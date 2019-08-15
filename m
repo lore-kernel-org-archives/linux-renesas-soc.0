@@ -1,45 +1,70 @@
-Return-Path: <SRS0=zvdX=WK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=zFik=WL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C67C433FF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Aug 2019 14:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE066C433FF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Aug 2019 06:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0877C206C1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Aug 2019 14:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F6FD206C2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Aug 2019 06:05:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BSMwRDTp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J40S5LgV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbfHNOy0 (ORCPT
+        id S1726027AbfHOGFS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Aug 2019 10:54:26 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50666 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfHNOy0 (ORCPT
+        Thu, 15 Aug 2019 02:05:18 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46266 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfHOGFR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Aug 2019 10:54:26 -0400
-Received: from pendragon.bb.dnainternet.fi (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 35EB42B2;
-        Wed, 14 Aug 2019 16:54:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1565794464;
-        bh=fMwkKQDP9tb51LzahulAvzJUA1ysJqumG8L71bWW+kg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BSMwRDTpoYFS9Y/Pee2id1AnmYSDkYOHODAPDuef8kECgSNkcV2sNjnHcgkJw4LQs
-         +seMeELJbzkqm67D1mlwuz0qNY3UXLHZTUm6vaBbRzOWw5FTrBaqz3XhES2WzByMqg
-         G+p2K87cU1GMN+KMwOBVuUCM6SRuDt/y0GIo1bZY=
-From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To:     linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] v4l: rcar-fcp: Read IP version register at probe time
-Date:   Wed, 14 Aug 2019 17:54:17 +0300
-Message-Id: <20190814145417.30670-1-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.21.0
+        Thu, 15 Aug 2019 02:05:17 -0400
+Received: by mail-pg1-f194.google.com with SMTP id m3so268324pgv.13;
+        Wed, 14 Aug 2019 23:05:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QR+1SuJZ5tZbGg7qkLCJVmhmhdJKRiKQpawR4Js8Xuk=;
+        b=J40S5LgVIFbpKF4VcPkepw8kzEiHWTibNmix/H9iDdsHe3GMUIUit3NqDx7wuVJiyt
+         G+Fk1scK5zD3KNi7jRf70kvb0zWiL1uCzhfbVoZtm93VwnediryTfIWwBvTXQgHr+/5K
+         QY11ruKyR6sVQJlZs0iQl+xzDM7vmQ3r06HWrJg0SPT00wfF4HBq1DKKgxMV5VkCB526
+         WV/BSIGogVvcg3tOmnVQE4vc0M2uxG5qHRMhuLBb+lhsDYTzrmb1wITXCC2CFe5lMpJu
+         SNwct2lCmtQH3i7kJ3BpdWXA/BPLz9UEClEv/FrfWKsk8Ab9GEyUWLSPZTVUpjzzL5oW
+         uWog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QR+1SuJZ5tZbGg7qkLCJVmhmhdJKRiKQpawR4Js8Xuk=;
+        b=RlWgDM03w0g5LeGwKbBvhGF4UdkDdUT8kQL35fUmohMLMV6SrMF15UfukBEtQdp+D9
+         jsc53Zt4sMLKiGhibaMlwro/SdAAEuxUJ6rMOCgKtkmzhQITdNCLay5jTq1rjQrSkNln
+         fSRpF8xOG5IQJsKtdYzRmfdiKgPc1kQTxJ+fjZpp3s+R00yIYuF1SioHxRupA3E0DvVw
+         JAXU4GmwSfoPZRqVnSNVfHrG8CbQMRPgR7uOcygj9Whj99SQEw/QvQDEPe5XZJTw+PGV
+         1uV7smMlOb8o08NnjmA0Q+fm/EO8tRbb+L9KQGGuTpiEOEbDaemrGmuwsa5eLOF3l+A5
+         /IKA==
+X-Gm-Message-State: APjAAAWCl+Z/+l2a4UOzF2mU0hPIY1MHN9oVYzAGa02XaIXegbj2tGyv
+        2CFoflMpzVQcEgPXVHgrOCBxlzI7
+X-Google-Smtp-Source: APXvYqwlHIKuxDnvidJF57JWbVKhk+wa/hb/uzQXQgc5YbmR5QYd0mamBhaxNsx5WykXdcAyh54Z8A==
+X-Received: by 2002:a17:90a:ec12:: with SMTP id l18mr812807pjy.6.1565849117142;
+        Wed, 14 Aug 2019 23:05:17 -0700 (PDT)
+Received: from localhost.localdomain ([110.225.3.176])
+        by smtp.gmail.com with ESMTPSA id l31sm1492817pgm.63.2019.08.14.23.05.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2019 23:05:16 -0700 (PDT)
+From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
+To:     geert+renesas@glider.be, linus.walleij@linaro.org,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Subject: [PATCH] pinctrl: rza1: Add of_node_put() before return
+Date:   Thu, 15 Aug 2019 11:35:03 +0530
+Message-Id: <20190815060503.2853-1-nishkadg.linux@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -47,98 +72,57 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This helps identifying the IP core version, for debugging purpose only
-for now.
+Each iteration of for_each_child_of_node puts the previous node, but in
+the case of a return from the middle of the loop, there is no put, thus
+causing a memory leak. Hence add an of_node_put before the return in
+three places.
+Issue found with Coccinelle.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
 ---
-Changes since v1:
+ drivers/pinctrl/pinctrl-rza1.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-- Use devm_platform_ioremap_resource()
----
- drivers/media/platform/rcar-fcp.c | 41 +++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
-
-diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
-index 43c78620c9d8..6e0c0e7c0f8c 100644
---- a/drivers/media/platform/rcar-fcp.c
-+++ b/drivers/media/platform/rcar-fcp.c
-@@ -8,6 +8,7 @@
-  */
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+index 021e37b7689e..8eeb9545137b 100644
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -866,8 +866,10 @@ static int rza1_dt_node_pin_count(struct device_node *np)
+ 	npins = 0;
+ 	for_each_child_of_node(np, child) {
+ 		of_pins = of_find_property(child, "pinmux", NULL);
+-		if (!of_pins)
++		if (!of_pins) {
++			of_node_put(child);
+ 			return -EINVAL;
++		}
  
- #include <linux/device.h>
-+#include <linux/io.h>
- #include <linux/list.h>
- #include <linux/module.h>
- #include <linux/mod_devicetable.h>
-@@ -21,11 +22,38 @@
- struct rcar_fcp_device {
- 	struct list_head list;
- 	struct device *dev;
-+	void __iomem *iomem;
- };
+ 		npins += of_pins->length / sizeof(u32);
+ 	}
+@@ -1025,8 +1027,10 @@ static int rza1_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		for_each_child_of_node(np, child) {
+ 			ret = rza1_parse_pinmux_node(rza1_pctl, child, mux_conf,
+ 						     grpin);
+-			if (ret < 0)
++			if (ret < 0) {
++				of_node_put(child);
+ 				return ret;
++			}
  
- static LIST_HEAD(fcp_devices);
- static DEFINE_MUTEX(fcp_lock);
+ 			grpin += ret;
+ 			mux_conf += ret;
+@@ -1272,8 +1276,10 @@ static int rza1_gpio_register(struct rza1_pinctrl *rza1_pctl)
  
-+#define FCP_VCR			0x0000
-+#define FCP_VCR_CATEGORY_MASK	(0xff << 8)
-+#define FCP_VCR_CATEGORY_SHIFT	8
-+#define FCP_VCR_REVISION_MASK	(0xff << 0)
-+#define FCP_VCR_REVISION_SHIFT	0
-+
-+#define FCP_CFG0		0x0004
-+#define FCP_RST			0x0010
-+#define FCP_STA			0x0018
-+#define FCP_TL_CTRL		0x0070
-+#define FCP_PICINFO1		0x00c4
-+#define FCP_BA_ANC_Y0		0x0100
-+#define FCP_BA_ANC_Y1		0x0104
-+#define FCP_BA_ANC_Y2		0x0108
-+#define FCP_BA_ANC_C		0x010c
-+#define FCP_BA_REF_Y0		0x0110
-+#define FCP_BA_REF_Y1		0x0114
-+#define FCP_BA_REF_Y2		0x0118
-+#define FCP_BA_REF_C		0x011c
-+
-+
-+static inline u32 rcar_fcp_read(struct rcar_fcp_device *fcp, u32 reg)
-+{
-+	return ioread32(fcp->iomem + reg);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Public API
-  */
-@@ -129,6 +157,7 @@ EXPORT_SYMBOL_GPL(rcar_fcp_disable);
- static int rcar_fcp_probe(struct platform_device *pdev)
- {
- 	struct rcar_fcp_device *fcp;
-+	u32 version;
+ 		ret = rza1_parse_gpiochip(rza1_pctl, child, &gpio_chips[i],
+ 					  &gpio_ranges[i]);
+-		if (ret)
++		if (ret) {
++			of_node_put(child);
+ 			return ret;
++		}
  
- 	fcp = devm_kzalloc(&pdev->dev, sizeof(*fcp), GFP_KERNEL);
- 	if (fcp == NULL)
-@@ -138,6 +167,18 @@ static int rcar_fcp_probe(struct platform_device *pdev)
- 
- 	pm_runtime_enable(&pdev->dev);
- 
-+	fcp->iomem = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(fcp->iomem))
-+		return PTR_ERR(fcp->iomem);
-+
-+	pm_runtime_get_sync(&pdev->dev);
-+	version = rcar_fcp_read(fcp, FCP_VCR);
-+	pm_runtime_put(&pdev->dev);
-+
-+	dev_dbg(&pdev->dev, "FCP category %u revision %u\n",
-+		(version & FCP_VCR_CATEGORY_MASK) >> FCP_VCR_CATEGORY_SHIFT,
-+		(version & FCP_VCR_REVISION_MASK) >> FCP_VCR_REVISION_SHIFT);
-+
- 	mutex_lock(&fcp_lock);
- 	list_add_tail(&fcp->list, &fcp_devices);
- 	mutex_unlock(&fcp_lock);
+ 		++i;
+ 	}
 -- 
-Regards,
-
-Laurent Pinchart
+2.19.1
 
