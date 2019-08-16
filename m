@@ -2,102 +2,83 @@ Return-Path: <SRS0=wMQj=WM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B26C2C3A59C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Aug 2019 12:44:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DE36C41514
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Aug 2019 12:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 845502086C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Aug 2019 12:44:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tdrDIrqc"
+	by mail.kernel.org (Postfix) with ESMTP id 3E9D82133F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Aug 2019 12:52:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbfHPMo1 (ORCPT
+        id S1727159AbfHPMw2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 16 Aug 2019 08:44:27 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38648 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726075AbfHPMo1 (ORCPT
+        Fri, 16 Aug 2019 08:52:28 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:40038 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727202AbfHPMw2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Aug 2019 08:44:27 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C0F0C2AF;
-        Fri, 16 Aug 2019 14:44:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1565959465;
-        bh=13TS07WjEU8T1vNw89rJNneidSGr9WeYO9OEoonJdE4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tdrDIrqcnJhgs6D7g2Qp9s8Hl8aAMvllrZLEltP9gbTo9Pz8iG4TPZ6GIG+Gi4XNj
-         /mSQX1p7Vthh2ZM6bmlE5maDy+dcOPSzumeSAV40Xn9Q+DWqjbaIaM7tiGcFwfrIrZ
-         VEER0nH/7roTfFqElknjTMijQ32IYX76FOfivDio=
-Date:   Fri, 16 Aug 2019 15:44:12 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2] v4l: rcar-fcp: Read IP version register at probe time
-Message-ID: <20190816124412.GG5020@pendragon.ideasonboard.com>
-References: <20190814145417.30670-1-laurent.pinchart+renesas@ideasonboard.com>
- <CAMuHMdWnnWTgnrjbSSxkg1rUadosijZyrfB8LQk5zWhzmg3WtQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWnnWTgnrjbSSxkg1rUadosijZyrfB8LQk5zWhzmg3WtQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 16 Aug 2019 08:52:28 -0400
+Received: from ramsan ([84.194.98.4])
+        by albert.telenet-ops.be with bizsmtp
+        id posT2000A05gfCL06osTD2; Fri, 16 Aug 2019 14:52:27 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hybiV-0005JD-Af; Fri, 16 Aug 2019 14:52:27 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hybiV-0004Bv-9R; Fri, 16 Aug 2019 14:52:27 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
+Date:   Fri, 16 Aug 2019 14:52:23 +0200
+Message-Id: <20190816125225.16061-2-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190816125225.16061-1-geert+renesas@glider.be>
+References: <20190816125225.16061-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+The CPG/MSTP Clock Domain driver does not implement the
+generic_pm_domain.power_{on,off}() callbacks, as the domain itself
+cannot be powered down.  Hence the domain should be marked as always-on
+by setting the GENPD_FLAG_ALWAYS_ON flag.
 
-On Fri, Aug 16, 2019 at 10:21:42AM +0200, Geert Uytterhoeven wrote:
-> On Wed, Aug 14, 2019 at 4:55 PM Laurent Pinchart wrote:
-> > This helps identifying the IP core version, for debugging purpose only
-> > for now.
-> >
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> > --- a/drivers/media/platform/rcar-fcp.c
-> > +++ b/drivers/media/platform/rcar-fcp.c
-> 
-> > @@ -138,6 +167,18 @@ static int rcar_fcp_probe(struct platform_device *pdev)
-> >
-> >         pm_runtime_enable(&pdev->dev);
-> >
-> > +       fcp->iomem = devm_platform_ioremap_resource(pdev, 0);
-> > +       if (IS_ERR(fcp->iomem))
-> > +               return PTR_ERR(fcp->iomem);
-> > +
-> > +       pm_runtime_get_sync(&pdev->dev);
-> > +       version = rcar_fcp_read(fcp, FCP_VCR);
-> > +       pm_runtime_put(&pdev->dev);
-> 
-> Unless (dynamic) debugging is enabled, all of the above is done for obtaining
-> a version number that is not used.
-> Can this be improved?
+This gets rid of the following boot warning on RZ/A1:
 
-With FCNL support we'll need that anyway.
+    sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be powered off
 
-This patch comes from a larger FCNL series that rejects devices with an
-unknown version, and I thought it could be fast-tracked in a stripped
-form already. I don't mind either way, I can wait until it's time to
-merge FCNL support.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/clk-mstp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> > +
-> > +       dev_dbg(&pdev->dev, "FCP category %u revision %u\n",
-> > +               (version & FCP_VCR_CATEGORY_MASK) >> FCP_VCR_CATEGORY_SHIFT,
-> > +               (version & FCP_VCR_REVISION_MASK) >> FCP_VCR_REVISION_SHIFT);
-> > +
-> >         mutex_lock(&fcp_lock);
-> >         list_add_tail(&fcp->list, &fcp_devices);
-> >         mutex_unlock(&fcp_lock);
-
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index dfbef37eed4a82e8..fcf753a6249a0e53 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -335,7 +335,8 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ 		return;
+ 
+ 	pd->name = np->name;
+-	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
++	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ALWAYS_ON |
++		    GENPD_FLAG_ACTIVE_WAKEUP;
+ 	pd->attach_dev = cpg_mstp_attach_dev;
+ 	pd->detach_dev = cpg_mstp_detach_dev;
+ 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
 -- 
-Regards,
+2.17.1
 
-Laurent Pinchart
