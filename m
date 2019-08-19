@@ -8,62 +8,62 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FA49C3A5A0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 12:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD05C3A5A0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 12:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 472F020851
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 12:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC10D20851
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 12:55:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MP6L1+Ti"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ic5eSyZy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbfHSMze (ORCPT
+        id S1727308AbfHSMzw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Aug 2019 08:55:34 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36481 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726987AbfHSMzd (ORCPT
+        Mon, 19 Aug 2019 08:55:52 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40477 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727128AbfHSMzw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Aug 2019 08:55:33 -0400
-Received: by mail-pf1-f193.google.com with SMTP id w2so1136708pfi.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Aug 2019 05:55:33 -0700 (PDT)
+        Mon, 19 Aug 2019 08:55:52 -0400
+Received: by mail-pg1-f196.google.com with SMTP id w10so1179826pgj.7
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Aug 2019 05:55:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=wxLexOtpgiOZUCwyidEYaY3eooecCDD5CLNpFroafaI=;
-        b=MP6L1+Ti0g0EfBo4RrkTQ4TUf7oFPj0XE8pqOctRmGvYb8EV2H5jHmOQqUV2pmfDv8
-         ssk79pgomUQFl5vm5jY3fNnYGkDp1TTmcoC6n25pbuD4GYeP3Kw3TPK0Ij1nLNd4/Rla
-         M78c77eWYj5z4pnfXcj79jOfZHB9HU8ODO8H+udxr5TdkQP3dh/2v+QQpW9TN5SGysCm
-         LW2g7MqxJvCbxXfaiRejuf+ljcucb+Rco4pb+SdT+NcGHq/oYZIEf5AIHKKkLCW9do0/
-         QcE3BFVEAEY60CbHJhu9YKLoxc1F8lsNUey4yR5oOAReRYUYteGGJ2SIcEMC9ic6baGF
-         q7Aw==
+        bh=v5qVhsj1Sh0huonK/swWihX+DCDDmRO1aGyC58oJV4s=;
+        b=Ic5eSyZyZrVLzC/MLRQ83pEC+DBw04beNBU7MbyhOl4si0cNUiosvpb2Bedm62EKdq
+         yxCSNGsTNI3CWUGDrUMVTsvjEe0hnhg6deXIURViDKnaCW98sG1DvE1SFUsD1Zby6sEV
+         MYbFYTVm1+G53k/BJ8WdTyNyY2fwUGuzz6YwYNQwUhlga0C+YqfNHymHPIM8xoIgPo4Z
+         xATeGD7jSnvwB/8fwz++/fy7ZeaSaRqhsGcWvDPldJSlHr677Olta1LZRHB3oJnV2IQL
+         gOjiRhzKHW1aSiZb/ZlG9sFYTCA4EPYTwKTcwEW9u4gIgNb3a1JenRYQEGI2VqwtxjNr
+         fOwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wxLexOtpgiOZUCwyidEYaY3eooecCDD5CLNpFroafaI=;
-        b=J5/PxnadSwtufxmT2+7ozkIWp6FQ5Spz5BkGutd96nRcMIGB0ENoo3I/7lFisg1SAX
-         qxVzrFesWJ6OXbMR6QJhktlJhGDSLK/uQtxo9+ccraqJ9YLXv5+9B8sqOZNVLkGhmLVw
-         LTmd3KY8QOoJ6K4STv7XR7MBrWOUHGAkA451b3pPDnt1H41CtiT1v0JIkV7/pnOkpv/P
-         deYzv1tPr1sBBMQtacs4jo1rT9fYlf1rkGbRTEastvLji+Pydk7hiSeWh6tsvTaZ8uMy
-         VuaAun45mAimnHenWaLcmoMY3oxciTXZQBygXjXGkf43o+eO/ig2KWQvlLH+h/VdAeJ5
-         I/ug==
-X-Gm-Message-State: APjAAAXYnbawU3HBZMWoGK45oKgB2b0lHz/7Ru+K5yCEBWpLcXbMi626
-        9Q4uqRlPKkEIohxgvg3/1mM7VInp
-X-Google-Smtp-Source: APXvYqyhDDchMWr1RWUittFEHEHopaQA3ix1MeEU072Be8O/tTlfL0IZKYLZgD/m92nSlltSLeqVVA==
-X-Received: by 2002:aa7:8007:: with SMTP id j7mr23790753pfi.154.1566219332838;
-        Mon, 19 Aug 2019 05:55:32 -0700 (PDT)
+        bh=v5qVhsj1Sh0huonK/swWihX+DCDDmRO1aGyC58oJV4s=;
+        b=mV3x9LxoTEV3heaQqvXE+ixYiVffR3Yp2BF9Jj/fTlMkDYCSyQZG6wPcYGK9TwgsSn
+         8A7oet6Y3HW+UfvhFR8/TTYqoZsfaeBWeSXGJmkfhmsoU5jYoc7k1DYSYGrQmPmUBrZu
+         6BW0sst1icDIl06yiPXf/MqlxTwsc3ta517Rc9Ye/+FO65UX+pke0VZwvmHGoXhUvM69
+         l6+wyN2OalqqiWsK5Qu1/QGpMCfUB4wFU6rp0kzWivaG7mSCp8E7nLfgShYY1fo60p9J
+         Atk/JTsLqi2cFit81DpWGA6XLgkmAQo0sILiDkf/pXMtKhC0E0q/VSPRPt6VHDiGH9Ew
+         Hi+Q==
+X-Gm-Message-State: APjAAAVq28Vk9cGkECC6gDjcqNpKjMyqE3P7G9u5wQ+VHlUESgZKBO+E
+        GFHvukzHfg59H3acgF2HOns/aRUx
+X-Google-Smtp-Source: APXvYqzjZ55GlzrZenjUQbO/L8WqYRgNiYv2ZUlFlqICGOE+HpVHDfzLW0WkM0hfQGIjsQKapBL9ew==
+X-Received: by 2002:a63:101b:: with SMTP id f27mr19040919pgl.291.1566219351382;
+        Mon, 19 Aug 2019 05:55:51 -0700 (PDT)
 Received: from localhost.localdomain (p6796086-ipngn28101marunouchi.tokyo.ocn.ne.jp. [114.165.92.86])
-        by smtp.gmail.com with ESMTPSA id i15sm14949839pfd.160.2019.08.19.05.55.30
+        by smtp.gmail.com with ESMTPSA id t9sm13215113pji.18.2019.08.19.05.55.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 19 Aug 2019 05:55:32 -0700 (PDT)
+        Mon, 19 Aug 2019 05:55:50 -0700 (PDT)
 From:   Yoshihiro Kaneko <ykaneko0929@gmail.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] arm64: dts: renesas: r8a774a1: sort nodes
-Date:   Mon, 19 Aug 2019 21:54:55 +0900
-Message-Id: <1566219295-23003-1-git-send-email-ykaneko0929@gmail.com>
+Subject: [PATCH] arm64: dts: renesas: r8a774c0-cat874: sort nodes
+Date:   Mon, 19 Aug 2019 21:55:41 +0900
+Message-Id: <1566219341-23048-1-git-send-email-ykaneko0929@gmail.com>
 X-Mailer: git-send-email 1.9.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -86,229 +86,53 @@ Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
 This patch is based on the master branch of Geert Uytterhoeven's renesas-devel
 tree.
 
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 174 +++++++++++++++---------------
- 1 file changed, 87 insertions(+), 87 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index bdb4675..06c7c84 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -1726,6 +1726,28 @@
- 				      "ssi.1", "ssi.0";
- 			status = "disabled";
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+index 651383c..aaa37158 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
+@@ -82,13 +82,13 @@
+ 		simple-audio-card,bitclock-master = <&sndcpu>;
+ 		simple-audio-card,frame-master = <&sndcpu>;
  
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				port@0 {
-+					reg = <0>;
-+				};
-+				port@1 {
-+					reg = <1>;
-+				};
-+			};
-+
-+			rcar_sound,ctu {
-+				ctu00: ctu-0 { };
-+				ctu01: ctu-1 { };
-+				ctu02: ctu-2 { };
-+				ctu03: ctu-3 { };
-+				ctu10: ctu-4 { };
-+				ctu11: ctu-5 { };
-+				ctu12: ctu-6 { };
-+				ctu13: ctu-7 { };
-+			};
-+
- 			rcar_sound,dvc {
- 				dvc0: dvc-0 {
- 					dmas = <&audma1 0xbc>;
-@@ -1742,17 +1764,6 @@
- 				mix1: mix-1 { };
- 			};
- 
--			rcar_sound,ctu {
--				ctu00: ctu-0 { };
--				ctu01: ctu-1 { };
--				ctu02: ctu-2 { };
--				ctu03: ctu-3 { };
--				ctu10: ctu-4 { };
--				ctu11: ctu-5 { };
--				ctu12: ctu-6 { };
--				ctu13: ctu-7 { };
--			};
+-		sndcpu: simple-audio-card,cpu {
+-			sound-dai = <&rcar_sound>;
+-		};
 -
- 			rcar_sound,src {
- 				src0: src-0 {
- 					interrupts = <GIC_SPI 352 IRQ_TYPE_LEVEL_HIGH>;
-@@ -1806,6 +1817,59 @@
- 				};
- 			};
- 
-+			rcar_sound,ssi {
-+				ssi0: ssi-0 {
-+					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x01>, <&audma1 0x02>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi1: ssi-1 {
-+					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x03>, <&audma1 0x04>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi2: ssi-2 {
-+					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x05>, <&audma1 0x06>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi3: ssi-3 {
-+					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x07>, <&audma1 0x08>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi4: ssi-4 {
-+					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x09>, <&audma1 0x0a>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi5: ssi-5 {
-+					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x0b>, <&audma1 0x0c>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi6: ssi-6 {
-+					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x0d>, <&audma1 0x0e>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi7: ssi-7 {
-+					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x0f>, <&audma1 0x10>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi8: ssi-8 {
-+					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x11>, <&audma1 0x12>;
-+					dma-names = "rx", "tx";
-+				};
-+				ssi9: ssi-9 {
-+					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
-+					dmas = <&audma0 0x13>, <&audma1 0x14>;
-+					dma-names = "rx", "tx";
-+				};
-+			};
-+
- 			rcar_sound,ssiu {
- 				ssiu00: ssiu-0 {
- 					dmas = <&audma0 0x15>, <&audma1 0x16>;
-@@ -2016,70 +2080,6 @@
- 					dma-names = "rx", "tx";
- 				};
- 			};
--
--			rcar_sound,ssi {
--				ssi0: ssi-0 {
--					interrupts = <GIC_SPI 370 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x01>, <&audma1 0x02>;
--					dma-names = "rx", "tx";
--				};
--				ssi1: ssi-1 {
--					interrupts = <GIC_SPI 371 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x03>, <&audma1 0x04>;
--					dma-names = "rx", "tx";
--				};
--				ssi2: ssi-2 {
--					interrupts = <GIC_SPI 372 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x05>, <&audma1 0x06>;
--					dma-names = "rx", "tx";
--				};
--				ssi3: ssi-3 {
--					interrupts = <GIC_SPI 373 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x07>, <&audma1 0x08>;
--					dma-names = "rx", "tx";
--				};
--				ssi4: ssi-4 {
--					interrupts = <GIC_SPI 374 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x09>, <&audma1 0x0a>;
--					dma-names = "rx", "tx";
--				};
--				ssi5: ssi-5 {
--					interrupts = <GIC_SPI 375 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0b>, <&audma1 0x0c>;
--					dma-names = "rx", "tx";
--				};
--				ssi6: ssi-6 {
--					interrupts = <GIC_SPI 376 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0d>, <&audma1 0x0e>;
--					dma-names = "rx", "tx";
--				};
--				ssi7: ssi-7 {
--					interrupts = <GIC_SPI 377 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x0f>, <&audma1 0x10>;
--					dma-names = "rx", "tx";
--				};
--				ssi8: ssi-8 {
--					interrupts = <GIC_SPI 378 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x11>, <&audma1 0x12>;
--					dma-names = "rx", "tx";
--				};
--				ssi9: ssi-9 {
--					interrupts = <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>;
--					dmas = <&audma0 0x13>, <&audma1 0x14>;
--					dma-names = "rx", "tx";
--				};
--			};
--
--			ports {
--				#address-cells = <1>;
--				#size-cells = <0>;
--				port@0 {
--					reg = <0>;
--				};
--				port@1 {
--					reg = <1>;
--				};
--			};
+ 		sndcodec: simple-audio-card,codec {
+ 			sound-dai = <&tda19988>;
  		};
- 
- 		audma0: dma-controller@ec700000 {
-@@ -2746,6 +2746,18 @@
- 			thermal-sensors = <&tsc 2>;
- 			sustainable-power = <3874>;
- 
-+			cooling-maps {
-+				map0 {
-+					trip = <&target>;
-+					cooling-device = <&a57_0 0 2>;
-+					contribution = <1024>;
-+				};
-+				map1 {
-+					trip = <&target>;
-+					cooling-device = <&a53_0 0 2>;
-+					contribution = <1024>;
-+				};
-+			};
- 			trips {
- 				target: trip-point1 {
- 					temperature = <100000>;
-@@ -2759,18 +2771,6 @@
- 					type = "critical";
- 				};
- 			};
--			cooling-maps {
--				map0 {
--					trip = <&target>;
--					cooling-device = <&a57_0 0 2>;
--					contribution = <1024>;
--				};
--				map1 {
--					trip = <&target>;
--					cooling-device = <&a53_0 0 2>;
--					contribution = <1024>;
--				};
--			};
- 		};
++
++		sndcpu: simple-audio-card,cpu {
++			sound-dai = <&rcar_sound>;
++		};
  	};
  
+ 	vcc_sdhi0: regulator-vcc-sdhi0 {
+@@ -313,16 +313,16 @@
+ 		power-source = <1800>;
+ 	};
+ 
+-	sound_pins: sound {
+-		groups = "ssi01239_ctrl", "ssi0_data";
+-		function = "ssi";
+-	};
+-
+ 	sound_clk_pins: sound_clk {
+ 		groups = "audio_clkout1_a";
+ 		function = "audio_clk";
+ 	};
+ 
++	sound_pins: sound {
++		groups = "ssi01239_ctrl", "ssi0_data";
++		function = "ssi";
++	};
++
+ 	usb30_pins: usb30 {
+ 		groups = "usb30", "usb30_id";
+ 		function = "usb30";
 -- 
 1.9.1
 
