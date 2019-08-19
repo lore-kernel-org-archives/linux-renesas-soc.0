@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF93AC3A5A2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 13:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F35C3A5A0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 14:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF7752064A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 13:56:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C3472064A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 14:01:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfHSN4h (ORCPT
+        id S1727512AbfHSOBM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Aug 2019 09:56:37 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:41452 "EHLO
+        Mon, 19 Aug 2019 10:01:12 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:41562 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726987AbfHSN4h (ORCPT
+        with ESMTP id S1727352AbfHSOBL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Aug 2019 09:56:37 -0400
+        Mon, 19 Aug 2019 10:01:11 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 971A325AF0E;
-        Mon, 19 Aug 2019 23:56:34 +1000 (AEST)
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 71FBE25AF0E;
+        Tue, 20 Aug 2019 00:01:09 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 786F19406ED; Mon, 19 Aug 2019 15:56:32 +0200 (CEST)
+        id 51C469406ED; Mon, 19 Aug 2019 16:01:07 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH] dt-bindings: clk: emev2: Rename bindings documentation file
-Date:   Mon, 19 Aug 2019 15:56:30 +0200
-Message-Id: <20190819135630.18462-1-horms+renesas@verge.net.au>
+Subject: [PATCH] dt-bindings: iio: light: isl29501: Rename bindings documentation file
+Date:   Mon, 19 Aug 2019 16:01:05 +0200
+Message-Id: <20190819140105.18800-1-horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Rename the device tree clock bindings for Renesas EMMA Mobile EV2
-from emev2-clock.txt to emev2-renesas,emev2-smu.txt.
+Rename the bindings documentation file for Renesas ISL29501 Time-of-flight
+sensor from isl29501.txt to renesas,isl29501.txt.
 
 This is part of an ongoing effort to name bindings documentation files for
 Renesas IP blocks consistently, in line with the compat strings they
@@ -56,14 +57,30 @@ Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 ---
 Based on v5.3-rc1
 ---
- .../bindings/clock/{emev2-clock.txt => emev2-renesas,emev2-smu.txt}       | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- rename Documentation/devicetree/bindings/clock/{emev2-clock.txt => emev2-renesas,emev2-smu.txt} (100%)
+ .../bindings/iio/light/{isl29501.txt => renesas,isl29501.txt}         | 0
+ Makefile                                                              | 4 ++--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+ rename Documentation/devicetree/bindings/iio/light/{isl29501.txt => renesas,isl29501.txt} (100%)
 
-diff --git a/Documentation/devicetree/bindings/clock/emev2-clock.txt b/Documentation/devicetree/bindings/clock/emev2-renesas,emev2-smu.txt
+diff --git a/Documentation/devicetree/bindings/iio/light/isl29501.txt b/Documentation/devicetree/bindings/iio/light/renesas,isl29501.txt
 similarity index 100%
-rename from Documentation/devicetree/bindings/clock/emev2-clock.txt
-rename to Documentation/devicetree/bindings/clock/emev2-renesas,emev2-smu.txt
+rename from Documentation/devicetree/bindings/iio/light/isl29501.txt
+rename to Documentation/devicetree/bindings/iio/light/renesas,isl29501.txt
+diff --git a/Makefile b/Makefile
+index fd6f7949bc1a..9be5834073f8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,8 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0
+ VERSION = 5
+-PATCHLEVEL = 2
++PATCHLEVEL = 3
+ SUBLEVEL = 0
+-EXTRAVERSION =
++EXTRAVERSION = -rc1
+ NAME = Bobtail Squid
+ 
+ # *DOCUMENTATION*
 -- 
 2.11.0
 
