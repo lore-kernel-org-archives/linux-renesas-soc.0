@@ -2,79 +2,86 @@ Return-Path: <SRS0=Lvs1=WP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B75C3A59F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 06:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F342C3A59D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 09:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 901702087E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 06:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1105F20989
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Aug 2019 09:44:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726583AbfHSGVr (ORCPT
+        id S1726661AbfHSJoZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Aug 2019 02:21:47 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:50319 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726584AbfHSGVr (ORCPT
+        Mon, 19 Aug 2019 05:44:25 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:60664 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726314AbfHSJoZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Aug 2019 02:21:47 -0400
-X-IronPort-AV: E=Sophos;i="5.64,403,1559487600"; 
-   d="scan'208";a="24116684"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Aug 2019 15:21:45 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D7F254001DDF;
-        Mon, 19 Aug 2019 15:21:44 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     thierry.reding@gmail.com
-Cc:     linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3] pwm: rcar: remove a redundant condition in rcar_pwm_apply()
-Date:   Mon, 19 Aug 2019 15:20:12 +0900
-Message-Id: <1566195612-11614-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 19 Aug 2019 05:44:25 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 1D3EB25AED2;
+        Mon, 19 Aug 2019 19:44:23 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id EDE079406ED; Mon, 19 Aug 2019 11:44:20 +0200 (CEST)
+Date:   Mon, 19 Aug 2019 11:44:20 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3] pwm: rcar: remove a redundant condition in
+ rcar_pwm_apply()
+Message-ID: <20190819094420.33kzsgdixoejxd5m@verge.net.au>
+References: <1566195612-11614-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1566195612-11614-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Since the rcar_pwm_apply() has already checked whether state->enabled
-is set or not, this patch removes a redundant condition.
+On Mon, Aug 19, 2019 at 03:20:12PM +0900, Yoshihiro Shimoda wrote:
+> Since the rcar_pwm_apply() has already checked whether state->enabled
+> is set or not, this patch removes a redundant condition.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
----
-Changes from v2:
- - Revise some typos in the commit log.
-https://patchwork.kernel.org/patch/11083353/
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
-Changes from v1:
- - Spin-off this independent patch (5/7).
- - Add Geert and Uwe's Reviewed-by.
-https://patchwork.kernel.org/patch/11034743/
-
- drivers/pwm/pwm-rcar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
-index 5b2b8ec..c8cd43f 100644
---- a/drivers/pwm/pwm-rcar.c
-+++ b/drivers/pwm/pwm-rcar.c
-@@ -187,7 +187,7 @@ static int rcar_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
- 	/* The SYNC should be set to 0 even if rcar_pwm_set_counter failed */
- 	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, 0, RCAR_PWMCR);
- 
--	if (!ret && state->enabled)
-+	if (!ret)
- 		ret = rcar_pwm_enable(rp);
- 
- 	return ret;
--- 
-2.7.4
-
+> ---
+> Changes from v2:
+>  - Revise some typos in the commit log.
+> https://patchwork.kernel.org/patch/11083353/
+> 
+> Changes from v1:
+>  - Spin-off this independent patch (5/7).
+>  - Add Geert and Uwe's Reviewed-by.
+> https://patchwork.kernel.org/patch/11034743/
+> 
+>  drivers/pwm/pwm-rcar.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+> index 5b2b8ec..c8cd43f 100644
+> --- a/drivers/pwm/pwm-rcar.c
+> +++ b/drivers/pwm/pwm-rcar.c
+> @@ -187,7 +187,7 @@ static int rcar_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
+>  	/* The SYNC should be set to 0 even if rcar_pwm_set_counter failed */
+>  	rcar_pwm_update(rp, RCAR_PWMCR_SYNC, 0, RCAR_PWMCR);
+>  
+> -	if (!ret && state->enabled)
+> +	if (!ret)
+>  		ret = rcar_pwm_enable(rp);
+>  
+>  	return ret;
+> -- 
+> 2.7.4
+> 
