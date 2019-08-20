@@ -7,128 +7,101 @@ X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C32D0C3A589
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Aug 2019 12:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E169C3A589
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Aug 2019 12:33:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9597622CE3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Aug 2019 12:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FCC022DBF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Aug 2019 12:33:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ADi0rULS"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OeF/l51C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728947AbfHTMQ5 (ORCPT
+        id S1728947AbfHTMdP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 20 Aug 2019 08:16:57 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38393 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728731AbfHTMQ5 (ORCPT
+        Tue, 20 Aug 2019 08:33:15 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35021 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729137AbfHTMdP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Aug 2019 08:16:57 -0400
-Received: by mail-pg1-f194.google.com with SMTP id e11so3152119pga.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Aug 2019 05:16:56 -0700 (PDT)
+        Tue, 20 Aug 2019 08:33:15 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d85so3322202pfd.2;
+        Tue, 20 Aug 2019 05:33:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:date:message-id:subject;
-        bh=e9VRMZXqyq7sz/0ScIoqDuF79yOjQta9bK1odfunp/I=;
-        b=ADi0rULSniY/TMldFtio2giWS40QUvP1v/86i40hpoPA/OagYU02WTzOwnWSSSeaOq
-         gRWXj1SZvpgNcKAcvCsnBvDnzmhLRecTuLkjQdZPJaAeQBLWTZP+xbsmMx5vmt6cwbVS
-         4puYNXthyOGfMLQ7Xu4MOv0F/Ln40yLOiG4lpBzJF2q5SBjX2+zzA4mkUUndjyR/m/2F
-         ltCczvcmDbZFPBq9vLOIMFZOowCeJ3MObxQRe/ilWUSSHQFyb4fz5M37zqpdeEuzOcb6
-         /+tZM7ujE0VZ/N2x1Zo1NuAFDGHhjMBGQCK8CbbgkaTxb5KUDo0sZUoZJZ+HPJuAb64/
-         zQOg==
+        bh=zvwNQi4BCeuIA14cWZa0cHRt7U/PvcH30olqD0I+BGs=;
+        b=OeF/l51CBLge4/Wv3+5rrj7xno8+xVbhY59avBJvgnt8NCKcSbwr86tAxJLEHTN6Sk
+         kmqX0omOoG3gZMYhUvnhnIEUfbjYqRr1WW5rJ7jqniTU7IIpoRkyyURuMg2AAZ0BkrGL
+         1CkCCnk13NNifXaSziMVFvSi5lRjYban9TJ/WS7CMBjs8ina5EQ01sXjcH84/nvEwQdM
+         XEBQelq7hD9gywe1tT1y4OlmrpJexraQbOUcfXtI/e01zErwP+l83whuTXzWH8yJu3zL
+         1RmQ/hF+IUKSX1DWo1qhc4NLg4K1wDLimdn19QPpAXVpjxX1X7kIr3XJux5ToMq0FOjR
+         gXFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:date:message-id:subject;
-        bh=e9VRMZXqyq7sz/0ScIoqDuF79yOjQta9bK1odfunp/I=;
-        b=haKhcacIV+JNsg/lAEB1GhKFsddw2IVzxGuuOk216AY7C+x4flciTzkFJSHRaZxRfa
-         NP/qmbBIxfPj4QV0vPHPY+8IFgZXwo9udKQdYak3ba903ssiQnIUczwg1qeRWbFGFsua
-         SmIEuoI+zYBCmVKCpGDcN3piWAzC5geC05YslO4U5OhwrajfA/IWJuhsn+EfT2RA7GHI
-         tDnJGHGCWiXNF7u7j5mFVFgIrqZjgB0SH4IURFTeM3kuDrGyKewuUSUsHl3+g2MeEXof
-         1pPTMw18HSswydYtjYoNJphZj+5DSFFCtanFC07vkLR2OcRD2SVeppRp845VY3UGesyh
-         +arg==
-X-Gm-Message-State: APjAAAUvVl6WFzeH1iuKfrQ5onvf/viXkTv//RD26b8LQEOixUw2ONDC
-        eqOn1zSY+Uy2JbO5MD/bWTIMqaTl
-X-Google-Smtp-Source: APXvYqzSftPMoc9Hf5dA/6hTeCLMowVU8PbqaGSblpUgz+OkGzHJicenVMg2ehTLG6gL1pXCffJ/GA==
-X-Received: by 2002:a63:f304:: with SMTP id l4mr17031851pgh.66.1566303415829;
-        Tue, 20 Aug 2019 05:16:55 -0700 (PDT)
+        bh=zvwNQi4BCeuIA14cWZa0cHRt7U/PvcH30olqD0I+BGs=;
+        b=BI2PJhnQGuOpCjIXZwLdfF+vSiR5EgYyL2YTNUGfWOFkbMmcJbyR1FO/ydZDEG1/Rg
+         DPvP8MTiyWk1C9K9+7Ud6FqXrDJtfVUrwNUZI9AU6a5AW+begWSqUtlpOnD8soFFmI+0
+         K+LMXDSU3fMXVS2MgAOSIKDDoO465yVlFBEAC8ELFxm2iwXSQPCABz9eY5Zajt24yz5n
+         Z/BwrXZmOoZjtPH/xl1Bpehg6cZniG6WsG/1tNrSUWSAJYXQ6wk4QBTuy3ZGTOqkxozV
+         dqGQpjuEZKAj//X3UIkKo8P1qJFo5DvAqp5pOh/G17ZuSeCiCD4N2UbTrS7JLp/hesls
+         njKA==
+X-Gm-Message-State: APjAAAX9bkwdJgu9WZMma1SJQcD7Er64/Q9/f39K3vNntKCpOJxfsNrf
+        r22vH5/+Klgai63mFUdi4SWeOsIZ
+X-Google-Smtp-Source: APXvYqwzXZIQ5h8iNoF7/9ju+JjQYuHdT8iC1R4a+hrxV1YRmTnUBfmAlaHmjz3x6+/O3wSReeHT+g==
+X-Received: by 2002:aa7:9ab8:: with SMTP id x24mr29047690pfi.98.1566304394239;
+        Tue, 20 Aug 2019 05:33:14 -0700 (PDT)
 Received: from [127.0.0.1] (l193216.ppp.asahi-net.or.jp. [218.219.193.216])
-        by smtp.gmail.com with ESMTPSA id e6sm32279702pfl.37.2019.08.20.05.16.53
+        by smtp.gmail.com with ESMTPSA id m34sm20772366pje.5.2019.08.20.05.33.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Aug 2019 05:16:54 -0700 (PDT)
+        Tue, 20 Aug 2019 05:33:13 -0700 (PDT)
 From:   Magnus Damm <magnus.damm@gmail.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Magnus Damm <magnus.damm@gmail.com>, geert@glider.be
-Date:   Tue, 20 Aug 2019 21:18:35 +0900
-Message-Id: <156630351537.24954.2550542042474735517.sendpatchset@octo>
-Subject: [PATCH/RFC] serial: sh-sci: Update uartclk based on selected clock
+To:     linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        geert+renesas@glider.be, daniel.lezcano@linaro.org,
+        linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
+        tglx@linutronix.de
+Date:   Tue, 20 Aug 2019 21:34:52 +0900
+Message-Id: <156630449239.17444.11157306180861080402.sendpatchset@octo>
+Subject: [PATCH v2 0/7] renesas, cmt: DT Binding Documentation and Minor Driver Updates V2
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Magnus Damm <damm+renesas@opensource.se>
+renesas, cmt: DT Binding Documentation and Minor Driver Updates V2
 
-I noticed that uartclk never gets updated as it is today.
+[PATCH v2 1/7] dt-bindings: timer: renesas, cmt: Add CMT0234 to sh73a0 and r8a7740
+[PATCH v2 2/7] dt-bindings: timer: renesas, cmt: Update CMT1 on sh73a0 and r8a7740
+[PATCH v2 3/7] dt-bindings: timer: renesas, cmt: Add CMT0 and CMT1 to r8a7792
+[PATCH v2 4/7] dt-bindings: timer: renesas, cmt: Add CMT0 and CMT1 to r8a77995
+[PATCH v2 5/7] dt-bindings: timer: renesas, cmt: Update R-Car Gen3 CMT1 usage
+[PATCH v2 6/7] clocksource/drivers/sh_cmt: r8a7740 and sh73a0 SoC-specific match
+[PATCH v2 7/7] clocksource/drivers/sh_cmt: Document "cmt-48" as deprecated 
 
-This compile tested patch makes sure uartclk is in sync with
-whatever clock is selected during sci_set_termios(). Exposing
-the actual value to user space seems like a good plan to me.
+This series collect the following rather trivial changes for the CMT driver:
+- Add 32-bit CMT0234 and convert CMT1 DT binding docs on sh73a0 and r8a7740.
+- Add documentation for the CMT on the R-Car Gen2 V2H (r8a7792) SoC.
+- Add missing R-Car Gen3 DT binding documentation for D3 (r8a77995).
+- Update the R-Car Gen3 DT documentation to reflect current usage.
+- Introduce SoC-specific matching in the driver for CMT1 on sh73a0 and sh73a0.
+- Document old "cmt-48" binding as deprecated in the driver.
 
-Another semi-related issue:
+Since V1 the only update is the addition of reviewed-by from Simon - thanks!
 
-The ->termios() callback in the SCIF driver seems to enable clocks using
-runtine pm in sci_port_enable() followed by register accesses and
-a before returnng sci_port_enable() disables clocks as well.
+Please see each individual patch for more detailed information.
 
-The ->pm() callback will enable the port again later on however
-on SoCs where the SCIF is in a power domain it looks like the
-register contents might get lost due to power down between ->termios()
-and ->pm()?
-
-Perhaps the power domain use case is known to be busted?
-
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> [Patch 3-5]
+Reviewed-by: Rob Herring <robh@kernel.org> [Patch 1-5]
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
 
- drivers/tty/serial/sh-sci.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Developed on top of "renesas-drivers-2019-08-13-v5.3-rc4". Earlier posted as:
+[PATCH 0/7] renesas, cmt: DT Binding Documentation and Minor Driver Updates
 
---- 0001/drivers/tty/serial/sh-sci.c
-+++ work/drivers/tty/serial/sh-sci.c	2019-08-20 20:32:17.680030451 +0900
-@@ -129,6 +129,7 @@ struct sci_port {
- 	/* Clocks */
- 	struct clk		*clks[SCI_NUM_CLKS];
- 	unsigned long		clk_rates[SCI_NUM_CLKS];
-+	int			sel_clk;
- 
- 	int			irqs[SCIx_NR_IRQS];
- 	char			*irqstr[SCIx_NR_IRQS];
-@@ -542,7 +543,11 @@ static void sci_port_enable(struct sci_p
- 		clk_prepare_enable(sci_port->clks[i]);
- 		sci_port->clk_rates[i] = clk_get_rate(sci_port->clks[i]);
- 	}
--	sci_port->port.uartclk = sci_port->clk_rates[SCI_FCK];
-+
-+	if (sci_port->sel_clk >= 0)
-+		sci_port->port.uartclk = sci_port->clk_rates[sci_port->sel_clk];
-+	else
-+		sci_port->port.uartclk = sci_port->clk_rates[SCI_FCK];
- }
- 
- static void sci_port_disable(struct sci_port *sci_port)
-@@ -2472,6 +2477,7 @@ done:
- 		dev_dbg(port->dev, "Using clk %pC for %u%+d bps\n",
- 			s->clks[best_clk], baud, min_err);
- 
-+	s->sel_clk = best_clk;
- 	sci_port_enable(s);
- 
- 	/*
-@@ -2785,6 +2791,8 @@ static int sci_init_clocks(struct sci_po
- 	struct clk *clk;
- 	unsigned int i;
- 
-+	sci_port->sel_clk = -1; /* invalid */
-+
- 	if (sci_port->cfg->type == PORT_HSCIF)
- 		clk_names[SCI_SCK] = "hsck";
- 
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt |   42 ++++++++-------
+ drivers/clocksource/sh_cmt.c                            |   14 ++++-
+ 2 files changed, 37 insertions(+), 19 deletions(-)
+
+
