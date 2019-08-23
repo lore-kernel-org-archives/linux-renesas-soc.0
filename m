@@ -2,34 +2,35 @@ Return-Path: <SRS0=fckF=WT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+X-Spam-Status: No, score=-13.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB68FC3A5A4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 865A4C3A5A2
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 23 Aug 2019 12:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B23823401
+	by mail.kernel.org (Postfix) with ESMTP id 58A3723400
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 23 Aug 2019 12:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391797AbfHWMg4 (ORCPT
+        id S1732076AbfHWMgz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 23 Aug 2019 08:36:56 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:47740 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732384AbfHWMgz (ORCPT
+        Fri, 23 Aug 2019 08:36:55 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:57768 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391797AbfHWMgz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 23 Aug 2019 08:36:55 -0400
 Received: from ramsan ([84.194.98.4])
-        by baptiste.telenet-ops.be with bizsmtp
-        id sccr2000805gfCL01ccrV0; Fri, 23 Aug 2019 14:36:53 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id sccr2000U05gfCL06ccrx4; Fri, 23 Aug 2019 14:36:54 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i18oF-0006YL-Cy; Fri, 23 Aug 2019 14:36:51 +0200
+        id 1i18oF-0006YU-GJ; Fri, 23 Aug 2019 14:36:51 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i18oF-0004uG-B7; Fri, 23 Aug 2019 14:36:51 +0200
+        id 1i18oF-0004uR-E9; Fri, 23 Aug 2019 14:36:51 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
 Cc:     Simon Horman <horms@verge.net.au>,
@@ -37,63 +38,47 @@ Cc:     Simon Horman <horms@verge.net.au>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PULL 0/5] Renesas SoC updates for v5.4 (take two)
-Date:   Fri, 23 Aug 2019 14:36:38 +0200
-Message-Id: <20190823123643.18799-1-geert+renesas@glider.be>
+Subject: [PULL 4/5] Renesas driver updates for v5.4 (take two)
+Date:   Fri, 23 Aug 2019 14:36:42 +0200
+Message-Id: <20190823123643.18799-5-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190823123643.18799-1-geert+renesas@glider.be>
+References: <20190823123643.18799-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi arm-soc folks,
+The following changes since commit 0ed0eb0171d7c19310d9f7b06a6dee82a4fb8ab6:
 
-This is my second pull request for the inclusion of Renesas SoC updates
-for v5.4.
+  soc: renesas: rcar-sysc: Use [] to denote a flexible array member (2019-07-29 15:36:56 +0200)
 
-It consists of 5 parts:
+are available in the Git repository at:
 
-  [PULL 1/5] Renesas ARM DT updates for v5.4
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-drivers-for-v5.4-tag2
 
-    - Fix HSCIF PM Domain on R-Car H1,
-    - PMU support for RZ/G1C.
+for you to fetch changes up to 2eced4607a1e6f51f928ae3e521fe02be5cb7d23:
 
-  [PULL 2/5] Renesas ARM SoC updates for v5.4
+  soc: renesas: Enable ARM_ERRATA_754322 for affected Cortex-A9 (2019-08-23 10:33:31 +0200)
 
-    - Low-level debugging support for RZ/A2M.
+----------------------------------------------------------------
+Renesas driver updates for v5.4 (take two)
 
-  [PULL 3/5] Renesas ARM64 DT updates for v5.4 (take two)
+  - Improve "always-on" PM Domain handling on SH/R-Mobile SoCs,
+  - Automatic errata selection for Cortex-A7/A9,
+  - Small fixes and improvements.
 
-    - Sort nodes in various SoC and board DTSes,
-    - HDMI sound for HiHope RZ/G2M and R-Car M3-N Salvator-X(S) boards,
-    - Limit EtherAVB to 100Mbps on the Ebisu and Draak boards,
-    - Small fixes and improvements.
+----------------------------------------------------------------
+Geert Uytterhoeven (4):
+      soc: renesas: rcar-sysc: Eliminate local variable gov
+      soc: renesas: rmobile-sysc: Set GENPD_FLAG_ALWAYS_ON for always-on domain
+      soc: renesas: Enable ARM_ERRATA_814220 for affected Cortex-A7
+      soc: renesas: Enable ARM_ERRATA_754322 for affected Cortex-A9
 
-  [PULL 4/5] Renesas driver updates for v5.4 (take two)
+Nishka Dasgupta (1):
+      soc: renesas: rcar-sysc: Add goto to of_node_put() before return
 
-    - Improve "always-on" PM Domain handling on SH/R-Mobile SoCs,
-    - Automatic errata selection for Cortex-A7/A9,
-    - Small fixes and improvements.
-
-  [PULL 5/5] Renesas DT binding updates for v5.4 (take two)
-
-    - Renesas DT binding doc filename cleanups,
-    - R-Car Gen3 and RZ/G1 updates for the R-Car CAN and CANFD DT
-      bindings.
-
-For now I more or less followed Simon's way of structuring the branches,
-but I'm open for change.  Hence if you have any comments, or suggestions
-for improving the workflow, please let me know.
-
-Thanks for pulling, and for your comments!
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ drivers/soc/renesas/Kconfig        | 11 +++++++++++
+ drivers/soc/renesas/rcar-sysc.c    |  5 ++---
+ drivers/soc/renesas/rmobile-sysc.c | 31 ++++++++++++++++---------------
+ 3 files changed, 29 insertions(+), 18 deletions(-)
