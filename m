@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-13.8 required=3.0
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 865A4C3A5A2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 23 Aug 2019 12:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABEC4C3A5A5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 23 Aug 2019 12:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A3723400
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 23 Aug 2019 12:36:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82685233FE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 23 Aug 2019 12:36:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732076AbfHWMgz (ORCPT
+        id S2389943AbfHWMg5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 23 Aug 2019 08:36:55 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:57768 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391797AbfHWMgz (ORCPT
+        Fri, 23 Aug 2019 08:36:57 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:40594 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732384AbfHWMg4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 23 Aug 2019 08:36:55 -0400
+        Fri, 23 Aug 2019 08:36:56 -0400
 Received: from ramsan ([84.194.98.4])
-        by michel.telenet-ops.be with bizsmtp
-        id sccr2000U05gfCL06ccrx4; Fri, 23 Aug 2019 14:36:54 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id sccr2000k05gfCL01ccrcd; Fri, 23 Aug 2019 14:36:55 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i18oF-0006YU-GJ; Fri, 23 Aug 2019 14:36:51 +0200
+        id 1i18oF-0006YM-D3; Fri, 23 Aug 2019 14:36:51 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i18oF-0004uR-E9; Fri, 23 Aug 2019 14:36:51 +0200
+        id 1i18oF-0004uI-Bu; Fri, 23 Aug 2019 14:36:51 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
 Cc:     Simon Horman <horms@verge.net.au>,
@@ -38,9 +38,9 @@ Cc:     Simon Horman <horms@verge.net.au>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PULL 4/5] Renesas driver updates for v5.4 (take two)
-Date:   Fri, 23 Aug 2019 14:36:42 +0200
-Message-Id: <20190823123643.18799-5-geert+renesas@glider.be>
+Subject: [PULL 1/5] Renesas ARM DT updates for v5.4
+Date:   Fri, 23 Aug 2019 14:36:39 +0200
+Message-Id: <20190823123643.18799-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190823123643.18799-1-geert+renesas@glider.be>
 References: <20190823123643.18799-1-geert+renesas@glider.be>
@@ -49,36 +49,29 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The following changes since commit 0ed0eb0171d7c19310d9f7b06a6dee82a4fb8ab6:
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
 
-  soc: renesas: rcar-sysc: Use [] to denote a flexible array member (2019-07-29 15:36:56 +0200)
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-drivers-for-v5.4-tag2
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-dt-for-v5.4-tag1
 
-for you to fetch changes up to 2eced4607a1e6f51f928ae3e521fe02be5cb7d23:
+for you to fetch changes up to 57012813f1ba82412cdcc3665b04d4353b357378:
 
-  soc: renesas: Enable ARM_ERRATA_754322 for affected Cortex-A9 (2019-08-23 10:33:31 +0200)
-
-----------------------------------------------------------------
-Renesas driver updates for v5.4 (take two)
-
-  - Improve "always-on" PM Domain handling on SH/R-Mobile SoCs,
-  - Automatic errata selection for Cortex-A7/A9,
-  - Small fixes and improvements.
+  ARM: dts: r8a77470: Add PMU device node (2019-08-21 10:28:57 +0200)
 
 ----------------------------------------------------------------
-Geert Uytterhoeven (4):
-      soc: renesas: rcar-sysc: Eliminate local variable gov
-      soc: renesas: rmobile-sysc: Set GENPD_FLAG_ALWAYS_ON for always-on domain
-      soc: renesas: Enable ARM_ERRATA_814220 for affected Cortex-A7
-      soc: renesas: Enable ARM_ERRATA_754322 for affected Cortex-A9
+Renesas ARM DT updates for v5.4
 
-Nishka Dasgupta (1):
-      soc: renesas: rcar-sysc: Add goto to of_node_put() before return
+  - Fix HSCIF PM Domain on R-Car H1,
+  - PMU support for RZ/G1C.
 
- drivers/soc/renesas/Kconfig        | 11 +++++++++++
- drivers/soc/renesas/rcar-sysc.c    |  5 ++---
- drivers/soc/renesas/rmobile-sysc.c | 31 ++++++++++++++++---------------
- 3 files changed, 29 insertions(+), 18 deletions(-)
+----------------------------------------------------------------
+Geert Uytterhoeven (2):
+      ARM: dts: r8a7779: Use SYSC "always-on" PM Domain for HSCIF
+      ARM: dts: r8a77470: Add PMU device node
+
+ arch/arm/boot/dts/r8a77470.dtsi | 7 +++++++
+ arch/arm/boot/dts/r8a7779.dtsi  | 4 ++--
+ 2 files changed, 9 insertions(+), 2 deletions(-)
