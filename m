@@ -4,27 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA5CC3A5A1
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 25 Aug 2019 13:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E29F7C3A5A4
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 25 Aug 2019 13:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 598C620870
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 25 Aug 2019 13:51:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4CDC21848
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 25 Aug 2019 13:51:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbfHYNvY (ORCPT
+        id S1728667AbfHYNvQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 25 Aug 2019 09:51:24 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:33751 "EHLO
+        Sun, 25 Aug 2019 09:51:16 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:46153 "EHLO
         relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728668AbfHYNvX (ORCPT
+        with ESMTP id S1728653AbfHYNvO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 25 Aug 2019 09:51:23 -0400
+        Sun, 25 Aug 2019 09:51:14 -0400
 X-Originating-IP: 87.18.63.98
 Received: from uno.homenet.telecomitalia.it (unknown [87.18.63.98])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 184EAC0003;
-        Sun, 25 Aug 2019 13:51:18 +0000 (UTC)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 05739C0006;
+        Sun, 25 Aug 2019 13:51:08 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     laurent.pinchart@ideasonboard.com,
         kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
@@ -34,10 +35,10 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         VenkataRajesh.Kalakodima@in.bosch.com,
         Harsha.ManjulaMallikarjun@in.bosch.com,
         linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 14/14] drm: rcar-du: Force CMM enablement when resuming
-Date:   Sun, 25 Aug 2019 15:51:54 +0200
-Message-Id: <20190825135154.11488-15-jacopo+renesas@jmondi.org>
+        linux-kernel@vger.kernel.org, Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH v3 11/14] drm: rcar-du: crtc: Enable and disable CMMs
+Date:   Sun, 25 Aug 2019 15:51:51 +0200
+Message-Id: <20190825135154.11488-12-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190825135154.11488-1-jacopo+renesas@jmondi.org>
 References: <20190825135154.11488-1-jacopo+renesas@jmondi.org>
@@ -48,59 +49,86 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When resuming from system suspend, the DU driver is responsible for
-reprogramming and enabling the CMM unit if it was in use at the time
-the system entered the suspend state.
+Enable/disable the CMM associated with a CRTC at CRTC start and stop
+time and enable the CMM unit through the Display Extensional Functions
+register at group setup time.
 
-Force the color_mgmt_changed flag to true if any of the DRM color
-transformation properties was set in the CRTC state duplicated at
-suspend time, as the CMM gets reprogrammed only if said flag is active in
-the rcar_du_atomic_commit_update_cmm() method.
-
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 7 +++++++
+ drivers/gpu/drm/rcar-du/rcar_du_group.c | 8 ++++++++
+ drivers/gpu/drm/rcar-du/rcar_du_regs.h  | 5 +++++
+ 3 files changed, 20 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 018480a8f35c..6e38495fb78f 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -17,6 +17,7 @@
- #include <linux/slab.h>
- #include <linux/wait.h>
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 23f1d6cc1719..3dac605c3a67 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -21,6 +21,7 @@
+ #include <drm/drm_plane_helper.h>
+ #include <drm/drm_vblank.h>
  
-+#include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_fb_helper.h>
-@@ -482,6 +483,26 @@ static int rcar_du_pm_suspend(struct device *dev)
- static int rcar_du_pm_resume(struct device *dev)
- {
- 	struct rcar_du_device *rcdu = dev_get_drvdata(dev);
-+	struct drm_atomic_state *state = rcdu->ddev->mode_config.suspend_state;
-+	unsigned int i;
-+
-+	for (i = 0; i < rcdu->num_crtcs; ++i) {
-+		struct drm_crtc *crtc = &rcdu->crtcs[i].crtc;
-+		struct drm_crtc_state *crtc_state;
-+
-+		crtc_state = drm_atomic_get_existing_crtc_state(state, crtc);
-+		if (!crtc_state)
-+			continue;
-+
-+		/*
-+		 * Force re-enablement of CMM after system resume if any
-+		 * of the DRM color transformation properties was set in
-+		 * the state saved at system suspend time.
-+		 */
-+		if (crtc_state->gamma_lut || crtc_state->degamma_lut ||
-+		    crtc_state->ctm)
-+			crtc_state->color_mgmt_changed = true;
-+	}
++#include "rcar_cmm.h"
+ #include "rcar_du_crtc.h"
+ #include "rcar_du_drv.h"
+ #include "rcar_du_encoder.h"
+@@ -619,6 +620,9 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
+ 	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE))
+ 		rcar_du_vsp_disable(rcrtc);
  
- 	return drm_mode_config_helper_resume(rcdu->ddev);
++	if (rcrtc->cmm)
++		rcar_cmm_disable(rcrtc->cmm);
++
+ 	/*
+ 	 * Select switch sync mode. This stops display operation and configures
+ 	 * the HSYNC and VSYNC signals as inputs.
+@@ -686,6 +690,9 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
+ 	}
+ 
+ 	rcar_du_crtc_start(rcrtc);
++
++	if (rcrtc->cmm)
++		rcar_cmm_enable(rcrtc->cmm);
  }
+ 
+ static void rcar_du_crtc_atomic_disable(struct drm_crtc *crtc,
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+index 9eee47969e77..25d0fc125d7a 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+@@ -147,6 +147,14 @@ static void rcar_du_group_setup(struct rcar_du_group *rgrp)
+ 
+ 	rcar_du_group_setup_pins(rgrp);
+ 
++	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_CMM)) {
++		u32 defr7 = DEFR7_CODE
++			  | (rgrp->cmms_mask & BIT(1) ? DEFR7_CMME1 : 0)
++			  | (rgrp->cmms_mask & BIT(0) ? DEFR7_CMME0 : 0);
++
++		rcar_du_group_write(rgrp, DEFR7, defr7);
++	}
++
+ 	if (rcdu->info->gen >= 2) {
+ 		rcar_du_group_setup_defr8(rgrp);
+ 		rcar_du_group_setup_didsr(rgrp);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+index bc87f080b170..fb9964949368 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+@@ -197,6 +197,11 @@
+ #define DEFR6_MLOS1		(1 << 2)
+ #define DEFR6_DEFAULT		(DEFR6_CODE | DEFR6_TCNE1)
+ 
++#define DEFR7			0x000ec
++#define DEFR7_CODE		(0x7779 << 16)
++#define DEFR7_CMME1		BIT(6)
++#define DEFR7_CMME0		BIT(4)
++
+ /* -----------------------------------------------------------------------------
+  * R8A7790-only Control Registers
+  */
 -- 
 2.22.0
 
