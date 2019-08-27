@@ -2,56 +2,77 @@ Return-Path: <SRS0=zk1/=WX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 935F0C3A5A3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Aug 2019 11:12:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFF9C41514
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Aug 2019 11:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F30C2077B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Aug 2019 11:12:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DB82206BA
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Aug 2019 11:12:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbfH0LMN (ORCPT
+        id S1725793AbfH0LMN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 27 Aug 2019 07:12:13 -0400
 Received: from relmlor1.renesas.com ([210.160.252.171]:44344 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725793AbfH0LMN (ORCPT
+        by vger.kernel.org with ESMTP id S1727058AbfH0LMN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 27 Aug 2019 07:12:13 -0400
 X-IronPort-AV: E=Sophos;i="5.64,436,1559487600"; 
-   d="scan'208";a="25050326"
+   d="scan'208";a="25050329"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
   by relmlie5.idc.renesas.com with ESMTP; 27 Aug 2019 20:12:11 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 786384007F56;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A866A40041AB;
         Tue, 27 Aug 2019 20:12:11 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     vkoul@kernel.org
 Cc:     dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] dmaengine: rcar-dmac: minor modifications
-Date:   Tue, 27 Aug 2019 20:10:29 +0900
-Message-Id: <1566904231-25486-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] dmaengine: rcar-dmac: Use devm_platform_ioremap_resource()
+Date:   Tue, 27 Aug 2019 20:10:31 +0900
+Message-Id: <1566904231-25486-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1566904231-25486-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1566904231-25486-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series is based on renesas-drivers.git /
-renesas-drivers-2019-08-13-v5.3-rc4 tag. This is minor modifications
-to add support for changed registers memory mapping hardware support
-easily in the future.
+This patch uses devm_platform_ioremap_resource() instead of
+using platform_get_resource() and devm_ioremap_resource() together
+to simplify.
 
-Yoshihiro Shimoda (2):
-  dmaengine: rcar-dmac: Use of_data values instead of a macro
-  dmaengine: rcar-dmac: Use devm_platform_ioremap_resource()
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/dma/sh/rcar-dmac.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- drivers/dma/sh/rcar-dmac.c | 37 +++++++++++++++++++++++++++++--------
- 1 file changed, 29 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 1ff6d81..779b715 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1814,7 +1814,6 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ 	struct dma_device *engine;
+ 	struct rcar_dmac *dmac;
+ 	const struct rcar_dmac_of_data *data;
+-	struct resource *mem;
+ 	unsigned int i;
+ 	int ret;
+ 
+@@ -1855,8 +1854,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	/* Request resources. */
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	dmac->iomem = devm_ioremap_resource(&pdev->dev, mem);
++	dmac->iomem = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(dmac->iomem))
+ 		return PTR_ERR(dmac->iomem);
+ 
 -- 
 2.7.4
 
