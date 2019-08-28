@@ -2,142 +2,84 @@ Return-Path: <SRS0=2iH4=WY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94EEFC3A5A4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 11:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F96C3A5A1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 11:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7709F22CF5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 11:15:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B272E2189D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 11:48:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726293AbfH1LPk (ORCPT
+        id S1726341AbfH1LsA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 28 Aug 2019 07:15:40 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:38347 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725991AbfH1LPj (ORCPT
+        Wed, 28 Aug 2019 07:48:00 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42070 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726339AbfH1LsA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Aug 2019 07:15:39 -0400
-X-IronPort-AV: E=Sophos;i="5.64,440,1559487600"; 
-   d="scan'208";a="24930198"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 28 Aug 2019 20:15:37 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 82F3342296E1;
-        Wed, 28 Aug 2019 20:15:37 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     vkoul@kernel.org
-Cc:     dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] dmaengine: rcar-dmac: Don't set DMACHCLR bit 0 to 1 if iommu is mapped
-Date:   Wed, 28 Aug 2019 20:13:54 +0900
-Message-Id: <1566990835-27028-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1566990835-27028-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1566990835-27028-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 28 Aug 2019 07:48:00 -0400
+Received: by mail-oi1-f194.google.com with SMTP id o6so1813543oic.9
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Aug 2019 04:47:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=frj+XKKwyqwU6iAnIPlEbpQMfAgLYdlEvFvCt5kB5SY=;
+        b=IAcqr+Jt7XtsCvfN4cc+wLnh1je0BIb1Xiaj2wYrmiJ7kLCA9U8NP/1xKPUU3wqdTl
+         0R/E60aHgyLCJ98GQMvuxG0xD4gWNk+3lQE/q2t5lZF0O7tX200cP6NhOUNT8TPG+QlY
+         NY4gfeVcEIj6bSPA1hmcaciJYxY+AWzRfB1kmX3yTl5LBwE4borTYit4ScU9rpD86ENE
+         uLqb4R1k95nvuLECwq0RyIrj63zwxPFm//GBK/cWzaPPSw9OZfI++kVRmg/XlK3Y1qwJ
+         aY/6VP6iCMv9E2gzQNep2EdVIX+qhndoYu+Eg/rY4rL28NhbEtZN4BwYBNkwnLn/awFI
+         IEQA==
+X-Gm-Message-State: APjAAAXx8OBeJU44ir848Mzcss49Ran8qvHAC0flgAGCK5cintlXy4ap
+        a580Zppa53Da7sqcONGDGWCpPn87SY8VyfPEItA6AQ==
+X-Google-Smtp-Source: APXvYqz4Zc8QnngmSt0O8wLlRtgXFaDZ4ZTXwIQrHaCAxFA2phBpgeKuBb0n9/YdUlTpNzgkCKsx5Qz48iEofJZdO2k=
+X-Received: by 2002:aca:f4ca:: with SMTP id s193mr2233603oih.131.1566992879124;
+ Wed, 28 Aug 2019 04:47:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <1547808474-19427-1-git-send-email-uli+renesas@fpond.eu> <1547808474-19427-2-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <1547808474-19427-2-git-send-email-uli+renesas@fpond.eu>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 28 Aug 2019 13:47:48 +0200
+Message-ID: <CAMuHMdXcoh7vXNNRE9sZjG=5705SyhrSPZu-9trrbUwjxxyxAg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] arm64: dts: r8a7795: Add cpuidle support for CA57 cores
+To:     Ulrich Hecht <uli+renesas@fpond.eu>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        dien.pham.ry@renesas.com,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The commit 20c169aceb45 ("dmaengine: rcar-dmac: clear pertinence
-number of channels") always set the DMACHCLR bit 0 to 1, but if
-iommu is mapped to the device, this driver doesn't need to clear it.
-So, this patch takes care of it by using "channels_mask" bitfield.
+On Fri, Jan 18, 2019 at 11:48 AM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+>
+> Enable cpuidle (core shutdown) support for R-Car H3 CA57 cores.
+>
+> Parameters were found after evaluation by gaku.inami.xw@bp.renesas.com; they
+> help to keep the performance and reduce the power consumption.
+>
+> Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+> [dien.pham.ry: Apply new cpuidle parameters]
+> Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+> Signed-off-by: Takeshi Kihara <takeshi.kihara.df@renesas.com>
+> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
-Note that, this patch doesn't have a "Fixes:" tag because the driver
-doesn't manage the channel 0 anyway so that the behavior of
-the channel is not changed.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/dma/sh/rcar-dmac.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 779b715..204160e 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -192,6 +192,7 @@ struct rcar_dmac_chan {
-  * @iomem: remapped I/O memory base
-  * @n_channels: number of available channels
-  * @channels: array of DMAC channels
-+ * @channels_mask: bitfield of which DMA channels are managed by this driver
-  * @modules: bitmask of client modules in use
-  */
- struct rcar_dmac {
-@@ -202,6 +203,7 @@ struct rcar_dmac {
- 
- 	unsigned int n_channels;
- 	struct rcar_dmac_chan *channels;
-+	unsigned int channels_mask;
- 
- 	DECLARE_BITMAP(modules, 256);
- };
-@@ -446,7 +448,7 @@ static int rcar_dmac_init(struct rcar_dmac *dmac)
- 	u16 dmaor;
- 
- 	/* Clear all channels and enable the DMAC globally. */
--	rcar_dmac_write(dmac, RCAR_DMACHCLR, GENMASK(dmac->n_channels - 1, 0));
-+	rcar_dmac_write(dmac, RCAR_DMACHCLR, dmac->channels_mask);
- 	rcar_dmac_write(dmac, RCAR_DMAOR,
- 			RCAR_DMAOR_PRI_FIXED | RCAR_DMAOR_DME);
- 
-@@ -822,6 +824,9 @@ static void rcar_dmac_stop_all_chan(struct rcar_dmac *dmac)
- 	for (i = 0; i < dmac->n_channels; ++i) {
- 		struct rcar_dmac_chan *chan = &dmac->channels[i];
- 
-+		if (!(dmac->channels_mask & BIT(i)))
-+			continue;
-+
- 		/* Stop and reinitialize the channel. */
- 		spin_lock_irq(&chan->lock);
- 		rcar_dmac_chan_halt(chan);
-@@ -1801,6 +1806,8 @@ static int rcar_dmac_parse_of(struct device *dev, struct rcar_dmac *dmac)
- 		return -EINVAL;
- 	}
- 
-+	dmac->channels_mask = GENMASK(dmac->n_channels - 1, 0);
-+
- 	return 0;
- }
- 
-@@ -1810,7 +1817,6 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 		DMA_SLAVE_BUSWIDTH_2_BYTES | DMA_SLAVE_BUSWIDTH_4_BYTES |
- 		DMA_SLAVE_BUSWIDTH_8_BYTES | DMA_SLAVE_BUSWIDTH_16_BYTES |
- 		DMA_SLAVE_BUSWIDTH_32_BYTES | DMA_SLAVE_BUSWIDTH_64_BYTES;
--	unsigned int channels_offset = 0;
- 	struct dma_device *engine;
- 	struct rcar_dmac *dmac;
- 	const struct rcar_dmac_of_data *data;
-@@ -1843,10 +1849,8 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 	 * level we can't disable it selectively, so ignore channel 0 for now if
- 	 * the device is part of an IOMMU group.
- 	 */
--	if (device_iommu_mapped(&pdev->dev)) {
--		dmac->n_channels--;
--		channels_offset = 1;
--	}
-+	if (device_iommu_mapped(&pdev->dev))
-+		dmac->channels_mask &= ~BIT(0);
- 
- 	dmac->channels = devm_kcalloc(&pdev->dev, dmac->n_channels,
- 				      sizeof(*dmac->channels), GFP_KERNEL);
-@@ -1903,8 +1907,10 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 	INIT_LIST_HEAD(&engine->channels);
- 
- 	for (i = 0; i < dmac->n_channels; ++i) {
--		ret = rcar_dmac_chan_probe(dmac, &dmac->channels[i], data,
--					   i + channels_offset);
-+		if (!(dmac->channels_mask & BIT(i)))
-+			continue;
-+
-+		ret = rcar_dmac_chan_probe(dmac, &dmac->channels[i], data, i);
- 		if (ret < 0)
- 			goto error;
- 	}
+                        Geert
+
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
