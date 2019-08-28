@@ -2,61 +2,78 @@ Return-Path: <SRS0=2iH4=WY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3F5C3A5A1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 11:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B929C3A5A7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 11:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1507A2189D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 11:15:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 234712189D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 11:15:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbfH1LPj (ORCPT
+        id S1726394AbfH1LPk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 28 Aug 2019 07:15:39 -0400
+        Wed, 28 Aug 2019 07:15:40 -0400
 Received: from relmlor1.renesas.com ([210.160.252.171]:61955 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726293AbfH1LPj (ORCPT
+        by vger.kernel.org with ESMTP id S1726341AbfH1LPk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Aug 2019 07:15:39 -0400
+        Wed, 28 Aug 2019 07:15:40 -0400
 X-IronPort-AV: E=Sophos;i="5.64,440,1559487600"; 
-   d="scan'208";a="25148804"
+   d="scan'208";a="25148807"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
   by relmlie5.idc.renesas.com with ESMTP; 28 Aug 2019 20:15:37 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5E54642296E6;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8F8C342296E7;
         Wed, 28 Aug 2019 20:15:37 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     vkoul@kernel.org
 Cc:     dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 0/2] dmaengine: rcar-dmac: Add dma-channel-mask property support
-Date:   Wed, 28 Aug 2019 20:13:53 +0900
-Message-Id: <1566990835-27028-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 2/2] dmaengine: rcar-dmac: Add dma-channel-mask property support
+Date:   Wed, 28 Aug 2019 20:13:55 +0900
+Message-Id: <1566990835-27028-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1566990835-27028-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1566990835-27028-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series is based on
- - renesas-drivers.git / renesas-drivers-2019-08-13-v5.3-rc4 tag
- - and the following patch series:
-https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=165881
+This patch adds dma-channel-mask property support not to reserve
+some DMA channels for some reasons. (for example: a heterogeneous
+CPU uses it.)
 
-The commit e2d896c08ca3 ("Documentation: bindings: dma: Add binding for
-dma-channel-mask") adds the generic property and R-Car also has such
-use cases so that I made this patch series. Before adding the property
-support, I made a clean-up patch as the patch 1/2.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/dma/sh/rcar-dmac.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Yoshihiro Shimoda (2):
-  dmaengine: rcar-dmac: Don't set DMACHCLR bit 0 to 1 if iommu is mapped
-  dmaengine: rcar-dmac: Add dma-channel-mask property support
-
- drivers/dma/sh/rcar-dmac.c | 32 ++++++++++++++++++++++++--------
- 1 file changed, 24 insertions(+), 8 deletions(-)
-
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 204160e..bae0fe8 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -1806,7 +1806,17 @@ static int rcar_dmac_parse_of(struct device *dev, struct rcar_dmac *dmac)
+ 		return -EINVAL;
+ 	}
+ 
+-	dmac->channels_mask = GENMASK(dmac->n_channels - 1, 0);
++	/*
++	 * If the driver is unable to read dma-channel-mask property,
++	 * the driver assumes that it can use all channels.
++	 */
++	ret = of_property_read_u32(np, "dma-channel-mask",
++				   &dmac->channels_mask);
++	if (ret < 0)
++		dmac->channels_mask = GENMASK(dmac->n_channels - 1, 0);
++
++	/* If the property has out-of-channel mask, this driver clears it */
++	dmac->channels_mask &= GENMASK(dmac->n_channels - 1, 0);
+ 
+ 	return 0;
+ }
 -- 
 2.7.4
 
