@@ -2,144 +2,117 @@ Return-Path: <SRS0=2iH4=WY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22910C3A5A6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 11:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB11DC3A5A1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 12:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F408922CED
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 11:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 914AB2173E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Aug 2019 12:05:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726339AbfH1L6s (ORCPT
+        id S1726300AbfH1MFM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 28 Aug 2019 07:58:48 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:33608 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726259AbfH1L6s (ORCPT
+        Wed, 28 Aug 2019 08:05:12 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43245 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726253AbfH1MFM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Aug 2019 07:58:48 -0400
-Received: from ramsan ([84.194.98.4])
-        by michel.telenet-ops.be with bizsmtp
-        id ubyi2000F05gfCL06byivG; Wed, 28 Aug 2019 13:58:45 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1i2wb4-0008As-Cn; Wed, 28 Aug 2019 13:58:42 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1i2wFQ-0001kX-8C; Wed, 28 Aug 2019 13:36:20 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     Simon Horman <horms@verge.net.au>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/7] soc: renesas: r8a7795-sysc: Fix power request conflicts
-Date:   Wed, 28 Aug 2019 13:36:13 +0200
-Message-Id: <20190828113618.6672-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190828113618.6672-1-geert+renesas@glider.be>
-References: <20190828113618.6672-1-geert+renesas@glider.be>
+        Wed, 28 Aug 2019 08:05:12 -0400
+Received: by mail-oi1-f196.google.com with SMTP id y8so1847492oih.10
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Aug 2019 05:05:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vF5xXOwOe5OzZuDkvVDIRT+0FFmn19wOP7GDl42Uj0E=;
+        b=FDAJ/r1AlHhbnsBSBp2GkqdgDUTsnHeEQ7qJXp11OCAUl0yEHbRX+xIYrnpJgkKJkD
+         m+Z+5E6jsbqPQt7TGlr9mAnG0wLvEFyAfqwFbxG/3jm3DKtfnTH37TX3UjI3i49gIft1
+         JFNaBR5NqhwyTPVJ/OOFsyNzD9ibfm5WuRWH8SyDsqrSskoVVJFWf9ylCwoR3ILEIvN5
+         FWDkVyShfoSZNbfKn8gU1bGcnDslLl3XgXbBE41Ivy0yCSJXiI1OIVdV7bbE4SsSPMoM
+         TMvdJqn7GHzkjwMIbf4kDR+tBlIvr+2W2O2fnc+BXMDCBM99qMDpPolXJ8ay41rXuvN6
+         VzHA==
+X-Gm-Message-State: APjAAAWf0sR6FN+pGgVXnNksk4hip+6aeoyagpCvzsqZ8ZqJWOXuh3/p
+        u8qhqOKlDFC9pCipfZQljVN86OFfhN3d0IhmfQlYLaJw
+X-Google-Smtp-Source: APXvYqxaYO737BDUqNA3yKVQvMHcDXas5j+anmc6I4lTdUYlVUISB5uta0Y/iot8h+SyZLZrTgCHfM7cPAjob0nGofw=
+X-Received: by 2002:aca:b154:: with SMTP id a81mr2263281oif.148.1566993910829;
+ Wed, 28 Aug 2019 05:05:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <1547808474-19427-1-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <1547808474-19427-1-git-send-email-uli+renesas@fpond.eu>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 28 Aug 2019 14:04:59 +0200
+Message-ID: <CAMuHMdVLcjujQR+QOtH0C8uZJxKC_gWZ3zupDyb=LHKc+RrhLw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] H3/M3-W cpuidle support
+To:     Ulrich Hecht <uli+renesas@fpond.eu>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
+        dien.pham.ry@renesas.com,
+        Takeshi Kihara <takeshi.kihara.df@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Describe the location and contents of the SYSCEXTMASK register on R-Car
-H3, to prevent conflicts between internal and external power requests.
+Hi Uli,
 
-This register does not exist on R-Car H3 ES1.x and ES2.x.
+(Replying to an old series, now we have received more background
+ information)
 
-Based on a patch in the BSP by Dien Pham <dien.pham.ry@renesas.com>.
+On Fri, Jan 18, 2019 at 11:48 AM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> This series adds CPU idle support for H3 and M3-W. It's a straight up-port
+> from the BSP.  This revision removes the superfluous status properties from
+> the idle states and fixes Khiem's e-mail address.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
----
- drivers/soc/renesas/r8a7795-sysc.c | 32 +++++++++++++++++++++++++-----
- drivers/soc/renesas/rcar-sysc.h    |  2 +-
- 2 files changed, 28 insertions(+), 6 deletions(-)
+> Dien Pham (2):
+>   arm64: dts: r8a7795: Add cpuidle support for CA53 cores
+>   arm64: dts: r8a7796: Add cpuidle support for CA53 cores
+>
+> Khiem Nguyen (2):
+>   arm64: dts: r8a7795: Add cpuidle support for CA57 cores
+>   arm64: dts: r8a7796: Add cpuidle support for CA57 cores
 
-diff --git a/drivers/soc/renesas/r8a7795-sysc.c b/drivers/soc/renesas/r8a7795-sysc.c
-index cda27a67de9876af..7e15cd09c4eb4780 100644
---- a/drivers/soc/renesas/r8a7795-sysc.c
-+++ b/drivers/soc/renesas/r8a7795-sysc.c
-@@ -5,6 +5,7 @@
-  * Copyright (C) 2016-2017 Glider bvba
-  */
- 
-+#include <linux/bits.h>
- #include <linux/bug.h>
- #include <linux/kernel.h>
- #include <linux/sys_soc.h>
-@@ -51,25 +52,46 @@ static struct rcar_sysc_area r8a7795_areas[] __initdata = {
- 
- 
- 	/*
--	 * Fixups for R-Car H3 revisions after ES1.x
-+	 * Fixups for R-Car H3 revisions
- 	 */
- 
--static const struct soc_device_attribute r8a7795es1[] __initconst = {
--	{ .soc_id = "r8a7795", .revision = "ES1.*" },
-+#define HAS_A2VC0	BIT(0)		/* Power domain A2VC0 is present */
-+#define NO_EXTMASK	BIT(1)		/* Missing SYSCEXTMASK register */
-+
-+static const struct soc_device_attribute r8a7795_quirks_match[] __initconst = {
-+	{
-+		.soc_id = "r8a7795", .revision = "ES1.*",
-+		.data = (void *)(HAS_A2VC0 | NO_EXTMASK),
-+	}, {
-+		.soc_id = "r8a7795", .revision = "ES2.*",
-+		.data = (void *)(NO_EXTMASK),
-+	},
- 	{ /* sentinel */ }
- };
- 
- static int __init r8a7795_sysc_init(void)
- {
--	if (!soc_device_match(r8a7795es1))
-+	const struct soc_device_attribute *attr;
-+	u32 quirks = 0;
-+
-+	attr = soc_device_match(r8a7795_quirks_match);
-+	if (attr)
-+		quirks = (uintptr_t)attr->data;
-+
-+	if (!(quirks & HAS_A2VC0))
- 		rcar_sysc_nullify(r8a7795_areas, ARRAY_SIZE(r8a7795_areas),
- 				  R8A7795_PD_A2VC0);
- 
-+	if (quirks & NO_EXTMASK)
-+		r8a7795_sysc_info.extmask_val = 0;
-+
- 	return 0;
- }
- 
--const struct rcar_sysc_info r8a7795_sysc_info __initconst = {
-+struct rcar_sysc_info r8a7795_sysc_info __initdata = {
- 	.init = r8a7795_sysc_init,
- 	.areas = r8a7795_areas,
- 	.num_areas = ARRAY_SIZE(r8a7795_areas),
-+	.extmask_offs = 0x2f8,
-+	.extmask_val = BIT(0),
- };
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index 21ee3ff8620bbafe..499797a9e18c2f10 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -59,7 +59,7 @@ extern const struct rcar_sysc_info r8a7790_sysc_info;
- extern const struct rcar_sysc_info r8a7791_sysc_info;
- extern const struct rcar_sysc_info r8a7792_sysc_info;
- extern const struct rcar_sysc_info r8a7794_sysc_info;
--extern const struct rcar_sysc_info r8a7795_sysc_info;
-+extern struct rcar_sysc_info r8a7795_sysc_info;
- extern const struct rcar_sysc_info r8a7796_sysc_info;
- extern const struct rcar_sysc_info r8a77965_sysc_info;
- extern const struct rcar_sysc_info r8a77970_sysc_info;
+Thanks for the update!
+
+I took the liberty to create a topic branch[1] for the first 4 patches,
+and include it in yesterday's renesas-drivers-2019-08-27-v5.3-rc6.
+
+> I don't think we have any information on whether all M3ULCB boards have an
+> ES1.0 SoC yet, do we?
+
+> Takeshi Kihara (1):
+>   arm64: dts: r8a7796-m3ulcb: Disable cpuidle support for CA53 cores
+
+This is just one possible mitigation for a system controller issue, to
+prevent conflicts between powering off CPU cores or the 3D Graphics
+Engine, and changing the state of another power domain through SYSC,
+which could lead to CPG state machine lock-ups.
+Other mitigations are to make use of the new System Controller External
+Request Mask Register[2], present in newer SoCs and SoC revisions, or to
+keep some power areas always powered.
+
+However, we believe this issue cannot happen in the upstream kernel, as
+upstream has no support for graphics acceleration yet.
+
+Hence I think this series (modulo the last patch) is ready to be queued
+in renesas-devel for v5.5.
+
+Thanks for your comments!
+
+[1] git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git#topic/rcar3-cpuidle-v2
+[2] "[PATCH v2 0/7] soc: renesas: rcar-gen3-sysc: Fix power request conflicts"
+    (https://lore.kernel.org/linux-renesas-soc/20190828113618.6672-1-geert+renesas@glider.be/)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
