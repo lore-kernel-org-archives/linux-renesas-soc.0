@@ -2,88 +2,99 @@ Return-Path: <SRS0=TH12=W2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17CE6C3A5A4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Aug 2019 13:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ED8BC3A59B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Aug 2019 13:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E726B21897
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Aug 2019 13:25:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C11E23405
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Aug 2019 13:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbfH3NZv (ORCPT
+        id S1727961AbfH3NuV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 30 Aug 2019 09:25:51 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39639 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727135AbfH3NZv (ORCPT
+        Fri, 30 Aug 2019 09:50:21 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:52310 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727936AbfH3NuV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Aug 2019 09:25:51 -0400
-Received: by mail-ot1-f65.google.com with SMTP id b1so6893586otp.6;
-        Fri, 30 Aug 2019 06:25:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ONcxjA/xj5zjcYYIHoKaRWyZ2UyvDe9PGkmssJa9Wjc=;
-        b=nXA5/VMaHXil39u3hrhOV8FzXQcK2KiQZ7prDcg0SlE2rGd0VC6VQJ/kJ+OmQ1EVXH
-         XDU2VcIpwpymYpFd1ovSXUIxXxWKpvWGTDnzH0lYURMvHsMP8o4ld+RCzaVNPpd3kw6w
-         VEIoziEmWgksq64mt98a+hA/ERL7iOq9KFaMfCqSx+m5TXZgkQ+lzE4UMV/FHBhZCjH+
-         82tk+prNjV52qqotX3TanY5UEj6I86hn99DPs7GH0KXqtfP8bMlTMZHBwwJhHVi+wlTd
-         19spYmdB0PoRQRfVN72GSIoWzFQDPET12RqMo/ruszW0H5px1fuGP2fvwihJXgettx/y
-         1JKQ==
-X-Gm-Message-State: APjAAAXXRgjwHIDa7Mc/gK3oUQwf1ynXrRoy/y4z6cmfcd5TUiIkJblA
-        2+JLTg/hO97zWvmHzZOcbTaChn3e9WiKo2G3MZ0=
-X-Google-Smtp-Source: APXvYqz0Cz34xoZDrBsu1TbuTzbiUDn+xogmAbtOvJs9bhp5Oh/MRI+yJUDTF9Kdt6pkfSF4j3BXylaK/kduxPwx3QU=
-X-Received: by 2002:a9d:3e50:: with SMTP id h16mr11619950otg.107.1567171550260;
- Fri, 30 Aug 2019 06:25:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <1567170935-19186-1-git-send-email-fabrizio.castro@bp.renesas.com>
-In-Reply-To: <1567170935-19186-1-git-send-email-fabrizio.castro@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 30 Aug 2019 15:25:39 +0200
-Message-ID: <CAMuHMdVtkBtVpXo2eCMbZ6MEJskeLHYgC4O=p1SjwOdkHLakyg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: hihope-common: Fix eMMC status
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Simon Horman <horms@verge.net.au>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>, xu_shunji@hoperun.com
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 30 Aug 2019 09:50:21 -0400
+Received: from ramsan ([84.194.98.4])
+        by baptiste.telenet-ops.be with bizsmtp
+        id vRqJ2000r05gfCL01RqJdm; Fri, 30 Aug 2019 15:50:19 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1i3hIA-0003KX-Sw; Fri, 30 Aug 2019 15:50:18 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1i3hDK-00037i-Sf; Fri, 30 Aug 2019 15:45:18 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 5/8] clk: renesas: rcar-gen3: Loop to find best rate in cpg_sd_clock_round_rate()
+Date:   Fri, 30 Aug 2019 15:45:12 +0200
+Message-Id: <20190830134515.11925-6-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190830134515.11925-1-geert+renesas@glider.be>
+References: <20190830134515.11925-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 3:15 PM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
-> SDHI3 got accidentally disabled while adding USB 2.0 support,
-> this patch fixes it.
->
-> Fixes: 734d277f412a ("arm64: dts: renesas: hihope-common: Add USB 2.0 support")
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+cpg_sd_clock_round_rate() really needs the best rate, not the best
+divider.  Hence change the iteration to find the former, and get rid of
+the final division.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Add an out-of-range rate check while at it.
 
-This is a fix for v5.3.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Split off from "clk: renesas: rcar-gen3: Switch SD clocks to
+    .determine_rate()".
+---
+ drivers/clk/renesas/rcar-gen3-cpg.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 12ea5c9a671de788..a612045cba7d97b7 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -312,21 +312,25 @@ static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
+ static long cpg_sd_clock_round_rate(struct clk_hw *hw, unsigned long rate,
+ 				      unsigned long *parent_rate)
+ {
+-	unsigned long calc_rate, diff, diff_min = ULONG_MAX;
++	unsigned long best_rate = ULONG_MAX, diff_min = ULONG_MAX;
+ 	struct sd_clock *clock = to_sd_clock(hw);
+-	unsigned int i, best_div = 0;
++	unsigned long calc_rate, diff;
++	unsigned int i;
+ 
+ 	for (i = 0; i < clock->div_num; i++) {
+ 		calc_rate = DIV_ROUND_CLOSEST(*parent_rate,
+ 					      clock->div_table[i].div);
+ 		diff = calc_rate > rate ? calc_rate - rate : rate - calc_rate;
+ 		if (diff < diff_min) {
+-			best_div = clock->div_table[i].div;
++			best_rate = calc_rate;
+ 			diff_min = diff;
+ 		}
+ 	}
+ 
+-	return DIV_ROUND_CLOSEST(*parent_rate, best_div);
++	if (best_rate > LONG_MAX)
++		return -EINVAL;
++
++	return best_rate;
+ }
+ 
+ static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
