@@ -6,108 +6,73 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C27E1C3A5AA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Aug 2019 13:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE506C3A5B0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Aug 2019 13:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A27E123407
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Aug 2019 13:50:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E92A23426
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Aug 2019 13:50:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfH3NuW (ORCPT
+        id S1727857AbfH3NuW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 30 Aug 2019 09:50:22 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:52320 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727922AbfH3NuV (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:48686 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727884AbfH3NuV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 30 Aug 2019 09:50:21 -0400
 Received: from ramsan ([84.194.98.4])
-        by baptiste.telenet-ops.be with bizsmtp
-        id vRqJ2000n05gfCL01RqJdl; Fri, 30 Aug 2019 15:50:19 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id vRqJ2000S05gfCL01RqJ3t; Fri, 30 Aug 2019 15:50:19 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i3hIA-0003KX-Rz; Fri, 30 Aug 2019 15:50:18 +0200
+        id 1i3hIA-0003KX-Oy; Fri, 30 Aug 2019 15:50:18 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i3hDK-00037l-Ts; Fri, 30 Aug 2019 15:45:18 +0200
+        id 1i3hGO-0003C6-Jy; Fri, 30 Aug 2019 15:48:28 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 6/8] clk: renesas: rcar-gen2: Switch Z clock to .determine_rate()
-Date:   Fri, 30 Aug 2019 15:45:13 +0200
-Message-Id: <20190830134515.11925-7-geert+renesas@glider.be>
+Subject: [PATCH] media: i2c: Use div64_ul() for u64-by-unsigned-long divide
+Date:   Fri, 30 Aug 2019 15:48:27 +0200
+Message-Id: <20190830134827.12237-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190830134515.11925-1-geert+renesas@glider.be>
-References: <20190830134515.11925-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As the .round_rate() callback returns a long clock rate, it cannot
-return clock rates that do not fit in signed long, but do fit in
-unsigned long.  Hence switch the Z clock on R-Car Gen2 from the old
-.round_rate() callback to the newer .determine_rate() callback, which
-does not suffer from this limitation.
+div_u64() does a 64-by-32 division, while the divisor max2175.xtal_freq
+is unsigned long, thus 64-bit on 64-bit platforms.  Hence the proper
+function to call is div64_ul().
 
-This includes implementing range checking.
+Note that this change does not have any functional impact, as the
+crystal frequency must be much lower than the 32-bit limit anyway.
+On 32-bit platforms, the generated code is the same.  But at least on
+arm64, this saves an AND-instruction to truncate xtal_freq to 32-bit.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2:
-  - Use div_u64() for division by unsigned long,
-  - Rebased.
----
- drivers/clk/renesas/rcar-gen2-cpg.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+ drivers/media/i2c/max2175.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/rcar-gen2-cpg.c b/drivers/clk/renesas/rcar-gen2-cpg.c
-index c378505830f0bacc..d4fa3dc3e2a2632f 100644
---- a/drivers/clk/renesas/rcar-gen2-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen2-cpg.c
-@@ -63,19 +63,22 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
- 	return div_u64((u64)parent_rate * mult, 32);
- }
+diff --git a/drivers/media/i2c/max2175.c b/drivers/media/i2c/max2175.c
+index 19a3ceea3bc20f0f..506a30e69ced45c4 100644
+--- a/drivers/media/i2c/max2175.c
++++ b/drivers/media/i2c/max2175.c
+@@ -591,8 +591,8 @@ static int max2175_set_lo_freq(struct max2175 *ctx, u32 lo_freq)
+ 		lo_freq *= lo_mult;
  
--static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
--				 unsigned long *parent_rate)
-+static int cpg_z_clk_determine_rate(struct clk_hw *hw,
-+				    struct clk_rate_request *req)
- {
--	unsigned long prate  = *parent_rate;
--	unsigned int mult;
-+	unsigned long prate = req->best_parent_rate;
-+	unsigned int min_mult, max_mult, mult;
+ 	int_desired = lo_freq / ctx->xtal_freq;
+-	frac_desired = div_u64((u64)(lo_freq % ctx->xtal_freq) << 20,
+-			       ctx->xtal_freq);
++	frac_desired = div64_ul((u64)(lo_freq % ctx->xtal_freq) << 20,
++				ctx->xtal_freq);
  
--	if (!prate)
--		prate = 1;
-+	min_mult = max(div64_ul(req->min_rate * 32ULL, prate), 1ULL);
-+	max_mult = min(div64_ul(req->max_rate * 32ULL, prate), 32ULL);
-+	if (max_mult < min_mult)
-+		return -EINVAL;
- 
--	mult = div64_ul(rate * 32ULL, prate);
--	mult = clamp(mult, 1U, 32U);
-+	mult = div64_ul(req->rate * 32ULL, prate);
-+	mult = clamp(mult, min_mult, max_mult);
- 
--	return div_u64((u64)*parent_rate * mult, 32);
-+	req->rate = div_u64((u64)prate * mult, 32);
-+	return 0;
- }
- 
- static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -126,7 +129,7 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- static const struct clk_ops cpg_z_clk_ops = {
- 	.recalc_rate = cpg_z_clk_recalc_rate,
--	.round_rate = cpg_z_clk_round_rate,
-+	.determine_rate = cpg_z_clk_determine_rate,
- 	.set_rate = cpg_z_clk_set_rate,
- };
- 
+ 	/* Check CSM is not busy */
+ 	ret = max2175_poll_csm_ready(ctx);
 -- 
 2.17.1
 
