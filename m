@@ -2,174 +2,94 @@ Return-Path: <SRS0=poXO=W5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AFB5C3A5A8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 11:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94940C3A5A7
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 12:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EFDE217D7
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 11:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C07B217F4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 12:03:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730433AbfIBLpw (ORCPT
+        id S1731194AbfIBMD2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 2 Sep 2019 07:45:52 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:58796 "EHLO
+        Mon, 2 Sep 2019 08:03:28 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:58665 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730148AbfIBLpw (ORCPT
+        by vger.kernel.org with ESMTP id S1731197AbfIBMD1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Sep 2019 07:45:52 -0400
+        Mon, 2 Sep 2019 08:03:27 -0400
 X-IronPort-AV: E=Sophos;i="5.64,459,1559487600"; 
-   d="scan'208";a="25316788"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Sep 2019 20:45:50 +0900
+   d="scan'208";a="25317515"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 02 Sep 2019 21:03:25 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id EE2DE422E125;
-        Mon,  2 Sep 2019 20:45:49 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A036D4006DF3;
+        Mon,  2 Sep 2019 21:03:25 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     vkoul@kernel.org
-Cc:     dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     gregkh@linuxfoundation.org, mathias.nyman@intel.com
+Cc:     linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2] dmaengine: rcar-dmac: Fix DMACHCLR handling if iommu is mapped
-Date:   Mon,  2 Sep 2019 20:44:03 +0900
-Message-Id: <1567424643-26629-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 1/3] usb: host: xhci-plat: add quirks member into struct xhci_plat_priv
+Date:   Mon,  2 Sep 2019 21:01:36 +0900
+Message-Id: <1567425698-27560-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1567425698-27560-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1567425698-27560-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The commit 20c169aceb45 ("dmaengine: rcar-dmac: clear pertinence
-number of channels") forgets to clear the last channel by
-DMACHCLR in rcar_dmac_init() (and doesn't need to clear the first
-channel) if iommu is mapped to the device. So, this patch fixes it
-by using "channels_mask" bitfield.
+To simplify adding xhci->quirks instead of the .init_quirk()
+function, this patch adds a new parameter "quirks" into
+the struct xhci_plat_priv.
 
-Note that the hardware and driver don't support more than 32 bits
-in DMACHCLR register anyway, so this patch should reject more than
-32 channels in rcar_dmac_parse_of().
-
-Fixes: 20c169aceb459575 ("dmaengine: rcar-dmac: clear pertinence number of channels")
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Changes from v1:
- - Rebase on v5.3-rc6.
- - Fix the subject and commit log.
- - Add a condition to reject >= 32 channels instead of >= 100.
-   (I had mentioned adding a condition for it as a more one separate patch,
-    but it seems to be odd, especially how to describe it as a fixed patch.
-    So, I included the condition on this patch.)
- - Add Fixes tag.
- - Add Geert-san's Reviewed-by.
- https://patchwork.kernel.org/patch/11118637/
+ drivers/usb/host/xhci-plat.c | 4 +++-
+ drivers/usb/host/xhci-plat.h | 2 ++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
- drivers/dma/sh/rcar-dmac.c | 28 +++++++++++++++++++---------
- 1 file changed, 19 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 9c41a4e..1072c45 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -192,6 +192,7 @@ struct rcar_dmac_chan {
-  * @iomem: remapped I/O memory base
-  * @n_channels: number of available channels
-  * @channels: array of DMAC channels
-+ * @channels_mask: bitfield of which DMA channels are managed by this driver
-  * @modules: bitmask of client modules in use
-  */
- struct rcar_dmac {
-@@ -202,6 +203,7 @@ struct rcar_dmac {
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index a1e5ce4..1843b69 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -66,12 +66,14 @@ static int xhci_priv_resume_quirk(struct usb_hcd *hcd)
  
- 	unsigned int n_channels;
- 	struct rcar_dmac_chan *channels;
-+	unsigned int channels_mask;
- 
- 	DECLARE_BITMAP(modules, 256);
- };
-@@ -438,7 +440,7 @@ static int rcar_dmac_init(struct rcar_dmac *dmac)
- 	u16 dmaor;
- 
- 	/* Clear all channels and enable the DMAC globally. */
--	rcar_dmac_write(dmac, RCAR_DMACHCLR, GENMASK(dmac->n_channels - 1, 0));
-+	rcar_dmac_write(dmac, RCAR_DMACHCLR, dmac->channels_mask);
- 	rcar_dmac_write(dmac, RCAR_DMAOR,
- 			RCAR_DMAOR_PRI_FIXED | RCAR_DMAOR_DME);
- 
-@@ -814,6 +816,9 @@ static void rcar_dmac_stop_all_chan(struct rcar_dmac *dmac)
- 	for (i = 0; i < dmac->n_channels; ++i) {
- 		struct rcar_dmac_chan *chan = &dmac->channels[i];
- 
-+		if (!(dmac->channels_mask & BIT(i)))
-+			continue;
-+
- 		/* Stop and reinitialize the channel. */
- 		spin_lock_irq(&chan->lock);
- 		rcar_dmac_chan_halt(chan);
-@@ -1776,6 +1781,8 @@ static int rcar_dmac_chan_probe(struct rcar_dmac *dmac,
- 	return 0;
- }
- 
-+#define RCAR_DMAC_MAX_CHANNELS	32
-+
- static int rcar_dmac_parse_of(struct device *dev, struct rcar_dmac *dmac)
+ static void xhci_plat_quirks(struct device *dev, struct xhci_hcd *xhci)
  {
- 	struct device_node *np = dev->of_node;
-@@ -1787,12 +1794,16 @@ static int rcar_dmac_parse_of(struct device *dev, struct rcar_dmac *dmac)
- 		return ret;
- 	}
- 
--	if (dmac->n_channels <= 0 || dmac->n_channels >= 100) {
-+	/* The hardware and driver don't support more than 32 bits in CHCLR */
-+	if (dmac->n_channels <= 0 ||
-+	    dmac->n_channels >= RCAR_DMAC_MAX_CHANNELS) {
- 		dev_err(dev, "invalid number of channels %u\n",
- 			dmac->n_channels);
- 		return -EINVAL;
- 	}
- 
-+	dmac->channels_mask = GENMASK(dmac->n_channels - 1, 0);
++	struct xhci_plat_priv *priv = xhci_to_priv(xhci);
 +
- 	return 0;
+ 	/*
+ 	 * As of now platform drivers don't provide MSI support so we ensure
+ 	 * here that the generic code does not try to make a pci_dev from our
+ 	 * dev struct in order to setup MSI
+ 	 */
+-	xhci->quirks |= XHCI_PLAT;
++	xhci->quirks |= XHCI_PLAT | priv->quirks;
  }
  
-@@ -1802,7 +1813,6 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 		DMA_SLAVE_BUSWIDTH_2_BYTES | DMA_SLAVE_BUSWIDTH_4_BYTES |
- 		DMA_SLAVE_BUSWIDTH_8_BYTES | DMA_SLAVE_BUSWIDTH_16_BYTES |
- 		DMA_SLAVE_BUSWIDTH_32_BYTES | DMA_SLAVE_BUSWIDTH_64_BYTES;
--	unsigned int channels_offset = 0;
- 	struct dma_device *engine;
- 	struct rcar_dmac *dmac;
- 	struct resource *mem;
-@@ -1831,10 +1841,8 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 	 * level we can't disable it selectively, so ignore channel 0 for now if
- 	 * the device is part of an IOMMU group.
- 	 */
--	if (device_iommu_mapped(&pdev->dev)) {
--		dmac->n_channels--;
--		channels_offset = 1;
--	}
-+	if (device_iommu_mapped(&pdev->dev))
-+		dmac->channels_mask &= ~BIT(0);
+ /* called during probe() after chip reset completes */
+diff --git a/drivers/usb/host/xhci-plat.h b/drivers/usb/host/xhci-plat.h
+index ae29f22..5681723 100644
+--- a/drivers/usb/host/xhci-plat.h
++++ b/drivers/usb/host/xhci-plat.h
+@@ -12,10 +12,12 @@
  
- 	dmac->channels = devm_kcalloc(&pdev->dev, dmac->n_channels,
- 				      sizeof(*dmac->channels), GFP_KERNEL);
-@@ -1892,8 +1900,10 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 	INIT_LIST_HEAD(&engine->channels);
+ struct xhci_plat_priv {
+ 	const char *firmware_name;
++	unsigned long long quirks;
+ 	void (*plat_start)(struct usb_hcd *);
+ 	int (*init_quirk)(struct usb_hcd *);
+ 	int (*resume_quirk)(struct usb_hcd *);
+ };
  
- 	for (i = 0; i < dmac->n_channels; ++i) {
--		ret = rcar_dmac_chan_probe(dmac, &dmac->channels[i],
--					   i + channels_offset);
-+		if (!(dmac->channels_mask & BIT(i)))
-+			continue;
-+
-+		ret = rcar_dmac_chan_probe(dmac, &dmac->channels[i], i);
- 		if (ret < 0)
- 			goto error;
- 	}
+ #define hcd_to_xhci_priv(h) ((struct xhci_plat_priv *)hcd_to_xhci(h)->priv)
++#define xhci_to_priv(x) ((struct xhci_plat_priv *)(x)->priv)
+ #endif	/* _XHCI_PLAT_H */
 -- 
 2.7.4
 
