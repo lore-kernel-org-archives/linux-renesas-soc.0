@@ -2,129 +2,99 @@ Return-Path: <SRS0=poXO=W5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A161C3A59B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 08:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4053BC3A59B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 08:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBEC321874
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 08:06:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E0CF215EA
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 08:19:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbfIBIGP (ORCPT
+        id S1730200AbfIBIQn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 2 Sep 2019 04:06:15 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:60600 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730072AbfIBIGP (ORCPT
+        Mon, 2 Sep 2019 04:16:43 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40913 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730133AbfIBIQi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:06:15 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id D197425B7E3;
-        Mon,  2 Sep 2019 18:06:07 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 599DB94048C; Mon,  2 Sep 2019 10:06:05 +0200 (CEST)
-From:   Simon Horman <horms+renesas@verge.net.au>
-To:     David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [net-next 2/3] ravb: Remove undocumented processing
-Date:   Mon,  2 Sep 2019 10:06:02 +0200
-Message-Id: <20190902080603.5636-3-horms+renesas@verge.net.au>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190902080603.5636-1-horms+renesas@verge.net.au>
+        Mon, 2 Sep 2019 04:16:38 -0400
+Received: by mail-ot1-f68.google.com with SMTP id y39so2801545ota.7;
+        Mon, 02 Sep 2019 01:16:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x5bFP6fqImsucqpUwzF2lv6id1FNdDN/zAQ0TCyv3p8=;
+        b=Pm5HVEtrkUBbTJzjdY7F/yKcEzUqL8WSUVL4TOnBZ6/Yj5DY9QcLeHFDDaJ0aCXQ2o
+         HXKboMyWxdnXNZ9GeVur9ZBLjZkIpBHhm5yBZl26Nai10Hf1bXxz9ZUw7h+zr/dnu4YH
+         UdXyoLUopCAT55/EMlfivXP+PqfFvD3iUUC/hXVpgP9PnxEqWsF2+8wuTmfxhky46lvm
+         PUd822tQzXaFpCnXt2KPFAGLx1DRvvOwu+6QVRGXiaD3hUsyw1gnMEy8XCiYTXIx2DZb
+         7dV3rxfReu2Pw654mccYa8kjQDv+/UmtjSuX2paaIgIUqtjCfxNC7qRskNC8v+SNIDeC
+         8uYQ==
+X-Gm-Message-State: APjAAAUrEX4oN3NSNQjfv0qBV4BHCmxAhjBa5cjZZm6xDb4T8j1j4big
+        83mm21g6Uq/Hx3FM6epueOjY5UFO1dtR+i7KW+o=
+X-Google-Smtp-Source: APXvYqzRgtUQniH4Hc1f2IfWiMKRA1STzqIz4mOrzeKGGw4mnkZS2EaJ4SkKTtR2oZLvktbrgPATOYlAH1pr5HiLjTE=
+X-Received: by 2002:a9d:2cc:: with SMTP id 70mr23038848otl.145.1567412196846;
+ Mon, 02 Sep 2019 01:16:36 -0700 (PDT)
+MIME-Version: 1.0
 References: <20190902080603.5636-1-horms+renesas@verge.net.au>
+In-Reply-To: <20190902080603.5636-1-horms+renesas@verge.net.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 2 Sep 2019 10:16:25 +0200
+Message-ID: <CAMuHMdXQypGJ_oqUndOcf02GCqxEGEOK15+jnS5ehqdUJ+A8aw@mail.gmail.com>
+Subject: Re: [net-next 0/3] ravb: Remove use of undocumented registers
+To:     Simon Horman <horms+renesas@verge.net.au>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     David Miller <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Hi Simon, Biju, Fabrizio,
 
-This patch removes the use of the undocumented registers
-CDCR, LCCR, CERCR, CEECR and the undocumented BOC bit of the CCC register.
+On Mon, Sep 2, 2019 at 10:06 AM Simon Horman <horms+renesas@verge.net.au> wrote:
+> this short series cleans up the RAVB driver a little.
+>
+> The first patch corrects the spelling of the FBP field of SFO register.
+> This register field is unused and should have no run-time effect.
+>
+> The remaining two patches remove the use of undocumented registers
+> after some consultation with the internal Renesas BSP team.
+>
+> All patches have been lightly tested on:
+> * E3 Ebisu
+> * H3 Salvator-XS (ES2.0)
+> * M3-W Salvator-XS
+> * M3-N Salvator-XS
 
-Current documentation for EtherAVB (ravb) describes the offset of
-what the driver uses as the BOC bit as reserved and that only a value of
-0 should be written. Furthermore, the offsets used for the undocumented
-registers are also considered reserved nd should not be written to.
+It would be good if someone could test this on an R-Car Gen2 board
+that uses ravb (iwg22d or iwg23s).
 
-After some internal investigation with Renesas it remains unclear
-why this driver accesses these fields but regardless of what the historical
-reasons are the current code is considered incorrect.
+Thanks!
 
-Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- drivers/net/ethernet/renesas/ravb.h      |  5 -----
- drivers/net/ethernet/renesas/ravb_main.c | 15 ---------------
- 2 files changed, 20 deletions(-)
+> Kazuya Mizuguchi (2):
+>   ravb: correct typo in FBP field of SFO register
+>   ravb: Remove undocumented processing
+>
+> Simon Horman (1):
+>   ravb: TROCR register is only present on R-Car Gen3
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 2596a95a4300..bdb051f04b0c 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -194,15 +194,11 @@ enum ravb_reg {
- 	MAHR	= 0x05c0,
- 	MALR	= 0x05c8,
- 	TROCR	= 0x0700,	/* Undocumented? */
--	CDCR	= 0x0708,	/* Undocumented? */
--	LCCR	= 0x0710,	/* Undocumented? */
- 	CEFCR	= 0x0740,
- 	FRECR	= 0x0748,
- 	TSFRCR	= 0x0750,
- 	TLFRCR	= 0x0758,
- 	RFCR	= 0x0760,
--	CERCR	= 0x0768,	/* Undocumented? */
--	CEECR	= 0x0770,	/* Undocumented? */
- 	MAFCR	= 0x0778,
- };
- 
-@@ -220,7 +216,6 @@ enum CCC_BIT {
- 	CCC_CSEL_HPB	= 0x00010000,
- 	CCC_CSEL_ETH_TX	= 0x00020000,
- 	CCC_CSEL_GMII_REF = 0x00030000,
--	CCC_BOC		= 0x00100000,	/* Undocumented? */
- 	CCC_LBME	= 0x01000000,
- };
- 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 6cacd5e893ac..b538cc6fdbb7 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -447,12 +447,6 @@ static int ravb_dmac_init(struct net_device *ndev)
- 	ravb_ring_format(ndev, RAVB_BE);
- 	ravb_ring_format(ndev, RAVB_NC);
- 
--#if defined(__LITTLE_ENDIAN)
--	ravb_modify(ndev, CCC, CCC_BOC, 0);
--#else
--	ravb_modify(ndev, CCC, CCC_BOC, CCC_BOC);
--#endif
--
- 	/* Set AVB RX */
- 	ravb_write(ndev,
- 		   RCR_EFFS | RCR_ENCF | RCR_ETS0 | RCR_ESF | 0x18000000, RCR);
-@@ -1629,15 +1623,6 @@ static struct net_device_stats *ravb_get_stats(struct net_device *ndev)
- 
- 	nstats->tx_dropped += ravb_read(ndev, TROCR);
- 	ravb_write(ndev, 0, TROCR);	/* (write clear) */
--	nstats->collisions += ravb_read(ndev, CDCR);
--	ravb_write(ndev, 0, CDCR);	/* (write clear) */
--	nstats->tx_carrier_errors += ravb_read(ndev, LCCR);
--	ravb_write(ndev, 0, LCCR);	/* (write clear) */
--
--	nstats->tx_carrier_errors += ravb_read(ndev, CERCR);
--	ravb_write(ndev, 0, CERCR);	/* (write clear) */
--	nstats->tx_carrier_errors += ravb_read(ndev, CEECR);
--	ravb_write(ndev, 0, CEECR);	/* (write clear) */
- 
- 	nstats->rx_packets = stats0->rx_packets + stats1->rx_packets;
- 	nstats->tx_packets = stats0->tx_packets + stats1->tx_packets;
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.11.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
