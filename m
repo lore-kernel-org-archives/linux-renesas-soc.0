@@ -2,66 +2,96 @@ Return-Path: <SRS0=poXO=W5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA28C3A59E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 12:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 765F4C3A5A9
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 12:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D8F7217D7
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 12:03:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35DD7217D7
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 12:03:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731242AbfIBMD1 (ORCPT
+        id S1731349AbfIBMD3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 2 Sep 2019 08:03:27 -0400
+        Mon, 2 Sep 2019 08:03:29 -0400
 Received: from relmlor1.renesas.com ([210.160.252.171]:20903 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731194AbfIBMD1 (ORCPT
+        by vger.kernel.org with ESMTP id S1731334AbfIBMD3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Sep 2019 08:03:27 -0400
+        Mon, 2 Sep 2019 08:03:29 -0400
 X-IronPort-AV: E=Sophos;i="5.64,459,1559487600"; 
-   d="scan'208";a="25536223"
+   d="scan'208";a="25536226"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
   by relmlie5.idc.renesas.com with ESMTP; 02 Sep 2019 21:03:25 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7A4A84005160;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id AD60B4001DAC;
         Mon,  2 Sep 2019 21:03:25 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     gregkh@linuxfoundation.org, mathias.nyman@intel.com
 Cc:     linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 0/3] usb: host: xhci-{plat,rcar}: clean up the drivers
-Date:   Mon,  2 Sep 2019 21:01:35 +0900
-Message-Id: <1567425698-27560-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 2/3] usb: host: xhci-rcar: Add a helper macro to set xhci_plat_priv
+Date:   Mon,  2 Sep 2019 21:01:37 +0900
+Message-Id: <1567425698-27560-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1567425698-27560-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1567425698-27560-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series is based on the latest Greg's linux-usb.git /
-usb-next branch.
+To avoid copy-and-paste setting of xhci_plat_priv for R-Car SoCs,
+this patch add a helper macro SET_XHCI_PLAT_PRIV_FOR_RCAR.
 
-Changes from v1:
- - Rebase today's usb-next branch.
- - Remove 4/4 patch (because I need more time to investigate how to fix it).
- - Add Geert-san's Reviewed-by from patch 1/3 to 3/3.
-https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=165847
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/usb/host/xhci-plat.c | 10 ++--------
+ drivers/usb/host/xhci-rcar.h |  7 +++++++
+ 2 files changed, 9 insertions(+), 8 deletions(-)
 
-
-Yoshihiro Shimoda (3):
-  usb: host: xhci-plat: add quirks member into struct xhci_plat_priv
-  usb: host: xhci-rcar: Add a helper macro to set xhci_plat_priv
-  usb: host: xhci-rcar: Use xhci_plat_priv.quirks instead of code
-    settings
-
- drivers/usb/host/xhci-plat.c | 14 +++++---------
- drivers/usb/host/xhci-plat.h |  2 ++
- drivers/usb/host/xhci-rcar.c | 28 ----------------------------
- drivers/usb/host/xhci-rcar.h | 21 +++++++++++++++++++++
- 4 files changed, 28 insertions(+), 37 deletions(-)
-
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 1843b69..d90cd5e 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -105,17 +105,11 @@ static const struct xhci_plat_priv xhci_plat_marvell_armada3700 = {
+ };
+ 
+ static const struct xhci_plat_priv xhci_plat_renesas_rcar_gen2 = {
+-	.firmware_name = XHCI_RCAR_FIRMWARE_NAME_V1,
+-	.init_quirk = xhci_rcar_init_quirk,
+-	.plat_start = xhci_rcar_start,
+-	.resume_quirk = xhci_rcar_resume_quirk,
++	SET_XHCI_PLAT_PRIV_FOR_RCAR(XHCI_RCAR_FIRMWARE_NAME_V1)
+ };
+ 
+ static const struct xhci_plat_priv xhci_plat_renesas_rcar_gen3 = {
+-	.firmware_name = XHCI_RCAR_FIRMWARE_NAME_V3,
+-	.init_quirk = xhci_rcar_init_quirk,
+-	.plat_start = xhci_rcar_start,
+-	.resume_quirk = xhci_rcar_resume_quirk,
++	SET_XHCI_PLAT_PRIV_FOR_RCAR(XHCI_RCAR_FIRMWARE_NAME_V3)
+ };
+ 
+ static const struct of_device_id usb_xhci_of_match[] = {
+diff --git a/drivers/usb/host/xhci-rcar.h b/drivers/usb/host/xhci-rcar.h
+index 804b6ab..1f8c225 100644
+--- a/drivers/usb/host/xhci-rcar.h
++++ b/drivers/usb/host/xhci-rcar.h
+@@ -31,4 +31,11 @@ static inline int xhci_rcar_resume_quirk(struct usb_hcd *hcd)
+ 	return 0;
+ }
+ #endif
++
++#define SET_XHCI_PLAT_PRIV_FOR_RCAR(firmware)				\
++	.firmware_name = firmware,					\
++	.init_quirk = xhci_rcar_init_quirk,				\
++	.plat_start = xhci_rcar_start,					\
++	.resume_quirk = xhci_rcar_resume_quirk,
++
+ #endif /* _XHCI_RCAR_H */
 -- 
 2.7.4
 
