@@ -2,138 +2,66 @@ Return-Path: <SRS0=poXO=W5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0575FC3A5A9
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 12:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA28C3A59E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 12:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6514217D7
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 12:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D8F7217D7
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 12:03:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731343AbfIBMD3 (ORCPT
+        id S1731242AbfIBMD1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 2 Sep 2019 08:03:29 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:58665 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731339AbfIBMD3 (ORCPT
+        Mon, 2 Sep 2019 08:03:27 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:20903 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731194AbfIBMD1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Sep 2019 08:03:29 -0400
+        Mon, 2 Sep 2019 08:03:27 -0400
 X-IronPort-AV: E=Sophos;i="5.64,459,1559487600"; 
-   d="scan'208";a="25317518"
+   d="scan'208";a="25536223"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 02 Sep 2019 21:03:25 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 02 Sep 2019 21:03:25 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id BA95D4001DB1;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7A4A84005160;
         Mon,  2 Sep 2019 21:03:25 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     gregkh@linuxfoundation.org, mathias.nyman@intel.com
 Cc:     linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 3/3] usb: host: xhci-rcar: Use xhci_plat_priv.quirks instead of code settings
-Date:   Mon,  2 Sep 2019 21:01:38 +0900
-Message-Id: <1567425698-27560-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 0/3] usb: host: xhci-{plat,rcar}: clean up the drivers
+Date:   Mon,  2 Sep 2019 21:01:35 +0900
+Message-Id: <1567425698-27560-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1567425698-27560-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1567425698-27560-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch uses xhci_plat_priv.quirks to simplify. The previous
-code had conditions to set some quirks in xhci_rcar_init_quirk().
-But, the xhci_rcar_init_quirk() is called at the same conditions.
-So, no behavior change.
+This patch series is based on the latest Greg's linux-usb.git /
+usb-next branch.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
+Changes from v1:
+ - Rebase today's usb-next branch.
+ - Remove 4/4 patch (because I need more time to investigate how to fix it).
+ - Add Geert-san's Reviewed-by from patch 1/3 to 3/3.
+https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=165847
+
+
+Yoshihiro Shimoda (3):
+  usb: host: xhci-plat: add quirks member into struct xhci_plat_priv
+  usb: host: xhci-rcar: Add a helper macro to set xhci_plat_priv
+  usb: host: xhci-rcar: Use xhci_plat_priv.quirks instead of code
+    settings
+
+ drivers/usb/host/xhci-plat.c | 14 +++++---------
+ drivers/usb/host/xhci-plat.h |  2 ++
  drivers/usb/host/xhci-rcar.c | 28 ----------------------------
- drivers/usb/host/xhci-rcar.h | 14 ++++++++++++++
- 2 files changed, 14 insertions(+), 28 deletions(-)
+ drivers/usb/host/xhci-rcar.h | 21 +++++++++++++++++++++
+ 4 files changed, 28 insertions(+), 37 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-rcar.c b/drivers/usb/host/xhci-rcar.c
-index 8616c52..34761be 100644
---- a/drivers/usb/host/xhci-rcar.c
-+++ b/drivers/usb/host/xhci-rcar.c
-@@ -107,15 +107,6 @@ static int xhci_rcar_is_gen2(struct device *dev)
- 		of_device_is_compatible(node, "renensas,rcar-gen2-xhci");
- }
- 
--static int xhci_rcar_is_gen3(struct device *dev)
--{
--	struct device_node *node = dev->of_node;
--
--	return of_device_is_compatible(node, "renesas,xhci-r8a7795") ||
--		of_device_is_compatible(node, "renesas,xhci-r8a7796") ||
--		of_device_is_compatible(node, "renesas,rcar-gen3-xhci");
--}
--
- void xhci_rcar_start(struct usb_hcd *hcd)
- {
- 	u32 temp;
-@@ -226,32 +217,13 @@ static bool xhci_rcar_wait_for_pll_active(struct usb_hcd *hcd)
- /* This function needs to initialize a "phy" of usb before */
- int xhci_rcar_init_quirk(struct usb_hcd *hcd)
- {
--	struct xhci_hcd *xhci = hcd_to_xhci(hcd);
--
- 	/* If hcd->regs is NULL, we don't just call the following function */
- 	if (!hcd->regs)
- 		return 0;
- 
--	/*
--	 * On R-Car Gen2 and Gen3, the AC64 bit (bit 0) of HCCPARAMS1 is set
--	 * to 1. However, these SoCs don't support 64-bit address memory
--	 * pointers. So, this driver clears the AC64 bit of xhci->hcc_params
--	 * to call dma_set_coherent_mask(dev, DMA_BIT_MASK(32)) in
--	 * xhci_gen_setup().
--	 *
--	 * And, since the firmware/internal CPU control the USBSTS.STS_HALT
--	 * and the process speed is down when the roothub port enters U3,
--	 * long delay for the handshake of STS_HALT is neeed in xhci_suspend().
--	 */
--	if (xhci_rcar_is_gen2(hcd->self.controller) ||
--			xhci_rcar_is_gen3(hcd->self.controller)) {
--		xhci->quirks |= XHCI_NO_64BIT_SUPPORT | XHCI_SLOW_SUSPEND;
--	}
--
- 	if (!xhci_rcar_wait_for_pll_active(hcd))
- 		return -ETIMEDOUT;
- 
--	xhci->quirks |= XHCI_TRUST_TX_LENGTH;
- 	return xhci_rcar_download_firmware(hcd);
- }
- 
-diff --git a/drivers/usb/host/xhci-rcar.h b/drivers/usb/host/xhci-rcar.h
-index 1f8c225..012744a 100644
---- a/drivers/usb/host/xhci-rcar.h
-+++ b/drivers/usb/host/xhci-rcar.h
-@@ -32,8 +32,22 @@ static inline int xhci_rcar_resume_quirk(struct usb_hcd *hcd)
- }
- #endif
- 
-+/*
-+ * On R-Car Gen2 and Gen3, the AC64 bit (bit 0) of HCCPARAMS1 is set
-+ * to 1. However, these SoCs don't support 64-bit address memory
-+ * pointers. So, this driver clears the AC64 bit of xhci->hcc_params
-+ * to call dma_set_coherent_mask(dev, DMA_BIT_MASK(32)) in
-+ * xhci_gen_setup() by using the XHCI_NO_64BIT_SUPPORT quirk.
-+ *
-+ * And, since the firmware/internal CPU control the USBSTS.STS_HALT
-+ * and the process speed is down when the roothub port enters U3,
-+ * long delay for the handshake of STS_HALT is neeed in xhci_suspend()
-+ * by using the XHCI_SLOW_SUSPEND quirk.
-+ */
- #define SET_XHCI_PLAT_PRIV_FOR_RCAR(firmware)				\
- 	.firmware_name = firmware,					\
-+	.quirks = XHCI_NO_64BIT_SUPPORT | XHCI_TRUST_TX_LENGTH |	\
-+		  XHCI_SLOW_SUSPEND,					\
- 	.init_quirk = xhci_rcar_init_quirk,				\
- 	.plat_start = xhci_rcar_start,					\
- 	.resume_quirk = xhci_rcar_resume_quirk,
 -- 
 2.7.4
 
