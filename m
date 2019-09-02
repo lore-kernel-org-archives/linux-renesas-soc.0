@@ -2,71 +2,94 @@ Return-Path: <SRS0=poXO=W5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 338A9C3A59B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 08:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D37F1C3A59B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 08:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10A0521874
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 08:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A513321874
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 08:06:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbfIBIGL (ORCPT
+        id S1730069AbfIBIGN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 2 Sep 2019 04:06:11 -0400
+        Mon, 2 Sep 2019 04:06:13 -0400
 Received: from kirsty.vergenet.net ([202.4.237.240]:60600 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbfIBIGL (ORCPT
+        with ESMTP id S1730059AbfIBIGM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Sep 2019 04:06:11 -0400
+        Mon, 2 Sep 2019 04:06:12 -0400
 Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id BDA2F25B784;
+        by kirsty.vergenet.net (Postfix) with ESMTPA id CBE4D25B7D2;
         Mon,  2 Sep 2019 18:06:07 +1000 (AEST)
 Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 2BA879401E6; Mon,  2 Sep 2019 10:06:05 +0200 (CEST)
+        id 492AF940173; Mon,  2 Sep 2019 10:06:05 +0200 (CEST)
 From:   Simon Horman <horms+renesas@verge.net.au>
 To:     David Miller <davem@davemloft.net>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Cc:     Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>
-Subject: [net-next 0/3] ravb: Remove use of undocumented registers
-Date:   Mon,  2 Sep 2019 10:06:00 +0200
-Message-Id: <20190902080603.5636-1-horms+renesas@verge.net.au>
+Subject: [net-next 1/3] ravb: correct typo in FBP field of SFO register
+Date:   Mon,  2 Sep 2019 10:06:01 +0200
+Message-Id: <20190902080603.5636-2-horms+renesas@verge.net.au>
 X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190902080603.5636-1-horms+renesas@verge.net.au>
+References: <20190902080603.5636-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+From: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-this short series cleans up the RAVB driver a little.
+The field name is FBP rather than FPB.
 
-The first patch corrects the spelling of the FBP field of SFO register.
-This register field is unused and should have no run-time effect.
+This field is unused and could equally be removed from the driver entirely.
+But there seems no harm in leaving as documentation of the presence of the
+field.
 
-The remaining two patches remove the use of undocumented registers
-after some consultation with the internal Renesas BSP team.
+Signed-off-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+v0 - Kazuya Mizuguchi
 
-All patches have been lightly tested on:
-* E3 Ebisu
-* H3 Salvator-XS (ES2.0)
-* M3-W Salvator-XS
-* M3-N Salvator-XS
+v1 - Simon Horman
+* Extracted from larger patch
+* Wrote changelog
 
-Kazuya Mizuguchi (2):
-  ravb: correct typo in FBP field of SFO register
-  ravb: Remove undocumented processing
+diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+index ac9195add811..bdb051f04b0c 100644
+--- a/drivers/net/ethernet/renesas/ravb.h
++++ b/drivers/net/ethernet/renesas/ravb.h
+@@ -317,7 +312,7 @@ enum UFCD_BIT {
 
-Simon Horman (1):
-  ravb: TROCR register is only present on R-Car Gen3
+ /* SFO */
+ enum SFO_BIT {
+-	SFO_FPB		= 0x0000003F,
++	SFO_FBP		= 0x0000003F,
+ };
 
- drivers/net/ethernet/renesas/ravb.h      |  9 ++-------
- drivers/net/ethernet/renesas/ravb_main.c | 21 ++++-----------------
- 2 files changed, 6 insertions(+), 24 deletions(-)
+ /* RTC */
+---
+ drivers/net/ethernet/renesas/ravb.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+index ac9195add811..2596a95a4300 100644
+--- a/drivers/net/ethernet/renesas/ravb.h
++++ b/drivers/net/ethernet/renesas/ravb.h
+@@ -317,7 +317,7 @@ enum UFCD_BIT {
+ 
+ /* SFO */
+ enum SFO_BIT {
+-	SFO_FPB		= 0x0000003F,
++	SFO_FBP		= 0x0000003F,
+ };
+ 
+ /* RTC */
 -- 
 2.11.0
 
