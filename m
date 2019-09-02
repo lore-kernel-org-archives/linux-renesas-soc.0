@@ -1,92 +1,93 @@
-Return-Path: <SRS0=O9sM=W3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=poXO=W5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C06C3A59F
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 31 Aug 2019 09:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39EB9C3A59B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 08:06:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 581E322CF7
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 31 Aug 2019 09:48:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 160F22190F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Sep 2019 08:06:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfHaJsh (ORCPT
+        id S1729707AbfIBIGJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 31 Aug 2019 05:48:37 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:53016 "EHLO
+        Mon, 2 Sep 2019 04:06:09 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:60582 "EHLO
         kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbfHaJsh (ORCPT
+        with ESMTP id S1725839AbfIBIGJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 31 Aug 2019 05:48:37 -0400
-Received: from penelope.horms.nl (ip4dab7138.direct-adsl.nl [77.171.113.56])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id A4F8E25AE77;
-        Sat, 31 Aug 2019 19:48:35 +1000 (AEST)
-Received: by penelope.horms.nl (Postfix, from userid 7100)
-        id 76A5BE22BF5; Sat, 31 Aug 2019 11:48:33 +0200 (CEST)
-Date:   Sat, 31 Aug 2019 11:48:33 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Mon, 2 Sep 2019 04:06:09 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id B6C9625B75F;
+        Mon,  2 Sep 2019 18:06:07 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 6600C9405F1; Mon,  2 Sep 2019 10:06:05 +0200 (CEST)
+From:   Simon Horman <horms+renesas@verge.net.au>
+To:     David Miller <davem@davemloft.net>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/7] soc: renesas: rcar-gen3-sysc: Fix power request
- conflicts
-Message-ID: <20190831094833.qhj6otyocnq2di5l@verge.net.au>
-References: <20190828113618.6672-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190828113618.6672-1-geert+renesas@glider.be>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Simon Horman <horms+renesas@verge.net.au>
+Subject: [net-next 3/3] ravb: TROCR register is only present on R-Car Gen3
+Date:   Mon,  2 Sep 2019 10:06:03 +0200
+Message-Id: <20190902080603.5636-4-horms+renesas@verge.net.au>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20190902080603.5636-1-horms+renesas@verge.net.au>
+References: <20190902080603.5636-1-horms+renesas@verge.net.au>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Aug 28, 2019 at 01:36:11PM +0200, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> Recent R-Car Gen3 SoCs added an External Request Mask Register to the
-> System Controller (SYSC).  This register allows to mask external power
-> requests for CPU or 3DG domains, to prevent conflicts between powering
-> off CPU cores or the 3D Graphics Engine, and changing the state of
-> another power domain through SYSC, which could lead to CPG state machine
-> lock-ups.
-> 
-> This patch series starts making use of this register.  Note that the
-> register is optional, and that its location and contents are
-> SoC-specific.
-> 
-> This was inspired by a patch in the BSP by Dien Pham
-> <dien.pham.ry@renesas.com>.
-> 
-> Note that the issue fixed cannot happen in the upstream kernel, as
-> upstream has no support for graphics acceleration yet.  SoCs lacking the
-> External Request Mask Register may need a different mitigation in the
-> future.
-> 
-> Changes compared to v1[1]:
->   - Improve description of cover letter and first patch.
-> 
-> Changes compared to RFC[2]:
->   - Rebased.
-> 
-> This has been boot-tested on R-Car H3 ES1.0, H3 ES2.0, M3-W ES1.0, M3-N,
-> V3M, and E3 (only the last 3 have this register!), and regression-tested
-> on R-Car Gen2.
-> 
-> This has not been tested on R-Car H3 ES3.0, M3-W ES2.0, and V3H.
-> 
-> For your convenience, this series is available in the
-> topic/rcar3-sysc-extmask-v2 branch of my renesas-drivers git repository at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-> 
-> Thanks for your comments!
+Only use the TROCR register on R-Car Gen3.
+It is not present on other SoCs.
 
-Looks good to me.
+Offsets used for the undocumented registers are also considered reserved
+and should not be written to.
 
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+After some internal investigation with Renesas it remains unclear why this
+driver accesses these fields on R-Car Gen2 but regardless of what the
+historical reasons are the current code is considered incorrect.
+
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+---
+ drivers/net/ethernet/renesas/ravb.h      | 2 +-
+ drivers/net/ethernet/renesas/ravb_main.c | 6 ++++--
+ 2 files changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+index bdb051f04b0c..a9c89d5d8898 100644
+--- a/drivers/net/ethernet/renesas/ravb.h
++++ b/drivers/net/ethernet/renesas/ravb.h
+@@ -193,7 +193,7 @@ enum ravb_reg {
+ 	GECMR	= 0x05b0,
+ 	MAHR	= 0x05c0,
+ 	MALR	= 0x05c8,
+-	TROCR	= 0x0700,	/* Undocumented? */
++	TROCR	= 0x0700,	/* R-Car Gen3 only */
+ 	CEFCR	= 0x0740,
+ 	FRECR	= 0x0748,
+ 	TSFRCR	= 0x0750,
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index b538cc6fdbb7..de9aa8c47f1c 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -1621,8 +1621,10 @@ static struct net_device_stats *ravb_get_stats(struct net_device *ndev)
+ 	stats0 = &priv->stats[RAVB_BE];
+ 	stats1 = &priv->stats[RAVB_NC];
+ 
+-	nstats->tx_dropped += ravb_read(ndev, TROCR);
+-	ravb_write(ndev, 0, TROCR);	/* (write clear) */
++	if (priv->chip_id == RCAR_GEN3) {
++		nstats->tx_dropped += ravb_read(ndev, TROCR);
++		ravb_write(ndev, 0, TROCR);	/* (write clear) */
++	}
+ 
+ 	nstats->rx_packets = stats0->rx_packets + stats1->rx_packets;
+ 	nstats->tx_packets = stats0->tx_packets + stats1->tx_packets;
+-- 
+2.11.0
 
