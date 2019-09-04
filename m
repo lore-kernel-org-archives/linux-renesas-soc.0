@@ -2,76 +2,73 @@ Return-Path: <SRS0=XexY=W7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72670C3A5A7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8815EC3A5A9
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Sep 2019 12:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EBE222DBF
+	by mail.kernel.org (Postfix) with ESMTP id 6C7582339E
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Sep 2019 12:01:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbfIDMBT (ORCPT
+        id S1725911AbfIDMBT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 4 Sep 2019 08:01:19 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:35008 "EHLO
+Received: from laurent.telenet-ops.be ([195.130.137.89]:34976 "EHLO
         laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfIDMBT (ORCPT
+        with ESMTP id S1728238AbfIDMBT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 4 Sep 2019 08:01:19 -0400
 Received: from ramsan ([84.194.98.4])
         by laurent.telenet-ops.be with bizsmtp
-        id xQ1H2000M05gfCL01Q1HKE; Wed, 04 Sep 2019 14:01:17 +0200
+        id xQ1F2000X05gfCL01Q1FJD; Wed, 04 Sep 2019 14:01:16 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i5TyP-0001Yv-AT; Wed, 04 Sep 2019 14:01:17 +0200
+        id 1i5TyN-0001Yp-Jc; Wed, 04 Sep 2019 14:01:15 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1i5TyP-0000VP-9d; Wed, 04 Sep 2019 14:01:17 +0200
+        id 1i5TyN-0000VK-HP; Wed, 04 Sep 2019 14:01:15 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Simon Horman <horms@verge.net.au>,
         Magnus Damm <magnus.damm@gmail.com>
 Cc:     linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/2] ARM: dts: lager: Replace spaces by TABs
-Date:   Wed,  4 Sep 2019 14:01:14 +0200
-Message-Id: <20190904120114.1894-3-geert+renesas@glider.be>
+Subject: [PATCH 0/2] ARM: dts: renesas: Replace spaces by TABs
+Date:   Wed,  4 Sep 2019 14:01:12 +0200
+Message-Id: <20190904120114.1894-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190904120114.1894-1-geert+renesas@glider.be>
-References: <20190904120114.1894-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Make it easier to compare the file with other similar files.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Two simple patches to replace spaces by TABs, to increase consistency
+between similar DTS files, and make it easier to compare them.
 
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 83cc619861b2bb20..6ec2cf7eb35455d3 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -325,10 +325,10 @@
- 		#size-cells = <0>;
- 	};
- 
--        /*
--         * IIC2 and I2C2 may be switched using pinmux.
--         * A fallback to GPIO is also provided.
--         */
-+	/*
-+	 * IIC2 and I2C2 may be switched using pinmux.
-+	 * A fallback to GPIO is also provided.
-+	 */
- 	i2chdmi: i2c-12 {
- 		compatible = "i2c-demux-pinctrl";
- 		i2c-parent = <&iic2>, <&i2c2>, <&gpioi2c2>;
+To be queued in renesas-devel for v5.5.
+
+Geert Uytterhoeven (2):
+  ARM: dts: gose: Replace spaces by TABs
+  ARM: dts: lager: Replace spaces by TABs
+
+ arch/arm/boot/dts/r8a7790-lager.dts |   8 +-
+ arch/arm/boot/dts/r8a7793-gose.dts  | 110 ++++++++++++++--------------
+ 2 files changed, 59 insertions(+), 59 deletions(-)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
