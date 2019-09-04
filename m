@@ -2,140 +2,83 @@ Return-Path: <SRS0=XexY=W7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.7 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C81C3A5AD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Sep 2019 12:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A78C3A5A7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Sep 2019 12:40:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E092E22CF5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Sep 2019 12:17:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 076E121883
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Sep 2019 12:40:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729773AbfIDMRC (ORCPT
+        id S1727083AbfIDMky (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 Sep 2019 08:17:02 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36960 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729640AbfIDMRC (ORCPT
+        Wed, 4 Sep 2019 08:40:54 -0400
+Received: from mail-qt1-f171.google.com ([209.85.160.171]:33153 "EHLO
+        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbfIDMky (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Sep 2019 08:17:02 -0400
-Received: from ramsan ([84.194.98.4])
-        by laurent.telenet-ops.be with bizsmtp
-        id xQGz2000N05gfCL01QGz5q; Wed, 04 Sep 2019 14:17:00 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1i5UDb-0001f2-GT; Wed, 04 Sep 2019 14:16:59 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1i5UDb-0000h3-FZ; Wed, 04 Sep 2019 14:16:59 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] Revert "pinctrl: sh-pfc: r8a77990: Fix MOD_SEL1 bit30 when using SSI_SCK2 and SSI_WS2"
-Date:   Wed,  4 Sep 2019 14:16:57 +0200
-Message-Id: <20190904121658.2617-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190904121658.2617-1-geert+renesas@glider.be>
-References: <20190904121658.2617-1-geert+renesas@glider.be>
+        Wed, 4 Sep 2019 08:40:54 -0400
+Received: by mail-qt1-f171.google.com with SMTP id r5so18901633qtd.0
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Sep 2019 05:40:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4rc7ayEDOw2tvsd+jn2BL7f5hw8iQbcT9Kw4EgT2DdI=;
+        b=WVPrHiAKz0s2F69r/r12AlXN9O73ELTZVcfq8xI6qF4PmyicYj47LGwlmzcLj7azmM
+         vyTPIylV8LVTo/JwUw9Jv51LNsWup2D/MxQYOP+9rgEN7ruYkPIOy46xRNC2I7sKoSaq
+         S9afjEZjAvjQaOcaN64O5o6+7K9xT0BumrRsiJkfTxEI9HD0UoGNDCrrJzx3QDFSgszG
+         UkG083FvFbBV/UaD/N5GjpBPzgXlBxg8A3tPFj0wUMqnvj/OXtKI3pSDCQ3IOJZMY+HC
+         IdsCUGpBPhRFG6fLwZjzdVVuRDkhcX1ctQ7Ru2X2zxxC0TrnQiA4bcjULaAxseMhgFW1
+         52ww==
+X-Gm-Message-State: APjAAAXa8rmhxO948qUYxKiM6qi4vAs54KNcaMs9TIW5BU+4znx53pHH
+        KTZLkIOuneZ1hIlzOlpBPuZ/KEikbE0Jw7G/vW8=
+X-Google-Smtp-Source: APXvYqy4Gbri7Sa8hZ9OYGQrbFKiYv1S1whwQeBSq+UsFyNoHhdQ/VUp3V5UuP6KNjaHrLK+IwDl6t1Pw5KozK7AiL8=
+X-Received: by 2002:a0c:d084:: with SMTP id z4mr16450999qvg.63.1567600853122;
+ Wed, 04 Sep 2019 05:40:53 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1565962268.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1565962268.git.horms+renesas@verge.net.au>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 4 Sep 2019 14:40:36 +0200
+Message-ID: <CAK8P3a0rQgEj9gQh-jyPOtoj+QVT2eeXz-vF0v5aKfnzWXP35g@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM Based SoC Fixes for v5.3
+To:     Simon Horman <horms+renesas@verge.net.au>
+Cc:     arm-soc <arm@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This reverts commit e87882eb9be10b2b9e28156922c2a47d877f5db4.
+On Fri, Aug 16, 2019 at 3:33 PM Simon Horman <horms+renesas@verge.net.au> wrote:
+>
+> are available in the git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/horms/renesas.git tags/renesas-fixes-for-v5.3
+>
+> for you to fetch changes up to 45f5d5a9e34d3fe4140a9a3b5f7ebe86c252440a:
+>
+>   arm64: dts: renesas: r8a77995: draak: Fix backlight regulator name (2019-08-09 11:58:17 -0700)
+>
+> ----------------------------------------------------------------
+> Renesas ARM Based SoC Fixes for v5.3
+>
+> * R-Car D3 (r8a77995) based Draak Board
+>   - Correct backlight regulator name in device tree
 
-According to the R-Car Gen3 Hardware Manual Errata for Rev 1.00 of Aug
-24, 2018, the SEL_SSI2_{0,1} definition was to be deleted.  However,
-this errata merely fixed an accidental double definition in the Hardware
-User's Manual Rev. 1.00.  The real definition is still present in later
-revisions of the manual (Rev. 1.50 and Rev. 2.00).
+I just found this pull request in the arm@kernel.org inbox, sorry for missing
+it earlier. The 5.4 pull requests that Geert sent in the meantime are all
+merged as they went to the new soc@kernel.org address.
 
-Hence revert the commit to recover the definition.
+Pulled this now into arm/fixes.
 
-Based on a patch in the BSP by Takeshi Kihara
-<takeshi.kihara.df@renesas.com>.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 20 +++++++++++---------
- 1 file changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index 2a6de2125bbf38b3..010fc0a6aba65428 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -448,6 +448,7 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
- #define MOD_SEL0_1_0	   REV4(FM(SEL_SPEED_PULSE_IF_0),	FM(SEL_SPEED_PULSE_IF_1),	FM(SEL_SPEED_PULSE_IF_2),	F_(0, 0))
- 
- /* MOD_SEL1 */			/* 0 */				/* 1 */				/* 2 */				/* 3 */			/* 4 */			/* 5 */		/* 6 */		/* 7 */
-+#define MOD_SEL1_30		FM(SEL_SSI2_0)			FM(SEL_SSI2_1)
- #define MOD_SEL1_29		FM(SEL_TIMER_TMU_0)		FM(SEL_TIMER_TMU_1)
- #define MOD_SEL1_28		FM(SEL_USB_20_CH0_0)		FM(SEL_USB_20_CH0_1)
- #define MOD_SEL1_26		FM(SEL_DRIF2_0)			FM(SEL_DRIF2_1)
-@@ -468,7 +469,7 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
- 
- #define PINMUX_MOD_SELS	\
- \
--MOD_SEL0_30_29 \
-+MOD_SEL0_30_29		MOD_SEL1_30 \
- 			MOD_SEL1_29 \
- MOD_SEL0_28		MOD_SEL1_28 \
- MOD_SEL0_27_26 \
-@@ -1058,7 +1059,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP10_27_24,		RIF0_CLK_B,	SEL_DRIF0_1),
- 	PINMUX_IPSR_MSEL(IP10_27_24,		SCL2_B,		SEL_I2C2_1),
- 	PINMUX_IPSR_MSEL(IP10_27_24,		TCLK1_A,	SEL_TIMER_TMU_0),
--	PINMUX_IPSR_GPSR(IP10_27_24,		SSI_SCK2_B),
-+	PINMUX_IPSR_MSEL(IP10_27_24,		SSI_SCK2_B,	SEL_SSI2_1),
- 	PINMUX_IPSR_GPSR(IP10_27_24,		TS_SCK0),
- 
- 	PINMUX_IPSR_GPSR(IP10_31_28,		SD0_WP),
-@@ -1067,7 +1068,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_IPSR_MSEL(IP10_31_28,		RIF0_D0_B,	SEL_DRIF0_1),
- 	PINMUX_IPSR_MSEL(IP10_31_28,		SDA2_B,		SEL_I2C2_1),
- 	PINMUX_IPSR_MSEL(IP10_31_28,		TCLK2_A,	SEL_TIMER_TMU_0),
--	PINMUX_IPSR_GPSR(IP10_31_28,		SSI_WS2_B),
-+	PINMUX_IPSR_MSEL(IP10_31_28,		SSI_WS2_B,	SEL_SSI2_1),
- 	PINMUX_IPSR_GPSR(IP10_31_28,		TS_SDAT0),
- 
- 	/* IPSR11 */
-@@ -1085,13 +1086,13 @@ static const u16 pinmux_data[] = {
- 
- 	PINMUX_IPSR_MSEL(IP11_11_8,		RX0_A,		SEL_SCIF0_0),
- 	PINMUX_IPSR_MSEL(IP11_11_8,		HRX1_A,		SEL_HSCIF1_0),
--	PINMUX_IPSR_GPSR(IP11_11_8,		SSI_SCK2_A),
-+	PINMUX_IPSR_MSEL(IP11_11_8,		SSI_SCK2_A,	SEL_SSI2_0),
- 	PINMUX_IPSR_GPSR(IP11_11_8,		RIF1_SYNC),
- 	PINMUX_IPSR_GPSR(IP11_11_8,		TS_SCK1),
- 
- 	PINMUX_IPSR_MSEL(IP11_15_12,		TX0_A,		SEL_SCIF0_0),
- 	PINMUX_IPSR_GPSR(IP11_15_12,		HTX1_A),
--	PINMUX_IPSR_GPSR(IP11_15_12,		SSI_WS2_A),
-+	PINMUX_IPSR_MSEL(IP11_15_12,		SSI_WS2_A,	SEL_SSI2_0),
- 	PINMUX_IPSR_GPSR(IP11_15_12,		RIF1_D0),
- 	PINMUX_IPSR_GPSR(IP11_15_12,		TS_SDAT1),
- 
-@@ -4957,11 +4958,12 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		MOD_SEL0_1_0 ))
- 	},
- 	{ PINMUX_CFG_REG_VAR("MOD_SEL1", 0xe6060504, 32,
--			     GROUP(2, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1, 1,
--				   2, 2, 2, 1, 1, 2, 1, 4),
-+			     GROUP(1, 1, 1, 1, 1, 1, 1, 3, 3, 1, 1, 1,
-+				   1, 2, 2, 2, 1, 1, 2, 1, 4),
- 			     GROUP(
--		/* RESERVED 31, 30 */
--		0, 0, 0, 0,
-+		/* RESERVED 31 */
-+		0, 0,
-+		MOD_SEL1_30
- 		MOD_SEL1_29
- 		MOD_SEL1_28
- 		/* RESERVED 27 */
--- 
-2.17.1
-
+     Arnd
