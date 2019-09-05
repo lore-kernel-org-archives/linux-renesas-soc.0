@@ -2,105 +2,73 @@ Return-Path: <SRS0=W0u2=XA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C14BCC43331
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Sep 2019 15:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DAEBC43331
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Sep 2019 16:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21DE020828
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Sep 2019 15:11:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F9322082E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Sep 2019 16:05:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388568AbfIEPLl (ORCPT
+        id S2388113AbfIEQFf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 Sep 2019 11:11:41 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:49004 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388524AbfIEPLk (ORCPT
+        Thu, 5 Sep 2019 12:05:35 -0400
+Received: from mail-qt1-f180.google.com ([209.85.160.180]:41342 "EHLO
+        mail-qt1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731857AbfIEQFf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Sep 2019 11:11:40 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id 5665D25BE0B;
-        Fri,  6 Sep 2019 01:11:28 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id CDA01940AC6; Thu,  5 Sep 2019 17:11:25 +0200 (CEST)
-From:   Simon Horman <horms+renesas@verge.net.au>
-To:     David Miller <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: [PATCH net-next v2 2/4] ravb: remove undocumented counter processing
-Date:   Thu,  5 Sep 2019 17:10:57 +0200
-Message-Id: <20190905151059.26794-3-horms+renesas@verge.net.au>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190905151059.26794-1-horms+renesas@verge.net.au>
-References: <20190905151059.26794-1-horms+renesas@verge.net.au>
+        Thu, 5 Sep 2019 12:05:35 -0400
+Received: by mail-qt1-f180.google.com with SMTP id j10so3406287qtp.8
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Sep 2019 09:05:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lg109LqwUiLzbnsvZnIE5S3uLfUGJu5WFRGWlk8oQEY=;
+        b=oVBSmvA+1qe3EGsx/8xUvpP32dcEZRM7V96GRe2TGgdIu3YIXsoYnYFxPS9eIrRzqb
+         Nu95y0eu9focztSntN51+0cysnXo0rp3A8bJjkPUY3xkyeJyj6bnFez+5oIpUfoUmWAO
+         0CigwjO2vpEmb69+wDMyqUcooZKq4ukH+AyyXSnnfVbLRvnZjDK62l3xSVU9/bngAb3j
+         TYSrrpP3VV9zJFSpD+IZcbQgKAv1vzA575RMkhekyb4et/c5SGregIg2NSd9Z3YJEl15
+         SXq3ldVZmQZ7KlwBB1QzmB/HLVfghbdrd2TszC5KG9ORsoxKBMFessbJD/2/eILZrory
+         dfwQ==
+X-Gm-Message-State: APjAAAX/OjlwvxQQVZiqnYuOflbRQuq9uy13r2boq5ie/0T/Atdrwimk
+        DJZseZ2suMkPmymzeV6p5VWyV/5zH1Me/PASXyY=
+X-Google-Smtp-Source: APXvYqxDvgZ2yRXFWjbdos3lkIkaNj98UJxtxl6G+LczKFRjB8TICktafKdfNZOWMMw2yyu0ehS1eQf9S8oeI6mdnJs=
+X-Received: by 2002:ac8:342a:: with SMTP id u39mr4393833qtb.7.1567699534284;
+ Thu, 05 Sep 2019 09:05:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1567675986.git.horms+renesas@verge.net.au>
+In-Reply-To: <cover.1567675986.git.horms+renesas@verge.net.au>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 5 Sep 2019 18:05:17 +0200
+Message-ID: <CAK8P3a1tNCqrEi6DkRs3G6x11bx17u9vTCD8AG0GyV08ieFM3w@mail.gmail.com>
+Subject: Re: [GIT PULL] Second Round of Renesas ARM Based SoC Fixes for v5.3
+To:     Simon Horman <horms+renesas@verge.net.au>
+Cc:     arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch removes the use of the undocumented counter registers
-CDCR, LCCR, CERCR, CEECR.
+On Thu, Sep 5, 2019 at 11:35 AM Simon Horman <horms+renesas@verge.net.au> wrote:
+>
+> Hi Olof, Hi Kevin, Hi Arnd,
+>
+> Please consider these second round of Renesas ARM based SoC fixes for v5.3.
+>
+> This pull request is based on the previous round of
+> such requests, tagged as renesas-next-20190813-v5.3-rc1,
+> which you have already pulled.
 
-Offsets used for undocumented registers are considered reserved and
-should not be written to. After some internal investigation with Renesas
-it remains unclear why this driver accesses these fields but regardless of
-what the historical reasons are the current code is considered incorrect.
+Pulled into fixes, thanks!
 
-Based on work by Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
-v2
-* New patch broken out of larger patch
----
- drivers/net/ethernet/renesas/ravb.h      | 4 ----
- drivers/net/ethernet/renesas/ravb_main.c | 9 ---------
- 2 files changed, 13 deletions(-)
-
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 2596a95a4300..70eeceb7f8ae 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -194,15 +194,11 @@ enum ravb_reg {
- 	MAHR	= 0x05c0,
- 	MALR	= 0x05c8,
- 	TROCR	= 0x0700,	/* Undocumented? */
--	CDCR	= 0x0708,	/* Undocumented? */
--	LCCR	= 0x0710,	/* Undocumented? */
- 	CEFCR	= 0x0740,
- 	FRECR	= 0x0748,
- 	TSFRCR	= 0x0750,
- 	TLFRCR	= 0x0758,
- 	RFCR	= 0x0760,
--	CERCR	= 0x0768,	/* Undocumented? */
--	CEECR	= 0x0770,	/* Undocumented? */
- 	MAFCR	= 0x0778,
- };
- 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 6cacd5e893ac..4d1f274cded0 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1629,15 +1629,6 @@ static struct net_device_stats *ravb_get_stats(struct net_device *ndev)
- 
- 	nstats->tx_dropped += ravb_read(ndev, TROCR);
- 	ravb_write(ndev, 0, TROCR);	/* (write clear) */
--	nstats->collisions += ravb_read(ndev, CDCR);
--	ravb_write(ndev, 0, CDCR);	/* (write clear) */
--	nstats->tx_carrier_errors += ravb_read(ndev, LCCR);
--	ravb_write(ndev, 0, LCCR);	/* (write clear) */
--
--	nstats->tx_carrier_errors += ravb_read(ndev, CERCR);
--	ravb_write(ndev, 0, CERCR);	/* (write clear) */
--	nstats->tx_carrier_errors += ravb_read(ndev, CEECR);
--	ravb_write(ndev, 0, CEECR);	/* (write clear) */
- 
- 	nstats->rx_packets = stats0->rx_packets + stats1->rx_packets;
- 	nstats->tx_packets = stats0->tx_packets + stats1->tx_packets;
--- 
-2.11.0
-
+      Arnd
