@@ -4,27 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5EC0C00307
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Sep 2019 13:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE96C43331
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Sep 2019 13:53:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5A2C21848
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Sep 2019 13:53:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D997A214DE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Sep 2019 13:53:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393620AbfIFNxx (ORCPT
+        id S2393525AbfIFNxk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 6 Sep 2019 09:53:53 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:58949 "EHLO
+        Fri, 6 Sep 2019 09:53:40 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:37523 "EHLO
         relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393553AbfIFNxw (ORCPT
+        with ESMTP id S2393478AbfIFNxk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Sep 2019 09:53:52 -0400
+        Fri, 6 Sep 2019 09:53:40 -0400
 X-Originating-IP: 2.224.242.101
 Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 909E4FF80D;
-        Fri,  6 Sep 2019 13:53:47 +0000 (UTC)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id F311BFF802;
+        Fri,  6 Sep 2019 13:53:35 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     laurent.pinchart@ideasonboard.com,
         kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
@@ -35,9 +36,9 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, airlied@linux.ie,
         Harsha.ManjulaMallikarjun@in.bosch.com,
         linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v4 9/9] arm64: dts: renesas: Add CMM units to Gen3 SoCs
-Date:   Fri,  6 Sep 2019 15:54:36 +0200
-Message-Id: <20190906135436.10622-10-jacopo+renesas@jmondi.org>
+Subject: [PATCH v4 5/9] drm: rcar-du: kms: Initialize CMM instances
+Date:   Fri,  6 Sep 2019 15:54:32 +0200
+Message-Id: <20190906135436.10622-6-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190906135436.10622-1-jacopo+renesas@jmondi.org>
 References: <20190906135436.10622-1-jacopo+renesas@jmondi.org>
@@ -48,257 +49,194 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add CMM units to Renesas R-Car Gen3 SoC that support it, and reference them
-from the Display Unit they are connected to.
+Implement device tree parsing to collect the available CMM instances
+described by the 'renesas,cmms' property. Associate CMMs with CRTCs and
+store a mask of active CMMs in the DU group for later enablement.
 
-Sort the 'vsps' and 'renesas,cmm' entries in the DU unit consistently
-in all the involved DTS.
+Enforce the probe and suspend/resume ordering of DU and CMM by creating
+a stateless device link between the two.
 
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 40 ++++++++++++++++++++++-
- arch/arm64/boot/dts/renesas/r8a7796.dtsi  | 28 ++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 28 ++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 22 ++++++++++++-
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 22 ++++++++++++-
- 5 files changed, 137 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  6 +++
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |  2 +
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  2 +
+ drivers/gpu/drm/rcar-du/rcar_du_group.h |  2 +
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 68 +++++++++++++++++++++++++
+ 5 files changed, 80 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 6675462f7585..67c242a447bc 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2939,6 +2939,42 @@
- 			iommus = <&ipmmu_vi1 10>;
- 		};
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 2da46e3dc4ae..23f1d6cc1719 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -1194,6 +1194,12 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
+ 	if (ret < 0)
+ 		return ret;
  
-+		cmm0: cmm@fea40000 {
-+			compatible = "renesas,r8a7795-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea40000 0 0x1000>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 711>;
-+			resets = <&cpg 711>;
-+		};
++	/* CMM might be disabled for this CRTC. */
++	if (rcdu->cmms[swindex]) {
++		rcrtc->cmm = rcdu->cmms[swindex];
++		rgrp->cmms_mask |= BIT(hwindex % 2);
++	}
 +
-+		cmm1: cmm@fea50000 {
-+			compatible = "renesas,r8a7795-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea50000 0 0x1000>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 710>;
-+			resets = <&cpg 710>;
-+		};
-+
-+		cmm2: cmm@fea60000 {
-+			compatible = "renesas,r8a7795-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea60000 0 0x1000>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 709>;
-+			resets = <&cpg 709>;
-+		};
-+
-+		cmm3: cmm@fea70000 {
-+			compatible = "renesas,r8a7795-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea70000 0 0x1000>;
-+			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 708>;
-+			resets = <&cpg 708>;
-+		};
-+
- 		csi20: csi2@fea80000 {
- 			compatible = "renesas,r8a7795-csi2";
- 			reg = <0 0xfea80000 0 0x10000>;
-@@ -3142,9 +3178,11 @@
- 				 <&cpg CPG_MOD 722>,
- 				 <&cpg CPG_MOD 721>;
- 			clock-names = "du.0", "du.1", "du.2", "du.3";
--			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
- 			status = "disabled";
+ 	drm_crtc_helper_add(crtc, &crtc_helper_funcs);
  
-+			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
-+			renesas,cmms = <&cmm0 &cmm1 &cmm2 &cmm3>;
-+
- 			ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 822c96601d3c..837c3b2da773 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -2641,6 +2641,33 @@
- 			renesas,fcp = <&fcpvi0>;
- 		};
+ 	/* Start with vertical blanking interrupt reporting disabled. */
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+index 3b7fc668996f..5f2940c42225 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+@@ -39,6 +39,7 @@ struct rcar_du_vsp;
+  * @vblank_wait: wait queue used to signal vertical blanking
+  * @vblank_count: number of vertical blanking interrupts to wait for
+  * @group: CRTC group this CRTC belongs to
++ * @cmm: CMM associated with this CRTC
+  * @vsp: VSP feeding video to this CRTC
+  * @vsp_pipe: index of the VSP pipeline feeding video to this CRTC
+  * @writeback: the writeback connector
+@@ -64,6 +65,7 @@ struct rcar_du_crtc {
+ 	unsigned int vblank_count;
  
-+		cmm0: cmm@fea40000 {
-+			compatible = "renesas,r8a7796-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea40000 0 0x1000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 711>;
-+			resets = <&cpg 711>;
-+		};
-+
-+		cmm1: cmm@fea50000 {
-+			compatible = "renesas,r8a7796-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea50000 0 0x1000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 710>;
-+			resets = <&cpg 710>;
-+		};
-+
-+		cmm2: cmm@fea60000 {
-+			compatible = "renesas,r8a7796-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea60000 0 0x1000>;
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 709>;
-+			resets = <&cpg 709>;
-+		};
-+
- 		csi20: csi2@fea80000 {
- 			compatible = "renesas,r8a7796-csi2";
- 			reg = <0 0xfea80000 0 0x10000>;
-@@ -2794,6 +2821,7 @@
- 			status = "disabled";
+ 	struct rcar_du_group *group;
++	struct platform_device *cmm;
+ 	struct rcar_du_vsp *vsp;
+ 	unsigned int vsp_pipe;
  
- 			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>;
-+			renesas,cmms = <&cmm0 &cmm1 &cmm2>;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+index a00dccc447aa..6316a1c5236c 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+@@ -13,6 +13,7 @@
+ #include <linux/kernel.h>
+ #include <linux/wait.h>
  
- 			ports {
- 				#address-cells = <1>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 4ae163220f60..c7635e8b261c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -2320,6 +2320,33 @@
- 			resets = <&cpg 611>;
- 		};
++#include "rcar_cmm.h"
+ #include "rcar_du_crtc.h"
+ #include "rcar_du_group.h"
+ #include "rcar_du_vsp.h"
+@@ -86,6 +87,7 @@ struct rcar_du_device {
+ 	struct rcar_du_encoder *encoders[RCAR_DU_OUTPUT_MAX];
  
-+		cmm0: cmm@fea40000 {
-+			compatible = "renesas,r8a77965-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea40000 0 0x1000>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 711>;
-+			resets = <&cpg 711>;
-+		};
-+
-+		cmm1: cmm@fea50000 {
-+			compatible = "renesas,r8a77965-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea50000 0 0x1000>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 710>;
-+			resets = <&cpg 710>;
-+		};
-+
-+		cmm3: cmm@fea70000 {
-+			compatible = "renesas,r8a77965-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea70000 0 0x1000>;
-+			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 708>;
-+			resets = <&cpg 708>;
-+		};
-+
- 		csi20: csi2@fea80000 {
- 			compatible = "renesas,r8a77965-csi2";
- 			reg = <0 0xfea80000 0 0x10000>;
-@@ -2470,6 +2497,7 @@
- 			status = "disabled";
+ 	struct rcar_du_group groups[RCAR_DU_MAX_GROUPS];
++	struct platform_device *cmms[RCAR_DU_MAX_CRTCS];
+ 	struct rcar_du_vsp vsps[RCAR_DU_MAX_VSPS];
  
- 			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd0 1>;
-+			renesas,cmms = <&cmm0 &cmm1 &cmm3>;
+ 	struct {
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.h b/drivers/gpu/drm/rcar-du/rcar_du_group.h
+index 87950c1f6a52..e9906609c635 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_group.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_group.h
+@@ -22,6 +22,7 @@ struct rcar_du_device;
+  * @mmio_offset: registers offset in the device memory map
+  * @index: group index
+  * @channels_mask: bitmask of populated DU channels in this group
++ * @cmms_mask: bitmask of available CMMs in this group
+  * @num_crtcs: number of CRTCs in this group (1 or 2)
+  * @use_count: number of users of the group (rcar_du_group_(get|put))
+  * @used_crtcs: number of CRTCs currently in use
+@@ -37,6 +38,7 @@ struct rcar_du_group {
+ 	unsigned int index;
  
- 			ports {
- 				#address-cells = <1>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 455954c3d98e..5e3d758a033f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -1727,6 +1727,24 @@
- 			iommus = <&ipmmu_vi0 9>;
- 		};
+ 	unsigned int channels_mask;
++	unsigned int cmms_mask;
+ 	unsigned int num_crtcs;
+ 	unsigned int use_count;
+ 	unsigned int used_crtcs;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 2dc9caee8767..294630e56992 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -17,7 +17,9 @@
+ #include <drm/drm_probe_helper.h>
+ #include <drm/drm_vblank.h>
  
-+		cmm0: cmm@fea40000 {
-+			compatible = "renesas,r8a77990-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea40000 0 0x1000>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 711>;
-+			resets = <&cpg 711>;
-+		};
-+
-+		cmm1: cmm@fea50000 {
-+			compatible = "renesas,r8a77990-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea50000 0 0x1000>;
-+			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 710>;
-+			resets = <&cpg 710>;
-+		};
-+
- 		csi40: csi2@feaa0000 {
- 			compatible = "renesas,r8a77990-csi2";
- 			reg = <0 0xfeaa0000 0 0x10000>;
-@@ -1768,9 +1786,11 @@
- 			clock-names = "du.0", "du.1";
- 			resets = <&cpg 724>;
- 			reset-names = "du.0";
--			vsps = <&vspd0 0>, <&vspd1 0>;
- 			status = "disabled";
++#include <linux/device.h>
+ #include <linux/of_graph.h>
++#include <linux/of_platform.h>
+ #include <linux/wait.h>
  
-+			vsps = <&vspd0 0>, <&vspd1 0>;
-+			renesas,cmms = <&cmm0 &cmm1>;
-+
- 			ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 183fef86cf7c..6838a81f5caa 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -993,6 +993,24 @@
- 			iommus = <&ipmmu_vi0 9>;
- 		};
+ #include "rcar_du_crtc.h"
+@@ -614,6 +616,67 @@ static int rcar_du_vsps_init(struct rcar_du_device *rcdu)
+ 	return ret;
+ }
  
-+		cmm0: cmm@fea40000 {
-+			compatible = "renesas,r8a77995-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea40000 0 0x1000>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 711>;
-+			resets = <&cpg 711>;
-+		};
++static int rcar_du_cmm_init(struct rcar_du_device *rcdu)
++{
++	const struct device_node *np = rcdu->dev->of_node;
++	unsigned int i;
++	int cells;
 +
-+		cmm1: cmm@fea50000 {
-+			compatible = "renesas,r8a77995-cmm",
-+				     "renesas,rcar-gen3-cmm";
-+			reg = <0 0xfea50000 0 0x1000>;
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
-+			clocks = <&cpg CPG_MOD 710>;
-+			resets = <&cpg 710>;
-+		};
++	cells = of_property_count_u32_elems(np, "renesas,cmms");
++	if (cells == -EINVAL)
++		return 0;
 +
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a77995";
- 			reg = <0 0xfeb00000 0 0x40000>;
-@@ -1003,9 +1021,11 @@
- 			clock-names = "du.0", "du.1";
- 			resets = <&cpg 724>;
- 			reset-names = "du.0";
--			vsps = <&vspd0 0>, <&vspd1 0>;
- 			status = "disabled";
++	if (cells > rcdu->num_crtcs) {
++		dev_err(rcdu->dev,
++			"Invalid number of entries in 'renesas,cmms'\n");
++		return -EINVAL;
++	}
++
++	for (i = 0; i < cells; ++i) {
++		struct platform_device *pdev;
++		struct device_link *link;
++		struct device_node *cmm;
++		int ret;
++
++		cmm = of_parse_phandle(np, "renesas,cmms", i);
++		if (IS_ERR(cmm)) {
++			dev_err(rcdu->dev,
++				"Failed to parse 'renesas,cmms' property\n");
++			return PTR_ERR(cmm);
++		}
++
++		if (!of_device_is_available(cmm)) {
++			/* It's fine to have a phandle to a non-enabled CMM. */
++			of_node_put(cmm);
++			continue;
++		}
++
++		pdev = of_find_device_by_node(cmm);
++		if (IS_ERR(pdev)) {
++			dev_err(rcdu->dev, "No device found for CMM%u\n", i);
++			of_node_put(cmm);
++			return PTR_ERR(pdev);
++		}
++
++		of_node_put(cmm);
++
++		ret = rcar_cmm_init(pdev);
++		if (ret)
++			return ret;
++
++		link = device_link_add(rcdu->dev, &pdev->dev, DL_FLAG_STATELESS);
++		if (!link) {
++			dev_err(rcdu->dev,
++				"Failed to create device link to CMM%u\n", i);
++			return -EINVAL;
++		}
++
++		rcdu->cmms[i] = pdev;
++	}
++
++	return 0;
++}
++
+ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ {
+ 	static const unsigned int mmio_offsets[] = {
+@@ -704,6 +767,11 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ 			return ret;
+ 	}
  
-+			vsps = <&vspd0 0>, <&vspd1 0>;
-+			renesas,cmms = <&cmm0 &cmm1>;
++	/* Initialize the Color Management Modules. */
++	ret = rcar_du_cmm_init(rcdu);
++	if (ret)
++		return ret;
 +
- 			ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
+ 	/* Create the CRTCs. */
+ 	for (swindex = 0, hwindex = 0; swindex < rcdu->num_crtcs; ++hwindex) {
+ 		struct rcar_du_group *rgrp;
 -- 
 2.23.0
 
