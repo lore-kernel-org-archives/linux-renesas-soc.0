@@ -5,36 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F3C0C49ED9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07942C433EF
 	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Sep 2019 06:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 086F521A4A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Sep 2019 06:35:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3FE22196E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Sep 2019 06:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730029AbfIIGfj (ORCPT
+        id S1729994AbfIIGfj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 9 Sep 2019 02:35:39 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:61519 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727174AbfIIGfj (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:12578 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729708AbfIIGfj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 9 Sep 2019 02:35:39 -0400
 X-IronPort-AV: E=Sophos;i="5.64,483,1559487600"; 
-   d="scan'208";a="25872153"
+   d="scan'208";a="26091410"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 09 Sep 2019 15:35:36 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 09 Sep 2019 15:35:35 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D5DE041A59F7;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B1B6141A59F7;
         Mon,  9 Sep 2019 15:35:35 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     vinod.koul@intel.com
 Cc:     dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 4/4] dmaengine: rcar-dmac: Add dma-channel-mask property support
-Date:   Mon,  9 Sep 2019 15:34:52 +0900
-Message-Id: <1568010892-17606-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 3/4] dmaengine: rcar-dmac: Use devm_platform_ioremap_resource()
+Date:   Mon,  9 Sep 2019 15:34:51 +0900
+Message-Id: <1568010892-17606-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1568010892-17606-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1568010892-17606-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -43,46 +43,38 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds dma-channel-mask property support not to reserve
-some DMA channels for some reasons. (for example: a heterogeneous
-CPU uses it.)
+This patch uses devm_platform_ioremap_resource() instead of
+using platform_get_resource() and devm_ioremap_resource() together
+to simplify.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/dma/sh/rcar-dmac.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/dma/sh/rcar-dmac.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 542786d..f06016d 100644
+index 74996a0..542786d 100644
 --- a/drivers/dma/sh/rcar-dmac.c
 +++ b/drivers/dma/sh/rcar-dmac.c
-@@ -203,7 +203,7 @@ struct rcar_dmac {
+@@ -1824,7 +1824,6 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ 	struct dma_device *engine;
+ 	struct rcar_dmac *dmac;
+ 	const struct rcar_dmac_of_data *data;
+-	struct resource *mem;
+ 	unsigned int i;
+ 	int ret;
  
- 	unsigned int n_channels;
- 	struct rcar_dmac_chan *channels;
--	unsigned int channels_mask;
-+	u32 channels_mask;
+@@ -1863,8 +1862,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
- 	DECLARE_BITMAP(modules, 256);
- };
-@@ -1810,7 +1810,15 @@ static int rcar_dmac_parse_of(struct device *dev, struct rcar_dmac *dmac)
- 		return -EINVAL;
- 	}
+ 	/* Request resources. */
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	dmac->iomem = devm_ioremap_resource(&pdev->dev, mem);
++	dmac->iomem = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(dmac->iomem))
+ 		return PTR_ERR(dmac->iomem);
  
-+	/*
-+	 * If the driver is unable to read dma-channel-mask property,
-+	 * the driver assumes that it can use all channels.
-+	 */
- 	dmac->channels_mask = GENMASK(dmac->n_channels - 1, 0);
-+	of_property_read_u32(np, "dma-channel-mask", &dmac->channels_mask);
-+
-+	/* If the property has out-of-channel mask, this driver clears it */
-+	dmac->channels_mask &= GENMASK(dmac->n_channels - 1, 0);
- 
- 	return 0;
- }
 -- 
 2.7.4
 
