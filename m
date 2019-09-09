@@ -2,97 +2,123 @@ Return-Path: <SRS0=rwh1=XE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F285C4740A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Sep 2019 13:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA71C4740A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Sep 2019 15:46:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D65F21924
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Sep 2019 13:05:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1920021920
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Sep 2019 15:46:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbfIINFq (ORCPT
+        id S2388835AbfIIPq0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 Sep 2019 09:05:46 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:56294 "EHLO
+        Mon, 9 Sep 2019 11:46:26 -0400
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:57905 "EHLO
         smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728885AbfIINFq (ORCPT
+        with ESMTP id S1729418AbfIIPq0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Sep 2019 09:05:46 -0400
+        Mon, 9 Sep 2019 11:46:26 -0400
 Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 063F73C04C0;
-        Mon,  9 Sep 2019 15:05:44 +0200 (CEST)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id D3FE13C0579;
+        Mon,  9 Sep 2019 17:46:23 +0200 (CEST)
 Received: from smtp1.de.adit-jv.com ([127.0.0.1])
         by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id YBJvnVtT2PP6; Mon,  9 Sep 2019 15:05:38 +0200 (CEST)
+        with ESMTP id Or0c0dXY5CWV; Mon,  9 Sep 2019 17:46:17 +0200 (CEST)
 Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id D190C3C0579;
-        Mon,  9 Sep 2019 15:05:29 +0200 (CEST)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id E3B073C0016;
+        Mon,  9 Sep 2019 17:46:17 +0200 (CEST)
+Received: from vmlxhi-070.adit-jv.com (10.72.93.148) by HI2EXCH01.adit-jv.com
  (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Mon, 9 Sep 2019
- 15:05:29 +0200
-Date:   Mon, 9 Sep 2019 15:05:25 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Veeraiyan Chidambaram <external.veeraiyan.c@de.adit-jv.com>
-CC:     Felipe Balbi <balbi@kernel.org>,
+ 17:46:17 +0200
+From:   Veeraiyan Chidambaram <external.veeraiyan.c@de.adit-jv.com>
+To:     Felipe Balbi <balbi@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+CC:     <linux-usb@vger.kernel.org>,
         Andrew Gabbasov <andrew_gabbasov@mentor.com>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v2 1/3] usb: renesas_usbhs: enable DVSE interrupt
-Message-ID: <20190909130525.GA19423@vmlxhi-102.adit-jv.com>
-References: <1567771431-13235-1-git-send-email-external.veeraiyan.c@de.adit-jv.com>
+        <external.veeraiyan.c@de.adit-jv.com>,
+        Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>
+Subject: [PATCH v4 1/3] usb: renesas_usbhs: simplify usbhs_status_get_device_state()
+Date:   Mon, 9 Sep 2019 17:46:12 +0200
+Message-ID: <1568043974-1236-1-git-send-email-external.veeraiyan.c@de.adit-jv.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1567771431-13235-1-git-send-email-external.veeraiyan.c@de.adit-jv.com>
-User-Agent: Mutt/1.12.1+40 (7f8642d4ee82) (2019-06-28)
-X-Originating-IP: [10.72.93.184]
+Content-Type: text/plain
+X-Originating-IP: [10.72.93.148]
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Veeraiyan,
+From: Eugeniu Rosca <erosca@de.adit-jv.com>
 
-On Fri, Sep 06, 2019 at 02:03:49PM +0200, Veeraiyan Chidambaram wrote:
-> From: Eugeniu Rosca <erosca@de.adit-jv.com>
-> 
-> Commit [1] enabled the possibility of checking the DVST (Device State
-> Transition) bit of INTSTS0 (Interrupt Status Register 0) and calling
-> the irq_dev_state() handler if the DVST bit is set. But neither
-> commit [1] nor commit [2] actually enabled the DVSE (Device State
-> Transition Interrupt Enable) bit in the INTENB0 (Interrupt Enable
-> Register 0). As a consequence, irq_dev_state() handler is getting
-> called as a side effect of other (non-DVSE) interrupts being fired,
-> which definitely can't be relied upon, if DVST notifications are of
-> any value.
-> 
-> Why this doesn't hurt is because usbhsg_irq_dev_state() currently
-> doesn't do much except of a dev_dbg(). Once more work is added to
-> the handler (e.g. detecting device "Suspended" state and notifying
-> other USB gadget components about it), enabling DVSE becomes a hard
-> requirement. Do it in a standalone commit for better visibility and
-> clear explanation.
-> 
-> [1] f1407d5 ("usb: renesas_usbhs: Add Renesas USBHS common code")
-> [2] 2f98382 ("usb: renesas_usbhs: Add Renesas USBHS Gadget")
-> 
-> Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-> ---
-> v2: No change
-> v1: https://patchwork.kernel.org/patch/10581479/
+Similar to usbhs_status_get_ctrl_stage(), *_get_device_state() is not
+supposed to return any error code since its return value is the DVSQ
+bitfield of the INTSTS0 register. According to SoC HW manual rev1.00,
+every single value of DVSQ[2:0] is valid and none is an error:
 
-It looks like this series changes the patch order of v1.
-Could you kindly stick to the original order? Many thanks.
+----8<----
+Device State
+000: Powered state
+001: Default state
+010: Address state
+011: Configuration state
+1xx: Suspended state
+----8<----
 
+Hence, simplify the function body. The motivation behind dropping the
+switch/case construct is being able to implement reading the suspended
+state. The latter (based on the above DVSQ[2:0] description) doesn't
+have a unique value, but is rather a list of states (which makes
+switch/case less suitable for reading/validating it):
+
+100: (Suspended) Powered state
+101: (Suspended) Default state
+110: (Suspended) Address state
+111: (Suspended) Configuration state
+
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Signed-off-by: Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>
+---
+v4: patch sequence change
+v3: https://patchwork.kernel.org/patch/11137697/
+v2: https://patchwork.kernel.org/patch/11135111/
+v1: https://patchwork.kernel.org/patch/10581479/
+
+ drivers/usb/renesas_usbhs/mod.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
+
+diff --git a/drivers/usb/renesas_usbhs/mod.c b/drivers/usb/renesas_usbhs/mod.c
+index 7475c4f64724..4fbb1d538b82 100644
+--- a/drivers/usb/renesas_usbhs/mod.c
++++ b/drivers/usb/renesas_usbhs/mod.c
+@@ -170,17 +170,7 @@ void usbhs_mod_remove(struct usbhs_priv *priv)
+  */
+ int usbhs_status_get_device_state(struct usbhs_irq_state *irq_state)
+ {
+-	int state = irq_state->intsts0 & DVSQ_MASK;
+-
+-	switch (state) {
+-	case POWER_STATE:
+-	case DEFAULT_STATE:
+-	case ADDRESS_STATE:
+-	case CONFIGURATION_STATE:
+-		return state;
+-	}
+-
+-	return -EIO;
++	return (int)irq_state->intsts0 & DVSQ_MASK;
+ }
+ 
+ int usbhs_status_get_ctrl_stage(struct usbhs_irq_state *irq_state)
 -- 
-Best Regards,
-Eugeniu.
+2.7.4
+
