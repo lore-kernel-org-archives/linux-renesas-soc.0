@@ -1,120 +1,65 @@
-Return-Path: <SRS0=rwh1=XE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=rFue=XF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CC6C4740A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Sep 2019 23:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD05C3A5A2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Sep 2019 04:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2006B20678
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Sep 2019 23:04:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ODIn6NlR"
+	by mail.kernel.org (Postfix) with ESMTP id 2BE292086A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Sep 2019 04:03:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730019AbfIIXEu (ORCPT
+        id S1726043AbfIJEDB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 Sep 2019 19:04:50 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:36546 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728358AbfIIXEu (ORCPT
+        Tue, 10 Sep 2019 00:03:01 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:54600 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725283AbfIJEDB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Sep 2019 19:04:50 -0400
-Received: from pendragon.ideasonboard.com (unknown [88.214.160.167])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 874DE4FE;
-        Tue, 10 Sep 2019 01:04:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1568070288;
-        bh=aMko9867ugF01tWgJcEmGEH7Q3llzWNzsN0Yl9FpdFE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ODIn6NlRsjVuaa/DIKVRkIbW5kNKoCcxV9EJksXmFuKb/tA17tNVumYq4jZaue1Qn
-         QnhjIRpGIGhtD2US5QSipZiQnXPtx27/oYWny6wmyeQtBdNEo0EG1KxE8k0hPlwwse
-         bRslXB3gJSnM1HldaLq8FJasYHNFWLWe/dG1Owt0=
-Date:   Tue, 10 Sep 2019 02:04:41 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] rcar-vin: Do not enumerate unsupported pixel formats
-Message-ID: <20190909230441.GE15652@pendragon.ideasonboard.com>
-References: <20190906143500.21882-1-niklas.soderlund+renesas@ragnatech.se>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190906143500.21882-1-niklas.soderlund+renesas@ragnatech.se>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 10 Sep 2019 00:03:01 -0400
+X-IronPort-AV: E=Sophos;i="5.64,487,1559487600"; 
+   d="scan'208";a="26188874"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Sep 2019 13:02:59 +0900
+Received: from localhost.localdomain (unknown [10.166.17.210])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6835B4004D0D;
+        Tue, 10 Sep 2019 13:02:59 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     ulf.hansson@linaro.org, wsa+renesas@sang-engineering.com
+Cc:     treding@nvidia.com, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 0/2] mmc: queue: Fix bigger segments usage
+Date:   Tue, 10 Sep 2019 13:02:57 +0900
+Message-Id: <1568088179-16865-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
+This patch series is based on the linux-next / next-20190904 tag.
+Thierry reported an issue which caused the SDHCI environment [1]
+so that I made this patch series to resolve the issue.
 
-Thank you for the patch.
+[1]
+https://patchwork.kernel.org/patch/11137903/
 
-On Fri, Sep 06, 2019 at 04:35:00PM +0200, Niklas Söderlund wrote:
-> If a pixel format is not supported by the hardware NULL is returned by
-> rvin_format_from_pixel() for that fourcc. Verify that the pixel format
-> is supported using this or skip it when enumerating.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
->  drivers/media/platform/rcar-vin/rcar-v4l2.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> index cbc1c07f0a9631a4..ba08f6c49956e899 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-> @@ -302,10 +302,20 @@ static int rvin_g_fmt_vid_cap(struct file *file, void *priv,
->  static int rvin_enum_fmt_vid_cap(struct file *file, void *priv,
->  				 struct v4l2_fmtdesc *f)
->  {
-> +	struct rvin_dev *vin = video_drvdata(file);
-> +	unsigned int i, skip = 0;
+Also, this patch adds the flag to enable the feature on my
+environment.
 
-This doesn't seem right. Let's consider, as initial conditions,
+Yoshihiro Shimoda (2):
+  mmc: queue: Fix bigger segments usage
+  mmc: renesas_sdhi_internal_dmac: Add MMC_CAP2_MERGE_CAPABLE
 
-rvin_formats = { RGB, unsupported, unsupported, YUV }
-ARRAY_SIZE(rvin_formats) == 4
-f->index = 1
-
-You want to return YUV.
-
-> +
->  	if (f->index >= ARRAY_SIZE(rvin_formats))
->  		return -EINVAL;
-
-This check will pass.
-
-> -	f->pixelformat = rvin_formats[f->index].fourcc;
-> +	for (i = 0; i <= f->index; i++)
-> +		if (!rvin_format_from_pixel(vin, rvin_formats[i].fourcc))
-> +			skip++;
-
-This loop will have two iterations, i == 0 and i == 1. The second
-iteration will increase skip, so skip == 1.
-
-> +
-> +	if (f->index + skip >= ARRAY_SIZE(rvin_formats))
-> +		return -EINVAL;
-
-This check will pass.
-
-> +
-> +	f->pixelformat = rvin_formats[f->index + skip].fourcc;
-
-This will return unsupported format.
-
->  
->  	return 0;
->  }
+ drivers/mmc/core/queue.c                      | 8 +++++++-
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 2 +-
+ include/linux/mmc/host.h                      | 1 +
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
 -- 
-Regards,
+2.7.4
 
-Laurent Pinchart
