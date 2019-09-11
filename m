@@ -2,90 +2,85 @@ Return-Path: <SRS0=9KLO=XG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A17C49ED6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Sep 2019 13:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905A1ECDE27
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Sep 2019 14:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E31C420838
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Sep 2019 13:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 685A12053B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Sep 2019 14:39:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727912AbfIKNXE (ORCPT
+        id S1728177AbfIKOjN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 11 Sep 2019 09:23:04 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:43273 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727656AbfIKNXE (ORCPT
+        Wed, 11 Sep 2019 10:39:13 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:39696 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728109AbfIKOjN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Sep 2019 09:23:04 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 050853C04C0;
-        Wed, 11 Sep 2019 15:23:02 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id PbvkNzfcUyt1; Wed, 11 Sep 2019 15:22:56 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 8D3003C0016;
-        Wed, 11 Sep 2019 15:22:56 +0200 (CEST)
-Received: from vmlxhi-070.adit-jv.com (10.72.93.148) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Wed, 11 Sep
- 2019 15:22:56 +0200
-Date:   Wed, 11 Sep 2019 15:22:52 +0200
-From:   veeraiyan chidambaram <external.veeraiyan.c@de.adit-jv.com>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-CC:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        "REE erosca@DE.ADIT-JV.COM" <erosca@DE.ADIT-JV.COM>,
-        Veeraiyan Chidambaram <veeraiyan.chidambaram@in.bosch.com>
-Subject: Re: [PATCH v4 2/3] usb: renesas_usbhs: enable DVSE interrupt
-Message-ID: <20190911132252.GA22580@vmlxhi-070.adit-jv.com>
-References: <1568043974-1236-1-git-send-email-external.veeraiyan.c@de.adit-jv.com>
- <1568043974-1236-2-git-send-email-external.veeraiyan.c@de.adit-jv.com>
- <TYAPR01MB4544C419E30F3D3033086088D8B60@TYAPR01MB4544.jpnprd01.prod.outlook.com>
- <20190910093117.GB9960@vmlxhi-070.adit-jv.com>
- <TYAPR01MB45447960B4D77CB0C01B08BBD8B10@TYAPR01MB4544.jpnprd01.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <TYAPR01MB45447960B4D77CB0C01B08BBD8B10@TYAPR01MB4544.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.93.148]
+        Wed, 11 Sep 2019 10:39:13 -0400
+Received: from ramsan ([84.194.98.4])
+        by andre.telenet-ops.be with bizsmtp
+        id 0Ef42100205gfCL01Ef4fw; Wed, 11 Sep 2019 16:39:10 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1i83lv-0006T4-UL; Wed, 11 Sep 2019 16:39:03 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1i83lv-0003P8-T2; Wed, 11 Sep 2019 16:39:03 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 2/5] gpio: Export gpiochip_get_desc() to modular GPIO code
+Date:   Wed, 11 Sep 2019 16:38:55 +0200
+Message-Id: <20190911143858.13024-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190911143858.13024-1-geert+renesas@glider.be>
+References: <20190911143858.13024-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello shimoda-san,
+Export the gpiochip_get_desc() symbol, so modular GPIO driver can make
+use of this function again.
 
-Thanks a lot for those hints.
-On Wed, Sep 11, 2019 at 02:45:52AM +0000, Yoshihiro Shimoda wrote:
-> Hello Veeraiyan-san,
-> 
-> > From: veeraiyan chidambaram, Sent: Tuesday, September 10, 2019 6:31 PM
-> > 
-> > Hello shimoda-san,
-> > 
-> > Thanks for point out checkpatch warning. After resolving checkpatch warning,
-> > below  checkpatch warning is seen.
-> > 
-> > WARNING: Possible unwrapped commit description (prefer a maximum 75 chars per line)
-> > #23:
-> > [1] commit f1407d5c6624 ("usb: renesas_usbhs: Add Renesas USBHS common code")
-> 
-> I checked other commit log, and it seems adding a new line is better like below:
-> 
-> [1] commit f1407d5c6624 ("usb: renesas_usbhs: Add Renesas USBHS common
->     code")
+This is a partial revert of commit 1bd6b601fe196b6f ("gpio: make
+gpiochip_get_desc() gpiolib-private").
 
-I have fixed and submitted v5 patch https://patchwork.kernel.org/patch/11141085/.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ERROR: "gpiochip_get_desc" [drivers/gpio/gpio-aggregator.ko] undefined!
+---
+ drivers/gpio/gpiolib.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best Regards,
-Veeraiyan Chidambaram
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index dbecf266be5a5a2a..c2cf01fb72a9de87 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -95,6 +95,7 @@ static inline void desc_set_label(struct gpio_desc *d, const char *label)
+ {
+ 	d->label = label;
+ }
++EXPORT_SYMBOL_GPL(gpiochip_get_desc);
+ 
+ /**
+  * gpio_to_desc - Convert a GPIO number to its descriptor
+-- 
+2.17.1
+
