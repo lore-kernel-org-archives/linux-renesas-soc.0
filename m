@@ -2,105 +2,72 @@ Return-Path: <SRS0=L50G=XM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F25DFC4CECD
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Sep 2019 12:51:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5B5C4CEC9
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Sep 2019 12:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C57E1218AE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Sep 2019 12:51:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568724703;
-	bh=8HTUssJ30wmJ3525tuBKRrrjnbwk2zySpokpgctlMDU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=E1+809UAIYX/MnHplSsKfmorqLQQVjFjTUGrNQPMqY0YooQRQIbqdn42ldgX27n9Y
-	 3zd35omf8aygfEBk23ClAhb3BdKJ1Rs2WhHc1RmqzgmbBjXs5fjA8AGRcX8Z6Pg9jA
-	 ZtlrH9DjJEuw8qbClsXWzKaFESIzB7HOKMCqRNLc=
+	by mail.kernel.org (Postfix) with ESMTP id 5674321852
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Sep 2019 12:52:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725901AbfIQMvn (ORCPT
+        id S1726181AbfIQMwU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 Sep 2019 08:51:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725917AbfIQMvn (ORCPT
+        Tue, 17 Sep 2019 08:52:20 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:57923 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725901AbfIQMwU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Sep 2019 08:51:43 -0400
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29D4F218AE;
-        Tue, 17 Sep 2019 12:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568724702;
-        bh=8HTUssJ30wmJ3525tuBKRrrjnbwk2zySpokpgctlMDU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1uHhAjUQjIlqvRMEcXRDWSXV5OxlxLAP4lEsXxfuLJJxX9TZ49AOIIL/GEZ9FkwXq
-         1xevUYBmoOhmyK+PXmWYvHF/OYI9FtRZpT01pd6svZGxau07u4gNPXRbLdRvP8qFUr
-         nKsF3HK/cDUfoppvfOOMYiKL5qMG16PbCOs00RLQ=
-Received: by mail-qk1-f179.google.com with SMTP id 4so3817741qki.6;
-        Tue, 17 Sep 2019 05:51:42 -0700 (PDT)
-X-Gm-Message-State: APjAAAXDetFZflOijPeC//k4tMqt2oPxajjqSZt/UzJ896CtHFF+HdtQ
-        6o6S+33tL+4y/DadlpKucF0y7grMkbPG9HjLag==
-X-Google-Smtp-Source: APXvYqzGZsXAlPhiYh2alH7jD4hHEpI33KIoVHXQC9xRmxchQF6hwXrY16sEph5+/s5f2sKazHtQfHO0iFuWVh1oZd8=
-X-Received: by 2002:a37:682:: with SMTP id 124mr3420891qkg.393.1568724701388;
- Tue, 17 Sep 2019 05:51:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190916075352.32108-1-horms+renesas@verge.net.au>
-In-Reply-To: <20190916075352.32108-1-horms+renesas@verge.net.au>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 17 Sep 2019 07:51:29 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLq7sUyh=E=D-Lk+Q=JrrKdsHkfsF88p=703mn-gwiLSA@mail.gmail.com>
-Message-ID: <CAL_JsqLq7sUyh=E=D-Lk+Q=JrrKdsHkfsF88p=703mn-gwiLSA@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: hspi: Convert bindings to json-schema
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Kaneko <ykaneko0929@gmail.com>,
-        linux-spi <linux-spi@vger.kernel.org>,
+        Tue, 17 Sep 2019 08:52:20 -0400
+X-IronPort-AV: E=Sophos;i="5.64,516,1559487600"; 
+   d="scan'208";a="26574875"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 17 Sep 2019 21:52:18 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4B0FA41ABBEA;
+        Tue, 17 Sep 2019 21:52:16 +0900 (JST)
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>, linux-serial@vger.kernel.org,
         devicetree@vger.kernel.org,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] dt-bindings: serial: sh-sci: Document r8a774b1 bindings
+Date:   Tue, 17 Sep 2019 13:45:24 +0100
+Message-Id: <1568724324-26995-1-git-send-email-biju.das@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Sep 16, 2019 at 2:54 AM Simon Horman <horms+renesas@verge.net.au> wrote:
->
-> Convert Renesas HSPI bindings documentation to json-schema.
-> Also name bindings documentation file according to the compat string
-> being documented.
->
-> As a side effect of this change all currently supported/used compat
-> strings are listed while no while card compat string is documented.
-> This, in my opinion, is desirable as only supported hardware should
-> be documented.
->
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> ---
-> Based on v5.3-rc1
-> Tested using:
->   ARCH=arm make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/spi/renesas,hspi.yaml
->
-> v2
-> - reference spi-controller.yaml# and thus do not document
->   #address-cells and #size-cells properties.
->   These properties are still listed as required.
-> - Drop comment regarding pinctrl properties.
->   These are not needed as only one state, "default", is supported
-> - Document clocks and power-domains properties.
->   The clocks property is required. Add these properties to the example.
-> - Drop unnecessary interrupt-parent property from example.
-> ---
->  .../devicetree/bindings/spi/renesas,hspi.yaml      | 57 ++++++++++++++++++++++
->  Documentation/devicetree/bindings/spi/sh-hspi.txt  | 26 ----------
->  2 files changed, 57 insertions(+), 26 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/spi/renesas,hspi.yaml
->  delete mode 100644 Documentation/devicetree/bindings/spi/sh-hspi.txt
+RZ/G2N (R8A774B1) SoC also has the R-Car Gen3 compatible SCIF and
+HSCIF ports, so document the SoC specific bindings.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/serial/renesas,sci-serial.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+index dd63151..b143d9a 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
++++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+@@ -26,6 +26,8 @@ Required properties:
+     - "renesas,hscif-r8a77470" for R8A77470 (RZ/G1C) HSCIF compatible UART.
+     - "renesas,scif-r8a774a1" for R8A774A1 (RZ/G2M) SCIF compatible UART.
+     - "renesas,hscif-r8a774a1" for R8A774A1 (RZ/G2M) HSCIF compatible UART.
++    - "renesas,scif-r8a774b1" for R8A774B1 (RZ/G2N) SCIF compatible UART.
++    - "renesas,hscif-r8a774b1" for R8A774B1 (RZ/G2N) HSCIF compatible UART.
+     - "renesas,scif-r8a774c0" for R8A774C0 (RZ/G2E) SCIF compatible UART.
+     - "renesas,hscif-r8a774c0" for R8A774C0 (RZ/G2E) HSCIF compatible UART.
+     - "renesas,scif-r8a7778" for R8A7778 (R-Car M1) SCIF compatible UART.
+-- 
+2.7.4
+
