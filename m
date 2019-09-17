@@ -2,65 +2,65 @@ Return-Path: <SRS0=L50G=XM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFA0C4CECE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Sep 2019 12:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F25DFC4CECD
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Sep 2019 12:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDCCF218AF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Sep 2019 12:48:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C57E1218AE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Sep 2019 12:51:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568724512;
-	bh=ccmEI6jZEd0dOUV90lbi49MGNfgvUALxit4VtkX8yr8=;
+	s=default; t=1568724703;
+	bh=8HTUssJ30wmJ3525tuBKRrrjnbwk2zySpokpgctlMDU=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=i1VKuhhdjOl0tAMy8fPHZhiEdmPZx1QgoMTZf5sJz3o0wuioHaNZL5oCF9MTQSH3n
-	 HHz0uneEzXEtNgO83ttcaCXQmK+pq0fACe9lIKc3HIKFxqgNqcowLqmMVyuJZhnkCx
-	 6GQ1HLqlDIMKLwMaj6mz6JyJffVvd3EBH9LiCXw8=
+	b=E1+809UAIYX/MnHplSsKfmorqLQQVjFjTUGrNQPMqY0YooQRQIbqdn42ldgX27n9Y
+	 3zd35omf8aygfEBk23ClAhb3BdKJ1Rs2WhHc1RmqzgmbBjXs5fjA8AGRcX8Z6Pg9jA
+	 ZtlrH9DjJEuw8qbClsXWzKaFESIzB7HOKMCqRNLc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbfIQMsb (ORCPT
+        id S1725901AbfIQMvn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 Sep 2019 08:48:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42546 "EHLO mail.kernel.org"
+        Tue, 17 Sep 2019 08:51:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727698AbfIQMsb (ORCPT
+        id S1725917AbfIQMvn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Sep 2019 08:48:31 -0400
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+        Tue, 17 Sep 2019 08:51:43 -0400
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1361E21881;
-        Tue, 17 Sep 2019 12:48:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29D4F218AE;
+        Tue, 17 Sep 2019 12:51:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568724510;
-        bh=ccmEI6jZEd0dOUV90lbi49MGNfgvUALxit4VtkX8yr8=;
+        s=default; t=1568724702;
+        bh=8HTUssJ30wmJ3525tuBKRrrjnbwk2zySpokpgctlMDU=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zuYtax/u6DxLdcesja2Bzozu71Z59ywEVfBi8wEzD6d4cIJLifBIOluvDQIwMnn32
-         uvbLpNEZ4qkRfT5wFMRiR9TjNgCDopsPFTSFq62J6vBDg8GroEDyM3V+IxlMxkU+jv
-         /pl7BNcxp1Hf+J3szEULioPAf2sCsIAKck+brZE4=
-Received: by mail-qt1-f171.google.com with SMTP id j1so4256105qth.1;
-        Tue, 17 Sep 2019 05:48:30 -0700 (PDT)
-X-Gm-Message-State: APjAAAWPvPXFdHPAPzLQdHSHt7BWr6FHewRkbbXlskTsHRDiougzP3ab
-        h8YmBoXtxKPguPRMizUdgFcH1KY+/uBrVVddIQ==
-X-Google-Smtp-Source: APXvYqyr4Sa3bzrHc9k8TKTb9uIVN+/yUg2kGr/uVQsXPc/jXmcL9I6oVZNUR0qdtqJ7ccPbnmXjS/UzryFxdZb5mwM=
-X-Received: by 2002:ac8:100d:: with SMTP id z13mr3425109qti.224.1568724509250;
- Tue, 17 Sep 2019 05:48:29 -0700 (PDT)
+        b=1uHhAjUQjIlqvRMEcXRDWSXV5OxlxLAP4lEsXxfuLJJxX9TZ49AOIIL/GEZ9FkwXq
+         1xevUYBmoOhmyK+PXmWYvHF/OYI9FtRZpT01pd6svZGxau07u4gNPXRbLdRvP8qFUr
+         nKsF3HK/cDUfoppvfOOMYiKL5qMG16PbCOs00RLQ=
+Received: by mail-qk1-f179.google.com with SMTP id 4so3817741qki.6;
+        Tue, 17 Sep 2019 05:51:42 -0700 (PDT)
+X-Gm-Message-State: APjAAAXDetFZflOijPeC//k4tMqt2oPxajjqSZt/UzJ896CtHFF+HdtQ
+        6o6S+33tL+4y/DadlpKucF0y7grMkbPG9HjLag==
+X-Google-Smtp-Source: APXvYqzGZsXAlPhiYh2alH7jD4hHEpI33KIoVHXQC9xRmxchQF6hwXrY16sEph5+/s5f2sKazHtQfHO0iFuWVh1oZd8=
+X-Received: by 2002:a37:682:: with SMTP id 124mr3420891qkg.393.1568724701388;
+ Tue, 17 Sep 2019 05:51:41 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190916153357.3880-1-horms+renesas@verge.net.au>
- <20190916153357.3880-2-horms+renesas@verge.net.au> <20190917112937.g3jna2kc7rw7zynd@verge.net.au>
-In-Reply-To: <20190917112937.g3jna2kc7rw7zynd@verge.net.au>
+References: <20190916075352.32108-1-horms+renesas@verge.net.au>
+In-Reply-To: <20190916075352.32108-1-horms+renesas@verge.net.au>
 From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 17 Sep 2019 07:48:17 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJmfrPZA7=uWG_DOOzFsLsHeg2=+86d_91mnmyv9UeLJg@mail.gmail.com>
-Message-ID: <CAL_JsqJmfrPZA7=uWG_DOOzFsLsHeg2=+86d_91mnmyv9UeLJg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: bus: simple-pm-bus: convert bindings to json-schema
-To:     Simon Horman <horms@verge.net.au>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
+Date:   Tue, 17 Sep 2019 07:51:29 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLq7sUyh=E=D-Lk+Q=JrrKdsHkfsF88p=703mn-gwiLSA@mail.gmail.com>
+Message-ID: <CAL_JsqLq7sUyh=E=D-Lk+Q=JrrKdsHkfsF88p=703mn-gwiLSA@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: hspi: Convert bindings to json-schema
+To:     Simon Horman <horms+renesas@verge.net.au>
+Cc:     Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mark Rutland <mark.rutland@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+        linux-spi <linux-spi@vger.kernel.org>,
         devicetree@vger.kernel.org,
         "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
         <linux-renesas-soc@vger.kernel.org>
@@ -70,140 +70,37 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 6:29 AM Simon Horman <horms@verge.net.au> wrote:
+On Mon, Sep 16, 2019 at 2:54 AM Simon Horman <horms+renesas@verge.net.au> wrote:
 >
-> On Mon, Sep 16, 2019 at 05:33:56PM +0200, Simon Horman wrote:
-> > Convert Simple Power-Managed Bus bindings documentation to json-schema.
-> >
-> > As a side effect of this change only simple-pm-bus is used in example. A
-> > follow-up patch will provide an example for the separately documented
-> > Renesas Bus State Controller (BSC) that uses "renesas,bsc-sh73a0" and
-> > "renesas,bsc" compat strings.
-> >
-> > Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-> > ---
-> > * Tested using:
-> >   # ARCH=arm64 make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/bus/simple-pm-bus.yaml
-> >   # ARCH=arm   make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/bus/simple-pm-bus.yaml
-> > ---
-> >  .../devicetree/bindings/bus/simple-pm-bus.txt      | 44 --------------
-> >  .../devicetree/bindings/bus/simple-pm-bus.yaml     | 68 ++++++++++++++++++++++
-> >  2 files changed, 68 insertions(+), 44 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/bus/simple-pm-bus.txt
-> >  create mode 100644 Documentation/devicetree/bindings/bus/simple-pm-bus.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/bus/simple-pm-bus.txt b/Documentation/devicetree/bindings/bus/simple-pm-bus.txt
-> > deleted file mode 100644
-> > index 6f15037131ed..000000000000
-> > --- a/Documentation/devicetree/bindings/bus/simple-pm-bus.txt
-> > +++ /dev/null
-> > @@ -1,44 +0,0 @@
-> > -Simple Power-Managed Bus
-> > -========================
-> > -
-> > -A Simple Power-Managed Bus is a transparent bus that doesn't need a real
-> > -driver, as it's typically initialized by the boot loader.
-> > -
-> > -However, its bus controller is part of a PM domain, or under the control of a
-> > -functional clock.  Hence, the bus controller's PM domain and/or clock must be
-> > -enabled for child devices connected to the bus (either on-SoC or externally)
-> > -to function.
-> > -
-> > -While "simple-pm-bus" follows the "simple-bus" set of properties, as specified
-> > -in the Devicetree Specification, it is not an extension of "simple-bus".
-> > -
-> > -
-> > -Required properties:
-> > -  - compatible: Must contain at least "simple-pm-bus".
-> > -             Must not contain "simple-bus".
-> > -             It's recommended to let this be preceded by one or more
-> > -             vendor-specific compatible values.
-> > -  - #address-cells, #size-cells, ranges: Must describe the mapping between
-> > -             parent address and child address spaces.
-> > -
-> > -Optional platform-specific properties for clock or PM domain control (at least
-> > -one of them is required):
-> > -  - clocks: Must contain a reference to the functional clock(s),
-> > -  - power-domains: Must contain a reference to the PM domain.
-> > -Please refer to the binding documentation for the clock and/or PM domain
-> > -providers for more details.
-> > -
-> > -
-> > -Example:
-> > -
-> > -     bsc: bus@fec10000 {
-> > -             compatible = "renesas,bsc-sh73a0", "renesas,bsc",
-> > -                          "simple-pm-bus";
-> > -             #address-cells = <1>;
-> > -             #size-cells = <1>;
-> > -             ranges = <0 0 0x20000000>;
-> > -             reg = <0xfec10000 0x400>;
-> > -             interrupts = <0 39 IRQ_TYPE_LEVEL_HIGH>;
-> > -             clocks = <&zb_clk>;
-> > -             power-domains = <&pd_a4s>;
-> > -     };
-> > diff --git a/Documentation/devicetree/bindings/bus/simple-pm-bus.yaml b/Documentation/devicetree/bindings/bus/simple-pm-bus.yaml
-> > new file mode 100644
-> > index 000000000000..72a3644974e3
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/bus/simple-pm-bus.yaml
-> > @@ -0,0 +1,68 @@
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/bus/simple-pm-bus.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Simple Power-Managed Bus
-> > +
-> > +maintainers:
-> > +  - Geert Uytterhoeven <geert+renesas@glider.be>
-> > +
-> > +description: |
-> > +  A Simple Power-Managed Bus is a transparent bus that doesn't need a real
-> > +  driver, as it's typically initialized by the boot loader.
-> > +
-> > +  However, its bus controller is part of a PM domain, or under the control
-> > +  of a functional clock.  Hence, the bus controller's PM domain and/or
-> > +  clock must be enabled for child devices connected to the bus (either
-> > +  on-SoC or externally) to function.
-> > +
-> > +  While "simple-pm-bus" follows the "simple-bus" set of properties, as
-> > +  specified in the Devicetree Specification, it is not an extension of
-> > +  "simple-bus".
-> > +
-> > +
+> Convert Renesas HSPI bindings documentation to json-schema.
+> Also name bindings documentation file according to the compat string
+> being documented.
 >
-> There is an extra blank line above, I will plan to remove it in v2.
+> As a side effect of this change all currently supported/used compat
+> strings are listed while no while card compat string is documented.
+> This, in my opinion, is desirable as only supported hardware should
+> be documented.
 >
-> > +properties:
-> > +  compatible:
-> > +    items:
-> > +       - const: simple-pm-bus
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> Based on v5.3-rc1
+> Tested using:
+>   ARCH=arm make dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/spi/renesas,hspi.yaml
 >
-> The following patch, for Renesas BSC, also
-> describes the simple-pm-bus but also requires other compatible
-> strings to be present.
->
-> In order to facilitate that I tried the following:
->
->    compatible:
->       contains:
->          const: simple-pm-bus
->       additionalItems: true
->
-> This allows make dtbs_check DT_SCHEMA_FILES=.../simple-pm-bus.yaml to pass
-> in cases where there are more compat strings pesent. However
-> make dtbs_check DT_SCHEMA_FILES=...renesas,bsc.yaml (schema file
-> introduced in following patch) fails in the case
-> where the only compat string is simple-pm-bus.
->
-> make dtbs_check DT_SCHEMA_FILES=...renesas,bsc.yaml also fails
-> due to the reg property not being present for the same compat case,
-> which should be valid according to simple-pm-bus.yaml.
->
-> Does anyone have any guidance on how to proceed?
+> v2
+> - reference spi-controller.yaml# and thus do not document
+>   #address-cells and #size-cells properties.
+>   These properties are still listed as required.
+> - Drop comment regarding pinctrl properties.
+>   These are not needed as only one state, "default", is supported
+> - Document clocks and power-domains properties.
+>   The clocks property is required. Add these properties to the example.
+> - Drop unnecessary interrupt-parent property from example.
+> ---
+>  .../devicetree/bindings/spi/renesas,hspi.yaml      | 57 ++++++++++++++++++++++
+>  Documentation/devicetree/bindings/spi/sh-hspi.txt  | 26 ----------
+>  2 files changed, 57 insertions(+), 26 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/spi/renesas,hspi.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/spi/sh-hspi.txt
 
-You'll need a custom 'select' in renesas,bsc.yaml that leaves out
-"simple-pm-bus". See "panel-lvds" users in linux-next for an example.
-
-Rob
+Reviewed-by: Rob Herring <robh@kernel.org>
