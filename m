@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED134C3A5A2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Sep 2019 15:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB5DC3A5A2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Sep 2019 15:40:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C60802080F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Sep 2019 15:29:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 977C820882
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Sep 2019 15:40:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403919AbfITP36 (ORCPT
+        id S2392883AbfITPkI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 20 Sep 2019 11:29:58 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45407 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403864AbfITP35 (ORCPT
+        Fri, 20 Sep 2019 11:40:08 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45413 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392871AbfITPkI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Sep 2019 11:29:57 -0400
-Received: by mail-ot1-f65.google.com with SMTP id 41so6488882oti.12
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Sep 2019 08:29:57 -0700 (PDT)
+        Fri, 20 Sep 2019 11:40:08 -0400
+Received: by mail-ot1-f67.google.com with SMTP id 41so6517690oti.12
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 20 Sep 2019 08:40:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=UP0oRpgLAIe+2OEutNG/3VSKgprsvt7BpvvezNipKBE=;
-        b=LLtrIu8dMKvYyuO4NJ36sPEwPumuVV6TcBY6/cgxOlVGTpJMbh3jV+BGUEDP6N1Oub
-         9MG0bP9byL8JFrF6+NmRqvu1DiMShBKGVYAZ9z43WPA/C7As/RGCLLL4J5rl9k6p1i26
-         ZtH0xEUMOI7c8Z31C3FGVJW2peDSj85ddnwVm7EZLhsXEbP81JMPI8aq6HZyYtoJEoJa
-         wzLSLuAq9U71IFV3vech0RW9ADRlG+zsClZZmBIdkZos4uXqA0OMYECp+DOVyZk5PPfS
-         ImWQSsxVjRi5CN3Sqb4LJSHA65MdYhpK398iRJSs3NAbi/UgYhkbHfpMO+bMAUFwTSgi
-         JaeQ==
-X-Gm-Message-State: APjAAAX46LFgRd1bsUQIs6Yt5rDRWoScerG+Sf46pZXCfSZbPUyDRsCC
-        iER870/IKK8QzOjtD/CtIXlqgDgKqrUYcA7OzZQ=
-X-Google-Smtp-Source: APXvYqz37pllGqkopGtYOcycw1flmuxCTshmvAmWPsz6RjUHKBCvrRM0TiZr+jCVndAiYdhDIHx0Qgyy0E460z6JAv0=
-X-Received: by 2002:a9d:5784:: with SMTP id q4mr11224366oth.107.1568993396755;
- Fri, 20 Sep 2019 08:29:56 -0700 (PDT)
+        bh=RfZSx7SD8ZuRLBfw2hqluDRlrVuYtieyhKCmX8EcyQk=;
+        b=lc9YXlDac9IfbqEUVepYP3eIRrOF21a5G0oWibTy0zlvaW1Z9NIgZR9RzjeqRDi03N
+         T2MSFHYK1uq6Xy0bQRChJtCD+bpGnOf2ySgaS5sZCppHUQUEuOA5IbvPNbonYyz/6vUU
+         G/Pl0Z4NkUJuhv7LKUnx0k062IcjWaSrO89FQlDM9vWNJTXfknJzTsgpQ/0K/iRHoJOw
+         QMNauFdutBALJk3VKeDmCTIaDO+Xdq1QiI+fZxU2vzKSaWNpxmuE2T4m2rr09c3rfBVt
+         u5ZGJposqKPD0w8i7hzs8cKe8VXrGBkD6lkv/UJzOtGnKj9RV8O8ePg84oOVva5169m1
+         +95w==
+X-Gm-Message-State: APjAAAXP8liEJtViKiQ7sRf6HfnFbDcAVwbk8RfWN2+UUWXL6lkwdQ4b
+        V2Kx9u5MTsS9Vqq3R1jknZT3wie2RYauawY1Tnw=
+X-Google-Smtp-Source: APXvYqxcUIWot9A/TT7TbnILGVty6XQyMsyglEtQTR+leaQHdwLggYJcvaTfmGLfqz6wFRDq9byojhBtMb2Fla1Y5FM=
+X-Received: by 2002:a9d:5a06:: with SMTP id v6mr11943307oth.250.1568994007467;
+ Fri, 20 Sep 2019 08:40:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <1568881036-4404-1-git-send-email-biju.das@bp.renesas.com>
- <1568881036-4404-3-git-send-email-biju.das@bp.renesas.com> <CAMuHMdUvVKYZuzS7Z9uiN=KmdKm6GPnGS0oZbGZKfkbaUOB+Ng@mail.gmail.com>
-In-Reply-To: <CAMuHMdUvVKYZuzS7Z9uiN=KmdKm6GPnGS0oZbGZKfkbaUOB+Ng@mail.gmail.com>
+References: <1568881036-4404-1-git-send-email-biju.das@bp.renesas.com> <1568881036-4404-5-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1568881036-4404-5-git-send-email-biju.das@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 20 Sep 2019 17:29:45 +0200
-Message-ID: <CAMuHMdVjycsCh87-nJF1X9Ow499F4tMBm8fMABQL6SNHKWXRQw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/8] soc: renesas: rcar-sysc: Add r8a774b1 support
+Date:   Fri, 20 Sep 2019 17:39:56 +0200
+Message-ID: <CAMuHMdUZXMUeUfoBP0P1028uyE-bNhge4bTj9_w+jM=RAFafDA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/8] soc: renesas: rcar-rst: Add support for RZ/G2N
 To:     Biju Das <biju.das@bp.renesas.com>
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
@@ -59,26 +58,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
-
-On Fri, Sep 20, 2019 at 4:54 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Thu, Sep 19, 2019 at 10:17 AM Biju Das <biju.das@bp.renesas.com> wrote:
-> > Add support for RZ/G2N (R8A774B1) SoC power areas to the R-Car SYSC
-> > driver.
-> >
-> > Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-
-> > --- /dev/null
-> > +++ b/drivers/soc/renesas/r8a774b1-sysc.c
-
-> > +const struct rcar_sysc_info r8a774b1_sysc_info __initconst = {
-> > +       .areas = r8a774b1_areas,
-> > +       .num_areas = ARRAY_SIZE(r8a774b1_areas),
+On Thu, Sep 19, 2019 at 10:17 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add support for RZ/G2N (R8A774B1) to the R-Car RST driver.
 >
-> Given the Hardware User's Manual documents the presence of the SYSCEXTMASK
-> register on RZ/G2N, you want to fill in the .extmask_{offs,val} fields, too.
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-FTR: I'm looking at Rev. 0.80 of the manual.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.5.
 
 Gr{oetje,eeting}s,
 
