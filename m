@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59472C3A5A6
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 22 Sep 2019 19:26:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE39C3A5A2
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 22 Sep 2019 19:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30236206B6
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 22 Sep 2019 19:26:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDA6620882
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 22 Sep 2019 19:27:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569180411;
-	bh=vXDkuYne+Hy4F82vAvYwB/USPCaWPvacv5O9Bg8gQqY=;
+	s=default; t=1569180446;
+	bh=IXyyax35NLJ6YWTbr1HB6lNWXUjGA3if8XZRop/f770=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IRZzlsIZdx8shiKjz700iTF9ZBItkAv3vHaC1jjWGov9DwXg3qrOEaiMlspH+gC85
-	 OHiJZCXP7bPI+hn3J8h92tIpfVZLxmBDgyRUPuLszs9rYU89tdtsae6Id1g21OxtCQ
-	 tC+ED0FsAmz1Gqi9wq4Mmx5L0opBf+uCsWNQEmys=
+	b=dzyo7hiuOn7vpMsdYBpe/p4JIijxlPpmWiY8Er7n3ZsaTNSAoEujJCZ6K9Fx8/OXE
+	 k1ULSb7zRn98REouUe1MO+c3EiNiK4AGmvx+IqTvykeUI9sQQwItdE/XGpTL/1Orya
+	 AXS6iao9c+cmYZgCE2DTVwamllvzBfWD2HFynEm8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbfIVT0q (ORCPT
+        id S2404974AbfIVSvX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 22 Sep 2019 15:26:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49658 "EHLO mail.kernel.org"
+        Sun, 22 Sep 2019 14:51:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405900AbfIVSvk (ORCPT
+        id S2404935AbfIVSvX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Sep 2019 14:51:40 -0400
+        Sun, 22 Sep 2019 14:51:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35E2721A4A;
-        Sun, 22 Sep 2019 18:51:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 886742190F;
+        Sun, 22 Sep 2019 18:51:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569178299;
-        bh=vXDkuYne+Hy4F82vAvYwB/USPCaWPvacv5O9Bg8gQqY=;
+        s=default; t=1569178282;
+        bh=IXyyax35NLJ6YWTbr1HB6lNWXUjGA3if8XZRop/f770=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i0+ogpOWdDp+Ksp+/KgMQBzEA+LzODEuwYoO45A7+mxRndd6Bk8YVh5d2RUC21QiG
-         ZMuecKxGoLq0ibBKhXH/BaHd2IMrkvHB7zBdddtsVx4TwnuxAg+IR9jlcSrpVGhX+B
-         iMkV+O7BsyO1ugUoUmKv/zEiWAMqE6kbgqGjoqg4=
+        b=V5zd9nRh5tffXN9AsP+ZTiob+elXIuIjWyCtYinC8IqJx3vEqoj3EevNML9p/dE5N
+         fhbk9zGG2H9qEKB4zqOLwWsffeSWOQjzCPBT4VCPSPjibCj8yIOLc0zBcGBuYLpDN6
+         bS0pWIqDCkDsW/Ha8rB5LhGReXUBG78syIBLsO/I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 073/185] media: vsp1: fix memory leak of dl on error return path
-Date:   Sun, 22 Sep 2019 14:47:31 -0400
-Message-Id: <20190922184924.32534-73-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 063/185] media: fdp1: Reduce FCP not found message level to debug
+Date:   Sun, 22 Sep 2019 14:47:21 -0400
+Message-Id: <20190922184924.32534-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190922184924.32534-1-sashal@kernel.org>
 References: <20190922184924.32534-1-sashal@kernel.org>
@@ -63,42 +63,43 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 70c55c1ad1a76e804ee5330e134674f5d2741cb7 ]
+[ Upstream commit 4fd22938569c14f6092c05880ca387409d78355f ]
 
-Currently when the call vsp1_dl_body_get fails and returns null the
-error return path leaks the allocation of dl. Fix this by kfree'ing
-dl before returning.
+When support for the IPMMU is not enabled, the FDP driver may be
+probe-deferred multiple times, causing several messages to be printed
+like:
 
-Addresses-Coverity: ("Resource leak")
+    rcar_fdp1 fe940000.fdp1: FCP not found (-517)
+    rcar_fdp1 fe944000.fdp1: FCP not found (-517)
 
-Fixes: 5d7936b8e27d ("media: vsp1: Convert display lists to use new body pool")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fix this by reducing the message level to debug level, as is done in the
+VSP1 driver.
+
+Fixes: 4710b752e029f3f8 ("[media] v4l: Add Renesas R-Car FDP1 Driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/vsp1/vsp1_dl.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/media/platform/rcar_fdp1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/vsp1/vsp1_dl.c b/drivers/media/platform/vsp1/vsp1_dl.c
-index 104b6f5145364..d7b43037e500a 100644
---- a/drivers/media/platform/vsp1/vsp1_dl.c
-+++ b/drivers/media/platform/vsp1/vsp1_dl.c
-@@ -557,8 +557,10 @@ static struct vsp1_dl_list *vsp1_dl_list_alloc(struct vsp1_dl_manager *dlm)
- 
- 	/* Get a default body for our list. */
- 	dl->body0 = vsp1_dl_body_get(dlm->pool);
--	if (!dl->body0)
-+	if (!dl->body0) {
-+		kfree(dl);
- 		return NULL;
-+	}
- 
- 	header_offset = dl->body0->max_entries * sizeof(*dl->body0->entries);
- 
+diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
+index b8615a288e2b7..6ca2cb15291f1 100644
+--- a/drivers/media/platform/rcar_fdp1.c
++++ b/drivers/media/platform/rcar_fdp1.c
+@@ -2306,7 +2306,7 @@ static int fdp1_probe(struct platform_device *pdev)
+ 		fdp1->fcp = rcar_fcp_get(fcp_node);
+ 		of_node_put(fcp_node);
+ 		if (IS_ERR(fdp1->fcp)) {
+-			dev_err(&pdev->dev, "FCP not found (%ld)\n",
++			dev_dbg(&pdev->dev, "FCP not found (%ld)\n",
+ 				PTR_ERR(fdp1->fcp));
+ 			return PTR_ERR(fdp1->fcp);
+ 		}
 -- 
 2.20.1
 
