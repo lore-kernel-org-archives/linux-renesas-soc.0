@@ -7,31 +7,29 @@ X-Spam-Status: No, score=-10.0 required=3.0
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CCEAC4360C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 30 Sep 2019 09:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 718D6C4360C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 30 Sep 2019 09:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F47621721
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 30 Sep 2019 09:15:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46E9A2086A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 30 Sep 2019 09:15:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730217AbfI3JPi (ORCPT
+        id S1730087AbfI3JPn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 30 Sep 2019 05:15:38 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:35906 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726952AbfI3JPi (ORCPT
+        Mon, 30 Sep 2019 05:15:43 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:56783 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726952AbfI3JPm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 30 Sep 2019 05:15:38 -0400
+        Mon, 30 Sep 2019 05:15:42 -0400
 X-IronPort-AV: E=Sophos;i="5.64,565,1559487600"; 
-   d="scan'208";a="27901443"
+   d="scan'208";a="27682651"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 30 Sep 2019 18:15:37 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 30 Sep 2019 18:15:41 +0900
 Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 81B8940078C1;
-        Mon, 30 Sep 2019 18:15:34 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8F9174009BD2;
+        Mon, 30 Sep 2019 18:15:38 +0900 (JST)
 From:   Biju Das <biju.das@bp.renesas.com>
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
+To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
 Cc:     Biju Das <biju.das@bp.renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -41,9 +39,9 @@ Cc:     Biju Das <biju.das@bp.renesas.com>,
         Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH 3/4] dt-bindings: display: renesas: lvds: Document r8a774b1 bindings
-Date:   Mon, 30 Sep 2019 10:15:04 +0100
-Message-Id: <1569834905-42868-4-git-send-email-biju.das@bp.renesas.com>
+Subject: [PATCH 4/4] drm: rcar-du: lvds: Add r8a774b1 support
+Date:   Mon, 30 Sep 2019 10:15:05 +0100
+Message-Id: <1569834905-42868-5-git-send-email-biju.das@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1569834905-42868-1-git-send-email-biju.das@bp.renesas.com>
 References: <1569834905-42868-1-git-send-email-biju.das@bp.renesas.com>
@@ -52,25 +50,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the RZ/G2N (R8A774B1) LVDS bindings.
+The LVDS encoders on RZ/G2N SoC is similar to R-Car M3-N. Add support for
+RZ/G2N (R8A774B1) SoC to the LVDS encoder driver.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt | 1 +
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-index c6a196d..c62ce24 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.txt
-@@ -10,6 +10,7 @@ Required properties:
-   - "renesas,r8a7743-lvds" for R8A7743 (RZ/G1M) compatible LVDS encoders
-   - "renesas,r8a7744-lvds" for R8A7744 (RZ/G1N) compatible LVDS encoders
-   - "renesas,r8a774a1-lvds" for R8A774A1 (RZ/G2M) compatible LVDS encoders
-+  - "renesas,r8a774b1-lvds" for R8A774B1 (RZ/G2N) compatible LVDS encoders
-   - "renesas,r8a774c0-lvds" for R8A774C0 (RZ/G2E) compatible LVDS encoders
-   - "renesas,r8a7790-lvds" for R8A7790 (R-Car H2) compatible LVDS encoders
-   - "renesas,r8a7791-lvds" for R8A7791 (R-Car M2-W) compatible LVDS encoders
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index 082d02c..3c24a6d 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -929,6 +929,7 @@ static const struct of_device_id rcar_lvds_of_table[] = {
+ 	{ .compatible = "renesas,r8a7743-lvds", .data = &rcar_lvds_gen2_info },
+ 	{ .compatible = "renesas,r8a7744-lvds", .data = &rcar_lvds_gen2_info },
+ 	{ .compatible = "renesas,r8a774a1-lvds", .data = &rcar_lvds_gen3_info },
++	{ .compatible = "renesas,r8a774b1-lvds", .data = &rcar_lvds_gen3_info },
+ 	{ .compatible = "renesas,r8a774c0-lvds", .data = &rcar_lvds_r8a77990_info },
+ 	{ .compatible = "renesas,r8a7790-lvds", .data = &rcar_lvds_r8a7790_info },
+ 	{ .compatible = "renesas,r8a7791-lvds", .data = &rcar_lvds_gen2_info },
 -- 
 2.7.4
 
