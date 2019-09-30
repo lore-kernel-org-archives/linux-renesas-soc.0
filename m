@@ -1,89 +1,70 @@
-Return-Path: <SRS0=pH6O=XX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=dTnv=XZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E2BC4360C
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Sep 2019 18:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3D5C388F3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 30 Sep 2019 08:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04BE12082F
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Sep 2019 18:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 677FC2190F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 30 Sep 2019 08:19:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728658AbfI1SYd (ORCPT
+        id S1729962AbfI3ITL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 28 Sep 2019 14:24:33 -0400
-Received: from sauhun.de ([88.99.104.3]:36584 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726026AbfI1SYd (ORCPT
+        Mon, 30 Sep 2019 04:19:11 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:11364 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729232AbfI3ITL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 28 Sep 2019 14:24:33 -0400
-Received: from localhost (unknown [46.183.103.17])
-        by pokefinder.org (Postfix) with ESMTPSA id 4122B2C0489;
-        Sat, 28 Sep 2019 20:24:30 +0200 (CEST)
-Date:   Sat, 28 Sep 2019 20:24:29 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Chris Brandt <chris.brandt@renesas.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        stable@vger.kernel.org,
-        Chien Nguyen <chien.nguyen.eb@rvc.renesas.com>
-Subject: Re: [PATCH v2] i2c: riic: Clear NACK in tend isr
-Message-ID: <20190928182423.GC12219@kunai>
-References: <20190926121909.1795-1-chris.brandt@renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SO98HVl1bnMOfKZd"
-Content-Disposition: inline
-In-Reply-To: <20190926121909.1795-1-chris.brandt@renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 30 Sep 2019 04:19:11 -0400
+X-IronPort-AV: E=Sophos;i="5.64,565,1559487600"; 
+   d="scan'208";a="27894407"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 30 Sep 2019 17:19:09 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id F185E400A880;
+        Mon, 30 Sep 2019 17:19:06 +0900 (JST)
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v2 0/5] Add RZ/G2N SYS-DMAC/SCIF/HSCIF/GPIO/EthernetAVB support
+Date:   Mon, 30 Sep 2019 09:18:42 +0100
+Message-Id: <1569831527-1250-1-git-send-email-biju.das@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+This patch series add SYS-DMAC/SCIF/HSCIF/GPIO/EthernetAVB driver support
+for RZ/G2N SoC.
 
---SO98HVl1bnMOfKZd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+V1-->V2
+ * Fixed the conflict related to AVB node with latest renesas-devel branch
 
-On Thu, Sep 26, 2019 at 07:19:09AM -0500, Chris Brandt wrote:
-> The NACKF flag should be cleared in INTRIICNAKI interrupt processing as
-> description in HW manual.
->=20
-> This issue shows up quickly when PREEMPT_RT is applied and a device is
-> probed that is not plugged in (like a touchscreen controller). The result
-> is endless interrupts that halt system boot.
->=20
-> Fixes: 310c18a41450 ("i2c: riic: add driver")
-> Cc: stable@vger.kernel.org
-> Reported-by: Chien Nguyen <chien.nguyen.eb@rvc.renesas.com>
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
->=20
+Biju Das (5):
+  arm64: dts: renesas: r8a774b1: Add SYS-DMAC device nodes
+  arm64: dts: renesas: r8a774b1: Add SCIF and HSCIF nodes
+  arm64: dts: renesas: r8a774b1: Add GPIO device nodes
+  arm64: dts: renesas: r8a774b1: Add Ethernet AVB node
+  arm64: dts: renesas: Add HiHope RZ/G2N sub board support
 
-Applied to for-current, thanks!
+ arch/arm64/boot/dts/renesas/Makefile               |   1 +
+ .../boot/dts/renesas/r8a774b1-hihope-rzg2n-ex.dts  |  15 +
+ arch/arm64/boot/dts/renesas/r8a774b1.dtsi          | 381 ++++++++++++++++++++-
+ 3 files changed, 386 insertions(+), 11 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-ex.dts
 
+-- 
+2.7.4
 
---SO98HVl1bnMOfKZd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl2PpVcACgkQFA3kzBSg
-KbZtXw/+LLgzjDx2AqGztOvytSm+LJzDaDWx5E1ZHDGJuAnuU167yv4u+4Uxcx9S
-4u3zG7ZlniHvRNu1fKz8/0QcRtiJMnwqupjHFRzf6v3xFluRsNPykYL9YipNgUgZ
-clNCGxJjhEeaqLxHCP9XR2LtZMbiukafQTp+bbaa1YJM4JwPIwGDc5QasdbdP4/0
-C6+KRSRkBhgL+VFtZUL21UwXxUkAem2q/pQtA08/Vrk3Uvu5tcLTJytn+kqOBPvh
-lcvRQ080lapDUVrLzsZqk7fHQvBpxwXAZliaGwmCGtqMDgeCHdyisblXqNFWO1bE
-jTqnm27un/h7SZxVhc1mRUv0uWSHn1V3fGP1yXGWhk1LfSAgJFefck/eZZovXjsh
-KUFR5lxn1y728z++2lI+djH419C0zpTkMWqgZO/0zT8H2Wc6zkC1BGGCxxSJe6Dc
-V2ZHEeZPgaQAngDeAGTU0zIzVYzhHcUUfi6L8JvemkEtYF+7H36aJhgjNyEz4/KT
-SvUOOfT9yg3havUBGkcFf/mFwb2vPe0+AdoNbvOhEN9zFO0GD3DQXPKwxZdHKNuJ
-Ah376vQkTWehzK9XBJl3GlzQKam+6YS6YeZHuhKo2QNEhiZ0e7/We09x99vgkzsX
-46OUdWg4dtMBCdJ4NYcfMdBYb9oeu7+LAB3qAomREPB9KrkCfd4=
-=sGSV
------END PGP SIGNATURE-----
-
---SO98HVl1bnMOfKZd--
