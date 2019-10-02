@@ -2,31 +2,31 @@ Return-Path: <SRS0=voFw=X3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 374AEC352AA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B21ECE58A
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Oct 2019 15:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07BEF21920
+	by mail.kernel.org (Postfix) with ESMTP id 33B6C21D80
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Oct 2019 15:20:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728463AbfJBPUw (ORCPT
+        id S1728515AbfJBPUs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 2 Oct 2019 11:20:52 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:41426 "EHLO
+        Wed, 2 Oct 2019 11:20:48 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:21434 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726708AbfJBPUv (ORCPT
+        by vger.kernel.org with ESMTP id S1728478AbfJBPUs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Oct 2019 11:20:51 -0400
+        Wed, 2 Oct 2019 11:20:48 -0400
 X-IronPort-AV: E=Sophos;i="5.64,574,1559487600"; 
-   d="scan'208";a="28118091"
+   d="scan'208";a="28118084"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 03 Oct 2019 00:20:50 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 03 Oct 2019 00:20:43 +0900
 Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 472284006A99;
-        Thu,  3 Oct 2019 00:20:47 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E21104006A99;
+        Thu,  3 Oct 2019 00:20:40 +0900 (JST)
 From:   Biju Das <biju.das@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
@@ -39,88 +39,47 @@ Cc:     Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v3 2/9] arm64: dts: renesas: r8a774b1: Add DU device to DT
-Date:   Wed,  2 Oct 2019 16:20:12 +0100
-Message-Id: <1570029619-43238-3-git-send-email-biju.das@bp.renesas.com>
+Subject: [PATCH v3 0/9] Add Display support
+Date:   Wed,  2 Oct 2019 16:20:10 +0100
+Message-Id: <1570029619-43238-1-git-send-email-biju.das@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1570029619-43238-1-git-send-email-biju.das@bp.renesas.com>
-References: <1570029619-43238-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add the DU device to r8a774b1 SoC DT.
+This patch adds display support for hihope RZ/G2N board.
 
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
- V1-->V2
-   * No change
-   * Added Laurent's Reviewed-by tag.
- V2-->V3
-   * No Change
----
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 38 +++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+This patch depend upon
+https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=177939
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-index 9d5630a..777b45d 100644
---- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-@@ -1285,7 +1285,18 @@
- 		};
- 
- 		du: display@feb00000 {
-+			compatible = "renesas,du-r8a774b1";
- 			reg = <0 0xfeb00000 0 0x80000>;
-+			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 724>,
-+				 <&cpg CPG_MOD 723>,
-+				 <&cpg CPG_MOD 721>;
-+			clock-names = "du.0", "du.1", "du.3";
-+			status = "disabled";
-+
-+			vsps = <&vspd0 0>, <&vspd1 0>, <&vspd0 1>;
- 
- 			ports {
- 				#address-cells = <1>;
-@@ -1304,6 +1315,33 @@
- 				port@2 {
- 					reg = <2>;
- 					du_out_lvds0: endpoint {
-+						remote-endpoint = <&lvds0_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		lvds0: lvds@feb90000 {
-+			compatible = "renesas,r8a774b1-lvds";
-+			reg = <0 0xfeb90000 0 0x14>;
-+			clocks = <&cpg CPG_MOD 727>;
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 727>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					lvds0_in: endpoint {
-+						remote-endpoint = <&du_out_lvds0>;
-+					};
-+				};
-+				port@1 {
-+					reg = <1>;
-+					lvds0_out: endpoint {
- 					};
- 				};
- 			};
+V1-->V2
+ * Incorporated Laurent's review comments for LVDS panels.
+V2-->V3
+ * Incorporated Laurent's review comments for LVDS panels.
+
+Biju Das (9):
+  arm64: dts: renesas: hihope-common: Move du clk properties out of
+    common dtsi
+  arm64: dts: renesas: r8a774b1: Add DU device to DT
+  arm64: dts: renesas: r8a774b1: Add HDMI encoder instance
+  arm64: dts: renesas: r8a774b1-hihope-rzg2n: Add display clock
+    properties
+  arm64: dts: renesas: r8a774b1: Add FDP1 device nodes
+  arm64: dts: renesas: r8a774b1: Add PWM device nodes
+  arm64: dts: renesas: hihope-rzg2-ex: Enable backlight
+  arm64: dts: renesas: hihope-rzg2-ex: Add LVDS support
+  arm64: dts: renesas: Add support for Advantech idk-1110wr LVDS panel
+
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi     |   8 --
+ arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi    |  49 ++++++++
+ .../boot/dts/renesas/r8a774a1-hihope-rzg2m.dts     |  11 ++
+ .../boot/dts/renesas/r8a774b1-hihope-rzg2n.dts     |  11 ++
+ arch/arm64/boot/dts/renesas/r8a774b1.dtsi          | 133 +++++++++++++++++++++
+ .../renesas/rzg2-advantech-idk-1110wr-panel.dtsi   |  41 +++++++
+ 6 files changed, 245 insertions(+), 8 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg2-advantech-idk-1110wr-panel.dtsi
+
 -- 
 2.7.4
 
