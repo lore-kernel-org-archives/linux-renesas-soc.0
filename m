@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0789AC352AA
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Oct 2019 10:09:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F91C35280
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Oct 2019 10:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA76321783
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Oct 2019 10:09:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 759C021783
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Oct 2019 10:09:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbfJBKJI (ORCPT
+        id S1727451AbfJBKJN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 2 Oct 2019 06:09:08 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:55208 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726742AbfJBKJI (ORCPT
+        Wed, 2 Oct 2019 06:09:13 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:38123 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727409AbfJBKJN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Oct 2019 06:09:08 -0400
-X-IronPort-AV: E=Sophos;i="5.64,574,1559487600"; 
-   d="scan'208";a="28103947"
+        Wed, 2 Oct 2019 06:09:13 -0400
+X-IronPort-AV: E=Sophos;i="5.64,573,1559487600"; 
+   d="scan'208";a="27885216"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Oct 2019 19:09:07 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 02 Oct 2019 19:09:10 +0900
 Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 910B242034EB;
-        Wed,  2 Oct 2019 19:09:04 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BCF2941EB064;
+        Wed,  2 Oct 2019 19:09:07 +0900 (JST)
 From:   Biju Das <biju.das@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
@@ -39,9 +39,9 @@ Cc:     Biju Das <biju.das@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: [PATCH v2 5/9] arm64: dts: renesas: r8a774b1: Add FDP1 device nodes
-Date:   Wed,  2 Oct 2019 11:08:22 +0100
-Message-Id: <1570010906-47486-6-git-send-email-biju.das@bp.renesas.com>
+Subject: [PATCH v2 6/9] arm64: dts: renesas: r8a774b1: Add PWM device nodes
+Date:   Wed,  2 Oct 2019 11:08:23 +0100
+Message-Id: <1570010906-47486-7-git-send-email-biju.das@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1570010906-47486-1-git-send-email-biju.das@bp.renesas.com>
 References: <1570010906-47486-1-git-send-email-biju.das@bp.renesas.com>
@@ -50,7 +50,7 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The r8a774b1 has a single FDP1 instance.
+This patch adds PWM device nodes to r8a774b1 SoC DT.
 
 Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -59,30 +59,90 @@ Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
    * No change
    * Added Laurent's Reviewed-by tag.
 ---
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 70 +++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-index 979be5a..93b2e88 100644
+index 93b2e88..538e9ce 100644
 --- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-@@ -1182,6 +1182,16 @@
+@@ -940,6 +940,76 @@
  			/* placeholder */
  		};
  
-+		fdp1@fe940000 {
-+			compatible = "renesas,fdp1";
-+			reg = <0 0xfe940000 0 0x2400>;
-+			interrupts = <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 119>;
-+			power-domains = <&sysc R8A774B1_PD_A3VP>;
-+			resets = <&cpg 119>;
-+			renesas,fcp = <&fcpf0>;
++		pwm0: pwm@e6e30000 {
++			compatible = "renesas,pwm-r8a774b1", "renesas,pwm-rcar";
++			reg = <0 0xe6e30000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			status = "disabled";
 +		};
 +
- 		fcpf0: fcp@fe950000 {
- 			compatible = "renesas,fcpf";
- 			reg = <0 0xfe950000 0 0x200>;
++		pwm1: pwm@e6e31000 {
++			compatible = "renesas,pwm-r8a774b1", "renesas,pwm-rcar";
++			reg = <0 0xe6e31000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pwm2: pwm@e6e32000 {
++			compatible = "renesas,pwm-r8a774b1", "renesas,pwm-rcar";
++			reg = <0 0xe6e32000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pwm3: pwm@e6e33000 {
++			compatible = "renesas,pwm-r8a774b1", "renesas,pwm-rcar";
++			reg = <0 0xe6e33000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pwm4: pwm@e6e34000 {
++			compatible = "renesas,pwm-r8a774b1", "renesas,pwm-rcar";
++			reg = <0 0xe6e34000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pwm5: pwm@e6e35000 {
++			compatible = "renesas,pwm-r8a774b1", "renesas,pwm-rcar";
++			reg = <0 0xe6e35000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pwm6: pwm@e6e36000 {
++			compatible = "renesas,pwm-r8a774b1", "renesas,pwm-rcar";
++			reg = <0 0xe6e36000 0 0x8>;
++			#pwm-cells = <2>;
++			clocks = <&cpg CPG_MOD 523>;
++			resets = <&cpg 523>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
+ 		scif0: serial@e6e60000 {
+ 			compatible = "renesas,scif-r8a774b1",
+ 				     "renesas,rcar-gen3-scif", "renesas,scif";
 -- 
 2.7.4
 
