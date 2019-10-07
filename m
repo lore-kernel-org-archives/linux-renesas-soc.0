@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9254FECE59B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D34EBECE58D
 	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Oct 2019 10:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73CFE206BB
+	by mail.kernel.org (Postfix) with ESMTP id B5027206BB
 	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Oct 2019 10:23:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbfJGKXp (ORCPT
+        id S1727514AbfJGKXq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Oct 2019 06:23:45 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:49688 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727472AbfJGKXo (ORCPT
+        Mon, 7 Oct 2019 06:23:46 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:54792 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727521AbfJGKXo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 7 Oct 2019 06:23:44 -0400
 Received: from ramsan ([84.194.98.4])
-        by andre.telenet-ops.be with bizsmtp
-        id AaPh2100d05gfCL01aPhM9; Mon, 07 Oct 2019 12:23:42 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id AaPh2100H05gfCL01aPh2M; Mon, 07 Oct 2019 12:23:42 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iHQB3-00087Q-Pa; Mon, 07 Oct 2019 12:23:41 +0200
+        id 1iHQB3-00086q-CE; Mon, 07 Oct 2019 12:23:41 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iHQB3-0003Ce-OO; Mon, 07 Oct 2019 12:23:41 +0200
+        id 1iHQB3-0003C2-B1; Mon, 07 Oct 2019 12:23:41 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 17/19] arm64: dts: renesas: Add support for Salvator-XS with R-Car M3-W+
-Date:   Mon,  7 Oct 2019 12:23:30 +0200
-Message-Id: <20191007102332.12196-18-geert+renesas@glider.be>
+Subject: [PATCH/RFC 05/19] dt-bindings: power: rcar-sysc: Document r8a77961 support
+Date:   Mon,  7 Oct 2019 12:23:18 +0200
+Message-Id: <20191007102332.12196-6-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191007102332.12196-1-geert+renesas@glider.be>
 References: <20191007102332.12196-1-geert+renesas@glider.be>
@@ -47,73 +47,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add initial support for the Renesas Salvator-X 2nd version development
-board equipped with an R-Car M3-W+ SiP with 8 (2 x 4) GiB of RAM.
-
-The memory map is as follows:
-  - Bank0: 4GiB RAM : 0x000048000000 -> 0x000bfffffff
-		      0x000480000000 -> 0x004ffffffff
-  - Bank1: 4GiB RAM : 0x000600000000 -> 0x006ffffffff
-
-Based on a patch in the BSP by Takeshi Kihara
-<takeshi.kihara.df@renesas.com>.
+Add DT binding documentation for the System Controller in the Renesas
+R-Car M3-W+ (R8A77961) SoC.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/Makefile          |  1 +
- .../boot/dts/renesas/r8a77961-salvator-xs.dts | 31 +++++++++++++++++++
- 2 files changed, 32 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77961-salvator-xs.dts
+ Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 3a6a0fb5b482a2dc..e0a829c139ee133f 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -11,6 +11,7 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a7795-es1-h3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-x.dtb r8a7796-m3ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-m3ulcb-kf.dtb
- dtb-$(CONFIG_ARCH_R8A7796) += r8a7796-salvator-xs.dtb
-+dtb-$(CONFIG_ARCH_R8A77961) += r8a77961-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb r8a77965-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-m3nulcb.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-m3nulcb-kf.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a77961-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77961-salvator-xs.dts
-new file mode 100644
-index 0000000000000000..4abd78ac1cd597d9
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77961-salvator-xs.dts
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the Salvator-X 2nd version board with R-Car M3-W+
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r8a77961.dtsi"
-+#include "salvator-xs.dtsi"
-+
-+/ {
-+	model = "Renesas Salvator-X 2nd version board based on r8a77961";
-+	compatible = "renesas,salvator-xs", "renesas,r8a77961";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x78000000>;
-+	};
-+
-+	memory@400000000 {
-+		device_type = "memory";
-+		reg = <0x4 0x80000000 0x0 0x80000000>;
-+	};
-+
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x1 0x00000000>;
-+	};
-+};
+diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+index 712caa5726f7cb91..acb41fade926e2de 100644
+--- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
++++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+@@ -22,6 +22,7 @@ Required properties:
+       - "renesas,r8a7794-sysc" (R-Car E2)
+       - "renesas,r8a7795-sysc" (R-Car H3)
+       - "renesas,r8a7796-sysc" (R-Car M3-W)
++      - "renesas,r8a77961-sysc" (R-Car M3-W+)
+       - "renesas,r8a77965-sysc" (R-Car M3-N)
+       - "renesas,r8a77970-sysc" (R-Car V3M)
+       - "renesas,r8a77980-sysc" (R-Car V3H)
 -- 
 2.17.1
 
