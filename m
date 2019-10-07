@@ -2,230 +2,75 @@ Return-Path: <SRS0=uTUX=YA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F6AEC47404
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Oct 2019 08:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09B8C47404
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Oct 2019 10:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D44D72133F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Oct 2019 08:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82039206BB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Oct 2019 10:23:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbfJGIkI (ORCPT
+        id S1727522AbfJGKXo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Oct 2019 04:40:08 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:16178 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726969AbfJGIkI (ORCPT
+        Mon, 7 Oct 2019 06:23:44 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:46238 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727345AbfJGKXo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Oct 2019 04:40:08 -0400
-X-IronPort-AV: E=Sophos;i="5.67,267,1566831600"; 
-   d="scan'208";a="28468938"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Oct 2019 17:40:06 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0B528400A8B4;
-        Mon,  7 Oct 2019 17:40:06 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     horms@verge.net.au, geert+renesas@glider.be, magnus.damm@gmail.com
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] arm64: dts: renesas: add iommus into R-Car Gen3 sdhi/mmc nodes
-Date:   Mon,  7 Oct 2019 17:40:05 +0900
-Message-Id: <1570437605-15804-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 7 Oct 2019 06:23:44 -0400
+Received: from ramsan ([84.194.98.4])
+        by xavier.telenet-ops.be with bizsmtp
+        id AaPh2100F05gfCL01aPhDq; Mon, 07 Oct 2019 12:23:42 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iHQB3-00086c-77; Mon, 07 Oct 2019 12:23:41 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iHQB3-0003Bq-5P; Mon, 07 Oct 2019 12:23:41 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC 01/19] dt-bindings: arm: renesas: Document R-Car M3-W+ SoC DT bindings
+Date:   Mon,  7 Oct 2019 12:23:14 +0200
+Message-Id: <20191007102332.12196-2-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191007102332.12196-1-geert+renesas@glider.be>
+References: <20191007102332.12196-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds iommus properties into R-Car Gen3 SoCs'
-sdhi/mmc nodes.
+Add device tree binding documentation for the Renesas R-Car M3-W+
+(R8A77961) SoC.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi  | 4 ++++
- arch/arm64/boot/dts/renesas/r8a7796.dtsi  | 4 ++++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 4 ++++
- arch/arm64/boot/dts/renesas/r8a77970.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r8a77980.dtsi | 1 +
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 3 +++
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 1 +
- 7 files changed, 18 insertions(+)
+ Documentation/devicetree/bindings/arm/renesas.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 6675462..8340f90 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -2599,6 +2599,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 314>;
-+			iommus = <&ipmmu_ds1 32>;
- 			status = "disabled";
- 		};
+diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/arm/renesas.yaml
+index bc0b4ec54756d6ae..b78e4e33e7c7ef22 100644
+--- a/Documentation/devicetree/bindings/arm/renesas.yaml
++++ b/Documentation/devicetree/bindings/arm/renesas.yaml
+@@ -205,6 +205,10 @@ properties:
+               - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
+           - const: renesas,r8a7796
  
-@@ -2611,6 +2612,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 313>;
-+			iommus = <&ipmmu_ds1 33>;
- 			status = "disabled";
- 		};
- 
-@@ -2623,6 +2625,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 312>;
-+			iommus = <&ipmmu_ds1 34>;
- 			status = "disabled";
- 		};
- 
-@@ -2635,6 +2638,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 311>;
-+			iommus = <&ipmmu_ds1 35>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-index 822c966..c0c4549 100644
---- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
-@@ -2394,6 +2394,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 314>;
-+			iommus = <&ipmmu_ds1 32>;
- 			status = "disabled";
- 		};
- 
-@@ -2406,6 +2407,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 313>;
-+			iommus = <&ipmmu_ds1 33>;
- 			status = "disabled";
- 		};
- 
-@@ -2418,6 +2420,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 312>;
-+			iommus = <&ipmmu_ds1 34>;
- 			status = "disabled";
- 		};
- 
-@@ -2430,6 +2433,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 311>;
-+			iommus = <&ipmmu_ds1 35>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 4ae1632..3be3fab 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -2105,6 +2105,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 314>;
-+			iommus = <&ipmmu_ds1 32>;
- 			status = "disabled";
- 		};
- 
-@@ -2117,6 +2118,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 313>;
-+			iommus = <&ipmmu_ds1 33>;
- 			status = "disabled";
- 		};
- 
-@@ -2129,6 +2131,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 312>;
-+			iommus = <&ipmmu_ds1 34>;
- 			status = "disabled";
- 		};
- 
-@@ -2141,6 +2144,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 311>;
-+			iommus = <&ipmmu_ds1 35>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index 74c2c00..0d0558e 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -1035,6 +1035,7 @@
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 314>;
- 			max-frequency = <200000000>;
-+			iommus = <&ipmmu_ds1 32>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index 042f408..4d86669 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -1338,6 +1338,7 @@
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 314>;
- 			max-frequency = <200000000>;
-+			iommus = <&ipmmu_ds1 32>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index 455954c..7e3460f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -1580,6 +1580,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 314>;
-+			iommus = <&ipmmu_ds1 32>;
- 			status = "disabled";
- 		};
- 
-@@ -1592,6 +1593,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 313>;
-+			iommus = <&ipmmu_ds1 33>;
- 			status = "disabled";
- 		};
- 
-@@ -1604,6 +1606,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 311>;
-+			iommus = <&ipmmu_ds1 35>;
- 			status = "disabled";
- 		};
- 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index 183fef8..b0ff2de 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -916,6 +916,7 @@
- 			max-frequency = <200000000>;
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 312>;
-+			iommus = <&ipmmu_ds1 34>;
- 			status = "disabled";
- 		};
- 
++      - description: R-Car M3-W+ (R8A77961)
++        items:
++          - const: renesas,r8a77961
++
+       - description: Kingfisher (SBEV-RCAR-KF-M03)
+         items:
+           - const: shimafuji,kingfisher
 -- 
-2.7.4
+2.17.1
 
