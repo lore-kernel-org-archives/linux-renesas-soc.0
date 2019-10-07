@@ -2,44 +2,43 @@ Return-Path: <SRS0=uTUX=YA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC60ECE596
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B665ECE58C
 	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Oct 2019 10:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E26E2084D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Oct 2019 10:23:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7A90206BB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Oct 2019 10:23:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbfJGKXo (ORCPT
+        id S1727448AbfJGKXo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 7 Oct 2019 06:23:44 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:49700 "EHLO
+Received: from andre.telenet-ops.be ([195.130.132.53]:49708 "EHLO
         andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbfJGKXo (ORCPT
+        with ESMTP id S1727376AbfJGKXo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 7 Oct 2019 06:23:44 -0400
 Received: from ramsan ([84.194.98.4])
         by andre.telenet-ops.be with bizsmtp
-        id AaPh2100S05gfCL01aPhM5; Mon, 07 Oct 2019 12:23:42 +0200
+        id AaPh2100Y05gfCL01aPhM7; Mon, 07 Oct 2019 12:23:42 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iHQB3-000872-Gl; Mon, 07 Oct 2019 12:23:41 +0200
+        id 1iHQB3-00087E-Lq; Mon, 07 Oct 2019 12:23:41 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iHQB3-0003CE-F0; Mon, 07 Oct 2019 12:23:41 +0200
+        id 1iHQB3-0003CQ-KP; Mon, 07 Oct 2019 12:23:41 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 09/19] dt-bindings: clock: Add r8a77961 CPG Core Clock Definitions
-Date:   Mon,  7 Oct 2019 12:23:22 +0200
-Message-Id: <20191007102332.12196-10-geert+renesas@glider.be>
+Subject: [PATCH/RFC 13/19] soc: renesas: rcar-rst: Add support for R-Car M3-W+
+Date:   Mon,  7 Oct 2019 12:23:26 +0200
+Message-Id: <20191007102332.12196-14-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191007102332.12196-1-geert+renesas@glider.be>
 References: <20191007102332.12196-1-geert+renesas@glider.be>
@@ -48,93 +47,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add all Clock Pulse Generator Core Clock Outputs for the Renesas R-Car
-M3-W+ (R8A77961) SoC, as listed in Table 8.2b ("List of Clocks [R-Car
-M3-W/R-Car M3-W+]") of the R-Car Series, 3rd Generation Hardware User's
-Manual (Rev. 2.00, Jul. 31, 2019).  A gap is added for CSIREF, to
-preserve compatibility with the definitions for R-Car M3-W (R8A77960).
-
-Note that internal CPG clocks (S0, S1, S2, S3, SDSRC, SSPSRC, and POST2)
-are not included, as they are used as internal clock sources only, and
-never referenced from DT.
+Add support for the Reset block in the R-Car M3-W+ (R8A77961) SoC to the
+Renesas R-Car RST driver.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/dt-bindings/clock/r8a77961-cpg-mssr.h | 65 +++++++++++++++++++
- 1 file changed, 65 insertions(+)
- create mode 100644 include/dt-bindings/clock/r8a77961-cpg-mssr.h
+ drivers/soc/renesas/rcar-rst.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/clock/r8a77961-cpg-mssr.h b/include/dt-bindings/clock/r8a77961-cpg-mssr.h
-new file mode 100644
-index 0000000000000000..7921d785546d12ce
---- /dev/null
-+++ b/include/dt-bindings/clock/r8a77961-cpg-mssr.h
-@@ -0,0 +1,65 @@
-+/* SPDX-License-Identifier: GPL-2.0+
-+ *
-+ * Copyright (C) 2019 Renesas Electronics Corp.
-+ */
-+#ifndef __DT_BINDINGS_CLOCK_R8A77961_CPG_MSSR_H__
-+#define __DT_BINDINGS_CLOCK_R8A77961_CPG_MSSR_H__
-+
-+#include <dt-bindings/clock/renesas-cpg-mssr.h>
-+
-+/* r8a77961 CPG Core Clocks */
-+#define R8A77961_CLK_Z			0
-+#define R8A77961_CLK_Z2			1
-+#define R8A77961_CLK_ZR			2
-+#define R8A77961_CLK_ZG			3
-+#define R8A77961_CLK_ZTR			4
-+#define R8A77961_CLK_ZTRD2		5
-+#define R8A77961_CLK_ZT			6
-+#define R8A77961_CLK_ZX			7
-+#define R8A77961_CLK_S0D1		8
-+#define R8A77961_CLK_S0D2		9
-+#define R8A77961_CLK_S0D3		10
-+#define R8A77961_CLK_S0D4		11
-+#define R8A77961_CLK_S0D6		12
-+#define R8A77961_CLK_S0D8		13
-+#define R8A77961_CLK_S0D12		14
-+#define R8A77961_CLK_S1D1		15
-+#define R8A77961_CLK_S1D2		16
-+#define R8A77961_CLK_S1D4		17
-+#define R8A77961_CLK_S2D1		18
-+#define R8A77961_CLK_S2D2		19
-+#define R8A77961_CLK_S2D4		20
-+#define R8A77961_CLK_S3D1		21
-+#define R8A77961_CLK_S3D2		22
-+#define R8A77961_CLK_S3D4		23
-+#define R8A77961_CLK_LB			24
-+#define R8A77961_CLK_CL			25
-+#define R8A77961_CLK_ZB3			26
-+#define R8A77961_CLK_ZB3D2		27
-+#define R8A77961_CLK_ZB3D4		28
-+#define R8A77961_CLK_CR			29
-+#define R8A77961_CLK_CRD2		30
-+#define R8A77961_CLK_SD0H		31
-+#define R8A77961_CLK_SD0			32
-+#define R8A77961_CLK_SD1H		33
-+#define R8A77961_CLK_SD1			34
-+#define R8A77961_CLK_SD2H		35
-+#define R8A77961_CLK_SD2			36
-+#define R8A77961_CLK_SD3H		37
-+#define R8A77961_CLK_SD3			38
-+#define R8A77961_CLK_SSP2		39
-+#define R8A77961_CLK_SSP1		40
-+#define R8A77961_CLK_SSPRS		41
-+#define R8A77961_CLK_RPC			42
-+#define R8A77961_CLK_RPCD2		43
-+#define R8A77961_CLK_MSO			44
-+#define R8A77961_CLK_CANFD		45
-+#define R8A77961_CLK_HDMI		46
-+#define R8A77961_CLK_CSI0		47
-+/* CLK_CSIREF was removed */
-+#define R8A77961_CLK_CP			49
-+#define R8A77961_CLK_CPEX		50
-+#define R8A77961_CLK_R			51
-+#define R8A77961_CLK_OSC			52
-+
-+#endif /* __DT_BINDINGS_CLOCK_R8A77961_CPG_MSSR_H__ */
+diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
+index cd5592977cefc22b..14d05a070dd3ecea 100644
+--- a/drivers/soc/renesas/rcar-rst.c
++++ b/drivers/soc/renesas/rcar-rst.c
+@@ -59,6 +59,7 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
+ 	/* R-Car Gen3 */
+ 	{ .compatible = "renesas,r8a7795-rst", .data = &rcar_rst_gen3 },
+ 	{ .compatible = "renesas,r8a7796-rst", .data = &rcar_rst_gen3 },
++	{ .compatible = "renesas,r8a77961-rst", .data = &rcar_rst_gen3 },
+ 	{ .compatible = "renesas,r8a77965-rst", .data = &rcar_rst_gen3 },
+ 	{ .compatible = "renesas,r8a77970-rst", .data = &rcar_rst_gen3 },
+ 	{ .compatible = "renesas,r8a77980-rst", .data = &rcar_rst_gen3 },
 -- 
 2.17.1
 
