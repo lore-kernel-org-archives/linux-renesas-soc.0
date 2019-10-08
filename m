@@ -4,29 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E95C4360C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Oct 2019 10:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B3FC4360C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Oct 2019 10:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF6021721
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Oct 2019 10:39:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5C6021721
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Oct 2019 10:39:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730554AbfJHKjX (ORCPT
+        id S1730600AbfJHKjl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Oct 2019 06:39:23 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:42391 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730511AbfJHKjW (ORCPT
+        Tue, 8 Oct 2019 06:39:41 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:52530 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730627AbfJHKjk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Oct 2019 06:39:22 -0400
+        Tue, 8 Oct 2019 06:39:40 -0400
 X-IronPort-AV: E=Sophos;i="5.67,270,1566831600"; 
-   d="scan'208";a="28578207"
+   d="scan'208";a="28359392"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 08 Oct 2019 19:39:21 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 08 Oct 2019 19:39:39 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2A0AD4009677;
-        Tue,  8 Oct 2019 19:39:16 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id EFC45400941B;
+        Tue,  8 Oct 2019 19:39:34 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms@verge.net.au>,
@@ -44,9 +45,9 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH 04/10] dt-bindings: rcar-gen3-phy-usb3: Add r8a774b1 support
-Date:   Tue,  8 Oct 2019 11:38:46 +0100
-Message-Id: <1570531132-21856-5-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 08/10] arm64: dts: renesas: r8a774b1: Add USB-DMAC and HSUSB device nodes
+Date:   Tue,  8 Oct 2019 11:38:50 +0100
+Message-Id: <1570531132-21856-9-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1570531132-21856-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1570531132-21856-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -55,26 +56,67 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document RZ/G2N (R8A774B1) SoC bindings.
+Add usb dmac and hsusb device nodes to the RZ/G2N SoC dtsi.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 42 ++++++++++++++++++++++++++++++-
+ 1 file changed, 41 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-index 9d98266..0fe433b 100644
---- a/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-+++ b/Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
-@@ -9,6 +9,8 @@ need this driver.
- Required properties:
- - compatible: "renesas,r8a774a1-usb3-phy" if the device is a part of an R8A774A1
- 	      SoC.
-+	      "renesas,r8a774b1-usb3-phy" if the device is a part of an R8A774B1
-+	      SoC.
- 	      "renesas,r8a7795-usb3-phy" if the device is a part of an R8A7795
- 	      SoC.
- 	      "renesas,r8a7796-usb3-phy" if the device is a part of an R8A7796
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
+index 3704ad1..abbcec6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
+@@ -675,8 +675,48 @@
+ 		};
+ 
+ 		hsusb: usb@e6590000 {
++			compatible = "renesas,usbhs-r8a774b1",
++				     "renesas,rcar-gen3-usbhs";
+ 			reg = <0 0xe6590000 0 0x200>;
+-			/* placeholder */
++			interrupts = <GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 704>, <&cpg CPG_MOD 703>;
++			dmas = <&usb_dmac0 0>, <&usb_dmac0 1>,
++			       <&usb_dmac1 0>, <&usb_dmac1 1>;
++			dma-names = "ch0", "ch1", "ch2", "ch3";
++			renesas,buswait = <11>;
++			phys = <&usb2_phy0 3>;
++			phy-names = "usb";
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 704>, <&cpg 703>;
++			status = "disabled";
++		};
++
++		usb_dmac0: dma-controller@e65a0000 {
++			compatible = "renesas,r8a774b1-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65a0000 0 0x100>;
++			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 330>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 330>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
++		};
++
++		usb_dmac1: dma-controller@e65b0000 {
++			compatible = "renesas,r8a774b1-usb-dmac",
++				     "renesas,usb-dmac";
++			reg = <0 0xe65b0000 0 0x100>;
++			interrupts = <GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH
++				      GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1";
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
++			resets = <&cpg 331>;
++			#dma-cells = <1>;
++			dma-channels = <2>;
+ 		};
+ 
+ 		usb3_phy0: usb-phy@e65ee000 {
 -- 
 2.7.4
 
