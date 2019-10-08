@@ -2,96 +2,64 @@ Return-Path: <SRS0=IirQ=YB=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E548C4360C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Oct 2019 16:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF89C4360C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Oct 2019 23:22:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 232452070B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Oct 2019 16:46:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEE9021835
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Oct 2019 23:22:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbfJHQqT (ORCPT
+        id S1727715AbfJHXWl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Oct 2019 12:46:19 -0400
-Received: from sauhun.de ([88.99.104.3]:50784 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725966AbfJHQqT (ORCPT
+        Tue, 8 Oct 2019 19:22:41 -0400
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:11410 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725848AbfJHXWl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Oct 2019 12:46:19 -0400
-Received: from localhost (p54B3324A.dip0.t-ipconnect.de [84.179.50.74])
-        by pokefinder.org (Postfix) with ESMTPSA id A39662C07B8;
-        Tue,  8 Oct 2019 18:46:16 +0200 (CEST)
-Date:   Tue, 8 Oct 2019 18:46:16 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi: fix hang up in HS400 timing mode
- selection
-Message-ID: <20191008164616.GA2966@kunai>
-References: <20190917225023.6035-1-wsa+renesas@sang-engineering.com>
- <TYAPR01MB45444D01948B219CEE4F86E0D88E0@TYAPR01MB4544.jpnprd01.prod.outlook.com>
- <20190918082210.GA1379@kunai>
+        Tue, 8 Oct 2019 19:22:41 -0400
+X-Halon-ID: 6beded86-ea22-11e9-bdc3-005056917a89
+Authorized-sender: niklas@soderlund.pp.se
+Received: from bismarck.berto.se (unknown [84.172.88.101])
+        by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
+        id 6beded86-ea22-11e9-bdc3-005056917a89;
+        Wed, 09 Oct 2019 01:22:10 +0200 (CEST)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/2] rcar-vin: Cleanup how subdevice format is handled
+Date:   Wed,  9 Oct 2019 01:21:59 +0200
+Message-Id: <20191008232201.1768407-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vkogqOf2sHV7VnPd"
-Content-Disposition: inline
-In-Reply-To: <20190918082210.GA1379@kunai>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi,
 
---vkogqOf2sHV7VnPd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This small series clean up how formats coming from the subdevice is 
+handled inside the driver. The changes are made possible after recent 
+VIN patches paved the way.
 
-On Wed, Sep 18, 2019 at 10:22:10AM +0200, Wolfram Sang wrote:
->=20
-> > I asked the BSP team about this topic, and then they have a concern abo=
-ut
-> > the retune. Since they would like to check whether the software is
-> > doing tune or not, just tuning situation is lacking on this patch.
-> > So, if MMC subsystem has such a new flag as "doing_tune" in struct mmc_=
-host,
-> > it's helpful for it. (Also, perhaps it's helpful for adding extra quirks
-> > on this driver in the future). What do you think?
->=20
-> I understand the concern. I will check this.
+There should not be any functional changes in this series.
 
-For the record, I am still working on this. I am currently researching
-if the hs400_downgrade() function has some relevance to it. However,
-I wasn't able to trigger the fault condition the last days. Will keep
-trying...
+Niklas Söderlund (2):
+  rcar-vin: Rename wrongly named rectangle
+  rcar-vin: Create compose rectangle where it is used
 
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 38 ++++++++++-----------
+ 1 file changed, 18 insertions(+), 20 deletions(-)
 
---vkogqOf2sHV7VnPd
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.23.0
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl2cvVMACgkQFA3kzBSg
-KbY8yBAAmmJaSMM2cXYVqBCIGNGHtPpf0lS6cVlc8ssQWgzIYqPdD5YCMLu1Vd9H
-KEE+kz2A5dgO0qGQQxdPWVgSAmGo6SbUTiAX2dQFLI1BZZ3S/LygUJstzvtVsBwo
-aYjen9mJHE6VE3ccs0uoyfkMp5wbohpeWE4mdSIslQSgtKUayYOWQBLs2QfYRwwU
-X/8mT4GmeUbuz8muU7Vla6HThdP96aKZx1Cw1SDdgY3Jmp2HAPLByT8uBKUR547Z
-xzdbIE9gmXvpyD4Fn8/m55pwNi7fq1rWMtFTuYyZQApPLBE1wblgbEdrkZC3dn+s
-+P26qo5+PwWWPupGunS6yEb0gMQauIcy6HcL6jtpNh+Lq2G0nJadp0T9uTlHv+pk
-YHnoKxCBvYTJngTlkrwrfdA3OOa66zpCzItil26tR+OzGi+vFleEHeBej6iK1+vK
-V+gGIIIP826AI/7rT+dpw4gIgTbIk+TN1grzPA3VkUG+j8CBnv8fqAbQi3qDALo0
-y5VDJ2OVQWIvpuv2uzh62h22YE5t0S4Ue+0UECENgasti1TAmTEaZx20MsbGQ4Qx
-8QZxorYDJd8Ij45kjTXO/d7zrTAPdwr2w9MZysEwhhzZfLhJtFoQTQthZ6NUDmlM
-/zaXTHwWpB7SlOPcBYMMyn0426U0FBR0OPnc1qYDri9uYVBusQs=
-=seba
------END PGP SIGNATURE-----
-
---vkogqOf2sHV7VnPd--
