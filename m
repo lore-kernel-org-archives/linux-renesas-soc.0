@@ -2,31 +2,32 @@ Return-Path: <SRS0=r2fM=YD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDECC4360C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Oct 2019 14:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4A24C10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Oct 2019 14:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4901720B7C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Oct 2019 14:26:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8523206B6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Oct 2019 14:26:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725999AbfJJO0J (ORCPT
+        id S1726303AbfJJO0N (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Oct 2019 10:26:09 -0400
+        Thu, 10 Oct 2019 10:26:13 -0400
 Received: from relmlor1.renesas.com ([210.160.252.171]:57697 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725923AbfJJO0I (ORCPT
+        by vger.kernel.org with ESMTP id S1725923AbfJJO0M (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Oct 2019 10:26:08 -0400
+        Thu, 10 Oct 2019 10:26:12 -0400
 X-IronPort-AV: E=Sophos;i="5.67,280,1566831600"; 
-   d="scan'208";a="28794119"
+   d="scan'208";a="28794128"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 10 Oct 2019 23:26:06 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 10 Oct 2019 23:26:10 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id BE7E24288736;
-        Thu, 10 Oct 2019 23:26:02 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 089F44288734;
+        Thu, 10 Oct 2019 23:26:06 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Wolfgang Grandegger <wg@grandegger.com>,
@@ -44,35 +45,51 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v2 0/3] Add CAN and CAN-FD support to the RZ/G2N SoC
-Date:   Thu, 10 Oct 2019 15:25:57 +0100
-Message-Id: <1570717560-7431-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH net-next v2 1/3] dt-bindings: can: rcar_can: Add r8a774b1 support
+Date:   Thu, 10 Oct 2019 15:25:58 +0100
+Message-Id: <1570717560-7431-2-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1570717560-7431-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1570717560-7431-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dear All,
+Document RZ/G2N (r8a774b1) SoC specific bindings.
 
-this series adds CAN and CAN FD support to the RZ/G2N SoC specific dtsi.
-
-Thanks,
-Fab
-
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
 v1->v2:
-* Fixed patch 2/3 according to Geert's comment
+* No change
 
-Fabrizio Castro (3):
-  dt-bindings: can: rcar_can: Add r8a774b1 support
-  dt-bindings: can: rcar_canfd: document r8a774b1 support
-  arm64: dts: renesas: r8a774b1: Add CAN and CAN FD support
+ Documentation/devicetree/bindings/net/can/rcar_can.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
- .../devicetree/bindings/net/can/rcar_can.txt       |  5 ++-
- .../devicetree/bindings/net/can/rcar_canfd.txt     |  5 ++-
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi          | 48 ++++++++++++++++++++--
- 3 files changed, 51 insertions(+), 7 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+index 19e4a7d..85c6551 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+@@ -7,6 +7,7 @@ Required properties:
+ 	      "renesas,can-r8a7745" if CAN controller is a part of R8A7745 SoC.
+ 	      "renesas,can-r8a77470" if CAN controller is a part of R8A77470 SoC.
+ 	      "renesas,can-r8a774a1" if CAN controller is a part of R8A774A1 SoC.
++	      "renesas,can-r8a774b1" if CAN controller is a part of R8A774B1 SoC.
+ 	      "renesas,can-r8a774c0" if CAN controller is a part of R8A774C0 SoC.
+ 	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
+ 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
+@@ -36,8 +37,8 @@ Required properties:
+ - pinctrl-0: pin control group to be used for this controller.
+ - pinctrl-names: must be "default".
+ 
+-Required properties for R8A774A1, R8A774C0, R8A7795, R8A7796, R8A77965,
+-R8A77990, and R8A77995:
++Required properties for R8A774A1, R8A774B1, R8A774C0, R8A7795, R8A7796,
++R8A77965, R8A77990, and R8A77995:
+ For the denoted SoCs, "clkp2" can be CANFD clock. This is a div6 clock and can
+ be used by both CAN and CAN FD controller at the same time. It needs to be
+ scaled to maximum frequency if any of these controllers use it. This is done
 -- 
 2.7.4
 
