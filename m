@@ -2,53 +2,54 @@ Return-Path: <SRS0=r2fM=YD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 892DEC4360C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Oct 2019 13:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36957C10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Oct 2019 13:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 539A320B7C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Oct 2019 13:04:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Sm43Rjg7"
+	by mail.kernel.org (Postfix) with ESMTP id 16A0E2190F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Oct 2019 13:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387710AbfJJNEU (ORCPT
+        id S2388203AbfJJNTN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Oct 2019 09:04:20 -0400
-Received: from mail-eopbgr1400132.outbound.protection.outlook.com ([40.107.140.132]:9664
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733300AbfJJNET (ORCPT
+        Thu, 10 Oct 2019 09:19:13 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39101 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388172AbfJJNTN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Oct 2019 09:04:19 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ggNe7uIjvZUtYn3sqQHy6Ztq3BJB360FCuejT10c3X56FxCP4feYdZ/XV36/lI64q+ge0TT3nYlWFszrKZ4TW7yrrlH6Qo1RsT+Lrn8b/sUrGno2jTpUxBdyLsi51bdYjgIJ91htAeADwGieiRFfp0yBdYA46Sem+bPxd0Gfwl5QzTDSjYP4v5qsrSWkINbL2RZVJupuzndeYc+eF9IedXd40pbbpLv4qGQrKlqOFlHvHLSNh9vsWLazHHPOjP2PLCMfe+dJAeFVTDldvaomtZxDhv5Jt7UbdIL1Q2z3xSfPk6Vz/2McYI3nvmcZ2+W20oMxGTrww7H8KNxDOAjQ+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MNhUSbx7iYWPrVnhj1gW8wPZQNlCFTpWjvYl2LsE+B8=;
- b=h22bDvfbNrfHTqc6gmZ2uLDzkuO+HjzE1qIwHAnszAxv92eKpdkrUokKK0soVfuUZ1895YEzSZTtY+r1c4pXxAN4rdP25VkOeV/55eiNiVaV7an7bC/ElQZl+EOcIKls/MScLS+oF1+es8228mfG7nPuehc4HEzmFN/Zij/o+ITu4QlPPfWpJbR7CQ225kwa8b6wR/Y6JlN+dYvwaVsTbPsEzsIVnySSD/Gk2RKT0oEd6VIXQ4/5IwrayG7COJtfUNvRbio7V9uRcxLyktxjrv6SN1VvUzmSILS3iLuL0BxGQU9n08djzPPdri2/hU6Vm0kWWU8/aKRpoMmp4kqADg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MNhUSbx7iYWPrVnhj1gW8wPZQNlCFTpWjvYl2LsE+B8=;
- b=Sm43Rjg7fx+t98FMfhTPP+LCBfUSlRKycAHCVQsnxAmHapK+gWxIrFkX5J9VDFtmtiFUJUlyK2YcbLyZ796Kd9vD7/tvdgbqWZjQbBUn3ESK5caIgi5/5Tub3RDWAVvnno1jIay66RXYiwYcPgr+ZoMtFtRg6mMELtjEvG5KZIg=
-Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.242.17) by
- OSBPR01MB1478.jpnprd01.prod.outlook.com (52.134.224.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.17; Thu, 10 Oct 2019 13:04:15 +0000
-Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
- ([fe80::dc33:9b1f:4522:550e]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
- ([fe80::dc33:9b1f:4522:550e%3]) with mapi id 15.20.2347.016; Thu, 10 Oct 2019
- 13:04:15 +0000
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
+        Thu, 10 Oct 2019 09:19:13 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w144so4846030oia.6;
+        Thu, 10 Oct 2019 06:19:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I7NZJhJN6HdWwCEUMeQlJdoAhMdqTEF44sskKDjfanc=;
+        b=dzn4Jbz5u35/F+VgX4lzB6CSa/Wh8gdstMAYYcX4HlpIl2D8bKbKZwU5Pdoge2I2Vz
+         QLF9TtTUpHNlBm8m3ZevEZ+Nr6g76/3Qcqs/bmVlfiMDAaVSxNXGRxSFoKBTk+ntkhF9
+         mdEw+QyKOIZBJcN3ZPq896KOai/hzLyY33+dwm0rrUP68yDibH65vQ1VM4AeK7BMOihM
+         O9EIrzu7NfZLWozZf975+2Tq3yMCihnOLeg2VFaT4z+W4YCnJElk4NRq6RIlGi+cqjDz
+         H7o9bv2hF1Ce3OKO7xcR4GVr/RGhRVB6TZ/xe2L3binl7sdrQaKfLxtsHxTwUgFLcllT
+         cjdA==
+X-Gm-Message-State: APjAAAVF+vQkvl414B9RHPar7eYznRKO/iymmkZXU6c2q/TXyBZfC/IZ
+        9FFrb+uwL1cMo3xHUqOLkbXbDdgdFNbFNmEy33o=
+X-Google-Smtp-Source: APXvYqzerbZNQDCGPcEhinDBYeswI2sWM62cykcHA35Eo9fX7xr7u1GxkK/D4cFmP9Ufqwl78lt9RO1LhowQ0ugUzsY=
+X-Received: by 2002:a54:4e89:: with SMTP id c9mr6999208oiy.148.1570713551912;
+ Thu, 10 Oct 2019 06:19:11 -0700 (PDT)
+MIME-Version: 1.0
+References: <1570200761-884-1-git-send-email-biju.das@bp.renesas.com>
+ <CAMuHMdWCu14DOci-EUuSZ_JTeZaoq90qr035WFsLY2c3UqgkeA@mail.gmail.com>
+ <TYAPR01MB21111CD187E5EF5CB6FB01BAB89A0@TYAPR01MB2111.jpnprd01.prod.outlook.com>
+ <CAMuHMdXYSK3U3wr7by0wBd+yQ7HkjDf5s5XMV7BmXyh7j5B9vQ@mail.gmail.com> <OSBPR01MB2103921B22CD1A794B8FCB4FB8940@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB2103921B22CD1A794B8FCB4FB8940@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 10 Oct 2019 15:19:00 +0200
+Message-ID: <CAMuHMdVx6XNaBZ4itZeu5P23bq0VMGsfYssNJGfAdMyf6KKphA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] arm64: dts: renesas: r8a774a1: Remove audio port node
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Simon Horman <horms@verge.net.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -58,91 +59,53 @@ CC:     Rob Herring <robh+dt@kernel.org>,
         <devicetree@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Subject: RE: [PATCH v3 1/2] arm64: dts: renesas: r8a774a1: Remove audio port
- node
-Thread-Topic: [PATCH v3 1/2] arm64: dts: renesas: r8a774a1: Remove audio port
- node
-Thread-Index: AQHVesNxH5cE4MOPUUurULrZE7LHeKdQwSKAgAAFRMCAAxh3AIAAAPQw
-Date:   Thu, 10 Oct 2019 13:04:14 +0000
-Message-ID: <OSBPR01MB2103921B22CD1A794B8FCB4FB8940@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-References: <1570200761-884-1-git-send-email-biju.das@bp.renesas.com>
- <CAMuHMdWCu14DOci-EUuSZ_JTeZaoq90qr035WFsLY2c3UqgkeA@mail.gmail.com>
- <TYAPR01MB21111CD187E5EF5CB6FB01BAB89A0@TYAPR01MB2111.jpnprd01.prod.outlook.com>
- <CAMuHMdXYSK3U3wr7by0wBd+yQ7HkjDf5s5XMV7BmXyh7j5B9vQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXYSK3U3wr7by0wBd+yQ7HkjDf5s5XMV7BmXyh7j5B9vQ@mail.gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=biju.das@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 4f569868-e6ec-46c5-7491-08d74d825a5f
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: OSBPR01MB1478:|OSBPR01MB1478:
-x-ms-exchange-purlcount: 1
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <OSBPR01MB1478E986EDE4BA156836717FB8940@OSBPR01MB1478.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:530;
-x-forefront-prvs: 018632C080
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(376002)(346002)(396003)(39860400002)(136003)(51914003)(189003)(199004)(102836004)(5660300002)(26005)(476003)(25786009)(44832011)(478600001)(446003)(486006)(11346002)(54906003)(52536014)(2906002)(81166006)(86362001)(81156014)(7696005)(76176011)(8676002)(6506007)(53546011)(966005)(66066001)(186003)(8936002)(99286004)(6116002)(6246003)(66946007)(107886003)(76116006)(6916009)(55016002)(64756008)(66556008)(66476007)(3846002)(305945005)(74316002)(14444005)(66446008)(14454004)(316002)(7736002)(71190400001)(33656002)(71200400001)(6306002)(9686003)(229853002)(6436002)(4326008)(256004);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB1478;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: z6OgTVC/oh6FWLwGQpkn/o9s+EQ6JownuHuDfsMuBlOsDMVM6kGf4MET2/Oh/236d/TXuOHf9TL0Xey/fhm92leEEsDXapy4W4cCOPR5Mjv+C5WZXS+EwM1RPBn0SunCyPeFPjcEEtlm1+TN3tTe+Bnyr93L2iByNK76f40mTwzA5ofSjBPilYY0NXrt2sQ+JGZqW1m0KoJkgpEOQ6QF7Pk3AolBVkO5odzClhu2A9MOHxU0eN9l8LN/haxQ76REVFE489wLHAwmHzysQpZm+7H1UNtUAPabyjx/5D9GZBzMUbM/u9iau++/BHnpkfTSGKZanvJMKo+H2w3cujsHs5s7FGwoIKUGrOsKTek/SciUu4QQlXg8chLyq0yPcI+tLPaMgL27JYLiFUq+TZmjsEYwO3jCaB9MiqEfVBydey7zcVhu+e6/+dbaSU9iR63Yxz1B623ZG51OM0gY1r96fQ==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f569868-e6ec-46c5-7491-08d74d825a5f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Oct 2019 13:04:15.2067
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2o09q+TGj9zw/fVoQVrBGiC5cK14qoxy8miQCavvlfXSDWnQT4URLFujGjuAQJSAmgw6S1jJlllNajh54AyeTw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1478
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-SGkgR2VlcnQsDQoNClRoYW5rcyBmb3IgdGhlIGZlZWRiYWNrLg0KDQo+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0ggdjMgMS8yXSBhcm02NDogZHRzOiByZW5lc2FzOiByOGE3NzRhMTogUmVtb3ZlIGF1ZGlv
-DQo+IHBvcnQgbm9kZQ0KPiANCj4gSGkgQmlqdSwNCj4gDQo+IE9uIFR1ZSwgT2N0IDgsIDIwMTkg
-YXQgMzo0MyBQTSBCaWp1IERhcyA8YmlqdS5kYXNAYnAucmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+
-ID4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAxLzJdIGFybTY0OiBkdHM6IHJlbmVzYXM6IHI4YTc3
-NGExOiBSZW1vdmUNCj4gPiA+IGF1ZGlvIHBvcnQgbm9kZSBPbiBGcmksIE9jdCA0LCAyMDE5IGF0
-IDQ6NTMgUE0gQmlqdSBEYXMNCj4gPiA+IDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4gd3JvdGU6
-DQo+ID4gPiA+IFRoaXMgcGF0Y2ggcmVtb3ZlcyBhdWRpbyBwb3J0IG5vZGUgZnJvbSBTb0MgZGV2
-aWNlIHRyZWUuDQo+ID4gPg0KPiA+ID4gU3RhbmRhcmQgcmV2aWV3IGNvbW1lbnQ6ICJXaHk/Ig0K
-PiANCj4gQmNhdXNlIGl0IGZpeGVzIGEgZHRiIHdhcm5pbmc/DQo+IA0KPiAgICBXYXJuaW5nICh1
-bml0X2FkZHJlc3NfdnNfcmVnKTogL3NvYy9zb3VuZEBlYzUwMDAwMC9wb3J0cy9wb3J0QDA6DQo+
-IG5vZGUgaGFzDQo+ICAgIGEgdW5pdCBuYW1lLCBidXQgbm8gcmVnIHByb3BlcnR5DQoNCkkgYWxz
-byBub3RpY2VkIHRoaXMgd2FybmluZy4NCg0KV2Ugd2lsbCBnZXQgdGhpcyB3YXJuaW5nLCBpZiB3
-ZSAgYXBwbHkgdGhlIHBhdGNoICAiW3YzLDIvMl0gYXJtNjQ6IGR0czogcmVuZXNhczogcjhhNzc0
-YjE6IEFkZCBTb3VuZCBhbmQgQXVkaW8gRE1BQw0KIGRldmljZSBub2RlcyIgZmlyc3QgYW5kIHRo
-ZW4gdGhpcyBvbmUuDQoNCklmIGl0IGlzIG90aGVyIHdheSBhcm91bmQsIHRoZW4gdGhlcmUgd29u
-J3QgYmUgYW55IHdhcm5pbmcuIFRoYXQgaXMgdGhlIHJlYXNvbiBJIGRpZG4ndCBtZW50aW9uIGl0
-IGluIHRoZSBjb21taXQgbWVzc2FnZS4NCg0KUmVnYXJkcywNCkJpanUNCg0KPiA+ID4NCj4gPiA+
-ID4gRml4ZXM6IGUyZjA0MjQ4ZmNkNCAoImFybTY0OiBkdHM6IHJlbmVzYXM6IHI4YTc3NGExOiBB
-ZGQgYXVkaW8NCj4gPiA+ID4gc3VwcG9ydCIpDQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IEJpanUg
-RGFzIDxiaWp1LmRhc0BicC5yZW5lc2FzLmNvbT4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+IFYxLS0+
-VjINCj4gPiA+ID4gICogTmV3IHBhdGNoLg0KPiA+ID4gPiBWMi0tPlYzDQo+ID4gPiA+ICAqIEZp
-eGVkIHRoZSBjb21taXQgbWVzc2FnZS4gVGhhbmtzIHRvIEZhYnJpemlvLg0KPiA+ID4gPg0KPiA+
-ID4gPiBUaGlzIHBhdGNoIGRlcGVuZCB1cG9uDQo+ID4gPiA+IGh0dHBzOi8vcGF0Y2h3b3JrLmtl
-cm5lbC5vcmcvcHJvamVjdC9saW51eC1yZW5lc2FzLXNvYy9saXN0Lz9zZXJpZQ0KPiA+ID4gPiBz
-PTE4DQo+ID4gPiA+IDI1ODENCj4gPiA+DQo+ID4gPiBXaHkgdGhlIGRlcGVuZGVuY3k/DQo+ID4g
-PiBUaGlzIGxvb2tzIGxpa2UgYSBmaXggZm9yIHI4YTc3NGExLCB0b28/DQo+ID4NCj4gPiBTb3Jy
-eSwgdGhlIGFib3ZlIGRlcGVuZGVuY3kgaXMgZm9yIHRoZSBzZWNvbmQgcGF0Y2guDQo+ID4gIlt2
-MywyLzJdIGFybTY0OiBkdHM6IHJlbmVzYXM6IHI4YTc3NGIxOiBBZGQgU291bmQgYW5kIEF1ZGlv
-IERNQUMNCj4gZGV2aWNlIG5vZGVzIg0KPiANCj4gT0suDQo+IA0KPiBHcntvZXRqZSxlZXRpbmd9
-cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBHZWVy
-dCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0tIGdl
-ZXJ0QGxpbnV4LQ0KPiBtNjhrLm9yZw0KPiANCj4gSW4gcGVyc29uYWwgY29udmVyc2F0aW9ucyB3
-aXRoIHRlY2huaWNhbCBwZW9wbGUsIEkgY2FsbCBteXNlbGYgYSBoYWNrZXIuIEJ1dA0KPiB3aGVu
-IEknbSB0YWxraW5nIHRvIGpvdXJuYWxpc3RzIEkganVzdCBzYXkgInByb2dyYW1tZXIiIG9yIHNv
-bWV0aGluZyBsaWtlIHRoYXQuDQo+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS0g
-TGludXMgVG9ydmFsZHMNCg==
+Hi Biju,
+
+On Thu, Oct 10, 2019 at 3:04 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> > Subject: Re: [PATCH v3 1/2] arm64: dts: renesas: r8a774a1: Remove audio
+> > port node
+
+> > On Tue, Oct 8, 2019 at 3:43 PM Biju Das <biju.das@bp.renesas.com> wrote:
+> > > > Subject: Re: [PATCH v3 1/2] arm64: dts: renesas: r8a774a1: Remove
+> > > > audio port node On Fri, Oct 4, 2019 at 4:53 PM Biju Das
+> > > > <biju.das@bp.renesas.com> wrote:
+> > > > > This patch removes audio port node from SoC device tree.
+> > > >
+> > > > Standard review comment: "Why?"
+> >
+> > Bcause it fixes a dtb warning?
+> >
+> >    Warning (unit_address_vs_reg): /soc/sound@ec500000/ports/port@0:
+> > node has
+> >    a unit name, but no reg property
+>
+> I also noticed this warning.
+>
+> We will get this warning, if we  apply the patch  "[v3,2/2] arm64: dts: renesas: r8a774b1: Add Sound and Audio DMAC
+>  device nodes" first and then this one.
+>
+> If it is other way around, then there won't be any warning. That is the reason I didn't mention it in the commit message.
+
+I even see the warning with current renesas-devel ("make dtbs W=1"),
+which does not have "[v3,2/2] arm64: dts: renesas: r8a774b1: Add Sound
+and Audio DMAC device nodes" yet.
+
+So I'll apply this patch with the warning message in the commit log, unless
+I'm missing something?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
