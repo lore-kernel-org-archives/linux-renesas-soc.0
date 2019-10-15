@@ -2,127 +2,298 @@ Return-Path: <SRS0=Zc5b=YI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78331ECE596
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 14:26:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2027C10F14
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 14:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BF5C21D7F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 14:26:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mEDe4FAh"
+	by mail.kernel.org (Postfix) with ESMTP id 6CE63214AE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 14:37:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732662AbfJOO0k (ORCPT
+        id S1732087AbfJOOhA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Oct 2019 10:26:40 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:55748 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732050AbfJOO0k (ORCPT
+        Tue, 15 Oct 2019 10:37:00 -0400
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:22862 "EHLO
+        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732751AbfJOOhA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Oct 2019 10:26:40 -0400
-Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6066B324;
-        Tue, 15 Oct 2019 16:26:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1571149598;
-        bh=hSdNGSSn5zc6mkejUmeqIoT8CVOAQ/twmh0YdLHeH+o=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mEDe4FAheoUDNwti7vv8FKUNaowQCfW1YFt/S+SvDJtxZOPsbMHfBKWw3G+DMAI01
-         rpFSW2xzRslhHapJtvtGno4nMPinthakiNafukrcXzCkhp65xy2pph3khkkI+rJgS5
-         t0nzccfeMmxoU7me05bt9PnE4edElreGkhEmqRaw=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH v5 3/8] drm: rcar-du: Add support for CMM
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli+renesas@fpond.eu,
-        VenkataRajesh.Kalakodima@in.bosch.com, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        Harsha.ManjulaMallikarjun@in.bosch.com, ezequiel@collabora.com,
-        seanpaul@chromium.org, linux-renesas-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20191015104621.62514-1-jacopo+renesas@jmondi.org>
- <20191015104621.62514-4-jacopo+renesas@jmondi.org>
- <2aefe646-45db-aafa-b22b-e1cf9616259d@ideasonboard.com>
- <20191015133320.uj4y5twxfkyopqi5@uno.localdomain>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <2e6e5e8d-e502-5957-5708-4e4d7ef84d8e@ideasonboard.com>
-Date:   Tue, 15 Oct 2019 15:26:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 15 Oct 2019 10:37:00 -0400
+X-Halon-ID: 0d8ef4e4-ef59-11e9-837a-0050569116f7
+Authorized-sender: niklas@soderlund.pp.se
+Received: from bismarck.berto.se (unknown [84.172.88.101])
+        by bin-vsp-out-03.atm.binero.net (Halon) with ESMTPA
+        id 0d8ef4e4-ef59-11e9-837a-0050569116f7;
+        Tue, 15 Oct 2019 16:35:37 +0200 (CEST)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Helen Koike <helen.koike@collabora.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/3] v4l2-dev/ioctl: Add V4L2_CAP_IO_MC
+Date:   Tue, 15 Oct 2019 16:35:50 +0200
+Message-Id: <20191015143552.317669-2-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191015143552.317669-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20191015143552.317669-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20191015133320.uj4y5twxfkyopqi5@uno.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 15/10/2019 14:33, Jacopo Mondi wrote:
-> Hi Kieran, thanks for review
+Add a video device capability flag to indicate that its inputs and/or
+outputs are controlled by the Media Controller instead of the V4L2 API.
+When this flag is set, ioctls for get, set and enum inputs and outputs
+are automatically enabled and programmed to call helper function
 
-<snip>
+Signed-off-by: Helen Koike <helen.koike@collabora.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ .../media/uapi/v4l/vidioc-querycap.rst        |  3 +
+ .../media/videodev2.h.rst.exceptions          |  1 +
+ drivers/media/v4l2-core/v4l2-dev.c            | 24 +++--
+ drivers/media/v4l2-core/v4l2-ioctl.c          | 87 ++++++++++++++++++-
+ include/uapi/linux/videodev2.h                |  2 +
+ 5 files changed, 107 insertions(+), 10 deletions(-)
 
->>> +config DRM_RCAR_CMM
->>> +	bool "R-Car DU Color Management Module (CMM) Support"
->>> +	depends on DRM && OF
->>> +	depends on DRM_RCAR_DU
->>
->>
->> DRM_RCAR_DU already depends on both DRM && OF, so I wonder if those are
->> needed to be specified explicitly.
->>
->> Doesn't hurt of course, but I see DRM_RCAR_DW_HDMI does the same, and so
->> does DRM_RCAR_LVDS, so I don't think you need to remove it.
->>
-> 
-> I did the same as it is done for HDMI and LVDS here. The extra
-> dependencies could be dropped yes, I chose to be consistent.
+diff --git a/Documentation/media/uapi/v4l/vidioc-querycap.rst b/Documentation/media/uapi/v4l/vidioc-querycap.rst
+index 5f9930195d624c73..8b621ecb906afe96 100644
+--- a/Documentation/media/uapi/v4l/vidioc-querycap.rst
++++ b/Documentation/media/uapi/v4l/vidioc-querycap.rst
+@@ -264,6 +264,9 @@ specification the ioctl returns an ``EINVAL`` error code.
+     * - ``V4L2_CAP_TOUCH``
+       - 0x10000000
+       - This is a touch device.
++    * - ``V4L2_CAP_IO_MC``
++      - 0x20000000
++      - The inputs and/or outputs of this device are controlled by the Media Controller see :ref:`media_controller`.
+     * - ``V4L2_CAP_DEVICE_CAPS``
+       - 0x80000000
+       - The driver fills the ``device_caps`` field. This capability can
+diff --git a/Documentation/media/videodev2.h.rst.exceptions b/Documentation/media/videodev2.h.rst.exceptions
+index b58e381bdf7bd38a..6c78a79fa45de283 100644
+--- a/Documentation/media/videodev2.h.rst.exceptions
++++ b/Documentation/media/videodev2.h.rst.exceptions
+@@ -173,6 +173,7 @@ replace define V4L2_CAP_STREAMING device-capabilities
+ replace define V4L2_CAP_META_OUTPUT device-capabilities
+ replace define V4L2_CAP_DEVICE_CAPS device-capabilities
+ replace define V4L2_CAP_TOUCH device-capabilities
++replace define V4L2_CAP_IO_MC device-capabilities
+ 
+ # V4L2 pix flags
+ replace define V4L2_PIX_FMT_PRIV_MAGIC :c:type:`v4l2_pix_format`
+diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
+index 4037689a945a5330..851e645414600941 100644
+--- a/drivers/media/v4l2-core/v4l2-dev.c
++++ b/drivers/media/v4l2-core/v4l2-dev.c
+@@ -702,22 +702,34 @@ static void determine_valid_ioctls(struct video_device *vdev)
+ 		SET_VALID_IOCTL(ops, VIDIOC_G_STD, vidioc_g_std);
+ 		if (is_rx) {
+ 			SET_VALID_IOCTL(ops, VIDIOC_QUERYSTD, vidioc_querystd);
+-			SET_VALID_IOCTL(ops, VIDIOC_ENUMINPUT, vidioc_enum_input);
+-			SET_VALID_IOCTL(ops, VIDIOC_G_INPUT, vidioc_g_input);
+-			SET_VALID_IOCTL(ops, VIDIOC_S_INPUT, vidioc_s_input);
+ 			SET_VALID_IOCTL(ops, VIDIOC_ENUMAUDIO, vidioc_enumaudio);
+ 			SET_VALID_IOCTL(ops, VIDIOC_G_AUDIO, vidioc_g_audio);
+ 			SET_VALID_IOCTL(ops, VIDIOC_S_AUDIO, vidioc_s_audio);
+ 			SET_VALID_IOCTL(ops, VIDIOC_QUERY_DV_TIMINGS, vidioc_query_dv_timings);
+ 			SET_VALID_IOCTL(ops, VIDIOC_S_EDID, vidioc_s_edid);
++			if (vdev->device_caps & V4L2_CAP_IO_MC) {
++				set_bit(_IOC_NR(VIDIOC_ENUMINPUT), valid_ioctls);
++				set_bit(_IOC_NR(VIDIOC_G_INPUT), valid_ioctls);
++				set_bit(_IOC_NR(VIDIOC_S_INPUT), valid_ioctls);
++			} else {
++				SET_VALID_IOCTL(ops, VIDIOC_ENUMINPUT, vidioc_enum_input);
++				SET_VALID_IOCTL(ops, VIDIOC_G_INPUT, vidioc_g_input);
++				SET_VALID_IOCTL(ops, VIDIOC_S_INPUT, vidioc_s_input);
++			}
+ 		}
+ 		if (is_tx) {
+-			SET_VALID_IOCTL(ops, VIDIOC_ENUMOUTPUT, vidioc_enum_output);
+-			SET_VALID_IOCTL(ops, VIDIOC_G_OUTPUT, vidioc_g_output);
+-			SET_VALID_IOCTL(ops, VIDIOC_S_OUTPUT, vidioc_s_output);
+ 			SET_VALID_IOCTL(ops, VIDIOC_ENUMAUDOUT, vidioc_enumaudout);
+ 			SET_VALID_IOCTL(ops, VIDIOC_G_AUDOUT, vidioc_g_audout);
+ 			SET_VALID_IOCTL(ops, VIDIOC_S_AUDOUT, vidioc_s_audout);
++			if (vdev->device_caps & V4L2_CAP_IO_MC) {
++				set_bit(_IOC_NR(VIDIOC_ENUMOUTPUT), valid_ioctls);
++				set_bit(_IOC_NR(VIDIOC_G_OUTPUT), valid_ioctls);
++				set_bit(_IOC_NR(VIDIOC_S_OUTPUT), valid_ioctls);
++			} else {
++				SET_VALID_IOCTL(ops, VIDIOC_ENUMOUTPUT, vidioc_enum_output);
++				SET_VALID_IOCTL(ops, VIDIOC_G_OUTPUT, vidioc_g_output);
++				SET_VALID_IOCTL(ops, VIDIOC_S_OUTPUT, vidioc_s_output);
++			}
+ 		}
+ 		if (ops->vidioc_g_parm || (vdev->vfl_type == VFL_TYPE_GRABBER &&
+ 					ops->vidioc_g_std))
+diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
+index 51b912743f0f4f6f..e4d2ec4ccd49f65e 100644
+--- a/drivers/media/v4l2-core/v4l2-ioctl.c
++++ b/drivers/media/v4l2-core/v4l2-ioctl.c
+@@ -1075,6 +1075,72 @@ static int v4l_querycap(const struct v4l2_ioctl_ops *ops,
+ 	return ret;
+ }
+ 
++static int v4l2_ioctl_enum_input_mc(struct file *file, void *priv,
++				    struct v4l2_input *i)
++{
++	struct video_device *vfd = video_devdata(file);
++
++	if (i->index > 0)
++		return -EINVAL;
++
++	memset(i, 0, sizeof(*i));
++	strlcpy(i->name, vfd->name, sizeof(i->name));
++	i->type = V4L2_INPUT_TYPE_CAMERA;
++
++	return 0;
++}
++
++static int v4l2_ioctl_enum_output_mc(struct file *file, void *priv,
++				     struct v4l2_output *o)
++{
++	struct video_device *vfd = video_devdata(file);
++
++	if (o->index > 0)
++		return -EINVAL;
++
++	memset(o, 0, sizeof(*o));
++	strlcpy(o->name, vfd->name, sizeof(o->name));
++	o->type = V4L2_OUTPUT_TYPE_ANALOG;
++
++	return 0;
++}
++
++static int v4l2_ioctl_g_input_mc(struct file *file, void *priv, unsigned int *i)
++{
++	*i = 0;
++	return 0;
++}
++#define v4l2_ioctl_g_output_mc v4l2_ioctl_g_input_mc
++
++static int v4l2_ioctl_s_input_mc(struct file *file, void *priv, unsigned int i)
++{
++	return i ? -EINVAL : 0;
++}
++#define v4l2_ioctl_s_output_mc v4l2_ioctl_s_input_mc
++
++
++static int v4l_g_input(const struct v4l2_ioctl_ops *ops,
++		       struct file *file, void *fh, void *arg)
++{
++	struct video_device *vfd = video_devdata(file);
++
++	if (vfd->device_caps & V4L2_CAP_IO_MC)
++		return v4l2_ioctl_g_input_mc(file, fh, arg);
++
++	return ops->vidioc_g_input(file, fh, arg);
++}
++
++static int v4l_g_output(const struct v4l2_ioctl_ops *ops,
++		       struct file *file, void *fh, void *arg)
++{
++	struct video_device *vfd = video_devdata(file);
++
++	if (vfd->device_caps & V4L2_CAP_IO_MC)
++		return v4l2_ioctl_g_output_mc(file, fh, arg);
++
++	return ops->vidioc_g_output(file, fh, arg);
++}
++
+ static int v4l_s_input(const struct v4l2_ioctl_ops *ops,
+ 				struct file *file, void *fh, void *arg)
+ {
+@@ -1084,12 +1150,21 @@ static int v4l_s_input(const struct v4l2_ioctl_ops *ops,
+ 	ret = v4l_enable_media_source(vfd);
+ 	if (ret)
+ 		return ret;
++
++	if (vfd->device_caps & V4L2_CAP_IO_MC)
++		return v4l2_ioctl_s_input_mc(file, fh, *(unsigned int *)arg);
++
+ 	return ops->vidioc_s_input(file, fh, *(unsigned int *)arg);
+ }
+ 
+ static int v4l_s_output(const struct v4l2_ioctl_ops *ops,
+ 				struct file *file, void *fh, void *arg)
+ {
++	struct video_device *vfd = video_devdata(file);
++
++	if (vfd->device_caps & V4L2_CAP_IO_MC)
++		return v4l2_ioctl_s_output_mc(file, fh, *(unsigned int *)arg);
++
+ 	return ops->vidioc_s_output(file, fh, *(unsigned int *)arg);
+ }
+ 
+@@ -1133,6 +1208,9 @@ static int v4l_enuminput(const struct v4l2_ioctl_ops *ops,
+ 	if (is_valid_ioctl(vfd, VIDIOC_S_STD))
+ 		p->capabilities |= V4L2_IN_CAP_STD;
+ 
++	if (vfd->device_caps & V4L2_CAP_IO_MC)
++		return v4l2_ioctl_enum_input_mc(file, fh, p);
++
+ 	return ops->vidioc_enum_input(file, fh, p);
+ }
+ 
+@@ -1151,6 +1229,9 @@ static int v4l_enumoutput(const struct v4l2_ioctl_ops *ops,
+ 	if (is_valid_ioctl(vfd, VIDIOC_S_STD))
+ 		p->capabilities |= V4L2_OUT_CAP_STD;
+ 
++	if (vfd->device_caps & V4L2_CAP_IO_MC)
++		return v4l2_ioctl_enum_output_mc(file, fh, p);
++
+ 	return ops->vidioc_enum_output(file, fh, p);
+ }
+ 
+@@ -2663,10 +2744,8 @@ DEFINE_V4L_STUB_FUNC(expbuf)
+ DEFINE_V4L_STUB_FUNC(g_std)
+ DEFINE_V4L_STUB_FUNC(g_audio)
+ DEFINE_V4L_STUB_FUNC(s_audio)
+-DEFINE_V4L_STUB_FUNC(g_input)
+ DEFINE_V4L_STUB_FUNC(g_edid)
+ DEFINE_V4L_STUB_FUNC(s_edid)
+-DEFINE_V4L_STUB_FUNC(g_output)
+ DEFINE_V4L_STUB_FUNC(g_audout)
+ DEFINE_V4L_STUB_FUNC(s_audout)
+ DEFINE_V4L_STUB_FUNC(g_jpegcomp)
+@@ -2715,11 +2794,11 @@ static const struct v4l2_ioctl_info v4l2_ioctls[] = {
+ 	IOCTL_INFO(VIDIOC_S_AUDIO, v4l_stub_s_audio, v4l_print_audio, INFO_FL_PRIO),
+ 	IOCTL_INFO(VIDIOC_QUERYCTRL, v4l_queryctrl, v4l_print_queryctrl, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_queryctrl, id)),
+ 	IOCTL_INFO(VIDIOC_QUERYMENU, v4l_querymenu, v4l_print_querymenu, INFO_FL_CTRL | INFO_FL_CLEAR(v4l2_querymenu, index)),
+-	IOCTL_INFO(VIDIOC_G_INPUT, v4l_stub_g_input, v4l_print_u32, 0),
++	IOCTL_INFO(VIDIOC_G_INPUT, v4l_g_input, v4l_print_u32, 0),
+ 	IOCTL_INFO(VIDIOC_S_INPUT, v4l_s_input, v4l_print_u32, INFO_FL_PRIO),
+ 	IOCTL_INFO(VIDIOC_G_EDID, v4l_stub_g_edid, v4l_print_edid, INFO_FL_ALWAYS_COPY),
+ 	IOCTL_INFO(VIDIOC_S_EDID, v4l_stub_s_edid, v4l_print_edid, INFO_FL_PRIO | INFO_FL_ALWAYS_COPY),
+-	IOCTL_INFO(VIDIOC_G_OUTPUT, v4l_stub_g_output, v4l_print_u32, 0),
++	IOCTL_INFO(VIDIOC_G_OUTPUT, v4l_g_output, v4l_print_u32, 0),
+ 	IOCTL_INFO(VIDIOC_S_OUTPUT, v4l_s_output, v4l_print_u32, INFO_FL_PRIO),
+ 	IOCTL_INFO(VIDIOC_ENUMOUTPUT, v4l_enumoutput, v4l_print_enumoutput, INFO_FL_CLEAR(v4l2_output, index)),
+ 	IOCTL_INFO(VIDIOC_G_AUDOUT, v4l_stub_g_audout, v4l_print_audioout, 0),
+diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+index b3c0961b62a0cba7..8c86f6f5b3d06b26 100644
+--- a/include/uapi/linux/videodev2.h
++++ b/include/uapi/linux/videodev2.h
+@@ -487,6 +487,8 @@ struct v4l2_capability {
+ 
+ #define V4L2_CAP_TOUCH                  0x10000000  /* Is a touch device */
+ 
++#define V4L2_CAP_IO_MC			0x20000000  /* Is input/output controlled by the media controller */
++
+ #define V4L2_CAP_DEVICE_CAPS            0x80000000  /* sets device capabilities field */
+ 
+ /*
+-- 
+2.23.0
 
-Consistent is fine with me.
-
-
-<snip>
-
->>> +struct rcar_cmm {
->>> +	void __iomem *base;
->>> +
->>> +	/*
->>> +	 * @lut:		1D-LUT status
->>> +	 * @lut.enabled:	1D-LUT enabled flag
->>> +	 */
->>> +	struct {
->>> +		bool enabled;
->>> +	} lut;
->>
->> This used to be a more complex structure in an earlier version storing a
->> cached version of the table. Now that the cached entry is removed, does
->> this need to be such a complex structure rather than just say, a bool
->> lut_enabled?
->>
->> (We will soon add an equivalent clu_enabled too, but I don't know what
->> other per-table options we'll need.)
->>
->> In fact, we'll potentially have other options specific to the HGO, and
->> CSC at some point in the future - so grouping by entity is indeed a good
->> thing IMO.
-> 
-> You are right, I pondered a bit it this was worth it, but I assume the
-> other CMM functions would have required some more complex fields so I
-> chose to keep it separate. I have no problem to make this a
-> lut_enabled, but I fear as soon as we support say, double buffering
-> for the lut, having a dedicated struct would be nice.
-> 
-> Is it ok if I keep this the way it is?
-
-Certainly fine for me. (That's what I tried to imply with "so grouping
-by entity is indeed a good thing IMO.")
-
-<snip>
---
-Kieran
