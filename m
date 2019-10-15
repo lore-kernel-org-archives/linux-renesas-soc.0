@@ -2,134 +2,148 @@ Return-Path: <SRS0=Zc5b=YI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E99C10F14
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 09:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E60ECE58E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 09:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B69A520650
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 09:27:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571131637;
-	bh=wKH6PNyjgawbgFGtapEjcoQ4qvOapU5f7tHJEFsMRyY=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=tbsmQFUukTzVnErIDUQm5748WBy+bG6KP5T94Jtx+adn4MYYNorIWsMUrTUhShrMC
-	 fJLv6KFFECVJSb7ruv05vVxCIpMwcUHj2jymuMRSxcsQ/Nt4V7kxFT+VHxpEKJU5Sd
-	 OwQ6UpKIBkm82HPTFkWW1dsNzQvJmm+HjQybmZvY=
+	by mail.kernel.org (Postfix) with ESMTP id A6E0A21835
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 09:52:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729705AbfJOJ1R (ORCPT
+        id S1729761AbfJOJwB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Oct 2019 05:27:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42958 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbfJOJ1R (ORCPT
+        Tue, 15 Oct 2019 05:52:01 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40135 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbfJOJwB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Oct 2019 05:27:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=THNfWqQBO9Eb7uFaWUwb/79hWPG9oUJfv7mFrWnTReA=; b=W/92WGlak/I9
-        3QFvQQcFm4/2gwcMA/iJhxI8BujMqzh1JFroC8HJXpnQsQ22TlyYfz/EHHlH7YIb+dlJcQaFgOzna
-        c64RjLRRExnfzUd/I/2VXPpyGPqrhiKrBoJEnB7Y5QBfUwCaxRRt6AC35CwDiuEbNI/VGOe+Z7rXC
-        YmW+4=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1iKJ6Y-0001p9-Cf; Tue, 15 Oct 2019 09:26:58 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id CF9B62742905; Tue, 15 Oct 2019 10:26:57 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        xu_shunji@hoperun.com
-Subject: Applied "dt-bindings: spi: sh-msiof: Add r8a774b1 support" to the spi tree
-In-Reply-To: <1570178133-21532-3-git-send-email-fabrizio.castro@bp.renesas.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20191015092657.CF9B62742905@ypsilon.sirena.org.uk>
-Date:   Tue, 15 Oct 2019 10:26:57 +0100 (BST)
+        Tue, 15 Oct 2019 05:52:01 -0400
+Received: by mail-oi1-f194.google.com with SMTP id k9so16258346oib.7;
+        Tue, 15 Oct 2019 02:52:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0CYH4j0srWEiMsF+OANP2Wo3C2QtrbO2vNC7ScJyUA8=;
+        b=CRJkdxvRsEdmSjXPukZYYgvX4DkkJeiIJSiT/ZyI25yexbp6OV0lTckYGSCMjkPmsv
+         rXRi9ljGAcbghXFDiCvG6UpuETrrp+Zl8HM25gqe6OxojQUvpnFP7WEfhZ8TQT7SHxDi
+         P7P+0EpnXadQoiTM426ur4kPi6lSGQVwjyKBAdqcr4i/ZFX2nn6x3bhglGHEkSm7twCo
+         caEETgE0L0PkIWzYDX1LXmgWrRUa9ky/mb87PaOiQfDsZsL+Cb0F2N0n8QuiZwovc9us
+         /UWLxRoeD2m7Fh3XU8XgeYYVQzBaJ+ruwYlGL2SZ6SbKn5ATiDeWEvJbRyCTnnPOCF1S
+         9CQA==
+X-Gm-Message-State: APjAAAWA8NXHePGYzi3XqlWnLwqasGNIk6zU/cBqYcyle+QeDyk1IwUg
+        rLKvrgRVeEzXCx/Uspy/UZlCJx2K9YDUZil7EMA=
+X-Google-Smtp-Source: APXvYqwlKwjCfbaD/Fu4Kccv/2hAco6cGIIYZtyu2Fqx7giwBiOA8FU9ug4GAzQwht8aPR23rojHPBuumOCb+IuEQ+k=
+X-Received: by 2002:aca:4bd2:: with SMTP id y201mr3095361oia.102.1571133119807;
+ Tue, 15 Oct 2019 02:51:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <4a877f1c7189a7c45b59a6ebfc3de607e8758949.1567434470.git.michal.simek@xilinx.com>
+ <CAMuHMdWY2VsY-CyAxSvpm1XYicAWqU7NORSQofQ+T195DwyLUg@mail.gmail.com> <7284590f-2b74-1b47-2d61-783ad8d5f46f@monstr.eu>
+In-Reply-To: <7284590f-2b74-1b47-2d61-783ad8d5f46f@monstr.eu>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 15 Oct 2019 11:51:48 +0200
+Message-ID: <CAMuHMdWZYALZB1bP5Mtoq4Nj5iubzdWBf1vRY9Mh5QvjCDhBgA@mail.gmail.com>
+Subject: Re: [PATCH] serial: core: Use cons->index for preferred console registration
+To:     Michal Simek <monstr@monstr.eu>
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The patch
+Hi Michal,
 
-   dt-bindings: spi: sh-msiof: Add r8a774b1 support
+On Tue, Oct 15, 2019 at 11:22 AM Michal Simek <monstr@monstr.eu> wrote:
+> On 15. 10. 19 11:19, Geert Uytterhoeven wrote:
+> > On Mon, Sep 2, 2019 at 4:29 PM Michal Simek <michal.simek@xilinx.com> wrote:
+> >> The reason for this patch is xilinx_uartps driver which create one dynamic
+> >> instance per IP with unique major and minor combinations. drv->nr is in
+> >> this case all the time setup to 1. That means that uport->line is all the
+> >> time setup to 0 and drv->tty_driver->name_base is doing shift in name to
+> >> for example ttyPS3.
+> >>
+> >> register_console() is looping over console_cmdline array and looking for
+> >> proper name/index combination which is in our case ttyPS/3.
+> >> That's why every instance of driver needs to be registered with proper
+> >> combination of name/number (ttyPS/3). Using uport->line is doing
+> >> registration with ttyPS/0 which is wrong that's why proper console index
+> >> should be used which is in cons->index field.
+> >>
+> >> Also it is visible that recording console should be done based on
+> >> information about console not about the port but in most cases numbers are
+> >> the same and xilinx_uartps is only one exception now.
+> >>
+> >> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> >
+> > This is now commit 91daae03188e0dd1 ("serial: core: Use cons->index
+> > for preferred console registration") in tty-next.
+> >
+> > This has been bisected to break the serial console on (at least)
+> > r8a7791/koelsch and r8a7795/h3-salvator-xs.
+> >
+> > The line "printk: console [ttySC0] enabled" is no longer printed.
+> > The system continues booting without any serial console output, and the
+> > login prompt never appears on the serial console.
+> >
+> > Reverting this commit fixes the issue.
+>
+> Sorry for trouble with this patch. Can you please point me to dts files
+> for these boards and also what's the value you have in uport->line and
 
-has been applied to the spi tree at
+arch/arm/boot/dts/r8a7791-koelsch.dts
+arch/arm64/boot/dts/renesas/r8a7795-salvator-xs.dts
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-5.5
+> uport->cons->index?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+On r8a7791/koelsch:
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+    Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+    platform serial8250: uport->line = 0, uport->cons->index = -1
+    platform serial8250: uport->line = 1, uport->cons->index = -1
+    platform serial8250: uport->line = 2, uport->cons->index = -1
+    platform serial8250: uport->line = 3, uport->cons->index = -1
+    SuperH (H)SCI(F) driver initialized
+  * sh-sci e6e60000.serial: uport->line = 0, uport->cons->index = -1
+  * e6e60000.serial: ttySC0 at MMIO 0xe6e60000 (irq = 79, base_baud =
+0) is a scif
+    printk: console [ttySC0] enabled
+    sh-sci e6e68000.serial: uport->line = 1, uport->cons->index = 0
+    e6e68000.serial: ttySC1 at MMIO 0xe6e68000 (irq = 80, base_baud =
+0) is a scif
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+On r8a7795/salvator-xs:
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+    sh-sci e6550000.serial: uport->line = 1, uport->cons->index = -1
+    e6550000.serial: ttySC1 at MMIO 0xe6550000 (irq = 34, base_baud =
+0) is a hscif
+  * sh-sci e6e88000.serial: uport->line = 0, uport->cons->index = -1
+  * e6e88000.serial: ttySC0 at MMIO 0xe6e88000 (irq = 120, base_baud =
+0) is a scif
+    printk: console [ttySC0] enabled
 
-Thanks,
-Mark
+Actual serial consoles marked with *.
 
-From 97f41c68b83ea5216dbf3ac51fd86b0fbd399a97 Mon Sep 17 00:00:00 2001
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Date: Fri, 4 Oct 2019 09:35:28 +0100
-Subject: [PATCH] dt-bindings: spi: sh-msiof: Add r8a774b1 support
+There are no 8250 serial ports in the system, shmobile_defconfig just includes
+driver support for it.
 
-Document RZ/G2N (R8A774B1) SoC bindings.
+Thanks!
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/1570178133-21532-3-git-send-email-fabrizio.castro@bp.renesas.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Gr{oetje,eeting}s,
 
-diff --git a/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml b/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
-index 4afaa48c1666..b6c1dd2a9c5e 100644
---- a/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
-+++ b/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
-@@ -35,6 +35,7 @@ properties:
-       - items:
-           - enum:
-               - renesas,msiof-r8a774a1      # RZ/G2M
-+              - renesas,msiof-r8a774b1      # RZ/G2N
-               - renesas,msiof-r8a774c0      # RZ/G2E
-               - renesas,msiof-r8a7795       # R-Car H3
-               - renesas,msiof-r8a7796       # R-Car M3-W
+                        Geert
+
 -- 
-2.20.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
