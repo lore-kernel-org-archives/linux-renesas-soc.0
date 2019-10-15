@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9C15C10F14
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 11:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6563CECE58F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 11:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C059C217F9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 11:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A07320873
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 11:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731691AbfJOLME (ORCPT
+        id S1726054AbfJOLMF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Oct 2019 07:12:04 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:32930 "EHLO
+        Tue, 15 Oct 2019 07:12:05 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:52452 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726054AbfJOLME (ORCPT
+        by vger.kernel.org with ESMTP id S1731692AbfJOLME (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 15 Oct 2019 07:12:04 -0400
 X-IronPort-AV: E=Sophos;i="5.67,299,1566831600"; 
-   d="scan'208";a="28928934"
+   d="scan'208";a="28928931"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
   by relmlie6.idc.renesas.com with ESMTP; 15 Oct 2019 20:12:00 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A84A74207866;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9C4BA4208692;
         Tue, 15 Oct 2019 20:12:00 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     joro@8bytes.org
 Cc:     iommu@lists.linux-foundation.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 6/6] iommu/ipmmu-vmsa: Add utlb_offset_base
-Date:   Tue, 15 Oct 2019 20:12:00 +0900
-Message-Id: <1571137920-15314-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 5/6] iommu/ipmmu-vmsa: Add helper functions for "uTLB" registers
+Date:   Tue, 15 Oct 2019 20:11:59 +0900
+Message-Id: <1571137920-15314-6-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1571137920-15314-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1571137920-15314-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -44,51 +44,66 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Since we will have changed memory mapping of the IPMMU in the future,
-this patch adds a utlb_offset_base into struct ipmmu_features
-for IMUCTR and IMUASID registers. No behavior change.
+This patch adds helper functions ipmmu_utlb_reg() and
+ipmmu_imu{asid,ctr}_write() for "uTLB" registers. No behavior change.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/iommu/ipmmu-vmsa.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/iommu/ipmmu-vmsa.c | 26 +++++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index d8385ef..1225f12 100644
+index 37bb4b7..d8385ef 100644
 --- a/drivers/iommu/ipmmu-vmsa.c
 +++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -52,6 +52,7 @@ struct ipmmu_features {
- 	bool cache_snoop;
- 	unsigned int ctx_offset_base;
- 	unsigned int ctx_offset_stride;
-+	unsigned int utlb_offset_base;
- };
- 
- struct ipmmu_vmsa_device {
-@@ -232,7 +233,7 @@ static void ipmmu_ctx_write_all(struct ipmmu_vmsa_domain *domain,
- 
- static u32 ipmmu_utlb_reg(struct ipmmu_vmsa_device *mmu, unsigned int reg)
- {
--	return reg;
-+	return mmu->features->utlb_offset_base + reg;
+@@ -230,6 +230,23 @@ static void ipmmu_ctx_write_all(struct ipmmu_vmsa_domain *domain,
+ 	ipmmu_ctx_write(domain->mmu->root, domain->context_id, reg, data);
  }
  
- static void ipmmu_imuasid_write(struct ipmmu_vmsa_device *mmu,
-@@ -956,6 +957,7 @@ static const struct ipmmu_features ipmmu_features_default = {
- 	.cache_snoop = true,
- 	.ctx_offset_base = 0,
- 	.ctx_offset_stride = 0x40,
-+	.utlb_offset_base = 0,
- };
++static u32 ipmmu_utlb_reg(struct ipmmu_vmsa_device *mmu, unsigned int reg)
++{
++	return reg;
++}
++
++static void ipmmu_imuasid_write(struct ipmmu_vmsa_device *mmu,
++				unsigned int utlb, u32 data)
++{
++	ipmmu_write(mmu, ipmmu_utlb_reg(mmu, IMUASID(utlb)), data);
++}
++
++static void ipmmu_imuctr_write(struct ipmmu_vmsa_device *mmu,
++			       unsigned int utlb, u32 data)
++{
++	ipmmu_write(mmu, ipmmu_utlb_reg(mmu, IMUCTR(utlb)), data);
++}
++
+ /* -----------------------------------------------------------------------------
+  * TLB and microTLB Management
+  */
+@@ -275,11 +292,10 @@ static void ipmmu_utlb_enable(struct ipmmu_vmsa_domain *domain,
+ 	 */
  
- static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
-@@ -969,6 +971,7 @@ static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
- 	.cache_snoop = false,
- 	.ctx_offset_base = 0,
- 	.ctx_offset_stride = 0x40,
-+	.utlb_offset_base = 0,
- };
+ 	/* TODO: What should we set the ASID to ? */
+-	ipmmu_write(mmu, IMUASID(utlb), 0);
++	ipmmu_imuasid_write(mmu, utlb, 0);
+ 	/* TODO: Do we need to flush the microTLB ? */
+-	ipmmu_write(mmu, IMUCTR(utlb),
+-		    IMUCTR_TTSEL_MMU(domain->context_id) | IMUCTR_FLUSH |
+-		    IMUCTR_MMUEN);
++	ipmmu_imuctr_write(mmu, utlb, IMUCTR_TTSEL_MMU(domain->context_id) |
++				      IMUCTR_FLUSH | IMUCTR_MMUEN);
+ 	mmu->utlb_ctx[utlb] = domain->context_id;
+ }
  
- static const struct of_device_id ipmmu_of_ids[] = {
+@@ -291,7 +307,7 @@ static void ipmmu_utlb_disable(struct ipmmu_vmsa_domain *domain,
+ {
+ 	struct ipmmu_vmsa_device *mmu = domain->mmu;
+ 
+-	ipmmu_write(mmu, IMUCTR(utlb), 0);
++	ipmmu_imuctr_write(mmu, utlb, 0);
+ 	mmu->utlb_ctx[utlb] = IPMMU_CTX_INVALID;
+ }
+ 
 -- 
 2.7.4
 
