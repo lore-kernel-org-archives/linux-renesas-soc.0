@@ -2,250 +2,67 @@ Return-Path: <SRS0=Zc5b=YI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D1AECE58F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 10:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EA2ECE58F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 10:58:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19BF420854
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 10:45:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76AE421848
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Oct 2019 10:58:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbfJOKpE (ORCPT
+        id S1731594AbfJOK6n (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Oct 2019 06:45:04 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:39279 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731028AbfJOKpD (ORCPT
+        Tue, 15 Oct 2019 06:58:43 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:55418 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726054AbfJOK6n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Oct 2019 06:45:03 -0400
-X-Originating-IP: 2.224.242.101
-Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 88903C0005;
-        Tue, 15 Oct 2019 10:44:58 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli+renesas@fpond.eu,
-        VenkataRajesh.Kalakodima@in.bosch.com
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        Harsha.ManjulaMallikarjun@in.bosch.com, ezequiel@collabora.com,
-        seanpaul@chromium.org, linux-renesas-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/8] drm: rcar-du: kms: Initialize CMM instances
-Date:   Tue, 15 Oct 2019 12:46:17 +0200
-Message-Id: <20191015104621.62514-5-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191015104621.62514-1-jacopo+renesas@jmondi.org>
-References: <20191015104621.62514-1-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 15 Oct 2019 06:58:43 -0400
+X-IronPort-AV: E=Sophos;i="5.67,299,1566831600"; 
+   d="scan'208";a="28927857"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 15 Oct 2019 19:58:41 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 213A64006DFD;
+        Tue, 15 Oct 2019 19:58:37 +0900 (JST)
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Subject: [PATCH 0/4] Add VIN/CSI-2 support
+Date:   Tue, 15 Oct 2019 11:57:54 +0100
+Message-Id: <1571137078-28922-1-git-send-email-biju.das@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Implement device tree parsing to collect the available CMM instances
-described by the 'renesas,cmms' property. Associate CMMs with CRTCs and
-store a mask of active CMMs in the DU group for later enablement.
+This patch series add VIN/CSI-2 driver support for RZ/G2N SoC.
 
-Enforce the probe and suspend/resume ordering of DU and CMM by creating
-a stateless device link between the two.
+Biju Das (4):
+  media: dt-bindings: rcar-vin: Add R8A774B1 support
+  media: dt-bindings: rcar-csi2: Add R8A774B1 support
+  media: rcar-vin: Enable support for R8A774B1
+  media: rcar-csi2: Enable support for R8A774B1
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  |  6 ++
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |  2 +
- drivers/gpu/drm/rcar-du/rcar_du_drv.h   |  2 +
- drivers/gpu/drm/rcar-du/rcar_du_group.h |  2 +
- drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 76 +++++++++++++++++++++++++
- 5 files changed, 88 insertions(+)
+ Documentation/devicetree/bindings/media/renesas,csi2.txt | 1 +
+ Documentation/devicetree/bindings/media/renesas,vin.txt  | 1 +
+ drivers/media/platform/rcar-vin/rcar-core.c              | 4 ++++
+ drivers/media/platform/rcar-vin/rcar-csi2.c              | 4 ++++
+ 4 files changed, 10 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 2da46e3dc4ae..23f1d6cc1719 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -1194,6 +1194,12 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
- 	if (ret < 0)
- 		return ret;
- 
-+	/* CMM might be disabled for this CRTC. */
-+	if (rcdu->cmms[swindex]) {
-+		rcrtc->cmm = rcdu->cmms[swindex];
-+		rgrp->cmms_mask |= BIT(hwindex % 2);
-+	}
-+
- 	drm_crtc_helper_add(crtc, &crtc_helper_funcs);
- 
- 	/* Start with vertical blanking interrupt reporting disabled. */
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-index 3b7fc668996f..5f2940c42225 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
-@@ -39,6 +39,7 @@ struct rcar_du_vsp;
-  * @vblank_wait: wait queue used to signal vertical blanking
-  * @vblank_count: number of vertical blanking interrupts to wait for
-  * @group: CRTC group this CRTC belongs to
-+ * @cmm: CMM associated with this CRTC
-  * @vsp: VSP feeding video to this CRTC
-  * @vsp_pipe: index of the VSP pipeline feeding video to this CRTC
-  * @writeback: the writeback connector
-@@ -64,6 +65,7 @@ struct rcar_du_crtc {
- 	unsigned int vblank_count;
- 
- 	struct rcar_du_group *group;
-+	struct platform_device *cmm;
- 	struct rcar_du_vsp *vsp;
- 	unsigned int vsp_pipe;
- 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-index 1327cd0df90a..61504c54e2ec 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-@@ -13,6 +13,7 @@
- #include <linux/kernel.h>
- #include <linux/wait.h>
- 
-+#include "rcar_cmm.h"
- #include "rcar_du_crtc.h"
- #include "rcar_du_group.h"
- #include "rcar_du_vsp.h"
-@@ -85,6 +86,7 @@ struct rcar_du_device {
- 	struct rcar_du_encoder *encoders[RCAR_DU_OUTPUT_MAX];
- 
- 	struct rcar_du_group groups[RCAR_DU_MAX_GROUPS];
-+	struct platform_device *cmms[RCAR_DU_MAX_CRTCS];
- 	struct rcar_du_vsp vsps[RCAR_DU_MAX_VSPS];
- 
- 	struct {
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.h b/drivers/gpu/drm/rcar-du/rcar_du_group.h
-index 87950c1f6a52..e9906609c635 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_group.h
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_group.h
-@@ -22,6 +22,7 @@ struct rcar_du_device;
-  * @mmio_offset: registers offset in the device memory map
-  * @index: group index
-  * @channels_mask: bitmask of populated DU channels in this group
-+ * @cmms_mask: bitmask of available CMMs in this group
-  * @num_crtcs: number of CRTCs in this group (1 or 2)
-  * @use_count: number of users of the group (rcar_du_group_(get|put))
-  * @used_crtcs: number of CRTCs currently in use
-@@ -37,6 +38,7 @@ struct rcar_du_group {
- 	unsigned int index;
- 
- 	unsigned int channels_mask;
-+	unsigned int cmms_mask;
- 	unsigned int num_crtcs;
- 	unsigned int use_count;
- 	unsigned int used_crtcs;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 2dc9caee8767..7c9fb5860e54 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -17,7 +17,9 @@
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_vblank.h>
- 
-+#include <linux/device.h>
- #include <linux/of_graph.h>
-+#include <linux/of_platform.h>
- #include <linux/wait.h>
- 
- #include "rcar_du_crtc.h"
-@@ -614,6 +616,75 @@ static int rcar_du_vsps_init(struct rcar_du_device *rcdu)
- 	return ret;
- }
- 
-+static int rcar_du_cmm_init(struct rcar_du_device *rcdu)
-+{
-+	const struct device_node *np = rcdu->dev->of_node;
-+	unsigned int i;
-+	int cells;
-+
-+	cells = of_property_count_u32_elems(np, "renesas,cmms");
-+	if (cells == -EINVAL)
-+		return 0;
-+
-+	if (cells > rcdu->num_crtcs) {
-+		dev_err(rcdu->dev,
-+			"Invalid number of entries in 'renesas,cmms'\n");
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < cells; ++i) {
-+		struct platform_device *pdev;
-+		struct device_link *link;
-+		struct device_node *cmm;
-+		int ret;
-+
-+		cmm = of_parse_phandle(np, "renesas,cmms", i);
-+		if (IS_ERR(cmm)) {
-+			dev_err(rcdu->dev,
-+				"Failed to parse 'renesas,cmms' property\n");
-+			return PTR_ERR(cmm);
-+		}
-+
-+		if (!of_device_is_available(cmm)) {
-+			/* It's fine to have a phandle to a non-enabled CMM. */
-+			of_node_put(cmm);
-+			continue;
-+		}
-+
-+		pdev = of_find_device_by_node(cmm);
-+		if (IS_ERR(pdev)) {
-+			dev_err(rcdu->dev, "No device found for CMM%u\n", i);
-+			of_node_put(cmm);
-+			return PTR_ERR(pdev);
-+		}
-+
-+		of_node_put(cmm);
-+
-+		/*
-+		 * -ENODEV is used to report that the CMM config option is
-+		 * disabled: return 0 and let the DU continue probing.
-+		 */
-+		ret = rcar_cmm_init(pdev);
-+		if (ret)
-+			return ret == -ENODEV ? 0 : ret;
-+
-+		/*
-+		 * Enforce suspend/resume ordering by making the CMM a provider
-+		 * of the DU: CMM is suspended after and resumed before the DU.
-+		 */
-+		link = device_link_add(rcdu->dev, &pdev->dev, DL_FLAG_STATELESS);
-+		if (!link) {
-+			dev_err(rcdu->dev,
-+				"Failed to create device link to CMM%u\n", i);
-+			return -EINVAL;
-+		}
-+
-+		rcdu->cmms[i] = pdev;
-+	}
-+
-+	return 0;
-+}
-+
- int rcar_du_modeset_init(struct rcar_du_device *rcdu)
- {
- 	static const unsigned int mmio_offsets[] = {
-@@ -704,6 +775,11 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
- 			return ret;
- 	}
- 
-+	/* Initialize the Color Management Modules. */
-+	ret = rcar_du_cmm_init(rcdu);
-+	if (ret)
-+		return ret;
-+
- 	/* Create the CRTCs. */
- 	for (swindex = 0, hwindex = 0; swindex < rcdu->num_crtcs; ++hwindex) {
- 		struct rcar_du_group *rgrp;
 -- 
-2.23.0
+2.7.4
 
