@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7A3FA3728
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 14:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDE3FA372A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 14:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F36572168B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 14:47:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C08921928
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 14:48:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393108AbfJPOrx (ORCPT
+        id S1730455AbfJPOr7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Oct 2019 10:47:53 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:37068 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726786AbfJPOrx (ORCPT
+        Wed, 16 Oct 2019 10:47:59 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:39049 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390354AbfJPOrx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 16 Oct 2019 10:47:53 -0400
 Received: from ramsan ([84.194.98.4])
-        by xavier.telenet-ops.be with bizsmtp
-        id EEnq2100X05gfCL01EnqeS; Wed, 16 Oct 2019 16:47:50 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id EEnq2100C05gfCL06EnqET; Wed, 16 Oct 2019 16:47:51 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iKkac-0003rY-Fq; Wed, 16 Oct 2019 16:47:50 +0200
+        id 1iKkac-0003rR-CL; Wed, 16 Oct 2019 16:47:50 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iKkac-0007hO-Dp; Wed, 16 Oct 2019 16:47:50 +0200
+        id 1iKkac-0007hH-AL; Wed, 16 Oct 2019 16:47:50 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -39,9 +39,9 @@ Cc:     Chris Brandt <chris.brandt@renesas.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 4/4] clocksource/drivers/renesas-ostm: Use unique device name instead of ostm
-Date:   Wed, 16 Oct 2019 16:47:47 +0200
-Message-Id: <20191016144747.29538-5-geert+renesas@glider.be>
+Subject: [PATCH v4 2/4] clocksource/drivers/timer-of: Use unique device name instead of timer
+Date:   Wed, 16 Oct 2019 16:47:45 +0200
+Message-Id: <20191016144747.29538-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191016144747.29538-1-geert+renesas@glider.be>
 References: <20191016144747.29538-1-geert+renesas@glider.be>
@@ -50,75 +50,40 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Currently all OSTM devices are called "ostm", also in kernel messages.
+If a hardware-specific driver does not provide a name, the timer-of core
+falls back to device_node.name.  Due to generic DT node naming policies,
+that name is almost always "timer", and thus doesn't identify the actual
+timer used.
 
-As there can be multiple instances in an SoC, this can confuse the user.
-Hence construct a unique name from the DT node name, like is done for
-platform devices.
+Fix this by using device_node.full_name instead, which includes the unit
+addrees.
 
-On RSK+RZA1, the boot log changes like:
+Example impact on /proc/timer_list:
 
-    -clocksource: ostm: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
-    +clocksource: timer@fcfec000: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
-     sched_clock: 32 bits at 33MHz, resolution 30ns, wraps every 64440619504ns
-    -ostm: used for clocksource
-    -ostm: used for clock events
-    +/soc/timer@fcfec000: used for clocksource
-    +/soc/timer@fcfec400: used for clock events
-     ...
-    -clocksource: Switched to clocksource ostm
-    +clocksource: Switched to clocksource timer@fcfec000
+    -Clock Event Device: timer
+    +Clock Event Device: timer@fcfec400
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v4:
-  - Rebase on top of timer_of conversion, and use np->full_name or %pOF,
-    like the timer-of core does,
-
-v3:
-  - Make the name format similar to the one used for platform devices,
-  - Use kasprintf() instead of buffer size guessing,
-  - Use a real example from rskrza1.
-
-v2 (by Jacopo):
-  - Use np->fullname.
+  - New.
 ---
- drivers/clocksource/renesas-ostm.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clocksource/timer-of.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
-index 46012d905604bc43..3d06ba66008c7029 100644
---- a/drivers/clocksource/renesas-ostm.c
-+++ b/drivers/clocksource/renesas-ostm.c
-@@ -64,9 +64,9 @@ static int __init ostm_init_clksrc(struct timer_of *to)
- 	writeb(CTL_FREERUN, timer_of_base(to) + OSTM_CTL);
- 	writeb(TS, timer_of_base(to) + OSTM_TS);
- 
--	return clocksource_mmio_init(timer_of_base(to) + OSTM_CNT, "ostm",
--				     timer_of_rate(to), 300, 32,
--				     clocksource_mmio_readl_up);
-+	return clocksource_mmio_init(timer_of_base(to) + OSTM_CNT,
-+				     to->np->full_name, timer_of_rate(to), 300,
-+				     32, clocksource_mmio_readl_up);
- }
- 
- static u64 notrace ostm_read_sched_clock(void)
-@@ -190,13 +190,13 @@ static int __init ostm_init(struct device_node *np)
- 			goto err_cleanup;
- 
- 		ostm_init_sched_clock(to);
--		pr_info("ostm: used for clocksource\n");
-+		pr_info("%pOF: used for clocksource\n", np);
- 	} else {
- 		ret = ostm_init_clkevt(to);
- 		if (ret)
- 			goto err_cleanup;
- 
--		pr_info("ostm: used for clock events\n");
-+		pr_info("%pOF: used for clock events\n", np);
+diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
+index 92cfb160657b81e2..572da477c6d35c5e 100644
+--- a/drivers/clocksource/timer-of.c
++++ b/drivers/clocksource/timer-of.c
+@@ -192,7 +192,7 @@ int __init timer_of_init(struct device_node *np, struct timer_of *to)
  	}
  
- 	return 0;
+ 	if (!to->clkevt.name)
+-		to->clkevt.name = np->name;
++		to->clkevt.name = np->full_name;
+ 
+ 	to->np = np;
+ 
 -- 
 2.17.1
 
