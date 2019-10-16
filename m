@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDE3FA372A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 14:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF94FA3728
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 14:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C08921928
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 14:48:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B10DE21925
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 14:48:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730455AbfJPOr7 (ORCPT
+        id S1729020AbfJPOsD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Oct 2019 10:47:59 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:39049 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390354AbfJPOrx (ORCPT
+        Wed, 16 Oct 2019 10:48:03 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:57838 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731987AbfJPOrx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 16 Oct 2019 10:47:53 -0400
 Received: from ramsan ([84.194.98.4])
-        by michel.telenet-ops.be with bizsmtp
-        id EEnq2100C05gfCL06EnqET; Wed, 16 Oct 2019 16:47:51 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id EEnq2100E05gfCL01Enq5V; Wed, 16 Oct 2019 16:47:50 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iKkac-0003rR-CL; Wed, 16 Oct 2019 16:47:50 +0200
+        id 1iKkac-0003rO-B8; Wed, 16 Oct 2019 16:47:50 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iKkac-0007hH-AL; Wed, 16 Oct 2019 16:47:50 +0200
+        id 1iKkac-0007hF-9f; Wed, 16 Oct 2019 16:47:50 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -39,9 +39,9 @@ Cc:     Chris Brandt <chris.brandt@renesas.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 2/4] clocksource/drivers/timer-of: Use unique device name instead of timer
-Date:   Wed, 16 Oct 2019 16:47:45 +0200
-Message-Id: <20191016144747.29538-3-geert+renesas@glider.be>
+Subject: [PATCH v4 1/4] clocksource/drivers/timer-of: Convert last full_name to %pOF
+Date:   Wed, 16 Oct 2019 16:47:44 +0200
+Message-Id: <20191016144747.29538-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191016144747.29538-1-geert+renesas@glider.be>
 References: <20191016144747.29538-1-geert+renesas@glider.be>
@@ -50,40 +50,34 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-If a hardware-specific driver does not provide a name, the timer-of core
-falls back to device_node.name.  Due to generic DT node naming policies,
-that name is almost always "timer", and thus doesn't identify the actual
-timer used.
-
-Fix this by using device_node.full_name instead, which includes the unit
-addrees.
-
-Example impact on /proc/timer_list:
-
-    -Clock Event Device: timer
-    +Clock Event Device: timer@fcfec400
+Commit 469869d18a886e04 ("clocksource: Convert to using %pOF instead of
+full_name") converted all but the one just added before by commit
+32f2fea6e77e64cd ("clocksource/drivers/timer-of: Handle
+of_irq_get_byname() result correctly").
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v4:
   - New.
 ---
- drivers/clocksource/timer-of.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clocksource/timer-of.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clocksource/timer-of.c b/drivers/clocksource/timer-of.c
-index 92cfb160657b81e2..572da477c6d35c5e 100644
+index 11ff701ff4bb9907..92cfb160657b81e2 100644
 --- a/drivers/clocksource/timer-of.c
 +++ b/drivers/clocksource/timer-of.c
-@@ -192,7 +192,7 @@ int __init timer_of_init(struct device_node *np, struct timer_of *to)
- 	}
- 
- 	if (!to->clkevt.name)
--		to->clkevt.name = np->name;
-+		to->clkevt.name = np->full_name;
- 
- 	to->np = np;
- 
+@@ -57,8 +57,8 @@ static __init int timer_of_irq_init(struct device_node *np,
+ 	if (of_irq->name) {
+ 		of_irq->irq = ret = of_irq_get_byname(np, of_irq->name);
+ 		if (ret < 0) {
+-			pr_err("Failed to get interrupt %s for %s\n",
+-			       of_irq->name, np->full_name);
++			pr_err("Failed to get interrupt %s for %pOF\n",
++			       of_irq->name, np);
+ 			return ret;
+ 		}
+ 	} else	{
 -- 
 2.17.1
 
