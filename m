@@ -2,78 +2,103 @@ Return-Path: <SRS0=RTEs=YJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F284FA372A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 15:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A53D8FA372A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 15:12:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E345820659
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 15:11:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D8D920640
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Oct 2019 15:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387766AbfJPPLM (ORCPT
+        id S1726244AbfJPPMU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Oct 2019 11:11:12 -0400
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:59336 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726244AbfJPPLM (ORCPT
+        Wed, 16 Oct 2019 11:12:20 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:43886 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730953AbfJPPMU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Oct 2019 11:11:12 -0400
+        Wed, 16 Oct 2019 11:12:20 -0400
 Received: from ramsan ([84.194.98.4])
-        by baptiste.telenet-ops.be with bizsmtp
-        id EFBA2100s05gfCL01FBA7l; Wed, 16 Oct 2019 17:11:10 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id EFCG2100M05gfCL01FCGCw; Wed, 16 Oct 2019 17:12:17 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iKkxC-0003wR-P5; Wed, 16 Oct 2019 17:11:10 +0200
+        id 1iKkyG-0003wY-SA; Wed, 16 Oct 2019 17:12:16 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iKkxC-00080e-NU; Wed, 16 Oct 2019 17:11:10 +0200
+        id 1iKkyG-00082z-PS; Wed, 16 Oct 2019 17:12:16 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc:     Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: arm: renesas: Add R-Car M3-N ULCB with Kingfisher
-Date:   Wed, 16 Oct 2019 17:11:09 +0200
-Message-Id: <20191016151109.30747-1-geert+renesas@glider.be>
+Subject: [PATCH v4] dt-bindings: display: renesas: du: Document optional reset properties
+Date:   Wed, 16 Oct 2019 17:12:15 +0200
+Message-Id: <20191016151215.30892-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the use of the Kingfisher expansion board with the R-Car
-Starter Kit Pro equipped with an R-Car M3-N SoC.
+Document the optional properties for describing module resets, to
+support resetting display channels on R-Car Gen2 and Gen3.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
-make ARCH=arm dtbs_check DT_SCHEMA_FILES=Documentation/devicetree/bindings/arm/renesas.yaml
+v4:
+  - Use "All but R8A7779" instead of "R8A779[0123456]", to reduce future
+    churn,
 
-arch/arm64/boot/dts/renesas/r8a77965-m3nulcb-kf.dt.yaml: compatible: ['shimafuji,kingfisher', 'renesas,m3nulcb', 'renesas,r8a77965'] is not valid under any of the given schemas
+v3:
+  - Add Acked-by,
+  - Drop LVDS resets, as LVDS is now covered by a separate binding,
+  - Update the example.
+
+v2:
+  - s/phandles/phandle/.
 ---
- Documentation/devicetree/bindings/arm/renesas.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../devicetree/bindings/display/renesas,du.txt         | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/arm/renesas.yaml
-index 99b290ca418a8a92..9436124c58090860 100644
---- a/Documentation/devicetree/bindings/arm/renesas.yaml
-+++ b/Documentation/devicetree/bindings/arm/renesas.yaml
-@@ -217,9 +217,11 @@ properties:
-           - enum:
-               - renesas,h3ulcb
-               - renesas,m3ulcb
-+              - renesas,m3nulcb
-           - enum:
-               - renesas,r8a7795
-               - renesas,r8a7796
-+              - renesas,r8a77965
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index c97dfacad28118fa..59be7462a4c8bb8e 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -45,6 +45,14 @@ Required Properties:
+     instance that serves the DU channel, and the channel index identifies the
+     LIF instance in that VSP.
  
-       - description: R-Car M3-N (R8A77965)
-         items:
++Optional properties:
++  - resets: A list of phandle + reset-specifier pairs, one for each entry in
++    the reset-names property.
++  - reset-names: Names of the resets. This property is model-dependent.
++    - All but R8A7779 use one reset for a group of one or more successive
++      channels. The resets must be named "du.x" with "x" being the numerical
++      index of the lowest channel in the group.
++
+ Required nodes:
+ 
+ The connections to the DU output video ports are modeled using the OF graph
+@@ -90,6 +98,8 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+ 			 <&cpg CPG_MOD 722>,
+ 			 <&cpg CPG_MOD 721>;
+ 		clock-names = "du.0", "du.1", "du.2", "du.3";
++		resets = <&cpg 724>, <&cpg 722>;
++		reset-names = "du.0", "du.2";
+ 		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+ 
+ 		ports {
 -- 
 2.17.1
 
