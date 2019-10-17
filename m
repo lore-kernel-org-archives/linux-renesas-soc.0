@@ -2,30 +2,31 @@ Return-Path: <SRS0=mucG=YK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB7FFA373B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Oct 2019 12:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0D7FA373B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Oct 2019 12:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B80CE21A49
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Oct 2019 12:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 911B720854
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Oct 2019 12:48:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502702AbfJQMsr (ORCPT
+        id S2502719AbfJQMsw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Oct 2019 08:48:47 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4208 "EHLO huawei.com"
+        Thu, 17 Oct 2019 08:48:52 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4209 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2502653AbfJQMsq (ORCPT
+        id S2502653AbfJQMsv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:48:46 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9001D560213FE09E2984;
-        Thu, 17 Oct 2019 20:48:41 +0800 (CST)
+        Thu, 17 Oct 2019 08:48:51 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A2D7B6223ADCEBDB3954;
+        Thu, 17 Oct 2019 20:48:46 +0800 (CST)
 Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
  (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
- 20:48:32 +0800
+ 20:48:39 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <linus.walleij@linaro.org>, <manivannan.sadhasivam@linaro.org>,
         <afaerber@suse.de>, <f.fainelli@gmail.com>, <rjui@broadcom.com>,
@@ -43,9 +44,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <haojian.zhuang@gmail.com>, <wens@csie.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <agross@kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 12/30] pinctrl: spear: use devm_platform_ioremap_resource() to simplify code
-Date:   Thu, 17 Oct 2019 20:26:22 +0800
-Message-ID: <20191017122640.22976-13-yuehaibing@huawei.com>
+Subject: [PATCH -next 15/30] pinctrl: oxnas: use devm_platform_ioremap_resource() to simplify code
+Date:   Thu, 17 Oct 2019 20:26:25 +0800
+Message-ID: <20191017122640.22976-16-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20191017122640.22976-1-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
@@ -63,52 +64,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/spear/pinctrl-plgpio.c | 4 +---
- drivers/pinctrl/spear/pinctrl-spear.c  | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/pinctrl/pinctrl-oxnas.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/spear/pinctrl-plgpio.c b/drivers/pinctrl/spear/pinctrl-plgpio.c
-index c4c9a29..1ebbc49 100644
---- a/drivers/pinctrl/spear/pinctrl-plgpio.c
-+++ b/drivers/pinctrl/spear/pinctrl-plgpio.c
-@@ -515,15 +515,13 @@ static int plgpio_probe_dt(struct platform_device *pdev, struct plgpio *plgpio)
- static int plgpio_probe(struct platform_device *pdev)
- {
- 	struct plgpio *plgpio;
+diff --git a/drivers/pinctrl/pinctrl-oxnas.c b/drivers/pinctrl/pinctrl-oxnas.c
+index 40dc125..674b7b5 100644
+--- a/drivers/pinctrl/pinctrl-oxnas.c
++++ b/drivers/pinctrl/pinctrl-oxnas.c
+@@ -1196,7 +1196,6 @@ static int oxnas_gpio_probe(struct platform_device *pdev)
+ 	struct oxnas_gpio_bank *bank;
+ 	unsigned int id, ngpios;
+ 	int irq, ret;
 -	struct resource *res;
- 	int ret, irq;
+ 	struct gpio_irq_chip *girq;
  
- 	plgpio = devm_kzalloc(&pdev->dev, sizeof(*plgpio), GFP_KERNEL);
- 	if (!plgpio)
- 		return -ENOMEM;
+ 	if (of_parse_phandle_with_fixed_args(np, "gpio-ranges",
+@@ -1220,8 +1219,7 @@ static int oxnas_gpio_probe(struct platform_device *pdev)
+ 
+ 	bank = &oxnas_gpio_banks[id];
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	plgpio->base = devm_ioremap_resource(&pdev->dev, res);
-+	plgpio->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(plgpio->base))
- 		return PTR_ERR(plgpio->base);
- 
-diff --git a/drivers/pinctrl/spear/pinctrl-spear.c b/drivers/pinctrl/spear/pinctrl-spear.c
-index 7ec19c7..948f56a 100644
---- a/drivers/pinctrl/spear/pinctrl-spear.c
-+++ b/drivers/pinctrl/spear/pinctrl-spear.c
-@@ -358,7 +358,6 @@ int spear_pinctrl_probe(struct platform_device *pdev,
- 			struct spear_pinctrl_machdata *machdata)
- {
- 	struct device_node *np = pdev->dev.of_node;
--	struct resource *res;
- 	struct spear_pmx *pmx;
- 
- 	if (!machdata)
-@@ -368,8 +367,7 @@ int spear_pinctrl_probe(struct platform_device *pdev,
- 	if (!pmx)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pmx->vbase = devm_ioremap_resource(&pdev->dev, res);
-+	pmx->vbase = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pmx->vbase))
- 		return PTR_ERR(pmx->vbase);
+-	bank->reg_base = devm_ioremap_resource(&pdev->dev, res);
++	bank->reg_base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(bank->reg_base))
+ 		return PTR_ERR(bank->reg_base);
  
 -- 
 2.7.4
