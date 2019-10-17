@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98950FA373B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Oct 2019 12:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E268FA3735
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Oct 2019 12:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 705B1214E0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Oct 2019 12:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64E5421A4C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Oct 2019 12:49:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390376AbfJQMtq (ORCPT
+        id S2502820AbfJQMtQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Oct 2019 08:49:46 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57658 "EHLO huawei.com"
+        Thu, 17 Oct 2019 08:49:16 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:4213 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2502830AbfJQMtT (ORCPT
+        id S2502812AbfJQMtP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Oct 2019 08:49:19 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 34A8B769474F2EBF411E;
-        Thu, 17 Oct 2019 20:49:17 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
- 20:49:08 +0800
+        Thu, 17 Oct 2019 08:49:15 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 4030555D330CE5AF0614;
+        Thu, 17 Oct 2019 20:49:12 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.439.0; Thu, 17 Oct 2019
+ 20:49:01 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
 To:     <linus.walleij@linaro.org>, <manivannan.sadhasivam@linaro.org>,
         <afaerber@suse.de>, <f.fainelli@gmail.com>, <rjui@broadcom.com>,
@@ -44,9 +44,9 @@ CC:     <linux-arm-kernel@lists.infradead.org>,
         <haojian.zhuang@gmail.com>, <wens@csie.org>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <agross@kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next 27/30] pinctrl: artpec6: use devm_platform_ioremap_resource() to simplify code
-Date:   Thu, 17 Oct 2019 20:26:37 +0800
-Message-ID: <20191017122640.22976-28-yuehaibing@huawei.com>
+Subject: [PATCH -next 24/30] pinctrl: digicolor: use devm_platform_ioremap_resource() to simplify code
+Date:   Thu, 17 Oct 2019 20:26:34 +0800
+Message-ID: <20191017122640.22976-25-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 In-Reply-To: <20191017122640.22976-1-yuehaibing@huawei.com>
 References: <20191017122640.22976-1-yuehaibing@huawei.com>
@@ -64,31 +64,31 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/pinctrl/pinctrl-artpec6.c | 4 +---
+ drivers/pinctrl/pinctrl-digicolor.c | 4 +---
  1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-artpec6.c b/drivers/pinctrl/pinctrl-artpec6.c
-index e3239cf..986e04a 100644
---- a/drivers/pinctrl/pinctrl-artpec6.c
-+++ b/drivers/pinctrl/pinctrl-artpec6.c
-@@ -936,7 +936,6 @@ static void artpec6_pmx_reset(struct artpec6_pmx *pmx)
- static int artpec6_pmx_probe(struct platform_device *pdev)
+diff --git a/drivers/pinctrl/pinctrl-digicolor.c b/drivers/pinctrl/pinctrl-digicolor.c
+index 7e1ceee..ff702cf 100644
+--- a/drivers/pinctrl/pinctrl-digicolor.c
++++ b/drivers/pinctrl/pinctrl-digicolor.c
+@@ -270,7 +270,6 @@ static int dc_gpiochip_add(struct dc_pinmap *pmap, struct device_node *np)
+ static int dc_pinctrl_probe(struct platform_device *pdev)
  {
- 	struct artpec6_pmx *pmx;
--	struct resource *res;
+ 	struct dc_pinmap *pmap;
+-	struct resource *r;
+ 	struct pinctrl_pin_desc *pins;
+ 	struct pinctrl_desc *pctl_desc;
+ 	char *pin_names;
+@@ -281,8 +280,7 @@ static int dc_pinctrl_probe(struct platform_device *pdev)
+ 	if (!pmap)
+ 		return -ENOMEM;
  
- 	pmx = devm_kzalloc(&pdev->dev, sizeof(*pmx), GFP_KERNEL);
- 	if (!pmx)
-@@ -944,8 +943,7 @@ static int artpec6_pmx_probe(struct platform_device *pdev)
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	pmap->regs = devm_ioremap_resource(&pdev->dev, r);
++	pmap->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pmap->regs))
+ 		return PTR_ERR(pmap->regs);
  
- 	pmx->dev = &pdev->dev;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pmx->base = devm_ioremap_resource(&pdev->dev, res);
-+	pmx->base = devm_platform_ioremap_resource(pdev, 0);
- 
- 	if (IS_ERR(pmx->base))
- 		return PTR_ERR(pmx->base);
 -- 
 2.7.4
 
