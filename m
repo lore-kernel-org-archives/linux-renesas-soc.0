@@ -2,129 +2,83 @@ Return-Path: <SRS0=mr1P=YL=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-13.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B65ACA9EA0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Oct 2019 10:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DF4CA9EA4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Oct 2019 11:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E854222C3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Oct 2019 10:17:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC3C621D7C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Oct 2019 11:01:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389772AbfJRKRv (ORCPT
+        id S2633624AbfJRLBK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Oct 2019 06:17:51 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41209 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388560AbfJRKRv (ORCPT
+        Fri, 18 Oct 2019 07:01:10 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:47696 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2633621AbfJRLBH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Oct 2019 06:17:51 -0400
-Received: by mail-oi1-f196.google.com with SMTP id g81so4748869oib.8;
-        Fri, 18 Oct 2019 03:17:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CEwwsfk1SyiFEq1Fvt999kx3eJMiwdoczC+MTi8SsI0=;
-        b=fdoPIsGzObkQpCzuC5dPtHMxNipIrEvRUjsye8ZJgxPs6WK0XUjwNIldFYvZ1hw776
-         FLU4iwoJ1pYQOtqgnOlJgujmma5X1e/cJIDZzd+tlXw4J9KceMzquzUS22mZtJb6RXTx
-         lvDwzxJNIeG35PN7YDrx2Xoe3mWxFXD1UKbS3m6/YulKmJyehytzakIAXXDzxOtQXrPC
-         fDgTiZQjtXGXPSwGrbcjPQQaO+Qt9zutISiLjx1vQwXbGRK7b17kGT7cSfS/Nno938Au
-         95udJOVFiji2y1KJnWTQl9YEjxwNtCelDBxh8LI5MWkekqItuaH/pCxQ5UNN/rTeIDr/
-         sLDA==
-X-Gm-Message-State: APjAAAUQsGYITgAeamyRe3r3VTE+JeAd/nq4sWH4SR3C7vyB4AisAZhY
-        72YBPyWHIKWnKK3qPGlZhxX967ajG8Qo29rT188=
-X-Google-Smtp-Source: APXvYqySEP5QO8Z4n1gpQC88jztS8lshEglNkce+JQcSV16ojD4EbAnp+iETJp3JI8s4ZXYUtWNtb3AFJk/2Y01VObs=
-X-Received: by 2002:aca:230c:: with SMTP id e12mr6899373oie.153.1571393870628;
- Fri, 18 Oct 2019 03:17:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <c4353d63-6f78-92b3-91c9-acc9327e1d80@gmail.com>
- <20191016152601.GB7457@e121166-lin.cambridge.arm.com> <75fb3519-80eb-fec2-d3eb-cc1b884fef25@gmail.com>
- <20191016161846.GC7457@e121166-lin.cambridge.arm.com> <CAL_JsqL2c-ODMkOo1tAJh8JeF0VRXahCq2zF2fX8dZV8wpQj+Q@mail.gmail.com>
- <c835701d-ff0e-f1b8-af16-fe53febe5519@gmail.com> <CAL_Jsq+4uaFJzk5jUPw+KssZvnji0WDh+QcFMok99XXntEhNTQ@mail.gmail.com>
- <88099c4f-4fb4-626e-f66f-3eb8861dfb2c@gmail.com> <CAL_JsqLzmk5dfn0Re3y7VjY5ehE29vKLOV-2tM5B_jPbB2YiPQ@mail.gmail.com>
- <06d093b2-dcc2-a01f-fce0-5db0bc47325e@gmail.com> <20191018100655.GA47056@e119886-lin.cambridge.arm.com>
-In-Reply-To: <20191018100655.GA47056@e119886-lin.cambridge.arm.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Oct 2019 12:17:38 +0200
-Message-ID: <CAMuHMdUf6uH_64R9hOgFgmoUYWk_LkCxy9RLzV0Je=TFr-G87w@mail.gmail.com>
-Subject: Re: [PATCH V3 2/3] PCI: rcar: Do not abort on too many inbound dma-ranges
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Marek Vasut <marek.vasut@gmail.com>, Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        PCI <linux-pci@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 18 Oct 2019 07:01:07 -0400
+Received: from ramsan ([84.194.98.4])
+        by laurent.telenet-ops.be with bizsmtp
+        id Ez142100i05gfCL01z148H; Fri, 18 Oct 2019 13:01:05 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iLQ0G-0005q3-JW; Fri, 18 Oct 2019 13:01:04 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iLPEt-0006s8-Va; Fri, 18 Oct 2019 12:12:07 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PULL 5/5] Renesas DT binding updates for v5.5
+Date:   Fri, 18 Oct 2019 12:11:36 +0200
+Message-Id: <20191018101136.26350-6-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191018101136.26350-1-geert+renesas@glider.be>
+References: <20191018101136.26350-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Andrew,
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
-On Fri, Oct 18, 2019 at 12:07 PM Andrew Murray <andrew.murray@arm.com> wrote:
-> On Thu, Oct 17, 2019 at 12:33:24AM +0200, Marek Vasut wrote:
-> > On 10/17/19 12:26 AM, Rob Herring wrote:
-> > [...]
-> > >>>> You can have multiple non-continuous DRAM banks for example. And an
-> > >>>> entry for SRAM optionally. Each DRAM bank and/or the SRAM should have a
-> > >>>> separate dma-ranges entry, right ?
-> > >>>
-> > >>> Not necessarily. We really only want to define the minimum we have to.
-> > >>> The ideal system is no dma-ranges. Is each bank at a different
-> > >>> relative position compared to the CPU's view of the system. That would
-> > >>> seem doubtful for just DRAM banks. Perhaps DRAM and SRAM could change.
-> > >>
-> > >> Is that a question ? Anyway, yes, there is a bit of DRAM below the 32bit
-> > >> boundary and some more above the 32bit boundary. These two banks don't
-> > >> need to be continuous. And then you could add the SRAM into the mix.
-> > >
-> > > Continuous is irrelevant. My question was in more specific terms is
-> > > (bank1 addr - bank0 addr) different for CPU's view (i.e phys addr) vs.
-> > > PCI host view (i.e. bus addr)? If not, then that is 1 translation and
-> > > 1 dma-ranges entry.
-> >
-> > I don't think it's different in that aspect. Except the bus has this
-> > 32bit limitation, where it only sees subset of the DRAM.
-> >
-> > Why should the DMA ranges incorrectly cover also the DRAM which is not
-> > present ?
->
-> I think this is where there is a difference in understanding.
->
-> If I understand correctly, the job of the dma-ranges property isn't to
-> describe *what* ranges the PCI device can access - it's there to describe
-> *how*, i.e. the mapping between PCI and CPU-visible memory.
->
-> The dma-ranges property is a side-effect of how the busses are wired up
-> between the CPU and PCI controller - and so it doesn't matter what is or
-> isn't on those buses.
->
-> It's the job of other parts of the system to ensure that PCI devices are
-> told the correct addresses to write to, e.g. the enumerating software
-> referring to a valid CPU visible address correctly translated for the view
-> of the PCI device, ATS etc. And any IOMMU to enforce that.
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
 
-Yep, that's what I thought, too.
+are available in the Git repository at:
 
-> It sounds like there is a 1:1 mapping between CPU and PCI - in which case
-> there isn't a reason for a dma-ranges.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v5.5-tag1
 
-There's still the 32-bit limitation: PCI devices can access low 32-bit addresses
-only.
+for you to fetch changes up to 4d3cae42544775c71521e8ed5adb64c1839036b9:
 
-Gr{oetje,eeting}s,
+  dt-bindings: reset: rcar-rst: Document r8a774b1 reset module (2019-10-01 09:52:34 +0200)
 
-                        Geert
+----------------------------------------------------------------
+Renesas DT binding updates for v5.5
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+  - RZ/G2M update for the Renesas Timer Unit bindings,
+  - Support for the new RZ/G2N (r8a774b1) SoC and the HiHope RZ/G2N
+    board.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+----------------------------------------------------------------
+Biju Das (4):
+      dt-bindings: arm: renesas: Document RZ/G2N SoC DT bindings
+      dt-bindings: arm: renesas: Add HopeRun RZ/G2N boards
+      dt-bindings: power: rcar-sysc: Document r8a774b1 sysc
+      dt-bindings: reset: rcar-rst: Document r8a774b1 reset module
+
+Fabrizio Castro (1):
+      dt-bindings: timer: renesas: tmu: Document r8a774a1 bindings
+
+ Documentation/devicetree/bindings/arm/renesas.yaml           | 12 ++++++++++++
+ .../devicetree/bindings/power/renesas,rcar-sysc.txt          |  1 +
+ Documentation/devicetree/bindings/reset/renesas,rst.txt      |  1 +
+ Documentation/devicetree/bindings/timer/renesas,tmu.txt      |  1 +
+ 4 files changed, 15 insertions(+)
