@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DF4CA9EA4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 516C8CA9EA5
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Oct 2019 11:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC3C621D7C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Oct 2019 11:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3490821D7C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Oct 2019 11:01:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633624AbfJRLBK (ORCPT
+        id S2633618AbfJRLBK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 18 Oct 2019 07:01:10 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:47696 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2633621AbfJRLBH (ORCPT
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:60124 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2633582AbfJRLBH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 18 Oct 2019 07:01:07 -0400
 Received: from ramsan ([84.194.98.4])
-        by laurent.telenet-ops.be with bizsmtp
-        id Ez142100i05gfCL01z148H; Fri, 18 Oct 2019 13:01:05 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id Ez142100D05gfCL01z14un; Fri, 18 Oct 2019 13:01:04 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iLQ0G-0005q3-JW; Fri, 18 Oct 2019 13:01:04 +0200
+        id 1iLQ0G-0005q3-Gg; Fri, 18 Oct 2019 13:01:04 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iLPEt-0006s8-Va; Fri, 18 Oct 2019 12:12:07 +0200
+        id 1iLPF8-0006tt-VN; Fri, 18 Oct 2019 12:12:22 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PULL 5/5] Renesas DT binding updates for v5.5
-Date:   Fri, 18 Oct 2019 12:11:36 +0200
-Message-Id: <20191018101136.26350-6-geert+renesas@glider.be>
+Subject: [GIT PULL] pinctrl: sh-pfc: Updates for v5.5
+Date:   Fri, 18 Oct 2019 12:12:21 +0200
+Message-Id: <20191018101221.26483-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191018101136.26350-1-geert+renesas@glider.be>
-References: <20191018101136.26350-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
+
+	Hi Linus,
 
 The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
@@ -54,31 +52,66 @@ The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v5.5-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v5.5-tag1
 
-for you to fetch changes up to 4d3cae42544775c71521e8ed5adb64c1839036b9:
+for you to fetch changes up to f846d1e704f2d07a7f359f65eac2c8cac565db35:
 
-  dt-bindings: reset: rcar-rst: Document r8a774b1 reset module (2019-10-01 09:52:34 +0200)
-
-----------------------------------------------------------------
-Renesas DT binding updates for v5.5
-
-  - RZ/G2M update for the Renesas Timer Unit bindings,
-  - Support for the new RZ/G2N (r8a774b1) SoC and the HiHope RZ/G2N
-    board.
+  pinctrl: sh-pfc: pfc-r8a77965: Fix typo in pinmux macro for SCL3 (2019-10-14 12:11:12 +0200)
 
 ----------------------------------------------------------------
-Biju Das (4):
-      dt-bindings: arm: renesas: Document RZ/G2N SoC DT bindings
-      dt-bindings: arm: renesas: Add HopeRun RZ/G2N boards
-      dt-bindings: power: rcar-sysc: Document r8a774b1 sysc
-      dt-bindings: reset: rcar-rst: Document r8a774b1 reset module
+pinctrl: sh-pfc: Updates for v5.5
 
-Fabrizio Castro (1):
-      dt-bindings: timer: renesas: tmu: Document r8a774a1 bindings
+  - Add support for the new RZ/G2N (r8a774b1) SoC,
+  - Small fixes and cleanups.
 
- Documentation/devicetree/bindings/arm/renesas.yaml           | 12 ++++++++++++
- .../devicetree/bindings/power/renesas,rcar-sysc.txt          |  1 +
- Documentation/devicetree/bindings/reset/renesas,rst.txt      |  1 +
- Documentation/devicetree/bindings/timer/renesas,tmu.txt      |  1 +
- 4 files changed, 15 insertions(+)
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (2):
+      dt-bindings: pinctrl: sh-pfc: Document r8a774b1 PFC support
+      pinctrl: sh-pfc: r8a77965: Add R8A774B1 PFC support
+
+Chris Brandt (1):
+      pinctrl: rza2: Fix gpio name typos
+
+Colin Ian King (1):
+      pinctrl: rzn1: Make array reg_drive static, makes object smaller
+
+Geert Uytterhoeven (2):
+      Revert "pinctrl: sh-pfc: r8a77990: Fix MOD_SEL1 bit30 when using SSI_SCK2 and SSI_WS2"
+      Revert "pinctrl: sh-pfc: r8a77990: Fix MOD_SEL1 bit31 when using SIM0_D"
+
+Keiya Nobuta (5):
+      pinctrl: sh-pfc: Fix PINMUX_IPSR_PHYS() to set GPSR
+      pinctrl: sh-pfc: pfc-r8a7795: Fix typo in pinmux macro for SCL3
+      pinctrl: sh-pfc: pfc-r8a7795-es1: Fix typo in pinmux macro for SCL3
+      pinctrl: sh-pfc: pfc-r8a7796: Fix typo in pinmux macro for SCL3
+      pinctrl: sh-pfc: pfc-r8a77965: Fix typo in pinmux macro for SCL3
+
+Takeshi Kihara (1):
+      pinctrl: sh-pfc: r8a77990: Rename AVB_AVTP_{MATCH,CAPTURE} pin functions
+
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   1 +
+ drivers/pinctrl/pinctrl-rza2.c                     |   4 +-
+ drivers/pinctrl/pinctrl-rzn1.c                     |   2 +-
+ drivers/pinctrl/sh-pfc/Kconfig                     |   4 +
+ drivers/pinctrl/sh-pfc/Makefile                    |   1 +
+ drivers/pinctrl/sh-pfc/core.c                      |   6 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7795-es1.c           |   2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7795.c               |   2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a7796.c               |   2 +-
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c              | 863 +++++++++++----------
+ drivers/pinctrl/sh-pfc/pfc-r8a77990.c              |  57 +-
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |   5 +-
+ 12 files changed, 504 insertions(+), 445 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
