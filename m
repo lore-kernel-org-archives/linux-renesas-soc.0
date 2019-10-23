@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48281CA9EB6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 568A6CA9EBB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25D5D21872
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36C1F214B2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391317AbfJWM3r (ORCPT
+        id S2391316AbfJWM3s (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 08:29:47 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:39176 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391315AbfJWM3q (ORCPT
+        Wed, 23 Oct 2019 08:29:48 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:35644 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391324AbfJWM3r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:29:46 -0400
+        Wed, 23 Oct 2019 08:29:47 -0400
 Received: from ramsan ([84.194.98.4])
-        by xavier.telenet-ops.be with bizsmtp
-        id H0Vl2100V05gfCL010VlWv; Wed, 23 Oct 2019 14:29:46 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id H0Vl2100j05gfCL010Vm2x; Wed, 23 Oct 2019 14:29:46 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFlp-0000eP-Qu; Wed, 23 Oct 2019 14:29:45 +0200
+        id 1iNFlp-0000eV-T4; Wed, 23 Oct 2019 14:29:45 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFlp-0003Dw-Pv; Wed, 23 Oct 2019 14:29:45 +0200
+        id 1iNFlp-0003E2-RP; Wed, 23 Oct 2019 14:29:45 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -39,9 +39,9 @@ Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] dt-bindings: clock: renesas: cpg-mssr: Document r8a77961 support
-Date:   Wed, 23 Oct 2019 14:29:38 +0200
-Message-Id: <20191023122941.12342-2-geert+renesas@glider.be>
+Subject: [PATCH v2 3/4] clk: renesas: Rename CLK_R8A7796 to CLK_R8A77960
+Date:   Wed, 23 Oct 2019 14:29:40 +0200
+Message-Id: <20191023122941.12342-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191023122941.12342-1-geert+renesas@glider.be>
 References: <20191023122941.12342-1-geert+renesas@glider.be>
@@ -50,52 +50,72 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add DT binding documentation for the Clock Pulse Generator / Module
-Standby and Software Reset block in the Renesas R-Car M3-W+ (R8A77961)
-SoC.
+Rename CONFIG_CLK_R8A7796 for R-Car M3-W (R8A77960) to
+CONFIG_CLK_R8A77960, to avoid confusion with R-Car M3-W+ (R8A77961),
+which will use CONFIG_CLK_R8A77961.
 
-Update all references to R-Car M3-W from "r8a7796" to "r8a77960", to
-avoid confusion between R-Car M3-W (R8A77960) and M3-W+.
+Extend the dependency of CONFIG_CLK_R8A77960 from CONFIG_ARCH_R8A7796 to
+CONFIG_ARCH_R8A77960, to relax dependencies for a future rename of the
+SoC configuration symbol.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
 v2:
-  - Add Reviewed-by,
-  - Update R-Car M3-W references.
+  - New.
 ---
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt    | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/clk/renesas/Kconfig            | 4 ++--
+ drivers/clk/renesas/Makefile           | 2 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c | 2 +-
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index b5edebeb12b40638..d67f57e0dfd22fbe 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -27,7 +27,8 @@ Required Properties:
-       - "renesas,r8a7793-cpg-mssr" for the r8a7793 SoC (R-Car M2-N)
-       - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
-       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
--      - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
-+      - "renesas,r8a7796-cpg-mssr" for the r8a77960 SoC (R-Car M3-W)
-+      - "renesas,r8a77961-cpg-mssr" for the r8a77961 SoC (R-Car M3-W+)
-       - "renesas,r8a77965-cpg-mssr" for the r8a77965 SoC (R-Car M3-N)
-       - "renesas,r8a77970-cpg-mssr" for the r8a77970 SoC (R-Car V3M)
-       - "renesas,r8a77980-cpg-mssr" for the r8a77980 SoC (R-Car V3H)
-@@ -42,10 +43,10 @@ Required Properties:
-   - clock-names: List of external parent clock names. Valid names are:
-       - "extal" (r7s9210, r8a7743, r8a7744, r8a7745, r8a77470, r8a774a1,
- 		 r8a774b1, r8a774c0, r8a7790, r8a7791, r8a7792, r8a7793,
--		 r8a7794, r8a7795, r8a7796, r8a77965, r8a77970, r8a77980,
--		 r8a77990, r8a77995)
--      - "extalr" (r8a774a1, r8a774b1, r8a7795, r8a7796, r8a77965, r8a77970,
--		  r8a77980)
-+		 r8a7794, r8a7795, r8a77960, r8a77961, r8a77965, r8a77970,
-+		 r8a77980, r8a77990, r8a77995)
-+      - "extalr" (r8a774a1, r8a774b1, r8a7795, r8a77960, r8a77961, r8a77965,
-+		  r8a77970, r8a77980)
-       - "usb_extal" (r8a7743, r8a7744, r8a7745, r8a77470, r8a7790, r8a7791,
- 		     r8a7793, r8a7794)
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index be03bb74801252bc..a48f75ec1400c090 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -21,7 +21,7 @@ config CLK_RENESAS
+ 	select CLK_R8A7792 if ARCH_R8A7792
+ 	select CLK_R8A7794 if ARCH_R8A7794
+ 	select CLK_R8A7795 if ARCH_R8A7795
+-	select CLK_R8A7796 if ARCH_R8A7796
++	select CLK_R8A77960 if ARCH_R8A77960 || ARCH_R8A7796
+ 	select CLK_R8A77965 if ARCH_R8A77965
+ 	select CLK_R8A77970 if ARCH_R8A77970
+ 	select CLK_R8A77980 if ARCH_R8A77980
+@@ -109,7 +109,7 @@ config CLK_R8A7795
+ 	bool "R-Car H3 clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN3_CPG
  
+-config CLK_R8A7796
++config CLK_R8A77960
+ 	bool "R-Car M3-W clock support" if COMPILE_TEST
+ 	select CLK_RCAR_GEN3_CPG
+ 
+diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
+index ef0fdd00d2b741b2..58211d0f04bf4d4b 100644
+--- a/drivers/clk/renesas/Makefile
++++ b/drivers/clk/renesas/Makefile
+@@ -18,7 +18,7 @@ obj-$(CONFIG_CLK_R8A7791)		+= r8a7791-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A7792)		+= r8a7792-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A7794)		+= r8a7794-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A7795)		+= r8a7795-cpg-mssr.o
+-obj-$(CONFIG_CLK_R8A7796)		+= r8a7796-cpg-mssr.o
++obj-$(CONFIG_CLK_R8A77960)		+= r8a7796-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A77965)		+= r8a77965-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A77970)		+= r8a77970-cpg-mssr.o
+ obj-$(CONFIG_CLK_R8A77980)		+= r8a77980-cpg-mssr.o
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index 35966678148e2c8b..c2f96e63498e14cc 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -749,7 +749,7 @@ static const struct of_device_id cpg_mssr_match[] = {
+ 		.data = &r8a7795_cpg_mssr_info,
+ 	},
+ #endif
+-#ifdef CONFIG_CLK_R8A7796
++#ifdef CONFIG_CLK_R8A77960
+ 	{
+ 		.compatible = "renesas,r8a7796-cpg-mssr",
+ 		.data = &r8a7796_cpg_mssr_info,
 -- 
 2.17.1
 
