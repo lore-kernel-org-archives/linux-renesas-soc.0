@@ -4,32 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBD2CA9EB7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70BF8CA9EBB
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ADFA21872
+	by mail.kernel.org (Postfix) with ESMTP id 4669021920
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391307AbfJWM30 (ORCPT
+        id S2391304AbfJWM30 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 23 Oct 2019 08:29:26 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:39172 "EHLO
+Received: from xavier.telenet-ops.be ([195.130.132.52]:39176 "EHLO
         xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391304AbfJWM3Z (ORCPT
+        with ESMTP id S2391310AbfJWM3Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 23 Oct 2019 08:29:25 -0400
 Received: from ramsan ([84.194.98.4])
         by xavier.telenet-ops.be with bizsmtp
-        id H0VK2100605gfCL010VKST; Wed, 23 Oct 2019 14:29:23 +0200
+        id H0VK2100905gfCL010VKSV; Wed, 23 Oct 2019 14:29:23 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFlP-0000FS-44; Wed, 23 Oct 2019 14:29:19 +0200
+        id 1iNFlP-0000Fd-5w; Wed, 23 Oct 2019 14:29:19 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFlP-0003B9-2u; Wed, 23 Oct 2019 14:29:19 +0200
+        id 1iNFlP-0003BF-4e; Wed, 23 Oct 2019 14:29:19 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -39,9 +40,9 @@ Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/5] dt-bindings: arm: renesas: Document R-Car M3-W+ SoC DT bindings
-Date:   Wed, 23 Oct 2019 14:29:07 +0200
-Message-Id: <20191023122911.12166-2-geert+renesas@glider.be>
+Subject: [PATCH v2 3/5] dt-bindings: reset: rcar-rst: Document r8a77961 support
+Date:   Wed, 23 Oct 2019 14:29:09 +0200
+Message-Id: <20191023122911.12166-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191023122911.12166-1-geert+renesas@glider.be>
 References: <20191023122911.12166-1-geert+renesas@glider.be>
@@ -50,8 +51,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device tree binding documentation for the Renesas R-Car M3-W+
-(R8A77961) SoC.
+Add DT binding documentation for the Reset block in the Renesas R-Car
+M3-W+ (R8A77961) SoC.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
@@ -59,24 +60,21 @@ Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 v2:
   - Add Reviewed-by.
 ---
- Documentation/devicetree/bindings/arm/renesas.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/reset/renesas,rst.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/arm/renesas.yaml
-index bc0b4ec54756d6ae..b78e4e33e7c7ef22 100644
---- a/Documentation/devicetree/bindings/arm/renesas.yaml
-+++ b/Documentation/devicetree/bindings/arm/renesas.yaml
-@@ -205,6 +205,10 @@ properties:
-               - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012S)
-           - const: renesas,r8a7796
- 
-+      - description: R-Car M3-W+ (R8A77961)
-+        items:
-+          - const: renesas,r8a77961
-+
-       - description: Kingfisher (SBEV-RCAR-KF-M03)
-         items:
-           - const: shimafuji,kingfisher
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rst.txt b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+index d6d6769a0c42735f..de7f06ccd003da9f 100644
+--- a/Documentation/devicetree/bindings/reset/renesas,rst.txt
++++ b/Documentation/devicetree/bindings/reset/renesas,rst.txt
+@@ -31,6 +31,7 @@ Required properties:
+ 		  - "renesas,r8a7794-rst" (R-Car E2)
+ 		  - "renesas,r8a7795-rst" (R-Car H3)
+ 		  - "renesas,r8a7796-rst" (R-Car M3-W)
++		  - "renesas,r8a77961-rst" (R-Car M3-W+)
+ 		  - "renesas,r8a77965-rst" (R-Car M3-N)
+ 		  - "renesas,r8a77970-rst" (R-Car V3M)
+ 		  - "renesas,r8a77980-rst" (R-Car V3H)
 -- 
 2.17.1
 
