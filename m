@@ -2,90 +2,103 @@ Return-Path: <SRS0=/BPJ=YQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CB8CA9EB6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C74D6CA9EB9
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD5232086D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:30:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99761214B2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:33:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391336AbfJWMaP (ORCPT
+        id S2389928AbfJWMdr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 08:30:15 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:37370 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388042AbfJWMaP (ORCPT
+        Wed, 23 Oct 2019 08:33:47 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:41652 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389899AbfJWMdq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:30:15 -0400
+        Wed, 23 Oct 2019 08:33:46 -0400
 Received: from ramsan ([84.194.98.4])
-        by michel.telenet-ops.be with bizsmtp
-        id H0WE2100C05gfCL060WEwH; Wed, 23 Oct 2019 14:30:14 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id H0Zj2100t05gfCL010Zkg5; Wed, 23 Oct 2019 14:33:44 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFmI-00011i-Af; Wed, 23 Oct 2019 14:30:14 +0200
+        id 1iNFpf-0003tg-Tf; Wed, 23 Oct 2019 14:33:43 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFmI-0003GO-9I; Wed, 23 Oct 2019 14:30:14 +0200
+        id 1iNFpf-0003QG-Rr; Wed, 23 Oct 2019 14:33:43 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
+To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] dt-bindings: serial: sh-sci: Document r8a77961 bindings
-Date:   Wed, 23 Oct 2019 14:30:10 +0200
-Message-Id: <20191023123010.12501-1-geert+renesas@glider.be>
+Subject: [PATCH v2 02/11] soc: renesas: Add ARCH_R8A77960 for existing R-Car M3-W
+Date:   Wed, 23 Oct 2019 14:33:33 +0200
+Message-Id: <20191023123342.13100-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191023123342.13100-1-geert+renesas@glider.be>
+References: <20191023123342.13100-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document support for the SCIF and HSCIF serial ports in the Renesas
-R-Car M3-W+ (R8A77961) SoC.
+Add CONFIG_ARCH_R8A77960 as a new config symbol for R-Car M3-W
+(R8A77960), to replace CONFIG_ARCH_R8A7796, and avoid confusion with
+R-Car M3-W+ (R8A77961), which will use CONFIG_ARCH_R8A77961.
 
-Update all references to R-Car M3-W from "r8a7796" to "r8a77960", to
-avoid confusion between R-Car M3-W (R8A77960) and M3-W+.
-
-No driver update is needed.
+Note that for now, CONFIG_ARCH_R8A7796 is retained, and just selects
+CONFIG_ARCH_R8A77960.  This relaxes dependencies of other subsystems on
+the SoC configuration symbol, and provides a smooth transition path for
+config files through "make oldconfig".
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
 v2:
-  - Split v1[1] in per-subsystem series,
-  - Add Reviewed-by,
-  - Update R-Car M3-W references.
-
-[1] "[PATCH/RFC 00/19] arm64: dts: renesas: Initial support for R-Car M3-W+"
-    https://lore.kernel.org/linux-renesas-soc/20191007102332.12196-1-geert+renesas@glider.be/
+  - New.
 ---
- .../devicetree/bindings/serial/renesas,sci-serial.txt       | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/soc/renesas/Kconfig       | 8 ++++++--
+ drivers/soc/renesas/renesas-soc.c | 2 +-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-index b143d9a21b2de13e..a5edf4b70c7ab657 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
-@@ -54,8 +54,10 @@ Required properties:
-     - "renesas,hscif-r8a7794" for R8A7794 (R-Car E2) HSCIF compatible UART.
-     - "renesas,scif-r8a7795" for R8A7795 (R-Car H3) SCIF compatible UART.
-     - "renesas,hscif-r8a7795" for R8A7795 (R-Car H3) HSCIF compatible UART.
--    - "renesas,scif-r8a7796" for R8A7796 (R-Car M3-W) SCIF compatible UART.
--    - "renesas,hscif-r8a7796" for R8A7796 (R-Car M3-W) HSCIF compatible UART.
-+    - "renesas,scif-r8a7796" for R8A77960 (R-Car M3-W) SCIF compatible UART.
-+    - "renesas,hscif-r8a7796" for R8A77960 (R-Car M3-W) HSCIF compatible UART.
-+    - "renesas,scif-r8a77961" for R8A77961 (R-Car M3-W+) SCIF compatible UART.
-+    - "renesas,hscif-r8a77961" for R8A77961 (R-Car M3-W+) HSCIF compatible UART.
-     - "renesas,scif-r8a77965" for R8A77965 (R-Car M3-N) SCIF compatible UART.
-     - "renesas,hscif-r8a77965" for R8A77965 (R-Car M3-N) HSCIF compatible UART.
-     - "renesas,scif-r8a77970" for R8A77970 (R-Car V3M) SCIF compatible UART.
+diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+index 328d7c409202e6a5..ce8e86a037d1d704 100644
+--- a/drivers/soc/renesas/Kconfig
++++ b/drivers/soc/renesas/Kconfig
+@@ -199,10 +199,14 @@ config ARCH_R8A7795
+ 	help
+ 	  This enables support for the Renesas R-Car H3 SoC.
+ 
+-config ARCH_R8A7796
+-	bool "Renesas R-Car M3-W SoC Platform"
++config ARCH_R8A77960
++	bool
+ 	select ARCH_RCAR_GEN3
+ 	select SYSC_R8A77960
++
++config ARCH_R8A7796
++	bool "Renesas R-Car M3-W SoC Platform"
++	select ARCH_R8A77960
+ 	help
+ 	  This enables support for the Renesas R-Car M3-W SoC.
+ 
+diff --git a/drivers/soc/renesas/renesas-soc.c b/drivers/soc/renesas/renesas-soc.c
+index 45135bc88e277d34..319e47bb1d99cfcf 100644
+--- a/drivers/soc/renesas/renesas-soc.c
++++ b/drivers/soc/renesas/renesas-soc.c
+@@ -262,7 +262,7 @@ static const struct of_device_id renesas_socs[] __initconst = {
+ #ifdef CONFIG_ARCH_R8A7795
+ 	{ .compatible = "renesas,r8a7795",	.data = &soc_rcar_h3 },
+ #endif
+-#ifdef CONFIG_ARCH_R8A7796
++#ifdef CONFIG_ARCH_R8A77960
+ 	{ .compatible = "renesas,r8a7796",	.data = &soc_rcar_m3_w },
+ #endif
+ #ifdef CONFIG_ARCH_R8A77965
 -- 
 2.17.1
 
