@@ -4,79 +4,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BCEBCA9EBD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48281CA9EB6
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71DFD214B2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25D5D21872
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391306AbfJWM30 (ORCPT
+        id S2391317AbfJWM3r (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Oct 2019 08:29:26 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:39204 "EHLO
+        Wed, 23 Oct 2019 08:29:47 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:39176 "EHLO
         xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391309AbfJWM3Z (ORCPT
+        with ESMTP id S2391315AbfJWM3q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Oct 2019 08:29:25 -0400
+        Wed, 23 Oct 2019 08:29:46 -0400
 Received: from ramsan ([84.194.98.4])
         by xavier.telenet-ops.be with bizsmtp
-        id H0VK2100805gfCL010VKSU; Wed, 23 Oct 2019 14:29:23 +0200
+        id H0Vl2100V05gfCL010VlWv; Wed, 23 Oct 2019 14:29:46 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFlP-0000Fb-51; Wed, 23 Oct 2019 14:29:19 +0200
+        id 1iNFlp-0000eP-Qu; Wed, 23 Oct 2019 14:29:45 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFlP-0003BB-3h; Wed, 23 Oct 2019 14:29:19 +0200
+        id 1iNFlp-0003Dw-Pv; Wed, 23 Oct 2019 14:29:45 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
+Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/5] dt-bindings: arm: renesas: Add Salvator-XS board with R-Car M3-W+
-Date:   Wed, 23 Oct 2019 14:29:08 +0200
-Message-Id: <20191023122911.12166-3-geert+renesas@glider.be>
+Subject: [PATCH v2 1/4] dt-bindings: clock: renesas: cpg-mssr: Document r8a77961 support
+Date:   Wed, 23 Oct 2019 14:29:38 +0200
+Message-Id: <20191023122941.12342-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191023122911.12166-1-geert+renesas@glider.be>
-References: <20191023122911.12166-1-geert+renesas@glider.be>
+In-Reply-To: <20191023122941.12342-1-geert+renesas@glider.be>
+References: <20191023122941.12342-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device tree binding documentation for the Renesas Salvator-XS board
-equipped with an R-Car M3-W+ (R8A77961) SoC.
+Add DT binding documentation for the Clock Pulse Generator / Module
+Standby and Software Reset block in the Renesas R-Car M3-W+ (R8A77961)
+SoC.
+
+Update all references to R-Car M3-W from "r8a7796" to "r8a77960", to
+avoid confusion between R-Car M3-W (R8A77960) and M3-W+.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
 v2:
   - Add Reviewed-by,
-  - Add board part number.
+  - Update R-Car M3-W references.
 ---
- Documentation/devicetree/bindings/arm/renesas.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt    | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/arm/renesas.yaml
-index b78e4e33e7c7ef22..99b290ca418a8a92 100644
---- a/Documentation/devicetree/bindings/arm/renesas.yaml
-+++ b/Documentation/devicetree/bindings/arm/renesas.yaml
-@@ -207,6 +207,8 @@ properties:
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index b5edebeb12b40638..d67f57e0dfd22fbe 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -27,7 +27,8 @@ Required Properties:
+       - "renesas,r8a7793-cpg-mssr" for the r8a7793 SoC (R-Car M2-N)
+       - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
+       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
+-      - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
++      - "renesas,r8a7796-cpg-mssr" for the r8a77960 SoC (R-Car M3-W)
++      - "renesas,r8a77961-cpg-mssr" for the r8a77961 SoC (R-Car M3-W+)
+       - "renesas,r8a77965-cpg-mssr" for the r8a77965 SoC (R-Car M3-N)
+       - "renesas,r8a77970-cpg-mssr" for the r8a77970 SoC (R-Car V3M)
+       - "renesas,r8a77980-cpg-mssr" for the r8a77980 SoC (R-Car V3H)
+@@ -42,10 +43,10 @@ Required Properties:
+   - clock-names: List of external parent clock names. Valid names are:
+       - "extal" (r7s9210, r8a7743, r8a7744, r8a7745, r8a77470, r8a774a1,
+ 		 r8a774b1, r8a774c0, r8a7790, r8a7791, r8a7792, r8a7793,
+-		 r8a7794, r8a7795, r8a7796, r8a77965, r8a77970, r8a77980,
+-		 r8a77990, r8a77995)
+-      - "extalr" (r8a774a1, r8a774b1, r8a7795, r8a7796, r8a77965, r8a77970,
+-		  r8a77980)
++		 r8a7794, r8a7795, r8a77960, r8a77961, r8a77965, r8a77970,
++		 r8a77980, r8a77990, r8a77995)
++      - "extalr" (r8a774a1, r8a774b1, r8a7795, r8a77960, r8a77961, r8a77965,
++		  r8a77970, r8a77980)
+       - "usb_extal" (r8a7743, r8a7744, r8a7745, r8a77470, r8a7790, r8a7791,
+ 		     r8a7793, r8a7794)
  
-       - description: R-Car M3-W+ (R8A77961)
-         items:
-+          - enum:
-+              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version, RTP0RC7796SIPB0012SA5A)
-           - const: renesas,r8a77961
- 
-       - description: Kingfisher (SBEV-RCAR-KF-M03)
 -- 
 2.17.1
 
