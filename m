@@ -2,80 +2,77 @@ Return-Path: <SRS0=LQJR=YR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 086C1CA9EBD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Oct 2019 12:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA052CA9EBB
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Oct 2019 12:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC5E42166E
+	by mail.kernel.org (Postfix) with ESMTP id BC08021906
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Oct 2019 12:22:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726189AbfJXMW3 (ORCPT
+        id S1726476AbfJXMW3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 24 Oct 2019 08:22:29 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:59152 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726491AbfJXMW3 (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:39742 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbfJXMW3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 24 Oct 2019 08:22:29 -0400
 Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id HQNS2100T5USYZQ01QNSWa; Thu, 24 Oct 2019 14:22:27 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id HQNS2100Q5USYZQ06QNSt7; Thu, 24 Oct 2019 14:22:27 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNc8I-0005pR-En; Thu, 24 Oct 2019 14:22:26 +0200
+        id 1iNc8I-0005pV-FT; Thu, 24 Oct 2019 14:22:26 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNc8I-00034o-CQ; Thu, 24 Oct 2019 14:22:26 +0200
+        id 1iNc8I-00034s-ES; Thu, 24 Oct 2019 14:22:26 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Cc:     Marc Zyngier <marc.zyngier@arm.com>, linux-gpio@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/2] gpio: renesas: Use proper irq_chip name
-Date:   Thu, 24 Oct 2019 14:22:22 +0200
-Message-Id: <20191024122224.11776-1-geert+renesas@glider.be>
+Subject: [PATCH v2 2/2] gpio: rcar: Use proper irq_chip name
+Date:   Thu, 24 Oct 2019 14:22:24 +0200
+Message-Id: <20191024122224.11776-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191024122224.11776-1-geert+renesas@glider.be>
+References: <20191024122224.11776-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Linus, Bartosz,
+The irq_chip .name field should contain the device's class name, not the
+instance's name.
 
-Recently, Marc pointed out some common misconceptions w.r.t. the .name
-and .parent_device fields in struct irq_chip.  This patch series fixes
-the names in the Renesas GPIO controller drivers.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
 
-Changes compared to v1[*]:
-  - Drop irqchip patches applied to the irqchip tree.
-
-Thanks for applying!
-
-[*] https://lore.kernel.org/linux-renesas-soc/20190607095858.10028-1-geert+renesas@glider.be/
-
-Geert Uytterhoeven (2):
-  gpio: em: Use proper irq_chip name
-  gpio: rcar: Use proper irq_chip name
-
- drivers/gpio/gpio-em.c   | 2 +-
+---
  drivers/gpio/gpio-rcar.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 187984d26f47a940..cea6124317857bf4 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -483,7 +483,7 @@ static int gpio_rcar_probe(struct platform_device *pdev)
+ 	gpio_chip->ngpio = npins;
+ 
+ 	irq_chip = &p->irq_chip;
+-	irq_chip->name = name;
++	irq_chip->name = "gpio-rcar";
+ 	irq_chip->parent_device = dev;
+ 	irq_chip->irq_mask = gpio_rcar_irq_disable;
+ 	irq_chip->irq_unmask = gpio_rcar_irq_enable;
 -- 
 2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
