@@ -4,93 +4,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E18CA9EA0
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Oct 2019 00:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58E6C47E49
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Oct 2019 00:22:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C46A20679
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Oct 2019 00:20:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D5EF20679
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 26 Oct 2019 00:22:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572049231;
-	bh=6Quw9Pg9H67ojcuZquXb4Jqb+yj8ZZ9zsXnYQsI/hx0=;
+	s=default; t=1572049346;
+	bh=nScLw/OJ9wg1qptMf2Vzmj0uEQ9CKNJv/d836gXcLhw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BTm31i8b42/8xT0JivVeFh5CU79GOaJjR9EAmFe6hO79cttzZJ7WyKww0iq21Vvcc
-	 F7EiCLOImXKnYvmoSw4c4dLpq2CjW0xK+Y63CVa1O4CI3p/8fwS7fySeiElWdQEnq5
-	 Fa9AihDM83pIE17IKOQuZYOpTBWZDGTTJ7RZj7rY=
+	b=CULNgmu/JCJPpoyQqbNVwSpNrkNl/gwBJ5HBtFObNOHqv1gN0PaCESm+jeu3Pw7Yg
+	 Pdh9WtV9ag2gi9Va1p5aPfp3USxs1ZDMA3cVyjOzQZ3baZjMNtlLXF2oN3nQ5qC3Ib
+	 6XI8w0bQrFQEJ+Dni0MAEo4oCG2DRqQM0Xyg0XgU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725899AbfJZAUb (ORCPT
+        id S1725881AbfJZAWZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 25 Oct 2019 20:20:31 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46138 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfJZAUb (ORCPT
+        Fri, 25 Oct 2019 20:22:25 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35020 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbfJZAWZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Oct 2019 20:20:31 -0400
-Received: by mail-oi1-f195.google.com with SMTP id c2so2721536oic.13;
-        Fri, 25 Oct 2019 17:20:30 -0700 (PDT)
+        Fri, 25 Oct 2019 20:22:25 -0400
+Received: by mail-oi1-f196.google.com with SMTP id n16so489401oig.2;
+        Fri, 25 Oct 2019 17:22:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xFaVplPix3RECfmw0mP26wLx1h1GSiIqpWNBxTGaapo=;
-        b=AxjjHQ5msHHdkFoPF3zPtrJ9CSTlRyoEVhjaEknKxNqU8DNhiSmj/TEP23XW6uETUr
-         1yNDRvp0BEQkQd4a+ft1DOPTGGwSBfxGQVlYs37x4Vic+cx0hRA3nlcvLAUuQotR2N7R
-         VcPC5IyIHYlqW7QJOPPtE7HwKOrk5gJsP79oy4kQa5JniDBtCckhw0GsCTuREM3v9Udy
-         tL0TcJSNvBcsMkaB1d38PfwY7jlybyylgEuYqqeN7yL6pSDRU7/UjTLT0Oi3sb3OPllo
-         1UlaGLcpuuyuW29QcS78SWgxq3znnSreZP6CZ61vgqOJ2ho7jtEw4Q046twydoDm0Z5/
-         mINQ==
-X-Gm-Message-State: APjAAAXTljrdMeg39U2A6PjIfdcv3jC3Su7EUQqCkINc5hrHmxSJMJ2m
-        Ny+yq7krE/hu+LfIeFQ4Pw==
-X-Google-Smtp-Source: APXvYqzpqk2Jv5TqpJClrIhi+vYwGvPQet1RBJ9Lrp4ewD+6Q8fdl9123Lp4ED+xjPhOJnmC5HuodQ==
-X-Received: by 2002:aca:7543:: with SMTP id q64mr4340495oic.95.1572049230274;
-        Fri, 25 Oct 2019 17:20:30 -0700 (PDT)
+        bh=sD4+t4O6I6/yZhYnM4tEH5BwgfVk2lbaDmYQkcXTSss=;
+        b=bIhRNJiq+XDcyzZbjNCkXtk6Z6gfnIG65URm3REhs+T5wPrI66YnDKgarBaVbMXgHo
+         hPwtcGMul0jOaRigNCg9cSRUb2qNDklVXyy6G2HrhM6yjabhfh4/yi99ecQDuBELhVuG
+         N4oIwReRmtranj2EL1VepAPoZiOTS2clv8B1F7IcfjrO/8gVlXm38iZZRnGNYKsp5Mf/
+         yJmEK5JunsgluNwEkzWNivBfMRu47Xbb44ka1mL9v0fzA4NX3z8uIKp6GZDwrgOgolEb
+         0r05koOV7Y7XFFWvHvAACD/KdCGWgp3OLyqxCuIVA+FiFBweRlmuUNpW0NYRQyZ13n/U
+         lseQ==
+X-Gm-Message-State: APjAAAWei0K/BfnygqqBnG4y1Ofgq6vqQNn/BKnyFC99OyGvYHuaT06d
+        CurnlTYhVellzcTalCDQfg==
+X-Google-Smtp-Source: APXvYqzsZncJeOkIGZCFFf85Cr89J0uYfd90yKvsRDYwFdeZQ5fBsMc84Nw4AHv7I6cSQQVxvqdMqQ==
+X-Received: by 2002:aca:1703:: with SMTP id j3mr5091232oii.94.1572049344641;
+        Fri, 25 Oct 2019 17:22:24 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t12sm1250767otq.61.2019.10.25.17.20.29
+        by smtp.gmail.com with ESMTPSA id p184sm1062879oia.11.2019.10.25.17.22.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 17:20:29 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 19:20:29 -0500
+        Fri, 25 Oct 2019 17:22:24 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 19:22:23 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v2 1/3] dt-bindings: pinctrl: sh-pfc: Document r8a77961
- support
-Message-ID: <20191026002029.GA11965@bogus>
-References: <20191023122955.12420-1-geert+renesas@glider.be>
- <20191023122955.12420-2-geert+renesas@glider.be>
+Subject: Re: [PATCH v2] dt-bindings: serial: sh-sci: Document r8a77961
+ bindings
+Message-ID: <20191026002223.GA14822@bogus>
+References: <20191023123010.12501-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191023122955.12420-2-geert+renesas@glider.be>
+In-Reply-To: <20191023123010.12501-1-geert+renesas@glider.be>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 23 Oct 2019 14:29:53 +0200, Geert Uytterhoeven wrote:
-> Add DT binding documentation for the Pin Function Controller in the
-> Renesas R-Car M3-W+ (R8A77961) SoC.
+On Wed, 23 Oct 2019 14:30:10 +0200, Geert Uytterhoeven wrote:
+> Document support for the SCIF and HSCIF serial ports in the Renesas
+> R-Car M3-W+ (R8A77961) SoC.
 > 
 > Update all references to R-Car M3-W from "r8a7796" to "r8a77960", to
 > avoid confusion between R-Car M3-W (R8A77960) and M3-W+.
+> 
+> No driver update is needed.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 > ---
 > v2:
+>   - Split v1[1] in per-subsystem series,
 >   - Add Reviewed-by,
 >   - Update R-Car M3-W references.
+> 
+> [1] "[PATCH/RFC 00/19] arm64: dts: renesas: Initial support for R-Car M3-W+"
+>     https://lore.kernel.org/linux-renesas-soc/20191007102332.12196-1-geert+renesas@glider.be/
 > ---
->  .../devicetree/bindings/pinctrl/renesas,pfc-pinctrl.txt        | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+>  .../devicetree/bindings/serial/renesas,sci-serial.txt       | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
