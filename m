@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE7E9CA9EC2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Oct 2019 16:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA822CA9EC1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Oct 2019 16:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A584721835
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Oct 2019 16:33:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B131B21783
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Oct 2019 16:33:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572280417;
-	bh=lhX8l72ISVPAssUM4Q9z3AvElpBRYVor+7qQ7hYQ08s=;
+	s=default; t=1572280418;
+	bh=Nx5uHHUvXC8zW0LZve6ApVMx76nau3D//qJbH6ltAL8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VFiV1cSilZ9yGyuFrCscJmXqUrZWALjwTk80oi01Pr8YBOqEGAd7Bi1JF4qKEFYeq
-	 PXfPKPegq3y/RLl35XevSb5Ax9LkGP1lGJZ+E3xKp1++qQkkS1arHQ29Jh64yJB+ue
-	 x6zL+rLnxjDPknbQMMZX4NHQWFCSUvD+7WLiN00Y=
+	b=QVEnTySDQD+1ZpOasyUG7LfUp2HYAJ0wYTL46gC7C4XHax3yfRIfdj9nmUw0n+Xth
+	 YU8QwOf0yOv5aLnoHl1IA+ozUNWIxsPQ695Cd7ldI/FcAtLwi+e1XXNJraAeKMxmzs
+	 sxeUTEHou/aEAZCAcaQoEJQM7RGYZrGSDwK9XOgk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391036AbfJ1Qdg (ORCPT
+        id S2391038AbfJ1Qdi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Oct 2019 12:33:36 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:33009 "EHLO
+        Mon, 28 Oct 2019 12:33:38 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:33012 "EHLO
         mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730772AbfJ1Qdg (ORCPT
+        with ESMTP id S1730772AbfJ1Qdi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Oct 2019 12:33:36 -0400
-Received: by mail-oi1-f193.google.com with SMTP id m193so1931284oig.0;
-        Mon, 28 Oct 2019 09:33:35 -0700 (PDT)
+        Mon, 28 Oct 2019 12:33:38 -0400
+Received: by mail-oi1-f193.google.com with SMTP id m193so1931379oig.0;
+        Mon, 28 Oct 2019 09:33:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=o+Nu5yrVJjsG4TTQSGHiVlpfm5ZyTifg0RmA51gaOc0=;
-        b=bA+iRtM18Eq/0MlY0qvzFEAqnlxrFPCzt1aGv+XQJG3Z3WGKAe5WFWNG3bnmOscc8o
-         AjXXz04wwEPpp12wYQVTdYaSLDvQY2v/iiXvZVdJblKqnIgmTWvB7lfJ5QpQTYBq0bB8
-         vcbI2Ea2/FLRq6nRIf3TVuTqL9e/Ln2jgefzn0R4Y6sIXzfwiu7xJiLLvuFdVIgBVEpl
-         PBg/7UvKwo9jx1WG6KOS74tt9WIAfm5sh6ZcEZjBHqi4AGZeUoFIXuOxC2VTnh7GK9Y8
-         6dRAzh22dwywZWhsj9UxxZEHyozA4hr/QcU/8mnE4r6E2Uyr7unsg3LcUIQ9x59/hvd1
-         KKkA==
-X-Gm-Message-State: APjAAAWNwrUrBRtJwYT3Ms7DMdr+fUQevazUzhSh1SrBihPn0rERKPq+
-        ocnFksbKfnA04X6cpazbDA==
-X-Google-Smtp-Source: APXvYqxZLTR5wVAhoLt1SmTt4eoDfXlOKWV5o+tkbeIOsDVOrc+wq0rFYNtuDO1eJW+OcmohkZZkqQ==
-X-Received: by 2002:aca:5015:: with SMTP id e21mr140283oib.174.1572280415373;
-        Mon, 28 Oct 2019 09:33:35 -0700 (PDT)
+        bh=n3y2Ka8WRhcKcfj2aX8DHqGH9IJEnrEYNwvqAJMp1K8=;
+        b=nqGaMMXM5mcQosT4bggQ0BwLi/hCPm/F8T6CI60qExWsIJamtT3f8L10peM93C619z
+         Wp5tF+xocmbCftnGKpU2JufImhKva/3ieRWuCpSBg5RQNONFGtkB4ItGV18MTCteNnuD
+         a+A15x41kfEil4lsQNLMRa/iEo+2YHcV0iWmJ9dNe4+89kNqwoC3jgKl8EtadctIQXCc
+         FH+q20MIPwY4WhKEvipOxU/J3LUTr7EPwcATUzvOAVwx3FvOJIFDh/3Ftqbh2Pn9BfGt
+         I6BvW7l0wqzsx6+iD1MNcfAXeAV5XGS/SXNemgfqwohn1Dglp1Xb99TmVtJjXuzOV/Pu
+         2Y1w==
+X-Gm-Message-State: APjAAAWnibYjgEYr9EBvWbJzrdYAyuO9sMUwBcwHRGJVsxP+S5mObYtW
+        HR0mJmWeBrzxM1F3UqW5VA==
+X-Google-Smtp-Source: APXvYqz8N1xGkSsjPvO3LqrYhKkvX8lmGh2l+7Jzyk4LSNNz1GUewrj62TSLCJt13u7SybQIhsO2YA==
+X-Received: by 2002:aca:1e0c:: with SMTP id m12mr170767oic.18.1572280417514;
+        Mon, 28 Oct 2019 09:33:37 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id e186sm354991oia.47.2019.10.28.09.33.33
+        by smtp.googlemail.com with ESMTPSA id e186sm354991oia.47.2019.10.28.09.33.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 09:33:34 -0700 (PDT)
+        Mon, 28 Oct 2019 09:33:36 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     Andrew Murray <andrew.murray@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>,
@@ -78,9 +78,9 @@ Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Toan Le <toan@os.amperecomputing.com>,
         Tom Joseph <tjoseph@cadence.com>, Will Deacon <will@kernel.org>
-Subject: [PATCH v3 14/25] PCI: xilinx: Use pci_parse_request_of_pci_ranges()
-Date:   Mon, 28 Oct 2019 11:32:45 -0500
-Message-Id: <20191028163256.8004-15-robh@kernel.org>
+Subject: [PATCH v3 15/25] PCI: xilinx-nwl: Use pci_parse_request_of_pci_ranges()
+Date:   Mon, 28 Oct 2019 11:32:46 -0500
+Message-Id: <20191028163256.8004-16-robh@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191028163256.8004-1-robh@kernel.org>
 References: <20191028163256.8004-1-robh@kernel.org>
@@ -91,7 +91,7 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert the Xilinx host bridge to use the common
+Convert the xilinx-nwl host bridge to use the common
 pci_parse_request_of_pci_ranges().
 
 There's no need to assign the resources to a temporary list first. Just
@@ -103,23 +103,23 @@ Cc: Bjorn Helgaas <bhelgaas@google.com>
 Cc: Michal Simek <michal.simek@xilinx.com>
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/pci/controller/pcie-xilinx.c | 17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
+ drivers/pci/controller/pcie-xilinx-nwl.c | 20 ++++----------------
+ 1 file changed, 4 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-xilinx.c b/drivers/pci/controller/pcie-xilinx.c
-index 5bf3af3b28e6..257702288787 100644
---- a/drivers/pci/controller/pcie-xilinx.c
-+++ b/drivers/pci/controller/pcie-xilinx.c
-@@ -619,8 +619,6 @@ static int xilinx_pcie_probe(struct platform_device *pdev)
- 	struct pci_bus *bus, *child;
+diff --git a/drivers/pci/controller/pcie-xilinx-nwl.c b/drivers/pci/controller/pcie-xilinx-nwl.c
+index 45c0f344ccd1..e135a4b60489 100644
+--- a/drivers/pci/controller/pcie-xilinx-nwl.c
++++ b/drivers/pci/controller/pcie-xilinx-nwl.c
+@@ -821,8 +821,6 @@ static int nwl_pcie_probe(struct platform_device *pdev)
+ 	struct pci_bus *child;
  	struct pci_host_bridge *bridge;
  	int err;
 -	resource_size_t iobase = 0;
 -	LIST_HEAD(res);
  
- 	if (!dev->of_node)
- 		return -ENODEV;
-@@ -647,19 +645,12 @@ static int xilinx_pcie_probe(struct platform_device *pdev)
+ 	bridge = devm_pci_alloc_host_bridge(dev, sizeof(*pcie));
+ 	if (!bridge)
+@@ -845,24 +843,18 @@ static int nwl_pcie_probe(struct platform_device *pdev)
  		return err;
  	}
  
@@ -135,21 +135,34 @@ index 5bf3af3b28e6..257702288787 100644
 -	if (err)
 -		goto error;
 -
--
+ 	err = nwl_pcie_init_irq_domain(pcie);
+ 	if (err) {
+ 		dev_err(dev, "Failed creating IRQ Domain\n");
+-		goto error;
++		return err;
+ 	}
+ 
 -	list_splice_init(&res, &bridge->windows);
  	bridge->dev.parent = dev;
- 	bridge->sysdata = port;
- 	bridge->busnr = 0;
-@@ -673,7 +664,7 @@ static int xilinx_pcie_probe(struct platform_device *pdev)
- #endif
+ 	bridge->sysdata = pcie;
+ 	bridge->busnr = pcie->root_busno;
+@@ -874,13 +866,13 @@ static int nwl_pcie_probe(struct platform_device *pdev)
+ 		err = nwl_pcie_enable_msi(pcie);
+ 		if (err < 0) {
+ 			dev_err(dev, "failed to enable MSI support: %d\n", err);
+-			goto error;
++			return err;
+ 		}
+ 	}
+ 
  	err = pci_scan_root_bus_bridge(bridge);
- 	if (err < 0)
+ 	if (err)
 -		goto error;
 +		return err;
  
  	bus = bridge->bus;
  
-@@ -682,10 +673,6 @@ static int xilinx_pcie_probe(struct platform_device *pdev)
+@@ -889,10 +881,6 @@ static int nwl_pcie_probe(struct platform_device *pdev)
  		pcie_bus_configure_settings(child);
  	pci_bus_add_devices(bus);
  	return 0;
@@ -159,7 +172,7 @@ index 5bf3af3b28e6..257702288787 100644
 -	return err;
  }
  
- static const struct of_device_id xilinx_pcie_of_match[] = {
+ static struct platform_driver nwl_pcie_driver = {
 -- 
 2.20.1
 
