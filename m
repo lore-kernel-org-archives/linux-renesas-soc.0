@@ -2,120 +2,58 @@ Return-Path: <SRS0=Uybg=YV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BA0CA9EA0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Oct 2019 06:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B33CA9EA0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Oct 2019 06:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA9A21726
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Oct 2019 06:07:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92A9720659
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Oct 2019 06:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572243637;
+	bh=l584WZ22rc99rV0bQd4TBlzOeBUKOHlbCifUy7x3LFU=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=zAYnMLrSpbCh2ibUE0GWlRgLqR/rZsKTt7gtxoy+N+/srof1hO8/stVWhLMnU0uGA
+	 Ff/Da96pHE6Koy0CUF6QzE4eRskp9EyMi8yoqJEFzOuvoE2hHT9hxvq2fWR1H3RlkF
+	 J9AIB81g3pA2gj+zOqUwiLiXQ5tDW400ERpXurGU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731788AbfJ1GHe (ORCPT
+        id S1728864AbfJ1GUh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Oct 2019 02:07:34 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:28066 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731716AbfJ1GHd (ORCPT
+        Mon, 28 Oct 2019 02:20:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49954 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728657AbfJ1GUh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Oct 2019 02:07:33 -0400
-X-IronPort-AV: E=Sophos;i="5.68,238,1569250800"; 
-   d="scan'208";a="30181609"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 28 Oct 2019 15:07:31 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 11EC44128CD7;
-        Mon, 28 Oct 2019 15:07:31 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, geert+renesas@glider.be
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 3/4] clk: renesas: rcar-usb2-clock-sel: Add multiple clocks management
-Date:   Mon, 28 Oct 2019 15:07:29 +0900
-Message-Id: <1572242850-9073-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1572242850-9073-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1572242850-9073-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 28 Oct 2019 02:20:37 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572243636;
+        bh=l584WZ22rc99rV0bQd4TBlzOeBUKOHlbCifUy7x3LFU=;
+        h=Subject:From:Date:To:From;
+        b=zudpRRruBh7KkT3WGz+EyKt1KocyN8wlSQmDYM45dCKbcvpQHgk3vCddSSq7AgaDh
+         lFSEhg9IhCVKuFIMoAn4uFnBo8Lz76ZZW8VTgRs8MjrqcYK+4ch6xrQl3/yD9QTvSY
+         YjCRxpPsx7TorJHCJu8ozA5K1/pj9pIX4ex+BiMU=
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <157224363663.1052.16783781830720984411.git-patchwork-housekeeping@kernel.org>
+Date:   Mon, 28 Oct 2019 06:20:36 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This hardware needs to enable clocks of both host and peripheral.
-So, this patch adds multiple clocks management.
+Latest series: [v2] clk: renesas: rcar-usb2-clock-sel: Fix clks/resets handling (2019-10-28T06:07:28)
+  Superseding: [v1] clk: renesas: rcar-usb2-clock-sel: Fix clks/resets handling (2019-10-24T11:16:58):
+    [1/3] dt-bindings: clock: renesas: rcar-usb2-clock-sel: Fix clock[-name]s properties
+    [2/3] clk: renesas: rcar-usb2-clock-sel: Add multiple clocks management
+    [3/3] clk: renesas: rcar-usb2-clock-sel: Add reset_control
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/clk/renesas/rcar-usb2-clock-sel.c | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-index b97f5f9..4096506 100644
---- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
-+++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-@@ -26,9 +26,16 @@
- #define CLKSET0_PRIVATE		BIT(0)
- #define CLKSET0_EXTAL_ONLY	(CLKSET0_INTCLK_EN | CLKSET0_PRIVATE)
- 
-+enum {
-+	CLK_INDEX_EHCI_OHCI,
-+	CLK_INDEX_HS_USB,
-+	CLK_NUM
-+};
-+
- struct usb2_clock_sel_priv {
- 	void __iomem *base;
- 	struct clk_hw hw;
-+	struct clk_bulk_data clks[CLK_NUM];
- 	bool extal;
- 	bool xtal;
- };
-@@ -53,14 +60,25 @@ static void usb2_clock_sel_disable_extal_only(struct usb2_clock_sel_priv *priv)
- 
- static int usb2_clock_sel_enable(struct clk_hw *hw)
- {
--	usb2_clock_sel_enable_extal_only(to_priv(hw));
-+	struct usb2_clock_sel_priv *priv = to_priv(hw);
-+	int ret;
-+
-+	ret = clk_bulk_prepare_enable(CLK_NUM, priv->clks);
-+	if (ret)
-+		return ret;
-+
-+	usb2_clock_sel_enable_extal_only(priv);
- 
- 	return 0;
- }
- 
- static void usb2_clock_sel_disable(struct clk_hw *hw)
- {
--	usb2_clock_sel_disable_extal_only(to_priv(hw));
-+	struct usb2_clock_sel_priv *priv = to_priv(hw);
-+
-+	usb2_clock_sel_disable_extal_only(priv);
-+
-+	clk_bulk_disable_unprepare(CLK_NUM, priv->clks);
- }
- 
- /*
-@@ -128,6 +146,14 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
-+	priv->clks[CLK_INDEX_EHCI_OHCI].clk = devm_clk_get(dev, "ehci_ohci");
-+	if (IS_ERR(priv->clks[CLK_INDEX_EHCI_OHCI].clk))
-+		return PTR_ERR(priv->clks[CLK_INDEX_EHCI_OHCI].clk);
-+
-+	priv->clks[CLK_INDEX_HS_USB].clk = devm_clk_get(dev, "hs-usb-if");
-+	if (IS_ERR(priv->clks[CLK_INDEX_HS_USB].clk))
-+		return PTR_ERR(priv->clks[CLK_INDEX_HS_USB].clk);
-+
- 	pm_runtime_enable(dev);
- 	pm_runtime_get_sync(dev);
- 
 -- 
-2.7.4
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
