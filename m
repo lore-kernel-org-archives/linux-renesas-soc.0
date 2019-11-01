@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.8 required=3.0
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC12ECA9ECF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7AFACA9ED0
 	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Nov 2019 15:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A15A3208E3
+	by mail.kernel.org (Postfix) with ESMTP id 760FB21734
 	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Nov 2019 15:58:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726757AbfKAP64 (ORCPT
+        id S1726823AbfKAP64 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 1 Nov 2019 11:58:56 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:44360 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726229AbfKAP64 (ORCPT
+Received: from laurent.telenet-ops.be ([195.130.137.89]:58000 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbfKAP64 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 1 Nov 2019 11:58:56 -0400
 Received: from ramsan ([84.195.182.253])
-        by andre.telenet-ops.be with bizsmtp
-        id Lfyu2100K5USYZQ01fyuzV; Fri, 01 Nov 2019 16:58:54 +0100
+        by laurent.telenet-ops.be with bizsmtp
+        id Lfyu210075USYZQ01fyusB; Fri, 01 Nov 2019 16:58:54 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iQZKA-0002rY-8g; Fri, 01 Nov 2019 16:58:54 +0100
+        id 1iQZKA-0002rg-Aq; Fri, 01 Nov 2019 16:58:54 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iQZKA-0008CX-7k; Fri, 01 Nov 2019 16:58:54 +0100
+        id 1iQZKA-0008Cf-9t; Fri, 01 Nov 2019 16:58:54 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 2/6] Renesas ARM SoC updates for v5.5
-Date:   Fri,  1 Nov 2019 16:58:38 +0100
-Message-Id: <20191101155842.31467-3-geert+renesas@glider.be>
+Subject: [GIT PULL 5/6] Renesas driver updates for v5.5 (take two)
+Date:   Fri,  1 Nov 2019 16:58:41 +0100
+Message-Id: <20191101155842.31467-6-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191101155842.31467-1-geert+renesas@glider.be>
 References: <20191101155842.31467-1-geert+renesas@glider.be>
@@ -48,26 +48,46 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+The following changes since commit 6655c568ced0789479f00b9399603c5d6ee48640:
 
-  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+  soc: renesas: rcar-sysc: Add r8a774b1 support (2019-10-01 10:29:40 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-soc-for-v5.5-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-drivers-for-v5.5-tag2
 
-for you to fetch changes up to 0a4319b5c87a29e6b283cabb3a2493af132a4b9a:
+for you to fetch changes up to bdde3d3ec934839b3c11689ead467099f1c36c12:
 
-  ARM: shmobile: rcar-gen2: Drop legacy DT clock support (2019-10-25 14:08:10 +0200)
-
-----------------------------------------------------------------
-Renesas ARM SoC updates for v5.5
-
-  - Drop legacy DT clock support on R-Car Gen2.
+  soc: renesas: rcar-sysc: Add R8A77961 support (2019-11-01 14:25:53 +0100)
 
 ----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      ARM: shmobile: rcar-gen2: Drop legacy DT clock support
+Renesas driver updates for v5.5 (take two)
 
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 1 -
- 1 file changed, 1 deletion(-)
+  - Initial support for the R-Car M3-W+ (r8a77961) SoC,
+  - A minor fix.
+
+----------------------------------------------------------------
+Geert Uytterhoeven (10):
+      dt-bindings: power: Add r8a77961 SYSC power domain definitions
+      dt-bindings: clock: Add r8a77961 CPG Core Clock Definitions
+      soc: renesas: Add missing check for non-zero product register address
+      Merge tag 'renesas-r8a77961-dt-binding-defs-tag' into renesas-drivers-for-v5.5
+      soc: renesas: Rename SYSC_R8A7796 to SYSC_R8A77960
+      soc: renesas: Add ARCH_R8A77960 for existing R-Car M3-W
+      soc: renesas: Add ARCH_R8A77961 for new R-Car M3-W+
+      soc: renesas: Identify R-Car M3-W+
+      soc: renesas: rcar-rst: Add R8A77961 support
+      soc: renesas: rcar-sysc: Add R8A77961 support
+
+ drivers/soc/renesas/Kconfig                   | 21 +++++++--
+ drivers/soc/renesas/Makefile                  |  3 +-
+ drivers/soc/renesas/r8a7796-sysc.c            | 27 ++++++-----
+ drivers/soc/renesas/rcar-rst.c                |  1 +
+ drivers/soc/renesas/rcar-sysc.c               |  7 ++-
+ drivers/soc/renesas/rcar-sysc.h               |  3 +-
+ drivers/soc/renesas/renesas-soc.c             |  7 ++-
+ include/dt-bindings/clock/r8a77961-cpg-mssr.h | 65 +++++++++++++++++++++++++++
+ include/dt-bindings/power/r8a77961-sysc.h     | 32 +++++++++++++
+ 9 files changed, 145 insertions(+), 21 deletions(-)
+ create mode 100644 include/dt-bindings/clock/r8a77961-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/r8a77961-sysc.h
