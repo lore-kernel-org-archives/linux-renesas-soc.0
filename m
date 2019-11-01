@@ -2,57 +2,82 @@ Return-Path: <SRS0=MG+9=YZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C6FCA9EC9
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Nov 2019 06:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A96C3CA9EC9
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Nov 2019 07:03:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA76A208E3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Nov 2019 06:40:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572590438;
-	bh=XIMGQG3cEwUHP8nE+KNr9Y5N7qy0OZyPbMLV5f4frbM=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=pmFtI8gfabcc7HRzAD+I7H8skKWLzcp7gfrx7SGE7ZMSJeswRCLzSPwaQoeoaW/4Y
-	 JRa4IiFOGGtX7HElQg3xseVtIowPC1WKl9PsBx8kT6AnDHvNkQYi2/La4sKdkTrmQ1
-	 Htx6xDu6+d2ION9R5Mn3NJ7cDmp+Dkv2EHBAxx54=
+	by mail.kernel.org (Postfix) with ESMTP id 78206217D9
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Nov 2019 07:03:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726457AbfKAGkh (ORCPT
+        id S1728976AbfKAHDN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Nov 2019 02:40:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47842 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725936AbfKAGkh (ORCPT
+        Fri, 1 Nov 2019 03:03:13 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:63273 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728529AbfKAHDM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Nov 2019 02:40:37 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572590437;
-        bh=XIMGQG3cEwUHP8nE+KNr9Y5N7qy0OZyPbMLV5f4frbM=;
-        h=Subject:From:Date:To:From;
-        b=t/zOSsbo/eSKsB5+7pBBM75rET8Ru7qYqaCSVONpe9ilb+8VUCPiOj0ZBSVaVMkeu
-         UeLsAc71GIxPo4mackzg0OrT7RIw61sMvJIj/hQ1+DP2pq7f8ZgsYYVNOfyRyNU021
-         cX8H5aInCP8mI+zlbIETaSJpjR0seilU2B3142y0=
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <157259043718.9316.956653936339923793.git-patchwork-housekeeping@kernel.org>
-Date:   Fri, 01 Nov 2019 06:40:37 +0000
-To:     linux-renesas-soc@vger.kernel.org
+        Fri, 1 Nov 2019 03:03:12 -0400
+X-IronPort-AV: E=Sophos;i="5.68,254,1569250800"; 
+   d="scan'208";a="30605227"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 01 Nov 2019 16:03:11 +0900
+Received: from localhost.localdomain (unknown [10.166.17.210])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 94E2E419B1D2;
+        Fri,  1 Nov 2019 16:03:11 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, geert+renesas@glider.be
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 0/4] clk: renesas: rcar-usb2-clock-sel: Fix clks/resets handling
+Date:   Fri,  1 Nov 2019 16:03:07 +0900
+Message-Id: <1572591791-11280-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v2] PCI: rcar: Fix missing MACCTLR register setting (take2) (2019-11-01T06:31:29)
-  Superseding: [v1] PCI: rcar: Fix missing MACCTLR register setting (take2) (2019-10-30T11:27:02):
-    [1/2] Revert "PCI: rcar: Fix missing MACCTLR register setting in rcar_pcie_hw_init()"
-    [2/2] PCI: rcar: Fix missing MACCTLR register setting in initialize sequence
+This patch series is based on the latest renesas-drivers.git /
+clk-renesas-for-v5.5 branch.
+The hardware also needs multiple clocks/resets management like
+renesas_usbhs driver [1], so this patch series fixes it.
 
+[1]
+3df0e24 usb: renesas_usbhs: Add multiple clocks management
+f181dbb usb: renesas_usbhs: Add reset_control
+
+Changes from v2:
+ - Add Rob's Reviewed-by into the patch [12]/4.
+ - Fix typo in patch 2/4.
+ https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=194309
+
+Changes from v1:
+ - Add Reviewed-by into this series' patch 1/4.
+ - (new) Add resets and power-domains properties into the patch 2/4.
+ - Use clk_bulk_* APIs (except clk_bulk_get() because this driver has
+   4 clocks and used only 2 clocks).
+ - Add "select RESET_CONTROLLER" into Kconfig
+ - Use devm_reset_control_array_get() instead of optional API.
+ https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=192869
+
+Yoshihiro Shimoda (4):
+  dt-bindings: clock: renesas: rcar-usb2-clock-sel: Fix clock[-name]s
+    properties
+  dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add power-domains
+    and resets properties
+  clk: renesas: rcar-usb2-clock-sel: Add multiple clocks management
+  clk: renesas: rcar-usb2-clock-sel: Add reset_control
+
+ .../bindings/clock/renesas,rcar-usb2-clock-sel.txt | 13 +++++--
+ drivers/clk/renesas/Kconfig                        |  1 +
+ drivers/clk/renesas/rcar-usb2-clock-sel.c          | 43 +++++++++++++++++++++-
+ 3 files changed, 52 insertions(+), 5 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+2.7.4
+
