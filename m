@@ -2,214 +2,103 @@ Return-Path: <SRS0=7w2H=Y5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DD5C5DF61
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 17:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 017A8C5DF62
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 18:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90D3B21D7D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 17:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572973680;
-	bh=982pnP21u6SLHEwMF1WidZv9LQW97H7o7tJaYDJdzz8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=gQGllNDq9yXjErUV1seiylm2xmnhXpdCHeb/noLqgzDkvOJRLOmss++xomabnfsY7
-	 CPiOF1oje6dlDZg24ZYzSFDPULzP/7nXRzf9B3xhFjlI762C/+GDIgAafJCYtwL2y+
-	 iyZteNHfMEUe24o6fvR/ytBmqahBwfsStoVtO1RU=
+	by mail.kernel.org (Postfix) with ESMTP id DA6AE20656
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 18:35:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390181AbfKERH7 (ORCPT
+        id S2390640AbfKESfK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Nov 2019 12:07:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45180 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387833AbfKERH7 (ORCPT
+        Tue, 5 Nov 2019 13:35:10 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:43320 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390592AbfKESfK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Nov 2019 12:07:59 -0500
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F63A21D7D;
-        Tue,  5 Nov 2019 17:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572973678;
-        bh=982pnP21u6SLHEwMF1WidZv9LQW97H7o7tJaYDJdzz8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=0DSgrhZ2NAQhUICtqBtKwZHph/j5WuH2vsCL7/O/tCwFJfttlXO//skvCyIcr6fdd
-         Q8tAcB47lt7ul0ex99vhOzzEr+FfuPk5P3fG+KSCRRyuYA7q31PBff6umt9ZGQnPMm
-         P3/5t/FhJMZP3RezivC4wWbs0XUqdezmJOg8OjR8=
-Received: by mail-qt1-f171.google.com with SMTP id r22so20259514qtt.2;
-        Tue, 05 Nov 2019 09:07:58 -0800 (PST)
-X-Gm-Message-State: APjAAAVp24RjoZLDVSW6uAQG13XPxpYCi5HoLiNG/nj+cMho7XWHpHQl
-        K6xoOJJXWiH0FCh1SlXO469XK/f7M6OAKQlvPg==
-X-Google-Smtp-Source: APXvYqz9/z2im9e76vhu3PDX2geLlkCL/9xOMZgc1KJo/mqie7zy7vcexLdTcRMCQUecwC+40LweB/fouXV5OHZ5gYU=
-X-Received: by 2002:ac8:458c:: with SMTP id l12mr19273736qtn.300.1572973677688;
- Tue, 05 Nov 2019 09:07:57 -0800 (PST)
-MIME-Version: 1.0
-References: <1572886683-4919-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1572886683-4919-3-git-send-email-fabrizio.castro@bp.renesas.com>
- <CAL_JsqJ+xus0GDWb0Px6HKDBzOt1yjwCCkQrfMspubwG+LZOdQ@mail.gmail.com> <TY1PR01MB1770F97A73768451B2ED8A22C07E0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB1770F97A73768451B2ED8A22C07E0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 5 Nov 2019 11:07:46 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL6Nzr2oBh51PZnQfBUK1ggDcZUrLaSP2GvEycwFAwJZw@mail.gmail.com>
-Message-ID: <CAL_JsqL6Nzr2oBh51PZnQfBUK1ggDcZUrLaSP2GvEycwFAwJZw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: display: bridge: Repurpose lvds-encoder
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Tue, 5 Nov 2019 13:35:10 -0500
+Received: from ramsan ([84.195.182.253])
+        by xavier.telenet-ops.be with bizsmtp
+        id NJb62100s5USYZQ01Jb6By; Tue, 05 Nov 2019 19:35:08 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iS3fW-0002sI-Ke; Tue, 05 Nov 2019 19:35:06 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iS3fW-0005aj-JH; Tue, 05 Nov 2019 19:35:06 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Peter Rosin <peda@axentia.se>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset="UTF-8"
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] dt-bindings: display: renesas: du: Add vendor prefix to vsps property
+Date:   Tue,  5 Nov 2019 19:35:02 +0100
+Message-Id: <20191105183504.21447-2-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191105183504.21447-1-geert+renesas@glider.be>
+References: <20191105183504.21447-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Nov 5, 2019 at 3:33 AM Fabrizio Castro
-<fabrizio.castro@bp.renesas.com> wrote:
->
-> Hello Rob,
->
-> Thank you for your feedback!
->
-> > From: Rob Herring <robh+dt@kernel.org>
-> > Sent: 04 November 2019 21:23
-> > Subject: Re: [PATCH v2 2/4] dt-bindings: display: bridge: Repurpose lvds-encoder
-> >
-> > On Mon, Nov 4, 2019 at 10:58 AM Fabrizio Castro
-> > <fabrizio.castro@bp.renesas.com> wrote:
-> > >
-> > > In an effort to repurpose lvds-encoder.c to also serve the
-> > > function of LVDS decoders, we ended up defining a new "generic"
-> > > compatible string, therefore adapt the dt-bindings to fit the
-> > > new purpose. Also, convert the dt-bindings from .txt to .yaml
-> > > while at it.
-> >
-> > "Also, ... while at it." is a sign for split into 2 patches.
->
-> Will split into 2 patches
->
-> >
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > >
-> > > ---
-> > > v1->v2:
-> > > * Converted to dt-schema as per Neil's comment
-> > > ---
-> > >  .../bindings/display/bridge/lvds-codec.yaml        | 117 +++++++++++++++++++++
-> > >  .../bindings/display/bridge/lvds-transmitter.txt   |  66 ------------
-> > >  2 files changed, 117 insertions(+), 66 deletions(-)
-> > >  create mode 100644 Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
-> > >  delete mode 100644 Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
-> > b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
-> > > new file mode 100644
-> > > index 0000000..ff79bc2
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
-> > > @@ -0,0 +1,117 @@
-> > > +# SPDX-License-Identifier: GPL-2.0
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/display/bridge/lvds-codec.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Trasnparent LVDS encoders and LVDS decoders
-> >
-> > Typo
->
-> Will fix
->
-> >
-> > > +
-> > > +maintainers:
-> > > +  - Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > +
-> > > +description: |
-> > > +  This binding supports transparent LVDS encoders and LVDS decoders that don't
-> > > +  require any configuration.
-> > > +
-> > > +  LVDS is a physical layer specification defined in ANSI/TIA/EIA-644-A. Multiple
-> > > +  incompatible data link layers have been used over time to transmit image data
-> > > +  to LVDS panels. This binding targets devices compatible with the following
-> > > +  specifications only.
-> > > +
-> > > +  [JEIDA] "Digital Interface Standards for Monitor", JEIDA-59-1999, February
-> > > +  1999 (Version 1.0), Japan Electronic Industry Development Association (JEIDA)
-> > > +  [LDI] "Open LVDS Display Interface", May 1999 (Version 0.95), National
-> > > +  Semiconductor
-> > > +  [VESA] "VESA Notebook Panel Standard", October 2007 (Version 1.0), Video
-> > > +  Electronics Standards Association (VESA)
-> > > +
-> > > +  Those devices have been marketed under the FPD-Link and FlatLink brand names
-> > > +  among others.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    description: |
-> > > +      Any encoder or decoder compatible with this generic binding, but with
-> > > +      additional properties not listed here, must define its own binding and
-> > > +      list a device specific compatible first followed by the generic compatible
-> > > +    items:
-> > > +      - enum:
-> >
-> > You can drop 'items' when there's only 1.
->
-> Will drop
->
-> >
-> > > +        - lvds-encoder # for LVDS encoders
-> > > +        - lvds-decoder # for LVDS decoders
-> > > +
-> > > +  ports:
-> > > +    type: object
-> > > +    description: |
-> > > +      This device has two video ports. Their connections are modeled using the
-> > > +      OF graph bindings specified in Documentation/devicetree/bindings/graph.txt
-> > > +    properties:
-> > > +      port@0:
-> > > +        type: object
-> > > +        description: |
-> > > +          With LVDS encoders port 0 is for parallel input
-> > > +          With LVDS decoders port 0 is for LVDS input
-> > > +
-> > > +      port@1:
-> > > +        type: object
-> > > +        description: |
-> > > +          With LVDS encoders port 1 is for LVDS output
-> > > +          With LVDS decoders port 1 is for parallel output
-> >
-> > port@* are required, right?
->
-> Yes, port@0 and port@1 are both required, similarly to:
-> Documentation/devicetree/bindings/display/st,stm32-dsi.yaml
-> therefore I have put "ports" under "required", in a similar fashion.
-> What's the right way of specifying this?
+The Renesas-specific "vsps" property lacks a vendor prefix.
+Add a "renesas," prefix to comply with DT best practises.
 
-Same as any other property:
+Move "renesas,vsps" below "renesas,cmms" to preserve alphabetical sort
+order.
 
-required:
-  - port@0
-  - port@1
+Fixes: 06711e6385a4ab4c ("drm: rcar-du: Document the vsps property in the DT bindings")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../devicetree/bindings/display/renesas,du.txt       | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-At the correct level of course.
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
+index f6fdaa67c257a046..eb4ae41fe41f83c7 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.txt
++++ b/Documentation/devicetree/bindings/display/renesas,du.txt
+@@ -41,15 +41,15 @@ Required Properties:
+       supplied they must be named "dclkin.x" with "x" being the input clock
+       numerical index.
+ 
+-  - vsps: A list of phandle and channel index tuples to the VSPs that handle
+-    the memory interfaces for the DU channels. The phandle identifies the VSP
+-    instance that serves the DU channel, and the channel index identifies the
+-    LIF instance in that VSP.
+-
+   - renesas,cmms: A list of phandles to the CMM instances present in the SoC,
+     one for each available DU channel. The property shall not be specified for
+     SoCs that do not provide any CMM (such as V3M and V3H).
+ 
++  - renesas,vsps: A list of phandle and channel index tuples to the VSPs that
++    handle the memory interfaces for the DU channels. The phandle identifies the
++    VSP instance that serves the DU channel, and the channel index identifies
++    the LIF instance in that VSP.
++
+ Required nodes:
+ 
+ The connections to the DU output video ports are modeled using the OF graph
+@@ -96,8 +96,8 @@ Example: R8A7795 (R-Car H3) ES2.0 DU
+ 			 <&cpg CPG_MOD 722>,
+ 			 <&cpg CPG_MOD 721>;
+ 		clock-names = "du.0", "du.1", "du.2", "du.3";
+-		vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+ 		renesas,cmms = <&cmm0>, <&cmm1>, <&cmm2>, <&cmm3>;
++		renesas,vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
+ 
+ 		ports {
+ 			#address-cells = <1>;
+-- 
+2.17.1
 
-Rob
