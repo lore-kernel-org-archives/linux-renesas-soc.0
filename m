@@ -2,57 +2,82 @@ Return-Path: <SRS0=7w2H=Y5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 421D2CA9ED3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 03:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BE1CA9EDE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 08:46:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A175214D8
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 03:00:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572922840;
-	bh=S4kkYmIuPBZbrLpKxieNabcDfSGBtSHCNIEePVJrkh4=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=rUbJcPsaaFV4fgHrtsP/T6M2SnoNEQ0+xydQ5zGedQJqiSR59JN6cUCEQORm7ObQ/
-	 bZ2GqGMY5Aha2XtuKWqG5l280ORGCnlD5ZkxDjOxEhRS2NCEUx/c7rT7XUYm+aeZb+
-	 LRS2C7z7R3k8y91JQGwk6W2JN9aQvxwSrSi2p8Oo=
+	by mail.kernel.org (Postfix) with ESMTP id 4FF4C20869
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 08:46:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728351AbfKEDAj (ORCPT
+        id S1727925AbfKEIqe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Nov 2019 22:00:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727861AbfKEDAj (ORCPT
+        Tue, 5 Nov 2019 03:46:34 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34619 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfKEIqe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Nov 2019 22:00:39 -0500
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572922839;
-        bh=S4kkYmIuPBZbrLpKxieNabcDfSGBtSHCNIEePVJrkh4=;
-        h=Subject:From:Date:To:From;
-        b=SYMd00tQLDH9G6dR7tzbF27Z3DTMMuGzzIfsaJJZMkTlXv9QkLs4+TU4u9nOIjgLm
-         KgtxsZaJWKt/+3R4gXDkaSa1AqhPNnZ6zFxzX3FEtCQS4LbVoJym8TXKpJpF8FlKqh
-         EJLj213PzJmIyIUDMuffgLDfhCVRTdpAJYUsBOHI=
+        Tue, 5 Nov 2019 03:46:34 -0500
+Received: by mail-ot1-f65.google.com with SMTP id t4so5471438otr.1;
+        Tue, 05 Nov 2019 00:46:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MyKOhk0LoBuQhEYb9KFuzXqL5I8+dPurov3bPqiyxKA=;
+        b=IV8Ysd61vx5rujwStE3sYWm1yJmXkRFfrFSDD1lc9QIP/y22ET9ma6r4yY1LdZISIC
+         JjXGqxmnmIonHK3YdRdyMLAQPDvGse+J8pfU2YYo4wnNBMMewGJFyPRIaX/hzIxuTdbg
+         7j1c+TLICOC9ZeH7SHw657nGFLcwKtifMpTv1lwdZgYre6SNB5WOeur90Bk+IK/HEZqy
+         H0yn2bjOOZoLuqFKw5R0PI3cVRlAeTp7HQZgZtILlzhR98XFNHxclbpongcVIwwuAREi
+         NzCPKbrz+KXfMSzarn7SeXAoc3qRFszTG8HdgbkZa/6zS8eEbrcBzDhdg3C0TdO9+vmh
+         /93Q==
+X-Gm-Message-State: APjAAAWPkCQWU6tnXjFLOdZE7YjtEsDqVWbXf1voVHYGTbfBOkoPerzn
+        n+hQq1UVK/ppVnGgr7dFq4mQWhpCMDmUVehatDYoqQ==
+X-Google-Smtp-Source: APXvYqyoKPt2sRuOVs5Ee4m3vs18Mr40EkrrhLwu5WtKCYg4srR5SdNJrOEQ13JmYG5w9JIgf9kRW93t24Y6XRdKeBk=
+X-Received: by 2002:a9d:191e:: with SMTP id j30mr12264213ota.297.1572943593688;
+ Tue, 05 Nov 2019 00:46:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <157292283904.17441.560744637180000989.git-patchwork-housekeeping@kernel.org>
-Date:   Tue, 05 Nov 2019 03:00:39 +0000
-To:     linux-renesas-soc@vger.kernel.org
+References: <1572922092-12323-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1572922092-12323-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1572922092-12323-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 5 Nov 2019 09:46:22 +0100
+Message-ID: <CAMuHMdXn2ua9G6OY-zd54EC12b07kd=cECbkfgUPAPEE7j_3fQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] Revert "PCI: rcar: Fix missing MACCTLR register
+ setting in rcar_pcie_hw_init()"
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v3] PCI: rcar: Fix missing MACCTLR register setting (take2) (2019-11-05T02:48:11)
-  Superseding: [v2] PCI: rcar: Fix missing MACCTLR register setting (take2) (2019-11-01T06:31:29):
-    [v2,1/2] Revert "PCI: rcar: Fix missing MACCTLR register setting in rcar_pcie_hw_init()"
-    [v2,2/2] PCI: rcar: Fix missing MACCTLR register setting in initialize sequence
+On Tue, Nov 5, 2019 at 3:48 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> This reverts commit 175cc093888ee74a17c4dd5f99ba9a6bc86de5be.
+>
+> The commit description/code don't follow the manual accurately,
+> it's difficult to understand. So, this patch reverts the commit.
+>
+> Fixes: 175cc093888e ("PCI: rcar: Fix missing MACCTLR register setting in rcar_pcie_hw_init()"
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
