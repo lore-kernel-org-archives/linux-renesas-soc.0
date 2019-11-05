@@ -2,73 +2,57 @@ Return-Path: <SRS0=7w2H=Y5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3E9CA9ED7
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 02:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 421D2CA9ED3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 03:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239FB21A4A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 02:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A175214D8
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 03:00:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572922840;
+	bh=S4kkYmIuPBZbrLpKxieNabcDfSGBtSHCNIEePVJrkh4=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=rUbJcPsaaFV4fgHrtsP/T6M2SnoNEQ0+xydQ5zGedQJqiSR59JN6cUCEQORm7ObQ/
+	 bZ2GqGMY5Aha2XtuKWqG5l280ORGCnlD5ZkxDjOxEhRS2NCEUx/c7rT7XUYm+aeZb+
+	 LRS2C7z7R3k8y91JQGwk6W2JN9aQvxwSrSi2p8Oo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729836AbfKECsO (ORCPT
+        id S1728351AbfKEDAj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Nov 2019 21:48:14 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:43264 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728351AbfKECsO (ORCPT
+        Mon, 4 Nov 2019 22:00:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727861AbfKEDAj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Nov 2019 21:48:14 -0500
-X-IronPort-AV: E=Sophos;i="5.68,269,1569250800"; 
-   d="scan'208";a="30832174"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 05 Nov 2019 11:48:13 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 10BD54151FA1;
-        Tue,  5 Nov 2019 11:48:13 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 0/2] PCI: rcar: Fix missing MACCTLR register setting (take2)
-Date:   Tue,  5 Nov 2019 11:48:10 +0900
-Message-Id: <1572922092-12323-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 4 Nov 2019 22:00:39 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572922839;
+        bh=S4kkYmIuPBZbrLpKxieNabcDfSGBtSHCNIEePVJrkh4=;
+        h=Subject:From:Date:To:From;
+        b=SYMd00tQLDH9G6dR7tzbF27Z3DTMMuGzzIfsaJJZMkTlXv9QkLs4+TU4u9nOIjgLm
+         KgtxsZaJWKt/+3R4gXDkaSa1AqhPNnZ6zFxzX3FEtCQS4LbVoJym8TXKpJpF8FlKqh
+         EJLj213PzJmIyIUDMuffgLDfhCVRTdpAJYUsBOHI=
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <157292283904.17441.560744637180000989.git-patchwork-housekeeping@kernel.org>
+Date:   Tue, 05 Nov 2019 03:00:39 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series is based on the latest pci/rcar branch of Lorenzo's pci.git.
-The commit 175cc093888e ("PCI: rcar: Fix missing MACCTLR register setting
-in rcar_pcie_hw_init()") description/code don't follow the manual
-accurately, so that it's difficult to understand. So, this patch
-series reverts the commit at first, and then applies a new fixed patch.
+Latest series: [v3] PCI: rcar: Fix missing MACCTLR register setting (take2) (2019-11-05T02:48:11)
+  Superseding: [v2] PCI: rcar: Fix missing MACCTLR register setting (take2) (2019-11-01T06:31:29):
+    [v2,1/2] Revert "PCI: rcar: Fix missing MACCTLR register setting in rcar_pcie_hw_init()"
+    [v2,2/2] PCI: rcar: Fix missing MACCTLR register setting in initialize sequence
 
-Reference:
-https://marc.info/?l=linux-renesas-soc&m=157242422327368&w=2
-
-Changes from v2:
- - Rebase on the latest pcir/rcar branch.
- - Add Euguniu-san's Reported-by in the patch 2/2.
- - Add the bits definitions instead of magic number to make the initial value
-   so that I don't add Euguniu-san's Reviewed-by tag in the patch 2/2.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=196557
-
-Changes from v1:
- - Follow -stable rule in patch 1/2.
- - Add some comments about SPCHG bit of MACCTLR register.
-https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=195717
-
-Yoshihiro Shimoda (2):
-  Revert "PCI: rcar: Fix missing MACCTLR register setting in
-    rcar_pcie_hw_init()"
-  PCI: rcar: Fix missing MACCTLR register setting in initialize sequence
-
- drivers/pci/controller/pcie-rcar.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
 
 -- 
-2.7.4
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
