@@ -2,97 +2,73 @@ Return-Path: <SRS0=7w2H=Y5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF5ACA9ED9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C3E9CA9ED7
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 02:48:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E2FF222C2
+	by mail.kernel.org (Postfix) with ESMTP id 239FB21A4A
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Nov 2019 02:48:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729917AbfKECsP (ORCPT
+        id S1729836AbfKECsO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Nov 2019 21:48:15 -0500
+        Mon, 4 Nov 2019 21:48:14 -0500
 Received: from relmlor1.renesas.com ([210.160.252.171]:43264 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729863AbfKECsP (ORCPT
+        by vger.kernel.org with ESMTP id S1728351AbfKECsO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 4 Nov 2019 21:48:15 -0500
+        Mon, 4 Nov 2019 21:48:14 -0500
 X-IronPort-AV: E=Sophos;i="5.68,269,1569250800"; 
-   d="scan'208";a="30832177"
+   d="scan'208";a="30832174"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
   by relmlie5.idc.renesas.com with ESMTP; 05 Nov 2019 11:48:13 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 445524151D53;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 10BD54151FA1;
         Tue,  5 Nov 2019 11:48:13 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, linux-pci@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org, stable@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 2/2] PCI: rcar: Fix missing MACCTLR register setting in initialize sequence
-Date:   Tue,  5 Nov 2019 11:48:12 +0900
-Message-Id: <1572922092-12323-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 0/2] PCI: rcar: Fix missing MACCTLR register setting (take2)
+Date:   Tue,  5 Nov 2019 11:48:10 +0900
+Message-Id: <1572922092-12323-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1572922092-12323-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1572922092-12323-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-According to the R-Car Gen2/3 manual, "Be sure to write the initial
-value (= H'80FF 0000) to MACCTLR before enabling PCIETCTLR.CFINIT".
-To avoid unexpected behaviors, this patch fixes it. Note that
-the SPCHG bit of MACCTLR register description said "Only writing 1
-is valid and writing 0 is invalid" but this "invalid" means
-"ignored", not "prohibited". So, any documentation conflict doesn't
-exist about writing the MACCTLR register.
+This patch series is based on the latest pci/rcar branch of Lorenzo's pci.git.
+The commit 175cc093888e ("PCI: rcar: Fix missing MACCTLR register setting
+in rcar_pcie_hw_init()") description/code don't follow the manual
+accurately, so that it's difficult to understand. So, this patch
+series reverts the commit at first, and then applies a new fixed patch.
 
-Reported-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Fixes: c25da4778803 ("PCI: rcar: Add Renesas R-Car PCIe driver")
-Fixes: be20bbcb0a8c ("PCI: rcar: Add the initialization of PCIe link in resume_noirq()")
-Cc: <stable@vger.kernel.org> # v5.2+
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/pci/controller/pcie-rcar.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Reference:
+https://marc.info/?l=linux-renesas-soc&m=157242422327368&w=2
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index 40d8c54..1bfec1f 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -91,8 +91,12 @@
- #define  LINK_SPEED_2_5GTS	(1 << 16)
- #define  LINK_SPEED_5_0GTS	(2 << 16)
- #define MACCTLR			0x011058
-+#define  MACCTLR_RESERVED23_16	GENMASK(23, 16)
- #define  SPEED_CHANGE		BIT(24)
- #define  SCRAMBLE_DISABLE	BIT(27)
-+#define  LTSMDIS		BIT(31)
-+	 /* Be sure to write the initial value (H'80FF 0000) to MACCTLR */
-+#define  MACCTLR_INIT_VAL	(LTSMDIS | MACCTLR_RESERVED23_16)
- #define PMSR			0x01105c
- #define MACS2R			0x011078
- #define MACCGSPSETR		0x011084
-@@ -613,6 +617,8 @@ static int rcar_pcie_hw_init(struct rcar_pcie *pcie)
- 	if (IS_ENABLED(CONFIG_PCI_MSI))
- 		rcar_pci_write_reg(pcie, 0x801f0000, PCIEMSITXR);
- 
-+	rcar_pci_write_reg(pcie, MACCTLR_INIT_VAL, MACCTLR);
-+
- 	/* Finish initialization - establish a PCI Express link */
- 	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
- 
-@@ -1235,6 +1241,7 @@ static int rcar_pcie_resume_noirq(struct device *dev)
- 		return 0;
- 
- 	/* Re-establish the PCIe link */
-+	rcar_pci_write_reg(pcie, MACCTLR_INIT_VAL, MACCTLR);
- 	rcar_pci_write_reg(pcie, CFINIT, PCIETCTLR);
- 	return rcar_pcie_wait_for_dl(pcie);
- }
+Changes from v2:
+ - Rebase on the latest pcir/rcar branch.
+ - Add Euguniu-san's Reported-by in the patch 2/2.
+ - Add the bits definitions instead of magic number to make the initial value
+   so that I don't add Euguniu-san's Reviewed-by tag in the patch 2/2.
+ https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=196557
+
+Changes from v1:
+ - Follow -stable rule in patch 1/2.
+ - Add some comments about SPCHG bit of MACCTLR register.
+https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=195717
+
+Yoshihiro Shimoda (2):
+  Revert "PCI: rcar: Fix missing MACCTLR register setting in
+    rcar_pcie_hw_init()"
+  PCI: rcar: Fix missing MACCTLR register setting in initialize sequence
+
+ drivers/pci/controller/pcie-rcar.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
 -- 
 2.7.4
 
