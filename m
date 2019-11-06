@@ -2,190 +2,135 @@ Return-Path: <SRS0=ZRe+=Y6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A39F7FC6194
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Nov 2019 23:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94523FC6195
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Nov 2019 23:59:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FFDB217F4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Nov 2019 23:58:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60C11217F4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Nov 2019 23:59:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="1J4qFusA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvK67h3f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbfKFX6t (ORCPT
+        id S1727381AbfKFX7b (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Nov 2019 18:58:49 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38788 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727326AbfKFX6t (ORCPT
+        Wed, 6 Nov 2019 18:59:31 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33910 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727369AbfKFX7a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Nov 2019 18:58:49 -0500
-Received: by mail-lf1-f65.google.com with SMTP id q28so88771lfa.5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Nov 2019 15:58:45 -0800 (PST)
+        Wed, 6 Nov 2019 18:59:30 -0500
+Received: by mail-wm1-f68.google.com with SMTP id v3so3513360wmh.1;
+        Wed, 06 Nov 2019 15:59:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=D/iwXlhFDVs74I7pbjZdJ9OqgCy7tcoxyzMcRknhddQ=;
-        b=1J4qFusAVYFC+vItP7CFyKPrQGTC3FlsTM+OitfDz8fF0g+tClf/HPiq01Om4XFqRd
-         NAZDYQQw7oB24ZiSEo1cKuGWFH88J3/zaK6aMgdy+NYKaedKNxHQeGKeiB90MuVioLZ5
-         /Mv+UFKVwSYbJJn14z+QXzcn1QaseMslbjTM/KCrfkjeqpwYtLRWWgPEO1dSEwNFDP3x
-         0K9nzcAoD4xknlhqKtTh2yS8l0ZkSefKGFpICyODUCrL1nKzfR69irvp9f7zFmZHdMWU
-         xCzznp2w6fXaqxbVyKLBVQuUcwn66sohFH/zUbZT5IrazKTaghM4igAyj6rtK1lN+X9J
-         +gmg==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=pYc1ZEuv8q0KG5E79mea0IAenws1iMJ4L6QA4R1lfVY=;
+        b=kvK67h3fYcWBmNBhk+w65SIcEgm9PvCe2zJ3e1TJO+o52SeF8hx8GgnX1DBB/LT2SD
+         j0Z5CqFHdmnXMj5sx0Tu5/dZpVKiSAMIWMl+3HsoVyrmmeFi09faiDu8OEM63Dzozlkn
+         YNN1jnyWillG0L2GjgMQN3zd8oyqjkijdV+fNQia7msX8wxRR+6jMUIyyM0xzweHLG+J
+         g7T1fy/i5yTLBGgg2zxLBYqJ6Ym6HUryLgrSEfB/jNuAP0/pJbIfLG4VRKffyNGYYa5Z
+         TBSFPEK6Xd4fwELoaG/HOLCIPvnPyAF4ee/0rBJ7m3/dpeTVZbrQ0wH9JIZDW47VDuHJ
+         SiXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=D/iwXlhFDVs74I7pbjZdJ9OqgCy7tcoxyzMcRknhddQ=;
-        b=LE+Y94bMR7cDzEFG5aWfhsTV5mZSDGZA1eQ+L1pr0rH12V1NwZzajRcfHB9NlvirLU
-         fsqN57QEpbXXik6owJd0Xe2zcB7JnaJPR6eXEAt1p/V93QjdyZmXJxMQNOV9eoKtXr51
-         QOqj6yEuONCLTniazXGtxHjjr/MyCbIlmZ/gmvwhjCr3t11ARnZwtDQRlKoPXJXGuPKl
-         xEqWWSmwi1dQRUod6FLgQXY3hhbej1q62ItYCeUUXgxttKrOyTsjlQ9Ogsl8wRtfkq9C
-         jSoM8mUYpjljVIIXmbs8PZ4a/tVGLVAtlCCyf10L3hYCStC3AIYouJRfcUauS4loGQei
-         xXyw==
-X-Gm-Message-State: APjAAAWWWv7lWozguqsdyQMthOezETk1PoZmmabTmsNFocJKW4CAIgHz
-        s1hkYIMolLSkgoVTXpkoP8Z5Uw==
-X-Google-Smtp-Source: APXvYqxKe+k+8WY10yjRi5lvytyIaJt/JCNj41QoQlGkR+tR4Ih+qJIAaIMmQw9vdMS2sLQkYx3XPA==
-X-Received: by 2002:ac2:563c:: with SMTP id b28mr69177lff.149.1573084724820;
-        Wed, 06 Nov 2019 15:58:44 -0800 (PST)
-Received: from localhost (h-93-159.A463.priv.bahnhof.se. [46.59.93.159])
-        by smtp.gmail.com with ESMTPSA id e2sm143928ljp.48.2019.11.06.15.58.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 06 Nov 2019 15:58:44 -0800 (PST)
-Date:   Thu, 7 Nov 2019 00:58:43 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     joro@8bytes.org, iommu@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] iommu/ipmmu-vmsa: tidyup register definitions
-Message-ID: <20191106235843.GC18345@bigcity.dyn.berto.se>
-References: <1573007750-16611-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1573007750-16611-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=pYc1ZEuv8q0KG5E79mea0IAenws1iMJ4L6QA4R1lfVY=;
+        b=E5fLs5myd++UfXnbcJ8E0E8z8Zl1JUwWBGSU0/GclSlvK6IhVX6hNt7BKaasGRrMQJ
+         tQW929DNbTfnASTAGtsGBhdQ8aeDX2HzFyBMDPMoZPGnE/o8S9P+ksvlbt0O5CWyEKTg
+         LZGKzlKIIIWR8fBqL09EsVZI5RzoOloGBhLNENBeQR8WbF2zC0fTWp05LH9Kd3dFP6dv
+         bxCd05iSbuq55iILcbqVD/MR6js2i+jllzll7dwFWqLxSHW9VAOYb423pJanEFwbnEpd
+         RdT1FmYPEgDytOCznuk9VtwlQtAfjx1VSSQtQnXneQIOlyUVy2IiZtuZfHJhyeC6jSqB
+         Raog==
+X-Gm-Message-State: APjAAAU0LrnWCNrCRhruyJA8uIuxidY5BI0efrZQc+T/5hLegm5yB9wS
+        AKhfC2PSqlsTqy2enksiwGQ=
+X-Google-Smtp-Source: APXvYqz4a4H5Uoy7rSYdGlqvNJE0lcHmzcfZs1JsT4P7wLXGRdWcJdrlLQZT3eQTWfwnQcTYVH7EJw==
+X-Received: by 2002:a1c:2dd0:: with SMTP id t199mr181746wmt.58.1573084768367;
+        Wed, 06 Nov 2019 15:59:28 -0800 (PST)
+Received: from [192.168.1.4] (ip-86-49-35-8.net.upcbroadband.cz. [86.49.35.8])
+        by smtp.gmail.com with ESMTPSA id d11sm423476wrf.80.2019.11.06.15.59.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 06 Nov 2019 15:59:27 -0800 (PST)
+Subject: Re: [PATCH V3 2/3] PCI: rcar: Do not abort on too many inbound
+ dma-ranges
+To:     Andrew Murray <andrew.murray@arm.com>
+Cc:     Simon Horman <horms@verge.net.au>, linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org, Robin.Murphy@arm.com
+References: <20190809175741.7066-1-marek.vasut@gmail.com>
+ <20190809175741.7066-2-marek.vasut@gmail.com>
+ <20190816132305.gyyml5r3xsimmoor@verge.net.au>
+ <8f1871ed-4820-1985-0090-bb9e2d8803d8@gmail.com>
+ <20191021101805.GM47056@e119886-lin.cambridge.arm.com>
+ <fef9502f-d51c-b922-afb3-8891267ae6c3@gmail.com>
+ <20191026203627.GA47056@e119886-lin.cambridge.arm.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <9c46a2d2-00bd-3854-8060-fc7389751f3f@gmail.com>
+Date:   Thu, 7 Nov 2019 00:37:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1573007750-16611-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20191026203627.GA47056@e119886-lin.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Shimoda-san,
-
-Thanks for your patch,
-
-On 2019-11-06 11:35:46 +0900, Yoshihiro Shimoda wrote:
-> To support different registers memory mapping hardware easily
-> in the future, this patch tidies up the register definitions
-> as below:
->  - Add comments to state to which SoCs or SoC families they apply
->  - Add categories about MMU "context" and uTLB registers
+On 10/26/19 10:36 PM, Andrew Murray wrote:
+[...]>> But this still leaves me with one open question -- how do I
+figure out
+>> what to program into the PCI controller inbound windows, so that the
+>> controller correctly filters inbound transfers which are targetting
+>> nonexisting memory ?
 > 
-> No change behavior.
+> Your driver should program into the RC->CPU windows, the exact ranges
+> described in the dma-ranges. Whilst also respecting the alignment and
+> max-size rules your controller has (e.g. the existing upstream logic
+> and also the new logic that recalculates the alignment per entry).
 > 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> As far as I can tell from looking at your U-Boot patch, I think I'd expect
+> a single dma-range to be presented in the DT, that describes
+> 0:0xFFFFFFFF => 0:0xFFFFFFFF. This is because 1) I understand your
+> controller is limited to 32 bits. And 2) there is a linear mapping between
+> PCI and CPU addresses (given that the second and third arguments on
+> pci_set_region are both the same).
+> 
+> As you point out, this range includes lots of things that you don't
+> want the RC to touch - such as non-existent memory. This is OK, when
+> Linux programs addresses into the various EP's for them to DMA to host
+> memory, it uses its own logic to select addresses that are in RAM, the
+> purpose of the dma-range is to describe what the CPU RAM address looks
+> like from the perspective of the RC (for example if the RC was wired
+> with an offset such that made memory writes from the RC made to
+> 0x00000000 end up on the system map at 0x80000000, we need to tell Linux
+> about this offset. Otherwise when a EP device driver programs a DMA
+> address of a RAM buffer at 0x90000000, it'll end up targetting
+> 0x110000000. Thankfully our dma-range will tell Linux to apply an offset
+> such that the actual address written to the EP is 0x10000000.).
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+I understand that Linux programs the endpoints correctly. However this
+still doesn't prevent the endpoint from being broken and from sending a
+transaction to that non-existent memory. The PCI controller can prevent
+that and in an automotive SoC, I would very much like the PCI controller
+to do just that, rather than hope that the endpoint would always work.
 
-> ---
->  drivers/iommu/ipmmu-vmsa.c | 58 ++++++++++++++++++++++++----------------------
->  1 file changed, 30 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-> index c4ec166..79975e1 100644
-> --- a/drivers/iommu/ipmmu-vmsa.c
-> +++ b/drivers/iommu/ipmmu-vmsa.c
-> @@ -101,47 +101,49 @@ static struct ipmmu_vmsa_device *to_ipmmu(struct device *dev)
->  
->  #define IM_CTX_SIZE			0x40
->  
-> -#define IMCTR				0x0000
-> -#define IMCTR_INTEN			(1 << 2)
-> -#define IMCTR_FLUSH			(1 << 1)
-> -#define IMCTR_MMUEN			(1 << 0)
-> -
-> -#define IMTTBCR				0x0008
-> -#define IMTTBCR_EAE			(1 << 31)
-> +/* MMU "context" registers */
-> +#define IMCTR				0x0000		/* R-Car Gen2/3 */
-> +#define IMCTR_INTEN			(1 << 2)	/* R-Car Gen2/3 */
-> +#define IMCTR_FLUSH			(1 << 1)	/* R-Car Gen2/3 */
-> +#define IMCTR_MMUEN			(1 << 0)	/* R-Car Gen2/3 */
-> +
-> +#define IMTTBCR				0x0008		/* R-Car Gen2/3 */
-> +#define IMTTBCR_EAE			(1 << 31)	/* R-Car Gen2/3 */
->  #define IMTTBCR_SH0_INNER_SHAREABLE	(3 << 12)	/* R-Car Gen2 only */
->  #define IMTTBCR_ORGN0_WB_WA		(1 << 10)	/* R-Car Gen2 only */
->  #define IMTTBCR_IRGN0_WB_WA		(1 << 8)	/* R-Car Gen2 only */
->  #define IMTTBCR_SL0_TWOBIT_LVL_1	(2 << 6)	/* R-Car Gen3 only */
-> -#define IMTTBCR_SL0_LVL_1		(1 << 4)
-> +#define IMTTBCR_SL0_LVL_1		(1 << 4)	/* R-Car Gen2 only */
->  
-> -#define IMBUSCR				0x000c
-> -#define IMBUSCR_DVM			(1 << 2)
-> -#define IMBUSCR_BUSSEL_MASK		(3 << 0)
-> +#define IMBUSCR				0x000c		/* R-Car Gen2 only */
-> +#define IMBUSCR_DVM			(1 << 2)	/* R-Car Gen2 only */
-> +#define IMBUSCR_BUSSEL_MASK		(3 << 0)	/* R-Car Gen2 only */
->  
-> -#define IMTTLBR0			0x0010
-> -#define IMTTUBR0			0x0014
-> +#define IMTTLBR0			0x0010		/* R-Car Gen2/3 */
-> +#define IMTTUBR0			0x0014		/* R-Car Gen2/3 */
->  
-> -#define IMSTR				0x0020
-> -#define IMSTR_MHIT			(1 << 4)
-> -#define IMSTR_ABORT			(1 << 2)
-> -#define IMSTR_PF			(1 << 1)
-> -#define IMSTR_TF			(1 << 0)
-> +#define IMSTR				0x0020		/* R-Car Gen2/3 */
-> +#define IMSTR_MHIT			(1 << 4)	/* R-Car Gen2/3 */
-> +#define IMSTR_ABORT			(1 << 2)	/* R-Car Gen2/3 */
-> +#define IMSTR_PF			(1 << 1)	/* R-Car Gen2/3 */
-> +#define IMSTR_TF			(1 << 0)	/* R-Car Gen2/3 */
->  
-> -#define IMMAIR0				0x0028
-> +#define IMMAIR0				0x0028		/* R-Car Gen2/3 */
->  
-> -#define IMELAR				0x0030	/* IMEAR on R-Car Gen2 */
-> -#define IMEUAR				0x0034	/* R-Car Gen3 only */
-> +#define IMELAR				0x0030		/* R-Car Gen2/3, IMEAR on R-Car Gen2 */
-> +#define IMEUAR				0x0034		/* R-Car Gen3 only */
->  
-> +/* uTLB registers */
->  #define IMUCTR(n)			((n) < 32 ? IMUCTR0(n) : IMUCTR32(n))
-> -#define IMUCTR0(n)			(0x0300 + ((n) * 16))
-> -#define IMUCTR32(n)			(0x0600 + (((n) - 32) * 16))
-> -#define IMUCTR_TTSEL_MMU(n)		((n) << 4)
-> -#define IMUCTR_FLUSH			(1 << 1)
-> -#define IMUCTR_MMUEN			(1 << 0)
-> +#define IMUCTR0(n)			(0x0300 + ((n) * 16))		/* R-Car Gen2/3 */
-> +#define IMUCTR32(n)			(0x0600 + (((n) - 32) * 16))	/* R-Car Gen3 only */
-> +#define IMUCTR_TTSEL_MMU(n)		((n) << 4)	/* R-Car Gen2/3 */
-> +#define IMUCTR_FLUSH			(1 << 1)	/* R-Car Gen2/3 */
-> +#define IMUCTR_MMUEN			(1 << 0)	/* R-Car Gen2/3 */
->  
->  #define IMUASID(n)			((n) < 32 ? IMUASID0(n) : IMUASID32(n))
-> -#define IMUASID0(n)			(0x0308 + ((n) * 16))
-> -#define IMUASID32(n)			(0x0608 + (((n) - 32) * 16))
-> +#define IMUASID0(n)			(0x0308 + ((n) * 16))		/* R-Car Gen2/3 */
-> +#define IMUASID32(n)			(0x0608 + (((n) - 32) * 16))	/* R-Car Gen3 only */
->  
->  /* -----------------------------------------------------------------------------
->   * Root device handling
-> -- 
-> 2.7.4
-> 
+> In your case the dma-range also serves to describe a limit to the range
+> of addresses we can reach.
+
+[...]
 
 -- 
-Regards,
-Niklas Söderlund
+Best regards,
+Marek Vasut
