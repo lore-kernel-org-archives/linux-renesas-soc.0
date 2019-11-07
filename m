@@ -1,136 +1,172 @@
-Return-Path: <SRS0=ZRe+=Y6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=ISJR=Y7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94523FC6195
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Nov 2019 23:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FAAEFC6195
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Nov 2019 00:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60C11217F4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Nov 2019 23:59:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16DF021848
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 Nov 2019 00:01:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvK67h3f"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="pB2pRi2+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbfKFX7b (ORCPT
+        id S1727326AbfKGABr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Nov 2019 18:59:31 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33910 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727369AbfKFX7a (ORCPT
+        Wed, 6 Nov 2019 19:01:47 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39454 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727498AbfKGABr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Nov 2019 18:59:30 -0500
-Received: by mail-wm1-f68.google.com with SMTP id v3so3513360wmh.1;
-        Wed, 06 Nov 2019 15:59:29 -0800 (PST)
+        Wed, 6 Nov 2019 19:01:47 -0500
+Received: by mail-lj1-f193.google.com with SMTP id p18so176166ljc.6
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Nov 2019 16:01:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pYc1ZEuv8q0KG5E79mea0IAenws1iMJ4L6QA4R1lfVY=;
-        b=kvK67h3fYcWBmNBhk+w65SIcEgm9PvCe2zJ3e1TJO+o52SeF8hx8GgnX1DBB/LT2SD
-         j0Z5CqFHdmnXMj5sx0Tu5/dZpVKiSAMIWMl+3HsoVyrmmeFi09faiDu8OEM63Dzozlkn
-         YNN1jnyWillG0L2GjgMQN3zd8oyqjkijdV+fNQia7msX8wxRR+6jMUIyyM0xzweHLG+J
-         g7T1fy/i5yTLBGgg2zxLBYqJ6Ym6HUryLgrSEfB/jNuAP0/pJbIfLG4VRKffyNGYYa5Z
-         TBSFPEK6Xd4fwELoaG/HOLCIPvnPyAF4ee/0rBJ7m3/dpeTVZbrQ0wH9JIZDW47VDuHJ
-         SiXA==
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=N3xggxZDcjAE7aQm0fUpcBPU4Y0Dslk0T0PK4QiJ3oc=;
+        b=pB2pRi2+1/abDK6sddDzck85WGgKVT4eY8WliDcBlStTbgeu4coeFIgdmt7797Cm51
+         nzUpUgyDszPQyOsGcFAra8z5Gd2/bJt8xunSz4GcBkJaFLI7DB/Q7VUf6FRftWAgrhqA
+         dUv8ZuSOeyCG7MourWXp3K+SQkC0yZaV5+GnEixH8/2VI00k9y19kZFk329oM4iQmg+X
+         juVEbFREBoN8HJU7z2EvYHD+d4oaxNJKHVd8W0tLpH4LDjKtH/iugz40c97MJEXapnai
+         f/vYC5LkTDdchvMwrBddn5Ja7T5bYFEdMtomNq/fi8FyuIhgxDtiNET+4kRf0/DWMtao
+         iAgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pYc1ZEuv8q0KG5E79mea0IAenws1iMJ4L6QA4R1lfVY=;
-        b=E5fLs5myd++UfXnbcJ8E0E8z8Zl1JUwWBGSU0/GclSlvK6IhVX6hNt7BKaasGRrMQJ
-         tQW929DNbTfnASTAGtsGBhdQ8aeDX2HzFyBMDPMoZPGnE/o8S9P+ksvlbt0O5CWyEKTg
-         LZGKzlKIIIWR8fBqL09EsVZI5RzoOloGBhLNENBeQR8WbF2zC0fTWp05LH9Kd3dFP6dv
-         bxCd05iSbuq55iILcbqVD/MR6js2i+jllzll7dwFWqLxSHW9VAOYb423pJanEFwbnEpd
-         RdT1FmYPEgDytOCznuk9VtwlQtAfjx1VSSQtQnXneQIOlyUVy2IiZtuZfHJhyeC6jSqB
-         Raog==
-X-Gm-Message-State: APjAAAU0LrnWCNrCRhruyJA8uIuxidY5BI0efrZQc+T/5hLegm5yB9wS
-        AKhfC2PSqlsTqy2enksiwGQ=
-X-Google-Smtp-Source: APXvYqz4a4H5Uoy7rSYdGlqvNJE0lcHmzcfZs1JsT4P7wLXGRdWcJdrlLQZT3eQTWfwnQcTYVH7EJw==
-X-Received: by 2002:a1c:2dd0:: with SMTP id t199mr181746wmt.58.1573084768367;
-        Wed, 06 Nov 2019 15:59:28 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-35-8.net.upcbroadband.cz. [86.49.35.8])
-        by smtp.gmail.com with ESMTPSA id d11sm423476wrf.80.2019.11.06.15.59.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 06 Nov 2019 15:59:27 -0800 (PST)
-Subject: Re: [PATCH V3 2/3] PCI: rcar: Do not abort on too many inbound
- dma-ranges
-To:     Andrew Murray <andrew.murray@arm.com>
-Cc:     Simon Horman <horms@verge.net.au>, linux-pci@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org, Robin.Murphy@arm.com
-References: <20190809175741.7066-1-marek.vasut@gmail.com>
- <20190809175741.7066-2-marek.vasut@gmail.com>
- <20190816132305.gyyml5r3xsimmoor@verge.net.au>
- <8f1871ed-4820-1985-0090-bb9e2d8803d8@gmail.com>
- <20191021101805.GM47056@e119886-lin.cambridge.arm.com>
- <fef9502f-d51c-b922-afb3-8891267ae6c3@gmail.com>
- <20191026203627.GA47056@e119886-lin.cambridge.arm.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <9c46a2d2-00bd-3854-8060-fc7389751f3f@gmail.com>
-Date:   Thu, 7 Nov 2019 00:37:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=N3xggxZDcjAE7aQm0fUpcBPU4Y0Dslk0T0PK4QiJ3oc=;
+        b=tdm2vLUzPJ+Yr4Lq/2NWavJc1cFu3ilFO6jI8SpubRzaqj+KxASmQXMx/N+2vB4/bZ
+         xTHlo5pqLO+6tLM75aqRsfT7co0+s91kmhIVe1Dsjp8Tkv3ia2xg5g5xgPP9ogP/zaL+
+         9ix1GPvuqRQdqnKx8ZX6cSuLq9kJ2GGJuJAaP+4WjeMU4dsNVD1HEZlrAISbOwSB7nsB
+         ktTblNpYHvCHZ14s+P3gRxYQJ9irUi07wcq1e+pGdEMGBX95knlvw/z15QGpnTwqyRk0
+         ga2lqUjm/wtIYJ/LpcI+En2EWBXc1fc5HvWMkSwvPenSdP5Oiz6llduLgXkpjN08PVtL
+         3g2Q==
+X-Gm-Message-State: APjAAAUe7MLJvuvBMk87RZqIt8O0mAQWgOsQjkMrmdlxDhpWBu6NFde6
+        13UycxumkLxmhr33d8xMzX5arw==
+X-Google-Smtp-Source: APXvYqy5fmT1UorHhJvw44NfF9a13y4/JsIWzK1n5j+pH5N4vojlk2F+CWt1VJ7I8lTAkprX+IaZcw==
+X-Received: by 2002:a2e:970a:: with SMTP id r10mr98856lji.142.1573084903973;
+        Wed, 06 Nov 2019 16:01:43 -0800 (PST)
+Received: from localhost (h-93-159.A463.priv.bahnhof.se. [46.59.93.159])
+        by smtp.gmail.com with ESMTPSA id s28sm127882lfp.92.2019.11.06.16.01.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 06 Nov 2019 16:01:43 -0800 (PST)
+Date:   Thu, 7 Nov 2019 01:01:43 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     joro@8bytes.org, iommu@lists.linux-foundation.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 3/6] iommu/ipmmu-vmsa: Add helper functions for MMU
+ "context" registers
+Message-ID: <20191107000143.GD18345@bigcity.dyn.berto.se>
+References: <1573007750-16611-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1573007750-16611-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20191026203627.GA47056@e119886-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1573007750-16611-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 10/26/19 10:36 PM, Andrew Murray wrote:
-[...]>> But this still leaves me with one open question -- how do I
-figure out
->> what to program into the PCI controller inbound windows, so that the
->> controller correctly filters inbound transfers which are targetting
->> nonexisting memory ?
-> 
-> Your driver should program into the RC->CPU windows, the exact ranges
-> described in the dma-ranges. Whilst also respecting the alignment and
-> max-size rules your controller has (e.g. the existing upstream logic
-> and also the new logic that recalculates the alignment per entry).
-> 
-> As far as I can tell from looking at your U-Boot patch, I think I'd expect
-> a single dma-range to be presented in the DT, that describes
-> 0:0xFFFFFFFF => 0:0xFFFFFFFF. This is because 1) I understand your
-> controller is limited to 32 bits. And 2) there is a linear mapping between
-> PCI and CPU addresses (given that the second and third arguments on
-> pci_set_region are both the same).
-> 
-> As you point out, this range includes lots of things that you don't
-> want the RC to touch - such as non-existent memory. This is OK, when
-> Linux programs addresses into the various EP's for them to DMA to host
-> memory, it uses its own logic to select addresses that are in RAM, the
-> purpose of the dma-range is to describe what the CPU RAM address looks
-> like from the perspective of the RC (for example if the RC was wired
-> with an offset such that made memory writes from the RC made to
-> 0x00000000 end up on the system map at 0x80000000, we need to tell Linux
-> about this offset. Otherwise when a EP device driver programs a DMA
-> address of a RAM buffer at 0x90000000, it'll end up targetting
-> 0x110000000. Thankfully our dma-range will tell Linux to apply an offset
-> such that the actual address written to the EP is 0x10000000.).
+Hi Shimoda-san,
 
-I understand that Linux programs the endpoints correctly. However this
-still doesn't prevent the endpoint from being broken and from sending a
-transaction to that non-existent memory. The PCI controller can prevent
-that and in an automotive SoC, I would very much like the PCI controller
-to do just that, rather than hope that the endpoint would always work.
+Thanks for your work,
 
-> In your case the dma-range also serves to describe a limit to the range
-> of addresses we can reach.
+On 2019-11-06 11:35:47 +0900, Yoshihiro Shimoda wrote:
+> Since we will have changed memory mapping of the IPMMU in the future,
+> This patch adds helper functions ipmmu_ctx_{reg,read,write}()
+> for MMU "context" registers. No behavior change.
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[...]
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  drivers/iommu/ipmmu-vmsa.c | 32 +++++++++++++++++++++++---------
+>  1 file changed, 23 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
+> index 79975e1..c4fcfda 100644
+> --- a/drivers/iommu/ipmmu-vmsa.c
+> +++ b/drivers/iommu/ipmmu-vmsa.c
+> @@ -190,29 +190,43 @@ static void ipmmu_write(struct ipmmu_vmsa_device *mmu, unsigned int offset,
+>  	iowrite32(data, mmu->base + offset);
+>  }
+>  
+> +static unsigned int ipmmu_ctx_reg(struct ipmmu_vmsa_device *mmu,
+> +				  unsigned int context_id, unsigned int reg)
+> +{
+> +	return context_id * IM_CTX_SIZE + reg;
+> +}
+> +
+> +static u32 ipmmu_ctx_read(struct ipmmu_vmsa_device *mmu,
+> +			  unsigned int context_id, unsigned int reg)
+> +{
+> +	return ipmmu_read(mmu, ipmmu_ctx_reg(mmu, context_id, reg));
+> +}
+> +
+> +static void ipmmu_ctx_write(struct ipmmu_vmsa_device *mmu,
+> +			    unsigned int context_id, unsigned int reg, u32 data)
+> +{
+> +	ipmmu_write(mmu, ipmmu_ctx_reg(mmu, context_id, reg), data);
+> +}
+> +
+>  static u32 ipmmu_ctx_read_root(struct ipmmu_vmsa_domain *domain,
+>  			       unsigned int reg)
+>  {
+> -	return ipmmu_read(domain->mmu->root,
+> -			  domain->context_id * IM_CTX_SIZE + reg);
+> +	return ipmmu_ctx_read(domain->mmu->root, domain->context_id, reg);
+>  }
+>  
+>  static void ipmmu_ctx_write_root(struct ipmmu_vmsa_domain *domain,
+>  				 unsigned int reg, u32 data)
+>  {
+> -	ipmmu_write(domain->mmu->root,
+> -		    domain->context_id * IM_CTX_SIZE + reg, data);
+> +	ipmmu_ctx_write(domain->mmu->root, domain->context_id, reg, data);
+>  }
+>  
+>  static void ipmmu_ctx_write_all(struct ipmmu_vmsa_domain *domain,
+>  				unsigned int reg, u32 data)
+>  {
+>  	if (domain->mmu != domain->mmu->root)
+> -		ipmmu_write(domain->mmu,
+> -			    domain->context_id * IM_CTX_SIZE + reg, data);
+> +		ipmmu_ctx_write(domain->mmu, domain->context_id, reg, data);
+>  
+> -	ipmmu_write(domain->mmu->root,
+> -		    domain->context_id * IM_CTX_SIZE + reg, data);
+> +	ipmmu_ctx_write(domain->mmu->root, domain->context_id, reg, data);
+>  }
+>  
+>  /* -----------------------------------------------------------------------------
+> @@ -913,7 +927,7 @@ static void ipmmu_device_reset(struct ipmmu_vmsa_device *mmu)
+>  
+>  	/* Disable all contexts. */
+>  	for (i = 0; i < mmu->num_ctx; ++i)
+> -		ipmmu_write(mmu, i * IM_CTX_SIZE + IMCTR, 0);
+> +		ipmmu_ctx_write(mmu, i, IMCTR, 0);
+>  }
+>  
+>  static const struct ipmmu_features ipmmu_features_default = {
+> -- 
+> 2.7.4
+> 
 
 -- 
-Best regards,
-Marek Vasut
+Regards,
+Niklas Söderlund
