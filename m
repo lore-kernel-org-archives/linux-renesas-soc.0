@@ -2,376 +2,173 @@ Return-Path: <SRS0=gMtt=ZA=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B37C5DF60
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Nov 2019 12:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C864C5DF60
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Nov 2019 12:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46E30215EA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Nov 2019 12:07:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46C40222CE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Nov 2019 12:13:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="np450Par"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="fySMvovR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390175AbfKHMHi (ORCPT
+        id S1731978AbfKHMNZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Nov 2019 07:07:38 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:47898 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388839AbfKHLku (ORCPT
+        Fri, 8 Nov 2019 07:13:25 -0500
+Received: from mail-eopbgr1400103.outbound.protection.outlook.com ([40.107.140.103]:27067
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387738AbfKHMNY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:40:50 -0500
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AA31A31D;
-        Fri,  8 Nov 2019 12:40:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1573213246;
-        bh=+2F4lRjMl0FUO6dnTz1EBDjLk1lORzZKDT4kjPquQqs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=np450ParGvwr8Ui84UIx/W1nL5TDbHHy2u8FRw0RV3Do/grv+J2Qy9br09dnwHyHP
-         ttuh5cB2W9jP0Fcplz+BBXVS7aYL6/OzO36K3BvA9Bqh2Qw/g7gWsOI9THGdXkp6Qz
-         YP0PbiDaIv5MLFXXmPnIvn+hW9gZhZpumYoLWP4o=
-Date:   Fri, 8 Nov 2019 13:40:37 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        Fri, 8 Nov 2019 07:13:24 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=E+NUd0xwk/qeLYGLX98r7HHG9XieoHqG1I/bSccunVyPl9fq7fGTOvoXW74FNvaR7KLcCA9pjnviJCsSA0LNROpDAqDw1Mwy6lYRNMsIZBi/doU41fKQ0Qj8pRT+AsRLMtAiiUxJkzTQH+upqAyUM+etTWF71Wv11kphDBDrH5wc+lvFYqmnU6JPj9XdnaJ1370G4Wof96hBI+23rI8UHnH9+iQ16mLloXlnsz7H/KatN45mlqBCHZy67yCI9O1+wujPDZswOH1Gp3Nz79rFDEXG1RIJDiY/Eb+Ms6nefAd2TIvSSppd/MRLourey8I0TuLjrdiyfMNO2kfdxUUmsg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yn0OhmUTiyWlTNGR7Ad3vhBuRXQSBmEDq8cXlFIeUQk=;
+ b=dzWuGbRQr7v7Xrq3ZIGryacKJQVxkO/QOEUU1pjQSFR4PPCWOKnViV3Bc9QF28RqghOzjQh1+9YhQus9cmxJYngE3utKcBcj6Tsg4mInDTcfxqDQuLdHYHmkjlMer2mag8wQKqHoqY3YDtbLt3ZHEh++WlXytUKWkH8CbyC9tdUQyO3vzGJehv5uXBz4St9IM3sF6tY5ecnI+n4s55DyhGdlDdYHx6ErQXRpRyctsceWzKb0lvINwpwe9ToB+z6DlCbJmkcDEaey3sGZJSnzsv6wvnRUz0mE2X+M9d7RDBwC+lK0opcceHogaWIt/YZv+FnANCUwK+CrQFP7jgbN+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yn0OhmUTiyWlTNGR7Ad3vhBuRXQSBmEDq8cXlFIeUQk=;
+ b=fySMvovRqIqlsTOqtB3lCA6kQ9L886LWbeA6KrFjnnOuO6e7egQRI2scsfpwnrgRe9Vdlc/nQwzuZIjuINSLXSzjM+wXVOc7locYGYicPTYK1c6IJ64NlwKvRWcZxHFY47vtQYWqAlfYpUkZSmpdRwRFVzl8od/glZ3RJ0ppElQ=
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.13) by
+ TY1PR01MB1675.jpnprd01.prod.outlook.com (52.133.163.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.20; Fri, 8 Nov 2019 12:13:21 +0000
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::18df:cd2b:3b80:f287]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::18df:cd2b:3b80:f287%7]) with mapi id 15.20.2430.023; Fri, 8 Nov 2019
+ 12:13:21 +0000
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Neil Armstrong <narmstrong@baylibre.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Andrzej Hajda <a.hajda@samsung.com>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Peter Rosin <peda@axentia.se>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Biju Das <biju.das@bp.renesas.com>,
         "linux-renesas-soc@vger.kernel.org" 
         <linux-renesas-soc@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: Re: [PATCH v3 2/7] drm/bridge: Repurpose lvds-encoder.c
-Message-ID: <20191108114037.GH4866@pendragon.ideasonboard.com>
-References: <1573157463-14070-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1573157463-14070-3-git-send-email-fabrizio.castro@bp.renesas.com>
- <20191107203454.GN24983@pendragon.ideasonboard.com>
- <TYXPR01MB177573D7BD9DAA139F7FAB8FC07B0@TYXPR01MB1775.jpnprd01.prod.outlook.com>
- <20191108093927.2g7dwgdwrcr4rov7@uno.localdomain>
- <20191108110658.GD4866@pendragon.ideasonboard.com>
- <20191108113737.v5rmiwdxyd75e5tc@uno.localdomain>
+        Simon Horman <horms@verge.net.au>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Peter Rosin <peda@axentia.se>
+Subject: RE: [PATCH 1/4] drm/bridge: Repurpose lvds-encoder.c
+Thread-Topic: [PATCH 1/4] drm/bridge: Repurpose lvds-encoder.c
+Thread-Index: AQHVjygQz2Y+psEDEE+CHimQYeCp+qd6w0qAgAAWDsCABjPkAIAALmwA
+Date:   Fri, 8 Nov 2019 12:13:20 +0000
+Message-ID: <TY1PR01MB1770177F163134D477EFE9E0C07B0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1572443014-17335-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1572443014-17335-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <870bea7e-5e5d-c0ba-2f5d-ebd0fd493c7e@baylibre.com>
+ <TY1PR01MB1770C9189BE24444BECCDC28C07F0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <CAMuHMdXr00yvtdOkZ9JW2EZwWmT_hBiomvnU_sbCE9MyBKs8uA@mail.gmail.com>
+In-Reply-To: <CAMuHMdXr00yvtdOkZ9JW2EZwWmT_hBiomvnU_sbCE9MyBKs8uA@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 2909aa0e-5b4b-4b9e-b77f-08d764450be2
+x-ms-traffictypediagnostic: TY1PR01MB1675:|TY1PR01MB1675:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TY1PR01MB167574E13252EBC2988F09D1C07B0@TY1PR01MB1675.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1227;
+x-forefront-prvs: 0215D7173F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(136003)(346002)(366004)(396003)(376002)(199004)(189003)(11346002)(66476007)(66556008)(64756008)(7696005)(26005)(99286004)(76116006)(66946007)(6506007)(5660300002)(3846002)(7736002)(305945005)(6246003)(186003)(102836004)(316002)(53546011)(66446008)(478600001)(71200400001)(6116002)(25786009)(71190400001)(14444005)(55016002)(256004)(6436002)(8676002)(74316002)(52536014)(229853002)(76176011)(446003)(86362001)(66066001)(476003)(44832011)(81166006)(8936002)(6916009)(486006)(14454004)(9686003)(54906003)(2906002)(81156014)(7416002)(4326008)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1675;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: iXJ20JnrRnTR9vq1D5XmZItGRlqQXfpiQw3vGEdvQc9TIGM5lfHv1mlXIs6xjo1PYoeM9/l4v2SQxCYK0+rPqpvieaEIX95H0oCcJN6TtIwMyjPXnhz+C4bbZj2STeaFZlHX5jD80GLbInbI1d79CkPxWDcPYesw4SBDdHbw9aDJmkXXuYrosauLUI874ml7vyCEAqQ0nDB+02VPtlq60zHRjUDLEvB84x56aPDLj3ai1LEkJVS7qiFC2FQ5vWm+/1EEHm7NZ3Ch48s7xc9oCApqHjh5cGY+oeG25Zu/XDxrgp2PnmuoJBr5niU1Pe+ifcP/zaKSwH1feNnXy3VwgyAy4P8jPG8Is3KL01PjNIXamlkmy8PrMmBklhmUas09VpXF6pBTpdsLhuH22j/FsJu49nsr9B2zRCPEt/CYNHbvngQRIj7qtLTXk2mQzwaO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191108113737.v5rmiwdxyd75e5tc@uno.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2909aa0e-5b4b-4b9e-b77f-08d764450be2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Nov 2019 12:13:20.9945
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kE2puSfHYuMj2HE87rp5pHiJ/5+AWRAwD+jOjf+OwO2gRJSGjmx8Bx/R/j4wQI5qkW64FVp/xgMoSsyq6lCFdueRdMVHoR9Z5e4+BkPr390=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1675
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
-
-On Fri, Nov 08, 2019 at 12:37:37PM +0100, Jacopo Mondi wrote:
-> On Fri, Nov 08, 2019 at 01:06:58PM +0200, Laurent Pinchart wrote:
-> > On Fri, Nov 08, 2019 at 10:39:27AM +0100, Jacopo Mondi wrote:
-> > > On Fri, Nov 08, 2019 at 09:22:56AM +0000, Fabrizio Castro wrote:
-> > > > On 07 November 2019 20:35 Laurent Pinchart wrote:
-> > > > > On Thu, Nov 07, 2019 at 08:10:58PM +0000, Fabrizio Castro wrote:
-> > > > > > lvds-encoder.c implementation is also suitable for LVDS decoders,
-> > > > > > not just LVDS encoders.
-> > > > > > Instead of creating a new driver for addressing support for
-> > > > > > transparent LVDS decoders, repurpose lvds-encoder.c for the greater
-> > > > > > good.
-> > > > > >
-> > > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > > > >
-> > > > > > ---
-> > > > > > v2->v3:
-> > > > > > * No change
-> > > > > > v1->v2:
-> > > > > > * No change
-> > > > > > ---
-> > > > > >  drivers/gpu/drm/bridge/Kconfig        |   8 +-
-> > > > > >  drivers/gpu/drm/bridge/Makefile       |   2 +-
-> > > > > >  drivers/gpu/drm/bridge/lvds-codec.c   | 131 ++++++++++++++++++++++++++++
-> > > > > >  drivers/gpu/drm/bridge/lvds-encoder.c | 155 ----------------------------------
-> > > > > >  4 files changed, 136 insertions(+), 160 deletions(-)
-> > > > >
-> > > > > It would help if you added the -M1 option to git-format-patch to detect
-> > > > > the rename, the result would be easier to review.
-> > > >
-> > > > Will do, thank you for the hint
-> > > >
-> > > > > >  create mode 100644 drivers/gpu/drm/bridge/lvds-codec.c
-> > > > > >  delete mode 100644 drivers/gpu/drm/bridge/lvds-encoder.c
-> > > > > >
-> > > > > > diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-> > > > > > index 3436297..9e75ca4e 100644
-> > > > > > --- a/drivers/gpu/drm/bridge/Kconfig
-> > > > > > +++ b/drivers/gpu/drm/bridge/Kconfig
-> > > > > > @@ -45,14 +45,14 @@ config DRM_DUMB_VGA_DAC
-> > > > > >  	  Support for non-programmable RGB to VGA DAC bridges, such as ADI
-> > > > > >  	  ADV7123, TI THS8134 and THS8135 or passive resistor ladder DACs.
-> > > > > >
-> > > > > > -config DRM_LVDS_ENCODER
-> > > > > > -	tristate "Transparent parallel to LVDS encoder support"
-> > > > > > +config DRM_LVDS_CODEC
-> > > > > > +	tristate "Transparent LVDS encoders and decoders support"
-> > > > > >  	depends on OF
-> > > > > >  	select DRM_KMS_HELPER
-> > > > > >  	select DRM_PANEL_BRIDGE
-> > > > > >  	help
-> > > > > > -	  Support for transparent parallel to LVDS encoders that don't require
-> > > > > > -	  any configuration.
-> > > > > > +	  Support for transparent LVDS encoders and LVDS decoders that don't
-> > > > > > +	  require any configuration.
-> > > > > >
-> > > > > >  config DRM_MEGACHIPS_STDPXXXX_GE_B850V3_FW
-> > > > > >  	tristate "MegaChips stdp4028-ge-b850v3-fw and stdp2690-ge-b850v3-fw"
-> > > > > > diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
-> > > > > > index 4934fcf..8a9178a 100644
-> > > > > > --- a/drivers/gpu/drm/bridge/Makefile
-> > > > > > +++ b/drivers/gpu/drm/bridge/Makefile
-> > > > > > @@ -2,7 +2,7 @@
-> > > > > >  obj-$(CONFIG_DRM_ANALOGIX_ANX78XX) += analogix-anx78xx.o
-> > > > > >  obj-$(CONFIG_DRM_CDNS_DSI) += cdns-dsi.o
-> > > > > >  obj-$(CONFIG_DRM_DUMB_VGA_DAC) += dumb-vga-dac.o
-> > > > > > -obj-$(CONFIG_DRM_LVDS_ENCODER) += lvds-encoder.o
-> > > > > > +obj-$(CONFIG_DRM_LVDS_CODEC) += lvds-codec.o
-> > > > > >  obj-$(CONFIG_DRM_MEGACHIPS_STDPXXXX_GE_B850V3_FW) += megachips-stdpxxxx-ge-b850v3-fw.o
-> > > > > >  obj-$(CONFIG_DRM_NXP_PTN3460) += nxp-ptn3460.o
-> > > > > >  obj-$(CONFIG_DRM_PARADE_PS8622) += parade-ps8622.o
-> > > > > > diff --git a/drivers/gpu/drm/bridge/lvds-codec.c b/drivers/gpu/drm/bridge/lvds-codec.c
-> > > > > > new file mode 100644
-> > > > > > index 0000000..d57a8eb
-> > > > > > --- /dev/null
-> > > > > > +++ b/drivers/gpu/drm/bridge/lvds-codec.c
-> > > > > > @@ -0,0 +1,131 @@
-> > > > > > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > > > > > +/*
-> > > > > > + * Copyright (C) 2019 Renesas Electronics Corporation
-> > > > > > + * Copyright (C) 2016 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > > > > + */
-> > > > > > +
-> > > > > > +#include <linux/gpio/consumer.h>
-> > > > > > +#include <linux/module.h>
-> > > > > > +#include <linux/of.h>
-> > > > > > +#include <linux/of_device.h>
-> > > > > > +#include <linux/of_graph.h>
-> > > > > > +#include <linux/platform_device.h>
-> > > > > > +
-> > > > > > +#include <drm/drm_bridge.h>
-> > > > > > +#include <drm/drm_panel.h>
-> > > > > > +
-> > > > > > +struct lvds_codec {
-> > > > > > +	struct drm_bridge bridge;
-> > > > > > +	struct drm_bridge *panel_bridge;
-> > > > > > +	struct gpio_desc *powerdown_gpio;
-> > > > > > +};
-> > > > > > +
-> > > > > > +static int lvds_codec_attach(struct drm_bridge *bridge)
-> > > > > > +{
-> > > > > > +	struct lvds_codec *lvds_codec = container_of(bridge,
-> > > > > > +						     struct lvds_codec, bridge);
-> > > > > > +
-> > > > > > +	return drm_bridge_attach(bridge->encoder, lvds_codec->panel_bridge,
-> > > > > > +				 bridge);
-> > > > > > +}
-> > > > > > +
-> > > > > > +static void lvds_codec_enable(struct drm_bridge *bridge)
-> > > > > > +{
-> > > > > > +	struct lvds_codec *lvds_codec = container_of(bridge,
-> > > > > > +						     struct lvds_codec, bridge);
-> > > > > > +
-> > > > > > +	if (lvds_codec->powerdown_gpio)
-> > > > > > +		gpiod_set_value_cansleep(lvds_codec->powerdown_gpio, 0);
-> > > > > > +}
-> > > > > > +
-> > > > > > +static void lvds_codec_disable(struct drm_bridge *bridge)
-> > > > > > +{
-> > > > > > +	struct lvds_codec *lvds_codec = container_of(bridge,
-> > > > > > +						     struct lvds_codec, bridge);
-> > > > > > +
-> > > > > > +	if (lvds_codec->powerdown_gpio)
-> > > > > > +		gpiod_set_value_cansleep(lvds_codec->powerdown_gpio, 1);
-> > > > > > +}
-> > > > > > +
-> > > > > > +static struct drm_bridge_funcs funcs = {
-> > > > > > +	.attach = lvds_codec_attach,
-> > > > > > +	.enable = lvds_codec_enable,
-> > > > > > +	.disable = lvds_codec_disable,
-> > > > > > +};
-> > > > > > +
-> > > > > > +static int lvds_codec_probe(struct platform_device *pdev)
-> > > > > > +{
-> > > > > > +	struct device *dev = &pdev->dev;
-> > > > > > +	struct device_node *panel_node;
-> > > > > > +	struct drm_panel *panel;
-> > > > > > +	struct lvds_codec *lvds_codec;
-> > > > > > +
-> > > > > > +	lvds_codec = devm_kzalloc(dev, sizeof(*lvds_codec), GFP_KERNEL);
-> > > > > > +	if (!lvds_codec)
-> > > > > > +		return -ENOMEM;
-> > > > > > +
-> > > > > > +	lvds_codec->powerdown_gpio = devm_gpiod_get_optional(dev, "powerdown",
-> > > > > > +							     GPIOD_OUT_HIGH);
-> > > > > > +	if (IS_ERR(lvds_codec->powerdown_gpio))
-> > > > > > +		return PTR_ERR(lvds_codec->powerdown_gpio);
-> > > > >
-> > > > > The driver had an error message here, any reason it got removed ?
-> > > >
-> > > > I am quoting from https://www.spinics.net/lists/devicetree/msg318602.html :
-> > > > "I know it was there already, but this seems a bit unusual for the
-> > > > minimal gain of having a printout in the very unlikely case the
-> > > > gpiod_get() operations fails. I would just return PTR_ERR()."
-> > > >
-> > > > I am OK with reinstating it, just let me know what you want me to do here.
-> > >
-> > > Yeah, I suggested that as it seemed to me quite unusual pattern for the
-> > > minimal gain of having an error message in an unlikely case. Sorry Fab
-> > > for the double effort if Laurent wants it back again.
-> > >
-> > > > > > +
-> > > > > > +	panel_node = of_graph_get_remote_node(dev->of_node, 1, 0);
-> > > > > > +	if (!panel_node) {
-> > > > > > +		dev_dbg(dev, "panel DT node not found\n");
-> > > > > > +		return -ENXIO;
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	panel = of_drm_find_panel(panel_node);
-> > > > > > +	of_node_put(panel_node);
-> > > > > > +	if (IS_ERR(panel)) {
-> > > > > > +		dev_dbg(dev, "panel not found, deferring probe\n");
-> > > > > > +		return PTR_ERR(panel);
-> > > > > > +	}
-> > > > > > +
-> > > > > > +	lvds_codec->panel_bridge = devm_drm_panel_bridge_add(dev, panel);
-> > > > >
-> > > > > This was devm_drm_panel_bridge_add_typed(), do you think there's a risk
-> > > > > of breaking userspace ? Of course as noted in the documentation of
-> > > > > devm_drm_panel_bridge_add_typed() the right solution is to fix panel
-> > > > > drivers, but I'm still slightly worried.
-> > > >
-> > > > Things break when the panel doesn't define connector_type, leading to the below
-> > > > check from devm_drm_panel_bridge_add:
-> > > > if (WARN_ON(panel->connector_type == DRM_MODE_CONNECTOR_Unknown))
-> > > >     return NULL;
-> > > >
-> > > > Please advise on the best course of action here.
-> > >
-> > > I pointed out that function was described as deprecated and probably
-> > > fixing the panel driver would be best. Why are you concerned about
-> > > userspace ? is the panel driver that should correctly report its
-> > > connector type, isn't it ? In case it's not, sorry again Fab for the
-> > > double effort.
-> >
-> > I'm concerned that this change may turn a working system in a
-> > non-working system. The issue has to be fixed in panel drivers of
-> > course, but switching from devm_drm_panel_bridge_add_typed() to
-> > devm_drm_panel_bridge_add() should only be done once all the drivers
-> > that are used with lvds-encoder behave properly.
-> >
-> 
-> I see.. It's probably most safer then to keep the _typed() version.
-> 
-> However, I understand not breaking working system is of course
-> desirable, but this would not be a userspace breakage, but a driver
-> change that requires other associated drivers to be updated
-> accordingly, like it happens at every release.
-
-Sure, but we're then expected to do this in lock-step, not push the
-first change, wait for someone to complain, and then fix other drivers
-:-) If we're confident that panel drivers are already behaving properly
-(which, in this case, more or less means that all LVDS panel drivers
-should report that they are LVDS panel drivers), then we can already
-move forward, but in any case, in a separate patch.
-
-> I however fear a
-> change like this if blindly ported to a BSP would break it, and yes,
-> doing that in this single commit won't help identifying where the
-> issue comes from. Sorry Fabrizio for the bad suggestion, you should
-> keep the _typed version and eventually switch to the new one in a
-> separate commit if you feel like to.
-> 
-> > > > > Actually, could you split this patch in two, with a patch that only
-> > > > > renames the driver (and the symbols internally) without any functional
-> > > > > change, and another patch that performs the modifications ? That would
-> > > > > be much easier to review and discuss.
-> > >
-> > > This is more work for something that could be simply addressed by the
-> > > reviewer by passing -M10 to git show. For such a simple driver isn't
-> > > this fine the way it is ?
-> >
-> > Don't make it difficult for the reviewer. I've reviewed this patch in my
-> > e-mail client, not in git. The patch itself should be generated with
-> > -M10, but in any case, such renames should not be bundled with other
-> > changes. One logical change by patch is the rule, and we can sometimes
-> > bundle a semi-unrelated minor change (such as a typo or indentation
-> > fix), but certainly not a potentially dangerous functional change that
-> > needs to be carefully reviewed.
-> 
-> Ack
-> 
-> > > > Will do
-> > > >
-> > > > > > +	if (IS_ERR(lvds_codec->panel_bridge))
-> > > > > > +		return PTR_ERR(lvds_codec->panel_bridge);
-> > > > > > +
-> > > > > > +	/* The panel_bridge bridge is attached to the panel's of_node,
-> > > > > > +	 * but we need a bridge attached to our of_node for our user
-> > > > > > +	 * to look up.
-> > > > > > +	 */
-> > > > > > +	lvds_codec->bridge.of_node = dev->of_node;
-> > > > > > +	lvds_codec->bridge.funcs = &funcs;
-> > > > > > +	drm_bridge_add(&lvds_codec->bridge);
-> > > > > > +
-> > > > > > +	platform_set_drvdata(pdev, lvds_codec);
-> > > > > > +
-> > > > > > +	return 0;
-> > > > > > +}
-> > > > > > +
-> > > > > > +static int lvds_codec_remove(struct platform_device *pdev)
-> > > > > > +{
-> > > > > > +	struct lvds_codec *lvds_codec = platform_get_drvdata(pdev);
-> > > > > > +
-> > > > > > +	drm_bridge_remove(&lvds_codec->bridge);
-> > > > > > +
-> > > > > > +	return 0;
-> > > > > > +}
-> > > > > > +
-> > > > > > +static const struct of_device_id lvds_codec_match[] = {
-> > > > > > +	{ .compatible = "lvds-encoder"  },
-> > > > > > +	{ .compatible = "thine,thc63lvdm83d" },
-> > > > > > +	{ .compatible = "lvds-decoder" },
-> > > > > > +	{},
-> > > > > > +};
-> > > > > > +MODULE_DEVICE_TABLE(of, lvds_codec_match);
-> > > > > > +
-> > > > > > +static struct platform_driver lvds_codec_driver = {
-> > > > > > +	.probe	= lvds_codec_probe,
-> > > > > > +	.remove	= lvds_codec_remove,
-> > > > > > +	.driver		= {
-> > > > > > +		.name		= "lvds-codec",
-> > > > > > +		.of_match_table	= lvds_codec_match,
-> > > > > > +	},
-> > > > > > +};
-> > > > > > +module_platform_driver(lvds_codec_driver);
-> > > > > > +
-> > > > > > +MODULE_AUTHOR("Laurent Pinchart <laurent.pinchart@ideasonboard.com>");
-> > > > > > +MODULE_DESCRIPTION("Driver for transparent LVDS encoders and LVDS decoders");
-> > > > >
-> > > > > Maybe "LVDS encoders and decoders" ?
-> > > > >
-> > > > > > +MODULE_LICENSE("GPL");
-> > > > >
-> > > > > [snip]
-
--- 
-Regards,
-
-Laurent Pinchart
+SGkgR2VlcnQsDQoNClRoYW5rIHlvdSBmb3IgeW91ciBmZWVkYmFjayENCg0KPiBGcm9tOiBHZWVy
+dCBVeXR0ZXJob2V2ZW4gPGdlZXJ0QGxpbnV4LW02OGsub3JnPg0KPiBTZW50OiAwOCBOb3ZlbWJl
+ciAyMDE5IDA5OjIxDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS80XSBkcm0vYnJpZGdlOiBSZXB1
+cnBvc2UgbHZkcy1lbmNvZGVyLmMNCj4gDQo+IEhpIEZhYnJpemlvLA0KPiANCj4gT24gTW9uLCBO
+b3YgNCwgMjAxOSBhdCAxMTo0MiBBTSBGYWJyaXppbyBDYXN0cm8NCj4gPGZhYnJpemlvLmNhc3Ry
+b0BicC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gPiBGcm9tOiBOZWlsIEFybXN0cm9uZyA8bmFy
+bXN0cm9uZ0BiYXlsaWJyZS5jb20+DQo+ID4gPiBTZW50OiAwNCBOb3ZlbWJlciAyMDE5IDA5OjE4
+DQo+ID4gPiBTdWJqZWN0OiBSZTogW1BBVENIIDEvNF0gZHJtL2JyaWRnZTogUmVwdXJwb3NlIGx2
+ZHMtZW5jb2Rlci5jDQo+ID4gPg0KPiA+ID4gT24gMzAvMTAvMjAxOSAxNDo0MywgRmFicml6aW8g
+Q2FzdHJvIHdyb3RlOg0KPiA+ID4gPiBsdmRzLWVuY29kZXIuYyBpbXBsZW1lbnRhdGlvbiBpcyBh
+bHNvIHN1aXRhYmxlIGZvciBMVkRTIGRlY29kZXJzLA0KPiA+ID4gPiBub3QganVzdCBMVkRTIGVu
+Y29kZXJzLg0KPiA+ID4gPiBJbnN0ZWFkIG9mIGNyZWF0aW5nIGEgbmV3IGRyaXZlciBmb3IgYWRk
+cmVzc2luZyBzdXBwb3J0IGZvcg0KPiA+ID4gPiB0cmFuc3BhcmVudCBMVkRTIGRlY29kZXJzLCBy
+ZXB1cnBvc2UgbHZkcy1lbmNvZGVyLmMgZm9yIHRoZSBncmVhdGVyDQo+ID4gPiA+IGdvb2QuDQo+
+ID4gPiA+DQo+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IEZhYnJpemlvIENhc3RybyA8ZmFicml6aW8u
+Y2FzdHJvQGJwLnJlbmVzYXMuY29tPg0KPiA+ID4gPiAtLS0NCj4gPiA+ID4gIGRyaXZlcnMvZ3B1
+L2RybS9icmlkZ2UvS2NvbmZpZyAgICAgICAgfCAgIDggKy0NCj4gPiA+ID4gIGRyaXZlcnMvZ3B1
+L2RybS9icmlkZ2UvTWFrZWZpbGUgICAgICAgfCAgIDIgKy0NCj4gPiA+ID4gIGRyaXZlcnMvZ3B1
+L2RybS9icmlkZ2UvbHZkcy1jb2RlYy5jICAgfCAxNjkgKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKw0KPiA+ID4gPiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9sdmRzLWVuY29kZXIu
+YyB8IDE1NSAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gPiA+ICA0IGZpbGVz
+IGNoYW5nZWQsIDE3NCBpbnNlcnRpb25zKCspLCAxNjAgZGVsZXRpb25zKC0pDQo+ID4gPiA+ICBj
+cmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9sdmRzLWNvZGVjLmMNCj4g
+PiA+ID4gIGRlbGV0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL2x2ZHMtZW5j
+b2Rlci5jDQo+ID4gPiA+DQo+ID4gPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJp
+ZGdlL0tjb25maWcgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL0tjb25maWcNCj4gPiA+ID4gaW5k
+ZXggMzQzNjI5Ny4uOWU3NWNhNGUgMTAwNjQ0DQo+ID4gPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9icmlkZ2UvS2NvbmZpZw0KPiA+ID4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL0tj
+b25maWcNCj4gPiA+ID4gQEAgLTQ1LDE0ICs0NSwxNCBAQCBjb25maWcgRFJNX0RVTUJfVkdBX0RB
+Qw0KPiA+ID4gPiAgICAgICBTdXBwb3J0IGZvciBub24tcHJvZ3JhbW1hYmxlIFJHQiB0byBWR0Eg
+REFDIGJyaWRnZXMsIHN1Y2ggYXMgQURJDQo+ID4gPiA+ICAgICAgIEFEVjcxMjMsIFRJIFRIUzgx
+MzQgYW5kIFRIUzgxMzUgb3IgcGFzc2l2ZSByZXNpc3RvciBsYWRkZXIgREFDcy4NCj4gPiA+ID4N
+Cj4gPiA+ID4gLWNvbmZpZyBEUk1fTFZEU19FTkNPREVSDQo+ID4gPiA+IC0gICB0cmlzdGF0ZSAi
+VHJhbnNwYXJlbnQgcGFyYWxsZWwgdG8gTFZEUyBlbmNvZGVyIHN1cHBvcnQiDQo+ID4gPiA+ICtj
+b25maWcgRFJNX0xWRFNfQ09ERUMNCj4gPiA+DQo+ID4gPg0KPiA+ID4gSSdtIG5vdCBDQ2VkIG9u
+IG90aGVyIHBhdGNoZXMsIGJ1dCBJJ20gcHJldHR5IHN1cmUgeW91IHNob3VsZCBmaXggb3RoZXIN
+Cj4gPiA+IEtjb25maWcgYW5kIGRlZmNvbmZpZ3Mgc2VsZWN0aW5nIHRoaXMgY29uZmlnIGluIHRo
+aXMgcGF0Y2ggdG8gYXZvaWQgYnJlYWtpbmcgYmlzZWN0Lg0KPiA+DQo+ID4gTXkgdW5kZXJzdGFu
+ZGluZyBpcyB0aGF0IG5vIGRlZmNvbmZpZyBhbmQgbm8gb3RoZXIgb3B0aW9uIHJlZmVyIGRpcmVj
+dGx5IHRvIERSTV9MVkRTX0VOQ09ERVIsIGRvIHlvdSBtaW5kIGJlaW5nIGEgbGl0dGxlIGJpdA0K
+PiBtb3JlIHNwZWNpZmljIGhlcmU/DQo+IA0KPiBTaWRlbm90ZTogaXQgbG9va3MgbGlrZSBDT05G
+SUdfRFJNX0xWRFNfRU5DT0RFUiBzaG91bGQgaGF2ZSBiZWVuIGVuYWJsZWQNCj4gaW4gc2htb2Jp
+bGVfZGVmY29uZmlnIHNpbmNlIGNvbW1pdHMgMzgxZGRmZTQ3ODg3MTU4OCAoImRybTogcmNhci1k
+dToNCj4gSGFyZGNvZGUgZW5jb2RlcnMgdHlwZXMgdG8gRFJNX01PREVfRU5DT0RFUl9OT05FIikg
+YW5kIDcxNjBkNTdiNmY4MTE4NWMNCj4gKCJkcm06IGJyaWRnZTogbHZkcy1lbmNvZGVyOiBBZGQg
+dGhpbmUsdGhjNjNsdmRtODNkIGNvbXBhdGlibGUgc3RyaW5nIiksDQo+IHRvIHN1cHBvcnQgdGhp
+bmUsdGhjNjNsdmRtODNkIGluIGFyY2gvYXJtL2Jvb3QvZHRzL3I4YTc3NzktbWFyemVuLmR0cz8N
+Cg0KSW50ZXJlc3RpbmcsIHdlbGwgdGhlIGRlZmNvbmZpZyBwYXRjaCBmcm9tIHRoaXMgc2VyaWVz
+IHNob3VsZCBoZWxwIHRoZW4uDQoNClRoYW5rcywNCkZhYg0KDQo+IA0KPiBHcntvZXRqZSxlZXRp
+bmd9cywNCj4gDQo+ICAgICAgICAgICAgICAgICAgICAgICAgIEdlZXJ0DQo+IA0KPiAtLQ0KPiBH
+ZWVydCBVeXR0ZXJob2V2ZW4gLS0gVGhlcmUncyBsb3RzIG9mIExpbnV4IGJleW9uZCBpYTMyIC0t
+IGdlZXJ0QGxpbnV4LW02OGsub3JnDQo+IA0KPiBJbiBwZXJzb25hbCBjb252ZXJzYXRpb25zIHdp
+dGggdGVjaG5pY2FsIHBlb3BsZSwgSSBjYWxsIG15c2VsZiBhIGhhY2tlci4gQnV0DQo+IHdoZW4g
+SSdtIHRhbGtpbmcgdG8gam91cm5hbGlzdHMgSSBqdXN0IHNheSAicHJvZ3JhbW1lciIgb3Igc29t
+ZXRoaW5nIGxpa2UgdGhhdC4NCj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLSBM
+aW51cyBUb3J2YWxkcw0K
