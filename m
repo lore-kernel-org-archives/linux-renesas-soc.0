@@ -4,55 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E712C17444
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 10 Nov 2019 02:57:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 408CFC43331
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 10 Nov 2019 03:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDBD521850
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 10 Nov 2019 02:57:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17024215EA
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 10 Nov 2019 03:17:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573354655;
-	bh=5WJiAT5XHNPt7tsfOK7uUb9wu5fkg7bQm1JKF/rfFXU=;
+	s=default; t=1573355851;
+	bh=Qd/xuIspfGELkLAKANspg6whBWC/YOasqt+zS66jQBw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D7YgeHI9scNaLciD+pLqNRSEKyEm/58/MszU39KXm4AubDu3p2+pVrj70ec/XTT4e
-	 gzKa+Sk1K4lUEccW/i6MmINhBaolbaMst1GIEEQU5PjPbGMkNhwpILsyvDhxm7fc6X
-	 hAABmvI+OP3L4qFacRG6s9xqm3EpwCaHG6oB5Bds=
+	b=pU3RS/gq4L3hU2vBFUYIEvUhYkwrtGKMl2DSo9qZQv5i0y2cUPn20NneSHrjMzEgC
+	 X9wQIsTu5G79f/IhQs271o437uJ+hwqlxW4am0WEXQi+U07m1jU19lWSbdrDwcBOC2
+	 h3HMZgpm603INXsr77sSZhrpxbPx60kBPXcD8o5c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728352AbfKJC5e (ORCPT
+        id S1726734AbfKJCkU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 9 Nov 2019 21:57:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47278 "EHLO mail.kernel.org"
+        Sat, 9 Nov 2019 21:40:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729454AbfKJC4s (ORCPT
+        id S1726710AbfKJCkU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 9 Nov 2019 21:56:48 -0500
+        Sat, 9 Nov 2019 21:40:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9275821D7E;
-        Sun, 10 Nov 2019 02:47:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38349215EA;
+        Sun, 10 Nov 2019 02:40:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573354047;
-        bh=5WJiAT5XHNPt7tsfOK7uUb9wu5fkg7bQm1JKF/rfFXU=;
+        s=default; t=1573353619;
+        bh=Qd/xuIspfGELkLAKANspg6whBWC/YOasqt+zS66jQBw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=htae9CG/V8tU01e40/ry287Av2FeYnUsnglYFokD7+pyVYTQyYFSFTQORu1QHrrXG
-         cwSQJBfx9lMBpGx/DotzNv6I+WFxkVSPXHrTzPWFFQs/cfU2nZe1HPGsud9nhzvCnR
-         aN5ufz8xYYGMnZ/2AfBjbOC/KBpUbvuN+p+VYI/s=
+        b=1NZQ+jghsGmpfCudcqoFlAHpiTTqmi5bk/Mhl9o3HYrORMHrGX6N0Tv99niDIBjHi
+         guyOSW7nKh7pEVq+C0RB48Z5UNd5wZ6Z4xecIWnWlyISgm5rcnfC6J4bDye0fAEI15
+         Jc9VAuMZMHY0Hl1Utu3c//2PVWUkhaxpEDexztgA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sasha Levin <sashal@kernel.org>,
+Cc:     Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 058/109] phy: renesas: rcar-gen3-usb2: fix vbus_ctrl for role sysfs
-Date:   Sat,  9 Nov 2019 21:44:50 -0500
-Message-Id: <20191110024541.31567-58-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 004/191] media: vsp1: Fix YCbCr planar formats pitch calculation
+Date:   Sat,  9 Nov 2019 21:37:06 -0500
+Message-Id: <20191110024013.29782-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191110024541.31567-1-sashal@kernel.org>
-References: <20191110024541.31567-1-sashal@kernel.org>
+In-Reply-To: <20191110024013.29782-1-sashal@kernel.org>
+References: <20191110024013.29782-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -62,39 +63,73 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
 
-[ Upstream commit 09938ea9d136243e8d1fed6d4d7a257764f28f6d ]
+[ Upstream commit 9b2798d5b71c50f64c41a40f0cbcae47c3fbd067 ]
 
-This patch fixes and issue that the vbus_ctrl is disabled by
-rcar_gen3_init_from_a_peri_to_a_host(), so a usb host cannot
-supply the vbus.
+YCbCr planar formats can have different pitch values for the luma and
+chroma planes. This isn't taken into account in the driver. Fix it.
 
-Note that this condition will exit when the otg irq happens
-even if we don't apply this patch.
+Based on a BSP patch from Koji Matsuoka <koji.matsuoka.xm@renesas.com>.
 
-Fixes: 9bb86777fb71 ("phy: rcar-gen3-usb2: add sysfs for usb role swap")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Fixes: 7863ac504bc5 ("drm: rcar-du: Add tri-planar memory formats support")
+[Updated documentation of the struct vsp1_du_atomic_config pitch field]
+
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/vsp1/vsp1_drm.c | 11 ++++++++++-
+ include/media/vsp1.h                   |  2 +-
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index e8fe80312820d..7f5e36bfeee8d 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -195,7 +195,7 @@ static void rcar_gen3_init_from_a_peri_to_a_host(struct rcar_gen3_chan *ch)
- 	val = readl(usb2_base + USB2_OBINTEN);
- 	writel(val & ~USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index b9c0f695d002b..8d86f618ec776 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -770,6 +770,7 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 	struct vsp1_device *vsp1 = dev_get_drvdata(dev);
+ 	struct vsp1_drm_pipeline *drm_pipe = &vsp1->drm->pipe[pipe_index];
+ 	const struct vsp1_format_info *fmtinfo;
++	unsigned int chroma_hsub;
+ 	struct vsp1_rwpf *rpf;
  
--	rcar_gen3_enable_vbus_ctrl(ch, 0);
-+	rcar_gen3_enable_vbus_ctrl(ch, 1);
- 	rcar_gen3_init_for_host(ch);
+ 	if (rpf_index >= vsp1->info->rpf_count)
+@@ -810,10 +811,18 @@ int vsp1_du_atomic_update(struct device *dev, unsigned int pipe_index,
+ 		return -EINVAL;
+ 	}
  
- 	writel(val | USB2_OBINT_BITS, usb2_base + USB2_OBINTEN);
++	/*
++	 * Only formats with three planes can affect the chroma planes pitch.
++	 * All formats with two planes have a horizontal subsampling value of 2,
++	 * but combine U and V in a single chroma plane, which thus results in
++	 * the luma plane and chroma plane having the same pitch.
++	 */
++	chroma_hsub = (fmtinfo->planes == 3) ? fmtinfo->hsub : 1;
++
+ 	rpf->fmtinfo = fmtinfo;
+ 	rpf->format.num_planes = fmtinfo->planes;
+ 	rpf->format.plane_fmt[0].bytesperline = cfg->pitch;
+-	rpf->format.plane_fmt[1].bytesperline = cfg->pitch;
++	rpf->format.plane_fmt[1].bytesperline = cfg->pitch / chroma_hsub;
+ 	rpf->alpha = cfg->alpha;
+ 
+ 	rpf->mem.addr[0] = cfg->mem[0];
+diff --git a/include/media/vsp1.h b/include/media/vsp1.h
+index 3093b9cb9067e..5b383d01c84a0 100644
+--- a/include/media/vsp1.h
++++ b/include/media/vsp1.h
+@@ -46,7 +46,7 @@ int vsp1_du_setup_lif(struct device *dev, unsigned int pipe_index,
+ /**
+  * struct vsp1_du_atomic_config - VSP atomic configuration parameters
+  * @pixelformat: plane pixel format (V4L2 4CC)
+- * @pitch: line pitch in bytes, for all planes
++ * @pitch: line pitch in bytes for the first plane
+  * @mem: DMA memory address for each plane of the frame buffer
+  * @src: source rectangle in the frame buffer (integer coordinates)
+  * @dst: destination rectangle on the display (integer coordinates)
 -- 
 2.20.1
 
