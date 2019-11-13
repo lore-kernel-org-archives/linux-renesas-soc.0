@@ -2,31 +2,31 @@ Return-Path: <SRS0=7+nO=ZF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8703AC47419
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 16:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9A9C43215
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 16:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 563E022CF7
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 15:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C40E2332A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 15:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbfKMPvn (ORCPT
+        id S1728105AbfKMPw1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Nov 2019 10:51:43 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:7195 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726276AbfKMPvn (ORCPT
+        Wed, 13 Nov 2019 10:52:27 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:43910 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727907AbfKMPw1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Nov 2019 10:51:43 -0500
+        Wed, 13 Nov 2019 10:52:27 -0500
 X-IronPort-AV: E=Sophos;i="5.68,300,1569250800"; 
-   d="scan'208";a="31380879"
+   d="scan'208";a="31593939"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Nov 2019 00:51:41 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 14 Nov 2019 00:52:26 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D48C1400ED49;
-        Thu, 14 Nov 2019 00:51:36 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id ADDC2400EE6B;
+        Thu, 14 Nov 2019 00:52:21 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         David Airlie <airlied@linux.ie>,
@@ -46,72 +46,58 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v4 00/13] Add LCD panel support to iwg20d
-Date:   Wed, 13 Nov 2019 15:51:19 +0000
-Message-Id: <1573660292-10629-1-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v4 09/13] dt-bindings: display: bridge: lvds-codec: Document ti,ds90cf384a
+Date:   Wed, 13 Nov 2019 15:51:28 +0000
+Message-Id: <1573660292-10629-10-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1573660292-10629-1-git-send-email-fabrizio.castro@bp.renesas.com>
+References: <1573660292-10629-1-git-send-email-fabrizio.castro@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The iW-RainboW-G20D-Qseven RZ/G1M,G1N Qseven Development Platform
-comes with a 7" capacitive display kit from Emerging Display
-Technologies Corporation (EDT). This series adds all that's
-necessary for supporting it.
+The DS90CF384A from TI is a transparent LVDS receiver (decoder),
+and therefore it is compatible with the lvds-codec driver and
+bindings.
 
-Thanks,
-Fab
+Document the ti,ds90cf384a compatible string with the dt-bindings.
+No driver change required.
 
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+
+---
 v3->v4:
-* Reworked according to Laurent's and Jacopo's comments
-v2->v3:
-* Split the dt-schema patch in two patches as per Rob's comment
-* Made fixes to the dt-schema according to Rob's comment
-* Made fixes to the lvds-codec driver according to Jacopo's comments
-* Added two new patches:
-  * drm: Define DRM_MODE_CONNECTOR_PARALLEL
-  * drm/panel: panel-simple: Add connector type for etm0700g0dh6
-v1->v2:
-* Convert dt-bindings to dt-schema
+* New patch
+---
+ Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Fabrizio Castro (13):
-  dt-bindings: display: bridge: Convert lvds-transmitter binding to
-    json-schema
-  dt-bindings: display: bridge: lvds-transmitter: Document
-    powerdown-gpios
-  dt-bindings: display: bridge: lvds-transmitter: Absorb ti,ds90c185.txt
-  dt-bindings: display: bridge: lvds-transmitter: Document
-    "ti,sn75lvds83"
-  drm/bridge: Repurpose lvds-encoder.c
-  drm/bridge: lvds-codec: Add "lvds-decoder" support
-  drm/bridge: lvds-codec: Simplify panel DT node localisation
-  dt-bindings: display: bridge: Repurpose lvds-encoder
-  dt-bindings: display: bridge: lvds-codec: Document ti,ds90cf384a
-  ARM: dts: iwg20d-q7-common: Add LCD support
-  ARM: shmobile_defconfig: Enable support for panels from EDT
-  [HACK] drm/bridge: lvds-codec: Enforce device specific compatible
-    strings
-  [HACK] dt-bindings: display: bridge: lvds-codec: Absorb
-    thine,thc63lvdm83d.txt
-
- .../bindings/display/bridge/lvds-codec.yaml        | 131 +++++++++++++++
- .../bindings/display/bridge/lvds-transmitter.txt   |  66 --------
- .../bindings/display/bridge/thine,thc63lvdm83d.txt |  50 ------
- .../bindings/display/bridge/ti,ds90c185.txt        |  55 -------
- arch/arm/boot/dts/iwg20d-q7-common.dtsi            |  85 ++++++++++
- arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi           |   1 -
- arch/arm/configs/shmobile_defconfig                |   3 +
- drivers/gpu/drm/bridge/Kconfig                     |   8 +-
- drivers/gpu/drm/bridge/Makefile                    |   2 +-
- .../drm/bridge/{lvds-encoder.c => lvds-codec.c}    | 179 +++++++++++++--------
- 10 files changed, 333 insertions(+), 247 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
- delete mode 100644 Documentation/devicetree/bindings/display/bridge/lvds-transmitter.txt
- delete mode 100644 Documentation/devicetree/bindings/display/bridge/thine,thc63lvdm83d.txt
- delete mode 100644 Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
- rename drivers/gpu/drm/bridge/{lvds-encoder.c => lvds-codec.c} (25%)
-
+diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+index 0ecc8a4..21f8c6e 100644
+--- a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+@@ -40,7 +40,10 @@ properties:
+           - ti,ds90c187       # For the TI DS90C187 FPD-Link Serializer
+           - ti,sn75lvds83     # For the TI SN75LVDS83 FlatLink transmitter
+         - const: lvds-encoder # Generic LVDS encoder compatible fallback
+-      - const: lvds-decoder   # Generic LVDS decoders compatible fallback
++      - items:
++        - enum:
++          - ti,ds90cf384a     # For the DS90CF384A FPD-Link LVDS Receiver
++        - const: lvds-decoder # Generic LVDS decoders compatible fallback
+ 
+   ports:
+     type: object
+@@ -102,7 +105,7 @@ examples:
+ 
+   - |
+     lvds-decoder {
+-      compatible = "lvds-decoder";
++      compatible = "ti,ds90cf384a", "lvds-decoder";
+ 
+       ports {
+         #address-cells = <1>;
 -- 
 2.7.4
 
