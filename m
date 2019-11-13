@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3433C33C9B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6351C47416
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 16:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CDEF2333C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 15:52:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C11522DCC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 15:52:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbfKMPwm (ORCPT
+        id S1728002AbfKMPwN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Nov 2019 10:52:42 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:12714 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726074AbfKMPwm (ORCPT
+        Wed, 13 Nov 2019 10:52:13 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:54368 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726276AbfKMPwN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Nov 2019 10:52:42 -0500
+        Wed, 13 Nov 2019 10:52:13 -0500
 X-IronPort-AV: E=Sophos;i="5.68,300,1569250800"; 
-   d="scan'208";a="31593960"
+   d="scan'208";a="31380894"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Nov 2019 00:52:41 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 14 Nov 2019 00:52:11 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B3A1D400EE6B;
-        Thu, 14 Nov 2019 00:52:36 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id C4296400ED5C;
+        Thu, 14 Nov 2019 00:52:06 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         David Airlie <airlied@linux.ie>,
@@ -46,9 +46,9 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v4 12/13] [HACK] drm/bridge: lvds-codec: Enforce device specific compatible strings
-Date:   Wed, 13 Nov 2019 15:51:31 +0000
-Message-Id: <1573660292-10629-13-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v4 06/13] drm/bridge: lvds-codec: Add "lvds-decoder" support
+Date:   Wed, 13 Nov 2019 15:51:25 +0000
+Message-Id: <1573660292-10629-7-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1573660292-10629-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1573660292-10629-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -57,139 +57,80 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The lvds-codec driver is a generic stub for transparent LVDS
-encoders and decoders.
-It's good practice to list a device specific compatible string
-before the generic fallback (if any) in the DT node for the relevant
-LVDS encoder/decoder, and it's also required by the dt-bindings.
-A notable exception to the generic fallback mechanism is the case
-of "thine,thc63lvdm83d", as documented in:
-Documentation/devicetree/bindings/display/bridge/thine,thc63lvdm83d.txt
-This patch enforces the adoption of a device specific compatible
-string (as fist string in the list), by using markers for the
-compatible string we match against and the index of the matching
-compatible string in the list.
+Add support for transparent LVDS decoders by adding a new
+compatible string ("lvds-decoder") to the driver.
+This patch also adds member connector_type to struct lvds_codec,
+and that's because LVDS decoders have a different connector type
+from LVDS encoders. We fill this new member up with the data
+matching the compatible string.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 ---
-Hi Laurent,
-
-I don't think we need to do anything in the driver to address your
-comment, as we can "enforce" this with the bindings (please see the
-next patch, as it would help with the "enforcing" of the compatible
-string for the thine device).
-I am sending this patch only so that you can see what a possible
-solution in the driver could look like.
-
 v3->v4:
-* New patch addressing the below comment from Laurent:
-"I think the lvds-decoder driver should error out at probe time if only
-one compatible string is listed."
+* New patch
 ---
- drivers/gpu/drm/bridge/lvds-codec.c | 55 +++++++++++++++++++++++++++++++++----
- 1 file changed, 49 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/bridge/lvds-codec.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/lvds-codec.c b/drivers/gpu/drm/bridge/lvds-codec.c
-index 784bbd3..145c25d 100644
+index b5801a2..c32e125 100644
 --- a/drivers/gpu/drm/bridge/lvds-codec.c
 +++ b/drivers/gpu/drm/bridge/lvds-codec.c
-@@ -14,11 +14,16 @@
- #include <drm/drm_bridge.h>
- #include <drm/drm_panel.h>
+@@ -7,6 +7,7 @@
+ #include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
  
-+struct lvds_codec_data {
-+	u32 connector_type;
-+	bool device_specific;
-+};
-+
- struct lvds_codec {
+@@ -17,6 +18,7 @@ struct lvds_codec {
  	struct drm_bridge bridge;
  	struct drm_bridge *panel_bridge;
  	struct gpio_desc *powerdown_gpio;
--	u32 connector_type;
-+	const struct lvds_codec_data *data;
++	u32 connector_type;
  };
  
  static int lvds_codec_attach(struct drm_bridge *bridge)
-@@ -65,7 +70,30 @@ static int lvds_codec_probe(struct platform_device *pdev)
+@@ -65,6 +67,7 @@ static int lvds_codec_probe(struct platform_device *pdev)
  	if (!lvds_codec)
  		return -ENOMEM;
  
--	lvds_codec->connector_type = (u32)of_device_get_match_data(&pdev->dev);
-+	lvds_codec->data = of_device_get_match_data(&pdev->dev);
-+	if (!lvds_codec->data)
-+		return -EINVAL;
-+
-+	/*
-+	 * If we haven't matched a device specific compatible string, we need
-+	 * to work out if the generic compatible string we matched against was
-+	 * listed first in the compatible property.
-+	 */
-+	if (!lvds_codec->data->device_specific) {
-+		const struct of_device_id *match;
-+		int compatible_index;
-+
-+		match = of_match_node(dev->driver->of_match_table,
-+				      dev->of_node);
-+		compatible_index = of_property_match_string(dev->of_node,
-+							    "compatible",
-+							    match->compatible);
-+		if (compatible_index == 0) {
-+			dev_err(dev, "Device specific compatible needed\n");
-+			return -EINVAL;
-+		}
-+	}
-+
++	lvds_codec->connector_type = (u32)of_device_get_match_data(&pdev->dev);
  	lvds_codec->powerdown_gpio = devm_gpiod_get_optional(dev, "powerdown",
  							     GPIOD_OUT_HIGH);
  	if (IS_ERR(lvds_codec->powerdown_gpio)) {
-@@ -92,7 +120,7 @@ static int lvds_codec_probe(struct platform_device *pdev)
+@@ -105,7 +108,7 @@ static int lvds_codec_probe(struct platform_device *pdev)
  
  	lvds_codec->panel_bridge =
  		devm_drm_panel_bridge_add_typed(dev, panel,
--						lvds_codec->connector_type);
-+					lvds_codec->data->connector_type);
+-						DRM_MODE_CONNECTOR_LVDS);
++						lvds_codec->connector_type);
  	if (IS_ERR(lvds_codec->panel_bridge))
  		return PTR_ERR(lvds_codec->panel_bridge);
  
-@@ -119,18 +147,33 @@ static int lvds_codec_remove(struct platform_device *pdev)
- 	return 0;
+@@ -133,8 +136,18 @@ static int lvds_codec_remove(struct platform_device *pdev)
  }
  
-+static const struct lvds_codec_data lvds_codec_decoder_data = {
-+	.connector_type = DRM_MODE_CONNECTOR_DPI,
-+	.device_specific = false,
-+};
-+
-+static const struct lvds_codec_data lvds_codec_encoder_data = {
-+	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-+	.device_specific = false,
-+};
-+
-+static const struct lvds_codec_data lvds_codec_thc63lvdm83d_data = {
-+	.connector_type = DRM_MODE_CONNECTOR_LVDS,
-+	.device_specific = true,
-+};
-+
  static const struct of_device_id lvds_codec_match[] = {
- 	{
- 		.compatible = "lvds-decoder",
--		.data = (void *)DRM_MODE_CONNECTOR_DPI,
-+		.data = &lvds_codec_decoder_data,
- 	},
- 	{
- 		.compatible = "lvds-encoder",
--		.data = (void *)DRM_MODE_CONNECTOR_LVDS,
-+		.data = &lvds_codec_encoder_data,
- 	},
- 	{
- 		.compatible = "thine,thc63lvdm83d",
--		.data = (void *)DRM_MODE_CONNECTOR_LVDS,
-+		.data = &lvds_codec_thc63lvdm83d_data,
- 	},
+-	{ .compatible = "lvds-encoder" },
+-	{ .compatible = "thine,thc63lvdm83d" },
++	{
++		.compatible = "lvds-decoder",
++		.data = (void *)DRM_MODE_CONNECTOR_DPI,
++	},
++	{
++		.compatible = "lvds-encoder",
++		.data = (void *)DRM_MODE_CONNECTOR_LVDS,
++	},
++	{
++		.compatible = "thine,thc63lvdm83d",
++		.data = (void *)DRM_MODE_CONNECTOR_LVDS,
++	},
  	{},
  };
+ MODULE_DEVICE_TABLE(of, lvds_codec_match);
 -- 
 2.7.4
 
