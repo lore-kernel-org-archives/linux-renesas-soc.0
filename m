@@ -4,30 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD22C33CA7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A24C33CA1
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 16:31:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA1A023159
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 15:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DB1822D37
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 15:51:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728110AbfKMPwc (ORCPT
+        id S1727996AbfKMPv5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Nov 2019 10:52:32 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:59620 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727907AbfKMPwc (ORCPT
+        Wed, 13 Nov 2019 10:51:57 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:21771 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726276AbfKMPv5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Nov 2019 10:52:32 -0500
+        Wed, 13 Nov 2019 10:51:57 -0500
 X-IronPort-AV: E=Sophos;i="5.68,300,1569250800"; 
-   d="scan'208";a="31380911"
+   d="scan'208";a="31593909"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Nov 2019 00:52:31 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 14 Nov 2019 00:51:56 +0900
 Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B7DA1400ED5C;
-        Thu, 14 Nov 2019 00:52:26 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D97E4400E9F7;
+        Thu, 14 Nov 2019 00:51:51 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         David Airlie <airlied@linux.ie>,
@@ -47,9 +46,9 @@ Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v4 10/13] ARM: dts: iwg20d-q7-common: Add LCD support
-Date:   Wed, 13 Nov 2019 15:51:29 +0000
-Message-Id: <1573660292-10629-11-git-send-email-fabrizio.castro@bp.renesas.com>
+Subject: [PATCH v4 03/13] dt-bindings: display: bridge: lvds-transmitter: Absorb ti,ds90c185.txt
+Date:   Wed, 13 Nov 2019 15:51:22 +0000
+Message-Id: <1573660292-10629-4-git-send-email-fabrizio.castro@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1573660292-10629-1-git-send-email-fabrizio.castro@bp.renesas.com>
 References: <1573660292-10629-1-git-send-email-fabrizio.castro@bp.renesas.com>
@@ -58,161 +57,116 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The iwg20d comes with a 7" capacitive touch screen, therefore
-add support for it.
+ti,ds90c185.txt documents LVDS encoders using the same driver
+as the one documented by lvds-transmitter.yaml.
+Since the properties listed in ti,ds90c185.txt are the same
+as the ones listed in lvds-transmitter.yaml, absorb the dt-binding
+into lvds-transmitter.yaml.
 
 Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
 ---
 v3->v4:
-* Reworked compatibility of DT node lvds-receiver
-* s/powerdown/powerdown-gpios/g in lvds-receiver
-* Reworked compatibility of DT node panel
-v2->v3:
-* No change
-v1->v2:
-* No change
+* New patch
 ---
- arch/arm/boot/dts/iwg20d-q7-common.dtsi  | 85 ++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi |  1 -
- 2 files changed, 85 insertions(+), 1 deletion(-)
+ .../bindings/display/bridge/lvds-transmitter.yaml  | 14 +++---
+ .../bindings/display/bridge/ti,ds90c185.txt        | 55 ----------------------
+ 2 files changed, 8 insertions(+), 61 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index ae75a1db..ab5ae93 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -46,6 +46,49 @@
- 		clock-frequency = <26000000>;
- 	};
+diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.yaml b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.yaml
+index 2484737..a8326ce 100644
+--- a/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.yaml
++++ b/Documentation/devicetree/bindings/display/bridge/lvds-transmitter.yaml
+@@ -31,11 +31,13 @@ description: |
+ properties:
+   compatible:
+     description: |
+-      Any encoder compatible with this generic binding, but with additional
+-      properties not listed here, must define its own binding and list a device
+-      specific compatible first followed by the generic compatible.
+-    enum:
+-      - lvds-encoder
++      Must list the device specific compatible string first, followed by the
++      generic compatible string.
++    items:
++      - enum:
++        - ti,ds90c185       # For the TI DS90C185 FPD-Link Serializer
++        - ti,ds90c187       # For the TI DS90C187 FPD-Link Serializer
++      - const: lvds-encoder # Generic LVDS encoder compatible fallback
  
-+	lcd_backlight: backlight {
-+		compatible = "pwm-backlight";
-+
-+		pwms = <&pwm3 0 5000000 0>;
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <7>;
-+		enable-gpios = <&gpio5 14 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	lvds-receiver {
-+		compatible = "ti,ds90cf384a", "lvds-decoder";
-+		powerdown-gpios = <&gpio7 25 GPIO_ACTIVE_LOW>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				lvds_receiver_in: endpoint {
-+					remote-endpoint = <&lvds0_out>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				lvds_receiver_out: endpoint {
-+					remote-endpoint = <&panel_in>;
-+				};
-+			};
-+		};
-+	};
-+
-+	panel {
-+		compatible = "edt,etm0700g0dh6";
-+		backlight = <&lcd_backlight>;
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&lvds_receiver_out>;
-+			};
-+		};
-+	};
-+
- 	reg_1p5v: 1p5v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "1P5V";
-@@ -120,6 +163,18 @@
- 	status = "okay";
- };
+   ports:
+     type: object
+@@ -69,7 +71,7 @@ required:
+ examples:
+   - |
+     lvds-encoder {
+-      compatible = "lvds-encoder";
++      compatible = "ti,ds90c185", "lvds-encoder";
  
-+&du {
-+	status = "okay";
-+};
-+
-+&gpio2 {
-+	touch-interrupt {
-+		gpio-hog;
-+		gpios = <12 GPIO_ACTIVE_LOW>;
-+		input;
-+	};
-+};
-+
- &hsusb {
- 	status = "okay";
- 	pinctrl-0 = <&usb0_pins>;
-@@ -147,6 +202,25 @@
- 		VDDIO-supply = <&reg_3p3v>;
- 		VDDD-supply = <&reg_1p5v>;
- 	};
-+
-+	touch: touchpanel@38 {
-+		compatible = "edt,edt-ft5406";
-+		reg = <0x38>;
-+		interrupt-parent = <&gpio2>;
-+		interrupts = <12 IRQ_TYPE_EDGE_FALLING>;
-+	};
-+};
-+
-+&lvds0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			lvds0_out: endpoint {
-+				remote-endpoint = <&lvds_receiver_in>;
-+			};
-+		};
-+	};
- };
- 
- &pci0 {
-@@ -180,6 +254,11 @@
- 		function = "i2c2";
- 	};
- 
-+	pwm3_pins: pwm3 {
-+		groups = "pwm3";
-+		function = "pwm3";
-+	};
-+
- 	scif0_pins: scif0 {
- 		groups = "scif0_data_d";
- 		function = "scif0";
-@@ -218,6 +297,12 @@
- 	};
- };
- 
-+&pwm3 {
-+	pinctrl-0 = <&pwm3_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
- &rcar_sound {
- 	pinctrl-0 = <&sound_pins>;
- 	pinctrl-names = "default";
-diff --git a/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi b/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
-index 0e99df2..ede2e0c 100644
---- a/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi
-@@ -39,7 +39,6 @@
- &du {
- 	pinctrl-0 = <&du_pins>;
- 	pinctrl-names = "default";
--	status = "okay";
- 
- 	ports {
- 		port@0 {
+       ports {
+         #address-cells = <1>;
+diff --git a/Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt b/Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
+deleted file mode 100644
+index e575f99..0000000
+--- a/Documentation/devicetree/bindings/display/bridge/ti,ds90c185.txt
++++ /dev/null
+@@ -1,55 +0,0 @@
+-Texas Instruments FPD-Link (LVDS) Serializer
+---------------------------------------------
+-
+-The DS90C185 and DS90C187 are low-power serializers for portable
+-battery-powered applications that reduces the size of the RGB
+-interface between the host GPU and the display.
+-
+-Required properties:
+-
+-- compatible: Should be
+-  "ti,ds90c185", "lvds-encoder"  for the TI DS90C185 FPD-Link Serializer
+-  "ti,ds90c187", "lvds-encoder"  for the TI DS90C187 FPD-Link Serializer
+-
+-Optional properties:
+-
+-- powerdown-gpios: Power down control GPIO (the PDB pin, active-low)
+-
+-Required nodes:
+-
+-The devices have two video ports. Their connections are modeled using the OF
+-graph bindings specified in Documentation/devicetree/bindings/graph.txt.
+-
+-- Video port 0 for parallel input
+-- Video port 1 for LVDS output
+-
+-
+-Example
+--------
+-
+-lvds-encoder {
+-	compatible = "ti,ds90c185", "lvds-encoder";
+-
+-	powerdown-gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
+-
+-	ports {
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-
+-		port@0 {
+-			reg = <0>;
+-
+-			lvds_enc_in: endpoint {
+-				remote-endpoint = <&lcdc_out_rgb>;
+-			};
+-		};
+-
+-		port@1 {
+-			reg = <1>;
+-
+-			lvds_enc_out: endpoint {
+-				remote-endpoint = <&lvds_panel_in>;
+-			};
+-		};
+-	};
+-};
 -- 
 2.7.4
 
