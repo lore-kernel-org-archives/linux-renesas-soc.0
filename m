@@ -2,66 +2,57 @@ Return-Path: <SRS0=7+nO=ZF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93AFCC43331
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 10:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 141FDC43331
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 10:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6276621783
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 10:39:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="isF6o5VX"
+	by mail.kernel.org (Postfix) with ESMTP id DC71822469
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 10:40:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727142AbfKMKjl (ORCPT
+        id S1726340AbfKMKk7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Nov 2019 05:39:41 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:39116 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726991AbfKMKjk (ORCPT
+        Wed, 13 Nov 2019 05:40:59 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59391 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfKMKk7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Nov 2019 05:39:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7WKOt0PU1d3nL/CCCTgJgokym6dAZxK4zFfjfXkPRJw=; b=isF6o5VXck6A2W28IBRVYOlkl
-        Vak7XScn5Sx2IAnHQtN6A00WUoEsEVwaQ//2q4YOaZcowM0E0/t0fQLA415Q1d/tcI163ypTRwkVs
-        FR4mdozBxCtJzUn1HN5RYLi3LCPXXcQGHlnWIZkD0lZjHtTsgu18nXygZ+lTJPG/BTUTJIHtgyKJw
-        f4QXifIa9KBESKFQ53cTIu6NX4YLC3SPlR0EgxjoUyXTdy0gRkHkKIsu/0wsO7d5GnQs1Uz0940Ta
-        Z37l6uIlCF7+2VOIaoWJuAGMaH2B1wgk++6fqfVEVLrLHiVlCIhz71nw8z79GkIuq072QdfB7MYJH
-        lrzGi8t2g==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:55632)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1iUq3X-0003a3-NZ; Wed, 13 Nov 2019 10:39:23 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iUq3T-0002ON-If; Wed, 13 Nov 2019 10:39:19 +0000
-Date:   Wed, 13 Nov 2019 10:39:19 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+        Wed, 13 Nov 2019 05:40:59 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iUq4m-0003S2-JM; Wed, 13 Nov 2019 11:40:40 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iUq4j-0005jl-TW; Wed, 13 Nov 2019 11:40:37 +0100
+Date:   Wed, 13 Nov 2019 11:40:37 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@fluxnic.net>,
+Cc:     Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nicolas Pitre <nico@fluxnic.net>,
         Eric Miao <eric.miao@nvidia.com>,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
         Chris Brandt <chris.brandt@renesas.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Subject: Re: [PATCH/RFC] ARM: boot: Relax kernel image alignment for RZ/A
  with CS3 SDRAM
-Message-ID: <20191113103919.GM25745@shell.armlinux.org.uk>
+Message-ID: <20191113104037.e45j37xoxeztvut3@pengutronix.de>
 References: <20191113102729.29303-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <20191113102729.29303-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -69,6 +60,15 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On Wed, Nov 13, 2019 at 11:27:29AM +0100, Geert Uytterhoeven wrote:
 > The RZA2MEVB sub board has 64 MiB of SDRAM at 0x0C000000 (CS3 space).
+
+This wording is misleading. You don't adapt the limit because 128 MiB >
+the amount of RAM on that platform but because the alignment of the CS3
+space isn't a multiple of 128 MiB. So I suggest:
+
+	On the RZA2MEVB the SDRAM's base is at 0x0C000000 which isn't
+	aligned to 128 MiB. So to ensure the assumptions of the
+	decompressor are valid the used alignment must be decreased.
+
 > Hence the mask for CONFIG_AUTO_ZRELADDR needs to be changed, otherwise
 > the system will crash because it will try to decompress a zImage or
 > uImage to a non-RAM garbage address.
@@ -80,59 +80,14 @@ On Wed, Nov 13, 2019 at 11:27:29AM +0100, Geert Uytterhoeven wrote:
 > No idea what to do with the rest of the comment, or if this breaks
 > existing platforms.
 
-We occasionally have discussions about this - the last one was a big
-one in Edinburgh, and the answer is we can't change this in mainline.
-They've also come up on the mailing lists as well.
+I would assume that it indeed breaks existing platforms. So maybe better
+make this configurable, default to 128 MiB and select it to 64 MiB on
+the affected platform? If the resulting kernel supports also other
+machines a warning (at compile time) might be a good idea.
 
-I'm not going to rehash this old argument yet again - the comment
-details the reason for it, and is there to prevent exactly this.
-
-If someone is silly enough to come up with a platform that violates
-the documented 32-bit ARM booting protocol, then they can't expect
-the kernel to bend to their platform's requirements at the expense of
-already merged platforms.
-
-Sorry.
-
-> 
-> Thanks for your comments!
-> ---
->  arch/arm/boot/compressed/head.S | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
-> index 93dffed0ac6e02b4..cfee6bd1e7a0a582 100644
-> --- a/arch/arm/boot/compressed/head.S
-> +++ b/arch/arm/boot/compressed/head.S
-> @@ -231,10 +231,10 @@ not_angel:
->  		 * address.
->  		 *
->  		 * This alignment is a balance between the requirements of
-> -		 * different platforms - we have chosen 128MB to allow
-> +		 * different platforms - we have chosen 64MB to allow
->  		 * platforms which align the start of their physical memory
-> -		 * to 128MB to use this feature, while allowing the zImage
-> -		 * to be placed within the first 128MB of memory on other
-> +		 * to 64MB to use this feature, while allowing the zImage
-> +		 * to be placed within the first 64MB of memory on other
->  		 * platforms.  Increasing the alignment means we place
->  		 * stricter alignment requirements on the start of physical
->  		 * memory, but relaxing it means that we break people who
-> @@ -242,7 +242,7 @@ not_angel:
->  		 * of this range.
->  		 */
->  		mov	r4, pc
-> -		and	r4, r4, #0xf8000000
-> +		and	r4, r4, #0xfc000000
->  		/* Determine final kernel image address. */
->  		add	r4, r4, #TEXT_OFFSET
->  #else
-> -- 
-> 2.17.1
-> 
-> 
+Best regards
+Uwe
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
