@@ -4,136 +4,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B27C43331
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 10:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECE71C43331
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 10:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8FDB2245A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 10:04:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB1FF222D0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Nov 2019 10:09:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbfKMKER (ORCPT
+        id S1727074AbfKMKJl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Nov 2019 05:04:17 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:45073 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbfKMKEQ (ORCPT
+        Wed, 13 Nov 2019 05:09:41 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:46564 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbfKMKJl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Nov 2019 05:04:16 -0500
-X-Originating-IP: 93.34.114.233
-Received: from uno.lan (93-34-114-233.ip49.fastwebnet.it [93.34.114.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 0F130C0015;
-        Wed, 13 Nov 2019 10:04:11 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
-        horms@verge.net.au, uli+renesas@fpond.eu
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, airlied@linux.ie,
-        daniel@ffwll.ch, linux-renesas-soc@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v7 1/7] dt-bindings: display: renesas,cmm: Add R-Car CMM documentation
-Date:   Wed, 13 Nov 2019 11:05:50 +0100
-Message-Id: <20191113100556.15616-2-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191113100556.15616-1-jacopo+renesas@jmondi.org>
-References: <20191113100556.15616-1-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 13 Nov 2019 05:09:41 -0500
+Received: from ramsan ([84.195.182.253])
+        by albert.telenet-ops.be with bizsmtp
+        id RN9f2100P5USYZQ06N9fXv; Wed, 13 Nov 2019 11:09:39 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iUpal-0002J6-BY; Wed, 13 Nov 2019 11:09:39 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iUpal-0007Bx-8o; Wed, 13 Nov 2019 11:09:39 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] iio: adc: max9611: Make enum relations more future proof
+Date:   Wed, 13 Nov 2019 11:09:38 +0100
+Message-Id: <20191113100938.27604-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device tree bindings documentation for the Renesas R-Car Display
-Unit Color Management Module.
+The relations between enum values and array indices values are currently
+not enforced by the code, which makes them fragile w.r.t. future
+changes.
 
-CMM is the image enhancement module available on each R-Car DU video
-channel on R-Car Gen2 and Gen3 SoCs (V3H and V3M excluded).
+Fix this by:
+  1. Using designated array initializers, to make sure array indices and
+     enums values match,
+  2. Linking max9611_csa_gain enum values to the corresponding
+     max9611_conf_ids enum values, as the latter is cast to the former
+     in max9611_read_csa_voltage().
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+No change in generated code.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../bindings/display/renesas,cmm.yaml         | 67 +++++++++++++++++++
- 1 file changed, 67 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/renesas,cmm.yaml
+ drivers/iio/adc/max9611.c | 36 +++++++++++-------------------------
+ 1 file changed, 11 insertions(+), 25 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,cmm.yaml b/Documentation/devicetree/bindings/display/renesas,cmm.yaml
-new file mode 100644
-index 000000000000..a57037b9e9ba
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/renesas,cmm.yaml
-@@ -0,0 +1,67 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/renesas,cmm.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas R-Car Color Management Module (CMM)
-+
-+maintainers:
-+  - Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-+  - Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-+  - Jacopo Mondi <jacopo+renesas@jmondi.org>
-+
-+description: |+
-+  Renesas R-Car color management module connected to R-Car DU video channels.
-+  It provides image enhancement functions such as 1-D look-up tables (LUT),
-+  3-D look-up tables (CLU), 1D-histogram generation (HGO), and color
-+  space conversion (CSC).
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+        - enum:
-+          - renesas,r8a7795-cmm
-+          - renesas,r8a7796-cmm
-+          - renesas,r8a77965-cmm
-+          - renesas,r8a77990-cmm
-+          - renesas,r8a77995-cmm
-+        - const: renesas,rcar-gen3-cmm
-+      - items:
-+        - const: renesas,rcar-gen2-cmm
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - resets
-+  - power-domains
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
-+    #include <dt-bindings/power/r8a7796-sysc.h>
-+
-+    cmm0: cmm@fea40000 {
-+         compatible = "renesas,r8a7796-cmm",
-+                      "renesas,rcar-gen3-cmm";
-+         reg = <0 0xfea40000 0 0x1000>;
-+         power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+         clocks = <&cpg CPG_MOD 711>;
-+         resets = <&cpg 711>;
-+    };
+diff --git a/drivers/iio/adc/max9611.c b/drivers/iio/adc/max9611.c
+index b0755f25356d700d..cb306ff1a5d6a0b2 100644
+--- a/drivers/iio/adc/max9611.c
++++ b/drivers/iio/adc/max9611.c
+@@ -114,22 +114,17 @@ enum max9611_conf_ids {
+  *		      where data shall be read from
+  */
+ static const unsigned int max9611_mux_conf[][2] = {
+-	/* CONF_SENSE_1x */
+-	{ MAX9611_MUX_SENSE_1x, MAX9611_REG_CSA_DATA },
+-	/* CONF_SENSE_4x */
+-	{ MAX9611_MUX_SENSE_4x, MAX9611_REG_CSA_DATA },
+-	/* CONF_SENSE_8x */
+-	{ MAX9611_MUX_SENSE_8x, MAX9611_REG_CSA_DATA },
+-	/* CONF_IN_VOLT */
+-	{ MAX9611_INPUT_VOLT, MAX9611_REG_RS_DATA },
+-	/* CONF_TEMP */
+-	{ MAX9611_MUX_TEMP, MAX9611_REG_TEMP_DATA },
++	[CONF_SENSE_1x]	= { MAX9611_MUX_SENSE_1x, MAX9611_REG_CSA_DATA },
++	[CONF_SENSE_4x]	= { MAX9611_MUX_SENSE_4x, MAX9611_REG_CSA_DATA },
++	[CONF_SENSE_8x]	= { MAX9611_MUX_SENSE_8x, MAX9611_REG_CSA_DATA },
++	[CONF_IN_VOLT]	= { MAX9611_INPUT_VOLT, MAX9611_REG_RS_DATA },
++	[CONF_TEMP]	= { MAX9611_MUX_TEMP, MAX9611_REG_TEMP_DATA },
+ };
+ 
+ enum max9611_csa_gain {
+-	CSA_GAIN_1x,
+-	CSA_GAIN_4x,
+-	CSA_GAIN_8x,
++	CSA_GAIN_1x = CONF_SENSE_1x,
++	CSA_GAIN_4x = CONF_SENSE_4x,
++	CSA_GAIN_8x = CONF_SENSE_8x,
+ };
+ 
+ enum max9611_csa_gain_params {
+@@ -147,18 +142,9 @@ enum max9611_csa_gain_params {
+  * value; use this structure to retrieve the correct LSB and offset values.
+  */
+ static const unsigned int max9611_gain_conf[][2] = {
+-	{ /* [0] CSA_GAIN_1x */
+-		MAX9611_CSA_1X_LSB_nV,
+-		MAX9611_CSA_1X_OFFS_RAW,
+-	},
+-	{ /* [1] CSA_GAIN_4x */
+-		MAX9611_CSA_4X_LSB_nV,
+-		MAX9611_CSA_4X_OFFS_RAW,
+-	},
+-	{ /* [2] CSA_GAIN_8x */
+-		MAX9611_CSA_8X_LSB_nV,
+-		MAX9611_CSA_8X_OFFS_RAW,
+-	},
++	[CSA_GAIN_1x] = { MAX9611_CSA_1X_LSB_nV, MAX9611_CSA_1X_OFFS_RAW, },
++	[CSA_GAIN_4x] = { MAX9611_CSA_4X_LSB_nV, MAX9611_CSA_4X_OFFS_RAW, },
++	[CSA_GAIN_8x] = { MAX9611_CSA_8X_LSB_nV, MAX9611_CSA_8X_OFFS_RAW, },
+ };
+ 
+ enum max9611_chan_addrs {
 -- 
-2.23.0
+2.17.1
 
