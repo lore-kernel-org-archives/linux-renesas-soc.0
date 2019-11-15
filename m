@@ -4,29 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 220F6C43141
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Nov 2019 23:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D04DC43215
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Nov 2019 23:57:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0C9920740
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Nov 2019 23:57:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12AD120740
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Nov 2019 23:57:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbfKOX5M (ORCPT
+        id S1727468AbfKOX5R (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Nov 2019 18:57:12 -0500
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:51271 "EHLO
+        Fri, 15 Nov 2019 18:57:17 -0500
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:51333 "EHLO
         vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfKOX5L (ORCPT
+        with ESMTP id S1727406AbfKOX5R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Nov 2019 18:57:11 -0500
-X-Halon-ID: a19a300c-0803-11ea-a0b9-005056917f90
+        Fri, 15 Nov 2019 18:57:17 -0500
+X-Halon-ID: a4fd2244-0803-11ea-a0b9-005056917f90
 Authorized-sender: niklas@soderlund.pp.se
 Received: from bismarck.berto.se (p54ac5865.dip0.t-ipconnect.de [84.172.88.101])
         by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
-        id a19a300c-0803-11ea-a0b9-005056917f90;
-        Sat, 16 Nov 2019 00:57:08 +0100 (CET)
+        id a4fd2244-0803-11ea-a0b9-005056917f90;
+        Sat, 16 Nov 2019 00:57:14 +0100 (CET)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     Helen Koike <helen.koike@collabora.com>,
@@ -37,9 +36,9 @@ To:     Helen Koike <helen.koike@collabora.com>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 2/6] rcar-vin: Use default VIDIOC_{G,S}_{INPUT,OUTPUT} handler
-Date:   Sat, 16 Nov 2019 00:55:55 +0100
-Message-Id: <20191115235559.806041-3-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 5/6] rcar-vin: Make use of V4L2_CAP_IO_MC
+Date:   Sat, 16 Nov 2019 00:55:58 +0100
+Message-Id: <20191115235559.806041-6-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191115235559.806041-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20191115235559.806041-1-niklas.soderlund+renesas@ragnatech.se>
@@ -51,55 +50,55 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The driver only has a single input, use the default handler.
+Set the V4L2_CAP_IO_MC capability flag and remove the driver specific
+enum input callbacks for the media controller enabled mode of the
+driver.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 17 -----------------
- 1 file changed, 17 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 15 +--------------
+ 1 file changed, 1 insertion(+), 14 deletions(-)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 9e2e63ffcc47acad..6c6465e61657b390 100644
+index 6c6465e61657b390..83f757123ef8f468 100644
 --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
 +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -489,19 +489,6 @@ static int rvin_enum_input(struct file *file, void *priv,
+@@ -736,18 +736,6 @@ static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
  	return 0;
  }
  
--static int rvin_g_input(struct file *file, void *priv, unsigned int *i)
+-static int rvin_mc_enum_input(struct file *file, void *priv,
+-			      struct v4l2_input *i)
 -{
--	*i = 0;
--	return 0;
--}
--
--static int rvin_s_input(struct file *file, void *priv, unsigned int i)
--{
--	if (i > 0)
+-	if (i->index != 0)
 -		return -EINVAL;
+-
+-	i->type = V4L2_INPUT_TYPE_CAMERA;
+-	strscpy(i->name, "Camera", sizeof(i->name));
+-
 -	return 0;
 -}
 -
- static int rvin_querystd(struct file *file, void *priv, v4l2_std_id *a)
- {
- 	struct rvin_dev *vin = video_drvdata(file);
-@@ -667,8 +654,6 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
- 	.vidioc_g_pixelaspect		= rvin_g_pixelaspect,
- 
- 	.vidioc_enum_input		= rvin_enum_input,
--	.vidioc_g_input			= rvin_g_input,
--	.vidioc_s_input			= rvin_s_input,
- 
- 	.vidioc_dv_timings_cap		= rvin_dv_timings_cap,
- 	.vidioc_enum_dv_timings		= rvin_enum_dv_timings,
-@@ -771,8 +756,6 @@ static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
+ static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
+ 	.vidioc_querycap		= rvin_querycap,
+ 	.vidioc_try_fmt_vid_cap		= rvin_mc_try_fmt_vid_cap,
+@@ -755,8 +743,6 @@ static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
+ 	.vidioc_s_fmt_vid_cap		= rvin_mc_s_fmt_vid_cap,
  	.vidioc_enum_fmt_vid_cap	= rvin_enum_fmt_vid_cap,
  
- 	.vidioc_enum_input		= rvin_mc_enum_input,
--	.vidioc_g_input			= rvin_g_input,
--	.vidioc_s_input			= rvin_s_input,
- 
+-	.vidioc_enum_input		= rvin_mc_enum_input,
+-
  	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
  	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
+ 	.vidioc_querybuf		= vb2_ioctl_querybuf,
+@@ -928,6 +914,7 @@ int rvin_v4l2_register(struct rvin_dev *vin)
+ 	vin->format.colorspace = RVIN_DEFAULT_COLORSPACE;
+ 
+ 	if (vin->info->use_mc) {
++		vdev->device_caps |= V4L2_CAP_IO_MC;
+ 		vdev->ioctl_ops = &rvin_mc_ioctl_ops;
+ 	} else {
+ 		vdev->ioctl_ops = &rvin_ioctl_ops;
 -- 
 2.24.0
 
