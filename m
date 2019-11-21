@@ -2,126 +2,152 @@ Return-Path: <SRS0=Yikl=ZN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE9E8C432C0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Nov 2019 08:45:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55685C432C3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Nov 2019 08:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2B6F206EC
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Nov 2019 08:45:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ECC320855
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Nov 2019 08:52:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="YqkOkqcm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726165AbfKUIpm (ORCPT
+        id S1726454AbfKUIww (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Nov 2019 03:45:42 -0500
-Received: from mars.blocktrron.ovh ([51.254.112.43]:39826 "EHLO
-        mail.blocktrron.ovh" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726132AbfKUIpm (ORCPT
+        Thu, 21 Nov 2019 03:52:52 -0500
+Received: from mail-eopbgr1400139.outbound.protection.outlook.com ([40.107.140.139]:48180
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726132AbfKUIww (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Nov 2019 03:45:42 -0500
-X-Greylist: delayed 408 seconds by postgrey-1.27 at vger.kernel.org; Thu, 21 Nov 2019 03:45:40 EST
-Received: from [IPv6:2003:e5:3f0b:d900:a9cf:9b4e:2f8a:599f] (p200300E53F0BD900A9CF9B4E2F8A599F.dip0.t-ipconnect.de [IPv6:2003:e5:3f0b:d900:a9cf:9b4e:2f8a:599f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.blocktrron.ovh (Postfix) with ESMTPSA id 653351FA94;
-        Thu, 21 Nov 2019 09:38:50 +0100 (CET)
-Subject: Re: [PATCH net 1/1] mdio_bus: fix mdio_register_device when
- RESET_CONTROLLER is disabled
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        =?UTF-8?Q?Marek_Beh=c3=ban?= <marek.behun@nic.cz>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20191118181505.32298-1-marek.behun@nic.cz>
- <20191119102744.GD32742@smile.fi.intel.com>
- <alpine.DEB.2.21.1911201053330.25420@ramsan.of.borg>
- <20191121020822.GD18325@lunn.ch>
-From:   David Bauer <mail@david-bauer.net>
-Autocrypt: addr=mail@david-bauer.net; prefer-encrypt=mutual; keydata=
- mQENBFYkGEcBCADbRMHdOXmszxrmE9G/gWUD4/HXklOfn+hyBpEcOul+GKAet0oFxznkchJe
- hO5MbEFYsnM8TZVxjnEi70c3luF1m4JycjgQ91GJ52+xvLV0dVz+L99JBgVJNRDvvt68rLVq
- A8/LCdkXctZ+GBfrtTYQ6dOeuQf/qWuwlNTvuG92uWVZjncyWOmQX73gv+1MTRsCmIGNYQu1
- ZDVyhr3YsTgJIXTHUCxBHQBDglkb3L5lK9WHPf1puQ2grNbUg9VSmo4a9IzUpRauNtCDUFxi
- 1m1e5VnmU5O5/xZyDzwmpWog9tUfScS7X9pdVNQ+2W3zCRrotFEn6FKdD01mhIsLnczjABEB
- AAG0IkRhdmlkIEJhdWVyIDxtYWlsQGRhdmlkLWJhdWVyLm5ldD6JAVkEEwEIAEMCGwMHCwkI
- BwMCAQYVCAIJCgsEFgIDAQIeAQIXgAIZARYhBNcEMml7fEwnOA/No7qzlxS0pLh4BQJbLRhu
- BQkIy2cnAAoJELqzlxS0pLh4It8IALb1ea/ezwy8v65zmTeIepeuO5umWzWIy7fLaAsxzJbH
- rO6rCTnRN5ZLyzuxNlhYMyvXAJL7kmPuEOOzHk5xh3soV24VZLSryzGeB6TG3g8L6D0guJ72
- JMM/2HGP8g1zu/IfIM94DZJk7WEuRKG5sndZp49s/voKhrMqAvAU4G03knpEN5SbJx5RA/Wf
- i5stipz2vqS87jHgOVTL1m67Wg9jhKuzJbSlt+m8rHZCQ9dCQQLtqbHugnyOrFhKxwfGFEMB
- aV0sKwoBfjtWP/g3kb9L5wOvRj8UnDRLTB/fVnOsMD18ILEiNqc6FCh4hIb4y2QQEc0nb68f
- imjr4Hz7TOe5AQ0EViQYRwEIALqz1V6kWIvCTVN/6QN9fepVSwSw+5IiiVBGtf2rtdqujCRD
- bGi96a2ZLYRQzlSQvCZ51skgoZFmIW2YhPP90qiZssSEQxgY1rf+DEYnjWmFSgi3iHqYXRk2
- cY7OI3ZT8D2tAFu9pIAxZpD5FdQznJmUhljeTJw+lGOoxctf1xjHZcRcU6GUFMpFBc4xaLC0
- hUN24HT5pDpklxskPFH91VncDaOsLesqszGaUHWx3hogRfogdADvycUp/bQB80kZO/XqexWN
- GUNJYS4axWM2ND25bWV1h9aFjPpOwFM7FwAyra0VihnnNn7dTL5vBpFztY0IFPlvqyc1Vw8y
- vgtShA0AEQEAAYkBPAQYAQgAJgIbDBYhBNcEMml7fEwnOA/No7qzlxS0pLh4BQJbLRiFBQkI
- y2c+AAoJELqzlxS0pLh4LIcH/jnL+ytxRSAh8VX3U2xrMOhBFOkJbW9fj6UgE2iFfZUEOBZl
- q6fZTYn1LOTOECrnLC6eNUQsnZ2u+/N93I5Fmof0MIICUbVabEVmbF/jCFkKjrTPFv/DbNZy
- c+X2ugyX7LsJT+CdvtPT9fObTLCS1nQc3G49syEGVEIzPNyIFzJbFLyh1AfRxmnzAwlal6xK
- S82CsKe+n2lwWg2dyyoJYqwM2G6hAg/ZFqRBZ1RH6TsACGMnwvmsfW/871mPt/mOTCDoH1s1
- tcsgxxtD87UnEqA4zL8dqi5uRA82ZznWaq3mzOGKcBkgEcxi8nnQWW+EyTiZWC+wJ9xT4kLh
- z03IzJQ=
-Message-ID: <94309e1b-d8f0-676f-5865-cff94832d830@david-bauer.net>
-Date:   Thu, 21 Nov 2019 09:38:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20191121020822.GD18325@lunn.ch>
-Content-Type: text/plain; charset=utf-8
+        Thu, 21 Nov 2019 03:52:52 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZBEmDhZEJKqyLXymPXzz3/NghaZCpKS1JfgfoMM+Hqsqgse2eFi08SW5h0DEQA6OIuhRbd0dXEUYLW+Pt+FWrKuZwS2SRLy4jg29TKrhGzYRreYAXFi+ItiSX7HZtGcjoJfR3nQethGrnFGDp9a3dxdRoEDt1yd4iD6HPoa09dKdE+q4HR+7SCT9WtGvRQXlVf/MnpMREYqcxTl809p4EklAIQkN0YONGuIyWZqVnFFpFiqomt7B+xo/7hIXkc8y/rzz+KxB+V2iw+gAAIcoIb1vQHBDCApgEMXc+ijd+YupvXWVnNtNyaCOLHRwD0hbyP1yBnFf0Cek/lvMxjz+IA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IA4X1eGUqLoYsSXLWtLz7XgV/C73/o60Xytn06OxyLk=;
+ b=Blom2ZJybrY/BrpJ5uQiLqsH03+nZZ1+792IT7A5IVx2dbUPtn28snnj4IBLMmV5/QLTBUOz3qTro+/abE5xDljJsf3Z4Q9R3Sff5HC75G3+EyImPkqKncgEKLQI/jgFVXO1p1FKZC0AougCrTug6xtdoGN87IHG81L4cIEFmHyR8rIQ84fPWkyKvBsbrTWiXf4Kv0sUhazYw8BsgcEpHj7D6dCUS/YEfRW5N63GufDuThfU+j7TXE5Mn/uStRhQQYaw7GXj5ArvYd/Bt4gAdpygAggqZ54BSvRObuDQ21mo/fhtguQJG6X52w2kZ4m3QVxfpSuMj3QkwRA/q+FlPQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IA4X1eGUqLoYsSXLWtLz7XgV/C73/o60Xytn06OxyLk=;
+ b=YqkOkqcm89gQ4DHgrmixvExoD2z2GZH23D+MsqnyOvoIZqpJhwYnJ0XBujorrVdZTmh0Z7JcP+dgfZKPXLjTG3tiEhQlniDobdczRM7urt9zxJLG8ri/ww/y+m0U5jOBYjKn+zDrCOwo8c2qoxXRH++mEV/+sl2INq+PKRmRRHs=
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com (52.134.242.17) by
+ OSBPR01MB2839.jpnprd01.prod.outlook.com (52.134.254.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.28; Thu, 21 Nov 2019 08:52:08 +0000
+Received: from OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::c9e7:5418:764e:69e3]) by OSBPR01MB2103.jpnprd01.prod.outlook.com
+ ([fe80::c9e7:5418:764e:69e3%3]) with mapi id 15.20.2451.031; Thu, 21 Nov 2019
+ 08:52:08 +0000
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: timer: renesas: tmu: Document r8a774b1
+ bindings
+Thread-Topic: [PATCH] dt-bindings: timer: renesas: tmu: Document r8a774b1
+ bindings
+Thread-Index: AQHVchuIQNHun2Bo106a/51G2vHeg6dIXISAgAAs/oCATSPLEA==
+Date:   Thu, 21 Nov 2019 08:52:08 +0000
+Message-ID: <OSBPR01MB21035DCC73952DBC72C139B2B84E0@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+References: <1569249052-1037-1-git-send-email-biju.das@bp.renesas.com>
+ <dd752192-8caf-39bf-5a91-27adb6a5f84b@linaro.org>
+ <CAMuHMdVvgS17NW7srZ37x5QD3qtZkGQY9xE_97bvF8bwAcmLvg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVvgS17NW7srZ37x5QD3qtZkGQY9xE_97bvF8bwAcmLvg@mail.gmail.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biju.das@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 3eaece3b-36f3-4c01-8dbd-08d76e60175b
+x-ms-traffictypediagnostic: OSBPR01MB2839:|OSBPR01MB2839:
+x-ms-exchange-purlcount: 1
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <OSBPR01MB2839992B785A065D369AE9D5B84E0@OSBPR01MB2839.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4125;
+x-forefront-prvs: 0228DDDDD7
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(39860400002)(346002)(376002)(396003)(366004)(199004)(189003)(13464003)(54906003)(52536014)(66476007)(305945005)(102836004)(64756008)(86362001)(446003)(11346002)(316002)(229853002)(3846002)(33656002)(74316002)(4326008)(966005)(66066001)(44832011)(7736002)(7696005)(5660300002)(81156014)(81166006)(76176011)(478600001)(8676002)(256004)(66446008)(14444005)(6436002)(6246003)(25786009)(186003)(8936002)(26005)(14454004)(53546011)(55016002)(99286004)(66556008)(66946007)(110136005)(6116002)(6506007)(6306002)(76116006)(71190400001)(2906002)(71200400001)(9686003);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2839;H:OSBPR01MB2103.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Xeb+g3aPMke1ECO+IRI+Fs9uGrsDPs9hWRGOTGT96sEofIXyB2brkjS5+WiD9p6AAVEC0qwoA7x2g0g4NxQekmf3zj1D8F6IgWuZpLJiOQe2YrdAczxHoQ3Jo6BHpJej63rjJsuDUTBX7COPEuPXQYPtRfvanORHT+sePbHujeXmZFdW6/3otjfZ06HiKkJl8XVGuieEmqe11H3pBX8j2sAgnlNH+4Q6nASyzGh142Ejvx0J6MW20m68SizAjlMsrLLjbEOljvk/ivJtJjj/j6w2mXjrUT2GRWYmw2TsMP6DkzqAJQ4Xd3IvloyCyl0ahRzHzKXoSWJX6dHqWwt1JI1yaREMQkHOHvfDiJCh1PL8HhPN9vq5uL/6SbFWoB+RqP1j+00kiIUjVP/2I3KxZTox2LuZ8uKTn+eGFJlDijUdp+YjTU4l+h/Vsc5MKqNpqQ7R+TzWVEOk7E0GcwQUZf3ML28kWFH5THsotMvwA+c=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3eaece3b-36f3-4c01-8dbd-08d76e60175b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Nov 2019 08:52:08.2817
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: i/t6MP99PanC2ODiEVDMenthyRrhXGx4tMNzqjQScAi7ycorIoaqW89hnptBxDiMpJ68TOfKqffhIysJRyL70Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2839
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello Andrew,
-
-On 11/21/19 3:08 AM, Andrew Lunn wrote:
->> The difference with the non-optional case is that
->> __devm_reset_control_get() registers a cleanup function if there's
->> no error condition, even for NULL (which is futile, will send a patch).
->>
->> However, more importantly, mdiobus_register_reset() calls a devm_*()
->> function on "&mdiodev->dev" ("mdio_bus ee700000.ethernet-ffffffff:01"),
->> which is a different device than the one being probed
->> (("ee700000.ethernet"), see also the callstack below).
->> In fact "&mdiodev->dev" hasn't been probed yet, leading to the WARNING
->> when it is probed later.
->>
->>     [<c0582de8>] (mdiobus_register_device) from [<c05810e0>] (phy_device_register+0xc/0x74)
->>     [<c05810e0>] (phy_device_register) from [<c0675ef4>] (of_mdiobus_register_phy+0x144/0x17c)
->>     [<c0675ef4>] (of_mdiobus_register_phy) from [<c06760f0>] (of_mdiobus_register+0x1c4/0x2d0)
->>     [<c06760f0>] (of_mdiobus_register) from [<c0589f0c>] (sh_eth_drv_probe+0x778/0x8ac)
->>     [<c0589f0c>] (sh_eth_drv_probe) from [<c0516ce8>] (platform_drv_probe+0x48/0x94)
->>
->> Has commit 71dd6c0dff51b5f1 ("net: phy: add support for
->> reset-controller") been tested with an actual reset present?
-
-I'm using it on a AR9132 board, however the mdio bus is probed before the
-ethernet driver, hence why i was not experiencing this misbehavior.
-
->>
->> Are Ethernet drivers not (no longer) allowed to register MDIO busses?
-> 
-> That is not good. The devm_reset_control_get() call need replaces with
-> an unmanaged version, and a call to reset_control_put() added to
-> mdiobus_unregister_device().
-> 
-> David, could you look at this, it was a patch from you that added
-> this.
-
-I will prepare patches to fix this bug.
-
-Best wishes
-David
-
-> 
-> 	Andrew
-> 
+SGkgR2VlcnQsIERhbmllbCwNCg0KQW55IHVwZGF0ZSBvbiB0aGUgYmVsb3cgYmluZGluZyBwYXRj
+aD8NCg0KUmVnYXJkcywNCkJpanUNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJv
+bTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhrLm9yZz4NCj4gU2VudDogVGh1
+cnNkYXksIE9jdG9iZXIgMywgMjAxOSA3OjUxIEFNDQo+IFRvOiBEYW5pZWwgTGV6Y2FubyA8ZGFu
+aWVsLmxlemNhbm9AbGluYXJvLm9yZz4NCj4gQ2M6IEJpanUgRGFzIDxiaWp1LmRhc0BicC5yZW5l
+c2FzLmNvbT47IFJvYiBIZXJyaW5nDQo+IDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBNYXJrIFJ1dGxh
+bmQgPG1hcmsucnV0bGFuZEBhcm0uY29tPjsgVGhvbWFzDQo+IEdsZWl4bmVyIDx0Z2x4QGxpbnV0
+cm9uaXguZGU+OyBvcGVuIGxpc3Q6T1BFTiBGSVJNV0FSRSBBTkQgRkxBVFRFTkVEDQo+IERFVklD
+RSBUUkVFIEJJTkRJTkdTIDxkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZz47IEdlZXJ0IFV5dHRl
+cmhvZXZlbg0KPiA8Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+OyBTaW1vbiBIb3JtYW4gPGhvcm1z
+QHZlcmdlLm5ldC5hdT47IENocmlzDQo+IFBhdGVyc29uIDxDaHJpcy5QYXRlcnNvbjJAcmVuZXNh
+cy5jb20+OyBGYWJyaXppbyBDYXN0cm8NCj4gPGZhYnJpemlvLmNhc3Ryb0BicC5yZW5lc2FzLmNv
+bT47IExpbnV4LVJlbmVzYXMgPGxpbnV4LXJlbmVzYXMtDQo+IHNvY0B2Z2VyLmtlcm5lbC5vcmc+
+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIGR0LWJpbmRpbmdzOiB0aW1lcjogcmVuZXNhczogdG11
+OiBEb2N1bWVudCByOGE3NzRiMQ0KPiBiaW5kaW5ncw0KPiANCj4gSGkgRGFuaWVsLA0KPiANCj4g
+T24gVGh1LCBPY3QgMywgMjAxOSBhdCA2OjA5IEFNIERhbmllbCBMZXpjYW5vIDxkYW5pZWwubGV6
+Y2Fub0BsaW5hcm8ub3JnPg0KPiB3cm90ZToNCj4gPiBPbiAyMy8wOS8yMDE5IDE2OjMwLCBCaWp1
+IERhcyB3cm90ZToNCj4gPiA+IERvY3VtZW50IFJaL0cyTiAoUjhBNzc0QjEpIFNvQyBpbiB0aGUg
+UmVuZXNhcyBUTVUgYmluZGluZ3MuDQo+ID4gPg0KPiA+ID4gU2lnbmVkLW9mZi1ieTogQmlqdSBE
+YXMgPGJpanUuZGFzQGJwLnJlbmVzYXMuY29tPg0KPiA+ID4gLS0tDQo+ID4gPiAgRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3RpbWVyL3JlbmVzYXMsdG11LnR4dCB8IDEgKw0KPiA+
+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiA+ID4NCj4gPiA+IGRpZmYgLS1n
+aXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdGltZXIvcmVuZXNhcyx0bXUu
+dHh0DQo+ID4gPiBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy90aW1lci9yZW5l
+c2FzLHRtdS50eHQNCj4gPiA+IGluZGV4IDlkZmY3ZTUuLjI5MTU5ZjQgMTAwNjQ0DQo+ID4gPiAt
+LS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdGltZXIvcmVuZXNhcyx0bXUu
+dHh0DQo+ID4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdGltZXIv
+cmVuZXNhcyx0bXUudHh0DQo+ID4gPiBAQCAtMTEsNiArMTEsNyBAQCBSZXF1aXJlZCBQcm9wZXJ0
+aWVzOg0KPiA+ID4gICAgLSBjb21wYXRpYmxlOiBtdXN0IGNvbnRhaW4gb25lIG9yIG1vcmUgb2Yg
+dGhlIGZvbGxvd2luZzoNCj4gPiA+ICAgICAgLSAicmVuZXNhcyx0bXUtcjhhNzc0MCIgZm9yIHRo
+ZSByOGE3NzQwIFRNVQ0KPiA+ID4gICAgICAtICJyZW5lc2FzLHRtdS1yOGE3NzRhMSIgZm9yIHRo
+ZSByOGE3NzRBMSBUTVUNCj4gPiA+ICsgICAgLSAicmVuZXNhcyx0bXUtcjhhNzc0YjEiIGZvciB0
+aGUgcjhhNzc0QjEgVE1VDQo+ID4gPiAgICAgIC0gInJlbmVzYXMsdG11LXI4YTc3NGMwIiBmb3Ig
+dGhlIHI4YTc3NEMwIFRNVQ0KPiA+ID4gICAgICAtICJyZW5lc2FzLHRtdS1yOGE3Nzc4IiBmb3Ig
+dGhlIHI4YTc3NzggVE1VDQo+ID4gPiAgICAgIC0gInJlbmVzYXMsdG11LXI4YTc3NzkiIGZvciB0
+aGUgcjhhNzc3OSBUTVUNCj4gPiA+DQo+ID4NCj4gPiBUaGUgcGF0Y2ggZG9lcyBub3QgYXBwbHkg
+b24gdGlwL3RpbWVycw0KPiANCj4gVGhhdCdzIGV4cGVjdGVkLCBhcyBJIHF1ZXVlZCB0aGUgcHJl
+dmlvdXMgY2hhbmdlIGluIHJlbmVzYXMtZHQtYmluZGluZ3MtZm9yLQ0KPiB2NS41LCBjZnIuDQo+
+IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LXJlbmVzYXMtc29jLzI0NGNhN2FjLTU0ZDEt
+ZDA3ZC03NjJmLQ0KPiBlODMyYjBlMmEyNjdAbGluYXJvLm9yZy8NCj4gDQo+IERvIHlvdSB3YW50
+IG1lIHRvIGtub3cgdGhpcyBpbiByZW5lc2FzLWR0LWJpbmRpbmdzLWZvci12NS41Pw0KDQo=
