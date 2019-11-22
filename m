@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3070C43215
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Nov 2019 06:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE68C432C3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Nov 2019 06:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC70C2070A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Nov 2019 06:25:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94A9D20674
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Nov 2019 06:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574403954;
-	bh=7DS8nQvITiDoPvFXUkkqn4Bs2erk92HkQ7idQB7DNKM=;
+	s=default; t=1574404181;
+	bh=hRQeDkByL8QEKVXoXktXKnPJwQx473J1hBcnIlZEy3k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j7wdg6ybkUfltP5nKAa9LB684sogK+O7R6wkNyLSr0k5N1dqeX6jY7oJxpRiSJTBP
-	 gVEfu9fywQTTY7o4GbuSfoibjNC+002SPBwb9NfxhHJg00RaflREsUVXHN1rZe7RbI
-	 mMBKKzJQsUiB65f8DJT3Kh/szo90lzaNy8M2xoEc=
+	b=OSmJ1wlRcklvhWakI6EJauIxIKM8118gvpAOhaZVKIVtsBLxWp/sjEK0TDEd9t+Eg
+	 9iLMJ6r0jYvYoeCPSQdVuyhlRZXSQJokHHTVYDHmtcPYomGIjAkWx2MnlKV+iNo896
+	 tvU3q5iO7d9VHbDwae59RsfaI3EsbhNeFaCk7Low=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728312AbfKVGZu (ORCPT
+        id S1727418AbfKVG3h (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Nov 2019 01:25:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55840 "EHLO mail.kernel.org"
+        Fri, 22 Nov 2019 01:29:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726714AbfKVFu6 (ORCPT
+        id S1727387AbfKVFt5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Nov 2019 00:50:58 -0500
+        Fri, 22 Nov 2019 00:49:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E834620726;
-        Fri, 22 Nov 2019 05:50:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 893E82070B;
+        Fri, 22 Nov 2019 05:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574401857;
-        bh=7DS8nQvITiDoPvFXUkkqn4Bs2erk92HkQ7idQB7DNKM=;
+        s=default; t=1574401796;
+        bh=hRQeDkByL8QEKVXoXktXKnPJwQx473J1hBcnIlZEy3k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tVzen5CMgELAgivuF50Dd0DugidYIwJDvntPJuh3SLat4nMpFh4f7PVogQEKtI5f1
-         J850y1nFXhE5VN9knTYOfappAgxkS6wy9GTr3nVTaTqFFHcbgogERHpZkSPLFPzDSP
-         Icrhe1mCIm6YBxQ9j64iwRQTqXGY6a9UlLr96LNI=
+        b=l5567OOMi2HSqclILq58Q5cIb6CZeh3LJv9ABLD3KHsja1Mm2JyIZjc/PC9uhVPJM
+         ZCMA8leDHLzoV8QCpyFAXfi/b8wammknZ12Ofzbt4hPzLQGt+k0AxT5OX6nQ1yLoSj
+         su6zgTVsJBLyt9MMx/70piwmQ4j5PlPI6nDLEosY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 094/219] pinctrl: sh-pfc: r8a77990: Fix MOD_SEL0 SEL_I2C1 field width
-Date:   Fri, 22 Nov 2019 00:47:06 -0500
-Message-Id: <20191122054911.1750-87-sashal@kernel.org>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 043/219] arm64: dts: renesas: draak: Fix CVBS input
+Date:   Fri, 22 Nov 2019 00:46:15 -0500
+Message-Id: <20191122054911.1750-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191122054911.1750-1-sashal@kernel.org>
 References: <20191122054911.1750-1-sashal@kernel.org>
@@ -61,41 +62,35 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-[ Upstream commit 755a5b805fa7ff22e2934d67501efd92109f41ea ]
+[ Upstream commit 6f61a2c8f1f6163c7e08c77c5f71df0427e4d2f6 ]
 
-The SEL_I2C1 (MOD_SEL0[21:20]) field in Module Select Register 0 has a
-width of 2 bits, i.e. it allows programming one out of 4 different
-configurations.
-However, the MOD_SEL0_21_20 macro contains 8 values instead of 4,
-overflowing into the subsequent fields in the register, and thus breaking
-the configuration of the latter.
+A typo in the adv7180 DT node prevents successful probing of the VIN.
+Fix it.
 
-Fix this by dropping the bogus last 4 values, including the non-existent
-SEL_I2C1_4 configuration.
-
-Fixes: 6d4036a1e3b3ac0f ("pinctrl: sh-pfc: Initial R8A77990 PFC support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 6a0942c20f5c ("arm64: dts: renesas: draak: Describe CVBS input")
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77990.c | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-index b81c807ac54d5..d2fcf7f7b9668 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77990.c
-@@ -395,7 +395,7 @@ FM(IP12_31_28)	IP12_31_28	FM(IP13_31_28)	IP13_31_28	FM(IP14_31_28)	IP14_31_28	FM
- #define MOD_SEL0_24		FM(SEL_HSCIF0_0)		FM(SEL_HSCIF0_1)
- #define MOD_SEL0_23		FM(SEL_HSCIF1_0)		FM(SEL_HSCIF1_1)
- #define MOD_SEL0_22		FM(SEL_HSCIF2_0)		FM(SEL_HSCIF2_1)
--#define MOD_SEL0_21_20		FM(SEL_I2C1_0)			FM(SEL_I2C1_1)			FM(SEL_I2C1_2)			FM(SEL_I2C1_3)		FM(SEL_I2C1_4)		F_(0, 0)	F_(0, 0)	F_(0, 0)
-+#define MOD_SEL0_21_20		FM(SEL_I2C1_0)			FM(SEL_I2C1_1)			FM(SEL_I2C1_2)			FM(SEL_I2C1_3)
- #define MOD_SEL0_19_18_17	FM(SEL_I2C2_0)			FM(SEL_I2C2_1)			FM(SEL_I2C2_2)			FM(SEL_I2C2_3)		FM(SEL_I2C2_4)		F_(0, 0)	F_(0, 0)	F_(0, 0)
- #define MOD_SEL0_16		FM(SEL_NDFC_0)			FM(SEL_NDFC_1)
- #define MOD_SEL0_15		FM(SEL_PWM0_0)			FM(SEL_PWM0_1)
+diff --git a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+index a8e8f2669d4c5..1b8f19ee257f0 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
+@@ -188,7 +188,7 @@
+ 		compatible = "adi,adv7180cp";
+ 		reg = <0x20>;
+ 
+-		port {
++		ports {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 
 -- 
 2.20.1
 
