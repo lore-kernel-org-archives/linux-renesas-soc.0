@@ -2,115 +2,119 @@ Return-Path: <SRS0=NV9y=ZO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF837C432C0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Nov 2019 06:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99AA9C432C0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Nov 2019 06:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F6C420708
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Nov 2019 06:16:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 722CE20707
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Nov 2019 06:17:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1574403441;
+	bh=BqVsHACs9+7+lZeoAk6GX44pHVXMYXWdvDuAsqeR2SY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=fDwDVqnld57wJSWYxvM/m6V2iEETdEwGrWzp0r2+qL+8GnSDHeiyKzqOYtgGFKpWs
+	 0T1r68xDx8MsSpv/+9BbuLcUSu/X27JfEeSd4CcnEpTKvYzsKeOah2C8Y5sfNBpIQ6
+	 4EuWR60tgeNKAOgbmO/W0KbVgigDwomI6SsV5SIU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727678AbfKVGQY (ORCPT
+        id S1729391AbfKVGNc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Nov 2019 01:16:24 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:6348 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729496AbfKVGNw (ORCPT
+        Fri, 22 Nov 2019 01:13:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50740 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728196AbfKVGNa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Nov 2019 01:13:52 -0500
-X-IronPort-AV: E=Sophos;i="5.69,228,1571670000"; 
-   d="scan'208";a="32366337"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Nov 2019 15:13:51 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A515D400D0F9;
-        Fri, 22 Nov 2019 15:13:51 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH RFC 1/4] mmc: host: renesas_sdhi_sys_dmac: Use dma_buswidth instead of hardcoded value
-Date:   Fri, 22 Nov 2019 15:13:48 +0900
-Message-Id: <1574403231-18512-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1574403231-18512-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1574403231-18512-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 22 Nov 2019 01:13:30 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7731A20718;
+        Fri, 22 Nov 2019 06:13:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574403210;
+        bh=BqVsHACs9+7+lZeoAk6GX44pHVXMYXWdvDuAsqeR2SY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QA2zoasa9nNf0P/EP0RiV6UTaOkQ35TpiBU9z20pPXTtP9BupM3k6cge/T6RhgzVs
+         ontE82pjc9El0fvOXLXoSr6iUYGQ7/yUpsF9PiMjrSrteG48h4xQzu/lZ7GteB0rkZ
+         yEzJ03+IwQXu/mLNcMJV2LHi8eVG7I2Yx4HHMa4o=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 25/68] pinctrl: sh-pfc: sh7734: Fix shifted values in IPSR10
+Date:   Fri, 22 Nov 2019 01:12:18 -0500
+Message-Id: <20191122061301.4947-24-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191122061301.4947-1-sashal@kernel.org>
+References: <20191122061301.4947-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch uses dma_buswidth instread of hardcoded value of
-TMIO_MMC_MIN_DMA_LEN (8) for increasing the buswidth in the future.
-Note that, since the dma_buswidth is 4 and the align is 2,
-when the sg_tmp->length is 6, it cannot transfer correcly.
-So, this patch changes the conditions.
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+[ Upstream commit 054f2400f706327f96770219c3065b5131f8f154 ]
+
+Some values in the Peripheral Function Select Register 10 descriptor are
+shifted by one position, which may cause a peripheral function to be
+programmed incorrectly.
+
+Fixing this makes all HSCIF0 pins use Function 4 (value 3), like was
+already the case for the HSCK0 pin in field IP10[5:3].
+
+Fixes: ac1ebc2190f575fc ("sh-pfc: Add sh7734 pinmux support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/renesas_sdhi_sys_dmac.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index 13ff023..30f34a3 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -23,8 +23,6 @@
- #include "renesas_sdhi.h"
- #include "tmio_mmc.h"
- 
--#define TMIO_MMC_MIN_DMA_LEN 8
--
- static const struct renesas_sdhi_of_data of_default_cfg = {
- 	.tmio_flags = TMIO_MMC_HAS_IDLE_WAIT,
- };
-@@ -159,11 +157,12 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
- 	int ret, i;
- 	bool aligned = true, multiple = true;
- 	unsigned int align = (1 << host->pdata->alignment_shift) - 1;
-+	unsigned int min_len = priv->dma_priv.dma_buswidth ? : align + 1;
- 
- 	for_each_sg(sg, sg_tmp, host->sg_len, i) {
- 		if (sg_tmp->offset & align)
- 			aligned = false;
--		if (sg_tmp->length & align) {
-+		if (sg_tmp->length % min_len) {
- 			multiple = false;
- 			break;
- 		}
-@@ -175,7 +174,7 @@ static void renesas_sdhi_sys_dmac_start_dma_rx(struct tmio_mmc_host *host)
- 		goto pio;
- 	}
- 
--	if (sg->length < TMIO_MMC_MIN_DMA_LEN)
-+	if (sg->length < min_len)
- 		return;
- 
- 	/* The only sg element can be unaligned, use our bounce buffer then */
-@@ -231,11 +230,12 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- 	int ret, i;
- 	bool aligned = true, multiple = true;
- 	unsigned int align = (1 << host->pdata->alignment_shift) - 1;
-+	unsigned int min_len = priv->dma_priv.dma_buswidth ? : align + 1;
- 
- 	for_each_sg(sg, sg_tmp, host->sg_len, i) {
- 		if (sg_tmp->offset & align)
- 			aligned = false;
--		if (sg_tmp->length & align) {
-+		if (sg_tmp->length % min_len) {
- 			multiple = false;
- 			break;
- 		}
-@@ -247,7 +247,7 @@ static void renesas_sdhi_sys_dmac_start_dma_tx(struct tmio_mmc_host *host)
- 		goto pio;
- 	}
- 
--	if (sg->length < TMIO_MMC_MIN_DMA_LEN)
-+	if (sg->length < min_len)
- 		return;
- 
- 	/* The only sg element can be unaligned, use our bounce buffer then */
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+index 9842bb1067969..c691b2e343746 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+@@ -2218,22 +2218,22 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 	    /* IP10_22 [1] */
+ 		FN_CAN_CLK_A, FN_RX4_D,
+ 	    /* IP10_21_19 [3] */
+-		FN_AUDIO_CLKOUT, FN_TX1_E, FN_HRTS0_C, FN_FSE_B,
+-		FN_LCD_M_DISP_B, 0, 0, 0,
++		FN_AUDIO_CLKOUT, FN_TX1_E, 0, FN_HRTS0_C, FN_FSE_B,
++		FN_LCD_M_DISP_B, 0, 0,
+ 	    /* IP10_18_16 [3] */
+-		FN_AUDIO_CLKC, FN_SCK1_E, FN_HCTS0_C, FN_FRB_B,
+-		FN_LCD_VEPWC_B, 0, 0, 0,
++		FN_AUDIO_CLKC, FN_SCK1_E, 0, FN_HCTS0_C, FN_FRB_B,
++		FN_LCD_VEPWC_B, 0, 0,
+ 	    /* IP10_15 [1] */
+ 		FN_AUDIO_CLKB_A, FN_LCD_CLK_B,
+ 	    /* IP10_14_12 [3] */
+ 		FN_AUDIO_CLKA_A, FN_VI1_CLK_B, FN_SCK1_D, FN_IECLK_B,
+ 		FN_LCD_FLM_B, 0, 0, 0,
+ 	    /* IP10_11_9 [3] */
+-		FN_SSI_SDATA3, FN_VI1_7_B, FN_HTX0_C, FN_FWE_B,
+-		FN_LCD_CL2_B, 0, 0, 0,
++		FN_SSI_SDATA3, FN_VI1_7_B, 0, FN_HTX0_C, FN_FWE_B,
++		FN_LCD_CL2_B, 0, 0,
+ 	    /* IP10_8_6 [3] */
+-		FN_SSI_SDATA2, FN_VI1_6_B, FN_HRX0_C, FN_FRE_B,
+-		FN_LCD_CL1_B, 0, 0, 0,
++		FN_SSI_SDATA2, FN_VI1_6_B, 0, FN_HRX0_C, FN_FRE_B,
++		FN_LCD_CL1_B, 0, 0,
+ 	    /* IP10_5_3 [3] */
+ 		FN_SSI_WS23, FN_VI1_5_B, FN_TX1_D, FN_HSCK0_C, FN_FALE_B,
+ 		FN_LCD_DON_B, 0, 0, 0,
 -- 
-2.7.4
+2.20.1
 
