@@ -1,228 +1,120 @@
-Return-Path: <SRS0=Yikl=ZN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=NV9y=ZO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 071E4C432C3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Nov 2019 17:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9003BC43215
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Nov 2019 06:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDA5C20708
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Nov 2019 17:33:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E7152070E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Nov 2019 06:07:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1574402833;
+	bh=v/ELUbqxZyXrZuAAY7IR8tKjXYRyU+EDsOX/Vedj/xw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=OK2mTl7AZlqP49UuqTbQdVIDfPd5LO8QEAkBP5pBMkJC93PWFuvhpiozsI59YaWrb
+	 byMC31+wsVuBS633hSyCRBC8zLtYo2gGdhBXWN45Zd8G0mMOTu19Ibggt2eySFoLeh
+	 Nq7xn9veJFBzXb0NvWWkxQhBzM3p2BzAWe8SfN3s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726541AbfKURdk (ORCPT
+        id S1728359AbfKVGHM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Nov 2019 12:33:40 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:58475 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbfKURdk (ORCPT
+        Fri, 22 Nov 2019 01:07:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728629AbfKVGCD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Nov 2019 12:33:40 -0500
-Received: from uno.localdomain (93-34-114-233.ip49.fastwebnet.it [93.34.114.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id D9A19240008;
-        Thu, 21 Nov 2019 17:33:37 +0000 (UTC)
-Date:   Thu, 21 Nov 2019 18:35:41 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] max9286: simplify i2c-mux parsing
-Message-ID: <20191121173541.sb4ycbinjkhvzmso@uno.localdomain>
-References: <20191116165034.39001-1-jacopo+renesas@jmondi.org>
- <20191121165631.5744-1-kieran.bingham@ideasonboard.com>
+        Fri, 22 Nov 2019 01:02:03 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AFF0207FC;
+        Fri, 22 Nov 2019 06:02:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574402522;
+        bh=v/ELUbqxZyXrZuAAY7IR8tKjXYRyU+EDsOX/Vedj/xw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XFMhMPlf7tcqFPIyKZBHt50auTaxuTueIBK+ciTHK8QA1aDO5cVLD8jC4A+qQkfUT
+         A+OVMm7yLgEMV1U9uOsuwm6RaP/WrEixry4ZDJeDr0DXpTcbKakPyG291Jz2A4a2Va
+         O9AjMqpcPP5oAOf+sijQ8jXuTrSxP2BCYs+faD10=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 30/91] pinctrl: sh-pfc: sh7734: Fix shifted values in IPSR10
+Date:   Fri, 22 Nov 2019 01:00:28 -0500
+Message-Id: <20191122060129.4239-29-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191122060129.4239-1-sashal@kernel.org>
+References: <20191122060129.4239-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vfvvexuoguzdgswj"
-Content-Disposition: inline
-In-Reply-To: <20191121165631.5744-1-kieran.bingham@ideasonboard.com>
-User-Agent: NeoMutt/20180716
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
---vfvvexuoguzdgswj
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+[ Upstream commit 054f2400f706327f96770219c3065b5131f8f154 ]
 
-Hi Kieran,
+Some values in the Peripheral Function Select Register 10 descriptor are
+shifted by one position, which may cause a peripheral function to be
+programmed incorrectly.
 
-On Thu, Nov 21, 2019 at 04:56:31PM +0000, Kieran Bingham wrote:
->  - Identify each enabled i2c-mux channel in a single pass
->
-> The parse_dt function iterates each node in the i2c-mux for each endpoint looking for a match.
-> The only purpose of these iterations is to determine if the corresponding i2c-channel
-> is enabled. (status = 'okay').
->
-> Iterate the i2c-mux nodes in a single pass storing the enable state
-> in a local i2c_mux_mask for use when parsing the endpoints.
->
+Fixing this makes all HSCIF0 pins use Function 4 (value 3), like was
+already the case for the HSCK0 pin in field IP10[5:3].
 
-I very much agree with this :)
+Fixes: ac1ebc2190f575fc ("sh-pfc: Add sh7734 pinmux support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pinctrl/sh-pfc/pfc-sh7734.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-> Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> ---
->  drivers/media/i2c/max9286.c | 84 +++++++++++++++----------------------
->  1 file changed, 34 insertions(+), 50 deletions(-)
->
-> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-> index 34cb6f3b40c2..a36132becdc7 100644
-> --- a/drivers/media/i2c/max9286.c
-> +++ b/drivers/media/i2c/max9286.c
-> @@ -1097,55 +1097,6 @@ static int max9286_is_bound(struct device *dev, void *data)
->  	return 0;
->  }
->
-> -static struct device_node *max9286_get_i2c_by_id(struct device_node *parent,
-> -						 u32 id)
-> -{
-> -	struct device_node *i2c_mux;
-> -	struct device_node *child;
-> -
-> -	/* Balance the of_node_put() performed by of_find_node_by_name() */
-> -	of_node_get(parent);
-> -
-> -	i2c_mux = of_find_node_by_name(parent, "i2c-mux");
-> -	if (!i2c_mux) {
-> -		printk("max9286: Failed to find i2c-mux node\n");
-> -		return NULL;
-> -	}
-> -
-> -	for_each_child_of_node(i2c_mux, child) {
-> -		u32 i2c_id = 0;
-> -
-> -		if (of_node_cmp(child->name, "i2c") != 0)
-> -			continue;
-> -		of_property_read_u32(child, "reg", &i2c_id);
-> -		if (id == i2c_id)
-> -			return child;
-> -	}
-> -
-> -	return NULL;
-> -}
-> -
-> -static int max9286_check_i2c_bus_by_id(struct device *dev, int id)
-> -{
-> -	struct device_node *i2c_np;
-> -
-> -	i2c_np = max9286_get_i2c_by_id(dev->of_node, id);
-> -	if (!i2c_np) {
-> -		dev_err(dev, "Failed to find corresponding i2c@%u\n", id);
-> -		return -ENODEV;
-> -	}
-> -
-> -	if (!of_device_is_available(i2c_np)) {
-> -		dev_dbg(dev, "Skipping port %u with disabled I2C bus\n", id);
-> -		of_node_put(i2c_np);
-> -		return -ENODEV;
-> -	}
-> -
-> -	of_node_put(i2c_np);
-> -
-> -	return 0;
-> -}
-> -
->  static void max9286_cleanup_dt(struct max9286_priv *priv)
->  {
->  	struct max9286_source *source;
-> @@ -1167,11 +1118,44 @@ static void max9286_cleanup_dt(struct max9286_priv *priv)
->  static int max9286_parse_dt(struct max9286_priv *priv)
->  {
->  	struct device *dev = &priv->client->dev;
-> +	struct device_node *i2c_mux;
-> +	struct device_node *child = NULL;
->  	struct device_node *ep_np = NULL;
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+index 6502e676d3686..33232041ee86d 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
+@@ -2213,22 +2213,22 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 	    /* IP10_22 [1] */
+ 		FN_CAN_CLK_A, FN_RX4_D,
+ 	    /* IP10_21_19 [3] */
+-		FN_AUDIO_CLKOUT, FN_TX1_E, FN_HRTS0_C, FN_FSE_B,
+-		FN_LCD_M_DISP_B, 0, 0, 0,
++		FN_AUDIO_CLKOUT, FN_TX1_E, 0, FN_HRTS0_C, FN_FSE_B,
++		FN_LCD_M_DISP_B, 0, 0,
+ 	    /* IP10_18_16 [3] */
+-		FN_AUDIO_CLKC, FN_SCK1_E, FN_HCTS0_C, FN_FRB_B,
+-		FN_LCD_VEPWC_B, 0, 0, 0,
++		FN_AUDIO_CLKC, FN_SCK1_E, 0, FN_HCTS0_C, FN_FRB_B,
++		FN_LCD_VEPWC_B, 0, 0,
+ 	    /* IP10_15 [1] */
+ 		FN_AUDIO_CLKB_A, FN_LCD_CLK_B,
+ 	    /* IP10_14_12 [3] */
+ 		FN_AUDIO_CLKA_A, FN_VI1_CLK_B, FN_SCK1_D, FN_IECLK_B,
+ 		FN_LCD_FLM_B, 0, 0, 0,
+ 	    /* IP10_11_9 [3] */
+-		FN_SSI_SDATA3, FN_VI1_7_B, FN_HTX0_C, FN_FWE_B,
+-		FN_LCD_CL2_B, 0, 0, 0,
++		FN_SSI_SDATA3, FN_VI1_7_B, 0, FN_HTX0_C, FN_FWE_B,
++		FN_LCD_CL2_B, 0, 0,
+ 	    /* IP10_8_6 [3] */
+-		FN_SSI_SDATA2, FN_VI1_6_B, FN_HRX0_C, FN_FRE_B,
+-		FN_LCD_CL1_B, 0, 0, 0,
++		FN_SSI_SDATA2, FN_VI1_6_B, 0, FN_HRX0_C, FN_FRE_B,
++		FN_LCD_CL1_B, 0, 0,
+ 	    /* IP10_5_3 [3] */
+ 		FN_SSI_WS23, FN_VI1_5_B, FN_TX1_D, FN_HSCK0_C, FN_FALE_B,
+ 		FN_LCD_DON_B, 0, 0, 0,
+-- 
+2.20.1
 
-Nit: could you re-use child or ep_np ?
-
-> +	unsigned int i2c_mux_mask = 0;
->  	int ret;
->
-> +	/* Balance the of_node_put() performed by of_find_node_by_name() */
-
-Do you need this comment ?
-
-> +	of_node_get(dev->of_node);
-> +	i2c_mux = of_find_node_by_name(dev->of_node, "i2c-mux");
-> +	if (!i2c_mux) {
-> +		dev_err(dev, "Failed to find i2c-mux node\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Identify which i2c-mux channels are enabled */
-> +	for_each_child_of_node(i2c_mux, child) {
-> +		u32 id = 0;
-> +
-> +		if (of_node_cmp(child->name, "i2c") != 0)
-> +			continue;
-
-With the new bindings in yaml format and the associated verification,
-this should not happen.
-
-> +
-> +		of_property_read_u32(child, "reg", &id);
-> +		if (id >= MAX9286_NUM_GMSL)
-> +			continue;
-> +
-> +		if (!of_device_is_available(child)) {
-> +			dev_dbg(dev, "Skipping port %u with disabled I2C bus\n", id);
-> +			continue;
-> +		}
-> +
-> +		i2c_mux_mask |= BIT(id);
-> +	}
-> +	of_node_put(child);
-> +	of_node_put(i2c_mux);
-> +
->  	v4l2_async_notifier_init(&priv->notifier);
->
-> +	/* Parse the endpoints */
->  	for_each_endpoint_of_node(dev->of_node, ep_np) {
-
-dev->of_node is reused here, do you need to get it again ?
-
-All minors though, squash this on the next max9286 submission if you
-feel to.
-
-Thanks
-   j
-
->  		struct max9286_source *source;
->  		struct of_endpoint ep;
-> @@ -1214,7 +1198,7 @@ static int max9286_parse_dt(struct max9286_priv *priv)
->  		}
->
->  		/* Skip if the corresponding GMSL link is unavailable. */
-> -		if (max9286_check_i2c_bus_by_id(dev, ep.port))
-> +		if (!(i2c_mux_mask & BIT(ep.port)))
->  			continue;
->
->  		if (priv->sources[ep.port].fwnode) {
-> --
-> 2.20.1
->
-
---vfvvexuoguzdgswj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl3Wyu0ACgkQcjQGjxah
-Vjy3Pg//ZaEkg+NgZafsxJpXphumiT6bnmMmWcQClYjtqwUM/YlpTL9Pnhl8aijb
-TqU7mVv3ZXb4P4ybDkwg1U9JAmEDbhINFURSL/eXASQtWfU00iq5Q7gant9ifbp8
-K2JH+FpUrwsn8qeX1oFKs69aTvYJkaXRN0KW77izgxyj7Tpo//33ZuBGhFT6CTDv
-4i837BnlnQbUbN7LMfazBS9jx3nRl2LFFuhMrVMr4xnJ+A7xxzWwoBLMUCLPMfoN
-NY9U6dM4MNz2Et7gsbwH1b+CdoQnJAt033MrjxmyOv1xQtfAEeAfU3jo00HXN/gt
-pnqN1jdcEVkZm8uDqPU4K2rOSP8CEvl6fpFR2PEwq8AxguYaipGFJtwhN73Ro6QK
-c8YApGGZiPSrlSxENnxqKSR/zS1kj5uajDnZ/zOIn2rDtPn2ifInshpydRNYcYhe
-Gw/l7dtiBeGkJJT9j67BzIRGyMiOP1dGihakscoc3LrL4Xw27Jdh4cVQJIQ3Ze2D
-HwiyN2iuBtYM8Y7NjJIiItR21/naWTxUFSrxtYf5PiOzMXELEuhYzTdUe4lHDRRx
-bfnmlTRC3HeF8SuiCX4tCCBF4rfq8T2ROtDzkWAkwm048TushSPs8wxGl//YrNmQ
-vUHjwSzsokV7eBRYBcGw1XIKXucVs4jNh5z0ucnkhQurLuoDoUA=
-=TYiB
------END PGP SIGNATURE-----
-
---vfvvexuoguzdgswj--
