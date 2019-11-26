@@ -2,184 +2,204 @@ Return-Path: <SRS0=myIh=ZS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3441FC43215
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Nov 2019 13:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D3DC432C0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Nov 2019 14:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA4C207DD
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Nov 2019 13:17:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 087DD20722
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Nov 2019 14:33:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="69d5vRmK";
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="69d5vRmK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nj3w38bZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbfKZNRT (ORCPT
+        id S1727431AbfKZOdx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Nov 2019 08:17:19 -0500
-Received: from mail-eopbgr40059.outbound.protection.outlook.com ([40.107.4.59]:35230
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728128AbfKZNQh (ORCPT
+        Tue, 26 Nov 2019 09:33:53 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45561 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfKZOdx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Nov 2019 08:16:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AXiSa2cDPynqi1pZWZTQXR63peA1QHF+7CCWR6/itq8=;
- b=69d5vRmKAwZ5E5i2SfbFOrjsvu7rBi4QG12K9hYv0OIXrAPvbAlRlKm7EOJWZ+jOQ/OUea1ALgrMOkrCJUs0NLkRqXu93Tuf923YAUYzbXvFIXx0pp7IDi7u1J/EnCNfNkAolru4QB5Q3itdmCtxtGF+w54W0ZONhCTX8KtToQk=
-Received: from VI1PR08CA0258.eurprd08.prod.outlook.com (2603:10a6:803:dc::31)
- by AM0PR08MB3585.eurprd08.prod.outlook.com (2603:10a6:208:d9::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.21; Tue, 26 Nov
- 2019 13:16:33 +0000
-Received: from DB5EUR03FT043.eop-EUR03.prod.protection.outlook.com
- (2a01:111:f400:7e0a::207) by VI1PR08CA0258.outlook.office365.com
- (2603:10a6:803:dc::31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2474.17 via Frontend
- Transport; Tue, 26 Nov 2019 13:16:33 +0000
-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
- header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=bestguesspass
- action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- DB5EUR03FT043.mail.protection.outlook.com (10.152.20.236) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.17 via Frontend Transport; Tue, 26 Nov 2019 13:16:33 +0000
-Received: ("Tessian outbound 512f710540da:v33"); Tue, 26 Nov 2019 13:16:31 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 54495c6cc4f08a7f
-X-CR-MTA-TID: 64aa7808
-Received: from f4b123a35b0f.2 (ip-172-16-0-2.eu-west-1.compute.internal [104.47.14.50])
-        by 64aa7808-outbound-1.mta.getcheckrecipient.com id 2C2F2565-C22B-4BD8-9147-90B0661C3173.1;
-        Tue, 26 Nov 2019 13:16:26 +0000
-Received: from EUR04-VI1-obe.outbound.protection.outlook.com (mail-vi1eur04lp2050.outbound.protection.outlook.com [104.47.14.50])
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id f4b123a35b0f.2
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Tue, 26 Nov 2019 13:16:26 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e3YLhHGCaG87oEYNSlxiibDSBe0JkXKy2rslCutmWZOB1MMliAP0pgCAvTOzRS0bmtYZxXVoQYsqfffgquKGLK2UZM5glX1waZtwmO71iT9INDj5RJNehPINl8rf0GILP6TqYRSpz9isiKh4LI4hYKccOxOzo4qntGvBT1d5LoTUnXflCqaIXb04xXaFCz0TwgULOIIGozm4bBNtiI1dKkH07j33nJzOP80j99ulVLsd9Wl75id4rA3SCyEPoHMNGsNsCTDHkR0HiTm5NslyOqrlsXViDt3X/vKvUEHwTfrgK/lYt6Fqz1lqiWCiEiFHVHuDhtUh0suzE0A9E3frbA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AXiSa2cDPynqi1pZWZTQXR63peA1QHF+7CCWR6/itq8=;
- b=Vv44870OD5WjXkk5naSmOHeYWeubwVXtaQe3iWXRgyx546vAimAZC8EC2xchHZO6zIA2GAPs2L7ZDxQpbYyqEdNTI1YwIV/4hbkzAHgZIifIdcDTSK8YuLi95U1nrV2axQ8I5eTwQSAh0iChulUpIQWhCV7AdZkCwLAMFJogoYPQrwrWIGHmo/ii+5Oi+yr7F7L02+Z/mew3LokT4U7ayaFpDVhkWI1zcWQvGucfEwgKoRybHcHlXsbeAq3ywf9pK4gtVzQoF+cSz7bwlMcz5adb3y7cXKVJK+hie2bjINijFF5aG8qUxG60Hry4awj35nkrnsvHC9I8w+R7WPdiLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector2-armh-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AXiSa2cDPynqi1pZWZTQXR63peA1QHF+7CCWR6/itq8=;
- b=69d5vRmKAwZ5E5i2SfbFOrjsvu7rBi4QG12K9hYv0OIXrAPvbAlRlKm7EOJWZ+jOQ/OUea1ALgrMOkrCJUs0NLkRqXu93Tuf923YAUYzbXvFIXx0pp7IDi7u1J/EnCNfNkAolru4QB5Q3itdmCtxtGF+w54W0ZONhCTX8KtToQk=
-Received: from VI1PR08MB4078.eurprd08.prod.outlook.com (20.178.127.92) by
- VI1PR08MB4317.eurprd08.prod.outlook.com (20.179.28.86) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2474.16; Tue, 26 Nov 2019 13:16:25 +0000
-Received: from VI1PR08MB4078.eurprd08.prod.outlook.com
- ([fe80::8191:f0ac:574a:d24d]) by VI1PR08MB4078.eurprd08.prod.outlook.com
- ([fe80::8191:f0ac:574a:d24d%3]) with mapi id 15.20.2474.023; Tue, 26 Nov 2019
- 13:16:25 +0000
-From:   Mihail Atanassov <Mihail.Atanassov@arm.com>
-To:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-CC:     Mihail Atanassov <Mihail.Atanassov@arm.com>, nd <nd@arm.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH 27/30] drm: rcar-du: lvds: Don't set drm_bridge private
- pointer
-Thread-Topic: [PATCH 27/30] drm: rcar-du: lvds: Don't set drm_bridge private
- pointer
-Thread-Index: AQHVpFu0AaX4+WqtW0efGC3rTYsu4g==
-Date:   Tue, 26 Nov 2019 13:16:25 +0000
-Message-ID: <20191126131541.47393-28-mihail.atanassov@arm.com>
-References: <20191126131541.47393-1-mihail.atanassov@arm.com>
-In-Reply-To: <20191126131541.47393-1-mihail.atanassov@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [217.140.106.55]
-x-clientproxiedby: LO2P265CA0453.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:e::33) To VI1PR08MB4078.eurprd08.prod.outlook.com
- (2603:10a6:803:e5::28)
-x-mailer: git-send-email 2.23.0
-Authentication-Results-Original: spf=none (sender IP is )
- smtp.mailfrom=Mihail.Atanassov@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: cc471311-4d1e-4a07-5b46-08d77272dba0
-X-MS-TrafficTypeDiagnostic: VI1PR08MB4317:|VI1PR08MB4317:|AM0PR08MB3585:
-x-ms-exchange-transport-forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR08MB35851F6405C9EACAE5B0B2078F450@AM0PR08MB3585.eurprd08.prod.outlook.com>
-x-checkrecipientrouted: true
-x-ms-oob-tlc-oobclassifiers: OLM:546;OLM:546;
-x-forefront-prvs: 0233768B38
-X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(1496009)(4636009)(39860400002)(366004)(346002)(376002)(136003)(396003)(189003)(199004)(5640700003)(86362001)(6512007)(71200400001)(2616005)(6486002)(71190400001)(2906002)(4326008)(6916009)(44832011)(446003)(11346002)(54906003)(66946007)(316002)(66446008)(64756008)(66556008)(66476007)(6436002)(4744005)(8936002)(186003)(26005)(5660300002)(102836004)(305945005)(14454004)(25786009)(99286004)(81166006)(50226002)(478600001)(2501003)(7736002)(6116002)(2351001)(76176011)(1076003)(52116002)(66066001)(256004)(14444005)(8676002)(81156014)(6506007)(3846002)(386003)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB4317;H:VI1PR08MB4078.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Untrusted: BCL:0;
-X-Microsoft-Antispam-Message-Info-Original: 0bplAz7M7EOz1UCgRq3RawokjrsTXRkN6Ft61+dbUbyp9wpzugB/oCg163ScqVsA8ICjwn3KmSACh31sqsqN3H3jrewsMvgR+Og7tRsyxNNO/dtlC9FiaMKWIIbSeZJiJHm5kbhKRrCE+a1E/YDDGc1F+96Ipk7MMESBs40P9GFUexQJQE8zj+yTrEFxzTwzWWT2w9NrdyFHwCjB+29dW9LYBcEcNGxSQfh29c2hdk/8z/3e2Af8Zr+ADahI3JfRMG165hl+JwderTs7pwjsrQO80daI+hvJzEVyS2nUuljT/0tctT9mLRcqGYvFWaKjnYAWeJIh4RSx2eq1B9su6jLTLqv/n1g30QIUyI6vfw87LjZCNTxHs0JnExXSIvP5deZBJrHtOWth31f/hYN0DSkA/HChnaEdHHMsCi+1RYWm9KUmaf3zR1YwqGsvi+DW
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 26 Nov 2019 09:33:53 -0500
+Received: by mail-oi1-f193.google.com with SMTP id 14so16768741oir.12;
+        Tue, 26 Nov 2019 06:33:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6Ke9S+LOVhCSYY/a2D7Vlzb4JuZDRi+EFqSopQYxhvo=;
+        b=nj3w38bZg0AIusIt49/mQa4MqrbC8q2I1Gu83u5RhH7p+9zwD+Obg3mc8Ug/E3RIb/
+         +OpcBhlBKwiMWWTUHfcBQZyeyJz/QqfNgm/pXQV5UjZAycKx19JMKo1IcGDqKLKpF6bB
+         No4+dTgPNLBOUdswSF4JHl4Dco+G6DFR8+iujV3/usRywxvytpKcvu7kIqJoKLvNd29Z
+         Yi8AevjDxVXldLY7R688l+AMMCXFEMYWdSEr/v/cJg5qcQnIrNOGWI2F/Fm8A+qDaACI
+         ixM6YFWfxrFm2YmbDY5ct9hWCQlaGsMP5kzcnfllU6KHNE9RUkUrY0KoD6Qlxu31qLVC
+         zO/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6Ke9S+LOVhCSYY/a2D7Vlzb4JuZDRi+EFqSopQYxhvo=;
+        b=t+Pm9UxCF1utiCD68wr5AjTUy4s72vesd+rqnTYY2/1d7lnvLhasJIuQ298ciRQqMj
+         VzCx19k6V5I6gvOS/KIwO9mEysB4VGJXcGi9Ckx8dvBWekrSwydQ8A0SPxkFfvMCdjiq
+         hqe1BaCoFoo7f13fW2r8U7LZhSw6Vp8ArhSUe0jmY9AAhrqeEKOxnYn5UOgxviOVJ3oc
+         S6UD7UZ28GZl4ONb3BKpCJgs6pPXEAVVKwrqvljEjNm3UhXB9wXexfLTDg7b0opFTX/S
+         nDmKouqmLuDeJ35btOtqylvomtVnZhWu33IIJI3kvpiBr1ZCiZKtHJ3W9BcnhonjkD1U
+         aVAg==
+X-Gm-Message-State: APjAAAU9HOGJE0SyJhRBMaOIt4y3Iqoe+svXRQCXz9zi9R95GlX3ZF99
+        zYDC7WOb6rWbtgFuR2SAQC1PMUtZ+2oVxGysENo=
+X-Google-Smtp-Source: APXvYqwdIx5fvcr/2eqn6PfsjTtnTEUauTJoJlXG+zzhycInNXig/nGBmY7EZu2DrNnThSLkOUcAJwQqVld3E5i8yP8=
+X-Received: by 2002:a05:6808:906:: with SMTP id w6mr3714280oih.162.1574778831671;
+ Tue, 26 Nov 2019 06:33:51 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB4317
-Original-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Mihail.Atanassov@arm.com; 
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped: DB5EUR03FT043.eop-EUR03.prod.protection.outlook.com
-X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(346002)(396003)(136003)(199004)(189003)(336012)(70586007)(70206006)(14444005)(316002)(26826003)(305945005)(25786009)(2616005)(14454004)(54906003)(4744005)(36756003)(478600001)(50226002)(7736002)(106002)(8676002)(3846002)(6116002)(8746002)(446003)(81156014)(8936002)(81166006)(2906002)(11346002)(50466002)(2501003)(5640700003)(26005)(76176011)(186003)(2351001)(99286004)(76130400001)(450100002)(23756003)(356004)(6512007)(6486002)(47776003)(66066001)(386003)(6506007)(5660300002)(86362001)(6862004)(4326008)(102836004)(22756006)(1076003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR08MB3585;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:Pass;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
-X-MS-Office365-Filtering-Correlation-Id-Prvs: 6bb0853c-f121-4134-b1f5-08d77272d6b2
-NoDisclaimer: True
-X-Forefront-PRVS: 0233768B38
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: kNWKDl4nRyrh8YRF4XK3Z9gKDGmDG0RI1LvWZBbsMyAIvAvTXchu3v3B4MIXUKg9bM5OzCveBuCcq8OmOjISepQEVq9xXHGd5U/vBMcJmXLZCAry7Dk2GB0/g28p6px8ooe/iYLLuaKXvbMpQ++Kir+yPT93Y7XpjV8i+kCWLyk/3Cz8JHNNZD96GAepvvyLweC2jh8lXFcqny7h3yng6abQR8h4ZacUG3K9Y3b3MR7eii4UbNoz+RuDlhZhGLxXPqC1hzDnxd6zyB0xQ5aYnNVCo4epPdAsQaCndA87eMkdgmRKTpqkEVR2ZA2Q0bJzNCiVvJSahVCVtM8TvUsu/yp168ILv/zACf02D0NgLWX7/9Zie9RfgqOjztrfYlEoQkVlIdTlMHl55VBuEIot5Vi7WWiekVpKcvEKBVlymsffScmQANwGJJaRi5AI06oS
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Nov 2019 13:16:33.2001
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cc471311-4d1e-4a07-5b46-08d77272dba0
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR08MB3585
+References: <20191106193609.19645-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20191106193609.19645-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Tue, 26 Nov 2019 14:33:25 +0000
+Message-ID: <CA+V-a8tVK7oUYggTb5Vi3agMp4CH8gtiKDHet09DzE5-LAfiew@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Add support for PCIe controller to work in endpoint
+ mode on R-Car SoCs.
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-pci <linux-pci@vger.kernel.org>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Murray <andrew.murray@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-No functional change: it's not used anywhere.
+Hi Bjorn/Kishon,
 
-Signed-off-by: Mihail Atanassov <mihail.atanassov@arm.com>
----
- drivers/gpu/drm/rcar-du/rcar_lvds.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Gentle ping for this patch set.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/=
-rcar_lvds.c
-index ac1f29bacfcb..168a718cbcbd 100644
---- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -882,7 +882,7 @@ static int rcar_lvds_probe(struct platform_device *pdev=
-)
- 		return ret;
-=20
- 	drm_bridge_init(&lvds->bridge, &pdev->dev, &rcar_lvds_bridge_ops,
--			NULL, lvds);
-+			NULL, NULL);
-=20
- 	mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	lvds->mmio =3D devm_ioremap_resource(&pdev->dev, mem);
---=20
-2.23.0
+On Wed, Nov 6, 2019 at 7:36 PM Lad Prabhakar <prabhakar.csengg@gmail.com> wrote:
+>
+> From: "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> This patch series adds support for PCIe controller on rcar to work in endpoint mode,
+> this also extends the epf framework to handle multiple outbound regions.
+>
+Cheers,
+--Prabhakar Lad
 
+
+> Note:
+> The cadence/rockchip/designware endpoint drivers are build tested only.
+>
+> Endpoint configuration:
+> $ cd /sys/kernel/config/pci_ep
+> $ mkdir functions/pci_epf_test/func1
+> $ echo 0x1912 > functions/pci_epf_test/func1/vendorid
+> $ echo 0x002d > functions/pci_epf_test/func1/deviceid
+> $ echo 32 > functions/pci_epf_test/func1/msi_interrupts
+> $ ln -s functions/pci_epf_test/func1/ controllers/fe000000.pcie_ep/
+> $ echo 1 > controllers/fe000000.pcie_ep/start
+>
+> Host side results:
+> lspci output:
+> 01:00.0 Unassigned class [ff00]: Renesas Technology Corp. Device 002d
+>         Flags: bus master, fast devsel, latency 0, IRQ 103
+>         Memory at fe200200 (64-bit, non-prefetchable) [size=128]
+>         Memory at fe200000 (64-bit, non-prefetchable) [size=256]
+>         Memory at fe200100 (64-bit, non-prefetchable) [size=256]
+>         Capabilities: [40] Power Management version 3
+>         Capabilities: [50] MSI: Enable- Count=1/1 Maskable+ 64bit+
+>         Capabilities: [70] Express Endpoint, MSI 00
+>         Capabilities: [100] Virtual Channel
+>         Kernel driver in use: pci-endpoint-test
+>
+> pcitest results:
+>
+> BAR tests
+>
+> BAR0:           OKAY
+> BAR1:           NOT OKAY
+> BAR2:           OKAY
+> BAR3:           NOT OKAY
+> BAR4:           OKAY
+> BAR5:           NOT OKAY
+>
+> Interrupt tests
+>
+> SET IRQ TYPE TO LEGACY:         OKAY
+> LEGACY IRQ:     OKAY
+> Read Tests
+>
+> SET IRQ TYPE TO LEGACY:         OKAY
+> READ (      1 bytes):           OKAY
+> READ (   1024 bytes):           OKAY
+> READ (   1025 bytes):           OKAY
+> READ (1024000 bytes):           OKAY
+> READ (1024001 bytes):           OKAY
+>
+> Write Tests
+>
+> WRITE (      1 bytes):          OKAY
+> WRITE (   1024 bytes):          OKAY
+> WRITE (   1025 bytes):          OKAY
+> WRITE (1024000 bytes):          OKAY
+> WRITE (1024001 bytes):          OKAY
+>
+> Copy Tests
+>
+> COPY (      1 bytes):           OKAY
+> COPY (   1024 bytes):           OKAY
+> COPY (   1025 bytes):           OKAY
+> COPY (1024000 bytes):           OKAY
+> COPY (1024001 bytes):           OKAY
+>
+> BAR tests for 1/3/5 fail because its configured to use 64bit bars
+>
+> Lad, Prabhakar (5):
+>   pci: pcie-rcar: preparation for adding endpoint support
+>   pci: endpoint: add support to handle multiple base for mapping
+>     outbound memory
+>   PCI: rcar: Add R-Car PCIe endpoint device tree bindings
+>   pci: rcar: add support for rcar pcie controller in endpoint mode
+>   misc: pci_endpoint_test: add device-id for RZ/G2 pcie controller
+>
+>  .../devicetree/bindings/pci/rcar-pci-ep.txt   |   43 +
+>  arch/arm64/configs/defconfig                  |    2 +-
+>  arch/arm64/configs/renesas_defconfig          |    2 +-
+>  drivers/misc/pci_endpoint_test.c              |    3 +
+>  drivers/pci/controller/Kconfig                |   11 +-
+>  drivers/pci/controller/Makefile               |    3 +-
+>  .../pci/controller/dwc/pcie-designware-ep.c   |   30 +-
+>  drivers/pci/controller/pcie-cadence-ep.c      |   11 +-
+>  drivers/pci/controller/pcie-rcar-ep.c         |  483 +++++++
+>  drivers/pci/controller/pcie-rcar-host.c       | 1058 ++++++++++++++
+>  drivers/pci/controller/pcie-rcar.c            | 1231 +----------------
+>  drivers/pci/controller/pcie-rcar.h            |  129 ++
+>  drivers/pci/controller/pcie-rockchip-ep.c     |   13 +-
+>  drivers/pci/endpoint/functions/pci-epf-test.c |   29 +-
+>  drivers/pci/endpoint/pci-epc-core.c           |    7 +-
+>  drivers/pci/endpoint/pci-epc-mem.c            |  189 ++-
+>  include/linux/pci-epc.h                       |   43 +-
+>  17 files changed, 2016 insertions(+), 1271 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/rcar-pci-ep.txt
+>  create mode 100644 drivers/pci/controller/pcie-rcar-ep.c
+>  create mode 100644 drivers/pci/controller/pcie-rcar-host.c
+>  create mode 100644 drivers/pci/controller/pcie-rcar.h
+>
+> --
+> 2.20.1
+>
