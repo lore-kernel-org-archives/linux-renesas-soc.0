@@ -2,101 +2,113 @@ Return-Path: <SRS0=myIh=ZS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6838AC432C0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Nov 2019 10:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3BD3C43215
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Nov 2019 13:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B76C020637
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Nov 2019 10:52:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="HUYMxHuX"
+	by mail.kernel.org (Postfix) with ESMTP id C2A0B2073F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Nov 2019 13:17:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbfKZKwR (ORCPT
+        id S1727258AbfKZNQ7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Nov 2019 05:52:17 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:23733 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727721AbfKZKwR (ORCPT
+        Tue, 26 Nov 2019 08:16:59 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:57394 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728239AbfKZNQ7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Nov 2019 05:52:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1574765535;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=tCwy+Q7cYP/fryGdqaWLlJJmu/y1aBMBVN7PyTLfJhQ=;
-        b=HUYMxHuXysSmi2U/beFceiq7obTvRhg6LwqH0F7t4dA4WpKafPj1efX1961VoQCJFt
-        2zMbWiRlMS8Q5UksqLR0gHDC6vJV0XuOb1hUJ1tVKHFgTn9ZiPlTldrUc+8+iTegvqLz
-        y92w/zbYoH0kKeYqFWa1iq8bhVvhGvcCvEk+hZHZN6+gYkbbfFTy/9yNVxLeAMFRt8vk
-        2k8iFBYZq4a9HK4BFDgDKZGBwMfis9aKQaAuzEk/1RLQrCB7kIBsdcrpN1rhahJeCuRN
-        HMtNPTV6jLOOAMlsLrAKidJVZ4ryeRmRAVAhdPe06Z75PgDrDar4DS7CK7nNPLjYDEY5
-        zqDA==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp04-01.back.ox.d0m.de
-        by smtp-ox.front (RZmta 45.0.2 AUTH)
-        with ESMTPSA id k05717vAQAkF4Oh
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Tue, 26 Nov 2019 11:46:15 +0100 (CET)
-Date:   Tue, 26 Nov 2019 11:46:15 +0100 (CET)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Message-ID: <173522043.1354245.1574765175403@webmail.strato.com>
-In-Reply-To: <1574403231-18512-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1574403231-18512-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1574403231-18512-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH RFC 4/4] mmc: host: renesas_sdhi_sys_dmac: Set
- dma_buswidth value to 32 byte
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.1-Rev22
-X-Originating-IP: 112.198.74.215
-X-Originating-Client: open-xchange-appsuite
+        Tue, 26 Nov 2019 08:16:59 -0500
+Received: from ramsan ([84.195.182.253])
+        by albert.telenet-ops.be with bizsmtp
+        id WdGw2100X5USYZQ06dGwiQ; Tue, 26 Nov 2019 14:16:56 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iZai8-0006RV-OK
+        for linux-renesas-soc@vger.kernel.org; Tue, 26 Nov 2019 14:16:56 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iZai8-0003sl-M2
+        for linux-renesas-soc@vger.kernel.org; Tue, 26 Nov 2019 14:16:56 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2019-11-26-v5.4
+Date:   Tue, 26 Nov 2019 14:16:56 +0100
+Message-Id: <20191126131656.14881-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+I have pushed renesas-drivers-2019-11-26-v5.4 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-> On November 22, 2019 at 7:13 AM Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com> wrote:
-> 
-> 
-> To improve performance, this patch sets dma_buswidth value to 32
-> when transfer size is multiples of 32. In other words, a sd card
-> transfer's size if not multiples of 32, this driver uses PIO
-> and then the performance will be down.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  drivers/mmc/host/renesas_sdhi_sys_dmac.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-> index 09137cc..65e71b6 100644
-> --- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-> +++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-> @@ -58,7 +58,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
->  	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
->  			  MMC_CAP_CMD23,
->  	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
-> -	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_32_BYTES,
->  	.dma_rx_offset	= 0x2000,
->  	.scc_offset	= 0x0300,
->  	.taps		= rcar_gen2_scc_taps,
-> -- 
-> 2.7.4
->
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the master branch of my
+renesas-devel.git tree.
 
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Today's version is based on renesas-devel-2019-11-25-v5.4.
 
-CU
-Uli
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+
+Included fixes:
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#clockevents/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
