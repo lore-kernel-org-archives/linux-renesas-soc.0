@@ -1,131 +1,88 @@
-Return-Path: <SRS0=d1AP=ZT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=5rCG=ZU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F07A9C432C0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Nov 2019 21:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE7DC432C0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Nov 2019 01:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D003221555
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Nov 2019 21:44:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E33CB2158A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Nov 2019 01:50:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="t9GPUKIe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbfK0VoD (ORCPT
+        id S1727406AbfK1Bu6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Nov 2019 16:44:03 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35451 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728174AbfK0Uh7 (ORCPT
+        Wed, 27 Nov 2019 20:50:58 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:41174 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbfK1Bu6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Nov 2019 15:37:59 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 23so18544059otf.2;
-        Wed, 27 Nov 2019 12:37:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=14vyCpwlco5dNMekZ671HzsQ/qD/jZMl32Sz5ULoC/U=;
-        b=EXzhuoyV1OLRcuwocYrAZ7FKZEIUjtjNrYygi24X9SokyLEPz0XRMvGUmsXzJHPEsm
-         HEjGyocRwmBgOCv3NqKYx1IVM9tRQsIdHEPjm05IQVIfhAkknunCKokl0v8sHdzSl2cJ
-         qkQhhvTLVPe5s3bAlhaeh/sL21g84jTENGy/B4ISDhpZHxsnODQ2vMbdu3b8L0iseCsh
-         4zTwpXFXwAoUA+iEQHJJpAaCPZROsJuvBlOo65Nkn/9NhUoKvK7dmge+9j+OL+oL1vzI
-         Jn8v5fVJX7HNWSFy+XmU4Q07pNCriIeqUft32P+RN3GpoVmRCMLFFQI2InxLvvTiYFZl
-         DHTQ==
-X-Gm-Message-State: APjAAAUU9SGfpxDvmtC2lMC/+uldHntpWEgb3fvdJW3lrFGeUqHPEwW/
-        uP1to04+2EeUB1p0oLSN9rxkPgRIlohy+5nhEcU=
-X-Google-Smtp-Source: APXvYqyekyFnyyTzxDAaVF4lh76x3pVg0AJcETDtG/R5UDB8kyib7ugeAakdgVvr7ZJMAAkTJwIUv0P5kqimosEUmPw=
-X-Received: by 2002:a9d:2073:: with SMTP id n106mr5117337ota.145.1574887078997;
- Wed, 27 Nov 2019 12:37:58 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1574871463.git.nishadkamdar@gmail.com> <5a7ed2e4b58ba7ff2f0638a2435a3a1e1c62c9f6.1574871463.git.nishadkamdar@gmail.com>
-In-Reply-To: <5a7ed2e4b58ba7ff2f0638a2435a3a1e1c62c9f6.1574871463.git.nishadkamdar@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 27 Nov 2019 21:37:47 +0100
-Message-ID: <CAMuHMdUqfRioTBV27AKx9zv9YuSqEod6x+A4aguf=h20TDXr6w@mail.gmail.com>
-Subject: Re: [PATCH 4/5] pinctrl: sh-pfc: Use the correct style for SPDX
- License Identifier
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joe Perches <joe@perches.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        Wed, 27 Nov 2019 20:50:58 -0500
+Received: from pendragon.ideasonboard.com (unknown [104.132.253.101])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AB0FF4FF;
+        Thu, 28 Nov 2019 02:50:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1574905855;
+        bh=UZ6ggFBgzZuX2+D3oNGNdZPRR6WVAycMBJ8RY8d+ymk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=t9GPUKIeQrjeJLIeZS9jGzPqGzY99zDh5ccnMwPkF4WJde46R2sSURIlzPlFwwT48
+         Hmo2GJF3DMoVkpgbKXEtZ0P3yZIzekR8hCmCiVGnfzJb6XJRe6aJk/RdR7EFGbsOik
+         scbNW64T2s0//DvmZ4j3rCEm8uADY6iCPIa33ZB4=
+Date:   Thu, 28 Nov 2019 03:50:45 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Simon Horman <horms@verge.net.au>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v7 2/7] dt-bindings: display, renesas,du: Document cmms
+ property
+Message-ID: <20191128015045.GA13942@pendragon.ideasonboard.com>
+References: <20191113100556.15616-1-jacopo+renesas@jmondi.org>
+ <20191113100556.15616-3-jacopo+renesas@jmondi.org>
+ <CAMuHMdWAvFfL5gWZVkfan=o2pRygxCKaNwCf=7AbiPJS1r8nAA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWAvFfL5gWZVkfan=o2pRygxCKaNwCf=7AbiPJS1r8nAA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Nishad,
+On Wed, Nov 13, 2019 at 02:34:27PM +0100, Geert Uytterhoeven wrote:
+> Hi Jacopo,
+> 
+> Sorry for spoiling your v7 ;-)
+> 
+> On Wed, Nov 13, 2019 at 11:04 AM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> > Document the newly added 'cmms' property which accepts a list of phandle
+> 
+> renesas,cmms
 
-On Wed, Nov 27, 2019 at 5:46 PM Nishad Kamdar <nishadkamdar@gmail.com> wrote:
-> This patch corrects the SPDX License Identifier style in
-> header files related to Reneses Soc pinctrl driver.
-> It assigns explicit block comment for the SPDX License Identifier.
+Fix applied to my branch.
 
-Is it incorrect to not have an explicit block comment?
-Other recommendations have been to integrate the SPDX comment line
-into an existing comment header, if it exists....
-
-> Changes made by using a script provided by Joe Perches here:
-> https://lkml.org/lkml/2019/2/7/46.
->
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> ---
->  drivers/pinctrl/sh-pfc/core.h   | 4 ++--
->  drivers/pinctrl/sh-pfc/sh_pfc.h | 4 ++--
->  2 files changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/pinctrl/sh-pfc/core.h b/drivers/pinctrl/sh-pfc/core.h
-> index b5b1d163e98a..5ad0ab8f9e14 100644
-> --- a/drivers/pinctrl/sh-pfc/core.h
-> +++ b/drivers/pinctrl/sh-pfc/core.h
-> @@ -1,5 +1,5 @@
-> -/* SPDX-License-Identifier: GPL-2.0
-> - *
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
->   * SuperH Pin Function Controller support.
->   *
->   * Copyright (C) 2012  Renesas Solutions Corp.
-> diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> index 640d2a4cb838..fff9cbb7a0f8 100644
-> --- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-> +++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-> @@ -1,5 +1,5 @@
-> -/* SPDX-License-Identifier: GPL-2.0
-> - *
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
->   * SuperH Pin Function Controller Support
->   *
->   * Copyright (c) 2008 Magnus Damm
-
-Gr{oetje,eeting}s,
-
-                        Geert
+> > and channel index pairs that point to the CMM units available for each
+> > Display Unit output video channel.
+> >
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Regards,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Laurent Pinchart
