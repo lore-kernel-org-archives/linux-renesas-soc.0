@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFAAC33CB9
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A53C432C3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 857E120848
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E120A20848
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  2 Dec 2019 19:34:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pt4eRo+r"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OY1yeCPD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728227AbfLBTd4 (ORCPT
+        id S1728197AbfLBTdt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 2 Dec 2019 14:33:56 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42216 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728214AbfLBTdy (ORCPT
+        Mon, 2 Dec 2019 14:33:49 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35635 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728154AbfLBTds (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 2 Dec 2019 14:33:54 -0500
-Received: by mail-lf1-f66.google.com with SMTP id y19so756761lfl.9;
-        Mon, 02 Dec 2019 11:33:51 -0800 (PST)
+        Mon, 2 Dec 2019 14:33:48 -0500
+Received: by mail-lj1-f196.google.com with SMTP id j6so861486lja.2;
+        Mon, 02 Dec 2019 11:33:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sQFlzyFny1i3dHVwTEws0fP7Z8KCjLT5c7TINBzn22A=;
-        b=pt4eRo+rlUMtO4GzjerqssqjlO0TO1vFSYLwXnfqMSsS6I6x4kY1DKOw6u9G9vdsgW
-         VAXzxTR5zDmXqrnHapjbB2IRlTBgXXfxGeEzL71oJVndvo7oGsIzdM4JNNW+vJ9wI25g
-         Qpon0HiFbTQdsFgeRb9y24Z617Q2A4fAEvuGRRje5A0OM5b/IzFlUNEFnzszoF9xFYKW
-         CFKHrlknb1/H6PzMT5qxX68gQRn6wKxNlsb26QKyV9LEm0W4VdQaXIu/ffS0UbmwteSa
-         ESNzQZVCq6Z1dS+LBlZ71mm/mZiCmeduZsUF8YAG5RFC59oKdaCyFJU+oIb5eWrZqitl
-         CEAw==
+        bh=EQCdMhhHkJLZcD9BzMhwIb5xb1irL0uJ2pcFEXKepFw=;
+        b=OY1yeCPDNfjdMrvsRARHHhgFlNUaTixpvh8ETXE7pMJprdmFTKVV1we1+8cJAz4XT/
+         TZOFneS+bmAmVo2/1FarsnUNlF/HQ+i0a79binQ5VeON+J+QbN06Nj4uz7Ma4ZX7Igvl
+         NXSUqN+sktPvX04ns9obPeU83zwmI1ihE6txwTCk4mACiFSc0Q+/zOjZfeleVpUs3cTe
+         /fi4PLHiLkuNCu2ibSyeRs7p/Vqvx3bApaueyaqYsXJJJtQcMDWNS4q1uTGpF1hcRUau
+         gBOAK7Vue7m8v3F+YcSlkj9YA2E3ShmHOkJj0JQcPrWeqpoS0NMGuWbKaARELG4bbetw
+         SW5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=sQFlzyFny1i3dHVwTEws0fP7Z8KCjLT5c7TINBzn22A=;
-        b=VA1D9gY44+nnra9oW2yqbGHJCAxRnsVubdxM6m7HV8O2BmduGin8akX1ufJl95cgCz
-         VsLqFuDwfW15LNNGvG/F5QmDiAcUfcpBsQJpS1xyskG5wYHDDzR/7GIXByveavRLS1O/
-         E/P86J+7TMNx/pXEKOpKA7PMIUrwRAXpK7lnfPDIXNDf9MgnK+029+gnIG8/hcPAH/YD
-         PoI8F9ozEc/8kpnxTljcikulwVoTc5EJYOLGEo1w6nUDB9xFI9N7mMYB747+Ffvj+Z4x
-         qOPteBfKo2OSkyQRftotwhR9DoXBLFk9inNQoib89SBksto2wk2XG5OLujWZjctSwqcg
-         Kf5A==
-X-Gm-Message-State: APjAAAXCVu2KSG8C2/zE/Ao1eeEI5tll3uRgMQHDCBF9uBraK5sVZ7M4
-        ZiIThklJDRQw9CqdY1mIVGs=
-X-Google-Smtp-Source: APXvYqw+I2ccfhtX+jZIDSZ8cLTRrK19+BfFlN/G+FBcKPfk4B/UKRsY/a6pLRlAL5tf08+wnj+Qzg==
-X-Received: by 2002:ac2:4a89:: with SMTP id l9mr397464lfp.121.1575315231117;
-        Mon, 02 Dec 2019 11:33:51 -0800 (PST)
+        bh=EQCdMhhHkJLZcD9BzMhwIb5xb1irL0uJ2pcFEXKepFw=;
+        b=QFkgfjjMgXiT0S6mclc6vFCOk8nR9SHjBri6R7yUkCKByzhLA6Mkm5+QdR5qeZO0kz
+         dDaEvrGO8qU5NxU/B04NIAAdQl9nLpKno5s6KBT5A4uZUI/5aN0wzt8uJRsHpfa0nhhS
+         XbXYFR3p0v1suIDld/bXAH91yoNFuZ9TYgxCeykQcESCM3ScDlBRuDhp73pqQQ4TpKpw
+         FdW568wOXpwSK7ZjMNtjuCQibN1F/v1wFeuQ2OITP+ZC927NgxGet+FkOM96XYMNKedI
+         HNRQLBdTEfCPr+SKF1hdoHeMyjwptVtufya/NvqrFnZKPqIeqSmA7OG6fR+xHohm3rH9
+         xLWg==
+X-Gm-Message-State: APjAAAVnj54cmpBrqU4dn8mAWkmh4s9WvgF+74DclCTfUIudUZrb82Ke
+        ezs3GNXmIpMQ0B4YFpWVC2A=
+X-Google-Smtp-Source: APXvYqzBtPgnZJO2C3FgsAdYxGahX1PcJUcy/5pxg4ftOozbwWlQs9ZDIf/3+yVVuJ09OIxficg0uA==
+X-Received: by 2002:a2e:c42:: with SMTP id o2mr277018ljd.222.1575315225817;
+        Mon, 02 Dec 2019 11:33:45 -0800 (PST)
 Received: from saturn.lan (18.158-248-194.customer.lyse.net. [158.248.194.18])
-        by smtp.gmail.com with ESMTPSA id g13sm79482lfb.74.2019.12.02.11.33.49
+        by smtp.gmail.com with ESMTPSA id g13sm79482lfb.74.2019.12.02.11.33.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Dec 2019 11:33:50 -0800 (PST)
+        Mon, 02 Dec 2019 11:33:45 -0800 (PST)
 From:   Sam Ravnborg <sam@ravnborg.org>
 To:     dri-devel@lists.freedesktop.org,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -83,9 +83,9 @@ Cc:     Abhinav Kumar <abhinavk@codeaurora.org>,
         Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
         Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v1 25/26] drm/panel: tpo-td028ttec1: use drm_panel backlight support
-Date:   Mon,  2 Dec 2019 20:32:29 +0100
-Message-Id: <20191202193230.21310-26-sam@ravnborg.org>
+Subject: [PATCH v1 22/26] drm/panel: sharp-ls043t1le01: use drm_panel backlight support
+Date:   Mon,  2 Dec 2019 20:32:26 +0100
+Message-Id: <20191202193230.21310-23-sam@ravnborg.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191202193230.21310-1-sam@ravnborg.org>
 References: <20191202193230.21310-1-sam@ravnborg.org>
@@ -102,69 +102,92 @@ Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
 Cc: Thierry Reding <thierry.reding@gmail.com>
 Cc: Sam Ravnborg <sam@ravnborg.org>
 ---
- drivers/gpu/drm/panel/panel-tpo-td028ttec1.c | 14 ++++----------
- 1 file changed, 4 insertions(+), 10 deletions(-)
+ .../gpu/drm/panel/panel-sharp-ls043t1le01.c   | 20 +++++++------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-index 37252590b541..cf29405a2dbe 100644
---- a/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-+++ b/drivers/gpu/drm/panel/panel-tpo-td028ttec1.c
-@@ -17,7 +17,6 @@
-  * H. Nikolaus Schaller <hns@goldelico.com>
+diff --git a/drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c b/drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c
+index 7995cf5a9fc4..b60c4db1ed6d 100644
+--- a/drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c
++++ b/drivers/gpu/drm/panel/panel-sharp-ls043t1le01.c
+@@ -7,7 +7,6 @@
+  * Based on AUO panel driver by Rob Clark <robdclark@gmail.com>
   */
  
 -#include <linux/backlight.h>
  #include <linux/delay.h>
+ #include <linux/gpio/consumer.h>
  #include <linux/module.h>
- #include <linux/spi/spi.h>
-@@ -83,7 +82,6 @@ struct td028ttec1_panel {
- 	struct drm_panel panel;
+@@ -25,7 +24,6 @@ struct sharp_nt_panel {
+ 	struct drm_panel base;
+ 	struct mipi_dsi_device *dsi;
  
- 	struct spi_device *spi;
 -	struct backlight_device *backlight;
- };
+ 	struct regulator *supply;
+ 	struct gpio_desc *reset_gpio;
  
- #define to_td028ttec1_device(p) container_of(p, struct td028ttec1_panel, panel)
-@@ -243,8 +241,6 @@ static int td028ttec1_enable(struct drm_panel *panel)
- 	if (ret)
- 		return ret;
+@@ -107,8 +105,6 @@ static int sharp_nt_panel_disable(struct drm_panel *panel)
+ 	if (!sharp_nt->enabled)
+ 		return 0;
  
--	backlight_enable(lcd->backlight);
+-	backlight_disable(sharp_nt->backlight);
 -
- 	return 0;
- }
+ 	sharp_nt->enabled = false;
  
-@@ -252,8 +248,6 @@ static int td028ttec1_disable(struct drm_panel *panel)
+ 	return 0;
+@@ -190,8 +186,6 @@ static int sharp_nt_panel_enable(struct drm_panel *panel)
+ 	if (sharp_nt->enabled)
+ 		return 0;
+ 
+-	backlight_enable(sharp_nt->backlight);
+-
+ 	sharp_nt->enabled = true;
+ 
+ 	return 0;
+@@ -244,6 +238,7 @@ static const struct drm_panel_funcs sharp_nt_panel_funcs = {
+ static int sharp_nt_panel_add(struct sharp_nt_panel *sharp_nt)
  {
- 	struct td028ttec1_panel *lcd = to_td028ttec1_device(panel);
+ 	struct device *dev = &sharp_nt->dsi->dev;
++	int ret;
  
--	backlight_disable(lcd->backlight);
+ 	sharp_nt->mode = &default_mode;
+ 
+@@ -260,14 +255,13 @@ static int sharp_nt_panel_add(struct sharp_nt_panel *sharp_nt)
+ 		gpiod_set_value(sharp_nt->reset_gpio, 0);
+ 	}
+ 
+-	sharp_nt->backlight = devm_of_find_backlight(dev);
 -
- 	jbt_ret_write_0(lcd, JBT_REG_DISPLAY_OFF, NULL);
- 
- 	return 0;
-@@ -334,10 +328,6 @@ static int td028ttec1_probe(struct spi_device *spi)
- 	spi_set_drvdata(spi, lcd);
- 	lcd->spi = spi;
- 
--	lcd->backlight = devm_of_find_backlight(&spi->dev);
--	if (IS_ERR(lcd->backlight))
--		return PTR_ERR(lcd->backlight);
+-	if (IS_ERR(sharp_nt->backlight))
+-		return PTR_ERR(sharp_nt->backlight);
 -
- 	spi->mode = SPI_MODE_3;
- 	spi->bits_per_word = 9;
+ 	drm_panel_init(&sharp_nt->base, &sharp_nt->dsi->dev,
+ 		       &sharp_nt_panel_funcs, DRM_MODE_CONNECTOR_DSI);
  
-@@ -350,6 +340,10 @@ static int td028ttec1_probe(struct spi_device *spi)
- 	drm_panel_init(&lcd->panel, &lcd->spi->dev, &td028ttec1_funcs,
- 		       DRM_MODE_CONNECTOR_DPI);
- 
-+	ret = drm_panel_of_backlight(&lcd->panel);
++	ret = drm_panel_of_backlight(&sharp_nt->base);
 +	if (ret)
 +		return ret;
 +
- 	return drm_panel_add(&lcd->panel);
+ 	return drm_panel_add(&sharp_nt->base);
  }
  
+@@ -309,7 +303,7 @@ static int sharp_nt_panel_remove(struct mipi_dsi_device *dsi)
+ 	struct sharp_nt_panel *sharp_nt = mipi_dsi_get_drvdata(dsi);
+ 	int ret;
+ 
+-	ret = sharp_nt_panel_disable(&sharp_nt->base);
++	ret = drm_panel_disable(&sharp_nt->base);
+ 	if (ret < 0)
+ 		dev_err(&dsi->dev, "failed to disable panel: %d\n", ret);
+ 
+@@ -326,7 +320,7 @@ static void sharp_nt_panel_shutdown(struct mipi_dsi_device *dsi)
+ {
+ 	struct sharp_nt_panel *sharp_nt = mipi_dsi_get_drvdata(dsi);
+ 
+-	sharp_nt_panel_disable(&sharp_nt->base);
++	drm_panel_disable(&sharp_nt->base);
+ }
+ 
+ static const struct of_device_id sharp_nt_of_match[] = {
 -- 
 2.20.1
 
