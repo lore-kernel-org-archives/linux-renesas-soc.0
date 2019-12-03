@@ -2,134 +2,201 @@ Return-Path: <SRS0=x042=ZZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9357C432C0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CB8C43215
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 14:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA802073C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:27:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kf2TrLzo"
+	by mail.kernel.org (Postfix) with ESMTP id 697FF2146E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 14:19:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1575382795;
+	bh=2ZaCRWOeRuWd4ETKS3qPMNz4JcB0cp4ZP9Vi2p3cGu4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=o08lrszuNwpY7j3y8ZRwr0AQmXhLOyFCk+PaLk0Mycg+d+KV46GDlk25jy1PnyDeP
+	 e4PYRy8CTwSqk/tajAls8K93MgqETLfSG7lCMarw8lgUAv2lzJIQ0kKUkv9DMkPANM
+	 lgZTEOyuiMSQKxXTcyc1Tt0DUiiAHGUha+TKSwCc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726086AbfLCN1s (ORCPT
+        id S1726189AbfLCOTy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 3 Dec 2019 08:27:48 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38538 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbfLCN1s (ORCPT
+        Tue, 3 Dec 2019 09:19:54 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43568 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725957AbfLCOTy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:27:48 -0500
-Received: by mail-lf1-f65.google.com with SMTP id r14so2957729lfm.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Dec 2019 05:27:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=w5kvvsNqTWUYowCw16IbU3x1YCmaOiYf5tGr6DU/4Oo=;
-        b=Kf2TrLzoeW7GPO93jICax9H7npFli7nKkPrAa/7pensbMPErLdSyO5cAPXKjgJ5SwW
-         dQrNoMOKIZ0oZKLp96BDVuif4EmGi5MgCrhh0N20691gPfYKiIWpucl1bpxPv8HyWwEO
-         sV/o0T5vo3zUWjf4mn/5JFm4iQ9eVy7Qwu71lDN9Y0jhqghCBoOVDyB/uDoKZVeoM5qE
-         lirCwRmMcZeJCvVkm4a8hz6Ijs6Aw/lR6XRBXo/Au/eoIX7M/1cljIRGuyDeppCzGaRX
-         SiP6V0C53L9KztUCT76fN77bWsENOXX1T2+wgpTdxmhUZRMwMYpW+0PGCrTHVh2H+JbJ
-         2ZrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=w5kvvsNqTWUYowCw16IbU3x1YCmaOiYf5tGr6DU/4Oo=;
-        b=AFN65yEZb1SZN2KZhZ271WHct35xBD1zFz8Ei0IE/5iB736oWMQ5FBN0tMtK/mzMg7
-         a291ynrhifS34XBLyeymjBJecrx7pnG3HYeaA2Cx37pPGRx2Pe1FNmoRU7gKSrQ3wk3J
-         hBpyVcWIbMT1lkcTr+NA36bQ3C/OleIGYWpvF0Sfxz4CvMRuDJZiy6x97mKkOvATCvW5
-         jmmdd1BvfgVQIysb/vPwMcQVUYNMCCT5Y+IgkmKjvPYicg0z+NG7u3b7NTcH7VroWtfr
-         c1uDwS4Ap3byXRT5J9UwEIajwI5HqVxnVQB+a4hjQLTkejHobn0oQYkF9Iwdnq0IS63h
-         3BXw==
-X-Gm-Message-State: APjAAAXuWw5J7ygJEobem4lsg8g0pNmJhU8wY3ruK6T9O6CB38VdmYvt
-        siTDxpfknM3o+u64YsFBIY6+hZm2LezFIOMKYYrz5Q==
-X-Google-Smtp-Source: APXvYqyofMBPFWLLzB1STopamPLWqp8a6SLsme2LKB0JzU+G9blqUgnpYL5l6F2TBybbdU6uzjI0Yo9WQ+oH5mP/T40=
-X-Received: by 2002:a19:f701:: with SMTP id z1mr2657953lfe.133.1575379666036;
- Tue, 03 Dec 2019 05:27:46 -0800 (PST)
+        Tue, 3 Dec 2019 09:19:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/CDlfnPoepj5xBGb25Vr91OKvHcFns89CSr5ZTmJxuo=; b=HUIIRWozvP+6ahxe+WI0KkGLU
+        0xPE74mDFqOrPvPvIYwrU0XsMydq8dlnSxVfd9q2F+brAVeBRFAKmnvtV4MkVC7mxPAv8ImKV+cM5
+        U8gtFs0EszaslwMUDaT6Ce3ew2MQBuO9nrEznQ5F9kfs7FnRPVfG8fx5KLwxbx1EiRLwM=;
+Received: from fw-tnat-cam1.arm.com ([217.140.106.49] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ic91l-0002iA-AB; Tue, 03 Dec 2019 14:19:45 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id CEFD6D002FA; Tue,  3 Dec 2019 14:19:44 +0000 (GMT)
+Date:   Tue, 3 Dec 2019 14:19:44 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Chris Brandt <chris.brandt@renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, Mason Yang <masonccyang@mxic.com.tw>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 4/6] spi: Add SPIBSC driver
+Message-ID: <20191203141944.GI1998@sirena.org.uk>
+References: <20191203034519.5640-1-chris.brandt@renesas.com>
+ <20191203034519.5640-5-chris.brandt@renesas.com>
 MIME-Version: 1.0
-References: <20191202193230.21310-1-sam@ravnborg.org> <20191202193230.21310-9-sam@ravnborg.org>
-In-Reply-To: <20191202193230.21310-9-sam@ravnborg.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 3 Dec 2019 14:27:34 +0100
-Message-ID: <CACRpkdbiyVcUDrxuCK_wgsB6Vn+XZptsc9H3zB0cXxjeOtw+Ug@mail.gmail.com>
-Subject: Re: [PATCH v1 08/26] drm/panel: drop drm_device from drm_panel
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jitao Shi <jitao.shi@mediatek.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Stefan Mavrodiev <stefan@olimex.com>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="Op27XXJsWz80g3oF"
+Content-Disposition: inline
+In-Reply-To: <20191203034519.5640-5-chris.brandt@renesas.com>
+X-Cookie: Cleanliness is next to impossible.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Dec 2, 2019 at 8:33 PM Sam Ravnborg <sam@ravnborg.org> wrote:
 
-> The panel drivers used drm_panel.drm for two purposes:
-> 1) Argument to drm_mode_duplicate()
-> 2) drm->dev was used in error messages
->
-> The first usage is replaced with drm_connector.dev
-> - drm_connector is already connected to a drm_device
->   and we have a valid connector
->
-> The second usage is replaced with drm_panel.dev
-> - this makes drivers more consistent in their dev argument
->   used for dev_err() and friends
->
-> With these replacements there are no more uses of drm_panel.drm,
-> so it is removed from struct drm_panel.
-> With this change drm_panel_attach() and drm_panel_detach()
-> no logner has any use as they are empty functions.
->
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Jagan Teki <jagan@amarulasolutions.com>
-> Cc: Stefan Mavrodiev <stefan@olimex.com>
-> Cc: Robert Chiras <robert.chiras@nxp.com>
-> Cc: "Guido G=C3=BCnther" <agx@sigxcpu.org>
-> Cc: Purism Kernel Team <kernel@puri.sm>
+--Op27XXJsWz80g3oF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+On Mon, Dec 02, 2019 at 10:45:17PM -0500, Chris Brandt wrote:
 
-Yours,
-Linus Walleij
+> +config SPI_SPIBSC
+> +	tristate "Renesas SPI Multi I/O Bus Controller"
+> +	depends on ARCH_R7S72100 || ARCH_R7S9210
+
+I'm not seeing any build dependency here, please add an ||
+COMPILE_TEST for build coverage.
+
+> +++ b/drivers/spi/spi-spibsc.c
+> @@ -0,0 +1,609 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * SPI Bus Space Controller (SPIBSC) bus driver
+
+Please make the entire comment block here a C++ one so things
+look more intentional.
+
+> +static void spibsc_write(struct spibsc_priv *sbsc, int reg, u32 val)
+> +{
+> +	iowrite32(val, sbsc->base + reg);
+> +}
+> +static void spibsc_write8(struct spibsc_priv *sbsc, int reg, u8 val)
+
+Blank likes between functions, please see coding-style.rst.
+Looking at a bunch of the stuff here it looks like you could
+benefit from regmap, it's got lots of debug infrastructure.
+
+> +	if (tx)
+> +		pr_debug("spibsc: send data: ");
+> +	else
+> +		pr_debug("spibsc: recv data: ");
+
+dev_dbg() if you're going to do tis.
+
+> +
+> +	for (i = 0; i < len; ) {
+> +		sprintf(line_buffer + line_index, " %02X", buf[i]);
+
+snprintf()!
+
+> +static int spibsc_transfer_one_message(struct spi_controller *master,
+> +				       struct spi_message *msg)
+> +{
+> +	struct spibsc_priv *sbsc = spi_controller_get_devdata(master);
+> +	struct spi_transfer *t, *t_last;
+> +	u8 tx_data[MAX_CMD_LEN];
+> +	int tx_only;
+> +	u8 tx_len;
+> +	int ret;
+> +
+> +	t_last = list_last_entry(&msg->transfers, struct spi_transfer,
+> +				 transfer_list);
+> +	/* defaults */
+> +	ret = 0;
+> +	sbsc->last_xfer = 0;
+> +	tx_only = 1;
+> +
+> +	/* Analyze the messages */
+> +	t = list_first_entry(&msg->transfers, struct spi_transfer,
+> +			     transfer_list);
+> +	if (t->rx_buf) {
+> +		dev_dbg(sbsc->dev, "Cannot Rx without Tx first!\n");
+> +		return -EIO;
+
+These errors should probably be -EINVAL, you're failing on
+validation here.
+
+> +	}
+> +	list_for_each_entry(t, &msg->transfers, transfer_list) {
+
+Blank line here please as well.
+
+> +	if (spi->bits_per_word != 8) {
+> +		dev_err(sbsc->dev, "bits_per_word must be 8\n");
+> +		return -EIO;
+> +	}
+
+The core will validate this for you.
+
+> +	master->num_chipselect	= 1;
+> +	master->mode_bits		= SPI_CPOL | SPI_CPHA;
+> +	master->setup			= spibsc_setup;
+> +	master->transfer_one_message	= spibsc_transfer_one_message;
+
+Set bits_per_word_mask here.
+
+> +	dev_info(&pdev->dev, "probed\n");
+> +
+
+Remove this, it's just noise.
+
+> +static int spibsc_remove(struct platform_device *pdev)
+> +{
+> +	struct spibsc_priv *sbsc = dev_get_drvdata(&pdev->dev);
+> +
+> +	pm_runtime_put(&pdev->dev);
+> +	pm_runtime_disable(&pdev->dev);
+
+There seems to be no purpose in the runtime PM code in this
+driver, there's no PM operations of any kind and the driver holds
+a runtime PM reference for the entire lifetime of the device.
+
+> +	spi_unregister_controller(sbsc->master);
+
+You registered the controller with devm_, there's no need to
+unregister it and if you do you need to use a matching devm_
+unregiser.
+
+--Op27XXJsWz80g3oF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3mbwAACgkQJNaLcl1U
+h9Dzcgf/bPKKtl+0UszS1c1X9/HBdRfcH6vnPEp8R9IbwYRR71OmtqteR27re0WC
+rUf5W3IKQ9q8jPd5zUsBBLifHg3Oj8WCuMogg4E946QUMdsnY/517wlBQ6cavxhq
+q+Ky2Dp3Iz29lLyiwTOMSUkHndbhY3Q7oHmpx8akowtcVcdegBrg+gNaYU6152+C
+l+Zy+fG4R8FndhiGgUMto1kkvq6NZXfGzKzFvY5ANrPtD2N4Vd5m0RVYmBxjO3r5
+hGjQPPrJ3LQ5JhWr9MZhXEzf3X1zd1z9tQFFnx9nMU8AZeCgKyedNoA1cCLTxgt6
+vkN5C/dBQyj2EzWI/D3UhVTY9t/Wvg==
+=7Jzf
+-----END PGP SIGNATURE-----
+
+--Op27XXJsWz80g3oF--
