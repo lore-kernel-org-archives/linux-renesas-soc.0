@@ -2,125 +2,121 @@ Return-Path: <SRS0=x042=ZZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A21A9C43215
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD94C432C0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 793A92073B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ED2C2073B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 13:27:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xvis201g"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="ANmDGJCQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726086AbfLCNZT (ORCPT
+        id S1726182AbfLCN1p (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 3 Dec 2019 08:25:19 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44519 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbfLCNZT (ORCPT
+        Tue, 3 Dec 2019 08:27:45 -0500
+Received: from mail-eopbgr1400121.outbound.protection.outlook.com ([40.107.140.121]:34209
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726086AbfLCN1o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Dec 2019 08:25:19 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v201so2904651lfa.11
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 03 Dec 2019 05:25:17 -0800 (PST)
+        Tue, 3 Dec 2019 08:27:44 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JatFMizwGImVXjvDJbkSZnUreVzkUiqy+rZ6bMTZ5GbFVMJvB5w5WbuCBDsbsk9/deNKuNgS6KHOPpsZ0XDt+2m5ag2lXMc7OWDjHXoSzlos9la/bbV7IX6XY0OCUrGcTHGfUY5eL8grBlbdF62IFZ3zC7w0b/I/7zTCl+mzeB/Z9IcmnrHCDy+pvDtlL7aSWwR8dwvLKoQzXxP4x+7yVHPF8lZeGV8McwCkQNsBsMa07Q3Uvptk9UgsgpwR5xWU6SFwQkQR3nH0UvjxIikHMYKJsPp/lVzyupfYIWOL0b4bwNcCmIG/IJ8PbvYys272TQfT2m5kRnkZtyWnI7N78Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E6iqdCRYte3HB+lK+qyaQjUGwN5HP9VlAZ5gNuMz5mA=;
+ b=ZgwBYVAFgN1w1ElyOE5/j8MyrJPMAlIiHfcnSkiC1YaCAsYu8xGUrwAA1hUdCl+LRX3rLVfV/C6w6giHtVCYbgMVQjb7/pk4dEFgjPYMk5PdpuNWEOXs2FykPfxgeFd7TnpeJ7+sUgjap9kJriR51LKskqP/7ZPooG8IlREsIGCWpO5m3Ddpk26Xy8vOBfnZadEJjofeM8OLcbKdGgXgmul+SNt6kMLPKyQQ8YYNla2QhEpb5Iob4Hz0GWrs/LAd2N8XgFJtgdZKTwf5C+s3ZURVfMg7iRAfrq983KCDZtm0CiWydgCu/auod0z9t9y702lM1lWtqhmfFSOmTjyykQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=9a1hL+PexI1M8Jq7K439+8ni7/mVSuwFTy8tepPE5ag=;
-        b=xvis201gXI3TiO7rQvoI1mKBfSgzASqAd5iNB/gKNTcG/vn4Yqzhacn1uV/53tfqU8
-         kD2NRTag5a/3oe4AJYonE/5qZUY9d/e3gtDw1PcpmJ/wbepHuPFpAO2vAYkoiRl+EaUf
-         eNzFxpDgdSJ7gWNidrFThpe2xiov+axfIBro+R28+EWkRF0w07eNS6dozJjhFBRBpmMt
-         usXLfgmME3MTm5zAC5CIERmWX1iAN+xefTx1Q2ApRqbMrUAp3Ylf9AiZA9HwCUstvsYg
-         6tssUWKZp25YEHHE3kRX0wSoNqFps0sLQNBE4276+BCka+7PILtOjKGV7mxPqc5LGtcR
-         hgNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=9a1hL+PexI1M8Jq7K439+8ni7/mVSuwFTy8tepPE5ag=;
-        b=lTi/SSUGPpqFuDKTQZSHLQuC3FBY4QXAq06MgxEpqqDvRJGfnEqeLLRMX5ocfhukVH
-         KqJLh1OUnS+Ivjk8Qi+lEVnjHss621Y63/LCddHV/FPKcVSn6lnsKw+9H5ZDBFyWLQ1b
-         nXYrDk5zlvMDg9/fFd4uO8Lpfi2atZsEm5XTQfuPamY2dDB+JFKpw+g6KEIOb50R5CJ5
-         tene8vZ5AeAR50lyir4yy4f6gwa3MUDzz4TzGQruGqonb6BvxPC71VGfBur8ppuOTahP
-         nooVJ7ZCpetFKTrWWvzhK2pA+B8kB3fEpXk9NESxWWG5j1evgRFHw8VrJv/iIiixtTRf
-         S30w==
-X-Gm-Message-State: APjAAAVio8oPTu/KwvcKQpWsONZYdA6K8jV4TUnAlnJfuPMnkDZdEdy2
-        GYPQIHEa0m3FYuf1ul1KMbltQf3dy0XxnGEeA8i3Rw==
-X-Google-Smtp-Source: APXvYqxTXADDPAMH7cAkcCdHzl2vjK+aV5Roq/rNhp0U0HmtoXe1KfDsidebtQJoYG7+XHWaVda6PVL/JLS+4QQ0S+k=
-X-Received: by 2002:a19:7611:: with SMTP id c17mr2569127lff.86.1575379516980;
- Tue, 03 Dec 2019 05:25:16 -0800 (PST)
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E6iqdCRYte3HB+lK+qyaQjUGwN5HP9VlAZ5gNuMz5mA=;
+ b=ANmDGJCQk3jSmec7QnPtO1uy7X4sh+kzz+O/wuzUxs5fd+AovaWgs6oTzEL0q2HXRZMFz22ongKtzC75B4jL6xMVHX82++xAYcvn2dOO2Hq7dSzsj2t2HJcd7Ppqd+e7dF+ePEi/0Ec7iLd4fs1/t4m5cj5O4F3p6dxLZIfHaSs=
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
+ TY1SPR01MB2.jpnprd01.prod.outlook.com (52.133.161.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.12; Tue, 3 Dec 2019 13:27:40 +0000
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::74db:232e:f59e:83f2]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::74db:232e:f59e:83f2%3]) with mapi id 15.20.2516.003; Tue, 3 Dec 2019
+ 13:27:39 +0000
+From:   Chris Brandt <Chris.Brandt@renesas.com>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>
+Subject: RE: [PATCH 6/6] dt-bindings: spi: Document Renesas SPIBSC bindings
+Thread-Topic: [PATCH 6/6] dt-bindings: spi: Document Renesas SPIBSC bindings
+Thread-Index: AQHVqYxRjjQT6EPsk0uhvsHduSJ+e6eoIQoAgAA7ZYA=
+Date:   Tue, 3 Dec 2019 13:27:39 +0000
+Message-ID: <TY1PR01MB156262E8D33A0624457CAE248A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20191203034519.5640-1-chris.brandt@renesas.com>
+ <20191203034519.5640-7-chris.brandt@renesas.com>
+ <17e66541-41fb-26ed-c87b-15c59ab57bef@cogentembedded.com>
+In-Reply-To: <17e66541-41fb-26ed-c87b-15c59ab57bef@cogentembedded.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctYWJkMjliMjMtMTVkMC0xMWVhLWFhNTEtOTRlNmY3Njc5M2FlXGFtZS10ZXN0XGFiZDI5YjI0LTE1ZDAtMTFlYS1hYTUxLTk0ZTZmNzY3OTNhZWJvZHkudHh0IiBzej0iNjk2IiB0PSIxMzIxOTg1MzI1Nzg5ODY2OTgiIGg9ImJTaFlmT3U3bUZmWDBxL0Jtbks1NUFhSlYybz0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
+x-dg-rorf: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chris.Brandt@renesas.com; 
+x-originating-ip: [75.60.247.61]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 1947f291-f0a1-42e0-7c66-08d777f491e0
+x-ms-traffictypediagnostic: TY1SPR01MB2:
+x-microsoft-antispam-prvs: <TY1SPR01MB2F7B2FF101FF1A03AEA618A420@TY1SPR01MB2.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 02408926C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(39860400002)(366004)(376002)(396003)(136003)(199004)(189003)(7416002)(7736002)(305945005)(74316002)(8676002)(71190400001)(81156014)(8936002)(446003)(71200400001)(11346002)(25786009)(81166006)(52536014)(316002)(76116006)(5660300002)(66946007)(478600001)(54906003)(102836004)(26005)(6246003)(99286004)(4326008)(9686003)(76176011)(7696005)(6506007)(110136005)(4744005)(55016002)(33656002)(256004)(2906002)(186003)(14454004)(6436002)(66556008)(3846002)(6116002)(66446008)(66476007)(64756008)(86362001)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1SPR01MB2;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 9KXwGIDSGdFEgQABHZ4Hkls6+ZaJgDc2I8mzDrO12b6cEohJ/DY+AkTvPCPGU6yR/xeXlf8i1zNDPxlhSx+KmsyUJQ4RWxw3ujSy8VtHkh1JvZZz0uy+wBCwOS9YnxZ1y48bOeIkWhsGsP0vCw86OXWR8sk3X9p5CmBu6f6EhQutGIpknomrEAK09cTjnUE+m3M3vM87PkKiPUPjWXlwyKJf+zGuq35tPzxUi3aOX/CNS/W52diSFdUWLEoJsDRtK9keeaRkUayxbBBnknIZqJ7K+bCLDjSoE2Dsk+3+S6Kf+/ucYCNSZoBUIblcLyVvO1yXMJkve/pWuf5ABl5qhCd/yO12URLsK5YL9M3vkH5oWG9EfPrRBuars6PWcCSWK4mPz3unKbm15SRRf26NNtA5bfzbtYlAYjKXilsOSSBZLNaQ0qubHgO6MTmXrDti
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20191202193230.21310-1-sam@ravnborg.org> <20191202193230.21310-6-sam@ravnborg.org>
-In-Reply-To: <20191202193230.21310-6-sam@ravnborg.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 3 Dec 2019 14:25:04 +0100
-Message-ID: <CACRpkdb9c__FUBWE6j6g9uFwYRE6CrX8gu2gbHZ-xPpZ+YkF6Q@mail.gmail.com>
-Subject: Re: [PATCH v1 05/26] drm/panel: add drm_connector argument to get_modes()
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jitao Shi <jitao.shi@mediatek.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Stefan Mavrodiev <stefan@olimex.com>,
-        Robert Chiras <robert.chiras@nxp.com>,
-        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1947f291-f0a1-42e0-7c66-08d777f491e0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2019 13:27:39.8089
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tPnjXvmGvnBqZ5vRniYYFOEpW72iGcpN/fAJCvcN1oyBvHT3HWsPH8QwMjOvdxYDFq+I+JlDswxzuNUgN+gY6MZMjl/7JUZI7yTQoz0O/Zs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1SPR01MB2
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Dec 2, 2019 at 8:33 PM Sam Ravnborg <sam@ravnborg.org> wrote:
-
-> Today the bridge creates the drm_connector, but that is planned
-> to be moved to the display drivers.
-> To facilitate this, update drm_panel_funcs.get_modes() to
-> take drm_connector as an argument.
-> All panel drivers implementing get_modes() are updated.
->
-> Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: David Airlie <airlied@linux.ie>
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Jagan Teki <jagan@amarulasolutions.com>
-> Cc: Stefan Mavrodiev <stefan@olimex.com>
-> Cc: Robert Chiras <robert.chiras@nxp.com>
-> Cc: "Guido G=C3=BCnther" <agx@sigxcpu.org>
-> Cc: Purism Kernel Team <kernel@puri.sm>
-
-This looks reasonable to me.
-
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+T24gVHVlLCBEZWMgMywgMjAxOSwgU2VyZ2VpIFNodHlseW92IHdyb3RlOg0KPiAgICAgVGhhdCdz
+IG9ubHkgMiBhcmVhcywgbm90IDMuIDotKQ0KVGhhbmsgeW91IQ0KDQo+ID4gKy0gZmxhc2g6IHNo
+b3VsZCBiZSByZXByZXNlbnRlZCBieSBhIHN1Ym5vZGUgb2YgdGhlIFNQSUJTQyBub2RlLA0KPiA+
+ICsJIGl0cyAiY29tcGF0aWJsZSIgcHJvcGVydHkgY29udGFpbnMgImplZGVjLHNwaS1ub3IiIGlm
+IFNQSSBpcyB1c2VkLg0KPiANCj4gICAgIEFyZSBhbnkgb3RoZXIgZmxhc2ggdmFyaWFudHMgc3Vw
+cG9ydGVkPw0KDQpEbyB5b3UgbWVhbiBvdGhlciB0eXBlcyBvZiBTUEkgZmxhc2g/DQpJJ3ZlIG9u
+bHkgdXNlZCBTUEkgZmxhc2ggZGV2aWNlcyB0aGF0IGFyZSBhdXRvIGRldGVjdGVkIHVzaW5nIA0K
+ImplZGVjLHNwaS1ub3IiLg0KSW4gdGhlb3J5LCB5b3UgY291bGQgdXNlIG90aGVyIHR5cGVzIG9m
+IFNQSSBmbGFzaCBsaWtlICJhdG1lbCxhdDQ1IiwgYnV0DQpubyBvbmUgaGFzIGV2ZXJ5IHRyaWVk
+IGl0LCBtb3N0bHkgYmVjYXVzZSB0aGUgU29DIHdpbGwgb25seSBib290IGZyb20NCkpFREVDIGNv
+bXBhdGlibGUgU1BJIGZsYXNoLg0KDQpDaHJpcw0K
