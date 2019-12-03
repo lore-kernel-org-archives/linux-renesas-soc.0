@@ -2,121 +2,121 @@ Return-Path: <SRS0=x042=ZZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC857C432C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 08:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D63FC432C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 08:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DAA02064B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 08:18:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DE5D20726
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Dec 2019 08:34:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbfLCISL (ORCPT
+        id S1726107AbfLCIeB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 3 Dec 2019 03:18:11 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39478 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbfLCISK (ORCPT
+        Tue, 3 Dec 2019 03:34:01 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:35460 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbfLCIeB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Dec 2019 03:18:10 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 77so2148995oty.6;
-        Tue, 03 Dec 2019 00:18:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gBtOE1GdWf2jzATlRbrF8r8Pac6d5nQ4OzH7cwGAR94=;
-        b=b+m13b3CkvQfHjFMmIRLCWHuM3weg+qEBDCakTYL5msGW+URm18UNn563N0Kqw0ut0
-         xP+lH3/HGq2BMU+spjBBYcC9Cb+78tpW7yy3ySLggmRmVByCMwTFY/4Ucgo7Akiw1A75
-         mKq37EDgN3klAjpfcS9hSaEsn9XhutvYasivZbdaNzFibSZb9eIiq/vjmdYT4bGqye72
-         69xqvTZx6uZbXcVaAdCu+pl7J5bICfLM9oM9eT7tn7grjfm7cRGDm/txW5VVZiZgdymC
-         7cmXLlpLlGXahovpcl0/xVYTkBbjErfggae43lJxfDghOHpRjJJGJmo0ixWOGHuKJ+vc
-         ZRPQ==
-X-Gm-Message-State: APjAAAVRpMyApozG4Ibe0l5j8+hA7Rzmk6Tvm+WtGxmLkU6Kbl8uBdd3
-        jMSNYPA4mZ0hGvW5CIcvZwYnulIG/ppA1P/HhL8=
-X-Google-Smtp-Source: APXvYqzBuvWMWrwsEDDhZ2tcNfeX7um84g4QQ5ld7WP0VV8LQtkLVFpjZhnV4oe+jaJ4tYQpo65700XzoJh4+uCOqZU=
-X-Received: by 2002:a9d:3a37:: with SMTP id j52mr2353717otc.39.1575361089532;
- Tue, 03 Dec 2019 00:18:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20191127084253.16356-1-geert+renesas@glider.be>
- <20191127084253.16356-6-geert+renesas@glider.be> <585c4ad9-31fc-e87e-07c4-b8d6aa09c7e4@mentor.com>
-In-Reply-To: <585c4ad9-31fc-e87e-07c4-b8d6aa09c7e4@mentor.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 Dec 2019 09:17:58 +0100
-Message-ID: <CAMuHMdW-n8ao7t7156WYxRg7v8+ojXsRgHGUOax=9nBo2F5xOw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/7] gpio: Add GPIO Aggregator/Repeater driver
-To:     Harish Jenny K N <harish_kandiga@mentor.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tue, 3 Dec 2019 03:34:01 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 33C3D80478;
+        Tue,  3 Dec 2019 09:33:53 +0100 (CET)
+Date:   Tue, 3 Dec 2019 09:33:51 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Boris Brezillon <boris.brezillon@collabora.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Jagan Teki <jagan@amarulasolutions.com>,
+        Jitao Shi <jitao.shi@mediatek.com>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Purism Kernel Team <kernel@puri.sm>,
+        Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH v1 0/26] drm/panel infrastructure + backlight update
+Message-ID: <20191203083351.GA30687@ravnborg.org>
+References: <20191202193230.21310-1-sam@ravnborg.org>
+ <20191203072443.GK4730@pendragon.ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191203072443.GK4730@pendragon.ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10
+        a=9hfdOVt4OdhUXmoMrC4A:9 a=CjuIK1q_8ugA:10
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Harish,
+Hi Laurent.
 
-On Tue, Dec 3, 2019 at 6:42 AM Harish Jenny K N
-<harish_kandiga@mentor.com> wrote:
-> > +static int gpio_aggregator_probe(struct platform_device *pdev)
-> > +{
-> > +     struct device *dev = &pdev->dev;
-> > +     struct gpio_desc **descs;
-> > +     struct gpiochip_fwd *fwd;
-> > +     int i, n;
-> > +
-> > +     n = gpiod_count(dev, NULL);
-> > +     if (n < 0)
-> > +             return n;
-> > +
-> > +     descs = devm_kmalloc_array(dev, n, sizeof(*descs), GFP_KERNEL);
-> > +     if (!descs)
-> > +             return -ENOMEM;
-> > +
-> > +     for (i = 0; i < n; i++) {
-> > +             descs[i] = devm_gpiod_get_index(dev, NULL, i, GPIOD_ASIS);
->
-> can you please add this check as well as we need to return EPROBE_DEFER.
->
-> if (desc[i] == ERR_PTR(-ENOENT))
-> <                 return -EPROBE_DEFER;
+> > This patchset include a couple of different
+> > things - all related to panels.
+> > 
+> > - The panel callbacks are optional - so drop error if
+> >   callback is not present.
+> >  
+> > - Add support for backlight in drm_panel.
+> >   This allows us to make much simpler backlight
+> >   support to most panels.
+> >   The patchset include conversion of most of the
+> >   trivial cases.
+> > 
+> > - Drop drm_connector from drm_panel.
+> >   This change required many changes to most
+> >   panels and many bridges and display drivers.
+> >   This is by far the most invasive change in this patchset.
+> > 
+> > - Drop the unused get_timings() callback.
+> >   No users, so no need to keep it around.
+> > 
+> > With this patchset drm_panel_(attach|detach) are nop's
+> > but they are kept for now.
+> > 
+> > A few of these patches has been sent out before - but versioning
+> > started again from v1 - as the most patches are new.
+> > 
+> > I have tested the panel-simple changes, and thus some
+> > of the infrastructure changes.
+> > The testing was done on an earlier iteration - and I ended
+> > up submitting this as Laurent and others started to depend on it.
+> > Jitao has a patch to add more callbacks, and I wanted the
+> > simplification of the callbacks before we add more callbacks.
+> 
+> Great series !!! Thanks for working on this.
+And likewise - thanks for the detailed reviews!
 
-So gpiod_get_index() nevers return -EPROBE_DEFER, but returns -ENOENT
-instead?
-How can a driver distinguish between "GPIO not found" and "gpiochip driver
-not yet initialized"?
-Worse, so the *_optional() variants will return NULL in both cases, too, so
-the caller will always fall back to optional GPIO not present?
+I have a patch to remove drm_panel_(attach|detach),
+but they was not included because there is also a patchset floating
+that add more functionality to these.
 
-Or am I missing something?
+I will address the feedback, it looked all straighforward, and post
+an updated series.
 
-Gr{oetje,eeting}s,
+> drm/panel: remove get_timings
+I will drop this patch as we may need this later.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	Sam
