@@ -2,117 +2,154 @@ Return-Path: <SRS0=gsid=Z2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E616BC43603
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Dec 2019 16:50:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79FA7C43603
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Dec 2019 18:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B76D220659
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Dec 2019 16:50:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575478217;
-	bh=n2TpjN/OptBYY/G/BcEkXA4jaPFSNlIuaHlzaeouaPg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rgOeY4AZgWRZ6um/OupN8qqHsnypSDz8Bj3YCpGNaULl3C+AHXTkZ56yv4/y48OaT
-	 zSYPYjkqvze81+3hERAYpG2fghv8P8eWnfMe3559w/MKdz0qXA7TDjqaAbtDhtIfUk
-	 cp5jLoJKhwRR52xpKkZDap/XcPBVc2L5jYqobtZs=
+	by mail.kernel.org (Postfix) with ESMTP id 4C40C205F4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Dec 2019 18:26:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="WeN1DYFu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbfLDQuR (ORCPT
+        id S1729734AbfLDS00 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 Dec 2019 11:50:17 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33770 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbfLDQuR (ORCPT
+        Wed, 4 Dec 2019 13:26:26 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46915 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729134AbfLDR7g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Dec 2019 11:50:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=n2TpjN/OptBYY/G/BcEkXA4jaPFSNlIuaHlzaeouaPg=; b=WMWH7NGdkGTZzxQg9+gxsMtVB
-        y/0M2EFDget8RQRmOCU5Yf8U1nJ0hHmrDbtxavFx1rl7q8RM6/uMeJwJTWAtU1LFjznXK8yK/RG/3
-        tKbFKNgjtTIzT0p9RICpiVnv0yEfVjJ+A1KWmB8Fa5iGVI6IN1xKIVlOY7pFqZHqXBcVA=;
-Received: from fw-tnat-cam6.arm.com ([217.140.106.54] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1icXqq-0001IV-CM; Wed, 04 Dec 2019 16:50:08 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 02A22D00466; Wed,  4 Dec 2019 16:49:57 +0000 (GMT)
-Date:   Wed, 4 Dec 2019 16:49:56 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Chris Brandt <Chris.Brandt@renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 4/6] spi: Add SPIBSC driver
-Message-ID: <20191204164956.GW1998@sirena.org.uk>
-References: <20191203034519.5640-1-chris.brandt@renesas.com>
- <20191203034519.5640-5-chris.brandt@renesas.com>
- <20191203141944.GI1998@sirena.org.uk>
- <TY1PR01MB1562C00B477C60A6C264F2A28A5D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+        Wed, 4 Dec 2019 12:59:36 -0500
+Received: by mail-lf1-f65.google.com with SMTP id a17so237943lfi.13
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Dec 2019 09:59:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=NnAlVzxQqhMroKn01NkSHhH1AiWzcz1PmI9bavfgrJc=;
+        b=WeN1DYFuz6qbTSF8zkhoLbKbzuVNfXk+eheYaSR5sl8l7VT6/FMYDWq5WGPRfvnH5J
+         H8MNUBNoQSqE+4vcLxWE/RWUdaD5IJYzcwo2JfK9YuWz41unCrfR+Qle48w3QCILjEWg
+         Ez8MnNPMhxsbPuMM85br73MnhlWzFpCKhze2qQ8EDeAAHJIQrD+3im361r2/IB+J/n2t
+         9igTyAlwpmR73SdwjOSYIC//gTGuSGn/CSdokQtjL7m+3KBVu3fK4kUDiDumG+jiva4h
+         AzZMu0hKHEdyM7AjQM9lk9YJfzTS8vCI0Z5Ib+M7uKWvqfRHH/Qqvyf7taVRTPVuB0cA
+         2BTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=NnAlVzxQqhMroKn01NkSHhH1AiWzcz1PmI9bavfgrJc=;
+        b=ck/brhiab2CWuZmggjacOCiHzQC4Q/W/qTNh9ehqvvac+SkcaLJmFl/Mt58oEQoxb3
+         gJLTssR6Hog0MfHh1FaDvayCKdtgpo4gnJtd2anOwDrKWUME5iX5VhXfMvymlKrgWxwz
+         Rob01jNTdYm75MlZSvE2STFqYURYSREd3Bkh8vAq3Apm0Urnz7PQutYFYs097RrIXz8C
+         g49n6T4O5tNvyneZeO8kMoW6MdKx5qJKeG2CcBRskGv6fWNJ3886gexjr3ioggTeVloO
+         53HK1nWM7ewqYMbZd6FFhPKXoU1I3iZU11JQXiyfWUjHqBU9l41T4ZeGDXmuQqFOsfL7
+         DeqQ==
+X-Gm-Message-State: APjAAAW+YyINvVsIhn0JwR8D2RPe1YfiLiyNGLclki6t8rIuIG4UtH0o
+        sKBnyUxi7t4mdClSriTYkai/7w==
+X-Google-Smtp-Source: APXvYqxAicaegGYqhgVeHIRwqaquF9yndaug/Pn5IjDuFHRTfXfishhbMH/UMK7nJZNlprMmTtCHBg==
+X-Received: by 2002:ac2:5310:: with SMTP id c16mr2918290lfh.101.1575482374477;
+        Wed, 04 Dec 2019 09:59:34 -0800 (PST)
+Received: from localhost (h-93-159.A463.priv.bahnhof.se. [46.59.93.159])
+        by smtp.gmail.com with ESMTPSA id q25sm3661450lji.7.2019.12.04.09.59.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 09:59:33 -0800 (PST)
+Date:   Wed, 4 Dec 2019 18:59:33 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi: remove whitelist for internal DMAC
+Message-ID: <20191204175933.GD28879@bigcity.dyn.berto.se>
+References: <20191203194859.917-1-wsa@the-dreams.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Y974o0GblB/Ae/yP"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <TY1PR01MB1562C00B477C60A6C264F2A28A5D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-X-Cookie: Cleanliness is next to impossible.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191203194859.917-1-wsa@the-dreams.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Wolfram,
 
---Y974o0GblB/Ae/yP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your work.
 
-On Wed, Dec 04, 2019 at 03:51:48PM +0000, Chris Brandt wrote:
-> On Tue, Dec 3, 2019, Mark Brown wrote:
+On 2019-12-03 20:48:59 +0100, Wolfram Sang wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> We know now that there won't be Gen3 SoCs with both, SYS-DMAC and
+> internal DMAC. We removed the blacklisting for SYS-DMAC already, so we
+> can remove the whitelisting for internal DMAC, too. This makes adding
+> new SoCs easier. We keep the quirk handling, of course.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-> > Looking at a bunch of the stuff here it looks like you could benefit fr=
-om
-> > regmap, it's got lots of debug infrastructure.
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-> Thank you for the suggestion, but I looked into using regmap, and there=
-=20
-> are a lot of drivers that use it, but I don't think it's going to work=20
-> well for me.
-> Regmap assumes that all the registers will be the same size. I have to=20
-> have functions that write with different widths (8/16/32) for a reason.
+> ---
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 23 ++++---------------
+>  1 file changed, 4 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> index 68fb39a74b8b..47ac53e91241 100644
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -298,38 +298,23 @@ static const struct tmio_mmc_dma_ops renesas_sdhi_internal_dmac_dma_ops = {
+>   * Whitelist of specific R-Car Gen3 SoC ES versions to use this DMAC
+>   * implementation as others may use a different implementation.
+>   */
+> -static const struct soc_device_attribute soc_whitelist[] = {
+> -	/* specific ones */
+> +static const struct soc_device_attribute soc_dma_quirks[] = {
+>  	{ .soc_id = "r7s9210",
+>  	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ADDR_MODE_FIXED_ONLY) },
+>  	{ .soc_id = "r8a7795", .revision = "ES1.*",
+>  	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
+>  	{ .soc_id = "r8a7796", .revision = "ES1.0",
+>  	  .data = (void *)BIT(SDHI_INTERNAL_DMAC_ONE_RX_ONLY) },
+> -	/* generic ones */
+> -	{ .soc_id = "r8a774a1" },
+> -	{ .soc_id = "r8a774b1" },
+> -	{ .soc_id = "r8a774c0" },
+> -	{ .soc_id = "r8a77470" },
+> -	{ .soc_id = "r8a7795" },
+> -	{ .soc_id = "r8a7796" },
+> -	{ .soc_id = "r8a77965" },
+> -	{ .soc_id = "r8a77970" },
+> -	{ .soc_id = "r8a77980" },
+> -	{ .soc_id = "r8a77990" },
+> -	{ .soc_id = "r8a77995" },
+>  	{ /* sentinel */ }
+>  };
+>  
+>  static int renesas_sdhi_internal_dmac_probe(struct platform_device *pdev)
+>  {
+> -	const struct soc_device_attribute *soc = soc_device_match(soc_whitelist);
+> +	const struct soc_device_attribute *soc = soc_device_match(soc_dma_quirks);
+>  	struct device *dev = &pdev->dev;
+>  
+> -	if (!soc)
+> -		return -ENODEV;
+> -
+> -	global_flags |= (unsigned long)soc->data;
+> +	if (soc)
+> +		global_flags |= (unsigned long)soc->data;
+>  
+>  	dev->dma_parms = devm_kzalloc(dev, sizeof(*dev->dma_parms), GFP_KERNEL);
+>  	if (!dev->dma_parms)
+> -- 
+> 2.20.1
+> 
 
-You *can* have more than one regmap for a device, or if it really
-only is one or two registers open code accesses to just those
-registers.
-
---Y974o0GblB/Ae/yP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3n47IACgkQJNaLcl1U
-h9Be3wf/WcxNfLSB6o1qW6xEZEOwlzwVHkE9O/D4Er+nOK513sA9f2VcM1ApH5Zu
-ZQR0no8iK2XQgLRnuaKp7MjoI4tuWCR8LBYAC4eqsrgFXmaklbzHuzAnA/sVJgPA
-bVk/FbV0XZzqLgKH8V7D1sdpSbWGgU4rb61/8vCAfEz1P4zF6HGcoDNDD14RAeEa
-9ZIWAHioZc9JhnijqqJZiWjSUQH5aUShFqvtuCfpl3IYb0hQ97uZWkw34SK+TV4G
-5cJsV52wGp22whXzizQpxUweaTQPRlMyMK6uVo9IlWRjTSdoiVF+T2v1taFo81tC
-G6nx9Uxh9iA2HQmB2Rjd1ypWgKPV3g==
-=rw0F
------END PGP SIGNATURE-----
-
---Y974o0GblB/Ae/yP--
+-- 
+Regards,
+Niklas Söderlund
