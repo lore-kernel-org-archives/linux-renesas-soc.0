@@ -2,34 +2,34 @@ Return-Path: <SRS0=VtlK=Z3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC4AC2D0C0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Dec 2019 13:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C14C43603
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Dec 2019 13:59:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 017872465A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Dec 2019 13:59:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9592F2464D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Dec 2019 13:59:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729503AbfLEN7f (ORCPT
+        id S1729530AbfLEN7i (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 Dec 2019 08:59:35 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:33308 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729534AbfLEN7f (ORCPT
+        Thu, 5 Dec 2019 08:59:38 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:55348 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729531AbfLEN7i (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Dec 2019 08:59:35 -0500
+        Thu, 5 Dec 2019 08:59:38 -0500
 Received: from ramsan ([84.195.182.253])
-        by baptiste.telenet-ops.be with bizsmtp
-        id aDzY210065USYZQ01DzYcN; Thu, 05 Dec 2019 14:59:33 +0100
+        by laurent.telenet-ops.be with bizsmtp
+        id aDzY210065USYZQ01DzYQ6; Thu, 05 Dec 2019 14:59:36 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1icrfI-0002Kv-2N; Thu, 05 Dec 2019 14:59:32 +0100
+        id 1icrfI-0002Ks-1D; Thu, 05 Dec 2019 14:59:32 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1icrfI-0001x8-12; Thu, 05 Dec 2019 14:59:32 +0100
+        id 1icrfH-0001x4-VR; Thu, 05 Dec 2019 14:59:31 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
@@ -38,165 +38,49 @@ Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/6] arm64: dts: renesas: r8a77961: Add GPIO nodes
-Date:   Thu,  5 Dec 2019 14:59:26 +0100
-Message-Id: <20191205135930.7454-3-geert+renesas@glider.be>
+Subject: [PATCH 0/6] arm64: dts: renesas: r8a77961: Add more device nodes
+Date:   Thu,  5 Dec 2019 14:59:24 +0100
+Message-Id: <20191205135930.7454-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191205135930.7454-1-geert+renesas@glider.be>
-References: <20191205135930.7454-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device nodes for the GPIO controllers on the Renesas R-Car M3-W+
-(r8a77961) SoC.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Test procedure (with "[PATCH 3/6] arm64: dts: renesas: r8a77961: Add
-RAVB node"):
-  1. "ifconfig eth0 1.2.3.4",
-  2. "watch grep e6052000.gpio /proc/interrupts",
-  3. See interrupt count increase when Ethernet link goes up.
----
- arch/arm64/boot/dts/renesas/r8a77961.dtsi | 85 +++++++++++++++++++++--
- 1 file changed, 80 insertions(+), 5 deletions(-)
+This patch series broadens support for the R-Car M3-W+ (aka R-Car M3-W
+ES3.0) Soc (R8A77961), by adding more device nodes to its DT source
+file, up to what can be tested reasonably using remote access.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77961.dtsi b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-index ea2c6445977f3d99..10e768ce2bc70e0c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-@@ -328,49 +328,124 @@
- 			status = "disabled";
- 		};
- 
-+		gpio0: gpio@e6050000 {
-+			compatible = "renesas,gpio-r8a77961",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6050000 0 0x50>;
-+			interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 0 16>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 912>;
-+			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
-+			resets = <&cpg 912>;
-+		};
-+
-+		gpio1: gpio@e6051000 {
-+			compatible = "renesas,gpio-r8a77961",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6051000 0 0x50>;
-+			interrupts = <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 32 29>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 911>;
-+			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
-+			resets = <&cpg 911>;
-+		};
-+
- 		gpio2: gpio@e6052000 {
-+			compatible = "renesas,gpio-r8a77961",
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6052000 0 0x50>;
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
- 			gpio-controller;
-+			gpio-ranges = <&pfc 0 64 15>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--			/* placeholder */
-+			clocks = <&cpg CPG_MOD 910>;
-+			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
-+			resets = <&cpg 910>;
- 		};
- 
- 		gpio3: gpio@e6053000 {
-+			compatible = "renesas,gpio-r8a77961",
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6053000 0 0x50>;
-+			interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
- 			gpio-controller;
-+			gpio-ranges = <&pfc 0 96 16>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--			/* placeholder */
-+			clocks = <&cpg CPG_MOD 909>;
-+			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
-+			resets = <&cpg 909>;
- 		};
- 
- 		gpio4: gpio@e6054000 {
-+			compatible = "renesas,gpio-r8a77961",
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6054000 0 0x50>;
-+			interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
- 			gpio-controller;
-+			gpio-ranges = <&pfc 0 128 18>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--			/* placeholder */
-+			clocks = <&cpg CPG_MOD 908>;
-+			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
-+			resets = <&cpg 908>;
- 		};
- 
- 		gpio5: gpio@e6055000 {
-+			compatible = "renesas,gpio-r8a77961",
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055000 0 0x50>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
- 			gpio-controller;
-+			gpio-ranges = <&pfc 0 160 26>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--			/* placeholder */
-+			clocks = <&cpg CPG_MOD 907>;
-+			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
-+			resets = <&cpg 907>;
- 		};
- 
- 		gpio6: gpio@e6055400 {
-+			compatible = "renesas,gpio-r8a77961",
-+				     "renesas,rcar-gen3-gpio";
- 			reg = <0 0xe6055400 0 0x50>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
- 			#gpio-cells = <2>;
- 			gpio-controller;
-+			gpio-ranges = <&pfc 0 192 32>;
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--			/* placeholder */
-+			clocks = <&cpg CPG_MOD 906>;
-+			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
-+			resets = <&cpg 906>;
-+		};
-+
-+		gpio7: gpio@e6055800 {
-+			compatible = "renesas,gpio-r8a77961",
-+				     "renesas,rcar-gen3-gpio";
-+			reg = <0 0xe6055800 0 0x50>;
-+			interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-+			#gpio-cells = <2>;
-+			gpio-controller;
-+			gpio-ranges = <&pfc 0 224 4>;
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+			clocks = <&cpg CPG_MOD 905>;
-+			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
-+			resets = <&cpg 905>;
- 		};
- 
- 		pfc: pin-controller@e6060000 {
+This has been tested on a Salvator-XS development board.
+More details can be found in the individual patches.
+
+To be queued in renesas-devel for v5.6.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (6):
+  arm64: dts: renesas: r8a77961: Add RWDT node
+  arm64: dts: renesas: r8a77961: Add GPIO nodes
+  arm64: dts: renesas: r8a77961: Add RAVB node
+  arm64: dts: renesas: r8a77961: Add SYS-DMAC nodes
+  arm64: dts: renesas: r8a77961: Add I2C nodes
+  arm64: dts: renesas: r8a77961: Add SDHI nodes
+
+ arch/arm64/boot/dts/renesas/r8a77961.dtsi | 390 +++++++++++++++++++++-
+ 1 file changed, 377 insertions(+), 13 deletions(-)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
