@@ -2,93 +2,126 @@ Return-Path: <SRS0=tds5=Z4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5B3C2BBE2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Dec 2019 14:05:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAB5C43603
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Dec 2019 14:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB57720706
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Dec 2019 14:05:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BCAE20706
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Dec 2019 14:05:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PAW+EXgH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726284AbfLFOFU (ORCPT
+        id S1726272AbfLFOF0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 6 Dec 2019 09:05:20 -0500
-Received: from pbmsgap02.intersil.com ([192.157.179.202]:49592 "EHLO
-        pbmsgap02.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbfLFOFU (ORCPT
+        Fri, 6 Dec 2019 09:05:26 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42898 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726195AbfLFOF0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Dec 2019 09:05:20 -0500
-Received: from pps.filterd (pbmsgap02.intersil.com [127.0.0.1])
-        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id xB6Dh7bj000784;
-        Fri, 6 Dec 2019 08:43:07 -0500
-Received: from pbmxdp01.intersil.corp (pbmxdp01.pb.intersil.com [132.158.200.222])
-        by pbmsgap02.intersil.com with ESMTP id 2wkkffmn5j-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 06 Dec 2019 08:43:07 -0500
-Received: from pbmxdp02.intersil.corp (132.158.200.223) by
- pbmxdp01.intersil.corp (132.158.200.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.1531.3; Fri, 6 Dec 2019 08:43:06 -0500
-Received: from localhost.localdomain (132.158.202.109) by
- pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Fri, 6 Dec 2019 08:43:05 -0500
-From:   Chris Brandt <chris.brandt@renesas.com>
-To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 3/6] clk: renesas: r7s9210: Add SPIBSC clock
-Date:   Fri, 6 Dec 2019 08:41:59 -0500
-Message-ID: <20191206134202.18784-4-chris.brandt@renesas.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191206134202.18784-1-chris.brandt@renesas.com>
-References: <20191206134202.18784-1-chris.brandt@renesas.com>
+        Fri, 6 Dec 2019 09:05:26 -0500
+Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BED5E2E5;
+        Fri,  6 Dec 2019 15:05:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1575641124;
+        bh=6ONuODhEjMzl4kqT+4jamlywuUxfVqkfkFDu+SUHM5U=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PAW+EXgHiGhq0+FQ9oVA4+WGG8w0j7IRksubi3QpNpOyHwExLsAQ5WiU/ugNwdf5m
+         Cp9VaXibgGmjSJI0j1V/zcjnP30NttoPqVL+G/w3pgsyWWJYhiDRB9vSX9vlC01XRA
+         /fT7i4o9tU+rahXx73RTKNYgv+7B3kHAf6O7VhrM=
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+To:     Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH 1/3] media: i2c: max9286: Remove redundant max9286_i2c_mux_state
+Date:   Fri,  6 Dec 2019 14:05:18 +0000
+Message-Id: <20191206140520.10457-1-kieran.bingham@ideasonboard.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191116165034.39001-1-jacopo+renesas@jmondi.org>
+References: <20191116165034.39001-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-12-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=987
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911200000 definitions=main-1912060118
-X-Proofpoint-Spam-Reason: mlx
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The SPIBSC clocks are marked as critical because for XIP systems, the
-kernel will be running from QSPI flash and cannot be turned off.
+While simplifying the i2c-mux state, the states were stored in an enum
+(initially there were three).
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
-v2:
- * Removed spibsc from critical clock section
----
- drivers/clk/renesas/r7s9210-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+This has now simplified down to 2 states, open and closed - and can be
+represented easily in a bool.
 
-diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-index 14093503c085..261d88ae990b 100644
---- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
-+++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -93,6 +93,7 @@ static const struct mssr_mod_clk r7s9210_mod_clks[] __initconst = {
- 	DEF_MOD_STB("ether1",	 64,	R7S9210_CLK_B),
- 	DEF_MOD_STB("ether0",	 65,	R7S9210_CLK_B),
+It 'could' also be represented within the mux_channel, but I don't want
+to pollute that further than the '-1' value which is already stored in
+there to represent no channel selected.
+
+Remove the max9286_i2c_mux_state and replace with a bool mux_open flag,
+and move the location within the private struct to be more appropriate.
+
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+---
+ drivers/media/i2c/max9286.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+index e5b3f78318db..6ea08fd87811 100644
+--- a/drivers/media/i2c/max9286.c
++++ b/drivers/media/i2c/max9286.c
+@@ -144,10 +144,10 @@ struct max9286_priv {
+ 	struct media_pad pads[MAX9286_N_PADS];
+ 	struct regulator *regulator;
+ 	bool poc_enabled;
+-	int mux_state;
  
-+	DEF_MOD_STB("spibsc",	 83,	R7S9210_CLK_P1),
- 	DEF_MOD_STB("i2c3",	 84,	R7S9210_CLK_P1),
- 	DEF_MOD_STB("i2c2",	 85,	R7S9210_CLK_P1),
- 	DEF_MOD_STB("i2c1",	 86,	R7S9210_CLK_P1),
+ 	struct i2c_mux_core *mux;
+ 	unsigned int mux_channel;
++	bool mux_open;
+ 
+ 	struct v4l2_ctrl_handler ctrls;
+ 
+@@ -221,11 +221,6 @@ static int max9286_write(struct max9286_priv *priv, u8 reg, u8 val)
+  * I2C Multiplexer
+  */
+ 
+-enum max9286_i2c_mux_state {
+-	MAX9286_MUX_CLOSED = 0,
+-	MAX9286_MUX_OPEN,
+-};
+-
+ static void max9286_i2c_mux_configure(struct max9286_priv *priv, u8 conf)
+ {
+ 	max9286_write(priv, 0x0a, conf);
+@@ -242,7 +237,7 @@ static void max9286_i2c_mux_open(struct max9286_priv *priv)
+ 	/* Open all channels on the MAX9286 */
+ 	max9286_i2c_mux_configure(priv, 0xff);
+ 
+-	priv->mux_state = MAX9286_MUX_OPEN;
++	priv->mux_open = true;
+ }
+ 
+ static void max9286_i2c_mux_close(struct max9286_priv *priv)
+@@ -254,7 +249,7 @@ static void max9286_i2c_mux_close(struct max9286_priv *priv)
+ 	 */
+ 	max9286_i2c_mux_configure(priv, 0x00);
+ 
+-	priv->mux_state = MAX9286_MUX_CLOSED;
++	priv->mux_open = false;
+ 	priv->mux_channel = -1;
+ }
+ 
+@@ -263,7 +258,7 @@ static int max9286_i2c_mux_select(struct i2c_mux_core *muxc, u32 chan)
+ 	struct max9286_priv *priv = i2c_mux_priv(muxc);
+ 
+ 	/* Channel select is disabled when configured in the opened state. */
+-	if (priv->mux_state == MAX9286_MUX_OPEN)
++	if (priv->mux_open)
+ 		return 0;
+ 
+ 	if (priv->mux_channel == chan)
 -- 
-2.23.0
+2.20.1
 
