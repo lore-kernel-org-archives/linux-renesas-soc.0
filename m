@@ -2,114 +2,94 @@ Return-Path: <SRS0=tds5=Z4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E66EC2BBE2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Dec 2019 14:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5C6C2D0C3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Dec 2019 14:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68DA320706
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Dec 2019 14:05:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DhPjDqoi"
+	by mail.kernel.org (Postfix) with ESMTP id F114D206DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Dec 2019 14:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbfLFOF2 (ORCPT
+        id S1726250AbfLFOIY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 6 Dec 2019 09:05:28 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42912 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbfLFOF2 (ORCPT
+        Fri, 6 Dec 2019 09:08:24 -0500
+Received: from pbmsgap02.intersil.com ([192.157.179.202]:49756 "EHLO
+        pbmsgap02.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726234AbfLFOIY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Dec 2019 09:05:28 -0500
-Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7CF2FA2E;
-        Fri,  6 Dec 2019 15:05:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1575641125;
-        bh=sHrg5QqErgwcEvTDoXZYgt8UYYVwPL4m/mdTYb9qhF0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DhPjDqoiKafKGtJFG+2lMO0Xhig/BWahfsxjZ6a1xfGVq19kuP7VzNsuOudqEqger
-         j3YL+onwcrrb9zBZLRbPmmFcH1D4uoAP5u9bdoGodMiw6fecOaPZgYZK4HwaagJH8x
-         kz61z/X46wZCJ98w+VpuggJLpQAiv9NK0iwxQ7Zo=
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 3/3] media: i2c: max9286: Provide optional enable-gpio
-Date:   Fri,  6 Dec 2019 14:05:20 +0000
-Message-Id: <20191206140520.10457-3-kieran.bingham@ideasonboard.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191206140520.10457-1-kieran.bingham@ideasonboard.com>
-References: <20191116165034.39001-1-jacopo+renesas@jmondi.org>
- <20191206140520.10457-1-kieran.bingham@ideasonboard.com>
+        Fri, 6 Dec 2019 09:08:24 -0500
+Received: from pps.filterd (pbmsgap02.intersil.com [127.0.0.1])
+        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id xB6DhCkB000787;
+        Fri, 6 Dec 2019 08:43:42 -0500
+Received: from pbmxdp01.intersil.corp (pbmxdp01.pb.intersil.com [132.158.200.222])
+        by pbmsgap02.intersil.com with ESMTP id 2wkkffmn5y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 06 Dec 2019 08:43:41 -0500
+Received: from pbmxdp02.intersil.corp (132.158.200.223) by
+ pbmxdp01.intersil.corp (132.158.200.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.1.1531.3; Fri, 6 Dec 2019 08:43:40 -0500
+Received: from localhost.localdomain (132.158.202.109) by
+ pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server id
+ 15.1.1531.3 via Frontend Transport; Fri, 6 Dec 2019 08:43:39 -0500
+From:   Chris Brandt <chris.brandt@renesas.com>
+To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Chris Brandt <chris.brandt@renesas.com>
+Subject: [PATCH v2 6/6] ARM: dts: gr-peach: Enable SPIBSC
+Date:   Fri, 6 Dec 2019 08:42:02 -0500
+Message-ID: <20191206134202.18784-7-chris.brandt@renesas.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191206134202.18784-1-chris.brandt@renesas.com>
+References: <20191206134202.18784-1-chris.brandt@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-12-06_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=879
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911200000 definitions=main-1912060118
+X-Proofpoint-Spam-Reason: mlx
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The MAX9286 has a negated PWDN line which must be raised to enable the
-device.  On the Eagle-V3M this pin is connected to a GPIO on the
-io_expander.
+The SPIBSC is used to memory map the QSPI device for XIP of the kernel and
+root file system.
 
-Provide an enable-gpio dt property to specify the link, and ensure that
-the line is handled in the driver accordingly.
-
-This can also provide the abiltiy to manage low power states and
-runtime-pm at a later date by fully powering down the chip.
-
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 ---
- drivers/media/i2c/max9286.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/arm/boot/dts/r7s72100-gr-peach.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-index c34e7b5c7447..67065cd99d8d 100644
---- a/drivers/media/i2c/max9286.c
-+++ b/drivers/media/i2c/max9286.c
-@@ -13,6 +13,7 @@
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/fwnode.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/gpio/driver.h>
- #include <linux/i2c.h>
- #include <linux/i2c-mux.h>
-@@ -143,6 +144,7 @@ struct max9286_source {
+diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+index fe1a4aa4d7cb..df3c37b4fa31 100644
+--- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
++++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
+@@ -116,6 +116,11 @@
+ 	status = "okay";
+ };
  
- struct max9286_priv {
- 	struct i2c_client *client;
-+	struct gpio_desc *gpiod_pwdn;
- 	struct v4l2_subdev sd;
- 	struct media_pad pads[MAX9286_N_PADS];
- 	struct regulator *regulator;
-@@ -1044,6 +1046,14 @@ static int max9286_probe(struct i2c_client *client)
- 	if (ret)
- 		return ret;
- 
-+	priv->gpiod_pwdn = devm_gpiod_get_optional(&client->dev, "enable",
-+						   GPIOD_OUT_HIGH);
-+	if (IS_ERR(priv->gpiod_pwdn))
-+		return PTR_ERR(priv->gpiod_pwdn);
++/* Used for XIP of kernel and root file system. */
++&spibsc0 {
++	status = "okay";
++};
 +
-+	gpiod_set_consumer_name(priv->gpiod_pwdn, "max9286-pwdn");
-+	gpiod_set_value_cansleep(priv->gpiod_pwdn, 1);
-+
- 	/*
- 	 * It is possible to set up the power regulator from the GPIO lines,
- 	 * so it needs to be set up early.
-@@ -1117,6 +1127,9 @@ static int max9286_remove(struct i2c_client *client)
- 	regulator_put(priv->regulator);
- 
- 	max9286_cleanup_dt(priv);
-+
-+	gpiod_set_value_cansleep(priv->gpiod_pwdn, 0);
-+
- 	kfree(priv);
- 
- 	return 0;
+ &ether {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&ether_pins>;
 -- 
-2.20.1
+2.23.0
 
