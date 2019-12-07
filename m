@@ -1,122 +1,121 @@
-Return-Path: <SRS0=tds5=Z4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=Ev5K=Z5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A276C3F68F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Dec 2019 19:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B01C43603
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  7 Dec 2019 10:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DF132173E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Dec 2019 19:49:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="I8MOIuol"
+	by mail.kernel.org (Postfix) with ESMTP id 0049B24677
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  7 Dec 2019 10:33:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1575714837;
+	bh=SuakieLmzH/APRkH24GmeiDVGJkhpgM0p3HYv5+YVNc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=WxUh7a7J1Qf2B3iXMqp+B3hxv2SFaHaeGDWtpTV3l/RcfOQoMleisW97UdOdIfWUM
+	 qIsEjs9L9cZSz4+Sk4XSxWi6RP3QsT/u87AQyTmrk3uODqTyrzyU8YBT/6lAar6sYl
+	 P9Ov8Q4f4o4mwfZaes16YVFt/QUBeaGBb0DvVVLY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbfLFTtk (ORCPT
+        id S1726400AbfLGKdx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 6 Dec 2019 14:49:40 -0500
-Received: from mail-eopbgr1400104.outbound.protection.outlook.com ([40.107.140.104]:36171
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726325AbfLFTtk (ORCPT
+        Sat, 7 Dec 2019 05:33:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725992AbfLGKdx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Dec 2019 14:49:40 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ch9UQrbrUPPG0nB8ZNlSSzkqsKKpXirydgCOcmA3qDgWoTskqP9B6+NhJ0BCZ5dVIh81wiqMnPDT79lv+91HcIxewGE+loEvSJHnmuUJIcv9l5ByaeZxTl4Uo6s+ZjkJyZWO6E1GgAh+otI+INgGhpdtnDqbliuGzCCiSdIDFguWUrd5SalAne7UD3owwgNrum6t2A243emyu4goOuR7igVWuu9ch/cO6SkL7G581fzmqT7CpcY8Pe+FMUBu5NYKX5uvE4uWdfIWNF42eI5ndM7xfXwyyb86Y/sGIaN3NvkGEvaBIwnRKJAKOOtzRe6waqN9N1w8m9h3AhiW8ekt1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gyGjU7T6WutyAvOkNHgc4SGQpxnvbKyXVi72RF4mXN0=;
- b=hWVgc0bOr1sTfPcWMcZKu/rYEW+6bNzuT7JGtu+DnZNS3QyiJIPd9uGr/yc1M1lA4pkxyN32piWlASbV4K7uzSDdFOtHVaunyd6Hhv0zsLlL0ZccZxDs3TDIBs1nFTiN8HiQCdtsVZBk/LK94nIfQOP5FmZBlgGxM45VOF86b3Qys5f7tTaRunF7WAq94riO8PF8uLDsaa7hOKt2LWDsjTH0uleeXRucbFCSuK54z16EXfRY/vRVUuEL71a/VtnJSinsGLjUsukLM3SsAgIY8zt/dN5zQ7zkMzM3uYb3z/u7FP39JKPKZ39NCfV6tUr7HcGDi/GRrrYNGNUnRYXIBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gyGjU7T6WutyAvOkNHgc4SGQpxnvbKyXVi72RF4mXN0=;
- b=I8MOIuol4RDN8Gk7j2z9N1kFQBXIgzBakIchV6NB+y+fWgWQqvNK1pB2r5/Cck5It8uB6BxudPPqrYoblnvBTo/PN09bA+9Ybnw2FCJk6B9WTuS3M95+wZOPexe2rvft5yBqTrIzQRgN2CxUvonrCDwXBqFVENcVROAserMGJlM=
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
- TY1PR01MB1643.jpnprd01.prod.outlook.com (52.133.163.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.17; Fri, 6 Dec 2019 19:49:34 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2%3]) with mapi id 15.20.2516.003; Fri, 6 Dec 2019
- 19:49:34 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>
-Subject: RE: [PATCH v2 3/6] clk: renesas: r7s9210: Add SPIBSC clock
-Thread-Topic: [PATCH v2 3/6] clk: renesas: r7s9210: Add SPIBSC clock
-Thread-Index: AQHVrDsZnI+SMLkmZkyW5+1FSLVd3qetcNKAgAAShiA=
-Date:   Fri, 6 Dec 2019 19:49:34 +0000
-Message-ID: <TY1PR01MB1562645184402F7C01CE36958A5F0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20191206134202.18784-1-chris.brandt@renesas.com>
- <20191206134202.18784-4-chris.brandt@renesas.com>
- <5644c687-7692-53f2-f01e-0e7bf62464ea@cogentembedded.com>
-In-Reply-To: <5644c687-7692-53f2-f01e-0e7bf62464ea@cogentembedded.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctODQ5ZDdkZDEtMTg2MS0xMWVhLWFhNTItOTRlNmY3Njc5M2FlXGFtZS10ZXN0XDg0OWQ3ZGQzLTE4NjEtMTFlYS1hYTUyLTk0ZTZmNzY3OTNhZWJvZHkudHh0IiBzej0iNjg5IiB0PSIxMzIyMDEzNTM3MTQ0MTg1ODkiIGg9IjlzS0dEQ0xiVktiaWd4VjIwQnM0NTg2ZnRjaz0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e6c8f820-1813-40e3-8c57-08d77a856b70
-x-ms-traffictypediagnostic: TY1PR01MB1643:
-x-microsoft-antispam-prvs: <TY1PR01MB1643437E672D90FEACCBC5148A5F0@TY1PR01MB1643.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0243E5FD68
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(366004)(346002)(376002)(396003)(136003)(189003)(199004)(9686003)(76176011)(99286004)(478600001)(81166006)(81156014)(55016002)(7696005)(8936002)(186003)(5660300002)(305945005)(74316002)(8676002)(229853002)(2906002)(102836004)(53546011)(6506007)(66946007)(33656002)(52536014)(7416002)(66446008)(64756008)(66556008)(66476007)(76116006)(86362001)(71200400001)(71190400001)(4744005)(54906003)(316002)(110136005)(26005)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1643;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: fiaYp+NTbST/jqAv5SDWDFSh10U6W1RT2pRmDViYtD7uBfroouJrNtIU4gQJqBWPg1uJ+kDEspwSbl+SJE5ZwYsyiFyrFrBo6NRbJbvEWdmW86ol7Vxtr9i7moT4aOmJ8vY0K89U3xViSDc34PJziFPbI71PB5nX5pAB20LzgQNFZuXClXUPc7eSxeV/NL971eUx3nD+Of2aWHxbVwHoPAd2smQjNAmpXq/r+7/PZfK1tBrFytL8d1vWoiQvQny6lUfGg4KLDkH0iU5UKnSSBWbs6VC26CvlBd+wx6RD9mrhyEJ+h/ll1JJYyXrxZQYyb0UWHy5CG1S1XbNiV/1mVRgKXJBmB9YB/WELmNAZKAtN1oX//bQC3dYjQXduQ5r+4MHFu25xudE5ph6E+dnnYo2iMR9WDFTXBpZcTxp0Me1U/h1Q0NceiYNXCFz/6jEW
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Sat, 7 Dec 2019 05:33:53 -0500
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01E3424673;
+        Sat,  7 Dec 2019 10:33:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575714832;
+        bh=SuakieLmzH/APRkH24GmeiDVGJkhpgM0p3HYv5+YVNc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IDF+m0ScfxXqIXX35QX4SQRSrqb7oX3ILXORqiFbrHXbogC6e4NSV+ypIJiSM8iOd
+         bIFoKctSRG1XWFJ0PrA/hPfvxbipFd3/BFCY2k392XDZqo8/Vz0PRkeyiuog7DZ+xJ
+         BnAdWSMHDzl7WPZyrYA14DuHXcsitfLdHbHVfC08=
+Date:   Sat, 7 Dec 2019 10:33:48 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: adc: max9611: Fix too short conversion time
+ delay
+Message-ID: <20191207103348.58df9cd5@archlinux>
+In-Reply-To: <20191202092328.GE1266@kunai>
+References: <20191202085546.21655-1-geert+renesas@glider.be>
+        <20191202092328.GE1266@kunai>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e6c8f820-1813-40e3-8c57-08d77a856b70
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2019 19:49:34.5742
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 1bKrH3wZIooZwFvEX2a7biiARZrNaHJke7cWlJfaprGqzxgC07McP1gpZ1YmH/x1dQzpHzG1i2m/HIIEWUvB8/qeefNps+ombkkiqIw+s2M=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1643
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-T24gRnJpLCBEZWMgNiwgMjAxOSwgU2VyZ2VpIFNodHlseW92IHdyb3RlOg0KPiBPbiAxMi8wNi8y
-MDE5IDA0OjQxIFBNLCBDaHJpcyBCcmFuZHQgd3JvdGU6DQo+IA0KPiA+IFRoZSBTUElCU0MgY2xv
-Y2tzIGFyZSBtYXJrZWQgYXMgY3JpdGljYWwgYmVjYXVzZSBmb3IgWElQIHN5c3RlbXMsIHRoZQ0K
-PiA+IGtlcm5lbCB3aWxsIGJlIHJ1bm5pbmcgZnJvbSBRU1BJIGZsYXNoIGFuZCBjYW5ub3QgYmUg
-dHVybmVkIG9mZi4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IENocmlzIEJyYW5kdCA8Y2hyaXMu
-YnJhbmR0QHJlbmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+IHYyOg0KPiA+ICAqIFJlbW92ZWQgc3Bp
-YnNjIGZyb20gY3JpdGljYWwgY2xvY2sgc2VjdGlvbg0KPiANCj4gICAgU28geW91J3ZlIHJlbW92
-ZWQgaXQgZnJvbSB0aGUgY3JpdGljYWwgdGFibGUgYnV0IGxlZnQgdGhlIHBhdGNoDQo+IGRlc2Ny
-aXB0aW9uIGludGFjdD8NCg0KRGFtbiENClRoYW5rIHlvdSBmb3IgcG9pbnRpbmcgdGhhdCBvdXQu
-DQpJIHJlbWVtYmVyZWQgdG8gdGFrZSB0aGUgY29tbWVudCBvdXQgb2Ygb25lIHBhdGNoLCBidXQg
-SSBtaXNzZWQgdGhpcyBvbmUuDQoNCkNocmlzDQoNCg==
+On Mon, 2 Dec 2019 10:23:29 +0100
+Wolfram Sang <wsa@the-dreams.de> wrote:
+
+> On Mon, Dec 02, 2019 at 09:55:46AM +0100, Geert Uytterhoeven wrote:
+> > As of commit b9ddd5091160793e ("iio: adc: max9611: Fix temperature
+> > reading in probe"), max9611 initialization sometimes fails on the
+> > Salvator-X(S) development board with:
+> >=20
+> >     max9611 4-007f: Invalid value received from ADC 0x8000: aborting
+> >     max9611: probe of 4-007f failed with error -5
+> >=20
+> > The max9611 driver tests communications with the chip by reading the die
+> > temperature during the probe function, which returns an invalid value.
+> >=20
+> > According to the datasheet, the typical ADC conversion time is 2 ms, but
+> > no minimum or maximum values are provided.  Maxim Technical Support
+> > confirmed this was tested with temperature Ta=3D25 degreeC, and promised
+> > to inform me if a maximum/minimum value is available (they didn't get
+> > back to me, so I assume it is not).
+> >=20
+> > However, the driver assumes a 1 ms conversion time.  Usually the
+> > usleep_range() call returns after more than 1.8 ms, hence it succeeds.
+> > When it returns earlier, the data register may be read too early, and
+> > the previous measurement value will be returned.  After boot, this is
+> > the temperature POR (power-on reset) value, causing the failure above.
+> >=20
+> > Fix this by increasing the delay from 1000-2000 =C2=B5s to 3000-3300 =
+=C2=B5s.
+> >=20
+> > Note that this issue has always been present, but it was exposed by the
+> > aformentioned commit.
+> >=20
+> > Fixes: 69780a3bbc0b1e7e ("iio: adc: Add Maxim max9611 ADC driver")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org> =20
+>=20
+> Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>=20
+> One minor nit, though:
+>=20
+> >  	/*
+> >  	 * need a delay here to make register configuration
+> > -	 * stabilize. 1 msec at least, from empirical testing.
+> > +	 * stabilize. =20
+>=20
+> This could be a one line comment now?
+>=20
+
+Applied to the fixes-togreg branch of iio.git and tidied up.
+
+Thanks,
+
+Jonathan
