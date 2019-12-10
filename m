@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD66C3F68F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 22:37:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AFC2C2D0BF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 22:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 542532077B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 22:37:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53C872053B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 22:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576017454;
-	bh=12JXYKByqO3x4CmWFEQUCTSCcQ7aP0VNMdMcR4qvP5I=;
+	s=default; t=1576017731;
+	bh=ztm9+c7mnXrc+ghtQEh2nXABFn+MTsi79zBf51x//Lk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YJORuVd18oTG6QqF7nUTeWAZhlA9qNpFXPce9s+qdJlKY55Y7TffIkDn5KKdVgeqI
-	 iLR9iwuO0KwvV+7j5cOgzRIifHJCynkVw4b+OgGx7Rcz3dTWnWYL8m6O1hGj6P46BH
-	 UWRpkN0Z+JiTX504qFNue2AO7ebjDLdR+s1GoIss=
+	b=C17BvAG4fZpnkjORRSdJsIMbEKJkRf/KVKupSXG+DE0D+qZocnGLdk0Su54Z4Gew6
+	 PWJ6ITpsZuCmf+LM9Wr28TShSPi56hHcDhEXdv108bPxeKuTcb7RfrdjIJfT3uQiQz
+	 ++U0VibwHLoxJSCVdah/GtXMfZNtYKewvZba8X7s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730086AbfLJWeB (ORCPT
+        id S1727508AbfLJWmK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Dec 2019 17:34:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55184 "EHLO mail.kernel.org"
+        Tue, 10 Dec 2019 17:42:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730063AbfLJWeA (ORCPT
+        id S1728536AbfLJWbb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:34:00 -0500
+        Tue, 10 Dec 2019 17:31:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A601C208C3;
-        Tue, 10 Dec 2019 22:33:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CDEC20828;
+        Tue, 10 Dec 2019 22:31:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576017239;
-        bh=12JXYKByqO3x4CmWFEQUCTSCcQ7aP0VNMdMcR4qvP5I=;
+        s=default; t=1576017091;
+        bh=ztm9+c7mnXrc+ghtQEh2nXABFn+MTsi79zBf51x//Lk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wvFXmAIdgCe0YBaNDcDXzVVhPk6IlWPMao0315zoYWpielJQ3RF5nmqbtYNec6iRk
-         AtplWmPBotTxaGfdAh6dYfKbaJEJlXuP6u8uR+HkV7P/aofbK5F9C+3EMzRtOqc6oo
-         Z87ZhaaFJj7YrEEF9YjlsUMwf1hvn319H/z6GIzY=
+        b=OJwE5/WZBfdbgpeL2aZhjsd2tQAjn7fgPVY1mmHsZGPVohb93tjPdAVdosLu7sY3w
+         Z5lpE8uyHjL/iureknpiBlDrv9fMC5EtJaLbGZDEi1pyvUWrTVHVzuRPr5nUIxvEdH
+         QGpXyorKFsfkLNaIGef7I+cy5dS+hcxWTHh0TfeQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Ben Dooks <ben.dooks@codethink.co.uk>,
         Sasha Levin <sashal@kernel.org>, linux-sh@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 36/71] pinctrl: sh-pfc: sh7734: Fix duplicate TCLK1_B
-Date:   Tue, 10 Dec 2019 17:32:41 -0500
-Message-Id: <20191210223316.14988-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 46/91] pinctrl: sh-pfc: sh7734: Fix duplicate TCLK1_B
+Date:   Tue, 10 Dec 2019 17:29:50 -0500
+Message-Id: <20191210223035.14270-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191210223316.14988-1-sashal@kernel.org>
-References: <20191210223316.14988-1-sashal@kernel.org>
+In-Reply-To: <20191210223035.14270-1-sashal@kernel.org>
+References: <20191210223035.14270-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -96,10 +96,10 @@ index 2fb9a7b71b412..a2667c9b5819a 100644
  		GPIO_FN_ET0_ETXD3_A,
  	GPIO_FN_EX_CS4, GPIO_FN_SD1_WP_A, GPIO_FN_ATAWR, GPIO_FN_QMI_QIO1_B,
 diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-index c691b2e343746..ab09d385f95d1 100644
+index 33232041ee86d..3eccc9b3ca84a 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-@@ -1458,7 +1458,7 @@ static const struct pinmux_func pinmux_func_gpios[] = {
+@@ -1453,7 +1453,7 @@ static const struct pinmux_func pinmux_func_gpios[] = {
  	GPIO_FN(ET0_ETXD2_A),
  	GPIO_FN(EX_CS5), GPIO_FN(SD1_CMD_A), GPIO_FN(ATADIR), GPIO_FN(QSSL_B),
  	GPIO_FN(ET0_ETXD3_A),
@@ -108,7 +108,7 @@ index c691b2e343746..ab09d385f95d1 100644
  	GPIO_FN(EX_WAIT0), GPIO_FN(TCLK1_B),
  	GPIO_FN(EX_WAIT1), GPIO_FN(SD1_DAT0_A), GPIO_FN(DREQ2),
  		GPIO_FN(CAN1_TX_C), GPIO_FN(ET0_LINK_C), GPIO_FN(ET0_ETXD5_A),
-@@ -1954,7 +1954,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+@@ -1949,7 +1949,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
  	    /* IP3_20 [1] */
  		FN_EX_WAIT0, FN_TCLK1_B,
  	    /* IP3_19_18 [2] */
