@@ -2,117 +2,96 @@ Return-Path: <SRS0=1GST=2A=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB73C43603
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 21:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B03FC43603
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 22:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F9B6205C9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 21:42:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ELDYffyP"
+	by mail.kernel.org (Postfix) with ESMTP id D6CC82053B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 22:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576015768;
+	bh=Kyspyl1ZOtu0CnBtIvJzbvCwRWXO6zZXmW9x+KxeQ08=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=HXwQzrO7Ut2nREOEghGdUe2kqde+EdWXzAk8dd+y1pN/RZTzwr19YZTmgFpk5018a
+	 z09oVw/kOTr9rrnhknXWlY8ciY4d3yeAEnnGXxL1q/ZlpbbMtggh/IPIO4tcyAO+aH
+	 h9loOb7WTrLSWJsOxsfDqM8ala0hWvOMKOAG/pw4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726741AbfLJVmW (ORCPT
+        id S1727724AbfLJWJR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Dec 2019 16:42:22 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:35190 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729898AbfLJVeB (ORCPT
+        Tue, 10 Dec 2019 17:09:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35410 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728868AbfLJWEa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Dec 2019 16:34:01 -0500
-Received: by mail-lj1-f193.google.com with SMTP id j6so21604522lja.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Dec 2019 13:34:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sfwPNW+0w7SYOVN5vzqnBaCzSrm1enkZiO9HCQzgqjc=;
-        b=ELDYffyPwLTppPAGsVU3YxNSQOLOcATsg+IC8f7KpshW1lI8HVOS/LPhBAsT3ufSID
-         fT8v7xNJc4kv0wTGrieBMQqsRE05FMAqAlQlWeqPYjlA6ow0ox6lVlQeD3a0gHQCNpvO
-         UQuarskxChn5qju4s1+DdsIwkp9B7GHuVeF6VYnrRLMyisteUJaHFhFjU/S8KbDGs+wP
-         PxqBkBxPJ4ttyp+Sef34gOKwQPC9beuKUBnoGOn5XjUWMEO9A2EEJEl1u9PnSr5O44Lx
-         VMiuT+azPKHva2915rPrbzbWb1+RwsYjjYQJPUWnIZz+Df5kMzfE10XKxc8RFFUbhxa5
-         icmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sfwPNW+0w7SYOVN5vzqnBaCzSrm1enkZiO9HCQzgqjc=;
-        b=ALnvx7uQIgut7EecdGxT4ATASsm6CbGuLUXpP8PEig8+GLXKNdsq+SxI/IzPSMIivU
-         9wE4pIsJXIo1zB9NGrNSbwbf/JHnppobaDkLS59lQuSVPBxs0u0bbmeAEbsT1FwbjhPg
-         2TmFehnFO2sJM4hOf8aqqGgfhZCLF+tpIqVjThWwKuFvWMl6M3IncILlq7uzDJAKxuFq
-         0N4sQILc76NI1H4f5dFhgB6ovU6gNzz81qpFSLPaLv68t9h+nn4z6uBlhLOnEkGkPYVf
-         SN2ljAqYjh2WrFQGaCHINMArwMNkqU5dFw2Rkyek1VC6JhKR65YdAwwB5jHpTRY++26+
-         CfNA==
-X-Gm-Message-State: APjAAAUw2zV6jxCFCk8DYHRaLU0hBaEVwL6+hBumHgiB3bAR2tT/slJj
-        m+MvEU3bU8UPnDT+CQ5LeRiKZJDIX0YZOHEntGyMcQ==
-X-Google-Smtp-Source: APXvYqxlNtTXCGGpW9eRPgRQxUIXYH1CqIcL6wpo3KqsA4rHt7y1htGJhYXnIDuRbtBsJbNT4EJP7YmxbMU5QzD97u0=
-X-Received: by 2002:a2e:9587:: with SMTP id w7mr21298405ljh.42.1576013639357;
- Tue, 10 Dec 2019 13:33:59 -0800 (PST)
+        Tue, 10 Dec 2019 17:04:30 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A0C620828;
+        Tue, 10 Dec 2019 22:04:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576015470;
+        bh=Kyspyl1ZOtu0CnBtIvJzbvCwRWXO6zZXmW9x+KxeQ08=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Cnu5CxHz2sD+Yzyhsu0OHbJCWcsyOU95UwxEzb3R2RFcLV0IafyF0AazqQ2OglKy5
+         ik2tsPzhduyw4NJid2DQ/91866oB9Rm3oBgB6klQpVRPNgfARvRdu4f2d8/bdrDnkY
+         tQcyXviNpJDo/S5cDLzhDzaS0hRJ9y+/IHyps4SU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 075/130] media: rcar_drif: fix a memory disclosure
+Date:   Tue, 10 Dec 2019 17:02:06 -0500
+Message-Id: <20191210220301.13262-75-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191210220301.13262-1-sashal@kernel.org>
+References: <20191210220301.13262-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20191202193230.21310-1-sam@ravnborg.org> <20191202193230.21310-8-sam@ravnborg.org>
- <20191203074659.ilsyv4yx7pzw5vax@gilmour.lan> <CACRpkdZrReQs08+bXS7s7eJ-K76nMGvRgQ-L-1-baunEtiF40g@mail.gmail.com>
- <20191204081650.4n4ehbub4n7pxdom@gilmour.lan>
-In-Reply-To: <20191204081650.4n4ehbub4n7pxdom@gilmour.lan>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 10 Dec 2019 22:33:48 +0100
-Message-ID: <CACRpkdZ7jg7JwNk12m9pGXOVBxHRta8nBWmpdqFvfQHB=8LptA@mail.gmail.com>
-Subject: Re: [PATCH v1 07/26] drm/panel: remove get_timings
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Jitao Shi <jitao.shi@mediatek.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Purism Kernel Team <kernel@puri.sm>,
-        Sean Paul <sean@poorly.run>, Stefan Agner <stefan@agner.ch>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 9:16 AM Maxime Ripard <mripard@kernel.org> wrote:
-> On Tue, Dec 03, 2019 at 04:20:24PM +0100, Linus Walleij wrote:
+From: Kangjie Lu <kjlu@umn.edu>
 
-> > On the DSI displays in video mode there is also this EOL area
-> > which seems to be where the logic is normally just idling for a
-> > while, that can be adjusted on some hardware as well, but
-> > I don't quite understand it admittedly. Sometimes I wonder if
-> > anyone really understands DSI... :/
->
-> I'm not aware of any EOL area in MIPI-DSI that would make the hardware
-> idle, don't you mean LP-11?
+[ Upstream commit d39083234c60519724c6ed59509a2129fd2aed41 ]
 
-I think in the spec the bubble used for this is tagged "BLLP"
-Blanking-Line-Low-Power or something.
+"f->fmt.sdr.reserved" is uninitialized. As other peer drivers
+like msi2500 and airspy do, the fix initializes it to avoid
+memory disclosures.
 
-IIUC it is possible for displays to either receive continuous NULL
-packets or blanking packets or go to LP mode in this area.
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/platform/rcar_drif.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-And since that is not there for e.g. DPI displays I feel it adds
-another layer of confusion to timings.
+diff --git a/drivers/media/platform/rcar_drif.c b/drivers/media/platform/rcar_drif.c
+index 522364ff0d5d8..3871ed6a1fcbf 100644
+--- a/drivers/media/platform/rcar_drif.c
++++ b/drivers/media/platform/rcar_drif.c
+@@ -915,6 +915,7 @@ static int rcar_drif_g_fmt_sdr_cap(struct file *file, void *priv,
+ {
+ 	struct rcar_drif_sdr *sdr = video_drvdata(file);
+ 
++	memset(f->fmt.sdr.reserved, 0, sizeof(f->fmt.sdr.reserved));
+ 	f->fmt.sdr.pixelformat = sdr->fmt->pixelformat;
+ 	f->fmt.sdr.buffersize = sdr->fmt->buffersize;
+ 
+-- 
+2.20.1
 
-Yours,
-Linus Walleij
