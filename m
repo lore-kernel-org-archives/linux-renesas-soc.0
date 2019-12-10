@@ -2,121 +2,78 @@ Return-Path: <SRS0=1GST=2A=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA8DC2D0C5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 22:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DE1C43603
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 22:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C589F207FF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 22:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576015784;
-	bh=WjS0Tq7OrsE2NjIqEF56Rkua9+801ORAczYUD93TxZA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TSxpeK6HkrsU/NZ6nU/a6dXGLVhfdoVk8qNLSyL0zEv+tar7echDf58san/YsiK/Z
-	 Wa57NFdEaBYtYmPdKYETpn4t1S9n5dopOfmbdiGgMNlPem4P2sJjDuaWf/tqeoPg7V
-	 BeUsfFmomzsMpDkR605k79WrERZAeNA6AnugQ0OU=
+	by mail.kernel.org (Postfix) with ESMTP id 057BF2053B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Dec 2019 22:20:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728777AbfLJWEZ (ORCPT
+        id S1726959AbfLJWUP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Dec 2019 17:04:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35232 "EHLO mail.kernel.org"
+        Tue, 10 Dec 2019 17:20:15 -0500
+Received: from sauhun.de ([88.99.104.3]:42728 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728766AbfLJWEY (ORCPT
+        id S1726874AbfLJWUP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Dec 2019 17:04:24 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8133B20828;
-        Tue, 10 Dec 2019 22:04:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576015464;
-        bh=WjS0Tq7OrsE2NjIqEF56Rkua9+801ORAczYUD93TxZA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Kjznzty4CyoJKchwddGfw6fAevhHQplhVIUAmT6050/Fo+rroC4VW0F52l+eri3OH
-         kDwHllNWTXJQ8TW/y/BYvduw89kncH5qJFGIhm5MJfRdy1OfN8051sAA3+Wy86Yh1/
-         Zkg//xp+9tnYxcmP7tlGD7uUxOSSG3n3BpMV62xc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Sasha Levin <sashal@kernel.org>, linux-sh@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 070/130] pinctrl: sh-pfc: sh7734: Fix duplicate TCLK1_B
-Date:   Tue, 10 Dec 2019 17:02:01 -0500
-Message-Id: <20191210220301.13262-70-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191210220301.13262-1-sashal@kernel.org>
-References: <20191210220301.13262-1-sashal@kernel.org>
+        Tue, 10 Dec 2019 17:20:15 -0500
+Received: from localhost (p54B330BE.dip0.t-ipconnect.de [84.179.48.190])
+        by pokefinder.org (Postfix) with ESMTPSA id CF20D2C0616;
+        Tue, 10 Dec 2019 23:20:12 +0100 (CET)
+Date:   Tue, 10 Dec 2019 23:20:11 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: remove i2c_new_dummy() API
+Message-ID: <20191210222011.GA8683@kunai>
+References: <20191206002322.12801-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Content-Disposition: inline
+In-Reply-To: <20191206002322.12801-1-wsa+renesas@sang-engineering.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 884caadad128efad8e00c1cdc3177bc8912ee8ec ]
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The definitions for bit field [19:18] of the Peripheral Function Select
-Register 3 were accidentally copied from bit field [20], leading to
-duplicates for the TCLK1_B function, and missing TCLK0, CAN_CLK_B, and
-ET0_ETXD4 functions.
+On Fri, Dec 06, 2019 at 01:23:22AM +0100, Wolfram Sang wrote:
+> All in-kernel users have been converted to
+> {devm_}i2c_new_dummy_device(). Remove the old API.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Fix this by adding the missing GPIO_FN_CAN_CLK_B and GPIO_FN_ET0_ETXD4
-enum values, and correcting the functions.
+Applied to for-current, thanks!
 
-Reported-by: Ben Dooks <ben.dooks@codethink.co.uk>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20191024131308.16659-1-geert+renesas@glider.be
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/sh/include/cpu-sh4/cpu/sh7734.h | 2 +-
- drivers/pinctrl/sh-pfc/pfc-sh7734.c  | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/sh/include/cpu-sh4/cpu/sh7734.h b/arch/sh/include/cpu-sh4/cpu/sh7734.h
-index 96f0246ad2f2b..82b63208135ae 100644
---- a/arch/sh/include/cpu-sh4/cpu/sh7734.h
-+++ b/arch/sh/include/cpu-sh4/cpu/sh7734.h
-@@ -134,7 +134,7 @@ enum {
- 	GPIO_FN_EX_WAIT1, GPIO_FN_SD1_DAT0_A, GPIO_FN_DREQ2, GPIO_FN_CAN1_TX_C,
- 		GPIO_FN_ET0_LINK_C, GPIO_FN_ET0_ETXD5_A,
- 	GPIO_FN_EX_WAIT0, GPIO_FN_TCLK1_B,
--	GPIO_FN_RD_WR, GPIO_FN_TCLK0,
-+	GPIO_FN_RD_WR, GPIO_FN_TCLK0, GPIO_FN_CAN_CLK_B, GPIO_FN_ET0_ETXD4,
- 	GPIO_FN_EX_CS5, GPIO_FN_SD1_CMD_A, GPIO_FN_ATADIR, GPIO_FN_QSSL_B,
- 		GPIO_FN_ET0_ETXD3_A,
- 	GPIO_FN_EX_CS4, GPIO_FN_SD1_WP_A, GPIO_FN_ATAWR, GPIO_FN_QMI_QIO1_B,
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7734.c b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-index 33232041ee86d..3eccc9b3ca84a 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7734.c
-@@ -1453,7 +1453,7 @@ static const struct pinmux_func pinmux_func_gpios[] = {
- 	GPIO_FN(ET0_ETXD2_A),
- 	GPIO_FN(EX_CS5), GPIO_FN(SD1_CMD_A), GPIO_FN(ATADIR), GPIO_FN(QSSL_B),
- 	GPIO_FN(ET0_ETXD3_A),
--	GPIO_FN(RD_WR), GPIO_FN(TCLK1_B),
-+	GPIO_FN(RD_WR), GPIO_FN(TCLK0), GPIO_FN(CAN_CLK_B), GPIO_FN(ET0_ETXD4),
- 	GPIO_FN(EX_WAIT0), GPIO_FN(TCLK1_B),
- 	GPIO_FN(EX_WAIT1), GPIO_FN(SD1_DAT0_A), GPIO_FN(DREQ2),
- 		GPIO_FN(CAN1_TX_C), GPIO_FN(ET0_LINK_C), GPIO_FN(ET0_ETXD5_A),
-@@ -1949,7 +1949,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 	    /* IP3_20 [1] */
- 		FN_EX_WAIT0, FN_TCLK1_B,
- 	    /* IP3_19_18 [2] */
--		FN_RD_WR, FN_TCLK1_B, 0, 0,
-+		FN_RD_WR, FN_TCLK0, FN_CAN_CLK_B, FN_ET0_ETXD4,
- 	    /* IP3_17_15 [3] */
- 		FN_EX_CS5, FN_SD1_CMD_A, FN_ATADIR, FN_QSSL_B,
- 		FN_ET0_ETXD3_A, 0, 0, 0,
--- 
-2.20.1
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl3wGhYACgkQFA3kzBSg
+KbYLQBAAlxZPLxHvbjeF017vrPl+xILG7b0A6D+jXhs2lvlJB1DheKyF5p9DT3+H
+qVuGomZQWg5x6MzBQyrIojiZ5icikKpbOTxEyu4FGRIKJjzkqrkYvJFYIw3Do9Bj
+zKprijupdlpqJl9Vc+XV9CSEF/AmxbQnKaEXEa/PpIaswGkSYkChWeEjJFnDwYQz
+eivcNZ7R632fkBrbln4mewIhWph/KthJf6AlgJfwvAnDoTbMvPL2AuBPvXP1WK0s
+0IYzKpGWc2DvyUU6w61NHBacomuyA93BSDxsYiuqYoeFtbDPQUEKC2/HwokgqMRb
+Fk0ZvWYfamzIccJM5lbCA6a6sc8K6lleoe3qBnUedVj8kQhnJr4VblJYJ5yhxYAD
+qZTgr1JxC7r+xgrvrnL8dzbc2LXPA8YNiwFwLrwIvmADA/hA7M5IbomvXSv1S92k
+zh5X5O7UmFJJOWpgZNVWlGzl2IiBPv2SCRsY9CQdW25tAjITw9zB2XKhzLKI76LW
+8gI2AbbtBjWWfH+OyWnqX+8Z6hd8MdWt2pUw6ySmwQbItkbH1ZZbhK30WQlWG/Ah
+5zUv/KA2/MB/k/6LaDUBiFQuZjCbD8fx1fBA8RO1xYXDsQOTqzTYcywPNKaI8F3f
+HKY7i0C58USvhotXvW4Cki1/+tQp8Noqd2X9wpjWPZMSrZ69ObI=
+=piLt
+-----END PGP SIGNATURE-----
+
+--xHFwDpU9dbj6ez1V--
