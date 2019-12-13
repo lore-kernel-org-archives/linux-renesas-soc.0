@@ -2,174 +2,132 @@ Return-Path: <SRS0=ij62=2D=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 954B0C4BA3E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A97C341CD
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D41C824758
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D750247E5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:39:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728329AbfLMQlU (ORCPT
+        id S1728274AbfLMQlU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 13 Dec 2019 11:41:20 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:33446 "EHLO
+Received: from albert.telenet-ops.be ([195.130.137.90]:33450 "EHLO
         albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728274AbfLMQlT (ORCPT
+        with ESMTP id S1727974AbfLMQlT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 13 Dec 2019 11:41:19 -0500
 Received: from ramsan ([84.195.182.253])
         by albert.telenet-ops.be with bizsmtp
-        id dUhG2100e5USYZQ06UhGDN; Fri, 13 Dec 2019 17:41:16 +0100
+        id dUhG2100d5USYZQ06UhGDP; Fri, 13 Dec 2019 17:41:16 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ifo0C-0006uX-I0; Fri, 13 Dec 2019 17:41:16 +0100
+        id 1ifo0C-0006uO-Ey; Fri, 13 Dec 2019 17:41:16 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ifo0C-0000zC-Gk; Fri, 13 Dec 2019 17:41:16 +0100
+        id 1ifo0C-0000yr-Cu; Fri, 13 Dec 2019 17:41:16 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/7] ARM: dts: renesas: Group tuples in pci ranges and dma-ranges properties
-Date:   Fri, 13 Dec 2019 17:41:11 +0100
-Message-Id: <20191213164115.3697-5-geert+renesas@glider.be>
+Subject: [PATCH 0/7] arm: dts: renesas: Group tuples in reg/ranges/dma-ranges/states properties
+Date:   Fri, 13 Dec 2019 17:41:07 +0100
+Message-Id: <20191213164115.3697-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191213164115.3697-1-geert+renesas@glider.be>
-References: <20191213164115.3697-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-To improve human readability and enable automatic validation, the tuples
-in the "ranges" and "dma-ranges" properties of PCI devices nodes should
-be grouped.  Not doing so causes "make dtbs_check" to emit warnings
-like:
+	Hi all,
 
-    pcie@fe000000: dma-ranges: [[1107296256, 0, 1073741824, 0, 1073741824, 0, 2147483648, 1124073472, 2, 0, 2, 0, 1, 0]] is not valid under any of the given schemas (Possible causes of the failure):
-    pcie@fe000000: dma-ranges: [[1107296256, 0, 1073741824, 0, 1073741824, 0, 2147483648, 1124073472, 2, 0, 2, 0, 1, 0]] is not of type 'boolean'
-    pcie@fe000000: dma-ranges:0: [1107296256, 0, 1073741824, 0, 1073741824, 0, 2147483648, 1124073472, 2, 0, 2, 0, 1, 0] is too long
+To improve human readability and enable automatic validation, tuples
+in various properties should be grouped.  While "make dtbs_check" does
+not impose this yet for all properties, it does for some, hence
+triggering me to fix (I hope) all of them.
 
-Fix this by grouping the tuples of the "ranges" and "dma-ranges"
-properties using angle brackets.
+Unfortunately even after this, a few "... is too long" warnings are
+still printed (e.g. for PCI "ranges"), which I believe are false
+positives.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-I still see e.g.:
+This series is against renesas-devel-2019-12-13-v5.5-rc1[*] with
+"[PATCH] ARM: dts: rcar-gen2: Fix PCI high address in
+interrupt-map-mask" applied on top.
 
-    arch/arm/boot/dts/r8a7791-koelsch.dt.yaml: soc: pci@ee090000:ranges: [[33554432, 0, 3993501696, 0, 3993501696, 0, 65536]] is not valid under any of the given schemas (Possible causes of the failure):
-        arch/arm/boot/dts/r8a7791-koelsch.dt.yaml: soc: pci@ee090000:ranges: True was expected
-        arch/arm/boot/dts/r8a7791-koelsch.dt.yaml: soc: pci@ee090000:ranges:0: [33554432, 0, 3993501696, 0, 3993501696, 0, 65536] is too long
----
- arch/arm/boot/dts/r8a7743.dtsi | 12 ++++++------
- arch/arm/boot/dts/r8a7744.dtsi | 12 ++++++------
- arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++------
- arch/arm/boot/dts/r8a7791.dtsi | 12 ++++++------
- 4 files changed, 24 insertions(+), 24 deletions(-)
+Thanks for your comments!
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 36d45f5a6281bb89..1cd19a569bd0fb66 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -1617,13 +1617,13 @@
- 			#size-cells = <2>;
- 			bus-range = <0x00 0xff>;
- 			device_type = "pci";
--			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
--				  0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
--				  0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
--				  0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
-+			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000>,
-+				 <0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000>,
-+				 <0x02000000 0 0x30000000 0 0x30000000 0 0x08000000>,
-+				 <0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
- 			/* Map all possible DDR as inbound ranges */
--			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000
--				      0x43000000 2 0x00000000 2 0x00000000 1 0x00000000>;
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>,
-+				     <0x43000000 2 0x00000000 2 0x00000000 1 0x00000000>;
- 			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 366201d0a71d1986..1c82dd0abd76c4c9 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -1603,13 +1603,13 @@
- 			#size-cells = <2>;
- 			bus-range = <0x00 0xff>;
- 			device_type = "pci";
--			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
--				  0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
--				  0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
--				  0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
-+			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000>,
-+				 <0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000>,
-+				 <0x02000000 0 0x30000000 0 0x30000000 0 0x08000000>,
-+				 <0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
- 			/* Map all possible DDR as inbound ranges */
--			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000
--				      0x43000000 2 0x00000000 2 0x00000000 1 0x00000000>;
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>,
-+				     <0x43000000 2 0x00000000 2 0x00000000 1 0x00000000>;
- 			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index ebe9dbf3f8884e99..334ba19769b998ac 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -1617,13 +1617,13 @@
- 			#size-cells = <2>;
- 			bus-range = <0x00 0xff>;
- 			device_type = "pci";
--			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
--				  0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
--				  0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
--				  0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
-+			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000>,
-+				 <0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000>,
-+				 <0x02000000 0 0x30000000 0 0x30000000 0 0x08000000>,
-+				 <0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
- 			/* Map all possible DDR as inbound ranges */
--			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000
--				      0x43000000 1 0x80000000 1 0x80000000 0 0x80000000>;
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>,
-+				     <0x43000000 1 0x80000000 1 0x80000000 0 0x80000000>;
- 			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 2267607616e6413b..baedfab84cb09134 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -1602,13 +1602,13 @@
- 			#size-cells = <2>;
- 			bus-range = <0x00 0xff>;
- 			device_type = "pci";
--			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000
--				  0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000
--				  0x02000000 0 0x30000000 0 0x30000000 0 0x08000000
--				  0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
-+			ranges = <0x01000000 0 0x00000000 0 0xfe100000 0 0x00100000>,
-+				 <0x02000000 0 0xfe200000 0 0xfe200000 0 0x00200000>,
-+				 <0x02000000 0 0x30000000 0 0x30000000 0 0x08000000>,
-+				 <0x42000000 0 0x38000000 0 0x38000000 0 0x08000000>;
- 			/* Map all possible DDR as inbound ranges */
--			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000
--				      0x43000000 2 0x00000000 2 0x00000000 1 0x00000000>;
-+			dma-ranges = <0x42000000 0 0x40000000 0 0x40000000 0 0x80000000>,
-+				     <0x43000000 2 0x00000000 2 0x00000000 1 0x00000000>;
- 			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
+[*] Will be pushed out when gitolite.kernel.org is back.
+
+Geert Uytterhoeven (7):
+  ARM: dts: renesas: Group tuples in regulator-gpio states properties
+  ARM: dts: renesas: Group tuples in interrupt properties
+  ARM: dts: renesas: Group tuples in pci ranges and dma-ranges
+    properties
+  arm64: dts: renesas: Group tuples in regulator-gpio states properties
+  arm64: dts: renesas: Group tuples in interrupt properties
+  arm64: dts: renesas: Group tuples in pci ranges and dma-ranges
+    properties
+  arm64: dts: renesas: r8a77970: Group tuples in thermal reg property
+
+ arch/arm/boot/dts/iwg20d-q7-common.dtsi       |   3 +-
+ arch/arm/boot/dts/r7s72100.dtsi               |  18 +-
+ arch/arm/boot/dts/r8a73a4.dtsi                |  42 ++--
+ arch/arm/boot/dts/r8a7740-armadillo800eva.dts |   3 +-
+ arch/arm/boot/dts/r8a7740.dtsi                | 102 ++++-----
+ arch/arm/boot/dts/r8a7743.dtsi                | 152 ++++++-------
+ arch/arm/boot/dts/r8a7744.dtsi                | 152 ++++++-------
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts   |   3 +-
+ arch/arm/boot/dts/r8a7745.dtsi                | 112 ++++-----
+ arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts     |   3 +-
+ arch/arm/boot/dts/r8a77470.dtsi               |  80 +++----
+ arch/arm/boot/dts/r8a7778.dtsi                |   8 +-
+ arch/arm/boot/dts/r8a7779-marzen.dts          |   3 +-
+ arch/arm/boot/dts/r8a7779.dtsi                |   8 +-
+ arch/arm/boot/dts/r8a7790-lager.dts           |   6 +-
+ arch/arm/boot/dts/r8a7790.dtsi                | 158 ++++++-------
+ arch/arm/boot/dts/r8a7791-koelsch.dts         |   9 +-
+ arch/arm/boot/dts/r8a7791-porter.dts          |   6 +-
+ arch/arm/boot/dts/r8a7791.dtsi                | 152 ++++++-------
+ arch/arm/boot/dts/r8a7792.dtsi                |  64 +++---
+ arch/arm/boot/dts/r8a7793-gose.dts            |   9 +-
+ arch/arm/boot/dts/r8a7793.dtsi                | 120 +++++-----
+ arch/arm/boot/dts/r8a7794-alt.dts             |   6 +-
+ arch/arm/boot/dts/r8a7794-silk.dts            |   3 +-
+ arch/arm/boot/dts/r8a7794.dtsi                | 104 ++++-----
+ arch/arm/boot/dts/sh73a0.dtsi                 | 122 +++++-----
+ .../arm64/boot/dts/renesas/hihope-common.dtsi |   3 +-
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi     | 206 ++++++++---------
+ arch/arm64/boot/dts/renesas/r8a774b1.dtsi     | 206 ++++++++---------
+ .../boot/dts/renesas/r8a774c0-cat874.dts      |   3 +-
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi     | 164 +++++++-------
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi      | 214 +++++++++---------
+ arch/arm64/boot/dts/renesas/r8a77960.dtsi     | 206 ++++++++---------
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi     | 206 ++++++++---------
+ arch/arm64/boot/dts/renesas/r8a77970.dtsi     |  52 ++---
+ arch/arm64/boot/dts/renesas/r8a77980.dtsi     |  96 ++++----
+ .../arm64/boot/dts/renesas/r8a77990-ebisu.dts |   6 +-
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi     | 164 +++++++-------
+ arch/arm64/boot/dts/renesas/r8a77995.dtsi     |  74 +++---
+ .../boot/dts/renesas/salvator-common.dtsi     |   6 +-
+ arch/arm64/boot/dts/renesas/ulcb.dtsi         |   3 +-
+ 41 files changed, 1514 insertions(+), 1543 deletions(-)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
