@@ -2,45 +2,44 @@ Return-Path: <SRS0=ij62=2D=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FAKE_REPLY_C,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FAKE_REPLY_C,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 411FAC00454
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Dec 2019 21:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F59FC2D0CA
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Dec 2019 21:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BE832467A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Dec 2019 21:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A11E424671
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Dec 2019 21:06:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576271198;
-	bh=TLRFub19ZhaITE7YjcFkEHRBA0pszoIN5RnRY1gDYLs=;
+	s=default; t=1576271206;
+	bh=hWUTsi+517PaE+0S0Vj4/AHhcznAaHtL9dM69acMjt0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=bu2YDek+bjTDL4AjdFWrRIj4wuaWyKIwkS27cRjuBg7sM+r/ZbZA8d24L4ZVuqza8
-	 iUirS7hAuS2dijwgF3/e9qkt1BXnrX32anjzbxLdMUH5gU4RKS53tUAtyQa9FcfgHv
-	 ri83wlvH36UGL4Ekr0r7lnWxX4QE+yly48SLX9Zk=
+	b=igrifEF830tALEW/A2mmNZy4rwPQ2Y5+2NmHriGxMlCVioocIxD+uhzBJ5l7PcKLE
+	 fC28gEqk+UW5LrqCXSYXWxiLQSRlcemhyllng2+Daeus9QljRaXwMhnX/koRgW+Ifv
+	 bdaGcVeeknYPV/kymoioPvDP01rnshcMNYvDhyrI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfLMVGe (ORCPT
+        id S1726772AbfLMVGo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 13 Dec 2019 16:06:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45758 "EHLO mail.kernel.org"
+        Fri, 13 Dec 2019 16:06:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726141AbfLMVGe (ORCPT
+        id S1726004AbfLMVGn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Dec 2019 16:06:34 -0500
+        Fri, 13 Dec 2019 16:06:43 -0500
 Received: from localhost (mobile-166-170-223-177.mycingular.net [166.170.223.177])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D28C62467A;
-        Fri, 13 Dec 2019 21:06:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D6D72467A;
+        Fri, 13 Dec 2019 21:06:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576271193;
-        bh=TLRFub19ZhaITE7YjcFkEHRBA0pszoIN5RnRY1gDYLs=;
+        s=default; t=1576271202;
+        bh=hWUTsi+517PaE+0S0Vj4/AHhcznAaHtL9dM69acMjt0=;
         h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=E/BnZTX+a8LiIkE6EdBlArJFLe2i3cC9dAJ9uaJzsx+hIy4Neio9I5tQwh+XcB08d
-         YZV1mMNvJ1mDG0o5Vz+DTW3Xm51ca/KJWDwKJavT60c/lw5iWIrjQWfoEI7HKwPIq7
-         9Ynq21FilKYcUtvUrWHTkFAx9x5ELRCpRpV7Bpkg=
-Date:   Fri, 13 Dec 2019 15:06:31 -0600
+        b=cObaL2ydIExDh5FQfy04mYtNWg8OGAWhz8lGSbGtxeNyVZ2k16gCNohgzA/fV+IBS
+         9cFMAMDj4nGr6XQKqdmWTNDQRO5ykXoBKm9Ncektrv6hzd7/TEU83Mfl0rChSKJn7j
+         qY1XoccfsWjH7157hNnDcoweI7eFUjAByHwEYBgg=
+Date:   Fri, 13 Dec 2019 15:06:41 -0600
 From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     Lad Prabhakar <prabhakar.csengg@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -70,43 +69,36 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Heiko Stuebner <heiko@sntech.de>,
         linux-rockchip@lists.infradead.org,
         "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [v2 1/6] pci: pcie-rcar: preparation for adding endpoint support
-Message-ID: <20191213185011.GA170447@google.com>
+Subject: Re: [v2 0/6] Add support for PCIe controller to work in endpoint
+ mode on R-Car SoCs
+Message-ID: <20191213184627.GA169673@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191213084748.11210-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20191213084748.11210-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Dec 13, 2019 at 08:47:43AM +0000, Lad Prabhakar wrote:
-> From: "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> 
-> this patch prepares for adding endpoint support to rcar controller,
-> there are no functional changes with this patch, a common file is
-> created so that it can be shared with endpoint driver. Alongside
-> this patch fixes checkpatch reported issues.
+On Fri, Dec 13, 2019 at 08:47:42AM +0000, Lad Prabhakar wrote:
 
-Can you please split this into:
+> Lad, Prabhakar (6):
+>   pci: pcie-rcar: preparation for adding endpoint support
+>   pci: endpoint: add support to handle features of outbound memory
+>   of: address: add support to parse PCI outbound-ranges
+>   dt-bindings: PCI: rcar: Add bindings for R-Car PCIe endpoint
+>     controller
+>   pci: rcar: add support for rcar pcie controller in endpoint mode
+>   misc: pci_endpoint_test: add device-id for RZ/G2E pcie controller
 
-  - a patch that moves code only, with no other changes except any
-    necessary Kconfig and Makefile changes
-  - another patch that fixes the checkpatch things
+The next time you post this, please update the subject lines to match
+existing conventions (capitalize "PCI", description is a complete
+sentence starting with a capitalized verb, etc").  Run "git log
+--online" on the file you're changing and make yours look the same.
 
-When the checkpatch fixes are buried in the code move, it's impossible
-to review them.
-
-> Signed-off-by: Lad, Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  arch/arm64/configs/defconfig            |    2 +-
->  drivers/pci/controller/Kconfig          |    4 +-
->  drivers/pci/controller/Makefile         |    2 +-
->  drivers/pci/controller/pcie-rcar-host.c | 1056 ++++++++++++++++++++++++++
->  drivers/pci/controller/pcie-rcar.c      | 1229 ++-----------------------------
->  drivers/pci/controller/pcie-rcar.h      |  129 ++++
->  6 files changed, 1242 insertions(+), 1180 deletions(-)
->  create mode 100644 drivers/pci/controller/pcie-rcar-host.c
->  create mode 100644 drivers/pci/controller/pcie-rcar.h
+  s/pci: /PCI: /
+  s/pcie-rcar: /rcar: /
+  s/pcie/PCIe/
+  s/device-id/Device ID/
