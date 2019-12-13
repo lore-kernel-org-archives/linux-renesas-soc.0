@@ -4,41 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44C2C4BA1F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:39:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B341C4BA38
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F13D62473E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:39:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8EE4246B3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Dec 2019 20:39:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbfLMQ1j (ORCPT
+        id S1728367AbfLMQlS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 13 Dec 2019 11:27:39 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:33352 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728120AbfLMQ1j (ORCPT
+        Fri, 13 Dec 2019 11:41:18 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:58958 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728357AbfLMQlS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Dec 2019 11:27:39 -0500
+        Fri, 13 Dec 2019 11:41:18 -0500
 Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id dUTd210095USYZQ06UTdLw; Fri, 13 Dec 2019 17:27:37 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id dUhG2100Q5USYZQ01UhGqp; Fri, 13 Dec 2019 17:41:16 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ifnmz-0006mq-5r; Fri, 13 Dec 2019 17:27:37 +0100
+        id 1ifo0C-0006uQ-FN; Fri, 13 Dec 2019 17:41:16 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ifnmz-0000ZZ-4W; Fri, 13 Dec 2019 17:27:37 +0100
+        id 1ifo0C-0000yx-ER; Fri, 13 Dec 2019 17:41:16 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Subject: [PATCH] ARM: dts: sh73a0: Add missing clock-frequency for fixed clocks
-Date:   Fri, 13 Dec 2019 17:27:36 +0100
-Message-Id: <20191213162736.2160-1-geert+renesas@glider.be>
+Date:   Fri, 13 Dec 2019 17:41:09 +0100
+Message-Id: <20191213164115.3697-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191213164115.3697-1-geert+renesas@glider.be>
+References: <20191213164115.3697-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
