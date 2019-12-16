@@ -2,246 +2,190 @@ Return-Path: <SRS0=T57Y=2G=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 751BCC43603
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 17:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F7BC43603
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 17:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C62A206D7
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 17:14:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBD8820717
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 17:14:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbfLPROU (ORCPT
+        id S1726701AbfLPROW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Dec 2019 12:14:20 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:41705 "EHLO
+        Mon, 16 Dec 2019 12:14:22 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:45823 "EHLO
         relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbfLPROU (ORCPT
+        with ESMTP id S1726427AbfLPROW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:14:20 -0500
+        Mon, 16 Dec 2019 12:14:22 -0500
 X-Originating-IP: 2.224.242.101
 Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 3FE7040005;
-        Mon, 16 Dec 2019 17:14:17 +0000 (UTC)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id AC34F4000A;
+        Mon, 16 Dec 2019 17:14:19 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     kieran.bingham+renesas@ideasonboard.com,
         laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org
-Subject: [RFC 05/11] fixup! dt-bindings: media: i2c: Add bindings for IMI RDACM20
-Date:   Mon, 16 Dec 2019 18:16:14 +0100
-Message-Id: <20191216171620.372683-6-jacopo+renesas@jmondi.org>
+Subject: [RFC 07/11] media: i2c: max9286: Move notifiers operations
+Date:   Mon, 16 Dec 2019 18:16:16 +0100
+Message-Id: <20191216171620.372683-8-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20191216171620.372683-1-jacopo+renesas@jmondi.org>
 References: <20191216171620.372683-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
----
- .../bindings/media/i2c/imi,rdacm20.txt        |  66 ----------
- .../bindings/media/i2c/imi,rdacm20.yaml       | 113 ++++++++++++++++++
- 2 files changed, 113 insertions(+), 66 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
- create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.yaml
+In preparation to move the call to max9286_check_config_link() in
+the notifier's bound callback, move the notifier's ops below the
+max9286_check_config_link() function.
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
-deleted file mode 100644
-index 4731aafed63f..000000000000
---- a/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
-+++ /dev/null
-@@ -1,66 +0,0 @@
--IMI D&D RDACM20 Automotive Camera Platform
--------------------------------------------
+Cosmetic change, no functional changes intended.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/media/i2c/max9286.c | 114 ++++++++++++++++++------------------
+ 1 file changed, 57 insertions(+), 57 deletions(-)
+
+diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+index ab84f0fa66dc..3c2c1f506983 100644
+--- a/drivers/media/i2c/max9286.c
++++ b/drivers/media/i2c/max9286.c
+@@ -445,63 +445,6 @@ static void max9286_configure_i2c(struct max9286_priv *priv, bool localack)
+ 	usleep_range(3000, 5000);
+ }
+ 
+-/* -----------------------------------------------------------------------------
+- * V4L2 Subdev
+- */
 -
--The IMI D&D RDACM20 is a GMSL-compatible camera designed for automotive
--applications. It encloses a Maxim Integrated MAX9271 GMSL serializer, an
--Omnivision OV10635 camera sensor and an embedded MCU, and connects to a remote
--GMSL endpoint through a coaxial cable.
+-static int max9286_notify_bound(struct v4l2_async_notifier *notifier,
+-				struct v4l2_subdev *subdev,
+-				struct v4l2_async_subdev *asd)
+-{
+-	struct max9286_priv *priv = sd_to_max9286(notifier->sd);
+-	struct max9286_source *source = asd_to_max9286_source(asd);
+-	unsigned int index = to_index(priv, source);
+-	unsigned int src_pad;
+-	int ret;
 -
--                                                     IMI RDACM20
-- ---------------                               --------------------------------
--|      GMSL     |   <---  Video Stream        |       <- Video--------\        |
--|               |< ====== GMSL Link ======== >|MAX9271<- I2C bus-> <-->OV10635 |
--| de-serializer |   <---  I2C messages --->   |                   \<-->MCU     |
-- ---------------                               --------------------------------
+-	ret = media_entity_get_fwnode_pad(&subdev->entity,
+-					  source->fwnode,
+-					  MEDIA_PAD_FL_SOURCE);
+-	if (ret < 0) {
+-		dev_err(&priv->client->dev,
+-			"Failed to find pad for %s\n", subdev->name);
+-		return ret;
+-	}
 -
--The RDACM20 transmits video data generated by the embedded camera sensor on the
--GMSL serial channel to a remote GMSL de-serializer, as well as it receives and
--transmits I2C messages encapsulated in the GMSL bidirectional control channel.
+-	source->sd = subdev;
+-	src_pad = ret;
 -
--All I2C traffic received on the GMSL link not directed to the serializer is
--propagated on the local I2C bus to the embedded camera sensor and MCU. All
--I2C traffic generated on the local I2C bus not directed to the serializer is
--propagated to the remote de-serializer encapsulated in the GMSL control channel.
+-	ret = media_create_pad_link(&source->sd->entity, src_pad,
+-				    &priv->sd.entity, index,
+-				    MEDIA_LNK_FL_ENABLED |
+-				    MEDIA_LNK_FL_IMMUTABLE);
+-	if (ret) {
+-		dev_err(&priv->client->dev,
+-			"Unable to link %s:%u -> %s:%u\n",
+-			source->sd->name, src_pad, priv->sd.name, index);
+-		return ret;
+-	}
 -
--The RDACM20 DT node should be a direct child of the GMSL Deserializer's I2C bus
--corresponding to the GMSL link that the camera is attached to.
+-	dev_dbg(&priv->client->dev, "Bound %s pad: %u on index %u\n",
+-		subdev->name, src_pad, index);
 -
--Required Properties:
+-	return 0;
+-}
 -
--- compatible: Shall be "imi,rdacm20".
--- reg: I2C device addresses, the first to be assigned to the serializer
--  the second to be assigned to the camera sensor. An optional third address can
--  be provided to specify the MCU address if present.
+-static void max9286_notify_unbind(struct v4l2_async_notifier *notifier,
+-				  struct v4l2_subdev *subdev,
+-				  struct v4l2_async_subdev *asd)
+-{
+-	struct max9286_source *source = asd_to_max9286_source(asd);
 -
--Connection to the remote GMSL endpoint are modelled using the OF graph bindings
--in accordance with the video interface bindings defined in
--Documentation/devicetree/bindings/media/video-interfaces.txt.
+-	source->sd = NULL;
+-}
 -
--The device node contains a single "port" child node with a single "endpoint"
--sub-device.
+-static const struct v4l2_async_notifier_operations max9286_notify_ops = {
+-	.bound = max9286_notify_bound,
+-	.unbind = max9286_notify_unbind,
+-};
 -
--Required endpoint properties:
--
--- remote-endpoint: phandle to the remote GMSL endpoint sub-node in the remote
--  node port.
--
--Example:
---------
--
--	i2c@0 {
--		#address-cells = <1>;
--		#size-cells = <0>;
--		reg = <0>;
--
--		camera@51 {
--			compatible = "imi,rdacm20";
--			reg = <0x31 0x41 0x51>;
--
--			port {
--				rdacm20_out0: endpoint {
--					remote-endpoint = <&max9286_in0>;
--				};
--			};
--
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.yaml b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.yaml
-new file mode 100644
-index 000000000000..76740e285f44
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.yaml
-@@ -0,0 +1,113 @@
-+# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-+# Copyright (C) 2019 Renesas Electronics Corp.
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/i2c/imi,rdacm20.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+ /*
+  * max9286_check_config_link() - Detect and wait for configuration links
+  *
+@@ -602,6 +545,63 @@ static int max9286_check_video_links(struct max9286_priv *priv)
+ 	return 0;
+ }
+ 
++/* -----------------------------------------------------------------------------
++ * V4L2 Subdev
++ */
 +
-+title:  IMI D&D RDACM20 Automotive Camera Platform
++static int max9286_notify_bound(struct v4l2_async_notifier *notifier,
++				struct v4l2_subdev *subdev,
++				struct v4l2_async_subdev *asd)
++{
++	struct max9286_priv *priv = sd_to_max9286(notifier->sd);
++	struct max9286_source *source = asd_to_max9286_source(asd);
++	unsigned int index = to_index(priv, source);
++	unsigned int src_pad;
++	int ret;
 +
-+maintainers:
-+  - Jacopo Mondi <jacopo+renesas@jmondi.org>
-+  - Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-+  - Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-+  - Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
++	ret = media_entity_get_fwnode_pad(&subdev->entity,
++					  source->fwnode,
++					  MEDIA_PAD_FL_SOURCE);
++	if (ret < 0) {
++		dev_err(&priv->client->dev,
++			"Failed to find pad for %s\n", subdev->name);
++		return ret;
++	}
 +
-+description: -|
-+  The IMI D&D RDACM20 is a GMSL-compatible camera designed for automotive
-+  applications. It encloses a Maxim Integrated MAX9271 GMSL serializer, an
-+  Omnivision OV10635 camera sensor and an embedded MCU, and connects to a remote
-+  GMSL endpoint through a coaxial cable.
++	source->sd = subdev;
++	src_pad = ret;
 +
-+                                                   IMI RDACM20
-+  +---------------+                        +--------------------------------+
-+  |      GMSL     |   <- Video Stream      |       <- Video--------\        |
-+  |               |< === GMSL Link ====== >|MAX9271<- I2C bus-> <-->OV10635 |
-+  | de-serializer |   <- I2C messages ->   |                   \<-->MCU     |
-+  +---------------+                        +--------------------------------+
++	ret = media_create_pad_link(&source->sd->entity, src_pad,
++				    &priv->sd.entity, index,
++				    MEDIA_LNK_FL_ENABLED |
++				    MEDIA_LNK_FL_IMMUTABLE);
++	if (ret) {
++		dev_err(&priv->client->dev,
++			"Unable to link %s:%u -> %s:%u\n",
++			source->sd->name, src_pad, priv->sd.name, index);
++		return ret;
++	}
 +
-+  The RDACM20 transmits video data generated by the embedded camera sensor on
-+  the GMSL serial channel to a remote GMSL de-serializer, as well as it receives
-+  and transmits I2C messages encapsulated in the GMSL bidirectional control
-+  channel.
++	dev_dbg(&priv->client->dev, "Bound %s pad: %u on index %u\n",
++		subdev->name, src_pad, index);
 +
-+  All I2C traffic received on the GMSL link not directed to the serializer is
-+  propagated on the local I2C bus to the embedded camera sensor and MCU. All I2C
-+  traffic generated on the local I2C bus not directed to the serializer is
-+  propagated to the remote de-serializer encapsulated in the GMSL control
-+  channel.
++	return 0;
++}
 +
-+  The RDACM20 DT node should be a direct child of the GMSL Deserializer's I2C
-+  bus corresponding to the GMSL link that the camera is attached to.
++static void max9286_notify_unbind(struct v4l2_async_notifier *notifier,
++				  struct v4l2_subdev *subdev,
++				  struct v4l2_async_subdev *asd)
++{
++	struct max9286_source *source = asd_to_max9286_source(asd);
 +
-+properties:
-+  '#address-cells':
-+    const: 1
++	source->sd = NULL;
++}
 +
-+  '#size-cells':
-+    const: 0
++static const struct v4l2_async_notifier_operations max9286_notify_ops = {
++	.bound = max9286_notify_bound,
++	.unbind = max9286_notify_unbind,
++};
 +
-+  compatible:
-+    const: imi,rdacm20
-+
-+  reg:
-+    description: -|
-+      I2C device addresses, the first to be assigned to the serializer the
-+      second to be assigned to the camera sensor. An optional third address can
-+      be provided to specify the MCU address if present.
-+    minItems: 2
-+    maxItems: 3
-+
-+  port:
-+    type: object
-+    additionalProperties: false
-+    description: -|
-+      Connection to the remote GMSL endpoint are modelled using the OF graph
-+      bindings in accordance with the video interface bindings defined in
-+      Documentation/devicetree/bindings/media/video-interfaces.txt.
-+
-+      The device node contains a single "port" child node with a single
-+      "endpoint" sub-device.
-+
-+    properties:
-+      endpoint:
-+        type: object
-+        additionalProperties: false
-+
-+        properties:
-+          remote-endpoint:
-+            description: -|
-+              phandle to the remote GMSL endpoint sub-node in the remote node
-+              port.
-+            maxItems: 1
-+
-+        required:
-+          - remote-endpoint
-+
-+    required:
-+      - endpoint
-+
-+required:
-+  - compatible
-+  - reg
-+  - port
-+
-+examples:
-+  - |
-+    i2c@e66d8000 {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      reg = <0 0xe66d8000 0 0x40>;
-+
-+      camera@31 {
-+        compatible = "imi,rdacm20";
-+        reg = <0x31>, <0x41>, <0x51>;
-+
-+        port {
-+          rdacm20_out0: endpoint {
-+            remote-endpoint = <&max9286_in0>;
-+          };
-+        };
-+      };
-+    };
+ static int max9286_s_stream(struct v4l2_subdev *sd, int enable)
+ {
+ 	struct max9286_priv *priv = sd_to_max9286(sd);
 -- 
 2.24.0
 
