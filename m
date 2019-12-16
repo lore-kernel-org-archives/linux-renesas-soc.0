@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B51FCC2D0C3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 22:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35331C43603
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 22:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B5B821739
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 22:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEB9121739
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 22:41:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="iNWfkU82"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="W1dvgzsE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727491AbfLPWki (ORCPT
+        id S1727036AbfLPWlk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Dec 2019 17:40:38 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60108 "EHLO
+        Mon, 16 Dec 2019 17:41:40 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60124 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727036AbfLPWki (ORCPT
+        with ESMTP id S1726947AbfLPWlk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Dec 2019 17:40:38 -0500
+        Mon, 16 Dec 2019 17:41:40 -0500
 Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D01CDA34;
-        Mon, 16 Dec 2019 23:40:35 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A3507A34;
+        Mon, 16 Dec 2019 23:41:38 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1576536036;
-        bh=OOQ253wdNBfpvbNdmsaRqBHLuQcDU4VRJziZhy1aLy0=;
+        s=mail; t=1576536098;
+        bh=I1Qn/jmgMmQAuyycrP2Kf5riyO8UBNWgt1qwWrm10MQ=;
         h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=iNWfkU82mhJItl90q15fuHWUVyKvz7rfHvf5u7WxpqFulmCYg9HWpB9/EXEPuKrlm
-         +YXm5jV3wgsNQ1eJhINYiW3eJcunzVkGL3+pbl/dIb0Ko80yi70SvVYI5y+qB1OEdi
-         CKe8NnlHS+R3+LLKWgoz1CwVOU1ffEGNzdcHZ6U0=
+        b=W1dvgzsEs+xumP0X4T5D58EN6tf2sPkvdkVRnA60ZISwpBHuf/cosVVzdu0SuB00z
+         JIJZb2HCb9KwJgrkHWIS/Y/7cTEv6d7EQsyAZs9nbYTTnSXLhgS6qY+fAwT/QzjmDM
+         52QmjlA0xCzw3YA/nQgFpE/vcveUtgcGAI483ObE=
 Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [RFC 03/11] fixup! arm64: dts: renesas: eagle: Provide Eagle
- FAKRA dynamic overlay
+Subject: Re: [RFC 04/11] fixup! arm64: dts: renesas: eagle: Provide MAX9286
+ GMSL deserialiser
 To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se
 Cc:     linux-renesas-soc@vger.kernel.org
 References: <20191216171620.372683-1-jacopo+renesas@jmondi.org>
- <20191216171620.372683-4-jacopo+renesas@jmondi.org>
+ <20191216171620.372683-5-jacopo+renesas@jmondi.org>
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Organization: Ideas on Board
-Message-ID: <c8123fa1-b918-caad-4917-c6d694b49d8d@ideasonboard.com>
-Date:   Mon, 16 Dec 2019 22:40:33 +0000
+Message-ID: <93eaaa42-53a5-3aa6-5c22-0786e1fcaad6@ideasonboard.com>
+Date:   Mon, 16 Dec 2019 22:41:36 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191216171620.372683-4-jacopo+renesas@jmondi.org>
+In-Reply-To: <20191216171620.372683-5-jacopo+renesas@jmondi.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -60,58 +60,33 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 Hi Jacopo,
 
 On 16/12/2019 17:16, Jacopo Mondi wrote:
-> Fixes DTC warning
-> r8a77970-eagle.dt.yaml: camera@51: reg: [[81, 97]] is too short
+> Fixes DTC warning:
+> r8a77970-eagle.dts:236.29-335.4: Warning (avoid_unnecessary_addr_size): /soc/i2c@e66d0000/gmsl-deserializer@48: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
 
-Also agreed,
+Aha, this must be a left over from moving the child nodes into an i2c-mux.
+
 
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
 Thanks - I'll squash this onto my gmsl/platform branch.
 
 > ---
->  arch/arm64/boot/dts/renesas/eagle-fakra.dtsi | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/renesas/eagle-fakra.dtsi b/arch/arm64/boot/dts/renesas/eagle-fakra.dtsi
-> index 1f3aeb49e4d9..d30d0f25e60f 100644
-> --- a/arch/arm64/boot/dts/renesas/eagle-fakra.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/eagle-fakra.dtsi
-> @@ -63,7 +63,7 @@ i2c@0 {
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> index c8cd548b7981..614f8d68d991 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> +++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+> @@ -263,9 +263,6 @@ gmsl: gmsl-deserializer@48 {
+>  		compatible = "maxim,max9286";
+>  		reg = <0x48>;
 >  
->  			camera@51 {
->  				compatible = EAGLE_CAMERA0;
-> -				reg = <0x51 0x61>;
-> +				reg = <0x51>, <0x61>;
+> -		#address-cells = <1>;
+> -		#size-cells = <0>;
+> -
+>  		/* eagle-pca9654-max9286-pwdn */
+>  		enable-gpios = <&io_expander 0 GPIO_ACTIVE_HIGH>;
 >  
->  				port {
->  					fakra_con0: endpoint {
-> @@ -80,7 +80,7 @@ i2c@1 {
->  
->  			camera@52 {
->  				compatible = EAGLE_CAMERA1;
-> -				reg = <0x52 0x62>;
-> +				reg = <0x52>, <0x62>;
->  
->  				port {
->  					fakra_con1: endpoint {
-> @@ -97,7 +97,7 @@ i2c@2 {
->  
->  			camera@53 {
->  				compatible = EAGLE_CAMERA2;
-> -				reg = <0x53 0x63>;
-> +				reg = <0x53>, <0x63>;
->  
->  				port {
->  					fakra_con2: endpoint {
-> @@ -114,7 +114,7 @@ i2c@3 {
->  
->  			camera@54 {
->  				compatible = EAGLE_CAMERA3;
-> -				reg = <0x54 0x64>;
-> +				reg = <0x54>, <0x64>;
->  
->  				port {
->  					fakra_con3: endpoint {
 > 
 
