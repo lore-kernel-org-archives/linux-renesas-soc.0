@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A42FC2D0C3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43ED0C43603
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC13420725
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1822A20725
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="I3/BgKvb"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Prs9UIgm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbfLPK3n (ORCPT
+        id S1727395AbfLPK3o (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Dec 2019 05:29:43 -0500
+        Mon, 16 Dec 2019 05:29:44 -0500
 Received: from perceval.ideasonboard.com ([213.167.242.64]:40704 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727476AbfLPK3n (ORCPT
+        with ESMTP id S1727476AbfLPK3o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:29:43 -0500
+        Mon, 16 Dec 2019 05:29:44 -0500
 Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7D83EA34;
-        Mon, 16 Dec 2019 11:29:35 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C8B5EB1A;
+        Mon, 16 Dec 2019 11:29:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1576492175;
-        bh=Ren/XIru5Y5hQ2L1tNYvyr2r6P0B7j38rkD7G9d9XSI=;
+        s=mail; t=1576492176;
+        bh=iVKHkanYUVKEN78LNrq66HLl46bCSrAtpvh3rdpeH8U=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=I3/BgKvbXs+h4RRDSqEcguyKYhHPinn9cwWtKTwRbyyQ28644RYXXWV6xUug34pQA
-         5ez8if5RmfU9DWWHDDeno0T8KAQe5au+gBMi5oGprvR1QUKYLWQMZzexhtXzca9lw7
-         O921j7P9uP/82Wzx1czgTEYaX35paZklTLLk/Zmw=
+        b=Prs9UIgm0diNFH6oyy2ZCsvR82kgEAKFC8UfvoZM4UWqYvLExgASyUeRa5lqpW5D/
+         m563TM0BYPwHk5RrQx1zlFD9mNQ9ROb+YJa3mhyn4HiiN3pX4BNdBAqtNTcgX6nZem
+         fy1vrPL6zoZL4IMz8XsaqI3473MpTqiAyidxl8Os=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
-Subject: [RFC PATCH v6 07/13] arm64: dts: renesas: salvator-x: Add MAX9286 expansion board
-Date:   Mon, 16 Dec 2019 10:29:24 +0000
-Message-Id: <20191216102930.5867-8-kieran.bingham+renesas@ideasonboard.com>
+Subject: [RFC PATCH v6 11/13] [DNI:DEBUG] media: i2c: max9286: Add max9286_check_config_link()
+Date:   Mon, 16 Dec 2019 10:29:28 +0000
+Message-Id: <20191216102930.5867-12-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191216102930.5867-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20191211124459.20508-1-kieran.bingham+renesas@ideasonboard.com>
@@ -49,436 +49,83 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Add a .dtsi fragment to describe the MAX9286-based expansion board for
-the Renesas Salvator-X board.
+Add extra debug status output.
 
-The MAX9286 expansion board has eight RDACM20 cameras connected to it.
-They can be individually controlled by enabling or disabling the macro
-defines.
-
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 ---
-v2:
- - Use SPDX headers
- - Remove link from ADV748x TXA (HDMI)
- - Use 0x31-0x38, and 0x41-0x48 for the 8 cameras. 0x30 and 0x40 are the
-   base addresses for the OV10635 and MAX9271 (0x50 for the MCU)
- - Provide RDACM20 MCU I2C address reservations. (0x51-0x58)
+ drivers/media/i2c/max9286.c | 50 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-v3:
- - Fix gmsl-serializer@ i2c node addressing
-
-v6:
- - Make i2c-mux child node and update to be conformant to new bindings.
----
- .../boot/dts/renesas/salvator-x-max9286.dtsi  | 394 ++++++++++++++++++
- 1 file changed, 394 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/salvator-x-max9286.dtsi
-
-diff --git a/arch/arm64/boot/dts/renesas/salvator-x-max9286.dtsi b/arch/arm64/boot/dts/renesas/salvator-x-max9286.dtsi
-new file mode 100644
-index 000000000000..19697f5a3c85
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/salvator-x-max9286.dtsi
-@@ -0,0 +1,394 @@
-+// SPDX-License-Identifier: GPL-2.0+
+diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+index 6e1dfc518e03..057258a3c645 100644
+--- a/drivers/media/i2c/max9286.c
++++ b/drivers/media/i2c/max9286.c
+@@ -502,6 +502,51 @@ static const struct v4l2_async_notifier_operations max9286_notify_ops = {
+ 	.unbind = max9286_notify_unbind,
+ };
+ 
 +/*
-+ * Device Tree Source for the Salvator-X MAX9286 expansion board
++ * max9286_check_config_link() - Detect and wait for configuration links
 + *
-+ * Copyright (C) 2017 Ideas on Board <laurent.pinchart@ideasonboard.com>
++ * Determine if the configuration channel is up and settled for a link.
++ *
++ * Returns 0 for success, -EIO for errors.
 + */
++static int max9286_check_config_link(struct max9286_priv *priv,
++				     unsigned int source_mask)
++{
++	unsigned int i;
++	int ret;
++	const unsigned int max_loops = 1000;
 +
-+#include <dt-bindings/gpio/gpio.h>
++	source_mask &= 0xf;
++	source_mask <<= 4;
 +
-+/*
-+ * MAX9286 A
-+ */
-+#define MAXIM_CAMERA0 "imi,rdacm20"
-+#define MAXIM_CAMERA1 "imi,rdacm20"
-+#define MAXIM_CAMERA2 "imi,rdacm20"
-+#define MAXIM_CAMERA3 "imi,rdacm20"
++	/*
++	 * Make sure requested configuration links are detected.
++	 */
++	for (i = 0; i < max_loops; i++) {
++		ret = max9286_read(priv, 0x49);
++		if (ret < 0)
++			return -EIO;
 +
-+/*
-+ * MAX9286 B
-+ */
-+#define MAXIM_CAMERA4 "imi,rdacm20"
-+#define MAXIM_CAMERA5 "imi,rdacm20"
-+#define MAXIM_CAMERA6 "imi,rdacm20"
-+#define MAXIM_CAMERA7 "imi,rdacm20"
++		if ((ret & source_mask) == source_mask)
++			break;
 +
-+/ {
-+/*
-+ * Powered MCU IMI cameras need delay between power-on and R-Car access
-+ * to avoid I2C bus conflicts since the R-Car I2C does not support I2C
-+ * multi-master. The I2C bus conflict would result in R-Car I2C IP stall.
-+ */
-+#define IMI_MCU_V0_DELAY	8000000	/* delay for powered MCU firmware v0 */
-+#define IMI_MCU_V1_DELAY	3000000	/* delay for powered MCU firmware v1 */
-+#define IMI_MCU_NO_DELAY	0	/* delay for unpowered MCU  */
-+#define IMI_MCU_DELAY		IMI_MCU_V0_DELAY
++		usleep_range(350, 500);
++	}
 +
-+	poc_12v: regulator-vcc-poc-12v {
-+		compatible = "regulator-fixed";
++	if (i == max_loops) {
++		dev_err(&priv->client->dev,
++			"Unable to detect configuration links: 0x%02x expected 0x%02x\n",
++			ret, source_mask);
++		return -EIO;
++	}
 +
-+		regulator-name = "Camera PoC 12V";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		startup-delay-us = <(250000 + IMI_MCU_DELAY)>;
++	dev_err(&priv->client->dev,
++		"Successfully detected configuration links after %u loops: 0x%02x\n",
++		i, ret);
 +
-+		gpio = <&gpio6 30 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+};
++	return 0;
++}
 +
-+&vin0 {
-+	status = "okay";
-+};
+ /*
+  * max9286_check_video_links() - Make sure video links are detected and locked
+  *
+@@ -831,6 +876,11 @@ static int max9286_setup(struct max9286_priv *priv)
+ 	 */
+ 	usleep_range(2000, 5000);
+ 
++	/*
++	 * Check to see if the expected configuration links are up.
++	 */
++	max9286_check_config_link(priv, priv->source_mask);
 +
-+&vin1 {
-+	status = "okay";
-+};
-+
-+&vin2 {
-+	status = "okay";
-+};
-+
-+&vin3 {
-+	status = "okay";
-+};
-+
-+&vin4 {
-+	status = "okay";
-+};
-+
-+&vin5 {
-+	status = "okay";
-+};
-+
-+&vin6 {
-+	status = "okay";
-+};
-+
-+&vin7 {
-+	status = "okay";
-+};
-+
-+/* Disconnect the csi40 endpoint from the ADV748x TXA (HDMI) */
-+&adv7482_txa {
-+	/delete-property/ remote-endpoint;
-+	status = "disabled";
-+};
-+
-+&csi40 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			csi40_in: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&max9286_out0>;
-+			};
-+		};
-+	};
-+};
-+
-+&csi41 {
-+	status = "okay";
-+
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		port@0 {
-+			reg = <0>;
-+
-+			csi41_in: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2 3 4>;
-+				remote-endpoint = <&max9286_out1>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c4 {
-+	gmsl-deserializer@4c {
-+		compatible = "maxim,max9286";
-+		reg = <0x4c>;
-+		poc-supply = <&poc_12v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				max9286_in0: endpoint {
-+#ifdef MAXIM_CAMERA0
-+					remote-endpoint = <&rdacm20_out0>;
-+#endif
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				max9286_in1: endpoint {
-+#ifdef MAXIM_CAMERA1
-+					remote-endpoint = <&rdacm20_out1>;
-+#endif
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				max9286_in2: endpoint {
-+#ifdef MAXIM_CAMERA2
-+					remote-endpoint = <&rdacm20_out2>;
-+#endif
-+				};
-+			};
-+
-+			port@3 {
-+				reg = <3>;
-+				max9286_in3: endpoint {
-+#ifdef MAXIM_CAMERA3
-+					remote-endpoint = <&rdacm20_out3>;
-+#endif
-+				};
-+			};
-+
-+			port@4 {
-+				reg = <4>;
-+				max9286_out0: endpoint {
-+					clock-lanes = <0>;
-+					data-lanes = <1 2 3 4>;
-+					remote-endpoint = <&csi40_in>;
-+				};
-+			};
-+		};
-+
-+		i2c-mux {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			i2c@0 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0>;
-+
-+#ifdef MAXIM_CAMERA0
-+				camera@31 {
-+					compatible = MAXIM_CAMERA0;
-+					reg = <0x31 0x41 0x51>;
-+
-+					port {
-+						rdacm20_out0: endpoint {
-+							remote-endpoint = <&max9286_in0>;
-+						};
-+					};
-+
-+				};
-+#endif
-+			};
-+
-+			i2c@1 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <1>;
-+
-+#ifdef MAXIM_CAMERA1
-+				camera@32 {
-+					compatible = MAXIM_CAMERA1;
-+					reg = <0x32 0x42 0x52>;
-+					port {
-+						rdacm20_out1: endpoint {
-+							remote-endpoint = <&max9286_in1>;
-+						};
-+					};
-+				};
-+#endif
-+			};
-+
-+			i2c@2 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <2>;
-+
-+#ifdef MAXIM_CAMERA2
-+				camera@33 {
-+					compatible = MAXIM_CAMERA2;
-+					reg = <0x33 0x43 0x53>;
-+					port {
-+						rdacm20_out2: endpoint {
-+							remote-endpoint = <&max9286_in2>;
-+						};
-+					};
-+				};
-+#endif
-+			};
-+
-+			i2c@3 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <3>;
-+
-+#ifdef MAXIM_CAMERA3
-+				camera@34 {
-+					compatible = MAXIM_CAMERA3;
-+					reg = <0x34 0x44 0x54>;
-+					port {
-+						rdacm20_out3: endpoint {
-+							remote-endpoint = <&max9286_in3>;
-+						};
-+					};
-+				};
-+#endif
-+			};
-+		};
-+	};
-+
-+	gmsl-deserializer@6c {
-+		compatible = "maxim,max9286";
-+		reg = <0x6c>;
-+		poc-supply = <&poc_12v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				max9286_in4: endpoint {
-+#ifdef MAXIM_CAMERA4
-+					remote-endpoint = <&rdacm20_out4>;
-+#endif
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				max9286_in5: endpoint {
-+#ifdef MAXIM_CAMERA5
-+					remote-endpoint = <&rdacm20_out5>;
-+#endif
-+				};
-+			};
-+
-+			port@2 {
-+				reg = <2>;
-+				max9286_in6: endpoint {
-+#ifdef MAXIM_CAMERA6
-+					remote-endpoint = <&rdacm20_out6>;
-+#endif
-+				};
-+			};
-+
-+			port@3 {
-+				reg = <3>;
-+				max9286_in7: endpoint {
-+#ifdef MAXIM_CAMERA7
-+					remote-endpoint = <&rdacm20_out7>;
-+#endif
-+				};
-+			};
-+
-+			port@4 {
-+				reg = <4>;
-+				max9286_out1: endpoint {
-+					clock-lanes = <0>;
-+					data-lanes = <1 2 3 4>;
-+					remote-endpoint = <&csi41_in>;
-+				};
-+			};
-+		};
-+
-+		i2c-mux {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			i2c@0 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <0>;
-+
-+#ifdef MAXIM_CAMERA4
-+				camera@35 {
-+					compatible = MAXIM_CAMERA4;
-+					reg = <0x35 0x45 0x55>;
-+					port {
-+						rdacm20_out4: endpoint {
-+							remote-endpoint = <&max9286_in4>;
-+						};
-+					};
-+				};
-+#endif
-+			};
-+
-+			i2c@1 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <1>;
-+
-+#ifdef MAXIM_CAMERA5
-+				camera@36 {
-+					compatible = MAXIM_CAMERA5;
-+					reg = <0x36 0x46 0x56>;
-+					port {
-+						rdacm20_out5: endpoint {
-+							remote-endpoint = <&max9286_in5>;
-+						};
-+					};
-+				};
-+#endif
-+			};
-+
-+			i2c@2 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <2>;
-+
-+#ifdef MAXIM_CAMERA6
-+				camera@37 {
-+					compatible = MAXIM_CAMERA6;
-+					reg = <0x37 0x47 0x57>;
-+					port {
-+						rdacm20_out6: endpoint {
-+							remote-endpoint = <&max9286_in6>;
-+						};
-+					};
-+				};
-+#endif
-+			};
-+
-+			i2c@3 {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+				reg = <3>;
-+
-+#ifdef MAXIM_CAMERA7
-+				camera@38 {
-+					compatible = MAXIM_CAMERA7;
-+					reg = <0x38 0x48 0x58>;
-+					port {
-+						rdacm20_out7: endpoint {
-+							remote-endpoint = <&max9286_in7>;
-+						};
-+					};
-+				};
-+#endif
-+			};
-+		};
-+	};
-+};
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
