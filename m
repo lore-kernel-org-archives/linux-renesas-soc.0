@@ -7,164 +7,84 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 376E4C2D0BF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686BEC43603
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EFDC20725
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32BFD2072D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GvRUyGoG"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="G960wV45"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbfLPK3g (ORCPT
+        id S1727436AbfLPK3i (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Dec 2019 05:29:36 -0500
+        Mon, 16 Dec 2019 05:29:38 -0500
 Received: from perceval.ideasonboard.com ([213.167.242.64]:40692 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727070AbfLPK3g (ORCPT
+        with ESMTP id S1727070AbfLPK3h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:29:36 -0500
+        Mon, 16 Dec 2019 05:29:37 -0500
 Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DAAC6B1A;
-        Mon, 16 Dec 2019 11:29:33 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 908A21170;
+        Mon, 16 Dec 2019 11:29:34 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
         s=mail; t=1576492174;
-        bh=ZIaWTQb5foHsyW3EPce6shFs7PtfFoP2AqMchE4b1sA=;
+        bh=bLgoGWpMfLhIxX+u92B25Ll8zAnWSzgu0IFdujBe/cc=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=GvRUyGoG4qAmRJ7mDfKvF2LRBfUqR+3S79qW5VzWO7os3Tsj8xXWqhXGIjONLCJzh
-         8GgiTp8fHG1AEm4lvPn/CMpiNNJcKqAqcHd3k/xgWiZIiDEu08UIcOodHcEsEclQiH
-         7Vy9mjlZQPPrwt5x0dYeHOj9XyF7yEkzm/i/yIJA=
+        b=G960wV450pFXkqIAKOc19BFZ+wtETEvoh5zP7vmsWpTEGSiF3nlFv/fiAnMCC5kri
+         2aeDE9u68WtZfTyq8HBO6rdtO/grpzCeEw+SQLEmBNeGPAIzSw4AdHNwml0xyPHmWf
+         B0IqL7dySbPXLNh3GvWXEPunexgm7jm0scwll2PY=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
-Subject: [RFC PATCH v6 02/13] dt-bindings: media: i2c: Add bindings for IMI RDACM20
-Date:   Mon, 16 Dec 2019 10:29:19 +0000
-Message-Id: <20191216102930.5867-3-kieran.bingham+renesas@ideasonboard.com>
+Subject: [RFC PATCH v6 04/13] arm64: dts: renesas: eagle: enable VIN
+Date:   Mon, 16 Dec 2019 10:29:21 +0000
+Message-Id: <20191216102930.5867-5-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191216102930.5867-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20191211124459.20508-1-kieran.bingham+renesas@ideasonboard.com>
  <20191216102930.5867-1-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-The IMI RDACM20 is a Gigabit Multimedia Serial Link (GMSL) camera
-capable of transmitting video and I2C control messages on a coax cable
-physical link for automotive applications.
+Enable VIN0-VIN3 on the Eagle platform.
 
-Document its device tree binding interface.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+[Kieran: Rebase to linux-media/master]
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
 ---
-v2:
- - Provide imi vendor prefix
- - Fix minor spelling
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-v3:
- - update binding descriptions
-
-v4:
- - No change
-
-v5:
- - Specify optional third reg address for the MCU
----
- .../bindings/media/i2c/imi,rdacm20.txt        | 66 +++++++++++++++++++
- .../devicetree/bindings/vendor-prefixes.yaml  |  2 +
- 2 files changed, 68 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
-
-diff --git a/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
-new file mode 100644
-index 000000000000..4731aafed63f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/imi,rdacm20.txt
-@@ -0,0 +1,66 @@
-+IMI D&D RDACM20 Automotive Camera Platform
-+------------------------------------------
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+index 2afb91ec9c8d..2be89ed879a5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
+@@ -206,3 +206,19 @@
+ 
+ 	status = "okay";
+ };
 +
-+The IMI D&D RDACM20 is a GMSL-compatible camera designed for automotive
-+applications. It encloses a Maxim Integrated MAX9271 GMSL serializer, an
-+Omnivision OV10635 camera sensor and an embedded MCU, and connects to a remote
-+GMSL endpoint through a coaxial cable.
++&vin0 {
++	status = "okay";
++};
 +
-+                                                     IMI RDACM20
-+ ---------------                               --------------------------------
-+|      GMSL     |   <---  Video Stream        |       <- Video--------\        |
-+|               |< ====== GMSL Link ======== >|MAX9271<- I2C bus-> <-->OV10635 |
-+| de-serializer |   <---  I2C messages --->   |                   \<-->MCU     |
-+ ---------------                               --------------------------------
++&vin1 {
++	status = "okay";
++};
 +
-+The RDACM20 transmits video data generated by the embedded camera sensor on the
-+GMSL serial channel to a remote GMSL de-serializer, as well as it receives and
-+transmits I2C messages encapsulated in the GMSL bidirectional control channel.
++&vin2 {
++	status = "okay";
++};
 +
-+All I2C traffic received on the GMSL link not directed to the serializer is
-+propagated on the local I2C bus to the embedded camera sensor and MCU. All
-+I2C traffic generated on the local I2C bus not directed to the serializer is
-+propagated to the remote de-serializer encapsulated in the GMSL control channel.
-+
-+The RDACM20 DT node should be a direct child of the GMSL Deserializer's I2C bus
-+corresponding to the GMSL link that the camera is attached to.
-+
-+Required Properties:
-+
-+- compatible: Shall be "imi,rdacm20".
-+- reg: I2C device addresses, the first to be assigned to the serializer
-+  the second to be assigned to the camera sensor. An optional third address can
-+  be provided to specify the MCU address if present.
-+
-+Connection to the remote GMSL endpoint are modelled using the OF graph bindings
-+in accordance with the video interface bindings defined in
-+Documentation/devicetree/bindings/media/video-interfaces.txt.
-+
-+The device node contains a single "port" child node with a single "endpoint"
-+sub-device.
-+
-+Required endpoint properties:
-+
-+- remote-endpoint: phandle to the remote GMSL endpoint sub-node in the remote
-+  node port.
-+
-+Example:
-+-------
-+
-+	i2c@0 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		reg = <0>;
-+
-+		camera@51 {
-+			compatible = "imi,rdacm20";
-+			reg = <0x31 0x41 0x51>;
-+
-+			port {
-+				rdacm20_out0: endpoint {
-+					remote-endpoint = <&max9286_in0>;
-+				};
-+			};
-+
-+		};
-+	};
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-index 6046f4555852..80042764d2c6 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-@@ -429,6 +429,8 @@ patternProperties:
-     description: Ingenieurburo Fur Ic-Technologie (I/F/I)
-   "^ilitek,.*":
-     description: ILI Technology Corporation (ILITEK)
-+  "^imi,.*":
-+    description: Integrated Micro-Electronics Inc.
-   "^img,.*":
-     description: Imagination Technologies Ltd.
-   "^incircuit,.*":
++&vin3 {
++	status = "okay";
++};
 -- 
 2.20.1
 
