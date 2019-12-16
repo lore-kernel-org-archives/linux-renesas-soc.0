@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD6CC2D0C0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF09C43603
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B23D920725
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E89C20725
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 10:29:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LPuz/jGy"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="L3Q4S1N3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbfLPK3p (ORCPT
+        id S1727452AbfLPK3q (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Dec 2019 05:29:45 -0500
+        Mon, 16 Dec 2019 05:29:46 -0500
 Received: from perceval.ideasonboard.com ([213.167.242.64]:40692 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727070AbfLPK3p (ORCPT
+        with ESMTP id S1727070AbfLPK3q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Dec 2019 05:29:45 -0500
+        Mon, 16 Dec 2019 05:29:46 -0500
 Received: from localhost.localdomain (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7D84CB18;
-        Mon, 16 Dec 2019 11:29:36 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 65722144B;
+        Mon, 16 Dec 2019 11:29:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1576492176;
-        bh=4RpJ3bE4pj4Pu0tFqVNEkjDIl1PHOcfrVMJv8bj2eKs=;
+        s=mail; t=1576492177;
+        bh=uCh1T2Yfv/ZM/HR/y4pLSjxonu+4j+vpiwmLYsdw3k8=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=LPuz/jGyB8bJf7gGEb5dcIkwojUN9Ayvdm/inrHtl4enzcp0zpKr0lcpVn8PMshve
-         ULUoy3VT71MVmFLADGBOYafGZZbOpvBksfi0pCPlylqN6IzX5MMSyxRh+4dd+9EGuV
-         c0xn38u3rHduwG4YoUGLZKXvxnYRDZluvi7CvVWY=
+        b=L3Q4S1N3tqsoZeNiLcpFZfiAMF0wdxY9Kdh56fizijPmo/6irw5H6SWgpqsznMhse
+         moAyTixS18wTnDRp/CXQkSoFpY980Qz/H3hnZOuoTrfHf6GeKXmV9EVp6hsSCzs8f+
+         VlKISx10WNW1zbKI72d6RP9ram6yg2tsGRjLIZUs=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
-Subject: [RFC PATCH v6 10/13] media: i2c: max9286: Introduce a debugfs layer
-Date:   Mon, 16 Dec 2019 10:29:27 +0000
-Message-Id: <20191216102930.5867-11-kieran.bingham+renesas@ideasonboard.com>
+Subject: [RFC PATCH v6 13/13] media: i2c: max9286: [Workaround] 'device is bound'
+Date:   Mon, 16 Dec 2019 10:29:30 +0000
+Message-Id: <20191216102930.5867-14-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191216102930.5867-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20191211124459.20508-1-kieran.bingham+renesas@ideasonboard.com>
@@ -49,210 +49,81 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The MAX9286 provides several read-only status registers for observing
-the system state of the device.
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
-Provide error statistics and link status through debugfs files.
-These files will be free-form and should not be considered as part
-of any userspace API
+This introduces a local workaround to support multiple MAX9286 devices
+on the same I2C bus.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Not for upstream consumption due to device_is_bound being an in kernel
+symbol, and requires the module to be a built-in only.
 
+Not-signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
-
-Please consider this a starting point for adding useful debug. I don't
-necessarily expect this code to make it to the final driver, but it
-could be very useful to process and expose this information internally
-in the driver.
-
-Alternatively - we could move this all to max9286_debugfs.c or such.
-
-Watch out for a lot of the error counters which reset to 0 when read.
-We should handle those by adding the value to a local store on every
-read.
-
-v2:
- - Cleanup debugfs in error path of probe()
-
-v6:
- - Fix a bogus (h << 0) check
----
- drivers/media/i2c/max9286.c | 127 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 127 insertions(+)
+ drivers/media/i2c/max9286.c | 34 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 32 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-index df77871e603c..6e1dfc518e03 100644
+index 090b6c0f81e9..07d4489183f4 100644
 --- a/drivers/media/i2c/max9286.c
 +++ b/drivers/media/i2c/max9286.c
-@@ -10,6 +10,7 @@
-  * Copyright (C) 2015 Cogent Embedded, Inc.
-  */
- 
-+#include <linux/debugfs.h>
- #include <linux/delay.h>
- #include <linux/device.h>
- #include <linux/fwnode.h>
-@@ -148,6 +149,7 @@ struct max9286_priv {
- 	struct v4l2_subdev sd;
- 	struct media_pad pads[MAX9286_N_PADS];
- 	struct regulator *regulator;
-+	struct dentry *dbgroot;
- 	bool poc_enabled;
- 
- 	struct gpio_chip gpio;
-@@ -225,6 +227,124 @@ static int max9286_write(struct max9286_priv *priv, u8 reg, u8 val)
+@@ -942,7 +942,7 @@ static int max9286_gpio(struct max9286_priv *priv)
  	return ret;
  }
  
-+/* -----------------------------------------------------------------------------
-+ * DebugFS
-+ */
-+
-+#define DEBUGFS_RO_ATTR(name)						\
-+static int name##_open(struct inode *inode, struct file *file)		\
-+{									\
-+	return single_open(file, name, inode->i_private);		\
-+}									\
-+static const struct file_operations name##_fops = {			\
-+	.owner = THIS_MODULE,						\
-+	.open = name##_open,						\
-+	.llseek = seq_lseek,						\
-+	.read = seq_read,						\
-+	.release = single_release,					\
-+}
-+
-+static int max9286_config_video_detect(struct max9286_priv *priv,
-+				       struct seq_file *s)
-+{
-+	int reg_49 = max9286_read(priv, 0x49);
-+	unsigned int i;
-+
-+	if (reg_49 < 0)
-+		return reg_49;
-+
-+	seq_puts(s, "                  :  0   1   2   3\n");
-+	seq_puts(s, "Configuration Link:");
-+	for (i = 0; i < 4; i++) {
-+		int link = (reg_49 & BIT(i + 4));
-+
-+		seq_printf(s, " %3s", link ? " O " : "xxx");
-+	}
-+	seq_puts(s, "\n");
-+
-+	seq_puts(s, "Video Link        :");
-+	for (i = 0; i < 4; i++) {
-+		int link = (reg_49 & BIT(i));
-+
-+		seq_printf(s, " %3s", link ? " O " : "xxx");
-+	}
-+	seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+static int max9286_vs_period(struct max9286_priv *priv, struct seq_file *s)
-+{
-+	int l, m, h;
-+	unsigned int frame_length;
-+
-+	l = max9286_read(priv, 0x5b);
-+	m = max9286_read(priv, 0x5c);
-+	h = max9286_read(priv, 0x5d);
-+
-+	if (l < 0 || m < 0 || h < 0)
-+		return -ENODEV;
-+
-+	frame_length = (h << 16) + (m << 8) + l;
-+
-+	seq_printf(s, "Calculated VS Period (pxclk) : %u\n", frame_length);
-+
-+	return 0;
-+}
-+
-+static int max9286_master_link(struct max9286_priv *priv, struct seq_file *s)
-+{
-+	int reg_71 = max9286_read(priv, 0x71);
-+	unsigned int link = (reg_71 >> 4) & 0x03;
-+
-+	if (reg_71 < 0)
-+		return reg_71;
-+
-+	seq_printf(s, "Master link selected : %u\n", link);
-+
-+	return 0;
-+}
-+
-+static int max9286_debugfs_info(struct seq_file *s, void *p)
-+{
-+	struct max9286_priv *priv = s->private;
-+
-+	max9286_config_video_detect(priv, s);
-+	max9286_vs_period(priv, s);
-+	max9286_master_link(priv, s);
-+
-+	return 0;
-+}
-+
-+DEBUGFS_RO_ATTR(max9286_debugfs_info);
-+
-+static int max9286_debugfs_init(struct max9286_priv *priv)
-+{
-+	char name[32];
-+
-+	snprintf(name, sizeof(name), "max9286-%s",
-+		 dev_name(&priv->client->dev));
-+
-+	priv->dbgroot = debugfs_create_dir(name, NULL);
-+	if (!priv->dbgroot)
-+		return -ENOMEM;
-+
-+	/*
-+	 * dentry pointers are discarded, and remove_recursive is used to
-+	 * cleanup the tree. DEBUGFS_RO_ATTR defines the file operations with
-+	 * the _fops extension to the function name.
-+	 */
-+	debugfs_create_file("info", 0444, priv->dbgroot, priv,
-+			    &max9286_debugfs_info_fops);
-+
-+	return 0;
-+}
-+
-+static void max9286_debugfs_remove(struct max9286_priv *priv)
-+{
-+	debugfs_remove_recursive(priv->dbgroot);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * I2C Multiplexer
-  */
-@@ -1094,6 +1214,9 @@ static int max9286_probe(struct i2c_client *client)
- 	 */
- 	max9286_configure_i2c(priv, false);
+-static int max9286_init(struct device *dev)
++static int max9286_init(struct device *dev, void *data)
+ {
+ 	struct max9286_priv *priv;
+ 	struct i2c_client *client;
+@@ -1056,6 +1056,25 @@ static int max9286_init(struct device *dev)
+ 	return ret;
+ }
  
-+	/* Add any userspace support before we return early. */
-+	max9286_debugfs_init(priv);
++static int max9286_is_bound(struct device *dev, void *data)
++{
++	struct device *this = data;
++	int ret;
 +
- 	ret = max9286_init(&client->dev);
++	if (dev == this)
++		return 0;
++
++	/* Skip non-max9286 devices. */
++	if (!dev->of_node || !of_match_node(max9286_dt_ids, dev->of_node))
++		return 0;
++
++	ret = device_is_bound(dev);
++	if (!ret)
++		return -EPROBE_DEFER;
++
++	return 0;
++}
++
+ static void max9286_cleanup_dt(struct max9286_priv *priv)
+ {
+ 	struct max9286_source *source;
+@@ -1281,10 +1300,21 @@ static int max9286_probe(struct i2c_client *client)
+ 	/* Add any userspace support before we return early. */
+ 	max9286_debugfs_init(priv);
+ 
+-	ret = max9286_init(&client->dev);
++	ret = device_for_each_child(client->dev.parent, &client->dev,
++				    max9286_is_bound);
++	if (ret)
++		return 0;
++
++	dev_dbg(&client->dev,
++		"All max9286 probed: start initialization sequence\n");
++	ret = device_for_each_child(client->dev.parent, NULL,
++				    max9286_init);
  	if (ret < 0)
  		goto err_regulator;
-@@ -1104,6 +1227,7 @@ static int max9286_probe(struct i2c_client *client)
- 	regulator_put(priv->regulator);
- 	max9286_i2c_mux_close(priv);
- 	max9286_configure_i2c(priv, false);
-+	max9286_debugfs_remove(priv);
- err_free:
- 	max9286_cleanup_dt(priv);
- 	kfree(priv);
-@@ -1115,6 +1239,9 @@ static int max9286_remove(struct i2c_client *client)
- {
- 	struct max9286_priv *priv = i2c_get_clientdata(client);
  
-+	/* Remove all Debugfs / sysfs entries */
-+	max9286_debugfs_remove(priv);
++	/* Leave the mux channels disabled until they are selected. */
++	max9286_i2c_mux_close(priv);
 +
- 	i2c_mux_del_adapters(priv->mux);
+ 	return 0;
  
- 	fwnode_handle_put(priv->sd.fwnode);
+ err_regulator:
 -- 
 2.20.1
 
