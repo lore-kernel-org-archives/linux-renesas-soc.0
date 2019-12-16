@@ -2,123 +2,120 @@ Return-Path: <SRS0=T57Y=2G=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7602C3F68F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 12:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 166D6C2D0C0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 12:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B760C206D3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 12:06:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA7EB206D3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Dec 2019 12:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727621AbfLPMGK (ORCPT
+        id S1727652AbfLPMrp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Dec 2019 07:06:10 -0500
-Received: from foss.arm.com ([217.140.110.172]:52540 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727579AbfLPMGK (ORCPT
+        Mon, 16 Dec 2019 07:47:45 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:33068 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727605AbfLPMrp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Dec 2019 07:06:10 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 227761063;
-        Mon, 16 Dec 2019 04:06:10 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F1CE3F719;
-        Mon, 16 Dec 2019 04:06:09 -0800 (PST)
-Date:   Mon, 16 Dec 2019 12:06:07 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Simon Horman <horms@verge.net.au>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [RFC PATCH] PCI: rcar: Fix incorrect programming of OB windows
-Message-ID: <20191216120607.GV24359@e119886-lin.cambridge.arm.com>
-References: <20191004132941.6660-1-andrew.murray@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191004132941.6660-1-andrew.murray@arm.com>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+        Mon, 16 Dec 2019 07:47:45 -0500
+Received: from ramsan ([84.195.182.253])
+        by baptiste.telenet-ops.be with bizsmtp
+        id ecnj210065USYZQ01cnjz7; Mon, 16 Dec 2019 13:47:43 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1igpmo-0004EQ-Us; Mon, 16 Dec 2019 13:47:42 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1igpmo-0004LS-Tu; Mon, 16 Dec 2019 13:47:42 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/6] arm64: dts: renesas: r8a77961: Add RAVB node
+Date:   Mon, 16 Dec 2019 13:47:37 +0100
+Message-Id: <20191216124740.16647-4-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191216124740.16647-1-geert+renesas@glider.be>
+References: <20191216124740.16647-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Oct 04, 2019 at 02:29:41PM +0100, Andrew Murray wrote:
-> The outbound windows (PCIEPAUR(x), PCIEPALR(x)) describe a mapping between
-> a CPU address (which is determined by the window number 'x') and a
-> programmed PCI address - Thus allowing the controller to translate CPU
-> accesses into PCI accesses.
-> 
-> However the existing code incorrectly writes the CPU address - lets fix
-> this by writing the PCI address instead.
-> 
-> For memory transactions, existing DT users describe a 1:1 identity mapping
-> and thus this change should have no effect. However the same isn't true for
-> I/O.
-> 
-> Fixes: c25da4778803 ("PCI: rcar: Add Renesas R-Car PCIe driver")
-> Signed-off-by: Andrew Murray <andrew.murray@arm.com>
-> 
-> ---
-> This hasn't been tested, so keen for someone to give it a try.
-> 
-> Also keen for someone to confirm my understanding that the RCar windows
-> expect PCI addresses and that res->start refers to CPU addresses. If this
-> is correct then it's possible the I/O doesn't work correctly.
+Add a device node for the Ethernet AVB (RAVB) interface on the Renesas
+R-Car M3-W+ (r8a77961) SoC.
 
-Marek/Yoshihiro - any feedback on this?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - No changes.
 
-Thanks,
+Test procedure:
+  1. "ifconfig eth0 <A>.<B>.<C>.<D>",
+  2. "ping <gateway>".
+---
+ arch/arm64/boot/dts/renesas/r8a77961.dtsi | 40 ++++++++++++++++++++++-
+ 1 file changed, 39 insertions(+), 1 deletion(-)
 
-Andrew Murray
+diff --git a/arch/arm64/boot/dts/renesas/r8a77961.dtsi b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
+index 10e768ce2bc70e0c..4a7597cc07514c41 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77961.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
+@@ -519,10 +519,48 @@
+ 		};
+ 
+ 		avb: ethernet@e6800000 {
++			compatible = "renesas,etheravb-r8a77961",
++				     "renesas,etheravb-rcar-gen3";
+ 			reg = <0 0xe6800000 0 0x800>, <0 0xe6a00000 0 0x10000>;
++			interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 41 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 45 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 47 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 61 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 63 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15",
++					  "ch16", "ch17", "ch18", "ch19",
++					  "ch20", "ch21", "ch22", "ch23",
++					  "ch24";
++			clocks = <&cpg CPG_MOD 812>;
++			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
++			resets = <&cpg 812>;
++			phy-mode = "rgmii";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+-			/* placeholder */
++			status = "disabled";
+ 		};
+ 
+ 		pwm1: pwm@e6e31000 {
+-- 
+2.17.1
 
-> ---
->  drivers/pci/controller/pcie-rcar.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-> index f6a669a9af41..b28d726b4aba 100644
-> --- a/drivers/pci/controller/pcie-rcar.c
-> +++ b/drivers/pci/controller/pcie-rcar.c
-> @@ -332,11 +332,12 @@ static struct pci_ops rcar_pcie_ops = {
->  };
->  
->  static void rcar_pcie_setup_window(int win, struct rcar_pcie *pcie,
-> -				   struct resource *res)
-> +				   struct resource_entry *window)
->  {
->  	/* Setup PCIe address space mappings for each resource */
->  	resource_size_t size;
->  	resource_size_t res_start;
-> +	struct resource *res = window->res;
->  	u32 mask;
->  
->  	rcar_pci_write_reg(pcie, 0x00000000, PCIEPTCTLR(win));
-> @@ -350,9 +351,9 @@ static void rcar_pcie_setup_window(int win, struct rcar_pcie *pcie,
->  	rcar_pci_write_reg(pcie, mask << 7, PCIEPAMR(win));
->  
->  	if (res->flags & IORESOURCE_IO)
-> -		res_start = pci_pio_to_address(res->start);
-> +		res_start = pci_pio_to_address(res->start) - window->offset;
->  	else
-> -		res_start = res->start;
-> +		res_start = res->start - window->offset;
->  
->  	rcar_pci_write_reg(pcie, upper_32_bits(res_start), PCIEPAUR(win));
->  	rcar_pci_write_reg(pcie, lower_32_bits(res_start) & ~0x7F,
-> @@ -381,7 +382,7 @@ static int rcar_pcie_setup(struct list_head *resource, struct rcar_pcie *pci)
->  		switch (resource_type(res)) {
->  		case IORESOURCE_IO:
->  		case IORESOURCE_MEM:
-> -			rcar_pcie_setup_window(i, pci, res);
-> +			rcar_pcie_setup_window(i, pci, win);
->  			i++;
->  			break;
->  		case IORESOURCE_BUS:
-> -- 
-> 2.21.0
-> 
