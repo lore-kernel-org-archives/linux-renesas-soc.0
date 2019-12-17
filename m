@@ -2,82 +2,81 @@ Return-Path: <SRS0=/HLL=2H=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7CDC43603
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Dec 2019 16:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC4CC43603
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Dec 2019 18:38:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD92F24655
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Dec 2019 16:38:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17957206EC
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Dec 2019 18:38:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728238AbfLQQic (ORCPT
+        id S1728066AbfLQSip (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 Dec 2019 11:38:32 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:54143 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727766AbfLQQic (ORCPT
+        Tue, 17 Dec 2019 13:38:45 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:34172 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727005AbfLQSip (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Dec 2019 11:38:32 -0500
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 2422A3C057C;
-        Tue, 17 Dec 2019 17:38:30 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id iZfVHM76q697; Tue, 17 Dec 2019 17:38:25 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 116B13C00BB;
-        Tue, 17 Dec 2019 17:38:25 +0100 (CET)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.66) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 17 Dec
- 2019 17:38:24 +0100
-Date:   Tue, 17 Dec 2019 17:38:21 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-CC:     Magnus Damm <magnus.damm@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        <linux-renesas-soc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v2 4/6] arm64: dts: renesas: r8a77961: Add SYS-DMAC nodes
-Message-ID: <20191217163821.GA16268@vmlxhi-102.adit-jv.com>
-References: <20191216124740.16647-1-geert+renesas@glider.be>
- <20191216124740.16647-5-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191216124740.16647-5-geert+renesas@glider.be>
-X-Originating-IP: [10.72.93.66]
+        Tue, 17 Dec 2019 13:38:45 -0500
+Received: from ramsan ([84.195.182.253])
+        by andre.telenet-ops.be with bizsmtp
+        id f6ei2100H5USYZQ016eiFW; Tue, 17 Dec 2019 19:38:44 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ihHk2-0003aQ-MN; Tue, 17 Dec 2019 19:38:42 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ihHk2-000086-Ku; Tue, 17 Dec 2019 19:38:42 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4/5] arm64: dts: renesas: Prepare for split of ARCH_R8A7795 into ARCH_R8A7795[01]
+Date:   Tue, 17 Dec 2019 19:38:40 +0100
+Message-Id: <20191217183841.432-5-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191217183841.432-1-geert+renesas@glider.be>
+References: <20191217183841.432-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+As R-Car H3 ES1.x (R8A77950) and R-Car H3 ES2.0+ (R8A77951) are really
+different SoCs, CONFIG_ARCH_R8A7795 will be split in
+CONFIG_ARCH_R8A77950 and CONFIG_ARCH_R8A77951.
 
-On Mon, Dec 16, 2019 at 01:47:38PM +0100, Geert Uytterhoeven wrote:
-> Add device nodes for the System DMA Controllers (SYS-DMAC) on the
-> Renesas R-Car M3-W+ (r8a77961) SoC.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Group interrupt specifiers.
-> 
-> Test procedure (with "arm64: dts: renesas: r8a77961: Add i2c nodes"):
->   1. "hd /sys/devices/platform/soc/e60b0000.i2c/i2c-?/?-0050/eeprom",
->   2. See dma-controller interrupt count in /proc/interrupts has
->      increased.
-> ---
+Relax dependencies by handling both the old and the new symbols.
 
-Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/boot/dts/renesas/Makefile | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks!
-
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 7ac6f18c996a0961..b663176d153493f9 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -8,6 +8,10 @@ dtb-$(CONFIG_ARCH_R8A7795) += r8a77950-salvator-x.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a77950-ulcb.dtb r8a77950-ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a77951-salvator-x.dtb r8a77951-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A7795) += r8a77951-ulcb.dtb r8a77951-ulcb-kf.dtb
++dtb-$(CONFIG_ARCH_R8A77950) += r8a77950-salvator-x.dtb
++dtb-$(CONFIG_ARCH_R8A77950) += r8a77950-ulcb.dtb r8a77950-ulcb-kf.dtb
++dtb-$(CONFIG_ARCH_R8A77951) += r8a77951-salvator-x.dtb r8a77951-salvator-xs.dtb
++dtb-$(CONFIG_ARCH_R8A77951) += r8a77951-ulcb.dtb r8a77951-ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A77960) += r8a77960-salvator-x.dtb r8a77960-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77960) += r8a77960-ulcb.dtb r8a77960-ulcb-kf.dtb
+ dtb-$(CONFIG_ARCH_R8A77961) += r8a77961-salvator-xs.dtb
 -- 
-Best Regards,
-Eugeniu
+2.17.1
+
