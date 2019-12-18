@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC045C43603
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Dec 2019 19:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 440E1C2D0BF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Dec 2019 19:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 932712082E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Dec 2019 19:48:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 172A121582
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Dec 2019 19:48:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbfLRTsS (ORCPT
+        id S1727031AbfLRTsS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 18 Dec 2019 14:48:18 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:60672 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727558AbfLRTsS (ORCPT
+Received: from andre.telenet-ops.be ([195.130.132.53]:32988 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727533AbfLRTsS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 18 Dec 2019 14:48:18 -0500
 Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id fXoF2100a5USYZQ01XoFrg; Wed, 18 Dec 2019 20:48:16 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id fXoF2100T5USYZQ01XoFkV; Wed, 18 Dec 2019 20:48:16 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ihfIt-0007xy-II; Wed, 18 Dec 2019 20:48:15 +0100
+        id 1ihfIt-0007xl-EK; Wed, 18 Dec 2019 20:48:15 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ihfIt-0003KY-H5; Wed, 18 Dec 2019 20:48:15 +0100
+        id 1ihfIt-0003KM-DH; Wed, 18 Dec 2019 20:48:15 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Yoshinori Sato <ysato@users.sourceforge.jp>,
@@ -37,9 +37,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
 Cc:     linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
         linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/6] sh: sh7264: Remove bogus SSU GPIO function definitions
-Date:   Wed, 18 Dec 2019 20:48:11 +0100
-Message-Id: <20191218194812.12741-6-geert+renesas@glider.be>
+Subject: [PATCH 1/6] pinctrl: sh-pfc: r8a7778: Fix duplicate SDSELF_B and SD1_CLK_B
+Date:   Wed, 18 Dec 2019 20:48:07 +0100
+Message-Id: <20191218194812.12741-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191218194812.12741-1-geert+renesas@glider.be>
 References: <20191218194812.12741-1-geert+renesas@glider.be>
@@ -48,52 +48,42 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-SH7264 has no Synchronous Serial Communication Unit (SSU).
-Remove the bogus enum IDs, which caused holes in pinmux_func_gpios[].
+The FN_SDSELF_B and FN_SD1_CLK_B enum IDs are used twice, which means
+one set of users must be wrong.  Replace them by the correct enum IDs.
 
+Fixes: 87f8c988636db0d4 ("sh-pfc: Add r8a7778 pinmux support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Presumably this has been copied from sh7203.
-
 The runtime-check under development reports:
 
-    sh7264_pfc: empty function gpio 118
-    sh7264_pfc: empty function gpio 119
-    sh7264_pfc: empty function gpio 120
-    sh7264_pfc: empty function gpio 121
-    sh7264_pfc: empty function gpio 122
-    sh7264_pfc: empty function gpio 123
-    sh7264_pfc: empty function gpio 124
-    sh7264_pfc: empty function gpio 125
-    sh7264_pfc: empty function gpio 126
-    sh7264_pfc: empty function gpio 127
-    sh7264_pfc: empty function gpio 128
-    sh7264_pfc: empty function gpio 129
-    sh7264_pfc: empty function gpio 130
-    sh7264_pfc: empty function gpio 131
-    sh7264_pfc: empty function gpio 132
-    sh7264_pfc: empty function gpio 133
+    r8a7778_pfc: config reg 0xfffc002c/54 enum_id 613 conflict
+    r8a7778_pfc: config reg 0xfffc002c/70 enum_id 607 conflict
 ---
- arch/sh/include/cpu-sh2a/cpu/sh7264.h | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7778.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7264.h b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-index d12c1918684518b3..8a1338aaf10a5c41 100644
---- a/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-+++ b/arch/sh/include/cpu-sh2a/cpu/sh7264.h
-@@ -112,12 +112,6 @@ enum {
- 	GPIO_FN_TIOC0D, GPIO_FN_TIOC0C, GPIO_FN_TIOC0B, GPIO_FN_TIOC0A,
- 	GPIO_FN_TCLKD, GPIO_FN_TCLKC, GPIO_FN_TCLKB, GPIO_FN_TCLKA,
- 
--	/* SSU */
--	GPIO_FN_SCS0_PD, GPIO_FN_SSO0_PD, GPIO_FN_SSI0_PD, GPIO_FN_SSCK0_PD,
--	GPIO_FN_SCS0_PF, GPIO_FN_SSO0_PF, GPIO_FN_SSI0_PF, GPIO_FN_SSCK0_PF,
--	GPIO_FN_SCS1_PD, GPIO_FN_SSO1_PD, GPIO_FN_SSI1_PD, GPIO_FN_SSCK1_PD,
--	GPIO_FN_SCS1_PF, GPIO_FN_SSO1_PF, GPIO_FN_SSI1_PF, GPIO_FN_SSCK1_PF,
--
- 	/* SCIF */
- 	GPIO_FN_SCK0, GPIO_FN_SCK1, GPIO_FN_SCK2, GPIO_FN_SCK3,
- 	GPIO_FN_RXD0, GPIO_FN_RXD1, GPIO_FN_RXD2, GPIO_FN_RXD3,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
+index 24866a5958aee512..a9875038ed9b664e 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
+@@ -2305,7 +2305,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		FN_ATAG0_A,	0,		FN_REMOCON_B,	0,
+ 		/* IP0_11_8 [4] */
+ 		FN_SD1_DAT2_A,	FN_MMC_D2,	0,		FN_BS,
+-		FN_ATADIR0_A,	0,		FN_SDSELF_B,	0,
++		FN_ATADIR0_A,	0,		FN_SDSELF_A,	0,
+ 		FN_PWM4_B,	0,		0,		0,
+ 		0,		0,		0,		0,
+ 		/* IP0_7_5 [3] */
+@@ -2349,7 +2349,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ 		FN_TS_SDAT0_A,	0,		0,		0,
+ 		0,		0,		0,		0,
+ 		/* IP1_10_8 [3] */
+-		FN_SD1_CLK_B,	FN_MMC_D6,	0,		FN_A24,
++		FN_SD1_CD_A,	FN_MMC_D6,	0,		FN_A24,
+ 		FN_DREQ1_A,	0,		FN_HRX0_B,	FN_TS_SPSYNC0_A,
+ 		/* IP1_7_5 [3] */
+ 		FN_A23,		FN_HTX0_B,	FN_TX2_B,	FN_DACK2_A,
 -- 
 2.17.1
 
