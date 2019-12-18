@@ -2,227 +2,266 @@ Return-Path: <SRS0=C960=2I=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UPPERCASE_50_75,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9F7C3F68F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Dec 2019 19:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9980C43603
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Dec 2019 20:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CE792082E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Dec 2019 19:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CD5021D7D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Dec 2019 20:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576700422;
+	bh=J1ZKEzj9abziTHszBXStxH73jEWPUaWR3cjLKfdvnOc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OBj23Ofp/dduoahnty5BvG7pADoVBJO9QjRlHy8B/qmSyTPLX0M1KTUHZlrrNupnf
+	 T3fFWYe4y/ZnfxI5+pmXEZjZnDn7lm7Q2crEOzk98BLDwRbAUBHsTyUlDe0XlxhzKJ
+	 Ka7WSO+2QUHSOEqho+36r7+0TzeBjZOlCsGBnbT4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbfLRTsU (ORCPT
+        id S1726674AbfLRUUW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Dec 2019 14:48:20 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:48032 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727422AbfLRTsT (ORCPT
+        Wed, 18 Dec 2019 15:20:22 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:35623 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725938AbfLRUUW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Dec 2019 14:48:19 -0500
-Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id fXoF2100N5USYZQ01XoFXN; Wed, 18 Dec 2019 20:48:16 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ihfIt-0007xs-HK; Wed, 18 Dec 2019 20:48:15 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ihfIt-0003KV-GB; Wed, 18 Dec 2019 20:48:15 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/6] pinctrl: sh-pfc: sh7269: Fix CAN function GPIOs
-Date:   Wed, 18 Dec 2019 20:48:10 +0100
-Message-Id: <20191218194812.12741-5-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191218194812.12741-1-geert+renesas@glider.be>
-References: <20191218194812.12741-1-geert+renesas@glider.be>
+        Wed, 18 Dec 2019 15:20:22 -0500
+Received: by mail-ot1-f65.google.com with SMTP id f71so4005489otf.2;
+        Wed, 18 Dec 2019 12:20:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5ftNpWYyKl69z1Op+T0ZEjpd3DQ5nYjH7jvgxCSreFA=;
+        b=NCvJ1TtoAVBZ4ej6sO6Ko2DYisotNmqXdR+CT3zEpA3/7ZQZmZgN1ukD/P1m0kDcHZ
+         SMvo6a7053+B4wdGA3nCefJKbBiHVdJirYbQq0brjsMSPaOZLaoY2eoIC7zzjwCQA3ai
+         LWfEVBzVfz29WneweUwQJqLqSopB3kePIY94liOpRzuVntuTNO6sVtBEdQNm5gQ282tQ
+         lBZa9e3pD+sQDld8TKNIIF/6uHL3krPINT4p/R2PsFKsw2Qeh9qFs+4CatUhR0d3yEx/
+         nF9wgZQQpsLju3Du7oXFtqRuuyjw0MOoyms8Ex0tNpZUxwYErTU3Z+6LQBznJMuYwYG4
+         dXJQ==
+X-Gm-Message-State: APjAAAVyZcuKaSdIi0iE1+R8CcUJbX29mNS40DQ/TLd8b/sQnYGxUp2+
+        CwcYsnYwZg4YVweB3A/9eg==
+X-Google-Smtp-Source: APXvYqxEKkkc4eUcU32G8cCC0HDWRY1ZBkEZlpsBb0kXZRCZgzaryBbWtD6Knj0ZDfA2aholr6kBuQ==
+X-Received: by 2002:a9d:7501:: with SMTP id r1mr1785228otk.196.1576700421108;
+        Wed, 18 Dec 2019 12:20:21 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r25sm1196527otk.2.2019.12.18.12.20.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 12:20:19 -0800 (PST)
+Date:   Wed, 18 Dec 2019 14:20:18 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        ebiharaml@si-linux.co.jp
+Subject: Re: [PATCH v6 5/6] dt-bindings: display: Add idk-2121wr binding
+Message-ID: <20191218202018.GA7282@bogus>
+References: <1576590361-28244-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1576590361-28244-6-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1576590361-28244-6-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-pinmux_func_gpios[] contains a hole due to the missing function GPIO
-definition for the "CTX0&CTX1" signal, which is the logical "AND" of the
-first two CAN outputs.
+On Tue, Dec 17, 2019 at 01:46:00PM +0000, Fabrizio Castro wrote:
+> Add binding for the idk-2121wr LVDS panel from Advantech.
+> 
+> Some panel-specific documentation can be found here:
+> https://buy.advantech.eu/Displays/Embedded-LCD-Kits-High-Brightness/model-IDK-2121WR-K2FHA2E.htm
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> ---
+> v5->v6:
+> * No change
+> 
+> v4->v5:
+> * No change
+> 
+> v3->v4:
+> * Absorbed patch "dt-bindings: display: Add bindings for LVDS
+>   bus-timings"
+> * Big restructuring after Rob's and Laurent's comments
+> 
+> v2->v3:
+> * New patch
+> ---
+>  .../display/panel/advantech,idk-2121wr.yaml        | 128 +++++++++++++++++++++
+>  1 file changed, 128 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml b/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
+> new file mode 100644
+> index 0000000..24cd38b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
+> @@ -0,0 +1,128 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/panel/advantech,idk-2121wr.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Advantech IDK-2121WR 21.5" Full-HD dual-LVDS panel
+> +
+> +maintainers:
+> +  - Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +
+> +description: |
+> +  The IDK-2121WR from Advantech is a Full-HD dual-LVDS panel.
+> +  A dual-LVDS interface is a dual-link connection with even pixels traveling
+> +  on one link, and with odd pixels traveling on the other link.
+> +
+> +  The panel expects odd pixels on the first port, and even pixels on the
+> +  second port, therefore the ports must be marked accordingly (with either
+> +  dual-lvds-odd-pixels or dual-lvds-even-pixels).
+> +
 
-A closer look reveals other issues:
-  - Some functionality is available on alternative pins, but the
-    PINMUX_DATA() entries is using the wrong marks,
-  - Several configurations are missing.
+Needs to reference lvds.yaml here.
 
-Fix this by:
-  - Renaming CTX0CTX1CTX2_MARK, CRX0CRX1_PJ22_MARK, and
-    CRX0CRX1CRX2_PJ20_MARK to CTX0_CTX1_CTX2_MARK, CRX0_CRX1_PJ22_MARK,
-    resp. CRX0_CRX1_CRX2_PJ20_MARK for consistency with the
-    corresponding enum IDs,
-  - Adding all missing enum IDs and marks,
-  - Use the right (*_PJ2x) variants for alternative pins,
-  - Adding all missing configurations to pinmux_data[],
-  - Adding all missing function GPIO definitions to pinmux_func_gpios[].
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: advantech,idk-2121wr
+> +      - {} # panel-lvds, but not listed here to avoid false select
+> +
+> +  width-mm:
+> +    const: 476
+> +
+> +  height-mm:
+> +    const: 268
+> +
+> +  data-mapping:
+> +    const: vesa-24
+> +
+> +  ports:
+> +    type: object
+> +    properties:
+> +      "#address-cells":
+> +        const: 1
+> +
+> +      "#size-cells":
+> +        const: 0
 
-See SH7268 Group, SH7269 Group User’s Manual: Hardware, Rev. 2.00:
-  [1] Table 1.4 List of Pins
-  [2] Figure 23.29 Connection Example when Using Channels 0 and 1 as One
-      Channel (64 Mailboxes × 1 Channel) and Channel 2 as One Channel
-      (32 Mailboxes × 1 Channel),
-  [3] Figure 23.30 Connection Example when Using Channels 0, 1, and 2 as
-      One Channel (96 Mailboxes × 1 Channel),
-  [4] Table 48.3 Multiplexed Pins (Port B),
-  [5] Table 48.4 Multiplexed Pins (Port C),
-  [6] Table 48.10 Multiplexed Pins (Port J),
-  [7] Section 48.2.4 Port B Control Registers 0 to 5 (PBCR0 to PBCR5).
+No need for these 2. Can assume they are defined in common binding.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-The runtime-check under development reports:
+> +
+> +      port@0:
+> +        type: object
+> +        description: The sink for odd pixels.
+> +        properties:
+> +          reg:
+> +            const: 0
+> +
+> +          dual-lvds-odd-pixels: true
+> +
+> +        required:
+> +          - reg
+> +          - dual-lvds-odd-pixels
+> +
+> +      port@1:
+> +        type: object
+> +        description: The sink for even pixels.
+> +        properties:
+> +          reg:
+> +            const: 1
+> +
+> +          dual-lvds-even-pixels: true
+> +
+> +        required:
+> +          - reg
+> +          - dual-lvds-even-pixels
 
-    sh7269_pfc: empty function gpio 46
----
- arch/sh/include/cpu-sh2a/cpu/sh7269.h | 11 ++++++--
- drivers/pinctrl/sh-pfc/pfc-sh7269.c   | 39 ++++++++++++++++++---------
- 2 files changed, 36 insertions(+), 14 deletions(-)
 
-diff --git a/arch/sh/include/cpu-sh2a/cpu/sh7269.h b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
-index d516e5d488180db7..b887cc402b712557 100644
---- a/arch/sh/include/cpu-sh2a/cpu/sh7269.h
-+++ b/arch/sh/include/cpu-sh2a/cpu/sh7269.h
-@@ -78,8 +78,15 @@ enum {
- 	GPIO_FN_WDTOVF,
- 
- 	/* CAN */
--	GPIO_FN_CTX1, GPIO_FN_CRX1, GPIO_FN_CTX0, GPIO_FN_CTX0_CTX1,
--	GPIO_FN_CRX0, GPIO_FN_CRX0_CRX1, GPIO_FN_CRX0_CRX1_CRX2,
-+	GPIO_FN_CTX2, GPIO_FN_CRX2,
-+	GPIO_FN_CTX1, GPIO_FN_CRX1,
-+	GPIO_FN_CTX0, GPIO_FN_CRX0,
-+	GPIO_FN_CTX0_CTX1, GPIO_FN_CRX0_CRX1,
-+	GPIO_FN_CTX0_CTX1_CTX2, GPIO_FN_CRX0_CRX1_CRX2,
-+	GPIO_FN_CTX2_PJ21, GPIO_FN_CRX2_PJ20,
-+	GPIO_FN_CTX1_PJ23, GPIO_FN_CRX1_PJ22,
-+	GPIO_FN_CTX0_CTX1_PJ23, GPIO_FN_CRX0_CRX1_PJ22,
-+	GPIO_FN_CTX0_CTX1_CTX2_PJ21, GPIO_FN_CRX0_CRX1_CRX2_PJ20,
- 
- 	/* DMAC */
- 	GPIO_FN_TEND0, GPIO_FN_DACK0, GPIO_FN_DREQ0,
-diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7269.c b/drivers/pinctrl/sh-pfc/pfc-sh7269.c
-index 6cbb18ef77dc04ae..d20974a55d93add1 100644
---- a/drivers/pinctrl/sh-pfc/pfc-sh7269.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-sh7269.c
-@@ -737,13 +737,12 @@ enum {
- 	CRX0_MARK, CTX0_MARK,
- 	CRX1_MARK, CTX1_MARK,
- 	CRX2_MARK, CTX2_MARK,
--	CRX0_CRX1_MARK,
--	CRX0_CRX1_CRX2_MARK,
--	CTX0CTX1CTX2_MARK,
-+	CRX0_CRX1_MARK, CTX0_CTX1_MARK,
-+	CRX0_CRX1_CRX2_MARK, CTX0_CTX1_CTX2_MARK,
- 	CRX1_PJ22_MARK, CTX1_PJ23_MARK,
- 	CRX2_PJ20_MARK, CTX2_PJ21_MARK,
--	CRX0CRX1_PJ22_MARK,
--	CRX0CRX1CRX2_PJ20_MARK,
-+	CRX0_CRX1_PJ22_MARK, CTX0_CTX1_PJ23_MARK,
-+	CRX0_CRX1_CRX2_PJ20_MARK, CTX0_CTX1_CTX2_PJ21_MARK,
- 
- 	/* VDC */
- 	DV_CLK_MARK,
-@@ -821,6 +820,7 @@ static const u16 pinmux_data[] = {
- 	PINMUX_DATA(CS3_MARK, PC8MD_001),
- 	PINMUX_DATA(TXD7_MARK, PC8MD_010),
- 	PINMUX_DATA(CTX1_MARK, PC8MD_011),
-+	PINMUX_DATA(CTX0_CTX1_MARK, PC8MD_100),
- 
- 	PINMUX_DATA(PC7_DATA, PC7MD_000),
- 	PINMUX_DATA(CKE_MARK, PC7MD_001),
-@@ -833,11 +833,12 @@ static const u16 pinmux_data[] = {
- 	PINMUX_DATA(CAS_MARK, PC6MD_001),
- 	PINMUX_DATA(SCK7_MARK, PC6MD_010),
- 	PINMUX_DATA(CTX0_MARK, PC6MD_011),
-+	PINMUX_DATA(CTX0_CTX1_CTX2_MARK, PC6MD_100),
- 
- 	PINMUX_DATA(PC5_DATA, PC5MD_000),
- 	PINMUX_DATA(RAS_MARK, PC5MD_001),
- 	PINMUX_DATA(CRX0_MARK, PC5MD_011),
--	PINMUX_DATA(CTX0CTX1CTX2_MARK, PC5MD_100),
-+	PINMUX_DATA(CTX0_CTX1_CTX2_MARK, PC5MD_100),
- 	PINMUX_DATA(IRQ0_PC_MARK, PC5MD_101),
- 
- 	PINMUX_DATA(PC4_DATA, PC4MD_00),
-@@ -1289,30 +1290,32 @@ static const u16 pinmux_data[] = {
- 	PINMUX_DATA(LCD_DATA23_PJ23_MARK, PJ23MD_010),
- 	PINMUX_DATA(LCD_TCON6_MARK, PJ23MD_011),
- 	PINMUX_DATA(IRQ3_PJ_MARK, PJ23MD_100),
--	PINMUX_DATA(CTX1_MARK, PJ23MD_101),
-+	PINMUX_DATA(CTX1_PJ23_MARK, PJ23MD_101),
-+	PINMUX_DATA(CTX0_CTX1_PJ23_MARK, PJ23MD_110),
- 
- 	PINMUX_DATA(PJ22_DATA, PJ22MD_000),
- 	PINMUX_DATA(DV_DATA22_MARK, PJ22MD_001),
- 	PINMUX_DATA(LCD_DATA22_PJ22_MARK, PJ22MD_010),
- 	PINMUX_DATA(LCD_TCON5_MARK, PJ22MD_011),
- 	PINMUX_DATA(IRQ2_PJ_MARK, PJ22MD_100),
--	PINMUX_DATA(CRX1_MARK, PJ22MD_101),
--	PINMUX_DATA(CRX0_CRX1_MARK, PJ22MD_110),
-+	PINMUX_DATA(CRX1_PJ22_MARK, PJ22MD_101),
-+	PINMUX_DATA(CRX0_CRX1_PJ22_MARK, PJ22MD_110),
- 
- 	PINMUX_DATA(PJ21_DATA, PJ21MD_000),
- 	PINMUX_DATA(DV_DATA21_MARK, PJ21MD_001),
- 	PINMUX_DATA(LCD_DATA21_PJ21_MARK, PJ21MD_010),
- 	PINMUX_DATA(LCD_TCON4_MARK, PJ21MD_011),
- 	PINMUX_DATA(IRQ1_PJ_MARK, PJ21MD_100),
--	PINMUX_DATA(CTX2_MARK, PJ21MD_101),
-+	PINMUX_DATA(CTX2_PJ21_MARK, PJ21MD_101),
-+	PINMUX_DATA(CTX0_CTX1_CTX2_PJ21_MARK, PJ21MD_110),
- 
- 	PINMUX_DATA(PJ20_DATA, PJ20MD_000),
- 	PINMUX_DATA(DV_DATA20_MARK, PJ20MD_001),
- 	PINMUX_DATA(LCD_DATA20_PJ20_MARK, PJ20MD_010),
- 	PINMUX_DATA(LCD_TCON3_MARK, PJ20MD_011),
- 	PINMUX_DATA(IRQ0_PJ_MARK, PJ20MD_100),
--	PINMUX_DATA(CRX2_MARK, PJ20MD_101),
--	PINMUX_DATA(CRX0CRX1CRX2_PJ20_MARK, PJ20MD_110),
-+	PINMUX_DATA(CRX2_PJ20_MARK, PJ20MD_101),
-+	PINMUX_DATA(CRX0_CRX1_CRX2_PJ20_MARK, PJ20MD_110),
- 
- 	PINMUX_DATA(PJ19_DATA, PJ19MD_000),
- 	PINMUX_DATA(DV_DATA19_MARK, PJ19MD_001),
-@@ -1663,12 +1666,24 @@ static const struct pinmux_func pinmux_func_gpios[] = {
- 	GPIO_FN(WDTOVF),
- 
- 	/* CAN */
-+	GPIO_FN(CTX2),
-+	GPIO_FN(CRX2),
- 	GPIO_FN(CTX1),
- 	GPIO_FN(CRX1),
- 	GPIO_FN(CTX0),
- 	GPIO_FN(CRX0),
-+	GPIO_FN(CTX0_CTX1),
- 	GPIO_FN(CRX0_CRX1),
-+	GPIO_FN(CTX0_CTX1_CTX2),
- 	GPIO_FN(CRX0_CRX1_CRX2),
-+	GPIO_FN(CTX2_PJ21),
-+	GPIO_FN(CRX2_PJ20),
-+	GPIO_FN(CTX1_PJ23),
-+	GPIO_FN(CRX1_PJ22),
-+	GPIO_FN(CTX0_CTX1_PJ23),
-+	GPIO_FN(CRX0_CRX1_PJ22),
-+	GPIO_FN(CTX0_CTX1_CTX2_PJ21),
-+	GPIO_FN(CRX0_CRX1_CRX2_PJ20),
- 
- 	/* DMAC */
- 	GPIO_FN(TEND0),
--- 
-2.17.1
+port@0 and port@1 both required?
 
+> +
+> +  panel-timing: true
+> +
+> +additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - width-mm
+> +  - height-mm
+> +  - data-mapping
+> +  - panel-timing
+> +  - ports
+
+No need to repeat what's required by lvds.yaml.
+
+> +
+> +examples:
+> +  - |+
+> +    panel-lvds {
+> +      compatible = "advantech,idk-2121wr", "panel-lvds";
+> +
+> +      width-mm = <476>;
+> +      height-mm = <268>;
+> +
+> +      data-mapping = "vesa-24";
+> +
+> +      panel-timing {
+> +        clock-frequency = <148500000>;
+> +        hactive = <1920>;
+> +        vactive = <1080>;
+> +        hsync-len = <44>;
+> +        hfront-porch = <88>;
+> +        hback-porch = <148>;
+> +        vfront-porch = <4>;
+> +        vback-porch = <36>;
+> +        vsync-len = <5>;
+> +      };
+> +
+> +      ports {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        port@0 {
+> +          reg = <0>;
+> +          dual-lvds-odd-pixels;
+> +          panel_in0: endpoint {
+> +            remote-endpoint = <&lvds0_out>;
+> +          };
+> +        };
+> +
+> +        port@1 {
+> +          reg = <1>;
+> +          dual-lvds-even-pixels;
+> +          panel_in1: endpoint {
+> +            remote-endpoint = <&lvds1_out>;
+> +          };
+> +        };
+> +      };
+> +    };
+> +
+> +...
+> -- 
+> 2.7.4
+> 
