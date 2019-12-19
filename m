@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F583C43603
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Dec 2019 01:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8830FC43603
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Dec 2019 01:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C37F21D7D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Dec 2019 01:23:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63BE4227BF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Dec 2019 01:24:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbfLSBXM (ORCPT
+        id S1726671AbfLSBYL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Dec 2019 20:23:12 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:4008 "EHLO
+        Wed, 18 Dec 2019 20:24:11 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:59169 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726536AbfLSBXM (ORCPT
+        by vger.kernel.org with ESMTP id S1726518AbfLSBYL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Dec 2019 20:23:12 -0500
-Date:   19 Dec 2019 10:23:11 +0900
+        Wed, 18 Dec 2019 20:24:11 -0500
+Date:   19 Dec 2019 10:24:09 +0900
 X-IronPort-AV: E=Sophos;i="5.69,330,1571670000"; 
-   d="scan'208";a="34579642"
+   d="scan'208";a="34579750"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Dec 2019 10:23:11 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 19 Dec 2019 10:24:09 +0900
 Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4BF4D4007F52;
-        Thu, 19 Dec 2019 10:23:11 +0900 (JST)
-Message-ID: <87v9qdyups.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id C8F3C4007F52;
+        Thu, 19 Dec 2019 10:24:09 +0900 (JST)
+Message-ID: <87tv5xyuo6.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH v2 1/3] sh: fixup strncpy() warning and add missing padding
+Subject: [PATCH v2 2/3] sh: fixup strncpy() warning and add missing padding
 User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
 To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
         Rich Felker <dalias@libc.org>,
@@ -79,14 +79,14 @@ v1 -> v2
 	- tidyup 80char
 	- tidyup Subject
 
- arch/sh/include/asm/string_32.h | 56 +++++++++++++++++++++++++++--------------
- 1 file changed, 37 insertions(+), 19 deletions(-)
+ arch/sh/include/asm/string_32.h | 58 +++++++++++++++++++++++++++--------------
+ 1 file changed, 39 insertions(+), 19 deletions(-)
 
 diff --git a/arch/sh/include/asm/string_32.h b/arch/sh/include/asm/string_32.h
-index 3558b1d..4978f6e 100644
+index 3558b1d..3b4aec0 100644
 --- a/arch/sh/include/asm/string_32.h
 +++ b/arch/sh/include/asm/string_32.h
-@@ -31,27 +31,45 @@ static inline char *strcpy(char *__dest, const char *__src)
+@@ -31,27 +31,47 @@ static inline char *strcpy(char *__dest, const char *__src)
  #define __HAVE_ARCH_STRNCPY
  static inline char *strncpy(char *__dest, const char *__src, size_t __n)
  {
@@ -94,6 +94,7 @@ index 3558b1d..4978f6e 100644
 -	unsigned long __dummy;
 +	char * retval = __dest;
 +	const char * __dest_end = __dest + __n - 1;
++	register unsigned int * r0_register __asm__ ("r0");
  
 +	/* size_t is always unsigned */
  	if (__n == 0)
@@ -127,24 +128,25 @@ index 3558b1d..4978f6e 100644
 +
 +	__asm__ __volatile__ (
 +		"strncpy_start:\n\t"
-+		"mov.b @%[src]+,r0\n\t"
-+		"cmp/eq #0,r0\n\t"
++		"mov.b @%[src]+,%[r0_reg]\n\t"
++		"cmp/eq #0,%[r0_reg]\n\t"
 +		"bt.s strncpy_pad\n\t"
 +		"cmp/eq %[dest],%[dest_end]\n\t"
 +		"bt.s strncpy_end\n\t"
-+		"mov.b r0,@%[dest]\n\t"
++		"mov.b %[r0_reg],@%[dest]\n\t"
 +		"bra strncpy_start\n\t"
 +		"add #1,%[dest]\n\t"
 +		"strncpy_pad:\n\t"
 +		"bt.s strncpy_end\n\t"
-+		"mov.b r0,@%[dest]\n\t"
++		"mov.b %[r0_reg],@%[dest]\n\t"
 +		"add #1,%[dest]\n\t"
 +		"bra strncpy_pad\n\t"
 +		"cmp/eq %[dest],%[dest_end]\n\t"
 +		"strncpy_end:\n\t"
-+		: [src] "+r" (__src), [dest] "+r" (__dest)
++		: [src] "+r" (__src), [dest] "+r" (__dest),
++		  [r0_reg] "+&z" (r0_register)
 +		: [dest_end] "r" (__dest_end)
-+		: "r0","t","memory"
++		: "t","memory"
 +		);
 +
 +	return retval;
