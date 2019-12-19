@@ -1,90 +1,71 @@
-Return-Path: <SRS0=C960=2I=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=zUVY=2J=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7825C2D0CD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Dec 2019 23:41:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3963CC3F68F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Dec 2019 00:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 915DB24676
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Dec 2019 23:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576712472;
-	bh=jai2rqUZrCTqhBrKP68xPvcnxMKbNpTyIVcyiDtJMiQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=dCE6YcMsEejtIWtZh7gK47aLCrZdwiGhTZu2o9bGWk6rpl4FdJEo+B0g702jXDEa8
-	 qWfcAzg/VyHgwCsewz+0NRdt1SDs8CVYKLxOaLOnbTFo6P8EQ2CL3UVo9ynubNner6
-	 +nWXr6Sy9fnf9bq8uLgCSNmyAg39Y+Heuf81UkJk=
+	by mail.kernel.org (Postfix) with ESMTP id 19C1E24650
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Dec 2019 00:46:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbfLRXlM (ORCPT
+        id S1726623AbfLSAqA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Dec 2019 18:41:12 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45073 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725948AbfLRXlM (ORCPT
+        Wed, 18 Dec 2019 19:46:00 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:63416 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726518AbfLSAqA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Dec 2019 18:41:12 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 59so4581102otp.12;
-        Wed, 18 Dec 2019 15:41:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PqNQdT+O/1YRrinbHmkyRkVJ9xQOa2a5HYYY4UY1clA=;
-        b=fiqPcggxY1n9FoyOOtiZHcuTkPbQj7kRopZFBIWQpHGFNWbAPTX9kYiEumu4uxk+lH
-         7SjInjKN+4ifAf37CFHK+yMEGkReOaumHS8kIhKiblMd7Fu/61ESYUpMm1G/6GS7V1dY
-         yU1/4NtZ2boWgLHOk5BXFELge6Z633FYhc2kyF1DoIH1RqaGJxop54H6MtU8rLAoOErT
-         +baMx1zdC3Df16XnnmgzGev9wxfh7DcgOWe/v2XM317TIafJuFYGKLmeWE7CFnUFIDNJ
-         lsLvy64jHSIMmMer3NEV1b1sblA2IotuRpGfbiT9houpWZ4g8InuzB9bjiHaEO9rsFF1
-         vcUw==
-X-Gm-Message-State: APjAAAVmEuiu6WBJALXhH9J2TMaxupAoEtGyqMXie/NGVL37WHhDfFF7
-        0Vw3Q3jt+bup82zx979iDu8hzJZwPA==
-X-Google-Smtp-Source: APXvYqxawIpRR6wk47UcEySc6FtBzz5GLBmbX307VrrvU52uxWgNd7YfH08bCuUSIuY50dnoIHp4PA==
-X-Received: by 2002:a05:6830:184:: with SMTP id q4mr5527840ota.52.1576712471373;
-        Wed, 18 Dec 2019 15:41:11 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n17sm1388954otq.46.2019.12.18.15.41.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 15:41:11 -0800 (PST)
-Date:   Wed, 18 Dec 2019 17:41:10 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH] dt-bindings: watchdog: renesas-wdt: Document r8a77961
- support
-Message-ID: <20191218234110.GA14757@bogus>
-References: <20191205134751.6928-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191205134751.6928-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 18 Dec 2019 19:46:00 -0500
+Date:   19 Dec 2019 09:45:58 +0900
+X-IronPort-AV: E=Sophos;i="5.69,330,1571670000"; 
+   d="scan'208";a="34574760"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 19 Dec 2019 09:45:58 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 6FC8440FD785;
+        Thu, 19 Dec 2019 09:45:58 +0900 (JST)
+Message-ID: <87zhfpywft.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Karl Nasrallah <knnspeed@aol.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-SH <linux-sh@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH] sh: use generic strncpy()
+In-Reply-To: <CAMuHMdUq6U0i_+Dg57jVNYM4iephuZ8k3QC6AyQ--W_qY5=q9w@mail.gmail.com>
+References: <878snajjh2.wl-kuninori.morimoto.gx@renesas.com>
+        <CAMuHMdUq6U0i_+Dg57jVNYM4iephuZ8k3QC6AyQ--W_qY5=q9w@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu,  5 Dec 2019 14:47:51 +0100, Geert Uytterhoeven wrote:
-> Document support for the Watchdog Timer in the Renesas R-Car M3-W+
-> (R8A77961) SoC.
-> 
-> No driver update is needed.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  Documentation/devicetree/bindings/watchdog/renesas,wdt.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
 
-Applied, thanks.
+Hi Geert
 
-Rob
+Thank you for your review
+
+> > But, current SH strnpy() has 2 issues.
+> > 1st is it will access to out-of-memory (= src + 10).
+> 
+> I believe this is not correct: the code does not really access memory
+> beyond the end of the source string.  (Recent) gcc just thinks so,
+> because "__src+__n" is used as a parameter to the routine.
+
+I see.
+Will fix in v2
+
+Thank you for your help !!
+Best regards
+---
+Kuninori Morimoto
