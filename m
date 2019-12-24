@@ -1,84 +1,95 @@
-Return-Path: <SRS0=RU+5=2N=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=aX3e=2O=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E698C2D0C0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Dec 2019 20:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4EDC3F68F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Dec 2019 16:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E683120643
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 23 Dec 2019 20:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 076332073B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Dec 2019 16:58:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="uL3/M8VW"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="W0hlLL5D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfLWUHR (ORCPT
+        id S1726203AbfLXQ6Z (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 23 Dec 2019 15:07:17 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35366 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbfLWUHR (ORCPT
+        Tue, 24 Dec 2019 11:58:25 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40814 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbfLXQ6Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Dec 2019 15:07:17 -0500
-Received: by mail-lj1-f195.google.com with SMTP id j1so11475130lja.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 23 Dec 2019 12:07:15 -0800 (PST)
+        Tue, 24 Dec 2019 11:58:25 -0500
+Received: by mail-lf1-f66.google.com with SMTP id i23so15464759lfo.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 24 Dec 2019 08:58:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:organization:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=jlswyEc6xIGtbVUwHi52dwuY4ajQKEt5NuNVOiiskgw=;
-        b=uL3/M8VWDFlVkz/n3D6NfSRboQct3/dGTYUJkfrsxjqaSw+powfOuZNJS8Yisdolf3
-         W7IdrXrcukkSoUTcbrjnTjyzvK3o32XmMoRRaBsXYUZEKO77cMrZyWnhupiTXMTkBU9k
-         RonZlzpJd09zJbBr+QvizRpPOxIC5B3UTBFDz5NoI3PVi4CxnhnzcS5A9s8y3fBpCgqE
-         rHP/9xDBTHCHsiRYa+8tweT2HmhoBWCfTHwA2a1tDrV6gybMJDoeixrLXigLp1U5LKRT
-         RB3L2xh97Av0TbaI/9N3wkT2tJitiCzqLpiRuwEunA+jLbSKTOEozf2WVXdVB0cVrLAw
-         R2oA==
+        bh=J9xVipWdZ9ewXXkBZXIrSrABSMZzc9X1MMnhoAbWXlE=;
+        b=W0hlLL5DhTEpCFv0TCctzYOTXyobKMI6Y6UJK8+lDzVhnHItHqQwaIpn680DfYumSV
+         L8WcWNVtAVhspp+9zGEG05NY2Th2BRK8yr/LBjNXiqAM/JFXdq2isbMLHBZPrMvXg/n0
+         pF/574ew1QU8lMu8AA68vrFTMlZwzN43O4YFR0soGdns80TeDSeZlF/mUZ1fMejn/WEj
+         BkgoETEWv70bXzccrBSJ1DQ4IYDU3/uJLE1qGrL0sJyHHXvZSlpG7TKjSdqmBnzcNne/
+         mhRNJ6DrtfIb3G8kzyuQlh3QToM5aJZTIlslg0SRb1VYd9JUY0o5Ayl8xO3zpTXgisBm
+         PoIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=jlswyEc6xIGtbVUwHi52dwuY4ajQKEt5NuNVOiiskgw=;
-        b=fNk+BDNLrkNSulc9B1TbU+73DkfIwuj3/MzQW/wabAhHVFdpPiKHRKw2FW2LX442mv
-         xq28KiOxUbNOhjTc33vLfFv1OBWPBhQ4gdEqhtkaT0RB2btuSqwKszvf51IkgHYBv7Or
-         AQPEh1r9OZJX0mZE+pdbZnhIsEFNdpOWuCIpgzh8AB2yZ0lWoIw8PuQelZEQBM9a7BBV
-         jY/JqLCshnr60m6UGCG6RlbEpRwgvIiV4Bh5j2h2nIUekIEJMP/PvpTW9sqW5j8JYbl8
-         Ln+f/wLAiIRqYJ4N7RrS1+dobrK/Mc2b9FSei9bkXUVmxx4CStOBHZd3yWD/h64jG+vu
-         SJ9w==
-X-Gm-Message-State: APjAAAWsQH1K0g5sh+Lz+4JT9dLBKnMCjB9PIKLYuhWJ5/t1YovW7JCD
-        bjbfehZgXSuN2Hj0d/5t2vMsEA==
-X-Google-Smtp-Source: APXvYqx5g4M0uhRd+Jgki+03Npwwmd4lXlZjXrbkgxQkR/xuSqUXP1tnYgb7OvSuShD1VKlGh6Jykw==
-X-Received: by 2002:a2e:a486:: with SMTP id h6mr11540184lji.235.1577131635009;
-        Mon, 23 Dec 2019 12:07:15 -0800 (PST)
-Received: from wasted.cogentembedded.com ([2a00:1fa0:855:9d36:483b:5fb3:f1dd:f0d5])
-        by smtp.gmail.com with ESMTPSA id i19sm8915307lfj.17.2019.12.23.12.07.13
+        bh=J9xVipWdZ9ewXXkBZXIrSrABSMZzc9X1MMnhoAbWXlE=;
+        b=FgWxlA1t6CkFPWAvcUj3C4Jo9JPqMJ8zWMhUjJ20KoTnwqkZTEqzOjKxEo8BLPmP5k
+         redHmfg0ZqyG0l7yOq8pzVArjXu+CZiI8ejjAF97XUnL17OtgiQ3/IbPOGIfjphvtRlx
+         7e2UqoRji5dA+LNStXDPGmJj+Xn/GwqGgE4Qr7DuEl/QOapOwjiupuJhUCR/5u81FUUZ
+         AFPIDYmpBgSNHheWIFbvDWe6BxOfTJlEuRQUwmAHBoAK+cTs16+qZcgx6qI0J+t6wxRA
+         QjSiFeC2rsi8xLHxd7cG2C0QOe8NdCqsenhXHcdIQ5pNvgZ9Lqr40QX+e/ki+DQWetN0
+         LBFg==
+X-Gm-Message-State: APjAAAWJFzgTt8zSz0MjDylgbeFajgElQfr/6ZVqt/FQdc7Ds8fITsCF
+        YHIjRuzoZO5qd2HE/hb3cJFdYg==
+X-Google-Smtp-Source: APXvYqwV8IVoVjnuRZBeIW/7BCYcFzMxWYQyUyZDt6oXFV1ZN/xkagQ1KHils7pYZlCWzv9yW2hdjA==
+X-Received: by 2002:a19:c1c1:: with SMTP id r184mr20571865lff.128.1577206703390;
+        Tue, 24 Dec 2019 08:58:23 -0800 (PST)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:441d:5f5:f336:feb9:305c:b1aa])
+        by smtp.gmail.com with ESMTPSA id x21sm10232507ljd.2.2019.12.24.08.58.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 23 Dec 2019 12:07:14 -0800 (PST)
-Subject: Re: [PATCH v17 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-To:     Mason Yang <masonccyang@mxic.com.tw>, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+        Tue, 24 Dec 2019 08:58:22 -0800 (PST)
+Subject: Re: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
+To:     masonccyang@mxic.com.tw
+Cc:     Mark Brown <broonie@kernel.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org
-Cc:     juliensu@mxic.com.tw, Simon Horman <horms@verge.net.au>,
-        lee.jones@linaro.org, marek.vasut@gmail.com,
-        miquel.raynal@bootlin.com
-References: <1565060061-11588-1-git-send-email-masonccyang@mxic.com.tw>
- <1565060061-11588-2-git-send-email-masonccyang@mxic.com.tw>
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <20191206134202.18784-1-chris.brandt@renesas.com>
+ <922cfa46-efb5-9e6d-67ea-3ac505b8211c@cogentembedded.com>
+ <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <e6a73df5-31c4-3472-f7bc-a0984f1f5380@cogentembedded.com>
+ <TY1PR01MB1562D343E1AB06DCA2973DAC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <590840ce-a250-2512-3d04-c2420d83f7da@cogentembedded.com>
+ <TY1PR01MB1562B9EB96818DCA507079808A510@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <bb630141-021c-5618-f266-b98b29956fa8@cogentembedded.com>
+ <TY1PR01MB1562E196AB1C582F186CC74B8A520@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <6f4c5d92-3ca4-2d1d-47c4-cbd52ad428b0@cogentembedded.com>
+ <OF3F92D76C.33FFFBFC-ON482584D6.00093DAC-482584D6.0009A51D@mxic.com.tw>
 From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Organization: Cogent Embedded
-Message-ID: <0e65db61-00e5-73cc-347a-023abfd138ba@cogentembedded.com>
-Date:   Mon, 23 Dec 2019 23:07:12 +0300
+Message-ID: <bac1f4db-302d-0dd7-3b66-341a74f67a6b@cogentembedded.com>
+Date:   Tue, 24 Dec 2019 19:58:21 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <1565060061-11588-2-git-send-email-masonccyang@mxic.com.tw>
+In-Reply-To: <OF3F92D76C.33FFFBFC-ON482584D6.00093DAC-482584D6.0009A51D@mxic.com.tw>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
@@ -89,104 +100,34 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hello!
 
-On 08/06/2019 05:54 AM, Mason Yang wrote:
+On 12/20/2019 04:45 AM, masonccyang@mxic.com.tw wrote:
 
-> Add a driver for Renesas R-Car Gen3 RPC-IF SPI controller.
+>>>>> So at the moment, there is nothing yet for me to 'try' on the RZ/A series,
+>>>> correct?
+>>>>
+>>>>    Why, I can send you a working version of the SPI driver, and even HF one
+>>>> if you're
+>>>> interested.
+>>>
+>>> The point of this whole discussion is to determine if we should have 2 drivers
+>>> for the same Renesas HW IP.
+>>>
+>>> There was a RPC-IF patch series that made it to v17....and is now dead.
 > 
-> Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> It's under review by Geert Uytterhoeven
+> 
+> https://patchwork.kernel.org/project/linux-renesas-soc/list/?submitter=181859 
+> https://patchwork.kernel.org/patch/11078131/ 
+> https://patchwork.kernel.org/patch/11078133/
 
-   Mark Brown did have some comments to my variant of the RPC-IF SPI driver,
-which didn't get addressed in your SPI driver... Relaying his comments to you,
-I'd appreciate if you could reply to them...
+https://patchwork.kernel.org/patch/11078137/
+https://patchwork.kernel.org/patch/11078139/ 
 
-[...]
-> diff --git a/drivers/spi/spi-renesas-rpc.c b/drivers/spi/spi-renesas-rpc.c
-> new file mode 100644
-> index 0000000..52537b7
-> --- /dev/null
-> +++ b/drivers/spi/spi-renesas-rpc.c
-> @@ -0,0 +1,756 @@
-[...]
-> +static void rpc_spi_transfer_setup(struct rpc_spi *rpc,
-> +				   struct spi_message *msg)
-> +{
-> +	struct spi_transfer *t, xfer[4] = { };
+   It doesn't matter much what's in the renesas-soc patchwork, the patch would
+be merged thru the linux-spi repo, and in their patchwork the status of your v17
+patches is "New, archived"...
 
-Don't mix initialized and non-initialized declarations in a single line
-(as per coding style).
-
-> +	u32 i, xfercnt, xferpos = 0;
-> +
-> +	rpc->totalxferlen = 0;
-> +	rpc->xfer_dir = SPI_MEM_NO_DATA;
-> +
-> +	list_for_each_entry(t, &msg->transfers, transfer_list) {
-> +		if (t->tx_buf) {
-> +			xfer[xferpos].tx_buf = t->tx_buf;
-> +			xfer[xferpos].tx_nbits = t->tx_nbits;
-
-xfer is hard coded to 4 elements but I'm not seeing any validation that
-we don't have more transfers than that in the message, and there's lots
-of assumptions later on about the number of transfers.
-
-[...]
-> +		if (list_is_last(&t->transfer_list, &msg->transfers)) {
-> +			if (xferpos > 1) {
-> +				if (t->rx_buf) {
-> +					rpc->xfer_dir = SPI_MEM_DATA_IN;
-> +					rpc->smcr = RPC_SMCR_SPIRE;
-> +				} else if (t->tx_buf) {
-> +					rpc->xfer_dir = SPI_MEM_DATA_OUT;
-> +					rpc->smcr = RPC_SMCR_SPIWE;
-> +				}
-> +			}
-
-Transfers can be bidirectional...  if the device can't support that it
-should set SPI_CONTROLLER_HALF_DUPLEX.
-
-[...]
-> +static inline int rpc_spi_xfer_message(struct rpc_spi *rpc,
-> +				       struct spi_transfer *data_xfer)
-
-This has exactly one caller and contains a single statement - why have a
-separate function?
-
-> +{
-> +	int ret;
-> +
-> +	ret = rpc_spi_set_freq(rpc, data_xfer->speed_hz);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = rpc_spi_io_xfer(rpc,
-> +			      rpc->xfer_dir == SPI_MEM_DATA_OUT ?
-> +			      data_xfer->tx_buf : NULL,
-> +			      rpc->xfer_dir == SPI_MEM_DATA_IN ?
-> +			      data_xfer->rx_buf : NULL);
-
-This is really hard to read.  Why are we abusing the ternery operator
-here, especially when there's other places where we already set things
-up based on the direction?
-
-[...]
-[...]
-> +static int rpc_spi_remove(struct platform_device *pdev)
-> +{
-> +	struct spi_controller *ctlr = platform_get_drvdata(pdev);
-> +
-> +	pm_runtime_disable(&pdev->dev);
-> +	spi_unregister_controller(ctlr);
-> +
-> +	return 0;
-> +}
-> +
-
-Shouldn't we unregister the controller before we disable the RPM?  The
-probe was the other way around and this means that we might still be
-processing messages while the hardware is disabled which doesn't seem
-good.
-
-[...]
+> thanks & best regards,
+> Mason
 
 MBR, Sergei
