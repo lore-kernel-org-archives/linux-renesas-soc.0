@@ -2,116 +2,107 @@ Return-Path: <SRS0=/B+r=2R=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA4EC2D0C0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Dec 2019 00:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5BEC2D0DB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Dec 2019 17:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F0220838
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Dec 2019 00:59:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F0A721D7E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Dec 2019 17:48:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577408349;
-	bh=24eJ6Avn14dhmQXXO11gVGgOVubQHh7MvHAR0V0HDLU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vwz2CX3xvco0YY14zGswhNYiXLF+y09lycwo512GnpUJGgeWy63FQLZKksN4oVn7s
-	 kx76PYqUxmolDZWwCt8OfMbPacdmaf/ULE7Mrf+p6hUWML8ryiRTIDyJcgnIiqfywf
-	 rODvuWwE6l/QV/8eNj+OpKtxiPi5DoXwpl0l26EE=
+	s=default; t=1577468906;
+	bh=7O06fsqhjkB+bXQLYcomHu5IzcG2iatiptgUEdZPqac=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=St4RFg4j6FiR/HWijESfGOyzGtXUa+2FxGivjIwIjoaZ2gpTfLqizX+8g8uYDTYYS
+	 rVATZjQlJ+Tn28LNTc1h5EagM30eqfDWptnYo9V92lZKf9Zsh4WsG+zdhgExM6F1w0
+	 GkL6bK2TmVF0HT1EGAikhrmzHP0MdVPRVs0XD3Wk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbfL0A7J (ORCPT
+        id S1727595AbfL0RsK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 26 Dec 2019 19:59:09 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43302 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbfL0A7J (ORCPT
+        Fri, 27 Dec 2019 12:48:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728551AbfL0Roq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Dec 2019 19:59:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=b2rtFlDWT9u7yqTvQM+L2HoYozAhuvbhOAHBbpkqe5o=; b=rJE9LqGxvBqnQ69avZ18Yrp9H
-        Wbg67tXSt2jFUMHx2UKQw5x82OAOcvfSyTNeQaRAzgOWpLMpNwk8i2M1+SBp7ckOqJ2qjeQS9ecFr
-        ZpHY7u5nCsAWlwSiAkubqm7F6n6/WGrayjvT1KpeCEa9UB01CggOupVUMh368oE5RNfAo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ikdxz-00048c-Ip; Fri, 27 Dec 2019 00:58:59 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 98563D01896; Fri, 27 Dec 2019 00:58:58 +0000 (GMT)
-Date:   Fri, 27 Dec 2019 00:58:58 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     masonccyang@mxic.com.tw, Chris Brandt <Chris.Brandt@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
-Message-ID: <20191227005858.GJ27497@sirena.org.uk>
-References: <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <e6a73df5-31c4-3472-f7bc-a0984f1f5380@cogentembedded.com>
- <TY1PR01MB1562D343E1AB06DCA2973DAC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <590840ce-a250-2512-3d04-c2420d83f7da@cogentembedded.com>
- <TY1PR01MB1562B9EB96818DCA507079808A510@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <bb630141-021c-5618-f266-b98b29956fa8@cogentembedded.com>
- <TY1PR01MB1562E196AB1C582F186CC74B8A520@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <6f4c5d92-3ca4-2d1d-47c4-cbd52ad428b0@cogentembedded.com>
- <OF3F92D76C.33FFFBFC-ON482584D6.00093DAC-482584D6.0009A51D@mxic.com.tw>
- <bac1f4db-302d-0dd7-3b66-341a74f67a6b@cogentembedded.com>
+        Fri, 27 Dec 2019 12:44:46 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D246206F4;
+        Fri, 27 Dec 2019 17:44:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577468686;
+        bh=7O06fsqhjkB+bXQLYcomHu5IzcG2iatiptgUEdZPqac=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=NFXAaFnXmYYYdIGSqdTUa3yw1u1aeKiutvlTkjcYhjpxo9S7onjMg6L2C9+XARIfN
+         ZHyk+HnPRuiRhW6lcqc3gj4PSqI9b6QBOHKDNOkhe3tKrxXvKeaQxJYd294xzk5mfF
+         lJLrHQpWlMS2kuvTgXcj+SAsAxj2G4RbiuiM/bT0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 44/84] ARM: shmobile: defconfig: Restore debugfs support
+Date:   Fri, 27 Dec 2019 12:43:12 -0500
+Message-Id: <20191227174352.6264-44-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191227174352.6264-1-sashal@kernel.org>
+References: <20191227174352.6264-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZG+WKzXzVby2T9Ro"
-Content-Disposition: inline
-In-Reply-To: <bac1f4db-302d-0dd7-3b66-341a74f67a6b@cogentembedded.com>
-X-Cookie: I have many CHARTS and DIAGRAMS..
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
---ZG+WKzXzVby2T9Ro
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[ Upstream commit fa2cdb1762d15f701b83efa60b04f0d04e71bf89 ]
 
-On Tue, Dec 24, 2019 at 07:58:21PM +0300, Sergei Shtylyov wrote:
+Since commit 0e4a459f56c32d3e ("tracing: Remove unnecessary DEBUG_FS
+dependency"), CONFIG_DEBUG_FS is no longer auto-enabled.  This breaks
+booting Debian 9, as systemd needs debugfs:
 
->    It doesn't matter much what's in the renesas-soc patchwork, the patch would
-> be merged thru the linux-spi repo, and in their patchwork the status of your v17
-> patches is "New, archived"...
+    [FAILED] Failed to mount /sys/kernel/debug.
+    See 'systemctl status sys-kernel-debug.mount' for details.
+    [DEPEND] Dependency failed for Local File Systems.
+    ...
+    You are in emergGive root password for maintenance
+    (or press Control-D to continue):
 
-To be fair patchwork isn't exactly used in the review process for
-SPI like it is with some other subsystems so other than automated
-updates when things get applied or superceeded the states don't
-mean a huge amount.  Like I said elsewhere in the thread I'd been
-expecting some review from other people working with this
-hardware since up until that point it had been pretty active.
+Fix this by enabling CONFIG_DEBUG_FS explicitly.
 
---ZG+WKzXzVby2T9Ro
-Content-Type: application/pgp-signature; name="signature.asc"
+See also commit 18977008f44c66bd ("ARM: multi_v7_defconfig: Restore
+debugfs support").
 
------BEGIN PGP SIGNATURE-----
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Link: https://lore.kernel.org/r/20191209101327.26571-1-geert+renesas@glider.be
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/configs/shmobile_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4FV1EACgkQJNaLcl1U
-h9Dw/Qf9H6McVLuJOf7UR+8tvE28HHYofwkbY9W0uLfOPBnIsIVtKzOG2cAfPJay
-kXZ0Up1m1wHAMLGSw9Cb0NO8sweKh9ke+7V8lP9uXajisXtUbUVar3kgita+zRtB
-Qsv/8L4zPyskxKL97XySBb+28UPEcmm2evLJf+LUiL6msYQ2S9960UKZ8JYj90g3
-GDCZgbuZjGNpzy/fmQib5mG9JbpXHAzy0QSrT5X7h+hIepp/zDI+C1r+wyOzM7YE
-pNtZ9ndxtEaKGqkmW+slAJn3peHxOqvS6S1BTGANnCPfsruGKOb/XL4ItNcOpLzp
-7jHMO77S8ZX5o+nu46YjuqwYv+ziCA==
-=L9BN
------END PGP SIGNATURE-----
+diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
+index f8faf3729464..a0e487e95d69 100644
+--- a/arch/arm/configs/shmobile_defconfig
++++ b/arch/arm/configs/shmobile_defconfig
+@@ -211,5 +211,6 @@ CONFIG_NLS_ISO8859_1=y
+ CONFIG_PRINTK_TIME=y
+ # CONFIG_ENABLE_WARN_DEPRECATED is not set
+ # CONFIG_ENABLE_MUST_CHECK is not set
++CONFIG_DEBUG_FS=y
+ CONFIG_DEBUG_KERNEL=y
+ # CONFIG_ARM_UNWIND is not set
+-- 
+2.20.1
 
---ZG+WKzXzVby2T9Ro--
