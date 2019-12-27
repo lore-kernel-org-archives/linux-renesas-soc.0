@@ -2,44 +2,44 @@ Return-Path: <SRS0=/B+r=2R=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5BEC2D0DB
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Dec 2019 17:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4CDC2D0DA
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Dec 2019 17:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0A721D7E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Dec 2019 17:48:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91841206CB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Dec 2019 17:53:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577468906;
-	bh=7O06fsqhjkB+bXQLYcomHu5IzcG2iatiptgUEdZPqac=;
+	s=default; t=1577469211;
+	bh=WfW8d4aeEG0t7FRFjhEz85O0YvSM8OOhmFuRuzlY88k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=St4RFg4j6FiR/HWijESfGOyzGtXUa+2FxGivjIwIjoaZ2gpTfLqizX+8g8uYDTYYS
-	 rVATZjQlJ+Tn28LNTc1h5EagM30eqfDWptnYo9V92lZKf9Zsh4WsG+zdhgExM6F1w0
-	 GkL6bK2TmVF0HT1EGAikhrmzHP0MdVPRVs0XD3Wk=
+	b=EvxJVO5ACvheh2k6FJZ5Ui/aWd9qNU3lcdticU6ng37erdfXHlT5zMjb9q52BgJUr
+	 VPoJEu8a15rLNMFhtPNpWB0gnWeH3V0B6JBwShWDg0MEqOwP0ZA1iSQilN60Qs3RKA
+	 hbfOokWbnfTx1Pumz81ZLDX3hg3pBpwowCRjpNLI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727595AbfL0RsK (ORCPT
+        id S1726495AbfL0Rxb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 27 Dec 2019 12:48:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43114 "EHLO mail.kernel.org"
+        Fri, 27 Dec 2019 12:53:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728551AbfL0Roq (ORCPT
+        id S1728003AbfL0Rmw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Dec 2019 12:44:46 -0500
+        Fri, 27 Dec 2019 12:42:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D246206F4;
-        Fri, 27 Dec 2019 17:44:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 022B522525;
+        Fri, 27 Dec 2019 17:42:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577468686;
-        bh=7O06fsqhjkB+bXQLYcomHu5IzcG2iatiptgUEdZPqac=;
+        s=default; t=1577468571;
+        bh=WfW8d4aeEG0t7FRFjhEz85O0YvSM8OOhmFuRuzlY88k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NFXAaFnXmYYYdIGSqdTUa3yw1u1aeKiutvlTkjcYhjpxo9S7onjMg6L2C9+XARIfN
-         ZHyk+HnPRuiRhW6lcqc3gj4PSqI9b6QBOHKDNOkhe3tKrxXvKeaQxJYd294xzk5mfF
-         lJLrHQpWlMS2kuvTgXcj+SAsAxj2G4RbiuiM/bT0=
+        b=g03klbOLQc3tszFW5V3xUcicWztX0Kwm1Jm9Y9PmsDI4XqPruFvO4+hcLVfEpEIFR
+         OfUPBa2uzVBpwDZEndfBaE1JFIJPKRk5rh+lX4KzRh7THZ4NcyndhkmAJmDPpkuJ+8
+         m6Tm8vDJGvXPCwliVC8vFFX29eXsJa0+rwzGAg/U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -48,12 +48,12 @@ Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 44/84] ARM: shmobile: defconfig: Restore debugfs support
-Date:   Fri, 27 Dec 2019 12:43:12 -0500
-Message-Id: <20191227174352.6264-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 096/187] ARM: shmobile: defconfig: Restore debugfs support
+Date:   Fri, 27 Dec 2019 12:39:24 -0500
+Message-Id: <20191227174055.4923-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191227174352.6264-1-sashal@kernel.org>
-References: <20191227174352.6264-1-sashal@kernel.org>
+In-Reply-To: <20191227174055.4923-1-sashal@kernel.org>
+References: <20191227174055.4923-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
@@ -93,16 +93,15 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index f8faf3729464..a0e487e95d69 100644
+index c6c70355141c..7e7b678ae153 100644
 --- a/arch/arm/configs/shmobile_defconfig
 +++ b/arch/arm/configs/shmobile_defconfig
-@@ -211,5 +211,6 @@ CONFIG_NLS_ISO8859_1=y
+@@ -215,4 +215,5 @@ CONFIG_DMA_CMA=y
+ CONFIG_CMA_SIZE_MBYTES=64
  CONFIG_PRINTK_TIME=y
- # CONFIG_ENABLE_WARN_DEPRECATED is not set
  # CONFIG_ENABLE_MUST_CHECK is not set
 +CONFIG_DEBUG_FS=y
  CONFIG_DEBUG_KERNEL=y
- # CONFIG_ARM_UNWIND is not set
 -- 
 2.20.1
 
