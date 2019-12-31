@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1ECC2D0DE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 31 Dec 2019 16:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6025DC2D0C2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 31 Dec 2019 16:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A26F205ED
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 31 Dec 2019 16:14:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 357B8205ED
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 31 Dec 2019 16:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbfLaQOh (ORCPT
+        id S1727139AbfLaQOi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 31 Dec 2019 11:14:37 -0500
-Received: from sauhun.de ([88.99.104.3]:51518 "EHLO pokefinder.org"
+        Tue, 31 Dec 2019 11:14:38 -0500
+Received: from sauhun.de ([88.99.104.3]:51582 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727054AbfLaQOg (ORCPT
+        id S1727064AbfLaQOh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 31 Dec 2019 11:14:36 -0500
+        Tue, 31 Dec 2019 11:14:37 -0500
 Received: from localhost (p5486C426.dip0.t-ipconnect.de [84.134.196.38])
-        by pokefinder.org (Postfix) with ESMTPSA id BBA282C0783;
-        Tue, 31 Dec 2019 17:14:33 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id 908992C07CF;
+        Tue, 31 Dec 2019 17:14:35 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -32,9 +32,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Vladimir Zapolskiy <vz@mleia.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 1/5] i2c: core: refactor scanning for a client
-Date:   Tue, 31 Dec 2019 17:13:56 +0100
-Message-Id: <20191231161400.1688-2-wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 5/5] simple test case for the I2C alias functionality
+Date:   Tue, 31 Dec 2019 17:14:00 +0100
+Message-Id: <20191231161400.1688-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191231161400.1688-1-wsa+renesas@sang-engineering.com>
 References: <20191231161400.1688-1-wsa+renesas@sang-engineering.com>
@@ -45,107 +45,65 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-There is a pattern to check for existence of a client which is copied in
-i2c_detect_address() and i2c_new_scanned_device():
+Not for upstream!
 
-1) check if address is valid
-2) check if address is already registered
-3) send a message and check the reponse
-
-Because this pattern will be needed a third time soon, refactor it into
-its own function.
-
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Not-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/i2c/i2c-core-base.c | 57 ++++++++++++++++---------------------
- 1 file changed, 25 insertions(+), 32 deletions(-)
+ drivers/i2c/i2c-core-base.c |  2 +-
+ sound/soc/codecs/ak4642.c   | 20 ++++++++++++++++++++
+ 2 files changed, 21 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index a1eb28a3cc54..20a726dc78db 100644
+index 0cc4a5c49a15..97d3e9f8dfa7 100644
 --- a/drivers/i2c/i2c-core-base.c
 +++ b/drivers/i2c/i2c-core-base.c
-@@ -2108,29 +2108,39 @@ static int i2c_default_probe(struct i2c_adapter *adap, unsigned short addr)
- 	return err >= 0;
- }
+@@ -1307,7 +1307,7 @@ static int i2c_register_adapter(struct i2c_adapter *adap)
+ 		adap->lock_ops = &i2c_adapter_lock_ops;
  
--static int i2c_detect_address(struct i2c_client *temp_client,
--			      struct i2c_driver *driver)
-+static int i2c_scan_for_client(struct i2c_adapter *adap, unsigned short addr,
-+			    int (*probe)(struct i2c_adapter *adap, unsigned short addr))
- {
--	struct i2c_board_info info;
--	struct i2c_adapter *adapter = temp_client->adapter;
--	int addr = temp_client->addr;
- 	int err;
- 
- 	/* Make sure the address is valid */
- 	err = i2c_check_7bit_addr_validity_strict(addr);
--	if (err) {
--		dev_warn(&adapter->dev, "Invalid probe address 0x%02x\n",
--			 addr);
-+	if (WARN(err, "Invalid probe address 0x%02x\n", addr))
- 		return err;
--	}
- 
- 	/* Skip if already in use (7 bit, no need to encode flags) */
--	if (i2c_check_addr_busy(adapter, addr))
--		return 0;
-+	if (i2c_check_addr_busy(adap, addr))
-+		return -EBUSY;
- 
- 	/* Make sure there is something at this address */
--	if (!i2c_default_probe(adapter, addr))
--		return 0;
-+	if (!probe(adap, addr))
-+		return -ENODEV;
+ 	adap->locked_flags = 0;
+-	adap->alias_idx = 0x08;	/* first valid I2C address */
++	adap->alias_idx = 0x3e;	/* first valid I2C address */
+ 	rt_mutex_init(&adap->bus_lock);
+ 	rt_mutex_init(&adap->mux_lock);
+ 	mutex_init(&adap->userspace_clients_lock);
+diff --git a/sound/soc/codecs/ak4642.c b/sound/soc/codecs/ak4642.c
+index 353237025514..d34476b80b41 100644
+--- a/sound/soc/codecs/ak4642.c
++++ b/sound/soc/codecs/ak4642.c
+@@ -639,6 +639,25 @@ static int ak4642_i2c_probe(struct i2c_client *i2c,
+ 	struct regmap *regmap;
+ 	struct ak4642_priv *priv;
+ 	struct clk *mcko = NULL;
++struct i2c_client *test, *test2, *test3;
 +
-+	return 0;
-+}
++test = i2c_new_alias_device(i2c->adapter);
++printk(KERN_INFO "****** wsa: %08x %08x\n", test->addr, i2c->adapter->alias_idx);
 +
-+static int i2c_detect_address(struct i2c_client *temp_client,
-+			      struct i2c_driver *driver)
-+{
-+	struct i2c_board_info info;
-+	struct i2c_adapter *adapter = temp_client->adapter;
-+	int addr = temp_client->addr;
-+	int err;
++test2 = i2c_new_alias_device(i2c->adapter);
++printk(KERN_INFO "****** wsa: %08x %08x\n", test2->addr, i2c->adapter->alias_idx);
 +
-+	/* Only report broken addresses, busy addresses are no error */
-+	err = i2c_scan_for_client(adapter, addr, i2c_default_probe);
-+	if (err < 0)
-+		return err == -EINVAL ? -EINVAL : 0;
++//i2c_unregister_device(test2);
++//printk(KERN_INFO "****** wsa: %08x %08x\n", test2->addr, i2c->adapter->alias_idx);
++
++i2c_unregister_device(test);
++printk(KERN_INFO "****** wsa: %08x %08x\n", test->addr, i2c->adapter->alias_idx);
++
++test = i2c_new_alias_device(i2c->adapter);
++printk(KERN_INFO "****** wsa: %08x %08x\n", test->addr, i2c->adapter->alias_idx);
++
++test3 = i2c_new_alias_device(i2c->adapter);
++printk(KERN_INFO "****** wsa: %08x %08x\n", test3->addr, i2c->adapter->alias_idx);
  
- 	/* Finally call the custom detection function */
- 	memset(&info, 0, sizeof(struct i2c_board_info));
-@@ -2232,26 +2242,9 @@ i2c_new_scanned_device(struct i2c_adapter *adap,
- 	if (!probe)
- 		probe = i2c_default_probe;
+ 	if (np) {
+ 		const struct of_device_id *of_id;
+@@ -659,6 +678,7 @@ static int ak4642_i2c_probe(struct i2c_client *i2c,
+ 		return -EINVAL;
+ 	}
  
--	for (i = 0; addr_list[i] != I2C_CLIENT_END; i++) {
--		/* Check address validity */
--		if (i2c_check_7bit_addr_validity_strict(addr_list[i]) < 0) {
--			dev_warn(&adap->dev, "Invalid 7-bit address 0x%02x\n",
--				 addr_list[i]);
--			continue;
--		}
--
--		/* Check address availability (7 bit, no need to encode flags) */
--		if (i2c_check_addr_busy(adap, addr_list[i])) {
--			dev_dbg(&adap->dev,
--				"Address 0x%02x already in use, not probing\n",
--				addr_list[i]);
--			continue;
--		}
--
--		/* Test address responsiveness */
--		if (probe(adap, addr_list[i]))
-+	for (i = 0; addr_list[i] != I2C_CLIENT_END; i++)
-+		if (i2c_scan_for_client(adap, addr_list[i], probe) == 0)
- 			break;
--	}
- 
- 	if (addr_list[i] == I2C_CLIENT_END) {
- 		dev_dbg(&adap->dev, "Probing failed, no device found\n");
++
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
 -- 
 2.20.1
 
