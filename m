@@ -2,110 +2,100 @@ Return-Path: <SRS0=OKYY=2X=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12C80C3F68F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  2 Jan 2020 14:12:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0BBC2D0DC
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  2 Jan 2020 14:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E430E20848
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  2 Jan 2020 14:12:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B93A215A4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  2 Jan 2020 14:46:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728288AbgABOMx (ORCPT
+        id S1728531AbgABOqo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 2 Jan 2020 09:12:53 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:45176 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728469AbgABOMx (ORCPT
+        Thu, 2 Jan 2020 09:46:44 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:45008 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728425AbgABOqn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Jan 2020 09:12:53 -0500
-Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id lSCn2100L5USYZQ01SCnNQ; Thu, 02 Jan 2020 15:12:51 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1in1DT-0006OS-BB; Thu, 02 Jan 2020 15:12:47 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1in1DT-00006r-91; Thu, 02 Jan 2020 15:12:47 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Thu, 2 Jan 2020 09:46:43 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 94B52803D7;
+        Thu,  2 Jan 2020 15:46:37 +0100 (CET)
+Date:   Thu, 2 Jan 2020 15:46:36 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
         David Lechner <david@lechnology.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <mripard@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Chris Brandt <chris.brandt@renesas.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] drm: Add support for Okaya RH128128T
-Date:   Thu,  2 Jan 2020 15:12:43 +0100
-Message-Id: <20200102141246.370-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 1/3] dt-bindings: display: sitronix, st7735r: Add Okaya
+ rh128128t
+Message-ID: <20200102144636.GA10075@ravnborg.org>
+References: <20200102141246.370-1-geert+renesas@glider.be>
+ <20200102141246.370-2-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200102141246.370-2-geert+renesas@glider.be>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10
+        a=FF-hTYSRAwVgkRfqy0oA:9 a=CjuIK1q_8ugA:10 a=pHzHmUro8NiASowvMSCR:22
+        a=6VlIyEUom7LUIeUMNQJH:22
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+Hi Geert.
 
-This patch series adds support for the Okaya RH128128T LCD to the
-existing ST7735R driver.  This is a 128x128 1.4" TFT display driven by a
-Sitronix ST7715R TFT Controller/Driver.  It is used on the "lcd-pmod"
-display module that is shipped with Renesas RSK+RZA1 development boards,
-and with several other Renesas starter kits, for RX, Synergy, and RZ/T1
-MCUs and SoCs.
+On Thu, Jan 02, 2020 at 03:12:44PM +0100, Geert Uytterhoeven wrote:
+> Document support for the Okaya RH128128T display, which is a 128x128
+> 1.44" TFT display driven by a Sitronix ST7715R TFT Controller/Driver.
+> 
+> ST7715R and ST7735R are very similar.  Their major difference is that
+> the former is restricted to displays of up to 132x132 pixels, while the
+> latter supports displays up to 132x162 pixels.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  .../devicetree/bindings/display/sitronix,st7735r.txt          | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/sitronix,st7735r.txt b/Documentation/devicetree/bindings/display/sitronix,st7735r.txt
+> index cd5c7186890a2be7..87ebdcb294e29798 100644
+> --- a/Documentation/devicetree/bindings/display/sitronix,st7735r.txt
+> +++ b/Documentation/devicetree/bindings/display/sitronix,st7735r.txt
+While touching the bindings file, can I convince you to convert it to
+meta-schema format (.yaml)?
 
-I'm not 100% sure about the actual Okaya part number, but this is the
-only display listed on the Okaya website that matches the
-specifications.
 
-Patch 2 depends on "[PATCH] drm/mipi_dbi: Fix off-by-one bugs in
-mipi_dbi_blank()"[1], which I sent earlier this week.
+> @@ -4,7 +4,9 @@ This binding is for display panels using a Sitronix ST7735R controller in SPI
+>  mode.
+>  
+>  Required properties:
+> -- compatible:	"jianda,jd-t18003-t01", "sitronix,st7735r"
+> +- compatible:	Must be one of the following combinations:
+> +		  - "jianda,jd-t18003-t01", "sitronix,st7735r"
+> +		  - "okaya,rh128128t", "sitronix,st7715r"
 
-This has been tested using the r7s72100-rskrza1-pmod-spi.dtso and
-r7s72100-rskrza1-pmod2-lcd.dtso DT overlays[2].
-Note that for using this on RSK+RZA1, there is a dependency on RSPI
-cs-gpios support[3].  With DT overlays, this also depends on DT
-overlays[4] and gpio-hog overlay support[5].
+It would be nice if there was a "description" for each pair of
+compatible that identified the actual panel.
+In your case "Okaya RH128128T 1.44" 128x128 TFT display"
+It can be looked up in git history - but better to have it in the
+binding file.
 
-Thanks for your comments!
-
-[1] https://lore.kernel.org/lkml/20191230130604.31006-1-geert+renesas@glider.be/
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/renesas-overlays
-[3] "[PATCH 0/6] spi: rspi: Add support for multiple native and GPIO
-    chip selects"
-    https://lore.kernel.org/lkml/20200102133822.29346-1-geert+renesas@glider.be/
-[4] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/overlays
-[5] "[PATCH/RFC 0/2] gpio: of: Add DT overlay support for GPIO hogs"
-    https://lore.kernel.org/lkml/20191230133852.5890-1-geert+renesas@glider.be/
-
-Geert Uytterhoeven (3):
-  dt-bindings: display: sitronix,st7735r: Add Okaya rh128128t
-  drm/mipi_dbi: Add support for display offsets
-  drm: tiny: st7735r: Add support for Okaya RH128128T
-
- .../bindings/display/sitronix,st7735r.txt     |  4 +-
- drivers/gpu/drm/drm_mipi_dbi.c                | 30 ++++++---
- drivers/gpu/drm/tiny/st7735r.c                | 65 ++++++++++++++++---
- include/drm/drm_mipi_dbi.h                    | 12 ++++
- 4 files changed, 90 insertions(+), 21 deletions(-)
-
--- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+	Sam
