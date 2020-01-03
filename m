@@ -2,124 +2,107 @@ Return-Path: <SRS0=6FlE=2Y=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9A5C3276C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jan 2020 00:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B8AC2D0C2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jan 2020 09:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70A9D217F4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jan 2020 00:11:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08EA32053B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jan 2020 09:51:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Eg7o5RuN"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="cG4ow4LH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbgACALJ (ORCPT
+        id S1725972AbgACJvV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 2 Jan 2020 19:11:09 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:55112 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgACALJ (ORCPT
+        Fri, 3 Jan 2020 04:51:21 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42003 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727313AbgACJvV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 2 Jan 2020 19:11:09 -0500
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 210AC516;
-        Fri,  3 Jan 2020 01:11:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1578010266;
-        bh=WzWxEa94iqGsV8/jwAsTxRyk8kDt6DYucmSsNmKCook=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Eg7o5RuNL3QIx0q4DD4G2qesMUjchevg6J7xY+1Oz/U168PkbQcE2eaKqK/scGhbf
-         NrmEq2m+k35yp1stFGCzoJCt2R8lerkNRITkZBERVscSZfi7dCFFJuJrPoMuQKU+HM
-         txJnYzTZVF7igW/8MiSX9zayhmM5n4O9L4bXcUCM=
-Date:   Fri, 3 Jan 2020 02:10:56 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Vladimir Zapolskiy <vz@mleia.com>
-Subject: Re: [RFC PATCH 3/5] i2c: core: add function to request an alias
-Message-ID: <20200103001056.GJ4843@pendragon.ideasonboard.com>
-References: <20191231161400.1688-1-wsa+renesas@sang-engineering.com>
- <20191231161400.1688-4-wsa+renesas@sang-engineering.com>
- <20200101165515.GC6226@pendragon.ideasonboard.com>
- <e008939f-531d-f7dc-4c3c-937476213030@lucaceresoli.net>
- <20200102211327.GB1030@kunai>
- <cc2a10ab-9f05-2c61-3a37-0e5e0184e379@lucaceresoli.net>
+        Fri, 3 Jan 2020 04:51:21 -0500
+Received: by mail-qk1-f195.google.com with SMTP id z14so32074420qkg.9
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jan 2020 01:51:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=m2l4ZP00y1MciphnLaoZDMF/+IkQks5KZaGyrGhDRiA=;
+        b=cG4ow4LHRj767jnNAQOpyl17Q+p40TAAcPfpSpHHXDGlrwj62Hpbce+n9FDrk+qkc/
+         hF5ZyqmmFsJTtYTiw79voWF6jUJzD3jMMLxaKlR24Yfx0wH19vRA84WzFpBPdLB301Wn
+         oDHYiFn+x4VsG0+cQjGtKP+AgiFhJEl2gny+42Vv2QuoSuDmtZTYXxHfkb2SYQSXio5l
+         4izdl3cbPeqe/fUEgmo7jINRJHhXeZzjP7rcRM1zIfCdONmAYkusOFVw3KH4tD5KGrsX
+         B2TTgSy+6TGCiaGzC+uIdpJ7YevNhC6HmCAOCMdMswOZwgLLOkvTEExLz90pSslcmLhv
+         3Jtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=m2l4ZP00y1MciphnLaoZDMF/+IkQks5KZaGyrGhDRiA=;
+        b=GD+jHeO8SqkVI+2hljKj7/kYBs83tvq141qAdnzXscoS1Bdw4Ini/P34glylxg/k0g
+         4QiMaDvyQKVZqq2qfiEBFsZEXqoOJ4NrhydmM81NE5oIUHbskNquiSYplt26Np2T8KgL
+         COow6vTvhVWL246Rx6pk/X+WcLdTqYM1C+MUx8UJFhxdfzNBPep4sziSI8YJ0MXTO/Y5
+         VygbGGEMxtM8jJRsYFJnNOwvwWZk/kFMFZePsw3uQyP+Frs6arNIqXGZ7SpfKHccZqmJ
+         a7Y9QH+H1aC7/09KW4zf6PhPMWwNyEqkiFoknKER6DdGbU34xHCITyTjXIoSzXs09psl
+         MaHQ==
+X-Gm-Message-State: APjAAAXMnIY/7BH5nRLKMfvfesa0gPavzheCliaY/WBHF/cj94mL/t1J
+        6ueixyBvclDvSfH7/0xt74HiPGXtciAJffxDX8ItYA==
+X-Google-Smtp-Source: APXvYqzAZelvEL1bp9L+Dip8BtcvxrfIeDBmaKGivW0X8lJb2LdaJs31IH9b2gpMP+zcFkudxHBKRdWDiyhDv4QqwCw=
+X-Received: by 2002:a37:6255:: with SMTP id w82mr71281142qkb.330.1578045080489;
+ Fri, 03 Jan 2020 01:51:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cc2a10ab-9f05-2c61-3a37-0e5e0184e379@lucaceresoli.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20191230133852.5890-1-geert+renesas@glider.be>
+In-Reply-To: <20191230133852.5890-1-geert+renesas@glider.be>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Fri, 3 Jan 2020 10:51:09 +0100
+Message-ID: <CAMpxmJVN3f5vWZoUpgsM0kocmBYSO=T0OeoG--5rQi9=jk2t2g@mail.gmail.com>
+Subject: Re: [PATCH/RFC 0/2] gpio: of: Add DT overlay support for GPIO hogs
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jan 02, 2020 at 11:27:57PM +0100, Luca Ceresoli wrote:
-> Hi Wolfram,
-> 
-> On 02/01/20 22:13, Wolfram Sang wrote:
-> > Hi Luca,
-> > 
-> >>> This looks quite inefficient, especially if the beginning of the range
-> >>> is populated with devices. Furthermore, I think there's a high risk of
-> >>> false negatives, as acquiring a free address and reprogramming the
-> >>> client to make use of it are separate operations.
-> >>
-> >> Right. Applying the alias could raise other errors, thus one would need
-> >> i2c_new_alias_device() to keep the alias locked until programming it has
-> >> either failed or has been successfully programmed.
-> > 
-> > Please see my reply to Laurent, I don't think it is racy. But please
-> > elaborate if you think I am wrong.
-> 
-> Uhm, you are right here, it's not racy. Sorry, I had read the code
-> quickly and didn't notice the i2c_new_dummy_device() call.
-> 
-> So this means if i2c_new_alias_device() succeeds but the caller later
-> fails while applying the alias, then it has to call
-> i2c_unregister_device() to free the alias. Correct?
+pon., 30 gru 2019 o 14:38 Geert Uytterhoeven <geert+renesas@glider.be>
+napisa=C5=82(a):
+>
+>         Hi all,
+>
+> As GPIO hogs are configured at GPIO controller initialization time,
+> adding/removing GPIO hogs in Device Tree overlays currently does not
+> work.  Hence this patch series adds support for that, by registering an
+> of_reconfig notifier, as is already done for platform, i2c, and SPI
+> devices.
+>
+> Perhaps this would be better served through a pinctrl-gpio driver?
+> Pinctrl is already working fine with DT overlays, as the pinctrl-*
+> properties are part of the slave device node, and thus looked up at
+> slave device node attachment time, not at pin controller initialization
+> time.
+>
+> In my particular use case (talking to SPI devices connected to a PMOD
+> connector on the RSK+RZA1 development board), the GPIO performs board
+> level muxing of a.o. the SPI MOSI/MISO/SCK signals.  Hence the hog
+> really needs to be active only while talking to the SPI device, so the
+> muxing could (in theory) be done upon demand.
+> But how to describe that in DT, and implement it (using Runtime PM?)?
+>
 
-I was wrong as well, sorry about that.
+I may be missing the whole picture, but from your description this
+sounds like a job for the mux framework. Maybe we could make runtime
+PM aware of muxing for this type of use-cases?
 
-> >>> What happened to the idea of reporting busy address ranges in the
-> >>> firmware (DT, ACPI, ...) ?
-> >>
-> >> Indeed that's how I remember it as well, and I'm a bit suspicious about
-> >> sending out probe messages that might have side effects (even if the
-> >> false negative issue mentioned by Laurent were solved). You know, I've
-> >> been taught to "expect the worse" :) so I'd like to better understand
-> >> what are the strong reasons in favor of probing, as well as the
-> >> potential side effects.
-> > 
-> > As I said to Laurent, too, I think the risk that a bus is not fully
-> > described is higher than a device which does not respond to a read_byte.
-> > In both cases, we would wrongly use an address in use.
-
-I don't fully agree with this, I think we shouldn't impose a penalty on
-every user because some device trees don't fully describe the hardware.
-I think we should, at the very least, skip the probe and rely on DT if
-DT explicitly states that all used addresses are listed. We discussed a
-property to report addresses used by devices not described in DT, if
-that property is listed I would prefer trusting DT.
-
-> OK, I'm still uncomfortable with sending unexpected transactions to the
-> dark outer space, but this is more a feeling than based on facts, and
-> you know more than me, so I guess I can live with that.
-> 
-> > Also, all the best for you in 2020!
-> 
-> Thanks. Best wishes to you too for the new year!
-
-Likewise. Let's start with a simple wish of getting this issue resolved
-:-)
-
-
--- 
-Regards,
-
-Laurent Pinchart
+Bart
