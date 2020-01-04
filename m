@@ -1,182 +1,151 @@
-Return-Path: <SRS0=6FlE=2Y=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=Hxqp=2Z=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA12C2D0CE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jan 2020 16:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4420AC32771
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  4 Jan 2020 00:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BA8821734
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jan 2020 16:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18FCA2464B
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  4 Jan 2020 00:21:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qqjelQ0+"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gRnVfA7F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728023AbgACQ3t (ORCPT
+        id S1727156AbgADAVo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 3 Jan 2020 11:29:49 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45933 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727969AbgACQ3p (ORCPT
+        Fri, 3 Jan 2020 19:21:44 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43817 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727159AbgADAVk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Jan 2020 11:29:45 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 59so61796322otp.12;
-        Fri, 03 Jan 2020 08:29:45 -0800 (PST)
+        Fri, 3 Jan 2020 19:21:40 -0500
+Received: by mail-lj1-f195.google.com with SMTP id a13so45391133ljm.10
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jan 2020 16:21:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=TP17Q6SBM8RfPS7JEf89IxBEEl+82WJKOot5C8K9N98=;
-        b=qqjelQ0+Kba+Pvu7W6JzOzsWlxmU4Ap+PUQ1JAnf1w4z9lOX0l2NhJIYieVbWYkq+i
-         tZnhI+JcVeUs9DSAbecaKFqKLjENQC/bJXsXocYpxG/SaqscK8CFG6Q3VMOkAPlGS+vG
-         NXTkv9j3ucpnFzf2QRu0uiA74wdEuNrJJ6QSBTmxAcPD9TmNe9mnDfArKRMUVuVuQ3Ou
-         fgGlmjc677XGKTIEGhvglgnnFTTlb2s+aE66EfKRY8Pqg2Hop+iVfDEArN2O7oDnkG69
-         whfs/9FCtOBgZogqFllOd00fE8JMvYZwHR0GoFtWLyKVfcYf2bfe+Iok4a+DPiocc2+J
-         udBQ==
+        bh=a25MTBnzC/TY/vt8zz8+qKKJTGhY6mCF1CmPfY1tykI=;
+        b=gRnVfA7FDAgs73jNy22XumTxemh0aYDjK9B1YAV7aDhmr0DazAVJiMp4WVw1bkv31/
+         bcATx1sRwYkcsu4O0LQVmlmjSHW5VtsN8kArTfZitHm7x//5M6K3YcSNLlNrU4k2nXBM
+         yt6DH6rszExsqnVul0yZCOGTl1phucIVvqvK/Gcklh4kjZC6VQ1xu9ZmRNx0Ik5oj39W
+         PUCHY1sxyw3q0Pr498xt9akwnDTU17FpPWdhZ0+b30zgWzvbnxDXRO1SyZ+eSC73LL7M
+         4bTSAi5L7Qao6/+sTppkChYPciZ16A05vGdttDOmIm7Rn2KAj85O40F9gtCbP1HMl69m
+         XGZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=TP17Q6SBM8RfPS7JEf89IxBEEl+82WJKOot5C8K9N98=;
-        b=n67tly/MuUa+QJzx6r6wRj3UjMjFGYsqhcaOF4/Jv0FdZRlWx2msUs+TU1ov+iVI09
-         6WmvFUYa30E/27cV/iNJWbfSYJcwEEDu+kCjRfWGDi69zy1+mskFUuJy5g426Vgtw4op
-         BZCuPUkxsG5j4Jt5/fvK72ppgrO8Q42zW6H+M8457ip7vrEavXDylZq+qwBtLkBsZL5C
-         LIZLXDn8KwbYUyJXe7WYP8a8LlKxI8g6bGr72LyQoC6X5QFwbsMFCoXS8qkD32jLOPtZ
-         mC+B/DH89buEEpOlWnlzY1nv3STrw/8SFvQVznHNsh5yGiRbbvKzCYuDAVUZQ5zu2pq+
-         dwrw==
-X-Gm-Message-State: APjAAAUYnGrofmNCPsXeS//AZLximddfqiySLWnLERM7JuK2/oVVkFv7
-        Xcvs4oA51ZVoVKIS885+WI+ptCp+LrK43z1wXeM=
-X-Google-Smtp-Source: APXvYqyx0qfOGlCgf+mbqVx1RA3NJa/iWXu/notHG2jRzI1XyQlklOpJtiW2znnOyK1gz/QnIOAs/YVhOvNs6/K2WcU=
-X-Received: by 2002:a9d:5c02:: with SMTP id o2mr92142289otk.176.1578068984784;
- Fri, 03 Jan 2020 08:29:44 -0800 (PST)
+        bh=a25MTBnzC/TY/vt8zz8+qKKJTGhY6mCF1CmPfY1tykI=;
+        b=cEPo6EyOwKGM5NJTOqA4WbyRKRaN5+TX2U2Op2iY7KwCBSIilyYQDODoQn3wcUHYix
+         Y3RThMHJOMCFV3QxgeYazq+GTUODTNTl/yryx5aQOw4ayFBvlVwFCpcDSuKjmUumel64
+         Jbwn2ZphrAFhJyRY8aUWs7260hWAAuEUo220XQxiVmS/zCdG6QpyqTclpPcRvsCCWnTO
+         7cFhR+Z3UZYL9Uxo0YrP8FNiInVwUmYb6sZ3w7Ks0oRH5vvU2rfYuiIuq14vPmPWRsFV
+         YrrHtMh5jERbx+b7GHxKyVGUpOsXiwyJe7ksc54K64dX4jPBEICgyv3u0k2u0Jow35kG
+         VBgw==
+X-Gm-Message-State: APjAAAUlibrPOOLqEsRHnYjRXTupBxGpfabgmtTvdazjxFI6pWUCpEii
+        g7g7wgl/Ur8wuwblqyokP3jIjZaFvg2Ps6f7FiIjXg==
+X-Google-Smtp-Source: APXvYqxHT5NBcGXP7l31r/rUzGwxDXqF6xPcQ35bsC0BAshJRd7O7pJFod6OutyDNvKjGim9p9LsFYX1ulkLOKLmCGs=
+X-Received: by 2002:a2e:85cd:: with SMTP id h13mr51946653ljj.191.1578097298469;
+ Fri, 03 Jan 2020 16:21:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20191213084748.11210-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20191213084748.11210-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20191213084748.11210-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Fri, 3 Jan 2020 16:29:18 +0000
-Message-ID: <CA+V-a8uZqwfbYNec7bPWf5RuZP-zVkAyAz8SMueJic5wU0zyBw@mail.gmail.com>
-Subject: Re: [v2 4/6] dt-bindings: PCI: rcar: Add bindings for R-Car PCIe
- endpoint controller
-To:     Bjorn Helgaas <bhelgaas@google.com>,
+References: <20191127084253.16356-1-geert+renesas@glider.be>
+ <20191127084253.16356-7-geert+renesas@glider.be> <CACRpkdb1XZAeSThxWmJtnm80T4aPufXV2UvJdVdgnw-TJe3trg@mail.gmail.com>
+ <CAMuHMdV+Ww5Y9G7+bS-SyHtm4dC89V37yuaYvrS3kYW=PRTkFA@mail.gmail.com>
+In-Reply-To: <CAMuHMdV+Ww5Y9G7+bS-SyHtm4dC89V37yuaYvrS3kYW=PRTkFA@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 4 Jan 2020 01:21:27 +0100
+Message-ID: <CACRpkdZwos9Dtt9E3OkxWf4rqMALNTge5NGduzGm-7MhQyLZuQ@mail.gmail.com>
+Subject: Re: [PATCH v3 6/7] docs: gpio: Add GPIO Aggregator/Repeater documentation
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Jonathan Corbet <corbet@lwn.net>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Alexander Graf <graf@amazon.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Phil Reid <preid@electromag.com.au>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Andrew Murray <andrew.murray@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        LAK <linux-arm-kernel@lists.infradead.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Simon Horman <horms@verge.net.au>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Tom Joseph <tjoseph@cadence.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-pci <linux-pci@vger.kernel.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        QEMU Developers <qemu-devel@nongnu.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kishon/Rob,
-
-On Fri, Dec 13, 2019 at 8:48 AM Lad Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
+On Thu, Dec 12, 2019 at 3:48 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Thu, Dec 12, 2019 at 3:42 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Wed, Nov 27, 2019 at 9:43 AM Geert Uytterhoeven
+> > <geert+renesas@glider.be> wrote:
+> > > +The GPIO Aggregator allows access control for individual GPIOs, by aggregating
+> > > +them into a new gpio_chip, which can be assigned to a group or user using
+> > > +standard UNIX file ownership and permissions.  Furthermore, this simplifies and
+> > > +hardens exporting GPIOs to a virtual machine, as the VM can just grab the full
+> > > +GPIO controller, and no longer needs to care about which GPIOs to grab and
+> > > +which not, reducing the attack surface.
+> > > +
+> > > +Aggregated GPIO controllers are instantiated and destroyed by writing to
+> > > +write-only attribute files in sysfs.
+> >
+> > I suppose virtual machines will have a lengthy config file where
+> > they specify which GPIO lines to pick and use for their GPIO
+> > aggregator, and that will all be fine, the VM starts and the aggregator
+> > is there and we can start executing.
+> >
+> > I would perhaps point out a weakness as with all sysfs and with the current
+> > gpio sysfs: if a process creates an aggregator device, and then that
+> > process crashes, what happens when you try to restart the process and
+> > run e.g. your VM again?
+> >
+> > Time for a hard reboot? Or should we add some design guidelines for
+> > these machines so that they can cleanly tear down aggregators
+> > previously created by the crashed VM?
 >
-> From: "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> No, the VM does not create the aggregator.
 >
-> This patch adds the bindings for the R-Car PCIe endpoint driver.
+> The idea is for the user to create one or more aggregators, set up
+> permissions on /dev/gpiochipX, and launch the VM, passing the aggregated
+> /dev/gpiochipX as parameters.
+> If the VM crashes, just launch it again.
 >
-> Signed-off-by: Lad, Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
->  .../devicetree/bindings/pci/rcar-pci-ep.txt        | 37 ++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/rcar-pci-ep.txt
->
-> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-ep.txt b/Documentation/devicetree/bindings/pci/rcar-pci-ep.txt
-> new file mode 100644
-> index 0000000..7f0a97e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/rcar-pci-ep.txt
-> @@ -0,0 +1,37 @@
-> +* Renesas R-Car PCIe Endpoint Controller DT description
-> +
-> +Required properties:
-> +           "renesas,pcie-ep-r8a774c0" for the R8A774C0 SoC;
-> +           "renesas,pcie-ep-rcar-gen3" for a generic R-Car Gen3 or
-> +                                    RZ/G2 compatible device.
-> +
-> +           When compatible with the generic version, nodes must list the
-> +           SoC-specific version corresponding to the platform first
-> +           followed by the generic version.
-> +
-> +- reg: base address and length of the PCIe controller registers.
-> +- outbound-ranges: outbound windows base address and length including the flags.
-> +- resets: Must contain phandles to PCIe-related reset lines exposed by IP block
-> +- clocks: from common clock binding: clock specifiers for the PCIe controller
-> +        clock.
-> +- clock-names: from common clock binding: should be "pcie".
-> +
-> +Optional Property:
-> +- max-functions: Maximum number of functions that can be configured (default 1).
-> +
-> +Example:
-> +
-> +SoC-specific DT Entry:
-> +
-> +       pcie_ep: pcie_ep@fe000000 {
-> +               compatible = "renesas,pcie-ep-r8a774c0", "renesas,pcie-rcar-gen2";
-> +               reg = <0 0xfe000000 0 0x80000>;
-> +               outbound-ranges = <0xa 0x0 0xfe100000 0 0x000100000
-> +                                  0xa 0x0 0xfe200000 0 0x000200000
-> +                                  0x6 0x0 0x30000000 0 0x008000000
-> +                                  0x6 0x0 0x38000000 0 0x008000000>;
-> +               clocks = <&cpg CPG_MOD 319>;
-> +               clock-names = "pcie";
-> +               power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-> +               resets = <&cpg 319>;
-> +       };
+> Destroying the aggregators is a manual and independent process, after
+> the VM has exited.
 
-Now that I have dropped "outbound-ranges", do the below bindings look good ?
+I'm thinking about someone making some industrial application for some
+control of a machinery say a robotic arm.
 
-- reg-names: Must include the following names
- - "apb-base" - Controller base
- - "memory0" - memory window 0 used by the host to map the pci address locally
- - "memory1" - memory window 1 used by the host to map the pci address locally
-- "memory2" - memory window 2 used by the host to map the pci address locally
-- "memory3" - memory window 3 used by the host to map the pci address locally
+And do make sure this VM is only controlling these GPIOs related to
+this robotic arm, they create a GPIO aggregator. And we care about
+cases like that since we provide this security argument.
 
-    pcie-ep: pcie_ep@fe000000 {
-        compatible = "renesas,pcie-r8a774c0", "renesas,pcie-rcar-gen2";
-        reg = <0 0xfe000000 0 0x80000>,
-            <0x0 0xfe100000 0 0x100000>,
-            <0x0 0xfe200000 0 0x200000>,
-            <0x0 0x30000000 0 0x8000000>,
-            <0x0 0x38000000 0 0x8000000>;
-        reg-names = "apb-base", "memory0", "memory1", "memory2", "memory3";
-        clocks = <&cpg CPG_MOD 319>;
-        clock-names = "pcie";
-        power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-        resets = <&cpg 319>;
-    };
+Surely that machine will be rebooted.
 
-Cheers,
---Prabhakar
+Surely they don't have a printed paper with all the commands lying
+at the console, and asking whoever powers it back on to manually
+type it all in again. That feels a bit 1981.
+
+So they will have a script for this I suppose. Possibly in some
+initscript so it is set up on boot. And this script echos stuff
+all over the place to set up the aggregator.
+
+Is this the use case you're thinking of?
+
+I just like to have the whole picture here.
+
+Yours,
+Linus Walleij
