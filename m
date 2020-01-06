@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.8 required=3.0
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7027FC33CA1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jan 2020 10:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A20A9C32771
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jan 2020 10:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48144207FF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jan 2020 10:49:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71B5B2467A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jan 2020 10:49:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbgAFKtL (ORCPT
+        id S1726358AbgAFKtN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 6 Jan 2020 05:49:11 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:57874 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbgAFKtL (ORCPT
+        Mon, 6 Jan 2020 05:49:13 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:38788 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbgAFKtM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Jan 2020 05:49:11 -0500
+        Mon, 6 Jan 2020 05:49:12 -0500
 Received: from ramsan ([84.195.182.253])
-        by michel.telenet-ops.be with bizsmtp
-        id myp52100S5USYZQ06yp5RR; Mon, 06 Jan 2020 11:49:09 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id myp52100L5USYZQ01yp5Kf; Mon, 06 Jan 2020 11:49:10 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ioPwX-0001yi-LC; Mon, 06 Jan 2020 11:49:05 +0100
+        id 1ioPwX-0001yr-Nm; Mon, 06 Jan 2020 11:49:05 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ioPwX-0002Bt-KK; Mon, 06 Jan 2020 11:49:05 +0100
+        id 1ioPwX-0002C3-Mi; Mon, 06 Jan 2020 11:49:05 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 2/5] Renesas ARM DT updates for v5.6
-Date:   Mon,  6 Jan 2020 11:48:54 +0100
-Message-Id: <20200106104857.8361-3-geert+renesas@glider.be>
+Subject: [GIT PULL 5/5] Renesas DT binding updates for v5.6
+Date:   Mon,  6 Jan 2020 11:48:57 +0100
+Message-Id: <20200106104857.8361-6-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200106104857.8361-1-geert+renesas@glider.be>
 References: <20200106104857.8361-1-geert+renesas@glider.be>
@@ -54,60 +54,26 @@ The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-dt-for-v5.6-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v5.6-tag1
 
-for you to fetch changes up to fe4a76fafdb4d072e0842d55cccfa141a1912457:
+for you to fetch changes up to 837b7deb364c3cf927f922d88b6131c8a4f81d0e:
 
-  ARM: dts: sh73a0: Add missing clock-frequency for fixed clocks (2019-12-31 10:33:41 +0100)
-
-----------------------------------------------------------------
-Renesas ARM DT updates for v5.6
-
-  - Touch screen support for the iwg20d board,
-  - ARM global timer support on Cortex-A9 MPCore SoCs,
-  - Miscellaneous fixes for issues detected by "make dtbs_check".
+  dt-bindings: can: rcar_canfd: document r8a774b1 support (2019-12-20 15:59:57 +0100)
 
 ----------------------------------------------------------------
-Fabrizio Castro (1):
-      ARM: dts: iwg20d-q7-common: Add LCD support
+Renesas DT binding updates for v5.6
 
-Geert Uytterhoeven (10):
-      ARM: dts: sh73a0: Rename twd clock to periph clock
-      ARM: dts: sh73a0: Add device node for ARM global timer
-      ARM: dts: r8a7779: Add device node for ARM global timer
-      ARM: dts: renesas: Group tuples in regulator-gpio states properties
-      ARM: dts: renesas: Group tuples in interrupt properties
-      ARM: dts: renesas: Group tuples in pci ranges and dma-ranges properties
-      ARM: dts: rcar-gen2: Fix PCI high address in interrupt-map-mask
-      ARM: dts: rcar-gen2: Add missing mmio-sram bus properties
-      ARM: dts: r8a7778: Add missing clock-frequency for fixed clocks
-      ARM: dts: sh73a0: Add missing clock-frequency for fixed clocks
+  - Document TMU and CAN(FD) support for R-Car RZ/G2N.
 
- arch/arm/boot/dts/iwg20d-q7-common.dtsi       |  88 +++++++++++++-
- arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi      |   1 -
- arch/arm/boot/dts/r7s72100.dtsi               |  18 +--
- arch/arm/boot/dts/r8a73a4.dtsi                |  42 +++----
- arch/arm/boot/dts/r8a7740-armadillo800eva.dts |   3 +-
- arch/arm/boot/dts/r8a7740.dtsi                | 102 ++++++++--------
- arch/arm/boot/dts/r8a7743.dtsi                | 162 +++++++++++++------------
- arch/arm/boot/dts/r8a7744.dtsi                | 162 +++++++++++++------------
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts   |   3 +-
- arch/arm/boot/dts/r8a7745.dtsi                | 122 ++++++++++---------
- arch/arm/boot/dts/r8a77470-iwg23s-sbc.dts     |   3 +-
- arch/arm/boot/dts/r8a77470.dtsi               |  86 +++++++------
- arch/arm/boot/dts/r8a7778.dtsi                |  11 +-
- arch/arm/boot/dts/r8a7779-marzen.dts          |   3 +-
- arch/arm/boot/dts/r8a7779.dtsi                |  16 ++-
- arch/arm/boot/dts/r8a7790-lager.dts           |   6 +-
- arch/arm/boot/dts/r8a7790.dtsi                | 167 +++++++++++++-------------
- arch/arm/boot/dts/r8a7791-koelsch.dts         |   9 +-
- arch/arm/boot/dts/r8a7791-porter.dts          |   6 +-
- arch/arm/boot/dts/r8a7791.dtsi                | 159 ++++++++++++------------
- arch/arm/boot/dts/r8a7792.dtsi                |  67 ++++++-----
- arch/arm/boot/dts/r8a7793-gose.dts            |   9 +-
- arch/arm/boot/dts/r8a7793.dtsi                | 123 ++++++++++---------
- arch/arm/boot/dts/r8a7794-alt.dts             |   6 +-
- arch/arm/boot/dts/r8a7794-silk.dts            |   3 +-
- arch/arm/boot/dts/r8a7794.dtsi                | 111 ++++++++---------
- arch/arm/boot/dts/sh73a0.dtsi                 | 139 +++++++++++----------
- 27 files changed, 878 insertions(+), 749 deletions(-)
+----------------------------------------------------------------
+Biju Das (1):
+      dt-bindings: timer: renesas: tmu: Document r8a774b1 bindings
+
+Fabrizio Castro (2):
+      dt-bindings: can: rcar_can: document r8a774b1 support
+      dt-bindings: can: rcar_canfd: document r8a774b1 support
+
+ Documentation/devicetree/bindings/net/can/rcar_can.txt   | 5 +++--
+ Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 5 +++--
+ Documentation/devicetree/bindings/timer/renesas,tmu.txt  | 1 +
+ 3 files changed, 7 insertions(+), 4 deletions(-)
