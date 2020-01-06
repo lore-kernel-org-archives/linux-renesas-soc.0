@@ -2,78 +2,180 @@ Return-Path: <SRS0=Tv30=23=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A20A9C32771
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jan 2020 10:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10203C33C8C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jan 2020 17:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71B5B2467A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jan 2020 10:49:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2163207FF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jan 2020 17:08:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgAFKtN (ORCPT
+        id S1726612AbgAFRIQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 6 Jan 2020 05:49:13 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:38788 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725787AbgAFKtM (ORCPT
+        Mon, 6 Jan 2020 12:08:16 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:51186 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726524AbgAFRIQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Jan 2020 05:49:12 -0500
-Received: from ramsan ([84.195.182.253])
-        by baptiste.telenet-ops.be with bizsmtp
-        id myp52100L5USYZQ01yp5Kf; Mon, 06 Jan 2020 11:49:10 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ioPwX-0001yr-Nm; Mon, 06 Jan 2020 11:49:05 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ioPwX-0002C3-Mi; Mon, 06 Jan 2020 11:49:05 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 5/5] Renesas DT binding updates for v5.6
-Date:   Mon,  6 Jan 2020 11:48:57 +0100
-Message-Id: <20200106104857.8361-6-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200106104857.8361-1-geert+renesas@glider.be>
-References: <20200106104857.8361-1-geert+renesas@glider.be>
+        Mon, 6 Jan 2020 12:08:16 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id B1E2080554;
+        Mon,  6 Jan 2020 18:08:09 +0100 (CET)
+Date:   Mon, 6 Jan 2020 18:08:08 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        David Lechner <david@lechnology.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH 3/3] drm: tiny: st7735r: Add support for Okaya RH128128T
+Message-ID: <20200106170808.GA21745@ravnborg.org>
+References: <20200102141246.370-1-geert+renesas@glider.be>
+ <20200102141246.370-4-geert+renesas@glider.be>
+ <20200105091303.GB29102@ravnborg.org>
+ <CAMuHMdUL3tCZzCDyJkmqYT5n+-t+Z-Ubo4=+NJpHpZU1w5C07g@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUL3tCZzCDyJkmqYT5n+-t+Z-Ubo4=+NJpHpZU1w5C07g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VcLZwmh9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10
+        a=jzz1BgsP7IGNGfLaZHoA:9 a=CjuIK1q_8ugA:10 a=pHzHmUro8NiASowvMSCR:22
+        a=6VlIyEUom7LUIeUMNQJH:22
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+Hi Geert.
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+> Thanks for your comments!
+> 
+> > On Thu, Jan 02, 2020 at 03:12:46PM +0100, Geert Uytterhoeven wrote:
+> > > Add support for the Okaya RH128128T display to the st7735r driver.
+> > >
+> > > The RH128128T is a 128x128 1.44" TFT display driven by a Sitronix
+> > > ST7715R TFT Controller/Driver.  The latter is very similar to the
+> > > ST7735R, and can be handled by the existing st7735r driver.
+> >
+> > As a general comment - it would have eased review if this was split
+> > in two patches.
+> > One patch to introduce the infrastructure to deal with another set of
+> > controller/display and one patch introducing the new combination.
+> 
+> I had thought about that, but didn't pursue as the new combination is
+> just 7 added lines.  If you prefer a split, I can do that.
 
-are available in the Git repository at:
+The good thing with a split is that is shows how little is really
+required to support a new controller/panel pair.
+So it would be good if you did so.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v5.6-tag1
+> 
+> > > --- a/drivers/gpu/drm/tiny/st7735r.c
+> > > +++ b/drivers/gpu/drm/tiny/st7735r.c
+> > > @@ -1,8 +1,9 @@
+> > >  // SPDX-License-Identifier: GPL-2.0+
+> > >  /*
+> > > - * DRM driver for Sitronix ST7735R panels
+> > > + * DRM driver for Sitronix ST7715R/ST7735R panels
+> >
+> > This comment could describe the situation a little better.
+> > This is a sitronix st7735r controller with a jianda jd-t18003-t01
+> > display.
+> > Or a sitronix st7715r controller with a okaya rh128128t display.
+> 
+> Indeed. It is currently limited to two controller/display combos.
+> But I expect more combos to be added over time.
+> Hence does it make sense to describe all of that in the top comments?
 
-for you to fetch changes up to 837b7deb364c3cf927f922d88b6131c8a4f81d0e:
+If we do describe it we should do so as kernel-doc and then wire up the
+driver somwhere under Documentation/gpu/
+But there is no good place to wire it up yet.
 
-  dt-bindings: can: rcar_canfd: document r8a774b1 support (2019-12-20 15:59:57 +0100)
+> > > @@ -37,12 +39,28 @@
+> > >  #define ST7735R_MY   BIT(7)
+> > >  #define ST7735R_MX   BIT(6)
+> > >  #define ST7735R_MV   BIT(5)
+> > > +#define ST7735R_RGB  BIT(3)
+> > > +
+> > > +struct st7735r_cfg {
+> > > +     const struct drm_display_mode mode;
+> > > +     unsigned int left_offset;
+> > > +     unsigned int top_offset;
+> > > +     unsigned int write_only:1;
+> > > +     unsigned int rgb:1;             /* RGB (vs. BGR) */
+> > > +};
+> > > +
+> > > +struct st7735r_priv {
+> > > +     struct mipi_dbi_dev dbidev;     /* Must be first for .release() */
+> > > +     unsigned int rgb:1;
+> > > +};
+> >
+> > The structs here uses "st7735r" as the generic prefix.
+> > But the rest of this file uses "jd_t18003_t01" as the generic prefix.
+> >
+> > It would help readability if the same prefix is used for the common
+> > stuff everywhere.
+> 
+> Agreed.
+> So I think it makes most sense to rename jd_t18003_t01_pipe_{enable,funcs}
+> to sh7735r_pipe_{enable,funcs}?
+s/sh/st/
+Yeah, or maybe just sitronix_pipe_{enable,funcs} as we have support
+for more than one Sitronix controller anyway.
 
-----------------------------------------------------------------
-Renesas DT binding updates for v5.6
+> If needed, the display-specific parts (e.g. gamma parameters) could be
+> factored out in st7735r_cfg later, if neeeded.
+> 
+> In reality, there are lots of different ways to communicate with an
+> ST77[13]5R display controller (3/4-wire SPI, or 6800/8080 bus, ...), and
+> lots of different ways to wire a display to the controller.  Ideally,
+> this should be described in DT.  As I don't have schematics for the
+> display board, doing so is difficult, and will miss important details,
+> which may lead to DTB ABI compatibility issues later.
+> I understand using these compatible combinations was a pragmatic solution
+> to this problem.
+Agreed, let's bite that when we have a display we care enough about
+and maybe then we also can write a proper driver for it.
+I have a few displays here using 8080 and I hope someone steps up
+to do proper support for such displays.
 
-  - Document TMU and CAN(FD) support for R-Car RZ/G2N.
+> > >
+> > >  static const struct spi_device_id st7735r_id[] = {
+> > > -     { "jd-t18003-t01", 0 },
+> > > +     { "jd-t18003-t01", (uintptr_t)&jd_t18003_t01_cfg },
+> > >       { },
+> > { /* sentinel */ },
+> >
+> > Do we need an entry for "okaya,rh128128t" here?
+> >
+> > Note: I have not fully understood how MODULE_DEVICE_TABLE()
+> > works - so forgive me my ignorance.
+> 
+> st7735r_id[] is used for matching based on platform device name.
+> Hence an entry is needed only to use the display on non-DT systems.
+> Can be added later, if ever needed.
+> 
+> Note that there is a separate MODULE_DEVICE_TABLE() for DT-based matching,
+> so the driver module will be auto-loaded on DT-based systems.
 
-----------------------------------------------------------------
-Biju Das (1):
-      dt-bindings: timer: renesas: tmu: Document r8a774b1 bindings
+Thanks for the explanation.
 
-Fabrizio Castro (2):
-      dt-bindings: can: rcar_can: document r8a774b1 support
-      dt-bindings: can: rcar_canfd: document r8a774b1 support
-
- Documentation/devicetree/bindings/net/can/rcar_can.txt   | 5 +++--
- Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 5 +++--
- Documentation/devicetree/bindings/timer/renesas,tmu.txt  | 1 +
- 3 files changed, 7 insertions(+), 4 deletions(-)
+	Sam
