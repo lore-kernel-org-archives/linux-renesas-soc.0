@@ -2,52 +2,30 @@ Return-Path: <SRS0=SeuO=24=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 255A3C33C99
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Jan 2020 10:36:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E308C33C99
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Jan 2020 11:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0089B2081E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Jan 2020 10:36:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE3FF2077B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Jan 2020 11:23:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbgAGKgj (ORCPT
+        id S1727650AbgAGLXO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 7 Jan 2020 05:36:39 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37900 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727559AbgAGKgj (ORCPT
+        Tue, 7 Jan 2020 06:23:14 -0500
+Received: from sauhun.de ([88.99.104.3]:49720 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726937AbgAGLXO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Jan 2020 05:36:39 -0500
-Received: by mail-qt1-f195.google.com with SMTP id n15so44926875qtp.5;
-        Tue, 07 Jan 2020 02:36:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QeSF/6JJEtY7qU4oYuTuPQ5X5Y2Ft7PgpKJsvHUjbvY=;
-        b=AvyzLP4XRqS/pfZie32tTqHu4MMHK6KfvXA4ZVHMf1OWgAwiYzh2oiozgP/AQVeppa
-         CHTImlcXGBbRwFonfgBxEXart8kX8JQoKT9RAfGsKLXk0MGPJRS8mLdr8Hw3aNCqc8P5
-         iCjvlcpFU7sqImCVVW/z8e2WAg9sCFoCj8xqgFY7WPWz3ekbNbuYibKkvxnOmJNCYOcr
-         woQ/gFhgA2sPr8eE1MrC9xtrEg9r7o0SuUqc9ayx36hTiFJHIeS7GceijFk0xTAD2LUX
-         QwZh+JAIjdIWAB9bHlZJa2lMWq/hDWGEAWiDOZutdXfr/ctlhvh2pPKDg6VyQhH0e7t2
-         UM2Q==
-X-Gm-Message-State: APjAAAVXSONFJ6vfnQD4UFva/oiFUxJwU95Wq4SJzHESJBbwmagdigmw
-        /dxQMj4BqOHL7aHiKWYJrdrebdooucc7yu9eYpIytG/I
-X-Google-Smtp-Source: APXvYqwC6fFX2xmVnSH0aCX5ekhjzhS2hXu7vSXUVbW2d2twnaRosSmB7f9ngkjda/0SXH3Se+jYLSi75YwFwWq/QWg=
-X-Received: by 2002:ac8:958:: with SMTP id z24mr79726402qth.40.1578393398188;
- Tue, 07 Jan 2020 02:36:38 -0800 (PST)
-MIME-Version: 1.0
-References: <20191231161400.1688-1-wsa+renesas@sang-engineering.com>
- <20191231161400.1688-2-wsa+renesas@sang-engineering.com> <bf17ebe6-550e-dcd2-c5c4-ff669519ef79@bingham.xyz>
- <CAMuHMdXVxeF0bCV8tNMr_0D-HudXBMXycs=LXCxJX=wKzjQZgw@mail.gmail.com> <20200107102557.GA1135@ninjato>
-In-Reply-To: <20200107102557.GA1135@ninjato>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 7 Jan 2020 11:36:26 +0100
-Message-ID: <CAMuHMdWM0PoqLuAP2qjCjejNQ8FaArnkAT0gnd96xp3yJKLE-A@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/5] i2c: core: refactor scanning for a client
-To:     Wolfram Sang <wsa@the-dreams.de>
+        Tue, 7 Jan 2020 06:23:14 -0500
+Received: from localhost (p5486CF8B.dip0.t-ipconnect.de [84.134.207.139])
+        by pokefinder.org (Postfix) with ESMTPSA id 2DABC2C05BA;
+        Tue,  7 Jan 2020 12:23:12 +0100 (CET)
+Date:   Tue, 7 Jan 2020 12:23:11 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Kieran Bingham <kieran@ksquared.org.uk>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linux I2C <linux-i2c@vger.kernel.org>,
@@ -56,41 +34,76 @@ Cc:     Kieran Bingham <kieran@ksquared.org.uk>,
         Jacopo Mondi <jacopo@jmondi.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Vladimir Zapolskiy <vz@mleia.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC PATCH 1/5] i2c: core: refactor scanning for a client
+Message-ID: <20200107112311.GC1135@ninjato>
+References: <20191231161400.1688-1-wsa+renesas@sang-engineering.com>
+ <20191231161400.1688-2-wsa+renesas@sang-engineering.com>
+ <bf17ebe6-550e-dcd2-c5c4-ff669519ef79@bingham.xyz>
+ <CAMuHMdXVxeF0bCV8tNMr_0D-HudXBMXycs=LXCxJX=wKzjQZgw@mail.gmail.com>
+ <20200107102557.GA1135@ninjato>
+ <CAMuHMdWM0PoqLuAP2qjCjejNQ8FaArnkAT0gnd96xp3yJKLE-A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="w7PDEPdKQumQfZlR"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWM0PoqLuAP2qjCjejNQ8FaArnkAT0gnd96xp3yJKLE-A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
 
-On Tue, Jan 7, 2020 at 11:26 AM Wolfram Sang <wsa@the-dreams.de> wrote:
-> > Quoting GregKH:
-> > | We really do not want WARN_ON() anywhere, as that causes systems with
-> > | panic-on-warn to reboot.
+--w7PDEPdKQumQfZlR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> > > https://lore.kernel.org/lkml/20191121135743.GA552517@kroah.com/
 > >
-> > https://lore.kernel.org/lkml/20191121135743.GA552517@kroah.com/
->
-> Huh? This renders WARN completely useless, or? If somebody wants panic
-> on warn, this person should get it?
+> > Huh? This renders WARN completely useless, or? If somebody wants panic
+> > on warn, this person should get it?
+>=20
+> I also have my doubts...
 
-I also have my doubts...
+Good to know :)
 
-> If we don't add a stack trace, we only know that *someone* registered an
-> invalid address. Finding out who can be annoying. Kieran spotted this
-> correctly.
+> What other information will you have in the backtrace, that you don't have
+> available inside the function?
+> Would printing the i2c_driver name be sufficient?
 
-What other information will you have in the backtrace, that you don't have
-available inside the function?
-Would printing the i2c_driver name be sufficient?
+Yes, but we don't have the client struct, only the adapter and the
+address:
 
-Gr{oetje,eeting}s,
++static int i2c_scan_for_client(struct i2c_adapter *adap, unsigned short ad=
+dr,
++                           int (*probe)(struct i2c_adapter *adap, unsigned=
+ short addr))
 
-                        Geert
+And even if we had the client struct, it would be empty because for most
+cases scanning happens before binding to the driver. We don't even have
+the name/type in case of i2c_detect().
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--w7PDEPdKQumQfZlR
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4UahsACgkQFA3kzBSg
+KbYoZQ/9E2SDltI/M1ZR4toIhkQlSB8Pa6YDImGRIhffCcZpYVPNmNArmeaIYCwG
+7B0iqn+SCtjIjhB7rr0epvgESUE08NNHQ7rOEMS3uekcz8JvDUTdlj8XoBegN4sH
+IBKxzXh6YNlcPbOpC0248ESGAIdkafcW+lH0L6qczbN9DWuXG+ntEI2d6ru5e3sl
+ITBtfTqxbNiBWze2xWInmLzSth/b0kXM9SBay5y0TC3109Rd7zXVZjBKXt5tyF7y
+eToUnRCszsiBzJUDect87mUTDSTxx8MZ90vDXijglC0NIZ1Dp+BxGyCvfusYDulU
+L9eV/8VD+G+UJx+VGDFxqvCSBKpkfT8JZ05VXSFRnftoS8mqa0ztA4tArI+ls1lC
+cH7UWrgeKjo7TXuZHD98sCKTJs5feflmFfBXF0dPvEhtoKWIbt05Cz8lkeIGGFUl
+SGnM/Kc8ePLMLQz58PB4o/n8e7tIR2j932bIL6gXSXQZdfZlirFxDOMoSRH+nPdA
+aOVw1YCEaEXY7BouS3G3bmKE+/fvoTnIej2/B/QwEBLzWT0KnurVcFvpl/gtgAR7
+LJBqGqGRqy57cDmLYOse/TrHpbaHUBnnmAq4KZRQKS6pTgTHi4y32sQMSELpMdjZ
+cXKX+aOH4SjILDpnwodRhSEYx1rpPxAdZcp2ACS5/gIEjFpt85s=
+=l9Fb
+-----END PGP SIGNATURE-----
+
+--w7PDEPdKQumQfZlR--
