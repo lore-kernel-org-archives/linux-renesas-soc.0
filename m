@@ -2,230 +2,183 @@ Return-Path: <SRS0=SeuO=24=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C52EDC33C8C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Jan 2020 17:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C26EC282DD
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Jan 2020 23:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D552073D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Jan 2020 17:15:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 352BF2080A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Jan 2020 23:27:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Zs441usv"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="XCG5rrqA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728307AbgAGRPC (ORCPT
+        id S1727125AbgAGX1A (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 7 Jan 2020 12:15:02 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37374 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728262AbgAGRPC (ORCPT
+        Tue, 7 Jan 2020 18:27:00 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46662 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbgAGX07 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Jan 2020 12:15:02 -0500
-Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3CCAE52F;
-        Tue,  7 Jan 2020 18:14:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1578417298;
-        bh=WS4w2zjKY3/i2X7sFyQmKb9OW8eSTvK2BxJYjda8rk8=;
-        h=Subject:To:Cc:References:Reply-To:From:Date:In-Reply-To:From;
-        b=Zs441usvSr7KJ5+t7XK2oegKhfBlARYfoVHm6QBaMQmWP0Er/1D024mU9WItnnJoa
-         mjj5pWvFy5flov2B54uGzx2MIMJ4C/4FKQLNuXbFZkSDmf/xgZWRNIlNSB67qV8bIn
-         XkxvkQp0eGHUc+XTnkwDe4lqQArkHcF/wf917TMs=
-Subject: Re: [RFC PATCH 3/5] i2c: core: add function to request an alias
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Vladimir Zapolskiy <vz@mleia.com>
-References: <20191231161400.1688-1-wsa+renesas@sang-engineering.com>
- <20191231161400.1688-4-wsa+renesas@sang-engineering.com>
- <6760a242-ff0f-c981-68d4-7b9665124e21@bingham.xyz>
- <20200107171119.GN4871@pendragon.ideasonboard.com>
-Reply-To: kieran.bingham@ideasonboard.com
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
- 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
- WZw01QYHU/GUV/zHJSFk
-Organization: Ideas on Board
-Message-ID: <61344235-9e66-0d89-89cd-1adef2e0bce1@ideasonboard.com>
-Date:   Tue, 7 Jan 2020 17:14:55 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Tue, 7 Jan 2020 18:26:59 -0500
+Received: by mail-lj1-f195.google.com with SMTP id m26so1321652ljc.13
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 07 Jan 2020 15:26:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=IjTxC1FiNozeI8fwV+AfSJ/Kn6P8fUH4jlMJdxPN5HU=;
+        b=XCG5rrqAtzsyhbl2V9392ti0zcF3zJgOsQVo/QmWRKwygcFbkmffauQmt57TH0cXiq
+         PSOS1Br9CeQhTaqPREAHxsu33GK93w/7lSmJgntSQFgIFkTgQFpEjxs6yYRtT6d0EhCg
+         a46GhaQseqsHlQ5oSRPv+NsvLJnjHEx7oYQH0DdFbjb+Iv7TGQMGK5qLnKIMcGVRfpyt
+         +KohQi2L/FG5NdfirdOcggSHMAf7cU3Tx8ZOHjJBExYv4nPSjD0535QC8IhIOFb06xSx
+         fZCb3fMIXUsV0tn6z/1lBZGc0wH+WERZcQDvQeSCazoojs5NvzHo6raP2JJz+9NUWKYZ
+         LKDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=IjTxC1FiNozeI8fwV+AfSJ/Kn6P8fUH4jlMJdxPN5HU=;
+        b=SQ05Vf9cezCqwzeTm5C0JW8ukOpj8g6v9pVDHSyUmmL38/6me2bs7gP4WchARe3+/c
+         pAWOpuaN4LRxS/5zr27y38Bo+8+HSltXI1f3aH1GXrMtMcwdk7v8anTo+5rZv/Wg56Xd
+         6hIpfkR7QimQdo5gszcuk4gKoSIH+wM4A5i669ZMayjB2smvfgTHaX++sr82LQZnVgUK
+         fhIGhpuDV1nzwzVDoa43TEhGMOJGShQM6494aTHsRKS5i7AbHdeFtlmImppiI8dx0jtL
+         orf05edYMhIZdQoZ3TiYVItgGv9F2YWA5XitW1R5fVYzepDzD8pfK07ClYqQWZuPrZat
+         g5Dg==
+X-Gm-Message-State: APjAAAU0O6j1a8YQygpLLqTuAK3kntSFKuKf3CIIHx2fncxp3Sz4oddh
+        sxWGMA3dLUQIlRYerNCU3jkgjL1XdWt/qw==
+X-Google-Smtp-Source: APXvYqzI+Sfb+B5FpEUaIicFBEm/VR5Uqn3EtTC/EH9bjza4YElEGw8QUnFBkginCFXQRjQnntKpYg==
+X-Received: by 2002:a2e:3608:: with SMTP id d8mr1105809lja.152.1578439617424;
+        Tue, 07 Jan 2020 15:26:57 -0800 (PST)
+Received: from localhost (h-93-159.A463.priv.bahnhof.se. [46.59.93.159])
+        by smtp.gmail.com with ESMTPSA id 2sm408365ljq.38.2020.01.07.15.26.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 Jan 2020 15:26:56 -0800 (PST)
+Date:   Wed, 8 Jan 2020 00:26:55 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/5] arm64: renesas: Split/rename R-Car H3 support
+Message-ID: <20200107232655.GR533370@oden.dyn.berto.se>
+References: <20191217183841.432-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20200107171119.GN4871@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191217183841.432-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
+Hi Geert,
 
-On 07/01/2020 17:11, Laurent Pinchart wrote:
-> Hi Kieran,
+Nice cleanup of the otherwise sometimes confusing names :-)
+
+For the whole series,
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+On 2019-12-17 19:38:36 +0100, Geert Uytterhoeven wrote:
+> 	Hi all,
 > 
-> On Tue, Jan 07, 2020 at 09:40:35AM +0000, Kieran Bingham wrote:
->> On 31/12/2019 16:13, Wolfram Sang wrote:
->>> Some devices are able to reprogram their I2C address at runtime. This
->>> can prevent address collisions when one is able to activate and
->>> reprogram these devices one by one. For that to work, they need to be
->>> assigned an unused address. This new functions allows drivers to request
->>> for such an address. It assumes all non-occupied addresses are free. It
->>> will then send a message to such a free address to make sure there is
->>> really nothing listening there.
->>>
->>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->>> ---
->>>  drivers/i2c/i2c-core-base.c | 22 ++++++++++++++++++++++
->>>  include/linux/i2c.h         |  2 ++
->>>  2 files changed, 24 insertions(+)
->>>
->>> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
->>> index 51bd953ddfb2..5a010e7e698f 100644
->>> --- a/drivers/i2c/i2c-core-base.c
->>> +++ b/drivers/i2c/i2c-core-base.c
->>> @@ -2241,6 +2241,28 @@ static int i2c_detect(struct i2c_adapter *adapter, struct i2c_driver *driver)
->>>  	return err;
->>>  }
->>>  
->>> +struct i2c_client *i2c_new_alias_device(struct i2c_adapter *adap)
->>> +{
->>> +	struct i2c_client *alias = ERR_PTR(-EBUSY);
->>> +	int ret;
->>> +	u16 addr;
->>> +
->>> +	i2c_lock_bus(adap, I2C_LOCK_SEGMENT);
->>> +
->>> +	for (addr = 0x08; addr < 0x78; addr++) {
->>> +		ret = i2c_scan_for_client(adap, addr, i2c_unlocked_read_byte_probe);
->>
->> Are all 'known' devices on a bus (all the ones declared in DT etc)
->> marked as 'busy' or taken by the time this call is made? (edit, I don't
->> think they are)
->>
->> Perhaps this is a constructed corner case, but I'm just trying to follow
->> it through:
->>
->> I.e. if say the adv748x had in DT defined aliases at 0x08, 0x09,
->> 0x0A..., but not yet probed (thus no device is listening at these
->> addresses) ... and then a max9286 came along and asked for 'any' spare
->> address with this call, would it be given 0x08 first?
->>
->> If so (which I think is what the case would be currently, until I'm
->> pointed otherwise) do we need to mark all addresses on the bus as
->> reserved against this some how?
->>
->> I'm not sure how that would occur, as it would be up to the adv748x in
->> that instance to parse it's extended register list to identify the extra
->> aliases it will create, *and* that would only happen if the device
->> driver was enabled in the first place.
->>
->> So this seems a bit 'racy' in a different context; not the i2c_lock_bus,
->> but rather the probe order of devices on the bus could affect the
->> allocations.
->>
->> Perhaps that is unavoidable though...
+> Despite using the same compatible values ("r8a7795"-based) because of
+> historical reasons, R-Car H3 ES1.x (R8A77950) and R-Car H3 ES2.0+
+> (R8A77951) are really different SoCs, with different part numbers.
 > 
-> But it's a real problem... Could the I2C core parse all the addresses on
-> the bus before probing drivers ?
-
-That's my point :-D
-
-The core 'could' parse all reg entries, and conclude that any extended
-entries within a device node are aliases as well, which should be
-reserved, but I don't think it could know if the device is actually
-going to be enabled by a driver (well, it could look it up).
-
-I think if core-i2c parses all device tree nodes for register addresses
-first, it would have to consider all addresses it came across as
-potentially in use.
-
-But it would also have to traverse any i2c-muxes too!
-
---
-Kieran
-
-
+> Hence this patch series splits the config symbols for R-Car H3, and
+> renames the related DTS files, to maintain a clear separation between
+> early (ES1.x) and later (ES2.0+) SoC revisions.  This will pave the way
+> for configuring out support for early SoC revisions, which can reduce
+> kernel size, especially in the pin control subsystem.
+> This is similar to the recent split of R8A7796 symbols for R-Car M3-W
+> (R8A77960) and M3-W+ (R8A77961)[1], and the related DTS file renames[2],
+> but different due to the sharing of compatible values between R-Car H3
+> ES1.x and H3 ES2.0+.
 > 
->>> +		if (ret == -ENODEV) {
->>> +			alias = i2c_new_dummy_device(adap, addr);
->>> +			dev_dbg(&adap->dev, "Found alias: 0x%x\n", addr);
->>> +			break;
->>> +		}
->>> +	}
->>> +
->>> +	i2c_unlock_bus(adap, I2C_LOCK_SEGMENT);
->>> +	return alias;
->>> +}
->>> +EXPORT_SYMBOL_GPL(i2c_new_alias_device);
->>> +
->>>  int i2c_probe_func_quick_read(struct i2c_adapter *adap, unsigned short addr)
->>>  {
->>>  	return i2c_smbus_xfer(adap, addr, 0, I2C_SMBUS_READ, 0,
->>> diff --git a/include/linux/i2c.h b/include/linux/i2c.h
->>> index f834687989f7..583ca2aec022 100644
->>> --- a/include/linux/i2c.h
->>> +++ b/include/linux/i2c.h
->>> @@ -441,6 +441,8 @@ i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info);
->>>  struct i2c_client *
->>>  i2c_new_client_device(struct i2c_adapter *adap, struct i2c_board_info const *info);
->>>  
->>> +struct i2c_client *i2c_new_alias_device(struct i2c_adapter *adap);
->>> +
->>>  /* If you don't know the exact address of an I2C device, use this variant
->>>   * instead, which can probe for device presence in a list of possible
->>>   * addresses. The "probe" callback function is optional. If it is provided,
+> This series also includes the rename/cleanup of the ULCB DTS file names,
+> as suggested by Eugeniu Rosca.  As DTS files are already being renamed
+> for v5.6[2], it makes sense to combine them with other renames, to avoid
+> inconveniencing the user with multiple renames in multiple kernel
+> versions.
 > 
-
+> The pin control part will be handled in a separate patch.
+> 
+> For your convenience, all of this is available in the
+> topic/r8a7795-rename-v1 branch of my renesas-drivers git repository at
+> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
+> 
+> Thanks for your comments!
+> 
+> References:
+>   [1] "[PATCH v2 00/11] arm64: renesas: Add r8a77961 support"
+>       https://lore.kernel.org/linux-renesas-soc/20191023123342.13100-1-geert+renesas@glider.be/
+>   [2] "[PATCH/RFC] arm64: dts: renesas: Rename r8a7796* to r8a77960*"
+>       https://lore.kernel.org/linux-renesas-soc/20191211131311.23661-1-geert+renesas@glider.be/
+> 
+> Geert Uytterhoeven (5):
+>   arm64: dts: renesas: Rename r8a7795{-es1,}* to r8a7795[01]*
+>   arm64: dts: renesas: Drop redudant SoC prefixes from ULCB DTS file
+>     names
+>   arm64: dts: renesas: Sort DTBs in Makefile
+>   arm64: dts: renesas: Prepare for split of ARCH_R8A7795 into
+>     ARCH_R8A7795[01]
+>   soc: renesas: Add ARCH_R8A7795[01] for existing R-Car H3
+> 
+>  arch/arm64/boot/dts/renesas/Makefile          | 21 ++++++++++---------
+>  ...salvator-x.dts => r8a77950-salvator-x.dts} |  4 ++--
+>  ...795-h3ulcb-kf.dts => r8a77950-ulcb-kf.dts} |  4 ++--
+>  ...a7795-es1-h3ulcb.dts => r8a77950-ulcb.dts} |  4 ++--
+>  .../{r8a7795-es1.dtsi => r8a77950.dtsi}       |  4 ++--
+>  ...salvator-x.dts => r8a77951-salvator-x.dts} |  4 ++--
+>  ...lvator-xs.dts => r8a77951-salvator-xs.dts} |  8 +++----
+>  ...es1-h3ulcb-kf.dts => r8a77951-ulcb-kf.dts} |  4 ++--
+>  .../{r8a7795-h3ulcb.dts => r8a77951-ulcb.dts} |  4 ++--
+>  .../renesas/{r8a7795.dtsi => r8a77951.dtsi}   |  2 +-
+>  ...960-m3ulcb-kf.dts => r8a77960-ulcb-kf.dts} |  2 +-
+>  ...{r8a77960-m3ulcb.dts => r8a77960-ulcb.dts} |  0
+>  ...65-m3nulcb-kf.dts => r8a77965-ulcb-kf.dts} |  2 +-
+>  ...r8a77965-m3nulcb.dts => r8a77965-ulcb.dts} |  0
+>  drivers/soc/renesas/Kconfig                   |  8 +++++++
+>  15 files changed, 40 insertions(+), 31 deletions(-)
+>  rename arch/arm64/boot/dts/renesas/{r8a7795-es1-salvator-x.dts => r8a77950-salvator-x.dts} (96%)
+>  rename arch/arm64/boot/dts/renesas/{r8a7795-h3ulcb-kf.dts => r8a77950-ulcb-kf.dts} (75%)
+>  rename arch/arm64/boot/dts/renesas/{r8a7795-es1-h3ulcb.dts => r8a77950-ulcb.dts} (89%)
+>  rename arch/arm64/boot/dts/renesas/{r8a7795-es1.dtsi => r8a77950.dtsi} (98%)
+>  rename arch/arm64/boot/dts/renesas/{r8a7795-salvator-x.dts => r8a77951-salvator-x.dts} (96%)
+>  rename arch/arm64/boot/dts/renesas/{r8a7795-salvator-xs.dts => r8a77951-salvator-xs.dts} (96%)
+>  rename arch/arm64/boot/dts/renesas/{r8a7795-es1-h3ulcb-kf.dts => r8a77951-ulcb-kf.dts} (75%)
+>  rename arch/arm64/boot/dts/renesas/{r8a7795-h3ulcb.dts => r8a77951-ulcb.dts} (92%)
+>  rename arch/arm64/boot/dts/renesas/{r8a7795.dtsi => r8a77951.dtsi} (99%)
+>  rename arch/arm64/boot/dts/renesas/{r8a77960-m3ulcb-kf.dts => r8a77960-ulcb-kf.dts} (92%)
+>  rename arch/arm64/boot/dts/renesas/{r8a77960-m3ulcb.dts => r8a77960-ulcb.dts} (100%)
+>  rename arch/arm64/boot/dts/renesas/{r8a77965-m3nulcb-kf.dts => r8a77965-ulcb-kf.dts} (92%)
+>  rename arch/arm64/boot/dts/renesas/{r8a77965-m3nulcb.dts => r8a77965-ulcb.dts} (100%)
+> 
+> -- 
+> 2.17.1
+> 
+> Gr{oetje,eeting}s,
+> 
+> 						Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+> 							    -- Linus Torvalds
 
 -- 
-Regards
---
-Kieran
+Regards,
+Niklas Söderlund
