@@ -2,209 +2,94 @@ Return-Path: <SRS0=XwoL=27=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A33E4C33CA6
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6823AC33CA8
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC4A2077C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39CD22072E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727594AbgAJNTd (ORCPT
+        id S1727500AbgAJNTe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Jan 2020 08:19:33 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:41200 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727690AbgAJNTc (ORCPT
+        Fri, 10 Jan 2020 08:19:34 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:51714 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727733AbgAJNTb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Jan 2020 08:19:32 -0500
+        Fri, 10 Jan 2020 08:19:31 -0500
 Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id odKU2100C5USYZQ06dKU8Z; Fri, 10 Jan 2020 14:19:28 +0100
+        by laurent.telenet-ops.be with bizsmtp
+        id odKU210085USYZQ01dKUuP; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0007Wn-9O; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0007Wm-93; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0000Hm-8c; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0000Hi-7A; Fri, 10 Jan 2020 14:19:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 02/13] pinctrl: sh-pfc: checker: Add helpers for reporting
-Date:   Fri, 10 Jan 2020 14:19:16 +0100
-Message-Id: <20200110131927.1029-3-geert+renesas@glider.be>
+Subject: [PATCH 00/13] pinctrl: sh-pfc: checker: Various improvements
+Date:   Fri, 10 Jan 2020 14:19:14 +0100
+Message-Id: <20200110131927.1029-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200110131927.1029-1-geert+renesas@glider.be>
-References: <20200110131927.1029-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add helpers to report errors and warnings, and to increase the
-corresponding counters.  This simplifies callers.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/sh-pfc/core.c | 96 ++++++++++++++++-------------------
- 1 file changed, 44 insertions(+), 52 deletions(-)
+This patch series contains various improvements for the builtin pin
+control table runtime checks of the Renesas Pin Function Controller
+driver.  These checks are enabled with CONFIG_DEBUG_PINCTRL=y, which can
+be combined with CONFIG_COMPILE_TEST=y to increase coverage to all
+Renesas ARM and SuperH SoCs..
 
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index a565effbff12f5a9..45bdaf88819fa498 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -729,6 +729,17 @@ static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
- static unsigned int sh_pfc_errors __initdata = 0;
- static unsigned int sh_pfc_warnings __initdata = 0;
- 
-+#define sh_pfc_err(fmt, ...)					 \
-+	do {							 \
-+		pr_err("%s: " fmt, drvname, ##__VA_ARGS__);	\
-+		sh_pfc_errors++;				\
-+	} while (0)
-+#define sh_pfc_warn(fmt, ...)					 \
-+	do {							 \
-+		pr_warn("%s: " fmt, drvname, ##__VA_ARGS__);	\
-+		sh_pfc_warnings++;				\
-+	} while (0)
-+
- static bool __init is0s(const u16 *enum_ids, unsigned int n)
- {
- 	unsigned int i;
-@@ -751,26 +762,20 @@ static void __init sh_pfc_check_cfg_reg(const char *drvname,
- 	}
- 
- 	for (i = 0, n = 0, rw = 0; (fw = cfg_reg->var_field_width[i]); i++) {
--		if (fw > 3 && is0s(&cfg_reg->enum_ids[n], 1 << fw)) {
--			pr_warn("%s: reg 0x%x: reserved field [%u:%u] can be split to reduce table size\n",
--				drvname, cfg_reg->reg, rw, rw + fw - 1);
--			sh_pfc_warnings++;
--		}
-+		if (fw > 3 && is0s(&cfg_reg->enum_ids[n], 1 << fw))
-+			sh_pfc_warn("reg 0x%x: reserved field [%u:%u] can be split to reduce table size\n",
-+				    cfg_reg->reg, rw, rw + fw - 1);
- 		n += 1 << fw;
- 		rw += fw;
- 	}
- 
--	if (rw != cfg_reg->reg_width) {
--		pr_err("%s: reg 0x%x: var_field_width declares %u instead of %u bits\n",
--		       drvname, cfg_reg->reg, rw, cfg_reg->reg_width);
--		sh_pfc_errors++;
--	}
-+	if (rw != cfg_reg->reg_width)
-+		sh_pfc_err("reg 0x%x: var_field_width declares %u instead of %u bits\n",
-+			   cfg_reg->reg, rw, cfg_reg->reg_width);
- 
--	if (n != cfg_reg->nr_enum_ids) {
--		pr_err("%s: reg 0x%x: enum_ids[] has %u instead of %u values\n",
--		       drvname, cfg_reg->reg, cfg_reg->nr_enum_ids, n);
--		sh_pfc_errors++;
--	}
-+	if (n != cfg_reg->nr_enum_ids)
-+		sh_pfc_err("reg 0x%x: enum_ids[] has %u instead of %u values\n",
-+			   cfg_reg->reg, cfg_reg->nr_enum_ids, n);
- }
- 
- static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
-@@ -785,29 +790,24 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	/* Check pins */
- 	for (i = 0; i < info->nr_pins; i++) {
- 		for (j = 0; j < i; j++) {
--			if (!strcmp(info->pins[i].name, info->pins[j].name)) {
--				pr_err("%s: pin %s/%s: name conflict\n",
--				       drvname, info->pins[i].name,
--				       info->pins[j].name);
--				sh_pfc_errors++;
--			}
-+			if (!strcmp(info->pins[i].name, info->pins[j].name))
-+				sh_pfc_err("pin %s/%s: name conflict\n",
-+					   info->pins[i].name,
-+					   info->pins[j].name);
- 
- 			if (info->pins[i].pin != (u16)-1 &&
--			    info->pins[i].pin == info->pins[j].pin) {
--				pr_err("%s: pin %s/%s: pin %u conflict\n",
--				       drvname, info->pins[i].name,
--				       info->pins[j].name, info->pins[i].pin);
--				sh_pfc_errors++;
--			}
-+			    info->pins[i].pin == info->pins[j].pin)
-+				sh_pfc_err("pin %s/%s: pin %u conflict\n",
-+					   info->pins[i].name,
-+					   info->pins[j].name,
-+					   info->pins[i].pin);
- 
- 			if (info->pins[i].enum_id &&
--			    info->pins[i].enum_id == info->pins[j].enum_id) {
--				pr_err("%s: pin %s/%s: enum_id %u conflict\n",
--				       drvname, info->pins[i].name,
--				       info->pins[j].name,
--				       info->pins[i].enum_id);
--				sh_pfc_errors++;
--			}
-+			    info->pins[i].enum_id == info->pins[j].enum_id)
-+				sh_pfc_err("pin %s/%s: enum_id %u conflict\n",
-+					   info->pins[i].name,
-+					   info->pins[j].name,
-+					   info->pins[i].enum_id);
- 		}
- 	}
- 
-@@ -819,8 +819,7 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	for (i = 0; i < info->nr_functions; i++) {
- 		func = &info->functions[i];
- 		if (!func->name) {
--			pr_err("%s: empty function %u\n", drvname, i);
--			sh_pfc_errors++;
-+			sh_pfc_err("empty function %u\n", i);
- 			continue;
- 		}
- 		for (j = 0; j < func->nr_groups; j++) {
-@@ -833,29 +832,22 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 				}
- 			}
- 
--			if (k == info->nr_groups) {
--				pr_err("%s: function %s: group %s not found\n",
--				       drvname, func->name, func->groups[j]);
--				sh_pfc_errors++;
--			}
-+			if (k == info->nr_groups)
-+				sh_pfc_err("function %s: group %s not found\n",
-+					   func->name, func->groups[j]);
- 		}
- 	}
- 
- 	for (i = 0; i < info->nr_groups; i++) {
- 		if (!info->groups[i].name) {
--			pr_err("%s: empty group %u\n", drvname, i);
--			sh_pfc_errors++;
-+			sh_pfc_err("empty group %u\n", i);
- 			continue;
- 		}
--		if (!refcnts[i]) {
--			pr_err("%s: orphan group %s\n", drvname,
--			       info->groups[i].name);
--			sh_pfc_errors++;
--		} else if (refcnts[i] > 1) {
--			pr_warn("%s: group %s referenced by %u functions\n",
--				drvname, info->groups[i].name, refcnts[i]);
--			sh_pfc_warnings++;
--		}
-+		if (!refcnts[i])
-+			sh_pfc_err("orphan group %s\n", info->groups[i].name);
-+		else if (refcnts[i] > 1)
-+			sh_pfc_warn("group %s referenced by %u functions\n",
-+				    info->groups[i].name, refcnts[i]);
- 	}
- 
- 	kfree(refcnts);
+Note that all issues detected by this have already been fixed in "[PATCH
+0/6] pinctrl: sh-pfc: More miscellenaous fixes"[1], and are now part of
+linux-next.
+
+I plan to queue this in sh-pfc-for-v5.7.
+
+Thanks for your comments!
+
+[1] https://lore.kernel.org/linux-renesas-soc/20191218194812.12741-1-geert+renesas@glider.be/
+
+Geert Uytterhoeven (13):
+  pinctrl: sh-pfc: checker: Move data before code
+  pinctrl: sh-pfc: checker: Add helpers for reporting
+  pinctrl: sh-pfc: checker: Add helper for safe name comparison
+  pinctrl: sh-pfc: checker: Add check for config register conflicts
+  pinctrl: sh-pfc: checker: Add check for enum ID conflicts
+  pinctrl: sh-pfc: checker: Improve pin checks
+  pinctrl: sh-pfc: checker: Improve pin function checks
+  pinctrl: sh-pfc: checker: Improve pin group checks
+  pinctrl: sh-pfc: checker: Add drive strength register checks
+  pinctrl: sh-pfc: checker: Add bias register checks
+  pinctrl: sh-pfc: checker: Add ioctrl register checks
+  pinctrl: sh-pfc: checker: Add data register checks
+  pinctrl: sh-pfc: checker: Add function GPIO checks
+
+ drivers/pinctrl/sh-pfc/core.c | 312 +++++++++++++++++++++++++++-------
+ 1 file changed, 250 insertions(+), 62 deletions(-)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
