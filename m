@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B844AC33CAB
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB71C33CB0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EAB72080D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 867C42077C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbgAJNTe (ORCPT
+        id S1727736AbgAJNTh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Jan 2020 08:19:34 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:41206 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727716AbgAJNTb (ORCPT
+        Fri, 10 Jan 2020 08:19:37 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:40264 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727595AbgAJNTa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Jan 2020 08:19:31 -0500
+        Fri, 10 Jan 2020 08:19:30 -0500
 Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id odKU2100L5USYZQ06dKU8e; Fri, 10 Jan 2020 14:19:28 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id odKU2100H5USYZQ01dKUaq; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0007XE-GU; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0007XM-IY; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0000IU-Fa; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0000Ie-Hf; Fri, 10 Jan 2020 14:19:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 10/13] pinctrl: sh-pfc: checker: Add bias register checks
-Date:   Fri, 10 Jan 2020 14:19:24 +0100
-Message-Id: <20200110131927.1029-11-geert+renesas@glider.be>
+Subject: [PATCH 13/13] pinctrl: sh-pfc: checker: Add function GPIO checks
+Date:   Fri, 10 Jan 2020 14:19:27 +0100
+Message-Id: <20200110131927.1029-14-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200110131927.1029-1-geert+renesas@glider.be>
 References: <20200110131927.1029-1-geert+renesas@glider.be>
@@ -46,46 +46,68 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add checks for bias register descriptors:
-  1. Pull-up and optional pull-down register addresses must be unique,
-  2. Referred pins must exist.
+Add checks for legacy function GPIO descriptors:
+  1. Function GPIOs must have a name,
+  2. Names must be unique,
+  3. Enum ID values must be unique.
+
+This exposes bugs like those fixed in
+  - commit 884caadad128efad ("pinctrl: sh-pfc: sh7734: Fix duplicate
+    TCLK1_B"),
+  - commit 55b1cb1f03ad5eea ("pinctrl: sh-pfc: sh7264: Fix CAN function
+    GPIOs"),
+  - commit 02aeb2f21530c98f ("pinctrl: sh-pfc: sh7269: Fix CAN function
+    GPIOs"),
+  - commit db9c07272c8245a2 ("sh: sh7264: Remove bogus SSU GPIO function
+    definitions"),
+  - commit b4fba344a2930769 ("sh: sh7269: Remove bogus SSU GPIO function
+    definitions").
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/core.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/pinctrl/sh-pfc/core.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
 diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index a1667a29dd69c3ff..b737aa5978b7daa4 100644
+index 34d3d210c7347336..5343729574849531 100644
 --- a/drivers/pinctrl/sh-pfc/core.c
 +++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -888,6 +888,18 @@ static void __init sh_pfc_check_drive_reg(const struct sh_pfc_soc_info *info,
- 	}
+@@ -802,6 +802,13 @@ static int __init __sh_pfc_check_enum(const char *drvname, u16 enum_id)
+ 	return 0;
  }
  
-+static void __init sh_pfc_check_bias_reg(const struct sh_pfc_soc_info *info,
-+					 const struct pinmux_bias_reg *bias)
++static void __init sh_pfc_check_enum(const char *drvname, const char *name,
++				     u16 enum_id)
 +{
-+	unsigned int i;
-+
-+	sh_pfc_check_reg(info->name, bias->puen);
-+	if (bias->pud)
-+		sh_pfc_check_reg(info->name, bias->pud);
-+	for (i = 0; i < ARRAY_SIZE(bias->pins); i++)
-+		sh_pfc_check_pin(info, bias->puen, bias->pins[i]);
++	if (__sh_pfc_check_enum(drvname, enum_id))
++		sh_pfc_err("%s enum_id %u conflict\n", name, enum_id);
 +}
 +
- static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ static void __init sh_pfc_check_reg_enums(const char *drvname, u32 reg,
+ 					  const u16 *enums, unsigned int n)
  {
- 	const char *drvname = info->name;
-@@ -984,6 +996,10 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	/* Check drive strength registers */
- 	for (i = 0; info->drive_regs && info->drive_regs[i].reg; i++)
- 		sh_pfc_check_drive_reg(info, &info->drive_regs[i]);
+@@ -1012,6 +1019,24 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 				       info->data_regs[i].enum_ids,
+ 				       info->data_regs[i].reg_width);
+ 	}
 +
-+	/* Check bias registers */
-+	for (i = 0; info->bias_regs && info->bias_regs[i].puen; i++)
-+		sh_pfc_check_bias_reg(info, &info->bias_regs[i]);
++#ifdef CONFIG_PINCTRL_SH_FUNC_GPIO
++	/* Check function GPIOs */
++	for (i = 0; i < info->nr_func_gpios; i++) {
++		const struct pinmux_func *func = &info->func_gpios[i];
++
++		if (!func->name) {
++			sh_pfc_err("empty function gpio %u\n", i);
++			continue;
++		}
++		for (j = 0; j < i; j++) {
++			if (same_name(func->name, info->func_gpios[j].name))
++				sh_pfc_err("func_gpio %s: name conflict\n",
++					   func->name);
++		}
++		sh_pfc_check_enum(drvname, func->name, func->enum_id);
++	}
++#endif
  }
  
  static void __init sh_pfc_check_driver(const struct platform_driver *pdrv)
