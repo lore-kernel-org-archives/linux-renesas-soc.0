@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A25AC33CA2
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33E4C33CA6
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34DA82077C
+	by mail.kernel.org (Postfix) with ESMTP id 7FC4A2077C
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Jan 2020 13:19:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbgAJNTc (ORCPT
+        id S1727594AbgAJNTd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Jan 2020 08:19:32 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:37014 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727606AbgAJNTc (ORCPT
+        Fri, 10 Jan 2020 08:19:33 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:41200 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727690AbgAJNTc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 10 Jan 2020 08:19:32 -0500
 Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id odKU2100H5USYZQ01dKUsW; Fri, 10 Jan 2020 14:19:28 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id odKU2100C5USYZQ06dKU8Z; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0007Wv-Bl; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0007Wn-9O; Fri, 10 Jan 2020 14:19:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ipuCG-0000I7-Am; Fri, 10 Jan 2020 14:19:28 +0100
+        id 1ipuCG-0000Hm-8c; Fri, 10 Jan 2020 14:19:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 05/13] pinctrl: sh-pfc: checker: Add check for enum ID conflicts
-Date:   Fri, 10 Jan 2020 14:19:19 +0100
-Message-Id: <20200110131927.1029-6-geert+renesas@glider.be>
+Subject: [PATCH 02/13] pinctrl: sh-pfc: checker: Add helpers for reporting
+Date:   Fri, 10 Jan 2020 14:19:16 +0100
+Message-Id: <20200110131927.1029-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200110131927.1029-1-geert+renesas@glider.be>
 References: <20200110131927.1029-1-geert+renesas@glider.be>
@@ -46,129 +46,165 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a helper to verify that enum IDs are unique, and use it to validate
-the enum ID arrays in config register descriptors.
-
-This exposes bugs like those fixed in:
-  - commit 805f635703b2562b ("pinctrl: sh-pfc: r8a7778: Fix duplicate
-    SDSELF_B and SD1_CLK_B"),
-  - commit 884caadad128efad ("pinctrl: sh-pfc: sh7734: Fix duplicate
-    TCLK1_B"),
-  - commit 2a069a92811fb35b ("pinctrl: sh-pfc: sh7264: Fix Port K I/O
-    Register 0 definition").
+Add helpers to report errors and warnings, and to increase the
+corresponding counters.  This simplifies callers.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/sh-pfc/core.c | 49 +++++++++++++++++++++++++++++++++--
- 1 file changed, 47 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/core.c | 96 ++++++++++++++++-------------------
+ 1 file changed, 44 insertions(+), 52 deletions(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index 2edf6efe8dfe3fdf..f82f483b98a25da5 100644
+index a565effbff12f5a9..45bdaf88819fa498 100644
 --- a/drivers/pinctrl/sh-pfc/core.c
 +++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -727,11 +727,14 @@ static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
- 
- #ifdef DEBUG
- #define SH_PFC_MAX_REGS		300
-+#define SH_PFC_MAX_ENUMS	3000
- 
+@@ -729,6 +729,17 @@ static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
  static unsigned int sh_pfc_errors __initdata = 0;
  static unsigned int sh_pfc_warnings __initdata = 0;
- static u32 *sh_pfc_regs __initdata = NULL;
- static u32 sh_pfc_num_regs __initdata = 0;
-+static u16 *sh_pfc_enums __initdata = NULL;
-+static u32 sh_pfc_num_enums __initdata = 0;
  
- #define sh_pfc_err(fmt, ...)					 \
- 	do {							 \
-@@ -781,6 +784,36 @@ static void __init sh_pfc_check_reg(const char *drvname, u32 reg)
- 	sh_pfc_regs[sh_pfc_num_regs++] = reg;
- }
- 
-+static int __init __sh_pfc_check_enum(const char *drvname, u16 enum_id)
-+{
-+	unsigned int i;
++#define sh_pfc_err(fmt, ...)					 \
++	do {							 \
++		pr_err("%s: " fmt, drvname, ##__VA_ARGS__);	\
++		sh_pfc_errors++;				\
++	} while (0)
++#define sh_pfc_warn(fmt, ...)					 \
++	do {							 \
++		pr_warn("%s: " fmt, drvname, ##__VA_ARGS__);	\
++		sh_pfc_warnings++;				\
++	} while (0)
 +
-+	for (i = 0; i < sh_pfc_num_enums; i++) {
-+		if (enum_id == sh_pfc_enums[i])
-+			return -EINVAL;
-+	}
-+
-+	if (sh_pfc_num_enums == SH_PFC_MAX_ENUMS) {
-+		pr_warn_once("%s: Please increase SH_PFC_MAX_ENUMS\n", drvname);
-+		return 0;
-+	}
-+
-+	sh_pfc_enums[sh_pfc_num_enums++] = enum_id;
-+	return 0;
-+}
-+
-+static void __init sh_pfc_check_reg_enums(const char *drvname, u32 reg,
-+					  const u16 *enums, unsigned int n)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < n; i++) {
-+		if (enums[i] && __sh_pfc_check_enum(drvname, enums[i]))
-+			sh_pfc_err("reg 0x%x enum_id %u conflict\n", reg,
-+				   enums[i]);
-+	}
-+}
-+
- static void __init sh_pfc_check_cfg_reg(const char *drvname,
- 					const struct pinmux_cfg_reg *cfg_reg)
+ static bool __init is0s(const u16 *enum_ids, unsigned int n)
  {
-@@ -789,8 +822,9 @@ static void __init sh_pfc_check_cfg_reg(const char *drvname,
- 	sh_pfc_check_reg(drvname, cfg_reg->reg);
- 
- 	if (cfg_reg->field_width) {
--		/* Checked at build time */
--		return;
-+		n = cfg_reg->reg_width / cfg_reg->field_width;
-+		/* Skip field checks (done at build time) */
-+		goto check_enum_ids;
+ 	unsigned int i;
+@@ -751,26 +762,20 @@ static void __init sh_pfc_check_cfg_reg(const char *drvname,
  	}
  
  	for (i = 0, n = 0, rw = 0; (fw = cfg_reg->var_field_width[i]); i++) {
-@@ -808,6 +842,9 @@ static void __init sh_pfc_check_cfg_reg(const char *drvname,
- 	if (n != cfg_reg->nr_enum_ids)
- 		sh_pfc_err("reg 0x%x: enum_ids[] has %u instead of %u values\n",
- 			   cfg_reg->reg, cfg_reg->nr_enum_ids, n);
-+
-+check_enum_ids:
-+	sh_pfc_check_reg_enums(drvname, cfg_reg->reg, cfg_reg->enum_ids, n);
+-		if (fw > 3 && is0s(&cfg_reg->enum_ids[n], 1 << fw)) {
+-			pr_warn("%s: reg 0x%x: reserved field [%u:%u] can be split to reduce table size\n",
+-				drvname, cfg_reg->reg, rw, rw + fw - 1);
+-			sh_pfc_warnings++;
+-		}
++		if (fw > 3 && is0s(&cfg_reg->enum_ids[n], 1 << fw))
++			sh_pfc_warn("reg 0x%x: reserved field [%u:%u] can be split to reduce table size\n",
++				    cfg_reg->reg, rw, rw + fw - 1);
+ 		n += 1 << fw;
+ 		rw += fw;
+ 	}
+ 
+-	if (rw != cfg_reg->reg_width) {
+-		pr_err("%s: reg 0x%x: var_field_width declares %u instead of %u bits\n",
+-		       drvname, cfg_reg->reg, rw, cfg_reg->reg_width);
+-		sh_pfc_errors++;
+-	}
++	if (rw != cfg_reg->reg_width)
++		sh_pfc_err("reg 0x%x: var_field_width declares %u instead of %u bits\n",
++			   cfg_reg->reg, rw, cfg_reg->reg_width);
+ 
+-	if (n != cfg_reg->nr_enum_ids) {
+-		pr_err("%s: reg 0x%x: enum_ids[] has %u instead of %u values\n",
+-		       drvname, cfg_reg->reg, cfg_reg->nr_enum_ids, n);
+-		sh_pfc_errors++;
+-	}
++	if (n != cfg_reg->nr_enum_ids)
++		sh_pfc_err("reg 0x%x: enum_ids[] has %u instead of %u values\n",
++			   cfg_reg->reg, cfg_reg->nr_enum_ids, n);
  }
  
  static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
-@@ -819,6 +856,7 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 
- 	pr_info("Checking %s\n", drvname);
- 	sh_pfc_num_regs = 0;
-+	sh_pfc_num_enums = 0;
- 
+@@ -785,29 +790,24 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
  	/* Check pins */
  	for (i = 0; i < info->nr_pins; i++) {
-@@ -898,6 +936,11 @@ static void __init sh_pfc_check_driver(const struct platform_driver *pdrv)
- 	if (!sh_pfc_regs)
- 		return;
+ 		for (j = 0; j < i; j++) {
+-			if (!strcmp(info->pins[i].name, info->pins[j].name)) {
+-				pr_err("%s: pin %s/%s: name conflict\n",
+-				       drvname, info->pins[i].name,
+-				       info->pins[j].name);
+-				sh_pfc_errors++;
+-			}
++			if (!strcmp(info->pins[i].name, info->pins[j].name))
++				sh_pfc_err("pin %s/%s: name conflict\n",
++					   info->pins[i].name,
++					   info->pins[j].name);
  
-+	sh_pfc_enums = kcalloc(SH_PFC_MAX_ENUMS, sizeof(*sh_pfc_enums),
-+			      GFP_KERNEL);
-+	if (!sh_pfc_enums)
-+		goto free_regs;
-+
- 	pr_warn("Checking builtin pinmux tables\n");
+ 			if (info->pins[i].pin != (u16)-1 &&
+-			    info->pins[i].pin == info->pins[j].pin) {
+-				pr_err("%s: pin %s/%s: pin %u conflict\n",
+-				       drvname, info->pins[i].name,
+-				       info->pins[j].name, info->pins[i].pin);
+-				sh_pfc_errors++;
+-			}
++			    info->pins[i].pin == info->pins[j].pin)
++				sh_pfc_err("pin %s/%s: pin %u conflict\n",
++					   info->pins[i].name,
++					   info->pins[j].name,
++					   info->pins[i].pin);
  
- 	for (i = 0; pdrv->id_table[i].name[0]; i++)
-@@ -911,6 +954,8 @@ static void __init sh_pfc_check_driver(const struct platform_driver *pdrv)
- 	pr_warn("Detected %u errors and %u warnings\n", sh_pfc_errors,
- 		sh_pfc_warnings);
+ 			if (info->pins[i].enum_id &&
+-			    info->pins[i].enum_id == info->pins[j].enum_id) {
+-				pr_err("%s: pin %s/%s: enum_id %u conflict\n",
+-				       drvname, info->pins[i].name,
+-				       info->pins[j].name,
+-				       info->pins[i].enum_id);
+-				sh_pfc_errors++;
+-			}
++			    info->pins[i].enum_id == info->pins[j].enum_id)
++				sh_pfc_err("pin %s/%s: enum_id %u conflict\n",
++					   info->pins[i].name,
++					   info->pins[j].name,
++					   info->pins[i].enum_id);
+ 		}
+ 	}
  
-+	kfree(sh_pfc_enums);
-+free_regs:
- 	kfree(sh_pfc_regs);
- }
+@@ -819,8 +819,7 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 	for (i = 0; i < info->nr_functions; i++) {
+ 		func = &info->functions[i];
+ 		if (!func->name) {
+-			pr_err("%s: empty function %u\n", drvname, i);
+-			sh_pfc_errors++;
++			sh_pfc_err("empty function %u\n", i);
+ 			continue;
+ 		}
+ 		for (j = 0; j < func->nr_groups; j++) {
+@@ -833,29 +832,22 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 				}
+ 			}
  
+-			if (k == info->nr_groups) {
+-				pr_err("%s: function %s: group %s not found\n",
+-				       drvname, func->name, func->groups[j]);
+-				sh_pfc_errors++;
+-			}
++			if (k == info->nr_groups)
++				sh_pfc_err("function %s: group %s not found\n",
++					   func->name, func->groups[j]);
+ 		}
+ 	}
+ 
+ 	for (i = 0; i < info->nr_groups; i++) {
+ 		if (!info->groups[i].name) {
+-			pr_err("%s: empty group %u\n", drvname, i);
+-			sh_pfc_errors++;
++			sh_pfc_err("empty group %u\n", i);
+ 			continue;
+ 		}
+-		if (!refcnts[i]) {
+-			pr_err("%s: orphan group %s\n", drvname,
+-			       info->groups[i].name);
+-			sh_pfc_errors++;
+-		} else if (refcnts[i] > 1) {
+-			pr_warn("%s: group %s referenced by %u functions\n",
+-				drvname, info->groups[i].name, refcnts[i]);
+-			sh_pfc_warnings++;
+-		}
++		if (!refcnts[i])
++			sh_pfc_err("orphan group %s\n", info->groups[i].name);
++		else if (refcnts[i] > 1)
++			sh_pfc_warn("group %s referenced by %u functions\n",
++				    info->groups[i].name, refcnts[i]);
+ 	}
+ 
+ 	kfree(refcnts);
 -- 
 2.17.1
 
