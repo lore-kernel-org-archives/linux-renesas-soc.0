@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A1A6C33CA9
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 12 Jan 2020 23:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08204C33CAB
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 12 Jan 2020 23:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 302AD21744
+	by mail.kernel.org (Postfix) with ESMTP id DBFB52084D
 	for <linux-renesas-soc@archiver.kernel.org>; Sun, 12 Jan 2020 23:25:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387461AbgALXZX (ORCPT
+        id S1727494AbgALXZY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 12 Jan 2020 18:25:23 -0500
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:61456 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387471AbgALXZX (ORCPT
+        Sun, 12 Jan 2020 18:25:24 -0500
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:55366 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387475AbgALXZY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Jan 2020 18:25:23 -0500
-X-Halon-ID: cd2b6fcb-3592-11ea-a00b-005056917a89
+        Sun, 12 Jan 2020 18:25:24 -0500
+X-Halon-ID: cdba2e7d-3592-11ea-a00b-005056917a89
 Authorized-sender: niklas@soderlund.pp.se
 Received: from bismarck.berto.se (p54ac5d7b.dip0.t-ipconnect.de [84.172.93.123])
         by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
-        id cd2b6fcb-3592-11ea-a00b-005056917a89;
-        Mon, 13 Jan 2020 00:25:21 +0100 (CET)
+        id cdba2e7d-3592-11ea-a00b-005056917a89;
+        Mon, 13 Jan 2020 00:25:22 +0100 (CET)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     Helen Koike <helen.koike@collabora.com>,
@@ -36,9 +36,9 @@ To:     Helen Koike <helen.koike@collabora.com>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 2/5] rcar-vin: Use default VIDIOC_{G,S}_{INPUT,OUTPUT} handler
-Date:   Mon, 13 Jan 2020 00:24:55 +0100
-Message-Id: <20200112232458.2844506-3-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 3/5] staging/intel-ipu3: Use default VIDIOC_{G,S}_{INPUT,OUTPUT} handler
+Date:   Mon, 13 Jan 2020 00:24:56 +0100
+Message-Id: <20200112232458.2844506-4-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200112232458.2844506-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20200112232458.2844506-1-niklas.soderlund+renesas@ragnatech.se>
@@ -50,55 +50,70 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The driver only has a single input, use the default handler.
+The driver only has a single input and output, use the default handler.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 17 -----------------
- 1 file changed, 17 deletions(-)
+ drivers/staging/media/ipu3/ipu3-v4l2.c | 30 --------------------------
+ 1 file changed, 30 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 9e2e63ffcc47acad..6c6465e61657b390 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -489,19 +489,6 @@ static int rvin_enum_input(struct file *file, void *priv,
+diff --git a/drivers/staging/media/ipu3/ipu3-v4l2.c b/drivers/staging/media/ipu3/ipu3-v4l2.c
+index 45de77baf08034c9..2f6b5bee39898715 100644
+--- a/drivers/staging/media/ipu3/ipu3-v4l2.c
++++ b/drivers/staging/media/ipu3/ipu3-v4l2.c
+@@ -854,18 +854,6 @@ static int imgu_vidioc_enum_input(struct file *file, void *fh,
  	return 0;
  }
  
--static int rvin_g_input(struct file *file, void *priv, unsigned int *i)
+-static int imgu_vidioc_g_input(struct file *file, void *fh, unsigned int *input)
 -{
--	*i = 0;
+-	*input = 0;
+-
 -	return 0;
 -}
 -
--static int rvin_s_input(struct file *file, void *priv, unsigned int i)
+-static int imgu_vidioc_s_input(struct file *file, void *fh, unsigned int input)
 -{
--	if (i > 0)
--		return -EINVAL;
--	return 0;
+-	return input == 0 ? 0 : -EINVAL;
 -}
 -
- static int rvin_querystd(struct file *file, void *priv, v4l2_std_id *a)
+ static int imgu_vidioc_enum_output(struct file *file, void *fh,
+ 				   struct v4l2_output *output)
  {
- 	struct rvin_dev *vin = video_drvdata(file);
-@@ -667,8 +654,6 @@ static const struct v4l2_ioctl_ops rvin_ioctl_ops = {
- 	.vidioc_g_pixelaspect		= rvin_g_pixelaspect,
+@@ -877,20 +865,6 @@ static int imgu_vidioc_enum_output(struct file *file, void *fh,
+ 	return 0;
+ }
  
- 	.vidioc_enum_input		= rvin_enum_input,
--	.vidioc_g_input			= rvin_g_input,
--	.vidioc_s_input			= rvin_s_input,
+-static int imgu_vidioc_g_output(struct file *file, void *fh,
+-				unsigned int *output)
+-{
+-	*output = 0;
+-
+-	return 0;
+-}
+-
+-static int imgu_vidioc_s_output(struct file *file, void *fh,
+-				unsigned int output)
+-{
+-	return output == 0 ? 0 : -EINVAL;
+-}
+-
+ /******************** function pointers ********************/
  
- 	.vidioc_dv_timings_cap		= rvin_dv_timings_cap,
- 	.vidioc_enum_dv_timings		= rvin_enum_dv_timings,
-@@ -771,8 +756,6 @@ static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
- 	.vidioc_enum_fmt_vid_cap	= rvin_enum_fmt_vid_cap,
+ static struct v4l2_subdev_internal_ops imgu_subdev_internal_ops = {
+@@ -958,12 +932,8 @@ static const struct v4l2_ioctl_ops imgu_v4l2_ioctl_ops = {
+ 	.vidioc_try_fmt_vid_out_mplane = imgu_vidioc_try_fmt,
  
- 	.vidioc_enum_input		= rvin_mc_enum_input,
--	.vidioc_g_input			= rvin_g_input,
--	.vidioc_s_input			= rvin_s_input,
+ 	.vidioc_enum_output = imgu_vidioc_enum_output,
+-	.vidioc_g_output = imgu_vidioc_g_output,
+-	.vidioc_s_output = imgu_vidioc_s_output,
  
- 	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
- 	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
+ 	.vidioc_enum_input = imgu_vidioc_enum_input,
+-	.vidioc_g_input = imgu_vidioc_g_input,
+-	.vidioc_s_input = imgu_vidioc_s_input,
+ 
+ 	/* buffer queue management */
+ 	.vidioc_reqbufs = vb2_ioctl_reqbufs,
 -- 
 2.24.1
 
