@@ -2,94 +2,315 @@ Return-Path: <SRS0=Wd1u=3C=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0834FC33CB0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jan 2020 05:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B33CCC33CAB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jan 2020 08:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBFB3214D8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jan 2020 05:20:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72EBD2075B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jan 2020 08:57:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rYZZxqHU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725909AbgAMFUj (ORCPT
+        id S1728915AbgAMI5G (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Jan 2020 00:20:39 -0500
-Received: from mail01.vodafone.es ([217.130.24.71]:61170 "EHLO
-        mail01.vodafone.es" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725268AbgAMFUj (ORCPT
+        Mon, 13 Jan 2020 03:57:06 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:35516 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727325AbgAMI5F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Jan 2020 00:20:39 -0500
-IronPort-SDR: KcEYWxAMY8V9DuvBnMOeFskZx/D9f8EJV20Dmihcn15RJizJ0yAlW5S5jsVnReUn6vkds++m36
- fAHat3DkH9sg==
-IronPort-PHdr: =?us-ascii?q?9a23=3AIB4nlBFYZSDetHbdLiE9vp1GYnF86YWxBRYc79?=
- =?us-ascii?q?8ds5kLTJ7yps2wAkXT6L1XgUPTWs2DsrQY0rGQ6f6xEjxaqb+681k6OKRWUB?=
- =?us-ascii?q?EEjchE1ycBO+WiTXPBEfjxciYhF95DXlI2t1uyMExSBdqsLwaK+i764jEdAA?=
- =?us-ascii?q?jwOhRoLerpBIHSk9631+ev8JHPfglEnjWwba58IRmsswnct80bjYRhJ6ov1x?=
- =?us-ascii?q?DEvmZGd+NKyG1yOFmdhQz85sC+/J5i9yRfpfcs/NNeXKv5Yqo1U6VWACwpPG?=
- =?us-ascii?q?4p6sLrswLDTRaU6XsHTmoWiBtIDBPb4xz8Q5z8rzH1tut52CmdIM32UbU5Ui?=
- =?us-ascii?q?ms4qt3VBPljjoMOzg+/G/KlsN/lqdboRK4qxFhxI7UepmVNP1kfqzHYdMVW3?=
- =?us-ascii?q?NNUdhXVyBYHo68c5cPAPAdMuZYsYb9okUBrR2iBQW1GuzvzCZEiHjx3a08ze?=
- =?us-ascii?q?sgERjK0xImH9kTtHjZosn5OLsXXe2z0aLGzyjMb+lO1Dnz6IbIaA4vr/KRU7?=
- =?us-ascii?q?1/bcXfxlIiFx/Hg1qMtYDpIy+Z2voLvmOG7+RgT+Wvi2s/pg9rvDev2tkjip?=
- =?us-ascii?q?PUjY0VzVDE8yp5y5syKN2gVkF7fcCrEIFetiGdMYt2TdgvQ2FzuCkh1rIKo4?=
- =?us-ascii?q?K0fC8PyJg9xx7faOWKfo6V6RzgTOacOSl0iG9ndb6lmhq//1SsxvfiWsS7yl?=
- =?us-ascii?q?pHoCpIn9/RvX4XzRPT8NKISv5l80ek3jaAyh7c5/lfIUAxiarbM5khwqMslp?=
- =?us-ascii?q?YLsUTMACv2mELuga+TbEok++yo6/75bbXiupOROJV4ih/5MqszgMO/D+M4Mg?=
- =?us-ascii?q?4QUGSB5+u8z6Xv/Uz/QLpUkv07irfVvI3YKMgBu6K0DRNZ3pw95xuwFTur3t?=
- =?us-ascii?q?QVkWECLF1feRKHi4bpO0vJIPD9Ffq/m0qjkCt1yPDcMLzhBZPNLnfYnbfhZr?=
- =?us-ascii?q?Zy8FJTxBAvwtBY4pJYELEBIPHrVk/rqNPYFgM5MxCzw+v/DNV914UeWX+AA6?=
- =?us-ascii?q?OAKqPdr1mI6fw0I+aWf48ZoS39K/856PP1k385lkESfbOz0ZsUdn+4BPJmLF?=
- =?us-ascii?q?udYXb2hdcBC2gK7UICS7nuiVufQXtJanC/RKsnoyo8A6q4AorZAIOgmrqM2G?=
- =?us-ascii?q?G8BJIFXG1eDkGwFiLQepmJQb8zbySdapt5nyAJT6emTYAh1hG1vgTSxL9uL+?=
- =?us-ascii?q?6S8Sod48HNzt9wstXeiRwovQNzCcvVh3mAU2xugWQOSBc2x6p050d6zxGD0v?=
- =?us-ascii?q?4r0LRjCdVP6qYQAU8BPpnGwrkhU4j/?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2ETKgAg/RtemCMYgtkUBjMYGgEBAQE?=
- =?us-ascii?q?BAQEBAQMBAQEBEQEBAQICAQEBAYF7AgEBFwEBgS6BTVIgEpNQgU0fg0OLY4E?=
- =?us-ascii?q?Agx4VhggTDIFbDQEBAQEBNQIBAYRATgEXgQ8kOgQNAgMNAQEFAQEBAQEFBAE?=
- =?us-ascii?q?BAhABAQEBAQYNCwYphUqCHQweAQQBAQEBAwMDAQEMAYNdBxkPOUpMAQ4BU4M?=
- =?us-ascii?q?EgksBATOFJJdMAY0EDQ0ChR2CPwQKgQmBGiOBNgGMGBqBQT+BIyGCKwgBggG?=
- =?us-ascii?q?CfwESAWyCSIJZBI1CEiGBB4gpmBeCQQR2iUyMAoI3AQ+IAYQxAxCCRQ+BCYg?=
- =?us-ascii?q?DhE6BfaM3V4EMDXpxMxqCJhqBIE8YDYgbji1AgRYQAk+JLoIyAQE?=
-X-IPAS-Result: =?us-ascii?q?A2ETKgAg/RtemCMYgtkUBjMYGgEBAQEBAQEBAQMBAQEBE?=
- =?us-ascii?q?QEBAQICAQEBAYF7AgEBFwEBgS6BTVIgEpNQgU0fg0OLY4EAgx4VhggTDIFbD?=
- =?us-ascii?q?QEBAQEBNQIBAYRATgEXgQ8kOgQNAgMNAQEFAQEBAQEFBAEBAhABAQEBAQYNC?=
- =?us-ascii?q?wYphUqCHQweAQQBAQEBAwMDAQEMAYNdBxkPOUpMAQ4BU4MEgksBATOFJJdMA?=
- =?us-ascii?q?Y0EDQ0ChR2CPwQKgQmBGiOBNgGMGBqBQT+BIyGCKwgBggGCfwESAWyCSIJZB?=
- =?us-ascii?q?I1CEiGBB4gpmBeCQQR2iUyMAoI3AQ+IAYQxAxCCRQ+BCYgDhE6BfaM3V4EMD?=
- =?us-ascii?q?XpxMxqCJhqBIE8YDYgbji1AgRYQAk+JLoIyAQE?=
-X-IronPort-AV: E=Sophos;i="5.69,427,1571695200"; 
-   d="scan'208";a="304562334"
-Received: from mailrel04.vodafone.es ([217.130.24.35])
-  by mail01.vodafone.es with ESMTP; 13 Jan 2020 06:20:34 +0100
-Received: (qmail 24517 invoked from network); 12 Jan 2020 05:00:21 -0000
-Received: from unknown (HELO 192.168.1.3) (quesosbelda@[217.217.179.17])
-          (envelope-sender <peterwong@hsbc.com.hk>)
-          by mailrel04.vodafone.es (qmail-ldap-1.03) with SMTP
-          for <linux-renesas-soc@vger.kernel.org>; 12 Jan 2020 05:00:21 -0000
-Date:   Sun, 12 Jan 2020 06:00:20 +0100 (CET)
-From:   Peter Wong <peterwong@hsbc.com.hk>
-Reply-To: Peter Wong <peterwonghkhsbc@gmail.com>
-To:     linux-renesas-soc@vger.kernel.org
-Message-ID: <30883411.460824.1578805221782.JavaMail.cash@217.130.24.55>
-Subject: Investment opportunity
+        Mon, 13 Jan 2020 03:57:05 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00D8uPmw052759;
+        Mon, 13 Jan 2020 02:56:25 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578905785;
+        bh=qiluW+qBpvQyARnjqX2JEhlxa6K7JfbnE7vKlMFGKsQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=rYZZxqHUR9N6nLKtsz38/NT5IEKxu8f9c1YxZL9P8v4I0w5+jmY2yA0ez7Q6zyJKp
+         pyNkqSeWVw4w1aHLDlCFPt7dNX3XcYKPred2L+ha0F+yxZi3sGUARnEdBOpBD7GgGE
+         Y58DBXtybW3uCVrjHg/Cy0PdnHf5Uyuk0E9rsh7U=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00D8uPvS120096;
+        Mon, 13 Jan 2020 02:56:25 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 13
+ Jan 2020 02:56:24 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 13 Jan 2020 02:56:24 -0600
+Received: from [10.24.69.159] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00D8uGnf076383;
+        Mon, 13 Jan 2020 02:56:17 -0600
+Subject: Re: [v3 3/6] PCI: endpoint: Add support to handle multiple base for
+ mapping outbound memory
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+CC:     Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Murray <andrew.murray@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Simon Horman <horms@verge.net.au>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20200108162211.22358-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200108162211.22358-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <53d74632-34ee-f7f7-656f-a93a6c10e7ba@ti.com>
+ <CA+V-a8tHkqkxE_5DMtt6PbJyGz1vfKZUezE5nOFmJXarJAugkw@mail.gmail.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <2b4dd351-76ee-60bd-bd91-20d5f1ac4e79@ti.com>
+Date:   Mon, 13 Jan 2020 14:28:26 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+In-Reply-To: <CA+V-a8tHkqkxE_5DMtt6PbJyGz1vfKZUezE5nOFmJXarJAugkw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Greetings,
-Please read the attached investment proposal and reply for more details.
-Are you interested in loan?
-Sincerely: Peter Wong
+Hi Prabhakar,
+
+On 10/01/20 11:38 PM, Lad, Prabhakar wrote:
+> Hi Kishon,
+> 
+> Thank you for the review.
+> 
+> On Thu, Jan 9, 2020 at 6:25 AM Kishon Vijay Abraham I <kishon@ti.com> wrote:
+>>
+>> Hi Prabhakar,
+>>
+>> On 08/01/20 9:52 PM, Lad Prabhakar wrote:
+>>> R-Car PCIe controller has support to map multiple memory regions for
+>>> mapping the outbound memory in local system also the controller limits
+>>> single allocation for each region (that is, once a chunk is used from the
+>>> region it cannot be used to allocate a new one). This features inspires to
+>>> add support for handling multiple memory bases in endpoint framework.
+>>>
+>>> With this patch pci_epc_mem_init() now accepts multiple regions, also
+>>> page_size for each memory region is passed during initialization so as
+>>> to handle single allocation for each region by setting the page_size to
+>>> window_size.
+>>>
+>>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>>> ---
+>>>  .../pci/controller/cadence/pcie-cadence-ep.c  |  12 +-
+>>>  .../pci/controller/dwc/pcie-designware-ep.c   |  31 ++-
+>>>  drivers/pci/controller/pcie-rockchip-ep.c     |  14 +-
+>>>  drivers/pci/endpoint/functions/pci-epf-test.c |  29 +--
+>>>  drivers/pci/endpoint/pci-epc-core.c           |   7 +-
+>>>  drivers/pci/endpoint/pci-epc-mem.c            | 199 ++++++++++++++----
+>>>  include/linux/pci-epc.h                       |  46 ++--
+>>>  7 files changed, 245 insertions(+), 93 deletions(-)
+>>>
+>> .
+>> .
+>> <snip>
+>> .
+>> .
+>>> diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+>>> index 2091508c1620..289c266c2d90 100644
+>>> --- a/drivers/pci/endpoint/pci-epc-core.c
+>>> +++ b/drivers/pci/endpoint/pci-epc-core.c
+>>> @@ -358,13 +358,15 @@ EXPORT_SYMBOL_GPL(pci_epc_unmap_addr);
+>>>   * @epc: the EPC device on which address is allocated
+>>>   * @func_no: the endpoint function number in the EPC device
+>>>   * @phys_addr: physical address of the local system
+>>> + * @window: index to the window region where PCI address will be mapped
+>>>   * @pci_addr: PCI address to which the physical address should be mapped
+>>>   * @size: the size of the allocation
+>>>   *
+>>>   * Invoke to map CPU address with PCI address.
+>>>   */
+>>>  int pci_epc_map_addr(struct pci_epc *epc, u8 func_no,
+>>> -                  phys_addr_t phys_addr, u64 pci_addr, size_t size)
+>>> +                  phys_addr_t phys_addr, int window,
+>>> +                  u64 pci_addr, size_t size)
+>>>  {
+>>>       int ret;
+>>>       unsigned long flags;
+>>> @@ -376,7 +378,8 @@ int pci_epc_map_addr(struct pci_epc *epc, u8 func_no,
+>>>               return 0;
+>>>
+>>>       spin_lock_irqsave(&epc->lock, flags);
+>>> -     ret = epc->ops->map_addr(epc, func_no, phys_addr, pci_addr, size);
+>>> +     ret = epc->ops->map_addr(epc, func_no, phys_addr,
+>>> +                              window, pci_addr, size);
+>>>       spin_unlock_irqrestore(&epc->lock, flags);
+>>>
+>>>       return ret;
+>>> diff --git a/drivers/pci/endpoint/pci-epc-mem.c b/drivers/pci/endpoint/pci-epc-mem.c
+>>> index d2b174ce15de..f205f7819292 100644
+>>> --- a/drivers/pci/endpoint/pci-epc-mem.c
+>>> +++ b/drivers/pci/endpoint/pci-epc-mem.c
+>>> @@ -38,57 +38,77 @@ static int pci_epc_mem_get_order(struct pci_epc_mem *mem, size_t size)
+>>>  /**
+>>>   * __pci_epc_mem_init() - initialize the pci_epc_mem structure
+>>>   * @epc: the EPC device that invoked pci_epc_mem_init
+>>> - * @phys_base: the physical address of the base
+>>> - * @size: the size of the address space
+>>> - * @page_size: size of each page
+>>> + * @windows: pointer to windows supported by the device
+>>> + * @num_windows: number of windows device supports
+>>>   *
+>>>   * Invoke to initialize the pci_epc_mem structure used by the
+>>>   * endpoint functions to allocate mapped PCI address.
+>>>   */
+>>> -int __pci_epc_mem_init(struct pci_epc *epc, phys_addr_t phys_base, size_t size,
+>>> -                    size_t page_size)
+>>> +int __pci_epc_mem_init(struct pci_epc *epc, struct pci_epc_mem_window *windows,
+>>> +                    int num_windows)
+>>>  {
+>>> -     int ret;
+>>> -     struct pci_epc_mem *mem;
+>>> -     unsigned long *bitmap;
+>>> +     struct pci_epc_mem *mem = NULL;
+>>> +     unsigned long *bitmap = NULL;
+>>>       unsigned int page_shift;
+>>> -     int pages;
+>>> +     size_t page_size;
+>>>       int bitmap_size;
+>>> +     int pages;
+>>> +     int ret;
+>>> +     int i;
+>>>
+>>> -     if (page_size < PAGE_SIZE)
+>>> -             page_size = PAGE_SIZE;
+>>> +     epc->mem_windows = 0;
+>>>
+>>> -     page_shift = ilog2(page_size);
+>>> -     pages = size >> page_shift;
+>>> -     bitmap_size = BITS_TO_LONGS(pages) * sizeof(long);
+>>> +     if (!windows)
+>>> +             return -EINVAL;
+>>>
+>>> -     mem = kzalloc(sizeof(*mem), GFP_KERNEL);
+>>> -     if (!mem) {
+>>> -             ret = -ENOMEM;
+>>> -             goto err;
+>>> -     }
+>>> +     if (num_windows <= 0)
+>>> +             return -EINVAL;
+>>>
+>>> -     bitmap = kzalloc(bitmap_size, GFP_KERNEL);
+>>> -     if (!bitmap) {
+>>> -             ret = -ENOMEM;
+>>> -             goto err_mem;
+>>> -     }
+>>> +     epc->mem = kcalloc(num_windows, sizeof(*mem), GFP_KERNEL);
+>>> +     if (!epc->mem)
+>>> +             return -EINVAL;
+>>> +
+>>> +     for (i = 0; i < num_windows; i++) {
+>>> +             page_size = windows[i].page_size;
+>>> +             if (page_size < PAGE_SIZE)
+>>> +                     page_size = PAGE_SIZE;
+>>> +             page_shift = ilog2(page_size);
+>>> +             pages = windows[i].size >> page_shift;
+>>> +             bitmap_size = BITS_TO_LONGS(pages) * sizeof(long);
+>>> +
+>>> +             mem = kzalloc(sizeof(*mem), GFP_KERNEL);
+>>> +             if (!mem) {
+>>> +                     ret = -ENOMEM;
+>>> +                     goto err_mem;
+>>> +             }
+>>>
+>>> -     mem->bitmap = bitmap;
+>>> -     mem->phys_base = phys_base;
+>>> -     mem->page_size = page_size;
+>>> -     mem->pages = pages;
+>>> -     mem->size = size;
+>>> +             bitmap = kzalloc(bitmap_size, GFP_KERNEL);
+>>> +             if (!bitmap) {
+>>> +                     ret = -ENOMEM;
+>>> +                     goto err_mem;
+>>> +             }
+>>>
+>>> -     epc->mem = mem;
+>>> +             mem->bitmap = bitmap;
+>>> +             mem->window.phys_base = windows[i].phys_base;
+>>> +             mem->page_size = page_size;
+>>> +             mem->pages = pages;
+>>> +             mem->window.size = windows[i].size;
+>>> +             mem->window.map_size = 0;
+>>> +
+>>> +             epc->mem[i] = mem;
+>>> +     }
+>>> +     epc->mem_windows = num_windows;
+>>>
+>>>       return 0;
+>>>
+>>>  err_mem:
+>>> -     kfree(mem);
+>>> +     for (; i >= 0; i--) {
+>>
+>> mem has to be reinitialized for every iteration of the loop.
+> not sure what exactly you mean here, could you please elaborate.
+
+You are invoking "kfree(mem->bitmap);" in a loop without re-initializing
+mem. Refer pci_epc_mem_exit() where you are doing the free properly.
+
+> 
+>>> +             kfree(mem->bitmap);
+>>> +             kfree(epc->mem[i]);
+>>> +     }
+>>> +     kfree(epc->mem);
+>>>
+>>> -err:
+>>> -return ret;
+>>> +     return ret;
+>>>  }
+>>>  EXPORT_SYMBOL_GPL(__pci_epc_mem_init);
+>>>
+>>> @@ -101,48 +121,127 @@ EXPORT_SYMBOL_GPL(__pci_epc_mem_init);
+>>>   */
+>>>  void pci_epc_mem_exit(struct pci_epc *epc)
+>>>  {
+>>> -     struct pci_epc_mem *mem = epc->mem;
+>>> +     struct pci_epc_mem *mem;
+>>> +     int i;
+>>> +
+>>> +     if (!epc->mem_windows)
+>>> +             return;
+>>> +
+>>> +     for (i = 0; i <= epc->mem_windows; i++) {
+>>> +             mem = epc->mem[i];
+
+Missing the above line in the error handling above.
 
 
+>>> +             kfree(mem->bitmap);
+>>> +             kfree(epc->mem[i]);
+>>> +     }
 
-
-----------------------------------------------------
-This email was sent by the shareware version of Postman Professional.
-
+Thanks
+Kishon
