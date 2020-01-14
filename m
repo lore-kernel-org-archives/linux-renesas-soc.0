@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F08C33C9E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jan 2020 22:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12480C33C9E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jan 2020 22:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 717A424673
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jan 2020 22:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5B8C2187F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jan 2020 22:31:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbgANWa6 (ORCPT
+        id S1727331AbgANWbD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Jan 2020 17:30:58 -0500
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:65204 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727331AbgANWa6 (ORCPT
+        Tue, 14 Jan 2020 17:31:03 -0500
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:65196 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728824AbgANWbD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Jan 2020 17:30:58 -0500
-X-Halon-ID: 8811a98b-371d-11ea-b6d8-005056917f90
+        Tue, 14 Jan 2020 17:31:03 -0500
+X-Halon-ID: 87a82090-371d-11ea-b6d8-005056917f90
 Authorized-sender: niklas@soderlund.pp.se
 Received: from bismarck.berto.se (p54ac5d7b.dip0.t-ipconnect.de [84.172.93.123])
         by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
-        id 8811a98b-371d-11ea-b6d8-005056917f90;
+        id 87a82090-371d-11ea-b6d8-005056917f90;
         Tue, 14 Jan 2020 23:30:56 +0100 (CET)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
@@ -33,9 +33,9 @@ To:     linux-pm@vger.kernel.org,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/2] thermal: rcar_gen3_thermal: Remove temperature bound
-Date:   Tue, 14 Jan 2020 23:29:45 +0100
-Message-Id: <20200114222945.3128250-3-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/2] thermal: rcar_thermal: Remove temperature bound
+Date:   Tue, 14 Jan 2020 23:29:44 +0100
+Message-Id: <20200114222945.3128250-2-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200114222945.3128250-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20200114222945.3128250-1-niklas.soderlund+renesas@ragnatech.se>
@@ -48,30 +48,33 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 The hardware manual states that the operation of the sensor is not
-guaranteed with temperatures above 125°C, not that the readings are
-invalid. Remove the bound check and try to deliver temperature readings
-even if we are outside the guaranteed operation range.
+guaranteed outside the range of -40°C to 125°C, not that the readings
+are invalid. Remove the bound check and try to deliver temperature
+readings even if we are outside the guaranteed operation range.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/thermal/rcar_gen3_thermal.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/thermal/rcar_thermal.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 1460cf9d9f1c397b..0f69ff676838a999 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -182,10 +182,6 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
- 				tsc->coef.a2);
- 	mcelsius = FIXPT_TO_MCELSIUS(val);
+diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
+index d0873de718da9218..2ae60b27a0183db1 100644
+--- a/drivers/thermal/rcar_thermal.c
++++ b/drivers/thermal/rcar_thermal.c
+@@ -275,13 +275,6 @@ static int rcar_thermal_get_current_temp(struct rcar_thermal_priv *priv,
+ 		tmp = MCELSIUS((priv->ctemp * 5) - 60);
+ 	mutex_unlock(&priv->lock);
  
--	/* Make sure we are inside specifications */
--	if ((mcelsius < MCELSIUS(-40)) || (mcelsius > MCELSIUS(125)))
--		return -EIO;
+-	if ((tmp < MCELSIUS(-45)) || (tmp > MCELSIUS(125))) {
+-		struct device *dev = rcar_priv_to_dev(priv);
 -
- 	/* Round value to device granularity setting */
- 	*temp = rcar_gen3_thermal_round(mcelsius);
+-		dev_err(dev, "it couldn't measure temperature correctly\n");
+-		return -EIO;
+-	}
+-
+ 	*temp = tmp;
  
+ 	return 0;
 -- 
 2.24.1
 
