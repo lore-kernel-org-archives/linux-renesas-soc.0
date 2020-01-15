@@ -2,204 +2,129 @@ Return-Path: <SRS0=aevT=3E=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39832C3F68F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jan 2020 18:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 787DCC33CB3
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jan 2020 18:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FC4A2081E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jan 2020 18:15:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4808B20728
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jan 2020 18:39:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="aj7b4wZM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729299AbgAOSPp (ORCPT
+        id S1729045AbgAOSjq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Jan 2020 13:15:45 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:38982 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729207AbgAOSPk (ORCPT
+        Wed, 15 Jan 2020 13:39:46 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45488 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728993AbgAOSjp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Jan 2020 13:15:40 -0500
-Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id qiFR2100Y5USYZQ06iFRqv; Wed, 15 Jan 2020 19:15:37 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1irnCP-00012d-IT; Wed, 15 Jan 2020 19:15:25 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1irnCP-00069F-GU; Wed, 15 Jan 2020 19:15:25 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 4/5] docs: gpio: Add GPIO Aggregator documentation
-Date:   Wed, 15 Jan 2020 19:15:22 +0100
-Message-Id: <20200115181523.23556-5-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200115181523.23556-1-geert+renesas@glider.be>
-References: <20200115181523.23556-1-geert+renesas@glider.be>
+        Wed, 15 Jan 2020 13:39:45 -0500
+Received: by mail-lf1-f67.google.com with SMTP id 203so13495272lfa.12
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jan 2020 10:39:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=zXVPagk9qy6y1pvhnWsVit2PeslU4wNbSMADm371SMA=;
+        b=aj7b4wZMsmzA/j5jJk0eKoPAbxmen1HlcPaI3zqGFb7zqb4T4zPXtek0Iv/FvRVEuw
+         V0H2lPqNZptjw+8JXVznLeuYNHDqg6lIviGqr61W/bW5YlVA+yI1UVVfIpShh/OtQOVl
+         Zp9XicUCnP8CdkU8cQED9Q0QP/np6sYi7HSTu/XG7IDjj6OMQ5xfPxKdBnctdOCNL4PX
+         VOr11WEvexBioKDMriayxGNH2V6r5aVn5JHD843MjMtt9JbGGNmfdQ2XyaJSLxyc6XcW
+         9pag2DjD43LS9hpmMaqvQ15QN7QKQD5EtAJHWP44YrPxpDrj6WTMCMkfPweR5VoP096T
+         tqDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=zXVPagk9qy6y1pvhnWsVit2PeslU4wNbSMADm371SMA=;
+        b=N8YtPjmTsBcB+zf9UUwN2GdHi8QSYe5Wy4ueNV0382512UoLhe4v3wAeRk7DOGb2wP
+         gffGgq1zdl4ePb9n0ErC+9j1hgg51kvTfl0BYmQPs0F1dnv7Mj2NF0dml0dJQWqe3uZi
+         7Ynd42/RJaeZDeEMV+5MrlpN0AGMYRqCdSSP3KATW7woALl1MHvYHkIlZra0Tuv12jU8
+         dRU9t/ESMxNPzM0133X1T9Hp7rq6cfswDF8kKQA2gBsMwV0EAXs3aX8MybMgVv9iL5Oo
+         WFVeW7fbiK5z5JjBE3lzuUj1eSU/CGAyjKm8ErCB2KLMzu94gzmPavuqkhE0MkUIcNqe
+         odaQ==
+X-Gm-Message-State: APjAAAWOM26UmLJO+1RfSuGoF7paht3/Y15v53f+HjoNQ+14KstCfZHe
+        FjY/p8sWjtsKQrcEqKkdeKYGRw==
+X-Google-Smtp-Source: APXvYqx3o1geG9DVN0+yWVxPH0U1oYe+kMH4w2sGpk9818GWZ5uKiP2U9GaNpKvS32E35/1CF+eZVg==
+X-Received: by 2002:ac2:544f:: with SMTP id d15mr172788lfn.126.1579113582544;
+        Wed, 15 Jan 2020 10:39:42 -0800 (PST)
+Received: from localhost (h-93-159.A463.priv.bahnhof.se. [46.59.93.159])
+        by smtp.gmail.com with ESMTPSA id 140sm9469856lfk.78.2020.01.15.10.39.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 10:39:41 -0800 (PST)
+Date:   Wed, 15 Jan 2020 19:39:40 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] thermal: rcar_thermal: Remove temperature bound
+Message-ID: <20200115183940.GA979534@oden.dyn.berto.se>
+References: <20200114222945.3128250-1-niklas.soderlund+renesas@ragnatech.se>
+ <20200114222945.3128250-2-niklas.soderlund+renesas@ragnatech.se>
+ <a98baf8f-e2ef-d77d-ff3c-f5838e268dd7@linaro.org>
+ <20200115134559.GA945270@oden.dyn.berto.se>
+ <d7c7bb44-897d-a3a3-c203-d87ffb7de9be@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d7c7bb44-897d-a3a3-c203-d87ffb7de9be@linaro.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the GPIO Aggregator, and the two typical use-cases.
+Hi Daniel,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
----
-v4:
-  - Add Reviewed-by,
-  - Drop controversial GPIO repeater,
-  - Clarify industrial control use case,
-  - Fix typo s/communicated/communicate/,
-  - Replace abstract frobnicator example by concrete door example with
-    gpio-line-names,
+On 2020-01-15 19:15:11 +0100, Daniel Lezcano wrote:
+> On 15/01/2020 14:45, Niklas Söderlund wrote:
+> > Hi Daniel,
+> > 
+> > Thanks for your feedback.
+> > 
+> > On 2020-01-15 14:24:30 +0100, Daniel Lezcano wrote:
+> >> On 14/01/2020 23:29, Niklas Söderlund wrote:
+> >>> The hardware manual states that the operation of the sensor is not
+> >>> guaranteed outside the range of -40°C to 125°C, not that the readings
+> >>> are invalid. Remove the bound check and try to deliver temperature
+> >>> readings even if we are outside the guaranteed operation range.
+> >>
+> >> And what if the sensor is returning crap in this out-of-range operation?
+> > 
+> > I'm not sure what is worse, reporting an untrue (but still outside the 
+> > guaranteed operation range) extreme temperature or failing with -EIO.  
+> > The view of the hardware guys is that it's better to report what the 
+> > sensor indicates then to return -EIO.
+> 
+> I don't get the point.
+> 
+> What happens if we read the sensor while it is above or below the limits?
 
-v3:
-  - New.
----
- .../admin-guide/gpio/gpio-aggregator.rst      | 102 ++++++++++++++++++
- Documentation/admin-guide/gpio/index.rst      |   1 +
- 2 files changed, 103 insertions(+)
- create mode 100644 Documentation/admin-guide/gpio/gpio-aggregator.rst
+The manual describes the read outs as being +/- 2°C from the true 
+temperature for the guaranteed operating range. Outside this range the 
+difference between the true temperature and the read out temperature 
+might be larger than 2°C.
 
-diff --git a/Documentation/admin-guide/gpio/gpio-aggregator.rst b/Documentation/admin-guide/gpio/gpio-aggregator.rst
-new file mode 100644
-index 0000000000000000..954ed568b0b833b3
---- /dev/null
-+++ b/Documentation/admin-guide/gpio/gpio-aggregator.rst
-@@ -0,0 +1,102 @@
-+.. SPDX-License-Identifier: GPL-2.0-only
-+
-+GPIO Aggregator
-+===============
-+
-+The GPIO Aggregator allows to aggregate GPIOs, and expose them as a new
-+gpio_chip.  This supports the following use cases.
-+
-+
-+Aggregating GPIOs using Sysfs
-+-----------------------------
-+
-+GPIO controllers are exported to userspace using /dev/gpiochip* character
-+devices.  Access control to these devices is provided by standard UNIX file
-+system permissions, on an all-or-nothing basis: either a GPIO controller is
-+accessible for a user, or it is not.
-+
-+The GPIO Aggregator allows access control for individual GPIOs, by aggregating
-+them into a new gpio_chip, which can be assigned to a group or user using
-+standard UNIX file ownership and permissions.  Furthermore, this simplifies and
-+hardens exporting GPIOs to a virtual machine, as the VM can just grab the full
-+GPIO controller, and no longer needs to care about which GPIOs to grab and
-+which not, reducing the attack surface.
-+
-+Aggregated GPIO controllers are instantiated and destroyed by writing to
-+write-only attribute files in sysfs.
-+
-+    /sys/bus/platform/drivers/gpio-aggregator/
-+
-+	"new_device" ...
-+		Userspace may ask the kernel to instantiate an aggregated GPIO
-+		controller by writing a string describing the GPIOs to
-+		aggregate to the "new_device" file, using the format
-+
-+		.. code-block:: none
-+
-+		    [<gpioA>] [<gpiochipB> <offsets>] ...
-+
-+		Where:
-+
-+		    "<gpioA>" ...
-+			    is a GPIO line name,
-+
-+		    "<gpiochipB>" ...
-+			    is a GPIO chip label or name, and
-+
-+		    "<offsets>" ...
-+			    is a comma-separated list of GPIO offsets and/or
-+			    GPIO offset ranges denoted by dashes.
-+
-+		Example: Instantiate a new GPIO aggregator by aggregating GPIO
-+		19 of "e6052000.gpio" and GPIOs 20-21 of "gpiochip2" into a new
-+		gpio_chip:
-+
-+		.. code-block:: bash
-+
-+		    echo 'e6052000.gpio 19 gpiochip2 20-21' > new_device
-+
-+	"delete_device" ...
-+		Userspace may ask the kernel to destroy an aggregated GPIO
-+		controller after use by writing its device name to the
-+		"delete_device" file.
-+
-+		Example: Destroy the previously-created aggregated GPIO
-+		controller "gpio-aggregator.0":
-+
-+		.. code-block:: bash
-+
-+		    echo gpio-aggregator.0 > delete_device
-+
-+
-+Generic GPIO Driver
-+-------------------
-+
-+The GPIO Aggregator can also be used as a generic driver for a simple
-+GPIO-operated device described in DT, without a dedicated in-kernel driver.
-+This is useful in industrial control, and is not unlike e.g. spidev, which
-+allows to communicate with an SPI device from userspace.
-+
-+Binding a device to the GPIO Aggregator is performed either by modifying the
-+gpio-aggregator driver, or by writing to the "driver_override" file in Sysfs.
-+
-+Example: If "door" is a GPIO-operated device described in DT, using its own
-+compatible value::
-+
-+        door {
-+                compatible = "myvendor,mydoor";
-+
-+                gpios = <&gpio2 19 GPIO_ACTIVE_HIGH>,
-+                        <&gpio2 20 GPIO_ACTIVE_LOW>;
-+		gpio-line-names = "open", "lock";
-+        };
-+
-+it can be bound to the GPIO Aggregator by either:
-+
-+1. Adding its compatible value to ``gpio_aggregator_dt_ids[]``,
-+2. Binding manually using "driver_override":
-+
-+.. code-block:: bash
-+
-+    echo gpio-aggregator > /sys/bus/platform/devices/door/driver_override
-+    echo door > /sys/bus/platform/drivers/gpio-aggregator/bind
-diff --git a/Documentation/admin-guide/gpio/index.rst b/Documentation/admin-guide/gpio/index.rst
-index a244ba4e87d5398a..ef2838638e967777 100644
---- a/Documentation/admin-guide/gpio/index.rst
-+++ b/Documentation/admin-guide/gpio/index.rst
-@@ -7,6 +7,7 @@ gpio
- .. toctree::
-     :maxdepth: 1
- 
-+    gpio-aggregator
-     sysfs
- 
- .. only::  subproject and html
+> 
+> 
+> [ ... ]
+> 
+> 
+> 
+> -- 
+>  <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> 
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+> 
+
 -- 
-2.17.1
-
+Regards,
+Niklas Söderlund
