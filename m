@@ -2,115 +2,155 @@ Return-Path: <SRS0=aevT=3E=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0D0AC33CB1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jan 2020 08:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33084C33CB1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jan 2020 12:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8041C214AF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jan 2020 08:38:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Tf8LClkB"
+	by mail.kernel.org (Postfix) with ESMTP id 09BD424684
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jan 2020 12:45:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbgAOIiR (ORCPT
+        id S1729154AbgAOMp7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Jan 2020 03:38:17 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43669 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbgAOIiQ (ORCPT
+        Wed, 15 Jan 2020 07:45:59 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:56500 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729073AbgAOMp7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Jan 2020 03:38:16 -0500
-Received: by mail-lf1-f68.google.com with SMTP id 9so12034264lfq.10
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jan 2020 00:38:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Z0Y12tBy5eHi+yDV3iOK2P12WSwrSuIg90dqSAJA2T4=;
-        b=Tf8LClkB0ZUJCGuLC+5MpLYSkUH7UBpfaoOm+/PGEgceH77ZPdtByVSfH4gYjSFFHz
-         dq9WiP/7yMggg5AgRClKW2NtejridSdj81v//yZE1KeP6Nf8bN4vpxxkUL2ruLtOuoCI
-         mFyAXKLR4JAqvc816zOLqJv1RkAemI/ebzLSD2m1QLwQoNYvYd3HpwgqziJqShvVJMus
-         EM42YKaQleoHSI7kIM0S8l+/MY6YrOG3U/Fd9qDzJ+mp3rlQL57N7D+vZmFgHPdPPTOH
-         y4YzByZDA06/nqJElB/StzgYBD1t5QLNHJrhKxjzrC1ise/GK04YQNoCQrQLdBM7Oa6y
-         x+OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Z0Y12tBy5eHi+yDV3iOK2P12WSwrSuIg90dqSAJA2T4=;
-        b=e41JE3UC6Fs+4HVE9Q6jvaWqE1eJkuv+uLQ0YUm+3xbGlDQkKwKcO0SC357nxfcE76
-         B+ZYPqJFyhgMIMSEov0qmDKCWP2rSvN7lrOFw0HbVssXz8Ibzm8TB13H15p/6Ob0gO9o
-         QMSC6pKJsjueMHiUIrAbrjiot/QlkP+0Oa84BgCfMIIOc6e3Gc4WFeOiP9uuIwH/Em4p
-         QrH2UdDqLtrQFfvu7YjuxyJR872fHEre6fmXJZUgqTpca/3uvZL9u7HYTxhTWCzVExBt
-         eLQ4nkVST8iFJVShFWg9BGhcttvDA4KJzvPAJmveOPInp6ezas4yV1t9Le6BynghyiKD
-         qbxw==
-X-Gm-Message-State: APjAAAWlBUqKbVmauFodIK+CWTKi5mbnCZ1nRxKkbxHJcyrzMHP7E7f8
-        GmrT2O5Iqja+6p/lgSFWRWdLgS99/7NPag==
-X-Google-Smtp-Source: APXvYqwQSXHAfen8Vudqq6AYTOO6wkq4LHdkhdZsD9ais6oFiejiQPMt9LksuasNK6KC87IZni441A==
-X-Received: by 2002:a19:4b87:: with SMTP id y129mr4124726lfa.32.1579077494150;
-        Wed, 15 Jan 2020 00:38:14 -0800 (PST)
-Received: from ?IPv6:2a00:1fa0:426b:3345:a13e:7db5:2067:8d62? ([2a00:1fa0:426b:3345:a13e:7db5:2067:8d62])
-        by smtp.gmail.com with ESMTPSA id q17sm8841744ljg.23.2020.01.15.00.38.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Jan 2020 00:38:13 -0800 (PST)
-Subject: Re: [RFC][PATCH] ARM: dts: renesas: Add missing ethernet PHY reset
- GPIO on Gen2 reference boards
-To:     Chris Paterson <Chris.Paterson2@renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Marek Vasut <marek.vasut@gmail.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20200112191315.118831-1-marek.vasut@gmail.com>
- <CAMuHMdWc97=-9yBF0CJDZpWH9ZGX9uoDY_t6E6TQNc4MO93W_w@mail.gmail.com>
- <cfb752e0-46b5-1936-c3f1-8c6d781bebb5@gmail.com>
- <CAMuHMdWeo3awiD7iAfWFXc01isnmsBc6CuQ6X4s3CO7pNXjfJA@mail.gmail.com>
- <TYAPR01MB228521B36B1B1DC67F187663B7370@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <9c687d6b-cbec-2c30-4e4e-39ac57bcca60@cogentembedded.com>
-Date:   Wed, 15 Jan 2020 11:37:51 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <TYAPR01MB228521B36B1B1DC67F187663B7370@TYAPR01MB2285.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 15 Jan 2020 07:45:59 -0500
+Received: from ramsan ([84.195.182.253])
+        by baptiste.telenet-ops.be with bizsmtp
+        id qclq210075USYZQ01clqdC; Wed, 15 Jan 2020 13:45:57 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iri3S-0003z5-4W; Wed, 15 Jan 2020 13:45:50 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iri3S-00012d-3B; Wed, 15 Jan 2020 13:45:50 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        David Lechner <david@lechnology.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 3/5] drm/mipi_dbi: Add support for display offsets
+Date:   Wed, 15 Jan 2020 13:45:46 +0100
+Message-Id: <20200115124548.3951-4-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200115124548.3951-1-geert+renesas@glider.be>
+References: <20200115124548.3951-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+If the resolution of the TFT display is smaller than the maximum
+resolution supported by the display controller, the display may be
+connected to the driver output arrays with a horizontal and/or vertical
+offset, leading to a shifted image.
 
-On 15.01.2020 11:26, Chris Paterson wrote:
+Add support for specifying these offsets.
 
->>> On 1/13/20 9:58 AM, Geert Uytterhoeven wrote:
->>>>>   arch/arm/boot/dts/r8a7790-lager.dts   | 1 +
->>>>>   arch/arm/boot/dts/r8a7790-stout.dts   | 1 +
->>>>>   arch/arm/boot/dts/r8a7791-koelsch.dts | 1 +
->>>>>   arch/arm/boot/dts/r8a7791-porter.dts  | 1 +
->>>>>   arch/arm/boot/dts/r8a7793-gose.dts    | 1 +
->>>>>   arch/arm/boot/dts/r8a7794-alt.dts     | 1 +
->>>>>   arch/arm/boot/dts/r8a7794-silk.dts    | 1 +
->>>>
->>>> I believe all of the above (except for stout) are available in Magnus' farm...
->>>>
->>>> r8a7743-sk-rzg1m.dts and r8a7745-sk-rzg1e.dts need similar changes as
->>>> r8a7791-porter.dts resp. r8a7794-silk.dts.
->>>
->>> Do you have those two boards / can you prepare and test a patch ?
->>
->> I don't have those boards, and thus can't test them.
-> 
-> Sorry, I don’t either. Perhaps Sergei?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
+---
+v2:
+  - Add Reviewed-by.
+---
+ drivers/gpu/drm/drm_mipi_dbi.c | 30 ++++++++++++++++++++----------
+ include/drm/drm_mipi_dbi.h     | 12 ++++++++++++
+ 2 files changed, 32 insertions(+), 10 deletions(-)
 
-    Me neither, I only have Porter and SILK.
+diff --git a/drivers/gpu/drm/drm_mipi_dbi.c b/drivers/gpu/drm/drm_mipi_dbi.c
+index 16bff1be4b8ac622..27fe81a53c88e338 100644
+--- a/drivers/gpu/drm/drm_mipi_dbi.c
++++ b/drivers/gpu/drm/drm_mipi_dbi.c
+@@ -238,6 +238,23 @@ int mipi_dbi_buf_copy(void *dst, struct drm_framebuffer *fb,
+ }
+ EXPORT_SYMBOL(mipi_dbi_buf_copy);
+ 
++static void mipi_dbi_set_window_address(struct mipi_dbi_dev *dbidev,
++					unsigned int xs, unsigned int xe,
++					unsigned int ys, unsigned int ye)
++{
++	struct mipi_dbi *dbi = &dbidev->dbi;
++
++	xs += dbidev->left_offset;
++	xe += dbidev->left_offset;
++	ys += dbidev->top_offset;
++	ye += dbidev->top_offset;
++
++	mipi_dbi_command(dbi, MIPI_DCS_SET_COLUMN_ADDRESS, (xs >> 8) & 0xff,
++			 xs & 0xff, (xe >> 8) & 0xff, xe & 0xff);
++	mipi_dbi_command(dbi, MIPI_DCS_SET_PAGE_ADDRESS, (ys >> 8) & 0xff,
++			 ys & 0xff, (ye >> 8) & 0xff, ye & 0xff);
++}
++
+ static void mipi_dbi_fb_dirty(struct drm_framebuffer *fb, struct drm_rect *rect)
+ {
+ 	struct drm_gem_object *gem = drm_gem_fb_get_obj(fb, 0);
+@@ -271,12 +288,8 @@ static void mipi_dbi_fb_dirty(struct drm_framebuffer *fb, struct drm_rect *rect)
+ 		tr = cma_obj->vaddr;
+ 	}
+ 
+-	mipi_dbi_command(dbi, MIPI_DCS_SET_COLUMN_ADDRESS,
+-			 (rect->x1 >> 8) & 0xff, rect->x1 & 0xff,
+-			 ((rect->x2 - 1) >> 8) & 0xff, (rect->x2 - 1) & 0xff);
+-	mipi_dbi_command(dbi, MIPI_DCS_SET_PAGE_ADDRESS,
+-			 (rect->y1 >> 8) & 0xff, rect->y1 & 0xff,
+-			 ((rect->y2 - 1) >> 8) & 0xff, (rect->y2 - 1) & 0xff);
++	mipi_dbi_set_window_address(dbidev, rect->x1, rect->x2 - 1, rect->y1,
++				    rect->y2 - 1);
+ 
+ 	ret = mipi_dbi_command_buf(dbi, MIPI_DCS_WRITE_MEMORY_START, tr,
+ 				   width * height * 2);
+@@ -366,10 +379,7 @@ static void mipi_dbi_blank(struct mipi_dbi_dev *dbidev)
+ 
+ 	memset(dbidev->tx_buf, 0, len);
+ 
+-	mipi_dbi_command(dbi, MIPI_DCS_SET_COLUMN_ADDRESS, 0, 0,
+-			 ((width - 1) >> 8) & 0xFF, (width - 1) & 0xFF);
+-	mipi_dbi_command(dbi, MIPI_DCS_SET_PAGE_ADDRESS, 0, 0,
+-			 ((height - 1) >> 8) & 0xFF, (height - 1) & 0xFF);
++	mipi_dbi_set_window_address(dbidev, 0, width - 1, 0, height - 1);
+ 	mipi_dbi_command_buf(dbi, MIPI_DCS_WRITE_MEMORY_START,
+ 			     (u8 *)dbidev->tx_buf, len);
+ 
+diff --git a/include/drm/drm_mipi_dbi.h b/include/drm/drm_mipi_dbi.h
+index 67c66f5ee591e80f..33f325f5af2b921f 100644
+--- a/include/drm/drm_mipi_dbi.h
++++ b/include/drm/drm_mipi_dbi.h
+@@ -109,6 +109,18 @@ struct mipi_dbi_dev {
+ 	 */
+ 	unsigned int rotation;
+ 
++	/**
++	 * @left_offset: Horizontal offset of the display relative to the
++	 *               controller's driver array
++	 */
++	unsigned int left_offset;
++
++	/**
++	 * @top_offset: Vertical offset of the display relative to the
++	 *              controller's driver array
++	 */
++	unsigned int top_offset;
++
+ 	/**
+ 	 * @backlight: backlight device (optional)
+ 	 */
+-- 
+2.17.1
 
-> Chris
-
-MBR, Sergei
