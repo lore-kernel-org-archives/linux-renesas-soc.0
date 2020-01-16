@@ -7,53 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7FCC33CB3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C16C33CB6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F70246DD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:37:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00E1B2473D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579196277;
-	bh=CoU9mfn6JpZ2Lmi3xaNgldVIo9L2bmErfOKLD4D/kuI=;
+	s=default; t=1579196630;
+	bh=ci875D9tppVlOcFXCFRnSJXrGNh4mKDiUnwCrjtZLDE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PXXmrbjSnpDf329NeYhEg8QNHfImrYPRk/KUGuSn0DZJm2h0s9qvRNRCBGWbUCu4x
-	 lfP41FdUeZ5bOqniOYGt14hkcZXXtBx4RqNL0WCYxGbUqo+awgg0D4pU8GTD7KLsiT
-	 9Ig3t3AW4Ocf5mOzgf7L5IpdjbRtLNV9kzFMkxmg=
+	b=bxco59vgClmPopaThPK+s9xK1YQtzn/lOBd2x7ulnvT9VksRBFlPEQ2Hgg46j+o3P
+	 R2gkkH8GnjzVrq0odjQomuznQNil1ABbB6kMiAFwYh8ugk9AsaLCWhIF2HZZNuWJ64
+	 nvm2BcDagLItTrxO7CTxm1eorefRvt7Clb7guZ80=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393226AbgAPRhz (ORCPT
+        id S2393998AbgAPRnt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:37:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53546 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:43:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393220AbgAPRhy (ORCPT
+        id S2393993AbgAPRns (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:54 -0500
+        Thu, 16 Jan 2020 12:43:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E60B246DD;
-        Thu, 16 Jan 2020 17:37:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44F3924730;
+        Thu, 16 Jan 2020 17:43:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196274;
-        bh=CoU9mfn6JpZ2Lmi3xaNgldVIo9L2bmErfOKLD4D/kuI=;
+        s=default; t=1579196628;
+        bh=ci875D9tppVlOcFXCFRnSJXrGNh4mKDiUnwCrjtZLDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aPoA/XRHRBl9FOhLa9u30NOZ0PL9isO9sSZCMYPhZCrfhDk+RbO+83tHw0nDhv0dQ
-         PCTBalZOFp1GLmp8uaahshbND1VWB8q2IKABWA2SBme14Z/WS1HoTVR7ui+5gWuHrT
-         A1yQqUGWZmzAofh1/j80crxTPJu2/MsrVB4pBkas=
+        b=U2XQA8Sw/FRX2X18munaHD0uNg5oM3X/WbOGzbJ0FlGPKb/yr/cwiAIRWG7eKetJ1
+         XnjA2B7quOJuHLMIWFKmlcJHIMDBrNGZtwHPMed6SynmUBq+bco52D8mAKB7XEuuw2
+         iv04wail50cqDein8MA4WqGMt4QDxjLA3eu0J3HE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 095/251] net: sh_eth: fix a missing check of of_get_phy_mode
-Date:   Thu, 16 Jan 2020 12:34:04 -0500
-Message-Id: <20200116173641.22137-55-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 042/174] pinctrl: sh-pfc: emev2: Add missing pinmux functions
+Date:   Thu, 16 Jan 2020 12:40:39 -0500
+Message-Id: <20200116174251.24326-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
-References: <20200116173641.22137-1-sashal@kernel.org>
+In-Reply-To: <20200116174251.24326-1-sashal@kernel.org>
+References: <20200116174251.24326-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -63,47 +61,80 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 035a14e71f27eefa50087963b94cbdb3580d08bf ]
+[ Upstream commit 1ecd8c9cb899ae277e6986ae134635cb1a50f5de ]
 
-of_get_phy_mode may fail and return a negative error code;
-the fix checks the return value of of_get_phy_mode and
-returns NULL of it fails.
+The err_rst_reqb, ext_clki, lowpwr, and ref_clko pin groups are present,
+but no pinmux functions refer to them, hence they can not be selected.
 
-Fixes: b356e978e92f ("sh_eth: add device tree support")
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 1e7d5d849cf4f0c5 ("sh-pfc: Add emev2 pinmux support")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/renesas/sh_eth.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-emev2.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 49300194d3f9..6f8d4810ce97 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2929,12 +2929,16 @@ static struct sh_eth_plat_data *sh_eth_parse_dt(struct device *dev)
- 	struct device_node *np = dev->of_node;
- 	struct sh_eth_plat_data *pdata;
- 	const char *mac_addr;
-+	int ret;
+diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pfc-emev2.c
+index 02118ab336fc..5ab3ac61f418 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
++++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
+@@ -1263,6 +1263,14 @@ static const char * const dtv_groups[] = {
+ 	"dtv_b",
+ };
  
- 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
- 		return NULL;
++static const char * const err_rst_reqb_groups[] = {
++	"err_rst_reqb",
++};
++
++static const char * const ext_clki_groups[] = {
++	"ext_clki",
++};
++
+ static const char * const iic0_groups[] = {
+ 	"iic0",
+ };
+@@ -1285,6 +1293,10 @@ static const char * const lcd_groups[] = {
+ 	"yuv3",
+ };
  
--	pdata->phy_interface = of_get_phy_mode(np);
-+	ret = of_get_phy_mode(np);
-+	if (ret < 0)
-+		return NULL;
-+	pdata->phy_interface = ret;
++static const char * const lowpwr_groups[] = {
++	"lowpwr",
++};
++
+ static const char * const ntsc_groups[] = {
+ 	"ntsc_clk",
+ 	"ntsc_data",
+@@ -1298,6 +1310,10 @@ static const char * const pwm1_groups[] = {
+ 	"pwm1",
+ };
  
- 	mac_addr = of_get_mac_address(np);
- 	if (mac_addr)
++static const char * const ref_clko_groups[] = {
++	"ref_clko",
++};
++
+ static const char * const sd_groups[] = {
+ 	"sd_cki",
+ };
+@@ -1391,13 +1407,17 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(cam),
+ 	SH_PFC_FUNCTION(cf),
+ 	SH_PFC_FUNCTION(dtv),
++	SH_PFC_FUNCTION(err_rst_reqb),
++	SH_PFC_FUNCTION(ext_clki),
+ 	SH_PFC_FUNCTION(iic0),
+ 	SH_PFC_FUNCTION(iic1),
+ 	SH_PFC_FUNCTION(jtag),
+ 	SH_PFC_FUNCTION(lcd),
++	SH_PFC_FUNCTION(lowpwr),
+ 	SH_PFC_FUNCTION(ntsc),
+ 	SH_PFC_FUNCTION(pwm0),
+ 	SH_PFC_FUNCTION(pwm1),
++	SH_PFC_FUNCTION(ref_clko),
+ 	SH_PFC_FUNCTION(sd),
+ 	SH_PFC_FUNCTION(sdi0),
+ 	SH_PFC_FUNCTION(sdi1),
 -- 
 2.20.1
 
