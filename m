@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF330C33CB6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CAEFC33CAF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BEFF214AF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:12:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1A7820684
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:13:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579198347;
-	bh=cIPEba41vQU7K3z8IlNqQquXjet5Msndflxao2tfQ4w=;
+	s=default; t=1579198431;
+	bh=Ov1QD+YipGZ+IgMp85mXzTlYyLosc1Y4z2X4IcfjmdI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y8Hn7AfF9BfI+UU3JObI04kTGUkQduj1/aebHzQU7aHRkS2n8so1BzVwZawsdK6j4
-	 OG3lg86nwJk8su5uoqqnq/tP8qcNvGPOiyd+dBG6KiN9vRdu9MoREfWzS6+V6hpDlY
-	 +V6B5/k4TFrUb5ZFNv9sPvpBggaT47JmdNCkJlBU=
+	b=0TEVuu31nd7JvQycJ4vbDQK6s3Q+1mCILcuXM2V9q/YjMo45nq59/4meitSyLHnok
+	 4HfV1HlnKUnOMovaYpuio+NLGqA/WfvOqfU+xoeNBuebbkRYEgxk6gvQUj1zojzKyn
+	 vp40A6lrXtqP7fL7r2Zrr6d6+uvIGVF2m8AKI5As=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395196AbgAPSMR (ORCPT
+        id S2404899AbgAPRgm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 13:12:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52430 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:36:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393158AbgAPRhQ (ORCPT
+        id S2404908AbgAPRfH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:37:16 -0500
+        Thu, 16 Jan 2020 12:35:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE547246C3;
-        Thu, 16 Jan 2020 17:37:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1564246BA;
+        Thu, 16 Jan 2020 17:35:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196235;
-        bh=cIPEba41vQU7K3z8IlNqQquXjet5Msndflxao2tfQ4w=;
+        s=default; t=1579196106;
+        bh=Ov1QD+YipGZ+IgMp85mXzTlYyLosc1Y4z2X4IcfjmdI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iOJ+mW4L3KKuQWeSBEnU3UxALIwsT8mC9K8ZNr37Z9PFeLNwu0Me/oIo/Yu8Lu9cK
-         VZF39hPgkbqARXRrQSyg7TjpEm8b9z9LDzuVo4h3M9uuWbKHnI2dCxlC7Eyr09eSTI
-         9wqNAwAMp4OmtoS1a2MbRycELz9I+udnFiHPWKvc=
+        b=0zKTI5APX7SiKpm9Ys8rPpxsS0+yGfycl0mcLgvFBjuIhHtQE9034hmDW8iK/MCVM
+         tobzP8wvPcMbhYK18XFjD18W8a8DUOD4nW0q9ZfCH0CCHMuDoEHO4YAXB5La4p46ob
+         9Upm/6Jayvr7PSvgeUcDauO9T2zBKbq19yj+HZzI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 066/251] pinctrl: sh-pfc: emev2: Add missing pinmux functions
-Date:   Thu, 16 Jan 2020 12:33:35 -0500
-Message-Id: <20200116173641.22137-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 016/251] pinctrl: sh-pfc: r8a7791: Remove bogus ctrl marks from qspi_data4_b group
+Date:   Thu, 16 Jan 2020 12:30:50 -0500
+Message-Id: <20200116173445.21385-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
-References: <20200116173641.22137-1-sashal@kernel.org>
+In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
+References: <20200116173445.21385-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -63,78 +63,35 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 1ecd8c9cb899ae277e6986ae134635cb1a50f5de ]
+[ Upstream commit 884fa25fb6e5e63ab970d612a628313bb68f37cc ]
 
-The err_rst_reqb, ext_clki, lowpwr, and ref_clko pin groups are present,
-but no pinmux functions refer to them, hence they can not be selected.
+The qspi_data4_b_mux[] array contains pin marks for the clock and chip
+select pins.  The qspi_data4_b_pins[] array rightfully does not contain
+the corresponding pin numbers, as the control pins are provided by a
+separate group (qspi_ctrl_b).
 
-Fixes: 1e7d5d849cf4f0c5 ("sh-pfc: Add emev2 pinmux support")
+Fixes: 2d0c386f135e4186 ("pinctrl: sh-pfc: r8a7791: Add QSPI pin groups")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-emev2.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-index 1cbbe04d7df6..eafd8edbcbe9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-@@ -1263,6 +1263,14 @@ static const char * const dtv_groups[] = {
- 	"dtv_b",
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index baa98d7fe947..fcf731994811 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -3136,8 +3136,7 @@ static const unsigned int qspi_data4_b_pins[] = {
+ 	RCAR_GP_PIN(6, 4),
  };
- 
-+static const char * const err_rst_reqb_groups[] = {
-+	"err_rst_reqb",
-+};
-+
-+static const char * const ext_clki_groups[] = {
-+	"ext_clki",
-+};
-+
- static const char * const iic0_groups[] = {
- 	"iic0",
+ static const unsigned int qspi_data4_b_mux[] = {
+-	SPCLK_B_MARK, MOSI_IO0_B_MARK, MISO_IO1_B_MARK,
+-	IO2_B_MARK, IO3_B_MARK, SSL_B_MARK,
++	MOSI_IO0_B_MARK, MISO_IO1_B_MARK, IO2_B_MARK, IO3_B_MARK,
  };
-@@ -1285,6 +1293,10 @@ static const char * const lcd_groups[] = {
- 	"yuv3",
- };
- 
-+static const char * const lowpwr_groups[] = {
-+	"lowpwr",
-+};
-+
- static const char * const ntsc_groups[] = {
- 	"ntsc_clk",
- 	"ntsc_data",
-@@ -1298,6 +1310,10 @@ static const char * const pwm1_groups[] = {
- 	"pwm1",
- };
- 
-+static const char * const ref_clko_groups[] = {
-+	"ref_clko",
-+};
-+
- static const char * const sd_groups[] = {
- 	"sd_cki",
- };
-@@ -1391,13 +1407,17 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(cam),
- 	SH_PFC_FUNCTION(cf),
- 	SH_PFC_FUNCTION(dtv),
-+	SH_PFC_FUNCTION(err_rst_reqb),
-+	SH_PFC_FUNCTION(ext_clki),
- 	SH_PFC_FUNCTION(iic0),
- 	SH_PFC_FUNCTION(iic1),
- 	SH_PFC_FUNCTION(jtag),
- 	SH_PFC_FUNCTION(lcd),
-+	SH_PFC_FUNCTION(lowpwr),
- 	SH_PFC_FUNCTION(ntsc),
- 	SH_PFC_FUNCTION(pwm0),
- 	SH_PFC_FUNCTION(pwm1),
-+	SH_PFC_FUNCTION(ref_clko),
- 	SH_PFC_FUNCTION(sd),
- 	SH_PFC_FUNCTION(sdi0),
- 	SH_PFC_FUNCTION(sdi1),
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
 -- 
 2.20.1
 
