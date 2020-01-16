@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB44C33CB6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9204C33CAF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D39162072E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:14:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAACA2073A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:14:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579202045;
-	bh=qR9z+vhMoovUMCDKsNJsPHdQQAm57/Nlj/ycMZRmjCo=;
+	s=default; t=1579202047;
+	bh=LkVTKsYdHJfdDmmYPdoTfDPNzo2Cyo3Ys6rmxdoBcPg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2PHrD3OpiPuyVbrLX7Lic8QvKD1UT9KnakUN0JSnQz4YlSsXTdU5w3KvYzqbLFg9J
-	 joJKrwXb57wXp8Dtdb2bnp9ZZVEpm/Guoem88FbfUPuHq6GZah8ySzG0lNSJU5Ba92
-	 uZ+ozOEFES9nAqXZ47nw4gtJUNF6KDItkuc0LFDQ=
+	b=F+cAujPPg3eUToLf3pqEpHvVwdeym8hst4bWkZxTYm4AWqw8qa+iGqG/f/tI5WBt1
+	 7vh6vTyP3/4e98RTbvw/Khk5Fa05Dm01Tv5wnC9m0v0iFJAElxsT02bTBSjBYjXgJD
+	 sqxEFmY50r4Kg1mRqU7cGeJXx9QaHanzgvZmAJb4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387666AbgAPTNy (ORCPT
+        id S1733271AbgAPQ4m (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 14:13:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43234 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 11:56:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729634AbgAPQ4o (ORCPT
+        id S1733075AbgAPQ4l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:56:44 -0500
+        Thu, 16 Jan 2020 11:56:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5501321582;
-        Thu, 16 Jan 2020 16:56:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1475F24656;
+        Thu, 16 Jan 2020 16:56:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193803;
-        bh=qR9z+vhMoovUMCDKsNJsPHdQQAm57/Nlj/ycMZRmjCo=;
+        s=default; t=1579193800;
+        bh=LkVTKsYdHJfdDmmYPdoTfDPNzo2Cyo3Ys6rmxdoBcPg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iJ/SqI5rqtKstaG+/zshLvZUsYZv6uJhx0HLVITsRfOO8CHIOftKpfBNQgavuWoox
-         S0XOZdE2et5MrWqaRtLzWchmww9ubbeB6fCXL9yoNuiNvvfogVz8PbcwXZn7VGXmLO
-         ELwLgsexSwSDhFGifl9Xdp16wpRtiM9Vh5KsiHiY=
+        b=pEmnUOlLTOrfXTgkKEXLWdfLXPgU4pZOUqoTnHZhg1ddbrzdXapMG+b4+GNKtHo8l
+         vwSsOsdeNBYqdLako0GzOZLoGOfCbI1n0wHCwAEGjuSsDA1hQblc+cStkRluzsn4wV
+         eEZ6lgxt3twlOI5TMgKO8k0UBoNKpwumjTHZ8gkQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 069/671] pinctrl: sh-pfc: r8a7740: Add missing LCD0 marks to lcd0_data24_1 group
-Date:   Thu, 16 Jan 2020 11:45:00 -0500
-Message-Id: <20200116165502.8838-69-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 068/671] pinctrl: sh-pfc: r8a7740: Add missing REF125CK pin to gether_gmii group
+Date:   Thu, 16 Jan 2020 11:44:59 -0500
+Message-Id: <20200116165502.8838-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -63,31 +63,32 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 96bb2a6ab4eca10e5b6490b3f0738e9f7ec22c2b ]
+[ Upstream commit 1ebc589a7786f17f97b9e87b44e0fb4d0290d8f8 ]
 
-The lcd0_data24_1_pins[] array contains the LCD0 D1[2-5] pin numbers,
-but the lcd0_data24_1_mux[] array lacks the corresponding pin marks.
+The gether_gmii_mux[] array contains the REF125CK pin mark, but the
+gether_gmii_pins[] array lacks the corresponding pin number.
 
-Fixes: 06c7dd866da70f6c ("sh-pfc: r8a7740: Add LCDC0 and LCDC1 pin groups and functions")
+Fixes: bae11d30d0cafdc5 ("sh-pfc: r8a7740: Add GETHER pin groups and functions")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-index d8077065636e..e9739dbcb356 100644
+index 35f436bcb849..d8077065636e 100644
 --- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
 +++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-@@ -2154,6 +2154,7 @@ static const unsigned int lcd0_data24_1_mux[] = {
- 	LCD0_D0_MARK, LCD0_D1_MARK, LCD0_D2_MARK, LCD0_D3_MARK,
- 	LCD0_D4_MARK, LCD0_D5_MARK, LCD0_D6_MARK, LCD0_D7_MARK,
- 	LCD0_D8_MARK, LCD0_D9_MARK, LCD0_D10_MARK, LCD0_D11_MARK,
-+	LCD0_D12_MARK, LCD0_D13_MARK, LCD0_D14_MARK, LCD0_D15_MARK,
- 	LCD0_D16_MARK, LCD0_D17_MARK, LCD0_D18_PORT163_MARK,
- 	LCD0_D19_PORT162_MARK, LCD0_D20_PORT161_MARK, LCD0_D21_PORT158_MARK,
- 	LCD0_D22_PORT160_MARK, LCD0_D23_PORT159_MARK,
+@@ -1982,7 +1982,7 @@ static const unsigned int gether_gmii_pins[] = {
+ 	 */
+ 	185, 186, 187, 188, 189, 190, 191, 192, 174, 161, 204,
+ 	171, 170, 169, 168, 167, 166, 173, 172, 176, 184, 183, 203,
+-	205, 163, 206, 207,
++	205, 163, 206, 207, 158,
+ };
+ static const unsigned int gether_gmii_mux[] = {
+ 	ET_ERXD0_MARK, ET_ERXD1_MARK, ET_ERXD2_MARK, ET_ERXD3_MARK,
 -- 
 2.20.1
 
