@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D567C33CAF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A255C33CAF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6222073A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:33:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BB8B206D7
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:33:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579199597;
-	bh=qAJVdmPz7SId3e3ffjn7MuWUJTLbtffxPCjvPdE4Zks=;
+	s=default; t=1579199603;
+	bh=b26Sz2FnOtNNDdBBefrjpx6WRYWcTY/t6YuI1aLeYjI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XIPDSKMtmYqqbQe/MUokip6ocYLSATZBeOclMrM2GBYzVf5C0D8JWiGb2g3iB+pdf
-	 BuzuYKzoIH2CHycaJLrpTLOYzuVG6AOkF9aCaIjhuNJ+/4NVblvUAMcgRnhgBVhIcl
-	 c1Lr85yWi7zvOQMVyiZ4EQFU2ZW0YYqqqGr9Y238=
+	b=hNdl/uD0M46/H8Z3yTF6COe915homApMNNf8xxuA7GHlivw6fBGenJcLcYkteGMJk
+	 kZtfuqTxQCU+npA/BPtbo5BadXx5tT3vipDrFZiyNebQaLC4WX4e5tl2Gr4ordSmgx
+	 7ywi6DROTsmurB90Pl5yfoL35Di+sji9TCUCjw2g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388487AbgAPSdQ (ORCPT
+        id S2403832AbgAPRYw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 13:33:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60092 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:24:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403837AbgAPRYx (ORCPT
+        id S2403826AbgAPRYw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:53 -0500
+        Thu, 16 Jan 2020 12:24:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 429912468D;
-        Thu, 16 Jan 2020 17:24:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFDFE246BF;
+        Thu, 16 Jan 2020 17:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195493;
-        bh=qAJVdmPz7SId3e3ffjn7MuWUJTLbtffxPCjvPdE4Zks=;
+        s=default; t=1579195491;
+        bh=b26Sz2FnOtNNDdBBefrjpx6WRYWcTY/t6YuI1aLeYjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QTRKcdUHlcsKMhuYZ8nvcbnDfxC+JsI4FgJ1OoC0Q08hbWqpiUJlJOCSJPYd7beKh
-         hCs18qkhTMbJMrrr5CWWUkixJ7NHHrk5+GP2VcBv6MDgn1ouOhAOC9rAuTy/tlL9It
-         gRT1vUhpQpvuiEX7r7xL6TUNyB6YCC48Aaz/Ulxg=
+        b=jST6uzzJQZVhUc204sES0GosujhjGRmnLHwlV5d/QXqypAcpcuR9FWwOak/Acm5Zo
+         FajQGTbPoI02NL6+hJtSmSOqXdWi8Z5Dg7OTItUYlwcWZAM7AxhdiAc/Em4d3dpvs0
+         5Qn6SLYvqcP8MdubNgrVQNSBh+ytythLAAUWiud4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 095/371] pinctrl: sh-pfc: r8a7792: Fix vin1_data18_b pin group
-Date:   Thu, 16 Jan 2020 12:19:27 -0500
-Message-Id: <20200116172403.18149-38-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 094/371] pinctrl: sh-pfc: r8a7791: Fix scifb2_data_c pin group
+Date:   Thu, 16 Jan 2020 12:19:26 -0500
+Message-Id: <20200116172403.18149-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -63,31 +63,32 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit b9fd50488b4939ce5b3a026d29e752e17c2d1800 ]
+[ Upstream commit a4b0350047f1b10207e25e72d7cd3f7826e93769 ]
 
-The vin1_data18_b pin group itself is present, but it is not listed in
-the VIN1 pin group array, and thus cannot be selected.
+The entry for "scifb2_data_c" in the SCIFB2 pin group array contains a
+typo, thus the group cannot be selected.
 
-Fixes: 7dd74bb1f058786e ("pinctrl: sh-pfc: r8a7792: Add VIN pin groups")
+Fixes: 5088451962389924 ("pinctrl: sh-pfc: r8a7791 PFC support")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7792.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-index cc3597f66605..46c41ca6ea38 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7792.c
-@@ -1916,6 +1916,7 @@ static const char * const vin1_groups[] = {
- 	"vin1_data8",
- 	"vin1_data24_b",
- 	"vin1_data20_b",
-+	"vin1_data18_b",
- 	"vin1_data16_b",
- 	"vin1_sync",
- 	"vin1_field",
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index d34982ea66bf..e4774b220040 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -5209,7 +5209,7 @@ static const char * const scifb2_groups[] = {
+ 	"scifb2_data_b",
+ 	"scifb2_clk_b",
+ 	"scifb2_ctrl_b",
+-	"scifb0_data_c",
++	"scifb2_data_c",
+ 	"scifb2_clk_c",
+ 	"scifb2_data_d",
+ };
 -- 
 2.20.1
 
