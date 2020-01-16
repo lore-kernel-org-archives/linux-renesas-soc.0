@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D52C33CAF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3926C47409
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 577FF206D9
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8588206D7
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:33:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579199405;
-	bh=mAr6Zddc1rPASOuktELYGo8wqMA4ihXUJE/R/dMfsc4=;
+	s=default; t=1579199595;
+	bh=Z/6Je7W6tQDJpYaxxR+scce6bDJ+iS9rauUEIqMWV8w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Uj2VIoL1N6VVDZrqEsfdLzzdFVIGfoATZxzc/sieINpDCKVa+qydpBNTf7LTnCPAC
-	 VsXdijCJ6iSRXFA0AdE2YXRi57CXFo87iAj4/PTZxHjr32xltJGEaB57CNljZhT9iX
-	 WT5Wyyz4TPpvDe94Ftyh5Uja8JTa0TKBdP7VhiZM=
+	b=XGYebpEZpcF3lSAaa2FjPP/Vew1nOxSe6+lw8cWMTz5g2liItd8f8HhFVNcUp69Ff
+	 DItG2Our85ITbudGrs6IdCU1RE/j3q+ukHzVhbns/MJPfiEi+Y1UnxMS+aownv5xsO
+	 FE9BRSLCqN8q7HNaji28SlTs8/r1l6nxSTioyOZg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391050AbgAPS3z (ORCPT
+        id S2391989AbgAPScy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 13:29:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33706 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 13:32:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392144AbgAPRZn (ORCPT
+        id S2403842AbgAPRYy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:25:43 -0500
+        Thu, 16 Jan 2020 12:24:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B09CE246DD;
-        Thu, 16 Jan 2020 17:25:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7934C246AD;
+        Thu, 16 Jan 2020 17:24:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195542;
-        bh=mAr6Zddc1rPASOuktELYGo8wqMA4ihXUJE/R/dMfsc4=;
+        s=default; t=1579195494;
+        bh=Z/6Je7W6tQDJpYaxxR+scce6bDJ+iS9rauUEIqMWV8w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X0ke1dv+RQ2mf0FMLwxBZWa6oYHOlAI7dHXQVvYV2JlUmGjyIU1RqnARHYLrAsJn1
-         gTJ+hxARbKBDBlgqfEvuwNi8Y7hG4bmiJX0PbXuXBL5S6rJ3+OuRSzWJQlrzAwxGjk
-         57tWPVKyp4C8NHF1xcquMqScYZXJIr1qQnjZhNSM=
+        b=qa8WFqQHRHa1HcH/qo4UOeLZs+6ct2palR9MHxBkfYWUWcshVgq2aoXVl8jO6Hk78
+         6gByuaJSXSqIyImCKvhR7jPhs8pyTsjU3bgGqaVI5xcdDW44zMaXM6r4EnWz+VMr/H
+         thIgpUJM1h8Y85gBLseBW3zpcz71zLfUVpY3dAto=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 135/371] net: sh_eth: fix a missing check of of_get_phy_mode
-Date:   Thu, 16 Jan 2020 12:20:07 -0500
-Message-Id: <20200116172403.18149-78-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 096/371] pinctrl: sh-pfc: sh73a0: Fix fsic_spdif pin groups
+Date:   Thu, 16 Jan 2020 12:19:28 -0500
+Message-Id: <20200116172403.18149-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -63,47 +61,35 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 035a14e71f27eefa50087963b94cbdb3580d08bf ]
+[ Upstream commit 0e6e448bdcf896d001a289a6112a704542d51516 ]
 
-of_get_phy_mode may fail and return a negative error code;
-the fix checks the return value of of_get_phy_mode and
-returns NULL of it fails.
+There are two pin groups for the FSIC SPDIF signal, but the FSIC pin
+group array lists only one, and it refers to a nonexistent group.
 
-Fixes: b356e978e92f ("sh_eth: add device tree support")
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 2ecd4154c906b7d6 ("sh-pfc: sh73a0: Add FSI pin groups and functions")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/renesas/sh_eth.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 9b1906a65e11..25f3b2ad26e9 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -3046,12 +3046,16 @@ static struct sh_eth_plat_data *sh_eth_parse_dt(struct device *dev)
- 	struct device_node *np = dev->of_node;
- 	struct sh_eth_plat_data *pdata;
- 	const char *mac_addr;
-+	int ret;
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+index f8fbedb46585..6dca760f9f28 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+@@ -3367,7 +3367,8 @@ static const char * const fsic_groups[] = {
+ 	"fsic_sclk_out",
+ 	"fsic_data_in",
+ 	"fsic_data_out",
+-	"fsic_spdif",
++	"fsic_spdif_0",
++	"fsic_spdif_1",
+ };
  
- 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
- 	if (!pdata)
- 		return NULL;
- 
--	pdata->phy_interface = of_get_phy_mode(np);
-+	ret = of_get_phy_mode(np);
-+	if (ret < 0)
-+		return NULL;
-+	pdata->phy_interface = ret;
- 
- 	mac_addr = of_get_mac_address(np);
- 	if (mac_addr)
+ static const char * const fsid_groups[] = {
 -- 
 2.20.1
 
