@@ -7,52 +7,53 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27901C33CB3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 16:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F34C33CAF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E545B20730
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 16:59:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFAA9207FF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:04:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579193945;
-	bh=yYct/yvcXDrlEgA0LcQIaaTkGaXswQCQAppwQZKXnE0=;
+	s=default; t=1579194267;
+	bh=S8X1xJcjW3hguFRJhdG5X+h1/mJOR68raBbkBr9FXsg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qTxr4BGM23P7yGs36SML5uA2klk4stcT4dfK+f+qZTLBCIqV8RB/AvmDDrnNpmCZV
-	 dA487s9V7d6VAMW6pAfF7M1OOIiz2nekzjZ9RzCBWIHBH5WvA+8JODxyeZA70VYuA5
-	 sJsakR0gw4GCWt4HCb/gihdo6xvXfZxEfA3jJtpY=
+	b=CpgVkSpD76GPSf/9z/DrV9U4BfDpX6OqHOf55lbBwV4DdHAdoUNS2ORpGSrlp6ZEZ
+	 zKafhlnoE5ggndqkkCoZ2CWH8YyvnHZBaEMI3hTBGGPRbPDulKDaWveW/oUA+1WAiA
+	 HoPU2gJR1ZwYLm01HADQ5TaDWktPGrLeqr3mHjcQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387513AbgAPQ5d (ORCPT
+        id S2388465AbgAPRCp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 11:57:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44802 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:02:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387510AbgAPQ5c (ORCPT
+        id S2388462AbgAPRCp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:57:32 -0500
+        Thu, 16 Jan 2020 12:02:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA12D24656;
-        Thu, 16 Jan 2020 16:57:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8A912467C;
+        Thu, 16 Jan 2020 17:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193852;
-        bh=yYct/yvcXDrlEgA0LcQIaaTkGaXswQCQAppwQZKXnE0=;
+        s=default; t=1579194164;
+        bh=S8X1xJcjW3hguFRJhdG5X+h1/mJOR68raBbkBr9FXsg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IfvXmm5gDbIqmNdpdcCtjEDZpFfioCTqpj/iR2eutdW8u50lJggOl18t9O+zRjxGN
-         2bA+kOfjMDZ4ec/5w6BIXaEtNioYrCSiSwxsxdVkvdBkZi9PI0aZI1+vxyNw+HwkaV
-         GUYnfuMXBKiGiyboTaPNmtl4Mi5g/gEaLrgaoC8A=
+        b=icb+tahqhjSU/a2/rFRjxe/T4/9Ul0SvqRkFTEFwDxGNoXlb1Bmb/YRW21h1s2RcO
+         mNK4E3SX/BKHJdNUvVlHy2TMyRMa3DqGnq0PHGOVfAXO2miLgbAgUwQId3EsLYK3Ph
+         +vf1s/oY/ANiiqH+5I2/R/4QcJYcpbTA9GSoCOj0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Biju Das <biju.das@bp.renesas.com>,
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 103/671] ARM: dts: r8a7743: Remove generic compatible string from iic3
-Date:   Thu, 16 Jan 2020 11:45:34 -0500
-Message-Id: <20200116165502.8838-103-sashal@kernel.org>
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 245/671] net: sh_eth: fix a missing check of of_get_phy_mode
+Date:   Thu, 16 Jan 2020 11:52:34 -0500
+Message-Id: <20200116165940.10720-128-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
-References: <20200116165502.8838-1-sashal@kernel.org>
+In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
+References: <20200116165940.10720-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -62,37 +63,47 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Biju Das <biju.das@bp.renesas.com>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit 072b817589b17660ef19c31d89f7b981dbed3fd2 ]
+[ Upstream commit 035a14e71f27eefa50087963b94cbdb3580d08bf ]
 
-The iic3 block on RZ/G1M does not support automatic transmission, unlike
-other R-Car SoC's. So dropping the compatibility with the generic version.
+of_get_phy_mode may fail and return a negative error code;
+the fix checks the return value of of_get_phy_mode and
+returns NULL of it fails.
 
-Fixes: f523405f2a22cc0c307 ("ARM: dts: r8a7743: Add IIC cores to dtsi")
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Fixes: b356e978e92f ("sh_eth: add device tree support")
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/r8a7743.dtsi | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/ethernet/renesas/sh_eth.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index 24715f74ae08..5015e2273d82 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -565,9 +565,7 @@
- 			/* doesn't need pinmux */
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--			compatible = "renesas,iic-r8a7743",
--				     "renesas,rcar-gen2-iic",
--				     "renesas,rmobile-iic";
-+			compatible = "renesas,iic-r8a7743";
- 			reg = <0 0xe60b0000 0 0x425>;
- 			interrupts = <GIC_SPI 173 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 926>;
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index 5e3e6e262ba3..f20290c72412 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -3129,12 +3129,16 @@ static struct sh_eth_plat_data *sh_eth_parse_dt(struct device *dev)
+ 	struct device_node *np = dev->of_node;
+ 	struct sh_eth_plat_data *pdata;
+ 	const char *mac_addr;
++	int ret;
+ 
+ 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (!pdata)
+ 		return NULL;
+ 
+-	pdata->phy_interface = of_get_phy_mode(np);
++	ret = of_get_phy_mode(np);
++	if (ret < 0)
++		return NULL;
++	pdata->phy_interface = ret;
+ 
+ 	mac_addr = of_get_mac_address(np);
+ 	if (mac_addr)
 -- 
 2.20.1
 
