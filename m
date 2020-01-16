@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9204C33CAF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30ED3C33CAF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:14:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAACA2073A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:14:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0835E207E0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:14:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579202047;
-	bh=LkVTKsYdHJfdDmmYPdoTfDPNzo2Cyo3Ys6rmxdoBcPg=;
+	s=default; t=1579202091;
+	bh=pRkhybkngEnr4gOAuE3FOmVM9pUynr3Wp6eubVhRKl0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=F+cAujPPg3eUToLf3pqEpHvVwdeym8hst4bWkZxTYm4AWqw8qa+iGqG/f/tI5WBt1
-	 7vh6vTyP3/4e98RTbvw/Khk5Fa05Dm01Tv5wnC9m0v0iFJAElxsT02bTBSjBYjXgJD
-	 sqxEFmY50r4Kg1mRqU7cGeJXx9QaHanzgvZmAJb4=
+	b=t/XjQRT69ZHIHjsywy7TiTBXzsgr3bDeGga/XVOh7OPcELTxxHgO62dGRw7V0y/xH
+	 lCxFN2TN7Kp9ILf7CAGNw5fDiQ2bDzJb8qVa8uljIc6enMoOg56Ss156XozHnAsePn
+	 guMVsVnjB/K7Dr7HwruWn1d56VpuPxtD41/TeAPQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733271AbgAPQ4m (ORCPT
+        id S1729248AbgAPTOu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 11:56:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43170 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 14:14:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733075AbgAPQ4l (ORCPT
+        id S1733207AbgAPQ4S (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:56:41 -0500
+        Thu, 16 Jan 2020 11:56:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1475F24656;
-        Thu, 16 Jan 2020 16:56:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 402FD24687;
+        Thu, 16 Jan 2020 16:56:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193800;
-        bh=LkVTKsYdHJfdDmmYPdoTfDPNzo2Cyo3Ys6rmxdoBcPg=;
+        s=default; t=1579193777;
+        bh=pRkhybkngEnr4gOAuE3FOmVM9pUynr3Wp6eubVhRKl0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pEmnUOlLTOrfXTgkKEXLWdfLXPgU4pZOUqoTnHZhg1ddbrzdXapMG+b4+GNKtHo8l
-         vwSsOsdeNBYqdLako0GzOZLoGOfCbI1n0wHCwAEGjuSsDA1hQblc+cStkRluzsn4wV
-         eEZ6lgxt3twlOI5TMgKO8k0UBoNKpwumjTHZ8gkQ=
+        b=owHF4+pZgP2xm8he0tnCNYc8vYSXD9fi3zT5/06oLHat48aomyUhv+b48bXnayEvu
+         Axs4P59TsIw53E5EGutBV8bToWh3zRsW9YMMyo/LTZcSyNU0Tyy3/rKo0qZFzmF+ym
+         LEfMcT9NNRxUNqSMT6B0O/qBZSBdRceqIuwbgM3Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 068/671] pinctrl: sh-pfc: r8a7740: Add missing REF125CK pin to gether_gmii group
-Date:   Thu, 16 Jan 2020 11:44:59 -0500
-Message-Id: <20200116165502.8838-68-sashal@kernel.org>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 058/671] arm64: dts: renesas: r8a7795-es1: Add missing power domains to IPMMU nodes
+Date:   Thu, 16 Jan 2020 11:44:49 -0500
+Message-Id: <20200116165502.8838-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -63,32 +63,40 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 1ebc589a7786f17f97b9e87b44e0fb4d0290d8f8 ]
+[ Upstream commit 41e30b515a003a90e336b7a456c7c82d8c3aa6a7 ]
 
-The gether_gmii_mux[] array contains the REF125CK pin mark, but the
-gether_gmii_pins[] array lacks the corresponding pin number.
+While commit 3b7e7848f0e88b36 ("arm64: dts: renesas: r8a7795: Add IPMMU
+device nodes") for R-Car H3 ES2.0 did include power-domains properties,
+they were forgotten in the counterpart for older R-Car H3 ES1.x SoCs.
 
-Fixes: bae11d30d0cafdc5 ("sh-pfc: r8a7740: Add GETHER pin groups and functions")
+Fixes: e4b9a493df45075b ("arm64: dts: renesas: r8a7795-es1: Add IPMMU device nodes")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-index 35f436bcb849..d8077065636e 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
-@@ -1982,7 +1982,7 @@ static const unsigned int gether_gmii_pins[] = {
- 	 */
- 	185, 186, 187, 188, 189, 190, 191, 192, 174, 161, 204,
- 	171, 170, 169, 168, 167, 166, 173, 172, 176, 184, 183, 203,
--	205, 163, 206, 207,
-+	205, 163, 206, 207, 158,
- };
- static const unsigned int gether_gmii_mux[] = {
- 	ET_ERXD0_MARK, ET_ERXD1_MARK, ET_ERXD2_MARK, ET_ERXD3_MARK,
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+index 7b2fbaec9aef..3dc61b7e1d08 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
+@@ -28,6 +28,7 @@
+ 		compatible = "renesas,ipmmu-r8a7795";
+ 		reg = <0 0xec680000 0 0x1000>;
+ 		renesas,ipmmu-main = <&ipmmu_mm 5>;
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		#iommu-cells = <1>;
+ 	};
+ 
+@@ -35,6 +36,7 @@
+ 		compatible = "renesas,ipmmu-r8a7795";
+ 		reg = <0 0xe7730000 0 0x1000>;
+ 		renesas,ipmmu-main = <&ipmmu_mm 8>;
++		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 		#iommu-cells = <1>;
+ 	};
+ 
 -- 
 2.20.1
 
