@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D8FC33CB3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC49C33CB6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E53B246CD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 885FE2073A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:20:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579195238;
-	bh=M87j4uXpBtzWyfnHV8MWX3deYdoHLzd99tBx2dw09k0=;
+	s=default; t=1579195253;
+	bh=/Apw4e2PWQto+zm48NOION89By1mmEsAQvhED28Y5Cw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=afl34o6gTF9mmYevQDA5CYOfOqGNDA1lbwu9Q/pAX0kYLM+lSYc34pu9hyPJEpJRj
-	 0NccCq2nq6sjkP6E1YMBOqz92paCuSmVFKiLVSQsEQIVakllg5B3vTnEouKjPQl1Ak
-	 /u7tU584odqVyuoQKw799hTngD+7eiPPfzI4CX2g=
+	b=aUL7qf8bKtRHjSI9hX/FiHeKzfpmOX2LcXDBeOcpmbgbbcN73hGDOepQqbvRZYU6O
+	 7ELURDH2utnh8Q+yy1R/Nj+OowghZzSUtnObXcDtjiB+Z8i9OWEdfs+0STbiiol1ef
+	 co+rCrlaZ9V9qyHRO6kYb79aVnUvSN5vF8ytkLvs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391358AbgAPRSE (ORCPT
+        id S2391260AbgAPRUt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:18:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44574 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:20:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44234 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391121AbgAPRSD (ORCPT
+        id S2391128AbgAPRR6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:18:03 -0500
+        Thu, 16 Jan 2020 12:17:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97A422192A;
-        Thu, 16 Jan 2020 17:18:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A12E24693;
+        Thu, 16 Jan 2020 17:17:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195082;
-        bh=M87j4uXpBtzWyfnHV8MWX3deYdoHLzd99tBx2dw09k0=;
+        s=default; t=1579195077;
+        bh=/Apw4e2PWQto+zm48NOION89By1mmEsAQvhED28Y5Cw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SzbkoYFkXwgsHTKQZ9uENIj7Ms1NODG6bekymVeHzXFlY1JE7l2U9x3qUI+tb/0wV
-         CBqED0qRvJrUSK0uuOCIo9u77zXgS5oBING/1KE5GR0zQ09WrOJTJchWyL/F4zivt8
-         3sDidgL13D5Cwm2nHZOhqBJZGG1L30Y4+PEAcKIg=
+        b=SgXhgI95mHv5Y8Pw8X4rbk7q0PDrWGJzCJI2oceVZMg64epuAboMnbPbZJ1wp/5k2
+         KEz4uTWd8mADDtg07rSGobqwXuLUiw6IiF4ZgvTRRuAUjl3jNDYfokBlfzqcFeA8p0
+         yF8z2VNUW7+eI93Z2JOXYEdI1oCL11aXvWC9W4pk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 031/371] pinctrl: sh-pfc: r8a77995: Remove bogus SEL_PWM[0-3]_3 configurations
-Date:   Thu, 16 Jan 2020 12:11:39 -0500
-Message-Id: <20200116171719.16965-31-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 027/371] pinctrl: sh-pfc: r8a7791: Remove bogus marks from vin1_b_data18 group
+Date:   Thu, 16 Jan 2020 12:11:35 -0500
+Message-Id: <20200116171719.16965-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116171719.16965-1-sashal@kernel.org>
 References: <20200116171719.16965-1-sashal@kernel.org>
@@ -63,41 +63,43 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit e28dc3f09c9d2555a9bd982f0847988591052226 ]
+[ Upstream commit 0d6256cb880166a4111bebce35790019e56b6e1b ]
 
-While the SEL_PWM[0-3] fields in the Module Select Register 0 support 4
-possible configurations per PWM pin, only the first 3 are valid.
+The vin1_b_data18_mux[] arrays contains pin marks for the 2 LSB bits of
+the color components.  The vin1_b_data18_pins[] array rightfully does
+not include the corresponding pin numbers, as RGB18 is subset of RGB24,
+containing only the 6 MSB bits of each component.
 
-Replace the invalid and unused configurations for SEL_PWM[0-3]_3 by
-dummies.
-
-Fixes: 794a6711764658a1 ("pinctrl: sh-pfc: Initial R8A77995 PFC support")
+Fixes: 8e32c9671f84acd8 ("pinctrl: sh-pfc: r8a7791: Add VIN pins")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a77995.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-index 4f5ee1d7317d..36421df1b326 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a77995.c
-@@ -391,10 +391,10 @@ FM(IP12_31_28)	IP12_31_28 \
- #define MOD_SEL0_27		FM(SEL_MSIOF3_0)	FM(SEL_MSIOF3_1)
- #define MOD_SEL0_26		FM(SEL_HSCIF3_0)	FM(SEL_HSCIF3_1)
- #define MOD_SEL0_25		FM(SEL_SCIF4_0)		FM(SEL_SCIF4_1)
--#define MOD_SEL0_24_23		FM(SEL_PWM0_0)		FM(SEL_PWM0_1)		FM(SEL_PWM0_2)		FM(SEL_PWM0_3)
--#define MOD_SEL0_22_21		FM(SEL_PWM1_0)		FM(SEL_PWM1_1)		FM(SEL_PWM1_2)		FM(SEL_PWM1_3)
--#define MOD_SEL0_20_19		FM(SEL_PWM2_0)		FM(SEL_PWM2_1)		FM(SEL_PWM2_2)		FM(SEL_PWM2_3)
--#define MOD_SEL0_18_17		FM(SEL_PWM3_0)		FM(SEL_PWM3_1)		FM(SEL_PWM3_2)		FM(SEL_PWM3_3)
-+#define MOD_SEL0_24_23		FM(SEL_PWM0_0)		FM(SEL_PWM0_1)		FM(SEL_PWM0_2)		F_(0, 0)
-+#define MOD_SEL0_22_21		FM(SEL_PWM1_0)		FM(SEL_PWM1_1)		FM(SEL_PWM1_2)		F_(0, 0)
-+#define MOD_SEL0_20_19		FM(SEL_PWM2_0)		FM(SEL_PWM2_1)		FM(SEL_PWM2_2)		F_(0, 0)
-+#define MOD_SEL0_18_17		FM(SEL_PWM3_0)		FM(SEL_PWM3_1)		FM(SEL_PWM3_2)		F_(0, 0)
- #define MOD_SEL0_15		FM(SEL_IRQ_0_0)		FM(SEL_IRQ_0_1)
- #define MOD_SEL0_14		FM(SEL_IRQ_1_0)		FM(SEL_IRQ_1_1)
- #define MOD_SEL0_13		FM(SEL_IRQ_2_0)		FM(SEL_IRQ_2_1)
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index 8600ba82f59c..d34982ea66bf 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -4348,17 +4348,14 @@ static const unsigned int vin1_b_data18_pins[] = {
+ };
+ static const unsigned int vin1_b_data18_mux[] = {
+ 	/* B */
+-	VI1_DATA0_B_MARK, VI1_DATA1_B_MARK,
+ 	VI1_DATA2_B_MARK, VI1_DATA3_B_MARK,
+ 	VI1_DATA4_B_MARK, VI1_DATA5_B_MARK,
+ 	VI1_DATA6_B_MARK, VI1_DATA7_B_MARK,
+ 	/* G */
+-	VI1_G0_B_MARK, VI1_G1_B_MARK,
+ 	VI1_G2_B_MARK, VI1_G3_B_MARK,
+ 	VI1_G4_B_MARK, VI1_G5_B_MARK,
+ 	VI1_G6_B_MARK, VI1_G7_B_MARK,
+ 	/* R */
+-	VI1_R0_B_MARK, VI1_R1_B_MARK,
+ 	VI1_R2_B_MARK, VI1_R3_B_MARK,
+ 	VI1_R4_B_MARK, VI1_R5_B_MARK,
+ 	VI1_R6_B_MARK, VI1_R7_B_MARK,
 -- 
 2.20.1
 
