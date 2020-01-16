@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30ED3C33CAF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C4AC47409
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0835E207E0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:14:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F3DE206E6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:15:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579202091;
-	bh=pRkhybkngEnr4gOAuE3FOmVM9pUynr3Wp6eubVhRKl0=;
+	s=default; t=1579202109;
+	bh=XZhnUCCwvm9lbZcTFOr66Eusy3wYa75mhvzEZFBPqcc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t/XjQRT69ZHIHjsywy7TiTBXzsgr3bDeGga/XVOh7OPcELTxxHgO62dGRw7V0y/xH
-	 lCxFN2TN7Kp9ILf7CAGNw5fDiQ2bDzJb8qVa8uljIc6enMoOg56Ss156XozHnAsePn
-	 guMVsVnjB/K7Dr7HwruWn1d56VpuPxtD41/TeAPQ=
+	b=Xrhj1RfsV9ZdBfudpZaMM8AVjv0BZAkTKsU5LeZdLkpY+w6txQbOzRy5HNXXTmwhy
+	 uK1+yA0H2DPi7Lfh/d6UmCAZfEQqtzvxhHSP1ZipUIC3W8/CmZpHhhmxbgtAjuOsNq
+	 D3CrWC1POGG2wUBrjBziJmNdWNsoFgsBIfPHy6Ac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbgAPTOu (ORCPT
+        id S1733182AbgAPQ4M (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 14:14:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42538 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 11:56:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733207AbgAPQ4S (ORCPT
+        id S1733178AbgAPQ4L (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:56:18 -0500
+        Thu, 16 Jan 2020 11:56:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 402FD24687;
-        Thu, 16 Jan 2020 16:56:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB42321D56;
+        Thu, 16 Jan 2020 16:56:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193777;
-        bh=pRkhybkngEnr4gOAuE3FOmVM9pUynr3Wp6eubVhRKl0=;
+        s=default; t=1579193770;
+        bh=XZhnUCCwvm9lbZcTFOr66Eusy3wYa75mhvzEZFBPqcc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=owHF4+pZgP2xm8he0tnCNYc8vYSXD9fi3zT5/06oLHat48aomyUhv+b48bXnayEvu
-         Axs4P59TsIw53E5EGutBV8bToWh3zRsW9YMMyo/LTZcSyNU0Tyy3/rKo0qZFzmF+ym
-         LEfMcT9NNRxUNqSMT6B0O/qBZSBdRceqIuwbgM3Q=
+        b=k4VYHuhU8jStjlhpcTaRts2XHdpbP8C9zg88cgo7nV4ULZcJ9sX9Dd8z0D/KHuYdB
+         ZOfRcUserg6SKQV4lx3/61Pk/9cbWU+nwEGaj2CxHXuExmE6gJRwlXpysFlw2gSvFL
+         PQRQAkT3cKcqWZM2ensAp2tc3M5HBS0VfqjrKOuA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 058/671] arm64: dts: renesas: r8a7795-es1: Add missing power domains to IPMMU nodes
-Date:   Thu, 16 Jan 2020 11:44:49 -0500
-Message-Id: <20200116165502.8838-58-sashal@kernel.org>
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 054/671] drm: rcar-du: Fix vblank initialization
+Date:   Thu, 16 Jan 2020 11:44:45 -0500
+Message-Id: <20200116165502.8838-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -61,41 +62,34 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-[ Upstream commit 41e30b515a003a90e336b7a456c7c82d8c3aa6a7 ]
+[ Upstream commit 3d61fe5f59dd3e6f96fc0772156d257cb04dc656 ]
 
-While commit 3b7e7848f0e88b36 ("arm64: dts: renesas: r8a7795: Add IPMMU
-device nodes") for R-Car H3 ES2.0 did include power-domains properties,
-they were forgotten in the counterpart for older R-Car H3 ES1.x SoCs.
+The drm_vblank_init() takes the total number of CRTCs as an argument,
+but the rcar-du driver passes a bitmask of the CRTC indices. Fix it.
 
-Fixes: e4b9a493df45075b ("arm64: dts: renesas: r8a7795-es1: Add IPMMU device nodes")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 4bf8e1962f91 ("drm: Renesas R-Car Display Unit DRM driver")
+Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-index 7b2fbaec9aef..3dc61b7e1d08 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795-es1.dtsi
-@@ -28,6 +28,7 @@
- 		compatible = "renesas,ipmmu-r8a7795";
- 		reg = <0 0xec680000 0 0x1000>;
- 		renesas,ipmmu-main = <&ipmmu_mm 5>;
-+		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 		#iommu-cells = <1>;
- 	};
- 
-@@ -35,6 +36,7 @@
- 		compatible = "renesas,ipmmu-r8a7795";
- 		reg = <0 0xe7730000 0 0x1000>;
- 		renesas,ipmmu-main = <&ipmmu_mm 8>;
-+		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 		#iommu-cells = <1>;
- 	};
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index 0386b454e221..6a9578159c2b 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -544,7 +544,7 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ 	 * Initialize vertical blanking interrupts handling. Start with vblank
+ 	 * disabled for all CRTCs.
+ 	 */
+-	ret = drm_vblank_init(dev, (1 << rcdu->num_crtcs) - 1);
++	ret = drm_vblank_init(dev, rcdu->num_crtcs);
+ 	if (ret < 0)
+ 		return ret;
  
 -- 
 2.20.1
