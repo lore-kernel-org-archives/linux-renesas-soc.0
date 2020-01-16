@@ -4,60 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065D1C33CAF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51FBC33CAF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B4282467E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B16EA246A9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:35:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579195384;
-	bh=ayTV0SyUH0e2bABLL/2P8fDxp82lebQiM6N7Y8tD5Uw=;
+	s=default; t=1579196107;
+	bh=qR9z+vhMoovUMCDKsNJsPHdQQAm57/Nlj/ycMZRmjCo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=04qK3E/WdDONYwLd//ZHAztm3aZrYr0xocQFCJHPDCW4Tpqj4htqbJW2jAkLVdUT0
-	 FOhjZyMeonYopRI+gRqLrQmRLJ/lzHEt12gO8J1LtK6mMNBjzwh7yeD8ZXjmLE0NYc
-	 s9KtclaZp/xIQ4YFRA1uwaBMtOD0Lhvahh5REkCY=
+	b=dyFQjUgVIOjkbWNNRi+t2OHrpQ0geWtM3MBxibBbKXKG7I0DeYb/xGgUE8D0yk4+3
+	 KKHtwZnNPwHxtzkQr41rWkLYFE99aVzzQIRuvb2A/aIhE39NfmUzjN0qtu+TtBhzsB
+	 blRIXqXtcoPccLn3akZ3dU+GO+e+bheBZd2Ghtc0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390733AbgAPRNX (ORCPT
+        id S2404905AbgAPRfG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:13:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58178 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:35:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390729AbgAPRNW (ORCPT
+        id S2393071AbgAPRfG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:13:22 -0500
+        Thu, 16 Jan 2020 12:35:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 549B3246AA;
-        Thu, 16 Jan 2020 17:13:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65D87246A1;
+        Thu, 16 Jan 2020 17:35:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194801;
-        bh=ayTV0SyUH0e2bABLL/2P8fDxp82lebQiM6N7Y8tD5Uw=;
+        s=default; t=1579196105;
+        bh=qR9z+vhMoovUMCDKsNJsPHdQQAm57/Nlj/ycMZRmjCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bngEY89dxoMr+tvTWdHEw0wrmfHx4zVUc0R6g0fgSpLaGNbdOIDsGuEmIBRX3qcvW
-         f92MfDRxSzpe+9XzIpEJYXP1x8rSBZwQaa7zpQUo/UVm8gcX3EQNyEzZjkOZEGJmNJ
-         /BTNu54RIf/wC7w8h8LuXzkzmEu9RUvdZrOQynbA=
+        b=vVVBJDPoCMxZfA6IukvFHYmrdqe8dQEQwAsQ6NJgCZ98EYcZWKMdlSMjCUvwWAsM6
+         LbBjGRrR7tKucSXtSpYTWSVOf1DZlD3lFSx0Oo7/daqC+z7R1LSMiCIFTtYr8SaykO
+         RuSILD8yjIWLupcXy3b94c49TfupbH/xpAzoU5x8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 612/671] media: rcar-vin: Fix incorrect return statement in rvin_try_format()
-Date:   Thu, 16 Jan 2020 12:04:10 -0500
-Message-Id: <20200116170509.12787-349-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 015/251] pinctrl: sh-pfc: r8a7740: Add missing LCD0 marks to lcd0_data24_1 group
+Date:   Thu, 16 Jan 2020 12:30:49 -0500
+Message-Id: <20200116173445.21385-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
-References: <20200116170509.12787-1-sashal@kernel.org>
+In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
+References: <20200116173445.21385-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -66,46 +61,33 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit a0862a40364e2f87109317e31c51c9d7bc89e33f ]
+[ Upstream commit 96bb2a6ab4eca10e5b6490b3f0738e9f7ec22c2b ]
 
-While refactoring code the return statement became corrupted, fix it by
-returning the correct return code.
+The lcd0_data24_1_pins[] array contains the LCD0 D1[2-5] pin numbers,
+but the lcd0_data24_1_mux[] array lacks the corresponding pin marks.
 
-Reported-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Fixes: 897e371389e77514 ("media: rcar-vin: simplify how formats are set and reset"
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 06c7dd866da70f6c ("sh-pfc: r8a7740: Add LCDC0 and LCDC1 pin groups and functions")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7740.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 5a54779cfc27..1236e6e8228c 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -196,6 +196,7 @@ static int rvin_try_format(struct rvin_dev *vin, u32 which,
- 	ret = v4l2_subdev_call(sd, pad, set_fmt, pad_cfg, &format);
- 	if (ret < 0 && ret != -ENOIOCTLCMD)
- 		goto done;
-+	ret = 0;
- 
- 	v4l2_fill_pix_format(pix, &format.format);
- 
-@@ -230,7 +231,7 @@ static int rvin_try_format(struct rvin_dev *vin, u32 which,
- done:
- 	v4l2_subdev_free_pad_config(pad_cfg);
- 
--	return 0;
-+	return ret;
- }
- 
- static int rvin_querycap(struct file *file, void *priv,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+index d8077065636e..e9739dbcb356 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7740.c
+@@ -2154,6 +2154,7 @@ static const unsigned int lcd0_data24_1_mux[] = {
+ 	LCD0_D0_MARK, LCD0_D1_MARK, LCD0_D2_MARK, LCD0_D3_MARK,
+ 	LCD0_D4_MARK, LCD0_D5_MARK, LCD0_D6_MARK, LCD0_D7_MARK,
+ 	LCD0_D8_MARK, LCD0_D9_MARK, LCD0_D10_MARK, LCD0_D11_MARK,
++	LCD0_D12_MARK, LCD0_D13_MARK, LCD0_D14_MARK, LCD0_D15_MARK,
+ 	LCD0_D16_MARK, LCD0_D17_MARK, LCD0_D18_PORT163_MARK,
+ 	LCD0_D19_PORT162_MARK, LCD0_D20_PORT161_MARK, LCD0_D21_PORT158_MARK,
+ 	LCD0_D22_PORT160_MARK, LCD0_D23_PORT159_MARK,
 -- 
 2.20.1
 
