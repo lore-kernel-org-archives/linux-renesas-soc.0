@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A50E6C3F68F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:17:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D7AC33CB3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CA70246AF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:17:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B42424693
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:18:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579195078;
-	bh=XEBX5LKGTgkXutyRuySDGSRfdAJUs1xVRWBHLLs2zVk=;
+	s=default; t=1579195081;
+	bh=4SRJb8qcVjP2QHL9Zdeu2yEEZmxwQyxCQJ9qOUOh2i0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OY1YyWYk+7mISzYm/bfMn0xoEf6nkBONeNOJwQJ07dGxYoWDEvbomWr9Ec/mPzVQZ
-	 pjKx0WJVdY7FHvBPi8f0D/7UkAY4qkvL6fjiA/+1xiuzoS6PZBBQQ8OOV/V8C7mbPp
-	 n601rq4BX+Hq8591hz/AWnAGK4VqYKZ1b+Hq1z6U=
+	b=2ik6/DmzmCEvdwo18seGTVRAt8xKDWUmYlBZ3O3kaM/oTqjZLoENmJppcNkc34OSS
+	 qA8RC9EGnyM38ZtrqCeATzIYvOTb+IJFvJQjq/dL/ve69UfL+HcEQ8CqHVTv4l+0r1
+	 PCaOsDQKDQTkiMlXqwz8pqFdIrr5lEMwCOB9cfYo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391316AbgAPRR5 (ORCPT
+        id S2391330AbgAPRSA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:17:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44156 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:18:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391308AbgAPRR4 (ORCPT
+        id S2391323AbgAPRR7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:17:56 -0500
+        Thu, 16 Jan 2020 12:17:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 820A2246B1;
-        Thu, 16 Jan 2020 17:17:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EE012469D;
+        Thu, 16 Jan 2020 17:17:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195075;
-        bh=XEBX5LKGTgkXutyRuySDGSRfdAJUs1xVRWBHLLs2zVk=;
+        s=default; t=1579195078;
+        bh=4SRJb8qcVjP2QHL9Zdeu2yEEZmxwQyxCQJ9qOUOh2i0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NoNtHikn77I4+YKORryaXz/EaDK8Bu0TdgdyvPLqUBcCS0sW1rMk1bz2aP3wTuclP
-         nRm5JM0YsUIeIHkfdueZkuQtEdIm1yxu1d6Pcf7SGS5X2TeevB+knsXGG5H/S5IY86
-         J1pXhQ8z89QQ1yXFJlyBzaBGGECw1E3fJD9vD+CQ=
+        b=zNvuMDWIvLMUU7EjcR4+r1lFDyW/M8yJIaRYeb4cKc+wz+5CQ7kONGhzfn/iVEmnN
+         A3nwUGm5jYMovzcKKsHs447/SsgjT8PzgkoUbuWMkXRquzcbSHv5K5K7nT1FKYtf4G
+         FA9y9QDrs4qaLDRS2GZ6JTa/OVuHXMxDM7/VrPr4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 026/371] pinctrl: sh-pfc: r8a7791: Remove bogus ctrl marks from qspi_data4_b group
-Date:   Thu, 16 Jan 2020 12:11:34 -0500
-Message-Id: <20200116171719.16965-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 028/371] pinctrl: sh-pfc: sh73a0: Add missing TO pin to tpu4_to3 group
+Date:   Thu, 16 Jan 2020 12:11:36 -0500
+Message-Id: <20200116171719.16965-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116171719.16965-1-sashal@kernel.org>
 References: <20200116171719.16965-1-sashal@kernel.org>
@@ -63,35 +63,33 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 884fa25fb6e5e63ab970d612a628313bb68f37cc ]
+[ Upstream commit 124cde98f856b6206b804acbdec3b7c80f8c3427 ]
 
-The qspi_data4_b_mux[] array contains pin marks for the clock and chip
-select pins.  The qspi_data4_b_pins[] array rightfully does not contain
-the corresponding pin numbers, as the control pins are provided by a
-separate group (qspi_ctrl_b).
+The tpu4_to3_mux[] array contains the TPU4TO3 pin mark, but the
+tpu4_to3_pins[] array lacks the corresponding pin number.
 
-Fixes: 2d0c386f135e4186 ("pinctrl: sh-pfc: r8a7791: Add QSPI pin groups")
+Add the missing pin number, for non-GPIO pin F26.
+
+Fixes: 5da4eb049de803c7 ("sh-pfc: sh73a0: Add TPU pin groups and functions")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-sh73a0.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-index c01ef02d326b..8600ba82f59c 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
-@@ -3220,8 +3220,7 @@ static const unsigned int qspi_data4_b_pins[] = {
- 	RCAR_GP_PIN(6, 4),
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+index d25e6f674d0a..f8fbedb46585 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh73a0.c
+@@ -3086,6 +3086,7 @@ static const unsigned int tpu4_to2_mux[] = {
  };
- static const unsigned int qspi_data4_b_mux[] = {
--	SPCLK_B_MARK, MOSI_IO0_B_MARK, MISO_IO1_B_MARK,
--	IO2_B_MARK, IO3_B_MARK, SSL_B_MARK,
-+	MOSI_IO0_B_MARK, MISO_IO1_B_MARK, IO2_B_MARK, IO3_B_MARK,
+ static const unsigned int tpu4_to3_pins[] = {
+ 	/* TO */
++	PIN_NUMBER(6, 26),
  };
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
+ static const unsigned int tpu4_to3_mux[] = {
+ 	TPU4TO3_MARK,
 -- 
 2.20.1
 
