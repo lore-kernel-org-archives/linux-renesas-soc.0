@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95171C33CB6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F26C33CB6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:45:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D58522464
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:33:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEC652073A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 18:45:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579199621;
-	bh=cIPEba41vQU7K3z8IlNqQquXjet5Msndflxao2tfQ4w=;
+	s=default; t=1579200339;
+	bh=WmkmH9k1I+h9YStmDsNCig/jfY5LcZcLHbuDnJJLezs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0woZ3VKsW53ecQ5ZRd5+dxpLneJ4twj2xdVd4W3Dxct2Zh2arkJcc3myO8zwLa5kW
-	 0rfXdguaK5OR3al0v5MRyD8McG7/yCLGI1aW5yudULJwx9TbABsFbUoOvYnvqcMhMg
-	 uW4wVAZhtsatDJ4dE97qXNliLfMurf7uyH3B+bPQ=
+	b=Kabq1eQ+h521SLxWGkncSfXrOxJ/zV7IoUkY3V+1egOW22qt1KCjh0D+zERjXrtTO
+	 XPugBM6jz7+6nrUIQJAvxHZKkXSP3KhJ9tTDDMUg0HwEriD9cbAeH4bUOofJIwv0Mt
+	 asGYW1uTSkgMawo2kA2l6waHtXEEOjIOaTQGdX1A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403821AbgAPSdf (ORCPT
+        id S2389046AbgAPSp3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 13:33:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59992 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 13:45:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391816AbgAPRYv (ORCPT
+        id S2390046AbgAPRKj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:24:51 -0500
+        Thu, 16 Jan 2020 12:10:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E64F246B6;
-        Thu, 16 Jan 2020 17:24:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EE1A2468A;
+        Thu, 16 Jan 2020 17:10:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195490;
-        bh=cIPEba41vQU7K3z8IlNqQquXjet5Msndflxao2tfQ4w=;
+        s=default; t=1579194638;
+        bh=WmkmH9k1I+h9YStmDsNCig/jfY5LcZcLHbuDnJJLezs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DfBRBH4rjV1AfaNZ3Vx8aTIldDCwVkRINIojdGcnu9GuBxnMuFNN6gjn9MUR9rBce
-         uojfvj4TWub9G9OaYekzZwj+b71v8Xyl2/2oTge8d5aVIYMOf9Jdvm9wAXK7oAlI03
-         kVXo1dqOxAzhKJgh9zgIlIg/Bkhr8V+9DMl7hjPk=
+        b=oene3RMOt3ES08W6Ci8eYQYRVHE8kfHe1KzBqYbKq2S3H2Jc0lY0+/SIzJm2QN2rZ
+         /n/2rNcgSDLGVHx/7/+LYxnqTI9J/yLIlJsDF+Ha2YCnXdRraWlsABCRcYcA4Q4pJA
+         e5ed7H+wi1qptOO6oJ5hZsY7sh8ZkQFv/tpZpnXE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
         Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 093/371] pinctrl: sh-pfc: emev2: Add missing pinmux functions
-Date:   Thu, 16 Jan 2020 12:19:25 -0500
-Message-Id: <20200116172403.18149-36-sashal@kernel.org>
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 496/671] drm: rcar-du: lvds: Fix bridge_to_rcar_lvds
+Date:   Thu, 16 Jan 2020 12:02:14 -0500
+Message-Id: <20200116170509.12787-233-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
-References: <20200116172403.18149-1-sashal@kernel.org>
+In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
+References: <20200116170509.12787-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -61,80 +61,46 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-[ Upstream commit 1ecd8c9cb899ae277e6986ae134635cb1a50f5de ]
+[ Upstream commit 0b936e6122738f4cf474d1f3ff636cba0edc8b94 ]
 
-The err_rst_reqb, ext_clki, lowpwr, and ref_clko pin groups are present,
-but no pinmux functions refer to them, hence they can not be selected.
+Using name "bridge" for macro bridge_to_rcar_lvds argument doesn't
+work when the pointer name used by the caller is not "bridge".
+Rename the argument to "b" to allow for any pointer name.
 
-Fixes: 1e7d5d849cf4f0c5 ("sh-pfc: Add emev2 pinmux support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+While at it, fix the connector_to_rcar_lvds macro similarly.
+
+Fixes: c6a27fa41fab ("drm: rcar-du: Convert LVDS encoder code to bridge driver")
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+[Fix connector_to_rcar_lvds]
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-emev2.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_lvds.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-emev2.c b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-index 1cbbe04d7df6..eafd8edbcbe9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-emev2.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-emev2.c
-@@ -1263,6 +1263,14 @@ static const char * const dtv_groups[] = {
- 	"dtv_b",
+diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+index 4c39de3f4f0f..b6dc91cdff68 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
++++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
+@@ -59,11 +59,11 @@ struct rcar_lvds {
+ 	enum rcar_lvds_mode mode;
  };
  
-+static const char * const err_rst_reqb_groups[] = {
-+	"err_rst_reqb",
-+};
-+
-+static const char * const ext_clki_groups[] = {
-+	"ext_clki",
-+};
-+
- static const char * const iic0_groups[] = {
- 	"iic0",
- };
-@@ -1285,6 +1293,10 @@ static const char * const lcd_groups[] = {
- 	"yuv3",
- };
+-#define bridge_to_rcar_lvds(bridge) \
+-	container_of(bridge, struct rcar_lvds, bridge)
++#define bridge_to_rcar_lvds(b) \
++	container_of(b, struct rcar_lvds, bridge)
  
-+static const char * const lowpwr_groups[] = {
-+	"lowpwr",
-+};
-+
- static const char * const ntsc_groups[] = {
- 	"ntsc_clk",
- 	"ntsc_data",
-@@ -1298,6 +1310,10 @@ static const char * const pwm1_groups[] = {
- 	"pwm1",
- };
+-#define connector_to_rcar_lvds(connector) \
+-	container_of(connector, struct rcar_lvds, connector)
++#define connector_to_rcar_lvds(c) \
++	container_of(c, struct rcar_lvds, connector)
  
-+static const char * const ref_clko_groups[] = {
-+	"ref_clko",
-+};
-+
- static const char * const sd_groups[] = {
- 	"sd_cki",
- };
-@@ -1391,13 +1407,17 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(cam),
- 	SH_PFC_FUNCTION(cf),
- 	SH_PFC_FUNCTION(dtv),
-+	SH_PFC_FUNCTION(err_rst_reqb),
-+	SH_PFC_FUNCTION(ext_clki),
- 	SH_PFC_FUNCTION(iic0),
- 	SH_PFC_FUNCTION(iic1),
- 	SH_PFC_FUNCTION(jtag),
- 	SH_PFC_FUNCTION(lcd),
-+	SH_PFC_FUNCTION(lowpwr),
- 	SH_PFC_FUNCTION(ntsc),
- 	SH_PFC_FUNCTION(pwm0),
- 	SH_PFC_FUNCTION(pwm1),
-+	SH_PFC_FUNCTION(ref_clko),
- 	SH_PFC_FUNCTION(sd),
- 	SH_PFC_FUNCTION(sdi0),
- 	SH_PFC_FUNCTION(sdi1),
+ static void rcar_lvds_write(struct rcar_lvds *lvds, u32 reg, u32 data)
+ {
 -- 
 2.20.1
 
