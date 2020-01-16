@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB01DC33CB6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A50E6C3F68F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B85F82467A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:10:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CA70246AF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 17:17:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579194613;
-	bh=PJJRRjvM01qG8A3jR/oqv9cop8TjjfoNmIAu3nk6O+w=;
+	s=default; t=1579195078;
+	bh=XEBX5LKGTgkXutyRuySDGSRfdAJUs1xVRWBHLLs2zVk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LY6BGOpflDHK1juRbMI5ZtWsB5LuoWQLNJAwoIXYf/3GsS760Xt1OcsUnXnSimI19
-	 CmSKVc5Y9iZASrHiczRH7gDNjDCadNusgrQa6rLAyWSzcqQS9aZWdZnuY+TCWQpmE1
-	 BFH34P0UJmKEjlrhTOpr1vFNM3PXlZU2v8XqtOUI=
+	b=OY1YyWYk+7mISzYm/bfMn0xoEf6nkBONeNOJwQJ07dGxYoWDEvbomWr9Ec/mPzVQZ
+	 pjKx0WJVdY7FHvBPi8f0D/7UkAY4qkvL6fjiA/+1xiuzoS6PZBBQQ8OOV/V8C7mbPp
+	 n601rq4BX+Hq8591hz/AWnAGK4VqYKZ1b+Hq1z6U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389865AbgAPRKM (ORCPT
+        id S2391316AbgAPRR5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:10:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47694 "EHLO mail.kernel.org"
+        Thu, 16 Jan 2020 12:17:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389249AbgAPRKL (ORCPT
+        id S2391308AbgAPRR4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:10:11 -0500
+        Thu, 16 Jan 2020 12:17:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EEC52081E;
-        Thu, 16 Jan 2020 17:10:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 820A2246B1;
+        Thu, 16 Jan 2020 17:17:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194611;
-        bh=PJJRRjvM01qG8A3jR/oqv9cop8TjjfoNmIAu3nk6O+w=;
+        s=default; t=1579195075;
+        bh=XEBX5LKGTgkXutyRuySDGSRfdAJUs1xVRWBHLLs2zVk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xe6Z4lUOjJ2u76kK3VCiCR5eUpQq+xuZ7mLUEoHKaU5afGPrVdNoKr6FwzUxlV5SN
-         38w6RBamJW4gps98uLRlXuD19C9haT3VW1IItoHlB8zEqPl7NOE5Af2eT/5kJpXVsE
-         MOMDdco1sIDEXpGQhZnZmybVAuOm2xfVqVXAm1wE=
+        b=NoNtHikn77I4+YKORryaXz/EaDK8Bu0TdgdyvPLqUBcCS0sW1rMk1bz2aP3wTuclP
+         nRm5JM0YsUIeIHkfdueZkuQtEdIm1yxu1d6Pcf7SGS5X2TeevB+knsXGG5H/S5IY86
+         J1pXhQ8z89QQ1yXFJlyBzaBGGECw1E3fJD9vD+CQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yoshihiro Kaneko <ykaneko0929@gmail.com>,
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 476/671] arm64: dts: renesas: r8a77995: Fix register range of display node
-Date:   Thu, 16 Jan 2020 12:01:54 -0500
-Message-Id: <20200116170509.12787-213-sashal@kernel.org>
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 026/371] pinctrl: sh-pfc: r8a7791: Remove bogus ctrl marks from qspi_data4_b group
+Date:   Thu, 16 Jan 2020 12:11:34 -0500
+Message-Id: <20200116171719.16965-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
-References: <20200116170509.12787-1-sashal@kernel.org>
+In-Reply-To: <20200116171719.16965-1-sashal@kernel.org>
+References: <20200116171719.16965-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -62,36 +61,37 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Yoshihiro Kaneko <ykaneko0929@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 56d651e890f3befd616b6962a862f5ffa1a514fa ]
+[ Upstream commit 884fa25fb6e5e63ab970d612a628313bb68f37cc ]
 
-Since the R8A77995 SoC uses DU{0,1}, the range from the base address to
-the 0x4000 address is used.
-This patch fixed it.
+The qspi_data4_b_mux[] array contains pin marks for the clock and chip
+select pins.  The qspi_data4_b_pins[] array rightfully does not contain
+the corresponding pin numbers, as the control pins are provided by a
+separate group (qspi_ctrl_b).
 
-Fixes: 18f1a773e3f9e6d1 ("arm64: dts: renesas: r8a77995: add DU support")
-Signed-off-by: Yoshihiro Kaneko <ykaneko0929@gmail.com>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 2d0c386f135e4186 ("pinctrl: sh-pfc: r8a7791: Add QSPI pin groups")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pinctrl/sh-pfc/pfc-r8a7791.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index fe77bc43c447..fb3ecb2c385d 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -938,7 +938,7 @@
- 
- 		du: display@feb00000 {
- 			compatible = "renesas,du-r8a77995";
--			reg = <0 0xfeb00000 0 0x80000>;
-+			reg = <0 0xfeb00000 0 0x40000>;
- 			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 724>,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+index c01ef02d326b..8600ba82f59c 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7791.c
+@@ -3220,8 +3220,7 @@ static const unsigned int qspi_data4_b_pins[] = {
+ 	RCAR_GP_PIN(6, 4),
+ };
+ static const unsigned int qspi_data4_b_mux[] = {
+-	SPCLK_B_MARK, MOSI_IO0_B_MARK, MISO_IO1_B_MARK,
+-	IO2_B_MARK, IO3_B_MARK, SSL_B_MARK,
++	MOSI_IO0_B_MARK, MISO_IO1_B_MARK, IO2_B_MARK, IO3_B_MARK,
+ };
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
 -- 
 2.20.1
 
