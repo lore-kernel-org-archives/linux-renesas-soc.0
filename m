@@ -2,30 +2,30 @@ Return-Path: <SRS0=a7EL=3G=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49520C33CB1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jan 2020 16:06:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF53C33CB8
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jan 2020 16:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29A3520842
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jan 2020 16:06:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F67A20842
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jan 2020 16:06:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729285AbgAQQGK (ORCPT
+        id S1728831AbgAQQGL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Jan 2020 11:06:10 -0500
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:23253 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727043AbgAQQGK (ORCPT
+        Fri, 17 Jan 2020 11:06:11 -0500
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:44100 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729108AbgAQQGL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Jan 2020 11:06:10 -0500
-X-Halon-ID: 446cdcf2-3943-11ea-a00b-005056917a89
+        Fri, 17 Jan 2020 11:06:11 -0500
+X-Halon-ID: 46b97440-3943-11ea-a00b-005056917a89
 Authorized-sender: niklas@soderlund.pp.se
 Received: from bismarck.berto.se (p54ac5d7b.dip0.t-ipconnect.de [84.172.93.123])
         by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
-        id 446cdcf2-3943-11ea-a00b-005056917a89;
-        Fri, 17 Jan 2020 17:06:09 +0100 (CET)
+        id 46b97440-3943-11ea-a00b-005056917a89;
+        Fri, 17 Jan 2020 17:06:10 +0100 (CET)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     linux-pm@vger.kernel.org,
@@ -33,10 +33,12 @@ To:     linux-pm@vger.kernel.org,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v3 0/2] thermal: rcar_{gen3_}thermal: Remove temperature
-Date:   Fri, 17 Jan 2020 17:05:52 +0100
-Message-Id: <20200117160554.3812787-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v3 2/2] thermal: rcar_gen3_thermal: Remove temperature bound
+Date:   Fri, 17 Jan 2020 17:05:54 +0100
+Message-Id: <20200117160554.3812787-3-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200117160554.3812787-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20200117160554.3812787-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,21 +47,37 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+The hardware manual states that the operation of the sensor is not
+guaranteed with temperatures above 125°C, not that the readings are
+invalid. Remove the bound check and try to deliver temperature readings
+even if we are outside the guaranteed operation range.
 
-This series removes the checks that the read out temperature are within
-the guaranteed operation limits described in the hardware manual. It has
-been discussed with the hardware guys and the judgement is that it's
-better to report a best effort temperature instead of failing with -EIO
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+* Changes since v2
+- s/ragne/range/
 
-Niklas Söderlund (2):
-  thermal: rcar_thermal: Remove temperature bound
-  thermal: rcar_gen3_thermal: Remove temperature bound
-
+* Changes since v1
+- Preserve the guaranteed operating range in a comment.
+---
  drivers/thermal/rcar_gen3_thermal.c | 4 +---
- drivers/thermal/rcar_thermal.c      | 7 +------
- 2 files changed, 2 insertions(+), 9 deletions(-)
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 1460cf9d9f1c397b..72877bdc072daaed 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -182,9 +182,7 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
+ 				tsc->coef.a2);
+ 	mcelsius = FIXPT_TO_MCELSIUS(val);
+ 
+-	/* Make sure we are inside specifications */
+-	if ((mcelsius < MCELSIUS(-40)) || (mcelsius > MCELSIUS(125)))
+-		return -EIO;
++	/* Guaranteed operating range is -40C to 125C. */
+ 
+ 	/* Round value to device granularity setting */
+ 	*temp = rcar_gen3_thermal_round(mcelsius);
 -- 
 2.24.1
 
