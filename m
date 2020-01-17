@@ -2,74 +2,64 @@ Return-Path: <SRS0=a7EL=3G=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0CAC3F68F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jan 2020 10:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E3AC33CB1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jan 2020 15:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945CB2082F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jan 2020 10:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 801842073A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jan 2020 15:23:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726855AbgAQKyK (ORCPT
+        id S1728988AbgAQPXK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Jan 2020 05:54:10 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:3183 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726726AbgAQKyJ (ORCPT
+        Fri, 17 Jan 2020 10:23:10 -0500
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:1989 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728831AbgAQPXJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Jan 2020 05:54:09 -0500
-X-IronPort-AV: E=Sophos;i="5.70,329,1574089200"; 
-   d="scan'208";a="36950905"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Jan 2020 19:54:07 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 82F5440104E2;
-        Fri, 17 Jan 2020 19:54:07 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     gregkh@linuxfoundation.org, stern@rowland.harvard.edu,
-        linux@prisktech.co.nz, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 1/2] dt-bindings: usb: generic-ehci: add a quirk property to avoid stuck
-Date:   Fri, 17 Jan 2020 19:54:06 +0900
-Message-Id: <1579258447-28135-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1579258447-28135-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1579258447-28135-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 17 Jan 2020 10:23:09 -0500
+X-Halon-ID: 40b0dbbe-393d-11ea-a00b-005056917a89
+Authorized-sender: niklas@soderlund.pp.se
+Received: from bismarck.berto.se (p54ac5d7b.dip0.t-ipconnect.de [84.172.93.123])
+        by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
+        id 40b0dbbe-393d-11ea-a00b-005056917a89;
+        Fri, 17 Jan 2020 16:23:08 +0100 (CET)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     linux-pm@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 0/2] thermal: rcar_{gen3_}thermal: Remove temperature 
+Date:   Fri, 17 Jan 2020 16:22:40 +0100
+Message-Id: <20200117152242.3804288-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.24.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Since EHCI/OHCI controllers on R-Car Gen3 SoCs are possible to
-be getting stuck very rarely after a full/low usb device was
-disconnected. To detect/recover from such a situation, the controllers
-require a special way which poll the EHCI PORTSC register and changes
-the OHCI functional state.
+Hi,
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- Documentation/devicetree/bindings/usb/generic-ehci.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+This series removes the checks that the read out temperature are within
+the guaranteed operation limits described in the hardware manual. It has
+been discussed with the hardware guys and the judgement is that it's
+better to report a best effort temperature instead of failing with -EIO.
 
-diff --git a/Documentation/devicetree/bindings/usb/generic-ehci.yaml b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-index 10edd05..c3d2dae 100644
---- a/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-+++ b/Documentation/devicetree/bindings/usb/generic-ehci.yaml
-@@ -63,6 +63,11 @@ properties:
-     description:
-       Set this flag to force EHCI reset after resume.
- 
-+  needs-polling-to-avoid-stuck:
-+    $ref: /schemas/types.yaml#/definitions/flag
-+    description:
-+      Set this flag to avoid getting EHCI stuck.
-+
-   companion:
-     $ref: /schemas/types.yaml#/definitions/phandle
-     description:
+Niklas Söderlund (2):
+  thermal: rcar_thermal: Remove temperature bound
+  thermal: rcar_gen3_thermal: Remove temperature bound
+
+ drivers/thermal/rcar_gen3_thermal.c | 4 +---
+ drivers/thermal/rcar_thermal.c      | 7 +------
+ 2 files changed, 2 insertions(+), 9 deletions(-)
+
 -- 
-2.7.4
+2.24.1
 
