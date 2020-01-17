@@ -1,97 +1,128 @@
-Return-Path: <SRS0=Z6Jp=3F=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=a7EL=3G=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E1FC33CAF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 683F5C33CB1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jan 2020 08:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33F80206E6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jan 2020 19:15:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579202111;
-	bh=RIPQ/q5w8QJUc7C++E2s9w8BI6DlcJ5VsmgrPh46V6o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xnVuqy+1xe4DwjnveETufov0Jjuf4JRAdcEJPmex6vWlE4HYFowI4tKfYhk73eMt8
-	 Nd+Y/JTGXQSDrVi3uopmiG7BQmF3IHsPP94hZ7zeCjQAC7VL8O0zNV9G5SMMktmNcS
-	 D/VwlezxgwXDKV8oaYZC2RCSSWEfsoePWXLBYLEA=
+	by mail.kernel.org (Postfix) with ESMTP id 43CDF20748
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jan 2020 08:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733175AbgAPQ4K (ORCPT
+        id S1729501AbgAQIrg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jan 2020 11:56:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42212 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733171AbgAPQ4K (ORCPT
+        Fri, 17 Jan 2020 03:47:36 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41380 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729121AbgAQIrf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:56:10 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A63224686;
-        Thu, 16 Jan 2020 16:56:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193769;
-        bh=RIPQ/q5w8QJUc7C++E2s9w8BI6DlcJ5VsmgrPh46V6o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EHIpG+AmDsudX1Hz9Pt/lmSD2oy4xRhM+QkiOE5wLBmUIzhE/OOg6XUeXIcbF1TiO
-         6Te3ZIViGyxPhh4YP7F/gzUPPfWPoeRKe3uruS1dAuVkhfBFwZsuUOZ6a5CDNyAPLZ
-         eRgMJAnvRc9hFjKjlwEuyXHpZFpMx1Ga7LjOoIkU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 053/671] drm: rcar-du: Fix the return value in case of error in 'rcar_du_crtc_set_crc_source()'
-Date:   Thu, 16 Jan 2020 11:44:44 -0500
-Message-Id: <20200116165502.8838-53-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
-References: <20200116165502.8838-1-sashal@kernel.org>
+        Fri, 17 Jan 2020 03:47:35 -0500
+Received: by mail-ot1-f68.google.com with SMTP id r27so21900856otc.8;
+        Fri, 17 Jan 2020 00:47:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pz6+/xs8T4dEEblCt+UUKFDi8/LXzdFKEsZrzO5UHGk=;
+        b=r6/+skgijbZCUz4LRc7ea9ZAOslUAfkeAdLGC92NNlGGxNk9Kt6oS/9BS5x6F0Lcaq
+         bmPc5GiaoR4t5M/ZMBMWjID73WQgrtI3I+OQUGjPWJrawJ+gbZiEIbCr7aK4DYLxp2CR
+         JNnNmoxobr6RfLGSSlruAOOEMllmmmU63gwZARHwSnSglHa2zw2l+94gRpHELDALk8qm
+         Ei/OWprX6mNTl+hQevKPFOXH4iy4muLatj9P4U5unkFxHcb/hdZmO4fFxShrxthqePKG
+         Vyubc41WmC5Nx1kA7UTgRvVDRxKbqXNf92zS6Mm90WpiPblGiHucHkOuf7aueW/p4H1Q
+         O/wQ==
+X-Gm-Message-State: APjAAAUdxaDOrroi8M+FDpCajkb9Q7WHiVBlrLKXMnC2YcgFJTTm6Wcj
+        mSAsoUmNF4qPKR8e9yWA4a7WuyeUUQzPIIVDyro=
+X-Google-Smtp-Source: APXvYqwPm6MtbyAOSCi9UiBhMZ4PpzpzXrNfcsnaLGfKDZqdHNnurHqn4SJJX9I9yrPnM/Q7dnOgZvD5f79Eq6Wg3as=
+X-Received: by 2002:a05:6830:2141:: with SMTP id r1mr5358243otd.39.1579250854871;
+ Fri, 17 Jan 2020 00:47:34 -0800 (PST)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <1576590361-28244-1-git-send-email-fabrizio.castro@bp.renesas.com> <20191217231326.GG4874@pendragon.ideasonboard.com>
+In-Reply-To: <20191217231326.GG4874@pendragon.ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 17 Jan 2020 09:47:22 +0100
+Message-ID: <CAMuHMdWaZBfsHi9E57B8Mr6QSCATVxpdRtg=9_H-urBaK_iRJw@mail.gmail.com>
+Subject: Re: [PATCH v6 0/6] Add dual-LVDS panel support to EK874
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Sean Paul <sean@poorly.run>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        ebiharaml@si-linux.co.jp
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Hi Laurent,
 
-[ Upstream commit 4d486f18d91b1876040bf87e9ad78981a08b15a6 ]
+(woops, forgot to press sent)
 
-We return 0 unconditionally in 'rcar_du_crtc_set_crc_source()'.
-However, 'ret' is set to some error codes if some function calls fail.
+On Wed, Dec 18, 2019 at 12:13 AM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Tue, Dec 17, 2019 at 01:45:55PM +0000, Fabrizio Castro wrote:
+> > this series adds support for dual-LVDS panel IDK-2121WR
+> > from Advantech:
+> > https://buy.advantech.eu/Displays/Embedded-LCD-Kits-High-Brightness/model-IDK-2121WR-K2FHA2E.htm
+> >
+> > V6 reworks patch "drm: rcar-du: lvds: Allow for even and odd pixels swap",
+> > and rebases the series on top of patch:
+> > https://patchwork.kernel.org/patch/11295991/
+>
+> I've taken patch 1/6 to 4/6 in my tree. I expect Geert to take 6/6. For
+> 5/6, I'll give Rob a chance to review the patch. Sam, could you handle
+> it afterwards ?
 
-Return 'ret' instead to propagate the error code.
+Queuing 6/6 in renesas-devel for v5.6.
 
-Fixes: 47a52d024e89 ("media: drm: rcar-du: Add support for CRC computation")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> > Fabrizio Castro (6):
+> >   drm: of: Add drm_of_lvds_get_dual_link_pixel_order
+> >   drm: rcar-du: lvds: Improve identification of panels
+> >   drm: rcar-du: lvds: Get dual link configuration from DT
+> >   drm: rcar-du: lvds: Allow for even and odd pixels swap
+> >   dt-bindings: display: Add idk-2121wr binding
+> >   arm64: dts: renesas: Add EK874 board with idk-2121wr display support
+> >
+> >  .../display/panel/advantech,idk-2121wr.yaml        | 128 +++++++++++++++
+> >  arch/arm64/boot/dts/renesas/Makefile               |   3 +-
+> >  .../boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts | 116 +++++++++++++
+> >  drivers/gpu/drm/drm_of.c                           | 116 +++++++++++++
+> >  drivers/gpu/drm/rcar-du/rcar_lvds.c                | 180 ++++++++++++---------
+> >  include/drm/drm_of.h                               |  20 +++
+> >  6 files changed, 483 insertions(+), 80 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.yaml
+> >  create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 15dc9caa128b..212e5e11e4b7 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -837,7 +837,7 @@ static int rcar_du_crtc_set_crc_source(struct drm_crtc *crtc,
- 	drm_modeset_drop_locks(&ctx);
- 	drm_modeset_acquire_fini(&ctx);
- 
--	return 0;
-+	return ret;
- }
- 
- static const struct drm_crtc_funcs crtc_funcs_gen2 = {
--- 
-2.20.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
