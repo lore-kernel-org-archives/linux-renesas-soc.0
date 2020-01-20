@@ -2,121 +2,56 @@ Return-Path: <SRS0=8mZC=3J=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4630C2D0DB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jan 2020 12:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D68AC2D0DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jan 2020 12:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B530A21D7E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jan 2020 12:36:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1153521D7E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jan 2020 12:40:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1579524035;
+	bh=71vECiSEQc6qVhI5Y4UPxntDsrIwbU5N+cS7lwUPLQc=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=n7RnkjIU85rKdd8yqIjaVahNVxGJjU0IdlYjcAJpkWXCTgzKFiQFHPXGVG0zHOBnH
+	 2W9W73V/wgtlIE8qn+Agy4OPIBzwr2RkrdUvJo2Jhs7TKNwLdS5yLJJfahhQo5fT0m
+	 icDxoSwItqbYKLGfBEd1AHe7aoRdnQrFGljG1Tag=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgATMgW (ORCPT
+        id S1726738AbgATMke (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Jan 2020 07:36:22 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:32844 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbgATMgW (ORCPT
+        Mon, 20 Jan 2020 07:40:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60972 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726589AbgATMke (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:36:22 -0500
-Received: by mail-oi1-f193.google.com with SMTP id q81so13536099oig.0;
-        Mon, 20 Jan 2020 04:36:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h5LLv85IHqiD9bJHkYVPOat4WjpKlymYmibbM8KDiHI=;
-        b=bfTWbcMSbQdMNztDIHcYD4spp9FUSu9zPcH9ic7I8birk0tW/1CasmhDHemrbrf/hV
-         XGlWPPvj7xyX4G1rIMB5u3O2XNekZxuLNPphvctxffT3wUkgjCX3LzTBaJB93WYiH9Wq
-         jdutMFEpSzeEp11EwI2FmrEzAtpSV6nY4a4qqZngFS6BuK+uWBi9njb13dYnQLddJBzt
-         df/TCo2UP+SF1vMdm7eFLkBq4Iy8fl2LjL94qYQ64Zw9zbiG+xsXiRhysuGlaDzAZKAZ
-         W6kGACSrunTYhT/qO7djJE1VsChBVkStNVuzRQnxoUdtGTaV9I0208Ms9zUzJOgCo7f0
-         7Cdw==
-X-Gm-Message-State: APjAAAVK9WlikJyH7gCLrZ9vLVk39kQ+YTLOK0Oiiob8l+NNoRobJpfF
-        BDEirwaeVaR27h/Jk18hPnY59bIH+aFlscNlE9X/NTyJ
-X-Google-Smtp-Source: APXvYqw6I8qtOuyHTu5+mS/goZMEOclkdUxdtam6G+pmDKAAIhr9OjUJ+zVr5mfvRHGw5EzeX0ZkHm40aSRoXimn9Bg=
-X-Received: by 2002:a05:6808:292:: with SMTP id z18mr12124841oic.131.1579523781652;
- Mon, 20 Jan 2020 04:36:21 -0800 (PST)
+        Mon, 20 Jan 2020 07:40:34 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579524034;
+        bh=71vECiSEQc6qVhI5Y4UPxntDsrIwbU5N+cS7lwUPLQc=;
+        h=Subject:From:Date:To:From;
+        b=gFKx7NNxq60Wawab3Y4IWyOzarSCThNKOzbFvPVszvyff7q4yM//z8kPtuhjT08TR
+         BH1l59yXdf++95onrhQh3R0DBuxYywqUEk606t30K3eRBc1+UHn12JvYKgUi95HTfy
+         /av8AulzbO0XIa4qdW7rQGrRSjzH/jBOmkAg1v+4=
 MIME-Version: 1.0
-References: <20191217104025.23318-1-peter.ujfalusi@ti.com> <CAMuHMdUPhabZrXJ3UqSVTdy2aWf6VG27q287MizKJ5q5tyRnwA@mail.gmail.com>
- <c7eedf72-aa00-8ffe-8c8f-4946a4f54fa7@ti.com>
-In-Reply-To: <c7eedf72-aa00-8ffe-8c8f-4946a4f54fa7@ti.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 20 Jan 2020 13:36:10 +0100
-Message-ID: <CAMuHMdXU9_WY54iU5DY6UHZHmyaR06pW7X0nnyCWHA=R3GtcJA@mail.gmail.com>
-Subject: Re: [PATCH] media: rcar_drif: Use dma_request_chan() instead dma_request_slave_channel()
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
-        Vinod <vkoul@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <157952403415.4278.12799157479101416665.git-patchwork-housekeeping@kernel.org>
+Date:   Mon, 20 Jan 2020 12:40:34 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Peter,
+Latest series: [v2] media: rcar_drif: Use dma_request_chan() instead dma_request_slave_channel() (2020-01-20T12:36:31)
+  Superseding: [v1] media: rcar_drif: Use dma_request_chan() instead dma_request_slave_channel() (2019-12-17T10:40:25):
+    media: rcar_drif: Use dma_request_chan() instead dma_request_slave_channel()
 
-On Mon, Jan 20, 2020 at 1:09 PM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
-> On 20/01/2020 14.05, Geert Uytterhoeven wrote:
-> > On Tue, Dec 17, 2019 at 11:41 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
-> >> dma_request_slave_channel() is a wrapper on top of dma_request_chan()
-> >> eating up the error code.
-> >>
-> >> By using dma_request_chan() directly the driver can support deferred
-> >> probing against DMA.
-> >>
-> >> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > One comment below.
-> >
-> >> --- a/drivers/media/platform/rcar_drif.c
-> >> +++ b/drivers/media/platform/rcar_drif.c
-> >> @@ -275,10 +275,10 @@ static int rcar_drif_alloc_dmachannels(struct rcar_drif_sdr *sdr)
-> >>         for_each_rcar_drif_channel(i, &sdr->cur_ch_mask) {
-> >>                 struct rcar_drif *ch = sdr->ch[i];
-> >>
-> >> -               ch->dmach = dma_request_slave_channel(&ch->pdev->dev, "rx");
-> >> -               if (!ch->dmach) {
-> >> +               ch->dmach = dma_request_chan(&ch->pdev->dev, "rx");
-> >> +               if (IS_ERR(ch->dmach)) {
-> >>                         rdrif_err(sdr, "ch%u: dma channel req failed\n", i);
-> >
-> > Now there is an error code, you might (1) want to print it, and (2) only
-> > do so when it is not due to probe deferral:
-> >
-> >         if (PTR_ERR(ch->dmach) != -EPROBE_DEFER)
-> >                 rdrif_err(sdr, "ch%u: dma channel req failed %pe\n",
-> > i, ch->dmach);
->
-> Yes, this is true.
->
-> >
-> >> -                       ret = -ENODEV;
-> >> +                       ret = PTR_ERR(ch->dmach);
->
-> if (ret != -EPROBE_DEFER)
->         rdrif_err(sdr, "ch%u: dma channel req failed (%d)\n", i, ret);
->
-> might be simpler.
-
-Sure, checking ret is simpler.
-But printing ch->dmach means you can use the new %pe format specifier
-to pretty-print the error code.
-
-Gr{oetje,eeting}s,
-
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
