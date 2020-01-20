@@ -2,167 +2,115 @@ Return-Path: <SRS0=8mZC=3J=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 706DCC2D0DB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jan 2020 12:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D52B7C2D0DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jan 2020 12:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE2820882
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jan 2020 12:14:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3A9421D7E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Jan 2020 12:35:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ahlzDhBQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbgATMOz (ORCPT
+        id S1726860AbgATMf7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Jan 2020 07:14:55 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:53928 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbgATMOy (ORCPT
+        Mon, 20 Jan 2020 07:35:59 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56054 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbgATMf7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Jan 2020 07:14:54 -0500
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id C7E013C00C5;
-        Mon, 20 Jan 2020 13:14:50 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Bta2hz3l_WGv; Mon, 20 Jan 2020 13:14:42 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id AC1BB3C04C1;
-        Mon, 20 Jan 2020 13:14:42 +0100 (CET)
-Received: from lxhi-065.adit-jv.com (10.72.93.66) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Mon, 20 Jan
- 2020 13:14:42 +0100
-Date:   Mon, 20 Jan 2020 13:14:39 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v3 0/7] gpio: Add GPIO Aggregator/Repeater
-Message-ID: <20200120121439.GA24951@lxhi-065.adit-jv.com>
-References: <20191127084253.16356-1-geert+renesas@glider.be>
- <20200118014632.GA14644@lxhi-065.adit-jv.com>
- <CAMuHMdUUc17n0TxOrtQNby+ZiHDpz-aEh-ncnkz50vcwQe6z6w@mail.gmail.com>
+        Mon, 20 Jan 2020 07:35:59 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00KCZsje062199;
+        Mon, 20 Jan 2020 06:35:54 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579523754;
+        bh=m+zTuRnfuAntSFFi0NvmMn8KC9SHkTO7IO7+B4/ZUJo=;
+        h=From:To:CC:Subject:Date;
+        b=ahlzDhBQT2oRSfOHOMYboJUmnydPvx2wVToARkTASScwgTaMyRTz3SVZRC0Nyxh6R
+         fHDHdURuwYyiweARqvkuIIHHgFg5KvWG+uhGo88nGi8nO7oMVfcpzv91Hbg+OdAa94
+         tISmyuy/2sZEQFLJIBtzKv1WBzXIQUlNdUtDeSbE=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00KCZsFA113501
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 20 Jan 2020 06:35:54 -0600
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 20
+ Jan 2020 06:35:53 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 20 Jan 2020 06:35:53 -0600
+Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00KCZp1f027202;
+        Mon, 20 Jan 2020 06:35:51 -0600
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <mchehab@kernel.org>, <rashanmu@gmail.com>, <geert@linux-m68k.org>
+CC:     <vkoul@kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH v2] media: rcar_drif: Use dma_request_chan() instead dma_request_slave_channel()
+Date:   Mon, 20 Jan 2020 14:36:31 +0200
+Message-ID: <20200120123631.24799-1-peter.ujfalusi@ti.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUUc17n0TxOrtQNby+ZiHDpz-aEh-ncnkz50vcwQe6z6w@mail.gmail.com>
-X-Originating-IP: [10.72.93.66]
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+dma_request_slave_channel() is a wrapper on top of dma_request_chan()
+eating up the error code.
 
-On Mon, Jan 20, 2020 at 10:33:53AM +0100, Geert Uytterhoeven wrote:
-> On Sat, Jan 18, 2020 at 2:46 AM Eugeniu Rosca <erosca@de.adit-jv.com> wrote:
-> > The only unexpected thing is seeing below messages (where gpiochip99 and
-> > gpiochip22 are inexisting gpiochip names, mistakenly provided on command
-> > line prior to passing the correct name):
-> >
-> > root@rcar-gen3:~# echo gpiochip6 12-13 > /sys/bus/platform/drivers/gpio-aggregator/new_device
-> > [  915.572905] gpio-aggregator gpio-aggregator.0: cannot find GPIO chip gpiochip99, deferring
-> > [  915.584224] gpio-aggregator gpio-aggregator.2: cannot find GPIO chip gpiochip99, deferring
-> > [  915.865281] gpio-aggregator gpio-aggregator.29: cannot find GPIO chip gpiochip22, deferring
-> >
-> > Obviously, in the above case, due to a typo in the names, the gpio
-> > chips will never be found, no matter how long gpio-aggregator defers
-> 
-> Indeed, that is expected behavior: you have created platform devices
-> referring to resources that are not available.
+By using dma_request_chan() directly the driver can support deferred
+probing against DMA.
 
-Got it. Sounds reasonable to me.
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Hi,
 
-> 
-> > their probing. Unfortunately, the driver will continuously emit those
-> > messages, upon each successfully created/aggregated gpiochip. I built
-> 
-> That is expected behavior, too: every time the driver core manages to
-> bind a device to a driver, it will retry all previously deferred probes,
-> in the hope they can be satisfied by the just bound device.
-> 
-> Note that you can destroy these bogus devices, using e.g.
-> 
->     # echo gpio-aggregator.0 > \
->     /sys/bus/platform/drivers/gpio-aggregator/delete_device
+Changes since v1:
+- Do not print error in case of EPROBE_DEFER
+- Added Reviewed-by from Geert
 
-Yep, I can get rid of the bogus devices this way. Thanks!
+Regards,
+Peter
 
-> 
-> > gpio-aggregator as a loadable module, if that's relevant.
-> 
-> Modular or non-modular shouldn't matter w.r.t. this behavior.
-> Although unloading the module should get rid of the cruft.
+ drivers/media/platform/rcar_drif.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-Yes, indeed!
-
-> 
-> > Another comment is that, while the series _does_ allow specifying
-> > gpio lines in the DTS (this would require a common compatible string
-> > in gpio_aggregator_dt_ids[] and in the DTS node) and while those lines
-> > are indeed exposed to userspace, based on my testing, these same gpio
-> > lines are marked as "used/reserved" by the kernel. This means that
-> > operating on those gpio pins from userspace will not be possible.
-> > For instance, gpioget/gpioset return "Device or resource busy":
-> >
-> > gpioget: error reading GPIO values: Device or resource busy
-> > gpioset: error setting the GPIO line values: Device or resource busy
-> >
-> > I guess Harish will be unhappy about that, as his expectation was that
-> > upon merging gpio-aggregator with gpio-inverter, he will be able to
-> > describe GPIO polarity and names in DTS without "hogging" the pins.
-> > Perhaps this can be supplemented via an add-on patch later on?
-> 
-> When aggregating GPIO lines, the original GPIO lines are indeed marked
-> used/reserved, so you cannot use them from userspace.
-> However, you are expected to use them through the newly created virtual
-> gpiochip representing the aggregated GPIO lines.
-> 
-> You can try this using the "door" example in
-> Documentation/admin-guide/gpio/gpio-aggregator.rst, after replacing
-> gpio2 {19,20} by gpio6 {12,13} to suit your H3ULCB.
-
-Confirmed. The example works like a charm. One difference between
-the runtime-created and DTS-created gpiochips is the name:
- - gpio-aggregator.<number>, for the ones created via sysfs
- - <name-of-DTS-node>, for the ones created via DTS
-
-Seeing this behavior on my target, I believe the expectations of
-Harish should be met w/o any major limitations.
-
-> 
-> > For the whole series (leaving the above findings to your discretion):
-> >
-> > Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-> > Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-
-The recent [v3] discussion actually applies to [v4], for which I did
-review and testing. Will relay the signatures to the latest version.
-
-Thank you very much.
-
+diff --git a/drivers/media/platform/rcar_drif.c b/drivers/media/platform/rcar_drif.c
+index 0f267a237b42..33251f4bf181 100644
+--- a/drivers/media/platform/rcar_drif.c
++++ b/drivers/media/platform/rcar_drif.c
+@@ -275,10 +275,13 @@ static int rcar_drif_alloc_dmachannels(struct rcar_drif_sdr *sdr)
+ 	for_each_rcar_drif_channel(i, &sdr->cur_ch_mask) {
+ 		struct rcar_drif *ch = sdr->ch[i];
+ 
+-		ch->dmach = dma_request_slave_channel(&ch->pdev->dev, "rx");
+-		if (!ch->dmach) {
+-			rdrif_err(sdr, "ch%u: dma channel req failed\n", i);
+-			ret = -ENODEV;
++		ch->dmach = dma_request_chan(&ch->pdev->dev, "rx");
++		if (IS_ERR(ch->dmach)) {
++			ret = PTR_ERR(ch->dmach);
++			if (ret != -EPROBE_DEFER)
++				rdrif_err(sdr,
++					  "ch%u: dma channel req failed (%d)\n",
++					  i, ret);
+ 			goto dmach_error;
+ 		}
+ 
 -- 
-Best Regards,
-Eugeniu
+Peter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
