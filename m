@@ -6,92 +6,93 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E399C33CB7
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 18:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A7E0C2D0DB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 20:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B68020661
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 18:41:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3B1B20716
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 20:37:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbgA2SlE (ORCPT
+        id S1726708AbgA2Uh0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 29 Jan 2020 13:41:04 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:42889 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727523AbgA2SlE (ORCPT
+        Wed, 29 Jan 2020 15:37:26 -0500
+Received: from sauhun.de ([88.99.104.3]:41378 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726672AbgA2Uh0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Jan 2020 13:41:04 -0500
-X-IronPort-AV: E=Sophos;i="5.70,378,1574089200"; 
-   d="scan'208";a="37715617"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 30 Jan 2020 03:41:03 +0900
-Received: from marian-VirtualBox.ree.adwin.renesas.com (unknown [10.226.36.164])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8836E4007F2E;
-        Thu, 30 Jan 2020 03:41:02 +0900 (JST)
-From:   Marian-Cristian Rotariu 
-        <marian-cristian.rotariu.rb@bp.renesas.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Chris Paterson <chris.paterson2@renesas.com>,
-        prabhakar.mahadev-lad.rj@bp.renesas.com,
-        Marian-Cristian Rotariu 
-        <marian-cristian.rotariu.rb@bp.renesas.com>
-Subject: [PATCH 2/2] ARM: dts: iwg22d-sodimm: disable lcd for extension board
-Date:   Wed, 29 Jan 2020 18:40:53 +0000
-Message-Id: <1580323253-3281-3-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580323253-3281-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
-References: <1580323253-3281-1-git-send-email-marian-cristian.rotariu.rb@bp.renesas.com>
+        Wed, 29 Jan 2020 15:37:26 -0500
+Received: from localhost (p5486CF2C.dip0.t-ipconnect.de [84.134.207.44])
+        by pokefinder.org (Postfix) with ESMTPSA id B03932C28B4;
+        Wed, 29 Jan 2020 21:37:24 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-mmc@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 3/6] mmc: tmio: give callback a generic name
+Date:   Wed, 29 Jan 2020 21:37:06 +0100
+Message-Id: <20200129203709.30493-4-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200129203709.30493-1-wsa+renesas@sang-engineering.com>
+References: <20200129203709.30493-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The two variants of the iW-G22D should be mutually exclusive, therefore
-this patch disables the RGB LCD display when the HDMI extension board is
-used.
+check_scc_error() is too Renesas specific. Let's just call it
+check_retune() to make it also easier understandable what it does.
+Only a rename, no functional change.
 
-Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts | 13 +++++++++++++
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts         |  2 +-
- 2 files changed, 14 insertions(+), 1 deletion(-)
+ drivers/mmc/host/renesas_sdhi_core.c | 2 +-
+ drivers/mmc/host/tmio_mmc.h          | 2 +-
+ drivers/mmc/host/tmio_mmc_core.c     | 4 ++--
+ 3 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-index 2aeebfc..cb76469 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts
-@@ -108,6 +108,19 @@
- 	};
- };
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index d63aeb35bd0b..24ee8ac1fe21 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -899,7 +899,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
  
-+&lcd_panel {
-+	status = "disabled";
-+
-+	/* null reference to get rid of the dtc warning */
-+	ports {
-+		port@0 {
-+			endpoint {
-+				remote-endpoint = <0>;
-+			};
-+		};
-+	};
-+};
-+
- &pfc {
- 	can1_pins: can1 {
- 		groups = "can1_data_b";
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 878113a..444adc6 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -98,7 +98,7 @@
- 		pinctrl-names = "default";
- 	};
+ 		host->execute_tuning = renesas_sdhi_execute_tuning;
+ 		host->select_tuning = renesas_sdhi_select_tuning;
+-		host->check_scc_error = renesas_sdhi_check_scc_error;
++		host->check_retune = renesas_sdhi_check_scc_error;
+ 		host->prepare_hs400_tuning =
+ 			renesas_sdhi_prepare_hs400_tuning;
+ 		host->hs400_downgrade = renesas_sdhi_disable_scc;
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index bfebbe368f02..bdb9973981ff 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -176,7 +176,7 @@ struct tmio_mmc_host {
+ 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
+ 	void (*reset)(struct tmio_mmc_host *host);
+ 	void (*hw_reset)(struct tmio_mmc_host *host);
+-	bool (*check_scc_error)(struct tmio_mmc_host *host);
++	bool (*check_retune)(struct tmio_mmc_host *host);
  
--	lcd {
-+	lcd_panel: lcd {
- 		compatible = "edt,etm043080dh6gp", "simple-panel";
- 		power-supply = <&vccq_panel>;
+ 	/*
+ 	 * Mandatory callback for tuning to occur which is optional for SDR50
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 593f88cafb6e..3cacb516a66e 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -818,8 +818,8 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
+ 	if (mrq->cmd->error || (mrq->data && mrq->data->error))
+ 		tmio_mmc_abort_dma(host);
  
+-	/* SCC error means retune, but executed command was still successful */
+-	if (host->check_scc_error && host->check_scc_error(host))
++	/* Error means retune, but executed command was still successful */
++	if (host->check_retune && host->check_retune(host))
+ 		mmc_retune_needed(host->mmc);
+ 
+ 	/* If SET_BLOCK_COUNT, continue with main command */
 -- 
-2.7.4
+2.20.1
 
