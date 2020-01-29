@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6ECFC3524A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 20:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB20C33CB7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 20:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 837B6207FD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 20:37:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 806FC20716
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 20:37:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726259AbgA2Uh3 (ORCPT
+        id S1727025AbgA2Uh3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 29 Jan 2020 15:37:29 -0500
-Received: from sauhun.de ([88.99.104.3]:41392 "EHLO pokefinder.org"
+Received: from sauhun.de ([88.99.104.3]:41406 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726618AbgA2Uh2 (ORCPT
+        id S1726847AbgA2Uh3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Jan 2020 15:37:28 -0500
+        Wed, 29 Jan 2020 15:37:29 -0500
 Received: from localhost (p5486CF2C.dip0.t-ipconnect.de [84.134.207.44])
-        by pokefinder.org (Postfix) with ESMTPSA id 77EA32C28B7;
-        Wed, 29 Jan 2020 21:37:26 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id 564E92C28AC;
+        Wed, 29 Jan 2020 21:37:27 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-mmc@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 4/6] mmc: tmio: enforce retune after runtime suspend
-Date:   Wed, 29 Jan 2020 21:37:07 +0100
-Message-Id: <20200129203709.30493-5-wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 6/6] mmc: tmio: remove superfluous callback wrappers
+Date:   Wed, 29 Jan 2020 21:37:09 +0100
+Message-Id: <20200129203709.30493-7-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200129203709.30493-1-wsa+renesas@sang-engineering.com>
 References: <20200129203709.30493-1-wsa+renesas@sang-engineering.com>
@@ -41,74 +41,119 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Currently, select_tuning() is called after RPM resume. But
-select_tuning() needs some additional function calls to work correctly.
-Instead of reimplementing the whole postprocessing, just enforce
-retuning.
+After various refactoring, we can populate the mmc_ops callbacks
+directly and don't need to have wrappers for them anymore.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-
-I couldn't trigger RPM suspend even with debug code. Shimoda-san said
-it should only occur with removed cards which is not so easy with
-soldered eMMC. For those cases, I think the aproach taken here is fine.
-Needs more discussion, though, to make sure...
-
- drivers/mmc/host/renesas_sdhi_core.c | 1 -
- drivers/mmc/host/tmio_mmc.h          | 1 -
- drivers/mmc/host/tmio_mmc_core.c     | 8 +-------
- 3 files changed, 1 insertion(+), 9 deletions(-)
+ drivers/mmc/host/renesas_sdhi_core.c | 18 ++++++++++------
+ drivers/mmc/host/tmio_mmc_core.c     | 32 +---------------------------
+ 2 files changed, 12 insertions(+), 38 deletions(-)
 
 diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 24ee8ac1fe21..0c9e5e010bda 100644
+index 22eaabe513d0..0f07cc1aee34 100644
 --- a/drivers/mmc/host/renesas_sdhi_core.c
 +++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -898,7 +898,6 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 			dev_warn(&host->pdev->dev, "Unknown clock rate for tuning\n");
+@@ -321,8 +321,9 @@ static unsigned int renesas_sdhi_init_tuning(struct tmio_mmc_host *host)
+ 		SH_MOBILE_SDHI_SCC_DTCNTL_TAPNUM_MASK;
+ }
+ 
+-static void renesas_sdhi_hs400_complete(struct tmio_mmc_host *host)
++static void renesas_sdhi_hs400_complete(struct mmc_host *mmc)
+ {
++	struct tmio_mmc_host *host = mmc_priv(mmc);
+ 	struct renesas_sdhi *priv = host_to_priv(host);
+ 
+ 	sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, ~CLK_CTL_SCLKEN &
+@@ -376,8 +377,9 @@ static void renesas_sdhi_reset_scc(struct tmio_mmc_host *host,
+ 				     SH_MOBILE_SDHI_SCC_CKSEL));
+ }
+ 
+-static void renesas_sdhi_disable_scc(struct tmio_mmc_host *host)
++static void renesas_sdhi_disable_scc(struct mmc_host *mmc)
+ {
++	struct tmio_mmc_host *host = mmc_priv(mmc);
+ 	struct renesas_sdhi *priv = host_to_priv(host);
+ 
+ 	renesas_sdhi_reset_scc(host, priv);
+@@ -412,9 +414,12 @@ static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
+ 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
+ }
+ 
+-static void renesas_sdhi_prepare_hs400_tuning(struct tmio_mmc_host *host)
++static int renesas_sdhi_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_ios *ios)
+ {
++	struct tmio_mmc_host *host = mmc_priv(mmc);
++
+ 	renesas_sdhi_reset_hs400_mode(host, host_to_priv(host));
++	return 0;
+ }
+ 
+ #define SH_MOBILE_SDHI_MAX_TAP 3
+@@ -899,10 +904,9 @@ int renesas_sdhi_probe(struct platform_device *pdev,
  
  		host->execute_tuning = renesas_sdhi_execute_tuning;
--		host->select_tuning = renesas_sdhi_select_tuning;
  		host->check_retune = renesas_sdhi_check_scc_error;
- 		host->prepare_hs400_tuning =
- 			renesas_sdhi_prepare_hs400_tuning;
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index bdb9973981ff..b6fffd3d2650 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -183,7 +183,6 @@ struct tmio_mmc_host {
- 	 * and mandatory for SDR104.
- 	 */
- 	int (*execute_tuning)(struct tmio_mmc_host *host, u32 opcode);
--	int (*select_tuning)(struct tmio_mmc_host *host);
+-		host->prepare_hs400_tuning =
+-			renesas_sdhi_prepare_hs400_tuning;
+-		host->hs400_downgrade = renesas_sdhi_disable_scc;
+-		host->hs400_complete = renesas_sdhi_hs400_complete;
++		host->ops.prepare_hs400_tuning = renesas_sdhi_prepare_hs400_tuning;
++		host->ops.hs400_downgrade = renesas_sdhi_disable_scc;
++		host->ops.hs400_complete = renesas_sdhi_hs400_complete;
+ 	}
  
- 	/* Tuning values: 1 for success, 0 for failure */
- 	DECLARE_BITMAP(taps, BITS_PER_BYTE * sizeof(long));
+ 	num_irqs = platform_irq_count(pdev);
 diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 3cacb516a66e..aeafa1c68ce2 100644
+index aeafa1c68ce2..a2415fb5dde0 100644
 --- a/drivers/mmc/host/tmio_mmc_core.c
 +++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -1302,11 +1302,6 @@ int tmio_mmc_host_runtime_suspend(struct device *dev)
+@@ -997,34 +997,7 @@ static int tmio_multi_io_quirk(struct mmc_card *card,
+ 	return blk_size;
  }
- EXPORT_SYMBOL_GPL(tmio_mmc_host_runtime_suspend);
  
--static bool tmio_mmc_can_retune(struct tmio_mmc_host *host)
+-static int tmio_mmc_prepare_hs400_tuning(struct mmc_host *mmc,
+-					 struct mmc_ios *ios)
 -{
--	return host->tap_num && mmc_can_retune(host->mmc);
+-	struct tmio_mmc_host *host = mmc_priv(mmc);
+-
+-	if (host->prepare_hs400_tuning)
+-		host->prepare_hs400_tuning(host);
+-
+-	return 0;
 -}
 -
- int tmio_mmc_host_runtime_resume(struct device *dev)
- {
- 	struct tmio_mmc_host *host = dev_get_drvdata(dev);
-@@ -1323,8 +1318,7 @@ int tmio_mmc_host_runtime_resume(struct device *dev)
+-static void tmio_mmc_hs400_downgrade(struct mmc_host *mmc)
+-{
+-	struct tmio_mmc_host *host = mmc_priv(mmc);
+-
+-	if (host->hs400_downgrade)
+-		host->hs400_downgrade(host);
+-}
+-
+-static void tmio_mmc_hs400_complete(struct mmc_host *mmc)
+-{
+-	struct tmio_mmc_host *host = mmc_priv(mmc);
+-
+-	if (host->hs400_complete)
+-		host->hs400_complete(host);
+-}
+-
+-static const struct mmc_host_ops tmio_mmc_ops = {
++static struct mmc_host_ops tmio_mmc_ops = {
+ 	.request	= tmio_mmc_request,
+ 	.set_ios	= tmio_mmc_set_ios,
+ 	.get_ro         = tmio_mmc_get_ro,
+@@ -1033,9 +1006,6 @@ static const struct mmc_host_ops tmio_mmc_ops = {
+ 	.multi_io_quirk	= tmio_multi_io_quirk,
+ 	.hw_reset	= tmio_mmc_hw_reset,
+ 	.execute_tuning = tmio_mmc_execute_tuning,
+-	.prepare_hs400_tuning = tmio_mmc_prepare_hs400_tuning,
+-	.hs400_downgrade = tmio_mmc_hs400_downgrade,
+-	.hs400_complete	= tmio_mmc_hs400_complete,
+ };
  
- 	tmio_mmc_enable_dma(host, true);
- 
--	if (tmio_mmc_can_retune(host) && host->select_tuning(host))
--		dev_warn(&host->pdev->dev, "Tuning selection failed\n");
-+	mmc_retune_needed(host->mmc);
- 
- 	return 0;
- }
+ static int tmio_mmc_init_ocr(struct tmio_mmc_host *host)
 -- 
 2.20.1
 
