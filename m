@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E413DC35248
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 20:37:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66937C2D0DB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 20:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C61C020716
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 20:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3668D20702
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Jan 2020 20:37:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbgA2Uh1 (ORCPT
+        id S1726955AbgA2Uh2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 29 Jan 2020 15:37:27 -0500
-Received: from sauhun.de ([88.99.104.3]:41358 "EHLO pokefinder.org"
+        Wed, 29 Jan 2020 15:37:28 -0500
+Received: from sauhun.de ([88.99.104.3]:41402 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726259AbgA2Uh1 (ORCPT
+        id S1726259AbgA2Uh2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 29 Jan 2020 15:37:27 -0500
+        Wed, 29 Jan 2020 15:37:28 -0500
 Received: from localhost (p5486CF2C.dip0.t-ipconnect.de [84.134.207.44])
-        by pokefinder.org (Postfix) with ESMTPSA id CB3322C28AC;
-        Wed, 29 Jan 2020 21:37:23 +0100 (CET)
+        by pokefinder.org (Postfix) with ESMTPSA id E95902C06AB;
+        Wed, 29 Jan 2020 21:37:26 +0100 (CET)
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-mmc@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 1/6] mmc: tmio: refactor tuning execution into SDHI driver
-Date:   Wed, 29 Jan 2020 21:37:04 +0100
-Message-Id: <20200129203709.30493-2-wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH 5/6] mmc: tmio: factor out TAP usage
+Date:   Wed, 29 Jan 2020 21:37:08 +0100
+Message-Id: <20200129203709.30493-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200129203709.30493-1-wsa+renesas@sang-engineering.com>
 References: <20200129203709.30493-1-wsa+renesas@sang-engineering.com>
@@ -41,156 +41,160 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Move Renesas specific code for executing the tuning with a SCC into the
-SDHI driver and leave only a generic call in the TMIO driver. Simplify
-the code a little by removing init_tuning() and prepare_tuning()
-callbacks. The latter is directly folded into the new execute_tuning()
-callbacks.
+TAPs are Renesas SDHI specific. Now that we moved all handling to the
+SDHI core, we can also move the definitions from the TMIO struct to the
+SDHI one.
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/mmc/host/renesas_sdhi_core.c | 45 ++++++++++++++++++++--------
- drivers/mmc/host/tmio_mmc.h          |  3 +-
- drivers/mmc/host/tmio_mmc_core.c     | 33 +++-----------------
- 3 files changed, 37 insertions(+), 44 deletions(-)
+ drivers/mmc/host/renesas_sdhi.h      |  5 ++++
+ drivers/mmc/host/renesas_sdhi_core.c | 38 ++++++++++++++--------------
+ drivers/mmc/host/tmio_mmc.h          |  5 ----
+ 3 files changed, 24 insertions(+), 24 deletions(-)
 
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index 11a0b2bca3aa..7a1a741547f2 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -58,6 +58,11 @@ struct renesas_sdhi {
+ 	u32 scc_tappos;
+ 	u32 scc_tappos_hs400;
+ 	bool doing_tune;
++
++	/* Tuning values: 1 for success, 0 for failure */
++	DECLARE_BITMAP(taps, BITS_PER_BYTE * sizeof(long));
++	unsigned int tap_num;
++	unsigned long tap_set;
+ };
+ 
+ #define host_to_priv(host) \
 diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 6a112454ca26..b3ab66f963f8 100644
+index 0c9e5e010bda..22eaabe513d0 100644
 --- a/drivers/mmc/host/renesas_sdhi_core.c
 +++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -321,17 +321,6 @@ static unsigned int renesas_sdhi_init_tuning(struct tmio_mmc_host *host)
- 		SH_MOBILE_SDHI_SCC_DTCNTL_TAPNUM_MASK;
- }
+@@ -354,7 +354,7 @@ static void renesas_sdhi_hs400_complete(struct tmio_mmc_host *host)
  
--static void renesas_sdhi_prepare_tuning(struct tmio_mmc_host *host,
--					unsigned long tap)
--{
--	struct renesas_sdhi *priv = host_to_priv(host);
--
--	priv->doing_tune = true;
--
--	/* Set sampling clock position */
--	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET, tap);
--}
--
- static void renesas_sdhi_hs400_complete(struct tmio_mmc_host *host)
- {
+ 	if (priv->quirks && priv->quirks->hs400_4taps)
+ 		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET,
+-			       host->tap_set / 2);
++			       priv->tap_set / 2);
+ 
+ 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_CKSEL,
+ 		       SH_MOBILE_SDHI_SCC_CKSEL_DTSEL |
+@@ -438,11 +438,11 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
+ 	 * result requiring the tap to be good in both runs before
+ 	 * considering it for tuning selection.
+ 	 */
+-	for (i = 0; i < host->tap_num * 2; i++) {
+-		int offset = host->tap_num * (i < host->tap_num ? 1 : -1);
++	for (i = 0; i < priv->tap_num * 2; i++) {
++		int offset = priv->tap_num * (i < priv->tap_num ? 1 : -1);
+ 
+-		if (!test_bit(i, host->taps))
+-			clear_bit(i + offset, host->taps);
++		if (!test_bit(i, priv->taps))
++			clear_bit(i + offset, priv->taps);
+ 	}
+ 
+ 	/*
+@@ -454,8 +454,8 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
+ 	ntap = 0;
+ 	tap_start = 0;
+ 	tap_end = 0;
+-	for (i = 0; i < host->tap_num * 2; i++) {
+-		if (test_bit(i, host->taps)) {
++	for (i = 0; i < priv->tap_num * 2; i++) {
++		if (test_bit(i, priv->taps)) {
+ 			ntap++;
+ 		} else {
+ 			if (ntap > tap_cnt) {
+@@ -474,12 +474,12 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
+ 	}
+ 
+ 	if (tap_cnt >= SH_MOBILE_SDHI_MAX_TAP)
+-		host->tap_set = (tap_start + tap_end) / 2 % host->tap_num;
++		priv->tap_set = (tap_start + tap_end) / 2 % priv->tap_num;
+ 	else
+ 		return -EIO;
+ 
+ 	/* Set SCC */
+-	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET, host->tap_set);
++	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET, priv->tap_set);
+ 
+ 	/* Enable auto re-tuning */
+ 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL,
+@@ -494,27 +494,27 @@ static int renesas_sdhi_execute_tuning(struct tmio_mmc_host *host, u32 opcode)
  	struct renesas_sdhi *priv = host_to_priv(host);
-@@ -500,6 +489,37 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
- 	return 0;
- }
+ 	int i, ret;
  
-+static int renesas_sdhi_execute_tuning(struct tmio_mmc_host *host, u32 opcode)
-+{
-+	struct renesas_sdhi *priv = host_to_priv(host);
-+	int i, ret;
-+
-+	host->tap_num = renesas_sdhi_init_tuning(host);
-+	if (!host->tap_num)
-+		return 0; /* Tuning is not supported */
-+
-+	if (host->tap_num * 2 >= sizeof(host->taps) * BITS_PER_BYTE) {
-+		dev_warn_once(&host->pdev->dev,
-+			"Too many taps, skipping tuning. Please consider updating size of taps field of tmio_mmc_host\n");
-+		return 0;
-+	}
-+
-+	priv->doing_tune = true;
-+	bitmap_zero(host->taps, host->tap_num * 2);
-+
-+	/* Issue CMD19 twice for each tap */
-+	for (i = 0; i < 2 * host->tap_num; i++) {
-+		/* Set sampling clock position */
-+		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET, i % host->tap_num);
-+
-+		ret = mmc_send_tuning(host->mmc, opcode, NULL);
-+		if (ret == 0)
-+			set_bit(i, host->taps);
-+	}
-+
-+	return renesas_sdhi_select_tuning(host);
-+}
-+
+-	host->tap_num = renesas_sdhi_init_tuning(host);
+-	if (!host->tap_num)
++	priv->tap_num = renesas_sdhi_init_tuning(host);
++	if (!priv->tap_num)
+ 		return 0; /* Tuning is not supported */
+ 
+-	if (host->tap_num * 2 >= sizeof(host->taps) * BITS_PER_BYTE) {
++	if (priv->tap_num * 2 >= sizeof(priv->taps) * BITS_PER_BYTE) {
+ 		dev_err(&host->pdev->dev,
+ 			"Too many taps, please update 'taps' in tmio_mmc_host!\n");
+ 		return -EINVAL;
+ 	}
+ 
+ 	priv->doing_tune = true;
+-	bitmap_zero(host->taps, host->tap_num * 2);
++	bitmap_zero(priv->taps, priv->tap_num * 2);
+ 
+ 	/* Issue CMD19 twice for each tap */
+-	for (i = 0; i < 2 * host->tap_num; i++) {
++	for (i = 0; i < 2 * priv->tap_num; i++) {
+ 		/* Set sampling clock position */
+-		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET, i % host->tap_num);
++		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET, i % priv->tap_num);
+ 
+ 		ret = mmc_send_tuning(host->mmc, opcode, NULL);
+ 		if (ret == 0)
+-			set_bit(i, host->taps);
++			set_bit(i, priv->taps);
+ 	}
+ 
+ 	return renesas_sdhi_select_tuning(host);
+@@ -523,7 +523,7 @@ static int renesas_sdhi_execute_tuning(struct tmio_mmc_host *host, u32 opcode)
  static bool renesas_sdhi_manual_correction(struct tmio_mmc_host *host, bool use_4tap)
  {
  	struct renesas_sdhi *priv = host_to_priv(host);
-@@ -877,8 +897,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 		if (!hit)
- 			dev_warn(&host->pdev->dev, "Unknown clock rate for tuning\n");
+-	unsigned long new_tap = host->tap_set;
++	unsigned long new_tap = priv->tap_set;
+ 	u32 val;
  
--		host->init_tuning = renesas_sdhi_init_tuning;
--		host->prepare_tuning = renesas_sdhi_prepare_tuning;
-+		host->execute_tuning = renesas_sdhi_execute_tuning;
- 		host->select_tuning = renesas_sdhi_select_tuning;
- 		host->check_scc_error = renesas_sdhi_check_scc_error;
- 		host->prepare_hs400_tuning =
+ 	val = sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSREQ);
+@@ -560,9 +560,9 @@ static bool renesas_sdhi_manual_correction(struct tmio_mmc_host *host, bool use_
+ 			return false;
+ 	}
+ 
+-	host->tap_set = (new_tap % host->tap_num);
++	priv->tap_set = (new_tap % priv->tap_num);
+ 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_TAPSET,
+-		       host->tap_set / (use_4tap ? 2 : 1));
++		       priv->tap_set / (use_4tap ? 2 : 1));
+ 
+ 	return false;
+ }
 diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index c5ba13fae399..bfebbe368f02 100644
+index b6fffd3d2650..b4cf10109162 100644
 --- a/drivers/mmc/host/tmio_mmc.h
 +++ b/drivers/mmc/host/tmio_mmc.h
-@@ -176,14 +176,13 @@ struct tmio_mmc_host {
- 	int (*write16_hook)(struct tmio_mmc_host *host, int addr);
- 	void (*reset)(struct tmio_mmc_host *host);
- 	void (*hw_reset)(struct tmio_mmc_host *host);
--	void (*prepare_tuning)(struct tmio_mmc_host *host, unsigned long tap);
- 	bool (*check_scc_error)(struct tmio_mmc_host *host);
- 
- 	/*
- 	 * Mandatory callback for tuning to occur which is optional for SDR50
- 	 * and mandatory for SDR104.
+@@ -184,11 +184,6 @@ struct tmio_mmc_host {
  	 */
--	unsigned int (*init_tuning)(struct tmio_mmc_host *host);
-+	int (*execute_tuning)(struct tmio_mmc_host *host, u32 opcode);
- 	int (*select_tuning)(struct tmio_mmc_host *host);
+ 	int (*execute_tuning)(struct tmio_mmc_host *host, u32 opcode);
  
- 	/* Tuning values: 1 for success, 0 for failure */
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index c4a1d49fbea4..593f88cafb6e 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -718,38 +718,13 @@ static int tmio_mmc_start_data(struct tmio_mmc_host *host,
- static int tmio_mmc_execute_tuning(struct mmc_host *mmc, u32 opcode)
- {
- 	struct tmio_mmc_host *host = mmc_priv(mmc);
--	int i, ret = 0;
+-	/* Tuning values: 1 for success, 0 for failure */
+-	DECLARE_BITMAP(taps, BITS_PER_BYTE * sizeof(long));
+-	unsigned int tap_num;
+-	unsigned long tap_set;
 -
--	if (!host->init_tuning || !host->select_tuning)
--		/* Tuning is not supported */
--		goto out;
--
--	host->tap_num = host->init_tuning(host);
--	if (!host->tap_num)
--		/* Tuning is not supported */
--		goto out;
--
--	if (host->tap_num * 2 >= sizeof(host->taps) * BITS_PER_BYTE) {
--		dev_warn_once(&host->pdev->dev,
--			"Too many taps, skipping tuning. Please consider updating size of taps field of tmio_mmc_host\n");
--		goto out;
--	}
--
--	bitmap_zero(host->taps, host->tap_num * 2);
--
--	/* Issue CMD19 twice for each tap */
--	for (i = 0; i < 2 * host->tap_num; i++) {
--		if (host->prepare_tuning)
--			host->prepare_tuning(host, i % host->tap_num);
-+	int ret;
- 
--		ret = mmc_send_tuning(mmc, opcode, NULL);
--		if (ret == 0)
--			set_bit(i, host->taps);
--	}
-+	if (!host->execute_tuning)
-+		return 0;
- 
--	ret = host->select_tuning(host);
-+	ret = host->execute_tuning(host, opcode);
- 
--out:
- 	if (ret < 0) {
- 		dev_warn(&host->pdev->dev, "Tuning procedure failed\n");
- 		tmio_mmc_hw_reset(mmc);
+ 	void (*prepare_hs400_tuning)(struct tmio_mmc_host *host);
+ 	void (*hs400_downgrade)(struct tmio_mmc_host *host);
+ 	void (*hs400_complete)(struct tmio_mmc_host *host);
 -- 
 2.20.1
 
