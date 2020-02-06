@@ -2,76 +2,56 @@ Return-Path: <SRS0=mdI5=32=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94D8C2D0B1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Feb 2020 11:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3654C2D0B1
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Feb 2020 11:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 852A8206CC
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Feb 2020 11:12:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77E47206CC
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Feb 2020 11:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580988036;
+	bh=mgftfakJVfi9aaGDxtIm5GUGJZu0vAVmtP0HUW0gEUo=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=BiolLGq7MS0vJuQNYnJD2oo2IbzyiwVS6fMcKYNqLrJEwqvP9yHmd3wTxXjPRutvp
+	 NegmFZ1BebrXdu8OhqVsJv0qGVfl/8/yxpRQzcahx+x+mV5v/CjKJF0USmzSMG7TMk
+	 1ILQIT7ltoUfN/sCF6HxUXrL2rqMkuP6DNSdQ7YE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727586AbgBFLMg (ORCPT
+        id S1727007AbgBFLUg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 6 Feb 2020 06:12:36 -0500
-Received: from mga01.intel.com ([192.55.52.88]:8628 "EHLO mga01.intel.com"
+        Thu, 6 Feb 2020 06:20:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727585AbgBFLMg (ORCPT
+        id S1726765AbgBFLUg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 Feb 2020 06:12:36 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2020 03:12:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,409,1574150400"; 
-   d="scan'208";a="430473269"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga005.fm.intel.com with ESMTP; 06 Feb 2020 03:12:34 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 7BB01101; Thu,  6 Feb 2020 13:12:33 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3] drm: shmobile: Reduce include dependencies
-Date:   Thu,  6 Feb 2020 13:12:32 +0200
-Message-Id: <20200206111232.75309-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.24.1
+        Thu, 6 Feb 2020 06:20:36 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580988035;
+        bh=mgftfakJVfi9aaGDxtIm5GUGJZu0vAVmtP0HUW0gEUo=;
+        h=Subject:From:Date:To:From;
+        b=QFi6lU2fMTzq0hXlFr0DN24hSJIGxBZ/oXBLrFft5UaYoGg1+hcD9O61Uyqf+2MvR
+         kl5F9ciWVL5EWA/b6MylLKbwv0oEKAbFG4d3H8yhaCIUiiotGpSvLh+qjMvFai2i1G
+         pNMh0wUwH7brDPLoA+wMynuSTwuShC9TkvnIgejA=
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <158098803571.16243.11985086628968065483.git-patchwork-housekeeping@kernel.org>
+Date:   Thu, 06 Feb 2020 11:20:35 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This file doesn't need everything provided by <linux/kernel.h>.
-All it needs are some types, which are provided by <drm/drm_mode.h>.
+Latest series: [v3] drm: shmobile: Reduce include dependencies (2020-02-06T11:12:32)
+  Superseding: [v2] drm: shmobile: Reduce include dependencies (2020-02-05T09:32:26):
+    [v2] drm: shmobile: Reduce include dependencies
 
-Drop unneeded <linux/kernel.h> completely.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
-v3: Drop header completely (Laurent)
- include/linux/platform_data/shmob_drm.h | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/include/linux/platform_data/shmob_drm.h b/include/linux/platform_data/shmob_drm.h
-index fe815d7d9f58..d661399b217d 100644
---- a/include/linux/platform_data/shmob_drm.h
-+++ b/include/linux/platform_data/shmob_drm.h
-@@ -10,8 +10,6 @@
- #ifndef __SHMOB_DRM_H__
- #define __SHMOB_DRM_H__
- 
--#include <linux/kernel.h>
--
- #include <drm/drm_mode.h>
- 
- enum shmob_drm_clk_source {
 -- 
-2.24.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
