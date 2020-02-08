@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 427C4C35242
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Feb 2020 18:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD2FC352A4
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Feb 2020 18:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E71220733
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Feb 2020 18:36:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECB7120733
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Feb 2020 18:37:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ug6trja9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEC0UpG2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbgBHSg5 (ORCPT
+        id S1728506AbgBHShH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 8 Feb 2020 13:36:57 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42115 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727964AbgBHSg4 (ORCPT
+        Sat, 8 Feb 2020 13:37:07 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54527 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728237AbgBHShG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Feb 2020 13:36:56 -0500
-Received: by mail-wr1-f68.google.com with SMTP id k11so2666564wrd.9;
-        Sat, 08 Feb 2020 10:36:54 -0800 (PST)
+        Sat, 8 Feb 2020 13:37:06 -0500
+Received: by mail-wm1-f66.google.com with SMTP id g1so5698979wmh.4;
+        Sat, 08 Feb 2020 10:37:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KjY0ZxPgA8xDdI4P8UFFhtICRDQWXvSYtBAZooAhylM=;
-        b=Ug6trja9jfyujkI7OOVeJvqVNOFLdsZkvVDlOHWng8rLWSgGZC7IcBQBT6XtFCgbBA
-         U+Ijyf1DornRokrSN6El65xgvgpYfUFrbtFZTBxAHtdeuVZ0QH79GeZMqoKe6uyUUElr
-         tJ3jBOAkYMrmE9iJBl9e9rqx0jMEI6Pt/LGD9hDHsRrugAj2zfJmRYL6qoDfoMHxNgIe
-         lbjjxYYEn1uA8xgnvR6LsGGlvEPs6wnDqIqKqzIOSDDYY0UHSW/T661hq0ufNVJicayr
-         woY8m+UU8c7fdXhhjto6pDPpsMTFVKUcOqUtJ1kt47NzomDZiC/Kw4ZwUaP14QF20Lz9
-         wNEA==
+        bh=hRkPExrL63331yWhoKi03csinXjXhPNQwWmMbM7w46o=;
+        b=UEC0UpG2p14iHJSU4WkX6eWFx9d1ZrjGwMix75y6gn4mB9vo2Bz6OdbOAiTVnDFNdA
+         kHaNYBVtSdWUb18uYt8Re2C4VmqtY2KceHrDEzhVTPz56EF+OLyaOorEsPkZsK9Nbsd6
+         wz64iQkTrWLpcoNNc8Hn5TUKkPQonvA/P8nBTKbRvODetvF85EV4PPhEnGa7/GYjmZaY
+         x2l6XgCInciUapSaXHUipQ+PN6LW3H+ypy/b0/gIKCUXccGDLWT52kK2XyAd0wDY7STv
+         CILOQSijsDnx98PqipPyD/awNKYdaLa1audtC62ntVJ0kHpwpvk3ufeHtzE6Lov0Tojl
+         LDaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KjY0ZxPgA8xDdI4P8UFFhtICRDQWXvSYtBAZooAhylM=;
-        b=Q0oV/8y5VW+EBS5dNZa2NsJqQsNPOQVgu41O2YNHHwVunt9THyx4wyZyYmTv01NnpZ
-         /vSr/AGmhxOHfLrtUzxdEtI5/Kit4orJCG3fZAeR6k6Y5Zas5BUpobzM7uCmwpXkBGyT
-         BxhHt2baR8jNaRqFG7Vw8udSLj7YHtqw6zcrB57I178r8x76lOTLMX823W0oQHyCu4Ew
-         Rqdj4xGtsRgJGOgdBQRcnSJ4hZdEy+XkyN8D+hcsdNRg7jD9Hsd7PgDD33hjxU0cvLCw
-         7KAq2WbVkt5bL51cOjGxXyX/tPxDihsH9ngMooxQNF7UqAaf5Hcd/kkHvh06D+mvcvlF
-         RwAA==
-X-Gm-Message-State: APjAAAXMomzUdjPHkoGkdZh1EC5jk+y2V2GNQualJgbWjqbGnvwPgj1s
-        riQePqaKWH81sWqiY2w9hfY=
-X-Google-Smtp-Source: APXvYqxIu6atAePt2heYHf7buiIaKkoy/ZjBtwOXRU6/ElHpeC9rstK/20wPHyjKhEeZtut77LTr3w==
-X-Received: by 2002:a5d:6284:: with SMTP id k4mr6541427wru.398.1581187014097;
-        Sat, 08 Feb 2020 10:36:54 -0800 (PST)
+        bh=hRkPExrL63331yWhoKi03csinXjXhPNQwWmMbM7w46o=;
+        b=s3/AP4Ajs79BJwVjIeZIpDhSxubXXclIw7Uy+uX4c7L/WvxuEFZhuVls4ecIPoZZsk
+         /3K65NlI660iBHc2yJ4R35kbTaRN1Rdo/kctRDEVLZ8o6Hr3REqx+GLZQ2OcNCxNh3Pv
+         vQV4Vj8ISglyhIhvxRlx70V5WkPqtlITjc/CJfYbdwc1EEX3uWu90GEfvCOAVj6a+ozE
+         vZeSpaokMIM+uQfpnO+w+riMBvZvryQp5UzAgyb0szx53kCCy7PBhaTJ6wbGzo779onQ
+         fhEYl+u3qFnklBmsfftrNtXulzt5lXHoEtucOi6OU1QZ3dZTsck8NHzpNQENGDUYYj6x
+         KreA==
+X-Gm-Message-State: APjAAAVVgMU9PJSxedrl7d2U0LKQkc0YZ8wmLAgM/zWVkC9vwydVWykl
+        JVbBeBPztqnoauleFgZY41k=
+X-Google-Smtp-Source: APXvYqwFu7OC7ixOqiSrg18we1AFkhBXmQoqPIvj66lfI/PTesneFDIRfoJbBRYAkWP5qo2AT7T7xQ==
+X-Received: by 2002:a1c:3b09:: with SMTP id i9mr5239091wma.31.1581187023994;
+        Sat, 08 Feb 2020 10:37:03 -0800 (PST)
 Received: from prasmi.home ([2a00:23c8:2510:d000:a553:90a1:93f5:e306])
-        by smtp.gmail.com with ESMTPSA id b67sm8404385wmc.38.2020.02.08.10.36.53
+        by smtp.gmail.com with ESMTPSA id b67sm8404385wmc.38.2020.02.08.10.37.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Feb 2020 10:36:53 -0800 (PST)
+        Sat, 08 Feb 2020 10:37:03 -0800 (PST)
 From:   Lad Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Bjorn Helgaas <bhelgaas@google.com>,
@@ -80,9 +80,9 @@ Cc:     Andrew Murray <andrew.murray@arm.com>, linux-pci@vger.kernel.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 2/6] PCI: rcar: Fix calculating mask for PCIEPAMR register
-Date:   Sat,  8 Feb 2020 18:36:37 +0000
-Message-Id: <20200208183641.6674-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 6/6] misc: pci_endpoint_test: Add Device ID for RZ/G2E PCIe controller
+Date:   Sat,  8 Feb 2020 18:36:41 +0000
+Message-Id: <20200208183641.6674-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200208183641.6674-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20200208183641.6674-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -93,38 +93,35 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The mask value was calculated incorrectly for PCIEPAMR register if the
-size was less the 128bytes, this patch fixes the above by adding a check
-on size.
+Add RZ/G2E in pci_device_id table so that pci-epf-test can be used for
+testing PCIe EP in RZ/G2E.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/pci/controller/pcie-rcar.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/misc/pci_endpoint_test.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index d5568db..c76a92a 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -71,7 +71,7 @@ void rcar_pcie_set_outbound(int win, void __iomem *base,
- 	/* Setup PCIe address space mappings for each resource */
- 	resource_size_t res_start;
- 	resource_size_t size;
--	u32 mask;
-+	u32 mask = 0x0;
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index a5e3170..3c84e9a 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -66,6 +66,8 @@
  
- 	rcar_pci_write_reg(base, 0x00000000, PCIEPTCTLR(win));
+ #define PCI_DEVICE_ID_TI_AM654			0xb00c
  
-@@ -80,7 +80,8 @@ void rcar_pcie_set_outbound(int win, void __iomem *base,
- 	 * keeps things pretty simple.
- 	 */
- 	size = resource_size(res);
--	mask = (roundup_pow_of_two(size) / SZ_128) - 1;
-+	if (size > 128)
-+		mask = (roundup_pow_of_two(size) / SZ_128) - 1;
- 	rcar_pci_write_reg(base, mask << 7, PCIEPAMR(win));
++#define PCI_DEVICE_ID_RENESAS_RZG2E		0x002d
++
+ #define is_am654_pci_dev(pdev)		\
+ 		((pdev)->device == PCI_DEVICE_ID_TI_AM654)
  
- 	if (!host) {
+@@ -797,6 +799,7 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_AM654),
+ 	  .driver_data = (kernel_ulong_t)&am654_data
+ 	},
++	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_RZG2E) },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(pci, pci_endpoint_test_tbl);
 -- 
 2.7.4
 
