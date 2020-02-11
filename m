@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4DAC35242
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD05CC352A3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 849D520714
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB95B20873
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731346AbgBKSVL (ORCPT
+        id S1731085AbgBKSVL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 11 Feb 2020 13:21:11 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:45482 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730154AbgBKSTd (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:59516 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731172AbgBKSTd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 11 Feb 2020 13:19:33 -0500
 Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id 1WKV2200a5USYZQ01WKWwU; Tue, 11 Feb 2020 19:19:31 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id 1WKW2200H5USYZQ06WKWab; Tue, 11 Feb 2020 19:19:31 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a8A-0002of-3F; Tue, 11 Feb 2020 19:19:30 +0100
+        id 1j1a89-0002nw-IC; Tue, 11 Feb 2020 19:19:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a8A-0003z5-1I; Tue, 11 Feb 2020 19:19:30 +0100
+        id 1j1a89-0003yP-Gg; Tue, 11 Feb 2020 19:19:29 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Gilad Ben-Yossef <gilad@benyossef.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -40,9 +40,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 21/34] crypto: ccree - remove struct cc_cipher_handle
-Date:   Tue, 11 Feb 2020 19:19:15 +0100
-Message-Id: <20200211181928.15178-22-geert+renesas@glider.be>
+Subject: [PATCH v2 07/34] crypto: ccree - remove empty cc_sram_mgr_fini()
+Date:   Tue, 11 Feb 2020 19:19:01 +0100
+Message-Id: <20200211181928.15178-8-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200211181928.15178-1-geert+renesas@glider.be>
 References: <20200211181928.15178-1-geert+renesas@glider.be>
@@ -51,101 +51,94 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The cc_cipher_handle structure contains only a single member, and only
-one instance exists.  Simplify the code and reduce memory consumption by
-moving this member to struct cc_drvdata.
+cc_sram_mgr_fini() doesn't do anything, so it can just be removed.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
   - New.
 
- drivers/crypto/ccree/cc_cipher.c | 33 ++++++++------------------------
- drivers/crypto/ccree/cc_driver.h |  2 +-
- 2 files changed, 9 insertions(+), 26 deletions(-)
+ drivers/crypto/ccree/cc_driver.c   |  7 ++-----
+ drivers/crypto/ccree/cc_sram_mgr.c | 10 ----------
+ drivers/crypto/ccree/cc_sram_mgr.h |  7 -------
+ 3 files changed, 2 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
-index 1c7ced65008bc311..a1430d669a584a85 100644
---- a/drivers/crypto/ccree/cc_cipher.c
-+++ b/drivers/crypto/ccree/cc_cipher.c
-@@ -20,10 +20,6 @@
- 
- #define template_skcipher	template_u.skcipher
- 
--struct cc_cipher_handle {
--	struct list_head alg_list;
--};
--
- struct cc_user_key_info {
- 	u8 *key;
- 	dma_addr_t key_dma_addr;
-@@ -1669,36 +1665,24 @@ static struct cc_crypto_alg *cc_create_alg(const struct cc_alg_template *tmpl,
- int cc_cipher_free(struct cc_drvdata *drvdata)
- {
- 	struct cc_crypto_alg *t_alg, *n;
--	struct cc_cipher_handle *cipher_handle = drvdata->cipher_handle;
--
--	if (cipher_handle) {
--		/* Remove registered algs */
--		list_for_each_entry_safe(t_alg, n, &cipher_handle->alg_list,
--					 entry) {
--			crypto_unregister_skcipher(&t_alg->skcipher_alg);
--			list_del(&t_alg->entry);
--			kfree(t_alg);
--		}
--		kfree(cipher_handle);
--		drvdata->cipher_handle = NULL;
-+
-+	/* Remove registered algs */
-+	list_for_each_entry_safe(t_alg, n, &drvdata->alg_list, entry) {
-+		crypto_unregister_skcipher(&t_alg->skcipher_alg);
-+		list_del(&t_alg->entry);
-+		kfree(t_alg);
+diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+index 599936a0b0a2cc63..f8aba89e48730e4d 100644
+--- a/drivers/crypto/ccree/cc_driver.c
++++ b/drivers/crypto/ccree/cc_driver.c
+@@ -478,13 +478,13 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 		cc_sram_alloc(new_drvdata, MAX_MLLI_BUFF_SIZE);
+ 	if (new_drvdata->mlli_sram_addr == NULL_SRAM_ADDR) {
+ 		rc = -ENOMEM;
+-		goto post_sram_mgr_err;
++		goto post_fips_init_err;
  	}
- 	return 0;
- }
  
- int cc_cipher_alloc(struct cc_drvdata *drvdata)
- {
--	struct cc_cipher_handle *cipher_handle;
- 	struct cc_crypto_alg *t_alg;
- 	struct device *dev = drvdata_to_dev(drvdata);
- 	int rc = -ENOMEM;
- 	int alg;
+ 	rc = cc_req_mgr_init(new_drvdata);
+ 	if (rc) {
+ 		dev_err(dev, "cc_req_mgr_init failed\n");
+-		goto post_sram_mgr_err;
++		goto post_fips_init_err;
+ 	}
  
--	cipher_handle = kmalloc(sizeof(*cipher_handle), GFP_KERNEL);
--	if (!cipher_handle)
--		return -ENOMEM;
+ 	rc = cc_buffer_mgr_init(new_drvdata);
+@@ -538,8 +538,6 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 	 cc_buffer_mgr_fini(new_drvdata);
+ post_req_mgr_err:
+ 	cc_req_mgr_fini(new_drvdata);
+-post_sram_mgr_err:
+-	cc_sram_mgr_fini(new_drvdata);
+ post_fips_init_err:
+ 	cc_fips_fini(new_drvdata);
+ post_debugfs_err:
+@@ -568,7 +566,6 @@ static void cleanup_cc_resources(struct platform_device *plat_dev)
+ 	cc_pm_fini(drvdata);
+ 	cc_buffer_mgr_fini(drvdata);
+ 	cc_req_mgr_fini(drvdata);
+-	cc_sram_mgr_fini(drvdata);
+ 	cc_fips_fini(drvdata);
+ 	cc_debugfs_fini(drvdata);
+ 	fini_cc_regs(drvdata);
+diff --git a/drivers/crypto/ccree/cc_sram_mgr.c b/drivers/crypto/ccree/cc_sram_mgr.c
+index 62c885e6e791cfe1..a3c13b37adce4641 100644
+--- a/drivers/crypto/ccree/cc_sram_mgr.c
++++ b/drivers/crypto/ccree/cc_sram_mgr.c
+@@ -12,16 +12,6 @@ struct cc_sram_ctx {
+ 	cc_sram_addr_t sram_free_offset;
+ };
+ 
+-/**
+- * cc_sram_mgr_fini() - Cleanup SRAM pool.
+- *
+- * @drvdata: Associated device driver context
+- */
+-void cc_sram_mgr_fini(struct cc_drvdata *drvdata)
+-{
+-	/* Nothing needed */
+-}
 -
--	INIT_LIST_HEAD(&cipher_handle->alg_list);
--	drvdata->cipher_handle = cipher_handle;
-+	INIT_LIST_HEAD(&drvdata->alg_list);
+ /**
+  * cc_sram_mgr_init() - Initializes SRAM pool.
+  *      The pool starts right at the beginning of SRAM.
+diff --git a/drivers/crypto/ccree/cc_sram_mgr.h b/drivers/crypto/ccree/cc_sram_mgr.h
+index 1d14de9ee8c344ba..971029b0e2a16c36 100644
+--- a/drivers/crypto/ccree/cc_sram_mgr.h
++++ b/drivers/crypto/ccree/cc_sram_mgr.h
+@@ -29,13 +29,6 @@ typedef u64 cc_sram_addr_t;
+  */
+ int cc_sram_mgr_init(struct cc_drvdata *drvdata);
  
- 	/* Linux crypto */
- 	dev_dbg(dev, "Number of algorithms = %zu\n",
-@@ -1730,8 +1714,7 @@ int cc_cipher_alloc(struct cc_drvdata *drvdata)
- 			kfree(t_alg);
- 			goto fail0;
- 		} else {
--			list_add_tail(&t_alg->entry,
--				      &cipher_handle->alg_list);
-+			list_add_tail(&t_alg->entry, &drvdata->alg_list);
- 			dev_dbg(dev, "Registered %s\n",
- 				t_alg->skcipher_alg.base.cra_driver_name);
- 		}
-diff --git a/drivers/crypto/ccree/cc_driver.h b/drivers/crypto/ccree/cc_driver.h
-index 4895f124d2b83fb1..4790eb5cb8bdac3c 100644
---- a/drivers/crypto/ccree/cc_driver.h
-+++ b/drivers/crypto/ccree/cc_driver.h
-@@ -141,7 +141,7 @@ struct cc_drvdata {
- 	struct platform_device *plat_dev;
- 	u32 mlli_sram_addr;
- 	struct dma_pool *mlli_buffs_pool;
--	void *cipher_handle;
-+	struct list_head alg_list;
- 	void *hash_handle;
- 	void *aead_handle;
- 	void *request_mgr_handle;
+-/*!
+- * Uninits SRAM pool.
+- *
+- * \param drvdata
+- */
+-void cc_sram_mgr_fini(struct cc_drvdata *drvdata);
+-
+ /*!
+  * Allocated buffer from SRAM pool.
+  * Note: Caller is responsible to free the LAST allocated buffer.
 -- 
 2.17.1
 
