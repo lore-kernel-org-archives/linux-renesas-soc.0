@@ -4,32 +4,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 035EAC35242
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5F7C35242
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E554F20714
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7806220714
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729911AbgBKSVT (ORCPT
+        id S1731364AbgBKSVT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 11 Feb 2020 13:21:19 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:44996 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730206AbgBKSTd (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:59438 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731160AbgBKSTd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 11 Feb 2020 13:19:33 -0500
 Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id 1WKV2200K5USYZQ01WKV3C; Tue, 11 Feb 2020 19:19:30 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id 1WKV2200J5USYZQ06WKVaS; Tue, 11 Feb 2020 19:19:30 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a89-0002nb-Ar; Tue, 11 Feb 2020 19:19:29 +0100
+        id 1j1a89-0002o2-KQ; Tue, 11 Feb 2020 19:19:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a89-0003y7-9j; Tue, 11 Feb 2020 19:19:29 +0100
+        id 1j1a89-0003yV-Ix; Tue, 11 Feb 2020 19:19:29 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Gilad Ben-Yossef <gilad@benyossef.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -39,104 +40,57 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 01/34] debugfs: regset32: Add Runtime PM support
-Date:   Tue, 11 Feb 2020 19:18:55 +0100
-Message-Id: <20200211181928.15178-2-geert+renesas@glider.be>
+Subject: [PATCH v2 09/34] crypto: ccree - make mlli_params.mlli_virt_addr void *
+Date:   Tue, 11 Feb 2020 19:19:03 +0100
+Message-Id: <20200211181928.15178-10-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200211181928.15178-1-geert+renesas@glider.be>
 References: <20200211181928.15178-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hardware registers of devices under control of power management cannot
-be accessed at all times.  If such a device is suspended, register
-accesses may lead to undefined behavior, like reading bogus values, or
-causing exceptions or system lock-ups.
+mlli_params.mlli_virt_addr is just a buffer of memory.
+This allows to drop a cast.
 
-Extend struct debugfs_regset32 with an optional field to let device
-drivers specify the device the registers in the set belong to.  This
-allows debugfs_show_regset32() to make sure the device is resumed while
-its registers are being read.
+No change in generated code.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
-Affected drivers:
-  - drivers/crypto/ccree (fixed)
-  - drivers/gpu/drm/msm/disp/dpu1
-  - drivers/usb/dwc3
-  - drivers/usb/host/ehci-omap.c
-  - drivers/usb/host/ehci-tegra.c
-  - drivers/usb/host/ohci-platform.c
-  - drivers/usb/host/xhci-dbgcap.c
-  - drivers/usb/host/xhci-histb.c
-  - drivers/usb/host/xhci-hub.c
-  - drivers/usb/host/xhci-mtk.c
-  - drivers/usb/host/xhci-pci.c
-  - drivers/usb/host/xhci-tegra.c
-  - drivers/usb/host/xhci.c
-  - drivers/usb/mtu3
-  - drivers/usb/musb
-    drivers/usb/host/xhci-plat.c
-
-Some drivers call pm_runtime_forbid(), but given the comment "users
-should enable runtime pm using power/control in sysfs", this can be
-overridden from userspace?
-
 v2:
-  - Add Reviewed-by, Acked-by,
-  - s/locks/lock-ups/.
----
- fs/debugfs/file.c       | 8 ++++++++
- include/linux/debugfs.h | 1 +
- 2 files changed, 9 insertions(+)
+  - New.
 
-diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
-index 634b09d18b77f46f..204734f8d1c6d648 100644
---- a/fs/debugfs/file.c
-+++ b/fs/debugfs/file.c
-@@ -18,6 +18,7 @@
- #include <linux/slab.h>
- #include <linux/atomic.h>
- #include <linux/device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/poll.h>
- #include <linux/security.h>
+ drivers/crypto/ccree/cc_buffer_mgr.c | 2 +-
+ drivers/crypto/ccree/cc_buffer_mgr.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/crypto/ccree/cc_buffer_mgr.c b/drivers/crypto/ccree/cc_buffer_mgr.c
+index 1e335abd744024d8..abf08369f030faa8 100644
+--- a/drivers/crypto/ccree/cc_buffer_mgr.c
++++ b/drivers/crypto/ccree/cc_buffer_mgr.c
+@@ -207,7 +207,7 @@ static int cc_generate_mlli(struct device *dev, struct buffer_array *sg_data,
+ 		goto build_mlli_exit;
+ 	}
+ 	/* Point to start of MLLI */
+-	mlli_p = (u32 *)mlli_params->mlli_virt_addr;
++	mlli_p = mlli_params->mlli_virt_addr;
+ 	/* go over all SG's and link it to one MLLI table */
+ 	for (i = 0; i < sg_data->num_of_buffers; i++) {
+ 		union buffer_array_entry *entry = &sg_data->entry[i];
+diff --git a/drivers/crypto/ccree/cc_buffer_mgr.h b/drivers/crypto/ccree/cc_buffer_mgr.h
+index 827b6cb1236e8a65..250d634902adc634 100644
+--- a/drivers/crypto/ccree/cc_buffer_mgr.h
++++ b/drivers/crypto/ccree/cc_buffer_mgr.h
+@@ -32,7 +32,7 @@ struct cc_mlli {
  
-@@ -1060,7 +1061,14 @@ static int debugfs_show_regset32(struct seq_file *s, void *data)
- {
- 	struct debugfs_regset32 *regset = s->private;
- 
-+	if (regset->dev)
-+		pm_runtime_get_sync(regset->dev);
-+
- 	debugfs_print_regs32(s, regset->regs, regset->nregs, regset->base, "");
-+
-+	if (regset->dev)
-+		pm_runtime_put(regset->dev);
-+
- 	return 0;
- }
- 
-diff --git a/include/linux/debugfs.h b/include/linux/debugfs.h
-index 3d013de64f70ec42..ad416853e722fca7 100644
---- a/include/linux/debugfs.h
-+++ b/include/linux/debugfs.h
-@@ -35,6 +35,7 @@ struct debugfs_regset32 {
- 	const struct debugfs_reg32 *regs;
- 	int nregs;
- 	void __iomem *base;
-+	struct device *dev;	/* Optional device for Runtime PM */
+ struct mlli_params {
+ 	struct dma_pool *curr_pool;
+-	u8 *mlli_virt_addr;
++	void *mlli_virt_addr;
+ 	dma_addr_t mlli_dma_addr;
+ 	u32 mlli_len;
  };
- 
- extern struct dentry *arch_debugfs_dir;
 -- 
 2.17.1
 
