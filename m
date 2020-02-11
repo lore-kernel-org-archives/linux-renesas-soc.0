@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC0CC35242
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF06C3B188
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D154208C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09D56208C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:20:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731136AbgBKSTe (ORCPT
+        id S1731049AbgBKSTd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Feb 2020 13:19:34 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:34404 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730135AbgBKSTd (ORCPT
+        Tue, 11 Feb 2020 13:19:33 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:52112 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730673AbgBKSTd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 11 Feb 2020 13:19:33 -0500
 Received: from ramsan ([84.195.182.253])
-        by andre.telenet-ops.be with bizsmtp
-        id 1WKV2200W5USYZQ01WKWUG; Tue, 11 Feb 2020 19:19:31 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id 1WKV2200M5USYZQ01WKV6z; Tue, 11 Feb 2020 19:19:30 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a8A-0002p9-CW; Tue, 11 Feb 2020 19:19:30 +0100
+        id 1j1a89-0002nt-Gy; Tue, 11 Feb 2020 19:19:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a8A-0003zQ-Ab; Tue, 11 Feb 2020 19:19:30 +0100
+        id 1j1a89-0003yM-Fc; Tue, 11 Feb 2020 19:19:29 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Gilad Ben-Yossef <gilad@benyossef.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -40,9 +40,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 28/34] crypto: ccree - improve kerneldoc in cc_sram_mgr.[ch]
-Date:   Tue, 11 Feb 2020 19:19:22 +0100
-Message-Id: <20200211181928.15178-29-geert+renesas@glider.be>
+Subject: [PATCH v2 06/34] crypto: ccree - drop duplicated error message on SRAM exhaustion
+Date:   Tue, 11 Feb 2020 19:19:00 +0100
+Message-Id: <20200211181928.15178-7-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200211181928.15178-1-geert+renesas@glider.be>
 References: <20200211181928.15178-1-geert+renesas@glider.be>
@@ -51,112 +51,55 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Miscellaneous improvements:
-  - Start comment blocks with "/**" to enable kerneldoc,
-  - Mark parameters using "@" instead of "\param",
-  - Fix typos in parameter names,
-  - Add missing function names to kerneldoc headers,
-  - Add missing parameter and return value descriptions.
+When no SRAM can be allocated, cc_sram_alloc() already prints an error
+message.  Hence there is no need to duplicate this in all callers.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
   - New.
 
- drivers/crypto/ccree/cc_sram_mgr.c | 16 +++++++++++-----
- drivers/crypto/ccree/cc_sram_mgr.h | 22 +++++++++++++---------
- 2 files changed, 24 insertions(+), 14 deletions(-)
+ drivers/crypto/ccree/cc_aead.c   | 1 -
+ drivers/crypto/ccree/cc_driver.c | 1 -
+ drivers/crypto/ccree/cc_hash.c   | 1 -
+ 3 files changed, 3 deletions(-)
 
-diff --git a/drivers/crypto/ccree/cc_sram_mgr.c b/drivers/crypto/ccree/cc_sram_mgr.c
-index 38f36cbc05b3cf6f..37a95856361fc52c 100644
---- a/drivers/crypto/ccree/cc_sram_mgr.c
-+++ b/drivers/crypto/ccree/cc_sram_mgr.c
-@@ -10,6 +10,9 @@
-  *      Returns zero for success, negative value otherwise.
-  *
-  * @drvdata: Associated device driver context
-+ *
-+ * Return:
-+ * 0 for success, negative error code for failure.
-  */
- int cc_sram_mgr_init(struct cc_drvdata *drvdata)
- {
-@@ -29,11 +32,14 @@ int cc_sram_mgr_init(struct cc_drvdata *drvdata)
- 	return 0;
- }
+diff --git a/drivers/crypto/ccree/cc_aead.c b/drivers/crypto/ccree/cc_aead.c
+index 7a62fb023d8d3769..db89144ce6c5e974 100644
+--- a/drivers/crypto/ccree/cc_aead.c
++++ b/drivers/crypto/ccree/cc_aead.c
+@@ -2682,7 +2682,6 @@ int cc_aead_alloc(struct cc_drvdata *drvdata)
+ 							 MAX_HMAC_DIGEST_SIZE);
  
--/*!
-- * Allocated buffer from SRAM pool.
-+/**
-+ * cc_sram_alloc() - Allocate buffer from SRAM pool.
-+ *
-+ * @drvdata: Associated device driver context
-+ * @size: The requested numer of bytes to allocate
-  *
-- * \param drvdata
-- * \param size The requested bytes to allocate
-+ * Return:
-+ * Address offset in SRAM or NULL_SRAM_ADDR for failure.
-  */
- u32 cc_sram_alloc(struct cc_drvdata *drvdata, u32 size)
- {
-@@ -64,7 +70,7 @@ u32 cc_sram_alloc(struct cc_drvdata *drvdata, u32 size)
-  *
-  * @src:	  A pointer to array of words to set as consts.
-  * @dst:	  The target SRAM buffer to set into
-- * @nelements:	  The number of words in "src" array
-+ * @nelement:	  The number of words in "src" array
-  * @seq:	  A pointer to the given IN/OUT descriptor sequence
-  * @seq_len:	  A pointer to the given IN/OUT sequence length
-  */
-diff --git a/drivers/crypto/ccree/cc_sram_mgr.h b/drivers/crypto/ccree/cc_sram_mgr.h
-index 04a857259d4148eb..1c965ef83002a631 100644
---- a/drivers/crypto/ccree/cc_sram_mgr.h
-+++ b/drivers/crypto/ccree/cc_sram_mgr.h
-@@ -12,22 +12,26 @@ struct cc_drvdata;
+ 	if (aead_handle->sram_workspace_addr == NULL_SRAM_ADDR) {
+-		dev_err(dev, "SRAM pool exhausted\n");
+ 		rc = -ENOMEM;
+ 		goto fail1;
+ 	}
+diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+index fc34d152f42090fc..599936a0b0a2cc63 100644
+--- a/drivers/crypto/ccree/cc_driver.c
++++ b/drivers/crypto/ccree/cc_driver.c
+@@ -477,7 +477,6 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 	new_drvdata->mlli_sram_addr =
+ 		cc_sram_alloc(new_drvdata, MAX_MLLI_BUFF_SIZE);
+ 	if (new_drvdata->mlli_sram_addr == NULL_SRAM_ADDR) {
+-		dev_err(dev, "Failed to alloc MLLI Sram buffer\n");
+ 		rc = -ENOMEM;
+ 		goto post_sram_mgr_err;
+ 	}
+diff --git a/drivers/crypto/ccree/cc_hash.c b/drivers/crypto/ccree/cc_hash.c
+index c3146f550268e7ab..defeb35a16a626ff 100644
+--- a/drivers/crypto/ccree/cc_hash.c
++++ b/drivers/crypto/ccree/cc_hash.c
+@@ -2001,7 +2001,6 @@ int cc_hash_alloc(struct cc_drvdata *drvdata)
  
- #define NULL_SRAM_ADDR ((u32)-1)
- 
--/*!
-- * Initializes SRAM pool.
-+/**
-+ * cc_sram_mgr_init() - Initializes SRAM pool.
-  * The first X bytes of SRAM are reserved for ROM usage, hence, pool
-  * starts right after X bytes.
-  *
-- * \param drvdata
-+ * @drvdata: Associated device driver context
-  *
-- * \return int Zero for success, negative value otherwise.
-+ * Return:
-+ * Zero for success, negative value otherwise.
-  */
- int cc_sram_mgr_init(struct cc_drvdata *drvdata);
- 
--/*!
-- * Allocate buffer from SRAM pool.
-+/**
-+ * cc_sram_alloc() - Allocate buffer from SRAM pool.
-+ *
-+ * @drvdata: Associated device driver context
-+ * @size: The requested bytes to allocate
-  *
-- * \param drvdata
-- * \param size The requested bytes to allocate
-+ * Return:
-+ * Address offset in SRAM or NULL_SRAM_ADDR for failure.
-  */
- u32 cc_sram_alloc(struct cc_drvdata *drvdata, u32 size);
- 
-@@ -38,7 +42,7 @@ u32 cc_sram_alloc(struct cc_drvdata *drvdata, u32 size);
-  *
-  * @src:	  A pointer to array of words to set as consts.
-  * @dst:	  The target SRAM buffer to set into
-- * @nelements:	  The number of words in "src" array
-+ * @nelement:	  The number of words in "src" array
-  * @seq:	  A pointer to the given IN/OUT descriptor sequence
-  * @seq_len:	  A pointer to the given IN/OUT sequence length
-  */
+ 	sram_buff = cc_sram_alloc(drvdata, sram_size_to_alloc);
+ 	if (sram_buff == NULL_SRAM_ADDR) {
+-		dev_err(dev, "SRAM pool exhausted\n");
+ 		rc = -ENOMEM;
+ 		goto fail;
+ 	}
 -- 
 2.17.1
 
