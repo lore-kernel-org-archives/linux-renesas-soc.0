@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2131CC3B187
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B544C3B188
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E675320708
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:19:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AF2A20848
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:19:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730201AbgBKSTp (ORCPT
+        id S1730250AbgBKSTq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Feb 2020 13:19:45 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:34422 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731097AbgBKSTg (ORCPT
+        Tue, 11 Feb 2020 13:19:46 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:45408 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730895AbgBKSTf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Feb 2020 13:19:36 -0500
+        Tue, 11 Feb 2020 13:19:35 -0500
 Received: from ramsan ([84.195.182.253])
-        by andre.telenet-ops.be with bizsmtp
-        id 1WKV2200Y5USYZQ01WKWUK; Tue, 11 Feb 2020 19:19:31 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id 1WKV2200a5USYZQ01WKVvx; Tue, 11 Feb 2020 19:19:30 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a8A-0002op-7F; Tue, 11 Feb 2020 19:19:30 +0100
+        id 1j1a89-0002oI-Qq; Tue, 11 Feb 2020 19:19:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a8A-0003zE-56; Tue, 11 Feb 2020 19:19:30 +0100
+        id 1j1a89-0003yk-PG; Tue, 11 Feb 2020 19:19:29 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Gilad Ben-Yossef <gilad@benyossef.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -39,9 +39,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 24/34] crypto: ccree - improve kerneldoc in cc_hw_queue_defs.h
-Date:   Tue, 11 Feb 2020 19:19:18 +0100
-Message-Id: <20200211181928.15178-25-geert+renesas@glider.be>
+Subject: [PATCH v2 14/34] crypto: ccree - simplify Runtime PM handling
+Date:   Tue, 11 Feb 2020 19:19:08 +0100
+Message-Id: <20200211181928.15178-15-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200211181928.15178-1-geert+renesas@glider.be>
 References: <20200211181928.15178-1-geert+renesas@glider.be>
@@ -50,521 +50,279 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Miscellaneous improvements:
-  - Start comment blocks with "/**" to enable kerneldoc,
-  - Fix descriptor type of set_dout_mlli(),
-  - Fix copied config parameter of set_cipher_config1(),
-  - Fix copied config parameter of set_bytes_swap(),
-  - Add missing function names to kerneldoc headers,
-  - Add missing parameter descriptions,
-  - Remove descriptions for nonexistent parameters,
-  - Add missing colons,
-  - Remove references to obsolete camelcase parameter names,
-  - Sort according to actual parameter order,
-  - Fix grammar and spelling.
+Currently, a large part of the probe function runs before Runtime PM is
+enabled.  As the driver manages the device's clock manually, this may
+work fine on some systems, but may break on platforms with a more
+complex power hierarchy.
+
+Fix this by moving the initialization of Runtime PM before the first
+register access (in cc_wait_for_reset_completion()), and putting the
+device to sleep only after the last access (in cc_set_ree_fips_status()).
+
+This allows to remove the pm_on flag, which was used to track manually
+if Runtime PM had been enabled or not.
+Remove the cc_pm_{init,go,fini}() wrappers, as they are called only
+once, and obscure operation.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
   - New.
 
- drivers/crypto/ccree/cc_hw_queue_defs.h | 237 ++++++++++++------------
- 1 file changed, 119 insertions(+), 118 deletions(-)
+ drivers/crypto/ccree/cc_driver.c | 43 +++++++++++++++++++-------------
+ drivers/crypto/ccree/cc_driver.h |  1 -
+ drivers/crypto/ccree/cc_pm.c     | 38 +++-------------------------
+ drivers/crypto/ccree/cc_pm.h     | 12 ---------
+ 4 files changed, 29 insertions(+), 65 deletions(-)
 
-diff --git a/drivers/crypto/ccree/cc_hw_queue_defs.h b/drivers/crypto/ccree/cc_hw_queue_defs.h
-index 36786344c57a92cf..25ef286699892df5 100644
---- a/drivers/crypto/ccree/cc_hw_queue_defs.h
-+++ b/drivers/crypto/ccree/cc_hw_queue_defs.h
-@@ -207,31 +207,32 @@ enum cc_hash_cipher_pad {
- /* Descriptor packing macros */
- /*****************************/
+diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
+index a7b7f65939e2f620..c7e44f212d4b0ac5 100644
+--- a/drivers/crypto/ccree/cc_driver.c
++++ b/drivers/crypto/ccree/cc_driver.c
+@@ -14,6 +14,7 @@
+ #include <linux/of.h>
+ #include <linux/clk.h>
+ #include <linux/of_address.h>
++#include <linux/pm_runtime.h>
  
--/*
-- * Init a HW descriptor struct
-- * @pdesc: pointer HW descriptor struct
-+/**
-+ * hw_desc_init() - Init a HW descriptor struct
-+ * @pdesc: pointer to HW descriptor struct
-  */
- static inline void hw_desc_init(struct cc_hw_desc *pdesc)
+ #include "cc_driver.h"
+ #include "cc_request_mgr.h"
+@@ -360,6 +361,16 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 
+ 	new_drvdata->sec_disabled = cc_sec_disable;
+ 
++	pm_runtime_set_autosuspend_delay(dev, CC_SUSPEND_TIMEOUT);
++	pm_runtime_use_autosuspend(dev);
++	pm_runtime_set_active(dev);
++	pm_runtime_enable(dev);
++	rc = pm_runtime_get_sync(dev);
++	if (rc < 0) {
++		dev_err(dev, "pm_runtime_get_sync() failed: %d\n", rc);
++		goto post_pm_err;
++	}
++
+ 	/* wait for Crytpcell reset completion */
+ 	if (!cc_wait_for_reset_completion(new_drvdata)) {
+ 		dev_err(dev, "Cryptocell reset not completed");
+@@ -372,7 +383,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 			dev_err(dev, "Invalid CC signature: SIGNATURE=0x%08X != expected=0x%08X\n",
+ 				val, hw_rev->sig);
+ 			rc = -EINVAL;
+-			goto post_clk_err;
++			goto post_pm_err;
+ 		}
+ 		sig_cidr = val;
+ 		hw_rev_pidr = cc_ioread(new_drvdata, new_drvdata->ver_offset);
+@@ -383,7 +394,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 			dev_err(dev, "Invalid CC PIDR: PIDR0124=0x%08X != expected=0x%08X\n",
+ 				val,  hw_rev->pidr_0124);
+ 			rc = -EINVAL;
+-			goto post_clk_err;
++			goto post_pm_err;
+ 		}
+ 		hw_rev_pidr = val;
+ 
+@@ -392,7 +403,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 			dev_err(dev, "Invalid CC CIDR: CIDR0123=0x%08X != expected=0x%08X\n",
+ 			val,  hw_rev->cidr_0123);
+ 			rc = -EINVAL;
+-			goto post_clk_err;
++			goto post_pm_err;
+ 		}
+ 		sig_cidr = val;
+ 
+@@ -411,7 +422,7 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 		default:
+ 			dev_err(dev, "Unsupported engines configuration.\n");
+ 			rc = -EINVAL;
+-			goto post_clk_err;
++			goto post_pm_err;
+ 		}
+ 
+ 		/* Check security disable state */
+@@ -437,14 +448,14 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 			      new_drvdata);
+ 	if (rc) {
+ 		dev_err(dev, "Could not register to interrupt %d\n", irq);
+-		goto post_clk_err;
++		goto post_pm_err;
+ 	}
+ 	dev_dbg(dev, "Registered to IRQ: %d\n", irq);
+ 
+ 	rc = init_cc_regs(new_drvdata, true);
+ 	if (rc) {
+ 		dev_err(dev, "init_cc_regs failed\n");
+-		goto post_clk_err;
++		goto post_pm_err;
+ 	}
+ 
+ 	rc = cc_debugfs_init(new_drvdata);
+@@ -483,12 +494,6 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 		goto post_req_mgr_err;
+ 	}
+ 
+-	rc = cc_pm_init(new_drvdata);
+-	if (rc) {
+-		dev_err(dev, "cc_pm_init failed\n");
+-		goto post_buf_mgr_err;
+-	}
+-
+ 	/* Allocate crypto algs */
+ 	rc = cc_cipher_alloc(new_drvdata);
+ 	if (rc) {
+@@ -509,15 +514,13 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 		goto post_hash_err;
+ 	}
+ 
+-	/* All set, we can allow autosuspend */
+-	cc_pm_go(new_drvdata);
+-
+ 	/* If we got here and FIPS mode is enabled
+ 	 * it means all FIPS test passed, so let TEE
+ 	 * know we're good.
+ 	 */
+ 	cc_set_ree_fips_status(new_drvdata, true);
+ 
++	pm_runtime_put(dev);
+ 	return 0;
+ 
+ post_hash_err:
+@@ -534,7 +537,10 @@ static int init_cc_resources(struct platform_device *plat_dev)
+ 	cc_debugfs_fini(new_drvdata);
+ post_regs_err:
+ 	fini_cc_regs(new_drvdata);
+-post_clk_err:
++post_pm_err:
++	pm_runtime_put_noidle(dev);
++	pm_runtime_disable(dev);
++	pm_runtime_set_suspended(dev);
+ 	clk_disable_unprepare(new_drvdata->clk);
+ 	return rc;
+ }
+@@ -547,18 +553,21 @@ void fini_cc_regs(struct cc_drvdata *drvdata)
+ 
+ static void cleanup_cc_resources(struct platform_device *plat_dev)
  {
- 	memset(pdesc, 0, sizeof(struct cc_hw_desc));
++	struct device *dev = &plat_dev->dev;
+ 	struct cc_drvdata *drvdata =
+ 		(struct cc_drvdata *)platform_get_drvdata(plat_dev);
+ 
+ 	cc_aead_free(drvdata);
+ 	cc_hash_free(drvdata);
+ 	cc_cipher_free(drvdata);
+-	cc_pm_fini(drvdata);
+ 	cc_buffer_mgr_fini(drvdata);
+ 	cc_req_mgr_fini(drvdata);
+ 	cc_fips_fini(drvdata);
+ 	cc_debugfs_fini(drvdata);
+ 	fini_cc_regs(drvdata);
++	pm_runtime_put_noidle(dev);
++	pm_runtime_disable(dev);
++	pm_runtime_set_suspended(dev);
+ 	clk_disable_unprepare(drvdata->clk);
  }
  
--/*
-- * Indicates the end of current HW descriptors flow and release the HW engines.
-+/**
-+ * set_queue_last_ind_bit() - Indicate the end of current HW descriptors flow
-+ * and release the HW engines.
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  */
- static inline void set_queue_last_ind_bit(struct cc_hw_desc *pdesc)
+diff --git a/drivers/crypto/ccree/cc_driver.h b/drivers/crypto/ccree/cc_driver.h
+index d7928b164a3b57e5..9e94a29d84ae61f1 100644
+--- a/drivers/crypto/ccree/cc_driver.h
++++ b/drivers/crypto/ccree/cc_driver.h
+@@ -158,7 +158,6 @@ struct cc_drvdata {
+ 	int std_bodies;
+ 	bool sec_disabled;
+ 	u32 comp_mask;
+-	bool pm_on;
+ };
+ 
+ struct cc_crypto_alg {
+diff --git a/drivers/crypto/ccree/cc_pm.c b/drivers/crypto/ccree/cc_pm.c
+index 81376173c3ecf48f..f7729fc1ee597e9a 100644
+--- a/drivers/crypto/ccree/cc_pm.c
++++ b/drivers/crypto/ccree/cc_pm.c
+@@ -64,23 +64,15 @@ int cc_pm_resume(struct device *dev)
+ 
+ int cc_pm_get(struct device *dev)
  {
- 	pdesc->word[3] |= FIELD_PREP(WORD3_QUEUE_LAST_IND, 1);
+-	int rc = 0;
+-	struct cc_drvdata *drvdata = dev_get_drvdata(dev);
+-
+-	if (drvdata->pm_on)
+-		rc = pm_runtime_get_sync(dev);
++	int rc = pm_runtime_get_sync(dev);
+ 
+ 	return (rc == 1 ? 0 : rc);
  }
  
--/*
-- * Set the DIN field of a HW descriptors
-+/**
-+ * set_din_type() - Set the DIN field of a HW descriptor
-  *
-- * @pdesc: pointer HW descriptor struct
-- * @dma_mode: dmaMode The DMA mode: NO_DMA, SRAM, DLLI, MLLI, CONSTANT
-- * @addr: dinAdr DIN address
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @dma_mode: The DMA mode: NO_DMA, SRAM, DLLI, MLLI, CONSTANT
-+ * @addr: DIN address
-  * @size: Data size in bytes
-  * @axi_sec: AXI secure bit
-  */
-@@ -248,11 +249,11 @@ static inline void set_din_type(struct cc_hw_desc *pdesc,
- 				FIELD_PREP(WORD1_NS_BIT, axi_sec);
- }
- 
--/*
-- * Set the DIN field of a HW descriptors to NO DMA mode.
-+/**
-+ * set_din_no_dma() - Set the DIN field of a HW descriptor to NO DMA mode.
-  * Used for NOP descriptor, register patches and other special modes.
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @addr: DIN address
-  * @size: Data size in bytes
-  */
-@@ -262,14 +263,11 @@ static inline void set_din_no_dma(struct cc_hw_desc *pdesc, u32 addr, u32 size)
- 	pdesc->word[1] |= FIELD_PREP(WORD1_DIN_SIZE, size);
- }
- 
--/*
-- * Setup the special CPP descriptor
-+/**
-+ * set_cpp_crypto_key() - Setup the special CPP descriptor
-  *
-- * @pdesc: pointer HW descriptor struct
-- * @alg: cipher used (AES / SM4)
-- * @mode: mode used (CTR or CBC)
-- * @slot: slot number
-- * @ksize: key size
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @slot: Slot number
-  */
- static inline void set_cpp_crypto_key(struct cc_hw_desc *pdesc, u8 slot)
+ void cc_pm_put_suspend(struct device *dev)
  {
-@@ -281,14 +279,14 @@ static inline void set_cpp_crypto_key(struct cc_hw_desc *pdesc, u8 slot)
- 	pdesc->word[4] |= FIELD_PREP(WORD4_SETUP_OPERATION, slot);
+-	struct cc_drvdata *drvdata = dev_get_drvdata(dev);
+-
+-	if (drvdata->pm_on) {
+-		pm_runtime_mark_last_busy(dev);
+-		pm_runtime_put_autosuspend(dev);
+-	}
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
  }
  
--/*
-- * Set the DIN field of a HW descriptors to SRAM mode.
-+/**
-+ * set_din_sram() - Set the DIN field of a HW descriptor to SRAM mode.
-  * Note: No need to check SRAM alignment since host requests do not use SRAM and
-- * adaptor will enforce alignment check.
-+ * the adaptor will enforce alignment checks.
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @addr: DIN address
-- * @size Data size in bytes
-+ * @size: Data size in bytes
-  */
- static inline void set_din_sram(struct cc_hw_desc *pdesc, u32 addr, u32 size)
+ bool cc_pm_is_dev_suspended(struct device *dev)
+@@ -88,27 +80,3 @@ bool cc_pm_is_dev_suspended(struct device *dev)
+ 	/* check device state using runtime api */
+ 	return pm_runtime_suspended(dev);
+ }
+-
+-int cc_pm_init(struct cc_drvdata *drvdata)
+-{
+-	struct device *dev = drvdata_to_dev(drvdata);
+-
+-	/* must be before the enabling to avoid redundant suspending */
+-	pm_runtime_set_autosuspend_delay(dev, CC_SUSPEND_TIMEOUT);
+-	pm_runtime_use_autosuspend(dev);
+-	/* set us as active - note we won't do PM ops until cc_pm_go()! */
+-	return pm_runtime_set_active(dev);
+-}
+-
+-/* enable the PM module*/
+-void cc_pm_go(struct cc_drvdata *drvdata)
+-{
+-	pm_runtime_enable(drvdata_to_dev(drvdata));
+-	drvdata->pm_on = true;
+-}
+-
+-void cc_pm_fini(struct cc_drvdata *drvdata)
+-{
+-	pm_runtime_disable(drvdata_to_dev(drvdata));
+-	drvdata->pm_on = false;
+-}
+diff --git a/drivers/crypto/ccree/cc_pm.h b/drivers/crypto/ccree/cc_pm.h
+index 80a18e11cae43f3d..2dcf53fa108e77a6 100644
+--- a/drivers/crypto/ccree/cc_pm.h
++++ b/drivers/crypto/ccree/cc_pm.h
+@@ -15,9 +15,6 @@
+ 
+ extern const struct dev_pm_ops ccree_pm;
+ 
+-int cc_pm_init(struct cc_drvdata *drvdata);
+-void cc_pm_go(struct cc_drvdata *drvdata);
+-void cc_pm_fini(struct cc_drvdata *drvdata);
+ int cc_pm_suspend(struct device *dev);
+ int cc_pm_resume(struct device *dev);
+ int cc_pm_get(struct device *dev);
+@@ -26,15 +23,6 @@ bool cc_pm_is_dev_suspended(struct device *dev);
+ 
+ #else
+ 
+-static inline int cc_pm_init(struct cc_drvdata *drvdata)
+-{
+-	return 0;
+-}
+-
+-static inline void cc_pm_go(struct cc_drvdata *drvdata) {}
+-
+-static inline void cc_pm_fini(struct cc_drvdata *drvdata) {}
+-
+ static inline int cc_pm_get(struct device *dev)
  {
-@@ -297,10 +295,10 @@ static inline void set_din_sram(struct cc_hw_desc *pdesc, u32 addr, u32 size)
- 				FIELD_PREP(WORD1_DIN_DMA_MODE, DMA_SRAM);
- }
- 
--/*
-- * Set the DIN field of a HW descriptors to CONST mode
-+/**
-+ * set_din_const() - Set the DIN field of a HW descriptor to CONST mode
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @val: DIN const value
-  * @size: Data size in bytes
-  */
-@@ -312,20 +310,20 @@ static inline void set_din_const(struct cc_hw_desc *pdesc, u32 val, u32 size)
- 			FIELD_PREP(WORD1_DIN_SIZE, size);
- }
- 
--/*
-- * Set the DIN not last input data indicator
-+/**
-+ * set_din_not_last_indication() - Set the DIN not last input data indicator
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  */
- static inline void set_din_not_last_indication(struct cc_hw_desc *pdesc)
- {
- 	pdesc->word[1] |= FIELD_PREP(WORD1_NOT_LAST, 1);
- }
- 
--/*
-- * Set the DOUT field of a HW descriptors
-+/**
-+ * set_dout_type() - Set the DOUT field of a HW descriptor
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @dma_mode: The DMA mode: NO_DMA, SRAM, DLLI, MLLI, CONSTANT
-  * @addr: DOUT address
-  * @size: Data size in bytes
-@@ -344,15 +342,15 @@ static inline void set_dout_type(struct cc_hw_desc *pdesc,
- 				FIELD_PREP(WORD3_NS_BIT, axi_sec);
- }
- 
--/*
-- * Set the DOUT field of a HW descriptors to DLLI type
-+/**
-+ * set_dout_dlli() - Set the DOUT field of a HW descriptor to DLLI type
-  * The LAST INDICATION is provided by the user
-  *
-- * @pdesc pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @addr: DOUT address
-  * @size: Data size in bytes
-- * @last_ind: The last indication bit
-  * @axi_sec: AXI secure bit
-+ * @last_ind: The last indication bit
-  */
- static inline void set_dout_dlli(struct cc_hw_desc *pdesc, dma_addr_t addr,
- 				 u32 size, enum cc_axi_sec axi_sec,
-@@ -362,15 +360,15 @@ static inline void set_dout_dlli(struct cc_hw_desc *pdesc, dma_addr_t addr,
- 	pdesc->word[3] |= FIELD_PREP(WORD3_DOUT_LAST_IND, last_ind);
- }
- 
--/*
-- * Set the DOUT field of a HW descriptors to DLLI type
-+/**
-+ * set_dout_mlli() - Set the DOUT field of a HW descriptor to MLLI type
-  * The LAST INDICATION is provided by the user
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @addr: DOUT address
-  * @size: Data size in bytes
-- * @last_ind: The last indication bit
-  * @axi_sec: AXI secure bit
-+ * @last_ind: The last indication bit
-  */
- static inline void set_dout_mlli(struct cc_hw_desc *pdesc, u32 addr, u32 size,
- 				 enum cc_axi_sec axi_sec, bool last_ind)
-@@ -379,11 +377,11 @@ static inline void set_dout_mlli(struct cc_hw_desc *pdesc, u32 addr, u32 size,
- 	pdesc->word[3] |= FIELD_PREP(WORD3_DOUT_LAST_IND, last_ind);
- }
- 
--/*
-- * Set the DOUT field of a HW descriptors to NO DMA mode.
-+/**
-+ * set_dout_no_dma() - Set the DOUT field of a HW descriptor to NO DMA mode.
-  * Used for NOP descriptor, register patches and other special modes.
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: pointer to HW descriptor struct
-  * @addr: DOUT address
-  * @size: Data size in bytes
-  * @write_enable: Enables a write operation to a register
-@@ -396,54 +394,55 @@ static inline void set_dout_no_dma(struct cc_hw_desc *pdesc, u32 addr,
- 			FIELD_PREP(WORD3_DOUT_LAST_IND, write_enable);
- }
- 
--/*
-- * Set the word for the XOR operation.
-+/**
-+ * set_xor_val() - Set the word for the XOR operation.
-  *
-- * @pdesc: pointer HW descriptor struct
-- * @val: xor data value
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @val: XOR data value
-  */
- static inline void set_xor_val(struct cc_hw_desc *pdesc, u32 val)
- {
- 	pdesc->word[2] = val;
- }
- 
--/*
-- * Sets the XOR indicator bit in the descriptor
-+/**
-+ * set_xor_active() - Set the XOR indicator bit in the descriptor
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  */
- static inline void set_xor_active(struct cc_hw_desc *pdesc)
- {
- 	pdesc->word[3] |= FIELD_PREP(WORD3_HASH_XOR_BIT, 1);
- }
- 
--/*
-- * Select the AES engine instead of HASH engine when setting up combined mode
-- * with AES XCBC MAC
-+/**
-+ * set_aes_not_hash_mode() - Select the AES engine instead of HASH engine when
-+ * setting up combined mode with AES XCBC MAC
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  */
- static inline void set_aes_not_hash_mode(struct cc_hw_desc *pdesc)
- {
- 	pdesc->word[4] |= FIELD_PREP(WORD4_AES_SEL_N_HASH, 1);
- }
- 
--/*
-- * Set aes xor crypto key, this in some secenrios select SM3 engine
-+/**
-+ * set_aes_xor_crypto_key() - Set aes xor crypto key, which in some scenarios
-+ * selects the SM3 engine
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  */
- static inline void set_aes_xor_crypto_key(struct cc_hw_desc *pdesc)
- {
- 	pdesc->word[4] |= FIELD_PREP(WORD4_AES_XOR_CRYPTO_KEY, 1);
- }
- 
--/*
-- * Set the DOUT field of a HW descriptors to SRAM mode
-+/**
-+ * set_dout_sram() - Set the DOUT field of a HW descriptor to SRAM mode
-  * Note: No need to check SRAM alignment since host requests do not use SRAM and
-- * adaptor will enforce alignment check.
-+ * the adaptor will enforce alignment checks.
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @addr: DOUT address
-  * @size: Data size in bytes
-  */
-@@ -454,32 +453,34 @@ static inline void set_dout_sram(struct cc_hw_desc *pdesc, u32 addr, u32 size)
- 			FIELD_PREP(WORD3_DOUT_SIZE, size);
- }
- 
--/*
-- * Sets the data unit size for XEX mode in data_out_addr[15:0]
-+/**
-+ * set_xex_data_unit_size() - Set the data unit size for XEX mode in
-+ * data_out_addr[15:0]
-  *
-- * @pdesc: pDesc pointer HW descriptor struct
-- * @size: data unit size for XEX mode
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @size: Data unit size for XEX mode
-  */
- static inline void set_xex_data_unit_size(struct cc_hw_desc *pdesc, u32 size)
- {
- 	pdesc->word[2] = size;
- }
- 
--/*
-- * Set the number of rounds for Multi2 in data_out_addr[15:0]
-+/**
-+ * set_multi2_num_rounds() - Set the number of rounds for Multi2 in
-+ * data_out_addr[15:0]
-  *
-- * @pdesc: pointer HW descriptor struct
-- * @num: number of rounds for Multi2
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @num: Number of rounds for Multi2
-  */
- static inline void set_multi2_num_rounds(struct cc_hw_desc *pdesc, u32 num)
- {
- 	pdesc->word[2] = num;
- }
- 
--/*
-- * Set the flow mode.
-+/**
-+ * set_flow_mode() - Set the flow mode.
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @mode: Any one of the modes defined in [CC7x-DESC]
-  */
- static inline void set_flow_mode(struct cc_hw_desc *pdesc,
-@@ -488,22 +489,22 @@ static inline void set_flow_mode(struct cc_hw_desc *pdesc,
- 	pdesc->word[4] |= FIELD_PREP(WORD4_DATA_FLOW_MODE, mode);
- }
- 
--/*
-- * Set the cipher mode.
-+/**
-+ * set_cipher_mode() - Set the cipher mode.
-  *
-- * @pdesc: pointer HW descriptor struct
-- * @mode:  Any one of the modes defined in [CC7x-DESC]
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @mode: Any one of the modes defined in [CC7x-DESC]
-  */
- static inline void set_cipher_mode(struct cc_hw_desc *pdesc, int mode)
- {
- 	pdesc->word[4] |= FIELD_PREP(WORD4_CIPHER_MODE, mode);
- }
- 
--/*
-- * Set the cipher mode for hash algorithms.
-+/**
-+ * set_hash_cipher_mode() - Set the cipher mode for hash algorithms.
-  *
-- * @pdesc: pointer HW descriptor struct
-- * @cipher_mode:  Any one of the modes defined in [CC7x-DESC]
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @cipher_mode: Any one of the modes defined in [CC7x-DESC]
-  * @hash_mode: specifies which hash is being handled
-  */
- static inline void set_hash_cipher_mode(struct cc_hw_desc *pdesc,
-@@ -515,10 +516,10 @@ static inline void set_hash_cipher_mode(struct cc_hw_desc *pdesc,
- 		set_aes_xor_crypto_key(pdesc);
- }
- 
--/*
-- * Set the cipher configuration fields.
-+/**
-+ * set_cipher_config0() - Set the cipher configuration fields.
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @mode: Any one of the modes defined in [CC7x-DESC]
-  */
- static inline void set_cipher_config0(struct cc_hw_desc *pdesc, int mode)
-@@ -526,11 +527,11 @@ static inline void set_cipher_config0(struct cc_hw_desc *pdesc, int mode)
- 	pdesc->word[4] |= FIELD_PREP(WORD4_CIPHER_CONF0, mode);
- }
- 
--/*
-- * Set the cipher configuration fields.
-+/**
-+ * set_cipher_config1() - Set the cipher configuration fields.
-  *
-- * @pdesc: pointer HW descriptor struct
-- * @config: Any one of the modes defined in [CC7x-DESC]
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @config: Padding mode
-  */
- static inline void set_cipher_config1(struct cc_hw_desc *pdesc,
- 				      enum cc_hash_conf_pad config)
-@@ -538,10 +539,10 @@ static inline void set_cipher_config1(struct cc_hw_desc *pdesc,
- 	pdesc->word[4] |= FIELD_PREP(WORD4_CIPHER_CONF1, config);
- }
- 
--/*
-- * Set HW key configuration fields.
-+/**
-+ * set_hw_crypto_key() - Set HW key configuration fields.
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @hw_key: The HW key slot asdefined in enum cc_hw_crypto_key
-  */
- static inline void set_hw_crypto_key(struct cc_hw_desc *pdesc,
-@@ -553,64 +554,64 @@ static inline void set_hw_crypto_key(struct cc_hw_desc *pdesc,
- 				   (hw_key >> HW_KEY_SHIFT_CIPHER_CFG2));
- }
- 
--/*
-- * Set byte order of all setup-finalize descriptors.
-+/**
-+ * set_bytes_swap() - Set byte order of all setup-finalize descriptors.
-  *
-- * @pdesc: pointer HW descriptor struct
-- * @config: Any one of the modes defined in [CC7x-DESC]
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @config: True to enable byte swapping
-  */
- static inline void set_bytes_swap(struct cc_hw_desc *pdesc, bool config)
- {
- 	pdesc->word[4] |= FIELD_PREP(WORD4_BYTES_SWAP, config);
- }
- 
--/*
-- * Set CMAC_SIZE0 mode.
-+/**
-+ * set_cmac_size0_mode() - Set CMAC_SIZE0 mode.
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  */
- static inline void set_cmac_size0_mode(struct cc_hw_desc *pdesc)
- {
- 	pdesc->word[4] |= FIELD_PREP(WORD4_CMAC_SIZE0, 1);
- }
- 
--/*
-- * Set key size descriptor field.
-+/**
-+ * set_key_size() - Set key size descriptor field.
-  *
-- * @pdesc: pointer HW descriptor struct
-- * @size: key size in bytes (NOT size code)
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @size: Key size in bytes (NOT size code)
-  */
- static inline void set_key_size(struct cc_hw_desc *pdesc, u32 size)
- {
- 	pdesc->word[4] |= FIELD_PREP(WORD4_KEY_SIZE, size);
- }
- 
--/*
-- * Set AES key size.
-+/**
-+ * set_key_size_aes() - Set AES key size.
-  *
-- * @pdesc: pointer HW descriptor struct
-- * @size: key size in bytes (NOT size code)
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @size: Key size in bytes (NOT size code)
-  */
- static inline void set_key_size_aes(struct cc_hw_desc *pdesc, u32 size)
- {
- 	set_key_size(pdesc, ((size >> 3) - 2));
- }
- 
--/*
-- * Set DES key size.
-+/**
-+ * set_key_size_des() - Set DES key size.
-  *
-- * @pdesc: pointer HW descriptor struct
-- * @size: key size in bytes (NOT size code)
-+ * @pdesc: Pointer to HW descriptor struct
-+ * @size: Key size in bytes (NOT size code)
-  */
- static inline void set_key_size_des(struct cc_hw_desc *pdesc, u32 size)
- {
- 	set_key_size(pdesc, ((size >> 3) - 1));
- }
- 
--/*
-- * Set the descriptor setup mode
-+/**
-+ * set_setup_mode() - Set the descriptor setup mode
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @mode: Any one of the setup modes defined in [CC7x-DESC]
-  */
- static inline void set_setup_mode(struct cc_hw_desc *pdesc,
-@@ -619,10 +620,10 @@ static inline void set_setup_mode(struct cc_hw_desc *pdesc,
- 	pdesc->word[4] |= FIELD_PREP(WORD4_SETUP_OPERATION, mode);
- }
- 
--/*
-- * Set the descriptor cipher DO
-+/**
-+ * set_cipher_do() - Set the descriptor cipher DO
-  *
-- * @pdesc: pointer HW descriptor struct
-+ * @pdesc: Pointer to HW descriptor struct
-  * @config: Any one of the cipher do defined in [CC7x-DESC]
-  */
- static inline void set_cipher_do(struct cc_hw_desc *pdesc,
+ 	return 0;
 -- 
 2.17.1
 
