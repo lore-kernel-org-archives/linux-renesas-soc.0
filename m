@@ -2,98 +2,101 @@ Return-Path: <SRS0=5Rin=37=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B928DC352A3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B0A0C35242
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB2620842
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:27:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67A5D20873
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:44:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Peg+EZis"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731293AbgBKS1H (ORCPT
+        id S1730608AbgBKSoH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Feb 2020 13:27:07 -0500
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:35844 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728548AbgBKS0y (ORCPT
+        Tue, 11 Feb 2020 13:44:07 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46205 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729433AbgBKSoG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Feb 2020 13:26:54 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 48H9z66VTZzMtgr4
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Feb 2020 19:19:30 +0100 (CET)
-Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id 1WKV2200M5USYZQ06WKWPC; Tue, 11 Feb 2020 19:19:30 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j1a8A-0002pO-I2; Tue, 11 Feb 2020 19:19:30 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j1a8A-0003zf-Gd; Tue, 11 Feb 2020 19:19:30 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Gilad Ben-Yossef <gilad@benyossef.com>,
+        Tue, 11 Feb 2020 13:44:06 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x14so12753165ljd.13
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 11 Feb 2020 10:44:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=X0RiGxD598VNdYRw7xmS/5EVhHzz6Ia1q5/DbEyGlgg=;
+        b=Peg+EZisEXYABEG3l5R11Ckp1h2TIHD5m5gaWrN4FTdFU/HM704QIQjWyBCW+sKJHm
+         TBwrHBxnRi9ykqRhuz6fggtR+GToy1ZdOYJGJ6EiqCUOwXPQ4HxQrOMw58KHNljyfUW0
+         OX2DGoRuPaL6yR99d8kVppOVrDyjnE0berQWpLdhSb0K1BZymPluwhOiAvd8KJfy9QNw
+         mDZiL8svakmQsQsrVsYVxJtMT2u7Ek6+ZXBPXqy1e7tkXG+yHtUyWterKNF6tUmj11xz
+         KARQ4strqt7f56f+/CQuK1Ms/VdxyEA3KzU8eKUxmBgaKcM/kEHF6ABRMmJ4fo7s8Pht
+         7w0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=X0RiGxD598VNdYRw7xmS/5EVhHzz6Ia1q5/DbEyGlgg=;
+        b=Bw5A9m/bmh8apSKvsw6pGYMNznh8P6KJiUwwjw0IoXjdefkPGYGf2wClegSZREQhjU
+         qWNvb592zaKLcy8SC/wqgBWYon+BsvKwnk+GwVxGUfYS2HK7JXA5LaYgKoyNbhPgoxVU
+         7gMpzcTxO+p+KaQCu6DiPDtx/Cjc/io2FdjaeuofXsO9kNuGI99pRGFdobFhZHUyrCyc
+         cOfDZm7brmObjDs/LCTghtI7faccjMSGO6oJ/0cxq0aom/JTfQsoJwPWzJQjrvQzMVPw
+         Fx5nVR6mnBYjark2Nlc0Sn96jkF8UPAgR0jL9LXhm2X/pZRgtmXIipnfTuXiHQeJtHQn
+         e+pQ==
+X-Gm-Message-State: APjAAAU8j4otAGEWVTl9Ot++EX7AmsE086QpW01RR7xLHguJUQ0M3TmF
+        CirRWb6MVUzGriP/+c9jBABadA==
+X-Google-Smtp-Source: APXvYqw/C3WPKtObJplZ3qp0y3V2KAttt0bItnHGRKkAJLc0CGkZu91ZarSc4OfnExn5g7Nl1yxJGg==
+X-Received: by 2002:a2e:96c6:: with SMTP id d6mr5173671ljj.4.1581446645116;
+        Tue, 11 Feb 2020 10:44:05 -0800 (PST)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:42b3:6bcd:dba3:6f3d:48fb:be1c])
+        by smtp.gmail.com with ESMTPSA id n8sm1937902lfi.83.2020.02.11.10.44.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 11 Feb 2020 10:44:04 -0800 (PST)
+Subject: Re: [PATCH v2 23/34] crypto: ccree - remove bogus kerneldoc markers
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Gilad Ben-Yossef <gilad@benyossef.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         "David S . Miller" <davem@davemloft.net>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J . Wysocki" <rafael@kernel.org>,
         linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 33/34] crypto: ccree - use devm_k[mz]alloc() for cipher data
-Date:   Tue, 11 Feb 2020 19:19:27 +0100
-Message-Id: <20200211181928.15178-34-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200211181928.15178-1-geert+renesas@glider.be>
+        linux-kernel@vger.kernel.org
 References: <20200211181928.15178-1-geert+renesas@glider.be>
+ <20200211181928.15178-24-geert+renesas@glider.be>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <9e74ef25-90d9-0340-4e5f-07ff4d8c3fa3@cogentembedded.com>
+Date:   Tue, 11 Feb 2020 21:44:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <20200211181928.15178-24-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As the lifetime of the cipher data matches the lifetime of the driver,
-cipher data can be allocated using the managed allocators.
+Hello!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New.
+On 02/11/2020 09:19 PM, Geert Uytterhoeven wrote:
 
- drivers/crypto/ccree/cc_cipher.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> Normal comments should start with "/*".
+> "/**" is reserver for kerneldoc.
 
-diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
-index 517d78f9931943a3..44dc8e6229062a02 100644
---- a/drivers/crypto/ccree/cc_cipher.c
-+++ b/drivers/crypto/ccree/cc_cipher.c
-@@ -1634,7 +1634,7 @@ static struct cc_crypto_alg *cc_create_alg(const struct cc_alg_template *tmpl,
- 	struct cc_crypto_alg *t_alg;
- 	struct skcipher_alg *alg;
- 
--	t_alg = kzalloc(sizeof(*t_alg), GFP_KERNEL);
-+	t_alg = devm_kzalloc(dev, sizeof(*t_alg), GFP_KERNEL);
- 	if (!t_alg)
- 		return ERR_PTR(-ENOMEM);
- 
-@@ -1670,7 +1670,6 @@ int cc_cipher_free(struct cc_drvdata *drvdata)
- 	list_for_each_entry_safe(t_alg, n, &drvdata->alg_list, entry) {
- 		crypto_unregister_skcipher(&t_alg->skcipher_alg);
- 		list_del(&t_alg->entry);
--		kfree(t_alg);
- 	}
- 	return 0;
- }
-@@ -1711,7 +1710,6 @@ int cc_cipher_alloc(struct cc_drvdata *drvdata)
- 		if (rc) {
- 			dev_err(dev, "%s alg registration failed\n",
- 				t_alg->skcipher_alg.base.cra_driver_name);
--			kfree(t_alg);
- 			goto fail0;
- 		}
- 
--- 
-2.17.1
+   Reserved for kernel-doc, perhaps?
+
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+[...]
+
+MBR, Sergei
 
