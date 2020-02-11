@@ -4,33 +4,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 584E3C352A3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC94C35242
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47387208C3
+	by mail.kernel.org (Postfix) with ESMTP id BCCD22086A
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:20:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbgBKSUR (ORCPT
+        id S1730135AbgBKSTe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Feb 2020 13:20:17 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:59478 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730977AbgBKSTe (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 11 Feb 2020 13:19:34 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:60426 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729980AbgBKSTd (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 11 Feb 2020 13:19:33 -0500
 Received: from ramsan ([84.195.182.253])
-        by michel.telenet-ops.be with bizsmtp
-        id 1WKW220045USYZQ06WKWaY; Tue, 11 Feb 2020 19:19:30 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id 1WKV2200K5USYZQ06WKVNN; Tue, 11 Feb 2020 19:19:30 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a8A-0002ob-1m; Tue, 11 Feb 2020 19:19:30 +0100
+        id 1j1a89-0002o8-Mc; Tue, 11 Feb 2020 19:19:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a8A-0003z2-0G; Tue, 11 Feb 2020 19:19:30 +0100
+        id 1j1a89-0003yb-LQ; Tue, 11 Feb 2020 19:19:29 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Gilad Ben-Yossef <gilad@benyossef.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -40,9 +39,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 20/34] crypto: ccree - remove struct buff_mgr_handle
-Date:   Tue, 11 Feb 2020 19:19:14 +0100
-Message-Id: <20200211181928.15178-21-geert+renesas@glider.be>
+Subject: [PATCH v2 11/34] crypto: ccree - defer larval_digest_addr init until needed
+Date:   Tue, 11 Feb 2020 19:19:05 +0100
+Message-Id: <20200211181928.15178-12-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200211181928.15178-1-geert+renesas@glider.be>
 References: <20200211181928.15178-1-geert+renesas@glider.be>
@@ -51,159 +50,66 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The buff_mgr_handle structure contains only a single member, and only
-one instance exists.  Simplify the code and reduce memory consumption by
-moving this member to struct cc_drvdata.
+While the larval digest addresses are not always used in
+cc_get_plain_hmac_key() and cc_hash_digest(), they are always
+calculated.
+
+Defer their calculations to the points where needed.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
   - New.
 
- drivers/crypto/ccree/cc_buffer_mgr.c | 41 ++++++----------------------
- drivers/crypto/ccree/cc_driver.h     |  2 +-
- 2 files changed, 9 insertions(+), 34 deletions(-)
+ drivers/crypto/ccree/cc_aead.c | 4 +++-
+ drivers/crypto/ccree/cc_hash.c | 5 +++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/crypto/ccree/cc_buffer_mgr.c b/drivers/crypto/ccree/cc_buffer_mgr.c
-index abf08369f030faa8..f2e782d2be155ee4 100644
---- a/drivers/crypto/ccree/cc_buffer_mgr.c
-+++ b/drivers/crypto/ccree/cc_buffer_mgr.c
-@@ -19,10 +19,6 @@ enum dma_buffer_type {
- 	DMA_BUFF_TYPE = 2,
- };
- 
--struct buff_mgr_handle {
--	struct dma_pool *mlli_buffs_pool;
--};
--
- union buffer_array_entry {
- 	struct scatterlist *sgl;
- 	dma_addr_t buffer_dma;
-@@ -402,7 +398,6 @@ int cc_map_cipher_request(struct cc_drvdata *drvdata, void *ctx,
- {
- 	struct cipher_req_ctx *req_ctx = (struct cipher_req_ctx *)ctx;
- 	struct mlli_params *mlli_params = &req_ctx->mlli_params;
--	struct buff_mgr_handle *buff_mgr = drvdata->buff_mgr_handle;
- 	struct device *dev = drvdata_to_dev(drvdata);
- 	struct buffer_array sg_data;
- 	u32 dummy = 0;
-@@ -466,7 +461,7 @@ int cc_map_cipher_request(struct cc_drvdata *drvdata, void *ctx,
+diff --git a/drivers/crypto/ccree/cc_aead.c b/drivers/crypto/ccree/cc_aead.c
+index db89144ce6c5e974..d1e7e82b9a40f8ff 100644
+--- a/drivers/crypto/ccree/cc_aead.c
++++ b/drivers/crypto/ccree/cc_aead.c
+@@ -417,7 +417,7 @@ static int cc_get_plain_hmac_key(struct crypto_aead *tfm, const u8 *authkey,
+ 	dma_addr_t key_dma_addr = 0;
+ 	struct cc_aead_ctx *ctx = crypto_aead_ctx(tfm);
+ 	struct device *dev = drvdata_to_dev(ctx->drvdata);
+-	u32 larval_addr = cc_larval_digest_addr(ctx->drvdata, ctx->auth_mode);
++	u32 larval_addr;
+ 	struct cc_crypto_req cc_req = {};
+ 	unsigned int blocksize;
+ 	unsigned int digestsize;
+@@ -459,6 +459,8 @@ static int cc_get_plain_hmac_key(struct crypto_aead *tfm, const u8 *authkey,
+ 			/* Load hash initial state */
+ 			hw_desc_init(&desc[idx]);
+ 			set_cipher_mode(&desc[idx], hashmode);
++			larval_addr = cc_larval_digest_addr(ctx->drvdata,
++							    ctx->auth_mode);
+ 			set_din_sram(&desc[idx], larval_addr, digestsize);
+ 			set_flow_mode(&desc[idx], S_DIN_to_HASH);
+ 			set_setup_mode(&desc[idx], SETUP_LOAD_STATE0);
+diff --git a/drivers/crypto/ccree/cc_hash.c b/drivers/crypto/ccree/cc_hash.c
+index defeb35a16a626ff..cebbe2f08f606bf3 100644
+--- a/drivers/crypto/ccree/cc_hash.c
++++ b/drivers/crypto/ccree/cc_hash.c
+@@ -429,8 +429,7 @@ static int cc_hash_digest(struct ahash_request *req)
+ 	bool is_hmac = ctx->is_hmac;
+ 	struct cc_crypto_req cc_req = {};
+ 	struct cc_hw_desc desc[CC_MAX_HASH_SEQ_LEN];
+-	cc_sram_addr_t larval_digest_addr =
+-		cc_larval_digest_addr(ctx->drvdata, ctx->hash_mode);
++	cc_sram_addr_t larval_digest_addr;
+ 	int idx = 0;
+ 	int rc = 0;
+ 	gfp_t flags = cc_gfp_flags(&req->base);
+@@ -472,6 +471,8 @@ static int cc_hash_digest(struct ahash_request *req)
+ 		set_din_type(&desc[idx], DMA_DLLI, state->digest_buff_dma_addr,
+ 			     ctx->inter_digestsize, NS_BIT);
+ 	} else {
++		larval_digest_addr = cc_larval_digest_addr(ctx->drvdata,
++							   ctx->hash_mode);
+ 		set_din_sram(&desc[idx], larval_digest_addr,
+ 			     ctx->inter_digestsize);
  	}
- 
- 	if (req_ctx->dma_buf_type == CC_DMA_BUF_MLLI) {
--		mlli_params->curr_pool = buff_mgr->mlli_buffs_pool;
-+		mlli_params->curr_pool = drvdata->mlli_buffs_pool;
- 		rc = cc_generate_mlli(dev, &sg_data, mlli_params, flags);
- 		if (rc)
- 			goto cipher_exit;
-@@ -1007,7 +1002,6 @@ int cc_map_aead_request(struct cc_drvdata *drvdata, struct aead_request *req)
- 	struct device *dev = drvdata_to_dev(drvdata);
- 	struct buffer_array sg_data;
- 	unsigned int authsize = areq_ctx->req_authsize;
--	struct buff_mgr_handle *buff_mgr = drvdata->buff_mgr_handle;
- 	int rc = 0;
- 	struct crypto_aead *tfm = crypto_aead_reqtfm(req);
- 	bool is_gcm4543 = areq_ctx->is_gcm4543;
-@@ -1180,7 +1174,7 @@ int cc_map_aead_request(struct cc_drvdata *drvdata, struct aead_request *req)
- 	 */
- 	if (areq_ctx->assoc_buff_type == CC_DMA_BUF_MLLI ||
- 	    areq_ctx->data_buff_type == CC_DMA_BUF_MLLI) {
--		mlli_params->curr_pool = buff_mgr->mlli_buffs_pool;
-+		mlli_params->curr_pool = drvdata->mlli_buffs_pool;
- 		rc = cc_generate_mlli(dev, &sg_data, mlli_params, flags);
- 		if (rc)
- 			goto aead_map_failure;
-@@ -1208,7 +1202,6 @@ int cc_map_hash_request_final(struct cc_drvdata *drvdata, void *ctx,
- 	u32 *curr_buff_cnt = cc_hash_buf_cnt(areq_ctx);
- 	struct mlli_params *mlli_params = &areq_ctx->mlli_params;
- 	struct buffer_array sg_data;
--	struct buff_mgr_handle *buff_mgr = drvdata->buff_mgr_handle;
- 	int rc = 0;
- 	u32 dummy = 0;
- 	u32 mapped_nents = 0;
-@@ -1255,7 +1248,7 @@ int cc_map_hash_request_final(struct cc_drvdata *drvdata, void *ctx,
- 
- 	/*build mlli */
- 	if (areq_ctx->data_dma_buf_type == CC_DMA_BUF_MLLI) {
--		mlli_params->curr_pool = buff_mgr->mlli_buffs_pool;
-+		mlli_params->curr_pool = drvdata->mlli_buffs_pool;
- 		/* add the src data to the sg_data */
- 		cc_add_sg_entry(dev, &sg_data, areq_ctx->in_nents, src, nbytes,
- 				0, true, &areq_ctx->mlli_nents);
-@@ -1293,7 +1286,6 @@ int cc_map_hash_request_update(struct cc_drvdata *drvdata, void *ctx,
- 	unsigned int update_data_len;
- 	u32 total_in_len = nbytes + *curr_buff_cnt;
- 	struct buffer_array sg_data;
--	struct buff_mgr_handle *buff_mgr = drvdata->buff_mgr_handle;
- 	unsigned int swap_index = 0;
- 	int rc = 0;
- 	u32 dummy = 0;
-@@ -1368,7 +1360,7 @@ int cc_map_hash_request_update(struct cc_drvdata *drvdata, void *ctx,
- 	}
- 
- 	if (areq_ctx->data_dma_buf_type == CC_DMA_BUF_MLLI) {
--		mlli_params->curr_pool = buff_mgr->mlli_buffs_pool;
-+		mlli_params->curr_pool = drvdata->mlli_buffs_pool;
- 		/* add the src data to the sg_data */
- 		cc_add_sg_entry(dev, &sg_data, areq_ctx->in_nents, src,
- 				(update_data_len - *curr_buff_cnt), 0, true,
-@@ -1435,39 +1427,22 @@ void cc_unmap_hash_request(struct device *dev, void *ctx,
- 
- int cc_buffer_mgr_init(struct cc_drvdata *drvdata)
- {
--	struct buff_mgr_handle *buff_mgr_handle;
- 	struct device *dev = drvdata_to_dev(drvdata);
- 
--	buff_mgr_handle = kmalloc(sizeof(*buff_mgr_handle), GFP_KERNEL);
--	if (!buff_mgr_handle)
--		return -ENOMEM;
--
--	drvdata->buff_mgr_handle = buff_mgr_handle;
--
--	buff_mgr_handle->mlli_buffs_pool =
-+	drvdata->mlli_buffs_pool =
- 		dma_pool_create("dx_single_mlli_tables", dev,
- 				MAX_NUM_OF_TOTAL_MLLI_ENTRIES *
- 				LLI_ENTRY_BYTE_SIZE,
- 				MLLI_TABLE_MIN_ALIGNMENT, 0);
- 
--	if (!buff_mgr_handle->mlli_buffs_pool)
--		goto error;
-+	if (!drvdata->mlli_buffs_pool)
-+		return -ENOMEM;
- 
- 	return 0;
--
--error:
--	cc_buffer_mgr_fini(drvdata);
--	return -ENOMEM;
- }
- 
- int cc_buffer_mgr_fini(struct cc_drvdata *drvdata)
- {
--	struct buff_mgr_handle *buff_mgr_handle = drvdata->buff_mgr_handle;
--
--	if (buff_mgr_handle) {
--		dma_pool_destroy(buff_mgr_handle->mlli_buffs_pool);
--		kfree(drvdata->buff_mgr_handle);
--		drvdata->buff_mgr_handle = NULL;
--	}
-+	dma_pool_destroy(drvdata->mlli_buffs_pool);
- 	return 0;
- }
-diff --git a/drivers/crypto/ccree/cc_driver.h b/drivers/crypto/ccree/cc_driver.h
-index 7360b403655c96f7..4895f124d2b83fb1 100644
---- a/drivers/crypto/ccree/cc_driver.h
-+++ b/drivers/crypto/ccree/cc_driver.h
-@@ -140,7 +140,7 @@ struct cc_drvdata {
- 	struct completion hw_queue_avail; /* wait for HW queue availability */
- 	struct platform_device *plat_dev;
- 	u32 mlli_sram_addr;
--	void *buff_mgr_handle;
-+	struct dma_pool *mlli_buffs_pool;
- 	void *cipher_handle;
- 	void *hash_handle;
- 	void *aead_handle;
 -- 
 2.17.1
 
