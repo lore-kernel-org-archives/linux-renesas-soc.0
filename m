@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D5F7C35242
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA980C3B187
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7806220714
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD7AD206D6
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:21:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbgBKSVT (ORCPT
+        id S1728715AbgBKSV2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Feb 2020 13:21:19 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:59438 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731160AbgBKSTd (ORCPT
+        Tue, 11 Feb 2020 13:21:28 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:45376 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730058AbgBKSTc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Feb 2020 13:19:33 -0500
+        Tue, 11 Feb 2020 13:19:32 -0500
 Received: from ramsan ([84.195.182.253])
-        by michel.telenet-ops.be with bizsmtp
-        id 1WKV2200J5USYZQ06WKVaS; Tue, 11 Feb 2020 19:19:30 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id 1WKW220055USYZQ01WKWw0; Tue, 11 Feb 2020 19:19:30 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a89-0002o2-KQ; Tue, 11 Feb 2020 19:19:29 +0100
+        id 1j1a8A-0002ol-5L; Tue, 11 Feb 2020 19:19:30 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a89-0003yV-Ix; Tue, 11 Feb 2020 19:19:29 +0100
+        id 1j1a8A-0003zB-3z; Tue, 11 Feb 2020 19:19:30 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Gilad Ben-Yossef <gilad@benyossef.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -40,9 +40,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 09/34] crypto: ccree - make mlli_params.mlli_virt_addr void *
-Date:   Tue, 11 Feb 2020 19:19:03 +0100
-Message-Id: <20200211181928.15178-10-geert+renesas@glider.be>
+Subject: [PATCH v2 23/34] crypto: ccree - remove bogus kerneldoc markers
+Date:   Tue, 11 Feb 2020 19:19:17 +0100
+Message-Id: <20200211181928.15178-24-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200211181928.15178-1-geert+renesas@glider.be>
 References: <20200211181928.15178-1-geert+renesas@glider.be>
@@ -51,46 +51,57 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-mlli_params.mlli_virt_addr is just a buffer of memory.
-This allows to drop a cast.
-
-No change in generated code.
+Normal comments should start with "/*".
+"/**" is reserver for kerneldoc.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
   - New.
 
- drivers/crypto/ccree/cc_buffer_mgr.c | 2 +-
- drivers/crypto/ccree/cc_buffer_mgr.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/ccree/cc_aead.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/crypto/ccree/cc_buffer_mgr.c b/drivers/crypto/ccree/cc_buffer_mgr.c
-index 1e335abd744024d8..abf08369f030faa8 100644
---- a/drivers/crypto/ccree/cc_buffer_mgr.c
-+++ b/drivers/crypto/ccree/cc_buffer_mgr.c
-@@ -207,7 +207,7 @@ static int cc_generate_mlli(struct device *dev, struct buffer_array *sg_data,
- 		goto build_mlli_exit;
- 	}
- 	/* Point to start of MLLI */
--	mlli_p = (u32 *)mlli_params->mlli_virt_addr;
-+	mlli_p = mlli_params->mlli_virt_addr;
- 	/* go over all SG's and link it to one MLLI table */
- 	for (i = 0; i < sg_data->num_of_buffers; i++) {
- 		union buffer_array_entry *entry = &sg_data->entry[i];
-diff --git a/drivers/crypto/ccree/cc_buffer_mgr.h b/drivers/crypto/ccree/cc_buffer_mgr.h
-index 827b6cb1236e8a65..250d634902adc634 100644
---- a/drivers/crypto/ccree/cc_buffer_mgr.h
-+++ b/drivers/crypto/ccree/cc_buffer_mgr.h
-@@ -32,7 +32,7 @@ struct cc_mlli {
+diff --git a/drivers/crypto/ccree/cc_aead.c b/drivers/crypto/ccree/cc_aead.c
+index 78afa753b44f2dba..be26aaf75e1fe9ea 100644
+--- a/drivers/crypto/ccree/cc_aead.c
++++ b/drivers/crypto/ccree/cc_aead.c
+@@ -1223,7 +1223,7 @@ static void cc_hmac_authenc(struct aead_request *req, struct cc_hw_desc desc[],
+ 				 req_ctx->is_single_pass);
  
- struct mlli_params {
- 	struct dma_pool *curr_pool;
--	u8 *mlli_virt_addr;
-+	void *mlli_virt_addr;
- 	dma_addr_t mlli_dma_addr;
- 	u32 mlli_len;
- };
+ 	if (req_ctx->is_single_pass) {
+-		/**
++		/*
+ 		 * Single-pass flow
+ 		 */
+ 		cc_set_hmac_desc(req, desc, seq_size);
+@@ -1235,7 +1235,7 @@ static void cc_hmac_authenc(struct aead_request *req, struct cc_hw_desc desc[],
+ 		return;
+ 	}
+ 
+-	/**
++	/*
+ 	 * Double-pass flow
+ 	 * Fallback for unsupported single-pass modes,
+ 	 * i.e. using assoc. data of non-word-multiple
+@@ -1276,7 +1276,7 @@ cc_xcbc_authenc(struct aead_request *req, struct cc_hw_desc desc[],
+ 				 req_ctx->is_single_pass);
+ 
+ 	if (req_ctx->is_single_pass) {
+-		/**
++		/*
+ 		 * Single-pass flow
+ 		 */
+ 		cc_set_xcbc_desc(req, desc, seq_size);
+@@ -1287,7 +1287,7 @@ cc_xcbc_authenc(struct aead_request *req, struct cc_hw_desc desc[],
+ 		return;
+ 	}
+ 
+-	/**
++	/*
+ 	 * Double-pass flow
+ 	 * Fallback for unsupported single-pass modes,
+ 	 * i.e. using assoc. data of non-word-multiple
 -- 
 2.17.1
 
