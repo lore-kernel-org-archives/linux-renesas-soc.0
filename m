@@ -4,33 +4,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF06C3B188
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5365C352A3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D56208C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:20:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B837520708
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Feb 2020 18:20:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731049AbgBKSTd (ORCPT
+        id S1731011AbgBKSTd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 11 Feb 2020 13:19:33 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:52112 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730673AbgBKSTd (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:59460 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731049AbgBKSTd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 11 Feb 2020 13:19:33 -0500
 Received: from ramsan ([84.195.182.253])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 1WKV2200M5USYZQ01WKV6z; Tue, 11 Feb 2020 19:19:30 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id 1WKW220025USYZQ06WKWaX; Tue, 11 Feb 2020 19:19:30 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a89-0002nt-Gy; Tue, 11 Feb 2020 19:19:29 +0100
+        id 1j1a89-0002oS-Uy; Tue, 11 Feb 2020 19:19:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1a89-0003yM-Fc; Tue, 11 Feb 2020 19:19:29 +0100
+        id 1j1a89-0003yt-T7; Tue, 11 Feb 2020 19:19:29 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Gilad Ben-Yossef <gilad@benyossef.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
@@ -40,9 +39,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 06/34] crypto: ccree - drop duplicated error message on SRAM exhaustion
-Date:   Tue, 11 Feb 2020 19:19:00 +0100
-Message-Id: <20200211181928.15178-7-geert+renesas@glider.be>
+Subject: [PATCH v2 17/34] crypto: ccree - make cc_pm_{suspend,resume}() static
+Date:   Tue, 11 Feb 2020 19:19:11 +0100
+Message-Id: <20200211181928.15178-18-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200211181928.15178-1-geert+renesas@glider.be>
 References: <20200211181928.15178-1-geert+renesas@glider.be>
@@ -51,55 +50,68 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When no SRAM can be allocated, cc_sram_alloc() already prints an error
-message.  Hence there is no need to duplicate this in all callers.
+cc_pm_suspend() and cc_pm_resume() are not used outside
+drivers/crypto/ccree/cc_pm.c.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
   - New.
 
- drivers/crypto/ccree/cc_aead.c   | 1 -
- drivers/crypto/ccree/cc_driver.c | 1 -
- drivers/crypto/ccree/cc_hash.c   | 1 -
- 3 files changed, 3 deletions(-)
+ drivers/crypto/ccree/cc_pm.c | 12 ++++++------
+ drivers/crypto/ccree/cc_pm.h |  2 --
+ 2 files changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/crypto/ccree/cc_aead.c b/drivers/crypto/ccree/cc_aead.c
-index 7a62fb023d8d3769..db89144ce6c5e974 100644
---- a/drivers/crypto/ccree/cc_aead.c
-+++ b/drivers/crypto/ccree/cc_aead.c
-@@ -2682,7 +2682,6 @@ int cc_aead_alloc(struct cc_drvdata *drvdata)
- 							 MAX_HMAC_DIGEST_SIZE);
+diff --git a/drivers/crypto/ccree/cc_pm.c b/drivers/crypto/ccree/cc_pm.c
+index 3b4927c41a177752..d39e1664fc7edfd3 100644
+--- a/drivers/crypto/ccree/cc_pm.c
++++ b/drivers/crypto/ccree/cc_pm.c
+@@ -15,11 +15,7 @@
+ #define POWER_DOWN_ENABLE 0x01
+ #define POWER_DOWN_DISABLE 0x00
  
- 	if (aead_handle->sram_workspace_addr == NULL_SRAM_ADDR) {
--		dev_err(dev, "SRAM pool exhausted\n");
- 		rc = -ENOMEM;
- 		goto fail1;
- 	}
-diff --git a/drivers/crypto/ccree/cc_driver.c b/drivers/crypto/ccree/cc_driver.c
-index fc34d152f42090fc..599936a0b0a2cc63 100644
---- a/drivers/crypto/ccree/cc_driver.c
-+++ b/drivers/crypto/ccree/cc_driver.c
-@@ -477,7 +477,6 @@ static int init_cc_resources(struct platform_device *plat_dev)
- 	new_drvdata->mlli_sram_addr =
- 		cc_sram_alloc(new_drvdata, MAX_MLLI_BUFF_SIZE);
- 	if (new_drvdata->mlli_sram_addr == NULL_SRAM_ADDR) {
--		dev_err(dev, "Failed to alloc MLLI Sram buffer\n");
- 		rc = -ENOMEM;
- 		goto post_sram_mgr_err;
- 	}
-diff --git a/drivers/crypto/ccree/cc_hash.c b/drivers/crypto/ccree/cc_hash.c
-index c3146f550268e7ab..defeb35a16a626ff 100644
---- a/drivers/crypto/ccree/cc_hash.c
-+++ b/drivers/crypto/ccree/cc_hash.c
-@@ -2001,7 +2001,6 @@ int cc_hash_alloc(struct cc_drvdata *drvdata)
+-const struct dev_pm_ops ccree_pm = {
+-	SET_RUNTIME_PM_OPS(cc_pm_suspend, cc_pm_resume, NULL)
+-};
+-
+-int cc_pm_suspend(struct device *dev)
++static int cc_pm_suspend(struct device *dev)
+ {
+ 	struct cc_drvdata *drvdata = dev_get_drvdata(dev);
  
- 	sram_buff = cc_sram_alloc(drvdata, sram_size_to_alloc);
- 	if (sram_buff == NULL_SRAM_ADDR) {
--		dev_err(dev, "SRAM pool exhausted\n");
- 		rc = -ENOMEM;
- 		goto fail;
- 	}
+@@ -30,7 +26,7 @@ int cc_pm_suspend(struct device *dev)
+ 	return 0;
+ }
+ 
+-int cc_pm_resume(struct device *dev)
++static int cc_pm_resume(struct device *dev)
+ {
+ 	int rc;
+ 	struct cc_drvdata *drvdata = dev_get_drvdata(dev);
+@@ -62,6 +58,10 @@ int cc_pm_resume(struct device *dev)
+ 	return 0;
+ }
+ 
++const struct dev_pm_ops ccree_pm = {
++	SET_RUNTIME_PM_OPS(cc_pm_suspend, cc_pm_resume, NULL)
++};
++
+ int cc_pm_get(struct device *dev)
+ {
+ 	int rc = pm_runtime_get_sync(dev);
+diff --git a/drivers/crypto/ccree/cc_pm.h b/drivers/crypto/ccree/cc_pm.h
+index 1fe1fc827f62f49e..50cac33de11832bc 100644
+--- a/drivers/crypto/ccree/cc_pm.h
++++ b/drivers/crypto/ccree/cc_pm.h
+@@ -15,8 +15,6 @@
+ 
+ extern const struct dev_pm_ops ccree_pm;
+ 
+-int cc_pm_suspend(struct device *dev);
+-int cc_pm_resume(struct device *dev);
+ int cc_pm_get(struct device *dev);
+ void cc_pm_put_suspend(struct device *dev);
+ 
 -- 
 2.17.1
 
