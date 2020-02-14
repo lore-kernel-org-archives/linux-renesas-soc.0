@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C9FC3B1A5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 16:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCD2C3B1A1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 16:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9133A246A1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 16:33:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AF9B24693
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 16:40:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581698004;
-	bh=U1hQYGmbYZuTgXI+foOvWiI4DWlD9KQ+H4SpRNWnz5A=;
+	s=default; t=1581698438;
+	bh=XYGSiGMpjLNrL6iof9ltMi4uaPxiKfUKwYzBWza8r7w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Euo2tMAopAw9nqdiFQZpQiAJGDuDm57v6fXndp+cX4UvXUJLcfbzxJnlt+OY1vlmo
-	 FNsMsTOPP0L/NRwmD+tzpFeXi/T7OFc8LOUO80DFTsj4GmLzpzoeqqx6PzE+23mLWM
-	 0uzf2FFpFtcQsSdRMbfTtc1vBl/997ud5Ej4jD+0=
+	b=kNwTz215U8hyRyzUgJx7gslbjRssvjslnKS8dFXnZ3fdUdHrdQUI/UADaC9OxH9FG
+	 VzzZcQTcVT7mE8ZSEkgMZ6OTcxuvvu4PHxZoWls443/VwtqASI/uS2UzP/hOUGfjeJ
+	 eyEbUQ84PEEHZ3TZzkwMpWyNii2Zt0mUCYr3ld6M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406120AbgBNQZ3 (ORCPT
+        id S2393258AbgBNQWw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Feb 2020 11:25:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35152 "EHLO mail.kernel.org"
+        Fri, 14 Feb 2020 11:22:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406113AbgBNQZ3 (ORCPT
+        id S2393254AbgBNQWw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:25:29 -0500
+        Fri, 14 Feb 2020 11:22:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DA80D247C6;
-        Fri, 14 Feb 2020 16:25:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7F7024761;
+        Fri, 14 Feb 2020 16:22:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697528;
-        bh=U1hQYGmbYZuTgXI+foOvWiI4DWlD9KQ+H4SpRNWnz5A=;
+        s=default; t=1581697371;
+        bh=XYGSiGMpjLNrL6iof9ltMi4uaPxiKfUKwYzBWza8r7w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TiwaU/S7dmHZvF2zMUIDu+QYTxtgxUzW6por9NN8DCA32eV5K9ZhPjU+c6hlZDLLR
-         zx+Jb+E89v6iflpp2HsK0+YUOuvlhqnyCXIEXMcr0RAsfPXazWQVqSNdW6EWh95yVF
-         oK22fLiF4rcjdf+E3QHss5ScPSrb2wElP6MmqmcE=
+        b=luQdGElfVEu3FP1yzc+TX4iRN3KwMB0krenmkO66v+tpEgVExdasOXJxCloB7BzbW
+         vfgEBaNHK7LB7SXtrmRazARsTeWHEcTGQRF5BiQY/XQtLsBD1aU4yjEraQOSEXe5Pq
+         czu9HU6HwYUk+2pVLCuuI4J3pOfROKoeKurXmIRY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 051/100] ARM: dts: r8a7779: Add device node for ARM global timer
-Date:   Fri, 14 Feb 2020 11:23:35 -0500
-Message-Id: <20200214162425.21071-51-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 070/141] ARM: dts: r8a7779: Add device node for ARM global timer
+Date:   Fri, 14 Feb 2020 11:20:10 -0500
+Message-Id: <20200214162122.19794-70-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
-References: <20200214162425.21071-1-sashal@kernel.org>
+In-Reply-To: <20200214162122.19794-1-sashal@kernel.org>
+References: <20200214162122.19794-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -78,10 +78,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
-index 6afa909865b52..8636e2321ab71 100644
+index b9bbcce69dfbd..6c6d4893e92d4 100644
 --- a/arch/arm/boot/dts/r8a7779.dtsi
 +++ b/arch/arm/boot/dts/r8a7779.dtsi
-@@ -63,6 +63,14 @@
+@@ -67,6 +67,14 @@
  		      <0xf0000100 0x100>;
  	};
  
