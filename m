@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B54BC2BA83
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:07:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE78C2BA83
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D95E120656
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:07:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E403D206CC
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:07:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581700054;
-	bh=0WYT4szMb7DP/YdPdxU6t2Y/fi4579HGwYwbNDVFFZ4=;
+	s=default; t=1581700079;
+	bh=6HKEoRuBusvKcuT8Fuw5jbBQs7MAmC6gXzaQukErTvA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oVnNwulmCZyBqjH5Y5ExeHv03xPf2bUDQhL6/A9MbvYEdjoTs/S1Zkyge6r0yiSgG
-	 yXShk2cdF20eEsasg99hzq5u6qXL7uBFwcUkazVk/P0GS3XgLHnf3GmSBQSEqtJgmO
-	 KYkivdivx4NcIIZ0ZOUS4oyQDE21mwtnKEaGRqHE=
+	b=Ue7aJTtm+fY/RqgArqIJB6+KhK2SdmOT++ymxI5yB4XlikoxKRhJ32PSaTdyYJ69J
+	 dCMlJ4ocMKi78ZB3Wsl52lzUZnwMJyiV1zmC/1qU4yenVTg8WRL7y/RQ0/RydCeZp2
+	 icyRxCppqL1UqQDIVOgZOLqSNV/tmMSFV+vgH2RY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404024AbgBNQOZ (ORCPT
+        id S2392281AbgBNQOO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Feb 2020 11:14:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43960 "EHLO mail.kernel.org"
+        Fri, 14 Feb 2020 11:14:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404016AbgBNQOZ (ORCPT
+        id S2392274AbgBNQOO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:14:25 -0500
+        Fri, 14 Feb 2020 11:14:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6D93246C9;
-        Fri, 14 Feb 2020 16:14:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2B3D246C3;
+        Fri, 14 Feb 2020 16:14:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696864;
-        bh=0WYT4szMb7DP/YdPdxU6t2Y/fi4579HGwYwbNDVFFZ4=;
+        s=default; t=1581696853;
+        bh=6HKEoRuBusvKcuT8Fuw5jbBQs7MAmC6gXzaQukErTvA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g/IQ+rQfV+dOYvMBuWbvUnQCPngVROmbfmoPmFI796XhZx8k4zhW9k432Va1zv6+L
-         GHquBqgWCmbacP/Oe30Cz1DpkUcq6Gu39IzTS/kytjPN27H5tspBRz6WKixrjIqCUa
-         +mc2OAXBul8obSD6o/+lXI7phvDCoOgJe4xfOoZ4=
+        b=GqNZjh9j886ug/VZU6AOL7X4+0/4uDVH/bR0zqDknSwxG3FChW8MlZ8xQnp/YMloQ
+         DRQTVFVj7vvVidgIbSgjKh1+b9jclQTAz3B4LhtkqrqrIPOX8ygHdWG4CVVfHhBm3V
+         FBqP/JvA0zUI+VjcNrT6AGj+1pL1WvtHtJoi4zDs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 123/252] pinctrl: sh-pfc: r8a7778: Fix duplicate SDSELF_B and SD1_CLK_B
-Date:   Fri, 14 Feb 2020 11:09:38 -0500
-Message-Id: <20200214161147.15842-123-sashal@kernel.org>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 114/252] ARM: dts: r8a7779: Add device node for ARM global timer
+Date:   Fri, 14 Feb 2020 11:09:29 -0500
+Message-Id: <20200214161147.15842-114-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214161147.15842-1-sashal@kernel.org>
 References: <20200214161147.15842-1-sashal@kernel.org>
@@ -62,41 +62,40 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 805f635703b2562b5ddd822c62fc9124087e5dd5 ]
+[ Upstream commit 8443ffd1bbd5be74e9b12db234746d12e8ea93e2 ]
 
-The FN_SDSELF_B and FN_SD1_CLK_B enum IDs are used twice, which means
-one set of users must be wrong.  Replace them by the correct enum IDs.
+Add a device node for the global timer, which is part of the Cortex-A9
+MPCore.
 
-Fixes: 87f8c988636db0d4 ("sh-pfc: Add r8a7778 pinmux support")
+The global timer can serve as an accurate (4 ns) clock source for
+scheduling and delay loops.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20191218194812.12741-2-geert+renesas@glider.be
+Link: https://lore.kernel.org/r/20191211135222.26770-4-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/r8a7779.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-index 00d61d1752496..c60fce1225b02 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-@@ -2325,7 +2325,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_ATAG0_A,	0,		FN_REMOCON_B,	0,
- 		/* IP0_11_8 [4] */
- 		FN_SD1_DAT2_A,	FN_MMC_D2,	0,		FN_BS,
--		FN_ATADIR0_A,	0,		FN_SDSELF_B,	0,
-+		FN_ATADIR0_A,	0,		FN_SDSELF_A,	0,
- 		FN_PWM4_B,	0,		0,		0,
- 		0,		0,		0,		0,
- 		/* IP0_7_5 [3] */
-@@ -2367,7 +2367,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_TS_SDAT0_A,	0,		0,		0,
- 		0,		0,		0,		0,
- 		/* IP1_10_8 [3] */
--		FN_SD1_CLK_B,	FN_MMC_D6,	0,		FN_A24,
-+		FN_SD1_CD_A,	FN_MMC_D6,	0,		FN_A24,
- 		FN_DREQ1_A,	0,		FN_HRX0_B,	FN_TS_SPSYNC0_A,
- 		/* IP1_7_5 [3] */
- 		FN_A23,		FN_HTX0_B,	FN_TX2_B,	FN_DACK2_A,
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index 03919714645ae..f1c9b2bc542c5 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -68,6 +68,14 @@
+ 		      <0xf0000100 0x100>;
+ 	};
+ 
++	timer@f0000200 {
++		compatible = "arm,cortex-a9-global-timer";
++		reg = <0xf0000200 0x100>;
++		interrupts = <GIC_PPI 11
++			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
++		clocks = <&cpg_clocks R8A7779_CLK_ZS>;
++	};
++
+ 	timer@f0000600 {
+ 		compatible = "arm,cortex-a9-twd-timer";
+ 		reg = <0xf0000600 0x20>;
 -- 
 2.20.1
 
