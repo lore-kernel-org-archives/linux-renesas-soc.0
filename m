@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 345DDC2BA83
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:33:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89935C2BA83
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D6FA2168B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:33:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F46206CC
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:46:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581701610;
-	bh=RJz+RrkbU4lgmkToGa+2MO6GD3Qh7Gga30b3H8XRPnw=;
+	s=default; t=1581702372;
+	bh=9gELkEKIqQTEF6M71cntxk0dzqeNLlTlfil80CPMXSY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y7KV9quiL2m81BFumrwjTvPAObnzchLDxIR/EQ56QNK66EhDfY+Yuo5IlhgWPse0e
-	 SycN6LZzGiyDoNxiqx5PxG8Tp/oqM0vRsRirqu0mA/rmPy59DFN2hNMS6VPJBZChqD
-	 3X/qsrrfXiwBBge3Y1/0KwSFBugJLKjibrBPjgNQ=
+	b=kHr5Y47zmUQd+7urgdYC5Zp+T96fsAw+4sdDhz7LazqqXgunsMnwo2izocVFjHBt/
+	 PkFGwLAvXv71f66szp7Bnfa6qkhEUMfCoksZvS3XDvD0aDZNLn97UdjxahCgBpfgJR
+	 Bn2SNjJRoKZzlaoI3oFu+F0ceNr/sTxKGODqZ8Qg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394516AbgBNRdW (ORCPT
+        id S2388700AbgBNRqJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Feb 2020 12:33:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56910 "EHLO mail.kernel.org"
+        Fri, 14 Feb 2020 12:46:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390427AbgBNQG1 (ORCPT
+        id S2389361AbgBNQCa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:06:27 -0500
+        Fri, 14 Feb 2020 11:02:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FAC422314;
-        Fri, 14 Feb 2020 16:06:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3549217F4;
+        Fri, 14 Feb 2020 16:02:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696387;
-        bh=RJz+RrkbU4lgmkToGa+2MO6GD3Qh7Gga30b3H8XRPnw=;
+        s=default; t=1581696149;
+        bh=9gELkEKIqQTEF6M71cntxk0dzqeNLlTlfil80CPMXSY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UZtykO0lZFsU7RMEqyEZXCH4CpX0wqZ1bhMnBbMQSPIaqsw2OVeo7rs1Q8Orm5pE8
-         Dv7GTU1HufrO0ygDeYMbEZT9ky5Uv9r2NLhhx9Htq0awh81TLArMwLIN8Ep9RaOGfc
-         JZknTJ/Jx0I8kjQUo9DOddee3GEIfx11oRA+qwbU=
+        b=JTCbIpaqlnF47h+EgNwRHDRc59gzyn/21EssBVJK5DjFopc5OFx6owTZTt5uFV/FZ
+         VkNe2h6zgK0q/PwR0MtAdHII4aqXwoVW3bXcU2lrNPPBRMYGHQbPja06JqPzXK4rMm
+         Lvf54GiezQDt/M/DXllljb72BJ1tTYOT1H70r2RI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 213/459] clk: renesas: rcar-gen3: Allow changing the RPC[D2] clocks
-Date:   Fri, 14 Feb 2020 10:57:43 -0500
-Message-Id: <20200214160149.11681-213-sashal@kernel.org>
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 029/459] pinctrl: sh-pfc: sh7264: Fix CAN function GPIOs
+Date:   Fri, 14 Feb 2020 10:54:39 -0500
+Message-Id: <20200214160149.11681-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -61,46 +60,91 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 0d67c0340a60829c5c1b7d09629d23bbd67696f3 ]
+[ Upstream commit 55b1cb1f03ad5eea39897d0c74035e02deddcff2 ]
 
-I was unable to get clk_set_rate() setting a lower RPC-IF clock frequency
-and that issue boiled down to me not passing CLK_SET_RATE_PARENT flag to
-clk_register_composite() when registering the RPC[D2] clocks...
+pinmux_func_gpios[] contains a hole due to the missing function GPIO
+definition for the "CTX0&CTX1" signal, which is the logical "AND" of the
+two CAN outputs.
 
-Fixes: db4a0073cc82 ("clk: renesas: rcar-gen3: Add RPC clocks")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Link: https://lore.kernel.org/r/be27a344-d8bf-9e0c-8950-2d1b48498496@cogentembedded.com
+Fix this by:
+  - Renaming CRX0_CRX1_MARK to CTX0_CTX1_MARK, as PJ2MD[2:0]=010
+    configures the combined "CTX0&CTX1" output signal,
+  - Renaming CRX0X1_MARK to CRX0_CRX1_MARK, as PJ3MD[1:0]=10 configures
+    the shared "CRX0/CRX1" input signal, which is fed to both CAN
+    inputs,
+  - Adding the missing function GPIO definition for "CTX0&CTX1" to
+    pinmux_func_gpios[],
+  - Moving all CAN enums next to each other.
+
+See SH7262 Group, SH7264 Group User's Manual: Hardware, Rev. 4.00:
+  [1] Figure 1.2 (3) (Pin Assignment for the SH7264 Group (1-Mbyte
+      Version),
+  [2] Figure 1.2 (4) Pin Assignment for the SH7264 Group (640-Kbyte
+      Version,
+  [3] Table 1.4 List of Pins,
+  [4] Figure 20.29 Connection Example when Using This Module as 1-Channel
+      Module (64 Mailboxes x 1 Channel),
+  [5] Table 32.10 Multiplexed Pins (Port J),
+  [6] Section 32.2.30 (3) Port J Control Register 0 (PJCR0).
+
+Note that the last 2 disagree about PJ2MD[2:0], which is probably the
+root cause of this bug.  But considering [4], "CTx0&CTx1" in [5] must
+be correct, and "CRx0&CRx1" in [6] must be wrong.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Link: https://lore.kernel.org/r/20191218194812.12741-4-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/pinctrl/sh-pfc/pfc-sh7264.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index d25c8ba00a656..532626946b8d2 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -464,7 +464,8 @@ static struct clk * __init cpg_rpc_clk_register(const char *name,
+diff --git a/drivers/pinctrl/sh-pfc/pfc-sh7264.c b/drivers/pinctrl/sh-pfc/pfc-sh7264.c
+index 4a95867deb8af..5a026601d4f9a 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-sh7264.c
++++ b/drivers/pinctrl/sh-pfc/pfc-sh7264.c
+@@ -497,17 +497,15 @@ enum {
+ 	SD_WP_MARK, SD_CLK_MARK, SD_CMD_MARK,
+ 	CRX0_MARK, CRX1_MARK,
+ 	CTX0_MARK, CTX1_MARK,
++	CRX0_CRX1_MARK, CTX0_CTX1_MARK,
  
- 	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
- 				     &rpc->div.hw,  &clk_divider_ops,
--				     &rpc->gate.hw, &clk_gate_ops, 0);
-+				     &rpc->gate.hw, &clk_gate_ops,
-+				     CLK_SET_RATE_PARENT);
- 	if (IS_ERR(clk)) {
- 		kfree(rpc);
- 		return clk;
-@@ -500,7 +501,8 @@ static struct clk * __init cpg_rpcd2_clk_register(const char *name,
+ 	PWM1A_MARK, PWM1B_MARK, PWM1C_MARK, PWM1D_MARK,
+ 	PWM1E_MARK, PWM1F_MARK, PWM1G_MARK, PWM1H_MARK,
+ 	PWM2A_MARK, PWM2B_MARK, PWM2C_MARK, PWM2D_MARK,
+ 	PWM2E_MARK, PWM2F_MARK, PWM2G_MARK, PWM2H_MARK,
+ 	IERXD_MARK, IETXD_MARK,
+-	CRX0_CRX1_MARK,
+ 	WDTOVF_MARK,
  
- 	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
- 				     &rpcd2->fixed.hw, &clk_fixed_factor_ops,
--				     &rpcd2->gate.hw, &clk_gate_ops, 0);
-+				     &rpcd2->gate.hw, &clk_gate_ops,
-+				     CLK_SET_RATE_PARENT);
- 	if (IS_ERR(clk))
- 		kfree(rpcd2);
+-	CRX0X1_MARK,
+-
+ 	/* DMAC */
+ 	TEND0_MARK, DACK0_MARK, DREQ0_MARK,
+ 	TEND1_MARK, DACK1_MARK, DREQ1_MARK,
+@@ -995,12 +993,12 @@ static const u16 pinmux_data[] = {
+ 
+ 	PINMUX_DATA(PJ3_DATA, PJ3MD_00),
+ 	PINMUX_DATA(CRX1_MARK, PJ3MD_01),
+-	PINMUX_DATA(CRX0X1_MARK, PJ3MD_10),
++	PINMUX_DATA(CRX0_CRX1_MARK, PJ3MD_10),
+ 	PINMUX_DATA(IRQ1_PJ_MARK, PJ3MD_11),
+ 
+ 	PINMUX_DATA(PJ2_DATA, PJ2MD_000),
+ 	PINMUX_DATA(CTX1_MARK, PJ2MD_001),
+-	PINMUX_DATA(CRX0_CRX1_MARK, PJ2MD_010),
++	PINMUX_DATA(CTX0_CTX1_MARK, PJ2MD_010),
+ 	PINMUX_DATA(CS2_MARK, PJ2MD_011),
+ 	PINMUX_DATA(SCK0_MARK, PJ2MD_100),
+ 	PINMUX_DATA(LCD_M_DISP_MARK, PJ2MD_101),
+@@ -1245,6 +1243,7 @@ static const struct pinmux_func pinmux_func_gpios[] = {
+ 	GPIO_FN(CTX1),
+ 	GPIO_FN(CRX1),
+ 	GPIO_FN(CTX0),
++	GPIO_FN(CTX0_CTX1),
+ 	GPIO_FN(CRX0),
+ 	GPIO_FN(CRX0_CRX1),
  
 -- 
 2.20.1
