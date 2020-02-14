@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F26BC2BA83
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F102C3B1A1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30EE4222C4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:32:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62BF22082F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 17:33:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581701525;
-	bh=c2FN921kY1CefLsiWaCjWz6K+vYQcvTloLawxS3AYGw=;
+	s=default; t=1581701598;
+	bh=O223LQV9enNAUAJH8Cah5pckGd311AgxJ5giEGsj2OE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R5d8Yg1OJbwVKklDIwlB+kq+DOM6ybjGwkuGORgc+lY07GRi4gHt3f+eWsWkMwB1T
-	 v/F1LIHhOLW9g1CMXsd2Q5k1dk3XJSve+U+dh3T+xAxA+J2wyrfakCGsmy6YPEuWrj
-	 WdFVKzyq41mfDPsZG4YUtjOcy4CEEkBWfGdjetmo=
+	b=EsE21jlGP+cZKUmfUrUT08QigPUBykT4F6cQag0AIoEcCqV7lNTtWOwWqDvR6d91x
+	 RugsAbAJ/4U09UZp1m1+bnOF4bB1WhJxhcr353TwlhsPtExSgiadS6utO8+b024vrA
+	 ZlwRQc2wkJOueX4o2lLbuy7ecb8pXOjvHKHYUSV4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392278AbgBNRb7 (ORCPT
+        id S2390438AbgBNQGa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Feb 2020 12:31:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57640 "EHLO mail.kernel.org"
+        Fri, 14 Feb 2020 11:06:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390534AbgBNQGy (ORCPT
+        id S2390435AbgBNQG3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:06:54 -0500
+        Fri, 14 Feb 2020 11:06:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B36624676;
-        Fri, 14 Feb 2020 16:06:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83319206D7;
+        Fri, 14 Feb 2020 16:06:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696413;
-        bh=c2FN921kY1CefLsiWaCjWz6K+vYQcvTloLawxS3AYGw=;
+        s=default; t=1581696389;
+        bh=O223LQV9enNAUAJH8Cah5pckGd311AgxJ5giEGsj2OE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uHTFnNG8cyHaFmEM9nJpRYZwBy9OPdOq5T2lWvOQnvbEF6za4W3o4yewGZR0x75Pk
-         +PnxVt1LiTgDFzFlTVE9Jh6S2ZbuRjYYVGLAobsuGCmnSHlkoAl4HTFS8dKXDb27SP
-         iQTmroX6DdzbX/WDGYLSlUAk6CH3y5dqh1fVzG4g=
+        b=sKkyb6uCIQf4P7VmAvndURRa0TssA8m1YwroFbIsxyc/z+JRmR0i0jHp+IXR5Bue/
+         4a0H5LB1H7lVl7GhobX3pAA3C8hvTwAqZ6/9aO+jQstbN35JVePhrc2caSM+V5U6RF
+         v7CVu6Ss9KoZTLsnEvOxS7+zTNNxx9sdE8A4vhjE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 235/459] pinctrl: sh-pfc: r8a7778: Fix duplicate SDSELF_B and SD1_CLK_B
-Date:   Fri, 14 Feb 2020 10:58:05 -0500
-Message-Id: <20200214160149.11681-235-sashal@kernel.org>
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 215/459] arm64: dts: renesas: r8a77990: ebisu: Remove clkout-lr-synchronous from sound
+Date:   Fri, 14 Feb 2020 10:57:45 -0500
+Message-Id: <20200214160149.11681-215-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -60,43 +61,37 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-[ Upstream commit 805f635703b2562b5ddd822c62fc9124087e5dd5 ]
+[ Upstream commit bf2b74ce9b33a2edd6ba1930ce60a71830790910 ]
 
-The FN_SDSELF_B and FN_SD1_CLK_B enum IDs are used twice, which means
-one set of users must be wrong.  Replace them by the correct enum IDs.
+rcar_sound doesn't support clkout-lr-synchronous in upstream.
+It was supported under out-of-tree rcar_sound.
+upstream rcar_sound is supporting
+	- clkout-lr-synchronous
+	+ clkout-lr-asynchronous
 
-Fixes: 87f8c988636db0d4 ("sh-pfc: Add r8a7778 pinmux support")
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Link: https://lore.kernel.org/r/87mubt3tux.wl-kuninori.morimoto.gx@renesas.com
+Fixes: 56629fcba94c698d ("arm64: dts: renesas: ebisu: Enable Audio")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Link: https://lore.kernel.org/r/20191218194812.12741-2-geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/sh-pfc/pfc-r8a7778.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-index 24866a5958aee..a9875038ed9b6 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7778.c
-@@ -2305,7 +2305,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_ATAG0_A,	0,		FN_REMOCON_B,	0,
- 		/* IP0_11_8 [4] */
- 		FN_SD1_DAT2_A,	FN_MMC_D2,	0,		FN_BS,
--		FN_ATADIR0_A,	0,		FN_SDSELF_B,	0,
-+		FN_ATADIR0_A,	0,		FN_SDSELF_A,	0,
- 		FN_PWM4_B,	0,		0,		0,
- 		0,		0,		0,		0,
- 		/* IP0_7_5 [3] */
-@@ -2349,7 +2349,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
- 		FN_TS_SDAT0_A,	0,		0,		0,
- 		0,		0,		0,		0,
- 		/* IP1_10_8 [3] */
--		FN_SD1_CLK_B,	FN_MMC_D6,	0,		FN_A24,
-+		FN_SD1_CD_A,	FN_MMC_D6,	0,		FN_A24,
- 		FN_DREQ1_A,	0,		FN_HRX0_B,	FN_TS_SPSYNC0_A,
- 		/* IP1_7_5 [3] */
- 		FN_A23,		FN_HTX0_B,	FN_TX2_B,	FN_DACK2_A,
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+index b38f9d442fc08..e6d700f8c1948 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
+@@ -636,7 +636,6 @@
+ 	/* audio_clkout0/1/2/3 */
+ 	#clock-cells = <1>;
+ 	clock-frequency = <12288000 11289600>;
+-	clkout-lr-synchronous;
+ 
+ 	status = "okay";
+ 
 -- 
 2.20.1
 
