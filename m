@@ -1,132 +1,126 @@
-Return-Path: <SRS0=OQe3=4C=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=WaST=4D=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E12A1C2BA83
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 18:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A1BC352A3
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Feb 2020 05:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFEA62086A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Feb 2020 18:23:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581704585;
-	bh=m2QY89YMDTBv5LbPtFDrXsFu6fj+7Qh5AXzAdmpTi+o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JITKIEgE5TURV/ykYBRUB8W6wJS5hNdIfZHAJ401WBGDFSEglIZDSnscg7VZqUE3r
-	 rrqpmqja7lN8WLVz4uQGcZ5GKpvM/+oOimPnaCBs7zAJ3VIQ2M0JsIHrvlvSSEnBWr
-	 HSxuPcy57AzmvDDkZCsxn/3XEli2ruXYFcaYKGcs=
+	by mail.kernel.org (Postfix) with ESMTP id DD0222082F
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Feb 2020 05:36:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cIxrqNRp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404468AbgBNSXE (ORCPT
+        id S1725829AbgBOFgK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Feb 2020 13:23:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52348 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbgBNPt1 (ORCPT
+        Sat, 15 Feb 2020 00:36:10 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40817 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbgBOFgK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:49:27 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5095B2086A;
-        Fri, 14 Feb 2020 15:49:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695366;
-        bh=m2QY89YMDTBv5LbPtFDrXsFu6fj+7Qh5AXzAdmpTi+o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rgCznXuN1StiYGEH71duvRbOls02tbU4tiOvcaLG6MfBKcF09BXtnJx+D8h+IpNJp
-         MVF+8PTvHRXdmwbM33PXK4nklE17cX76V1ALssT5K0XzKL0IGElXpiLgd821slkhH/
-         Twn6YXg5HtG/V6s9KouuPGcDK5fytlO66m58JSWk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 024/542] drm: rcar-du: Recognize "renesas,vsps" in addition to "vsps"
-Date:   Fri, 14 Feb 2020 10:40:16 -0500
-Message-Id: <20200214154854.6746-24-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
-References: <20200214154854.6746-1-sashal@kernel.org>
+        Sat, 15 Feb 2020 00:36:10 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q8so5996523pfh.7
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 14 Feb 2020 21:36:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=umSLSqFdcTUcW15IlOni/Tuec1i7imfq7Q7J9RYYX4g=;
+        b=cIxrqNRp65WCtK+fiYn9g3PVPZKXWCeUB0uFKNIzbK215QX3Al36Ke7lSPKliczQPG
+         zRn7Bi6DqLKPjlqWNiNyIv1hfnOjroG9dJAo7zBVoxdcOscAu96nnIAHZ0M1KbXjm0Sl
+         ZR04ZlFB/h9Rx1G6+2XpmHZ6qc00E2hKTf9RBjGMhvM/S7iYiuAY2TTttm/rFAuLs3bq
+         Tl4EPCrQfsVTe0Oz0o9vN+XxWzhv+LiQ+CYz/xTgBuLMVClebtR7iuNxNAyHBtWlm0Wp
+         bHYgpgS19tzczImghBSGzs7yS4YbFHy+7+42F6gNr1Xyalax7P6gX0gNY6JBKTkCYKiJ
+         SqhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=umSLSqFdcTUcW15IlOni/Tuec1i7imfq7Q7J9RYYX4g=;
+        b=hLEH0AUHKrzbZtSqmxnd7YgeTeJh1wu+wJUzQoqxS66iz/vIF+b9Ibgw/x43DF+ac8
+         2fZos0nDWOioppYekJW+65TVno5u3vAbeVcAJ0DWcHk6OTGOzdL+MPnWlEmFOOqWbJos
+         +BaJj3gymrQWIWnxiU7mDrhUQNWKU8akIW1suMPdBwjEJmbWFa6hWMF9XFUq/vFetzCc
+         KVodRlmuR0yWlYgDDd1qdZE0jGJmsUT+u5mmAQ2vLatwCot6OXfR6duOEMVqKfdPHDZT
+         QhhRS1aKIlwnMFsRqSNhLDYSWoyYF5JzntKzo62IhbJqpiRmyB4LT2FiEM+AyQA+u0WO
+         vPSA==
+X-Gm-Message-State: APjAAAVzGXCks7pgudlJtr3+thHTe+//Ic2NUC8QlcLI0UcjCX2w7I+i
+        hGYW5ZzPP3p+bhZkGGk2KqZ2iw==
+X-Google-Smtp-Source: APXvYqzk4mzSWnD3eisseNOAoKEFSWYJ3iXu/MnMV3x1ieUnd9jyOy7C/UGmCSr9X/1fRkBJKg6m3w==
+X-Received: by 2002:a62:6842:: with SMTP id d63mr6945184pfc.113.1581744969478;
+        Fri, 14 Feb 2020 21:36:09 -0800 (PST)
+Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id q12sm8411743pfh.158.2020.02.14.21.36.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Feb 2020 21:36:08 -0800 (PST)
+Date:   Fri, 14 Feb 2020 21:35:17 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Linus Walleij <linus.walleij@linaro.org>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sean Wang <sean.wang@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Andy Gross <agross@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-oxnas@groups.io,
+        linux-rockchip@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 2/2] pinctrl: Use new GPIO_LINE_DIRECTION
+Message-ID: <20200215053517.GN955802@ripper>
+References: <20191112141819.GA22076@localhost.localdomain>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191112141819.GA22076@localhost.localdomain>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+On Tue 12 Nov 06:18 PST 2019, Matti Vaittinen wrote:
+> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
+> index 763da0be10d6..8844ca1261d5 100644
+> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
+> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+> @@ -485,8 +485,8 @@ static int msm_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
+>  
+>  	val = msm_readl_ctl(pctrl, g);
+>  
+> -	/* 0 = output, 1 = input */
+> -	return val & BIT(g->oe_bit) ? 0 : 1;
+> +	return val & BIT(g->oe_bit) ? GPIO_LINE_DIRECTION_OUT :
+> +				      GPIO_LINE_DIRECTION_IN;
 
-[ Upstream commit 7b627ce80fbd05885b27f711a5f9820f2b40749a ]
+For pinctrl-msm:
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-The Renesas-specific "vsps" property lacks a vendor prefix.
-Add a "renesas," prefix to comply with DT best practises.
-Retain backward compatibility with old DTBs by falling back to "vsps"
-when needed.
+>  }
 
-Fixes: 6d62ef3ac30be756 ("drm: rcar-du: Expose the VSP1 compositor through KMS planes")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/rcar-du/rcar_du_kms.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-index 0d59f390de19a..662d8075f4116 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-@@ -542,6 +542,7 @@ static int rcar_du_properties_init(struct rcar_du_device *rcdu)
- static int rcar_du_vsps_init(struct rcar_du_device *rcdu)
- {
- 	const struct device_node *np = rcdu->dev->of_node;
-+	const char *vsps_prop_name = "renesas,vsps";
- 	struct of_phandle_args args;
- 	struct {
- 		struct device_node *np;
-@@ -557,15 +558,21 @@ static int rcar_du_vsps_init(struct rcar_du_device *rcdu)
- 	 * entry contains a pointer to the VSP DT node and a bitmask of the
- 	 * connected DU CRTCs.
- 	 */
--	cells = of_property_count_u32_elems(np, "vsps") / rcdu->num_crtcs - 1;
-+	ret = of_property_count_u32_elems(np, vsps_prop_name);
-+	if (ret < 0) {
-+		/* Backward compatibility with old DTBs. */
-+		vsps_prop_name = "vsps";
-+		ret = of_property_count_u32_elems(np, vsps_prop_name);
-+	}
-+	cells = ret / rcdu->num_crtcs - 1;
- 	if (cells > 1)
- 		return -EINVAL;
- 
- 	for (i = 0; i < rcdu->num_crtcs; ++i) {
- 		unsigned int j;
- 
--		ret = of_parse_phandle_with_fixed_args(np, "vsps", cells, i,
--						       &args);
-+		ret = of_parse_phandle_with_fixed_args(np, vsps_prop_name,
-+						       cells, i, &args);
- 		if (ret < 0)
- 			goto error;
- 
-@@ -587,8 +594,8 @@ static int rcar_du_vsps_init(struct rcar_du_device *rcdu)
- 
- 		/*
- 		 * Store the VSP pointer and pipe index in the CRTC. If the
--		 * second cell of the 'vsps' specifier isn't present, default
--		 * to 0 to remain compatible with older DT bindings.
-+		 * second cell of the 'renesas,vsps' specifier isn't present,
-+		 * default to 0 to remain compatible with older DT bindings.
- 		 */
- 		rcdu->crtcs[i].vsp = &rcdu->vsps[j];
- 		rcdu->crtcs[i].vsp_pipe = cells >= 1 ? args.args[0] : 0;
--- 
-2.20.1
-
+Regards,
+Bjorn
