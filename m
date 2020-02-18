@@ -2,194 +2,60 @@ Return-Path: <SRS0=lOJF=4G=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 482A3C3403F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Feb 2020 15:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D7DC34026
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Feb 2020 15:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A9D12465A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Feb 2020 15:18:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85EEB21D56
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Feb 2020 15:20:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582039241;
+	bh=u8ywnrqiTc+VFjopT2S3XnsibDotsHXmQRFe17aFwkE=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=YfltGnHHsnsI/thkTw3mXRwrANz+xrhjCK7f9cQPNIJueJhE8CQVNZITccNbZIgt4
+	 qnWPYjsnOBAyzzqCfvmveH5CMiQygE2/oCnNGSZkNPvErpq5QyscIrLNDckfLBNNti
+	 VRIcn7PsZMz1tkHYpl3gZGzTc5jlS6dyeaPnDY1E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727108AbgBRPS2 (ORCPT
+        id S1726666AbgBRPUl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Feb 2020 10:18:28 -0500
-Received: from michel.telenet-ops.be ([195.130.137.88]:43498 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727021AbgBRPS2 (ORCPT
+        Tue, 18 Feb 2020 10:20:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38732 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726761AbgBRPUl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Feb 2020 10:18:28 -0500
-Received: from ramsan ([84.195.182.253])
-        by michel.telenet-ops.be with bizsmtp
-        id 4FJD2200q5USYZQ06FJDNA; Tue, 18 Feb 2020 16:18:26 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j44dZ-0006yC-R8; Tue, 18 Feb 2020 16:18:13 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j44dZ-00022y-PY; Tue, 18 Feb 2020 16:18:13 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 2/5] gpiolib: Add support for GPIO line table lookup
-Date:   Tue, 18 Feb 2020 16:18:09 +0100
-Message-Id: <20200218151812.7816-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200218151812.7816-1-geert+renesas@glider.be>
-References: <20200218151812.7816-1-geert+renesas@glider.be>
+        Tue, 18 Feb 2020 10:20:41 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582039240;
+        bh=u8ywnrqiTc+VFjopT2S3XnsibDotsHXmQRFe17aFwkE=;
+        h=Subject:From:Date:To:From;
+        b=tSQbrZ4bknJqq3AEV4V6O2IrR35Egybpbzm+JpaA/8DxJhHlGJAu0cKAD17lqgtc+
+         cIx737Udd0sjZzpovQLK29yTmynWQmKNIwVvErgOLvFOynT9kJVPPdPvnzN7+Xq8sO
+         dH5jmdNR97CSBXf48mRp1H47llrcy/JHlmnw0uv0=
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <158203924080.22812.2329359159678287071.git-patchwork-housekeeping@kernel.org>
+Date:   Tue, 18 Feb 2020 15:20:40 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Currently GPIOs can only be referred to by GPIO controller and offset in
-GPIO lookup tables.
+Latest series: [v5] gpio: Add GPIO Aggregator (2020-02-18T15:18:12)
+  Superseding: [v4] gpio: Add GPIO Aggregator (2020-01-15T18:15:23):
+    [v4,1/5] gpiolib: Add support for gpiochipN-based table lookup
+    [v4,2/5] gpiolib: Add support for GPIO line table lookup
+    [v4,3/5] gpio: Add GPIO Aggregator
+    [v4,4/5] docs: gpio: Add GPIO Aggregator documentation
+    [v4,5/5] MAINTAINERS: Add GPIO Aggregator section
 
-Add support for looking them up by line name.
-Rename gpiod_lookup.chip_label to gpiod_lookup.key, to make it clear
-that this field can have two meanings, and update the kerneldoc and
-GPIO_LOOKUP*() macros.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
-Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
-v5:
-  - Add Reviewed-by, Tested-by,
-
-v4:
-  - Add Reviewed-by,
-  - Rename gpiod_lookup.chip_label.
-  - Use U16_MAX instead of (u16)-1,
-
-v3:
-  - New.
----
- drivers/gpio/gpiolib.c       | 22 +++++++++++++++++-----
- include/linux/gpio/machine.h | 15 ++++++++-------
- 2 files changed, 25 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 200c2d2be4b78043..24c02167f9e5472f 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -4453,7 +4453,7 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 	if (!table)
- 		return desc;
- 
--	for (p = &table->table[0]; p->chip_label; p++) {
-+	for (p = &table->table[0]; p->key; p++) {
- 		struct gpio_chip *chip;
- 
- 		/* idx must always match exactly */
-@@ -4464,18 +4464,30 @@ static struct gpio_desc *gpiod_find(struct device *dev, const char *con_id,
- 		if (p->con_id && (!con_id || strcmp(p->con_id, con_id)))
- 			continue;
- 
--		chip = find_chip_by_name(p->chip_label);
-+		if (p->chip_hwnum == U16_MAX) {
-+			desc = gpio_name_to_desc(p->key);
-+			if (desc) {
-+				*flags = p->flags;
-+				return desc;
-+			}
-+
-+			dev_warn(dev, "cannot find GPIO line %s, deferring\n",
-+				 p->key);
-+			return ERR_PTR(-EPROBE_DEFER);
-+		}
-+
-+		chip = find_chip_by_name(p->key);
- 
- 		if (!chip) {
- 			/*
- 			 * As the lookup table indicates a chip with
--			 * p->chip_label should exist, assume it may
-+			 * p->key should exist, assume it may
- 			 * still appear later and let the interested
- 			 * consumer be probed again or let the Deferred
- 			 * Probe infrastructure handle the error.
- 			 */
- 			dev_warn(dev, "cannot find GPIO chip %s, deferring\n",
--				 p->chip_label);
-+				 p->key);
- 			return ERR_PTR(-EPROBE_DEFER);
- 		}
- 
-@@ -4506,7 +4518,7 @@ static int platform_gpio_count(struct device *dev, const char *con_id)
- 	if (!table)
- 		return -ENOENT;
- 
--	for (p = &table->table[0]; p->chip_label; p++) {
-+	for (p = &table->table[0]; p->key; p++) {
- 		if ((con_id && p->con_id && !strcmp(con_id, p->con_id)) ||
- 		    (!con_id && !p->con_id))
- 			count++;
-diff --git a/include/linux/gpio/machine.h b/include/linux/gpio/machine.h
-index 1ebe5be05d5f81fa..84c66fbf54fd5811 100644
---- a/include/linux/gpio/machine.h
-+++ b/include/linux/gpio/machine.h
-@@ -20,8 +20,9 @@ enum gpio_lookup_flags {
- 
- /**
-  * struct gpiod_lookup - lookup table
-- * @chip_label: name of the chip the GPIO belongs to
-- * @chip_hwnum: hardware number (i.e. relative to the chip) of the GPIO
-+ * @key: either the name of the chip the GPIO belongs to, or the GPIO line name
-+ * @chip_hwnum: hardware number (i.e. relative to the chip) of the GPIO, or
-+ *              U16_MAX to indicate that @key is a GPIO line name
-  * @con_id: name of the GPIO from the device's point of view
-  * @idx: index of the GPIO in case several GPIOs share the same name
-  * @flags: bitmask of gpio_lookup_flags GPIO_* values
-@@ -30,7 +31,7 @@ enum gpio_lookup_flags {
-  * functions using platform data.
-  */
- struct gpiod_lookup {
--	const char *chip_label;
-+	const char *key;
- 	u16 chip_hwnum;
- 	const char *con_id;
- 	unsigned int idx;
-@@ -63,17 +64,17 @@ struct gpiod_hog {
- /*
-  * Simple definition of a single GPIO under a con_id
-  */
--#define GPIO_LOOKUP(_chip_label, _chip_hwnum, _con_id, _flags) \
--	GPIO_LOOKUP_IDX(_chip_label, _chip_hwnum, _con_id, 0, _flags)
-+#define GPIO_LOOKUP(_key, _chip_hwnum, _con_id, _flags) \
-+	GPIO_LOOKUP_IDX(_key, _chip_hwnum, _con_id, 0, _flags)
- 
- /*
-  * Use this macro if you need to have several GPIOs under the same con_id.
-  * Each GPIO needs to use a different index and can be accessed using
-  * gpiod_get_index()
-  */
--#define GPIO_LOOKUP_IDX(_chip_label, _chip_hwnum, _con_id, _idx, _flags)  \
-+#define GPIO_LOOKUP_IDX(_key, _chip_hwnum, _con_id, _idx, _flags)         \
- {                                                                         \
--	.chip_label = _chip_label,                                        \
-+	.key = _key,                                                      \
- 	.chip_hwnum = _chip_hwnum,                                        \
- 	.con_id = _con_id,                                                \
- 	.idx = _idx,                                                      \
 -- 
-2.17.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
