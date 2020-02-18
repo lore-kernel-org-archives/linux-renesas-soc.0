@@ -2,75 +2,106 @@ Return-Path: <SRS0=lOJF=4G=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68F29C34037
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA74C34026
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Feb 2020 10:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C8020722
+	by mail.kernel.org (Postfix) with ESMTP id 2B299206E2
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Feb 2020 10:58:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbgBRK6P (ORCPT
+        id S1726539AbgBRK6O (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Feb 2020 05:58:15 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:58192 "EHLO
+        Tue, 18 Feb 2020 05:58:14 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:58190 "EHLO
         laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbgBRK6O (ORCPT
+        with ESMTP id S1726363AbgBRK6O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 18 Feb 2020 05:58:14 -0500
 Received: from ramsan ([84.195.182.253])
         by laurent.telenet-ops.be with bizsmtp
-        id 4AyC220065USYZQ01AyCyp; Tue, 18 Feb 2020 11:58:13 +0100
+        id 4AyC2200K5USYZQ01AyCyx; Tue, 18 Feb 2020 11:58:13 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j40Zw-0003jJ-31; Tue, 18 Feb 2020 11:58:12 +0100
+        id 1j40Zw-0003jM-Hn; Tue, 18 Feb 2020 11:58:12 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j40Zw-0000FZ-0e; Tue, 18 Feb 2020 11:58:12 +0100
+        id 1j40Zw-0000Fc-Gc; Tue, 18 Feb 2020 11:58:12 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Hoan Nguyen An <na-hoan@jinso.co.jp>, linux-spi@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] spi: rspi: Add support for configuring word order
-Date:   Tue, 18 Feb 2020 11:58:07 +0100
-Message-Id: <20200218105810.902-1-geert+renesas@glider.be>
+Subject: [PATCH 1/2] spi: rspi: Factor out handling of common mode bits
+Date:   Tue, 18 Feb 2020 11:58:08 +0100
+Message-Id: <20200218105810.902-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200218105810.902-1-geert+renesas@glider.be>
+References: <20200218105810.902-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Mark,
+Basic SPI features like clock phase/polarity and loopback mode are
+common to all RSPI variants.  Factor them out to reduce duplication.
 
-This patch series adds support for configuring the word order on Renesas
-"RSPI" SPI controllers.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/spi/spi-rspi.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
-This has been tested on RSK+RZA1 using spidev_test (with/without -L
-option).
-
-Thanks!
-
-Geert Uytterhoeven (2):
-  spi: rspi: Factor out handling of common mode bits
-  spi: rspi: Add support for LSB-first word order
-
- drivers/spi/spi-rspi.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 85575d45901cee1b..7a1e6d524f34a416 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -239,7 +239,7 @@ struct spi_ops {
+ 	int (*set_config_register)(struct rspi_data *rspi, int access_size);
+ 	int (*transfer_one)(struct spi_controller *ctlr,
+ 			    struct spi_device *spi, struct spi_transfer *xfer);
+-	u16 mode_bits;
++	u16 extra_mode_bits;
+ 	u16 flags;
+ 	u16 fifo_size;
+ 	u8 num_hw_ss;
+@@ -1122,7 +1122,6 @@ static int rspi_remove(struct platform_device *pdev)
+ static const struct spi_ops rspi_ops = {
+ 	.set_config_register =	rspi_set_config_register,
+ 	.transfer_one =		rspi_transfer_one,
+-	.mode_bits =		SPI_CPHA | SPI_CPOL | SPI_LOOP,
+ 	.flags =		SPI_CONTROLLER_MUST_TX,
+ 	.fifo_size =		8,
+ 	.num_hw_ss =		2,
+@@ -1131,7 +1130,6 @@ static const struct spi_ops rspi_ops = {
+ static const struct spi_ops rspi_rz_ops = {
+ 	.set_config_register =	rspi_rz_set_config_register,
+ 	.transfer_one =		rspi_rz_transfer_one,
+-	.mode_bits =		SPI_CPHA | SPI_CPOL | SPI_LOOP,
+ 	.flags =		SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX,
+ 	.fifo_size =		8,	/* 8 for TX, 32 for RX */
+ 	.num_hw_ss =		1,
+@@ -1140,8 +1138,7 @@ static const struct spi_ops rspi_rz_ops = {
+ static const struct spi_ops qspi_ops = {
+ 	.set_config_register =	qspi_set_config_register,
+ 	.transfer_one =		qspi_transfer_one,
+-	.mode_bits =		SPI_CPHA | SPI_CPOL | SPI_LOOP |
+-				SPI_TX_DUAL | SPI_TX_QUAD |
++	.extra_mode_bits =	SPI_TX_DUAL | SPI_TX_QUAD |
+ 				SPI_RX_DUAL | SPI_RX_QUAD,
+ 	.flags =		SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX,
+ 	.fifo_size =		32,
+@@ -1258,7 +1255,7 @@ static int rspi_probe(struct platform_device *pdev)
+ 	ctlr->transfer_one = ops->transfer_one;
+ 	ctlr->prepare_message = rspi_prepare_message;
+ 	ctlr->unprepare_message = rspi_unprepare_message;
+-	ctlr->mode_bits = ops->mode_bits;
++	ctlr->mode_bits = SPI_CPHA | SPI_CPOL | SPI_LOOP | ops->extra_mode_bits;
+ 	ctlr->flags = ops->flags;
+ 	ctlr->dev.of_node = pdev->dev.of_node;
+ 	ctlr->use_gpio_descriptors = true;
 -- 
 2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
