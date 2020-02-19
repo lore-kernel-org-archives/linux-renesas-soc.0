@@ -2,206 +2,76 @@ Return-Path: <SRS0=cnDJ=4H=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3DBC34047
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Feb 2020 15:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA89EC34047
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Feb 2020 15:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECD2024654
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Feb 2020 15:34:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="H0JqCRL4"
+	by mail.kernel.org (Postfix) with ESMTP id 89AF124654
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Feb 2020 15:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbgBSPeA (ORCPT
+        id S1726677AbgBSPjf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Feb 2020 10:34:00 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37282 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbgBSPeA (ORCPT
+        Wed, 19 Feb 2020 10:39:35 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:56696 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726651AbgBSPjf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Feb 2020 10:34:00 -0500
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D75A252B;
-        Wed, 19 Feb 2020 16:33:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1582126438;
-        bh=4FgQHDoXOEMSciBH4XP1rC+v0LQVOpLJOCVlXNsBPwo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H0JqCRL4lFzfmsJmRfJP1D3qDzMDqPiNW3prygMavyxhiqBkBqlZ2hK/Np/dn3xIy
-         BCE4DfUiU+v4FVY//lk6tLWZBFL2VIiEOQTTbNQJhCDkCslUwVblc7sdvhoyxjGgyX
-         Acj3V0HqxnvqzizWIRNOgzOeyQhAa9AFlDdYbPUY=
-Date:   Wed, 19 Feb 2020 17:33:39 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Wed, 19 Feb 2020 10:39:35 -0500
+Received: from ramsan ([84.195.182.253])
+        by albert.telenet-ops.be with bizsmtp
+        id 4ffX220055USYZQ06ffXFp; Wed, 19 Feb 2020 16:39:32 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j4RRj-0004Ls-1B; Wed, 19 Feb 2020 16:39:31 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j4RRi-0002tK-Vl; Wed, 19 Feb 2020 16:39:31 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 3/4] arm64: dts: renesas: rcar-gen3: Add reset control
- properties for display
-Message-ID: <20200219153339.GT5070@pendragon.ideasonboard.com>
-References: <20200218133019.22299-1-geert+renesas@glider.be>
- <20200218133019.22299-4-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200218133019.22299-4-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] ARM: dts: r8a7779: Remove deprecated "renesas,rcar-sata" compatible value
+Date:   Wed, 19 Feb 2020 16:39:29 +0100
+Message-Id: <20200219153929.11073-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+The "renesas,rcar-sata" compatible value was deprecated by
+"renesas,sata-r8a7779" many years ago, in commit e67adb4e669db834
+("sata_rcar: Add R-Car Gen2 SATA PHY support").  Drop it.
 
-Thank you for the patch.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-fixes for v5.6, as not having to care about the
+deprecated value will simplify the json-schema conversion.
+---
+ arch/arm/boot/dts/r8a7779.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Tue, Feb 18, 2020 at 02:30:18PM +0100, Geert Uytterhoeven wrote:
-> Add reset control properties to the device nodes for the Display Units
-> on all supported R-Car Gen3 SoCs.  Note that on these SoCs, there is
-> only a single reset for each pair of DU channels.
-> 
-> The display nodes on R-Car V3M and V3H already had "resets" properties,
-> but lacked the corresponding "reset-names" properties.
-> 
-> Join the clocks lines while at it, to increase uniformity.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - Use "du.0" resp. "du.2" instead of "du.0-1" resp. "du.2-3",
->   - Drop LVDS reset, as LVDS is now a separate node,
->   - Add other R-Car Gen3 SoCs.
-> ---
->  arch/arm64/boot/dts/renesas/r8a77951.dtsi | 8 ++++----
->  arch/arm64/boot/dts/renesas/r8a77960.dtsi | 5 +++--
->  arch/arm64/boot/dts/renesas/r8a77965.dtsi | 5 +++--
->  arch/arm64/boot/dts/renesas/r8a77970.dtsi | 1 +
->  arch/arm64/boot/dts/renesas/r8a77980.dtsi | 1 +
->  arch/arm64/boot/dts/renesas/r8a77990.dtsi | 3 +--
->  arch/arm64/boot/dts/renesas/r8a77995.dtsi | 3 +--
->  7 files changed, 14 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77951.dtsi b/arch/arm64/boot/dts/renesas/r8a77951.dtsi
-> index 27cbe697490c7c78..52229546454c400a 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77951.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77951.dtsi
-> @@ -3177,11 +3177,11 @@
->  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&cpg CPG_MOD 724>,
-> -				 <&cpg CPG_MOD 723>,
-> -				 <&cpg CPG_MOD 722>,
-> -				 <&cpg CPG_MOD 721>;
-> +			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
-> +				 <&cpg CPG_MOD 722>, <&cpg CPG_MOD 721>;
->  			clock-names = "du.0", "du.1", "du.2", "du.3";
-> +			resets = <&cpg 724>, <&cpg 722>;
-> +			reset-names = "du.0", "du.2";
->  
->  			renesas,cmms = <&cmm0>, <&cmm1>, <&cmm2>, <&cmm3>;
->  			renesas,vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>,
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77960.dtsi b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
-> index ea03b91bdf9d9cbc..31282367d3acd8cf 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77960.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
-> @@ -2827,10 +2827,11 @@
->  			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&cpg CPG_MOD 724>,
-> -				 <&cpg CPG_MOD 723>,
-> +			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
->  				 <&cpg CPG_MOD 722>;
->  			clock-names = "du.0", "du.1", "du.2";
-> +			resets = <&cpg 724>, <&cpg 722>;
-> +			reset-names = "du.0", "du.2";
->  
->  			renesas,cmms = <&cmm0>, <&cmm1>, <&cmm2>;
->  			renesas,vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>;
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> index 1a20ebe9ea5be5da..f7468822e81e41d6 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-> @@ -2503,10 +2503,11 @@
->  			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&cpg CPG_MOD 724>,
-> -				 <&cpg CPG_MOD 723>,
-> +			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
->  				 <&cpg CPG_MOD 721>;
->  			clock-names = "du.0", "du.1", "du.3";
-> +			resets = <&cpg 724>, <&cpg 722>;
-> +			reset-names = "du.0", "du.3";
-
-I wonder if this should be du.2, especially given that 722 corresponds
-to the non-existing DU2 channel. It's a bit of a mess at the hardware
-level :-S
-
-Apart from that the patch looks good to me.
-
->  
->  			renesas,cmms = <&cmm0>, <&cmm1>, <&cmm3>;
->  			renesas,vsps = <&vspd0 0>, <&vspd1 0>, <&vspd0 1>;
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> index dbf1c677dbc6e51f..a009c0ebc8b4f8d0 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-> @@ -1121,6 +1121,7 @@
->  			clock-names = "du.0";
->  			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
->  			resets = <&cpg 724>;
-> +			reset-names = "du.0";
->  			renesas,vsps = <&vspd0 0>;
->  
->  			status = "disabled";
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-> index 9444347e61eb881d..e01b0508a18fa91a 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-> @@ -1491,6 +1491,7 @@
->  			clock-names = "du.0";
->  			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
->  			resets = <&cpg 724>;
-> +			reset-names = "du.0";
->  			renesas,vsps = <&vspd0 0>;
->  
->  			status = "disabled";
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> index c05ee98043b2c7a5..0ad20b78e6eb62fd 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-> @@ -1793,8 +1793,7 @@
->  			reg = <0 0xfeb00000 0 0x40000>;
->  			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&cpg CPG_MOD 724>,
-> -				 <&cpg CPG_MOD 723>;
-> +			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
->  			clock-names = "du.0", "du.1";
->  			resets = <&cpg 724>;
->  			reset-names = "du.0";
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> index 7d3102dccac96e42..e8d2290fe79d761a 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-> @@ -1026,8 +1026,7 @@
->  			reg = <0 0xfeb00000 0 0x40000>;
->  			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&cpg CPG_MOD 724>,
-> -				 <&cpg CPG_MOD 723>;
-> +			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
->  			clock-names = "du.0", "du.1";
->  			resets = <&cpg 724>;
->  			reset-names = "du.0";
-
+diff --git a/arch/arm/boot/dts/r8a7779.dtsi b/arch/arm/boot/dts/r8a7779.dtsi
+index beb9885e6ffca7a5..c0999e27e9b145e3 100644
+--- a/arch/arm/boot/dts/r8a7779.dtsi
++++ b/arch/arm/boot/dts/r8a7779.dtsi
+@@ -377,7 +377,7 @@
+ 	};
+ 
+ 	sata: sata@fc600000 {
+-		compatible = "renesas,sata-r8a7779", "renesas,rcar-sata";
++		compatible = "renesas,sata-r8a7779";
+ 		reg = <0xfc600000 0x200000>;
+ 		interrupts = <GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
 -- 
-Regards,
+2.17.1
 
-Laurent Pinchart
