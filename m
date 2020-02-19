@@ -2,48 +2,47 @@ Return-Path: <SRS0=cnDJ=4H=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8ED6C34047
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Feb 2020 11:05:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5088C34047
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Feb 2020 11:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11C6124656
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Feb 2020 11:05:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7288F208E4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Feb 2020 11:07:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="si2ZgHDW"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="cunYgKJi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbgBSLFu (ORCPT
+        id S1726691AbgBSLH2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Feb 2020 06:05:50 -0500
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.161]:25583 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbgBSLFu (ORCPT
+        Wed, 19 Feb 2020 06:07:28 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:22258 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbgBSLH2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Feb 2020 06:05:50 -0500
-X-Greylist: delayed 335 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Feb 2020 06:05:49 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582110348;
+        Wed, 19 Feb 2020 06:07:28 -0500
+X-Greylist: delayed 447 seconds by postgrey-1.27 at vger.kernel.org; Wed, 19 Feb 2020 06:07:27 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582110446;
         s=strato-dkim-0002; d=fpond.eu;
         h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=B88DXd+9oJVeNvSGQP63Mq3oBBVtmlPzdypGUzk65UA=;
-        b=si2ZgHDWe/egZ1mcEVEt5ArF02cc/5YNE+/91At1CUBN8VHfOLpyTk2Zv5FRleutEy
-        aeKf54SLzYm86mDp1u9zZ9EhiFC1YLMYxrL9QVi1SvmaKZKmMBBWWHmqfvVYMviCOSK9
-        oC4BNyQXmr1cQMWb3v+67NkjyucoVifz240rsvEITvPsQuw316j8c/G1R/rDOdplIc/B
-        9xKdXZUZeaeoK5f/Jvzz12EKOXv5UdC2dhMApIrNofLtXkG4eH5WF89jhiGiR3FeUa6r
-        Wku5UMrY1ZzNJPyYkOtdxPc6ZYiEcXM2r4h0EtEE7zRxb9RJXt7DIlPJSV1kOF++aKOz
-        U9jA==
+        bh=6T71QD2Vo8dmsgSNbE8j1x5equ3md8IsMMhzsthbYfQ=;
+        b=cunYgKJiT2VVUiYOdXY3q91Ni5A4dfrY/tMiDwcTXL8W3Pm5th3cnlXdegh8GQsquq
+        UdJlWn/ix05HXhleBY3/p8k41GaOjr4IHCaIiFmC0m9WjJF9FevvyAG7fdvTG37mnWBu
+        Bcar0w4Mlm4YYfEYejH69ICmeiBndNGPKfL6ovEIBrTnE/zgBluuyxlKPmwBoivF1BOv
+        fiELHFrg+CVxMLZdHZ7tBjHbrzcV321zYYMPoX+iySSqIYHcX12pEtTVx+lnbLiapXxC
+        8pIcLX4A5Uhn8ZGAIDHVFCvGRjxhyPYGzXcPMN86LwccDVeURcJt3tk6ScKZjZiSLvh/
+        lP/Q==
 X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fCv/x64iFM="
 X-RZG-CLASS-ID: mo00
 Received: from oxapp06-03.back.ox.d0m.de
         by smtp-ox.front (RZmta 46.1.12 AUTH)
-        with ESMTPSA id L09b9cw1JAxm62l
+        with ESMTPSA id L09b9cw1JB1L63F
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
         (Client did not present a certificate);
-        Wed, 19 Feb 2020 11:59:48 +0100 (CET)
-Date:   Wed, 19 Feb 2020 11:59:48 +0100 (CET)
+        Wed, 19 Feb 2020 12:01:21 +0100 (CET)
+Date:   Wed, 19 Feb 2020 12:01:21 +0100 (CET)
 From:   Ulrich Hecht <uli@fpond.eu>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>
@@ -51,11 +50,11 @@ Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Message-ID: <1596455847.273189.1582109988206@webmail.strato.com>
-In-Reply-To: <20200218133019.22299-2-geert+renesas@glider.be>
+Message-ID: <1867901409.273361.1582110081464@webmail.strato.com>
+In-Reply-To: <20200218133019.22299-5-geert+renesas@glider.be>
 References: <20200218133019.22299-1-geert+renesas@glider.be>
- <20200218133019.22299-2-geert+renesas@glider.be>
-Subject: Re: [PATCH v2 1/4] ARM: dts: rcar-gen2: Add reset control
+ <20200218133019.22299-5-geert+renesas@glider.be>
+Subject: Re: [PATCH v2 4/4] arm64: dts: renesas: rzg2: Add reset control
  properties for display
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -74,105 +73,14 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 > 
 > 
 > Add reset control properties to the device nodes for the Display Units
-> on all supported R-Car Gen2 SoCs.  Note that on these SoCs, there is
-> only a single reset for all DU channels.
+> on all supported RZ/G2 SoCs.  Note that on these SoCs, there is only a
+> single reset for each pair of DU channels.
 > 
 > Join the clocks lines while at it, to increase uniformity.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2:
->   - New.
-> ---
->  arch/arm/boot/dts/r8a7790.dtsi | 2 ++
->  arch/arm/boot/dts/r8a7791.dtsi | 5 +++--
->  arch/arm/boot/dts/r8a7792.dtsi | 5 +++--
->  arch/arm/boot/dts/r8a7793.dtsi | 5 +++--
->  arch/arm/boot/dts/r8a7794.dtsi | 2 ++
->  5 files changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-> index 334ba19769b998ac..e5ef9fd4284ae436 100644
-> --- a/arch/arm/boot/dts/r8a7790.dtsi
-> +++ b/arch/arm/boot/dts/r8a7790.dtsi
-> @@ -1719,6 +1719,8 @@
->  			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
->  				 <&cpg CPG_MOD 722>;
->  			clock-names = "du.0", "du.1", "du.2";
-> +			resets = <&cpg 724>;
-> +			reset-names = "du.0";
->  			status = "disabled";
->  
->  			ports {
-> diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-> index baedfab84cb09134..e38a5f01490d70a1 100644
-> --- a/arch/arm/boot/dts/r8a7791.dtsi
-> +++ b/arch/arm/boot/dts/r8a7791.dtsi
-> @@ -1682,9 +1682,10 @@
->  			reg = <0 0xfeb00000 0 0x40000>;
->  			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&cpg CPG_MOD 724>,
-> -				 <&cpg CPG_MOD 723>;
-> +			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
->  			clock-names = "du.0", "du.1";
-> +			resets = <&cpg 724>;
-> +			reset-names = "du.0";
->  			status = "disabled";
->  
->  			ports {
-> diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-> index 39af16caa2aef501..4627eefa502b7677 100644
-> --- a/arch/arm/boot/dts/r8a7792.dtsi
-> +++ b/arch/arm/boot/dts/r8a7792.dtsi
-> @@ -852,9 +852,10 @@
->  			reg = <0 0xfeb00000 0 0x40000>;
->  			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&cpg CPG_MOD 724>,
-> -				 <&cpg CPG_MOD 723>;
-> +			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
->  			clock-names = "du.0", "du.1";
-> +			resets = <&cpg 724>;
-> +			reset-names = "du.0";
->  			status = "disabled";
->  
->  			ports {
-> diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-> index eef035c4d98341b6..dadbda16161b7457 100644
-> --- a/arch/arm/boot/dts/r8a7793.dtsi
-> +++ b/arch/arm/boot/dts/r8a7793.dtsi
-> @@ -1341,9 +1341,10 @@
->  			reg = <0 0xfeb00000 0 0x40000>;
->  			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
->  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
-> -			clocks = <&cpg CPG_MOD 724>,
-> -				 <&cpg CPG_MOD 723>;
-> +			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
->  			clock-names = "du.0", "du.1";
-> +			resets = <&cpg 724>;
-> +			reset-names = "du.0";
->  			status = "disabled";
->  
->  			ports {
-> diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-> index 05ef79c6ed7f6b61..2c9e7a1ebfec1863 100644
-> --- a/arch/arm/boot/dts/r8a7794.dtsi
-> +++ b/arch/arm/boot/dts/r8a7794.dtsi
-> @@ -1356,6 +1356,8 @@
->  				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>;
->  			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>;
->  			clock-names = "du.0", "du.1";
-> +			resets = <&cpg 724>;
-> +			reset-names = "du.0";
->  			status = "disabled";
->  
->  			ports {
-> -- 
-> 2.17.1
->
 
-Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+FTR: I can't review this one, I don't have the datasheet.
 
 CU
 Uli
