@@ -2,113 +2,176 @@ Return-Path: <SRS0=z3wm=4I=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D28FC11D10
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Feb 2020 17:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C5DC11D19
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Feb 2020 18:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 819FE2467A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Feb 2020 17:26:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18D3324673
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Feb 2020 18:51:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vOeF5IAw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbgBTR02 (ORCPT
+        id S1728896AbgBTSvA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 20 Feb 2020 12:26:28 -0500
-Received: from sauhun.de ([88.99.104.3]:35070 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728730AbgBTRZy (ORCPT
+        Thu, 20 Feb 2020 13:51:00 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:37320 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728725AbgBTSu7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Feb 2020 12:25:54 -0500
-Received: from localhost (p5486CC48.dip0.t-ipconnect.de [84.134.204.72])
-        by pokefinder.org (Postfix) with ESMTPSA id 80B0D2C1EBB;
-        Thu, 20 Feb 2020 18:25:51 +0100 (CET)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, linux-i3c@lists.infradead.org,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [RFC PATCH 2/7] i2c: use DEFINE for the dummy driver name
-Date:   Thu, 20 Feb 2020 18:23:58 +0100
-Message-Id: <20200220172403.26062-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200220172403.26062-1-wsa+renesas@sang-engineering.com>
-References: <20200220172403.26062-1-wsa+renesas@sang-engineering.com>
+        Thu, 20 Feb 2020 13:50:59 -0500
+Received: by mail-yw1-f68.google.com with SMTP id l5so2345026ywd.4;
+        Thu, 20 Feb 2020 10:50:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zxEjfC9qysOEYz/uA2xiD/exrMiBDn8DQeJ/H1ImPeI=;
+        b=vOeF5IAwfqyD4UjHnQxFvqrEL90PuTYYQ4PHXBFKDV7ZbakFWFaWzua6UYyEUAXQ92
+         zDX7l+tkulRP5kuqkdO9KmO4wGE/ocgsSuWgmq4gdhlZLJBs1KjquticFTuPvWuaqdil
+         U78Rg92ZQGU415XVxD4/4w4JcLp+pI/nkJgwdzeJNLKaQ2gnoM3wsswdE5q0ld3zt3SO
+         DextXdp6Z92+ImqLu4BBuBD4oQkRhUdxfl/HEBKeurOgMAEuGgIuvMwLOLzIcbLPXbRw
+         DwGW4KXiylmhLYde9lx5n9taNmCIQoNd4XIZtr8B3M7uI19xiHPBK43nKqBwEWNyMZ7v
+         s1ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zxEjfC9qysOEYz/uA2xiD/exrMiBDn8DQeJ/H1ImPeI=;
+        b=SIdkZVrj1vuqd7MkLnHV8f7bn7mU3KZW4LwT1Coea2M9Abbcw4V5R9JlCRTU1NaKBF
+         42Jd697evTEI+GtqxtWtARMlRajKiol0bgZmS/vQkAAMaQgXpc29wbvvd3tj6Bej/v4a
+         3gnRNalNxHnNlcKaYB/yg+ROTeG/mf90Ono0ztZKD40q5qRA00vFmEsis5yqn0d3nx5t
+         lAmSd1JmXderSRXBaVxywmIZZFhwFE/C7H/oGb9mIOPoz+5QOaBRxk+SUrwCuUUl8+gh
+         4000l/zEXJWRSF/BU+KVWAePeYWXCDnfgTxvL7pqUC5Mg3n3w/WgBA4dl2Lu2wg3VGC+
+         7T+A==
+X-Gm-Message-State: APjAAAUl6h41kWLMUTfDPI7otow6vnrY8QC/Jp73OwDKy1KE665WNUET
+        Sou3QyQZyntKMMiwGDWg8rE=
+X-Google-Smtp-Source: APXvYqzzI0G8JXyQA8z5ibMWtYWDCxNVmMsdqyWKeFRO2zeOL2vG/Ctjbb1OgBqCIKTgqVRSjtbfxg==
+X-Received: by 2002:a0d:e745:: with SMTP id q66mr25974738ywe.503.1582224658124;
+        Thu, 20 Feb 2020 10:50:58 -0800 (PST)
+Received: from [192.168.1.46] (c-73-88-245-53.hsd1.tn.comcast.net. [73.88.245.53])
+        by smtp.gmail.com with ESMTPSA id d22sm212927ywb.77.2020.02.20.10.50.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 20 Feb 2020 10:50:57 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] gpio: of: Extract of_gpiochip_add_hog()
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200220130149.26283-1-geert+renesas@glider.be>
+ <20200220130149.26283-2-geert+renesas@glider.be>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <7b902253-cb5c-d192-0a94-788f4d59c7b5@gmail.com>
+Date:   Thu, 20 Feb 2020 12:50:56 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200220130149.26283-2-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-We use it in multiple places, so make sure it is consistent whenever we
-need to change it.
+On 2/20/20 7:01 AM, Geert Uytterhoeven wrote:
+> Extract the code to add all GPIO hogs of a gpio-hog node into its own
+> function, so it can be reused.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - No changes.
+> ---
+>  drivers/gpio/gpiolib-of.c | 49 ++++++++++++++++++++++++++-------------
+>  1 file changed, 33 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index c6d30f73df078e0b..2b47f93886075294 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -604,6 +604,35 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
+>  	return desc;
+>  }
+>  
+> +/**
+> + * of_gpiochip_add_hog - Add all hogs in a hog device node
+> + * @chip:	gpio chip to act on
+> + * @hog:	device node describing the hogs
+> + *
+> + * Returns error if it fails otherwise 0 on success.
+> + */
+> +static int of_gpiochip_add_hog(struct gpio_chip *chip, struct device_node *hog)
+> +{
+> +	enum gpiod_flags dflags;
+> +	struct gpio_desc *desc;
+> +	unsigned long lflags;
+> +	const char *name;
+> +	unsigned int i;
+> +	int ret;
+> +
+> +	for (i = 0;; i++) {
+> +		desc = of_parse_own_gpio(hog, chip, i, &name, &lflags, &dflags);
+> +		if (IS_ERR(desc))
+> +			break;
+> +
+> +		ret = gpiod_hog(desc, name, lflags, dflags);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  /**
+>   * of_gpiochip_scan_gpios - Scan gpio-controller for gpio definitions
+>   * @chip:	gpio chip to act on
+> @@ -614,29 +643,17 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
+>   */
+>  static int of_gpiochip_scan_gpios(struct gpio_chip *chip)
+>  {
+> -	struct gpio_desc *desc = NULL;
+>  	struct device_node *np;
+> -	const char *name;
+> -	unsigned long lflags;
+> -	enum gpiod_flags dflags;
+> -	unsigned int i;
+>  	int ret;
+>  
+>  	for_each_available_child_of_node(chip->of_node, np) {
+>  		if (!of_property_read_bool(np, "gpio-hog"))
+>  			continue;
+>  
+> -		for (i = 0;; i++) {
+> -			desc = of_parse_own_gpio(np, chip, i, &name, &lflags,
+> -						 &dflags);
+> -			if (IS_ERR(desc))
+> -				break;
+> -
+> -			ret = gpiod_hog(desc, name, lflags, dflags);
+> -			if (ret < 0) {
+> -				of_node_put(np);
+> -				return ret;
+> -			}
+> +		ret = of_gpiochip_add_hog(chip, np);
+> +		if (ret < 0) {
+> +			of_node_put(np);
+> +			return ret;
+>  		}
+>  	}
+>  
+> 
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-base.c | 8 ++++----
- drivers/i2c/i2c-core.h      | 2 ++
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-index 8f46d1bb8c62..8df2fa10c48a 100644
---- a/drivers/i2c/i2c-core-base.c
-+++ b/drivers/i2c/i2c-core-base.c
-@@ -853,7 +853,7 @@ EXPORT_SYMBOL_GPL(i2c_unregister_device);
- 
- 
- static const struct i2c_device_id dummy_id[] = {
--	{ "dummy", 0 },
-+	{ I2C_DUMMY_DRV_NAME, 0 },
- 	{ },
- };
- 
-@@ -869,7 +869,7 @@ static int dummy_remove(struct i2c_client *client)
- }
- 
- static struct i2c_driver dummy_driver = {
--	.driver.name	= "dummy",
-+	.driver.name	= I2C_DUMMY_DRV_NAME,
- 	.probe		= dummy_probe,
- 	.remove		= dummy_remove,
- 	.id_table	= dummy_id,
-@@ -896,7 +896,7 @@ static struct i2c_driver dummy_driver = {
- struct i2c_client *i2c_new_dummy_device(struct i2c_adapter *adapter, u16 address)
- {
- 	struct i2c_board_info info = {
--		I2C_BOARD_INFO("dummy", address),
-+		I2C_BOARD_INFO(I2C_DUMMY_DRV_NAME, address),
- 	};
- 
- 	return i2c_new_client_device(adapter, &info);
-@@ -1487,7 +1487,7 @@ static void i2c_do_del_adapter(struct i2c_driver *driver,
- static int __unregister_client(struct device *dev, void *dummy)
- {
- 	struct i2c_client *client = i2c_verify_client(dev);
--	if (client && strcmp(client->name, "dummy"))
-+	if (client && strcmp(client->name, I2C_DUMMY_DRV_NAME))
- 		i2c_unregister_device(client);
- 	return 0;
- }
-diff --git a/drivers/i2c/i2c-core.h b/drivers/i2c/i2c-core.h
-index 517d98be68d2..fb89fabf84d3 100644
---- a/drivers/i2c/i2c-core.h
-+++ b/drivers/i2c/i2c-core.h
-@@ -22,6 +22,8 @@ int i2c_check_7bit_addr_validity_strict(unsigned short addr);
- int i2c_dev_irq_from_resources(const struct resource *resources,
- 			       unsigned int num_resources);
- 
-+#define I2C_DUMMY_DRV_NAME "dummy"
-+
- /*
-  * We only allow atomic transfers for very late communication, e.g. to send
-  * the powerdown command to a PMIC. Atomic transfers are a corner case and not
--- 
-2.20.1
-
+Reviewed-by: Frank Rowand <frank.rowand@sony.com>
