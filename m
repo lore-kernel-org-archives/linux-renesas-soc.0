@@ -2,142 +2,57 @@ Return-Path: <SRS0=z3wm=4I=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 495DEC11D07
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Feb 2020 13:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7584C11D04
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Feb 2020 13:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C6EF24676
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Feb 2020 13:02:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC5D1208C4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Feb 2020 13:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582204837;
+	bh=/5A5mO1xeq5J4dLSbZxwTxIanUA85sl2hQoFKirDvR4=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=R8tGAlnbvQHycN9gVUsmn+2aDyItIXGLGLuiz3/1uaHRj+cLc4Ha1DjglY0pcs+UK
+	 rUEJg2TF/Agy/5iA34LStrkSOkfy0DZhvnlacP6mUxh/9vjXepDj/qCuaZChelu7CL
+	 +anVGoWW0K3g6ElhwrXLLfDaV0TedBLrAadDl3Nk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbgBTNCL (ORCPT
+        id S1727953AbgBTNUh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 20 Feb 2020 08:02:11 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:53470 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728043AbgBTNCA (ORCPT
+        Thu, 20 Feb 2020 08:20:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727943AbgBTNUh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Feb 2020 08:02:00 -0500
-Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id 511u220065USYZQ0111uY3; Thu, 20 Feb 2020 14:01:58 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j4lSj-000564-VF; Thu, 20 Feb 2020 14:01:53 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j4lSj-0007Lh-To; Thu, 20 Feb 2020 14:01:53 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Pantelis Antoniou <pantelis.antoniou@konsulko.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2] gpio: of: Extract of_gpiochip_add_hog()
-Date:   Thu, 20 Feb 2020 14:01:48 +0100
-Message-Id: <20200220130149.26283-2-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200220130149.26283-1-geert+renesas@glider.be>
-References: <20200220130149.26283-1-geert+renesas@glider.be>
+        Thu, 20 Feb 2020 08:20:37 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582204837;
+        bh=/5A5mO1xeq5J4dLSbZxwTxIanUA85sl2hQoFKirDvR4=;
+        h=Subject:From:Date:To:From;
+        b=2gD0+HYjGQrZziu/hpcJsVVXQXXFeFs/VvViSpaCsD7hX3NBH5dk2neQxRmfNHzZ1
+         mXjuVUvH4zxSmkI5899HvrcB5K6cDqKHOdbM2Qakibsa837fZk/zavAV1mfARa5B/3
+         RhSUeEb7c/QyNt9k6PRrmb6AUaa9x9jRRl6448AQ=
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <158220483699.9761.4682283888565347874.git-patchwork-housekeeping@kernel.org>
+Date:   Thu, 20 Feb 2020 13:20:36 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Extract the code to add all GPIO hogs of a gpio-hog node into its own
-function, so it can be reused.
+Latest series: [v2] gpio: of: Add DT overlay support for GPIO hogs (2020-02-20T13:01:47)
+  Superseding: [v1] gpio: of: Add DT overlay support for GPIO hogs (2019-12-30T13:38:50):
+    [PATCH/RFC,1/2] gpio: of: Extract of_gpiochip_add_hog()
+    [PATCH/RFC,2/2] gpio: of: Add DT overlay support for GPIO hogs
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
----
- drivers/gpio/gpiolib-of.c | 49 ++++++++++++++++++++++++++-------------
- 1 file changed, 33 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index c6d30f73df078e0b..2b47f93886075294 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -604,6 +604,35 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
- 	return desc;
- }
- 
-+/**
-+ * of_gpiochip_add_hog - Add all hogs in a hog device node
-+ * @chip:	gpio chip to act on
-+ * @hog:	device node describing the hogs
-+ *
-+ * Returns error if it fails otherwise 0 on success.
-+ */
-+static int of_gpiochip_add_hog(struct gpio_chip *chip, struct device_node *hog)
-+{
-+	enum gpiod_flags dflags;
-+	struct gpio_desc *desc;
-+	unsigned long lflags;
-+	const char *name;
-+	unsigned int i;
-+	int ret;
-+
-+	for (i = 0;; i++) {
-+		desc = of_parse_own_gpio(hog, chip, i, &name, &lflags, &dflags);
-+		if (IS_ERR(desc))
-+			break;
-+
-+		ret = gpiod_hog(desc, name, lflags, dflags);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * of_gpiochip_scan_gpios - Scan gpio-controller for gpio definitions
-  * @chip:	gpio chip to act on
-@@ -614,29 +643,17 @@ static struct gpio_desc *of_parse_own_gpio(struct device_node *np,
-  */
- static int of_gpiochip_scan_gpios(struct gpio_chip *chip)
- {
--	struct gpio_desc *desc = NULL;
- 	struct device_node *np;
--	const char *name;
--	unsigned long lflags;
--	enum gpiod_flags dflags;
--	unsigned int i;
- 	int ret;
- 
- 	for_each_available_child_of_node(chip->of_node, np) {
- 		if (!of_property_read_bool(np, "gpio-hog"))
- 			continue;
- 
--		for (i = 0;; i++) {
--			desc = of_parse_own_gpio(np, chip, i, &name, &lflags,
--						 &dflags);
--			if (IS_ERR(desc))
--				break;
--
--			ret = gpiod_hog(desc, name, lflags, dflags);
--			if (ret < 0) {
--				of_node_put(np);
--				return ret;
--			}
-+		ret = of_gpiochip_add_hog(chip, np);
-+		if (ret < 0) {
-+			of_node_put(np);
-+			return ret;
- 		}
- 	}
- 
 -- 
-2.17.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
