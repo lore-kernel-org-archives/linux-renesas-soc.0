@@ -6,47 +6,43 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B58C35646
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Feb 2020 14:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4486C35646
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Feb 2020 14:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B43224676
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Feb 2020 14:20:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A667724676
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Feb 2020 14:20:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582294834;
-	bh=RZQMhGh5meTj/7Ql8IH60F/4QNiFWNzr/tq1C5045ck=;
+	s=default; t=1582294836;
+	bh=MiqCcd8YdCi4nyUQTmpklJFyE5x/15TYGp75gjO7o4Y=;
 	h=Subject:From:Date:References:To:List-ID:From;
-	b=1tHusVn/VKTMeA2g1YS1AJcnuYzqXuN1shoLYp83vkL3+j20p2vn/PgwdVamfCKBK
-	 cSVRIJDSpooHDO06Dois4p/RZTzZoSRTy6Fxk9wShwLF9IPyYZPksc8/0L5R04/73i
-	 oGDIx6KD4SWZaKulmLJVisQv3Y4z6p1Gpi3aLYhw=
+	b=QEmZ8fQSFAdYH0VB0Z1HV81CUiXt9ylseLN09RabImQSbsxrTbGmthjW93N30YNMy
+	 7sjVRKEgdyAL6CGkvD6IPN9QLat3CScf9DN5beRYky7knUMpauZVlud5XL3/LXo1kI
+	 Ox8uG/9F6Slt5ibmL/JXSQluw7n6DcnA21PpsDWM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728312AbgBUOUd (ORCPT
+        id S1728754AbgBUOUg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Feb 2020 09:20:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41990 "EHLO mail.kernel.org"
+        Fri, 21 Feb 2020 09:20:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727315AbgBUOUd (ORCPT
+        id S1727315AbgBUOUg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Feb 2020 09:20:33 -0500
+        Fri, 21 Feb 2020 09:20:36 -0500
 Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582294833;
-        bh=RZQMhGh5meTj/7Ql8IH60F/4QNiFWNzr/tq1C5045ck=;
+        s=default; t=1582294835;
+        bh=MiqCcd8YdCi4nyUQTmpklJFyE5x/15TYGp75gjO7o4Y=;
         h=Subject:From:Date:References:To:From;
-        b=P3Us9nSqeocjdEHL0ttLE+BNrSKxPkbKSMZDP8Xqeqtcll+nie5CYxZaoj2AOlZid
-         p+p2ycQoBrydo6nzixSGtf5e7DrGkNbSJBMzEC4WSSzHhEtZJhelol5iAjyxqFh/jh
-         I4iXyPdMXWAKWBzo7vlP5r4u9mGmgMRxME3eaQvY=
+        b=aJ7o6fb4RGokghT68x2F93fJwfXvDln9foCAPifpouh2SiZh6a7ufFdM26tu2VTGR
+         DRzsaDewlUY8qTYLGrwbIzk5/rMYQr2lTumHsNaXoP5RtgbNyYp2orUtT6PfyXkuRV
+         pfKUjkDWHA2XBh11DSQ89EnmDkOYUy7N3FjoxGww=
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Subject: Patchwork summary for: linux-renesas-soc
 From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <158229483332.12219.5639020605006542672.git-patchwork-summary@kernel.org>
-Date:   Fri, 21 Feb 2020 14:20:33 +0000
-References: <20200217101741.3758-1-geert+renesas@glider.be>,
- <20200218112414.5591-1-geert+renesas@glider.be>,
- <20200218112449.5723-1-geert+renesas@glider.be>,
- <20200219153929.11073-1-geert+renesas@glider.be>,
- <20200218132217.21454-1-geert+renesas@glider.be>,
- <20200217103251.5205-1-geert+renesas@glider.be>
+Message-Id: <158229483571.12219.2446835940062147487.git-patchwork-summary@kernel.org>
+Date:   Fri, 21 Feb 2020 14:20:35 +0000
+References: <20200217094716.13689-1-geert+renesas@glider.be>,
+ <20200217094755.20632-1-geert+renesas@glider.be>
 To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
@@ -56,33 +52,17 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 Hello:
 
 The following patches were marked "accepted", because they were applied to
-geert/renesas-devel (refs/heads/next):
+geert/renesas-devel (refs/heads/master):
 
-Patch: arm64: defconfig: Replace ARCH_R8A7796 by ARCH_R8A77960
+Patch: [LOCAL] arm64: renesas_defconfig: Refresh for v5.6-rc1
   Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=242521
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=242501
 
-Patch: arm64: dts: renesas: Remove use of ARCH_R8A7795
+Patch: [LOCAL] arm64: renesas_defconfig: Enable CONFIG_ARCH_R8A7795[01]
   Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=243169
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=242503
 
-Patch: soc: renesas: Remove ARCH_R8A7795
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=243173
-
-Patch: ARM: dts: r8a7779: Remove deprecated "renesas,rcar-sata" compatible value
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=244103
-
-Patch: ARM: dts: r8a7745: Convert to new DU DT bindings
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=243237
-
-Patch: arm64: defconfig: Enable additional support for Renesas platforms
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=242529
-
-Total patches: 6
+Total patches: 2
 
 -- 
 Deet-doot-dot, I am a bot.
