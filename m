@@ -2,136 +2,264 @@ Return-Path: <SRS0=tPEP=4K=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E75C35669
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Feb 2020 01:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66A94C35671
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Feb 2020 07:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02DC3206EF
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Feb 2020 01:42:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EF31208C3
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 22 Feb 2020 07:08:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727723AbgBVBmU (ORCPT
+        id S1726832AbgBVHIU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Feb 2020 20:42:20 -0500
-Received: from helcar.hmeau.com ([216.24.177.18]:52220 "EHLO fornost.hmeau.com"
+        Sat, 22 Feb 2020 02:08:20 -0500
+Received: from mga03.intel.com ([134.134.136.65]:65437 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726842AbgBVBmU (ORCPT
+        id S1726689AbgBVHIU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Feb 2020 20:42:20 -0500
-Received: from gwarestrin.me.apana.org.au ([192.168.0.7] helo=gwarestrin.arnor.me.apana.org.au)
-        by fornost.hmeau.com with smtp (Exim 4.89 #2 (Debian))
-        id 1j5Jnu-0002wa-Bq; Sat, 22 Feb 2020 12:42:03 +1100
-Received: by gwarestrin.arnor.me.apana.org.au (sSMTP sendmail emulation); Sat, 22 Feb 2020 12:42:02 +1100
-Date:   Sat, 22 Feb 2020 12:42:02 +1100
-From:   Herbert Xu <herbert@gondor.apana.org.au>
+        Sat, 22 Feb 2020 02:08:20 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Feb 2020 23:08:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,471,1574150400"; 
+   d="scan'208";a="259846750"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by fmsmga004.fm.intel.com with ESMTP; 21 Feb 2020 23:08:18 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1j5Otd-0004wY-JT; Sat, 22 Feb 2020 15:08:17 +0800
+Date:   Sat, 22 Feb 2020 15:08:09 +0800
+From:   kbuild test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Gilad Ben-Yossef <gilad@benyossef.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-crypto@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/34] crypto: ccree - miscellaneous fixes and
- improvements
-Message-ID: <20200222014202.GD19028@gondor.apana.org.au>
-References: <20200211181928.15178-1-geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [renesas-devel:renesas-arm64-dt-for-v5.7] BUILD SUCCESS
+ 721b76195b31467e56851fbab3855e700f281270
+Message-ID: <5e50d359.vEgiTZQ7bYmtTgNZ%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200211181928.15178-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 07:18:54PM +0100, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> This series contains several fixes, cleanups, and other improvements for
-> the ARM TrustZone CryptoCell driver.
-> 
-> The first 3 patches have been sent before:
->   - [PATCH 0/2] Fix debugfs register access while suspended[1],
->   - [PATCH] [RFC] crypto: ccree - fix retry handling in
->     cc_send_sync_request()[2.
-> 
-> This is based on v5.6-rc1, with the following fixes from Gilad applied:
->   - [PATCH 0/4] crypto: ccree - fixes[3],
->   - [PATCH] crypto: ccree - dec auth tag size from cryptlen map[4].
-> 
-> This has been tested on R-Car H3 ES2.0.
-> To ease testing, I have pushed this series and its dependencies to the
-> topic/ccree-misc-v2  branch of my renesas-drivers repository at
-> git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-> 
-> Thanks for your comments!
-> 
-> [1] https://lore.kernel.org/r/20200124132957.15769-1-geert+renesas@glider.be/
-> [2] https://lore.kernel.org/r/20200128190913.23086-1-geert+renesas@glider.be/
-> [3] https://lore.kernel.org/r/20200129143757.680-1-gilad@benyossef.com/
-> [4] https://lore.kernel.org/r/20200202161914.9551-1-gilad@benyossef.com/
-> 
-> Geert Uytterhoeven (34):
->   debugfs: regset32: Add Runtime PM support
->   crypto: ccree - fix debugfs register access while suspended
->   crypto: ccree - fix retry handling in cc_send_sync_request()
->   crypto: ccree - remove unneeded casts
->   crypto: ccree - swap SHA384 and SHA512 larval hashes at build time
->   crypto: ccree - drop duplicated error message on SRAM exhaustion
->   crypto: ccree - remove empty cc_sram_mgr_fini()
->   crypto: ccree - clean up clock handling
->   crypto: ccree - make mlli_params.mlli_virt_addr void *
->   crypto: ccree - use existing helpers to split 64-bit addresses
->   crypto: ccree - defer larval_digest_addr init until needed
->   crypto: ccree - remove bogus paragraph about freeing SRAM
->   crypto: ccree - use u32 for SRAM addresses
->   crypto: ccree - simplify Runtime PM handling
->   crypto: ccree - use of_device_get_match_data()
->   crypto: ccree - remove cc_pm_is_dev_suspended() wrapper
->   crypto: ccree - make cc_pm_{suspend,resume}() static
->   crypto: ccree - remove struct cc_sram_ctx
->   crypto: ccree - remove struct cc_debugfs_ctx
->   crypto: ccree - remove struct buff_mgr_handle
->   crypto: ccree - remove struct cc_cipher_handle
->   crypto: ccree - extract cc_init_copy_sram()
->   crypto: ccree - remove bogus kerneldoc markers
->   crypto: ccree - improve kerneldoc in cc_hw_queue_defs.h
->   crypto: ccree - improve kerneldoc in cc_buffer_mgr.c
->   crypto: ccree - improve kerneldoc in cc_hash.[ch]
->   crypto: ccree - improve kerneldoc in cc_request_mgr.[ch]
->   crypto: ccree - improve kerneldoc in cc_sram_mgr.[ch]
->   crypto: ccree - spelling s/Crytpcell/Cryptocell/
->   crypto: ccree - grammar s/not room/no room/
->   crypto: ccree - use existing dev helper in init_cc_resources()
->   crypto: ccree - use devm_k[mz]alloc() for AEAD data
->   crypto: ccree - use devm_k[mz]alloc() for cipher data
->   crypto: ccree - use devm_kzalloc() for hash data
-> 
->  drivers/crypto/ccree/cc_aead.c          |  61 +++---
->  drivers/crypto/ccree/cc_buffer_mgr.c    |  66 +++---
->  drivers/crypto/ccree/cc_buffer_mgr.h    |   4 +-
->  drivers/crypto/ccree/cc_cipher.c        |  61 ++----
->  drivers/crypto/ccree/cc_debugfs.c       |  29 +--
->  drivers/crypto/ccree/cc_driver.c        | 127 +++++-------
->  drivers/crypto/ccree/cc_driver.h        |  13 +-
->  drivers/crypto/ccree/cc_hash.c          | 225 +++++++++------------
->  drivers/crypto/ccree/cc_hash.h          |  31 ++-
->  drivers/crypto/ccree/cc_hw_queue_defs.h | 255 ++++++++++++------------
->  drivers/crypto/ccree/cc_pm.c            |  60 +-----
->  drivers/crypto/ccree/cc_pm.h            |  21 --
->  drivers/crypto/ccree/cc_request_mgr.c   |  47 +++--
->  drivers/crypto/ccree/cc_request_mgr.h   |  19 +-
->  drivers/crypto/ccree/cc_sram_mgr.c      |  78 +++-----
->  drivers/crypto/ccree/cc_sram_mgr.h      |  45 ++---
->  fs/debugfs/file.c                       |   8 +
->  include/linux/debugfs.h                 |   1 +
->  18 files changed, 456 insertions(+), 695 deletions(-)
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-arm64-dt-for-v5.7
+branch HEAD: 721b76195b31467e56851fbab3855e700f281270  arm64: dts: renesas: rzg2: Add reset control properties for display
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+elapsed time: 933m
+
+configs tested: 200
+configs skipped: 144
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm                              allmodconfig
+arm                               allnoconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm64                            allyesconfig
+arm                         at91_dt_defconfig
+arm                           efm32_defconfig
+arm                          exynos_defconfig
+arm                        multi_v5_defconfig
+arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
+sh                               allmodconfig
+riscv                          rv32_defconfig
+arc                                 defconfig
+c6x                              allyesconfig
+parisc                generic-32bit_defconfig
+m68k                          multi_defconfig
+openrisc                    or1ksim_defconfig
+i386                             alldefconfig
+i386                              allnoconfig
+i386                             allyesconfig
+i386                                defconfig
+ia64                             alldefconfig
+ia64                             allmodconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+ia64                                defconfig
+c6x                        evmc6678_defconfig
+nios2                         10m50_defconfig
+nios2                         3c120_defconfig
+openrisc                 simple_smp_defconfig
+xtensa                       common_defconfig
+xtensa                          iss_defconfig
+alpha                               defconfig
+csky                                defconfig
+nds32                             allnoconfig
+nds32                               defconfig
+h8300                     edosk2674_defconfig
+h8300                    h8300h-sim_defconfig
+h8300                       h8s-sim_defconfig
+m68k                             allmodconfig
+m68k                       m5475evb_defconfig
+m68k                           sun3_defconfig
+arc                              allyesconfig
+microblaze                      mmu_defconfig
+microblaze                    nommu_defconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+powerpc                       ppc64_defconfig
+powerpc                          rhel-kconfig
+mips                           32r2_defconfig
+mips                         64r6el_defconfig
+mips                             allmodconfig
+mips                              allnoconfig
+mips                             allyesconfig
+mips                      fuloong2e_defconfig
+mips                      malta_kvm_defconfig
+parisc                            allnoconfig
+parisc                           allyesconfig
+parisc                generic-64bit_defconfig
+x86_64               randconfig-a001-20200221
+x86_64               randconfig-a002-20200221
+x86_64               randconfig-a003-20200221
+i386                 randconfig-a001-20200221
+i386                 randconfig-a002-20200221
+i386                 randconfig-a003-20200221
+x86_64               randconfig-a001-20200222
+x86_64               randconfig-a002-20200222
+x86_64               randconfig-a003-20200222
+i386                 randconfig-a001-20200222
+i386                 randconfig-a002-20200222
+i386                 randconfig-a003-20200222
+alpha                randconfig-a001-20200221
+m68k                 randconfig-a001-20200221
+mips                 randconfig-a001-20200221
+nds32                randconfig-a001-20200221
+parisc               randconfig-a001-20200221
+riscv                randconfig-a001-20200221
+alpha                randconfig-a001-20200222
+m68k                 randconfig-a001-20200222
+mips                 randconfig-a001-20200222
+nds32                randconfig-a001-20200222
+parisc               randconfig-a001-20200222
+riscv                randconfig-a001-20200222
+c6x                  randconfig-a001-20200221
+h8300                randconfig-a001-20200221
+microblaze           randconfig-a001-20200221
+nios2                randconfig-a001-20200221
+sparc64              randconfig-a001-20200221
+csky                 randconfig-a001-20200221
+openrisc             randconfig-a001-20200221
+s390                 randconfig-a001-20200221
+sh                   randconfig-a001-20200221
+xtensa               randconfig-a001-20200221
+x86_64               randconfig-b001-20200221
+x86_64               randconfig-b002-20200221
+x86_64               randconfig-b003-20200221
+i386                 randconfig-b001-20200221
+i386                 randconfig-b002-20200221
+i386                 randconfig-b003-20200221
+x86_64               randconfig-b001-20200222
+x86_64               randconfig-b002-20200222
+x86_64               randconfig-b003-20200222
+i386                 randconfig-b001-20200222
+i386                 randconfig-b002-20200222
+i386                 randconfig-b003-20200222
+x86_64               randconfig-c001-20200221
+x86_64               randconfig-c002-20200221
+x86_64               randconfig-c003-20200221
+i386                 randconfig-c001-20200221
+i386                 randconfig-c002-20200221
+i386                 randconfig-c003-20200221
+x86_64               randconfig-d001-20200222
+x86_64               randconfig-d002-20200222
+x86_64               randconfig-d003-20200222
+i386                 randconfig-d001-20200222
+i386                 randconfig-d002-20200222
+i386                 randconfig-d003-20200222
+x86_64               randconfig-e001-20200222
+x86_64               randconfig-e002-20200222
+x86_64               randconfig-e003-20200222
+i386                 randconfig-e001-20200222
+i386                 randconfig-e002-20200222
+i386                 randconfig-e003-20200222
+x86_64               randconfig-e001-20200221
+x86_64               randconfig-e002-20200221
+x86_64               randconfig-e003-20200221
+i386                 randconfig-e001-20200221
+i386                 randconfig-e002-20200221
+i386                 randconfig-e003-20200221
+x86_64               randconfig-f001-20200221
+x86_64               randconfig-f002-20200221
+x86_64               randconfig-f003-20200221
+i386                 randconfig-f001-20200221
+i386                 randconfig-f002-20200221
+i386                 randconfig-f003-20200221
+x86_64               randconfig-f001-20200222
+x86_64               randconfig-f002-20200222
+x86_64               randconfig-f003-20200222
+i386                 randconfig-f001-20200222
+i386                 randconfig-f002-20200222
+i386                 randconfig-f003-20200222
+x86_64               randconfig-g001-20200222
+x86_64               randconfig-g002-20200222
+x86_64               randconfig-g003-20200222
+i386                 randconfig-g001-20200222
+i386                 randconfig-g002-20200222
+i386                 randconfig-g003-20200222
+x86_64               randconfig-g001-20200221
+x86_64               randconfig-g002-20200221
+x86_64               randconfig-g003-20200221
+i386                 randconfig-g001-20200221
+i386                 randconfig-g002-20200221
+i386                 randconfig-g003-20200221
+x86_64               randconfig-h001-20200221
+x86_64               randconfig-h002-20200221
+x86_64               randconfig-h003-20200221
+i386                 randconfig-h001-20200221
+i386                 randconfig-h002-20200221
+i386                 randconfig-h003-20200221
+arc                  randconfig-a001-20200221
+arm                  randconfig-a001-20200221
+arm64                randconfig-a001-20200221
+ia64                 randconfig-a001-20200221
+powerpc              randconfig-a001-20200221
+sparc                randconfig-a001-20200221
+riscv                            allmodconfig
+riscv                             allnoconfig
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                    nommu_virt_defconfig
+s390                             alldefconfig
+s390                             allmodconfig
+s390                              allnoconfig
+s390                             allyesconfig
+s390                          debug_defconfig
+s390                                defconfig
+s390                       zfcpdump_defconfig
+sh                                allnoconfig
+sh                          rsk7269_defconfig
+sh                  sh7785lcr_32bit_defconfig
+sh                            titan_defconfig
+sparc                            allyesconfig
+sparc                               defconfig
+sparc64                          allmodconfig
+sparc64                           allnoconfig
+sparc64                          allyesconfig
+sparc64                             defconfig
+um                                  defconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                              fedora-25
+x86_64                                  kexec
+x86_64                                    lkp
+x86_64                                   rhel
+x86_64                         rhel-7.2-clear
+x86_64                               rhel-7.6
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
