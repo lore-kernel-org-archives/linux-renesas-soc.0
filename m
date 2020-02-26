@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-13.8 required=3.0
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 083E0C4BA0E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 10:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B68C4BA0E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 11:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD98024688
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 10:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C39A2469B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 11:02:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbgBZKwu (ORCPT
+        id S1728056AbgBZLCb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 26 Feb 2020 05:52:50 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:49076 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727191AbgBZKwu (ORCPT
+        Wed, 26 Feb 2020 06:02:31 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:60884 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728047AbgBZLCb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Feb 2020 05:52:50 -0500
+        Wed, 26 Feb 2020 06:02:31 -0500
 Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id 7Nsk220075USYZQ01NsknC; Wed, 26 Feb 2020 11:52:48 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id 7P2V2200Q5USYZQ06P2V8s; Wed, 26 Feb 2020 12:02:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j6uJ2-0002Ml-3E; Wed, 26 Feb 2020 11:52:44 +0100
+        id 1j6uST-0002Ty-7l; Wed, 26 Feb 2020 12:02:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j6uJ2-0004n1-0U; Wed, 26 Feb 2020 11:52:44 +0100
+        id 1j6uST-000520-6d; Wed, 26 Feb 2020 12:02:29 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] Renesas fixes for v5.6
-Date:   Wed, 26 Feb 2020 11:52:36 +0100
-Message-Id: <20200226105236.18368-1-geert+renesas@glider.be>
+Subject: [GIT PULL 1/5] Renesas ARM DT updates for v5.7
+Date:   Wed, 26 Feb 2020 12:02:17 +0100
+Message-Id: <20200226110221.19288-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200226110221.19288-1-geert+renesas@glider.be>
+References: <20200226110221.19288-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
-
-	Hi arm-soc folks,
 
 The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
@@ -54,36 +54,48 @@ The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-fixes-for-v5.6-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-dt-for-v5.7-tag1
 
-for you to fetch changes up to 21b388dca138b0fc540c76b065bc83281762a9b4:
+for you to fetch changes up to 9e1232631d4e8e30096fa758a0e1fb9e08f219f9:
 
-  ARM: dts: r8a7779: Remove deprecated "renesas, rcar-sata" compatible value (2020-02-24 14:04:21 +0100)
+  ARM: dts: rzg1: Add reset control properties for display (2020-02-24 14:03:33 +0100)
 
 ----------------------------------------------------------------
-Renesas Fixes for v5.6
+Renesas ARM DT updates for v5.7
 
-  - Restore R-Car M3-W support,
-  - Drop deprecated compatible value to ease DT binding conversion to
-    json-schema.
+  - Miscellaneous fixes and improvements.
 
-Thanks for pulling!
 ----------------------------------------------------------------
-Geert Uytterhoeven (2):
-      arm64: defconfig: Replace ARCH_R8A7796 by ARCH_R8A77960
-      ARM: dts: r8a7779: Remove deprecated "renesas, rcar-sata" compatible value
+Chris Brandt (1):
+      ARM: dts: r7s72100: Add SPIBSC clocks
 
- arch/arm/boot/dts/r8a7779.dtsi | 2 +-
- arch/arm64/configs/defconfig   | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Geert Uytterhoeven (4):
+      ARM: dts: renesas: Group tuples in operating-points properties
+      ARM: dts: r8a7745: Convert to new DU DT bindings
+      ARM: dts: rcar-gen2: Add reset control properties for display
+      ARM: dts: rzg1: Add reset control properties for display
 
-Gr{oetje,eeting}s,
+Marek Vasut (1):
+      ARM: dts: renesas: Add missing ethernet PHY reset GPIO on Gen2 reference boards
 
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ arch/arm/boot/dts/r7s72100-gr-peach.dts | 3 +++
+ arch/arm/boot/dts/r7s72100.dtsi         | 5 +++--
+ arch/arm/boot/dts/r8a73a4-ape6evm.dts   | 7 ++-----
+ arch/arm/boot/dts/r8a7743.dtsi          | 5 +++--
+ arch/arm/boot/dts/r8a7744.dtsi          | 5 +++--
+ arch/arm/boot/dts/r8a7745.dtsi          | 3 ++-
+ arch/arm/boot/dts/r8a77470.dtsi         | 5 +++--
+ arch/arm/boot/dts/r8a7790-lager.dts     | 1 +
+ arch/arm/boot/dts/r8a7790-stout.dts     | 1 +
+ arch/arm/boot/dts/r8a7790.dtsi          | 2 ++
+ arch/arm/boot/dts/r8a7791-koelsch.dts   | 1 +
+ arch/arm/boot/dts/r8a7791-porter.dts    | 1 +
+ arch/arm/boot/dts/r8a7791.dtsi          | 5 +++--
+ arch/arm/boot/dts/r8a7792.dtsi          | 5 +++--
+ arch/arm/boot/dts/r8a7793-gose.dts      | 1 +
+ arch/arm/boot/dts/r8a7793.dtsi          | 5 +++--
+ arch/arm/boot/dts/r8a7794-alt.dts       | 1 +
+ arch/arm/boot/dts/r8a7794-silk.dts      | 1 +
+ arch/arm/boot/dts/r8a7794.dtsi          | 2 ++
+ arch/arm/boot/dts/sh73a0-kzm9g.dts      | 9 +++------
+ 20 files changed, 42 insertions(+), 26 deletions(-)
