@@ -2,83 +2,94 @@ Return-Path: <SRS0=mEDe=4O=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C11CC4BA18
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 18:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6DEC4BA24
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 20:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EFD22465D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 18:10:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8656524672
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 20:28:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="VmZVx9ga"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726928AbgBZSKW (ORCPT
+        id S1727434AbgBZU2g (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 26 Feb 2020 13:10:22 -0500
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:34780 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbgBZSKW (ORCPT
+        Wed, 26 Feb 2020 15:28:36 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:26700 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbgBZU2g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Feb 2020 13:10:22 -0500
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 3E1F33C009D;
-        Wed, 26 Feb 2020 19:10:20 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ox3u6X-MG0Pr; Wed, 26 Feb 2020 19:10:15 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 1A7E03C005E;
-        Wed, 26 Feb 2020 19:10:15 +0100 (CET)
-Received: from lxhi-065.adit-jv.com (10.72.93.66) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.468.0; Wed, 26 Feb
- 2020 19:10:14 +0100
-Date:   Wed, 26 Feb 2020 19:10:11 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-CC:     <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
-        "Lee, Chiasheng" <chiasheng.lee@intel.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Hardik Gajjar <hgajjar@de.adit-jv.com>,
-        <scan-admin@coverity.com>, Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH] usb: hub: Fix unhandled return value of
- usb_autopm_get_interface()
-Message-ID: <20200226181011.GA2868@lxhi-065.adit-jv.com>
-References: <20200225202223.GA9154@lxhi-065.adit-jv.com>
- <Pine.LNX.4.44L0.2002251553030.1485-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.2002251553030.1485-100000@iolanthe.rowland.org>
-X-Originating-IP: [10.72.93.66]
+        Wed, 26 Feb 2020 15:28:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1582748914;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=q6Dg2FKsync8Vc5ci83dxqGblqEfGZbztswSKEH5GW4=;
+        b=VmZVx9ga6ezrze2c6r0DqUYkl/QZrGeTzvLUZxjyqNIttUWOhctCrDA82xkkceCIFp
+        qBy/gvbju+1fjEyjpAmKQX4HQh6Bxyj5URasxvgJWaQr6I2jncQ0Uixn+0ZIEVN3MWHB
+        BJb8lCZtgYS7vTFYTsvpL6lkPYM4SNA/BXgdQ5tCLDvRd4cLy2N06mZqhkwft8ZTJbfH
+        W6KcPWfffJkyh2vMG7iPE8TQkTnwmI1l5PojRnWyahprbR4sZ7HsXRNcO3yiKIZrnt6n
+        A0//Rclzjx4+SScETu+5rCuBLLXru9l05Ep3+ttFV/ABJ5fSF06+L1GyJxjyG75tBWUC
+        K5uA==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR8GNcd21/dZ4="
+X-RZG-CLASS-ID: mo00
+Received: from groucho.site
+        by smtp.strato.de (RZmta 46.1.12 DYNA|AUTH)
+        with ESMTPSA id L09b9cw1QKSPWO1
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Wed, 26 Feb 2020 21:28:25 +0100 (CET)
+From:   Ulrich Hecht <uli+renesas@fpond.eu>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     wsa@the-dreams.de, geert@linux-m68k.org,
+        fabrizio.castro@bp.renesas.com,
+        ramesh.shanmugasundaram@bp.renesas.com, magnus.damm@gmail.com,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH 03/11] clk: renesas: r8a7795: mark RWDT clock as ignore-unused
+Date:   Wed, 26 Feb 2020 21:28:09 +0100
+Message-Id: <1582748897-17374-4-git-send-email-uli+renesas@fpond.eu>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1582748897-17374-1-git-send-email-uli+renesas@fpond.eu>
+References: <1582748897-17374-1-git-send-email-uli+renesas@fpond.eu>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Alan,
+Ensures RWDT remains alert throughout the boot process if enabled.
 
-On Tue, Feb 25, 2020 at 03:54:20PM -0500, Alan Stern wrote:
-> On Tue, 25 Feb 2020, Eugeniu Rosca wrote:
-> > There are three commits fixed by the proposed changes in usb core:
-> >  - v5.6-rc3 commit 1208f9e1d758c9 ("USB: hub: Fix the broken detection of USB3 device in SMSC hub")
-> >  - v3.9-rc1 commit 971fcd492cebf5 ("usb: add runtime pm support for usb port device")
-> >  - v2.6.33-rc1 commit 253e05724f9230 ("USB: add a "remove hardware" sysfs attribute")
-> > 
-> > I assume a single fix will create some pain when applying it to the
-> > stable branches. Do you have any preference/inputs about that?
-> 
-> If you prefer to split this up into multiple patches, that's fine with 
-> me.
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+---
+ drivers/clk/renesas/r8a7795-cpg-mssr.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Please, check https://lore.kernel.org/lkml/20200226175036.14946-1-erosca@de.adit-jv.com/
-
+diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+index fbc8c75..e83bdcc 100644
+--- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
+@@ -281,7 +281,9 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
+ static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
+ };
+-
++static const unsigned int r8a7795_used_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
++};
+ 
+ /*
+  * CPG Clock Data
+@@ -476,6 +478,8 @@ const struct cpg_mssr_info r8a7795_cpg_mssr_info __initconst = {
+ 	/* Critical Module Clocks */
+ 	.crit_mod_clks = r8a7795_crit_mod_clks,
+ 	.num_crit_mod_clks = ARRAY_SIZE(r8a7795_crit_mod_clks),
++	.used_mod_clks = r8a7795_used_mod_clks,
++	.num_used_mod_clks = ARRAY_SIZE(r8a7795_used_mod_clks),
+ 
+ 	/* Callbacks */
+ 	.init = r8a7795_cpg_mssr_init,
 -- 
-Best Regards
-Eugeniu Rosca
+2.7.4
+
