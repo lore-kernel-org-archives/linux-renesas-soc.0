@@ -2,92 +2,216 @@ Return-Path: <SRS0=mEDe=4O=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C082C4BA13
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 11:02:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE31C4BA10
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 11:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D777224685
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 11:02:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3990D2467F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Feb 2020 11:24:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="IdiwVBeH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbgBZLCc (ORCPT
+        id S1726440AbgBZLYk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 26 Feb 2020 06:02:32 -0500
-Received: from albert.telenet-ops.be ([195.130.137.90]:55446 "EHLO
-        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728054AbgBZLCc (ORCPT
+        Wed, 26 Feb 2020 06:24:40 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41558 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728033AbgBZLYj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Feb 2020 06:02:32 -0500
-Received: from ramsan ([84.195.182.253])
-        by albert.telenet-ops.be with bizsmtp
-        id 7P2V220095USYZQ06P2VLB; Wed, 26 Feb 2020 12:02:29 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j6uST-0002U5-9q; Wed, 26 Feb 2020 12:02:29 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j6uST-000529-8o; Wed, 26 Feb 2020 12:02:29 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 4/5] Renesas ARM64 DT updates for v5.7
-Date:   Wed, 26 Feb 2020 12:02:20 +0100
-Message-Id: <20200226110221.19288-5-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200226110221.19288-1-geert+renesas@glider.be>
-References: <20200226110221.19288-1-geert+renesas@glider.be>
+        Wed, 26 Feb 2020 06:24:39 -0500
+Received: by mail-lj1-f193.google.com with SMTP id h23so2661751ljc.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Feb 2020 03:24:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=EPHgzFYs7QzqIt9nBY4EYuu/F8O9Sp2fSHekThnbgzg=;
+        b=IdiwVBeHXd3tD7DoMmW6bSA3sHMeb2XWKjRq9VMY3ffjN7rWpata6u22yH6leapxOM
+         alH59vYC++9OHzUQg33R/RNNcCviUIAYb3CZ+ZasgJsXJLEJprBouGHInf8+wwuOid4c
+         XYLSVuzljMgRQ/kyErAVVJ6V3v0jfBEX2DrfGPs1cL9T4l1zAmkjMy1TLHdaJMypDO7u
+         uXIObYecTxpgahQ5PVtyU6NBGU5CqgAmXrCD+RN16oB8+seWsNk370BuL+UaGDN1wW4R
+         scv0DUeiYdfvtfM4XB6sjpxq05Kgev80y8Mwwj/+GELhECCFIoCK/AhOyIitHyNKdV86
+         A6sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=EPHgzFYs7QzqIt9nBY4EYuu/F8O9Sp2fSHekThnbgzg=;
+        b=LNu6WqDiOdJZEK4vmUD05ZjGucJoDKg8VIi+115s/Pbhm1AdZt3fYyr/V4noaMxCyj
+         Iw8fpim6OaAR4eGqm7vw/vt5H5QzaqhkMavXqW65FUuPXgHOQuNIqz4teUoH24kMQRP5
+         Y0m2tcSvZRvp8EkCXu1ZH0Tk+YfkHUheaHDOoh2JkRUc5bWUX7mfbMcTzQ2k5aOPlpVa
+         EMYpuRLIqZ7QmHwSn8sN5F1vI1QWJuK7d3UnTvNwPW/EsCUj/v0KdXVwwZuBVZHA3TVI
+         0E4Ez2AFaHDb4UPSspqzCgF5Fq3Xif+wQj67dgPWPqpgWUxnNPFgrLHH8ABQ0NGq888X
+         1iRg==
+X-Gm-Message-State: APjAAAUHwAI2d48gQlSheufHQvnsfXnjf/OaRDIWfrGFfNs03XVmd42+
+        KZzj8AzAg3vAI54x3//2lBbzjg==
+X-Google-Smtp-Source: APXvYqwkac5LM/aAO6i6HmhOicbmB2PRJd04eJzaCZAf/fSGmkZxRPhle8mDD57FkhU+9YzxxSOxTA==
+X-Received: by 2002:a2e:89d4:: with SMTP id c20mr2709521ljk.228.1582716275305;
+        Wed, 26 Feb 2020 03:24:35 -0800 (PST)
+Received: from localhost (h-200-138.A463.priv.bahnhof.se. [176.10.200.138])
+        by smtp.gmail.com with ESMTPSA id p12sm842798lfc.43.2020.02.26.03.24.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 03:24:33 -0800 (PST)
+Date:   Wed, 26 Feb 2020 12:24:33 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Kieran Bingham <kbingham@kernel.org>
+Cc:     linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH] thermal: rcar_gen3_thermal: Generate interrupt when
+ temperature changes
+Message-ID: <20200226112433.GD3165317@oden.dyn.berto.se>
+References: <20200212224917.737314-1-niklas.soderlund+renesas@ragnatech.se>
+ <46d8fe77-57f1-83e3-33ae-5080c6de2424@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <46d8fe77-57f1-83e3-33ae-5080c6de2424@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
+Hi Kieran,
 
-  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+Thanks for your feedback.
 
-are available in the Git repository at:
+On 2020-02-26 09:05:22 +0000, Kieran Bingham wrote:
+> Hi Niklas,
+> 
+> On 12/02/2020 22:49, Niklas Söderlund wrote:
+> > The desired behavior of the driver is to generate an interrupt and call
+> 
+> s/behavior/behaviour/ but that's me being English, so you can ignore
+> that ... (at your peril ... :-D )
+> 
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm64-dt-for-v5.7-tag1
+I have a hard time as it is trying to spell the "other" version of the 
+language I been exposed to since early years, throwing more 'u' at it 
+will only add to my confusion ;-)
 
-for you to fetch changes up to 721b76195b31467e56851fbab3855e700f281270:
+> > thermal_zone_device_update() as soon as the temperature have changed
+> > more then one degree.
+> > 
+> > When the set_trips operation was implemented it was believed that the
+> > trip window set by the framework would move around the current
+> > temperature and the hysteresis value described in devicetree. The
+> 
+> Should the hysteresis value described in devicetree be a part of the
+> +-MCELCIUS(1) calculations? or is it determined that a one degree window
+> each side is sufficient to contain such hysteresis of the readings?
 
-  arm64: dts: renesas: rzg2: Add reset control properties for display (2020-02-21 14:41:36 +0100)
+The hardware testers wanted a fixed 1 degree window.
 
-----------------------------------------------------------------
-Renesas ARM64 DT updates for v5.7
+> 
+> > behavior of the framework is however to set a window based on the trip
+> > points described in devicetree.
+> > 
+> > Remove the set_trips operation which was not used correctly and update
+> > the temperatures that triggers interrupts directly from the interrupt
+> > handler.
+> > 
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> Sounds good to me.
+> 
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-  - CryptoCell support for R-Car M3-W, M3-W+, M3-N, E3, and D3,
-  - Miscellaneous fixes and improvements.
+Thanks! Unfortunately the patch is already merged so it will be hard to 
+add your tag.
 
-----------------------------------------------------------------
-Geert Uytterhoeven (5):
-      arm64: dts: renesas: rcar-gen3: Replace "vsps" by "renesas,vsps"
-      arm64: dts: renesas: rcar-gen3: Add CCREE nodes
-      arm64: dts: renesas: Remove use of ARCH_R8A7795
-      arm64: dts: renesas: rcar-gen3: Add reset control properties for display
-      arm64: dts: renesas: rzg2: Add reset control properties for display
+> 
+> > ---
+> >  drivers/thermal/rcar_gen3_thermal.c | 24 ++++++++++++------------
+> >  1 file changed, 12 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+> > index 72877bdc072daaed..55d1736f532cdb33 100644
+> > --- a/drivers/thermal/rcar_gen3_thermal.c
+> > +++ b/drivers/thermal/rcar_gen3_thermal.c
+> > @@ -81,8 +81,6 @@ struct rcar_gen3_thermal_tsc {
+> >  	void __iomem *base;
+> >  	struct thermal_zone_device *zone;
+> >  	struct equation_coefs coef;
+> > -	int low;
+> > -	int high;
+> >  	int tj_t;
+> >  	int id; /* thermal channel id */
+> >  };
+> > @@ -204,12 +202,14 @@ static int rcar_gen3_thermal_mcelsius_to_temp(struct rcar_gen3_thermal_tsc *tsc,
+> >  	return INT_FIXPT(val);
+> >  }
+> >  
+> > -static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
+> > +static int rcar_gen3_thermal_update_range(struct rcar_gen3_thermal_tsc *tsc)
+> >  {
+> > -	struct rcar_gen3_thermal_tsc *tsc = devdata;
+> > +	int temperature, low, high;
+> >  
+> > -	low = clamp_val(low, -40000, 120000);
+> > -	high = clamp_val(high, -40000, 120000);
+> > +	rcar_gen3_thermal_get_temp(tsc, &temperature);
+> > +
+> > +	low = temperature - MCELSIUS(1);
+> > +	high = temperature + MCELSIUS(1);
+> >  
+> >  	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP1,
+> >  				rcar_gen3_thermal_mcelsius_to_temp(tsc, low));
+> > @@ -217,15 +217,11 @@ static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
+> >  	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP2,
+> >  				rcar_gen3_thermal_mcelsius_to_temp(tsc, high));
+> >  
+> > -	tsc->low = low;
+> > -	tsc->high = high;
+> > -
+> >  	return 0;
+> >  }
+> >  
+> >  static const struct thermal_zone_of_device_ops rcar_gen3_tz_of_ops = {
+> >  	.get_temp	= rcar_gen3_thermal_get_temp,
+> > -	.set_trips	= rcar_gen3_thermal_set_trips,
+> >  };
+> >  
+> >  static void rcar_thermal_irq_set(struct rcar_gen3_thermal_priv *priv, bool on)
+> > @@ -246,9 +242,11 @@ static irqreturn_t rcar_gen3_thermal_irq(int irq, void *data)
+> >  	for (i = 0; i < priv->num_tscs; i++) {
+> >  		status = rcar_gen3_thermal_read(priv->tscs[i], REG_GEN3_IRQSTR);
+> >  		rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQSTR, 0);
+> > -		if (status)
+> > +		if (status) {
+> > +			rcar_gen3_thermal_update_range(priv->tscs[i]);
+> >  			thermal_zone_device_update(priv->tscs[i]->zone,
+> >  						   THERMAL_EVENT_UNSPECIFIED);
+> > +		}
+> >  	}
+> >  
+> >  	return IRQ_HANDLED;
+> > @@ -454,6 +452,8 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+> >  		if (ret < 0)
+> >  			goto error_unregister;
+> >  
+> > +		rcar_gen3_thermal_update_range(tsc);
+> > +
+> >  		dev_info(dev, "TSC%d: Loaded %d trip points\n", i, ret);
+> >  	}
+> >  
+> > @@ -492,7 +492,7 @@ static int __maybe_unused rcar_gen3_thermal_resume(struct device *dev)
+> >  		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
+> >  
+> >  		priv->thermal_init(tsc);
+> > -		rcar_gen3_thermal_set_trips(tsc, tsc->low, tsc->high);
+> > +		rcar_gen3_thermal_update_range(tsc);
+> >  	}
+> >  
+> >  	rcar_thermal_irq_set(priv, true);
+> > 
+> 
 
-Kieran Bingham (1):
-      arm: dts: renesas: r8a77980: Remove r8a77970 DU compatible
-
- arch/arm64/boot/dts/renesas/Makefile      |  4 ----
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi |  7 ++++---
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi |  7 ++++---
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi |  8 +++++---
- arch/arm64/boot/dts/renesas/r8a77950.dtsi |  2 +-
- arch/arm64/boot/dts/renesas/r8a77951.dtsi | 11 ++++++-----
- arch/arm64/boot/dts/renesas/r8a77960.dtsi | 16 +++++++++++++---
- arch/arm64/boot/dts/renesas/r8a77961.dtsi |  9 +++++++++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi | 16 +++++++++++++---
- arch/arm64/boot/dts/renesas/r8a77970.dtsi |  4 +++-
- arch/arm64/boot/dts/renesas/r8a77980.dtsi |  7 ++++---
- arch/arm64/boot/dts/renesas/r8a77990.dtsi | 14 +++++++++++---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 14 +++++++++++---
- 13 files changed, 84 insertions(+), 35 deletions(-)
+-- 
+Regards,
+Niklas Söderlund
