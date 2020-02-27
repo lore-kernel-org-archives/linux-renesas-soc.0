@@ -2,95 +2,129 @@ Return-Path: <SRS0=GsTI=4P=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D34D2C11D3D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Feb 2020 18:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 006BBC35E15
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Feb 2020 18:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD875246A4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Feb 2020 18:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1D81246B2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Feb 2020 18:16:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="eYm4GQi1"
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="idI/nUpr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729385AbgB0SKd (ORCPT
+        id S1729308AbgB0SQR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 27 Feb 2020 13:10:33 -0500
-Received: from mail-lj1-f169.google.com ([209.85.208.169]:45629 "EHLO
-        mail-lj1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729281AbgB0SKd (ORCPT
+        Thu, 27 Feb 2020 13:16:17 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54170 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729181AbgB0SQR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Feb 2020 13:10:33 -0500
-Received: by mail-lj1-f169.google.com with SMTP id e18so215208ljn.12
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Feb 2020 10:10:31 -0800 (PST)
+        Thu, 27 Feb 2020 13:16:17 -0500
+Received: by mail-wm1-f66.google.com with SMTP id f15so424114wml.3
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Feb 2020 10:16:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lZwQ7m18i9+lKvREczPcF+oIj2CXwsJ7mJqMPCtyg+8=;
-        b=eYm4GQi1sw2Ds59Hm1KrOZaaocITpeplWcCEjWWqSSmQWRwljouNr9jYietApt6jFJ
-         s/peyVM6akFkoUB0rUvyxHSdltC+Bx0dQW2KHu95+Nt5gbfm913X63dZSEnDICncK372
-         1sx9ST/g5uT6IJO+H60IBGQ5SjS7QARQW+llI+bdOGfTu4J6IFYSdz3nS0ztcI8oE2D0
-         5DSuJ4JzlWbjKxyDU0Xfl14sJ1CpIACm20vVMK3E7FExhE1l2sm3EOkz7D6eIPywjtI9
-         oEccAjWpL5W7t6AlsFvi8HV4dDCFVONMK639e4rQD3cqspx9hvQd+CFQd/fbMTZH+hW7
-         p44w==
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ZMfA9aWw1LYmrFFdoc2a+Paav2KuYGb9y2DZvr6Ld/Y=;
+        b=idI/nUprJ45PYhJp29FjMNueKSpuMVv0zdPxqGEuKgnDrpaNm35BZDDfsJv90EIqHq
+         GrbL/2o+aXpDbyAQZgfMUaOdHWKKoPWUc8Llev7MeRNcKmjsYLyq9ofxH9FvaqC6u0hr
+         TpC43EzxIsJwK9HmgscpnLu4jYNAdGXVXiQhg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lZwQ7m18i9+lKvREczPcF+oIj2CXwsJ7mJqMPCtyg+8=;
-        b=tVbZPl6Km1R3khsz9urSU6ZxCQC++qGYzcNnshKYet+bvvTx/CKgewoR1wiDZ+3UdJ
-         fT77k8V3cjsMj1Ow57eWGxqE5X9v9yH5mgW/WKgXthUHPjmGUcTaxYUguOBoW64oXW+i
-         YQFdWugWRhrCjgSSfq17MNMPg7jbYlRo85TPA3F3ldPp+zmnAI0Z49+rT+r/6OX36INX
-         Dlp/w6zKxXsReHKTWtJQoh9+RkW36I/BFvD6SCqAXnQuLCff2BuxQAnvrBhj/6/jLntq
-         6XSkmodJM5HtTdjOerLgtSUHhWJXbiMNOc2mgdsiIrZq9+dphSSE1fat5RqaC0rvMBzQ
-         J0ZQ==
-X-Gm-Message-State: ANhLgQ0gWXXTFwiVOZSFVYx5esnoyHeCWwDyfoHMFuk/HmSfhepKjaqD
-        fE7y2NQvGjQLhqZZBad7Xgcqnw==
-X-Google-Smtp-Source: ADFU+vt6//Zzlu4oIzRFI47jGSAzXqPCEc0rs/y3npdFA3WXIV5yOd+1XjT343aFZ2ptTZjvunRvnw==
-X-Received: by 2002:a2e:9dc3:: with SMTP id x3mr169644ljj.257.1582827030464;
-        Thu, 27 Feb 2020 10:10:30 -0800 (PST)
-Received: from localhost (h85-30-9-151.cust.a3fiber.se. [85.30.9.151])
-        by smtp.gmail.com with ESMTPSA id z17sm3720518ljm.19.2020.02.27.10.10.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Feb 2020 10:10:29 -0800 (PST)
-Date:   Thu, 27 Feb 2020 10:10:18 -0800
-From:   Olof Johansson <olof@lixom.net>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ZMfA9aWw1LYmrFFdoc2a+Paav2KuYGb9y2DZvr6Ld/Y=;
+        b=jmyEtO53Lc+1nSq8KCdMOyq7FkuOz+w27JTRd9Eu/E/DtmX55+rFu4Zp19PX9BTahL
+         mUttwZNN1/8+C4JHC5XnC+hZSYsps2X6+do126pKIlQONZ3LFazPSnmBg7SE0/3mxXcu
+         mrxtm129hbkmYi1I7gjtiNhd99ZybTB3Qt4iwnqD80C+AKOkpyxr+rDi8KdzgSKASlmA
+         HfFOJJ52E+Ao0jlz5I0a9UguOKZPx6ownJTOYXPXlfnTp/yIYek2wXx11SHGbWCDDtyp
+         hA9MDt//jcp4KSVgo0b4HmvvWA6zKfRV/UrM9yQ4td5hqKo1UTHbTI+ZKovhV2/SBWe+
+         dU1w==
+X-Gm-Message-State: APjAAAWvVyEra17GPTJtsrtpZq8ov09m3NhHIZgvOwF/G3MM2lXkbXFY
+        Ka8eYLE0YgTSs4Iv8ndGkPtVag==
+X-Google-Smtp-Source: APXvYqyAiAd3NqjzGM5pcc7wXbEXPSOeetuKuPXQLAVyaBb11j4QYczqKjclZTpGgJDMIkv+DTiqsg==
+X-Received: by 2002:a1c:7512:: with SMTP id o18mr50299wmc.110.1582827375044;
+        Thu, 27 Feb 2020 10:16:15 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id q1sm8551152wrw.5.2020.02.27.10.16.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Feb 2020 10:16:14 -0800 (PST)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>
+Cc:     Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        l.stach@pengutronix.de, m.felsch@pengutronix.de,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [GIT PULL 0/5] Renesas SoC updates for v5.7
-Message-ID: <20200227181018.5nixs7o7lght3mug@localhost>
-References: <20200226110221.19288-1-geert+renesas@glider.be>
+Subject: [PATCH 36/51] drm/rcar-du: Drop explicit drm_mode_config_cleanup call
+Date:   Thu, 27 Feb 2020 19:15:07 +0100
+Message-Id: <20200227181522.2711142-37-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200227181522.2711142-1-daniel.vetter@ffwll.ch>
+References: <20200227181522.2711142-1-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226110221.19288-1-geert+renesas@glider.be>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Feb 26, 2020 at 12:02:16PM +0100, Geert Uytterhoeven wrote:
-> 	Hi arm-soc folks,
-> 
-> This is my first pull request for the inclusion of Renesas SoC updates
-> for v5.7.
-> 
-> It consists of 5 parts:
+It's right above the drm_dev_put().
 
-Hi,
+This is made possible by a preceeding patch which added a drmm_
+cleanup action to drm_mode_config_init(), hence all we need to do to
+ensure that drm_mode_config_cleanup() is run on final drm_device
+cleanup is check the new error code for _init().
 
-Only 2 of these were sent to arm@kernel.org / soc@kernel.org: 2/5 and 5/5.
-Mind checking your scripts to make sure you send them to us so they end
-up in our patchwork? (And please resend the ones who weren't).
+Aside: Another driver with a bit much devm_kzalloc, which should
+probably use drmm_kzalloc instead ...
 
+v2: Explain why this cleanup is possible (Laurent).
 
-Thanks!
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c | 1 -
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 4 +++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
--Olof
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 654e2dd08146..3e67cf70f040 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -530,7 +530,6 @@ static int rcar_du_remove(struct platform_device *pdev)
+ 	drm_dev_unregister(ddev);
+ 
+ 	drm_kms_helper_poll_fini(ddev);
+-	drm_mode_config_cleanup(ddev);
+ 
+ 	drm_dev_put(ddev);
+ 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index fcfd916227d1..dcdc1580b511 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -712,7 +712,9 @@ int rcar_du_modeset_init(struct rcar_du_device *rcdu)
+ 	unsigned int i;
+ 	int ret;
+ 
+-	drm_mode_config_init(dev);
++	ret = drm_mode_config_init(dev);
++	if (ret)
++		return ret;
+ 
+ 	dev->mode_config.min_width = 0;
+ 	dev->mode_config.min_height = 0;
+-- 
+2.24.1
 
