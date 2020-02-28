@@ -1,247 +1,134 @@
-Return-Path: <SRS0=GsTI=4P=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=c/JS=4Q=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E648AC11D3D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Feb 2020 20:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C55C3F2D2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Feb 2020 12:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9143B2468F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Feb 2020 20:32:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="y2Jzgj5w"
+	by mail.kernel.org (Postfix) with ESMTP id 1419224677
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Feb 2020 12:12:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729498AbgB0UcN (ORCPT
+        id S1726016AbgB1ML6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 27 Feb 2020 15:32:13 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:39473 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726793AbgB0UcM (ORCPT
+        Fri, 28 Feb 2020 07:11:58 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:41492 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725769AbgB1ML5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Feb 2020 15:32:12 -0500
-Received: by mail-lf1-f65.google.com with SMTP id n30so404276lfh.6
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 27 Feb 2020 12:32:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=from:subject:to:cc:references:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9ISG63/75ZnqFjCBjboMyogPm7Ic4pLFsII9ijv4S5c=;
-        b=y2Jzgj5wXfLKcV0mzl8aS8r5DHCPwq9BmPz15LFBZjZ8XjkhlCaac+qc62Pfzxw9Hm
-         VTPa/RgF10v6XrHXE7hDnx3Ru0j8l3Jrbnqua8a1f6t8QInpvqNMJjGVkU4Ka//t7i54
-         fDZFXhrURno8K6qqD2Klj2lbzdz3TFPKZay8b3ivDQn/bkFQ3Np+f97T+Y1QyCfzw5+R
-         fpCWL8AIf9zt5++8Cf9GVbKvOAKmK86IE2xK9cflXhcwUHapVRUvzLlKRChRClEhyOc9
-         PpUFEN2s0yw0hghIUJ7uc1OCspVFp/7ri01v41yjNyuDxrSSCI1jJV8Sd+FYAi008+Nf
-         I48A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=9ISG63/75ZnqFjCBjboMyogPm7Ic4pLFsII9ijv4S5c=;
-        b=Cl83fiFhRe0UXAhwDCyYXmAVri1KHka60OjfFWA67yUp8i5rx1edLMTly26skGZrb4
-         /FOIo14Dsmsjrx1bu0OgnvxSF/DRvmsOYf2mPyTeFW/fFkj5qAv2qMr1DPCapKL+gr+I
-         Tq5m8oXG9CmeWVyFScrZb0Lm1qJNmB+uK5/vvn0JI6CMtjhRLI87gn3eTMQUCx3GmA23
-         sAR2tRiCj7HXcL/OC8mQR6v0Bx4zaEQzhPdOw3PMvXMUm5OnQBtr8sBB0G1XJNtCe8le
-         rWJ1iTY0ANpl4yWiiLdi0yDhahI7BdMEot7ApAugS97AFt752jXD4DZ+3jBDpbqDE6H+
-         xgCg==
-X-Gm-Message-State: ANhLgQ1TBTBElHRruaDf4wsfo5SLIAqnbHqnkYbzJR/DJKQaSY+EFlYN
-        3CmeL89/n5lUl81Xuw+u1JLLsg==
-X-Google-Smtp-Source: ADFU+vv3qE+rnPwQ2pWW4DGqSfg7kiHpjIaGxXI8Vzew8ZjMQ2/4y2mDx/Bw+c5R1UDuJR7Y1uhtFQ==
-X-Received: by 2002:ac2:5492:: with SMTP id t18mr648914lfk.184.1582835530138;
-        Thu, 27 Feb 2020 12:32:10 -0800 (PST)
-Received: from wasted.cogentembedded.com ([2a00:1fa0:8d0:2529:4e81:e74e:4b97:1620])
-        by smtp.gmail.com with ESMTPSA id s10sm4303057ljp.35.2020.02.27.12.32.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 27 Feb 2020 12:32:09 -0800 (PST)
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH RFC 2/2] memory: add Renesas RPC-IF driver
-To:     "Behme Dirk (CM/ESO2)" <dirk.behme@de.bosch.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        linux-spi@vger.kernel.org, Chris Brandt <chris.brandt@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-References: <cb7022c9-0059-4eb2-7910-aab42124fa1c@cogentembedded.com>
- <4db876ed-1ccc-e3be-311d-30cd52f40259@cogentembedded.com>
- <5760bcdb-e44b-6f18-7262-9526684e5780@de.bosch.com>
- <5603f393-554d-e2a8-c2d8-6bafc20f4169@cogentembedded.com>
- <cba1e2ec-4896-23ef-ef7b-0f80d4310127@de.bosch.com>
- <ec545462-54ed-9e23-049e-1807d24ec084@cogentembedded.com>
- <3a182ac7-8d41-cdc7-2b87-7c503f68a426@de.bosch.com>
- <f21a9444-9541-6558-f5f5-ca0b733768ff@cogentembedded.com>
- <b7d64c11-473c-e703-0e5e-55b909861175@de.bosch.com>
-Organization: Cogent Embedded
-Message-ID: <cc60b321-9040-0962-e955-7212689d9a4a@cogentembedded.com>
-Date:   Thu, 27 Feb 2020 23:32:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Fri, 28 Feb 2020 07:11:57 -0500
+Received: from [109.168.11.45] (port=49168 helo=[192.168.101.73])
+        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1j7eUj-001wQh-Pt; Fri, 28 Feb 2020 13:11:53 +0100
+Subject: Re: [RFC PATCH 7/7] i2c: core: hand over reserved devices when
+ requesting ancillary addresses
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-i3c@lists.infradead.org,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Vladimir Zapolskiy <vz@mleia.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+References: <20200220172403.26062-1-wsa+renesas@sang-engineering.com>
+ <20200220172403.26062-8-wsa+renesas@sang-engineering.com>
+ <CAMuHMdV-dfjukuSKiFg4vb4Ntn+XWU0XwHPxyoaWs1vtQVg4cw@mail.gmail.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <dc831357-8545-6f6e-71a2-bef282e0bd94@lucaceresoli.net>
+Date:   Fri, 28 Feb 2020 13:11:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <b7d64c11-473c-e703-0e5e-55b909861175@de.bosch.com>
+In-Reply-To: <CAMuHMdV-dfjukuSKiFg4vb4Ntn+XWU0XwHPxyoaWs1vtQVg4cw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+Hi,
 
-On 02/26/2020 12:54 PM, Behme Dirk (CM/ESO2) wrote:
-
->>>>>>>    From d72b805cc461ab1e9747c973e9be84e7abb8f828 Mon Sep 17 00:00:00 2001
->>>>>>> From: Dirk Behme <dirk.behme@de.bosch.com>
->>>>>>> Date: Tue, 4 Feb 2020 08:39:31 +0100
->>>>>>> Subject: [PATCH] memory: renesas-rpc-if: Correct the STRTIM and some other
->>>>>>>     clean up
->>>>>>>
->>>>>>> This is required to make the driver work correctly in my M3 environment.
->>>>>>>
->>>>>>> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
->>>>>>> ---
->>>>>>>     drivers/memory/renesas-rpc-if.c | 42 ++++++++++++++++++++-------------
->>>>>>>     1 file changed, 25 insertions(+), 17 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/memory/renesas-rpc-if.c b/drivers/memory/renesas-rpc-if.c
->>>>>>> index 04be92b64bfa..f4356b066384 100644
->>>>>>> --- a/drivers/memory/renesas-rpc-if.c
->>>>>>> +++ b/drivers/memory/renesas-rpc-if.c
->>>>>> [...]
->>>>>>> @@ -513,19 +525,15 @@ ssize_t rpcif_dirmap_read(struct rpcif *rpc, u64 offs, size_t len, void *buf)
->>>>>>>         pm_runtime_get_sync(rpc->dev);
->>>>>>>
->>>>>>>         regmap_update_bits(rpc->regmap, RPCIF_CMNCR, RPCIF_CMNCR_MD, 0);
->>>>>>> -    regmap_write(rpc->regmap, RPCIF_DRCR,
->>>>>>> -             RPCIF_DRCR_RBURST(32) | RPCIF_DRCR_RBE);
->>>>>>> -    regmap_write(rpc->regmap, RPCIF_DRCMR, rpc->command);
->>>>>>> -    regmap_write(rpc->regmap, RPCIF_DREAR,
->>>>>>> -             RPCIF_DREAR_EAV(offs >> 25) | RPCIF_DREAR_EAC(1));
->>>>>>> -    regmap_write(rpc->regmap, RPCIF_DROPR, rpc->option);
->>>>>>> -    regmap_write(rpc->regmap, RPCIF_DRENR,
->>>>>>> -             rpc->enable & ~RPCIF_SMENR_SPIDE(0xF));
->>>>>>> -    regmap_write(rpc->regmap, RPCIF_DRDMCR, rpc->dummy);
->>>>>>> -    regmap_write(rpc->regmap, RPCIF_DRDRENR, rpc->ddr);
->>>>>>
->>>>>>       The driver somehow works only with this left in place (with 2 bytes eaten
->>>>>> as before), otherwise all the flash reads all 0xff (via dirmap).
->>>>>
->>>>>
->>>>> Do you boot from hyperflash?
->>>>
->>>>      No, I have arewto say 'cpld write 30 1' in U-Boot before a boot a kernel.
+On 21/02/20 11:13, Geert Uytterhoeven wrote:
+> Hi Wolfram,
+> 
+> On Thu, Feb 20, 2020 at 6:26 PM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+>> With i2c_new_ancillary_address, we can check if the intended driver is
+>> requesting a reserved address. Update the function to do these checks.
+>> If the check passes, the "reserved" device will become a regular "dummy"
+>> device.
 >>
->>     s/arewto/to/. :-)
+>> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/drivers/i2c/i2c-core-base.c
+>> +++ b/drivers/i2c/i2c-core-base.c
+>> @@ -975,6 +975,8 @@ struct i2c_client *i2c_new_ancillary_device(struct i2c_client *client,
+>>                                                 u16 default_addr)
+>>  {
+>>         struct device_node *np = client->dev.of_node;
+>> +       struct device *reserved_dev, *adapter_dev = &client->adapter->dev;
+>> +       struct i2c_client *reserved_client;
+>>         u32 addr = default_addr;
+>>         int i;
 >>
->>>> Normally, the V3x Starter Kit boards are wired for the QSPI flash chips.
->>>>
->>>>> The system I'm using for testing boots from hyperflash. So most probably all registers
->>>>> I don't touch in the driver are put into a reasonable state by the boot code, already.
->>>>> If you don't boot from hyperflash, that at least would explain our different behavior.
->>>>
->>>>      Yes. Mind dumping the registers and sending to me?
->>>
->>> Using the attached debug patch (0001-memory-renesas-rpc-if-DEBUG-Dump-register-
->>> content.patch) on a r8a7796 system booting from Hyperflash with above register
->> dropping reverted (i.e. including touching these registers) I get
->>>
->>> Before:
->>> RPCIF_DRCR:    0x00000000
->>> RPCIF_DRCMR:   0x00a00000
->>> RPCIF_DREAR:   0x00000000
->>> RPCIF_DROPR:   0x00000000
->>> RPCIF_DRENR:   0xa222d400
->>> RPCIF_DRDMCR:  0x0000000e
->>> RPCIF_DRDRENR: 0x00005101
->>>
->>> After:
->>> RPCIF_DRCR:    0x001f0100
->>> RPCIF_DRCMR:   0x00a00000
->>> RPCIF_DREAR:   0x00010001
->>> RPCIF_DROPR:   0x00000000
->>> RPCIF_DRENR:   0xa202d400
->>> RPCIF_DRDMCR:  0x0000000e
->>> RPCIF_DRDRENR: 0x00005101
->>>
->>> Comparing that, just 3 registers are different between my working version ("Before") and the version which shows the 2-byte offset ("After"): RPCIF_DRCR, RPCIF_DREAR and RPCIF_DRENR. With try & error, at least in my setup, I was able to reduce this to just RPCIF_DRCR. Dropping the burst mode I was able to 'fix' the two byte offset issue.
+>> @@ -984,7 +986,21 @@ struct i2c_client *i2c_new_ancillary_device(struct i2c_client *client,
+>>                         of_property_read_u32_index(np, "reg", i, &addr);
+>>         }
 >>
->>     ACK! Thanks a lot for finding it! :-)
->>     That's what I get on the first dirmap read:
->>
->> Before:
->> RPCIF_CMNCR:   0x81fff301
->> RPCIF_DRCR:    0x00000000
->> RPCIF_DRCMR:   0x00030000
->> RPCIF_DREAR:   0x00000000
->> RPCIF_DROPR:   0x00000000
->> RPCIF_DRENR:   0x00004700
->> RPCIF_DRDMCR:  0x00000000
->> RPCIF_DRDRENR: 0x00000000
->>
->> After:
->> RPCIF_CMNCR:   0x01fff301
->> RPCIF_DRCR:    0x001f0100
->> RPCIF_DRCMR:   0x00800000
->> RPCIF_DREAR:   0x00000001
->> RPCIF_DROPR:   0x00000000
->> RPCIF_DRENR:   0xa202d400
->> RPCIF_DRDMCR:  0x0000000e
->> RPCIF_DRDRENR: 0x00005101
->>
->>> Do you like to give the attached 0001-memory-renesas-rpc-if-Don-t-use-burst-mode-on-read.patch a try in your setup?
->>
->>     Works like charm! :-)
+>> -       dev_dbg(&client->adapter->dev, "Address for %s : 0x%x\n", name, addr);
+>> +       dev_info(adapter_dev, "Address for %s : 0x%x\n", name, addr);
+>> +
+>> +       /* No need to scan muxes, siblings must sit on the same adapter */
+>> +       reserved_dev = device_find_child(adapter_dev, &addr, __i2c_check_addr_busy);
+>> +       reserved_client = i2c_verify_client(reserved_dev);
+>> +
+>> +       if (reserved_client) {
+>> +               if (reserved_client->dev.of_node != np ||
+>> +                   strcmp(reserved_client->name, I2C_RESERVED_DRV_NAME) != 0)
+>> +                       return ERR_PTR(-EBUSY);
 > 
+> Missing put_device(reserved_dev).
 > 
-> Good news, thanks! :)
-> 
-> 
->>     Unfortunately, the SPI dirmap and/or writes are still broken.
-> 
-> 
-> I'm unsure about which function we are talking for "SPI dirmap"?
+>> +
+>> +               strlcpy(reserved_client->name, I2C_DUMMY_DRV_NAME, sizeof(client->name));
 
-   The same, rpcif_dirmap_read(). I'm now thinking it works correctly, it's just
-the writes that are borked.
+Any strong reason for not giving the device a more informative name?
+Reading "dummy" in several /sys/bus/i2c/devices/?-????/name files is not
+helping. Using the 'name' string that is passed to
+i2c_new_ancillary_device() would be way better, perhaps prefixed by
+dev->name. But this opens the question of why not doing it in
+i2c_new_dummy_device() as well, which currently receives no "name"
+parameter.
 
-> Regarding writes, in rpcif_io_xfer() in RPCIF_DATA_IN we have an additional place where burst mode is enabled:
+Of course this is not strictly related to this patch and can be done in
+a later step.
 
-   This works around the hardware bug where the SPI NOR RDID command's data bytes get
-spoiled, leading to unrecognized flash chip. Well, there's a comment before this *if*. 
+About the patch itself, except for the issues pointed out by Geert the
+approach looks generally good to me.
 
-> if (!(smenr & RPCIF_SMENR_ADE(0xf)) && rpc->dirmap) {
-> ...
-> regmap_write(rpc->regmap, RPCIF_DRCR,
->     RPCIF_DRCR_RBURST(32) | RPCIF_DRCR_RBE);
-> ...
-> 
-> Maybe it's worth a try to replace this by just 0, as well:
-> 
-> regmap_write(rpc->regmap, RPCIF_DRCR, 0);
-
-   I've just tried that, here's the result:
-
-spi-nor spi0.0: unrecognized JEDEC id bytes: 01 01 01 01 01 01                  
-
-(and the flash doesn't get registered).
-
-> But of course, this is guessing, as I'm not sure if this
-> 
-> if (!(smenr & RPCIF_SMENR_ADE(0xf)) && rpc->dirmap) {
-> 
-> path is taken, at all?
-
-   It's taken but only with SPI NOR.
-
-> Or even better, if you could adapt the "before / after" debug patch to the path which are still not working for you and share it and the results, we could compare it with my setup, too :)
-
-  I'll try doing that tomorrow...
-
-> Dirk
-
-MBR, Sergei
+-- 
+Luca
