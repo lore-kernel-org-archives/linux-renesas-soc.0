@@ -5,58 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4D5C3F2D4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Feb 2020 15:42:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7851C3F2D2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Feb 2020 15:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4DD42469D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Feb 2020 15:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4028246AE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Feb 2020 15:42:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qalBZFfG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NlRQ/A3Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727168AbgB1PmF (ORCPT
+        id S1727349AbgB1PmP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 Feb 2020 10:42:05 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38658 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbgB1PmF (ORCPT
+        Fri, 28 Feb 2020 10:42:15 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40051 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727309AbgB1PmN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Feb 2020 10:42:05 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n64so2354855wme.3;
-        Fri, 28 Feb 2020 07:42:04 -0800 (PST)
+        Fri, 28 Feb 2020 10:42:13 -0500
+Received: by mail-wm1-f68.google.com with SMTP id d138so2082384wmd.5;
+        Fri, 28 Feb 2020 07:42:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=IJMCbQr8gSPH+b/sm3hd4i0Wx4L3qYeT/ZG3eWxcMSg=;
-        b=qalBZFfGTeBq97wx4bKT5ES5+8Vr830pNz0mANkUaOAGPwjXV8mpYesHWh0xAnAPY/
-         lB8iQGhw9Fofdzz8qndxhF5pWekrcHA8vSA2tTxVV7QfcjlNObMteD/LzviTuE3J/Ja8
-         HvdEQIznu6z4Bk4LWcJceH4PMn9bLDrv/cYITsiRYL356u7M2TePhMe/2qEwCBRf4SkQ
-         AP6lO8EBHatOLcEAycqA5SVnCsdK7ZG7wEwP6xN8lLRGnzeW/owLkM8V2BNl1Ap6MJOh
-         MjXzwzEF8InWncNmLLTcptWqMwy7iT8VwCSrygxDXplqXjm+ql6i0ihGuS1tswkbwiaG
-         v4bQ==
+        bh=tydCqefpRAiM8TxJYR22+ZNMRD98oyKBlX5K6Oe7m5M=;
+        b=NlRQ/A3ZIuvune2sh7ASmytwru9f5VtLMq4MwdfOlResHzAFeHMGkLVZRtXTGEo9Lw
+         kDS1ltiis7PSqNMLcgCP54Jx3dCWVET/blN70hFFCT1iYj2AJ85VtxglH2uTSx0ZNu6s
+         0ctK7noY68yW58ICsVV1El3LIn3gTw/TkmT/JDcAgPmTyKVpzhYVHVE7QGYMB1foMpOJ
+         Lha+kZ5BhhFCNa3ZFdcGOeUbKX+iRDuU15w89Ha8UUCMvMw7TFzyLqj5qZOi8QhULpqB
+         5zc8JW9Vjwa4kBRHmUo7iaKAzHk4H/3lUb87u07L96B4hClHmmHwR8TPalH2vMv+2E7j
+         KUJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=IJMCbQr8gSPH+b/sm3hd4i0Wx4L3qYeT/ZG3eWxcMSg=;
-        b=a1MxiKyb7P1BUzsMzu2+FuCJuUhs/FkSTqYAnj6iG6Q2Wh1utd4gpFA2Zt+MpvMvY6
-         LiYEq2eKiObVW6O5LVuTnYlSNPWOX8w1mKAa0ivqIpwUxo/BUbkHA93hbk8P1AKHgmSv
-         KL3FOKGcQDcUNI/I/WS8FAkZYFNegcvWLkpAqpQq+/cr0k2CT0At32DRozQK9UwsFhKH
-         dvJFUkfdnKZjWQxVTghTD3eJ46X3O8bd6iTNFztYiQqeVSXsez9Ce0dCIPlIeVsotXCA
-         cgjrv61xbYk4sCIImUKXgax8Y+o+ffSboO3XWk/hrlDucej+mVSlYu/8jXEJu58XMBHG
-         vV6A==
-X-Gm-Message-State: APjAAAVgorwl3rjhdszIvf9ItUQ56ZLFosQTQPmnl/7jkm5H10Et0nmj
-        J0V+hZoISqezKHJKkuG7EBI2KU8Q7SrvKQ==
-X-Google-Smtp-Source: APXvYqx2ARGqNtOob4sRn7xEbT9W4deKtORU8SXhzdmDNYePt3KXJa2mafIKaL6r+ZBncANzMkJXMw==
-X-Received: by 2002:a1c:c344:: with SMTP id t65mr5248276wmf.97.1582904523429;
-        Fri, 28 Feb 2020 07:42:03 -0800 (PST)
+        bh=tydCqefpRAiM8TxJYR22+ZNMRD98oyKBlX5K6Oe7m5M=;
+        b=OhFtfRlrWb+OcD7dg/HBVUjLQPW2U0Ay88dYTQ9Mjxl/zYYZ3gejnBhB7vk7sy2bRf
+         LefqPdfOAlwfdbpsZbhkt+hxvA9zc805m0BFtcgKYjSA30kA2d76rkRIhATRnW/I8YPG
+         ckBEWWd0791bA+Y8bJjrBYo0vkI1mRYXz3BBMcZ7fhiX3pOoD1WBbVKABvWbDzPWgjpf
+         vJ8tzwLoVOXYWNkQwGeS/GnHJ5Ybyfy6PljsyTauekn6jF5mzrONu6NRZCYf/IVROaRN
+         +4FJnmAeoKgMmxamrYMvkL+N4z6fY+3yDKHrBYaszSaiqskQlrTc0HA5f5GAWZoQrctf
+         PWoA==
+X-Gm-Message-State: APjAAAXQj6e4nMxuev43ybsnfFXykDW4tsen6CUom9Pp3i+6vlup7in4
+        SahbfDT3+ytWvsB4KBE2W8E=
+X-Google-Smtp-Source: APXvYqy5mp+jeXmLU4fCJ72eZVrwLD5Dhfz9BwLviLvJbhwlj3Q8WU1dIX32i9RlHr4KRGVpm9H3qQ==
+X-Received: by 2002:a1c:238d:: with SMTP id j135mr5518985wmj.165.1582904531486;
+        Fri, 28 Feb 2020 07:42:11 -0800 (PST)
 Received: from prasmi.home ([2a00:23c8:2510:d000:3855:fd13:6b76:a11b])
-        by smtp.gmail.com with ESMTPSA id k16sm13355349wrd.17.2020.02.28.07.42.02
+        by smtp.gmail.com with ESMTPSA id k16sm13355349wrd.17.2020.02.28.07.42.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2020 07:42:02 -0800 (PST)
+        Fri, 28 Feb 2020 07:42:10 -0800 (PST)
 From:   Lad Prabhakar <prabhakar.csengg@gmail.com>
 X-Google-Original-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Bjorn Helgaas <bhelgaas@google.com>,
@@ -79,10 +79,11 @@ Cc:     Andrew Murray <andrew.murray@arm.com>, linux-pci@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 3/7] PCI: rcar: Fix calculating mask for PCIEPAMR register
-Date:   Fri, 28 Feb 2020 15:41:18 +0000
-Message-Id: <20200228154122.14164-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 5/7] dt-bindings: PCI: rcar: Add bindings for R-Car PCIe endpoint controller
+Date:   Fri, 28 Feb 2020 15:41:20 +0000
+Message-Id: <20200228154122.14164-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200228154122.14164-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20200228154122.14164-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -93,30 +94,97 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The mask value was calculated incorrectly for PCIEPAMR register if the
-size was less than 128 bytes. Fix this issue by adding a check on size.
+This patch adds the bindings for the R-Car PCIe endpoint driver.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/pci/controller/pcie-rcar.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/pci/rcar-pci-ep.yaml       | 76 ++++++++++++++++++++++
+ 1 file changed, 76 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index 41275f9..90d47b21 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -75,7 +75,10 @@ void rcar_pcie_set_outbound(int win, void __iomem *base,
- 	 * keeps things pretty simple.
- 	 */
- 	size = resource_size(res);
--	mask = (roundup_pow_of_two(size) / SZ_128) - 1;
-+	if (size > 128)
-+		mask = (roundup_pow_of_two(size) / SZ_128) - 1;
-+	else
-+		mask = 0x0;
- 	rcar_pci_write_reg(base, mask << 7, PCIEPAMR(win));
- 
- 	if (res->flags & IORESOURCE_IO)
+diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+new file mode 100644
+index 0000000..07cd5a7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+@@ -0,0 +1,76 @@
++# SPDX-License-Identifier: GPL-2.0
++# Copyright (C) 2020 Renesas Electronics Europe GmbH - https://www.renesas.com/eu/en/
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pci/rcar-pci-ep.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas R-Car PCIe Endpoint
++
++maintainers:
++  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
++
++properties:
++  compatible:
++    items:
++      - const: renesas,r8a774c0-pcie-ep
++      - const: renesas,rcar-gen3-pcie-ep
++
++  reg:
++    maxItems: 5
++
++  reg-names:
++    items:
++      - const: apb-base
++      - const: memory0
++      - const: memory1
++      - const: memory2
++      - const: memory3
++
++  power-domains:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: pcie
++
++  max-functions:
++    minimum: 1
++    maximum: 6
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - resets
++  - power-domains
++  - clocks
++  - clock-names
++  - max-functions
++
++examples:
++  - |
++    #include <dt-bindings/clock/r8a774c0-cpg-mssr.h>
++    #include <dt-bindings/power/r8a774c0-sysc.h>
++
++     pcie0_ep: pcie-ep@fe000000 {
++            compatible = "renesas,r8a774c0-pcie-ep",
++                         "renesas,rcar-gen3-pcie-ep";
++            reg = <0 0xfe000000 0 0x80000>,
++                  <0x0 0xfe100000 0 0x100000>,
++                  <0x0 0xfe200000 0 0x200000>,
++                  <0x0 0x30000000 0 0x8000000>,
++                  <0x0 0x38000000 0 0x8000000>;
++            reg-names = "apb-base", "memory0", "memory1", "memory2", "memory3";
++            resets = <&cpg 319>;
++            power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
++            clocks = <&cpg CPG_MOD 319>;
++            clock-names = "pcie";
++            max-functions = /bits/ 8 <1>;
++    };
 -- 
 2.7.4
 
