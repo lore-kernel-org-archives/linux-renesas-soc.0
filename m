@@ -2,57 +2,111 @@ Return-Path: <SRS0=lsBT=4X=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FFDC10DCE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 09:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58AF2C10DCE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 09:00:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06E592084E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 09:00:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583485244;
-	bh=jp4LFe1PiAcjPRxtxGw8/TdE/AS1IBGk5GJReK+ycgA=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=reOzLPDUJFfki5wbZ1SCUPEraeRmE2ZyygmFoNCVaZM7IG/t3arkAU1A+cIdvhCUW
-	 f+Z1vl9djXDwy0mtQVBT8tCYxEhrAIwMO5dy6D33iaBtWGPIcQ8nGLb45yfyhadRi8
-	 TZGzBTWoZAfwWthS1qS977zzWT6gDnUvMRf5Ck5E=
+	by mail.kernel.org (Postfix) with ESMTP id 3B23221741
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 09:00:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725951AbgCFJAn (ORCPT
+        id S1726026AbgCFJA5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 6 Mar 2020 04:00:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52542 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726026AbgCFJAn (ORCPT
+        Fri, 6 Mar 2020 04:00:57 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:44246 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbgCFJA4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Mar 2020 04:00:43 -0500
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583485243;
-        bh=jp4LFe1PiAcjPRxtxGw8/TdE/AS1IBGk5GJReK+ycgA=;
-        h=Subject:From:Date:To:From;
-        b=Tnw2jw3wFmU/WiQ8N00i7YRlF19d3Rzdt0tFQJ2w46uM/7xAbsqBJlW+wKinE8jAv
-         bQh+TSJNYLyT/ThsJjQWZndwCwh2oLRwbTlsoTqRxsD15AImcXLLiH3JeBL4LZeY6W
-         fiktRaC2Kg1EtelNLMjHs5hdhWVEcZ3Mcj4OUpN4=
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <158348524318.10844.7200618785838567755.git-patchwork-housekeeping@kernel.org>
-Date:   Fri, 06 Mar 2020 09:00:43 +0000
-To:     linux-renesas-soc@vger.kernel.org
+        Fri, 6 Mar 2020 04:00:56 -0500
+Received: from ramsan ([84.195.182.253])
+        by baptiste.telenet-ops.be with bizsmtp
+        id Ax0r2200w5USYZQ01x0rkv; Fri, 06 Mar 2020 10:00:54 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jA8qh-0002iv-Ov; Fri, 06 Mar 2020 10:00:51 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jA8qh-0002K9-LH; Fri, 06 Mar 2020 10:00:51 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Johan Hovold <johan@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/2] dt-bindings: serial: Convert generic and slave bindings to json-schema
+Date:   Fri,  6 Mar 2020 10:00:44 +0100
+Message-Id: <20200306090046.8890-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v3] spi: dt-bindings: spi-controller: Slave mode fixes (2020-03-06T08:50:37)
-  Superseding: [v2] spi: dt-bindings: spi-controller: Slave mode fixes (2020-03-03T09:45:20):
-    [v2,1/2] spi: dt-bindings: spi-controller: Fix #address-cells for slave mode
-    [v2,2/2] spi: dt-bindings: spi-controller: Fix spi-[rt]x-bus-width for slave mode
+	Hi Rob, Greg,
 
+This patch series converts the generic serial interface and slave-device
+Device Tree bindings to json-schema.
+
+Changes compared to v1[1]:
+  - Update references to serial.txt and slave-device.txt,
+  - Fix nodename pattern,
+  - Add missing maxItems to *-gpios,
+  - Express that uart-has-rtscts and [cr]ts-gpios are
+    mutually-exclusive,
+  - Drop examples,
+  - Allow any child node names,
+  - Typo s/connnected/connected/.
+
+This is a dependency for converting more serial DT bindings that will
+refer to properties defined in serial.yaml.
+
+This patch is based on next-20200306, which has a recent change to
+nextqualcomm-bluetooth.txt.
+
+Thanks!
+
+[1] https://lore.kernel.org/linux-devicetree/20200303134351.22270-1-geert+renesas@glider.be/
+
+Geert Uytterhoeven (2):
+  dt-bindings: serial: Convert generic bindings to json-schema
+  dt-bindings: serial: Convert slave-device bindings to json-schema
+
+ .../devicetree/bindings/gnss/gnss.txt         |   2 +-
+ .../bindings/net/broadcom-bluetooth.txt       |   2 +-
+ .../bindings/net/mediatek-bluetooth.txt       |   2 +-
+ .../devicetree/bindings/net/qca,qca7000.txt   |   2 +-
+ .../bindings/net/qualcomm-bluetooth.txt       |   2 +-
+ .../devicetree/bindings/net/ti-bluetooth.txt  |   3 +-
+ .../bindings/serial/fsl-imx-uart.txt          |   2 +-
+ .../bindings/serial/renesas,sci-serial.txt    |   4 +-
+ .../devicetree/bindings/serial/serial.txt     |  56 --------
+ .../devicetree/bindings/serial/serial.yaml    | 127 ++++++++++++++++++
+ .../bindings/serial/slave-device.txt          |  45 -------
+ MAINTAINERS                                   |   2 +-
+ 12 files changed, 137 insertions(+), 112 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/serial/serial.txt
+ create mode 100644 Documentation/devicetree/bindings/serial/serial.yaml
+ delete mode 100644 Documentation/devicetree/bindings/serial/slave-device.txt
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
