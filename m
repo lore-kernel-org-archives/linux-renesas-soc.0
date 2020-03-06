@@ -2,86 +2,57 @@ Return-Path: <SRS0=lsBT=4X=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 904C3C10F27
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 08:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FFDC10DCE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 09:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69B8D21744
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 08:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06E592084E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 09:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583485244;
+	bh=jp4LFe1PiAcjPRxtxGw8/TdE/AS1IBGk5GJReK+ycgA=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=reOzLPDUJFfki5wbZ1SCUPEraeRmE2ZyygmFoNCVaZM7IG/t3arkAU1A+cIdvhCUW
+	 f+Z1vl9djXDwy0mtQVBT8tCYxEhrAIwMO5dy6D33iaBtWGPIcQ8nGLb45yfyhadRi8
+	 TZGzBTWoZAfwWthS1qS977zzWT6gDnUvMRf5Ck5E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726124AbgCFIun (ORCPT
+        id S1725951AbgCFJAn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 6 Mar 2020 03:50:43 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:50836 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbgCFIun (ORCPT
+        Fri, 6 Mar 2020 04:00:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52542 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726026AbgCFJAn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Mar 2020 03:50:43 -0500
-Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id Awqg2200B5USYZQ01wqgPz; Fri, 06 Mar 2020 09:50:40 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jA8gq-0002XH-8g; Fri, 06 Mar 2020 09:50:40 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jA8gq-00027a-3z; Fri, 06 Mar 2020 09:50:40 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/2] spi: dt-bindings: spi-controller: Slave mode fixes
-Date:   Fri,  6 Mar 2020 09:50:36 +0100
-Message-Id: <20200306085038.8111-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Fri, 6 Mar 2020 04:00:43 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583485243;
+        bh=jp4LFe1PiAcjPRxtxGw8/TdE/AS1IBGk5GJReK+ycgA=;
+        h=Subject:From:Date:To:From;
+        b=Tnw2jw3wFmU/WiQ8N00i7YRlF19d3Rzdt0tFQJ2w46uM/7xAbsqBJlW+wKinE8jAv
+         bQh+TSJNYLyT/ThsJjQWZndwCwh2oLRwbTlsoTqRxsD15AImcXLLiH3JeBL4LZeY6W
+         fiktRaC2Kg1EtelNLMjHs5hdhWVEcZ3Mcj4OUpN4=
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <158348524318.10844.7200618785838567755.git-patchwork-housekeeping@kernel.org>
+Date:   Fri, 06 Mar 2020 09:00:43 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Mark, Rob, Maxime,
+Latest series: [v3] spi: dt-bindings: spi-controller: Slave mode fixes (2020-03-06T08:50:37)
+  Superseding: [v2] spi: dt-bindings: spi-controller: Slave mode fixes (2020-03-03T09:45:20):
+    [v2,1/2] spi: dt-bindings: spi-controller: Fix #address-cells for slave mode
+    [v2,2/2] spi: dt-bindings: spi-controller: Fix spi-[rt]x-bus-width for slave mode
 
-This patch series contains two fixes for the SPI controller DT bindings
-regarding SPI controllers configured for slave mode.
-
-Changes compared to v2[1]:
-  - Make #address-cells mutually-exclusive with spi-slave,
-
-Changes compared to v1[2]:
-  - Use "enum: [0, 1]" instead of min/max limit,
-  - use "- spi-slave" instead of "[ spi-slave ]".
-  - New fix for spi-[rt]x-bus-width.
-
-Thanks!
-
-[1] https://lore.kernel.org/linux-devicetree/20200303094522.23180-1-geert+renesas@glider.be/
-[2] https://lore.kernel.org/linux-devicetree/20200227130323.15327-1-geert+renesas@glider.be/
-
-Geert Uytterhoeven (2):
-  spi: dt-bindings: spi-controller: Fix #address-cells for slave mode
-  spi: dt-bindings: spi-controller: Fix spi-[rt]x-bus-width for slave
-    mode
-
- .../devicetree/bindings/spi/spi-controller.yaml        | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
 
 -- 
-2.17.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
