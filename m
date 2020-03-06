@@ -2,56 +2,80 @@ Return-Path: <SRS0=lsBT=4X=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B31C10F25
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 17:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25394C10DCE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 21:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A5532084E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 17:20:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFEF2206E6
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 21:10:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583515240;
-	bh=BCmkdV8nU0jJ4fhxQHky29TuhE3+knohFRt7uSlKpl4=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=gjmoq4h6GxxZYAzE+92zRHplvts7sP2r6R8nyrIZG/CNVDu7zXrkVdXaWcCKaDs6t
-	 rhITA+Rm5pBpyzSNXsSrQxe3r7C9lHu/dEnBwsX/ScnGYQF6rvZKdP/ggcbs4II2EY
-	 DkOx1pIM7px0bgcLC4x/QourD08hIAq1nAqfOlFk=
+	s=default; t=1583529046;
+	bh=nwAeYQzaSTdGGkq1YI2necHCEfOqnhSRCORV74z6X60=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=A0QWIXQmvvSnF0LsRoBCNNdkqmJzWfJZbbEAvUXkm4ln7sA3Tt/0DreLcCpMWubZU
+	 eOsMVcT30eDub3frCIBqY8CXOTBJ4vt1yDkUboVsDiWPy2dXT2mLPhj5wFWtX27s+O
+	 Jsx9FLhucp2Ulhgs1Qstq1pORjikT6qRXrnDjZFc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbgCFRUk (ORCPT
+        id S1726231AbgCFVKp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 6 Mar 2020 12:20:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33214 "EHLO mail.kernel.org"
+        Fri, 6 Mar 2020 16:10:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727125AbgCFRUj (ORCPT
+        id S1726185AbgCFVKp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Mar 2020 12:20:39 -0500
-Content-Type: text/plain; charset="utf-8"
+        Fri, 6 Mar 2020 16:10:45 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EAB9420709;
+        Fri,  6 Mar 2020 21:10:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583515239;
-        bh=BCmkdV8nU0jJ4fhxQHky29TuhE3+knohFRt7uSlKpl4=;
-        h=Subject:From:Date:To:From;
-        b=a4rYbAEEFz05SNMEBhYk4xBBZWVxumhUUiT4HXzuzU/2iuNACr85M28aOJuAsnnDi
-         tGIJeyHo3/rNCeqGSMntIPNyZ9x86hUUqX+chJIGKQXwimG3I5NunCVla2l0DJ1w+w
-         PWXZ/avW1JjmE5MnypsTuzQyxU8KypztM4m6XasI=
+        s=default; t=1583529045;
+        bh=nwAeYQzaSTdGGkq1YI2necHCEfOqnhSRCORV74z6X60=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=f4NbMDfbJk+2d7qCdmIbwYQOK5Mq4tda0rOMzbl9E5jhuiPZYrPSnHiHvZrlGl4xw
+         9KVa7iEA/xy+RXrkJ4cwsICjIgSVoOQj3fhyOdf1a/Y519FGwWah4qdEX2Wt+Nsynh
+         V9LQyK3dfGIN5VFTBZvsj1eed7IoksqJZ8fejSXI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <158351523937.9911.13382682454148503565.git-patchwork-housekeeping@kernel.org>
-Date:   Fri, 06 Mar 2020 17:20:39 +0000
-To:     linux-renesas-soc@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200226104235.17367-1-geert+renesas@glider.be>
+References: <20200226104235.17367-1-geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.7
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Fri, 06 Mar 2020 13:10:44 -0800
+Message-ID: <158352904405.174340.8240265341928981278@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v2] drm: rcar-du: make all sub-symbols depend on DRM_RCAR_DU (2020-03-06T17:15:01)
-  Superseding: [v1] drm: rcar-du: make all sub-symbols depend on DRM_RCAR_DU (2020-03-06T03:17:49):
-    [RFC] drm: rcar-du: make all sub-symbols depend on DRM_RCAR_DU
+Quoting Geert Uytterhoeven (2020-02-26 02:42:35)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862=
+b9:
+>=20
+>   Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v5.7-tag1
+>=20
+> for you to fetch changes up to 068e7f85234c0b56f55cc0259ad9c05f2c64b8fb:
+>=20
+>   clk: renesas: Remove use of ARCH_R8A7795 (2020-02-21 14:01:54 +0100)
+>=20
+> ----------------------------------------------------------------
 
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+Thanks. Pulled into clk-next
