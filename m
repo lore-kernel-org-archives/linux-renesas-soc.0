@@ -2,34 +2,34 @@ Return-Path: <SRS0=lsBT=4X=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B679C10F25
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 10:55:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8F9C10F27
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 10:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 034D92070A
+	by mail.kernel.org (Postfix) with ESMTP id D51042084E
 	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Mar 2020 10:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726240AbgCFKzI (ORCPT
+        id S1726129AbgCFKzJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 6 Mar 2020 05:55:08 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:49592 "EHLO
+        Fri, 6 Mar 2020 05:55:09 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:49684 "EHLO
         baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbgCFKzI (ORCPT
+        with ESMTP id S1726171AbgCFKzJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Mar 2020 05:55:08 -0500
+        Fri, 6 Mar 2020 05:55:09 -0500
 Received: from ramsan ([84.195.182.253])
         by baptiste.telenet-ops.be with bizsmtp
-        id Ayv52200j5USYZQ01yv6n2; Fri, 06 Mar 2020 11:55:06 +0100
+        id Ayv72200F5USYZQ01yv7nh; Fri, 06 Mar 2020 11:55:07 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jAAdF-000473-TJ; Fri, 06 Mar 2020 11:55:05 +0100
+        id 1jAAdH-000476-C6; Fri, 06 Mar 2020 11:55:07 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jAAdF-0006KA-QN; Fri, 06 Mar 2020 11:55:05 +0100
+        id 1jAAdH-0006KD-Ab; Fri, 06 Mar 2020 11:55:07 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Zhang Rui <rui.zhang@intel.com>,
@@ -39,40 +39,36 @@ To:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
 Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] thermal: Add support for Renesas R-Car M3-W+
-Date:   Fri,  6 Mar 2020 11:55:01 +0100
-Message-Id: <20200306105503.24267-1-geert+renesas@glider.be>
+Subject: [PATCH 1/2] dt-bindings: thermal: rcar-gen3-thermal: Add r8a77961 support
+Date:   Fri,  6 Mar 2020 11:55:02 +0100
+Message-Id: <20200306105503.24267-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200306105503.24267-1-geert+renesas@glider.be>
+References: <20200306105503.24267-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi,
+Document R-Car M3-W+ (R8A77961) SoC bindings.
 
-This patch series adds support for the Thermal Sensor/Chip Internal
-Voltage Monitor in the R-Car M3-W+ (R8A77961) SoC.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-It has been tested on a Salvator-XS development board with R-Car M3-W+.
-
-Geert Uytterhoeven (2):
-  dt-bindings: thermal: rcar-gen3-thermal: Add r8a77961 support
-  thermal: rcar_gen3_thermal: Add r8a77961 support
-
- .../devicetree/bindings/thermal/rcar-gen3-thermal.txt         | 1 +
- drivers/thermal/rcar_gen3_thermal.c                           | 4 ++++
- 2 files changed, 5 insertions(+)
-
+diff --git a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+index 12c740b975f78690..2993fa720195308f 100644
+--- a/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
++++ b/Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.txt
+@@ -11,6 +11,7 @@ Required properties:
+ 			    - "renesas,r8a774b1-thermal" (RZ/G2N)
+ 			    - "renesas,r8a7795-thermal" (R-Car H3)
+ 			    - "renesas,r8a7796-thermal" (R-Car M3-W)
++			    - "renesas,r8a77961-thermal" (R-Car M3-W+)
+ 			    - "renesas,r8a77965-thermal" (R-Car M3-N)
+ 			    - "renesas,r8a77980-thermal" (R-Car V3H)
+ - reg			: Address ranges of the thermal registers. Each sensor
 -- 
 2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
