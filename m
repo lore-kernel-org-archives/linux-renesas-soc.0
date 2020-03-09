@@ -1,219 +1,105 @@
-Return-Path: <SRS0=K37v=4Z=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=k1k+=42=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3320BC10F27
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  8 Mar 2020 16:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 489A3C10DCE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Mar 2020 01:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087C120828
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  8 Mar 2020 16:35:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="VBwElsPw"
+	by mail.kernel.org (Postfix) with ESMTP id 1E7142072A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Mar 2020 01:31:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726297AbgCHQfs (ORCPT
+        id S1726463AbgCIBbD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 8 Mar 2020 12:35:48 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38065 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbgCHQfs (ORCPT
+        Sun, 8 Mar 2020 21:31:03 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:24988 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726346AbgCIBbD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Mar 2020 12:35:48 -0400
-Received: by mail-lf1-f68.google.com with SMTP id x22so5659285lff.5
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 08 Mar 2020 09:35:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=SCn2CpVC/7ynZUWvGTDmpECNjpBPxtQHPMbxz1lBSOQ=;
-        b=VBwElsPwH4qLkHurgScNaHNHOiGUnQFVuXLs47+GzkvBpuVSogd92FF/MYnHIn9d/m
-         8F4fcpi2vppv8TT0bOMhzzYFk+CqYgNJWuH6q31JTUYoxqndZbhItF/tAC2EI5s8wpk/
-         o5onxJelZaDxOUI4COgA/C9cn76H2+iiQ487IQwrvdGPlAf/Un4T9vock+xKOwdy8Dj4
-         Uq8bXPLzu9T+WvWQU86PMi3FCRwPJrPOs+GGpi+cO0t32PuCDVFOp30dQsJqgmRbHCQg
-         KdzHi4WjOZ5F+W2hYQkNbxRiPcwg5yW2jz2fWDxOpaDSEBdv91NRKOFmtEnjlIT/GKm2
-         iNNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=SCn2CpVC/7ynZUWvGTDmpECNjpBPxtQHPMbxz1lBSOQ=;
-        b=MQQFUWF83wSc//lsRVLk+69bE+ISD0Idd6BR8j/jWgZXa+k5+FU39kjMk3FznLIHhI
-         +RFfd91VdCS67ZfqFueJ6jy0pWcn/JKoqA2HpwuTbejR29nO9wpW6PeQ7uY/IuR8yB39
-         DvmN2MFym40J0dLJB6gNaD/nrpiFqrYePspS6+CuFfPi6ZDQsYJ/s6RmVmv+XgqykzSs
-         seBVD6Ch4j9e43pQfiQCmHnSg2X+z7rgRmsh7pe4Z6/9Ufx1DuZwCozVlMLvDlhBfVpP
-         ONvzegxxmw5P6V2wOp7U1PBJXQGhNgpmI9UriItsSSuOJEx5H6+9TfFl3ggZ64vDHuB7
-         dMeQ==
-X-Gm-Message-State: ANhLgQ0+rfcat1lTORE5cjONPh2WmXuY449G2tzsCbVppn7a++mk+nch
-        L8J7XDv9+2vl1lgTLjjTEiahUw==
-X-Google-Smtp-Source: ADFU+vuo9cIWcyNT/HEu7Hn2mCrfDG0g9mOpd0bFl78MAIG7W5xNck5AJIKMHv1L7fu+OcBX7OdTfA==
-X-Received: by 2002:ac2:4201:: with SMTP id y1mr7412717lfh.92.1583685345015;
-        Sun, 08 Mar 2020 09:35:45 -0700 (PDT)
-Received: from localhost (h-200-138.A463.priv.bahnhof.se. [176.10.200.138])
-        by smtp.gmail.com with ESMTPSA id o4sm14989027lfl.62.2020.03.08.09.35.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Mar 2020 09:35:44 -0700 (PDT)
-Date:   Sun, 8 Mar 2020 17:35:43 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: renesas: r8a77961: Add thermal nodes
-Message-ID: <20200308163543.GD2975348@oden.dyn.berto.se>
-References: <20200306110025.24747-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200306110025.24747-1-geert+renesas@glider.be>
+        Sun, 8 Mar 2020 21:31:03 -0400
+Date:   09 Mar 2020 10:31:01 +0900
+X-IronPort-AV: E=Sophos;i="5.70,530,1574089200"; 
+   d="scan'208";a="41113966"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 09 Mar 2020 10:31:01 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 76F41400857C;
+        Mon,  9 Mar 2020 10:31:01 +0900 (JST)
+Message-ID: <87r1y2wbze.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Alex Riesen <alexander.riesen@cetitec.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Driver Development <devel@driverdev.osuosl.org>,
+        Linux Media <linux-media@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Device Tree <devicetree@vger.kernel.org>,
+        Renesas SoC <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 8/8] arm64: dts: renesas: salvator: add a connection from adv748x codec (HDMI input) to the R-Car SoC
+In-Reply-To: <20200306134546.GE4878@pendragon.ideasonboard.com>
+References: <CAMuHMdV9urx-6N4tiaPdkssa6Wu-9HSB4VY-rvCu+8JpfZcBfA@mail.gmail.com>
+        <20200302134011.GA3717@pflmari>
+        <CAMuHMdWobAE+y90DRi+zQadObWPxLyQiGNTe4t77O-2S1Vp5yA@mail.gmail.com>
+        <20200302150706.GB3717@pflmari>
+        <CAMuHMdW21rYXoOSE8azHNqYjng_j41rsL=Fo2bZc=1ULi9+pLw@mail.gmail.com>
+        <20200302160906.GC3717@pflmari>
+        <CAMuHMdVNGsVHyvAgC5dAHx=8Ax18EHx2tS6Hm5Bkg4ms=mW6Zw@mail.gmail.com>
+        <20200305143628.GB25741@pflmari>
+        <20200306131632.GA4878@pendragon.ideasonboard.com>
+        <20200306134154.GD27714@pflmari>
+        <20200306134546.GE4878@pendragon.ideasonboard.com>
+User-Agent: Wanderlust/2.15.9 Emacs/25.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
 
-Thanks for your work.
+Hi
 
-On 2020-03-06 12:00:25 +0100, Geert Uytterhoeven wrote:
-> Add a device node for the Thermal Sensor/Chip Internal Voltage Monitor
-> in the R-Car M3-W+ (R8A77961) SoC, and describe the thermal zones.
+> > > Those clocks are part of the CSI-2 protocol and also don't need to be
+> > > explicitly controlled. As far as I can tell from a quick check of the
+> > > ADV7482 documentation, only the I2S MCLK is a general-purpose clock that
+> > > needs to be exposed.
+(snip)
+> > Do you know, by chance, which of the snd_soc* callbacks should be used to
+> > implement setting of the MCLK? The one in snd_soc_component_driver or
+> > snd_soc_dai_driver->ops (snd_soc_dai_ops)?
+> > 
+> > Or how the userspace interface looks like? Or, if there is no userspace
+> > interface for this, how the MCLK is supposed to be set? Through mclk-fs?
 > 
-> According to the R-Car Gen3 Hardware Manual Errata for Revision 2.00 of
-> Jan 31, 2020, the thermal parameters for R-Car M3-W+ are the same as for
-> R-Car M3-W.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> It's a bit cold in Magnus' lab:
-> 
-> / # grep . /sys/devices/virtual/thermal/thermal_zone?/temp
-> /sys/devices/virtual/thermal/thermal_zone0/temp:17000
-> /sys/devices/virtual/thermal/thermal_zone1/temp:19000
-> /sys/devices/virtual/thermal/thermal_zone2/temp:18000
-> ---
->  arch/arm64/boot/dts/renesas/r8a77961.dtsi | 80 +++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a77961.dtsi b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-> index b6915319a61c8bf0..2f016458f57d3a33 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-> @@ -474,6 +474,20 @@
->  			#power-domain-cells = <1>;
->  		};
->  
-> +		tsc: thermal@e6198000 {
-> +			compatible = "renesas,r8a77961-thermal";
-> +			reg = <0 0xe6198000 0 0x100>,
-> +			      <0 0xe61a0000 0 0x100>,
-> +			      <0 0xe61a8000 0 0x100>;
-> +			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 522>;
-> +			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
-> +			resets = <&cpg 522>;
-> +			#thermal-sensor-cells = <1>;
-> +		};
-> +
->  		intc_ex: interrupt-controller@e61c0000 {
->  			#interrupt-cells = <2>;
->  			interrupt-controller;
-> @@ -785,6 +799,7 @@
->  			status = "disabled";
->  		};
->  
-> +
+> I'm afraid my knowledge of the sound subsystem is limited. Morimoto-san
+> is the main developer and maintainer of Renesas sound drivers.
+> Morimoto-sensei, would you have an answer to that question ? :-)
 
-This don't looks like it's needed :-) With this fixed,
+In my quick check, it goes to AUDIO_CLKC.
+If so, you can update rcar_sound::clocks.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+	&rcar_sound {
+		...
+-		/* update <audio_clk_b> to <cs2000> */
++		/* update <audio_clk_b> to <cs2000>,
++		 *        <audio_clk_c> to <adv748x> */
+		clocks = <&cpg CPG_MOD 1005>,
+			...
+			 <&audio_clk_a>, <&cs2000>,
+-			 <&audio_clk_c>,
++			 <&adv748x>,
+			 <&cpg CPG_CORE CPG_AUDIO_CLK_I>;
 
->  		pwm1: pwm@e6e31000 {
->  			reg = <0 0xe6e31000 0 8>;
->  			#pwm-cells = <2>;
-> @@ -1073,6 +1088,71 @@
->  		};
->  	};
->  
-> +	thermal-zones {
-> +		sensor_thermal1: sensor-thermal1 {
-> +			polling-delay-passive = <250>;
-> +			polling-delay = <1000>;
-> +			thermal-sensors = <&tsc 0>;
-> +			sustainable-power = <3874>;
-> +
-> +			trips {
-> +				sensor1_crit: sensor1-crit {
-> +					temperature = <120000>;
-> +					hysteresis = <1000>;
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-> +
-> +		sensor_thermal2: sensor-thermal2 {
-> +			polling-delay-passive = <250>;
-> +			polling-delay = <1000>;
-> +			thermal-sensors = <&tsc 1>;
-> +			sustainable-power = <3874>;
-> +
-> +			trips {
-> +				sensor2_crit: sensor2-crit {
-> +					temperature = <120000>;
-> +					hysteresis = <1000>;
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-> +
-> +		sensor_thermal3: sensor-thermal3 {
-> +			polling-delay-passive = <250>;
-> +			polling-delay = <1000>;
-> +			thermal-sensors = <&tsc 2>;
-> +			sustainable-power = <3874>;
-> +
-> +			cooling-maps {
-> +				map0 {
-> +					trip = <&target>;
-> +					cooling-device = <&a57_0 2 4>;
-> +					contribution = <1024>;
-> +				};
-> +				map1 {
-> +					trip = <&target>;
-> +					cooling-device = <&a53_0 0 2>;
-> +					contribution = <1024>;
-> +				};
-> +			};
-> +			trips {
-> +				target: trip-point1 {
-> +					temperature = <100000>;
-> +					hysteresis = <1000>;
-> +					type = "passive";
-> +				};
-> +
-> +				sensor3_crit: sensor3-crit {
-> +					temperature = <120000>;
-> +					hysteresis = <1000>;
-> +					type = "critical";
-> +				};
-> +			};
-> +		};
-> +	};
-> +
->  	timer {
->  		compatible = "arm,armv8-timer";
->  		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(6) | IRQ_TYPE_LEVEL_LOW)>,
-> -- 
-> 2.17.1
-> 
+Thank you for your help !!
 
--- 
-Regards,
-Niklas Söderlund
+Best regards
+---
+Kuninori Morimoto
