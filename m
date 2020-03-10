@@ -2,146 +2,98 @@ Return-Path: <SRS0=CSbe=43=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2612C18E5B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 20:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C486DC10DCE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 20:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1CC7222C4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 20:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87962215A4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 20:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583873707;
+	bh=6fr10Ttui1nZZQGvOwkMnflJsQSubXFDAuEI1T4R9Sg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=j27JtJ0jFqAxBqE8JxFLeKE/n71rUhzPgIthFUa18FtQfq1zHJwVxbDtB+Qs1cAhp
+	 5+XFjNbaIVgZufc9bn4IIAGveGBk3bw9FvyVDIr7g1FE0wmGosCZJXS9FWgKM5FIz9
+	 tXRJAxUzciYdOSaYRp0EhATQyQuvb94PD9rUny5U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727484AbgCJUmI (ORCPT
+        id S1726380AbgCJUzH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Mar 2020 16:42:08 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:21932 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726307AbgCJUmI (ORCPT
+        Tue, 10 Mar 2020 16:55:07 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36091 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbgCJUzH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Mar 2020 16:42:08 -0400
-X-IronPort-AV: E=Sophos;i="5.70,538,1574089200"; 
-   d="scan'208";a="41519232"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Mar 2020 05:42:07 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 49B9140F8AD4;
-        Wed, 11 Mar 2020 05:42:04 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 1/2] dt-bindings: display: Add idk-1110wr binding
-Date:   Tue, 10 Mar 2020 20:41:58 +0000
-Message-Id: <1583872919-7757-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1583872919-7757-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1583872919-7757-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Tue, 10 Mar 2020 16:55:07 -0400
+Received: by mail-oi1-f194.google.com with SMTP id k18so2342604oib.3;
+        Tue, 10 Mar 2020 13:55:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=TOiQ5UbbyIXOicEJpNk2SFlKtQ0SHScLOW4Mpkh2aW8=;
+        b=a443IYaGQGVa5FECWs+NulWArNxZKRTtgtku/xCpkoXF0azVNGq3oiyHMXpPlvK5kh
+         Qp/CD1pdLo9CIqxTf0qgA8lmLM4eQ9TAgH8zsLoOECyZWI9dq+4zZElgDmeCJlOuDU76
+         H5FaHob/3M50louevjRNvFkCaPr0ZsGJVcUi7rc4D0LGRv4N70Zde59JuQ00kxV7wHmq
+         o/iVb5S0fofP+pyKmOPH0mI4u6W40ds2hG1pfKvcd7/lMwqNxhk7qSH03qdYtM317rGE
+         iG/qC1xxApp8OT1zGcCQNx5lxo6M8ahTGqrW1s76bChu0prU/z/Z35ZT7ZeuGEIjOT7p
+         FHfQ==
+X-Gm-Message-State: ANhLgQ2IvIekvz9ppwRUyRc6ooCiR/nRQD85b18SKxJ0Gaqme5phVBCK
+        4AZcU99OxdH3C5lGoWyFsQ==
+X-Google-Smtp-Source: ADFU+vui7mX/+yiQ3UwIwy1g8dC2BgC3jxA20Sr5Vdkmy1XrlDPk957Nbud3N5UrA2cbMDrUnleuqw==
+X-Received: by 2002:aca:b9d6:: with SMTP id j205mr2630536oif.179.1583873705912;
+        Tue, 10 Mar 2020 13:55:05 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id h92sm4970984otb.2.2020.03.10.13.55.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 13:55:05 -0700 (PDT)
+Received: (nullmailer pid 27349 invoked by uid 1000);
+        Tue, 10 Mar 2020 20:55:04 -0000
+Date:   Tue, 10 Mar 2020 15:55:04 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v2] dt-bindings: clock: renesas: cpg-mssr: Convert to
+ json-schema
+Message-ID: <20200310205504.GA27288@bogus>
+References: <20200303094848.23670-1-geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200303094848.23670-1-geert+renesas@glider.be>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+On Tue,  3 Mar 2020 10:48:48 +0100, Geert Uytterhoeven wrote:
+> Convert the Renesas Clock Pulse Generator / Module Standby and Software
+> Reset Device Tree binding documentation to json-schema.
+> 
+> Note that #reset-cells was incorrecty marked a required property for
+> RZ/A2 before.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in clk-renesas-for-v5.7.
+> 
+> v2:
+>   - Remove complex if-construct implementing per-SoC clocks/clock-names
+>     constraints; list all possible clock-names upfront instead,
+>   - Drop Clock Domain member example.
+> ---
+>  .../bindings/clock/renesas,cpg-mssr.txt       | 100 ---------------
+>  .../bindings/clock/renesas,cpg-mssr.yaml      | 119 ++++++++++++++++++
+>  2 files changed, 119 insertions(+), 100 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> 
 
-Add binding for the idk-1110wr LVDS panel from Advantech.
-
-Some panel-specific documentation can be found here:
-https://buy.advantech.eu/Displays/Embedded-LCD-Kits-LCD-Kit-Modules/model-IDK-1110WR-55WSA1E.htm
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- .../display/panel/advantech,idk-1110wr.yaml        | 69 ++++++++++++++++++++++
- 1 file changed, 69 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml
-
-diff --git a/Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml b/Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml
-new file mode 100644
-index 0000000..93878c2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml
-@@ -0,0 +1,69 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/panel/advantech,idk-1110wr.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Advantech IDK-1110WR 10.1" WSVGA LVDS Display Panel
-+
-+maintainers:
-+  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-+  - Thierry Reding <thierry.reding@gmail.com>
-+
-+allOf:
-+  - $ref: lvds.yaml#
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: advantech,idk-1110wr
-+      - {} # panel-lvds, but not listed here to avoid false select
-+
-+  data-mapping:
-+    const: jeida-24
-+
-+  width-mm:
-+    const: 223
-+
-+  height-mm:
-+    const: 125
-+
-+  panel-timing: true
-+  port: true
-+
-+additionalProperties: false
-+
-+required:
-+  - compatible
-+
-+examples:
-+  - |+
-+    panel {
-+      compatible = "advantech,idk-1110wr", "panel-lvds";
-+
-+      width-mm = <223>;
-+      height-mm = <125>;
-+
-+      data-mapping = "jeida-24";
-+
-+      panel-timing {
-+        /* 1024x600 @60Hz */
-+        clock-frequency = <51200000>;
-+        hactive = <1024>;
-+        vactive = <600>;
-+        hsync-len = <240>;
-+        hfront-porch = <40>;
-+        hback-porch = <40>;
-+        vsync-len = <10>;
-+        vfront-porch = <15>;
-+        vback-porch = <10>;
-+      };
-+
-+      port {
-+        panel_in: endpoint {
-+          remote-endpoint = <&lvds_encoder>;
-+        };
-+      };
-+    };
-+
-+...
--- 
-2.7.4
-
