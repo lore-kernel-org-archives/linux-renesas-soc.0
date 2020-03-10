@@ -2,39 +2,41 @@ Return-Path: <SRS0=CSbe=43=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F058BC10F27
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 17:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF30C18E7A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 17:01:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFC8F222C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 17:01:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ED2B21D7E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 17:01:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbgCJRBW (ORCPT
+        id S1726395AbgCJRBX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Mar 2020 13:01:22 -0400
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:28486 "EHLO
+        Tue, 10 Mar 2020 13:01:23 -0400
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:28505 "EHLO
         bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726481AbgCJRBW (ORCPT
+        by vger.kernel.org with ESMTP id S1726716AbgCJRBX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Mar 2020 13:01:22 -0400
-X-Halon-ID: bb644488-62f0-11ea-aa6d-005056917f90
+        Tue, 10 Mar 2020 13:01:23 -0400
+X-Halon-ID: bf03e7c3-62f0-11ea-aa6d-005056917f90
 Authorized-sender: niklas@soderlund.pp.se
 Received: from bismarck.berto.se (p4fca2392.dip0.t-ipconnect.de [79.202.35.146])
         by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
-        id bb644488-62f0-11ea-aa6d-005056917f90;
-        Tue, 10 Mar 2020 18:01:10 +0100 (CET)
+        id bf03e7c3-62f0-11ea-aa6d-005056917f90;
+        Tue, 10 Mar 2020 18:01:12 +0100 (CET)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     linux-pm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Cc:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/3] thermal: rcar_thermal: Update how temperature is read
-Date:   Tue, 10 Mar 2020 18:00:26 +0100
-Message-Id: <20200310170029.1648996-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 3/3] thermal: rcar_thermal: Remove lock in rcar_thermal_get_current_temp()
+Date:   Tue, 10 Mar 2020 18:00:29 +0100
+Message-Id: <20200310170029.1648996-4-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200310170029.1648996-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20200310170029.1648996-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -43,24 +45,50 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+With the ctemp value returned instead of cached in the private data
+structure their is no need to take the lock when translating ctemp into
+a temperature.
 
-This series simplifies how the temperature is read, actually notifies a 
-zone on temperature changes and removes the need for locking in some 
-code paths. The change is made possible by a quiet old commit [1] which 
-made reading the ctemp value from hardware every time it's needed 
-mandatory.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/thermal/rcar_thermal.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-1. a1ade5653804b8eb ("thermal: rcar: check every rcar_thermal_update_temp() return value")
-
-Niklas Söderlund (3):
-  thermal: rcar_thermal: Always update thermal zone on interrupt
-  thermal: rcar_thermal: Do not store ctemp in rcar_thermal_priv
-  thermal: rcar_thermal: Remove lock in rcar_thermal_get_current_temp()
-
- drivers/thermal/rcar_thermal.c | 47 ++++++++++------------------------
- 1 file changed, 13 insertions(+), 34 deletions(-)
-
+diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
+index 953dc28d1dd1d499..8bdcb449bd280a18 100644
+--- a/drivers/thermal/rcar_thermal.c
++++ b/drivers/thermal/rcar_thermal.c
+@@ -254,24 +254,20 @@ static int rcar_thermal_update_temp(struct rcar_thermal_priv *priv)
+ static int rcar_thermal_get_current_temp(struct rcar_thermal_priv *priv,
+ 					 int *temp)
+ {
+-	int ctemp, tmp;
++	int ctemp;
+ 
+ 	ctemp = rcar_thermal_update_temp(priv);
+ 	if (ctemp < 0)
+ 		return ctemp;
+ 
+-	mutex_lock(&priv->lock);
++	/* Guaranteed operating range is -45C to 125C. */
++
+ 	if (priv->chip->ctemp_bands == 1)
+-		tmp = MCELSIUS((ctemp * 5) - 65);
++		*temp = MCELSIUS((ctemp * 5) - 65);
+ 	else if (ctemp < 24)
+-		tmp = MCELSIUS(((ctemp * 55) - 720) / 10);
++		*temp = MCELSIUS(((ctemp * 55) - 720) / 10);
+ 	else
+-		tmp = MCELSIUS((ctemp * 5) - 60);
+-	mutex_unlock(&priv->lock);
+-
+-	/* Guaranteed operating range is -45C to 125C. */
+-
+-	*temp = tmp;
++		*temp = MCELSIUS((ctemp * 5) - 60);
+ 
+ 	return 0;
+ }
 -- 
 2.25.1
 
