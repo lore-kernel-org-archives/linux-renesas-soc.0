@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21DDDC10DCE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 23:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED50C18E5A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 23:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD5D621D56
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 23:19:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28CAA2071B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Mar 2020 23:19:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgCJXTb (ORCPT
+        id S1727397AbgCJXTe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Mar 2020 19:19:31 -0400
-Received: from mga14.intel.com ([192.55.52.115]:64245 "EHLO mga14.intel.com"
+        Tue, 10 Mar 2020 19:19:34 -0400
+Received: from mga18.intel.com ([134.134.136.126]:13339 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726402AbgCJXTb (ORCPT
+        id S1726402AbgCJXTd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Mar 2020 19:19:31 -0400
+        Tue, 10 Mar 2020 19:19:33 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 16:19:30 -0700
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 16:19:33 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.70,538,1574150400"; 
-   d="scan'208";a="443356664"
+   d="scan'208";a="289184938"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Mar 2020 16:19:29 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 10 Mar 2020 16:19:31 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jBo9o-0009w3-Sc; Wed, 11 Mar 2020 07:19:28 +0800
-Date:   Wed, 11 Mar 2020 07:18:46 +0800
+        id 1jBo9q-000A9G-Vn; Wed, 11 Mar 2020 07:19:30 +0800
+Date:   Wed, 11 Mar 2020 07:18:39 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- 4653e74b77f45766b5548f0089ef713714ac1efe
-Message-ID: <5e682056.AF+xamuHk+W0w1ME%lkp@intel.com>
+Subject: [renesas-devel:renesas-arm64-dt-for-v5.7] BUILD SUCCESS
+ 1bb852d9d9067c5ebfd793f9749988351897eab2
+Message-ID: <5e68204f.PULNVvGgRRM5xqM8%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -48,13 +48,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  next
-branch HEAD: 4653e74b77f45766b5548f0089ef713714ac1efe  Merge branches 'renesas-arm64-dt-for-v5.7' and 'renesas-dt-bindings-for-v5.7' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-arm64-dt-for-v5.7
+branch HEAD: 1bb852d9d9067c5ebfd793f9749988351897eab2  arm64: dts: renesas: r8a77961: salvator-xs: Fix memory unit-address
 
 elapsed time: 674m
 
-configs tested: 152
-configs skipped: 0
+configs tested: 117
+configs skipped: 146
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -65,14 +65,14 @@ arm                              allyesconfig
 arm64                            allmodconfig
 arm64                             allnoconfig
 arm64                            allyesconfig
-arm                           efm32_defconfig
 arm                         at91_dt_defconfig
-arm                        shmobile_defconfig
-arm64                               defconfig
+arm                           efm32_defconfig
 arm                          exynos_defconfig
 arm                        multi_v5_defconfig
-arm                           sunxi_defconfig
 arm                        multi_v7_defconfig
+arm                        shmobile_defconfig
+arm                           sunxi_defconfig
+arm64                               defconfig
 sparc                            allyesconfig
 xtensa                       common_defconfig
 alpha                               defconfig
@@ -80,7 +80,6 @@ nds32                               defconfig
 parisc                generic-64bit_defconfig
 sh                  sh7785lcr_32bit_defconfig
 riscv                             allnoconfig
-sparc64                             defconfig
 arc                                 defconfig
 sparc64                           allnoconfig
 um                           x86_64_defconfig
@@ -144,35 +143,6 @@ openrisc             randconfig-a001-20200311
 s390                 randconfig-a001-20200311
 sh                   randconfig-a001-20200311
 xtensa               randconfig-a001-20200311
-csky                 randconfig-a001-20200310
-openrisc             randconfig-a001-20200310
-s390                 randconfig-a001-20200310
-sh                   randconfig-a001-20200310
-xtensa               randconfig-a001-20200310
-x86_64               randconfig-b001-20200309
-x86_64               randconfig-b002-20200309
-x86_64               randconfig-b003-20200309
-i386                 randconfig-b001-20200309
-i386                 randconfig-b002-20200309
-i386                 randconfig-b003-20200309
-x86_64               randconfig-c001-20200310
-x86_64               randconfig-c002-20200310
-x86_64               randconfig-c003-20200310
-i386                 randconfig-c001-20200310
-i386                 randconfig-c002-20200310
-i386                 randconfig-c003-20200310
-x86_64               randconfig-d001-20200310
-x86_64               randconfig-d002-20200310
-x86_64               randconfig-d003-20200310
-i386                 randconfig-d001-20200310
-i386                 randconfig-d002-20200310
-i386                 randconfig-d003-20200310
-x86_64               randconfig-e001-20200310
-x86_64               randconfig-e002-20200310
-x86_64               randconfig-e003-20200310
-i386                 randconfig-e001-20200310
-i386                 randconfig-e002-20200310
-i386                 randconfig-e003-20200310
 x86_64               randconfig-f001-20200311
 x86_64               randconfig-f002-20200311
 x86_64               randconfig-f003-20200311
@@ -203,14 +173,9 @@ sh                          rsk7269_defconfig
 sh                            titan_defconfig
 sparc                               defconfig
 sparc64                          allyesconfig
+sparc64                             defconfig
 um                                  defconfig
 um                             i386_defconfig
-x86_64                              fedora-25
-x86_64                                  kexec
-x86_64                                    lkp
-x86_64                                   rhel
-x86_64                         rhel-7.2-clear
-x86_64                               rhel-7.6
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
