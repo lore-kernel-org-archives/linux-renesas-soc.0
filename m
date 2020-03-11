@@ -3,76 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA552C10F27
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Mar 2020 12:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C2AC0044D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Mar 2020 20:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B2021655
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Mar 2020 12:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C90A02073E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Mar 2020 20:03:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729310AbgCKMnv convert rfc822-to-8bit (ORCPT
+        id S1731030AbgCKUDr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 11 Mar 2020 08:43:51 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37708 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729286AbgCKMnv (ORCPT
+        Wed, 11 Mar 2020 16:03:47 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:6517 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730960AbgCKUDr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Mar 2020 08:43:51 -0400
-Received: by mail-ot1-f67.google.com with SMTP id b3so1766620otp.4;
-        Wed, 11 Mar 2020 05:43:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=s+PxktQvp/cKLLI06CG/tjO/tti/oJs9yCRvWmABx9g=;
-        b=ezQpV+XYc4m0MfRVscbdp4CXtbqrd1IZedJsp21poU7O7yHkJZk8BECIDd+WdZz4Gz
-         sx0LnFvv6emCfX4DlhQfCC7byVblAYCUSvjYv1n6a6g9X1r3YTD/OR/gs2pAe9pM8rjf
-         P9ZWeM7xFxIlqvctjXs6nkrKhIPQyuBwz8D8t8DA07NIV2+hyF4LxgGGX+7k3JxRgby3
-         NXtQwm5QtG+IJlB4RiWRekgIoFxTeiVLA80NhYqAttOxFQE9tetAkpcc6JGrDYJP5Hq2
-         hww1JQkokK0a1lreKWveU13x/7rPp0oSatK8MCW6OXJJj0CAQ9wtvmBQxg9QLGQmMHR1
-         MUfw==
-X-Gm-Message-State: ANhLgQ1pdbjjdP0rS1XPcSZECs4yt+k8nQMuZ5KFisoEHXxEBhBAp+PX
-        9LuCptC76aeTzciOCkYJsXf+jmiU3sC7rsWwvnk=
-X-Google-Smtp-Source: ADFU+vuqJfhqwRNB8Z5/QRBuP2mh71GRTOEd87T+7eEsVeg4AmP8mnevNxxKzOSqZCw/8TXflTgfSXhYuELg1cdWNRI=
-X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr2203478otk.145.1583930630168;
- Wed, 11 Mar 2020 05:43:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200310170029.1648996-1-niklas.soderlund+renesas@ragnatech.se> <20200310170029.1648996-4-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20200310170029.1648996-4-niklas.soderlund+renesas@ragnatech.se>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 11 Mar 2020 13:43:39 +0100
-Message-ID: <CAMuHMdX+89romoUcHYJMbE0mvJvBQJd4TfnRpcdW60YbG1mRBQ@mail.gmail.com>
-Subject: Re: [PATCH 3/3] thermal: rcar_thermal: Remove lock in rcar_thermal_get_current_temp()
-To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     Linux PM list <linux-pm@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Wed, 11 Mar 2020 16:03:47 -0400
+X-IronPort-AV: E=Sophos;i="5.70,541,1574089200"; 
+   d="scan'208";a="41620347"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 12 Mar 2020 05:03:45 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D63E640E06EA;
+        Thu, 12 Mar 2020 05:03:41 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v4 0/2] Add LVDS panel support to HiHope RZ/G2M
+Date:   Wed, 11 Mar 2020 20:03:38 +0000
+Message-Id: <1583957020-16359-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Mar 10, 2020 at 6:02 PM Niklas Söderlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> With the ctemp value returned instead of cached in the private data
-> structure their is no need to take the lock when translating ctemp into
-> a temperature.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Dear All,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The HiHope RZ/G2M is advertised as supporting panel idk-1110wr from
+Advantech, but the panel doesn't come with the board, it has to purchased
+separatey, therefore this series adds panel support to a new DT.
 
-Gr{oetje,eeting}s,
+v3->v4
+ * Included rzg2-advantech-idk-1110wr-panel.dtsi in
+   r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts file instead of re-inventing
+   the wheel.
+ * Dropped the Ack from Laurent for patch 2/2 due to above changes
 
-                        Geert
+v2->v3
+ * Included Reviewed-by from Rob and Laurent
+ * Switched to dual license
+ * Added myself as the maintainer
+ * Updated copyright year
+ * Rebased the patches
+
+v1->v2
+ * fixed a space according to Geert's feedback.
+
+Thanks,
+Prabhakar
+
+Fabrizio Castro (2):
+  dt-bindings: display: Add idk-1110wr binding
+  arm64: dts: renesas: Add HiHope RZ/G2M board with idk-1110wr display
+
+ .../display/panel/advantech,idk-1110wr.yaml        | 69 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/Makefile               |  1 +
+ .../r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts        | 52 ++++++++++++++++
+ 3 files changed, 122 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex-idk-1110wr.dts
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
