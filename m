@@ -2,69 +2,77 @@ Return-Path: <SRS0=5QEK=45=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90A09C2BB1D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Mar 2020 13:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FAEC2BB1D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Mar 2020 14:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9252067C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Mar 2020 13:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 666D620716
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Mar 2020 14:15:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbgCLNpa (ORCPT
+        id S1727578AbgCLOO7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 12 Mar 2020 09:45:30 -0400
-Received: from sauhun.de ([88.99.104.3]:42506 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725978AbgCLNp3 (ORCPT
+        Thu, 12 Mar 2020 10:14:59 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37539 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbgCLOO6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Mar 2020 09:45:29 -0400
-Received: from localhost (p54B331A0.dip0.t-ipconnect.de [84.179.49.160])
-        by pokefinder.org (Postfix) with ESMTPSA id 8DF112C1ECC;
-        Thu, 12 Mar 2020 14:45:22 +0100 (CET)
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     linux-spi@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] spi: acpi: remove superfluous parameter check
-Date:   Thu, 12 Mar 2020 14:45:07 +0100
-Message-Id: <20200312134507.10000-1-wsa@the-dreams.de>
-X-Mailer: git-send-email 2.20.1
+        Thu, 12 Mar 2020 10:14:58 -0400
+Received: by mail-ot1-f66.google.com with SMTP id i12so1098192otp.4;
+        Thu, 12 Mar 2020 07:14:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pOL1fdrEckcE7hJhdExxXt7416zv/+dKTzYWxtpFQ5Q=;
+        b=SBKcur7vE2mAiWxK/rdJ9MlnEILtE+o0eC0lDUtNLug4OyAmB3huHKP9J7hriqh02Z
+         rDR0d22D1kauLy/b3L2sE5Ayu5+0Q7Ole+byS764HUx3MOTgtZGOPmaRzVWSalkAsm6e
+         cbNY59phYYqMbho8D8riY16r84PYsAqdXkBReieWckCGWwq/lkG0O6+NAHJq1rti9x8k
+         JRLj7zX8MLF2tC3cFqRvyVWmEAe33OaEBrFcefe9RXDyT5ZPuh9DfGKveSvKa75LrZd4
+         Ee7aGt0wqNPUijnvIZzO2aV1JUdPCigRgcbKX5kJbwiDO58dtO3Vnlp6/eHf6juktPyj
+         HBvg==
+X-Gm-Message-State: ANhLgQ3BrFrqWsqIVZ6wUitPfQXfgxe/HsfUm55+pkqZ4/KSRjUHS+iX
+        rUcOqjSI3bBzppivXLbl+OMD8UBJELXKSACUY5c=
+X-Google-Smtp-Source: ADFU+vvw9YBIxb/zGcDozzqkQM8ryEvyQgefsBfXbJ6bo8TQ47RYC/QeIzO2bonpnj+Gy9Vb03e74N/4v5XxsYQz7sw=
+X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr6487677otk.145.1584022498177;
+ Thu, 12 Mar 2020 07:14:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200312134507.10000-1-wsa@the-dreams.de>
+In-Reply-To: <20200312134507.10000-1-wsa@the-dreams.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 12 Mar 2020 15:14:47 +0100
+Message-ID: <CAMuHMdWxOa9Fo+oipWOS2DEXsJP6fiCV--0GDmDnd=1PoSg66Q@mail.gmail.com>
+Subject: Re: [PATCH] spi: acpi: remove superfluous parameter check
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Thu, Mar 12, 2020 at 2:46 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+> From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> to_spi_device() already checks 'dev'. No need to do it before calling
+> it.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-to_spi_device() already checks 'dev'. No need to do it before calling
-it.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Gr{oetje,eeting}s,
 
-Found while fiddling with bus_find_device_by_acpi_dev() in the I2C
-subsystem.
+                        Geert
 
- drivers/spi/spi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 755221bc3745..75978b6c5834 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -4034,7 +4034,7 @@ static struct spi_device *acpi_spi_find_device_by_adev(struct acpi_device *adev)
- 	struct device *dev;
- 
- 	dev = bus_find_device_by_acpi_dev(&spi_bus_type, adev);
--	return dev ? to_spi_device(dev) : NULL;
-+	return to_spi_device(dev);
- }
- 
- static int acpi_spi_notify(struct notifier_block *nb, unsigned long value,
 -- 
-2.20.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
