@@ -7,30 +7,30 @@ X-Spam-Status: No, score=-13.8 required=3.0
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DC01C10DCE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Mar 2020 15:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5346AC2BB1D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Mar 2020 15:43:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2060206B7
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Mar 2020 15:43:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D8B7206E2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Mar 2020 15:43:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbgCMPnV (ORCPT
+        id S1726620AbgCMPn0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 13 Mar 2020 11:43:21 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:39480 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726446AbgCMPnV (ORCPT
+        Fri, 13 Mar 2020 11:43:26 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:50292 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726446AbgCMPnZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Mar 2020 11:43:21 -0400
+        Fri, 13 Mar 2020 11:43:25 -0400
 Received: from ramsan ([84.195.182.253])
-        by andre.telenet-ops.be with bizsmtp
-        id DrjG2200D5USYZQ01rjGXB; Fri, 13 Mar 2020 16:43:19 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id DrjG2200R5USYZQ01rjGwC; Fri, 13 Mar 2020 16:43:24 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jCmSy-0002sC-Eo; Fri, 13 Mar 2020 16:43:16 +0100
+        id 1jCmSy-0002sH-Gs; Fri, 13 Mar 2020 16:43:16 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jCmSy-0000RP-DR; Fri, 13 Mar 2020 16:43:16 +0100
+        id 1jCmSy-0000RV-Fb; Fri, 13 Mar 2020 16:43:16 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: <soc.lore.kernel.org>
 To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
@@ -38,9 +38,9 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 1/3] Renesas ARM DT updates for v5.7 (take two)
-Date:   Fri, 13 Mar 2020 16:43:02 +0100
-Message-Id: <20200313154304.1636-2-geert+renesas@glider.be>
+Subject: [GIT PULL 3/3] Renesas DT binding updates for v5.7
+Date:   Fri, 13 Mar 2020 16:43:04 +0100
+Message-Id: <20200313154304.1636-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200313154304.1636-1-geert+renesas@glider.be>
 References: <20200313154304.1636-1-geert+renesas@glider.be>
@@ -49,28 +49,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The following changes since commit 9e1232631d4e8e30096fa758a0e1fb9e08f219f9:
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
-  ARM: dts: rzg1: Add reset control properties for display (2020-02-24 14:03:33 +0100)
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-dt-for-v5.7-tag2
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v5.7-tag1
 
-for you to fetch changes up to 99ae78f1fc3a73c88fe726c676ae963ce722bf20:
+for you to fetch changes up to 1e95b4f8faaa6033f59423256e5e3a750cb3ee90:
 
-  ARM: dts: iwg22d-sodimm: Enable touchscreen (2020-03-11 09:01:09 +0100)
-
-----------------------------------------------------------------
-Renesas ARM DT updates for v5.7 (take two)
-
-  - LCD/touchscreen support for the iwg22d-sodimm board.
+  dt-bindings: arm: renesas: Add M3ULCB with R-Car M3-W+ (2020-03-10 10:15:46 +0100)
 
 ----------------------------------------------------------------
-Marian-Cristian Rotariu (2):
-      ARM: dts: iwg22d-sodimm: Enable LCD panel
-      ARM: dts: iwg22d-sodimm: Enable touchscreen
+Renesas DT binding updates for v5.7
 
- .../arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts |  6 ++
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts        | 93 ++++++++++++++++++++++
- 2 files changed, 99 insertions(+)
+  - Document support for the M3ULCB board with R-Car M3-W+.
+
+----------------------------------------------------------------
+Yuya Hamamachi (1):
+      dt-bindings: arm: renesas: Add M3ULCB with R-Car M3-W+
+
+ Documentation/devicetree/bindings/arm/renesas.yaml | 1 +
+ 1 file changed, 1 insertion(+)
