@@ -2,165 +2,234 @@ Return-Path: <SRS0=0dze=5A=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7ABEC4CECE
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 15 Mar 2020 02:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D18E7C0044D
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 15 Mar 2020 02:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB19E20665
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 15 Mar 2020 02:27:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A409520578
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 15 Mar 2020 02:50:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFD+ypkJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727514AbgCOC06 (ORCPT
+        id S1727237AbgCOCuW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 14 Mar 2020 22:26:58 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:46590 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726949AbgCOC05 (ORCPT
+        Sat, 14 Mar 2020 22:50:22 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34072 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726873AbgCOCuW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:26:57 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 8E42D804EB;
-        Sat, 14 Mar 2020 08:38:14 +0100 (CET)
-Date:   Sat, 14 Mar 2020 08:38:12 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Sat, 14 Mar 2020 22:50:22 -0400
+Received: by mail-ed1-f65.google.com with SMTP id i24so13568793eds.1;
+        Sat, 14 Mar 2020 19:50:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QNTutDatIyamABRgsUsb8sk6DSaZsRp1ZwzD27tUqEw=;
+        b=mFD+ypkJ14t6G4efGOZwoxhqG2z6SjBBJITKzzEUyLxv0i0e27bypmj8hPjf5mXQ15
+         XVkT+rcX7/A2xlEC0iqhlsEsWhGBx86VITnhzT3yWnLQdh1m5XC4DScF3RnK4U1SNeFW
+         5J7bNho0GhgQ0JJZRoTOtM6IaF0bH31RaiLMThbh/UVWVFuIgKBwxar5U6YjFwHY24h8
+         O2zybnhXHGAouGlKDJOg50Z2vtPobcDt3yrfgH5o7vHI/QFtqLN6ZT0r3snmHCFyzPb6
+         JBOtRUYiEgsTBXAx0IIH58cIjywyvQgaLRmUnhsoL2SW7/zdlqwXDxnnwRja215C0TNJ
+         C+Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QNTutDatIyamABRgsUsb8sk6DSaZsRp1ZwzD27tUqEw=;
+        b=Huy9YHEzXJ373CKaoxOgVm08eWBtBmf0I+ZI+4o/nNBVSRI1RpS5jpYPtVpcaRb7uq
+         ECPGogUAo6uzARAqtQfrY6gBNRHaDpv/tYW+OtP46PszsZ6ByaDSug172VrRO4qJS4VA
+         6jRu6m5Eux+OzqpDoYpjakK/FO2CMkvxv4GTOPIzCrlc9B9MAS7WwTSqvm0KQkE2D994
+         m86jnHNrdLFROHq2AH93wr+1IkmehZx9ez52nB7EPf71kO9K/JHmbm1RoZqLZaLIWZHe
+         LbHt50FDW8atY9QLUaWAaA0jXBduOBV4ZoWi94UEtkkB5+57QelCAjpRLFU1vADwfkEl
+         5tbw==
+X-Gm-Message-State: ANhLgQ3wcZNhROBuRNPldE11K8dkmk/HJR4aHq26qsq4hfIY01ewrg/2
+        LSfRw0q09QzqQI2BOhCqEO4cxRrC
+X-Google-Smtp-Source: ADFU+vuiX02lKc4DiZTnb8mFkAx7YhZTNHTtVgybEneuQZdVlnUzmO6DIazSjGs5VjCAajtrHnp1aA==
+X-Received: by 2002:adf:a555:: with SMTP id j21mr25824917wrb.409.1584213166723;
+        Sat, 14 Mar 2020 12:12:46 -0700 (PDT)
+Received: from desktop.lan (ip-86-49-35-8.net.upcbroadband.cz. [86.49.35.8])
+        by smtp.gmail.com with ESMTPSA id k3sm9469881wro.59.2020.03.14.12.12.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Mar 2020 12:12:45 -0700 (PDT)
+From:   marek.vasut@gmail.com
+To:     linux-pci@vger.kernel.org
+Cc:     Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
+        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v4 1/2] dt-bindings: display: Add idk-1110wr binding
-Message-ID: <20200314073812.GC5783@ravnborg.org>
-References: <1583957020-16359-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1583957020-16359-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V3] PCI: rcar: Add the suspend/resume for pcie-rcar driver
+Date:   Sat, 14 Mar 2020 20:12:32 +0100
+Message-Id: <20200314191232.3122290-1-marek.vasut@gmail.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1583957020-16359-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=XpTUx2N9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=yC-0_ovQAAAA:8
-        a=NcFk6D9gAAAA:8 a=VwQbUJbxAAAA:8 a=P1BnusSwAAAA:8 a=gEfo2CItAAAA:8
-        a=pGLkceISAAAA:8 a=rdn2N8ET07tcJGP0fp8A:9 a=CjuIK1q_8ugA:10
-        a=woH39XMaDYAA:10 a=-FEs8UIgK8oA:10 a=CojVow1nldcA:10 a=NWVoK91CQyQA:10
-        a=QsnFDINu91a9xkgZirup:22 a=dT0RXAwTRpxWjiziVLXF:22
-        a=AjGcO6oz07-iQ99wixmX:22 a=D0XLA9XvdZm18NrgonBM:22
-        a=sptkURWiP4Gy88Gu7hUp:22
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Prabhakar
+From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
 
-On Wed, Mar 11, 2020 at 08:03:39PM +0000, Lad Prabhakar wrote:
-> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> 
-> Add binding for the idk-1110wr LVDS panel from Advantech.
-> 
-> Some panel-specific documentation can be found here:
-> https://buy.advantech.eu/Displays/Embedded-LCD-Kits-LCD-Kit-Modules/model-IDK-1110WR-55WSA1E.htm
-> 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+This adds the suspend/resume supports for pcie-rcar. The resume handler
+reprograms the hardware based on the software state kept in specific
+device structures. Also it doesn't need to save any registers.
 
-Applied, and pushed to drm-misc-next.
+Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Phil Edworthy <phil.edworthy@renesas.com>
+Cc: Simon Horman <horms+renesas@verge.net.au>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-renesas-soc@vger.kernel.org
+---
+V2: - Change return type of rcar_pcie_hw_enable() to void
+    - Drop default: case in switch statement in rcar_pcie_hw_enable()
+    - Sort variables in rcar_pcie_resume()
+V3: - Update on top of next-20200313
+---
+ drivers/pci/controller/pcie-rcar.c | 86 +++++++++++++++++++++++++-----
+ 1 file changed, 74 insertions(+), 12 deletions(-)
 
-	Sam
+diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+index 759c6542c5c8..f86513638b8a 100644
+--- a/drivers/pci/controller/pcie-rcar.c
++++ b/drivers/pci/controller/pcie-rcar.c
+@@ -452,6 +452,32 @@ static void rcar_pcie_force_speedup(struct rcar_pcie *pcie)
+ 		 (macsr & LINK_SPEED) == LINK_SPEED_5_0GTS ? "5" : "2.5");
+ }
+ 
++static void rcar_pcie_hw_enable(struct rcar_pcie *pci)
++{
++	struct resource_entry *win;
++	LIST_HEAD(res);
++	int i = 0;
++
++	/* Try setting 5 GT/s link speed */
++	rcar_pcie_force_speedup(pci);
++
++	/* Setup PCI resources */
++	resource_list_for_each_entry(win, &pci->resources) {
++		struct resource *res = win->res;
++
++		if (!res->flags)
++			continue;
++
++		switch (resource_type(res)) {
++		case IORESOURCE_IO:
++		case IORESOURCE_MEM:
++			rcar_pcie_setup_window(i, pci, win);
++			i++;
++			break;
++		}
++	}
++}
++
+ static int rcar_pcie_enable(struct rcar_pcie *pcie)
+ {
+ 	struct device *dev = pcie->dev;
+@@ -891,11 +917,25 @@ static void rcar_pcie_unmap_msi(struct rcar_pcie *pcie)
+ 	irq_domain_remove(msi->domain);
+ }
+ 
++static void rcar_pcie_hw_enable_msi(struct rcar_pcie *pcie)
++{
++	struct rcar_msi *msi = &pcie->msi;
++	unsigned long base;
++
++	/* setup MSI data target */
++	base = virt_to_phys((void *)msi->pages);
++
++	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
++	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
++
++	/* enable all MSI interrupts */
++	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
++}
++
+ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+ {
+ 	struct device *dev = pcie->dev;
+ 	struct rcar_msi *msi = &pcie->msi;
+-	phys_addr_t base;
+ 	int err, i;
+ 
+ 	mutex_init(&msi->lock);
+@@ -934,17 +974,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
+ 
+ 	/* setup MSI data target */
+ 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
+-	if (!msi->pages) {
+-		err = -ENOMEM;
+-		goto err;
+-	}
+-	base = virt_to_phys((void *)msi->pages);
+-
+-	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
+-	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
+-
+-	/* enable all MSI interrupts */
+-	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
++	rcar_pcie_hw_enable_msi(pcie);
+ 
+ 	return 0;
+ 
+@@ -1219,6 +1249,37 @@ static int rcar_pcie_probe(struct platform_device *pdev)
+ 	return err;
+ }
+ 
++static int rcar_pcie_resume(struct device *dev)
++{
++	struct rcar_pcie *pcie = dev_get_drvdata(dev);
++	int (*hw_init_fn)(struct rcar_pcie *);
++	unsigned int data;
++	int err;
++
++	err = rcar_pcie_parse_map_dma_ranges(pcie);
++	if (err)
++		return 0;
++
++	/* Failure to get a link might just be that no cards are inserted */
++	hw_init_fn = of_device_get_match_data(dev);
++	err = hw_init_fn(pcie);
++	if (err) {
++		dev_info(dev, "PCIe link down\n");
++		return 0;
++	}
++
++	data = rcar_pci_read_reg(pcie, MACSR);
++	dev_info(dev, "PCIe x%d: link up\n", (data >> 20) & 0x3f);
++
++	/* Enable MSI */
++	if (IS_ENABLED(CONFIG_PCI_MSI))
++		rcar_pcie_hw_enable_msi(pcie);
++
++	rcar_pcie_hw_enable(pcie);
++
++	return 0;
++}
++
+ static int rcar_pcie_resume_noirq(struct device *dev)
+ {
+ 	struct rcar_pcie *pcie = dev_get_drvdata(dev);
+@@ -1234,6 +1295,7 @@ static int rcar_pcie_resume_noirq(struct device *dev)
+ }
+ 
+ static const struct dev_pm_ops rcar_pcie_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(NULL, rcar_pcie_resume)
+ 	.resume_noirq = rcar_pcie_resume_noirq,
+ };
+ 
+-- 
+2.25.0
 
-> ---
->  .../display/panel/advantech,idk-1110wr.yaml        | 69 ++++++++++++++++++++++
->  1 file changed, 69 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml b/Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml
-> new file mode 100644
-> index 0000000..93878c2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/panel/advantech,idk-1110wr.yaml
-> @@ -0,0 +1,69 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/panel/advantech,idk-1110wr.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Advantech IDK-1110WR 10.1" WSVGA LVDS Display Panel
-> +
-> +maintainers:
-> +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +
-> +allOf:
-> +  - $ref: lvds.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: advantech,idk-1110wr
-> +      - {} # panel-lvds, but not listed here to avoid false select
-> +
-> +  data-mapping:
-> +    const: jeida-24
-> +
-> +  width-mm:
-> +    const: 223
-> +
-> +  height-mm:
-> +    const: 125
-> +
-> +  panel-timing: true
-> +  port: true
-> +
-> +additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +
-> +examples:
-> +  - |+
-> +    panel {
-> +      compatible = "advantech,idk-1110wr", "panel-lvds";
-> +
-> +      width-mm = <223>;
-> +      height-mm = <125>;
-> +
-> +      data-mapping = "jeida-24";
-> +
-> +      panel-timing {
-> +        /* 1024x600 @60Hz */
-> +        clock-frequency = <51200000>;
-> +        hactive = <1024>;
-> +        vactive = <600>;
-> +        hsync-len = <240>;
-> +        hfront-porch = <40>;
-> +        hback-porch = <40>;
-> +        vsync-len = <10>;
-> +        vfront-porch = <15>;
-> +        vback-porch = <10>;
-> +      };
-> +
-> +      port {
-> +        panel_in: endpoint {
-> +          remote-endpoint = <&lvds_encoder>;
-> +        };
-> +      };
-> +    };
-> +
-> +...
-> -- 
-> 2.7.4
