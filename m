@@ -5,72 +5,74 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D18E7C0044D
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 15 Mar 2020 02:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F15EC5ACC0
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 15 Mar 2020 10:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A409520578
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 15 Mar 2020 02:50:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D85B0206BE
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 15 Mar 2020 10:27:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mFD+ypkJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cMHf4rPn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbgCOCuW (ORCPT
+        id S1728141AbgCOK1l (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 14 Mar 2020 22:50:22 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34072 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgCOCuW (ORCPT
+        Sun, 15 Mar 2020 06:27:41 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55808 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728234AbgCOK1l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Mar 2020 22:50:22 -0400
-Received: by mail-ed1-f65.google.com with SMTP id i24so13568793eds.1;
-        Sat, 14 Mar 2020 19:50:19 -0700 (PDT)
+        Sun, 15 Mar 2020 06:27:41 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 6so14454833wmi.5;
+        Sun, 15 Mar 2020 03:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QNTutDatIyamABRgsUsb8sk6DSaZsRp1ZwzD27tUqEw=;
-        b=mFD+ypkJ14t6G4efGOZwoxhqG2z6SjBBJITKzzEUyLxv0i0e27bypmj8hPjf5mXQ15
-         XVkT+rcX7/A2xlEC0iqhlsEsWhGBx86VITnhzT3yWnLQdh1m5XC4DScF3RnK4U1SNeFW
-         5J7bNho0GhgQ0JJZRoTOtM6IaF0bH31RaiLMThbh/UVWVFuIgKBwxar5U6YjFwHY24h8
-         O2zybnhXHGAouGlKDJOg50Z2vtPobcDt3yrfgH5o7vHI/QFtqLN6ZT0r3snmHCFyzPb6
-         JBOtRUYiEgsTBXAx0IIH58cIjywyvQgaLRmUnhsoL2SW7/zdlqwXDxnnwRja215C0TNJ
-         C+Kg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=isehurdj5wn3c+W0oK2ewJ+9tH4P/AOAlMD4rcT40Og=;
+        b=cMHf4rPne7z6O1NtW/tIDnS7Ed17XFMOs7//4UgHUIMFSKXY4IPBOQSu+lO3Wu2Tgd
+         bvbCn1+z0NWM1+d6IdOnjyRV5glDnal6/TcJFM6hGQ90+2Uuglxw4lhhDZt29/mkaP5t
+         OTcYItOdIdng2dK9o6wnwnBu08nDgLMKnqTDNtMK0yaTEVsMVniNW1D6IKmhMO5VbabB
+         wNwuDFRh2IZuZbEuuWvGw00Gz6D4qTqr1fu9Zm9KecZiLClNwakimQfgtz7uhRveiKva
+         R9ogkTAYud88FKChCyJ38m9F3NeX/G7N2AUwUn8Vl6uU1yWtXIXFeSoCzgZ2B8LtPcXv
+         dlZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=QNTutDatIyamABRgsUsb8sk6DSaZsRp1ZwzD27tUqEw=;
-        b=Huy9YHEzXJ373CKaoxOgVm08eWBtBmf0I+ZI+4o/nNBVSRI1RpS5jpYPtVpcaRb7uq
-         ECPGogUAo6uzARAqtQfrY6gBNRHaDpv/tYW+OtP46PszsZ6ByaDSug172VrRO4qJS4VA
-         6jRu6m5Eux+OzqpDoYpjakK/FO2CMkvxv4GTOPIzCrlc9B9MAS7WwTSqvm0KQkE2D994
-         m86jnHNrdLFROHq2AH93wr+1IkmehZx9ez52nB7EPf71kO9K/JHmbm1RoZqLZaLIWZHe
-         LbHt50FDW8atY9QLUaWAaA0jXBduOBV4ZoWi94UEtkkB5+57QelCAjpRLFU1vADwfkEl
-         5tbw==
-X-Gm-Message-State: ANhLgQ3wcZNhROBuRNPldE11K8dkmk/HJR4aHq26qsq4hfIY01ewrg/2
-        LSfRw0q09QzqQI2BOhCqEO4cxRrC
-X-Google-Smtp-Source: ADFU+vuiX02lKc4DiZTnb8mFkAx7YhZTNHTtVgybEneuQZdVlnUzmO6DIazSjGs5VjCAajtrHnp1aA==
-X-Received: by 2002:adf:a555:: with SMTP id j21mr25824917wrb.409.1584213166723;
-        Sat, 14 Mar 2020 12:12:46 -0700 (PDT)
-Received: from desktop.lan (ip-86-49-35-8.net.upcbroadband.cz. [86.49.35.8])
-        by smtp.gmail.com with ESMTPSA id k3sm9469881wro.59.2020.03.14.12.12.44
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=isehurdj5wn3c+W0oK2ewJ+9tH4P/AOAlMD4rcT40Og=;
+        b=lrQjWiVvD1279DAd4WNqrXJKeH3Kt4ymg4TWonJ3Y/N6n1OZd1/UszrrF3rDnAk96J
+         l58/dNZSVBonP0nuAsipuDkJEM/Wb05K5BQk8lu6kvkxZx9VliComfDxvl5r/DJzW36f
+         8oYJfnKy6jX/EKc2ZeSt9ZMigNhxaRFJHKqQgn9ZhP+15JQMaOnIYDHJkjUDG71j9NTI
+         s2Jqa78V1UqB3cpXFW0ozli/zeo2cVUhjEy/33tD4KeUHNLeFc31b6VTnEobnr6AUOo9
+         WUnPxPwjB5zW9hnnVjD3B69ZHue0jEyITuRhcar8TNss9BVncNmyirlVAxnMipOTPa01
+         OUIw==
+X-Gm-Message-State: ANhLgQ3C6Eeseq0v7FvHuoSGRRC5H03YcyOUxarbqEqsS0XGcMC2AJDa
+        fwWpxtIR/f954659JMiL5gk=
+X-Google-Smtp-Source: ADFU+vtn37wVG0Czz5ac7f88DgLlkYZBCN3tu4vX7BZfFUoq59AvFNtKNfD9qN2LgEeLwpkzLITj3w==
+X-Received: by 2002:a1c:dc55:: with SMTP id t82mr21131825wmg.6.1584268058919;
+        Sun, 15 Mar 2020 03:27:38 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2510:d000:2c12:3438:7cb7:556d])
+        by smtp.gmail.com with ESMTPSA id z129sm25765190wmb.7.2020.03.15.03.27.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 14 Mar 2020 12:12:45 -0700 (PDT)
-From:   marek.vasut@gmail.com
-To:     linux-pci@vger.kernel.org
-Cc:     Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
-        Gaku Inami <gaku.inami.xw@bp.renesas.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V3] PCI: rcar: Add the suspend/resume for pcie-rcar driver
-Date:   Sat, 14 Mar 2020 20:12:32 +0100
-Message-Id: <20200314191232.3122290-1-marek.vasut@gmail.com>
-X-Mailer: git-send-email 2.25.0
+        Sun, 15 Mar 2020 03:27:38 -0700 (PDT)
+From:   Lad Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Niklas <niklas.soderlund@ragnatech.se>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 2/2] media: rcar-csi2: Let the driver handle fwnode matching using match_custom callback
+Date:   Sun, 15 Mar 2020 10:27:24 +0000
+Message-Id: <20200315102724.26850-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200315102724.26850-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20200315102724.26850-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -78,158 +80,91 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
+The rcar-csi2 driver uses the v4l2-async framework to do endpoint matching
+instead of node matching. This is needed as it needs to work with the
+adv748x driver which register it self in v4l2-async using endpoints
+instead of nodes. The reason for this is that from a single DT node it
+creates multiple subdevices, one for each endpoint.
 
-This adds the suspend/resume supports for pcie-rcar. The resume handler
-reprograms the hardware based on the software state kept in specific
-device structures. Also it doesn't need to save any registers.
+But when using subdevs which register itself in v4l2-async using nodes,
+the rcar-csi2 driver failed to find the matching endpoint because the
+match.fwnode was pointing to remote endpoint instead of remote parent
+port.
 
-Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Phil Edworthy <phil.edworthy@renesas.com>
-Cc: Simon Horman <horms+renesas@verge.net.au>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: linux-renesas-soc@vger.kernel.org
+This commit adds support in rcar-csi2 driver to handle both the cases
+where subdev registers in v4l2-async using endpoints/nodes, by using
+match_type as V4L2_ASYNC_MATCH_CUSTOM and implementing the match()
+callback to compare the fwnode of either remote/parent.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
-V2: - Change return type of rcar_pcie_hw_enable() to void
-    - Drop default: case in switch statement in rcar_pcie_hw_enable()
-    - Sort variables in rcar_pcie_resume()
-V3: - Update on top of next-20200313
----
- drivers/pci/controller/pcie-rcar.c | 86 +++++++++++++++++++++++++-----
- 1 file changed, 74 insertions(+), 12 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 46 +++++++++++++++++++--
+ 1 file changed, 43 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index 759c6542c5c8..f86513638b8a 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -452,6 +452,32 @@ static void rcar_pcie_force_speedup(struct rcar_pcie *pcie)
- 		 (macsr & LINK_SPEED) == LINK_SPEED_5_0GTS ? "5" : "2.5");
- }
- 
-+static void rcar_pcie_hw_enable(struct rcar_pcie *pci)
-+{
-+	struct resource_entry *win;
-+	LIST_HEAD(res);
-+	int i = 0;
-+
-+	/* Try setting 5 GT/s link speed */
-+	rcar_pcie_force_speedup(pci);
-+
-+	/* Setup PCI resources */
-+	resource_list_for_each_entry(win, &pci->resources) {
-+		struct resource *res = win->res;
-+
-+		if (!res->flags)
-+			continue;
-+
-+		switch (resource_type(res)) {
-+		case IORESOURCE_IO:
-+		case IORESOURCE_MEM:
-+			rcar_pcie_setup_window(i, pci, win);
-+			i++;
-+			break;
-+		}
-+	}
-+}
-+
- static int rcar_pcie_enable(struct rcar_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
-@@ -891,11 +917,25 @@ static void rcar_pcie_unmap_msi(struct rcar_pcie *pcie)
- 	irq_domain_remove(msi->domain);
- }
- 
-+static void rcar_pcie_hw_enable_msi(struct rcar_pcie *pcie)
-+{
-+	struct rcar_msi *msi = &pcie->msi;
-+	unsigned long base;
-+
-+	/* setup MSI data target */
-+	base = virt_to_phys((void *)msi->pages);
-+
-+	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
-+	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
-+
-+	/* enable all MSI interrupts */
-+	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
-+}
-+
- static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
- 	struct rcar_msi *msi = &pcie->msi;
--	phys_addr_t base;
- 	int err, i;
- 
- 	mutex_init(&msi->lock);
-@@ -934,17 +974,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
- 
- 	/* setup MSI data target */
- 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
--	if (!msi->pages) {
--		err = -ENOMEM;
--		goto err;
--	}
--	base = virt_to_phys((void *)msi->pages);
--
--	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
--	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
--
--	/* enable all MSI interrupts */
--	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
-+	rcar_pcie_hw_enable_msi(pcie);
- 
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index faa9fb23a2e9..1bbf05e9f025 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -808,6 +808,46 @@ static int rcsi2_parse_v4l2(struct rcar_csi2 *priv,
  	return 0;
- 
-@@ -1219,6 +1249,37 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	return err;
  }
  
-+static int rcar_pcie_resume(struct device *dev)
++static bool rcsi2_asd_match(struct v4l2_subdev *sd,
++			    struct v4l2_async_subdev *asd)
 +{
-+	struct rcar_pcie *pcie = dev_get_drvdata(dev);
-+	int (*hw_init_fn)(struct rcar_pcie *);
-+	unsigned int data;
-+	int err;
++	struct rcar_csi2 *priv = (struct rcar_csi2 *)asd->match.custom.priv;
++	struct fwnode_handle *remote_endpoint;
++	struct fwnode_handle *subdev_endpoint;
++	struct device_node *np;
++	bool matched = false;
 +
-+	err = rcar_pcie_parse_map_dma_ranges(pcie);
-+	if (err)
-+		return 0;
-+
-+	/* Failure to get a link might just be that no cards are inserted */
-+	hw_init_fn = of_device_get_match_data(dev);
-+	err = hw_init_fn(pcie);
-+	if (err) {
-+		dev_info(dev, "PCIe link down\n");
-+		return 0;
++	np = of_graph_get_endpoint_by_regs(priv->dev->of_node, 0, 0);
++	if (!np) {
++		dev_err(priv->dev, "Not connected to subdevice\n");
++		return matched;
 +	}
 +
-+	data = rcar_pci_read_reg(pcie, MACSR);
-+	dev_info(dev, "PCIe x%d: link up\n", (data >> 20) & 0x3f);
++	remote_endpoint =
++		fwnode_graph_get_remote_endpoint(of_fwnode_handle(np));
++	if (!remote_endpoint) {
++		dev_err(priv->dev, "Failed to get remote endpoint\n");
++		of_node_put(np);
++		return matched;
++	}
++	of_node_put(np);
 +
-+	/* Enable MSI */
-+	if (IS_ENABLED(CONFIG_PCI_MSI))
-+		rcar_pcie_hw_enable_msi(pcie);
++	if (sd->fwnode != dev_fwnode(sd->dev)) {
++		if (remote_endpoint == sd->fwnode)
++			matched = true;
++	} else {
++		subdev_endpoint =
++		      fwnode_graph_get_next_endpoint(dev_fwnode(sd->dev), NULL);
++		if (remote_endpoint == subdev_endpoint)
++			matched = true;
++		fwnode_handle_put(subdev_endpoint);
++	}
 +
-+	rcar_pcie_hw_enable(pcie);
++	fwnode_handle_put(remote_endpoint);
 +
-+	return 0;
++	return matched;
 +}
 +
- static int rcar_pcie_resume_noirq(struct device *dev)
+ static int rcsi2_parse_dt(struct rcar_csi2 *priv)
  {
- 	struct rcar_pcie *pcie = dev_get_drvdata(dev);
-@@ -1234,6 +1295,7 @@ static int rcar_pcie_resume_noirq(struct device *dev)
- }
+ 	struct device_node *ep;
+@@ -833,9 +873,9 @@ static int rcsi2_parse_dt(struct rcar_csi2 *priv)
+ 		return ret;
+ 	}
  
- static const struct dev_pm_ops rcar_pcie_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(NULL, rcar_pcie_resume)
- 	.resume_noirq = rcar_pcie_resume_noirq,
- };
+-	priv->asd.match.fwnode =
+-		fwnode_graph_get_remote_endpoint(of_fwnode_handle(ep));
+-	priv->asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
++	priv->asd.match.custom.match = &rcsi2_asd_match;
++	priv->asd.match.custom.priv = priv;
++	priv->asd.match_type = V4L2_ASYNC_MATCH_CUSTOM;
+ 
+ 	of_node_put(ep);
  
 -- 
-2.25.0
+2.20.1
 
