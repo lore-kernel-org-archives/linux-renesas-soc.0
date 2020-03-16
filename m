@@ -2,102 +2,100 @@ Return-Path: <SRS0=jPLR=5B=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 636A4C0044D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 10:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 188A1C3F2CE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 10:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3003B20658
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 10:31:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SU5AT+76"
+	by mail.kernel.org (Postfix) with ESMTP id E86782075E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 10:32:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730592AbgCPKbE (ORCPT
+        id S1730652AbgCPKcT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Mar 2020 06:31:04 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34952 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730565AbgCPKbE (ORCPT
+        Mon, 16 Mar 2020 06:32:19 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:60212 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730632AbgCPKcT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:31:04 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 49C22A3B;
-        Mon, 16 Mar 2020 11:31:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1584354662;
-        bh=TKrls43C5f1/bWmKF3TeVnSLC0R214JGxpZXZHFtiNs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SU5AT+764RDUnnP6lkjjCtKTX2fCDjQllsT2uNzha4m6f+iCtMI5odDOIebPhx4Xt
-         EW7cAmntrTBW8y06SpOTtyusiGSNfkdOapBYZNAJP1F21qOWtD06z81Q8DaC8EZOC1
-         c7Cz1UJg9Y+80PhNL/0l8kHXqnKmW6H36YS4Ee2Y=
-Date:   Mon, 16 Mar 2020 12:30:56 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: pwm: renesas-tpu: Document more R-Car Gen2
- support
-Message-ID: <20200316103056.GU4732@pendragon.ideasonboard.com>
-References: <20200316101453.27745-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200316101453.27745-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 16 Mar 2020 06:32:19 -0400
+Received: from ramsan ([84.195.182.253])
+        by xavier.telenet-ops.be with bizsmtp
+        id EyYH2200D5USYZQ01yYH4h; Mon, 16 Mar 2020 11:32:17 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jDn2f-0006Ej-5L; Mon, 16 Mar 2020 11:32:17 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jDn2f-0007ep-3V; Mon, 16 Mar 2020 11:32:17 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/3] pwm: rcar: Fix late Runtime PM enablement
+Date:   Mon, 16 Mar 2020 11:32:14 +0100
+Message-Id: <20200316103216.29383-2-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200316103216.29383-1-geert+renesas@glider.be>
+References: <20200316103216.29383-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Runtime PM should be enabled before calling pwmchip_add(), as PWM users
+can appear immediately after the PWM chip has been added.
+Likewise, Runtime PM should be disabled after the removal of the PWM
+chip.
 
-Thank you for the patch.
+Fixes: ed6c1476bf7f16d5 ("pwm: Add support for R-Car PWM Timer")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pwm/pwm-rcar.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-On Mon, Mar 16, 2020 at 11:14:53AM +0100, Geert Uytterhoeven wrote:
-> All R-Car Gen2 SoCs have a Renesas Timer Pulse Unit.
-> Document support for the missing variants.
-> 
-> No driver change is needed due to the fallback compatible string.
-
-I think this sentence doesn't belong to the bindings patch.
-
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
-> Tested on R-Car M2-W.
-
-What do you mean by tested, how do you test bindings on hardware ? :-)
-
-> ---
->  Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
-> index 4969a954993cb693..4bf62a3d5bba8e3a 100644
-> --- a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
-> +++ b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
-> @@ -19,6 +19,10 @@ properties:
->            - renesas,tpu-r8a7744   # RZ/G1N
->            - renesas,tpu-r8a7745   # RZ/G1E
->            - renesas,tpu-r8a7790   # R-Car H2
-> +          - renesas,tpu-r8a7791   # R-Car M2-W
-> +          - renesas,tpu-r8a7792   # R-Car V2H
-> +          - renesas,tpu-r8a7793   # R-Car M2-N
-> +          - renesas,tpu-r8a7794   # R-Car E2
->            - renesas,tpu-r8a7795   # R-Car H3
->            - renesas,tpu-r8a7796   # R-Car M3-W
->            - renesas,tpu-r8a77965  # R-Car M3-N
-
+diff --git a/drivers/pwm/pwm-rcar.c b/drivers/pwm/pwm-rcar.c
+index 2685577b6dd45be7..7ab9eb6616d950cb 100644
+--- a/drivers/pwm/pwm-rcar.c
++++ b/drivers/pwm/pwm-rcar.c
+@@ -229,24 +229,28 @@ static int rcar_pwm_probe(struct platform_device *pdev)
+ 	rcar_pwm->chip.base = -1;
+ 	rcar_pwm->chip.npwm = 1;
+ 
++	pm_runtime_enable(&pdev->dev);
++
+ 	ret = pwmchip_add(&rcar_pwm->chip);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to register PWM chip: %d\n", ret);
++		pm_runtime_disable(&pdev->dev);
+ 		return ret;
+ 	}
+ 
+-	pm_runtime_enable(&pdev->dev);
+-
+ 	return 0;
+ }
+ 
+ static int rcar_pwm_remove(struct platform_device *pdev)
+ {
+ 	struct rcar_pwm_chip *rcar_pwm = platform_get_drvdata(pdev);
++	int ret;
++
++	ret = pwmchip_remove(&rcar_pwm->chip);
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
+-	return pwmchip_remove(&rcar_pwm->chip);
++	return ret;
+ }
+ 
+ static const struct of_device_id rcar_pwm_of_table[] = {
 -- 
-Regards,
+2.17.1
 
-Laurent Pinchart
