@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E25FC0044D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4612DC2BB1D
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 10:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA8D02071C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 10:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DB9E20658
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 10:32:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730613AbgCPKcV (ORCPT
+        id S1730607AbgCPKcV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 16 Mar 2020 06:32:21 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:54972 "EHLO
+Received: from andre.telenet-ops.be ([195.130.132.53]:54970 "EHLO
         andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730636AbgCPKcU (ORCPT
+        with ESMTP id S1730613AbgCPKcU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 16 Mar 2020 06:32:20 -0400
 Received: from ramsan ([84.195.182.253])
         by andre.telenet-ops.be with bizsmtp
-        id EyYH2200M5USYZQ01yYHQX; Mon, 16 Mar 2020 11:32:17 +0100
+        id EyYH2200L5USYZQ01yYHQU; Mon, 16 Mar 2020 11:32:17 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jDn2f-0006Eo-7r; Mon, 16 Mar 2020 11:32:17 +0100
+        id 1jDn2f-0006Em-6u; Mon, 16 Mar 2020 11:32:17 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jDn2f-0007ev-6i; Mon, 16 Mar 2020 11:32:17 +0100
+        id 1jDn2f-0007er-55; Mon, 16 Mar 2020 11:32:17 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
@@ -38,9 +38,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Cc:     linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/3] pwm: renesas-tpu: Drop confusing registered message
-Date:   Mon, 16 Mar 2020 11:32:16 +0100
-Message-Id: <20200316103216.29383-4-geert+renesas@glider.be>
+Subject: [PATCH 2/3] pwm: renesas-tpu: Fix late Runtime PM enablement
+Date:   Mon, 16 Mar 2020 11:32:15 +0100
+Message-Id: <20200316103216.29383-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200316103216.29383-1-geert+renesas@glider.be>
 References: <20200316103216.29383-1-geert+renesas@glider.be>
@@ -49,36 +49,55 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-During device probe, the message
+Runtime PM should be enabled before calling pwmchip_add(), as PWM users
+can appear immediately after the PWM chip has been added.
+Likewise, Runtime PM should always be disabled after the removal of the
+PWM chip, even if the latter failed.
 
-    TPU PWM -1 registered
-
-is printed.
-
-While the "-1" looks suspicious, it is perfectly normal for a device
-instantiated from DT.
-
-Remove the message, as there are no non-DT users left, and other drivers
-don't print such messages neither.
-
+Fixes: 99b82abb0a35b073 ("pwm: Add Renesas TPU PWM driver")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pwm/pwm-renesas-tpu.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/pwm/pwm-renesas-tpu.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/pwm/pwm-renesas-tpu.c b/drivers/pwm/pwm-renesas-tpu.c
-index 8032acc84161a9dd..81ad5a551455e4b8 100644
+index 4a855a21b782dea3..8032acc84161a9dd 100644
 --- a/drivers/pwm/pwm-renesas-tpu.c
 +++ b/drivers/pwm/pwm-renesas-tpu.c
-@@ -424,8 +424,6 @@ static int tpu_probe(struct platform_device *pdev)
+@@ -415,16 +415,17 @@ static int tpu_probe(struct platform_device *pdev)
+ 	tpu->chip.base = -1;
+ 	tpu->chip.npwm = TPU_CHANNEL_MAX;
+ 
++	pm_runtime_enable(&pdev->dev);
++
+ 	ret = pwmchip_add(&tpu->chip);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to register PWM chip\n");
++		pm_runtime_disable(&pdev->dev);
  		return ret;
  	}
  
--	dev_info(&pdev->dev, "TPU PWM %d registered\n", tpu->pdev->id);
+ 	dev_info(&pdev->dev, "TPU PWM %d registered\n", tpu->pdev->id);
+ 
+-	pm_runtime_enable(&pdev->dev);
 -
  	return 0;
  }
  
+@@ -434,12 +435,10 @@ static int tpu_remove(struct platform_device *pdev)
+ 	int ret;
+ 
+ 	ret = pwmchip_remove(&tpu->chip);
+-	if (ret)
+-		return ret;
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ #ifdef CONFIG_OF
 -- 
 2.17.1
 
