@@ -2,79 +2,116 @@ Return-Path: <SRS0=jPLR=5B=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B21C0C0044D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 16:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97679C0044D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 16:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E9BB2051A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 16:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C68EF206C0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 16:35:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="De9CGDxQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732016AbgCPQ1y (ORCPT
+        id S1732097AbgCPQfA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Mar 2020 12:27:54 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59817 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731884AbgCPQ1y (ORCPT
+        Mon, 16 Mar 2020 12:35:00 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:26200 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731924AbgCPQfA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Mar 2020 12:27:54 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1jDsaj-0008Kh-J1; Mon, 16 Mar 2020 17:27:49 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1jDsai-0002UY-Cq; Mon, 16 Mar 2020 17:27:48 +0100
-Date:   Mon, 16 Mar 2020 17:27:48 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 3/3] pwm: renesas-tpu: Drop confusing registered message
-Message-ID: <20200316162748.cdafk2ghuw7zcqgd@pengutronix.de>
-References: <20200316103216.29383-1-geert+renesas@glider.be>
- <20200316103216.29383-4-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200316103216.29383-4-geert+renesas@glider.be>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+        Mon, 16 Mar 2020 12:35:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1584376497;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=XQO1aW6RArIYmOs8dBMYxDVu294Y+FF5+pgCc7w86ss=;
+        b=De9CGDxQ2RvWMTO5Xk84+Y8QVPs6jLV9nFESg+FH36TY1jtvBe87IgLVjB4GcyRHjF
+        LTE6/MwRJeDTMYXcFmfWzvhfs5NSLyiogI8v6e83+BWbI71+OH5tWIavnxNFgcNWSvW5
+        xzF9MaAZU3qPB3rxxDn26RrP4pbJOV77Y8rmS1lSdpt7x35mGXFNxmsSIbYMu6tSLiyU
+        BaU/uB8fyuZMv8yGN1eEZK7AYOy/j4WSY1bDREY01w8OsY2xJk6628rguDdzSN6yj6WV
+        AYhE8cAq4BsEOpP9v7niieW6vJ5SiPstsM0lEmN//KSqJJq198BDJrLny0m4klf5Fau4
+        4zfQ==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR82RYdxOjioM="
+X-RZG-CLASS-ID: mo00
+Received: from groucho.site
+        by smtp.strato.de (RZmta 46.2.0 DYNA|AUTH)
+        with ESMTPSA id d00eabw2GGYlDtI
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Mon, 16 Mar 2020 17:34:47 +0100 (CET)
+From:   Ulrich Hecht <uli+renesas@fpond.eu>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     wsa@the-dreams.de, geert@linux-m68k.org,
+        fabrizio.castro@bp.renesas.com,
+        ramesh.shanmugasundaram@bp.renesas.com, magnus.damm@gmail.com,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH v2 1/3] clk: renesas: cpg-mssr: add support for ignore-unused clocks
+Date:   Mon, 16 Mar 2020 17:34:37 +0100
+Message-Id: <1584376479-25258-2-git-send-email-uli+renesas@fpond.eu>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1584376479-25258-1-git-send-email-uli+renesas@fpond.eu>
+References: <1584376479-25258-1-git-send-email-uli+renesas@fpond.eu>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 11:32:16AM +0100, Geert Uytterhoeven wrote:
-> During device probe, the message
-> 
->     TPU PWM -1 registered
-> 
-> is printed.
-> 
-> While the "-1" looks suspicious, it is perfectly normal for a device
-> instantiated from DT.
-> 
-> Remove the message, as there are no non-DT users left, and other drivers
-> don't print such messages neither.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This adds facilities to mark clocks as "ignore used", i.e. never to be
+turned off. The primary application is the RWDT clock, which needs to
+remain on throughout the boot process if enabled by the bootloader.
 
-Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+---
+ drivers/clk/renesas/renesas-cpg-mssr.c | 5 +++++
+ drivers/clk/renesas/renesas-cpg-mssr.h | 9 +++++++++
+ 2 files changed, 14 insertions(+)
 
-Thanks
-Uwe
-
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index a2663fb..046efc9 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -423,6 +423,11 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
+ 			init.flags |= CLK_IS_CRITICAL;
+ 			break;
+ 		}
++	for (i = 0; i < info->num_ignore_unused_mod_clks; i++)
++		if (id == info->ignore_unused_mod_clks[i]) {
++			init.flags |= CLK_IGNORE_UNUSED;
++			break;
++		}
+ 
+ 	parent_name = __clk_get_name(parent);
+ 	init.parent_names = &parent_name;
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
+index 3b852ba..2a4b47e 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.h
++++ b/drivers/clk/renesas/renesas-cpg-mssr.h
+@@ -105,6 +105,11 @@ struct device_node;
+      * @crit_mod_clks: Array with Module Clock IDs of critical clocks that
+      *                 should not be disabled without a knowledgeable driver
+      * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
++     * @ignore_unused_mod_clks: Array with Module Clock IDs of clocks that
++     *                          should not be disabled even if they seem to
++     *                          be unused
++     * @num_ignore_unused_mod_clks: Number of entries in
++     *                              ignore_unused_mod_clks[]
+      *
+      * @core_pm_clks: Array with IDs of Core Clocks that are suitable for Power
+      *                Management, in addition to Module Clocks
+@@ -141,6 +146,10 @@ struct cpg_mssr_info {
+ 	const unsigned int *crit_mod_clks;
+ 	unsigned int num_crit_mod_clks;
+ 
++	/* Module Clocks that should not be disabled even if unused */
++	const unsigned int *ignore_unused_mod_clks;
++	unsigned int num_ignore_unused_mod_clks;
++
+ 	/* Core Clocks suitable for PM, in addition to the Module Clocks */
+ 	const unsigned int *core_pm_clks;
+ 	unsigned int num_core_pm_clks;
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+2.7.4
+
