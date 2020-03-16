@@ -2,78 +2,79 @@ Return-Path: <SRS0=jPLR=5B=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCD53C0044D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 10:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02CF6C0044D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 10:25:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE0C320663
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 10:14:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3F6A205ED
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Mar 2020 10:25:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730540AbgCPKO5 (ORCPT
+        id S1730527AbgCPKZs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Mar 2020 06:14:57 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:46316 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730495AbgCPKO5 (ORCPT
+        Mon, 16 Mar 2020 06:25:48 -0400
+Received: from michel.telenet-ops.be ([195.130.137.88]:57370 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730571AbgCPKZs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Mar 2020 06:14:57 -0400
+        Mon, 16 Mar 2020 06:25:48 -0400
 Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id EyEu220045USYZQ01yEuru; Mon, 16 Mar 2020 11:14:54 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id EyRk2200P5USYZQ06yRkK4; Mon, 16 Mar 2020 11:25:46 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jDmlq-00062m-8B; Mon, 16 Mar 2020 11:14:54 +0100
+        id 1jDmwK-00069k-85; Mon, 16 Mar 2020 11:25:44 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jDmlq-0007EE-5z; Mon, 16 Mar 2020 11:14:54 +0100
+        id 1jDmwK-0007Wg-5V; Mon, 16 Mar 2020 11:25:44 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: pwm: renesas-tpu: Document more R-Car Gen2 support
-Date:   Mon, 16 Mar 2020 11:14:53 +0100
-Message-Id: <20200316101453.27745-1-geert+renesas@glider.be>
+Subject: [PATCH 0/2] ARM: dts: r8a7791: Enable PWM support
+Date:   Mon, 16 Mar 2020 11:25:38 +0100
+Message-Id: <20200316102540.28887-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-All R-Car Gen2 SoCs have a Renesas Timer Pulse Unit.
-Document support for the missing variants.
+	Hi all,
 
-No driver change is needed due to the fallback compatible string.
+This patch series enables PWM support on R-Car M2-W, using both the
+single Timer Pulse Unit (4 channels), and the 7 channels of dedicated
+PWM Timers.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested on R-Car M2-W.
----
- Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+Channels 1-3 for both types have been tested on Koelsch using DT
+overlays from my topic/renesas-overlays branch[*].
+I intend to queue this in renesas-devel for v5.8.
 
-diff --git a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
-index 4969a954993cb693..4bf62a3d5bba8e3a 100644
---- a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
-+++ b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
-@@ -19,6 +19,10 @@ properties:
-           - renesas,tpu-r8a7744   # RZ/G1N
-           - renesas,tpu-r8a7745   # RZ/G1E
-           - renesas,tpu-r8a7790   # R-Car H2
-+          - renesas,tpu-r8a7791   # R-Car M2-W
-+          - renesas,tpu-r8a7792   # R-Car V2H
-+          - renesas,tpu-r8a7793   # R-Car M2-N
-+          - renesas,tpu-r8a7794   # R-Car E2
-           - renesas,tpu-r8a7795   # R-Car H3
-           - renesas,tpu-r8a7796   # R-Car M3-W
-           - renesas,tpu-r8a77965  # R-Car M3-N
+Thanks for your comments!
+
+[*] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/renesas-overlays
+
+Geert Uytterhoeven (2):
+  ARM: dts: r8a7791: Add TPU device node
+  ARM: dts: r8a7791: Add PWM device nodes
+
+ arch/arm/boot/dts/r8a7791.dtsi | 81 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
