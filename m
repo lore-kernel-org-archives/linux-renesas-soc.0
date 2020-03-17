@@ -2,310 +2,154 @@ Return-Path: <SRS0=CNuc=5C=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 102F7C18E5B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Mar 2020 10:50:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5455C2BB1D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Mar 2020 11:11:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C71E8206EC
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Mar 2020 10:50:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B41DD206EC
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Mar 2020 11:11:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="fwnmVIQA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbgCQKua (ORCPT
+        id S1729295AbgCQLLd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 Mar 2020 06:50:30 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36545 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726628AbgCQKu3 (ORCPT
+        Tue, 17 Mar 2020 07:11:33 -0400
+Received: from mail-eopbgr1410115.outbound.protection.outlook.com ([40.107.141.115]:2849
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729281AbgCQLLd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Mar 2020 06:50:29 -0400
-Received: by mail-ot1-f67.google.com with SMTP id 39so5697812otu.3;
-        Tue, 17 Mar 2020 03:50:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4RHKUQaqLP0RIgfBpLL5qOEOQG1NeX+nzzByYvELZmw=;
-        b=Ct4BrrRyd6FKIOM3sz16sP3XI/ZZW/XrB3uULRBkW3ShVZ/q/GRajsj/4mgPgQcbes
-         MENTKs65az5Zia3U8GT5kstaTs+KVO4fFy92WnWvMtbNvdCiPboxTzxBkzQxoC+wc+zC
-         6rjgW9ID1aXfSSVwtmTROwdrLO5IEJPDZr0DOhdeupo5hm/yFlhmv+SZNdIesECHa8YW
-         svHIVt/wFr55DUTiSczig1POI9D4Erlv34UByMrihTyuYBchZmnm5u/Hl7sASOmjhh5M
-         vGuS8PStWcbtyzKHK7ormqfRWyOSznkkVlaSE/1kGhdGQtBsDl5g/kC96MO4U+m7r7CX
-         lTvA==
-X-Gm-Message-State: ANhLgQ180CmeEysxlatCKk1Ozfr6XL2sqizT1sHJvBflEMWZ7DqHuO44
-        OBAGeE3GNYTelst7Pm1eDCmnzhLhPotmeGTBv9c=
-X-Google-Smtp-Source: ADFU+vvCnj5TM9jDoklN6SW2pOqgA8Yhy1UV90pkEYu70e2sIcYjz1ttaGrq9DI81fCb/fZk6X299+gFRk0K7Dbjlgs=
-X-Received: by 2002:a9d:4d02:: with SMTP id n2mr2946810otf.107.1584442226939;
- Tue, 17 Mar 2020 03:50:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200218151812.7816-1-geert+renesas@glider.be>
- <20200218151812.7816-4-geert+renesas@glider.be> <CACRpkdacAaw4PJp3Oa569JJTHTB4HjP-hPqZLmdFcuxvdvwBHg@mail.gmail.com>
-In-Reply-To: <CACRpkdacAaw4PJp3Oa569JJTHTB4HjP-hPqZLmdFcuxvdvwBHg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 17 Mar 2020 11:50:15 +0100
-Message-ID: <CAMuHMdVnoZ8uki9Ur-E-pDe60U_d=hNs8GTkMoTU3kACwFeY=g@mail.gmail.com>
-Subject: Re: [PATCH v5 3/5] gpio: Add GPIO Aggregator
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Alexander Graf <graf@amazon.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Phil Reid <preid@electromag.com.au>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Tue, 17 Mar 2020 07:11:33 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nzmpT585cAMwbD8i6XHhJrUYDM0hp281C7glwyXKfu0xv2lgAv3Ku4LTkPFX5sq9GVbWgmRYXIFTFywY1xoIk3pGTZXuurFwhO+7bmVrORFa/gV7QhbSPKPUB9XNH8AIJD9dPyYtBN8h18nlzucXR7azMz3zSzY8Ee7jzWnzBUeqh1kLP4OdKlp68B17DhbbsmCvvZa2bHD2S6Y3HIIIK8LFUoWeSHlAwd9E1HMpMSJDQGNWCzJJrF4CRE/BB1NYikmcVEbMyxzm6PJrFg9iD4mQg1A6KsZbilKosRkEaPVaxRmRW1m+BEK9ZnmWcHiOjb7bP4IpL4J6Zs8KTwisPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sb2eK4tdzXwFizdYNKLsOoW+5BUoMONAlwS5QSoazNk=;
+ b=kB3eUXNUH5EOwMH8D5tQqaYtArmo3l09t9Tq6SDCouzr3y8jV0+QEVeOJgHfNmLR0gSrcT578/1spj4Fa84xWXYLP2Pzj3dgZS2GbEmabwg7qPcVWgjY5dOwK9H5jPyX/PtvIj5TC2YATjhOl8+cz/aoRX4BUgVhpNrXuJX87g1xPf5qwVJJ5AP7FYrem3E/GP7oSv0w9lnEXjYPj0UFTGGqfergBvwkMDUhIJAD1FF4PySoyC3tLj6T3OWpgN/IXEEyVyKUq7pt6zAFjrMF5T1DXbQblTLhdg6FkpCZ+i7WfYtEHPeUEKIq1ZEbyaKJ9d4+P2vIci1SF9G/PIM3nQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sb2eK4tdzXwFizdYNKLsOoW+5BUoMONAlwS5QSoazNk=;
+ b=fwnmVIQAxOqOwdx+uG6X9xsSDQUR9xO4D0o7Fwme7okKdaLdthr7AxcsUt0DXhhlZIxKdSjT/MK+SASTF7k8ZyGxzgRjyhcEnA9gBLU6pk3bOvTspe6/P55ikAIf2v8Y1lb8DmusXE3D3YKg0mzenXUMqB8X7AETNs4xZ53oqcM=
+Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com (20.179.175.203) by
+ TYAPR01MB5277.jpnprd01.prod.outlook.com (20.178.138.87) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.13; Tue, 17 Mar 2020 11:11:28 +0000
+Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com
+ ([fe80::ed7f:1268:55a9:fc06]) by TYAPR01MB4544.jpnprd01.prod.outlook.com
+ ([fe80::ed7f:1268:55a9:fc06%4]) with mapi id 15.20.2814.021; Tue, 17 Mar 2020
+ 11:11:28 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.csengg@gmail.com>
+CC:     Andrew Murray <andrew.murray@arm.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-rockchip@lists.infradead.org" 
+        <linux-rockchip@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        QEMU Developers <qemu-devel@nongnu.org>
-Content-Type: text/plain; charset="UTF-8"
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>
+Subject: RE: [PATCH v5 5/7] dt-bindings: PCI: rcar: Add bindings for R-Car
+ PCIe endpoint controller
+Thread-Topic: [PATCH v5 5/7] dt-bindings: PCI: rcar: Add bindings for R-Car
+ PCIe endpoint controller
+Thread-Index: AQHV7k2mHX0IeWzmbUuqL/cidPXc16hMjZhwgAAghACAAA0gMA==
+Date:   Tue, 17 Mar 2020 11:11:28 +0000
+Message-ID: <TYAPR01MB454402897EA1C1334A7EF5C9D8F60@TYAPR01MB4544.jpnprd01.prod.outlook.com>
+References: <20200228154122.14164-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200228154122.14164-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <TYAPR01MB454466B8451E3115D8A7DFB7D8F60@TYAPR01MB4544.jpnprd01.prod.outlook.com>
+ <OSBPR01MB3590F13134F6E9BD106EC506AAF60@OSBPR01MB3590.jpnprd01.prod.outlook.com>
+In-Reply-To: <OSBPR01MB3590F13134F6E9BD106EC506AAF60@OSBPR01MB3590.jpnprd01.prod.outlook.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [124.210.22.195]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 127690c5-e293-4488-98d4-08d7ca63f0c1
+x-ms-traffictypediagnostic: TYAPR01MB5277:|TYAPR01MB5277:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TYAPR01MB527756263BEBFBF476043DC9D8F60@TYAPR01MB5277.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 0345CFD558
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(39860400002)(136003)(396003)(366004)(346002)(199004)(66946007)(71200400001)(66446008)(64756008)(66476007)(66556008)(2906002)(5660300002)(7416002)(9686003)(4326008)(52536014)(4744005)(33656002)(76116006)(7696005)(110136005)(54906003)(81166006)(8676002)(81156014)(55016002)(316002)(6506007)(55236004)(186003)(26005)(8936002)(86362001)(478600001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB5277;H:TYAPR01MB4544.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: RhXkg89RFmaVxRvYMByvI99uFELunUob1vkXOXqQepaGdbuaNuoRoobAflKrMimGej+gK52NjoV9sgCjzsK1X0k/UEYYWms7D1wxVKw6Nr8bvp2AdJPe4Hr+mLEw14fDF9+x0OYVZEgAjTPPWYY0Eesh23B3jMWy4LgoXabO5x3qG5nlVPL/7dwb6m89UYAxwxFJuxg3480cFdcetKGhg0Ie2UsY0I0DrKXQr+TqjeBvIEGhnjRjMWz7GDwDpsGPYShMXAbjrOWksxl648m4vz9uYz9R1tPG1NhYFf8XRo3x97oFAIWC5hQzF75UbSQ82YNZtsmUJY4FDeh5JOP4imqOclLc0eAaWnzI7oa5z1Nw67a+gOjAjLiMZSMGYnKhxRApBViHS7wwtC+jyJLadwfaT0vzmU6qfF57THuzYF30baXfPAjAdHTaHjkGkBVR
+x-ms-exchange-antispam-messagedata: 4BGqTl6hLUDX9ohnhyye2U0u2s3FAnHjdfCt3iSg6yL+8f88mGpUGrmsuD0xJem8tqeYJY/WrXEoQJjkaqQtKnMn8IKLGgNnb0xW6DrrKCJag/zZTcif2OPTTsDDE0sT4H/YwJ3IlUqEDSAT95MEaA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 127690c5-e293-4488-98d4-08d7ca63f0c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Mar 2020 11:11:28.4058
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ubKLgSGuMkFFf5knlYIWIk/IwV8yYZw0wHdxKxXVBYoRMSmtGrZhmJ2GL0rLZMSjUUAC84Sy4H4cciwdpmtyaRdhuihVEYntwCglQQFqCgCpeWnjm59npZaj7o1zU+Oj
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5277
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Linus,
+Hi Prabhakar-san,
 
-On Thu, Mar 12, 2020 at 3:57 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> thanks for your patience and again sorry for procrastination on my part :(
->
-> Overall I start to like this driver a lot. It has come a long way.
->
-> Some comments below are nitpicky, bear with me if they seem stupid.
+> From: Prabhakar Mahadev Lad, Sent: Tuesday, March 17, 2020 7:18 PM
+<snip>
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-
+> > lad.rj@bp.renesas.com>
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> >
+> > Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> >
+> Thank you for the review. Shall I add this file under "PCI DRIVER FOR REN=
+ESAS R-CAR"
+> In MAINTAINERS file as a separate patch ?
 
-Thanks a lot for your comments!
+That's a nice idea! I think we should add the following like for dt-binding=
+:
 
-> On Tue, Feb 18, 2020 at 4:18 PM Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > +#define DRV_NAME       "gpio-aggregator"
-> > +#define pr_fmt(fmt)    DRV_NAME ": " fmt
->
-> I would just use dev_[info|err] for all messages to get rid of this.
+F:	Documentation/devicetree/bindings/pci/*rcar*
 
-See below.
+Best regards,
+Yoshihiro Shimoda
 
-> > +#include <linux/bitmap.h>
-> > +#include <linux/bitops.h>
-> > +#include <linux/ctype.h>
-> > +#include <linux/gpio/consumer.h>
-> > +#include <linux/gpio/driver.h>
-> > +#include <linux/gpio/machine.h>
-> > +#include <linux/idr.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/module.h>
-> > +#include <linux/mutex.h>
-> > +#include <linux/overflow.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/spinlock.h>
-> > +#include <linux/string.h>
-> > +
-> > +#include "gpiolib.h"
->
-> When this file is includes I prefer if there is a comment next to
-> this include saying why we have to touch internals and which
-> ones.
+> Cheers,
+> --Prabhakar
+>=20
+> > Best regards,
+> > Yoshihiro Shimoda
 
-I have just discovered gpiod_to_chip(), which removes the need for two
-of the three users ;-)
-
-> > +struct gpio_aggregator {
-> > +       struct gpiod_lookup_table *lookups;
-> > +       struct platform_device *pdev;
->
-> What about just storing struct device *dev?
->
-> Then callbacks can just
->
-> dev_err(aggregator->dev, "myerror\n");
-
-&aggr->pdev.dev or aggr->dev does't make much of a difference.
-
-> > +static char *get_arg(char **args)
-> > +{
-> > +       char *start = *args, *end;
-> > +
-> > +       start = skip_spaces(start);
-> > +       if (!*start)
-> > +               return NULL;
-> > +
-> > +       if (*start == '"') {
-> > +               /* Quoted arg */
-> > +               end = strchr(++start, '"');
-> > +               if (!end)
-> > +                       return ERR_PTR(-EINVAL);
-> > +       } else {
-> > +               /* Unquoted arg */
-> > +               for (end = start; *end && !isspace(*end); end++) ;
-> > +       }
-> > +
-> > +       if (*end)
-> > +               *end++ = '\0';
-> > +
-> > +       *args = end;
-> > +       return start;
-> > +}
->
-> Isn't this function reimplementing strsep()?
-> while ((s = strsep(&p, " \""))) {
-> or something.
->
-> I'm not the best with strings, just asking so I know you tried it
-> already.
-
-strsep(&p, " \"") would terminate the token if a space or double quote is
-seen.  I.e. it wouldn't handle spaces in quoted arguments.
-There's also argv_split(), but that doesn't handle quoted args, and
-duplicates all arguments.
-
-Line names assigned by "gpio-lines-names" may contain spaces, so support
-for quoted args is mandatory.
-
-> > +static int aggr_parse(struct gpio_aggregator *aggr)
-> > +{
-> > +       unsigned int first_index, last_index, i, n = 0;
-> > +       char *name, *offsets, *first, *last, *next;
-> > +       char *args = aggr->args;
-> > +       int error;
-> > +
-> > +       for (name = get_arg(&args), offsets = get_arg(&args); name;
-> > +            offsets = get_arg(&args)) {
-> > +               if (IS_ERR(name)) {
-> > +                       pr_err("Cannot get GPIO specifier: %pe\n", name);
->
-> If gpio_aggregrator contained struct device *dev this would be
-> dev_err(aggr->dev, "...\n");
-
-aggr_parse() is called before the platform device is created, and before
-aggr->pdev is populated.  So there is no device to print yet.
-
-> > +static void gpio_aggregator_free(struct gpio_aggregator *aggr)
-> > +{
-> > +       platform_device_unregister(aggr->pdev);
->
-> Aha maybe store both the pdev and the dev in the struct then?
->
-> Or print using &aggr->pdev.dev.
-
-Same for aggr->pdev.dev (or aggr->dev).
-
-> > +       /*
-> > +        * If any of the GPIO lines are sleeping, then the entire forwarder
-> > +        * will be sleeping.
-> > +        * If any of the chips support .set_config(), then the forwarder will
-> > +        * support setting configs.
-> > +        */
-> > +       for (i = 0; i < ngpios; i++) {
-> > +               dev_dbg(dev, "gpio %u => gpio-%d (%s)\n", i,
-> > +                       desc_to_gpio(descs[i]), descs[i]->label ? : "?");
->
-> If this desc->label business is why you need to include
-> "gpiolib.h" then I'd prefer if you just add a
-
-It was the third reason to include that file...
-
-> const char *gpiod_get_producer_name(struct gpio_desc *desc);
->
-> to gpiolib (add in <linux/gpio/consumer.h> so that gpiolib can
-> try to give you something reasonable to print for the label here.
-> I ran into that problem before (wanting to print something like this)
-> and usually just printed the offset.
->
-> But if it is a serious debug issue, let's fix a helper for this.
->
-> gpiod_get_producer_name() could return the thing in
-> desc->label if that is set or else something along
-> "chipname-offset" or "unknown", I'm not very picky
-> with that.
-
-I will just remove the printing of the label, as it is no longer useful.
-Since I started using gpiod_lookup, the descriptor has already been
-requested at this point, which means its label will usually be
-"gpio-aggregator.N", i.e. it doesn't provide any help.
-The only exception is for a GPIO line which has an associated line name
-through "gpio-line-names" in DT.  But just seeing the global GPIO number
-should be good enough for debugging.
-
-BTW, one day you may want to have your our printk() format specifier for
-GPIOs?  Oh, no "%pg" and "%pG" are already taken; "%pp" is still
-available.
-
-> > error = aggr_add_gpio(aggr, name, U16_MAX, &n);
->
-> Is the reason why you use e.g. "gpiochip0" as name here that this
-> is a simple ABI for userspace?
-
-"name" is not the "gpiochipN" name here, but the line name, cfr. the
-U16_MAX value for chip index, and the comment just above:
-
-+                       /* Named GPIO line */
-
-That one is supposed to be stable, right?
-Note that this is the most use-centric way to refer to a GPIO.
-
-In the other caller:
-
-+                               error = aggr_add_gpio(aggr, name, i, &n);
-
-"name" is a reference to the gpiochip, i.e. either its label, or the
-"gpiochipN" name.
-
-> Such like obtained from /sys/bus/gpio/devices/<chipname>?
->
-> I would actually prefer to just add a sysfs attribute
-> such as "name" and set it to the value of gpiochip->label.
-
-Makes sense, but that would be a separate, unrelated patch, right?
-
-> These labels are compulsory and supposed to be unique.
->
-> Then whatever creates an aggregator can just use
-> cat /sys/bus/gpio/devices/gpiochipN/name to send in
-> through the sysfs interface to this kernel driver.
->
-> This will protect you in the following way:
->
-> When a system is booted and populated the N in
-> gpiochipN is not stable and this aggregator will be used
-> by scripts that assume it is. We already had this dilemma
-> with things like network interfaces like eth0/1.
->
-> This can be because of things like probe order which
-> can be random, or because someone compiled a
-> kernel with a new driver for a gpiochip that wasn't
-> detected before. This recently happened to Raspberry Pi,
-> that added gpio driver for "firmware GPIOs" (IIRC).
->
-> The label on the chip is going to be more stable
-> I think, so it is better to use that.
-
-OK, so support for "gpiochipN" matching can be dropped, obsoleting
-"[PATCH v5 1/5] gpiolib: Add support for gpiochipN-based table lookup".
-
-Note that I added support for that in response to Bartosz' first try
-https://lore.kernel.org/linux-gpio/CAMpxmJUF1s1zyXVtoUGfbV7Yk+heua4rNjY=DrX=jr-v8UfNxA@mail.gmail.com/
-
-> This should also rid the need to include "gpiolib.h"
-> which makes me nervous.
-
-Consider it done!
-Thanks!
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
