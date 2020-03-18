@@ -2,106 +2,188 @@ Return-Path: <SRS0=ZwCi=5D=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E84CC10DCE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F89C10DCE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEFE620771
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17CD120767
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:45:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWRVpgxh"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="H43ZxQtz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbgCRJfg (ORCPT
+        id S1727566AbgCRJpT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Mar 2020 05:35:36 -0400
-Received: from mail-pj1-f47.google.com ([209.85.216.47]:56086 "EHLO
-        mail-pj1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726994AbgCRJfg (ORCPT
+        Wed, 18 Mar 2020 05:45:19 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:41890 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727540AbgCRJpT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Mar 2020 05:35:36 -0400
-Received: by mail-pj1-f47.google.com with SMTP id mj6so1084200pjb.5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Mar 2020 02:35:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:date:message-id:subject;
-        bh=6+L0FIU2A+7B4LV7MqEmMouLnYI7ObBztyd+zUMY9rw=;
-        b=CWRVpgxhdoN+lMWVml4YxQDkNh0vkY7jj/kRybowThG3SKIFL3YvF4GHPIbz3D63PK
-         4XCb5x0AmjnnatvZDp1tL8nKnlI7IIoQRDgYZY01jHURYVLRPfGPdyLCTjqMfHKoIaKW
-         lux4FfEABJbjitIuafY0bLc/gGaL5phY/kgzrpey3Ae0uxWwU06UQXBGiE4T3CnZqrrY
-         oCGzEraFLkZgRKpjbzUnMxjQCA88xDfwAC75B1XZfVL0f/jLKCPU6n5CG9eaNET6cER+
-         78OwZVRXTgo2mtkz0CxI3vM7qkhoWnpiyGwa03ojjXlCTRHevY0ufZce/qcswV36wmmX
-         Yu3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:date:message-id:subject;
-        bh=6+L0FIU2A+7B4LV7MqEmMouLnYI7ObBztyd+zUMY9rw=;
-        b=eusvjJPenJO+dGRitWHwrnX7mEDBDcYq61ASi3xq5WunsGKsX8lFExLiX6Ey+PZrbx
-         FJDOhj/gLsOXqioTa43KhqBsUy9GnAUfOCgKgMF2PxFsxhTHfDjhAGCsJ+oMylOaw7Je
-         GQ4Oa51Mz7f8ylxh4w4x0sIZiIOa+vwPayYdwn16maaynSnaqlrTH5PN/pI0/Z31oMx3
-         Vce4DNb5FPisDc556AcdZihyzuN5IO9CFVlyzEijX8qLo6jOtrqHuyg8L1VGvZNtsVvL
-         r5i4SG/6Nt9O3T2cEZ1Rx/wjjUMDLRByP+NV4/Cjvethm1HVmS0zFlFQ4hgp9Ctf4YDk
-         ZKEg==
-X-Gm-Message-State: ANhLgQ3Q9o04VfOP1p+gter0Idp5dPmxLv8O8CPjc7SkzK3h+muEZKOe
-        2A1+j0GoyVMjH9NYgLVzMWTQqWLP
-X-Google-Smtp-Source: ADFU+vudpofHWhcu10ig89GG/clY0KsX2/E3ODE/59IQoQWq37wN7ijDZ5IDnMjVnouEo4/KCdazlQ==
-X-Received: by 2002:a17:90a:240a:: with SMTP id h10mr3639997pje.123.1584524134878;
-        Wed, 18 Mar 2020 02:35:34 -0700 (PDT)
-Received: from [127.0.0.1] (s214090.ppp.asahi-net.or.jp. [220.157.214.90])
-        by smtp.gmail.com with ESMTPSA id y22sm6141394pfr.68.2020.03.18.02.35.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Mar 2020 02:35:33 -0700 (PDT)
-From:   Magnus Damm <magnus.damm@gmail.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Magnus Damm <magnus.damm@gmail.com>, geert@glider.be
-Date:   Wed, 18 Mar 2020 18:27:51 +0900
-Message-Id: <158452367157.23699.16109085564905174396.sendpatchset@octo>
-Subject: [PATCH/RFC] arm64: dts: renesas: salvator-common: gpio-leds prototype
+        Wed, 18 Mar 2020 05:45:19 -0400
+Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F2690F9;
+        Wed, 18 Mar 2020 10:45:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1584524717;
+        bh=SjB4WrG5Cvh4/ecX+bx1L6N3BtX1CRYvdWcFVhHF3bI=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=H43ZxQtzeyCjt6+MdCSr5eJORngQAfregC7eYZ6Bmu3AXRwOYBNHtknX3MS7R3lqD
+         bSarVIRocQDy3GhbHUHINZ4TBXpng/rf38L3J6XBNalbeWhWf0GiynYi5Mb9nFQztJ
+         CdTselcWhGKy9PcUTVtxyocYxCPtQ4RSVrc34MTw=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 2/5] dt-bindings: media: max9286: Add overlap window
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc:     hyunk@xilinx.com, manivannan.sadhasivam@linaro.org,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+References: <20200316202757.529740-1-jacopo+renesas@jmondi.org>
+ <20200316202757.529740-3-jacopo+renesas@jmondi.org>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <c029c8b3-928b-24d0-777e-add1136bf051@ideasonboard.com>
+Date:   Wed, 18 Mar 2020 09:45:14 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
+MIME-Version: 1.0
+In-Reply-To: <20200316202757.529740-3-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Magnus Damm <damm+renesas@opensource.se>
+Hi Jacopo,
 
-This patch adds support for a couple of LEDs on Salvator-X and XS boards.
+On 16/03/2020 20:27, Jacopo Mondi wrote:
+> The MAX9286 chip exposes a way to control the 'overlap window'
+> parameter, most probably used in calculation of the frame
+> synchronization interval.
+> 
+> When used in conjunction with some serializers, the overlap window has to
+> be disabled in order to correctly achieve frame sync locking.
+> 
+> As the exact meaning of that control is not documented in the chip's
+> manual, require all DTS users to specify the value of the window. When,
+> and if, in future the meaning of control gets clarified and a default
 
-I've verified that LED4, LED5 and LED6 work by exporting GPIOs for GP6_11,
-GP6_12 and GP6_13 on the board on port 9011. This patch has not yet been
-tested though. Also to make matters slightly more complicated, even if LEDs
-might work with this patch as-is, the code in this patch is most likely not
-suitable for upstream consumption. This since SW20, SW21 and SW22 are also
-using the same GPIOs as the LEDs.
+/in future/in the future/
+/of control/of the control/
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+> behaviour (window enabled or disabled) can be established, a new boolean
+> property could supersede this one while being sure that older DTB are
 
- arch/arm64/boot/dts/renesas/salvator-common.dtsi |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+/DTB/DTBs/
 
---- 0001/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ work/arch/arm64/boot/dts/renesas/salvator-common.dtsi	2020-03-18 16:18:44.234040458 +0900
-@@ -166,6 +166,20 @@
- 		};
- 	};
- 
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led4 {
-+			gpios = <&gpio6 11 GPIO_ACTIVE_HIGH>;
-+		};
-+		led5 {
-+			gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
-+		};
-+		led6 {
-+			gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
- 	reg_1p8v: regulator0 {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
+> fully specified to avoid confusion.
+> 
+> Provide a few convenience macros for the window disabled and window
+> default value.
+
+Well it's not the best solution (putting hardcode values into the DTB)
+but I agree, without documentation these are almost 'magic values for
+the hardware' which is unfortunate.
+
+I do fear this may be the wrong place still though.
+
+This is dependent upon the 'serializer' connected, so is it a property
+of the serializer that the max9286 should query at probe time to see
+what it has connected?
+
+But that's just back to the whole topic of bus-parameter negotiations
+between the serializer and deserializer ...
+
+
+But with this solution, any dtb segment or overlay for the serializer
+needs to modify the max9286 depending on it's requirements ... that
+feels a bit odd. Possible, I think, but odd.
+
+Do we have any precedence in existing DT to reference on this topic?
+
+
+
+
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  .../devicetree/bindings/media/i2c/maxim,max9286.yaml  | 11 +++++++++++
+>  MAINTAINERS                                           |  1 +
+>  include/dt-bindings/media/maxim-gmsl.h                |  9 +++++++++
+>  3 files changed, 21 insertions(+)
+>  create mode 100644 include/dt-bindings/media/maxim-gmsl.h
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
+> index f9d3e5712c59..ee8e0418b3f0 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
+> @@ -46,6 +46,14 @@ properties:
+>      description: GPIO connected to the \#PWDN pin with inverted polarity
+>      maxItems: 1
+>  
+> +  # Until the overlap window control gets not clarified, require dts
+> +  # to set its value explicitly,
+> +  maxim,overlap-window:
+> +    description: Overlap window duration, in pixel clock cycles.
+> +    maxItems: 1
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32
+> +
+>    ports:
+>      type: object
+>      description: |
+> @@ -146,6 +154,7 @@ properties:
+>  required:
+>    - compatible
+>    - reg
+> +  - maxim,overlap-window
+>    - ports
+>    - i2c-mux
+>  
+> @@ -154,6 +163,7 @@ additionalProperties: false
+>  examples:
+>    - |
+>      #include <dt-bindings/gpio/gpio.h>
+> +    #include <dt-bindings/media/maxim-gmsl.h>
+>  
+>      i2c@e66d8000 {
+>        #address-cells = <1>;
+> @@ -166,6 +176,7 @@ examples:
+>          reg = <0x2c>;
+>          poc-supply = <&camera_poc_12v>;
+>          enable-gpios = <&gpio 13 GPIO_ACTIVE_HIGH>;
+> +        maxim,overlap-window = MAX9286_OVLP_WINDOW_DISABLED;
+>  
+>          ports {
+>            #address-cells = <1>;
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 21a9ff4fe684..3d2455085c80 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10190,6 +10190,7 @@ M:	Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+>  L:	linux-media@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
+> +F:	include/dt-bindings/media/maxim-gmsl.h
+>  F:	drivers/media/i2c/max9286.c
+>  
+>  MAX9860 MONO AUDIO VOICE CODEC DRIVER
+> diff --git a/include/dt-bindings/media/maxim-gmsl.h b/include/dt-bindings/media/maxim-gmsl.h
+> new file mode 100644
+> index 000000000000..47945ffc3a4d
+> --- /dev/null
+> +++ b/include/dt-bindings/media/maxim-gmsl.h
+> @@ -0,0 +1,9 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _DT_BINDINGS_MEDIA_MAXIM_GMSL_H
+> +#define _DT_BINDINGS_MEDIA_MAXIM_GMSL_H
+> +
+> +/* MAX9286 default overlap values. */
+> +#define MAX9286_OVLP_WINDOW_DISABLED	<0>
+> +#define MAX9286_OVLP_WINDOW_DEFAULT	<0x1680>
+> +
+> +#endif /* _DT_BINDINGS_MEDIA_MAXIM_GMSL_H */
+> 
+
