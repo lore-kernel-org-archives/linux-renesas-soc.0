@@ -2,139 +2,134 @@ Return-Path: <SRS0=ZwCi=5D=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F079C5ACD7
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 14:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 499FAC10DCE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 15:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F34220773
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 14:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27D8920770
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 15:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbgCROdZ (ORCPT
+        id S1727108AbgCRPBL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Mar 2020 10:33:25 -0400
-Received: from sauhun.de ([88.99.104.3]:48226 "EHLO pokefinder.org"
+        Wed, 18 Mar 2020 11:01:11 -0400
+Received: from sauhun.de ([88.99.104.3]:48466 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726596AbgCROdY (ORCPT
+        id S1726944AbgCRPBI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Mar 2020 10:33:24 -0400
+        Wed, 18 Mar 2020 11:01:08 -0400
 Received: from localhost (p54B333FA.dip0.t-ipconnect.de [84.179.51.250])
-        by pokefinder.org (Postfix) with ESMTPSA id 039522C097D;
-        Wed, 18 Mar 2020 15:33:21 +0100 (CET)
-Date:   Wed, 18 Mar 2020 15:33:21 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-i3c@lists.infradead.org,
+        by pokefinder.org (Postfix) with ESMTPSA id 2A5E62C2E7D;
+        Wed, 18 Mar 2020 16:01:06 +0100 (CET)
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-i3c@lists.infradead.org,
         Kieran Bingham <kieran@ksquared.org.uk>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Luca Ceresoli <luca@lucaceresoli.net>,
         Jacopo Mondi <jacopo@jmondi.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Vladimir Zapolskiy <vz@mleia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [RFC PATCH 6/7] i2c: of: mark a whole array of regs as reserved
-Message-ID: <20200318143321.GB8300@ninjato>
-References: <20200220172403.26062-1-wsa+renesas@sang-engineering.com>
- <20200220172403.26062-7-wsa+renesas@sang-engineering.com>
- <CAMuHMdUvADDozCX6Bd0dDVejpTY-k42naEnB7Q5Z6w7Yg94_Vw@mail.gmail.com>
+        linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [RFC PATCH v2 3/6] i2c: of: remove superfluous parameter from exported function
+Date:   Wed, 18 Mar 2020 16:00:56 +0100
+Message-Id: <20200318150059.21714-4-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200318150059.21714-1-wsa+renesas@sang-engineering.com>
+References: <20200318150059.21714-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aVD9QWMuhilNxW9f"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUvADDozCX6Bd0dDVejpTY-k42naEnB7Q5Z6w7Yg94_Vw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+'dev' is only used for printing an error message. However, that
+information is not needed because '%pOF' fully describes the location of
+the error. Drop the 'dev' and remove the superfluous parameter.
 
---aVD9QWMuhilNxW9f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
+---
+ drivers/i2c/i2c-core-of.c | 7 +++----
+ drivers/i3c/master.c      | 2 +-
+ include/linux/i2c.h       | 6 ++----
+ 3 files changed, 6 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+index d8d111ad6c85..710704cd583e 100644
+--- a/drivers/i2c/i2c-core-of.c
++++ b/drivers/i2c/i2c-core-of.c
+@@ -19,8 +19,7 @@
+ 
+ #include "i2c-core.h"
+ 
+-int of_i2c_get_board_info(struct device *dev, struct device_node *node,
+-			  struct i2c_board_info *info)
++int of_i2c_get_board_info(struct device_node *node, struct i2c_board_info *info)
+ {
+ 	u32 addr;
+ 	int ret;
+@@ -29,7 +28,7 @@ int of_i2c_get_board_info(struct device *dev, struct device_node *node,
+ 
+ 	ret = of_property_read_u32(node, "reg", &addr);
+ 	if (ret) {
+-		dev_err(dev, "of_i2c: invalid reg on %pOF\n", node);
++		pr_err("of_i2c: invalid reg on %pOF\n", node);
+ 		return ret;
+ 	}
+ 
+@@ -69,7 +68,7 @@ static struct i2c_client *of_i2c_register_device(struct i2c_adapter *adap,
+ 
+ 	dev_dbg(&adap->dev, "of_i2c: register %pOF\n", node);
+ 
+-	ret = of_i2c_get_board_info(&adap->dev, node, &info);
++	ret = of_i2c_get_board_info(node, &info);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 7f8f896fa0c3..cc0549a9fc64 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -1943,7 +1943,7 @@ of_i3c_master_add_i2c_boardinfo(struct i3c_master_controller *master,
+ 	if (!boardinfo)
+ 		return -ENOMEM;
+ 
+-	ret = of_i2c_get_board_info(dev, node, &boardinfo->base);
++	ret = of_i2c_get_board_info(node, &boardinfo->base);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/include/linux/i2c.h b/include/linux/i2c.h
+index f834687989f7..d84aaf0d83d5 100644
+--- a/include/linux/i2c.h
++++ b/include/linux/i2c.h
+@@ -942,8 +942,7 @@ const struct of_device_id
+ *i2c_of_match_device(const struct of_device_id *matches,
+ 		     struct i2c_client *client);
+ 
+-int of_i2c_get_board_info(struct device *dev, struct device_node *node,
+-			  struct i2c_board_info *info);
++int of_i2c_get_board_info(struct device_node *node, struct i2c_board_info *info);
+ 
+ #else
+ 
+@@ -969,8 +968,7 @@ static inline const struct of_device_id
+ 	return NULL;
+ }
+ 
+-static inline int of_i2c_get_board_info(struct device *dev,
+-					struct device_node *node,
++static inline int of_i2c_get_board_info(struct device_node *node,
+ 					struct i2c_board_info *info)
+ {
+ 	return -ENOTSUPP;
+-- 
+2.20.1
 
-> > +int of_i2c_get_board_info(struct device_node *node, struct i2c_board_i=
-nfo *info)
-> > +{
-> > +       u32 addr;
-> > +       int ret;
-> > +
-> > +       ret =3D of_property_read_u32(node, "reg", &addr);
->=20
-> Perhaps the time is ripe to start considering #address-cells, instead
-> of assuming 1, here ...
-
-I think here it is okay because we really want the first entry of the
-first tuple.
-
-> > +       of_property_for_each_u32(node, "reg", prop, cur, reg) {
->=20
-> ... and especially here, if this code can ever be reused for i3c, which u=
-ses 3.
-
-But here I agree. I reimplemented the code to handle it, and it worked
-with '#address-cells =3D <2>;' as expected. Here is the diff to this
-patch:
-
-@@ -16,6 +16,7 @@
- #include <linux/i2c.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/sysfs.h>
-=20
-@@ -75,13 +76,14 @@ static struct i2c_client *of_i2c_register_device(struct=
- i2c_adapter *adap,
- 	struct i2c_client *client, *first_client =3D ERR_PTR(-ENOENT);
- 	struct i2c_board_info info;
- 	bool first_reg =3D true;
--	struct property *prop;
--	const __be32 *cur;
--	u32 reg;
-+	unsigned int i =3D 0;
-+	const __be32 *prop;
-+	u16 reg;
-=20
- 	pr_debug("register %pOF\n", node);
-=20
--	of_property_for_each_u32(node, "reg", prop, cur, reg) {
-+	while ((prop =3D of_get_address(node, i++, NULL, NULL))) {
-+		reg =3D of_read_number(prop, 1);
- 		of_i2c_decode_board_info(node, reg, first_reg, &info);
-=20
- 		client =3D i2c_new_client_device(adap, &info);
-
-Thanks, Geert! I will send out the new version in a few minutes.
-
-
---aVD9QWMuhilNxW9f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl5yMS0ACgkQFA3kzBSg
-KbYtfRAAil0f+6TG3T06kRnSNoNLPpEoqabj0ip7Vz7+gSloBvl8lszjT7CP//7R
-9gnjhLFvr6hPVbC64dzimreCL1JGYUtFOhKDl/pPSA+TrEFEARbOCxIbdhgieFC0
-DrSN2Ed+jK7ZRTPdTuT2y6DNf6bbDHo3ihnzd57I2wy6cEsTMdyIJSAnsxfn5QVf
-6EKTCLAeBI9hPd3jDB38ICvQ0Vf9/F9lHRZNOQo1hQwSkUbnyyqf26k8kt/VAnm9
-Ipcvlz8krmqY2FWnC/FlzhKV5lSc9i7VSZJTQOjtO39RHxRAsOytbzc6erlTp9Pz
-V1+Uw8HGIVMbQe1+kpaaJvomxTApQ2HqjTOPTQc/2h9qXUdCdeWFi56oaJzCl7hp
-WHCgqmUCfs4a1V75vuHk2Fj3mPMQsvmjiWrvW5Sz5nvto2GTjKsg2m/v6bdabTxk
-iMFjwBfQVun1ziMQOad0zycEFF+sBtQafAg4zmS/FAyrhGAVI9YQ57Z93dlk7D1L
-YLFvxifo+L5a6/ny1uEL0xrjMoYfiUCTXlySSuywl5dD5jsqBoUWduFXeHo0DezA
-Pe/Vht7ChN7WlI3kDt3X+zCVGmf5WnObEJPrzm39gUNjod7UpW39zgoKQWuF4Rpp
-JCKxZe174onb36K3lz83DRTkg5v5NU1AdVgwqrKM6RjakOs1aXM=
-=Ku4u
------END PGP SIGNATURE-----
-
---aVD9QWMuhilNxW9f--
