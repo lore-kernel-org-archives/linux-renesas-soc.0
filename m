@@ -2,91 +2,159 @@ Return-Path: <SRS0=ZwCi=5D=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E12C5ACD6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A20F0C10DCE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 519E62076F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:55:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69F6820773
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:57:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MWBUUvV1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727611AbgCRJzd (ORCPT
+        id S1727405AbgCRJ5y (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Mar 2020 05:55:33 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35450 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbgCRJzc (ORCPT
+        Wed, 18 Mar 2020 05:57:54 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42000 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbgCRJ5x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Mar 2020 05:55:32 -0400
-Received: by mail-ot1-f66.google.com with SMTP id k26so24912041otr.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Mar 2020 02:55:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XJpTD+vvN7+5gG/V7nYWXN/sZKHSkwJB7TSrkjSO0CY=;
-        b=kHZQjMGm4hTyqQ42B5reObylkGtoQD+oxq6O04WQNivA4WNYs92s9XGvgmcKh3qhtP
-         2BPBE3wWNQ8UzrryxG2EhouLySodhiXErlA7yz9zHa2ZIgLeUDyTpkc6iD6Fl9Su+HHq
-         q7F1j13E8pjJPZ2hGpa1qGE1J+YhFQJxG3pu4A+5GIlEvKWtcMXhCcjI9ZqFxsAGlFjq
-         KbZHICz2F51NAcOnB5kDm31X9CdjGPTNxOxdyjiabyze8YfTemeKi1aEj1g6yi6zWkjb
-         hJjksW05+6CkR24BSi7gYZFumN1p4iLcX1FR0EHnPG2IyXaKJXyXgIBlTErv3jc/+JSv
-         /mAQ==
-X-Gm-Message-State: ANhLgQ3WIiU+otukqETGzT9gXFFQPTTokuZ60zN5WSENynhTN589BvQU
-        nbD/63lggHzGv+G4FC/yv+A1sy1uQLGmNxjK7FQ=
-X-Google-Smtp-Source: ADFU+vvGy0+oxq8uO8Z4YMCKmDP/juSVykMTm/tgIXcFKGS5VE0uEGJkMoDEDQGLX3/vaXSaQJaKj+6FyJvPo+qILG0=
-X-Received: by 2002:a9d:4d02:: with SMTP id n2mr2899790otf.107.1584525331920;
- Wed, 18 Mar 2020 02:55:31 -0700 (PDT)
+        Wed, 18 Mar 2020 05:57:53 -0400
+Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EDD9AF9;
+        Wed, 18 Mar 2020 10:57:51 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1584525472;
+        bh=tYUNieY9VIHItBYWfsMHaVuCLc+ReExOnGODmRg9iOA=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=MWBUUvV1+4Aogjn5P7nxT/lGBFFtsNVllnkfmaWFnOGVm1f/0SAqYn+JppOR3ZMIE
+         K1Ld79GoJ+DOMtyA8hLsCajps2UXF8LN5ZUF8Ue+r4bj9neBX8SGNQ4tiPhC4bS7fS
+         uIPA5oR2/ymqq3FGI6LbqkshWCXZTLu/QS0zPUME=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 5/5] media: i2c: max9286: Parse channel amplitude
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc:     hyunk@xilinx.com, manivannan.sadhasivam@linaro.org,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+References: <20200316202757.529740-1-jacopo+renesas@jmondi.org>
+ <20200316202757.529740-6-jacopo+renesas@jmondi.org>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <0de21347-4c06-50a1-0393-a1f4c1efad28@ideasonboard.com>
+Date:   Wed, 18 Mar 2020 09:57:48 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-References: <158452367157.23699.16109085564905174396.sendpatchset@octo>
-In-Reply-To: <158452367157.23699.16109085564905174396.sendpatchset@octo>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 18 Mar 2020 10:55:20 +0100
-Message-ID: <CAMuHMdXZNGMGE6h=dj_fFwDCumcowZt-vifyXBNb4gqOQWj+Ug@mail.gmail.com>
-Subject: Re: [PATCH/RFC] arm64: dts: renesas: salvator-common: gpio-leds prototype
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200316202757.529740-6-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Magnus,
+Hi Jacopo,
 
-On Wed, Mar 18, 2020 at 10:35 AM Magnus Damm <magnus.damm@gmail.com> wrote:
-> From: Magnus Damm <damm+renesas@opensource.se>
->
-> This patch adds support for a couple of LEDs on Salvator-X and XS boards.
+On 16/03/2020 20:27, Jacopo Mondi wrote:
+> Parse the 'maxim,reverse-channel-amplitude' property value and cache its
+> content to later program the initial reverse channel amplitude.
+> 
+> Only support 100mV and 170mV values for the moment. The property could
+> be easily expanded to support more values.
 
-Thanks for your patch!
+Can we (in the future) support arbitrary values from a range, or only
+from a fixed list?
 
-> I've verified that LED4, LED5 and LED6 work by exporting GPIOs for GP6_11,
-> GP6_12 and GP6_13 on the board on port 9011. This patch has not yet been
-> tested though. Also to make matters slightly more complicated, even if LEDs
-> might work with this patch as-is, the code in this patch is most likely not
-> suitable for upstream consumption. This since SW20, SW21 and SW22 are also
-> using the same GPIOs as the LEDs.
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/media/i2c/max9286.c | 39 ++++++++++++++++++++++++++++++++-----
+>  1 file changed, 34 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+> index 0357515860b2..24af8002535e 100644
+> --- a/drivers/media/i2c/max9286.c
+> +++ b/drivers/media/i2c/max9286.c
+> @@ -168,6 +168,7 @@ struct max9286_priv {
+>  	struct max9286_source sources[MAX9286_NUM_GMSL];
+>  	struct v4l2_async_notifier notifier;
+>  
+> +	u32 reverse_chan_amp;
+>  	u32 overlap_window;
+>  };
+>  
+> @@ -479,10 +480,15 @@ static int max9286_notify_bound(struct v4l2_async_notifier *notifier,
+>  	 * All enabled sources have probed and enabled their reverse control
+>  	 * channels:
+>  	 *
+> -	 * - Verify all configuration links are properly detected
+> +	 * - Increase reverse channel amplitude to 170mV if not initially
+> +	 *   compensated
+>  	 * - Disable auto-ack as communication on the control channel are now
+>  	 *   stable.
+>  	 */
+> +	if (priv->reverse_chan_amp == 100)
+> +		max9286_write(priv, 0x3b, MAX9286_REV_TRF(1) |
+> +			      MAX9286_REV_AMP(70) | MAX9286_REV_AMP_X);
+> +
+>  	max9286_check_config_link(priv, priv->source_mask);
+>  
+>  	/*
+> @@ -830,6 +836,8 @@ static void max9286_v4l2_unregister(struct max9286_priv *priv)
+>  
+>  static int max9286_setup(struct max9286_priv *priv)
+>  {
+> +	u8 chan_amp = MAX9286_REV_TRF(1);
+> +
+>  	/*
+>  	 * Link ordering values for all enabled links combinations. Orders must
+>  	 * be assigned sequentially from 0 to the number of enabled links
+> @@ -869,12 +877,18 @@ static int max9286_setup(struct max9286_priv *priv)
+>  	 *
+>  	 * - Enable custom reverse channel configuration (through register 0x3f)
+>  	 *   and set the first pulse length to 35 clock cycles.
+> -	 * - Increase the reverse channel amplitude to 170mV to accommodate the
+> -	 *   high threshold enabled by the serializer driver.
+> +	 * - Set initial reverse channel amplitude according the DTS property.
+> +	 *   If the initial channel amplitude is 100mV it should be increase
+> +	 *   later after the serializers high threshold have been enabled.
+> +	 *   If the initial value is 170mV the serializer has been
+> +	 *   pre-programmed and we can compensate immediately.>  	 */
+>  	max9286_write(priv, 0x3f, MAX9286_EN_REV_CFG | MAX9286_REV_FLEN(35));
+> -	max9286_write(priv, 0x3b, MAX9286_REV_TRF(1) | MAX9286_REV_AMP(70) |
+> -		      MAX9286_REV_AMP_X);
+> +	if (priv->reverse_chan_amp == 100)
+> +		chan_amp |= MAX9286_REV_AMP(100);
+> +	else
+> +		chan_amp |= MAX9286_REV_AMP(70) | MAX9286_REV_AMP_X;
+> +	max9286_write(priv, 0x3b, chan_amp);
+>  	usleep_range(2000, 2500);
+>  
+>  	/*
+> @@ -1069,6 +1083,21 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+>  		return -EINVAL;
+>  	}
+>  
+> +	ret = of_property_read_u32(dev->of_node, "maxim,reverse-channel-amplitude",
+> +				   &priv->reverse_chan_amp);
+> +	if (ret) {
+> +		dev_err(dev,
+> +			"Missing property \"maxim,reverse-channel-amplitude\"\n");
+> +		of_node_put(dev->of_node);
+> +		return -EINVAL;
+> +	}
+> +	if (priv->reverse_chan_amp != 100 && priv->reverse_chan_amp != 170) {
+> +		dev_err(dev, "Unsupported  channel amplitude %umV\n",
+> +			priv->reverse_chan_amp);
+> +		of_node_put(dev->of_node);
+> +		return -EINVAL;
+> +	}
+> +
+>  	i2c_mux = of_find_node_by_name(dev->of_node, "i2c-mux");
+>  	if (!i2c_mux) {
+>  		dev_err(dev, "Failed to find i2c-mux node\n");
+> 
 
-Indeed. I think we should add kernel support for sharing GPIOs this way,
-before we can describe the LEDs in DT.  Else we'll introduce a regression,
-depending on which driver is bound first.
-
-> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-
-As this matches with an old local patch of mine:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-However, I'm not gonna apply it, without a fix for the sharing issue.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
