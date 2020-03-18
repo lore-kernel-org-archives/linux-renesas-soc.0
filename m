@@ -2,148 +2,91 @@ Return-Path: <SRS0=ZwCi=5D=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4C9C10DCE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E12C5ACD6
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DB992076F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:55:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PKofjSQG"
+	by mail.kernel.org (Postfix) with ESMTP id 519E62076F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 09:55:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbgCRJz2 (ORCPT
+        id S1727611AbgCRJzd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Mar 2020 05:55:28 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41970 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727405AbgCRJz1 (ORCPT
+        Wed, 18 Mar 2020 05:55:33 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35450 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbgCRJzc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Mar 2020 05:55:27 -0400
-Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B7683F9;
-        Wed, 18 Mar 2020 10:55:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1584525326;
-        bh=jse4p8CidqqLBfDIycC52gS27VGbXSD8DVFN04FkBhI=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PKofjSQGBzrQIfryAQV1sin/dV2PhT7UV+RgFj04ltYIh78rH22lLMitIpksLs7Nz
-         K/nWMMZgra/84SLo1Y65foFv2dudUy7AvHlUOSZzdnFeh0s6um5fyXFi7O90wFJagM
-         0ymjfjBPp7HXgMKP2aH/NOfgCUvU+rX9ysqFVGKg=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH 4/5] dt-bindings: media: max9286: Add reverse channel
- amplitude
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc:     hyunk@xilinx.com, manivannan.sadhasivam@linaro.org,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-References: <20200316202757.529740-1-jacopo+renesas@jmondi.org>
- <20200316202757.529740-5-jacopo+renesas@jmondi.org>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <8c9ef39a-5318-a103-1855-952323670bc1@ideasonboard.com>
-Date:   Wed, 18 Mar 2020 09:55:22 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        Wed, 18 Mar 2020 05:55:32 -0400
+Received: by mail-ot1-f66.google.com with SMTP id k26so24912041otr.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Mar 2020 02:55:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XJpTD+vvN7+5gG/V7nYWXN/sZKHSkwJB7TSrkjSO0CY=;
+        b=kHZQjMGm4hTyqQ42B5reObylkGtoQD+oxq6O04WQNivA4WNYs92s9XGvgmcKh3qhtP
+         2BPBE3wWNQ8UzrryxG2EhouLySodhiXErlA7yz9zHa2ZIgLeUDyTpkc6iD6Fl9Su+HHq
+         q7F1j13E8pjJPZ2hGpa1qGE1J+YhFQJxG3pu4A+5GIlEvKWtcMXhCcjI9ZqFxsAGlFjq
+         KbZHICz2F51NAcOnB5kDm31X9CdjGPTNxOxdyjiabyze8YfTemeKi1aEj1g6yi6zWkjb
+         hJjksW05+6CkR24BSi7gYZFumN1p4iLcX1FR0EHnPG2IyXaKJXyXgIBlTErv3jc/+JSv
+         /mAQ==
+X-Gm-Message-State: ANhLgQ3WIiU+otukqETGzT9gXFFQPTTokuZ60zN5WSENynhTN589BvQU
+        nbD/63lggHzGv+G4FC/yv+A1sy1uQLGmNxjK7FQ=
+X-Google-Smtp-Source: ADFU+vvGy0+oxq8uO8Z4YMCKmDP/juSVykMTm/tgIXcFKGS5VE0uEGJkMoDEDQGLX3/vaXSaQJaKj+6FyJvPo+qILG0=
+X-Received: by 2002:a9d:4d02:: with SMTP id n2mr2899790otf.107.1584525331920;
+ Wed, 18 Mar 2020 02:55:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200316202757.529740-5-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <158452367157.23699.16109085564905174396.sendpatchset@octo>
+In-Reply-To: <158452367157.23699.16109085564905174396.sendpatchset@octo>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 18 Mar 2020 10:55:20 +0100
+Message-ID: <CAMuHMdXZNGMGE6h=dj_fFwDCumcowZt-vifyXBNb4gqOQWj+Ug@mail.gmail.com>
+Subject: Re: [PATCH/RFC] arm64: dts: renesas: salvator-common: gpio-leds prototype
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+Hi Magnus,
 
-On 16/03/2020 20:27, Jacopo Mondi wrote:
-> The MAX9286 chip exposes registers to control the reverse channel
-> amplitude signal. The channel amplitude has to be configured according
-> to the connected remote serializer settings, in order to guarantee
-> reliable communications.
-> 
-> Serializer might be pre-programmed and initialize with their reverse
-> channel noise threshold level increased. While this is intended to
-> increase the signal/noise immunity ratio on the channel, the
-> deserializer should be initialized accordingly, with its channel
-> amplitude increased to 170mV.
-> 
-> Add to the bindings documentation a required property to allow DTS users
-> to specify the initial setting of the deserializer reverse channel and
-> accommodate different serializer models.
-> 
+On Wed, Mar 18, 2020 at 10:35 AM Magnus Damm <magnus.damm@gmail.com> wrote:
+> From: Magnus Damm <damm+renesas@opensource.se>
+>
+> This patch adds support for a couple of LEDs on Salvator-X and XS boards.
 
-Same comments really as the other property, that these are highly
-dependent upon the serializer which is connected, so I wonder if there's
-a better way to describe that association / communication requirement.
+Thanks for your patch!
 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  .../bindings/media/i2c/maxim,max9286.yaml     | 21 +++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-> index ee8e0418b3f0..a1c56734a727 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-> @@ -54,6 +54,25 @@ properties:
->      allOf:
->        - $ref: /schemas/types.yaml#/definitions/uint32
->  
-> +  maxim,reverse-channel-amplitude:
-> +    description: |
-> +      The reverse channel amplitude initial value, in milliVolts. If the remote
+> I've verified that LED4, LED5 and LED6 work by exporting GPIOs for GP6_11,
+> GP6_12 and GP6_13 on the board on port 9011. This patch has not yet been
+> tested though. Also to make matters slightly more complicated, even if LEDs
+> might work with this patch as-is, the code in this patch is most likely not
+> suitable for upstream consumption. This since SW20, SW21 and SW22 are also
+> using the same GPIOs as the LEDs.
 
-Should there be a newline after milliVolts. ? That seems like a brief,
-followed by a description but all flowing together?
+Indeed. I think we should add kernel support for sharing GPIOs this way,
+before we can describe the LEDs in DT.  Else we'll introduce a regression,
+depending on which driver is bound first.
 
-> +      serializer is pre-programmed with an high reverse channel noise threshold,
+> Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 
-/an/a/
+As this matches with an old local patch of mine:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +      the deserializer channel amplitude shall initially be increased to 170mV
-> +      to allow the two to communicate reliably. Likewise, if the remote
-> +      serializer probes without an increased reverse channel noise threshold,
-> +      the deserializer initial reverse channel amplitude should be set to 100mV
-> +      to be later increased to 170mV after serializers have increased their
+However, I'm not gonna apply it, without a fix for the sharing issue.
 
-/after/after the/
+Gr{oetje,eeting}s,
 
-> +      reverse channel noise threshold.
-> +    maxItems: 1
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32
-> +    # The property can be easily expanded to support more values if needed,
-> +    # but that's what's supported today by the driver.
+                        Geert
 
-Stating "that's what's supported today" seems a bit redundant...
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> +    oneOf:
-> +      - const: 100
-> +      - const: 170
-> +
->    ports:
->      type: object
->      description: |
-> @@ -155,6 +174,7 @@ required:
->    - compatible
->    - reg
->    - maxim,overlap-window
-> +  - maxim,reverse-channel-amplitude
->    - ports
->    - i2c-mux
->  
-> @@ -177,6 +197,7 @@ examples:
->          poc-supply = <&camera_poc_12v>;
->          enable-gpios = <&gpio 13 GPIO_ACTIVE_HIGH>;
->          maxim,overlap-window = MAX9286_OVLP_WINDOW_DISABLED;
-> +        maxim,reverse-channel-amplitude = <170>;
->  
->          ports {
->            #address-cells = <1>;
-> 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
