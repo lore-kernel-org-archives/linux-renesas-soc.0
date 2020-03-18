@@ -2,96 +2,73 @@ Return-Path: <SRS0=ZwCi=5D=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622D9C5ACD9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 00:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD5DC10DCE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 08:09:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 279DD20663
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 00:25:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZjKxqJdP"
+	by mail.kernel.org (Postfix) with ESMTP id B92242076C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Mar 2020 08:09:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbgCRAZZ (ORCPT
+        id S1726713AbgCRIJo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 Mar 2020 20:25:25 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:59906 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727190AbgCRAZZ (ORCPT
+        Wed, 18 Mar 2020 04:09:44 -0400
+Received: from mga05.intel.com ([192.55.52.43]:23169 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726513AbgCRIJo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Mar 2020 20:25:25 -0400
-Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3A7F51AF4;
-        Wed, 18 Mar 2020 01:25:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1584491123;
-        bh=F9fnX25PXHg69eh7lpuMOqNiq3h0+N0RLw+RaLbWWnw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZjKxqJdPkq8HYXxvfCedlI4EVGRfUM0pNK/oLY9bpqhsdnWKTDcfk6hB9zVEgZ1yq
-         WBjjXrTiqN/Mjo+ciEGFFFu/vHmqw1j9sFF33pI9IEBMgTyYKfqfG1f8eYBg1kJt5b
-         BSsEOio4FAaJ29iKT7r1+yomyRZocADmoOSXCR7o=
-From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To:     linux-media@vger.kernel.org
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Wed, 18 Mar 2020 04:09:44 -0400
+IronPort-SDR: xr1h9kt92B+Eu9zL4V2G7UaCg+FyJWN51Gqq1M4dFh1s+X+6aux4skrrcMCTh0OEnFzW9sb8rV
+ YtJeX6P4oa1w==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Mar 2020 01:09:43 -0700
+IronPort-SDR: SYeGGI/zMfxiDiUqCzYhWZ+2jm1KNnPSyWfZxkCXU8ZO37cfu22TERAlTZtbtDlD+M/pjATiZW
+ VdULDqwXNogw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,566,1574150400"; 
+   d="scan'208";a="238130765"
+Received: from jsowinsk-mobl.ger.corp.intel.com (HELO mara.localdomain) ([10.249.156.87])
+  by fmsmga008.fm.intel.com with ESMTP; 18 Mar 2020 01:09:41 -0700
+Received: from sailus by mara.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@linux.intel.com>)
+        id 1jETli-0000YQ-Ou; Wed, 18 Mar 2020 10:09:38 +0200
+Date:   Wed, 18 Mar 2020 10:09:38 +0200
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     linux-media@vger.kernel.org,
         Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Lad Prabhakar <prabhakar.csengg@gmail.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 4/4] media: v4l2-async: Don't check fwnode name to detect endpoint
-Date:   Wed, 18 Mar 2020 02:25:07 +0200
-Message-Id: <20200318002507.30336-5-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200318002507.30336-1-laurent.pinchart+renesas@ideasonboard.com>
+Subject: Re: [PATCH v2 2/4] media: v4l2-async: Pass notifier pointer to match
+ functions
+Message-ID: <20200318080937.GB2101@mara.localdomain>
 References: <20200318002507.30336-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20200318002507.30336-3-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200318002507.30336-3-laurent.pinchart+renesas@ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Use the presence of a "remote-endpoint" property to detect if a fwnode
-is an endpoint node, as checking the node name won't work on ACPI-based
-implementations.
+On Wed, Mar 18, 2020 at 02:25:05AM +0200, Laurent Pinchart wrote:
+> The notifier is useful to match functions to access information about
+> the device matching a subdev. This will be used to print messages using
+> the correct struct device and driver name.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/media/v4l2-core/v4l2-async.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
-index 9f393a7be455..a5f83ba502df 100644
---- a/drivers/media/v4l2-core/v4l2-async.c
-+++ b/drivers/media/v4l2-core/v4l2-async.c
-@@ -78,7 +78,6 @@ static bool match_fwnode(struct v4l2_async_notifier *notifier,
- 	bool asd_fwnode_is_ep;
- 	bool sd_fwnode_is_ep;
- 	struct device *dev;
--	const char *name;
- 
- 	/*
- 	 * Both the subdev and the async subdev can provide either an endpoint
-@@ -92,10 +91,10 @@ static bool match_fwnode(struct v4l2_async_notifier *notifier,
- 	 * Otherwise, check if the sd fwnode and the asd fwnode refer to an
- 	 * endpoint or a device. If they're of the same type, there's no match.
- 	 */
--	name = fwnode_get_name(sd->fwnode);
--	sd_fwnode_is_ep = name && strstarts(name, "endpoint");
--	name = fwnode_get_name(asd->match.fwnode);
--	asd_fwnode_is_ep = name && strstarts(name, "endpoint");
-+	sd_fwnode_is_ep = fwnode_property_present(sd->fwnode,
-+						  "remote-endpoint");
-+	asd_fwnode_is_ep = fwnode_property_present(asd->match.fwnode,
-+						   "remote-endpoint");
- 
- 	if (sd_fwnode_is_ep == asd_fwnode_is_ep)
- 		return false;
 -- 
-Regards,
-
-Laurent Pinchart
-
+Sakari Ailus
