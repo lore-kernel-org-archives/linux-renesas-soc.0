@@ -2,126 +2,180 @@ Return-Path: <SRS0=UqfL=5E=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F5FC4332E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Mar 2020 17:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B5BC4332B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Mar 2020 17:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04FD6207FC
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Mar 2020 17:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D4E320836
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Mar 2020 17:42:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbgCSRFd (ORCPT
+        id S1727537AbgCSRmG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 19 Mar 2020 13:05:33 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:41048 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727252AbgCSRFd (ORCPT
+        Thu, 19 Mar 2020 13:42:06 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:59047 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbgCSRmG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 19 Mar 2020 13:05:33 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 1AAD32002D;
-        Thu, 19 Mar 2020 18:05:24 +0100 (CET)
-Date:   Thu, 19 Mar 2020 18:05:22 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Thomas Zimmermann <tzimmermann@suse.de>,
-        Daniel Vetter <daniel@ffwll.ch>,
+        Thu, 19 Mar 2020 13:42:06 -0400
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MORN0-1ivo7k0Cbu-00Pz7Q; Thu, 19 Mar 2020 18:41:50 +0100
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id B7A7B65021B;
+        Thu, 19 Mar 2020 17:41:49 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id zJ0c4ug5kAPk; Thu, 19 Mar 2020 18:41:49 +0100 (CET)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 517E264F8ED;
+        Thu, 19 Mar 2020 18:41:49 +0100 (CET)
+Received: from pflmari.corp.cetitec.com (10.8.5.52) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Thu, 19 Mar 2020 18:41:49 +0100
+Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
+        id 9E04D8050C; Thu, 19 Mar 2020 18:41:48 +0100 (CET)
+Date:   Thu, 19 Mar 2020 18:41:48 +0100
+From:   Alex Riesen <alexander.riesen@cetitec.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH v2 02/10] media: adv748x: include everything adv748x.h needs
+ into the file
+Message-ID: <fe109d58eaa34d68cad0f34bb048f827b336e024.1584639664.git.alexander.riesen@cetitec.com>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Jose Roberto de Souza <jose.souza@intel.com>,
-        virtualization@lists.linux-foundation.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-mediatek@lists.infradead.org,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        linux-amlogic@lists.infradead.org, linux-tegra@vger.kernel.org,
-        Dave Airlie <airlied@redhat.com>,
-        amd-gfx@lists.freedesktop.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org,
-        Emil Velikov <emil.velikov@collabora.com>
-Subject: Re: [PATCH v1 0/3] drm: drm_encoder_init() =>
- drm_encoder_init_funcs()
-Message-ID: <20200319170522.GA29213@ravnborg.org>
-References: <20200313201744.19773-1-sam@ravnborg.org>
- <20200319141954.GA25036@ravnborg.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <cover.1584639664.git.alexander.riesen@cetitec.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20200319141954.GA25036@ravnborg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=eMA9ckh1 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=e5mUnYsNAAAA:8
-        a=9MVmhzcSsuuJt3ktV8oA:9 a=CjuIK1q_8ugA:10 a=Vxmtnl_E_bksehYqCbjh:22
+In-Reply-To: <cover.1584639664.git.alexander.riesen@cetitec.com>
+X-Originating-IP: [10.8.5.52]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A290D7F536A6D7762
+X-Provags-ID: V03:K1:FHxeNjGlIL7NzarJSPnLpbfeHB9uBfXDTSMuryQpyLu9Ee7QL4W
+ cyHLH9BjLgtvX3Up1fHkJk1x3oQvGZZu2nsQEBQftJgEHGxFJiKo8RClAoRE3uyZ526t/wv
+ YwGDdYlSP40KxGOUYds9L9lhGtR3M1CXWPpVSd5GTIGdpojWw32pqnHGTmf/I1ONnFwipMk
+ 9NB5bfT6vPJquo5wetmtw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Uu9yQPd1gcU=:hz1qzK2t6UBTEhWh44qlRL
+ UnT0ILN1Dg+H3Q3Xuht2QR7b+NRmfiztGZCJBTtVm+MjiZDsj8r/+tEEW/Xco2BhskekfoyFS
+ q0LoQAmkJKx+aBgR7RA+rN0fcecqrhWaz6LxvMk7Sr6NF0wuPOpOShVcmgPTbzRH8bj7So+be
+ XYX/Y5DQFV6ULNpfZdCExmVn4fqs0KeQEo5RzS/5xR/BJ/A+ZfnRHCyeODvPrWsyTSS0YkacF
+ vtXuICJ0Noe9kyZsM/XyRBLACmMfUe0SIUHmWEXx+zMYlJGD9Kz/9AwHlQExCgapSgRHIterd
+ j074Jm6e+c35XR2Z2eLx/jKAqa7Y0bI8gJpKhga0cWI9Txl7KRxRHp/Br6/KwEfVr90HZr7Sl
+ 69vrscCga3pUHCUQkZ9RxQqKTkAo/gggM/6EWtWDvkVdR+QmcSLqQHWzvjuvzY4LIAzMzeaRE
+ vmbO1msBdF9NBSu/JeKs7GnC/2BHY+JhRim/SBiWEO0r8Ge+kueoy12ryd76mWAPsxfR25AaO
+ qrAJRZzcE4qPUINg1d9JZYN9cNWcYccS+Z7iiOKax6eekzfxgRhEsthJUxj/L5Zeiz15HXB/S
+ NfjtKMoP2b3qfwBOuXy07q8omWmmlk8E8raNXZEEQMU57cZohSAhB4p6yOBEkUV8vz3I50caw
+ nKjSB+qXX73TDT522MWiCm7vORds1sYYppU6gO6VxS7bOuAE9dxTomrRxiUhGlvPyyXDdtTQ2
+ XIKzPTz51S+jf4gSnjrZya1JdkDhGJjcXtf7alNB4ym7FxaCI//mTDrYC4ovUPwKrEi67YCMc
+ N4L+RoQ4mX7MtMRM/fHVer9bHB9XmuZH4X2KJajmW6Gyo9trm8oAfFwnpDuneFLyRBx+LO2
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 03:19:54PM +0100, Sam Ravnborg wrote:
-> On Fri, Mar 13, 2020 at 09:17:41PM +0100, Sam Ravnborg wrote:
-> > Thomas Zimmermann had made a nice patch-set that introduced
-> > drm_simple_encoder_init() which is already present in drm-misc-next.
-> > 
-> > While looking at this it was suddenly obvious to me that
-> > this was functionalty that really should be included in drm_encoder.c
-> > The case where the core could handle the callback is pretty
-> > common and not part of the simple pipe line.
-> > 
-> > So after some dialog on dri-devel the conclusion was to go for
-> > a change like this:
-> > 
-> >     drm_encoder_init_funcs() for all users that specified a
-> >     drm_encoder_funcs to extend the functionality.
-> > 
-> >     drm_encoder_init() for all users that did not
-> >     need to extend the basic functionality with
-> >     drm_encoder_funcs.
-> > 
-> > A similar approach with a _funcs() prefix is used elsewhere in drm/
-> > 
-> > This required a rename of the existing users, and
-> > a follow-up patch that moves drm_simple_encoder_init()
-> > to drm_encoder.c
-> > 
-> > Patches 3 in this set demonstrate the use of drm_encoder_init().
-> > There are many more drivers that can be converted as Thomas
-> > has already demonstrated.
-> > 
-> > This is all based on work done by Thomas Zimmermann,
-> > I just wanted to implement my suggestion so
-> > we could select the best way forward.
-> > 
-> > Note: Daniel Vetter has hinted the approach implemented
-> > here smelled like middle-layer.
-> > IMO this is not so, it is just a way to handle cleanup
-> > for the simple cases.
-> 
-> We discussed this patch-set briefly on irc.
-Just to clarify, we in this context was Daniel Vetter & me.
+To follow the established practice of not depending on others to
+pull everything in.
 
-	Sam
+Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
+---
+ drivers/media/i2c/adv748x/adv748x-afe.c  | 2 --
+ drivers/media/i2c/adv748x/adv748x-core.c | 2 --
+ drivers/media/i2c/adv748x/adv748x-csi2.c | 2 --
+ drivers/media/i2c/adv748x/adv748x-hdmi.c | 2 --
+ drivers/media/i2c/adv748x/adv748x.h      | 2 ++
+ 5 files changed, 2 insertions(+), 8 deletions(-)
 
-> With the upcoming drmm_ changes and such this is bad timing..
-> And in the end this may be pointless code-chrunch.
-> 
-> Patch-set shelfed for now - may re-visit it later.
-> 
-> 	Sam
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
+index dbbb1e4d6363..ab0479641c10 100644
+--- a/drivers/media/i2c/adv748x/adv748x-afe.c
++++ b/drivers/media/i2c/adv748x/adv748x-afe.c
+@@ -11,8 +11,6 @@
+ #include <linux/mutex.h>
+ #include <linux/v4l2-dv-timings.h>
+ 
+-#include <media/v4l2-ctrls.h>
+-#include <media/v4l2-device.h>
+ #include <media/v4l2-dv-timings.h>
+ #include <media/v4l2-ioctl.h>
+ 
+diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+index c3fb113cef62..345f009de121 100644
+--- a/drivers/media/i2c/adv748x/adv748x-core.c
++++ b/drivers/media/i2c/adv748x/adv748x-core.c
+@@ -20,8 +20,6 @@
+ #include <linux/slab.h>
+ #include <linux/v4l2-dv-timings.h>
+ 
+-#include <media/v4l2-ctrls.h>
+-#include <media/v4l2-device.h>
+ #include <media/v4l2-dv-timings.h>
+ #include <media/v4l2-fwnode.h>
+ #include <media/v4l2-ioctl.h>
+diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+index c43ce5d78723..78d391009b5a 100644
+--- a/drivers/media/i2c/adv748x/adv748x-csi2.c
++++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+@@ -8,8 +8,6 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ 
+-#include <media/v4l2-ctrls.h>
+-#include <media/v4l2-device.h>
+ #include <media/v4l2-ioctl.h>
+ 
+ #include "adv748x.h"
+diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+index c557f8fdf11a..0dffcdf79ff2 100644
+--- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
++++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+@@ -8,8 +8,6 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ 
+-#include <media/v4l2-ctrls.h>
+-#include <media/v4l2-device.h>
+ #include <media/v4l2-dv-timings.h>
+ #include <media/v4l2-ioctl.h>
+ 
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index fccb388ce179..09aab4138c3f 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -19,6 +19,8 @@
+  */
+ 
+ #include <linux/i2c.h>
++#include <media/v4l2-ctrls.h>
++#include <media/v4l2-device.h>
+ 
+ #ifndef _ADV748X_H_
+ #define _ADV748X_H_
+-- 
+2.25.1.25.g9ecbe7eb18
+
+
