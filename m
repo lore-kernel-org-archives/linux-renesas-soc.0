@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 991B9C43333
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Mar 2020 00:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F09C4332E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Mar 2020 00:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71A602076C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Mar 2020 00:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDC2D20767
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 19 Mar 2020 00:47:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fh/RzErH"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LrpwXq8c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726975AbgCSArR (ORCPT
+        id S1727065AbgCSArS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Mar 2020 20:47:17 -0400
+        Wed, 18 Mar 2020 20:47:18 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:47832 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbgCSArQ (ORCPT
+        with ESMTP id S1726623AbgCSArS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Mar 2020 20:47:16 -0400
+        Wed, 18 Mar 2020 20:47:18 -0400
 Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C90A3AC0;
-        Thu, 19 Mar 2020 01:47:12 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 18432D06;
+        Thu, 19 Mar 2020 01:47:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1584578833;
-        bh=t//QKgx8j40kBlNhFhrOancZrZPaOlqCCuR4YW+nm/4=;
+        s=mail; t=1584578834;
+        bh=06ZhRwdfDTzjkna8qH6E4M0yAR/n+LrxpXhfUMJ61yU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fh/RzErHpj+l+hS6RXV7OIUA+N7xLjjmNMDCSO3bxea+0HV6KFXLfJjj9gR3DK8N5
-         gXA3LY0XfG9sntpLpr8bGlo9sd9U4DCYUJT0roNr6VOYgHUZMKeukujKUouBQngfIN
-         w45hoklES0ZlGPeESuAauaID2NYrn+imXW2+E5pU=
+        b=LrpwXq8cTw5b2KyOlKuyiUZtNNiPIgOkDPyYD/7bA1L5AaNFLAnnCorROXn4Pv5BH
+         wa13DmmdGEbplcE/Ll4klD2y67hJ0Kf29uq5jTaR/J9UvmqiVUgGyC8tlw0opqs+BB
+         1kwh/kcTGjngM8C8B4mprtOgHB/JcfApHAn7MEpM=
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     linux-media@vger.kernel.org
 Cc:     Helen Koike <helen.koike@collabora.com>,
@@ -41,9 +41,9 @@ Cc:     Helen Koike <helen.koike@collabora.com>,
         linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v6 3/5] rcar-vin: Make use of V4L2_CAP_IO_MC
-Date:   Thu, 19 Mar 2020 02:46:59 +0200
-Message-Id: <20200319004701.30416-4-laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v6 5/5] vimc: Make use of V4L2_CAP_IO_MC
+Date:   Thu, 19 Mar 2020 02:47:01 +0200
+Message-Id: <20200319004701.30416-6-laurent.pinchart@ideasonboard.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200319004701.30416-1-laurent.pinchart@ideasonboard.com>
 References: <20200319004701.30416-1-laurent.pinchart@ideasonboard.com>
@@ -57,58 +57,49 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Set the V4L2_CAP_IO_MC capability flag and remove the driver specific
-vidioc_enum_input, vidioc_g_input and vidioc_s_input callbacks for the
-media controller enabled part of the driver.
+Set the V4L2_CAP_IO_MC capability flag to report this vimc
+inputs/outputs are controlled by the media graph.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 ---
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
+Changes since v5:
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 5ff565e76bca..f062251250fb 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -751,18 +751,6 @@ static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
- 	return 0;
- }
+- Wrap line longer than 80 characters
+- Implement mbus_code filtering for format enumeration
+---
+ drivers/media/platform/vimc/vimc-capture.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/vimc/vimc-capture.c b/drivers/media/platform/vimc/vimc-capture.c
+index 76c015898cfd..86b3580a746f 100644
+--- a/drivers/media/platform/vimc/vimc-capture.c
++++ b/drivers/media/platform/vimc/vimc-capture.c
+@@ -146,7 +146,12 @@ static int vimc_cap_s_fmt_vid_cap(struct file *file, void *priv,
+ static int vimc_cap_enum_fmt_vid_cap(struct file *file, void *priv,
+ 				     struct v4l2_fmtdesc *f)
+ {
+-	const struct vimc_pix_map *vpix = vimc_pix_map_by_index(f->index);
++	const struct vimc_pix_map *vpix;
++
++	if (f->mbus_code)
++		vpix = vimc_pix_map_by_code(f->mbus_code);
++	else
++		vpix = vimc_pix_map_by_index(f->index);
  
--static int rvin_mc_enum_input(struct file *file, void *priv,
--			      struct v4l2_input *i)
--{
--	if (i->index != 0)
--		return -EINVAL;
--
--	i->type = V4L2_INPUT_TYPE_CAMERA;
--	strscpy(i->name, "Camera", sizeof(i->name));
--
--	return 0;
--}
--
- static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
- 	.vidioc_querycap		= rvin_querycap,
- 	.vidioc_try_fmt_vid_cap		= rvin_mc_try_fmt_vid_cap,
-@@ -770,10 +758,6 @@ static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
- 	.vidioc_s_fmt_vid_cap		= rvin_mc_s_fmt_vid_cap,
- 	.vidioc_enum_fmt_vid_cap	= rvin_enum_fmt_vid_cap,
+ 	if (!vpix)
+ 		return -EINVAL;
+@@ -447,7 +452,8 @@ struct vimc_ent_device *vimc_cap_add(struct vimc_device *vimc,
  
--	.vidioc_enum_input		= rvin_mc_enum_input,
--	.vidioc_g_input			= rvin_g_input,
--	.vidioc_s_input			= rvin_s_input,
--
- 	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
- 	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
- 	.vidioc_querybuf		= vb2_ioctl_querybuf,
-@@ -945,6 +929,7 @@ int rvin_v4l2_register(struct rvin_dev *vin)
- 	vin->format.colorspace = RVIN_DEFAULT_COLORSPACE;
- 
- 	if (vin->info->use_mc) {
-+		vdev->device_caps |= V4L2_CAP_IO_MC;
- 		vdev->ioctl_ops = &rvin_mc_ioctl_ops;
- 	} else {
- 		vdev->ioctl_ops = &rvin_ioctl_ops;
+ 	/* Initialize the video_device struct */
+ 	vdev = &vcap->vdev;
+-	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
++	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING
++			  | V4L2_CAP_IO_MC;
+ 	vdev->entity.ops = &vimc_cap_mops;
+ 	vdev->release = vimc_cap_release;
+ 	vdev->fops = &vimc_cap_fops;
 -- 
 Regards,
 
