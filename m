@@ -2,145 +2,116 @@ Return-Path: <SRS0=uiuT=5F=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 864D5C4332D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Mar 2020 11:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C84C43332
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Mar 2020 13:27:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 605942076E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Mar 2020 11:12:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFFE52076E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Mar 2020 13:27:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D5pq5EEf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726955AbgCTLMS (ORCPT
+        id S1727142AbgCTN1P (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 20 Mar 2020 07:12:18 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:52011 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726726AbgCTLMS (ORCPT
+        Fri, 20 Mar 2020 09:27:15 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42506 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726814AbgCTN1O (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Mar 2020 07:12:18 -0400
-Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MwQGj-1jVx2Q3zC1-00sR4z; Fri, 20 Mar 2020 12:12:00 +0100
-Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id D346464D8E7;
-        Fri, 20 Mar 2020 11:11:58 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at cetitec.com
-Received: from mail.cetitecgmbh.com ([127.0.0.1])
-        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id hbhxwVzTYJeb; Fri, 20 Mar 2020 12:11:58 +0100 (CET)
-Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 7E4DC64BDF2;
-        Fri, 20 Mar 2020 12:11:58 +0100 (CET)
-Received: from pflmari.corp.cetitec.com (10.8.5.41) by
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Fri, 20 Mar 2020 12:11:58 +0100
-Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
-        id DDC578050D; Fri, 20 Mar 2020 12:11:57 +0100 (CET)
-Date:   Fri, 20 Mar 2020 12:11:57 +0100
-From:   Alex Riesen <alexander.riesen@cetitec.com>
+        Fri, 20 Mar 2020 09:27:14 -0400
+Received: by mail-lj1-f193.google.com with SMTP id q19so6347621ljp.9;
+        Fri, 20 Mar 2020 06:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wc4bfjrR+uREaIIZaXwsklhD3AeNPjVXLEgTl+fkFC8=;
+        b=D5pq5EEfn55+AsWz/yn9b30LsZ4b40DJoub3Vv9dg1p0+ouxIPliu6inR7N0AIY0CS
+         L+6oHD+IoJFVQCLsrcfJ32s+nVNe54KTCw3jq2PRP1dBF0Dkx7snD/fzFZGfFdPTo5Jc
+         8iBYW1H+xkGs/aBwWC/EFdFk1F8qtnjDYxVvZDlqqysJ+PhloDoo1uuxJFnvVByEO/4z
+         zD1afdj5LQSrUvfcKujfGHdZr3Zt1iDh4ERUknHtMpfM22Mw0veoS3ffn+cSUVsUAcMs
+         addb/FGOVI4BpFv4fRA7PAdCe1Buyqc8XVUCgkg56RbOBI/pHJ2tJncDj3eCjRXDfNL7
+         dHTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wc4bfjrR+uREaIIZaXwsklhD3AeNPjVXLEgTl+fkFC8=;
+        b=ZRATtNNCD0grREFl+LtMlJ9VJhVTo5xozPs4oJxTuH26ljCdGGzTJDCFBT2K1FmhPY
+         eSkMS7NT5BnrY8QgELEWv9acfaMOMWo8Jau2JzVMddZUndhxcY2LAX/lvGRfP4uyYeFq
+         0bHXG7dEXgL5kFjZYDyo+1IEaogTeOr/sQC/i8dduGobyCq8tw0j75YulQIVyl/K2sEQ
+         n/qxVKofHFBkLhZE/jYXGxUu/DfOZxFapVltQkQltxVyRfi5Bb6LM3/jUJ0cXGj/p/MC
+         bSJSDD/ZyiGy+PJTavsNK9D6GkkR6I9s5dMZ2nj1N+7i9YqMQJdlW7yMwlvwGdhnoA93
+         36TA==
+X-Gm-Message-State: ANhLgQ2Jrq+eiR8syiWG9fi0QKFWF8aGK8dmvsXNRfSkxBSY5bBPtJ5/
+        53DZgVVa3TGzppUZJl2sktqGbK6x
+X-Google-Smtp-Source: ADFU+vs9X33ooryzjZDTx+xNfE4vhyGx9fcHpid/WypfKXilGP2kWn2XGuDr4xWIPUYqj1dEeoo3kw==
+X-Received: by 2002:a2e:8095:: with SMTP id i21mr5526453ljg.193.1584710829378;
+        Fri, 20 Mar 2020 06:27:09 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
+        by smtp.googlemail.com with ESMTPSA id c2sm3315589lja.84.2020.03.20.06.27.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 20 Mar 2020 06:27:08 -0700 (PDT)
+Subject: Re: [PATCH v2] ARM: boot: Obtain start of physical memory from DTB
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nicolas Pitre <nico@fluxnic.net>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 05/10] media: adv748x: add support for HDMI audio
-Message-ID: <20200320111157.GH4344@pflmari>
-Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <cover.1584639664.git.alexander.riesen@cetitec.com>
- <252bb433f47b0ccb61bb077abdbd892091abc550.1584639664.git.alexander.riesen@cetitec.com>
- <CAMuHMdXOAQtuxCAfb=sZKodyJWwSrf-GO-pdV3HYkOytQW4ENg@mail.gmail.com>
- <20200320105846.GG4344@pflmari>
- <CAMuHMdVRJZ+RLSxeFdXXPntVxCUMd-Ai+=vizFrvN-CHNW=kjA@mail.gmail.com>
+        Chris Brandt <chris.brandt@renesas.com>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>,
+        Eric Miao <eric.miao@nvidia.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <CGME20200225112354eucas1p1300749b32c6809b6a22194c1a952a68c@eucas1p1.samsung.com>
+ <20200127140716.15673-1-geert+renesas@glider.be>
+ <d1b12473-5199-1cf6-25d1-a6ce79450e8e@samsung.com>
+ <CAMuHMdUGu4eStpYp5W0SKJd8yrLLDTgF4__Jq_n+Z7SWtPM+Cg@mail.gmail.com>
+ <90c006f2-8c13-2976-008f-37139ca49f37@gmail.com>
+ <CAMuHMdVkhf+4CQwpf9tn3UfaMb=qoRRYS2XpwcgBMciTVmXjHA@mail.gmail.com>
+ <75358399-c292-4e60-abdc-bd0729cf5c08@gmail.com>
+ <CAMuHMdX9PH+WUvONz2C8D1fRrZXn5rEND-p_my2mYvoyxF_gWA@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0c70b161-64e8-7765-cc4f-112c2cec9a29@gmail.com>
+Date:   Fri, 20 Mar 2020 16:27:07 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVRJZ+RLSxeFdXXPntVxCUMd-Ai+=vizFrvN-CHNW=kjA@mail.gmail.com>
-X-Originating-IP: [10.8.5.41]
-X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A290D7F536A6D776A
-X-Provags-ID: V03:K1:YmOpyUa1MX2lar3B2/y59QLL71WDNBwoqzE32XfFiajWx1ZGlRb
- n0Eu/6ecTjm7w+oQXq5gUy4REoDz0ZOaz3lXwPFzceyx6i7mL99o2f0ImAoZCEkYuLakZuR
- GW6GdLy7a4CbkUqoEzP8MjkSf5f9JpKK+OS77rsxVyJ4VH7QTOPXsk/OnQthu0g7y/dP482
- p0UYIgjNFGv/Sk0tSyKfA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:u/NT0LgJThw=:vTOcMP6mPnOiUJk3sPV2D6
- PPwbPAoPvfmF8jrgslYHjumhiEy9NIQNL7LUhRo0RmsC8CXbpAxhZUXU9pAg4Uv4SM+mkL1S0
- WQAYI5jFCgHWbk+FpTgBChzx7xD2WB5kiNvcVInp9fy/IGUnavrsgAH4SXs5nY7L78WTceQoB
- m2HAeXIjGF8y6EXKGL5j/nw7ik2miuvsVvkLUH+v7Zeuuv+ncyspaXaVbqxhvvTXWhL6671qS
- bexNOEWYOFeawVs62Fax4KoLGVtHHZDK3qRFD7mCUXLPMhSJ3HoDvcWX946YFPrRQUBCiC8Ze
- BxFuYYYCTQu7bKqLufipPxeJ7wX/5Cmsr7h28wBq4m54cDsg5KRXZgZ8ZvoYny0DrMa8dbz/B
- RWBXsEQQoraQeAR6KXtht7dySHtafFRg1m134QLqoZiwGlLNVcmKa+nnLJZ0YUpjX1RUu3rcn
- gV+s0txu7tJLbk0+N0lFEuvdXp3fuQGVQfmV7fFq4Yns9iIsc3HaGvXmm96wNsy7jJmkfK0ba
- yv8oKhKcbAMK1cBnZlAupU60+IwegjFM/WWwKtzPMtu9kZqHpNj4/gq+hvwhn5FEamMWnpl1S
- EVowToSwyOu+ShGWHxAPSXIokoQf4nSCpBrp/pxeLHmSDAoXpvy4iEJpPQ52BWGjFNZgYK6gX
- F8sp8mQKhRn2rgS5loGD/7Z+QXBR05UYm9OXcrGIN1CLDI4eQ3CW+QQq4rIDyQkf842NQ1Ma8
- HeJ0hIdSWwOHyIR7uSWFpJ7o3exySMgGAJaUl5LnEfHUVc59aNZGF7lAjh7GjCypwV8LaCoiO
- h1uVdSsu6t+PgwFH6l/GH2OT3SlaqUgmEeNswRE11n7kdNNH2aWq1Tx5l2/B4i40XggL7fI
+In-Reply-To: <CAMuHMdX9PH+WUvONz2C8D1fRrZXn5rEND-p_my2mYvoyxF_gWA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
-
-Geert Uytterhoeven, Fri, Mar 20, 2020 12:05:20 +0100:
-> On Fri, Mar 20, 2020 at 11:58 AM Alex Riesen <alexander.riesen@cetitec.com> wrote:
-> > Geert Uytterhoeven, Fri, Mar 20, 2020 09:43:29 +0100:
-> > > On Thu, Mar 19, 2020 at 6:42 PM Alex Riesen <alexander.riesen@cetitec.com> wrote:
-> > > > This adds an implemention of SoC DAI driver which provides access to the
-> > > > I2S port of the device.
-> >
-> > I just noticed I don't do clk_prepare_enable anywhere.
-> > Shouldn't the clock master enable its clocks somewhere?
+20.03.2020 12:18, Geert Uytterhoeven пишет:
+...
+> Thanks for the info!
 > 
-> Usually the consumer is responsible for doing that.
-> Does the rcar-sound driver do that?
+>> I recalled that CONFIG_THUMB2_KERNEL=y is set in my kernel's config and
+>> disabling thumb2 build fixes the problem. Please correct it in the next
+>> version of the patch, thanks in advance.
+> 
+> Interesting.  I enabled CONFIG_THUMB2_KERNEL=y, and it doesn't make
+> a difference for the few board combos I've tried (with/without appended DTB).
+> So it must be related to ATAGS.  Will dive deeper...
+> 
+> P.S. I never realized CONFIG_THUMB2_KERNEL=y had such a big size
+> impact: my kernel shrunk by ca. 1 MiB.
 
-No, it does not (verified by /sys/kernel/debug/clk/clk_summary during
-transfer).
+A quick observation tells that fdt_get_mem_start() returns a wrong
+address with CONFIG_THUMB2_KERNEL=y, I haven't tried to look further yet.
 
-> But in this case, perhaps the clock should be enabled implicitly in response
-> to a request from the audio subsystem, like you do below.
+Disabling all ATAGS options in kernel's config doesn't help.
 
-Ok...
-
-> Note that you register a fixed-rate clock, which is assumed to be always
-> enabled. Perhaps a gateable clock type is more appropriate?
-
-The gated clock implementation requires use of an I/O register, which I don't
-have in this case (an I2C connected device).
-
-I considered implementing full clk_hw set of operations, but decided against
-it: it's a lot for this simple configuration. Few other drivers do that, too.
-
-Regards,
-Alex
-
-
+Kernel config:
+https://gist.github.com/digetx/b7c4e1d2d4dae0c5566748c0d7f1e884
