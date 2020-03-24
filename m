@@ -4,32 +4,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68395C54FCE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A72C54FCF
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4222020B80
+	by mail.kernel.org (Postfix) with ESMTP id 696712080C
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Mar 2020 13:57:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbgCXN5I (ORCPT
+        id S1727522AbgCXN5I (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 24 Mar 2020 09:57:08 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:36946 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727580AbgCXN5I (ORCPT
+Received: from albert.telenet-ops.be ([195.130.137.90]:56038 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727867AbgCXN5I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 24 Mar 2020 09:57:08 -0400
 Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id JDwu2200N5USYZQ01Dwulv; Tue, 24 Mar 2020 14:57:05 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id JDwu2200M5USYZQ06Dwua8; Tue, 24 Mar 2020 14:57:07 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jGk34-0006Ow-PZ; Tue, 24 Mar 2020 14:56:54 +0100
+        id 1jGk34-0006Oi-JB; Tue, 24 Mar 2020 14:56:54 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jGk34-0001kr-Nf; Tue, 24 Mar 2020 14:56:54 +0100
+        id 1jGk34-0001kb-Gc; Tue, 24 Mar 2020 14:56:54 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -47,10 +47,12 @@ Cc:     Alexander Graf <graf@amazon.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-gpio@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org, Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v6 8/8] MAINTAINERS: Add GPIO Aggregator section
-Date:   Tue, 24 Mar 2020 14:56:53 +0100
-Message-Id: <20200324135653.6676-8-geert+renesas@glider.be>
+        qemu-devel@nongnu.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: [PATCH v6 3/8] mfd: sm501: Use GPIO_LOOKUP_IDX() helper macro
+Date:   Tue, 24 Mar 2020 14:56:48 +0100
+Message-Id: <20200324135653.6676-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200324135653.6676-1-geert+renesas@glider.be>
 References: <20200324135328.5796-1-geert+renesas@glider.be>
@@ -60,46 +62,62 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a maintainership section for the GPIO Aggregator, covering
-documentation and driver source code.
+i801_add_mux() fills in the GPIO lookup table by manually populating an
+array of gpiod_lookup structures.  Use the existing GPIO_LOOKUP_IDX()
+helper macro instead, to relax a dependency on the gpiod_lookup
+structure's member names.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc: Lee Jones <lee.jones@linaro.org>
 ---
+While this patch is a dependency for "[PATCH v6 4/8] gpiolib: Add
+support for GPIO lookup by line name", it can be applied independently.
+But an Acked-by would be nice, too.
+
+Cover letter and full series at
+https://lore.kernel.org/r/20200324135328.5796-1-geert+renesas@glider.be/
+
 v6:
-  - No changes,
-
-v5:
-  - Add Reviewed-by, Tested-by,
-
-v4:
-  - Drop controversial GPIO repeater,
-
-v3:
   - New.
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/mfd/sm501.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fcd79fc38928fafc..1fad69b956df1162 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7127,6 +7127,13 @@ F:	Documentation/firmware-guide/acpi/gpio-properties.rst
- F:	drivers/gpio/gpiolib-acpi.c
- F:	drivers/gpio/gpiolib-acpi.h
+diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+index e49787e6bb93e5c8..ccd62b963952814e 100644
+--- a/drivers/mfd/sm501.c
++++ b/drivers/mfd/sm501.c
+@@ -1145,22 +1145,14 @@ static int sm501_register_gpio_i2c_instance(struct sm501_devdata *sm,
+ 		return -ENOMEM;
  
-+GPIO AGGREGATOR
-+M:	Geert Uytterhoeven <geert+renesas@glider.be>
-+L:	linux-gpio@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/admin-guide/gpio/gpio-aggregator.rst
-+F:	drivers/gpio/gpio-aggregator.c
-+
- GPIO IR Transmitter
- M:	Sean Young <sean@mess.org>
- L:	linux-media@vger.kernel.org
+ 	lookup->dev_id = "i2c-gpio";
+-	if (iic->pin_sda < 32)
+-		lookup->table[0].chip_label = "SM501-LOW";
+-	else
+-		lookup->table[0].chip_label = "SM501-HIGH";
+-	lookup->table[0].chip_hwnum = iic->pin_sda % 32;
+-	lookup->table[0].con_id = NULL;
+-	lookup->table[0].idx = 0;
+-	lookup->table[0].flags = GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN;
+-	if (iic->pin_scl < 32)
+-		lookup->table[1].chip_label = "SM501-LOW";
+-	else
+-		lookup->table[1].chip_label = "SM501-HIGH";
+-	lookup->table[1].chip_hwnum = iic->pin_scl % 32;
+-	lookup->table[1].con_id = NULL;
+-	lookup->table[1].idx = 1;
+-	lookup->table[1].flags = GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN;
++	lookup->table[0] = (struct gpiod_lookup)
++		GPIO_LOOKUP_IDX(iic->pin_sda < 32 ? "SM501-LOW" : "SM501-HIGH",
++				iic->pin_sda % 32, NULL, 0,
++				GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN);
++	lookup->table[1] = (struct gpiod_lookup)
++		GPIO_LOOKUP_IDX(iic->pin_scl < 32 ? "SM501-LOW" : "SM501-HIGH",
++				iic->pin_scl % 32, NULL, 1,
++				GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN);
+ 	gpiod_add_lookup_table(lookup);
+ 
+ 	icd = dev_get_platdata(&pdev->dev);
 -- 
 2.17.1
 
