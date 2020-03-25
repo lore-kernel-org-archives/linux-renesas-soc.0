@@ -2,56 +2,78 @@ Return-Path: <SRS0=m7mt=5K=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DEA3C43331
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 25 Mar 2020 10:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 645AEC54FD5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 25 Mar 2020 10:04:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E880E20775
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 25 Mar 2020 10:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585130443;
-	bh=eEPRzPyzC3TV5K8T5L6Q0hxmVdznzmxbpP4Zi26dWpU=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=DS9yADh3L7+yoN7aDFj1dZF6j67Wkq1XBZz03G1dwgXvPY3AjJS8YTQGt/nUk4cQS
-	 xjGqCdWdF5dVega2TAgIWgRg6wwg/ZmGHv2QFRHx/rkAoS2XvktFN76ZiINB6e+YpL
-	 hGlSG1F6xE+XEjTRzUy5PBWQkTkBeWwYcp4qC3/A=
+	by mail.kernel.org (Postfix) with ESMTP id 3BBAF2078D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 25 Mar 2020 10:04:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726109AbgCYKAm (ORCPT
+        id S1727521AbgCYKED (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 25 Mar 2020 06:00:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726043AbgCYKAm (ORCPT
+        Wed, 25 Mar 2020 06:04:03 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:45052 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727137AbgCYKED (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Mar 2020 06:00:42 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585130442;
-        bh=eEPRzPyzC3TV5K8T5L6Q0hxmVdznzmxbpP4Zi26dWpU=;
-        h=Subject:From:Date:To:From;
-        b=gEaKE7u/FwT4OhI5QBFOE6xFrG4JwJHdO0vVCEK1faPv2KCTWRubTOTQPywCIC89T
-         AgeQgSLB1XE6fOp04VUAa7NnTrWqb2GGNC+5+F++8AU0AA/IZMq9L2Vz08SBJb8vik
-         YWB14r73ua5S7q4AAvNx/gA3CWP5UxCLtplPqxBc=
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <158513044219.2693.16758369232831744461.git-patchwork-housekeeping@kernel.org>
-Date:   Wed, 25 Mar 2020 10:00:42 +0000
-To:     linux-renesas-soc@vger.kernel.org
+        Wed, 25 Mar 2020 06:04:03 -0400
+Received: from ramsan ([84.195.182.253])
+        by andre.telenet-ops.be with bizsmtp
+        id Ja3y2200o5USYZQ01a3yHU; Wed, 25 Mar 2020 11:04:01 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jH2tC-00033V-Qi; Wed, 25 Mar 2020 11:03:58 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jH2tC-0003Zo-O8; Wed, 25 Mar 2020 11:03:58 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-sh@vger.kernel.org, uclinux-h8-devel@lists.sourceforge.jp,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] gpiolib: gpio_set_config() cleanups
+Date:   Wed, 25 Mar 2020 11:03:55 +0100
+Message-Id: <20200325100357.13705-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v2] dt-bindings: serial: sh-sci: Convert to json-schema (2020-03-25T09:57:21)
-  Superseding: [v1] dt-bindings: serial: sh-sci: Convert to json-schema (2020-03-06T09:07:20):
-    dt-bindings: serial: sh-sci: Convert to json-schema
+	Hi Linus, Bartosz,
 
+This patch sets reworks the parameters for gpio_set_config() and
+gpio_set_bias(), which simplifies callers, and slightly reduces the
+number of lines of code.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (2):
+  gpiolib: Pass gpio_desc to gpio_set_config()
+  gpiolib: Remove unused gpio_chip parameter from gpio_set_bias()
+
+ drivers/gpio/gpiolib.c | 25 ++++++++++---------------
+ 1 file changed, 10 insertions(+), 15 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
