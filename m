@@ -4,183 +4,173 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBF29C43331
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Mar 2020 10:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A17E6C43331
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Mar 2020 10:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 954D52070A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Mar 2020 10:47:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D79C2070A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Mar 2020 10:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbgCZKrB (ORCPT
+        id S1727910AbgCZKts (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 26 Mar 2020 06:47:01 -0400
-Received: from mga18.intel.com ([134.134.136.126]:11389 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727590AbgCZKrB (ORCPT
+        Thu, 26 Mar 2020 06:49:48 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:53377 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726338AbgCZKts (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Mar 2020 06:47:01 -0400
-IronPort-SDR: tuU6C6VMXswslFE2/vpNC1gL/qCYdVzgiT6WwIDmc5cooxd0JEsWIrBAYQARx2HyVZlU1obj8y
- 3ulCDYFDgvTw==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Mar 2020 03:47:00 -0700
-IronPort-SDR: 2XJdjLL7UuKeoerQpYx1WO93F32l+qvizCZvGU9cAiBYS7rR8bRWsofP7ARK0Gu2IbuqJiQrFI
- GU+fcfGl8OWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,308,1580803200"; 
-   d="scan'208";a="265832192"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga002.jf.intel.com with ESMTP; 26 Mar 2020 03:46:59 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jHQ2P-00D5mF-Tr; Thu, 26 Mar 2020 12:47:01 +0200
-Date:   Thu, 26 Mar 2020 12:47:01 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [RFC PATCH] i2c: refactor parsing of timings
-Message-ID: <20200326104701.GM1922688@smile.fi.intel.com>
-References: <20200326101647.1756-1-wsa+renesas@sang-engineering.com>
+        Thu, 26 Mar 2020 06:49:48 -0400
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MGQWr-1j1FCh1kVB-00Gncf for <linux-renesas-soc@vger.kernel.org>; Thu, 26
+ Mar 2020 11:49:46 +0100
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id 3D93765047A
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Mar 2020 10:49:46 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 7-s9PfSjAtCk for <linux-renesas-soc@vger.kernel.org>;
+        Thu, 26 Mar 2020 11:49:45 +0100 (CET)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id DB50C64C209
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Mar 2020 11:49:45 +0100 (CET)
+Received: from pflmari.corp.cetitec.com (10.8.5.79) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Thu, 26 Mar 2020 11:49:45 +0100
+Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
+        id 4A99B80501; Thu, 26 Mar 2020 11:35:25 +0100 (CET)
+Date:   Thu, 26 Mar 2020 11:35:25 +0100
+From:   Alex Riesen <alexander.riesen@cetitec.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: [PATCH v4 4/9] media: adv748x: add definitions for audio output
+ related registers
+Message-ID: <c4314afadd7e0882d8e2cbcbe2fe9c6a46775016.1585218857.git.alexander.riesen@cetitec.com>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <cover.1585218857.git.alexander.riesen@cetitec.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20200326101647.1756-1-wsa+renesas@sang-engineering.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <cover.1585218857.git.alexander.riesen@cetitec.com>
+X-Originating-IP: [10.8.5.79]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A290D7F536A6D7C67
+X-Provags-ID: V03:K1:zhCa0nN+JUbF4TKnnRMo6CRKFni9zSuSstNV0CAEjXMQWPnbeyi
+ Rk6K9gN5ju14SvgpYdVFCC1aHCfRddsN5rWxPLJSfwXCINVhGK83wmaYAMuVJCjhhyc6tMk
+ NJi/TM+4hzGRV3c7y9PhRRSXrhsSjhUihAOkOFhB4YwwtC7lL/H6rzv/ZUz8FqsWl0ovqdC
+ bIL9tRAfLKdpuf7r/EJyA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:bLK/TUmCenE=:BqI8GtTLoVzbMvOwxhFwAR
+ Cw3Ni5hZixaFqtqeLY3nOJViqUywRGiO+xjVNp0V2+xURnGMlgwUaDukQS7ajbaDJkGXTsqYP
+ N6YY3YNvjW8tD570bUnQBsOvcVU+TOgt9li+br8LjqwQiO6uQWzxf1H5/sco4QKwUmvJwx7ty
+ W7Sc3SxMvUbGu/Bay4m9vYbmDSXwkMrbBbddotea3vMbbgzZqRDExbDu1dopS3/wqFhytTk0z
+ zscXbXap4yxvGpnj+VEAf6MyMw0d6g/MUaf3JinZENSQ35Fci/qRXxkntir+qYf4jRUA7bZYO
+ VujMd8K/EcSV7Xd+LO8gXWZix30hMuIKfVqw8nnFZ92cvkC7TCwZK+U4Q2EZsNsBRStVFTXYr
+ DsMxoTCqnsgog7cERpH6+Tfl7089IbOaVgdxKZm3R6b4oAICarm2smMO616hRhnyOg0qETWum
+ aFGjhtWRz5+4VJIaSER4iHYuwCtxVKkpsWEob7maAt445bp1GmMYYhTw6Sc94JtFFebmLaX8j
+ T9SOHErsCQuKcx+KjSPolHBWQ6ij+1UbdvAP3YI6SLLDe9TGxI91OLkMI7zkm14YllZfgQE7P
+ IABFTrzohuZ7UphEuTuwyZLNkPJrIZegHY/JiaMNjyAyNV8KJTkvPcprda7/IZ9PtJTve1kVr
+ 0UQJvSe3FNaTjJIjK7pFl67g5sMuquPpI5OIt/RPXrpFeM9q4kCtMotbzwW/nMH78o6oWjL5t
+ cp1ijDSNJ+Tzz7uCLP2n+GljfuczRF7qad3p3Z7JifGWwyDsfesq1Yoy0NupZU/zR1Bt1Dl5i
+ Vqsk2WSgLTf+et8kceoso3KiRJE0kihMLjVUBi4JdkP86LzJ1OvwtESOJh2DRGyjf0cYaRZ
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Mar 26, 2020 at 11:16:47AM +0100, Wolfram Sang wrote:
-> When I wanted to print the chosen values to debug output, I concluded
-> that a helper function to parse one timing would be helpful.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
-> 
-> I am not entirely happy because 'dev' and 'u' is the same for each call.
-> Then again, we can't use a for-loop over an array of parameters, because
-> some default values depend on previously obtained timings.
-> 
-> Looking for opinions here...
+Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
+---
+ drivers/media/i2c/adv748x/adv748x.h | 32 +++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-No objections. (We may bikeshed about namings, though)
-
-However, looking into the code, I would go a bit further (perhaps as a separate
-change) and export parsing of clock-frequency, because tons of drivers only
-need one property, i.e. clock-frequency out of firmware.
-
-> 
->  drivers/i2c/i2c-core-base.c | 78 ++++++++++++++++++-------------------
->  1 file changed, 38 insertions(+), 40 deletions(-)
-> 
-> diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-> index 474baaf8c9e7..60b0aa246af2 100644
-> --- a/drivers/i2c/i2c-core-base.c
-> +++ b/drivers/i2c/i2c-core-base.c
-> @@ -1609,6 +1609,18 @@ void i2c_del_adapter(struct i2c_adapter *adap)
->  }
->  EXPORT_SYMBOL(i2c_del_adapter);
->  
-> +static void i2c_parse_timing(struct device *dev, char *prop_name, u32 *cur_val_p,
-> +			    u32 def_val, bool use_def)
-> +{
-> +	int ret;
-> +
-> +	ret = device_property_read_u32(dev, prop_name, cur_val_p);
-> +	if (ret && use_def)
-> +		*cur_val_p = def_val;
-> +
-> +	dev_dbg(dev, "%s: %u\n", prop_name, *cur_val_p);
-> +}
-> +
->  /**
->   * i2c_parse_fw_timings - get I2C related timing parameters from firmware
->   * @dev: The device to scan for I2C timing properties
-> @@ -1627,49 +1639,35 @@ EXPORT_SYMBOL(i2c_del_adapter);
->   */
->  void i2c_parse_fw_timings(struct device *dev, struct i2c_timings *t, bool use_defaults)
->  {
-> -	int ret;
-> -
-> -	ret = device_property_read_u32(dev, "clock-frequency", &t->bus_freq_hz);
-> -	if (ret && use_defaults)
-> -		t->bus_freq_hz = I2C_MAX_STANDARD_MODE_FREQ;
-> -
-> -	ret = device_property_read_u32(dev, "i2c-scl-rising-time-ns", &t->scl_rise_ns);
-> -	if (ret && use_defaults) {
-> -		if (t->bus_freq_hz <= I2C_MAX_STANDARD_MODE_FREQ)
-> -			t->scl_rise_ns = 1000;
-> -		else if (t->bus_freq_hz <= I2C_MAX_FAST_MODE_FREQ)
-> -			t->scl_rise_ns = 300;
-> -		else
-> -			t->scl_rise_ns = 120;
-> -	}
-> -
-> -	ret = device_property_read_u32(dev, "i2c-scl-falling-time-ns", &t->scl_fall_ns);
-> -	if (ret && use_defaults) {
-> -		if (t->bus_freq_hz <= I2C_MAX_FAST_MODE_FREQ)
-> -			t->scl_fall_ns = 300;
-> -		else
-> -			t->scl_fall_ns = 120;
-> -	}
-> +	bool u = use_defaults;
-> +	u32 d;
->  
-> -	ret = device_property_read_u32(dev, "i2c-scl-internal-delay-ns", &t->scl_int_delay_ns);
-> -	if (ret && use_defaults)
-> -		t->scl_int_delay_ns = 0;
-> +	i2c_parse_timing(dev, "clock-frequency", &t->bus_freq_hz,
-> +			 I2C_MAX_STANDARD_MODE_FREQ, u);
->  
-> -	ret = device_property_read_u32(dev, "i2c-sda-falling-time-ns", &t->sda_fall_ns);
-> -	if (ret && use_defaults)
-> -		t->sda_fall_ns = t->scl_fall_ns;
-> -
-> -	ret = device_property_read_u32(dev, "i2c-sda-hold-time-ns", &t->sda_hold_ns);
-> -	if (ret && use_defaults)
-> -		t->sda_hold_ns = 0;
-> -
-> -	ret = device_property_read_u32(dev, "i2c-digital-filter-width-ns", &t->digital_filter_width_ns);
-> -	if (ret && use_defaults)
-> -		t->digital_filter_width_ns = 0;
-> +	if (t->bus_freq_hz <= I2C_MAX_STANDARD_MODE_FREQ)
-> +		d = 1000;
-> +	else if (t->bus_freq_hz <= I2C_MAX_FAST_MODE_FREQ)
-> +		d = 300;
-> +	else
-> +		d = 120;
-> +	i2c_parse_timing(dev, "i2c-scl-rising-time-ns", &t->scl_rise_ns, d, u);
->  
-> -	ret = device_property_read_u32(dev, "i2c-analog-filter-cutoff-frequency", &t->analog_filter_cutoff_freq_hz);
-> -	if (ret && use_defaults)
-> -		t->analog_filter_cutoff_freq_hz = 0;
-> +	if (t->bus_freq_hz <= I2C_MAX_FAST_MODE_FREQ)
-> +		d = 300;
-> +	else
-> +		d = 120;
-> +	i2c_parse_timing(dev, "i2c-scl-falling-time-ns", &t->scl_fall_ns, d, u);
-> +
-> +	i2c_parse_timing(dev, "i2c-scl-internal-delay-ns",
-> +			 &t->scl_int_delay_ns, 0, u);
-> +	i2c_parse_timing(dev, "i2c-sda-falling-time-ns", &t->sda_fall_ns,
-> +			 t->scl_fall_ns, u);
-> +	i2c_parse_timing(dev, "i2c-sda-hold-time-ns", &t->sda_hold_ns, 0, u);
-> +	i2c_parse_timing(dev, "i2c-digital-filter-width-ns",
-> +			 &t->digital_filter_width_ns, 0, u);
-> +	i2c_parse_timing(dev, "i2c-analog-filter-cutoff-frequency",
-> +			 &t->analog_filter_cutoff_freq_hz, 0, u);
->  }
->  EXPORT_SYMBOL_GPL(i2c_parse_fw_timings);
->  
-> -- 
-> 2.20.1
-> 
-
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index 0a9d78c2870b..1a1ea70086c6 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -226,6 +226,11 @@ struct adv748x_state {
+ 
+ #define ADV748X_IO_VID_STD		0x05
+ 
++#define ADV748X_IO_PAD_CONTROLS		0x0e
++#define ADV748X_IO_PAD_CONTROLS_TRI_AUD	BIT(5)
++#define ADV748X_IO_PAD_CONTROLS_PDN_AUD	BIT(1)
++#define ADV748X_IO_PAD_CONTROLS1	0x1d
++
+ #define ADV748X_IO_10			0x10	/* io_reg_10 */
+ #define ADV748X_IO_10_CSI4_EN		BIT(7)
+ #define ADV748X_IO_10_CSI1_EN		BIT(6)
+@@ -248,7 +253,21 @@ struct adv748x_state {
+ #define ADV748X_IO_REG_FF		0xff
+ #define ADV748X_IO_REG_FF_MAIN_RESET	0xff
+ 
++/* DPLL Map */
++#define ADV748X_DPLL_MCLK_FS		0xb5
++#define ADV748X_DPLL_MCLK_FS_N_MASK	GENMASK(2, 0)
++
+ /* HDMI RX Map */
++#define ADV748X_HDMI_I2S		0x03	/* I2S mode and width */
++#define ADV748X_HDMI_I2SBITWIDTH_MASK	GENMASK(4, 0)
++#define ADV748X_HDMI_I2SOUTMODE_SHIFT	5
++#define ADV748X_HDMI_I2SOUTMODE_MASK	\
++	GENMASK(6, ADV748X_HDMI_I2SOUTMODE_SHIFT)
++#define ADV748X_I2SOUTMODE_I2S 0
++#define ADV748X_I2SOUTMODE_RIGHT_J 1
++#define ADV748X_I2SOUTMODE_LEFT_J 2
++#define ADV748X_I2SOUTMODE_SPDIF 3
++
+ #define ADV748X_HDMI_LW1		0x07	/* line width_1 */
+ #define ADV748X_HDMI_LW1_VERT_FILTER	BIT(7)
+ #define ADV748X_HDMI_LW1_DE_REGEN	BIT(5)
+@@ -260,6 +279,16 @@ struct adv748x_state {
+ #define ADV748X_HDMI_F1H1		0x0b	/* field1 height_1 */
+ #define ADV748X_HDMI_F1H1_INTERLACED	BIT(5)
+ 
++#define ADV748X_HDMI_MUTE_CTRL		0x1a
++#define ADV748X_HDMI_MUTE_CTRL_MUTE_AUDIO BIT(4)
++#define ADV748X_HDMI_MUTE_CTRL_WAIT_UNMUTE_MASK	GENMASK(3, 1)
++#define ADV748X_HDMI_MUTE_CTRL_NOT_AUTO_UNMUTE	BIT(0)
++
++#define ADV748X_HDMI_AUDIO_MUTE_SPEED	0x0f
++#define ADV748X_HDMI_AUDIO_MUTE_SPEED_MASK	GENMASK(4, 0)
++#define ADV748X_MAN_AUDIO_DL_BYPASS BIT(7)
++#define ADV748X_AUDIO_DELAY_LINE_BYPASS BIT(6)
++
+ #define ADV748X_HDMI_HFRONT_PORCH	0x20	/* hsync_front_porch_1 */
+ #define ADV748X_HDMI_HFRONT_PORCH_MASK	0x1fff
+ 
+@@ -281,6 +310,9 @@ struct adv748x_state {
+ #define ADV748X_HDMI_TMDS_1		0x51	/* hdmi_reg_51 */
+ #define ADV748X_HDMI_TMDS_2		0x52	/* hdmi_reg_52 */
+ 
++#define ADV748X_HDMI_REG_6D		0x6d	/* hdmi_reg_6d */
++#define ADV748X_I2S_TDM_MODE_ENABLE BIT(7)
++
+ /* HDMI RX Repeater Map */
+ #define ADV748X_REPEATER_EDID_SZ	0x70	/* primary_edid_size */
+ #define ADV748X_REPEATER_EDID_SZ_SHIFT	4
 -- 
-With Best Regards,
-Andy Shevchenko
+2.25.1.25.g9ecbe7eb18
 
 
