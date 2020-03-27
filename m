@@ -2,74 +2,68 @@ Return-Path: <SRS0=bPEI=5M=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05945C43331
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Mar 2020 05:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB2BC2D0ED
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Mar 2020 05:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D044520717
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Mar 2020 05:28:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22EB32071B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 27 Mar 2020 05:29:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726275AbgC0F2w (ORCPT
+        id S1727509AbgC0F24 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 27 Mar 2020 01:28:52 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:10187 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726133AbgC0F2w (ORCPT
+        Fri, 27 Mar 2020 01:28:56 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:17575 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726133AbgC0F2x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Mar 2020 01:28:52 -0400
+        Fri, 27 Mar 2020 01:28:53 -0400
 X-IronPort-AV: E=Sophos;i="5.72,311,1580742000"; 
-   d="scan'208";a="42775995"
+   d="scan'208";a="42990139"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 27 Mar 2020 14:28:50 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 27 Mar 2020 14:28:51 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 68C73416FA6C;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id D4CFA416FA94;
         Fri, 27 Mar 2020 14:28:50 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     kishon@ti.com, robh+dt@kernel.org
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 0/4] dt-bindings: phy: add r8a77961 support
-Date:   Fri, 27 Mar 2020 14:28:39 +0900
-Message-Id: <1585286923-11740-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 4/4] dt-bindings: phy: renesas: usb3-phy: add r8a77961 support
+Date:   Fri, 27 Mar 2020 14:28:43 +0900
+Message-Id: <1585286923-11740-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1585286923-11740-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1585286923-11740-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds USBPHY 2.0/3.0 devices support for r8a77961
-(R-Car M3-W+).
+This patch adds support for r8a77961 (R-Car M3-W+).
 
-Changes from v2:
- - Modify json-schema files which Geert-san was pointed out.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=261847
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes from v1:
- - Rebase these patches on top of my patches of convert bindings to
-   json-schema.
- - Add Reviewed-by.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=261195
-
-Yoshihiro Shimoda (4):
-  dt-bindings: phy: renesas: usb2-phy: convert bindings to json-schema
-  dt-bindings: phy: renesas: usb2-phy: add r8a77961 support
-  dt-bindings: phy: renesas: usb3-phy: convert bindings to json-schema
-  dt-bindings: phy: renesas: usb3-phy: add r8a77961 support
-
- .../devicetree/bindings/phy/rcar-gen3-phy-usb2.txt |  70 -------------
- .../devicetree/bindings/phy/rcar-gen3-phy-usb3.txt |  52 ----------
- .../devicetree/bindings/phy/renesas,usb2-phy.yaml  | 111 +++++++++++++++++++++
- .../devicetree/bindings/phy/renesas,usb3-phy.yaml  |  79 +++++++++++++++
- 4 files changed, 190 insertions(+), 122 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt
- delete mode 100644 Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb3.txt
- create mode 100644 Documentation/devicetree/bindings/phy/renesas,usb2-phy.yaml
- create mode 100644 Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
-
+diff --git a/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml b/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
+index edd5417..f459eaf 100644
+--- a/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/renesas,usb3-phy.yaml
+@@ -17,6 +17,7 @@ properties:
+           - renesas,r8a774b1-usb3-phy # RZ/G2N
+           - renesas,r8a7795-usb3-phy  # R-Car H3
+           - renesas,r8a7796-usb3-phy  # R-Car M3-W
++          - renesas,r8a77961-usb3-phy # R-Car M3-W+
+           - renesas,r8a77965-usb3-phy # R-Car M3-N
+       - const: renesas,rcar-gen3-usb3-phy
+ 
 -- 
 2.7.4
 
