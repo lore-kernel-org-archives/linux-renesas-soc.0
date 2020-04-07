@@ -1,108 +1,356 @@
-Return-Path: <SRS0=k7UY=5W=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=/sC/=5X=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61687C2BA1A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Apr 2020 21:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DB6C2BA16
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Apr 2020 07:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25CB9206B8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Apr 2020 21:14:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ABA6206F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Apr 2020 07:13:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="1MwGnWt2"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="ibq8DtWC";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gDAM6Us5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbgDFVOM (ORCPT
+        id S1727447AbgDGHNA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 6 Apr 2020 17:14:12 -0400
-Received: from mail-lf1-f41.google.com ([209.85.167.41]:36584 "EHLO
-        mail-lf1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbgDFVOM (ORCPT
+        Tue, 7 Apr 2020 03:13:00 -0400
+Received: from wout4-smtp.messagingengine.com ([64.147.123.20]:56879 "EHLO
+        wout4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726865AbgDGHM6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Apr 2020 17:14:12 -0400
-Received: by mail-lf1-f41.google.com with SMTP id w145so671345lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Apr 2020 14:14:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+Xd1xzbAohX/FqkqTk1cM6F9kOwM40uvkJrnhkR7+Fo=;
-        b=1MwGnWt2vQYBfJnOaGiMooJfZu8yPk9Lnh8IpQq4l4Fbk8acKx7Q0J83j4fbMJhmTX
-         Bz+eZjKKF+Ub1qTlSs94FqivztSEebggGwKqOO2o5c+66jj41PmWZIOIuYytFsaBqmG8
-         vbyS8SUkw8WPy8l9fXvKJ/eTAO6MGiT8QjtZbd1sQ9eBCMAg61zLKtD8blKSPCHXxeBc
-         XiVn5iAZEWta1iZrNBRvwoGTxeux9ycBqcHT22tBvWp4wUHFIRiKeN3mDGTuN9nsKMVN
-         8v0178c+aA+YlM+cBBDnBIF5MieLOOec2d4ecPVr44unPekjdEqBzjzuGLrRYzF7VbXT
-         XeQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=+Xd1xzbAohX/FqkqTk1cM6F9kOwM40uvkJrnhkR7+Fo=;
-        b=egQh+RHVVEkQZHc+4TpU5TghAcQXjcfvp7bqpNkgNxPJ+boU5lmImvCyUKCYj8yqZs
-         J99t0kbe7iOm3mBuFyIxpbQMr4Lcm8Am21Q5MskXTGu5CXrAWcTL0bywKXC24OXsYDsP
-         VDdQXl2tjuILSezuy/vCmwjHZdtM9ZMSoboQ0RlzEcRDBq0eZOFM1Qib8VVYRdBj2KHk
-         fM3AXhFm9betBYf80dhStSuvYZyFDSGTY2GlJ2EFfVEXlE5WGGxHlcni5KW4KZfxiTio
-         MbLrTkbYqZjToQwAzxQ69iIHdbn+RSocV0guV4lx3wZWRroaudCdndl/p9Ap49l+RyQF
-         OW7g==
-X-Gm-Message-State: AGi0PuZ54CEneb22p1HZZr6Od9seKIjH7iRX0zZAN9XjH8at5n+Ycjlo
-        U+odw43RWqINbUZ7VYK1V5Ya9PhqP64=
-X-Google-Smtp-Source: APiQypLi+4wO9Y/cU95F3kWj2BAO3JcE28FDvZp9goT7P7q6xIUprCvzvB04YOF9s/5Y3E2PeokoTA==
-X-Received: by 2002:a19:40d0:: with SMTP id n199mr14028200lfa.161.1586207649535;
-        Mon, 06 Apr 2020 14:14:09 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([2a00:1fa0:462e:583f:4b1:b175:1ecb:fb31])
-        by smtp.gmail.com with ESMTPSA id h16sm10509386ljl.73.2020.04.06.14.14.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 06 Apr 2020 14:14:08 -0700 (PDT)
-Subject: Re: question about drivers/net/ethernet/renesas/ravb_main.c
-To:     Julia Lawall <julia.lawall@inria.fr>, horms+renesas@verge.net.au,
-        tho.vu.wh@rvc.renesas.com, uli+renesas@fpond.eu
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joe@perches.com
-References: <alpine.DEB.2.21.2004031559240.2694@hadrien>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <4c39386e-4259-ba45-1f7f-1e6307a7753a@cogentembedded.com>
-Date:   Tue, 7 Apr 2020 00:14:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 7 Apr 2020 03:12:58 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id 41E5569F;
+        Tue,  7 Apr 2020 03:12:56 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 07 Apr 2020 03:12:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=I3/Di80PJiQMVee28CsWJsRHUhM
+        5QeBlnEv3CyCX3cw=; b=ibq8DtWCdfm0bHWwPbVCXibtbNlIJqxKxTD84rikqV3
+        7pnZHivzEgJ53yosvfy20zRHODxKBEl5UdXvui/if9DmAK47dFrOTB+nkx7oNwJe
+        MWlDfwK4WTEl+tft1p84vd9Bd6jouxGOCvJGS+BxLJRuE6Kwst+X0yVrHyyz4HQU
+        Ndiop1XNpX66ywiP3fcoHY0bqGnI4K8J8upUH4/TQ/xeJD8RLxVv/VUAAtSzOapk
+        weTJD8Vrw4gx2gHeRpTh5UcwlMAChl2uz2Yn0H9azOcQ4iC2nC/JkoBtlDag5zMJ
+        uDc771Jnni174T7ug8Saw3nAKcBmpY7Q8nInnD/vPNw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=I3/Di8
+        0PJiQMVee28CsWJsRHUhM5QeBlnEv3CyCX3cw=; b=gDAM6Us5rJhFwmxx+jS3YE
+        ooZtFWM0Ie99/lwBFa97V5tm+EUFlo8+4EzyUF3FiEqgaFQ1WMbzK6l9nbUdWu1q
+        9FCkRYs4hfXMr5oMF4efv675XtkK6e2rcN85hudKC1At+O1oYo8ZVfNRsiQET1YR
+        qnToFkGqvs4b1HnxdPdPY/jhPwi0OBhpZDWjDmRSzdeRokC0x27gFbYX+kwAaeXM
+        lGQH69KO7ICso6Dya2F+yzao4vmRulB0jteWPthFE6Vv+2U2DIHGhhMUy1bXGWpL
+        lWpPcROGGgXCmlhLhdAzSdRBp5HrBGgltUOWX/PJtPfJ0PRC64TVBdsezL4Xajqw
+        ==
+X-ME-Sender: <xms:9ieMXl3oS99-XBT_5tir_tTIAPd3_70h5SBJYSiNIfG7OtcoJPrnYQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeggdduudehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuffhomhgrih
+    hnpeguvghvihgtvghtrhgvvgdrohhrghenucfkphepledtrdekledrieekrdejieenucev
+    lhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvg
+    estggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:9ieMXiH10_rqHyEdZflIo5vfCikMNoQyAWuikYFsBn4zeku-y8KzSA>
+    <xmx:9ieMXgtup2Ygjs61tDO6rO6JX-d2_iskig8x035_-LTs7oIHh8p4zQ>
+    <xmx:9ieMXlrNveAspHXEK-8GSbUOboFykOWnSXO5qqpVfQFuylmCLS_2Hg>
+    <xmx:9yeMXlb26CiBVMCef1RbgoKf0ML2VhbdnCDBamPn-OQvqIB8noDLyg>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id C3EAE3280060;
+        Tue,  7 Apr 2020 03:12:53 -0400 (EDT)
+Date:   Tue, 7 Apr 2020 09:12:51 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mark Yao <mark.yao@rock-chips.com>,
+        Sandy Huang <hjc@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH/RFC 4/6] dt-bindings: display: rockchip: dw-hdmi: Convert
+ binding to YAML
+Message-ID: <20200407071251.npibrmzywiyigu2a@gilmour.lan>
+References: <20200405233935.27599-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20200405233935.27599-5-laurent.pinchart+renesas@ideasonboard.com>
+ <20200406080032.zlszhkjqmjeoa4ti@gilmour.lan>
+ <20200406111927.GD4757@pendragon.ideasonboard.com>
+ <20200406170915.x2ztz4q446h6vx2y@gilmour.lan>
+ <20200406175028.GI16885@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.2004031559240.2694@hadrien>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="dwn2vvpqb3gq7irh"
+Content-Disposition: inline
+In-Reply-To: <20200406175028.GI16885@pendragon.ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
 
-On 04/03/2020 05:04 PM, Julia Lawall wrote:
+--dwn2vvpqb3gq7irh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> In the function ravb_hwtstamp_get in ravb_main.c, the following code looks
-> suspicious:
-> 
->         if (priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE_V2_L2_EVENT)
->                 config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT;
->         else if (priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE_ALL)
->                 config.rx_filter = HWTSTAMP_FILTER_ALL;
->         else
->                 config.rx_filter = HWTSTAMP_FILTER_NONE;
-> 
-> According to drivers/net/ethernet/renesas/ravb.h,
-> RAVB_RXTSTAMP_TYPE_V2_L2_EVENT is 0x00000002 and RAVB_RXTSTAMP_TYPE_ALL is
-> 0x00000006.  Therefore, if the test on RAVB_RXTSTAMP_TYPE_ALL should be
-> true, it will never be reached.  How should the code be changed?
+On Mon, Apr 06, 2020 at 08:50:28PM +0300, Laurent Pinchart wrote:
+> Hi Maxime,
+>
+> On Mon, Apr 06, 2020 at 07:09:15PM +0200, Maxime Ripard wrote:
+> > On Mon, Apr 06, 2020 at 02:19:27PM +0300, Laurent Pinchart wrote:
+> > > On Mon, Apr 06, 2020 at 10:00:32AM +0200, Maxime Ripard wrote:
+> > > > On Mon, Apr 06, 2020 at 02:39:33AM +0300, Laurent Pinchart wrote:
+> > > > > Convert the Rockchip HDMI TX text binding to YAML.
+> > > > >
+> > > > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > > > > ---
+> > > > >  .../display/rockchip/dw_hdmi-rockchip.txt     |  74 --------
+> > > > >  .../display/rockchip/rockchip,dw-hdmi.yaml    | 178 ++++++++++++++++++
+> > > > >  2 files changed, 178 insertions(+), 74 deletions(-)
+> > > > >  delete mode 100644 Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
+> > > > >  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml
+> > > > >
+> > > > > diff --git a/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
+> > > > > deleted file mode 100644
+> > > > > index 3d32ce137e7f..000000000000
+> > > > > --- a/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
+> > > > > +++ /dev/null
+> > > > > @@ -1,74 +0,0 @@
+> > > > > -Rockchip DWC HDMI TX Encoder
+> > > > > -============================
+> > > > > -
+> > > > > -The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
+> > > > > -with a companion PHY IP.
+> > > > > -
+> > > > > -These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
+> > > > > -Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
+> > > > > -following device-specific properties.
+> > > > > -
+> > > > > -
+> > > > > -Required properties:
+> > > > > -
+> > > > > -- compatible: should be one of the following:
+> > > > > -		"rockchip,rk3228-dw-hdmi"
+> > > > > -		"rockchip,rk3288-dw-hdmi"
+> > > > > -		"rockchip,rk3328-dw-hdmi"
+> > > > > -		"rockchip,rk3399-dw-hdmi"
+> > > > > -- reg: See dw_hdmi.txt.
+> > > > > -- reg-io-width: See dw_hdmi.txt. Shall be 4.
+> > > > > -- interrupts: HDMI interrupt number
+> > > > > -- clocks: See dw_hdmi.txt.
+> > > > > -- clock-names: Shall contain "iahb" and "isfr" as defined in dw_hdmi.txt.
+> > > > > -- ports: See dw_hdmi.txt. The DWC HDMI shall have a single port numbered 0
+> > > > > -  corresponding to the video input of the controller. The port shall have two
+> > > > > -  endpoints, numbered 0 and 1, connected respectively to the vopb and vopl.
+> > > > > -- rockchip,grf: Shall reference the GRF to mux vopl/vopb.
+> > > > > -
+> > > > > -Optional properties
+> > > > > -
+> > > > > -- ddc-i2c-bus: The HDMI DDC bus can be connected to either a system I2C master
+> > > > > -  or the functionally-reduced I2C master contained in the DWC HDMI. When
+> > > > > -  connected to a system I2C master this property contains a phandle to that
+> > > > > -  I2C master controller.
+> > > > > -- clock-names: See dw_hdmi.txt. The "cec" clock is optional.
+> > > > > -- clock-names: May contain "cec" as defined in dw_hdmi.txt.
+> > > > > -- clock-names: May contain "grf", power for grf io.
+> > > > > -- clock-names: May contain "vpll", external clock for some hdmi phy.
+> > > > > -- phys: from general PHY binding: the phandle for the PHY device.
+> > > > > -- phy-names: Should be "hdmi" if phys references an external phy.
+> > > > > -
+> > > > > -Optional pinctrl entry:
+> > > > > -- If you have both a "unwedge" and "default" pinctrl entry, dw_hdmi
+> > > > > -  will switch to the unwedge pinctrl state for 10ms if it ever gets an
+> > > > > -  i2c timeout.  It's intended that this unwedge pinctrl entry will
+> > > > > -  cause the SDA line to be driven low to work around a hardware
+> > > > > -  errata.
+> > > > > -
+> > > > > -Example:
+> > > > > -
+> > > > > -hdmi: hdmi@ff980000 {
+> > > > > -	compatible = "rockchip,rk3288-dw-hdmi";
+> > > > > -	reg = <0xff980000 0x20000>;
+> > > > > -	reg-io-width = <4>;
+> > > > > -	ddc-i2c-bus = <&i2c5>;
+> > > > > -	rockchip,grf = <&grf>;
+> > > > > -	interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
+> > > > > -	clocks = <&cru  PCLK_HDMI_CTRL>, <&cru SCLK_HDMI_HDCP>;
+> > > > > -	clock-names = "iahb", "isfr";
+> > > > > -	ports {
+> > > > > -		hdmi_in: port {
+> > > > > -			#address-cells = <1>;
+> > > > > -			#size-cells = <0>;
+> > > > > -			hdmi_in_vopb: endpoint@0 {
+> > > > > -				reg = <0>;
+> > > > > -				remote-endpoint = <&vopb_out_hdmi>;
+> > > > > -			};
+> > > > > -			hdmi_in_vopl: endpoint@1 {
+> > > > > -				reg = <1>;
+> > > > > -				remote-endpoint = <&vopl_out_hdmi>;
+> > > > > -			};
+> > > > > -		};
+> > > > > -	};
+> > > > > -};
+> > > > > diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml
+> > > > > new file mode 100644
+> > > > > index 000000000000..8ff544ae0ac2
+> > > > > --- /dev/null
+> > > > > +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml
+> > > > > @@ -0,0 +1,178 @@
+> > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > > +%YAML 1.2
+> > > > > +---
+> > > > > +$id: http://devicetree.org/schemas/display/rockchip/rockchip,dw-hdmi.yaml#
+> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > > +
+> > > > > +title: Rockchip DWC HDMI TX Encoder
+> > > > > +
+> > > > > +maintainers:
+> > > > > +  - Mark Yao <mark.yao@rock-chips.com>
+> > > > > +
+> > > > > +description: |
+> > > > > +  The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
+> > > > > +  with a companion PHY IP.
+> > > > > +
+> > > > > +allOf:
+> > > > > +  - $ref: ../bridge/synopsys,dw-hdmi.yaml#
+> > > > > +
+> > > > > +properties:
+> > > > > +  compatible:
+> > > > > +    enum:
+> > > > > +      - rockchip,rk3228-dw-hdmi
+> > > > > +      - rockchip,rk3288-dw-hdmi
+> > > > > +      - rockchip,rk3328-dw-hdmi
+> > > > > +      - rockchip,rk3399-dw-hdmi
+> > > > > +
+> > > > > +  reg: true
+> > > > > +
+> > > > > +  reg-io-width:
+> > > > > +    const: 4
+> > > > > +
+> > > > > +  clocks:
+> > > > > +    minItems: 2
+> > > > > +    maxItems: 5
+> > > > > +    items:
+> > > > > +      - description: The bus clock for either AHB and APB
+> > > > > +      - description: The internal register configuration clock
+> > > > > +      - description: The HDMI CEC controller main clock
+> > > > > +      - description: Power for GRF IO
+> > > > > +      - description: External clock for some HDMI PHY
+> > > > > +
+> > > > > +  clock-names:
+> > > > > +    minItems: 2
+> > > > > +    maxItems: 5
+> > > > > +    items:
+> > > > > +      - const: iahb
+> > > > > +      - const: isfr
+> > > > > +      - enum:
+> > > > > +        - cec
+> > > > > +        - grf
+> > > > > +        - vpll
+> > > > > +      - enum:
+> > > > > +        - cec
+> > > > > +        - grf
+> > > > > +        - vpll
+> > > > > +      - enum:
+> > > > > +        - cec
+> > > > > +        - grf
+> > > > > +        - vpll
+> > > >
+> > > > IIRC Rob wanted us to standardize the order of the clocks if possible,
+> > > > since it's a pain to support properly here, and your description won't
+> > > > match what you describe here either (and in general it's just a best
+> > > > practice), so if all your DTs have the same order you should just set
+> > > > that order in stone.
+> > >
+> > > But how do we handle the case where any of the cec, grf and vpll clocks
+> > > can be set ? Assuming, for instance, that
+> > >
+> > > 	clock-names = "iahb", "isfr", "cec";
+> > > 	clock-names = "iahb", "isfr", "vpll";
+> > > 	clock-names = "iahb", "isfr", "cec", "vpll";
+> > >
+> > > would all be valid.
+> >
+> > It would be painful then...
+> >
+> > The easiest way to do so would be to simply use an enum there, and not
+> > bother checking the array at all. You'll get a warning if there's
+> > multiple occurences of the same string, and I guess that's what you
+> > would be really concerned about.
+> >
+> > However, now that I think about it, what's the interaction between the
+> > generic binding and this one when it comes to the third clock? The
+> > generic one expects it to be cec, and here you have other options?
+>
+> I'm not too familiar with the platform, but as far as I understand, any
+> of the cec, grf and vpll clock is optional (if someone could confirm
+> that, it would be useful). I don't care so much about the order, but
+> iahb and isfr are mandatory, and thus need to be specified as two const
+> items in the beginning as far as I understand. It would be nice to set
+> something along the lines of
+>
+>   minItems: 2
+>   maxItems: 5
+>   items:
+>     - const: iahb
+>     - const: isfr
+>     - enum:
+>       - cec
+>       - grf
+>       - vpll
 
-   After looking at the code, I think that setting RAVB_RXTSTAMP_TYPE_ALL to
-0x00000004 should be enough. BTW, the RAVB_{R,T}XTSTAMP_VALID don't seem be
-used anywhere...
+I guess you could do something like:
 
-> thanks,
-> julia
+in the generic schema:
 
-MBR, Sergei
+clock-names:
+  allOf:
+    - minItems: 2
+    - enum:
+       - iahb
+       - isfr
+       - cec
+      additonalItems: true
+    - items:
+      - iahb
+      - isfr
+
+Or something along those lines, I haven't tested it, but the basic
+idea is that you want to enforce that:
+  a) there's a minimum of two clocks
+  b) valid clock names are iahb, isfr and cec, but we will allow more
+  c) the first two clocks are iahb and isfr
+
+Now, on the rockchip binding, we can simply have:
+
+clock-names:
+  enum:
+    - iahb
+    - isfr
+    - cec
+    - grf
+    - vpll
+
+This way, here we enforce the available clock names, while keeping the
+constraints set in the generic binding.
+
+Maxime
+
+--dwn2vvpqb3gq7irh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXown8wAKCRDj7w1vZxhR
+xbzqAP0b7YMyvbvLZHLqcSAfIdp0wf5sIUH6pAKOI1Xkaa2pNgEAukMeyr8RlQG5
+rHcRboMkeq2Ukf9PhorHisDa8FtteA0=
+=2hD7
+-----END PGP SIGNATURE-----
+
+--dwn2vvpqb3gq7irh--
