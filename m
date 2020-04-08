@@ -2,44 +2,44 @@ Return-Path: <SRS0=GKdu=5Y=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A55CFC2BA2B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Apr 2020 23:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE01C2BB55
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Apr 2020 23:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B64620757
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Apr 2020 23:30:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9677620820
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Apr 2020 23:46:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586388614;
-	bh=BS0ZFoiAjqfPxe9bkyobcDKcwdePpxw1588Rc7wSJJc=;
+	s=default; t=1586389588;
+	bh=jdERzFagcZJpT6zeQ9ptPHc+W/HgbAkXikMkMpGMIc8=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=D4kaTFb/X6pBLj8gKU6yM3rPAiLDj1x0VeqNloissLLumOhXXX6X3LsVJyjWiqIuz
-	 SIVTEg3FjIHUmz8EOkVomIVKD+FCY+i7IP5OXwjMQdkW08TkoLlsUmBiGkZlfsb/Bo
-	 m7PRjIykIAufKHHqtyy/mBVKtJ9Pq+2seZpPOhwY=
+	b=BaYdat9upZ+uitWBdGUb3MXyfBJ1nvb4px3L3KvU+Nts6YQ1CM4Dtg72t1AcauxaB
+	 cCy/so3jCRxtyRNnuam4KuAyyiMQw5faT5IkAGwSGEiuqaVnz03ZXq4a8WXp+fIiTK
+	 A0DrX+1SDlw+qwHMYqz0rTSdB1eBiGvN7Hy0UQ4E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbgDHXaK (ORCPT
+        id S1726530AbgDHXqZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Apr 2020 19:30:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38192 "EHLO mail.kernel.org"
+        Wed, 8 Apr 2020 19:46:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726504AbgDHXaK (ORCPT
+        id S1726508AbgDHXqZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Apr 2020 19:30:10 -0400
+        Wed, 8 Apr 2020 19:46:25 -0400
 Received: from localhost (mobile-166-175-188-68.mycingular.net [166.175.188.68])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BD0ED20730;
-        Wed,  8 Apr 2020 23:30:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8821C20787;
+        Wed,  8 Apr 2020 23:46:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586388610;
-        bh=BS0ZFoiAjqfPxe9bkyobcDKcwdePpxw1588Rc7wSJJc=;
+        s=default; t=1586389585;
+        bh=jdERzFagcZJpT6zeQ9ptPHc+W/HgbAkXikMkMpGMIc8=;
         h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=Tq87FDiJYzSROkNza6MmRJ2L1MvMFuSLJty0f8QCOXhEryVgro3JUW+LY/jpx7JPt
-         A7jaNs8uU86tY53XAVsYf0RTGTgLzLVqKwY6wAnzho8QsVNndmxcHD9JMQQexFAcsh
-         uoCvMiiFs+QBCqEiVWGbNzi82E0hU7wSdJzZzKRs=
-Date:   Wed, 8 Apr 2020 18:30:08 -0500
+        b=UBEF4PPNtgYeAzJH79lLGGULnX41ZtOGL+nLtZMe5rqcdjOevaJL0F7SJcJqnQ/gL
+         cbk/jdvfvN7/J57YJCjLt9hgnh47iQLIXE+WlxuVESZ/NcOWOUykYPQC8tj5yfO0K9
+         NtF4OXMIed85faV2LxGjwdhmPKjCAsn4lB7mBgEc=
+Date:   Wed, 8 Apr 2020 18:46:22 -0500
 From:   Bjorn Helgaas <helgaas@kernel.org>
 To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
@@ -60,22 +60,50 @@ Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         linux-rockchip@lists.infradead.org,
         Lad Prabhakar <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v7 2/8] PCI: rcar: Move shareable code to a common file
-Message-ID: <20200408233008.GA150200@google.com>
+Subject: Re: [PATCH v7 4/8] PCI: endpoint: Add support to handle multiple
+ base for mapping outbound memory
+Message-ID: <20200408234622.GA150772@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1586360280-10956-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1586360280-10956-5-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Apr 08, 2020 at 04:37:54PM +0100, Lad Prabhakar wrote:
-> This patch moves sharable code to common file pcie-rcar.c and the #defines
-> to pcie-rcar.h so that the common code can be reused with endpoint driver.
-> There are no functional changes with this patch for the host controller
-> driver.
+On Wed, Apr 08, 2020 at 04:37:56PM +0100, Lad Prabhakar wrote:
+> R-Car PCIe controller has support to map multiple memory regions for
+> mapping the outbound memory in local system also the controller limits
+> single allocation for each region (that is, once a chunk is used from the
+> region it cannot be used to allocate a new one). This features inspires to
+> add support for handling multiple memory bases in endpoint framework.
+> 
+> With this patch pci_epc_mem_init() initializes address space for endpoint
+> controller which support single window and whereas __pci_epc_mem_init()
+> now accepts pointer to multiple windows supported by endpoint controller.
 
-s/This patch moves/Move/
-s/sharable/shareable/
+Adding a double underscore prefix usually indicates an internal
+function that skips some checking.
+
+It doesn't seem like quite the right thing for this external interface
+that adds functionality.  Maybe the name could include something like
+"multi"?
+
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+This needs an ack from Kishon, of course.
+
+This patch seems like it does several things that could possibly be
+split into separate patches?
+
+  - Change pci_epc_mem_init() interface to add page_size argument (the
+    only one that touches cadence & rockchip; it would be nice if this
+    were a tiny patch)
+
+  - Add struct pci_epc_mem_window
+
+  - Add a pci_epc_multi_mem_init() or similar, implement
+    pci_epc_mem_init() in terms of it (as you already do)
+
+Bjorn
