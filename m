@@ -2,90 +2,58 @@ Return-Path: <SRS0=GKdu=5Y=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DB5C2BB86
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Apr 2020 09:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9318C2D0EA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Apr 2020 10:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7E5E20787
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Apr 2020 09:46:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D0E120747
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Apr 2020 10:00:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586340039;
+	bh=2jESRE6XpOARH3+Y5xFFKVjlfRYZ+v79IRZZRHPyCZI=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=HkDXpXsJ2qCPpUuQw9DKRWGPNAERqI1QLo5miE/kmWxd+L+bcUXGxu3jIvJUKz+G0
+	 V3FmD8gBlOMSOqiFqC7vL3jXKsfn11afUW8MXBKm4Z0cGkWU5/kbkI8wWlwOlChzuE
+	 qhUoivpRskbK4AE0tqU2Dq1g5VqKAiGzjvy1mQVM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727919AbgDHJqw (ORCPT
+        id S1727258AbgDHKAj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Apr 2020 05:46:52 -0400
-Received: from sauhun.de ([88.99.104.3]:39648 "EHLO pokefinder.org"
+        Wed, 8 Apr 2020 06:00:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727079AbgDHJqw (ORCPT
+        id S1725932AbgDHKAj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Apr 2020 05:46:52 -0400
-Received: from localhost (p54B334FE.dip0.t-ipconnect.de [84.179.52.254])
-        by pokefinder.org (Postfix) with ESMTPSA id CE18B2C1FDC;
-        Wed,  8 Apr 2020 11:46:50 +0200 (CEST)
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-mmc@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 2/3] mmc: renesas_sdhi: clarify handling of selecting TAPs
-Date:   Wed,  8 Apr 2020 11:46:37 +0200
-Message-Id: <20200408094638.10375-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200408094638.10375-1-wsa+renesas@sang-engineering.com>
-References: <20200408094638.10375-1-wsa+renesas@sang-engineering.com>
+        Wed, 8 Apr 2020 06:00:39 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586340038;
+        bh=2jESRE6XpOARH3+Y5xFFKVjlfRYZ+v79IRZZRHPyCZI=;
+        h=Subject:From:Date:To:From;
+        b=Gw7TDBEcApAx1up51Qa5io9/np7/IvAJVs6kgHvFaQf2fsCHjsQX3CjwNUNl+dPv3
+         XvTYhSdiSSZxC5YAMYhxpI4kZXdDwZRDi3iVSOJJkUhrArev7jHltkcgBUG0MKeGMw
+         ViZYJSSbwx8vvrTNBDG9M3dKFrDn7+r4TIsdBRvM=
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <158634003891.24657.15406189776981251382.git-patchwork-housekeeping@kernel.org>
+Date:   Wed, 08 Apr 2020 10:00:38 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The comment and the define about how TAPs are selected were confusing to
-me because the good TAP was only valid if it was bigger than a *_MAX_*
-value. Rename the define and adapt the comment to what really happens.
+Latest series: [v2] mmc: renesas_sdhi: improve TAP selection if all TAPs are good (2020-04-08T09:46:35)
+  Superseding: [v1] mmc: renesas_sdhi: improve TAP selection if all TAPs are good (2020-03-06T09:31:58):
+    [RFT,1/3] mmc: renesas_sdhi: refactor calculation of best TAP
+    [RFT,2/3] mmc: renesas_sdhi: clarify handling of selecting TAPs
+    [RFT,3/3] mmc: renesas_sdhi: improve TAP selection if all TAPs are good
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/mmc/host/renesas_sdhi_core.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index f5d174d86117..0dbee47eafa1 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -422,7 +422,7 @@ static int renesas_sdhi_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_io
- 	return 0;
- }
- 
--#define SH_MOBILE_SDHI_MAX_TAP 3
-+#define SH_MOBILE_SDHI_MIN_TAP_ROW 3
- 
- static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
- {
-@@ -446,9 +446,9 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
- 	}
- 
- 	/*
--	 * Find the longest consecutive run of successful probes.  If that
--	 * is more than SH_MOBILE_SDHI_MAX_TAP probes long then use the
--	 * center index as the tap.
-+	 * Find the longest consecutive run of successful probes. If that
-+	 * is at least SH_MOBILE_SDHI_MIN_TAP_ROW probes long then use the
-+	 * center index as the tap, otherwise bail out.
- 	 */
- 	bitmap_for_each_set_region(priv->taps, rs, re, 0, taps_size) {
- 		if (re - rs > tap_cnt) {
-@@ -458,7 +458,7 @@ static int renesas_sdhi_select_tuning(struct tmio_mmc_host *host)
- 		}
- 	}
- 
--	if (tap_cnt >= SH_MOBILE_SDHI_MAX_TAP)
-+	if (tap_cnt >= SH_MOBILE_SDHI_MIN_TAP_ROW)
- 		priv->tap_set = (tap_start + tap_end) / 2 % priv->tap_num;
- 	else
- 		return -EIO;
 -- 
-2.20.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
