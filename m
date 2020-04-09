@@ -2,37 +2,36 @@ Return-Path: <SRS0=YZYO=5Z=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE3EEC2BB54
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 00:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB89C2BA2B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 00:46:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BE372078E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 00:36:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71C5D20857
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 00:46:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MglICWq/"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uWTJR6Wf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbgDIAgx (ORCPT
+        id S1726559AbgDIAq0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Apr 2020 20:36:53 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39508 "EHLO
+        Wed, 8 Apr 2020 20:46:26 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39600 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbgDIAgx (ORCPT
+        with ESMTP id S1726536AbgDIAq0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Apr 2020 20:36:53 -0400
+        Wed, 8 Apr 2020 20:46:26 -0400
 Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2B2B9B76;
-        Thu,  9 Apr 2020 02:36:51 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 44AB02DC;
+        Thu,  9 Apr 2020 02:46:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1586392611;
-        bh=dIuh372jzYXzncChXgfk20Ez/UBFgtea7xive7cCeZI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MglICWq/haQu8Ta9lCuIU1Of7OvUHLp6hLUXBBVbk6kEGnhujMkn2xXtZJaZdXCLY
-         dCkaENJO9ck85CfsLgKzBfdzOI3UiDQCumtUx1vu2MqakZ+jw1BhWTMhUtk+6/XaPH
-         7G71cwM6NW4PjOqdSJI7MTjXnJ/+75GMZ4ENsZBE=
+        s=mail; t=1586393184;
+        bh=XrImY9BvJeKbhh8QnJm/IVyeaDkiA3BMUm0hl4NRemY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=uWTJR6WfIbrGc6PfSOY/8QElBelrCrO2EYtcfL/UQe6sA/Z9mAcZq+38t6Am94rtP
+         xJj0A4Q/HhvjAC9ESjB5d+crmS5gEVkx7DRsaFeUOM9CagW96+DdomWfocD6N1mRsJ
+         fFuqpl+1vTt5QdWHsCMsBJpGU0YByMJ2YivIWmAg=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -40,13 +39,11 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>,
         Jonas Karlman <jonas@kwiboo.se>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH 2/2] drm: bridge: simple-bridge: Make connector creation optional
-Date:   Thu,  9 Apr 2020 03:36:36 +0300
-Message-Id: <20200409003636.11792-3-laurent.pinchart+renesas@ideasonboard.com>
+        Rob Clark <robdclark@chromium.org>, Sean Paul <sean@poorly.run>
+Subject: [PATCH 0/4] drm: bridge: adv7511: Enable usage with DRM bridge connector helper
+Date:   Thu,  9 Apr 2020 03:46:06 +0300
+Message-Id: <20200409004610.12346-1-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200409003636.11792-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20200409003636.11792-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -54,48 +51,42 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Make the connector creation optional to enable usage of the
-simple-bridge with the DRM bridge connector helper.
+Hello,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/bridge/simple-bridge.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+This patch series enables usage of the adv7511 driver with the DRM
+bridge connector helper (drm_bridge_connector.c).
 
-diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
-index bac223d0430d..bad638088029 100644
---- a/drivers/gpu/drm/bridge/simple-bridge.c
-+++ b/drivers/gpu/drm/bridge/simple-bridge.c
-@@ -101,16 +101,14 @@ static int simple_bridge_attach(struct drm_bridge *bridge,
- 	struct simple_bridge *sbridge = drm_bridge_to_simple_bridge(bridge);
- 	int ret;
- 
--	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR) {
--		DRM_ERROR("Fix bridge driver to make connector optional!");
--		return -EINVAL;
--	}
--
- 	ret = drm_bridge_attach(bridge->encoder, sbridge->next_bridge, bridge,
- 				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
- 	if (ret < 0)
- 		return ret;
- 
-+	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
-+		return 0;
-+
- 	if (!bridge->encoder) {
- 		DRM_ERROR("Missing encoder\n");
- 		return -ENODEV;
-@@ -127,8 +125,7 @@ static int simple_bridge_attach(struct drm_bridge *bridge,
- 		return ret;
- 	}
- 
--	drm_connector_attach_encoder(&sbridge->connector,
--					  bridge->encoder);
-+	drm_connector_attach_encoder(&sbridge->connector, bridge->encoder);
- 
- 	return 0;
- }
+Patch 1/4 and 2/4 start by splitting EDID read and connector creation to
+separate functions to ease review of 3/4 and 4/4. Patch 3/4 performs the
+bulk of the work by implementing the DRM bridge connector-related
+operations, and patch 4/4 then makes connector creation optional.
+
+I've had trouble wrapping my head around the HPD handling code in the
+av7511 driver (this is why I've CC'ed Rob and Sean who last touched
+this). The split of the code between the .detect() operation and the HPD
+IRQ seems a bit weird to me, and I haven't dared touching it as it also
+appears fragile.
+
+In particular, I'm not sure why we need to retrieve modes in the
+.detect() operation. git blame didn't help, as the code has been there
+since the beginning. I'd like to remove that completely, but to avoid
+breakages, patch 3/4 only does so when the adv7511 is used without
+creating a DRM connector.
+
+Usage of both adv7511->status and adv7511->connector.status in the two
+operations also seems awkward, and I would like to drop usage of the
+latter in the new code path, but I also haven't dared refactoring that
+yet. Feedback would be welcome.
+
+Laurent Pinchart (4):
+  drm: bridge: adv7511: Split EDID read to a separate function
+  drm: bridge: adv7511: Split connector creation to a separate function
+  drm: bridge: adv7511: Implement bridge connector operations
+  drm: bridge: adv7511: Make connector creation optional
+
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 137 +++++++++++++------
+ 1 file changed, 98 insertions(+), 39 deletions(-)
+
 -- 
 Regards,
 
