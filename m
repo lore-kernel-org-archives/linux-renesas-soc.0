@@ -2,105 +2,91 @@ Return-Path: <SRS0=YZYO=5Z=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E83C2BA2B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 16:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA96AC2BA19
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 17:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EB9720769
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 16:33:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="m0bHmXQq"
+	by mail.kernel.org (Postfix) with ESMTP id B578D20678
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 17:05:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbgDIQdp (ORCPT
+        id S1727977AbgDIRFJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Apr 2020 12:33:45 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50606 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbgDIQdp (ORCPT
+        Thu, 9 Apr 2020 13:05:09 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:39601 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726728AbgDIRFJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Apr 2020 12:33:45 -0400
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DCC1072C;
-        Thu,  9 Apr 2020 18:33:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1586450024;
-        bh=1TUMqJKhBAOKvfcP3ShZLw36os3ERuBc/qpJk2r5f5k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m0bHmXQqxGcr0mpJedCqkkzESaRp4DIW8OGHj3XymBA8U4Bs47PBtjdPnyyXVbG2P
-         aOogA4K+uX7KjTE9u5JVvC14dHsOGlHRxiD6kpCkF7zcQeEg/+M8HjulY8n9l1kcZH
-         ExsDEseEH3ZUyU1cd1sQAlp3MA6emqJuhTKxk2PA=
-Date:   Thu, 9 Apr 2020 19:33:33 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Hyun Kwon <hyunk@xilinx.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v8 02/13] squash! max9286: convert probe kzalloc
-Message-ID: <20200409163333.GA25086@pendragon.ideasonboard.com>
-References: <20200409121202.11130-1-kieran.bingham+renesas@ideasonboard.com>
- <20200409121202.11130-3-kieran.bingham+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Thu, 9 Apr 2020 13:05:09 -0400
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 77D88E0008;
+        Thu,  9 Apr 2020 17:05:07 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     linux-renesas-soc@vger.kernel.org,
+        kieran.bingham+renesas@ideasonboard.com
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH] squash! i2c: max9286: Put of node on error
+Date:   Thu,  9 Apr 2020 19:08:06 +0200
+Message-Id: <20200409170806.1842811-1-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200409121202.11130-3-kieran.bingham+renesas@ideasonboard.com>
+References: <20200409121202.11130-3-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+Put the device of node in case of dt parsing error.
 
-Thank you for the patch.
+Fixes: 9eed4185c7a0 ("media: i2c: Add MAX9286 driver")
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/media/i2c/max9286.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-On Thu, Apr 09, 2020 at 01:11:51PM +0100, Kieran Bingham wrote:
-> v8:
->  - Convert probe kzalloc usage to devm_ variant
+diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+index 241deed0f270..bac9696f83b4 100644
+--- a/drivers/media/i2c/max9286.c
++++ b/drivers/media/i2c/max9286.c
+@@ -1121,6 +1121,7 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+ 	i2c_mux = of_find_node_by_name(dev->of_node, "i2c-mux");
+ 	if (!i2c_mux) {
+ 		dev_err(dev, "Failed to find i2c-mux node\n");
++		of_node_put(dev->of_node);
+ 		return -EINVAL;
+ 	}
 
-This isn't worse than the existing code, but are you aware that devm_*
-should not be used in this case ? The memory should be allocated with
-kzalloc() and freed in the .release() operation.
+@@ -1168,6 +1169,7 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+ 					of_fwnode_handle(node), &vep);
+ 			if (ret) {
+ 				of_node_put(node);
++				of_node_put(dev->of_node);
+ 				return ret;
+ 			}
 
-> ---
->  drivers/media/i2c/max9286.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-> index b84d2daa6561..0a43137b8112 100644
-> --- a/drivers/media/i2c/max9286.c
-> +++ b/drivers/media/i2c/max9286.c
-> @@ -1155,7 +1155,7 @@ static int max9286_probe(struct i2c_client *client)
->  	unsigned int i;
->  	int ret;
->  
-> -	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
-> +	priv = devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
->  	if (!priv)
->  		return -ENOMEM;
->  
-> @@ -1232,7 +1232,6 @@ static int max9286_probe(struct i2c_client *client)
->  	max9286_configure_i2c(priv, false);
->  err_free:
->  	max9286_cleanup_dt(priv);
-> -	kfree(priv);
->  
->  	return ret;
->  }
-> @@ -1253,8 +1252,6 @@ static int max9286_remove(struct i2c_client *client)
->  
->  	gpiod_set_value_cansleep(priv->gpiod_pwdn, 0);
->  
-> -	kfree(priv);
-> -
->  	return 0;
->  }
->  
+@@ -1177,6 +1179,7 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+ 					vep.bus_type);
+ 				v4l2_fwnode_endpoint_free(&vep);
+ 				of_node_put(node);
++				of_node_put(dev->of_node);
+ 				return -EINVAL;
+ 			}
 
--- 
-Regards,
+@@ -1214,6 +1217,7 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+ 		priv->nsources++;
+ 	}
+ 	of_node_put(node);
++	of_node_put(dev->of_node);
 
-Laurent Pinchart
+ 	priv->route_mask = priv->source_mask;
+
+--
+2.26.0
+
