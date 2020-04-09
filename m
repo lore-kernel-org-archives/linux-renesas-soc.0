@@ -2,106 +2,117 @@ Return-Path: <SRS0=YZYO=5Z=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D74AC2BA80
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 09:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 762D5C2BB55
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 09:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D962084D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 09:27:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DD49221E9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Apr 2020 09:48:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="ajHLyTL6"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="Geihg/He"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725783AbgDIJ07 (ORCPT
+        id S1725970AbgDIJs4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Apr 2020 05:26:59 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45115 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbgDIJ06 (ORCPT
+        Thu, 9 Apr 2020 05:48:56 -0400
+Received: from de-out1.bosch-org.com ([139.15.230.186]:55272 "EHLO
+        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726632AbgDIJs4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Apr 2020 05:26:58 -0400
-Received: by mail-lf1-f66.google.com with SMTP id f8so7343481lfe.12
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Apr 2020 02:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=785ve1kYqq72ZnoZIdw7Mq9AwtBztA+CS1slLAh1Ioo=;
-        b=ajHLyTL6VSV4GJDDwB6mf2xIC7K7pX0a56ZMguQ7Jkple/01OdHr6c7ByJP7aFIxxD
-         ybIqLtY+Jayv9TQXp2bUDNvqtgDSjNMnhb6HQHXujv3bx2DwRCNJXfZqaffHqqKAX1cv
-         TuXkifKu2knNYdibTCu7WY78iEIT/7zBMcK95ZHe6y2GW2WNcOamY9nKscFugnmHpdT/
-         z+0kHZRbuoprwJ54DRPmCd75tdnuQ8Cug2zMuOo5n/2qHQ1m/MfmW2reWv0jUN731wTE
-         pXakjhbH1GHMLnw02Pakc/SX5AC4NtiIPzhBdTy9iSBgDAWgXuHmfDVaVftouPcDS00O
-         HxYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=785ve1kYqq72ZnoZIdw7Mq9AwtBztA+CS1slLAh1Ioo=;
-        b=oF+mm1MfcSw+NrIDIkK86nnMEgBIHvH0hxWNOJRCxUkXVV3uMjGM4ashB1WzzaASkR
-         6MQXEz8tTMV1yBLCzocgtnu7dIAiieoTqV+WBeOaJ6rC/Oq6M6etWFgTvkfEDBixQgOu
-         tB4BD4YTVfE6ffARkLi2/jTq3rl5yZJYG961KAckBJH/9Q+FuKBlNtItXJUkRKGEbiai
-         3uEvtQre/2Ioym/8iI4Hgak+PXfRXWq2ToSsdmJYJEsbILlZk9zp/xOJN0vH+6RttQya
-         WDY1jECh5oTSBvxqFQIDGD8coAi/rZWVIYcBqKL+cTrAxcPOPa+YMVlWCbdqE5Qk15h7
-         Je9g==
-X-Gm-Message-State: AGi0PuazCyS6c7jPD2qw5XBRhaUjJACvpryuLzsJh3qStjmJM1m0bFfs
-        miOf6xW93VFxPJLX9t6urKq1cA==
-X-Google-Smtp-Source: APiQypIcRf76WjN45F7H2dMUBzoO0tD6yy1I8Ubb5zMmzxhxeY7qVl4frDOnHsgQbsV6Ivur5sfiHw==
-X-Received: by 2002:a19:ca48:: with SMTP id h8mr7346704lfj.211.1586424415343;
-        Thu, 09 Apr 2020 02:26:55 -0700 (PDT)
-Received: from ?IPv6:2a00:1fa0:429a:a2f1:594e:c9e:26a1:8a11? ([2a00:1fa0:429a:a2f1:594e:c9e:26a1:8a11])
-        by smtp.gmail.com with ESMTPSA id s6sm15227121ljm.58.2020.04.09.02.26.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Apr 2020 02:26:54 -0700 (PDT)
-Subject: Re: [PATCH] ravb: Fix RAVB_RXTSTAMP_TYPE_ALL value
-To:     Dirk Behme <dirk.behme@de.bosch.com>,
-        linux-renesas-soc@vger.kernel.org
-Cc:     geert+renesas@glider.be, Julia Lawall <julia.lawall@inria.fr>
-References: <20200409061509.13385-1-dirk.behme@de.bosch.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <14e0c265-5cb6-0170-e673-8300eddc417c@cogentembedded.com>
-Date:   Thu, 9 Apr 2020 12:26:46 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        Thu, 9 Apr 2020 05:48:56 -0400
+Received: from fe0vm1649.rbesz01.com (unknown [139.15.230.188])
+        by si0vms0217.rbdmz01.com (Postfix) with ESMTPS id 48ybv973dSz4f3lwd;
+        Thu,  9 Apr 2020 11:48:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=de.bosch.com;
+        s=key3-intmail; t=1586425734;
+        bh=Emk+oCatsj2UF/58rIn7CY0omkGnijASbVgyPSDoea8=; l=10;
+        h=From:Subject:From:Reply-To:Sender;
+        b=Geihg/HejHHOFwlvAV39mNZ6o0nGfJoc6En/3Xk6U9AtNmaUcwcsNdrWHEwT7hV2u
+         Ac2JLAGSndg1Aef4I+3PsZxZZAzUqxvWnZk7PZyAk8EacBd64akUNgn0B/hAWigXXd
+         5x53rf180EoXXl/e0HgLC1LKAkuZQVsCWwt/fA6A=
+Received: from si0vm2082.rbesz01.com (unknown [10.58.172.176])
+        by fe0vm1649.rbesz01.com (Postfix) with ESMTPS id 48ybv96qf0z2cL;
+        Thu,  9 Apr 2020 11:48:53 +0200 (CEST)
+X-AuditID: 0a3aad16-993ff70000002671-70-5e8eef85e3d3
+Received: from fe0vm1651.rbesz01.com ( [10.58.173.29])
+        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by si0vm2082.rbesz01.com (SMG Outbound) with SMTP id 4C.7B.09841.58FEE8E5; Thu,  9 Apr 2020 11:48:53 +0200 (CEST)
+Received: from SI-HUB2000.de.bosch.com (si-hub2000.de.bosch.com [10.4.103.108])
+        by fe0vm1651.rbesz01.com (Postfix) with ESMTPS id 48ybv95XM2zvl5;
+        Thu,  9 Apr 2020 11:48:53 +0200 (CEST)
+Received: from HI-Z0EVG.hi.de.bosch.com (10.34.218.219) by
+ SI-HUB2000.de.bosch.com (10.4.103.108) with Microsoft SMTP Server id
+ 15.1.1979.3; Thu, 9 Apr 2020 11:48:53 +0200
+From:   Dirk Behme <dirk.behme@de.bosch.com>
+To:     <linux-renesas-soc@vger.kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+CC:     <geert+renesas@glider.be>, <dirk.behme@de.bosch.com>
+Subject: [PATCH v2 2/2] ravb: Drop unused RAVB_{R,T}XTSTAMP_VALID macros
+Date:   Thu, 9 Apr 2020 11:48:51 +0200
+Message-ID: <20200409094851.22142-2-dirk.behme@de.bosch.com>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20200409094851.22142-1-dirk.behme@de.bosch.com>
+References: <20200409094851.22142-1-dirk.behme@de.bosch.com>
 MIME-Version: 1.0
-In-Reply-To: <20200409061509.13385-1-dirk.behme@de.bosch.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.34.218.219]
+X-Brightmail-Tracker: H4sIAAAAAAAAA22SbUxTZxTHedoObptec7mIHDsQuY6FobC2jNkhItsXyYyDLIzMAWXFXmhn
+        W7AXGsBlFgTDqGKZQRjC4tgwFdgbiswXfCk4wQyGTpGXD+CCszBEawEHiK4vIP2wbyfnf37n
+        f55/HoxNnvESYEpNDq3VyFSUJ4/Di/ohIKzkUblUeGExQlJ3/CskaR2fYkl+bxzyimXHjVa+
+        YMVV9ITF2VrWJbA/4UXLaZVSR2vfjPmUp3jx/CAnW4/lPe196qVHDzzLEBcD4i241lWJyhAP
+        I4lqFvxWUchyCCRxEcGA9TOX8BOC1pNWL4fgSYTCOWOps15NpEHxz8XOTWxCAnNTY07Yh4gD
+        w0KRc4ZDvAb35w3OGieiYeFiB9vlHAjHmsqc81xiK4zYBuxXYHazaDh6l3KNe0P312Mc1/pA
+        ONB6nO2qAa5aLEtrgqC55twrRuRd44bUuCE1bsgJxG5EvoxSqFOLhRJxuDadZgqEovDdWeoW
+        5Mp3za+orexxuBmxMGRGkRiL8sXP3y+XkqvSs+T5ChmjSNPmqmiGEuD7J79MJX1etpncdLWS
+        YZRZGjMCjE2txncUHZaSuFyWX0Brs1yYGb2KcSg/3Je3T0oSmbIceg9NZ9PaZXULhlGAL07Z
+        Db21dCadl6FU5SzLVACOPDw8yDXuirstC+OaUQTGt3uPO27GmWyZmlFmLuFrXTi53F1Bb6DN
+        Aj/c6rAlHKoiV/PSVeCPi5vsD/F1E1bICTSIMET54FIHzLf/1hU/wPWOiLyXmiuQuMHOEKUc
+        +PdQBQcK65/wwfLsWxKsC1W+MDlS6AcXxuoFcFrfHADm24MhYGp4Fgq2quJNMG89FAXN04Pv
+        ga2mcCdMt9V+AJVzffEwNDL8oX2kMwkquydTobyxUwZzdTdlYKo4KIfTAzflcLmwNBNmrjxU
+        QPftb5QwcrZnD1gW6tQwPTyvhurZMxqobpnRwJHemb1wdPFK7oQ9TJY9zP50gyPMHFnO/4S5
+        1F15nUDPOsyIB+rfjjYGH/P/Z6xdsu6xqTfI7G0MoGrbh4MnFjYmq4NwuoNtmFnVx4U0U16/
+        7U/+RlHifG3D2s6I65ctLT5xf2/5PHhoW2Ksqf0NzmhY/q1T/SElmx6ISn6MtySn9Yhmu6VN
+        hqZdmmvJgZakjK7tjO11of/6R7noO4lYN963u0txomR468m5gdiQmDs6ML5f9kubz35uwdl7
+        locf9eTJJ97x7GhPKFCRz7eZ7p33l1yPT9Hcok/d+T5m2K9I05owbdnsOWLQfeG1V/vHbFL1
+        jlD5u39tvxq5XnUpfqgrdd8BfpQ0T/PxaIYl9sbdxMFdl6IiU/ixT5TBKRtSpVWJFIdRyESh
+        bC0j+w8WZA9GxwQAAA==
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+These macros are unused, we can safely drop them.
 
-On 09.04.2020 9:15, Dirk Behme wrote:
+Cleanup only, no functional change.
 
-> In the function ravb_hwtstamp_get() in ravb_main.c with the existing
-> values for RAVB_RXTSTAMP_TYPE_V2_L2_EVENT (0x2) and RAVB_RXTSTAMP_TYPE_ALL
-> (0x6)
-> 
-> if (priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE_V2_L2_EVENT)
->          config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT;
-> else if (priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE_ALL)
->          config.rx_filter = HWTSTAMP_FILTER_ALL;
-> 
-> if the test on RAVB_RXTSTAMP_TYPE_ALL should be true, it will never
-> be reached. Correct this by changing RAVB_RXTSTAMP_TYPE_ALL to 0x4.
-> 
-> While at it, drop two unused macros.
+Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
+---
+Changes in v2: Split fix and cleanup into two patches.
 
-    Don't do 2 things in 1 patch, especially when you're doing a fix
-and the other thing is a cleanup.
+ drivers/net/ethernet/renesas/ravb.h | 2 --
+ 1 file changed, 2 deletions(-)
 
-> Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-> Reported-by: Julia Lawall <julia.lawall@inria.fr>
-> Suggested-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-[...]
+diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+index e921eae82022..5a05b74a6fe6 100644
+--- a/drivers/net/ethernet/renesas/ravb.h
++++ b/drivers/net/ethernet/renesas/ravb.h
+@@ -35,10 +35,8 @@
+ #define RAVB_ALIGN	128
+ 
+ /* Hardware time stamp */
+-#define RAVB_TXTSTAMP_VALID	0x00000001	/* TX timestamp valid */
+ #define RAVB_TXTSTAMP_ENABLED	0x00000010	/* Enable TX timestamping */
+ 
+-#define RAVB_RXTSTAMP_VALID	0x00000001	/* RX timestamp valid */
+ #define RAVB_RXTSTAMP_TYPE	0x00000006	/* RX type mask */
+ #define RAVB_RXTSTAMP_TYPE_V2_L2_EVENT 0x00000002
+ #define RAVB_RXTSTAMP_TYPE_ALL	0x00000004
+-- 
+2.20.0
 
-MBR, Sergei
