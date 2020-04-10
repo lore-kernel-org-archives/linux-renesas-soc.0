@@ -2,95 +2,190 @@ Return-Path: <SRS0=ylRb=52=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECECC2D0EC
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 17:36:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CFCC2D0EC
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 17:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59A972078E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 17:36:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9979D2087E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 17:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586540216;
-	bh=BOqhR4vTHabaDF5ma1ebkMXr4dKMQ1/YM7Y2KhJfLbA=;
+	s=default; t=1586540287;
+	bh=wVr6B9kRmsNiOzawAx+yaktObU+34iswRe7Ma4K0+7U=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WREIwA/NE/Ql5UKo3nyQaaOGd92JT6omfx8e/JB5kgUzH8IRwmujImbvj5HfcvSuu
-	 u+sk6LJTEhNjHk/oHM5Iy3OV9l8tWJYzKBJSJ9l3OUJ6Iiqqzlzq/FkQzT0Rzz2DHu
-	 PtkXH7KUGn5ojVGgwh3AykzgTlTGA+355ZYy2oH0=
+	b=awjaAZCdjwFfjrNOub+AhnpWTbgv5hRg4Gu2hHTQ6rJdtI8TnFDhy6Bj89XP4GDhx
+	 de8+JRLN21nSKp5ARs+QepS9AMT87vdUhmLfghPcrS54Q3iRaBbTIR55O9/PS270g1
+	 j2VT2YpxbMlabydoHQlRc9zMmj/gMxce+PHqipdE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbgDJRgz (ORCPT
+        id S1726641AbgDJRiG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Apr 2020 13:36:55 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40918 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726234AbgDJRgz (ORCPT
+        Fri, 10 Apr 2020 13:38:06 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38547 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726177AbgDJRiG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Apr 2020 13:36:55 -0400
-Received: by mail-ot1-f65.google.com with SMTP id q2so2489275otk.7;
-        Fri, 10 Apr 2020 10:36:55 -0700 (PDT)
+        Fri, 10 Apr 2020 13:38:06 -0400
+Received: by mail-ot1-f68.google.com with SMTP id d18so2517091otc.5;
+        Fri, 10 Apr 2020 10:38:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MzwM/gQ/NLaRvDFMI25L91K+i3EhNsGz95soTyWuQBo=;
-        b=WCAbFeh/+b8aiImco+FcjemeUmUjLuH7pSK3E8H/CC9dnOB2DjOatVw/kXjZgLkrGe
-         FLuNW+hcRyh4BlHgz0aSQRYUcxIFZHBuE91bwhRF/xlOTb72sRqDGxTf5cfMYxR+NKbH
-         ZPL+hQJh3WCpaIbzJxDJFeyIcXDGTh2f5ptJSihmiw7mnnDlo9hTrYe0LH4dWOom12VT
-         7kKCuRcFbFt/EF0gK86SEWNqTJ0PudWpFctKR/8ZJnj5WVbG4z1VSo/JNWMqFLAiSPy4
-         SxxEhzM24qZqXEQJwhXCCA0dSwERA9L8JMXBO6avJ/T1AmotlIvNLi8SF06VjFYh7+cO
-         TmJg==
-X-Gm-Message-State: AGi0PuYyslzXsjDds9AkvAeScoCAKxfAur09hvknncm0vRxnS+VHzOSj
-        hEo3UeLoRBd1NEP1LDwkhA==
-X-Google-Smtp-Source: APiQypLnAMIYEtn1snzAX7XsnL8YdEKpMgCeNLiH6hW+fVNoQm1scqQIshatQunCogs3B6D0xJoNWA==
-X-Received: by 2002:a4a:c819:: with SMTP id s25mr4930618ooq.6.1586540215007;
-        Fri, 10 Apr 2020 10:36:55 -0700 (PDT)
-Received: from rob-hp-laptop (ip-99-203-29-27.pools.cgn.spcsdns.net. [99.203.29.27])
-        by smtp.gmail.com with ESMTPSA id d25sm1625369ooh.34.2020.04.10.10.36.51
+        bh=50MgVueUpRLYPxEqiQO+BlISCgjHmB6+RHj/Bt+hChk=;
+        b=i1Uw3rj9Jsi/ZJ4eQGCFxr5twSHq39BbAslofbSweiI6oUTPt5YgoAB7GsOcN8QjjA
+         BflfAL3ub7qWuTYA0RzExLS85xlaPTCGyh3eS3ObpxidVKCYoW55cWjrY8Rcn3tGTgkK
+         CptI8vOjfA5234pPy00dtTmfg8XRLbnaGmIVHp1OQvMxrSLkMllixfFpSTiicCaFWAAz
+         HWv6p5hWCFPCZaFJVDjcAsR0OCLkdQvJCjYPi3zkT9HIEji5Eq+yO7ntv6Dy5qE1F2hv
+         z5YFhtTRLlAll5xk8UIdtgu4u8oyBoN1iRQTf9+ox9PMG029Q3ceZBBvajZE6Dci7Ruu
+         Rrvg==
+X-Gm-Message-State: AGi0PuagJdBqh0hihpp3e+yktSnqf6ELyCoE14rOEw2qmQXjfuAvbWxZ
+        aIpvG1sXP8iKPb0HoEkxIS3ONb0=
+X-Google-Smtp-Source: APiQypLT0MlacQQNQZZQqIkajF6n5AyLq3+3It3FwTj1+j2Ey5SGoCvK6DDLKSDwBXipp0K8VdxJDA==
+X-Received: by 2002:a9d:5a9:: with SMTP id 38mr4505161otd.331.1586540285527;
+        Fri, 10 Apr 2020 10:38:05 -0700 (PDT)
+Received: from rob-hp-laptop (ip-99-203-29-27.pools.spcsdns.net. [99.203.29.27])
+        by smtp.gmail.com with ESMTPSA id c18sm1554480oig.53.2020.04.10.10.38.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Apr 2020 10:36:54 -0700 (PDT)
-Received: (nullmailer pid 13792 invoked by uid 1000);
-        Fri, 10 Apr 2020 16:31:08 -0000
-Date:   Fri, 10 Apr 2020 11:31:08 -0500
+        Fri, 10 Apr 2020 10:38:04 -0700 (PDT)
+Received: (nullmailer pid 29638 invoked by uid 1000);
+        Fri, 10 Apr 2020 17:04:35 -0000
+Date:   Fri, 10 Apr 2020 12:04:35 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH 1/2] dt-bindings: usb: generic-ehci: Document
- power-domains property
-Message-ID: <20200410163108.GA13579@bogus>
-References: <20200326163807.23216-1-geert+renesas@glider.be>
- <20200326163807.23216-2-geert+renesas@glider.be>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: regroup documentation of bindings
+Message-ID: <20200410170435.GA23398@bogus>
+References: <20200330002220.3575-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200326163807.23216-2-geert+renesas@glider.be>
+In-Reply-To: <20200330002220.3575-1-wsa+renesas@sang-engineering.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 26 Mar 2020 17:38:05 +0100, Geert Uytterhoeven wrote:
-> It is quite common for a generic EHCI block to be embedded in an SoC in
-> its own power domain.  Hence allow the DTS writer to describe the
-> controller's position in the power hierarchy, by documenting the
-> optional presence of a "power-domains" property.
+On Mon, Mar 30, 2020 at 02:22:20AM +0200, Wolfram Sang wrote:
+> Some bindings are for the bus master, some are for the slaves.
+> Regroup them and give them seperate headings to make it clear.
 > 
-> This gets rid of "make dtbs_check" warnings like:
-> 
->     arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m.dt.yaml: usb@ee080100: 'power-domains' does not match any of the regexes: 'pinctrl-[0-9]+'
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
->  Documentation/devicetree/bindings/usb/generic-ehci.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>  Documentation/devicetree/bindings/i2c/i2c.txt | 63 +++++++++++--------
+>  1 file changed, 38 insertions(+), 25 deletions(-)
 > 
+> diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentation/devicetree/bindings/i2c/i2c.txt
+> index 9a53df4243c6..aa74dd0e63e3 100644
+> --- a/Documentation/devicetree/bindings/i2c/i2c.txt
+> +++ b/Documentation/devicetree/bindings/i2c/i2c.txt
+> @@ -2,10 +2,10 @@ Generic device tree bindings for I2C busses
+>  ===========================================
+>  
+>  This document describes generic bindings which can be used to describe I2C
+> -busses in a device tree.
+> +busses and their child devices in a device tree.
+>  
+> -Required properties
+> --------------------
+> +Required properties (per bus)
+> +-----------------------------
+>  
+>  - #address-cells  - should be <1>. Read more about addresses below.
+>  - #size-cells     - should be <0>.
+> @@ -16,18 +16,13 @@ For other required properties e.g. to describe register sets,
+>  clocks, etc. check the binding documentation of the specific driver.
+>  
+>  The cells properties above define that an address of children of an I2C bus
+> -are described by a single value. This is usually a 7 bit address. However,
+> -flags can be attached to the address. I2C_TEN_BIT_ADDRESS is used to mark a 10
+> -bit address. It is needed to avoid the ambiguity between e.g. a 7 bit address
+> -of 0x50 and a 10 bit address of 0x050 which, in theory, can be on the same bus.
+> -Another flag is I2C_OWN_SLAVE_ADDRESS to mark addresses on which we listen to
+> -be devices ourselves.
+> +are described by a single value.
+>  
+> -Optional properties
+> --------------------
+> +Optional properties (per bus)
+> +-----------------------------
+>  
+>  These properties may not be supported by all drivers. However, if a driver
+> -wants to support one of the below features, it should adapt the bindings below.
+> +wants to support one of the below features, it should adapt these bindings.
+>  
+>  - clock-frequency
+>  	frequency of bus clock in Hz.
+> @@ -73,31 +68,49 @@ wants to support one of the below features, it should adapt the bindings below.
+>  	i2c bus clock frequency (clock-frequency).
+>  	Specified in Hz.
+>  
+> -- interrupts
+> -	interrupts used by the device.
+> -
+> -- interrupt-names
+> -	"irq", "wakeup" and "smbus_alert" names are recognized by I2C core,
+> -	other names are	left to individual drivers.
+> -
+> -- host-notify
+> -	device uses SMBus host notify protocol instead of interrupt line.
+> -
+>  - multi-master
+>  	states that there is another master active on this bus. The OS can use
+>  	this information to adapt power management to keep the arbitration awake
+>  	all the time, for example.
+>  
+> -- wakeup-source
+> -	device can be used as a wakeup source.
+> +Required properties (per child device)
+> +--------------------------------------
+> +
+> +- compatible
+> +	name of I2C slave device following generic names recommended practice.
 
-Applied, thanks.
+generic names is for node names not compatibles.
 
-Rob
+>  
+>  - reg
+> -	I2C slave addresses
+> +	One or many I2C slave addresses. These are usually a 7 bit addresses.
+> +	However, flags can be attached to an address. I2C_TEN_BIT_ADDRESS is
+> +	used to mark a 10 bit address. It is needed to avoid the ambiguity
+> +	between e.g. a 7 bit address of 0x50 and a 10 bit address of 0x050
+> +	which, in theory, can be on the same bus.
+> +	Another flag is I2C_OWN_SLAVE_ADDRESS to mark addresses on which we
+> +	listen to be devices ourselves.
+> +
+> +Optional properties (per child device)
+> +--------------------------------------
+> +
+> +These properties may not be supported by all drivers. However, if a driver
+> +wants to support one of the below features, it should adapt these bindings.
+> +
+> +- host-notify
+> +	device uses SMBus host notify protocol instead of interrupt line.
+> +
+> +- interrupts
+> +	interrupts used by the device.
+> +
+> +- interrupt-names
+> +	"irq", "wakeup" and "smbus_alert" names are recognized by I2C core,
+> +	other names are	left to individual drivers.
+>  
+>  - reg-names
+>  	Names of map programmable addresses.
+>  	It can contain any map needing another address than default one.
+>  
+> +- wakeup-source
+> +	device can be used as a wakeup source.
+> +
+>  Binding may contain optional "interrupts" property, describing interrupts
+>  used by the device. I2C core will assign "irq" interrupt (or the very first
+>  interrupt if not using interrupt names) as primary interrupt for the slave.
+> -- 
+> 2.20.1
+> 
