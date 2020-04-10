@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7F3C2BBC7
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 14:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A16C2BBC7
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 17:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E94402137B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 14:12:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A8A4207FF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 17:02:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbgDJOMc (ORCPT
+        id S1726234AbgDJRCM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Apr 2020 10:12:32 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:48581 "EHLO
+        Fri, 10 Apr 2020 13:02:12 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:56542 "EHLO
         hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726177AbgDJOMb (ORCPT
+        by vger.kernel.org with ESMTP id S1726203AbgDJRCM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Apr 2020 10:12:31 -0400
-Received: from [5.157.111.77] (port=57222 helo=[192.168.77.62])
+        Fri, 10 Apr 2020 13:02:12 -0400
+Received: from [5.157.111.77] (port=58938 helo=[192.168.77.62])
         by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
         (Exim 4.93)
         (envelope-from <luca@lucaceresoli.net>)
-        id 1jMu2M-004dr7-2a; Fri, 10 Apr 2020 15:49:38 +0200
-Subject: Re: [RFC PATCH v2 2/6] i2c: allow DT nodes without 'compatible'
+        id 1jMx2b-005q14-4P; Fri, 10 Apr 2020 19:02:05 +0200
+Subject: Re: [RFC PATCH v2 4/6] i2c: of: error message unification
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org, linux-i3c@lists.infradead.org,
@@ -35,17 +35,16 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-i3c@lists.infradead.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Vladimir Zapolskiy <vz@mleia.com>,
         linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh@kernel.org>
+        Geert Uytterhoeven <geert+renesas@glider.be>
 References: <20200318150059.21714-1-wsa+renesas@sang-engineering.com>
- <20200318150059.21714-3-wsa+renesas@sang-engineering.com>
+ <20200318150059.21714-5-wsa+renesas@sang-engineering.com>
 From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <11ca7487-ac07-f714-8573-20d1a0040212@lucaceresoli.net>
-Date:   Fri, 10 Apr 2020 15:49:33 +0200
+Message-ID: <d8f9b77f-9530-bbd6-3323-a0170bba5e6c@lucaceresoli.net>
+Date:   Fri, 10 Apr 2020 19:02:04 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <20200318150059.21714-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20200318150059.21714-5-wsa+renesas@sang-engineering.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -67,22 +66,18 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 Hi,
 
 On 18/03/20 16:00, Wolfram Sang wrote:
-> Sometimes, we have unknown devices in a system and still want to block
-> their address. For that, we allow DT nodes with only a 'reg' property.
-> These devices will be bound to the "dummy" driver but with the name
-> "reserved". That way, we can distinguish them and even hand them over to
-> the "dummy" driver later when they are really requested using
-> i2c_new_ancillary_device().
+> - don't prefix the device if %pOF is provided. That information is
+>   enough.
+> - move the prefix to pr_fmt
+> - change prefix from "of_i2c" to "i2c_of" because the code was moved
+>   out of the of-domain long ago
+> - drop error string for callers of of_i2c_register_device because it
+>   already reports enough (thanks to Tang Bin for the report!)
 > 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Rob Herring <robh@kernel.org>
 
 Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
-
-As I said in the reply to v1, I think we should reserve addresses also
-when there is a compatible string but no matching driver, but this is
-another story and can be handled separately.
 
 -- 
 Luca
