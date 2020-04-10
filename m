@@ -2,115 +2,104 @@ Return-Path: <SRS0=ylRb=52=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 033C1C2BA2B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 07:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A51A5C2BB85
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 07:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3829207FF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 07:45:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 876A7206F7
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Apr 2020 07:49:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725975AbgDJHpO (ORCPT
+        id S1726049AbgDJHtO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 10 Apr 2020 03:45:14 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:49811 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725776AbgDJHpO (ORCPT
+        Fri, 10 Apr 2020 03:49:14 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:41743 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbgDJHtO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 10 Apr 2020 03:45:14 -0400
+        Fri, 10 Apr 2020 03:49:14 -0400
 X-Originating-IP: 2.224.242.101
 Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id C5E2A20009;
-        Fri, 10 Apr 2020 07:45:11 +0000 (UTC)
-Date:   Fri, 10 Apr 2020 09:48:14 +0200
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 57087FF803;
+        Fri, 10 Apr 2020 07:49:10 +0000 (UTC)
+Date:   Fri, 10 Apr 2020 09:52:13 +0200
 From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Hyun Kwon <hyunk@xilinx.com>,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: Re: [PATCH v8 11/13] squash! max9286: Disable overlap window
-Message-ID: <20200410074814.gc5f6mwjimbtnvum@uno.localdomain>
+Subject: Re: [PATCH v8 03/13] squash! max9286: Fix cleanup path from GPIO
+ powerdown
+Message-ID: <20200410075213.gelbnkltkzfqcfgc@uno.localdomain>
 References: <20200409121202.11130-1-kieran.bingham+renesas@ideasonboard.com>
- <20200409121202.11130-12-kieran.bingham+renesas@ideasonboard.com>
- <20200409163236.mudhnpvq37wqn3y4@uno.localdomain>
- <cd390e5b-1da6-32c9-458a-a9aa5a29094c@ideasonboard.com>
+ <20200409121202.11130-4-kieran.bingham+renesas@ideasonboard.com>
+ <20200409162207.xcj2ro4ecji5yte4@uno.localdomain>
+ <CAMuHMdUYk92CX7NDNA3QEFG7fPC0Gwu702A9RU26fQGpBu=ugA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cd390e5b-1da6-32c9-458a-a9aa5a29094c@ideasonboard.com>
+In-Reply-To: <CAMuHMdUYk92CX7NDNA3QEFG7fPC0Gwu702A9RU26fQGpBu=ugA@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+Hi Geert,
 
-On Fri, Apr 10, 2020 at 08:14:18AM +0100, Kieran Bingham wrote:
+On Fri, Apr 10, 2020 at 09:34:28AM +0200, Geert Uytterhoeven wrote:
 > Hi Jacopo,
 >
-> On 09/04/2020 17:32, Jacopo Mondi wrote:
-> > Hi Kieran,
+> On Thu, Apr 9, 2020 at 7:07 PM Jacopo Mondi <jacopo@jmondi.org> wrote:
+> > On Thu, Apr 09, 2020 at 01:11:52PM +0100, Kieran Bingham wrote:
+> > >  - Fix up cleanup path from GPIO PowerDown registration
+> > > ---
+> > >  drivers/media/i2c/max9286.c | 14 ++++++++------
+> > >  1 file changed, 8 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+> > > index 0a43137b8112..cc99740b34c5 100644
+> > > --- a/drivers/media/i2c/max9286.c
+> > > +++ b/drivers/media/i2c/max9286.c
+> > > @@ -1171,8 +1171,10 @@ static int max9286_probe(struct i2c_client *client)
+> > >
+> > >       priv->gpiod_pwdn = devm_gpiod_get_optional(&client->dev, "enable",
+> > >                                                  GPIOD_OUT_HIGH);
+> > > -     if (IS_ERR(priv->gpiod_pwdn))
+> > > -             return PTR_ERR(priv->gpiod_pwdn);
+> > > +     if (IS_ERR(priv->gpiod_pwdn)) {
+> > > +             ret = PTR_ERR(priv->gpiod_pwdn);
+> > > +             goto err_cleanup_dt;
+> > > +     }
+> > >
+> > >       gpiod_set_consumer_name(priv->gpiod_pwdn, "max9286-pwdn");
+> > >       gpiod_set_value_cansleep(priv->gpiod_pwdn, 1);
 > >
-> > On Thu, Apr 09, 2020 at 01:12:00PM +0100, Kieran Bingham wrote:
-> >> Provide a function to control setting of the overlap window, but disable
-> >> it by default.
-> >>
-> >> The function will allow the value to be easily updated in the future,
-> >> either statically in the code, or via an external control mechanism.
-> >>
-> >> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >> ---
-> >>  drivers/media/i2c/max9286.c | 42 +++++++++++++++++++++++++++++++++++++
-> >>  1 file changed, 42 insertions(+)
-> >>
-> >> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-> >> index 008a93910300..61178ae363d6 100644
-> >> --- a/drivers/media/i2c/max9286.c
-> >> +++ b/drivers/media/i2c/max9286.c
-> >> @@ -118,6 +118,9 @@
-> >>  #define MAX9286_REV_FLEN(n)		((n) - 20)
-> >>  /* Register 0x49 */
-> >>  #define MAX9286_VIDEO_DETECT_MASK	0x0f
-> >> +/* Register 0x64 */
-> >> +#define MAX9286_ENFSINLAST		BIT(5)
-> >> +#define MAX9286_OVLP_WINDOWH_MASK	GENMASK(4, 0)
-> >>  /* Register 0x69 */
-> >>  #define MAX9286_LFLTBMONMASKED		BIT(7)
-> >>  #define MAX9286_LOCKMONMASKED		BIT(6)
-> >> @@ -632,6 +635,34 @@ static int max9286_s_stream(struct v4l2_subdev *sd, int enable)
-> >>  	return 0;
-> >>  }
-> >>
-> >> +/*
-> >> + * The overlap window is a 13 bit value with the low byte in register 0x63 and
-> >> + * the high byte(5bits) stored in the least significant bits of register 0x64.
-> >                    ^ space
+> > As we get_optional(), shouldn't this be protected by an
+> >         if (priv->gpiod_pwdn)
 > >
-> > But I'm not sure this is useful comment. The register layout is
-> > actually the only documented thing of this register :)
+> >  ?
 >
-> Sure, but readers won't necessarily have the documentation :-) I think I
-> was just trying to explain what was happening because we have so many
-> unidentified registers (i.e. they're all just numbers, so we can't do,
+> When passed a NULL desc, validate_desc() just returns 0, without printing
+> an error message, so both functions become no-ops.
 >
->   max9286_write(priv, MAX9286_OVERLAP_LOW, overlap & 0xff);
->   max9286_write(priv, MAX9286_OVERLAP_HIGH, (overlap >> SHIFT) & MASK);
->
-> I can drop this comment all the same, although I'd like to document
-> clearly that it's a 13-bit value as an input, (not a full 16 bit)
->
-> Will this be better suited?
->
->
-> /*
->  * The overlap window is a 13 bit value stored across two registers.
->  * The definition and units of the value is undocumented.
->  */
 
-Oh no worries, if you want to keep that comment the first version is
-perfectly fine.
+Ah indeed, sorry I have overlooked this!
+
+Thanks for pointing this out and sorry Kieran for the noise!
+
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
