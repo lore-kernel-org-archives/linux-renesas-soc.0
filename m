@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4FEEC2BBC7
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Apr 2020 23:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14176C2BA19
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Apr 2020 23:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4CDD20787
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Apr 2020 23:38:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9AEC2051A
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Apr 2020 23:38:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586648300;
-	bh=AI8O6M/xgW3bacaJBJ8wOpBb/tPE/qgXnORpcVHrm+8=;
+	s=default; t=1586648310;
+	bh=SSgEN5OqU2ouBLggR017Qb9oCwekzXh1EMKxQQoZ8MM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0Ec/sJ7j7dUe3wm0L2Epkx4+kZ01iRTX+zsj2aDAcPZWlcl/65Xy9+ZXjECPln68O
-	 ssBnOcLPCShnn5H1PigT/EQegKrlMB/J9s501ENHmlcCjTyj/P+oilfArDaa+b3+0L
-	 FjTPnzCQ3sxSeQXu1IA77xbgmFvRahRXLP7YaTt8=
+	b=jXkCbmWOUoLwo5LVGhppQ+skz0KzCzdlDX99973d1hsYIfGOjGAYzsgFp+Eg44/fN
+	 HA0bSJFzpsEHkJ0i8F3DwN4s2JZXMLRT8iIEO0euH/smP74Bs0rSMoiOINIUaCkGqP
+	 05BNdOOYJBt76cFZ9XcaBLh1gozxOK9PlOyA5mwo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728806AbgDKXIC (ORCPT
+        id S1728799AbgDKXIA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 11 Apr 2020 19:08:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44444 "EHLO mail.kernel.org"
+        Sat, 11 Apr 2020 19:08:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728800AbgDKXIB (ORCPT
+        id S1728792AbgDKXH7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 11 Apr 2020 19:08:01 -0400
+        Sat, 11 Apr 2020 19:07:59 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 773CB20787;
-        Sat, 11 Apr 2020 23:08:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BDDA20708;
+        Sat, 11 Apr 2020 23:07:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586646481;
-        bh=AI8O6M/xgW3bacaJBJ8wOpBb/tPE/qgXnORpcVHrm+8=;
+        s=default; t=1586646480;
+        bh=SSgEN5OqU2ouBLggR017Qb9oCwekzXh1EMKxQQoZ8MM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QeV4dxGTFa4UhRv63Vz6w9eYu6BU8NkKKkTLkx5WTPF/oMKvAZ2QYcStSBIMYcDaR
-         a1R+tff6m+vOh4SgXDUg1fjnmy9sqsm8AaX1IDVlABJXPfT2mzfUhDHbA6MEajM95k
-         iJfrKyNQoOesnuA+biRs6KthNj0N/s8DSGGC2Bcs=
+        b=kRBQVeQDInXKJXLxXyRMz1Og3fswxGFwXxl3syCXNXoVKrKajf6RhmpboC3nzoHsN
+         hW5dV627VMEbBBQIRzmRcQf1EGVElVl3/sgndRvIdH2vBQeh710hX2aurUbz1yhovd
+         djkz6iiDssRVfkXZ6fqcFEHn2IGds/o5h6Wmt63g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
@@ -47,9 +47,9 @@ Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 046/121] sh_eth: check sh_eth_cpu_data::no_xdfar when dumping registers
-Date:   Sat, 11 Apr 2020 19:05:51 -0400
-Message-Id: <20200411230706.23855-46-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 045/121] sh_eth: check sh_eth_cpu_data::cexcr when dumping registers
+Date:   Sat, 11 Apr 2020 19:05:50 -0400
+Message-Id: <20200411230706.23855-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200411230706.23855-1-sashal@kernel.org>
 References: <20200411230706.23855-1-sashal@kernel.org>
@@ -64,12 +64,12 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[ Upstream commit 7bf47f609f7eaac4f7e9c407a85ad78997288a38 ]
+[ Upstream commit f75ca32403dbf91e20c275719aab705401b9e718 ]
 
-When adding the sh_eth_cpu_data::no_xdfar flag I forgot to add the flag
-check to  __sh_eth_get_regs(), causing the non-existing RDFAR/TDFAR to be
-considered for dumping on the R-Car gen1/2 SoCs (the register offset check
-has the final say here)...
+When adding the sh_eth_cpu_data::cexcr flag I forgot to add the flag
+check to  __sh_eth_get_regs(), causing the non-existing RX packet counter
+registers to be considered for dumping on  the R7S72100 SoC (the register
+offset sanity check has the final say here)...
 
 Fixes: 4c1d45850d5 ("sh_eth: add sh_eth_cpu_data::cexcr flag")
 Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
@@ -81,25 +81,22 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index eb6c52318ea25..3acca898ddd6b 100644
+index 37e7cd0177b84..eb6c52318ea25 100644
 --- a/drivers/net/ethernet/renesas/sh_eth.c
 +++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2140,11 +2140,13 @@ static size_t __sh_eth_get_regs(struct net_device *ndev, u32 *buf)
- 	add_reg(EESR);
- 	add_reg(EESIPR);
- 	add_reg(TDLAR);
--	add_reg(TDFAR);
-+	if (!cd->no_xdfar)
-+		add_reg(TDFAR);
- 	add_reg(TDFXR);
- 	add_reg(TDFFR);
- 	add_reg(RDLAR);
--	add_reg(RDFAR);
-+	if (!cd->no_xdfar)
-+		add_reg(RDFAR);
- 	add_reg(RDFXR);
- 	add_reg(RDFFR);
- 	add_reg(TRSCER);
+@@ -2194,8 +2194,10 @@ static size_t __sh_eth_get_regs(struct net_device *ndev, u32 *buf)
+ 	add_reg(FRECR);
+ 	add_reg(TSFRCR);
+ 	add_reg(TLFRCR);
+-	add_reg(CERCR);
+-	add_reg(CEECR);
++	if (cd->cexcr) {
++		add_reg(CERCR);
++		add_reg(CEECR);
++	}
+ 	add_reg(MAFCR);
+ 	if (cd->rtrate)
+ 		add_reg(RTRATE);
 -- 
 2.20.1
 
