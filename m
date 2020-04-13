@@ -1,111 +1,284 @@
-Return-Path: <SRS0=LWzK=54=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=LIAp=55=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE80CC2BA2B
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 12 Apr 2020 09:30:33 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5E2420708
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 12 Apr 2020 09:30:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="sCoCfMu0"
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 872FBC2BA19
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Apr 2020 05:33:38 +0000 (UTC)
+Received: from vger.kernel.org (unknown [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id 56CB4206A1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Apr 2020 05:33:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56CB4206A1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-renesas-soc-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbgDLJaX (ORCPT
+        id S1727530AbgDMFdf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 12 Apr 2020 05:30:23 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37828 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726043AbgDLJaW (ORCPT
+        Mon, 13 Apr 2020 01:33:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.18]:41314 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727498AbgDMFde (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Apr 2020 05:30:22 -0400
-Received: by mail-lf1-f68.google.com with SMTP id t11so4393693lfe.4
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Apr 2020 02:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wvZjieRj4qaMs+6TZihVR3SxRNAcxfJpdpQbrdTQclA=;
-        b=sCoCfMu0RCkeRdSj17DdbWeFKZD3rHgAuAb8cNCMqPqeUuaWB8wGLbnhQr1BYWTXoi
-         upzKaP2DiqcCZOw7Yimp3sz52v7DeyzftOwUBxRkfd2qok0nXYnqVZjH0b47y+kRLZ8C
-         xAIHMfCHjom4BynzVP1HKozH8iBRDWBFIPs/KK+dGDWQ6fNYNI++9uF4CoCi6/FYx7za
-         DifRQVk5Gsuj8f/M+4L6sAQKwiKR1rGWqx3KLO7Yb6/HrShMNEjgLgL9gnO48L2IioUN
-         ijdYlnim6ISiftXFTlzkJWTFmng/tJdrqujwye1v5YnXFFar2lk7nPJu3p/ULW2r+zps
-         fdNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wvZjieRj4qaMs+6TZihVR3SxRNAcxfJpdpQbrdTQclA=;
-        b=HL7I3FbFbVu0Q2UIHDqHkkuTymFwMcgnTwnw/rST80mAxfZ++a7FFMcvSWSRNnZlGu
-         aZbiIA/v22droR8xzXYrX+2o7v0pfZbLiVQmFDXgWp94jvjXxByLuLCcRTYdEuzDTJk+
-         NjkQ2t5FQOUCbyqXJLiYoRWctlUDG7hj7psx4NUHr7e91pvYAR0mpC4w82pshs3BS2RC
-         j/bDtd1r4Twi3qmW1wQWM5tbw6H4XAvc9Bjgo88fdV6hl0zNXeMomkZgmzK5yLItbvGM
-         xgOcsQlsutelFrvUAOwqHj6m2fT4oVv2AYuiWRicHoAImd/nM+jBJbTUxkS76k7eNtrG
-         JhpA==
-X-Gm-Message-State: AGi0PuZFUQExMZalCTrEU0qtU4R0dg2NskZmm6ilXpGz5EBsCsUOK0Rp
-        b/u8CN2V3MTp8ZuvxoEjNUfN5aKhDoWXVw==
-X-Google-Smtp-Source: APiQypIiCKyDOWmQveSF/1l/II8M/C9LZdjb3kLvTVumC4zxn5XVOZ2W4iOLnw80Mn52Yek+rtsWuA==
-X-Received: by 2002:a19:d3:: with SMTP id 202mr7255970lfa.24.1586683820655;
-        Sun, 12 Apr 2020 02:30:20 -0700 (PDT)
-Received: from ?IPv6:2a00:1fa0:4648:ec80:e5e4:a4d:fae6:7d12? ([2a00:1fa0:4648:ec80:e5e4:a4d:fae6:7d12])
-        by smtp.gmail.com with ESMTPSA id b2sm1131469lfi.14.2020.04.12.02.30.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 12 Apr 2020 02:30:20 -0700 (PDT)
-Subject: Re: [PATCH AUTOSEL 5.6 056/149] sh_eth: check
- sh_eth_cpu_data::no_xdfar when dumping registers
-To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Cc:     Chris Brandt <chris.brandt@renesas.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <20200411230347.22371-1-sashal@kernel.org>
- <20200411230347.22371-56-sashal@kernel.org>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <6416ffc7-84a0-0383-aeda-93b4cb80c800@cogentembedded.com>
-Date:   Sun, 12 Apr 2020 12:30:17 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Mon, 13 Apr 2020 01:33:34 -0400
+Received: from asavdk4.altibox.net (asavdk4.altibox.net [109.247.116.15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B91F9C00860C
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 12 Apr 2020 22:33:30 -0700 (PDT)
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id DC9F280487;
+        Mon, 13 Apr 2020 07:33:26 +0200 (CEST)
+Date:   Mon, 13 Apr 2020 07:33:25 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Maxime Ripard <maxime@cerno.tech>
+Subject: Re: [PATCH 1/2] drm: bridge: simple-bridge: Delegate operations to
+ next bridge
+Message-ID: <20200413053325.GA6324@ravnborg.org>
+References: <20200409003636.11792-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20200409003636.11792-2-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <20200411230347.22371-56-sashal@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200409003636.11792-2-laurent.pinchart+renesas@ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=XpTUx2N9 c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8
+        a=P1BnusSwAAAA:8 a=e5mUnYsNAAAA:8 a=vZk7UPHPJn3jWLt6Te8A:9
+        a=CjuIK1q_8ugA:10 a=E9Po1WZjFZOl8hwRPBS3:22 a=D0XLA9XvdZm18NrgonBM:22
+        a=Vxmtnl_E_bksehYqCbjh:22
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+Hi Laurent.
 
-On 12.04.2020 2:02, Sasha Levin wrote:
+On Thu, Apr 09, 2020 at 03:36:35AM +0300, Laurent Pinchart wrote:
+> Instead of poking into the DT node of the next bridge for its DDC bus
+> and implementing the .get_modes() and .detect() connector operations
+> manually, retrieve the next bridge in the chain and delegate these
+> operations to it.
 
-> From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+I had the impression that we could have any number of bridges,
+and the approach was to request some info further down in the chain for
+info, without knowing if the next or the next->next was the bridge that
+could provide the information.
+But this seems not to be the case - here we assume ->next can get the
+edid - or if not we have a fallback.
+
+The relation that the next bridge was the one with i2c was present
+before this patch - so it is not directly related to this patch but
+a more general observation.
+
+A few nits below. With these nits considered the patch is:
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
+
+	Sam
+
 > 
-> [ Upstream commit 7bf47f609f7eaac4f7e9c407a85ad78997288a38 ]
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  drivers/gpu/drm/bridge/simple-bridge.c | 98 +++++++++-----------------
+>  1 file changed, 33 insertions(+), 65 deletions(-)
 > 
-> When adding the sh_eth_cpu_data::no_xdfar flag I forgot to add the flag
-> check to  __sh_eth_get_regs(), causing the non-existing RDFAR/TDFAR to be
-> considered for dumping on the R-Car gen1/2 SoCs (the register offset check
-> has the final say here)...
+> diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
+> index a2dca7a3ef03..bac223d0430d 100644
+> --- a/drivers/gpu/drm/bridge/simple-bridge.c
+> +++ b/drivers/gpu/drm/bridge/simple-bridge.c
+> @@ -29,7 +29,7 @@ struct simple_bridge {
+>  
+>  	const struct simple_bridge_info *info;
+>  
+> -	struct i2c_adapter	*ddc;
+> +	struct drm_bridge	*next_bridge;
+>  	struct regulator	*vdd;
+>  	struct gpio_desc	*enable;
+>  };
+> @@ -52,29 +52,24 @@ static int simple_bridge_get_modes(struct drm_connector *connector)
+>  	struct edid *edid;
+>  	int ret;
+>  
+> -	if (!sbridge->ddc)
+> -		goto fallback;
+> -
+> -	edid = drm_get_edid(connector, sbridge->ddc);
+> -	if (!edid) {
+> -		DRM_INFO("EDID readout failed, falling back to standard modes\n");
+> -		goto fallback;
+> +	edid = drm_bridge_get_edid(sbridge->next_bridge, connector);
+
+drm_bridge_get_edid() is not documented to return NULL:
+"The retrieved EDID on success, or an error pointer otherwise."
+So IS_ERR() would do the trick here.
+
+> +	if (IS_ERR_OR_NULL(edid)) {
+> +		if (!edid)
+> +			DRM_INFO("EDID readout failed, falling back to standard modes\n");
+> +
+> +		/*
+> +		 * In case we cannot retrieve the EDIDs (missing or broken DDC
+> +		 * bus from the next bridge), fallback on the XGA standards and
+> +		 * prefer a mode pretty much anyone can handle.
+> +		 */
+> +		ret = drm_add_modes_noedid(connector, 1920, 1200);
+> +		drm_set_preferred_mode(connector, 1024, 768);
+> +		return ret;
+>  	}
+>  
+>  	drm_connector_update_edid_property(connector, edid);
+>  	ret = drm_add_edid_modes(connector, edid);
+>  	kfree(edid);
+> -	return ret;
+> -
+> -fallback:
+> -	/*
+> -	 * In case we cannot retrieve the EDIDs (broken or missing i2c
+> -	 * bus), fallback on the XGA standards
+> -	 */
+> -	ret = drm_add_modes_noedid(connector, 1920, 1200);
+> -
+> -	/* And prefer a mode pretty much anyone can handle */
+> -	drm_set_preferred_mode(connector, 1024, 768);
+>  
+>  	return ret;
+>  }
+> @@ -88,16 +83,7 @@ simple_bridge_connector_detect(struct drm_connector *connector, bool force)
+>  {
+>  	struct simple_bridge *sbridge = drm_connector_to_simple_bridge(connector);
+>  
+> -	/*
+> -	 * Even if we have an I2C bus, we can't assume that the cable
+> -	 * is disconnected if drm_probe_ddc fails. Some cables don't
+> -	 * wire the DDC pins, or the I2C bus might not be working at
+> -	 * all.
+> -	 */
+> -	if (sbridge->ddc && drm_probe_ddc(sbridge->ddc))
+> -		return connector_status_connected;
+> -
+> -	return connector_status_unknown;
+> +	return drm_bridge_detect(sbridge->next_bridge);
+>  }
+>  
+>  static const struct drm_connector_funcs simple_bridge_con_funcs = {
+> @@ -120,6 +106,11 @@ static int simple_bridge_attach(struct drm_bridge *bridge,
+>  		return -EINVAL;
+>  	}
+>  
+> +	ret = drm_bridge_attach(bridge->encoder, sbridge->next_bridge, bridge,
+> +				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>  	if (!bridge->encoder) {
+>  		DRM_ERROR("Missing encoder\n");
+>  		return -ENODEV;
+> @@ -130,7 +121,7 @@ static int simple_bridge_attach(struct drm_bridge *bridge,
+>  	ret = drm_connector_init_with_ddc(bridge->dev, &sbridge->connector,
+>  					  &simple_bridge_con_funcs,
+>  					  sbridge->info->connector_type,
+> -					  sbridge->ddc);
+> +					  sbridge->next_bridge->ddc);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to initialize connector\n");
+>  		return ret;
+> @@ -172,31 +163,10 @@ static const struct drm_bridge_funcs simple_bridge_bridge_funcs = {
+>  	.disable	= simple_bridge_disable,
+>  };
+>  
+> -static struct i2c_adapter *simple_bridge_retrieve_ddc(struct device *dev)
+> -{
+> -	struct device_node *phandle, *remote;
+> -	struct i2c_adapter *ddc;
+> -
+> -	remote = of_graph_get_remote_node(dev->of_node, 1, -1);
+> -	if (!remote)
+> -		return ERR_PTR(-EINVAL);
+> -
+> -	phandle = of_parse_phandle(remote, "ddc-i2c-bus", 0);
+> -	of_node_put(remote);
+> -	if (!phandle)
+> -		return ERR_PTR(-ENODEV);
+> -
+> -	ddc = of_get_i2c_adapter_by_node(phandle);
+> -	of_node_put(phandle);
+> -	if (!ddc)
+> -		return ERR_PTR(-EPROBE_DEFER);
+> -
+> -	return ddc;
+> -}
+> -
+>  static int simple_bridge_probe(struct platform_device *pdev)
+>  {
+>  	struct simple_bridge *sbridge;
+> +	struct device_node *remote;
+>  
+>  	sbridge = devm_kzalloc(&pdev->dev, sizeof(*sbridge), GFP_KERNEL);
+>  	if (!sbridge)
+> @@ -222,16 +192,17 @@ static int simple_bridge_probe(struct platform_device *pdev)
+>  		return PTR_ERR(sbridge->enable);
+>  	}
+>  
+> -	sbridge->ddc = simple_bridge_retrieve_ddc(&pdev->dev);
+> -	if (IS_ERR(sbridge->ddc)) {
+> -		if (PTR_ERR(sbridge->ddc) == -ENODEV) {
+> -			dev_dbg(&pdev->dev,
+> -				"No i2c bus specified. Disabling EDID readout\n");
+> -			sbridge->ddc = NULL;
+> -		} else {
+> -			dev_err(&pdev->dev, "Couldn't retrieve i2c bus\n");
+> -			return PTR_ERR(sbridge->ddc);
+> -		}
+> +	/* Get the next bridge in the pipeline. */
+> +	remote = of_graph_get_remote_node(pdev->dev.of_node, 1, -1);
+> +	if (!remote)
+> +		return -EINVAL;
+> +
+> +	sbridge->next_bridge = of_drm_find_bridge(remote);
+> +	of_node_put(remote);
+> +
+> +	if (!sbridge->next_bridge) {
+> +		dev_dbg(&pdev->dev, "Next bridge not found, deferring probe\n");
+The patch mixes logging style.
+In some cases DRM_INFO(...), and here dev_dbg(...)
+
+
+> +		return -EPROBE_DEFER;
+Retreiving the next bridge may fail with a PROBE_DEFER.
+So should this be doen a little earlier in the probe function, so we
+fail as fast as we can?
+I am not sure it has any practical impact, was just wondering.
+
+>  	}
+>  
+>  	sbridge->bridge.funcs = &simple_bridge_bridge_funcs;
+> @@ -249,9 +220,6 @@ static int simple_bridge_remove(struct platform_device *pdev)
+>  
+>  	drm_bridge_remove(&sbridge->bridge);
+>  
+> -	if (sbridge->ddc)
+> -		i2c_put_adapter(sbridge->ddc);
+> -
+>  	return 0;
+>  }
+>  
+> -- 
+> Regards,
 > 
-> Fixes: 4c1d45850d5 ("sh_eth: add sh_eth_cpu_data::cexcr flag")
-
-    Oops, wrong commit here, should've been:
-
-Fixes: 6e80e55bd37a ("sh_eth: add sh_eth_cpu_data::no_xdfar flag")
-
-Luckily, both commits appeared in the same version, 4.17. :-)
-
-> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Tested-by: Chris Brandt <chris.brandt@renesas.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-[...]
-
-MBR, Sergei
+> Laurent Pinchart
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
