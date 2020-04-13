@@ -2,61 +2,63 @@ Return-Path: <SRS0=LIAp=55=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC19C2BBC7
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Apr 2020 09:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A6FC2BA19
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Apr 2020 09:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DEDE206A1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Apr 2020 09:24:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E920D206E9
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Apr 2020 09:24:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="T0yOasC4"
+	dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="IGBO35OF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728246AbgDMJYo (ORCPT
+        id S1728226AbgDMJYv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Apr 2020 05:24:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60480 "EHLO
+        Mon, 13 Apr 2020 05:24:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728224AbgDMJYm (ORCPT
+        by vger.kernel.org with ESMTP id S1728249AbgDMJYp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Apr 2020 05:24:42 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D4AEC008749
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Apr 2020 02:18:22 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id q19so8018108ljp.9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Apr 2020 02:18:22 -0700 (PDT)
+        Mon, 13 Apr 2020 05:24:45 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1611CC00860D
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Apr 2020 02:18:29 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id m19so6000623lfq.13
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Apr 2020 02:18:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=globallogic.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=lHubTvQBvGK3a1f0dL5uuc3R9QqieZy5ygx33SyVyOU=;
-        b=T0yOasC4EK+K/uSP6q/VHtsWfhYkDjRADF7V9g4F5+Z4DUWC5frjadvL0F6P0vsPe/
-         ktgqKhj3YQk6Z/Vu29R3XivuTQsAlMUbGlD9RbD/i5QgrMhdJJEmMf5MGsF+UjZiJ6gH
-         63TaszCvMTswnknyawfP/PU/lt66yzBxp8dwd9WKCqUeOHQQ/Vi1le4ng01Kw6hCaJ/r
-         BAJpA6jmFGMDM+ppj4MAPHGRZOR3qQ6xwqur4z1ZcXugdhBHcgHFp8zUGLPSy4S0FxlR
-         NGHoeaL4W/NWuJqRAV1ddVOGub1Bc3b7HNdYnZyUMkVJG6ev9+STqZuby5um6fFpqqJy
-         lm9Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=Dazg0uCSqaIHQUhsMcqRqSvCcoSDDbmA2fiSqaBN9MM=;
+        b=IGBO35OFdsIktkEWxvs2u4uJJPxlcgyZgAtOmQLDnMg9+1yf2x6K4oow82u3Vlikj4
+         qyRasUsMsWEzeVunT6ep688hAfUTx3p1Ce7s93jQ+yNgHVwkPBClqTLofhCwfPw6Hc0C
+         L3tXbx24BUqaoG3IrXoDbIGfTt746UnzFEMJNf5RGfElay0pVSBBwKn5eWVnq3tPAj5+
+         2Y0yWyJpilbcfw6QMj5hxIP7rJcXmxpzi6TJDXMQ8ml0lpav44aUEbOtUYD2KK/U6e2p
+         BDP0Bk+FEb8MMXT3lYkvqBclo/Ov6Ki7F6DEXnOINF4F6fscfQdZZ1PJ8IiOAvGDp3JH
+         K0Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lHubTvQBvGK3a1f0dL5uuc3R9QqieZy5ygx33SyVyOU=;
-        b=tPXCvNN0/ewxVtDEjC2IIJsQMbJiAAYPMJk3/0pnmHpxcj7poI2I930Ima+Z1rba9e
-         UVjP8T75tYq1plTIX+p30NABunW8GiIKhih+S+f8+UUUWd5YhOr6zr3qbIqLU67ADft7
-         Md5MJyytTCwLdBXfs2aqQAPMcZ1+Uqcu5zMje9MMnVWh/Lvx4VPXUVatw2hKIVhlRv62
-         kJbibx0G7CvC8kFqnXrHsRVtZ3EUGGySZ/I+cz+btGmfk7/xUnImIy1JW3Mfyi5/qu90
-         1WMpSVMdb40w82cmo5Vz9SFTx+0ndmELLvk2Iw8laOe4mWgN2IBE3tvLoxNMHP57vJl0
-         3Q7w==
-X-Gm-Message-State: AGi0PuYS/tTVFNur8h967xu/IavaqgpUpYuf/DD4BcJ4YczYrUX2UpSa
-        t7eYaIYPLbZuP0ycRP9/pl+wJw==
-X-Google-Smtp-Source: APiQypImlQL77/NsGdTM2O6q1MEpHE6CFMfh4ANSEsdt5fRmb4aUSjEpYhVF5ciGCXbqj8qUKhLhhg==
-X-Received: by 2002:a2e:b6c2:: with SMTP id m2mr9982617ljo.59.1586769500639;
-        Mon, 13 Apr 2020 02:18:20 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=Dazg0uCSqaIHQUhsMcqRqSvCcoSDDbmA2fiSqaBN9MM=;
+        b=NdmCfRypuJev5g3tbPVtRJ417dS/7UTNLdmq8Y/9/qdYvspteoN/osWhdXUGgZ3M5k
+         dvw91AU/j8PVomJEnIe0lDmMcu2ox91DeIkeUsZwb1aJr/gJZVzHF/zlW4WnO/G9eAgd
+         ITjataJGsQfQc5Fn2JFNV+b3vDM+S15vd6Si6IbMZXGunPzs/uPoicW2cRtsmx3QiuZi
+         h+vko1ixWHHZycLZirp/O8nVisW4QU/33mBm05yujx6Rzois+icszYHw2WrxTLWDjteG
+         nT17vXSUua4U0W5HnIwHld+1sIyTMbEObG9g2yf1bEf+pW+Tj3lUB35b6y75HyL7as+V
+         L/vw==
+X-Gm-Message-State: AGi0PuZS8Gxj2eRgTymSf1xNBBHmzgwwVW45kIlyCGHj4OQK+7XkNl9D
+        4ARVllBhuE6HgjxPhJOYlAeQyA==
+X-Google-Smtp-Source: APiQypJtWZRgeuhBdwNVv/BYkC/v97z1lki6YGoNZ8np1IQMVGV5tfmu6geF0iOgUiJOhok3iuHfpQ==
+X-Received: by 2002:a19:114:: with SMTP id 20mr9943824lfb.169.1586769507484;
+        Mon, 13 Apr 2020 02:18:27 -0700 (PDT)
 Received: from localhost.localdomain ([159.224.5.60])
-        by smtp.googlemail.com with ESMTPSA id e16sm8339049ljh.18.2020.04.13.02.18.19
+        by smtp.googlemail.com with ESMTPSA id e16sm8339049ljh.18.2020.04.13.02.18.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2020 02:18:20 -0700 (PDT)
+        Mon, 13 Apr 2020 02:18:27 -0700 (PDT)
 From:   Roman Kovalivskyi <roman.kovalivskyi@globallogic.com>
 To:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
@@ -75,31 +77,115 @@ Cc:     Luis Oliveira <lolivei@synopsys.com>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
         Dave Stevenson <dave.stevenson@raspberrypi.org>,
         Roman Kovalivskyi <roman.kovalivskyi@globallogic.com>
-Subject: [PATCH 0/4] ov5647 driver improvement
-Date:   Mon, 13 Apr 2020 12:17:43 +0300
-Message-Id: <cover.1586758372.git.roman.kovalivskyi@globallogic.com>
+Subject: [PATCH 2/4] media: ov5647: Add support for PWDN GPIO.
+Date:   Mon, 13 Apr 2020 12:17:45 +0300
+Message-Id: <f88b99899eb5e680607349b37eb3679dbd12433e.1586759968.git.roman.kovalivskyi@globallogic.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1586758372.git.roman.kovalivskyi@globallogic.com>
+References: <cover.1586758372.git.roman.kovalivskyi@globallogic.com>
+In-Reply-To: <cover.1586759968.git.roman.kovalivskyi@globallogic.com>
+References: <cover.1586759968.git.roman.kovalivskyi@globallogic.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Driver for ov5647 camera sensor lacks some important functionality, such
-as ability to query device format and resolution or operations with
-power down mode. Patches from Raspberry kernel source tree[1] fixes
-those issues and improves quality of mentioned driver.
+From: Dave Stevenson <dave.stevenson@raspberrypi.org>
 
-[1] - https://github.com/raspberrypi/linux
+Add support for an optional GPIO connected to PWDN on the sensor. This
+allows the use of hardware standby mode where internal device clock
+and circuit activities are halted.
 
-Dave Stevenson (4):
-  media: ov5647: Add set_fmt and get_fmt calls.
-  media: ov5647: Add support for PWDN GPIO.
-  media: ov5647: Add support for non-continuous clock mode
-  media: ov5647: Use gpiod_set_value_cansleep
+Please nothe that power is off when PWDN is high.
 
- drivers/media/i2c/ov5647.c | 67 ++++++++++++++++++++++++++++++++++++--
- 1 file changed, 64 insertions(+), 3 deletions(-)
+Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
+Signed-off-by: Roman Kovalivskyi <roman.kovalivskyi@globallogic.com>
+---
+ drivers/media/i2c/ov5647.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
 
+diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
+index 3e587eb0a30e..c39e3d20e3ef 100644
+--- a/drivers/media/i2c/ov5647.c
++++ b/drivers/media/i2c/ov5647.c
+@@ -21,6 +21,7 @@
+ 
+ #include <linux/clk.h>
+ #include <linux/delay.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/i2c.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+@@ -35,6 +36,13 @@
+ 
+ #define SENSOR_NAME "ov5647"
+ 
++/*
++ * From the datasheet, "20ms after PWDN goes low or 20ms after RESETB goes
++ * high if reset is inserted after PWDN goes high, host can access sensor's
++ * SCCB to initialize sensor."
++ */
++#define PWDN_ACTIVE_DELAY_MS	20
++
+ #define MIPI_CTRL00_CLOCK_LANE_GATE		BIT(5)
+ #define MIPI_CTRL00_BUS_IDLE			BIT(2)
+ #define MIPI_CTRL00_CLOCK_LANE_DISABLE		BIT(0)
+@@ -86,6 +94,7 @@ struct ov5647 {
+ 	unsigned int			height;
+ 	int				power_count;
+ 	struct clk			*xclk;
++	struct gpio_desc		*pwdn;
+ };
+ 
+ static inline struct ov5647 *to_state(struct v4l2_subdev *sd)
+@@ -355,6 +364,11 @@ static int ov5647_sensor_power(struct v4l2_subdev *sd, int on)
+ 	if (on && !ov5647->power_count)	{
+ 		dev_dbg(&client->dev, "OV5647 power on\n");
+ 
++		if (ov5647->pwdn) {
++			gpiod_set_value(ov5647->pwdn, 0);
++			msleep(PWDN_ACTIVE_DELAY_MS);
++		}
++
+ 		ret = clk_prepare_enable(ov5647->xclk);
+ 		if (ret < 0) {
+ 			dev_err(&client->dev, "clk prepare enable failed\n");
+@@ -392,6 +406,8 @@ static int ov5647_sensor_power(struct v4l2_subdev *sd, int on)
+ 			dev_dbg(&client->dev, "soft stby failed\n");
+ 
+ 		clk_disable_unprepare(ov5647->xclk);
++
++		gpiod_set_value(ov5647->pwdn, 1);
+ 	}
+ 
+ 	/* Update the power count. */
+@@ -603,6 +619,10 @@ static int ov5647_probe(struct i2c_client *client)
+ 		return -EINVAL;
+ 	}
+ 
++	/* Request the power down GPIO asserted */
++	sensor->pwdn = devm_gpiod_get_optional(&client->dev, "pwdn",
++					       GPIOD_OUT_HIGH);
++
+ 	mutex_init(&sensor->lock);
+ 
+ 	sd = &sensor->sd;
+@@ -616,7 +636,15 @@ static int ov5647_probe(struct i2c_client *client)
+ 	if (ret < 0)
+ 		goto mutex_remove;
+ 
++	if (sensor->pwdn) {
++		gpiod_set_value(sensor->pwdn, 0);
++		msleep(PWDN_ACTIVE_DELAY_MS);
++	}
++
+ 	ret = ov5647_detect(sd);
++
++	gpiod_set_value(sensor->pwdn, 1);
++
+ 	if (ret < 0)
+ 		goto error;
+ 
 -- 
 2.17.1
 
