@@ -2,142 +2,112 @@ Return-Path: <SRS0=LIAp=55=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9587C2BB86
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Apr 2020 09:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6823C2BB86
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Apr 2020 09:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA4DB206E9
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Apr 2020 09:24:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="kg6ykZxF"
+	by mail.kernel.org (Postfix) with ESMTP id 9EE5620737
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Apr 2020 09:55:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbgDMJYx (ORCPT
+        id S1728482AbgDMJzT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Apr 2020 05:24:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60502 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728239AbgDMJYn (ORCPT
+        Mon, 13 Apr 2020 05:55:19 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:42414 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727793AbgDMJzT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Apr 2020 05:24:43 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BB8DC00860B
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Apr 2020 02:18:26 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id w145so6047202lff.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Apr 2020 02:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=globallogic.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=g64ft+x3hBUoNKaOlNsqOIBji2tCG8A8Sg8KRFe28Yc=;
-        b=kg6ykZxF9Sg3DIKw4sLTc7wrIYsnOS1F0G3B6b4/E+yNNiTq6/CUotfvSeyDIOHR/r
-         ZrqNeqfJCLBa5UDqK/KZ/paCvMlYMjG5l3Ol+rNJCXYNmbekl6Srhf9uct55aVBtcIa6
-         fvfATh+tuQNfDPPfLbCF/0GFaYwvDxefnNZXI5H+bASe3vkZJT906W1tQ5K0CNmVfCgK
-         +otgCvqFVk+vo/OLeUyQQbig/uffIqcMqN/K3C+tL0AS4APDyvw7uXpvA0PFgnmp1zMC
-         pzQd0M4fDUvFrYYRoWlVOQa5BX7/JIDLHSRdp+lXPr0Huj5jxzzbhovTAnF3EYVxV2/h
-         9J7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=g64ft+x3hBUoNKaOlNsqOIBji2tCG8A8Sg8KRFe28Yc=;
-        b=iGASwU7ukHCf1KScoF3XkKxEAhxXLHIFbdLXcDdg+SM5HOtwAPZzAe5Pran288//dI
-         n3BiiCg/D9hEfbToCiCwXlZPS0mJKbVOMWU6scMrF0lUgk+BDatHlEjNmYWzp2vqwNGa
-         7DnggaCkWsuuFPa0apUB4es/OS/D9Z2svNg44/exRX5dHd55pCGQJIuzTT4wp8QDeaS3
-         Cx/+cfX0OFEy0QT2bmw7p5r5Pqudjocs+fdVbTG3USAB7iYwj0JT4RnM0UINei8L81J1
-         NMflomkuum2M5EPY/4grHjXMN9ePT4StS5ZL9e97zLwgFmJSikgNw5V9lhWxxVB4LkDr
-         aKaw==
-X-Gm-Message-State: AGi0PubAVBQ8jkM6P5HeXgrFrNwtzcQAEZWm+xVxLUL3kPs9NEABpXj3
-        d0a90s2jXWtEAvUzv4DyfbbIfEwXrEkFgg==
-X-Google-Smtp-Source: APiQypKsD9OoGak6fki/X4BhtvzdRdt8QcUcFqDWZ/kirBl+F7dY0/BGOtgEXs30BbUHtznkTZvNTQ==
-X-Received: by 2002:a05:6512:1095:: with SMTP id j21mr10024855lfg.118.1586769504807;
-        Mon, 13 Apr 2020 02:18:24 -0700 (PDT)
-Received: from localhost.localdomain ([159.224.5.60])
-        by smtp.googlemail.com with ESMTPSA id e16sm8339049ljh.18.2020.04.13.02.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2020 02:18:24 -0700 (PDT)
-From:   Roman Kovalivskyi <roman.kovalivskyi@globallogic.com>
-To:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Cc:     Luis Oliveira <lolivei@synopsys.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Mon, 13 Apr 2020 05:55:19 -0400
+Received: from [5.157.111.77] (port=45414 helo=[192.168.77.66])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1jNvo9-00A9CE-It; Mon, 13 Apr 2020 11:55:13 +0200
+Subject: Re: [RFC PATCH v2 5/6] i2c: of: mark a whole array of regs as
+ reserved
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-i3c@lists.infradead.org,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
         Jacopo Mondi <jacopo@jmondi.org>,
-        Michael Rodin <mrodin@de.adit-jv.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Suresh Udipi <sudipi@jp.adit-jv.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>,
-        Roman Kovalivskyi <roman.kovalivskyi@globallogic.com>
-Subject: [PATCH 1/4] media: ov5647: Add set_fmt and get_fmt calls.
-Date:   Mon, 13 Apr 2020 12:17:44 +0300
-Message-Id: <8a4c0d157d26251c9916b32866e6a4a91c023ef9.1586759968.git.roman.kovalivskyi@globallogic.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1586758372.git.roman.kovalivskyi@globallogic.com>
-References: <cover.1586758372.git.roman.kovalivskyi@globallogic.com>
-In-Reply-To: <cover.1586759968.git.roman.kovalivskyi@globallogic.com>
-References: <cover.1586759968.git.roman.kovalivskyi@globallogic.com>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Vladimir Zapolskiy <vz@mleia.com>, linux-kernel@vger.kernel.org
+References: <20200318150059.21714-1-wsa+renesas@sang-engineering.com>
+ <20200318150059.21714-6-wsa+renesas@sang-engineering.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <c4e41b0a-4b9a-0db9-94dc-bbbc2f013133@lucaceresoli.net>
+Date:   Mon, 13 Apr 2020 11:55:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
+MIME-Version: 1.0
+In-Reply-To: <20200318150059.21714-6-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Dave Stevenson <dave.stevenson@raspberrypi.org>
+Hi,
 
-There's no way to query the subdevice for the supported
-resolutions. Add set_fmt and get_fmt implementations. Since there's
-only one format supported set_fmt does nothing and get returns single
-format.
+On 18/03/20 16:00, Wolfram Sang wrote:
+> Back then, 'reg' properties in I2C DT bindings only contained one
+> address and this address was assigned a device and, thus, blocked.
+> Meanwhile, chips using multiple addresses are common and the 'reg'
+> property can be an array described by 'reg-names'. This code enhances
+> I2C DT parsing, so it will reserve all addresses described in an array.
+> They will be bound to the 'dummy' driver as 'reserved' iff the first
+> address can be assigned successfully. If that is not the case, the array
+> is not further considered. If one later address of the array can not be
+> assigned, it will be reported but we don't bail out. The driver has to
+> decide if that address is critical or not.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>  drivers/i2c/i2c-core-of.c | 70 +++++++++++++++++++++++++--------------
+>  1 file changed, 46 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/i2c/i2c-core-of.c b/drivers/i2c/i2c-core-of.c
+> index f2d09ea0d336..67eb2cd305cf 100644
+> --- a/drivers/i2c/i2c-core-of.c
+> +++ b/drivers/i2c/i2c-core-of.c
+> @@ -16,25 +16,18 @@
+>  #include <linux/i2c.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> +#include <linux/of_address.h>
+>  #include <linux/of_device.h>
+>  #include <linux/sysfs.h>
+>  
+>  #include "i2c-core.h"
+>  
+> -int of_i2c_get_board_info(struct device_node *node, struct i2c_board_info *info)
+> +static void of_i2c_decode_board_info(struct device_node *node, u32 addr,
+> +				     bool first_addr, struct i2c_board_info *info)
 
-Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
-Signed-off-by: Roman Kovalivskyi <roman.kovalivskyi@globallogic.com>
----
- drivers/media/i2c/ov5647.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+While I confirm the patch looks generally OK, let me add the name of
+this function is not quite self-explaining. The difference between "get"
+and "decode" has nothing to do with the different actions these
+functions do, i.e. the new function gets (or: decodes) info about  a
+single address that is passed, the old "get" function gets the info for
+the first address.
 
-diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-index e7d2e5b4ad4b..3e587eb0a30e 100644
---- a/drivers/media/i2c/ov5647.c
-+++ b/drivers/media/i2c/ov5647.c
-@@ -463,8 +463,30 @@ static int ov5647_enum_mbus_code(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
-+static int ov5647_set_get_fmt(struct v4l2_subdev *sd,
-+			      struct v4l2_subdev_pad_config *cfg,
-+			      struct v4l2_subdev_format *format)
-+{
-+	struct v4l2_mbus_framefmt *fmt = &format->format;
-+
-+	if (format->pad != 0)
-+		return -EINVAL;
-+
-+	/* Only one format is supported, so return that */
-+	memset(fmt, 0, sizeof(*fmt));
-+	fmt->code = MEDIA_BUS_FMT_SBGGR8_1X8;
-+	fmt->colorspace = V4L2_COLORSPACE_SRGB;
-+	fmt->field = V4L2_FIELD_NONE;
-+	fmt->width = 640;
-+	fmt->height = 480;
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_pad_ops ov5647_subdev_pad_ops = {
- 	.enum_mbus_code = ov5647_enum_mbus_code,
-+	.set_fmt =	  ov5647_set_get_fmt,
-+	.get_fmt =	  ov5647_set_get_fmt,
- };
- 
- static const struct v4l2_subdev_ops ov5647_subdev_ops = {
+I'd suggest the new function be named of_i2c_get_board_info_one_addr or
+similar. Not super nice, a bit long, but self-explanatory.
+
 -- 
-2.17.1
-
+Luca
