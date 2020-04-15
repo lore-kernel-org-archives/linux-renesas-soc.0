@@ -2,85 +2,107 @@ Return-Path: <SRS0=owXo=57=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36009C2BA19
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA6AC2BA19
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1387120768
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F0E420768
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:47:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2896571AbgDOKpX (ORCPT
+        id S2896450AbgDOKSZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 06:45:23 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:31291 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2896462AbgDOKUI (ORCPT
+        Wed, 15 Apr 2020 06:18:25 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:55244 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2896413AbgDOKR3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Apr 2020 06:20:08 -0400
-X-IronPort-AV: E=Sophos;i="5.72,386,1580742000"; 
-   d="scan'208";a="44575661"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 15 Apr 2020 19:19:18 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 0F1AE4004BB4;
-        Wed, 15 Apr 2020 19:19:16 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Niklas <niklas.soderlund@ragnatech.se>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 0/3] media: rcar-vin: Enable MEDIA_BUS_FMT_SRGGB8_1X8 format
-Date:   Wed, 15 Apr 2020 11:19:05 +0100
-Message-Id: <1586945948-11026-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 15 Apr 2020 06:17:29 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: dafna)
+        with ESMTPSA id D6FEC2A0C93
+Subject: Re: [PATCH v7 6/6] vimc: Make use of V4L2_CAP_IO_MC
+To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Helen Koike <helen.koike@collabora.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org
+References: <20200413202351.1359754-1-niklas.soderlund+renesas@ragnatech.se>
+ <20200413202351.1359754-7-niklas.soderlund+renesas@ragnatech.se>
+From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
+Message-ID: <a1a0bea6-d19f-4948-df0e-4477684f1082@collabora.com>
+Date:   Wed, 15 Apr 2020 12:16:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20200413202351.1359754-7-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
 
-This patch series adds support for MEDIA_BUS_FMT_SRGGB8_1X8 format for vin
 
-Cheers,
---Prabhakar
+On 13.04.20 22:23, Niklas Söderlund wrote:
+> Set the V4L2_CAP_IO_MC capability flag to report this vimc
+> inputs/outputs are controlled by the media graph.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> ---
+> Changes since v5:
+> 
+> - Wrap line longer than 80 characters
+> - Implement mbus_code filtering for format enumeration
+> ---
+>   drivers/media/platform/vimc/vimc-capture.c | 10 ++++++++--
+>   1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vimc/vimc-capture.c b/drivers/media/platform/vimc/vimc-capture.c
+> index 747ea9cc1bd7cb12..dbc827fd1b9baebb 100644
+> --- a/drivers/media/platform/vimc/vimc-capture.c
+> +++ b/drivers/media/platform/vimc/vimc-capture.c
+> @@ -149,7 +149,12 @@ static int vimc_cap_s_fmt_vid_cap(struct file *file, void *priv,
+>   static int vimc_cap_enum_fmt_vid_cap(struct file *file, void *priv,
+>   				     struct v4l2_fmtdesc *f)
+>   {
+> -	const struct vimc_pix_map *vpix = vimc_pix_map_by_index(f->index);
+> +	const struct vimc_pix_map *vpix;
+> +
+> +	if (f->mbus_code)
+> +		vpix = vimc_pix_map_by_code(f->mbus_code);
+Hi, if I understand correctly, the f->index should still tell us we should return the i'th format
+for the given mbus_code, right? if yes then since vimc support only one pixelformat for each mbus code
+there should be a code added here:
+if (f->index > 0)
+	return -EINVAL;
 
-Changed for v4:
-* patch 1/3 is new patch which adds a check for conversion from input to
-  output.
-* patch 2/3 added a comment while setting VNIS_REG for RAW format as
-  suggested by Niklas
+Thanks,
+Dafna
 
-Changes for v3:
-* Dropped patch 1/1 from v2 as this handled neatly by patches
-  https://patchwork.linuxtv.org/project/linux-media/list/?series=1974
-* Included Ack from Niklas for patch 2/2
-* Updated commit message for patch 1/1.
-
-Changes for v2:
-* Added support for matching fwnode against endpoints/nodes.
-* Separated patch for rcar-vin and rcar-csi2.c which added
-  MEDIA_BUS_FMT_SRGGB8_1X8.
-
-Lad Prabhakar (3):
-  media: rcar-vin: Invalidate pipeline if conversion is not possible on
-    input formats
-  media: rcar-vin: Add support for MEDIA_BUS_FMT_SRGGB8_1X8 format
-  media: rcar-csi2: Add support for MEDIA_BUS_FMT_SRGGB8_1X8 format
-
- drivers/media/platform/rcar-vin/rcar-csi2.c |  1 +
- drivers/media/platform/rcar-vin/rcar-dma.c  | 21 +++++++++++++++++++--
- drivers/media/platform/rcar-vin/rcar-v4l2.c |  4 ++++
- 3 files changed, 24 insertions(+), 2 deletions(-)
-
--- 
-2.20.1
-
+> +	else
+> +		vpix = vimc_pix_map_by_index(f->index);
+>   
+>   	if (!vpix)
+>   		return -EINVAL;
+> @@ -450,7 +455,8 @@ struct vimc_ent_device *vimc_cap_add(struct vimc_device *vimc,
+>   
+>   	/* Initialize the video_device struct */
+>   	vdev = &vcap->vdev;
+> -	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
+> +	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING
+> +			  | V4L2_CAP_IO_MC;
+>   	vdev->entity.ops = &vimc_cap_mops;
+>   	vdev->release = video_device_release_empty;
+>   	vdev->fops = &vimc_cap_fops;
+> 
