@@ -2,136 +2,177 @@ Return-Path: <SRS0=owXo=57=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D12F9C3815B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 14:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE3CC3815B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 14:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB6C4206D5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 14:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7698208FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 14:13:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2636419AbgDOOLy (ORCPT
+        id S2636490AbgDOONo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 10:11:54 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:54625 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2636414AbgDOOLq (ORCPT
+        Wed, 15 Apr 2020 10:13:44 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:36991 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2636464AbgDOONk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Apr 2020 10:11:46 -0400
-Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1Md76B-1iopto2yJ9-00aCVS; Wed, 15 Apr 2020 16:10:43 +0200
-Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id 7C05D650ECB;
-        Wed, 15 Apr 2020 14:10:42 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at cetitec.com
-Received: from mail.cetitecgmbh.com ([127.0.0.1])
-        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id k87RMMoqYIEv; Wed, 15 Apr 2020 16:10:42 +0200 (CEST)
-Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 2A57C64C0D9;
-        Wed, 15 Apr 2020 16:10:42 +0200 (CEST)
-Received: from pflmmbl.corp.cetitec.com (10.8.5.60) by
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Wed, 15 Apr 2020 16:10:41 +0200
-From:   Matthias Blankertz <matthias.blankertz@cetitec.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH 1/2] ASoC: rsnd: Fix parent SSI start/stop in multi-SSI mode
-Date:   Wed, 15 Apr 2020 16:10:16 +0200
-Message-ID: <20200415141017.384017-2-matthias.blankertz@cetitec.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200415141017.384017-1-matthias.blankertz@cetitec.com>
-References: <20200415141017.384017-1-matthias.blankertz@cetitec.com>
+        Wed, 15 Apr 2020 10:13:40 -0400
+Received: by mail-oi1-f193.google.com with SMTP id r25so3688150oij.4;
+        Wed, 15 Apr 2020 07:13:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/Gt7M+RuQIzyJOeJqT0MWmg4GB8D71MVJXJNFoJPodE=;
+        b=kUd/Xa/FC50VWPa21LftEpFTamN5dQ+OQNYWc7HISdQRVAA5uEdwRCjFIFUZa2Tx22
+         Cqi1jCWR+DbzrZJzhv7v2KHFTn1EqZJd+diChuv2WDUJnp5N63L5LsqIPsBmEJEs3r8n
+         2G7BJ/byOeoN6mzUaxMGW6zcLVZAWV1yS2/tMrJhHXYP8KJA72z+Ers6dzL7m5EVpSR6
+         Z7XsPIOc5OsHNOL0oDqvCNDe9gZIFP9en2yFNUqc9lN4WkSUxo7+dZYwNxE13E+dPcfA
+         DscVdL+GtYY1EnnuFKWGiR+Zs7V/iLSzMJoScZ7kTq9ekVNoKc8uJTnGentlszFCAq/I
+         Mxbg==
+X-Gm-Message-State: AGi0Pub5KogBU3xeumkh9EzDs3LnAhRVnYXuTXpmqHSNMvyFQbeziu82
+        BI+UTqKBCDF7gdvspB3UY9Dj58MXQtaElYnNKG4=
+X-Google-Smtp-Source: APiQypJKNPStH9WvUHy2DqrB/2o9qQW0DQSnNK10fBvROlIKHk1iOoMOZcjvqUv1TgYjO2VVubUEuQoTiK4tig++zrg=
+X-Received: by 2002:aca:f541:: with SMTP id t62mr4667388oih.148.1586960018814;
+ Wed, 15 Apr 2020 07:13:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.8.5.60]
-X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A290D7F536B647460
-X-Provags-ID: V03:K1:Dg6FDtPdZsmgRsmMhlYWEnuKvaX3qALipIH+tGzjN+bZlhcIpLG
- Cjm71wsq+PDb5HVHH7otRr0JdxVQxqQVAD4vQbSjTodxSb3ZxgezV7S8TNoMO7GFhyljKwK
- bfc28VW2hC2+0v8epqcVvmc0ND+s9PDElcpyYXOqmJX55YoNYFRjdX8A4nXBKacLQDL+Q+v
- 5FOcztZ3beD7MT7/i3LDQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:XuLeWtvK6/Q=:nA3Lgcclveqc8WDV4TER4Y
- N6WNnNU0eLJ1AQhNnVf+SvDq9fpE6OyVTjAl0XBU4TfNf60bjJbNMaztkqQsCbTBrFs9xmvr1
- F7o66/kKj65TZMdDEMN41rrEgdXAm4QkfkuLreDnq0O4bFX5poIhvTBq7+/a6+wbNMdDbwbjz
- lqD8FPeTx7RpymGUDVYrmUG0THbC5Kd3+8AYv5Vo1mlx14eShhj/55uk2lAvf4k79KF7WT8xZ
- QfhVHmyjhqXuotHOAIhauiDjU/WDQWsia9Vidw6xyPTcr8FMyEZHWNKcDxY4+8qsMnADSjAnW
- T7naX8LpNBT6n37/mULKBXFstq4aG1vTcPkH4HPrDFCotR10jl7mNGUf+7XTEGjie3W3sUM8P
- 4S9vUjh+HaeMNsW9QCtBA7/PuVB29wPaeowm02Ds1noKPsIbX9xOECUXsKIC4JCQjyR56DPzW
- nqHHAMBMYyLoPcHvJLcK2ea5UNfj1oeanHeyzgvBa5B6E6sUWF6BjtrImKdLkWADMp0cLHKqL
- GUI6LNkA3aHpqKMocXCFiEJwLp3WA5oEY/hDNdjU8nLtlCjfaDTKnwhf8stJO0s7/iC+M2/UR
- F32v5hzm4caVzWzAV6uIgOPfe23usQEpRTtZlu0V/9MfwUk0HLsH0+XSA33VV4y931XzVIck6
- +SsMX3yYEUUvZD/FPrK8S4UlDC2Xj9HTD/y6hdps2lKo6Hnp2aHGy2SyYSSwnM6BH5Cz1Lm3R
- ps/qHh7Q0Biof/0yFu2Xgbl0JfgfLHSQgQJhqmxc8IbA786EhxAra/a+bjNwkOPWcj9ogdUki
- Y/4jGpBXIE2ZCIihl0lVbV4gglu9AJnLUuexLk4WbUGMMvw9SLvWAIEzBbYH6vfa+4pTOZqOM
- TsrtSHQSbdMJR7m+Y2QQ==
+References: <20200408202711.1198966-1-arnd@arndb.de> <20200408202711.1198966-6-arnd@arndb.de>
+ <20200414201739.GJ19819@pendragon.ideasonboard.com> <CAK8P3a0hd5bsezrJS3+GV2nRMui4P5yeD2Rk7wQpJsAZeOCOUg@mail.gmail.com>
+ <20200414205158.GM19819@pendragon.ideasonboard.com> <CAK8P3a1PZbwdvdH_Gi9UQVUz2+_a8QDxKuWLqPtjhK1stxzMBQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a1PZbwdvdH_Gi9UQVUz2+_a8QDxKuWLqPtjhK1stxzMBQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 15 Apr 2020 16:13:27 +0200
+Message-ID: <CAMuHMdUb=XXucGUbxt26tZ1xu9pdyVUB8RVsfB2SffURVVXwSg@mail.gmail.com>
+Subject: Re: [RFC 5/6] drm/rcar-du: fix selection of CMM driver
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The parent SSI of a multi-SSI setup must be fully setup, started and
-stopped since it is also part of the playback/capture setup. So only
-skip the SSI (as per commit 203cdf51f288 ("ASoC: rsnd: SSI parent cares
-SWSP bit") and commit 597b046f0d99 ("ASoC: rsnd: control SSICR::EN
-correctly")) if the SSI is parent outside of a multi-SSI setup.
+Hi Arnd,
 
-Signed-off-by: Matthias Blankertz <matthias.blankertz@cetitec.com>
----
- sound/soc/sh/rcar/ssi.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+On Wed, Apr 15, 2020 at 3:47 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> On Tue, Apr 14, 2020 at 10:52 PM Laurent Pinchart
+> <laurent.pinchart@ideasonboard.com> wrote:
+> > On Tue, Apr 14, 2020 at 10:38:27PM +0200, Arnd Bergmann wrote:
+> > > On Tue, Apr 14, 2020 at 10:17 PM Laurent Pinchart wrote:
+> > > > On Wed, Apr 08, 2020 at 10:27:10PM +0200, Arnd Bergmann wrote:
+> > > > > The 'imply' statement does not seem to have an effect, as it's
+> > > > > still possible to turn the CMM code into a loadable module
+> > > > > in a randconfig build, leading to a link error:
+> > > > >
+> > > > > arm-linux-gnueabi-ld: drivers/gpu/drm/rcar-du/rcar_du_crtc.o: in function `rcar_du_crtc_atomic_enable':
+> > > > > rcar_du_crtc.c:(.text+0xad4): undefined reference to `rcar_lvds_clk_enable'
+> > > > > arm-linux-gnueabi-ld: drivers/gpu/drm/rcar-du/rcar_du_crtc.o: in function `rcar_du_crtc_atomic_disable':
+> > > > > rcar_du_crtc.c:(.text+0xd7c): undefined reference to `rcar_lvds_clk_disable'
+> > > > > arm-linux-gnueabi-ld: drivers/gpu/drm/rcar-du/rcar_du_drv.o: in function `rcar_du_init':
+> > > > > rcar_du_drv.c:(.init.text+0x4): undefined reference to `rcar_du_of_init'
+> > > > > arm-linux-gnueabi-ld: drivers/gpu/drm/rcar-du/rcar_du_encoder.o: in function `rcar_du_encoder_init':
+> > > > >
+> > > > > Remove the 'imply', and instead use a silent symbol that defaults
+> > > > > to the correct setting.
+> > > >
+> > > > This will result in the CMM always being selected when DU is, increasing
+> > > > the kernel size even for devices that don't need it. I believe we need a
+> > > > better construct in Kconfig to fix this.
+> > >
+> > > I had expected this to have the same meaning that we had before the
+> > > Kconfig change: whenever the dependencies are available, turn it on,
+> > > otherwise leave it disabled.
+> > >
+> > > Can you describe what behavior you actually want instead?
+> >
+> > Doesn't "imply" mean it gets selected by default but can be manually
+> > disabled ?
+>
+> That may be what it means now (I still don't understand how it's defined
+> as of v5.7-rc1), but traditionally it was more like a 'select if all
+> dependencies are met'.
 
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index fc5d089868df..d51fb3a39448 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -407,7 +407,7 @@ static void rsnd_ssi_config_init(struct rsnd_mod *mod,
- 	 * We shouldn't exchange SWSP after running.
- 	 * This means, parent needs to care it.
- 	 */
--	if (rsnd_ssi_is_parent(mod, io))
-+	if (rsnd_ssi_is_parent(mod, io) && !rsnd_ssi_multi_slaves(io))
- 		goto init_end;
- 
- 	if (rsnd_io_is_play(io))
-@@ -559,7 +559,7 @@ static int rsnd_ssi_start(struct rsnd_mod *mod,
- 	 * EN is for data output.
- 	 * SSI parent EN is not needed.
- 	 */
--	if (rsnd_ssi_is_parent(mod, io))
-+	if (rsnd_ssi_is_parent(mod, io) && !rsnd_ssi_multi_slaves(io))
- 		return 0;
- 
- 	ssi->cr_en = EN;
-@@ -582,7 +582,7 @@ static int rsnd_ssi_stop(struct rsnd_mod *mod,
- 	if (!rsnd_ssi_is_run_mods(mod, io))
- 		return 0;
- 
--	if (rsnd_ssi_is_parent(mod, io))
-+	if (rsnd_ssi_is_parent(mod, io) && !rsnd_ssi_multi_slaves(io))
- 		return 0;
- 
- 	cr  =	ssi->cr_own	|
-@@ -620,7 +620,7 @@ static int rsnd_ssi_irq(struct rsnd_mod *mod,
- 	if (rsnd_is_gen1(priv))
- 		return 0;
- 
--	if (rsnd_ssi_is_parent(mod, io))
-+	if (rsnd_ssi_is_parent(mod, io) && !rsnd_ssi_multi_slaves(io))
- 		return 0;
- 
- 	if (!rsnd_ssi_is_run_mods(mod, io))
+That's still what it is supposed to mean right now ;-)
+Except that now it should correctly handle the modular case, too.
+
+> > > > > --- a/drivers/gpu/drm/rcar-du/Kconfig
+> > > > > +++ b/drivers/gpu/drm/rcar-du/Kconfig
+> > > > > @@ -4,7 +4,6 @@ config DRM_RCAR_DU
+> > > > >       depends on DRM && OF
+> > > > >       depends on ARM || ARM64
+> > > > >       depends on ARCH_RENESAS || COMPILE_TEST
+> > > > > -     imply DRM_RCAR_CMM
+> > > > >       imply DRM_RCAR_LVDS
+> > > > >       select DRM_KMS_HELPER
+> > > > >       select DRM_KMS_CMA_HELPER
+> > > > > @@ -15,9 +14,8 @@ config DRM_RCAR_DU
+> > > > >         If M is selected the module will be called rcar-du-drm.
+> > > > >
+> > > > >  config DRM_RCAR_CMM
+> > > > > -     tristate "R-Car DU Color Management Module (CMM) Support"
+> > > > > +     def_tristate DRM_RCAR_DU
+> > > > >       depends on DRM && OF
+> > > > > -     depends on DRM_RCAR_DU
+> > > > >       help
+> > >
+> > > It would be easy enough to make this a visible 'bool' symbol and
+> > > build it into the rcu-du-drm.ko module itself. Would that help you?
+> >
+> > That could indeed simplify a few things. I wonder if it could introduce
+> > a few small issues though (but likely nothing we can't fix). The two
+> > that come to mind are the fact that the module would have two
+> > MODULE_DESCRIPTION and MODULE_LICENSE entries (I have no idea if that
+> > could cause breakages), and that it could make module unloading more
+> > difficult as the CMM being used by the DU would increase the refcount on
+> > the module. I think the latter could be worked around by manually
+> > unbinding the DU device through sysfs before unloading the module (and I
+> > can't say for sure that unloading the DU module is not broken today
+> > *innocent and naive look* :-)).
+>
+> In that case, a Makefile trick could also work, doing
+>
+> ifdef CONFIG_DRM_RCAR_CMM
+> obj-$(CONFIG_DRM_RCAR_DU) += rcar-cmm.o
+> endif
+>
+> Thereby making the cmm module have the same state (y or m) as
+> the du module whenever the option is enabled.
+
+What about dropping the "imply DRM_RCAR_CMM", but defaulting to
+enable CMM if DU is enabled?
+
+    config DRM_RCAR_CMM
+            tristate "R-Car DU Color Management Module (CMM) Support"
+            depends on DRM_RCAR_DU && OF
+            default DRM_RCAR_DU
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.26.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
