@@ -2,110 +2,73 @@ Return-Path: <SRS0=owXo=57=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67201C2BA19
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C0DC2BA19
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 446AD20737
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:44:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tW7oCY6N"
+	by mail.kernel.org (Postfix) with ESMTP id 8A51420737
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:45:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2896528AbgDOKn6 (ORCPT
+        id S2896561AbgDOKpM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 06:43:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57142 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2896475AbgDOKXh (ORCPT
+        Wed, 15 Apr 2020 06:45:12 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:22960 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2408512AbgDOKUI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Apr 2020 06:23:37 -0400
-Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0DFFC03C1A8
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Apr 2020 03:22:34 -0700 (PDT)
-Received: by mail-vs1-xe42.google.com with SMTP id 184so1890173vsu.3
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Apr 2020 03:22:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lx1VtRilkF7eVbuL1lMqV+lLLP1ngAUmM+HAJ1wt5Ac=;
-        b=tW7oCY6NwuTzovEpooLhKVX7j8WKfh5I1vB6sw1WLBd9zIz77/iJkudKEhHSGTJNxL
-         OjE580GfYKLnOJQcweMM1PZ2y+AT+yRvwIKeG9+lvZbhR7JApqPAMv+HvyObHNAgkx6E
-         K/FbxLIBh7urxHYuTqpAeIqugWaEqA42RGhIQFCiv0jhj9PkEJvHO8GViTOzI56sUqv4
-         qZQgMlO/qrAyuRZfqSp2x/oKDru01OSr/iSju8lUPTUrvDOPSIi3jW7x5ZtHVeLwaQtP
-         9Iwc8rdE2Mc6njZh4BuQ6/PlfcvlDBhU/186nOUNq5XucCrLHVm1Tr3LtLusVO0TMk/L
-         z95Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lx1VtRilkF7eVbuL1lMqV+lLLP1ngAUmM+HAJ1wt5Ac=;
-        b=YtjgyoQTMPRFzezPIcAjqnyATh1K/lchdCwpTW9e9gIG1p0GoP6Oc/DpVvjkBS10m7
-         AWY82mSUdA2Qo7tInpuivLtBMJGR+Y21Mtic7MAD6CfOj8H8U/Mc6J4GCkHFV69kEd6F
-         mM8pgmNfALIlJ24ue22iXSvLt2pF+o0nq/itTh1KlWWmxan2yUm/wTKvPjlZIhkgcAYg
-         KsjZitF8Zpd9IawcKPYkGk5ZbPFtOZrprVhdmK9IxhhNuc47UuwWmt86TgL3IHpHofOF
-         ZxMPfldIC7pBJmZ7BcVjhFNICMZ/YbBhdc5IQHjuLroUc3+sD8MqpUKn/CtnZBy5IWH2
-         SQ/Q==
-X-Gm-Message-State: AGi0Pubhi8Z1ZUXrEcPPDZn/mFQXRE9GDouW1OIGJ96fJJeIv+4HrKhf
-        kIIlfXokpntadul3on4FYy+XUO2178xNc00A0GesQA==
-X-Google-Smtp-Source: APiQypIbijlX9DyYWKgWSpyuEFwcw+h84LGo/fGmFldPGwraTKeTj6jXND30tteV2M70rzj9h1IaZ6kAqvQBbyL8Vj8=
-X-Received: by 2002:a67:f24b:: with SMTP id y11mr3768618vsm.165.1586946153713;
- Wed, 15 Apr 2020 03:22:33 -0700 (PDT)
+        Wed, 15 Apr 2020 06:20:08 -0400
+X-IronPort-AV: E=Sophos;i="5.72,386,1580742000"; 
+   d="scan'208";a="44789389"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 15 Apr 2020 19:19:28 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9D2074007F4F;
+        Wed, 15 Apr 2020 19:19:26 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Niklas <niklas.soderlund@ragnatech.se>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 3/3] media: rcar-csi2: Add support for MEDIA_BUS_FMT_SRGGB8_1X8 format
+Date:   Wed, 15 Apr 2020 11:19:08 +0100
+Message-Id: <1586945948-11026-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1586945948-11026-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <1586945948-11026-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-References: <20200408142252.21958-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20200408142252.21958-1-wsa+renesas@sang-engineering.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 15 Apr 2020 12:21:57 +0200
-Message-ID: <CAPDyKFork=TB3GEfLhfdhGzneJ75p2fiQp3Qv4TAOPrpScVE4A@mail.gmail.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi: simplify summary output
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 8 Apr 2020 at 16:25, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> No need to call platform_get_resource twice when we still have the
-> pointer from before. Also, use '%pa' for a resource_size_t pointer.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+This patch adds support for MEDIA_BUS_FMT_SRGGB8_1X8 format for CSI2
+input.
 
-Applied for next, thanks!
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Kind regards
-Uffe
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index faa9fb23a2e9..3d1945d7996c 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -320,6 +320,7 @@ static const struct rcar_csi2_format rcar_csi2_formats[] = {
+ 	{ .code = MEDIA_BUS_FMT_YUYV8_1X16,	.datatype = 0x1e, .bpp = 16 },
+ 	{ .code = MEDIA_BUS_FMT_UYVY8_2X8,	.datatype = 0x1e, .bpp = 16 },
+ 	{ .code = MEDIA_BUS_FMT_YUYV10_2X10,	.datatype = 0x1e, .bpp = 20 },
++	{ .code = MEDIA_BUS_FMT_SRGGB8_1X8,     .datatype = 0x2a, .bpp = 8 },
+ };
+ 
+ static const struct rcar_csi2_format *rcsi2_code_to_fmt(unsigned int code)
+-- 
+2.20.1
 
-
-> ---
->  drivers/mmc/host/renesas_sdhi_core.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index c002e9fb67fb..de7f4fc9bc21 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -933,10 +933,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->                         goto eirq;
->         }
->
-> -       dev_info(&pdev->dev, "%s base at 0x%08lx max clock rate %u MHz\n",
-> -                mmc_hostname(host->mmc), (unsigned long)
-> -                (platform_get_resource(pdev, IORESOURCE_MEM, 0)->start),
-> -                host->mmc->f_max / 1000000);
-> +       dev_info(&pdev->dev, "%s base at %pa, max clock rate %u MHz\n",
-> +                mmc_hostname(host->mmc), &res->start, host->mmc->f_max / 1000000);
->
->         return ret;
->
-> --
-> 2.20.1
->
