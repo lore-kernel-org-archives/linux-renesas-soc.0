@@ -2,149 +2,389 @@ Return-Path: <SRS0=owXo=57=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE821C3815B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 13:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C686CC2BA19
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 13:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B716E20737
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 13:17:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D1DF20775
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 13:50:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586958623;
+	bh=53nFtvqHdyIgnypxB2RMpy1E3WnulTpS940anTDT8/M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=LH7kIdtSVsUFRf9OrO4Eapk5l9Nx00yoaY0w3EPjPmgK6ll07hqdDHWfZa90j38w9
+	 6qfcsKuk9AeqiP9eHCBry9M8Jf99EoOu08VjoLmI4iSfUitF3WpJjnDS3i4dmhRQvg
+	 PpHavHzfaiHRmZEbjkcm5SfMIDufxDCYgzsPXyVI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2897048AbgDONRG (ORCPT
+        id S2633696AbgDONuW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 09:17:06 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42015 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S370736AbgDONRA (ORCPT
+        Wed, 15 Apr 2020 09:50:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732815AbgDONuQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Apr 2020 09:17:00 -0400
-Received: by mail-ot1-f68.google.com with SMTP id l21so3300446otd.9
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Apr 2020 06:17:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dbnocMf+YCXO6rynSRbZKTHwedc1p0SI4PJLE21o0ts=;
-        b=tcwcMxjyuB17jcYEyseG57ePeYy+L1oQKHQEUudo+r1/HAHyhlIlGvOZ4fhNiFmhPR
-         H2lRu2jJooeUoFLOSifNBrqUWniWjeTP+q9hX5/xGlFn4smhg5/wK5BrsbJcR2YAE0yJ
-         JbZhWFXiaSjjoKzfCEvmo3f9CDc2jBlr7ufstx0V0HEvHyuU3hLQXkH6uQ1Nae8j3zwc
-         QzjYx8yLVvvcFjUe1TvLcVnA1aEK70M2iNCzZtR2m2ik8gh8FwxGbNu5Ya6l22Vym3Ob
-         /ifbf9gng0G/oPUzgRVb8xYlUvKeAUIXmZ6lHYOQBrUw1KirG4g9MkVXDRgUjEVdo1Aw
-         65mg==
-X-Gm-Message-State: AGi0PuZOMJodHNbTR4rs6kk1YSUF7iVRvXFm1kjv5ol9sl5kpXZtMAqg
-        dfQphHemUVYL6SU0X1D4BQiS89abmY9LktKAx3w=
-X-Google-Smtp-Source: APiQypI1n3n1HrpC733H6dekvk5p8H+HZWlAjswfFTnY0HYg7b/b8KXVZIN2QJT+RFB7PNoRdwSj8pariD7U/pYZeoo=
-X-Received: by 2002:a9d:6299:: with SMTP id x25mr16992635otk.107.1586956619730;
- Wed, 15 Apr 2020 06:16:59 -0700 (PDT)
+        Wed, 15 Apr 2020 09:50:16 -0400
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4649F20775;
+        Wed, 15 Apr 2020 13:50:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586958615;
+        bh=53nFtvqHdyIgnypxB2RMpy1E3WnulTpS940anTDT8/M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=GuN9hmJH60vwU/dgm2fayA+8neORrahqcuLDYYBvzXKwBdLCu07hilcBV5damZoye
+         rOW0oarkc679i09GzcdL/7n9kkoqFasX7jL3+TsuvLxHYhHCBsbDivBYJNTm4yT/cu
+         J68/yNBTSuQohBn1nG2CHZi4AyMrg/yPG9STo8f8=
+Received: by mail-qk1-f181.google.com with SMTP id b62so17207426qkf.6;
+        Wed, 15 Apr 2020 06:50:15 -0700 (PDT)
+X-Gm-Message-State: AGi0PuZ1zC3aeoyHEQR1qdQvy7CKJQ3WC+kf4ejedM2mMWQN+/MfxLib
+        CCzhzw6+iXNxbHQL/Y9XJn46KwIxntuAUZL5ZQ==
+X-Google-Smtp-Source: APiQypJUnhFeABv9P0F814Z+p+B5Q4yhQFZZ9hVOY7koZh7lZJDfPlV3W5rtAhAuBySOBChpx4uaiKFo1iYLgHXov6Q=
+X-Received: by 2002:a37:4a85:: with SMTP id x127mr26789090qka.152.1586958614150;
+ Wed, 15 Apr 2020 06:50:14 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200320144348.12865-1-geert+renesas@glider.be>
- <CAKv+Gu8q2bAVMRLSc-Ae=hxhg3sbvpfuaMJ_nx4FZFvegNZ+9w@mail.gmail.com>
- <CAMj1kXFAEOWGgmMT4SMP=QafcT54mzMekLjm3wMTN8M4psNSKw@mail.gmail.com>
- <CAMuHMdUkrF9qBaZre0EJ-cuzPcL7A1j2ANmQNYV7FAngybb1bA@mail.gmail.com> <CAMj1kXEgXuizeQzBrt6aC-QODRGinoU5sjFrx0a1LRMg7zD85w@mail.gmail.com>
-In-Reply-To: <CAMj1kXEgXuizeQzBrt6aC-QODRGinoU5sjFrx0a1LRMg7zD85w@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 15 Apr 2020 15:16:48 +0200
-Message-ID: <CAMuHMdWxiSE5H=CEqrO5Zx4nyiLo8_xxRJUj20eHm=PHnANkdg@mail.gmail.com>
-Subject: Re: [PATCH v4] ARM: boot: Obtain start of physical memory from DTB
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     Nicolas Pitre <nico@fluxnic.net>, Arnd Bergmann <arnd@arndb.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Eric Miao <eric.miao@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20200405233935.27599-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20200405233935.27599-5-laurent.pinchart+renesas@ideasonboard.com>
+ <20200406080032.zlszhkjqmjeoa4ti@gilmour.lan> <20200406111927.GD4757@pendragon.ideasonboard.com>
+ <20200406170915.x2ztz4q446h6vx2y@gilmour.lan> <20200406175028.GI16885@pendragon.ideasonboard.com>
+ <20200407071251.npibrmzywiyigu2a@gilmour.lan> <20200408114552.GC4881@pendragon.ideasonboard.com>
+ <20200414231005.GA24462@bogus> <20200415010615.GZ19819@pendragon.ideasonboard.com>
+In-Reply-To: <20200415010615.GZ19819@pendragon.ideasonboard.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 15 Apr 2020 08:50:01 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKEnfK0BJMmb1XHNCkRYiAf7FVgRKdPpmcpz1TFvUU01g@mail.gmail.com>
+Message-ID: <CAL_JsqKEnfK0BJMmb1XHNCkRYiAf7FVgRKdPpmcpz1TFvUU01g@mail.gmail.com>
+Subject: Re: [PATCH/RFC 4/6] dt-bindings: display: rockchip: dw-hdmi: Convert
+ binding to YAML
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        devicetree@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Mark Yao <mark.yao@rock-chips.com>,
+        Sandy Huang <hjc@rock-chips.com>, Chen-Yu Tsai <wens@csie.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Ard,
-
-On Wed, Apr 15, 2020 at 2:57 PM Ard Biesheuvel <ardb@kernel.org> wrote:
-> On Wed, 15 Apr 2020 at 14:45, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Tue, Apr 14, 2020 at 10:07 AM Ard Biesheuvel <ardb@kernel.org> wrote:
-> > > On Wed, 25 Mar 2020 at 17:40, Ard Biesheuvel <ardb@kernel.org> wrote:
-> > > > On Fri, 20 Mar 2020 at 15:43, Geert Uytterhoeven
-> > > > <geert+renesas@glider.be> wrote:
-> > > > > Currently, the start address of physical memory is obtained by masking
-> > > > > the program counter with a fixed mask of 0xf8000000.  This mask value
-> > > > > was chosen as a balance between the requirements of different platforms.
-> > > > > However, this does require that the start address of physical memory is
-> > > > > a multiple of 128 MiB, precluding booting Linux on platforms where this
-> > > > > requirement is not fulfilled.
-> > > > >
-> > > > > Fix this limitation by obtaining the start address from the DTB instead,
-> > > > > if available (either explicitly passed, or appended to the kernel).
-> > > > > Fall back to the traditional method when needed.
-> > > > >
-> > > > > This allows to boot Linux on r7s9210/rza2mevb using the 64 MiB of SDRAM
-> > > > > on the RZA2MEVB sub board, which is located at 0x0C000000 (CS3 space),
-> > > > > i.e. not at a multiple of 128 MiB.
-> > > > >
-> > > > > Suggested-by: Nicolas Pitre <nico@fluxnic.net>
-> > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > > Reviewed-by: Nicolas Pitre <nico@fluxnic.net>
-> > > > > Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > > > ---
-> > > > > v4:
-> > > > >   - Fix stack location after commit 184bf653a7a452c1 ("ARM:
-> > > > >     decompressor: factor out routine to obtain the inflated image
-> > > > >     size"),
-> > > > >
-> > > >
-> > > > Apologies for the breakage. I was aware of the existence of this
-> > > > patch, but I didn't realize it was accessing LC0 early on to find the
-> > > > stack pointer value.
-> > > >
-> > > > Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+On Tue, Apr 14, 2020 at 8:06 PM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Rob,
+>
+> On Tue, Apr 14, 2020 at 06:10:05PM -0500, Rob Herring wrote:
+> > On Wed, Apr 08, 2020 at 02:45:52PM +0300, Laurent Pinchart wrote:
+> > > On Tue, Apr 07, 2020 at 09:12:51AM +0200, Maxime Ripard wrote:
+> > >> On Mon, Apr 06, 2020 at 08:50:28PM +0300, Laurent Pinchart wrote:
+> > >>> On Mon, Apr 06, 2020 at 07:09:15PM +0200, Maxime Ripard wrote:
+> > >>>> On Mon, Apr 06, 2020 at 02:19:27PM +0300, Laurent Pinchart wrote:
+> > >>>>> On Mon, Apr 06, 2020 at 10:00:32AM +0200, Maxime Ripard wrote:
+> > >>>>>> On Mon, Apr 06, 2020 at 02:39:33AM +0300, Laurent Pinchart wrote:
+> > >>>>>>> Convert the Rockchip HDMI TX text binding to YAML.
+> > >>>>>>>
+> > >>>>>>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > >>>>>>> ---
+> > >>>>>>>  .../display/rockchip/dw_hdmi-rockchip.txt     |  74 --------
+> > >>>>>>>  .../display/rockchip/rockchip,dw-hdmi.yaml    | 178 ++++++++++++++++++
+> > >>>>>>>  2 files changed, 178 insertions(+), 74 deletions(-)
+> > >>>>>>>  delete mode 100644 Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
+> > >>>>>>>  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml
+> > >>>>>>>
+> > >>>>>>> diff --git a/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
+> > >>>>>>> deleted file mode 100644
+> > >>>>>>> index 3d32ce137e7f..000000000000
+> > >>>>>>> --- a/Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
+> > >>>>>>> +++ /dev/null
+> > >>>>>>> @@ -1,74 +0,0 @@
+> > >>>>>>> -Rockchip DWC HDMI TX Encoder
+> > >>>>>>> -============================
+> > >>>>>>> -
+> > >>>>>>> -The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
+> > >>>>>>> -with a companion PHY IP.
+> > >>>>>>> -
+> > >>>>>>> -These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
+> > >>>>>>> -Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
+> > >>>>>>> -following device-specific properties.
+> > >>>>>>> -
+> > >>>>>>> -
+> > >>>>>>> -Required properties:
+> > >>>>>>> -
+> > >>>>>>> -- compatible: should be one of the following:
+> > >>>>>>> -             "rockchip,rk3228-dw-hdmi"
+> > >>>>>>> -             "rockchip,rk3288-dw-hdmi"
+> > >>>>>>> -             "rockchip,rk3328-dw-hdmi"
+> > >>>>>>> -             "rockchip,rk3399-dw-hdmi"
+> > >>>>>>> -- reg: See dw_hdmi.txt.
+> > >>>>>>> -- reg-io-width: See dw_hdmi.txt. Shall be 4.
+> > >>>>>>> -- interrupts: HDMI interrupt number
+> > >>>>>>> -- clocks: See dw_hdmi.txt.
+> > >>>>>>> -- clock-names: Shall contain "iahb" and "isfr" as defined in dw_hdmi.txt.
+> > >>>>>>> -- ports: See dw_hdmi.txt. The DWC HDMI shall have a single port numbered 0
+> > >>>>>>> -  corresponding to the video input of the controller. The port shall have two
+> > >>>>>>> -  endpoints, numbered 0 and 1, connected respectively to the vopb and vopl.
+> > >>>>>>> -- rockchip,grf: Shall reference the GRF to mux vopl/vopb.
+> > >>>>>>> -
+> > >>>>>>> -Optional properties
+> > >>>>>>> -
+> > >>>>>>> -- ddc-i2c-bus: The HDMI DDC bus can be connected to either a system I2C master
+> > >>>>>>> -  or the functionally-reduced I2C master contained in the DWC HDMI. When
+> > >>>>>>> -  connected to a system I2C master this property contains a phandle to that
+> > >>>>>>> -  I2C master controller.
+> > >>>>>>> -- clock-names: See dw_hdmi.txt. The "cec" clock is optional.
+> > >>>>>>> -- clock-names: May contain "cec" as defined in dw_hdmi.txt.
+> > >>>>>>> -- clock-names: May contain "grf", power for grf io.
+> > >>>>>>> -- clock-names: May contain "vpll", external clock for some hdmi phy.
+> > >>>>>>> -- phys: from general PHY binding: the phandle for the PHY device.
+> > >>>>>>> -- phy-names: Should be "hdmi" if phys references an external phy.
+> > >>>>>>> -
+> > >>>>>>> -Optional pinctrl entry:
+> > >>>>>>> -- If you have both a "unwedge" and "default" pinctrl entry, dw_hdmi
+> > >>>>>>> -  will switch to the unwedge pinctrl state for 10ms if it ever gets an
+> > >>>>>>> -  i2c timeout.  It's intended that this unwedge pinctrl entry will
+> > >>>>>>> -  cause the SDA line to be driven low to work around a hardware
+> > >>>>>>> -  errata.
+> > >>>>>>> -
+> > >>>>>>> -Example:
+> > >>>>>>> -
+> > >>>>>>> -hdmi: hdmi@ff980000 {
+> > >>>>>>> -     compatible = "rockchip,rk3288-dw-hdmi";
+> > >>>>>>> -     reg = <0xff980000 0x20000>;
+> > >>>>>>> -     reg-io-width = <4>;
+> > >>>>>>> -     ddc-i2c-bus = <&i2c5>;
+> > >>>>>>> -     rockchip,grf = <&grf>;
+> > >>>>>>> -     interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
+> > >>>>>>> -     clocks = <&cru  PCLK_HDMI_CTRL>, <&cru SCLK_HDMI_HDCP>;
+> > >>>>>>> -     clock-names = "iahb", "isfr";
+> > >>>>>>> -     ports {
+> > >>>>>>> -             hdmi_in: port {
+> > >>>>>>> -                     #address-cells = <1>;
+> > >>>>>>> -                     #size-cells = <0>;
+> > >>>>>>> -                     hdmi_in_vopb: endpoint@0 {
+> > >>>>>>> -                             reg = <0>;
+> > >>>>>>> -                             remote-endpoint = <&vopb_out_hdmi>;
+> > >>>>>>> -                     };
+> > >>>>>>> -                     hdmi_in_vopl: endpoint@1 {
+> > >>>>>>> -                             reg = <1>;
+> > >>>>>>> -                             remote-endpoint = <&vopl_out_hdmi>;
+> > >>>>>>> -                     };
+> > >>>>>>> -             };
+> > >>>>>>> -     };
+> > >>>>>>> -};
+> > >>>>>>> diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml
+> > >>>>>>> new file mode 100644
+> > >>>>>>> index 000000000000..8ff544ae0ac2
+> > >>>>>>> --- /dev/null
+> > >>>>>>> +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml
+> > >>>>>>> @@ -0,0 +1,178 @@
+> > >>>>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > >>>>>>> +%YAML 1.2
+> > >>>>>>> +---
+> > >>>>>>> +$id: http://devicetree.org/schemas/display/rockchip/rockchip,dw-hdmi.yaml#
+> > >>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > >>>>>>> +
+> > >>>>>>> +title: Rockchip DWC HDMI TX Encoder
+> > >>>>>>> +
+> > >>>>>>> +maintainers:
+> > >>>>>>> +  - Mark Yao <mark.yao@rock-chips.com>
+> > >>>>>>> +
+> > >>>>>>> +description: |
+> > >>>>>>> +  The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
+> > >>>>>>> +  with a companion PHY IP.
+> > >>>>>>> +
+> > >>>>>>> +allOf:
+> > >>>>>>> +  - $ref: ../bridge/synopsys,dw-hdmi.yaml#
+> > >>>>>>> +
+> > >>>>>>> +properties:
+> > >>>>>>> +  compatible:
+> > >>>>>>> +    enum:
+> > >>>>>>> +      - rockchip,rk3228-dw-hdmi
+> > >>>>>>> +      - rockchip,rk3288-dw-hdmi
+> > >>>>>>> +      - rockchip,rk3328-dw-hdmi
+> > >>>>>>> +      - rockchip,rk3399-dw-hdmi
+> > >>>>>>> +
+> > >>>>>>> +  reg: true
+> > >>>>>>> +
+> > >>>>>>> +  reg-io-width:
+> > >>>>>>> +    const: 4
+> > >>>>>>> +
+> > >>>>>>> +  clocks:
+> > >>>>>>> +    minItems: 2
+> > >>>>>>> +    maxItems: 5
+> > >>>>>>> +    items:
+> > >>>>>>> +      - description: The bus clock for either AHB and APB
+> > >>>>>>> +      - description: The internal register configuration clock
+> > >>>>>>> +      - description: The HDMI CEC controller main clock
+> > >>>>>>> +      - description: Power for GRF IO
+> > >>>>>>> +      - description: External clock for some HDMI PHY
+> > >>>>>>> +
+> > >>>>>>> +  clock-names:
+> > >>>>>>> +    minItems: 2
+> > >>>>>>> +    maxItems: 5
+> > >>>>>>> +    items:
+> > >>>>>>> +      - const: iahb
+> > >>>>>>> +      - const: isfr
+> > >>>>>>> +      - enum:
+> > >>>>>>> +        - cec
+> > >>>>>>> +        - grf
+> > >>>>>>> +        - vpll
+> > >>>>>>> +      - enum:
+> > >>>>>>> +        - cec
+> > >>>>>>> +        - grf
+> > >>>>>>> +        - vpll
+> > >>>>>>> +      - enum:
+> > >>>>>>> +        - cec
+> > >>>>>>> +        - grf
+> > >>>>>>> +        - vpll
+> > >>>>>>
+> > >>>>>> IIRC Rob wanted us to standardize the order of the clocks if possible,
+> > >>>>>> since it's a pain to support properly here, and your description won't
+> > >>>>>> match what you describe here either (and in general it's just a best
+> > >>>>>> practice), so if all your DTs have the same order you should just set
+> > >>>>>> that order in stone.
+> > >>>>>
+> > >>>>> But how do we handle the case where any of the cec, grf and vpll clocks
+> > >>>>> can be set ? Assuming, for instance, that
+> > >>>>>
+> > >>>>>         clock-names = "iahb", "isfr", "cec";
+> > >>>>>         clock-names = "iahb", "isfr", "vpll";
+> > >>>>>         clock-names = "iahb", "isfr", "cec", "vpll";
+> > >>>>>
+> > >>>>> would all be valid.
+> > >>>>
+> > >>>> It would be painful then...
+> > >>>>
+> > >>>> The easiest way to do so would be to simply use an enum there, and not
+> > >>>> bother checking the array at all. You'll get a warning if there's
+> > >>>> multiple occurences of the same string, and I guess that's what you
+> > >>>> would be really concerned about.
+> > >>>>
+> > >>>> However, now that I think about it, what's the interaction between the
+> > >>>> generic binding and this one when it comes to the third clock? The
+> > >>>> generic one expects it to be cec, and here you have other options?
+> > >>>
+> > >>> I'm not too familiar with the platform, but as far as I understand, any
+> > >>> of the cec, grf and vpll clock is optional (if someone could confirm
+> > >>> that, it would be useful). I don't care so much about the order, but
+> > >>> iahb and isfr are mandatory, and thus need to be specified as two const
+> > >>> items in the beginning as far as I understand. It would be nice to set
+> > >>> something along the lines of
+> > >>>
+> > >>>   minItems: 2
+> > >>>   maxItems: 5
+> > >>>   items:
+> > >>>     - const: iahb
+> > >>>     - const: isfr
+> > >>>     - enum:
+> > >>>       - cec
+> > >>>       - grf
+> > >>>       - vpll
+> > >>
+> > >> I guess you could do something like:
+> > >>
+> > >> in the generic schema:
+> > >>
+> > >> clock-names:
+> > >>   allOf:
+> > >>     - minItems: 2
+> > >>     - enum:
+> > >>        - iahb
+> > >>        - isfr
+> > >>        - cec
+> > >>       additonalItems: true
+> > >>     - items:
+> > >>       - iahb
+> > >>       - isfr
+> > >>
+> > >> Or something along those lines, I haven't tested it, but the basic
+> > >> idea is that you want to enforce that:
+> > >>   a) there's a minimum of two clocks
+> > >>   b) valid clock names are iahb, isfr and cec, but we will allow more
+> > >>   c) the first two clocks are iahb and isfr
 > > >
-> > > OK, so one thing I did notice when playing with this code is that the
-> > > phys/virt patching code requires that 'PHYS_OFFSET - PAGE_OFFSET' is a
-> > > multiple of 16 MB, and so this needs to be taken into account by this
-> > > change as well, given that PHYS_OFFSET is based on the placement of
-> > > the uncompressed kernel in the physical address space.
+> > > Interesting idea. I've tried
+> > >
+> > >   clock-names:
+> > >     allOf:
+> > >       - minItems: 2
+> > >       - enum:
+> > >         - iahb
+> > >         - isfr
+> > >         - cec
+> > >         additionalItems: true
 > >
-> > You mean fdt_get_mem_start() should round up the address to make sure
-> > it is a multiple of 16 MiB (assumed PAGE_OFFSET is a multiple of 16 MiB,
-> > too)?
+> > Instead of these 2, you want:
+> >
+> > items:
+> >   enum: [ iahb, isfr, cec ]
+> > minItems: 2
+> > maxItems: 3
+> >
+> > Though I assume there's some others missing as with this and below, the
+> > 3rd clock can only be 'cec'.
 >
-> Yes.
+> But with this bindings that include this base schema and extend the
+> number of clocks will not validate :-( I'd like a way for the base
+> schema to provide an overridable check, but I don't think that's
+> possible. I then tried to specify a check that would be valid for
+> extensions too, and that would verify that
 
-OK.
+But this is not the base schema?
 
-> > Can PAGE_OFFSET actually be not a multiple of 16 MiB?
+> - There are at least two clocks and maybe more (that should be easy by
+>   setting minItems: 2 and leaving maxItems unspecified, but the
+>   dt-validate tool then adds a maxItems automatically :-()
+
+That's to avoid boilerplate in the vast majority of cases.
+
+Can't you just do 'maxItems: 1000' or some sane limit?
+
 >
-> ARM's Kconfig has
->
-> config PAGE_OFFSET
->         hex
->         default PHYS_OFFSET if !MMU
->         default 0x40000000 if VMSPLIT_1G
->         default 0x80000000 if VMSPLIT_2G
->         default 0xB0000000 if VMSPLIT_3G_OPT
->         default 0xC0000000
->
-> which means that PHYS_OFFSET - PAGE_OFFSET is guaranteed to be 16 MB
-> aligned if PHYS_OFFSET is 16 MB aligned.
+> - The first two clock names are 'iahb' and 'isfr', and additional clock
+>   names can be anything.
 
-Ah, I missed the lack of a prompt, and thought this was user-configurable,
-too.  Hence as you talked about the alignment of the difference of the two
-values only, I wondered if PAGE_OFFSET could be e.g. 0xb0800000,
-so PHYS_OFFSET has to be offset by 0x800000, too ;-)
+So, in the base schema:
 
-Gr{oetje,eeting}s,
+items:
+  - const: iahb
+  - const: isfr
+minItems: 2
+maxItems: 10
+additionalItems: true
 
-                        Geert
+In the device schema you can do something like:
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+items:
+  - {}
+  - {}
+  - enum: [ a, b, c ]
+  - enum: [ a, b, c ]
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+If there's no order of the last items. Or you can use the schema
+flavor (rather than list) of 'items' and list iahb and isfr again.
+
+> Maybe YAML schemas can't support this, and I need to specify all
+> constraints explicitly in derived bindings ? The base
+> bridge/synopsys,dw-hdmi.yaml file would then be dropped completely, with
+> its contents copied to derived bindings. Or maybe I should selectively
+> include rules from the base schema in rockchip,dw-hdmi.yaml ? That's not
+> very user-friendly though.
+
+You could get into using definitions and referencing those
+individually, but I wouldn't recommend it.
+
+My hope is in new bindings the difficulty in expressing all the schema
+variations will prevent some of this needless variation. The reality
+is for the same IP block, the clocks and other resources shouldn't
+vary so much. :)
+
+Rob
