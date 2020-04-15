@@ -2,107 +2,155 @@ Return-Path: <SRS0=owXo=57=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA6AC2BA19
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 852FFC2BA19
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:47:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F0E420768
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C94520737
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Apr 2020 10:47:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2896450AbgDOKSZ (ORCPT
+        id S2896625AbgDOKrm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Apr 2020 06:18:25 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:55244 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2896413AbgDOKR3 (ORCPT
+        Wed, 15 Apr 2020 06:47:42 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:52429 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2896623AbgDOKre (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Apr 2020 06:17:29 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: dafna)
-        with ESMTPSA id D6FEC2A0C93
-Subject: Re: [PATCH v7 6/6] vimc: Make use of V4L2_CAP_IO_MC
-To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Helen Koike <helen.koike@collabora.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org
-References: <20200413202351.1359754-1-niklas.soderlund+renesas@ragnatech.se>
- <20200413202351.1359754-7-niklas.soderlund+renesas@ragnatech.se>
-From:   Dafna Hirschfeld <dafna.hirschfeld@collabora.com>
-Message-ID: <a1a0bea6-d19f-4948-df0e-4477684f1082@collabora.com>
-Date:   Wed, 15 Apr 2020 12:16:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Wed, 15 Apr 2020 06:47:34 -0400
+Received: from uno.homenet.telecomitalia.it (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 7BCAD240002;
+        Wed, 15 Apr 2020 10:47:22 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund+renesas@ragnatech.se,
+        kieran.bingham@ideasonboard.com, dave.stevenson@raspberrypi.com,
+        hyun.kwon@xilinx.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 1/6] media: v4l2-subdv: Introduce get_mbus_config pad op
+Date:   Wed, 15 Apr 2020 12:49:58 +0200
+Message-Id: <20200415105004.2497356-2-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.26.0
+In-Reply-To: <20200415105004.2497356-1-jacopo+renesas@jmondi.org>
+References: <20200415105004.2497356-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <20200413202351.1359754-7-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Introduce a new pad operation to allow retrieving the media bus
+configuration on a subdevice pad.
 
+The newly introduced operation reassembles the s/g_mbus_config video
+operation, which have been on their way to be deprecated since a long
+time.
 
-On 13.04.20 22:23, Niklas Söderlund wrote:
-> Set the V4L2_CAP_IO_MC capability flag to report this vimc
-> inputs/outputs are controlled by the media graph.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> ---
-> Changes since v5:
-> 
-> - Wrap line longer than 80 characters
-> - Implement mbus_code filtering for format enumeration
-> ---
->   drivers/media/platform/vimc/vimc-capture.c | 10 ++++++++--
->   1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vimc/vimc-capture.c b/drivers/media/platform/vimc/vimc-capture.c
-> index 747ea9cc1bd7cb12..dbc827fd1b9baebb 100644
-> --- a/drivers/media/platform/vimc/vimc-capture.c
-> +++ b/drivers/media/platform/vimc/vimc-capture.c
-> @@ -149,7 +149,12 @@ static int vimc_cap_s_fmt_vid_cap(struct file *file, void *priv,
->   static int vimc_cap_enum_fmt_vid_cap(struct file *file, void *priv,
->   				     struct v4l2_fmtdesc *f)
->   {
-> -	const struct vimc_pix_map *vpix = vimc_pix_map_by_index(f->index);
-> +	const struct vimc_pix_map *vpix;
-> +
-> +	if (f->mbus_code)
-> +		vpix = vimc_pix_map_by_code(f->mbus_code);
-Hi, if I understand correctly, the f->index should still tell us we should return the i'th format
-for the given mbus_code, right? if yes then since vimc support only one pixelformat for each mbus code
-there should be a code added here:
-if (f->index > 0)
-	return -EINVAL;
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ include/media/v4l2-subdev.h | 69 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 69 insertions(+)
 
-Thanks,
-Dafna
+diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+index a4848de59852..fc16af578471 100644
+--- a/include/media/v4l2-subdev.h
++++ b/include/media/v4l2-subdev.h
+@@ -350,6 +350,71 @@ struct v4l2_mbus_frame_desc {
+ 	unsigned short num_entries;
+ };
+ 
++/**
++ * struct v4l2_mbus_parallel_config - parallel mbus configuration
++ * @hsync_active: hsync active state: 1 for high, 0 for low
++ * @vsync_active: vsync active state: 1 for high, 0 for low
++ * @pclk_rising: pixel clock active edge: 1 for rising, 0 for falling
++ * @data_active: data lines active state: 1 for high, 0 for low
++ */
++struct v4l2_mbus_parallel_config {
++	unsigned int hsync_active : 1;
++	unsigned int vsync_active : 1;
++	unsigned int pclk_rising : 1;
++	unsigned int data_active : 1;
++};
++
++/**
++ * struct v4l2_mbus_csi2_dphy_config - MIPI CSI-2 DPHY mbus configuration
++ * @data_lanes: number of data lanes in use
++ * @clock_noncontinuous: non continuous clock enable flag: 1 for non
++ *			 continuous clock, 0 for continuous clock.
++ */
++struct v4l2_mbus_csi2_dphy_config {
++	unsigned int data_lanes : 3;
++	unsigned int clock_noncontinuous : 1;
++};
++
++/**
++ * struct v4l2_mbus_csi2_cphy_config - MIPI CSI-2 CPHY mbus configuration
++ *
++ * TODO
++ */
++struct v4l2_mbus_csi2_cphy_config {
++	/* TODO */
++};
++
++/**
++ * struct v4l2_mbus_pad_config - media bus configuration
++ *
++ * Report the subdevice media bus information to inform the caller of the
++ * current bus configuration. The structure describes bus configuration
++ * parameters that might change in-between streaming sessions, in order to allow
++ * the caller to adjust its media bus configuration to match what is reported
++ * here.
++ *
++ * TODO: add '_pad_' to the name to distinguish this from the structure
++ * defined in v4l2_mediabus.h used for the same purpose by the g/s_mbus_config
++ * video operations. Reuse the there defined enum v4l2_mbus_type to define
++ * the bus type.
++ *
++ * @type: mbus type. See &enum v4l2_mbus_type
++ * @parallel: parallel bus configuration parameters.
++ *	      See &struct v4l2_mbus_parallel_config
++ * @csi2_dphy: MIPI CSI-2 DPHY configuration parameters
++ *	       See &struct v4l2_mbus_csi2_dphy_config
++ * @csi2_cphy: MIPI CSI-2 CPHY configuration parameters
++ *	       See &struct v4l2_mbus_csi2_cphy_config
++ */
++struct v4l2_mbus_pad_config {
++	enum v4l2_mbus_type type;
++	union {
++		struct v4l2_mbus_parallel_config parallel;
++		struct v4l2_mbus_csi2_dphy_config csi2_dphy;
++		struct v4l2_mbus_csi2_cphy_config csi2_cphy;
++	};
++};
++
+ /**
+  * struct v4l2_subdev_video_ops - Callbacks used when v4l device was opened
+  *				  in video mode.
+@@ -670,6 +735,8 @@ struct v4l2_subdev_pad_config {
+  *
+  * @set_frame_desc: set the low level media bus frame parameters, @fd array
+  *                  may be adjusted by the subdev driver to device capabilities.
++ *
++ * @get_mbus_config: get the current mbus configuration
+  */
+ struct v4l2_subdev_pad_ops {
+ 	int (*init_cfg)(struct v4l2_subdev *sd,
+@@ -710,6 +777,8 @@ struct v4l2_subdev_pad_ops {
+ 			      struct v4l2_mbus_frame_desc *fd);
+ 	int (*set_frame_desc)(struct v4l2_subdev *sd, unsigned int pad,
+ 			      struct v4l2_mbus_frame_desc *fd);
++	int (*get_mbus_config)(struct v4l2_subdev *sd, unsigned int pad,
++			       struct v4l2_mbus_pad_config *config);
+ };
+ 
+ /**
+-- 
+2.26.0
 
-> +	else
-> +		vpix = vimc_pix_map_by_index(f->index);
->   
->   	if (!vpix)
->   		return -EINVAL;
-> @@ -450,7 +455,8 @@ struct vimc_ent_device *vimc_cap_add(struct vimc_device *vimc,
->   
->   	/* Initialize the video_device struct */
->   	vdev = &vcap->vdev;
-> -	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING;
-> +	vdev->device_caps = V4L2_CAP_VIDEO_CAPTURE | V4L2_CAP_STREAMING
-> +			  | V4L2_CAP_IO_MC;
->   	vdev->entity.ops = &vimc_cap_mops;
->   	vdev->release = video_device_release_empty;
->   	vdev->fops = &vimc_cap_fops;
-> 
