@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C83AFC2BB85
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Apr 2020 10:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A87BCC352BE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Apr 2020 10:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFC2721D82
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Apr 2020 10:44:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92A5921D82
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Apr 2020 10:44:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505455AbgDPKof (ORCPT
+        id S2505457AbgDPKok (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Apr 2020 06:44:35 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:60255 "EHLO
+        Thu, 16 Apr 2020 06:44:40 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:58025 "EHLO
         relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505340AbgDPKiY (ORCPT
+        with ESMTP id S2505346AbgDPKiY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 16 Apr 2020 06:38:24 -0400
 X-Originating-IP: 2.224.242.101
 Received: from uno.homenet.telecomitalia.it (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id AD1086001D;
-        Thu, 16 Apr 2020 10:38:10 +0000 (UTC)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id E20146001A;
+        Thu, 16 Apr 2020 10:38:14 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     kieran.bingham+renesas@ideasonboard.com,
         linux-renesas-soc@vger.kernel.org
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
         hyunk@xilinx.com, manivannan.sadhasivam@linaro.org
-Subject: [v8-rc1 07/20] squash! max9286: cleanup GPIO device registration fail path
-Date:   Thu, 16 Apr 2020 12:40:39 +0200
-Message-Id: <20200416104052.2643098-8-jacopo+renesas@jmondi.org>
+Subject: [v8-rc1 09/20] squash! max9286: Fit max9286_parse_dt print on one line
+Date:   Thu, 16 Apr 2020 12:40:41 +0200
+Message-Id: <20200416104052.2643098-10-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200416104052.2643098-1-jacopo+renesas@jmondi.org>
 References: <20200416104052.2643098-1-jacopo+renesas@jmondi.org>
@@ -46,42 +46,24 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
- - cleanup GPIO device registration fail path
+ - Fit max9286_parse_dt print on one line
 ---
- drivers/media/i2c/max9286.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/media/i2c/max9286.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
 diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-index cc99740b34c5..d0749c537152 100644
+index 08fd946c25f0..8f7e8928af56 100644
 --- a/drivers/media/i2c/max9286.c
 +++ b/drivers/media/i2c/max9286.c
-@@ -1185,7 +1185,7 @@ static int max9286_probe(struct i2c_client *client)
+@@ -1061,8 +1061,7 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+ 			continue;
  
- 	ret = max9286_gpio(priv);
- 	if (ret)
--		return ret;
-+		goto err_powerdown;
- 
- 	priv->regulator = regulator_get(&client->dev, "poc");
- 	if (IS_ERR(priv->regulator)) {
-@@ -1194,8 +1194,7 @@ static int max9286_probe(struct i2c_client *client)
- 				"Unable to get PoC regulator (%ld)\n",
- 				PTR_ERR(priv->regulator));
- 		ret = PTR_ERR(priv->regulator);
--		priv->regulator = NULL;
--		goto err_cleanup_dt;
-+		goto err_powerdown;
- 	}
- 
- 	/*
-@@ -1232,6 +1231,8 @@ static int max9286_probe(struct i2c_client *client)
- 	regulator_put(priv->regulator);
- 	max9286_i2c_mux_close(priv);
- 	max9286_configure_i2c(priv, false);
-+err_powerdown:
-+	gpiod_set_value_cansleep(priv->gpiod_pwdn, 0);
- err_cleanup_dt:
- 	max9286_cleanup_dt(priv);
+ 		if (!of_device_is_available(node)) {
+-			dev_dbg(dev, "Skipping disabled I2C bus port %u\n",
+-				id);
++			dev_dbg(dev, "Skipping disabled I2C bus port %u\n", id);
+ 			continue;
+ 		}
  
 -- 
 2.26.0
