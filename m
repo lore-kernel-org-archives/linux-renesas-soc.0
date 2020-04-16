@@ -2,120 +2,100 @@ Return-Path: <SRS0=W/py=6A=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 039BFC2BB55
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Apr 2020 11:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBBE8C2BB55
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Apr 2020 11:47:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFF01206D6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Apr 2020 11:44:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFE00206E9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Apr 2020 11:47:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2634102AbgDPLoI (ORCPT
+        id S2504618AbgDPKSI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Apr 2020 07:44:08 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:53721 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2506499AbgDPLli (ORCPT
+        Thu, 16 Apr 2020 06:18:08 -0400
+Received: from mga01.intel.com ([192.55.52.88]:45834 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2441495AbgDPKRx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Apr 2020 07:41:38 -0400
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id AC786100003;
-        Thu, 16 Apr 2020 11:41:29 +0000 (UTC)
-Date:   Thu, 16 Apr 2020 13:44:33 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org,
-        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
-        hyunk@xilinx.com, manivannan.sadhasivam@linaro.org
-Subject: Re: [v8-rc1 15/20] squash! max9286: Disable overlap window
-Message-ID: <20200416114433.dosgzx2tfgksgvxx@uno.localdomain>
-References: <20200416104052.2643098-1-jacopo+renesas@jmondi.org>
- <20200416104052.2643098-16-jacopo+renesas@jmondi.org>
- <f5b02b7e-4479-c6ea-1318-ff5bfd1d816b@ideasonboard.com>
- <20200416113108.2t5dfemqgxo5q77j@uno.localdomain>
- <5b36845b-5433-4b34-b40a-913482e5fd8c@ideasonboard.com>
+        Thu, 16 Apr 2020 06:17:53 -0400
+IronPort-SDR: AwA41n4JgjKZuuNgZRCP6UHT3UZ1/Za8i4jvp+2iuw24g9JtB0A34lTmesKM6GH21CTwW6R8I8
+ 0TXBR3vVAKnA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 03:17:42 -0700
+IronPort-SDR: PabvyhK/GDPyBjaf0paWWd5oAAbGpqHHyicWhdVU0osJ1cJkrEV/y2jitUhatIDlUFj03yE+KQ
+ +MY52IYzL9ng==
+X-IronPort-AV: E=Sophos;i="5.72,390,1580803200"; 
+   d="scan'208";a="400622555"
+Received: from ellenfax-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.44.122])
+  by orsmga004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 03:17:34 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Arnd Bergmann <arnd@arndb.de>, Saeed Mahameed <saeedm@mellanox.com>
+Cc:     "narmstrong\@baylibre.com" <narmstrong@baylibre.com>,
+        "masahiroy\@kernel.org" <masahiroy@kernel.org>,
+        "Laurent.pinchart\@ideasonboard.com" 
+        <Laurent.pinchart@ideasonboard.com>,
+        "leon\@kernel.org" <leon@kernel.org>,
+        "davem\@davemloft.net" <davem@davemloft.net>,
+        "linux-renesas-soc\@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nico\@fluxnic.net" <nico@fluxnic.net>,
+        "linux-rdma\@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "dri-devel\@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "kieran.bingham+renesas\@ideasonboard.com" 
+        <kieran.bingham+renesas@ideasonboard.com>,
+        "a.hajda\@samsung.com" <a.hajda@samsung.com>,
+        "jonas\@kwiboo.se" <jonas@kwiboo.se>,
+        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
+        "airlied\@linux.ie" <airlied@linux.ie>,
+        "jgg\@ziepe.ca" <jgg@ziepe.ca>,
+        "jernej.skrabec\@siol.net" <jernej.skrabec@siol.net>
+Subject: Re: [RFC 0/6] Regressions for "imply" behavior change
+In-Reply-To: <CAK8P3a3Wx5_bUOKnN3_hG5nLOqv3WCUtMSq6vOkJzWZgsmAz+A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20200408202711.1198966-1-arnd@arndb.de> <nycvar.YSQ.7.76.2004081633260.2671@knanqh.ubzr> <CAK8P3a2frDf4BzEpEF0uwPTV2dv6Jve+6N97z1sSuSBUAPJquA@mail.gmail.com> <20200408224224.GD11886@ziepe.ca> <87k12pgifv.fsf@intel.com> <7d9410a4b7d0ef975f7cbd8f0b6762df114df539.camel@mellanox.com> <20200410171320.GN11886@ziepe.ca> <16441479b793077cdef9658f35773739038c39dc.camel@mellanox.com> <20200414132900.GD5100@ziepe.ca> <CAK8P3a0aFQ7h4zRDW=QLogXWc88JkJJXEOK0_CpWwsRjq6+T+w@mail.gmail.com> <20200414152312.GF5100@ziepe.ca> <CAK8P3a1PjP9_b5NdmqTLeGN4y+3JXx_yyTE8YAf1u5rYHWPA9g@mail.gmail.com> <f6d83b08fc0bc171b5ba5b2a0bc138727d92e2c0.camel@mellanox.com> <CAK8P3a1-J=4EAxh7TtQxugxwXk239u8ffgxZNRdw_WWy8ExFoQ@mail.gmail.com> <834c7606743424c64951dd2193ca15e29799bf18.camel@mellanox.com> <CAK8P3a3Wx5_bUOKnN3_hG5nLOqv3WCUtMSq6vOkJzWZgsmAz+A@mail.gmail.com>
+Date:   Thu, 16 Apr 2020 13:17:32 +0300
+Message-ID: <874ktj4tvn.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5b36845b-5433-4b34-b40a-913482e5fd8c@ideasonboard.com>
+Content-Type: text/plain
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
-
-On Thu, Apr 16, 2020 at 12:31:32PM +0100, Kieran Bingham wrote:
-> On 16/04/2020 12:31, Jacopo Mondi wrote:
-> > Hi Kieran,
-> >
-> > On Thu, Apr 16, 2020 at 11:50:07AM +0100, Kieran Bingham wrote:
-> >> Hi Jacopo,
-> >>
-> >> On 16/04/2020 11:40, Jacopo Mondi wrote:
-> >>> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >>>
-> >>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >>>
-> >>> ---
-> >>> v2:
-> >>>   [Jacopo]
-> >>>   - Write register 0x63 and 0x64 directly as going through the function
-> >>>     breaks RDACM21 operations
-> >>> ---
-> >>>  drivers/media/i2c/max9286.c | 12 ++++++++++++
-> >>>  1 file changed, 12 insertions(+)
-> >>>
-> >>> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-> >>> index 3ef74ba10074..e0c637d4a7de 100644
-> >>> --- a/drivers/media/i2c/max9286.c
-> >>> +++ b/drivers/media/i2c/max9286.c
-> >>> @@ -966,6 +966,18 @@ static int max9286_setup(struct max9286_priv *priv)
-> >>>  	max9286_write(priv, 0x0c, MAX9286_HVEN | MAX9286_INVVS |
-> >>>  		      MAX9286_HVSRC_D14);
-> >>>
-> >>> +	/*
-> >>> +	 * The overlap window seems to provide additional validation by tracking
-> >>> +	 * the delay between vsync and frame sync, generating an error if the
-> >>> +	 * delay is bigger than the programmed window, though it's not yet clear
-> >>> +	 * what value should be set.
-> >>> +	 *
-> >>> +	 * As it's an optional value and can be disabled, we do so by setting
-> >>> +	 * a 0 overlap value.
-> >>
-> >> Are you happy to add the following as part of the removal of the function?
-> >>
-> >> 	 *
-> >> 	 * The overlap window is a 13 bit value, and register 0x64 is
-> >> 	 * shared with ENFSINLAST in BIT(5) which is also set zero.
-> >> 	 *
-> >
-> > Not sure, as I noticed failres for RDACM21 when not writing the
-> > supposidely reserved bits.
-> >
-> > As we blindly write the full registers I would leave details out until
-> > we figure out what's happening.
+On Thu, 16 Apr 2020, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Thu, Apr 16, 2020 at 5:25 AM Saeed Mahameed <saeedm@mellanox.com> wrote:
+>> BTW how about adding a new Kconfig option to hide the details of
+>> ( BAR || !BAR) ? as Jason already explained and suggested, this will
+>> make it easier for the users and developers to understand the actual
+>> meaning behind this tristate weird condition.
+>>
+>> e.g have a new keyword:
+>>      reach VXLAN
+>> which will be equivalent to:
+>>      depends on VXLAN && !VXLAN
 >
-> But that's precisely why I think we should document it :-) Otherwise -
-> some other person could hit this issue in a different way...
+> I'd love to see that, but I'm not sure what keyword is best. For your
+> suggestion of "reach", that would probably do the job, but I'm not
+> sure if this ends up being more or less confusing than what we have
+> today.
 
-In that case yes, I was concerned about the "reserved bits", but
-please go ahead and add that comment.
+Ah, perfect bikeshedding topic!
 
->
-> >
-> >>
-> >>> +	 */
-> >>> +	max9286_write(priv, 0x63, 0);
-> >>> +	max9286_write(priv, 0x64, 0);
-> >>> +
-> >>>  	/*
-> >>>  	 * Wait for 2ms to allow the link to resynchronize after the
-> >>>  	 * configuration change.
-> >>>
-> >>
->
+Perhaps "uses"? If the dependency is enabled it gets used as a
+dependency.
+
+Of course, this is all just talk until someone(tm) posts a patch
+actually making the change. I've looked at the kconfig tool sources
+before; not going to make the same mistake again.
+
+BR,
+Jani.
+
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
