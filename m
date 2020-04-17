@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AD9C38A2C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D735C38A2E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B77822223C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1388820656
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbgDQP4w (ORCPT
+        id S1728550AbgDQP4w (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 17 Apr 2020 11:56:52 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:48591 "EHLO
+Received: from mout.kundenserver.de ([212.227.17.13]:50219 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728550AbgDQP4v (ORCPT
+        with ESMTP id S1729282AbgDQP4w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Apr 2020 11:56:51 -0400
+        Fri, 17 Apr 2020 11:56:52 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1N8XHb-1jBo980fon-014Txp; Fri, 17 Apr 2020 17:56:23 +0200
+ 1MIdW7-1jUiXm100z-00EZfR; Fri, 17 Apr 2020 17:56:27 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     dri-devel@lists.freedesktop.org,
         Jani Nikula <jani.nikula@linux.intel.com>,
@@ -39,113 +39,69 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@fluxnic.net>,
         stefan@agner.ch, linux-graphics-maintainer@vmware.com,
         thellstrom@vmware.com, jfrederich@gmail.com, dsd@laptop.org,
         geert@linux-m68k.org
-Subject: [PATCH 2/8] fbdev/ARM: pxa: avoid selecting CONFIG_FB
-Date:   Fri, 17 Apr 2020 17:55:47 +0200
-Message-Id: <20200417155553.675905-3-arnd@arndb.de>
+Subject: [PATCH 8/8] drm/bridge/sii8620: fix extcon dependency
+Date:   Fri, 17 Apr 2020 17:55:53 +0200
+Message-Id: <20200417155553.675905-9-arnd@arndb.de>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200417155553.675905-1-arnd@arndb.de>
 References: <20200417155553.675905-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:9M8pFwKX8xhc5e+yflMbgJ8Ti6PLiBfgEhVySMhV/l2w6DXvyhX
- NqHG6MTuIAQ0w1jXhYMeQm/4sXwpcF6UovtQtruUfscod7FvMEitj/jjGKxoBkkpMde5A1s
- TBfzXcBjdh5JWbAS6IpSI6QECoFWTAR3EQJJbyIAER9nV/YNICVaq0mV0hKKyDm8O6XP8Pa
- wgxD678gZrlSEP9c+3IGQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:t8odLHHYr0o=:Eg4WwvEkIOxDpSqihTijKr
- gZfLCtw7qujzdzRsUDZ0VHt/JTPiKUG+uXsRdhzshYzby8NPGd4+i45NlI7f1e3dHYOMGwI1X
- Z+cd9oSIohw+PNDm2ct6SrZcELzbLecOrPCEpv+nOM3yOZ/YX2AMlu6XEYrQl8w4gGvv/tfvq
- 5bfoKGknTe3qGPhMVMJYMmJi5il5cnGt4bPqMEW7tmwiwezHfBlhqJRXXnARvzJnK4wA/Oyvi
- nFm8ir/siulpRMerWvH2QoFCE153RArslwfQyVv8JemnPd+hp53+OQDzKfnSvTNa7iuSyMEV7
- ZcoIQfYgffOyaPZ4tb15M4eynhQ5+hNKCSMHzPhIhmM/NAvHJ7khVEKQu1TwBxxrBg3U6lML+
- wZ8bZO4Jt6U7IEtd9MS4DudbcoGI2beF9R39qF2lMlxsyg0sayLYswdMvLT/6EnDDN9+cvZ/2
- nQQkXPvoW87wu9dRxnDWoWEPMRKQogwNfhYVllsS5vMOkgz/UEeUCBkHeYSikxOaayF1BY2/M
- bvjy/DHSfS6pLnM3gDZuJr9DGNse73vSLTtSOfAHJbbDdLlDoj8O60Q/xd4DvwDc91EkVKMvP
- j0+H9Zg+FXibtOFohU5BUMVc51UiQMUu9vrOjhmGN8/WaIxW5Wmc4mPcJ5PK36Kac7jSGO5Ve
- orGU+2sZO3UrxsACZW98bdQnjhkI1B9ZkLdYE6Sg0BKkxD/zEUqgchgqDSvdI7dyMPdce63iX
- 0mE/5g8hGiJk5/oxqmL8ztt8eThB7X2d8gnUrCpr1A/poSvWXNpQ3BSJ6/duGzk5VTXcC7xgx
- 4NC4KrpeezbyMCNduMs3m5FvSk8NJrVk5IbKnO3GRcKEvKHsrs=
+X-Provags-ID: V03:K1:UJfZE5doXQXPVZErHGo/jr5SBujC3aYcMMYtNkgKRBF2nc0duPM
+ 08ExwIQTE+EcQe7GilksYVZq8wjVRkU8P8k3vB5MKuopHwNqy/AjaVPeZeCJmXH6egv4IqM
+ VZEQBI/GcnYuDWE25eDN5M9eQPLp1/MvtAC8sE37e4xQqQR79mx3h6eHTZvuvxCt2guGuX8
+ HdzQN1IbXJRnIpaPlG44g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:miWYTRa2EbE=:JuLeeZ/tDWudAlfDrZtrJ+
+ ARPya4R+tGG5n6EGjv3NzTtynhx8vdzXF8zC38jHjKqlocFRzyVABI5PTCFNhK9Z9/moLt6pG
+ qX7Z8rlopstKaL8fIyZ4gkEeVIPyvABY83MTg7mPwTtrz4glfgy8LSGdesRSUfK/xk3suUSGs
+ /fGdtkxYNQ0lRBk8n4e+b/fYoLNNLsooxKLt9XkYbFDFULavPYAabmm8XQi8WNgZfhDskwAyk
+ XE9JKinpRPx7N5AF8A/J3PEKUz3KKwQri6QVUtX7AlUMiTWVY+pA6gCAO0zN9bTf9yJfLOB6K
+ PIN/r+U+jkYXts/yJIiuEj9AqNalQcp1rCdLdFHU3TiWNBOMECqKOwn5MaIE6VE/MN9mSIqYP
+ BpOnX+GFaVeYBIV0obo/p0bNEqm1pOcxWnDuvDvGZPWIEGajuBDyeC++Wz5Fb1aI9WC/jtXKn
+ YQu3z8pzjJJzn8r3wxlSWsMjtDc9w095nSiCcB/t1EG7U/qRqKOJICstwhYJjQUB+SKBwYC9D
+ 8okqr8N8tRBxjwjECmzqMOzVtUixGEXOlHwJwv5BIDOSikqZoXNJuaDJhprJlwpelTDl/d5kt
+ 1lKcaO9LFcS5SZE0SQ0kyOEb/zbxUzuTuzrql1DT3q770SqP0u5JO07YfEO40BVSj5bl60IC5
+ M45DeEeqwc3/c81jQjuAfj3wfp8oFYCt15oUAQFGxgQcD/mqMyqJv6QTUTKdIQXWGhiCJH2mZ
+ RfQ0nirokH8sfCDhLVkZZHNFFcrwSL7rV3FY8FR/mrQbTXRW2hYlWXz0YaRfTK1Nf/7Ejnntq
+ ZnsXjna2GcTDIeVcbVtCt6yCdYwh1bm1Gt0Z64lvDB98iBfMZ4=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-In order to add more compile-time dependencies to CONFIG_FB, remove the
-last few instances of selecting it from platform code.
+Using 'imply' does not work here, it still cause the same build
+failure:
 
-This was originally written to allow a modular driver, but that never
-worked because vmlinux cannot call exported functions from a loadable
-module.
+arm-linux-gnueabi-ld: drivers/gpu/drm/bridge/sil-sii8620.o: in function `sii8620_remove':
+sil-sii8620.c:(.text+0x1b8): undefined reference to `extcon_unregister_notifier'
+arm-linux-gnueabi-ld: drivers/gpu/drm/bridge/sil-sii8620.o: in function `sii8620_probe':
+sil-sii8620.c:(.text+0x27e8): undefined reference to `extcon_find_edev_by_node'
+arm-linux-gnueabi-ld: sil-sii8620.c:(.text+0x2870): undefined reference to `extcon_register_notifier'
+arm-linux-gnueabi-ld: drivers/gpu/drm/bridge/sil-sii8620.o: in function `sii8620_extcon_work':
+sil-sii8620.c:(.text+0x2908): undefined reference to `extcon_get_state'
 
-Just change the #ifdef check to what it should have been and remove
-the 'select' statement.
+Now that the framebuffer configuration is cleaned up, we can use the
+usual 'depends on EXTCON || !EXTCON' trick.
 
+Fixes: 7a109673899b ("drm/bridge/sii8620: add Kconfig dependency on extcon")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/configs/pxa_defconfig | 1 +
- arch/arm/mach-pxa/Kconfig      | 4 ----
- arch/arm/mach-pxa/saar.c       | 2 +-
- arch/arm/mach-pxa/tavorevb.c   | 2 +-
- 4 files changed, 3 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/bridge/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
-index 8df88e8a3048..3931184e2eb1 100644
---- a/arch/arm/configs/pxa_defconfig
-+++ b/arch/arm/configs/pxa_defconfig
-@@ -455,6 +455,7 @@ CONFIG_SOC_CAMERA_MT9M111=m
- CONFIG_DRM=m
- CONFIG_FIRMWARE_EDID=y
- CONFIG_FB=y
-+CONFIG_FB_PXA=y
- CONFIG_FB_W100=y
- CONFIG_FB_TILEBLITTING=y
- CONFIG_FB_PXA_OVERLAY=y
-diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
-index 8444d40df1b3..bea8ce447ed3 100644
---- a/arch/arm/mach-pxa/Kconfig
-+++ b/arch/arm/mach-pxa/Kconfig
-@@ -76,16 +76,12 @@ config MACH_TAVOREVB
- 	select CPU_PXA930
- 	select CPU_PXA935
- 	select PXA3xx
--	select FB
--	select FB_PXA
- 
- config MACH_SAAR
- 	bool "PXA930 Handheld Platform (aka SAAR)"
- 	select CPU_PXA930
- 	select CPU_PXA935
- 	select PXA3xx
--	select FB
--	select FB_PXA
- 
- comment "Third Party Dev Platforms (sorted by vendor name)"
- 
-diff --git a/arch/arm/mach-pxa/saar.c b/arch/arm/mach-pxa/saar.c
-index 3275b679792b..e35d6c57f73e 100644
---- a/arch/arm/mach-pxa/saar.c
-+++ b/arch/arm/mach-pxa/saar.c
-@@ -113,7 +113,7 @@ static struct platform_device smc91x_device = {
- 	},
- };
- 
--#if defined(CONFIG_FB_PXA) || defined(CONFIG_FB_PXA_MODULE)
-+#if defined(CONFIG_FB_PXA)
- static uint16_t lcd_power_on[] = {
- 	/* single frame */
- 	SMART_CMD_NOOP,
-diff --git a/arch/arm/mach-pxa/tavorevb.c b/arch/arm/mach-pxa/tavorevb.c
-index a15eb3b9484d..dda5f10b1883 100644
---- a/arch/arm/mach-pxa/tavorevb.c
-+++ b/arch/arm/mach-pxa/tavorevb.c
-@@ -165,7 +165,7 @@ static void __init tavorevb_init_keypad(void)
- static inline void tavorevb_init_keypad(void) {}
- #endif /* CONFIG_KEYBOARD_PXA27x || CONFIG_KEYBOARD_PXA27x_MODULE */
- 
--#if defined(CONFIG_FB_PXA) || defined(CONFIG_FB_PXA_MODULE)
-+#if defined(CONFIG_FB_PXA)
- static struct pwm_lookup tavorevb_pwm_lookup[] = {
- 	PWM_LOOKUP("pxa27x-pwm.0", 1, "pwm-backlight.0", NULL, 100000,
- 		   PWM_POLARITY_NORMAL),
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index aaed2347ace9..29c837625f03 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -90,7 +90,7 @@ config DRM_SIL_SII8620
+ 	tristate "Silicon Image SII8620 HDMI/MHL bridge"
+ 	depends on OF
+ 	select DRM_KMS_HELPER
+-	imply EXTCON
++	depends on EXTCON || !EXTCON
+ 	depends on RC_CORE || !RC_CORE
+ 	help
+ 	  Silicon Image SII8620 HDMI/MHL bridge chip driver.
 -- 
 2.26.0
 
