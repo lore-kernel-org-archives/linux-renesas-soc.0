@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4A3C2D0EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0205CC38A2B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6247A2223C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D689E2223C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbgDQP4v (ORCPT
+        id S1729576AbgDQP4x (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 11:56:51 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:42739 "EHLO
+        Fri, 17 Apr 2020 11:56:53 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:48313 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729282AbgDQP4u (ORCPT
+        with ESMTP id S1729535AbgDQP4x (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Apr 2020 11:56:50 -0400
+        Fri, 17 Apr 2020 11:56:53 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MLA6m-1jhYSy1x5e-00IH6g; Fri, 17 Apr 2020 17:56:22 +0200
+ 1Mdvyi-1irnEC2GYQ-00b2Ri; Fri, 17 Apr 2020 17:56:26 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     dri-devel@lists.freedesktop.org,
         Jani Nikula <jani.nikula@linux.intel.com>,
@@ -39,268 +39,201 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@fluxnic.net>,
         stefan@agner.ch, linux-graphics-maintainer@vmware.com,
         thellstrom@vmware.com, jfrederich@gmail.com, dsd@laptop.org,
         geert@linux-m68k.org
-Subject: [PATCH 1/8] fbdev: w100fb: clean up mach-pxa compile-time dependency
-Date:   Fri, 17 Apr 2020 17:55:46 +0200
-Message-Id: <20200417155553.675905-2-arnd@arndb.de>
+Subject: [PATCH 7/8] fbdev: rework backlight dependencies
+Date:   Fri, 17 Apr 2020 17:55:52 +0200
+Message-Id: <20200417155553.675905-8-arnd@arndb.de>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200417155553.675905-1-arnd@arndb.de>
 References: <20200417155553.675905-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:FSyLS2kD2Du4FJkr2PSO5IkSDJpM+w9TppbZSoEDwbAnlGno6cr
- YdxN/mZKd7kefnolwRhTPLde2WQ0EoCyTZCr7cOP1aeyIqV6Ol3kYdvRjUPrKM2Jh5F0IRh
- ikgcv4BOa4yHk3Q+8fTNKD0mrjUithBTDu+WQ5rtMVaA73zed4VfhnY36WE16r6Zo7h3JvL
- 9yF1U57DofTc9Sr1hFqIA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ogNLYWrB+oo=:z0WSPEoafwNG2cLJOcdNRg
- 4iuJlVK2HhjWe+k8SExSQv4hsI8qssLLJO/lQyDXGMmprFboPKV7ZvEr44vsBg3qBx+F57F4/
- xZRdCz8EGtQtyQiyazkUoV81uxF8VilRNT6zvxpyOCoqyd9RCIhcjxsrB2O85/i3Iqt7v3MPu
- U3j4KkNT2QmtJP1zi9HN2R7dAQYcF/itwCf9rUvsjOQhtQYsVHCEOTFRcPn4Q9fSnW4YB/a3v
- 1Cqg6gPD6xwkWYJfieB0Jh+Mnw3tSRFHQWp2HtjrXUqgpiv6v01i6OTxYC0Z2gAhbq6iBlYCE
- cDBH0vL3yX36Ddt7fq7cS9LYNIvrXFR4QgAPcrlC/TtgsIpo5vmgQMKIKFt0h7+I3Bn1u/YLH
- XGHBSvzAQ6+laXUzZgX3s4saVzy058/6DYJH9j0QNzHON/xpecaWH1wLSrgOYg8MY8gftZEc0
- iC4h5RvSmDSximaq0Iumb2r5Ku482IMGcZhly4jD/dXe/2+iXXzvMjenvHix9RSRnOVV4Ldrs
- JsE66YZUYg8cX8K9oP8nZvQa7DaiAbGMFamLpwTKfpEJf713q9ZGz/P1fgDqrBhFvg54jVG0A
- 62hBGnK1yBGcRKyXCuGsBmoMuK/n0fCXi7VCQrY+rb5xc0XZZgrD9RUcIZYP8zIsxkQU2mXlo
- JFuVqlbSKfn409OIadBpGveT/hItNOcLrxAdJiEkQqra1TehL0FWtFZAwYIucWRHmZM+MA0CM
- 3XxpyfrrKJq578U7kun86fNmz9L0DyWXOvVT5IWyIR9LLOTDBhb/sLiZ0V0tkOnR9idzCSUIs
- 90N1+uN6aSeaxQxLMKgomeVW8uSXrq0bp376Jo5Tda/1sY6Ip0=
+X-Provags-ID: V03:K1:vGGnc5uwogoaFi6Z70DCSCfFNs3VFNyi23c2w5F8AgwudYdGiOn
+ qf3xmzEH6ZlKvYId4+y9DQOJjPmrdQ5Ly77BVj5lo4BsvRV14yZifvS6wwRiNK5Km3YVcSs
+ ejNr2W/o5YZ78gytJeefvBfMDQhcv9w1VSv2LusnKOjgKAyYAWGZVsgT75IoREAyrU+HGYC
+ /cpVYSCtL6vWKC9ZwSJuQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:C7LFhGxGtwI=:mB0SQmX5ugxSw2eBOppjd9
+ zXdkkn+O/lxIgg0DC1sbRDZfrULOuQJJC5H7MS2hVxJtfNMZaksC1HDTw2CaZ5GAPRsu8ymQS
+ Lg1DhSrNb3SpHCpYOzUw+YO3FHxgO1C+XbT1lhknn/n6h4YFWyukCKicbG6xD2wph4anHkB2R
+ w7JtfjedEs9HvmcOvbZKDyF6CpWGZtvgp0PLAaRgmAC7sVSgfMIhYENXU76oRTWWeqwAcE4G3
+ qAysWvA1oq1pc1Sqr6/ESMGwDfx0lDmtmGt4ApX1UqxcCghCLYjMy5HsRvYzJeSWRw6S4h89o
+ STsdrITqli4Q7w5DEErYVWuVUbFxXzuNySZ3nnGDX9s7oA7cPtUFCOB5TYcg0eTlEpk4ALOp4
+ 1l/pEG4DZeiQrFYU1LpkuTA+UxFCG43mgZ1CGsjssToxbb++Zbe93dLUJSK+z2nIg5D4cuDNw
+ h2gO0vOeSu4HBQ4w0pHHZ0DLpRMkwZYm5B21gcoON/k4UbkBpiJdn9r2zF6Z4+5BGuxK8hw4J
+ IwfUio/q5ig2hDVomjbyQF2TCeTQ6h3vrXGAJu+hMfAMewAfb7WrMz0BP+tcVPVYpuhKuTRKK
+ NIMzjex/2BlVkhFpYaglhYlpZN+51xbLLrVTqQgbd0kihOxtCPVmJsV25Wdyp5MKvvJ+3ChjX
+ ESH0Qz/N7XmAfMjXfxHqgS4njsCPr3txSykzf9zA6VlJiTMbA9VXl2wrPPsb/iFGMR6DxoJif
+ oxwkTFEaT6hCPlrxpBDW40S4pHOAMSNJj8XZv0YFWeJX/AhuZiehC9STQMiqe3E4eFR4El0zX
+ Z6xQx3WL137d6sxZhtsWSxhPUxk8gArU7lJBoZsrIuzByFvkAo=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-In order to get rid of the 'select FB' line in Kconfig for all platforms,
-change the w100fb driver to handle the gpio lines itself rather than
-using an indirect function call.
+Rather than having CONFIG_FB_BACKLIGHT select CONFIG_BACKLIGHT_CLASS_DEVICE,
+make any driver that needs it have a dependency on the class device
+being available, to prevent circular dependencies.
 
-This also allows removing the remaining exported interfaces from the
-driver, the only other symbol has been unused for a long time.
+This is the same way that the backlight is already treated for the DRM
+subsystem.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/configs/pxa_defconfig |  2 +
- arch/arm/mach-pxa/Kconfig      |  3 --
- arch/arm/mach-pxa/eseries.c    | 14 +-----
- drivers/video/fbdev/w100fb.c   | 84 +++++-----------------------------
- include/video/w100fb.h         |  6 +--
- 5 files changed, 16 insertions(+), 93 deletions(-)
+ drivers/auxdisplay/Kconfig        |  1 +
+ drivers/macintosh/Kconfig         |  1 +
+ drivers/staging/fbtft/Kconfig     |  1 +
+ drivers/staging/olpc_dcon/Kconfig |  2 +-
+ drivers/video/fbdev/Kconfig       | 14 +++++++++++---
+ 5 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
-index b817c57f05f1..8df88e8a3048 100644
---- a/arch/arm/configs/pxa_defconfig
-+++ b/arch/arm/configs/pxa_defconfig
-@@ -454,6 +454,8 @@ CONFIG_V4L_MEM2MEM_DRIVERS=y
- CONFIG_SOC_CAMERA_MT9M111=m
- CONFIG_DRM=m
- CONFIG_FIRMWARE_EDID=y
-+CONFIG_FB=y
-+CONFIG_FB_W100=y
- CONFIG_FB_TILEBLITTING=y
- CONFIG_FB_PXA_OVERLAY=y
- CONFIG_FB_PXA_PARAMETERS=y
-diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
-index f60bc29aef68..8444d40df1b3 100644
---- a/arch/arm/mach-pxa/Kconfig
-+++ b/arch/arm/mach-pxa/Kconfig
-@@ -549,9 +549,6 @@ config MACH_ICONTROL
+diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
+index 48efa7a047f3..f5751b5b0e88 100644
+--- a/drivers/auxdisplay/Kconfig
++++ b/drivers/auxdisplay/Kconfig
+@@ -144,6 +144,7 @@ config IMG_ASCII_LCD
+ config HT16K33
+ 	tristate "Holtek Ht16K33 LED controller with keyscan"
+ 	depends on FB && OF && I2C && INPUT
++	depends on BACKLIGHT_CLASS_DEVICE
+ 	select FB_SYS_FOPS
+ 	select FB_SYS_FILLRECT
+ 	select FB_SYS_COPYAREA
+diff --git a/drivers/macintosh/Kconfig b/drivers/macintosh/Kconfig
+index cbd46c1c5bf7..a1c6677c7043 100644
+--- a/drivers/macintosh/Kconfig
++++ b/drivers/macintosh/Kconfig
+@@ -113,6 +113,7 @@ config PMAC_MEDIABAY
+ config PMAC_BACKLIGHT
+ 	bool "Backlight control for LCD screens"
+ 	depends on PPC_PMAC && ADB_PMU && FB = y && (BROKEN || !PPC64)
++	depends on BACKLIGHT_CLASS_DEVICE
+ 	select FB_BACKLIGHT
+ 	help
+ 	  Say Y here to enable Macintosh specific extensions of the generic
+diff --git a/drivers/staging/fbtft/Kconfig b/drivers/staging/fbtft/Kconfig
+index dad1ddcd7b0c..c4f2f01cd798 100644
+--- a/drivers/staging/fbtft/Kconfig
++++ b/drivers/staging/fbtft/Kconfig
+@@ -3,6 +3,7 @@ menuconfig FB_TFT
+ 	tristate "Support for small TFT LCD display modules"
+ 	depends on FB && SPI
+ 	depends on GPIOLIB || COMPILE_TEST
++	depends on BACKLIGHT_CLASS_DEVICE
+ 	select FB_SYS_FILLRECT
+ 	select FB_SYS_COPYAREA
+ 	select FB_SYS_IMAGEBLIT
+diff --git a/drivers/staging/olpc_dcon/Kconfig b/drivers/staging/olpc_dcon/Kconfig
+index d1a0dea09ef0..a9f36538d7ab 100644
+--- a/drivers/staging/olpc_dcon/Kconfig
++++ b/drivers/staging/olpc_dcon/Kconfig
+@@ -4,7 +4,7 @@ config FB_OLPC_DCON
+ 	depends on OLPC && FB
+ 	depends on I2C
+ 	depends on GPIO_CS5535 && ACPI
+-	select BACKLIGHT_CLASS_DEVICE
++	depends on BACKLIGHT_CLASS_DEVICE
+ 	help
+ 	  In order to support very low power operation, the XO laptop uses a
+ 	  secondary Display CONtroller, or DCON.  This secondary controller
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index bcf7834dbdbf..47e1b65276f4 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -186,7 +186,7 @@ config FB_MACMODES
+ config FB_BACKLIGHT
+ 	tristate
+ 	depends on FB
+-	select BACKLIGHT_CLASS_DEVICE
++	depends on BACKLIGHT_CLASS_DEVICE
  
- config ARCH_PXA_ESERIES
- 	bool "PXA based Toshiba e-series PDAs"
--	select FB_W100
--	select FB
--	select PXA25x
+ config FB_MODE_HELPERS
+ 	bool "Enable Video Mode Handling Helpers"
+@@ -275,12 +275,12 @@ config FB_ARMCLCD
+ 	tristate "ARM PrimeCell PL110 support"
+ 	depends on ARM || ARM64 || COMPILE_TEST
+ 	depends on FB && ARM_AMBA && HAS_IOMEM
++	depends on BACKLIGHT_CLASS_DEVICE || !OF
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
+ 	select FB_MODE_HELPERS if OF
+ 	select VIDEOMODE_HELPERS if OF
+-	select BACKLIGHT_CLASS_DEVICE if OF
+ 	help
+ 	  This framebuffer device driver is for the ARM PrimeCell PL110
+ 	  Colour LCD controller.  ARM PrimeCells provide the building
+@@ -861,6 +861,7 @@ config FB_ATMEL
+ 	tristate "AT91 LCD Controller support"
+ 	depends on FB && OF && HAVE_CLK && HAS_IOMEM
+ 	depends on HAVE_FB_ATMEL || COMPILE_TEST
++	depends on BACKLIGHT_CLASS_DEVICE
+ 	select FB_BACKLIGHT
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+@@ -914,6 +915,7 @@ config FB_NVIDIA_DEBUG
+ config FB_NVIDIA_BACKLIGHT
+ 	bool "Support for backlight control"
+ 	depends on FB_NVIDIA
++	depends on BACKLIGHT_CLASS_DEVICE=y || BACKLIGHT_CLASS_DEVICE=FB_NVIDIA
+ 	default y
+ 	help
+ 	  Say Y here if you want to control the backlight of your display.
+@@ -961,6 +963,7 @@ config FB_RIVA_DEBUG
+ config FB_RIVA_BACKLIGHT
+ 	bool "Support for backlight control"
+ 	depends on FB_RIVA
++	depends on BACKLIGHT_CLASS_DEVICE=y || BACKLIGHT_CLASS_DEVICE=FB_RIVA
+ 	default y
+ 	help
+ 	  Say Y here if you want to control the backlight of your display.
+@@ -1232,6 +1235,7 @@ config FB_RADEON_I2C
+ config FB_RADEON_BACKLIGHT
+ 	bool "Support for backlight control"
+ 	depends on FB_RADEON
++	depends on BACKLIGHT_CLASS_DEVICE=y || BACKLIGHT_CLASS_DEVICE=FB_RADEON
+ 	default y
+ 	help
+ 	  Say Y here if you want to control the backlight of your display.
+@@ -1263,6 +1267,7 @@ config FB_ATY128
+ config FB_ATY128_BACKLIGHT
+ 	bool "Support for backlight control"
+ 	depends on FB_ATY128
++	depends on BACKLIGHT_CLASS_DEVICE=y || BACKLIGHT_CLASS_DEVICE=FB_ATY128
+ 	default y
+ 	help
+ 	  Say Y here if you want to control the backlight of your display.
+@@ -1312,6 +1317,7 @@ config FB_ATY_GX
  
- config MACH_E330
- 	bool "Toshiba e330"
-diff --git a/arch/arm/mach-pxa/eseries.c b/arch/arm/mach-pxa/eseries.c
-index f37c44b6139d..023ee901a7eb 100644
---- a/arch/arm/mach-pxa/eseries.c
-+++ b/arch/arm/mach-pxa/eseries.c
-@@ -849,20 +849,8 @@ static struct w100_mem_info e800_w100_mem_info = {
- 	.size            = 0x1fffff,
- };
- 
--static void e800_tg_change(struct w100fb_par *par)
--{
--	unsigned long tmp;
--
--	tmp = w100fb_gpio_read(W100_GPIO_PORT_A);
--	if (par->mode->xres == 480)
--		tmp |= 0x100;
--	else
--		tmp &= ~0x100;
--	w100fb_gpio_write(W100_GPIO_PORT_A, tmp);
--}
--
- static struct w100_tg_info e800_tg_info = {
--	.change = e800_tg_change,
-+	.change_e800 = true,
- };
- 
- static struct w100fb_mach_info e800_fb_info = {
-diff --git a/drivers/video/fbdev/w100fb.c b/drivers/video/fbdev/w100fb.c
-index 2d6e2738b792..512c4d5a73a3 100644
---- a/drivers/video/fbdev/w100fb.c
-+++ b/drivers/video/fbdev/w100fb.c
-@@ -48,7 +48,6 @@ static void w100_init_lcd(struct w100fb_par*);
- static void w100_set_dispregs(struct w100fb_par*);
- static void w100_update_enable(void);
- static void w100_update_disable(void);
--static void calc_hsync(struct w100fb_par *par);
- static void w100_init_graphic_engine(struct w100fb_par *par);
- struct w100_pll_info *w100_get_xtal_table(unsigned int freq);
- 
-@@ -101,8 +100,6 @@ static ssize_t flip_store(struct device *dev, struct device_attribute *attr, con
- 	w100_set_dispregs(par);
- 	w100_update_enable();
- 
--	calc_hsync(par);
--
- 	return count;
- }
- 
-@@ -157,7 +154,6 @@ static ssize_t fastpllclk_store(struct device *dev, struct device_attribute *att
- 	}
- 
- 	w100_init_clocks(par);
--	calc_hsync(par);
- 
- 	return count;
- }
-@@ -173,23 +169,6 @@ static struct attribute *w100fb_attrs[] = {
- };
- ATTRIBUTE_GROUPS(w100fb);
- 
--/*
-- * Some touchscreens need hsync information from the video driver to
-- * function correctly. We export it here.
-- */
--unsigned long w100fb_get_hsynclen(struct device *dev)
--{
--	struct fb_info *info = dev_get_drvdata(dev);
--	struct w100fb_par *par=info->par;
--
--	/* If display is blanked/suspended, hsync isn't active */
--	if (par->blanked)
--		return 0;
--	else
--		return par->hsync_len;
--}
--EXPORT_SYMBOL(w100fb_get_hsynclen);
--
- static void w100fb_clear_screen(struct w100fb_par *par)
- {
- 	memset_io(remapped_fbuf + (W100_FB_BASE-MEM_WINDOW_BASE), 0, (par->xres * par->yres * BITS_PER_PIXEL/8));
-@@ -405,6 +384,15 @@ static void w100fb_copyarea(struct fb_info *info,
- 	writel((w << 16) | (h & 0xffff), remapped_regs + mmDST_WIDTH_HEIGHT);
- }
- 
-+static void w100fb_e800_tg_change(struct w100fb_par *par)
-+{
-+	u32 tmp = readl(remapped_regs + mmGPIO_DATA);
-+	if (par->mode->xres == 480)
-+		tmp |= 0x100;
-+	else
-+		tmp &= ~0x100;
-+	writel(tmp, remapped_regs + mmGPIO_DATA);
-+}
- 
- /*
-  *  Change the resolution by calling the appropriate hardware functions
-@@ -425,10 +413,9 @@ static void w100fb_activate_var(struct w100fb_par *par)
- 	w100_update_enable();
- 	w100_init_graphic_engine(par);
- 
--	calc_hsync(par);
--
--	if (!par->blanked && tg && tg->change)
--		tg->change(par);
-+	if (IS_ENABLED(CONFIG_ARCH_PXA_ESERIES) &&
-+	    !par->blanked && tg && tg->change_e800)
-+		w100fb_e800_tg_change(par);
- }
- 
- 
-@@ -837,28 +824,6 @@ static void w100_update_enable(void)
- 	writel((u32) (disp_db_buf_wr_cntl.val), remapped_regs + mmDISP_DB_BUF_CNTL);
- }
- 
--unsigned long w100fb_gpio_read(int port)
--{
--	unsigned long value;
--
--	if (port==W100_GPIO_PORT_A)
--		value = readl(remapped_regs + mmGPIO_DATA);
--	else
--		value = readl(remapped_regs + mmGPIO_DATA2);
--
--	return value;
--}
--
--void w100fb_gpio_write(int port, unsigned long value)
--{
--	if (port==W100_GPIO_PORT_A)
--		writel(value, remapped_regs + mmGPIO_DATA);
--	else
--		writel(value, remapped_regs + mmGPIO_DATA2);
--}
--EXPORT_SYMBOL(w100fb_gpio_read);
--EXPORT_SYMBOL(w100fb_gpio_write);
--
- /*
-  * Initialization of critical w100 hardware
-  */
-@@ -1497,31 +1462,6 @@ static void w100_set_dispregs(struct w100fb_par *par)
- 	writel((par->xres*BITS_PER_PIXEL/8), remapped_regs + mmGRAPHIC_PITCH);
- }
- 
--
--/*
-- * Work out how long the sync pulse lasts
-- * Value is 1/(time in seconds)
-- */
--static void calc_hsync(struct w100fb_par *par)
--{
--	unsigned long hsync;
--	struct w100_mode *mode = par->mode;
--	union crtc_ss_u crtc_ss;
--
--	if (mode->pixclk_src == CLK_SRC_XTAL)
--		hsync=par->mach->xtal_freq;
--	else
--		hsync=((par->fastpll_mode && mode->fast_pll_freq) ? mode->fast_pll_freq : mode->pll_freq)*100000;
--
--	hsync /= (w100_pwr_state.pclk_cntl.f.pclk_post_div + 1);
--
--	crtc_ss.val = readl(remapped_regs + mmCRTC_SS);
--	if (crtc_ss.val)
--		par->hsync_len = hsync / (crtc_ss.f.ss_end-crtc_ss.f.ss_start);
--	else
--		par->hsync_len = 0;
--}
--
- static void w100_suspend(u32 mode)
- {
- 	u32 val;
-diff --git a/include/video/w100fb.h b/include/video/w100fb.h
-index a614654d8598..8f260ba4fcac 100644
---- a/include/video/w100fb.h
-+++ b/include/video/w100fb.h
-@@ -14,13 +14,9 @@
- 
- struct w100fb_par;
- 
--unsigned long w100fb_gpio_read(int port);
--void w100fb_gpio_write(int port, unsigned long value);
--unsigned long w100fb_get_hsynclen(struct device *dev);
--
- /* LCD Specific Routines and Config */
- struct w100_tg_info {
--	void (*change)(struct w100fb_par*);
-+	bool change_e800;
- 	void (*suspend)(struct w100fb_par*);
- 	void (*resume)(struct w100fb_par*);
- };
+ config FB_ATY_BACKLIGHT
+ 	bool "Support for backlight control"
++	depends on BACKLIGHT_CLASS_DEVICE=y || BACKLIGHT_CLASS_DEVICE=FB_ATY
+ 	depends on FB_ATY
+ 	default y
+ 	help
+@@ -1855,6 +1861,7 @@ config FB_SH_MOBILE_LCDC
+ 	tristate "SuperH Mobile LCDC framebuffer support"
+ 	depends on FB && HAVE_CLK && HAS_IOMEM
+ 	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
++	depends on BACKLIGHT_CLASS_DEVICE
+ 	select FB_SYS_FILLRECT
+ 	select FB_SYS_COPYAREA
+ 	select FB_SYS_IMAGEBLIT
+@@ -2183,7 +2190,7 @@ config FB_PRE_INIT_FB
+ config FB_MX3
+ 	tristate "MX3 Framebuffer support"
+ 	depends on FB && MX3_IPU
+-	select BACKLIGHT_CLASS_DEVICE
++	depends on BACKLIGHT_CLASS_DEVICE
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
+@@ -2250,6 +2257,7 @@ config FB_SSD1307
+ 	depends on FB && I2C
+ 	depends on OF
+ 	depends on GPIOLIB || COMPILE_TEST
++	depends on BACKLIGHT_CLASS_DEVICE
+ 	select FB_SYS_FOPS
+ 	select FB_SYS_FILLRECT
+ 	select FB_SYS_COPYAREA
 -- 
 2.26.0
 
