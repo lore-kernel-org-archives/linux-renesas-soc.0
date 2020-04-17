@@ -2,283 +2,99 @@ Return-Path: <SRS0=LKxZ=6B=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5AFDC38A2B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 17:04:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF05C2D0EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 17:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D0E852220A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 17:04:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70E1B208E4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 17:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587143887;
+	bh=VCLkhpZJoywZlpzhEBTJApIPKcECQYX7x276NlVZDFA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Y3gNqNdob7IFkepcwpvIrvdSy2oDENdBnuX02dDAo75AtcfptMA7drfefIXVwk22S
+	 ShhG1VKWHpqgzMIArJfR5UlQDzL4QgOkv+omB7My07vWMgx8PaV7qdvmHg0T4E5k0K
+	 +XUv9T2rTmGG4xzmLwIuoJpPp3CV4ynsFHiehRDc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbgDQREv (ORCPT
+        id S1728820AbgDQRSH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 13:04:51 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:53714 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727913AbgDQREv (ORCPT
+        Fri, 17 Apr 2020 13:18:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38598 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728687AbgDQRSF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Apr 2020 13:04:51 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
+        Fri, 17 Apr 2020 13:18:05 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 47D2E804EF;
-        Fri, 17 Apr 2020 19:04:45 +0200 (CEST)
-Date:   Fri, 17 Apr 2020 19:04:44 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     dri-devel@lists.freedesktop.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        linux-fbdev@vger.kernel.org, marex@denx.de, dsd@laptop.org,
-        Andrzej Hajda <a.hajda@samsung.com>, airlied@linux.ie,
-        masahiroy@kernel.org, Nicolas Pitre <nico@fluxnic.net>,
-        Saeed Mahameed <saeedm@mellanox.com>, thellstrom@vmware.com,
-        haojian.zhuang@gmail.com, geert@linux-m68k.org,
-        linux-renesas-soc@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-        kieran.bingham+renesas@ideasonboard.com,
-        linux-graphics-maintainer@vmware.com,
-        Laurent.pinchart@ideasonboard.com, jfrederich@gmail.com,
-        robert.jarzmik@free.fr, daniel@zonque.org
-Subject: Re: [PATCH 7/8] fbdev: rework backlight dependencies
-Message-ID: <20200417170444.GB30483@ravnborg.org>
-References: <20200417155553.675905-1-arnd@arndb.de>
- <20200417155553.675905-8-arnd@arndb.de>
+        by mail.kernel.org (Postfix) with ESMTPSA id CF28E2078E;
+        Fri, 17 Apr 2020 17:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587143884;
+        bh=VCLkhpZJoywZlpzhEBTJApIPKcECQYX7x276NlVZDFA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FsGs/zvgF2wpjZPqw2JjueIJwPsTS669phOeZa3g2G7oUW7m24hEsCUKZIqpQW7p1
+         HMDAgXmY5CqbA6VqKhXAMZvErC87iS5sQxO+iJxou6sn7f6iPx0lDTd5XUiWVgrxQM
+         PYkGWJmT0LtYJyUrPzMv/Cz1YFzNKrc1fWE4G1Jk=
+Date:   Fri, 17 Apr 2020 13:18:02 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH AUTOSEL 5.4 095/108] ARM: shmobile: Enable
+ ARM_GLOBAL_TIMER on Cortex-A9 MPCore SoCs
+Message-ID: <20200417171802.GV1068@sasha-vm>
+References: <20200411230943.24951-1-sashal@kernel.org>
+ <20200411230943.24951-95-sashal@kernel.org>
+ <CAMuHMdVrp25m_SDKSC=ntNWxsumcw4JKvHNDeFZT_JnpfQmCxg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20200417155553.675905-8-arnd@arndb.de>
+In-Reply-To: <CAMuHMdVrp25m_SDKSC=ntNWxsumcw4JKvHNDeFZT_JnpfQmCxg@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=XpTUx2N9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=e5mUnYsNAAAA:8 a=8lmh6C7IyTPJoQKiCR8A:9
-        a=wtOHmKyMUfKVnwvn:21 a=CjuIK1q_8ugA:10 a=Vxmtnl_E_bksehYqCbjh:22
-        a=pHzHmUro8NiASowvMSCR:22 a=nt3jZW36AmriUCFCBwmW:22
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Arnd.
+On Sun, Apr 12, 2020 at 10:44:01AM +0200, Geert Uytterhoeven wrote:
+>Hi Sasha,
+>
+>On Sun, Apr 12, 2020 at 1:11 AM Sasha Levin <sashal@kernel.org> wrote:
+>> From: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> [ Upstream commit 408324a3c5383716939eea8096a0f999a0665f7e ]
+>>
+>> SH-Mobile AG5 and R-Car H1 SoCs are based on the Cortex-A9 MPCore, which
+>> includes a global timer.
+>>
+>> Enable the ARM global timer on these SoCs, which will be used for:
+>>   - the scheduler clock, improving scheduler accuracy from 10 ms to 3 or
+>>     4 ns,
+>>   - delay loops, allowing removal of calls to shmobile_init_delay() from
+>>     the corresponding machine vectors.
+>>
+>> Note that when using an old DTB lacking the global timer, the kernel
+>> will still work.  However, loops-per-jiffies will no longer be preset,
+>> and the delay loop will need to be calibrated during boot.
+>
+>I.e. to avoid this delay, this patch is best backported after backporting
+>8443ffd1bbd5be74 ("ARM: dts: r8a7779: Add device node for ARM global timer"),
+>df1a0aac0a533e6f ("ARM: dts: sh73a0: Add device node for ARM global timer").
+>
+>While the former has been backported to v5.[45]-stable, the latter hasn't,
+>probably because it depends on
+>61b58e3f6e518c51 ("ARM: dts: sh73a0: Rename twd clock to periph clock")
+>
+>So please backport the last two commits first.
 
-On Fri, Apr 17, 2020 at 05:55:52PM +0200, Arnd Bergmann wrote:
-> Rather than having CONFIG_FB_BACKLIGHT select CONFIG_BACKLIGHT_CLASS_DEVICE,
-> make any driver that needs it have a dependency on the class device
-> being available, to prevent circular dependencies.
-> 
-> This is the same way that the backlight is already treated for the DRM
-> subsystem.
+Done, thanks!
 
-I am not happy with the direction of this patch.
-It is not easy to understand that one has to enable backlight to
-be allowed to select a display or an fbdev driver.
-
-
-How about somthing like this:
-
-config BACKLIGHT_CLASS_DEVICE
-	tristate
-	# Will enable backlight module
-	# Has no dependencies
-
-config	BACKLIGHT
-	bool "Backlight drivers"
-	# Will make the backlight drivers visible - a visibility option
-	# only
-
-if BACKLIGHT
-
-config BACKLIGHT_ATMEL_LCDC
-	...
-config BACKLIGHT_EP93XX
-
-endif
-
-
-All drivers outside video/backlight/ can then select
-BACKLIGHT_CLASS_DEVICE to get the backlight core
-module.
-Or in other words BACKLIGHT_CLASS_DEVICE is used as a sort
-of library symbol that gices us access to backlight functionality.
-
-I tried something like this some time ago - but it did not work out for me.
-But maybe I just missed something obviously in the maze of Kconfig.
-
-Loking at your patch it is obviously that the approach I suggest above
-would require all relevant drivers to explicit add a
-select BACKLIGHT_CLASS_DEVICE.
-
-But that is not a bad thing IMO.
-
-
-	Sam
-
-
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/auxdisplay/Kconfig        |  1 +
->  drivers/macintosh/Kconfig         |  1 +
->  drivers/staging/fbtft/Kconfig     |  1 +
->  drivers/staging/olpc_dcon/Kconfig |  2 +-
->  drivers/video/fbdev/Kconfig       | 14 +++++++++++---
->  5 files changed, 15 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/auxdisplay/Kconfig b/drivers/auxdisplay/Kconfig
-> index 48efa7a047f3..f5751b5b0e88 100644
-> --- a/drivers/auxdisplay/Kconfig
-> +++ b/drivers/auxdisplay/Kconfig
-> @@ -144,6 +144,7 @@ config IMG_ASCII_LCD
->  config HT16K33
->  	tristate "Holtek Ht16K33 LED controller with keyscan"
->  	depends on FB && OF && I2C && INPUT
-> +	depends on BACKLIGHT_CLASS_DEVICE
->  	select FB_SYS_FOPS
->  	select FB_SYS_FILLRECT
->  	select FB_SYS_COPYAREA
-> diff --git a/drivers/macintosh/Kconfig b/drivers/macintosh/Kconfig
-> index cbd46c1c5bf7..a1c6677c7043 100644
-> --- a/drivers/macintosh/Kconfig
-> +++ b/drivers/macintosh/Kconfig
-> @@ -113,6 +113,7 @@ config PMAC_MEDIABAY
->  config PMAC_BACKLIGHT
->  	bool "Backlight control for LCD screens"
->  	depends on PPC_PMAC && ADB_PMU && FB = y && (BROKEN || !PPC64)
-> +	depends on BACKLIGHT_CLASS_DEVICE
->  	select FB_BACKLIGHT
->  	help
->  	  Say Y here to enable Macintosh specific extensions of the generic
-> diff --git a/drivers/staging/fbtft/Kconfig b/drivers/staging/fbtft/Kconfig
-> index dad1ddcd7b0c..c4f2f01cd798 100644
-> --- a/drivers/staging/fbtft/Kconfig
-> +++ b/drivers/staging/fbtft/Kconfig
-> @@ -3,6 +3,7 @@ menuconfig FB_TFT
->  	tristate "Support for small TFT LCD display modules"
->  	depends on FB && SPI
->  	depends on GPIOLIB || COMPILE_TEST
-> +	depends on BACKLIGHT_CLASS_DEVICE
->  	select FB_SYS_FILLRECT
->  	select FB_SYS_COPYAREA
->  	select FB_SYS_IMAGEBLIT
-> diff --git a/drivers/staging/olpc_dcon/Kconfig b/drivers/staging/olpc_dcon/Kconfig
-> index d1a0dea09ef0..a9f36538d7ab 100644
-> --- a/drivers/staging/olpc_dcon/Kconfig
-> +++ b/drivers/staging/olpc_dcon/Kconfig
-> @@ -4,7 +4,7 @@ config FB_OLPC_DCON
->  	depends on OLPC && FB
->  	depends on I2C
->  	depends on GPIO_CS5535 && ACPI
-> -	select BACKLIGHT_CLASS_DEVICE
-> +	depends on BACKLIGHT_CLASS_DEVICE
->  	help
->  	  In order to support very low power operation, the XO laptop uses a
->  	  secondary Display CONtroller, or DCON.  This secondary controller
-> diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
-> index bcf7834dbdbf..47e1b65276f4 100644
-> --- a/drivers/video/fbdev/Kconfig
-> +++ b/drivers/video/fbdev/Kconfig
-> @@ -186,7 +186,7 @@ config FB_MACMODES
->  config FB_BACKLIGHT
->  	tristate
->  	depends on FB
-> -	select BACKLIGHT_CLASS_DEVICE
-> +	depends on BACKLIGHT_CLASS_DEVICE
->  
->  config FB_MODE_HELPERS
->  	bool "Enable Video Mode Handling Helpers"
-> @@ -275,12 +275,12 @@ config FB_ARMCLCD
->  	tristate "ARM PrimeCell PL110 support"
->  	depends on ARM || ARM64 || COMPILE_TEST
->  	depends on FB && ARM_AMBA && HAS_IOMEM
-> +	depends on BACKLIGHT_CLASS_DEVICE || !OF
->  	select FB_CFB_FILLRECT
->  	select FB_CFB_COPYAREA
->  	select FB_CFB_IMAGEBLIT
->  	select FB_MODE_HELPERS if OF
->  	select VIDEOMODE_HELPERS if OF
-> -	select BACKLIGHT_CLASS_DEVICE if OF
->  	help
->  	  This framebuffer device driver is for the ARM PrimeCell PL110
->  	  Colour LCD controller.  ARM PrimeCells provide the building
-> @@ -861,6 +861,7 @@ config FB_ATMEL
->  	tristate "AT91 LCD Controller support"
->  	depends on FB && OF && HAVE_CLK && HAS_IOMEM
->  	depends on HAVE_FB_ATMEL || COMPILE_TEST
-> +	depends on BACKLIGHT_CLASS_DEVICE
->  	select FB_BACKLIGHT
->  	select FB_CFB_FILLRECT
->  	select FB_CFB_COPYAREA
-> @@ -914,6 +915,7 @@ config FB_NVIDIA_DEBUG
->  config FB_NVIDIA_BACKLIGHT
->  	bool "Support for backlight control"
->  	depends on FB_NVIDIA
-> +	depends on BACKLIGHT_CLASS_DEVICE=y || BACKLIGHT_CLASS_DEVICE=FB_NVIDIA
->  	default y
->  	help
->  	  Say Y here if you want to control the backlight of your display.
-> @@ -961,6 +963,7 @@ config FB_RIVA_DEBUG
->  config FB_RIVA_BACKLIGHT
->  	bool "Support for backlight control"
->  	depends on FB_RIVA
-> +	depends on BACKLIGHT_CLASS_DEVICE=y || BACKLIGHT_CLASS_DEVICE=FB_RIVA
->  	default y
->  	help
->  	  Say Y here if you want to control the backlight of your display.
-> @@ -1232,6 +1235,7 @@ config FB_RADEON_I2C
->  config FB_RADEON_BACKLIGHT
->  	bool "Support for backlight control"
->  	depends on FB_RADEON
-> +	depends on BACKLIGHT_CLASS_DEVICE=y || BACKLIGHT_CLASS_DEVICE=FB_RADEON
->  	default y
->  	help
->  	  Say Y here if you want to control the backlight of your display.
-> @@ -1263,6 +1267,7 @@ config FB_ATY128
->  config FB_ATY128_BACKLIGHT
->  	bool "Support for backlight control"
->  	depends on FB_ATY128
-> +	depends on BACKLIGHT_CLASS_DEVICE=y || BACKLIGHT_CLASS_DEVICE=FB_ATY128
->  	default y
->  	help
->  	  Say Y here if you want to control the backlight of your display.
-> @@ -1312,6 +1317,7 @@ config FB_ATY_GX
->  
->  config FB_ATY_BACKLIGHT
->  	bool "Support for backlight control"
-> +	depends on BACKLIGHT_CLASS_DEVICE=y || BACKLIGHT_CLASS_DEVICE=FB_ATY
->  	depends on FB_ATY
->  	default y
->  	help
-> @@ -1855,6 +1861,7 @@ config FB_SH_MOBILE_LCDC
->  	tristate "SuperH Mobile LCDC framebuffer support"
->  	depends on FB && HAVE_CLK && HAS_IOMEM
->  	depends on SUPERH || ARCH_RENESAS || COMPILE_TEST
-> +	depends on BACKLIGHT_CLASS_DEVICE
->  	select FB_SYS_FILLRECT
->  	select FB_SYS_COPYAREA
->  	select FB_SYS_IMAGEBLIT
-> @@ -2183,7 +2190,7 @@ config FB_PRE_INIT_FB
->  config FB_MX3
->  	tristate "MX3 Framebuffer support"
->  	depends on FB && MX3_IPU
-> -	select BACKLIGHT_CLASS_DEVICE
-> +	depends on BACKLIGHT_CLASS_DEVICE
->  	select FB_CFB_FILLRECT
->  	select FB_CFB_COPYAREA
->  	select FB_CFB_IMAGEBLIT
-> @@ -2250,6 +2257,7 @@ config FB_SSD1307
->  	depends on FB && I2C
->  	depends on OF
->  	depends on GPIOLIB || COMPILE_TEST
-> +	depends on BACKLIGHT_CLASS_DEVICE
->  	select FB_SYS_FOPS
->  	select FB_SYS_FILLRECT
->  	select FB_SYS_COPYAREA
-> -- 
-> 2.26.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+-- 
+Thanks,
+Sasha
