@@ -2,79 +2,57 @@ Return-Path: <SRS0=LKxZ=6B=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F30CC2BB1D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 08:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BC3C2BB1D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 08:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 631852087E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 08:16:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0D2F21D94
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 08:20:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587111637;
+	bh=GB5++n7qo3sUXkwjV9aBRA1kd181ZSrr6ckKfp6upCM=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=vUdTaeUNduVgLpSDJlVR1OV2+uc2rx6D2/30ZJeNeYeST9rulYU2UZNKzWKh/JcbF
+	 1QhjZOO3Ug5s3GPmWOTYa1c93HtVmePH4lAnWey35v1CIvJ2//9lXLKXduntZqq2ak
+	 2S1OO2WhjYsYOcwpLvb3hV2cQ2bL+QnnVsaggM/k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbgDQIQG (ORCPT
+        id S1729629AbgDQIUh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 04:16:06 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37674 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729607AbgDQIQF (ORCPT
+        Fri, 17 Apr 2020 04:20:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729176AbgDQIUh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Apr 2020 04:16:05 -0400
-Received: by mail-oi1-f194.google.com with SMTP id r25so1424909oij.4;
-        Fri, 17 Apr 2020 01:16:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OEUqvO4o4PLcUzctH8y/pHIipYkwHBkxh0sUSwqBhjI=;
-        b=KVj96e/tfUheE6ARFM2bfYhbgfdhQLyr25P7ursPxPh6duAI2Vj1fbe6WWoSlqesRr
-         +VFQKFsTo9YKte6u2iDsBv1fJyRmO1M0nsgPLXNng9kCRS9cfbBvnldfLDzDn6xbFNEu
-         LJOun/DkA/wpUZltpaorii2r48YVFOUO6ddcjrd7aV/5ZeoeHmGRvdF7y/mxrnpkAsgT
-         N8iFiUp+5AgM98Y9kOFEehKV1ZsIl1csRuwqpxR5WA/QBRKYeUcir5YMb4arC98R8vmW
-         H8CJYjv52HzqiAy8j+xT01w4PHPoktT+nMYew8Uyay0XKb0MSoQ8uDnbFcARe2y5GJ0p
-         D4DA==
-X-Gm-Message-State: AGi0PuZNLzDMWluiW1G7FuPyIHg2aIRvYKEgNL8jHWkjUnA3SFEJGDRd
-        e8d6twUqesuEeYouwY3jIqvlcbpHmvZax++9b5bgNQ==
-X-Google-Smtp-Source: APiQypLgb84lCmEkROwoYQwqq0y4HCBdGz8GOcxZq+P0iQq/kE0BDjlAwm2ypBVTzGYMRyxhyaIzk+3QcIX+GqraTH0=
-X-Received: by 2002:aca:cdd1:: with SMTP id d200mr1278264oig.153.1587111363675;
- Fri, 17 Apr 2020 01:16:03 -0700 (PDT)
+        Fri, 17 Apr 2020 04:20:37 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587111637;
+        bh=GB5++n7qo3sUXkwjV9aBRA1kd181ZSrr6ckKfp6upCM=;
+        h=Subject:From:Date:To:From;
+        b=TwrqU/XgUBCZ4EYY/oTZ1XtxigKtwxnGW7S+H2X9cnP4dGUNgKiSpppR6kwMqBf6k
+         moQ7ZScEBjZDaQOMtemUT4BE4bm4Es3hlh9aeLUYb3jtEK1j2QRhd5gzbn4kEp5wEc
+         8bu2p7M43P2b5EUGnRsc2moxXYbF/ZpsM11WDQLo=
 MIME-Version: 1.0
-References: <1587110829-26609-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1587110829-26609-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1587110829-26609-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 17 Apr 2020 10:15:52 +0200
-Message-ID: <CAMuHMdX3sPAfKooRQcNBph6OWg=7OQ0g33PCTBpLRkqu5YcP-A@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] dt-bindings: dma: renesas,usb-dmac: convert
- bindings to json-schema
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Vinod <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <158711163725.28012.4855931934300030032.git-patchwork-housekeeping@kernel.org>
+Date:   Fri, 17 Apr 2020 08:20:37 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Apr 17, 2020 at 10:08 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Convert Renesas R-Car USB-DMA Controller bindings documentation
-> to json-schema.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Latest series: [v3] dt-bindings: dma: renesas,{rcar,usb}-dmac: convert to json-schema (2020-04-17T08:07:07)
+  Superseding: [v2] dt-bindings: dma: renesas,{rcar,usb}-dmac: convert to json-schema (2020-04-17T03:55:14):
+    [v2,1/2] dt-bindings: dma: renesas,rcar-dmac: convert bindings to json-schema
+    [v2,2/2] dt-bindings: dma: renesas,usb-dmac: convert bindings to json-schema
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
