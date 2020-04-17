@@ -2,154 +2,197 @@ Return-Path: <SRS0=LKxZ=6B=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46437C38A2B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33867C38A2B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 322BB20936
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:30:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F2562223C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbgDQPay (ORCPT
+        id S1729413AbgDQP4u (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 11:30:54 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:59765 "EHLO
+        Fri, 17 Apr 2020 11:56:50 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:36869 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729023AbgDQPau (ORCPT
+        with ESMTP id S1726168AbgDQP4t (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Apr 2020 11:30:50 -0400
-Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1N1Ofr-1jEYe61Uxn-012rTp; Fri, 17 Apr 2020 17:30:29 +0200
-Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id 72E7C650EEE;
-        Fri, 17 Apr 2020 15:30:28 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at cetitec.com
-Received: from mail.cetitecgmbh.com ([127.0.0.1])
-        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id uQP4eFNE1n7O; Fri, 17 Apr 2020 17:30:28 +0200 (CEST)
-Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 1DCB064ECEB;
-        Fri, 17 Apr 2020 17:30:28 +0200 (CEST)
-Received: from pflmmbl.corp.cetitec.com (10.8.5.29) by
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Fri, 17 Apr 2020 17:30:27 +0200
-From:   Matthias Blankertz <matthias.blankertz@cetitec.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>
-CC:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        "Kuninori Morimoto" <kuninori.morimoto.gx@renesas.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH 1/2] ASoC: rsnd: Don't treat master SSI in multi SSI setup as parent
-Date:   Fri, 17 Apr 2020 17:30:16 +0200
-Message-ID: <20200417153017.1744454-2-matthias.blankertz@cetitec.com>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200417153017.1744454-1-matthias.blankertz@cetitec.com>
-References: <20200417153017.1744454-1-matthias.blankertz@cetitec.com>
+        Fri, 17 Apr 2020 11:56:49 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MBDvU-1jXlsH3ZNe-00Cfzq; Fri, 17 Apr 2020 17:56:23 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     dri-devel@lists.freedesktop.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        linux-fbdev@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@fluxnic.net>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Saeed Mahameed <saeedm@mellanox.com>, masahiroy@kernel.org,
+        Laurent.pinchart@ideasonboard.com,
+        linux-renesas-soc@vger.kernel.org,
+        kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
+        daniel@zonque.org, haojian.zhuang@gmail.com,
+        robert.jarzmik@free.fr, daniel@ffwll.ch, marex@denx.de,
+        stefan@agner.ch, linux-graphics-maintainer@vmware.com,
+        thellstrom@vmware.com, jfrederich@gmail.com, dsd@laptop.org,
+        geert@linux-m68k.org
+Subject: [PATCH 3/8] fbdev: rework FB_DDC dependencies
+Date:   Fri, 17 Apr 2020 17:55:48 +0200
+Message-Id: <20200417155553.675905-4-arnd@arndb.de>
+X-Mailer: git-send-email 2.26.0
+In-Reply-To: <20200417155553.675905-1-arnd@arndb.de>
+References: <20200417155553.675905-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.8.5.29]
-X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A290D7F536B64766A
-X-Provags-ID: V03:K1:905W2ZJz4v+jyqVb/Nkvj2ugtw0+l5agWgbR+E2f0oGvVpyMN/q
- qa1EhDJDpS2Eafj1RUrBekh2aaYG/aC6xLZ41KfAOCsnsspfX0vdypKjU0GwkzAirD5cT/b
- yWb3b1gdvaV9kmOMALR5EtVN+ggi6Gp1RfLTum7tkJd0faq1RNivbzD1LfNx4TBV7RxEGtm
- HRBjm5pnQwiV8dZhNG7sg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:cKC4gVX6Fxs=:R1T2Lf//daTbxWdr+e2Byq
- lILnLt6XnnWw1QXcZcckIShXRT7nuSPWSxjfrVhysO5tnsF470C1iMaSRzXKKn3JCX0+msJ9h
- /TXEILm7/pQ7YWWtoo1merok/zla470NF5D9sCK/jzUXif3MMFeeB/8mLRTkxVQlrmDUdL5Rn
- cP96NX2hru+1BqyTsz3mpQ3G0FXWcHRRfAl9QUVvLvkQwBXd2UV8vqmJYrKCuMGNBCSARzgLK
- oO48RdsppUXEtVi2+6ABIcwN7+R1ua8Q55lfWilZ47XPjsKrm4c+rN1aQpJ0+SRBt/cg0RpzY
- oaWsOGCQV3g7jxzDCHWkSmQGL2ULMbUwfa2/NRPR/hYfUfF+xROcpC3zsAhvBCqOjUZmW+cCg
- Dd1vQ7Xz0FdpZ5g1nu8ZnC3QLK8vlXV4UKLhVuHm2rFKdUioMVSP8ELkD4/nnRO715qq2dg6q
- gbiWRq594q5lFhJRXIqvj9AF4mEhfJCsL3hlM2RTLXRFJpRatzeVXeUcFNjExDG0n/xYcjejg
- OhJWlRcCPlMVLnDe+EetaMvptbyXM5N1YBepgiOPkwy7BKE4/SHs7w+2lQ/z9T8Rz+/oASpPv
- 0hG8i0A5dJzQPEV9/3RfiD5xS5vooQCykjYLa9CO6yZhH8zFh6VWcToyvVBBNqvGcsKzfnIyN
- Do33/JDUlmln4jbrYIUPqE86TPaz0D45NKZ6iAB9fXVGLOGql1/783o1ChvCnI/uh5Jx88MeZ
- 6WEQESPsyVUIIWhCZP7dvYnggVXaWXfXSBlIVFVDvj2jLmF068Oz2gTL5cp5JOj6vg9FJ5bss
- UyrBV+D3hgGbfIm12LTLpxuvWUDIWm0jm+FCfFDQZdjoOnoaQ0Ke1kZtE03fFWN1s3aYzQRVW
- 0S7mFzLSiASnzNS0acag==
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:2U9gszbYbMjT+zyUR7sFhiOdIUZPycfMTKYG2cp0trTWIbAamkf
+ JXJU/2QL4hsyz1HAy3tjg7sl9G8UVcB+oiwb7PUAAjXHy3WKwCoi6d78k/RIModYnifQMrp
+ NyySFD2n64+7oJ5Hitx7uI7OtO2oWoFcEP8r3CP4qfi0rQ0dsXhJfAywuUalVLZtP61z0jC
+ QSSwnzwbyzSCKvAQolKyg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:XrTAd9lyPFM=:1wciv0hqbcjGrbjumwW/E7
+ 3WaLAFl1zx6dK+KQGgkXLYH3tLrf8+YGuDAuG9EU0rR+ga0chOOJYgsc/edXVBcei4DUtIVvR
+ fZCYJtQCiFD3mPbtekRBtTW0hyGAyPSP5O7hKZLuIBu1u6rEJ8CiWaEwwstxzcMxBlWEg5eaM
+ FmO7SBgN1t5+i/IR5iifChGTs7VkRIqhmbf6TDdsGZm8q5dUFGKSOePvJh/r/o675iGlZ+Q4S
+ bW5n4+JEalu+krrSpEK+QIRmeUWjfdlQPxNfzoHa4F4st/lUBXDh156shwLr7w6vyUpjuH1Bb
+ IuHNm7Aw4GLaS7fhq+yCiETnYncNZIteCKjaouYugDF3aBOqmb9MJ3DYyoVj3dZO/tj2u5YYG
+ jOP8jx+1TX6r77BKMZTpWnhNqIrn7rUFsT+qR7HikkX3u51LSm6Uhfynf6uVNKzX4jp3RQOe5
+ dcyBbB4LfBfYnXQRE3mQRLzsSzoGi+5j6Bezw1mDtIljapb+JnJogPxscRxgYMmECbTxt8jpj
+ 4ULLVU2RneJxVGYSbXwT8XuPW0uEEVRfqKFKthqUbDdnhgIi9CE8EG+MCtC0eWeGA0+wuSNQr
+ Q9nvJSsgDd2pOnFzuc+zP8SbOhe0WmVoLY/DhX1+0vQgdgJR8BZ+JTSqecWkF2+c802ig1Gf/
+ sxBYO8k2BVrMlFqAKXR4I5fo1N1hNtT4I0xPGaddsRs4GIbuH2jFHSvMKMaU3TYmDG2WMOcBr
+ KbspylQfr/Yqm23y91sN6ltcQ1nFhl+4P3bWSNWQSX1+6Muf/l6WmXbJIbxC4lRavmsalbfqG
+ z/RXI26Q0r2QuOs8WrZV6R9veTTOr5HUfdZ4MHkML1EniqZWe8=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The master SSI of a multi-SSI setup was attached both to the
-RSND_MOD_SSI slot and the RSND_MOD_SSIP slot of the rsnd_dai_stream.
-This is not correct wrt. the meaning of being "parent" in the rest of
-the SSI code, where it seems to indicate an SSI that provides clock and
-word sync but is not transmitting/receiving audio data.
+Selecting FB_DDC currently turns on CONFIG_I2C implicitly,
+which is often not desired and can lead to circular dependencies.
 
-Not treating the multi-SSI master as parent allows removal of various
-special cases to the rsnd_ssi_is_parent conditions introduced in commit
-a09fb3f28a60 ("ASoC: rsnd: Fix parent SSI start/stop in multi-SSI mode").
-It also fixes the issue that operations performed via rsnd_dai_call()
-were performed twice for the master SSI. This caused some "status check
-failed" spam when stopping a multi-SSI stream as the driver attempted to
-stop the master SSI twice.
+Change this to a 'depends on' and change all drivers that
+rely on FB_DDC to have an appropriate I2C dependency as well.
 
-Signed-off-by: Matthias Blankertz <matthias.blankertz@cetitec.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- sound/soc/sh/rcar/ssi.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/video/fbdev/Kconfig | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/sh/rcar/ssi.c b/sound/soc/sh/rcar/ssi.c
-index d51fb3a39448..9900a4f6f4e5 100644
---- a/sound/soc/sh/rcar/ssi.c
-+++ b/sound/soc/sh/rcar/ssi.c
-@@ -407,7 +407,7 @@ static void rsnd_ssi_config_init(struct rsnd_mod *mod,
- 	 * We shouldn't exchange SWSP after running.
- 	 * This means, parent needs to care it.
- 	 */
--	if (rsnd_ssi_is_parent(mod, io) && !rsnd_ssi_multi_slaves(io))
-+	if (rsnd_ssi_is_parent(mod, io))
- 		goto init_end;
+diff --git a/drivers/video/fbdev/Kconfig b/drivers/video/fbdev/Kconfig
+index 91b0a719d221..bcf7834dbdbf 100644
+--- a/drivers/video/fbdev/Kconfig
++++ b/drivers/video/fbdev/Kconfig
+@@ -62,9 +62,8 @@ config FIRMWARE_EDID
  
- 	if (rsnd_io_is_play(io))
-@@ -559,7 +559,7 @@ static int rsnd_ssi_start(struct rsnd_mod *mod,
- 	 * EN is for data output.
- 	 * SSI parent EN is not needed.
- 	 */
--	if (rsnd_ssi_is_parent(mod, io) && !rsnd_ssi_multi_slaves(io))
-+	if (rsnd_ssi_is_parent(mod, io))
- 		return 0;
+ config FB_DDC
+ 	tristate
+-	depends on FB
++	depends on FB && I2C
+ 	select I2C_ALGOBIT
+-	select I2C
  
- 	ssi->cr_en = EN;
-@@ -582,7 +582,7 @@ static int rsnd_ssi_stop(struct rsnd_mod *mod,
- 	if (!rsnd_ssi_is_run_mods(mod, io))
- 		return 0;
+ config FB_BOOT_VESA_SUPPORT
+ 	bool
+@@ -356,6 +355,7 @@ config FB_CYBER2000
+ config FB_CYBER2000_DDC
+ 	bool "DDC for CyberPro support"
+ 	depends on FB_CYBER2000
++	depends on I2C=y || I2C=FB_CYBER2000
+ 	select FB_DDC
+ 	default y
+ 	help
+@@ -892,6 +892,7 @@ config FB_NVIDIA
+ config FB_NVIDIA_I2C
+ 	bool "Enable DDC Support"
+ 	depends on FB_NVIDIA
++	depends on I2C=y || I2C=FB_NVIDIA
+ 	select FB_DDC
+ 	help
+ 	  This enables I2C support for nVidia Chipsets.  This is used
+@@ -938,6 +939,7 @@ config FB_RIVA
+ config FB_RIVA_I2C
+ 	bool "Enable DDC Support"
+ 	depends on FB_RIVA
++	depends on I2C=y || I2C=FB_RIVA
+ 	select FB_DDC
+ 	help
+ 	  This enables I2C support for nVidia Chipsets.  This is used
+@@ -965,7 +967,7 @@ config FB_RIVA_BACKLIGHT
  
--	if (rsnd_ssi_is_parent(mod, io) && !rsnd_ssi_multi_slaves(io))
-+	if (rsnd_ssi_is_parent(mod, io))
- 		return 0;
+ config FB_I740
+ 	tristate "Intel740 support"
+-	depends on FB && PCI
++	depends on FB && PCI && I2C
+ 	select FB_MODE_HELPERS
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+@@ -1019,6 +1021,7 @@ config FB_I810_GTF
+ config FB_I810_I2C
+ 	bool "Enable DDC Support"
+ 	depends on FB_I810 && FB_I810_GTF
++	depends on I2C=y || I2C=FB_I810
+ 	select FB_DDC
+ 	help
+ 	  Add DDC/I2C support for i810fb.  This will allow the driver to get
+@@ -1074,6 +1077,7 @@ config FB_INTEL_DEBUG
+ config FB_INTEL_I2C
+ 	bool "DDC/I2C for Intel framebuffer support"
+ 	depends on FB_INTEL
++	depends on I2C=y || I2C=FB_INTEL
+ 	select FB_DDC
+ 	default y
+ 	help
+@@ -1153,6 +1157,7 @@ config FB_MATROX_G
+ config FB_MATROX_I2C
+ 	tristate "Matrox I2C support"
+ 	depends on FB_MATROX
++	depends on I2C=y || I2C=FB_MATROX
+ 	select FB_DDC
+ 	---help---
+ 	  This drivers creates I2C buses which are needed for accessing the
+@@ -1218,6 +1223,7 @@ config FB_RADEON
+ config FB_RADEON_I2C
+ 	bool "DDC/I2C for ATI Radeon support"
+ 	depends on FB_RADEON
++	depends on I2C=y || I2C=FB_RADEON
+ 	select FB_DDC
+ 	default y
+ 	help
+@@ -1327,6 +1333,7 @@ config FB_S3
+ config FB_S3_DDC
+ 	bool "DDC for S3 support"
+ 	depends on FB_S3
++	depends on I2C=y || I2C=FB_S3
+ 	select FB_DDC
+ 	default y
+ 	help
+@@ -1352,6 +1359,7 @@ config FB_SAVAGE
+ config FB_SAVAGE_I2C
+ 	bool "Enable DDC2 Support"
+ 	depends on FB_SAVAGE
++	depends on I2C=y || I2C=FB_SAVAGE
+ 	select FB_DDC
+ 	help
+ 	  This enables I2C support for S3 Savage Chipsets.  This is used
+@@ -1491,6 +1499,7 @@ config FB_3DFX_ACCEL
+ config FB_3DFX_I2C
+ 	bool "Enable DDC/I2C support"
+ 	depends on FB_3DFX
++	depends on I2C=y || I2C=FB_3DFX
+ 	select FB_DDC
+ 	default y
+ 	help
+@@ -1530,7 +1539,7 @@ config FB_VT8623
  
- 	cr  =	ssi->cr_own	|
-@@ -620,7 +620,7 @@ static int rsnd_ssi_irq(struct rsnd_mod *mod,
- 	if (rsnd_is_gen1(priv))
- 		return 0;
- 
--	if (rsnd_ssi_is_parent(mod, io) && !rsnd_ssi_multi_slaves(io))
-+	if (rsnd_ssi_is_parent(mod, io))
- 		return 0;
- 
- 	if (!rsnd_ssi_is_run_mods(mod, io))
-@@ -737,6 +737,9 @@ static void rsnd_ssi_parent_attach(struct rsnd_mod *mod,
- 	if (!rsnd_rdai_is_clk_master(rdai))
- 		return;
- 
-+	if (rsnd_ssi_is_multi_slave(mod, io))
-+		return;
-+
- 	switch (rsnd_mod_id(mod)) {
- 	case 1:
- 	case 2:
+ config FB_TRIDENT
+ 	tristate "Trident/CyberXXX/CyberBlade support"
+-	depends on FB && PCI
++	depends on FB && PCI && I2C
+ 	select FB_CFB_FILLRECT
+ 	select FB_CFB_COPYAREA
+ 	select FB_CFB_IMAGEBLIT
 -- 
-2.26.1
+2.26.0
 
