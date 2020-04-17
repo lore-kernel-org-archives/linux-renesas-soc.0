@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B79FC352BE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2023CC2D0EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5B9322243
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B76F20656
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729581AbgDQP4y (ORCPT
+        id S1729582AbgDQP44 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 11:56:54 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:41815 "EHLO
+        Fri, 17 Apr 2020 11:56:56 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:49765 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729282AbgDQP4y (ORCPT
+        with ESMTP id S1729282AbgDQP44 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Apr 2020 11:56:54 -0400
+        Fri, 17 Apr 2020 11:56:56 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MFK8N-1jRQDg3bmT-00FgfB; Fri, 17 Apr 2020 17:56:25 +0200
+ 1MmU9X-1iyh6f2Ctl-00iQqH; Fri, 17 Apr 2020 17:56:24 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     dri-devel@lists.freedesktop.org,
         Jani Nikula <jani.nikula@linux.intel.com>,
@@ -39,103 +39,109 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@fluxnic.net>,
         stefan@agner.ch, linux-graphics-maintainer@vmware.com,
         thellstrom@vmware.com, jfrederich@gmail.com, dsd@laptop.org,
         geert@linux-m68k.org
-Subject: [PATCH 6/8] drm: decouple from CONFIG_FB
-Date:   Fri, 17 Apr 2020 17:55:51 +0200
-Message-Id: <20200417155553.675905-7-arnd@arndb.de>
+Subject: [PATCH 4/8] drm/rcar: stop using 'imply' for dependencies
+Date:   Fri, 17 Apr 2020 17:55:49 +0200
+Message-Id: <20200417155553.675905-5-arnd@arndb.de>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200417155553.675905-1-arnd@arndb.de>
 References: <20200417155553.675905-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:0qBimtVr705+b3+OOeW9OcV+w70RcJb1UeeaRbsNFpRNaBBA8AJ
- DaMmbf5nUHQLmix18sFU8v0VJkd/IDerpbZDn/IECtMjar9Es06QzoINPu703Pqn4v497Hu
- Kyq33XSua3Qat0fv0xZ5BALWucGHzs0QGvmZPx+CHew3kGGMaoHKKxm4O4g4ZJkCvZ5G08p
- Ki8A8j7F9Ysk0P9bf3Q2w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:z3HrAeTyxKs=:dlFdue1DLLnlyYwhRUUq7F
- iRC6wwHUO48gl2J87xagem97WQclhaIjem3X5f/11XxouIvB+zt9wAARD2S7OeEA5cDurc/Qm
- j7k7cUlBRsPkUe4J6AUBIeri42SZ3z+Uqa726SqkttH0jsQqumq4jz85/kkZQcEZypC2Y8xja
- V0rA3bUX0m7vm4TxWx9LrbY7Gr8U2XCX7yZVyOzcrWFVX7v0alBYTuPYhcYOtHRPK6mWesybb
- JsZzGF3sfZRBHQ1xKGjt45hQy01i7EH09CmBTS/mt6CrUPc9P7ro/3mrbRzw+m9RnwpwCZU1M
- 5NwNC29DOe45bA6mAQm2EZF17ge6d2Tgiv3zRaR2ylgYyCHpIIbiJ5Sv2p4J1OgQeX24kF2sP
- EGMMK/xqNtmvdKUrO8dBtNGVVAMjuqwuuT5pZ+t99QV8YlyoyWOmVup7HFYZm9n/xP44u9MYp
- g1Z2u2BTgX27SeMofxGAkBikDxEvOdxyIZk4R8Tz5S/Qzqlxd+T+kcoh4a0MyoR3YFLkgycob
- 4O5ij7WMQbXD3UHb+s40r8EP7nHIC6xWqTAuHHQdy8rvvXecQkorwWucRr1AulIgpl4t0Ib9F
- GwJT6CVh2m8XBm06TDqcZ7lvPgyaKmgLhC/f/nq13VVtfsQCejPq312RKGmDddLcbDC9zK8TI
- QhxAmBMqJdMvSb0yA/GrOnPQoC+x9DDhnHLoa8k1AQlG6ovCK9eoG7UtE3a8tqqoOOzQuvWM8
- LHXuiLGETHoNTmQhAn/nWZj7hWEwg22nGyVaNBXCVjMNZdHHDxa044E9oc+KF/Fa5jWTWmIF9
- jOJJOrcw2qzvZZ8lO0s3eouIekb3UuHz5DmfANQ2r34YjG3i8A=
+X-Provags-ID: V03:K1:uo1PKQe5aWNhyhZcFZ9CjgTtBalbZwo94DNn1R7d79M+ZtxL4DH
+ DxKpYGp1fptO9Fs4eaFEDRkz5AjVdYui7SxSvwLwJF4Q9shlrUYKfku/gl5u66LWU+BPmXw
+ m3dDTjtsoJEuMrowemsBhNyK+S3xKKJP7VpWWzTlEKcaq+VtY6O+sntw1CeLTzsWIrIj1g9
+ 37OJQujT/P+UU3WH0C1cg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:GEpQHVWHcgc=:1g5dy8zUp1/LQRhBEqoGpG
+ gNy5o2AjfmNTg/cuJVYhiswPZ+aEvQX4Ihc9fqKE/q4j4Z1fAL0XRhDmLGOonFpnw6BYRe0Yz
+ Yn2CEF9hPyze2jzlp0e3vKF++WoAFCYY+gOqN9mVOhTJ06W7q4Lu9sUY9VSLoYpze8DRN24tf
+ fBtMmjNOO6KvWelk7ueoJA4/87xZjNJAfFb5xLa7e/rpznyQcwnOUQl+XhgNdZbuMlOU9p5Um
+ rZXrK+oO0Dqmzae2Ht4p3X53cZbEEs8MEo6GOOUqTgouPTkbIZ35BwSrvlSXGCl5g6VeYBkZm
+ ClfdayJsYpqXMVoD7Cf+8z1TCb5toU023sY2BLsWfxVhGikBl/T7tVKs5Ivo3CNeHfaNwdlwp
+ xmQzkAyDdToLZRee/Nx1r8O//2oYEtAjb2AgOQzu1eCuocA1KJ0cyvBuv5qf30/xCCg0OdC/X
+ CFE/aadn0Fq0o5Yh9APTuMhEz96YWf2YfnF5s12q1dy1d+phbHgSQuyprHOJF7PzhIMKa5jSV
+ RtEzizaYfiJ93ZN8aJd5HumwDJczqso8goqJ2rbXPjaNO/SXLLX9g0o7knTdJavHmeMihpoWI
+ cQu3qV0uCE9yXX+gDFLu/0cEwaORh4dGMaG/WfLqaOjZntvmfdKlzyjAO4TrGuGZOFmZuw01l
+ hEDycmFhs79laZXuNUKp/OrflzBBI7G1o1J4/WmAIkazkIHL+2xJnLny74hgNbvbhI02QoC1z
+ RZXMgnSoTx1I3wglpMTSf4kPrAwgMhvcK2b/0CpGKY6MGBoGIftj/fD8f/38iSdXvIVW6wg9/
+ ZPaGliZZ32z/tutY7Xed7XyAzn0RNOPFP2x4ObJi7NpfglY/50=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-CONFIG_DRM_KMS_FB_HELPER selects CONFIG_FB, which is something it
-really should not, to avoid circular dependencies and accidentally
-including potentially dangerous user interfaces in the kernel,
-so change this into a 'depends on' check.
+The meaning of the 'imply' keyword has changed recently, and neither the
+old meaning (select the symbol if its dependencies are met) nor the new
+meaning (enable it by default, but let the user set any other setting)
+is what we want here.
 
-Two device drivers currently select CONFIG_DRM_KMS_FB_HELPER, but
-as far as I can tell, they do not really need to any more, so those
-selects can be removed.
-
-This leaves DRM_FBDEV_EMULATION as the only thing that rightfully
-selects CONFIG_DRM_KMS_FB_HELPER, and this now has to depend on
-CONFIG_FB and its dependencies.
+Work around this by adding two more Kconfig options that lead to
+the correct behavior: if DRM_RCAR_USE_CMM and DRM_RCAR_USE_LVDS
+are enabled, that portion of the driver becomes usable, and no
+configuration results in a link error.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/Kconfig       | 5 +++--
- drivers/gpu/drm/mxsfb/Kconfig | 1 -
- drivers/gpu/drm/zte/Kconfig   | 1 -
- 3 files changed, 3 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/rcar-du/Kconfig | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index 43594978958e..7c3109133685 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -80,7 +80,7 @@ config DRM_KMS_HELPER
- config DRM_KMS_FB_HELPER
- 	bool
- 	depends on DRM_KMS_HELPER
--	select FB
-+	depends on FB
- 	select FRAMEBUFFER_CONSOLE if !EXPERT
- 	select FRAMEBUFFER_CONSOLE_DETECT_PRIMARY if FRAMEBUFFER_CONSOLE
- 	select FB_SYS_FOPS
-@@ -111,7 +111,8 @@ config DRM_DEBUG_DP_MST_TOPOLOGY_REFS
+diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+index 0919f1f159a4..d2fcec807dfa 100644
+--- a/drivers/gpu/drm/rcar-du/Kconfig
++++ b/drivers/gpu/drm/rcar-du/Kconfig
+@@ -4,8 +4,6 @@ config DRM_RCAR_DU
+ 	depends on DRM && OF
+ 	depends on ARM || ARM64
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+-	imply DRM_RCAR_CMM
+-	imply DRM_RCAR_LVDS
+ 	select DRM_KMS_HELPER
+ 	select DRM_KMS_CMA_HELPER
+ 	select DRM_GEM_CMA_HELPER
+@@ -14,13 +12,17 @@ config DRM_RCAR_DU
+ 	  Choose this option if you have an R-Car chipset.
+ 	  If M is selected the module will be called rcar-du-drm.
  
- config DRM_FBDEV_EMULATION
- 	bool "Enable legacy fbdev support for your modesetting driver"
--	depends on DRM
-+	depends on DRM && FB
-+	depends on FB=y || DRM=m
- 	select DRM_KMS_HELPER
- 	select DRM_KMS_FB_HELPER
- 	default y
-diff --git a/drivers/gpu/drm/mxsfb/Kconfig b/drivers/gpu/drm/mxsfb/Kconfig
-index 0dca8f27169e..33916b7b2c50 100644
---- a/drivers/gpu/drm/mxsfb/Kconfig
-+++ b/drivers/gpu/drm/mxsfb/Kconfig
-@@ -10,7 +10,6 @@ config DRM_MXSFB
- 	depends on COMMON_CLK
- 	select DRM_MXS
- 	select DRM_KMS_HELPER
--	select DRM_KMS_FB_HELPER
- 	select DRM_KMS_CMA_HELPER
- 	select DRM_PANEL
+-config DRM_RCAR_CMM
+-	tristate "R-Car DU Color Management Module (CMM) Support"
+-	depends on DRM && OF
++config DRM_RCAR_USE_CMM
++	bool "R-Car DU Color Management Module (CMM) Support"
+ 	depends on DRM_RCAR_DU
++	default DRM_RCAR_DU
  	help
-diff --git a/drivers/gpu/drm/zte/Kconfig b/drivers/gpu/drm/zte/Kconfig
-index 90ebaedc11fd..aa8594190b50 100644
---- a/drivers/gpu/drm/zte/Kconfig
-+++ b/drivers/gpu/drm/zte/Kconfig
-@@ -3,7 +3,6 @@ config DRM_ZTE
- 	tristate "DRM Support for ZTE SoCs"
- 	depends on DRM && ARCH_ZX
- 	select DRM_KMS_CMA_HELPER
--	select DRM_KMS_FB_HELPER
- 	select DRM_KMS_HELPER
- 	select SND_SOC_HDMI_CODEC if SND_SOC
- 	select VIDEOMODE_HELPERS
+ 	  Enable support for R-Car Color Management Module (CMM).
+ 
++config DRM_RCAR_CMM
++	def_tristate DRM_RCAR_DU
++	depends on DRM_RCAR_USE_CMM
++
+ config DRM_RCAR_DW_HDMI
+ 	tristate "R-Car DU Gen3 HDMI Encoder Support"
+ 	depends on DRM && OF
+@@ -28,15 +30,20 @@ config DRM_RCAR_DW_HDMI
+ 	help
+ 	  Enable support for R-Car Gen3 internal HDMI encoder.
+ 
+-config DRM_RCAR_LVDS
+-	tristate "R-Car DU LVDS Encoder Support"
+-	depends on DRM && DRM_BRIDGE && OF
++config DRM_RCAR_USE_LVDS
++	bool "R-Car DU LVDS Encoder Support"
++	depends on DRM_BRIDGE && OF
++	default DRM_RCAR_DU
+ 	select DRM_PANEL
+ 	select OF_FLATTREE
+ 	select OF_OVERLAY
+ 	help
+ 	  Enable support for the R-Car Display Unit embedded LVDS encoders.
+ 
++config DRM_RCAR_LVDS
++	def_tristate DRM_RCAR_DU
++	depends on DRM_RCAR_USE_LVDS
++
+ config DRM_RCAR_VSP
+ 	bool "R-Car DU VSP Compositor Support" if ARM
+ 	default y if ARM64
 -- 
 2.26.0
 
