@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D735C38A2E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4A3C2D0EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1388820656
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6247A2223C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Apr 2020 15:56:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbgDQP4w (ORCPT
+        id S1726168AbgDQP4v (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Apr 2020 11:56:52 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:50219 "EHLO
+        Fri, 17 Apr 2020 11:56:51 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:42739 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729282AbgDQP4w (ORCPT
+        with ESMTP id S1729282AbgDQP4u (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Apr 2020 11:56:52 -0400
+        Fri, 17 Apr 2020 11:56:50 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue109 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MIdW7-1jUiXm100z-00EZfR; Fri, 17 Apr 2020 17:56:27 +0200
+ 1MLA6m-1jhYSy1x5e-00IH6g; Fri, 17 Apr 2020 17:56:22 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     dri-devel@lists.freedesktop.org,
         Jani Nikula <jani.nikula@linux.intel.com>,
@@ -39,69 +39,268 @@ Cc:     Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@fluxnic.net>,
         stefan@agner.ch, linux-graphics-maintainer@vmware.com,
         thellstrom@vmware.com, jfrederich@gmail.com, dsd@laptop.org,
         geert@linux-m68k.org
-Subject: [PATCH 8/8] drm/bridge/sii8620: fix extcon dependency
-Date:   Fri, 17 Apr 2020 17:55:53 +0200
-Message-Id: <20200417155553.675905-9-arnd@arndb.de>
+Subject: [PATCH 1/8] fbdev: w100fb: clean up mach-pxa compile-time dependency
+Date:   Fri, 17 Apr 2020 17:55:46 +0200
+Message-Id: <20200417155553.675905-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.26.0
 In-Reply-To: <20200417155553.675905-1-arnd@arndb.de>
 References: <20200417155553.675905-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:UJfZE5doXQXPVZErHGo/jr5SBujC3aYcMMYtNkgKRBF2nc0duPM
- 08ExwIQTE+EcQe7GilksYVZq8wjVRkU8P8k3vB5MKuopHwNqy/AjaVPeZeCJmXH6egv4IqM
- VZEQBI/GcnYuDWE25eDN5M9eQPLp1/MvtAC8sE37e4xQqQR79mx3h6eHTZvuvxCt2guGuX8
- HdzQN1IbXJRnIpaPlG44g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:miWYTRa2EbE=:JuLeeZ/tDWudAlfDrZtrJ+
- ARPya4R+tGG5n6EGjv3NzTtynhx8vdzXF8zC38jHjKqlocFRzyVABI5PTCFNhK9Z9/moLt6pG
- qX7Z8rlopstKaL8fIyZ4gkEeVIPyvABY83MTg7mPwTtrz4glfgy8LSGdesRSUfK/xk3suUSGs
- /fGdtkxYNQ0lRBk8n4e+b/fYoLNNLsooxKLt9XkYbFDFULavPYAabmm8XQi8WNgZfhDskwAyk
- XE9JKinpRPx7N5AF8A/J3PEKUz3KKwQri6QVUtX7AlUMiTWVY+pA6gCAO0zN9bTf9yJfLOB6K
- PIN/r+U+jkYXts/yJIiuEj9AqNalQcp1rCdLdFHU3TiWNBOMECqKOwn5MaIE6VE/MN9mSIqYP
- BpOnX+GFaVeYBIV0obo/p0bNEqm1pOcxWnDuvDvGZPWIEGajuBDyeC++Wz5Fb1aI9WC/jtXKn
- YQu3z8pzjJJzn8r3wxlSWsMjtDc9w095nSiCcB/t1EG7U/qRqKOJICstwhYJjQUB+SKBwYC9D
- 8okqr8N8tRBxjwjECmzqMOzVtUixGEXOlHwJwv5BIDOSikqZoXNJuaDJhprJlwpelTDl/d5kt
- 1lKcaO9LFcS5SZE0SQ0kyOEb/zbxUzuTuzrql1DT3q770SqP0u5JO07YfEO40BVSj5bl60IC5
- M45DeEeqwc3/c81jQjuAfj3wfp8oFYCt15oUAQFGxgQcD/mqMyqJv6QTUTKdIQXWGhiCJH2mZ
- RfQ0nirokH8sfCDhLVkZZHNFFcrwSL7rV3FY8FR/mrQbTXRW2hYlWXz0YaRfTK1Nf/7Ejnntq
- ZnsXjna2GcTDIeVcbVtCt6yCdYwh1bm1Gt0Z64lvDB98iBfMZ4=
+X-Provags-ID: V03:K1:FSyLS2kD2Du4FJkr2PSO5IkSDJpM+w9TppbZSoEDwbAnlGno6cr
+ YdxN/mZKd7kefnolwRhTPLde2WQ0EoCyTZCr7cOP1aeyIqV6Ol3kYdvRjUPrKM2Jh5F0IRh
+ ikgcv4BOa4yHk3Q+8fTNKD0mrjUithBTDu+WQ5rtMVaA73zed4VfhnY36WE16r6Zo7h3JvL
+ 9yF1U57DofTc9Sr1hFqIA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ogNLYWrB+oo=:z0WSPEoafwNG2cLJOcdNRg
+ 4iuJlVK2HhjWe+k8SExSQv4hsI8qssLLJO/lQyDXGMmprFboPKV7ZvEr44vsBg3qBx+F57F4/
+ xZRdCz8EGtQtyQiyazkUoV81uxF8VilRNT6zvxpyOCoqyd9RCIhcjxsrB2O85/i3Iqt7v3MPu
+ U3j4KkNT2QmtJP1zi9HN2R7dAQYcF/itwCf9rUvsjOQhtQYsVHCEOTFRcPn4Q9fSnW4YB/a3v
+ 1Cqg6gPD6xwkWYJfieB0Jh+Mnw3tSRFHQWp2HtjrXUqgpiv6v01i6OTxYC0Z2gAhbq6iBlYCE
+ cDBH0vL3yX36Ddt7fq7cS9LYNIvrXFR4QgAPcrlC/TtgsIpo5vmgQMKIKFt0h7+I3Bn1u/YLH
+ XGHBSvzAQ6+laXUzZgX3s4saVzy058/6DYJH9j0QNzHON/xpecaWH1wLSrgOYg8MY8gftZEc0
+ iC4h5RvSmDSximaq0Iumb2r5Ku482IMGcZhly4jD/dXe/2+iXXzvMjenvHix9RSRnOVV4Ldrs
+ JsE66YZUYg8cX8K9oP8nZvQa7DaiAbGMFamLpwTKfpEJf713q9ZGz/P1fgDqrBhFvg54jVG0A
+ 62hBGnK1yBGcRKyXCuGsBmoMuK/n0fCXi7VCQrY+rb5xc0XZZgrD9RUcIZYP8zIsxkQU2mXlo
+ JFuVqlbSKfn409OIadBpGveT/hItNOcLrxAdJiEkQqra1TehL0FWtFZAwYIucWRHmZM+MA0CM
+ 3XxpyfrrKJq578U7kun86fNmz9L0DyWXOvVT5IWyIR9LLOTDBhb/sLiZ0V0tkOnR9idzCSUIs
+ 90N1+uN6aSeaxQxLMKgomeVW8uSXrq0bp376Jo5Tda/1sY6Ip0=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Using 'imply' does not work here, it still cause the same build
-failure:
+In order to get rid of the 'select FB' line in Kconfig for all platforms,
+change the w100fb driver to handle the gpio lines itself rather than
+using an indirect function call.
 
-arm-linux-gnueabi-ld: drivers/gpu/drm/bridge/sil-sii8620.o: in function `sii8620_remove':
-sil-sii8620.c:(.text+0x1b8): undefined reference to `extcon_unregister_notifier'
-arm-linux-gnueabi-ld: drivers/gpu/drm/bridge/sil-sii8620.o: in function `sii8620_probe':
-sil-sii8620.c:(.text+0x27e8): undefined reference to `extcon_find_edev_by_node'
-arm-linux-gnueabi-ld: sil-sii8620.c:(.text+0x2870): undefined reference to `extcon_register_notifier'
-arm-linux-gnueabi-ld: drivers/gpu/drm/bridge/sil-sii8620.o: in function `sii8620_extcon_work':
-sil-sii8620.c:(.text+0x2908): undefined reference to `extcon_get_state'
+This also allows removing the remaining exported interfaces from the
+driver, the only other symbol has been unused for a long time.
 
-Now that the framebuffer configuration is cleaned up, we can use the
-usual 'depends on EXTCON || !EXTCON' trick.
-
-Fixes: 7a109673899b ("drm/bridge/sii8620: add Kconfig dependency on extcon")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/gpu/drm/bridge/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/configs/pxa_defconfig |  2 +
+ arch/arm/mach-pxa/Kconfig      |  3 --
+ arch/arm/mach-pxa/eseries.c    | 14 +-----
+ drivers/video/fbdev/w100fb.c   | 84 +++++-----------------------------
+ include/video/w100fb.h         |  6 +--
+ 5 files changed, 16 insertions(+), 93 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index aaed2347ace9..29c837625f03 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -90,7 +90,7 @@ config DRM_SIL_SII8620
- 	tristate "Silicon Image SII8620 HDMI/MHL bridge"
- 	depends on OF
- 	select DRM_KMS_HELPER
--	imply EXTCON
-+	depends on EXTCON || !EXTCON
- 	depends on RC_CORE || !RC_CORE
- 	help
- 	  Silicon Image SII8620 HDMI/MHL bridge chip driver.
+diff --git a/arch/arm/configs/pxa_defconfig b/arch/arm/configs/pxa_defconfig
+index b817c57f05f1..8df88e8a3048 100644
+--- a/arch/arm/configs/pxa_defconfig
++++ b/arch/arm/configs/pxa_defconfig
+@@ -454,6 +454,8 @@ CONFIG_V4L_MEM2MEM_DRIVERS=y
+ CONFIG_SOC_CAMERA_MT9M111=m
+ CONFIG_DRM=m
+ CONFIG_FIRMWARE_EDID=y
++CONFIG_FB=y
++CONFIG_FB_W100=y
+ CONFIG_FB_TILEBLITTING=y
+ CONFIG_FB_PXA_OVERLAY=y
+ CONFIG_FB_PXA_PARAMETERS=y
+diff --git a/arch/arm/mach-pxa/Kconfig b/arch/arm/mach-pxa/Kconfig
+index f60bc29aef68..8444d40df1b3 100644
+--- a/arch/arm/mach-pxa/Kconfig
++++ b/arch/arm/mach-pxa/Kconfig
+@@ -549,9 +549,6 @@ config MACH_ICONTROL
+ 
+ config ARCH_PXA_ESERIES
+ 	bool "PXA based Toshiba e-series PDAs"
+-	select FB_W100
+-	select FB
+-	select PXA25x
+ 
+ config MACH_E330
+ 	bool "Toshiba e330"
+diff --git a/arch/arm/mach-pxa/eseries.c b/arch/arm/mach-pxa/eseries.c
+index f37c44b6139d..023ee901a7eb 100644
+--- a/arch/arm/mach-pxa/eseries.c
++++ b/arch/arm/mach-pxa/eseries.c
+@@ -849,20 +849,8 @@ static struct w100_mem_info e800_w100_mem_info = {
+ 	.size            = 0x1fffff,
+ };
+ 
+-static void e800_tg_change(struct w100fb_par *par)
+-{
+-	unsigned long tmp;
+-
+-	tmp = w100fb_gpio_read(W100_GPIO_PORT_A);
+-	if (par->mode->xres == 480)
+-		tmp |= 0x100;
+-	else
+-		tmp &= ~0x100;
+-	w100fb_gpio_write(W100_GPIO_PORT_A, tmp);
+-}
+-
+ static struct w100_tg_info e800_tg_info = {
+-	.change = e800_tg_change,
++	.change_e800 = true,
+ };
+ 
+ static struct w100fb_mach_info e800_fb_info = {
+diff --git a/drivers/video/fbdev/w100fb.c b/drivers/video/fbdev/w100fb.c
+index 2d6e2738b792..512c4d5a73a3 100644
+--- a/drivers/video/fbdev/w100fb.c
++++ b/drivers/video/fbdev/w100fb.c
+@@ -48,7 +48,6 @@ static void w100_init_lcd(struct w100fb_par*);
+ static void w100_set_dispregs(struct w100fb_par*);
+ static void w100_update_enable(void);
+ static void w100_update_disable(void);
+-static void calc_hsync(struct w100fb_par *par);
+ static void w100_init_graphic_engine(struct w100fb_par *par);
+ struct w100_pll_info *w100_get_xtal_table(unsigned int freq);
+ 
+@@ -101,8 +100,6 @@ static ssize_t flip_store(struct device *dev, struct device_attribute *attr, con
+ 	w100_set_dispregs(par);
+ 	w100_update_enable();
+ 
+-	calc_hsync(par);
+-
+ 	return count;
+ }
+ 
+@@ -157,7 +154,6 @@ static ssize_t fastpllclk_store(struct device *dev, struct device_attribute *att
+ 	}
+ 
+ 	w100_init_clocks(par);
+-	calc_hsync(par);
+ 
+ 	return count;
+ }
+@@ -173,23 +169,6 @@ static struct attribute *w100fb_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(w100fb);
+ 
+-/*
+- * Some touchscreens need hsync information from the video driver to
+- * function correctly. We export it here.
+- */
+-unsigned long w100fb_get_hsynclen(struct device *dev)
+-{
+-	struct fb_info *info = dev_get_drvdata(dev);
+-	struct w100fb_par *par=info->par;
+-
+-	/* If display is blanked/suspended, hsync isn't active */
+-	if (par->blanked)
+-		return 0;
+-	else
+-		return par->hsync_len;
+-}
+-EXPORT_SYMBOL(w100fb_get_hsynclen);
+-
+ static void w100fb_clear_screen(struct w100fb_par *par)
+ {
+ 	memset_io(remapped_fbuf + (W100_FB_BASE-MEM_WINDOW_BASE), 0, (par->xres * par->yres * BITS_PER_PIXEL/8));
+@@ -405,6 +384,15 @@ static void w100fb_copyarea(struct fb_info *info,
+ 	writel((w << 16) | (h & 0xffff), remapped_regs + mmDST_WIDTH_HEIGHT);
+ }
+ 
++static void w100fb_e800_tg_change(struct w100fb_par *par)
++{
++	u32 tmp = readl(remapped_regs + mmGPIO_DATA);
++	if (par->mode->xres == 480)
++		tmp |= 0x100;
++	else
++		tmp &= ~0x100;
++	writel(tmp, remapped_regs + mmGPIO_DATA);
++}
+ 
+ /*
+  *  Change the resolution by calling the appropriate hardware functions
+@@ -425,10 +413,9 @@ static void w100fb_activate_var(struct w100fb_par *par)
+ 	w100_update_enable();
+ 	w100_init_graphic_engine(par);
+ 
+-	calc_hsync(par);
+-
+-	if (!par->blanked && tg && tg->change)
+-		tg->change(par);
++	if (IS_ENABLED(CONFIG_ARCH_PXA_ESERIES) &&
++	    !par->blanked && tg && tg->change_e800)
++		w100fb_e800_tg_change(par);
+ }
+ 
+ 
+@@ -837,28 +824,6 @@ static void w100_update_enable(void)
+ 	writel((u32) (disp_db_buf_wr_cntl.val), remapped_regs + mmDISP_DB_BUF_CNTL);
+ }
+ 
+-unsigned long w100fb_gpio_read(int port)
+-{
+-	unsigned long value;
+-
+-	if (port==W100_GPIO_PORT_A)
+-		value = readl(remapped_regs + mmGPIO_DATA);
+-	else
+-		value = readl(remapped_regs + mmGPIO_DATA2);
+-
+-	return value;
+-}
+-
+-void w100fb_gpio_write(int port, unsigned long value)
+-{
+-	if (port==W100_GPIO_PORT_A)
+-		writel(value, remapped_regs + mmGPIO_DATA);
+-	else
+-		writel(value, remapped_regs + mmGPIO_DATA2);
+-}
+-EXPORT_SYMBOL(w100fb_gpio_read);
+-EXPORT_SYMBOL(w100fb_gpio_write);
+-
+ /*
+  * Initialization of critical w100 hardware
+  */
+@@ -1497,31 +1462,6 @@ static void w100_set_dispregs(struct w100fb_par *par)
+ 	writel((par->xres*BITS_PER_PIXEL/8), remapped_regs + mmGRAPHIC_PITCH);
+ }
+ 
+-
+-/*
+- * Work out how long the sync pulse lasts
+- * Value is 1/(time in seconds)
+- */
+-static void calc_hsync(struct w100fb_par *par)
+-{
+-	unsigned long hsync;
+-	struct w100_mode *mode = par->mode;
+-	union crtc_ss_u crtc_ss;
+-
+-	if (mode->pixclk_src == CLK_SRC_XTAL)
+-		hsync=par->mach->xtal_freq;
+-	else
+-		hsync=((par->fastpll_mode && mode->fast_pll_freq) ? mode->fast_pll_freq : mode->pll_freq)*100000;
+-
+-	hsync /= (w100_pwr_state.pclk_cntl.f.pclk_post_div + 1);
+-
+-	crtc_ss.val = readl(remapped_regs + mmCRTC_SS);
+-	if (crtc_ss.val)
+-		par->hsync_len = hsync / (crtc_ss.f.ss_end-crtc_ss.f.ss_start);
+-	else
+-		par->hsync_len = 0;
+-}
+-
+ static void w100_suspend(u32 mode)
+ {
+ 	u32 val;
+diff --git a/include/video/w100fb.h b/include/video/w100fb.h
+index a614654d8598..8f260ba4fcac 100644
+--- a/include/video/w100fb.h
++++ b/include/video/w100fb.h
+@@ -14,13 +14,9 @@
+ 
+ struct w100fb_par;
+ 
+-unsigned long w100fb_gpio_read(int port);
+-void w100fb_gpio_write(int port, unsigned long value);
+-unsigned long w100fb_get_hsynclen(struct device *dev);
+-
+ /* LCD Specific Routines and Config */
+ struct w100_tg_info {
+-	void (*change)(struct w100fb_par*);
++	bool change_e800;
+ 	void (*suspend)(struct w100fb_par*);
+ 	void (*resume)(struct w100fb_par*);
+ };
 -- 
 2.26.0
 
