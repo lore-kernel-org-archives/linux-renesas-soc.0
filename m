@@ -2,140 +2,61 @@ Return-Path: <SRS0=kK5T=6F=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73662C54FCC
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 Apr 2020 13:58:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CACCC54FC9
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 Apr 2020 14:00:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E41D20724
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 Apr 2020 13:58:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 570FE2071C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 21 Apr 2020 14:00:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587477644;
+	bh=6RMsTF+2z+zocVNMnzSGYCoiMEMxdQo3Uu/Zs4GEygs=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=L8F+YsfrB2C3MX0TtwOW+OXORsj8mw5NDp5uQbxhcOt0zgo1rmVMeflWNMIqHrBB9
+	 2XI1x8vSXKeQyb9kTFwT3WCnVCV34hjfxUG0ZDk0ecX2iYQZ86ZIwx6xx50ACmbseI
+	 Cnt7B3a3q6b9ow0CRwRwW+A2jXCSvrVhQDIXMCUA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbgDUN6c (ORCPT
+        id S1728717AbgDUOAo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 21 Apr 2020 09:58:32 -0400
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:37900 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728956AbgDUN54 (ORCPT
+        Tue, 21 Apr 2020 10:00:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58830 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728285AbgDUOAn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Apr 2020 09:57:56 -0400
-X-Halon-ID: 126d7537-83d8-11ea-aeed-005056917f90
-Authorized-sender: niklas@soderlund.pp.se
-Received: from bismarck.berto.se (p4fca2392.dip0.t-ipconnect.de [79.202.35.146])
-        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
-        id 126d7537-83d8-11ea-aeed-005056917f90;
-        Tue, 21 Apr 2020 15:57:44 +0200 (CEST)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Helen Koike <helen.koike@collabora.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v8 4/6] rcar-vin: Make use of V4L2_CAP_IO_MC
-Date:   Tue, 21 Apr 2020 15:57:41 +0200
-Message-Id: <20200421135743.1381930-5-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200421135743.1381930-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20200421135743.1381930-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 21 Apr 2020 10:00:43 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587477643;
+        bh=6RMsTF+2z+zocVNMnzSGYCoiMEMxdQo3Uu/Zs4GEygs=;
+        h=Subject:From:Date:To:From;
+        b=JPsUTEDHzC1ydUNv1QoyZmSUEST69spOdGiplOb7N1PyXZkHvw/Hou65epPnDayNY
+         VkJ5ry0WuXT+L85GRtUk4xkrkNWz1ejHubi6ciPjQSxopkM2ZgoEmjVuA0ql7e5yA2
+         TghyvlBUlKRuKt+1x31f84C0LMfbQGl0fYIg9KI0=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <158747764349.24548.4790783976886671479.git-patchwork-housekeeping@kernel.org>
+Date:   Tue, 21 Apr 2020 14:00:43 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Set the V4L2_CAP_IO_MC capability flag and remove the driver specific
-vidioc_enum_input, vidioc_g_input and vidioc_s_input callbacks for the
-media controller enabled part of the driver. Also add support mbus_code
-filtering for format enumeration.
+Latest series: [v8] v4l2-dev/ioctl: Add V4L2_CAP_IO_MC (2020-04-21T13:57:37)
+  Superseding: [v7] v4l2-dev/ioctl: Add V4L2_CAP_IO_MC (2020-04-13T20:23:48):
+    [v7,1/6] v4l2-dev/ioctl: Add V4L2_CAP_IO_MC
+    [v7,2/6] ivtv-ioctl.c: Do not initialize the reserved field of struct v4l2_fmtdesc
+    [v7,3/6] media: v4l2: Extend VIDIOC_ENUM_FMT to support MC-centric devices
+    [v7,4/6] rcar-vin: Make use of V4L2_CAP_IO_MC
+    [v7,5/6] staging/intel-ipu3: Make use of V4L2_CAP_IO_MC
+    [v7,6/6] vimc: Make use of V4L2_CAP_IO_MC
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-* Changes since v6
-- Implement mbus_code filtering for format enumeration
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 40 ++++++++++++---------
- 1 file changed, 24 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index 5151a3cd8a6e6754..f421e25848756c97 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -343,6 +343,29 @@ static int rvin_enum_fmt_vid_cap(struct file *file, void *priv,
- 	unsigned int i;
- 	int matched;
- 
-+	/*
-+	 * If mbus_code is set only enumerate supported pixel formats for that
-+	 * bus code. Converting from YCbCr to RGB and RGB to YCbCr is possible
-+	 * with VIN, so all supported YCbCr and RGB media bus codes can produce
-+	 * all of the related pixel formats. If mbus_code is not set enumerate
-+	 * all possible pixelformats.
-+	 *
-+	 * TODO: Once raw capture formats are added to the driver this needs
-+	 * to be extended so raw media bus codes only result in raw pixel
-+	 * formats.
-+	 */
-+	switch (f->mbus_code) {
-+	case 0:
-+	case MEDIA_BUS_FMT_YUYV8_1X16:
-+	case MEDIA_BUS_FMT_UYVY8_1X16:
-+	case MEDIA_BUS_FMT_UYVY8_2X8:
-+	case MEDIA_BUS_FMT_UYVY10_2X10:
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
- 	matched = -1;
- 	for (i = 0; i < ARRAY_SIZE(rvin_formats); i++) {
- 		if (rvin_format_from_pixel(vin, rvin_formats[i].fourcc))
-@@ -767,18 +790,6 @@ static int rvin_mc_s_fmt_vid_cap(struct file *file, void *priv,
- 	return 0;
- }
- 
--static int rvin_mc_enum_input(struct file *file, void *priv,
--			      struct v4l2_input *i)
--{
--	if (i->index != 0)
--		return -EINVAL;
--
--	i->type = V4L2_INPUT_TYPE_CAMERA;
--	strscpy(i->name, "Camera", sizeof(i->name));
--
--	return 0;
--}
--
- static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
- 	.vidioc_querycap		= rvin_querycap,
- 	.vidioc_try_fmt_vid_cap		= rvin_mc_try_fmt_vid_cap,
-@@ -786,10 +797,6 @@ static const struct v4l2_ioctl_ops rvin_mc_ioctl_ops = {
- 	.vidioc_s_fmt_vid_cap		= rvin_mc_s_fmt_vid_cap,
- 	.vidioc_enum_fmt_vid_cap	= rvin_enum_fmt_vid_cap,
- 
--	.vidioc_enum_input		= rvin_mc_enum_input,
--	.vidioc_g_input			= rvin_g_input,
--	.vidioc_s_input			= rvin_s_input,
--
- 	.vidioc_reqbufs			= vb2_ioctl_reqbufs,
- 	.vidioc_create_bufs		= vb2_ioctl_create_bufs,
- 	.vidioc_querybuf		= vb2_ioctl_querybuf,
-@@ -961,6 +968,7 @@ int rvin_v4l2_register(struct rvin_dev *vin)
- 	vin->format.colorspace = RVIN_DEFAULT_COLORSPACE;
- 
- 	if (vin->info->use_mc) {
-+		vdev->device_caps |= V4L2_CAP_IO_MC;
- 		vdev->ioctl_ops = &rvin_mc_ioctl_ops;
- 	} else {
- 		vdev->ioctl_ops = &rvin_ioctl_ops;
 -- 
-2.26.0
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
