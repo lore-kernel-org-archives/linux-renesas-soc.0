@@ -2,38 +2,39 @@ Return-Path: <SRS0=eQV7=6G=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8653AC55186
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Apr 2020 10:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6052CC55189
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Apr 2020 10:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61DF521556
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Apr 2020 10:10:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 476E12073A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Apr 2020 10:50:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729117AbgDVKK6 (ORCPT
+        id S1729237AbgDVKLq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 22 Apr 2020 06:10:58 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:57691 "EHLO
+        Wed, 22 Apr 2020 06:11:46 -0400
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:57742 "EHLO
         smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729105AbgDVKK5 (ORCPT
+        with ESMTP id S1729220AbgDVKLj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Apr 2020 06:10:57 -0400
+        Wed, 22 Apr 2020 06:11:39 -0400
 Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 64B203C004C;
-        Wed, 22 Apr 2020 12:10:54 +0200 (CEST)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 17D993C0579;
+        Wed, 22 Apr 2020 12:11:37 +0200 (CEST)
 Received: from smtp1.de.adit-jv.com ([127.0.0.1])
         by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id oguoUnbPx3nK; Wed, 22 Apr 2020 12:10:49 +0200 (CEST)
+        with ESMTP id uza13biTiMxw; Wed, 22 Apr 2020 12:11:32 +0200 (CEST)
 Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 69CC13C057F;
-        Wed, 22 Apr 2020 12:10:49 +0200 (CEST)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 0DFC43C004C;
+        Wed, 22 Apr 2020 12:11:32 +0200 (CEST)
 Received: from lxhi-065.adit-jv.com (10.72.94.60) by HI2EXCH01.adit-jv.com
  (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 22 Apr
- 2020 12:10:48 +0200
+ 2020 12:11:31 +0200
 From:   Eugeniu Rosca <erosca@de.adit-jv.com>
 To:     <linux-renesas-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
@@ -56,42 +57,81 @@ CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Jiada Wang <jiada_wang@mentor.com>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
         Eugeniu Rosca <rosca.eugeniu@gmail.com>
-Subject: [RFC PATCH 0/3] gpio: rcar: Add support for GPIO alternative interrupt
-Date:   Wed, 22 Apr 2020 12:10:23 +0200
-Message-ID: <20200422101026.9220-1-erosca@de.adit-jv.com>
+Subject: [RFC PATCH 3/3] [LOCAL] arm64: dts: renesas: ulcb: Showcase 'use-alternative-interrupt'
+Date:   Wed, 22 Apr 2020 12:10:26 +0200
+Message-ID: <20200422101026.9220-4-erosca@de.adit-jv.com>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200422101026.9220-1-erosca@de.adit-jv.com>
+References: <20200422101026.9220-1-erosca@de.adit-jv.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [10.72.94.60]
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The motivation behind this series is described in commit
-("gpio: rcar: Add support for GPIO alternative interrupt").
+One caveat is that the 'interrupts' property update _must_ go hand
+in hand with the newly added 'use-alternative-interrupt' property.
+Is there an easy way to avoid it?
 
-The reasons for which RFC tag is attached are:
- - Have Renesas/linux-gpio communities been facing GPIO interrupt
-   partitioning questions in the past (specifically AP vs RT)?
- - Is it a no-go to have mandatory DTS dependencies like updating
-   'interrupts' on specifying the new 'use-alternative-interrupt'?
+Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+---
+ arch/arm64/boot/dts/renesas/ulcb.dtsi | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-Many thanks for your comments!
-
-Eugeniu Rosca (1):
-  [LOCAL] arm64: dts: renesas: ulcb: Showcase 'use-alternative-interrupt'
-
-Torii Kenichi (2):
-  dt-bindings: gpio-rcar: Add optional use-alternative-interrupt property
-  gpio: rcar: Add support for GPIO alternative interrupt
-
- Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt |  3 +++
- arch/arm64/boot/dts/renesas/ulcb.dtsi                        | 40 ++++++++++++++++++++++++++++++++++++++++
- drivers/gpio/gpio-rcar.c                                     | 22 +++++++++++++++++-----
- 3 files changed, 60 insertions(+), 5 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+index d2ba9598cd1e..168dadbd1185 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
+@@ -174,6 +174,46 @@ &extalr_clk {
+ 	clock-frequency = <32768>;
+ };
+ 
++&gpio0 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio1 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio2 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio3 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio4 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio5 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio6 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>;
++};
++
++&gpio7 {
++	use-alternative-interrupt;
++	interrupts = <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>;
++};
++
+ &hdmi0 {
+ 	status = "okay";
+ 
 -- 
 2.26.0
 
