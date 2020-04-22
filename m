@@ -2,107 +2,96 @@ Return-Path: <SRS0=eQV7=6G=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D436C55189
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Apr 2020 07:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8653AC55186
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Apr 2020 10:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EE062070B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Apr 2020 07:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587542057;
-	bh=MQTSD86O6M1bnIYylRa49DyZsLKtJ923VHornbG4pFA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=z6Fjp7jWqQqUyN/U36zcg6CUNh4FZFcRl7ay6BwHU16wtwtj2KtORkltNCKjGVZh7
-	 lfLCg/EnDoxxX3kLAXMesbFoqlT++rVQgFUh4QwnccQtAoLLGFmz9hZJfi/ydKQtFF
-	 yComGZgsdz0wKuKQvdz4zmHKQt9fzh8T1rRESAig=
+	by mail.kernel.org (Postfix) with ESMTP id 61DF521556
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Apr 2020 10:10:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725899AbgDVHyR (ORCPT
+        id S1729117AbgDVKK6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 22 Apr 2020 03:54:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36202 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725810AbgDVHyQ (ORCPT
+        Wed, 22 Apr 2020 06:10:58 -0400
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:57691 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729105AbgDVKK5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Apr 2020 03:54:16 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 22 Apr 2020 06:10:57 -0400
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 64B203C004C;
+        Wed, 22 Apr 2020 12:10:54 +0200 (CEST)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id oguoUnbPx3nK; Wed, 22 Apr 2020 12:10:49 +0200 (CEST)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5019206E9;
-        Wed, 22 Apr 2020 07:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587542056;
-        bh=MQTSD86O6M1bnIYylRa49DyZsLKtJ923VHornbG4pFA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ODrN1YCgNkSTo2qwVq75iqXrl0LUlqKYqkHzbr0TbJIas5h/yMiva+AgZp/ZZYOCB
-         c/vOXxqqGU8Foe3VgZ8rRPpUeLncfff5j5bn0M3fKAL+gKvxioN4hGEGfdPHl+f2Db
-         zPsKTrvrFN3p9Ym5tg6ZYj28k8TNt1g987eqYRf0=
-Date:   Wed, 22 Apr 2020 08:54:13 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Todd Kjos <tkjos@google.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 69CC13C057F;
+        Wed, 22 Apr 2020 12:10:49 +0200 (CEST)
+Received: from lxhi-065.adit-jv.com (10.72.94.60) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.487.0; Wed, 22 Apr
+ 2020 12:10:48 +0200
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     <linux-renesas-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-renesas-soc@vger.kernel.org,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v5 0/6] driver core: Improve and cleanup
- driver_deferred_probe_check_state()
-Message-ID: <20200422075413.GB4898@sirena.org.uk>
-References: <20200225050828.56458-1-john.stultz@linaro.org>
- <20200421235836.GA8319@lxhi-065.adit-jv.com>
- <CALAqxLXX455P0V0o11scc3-1MHvecnvcUoT=XBcwB+ma7Kyjqg@mail.gmail.com>
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Chris Paterson <chris.paterson2@renesas.com>,
+        Yusuke Ashiduka <ashiduka@fujitsu.com>,
+        Torii Kenichi <torii.ken1@jp.fujitsu.com>,
+        Fukui Yohhei <yohhei.fukui@denso-ten.com>,
+        Yasushi Asano <yasano@jp.adit-jv.com>,
+        Yuichi Kusakabe <yuichi.kusakabe@denso-ten.com>,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Jiada Wang <jiada_wang@mentor.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Eugeniu Rosca <rosca.eugeniu@gmail.com>
+Subject: [RFC PATCH 0/3] gpio: rcar: Add support for GPIO alternative interrupt
+Date:   Wed, 22 Apr 2020 12:10:23 +0200
+Message-ID: <20200422101026.9220-1-erosca@de.adit-jv.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="3lcZGd9BuhuYXNfi"
-Content-Disposition: inline
-In-Reply-To: <CALAqxLXX455P0V0o11scc3-1MHvecnvcUoT=XBcwB+ma7Kyjqg@mail.gmail.com>
-X-Cookie: A stitch in time saves nine.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.72.94.60]
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+The motivation behind this series is described in commit
+("gpio: rcar: Add support for GPIO alternative interrupt").
 
---3lcZGd9BuhuYXNfi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The reasons for which RFC tag is attached are:
+ - Have Renesas/linux-gpio communities been facing GPIO interrupt
+   partitioning questions in the past (specifically AP vs RT)?
+ - Is it a no-go to have mandatory DTS dependencies like updating
+   'interrupts' on specifying the new 'use-alternative-interrupt'?
 
-On Tue, Apr 21, 2020 at 06:16:31PM -0700, John Stultz wrote:
+Many thanks for your comments!
 
-> The second reverts the default timeout back to 0:
->   https://lore.kernel.org/lkml/20200413204253.84991-1-john.stultz@linaro.org/
+Eugeniu Rosca (1):
+  [LOCAL] arm64: dts: renesas: ulcb: Showcase 'use-alternative-interrupt'
 
-If you're reverting the timeout we should revert the regulator change
-too I think.
+Torii Kenichi (2):
+  dt-bindings: gpio-rcar: Add optional use-alternative-interrupt property
+  gpio: rcar: Add support for GPIO alternative interrupt
 
---3lcZGd9BuhuYXNfi
-Content-Type: application/pgp-signature; name="signature.asc"
+ Documentation/devicetree/bindings/gpio/renesas,gpio-rcar.txt |  3 +++
+ arch/arm64/boot/dts/renesas/ulcb.dtsi                        | 40 ++++++++++++++++++++++++++++++++++++++++
+ drivers/gpio/gpio-rcar.c                                     | 22 +++++++++++++++++-----
+ 3 files changed, 60 insertions(+), 5 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+-- 
+2.26.0
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6f+CUACgkQJNaLcl1U
-h9B2jAf+I1mw+3l5JPlDd66CSUBQXlljbUBT3lc2RE8ju3Zyn95lDo4bojHerldP
-Sr96/KmiB2DYmvb//TfWyw+eRuGLJfVYOphRGPO7j8o2IV3qiG7wf6j0IVy2Ozu3
-eOnIQiRcqFLQopyzLdHDTrLoSlyrxj82JFeEJTpbaGld1zXkUqkO67clZo8kO1rm
-oHA+nFbEFlkOKkmEP/VcfxCruRfmfzXNZUuTWcFuIvJAd6T/M1oF4+9O8pkJAQXe
-EPKzlPSZ+GYF1YNO/gqNfeVBzjm40tIMWxfpMewXk6IUWlyIeeXjoKEX5MTl6ZT6
-mdWU5m7iIxqu4ktvs5Ive0JwTedMUA==
-=3Hk5
------END PGP SIGNATURE-----
-
---3lcZGd9BuhuYXNfi--
