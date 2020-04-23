@@ -2,101 +2,147 @@ Return-Path: <SRS0=6hTa=6H=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B495FC55186
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 09:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C221BC2BA19
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 09:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B94420781
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 09:28:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D9892076C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 09:33:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Tpm1m8MI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbgDWJ2q (ORCPT
+        id S1725863AbgDWJdF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Apr 2020 05:28:46 -0400
-Received: from sender4-of-o53.zoho.com ([136.143.188.53]:21350 "EHLO
-        sender4-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbgDWJ2p (ORCPT
+        Thu, 23 Apr 2020 05:33:05 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34480 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbgDWJdE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Apr 2020 05:28:45 -0400
-X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Thu, 23 Apr 2020 05:28:44 EDT
-ARC-Seal: i=1; a=rsa-sha256; t=1587633210; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=VVSGFYuiacgtCVG/Cr0OwEZN2WfMMzrs7p6JD9uuNUPvMgZPRAeJuKIwa4W7sMgvC3Ijrikg4aXW7l82yE/SkMm+EvHwaHCchtmwvq4aNhCZ6JWqcO6QeGjaTEPxilx37RyKrr3HrgFMAv2bN+xgY0qtzYBEDIXNI0lMt1EB8X8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1587633210; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:Subject:To; 
-        bh=lVcquTCP4j4rjMQfIarQX/W9zv5y8Yc+42wtUUDGOBw=; 
-        b=QshwM3Dv4laGOlm0nq3jZs3qxFFPiKuy87//LaZE4Cm8VsjOU4okI6Ms/WM75ST61jKwixbbQFr+Q4wxUdzfuUrIikrpAfyoY/1nudqcEENi0ZlpjfZ1zoDKXVOOWU4AV2SC2a829ZRelS62VMhpAAmIzG/+p9LHd0X9lcunxO0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        spf=pass  smtp.mailfrom=no-reply@patchew.org;
-        dmarc=pass header.from=<no-reply@patchew.org> header.from=<no-reply@patchew.org>
-Received: from [172.17.0.3] (23.253.156.214 [23.253.156.214]) by mx.zohomail.com
-        with SMTPS id 1587633209047725.916656049011; Thu, 23 Apr 2020 02:13:29 -0700 (PDT)
-In-Reply-To: <20200423090118.11199-1-geert+renesas@glider.be>
-Subject: Re: [PATCH QEMU v2 0/5] Add a GPIO backend
-Reply-To: <qemu-devel@nongnu.org>
-Message-ID: <158763320718.4520.18138029284746846177@39012742ff91>
+        Thu, 23 Apr 2020 05:33:04 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E19B74F7;
+        Thu, 23 Apr 2020 11:33:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1587634382;
+        bh=WfVAArMx4GNFWKyV2NWi4oMNE+nUKosNJUC4VnvFIec=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Tpm1m8MIGFoqVm9ZKmVRTrXB0WDl1PyU26h+gHTaPwEvrc95dnxv4QU0Llis4q7+r
+         8rI08ZZ+ac3UMPMQhF/UqJMy1wXoxS5uy/tyM1YpFMfsSCXbQ3qd/D9z0WwIB8ccfE
+         m70wUggCJt1WHLIbSUXRMfb9WOhtFawuvlumJdHQ=
+Date:   Thu, 23 Apr 2020 12:32:47 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Hyun Kwon <hyunk@xilinx.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v8 02/13] squash! max9286: convert probe kzalloc
+Message-ID: <20200423093247.GB6196@pendragon.ideasonboard.com>
+References: <20200409121202.11130-1-kieran.bingham+renesas@ideasonboard.com>
+ <20200409121202.11130-3-kieran.bingham+renesas@ideasonboard.com>
+ <20200409163333.GA25086@pendragon.ideasonboard.com>
+ <ef7fc3df-c84f-0c3d-a34f-73460a9c1478@ideasonboard.com>
+ <20200410111519.GA4751@pendragon.ideasonboard.com>
+ <20200423073841.GJ5381@paasikivi.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-From:   no-reply@patchew.org
-To:     geert+renesas@glider.be
-Cc:     peter.maydell@linaro.org, pbonzini@redhat.com, graf@amazon.com,
-        linus.walleij@linaro.org, bartekgola@gmail.com,
-        magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, qemu-arm@nongnu.org,
-        qemu-devel@nongnu.org, geert+renesas@glider.be
-Date:   Thu, 23 Apr 2020 02:13:29 -0700 (PDT)
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200423073841.GJ5381@paasikivi.fi.intel.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-UGF0Y2hldyBVUkw6IGh0dHBzOi8vcGF0Y2hldy5vcmcvUUVNVS8yMDIwMDQyMzA5MDExOC4xMTE5
-OS0xLWdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlLwoKCgpIaSwKClRoaXMgc2VyaWVzIGZhaWxlZCB0
-aGUgYXNhbiBidWlsZCB0ZXN0LiBQbGVhc2UgZmluZCB0aGUgdGVzdGluZyBjb21tYW5kcyBhbmQK
-dGhlaXIgb3V0cHV0IGJlbG93LiBJZiB5b3UgaGF2ZSBEb2NrZXIgaW5zdGFsbGVkLCB5b3UgY2Fu
-IHByb2JhYmx5IHJlcHJvZHVjZSBpdApsb2NhbGx5LgoKPT09IFRFU1QgU0NSSVBUIEJFR0lOID09
-PQojIS9iaW4vYmFzaApleHBvcnQgQVJDSD14ODZfNjQKbWFrZSBkb2NrZXItaW1hZ2UtZmVkb3Jh
-IFY9MSBORVRXT1JLPTEKdGltZSBtYWtlIGRvY2tlci10ZXN0LWRlYnVnQGZlZG9yYSBUQVJHRVRf
-TElTVD14ODZfNjQtc29mdG1tdSBKPTE0IE5FVFdPUks9MQo9PT0gVEVTVCBTQ1JJUFQgRU5EID09
-PQoKICBDQyAgICAgIGNoYXJkZXYvY2hhci1waXBlLm8KICBDQyAgICAgIGNoYXJkZXYvY2hhci1w
-dHkubwoKV2FybmluZywgdHJlYXRlZCBhcyBlcnJvcjoKL3RtcC9xZW11LXRlc3Qvc3JjL2RvY3Mv
-Li4vcWVtdS1vcHRpb25zLmh4Ojg4MTpVbmV4cGVjdGVkIGluZGVudGF0aW9uLgogIENDICAgICAg
-Y2hhcmRldi9jaGFyLXJpbmdidWYubwogIENDICAgICAgY2hhcmRldi9jaGFyLXNlcmlhbC5vCgpX
-YXJuaW5nLCB0cmVhdGVkIGFzIGVycm9yOgovdG1wL3FlbXUtdGVzdC9zcmMvZG9jcy8uLi9xZW11
-LW9wdGlvbnMuaHg6ODgxOlVuZXhwZWN0ZWQgaW5kZW50YXRpb24uCiAgQ0MgICAgICBjaGFyZGV2
-L2NoYXItc29ja2V0Lm8KICBDQyAgICAgIGNoYXJkZXYvY2hhci1zdGRpby5vCi0tLQogIENDICAg
-ICAgYmxvY2tkZXYtbmJkLm8KICBDQyAgICAgIGlvdGhyZWFkLm8KICBDQyAgICAgIGpvYi1xbXAu
-bwptYWtlOiAqKiogW01ha2VmaWxlOjExMTU6IC5kb2NzX3N5c3RlbV9xZW11LjFfZG9jc19zeXN0
-ZW1fcWVtdS1ibG9jay1kcml2ZXJzLjdfZG9jc19zeXN0ZW1fcWVtdS1jcHUtbW9kZWxzLjcuc2Vu
-dGluZWwuXSBFcnJvciAyCm1ha2U6ICoqKiBEZWxldGluZyBmaWxlICcuZG9jc19zeXN0ZW1fcWVt
-dS4xX2RvY3Nfc3lzdGVtX3FlbXUtYmxvY2stZHJpdmVycy43X2RvY3Nfc3lzdGVtX3FlbXUtY3B1
-LW1vZGVscy43LnNlbnRpbmVsLicKbWFrZTogKioqIFdhaXRpbmcgZm9yIHVuZmluaXNoZWQgam9i
-cy4uLi4KbWFrZTogKioqIFtNYWtlZmlsZToxMTA0OiBkb2NzL3N5c3RlbS9pbmRleC5odG1sXSBF
-cnJvciAyClRyYWNlYmFjayAobW9zdCByZWNlbnQgY2FsbCBsYXN0KToKICBGaWxlICIuL3Rlc3Rz
-L2RvY2tlci9kb2NrZXIucHkiLCBsaW5lIDY2NCwgaW4gPG1vZHVsZT4KICAgIHN5cy5leGl0KG1h
-aW4oKSkKLS0tCiAgICByYWlzZSBDYWxsZWRQcm9jZXNzRXJyb3IocmV0Y29kZSwgY21kKQpzdWJw
-cm9jZXNzLkNhbGxlZFByb2Nlc3NFcnJvcjogQ29tbWFuZCAnWydzdWRvJywgJy1uJywgJ2RvY2tl
-cicsICdydW4nLCAnLS1sYWJlbCcsICdjb20ucWVtdS5pbnN0YW5jZS51dWlkPTU4M2IxMGUxOTJk
-ODQxZWE5ODVmZTk0NzRlOWNjZTViJywgJy11JywgJzEwMDMnLCAnLS1zZWN1cml0eS1vcHQnLCAn
-c2VjY29tcD11bmNvbmZpbmVkJywgJy0tcm0nLCAnLWUnLCAnVEFSR0VUX0xJU1Q9eDg2XzY0LXNv
-ZnRtbXUnLCAnLWUnLCAnRVhUUkFfQ09ORklHVVJFX09QVFM9JywgJy1lJywgJ1Y9JywgJy1lJywg
-J0o9MTQnLCAnLWUnLCAnREVCVUc9JywgJy1lJywgJ1NIT1dfRU5WPScsICctZScsICdDQ0FDSEVf
-RElSPS92YXIvdG1wL2NjYWNoZScsICctdicsICcvaG9tZS9wYXRjaGV3Mi8uY2FjaGUvcWVtdS1k
-b2NrZXItY2NhY2hlOi92YXIvdG1wL2NjYWNoZTp6JywgJy12JywgJy92YXIvdG1wL3BhdGNoZXct
-dGVzdGVyLXRtcC00MXhiN2JlXy9zcmMvZG9ja2VyLXNyYy4yMDIwLTA0LTIzLTA1LjA5LjU2LjEw
-MjQ4Oi92YXIvdG1wL3FlbXU6eixybycsICdxZW11OmZlZG9yYScsICcvdmFyL3RtcC9xZW11L3J1
-bicsICd0ZXN0LWRlYnVnJ10nIHJldHVybmVkIG5vbi16ZXJvIGV4aXQgc3RhdHVzIDIuCmZpbHRl
-cj0tLWZpbHRlcj1sYWJlbD1jb20ucWVtdS5pbnN0YW5jZS51dWlkPTU4M2IxMGUxOTJkODQxZWE5
-ODVmZTk0NzRlOWNjZTViCm1ha2VbMV06ICoqKiBbZG9ja2VyLXJ1bl0gRXJyb3IgMQptYWtlWzFd
-OiBMZWF2aW5nIGRpcmVjdG9yeSBgL3Zhci90bXAvcGF0Y2hldy10ZXN0ZXItdG1wLTQxeGI3YmVf
-L3NyYycKbWFrZTogKioqIFtkb2NrZXItcnVuLXRlc3QtZGVidWdAZmVkb3JhXSBFcnJvciAyCgpy
-ZWFsICAgIDNtMzAuMjMycwp1c2VyICAgIDBtOC40NTdzCgoKVGhlIGZ1bGwgbG9nIGlzIGF2YWls
-YWJsZSBhdApodHRwOi8vcGF0Y2hldy5vcmcvbG9ncy8yMDIwMDQyMzA5MDExOC4xMTE5OS0xLWdl
-ZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlL3Rlc3RpbmcuYXNhbi8/dHlwZT1tZXNzYWdlLgotLS0KRW1h
-aWwgZ2VuZXJhdGVkIGF1dG9tYXRpY2FsbHkgYnkgUGF0Y2hldyBbaHR0cHM6Ly9wYXRjaGV3Lm9y
-Zy9dLgpQbGVhc2Ugc2VuZCB5b3VyIGZlZWRiYWNrIHRvIHBhdGNoZXctZGV2ZWxAcmVkaGF0LmNv
-bQ==
+Hi Sakari,
+
+On Thu, Apr 23, 2020 at 10:38:41AM +0300, Sakari Ailus wrote:
+> On Fri, Apr 10, 2020 at 02:15:19PM +0300, Laurent Pinchart wrote:
+> > On Fri, Apr 10, 2020 at 09:20:25AM +0100, Kieran Bingham wrote:
+> > > On 09/04/2020 17:33, Laurent Pinchart wrote:
+> > > > On Thu, Apr 09, 2020 at 01:11:51PM +0100, Kieran Bingham wrote:
+> > > >> v8:
+> > > >>  - Convert probe kzalloc usage to devm_ variant
+> > > > 
+> > > > This isn't worse than the existing code, but are you aware that devm_*
+> > > > should not be used in this case ? The memory should be allocated with
+> > > > kzalloc() and freed in the .release() operation.
+> > > 
+> > > This change was at the request of a review comment from Sakari.
+> > > 
+> > > From:
+> > > https://lore.kernel.org/linux-media/4139f241-2fde-26ad-fe55-dcaeb76ad6cc@ideasonboard.com/
+> > >
+> > > >>> +
+> > > >>> +static int max9286_probe(struct i2c_client *client)
+> > > >>> +{
+> > > >>> +	struct max9286_priv *priv;
+> > > >>> +	unsigned int i;
+> > > >>> +	int ret;
+> > > >>> +
+> > > >>> +	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+> > > >>> +	if (!priv)
+> > > >>> +		return -ENOMEM;
+> > > >> 
+> > > >> You won't lose anything by using the devm_ variant here.
+> > > > 
+> > > > Indeed,
+> > > > 
+> > > >>> +
+> > > >>> +	priv->client = client;
+> > > >>> +	i2c_set_clientdata(client, priv);
+> > > >>> +
+> > > >>> +	for (i = 0; i < MAX9286_N_SINKS; i++)
+> > > >>> +		max9286_init_format(&priv->fmt[i]);
+> > > >>> +
+> > > >>> +	ret = max9286_parse_dt(priv);
+> > > >>> +	if (ret)
+> > > >>> +		return ret;
+> > > >> 
+> > > >> But you can avoid accidental memory leaks for nothing. :-)
+> > > > 
+> > > > It would be good not to leak indeed!
+> > > 
+> > > I understand that there are lifetime issues in V4L2 - but in my opinion
+> > > that needs to be handled by core V4l2 (and or support from driver core
+> > > framework).
+> > 
+> > I'm afraid that's not possible. The V4L2 core can't delay remove().
+> > There are helpers we could create to simplify correct memory management
+> > for drivers, but in any case, devm_kzalloc() isn't correct.
+> > 
+> > There are also issues in the core that would make unbinding unsafe even
+> > if correctly implemented in this driver, but a correct implementation in
+> > drivers will be required in any case.
+> > 
+> > As I said before this patch isn't a regression as memory allocation is
+> > already broken here, but it doesn't go in the right direction either.
+> > 
+> > > Also - isn't it highly unlikely to affect the max9286? Isn't the
+> > > lifetime issue that the device can be unplugged while the file handle is
+> > > open?
+> > > 
+> > > I don't think anyone is going to 'unplug' the max9286 while it's active :-)
+> > 
+> > No, but someone could unbind it through sysfs. In any case it's not an
+> > excuse to not implement memory allocation correctly :-)
+> 
+> Properly refcounting the objects and being unbind-safe would require
+> rewriting the memory allocation in drivers. This can't be done as the
+> framework is broken.
+> 
+> Whether you use devm_* variant here makes no difference from that point of
+> view. But it makes it easier to find out driver does not do its object
+> refcounting properly later on when (or if) the framework is fixed.
+
+It's an interesting point, "as it's broken, make it very visible" :-)
+I'm fine with that.
+
+-- 
+Regards,
+
+Laurent Pinchart
