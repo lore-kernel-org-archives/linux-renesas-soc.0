@@ -2,133 +2,125 @@ Return-Path: <SRS0=6hTa=6H=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79D27C2BA19
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 07:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 684DEC55186
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 09:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C61521707
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 07:56:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5346D2084D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 09:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726027AbgDWH4F (ORCPT
+        id S1726490AbgDWJBZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Apr 2020 03:56:05 -0400
-Received: from mga04.intel.com ([192.55.52.120]:21960 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725562AbgDWH4E (ORCPT
+        Thu, 23 Apr 2020 05:01:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49120 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbgDWJBZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Apr 2020 03:56:04 -0400
-IronPort-SDR: 9q1XsrS7ReNvW3PVd2iLaDYK+pyRmnRIQ7Zsm7z9YFVu0j0jrdDwo17T+VfARP2fgSyV/FgZtm
- TmySfglMIOeA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2020 00:56:04 -0700
-IronPort-SDR: r+jLurLD/ryur1rbMtyce0xKOEJmXIaoqKT5V0T+RrNwOh9LVjOo744jmIAT0wOwTME4+gLANB
- 0TwumWeKu/hg==
-X-IronPort-AV: E=Sophos;i="5.73,306,1583222400"; 
-   d="scan'208";a="430232630"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2020 00:56:00 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 9B42C2080B; Thu, 23 Apr 2020 10:55:57 +0300 (EEST)
-Date:   Thu, 23 Apr 2020 10:55:57 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Roman Kovalivskyi <roman.kovalivskyi@globallogic.com>
-Cc:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Luis Oliveira <lolivei@synopsys.com>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>, Jacopo Mondi <jacopo@jmondi.org>,
-        Michael Rodin <mrodin@de.adit-jv.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Suresh Udipi <sudipi@jp.adit-jv.com>,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.org>
-Subject: Re: [PATCH 4/4] media: ov5647: Use gpiod_set_value_cansleep
-Message-ID: <20200423075557.GL5381@paasikivi.fi.intel.com>
-References: <cover.1586759968.git.roman.kovalivskyi@globallogic.com>
- <f496fe5d364748e9d625a634581a404f30a13efa.1586759968.git.roman.kovalivskyi@globallogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f496fe5d364748e9d625a634581a404f30a13efa.1586759968.git.roman.kovalivskyi@globallogic.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 23 Apr 2020 05:01:25 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9D87C08E859
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Apr 2020 02:01:24 -0700 (PDT)
+Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:89cc:efc7:85ce:4669])
+        by andre.telenet-ops.be with bizsmtp
+        id W91L2200k1RvcFS0191LLq; Thu, 23 Apr 2020 11:01:21 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jRXjU-0006kJ-Cn; Thu, 23 Apr 2020 11:01:20 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jRXjU-0002vg-BT; Thu, 23 Apr 2020 11:01:20 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Peter Maydell <peter.maydell@linaro.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Alexander Graf <graf@amazon.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bartekgola@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     qemu-arm@nongnu.org, qemu-devel@nongnu.org,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH QEMU v2 5/5] hw/arm/virt: Add dynamic PL061 GPIO support
+Date:   Thu, 23 Apr 2020 11:01:18 +0200
+Message-Id: <20200423090118.11199-6-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200423090118.11199-1-geert+renesas@glider.be>
+References: <20200423090118.11199-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Roman,
+Add support for dynamically instantiating PL061 GPIO controller
+instances in ARM virt.  Device tree nodes are created dynamically.
 
-On Mon, Apr 13, 2020 at 12:17:47PM +0300, Roman Kovalivskyi wrote:
-> From: Dave Stevenson <dave.stevenson@raspberrypi.org>
-> 
-> All calls to the gpio library are in contexts that can sleep,
-> therefore there is no issue with having those GPIOs controlled
-> by controllers which require sleeping (eg I2C GPIO expanders).
-> 
-> Switch to using gpiod_set_value_cansleep instead of gpiod_set_value
-> to avoid triggering the warning in gpiolib should the GPIO
-> controller need to sleep.
-> 
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
-> Signed-off-by: Roman Kovalivskyi <roman.kovalivskyi@globallogic.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - New.
+---
+ hw/arm/sysbus-fdt.c | 18 ++++++++++++++++++
+ hw/arm/virt.c       |  1 +
+ 2 files changed, 19 insertions(+)
 
-This should be merged with the second patch.
-
-> ---
->  drivers/media/i2c/ov5647.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-> index 8a1a515388e0..07550377be2e 100644
-> --- a/drivers/media/i2c/ov5647.c
-> +++ b/drivers/media/i2c/ov5647.c
-> @@ -373,7 +373,7 @@ static int ov5647_sensor_power(struct v4l2_subdev *sd, int on)
->  		dev_dbg(&client->dev, "OV5647 power on\n");
->  
->  		if (ov5647->pwdn) {
-> -			gpiod_set_value(ov5647->pwdn, 0);
-> +			gpiod_set_value_cansleep(ov5647->pwdn, 0);
->  			msleep(PWDN_ACTIVE_DELAY_MS);
->  		}
->  
-> @@ -415,7 +415,7 @@ static int ov5647_sensor_power(struct v4l2_subdev *sd, int on)
->  
->  		clk_disable_unprepare(ov5647->xclk);
->  
-> -		gpiod_set_value(ov5647->pwdn, 1);
-> +		gpiod_set_value_cansleep(ov5647->pwdn, 1);
->  	}
->  
->  	/* Update the power count. */
-> @@ -648,13 +648,13 @@ static int ov5647_probe(struct i2c_client *client)
->  		goto mutex_remove;
->  
->  	if (sensor->pwdn) {
-> -		gpiod_set_value(sensor->pwdn, 0);
-> +		gpiod_set_value_cansleep(sensor->pwdn, 0);
->  		msleep(PWDN_ACTIVE_DELAY_MS);
->  	}
->  
->  	ret = ov5647_detect(sd);
->  
-> -	gpiod_set_value(sensor->pwdn, 1);
-> +	gpiod_set_value_cansleep(sensor->pwdn, 1);
->  
->  	if (ret < 0)
->  		goto error;
-> -- 
-> 2.17.1
-> 
-
+diff --git a/hw/arm/sysbus-fdt.c b/hw/arm/sysbus-fdt.c
+index 6b6906f4cfc36198..493583218d176d0a 100644
+--- a/hw/arm/sysbus-fdt.c
++++ b/hw/arm/sysbus-fdt.c
+@@ -32,6 +32,7 @@
+ #include "sysemu/device_tree.h"
+ #include "sysemu/tpm.h"
+ #include "hw/platform-bus.h"
++#include "hw/gpio/pl061.h"
+ #include "hw/vfio/vfio-platform.h"
+ #include "hw/vfio/vfio-calxeda-xgmac.h"
+ #include "hw/vfio/vfio-amd-xgbe.h"
+@@ -468,6 +469,22 @@ static int add_tpm_tis_fdt_node(SysBusDevice *sbdev, void *opaque)
+     return 0;
+ }
+ 
++/*
++ * add_pl061_node: Create a DT node for a PL061 GPIO controller
++ */
++static int add_pl061_node(SysBusDevice *sbdev, void *opaque)
++{
++    PlatformBusFDTData *data = opaque;
++    PlatformBusDevice *pbus = data->pbus;
++    void *fdt = data->fdt;
++
++    pl061_create_fdt(fdt, data->pbus_node_name, 1,
++                     platform_bus_get_mmio_addr(pbus, sbdev, 0), 0x1000,
++                     platform_bus_get_irqn(pbus, sbdev, 0) + data->irq_start,
++                     qemu_fdt_get_phandle(fdt, "/apb-pclk"));
++    return 0;
++}
++
+ static int no_fdt_node(SysBusDevice *sbdev, void *opaque)
+ {
+     return 0;
+@@ -489,6 +506,7 @@ static const BindingEntry bindings[] = {
+     VFIO_PLATFORM_BINDING("amd,xgbe-seattle-v1a", add_amd_xgbe_fdt_node),
+ #endif
+     TYPE_BINDING(TYPE_TPM_TIS_SYSBUS, add_tpm_tis_fdt_node),
++    TYPE_BINDING(TYPE_PL061, add_pl061_node),
+     TYPE_BINDING(TYPE_RAMFB_DEVICE, no_fdt_node),
+     TYPE_BINDING("", NULL), /* last element */
+ };
+diff --git a/hw/arm/virt.c b/hw/arm/virt.c
+index c88c8850fbe00bdb..191594db09422d54 100644
+--- a/hw/arm/virt.c
++++ b/hw/arm/virt.c
+@@ -2178,6 +2178,7 @@ static void virt_machine_class_init(ObjectClass *oc, void *data)
+     machine_class_allow_dynamic_sysbus_dev(mc, TYPE_RAMFB_DEVICE);
+     machine_class_allow_dynamic_sysbus_dev(mc, TYPE_VFIO_PLATFORM);
+     machine_class_allow_dynamic_sysbus_dev(mc, TYPE_TPM_TIS_SYSBUS);
++    machine_class_allow_dynamic_sysbus_dev(mc, TYPE_PL061);
+     mc->block_default_type = IF_VIRTIO;
+     mc->no_cdrom = 1;
+     mc->pci_allow_0_address = true;
 -- 
-Sakari Ailus
+2.17.1
+
