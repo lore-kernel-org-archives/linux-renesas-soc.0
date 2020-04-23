@@ -2,98 +2,122 @@ Return-Path: <SRS0=6hTa=6H=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBAEC2BA19
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 09:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA08EC2BA19
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 09:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 367722076C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 09:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7B79214AF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Apr 2020 09:40:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="Tc85sXma"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbgDWJeh (ORCPT
+        id S1726984AbgDWJkt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Apr 2020 05:34:37 -0400
-Received: from sender4-of-o53.zoho.com ([136.143.188.53]:21387 "EHLO
-        sender4-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725863AbgDWJeh (ORCPT
+        Thu, 23 Apr 2020 05:40:49 -0400
+Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:37339 "EHLO
+        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726669AbgDWJkt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Apr 2020 05:34:37 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1587634465; cv=none; 
-        d=zohomail.com; s=zohoarc; 
-        b=kLB8eYIs24Svm9w+TUCYqeK1xdeSPAbKkszqvuq7KNJ5SR4ChyR+bJG7QV5ck6YEwLbSDulExz4vYaH42oDrMf0jyqhVwMaBxVHes9iK6Nnws4U5E6zZTM3zfYwslwMi2k3GUgurvGpH/ZjEhHpw+ZokLb5hOvACY4oycO78XMM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-        t=1587634465; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:Reply-To:Subject:To; 
-        bh=4dUD7e/KfxW6eb9ttR9esGd+AT1SiWrjlpLujn4g91w=; 
-        b=Q5zchtDEC6TWwwvWugQgBdi+WRIFpz8oWF9WaC9QeGBVRpD72a4Azm5qAyAVkrDS2uUHKGN7Fp9BaTcwIqs6mgn49ff44geTYyRh1LGhgepKeJi+mktEcmsjsTsYHbsYrCvcH0XmpkJHdBwsNiIbP5pFt+cUAaJjP1xBpUx1Gjk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-        spf=pass  smtp.mailfrom=no-reply@patchew.org;
-        dmarc=pass header.from=<no-reply@patchew.org> header.from=<no-reply@patchew.org>
-Received: from [172.17.0.3] (23.253.156.214 [23.253.156.214]) by mx.zohomail.com
-        with SMTPS id 1587634463565546.17772855945; Thu, 23 Apr 2020 02:34:23 -0700 (PDT)
-In-Reply-To: <20200423090118.11199-1-geert+renesas@glider.be>
-Subject: Re: [PATCH QEMU v2 0/5] Add a GPIO backend
-Reply-To: <qemu-devel@nongnu.org>
-Message-ID: <158763446157.4520.17561448359481961775@39012742ff91>
+        Thu, 23 Apr 2020 05:40:49 -0400
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id RYLajLPzh7xncRYLdjQ0mN; Thu, 23 Apr 2020 11:40:47 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1587634847; bh=X9jIIE53Q0GK6WoPEeXiidEZB/kG+LH0noxQldRb5Co=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=Tc85sXmap73Eg62GowEg1coB+S6XPU8TgnkGGpSaEPxpHokAtib92mH3OQGUAYoXt
+         gbnBm7M3Upjxq9rF8hEutscBy9TUK+Ftc5v8FPtJNfmotfBDDLc2iYCVEUGvYwyg3v
+         x0gYNtB5vlNsNv/nG/PMM9zbbQ0Y1WC/c3Tu0V2gbjG8no6xG3rv3q5hwnng/1tlk0
+         SsWD1G9lDKmqZSgzwCXkXPW6a8j/2buehJCXIFC1h1S19rs4AIf5TOdX09eZ0mlBSm
+         /gyBZLrBTow/ZH9nhAs4CNA8N+5pCRSm6UEgF/hpwVdPF6Rfutc7WPH1jBTUsrUFa9
+         skzYCr6qmvXPw==
+Subject: Re: [PATCH 2/2] v4l2-compliance: add tests for V4L2_CAP_IO_MC
+To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Helen Koike <helen.koike@collabora.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org
+References: <20200318132722.3089925-1-niklas.soderlund+renesas@ragnatech.se>
+ <20200318132722.3089925-3-niklas.soderlund+renesas@ragnatech.se>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <d67fda94-68b0-a3ac-3e1b-42aa7d42d884@xs4all.nl>
+Date:   Thu, 23 Apr 2020 11:40:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-From:   no-reply@patchew.org
-To:     geert+renesas@glider.be
-Cc:     peter.maydell@linaro.org, pbonzini@redhat.com, graf@amazon.com,
-        linus.walleij@linaro.org, bartekgola@gmail.com,
-        magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, qemu-arm@nongnu.org,
-        qemu-devel@nongnu.org, geert+renesas@glider.be
-Date:   Thu, 23 Apr 2020 02:34:23 -0700 (PDT)
-X-ZohoMailClient: External
+In-Reply-To: <20200318132722.3089925-3-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfDrOkPlo79Jo7Hs2PUvPtQqb3/6xYDzuZ+0+PqenuIFPozUNldwZeG5RGxMU1nzee4ZDmY63DIBUzqqNqJjZZxgoLk1FjStENytihv9lWBlwTIvI/lt3
+ cDIwINOG/CGZ3Zolbj4hNyq/fC0N/RISLjtBV911IU/0IiqbWKpOrOJAtJK+QomWxQawrWmecYHK9ix1uV12y2B/p5DER8itWCjNE7DqJpUhDuqITaWs03Vd
+ Sw49n2dLCoHKZjN+mFXEU5yB+j7SrT5+QBmEaEBPWbW8jC/7LFEsFMO9j+fQ6FBJmNyf72RRXI2ZQJ641S1zhCrk3B8ikPBQ/VyCPKM5nEOD2p4KA6btQCvP
+ huf9dF9aQzkihdw/tVQxA11mQnK+/2ZP6JWhoLNG3BsK+2hgDH0s0OBsN4Ad/bK9/jOmmYQ+
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-UGF0Y2hldyBVUkw6IGh0dHBzOi8vcGF0Y2hldy5vcmcvUUVNVS8yMDIwMDQyMzA5MDExOC4xMTE5
-OS0xLWdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlLwoKCgpIaSwKClRoaXMgc2VyaWVzIGZhaWxlZCB0
-aGUgYXNhbiBidWlsZCB0ZXN0LiBQbGVhc2UgZmluZCB0aGUgdGVzdGluZyBjb21tYW5kcyBhbmQK
-dGhlaXIgb3V0cHV0IGJlbG93LiBJZiB5b3UgaGF2ZSBEb2NrZXIgaW5zdGFsbGVkLCB5b3UgY2Fu
-IHByb2JhYmx5IHJlcHJvZHVjZSBpdApsb2NhbGx5LgoKPT09IFRFU1QgU0NSSVBUIEJFR0lOID09
-PQojIS9iaW4vYmFzaApleHBvcnQgQVJDSD14ODZfNjQKbWFrZSBkb2NrZXItaW1hZ2UtZmVkb3Jh
-IFY9MSBORVRXT1JLPTEKdGltZSBtYWtlIGRvY2tlci10ZXN0LWRlYnVnQGZlZG9yYSBUQVJHRVRf
-TElTVD14ODZfNjQtc29mdG1tdSBKPTE0IE5FVFdPUks9MQo9PT0gVEVTVCBTQ1JJUFQgRU5EID09
-PQoKICBDQyAgICAgIGh3LzlwZnMvOXAtc3ludGgubwogIENDICAgICAgaHcvOXBmcy85cC1wcm94
-eS5vCgpXYXJuaW5nLCB0cmVhdGVkIGFzIGVycm9yOgovdG1wL3FlbXUtdGVzdC9zcmMvZG9jcy8u
-Li9xZW11LW9wdGlvbnMuaHg6ODgxOlVuZXhwZWN0ZWQgaW5kZW50YXRpb24uCiAgQ0MgICAgICBo
-dy85cGZzL3hlbi05cC1iYWNrZW5kLm8KCldhcm5pbmcsIHRyZWF0ZWQgYXMgZXJyb3I6Ci90bXAv
-cWVtdS10ZXN0L3NyYy9kb2NzLy4uL3FlbXUtb3B0aW9ucy5oeDo4ODE6VW5leHBlY3RlZCBpbmRl
-bnRhdGlvbi4KICBDQyAgICAgIGh3L2FjcGkvY29yZS5vCiAgQ0MgICAgICBody9hY3BpL3BpaXg0
-Lm8KICBDQyAgICAgIGh3L2FjcGkvcGNpaHAubwogIENDICAgICAgaHcvYWNwaS9pY2g5Lm8KICBD
-QyAgICAgIGh3L2FjcGkvdGNvLm8KbWFrZTogKioqIFtNYWtlZmlsZToxMTA0OiBkb2NzL3N5c3Rl
-bS9pbmRleC5odG1sXSBFcnJvciAyCm1ha2U6ICoqKiBXYWl0aW5nIGZvciB1bmZpbmlzaGVkIGpv
-YnMuLi4uCm1ha2U6ICoqKiBbTWFrZWZpbGU6MTExNTogLmRvY3Nfc3lzdGVtX3FlbXUuMV9kb2Nz
-X3N5c3RlbV9xZW11LWJsb2NrLWRyaXZlcnMuN19kb2NzX3N5c3RlbV9xZW11LWNwdS1tb2RlbHMu
-Ny5zZW50aW5lbC5dIEVycm9yIDIKbWFrZTogKioqIERlbGV0aW5nIGZpbGUgJy5kb2NzX3N5c3Rl
-bV9xZW11LjFfZG9jc19zeXN0ZW1fcWVtdS1ibG9jay1kcml2ZXJzLjdfZG9jc19zeXN0ZW1fcWVt
-dS1jcHUtbW9kZWxzLjcuc2VudGluZWwuJwpUcmFjZWJhY2sgKG1vc3QgcmVjZW50IGNhbGwgbGFz
-dCk6CiAgRmlsZSAiLi90ZXN0cy9kb2NrZXIvZG9ja2VyLnB5IiwgbGluZSA2NjQsIGluIDxtb2R1
-bGU+Ci0tLQogICAgcmFpc2UgQ2FsbGVkUHJvY2Vzc0Vycm9yKHJldGNvZGUsIGNtZCkKc3VicHJv
-Y2Vzcy5DYWxsZWRQcm9jZXNzRXJyb3I6IENvbW1hbmQgJ1snc3VkbycsICctbicsICdkb2NrZXIn
-LCAncnVuJywgJy0tbGFiZWwnLCAnY29tLnFlbXUuaW5zdGFuY2UudXVpZD03OTk5MTEyOGQ4MDI0
-MGYzODIyNzllMmMwNTlmNDNmMicsICctdScsICcxMDAzJywgJy0tc2VjdXJpdHktb3B0JywgJ3Nl
-Y2NvbXA9dW5jb25maW5lZCcsICctLXJtJywgJy1lJywgJ1RBUkdFVF9MSVNUPXg4Nl82NC1zb2Z0
-bW11JywgJy1lJywgJ0VYVFJBX0NPTkZJR1VSRV9PUFRTPScsICctZScsICdWPScsICctZScsICdK
-PTE0JywgJy1lJywgJ0RFQlVHPScsICctZScsICdTSE9XX0VOVj0nLCAnLWUnLCAnQ0NBQ0hFX0RJ
-Uj0vdmFyL3RtcC9jY2FjaGUnLCAnLXYnLCAnL2hvbWUvcGF0Y2hldzIvLmNhY2hlL3FlbXUtZG9j
-a2VyLWNjYWNoZTovdmFyL3RtcC9jY2FjaGU6eicsICctdicsICcvdmFyL3RtcC9wYXRjaGV3LXRl
-c3Rlci10bXAtYW1sZnMyNGUvc3JjL2RvY2tlci1zcmMuMjAyMC0wNC0yMy0wNS4yOS4zOC4yMjY2
-MTovdmFyL3RtcC9xZW11Onoscm8nLCAncWVtdTpmZWRvcmEnLCAnL3Zhci90bXAvcWVtdS9ydW4n
-LCAndGVzdC1kZWJ1ZyddJyByZXR1cm5lZCBub24temVybyBleGl0IHN0YXR1cyAyLgpmaWx0ZXI9
-LS1maWx0ZXI9bGFiZWw9Y29tLnFlbXUuaW5zdGFuY2UudXVpZD03OTk5MTEyOGQ4MDI0MGYzODIy
-NzllMmMwNTlmNDNmMgptYWtlWzFdOiAqKiogW2RvY2tlci1ydW5dIEVycm9yIDEKbWFrZVsxXTog
-TGVhdmluZyBkaXJlY3RvcnkgYC92YXIvdG1wL3BhdGNoZXctdGVzdGVyLXRtcC1hbWxmczI0ZS9z
-cmMnCm1ha2U6ICoqKiBbZG9ja2VyLXJ1bi10ZXN0LWRlYnVnQGZlZG9yYV0gRXJyb3IgMgoKcmVh
-bCAgICA0bTQzLjA1M3MKdXNlciAgICAwbTUuMTA2cwoKClRoZSBmdWxsIGxvZyBpcyBhdmFpbGFi
-bGUgYXQKaHR0cDovL3BhdGNoZXcub3JnL2xvZ3MvMjAyMDA0MjMwOTAxMTguMTExOTktMS1nZWVy
-dCtyZW5lc2FzQGdsaWRlci5iZS90ZXN0aW5nLmFzYW4vP3R5cGU9bWVzc2FnZS4KLS0tCkVtYWls
-IGdlbmVyYXRlZCBhdXRvbWF0aWNhbGx5IGJ5IFBhdGNoZXcgW2h0dHBzOi8vcGF0Y2hldy5vcmcv
-XS4KUGxlYXNlIHNlbmQgeW91ciBmZWVkYmFjayB0byBwYXRjaGV3LWRldmVsQHJlZGhhdC5jb20=
+On 18/03/2020 14:27, Niklas Söderlund wrote:
+> Add tests to check the behavior of VIDIOC_ENUM{INPUT,OUTPUT},
+> VIDIOC_G_{INPUT,OUTPUT} and VIDIOC_S_{INPUT,OUTPUT} when the
+> V4L2_CAP_IO_MC  is set.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> ---
+>  utils/v4l2-compliance/v4l2-test-input-output.cpp | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/utils/v4l2-compliance/v4l2-test-input-output.cpp b/utils/v4l2-compliance/v4l2-test-input-output.cpp
+> index 2bf338e6f6d7ec5a..bf937abec320f88a 100644
+> --- a/utils/v4l2-compliance/v4l2-test-input-output.cpp
+> +++ b/utils/v4l2-compliance/v4l2-test-input-output.cpp
+> @@ -466,6 +466,13 @@ int testInput(struct node *node)
+>  	if (!node->inputs && node->has_inputs)
+>  		return fail("no inputs found, but input capabilities set\n");
+>  	fail_on_test(node->is_m2m && node->inputs > 1);
+> +	if (node->g_caps() & V4L2_CAP_IO_MC) {
+> +		if (!node->is_video && !node->is_meta)
+> +			return fail("media device controls none video or meta input\n");
+> +
+> +		if (!node->is_meta && node->inputs != 1)
+> +			return fail("media device controlled input have %d inputs\n", node->inputs);
+
+Just replace this with:
+
+		fail_on_test(!node->is_video && !node->is_meta);
+		fail_on_test(node->inputs != 1);
+
+> +	}
+>  	return 0;
+>  }
+>  
+> @@ -836,6 +843,13 @@ int testOutput(struct node *node)
+>  	if (!node->outputs && node->has_outputs)
+>  		return fail("no outputs found, but output capabilities set\n");
+>  	fail_on_test(node->is_m2m && node->outputs > 1);
+> +	if (node->g_caps() & V4L2_CAP_IO_MC) {
+> +		if (!node->is_video && !node->is_meta)
+> +			return fail("media device controls none video or meta output\n");
+> +
+> +		if (!node->is_meta && node->outputs != 1)
+> +			return fail("media device controlled output have %d outputs\n", node->outputs);
+
+Ditto.
+
+> +	}
+>  	return 0;
+>  }
+>  
+> 
+
+Regards,
+
+	Hans
