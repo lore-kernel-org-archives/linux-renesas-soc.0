@@ -1,49 +1,53 @@
-Return-Path: <SRS0=it5t=6I=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=6d9m=6J=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA03C54FD0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Apr 2020 19:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB4FC55186
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 25 Apr 2020 08:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5723D215A4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Apr 2020 19:57:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587758248;
-	bh=2e+1YrAFgpfUJYO8UuSZsSQ5b3htHAFAlNHQ7491n/0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=gQaswr5nO+v2aZT5rHt51rbavLJa7rScqsfU8V3P/2BdYe1/IP64zj7MrgEKubxvo
-	 /lB06A2F0S3GeVeRhYPPsdrJBSRJTguPPiqicylX0tlZ07inuawlDAq6yi+PD7rFh2
-	 4v7jlunKtkaEfHP9ONQAx7aqSMXl2XVG2d74Utt0=
+	by mail.kernel.org (Postfix) with ESMTP id 59F032071C
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 25 Apr 2020 08:55:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728379AbgDXT52 (ORCPT
+        id S1726130AbgDYIze (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 24 Apr 2020 15:57:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727031AbgDXT51 (ORCPT
+        Sat, 25 Apr 2020 04:55:34 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39901 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbgDYIzd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Apr 2020 15:57:27 -0400
-Received: from localhost (mobile-166-175-187-210.mycingular.net [166.175.187.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95CF220781;
-        Fri, 24 Apr 2020 19:57:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587758246;
-        bh=2e+1YrAFgpfUJYO8UuSZsSQ5b3htHAFAlNHQ7491n/0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=y5RqUNDbkDBs0BRj+rcpDfQSpGRDB9KLKwgtLnnwP/FZ4qj36n6ZXYZN0g8Y9HDgp
-         R5S6XRWvL+VkZmcwUV3pktFiRIVRV0N2ohcew1ztonEbgaRV0RBxnIXmtUZ0E10axP
-         W5NT+QcDa0nkmdqK5eyt6h3hYXag7i3MKW7Lnwe8=
-Date:   Fri, 24 Apr 2020 14:57:24 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     marek.vasut@gmail.com
-Cc:     linux-pci@vger.kernel.org,
+        Sat, 25 Apr 2020 04:55:33 -0400
+Received: by mail-ot1-f66.google.com with SMTP id m13so16860922otf.6;
+        Sat, 25 Apr 2020 01:55:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fUNW+YKfBgF2cMYUf1i6dEQvTH/58EF1lzSQEW40U3k=;
+        b=Djwi/xu+B1tUwewBH9MplPbDjGN3W5mnFcBM8jitCCD4uIQl4t255pyBOSBDwPYbo6
+         ySP91oAe7a8DcfjJz0bRlfq6GIx4W3WZguKQbuSYKBW49Hfjrppws6QF9dLq68jNw3LM
+         /CqDjYuO5A9m0Me5B9lps4sxVxMqT9M8N9J/z3w2PcVSyqdb2hkp6owRqP/23u+JnIhJ
+         qlKRn0FgSsV3ZztZGQsSNqdYDIeWD/ctLf28LEIDqlw3HGDTjQFku3EO7eSonKWucekt
+         a2XVC95wedllY+QTY7/f5tAD6dMSygD1xE1IEk4JWkVXPFQPffymnJtPR3o+fceGHMRE
+         WLjA==
+X-Gm-Message-State: AGi0PuZMaGgKHBD63us/ENLpGDBhYO48MCW0Bi9VCjZ79Q5BmeJaMEjv
+        mW/GVUY5NZmdiDtWUD+6IHk6Vd3+bexL2pNPN5k=
+X-Google-Smtp-Source: APiQypJW5O56mWteY8Y0vMM8aMxAGMjECnsP5wKPZkmXBXqkKVaISEG8Z+bkk71DRSaQBqd6D1kBf0TvUnpAMUX91+o=
+X-Received: by 2002:a9d:7990:: with SMTP id h16mr5250454otm.145.1587804932826;
+ Sat, 25 Apr 2020 01:55:32 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200314191232.3122290-1-marek.vasut@gmail.com> <20200424195724.GA187563@google.com>
+In-Reply-To: <20200424195724.GA187563@google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sat, 25 Apr 2020 10:55:21 +0200
+Message-ID: <CAMuHMdVGkM_-5q+pSOtQ5nBPGzMeOpRTJUqekYnvjiPMFepqLw@mail.gmail.com>
+Subject: Re: [PATCH V3] PCI: rcar: Add the suspend/resume for pcie-rcar driver
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
         Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>,
         Gaku Inami <gaku.inami.xw@bp.renesas.com>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -51,193 +55,34 @@ Cc:     linux-pci@vger.kernel.org,
         Phil Edworthy <phil.edworthy@renesas.com>,
         Simon Horman <horms+renesas@verge.net.au>,
         Wolfram Sang <wsa@the-dreams.de>,
-        linux-renesas-soc@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Vaibhav Gupta <vaibhavgupta40@gmail.com>
-Subject: Re: [PATCH V3] PCI: rcar: Add the suspend/resume for pcie-rcar driver
-Message-ID: <20200424195724.GA187563@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200314191232.3122290-1-marek.vasut@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-[+cc Vaibhav]
+Hi Bjorn,
 
-Alternate less redundant subject:
+On Fri, Apr 24, 2020 at 9:57 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> [+cc Vaibhav]
+>
+> Alternate less redundant subject:
+>
+>   PCI: rcar: Add suspend/resume support
 
-  PCI: rcar: Add suspend/resume support
+Note that there's both pcie-rcar.c (this driver, for R-Car Gen2 and Gen3
+PCIe) and pci-rcar-gen2.c (for R-Car Gen2 PCI).
+People tend to use the prefix "PCI: rcar: " for both :-(
 
-On Sat, Mar 14, 2020 at 08:12:32PM +0100, marek.vasut@gmail.com wrote:
-> From: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-> 
-> This adds the suspend/resume supports for pcie-rcar. The resume handler
-> reprograms the hardware based on the software state kept in specific
-> device structures. Also it doesn't need to save any registers.
+Gr{oetje,eeting}s,
 
-s/This adds the/Add/
-s/supports/support/
+                        Geert
 
-> Signed-off-by: Kazufumi Ikeda <kaz-ikeda@xc.jp.nec.com>
-> Signed-off-by: Gaku Inami <gaku.inami.xw@bp.renesas.com>
-> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Cc: Simon Horman <horms+renesas@verge.net.au>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-> Cc: linux-renesas-soc@vger.kernel.org
-> ---
-> V2: - Change return type of rcar_pcie_hw_enable() to void
->     - Drop default: case in switch statement in rcar_pcie_hw_enable()
->     - Sort variables in rcar_pcie_resume()
-> V3: - Update on top of next-20200313
-> ---
->  drivers/pci/controller/pcie-rcar.c | 86 +++++++++++++++++++++++++-----
->  1 file changed, 74 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-> index 759c6542c5c8..f86513638b8a 100644
-> --- a/drivers/pci/controller/pcie-rcar.c
-> +++ b/drivers/pci/controller/pcie-rcar.c
-> @@ -452,6 +452,32 @@ static void rcar_pcie_force_speedup(struct rcar_pcie *pcie)
->  		 (macsr & LINK_SPEED) == LINK_SPEED_5_0GTS ? "5" : "2.5");
->  }
->  
-> +static void rcar_pcie_hw_enable(struct rcar_pcie *pci)
-> +{
-> +	struct resource_entry *win;
-> +	LIST_HEAD(res);
-> +	int i = 0;
-> +
-> +	/* Try setting 5 GT/s link speed */
-> +	rcar_pcie_force_speedup(pci);
-> +
-> +	/* Setup PCI resources */
-> +	resource_list_for_each_entry(win, &pci->resources) {
-> +		struct resource *res = win->res;
-> +
-> +		if (!res->flags)
-> +			continue;
-> +
-> +		switch (resource_type(res)) {
-> +		case IORESOURCE_IO:
-> +		case IORESOURCE_MEM:
-> +			rcar_pcie_setup_window(i, pci, win);
-> +			i++;
-> +			break;
-> +		}
-> +	}
-> +}
-> +
->  static int rcar_pcie_enable(struct rcar_pcie *pcie)
->  {
->  	struct device *dev = pcie->dev;
-> @@ -891,11 +917,25 @@ static void rcar_pcie_unmap_msi(struct rcar_pcie *pcie)
->  	irq_domain_remove(msi->domain);
->  }
->  
-> +static void rcar_pcie_hw_enable_msi(struct rcar_pcie *pcie)
-> +{
-> +	struct rcar_msi *msi = &pcie->msi;
-> +	unsigned long base;
-> +
-> +	/* setup MSI data target */
-> +	base = virt_to_phys((void *)msi->pages);
-> +
-> +	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
-> +	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
-> +
-> +	/* enable all MSI interrupts */
-> +	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
-> +}
-> +
->  static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
->  {
->  	struct device *dev = pcie->dev;
->  	struct rcar_msi *msi = &pcie->msi;
-> -	phys_addr_t base;
->  	int err, i;
->  
->  	mutex_init(&msi->lock);
-> @@ -934,17 +974,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie *pcie)
->  
->  	/* setup MSI data target */
->  	msi->pages = __get_free_pages(GFP_KERNEL, 0);
-> -	if (!msi->pages) {
-> -		err = -ENOMEM;
-> -		goto err;
-> -	}
-> -	base = virt_to_phys((void *)msi->pages);
-> -
-> -	rcar_pci_write_reg(pcie, lower_32_bits(base) | MSIFE, PCIEMSIALR);
-> -	rcar_pci_write_reg(pcie, upper_32_bits(base), PCIEMSIAUR);
-> -
-> -	/* enable all MSI interrupts */
-> -	rcar_pci_write_reg(pcie, 0xffffffff, PCIEMSIIER);
-> +	rcar_pcie_hw_enable_msi(pcie);
->  
->  	return 0;
->  
-> @@ -1219,6 +1249,37 @@ static int rcar_pcie_probe(struct platform_device *pdev)
->  	return err;
->  }
->  
-> +static int rcar_pcie_resume(struct device *dev)
-> +{
-> +	struct rcar_pcie *pcie = dev_get_drvdata(dev);
-> +	int (*hw_init_fn)(struct rcar_pcie *);
-> +	unsigned int data;
-> +	int err;
-> +
-> +	err = rcar_pcie_parse_map_dma_ranges(pcie);
-> +	if (err)
-> +		return 0;
-> +
-> +	/* Failure to get a link might just be that no cards are inserted */
-> +	hw_init_fn = of_device_get_match_data(dev);
-> +	err = hw_init_fn(pcie);
-> +	if (err) {
-> +		dev_info(dev, "PCIe link down\n");
-> +		return 0;
-> +	}
-> +
-> +	data = rcar_pci_read_reg(pcie, MACSR);
-> +	dev_info(dev, "PCIe x%d: link up\n", (data >> 20) & 0x3f);
-> +
-> +	/* Enable MSI */
-> +	if (IS_ENABLED(CONFIG_PCI_MSI))
-> +		rcar_pcie_hw_enable_msi(pcie);
-> +
-> +	rcar_pcie_hw_enable(pcie);
-> +
-> +	return 0;
-> +}
-> +
->  static int rcar_pcie_resume_noirq(struct device *dev)
->  {
->  	struct rcar_pcie *pcie = dev_get_drvdata(dev);
-> @@ -1234,6 +1295,7 @@ static int rcar_pcie_resume_noirq(struct device *dev)
->  }
->  
->  static const struct dev_pm_ops rcar_pcie_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, rcar_pcie_resume)
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-This causes the following warning when CONFIG_PM_SLEEP is not set:
-
-  drivers/pci/controller/pcie-rcar.c:1253:12: warning: ‘rcar_pcie_resume’ defined but not used [-Wunused-function]
-   1253 | static int rcar_pcie_resume(struct device *dev)
-	|            ^~~~~~~~~~~~~~~~
-
-Most people seem to be using __maybe_unused on the suspend/resume
-functions to avoid this, e.g., 226e6b866d74 ("gpio: pch: Convert to
-dev_pm_ops").
-
->  	.resume_noirq = rcar_pcie_resume_noirq,
->  };
->  
-> -- 
-> 2.25.0
-> 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
