@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDA8C83004
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8324CC83008
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 21:36:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A08120787
+	by mail.kernel.org (Postfix) with ESMTP id 68AF320787
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 21:36:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbgD1VgH (ORCPT
+        id S1726423AbgD1VgH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 28 Apr 2020 17:36:07 -0400
-Received: from mga09.intel.com ([134.134.136.24]:43967 "EHLO mga09.intel.com"
+Received: from mga17.intel.com ([192.55.52.151]:3103 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbgD1VgG (ORCPT
+        id S1726509AbgD1VgG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 28 Apr 2020 17:36:06 -0400
-IronPort-SDR: Ik7LSEp6x32W0LbPF+Cq6K9Jyyd9GGLj61AplVdjjLD1OpP0G9xOJYxVPY697ER08dRZ8i7vBw
- /hAGmdh1I0Vw==
+IronPort-SDR: gIyNCkz0pIRXjG/LAWmK/RpBGPi+XmE+2Tml2nmv2aYM7q10Uydoy0uMgFrYKsndRX1vQ4CKSW
+ duXlck8TE3gg==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2020 14:36:04 -0700
-IronPort-SDR: qvLPzMcsMQ1i3QN7fTti1/6j2aSqhBG1XJdGxxDz9PJd+UzNnVEYi81UDwyYhmd6w7ZpzvNH1g
- +5qhJQvf4uVw==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2020 14:36:05 -0700
+IronPort-SDR: 4I//CpcNtUU2QCqOefOQJdOsw4RHmb/9HHd91+hhYEbaW9FHBenobxyVt89Y3MJ/iLdHq8EPMs
+ +EFiy1YPE3/g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,328,1583222400"; 
-   d="scan'208";a="432334082"
+   d="scan'208";a="246637655"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 28 Apr 2020 14:36:03 -0700
+  by orsmga007.jf.intel.com with ESMTP; 28 Apr 2020 14:36:03 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jTXta-0002E3-RG; Wed, 29 Apr 2020 05:36:02 +0800
-Date:   Wed, 29 Apr 2020 05:35:35 +0800
+        id 1jTXta-0002CE-MK; Wed, 29 Apr 2020 05:36:02 +0800
+Date:   Wed, 29 Apr 2020 05:35:15 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:renesas-fixes-for-v5.7] BUILD SUCCESS
- b704fc1da9b84d7145db550a13e2b7140f6b419b
-Message-ID: <5ea8a1a7.aW1hHyUOY1tKljuj%lkp@intel.com>
+Subject: [renesas-devel:master] BUILD SUCCESS
+ b9454e2093aaf76ab4aa7e133fb2b410b516fa18
+Message-ID: <5ea8a193.BmZ1W2skY5hKLOeO%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,13 +52,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-fixes-for-v5.7
-branch HEAD: b704fc1da9b84d7145db550a13e2b7140f6b419b  ARM: dts: r7s9210: Remove bogus clock-names from OSTM nodes
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
+branch HEAD: b9454e2093aaf76ab4aa7e133fb2b410b516fa18  Merge branch 'renesas-next' into renesas-devel
 
-elapsed time: 483m
+elapsed time: 482m
 
-configs tested: 163
-configs skipped: 153
+configs tested: 161
+configs skipped: 0
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -80,18 +80,18 @@ arm                        multi_v7_defconfig
 sparc                            allyesconfig
 csky                                defconfig
 sparc64                          allyesconfig
-um                             i386_defconfig
-m68k                             allmodconfig
-sparc64                          allmodconfig
+mips                       capcella_defconfig
+microblaze                      mmu_defconfig
 mips                         tb0287_defconfig
-ia64                              allnoconfig
-i386                              allnoconfig
+m68k                             allmodconfig
+ia64                             allmodconfig
 i386                             allyesconfig
+i386                              allnoconfig
 i386                             alldefconfig
 i386                                defconfig
 i386                              debian-10.3
-ia64                             allmodconfig
 ia64                                defconfig
+ia64                              allnoconfig
 ia64                        generic_defconfig
 ia64                          tiger_defconfig
 ia64                         bigsur_defconfig
@@ -119,9 +119,14 @@ arc                              allyesconfig
 powerpc                             defconfig
 powerpc                       ppc64_defconfig
 powerpc                          rhel-kconfig
-microblaze                      mmu_defconfig
 microblaze                    nommu_defconfig
 powerpc                           allnoconfig
+mips                malta_kvm_guest_defconfig
+mips                           ip32_defconfig
+mips                  decstation_64_defconfig
+mips                      loongson3_defconfig
+mips                          ath79_defconfig
+mips                        bcm63xx_defconfig
 mips                      fuloong2e_defconfig
 mips                      malta_kvm_defconfig
 mips                            ar7_defconfig
@@ -130,13 +135,6 @@ mips                         64r6el_defconfig
 mips                              allnoconfig
 mips                           32r2_defconfig
 mips                             allmodconfig
-mips                malta_kvm_guest_defconfig
-mips                       capcella_defconfig
-mips                           ip32_defconfig
-mips                  decstation_64_defconfig
-mips                      loongson3_defconfig
-mips                          ath79_defconfig
-mips                        bcm63xx_defconfig
 parisc                            allnoconfig
 parisc                generic-64bit_defconfig
 parisc                generic-32bit_defconfig
@@ -191,11 +189,9 @@ x86_64               randconfig-h003-20200428
 x86_64               randconfig-h002-20200428
 i386                 randconfig-h001-20200428
 i386                 randconfig-h002-20200428
-sparc                randconfig-a001-20200428
 ia64                 randconfig-a001-20200428
 powerpc              randconfig-a001-20200428
 arm64                randconfig-a001-20200428
-arc                  randconfig-a001-20200428
 riscv                            allyesconfig
 riscv                    nommu_virt_defconfig
 riscv                             allnoconfig
@@ -217,7 +213,9 @@ sh                                allnoconfig
 sparc                               defconfig
 sparc64                             defconfig
 sparc64                           allnoconfig
+sparc64                          allmodconfig
 um                           x86_64_defconfig
+um                             i386_defconfig
 um                                  defconfig
 x86_64                                   rhel
 x86_64                               rhel-7.6
