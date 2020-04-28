@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D18C83001
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 00:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D095C83002
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 02:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C158D2078C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 00:18:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D929206E2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 02:01:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726357AbgD1ASv (ORCPT
+        id S1726251AbgD1CBy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 27 Apr 2020 20:18:51 -0400
-Received: from mga12.intel.com ([192.55.52.136]:46009 "EHLO mga12.intel.com"
+        Mon, 27 Apr 2020 22:01:54 -0400
+Received: from mga17.intel.com ([192.55.52.151]:61272 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726016AbgD1ASv (ORCPT
+        id S1726233AbgD1CBx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Apr 2020 20:18:51 -0400
-IronPort-SDR: kNN9yKm8J7E8GEvpibcm7iH8veeMEYMjT04QZurj1oyS7EoaIQ+tRjv3g44YUutWynpgannw4l
- bQBlt7vXkWig==
+        Mon, 27 Apr 2020 22:01:53 -0400
+IronPort-SDR: ILg2PfNbXe9BZ1+3jfUi4UIKllTL+tMMTNqV9vVaNUk94GIvy2lIVXSQ5P6vCqD81Kp+q3d3pZ
+ 1KP/ypNOuZuA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 17:18:50 -0700
-IronPort-SDR: WAmvAROF+xHb0h+5sSlKiZT+hep5Kp57zpBuhBHmRqtJRGHKJMy1XMG74bN+jRt3yelGeH/zwO
- SbsETQXZJ4Gg==
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Apr 2020 19:01:52 -0700
+IronPort-SDR: OycYZOcrFFZstYz/kgARO+TOyMSHABWO68vg9zkIM8pMUNJ1J7DvWiDlU7MSYNvzCISJE5Jte9
+ mUIGsm7h1mtA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.73,325,1583222400"; 
-   d="scan'208";a="431979872"
+X-IronPort-AV: E=Sophos;i="5.73,326,1583222400"; 
+   d="scan'208";a="302573925"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 27 Apr 2020 17:18:48 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 27 Apr 2020 19:01:51 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jTDxY-0009UE-7v; Tue, 28 Apr 2020 08:18:48 +0800
-Date:   Tue, 28 Apr 2020 08:18:23 +0800
+        id 1jTFZH-0003vC-2W; Tue, 28 Apr 2020 10:01:51 +0800
+Date:   Tue, 28 Apr 2020 10:01:16 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- 3b00933301fc465d966fa1f83274dff95e82046a
-Message-ID: <5ea7764f.0rKOIQlvc/fyK4Zr%lkp@intel.com>
+Subject: [renesas-devel:renesas-arm-dt-for-v5.8] BUILD SUCCESS
+ cf8ae446bbcbf5c48214eb7ddaa6ac6e12f4633d
+Message-ID: <5ea78e6c.P+DdEBe53QwcHbRs%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,17 +52,23 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  next
-branch HEAD: 3b00933301fc465d966fa1f83274dff95e82046a  Merge branch 'renesas-arm-dt-for-v5.8' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-arm-dt-for-v5.8
+branch HEAD: cf8ae446bbcbf5c48214eb7ddaa6ac6e12f4633d  arm64: dts: renesas: Fix IOMMU device node names
 
-elapsed time: 783m
+elapsed time: 885m
 
-configs tested: 150
+configs tested: 158
 configs skipped: 159
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
+arm64                            allyesconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm                              allmodconfig
+arm64                             allnoconfig
+arm                               allnoconfig
 arm                           efm32_defconfig
 arm                         at91_dt_defconfig
 arm                        shmobile_defconfig
@@ -71,12 +77,6 @@ arm                          exynos_defconfig
 arm                        multi_v5_defconfig
 arm                           sunxi_defconfig
 arm                        multi_v7_defconfig
-arm64                            allyesconfig
-arm                              allyesconfig
-arm64                            allmodconfig
-arm                              allmodconfig
-arm                               allnoconfig
-arm64                             allnoconfig
 sparc                            allyesconfig
 powerpc                             defconfig
 ia64                                defconfig
@@ -85,20 +85,20 @@ h8300                    h8300h-sim_defconfig
 mips                              allnoconfig
 riscv                             allnoconfig
 i386                                defconfig
-nios2                         3c120_defconfig
-ia64                         bigsur_defconfig
 i386                              allnoconfig
 i386                              debian-10.3
 ia64                             allmodconfig
 ia64                              allnoconfig
 ia64                        generic_defconfig
 ia64                          tiger_defconfig
+ia64                         bigsur_defconfig
 ia64                             allyesconfig
 ia64                             alldefconfig
 nds32                               defconfig
 nds32                             allnoconfig
 csky                                defconfig
 alpha                               defconfig
+nios2                         3c120_defconfig
 nios2                         10m50_defconfig
 c6x                        evmc6678_defconfig
 xtensa                          iss_defconfig
@@ -106,6 +106,14 @@ c6x                              allyesconfig
 xtensa                       common_defconfig
 openrisc                 simple_smp_defconfig
 openrisc                    or1ksim_defconfig
+mips                malta_kvm_guest_defconfig
+mips                         tb0287_defconfig
+mips                       capcella_defconfig
+mips                           ip32_defconfig
+mips                  decstation_64_defconfig
+mips                      loongson3_defconfig
+mips                          ath79_defconfig
+mips                        bcm63xx_defconfig
 mips                      fuloong2e_defconfig
 mips                      malta_kvm_defconfig
 mips                            ar7_defconfig
