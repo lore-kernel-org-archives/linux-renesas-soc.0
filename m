@@ -2,82 +2,121 @@ Return-Path: <SRS0=c8wb=6M=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAC3C83008
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 14:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA92DC83000
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 15:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6818206E2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 14:36:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFF47206D8
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 15:13:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727124AbgD1Oge (ORCPT
+        id S1727879AbgD1PNI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 28 Apr 2020 10:36:34 -0400
-Received: from mail-oo1-f67.google.com ([209.85.161.67]:44484 "EHLO
-        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727122AbgD1Ogc (ORCPT
+        Tue, 28 Apr 2020 11:13:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40860 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727860AbgD1PNI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Apr 2020 10:36:32 -0400
-Received: by mail-oo1-f67.google.com with SMTP id p67so4708853ooa.11;
-        Tue, 28 Apr 2020 07:36:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xxIKi5iDI55wdhi1KIGfVexmNRIE3bS131i3YZ1d/2M=;
-        b=eKEZGQtrFrS9Mij4xvKsSDibwko3kZJrTJ0qxwD0lEwMmyHFYSeZm7YqWsEZucKN9a
-         ik4uxFK/C6YtuW16AV0hIT3KGt8M+7DN91mWM+0Pz1zLiIOP3AePEKCgbOFigG0FNZo0
-         wnVlpnyuSdB9HwkAjfT1neuYwq2cS3KbjxX6yY67e5TUho5TJVnPWha+xwz5t66v+5Ei
-         wZKtVZuE0OoIEtlfcJO0yaAgp8l3uGmsKjZS8B+KGHpZoQt93FlPrkyDWX4GXZSMx3Id
-         fga4LTxc5DcibMJu1emq2XU1lP6+IednnJUM+XxcYeJSPyhRjWGTW2L6LncGHCQcE1QS
-         sn2g==
-X-Gm-Message-State: AGi0PuasGY1vNPWhDYo+hFNhPXOYz1IFNZJZvPRMQabLB+Ykt+A1AqKe
-        4VHQACI5L3mFR/dD8srN86pi+UKokhyLSx9MlfM=
-X-Google-Smtp-Source: APiQypJJHE4iw9q62VxVYdpxPzCPkCktSHmeW9ThpyTpTlpnife/ElAKMojM9kIW5+D41AjYKimV3ZBswLAT6J+OPlU=
-X-Received: by 2002:a4a:eb08:: with SMTP id f8mr23328962ooj.1.1588084591983;
- Tue, 28 Apr 2020 07:36:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200428141716.87958-1-weiyongjun1@huawei.com>
-In-Reply-To: <20200428141716.87958-1-weiyongjun1@huawei.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 28 Apr 2020 16:36:19 +0200
-Message-ID: <CAMuHMdU0Chy6vmHBc6xqKZ3uQ=3NxZeZ7gt7FvCOLWh--Gcxdg@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/rcar-du: Fix return value check in rcar_du_cmm_init()
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 28 Apr 2020 11:13:08 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D637C03C1AB
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 28 Apr 2020 08:13:07 -0700 (PDT)
+Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:d03f:8af3:4e83:6587])
+        by andre.telenet-ops.be with bizsmtp
+        id YFD42201327aUyk01FD4XE; Tue, 28 Apr 2020 17:13:05 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jTRuz-0005Hr-Mh
+        for linux-renesas-soc@vger.kernel.org; Tue, 28 Apr 2020 17:13:05 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jTRuz-0008BE-KG
+        for linux-renesas-soc@vger.kernel.org; Tue, 28 Apr 2020 17:13:05 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2020-04-28-v5.7-rc3
+Date:   Tue, 28 Apr 2020 17:13:05 +0200
+Message-Id: <20200428151305.31400-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Apr 28, 2020 at 4:16 PM Wei Yongjun <weiyongjun1@huawei.com> wrote:
-> In case of error, the function of_parse_phandle()/of_find_device_by_node()
-> returns NULL pointer not ERR_PTR(). The IS_ERR() test in the return value
-> check should be replaced with NULL test
->
-> Fixes: 8de707aeb452 ("drm: rcar-du: kms: Initialize CMM instances")
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+I have pushed renesas-drivers-2020-04-28-v5.7-rc3 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the master branch of my
+renesas-devel.git tree.
+
+Today's version is based on renesas-devel-2020-04-28-v5.7-rc3.
+
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/gpio-aggregator-v6
+  - git://git.ragnatech.se/linux#for-renesas-drivers
+
+Included fixes:
+  - driver core: Revert default driver_deferred_probe_timeout value to 0
+  - driver core: Ensure wait_for_device_probe() waits until the deferred_probe_timeout fires
+  - ARM: shmobile: defconfig: Update shmobile_defconfig
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#timers/drivers/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/kishon/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
 
 Gr{oetje,eeting}s,
 
-                        Geert
-
+						Geert
 
 --
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							    -- Linus Torvalds
