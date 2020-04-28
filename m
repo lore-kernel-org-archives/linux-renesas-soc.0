@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8324CC83008
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 21:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE2EC8300A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 21:36:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68AF320787
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 21:36:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35EB820775
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 28 Apr 2020 21:36:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbgD1VgH (ORCPT
+        id S1726688AbgD1VgI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 28 Apr 2020 17:36:07 -0400
-Received: from mga17.intel.com ([192.55.52.151]:3103 "EHLO mga17.intel.com"
+        Tue, 28 Apr 2020 17:36:08 -0400
+Received: from mga04.intel.com ([192.55.52.120]:55265 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726509AbgD1VgG (ORCPT
+        id S1726587AbgD1VgH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Apr 2020 17:36:06 -0400
-IronPort-SDR: gIyNCkz0pIRXjG/LAWmK/RpBGPi+XmE+2Tml2nmv2aYM7q10Uydoy0uMgFrYKsndRX1vQ4CKSW
- duXlck8TE3gg==
+        Tue, 28 Apr 2020 17:36:07 -0400
+IronPort-SDR: wKbglW6WKGC0bhO8ENOci1/k9duwBp77ENMtKpXAa0u7yzXJrQYvvNNnL60BMIVJqLYj+3c11F
+ 16hFWaJoy9lA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2020 14:36:05 -0700
-IronPort-SDR: 4I//CpcNtUU2QCqOefOQJdOsw4RHmb/9HHd91+hhYEbaW9FHBenobxyVt89Y3MJ/iLdHq8EPMs
- +EFiy1YPE3/g==
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Apr 2020 14:36:04 -0700
+IronPort-SDR: nQ4eRTYjqkO5WuV4gZZnfDczNBJXaQaTlJmn/s7xbn2Z8o9YEB9Na2XYxvpaeUD4WfP+F7g3Sb
+ gqN6bha9nL/Q==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,328,1583222400"; 
-   d="scan'208";a="246637655"
+   d="scan'208";a="302820387"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 28 Apr 2020 14:36:03 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 28 Apr 2020 14:36:03 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jTXta-0002CE-MK; Wed, 29 Apr 2020 05:36:02 +0800
-Date:   Wed, 29 Apr 2020 05:35:15 +0800
+        id 1jTXta-0002BS-Jp; Wed, 29 Apr 2020 05:36:02 +0800
+Date:   Wed, 29 Apr 2020 05:35:47 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:master] BUILD SUCCESS
- b9454e2093aaf76ab4aa7e133fb2b410b516fa18
-Message-ID: <5ea8a193.BmZ1W2skY5hKLOeO%lkp@intel.com>
+Subject: [renesas-devel:renesas-dt-bindings-for-v5.8] BUILD SUCCESS
+ 9e01d74ce0a154411c8991d6e34f4c470958eac3
+Message-ID: <5ea8a1b3.uO0fJM5niboTMoG+%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,13 +52,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
-branch HEAD: b9454e2093aaf76ab4aa7e133fb2b410b516fa18  Merge branch 'renesas-next' into renesas-devel
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-dt-bindings-for-v5.8
+branch HEAD: 9e01d74ce0a154411c8991d6e34f4c470958eac3  dt-bindings: reset: rcar-rst: Document r8a7742 reset module
 
-elapsed time: 482m
+elapsed time: 483m
 
-configs tested: 161
-configs skipped: 0
+configs tested: 163
+configs skipped: 15
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -86,12 +86,12 @@ mips                         tb0287_defconfig
 m68k                             allmodconfig
 ia64                             allmodconfig
 i386                             allyesconfig
+ia64                              allnoconfig
 i386                              allnoconfig
 i386                             alldefconfig
 i386                                defconfig
 i386                              debian-10.3
 ia64                                defconfig
-ia64                              allnoconfig
 ia64                        generic_defconfig
 ia64                          tiger_defconfig
 ia64                         bigsur_defconfig
@@ -189,9 +189,11 @@ x86_64               randconfig-h003-20200428
 x86_64               randconfig-h002-20200428
 i386                 randconfig-h001-20200428
 i386                 randconfig-h002-20200428
+sparc                randconfig-a001-20200428
 ia64                 randconfig-a001-20200428
 powerpc              randconfig-a001-20200428
 arm64                randconfig-a001-20200428
+arc                  randconfig-a001-20200428
 riscv                            allyesconfig
 riscv                    nommu_virt_defconfig
 riscv                             allnoconfig
