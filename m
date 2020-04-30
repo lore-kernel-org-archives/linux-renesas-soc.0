@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-13.8 required=3.0
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB96C8300F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 Apr 2020 08:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F00C8300E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 Apr 2020 08:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E099B21D7F
+	by mail.kernel.org (Postfix) with ESMTP id 9912521D92
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 30 Apr 2020 08:48:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbgD3Isy (ORCPT
+        id S1726531AbgD3Isy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 30 Apr 2020 04:48:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35710 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726832AbgD3Isy (ORCPT
+        by vger.kernel.org with ESMTP id S1726549AbgD3Isy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 30 Apr 2020 04:48:54 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4D9EC08ED7D
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A64D2C08E859
         for <linux-renesas-soc@vger.kernel.org>; Thu, 30 Apr 2020 01:48:53 -0700 (PDT)
 Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:182a:142e:a95f:66c2])
-        by michel.telenet-ops.be with bizsmtp
-        id Ywor2200a0w8ZL606worug; Thu, 30 Apr 2020 10:48:52 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id Ywor2200Y0w8ZL606worP7; Thu, 30 Apr 2020 10:48:52 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jU4sF-0002lF-KZ; Thu, 30 Apr 2020 10:48:51 +0200
+        id 1jU4sF-0002l9-IR; Thu, 30 Apr 2020 10:48:51 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jU4sF-0000Oa-JG; Thu, 30 Apr 2020 10:48:51 +0200
+        id 1jU4sF-0000OS-H9; Thu, 30 Apr 2020 10:48:51 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: <soc.lore.kernel.org>
 To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
@@ -41,9 +41,9 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 5/5] Renesas DT binding updates for v5.8
-Date:   Thu, 30 Apr 2020 10:48:49 +0200
-Message-Id: <20200430084849.1457-6-geert+renesas@glider.be>
+Subject: [GIT PULL 3/5] Renesas ARM SoC updates for v5.8
+Date:   Thu, 30 Apr 2020 10:48:47 +0200
+Message-Id: <20200430084849.1457-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200430084849.1457-1-geert+renesas@glider.be>
 References: <20200430084849.1457-1-geert+renesas@glider.be>
@@ -58,23 +58,20 @@ The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v5.8-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-soc-for-v5.8-tag1
 
-for you to fetch changes up to 9e01d74ce0a154411c8991d6e34f4c470958eac3:
+for you to fetch changes up to 135e7a156ae2c1a7a1f0c1d44bf2b3daece04bbf:
 
-  dt-bindings: reset: rcar-rst: Document r8a7742 reset module (2020-04-28 10:09:56 +0200)
-
-----------------------------------------------------------------
-Renesas DT binding updates for v5.8
-
-  - Document System Controller (SYSC) and Reset (RST) support for
-    RZ/G1H.
+  ARM: shmobile: r8a7742: Basic SoC support (2020-04-28 10:13:58 +0200)
 
 ----------------------------------------------------------------
-Lad Prabhakar (2):
-      dt-bindings: power: rcar-sysc: Document r8a7742 SYSC binding
-      dt-bindings: reset: rcar-rst: Document r8a7742 reset module
+Renesas ARM SoC updates for v5.8
 
- Documentation/devicetree/bindings/power/renesas,rcar-sysc.yaml | 1 +
- Documentation/devicetree/bindings/reset/renesas,rst.yaml       | 1 +
- 2 files changed, 2 insertions(+)
+  - Add Basic support for the new RZ/G1H SoC.
+
+----------------------------------------------------------------
+Lad Prabhakar (1):
+      ARM: shmobile: r8a7742: Basic SoC support
+
+ arch/arm/mach-shmobile/setup-rcar-gen2.c | 2 ++
+ 1 file changed, 2 insertions(+)
