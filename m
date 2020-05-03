@@ -2,31 +2,32 @@ Return-Path: <SRS0=mPZw=6R=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	UPPERCASE_50_75,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B57D9C4725B
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  3 May 2020 21:47:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EFAC4725A
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  3 May 2020 21:48:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D4452071C
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  3 May 2020 21:47:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAFC5206B9
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  3 May 2020 21:48:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729262AbgECVrg (ORCPT
+        id S1729198AbgECVrU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 3 May 2020 17:47:36 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:40195 "EHLO
+        Sun, 3 May 2020 17:47:20 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:15735 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729255AbgECVrf (ORCPT
+        by vger.kernel.org with ESMTP id S1729104AbgECVrT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 3 May 2020 17:47:35 -0400
+        Sun, 3 May 2020 17:47:19 -0400
 X-IronPort-AV: E=Sophos;i="5.73,349,1583161200"; 
-   d="scan'208";a="46019263"
+   d="scan'208";a="46019248"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 04 May 2020 06:47:33 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 04 May 2020 06:47:17 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1FCD04006DF9;
-        Mon,  4 May 2020 06:47:29 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 28D5D40083D1;
+        Mon,  4 May 2020 06:47:13 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -41,9 +42,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-serial@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 06/10] ARM: dts: r8a7742: Initial SoC device tree
-Date:   Sun,  3 May 2020 22:46:50 +0100
-Message-Id: <1588542414-14826-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 02/10] pinctrl: sh-pfc: r8a7790: Add r8a7742 PFC support
+Date:   Sun,  3 May 2020 22:46:46 +0100
+Message-Id: <1588542414-14826-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1588542414-14826-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1588542414-14826-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -52,412 +53,863 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The initial R8A7742 SoC device tree including CPU[0-8], PMU, PFC,
-CPG, RST, SYSC, ICRAM[0-2], SCIFA2, MMC1, DMAC[0-1], GIC, PRR, timer
-and the required clock descriptions.
+Renesas RZ/G1H (R8A7742) is pin compatible with R-Car H2 (R8A7790),
+however it doesn't have several automotive specific peripherals. Add
+a r8a7790 specific pin groups/functions along with common pin
+groups/functions for supporting both r8a7790 and r8a7742 SoC.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- arch/arm/boot/dts/r8a7742.dtsi | 389 +++++++++++++++++++++++++++++++++
- 1 file changed, 389 insertions(+)
- create mode 100644 arch/arm/boot/dts/r8a7742.dtsi
+ drivers/pinctrl/sh-pfc/Kconfig       |   4 +
+ drivers/pinctrl/sh-pfc/Makefile      |   1 +
+ drivers/pinctrl/sh-pfc/core.c        |   6 +
+ drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 744 ++++++++++++++-------------
+ drivers/pinctrl/sh-pfc/sh_pfc.h      |   1 +
+ 5 files changed, 404 insertions(+), 352 deletions(-)
 
-diff --git a/arch/arm/boot/dts/r8a7742.dtsi b/arch/arm/boot/dts/r8a7742.dtsi
-new file mode 100644
-index 000000000000..8d64cd0a2137
---- /dev/null
-+++ b/arch/arm/boot/dts/r8a7742.dtsi
-@@ -0,0 +1,389 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the r8a7742 SoC
-+ *
-+ * Copyright (C) 2020 Renesas Electronics Corp.
-+ */
+diff --git a/drivers/pinctrl/sh-pfc/Kconfig b/drivers/pinctrl/sh-pfc/Kconfig
+index 9552851b96f1..c461a2f1927a 100644
+--- a/drivers/pinctrl/sh-pfc/Kconfig
++++ b/drivers/pinctrl/sh-pfc/Kconfig
+@@ -12,6 +12,7 @@ config PINCTRL_SH_PFC
+ 	select PINCTRL_PFC_EMEV2 if ARCH_EMEV2
+ 	select PINCTRL_PFC_R8A73A4 if ARCH_R8A73A4
+ 	select PINCTRL_PFC_R8A7740 if ARCH_R8A7740
++	select PINCTRL_PFC_R8A7742 if ARCH_R8A7742
+ 	select PINCTRL_PFC_R8A7743 if ARCH_R8A7743
+ 	select PINCTRL_PFC_R8A7744 if ARCH_R8A7744
+ 	select PINCTRL_PFC_R8A7745 if ARCH_R8A7745
+@@ -74,6 +75,9 @@ config PINCTRL_PFC_R8A7740
+ 	bool "R-Mobile A1 pin control support" if COMPILE_TEST
+ 	select PINCTRL_SH_PFC_GPIO
+ 
++config PINCTRL_PFC_R8A7742
++	bool "RZ/G1H pin control support" if COMPILE_TEST
 +
-+#include <dt-bindings/clock/r8a7742-cpg-mssr.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/power/r8a7742-sysc.h>
+ config PINCTRL_PFC_R8A7743
+ 	bool "RZ/G1M pin control support" if COMPILE_TEST
+ 
+diff --git a/drivers/pinctrl/sh-pfc/Makefile b/drivers/pinctrl/sh-pfc/Makefile
+index 9ebe321d24c4..3855d82069c9 100644
+--- a/drivers/pinctrl/sh-pfc/Makefile
++++ b/drivers/pinctrl/sh-pfc/Makefile
+@@ -4,6 +4,7 @@ obj-$(CONFIG_PINCTRL_SH_PFC_GPIO)	+= gpio.o
+ obj-$(CONFIG_PINCTRL_PFC_EMEV2)	+= pfc-emev2.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A73A4)	+= pfc-r8a73a4.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A7740)	+= pfc-r8a7740.o
++obj-$(CONFIG_PINCTRL_PFC_R8A7742)	+= pfc-r8a7790.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A7743)	+= pfc-r8a7791.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A7744)	+= pfc-r8a7791.o
+ obj-$(CONFIG_PINCTRL_PFC_R8A7745)	+= pfc-r8a7794.o
+diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
+index a2e19efa26e3..f368383cba61 100644
+--- a/drivers/pinctrl/sh-pfc/core.c
++++ b/drivers/pinctrl/sh-pfc/core.c
+@@ -485,6 +485,12 @@ static const struct of_device_id sh_pfc_of_table[] = {
+ 		.data = &r8a7740_pinmux_info,
+ 	},
+ #endif
++#ifdef CONFIG_PINCTRL_PFC_R8A7742
++	{
++		.compatible = "renesas,pfc-r8a7742",
++		.data = &r8a7742_pinmux_info,
++	},
++#endif
+ #ifdef CONFIG_PINCTRL_PFC_R8A7743
+ 	{
+ 		.compatible = "renesas,pfc-r8a7743",
+diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+index 3366ed561cce..5b120549c6e9 100644
+--- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
++++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
+@@ -3938,297 +3938,304 @@ static const unsigned int vin3_clk_mux[] = {
+ 	VI3_CLK_MARK,
+ };
+ 
+-static const struct sh_pfc_pin_group pinmux_groups[] = {
+-	SH_PFC_PIN_GROUP(audio_clk_a),
+-	SH_PFC_PIN_GROUP(audio_clk_b),
+-	SH_PFC_PIN_GROUP(audio_clk_c),
+-	SH_PFC_PIN_GROUP(audio_clkout),
+-	SH_PFC_PIN_GROUP(audio_clkout_b),
+-	SH_PFC_PIN_GROUP(audio_clkout_c),
+-	SH_PFC_PIN_GROUP(audio_clkout_d),
+-	SH_PFC_PIN_GROUP(avb_link),
+-	SH_PFC_PIN_GROUP(avb_magic),
+-	SH_PFC_PIN_GROUP(avb_phy_int),
+-	SH_PFC_PIN_GROUP(avb_mdio),
+-	SH_PFC_PIN_GROUP(avb_mii),
+-	SH_PFC_PIN_GROUP(avb_gmii),
+-	SH_PFC_PIN_GROUP(du_rgb666),
+-	SH_PFC_PIN_GROUP(du_rgb888),
+-	SH_PFC_PIN_GROUP(du_clk_out_0),
+-	SH_PFC_PIN_GROUP(du_clk_out_1),
+-	SH_PFC_PIN_GROUP(du_sync_0),
+-	SH_PFC_PIN_GROUP(du_sync_1),
+-	SH_PFC_PIN_GROUP(du_cde),
+-	SH_PFC_PIN_GROUP(du0_clk_in),
+-	SH_PFC_PIN_GROUP(du1_clk_in),
+-	SH_PFC_PIN_GROUP(du2_clk_in),
+-	SH_PFC_PIN_GROUP(eth_link),
+-	SH_PFC_PIN_GROUP(eth_magic),
+-	SH_PFC_PIN_GROUP(eth_mdio),
+-	SH_PFC_PIN_GROUP(eth_rmii),
+-	SH_PFC_PIN_GROUP(hscif0_data),
+-	SH_PFC_PIN_GROUP(hscif0_clk),
+-	SH_PFC_PIN_GROUP(hscif0_ctrl),
+-	SH_PFC_PIN_GROUP(hscif0_data_b),
+-	SH_PFC_PIN_GROUP(hscif0_ctrl_b),
+-	SH_PFC_PIN_GROUP(hscif0_data_c),
+-	SH_PFC_PIN_GROUP(hscif0_ctrl_c),
+-	SH_PFC_PIN_GROUP(hscif0_data_d),
+-	SH_PFC_PIN_GROUP(hscif0_ctrl_d),
+-	SH_PFC_PIN_GROUP(hscif0_data_e),
+-	SH_PFC_PIN_GROUP(hscif0_ctrl_e),
+-	SH_PFC_PIN_GROUP(hscif0_data_f),
+-	SH_PFC_PIN_GROUP(hscif0_ctrl_f),
+-	SH_PFC_PIN_GROUP(hscif1_data),
+-	SH_PFC_PIN_GROUP(hscif1_clk),
+-	SH_PFC_PIN_GROUP(hscif1_ctrl),
+-	SH_PFC_PIN_GROUP(hscif1_data_b),
+-	SH_PFC_PIN_GROUP(hscif1_clk_b),
+-	SH_PFC_PIN_GROUP(hscif1_ctrl_b),
+-	SH_PFC_PIN_GROUP(i2c0),
+-	SH_PFC_PIN_GROUP(i2c1),
+-	SH_PFC_PIN_GROUP(i2c1_b),
+-	SH_PFC_PIN_GROUP(i2c1_c),
+-	SH_PFC_PIN_GROUP(i2c2),
+-	SH_PFC_PIN_GROUP(i2c2_b),
+-	SH_PFC_PIN_GROUP(i2c2_c),
+-	SH_PFC_PIN_GROUP(i2c2_d),
+-	SH_PFC_PIN_GROUP(i2c2_e),
+-	SH_PFC_PIN_GROUP(i2c3),
+-	SH_PFC_PIN_GROUP(iic0),
+-	SH_PFC_PIN_GROUP(iic1),
+-	SH_PFC_PIN_GROUP(iic1_b),
+-	SH_PFC_PIN_GROUP(iic1_c),
+-	SH_PFC_PIN_GROUP(iic2),
+-	SH_PFC_PIN_GROUP(iic2_b),
+-	SH_PFC_PIN_GROUP(iic2_c),
+-	SH_PFC_PIN_GROUP(iic2_d),
+-	SH_PFC_PIN_GROUP(iic2_e),
+-	SH_PFC_PIN_GROUP(iic3),
+-	SH_PFC_PIN_GROUP(intc_irq0),
+-	SH_PFC_PIN_GROUP(intc_irq1),
+-	SH_PFC_PIN_GROUP(intc_irq2),
+-	SH_PFC_PIN_GROUP(intc_irq3),
+-	SH_PFC_PIN_GROUP(mlb_3pin),
+-	SH_PFC_PIN_GROUP(mmc0_data1),
+-	SH_PFC_PIN_GROUP(mmc0_data4),
+-	SH_PFC_PIN_GROUP(mmc0_data8),
+-	SH_PFC_PIN_GROUP(mmc0_ctrl),
+-	SH_PFC_PIN_GROUP(mmc1_data1),
+-	SH_PFC_PIN_GROUP(mmc1_data4),
+-	SH_PFC_PIN_GROUP(mmc1_data8),
+-	SH_PFC_PIN_GROUP(mmc1_ctrl),
+-	SH_PFC_PIN_GROUP(msiof0_clk),
+-	SH_PFC_PIN_GROUP(msiof0_sync),
+-	SH_PFC_PIN_GROUP(msiof0_ss1),
+-	SH_PFC_PIN_GROUP(msiof0_ss2),
+-	SH_PFC_PIN_GROUP(msiof0_rx),
+-	SH_PFC_PIN_GROUP(msiof0_tx),
+-	SH_PFC_PIN_GROUP(msiof0_clk_b),
+-	SH_PFC_PIN_GROUP(msiof0_ss1_b),
+-	SH_PFC_PIN_GROUP(msiof0_ss2_b),
+-	SH_PFC_PIN_GROUP(msiof0_rx_b),
+-	SH_PFC_PIN_GROUP(msiof0_tx_b),
+-	SH_PFC_PIN_GROUP(msiof1_clk),
+-	SH_PFC_PIN_GROUP(msiof1_sync),
+-	SH_PFC_PIN_GROUP(msiof1_ss1),
+-	SH_PFC_PIN_GROUP(msiof1_ss2),
+-	SH_PFC_PIN_GROUP(msiof1_rx),
+-	SH_PFC_PIN_GROUP(msiof1_tx),
+-	SH_PFC_PIN_GROUP(msiof1_clk_b),
+-	SH_PFC_PIN_GROUP(msiof1_ss1_b),
+-	SH_PFC_PIN_GROUP(msiof1_ss2_b),
+-	SH_PFC_PIN_GROUP(msiof1_rx_b),
+-	SH_PFC_PIN_GROUP(msiof1_tx_b),
+-	SH_PFC_PIN_GROUP(msiof2_clk),
+-	SH_PFC_PIN_GROUP(msiof2_sync),
+-	SH_PFC_PIN_GROUP(msiof2_ss1),
+-	SH_PFC_PIN_GROUP(msiof2_ss2),
+-	SH_PFC_PIN_GROUP(msiof2_rx),
+-	SH_PFC_PIN_GROUP(msiof2_tx),
+-	SH_PFC_PIN_GROUP(msiof3_clk),
+-	SH_PFC_PIN_GROUP(msiof3_sync),
+-	SH_PFC_PIN_GROUP(msiof3_ss1),
+-	SH_PFC_PIN_GROUP(msiof3_ss2),
+-	SH_PFC_PIN_GROUP(msiof3_rx),
+-	SH_PFC_PIN_GROUP(msiof3_tx),
+-	SH_PFC_PIN_GROUP(msiof3_clk_b),
+-	SH_PFC_PIN_GROUP(msiof3_sync_b),
+-	SH_PFC_PIN_GROUP(msiof3_rx_b),
+-	SH_PFC_PIN_GROUP(msiof3_tx_b),
+-	SH_PFC_PIN_GROUP(pwm0),
+-	SH_PFC_PIN_GROUP(pwm0_b),
+-	SH_PFC_PIN_GROUP(pwm1),
+-	SH_PFC_PIN_GROUP(pwm1_b),
+-	SH_PFC_PIN_GROUP(pwm2),
+-	SH_PFC_PIN_GROUP(pwm3),
+-	SH_PFC_PIN_GROUP(pwm4),
+-	SH_PFC_PIN_GROUP(pwm5),
+-	SH_PFC_PIN_GROUP(pwm6),
+-	SH_PFC_PIN_GROUP(qspi_ctrl),
+-	SH_PFC_PIN_GROUP(qspi_data2),
+-	SH_PFC_PIN_GROUP(qspi_data4),
+-	SH_PFC_PIN_GROUP(scif0_data),
+-	SH_PFC_PIN_GROUP(scif0_clk),
+-	SH_PFC_PIN_GROUP(scif0_ctrl),
+-	SH_PFC_PIN_GROUP(scif0_data_b),
+-	SH_PFC_PIN_GROUP(scif1_data),
+-	SH_PFC_PIN_GROUP(scif1_clk),
+-	SH_PFC_PIN_GROUP(scif1_ctrl),
+-	SH_PFC_PIN_GROUP(scif1_data_b),
+-	SH_PFC_PIN_GROUP(scif1_data_c),
+-	SH_PFC_PIN_GROUP(scif1_data_d),
+-	SH_PFC_PIN_GROUP(scif1_clk_d),
+-	SH_PFC_PIN_GROUP(scif1_data_e),
+-	SH_PFC_PIN_GROUP(scif1_clk_e),
+-	SH_PFC_PIN_GROUP(scif2_data),
+-	SH_PFC_PIN_GROUP(scif2_clk),
+-	SH_PFC_PIN_GROUP(scif2_data_b),
+-	SH_PFC_PIN_GROUP(scifa0_data),
+-	SH_PFC_PIN_GROUP(scifa0_clk),
+-	SH_PFC_PIN_GROUP(scifa0_ctrl),
+-	SH_PFC_PIN_GROUP(scifa0_data_b),
+-	SH_PFC_PIN_GROUP(scifa0_clk_b),
+-	SH_PFC_PIN_GROUP(scifa0_ctrl_b),
+-	SH_PFC_PIN_GROUP(scifa1_data),
+-	SH_PFC_PIN_GROUP(scifa1_clk),
+-	SH_PFC_PIN_GROUP(scifa1_ctrl),
+-	SH_PFC_PIN_GROUP(scifa1_data_b),
+-	SH_PFC_PIN_GROUP(scifa1_clk_b),
+-	SH_PFC_PIN_GROUP(scifa1_ctrl_b),
+-	SH_PFC_PIN_GROUP(scifa1_data_c),
+-	SH_PFC_PIN_GROUP(scifa1_clk_c),
+-	SH_PFC_PIN_GROUP(scifa1_ctrl_c),
+-	SH_PFC_PIN_GROUP(scifa1_data_d),
+-	SH_PFC_PIN_GROUP(scifa1_clk_d),
+-	SH_PFC_PIN_GROUP(scifa1_ctrl_d),
+-	SH_PFC_PIN_GROUP(scifa2_data),
+-	SH_PFC_PIN_GROUP(scifa2_clk),
+-	SH_PFC_PIN_GROUP(scifa2_ctrl),
+-	SH_PFC_PIN_GROUP(scifa2_data_b),
+-	SH_PFC_PIN_GROUP(scifa2_data_c),
+-	SH_PFC_PIN_GROUP(scifa2_clk_c),
+-	SH_PFC_PIN_GROUP(scifb0_data),
+-	SH_PFC_PIN_GROUP(scifb0_clk),
+-	SH_PFC_PIN_GROUP(scifb0_ctrl),
+-	SH_PFC_PIN_GROUP(scifb0_data_b),
+-	SH_PFC_PIN_GROUP(scifb0_clk_b),
+-	SH_PFC_PIN_GROUP(scifb0_ctrl_b),
+-	SH_PFC_PIN_GROUP(scifb0_data_c),
+-	SH_PFC_PIN_GROUP(scifb1_data),
+-	SH_PFC_PIN_GROUP(scifb1_clk),
+-	SH_PFC_PIN_GROUP(scifb1_ctrl),
+-	SH_PFC_PIN_GROUP(scifb1_data_b),
+-	SH_PFC_PIN_GROUP(scifb1_clk_b),
+-	SH_PFC_PIN_GROUP(scifb1_ctrl_b),
+-	SH_PFC_PIN_GROUP(scifb1_data_c),
+-	SH_PFC_PIN_GROUP(scifb1_data_d),
+-	SH_PFC_PIN_GROUP(scifb1_data_e),
+-	SH_PFC_PIN_GROUP(scifb1_clk_e),
+-	SH_PFC_PIN_GROUP(scifb1_data_f),
+-	SH_PFC_PIN_GROUP(scifb1_data_g),
+-	SH_PFC_PIN_GROUP(scifb1_clk_g),
+-	SH_PFC_PIN_GROUP(scifb2_data),
+-	SH_PFC_PIN_GROUP(scifb2_clk),
+-	SH_PFC_PIN_GROUP(scifb2_ctrl),
+-	SH_PFC_PIN_GROUP(scifb2_data_b),
+-	SH_PFC_PIN_GROUP(scifb2_clk_b),
+-	SH_PFC_PIN_GROUP(scifb2_ctrl_b),
+-	SH_PFC_PIN_GROUP(scifb2_data_c),
+-	SH_PFC_PIN_GROUP(scif_clk),
+-	SH_PFC_PIN_GROUP(scif_clk_b),
+-	SH_PFC_PIN_GROUP(sdhi0_data1),
+-	SH_PFC_PIN_GROUP(sdhi0_data4),
+-	SH_PFC_PIN_GROUP(sdhi0_ctrl),
+-	SH_PFC_PIN_GROUP(sdhi0_cd),
+-	SH_PFC_PIN_GROUP(sdhi0_wp),
+-	SH_PFC_PIN_GROUP(sdhi1_data1),
+-	SH_PFC_PIN_GROUP(sdhi1_data4),
+-	SH_PFC_PIN_GROUP(sdhi1_ctrl),
+-	SH_PFC_PIN_GROUP(sdhi1_cd),
+-	SH_PFC_PIN_GROUP(sdhi1_wp),
+-	SH_PFC_PIN_GROUP(sdhi2_data1),
+-	SH_PFC_PIN_GROUP(sdhi2_data4),
+-	SH_PFC_PIN_GROUP(sdhi2_ctrl),
+-	SH_PFC_PIN_GROUP(sdhi2_cd),
+-	SH_PFC_PIN_GROUP(sdhi2_wp),
+-	SH_PFC_PIN_GROUP(sdhi3_data1),
+-	SH_PFC_PIN_GROUP(sdhi3_data4),
+-	SH_PFC_PIN_GROUP(sdhi3_ctrl),
+-	SH_PFC_PIN_GROUP(sdhi3_cd),
+-	SH_PFC_PIN_GROUP(sdhi3_wp),
+-	SH_PFC_PIN_GROUP(ssi0_data),
+-	SH_PFC_PIN_GROUP(ssi0129_ctrl),
+-	SH_PFC_PIN_GROUP(ssi1_data),
+-	SH_PFC_PIN_GROUP(ssi1_ctrl),
+-	SH_PFC_PIN_GROUP(ssi2_data),
+-	SH_PFC_PIN_GROUP(ssi2_ctrl),
+-	SH_PFC_PIN_GROUP(ssi3_data),
+-	SH_PFC_PIN_GROUP(ssi34_ctrl),
+-	SH_PFC_PIN_GROUP(ssi4_data),
+-	SH_PFC_PIN_GROUP(ssi4_ctrl),
+-	SH_PFC_PIN_GROUP(ssi5),
+-	SH_PFC_PIN_GROUP(ssi5_b),
+-	SH_PFC_PIN_GROUP(ssi5_c),
+-	SH_PFC_PIN_GROUP(ssi6),
+-	SH_PFC_PIN_GROUP(ssi6_b),
+-	SH_PFC_PIN_GROUP(ssi7_data),
+-	SH_PFC_PIN_GROUP(ssi7_b_data),
+-	SH_PFC_PIN_GROUP(ssi7_c_data),
+-	SH_PFC_PIN_GROUP(ssi78_ctrl),
+-	SH_PFC_PIN_GROUP(ssi78_b_ctrl),
+-	SH_PFC_PIN_GROUP(ssi78_c_ctrl),
+-	SH_PFC_PIN_GROUP(ssi8_data),
+-	SH_PFC_PIN_GROUP(ssi8_b_data),
+-	SH_PFC_PIN_GROUP(ssi8_c_data),
+-	SH_PFC_PIN_GROUP(ssi9_data),
+-	SH_PFC_PIN_GROUP(ssi9_ctrl),
+-	SH_PFC_PIN_GROUP(tpu0_to0),
+-	SH_PFC_PIN_GROUP(tpu0_to1),
+-	SH_PFC_PIN_GROUP(tpu0_to2),
+-	SH_PFC_PIN_GROUP(tpu0_to3),
+-	SH_PFC_PIN_GROUP(usb0),
+-	SH_PFC_PIN_GROUP(usb0_ovc_vbus),
+-	SH_PFC_PIN_GROUP(usb1),
+-	SH_PFC_PIN_GROUP(usb2),
+-	VIN_DATA_PIN_GROUP(vin0_data, 24),
+-	VIN_DATA_PIN_GROUP(vin0_data, 20),
+-	SH_PFC_PIN_GROUP(vin0_data18),
+-	VIN_DATA_PIN_GROUP(vin0_data, 16),
+-	VIN_DATA_PIN_GROUP(vin0_data, 12),
+-	VIN_DATA_PIN_GROUP(vin0_data, 10),
+-	VIN_DATA_PIN_GROUP(vin0_data, 8),
+-	VIN_DATA_PIN_GROUP(vin0_data, 4),
+-	SH_PFC_PIN_GROUP(vin0_sync),
+-	SH_PFC_PIN_GROUP(vin0_field),
+-	SH_PFC_PIN_GROUP(vin0_clkenb),
+-	SH_PFC_PIN_GROUP(vin0_clk),
+-	VIN_DATA_PIN_GROUP(vin1_data, 24),
+-	VIN_DATA_PIN_GROUP(vin1_data, 20),
+-	SH_PFC_PIN_GROUP(vin1_data18),
+-	VIN_DATA_PIN_GROUP(vin1_data, 16),
+-	VIN_DATA_PIN_GROUP(vin1_data, 12),
+-	VIN_DATA_PIN_GROUP(vin1_data, 10),
+-	VIN_DATA_PIN_GROUP(vin1_data, 8),
+-	VIN_DATA_PIN_GROUP(vin1_data, 4),
+-	SH_PFC_PIN_GROUP(vin1_sync),
+-	SH_PFC_PIN_GROUP(vin1_field),
+-	SH_PFC_PIN_GROUP(vin1_clkenb),
+-	SH_PFC_PIN_GROUP(vin1_clk),
+-	VIN_DATA_PIN_GROUP(vin2_data, 24),
+-	SH_PFC_PIN_GROUP(vin2_data18),
+-	VIN_DATA_PIN_GROUP(vin2_data, 16),
+-	VIN_DATA_PIN_GROUP(vin2_data, 8),
+-	VIN_DATA_PIN_GROUP(vin2_data, 4),
+-	SH_PFC_PIN_GROUP(vin2_sync),
+-	SH_PFC_PIN_GROUP(vin2_field),
+-	SH_PFC_PIN_GROUP(vin2_clkenb),
+-	SH_PFC_PIN_GROUP(vin2_clk),
+-	SH_PFC_PIN_GROUP(vin3_data8),
+-	SH_PFC_PIN_GROUP(vin3_sync),
+-	SH_PFC_PIN_GROUP(vin3_field),
+-	SH_PFC_PIN_GROUP(vin3_clkenb),
+-	SH_PFC_PIN_GROUP(vin3_clk),
++static const struct {
++	struct sh_pfc_pin_group common[289];
++	struct sh_pfc_pin_group automotive[1];
++} pinmux_groups = {
++	.common = {
++		SH_PFC_PIN_GROUP(audio_clk_a),
++		SH_PFC_PIN_GROUP(audio_clk_b),
++		SH_PFC_PIN_GROUP(audio_clk_c),
++		SH_PFC_PIN_GROUP(audio_clkout),
++		SH_PFC_PIN_GROUP(audio_clkout_b),
++		SH_PFC_PIN_GROUP(audio_clkout_c),
++		SH_PFC_PIN_GROUP(audio_clkout_d),
++		SH_PFC_PIN_GROUP(avb_link),
++		SH_PFC_PIN_GROUP(avb_magic),
++		SH_PFC_PIN_GROUP(avb_phy_int),
++		SH_PFC_PIN_GROUP(avb_mdio),
++		SH_PFC_PIN_GROUP(avb_mii),
++		SH_PFC_PIN_GROUP(avb_gmii),
++		SH_PFC_PIN_GROUP(du_rgb666),
++		SH_PFC_PIN_GROUP(du_rgb888),
++		SH_PFC_PIN_GROUP(du_clk_out_0),
++		SH_PFC_PIN_GROUP(du_clk_out_1),
++		SH_PFC_PIN_GROUP(du_sync_0),
++		SH_PFC_PIN_GROUP(du_sync_1),
++		SH_PFC_PIN_GROUP(du_cde),
++		SH_PFC_PIN_GROUP(du0_clk_in),
++		SH_PFC_PIN_GROUP(du1_clk_in),
++		SH_PFC_PIN_GROUP(du2_clk_in),
++		SH_PFC_PIN_GROUP(eth_link),
++		SH_PFC_PIN_GROUP(eth_magic),
++		SH_PFC_PIN_GROUP(eth_mdio),
++		SH_PFC_PIN_GROUP(eth_rmii),
++		SH_PFC_PIN_GROUP(hscif0_data),
++		SH_PFC_PIN_GROUP(hscif0_clk),
++		SH_PFC_PIN_GROUP(hscif0_ctrl),
++		SH_PFC_PIN_GROUP(hscif0_data_b),
++		SH_PFC_PIN_GROUP(hscif0_ctrl_b),
++		SH_PFC_PIN_GROUP(hscif0_data_c),
++		SH_PFC_PIN_GROUP(hscif0_ctrl_c),
++		SH_PFC_PIN_GROUP(hscif0_data_d),
++		SH_PFC_PIN_GROUP(hscif0_ctrl_d),
++		SH_PFC_PIN_GROUP(hscif0_data_e),
++		SH_PFC_PIN_GROUP(hscif0_ctrl_e),
++		SH_PFC_PIN_GROUP(hscif0_data_f),
++		SH_PFC_PIN_GROUP(hscif0_ctrl_f),
++		SH_PFC_PIN_GROUP(hscif1_data),
++		SH_PFC_PIN_GROUP(hscif1_clk),
++		SH_PFC_PIN_GROUP(hscif1_ctrl),
++		SH_PFC_PIN_GROUP(hscif1_data_b),
++		SH_PFC_PIN_GROUP(hscif1_clk_b),
++		SH_PFC_PIN_GROUP(hscif1_ctrl_b),
++		SH_PFC_PIN_GROUP(i2c0),
++		SH_PFC_PIN_GROUP(i2c1),
++		SH_PFC_PIN_GROUP(i2c1_b),
++		SH_PFC_PIN_GROUP(i2c1_c),
++		SH_PFC_PIN_GROUP(i2c2),
++		SH_PFC_PIN_GROUP(i2c2_b),
++		SH_PFC_PIN_GROUP(i2c2_c),
++		SH_PFC_PIN_GROUP(i2c2_d),
++		SH_PFC_PIN_GROUP(i2c2_e),
++		SH_PFC_PIN_GROUP(i2c3),
++		SH_PFC_PIN_GROUP(iic0),
++		SH_PFC_PIN_GROUP(iic1),
++		SH_PFC_PIN_GROUP(iic1_b),
++		SH_PFC_PIN_GROUP(iic1_c),
++		SH_PFC_PIN_GROUP(iic2),
++		SH_PFC_PIN_GROUP(iic2_b),
++		SH_PFC_PIN_GROUP(iic2_c),
++		SH_PFC_PIN_GROUP(iic2_d),
++		SH_PFC_PIN_GROUP(iic2_e),
++		SH_PFC_PIN_GROUP(iic3),
++		SH_PFC_PIN_GROUP(intc_irq0),
++		SH_PFC_PIN_GROUP(intc_irq1),
++		SH_PFC_PIN_GROUP(intc_irq2),
++		SH_PFC_PIN_GROUP(intc_irq3),
++		SH_PFC_PIN_GROUP(mmc0_data1),
++		SH_PFC_PIN_GROUP(mmc0_data4),
++		SH_PFC_PIN_GROUP(mmc0_data8),
++		SH_PFC_PIN_GROUP(mmc0_ctrl),
++		SH_PFC_PIN_GROUP(mmc1_data1),
++		SH_PFC_PIN_GROUP(mmc1_data4),
++		SH_PFC_PIN_GROUP(mmc1_data8),
++		SH_PFC_PIN_GROUP(mmc1_ctrl),
++		SH_PFC_PIN_GROUP(msiof0_clk),
++		SH_PFC_PIN_GROUP(msiof0_sync),
++		SH_PFC_PIN_GROUP(msiof0_ss1),
++		SH_PFC_PIN_GROUP(msiof0_ss2),
++		SH_PFC_PIN_GROUP(msiof0_rx),
++		SH_PFC_PIN_GROUP(msiof0_tx),
++		SH_PFC_PIN_GROUP(msiof0_clk_b),
++		SH_PFC_PIN_GROUP(msiof0_ss1_b),
++		SH_PFC_PIN_GROUP(msiof0_ss2_b),
++		SH_PFC_PIN_GROUP(msiof0_rx_b),
++		SH_PFC_PIN_GROUP(msiof0_tx_b),
++		SH_PFC_PIN_GROUP(msiof1_clk),
++		SH_PFC_PIN_GROUP(msiof1_sync),
++		SH_PFC_PIN_GROUP(msiof1_ss1),
++		SH_PFC_PIN_GROUP(msiof1_ss2),
++		SH_PFC_PIN_GROUP(msiof1_rx),
++		SH_PFC_PIN_GROUP(msiof1_tx),
++		SH_PFC_PIN_GROUP(msiof1_clk_b),
++		SH_PFC_PIN_GROUP(msiof1_ss1_b),
++		SH_PFC_PIN_GROUP(msiof1_ss2_b),
++		SH_PFC_PIN_GROUP(msiof1_rx_b),
++		SH_PFC_PIN_GROUP(msiof1_tx_b),
++		SH_PFC_PIN_GROUP(msiof2_clk),
++		SH_PFC_PIN_GROUP(msiof2_sync),
++		SH_PFC_PIN_GROUP(msiof2_ss1),
++		SH_PFC_PIN_GROUP(msiof2_ss2),
++		SH_PFC_PIN_GROUP(msiof2_rx),
++		SH_PFC_PIN_GROUP(msiof2_tx),
++		SH_PFC_PIN_GROUP(msiof3_clk),
++		SH_PFC_PIN_GROUP(msiof3_sync),
++		SH_PFC_PIN_GROUP(msiof3_ss1),
++		SH_PFC_PIN_GROUP(msiof3_ss2),
++		SH_PFC_PIN_GROUP(msiof3_rx),
++		SH_PFC_PIN_GROUP(msiof3_tx),
++		SH_PFC_PIN_GROUP(msiof3_clk_b),
++		SH_PFC_PIN_GROUP(msiof3_sync_b),
++		SH_PFC_PIN_GROUP(msiof3_rx_b),
++		SH_PFC_PIN_GROUP(msiof3_tx_b),
++		SH_PFC_PIN_GROUP(pwm0),
++		SH_PFC_PIN_GROUP(pwm0_b),
++		SH_PFC_PIN_GROUP(pwm1),
++		SH_PFC_PIN_GROUP(pwm1_b),
++		SH_PFC_PIN_GROUP(pwm2),
++		SH_PFC_PIN_GROUP(pwm3),
++		SH_PFC_PIN_GROUP(pwm4),
++		SH_PFC_PIN_GROUP(pwm5),
++		SH_PFC_PIN_GROUP(pwm6),
++		SH_PFC_PIN_GROUP(qspi_ctrl),
++		SH_PFC_PIN_GROUP(qspi_data2),
++		SH_PFC_PIN_GROUP(qspi_data4),
++		SH_PFC_PIN_GROUP(scif0_data),
++		SH_PFC_PIN_GROUP(scif0_clk),
++		SH_PFC_PIN_GROUP(scif0_ctrl),
++		SH_PFC_PIN_GROUP(scif0_data_b),
++		SH_PFC_PIN_GROUP(scif1_data),
++		SH_PFC_PIN_GROUP(scif1_clk),
++		SH_PFC_PIN_GROUP(scif1_ctrl),
++		SH_PFC_PIN_GROUP(scif1_data_b),
++		SH_PFC_PIN_GROUP(scif1_data_c),
++		SH_PFC_PIN_GROUP(scif1_data_d),
++		SH_PFC_PIN_GROUP(scif1_clk_d),
++		SH_PFC_PIN_GROUP(scif1_data_e),
++		SH_PFC_PIN_GROUP(scif1_clk_e),
++		SH_PFC_PIN_GROUP(scif2_data),
++		SH_PFC_PIN_GROUP(scif2_clk),
++		SH_PFC_PIN_GROUP(scif2_data_b),
++		SH_PFC_PIN_GROUP(scifa0_data),
++		SH_PFC_PIN_GROUP(scifa0_clk),
++		SH_PFC_PIN_GROUP(scifa0_ctrl),
++		SH_PFC_PIN_GROUP(scifa0_data_b),
++		SH_PFC_PIN_GROUP(scifa0_clk_b),
++		SH_PFC_PIN_GROUP(scifa0_ctrl_b),
++		SH_PFC_PIN_GROUP(scifa1_data),
++		SH_PFC_PIN_GROUP(scifa1_clk),
++		SH_PFC_PIN_GROUP(scifa1_ctrl),
++		SH_PFC_PIN_GROUP(scifa1_data_b),
++		SH_PFC_PIN_GROUP(scifa1_clk_b),
++		SH_PFC_PIN_GROUP(scifa1_ctrl_b),
++		SH_PFC_PIN_GROUP(scifa1_data_c),
++		SH_PFC_PIN_GROUP(scifa1_clk_c),
++		SH_PFC_PIN_GROUP(scifa1_ctrl_c),
++		SH_PFC_PIN_GROUP(scifa1_data_d),
++		SH_PFC_PIN_GROUP(scifa1_clk_d),
++		SH_PFC_PIN_GROUP(scifa1_ctrl_d),
++		SH_PFC_PIN_GROUP(scifa2_data),
++		SH_PFC_PIN_GROUP(scifa2_clk),
++		SH_PFC_PIN_GROUP(scifa2_ctrl),
++		SH_PFC_PIN_GROUP(scifa2_data_b),
++		SH_PFC_PIN_GROUP(scifa2_data_c),
++		SH_PFC_PIN_GROUP(scifa2_clk_c),
++		SH_PFC_PIN_GROUP(scifb0_data),
++		SH_PFC_PIN_GROUP(scifb0_clk),
++		SH_PFC_PIN_GROUP(scifb0_ctrl),
++		SH_PFC_PIN_GROUP(scifb0_data_b),
++		SH_PFC_PIN_GROUP(scifb0_clk_b),
++		SH_PFC_PIN_GROUP(scifb0_ctrl_b),
++		SH_PFC_PIN_GROUP(scifb0_data_c),
++		SH_PFC_PIN_GROUP(scifb1_data),
++		SH_PFC_PIN_GROUP(scifb1_clk),
++		SH_PFC_PIN_GROUP(scifb1_ctrl),
++		SH_PFC_PIN_GROUP(scifb1_data_b),
++		SH_PFC_PIN_GROUP(scifb1_clk_b),
++		SH_PFC_PIN_GROUP(scifb1_ctrl_b),
++		SH_PFC_PIN_GROUP(scifb1_data_c),
++		SH_PFC_PIN_GROUP(scifb1_data_d),
++		SH_PFC_PIN_GROUP(scifb1_data_e),
++		SH_PFC_PIN_GROUP(scifb1_clk_e),
++		SH_PFC_PIN_GROUP(scifb1_data_f),
++		SH_PFC_PIN_GROUP(scifb1_data_g),
++		SH_PFC_PIN_GROUP(scifb1_clk_g),
++		SH_PFC_PIN_GROUP(scifb2_data),
++		SH_PFC_PIN_GROUP(scifb2_clk),
++		SH_PFC_PIN_GROUP(scifb2_ctrl),
++		SH_PFC_PIN_GROUP(scifb2_data_b),
++		SH_PFC_PIN_GROUP(scifb2_clk_b),
++		SH_PFC_PIN_GROUP(scifb2_ctrl_b),
++		SH_PFC_PIN_GROUP(scifb2_data_c),
++		SH_PFC_PIN_GROUP(scif_clk),
++		SH_PFC_PIN_GROUP(scif_clk_b),
++		SH_PFC_PIN_GROUP(sdhi0_data1),
++		SH_PFC_PIN_GROUP(sdhi0_data4),
++		SH_PFC_PIN_GROUP(sdhi0_ctrl),
++		SH_PFC_PIN_GROUP(sdhi0_cd),
++		SH_PFC_PIN_GROUP(sdhi0_wp),
++		SH_PFC_PIN_GROUP(sdhi1_data1),
++		SH_PFC_PIN_GROUP(sdhi1_data4),
++		SH_PFC_PIN_GROUP(sdhi1_ctrl),
++		SH_PFC_PIN_GROUP(sdhi1_cd),
++		SH_PFC_PIN_GROUP(sdhi1_wp),
++		SH_PFC_PIN_GROUP(sdhi2_data1),
++		SH_PFC_PIN_GROUP(sdhi2_data4),
++		SH_PFC_PIN_GROUP(sdhi2_ctrl),
++		SH_PFC_PIN_GROUP(sdhi2_cd),
++		SH_PFC_PIN_GROUP(sdhi2_wp),
++		SH_PFC_PIN_GROUP(sdhi3_data1),
++		SH_PFC_PIN_GROUP(sdhi3_data4),
++		SH_PFC_PIN_GROUP(sdhi3_ctrl),
++		SH_PFC_PIN_GROUP(sdhi3_cd),
++		SH_PFC_PIN_GROUP(sdhi3_wp),
++		SH_PFC_PIN_GROUP(ssi0_data),
++		SH_PFC_PIN_GROUP(ssi0129_ctrl),
++		SH_PFC_PIN_GROUP(ssi1_data),
++		SH_PFC_PIN_GROUP(ssi1_ctrl),
++		SH_PFC_PIN_GROUP(ssi2_data),
++		SH_PFC_PIN_GROUP(ssi2_ctrl),
++		SH_PFC_PIN_GROUP(ssi3_data),
++		SH_PFC_PIN_GROUP(ssi34_ctrl),
++		SH_PFC_PIN_GROUP(ssi4_data),
++		SH_PFC_PIN_GROUP(ssi4_ctrl),
++		SH_PFC_PIN_GROUP(ssi5),
++		SH_PFC_PIN_GROUP(ssi5_b),
++		SH_PFC_PIN_GROUP(ssi5_c),
++		SH_PFC_PIN_GROUP(ssi6),
++		SH_PFC_PIN_GROUP(ssi6_b),
++		SH_PFC_PIN_GROUP(ssi7_data),
++		SH_PFC_PIN_GROUP(ssi7_b_data),
++		SH_PFC_PIN_GROUP(ssi7_c_data),
++		SH_PFC_PIN_GROUP(ssi78_ctrl),
++		SH_PFC_PIN_GROUP(ssi78_b_ctrl),
++		SH_PFC_PIN_GROUP(ssi78_c_ctrl),
++		SH_PFC_PIN_GROUP(ssi8_data),
++		SH_PFC_PIN_GROUP(ssi8_b_data),
++		SH_PFC_PIN_GROUP(ssi8_c_data),
++		SH_PFC_PIN_GROUP(ssi9_data),
++		SH_PFC_PIN_GROUP(ssi9_ctrl),
++		SH_PFC_PIN_GROUP(tpu0_to0),
++		SH_PFC_PIN_GROUP(tpu0_to1),
++		SH_PFC_PIN_GROUP(tpu0_to2),
++		SH_PFC_PIN_GROUP(tpu0_to3),
++		SH_PFC_PIN_GROUP(usb0),
++		SH_PFC_PIN_GROUP(usb0_ovc_vbus),
++		SH_PFC_PIN_GROUP(usb1),
++		SH_PFC_PIN_GROUP(usb2),
++		VIN_DATA_PIN_GROUP(vin0_data, 24),
++		VIN_DATA_PIN_GROUP(vin0_data, 20),
++		SH_PFC_PIN_GROUP(vin0_data18),
++		VIN_DATA_PIN_GROUP(vin0_data, 16),
++		VIN_DATA_PIN_GROUP(vin0_data, 12),
++		VIN_DATA_PIN_GROUP(vin0_data, 10),
++		VIN_DATA_PIN_GROUP(vin0_data, 8),
++		VIN_DATA_PIN_GROUP(vin0_data, 4),
++		SH_PFC_PIN_GROUP(vin0_sync),
++		SH_PFC_PIN_GROUP(vin0_field),
++		SH_PFC_PIN_GROUP(vin0_clkenb),
++		SH_PFC_PIN_GROUP(vin0_clk),
++		VIN_DATA_PIN_GROUP(vin1_data, 24),
++		VIN_DATA_PIN_GROUP(vin1_data, 20),
++		SH_PFC_PIN_GROUP(vin1_data18),
++		VIN_DATA_PIN_GROUP(vin1_data, 16),
++		VIN_DATA_PIN_GROUP(vin1_data, 12),
++		VIN_DATA_PIN_GROUP(vin1_data, 10),
++		VIN_DATA_PIN_GROUP(vin1_data, 8),
++		VIN_DATA_PIN_GROUP(vin1_data, 4),
++		SH_PFC_PIN_GROUP(vin1_sync),
++		SH_PFC_PIN_GROUP(vin1_field),
++		SH_PFC_PIN_GROUP(vin1_clkenb),
++		SH_PFC_PIN_GROUP(vin1_clk),
++		VIN_DATA_PIN_GROUP(vin2_data, 24),
++		SH_PFC_PIN_GROUP(vin2_data18),
++		VIN_DATA_PIN_GROUP(vin2_data, 16),
++		VIN_DATA_PIN_GROUP(vin2_data, 8),
++		VIN_DATA_PIN_GROUP(vin2_data, 4),
++		SH_PFC_PIN_GROUP(vin2_sync),
++		SH_PFC_PIN_GROUP(vin2_field),
++		SH_PFC_PIN_GROUP(vin2_clkenb),
++		SH_PFC_PIN_GROUP(vin2_clk),
++		SH_PFC_PIN_GROUP(vin3_data8),
++		SH_PFC_PIN_GROUP(vin3_sync),
++		SH_PFC_PIN_GROUP(vin3_field),
++		SH_PFC_PIN_GROUP(vin3_clkenb),
++		SH_PFC_PIN_GROUP(vin3_clk),
++	},
++	.automotive = {
++		SH_PFC_PIN_GROUP(mlb_3pin),
++	}
+ };
+ 
+ static const char * const audio_clk_groups[] = {
+@@ -4689,63 +4696,70 @@ static const char * const vin3_groups[] = {
+ 	"vin3_clk",
+ };
+ 
+-static const struct sh_pfc_function pinmux_functions[] = {
+-	SH_PFC_FUNCTION(audio_clk),
+-	SH_PFC_FUNCTION(avb),
+-	SH_PFC_FUNCTION(du),
+-	SH_PFC_FUNCTION(du0),
+-	SH_PFC_FUNCTION(du1),
+-	SH_PFC_FUNCTION(du2),
+-	SH_PFC_FUNCTION(eth),
+-	SH_PFC_FUNCTION(hscif0),
+-	SH_PFC_FUNCTION(hscif1),
+-	SH_PFC_FUNCTION(i2c0),
+-	SH_PFC_FUNCTION(i2c1),
+-	SH_PFC_FUNCTION(i2c2),
+-	SH_PFC_FUNCTION(i2c3),
+-	SH_PFC_FUNCTION(iic0),
+-	SH_PFC_FUNCTION(iic1),
+-	SH_PFC_FUNCTION(iic2),
+-	SH_PFC_FUNCTION(iic3),
+-	SH_PFC_FUNCTION(intc),
+-	SH_PFC_FUNCTION(mlb),
+-	SH_PFC_FUNCTION(mmc0),
+-	SH_PFC_FUNCTION(mmc1),
+-	SH_PFC_FUNCTION(msiof0),
+-	SH_PFC_FUNCTION(msiof1),
+-	SH_PFC_FUNCTION(msiof2),
+-	SH_PFC_FUNCTION(msiof3),
+-	SH_PFC_FUNCTION(pwm0),
+-	SH_PFC_FUNCTION(pwm1),
+-	SH_PFC_FUNCTION(pwm2),
+-	SH_PFC_FUNCTION(pwm3),
+-	SH_PFC_FUNCTION(pwm4),
+-	SH_PFC_FUNCTION(pwm5),
+-	SH_PFC_FUNCTION(pwm6),
+-	SH_PFC_FUNCTION(qspi),
+-	SH_PFC_FUNCTION(scif0),
+-	SH_PFC_FUNCTION(scif1),
+-	SH_PFC_FUNCTION(scif2),
+-	SH_PFC_FUNCTION(scifa0),
+-	SH_PFC_FUNCTION(scifa1),
+-	SH_PFC_FUNCTION(scifa2),
+-	SH_PFC_FUNCTION(scifb0),
+-	SH_PFC_FUNCTION(scifb1),
+-	SH_PFC_FUNCTION(scifb2),
+-	SH_PFC_FUNCTION(scif_clk),
+-	SH_PFC_FUNCTION(sdhi0),
+-	SH_PFC_FUNCTION(sdhi1),
+-	SH_PFC_FUNCTION(sdhi2),
+-	SH_PFC_FUNCTION(sdhi3),
+-	SH_PFC_FUNCTION(ssi),
+-	SH_PFC_FUNCTION(tpu0),
+-	SH_PFC_FUNCTION(usb0),
+-	SH_PFC_FUNCTION(usb1),
+-	SH_PFC_FUNCTION(usb2),
+-	SH_PFC_FUNCTION(vin0),
+-	SH_PFC_FUNCTION(vin1),
+-	SH_PFC_FUNCTION(vin2),
+-	SH_PFC_FUNCTION(vin3),
++static const struct {
++	struct sh_pfc_function common[55];
++	struct sh_pfc_function automotive[1];
++} pinmux_functions = {
++	.common = {
++		SH_PFC_FUNCTION(audio_clk),
++		SH_PFC_FUNCTION(avb),
++		SH_PFC_FUNCTION(du),
++		SH_PFC_FUNCTION(du0),
++		SH_PFC_FUNCTION(du1),
++		SH_PFC_FUNCTION(du2),
++		SH_PFC_FUNCTION(eth),
++		SH_PFC_FUNCTION(hscif0),
++		SH_PFC_FUNCTION(hscif1),
++		SH_PFC_FUNCTION(i2c0),
++		SH_PFC_FUNCTION(i2c1),
++		SH_PFC_FUNCTION(i2c2),
++		SH_PFC_FUNCTION(i2c3),
++		SH_PFC_FUNCTION(iic0),
++		SH_PFC_FUNCTION(iic1),
++		SH_PFC_FUNCTION(iic2),
++		SH_PFC_FUNCTION(iic3),
++		SH_PFC_FUNCTION(intc),
++		SH_PFC_FUNCTION(mmc0),
++		SH_PFC_FUNCTION(mmc1),
++		SH_PFC_FUNCTION(msiof0),
++		SH_PFC_FUNCTION(msiof1),
++		SH_PFC_FUNCTION(msiof2),
++		SH_PFC_FUNCTION(msiof3),
++		SH_PFC_FUNCTION(pwm0),
++		SH_PFC_FUNCTION(pwm1),
++		SH_PFC_FUNCTION(pwm2),
++		SH_PFC_FUNCTION(pwm3),
++		SH_PFC_FUNCTION(pwm4),
++		SH_PFC_FUNCTION(pwm5),
++		SH_PFC_FUNCTION(pwm6),
++		SH_PFC_FUNCTION(qspi),
++		SH_PFC_FUNCTION(scif0),
++		SH_PFC_FUNCTION(scif1),
++		SH_PFC_FUNCTION(scif2),
++		SH_PFC_FUNCTION(scifa0),
++		SH_PFC_FUNCTION(scifa1),
++		SH_PFC_FUNCTION(scifa2),
++		SH_PFC_FUNCTION(scifb0),
++		SH_PFC_FUNCTION(scifb1),
++		SH_PFC_FUNCTION(scifb2),
++		SH_PFC_FUNCTION(scif_clk),
++		SH_PFC_FUNCTION(sdhi0),
++		SH_PFC_FUNCTION(sdhi1),
++		SH_PFC_FUNCTION(sdhi2),
++		SH_PFC_FUNCTION(sdhi3),
++		SH_PFC_FUNCTION(ssi),
++		SH_PFC_FUNCTION(tpu0),
++		SH_PFC_FUNCTION(usb0),
++		SH_PFC_FUNCTION(usb1),
++		SH_PFC_FUNCTION(usb2),
++		SH_PFC_FUNCTION(vin0),
++		SH_PFC_FUNCTION(vin1),
++		SH_PFC_FUNCTION(vin2),
++		SH_PFC_FUNCTION(vin3),
++	},
++	.automotive = {
++		SH_PFC_FUNCTION(mlb),
++	}
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+@@ -5736,6 +5750,7 @@ static const struct sh_pfc_soc_operations r8a7790_pinmux_ops = {
+ 	.pin_to_pocctrl = r8a7790_pin_to_pocctrl,
+ };
+ 
++#ifdef CONFIG_PINCTRL_PFC_R8A7790
+ const struct sh_pfc_soc_info r8a7790_pinmux_info = {
+ 	.name = "r8a77900_pfc",
+ 	.ops = &r8a7790_pinmux_ops,
+@@ -5745,13 +5760,38 @@ const struct sh_pfc_soc_info r8a7790_pinmux_info = {
+ 
+ 	.pins = pinmux_pins,
+ 	.nr_pins = ARRAY_SIZE(pinmux_pins),
+-	.groups = pinmux_groups,
+-	.nr_groups = ARRAY_SIZE(pinmux_groups),
+-	.functions = pinmux_functions,
+-	.nr_functions = ARRAY_SIZE(pinmux_functions),
++	.groups = pinmux_groups.common,
++	.nr_groups = ARRAY_SIZE(pinmux_groups.common) +
++		ARRAY_SIZE(pinmux_groups.automotive),
++	.functions = pinmux_functions.common,
++	.nr_functions = ARRAY_SIZE(pinmux_functions.common) +
++		ARRAY_SIZE(pinmux_functions.automotive),
 +
-+/ {
-+	compatible = "renesas,r8a7742";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
++	.cfg_regs = pinmux_config_regs,
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <0>;
-+			clock-frequency = <1400000000>;
-+			clocks = <&cpg CPG_CORE R8A7742_CLK_Z>;
-+			power-domains = <&sysc R8A7742_PD_CA15_CPU0>;
-+			next-level-cache = <&L2_CA15>;
-+			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1400000 1000000>,
-+					   <1225000 1000000>,
-+					   <1050000 1000000>,
-+					   < 875000 1000000>,
-+					   < 700000 1000000>,
-+					   < 350000 1000000>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <1>;
-+			clock-frequency = <1400000000>;
-+			clocks = <&cpg CPG_CORE R8A7742_CLK_Z>;
-+			power-domains = <&sysc R8A7742_PD_CA15_CPU1>;
-+			next-level-cache = <&L2_CA15>;
-+			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1400000 1000000>,
-+					   <1225000 1000000>,
-+					   <1050000 1000000>,
-+					   < 875000 1000000>,
-+					   < 700000 1000000>,
-+					   < 350000 1000000>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <2>;
-+			clock-frequency = <1400000000>;
-+			clocks = <&cpg CPG_CORE R8A7742_CLK_Z>;
-+			power-domains = <&sysc R8A7742_PD_CA15_CPU2>;
-+			next-level-cache = <&L2_CA15>;
-+			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1400000 1000000>,
-+					   <1225000 1000000>,
-+					   <1050000 1000000>,
-+					   < 875000 1000000>,
-+					   < 700000 1000000>,
-+					   < 350000 1000000>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a15";
-+			reg = <3>;
-+			clock-frequency = <1400000000>;
-+			clocks = <&cpg CPG_CORE R8A7742_CLK_Z>;
-+			power-domains = <&sysc R8A7742_PD_CA15_CPU3>;
-+			next-level-cache = <&L2_CA15>;
-+			capacity-dmips-mhz = <1024>;
-+			voltage-tolerance = <1>; /* 1% */
-+			clock-latency = <300000>; /* 300 us */
-+
-+			/* kHz - uV - OPPs unknown yet */
-+			operating-points = <1400000 1000000>,
-+					   <1225000 1000000>,
-+					   <1050000 1000000>,
-+					   < 875000 1000000>,
-+					   < 700000 1000000>,
-+					   < 350000 1000000>;
-+		};
-+
-+		cpu4: cpu@100 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x100>;
-+			clock-frequency = <780000000>;
-+			clocks = <&cpg CPG_CORE R8A7742_CLK_Z2>;
-+			power-domains = <&sysc R8A7742_PD_CA7_CPU0>;
-+			next-level-cache = <&L2_CA7>;
-+		};
-+
-+		cpu5: cpu@101 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x101>;
-+			clock-frequency = <780000000>;
-+			clocks = <&cpg CPG_CORE R8A7742_CLK_Z2>;
-+			power-domains = <&sysc R8A7742_PD_CA7_CPU1>;
-+			next-level-cache = <&L2_CA7>;
-+		};
-+
-+		cpu6: cpu@102 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x102>;
-+			clock-frequency = <780000000>;
-+			clocks = <&cpg CPG_CORE R8A7742_CLK_Z2>;
-+			power-domains = <&sysc R8A7742_PD_CA7_CPU2>;
-+			next-level-cache = <&L2_CA7>;
-+		};
-+
-+		cpu7: cpu@103 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a7";
-+			reg = <0x103>;
-+			clock-frequency = <780000000>;
-+			clocks = <&cpg CPG_CORE R8A7742_CLK_Z2>;
-+			power-domains = <&sysc R8A7742_PD_CA7_CPU3>;
-+			next-level-cache = <&L2_CA7>;
-+		};
-+
-+		L2_CA15: cache-controller-0 {
-+			compatible = "cache";
-+			power-domains = <&sysc R8A7742_PD_CA15_SCU>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+
-+		L2_CA7: cache-controller-1 {
-+			compatible = "cache";
-+			power-domains = <&sysc R8A7742_PD_CA7_SCU>;
-+			cache-unified;
-+			cache-level = <2>;
-+		};
-+	};
-+
-+	/* External root clock */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	pmu-0 {
-+		compatible = "arm,cortex-a15-pmu";
-+		interrupts-extended = <&gic GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 73 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 74 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 75 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
-+	};
-+
-+	pmu-1 {
-+		compatible = "arm,cortex-a7-pmu";
-+		interrupts-extended = <&gic GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 83 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
-+	};
-+
-+	/* External SCIF clock */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board. */
-+		clock-frequency = <0>;
-+	};
-+
-+	soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		pfc: pin-controller@e6060000 {
-+			compatible = "renesas,pfc-r8a7742";
-+			reg = <0 0xe6060000 0 0x250>;
-+		};
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a7742-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x1000>;
-+			clocks = <&extal_clk>, <&usb_extal_clk>;
-+			clock-names = "extal", "usb_extal";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a7742-rst";
-+			reg = <0 0xe6160000 0 0x0100>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a7742-sysc";
-+			reg = <0 0xe6180000 0 0x0200>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		icram0: sram@e63a0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63a0000 0 0x12000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xe63a0000 0x12000>;
-+		};
-+
-+		icram1: sram@e63c0000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe63c0000 0 0x1000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xe63c0000 0x1000>;
-+
-+			smp-sram@0 {
-+				compatible = "renesas,smp-sram";
-+				reg = <0 0x100>;
-+			};
-+		};
-+
-+		icram2: sram@e6300000 {
-+			compatible = "mmio-sram";
-+			reg = <0 0xe6300000 0 0x40000>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0 0xe6300000 0x40000>;
-+		};
-+
-+		scifa2: serial@e6c60000 {
-+			compatible = "renesas,scifa-r8a7742",
-+				     "renesas,rcar-gen2-scifa", "renesas,scifa";
-+			reg = <0 0xe6c60000 0 0x40>;
-+			interrupts = <GIC_SPI 151 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 202>;
-+			clock-names = "fck";
-+			dmas = <&dmac0 0x27>, <&dmac0 0x28>,
-+			       <&dmac1 0x27>, <&dmac1 0x28>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7742_PD_ALWAYS_ON>;
-+			resets = <&cpg 202>;
-+			status = "disabled";
-+		};
-+
-+		mmcif1: mmc@ee220000 {
-+			compatible = "renesas,mmcif-r8a7742",
-+				     "renesas,sh-mmcif";
-+			reg = <0 0xee220000 0 0x80>;
-+			interrupts = <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 305>;
-+			dmas = <&dmac0 0xe1>, <&dmac0 0xe2>,
-+			       <&dmac1 0xe1>, <&dmac1 0xe2>;
-+			dma-names = "tx", "rx", "tx", "rx";
-+			power-domains = <&sysc R8A7742_PD_ALWAYS_ON>;
-+			resets = <&cpg 305>;
-+			reg-io-width = <4>;
-+			status = "disabled";
-+			max-frequency = <97500000>;
-+		};
-+
-+		dmac0: dma-controller@e6700000 {
-+			compatible = "renesas,dmac-r8a7742",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6700000 0 0x20000>;
-+			interrupts = <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 204 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 205 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 210 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 212 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 213 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14";
-+			clocks = <&cpg CPG_MOD 219>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7742_PD_ALWAYS_ON>;
-+			resets = <&cpg 219>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
-+
-+		dmac1: dma-controller@e6720000 {
-+			compatible = "renesas,dmac-r8a7742",
-+				     "renesas,rcar-dmac";
-+			reg = <0 0xe6720000 0 0x20000>;
-+			interrupts = <GIC_SPI 220 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 218 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 219 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 308 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 309 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 310 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 311 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 312 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 313 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "error",
-+					  "ch0", "ch1", "ch2", "ch3",
-+					  "ch4", "ch5", "ch6", "ch7",
-+					  "ch8", "ch9", "ch10", "ch11",
-+					  "ch12", "ch13", "ch14";
-+			clocks = <&cpg CPG_MOD 218>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7742_PD_ALWAYS_ON>;
-+			resets = <&cpg 218>;
-+			#dma-cells = <1>;
-+			dma-channels = <15>;
-+		};
-+
-+		gic: interrupt-controller@f1001000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0 0xf1001000 0 0x1000>, <0 0xf1002000 0 0x2000>,
-+			      <0 0xf1004000 0 0x2000>, <0 0xf1006000 0 0x2000>;
-+			interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_HIGH)>;
-+			clocks = <&cpg CPG_MOD 408>;
-+			clock-names = "clk";
-+			power-domains = <&sysc R8A7742_PD_ALWAYS_ON>;
-+			resets = <&cpg 408>;
-+		};
-+
-+		prr: chipid@ff000044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xff000044 0 4>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv7-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+
-+	/* External USB clock - can be overridden by the board */
-+	usb_extal_clk: usb_extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <48000000>;
-+	};
++	.pinmux_data = pinmux_data,
++	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
 +};
++#endif
++
++#ifdef CONFIG_PINCTRL_PFC_R8A7742
++const struct sh_pfc_soc_info r8a7742_pinmux_info = {
++	.name = "r8a77420_pfc",
++	.ops = &r8a7790_pinmux_ops,
++	.unlock_reg = 0xe6060000, /* PMMR */
++
++	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
++
++	.pins = pinmux_pins,
++	.nr_pins = ARRAY_SIZE(pinmux_pins),
++	.groups = pinmux_groups.common,
++	.nr_groups = ARRAY_SIZE(pinmux_groups.common),
++	.functions = pinmux_functions.common,
++	.nr_functions = ARRAY_SIZE(pinmux_functions.common),
+ 
+ 	.cfg_regs = pinmux_config_regs,
+ 
+ 	.pinmux_data = pinmux_data,
+ 	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
+ };
++#endif
+diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
+index d57e633e99c0..0f013827baf9 100644
+--- a/drivers/pinctrl/sh-pfc/sh_pfc.h
++++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
+@@ -304,6 +304,7 @@ struct sh_pfc_soc_info {
+ extern const struct sh_pfc_soc_info emev2_pinmux_info;
+ extern const struct sh_pfc_soc_info r8a73a4_pinmux_info;
+ extern const struct sh_pfc_soc_info r8a7740_pinmux_info;
++extern const struct sh_pfc_soc_info r8a7742_pinmux_info;
+ extern const struct sh_pfc_soc_info r8a7743_pinmux_info;
+ extern const struct sh_pfc_soc_info r8a7744_pinmux_info;
+ extern const struct sh_pfc_soc_info r8a7745_pinmux_info;
 -- 
 2.17.1
 
