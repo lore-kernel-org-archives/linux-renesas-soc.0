@@ -1,915 +1,148 @@
-Return-Path: <SRS0=mPZw=6R=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=ZlFw=6S=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UPPERCASE_50_75,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EFAC4725A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  3 May 2020 21:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DCC4C3A5A9
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 May 2020 07:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AAFC5206B9
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  3 May 2020 21:48:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1CE12075B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  4 May 2020 07:35:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729198AbgECVrU (ORCPT
+        id S1727088AbgEDHfA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 3 May 2020 17:47:20 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:15735 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729104AbgECVrT (ORCPT
+        Mon, 4 May 2020 03:35:00 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:35821 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726411AbgEDHfA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 3 May 2020 17:47:19 -0400
-X-IronPort-AV: E=Sophos;i="5.73,349,1583161200"; 
-   d="scan'208";a="46019248"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 04 May 2020 06:47:17 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 28D5D40083D1;
-        Mon,  4 May 2020 06:47:13 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 02/10] pinctrl: sh-pfc: r8a7790: Add r8a7742 PFC support
-Date:   Sun,  3 May 2020 22:46:46 +0100
-Message-Id: <1588542414-14826-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1588542414-14826-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1588542414-14826-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Mon, 4 May 2020 03:35:00 -0400
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MPp0l-1jqdGu42tP-00MsxR; Mon, 04 May 2020 09:34:48 +0200
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id D9ED06510C9;
+        Mon,  4 May 2020 07:34:46 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id dUcN9RcOQ6Gr; Mon,  4 May 2020 09:34:46 +0200 (CEST)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 80F0964FBE0;
+        Mon,  4 May 2020 09:34:46 +0200 (CEST)
+Received: from pflmmbl.corp.cetitec.com (10.8.5.34) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Mon, 4 May 2020 09:34:46 +0200
+From:   Matthias Blankertz <matthias.blankertz@cetitec.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jerome Brunet <jbrunet@baylibre.com>
+CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: [RFC PATCH] drm: dw-hdmi-i2s: Workaround for interchannel sample offset
+Date:   Mon, 4 May 2020 09:34:22 +0200
+Message-ID: <20200504073422.7322-1-matthias.blankertz@cetitec.com>
+X-Mailer: git-send-email 2.26.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.8.5.34]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A290D7F536B667464
+X-Provags-ID: V03:K1:OgV8speWiqwUCoBxIRG3cxL3b5yA1H2ttfw7UzEq0x6x2+KVPhd
+ CXsjGXkYCBVde6ROVMy1EGe8uEVUNGJUSAT/3NeoMXYLk8pJu8czKJUJVdiWItSyndNPNtX
+ ZIq/9tB3GLE2Y1z+G3pNpcdsLfgkHJuxlQyzRKwkoeM6KZXcSJYonyns40yEfLcSD9W9BFe
+ sqp5ug1ZgnmH91CDOxr6w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:OZitNiLl6Hs=:T3NY6pV5wPlArxj2mGeotK
+ A79kxdvNg8tgJtnLqyaaMZm5MNUohqLJp8cLQCTcnwoBnO5BDzfA3lpyC0NkIdkvMZBCMU+2u
+ ar0pZ8gmSrTG8uO0hLveccgXNLbEXFck3u0+ZdFknaOMm97XegZ6yKxf5u41KX0aOeN7XrlxY
+ A4RuAuSpMn/nUwrXdheey1IgCSHbg1wCcCfnAVBfBYg+VCEVESUPRa+6Y39HIvu6DaA5YJIDs
+ N4h44W5yqFtRvI49OV2jnHvAmGs7UElZeKx4jxUMFWkXNUh0LrVPzrMw0kjZTx6Cc2FU6Uynm
+ 4xgex7a/zNBj+KbEvo5SKwuZTm3tWrhexKUPQEH6m4m6jWsy5CNu/QbMHGxUqixucoHKXRbDJ
+ TJX7E1dNCtvOyrVqcaJcZLKY8vImW1PKdN8vyG0VYImVRkeUpwNJDFlvqpM51djD2TONRBrZg
+ AufRAezk5TjA1bKhHfStEgvgQ6Gts24GJ2m60+Q8IbVyJjbFs9gsKfgI+3FhlA3qzz1IHUIoD
+ 1Nv1J3fDvOIO1R3ipmNsGC/dZQX2b/OVi/cNczj/n5Y6JOTmbjG81w1eXeUUzrd8LORwzU3Nf
+ wYDy7xInZ9ehZKjPtlyEimOfYNFfaQeaB/Xm9izoVfE19UhQYvyWKqLM4OxhH++cZ+pdosLxP
+ NRSbm+pAnhWbwwNL2ar4rWXMEnnKHc/T8aKC3pC6ubwbxO/Xeq+E55LskYZ8j/+rDebB+mBea
+ gwCNN4ODMV5yWeEOcluwHfSRR6+n3p46LJsfnokHLeVAAdrJgZak9raBc/zZCPbFouPWEEGf0
+ nN3as7C+iVlrSB2DTkg3vacEFhGoGioSE2czMK9RoQEoKKYD6A0KJLvb0xkGaerL38q9ghunD
+ ggTNDMh9x7Ymwqpg1WNg==
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Renesas RZ/G1H (R8A7742) is pin compatible with R-Car H2 (R8A7790),
-however it doesn't have several automotive specific peripherals. Add
-a r8a7790 specific pin groups/functions along with common pin
-groups/functions for supporting both r8a7790 and r8a7742 SoC.
+Add a second reset of the I2S block after the audio parameters are set.
+Without this, it was observed on the R-Car Gen3 platform that in ~50% of
+audio stream starts, the samples on each odd-numbered channel were delayed
+by one sample relative to the even-numbered channels: A stereo test stream
+was sent with a walking ones pattern, that is the data pattern was:
+Sample  Left    Right
+1       0x0001  0x0001
+2       0x0002  0x0002
+3       0x0004  0x0004
+4       0x0008  0x0008
+5       0x0010  0x0010
+etc.
+When the error occurred, the receiving device got the following data:
+Left    Right
+...
+0x0004  0x0002
+0x0008  0x0004
+0x0010  0x0008
+...
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+With the additional reset, the samples were always properly aligned on the
+receiver.
+
+Maybe this relates to the comment of commit 46cecde310bb ("drm/bridge:
+dw-hdmi-i2s: reset audio fifo before applying new params"), but without
+the datasheet it is only speculation.
+
+Signed-off-by: Matthias Blankertz <matthias.blankertz@cetitec.com>
 ---
- drivers/pinctrl/sh-pfc/Kconfig       |   4 +
- drivers/pinctrl/sh-pfc/Makefile      |   1 +
- drivers/pinctrl/sh-pfc/core.c        |   6 +
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 744 ++++++++++++++-------------
- drivers/pinctrl/sh-pfc/sh_pfc.h      |   1 +
- 5 files changed, 404 insertions(+), 352 deletions(-)
 
-diff --git a/drivers/pinctrl/sh-pfc/Kconfig b/drivers/pinctrl/sh-pfc/Kconfig
-index 9552851b96f1..c461a2f1927a 100644
---- a/drivers/pinctrl/sh-pfc/Kconfig
-+++ b/drivers/pinctrl/sh-pfc/Kconfig
-@@ -12,6 +12,7 @@ config PINCTRL_SH_PFC
- 	select PINCTRL_PFC_EMEV2 if ARCH_EMEV2
- 	select PINCTRL_PFC_R8A73A4 if ARCH_R8A73A4
- 	select PINCTRL_PFC_R8A7740 if ARCH_R8A7740
-+	select PINCTRL_PFC_R8A7742 if ARCH_R8A7742
- 	select PINCTRL_PFC_R8A7743 if ARCH_R8A7743
- 	select PINCTRL_PFC_R8A7744 if ARCH_R8A7744
- 	select PINCTRL_PFC_R8A7745 if ARCH_R8A7745
-@@ -74,6 +75,9 @@ config PINCTRL_PFC_R8A7740
- 	bool "R-Mobile A1 pin control support" if COMPILE_TEST
- 	select PINCTRL_SH_PFC_GPIO
+Can someone with knowledge of the hardware, or access to the datasheet
+give some insight if this is a "proper" fix, an ugly workaround, or the
+problem is actually elsewhere and this only changes behaviour due to
+e.g. timing changes?
+
+Thanks,
+	Matthias
+
+
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+index d7e65c869415..0cb526f6b8d9 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-i2s-audio.c
+@@ -110,6 +110,14 @@ static int dw_hdmi_i2s_hw_params(struct device *dev, void *data,
+ 	hdmi_write(audio, conf0, HDMI_AUD_CONF0);
+ 	hdmi_write(audio, conf1, HDMI_AUD_CONF1);
  
-+config PINCTRL_PFC_R8A7742
-+	bool "RZ/G1H pin control support" if COMPILE_TEST
-+
- config PINCTRL_PFC_R8A7743
- 	bool "RZ/G1M pin control support" if COMPILE_TEST
++	/* Re-reset I2S in an attempt to fix inter-channel sample offset
++	 * Without this second reset of the I2S interface, it was observed on
++	 * the R-Car Gen3 platform that in ~50% of audio stream starts, the
++	 * samples on each odd-numbered channel were delayed by one sample
++	 * relative to the even-numbered channels.
++	 */
++	audio->write(audio->hdmi, (u8)~HDMI_MC_SWRSTZ_I2SSWRST_REQ,
++		     HDMI_MC_SWRSTZ);
+ 	return 0;
+ }
  
-diff --git a/drivers/pinctrl/sh-pfc/Makefile b/drivers/pinctrl/sh-pfc/Makefile
-index 9ebe321d24c4..3855d82069c9 100644
---- a/drivers/pinctrl/sh-pfc/Makefile
-+++ b/drivers/pinctrl/sh-pfc/Makefile
-@@ -4,6 +4,7 @@ obj-$(CONFIG_PINCTRL_SH_PFC_GPIO)	+= gpio.o
- obj-$(CONFIG_PINCTRL_PFC_EMEV2)	+= pfc-emev2.o
- obj-$(CONFIG_PINCTRL_PFC_R8A73A4)	+= pfc-r8a73a4.o
- obj-$(CONFIG_PINCTRL_PFC_R8A7740)	+= pfc-r8a7740.o
-+obj-$(CONFIG_PINCTRL_PFC_R8A7742)	+= pfc-r8a7790.o
- obj-$(CONFIG_PINCTRL_PFC_R8A7743)	+= pfc-r8a7791.o
- obj-$(CONFIG_PINCTRL_PFC_R8A7744)	+= pfc-r8a7791.o
- obj-$(CONFIG_PINCTRL_PFC_R8A7745)	+= pfc-r8a7794.o
-diff --git a/drivers/pinctrl/sh-pfc/core.c b/drivers/pinctrl/sh-pfc/core.c
-index a2e19efa26e3..f368383cba61 100644
---- a/drivers/pinctrl/sh-pfc/core.c
-+++ b/drivers/pinctrl/sh-pfc/core.c
-@@ -485,6 +485,12 @@ static const struct of_device_id sh_pfc_of_table[] = {
- 		.data = &r8a7740_pinmux_info,
- 	},
- #endif
-+#ifdef CONFIG_PINCTRL_PFC_R8A7742
-+	{
-+		.compatible = "renesas,pfc-r8a7742",
-+		.data = &r8a7742_pinmux_info,
-+	},
-+#endif
- #ifdef CONFIG_PINCTRL_PFC_R8A7743
- 	{
- 		.compatible = "renesas,pfc-r8a7743",
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-index 3366ed561cce..5b120549c6e9 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-@@ -3938,297 +3938,304 @@ static const unsigned int vin3_clk_mux[] = {
- 	VI3_CLK_MARK,
- };
- 
--static const struct sh_pfc_pin_group pinmux_groups[] = {
--	SH_PFC_PIN_GROUP(audio_clk_a),
--	SH_PFC_PIN_GROUP(audio_clk_b),
--	SH_PFC_PIN_GROUP(audio_clk_c),
--	SH_PFC_PIN_GROUP(audio_clkout),
--	SH_PFC_PIN_GROUP(audio_clkout_b),
--	SH_PFC_PIN_GROUP(audio_clkout_c),
--	SH_PFC_PIN_GROUP(audio_clkout_d),
--	SH_PFC_PIN_GROUP(avb_link),
--	SH_PFC_PIN_GROUP(avb_magic),
--	SH_PFC_PIN_GROUP(avb_phy_int),
--	SH_PFC_PIN_GROUP(avb_mdio),
--	SH_PFC_PIN_GROUP(avb_mii),
--	SH_PFC_PIN_GROUP(avb_gmii),
--	SH_PFC_PIN_GROUP(du_rgb666),
--	SH_PFC_PIN_GROUP(du_rgb888),
--	SH_PFC_PIN_GROUP(du_clk_out_0),
--	SH_PFC_PIN_GROUP(du_clk_out_1),
--	SH_PFC_PIN_GROUP(du_sync_0),
--	SH_PFC_PIN_GROUP(du_sync_1),
--	SH_PFC_PIN_GROUP(du_cde),
--	SH_PFC_PIN_GROUP(du0_clk_in),
--	SH_PFC_PIN_GROUP(du1_clk_in),
--	SH_PFC_PIN_GROUP(du2_clk_in),
--	SH_PFC_PIN_GROUP(eth_link),
--	SH_PFC_PIN_GROUP(eth_magic),
--	SH_PFC_PIN_GROUP(eth_mdio),
--	SH_PFC_PIN_GROUP(eth_rmii),
--	SH_PFC_PIN_GROUP(hscif0_data),
--	SH_PFC_PIN_GROUP(hscif0_clk),
--	SH_PFC_PIN_GROUP(hscif0_ctrl),
--	SH_PFC_PIN_GROUP(hscif0_data_b),
--	SH_PFC_PIN_GROUP(hscif0_ctrl_b),
--	SH_PFC_PIN_GROUP(hscif0_data_c),
--	SH_PFC_PIN_GROUP(hscif0_ctrl_c),
--	SH_PFC_PIN_GROUP(hscif0_data_d),
--	SH_PFC_PIN_GROUP(hscif0_ctrl_d),
--	SH_PFC_PIN_GROUP(hscif0_data_e),
--	SH_PFC_PIN_GROUP(hscif0_ctrl_e),
--	SH_PFC_PIN_GROUP(hscif0_data_f),
--	SH_PFC_PIN_GROUP(hscif0_ctrl_f),
--	SH_PFC_PIN_GROUP(hscif1_data),
--	SH_PFC_PIN_GROUP(hscif1_clk),
--	SH_PFC_PIN_GROUP(hscif1_ctrl),
--	SH_PFC_PIN_GROUP(hscif1_data_b),
--	SH_PFC_PIN_GROUP(hscif1_clk_b),
--	SH_PFC_PIN_GROUP(hscif1_ctrl_b),
--	SH_PFC_PIN_GROUP(i2c0),
--	SH_PFC_PIN_GROUP(i2c1),
--	SH_PFC_PIN_GROUP(i2c1_b),
--	SH_PFC_PIN_GROUP(i2c1_c),
--	SH_PFC_PIN_GROUP(i2c2),
--	SH_PFC_PIN_GROUP(i2c2_b),
--	SH_PFC_PIN_GROUP(i2c2_c),
--	SH_PFC_PIN_GROUP(i2c2_d),
--	SH_PFC_PIN_GROUP(i2c2_e),
--	SH_PFC_PIN_GROUP(i2c3),
--	SH_PFC_PIN_GROUP(iic0),
--	SH_PFC_PIN_GROUP(iic1),
--	SH_PFC_PIN_GROUP(iic1_b),
--	SH_PFC_PIN_GROUP(iic1_c),
--	SH_PFC_PIN_GROUP(iic2),
--	SH_PFC_PIN_GROUP(iic2_b),
--	SH_PFC_PIN_GROUP(iic2_c),
--	SH_PFC_PIN_GROUP(iic2_d),
--	SH_PFC_PIN_GROUP(iic2_e),
--	SH_PFC_PIN_GROUP(iic3),
--	SH_PFC_PIN_GROUP(intc_irq0),
--	SH_PFC_PIN_GROUP(intc_irq1),
--	SH_PFC_PIN_GROUP(intc_irq2),
--	SH_PFC_PIN_GROUP(intc_irq3),
--	SH_PFC_PIN_GROUP(mlb_3pin),
--	SH_PFC_PIN_GROUP(mmc0_data1),
--	SH_PFC_PIN_GROUP(mmc0_data4),
--	SH_PFC_PIN_GROUP(mmc0_data8),
--	SH_PFC_PIN_GROUP(mmc0_ctrl),
--	SH_PFC_PIN_GROUP(mmc1_data1),
--	SH_PFC_PIN_GROUP(mmc1_data4),
--	SH_PFC_PIN_GROUP(mmc1_data8),
--	SH_PFC_PIN_GROUP(mmc1_ctrl),
--	SH_PFC_PIN_GROUP(msiof0_clk),
--	SH_PFC_PIN_GROUP(msiof0_sync),
--	SH_PFC_PIN_GROUP(msiof0_ss1),
--	SH_PFC_PIN_GROUP(msiof0_ss2),
--	SH_PFC_PIN_GROUP(msiof0_rx),
--	SH_PFC_PIN_GROUP(msiof0_tx),
--	SH_PFC_PIN_GROUP(msiof0_clk_b),
--	SH_PFC_PIN_GROUP(msiof0_ss1_b),
--	SH_PFC_PIN_GROUP(msiof0_ss2_b),
--	SH_PFC_PIN_GROUP(msiof0_rx_b),
--	SH_PFC_PIN_GROUP(msiof0_tx_b),
--	SH_PFC_PIN_GROUP(msiof1_clk),
--	SH_PFC_PIN_GROUP(msiof1_sync),
--	SH_PFC_PIN_GROUP(msiof1_ss1),
--	SH_PFC_PIN_GROUP(msiof1_ss2),
--	SH_PFC_PIN_GROUP(msiof1_rx),
--	SH_PFC_PIN_GROUP(msiof1_tx),
--	SH_PFC_PIN_GROUP(msiof1_clk_b),
--	SH_PFC_PIN_GROUP(msiof1_ss1_b),
--	SH_PFC_PIN_GROUP(msiof1_ss2_b),
--	SH_PFC_PIN_GROUP(msiof1_rx_b),
--	SH_PFC_PIN_GROUP(msiof1_tx_b),
--	SH_PFC_PIN_GROUP(msiof2_clk),
--	SH_PFC_PIN_GROUP(msiof2_sync),
--	SH_PFC_PIN_GROUP(msiof2_ss1),
--	SH_PFC_PIN_GROUP(msiof2_ss2),
--	SH_PFC_PIN_GROUP(msiof2_rx),
--	SH_PFC_PIN_GROUP(msiof2_tx),
--	SH_PFC_PIN_GROUP(msiof3_clk),
--	SH_PFC_PIN_GROUP(msiof3_sync),
--	SH_PFC_PIN_GROUP(msiof3_ss1),
--	SH_PFC_PIN_GROUP(msiof3_ss2),
--	SH_PFC_PIN_GROUP(msiof3_rx),
--	SH_PFC_PIN_GROUP(msiof3_tx),
--	SH_PFC_PIN_GROUP(msiof3_clk_b),
--	SH_PFC_PIN_GROUP(msiof3_sync_b),
--	SH_PFC_PIN_GROUP(msiof3_rx_b),
--	SH_PFC_PIN_GROUP(msiof3_tx_b),
--	SH_PFC_PIN_GROUP(pwm0),
--	SH_PFC_PIN_GROUP(pwm0_b),
--	SH_PFC_PIN_GROUP(pwm1),
--	SH_PFC_PIN_GROUP(pwm1_b),
--	SH_PFC_PIN_GROUP(pwm2),
--	SH_PFC_PIN_GROUP(pwm3),
--	SH_PFC_PIN_GROUP(pwm4),
--	SH_PFC_PIN_GROUP(pwm5),
--	SH_PFC_PIN_GROUP(pwm6),
--	SH_PFC_PIN_GROUP(qspi_ctrl),
--	SH_PFC_PIN_GROUP(qspi_data2),
--	SH_PFC_PIN_GROUP(qspi_data4),
--	SH_PFC_PIN_GROUP(scif0_data),
--	SH_PFC_PIN_GROUP(scif0_clk),
--	SH_PFC_PIN_GROUP(scif0_ctrl),
--	SH_PFC_PIN_GROUP(scif0_data_b),
--	SH_PFC_PIN_GROUP(scif1_data),
--	SH_PFC_PIN_GROUP(scif1_clk),
--	SH_PFC_PIN_GROUP(scif1_ctrl),
--	SH_PFC_PIN_GROUP(scif1_data_b),
--	SH_PFC_PIN_GROUP(scif1_data_c),
--	SH_PFC_PIN_GROUP(scif1_data_d),
--	SH_PFC_PIN_GROUP(scif1_clk_d),
--	SH_PFC_PIN_GROUP(scif1_data_e),
--	SH_PFC_PIN_GROUP(scif1_clk_e),
--	SH_PFC_PIN_GROUP(scif2_data),
--	SH_PFC_PIN_GROUP(scif2_clk),
--	SH_PFC_PIN_GROUP(scif2_data_b),
--	SH_PFC_PIN_GROUP(scifa0_data),
--	SH_PFC_PIN_GROUP(scifa0_clk),
--	SH_PFC_PIN_GROUP(scifa0_ctrl),
--	SH_PFC_PIN_GROUP(scifa0_data_b),
--	SH_PFC_PIN_GROUP(scifa0_clk_b),
--	SH_PFC_PIN_GROUP(scifa0_ctrl_b),
--	SH_PFC_PIN_GROUP(scifa1_data),
--	SH_PFC_PIN_GROUP(scifa1_clk),
--	SH_PFC_PIN_GROUP(scifa1_ctrl),
--	SH_PFC_PIN_GROUP(scifa1_data_b),
--	SH_PFC_PIN_GROUP(scifa1_clk_b),
--	SH_PFC_PIN_GROUP(scifa1_ctrl_b),
--	SH_PFC_PIN_GROUP(scifa1_data_c),
--	SH_PFC_PIN_GROUP(scifa1_clk_c),
--	SH_PFC_PIN_GROUP(scifa1_ctrl_c),
--	SH_PFC_PIN_GROUP(scifa1_data_d),
--	SH_PFC_PIN_GROUP(scifa1_clk_d),
--	SH_PFC_PIN_GROUP(scifa1_ctrl_d),
--	SH_PFC_PIN_GROUP(scifa2_data),
--	SH_PFC_PIN_GROUP(scifa2_clk),
--	SH_PFC_PIN_GROUP(scifa2_ctrl),
--	SH_PFC_PIN_GROUP(scifa2_data_b),
--	SH_PFC_PIN_GROUP(scifa2_data_c),
--	SH_PFC_PIN_GROUP(scifa2_clk_c),
--	SH_PFC_PIN_GROUP(scifb0_data),
--	SH_PFC_PIN_GROUP(scifb0_clk),
--	SH_PFC_PIN_GROUP(scifb0_ctrl),
--	SH_PFC_PIN_GROUP(scifb0_data_b),
--	SH_PFC_PIN_GROUP(scifb0_clk_b),
--	SH_PFC_PIN_GROUP(scifb0_ctrl_b),
--	SH_PFC_PIN_GROUP(scifb0_data_c),
--	SH_PFC_PIN_GROUP(scifb1_data),
--	SH_PFC_PIN_GROUP(scifb1_clk),
--	SH_PFC_PIN_GROUP(scifb1_ctrl),
--	SH_PFC_PIN_GROUP(scifb1_data_b),
--	SH_PFC_PIN_GROUP(scifb1_clk_b),
--	SH_PFC_PIN_GROUP(scifb1_ctrl_b),
--	SH_PFC_PIN_GROUP(scifb1_data_c),
--	SH_PFC_PIN_GROUP(scifb1_data_d),
--	SH_PFC_PIN_GROUP(scifb1_data_e),
--	SH_PFC_PIN_GROUP(scifb1_clk_e),
--	SH_PFC_PIN_GROUP(scifb1_data_f),
--	SH_PFC_PIN_GROUP(scifb1_data_g),
--	SH_PFC_PIN_GROUP(scifb1_clk_g),
--	SH_PFC_PIN_GROUP(scifb2_data),
--	SH_PFC_PIN_GROUP(scifb2_clk),
--	SH_PFC_PIN_GROUP(scifb2_ctrl),
--	SH_PFC_PIN_GROUP(scifb2_data_b),
--	SH_PFC_PIN_GROUP(scifb2_clk_b),
--	SH_PFC_PIN_GROUP(scifb2_ctrl_b),
--	SH_PFC_PIN_GROUP(scifb2_data_c),
--	SH_PFC_PIN_GROUP(scif_clk),
--	SH_PFC_PIN_GROUP(scif_clk_b),
--	SH_PFC_PIN_GROUP(sdhi0_data1),
--	SH_PFC_PIN_GROUP(sdhi0_data4),
--	SH_PFC_PIN_GROUP(sdhi0_ctrl),
--	SH_PFC_PIN_GROUP(sdhi0_cd),
--	SH_PFC_PIN_GROUP(sdhi0_wp),
--	SH_PFC_PIN_GROUP(sdhi1_data1),
--	SH_PFC_PIN_GROUP(sdhi1_data4),
--	SH_PFC_PIN_GROUP(sdhi1_ctrl),
--	SH_PFC_PIN_GROUP(sdhi1_cd),
--	SH_PFC_PIN_GROUP(sdhi1_wp),
--	SH_PFC_PIN_GROUP(sdhi2_data1),
--	SH_PFC_PIN_GROUP(sdhi2_data4),
--	SH_PFC_PIN_GROUP(sdhi2_ctrl),
--	SH_PFC_PIN_GROUP(sdhi2_cd),
--	SH_PFC_PIN_GROUP(sdhi2_wp),
--	SH_PFC_PIN_GROUP(sdhi3_data1),
--	SH_PFC_PIN_GROUP(sdhi3_data4),
--	SH_PFC_PIN_GROUP(sdhi3_ctrl),
--	SH_PFC_PIN_GROUP(sdhi3_cd),
--	SH_PFC_PIN_GROUP(sdhi3_wp),
--	SH_PFC_PIN_GROUP(ssi0_data),
--	SH_PFC_PIN_GROUP(ssi0129_ctrl),
--	SH_PFC_PIN_GROUP(ssi1_data),
--	SH_PFC_PIN_GROUP(ssi1_ctrl),
--	SH_PFC_PIN_GROUP(ssi2_data),
--	SH_PFC_PIN_GROUP(ssi2_ctrl),
--	SH_PFC_PIN_GROUP(ssi3_data),
--	SH_PFC_PIN_GROUP(ssi34_ctrl),
--	SH_PFC_PIN_GROUP(ssi4_data),
--	SH_PFC_PIN_GROUP(ssi4_ctrl),
--	SH_PFC_PIN_GROUP(ssi5),
--	SH_PFC_PIN_GROUP(ssi5_b),
--	SH_PFC_PIN_GROUP(ssi5_c),
--	SH_PFC_PIN_GROUP(ssi6),
--	SH_PFC_PIN_GROUP(ssi6_b),
--	SH_PFC_PIN_GROUP(ssi7_data),
--	SH_PFC_PIN_GROUP(ssi7_b_data),
--	SH_PFC_PIN_GROUP(ssi7_c_data),
--	SH_PFC_PIN_GROUP(ssi78_ctrl),
--	SH_PFC_PIN_GROUP(ssi78_b_ctrl),
--	SH_PFC_PIN_GROUP(ssi78_c_ctrl),
--	SH_PFC_PIN_GROUP(ssi8_data),
--	SH_PFC_PIN_GROUP(ssi8_b_data),
--	SH_PFC_PIN_GROUP(ssi8_c_data),
--	SH_PFC_PIN_GROUP(ssi9_data),
--	SH_PFC_PIN_GROUP(ssi9_ctrl),
--	SH_PFC_PIN_GROUP(tpu0_to0),
--	SH_PFC_PIN_GROUP(tpu0_to1),
--	SH_PFC_PIN_GROUP(tpu0_to2),
--	SH_PFC_PIN_GROUP(tpu0_to3),
--	SH_PFC_PIN_GROUP(usb0),
--	SH_PFC_PIN_GROUP(usb0_ovc_vbus),
--	SH_PFC_PIN_GROUP(usb1),
--	SH_PFC_PIN_GROUP(usb2),
--	VIN_DATA_PIN_GROUP(vin0_data, 24),
--	VIN_DATA_PIN_GROUP(vin0_data, 20),
--	SH_PFC_PIN_GROUP(vin0_data18),
--	VIN_DATA_PIN_GROUP(vin0_data, 16),
--	VIN_DATA_PIN_GROUP(vin0_data, 12),
--	VIN_DATA_PIN_GROUP(vin0_data, 10),
--	VIN_DATA_PIN_GROUP(vin0_data, 8),
--	VIN_DATA_PIN_GROUP(vin0_data, 4),
--	SH_PFC_PIN_GROUP(vin0_sync),
--	SH_PFC_PIN_GROUP(vin0_field),
--	SH_PFC_PIN_GROUP(vin0_clkenb),
--	SH_PFC_PIN_GROUP(vin0_clk),
--	VIN_DATA_PIN_GROUP(vin1_data, 24),
--	VIN_DATA_PIN_GROUP(vin1_data, 20),
--	SH_PFC_PIN_GROUP(vin1_data18),
--	VIN_DATA_PIN_GROUP(vin1_data, 16),
--	VIN_DATA_PIN_GROUP(vin1_data, 12),
--	VIN_DATA_PIN_GROUP(vin1_data, 10),
--	VIN_DATA_PIN_GROUP(vin1_data, 8),
--	VIN_DATA_PIN_GROUP(vin1_data, 4),
--	SH_PFC_PIN_GROUP(vin1_sync),
--	SH_PFC_PIN_GROUP(vin1_field),
--	SH_PFC_PIN_GROUP(vin1_clkenb),
--	SH_PFC_PIN_GROUP(vin1_clk),
--	VIN_DATA_PIN_GROUP(vin2_data, 24),
--	SH_PFC_PIN_GROUP(vin2_data18),
--	VIN_DATA_PIN_GROUP(vin2_data, 16),
--	VIN_DATA_PIN_GROUP(vin2_data, 8),
--	VIN_DATA_PIN_GROUP(vin2_data, 4),
--	SH_PFC_PIN_GROUP(vin2_sync),
--	SH_PFC_PIN_GROUP(vin2_field),
--	SH_PFC_PIN_GROUP(vin2_clkenb),
--	SH_PFC_PIN_GROUP(vin2_clk),
--	SH_PFC_PIN_GROUP(vin3_data8),
--	SH_PFC_PIN_GROUP(vin3_sync),
--	SH_PFC_PIN_GROUP(vin3_field),
--	SH_PFC_PIN_GROUP(vin3_clkenb),
--	SH_PFC_PIN_GROUP(vin3_clk),
-+static const struct {
-+	struct sh_pfc_pin_group common[289];
-+	struct sh_pfc_pin_group automotive[1];
-+} pinmux_groups = {
-+	.common = {
-+		SH_PFC_PIN_GROUP(audio_clk_a),
-+		SH_PFC_PIN_GROUP(audio_clk_b),
-+		SH_PFC_PIN_GROUP(audio_clk_c),
-+		SH_PFC_PIN_GROUP(audio_clkout),
-+		SH_PFC_PIN_GROUP(audio_clkout_b),
-+		SH_PFC_PIN_GROUP(audio_clkout_c),
-+		SH_PFC_PIN_GROUP(audio_clkout_d),
-+		SH_PFC_PIN_GROUP(avb_link),
-+		SH_PFC_PIN_GROUP(avb_magic),
-+		SH_PFC_PIN_GROUP(avb_phy_int),
-+		SH_PFC_PIN_GROUP(avb_mdio),
-+		SH_PFC_PIN_GROUP(avb_mii),
-+		SH_PFC_PIN_GROUP(avb_gmii),
-+		SH_PFC_PIN_GROUP(du_rgb666),
-+		SH_PFC_PIN_GROUP(du_rgb888),
-+		SH_PFC_PIN_GROUP(du_clk_out_0),
-+		SH_PFC_PIN_GROUP(du_clk_out_1),
-+		SH_PFC_PIN_GROUP(du_sync_0),
-+		SH_PFC_PIN_GROUP(du_sync_1),
-+		SH_PFC_PIN_GROUP(du_cde),
-+		SH_PFC_PIN_GROUP(du0_clk_in),
-+		SH_PFC_PIN_GROUP(du1_clk_in),
-+		SH_PFC_PIN_GROUP(du2_clk_in),
-+		SH_PFC_PIN_GROUP(eth_link),
-+		SH_PFC_PIN_GROUP(eth_magic),
-+		SH_PFC_PIN_GROUP(eth_mdio),
-+		SH_PFC_PIN_GROUP(eth_rmii),
-+		SH_PFC_PIN_GROUP(hscif0_data),
-+		SH_PFC_PIN_GROUP(hscif0_clk),
-+		SH_PFC_PIN_GROUP(hscif0_ctrl),
-+		SH_PFC_PIN_GROUP(hscif0_data_b),
-+		SH_PFC_PIN_GROUP(hscif0_ctrl_b),
-+		SH_PFC_PIN_GROUP(hscif0_data_c),
-+		SH_PFC_PIN_GROUP(hscif0_ctrl_c),
-+		SH_PFC_PIN_GROUP(hscif0_data_d),
-+		SH_PFC_PIN_GROUP(hscif0_ctrl_d),
-+		SH_PFC_PIN_GROUP(hscif0_data_e),
-+		SH_PFC_PIN_GROUP(hscif0_ctrl_e),
-+		SH_PFC_PIN_GROUP(hscif0_data_f),
-+		SH_PFC_PIN_GROUP(hscif0_ctrl_f),
-+		SH_PFC_PIN_GROUP(hscif1_data),
-+		SH_PFC_PIN_GROUP(hscif1_clk),
-+		SH_PFC_PIN_GROUP(hscif1_ctrl),
-+		SH_PFC_PIN_GROUP(hscif1_data_b),
-+		SH_PFC_PIN_GROUP(hscif1_clk_b),
-+		SH_PFC_PIN_GROUP(hscif1_ctrl_b),
-+		SH_PFC_PIN_GROUP(i2c0),
-+		SH_PFC_PIN_GROUP(i2c1),
-+		SH_PFC_PIN_GROUP(i2c1_b),
-+		SH_PFC_PIN_GROUP(i2c1_c),
-+		SH_PFC_PIN_GROUP(i2c2),
-+		SH_PFC_PIN_GROUP(i2c2_b),
-+		SH_PFC_PIN_GROUP(i2c2_c),
-+		SH_PFC_PIN_GROUP(i2c2_d),
-+		SH_PFC_PIN_GROUP(i2c2_e),
-+		SH_PFC_PIN_GROUP(i2c3),
-+		SH_PFC_PIN_GROUP(iic0),
-+		SH_PFC_PIN_GROUP(iic1),
-+		SH_PFC_PIN_GROUP(iic1_b),
-+		SH_PFC_PIN_GROUP(iic1_c),
-+		SH_PFC_PIN_GROUP(iic2),
-+		SH_PFC_PIN_GROUP(iic2_b),
-+		SH_PFC_PIN_GROUP(iic2_c),
-+		SH_PFC_PIN_GROUP(iic2_d),
-+		SH_PFC_PIN_GROUP(iic2_e),
-+		SH_PFC_PIN_GROUP(iic3),
-+		SH_PFC_PIN_GROUP(intc_irq0),
-+		SH_PFC_PIN_GROUP(intc_irq1),
-+		SH_PFC_PIN_GROUP(intc_irq2),
-+		SH_PFC_PIN_GROUP(intc_irq3),
-+		SH_PFC_PIN_GROUP(mmc0_data1),
-+		SH_PFC_PIN_GROUP(mmc0_data4),
-+		SH_PFC_PIN_GROUP(mmc0_data8),
-+		SH_PFC_PIN_GROUP(mmc0_ctrl),
-+		SH_PFC_PIN_GROUP(mmc1_data1),
-+		SH_PFC_PIN_GROUP(mmc1_data4),
-+		SH_PFC_PIN_GROUP(mmc1_data8),
-+		SH_PFC_PIN_GROUP(mmc1_ctrl),
-+		SH_PFC_PIN_GROUP(msiof0_clk),
-+		SH_PFC_PIN_GROUP(msiof0_sync),
-+		SH_PFC_PIN_GROUP(msiof0_ss1),
-+		SH_PFC_PIN_GROUP(msiof0_ss2),
-+		SH_PFC_PIN_GROUP(msiof0_rx),
-+		SH_PFC_PIN_GROUP(msiof0_tx),
-+		SH_PFC_PIN_GROUP(msiof0_clk_b),
-+		SH_PFC_PIN_GROUP(msiof0_ss1_b),
-+		SH_PFC_PIN_GROUP(msiof0_ss2_b),
-+		SH_PFC_PIN_GROUP(msiof0_rx_b),
-+		SH_PFC_PIN_GROUP(msiof0_tx_b),
-+		SH_PFC_PIN_GROUP(msiof1_clk),
-+		SH_PFC_PIN_GROUP(msiof1_sync),
-+		SH_PFC_PIN_GROUP(msiof1_ss1),
-+		SH_PFC_PIN_GROUP(msiof1_ss2),
-+		SH_PFC_PIN_GROUP(msiof1_rx),
-+		SH_PFC_PIN_GROUP(msiof1_tx),
-+		SH_PFC_PIN_GROUP(msiof1_clk_b),
-+		SH_PFC_PIN_GROUP(msiof1_ss1_b),
-+		SH_PFC_PIN_GROUP(msiof1_ss2_b),
-+		SH_PFC_PIN_GROUP(msiof1_rx_b),
-+		SH_PFC_PIN_GROUP(msiof1_tx_b),
-+		SH_PFC_PIN_GROUP(msiof2_clk),
-+		SH_PFC_PIN_GROUP(msiof2_sync),
-+		SH_PFC_PIN_GROUP(msiof2_ss1),
-+		SH_PFC_PIN_GROUP(msiof2_ss2),
-+		SH_PFC_PIN_GROUP(msiof2_rx),
-+		SH_PFC_PIN_GROUP(msiof2_tx),
-+		SH_PFC_PIN_GROUP(msiof3_clk),
-+		SH_PFC_PIN_GROUP(msiof3_sync),
-+		SH_PFC_PIN_GROUP(msiof3_ss1),
-+		SH_PFC_PIN_GROUP(msiof3_ss2),
-+		SH_PFC_PIN_GROUP(msiof3_rx),
-+		SH_PFC_PIN_GROUP(msiof3_tx),
-+		SH_PFC_PIN_GROUP(msiof3_clk_b),
-+		SH_PFC_PIN_GROUP(msiof3_sync_b),
-+		SH_PFC_PIN_GROUP(msiof3_rx_b),
-+		SH_PFC_PIN_GROUP(msiof3_tx_b),
-+		SH_PFC_PIN_GROUP(pwm0),
-+		SH_PFC_PIN_GROUP(pwm0_b),
-+		SH_PFC_PIN_GROUP(pwm1),
-+		SH_PFC_PIN_GROUP(pwm1_b),
-+		SH_PFC_PIN_GROUP(pwm2),
-+		SH_PFC_PIN_GROUP(pwm3),
-+		SH_PFC_PIN_GROUP(pwm4),
-+		SH_PFC_PIN_GROUP(pwm5),
-+		SH_PFC_PIN_GROUP(pwm6),
-+		SH_PFC_PIN_GROUP(qspi_ctrl),
-+		SH_PFC_PIN_GROUP(qspi_data2),
-+		SH_PFC_PIN_GROUP(qspi_data4),
-+		SH_PFC_PIN_GROUP(scif0_data),
-+		SH_PFC_PIN_GROUP(scif0_clk),
-+		SH_PFC_PIN_GROUP(scif0_ctrl),
-+		SH_PFC_PIN_GROUP(scif0_data_b),
-+		SH_PFC_PIN_GROUP(scif1_data),
-+		SH_PFC_PIN_GROUP(scif1_clk),
-+		SH_PFC_PIN_GROUP(scif1_ctrl),
-+		SH_PFC_PIN_GROUP(scif1_data_b),
-+		SH_PFC_PIN_GROUP(scif1_data_c),
-+		SH_PFC_PIN_GROUP(scif1_data_d),
-+		SH_PFC_PIN_GROUP(scif1_clk_d),
-+		SH_PFC_PIN_GROUP(scif1_data_e),
-+		SH_PFC_PIN_GROUP(scif1_clk_e),
-+		SH_PFC_PIN_GROUP(scif2_data),
-+		SH_PFC_PIN_GROUP(scif2_clk),
-+		SH_PFC_PIN_GROUP(scif2_data_b),
-+		SH_PFC_PIN_GROUP(scifa0_data),
-+		SH_PFC_PIN_GROUP(scifa0_clk),
-+		SH_PFC_PIN_GROUP(scifa0_ctrl),
-+		SH_PFC_PIN_GROUP(scifa0_data_b),
-+		SH_PFC_PIN_GROUP(scifa0_clk_b),
-+		SH_PFC_PIN_GROUP(scifa0_ctrl_b),
-+		SH_PFC_PIN_GROUP(scifa1_data),
-+		SH_PFC_PIN_GROUP(scifa1_clk),
-+		SH_PFC_PIN_GROUP(scifa1_ctrl),
-+		SH_PFC_PIN_GROUP(scifa1_data_b),
-+		SH_PFC_PIN_GROUP(scifa1_clk_b),
-+		SH_PFC_PIN_GROUP(scifa1_ctrl_b),
-+		SH_PFC_PIN_GROUP(scifa1_data_c),
-+		SH_PFC_PIN_GROUP(scifa1_clk_c),
-+		SH_PFC_PIN_GROUP(scifa1_ctrl_c),
-+		SH_PFC_PIN_GROUP(scifa1_data_d),
-+		SH_PFC_PIN_GROUP(scifa1_clk_d),
-+		SH_PFC_PIN_GROUP(scifa1_ctrl_d),
-+		SH_PFC_PIN_GROUP(scifa2_data),
-+		SH_PFC_PIN_GROUP(scifa2_clk),
-+		SH_PFC_PIN_GROUP(scifa2_ctrl),
-+		SH_PFC_PIN_GROUP(scifa2_data_b),
-+		SH_PFC_PIN_GROUP(scifa2_data_c),
-+		SH_PFC_PIN_GROUP(scifa2_clk_c),
-+		SH_PFC_PIN_GROUP(scifb0_data),
-+		SH_PFC_PIN_GROUP(scifb0_clk),
-+		SH_PFC_PIN_GROUP(scifb0_ctrl),
-+		SH_PFC_PIN_GROUP(scifb0_data_b),
-+		SH_PFC_PIN_GROUP(scifb0_clk_b),
-+		SH_PFC_PIN_GROUP(scifb0_ctrl_b),
-+		SH_PFC_PIN_GROUP(scifb0_data_c),
-+		SH_PFC_PIN_GROUP(scifb1_data),
-+		SH_PFC_PIN_GROUP(scifb1_clk),
-+		SH_PFC_PIN_GROUP(scifb1_ctrl),
-+		SH_PFC_PIN_GROUP(scifb1_data_b),
-+		SH_PFC_PIN_GROUP(scifb1_clk_b),
-+		SH_PFC_PIN_GROUP(scifb1_ctrl_b),
-+		SH_PFC_PIN_GROUP(scifb1_data_c),
-+		SH_PFC_PIN_GROUP(scifb1_data_d),
-+		SH_PFC_PIN_GROUP(scifb1_data_e),
-+		SH_PFC_PIN_GROUP(scifb1_clk_e),
-+		SH_PFC_PIN_GROUP(scifb1_data_f),
-+		SH_PFC_PIN_GROUP(scifb1_data_g),
-+		SH_PFC_PIN_GROUP(scifb1_clk_g),
-+		SH_PFC_PIN_GROUP(scifb2_data),
-+		SH_PFC_PIN_GROUP(scifb2_clk),
-+		SH_PFC_PIN_GROUP(scifb2_ctrl),
-+		SH_PFC_PIN_GROUP(scifb2_data_b),
-+		SH_PFC_PIN_GROUP(scifb2_clk_b),
-+		SH_PFC_PIN_GROUP(scifb2_ctrl_b),
-+		SH_PFC_PIN_GROUP(scifb2_data_c),
-+		SH_PFC_PIN_GROUP(scif_clk),
-+		SH_PFC_PIN_GROUP(scif_clk_b),
-+		SH_PFC_PIN_GROUP(sdhi0_data1),
-+		SH_PFC_PIN_GROUP(sdhi0_data4),
-+		SH_PFC_PIN_GROUP(sdhi0_ctrl),
-+		SH_PFC_PIN_GROUP(sdhi0_cd),
-+		SH_PFC_PIN_GROUP(sdhi0_wp),
-+		SH_PFC_PIN_GROUP(sdhi1_data1),
-+		SH_PFC_PIN_GROUP(sdhi1_data4),
-+		SH_PFC_PIN_GROUP(sdhi1_ctrl),
-+		SH_PFC_PIN_GROUP(sdhi1_cd),
-+		SH_PFC_PIN_GROUP(sdhi1_wp),
-+		SH_PFC_PIN_GROUP(sdhi2_data1),
-+		SH_PFC_PIN_GROUP(sdhi2_data4),
-+		SH_PFC_PIN_GROUP(sdhi2_ctrl),
-+		SH_PFC_PIN_GROUP(sdhi2_cd),
-+		SH_PFC_PIN_GROUP(sdhi2_wp),
-+		SH_PFC_PIN_GROUP(sdhi3_data1),
-+		SH_PFC_PIN_GROUP(sdhi3_data4),
-+		SH_PFC_PIN_GROUP(sdhi3_ctrl),
-+		SH_PFC_PIN_GROUP(sdhi3_cd),
-+		SH_PFC_PIN_GROUP(sdhi3_wp),
-+		SH_PFC_PIN_GROUP(ssi0_data),
-+		SH_PFC_PIN_GROUP(ssi0129_ctrl),
-+		SH_PFC_PIN_GROUP(ssi1_data),
-+		SH_PFC_PIN_GROUP(ssi1_ctrl),
-+		SH_PFC_PIN_GROUP(ssi2_data),
-+		SH_PFC_PIN_GROUP(ssi2_ctrl),
-+		SH_PFC_PIN_GROUP(ssi3_data),
-+		SH_PFC_PIN_GROUP(ssi34_ctrl),
-+		SH_PFC_PIN_GROUP(ssi4_data),
-+		SH_PFC_PIN_GROUP(ssi4_ctrl),
-+		SH_PFC_PIN_GROUP(ssi5),
-+		SH_PFC_PIN_GROUP(ssi5_b),
-+		SH_PFC_PIN_GROUP(ssi5_c),
-+		SH_PFC_PIN_GROUP(ssi6),
-+		SH_PFC_PIN_GROUP(ssi6_b),
-+		SH_PFC_PIN_GROUP(ssi7_data),
-+		SH_PFC_PIN_GROUP(ssi7_b_data),
-+		SH_PFC_PIN_GROUP(ssi7_c_data),
-+		SH_PFC_PIN_GROUP(ssi78_ctrl),
-+		SH_PFC_PIN_GROUP(ssi78_b_ctrl),
-+		SH_PFC_PIN_GROUP(ssi78_c_ctrl),
-+		SH_PFC_PIN_GROUP(ssi8_data),
-+		SH_PFC_PIN_GROUP(ssi8_b_data),
-+		SH_PFC_PIN_GROUP(ssi8_c_data),
-+		SH_PFC_PIN_GROUP(ssi9_data),
-+		SH_PFC_PIN_GROUP(ssi9_ctrl),
-+		SH_PFC_PIN_GROUP(tpu0_to0),
-+		SH_PFC_PIN_GROUP(tpu0_to1),
-+		SH_PFC_PIN_GROUP(tpu0_to2),
-+		SH_PFC_PIN_GROUP(tpu0_to3),
-+		SH_PFC_PIN_GROUP(usb0),
-+		SH_PFC_PIN_GROUP(usb0_ovc_vbus),
-+		SH_PFC_PIN_GROUP(usb1),
-+		SH_PFC_PIN_GROUP(usb2),
-+		VIN_DATA_PIN_GROUP(vin0_data, 24),
-+		VIN_DATA_PIN_GROUP(vin0_data, 20),
-+		SH_PFC_PIN_GROUP(vin0_data18),
-+		VIN_DATA_PIN_GROUP(vin0_data, 16),
-+		VIN_DATA_PIN_GROUP(vin0_data, 12),
-+		VIN_DATA_PIN_GROUP(vin0_data, 10),
-+		VIN_DATA_PIN_GROUP(vin0_data, 8),
-+		VIN_DATA_PIN_GROUP(vin0_data, 4),
-+		SH_PFC_PIN_GROUP(vin0_sync),
-+		SH_PFC_PIN_GROUP(vin0_field),
-+		SH_PFC_PIN_GROUP(vin0_clkenb),
-+		SH_PFC_PIN_GROUP(vin0_clk),
-+		VIN_DATA_PIN_GROUP(vin1_data, 24),
-+		VIN_DATA_PIN_GROUP(vin1_data, 20),
-+		SH_PFC_PIN_GROUP(vin1_data18),
-+		VIN_DATA_PIN_GROUP(vin1_data, 16),
-+		VIN_DATA_PIN_GROUP(vin1_data, 12),
-+		VIN_DATA_PIN_GROUP(vin1_data, 10),
-+		VIN_DATA_PIN_GROUP(vin1_data, 8),
-+		VIN_DATA_PIN_GROUP(vin1_data, 4),
-+		SH_PFC_PIN_GROUP(vin1_sync),
-+		SH_PFC_PIN_GROUP(vin1_field),
-+		SH_PFC_PIN_GROUP(vin1_clkenb),
-+		SH_PFC_PIN_GROUP(vin1_clk),
-+		VIN_DATA_PIN_GROUP(vin2_data, 24),
-+		SH_PFC_PIN_GROUP(vin2_data18),
-+		VIN_DATA_PIN_GROUP(vin2_data, 16),
-+		VIN_DATA_PIN_GROUP(vin2_data, 8),
-+		VIN_DATA_PIN_GROUP(vin2_data, 4),
-+		SH_PFC_PIN_GROUP(vin2_sync),
-+		SH_PFC_PIN_GROUP(vin2_field),
-+		SH_PFC_PIN_GROUP(vin2_clkenb),
-+		SH_PFC_PIN_GROUP(vin2_clk),
-+		SH_PFC_PIN_GROUP(vin3_data8),
-+		SH_PFC_PIN_GROUP(vin3_sync),
-+		SH_PFC_PIN_GROUP(vin3_field),
-+		SH_PFC_PIN_GROUP(vin3_clkenb),
-+		SH_PFC_PIN_GROUP(vin3_clk),
-+	},
-+	.automotive = {
-+		SH_PFC_PIN_GROUP(mlb_3pin),
-+	}
- };
- 
- static const char * const audio_clk_groups[] = {
-@@ -4689,63 +4696,70 @@ static const char * const vin3_groups[] = {
- 	"vin3_clk",
- };
- 
--static const struct sh_pfc_function pinmux_functions[] = {
--	SH_PFC_FUNCTION(audio_clk),
--	SH_PFC_FUNCTION(avb),
--	SH_PFC_FUNCTION(du),
--	SH_PFC_FUNCTION(du0),
--	SH_PFC_FUNCTION(du1),
--	SH_PFC_FUNCTION(du2),
--	SH_PFC_FUNCTION(eth),
--	SH_PFC_FUNCTION(hscif0),
--	SH_PFC_FUNCTION(hscif1),
--	SH_PFC_FUNCTION(i2c0),
--	SH_PFC_FUNCTION(i2c1),
--	SH_PFC_FUNCTION(i2c2),
--	SH_PFC_FUNCTION(i2c3),
--	SH_PFC_FUNCTION(iic0),
--	SH_PFC_FUNCTION(iic1),
--	SH_PFC_FUNCTION(iic2),
--	SH_PFC_FUNCTION(iic3),
--	SH_PFC_FUNCTION(intc),
--	SH_PFC_FUNCTION(mlb),
--	SH_PFC_FUNCTION(mmc0),
--	SH_PFC_FUNCTION(mmc1),
--	SH_PFC_FUNCTION(msiof0),
--	SH_PFC_FUNCTION(msiof1),
--	SH_PFC_FUNCTION(msiof2),
--	SH_PFC_FUNCTION(msiof3),
--	SH_PFC_FUNCTION(pwm0),
--	SH_PFC_FUNCTION(pwm1),
--	SH_PFC_FUNCTION(pwm2),
--	SH_PFC_FUNCTION(pwm3),
--	SH_PFC_FUNCTION(pwm4),
--	SH_PFC_FUNCTION(pwm5),
--	SH_PFC_FUNCTION(pwm6),
--	SH_PFC_FUNCTION(qspi),
--	SH_PFC_FUNCTION(scif0),
--	SH_PFC_FUNCTION(scif1),
--	SH_PFC_FUNCTION(scif2),
--	SH_PFC_FUNCTION(scifa0),
--	SH_PFC_FUNCTION(scifa1),
--	SH_PFC_FUNCTION(scifa2),
--	SH_PFC_FUNCTION(scifb0),
--	SH_PFC_FUNCTION(scifb1),
--	SH_PFC_FUNCTION(scifb2),
--	SH_PFC_FUNCTION(scif_clk),
--	SH_PFC_FUNCTION(sdhi0),
--	SH_PFC_FUNCTION(sdhi1),
--	SH_PFC_FUNCTION(sdhi2),
--	SH_PFC_FUNCTION(sdhi3),
--	SH_PFC_FUNCTION(ssi),
--	SH_PFC_FUNCTION(tpu0),
--	SH_PFC_FUNCTION(usb0),
--	SH_PFC_FUNCTION(usb1),
--	SH_PFC_FUNCTION(usb2),
--	SH_PFC_FUNCTION(vin0),
--	SH_PFC_FUNCTION(vin1),
--	SH_PFC_FUNCTION(vin2),
--	SH_PFC_FUNCTION(vin3),
-+static const struct {
-+	struct sh_pfc_function common[55];
-+	struct sh_pfc_function automotive[1];
-+} pinmux_functions = {
-+	.common = {
-+		SH_PFC_FUNCTION(audio_clk),
-+		SH_PFC_FUNCTION(avb),
-+		SH_PFC_FUNCTION(du),
-+		SH_PFC_FUNCTION(du0),
-+		SH_PFC_FUNCTION(du1),
-+		SH_PFC_FUNCTION(du2),
-+		SH_PFC_FUNCTION(eth),
-+		SH_PFC_FUNCTION(hscif0),
-+		SH_PFC_FUNCTION(hscif1),
-+		SH_PFC_FUNCTION(i2c0),
-+		SH_PFC_FUNCTION(i2c1),
-+		SH_PFC_FUNCTION(i2c2),
-+		SH_PFC_FUNCTION(i2c3),
-+		SH_PFC_FUNCTION(iic0),
-+		SH_PFC_FUNCTION(iic1),
-+		SH_PFC_FUNCTION(iic2),
-+		SH_PFC_FUNCTION(iic3),
-+		SH_PFC_FUNCTION(intc),
-+		SH_PFC_FUNCTION(mmc0),
-+		SH_PFC_FUNCTION(mmc1),
-+		SH_PFC_FUNCTION(msiof0),
-+		SH_PFC_FUNCTION(msiof1),
-+		SH_PFC_FUNCTION(msiof2),
-+		SH_PFC_FUNCTION(msiof3),
-+		SH_PFC_FUNCTION(pwm0),
-+		SH_PFC_FUNCTION(pwm1),
-+		SH_PFC_FUNCTION(pwm2),
-+		SH_PFC_FUNCTION(pwm3),
-+		SH_PFC_FUNCTION(pwm4),
-+		SH_PFC_FUNCTION(pwm5),
-+		SH_PFC_FUNCTION(pwm6),
-+		SH_PFC_FUNCTION(qspi),
-+		SH_PFC_FUNCTION(scif0),
-+		SH_PFC_FUNCTION(scif1),
-+		SH_PFC_FUNCTION(scif2),
-+		SH_PFC_FUNCTION(scifa0),
-+		SH_PFC_FUNCTION(scifa1),
-+		SH_PFC_FUNCTION(scifa2),
-+		SH_PFC_FUNCTION(scifb0),
-+		SH_PFC_FUNCTION(scifb1),
-+		SH_PFC_FUNCTION(scifb2),
-+		SH_PFC_FUNCTION(scif_clk),
-+		SH_PFC_FUNCTION(sdhi0),
-+		SH_PFC_FUNCTION(sdhi1),
-+		SH_PFC_FUNCTION(sdhi2),
-+		SH_PFC_FUNCTION(sdhi3),
-+		SH_PFC_FUNCTION(ssi),
-+		SH_PFC_FUNCTION(tpu0),
-+		SH_PFC_FUNCTION(usb0),
-+		SH_PFC_FUNCTION(usb1),
-+		SH_PFC_FUNCTION(usb2),
-+		SH_PFC_FUNCTION(vin0),
-+		SH_PFC_FUNCTION(vin1),
-+		SH_PFC_FUNCTION(vin2),
-+		SH_PFC_FUNCTION(vin3),
-+	},
-+	.automotive = {
-+		SH_PFC_FUNCTION(mlb),
-+	}
- };
- 
- static const struct pinmux_cfg_reg pinmux_config_regs[] = {
-@@ -5736,6 +5750,7 @@ static const struct sh_pfc_soc_operations r8a7790_pinmux_ops = {
- 	.pin_to_pocctrl = r8a7790_pin_to_pocctrl,
- };
- 
-+#ifdef CONFIG_PINCTRL_PFC_R8A7790
- const struct sh_pfc_soc_info r8a7790_pinmux_info = {
- 	.name = "r8a77900_pfc",
- 	.ops = &r8a7790_pinmux_ops,
-@@ -5745,13 +5760,38 @@ const struct sh_pfc_soc_info r8a7790_pinmux_info = {
- 
- 	.pins = pinmux_pins,
- 	.nr_pins = ARRAY_SIZE(pinmux_pins),
--	.groups = pinmux_groups,
--	.nr_groups = ARRAY_SIZE(pinmux_groups),
--	.functions = pinmux_functions,
--	.nr_functions = ARRAY_SIZE(pinmux_functions),
-+	.groups = pinmux_groups.common,
-+	.nr_groups = ARRAY_SIZE(pinmux_groups.common) +
-+		ARRAY_SIZE(pinmux_groups.automotive),
-+	.functions = pinmux_functions.common,
-+	.nr_functions = ARRAY_SIZE(pinmux_functions.common) +
-+		ARRAY_SIZE(pinmux_functions.automotive),
-+
-+	.cfg_regs = pinmux_config_regs,
-+
-+	.pinmux_data = pinmux_data,
-+	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
-+};
-+#endif
-+
-+#ifdef CONFIG_PINCTRL_PFC_R8A7742
-+const struct sh_pfc_soc_info r8a7742_pinmux_info = {
-+	.name = "r8a77420_pfc",
-+	.ops = &r8a7790_pinmux_ops,
-+	.unlock_reg = 0xe6060000, /* PMMR */
-+
-+	.function = { PINMUX_FUNCTION_BEGIN, PINMUX_FUNCTION_END },
-+
-+	.pins = pinmux_pins,
-+	.nr_pins = ARRAY_SIZE(pinmux_pins),
-+	.groups = pinmux_groups.common,
-+	.nr_groups = ARRAY_SIZE(pinmux_groups.common),
-+	.functions = pinmux_functions.common,
-+	.nr_functions = ARRAY_SIZE(pinmux_functions.common),
- 
- 	.cfg_regs = pinmux_config_regs,
- 
- 	.pinmux_data = pinmux_data,
- 	.pinmux_data_size = ARRAY_SIZE(pinmux_data),
- };
-+#endif
-diff --git a/drivers/pinctrl/sh-pfc/sh_pfc.h b/drivers/pinctrl/sh-pfc/sh_pfc.h
-index d57e633e99c0..0f013827baf9 100644
---- a/drivers/pinctrl/sh-pfc/sh_pfc.h
-+++ b/drivers/pinctrl/sh-pfc/sh_pfc.h
-@@ -304,6 +304,7 @@ struct sh_pfc_soc_info {
- extern const struct sh_pfc_soc_info emev2_pinmux_info;
- extern const struct sh_pfc_soc_info r8a73a4_pinmux_info;
- extern const struct sh_pfc_soc_info r8a7740_pinmux_info;
-+extern const struct sh_pfc_soc_info r8a7742_pinmux_info;
- extern const struct sh_pfc_soc_info r8a7743_pinmux_info;
- extern const struct sh_pfc_soc_info r8a7744_pinmux_info;
- extern const struct sh_pfc_soc_info r8a7745_pinmux_info;
+
+base-commit: 7111951b8d4973bda27ff663f2cf18b663d15b48
 -- 
-2.17.1
+2.26.2
 
