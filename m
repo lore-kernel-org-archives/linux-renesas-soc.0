@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54137C47256
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CDEC47259
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 May 2020 19:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DF77206B9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 May 2020 19:07:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCEC3206FA
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 May 2020 19:07:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbgEETHX (ORCPT
+        id S1728642AbgEETHY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 May 2020 15:07:23 -0400
-Received: from mga18.intel.com ([134.134.136.126]:52124 "EHLO mga18.intel.com"
+        Tue, 5 May 2020 15:07:24 -0400
+Received: from mga14.intel.com ([192.55.52.115]:36589 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728642AbgEETHW (ORCPT
+        id S1728773AbgEETHY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 May 2020 15:07:22 -0400
-IronPort-SDR: 0P3D8MWq/8RKdLAZVHkvKrnMSWqhWkQez7wgCVkEqJsHSrDZAlb3kpb+77KXadMN0KKx9iAQgU
- jNnKKWB3sHvg==
+        Tue, 5 May 2020 15:07:24 -0400
+IronPort-SDR: B0mIdgd5P2S/oN3v3ENTaiuIV4Ix+TimgdMgUVn0hzWfBi268mozb844O21JVxPKEyBKyG9pLT
+ op6XBAosOIpQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2020 12:07:21 -0700
-IronPort-SDR: EJCoPfnsF4lcym/hW0Qy/YsKK2JkokHKVxkffyhZb8pqCNW1Pk3ibwH0PWB3AW5n1L6ZgtUFUy
- rm2STho7WR+g==
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2020 12:07:22 -0700
+IronPort-SDR: Y554Z2YzCFJqR6xGAaPRjfwxR8OoKwezAQjBDWBEv49fPW71feJ1NHNih7jWZXcTBYJFFQ8RqR
+ Au5syLN92oKA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,356,1583222400"; 
-   d="scan'208";a="338759908"
+   d="scan'208";a="284354040"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 05 May 2020 12:07:20 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 05 May 2020 12:07:20 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jW2uV-000Dtj-Gu; Wed, 06 May 2020 03:07:19 +0800
-Date:   Wed, 06 May 2020 03:07:01 +0800
+        id 1jW2uV-000Dvf-Og; Wed, 06 May 2020 03:07:19 +0800
+Date:   Wed, 06 May 2020 03:06:53 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- 1b835e2a83eb6e0e88e01f9cc0829c5540b0f5ea
-Message-ID: <5eb1b955.6+Vf/AsX1OUw3YMT%lkp@intel.com>
+Subject: [renesas-devel:master] BUILD SUCCESS
+ 3a686bab50965b6757c0395e4daa532b3c2fdac4
+Message-ID: <5eb1b94d.L1ljQTh4GgQg2RuL%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,23 +52,17 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  next
-branch HEAD: 1b835e2a83eb6e0e88e01f9cc0829c5540b0f5ea  Merge branches 'renesas-arm-defconfig-for-v5.8', 'renesas-arm-dt-for-v5.8', 'renesas-arm-soc-for-v5.8', 'renesas-drivers-for-v5.8' and 'renesas-dt-bindings-for-v5.8' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
+branch HEAD: 3a686bab50965b6757c0395e4daa532b3c2fdac4  Merge branch 'renesas-next' into renesas-devel
 
 elapsed time: 488m
 
-configs tested: 220
+configs tested: 205
 configs skipped: 0
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
-arm64                            allyesconfig
-arm                              allyesconfig
-arm64                            allmodconfig
-arm                              allmodconfig
-arm64                             allnoconfig
-arm                               allnoconfig
 arm                           efm32_defconfig
 arm                         at91_dt_defconfig
 arm                        shmobile_defconfig
@@ -77,11 +71,18 @@ arm                          exynos_defconfig
 arm                        multi_v5_defconfig
 arm                           sunxi_defconfig
 arm                        multi_v7_defconfig
+arm64                            allyesconfig
+arm                              allyesconfig
+arm64                            allmodconfig
+arm                              allmodconfig
+arm64                             allnoconfig
+arm                               allnoconfig
 sparc                            allyesconfig
 xtensa                       common_defconfig
 mips                             allmodconfig
 h8300                       h8s-sim_defconfig
 um                           x86_64_defconfig
+m68k                           sun3_defconfig
 powerpc                     mpc512x_defconfig
 i386                             alldefconfig
 riscv                               defconfig
@@ -89,10 +90,10 @@ nds32                             allnoconfig
 powerpc                          g5_defconfig
 powerpc                           allnoconfig
 ia64                             allyesconfig
-i386                              allnoconfig
 i386                             allyesconfig
 i386                                defconfig
 i386                              debian-10.3
+i386                              allnoconfig
 ia64                             allmodconfig
 ia64                                defconfig
 ia64                              allnoconfig
@@ -103,7 +104,6 @@ ia64                             alldefconfig
 m68k                       m5475evb_defconfig
 m68k                             allmodconfig
 m68k                       bvme6000_defconfig
-m68k                           sun3_defconfig
 m68k                          multi_defconfig
 nios2                         3c120_defconfig
 nios2                         10m50_defconfig
@@ -181,11 +181,6 @@ csky                 randconfig-a001-20200505
 xtensa               randconfig-a001-20200503
 openrisc             randconfig-a001-20200503
 csky                 randconfig-a001-20200503
-s390                 randconfig-a001-20200430
-xtensa               randconfig-a001-20200430
-csky                 randconfig-a001-20200430
-openrisc             randconfig-a001-20200430
-sh                   randconfig-a001-20200430
 i386                 randconfig-b003-20200503
 x86_64               randconfig-b002-20200503
 i386                 randconfig-b001-20200503
@@ -198,20 +193,12 @@ i386                 randconfig-b001-20200505
 x86_64               randconfig-b001-20200505
 x86_64               randconfig-b003-20200505
 i386                 randconfig-b002-20200505
-x86_64               randconfig-c002-20200502
-i386                 randconfig-c002-20200502
-i386                 randconfig-c001-20200502
-i386                 randconfig-c003-20200502
 x86_64               randconfig-d001-20200505
 i386                 randconfig-d003-20200505
 i386                 randconfig-d001-20200505
 x86_64               randconfig-d003-20200505
 x86_64               randconfig-d002-20200505
 i386                 randconfig-d002-20200505
-i386                 randconfig-d003-20200502
-i386                 randconfig-d001-20200502
-x86_64               randconfig-d002-20200502
-i386                 randconfig-d002-20200502
 i386                 randconfig-e003-20200505
 x86_64               randconfig-e002-20200505
 x86_64               randconfig-e003-20200505
@@ -250,8 +237,6 @@ x86_64               randconfig-h001-20200505
 ia64                 randconfig-a001-20200505
 powerpc              randconfig-a001-20200505
 arm                  randconfig-a001-20200505
-arc                  randconfig-a001-20200505
-sparc                randconfig-a001-20200505
 riscv                            allyesconfig
 riscv                    nommu_virt_defconfig
 riscv                             allnoconfig
