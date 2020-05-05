@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B82FAC3A5A9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 May 2020 02:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86730C47247
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 May 2020 02:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95B7A206B9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 May 2020 02:22:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62E92206B9
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 May 2020 02:22:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726641AbgEECWH (ORCPT
+        id S1726897AbgEECWI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 May 2020 22:22:07 -0400
-Received: from mga07.intel.com ([134.134.136.100]:25325 "EHLO mga07.intel.com"
+        Mon, 4 May 2020 22:22:08 -0400
+Received: from mga17.intel.com ([192.55.52.151]:30487 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
         id S1726531AbgEECWH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 4 May 2020 22:22:07 -0400
-IronPort-SDR: 1PwYlL23NmHvgYrF0SLLoHeeDIztMQ4IF5nKrMeAXftcJNlLQXupjW5JbetkFkiYR+l/5YorPK
- /UITuIfQzS9g==
+IronPort-SDR: kozbewZlZyxST/Lqv0m6SHVYHy1UJYMVKo+ia4/C/EnPtc/EcBRq/rXckziZy5wStpM4HoQrfA
+ PSpjpL/r/Tww==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2020 19:22:02 -0700
-IronPort-SDR: JNOxyi8lyfFvPuvq53D8z8Q52iy62uLNQ+t8w4yZyQpgEYhGJTOXmE2WuLyRUnvo+BwYNCA8xG
- mTc2CO0upn2A==
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 May 2020 19:22:07 -0700
+IronPort-SDR: nwC1RP/aJJJMgiDxVpKxx9KLRPO3+uwlD1p9KFYH8q17w5BesK4oOl1xWSpeMTSKQZ0CUgAmcO
+ x/nEzMptHzJw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,354,1583222400"; 
-   d="scan'208";a="263007452"
+   d="scan'208";a="295684204"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 04 May 2020 19:22:01 -0700
+  by orsmga008.jf.intel.com with ESMTP; 04 May 2020 19:22:05 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jVnDc-0001y5-N8; Tue, 05 May 2020 10:22:00 +0800
-Date:   Tue, 05 May 2020 10:21:34 +0800
+        id 1jVnDh-0002UP-4v; Tue, 05 May 2020 10:22:05 +0800
+Date:   Tue, 05 May 2020 10:21:44 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- a928bef2e50f170e0766b8dbb6f131762946a4eb
-Message-ID: <5eb0cdae.hiPKo22T5p4VAR6h%lkp@intel.com>
+Subject: [renesas-devel:renesas-dt-bindings-for-v5.8] BUILD SUCCESS
+ 3e8084a2e86ea0ab4c677646ae30566ff45b5cd8
+Message-ID: <5eb0cdb8.x2KtKl8i18TVudvq%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,13 +52,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  next
-branch HEAD: a928bef2e50f170e0766b8dbb6f131762946a4eb  Merge branch 'renesas-drivers-for-v5.8' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-dt-bindings-for-v5.8
+branch HEAD: 3e8084a2e86ea0ab4c677646ae30566ff45b5cd8  dt-bindings: arm: renesas: Document iW-RainboW-G21D-Qseven-RZG1H board
 
 elapsed time: 483m
 
-configs tested: 210
-configs skipped: 0
+configs tested: 221
+configs skipped: 15
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -79,6 +79,7 @@ arm                           sunxi_defconfig
 arm                        multi_v7_defconfig
 sparc                            allyesconfig
 s390                             allmodconfig
+mips                            ar7_defconfig
 riscv                             allnoconfig
 parisc                            allnoconfig
 powerpc                       holly_defconfig
@@ -122,7 +123,6 @@ microblaze                      mmu_defconfig
 microblaze                    nommu_defconfig
 mips                      fuloong2e_defconfig
 mips                      malta_kvm_defconfig
-mips                            ar7_defconfig
 mips                             allyesconfig
 mips                         64r6el_defconfig
 mips                              allnoconfig
@@ -188,6 +188,12 @@ i386                 randconfig-b001-20200503
 x86_64               randconfig-b003-20200503
 x86_64               randconfig-b001-20200503
 i386                 randconfig-b002-20200503
+i386                 randconfig-b003-20200505
+x86_64               randconfig-b002-20200505
+i386                 randconfig-b001-20200505
+x86_64               randconfig-b001-20200505
+x86_64               randconfig-b003-20200505
+i386                 randconfig-b002-20200505
 i386                 randconfig-b003-20200502
 i386                 randconfig-b001-20200502
 x86_64               randconfig-b003-20200502
@@ -219,17 +225,17 @@ x86_64               randconfig-d003-20200503
 i386                 randconfig-d001-20200503
 x86_64               randconfig-d002-20200503
 i386                 randconfig-d002-20200503
-x86_64               randconfig-e003-20200502
-i386                 randconfig-e003-20200502
-x86_64               randconfig-e001-20200502
-i386                 randconfig-e002-20200502
-i386                 randconfig-e001-20200502
 x86_64               randconfig-e003-20200503
 x86_64               randconfig-e002-20200503
 i386                 randconfig-e003-20200503
 x86_64               randconfig-e001-20200503
 i386                 randconfig-e002-20200503
 i386                 randconfig-e001-20200503
+x86_64               randconfig-e003-20200502
+i386                 randconfig-e003-20200502
+x86_64               randconfig-e001-20200502
+i386                 randconfig-e002-20200502
+i386                 randconfig-e001-20200502
 i386                 randconfig-f003-20200503
 x86_64               randconfig-f002-20200503
 i386                 randconfig-f001-20200503
@@ -238,6 +244,11 @@ i386                 randconfig-g003-20200505
 i386                 randconfig-g002-20200505
 i386                 randconfig-g001-20200505
 x86_64               randconfig-g002-20200505
+x86_64               randconfig-g003-20200503
+i386                 randconfig-g003-20200503
+i386                 randconfig-g002-20200503
+x86_64               randconfig-g001-20200503
+i386                 randconfig-g001-20200503
 ia64                 randconfig-a001-20200503
 arm64                randconfig-a001-20200503
 arc                  randconfig-a001-20200503
