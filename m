@@ -2,80 +2,103 @@ Return-Path: <SRS0=byYQ=6T=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9E4C47254
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 May 2020 16:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E96B4C47247
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 May 2020 18:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC778206A4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 May 2020 16:07:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="1PA6kzZw"
+	by mail.kernel.org (Postfix) with ESMTP id D448320752
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 May 2020 18:02:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729725AbgEEQHx (ORCPT
+        id S1730679AbgEESCW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 May 2020 12:07:53 -0400
-Received: from www.zeus03.de ([194.117.254.33]:42496 "EHLO mail.zeus03.de"
+        Tue, 5 May 2020 14:02:22 -0400
+Received: from foss.arm.com ([217.140.110.172]:46916 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728804AbgEEQHx (ORCPT
+        id S1730069AbgEESCW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 May 2020 12:07:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version:content-type
-        :content-transfer-encoding; s=k1; bh=X0Q91izrK4UW1W/HUwdjfD2eKdG
-        Alaq4rEqT0gWkf9E=; b=1PA6kzZwDvl9d9ISOq11WPgTgyyo5tBZK6ALjVdpXTy
-        wX52XixxMoMLJkQ+AbLjBogzOcqzYkQ5SmhN7pv6DbuEAfwo67m14etYJ4JD/M50
-        k1BucAl6qjTpMyTgu3qdGm5FlGQRatepurkwwWlPN3cTVOkVd4IA2fmuxK/iMnGg
-        =
-Received: (qmail 344315 invoked from network); 5 May 2020 18:01:10 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 May 2020 18:01:10 +0200
-X-UD-Smtp-Session: l3s3148p1@O6KQweikrsUgAwDPXwzKAGcVR8vvnnu/
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH] i2c: reword explanation about atomic transfers
-Date:   Tue,  5 May 2020 18:01:01 +0200
-Message-Id: <20200505160101.12399-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 5 May 2020 14:02:22 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8BE0ED6E;
+        Tue,  5 May 2020 11:02:21 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8D1BF3F305;
+        Tue,  5 May 2020 11:02:20 -0700 (PDT)
+Date:   Tue, 5 May 2020 19:02:14 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     linux-pci@vger.kernel.org,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] PCI: pcie-rcar: Cache PHY init function pointer
+Message-ID: <20200505180214.GA18468@e121166-lin.cambridge.arm.com>
+References: <20200426123148.56051-1-marek.vasut@gmail.com>
+ <20200428083231.GC12459@e121166-lin.cambridge.arm.com>
+ <717765f1-b5be-a436-20d6-d0a95f58cbdc@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <717765f1-b5be-a436-20d6-d0a95f58cbdc@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Atomic transfers are not only about sending messages like the original
-wording suggested. Speak of 'accessing' now like in i2c.h.
+On Fri, May 01, 2020 at 10:42:06PM +0200, Marek Vasut wrote:
+> On 4/28/20 10:32 AM, Lorenzo Pieralisi wrote:
+> > On Sun, Apr 26, 2020 at 02:31:47PM +0200, marek.vasut@gmail.com wrote:
+> >> From: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >>
+> >> The PHY initialization function pointer does not change during the
+> >> lifetime of the driver instance, it is therefore sufficient to get
+> >> the pointer in .probe(), cache it in driver private data, and just
+> >> call the function through the cached pointer in .resume().
+> >>
+> >> Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+> >> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> >> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> >> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> >> Cc: Wolfram Sang <wsa@the-dreams.de>
+> >> Cc: linux-renesas-soc@vger.kernel.org
+> >> ---
+> >> NOTE: Based on git://git.kernel.org/pub/scm/linux/kernel/git/lpieralisi/pci.git
+> >>       branch pci/rcar
+> >> NOTE: The driver tag is now 'pcie-rcar' to distinguish it from pci-rcar-gen2.c
+> >> ---
+> >>  drivers/pci/controller/pcie-rcar.c | 10 ++++------
+> >>  1 file changed, 4 insertions(+), 6 deletions(-)
+> > 
+> > Squashed in https://patchwork.kernel.org/patch/11438665
+> 
+> Thanks
+> 
+> > Do you want me to rename the $SUBJECT (and the branch name while at it)
+> > in the patches in my pci/rcar branch ("PCI: pcie-rcar: ...") to start
+> > the commit subject tag renaming from this cycle (and in the interim you
+> > send a rename for the drivers files ?)
+> 
+> I don't really have a particular preference either way. I can keep
+> marking the drivers with pcie-rcar and pci-rcar tags if that helps
+> discern them.
 
-Reported-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+So:
 
-diff --git a/drivers/i2c/i2c-core.h b/drivers/i2c/i2c-core.h
-index 517d98be68d2..94ff1693b391 100644
---- a/drivers/i2c/i2c-core.h
-+++ b/drivers/i2c/i2c-core.h
-@@ -23,9 +23,9 @@ int i2c_dev_irq_from_resources(const struct resource *resources,
- 			       unsigned int num_resources);
- 
- /*
-- * We only allow atomic transfers for very late communication, e.g. to send
-- * the powerdown command to a PMIC. Atomic transfers are a corner case and not
-- * for generic use!
-+ * We only allow atomic transfers for very late communication, e.g. to access a
-+ * PMIC when powering down. Atomic transfers are a corner case and not for
-+ * generic use!
-  */
- static inline bool i2c_in_atomic_xfer_mode(void)
- {
--- 
-2.20.1
+- "rcar" for the PCIe driver
+- "rcar-pci" or "rcar-legacy" for the pci-rcar-gen2.c (preference ?
+  there is no urgency, no commit queued to rename, it is for future
+  code)
 
+Are we OK with that ? If yes I will rewrite the commits subjects
+and push out an updated pci/rcar branch.
+
+...DT bindings commit subjects - should I change their tag subject
+too ?
+
+Lorenzo
