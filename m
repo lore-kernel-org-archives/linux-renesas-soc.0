@@ -1,86 +1,177 @@
-Return-Path: <SRS0=cTbq=6U=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=UJne=6V=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBA0C47263
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 May 2020 19:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40319C47257
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 May 2020 02:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07C882075E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 May 2020 19:52:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 215CB2082E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  7 May 2020 02:53:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RxrFmj2x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729222AbgEFTwO (ORCPT
+        id S1728354AbgEGCxA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 May 2020 15:52:14 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:7384 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725799AbgEFTwM (ORCPT
+        Wed, 6 May 2020 22:53:00 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:33928 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbgEGCxA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 May 2020 15:52:12 -0400
-X-IronPort-AV: E=Sophos;i="5.73,360,1583161200"; 
-   d="scan'208";a="46218045"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 07 May 2020 04:52:11 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id C9141400495A;
-        Thu,  7 May 2020 04:52:07 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Wed, 6 May 2020 22:53:00 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 0472qPD2001465;
+        Wed, 6 May 2020 21:52:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1588819945;
+        bh=77R+KN0P7OsXUgS4duR3XXp1coR50qLJMaCXXlSV/To=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=RxrFmj2xHI3XzwRDd6EzTkWMyRLVoJV6Gv7++CFw3vBoFCNYGBoD1neud85nJ/7Ui
+         H4tk3kZFbkYIgVmPyDe4Y6M8dRGXJ2gD/vNMdLpf7k0jNXbSVu12/OJlC3NKQdOZDP
+         pAViwat4VydyzOnRRomoWgYymz3/TFYv8phPKH54=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0472qPMY045107;
+        Wed, 6 May 2020 21:52:25 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 6 May
+ 2020 21:52:25 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 6 May 2020 21:52:25 -0500
+Received: from [10.250.233.85] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 0472qJsC110440;
+        Wed, 6 May 2020 21:52:20 -0500
+Subject: Re: [PATCH v9 4/8] PCI: endpoint: Pass page size as argument to
+ pci_epc_mem_init()
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 5/9] dt-bindings: serial: renesas,scifb: Document r8a7742 bindings
-Date:   Wed,  6 May 2020 20:51:31 +0100
-Message-Id: <1588794695-27852-6-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1588794695-27852-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1588794695-27852-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Andrew Murray <amurray@thegoodpenguin.co.uk>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>
+CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Lad Prabhakar <prabhakar.csengg@gmail.com>
+References: <1587666159-6035-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1587666159-6035-5-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <8986f0a7-8e23-71d5-d718-def48a28dfc8@ti.com>
+Date:   Thu, 7 May 2020 08:22:19 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <1587666159-6035-5-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-RZ/G1H (R8A7742) SoC also has the R-Car gen2 compatible SCIFB ports,
-so document the SoC specific bindings.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2:
-* No change
----
 
- Documentation/devicetree/bindings/serial/renesas,scifb.yaml | 1 +
- 1 file changed, 1 insertion(+)
+On 4/23/2020 11:52 PM, Lad Prabhakar wrote:
+> pci_epc_mem_init() internally used page size equal to *PAGE_SIZE* to
+> manage the address space so instead just pass the page size as a
+> argument to pci_epc_mem_init().
+> 
+> Also make pci_epc_mem_init() as a C function instead of a macro function
+> in preparation for adding support for pci-epc-mem core to handle multiple
+> windows.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,scifb.yaml b/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
-index 57205cb1dcd4..b083970c16a9 100644
---- a/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,scifb.yaml
-@@ -24,6 +24,7 @@ properties:
- 
-       - items:
-           - enum:
-+              - renesas,scifb-r8a7742      # RZ/G1H
-               - renesas,scifb-r8a7743      # RZ/G1M
-               - renesas,scifb-r8a7744      # RZ/G1N
-               - renesas,scifb-r8a7745      # RZ/G1E
--- 
-2.17.1
-
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+>  drivers/pci/controller/cadence/pcie-cadence-ep.c | 2 +-
+>  drivers/pci/controller/pcie-rockchip-ep.c        | 2 +-
+>  drivers/pci/endpoint/pci-epc-mem.c               | 7 +++++++
+>  include/linux/pci-epc.h                          | 5 ++---
+>  4 files changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/cadence/pcie-cadence-ep.c b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> index 1c173dad67d1..1c15c8352125 100644
+> --- a/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> +++ b/drivers/pci/controller/cadence/pcie-cadence-ep.c
+> @@ -450,7 +450,7 @@ int cdns_pcie_ep_setup(struct cdns_pcie_ep *ep)
+>  		epc->max_functions = 1;
+>  
+>  	ret = pci_epc_mem_init(epc, pcie->mem_res->start,
+> -			       resource_size(pcie->mem_res));
+> +			       resource_size(pcie->mem_res), PAGE_SIZE);
+>  	if (ret < 0) {
+>  		dev_err(dev, "failed to initialize the memory space\n");
+>  		goto err_init;
+> diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
+> index d743b0a48988..5eaf36629a75 100644
+> --- a/drivers/pci/controller/pcie-rockchip-ep.c
+> +++ b/drivers/pci/controller/pcie-rockchip-ep.c
+> @@ -615,7 +615,7 @@ static int rockchip_pcie_ep_probe(struct platform_device *pdev)
+>  	rockchip_pcie_write(rockchip, BIT(0), PCIE_CORE_PHY_FUNC_CFG);
+>  
+>  	err = pci_epc_mem_init(epc, rockchip->mem_res->start,
+> -			       resource_size(rockchip->mem_res));
+> +			       resource_size(rockchip->mem_res), PAGE_SIZE);
+>  	if (err < 0) {
+>  		dev_err(dev, "failed to initialize the memory space\n");
+>  		goto err_uninit_port;
+> diff --git a/drivers/pci/endpoint/pci-epc-mem.c b/drivers/pci/endpoint/pci-epc-mem.c
+> index abfac1109a13..cdd1d3821249 100644
+> --- a/drivers/pci/endpoint/pci-epc-mem.c
+> +++ b/drivers/pci/endpoint/pci-epc-mem.c
+> @@ -93,6 +93,13 @@ return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(__pci_epc_mem_init);
+>  
+> +int pci_epc_mem_init(struct pci_epc *epc, phys_addr_t base,
+> +		     size_t size, size_t page_size)
+> +{
+> +	return __pci_epc_mem_init(epc, base, size, page_size);
+> +}
+> +EXPORT_SYMBOL_GPL(pci_epc_mem_init);
+> +
+>  /**
+>   * pci_epc_mem_exit() - cleanup the pci_epc_mem structure
+>   * @epc: the EPC device that invoked pci_epc_mem_exit
+> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+> index e0ed9d01f6e5..5bc1de65849e 100644
+> --- a/include/linux/pci-epc.h
+> +++ b/include/linux/pci-epc.h
+> @@ -137,9 +137,6 @@ struct pci_epc_features {
+>  #define devm_pci_epc_create(dev, ops)    \
+>  		__devm_pci_epc_create((dev), (ops), THIS_MODULE)
+>  
+> -#define pci_epc_mem_init(epc, phys_addr, size)	\
+> -		__pci_epc_mem_init((epc), (phys_addr), (size), PAGE_SIZE)
+> -
+>  static inline void epc_set_drvdata(struct pci_epc *epc, void *data)
+>  {
+>  	dev_set_drvdata(&epc->dev, data);
+> @@ -195,6 +192,8 @@ unsigned int pci_epc_get_first_free_bar(const struct pci_epc_features
+>  struct pci_epc *pci_epc_get(const char *epc_name);
+>  void pci_epc_put(struct pci_epc *epc);
+>  
+> +int pci_epc_mem_init(struct pci_epc *epc, phys_addr_t base,
+> +		     size_t size, size_t page_size);
+>  int __pci_epc_mem_init(struct pci_epc *epc, phys_addr_t phys_addr, size_t size,
+>  		       size_t page_size);
+>  void pci_epc_mem_exit(struct pci_epc *epc);
+> 
