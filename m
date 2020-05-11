@@ -2,161 +2,184 @@ Return-Path: <SRS0=JaFY=6Z=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CB8C54E8F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 10:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C93C47255
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 10:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9296207DD
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 10:20:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="Ixjdwi4v"
+	by mail.kernel.org (Postfix) with ESMTP id DD3DE206DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 10:37:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbgEKKUg (ORCPT
+        id S1728808AbgEKKhA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 May 2020 06:20:36 -0400
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:37225 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727093AbgEKKUg (ORCPT
+        Mon, 11 May 2020 06:37:00 -0400
+Received: from foss.arm.com ([217.140.110.172]:55856 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728209AbgEKKhA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 May 2020 06:20:36 -0400
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id Y5XyjA9BJhEkrY5Y0jG36T; Mon, 11 May 2020 12:20:32 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1589192432; bh=v30NtQeC3gcqtHWLR4991ZFdZBLF0lN/Kr3HY4BLSBM=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=Ixjdwi4vvoUnq6c9t9ekk+1Yb9LC1cc83KBF4VN/A6ZiggC55CMPHDNVaDPyPhVXN
-         JOiDS9s4EK8Jlvudao3wwN9ItlcFJcHrVbwF7HX8e1ccO0l9/zSses+CNrQI3BuEap
-         tpv5uZ2OG1ms/i5oMJ44I9j4wVfExxQqQrMMS5TxRKQGRJUowkqUoa5eN/P5RD2rOi
-         UWeD5mC8t2ZZH2fa60uz8Prvl9QKCbW6JOI8roxkEbL3ZM8VrnfwJmbsdMjW7HGdEa
-         jUwfPTRLTMz1xwbvfM6w5OQAfc3hZezBrVGwUFjT7E85QweAxCj47qMClPARWC6pAU
-         HIqBNkHkXroaQ==
-Subject: Re: [PATCH v8 4/4] media: i2c: Add RDACM20 driver
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        sakari.ailus@iki.fi, Hyun Kwon <hyunk@xilinx.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Rob Herring <robh@kernel.org>
-References: <20200417103424.5875-1-kieran.bingham+renesas@ideasonboard.com>
- <20200417103424.5875-5-kieran.bingham+renesas@ideasonboard.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <9542009f-7290-eec4-3190-9fc8dad6f214@xs4all.nl>
-Date:   Mon, 11 May 2020 12:20:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Mon, 11 May 2020 06:37:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCE101FB;
+        Mon, 11 May 2020 03:36:58 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 917703F305;
+        Mon, 11 May 2020 03:36:56 -0700 (PDT)
+Date:   Mon, 11 May 2020 11:36:54 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Tom Joseph <tjoseph@cadence.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH v10 0/8] Add endpoint driver for R-Car PCIe controller
+Message-ID: <20200511103654.GD24149@e121166-lin.cambridge.arm.com>
+References: <1588854799-13710-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <20200417103424.5875-5-kieran.bingham+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfJEY/valHly88FpnjoxOAXAEx4SvJ8hiONrbmS6097U1wDlDWti5PkSctG0PxjuILKrfyat1/KEOHklkxtfynxOQTVAgF3+kCjeYyI5gPEWaD/KKABZY
- F9tJB7c6iwzIACKI5JgaeWl/fcOyOa7FhKcL++ZATjbLTQPQoznEXrS3lpTGmxMrUTZSPJuzzMJ5L+OmYlYVWQcOllVusIWU+PDUIhMrVSXkJtojB1aAatIX
- 2cTq12lyF56EAKbpxQROGFU/2Ts30t2V1qkxuCJuufHCZi+I2R4Cy8R6bpvZeBVWZnwnVRh6y0k29WcEkos31aaFzpavhR/bRjhZVFj5d7f8E4Sib0c8tQDp
- 0bwiStvj7UxrKLjmz3DnWAPGkHkg6pWLxZ6yyb6DGjktqfSECqpc612W4v8arqicCkpgVWROH4mose9I6XHer8EhbO1a0W5cRSbdpKKB3/Vx88NIHa412RE6
- 3BycoYIVPz73E7OVefgDWa7vqRyBTJCcRvpPSkM8ehjBIkibhymcscLYH0M2Tx5mpaVkSp9fgPJ4jsK/xibBLXiz6mPPfEWY/2ZqUa2+i93O4DuVLDQHrr0+
- GuC7SKjvf5QfGoZsJPfY1Kd+DigRcAFW4Zr4fYamfnfhwFrGE8YwhPpBjROn74AfazT12tEwEg6ERd/3PanjL0IDhdqqK5Wr6YH/EG3u552tTZoj6GOEy7+C
- Z38Qd5AKsRKopC//UrQ1RSo9BM7+WWFuACxeroHKzsGOouBac91Ci6gdVSobbE7yNhCptK4AT63oBZNUYeCKWMB5C1GBaiiRMMhVAK7N4MevjHbTtke57aYG
- W07bZD8ifZVAydfo8aCnwpGh9Jd68W6QiYX9+CLHPf3oEaAsKttno71H3e+Gj2OHpr71GatvFToxT3c6fffmS23/vx7N/SntnjP+/oB7YykV6ffkUYfUn1RE
- bx1wpBXBR/Uq6HTIjGlqVeKrd7I=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1588854799-13710-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 17/04/2020 12:34, Kieran Bingham wrote:
-> From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+On Thu, May 07, 2020 at 01:33:11PM +0100, Lad Prabhakar wrote:
+> Hi All,
 > 
-> The RDACM20 is a GMSL camera supporting 1280x800 resolution images
-> developed by IMI based on an Omnivision 10635 sensor and a Maxim MAX9271
-> GMSL serializer.
+> This patch series adds support for endpoint driver for R-Car PCIe controller on
+> R-Car/RZ-G2x SoC's, this also extends the epf framework to handle multiple windows
+> supported by the controller for mapping PCI address locally.
 > 
-> The GMSL link carries power, control (I2C) and video data over a
-> single coax cable.
+> Note:
+> The rockchip/dwc endpoint drivers are build tested only and was tested on cadence
+> by Kishon (https://lkml.org/lkml/2020/5/6/1535)
 > 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
+> Changes for v10:
+> * Rebased patches on top of pci/rcar branch on tree
+>   https://git.kernel.org/pub/scm/linux/kernel/git/lpieralisi/pci.git
+> * Made pci_epc_get_matching_window() as static
+> * Included Ack's from Kishon for patches 4/8 and 5/8
+> * Included Reviewed-by tag from Shimoda-san for patches 4/8 and 5/8
 > 
-> ---
+> Changes for v9:
+> * Rebased patches on top of v5.7.rc1
+> * Replaced mdelay(1) with usleep_range(1000, 1001) in rcar_pcie_ep_assert_intx()
+> * Added a check for max_functions read from DT to restrict with
+>   RCAR_EPC_MAX_FUNCTIONS
+> * Replaced MSICAP0_MMENUM with MSICAP0_MMESE
+> * Retry ioremap for other windows on failure in pci_epc_mem_alloc_addr()
+> * Fixed looping for number windows in pci_epc_mem_exit()
+> * Set maximum to 1 for max-functions in DT binding (I have restored the acks
+>   from  Rob and Shimoda-san)
+> * Sorted the entry in MAINTAINERS
+> 
+> Changes for v8:
+> * Dropped adding R8A774C0 (0x002d) pci-id in pci_ids.h
+> * Fixed typo in commit message for patch 2/8
+> * Reworded commit message for patch 5/8 as suggested by Bjorn
+> * Split up patch to add pci_epc_mem_init() interface to add page_size argument
+>   as suggested by Bjorn.
+> 
+> Changes for v7:
+> * Fixed review comments pointed by Shimoda-san
+>   1] Made DT bindings dual licensed, added Shimoda-san as maintainer and fixed
+>      the example as its built with #{address,size}-cells = <1>. I have still
+>      restored the Ack from Rob and Shimoda-san with these changes.
+>   2] Split up the patches so that they can be picked up by respective subsystem
+>      patches 1/4-9/11 are now part of this series.
+>   3] Dropped altering a comment in pci-epc.h
+>   4] Used a local variable align_size in pci_epc_mem_alloc_addr() so that size
+>      variable doesn't get overwritten in the loop.
+>   5] Replaced i-=1 with i--
+>   6] Replaced rcar with R-Car in patch subject and description.
+>   7] Set MACCTLR in init() callback
+> 
+> Changes for v6:
+> 1] Rebased patches on endpoint branch of https://git.kernel.org/pub/
+>    scm/linux/kernel/git/lpieralisi/pci.git/
+> 2] Fixed review comments from Shimoda-san
+>    a] Made sure defconfig changes were in separate patch
+>    b] Created rcar_pcie_host/rcar_pcie_ep structures
+>    c] Added pci-id for R8A774C0
+>    d] Added entry in MAINTAINERS for dt-binding
+>    e] Dropped unnecessary braces
+> 3] Added support for msi.
+> 
+> Changes for v5:
+> 1] Rebased patches on next branch of https://git.kernel.org/pub/scm/
+>    linux/kernel/git/helgaas/pci.git
+> 2] Fixed review comments reported by Kishon while fetching the matching
+>    window in function pci_epc_get_matching_window()
+> 3] Fixed review comments reported by Bjorn
+>    a] Split patch up first patch so that its easier to review and incremental
+>    b] Fixed typos
+> 4] Included Reviewed tag from Rob for the dt-binding patch
+> 5] Fixed issue reported by Nathan for assigning variable to itself
+> 
+> Changes for v4:
+> 1] Fixed dtb_check error reported by Rob
+> 2] Fixed review comments reported by Kishon
+>    a] Dropped pci_epc_find_best_fit_window()
+>    b] Fixed initializing mem ptr in __pci_epc_mem_init()
+>    c] Dropped map_size from pci_epc_mem_window structure
+> 
+> Changes for v3:
+> 1] Fixed review comments from Bjorn and Kishon.
+> 3] Converted to DT schema
+> 
+> Changes for v2:
+> 1] Fixed review comments from Biju for dt-bindings to include an example
+>    for a tested platform.
+> 2] Fixed review comments from Kishon to extend the features of outbound
+>    regions in epf framework.
+> 3] Added support to parse outbound-ranges in OF.
+> 
+> Lad Prabhakar (8):
+>   PCI: rcar: Rename pcie-rcar.c to pcie-rcar-host.c
+>   PCI: rcar: Move shareable code to a common file
+>   PCI: rcar: Fix calculating mask for PCIEPAMR register
+>   PCI: endpoint: Pass page size as argument to pci_epc_mem_init()
+>   PCI: endpoint: Add support to handle multiple base for mapping
+>     outbound memory
+>   dt-bindings: PCI: rcar: Add bindings for R-Car PCIe endpoint
+>     controller
+>   PCI: rcar: Add endpoint mode support
+>   MAINTAINERS: Add file patterns for rcar PCI device tree bindings
+> 
+>  .../devicetree/bindings/pci/rcar-pci-ep.yaml  |   77 +
+>  MAINTAINERS                                   |    1 +
+>  drivers/pci/controller/Kconfig                |   18 +
+>  drivers/pci/controller/Makefile               |    3 +-
+>  .../pci/controller/cadence/pcie-cadence-ep.c  |    2 +-
+>  .../pci/controller/dwc/pcie-designware-ep.c   |   16 +-
+>  drivers/pci/controller/pcie-rcar-ep.c         |  563 ++++++++
+>  drivers/pci/controller/pcie-rcar-host.c       | 1130 +++++++++++++++
+>  drivers/pci/controller/pcie-rcar.c            | 1268 +----------------
+>  drivers/pci/controller/pcie-rcar.h            |  140 ++
+>  drivers/pci/controller/pcie-rockchip-ep.c     |    2 +-
+>  drivers/pci/endpoint/pci-epc-mem.c            |  204 ++-
+>  include/linux/pci-epc.h                       |   38 +-
+>  13 files changed, 2150 insertions(+), 1312 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+>  create mode 100644 drivers/pci/controller/pcie-rcar-ep.c
+>  create mode 100644 drivers/pci/controller/pcie-rcar-host.c
+>  create mode 100644 drivers/pci/controller/pcie-rcar.h
+ 
 
-<snip>
+Applied to pci/rcar, thanks !
 
-> diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
-> new file mode 100644
-> index 000000000000..37786998878b
-> --- /dev/null
-> +++ b/drivers/media/i2c/rdacm20.c
-> @@ -0,0 +1,668 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * IMI RDACM20 GMSL Camera Driver
-> + *
-> + * Copyright (C) 2017-2020 Jacopo Mondi
-> + * Copyright (C) 2017-2020 Kieran Bingham
-> + * Copyright (C) 2017-2019 Laurent Pinchart
-> + * Copyright (C) 2017-2019 Niklas Söderlund
-> + * Copyright (C) 2016 Renesas Electronics Corporation
-> + * Copyright (C) 2015 Cogent Embedded, Inc.
-> + */
-> +
-> +/*
-> + * The camera is made of an Omnivision OV10635 sensor connected to a Maxim
-> + * MAX9271 GMSL serializer.
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/fwnode.h>
-> +#include <linux/init.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/videodev2.h>
-> +
-> +#include <media/v4l2-async.h>
-> +#include <media/v4l2-ctrls.h>
-> +#include <media/v4l2-subdev.h>
-> +
-> +#include "max9271.h"
-> +
-> +#define OV10635_I2C_ADDRESS		0x30
-> +
-> +#define OV10635_SOFTWARE_RESET		0x0103
-> +#define OV10635_PID			0x300a
-> +#define OV10635_VER			0x300b
-> +#define OV10635_SC_CMMN_SCCB_ID		0x300c
-> +#define OV10635_SC_CMMN_SCCB_ID_SELECT	BIT(0)
-> +#define OV10635_VERSION			0xa635
-> +
-> +#define OV10635_WIDTH			1280
-> +#define OV10635_HEIGHT			800
-> +#define OV10635_FORMAT			MEDIA_BUS_FMT_UYVY8_2X8
-
-This OV10635_FORMAT define was very confusing when I reviewed this code.
-
-Please just use MEDIA_BUS_FMT_UYVY8_2X8 directly instead of introducing
-an alias. While reviewing I thought for a moment that OV10635_FORMAT was
-somehow a new mediabus format that was added elsewhere. I had to dig into
-the code to figure out that it really was an alias.
-
-Regards,
-
-	Hans
-
+Lorenzo
