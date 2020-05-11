@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD7CC54E8E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 16:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B96C54E8F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 16:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A9622082E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 16:34:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18EBE2082E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 16:34:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="T5NasMOy"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="GKs9mKXT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728556AbgEKQeN (ORCPT
+        id S1730336AbgEKQeO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 May 2020 12:34:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58976 "EHLO
+        Mon, 11 May 2020 12:34:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729862AbgEKQeM (ORCPT
+        by vger.kernel.org with ESMTP id S1730228AbgEKQeO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 May 2020 12:34:12 -0400
-Received: from mo6-p01-ob.smtp.rzone.de (mo6-p01-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5301::7])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D07D8C061A0E
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 May 2020 09:34:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1589214850;
+        Mon, 11 May 2020 12:34:14 -0400
+Received: from mo6-p01-ob.smtp.rzone.de (mo6-p01-ob.smtp.rzone.de [IPv6:2a01:238:20a:202:5301::8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26455C061A0E
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 May 2020 09:34:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1589214852;
         s=strato-dkim-0002; d=fpond.eu;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=hbrqknp06hHC2yN/4tJ+lPcOR/9UMabiIYaIJlb7+Fs=;
-        b=T5NasMOyG89vwFPoQF5et5vCdy3p5WK54ZNssVqxWKWG4BfaYTKp+IYbjfgr1DqzPE
-        RzcqRC2zJQ2jJVxikf+zYMA3qiRscuqvkkBUhwqkDuZOYg82xfSVcSgfDp0Je69+2vja
-        VscCljijDmQnXDpHVL9enyl3m9QyW/khojP4x6ppv8YDz+tGBHLa3/id9IQr5STlocqV
-        B8m++XHvc9H6x5ibRCQOsTkTuhmzIePy/Mp9hFnBH0WhRhTzV2ExEbC87hRb1lxLH+pk
-        WQdUfbsFSODCHdO+j6Lj/7elKPY1zHCjhWjAGR4gbEFormcbpoTuKJEHIL66uRYji+dr
-        YkEg==
+        bh=idLjoml/n0aY2mGHF79bsTQJ8OW+5pVkiHz3MYIIFpQ=;
+        b=GKs9mKXTA73aypwvfLbIBkx6YidDxfyNPKbTCzswh8mv6OupDynQqNkaIzvLdYakUR
+        4fpwy58k2KJFIneN93mYnW8L3gu1wVCnCYVbcCMd6TysRSOXyRZDLUGr8A99H56XBotT
+        mQyAybamK+etJzotEFmbus2/I2hmw+5jJg0cGukKZOePeEnJrr7ffDgIpvofqTSEJHnY
+        S7gvncNjrt2MYsCvJ/BHo+bbBDGtPOzRc+IlAT0mbbBXD6cnaTN6/qYd9fC+RO3tzUpx
+        FfRWAm5DK/7fXFDBgHR5NLkiY87cCdcekXRAi3UcFzk9X3hb0RMFUmkMSyD7SR186otC
+        uDmg==
 X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR92REa5ElWg=="
 X-RZG-CLASS-ID: mo00
 Received: from groucho.site
         by smtp.strato.de (RZmta 46.6.2 DYNA|AUTH)
-        with ESMTPSA id Z0acdaw4BGY8DFr
+        with ESMTPSA id Z0acdaw4BGYBDFt
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
         (Client did not present a certificate);
-        Mon, 11 May 2020 18:34:08 +0200 (CEST)
+        Mon, 11 May 2020 18:34:11 +0200 (CEST)
 From:   Ulrich Hecht <uli+renesas@fpond.eu>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     wsa@the-dreams.de, geert@linux-m68k.org, magnus.damm@gmail.com,
         Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH v3 1/3] clk: renesas: cpg-mssr: add support for never-disable clocks
-Date:   Mon, 11 May 2020 18:33:56 +0200
-Message-Id: <1589214838-18075-2-git-send-email-uli+renesas@fpond.eu>
+Subject: [PATCH v3 3/3] clk: renesas: rzg2: mark RWDT clock as never-disable
+Date:   Mon, 11 May 2020 18:33:58 +0200
+Message-Id: <1589214838-18075-4-git-send-email-uli+renesas@fpond.eu>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1589214838-18075-1-git-send-email-uli+renesas@fpond.eu>
 References: <1589214838-18075-1-git-send-email-uli+renesas@fpond.eu>
@@ -60,83 +60,87 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This adds facilities to mark clocks as never to be turned off. The primary
-application is the RWDT clock, which needs to remain on throughout the boot
-process if enabled by the bootloader.
+Ensures RWDT remains alert throughout the boot process if enabled.
+
+This patch applies the change to the following SoCs: r8a774a1,
+r8a774b1 and r8a774c0.
 
 Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 10 ++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.h |  9 +++++++++
- 2 files changed, 19 insertions(+)
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c | 5 +++++
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c | 5 +++++
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c | 5 +++++
+ 3 files changed, 15 insertions(+)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 8f6dff3..e234156 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -152,11 +152,13 @@ static struct cpg_mssr_priv *cpg_mssr_priv;
-  * @hw: handle between common and hardware-specific interfaces
-  * @index: MSTP clock number
-  * @priv: CPG/MSSR private data
-+ * @never_disable: clock shall never be disabled
-  */
- struct mstp_clock {
- 	struct clk_hw hw;
- 	u32 index;
- 	struct cpg_mssr_priv *priv;
-+	bool never_disable;
+diff --git a/drivers/clk/renesas/r8a774a1-cpg-mssr.c b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+index e05bfa2..be88403 100644
+--- a/drivers/clk/renesas/r8a774a1-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774a1-cpg-mssr.c
+@@ -239,6 +239,9 @@ static const struct mssr_mod_clk r8a774a1_mod_clks[] __initconst = {
+ static const unsigned int r8a774a1_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
  };
++static const unsigned int r8a774a1_never_disable_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
++};
  
- #define to_mstp_clock(_hw) container_of(_hw, struct mstp_clock, hw)
-@@ -175,6 +177,9 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
+ /*
+  * CPG Clock Data
+@@ -324,6 +327,8 @@ const struct cpg_mssr_info r8a774a1_cpg_mssr_info __initconst = {
+ 	/* Critical Module Clocks */
+ 	.crit_mod_clks = r8a774a1_crit_mod_clks,
+ 	.num_crit_mod_clks = ARRAY_SIZE(r8a774a1_crit_mod_clks),
++	.never_disable_mod_clks = r8a774a1_never_disable_mod_clks,
++	.num_never_disable_mod_clks = ARRAY_SIZE(r8a774a1_never_disable_mod_clks),
  
- 	dev_dbg(dev, "MSTP %u%02u/%pC %s\n", reg, bit, hw->clk,
- 		enable ? "ON" : "OFF");
-+	if (!enable && clock->never_disable)
-+		return 0;
-+
- 	spin_lock_irqsave(&priv->rmw_lock, flags);
+ 	/* Callbacks */
+ 	.init = r8a774a1_cpg_mssr_init,
+diff --git a/drivers/clk/renesas/r8a774b1-cpg-mssr.c b/drivers/clk/renesas/r8a774b1-cpg-mssr.c
+index c9af7091..230a82e 100644
+--- a/drivers/clk/renesas/r8a774b1-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774b1-cpg-mssr.c
+@@ -235,6 +235,9 @@ static const struct mssr_mod_clk r8a774b1_mod_clks[] __initconst = {
+ static const unsigned int r8a774b1_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
+ };
++static const unsigned int r8a774b1_never_disable_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
++};
  
- 	if (priv->stbyctrl) {
-@@ -423,6 +428,11 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
- 			init.flags |= CLK_IS_CRITICAL;
- 			break;
- 		}
-+	for (i = 0; i < info->num_never_disable_mod_clks; i++)
-+		if (id == info->never_disable_mod_clks[i]) {
-+			clock->never_disable = true;
-+			break;
-+		}
+ /*
+  * CPG Clock Data
+@@ -320,6 +323,8 @@ const struct cpg_mssr_info r8a774b1_cpg_mssr_info __initconst = {
+ 	/* Critical Module Clocks */
+ 	.crit_mod_clks = r8a774b1_crit_mod_clks,
+ 	.num_crit_mod_clks = ARRAY_SIZE(r8a774b1_crit_mod_clks),
++	.never_disable_mod_clks = r8a774b1_never_disable_mod_clks,
++	.num_never_disable_mod_clks = ARRAY_SIZE(r8a774b1_never_disable_mod_clks),
  
- 	parent_name = __clk_get_name(parent);
- 	init.parent_names = &parent_name;
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 55a18ef..654d3a789 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -105,6 +105,11 @@ struct device_node;
-      * @crit_mod_clks: Array with Module Clock IDs of critical clocks that
-      *                 should not be disabled without a knowledgeable driver
-      * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
-+     * @never_disable_mod_clks: Array with Module Clock IDs of clocks that
-+     *                          should not be disabled even if they seem to
-+     *                          be unused
-+     * @num_never_disable_mod_clks: Number of entries in
-+     *                              never_disable_mod_clks[]
-      *
-      * @core_pm_clks: Array with IDs of Core Clocks that are suitable for Power
-      *                Management, in addition to Module Clocks
-@@ -141,6 +146,10 @@ struct cpg_mssr_info {
- 	const unsigned int *crit_mod_clks;
- 	unsigned int num_crit_mod_clks;
+ 	/* Callbacks */
+ 	.init = r8a774b1_cpg_mssr_init,
+diff --git a/drivers/clk/renesas/r8a774c0-cpg-mssr.c b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+index f91e7a4..6bd74de 100644
+--- a/drivers/clk/renesas/r8a774c0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a774c0-cpg-mssr.c
+@@ -240,6 +240,9 @@ static const struct mssr_mod_clk r8a774c0_mod_clks[] __initconst = {
+ static const unsigned int r8a774c0_crit_mod_clks[] __initconst = {
+ 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
+ };
++static const unsigned int r8a774c0_never_disable_mod_clks[] __initconst = {
++	MOD_CLK_ID(402),	/* RWDT */
++};
  
-+	/* Module Clocks that should not be disabled even if unused */
-+	const unsigned int *never_disable_mod_clks;
-+	unsigned int num_never_disable_mod_clks;
-+
- 	/* Core Clocks suitable for PM, in addition to the Module Clocks */
- 	const unsigned int *core_pm_clks;
- 	unsigned int num_core_pm_clks;
+ /*
+  * CPG Clock Data
+@@ -289,6 +292,8 @@ const struct cpg_mssr_info r8a774c0_cpg_mssr_info __initconst = {
+ 	/* Critical Module Clocks */
+ 	.crit_mod_clks = r8a774c0_crit_mod_clks,
+ 	.num_crit_mod_clks = ARRAY_SIZE(r8a774c0_crit_mod_clks),
++	.never_disable_mod_clks = r8a774c0_never_disable_mod_clks,
++	.num_never_disable_mod_clks = ARRAY_SIZE(r8a774c0_never_disable_mod_clks),
+ 
+ 	/* Callbacks */
+ 	.init = r8a774c0_cpg_mssr_init,
 -- 
 2.7.4
 
