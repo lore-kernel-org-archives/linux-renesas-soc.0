@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E1DC54E8D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 21:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA28C54E90
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 21:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 148CE20882
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 21:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0817820836
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 May 2020 21:09:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbgEKVJD (ORCPT
+        id S1726322AbgEKVJE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 May 2020 17:09:03 -0400
-Received: from mga05.intel.com ([192.55.52.43]:18328 "EHLO mga05.intel.com"
+        Mon, 11 May 2020 17:09:04 -0400
+Received: from mga11.intel.com ([192.55.52.93]:44618 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725888AbgEKVJD (ORCPT
+        id S1725888AbgEKVJE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 May 2020 17:09:03 -0400
-IronPort-SDR: 6cVO5QPtToBnRrPS/2JIIcdYKI0EszCzuzjoFVBKdXyruXv85CIrrIBjOu0mYrFHJWji1Jen5t
- kUomOg06NJ6g==
+        Mon, 11 May 2020 17:09:04 -0400
+IronPort-SDR: NCO+JvMk20YBwQ7w4B3Q9xUZ0iV1APHiuF8w575YSjXjyPmr/npMmgilCnUNZT2eL2shEZhwRb
+ Mrlj+hH7/oxw==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2020 14:09:03 -0700
-IronPort-SDR: bIwPpKzDKsy1Ub/tgmfCistmpa2G+dRgvD44JR5mDZatUmHA6dnrjEiRg08+4QkxRJNxXJkmlI
- R+EXtcMAwTcw==
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 May 2020 14:09:03 -0700
+IronPort-SDR: PyQvIMl4ybOaJI1tmIQsR3nBPJtung3Y8vRO5NJpwtKIdcMD0hgdrMS7aOzA6Ap5b7XDzAeJC7
+ /D2o7K4R/3Sg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,381,1583222400"; 
-   d="scan'208";a="261892454"
+   d="scan'208";a="436834416"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 11 May 2020 14:09:01 -0700
+  by orsmga005.jf.intel.com with ESMTP; 11 May 2020 14:09:01 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jYFfY-0007bG-La; Tue, 12 May 2020 05:09:00 +0800
-Date:   Tue, 12 May 2020 05:08:08 +0800
+        id 1jYFfY-0007aZ-JN; Tue, 12 May 2020 05:09:00 +0800
+Date:   Tue, 12 May 2020 05:08:02 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- 3d92f62c7ba3a9caad8aa85f14ab9b7998813a03
-Message-ID: <5eb9beb8./PXsTfQWPKuZ2DqH%lkp@intel.com>
+Subject: [renesas-devel:master] BUILD SUCCESS
+ e79a427fdcbb34523a99efc5889907c996a2b04e
+Message-ID: <5eb9beb2.xLZbIe99iO+xDECn%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,27 +52,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  next
-branch HEAD: 3d92f62c7ba3a9caad8aa85f14ab9b7998813a03  Merge branch 'renesas-arm-dt-for-v5.8' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
+branch HEAD: e79a427fdcbb34523a99efc5889907c996a2b04e  Merge branch 'renesas-next', tag 'v5.7-rc5' into renesas-devel
 
 elapsed time: 485m
 
-configs tested: 97
+configs tested: 100
 configs skipped: 1
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
 arm                                 defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+arm                               allnoconfig
 arm64                            allyesconfig
 arm64                               defconfig
 arm64                            allmodconfig
 arm64                             allnoconfig
-arm                              allyesconfig
-arm                              allmodconfig
-arm                               allnoconfig
 sparc                            allyesconfig
-m68k                             allyesconfig
 i386                              allnoconfig
 i386                                defconfig
 i386                              debian-10.3
@@ -85,6 +84,7 @@ m68k                             allmodconfig
 m68k                              allnoconfig
 m68k                           sun3_defconfig
 m68k                                defconfig
+m68k                             allyesconfig
 nios2                               defconfig
 nios2                            allyesconfig
 openrisc                            defconfig
@@ -124,6 +124,9 @@ i386                 randconfig-a003-20200511
 i386                 randconfig-a001-20200511
 i386                 randconfig-a004-20200511
 i386                 randconfig-a002-20200511
+x86_64               randconfig-a016-20200511
+x86_64               randconfig-a012-20200511
+x86_64               randconfig-a014-20200511
 i386                 randconfig-a012-20200511
 i386                 randconfig-a016-20200511
 i386                 randconfig-a014-20200511
