@@ -2,88 +2,182 @@ Return-Path: <SRS0=cmkQ=63=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A19CBC47076
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 May 2020 11:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A11CA90AF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 May 2020 11:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76E6120753
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 May 2020 11:11:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589368306;
-	bh=kB4BWkMLJvEVQMf12Y4rt6Z8k9k+beZBrh8w5LEeOC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=pGuAottHYS1HjXMNRl/ZfZoA8JmTSHwaEthV1Hl6mNW+HaK+cHM1TfdGtkqZyPQMC
-	 pXuVWRPjS0oqtcjP6IH+r0klOoIAMxiF0uQ8ulUI9qjwQ01kvRncWr8zbTTuE2tOKv
-	 jB/MXawHxtF0+5NAdFXDJOhfKsYLsBlglwdVXv6E=
+	by mail.kernel.org (Postfix) with ESMTP id F2549206E5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 May 2020 11:16:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pKvPSW2t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728684AbgEMLLn (ORCPT
+        id S1731898AbgEMLQ2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 May 2020 07:11:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45438 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726645AbgEMLLm (ORCPT
+        Wed, 13 May 2020 07:16:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34552 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730286AbgEMLQ2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 May 2020 07:11:42 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E84FC20740;
-        Wed, 13 May 2020 11:11:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589368302;
-        bh=kB4BWkMLJvEVQMf12Y4rt6Z8k9k+beZBrh8w5LEeOC0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ggdEz4sDEWOID0Yd2ORMuaDmi+wBlTPXxdrWv1CfvfWn9EoFyHlUFA6XCYWaOw4al
-         sfZ9l/kfuNgnJhAzEre6uD3f074n2DLVKJ7RtEPL9itu5zQI9GxV8QVIj+BVumI2Nz
-         +Wi8CVrAl1eVAqy7dePYH8qzLn9xO6Fq39ZjbEXc=
-Date:   Wed, 13 May 2020 13:11:40 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Jens Axboe <axboe@kernel.dk>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        linux-ide@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ata: sata_rcar: Fix DMA boundary mask
-Message-ID: <20200513111140.GA874221@kroah.com>
-References: <20200513110426.22472-1-geert+renesas@glider.be>
+        Wed, 13 May 2020 07:16:28 -0400
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F6BFC061A0C;
+        Wed, 13 May 2020 04:16:27 -0700 (PDT)
+Received: by mail-ot1-x343.google.com with SMTP id v17so5140186ote.0;
+        Wed, 13 May 2020 04:16:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=kmT3haoKYL7RaHgaxSv/OLDSB0fCvleON4tKRznJs/E=;
+        b=pKvPSW2tdPeQB7JcDzETIxB6dRyvhPkU+ceLt8PJLxG9l3jxbkO8KzEEXdCAkMbKUK
+         8OX/PCIzHtwVt4kfQqPiuZDAKqaaOyesvpj66CcWN5+PlXG52diEmq/TFYj5npR1xCFP
+         Vxdc+RBudn6c+QsTEpBx33ku6ZSlNn3vRdHgYdurFQ0dxuRKkXtqKwrgYZ0O7chkqylB
+         6bma4N2RvLfkz8RyyiF64ouT+rVUA0ktFFfMuow8NBCH0LQQBB//TTJ+TbAohu/ZTv0E
+         aYukrRFoxouG0LpdV1L9zeaRYERlz0FwKl9sf51XCPW6xycf5/luehiY+s58kSR1y4L5
+         YwUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kmT3haoKYL7RaHgaxSv/OLDSB0fCvleON4tKRznJs/E=;
+        b=b0+jopkOfYGtRPGmHDjrF8l+O3hxkjVCokG5ShaBmrcDzEayB10QGbKqwKIyf/948H
+         66SdhyLJPOmVIqCJYOqAxZ7EmmNbbuOqCf8gRBlstK4eqHbsWlfOZ06d6HQ+7NR/Np9W
+         s0ue9zLAbhyUTUebPUjVhoLO3Moxr2PDiM3LHngQEZlzMYXtS3i/qvdKiB59pDNobvq5
+         SGXGA+OYANy3nevkWGwfABo7rPIRJcJfdjRrmX8WsI5onCLdMXFiE4zb5hbgUq+hk2ld
+         BK3tc76D36V5hi6TDHIjREMHl1rqKu3C6rJEIQadLJ6aVlxs5M/sPXCoXPfkAbaFdOYG
+         VI7A==
+X-Gm-Message-State: AGi0PuZwg4Ugh0xj06GMqQtLjFlpYo5Z/BLhLUNOOAlQx4bzAFkWr70k
+        tT0xHQ7chO3t301/4hUCbUMOMJjmpm2D1H6IVCxdnVKGzfqdTg==
+X-Google-Smtp-Source: APiQypKCiadeMjqy4HJtxD3P1eyF9SmDO+r0O/RiOm5MGnBXerJmlguCBMcOgC8R7fErOqw5TY8VqepeP/PyfymSizA=
+X-Received: by 2002:a9d:7390:: with SMTP id j16mr18834815otk.43.1589368586398;
+ Wed, 13 May 2020 04:16:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200513110426.22472-1-geert+renesas@glider.be>
+References: <1586945948-11026-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1586945948-11026-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200512222648.GD2542285@oden.dyn.berto.se>
+In-Reply-To: <20200512222648.GD2542285@oden.dyn.berto.se>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Wed, 13 May 2020 12:16:00 +0100
+Message-ID: <CA+V-a8tC2KrspKWGHn8=+7DYjOUNuBXn+biS9NDB+qcqnd6f9w@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] media: rcar-vin: Invalidate pipeline if conversion
+ is not possible on input formats
+To:     Niklas <niklas.soderlund@ragnatech.se>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, May 13, 2020 at 01:04:26PM +0200, Geert Uytterhoeven wrote:
-> Before commit 9495b7e92f716ab2 ("driver core: platform: Initialize
-> dma_parms for platform devices"), the R-Car SATA device didn't have DMA
-> parameters.  Hence the DMA boundary mask supplied by its driver was
-> silently ignored, as __scsi_init_queue() doesn't check the return value
-> of dma_set_seg_boundary(), and the default value of 0xffffffff was used.
-> 
-> Now the device has gained DMA parameters, the driver-supplied value is
-> used, and the following warning is printed on Salvator-XS:
-> 
->     DMA-API: sata_rcar ee300000.sata: mapping sg segment across boundary [start=0x00000000ffffe000] [end=0x00000000ffffefff] [boundary=0x000000001ffffffe]
->     WARNING: CPU: 5 PID: 38 at kernel/dma/debug.c:1233 debug_dma_map_sg+0x298/0x300
-> 
-> (the range of start/end values depend on whether IOMMU support is
->  enabled or not)
-> 
-> The issue here is that SATA_RCAR_DMA_BOUNDARY doesn't have bit 0 set, so
-> any typical end value, which is odd, will trigger the check.
-> 
-> Fix this by increasing the DMA boundary value by 1.
-> 
-> Fixes: 8bfbeed58665dbbf ("sata_rcar: correct 'sata_rcar_sht'")
-> Fixes: 9495b7e92f716ab2 ("driver core: platform: Initialize dma_parms for platform devices")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Niklas,
 
-Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Thank you for the review.
+
+On Tue, May 12, 2020 at 11:26 PM Niklas <niklas.soderlund@ragnatech.se> wro=
+te:
+>
+> Hi Lad,
+>
+> Thanks for your work.
+>
+> On 2020-04-15 11:19:06 +0100, Lad Prabhakar wrote:
+> > Up until now the VIN was capable to convert any of its supported input =
+mbus
+> > formats to any of it's supported output pixel formats. With the additio=
+n of
+> > RAW formats this is no longer true.
+>
+> Add blank line.
+>
+> > This patch invalidates the pipeline by adding a check if given vin inpu=
+t
+> > format can be converted to supported output pixel format.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> I like this patch I think there is a typo bellow and patch [1] have been
+> merged in the media-tree which unfortunately addes one more thing to do
+> in this patch. In rvin_enum_fmt_vid_cap() there is a TODO noted for what
+> needs to be done. In imagine the fix is simple and the end result would
+> look something like this.
+>
+>     switch (f->mbus_code) {
+>     case 0:
+>     case MEDIA_BUS_FMT_YUYV8_1X16:
+>     case MEDIA_BUS_FMT_UYVY8_1X16:
+>     case MEDIA_BUS_FMT_UYVY8_2X8:
+>     case MEDIA_BUS_FMT_UYVY10_2X10:
+>     case MEDIA_BUS_FMT_RGB888_1X24:
+>         break;
+>     case MEDIA_BUS_FMT_SRGGB8_1X8:
+>         if (f->index)
+>             return -EINVAL;
+>
+>         f->pixelformat =3D V4L2_PIX_FMT_SRGGB8;
+>         return 0;
+>     case default:
+>         return -EINVAL;
+>     }
+>
+> 1. d5f74a1eff9aef3b ("media: rcar-vin: Make use of V4L2_CAP_IO_MC")
+>
+Sure Ill take of care of this and just repost this patch is that OK with yo=
+u ?
+
+> > ---
+> >  drivers/media/platform/rcar-vin/rcar-dma.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media=
+/platform/rcar-vin/rcar-dma.c
+> > index 1a30cd036371..48bd9bfc3948 100644
+> > --- a/drivers/media/platform/rcar-vin/rcar-dma.c
+> > +++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+> > @@ -1109,13 +1109,17 @@ static int rvin_mc_validate_format(struct rvin_=
+dev *vin, struct v4l2_subdev *sd,
+> >       case MEDIA_BUS_FMT_UYVY8_1X16:
+> >       case MEDIA_BUS_FMT_UYVY8_2X8:
+> >       case MEDIA_BUS_FMT_UYVY10_2X10:
+> > +             break;
+> >       case MEDIA_BUS_FMT_RGB888_1X24:
+> > -             vin->mbus_code =3D fmt.format.code;
+>
+> This is not right is it?
+>
+> Should you not add a case for MEDIA_BUS_FMT_SRGGB8_1X8 instead of taking
+> over MEDIA_BUS_FMT_RGB888_1X24?
+>
+Agreed, I blindly took this suggestion from your previous comments [1].
+
+[1] https://lkml.org/lkml/2020/3/19/858
+
+Cheers,
+--Prabhakar Lad
+
+> > +             if (vin->format.pixelformat !=3D V4L2_PIX_FMT_SRGGB8)
+> > +                     return -EPIPE;
+> >               break;
+> >       default:
+> >               return -EPIPE;
+> >       }
+> >
+> > +     vin->mbus_code =3D fmt.format.code;
+> > +
+> >       switch (fmt.format.field) {
+> >       case V4L2_FIELD_TOP:
+> >       case V4L2_FIELD_BOTTOM:
+> > --
+> > 2.20.1
+> >
+>
+> --
+> Regards,
+> Niklas S=C3=B6derlund
