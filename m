@@ -5,52 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B621CC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 May 2020 14:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DFF1C433E3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 May 2020 15:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8762120671
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 May 2020 14:00:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B103207C3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 May 2020 15:07:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NwU18eA8"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="RLSyG/jj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726140AbgENOA1 (ORCPT
+        id S1727938AbgENPHM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 May 2020 10:00:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59070 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726050AbgENOA1 (ORCPT
+        Thu, 14 May 2020 11:07:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41314 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726240AbgENPHL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 May 2020 10:00:27 -0400
+        Thu, 14 May 2020 11:07:11 -0400
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BD4EC061A0C
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 May 2020 07:00:27 -0700 (PDT)
-Received: from Q.local (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 58908259;
-        Thu, 14 May 2020 16:00:25 +0200 (CEST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3032C061A0C
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 May 2020 08:07:11 -0700 (PDT)
+Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6A58925A;
+        Thu, 14 May 2020 17:07:08 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1589464825;
-        bh=J3ZQfYkcJE46bE8ljP/9BLvQwPr3k/lXc0GkEtRRRHs=;
+        s=mail; t=1589468828;
+        bh=83DPXqioN1gtzgfPxCZSiI+wuwVUU2ki93cqE2St27s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NwU18eA8/kvePBpRfrSMYPgrLTK/wujClbD7UQIqevXnzQtu+1IYF0sE17TLuACaU
-         hpGjy8LhxeDMrsa2gILRN6WGXYKLX4PZLT3xm94/d1EhS1tg6gyLQrRou0zMeQWDJJ
-         Kho3WITRr1UZ/+/PvccOw6jZhppVvhlI6Db2H4Y4=
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Hyun Kwon <hyunk@xilinx.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v9 3/3] fixes! [max9286]: Fix dev->of_node refcnting
-Date:   Thu, 14 May 2020 15:00:16 +0100
-Message-Id: <20200514140016.1445489-4-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200514140016.1445489-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20200514140016.1445489-1-kieran.bingham+renesas@ideasonboard.com>
+        b=RLSyG/jj/Rk+dFhGENJ63zVjHFkemzGoU0Jg+xpWVINx0BUvQ/ICjfDnmlHkgGBoS
+         4tNLYg06t+TeiQgsC8dwy6FSPv7DO9Tbu0h1cGYl7wjeVc6neuxj2dQfh08w44CdEG
+         MtWosP0jR0I8Wyg6hkyrLik7WTivZO0wevdBc3kM=
+From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH 2/2] drm: rcar-du: Configure pixel clock polarity
+Date:   Thu, 14 May 2020 18:06:57 +0300
+Message-Id: <20200514150657.25431-2-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200514150657.25431-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20200514150657.25431-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -58,81 +53,128 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-With a little help from an of_ref_read():
+The R-Car DU supports inverting the polarity of the output pixel clock.
+At the moment the driver hardcodes the clock polarity to drive signals
+on the rising edge of the clock. Configure it instead based on the needs
+of the display pipeline.
 
-+static int of_ref_read(struct device_node *node)
-+{
-+       if (node)
-+               return kref_read(&node->kobj.kref);
-+
-+       return 0;
-+}
-
-I've validated the refcount of the node now stays consitent.
-Particularly between entry (A) and exit (B) of the parse_dt function:
-
-[    2.305784] max9286 4-004c: A: node refcnt is 6
-[    2.310401] max9286 4-004c: node refcnt is 6
-[    2.314729] max9286 4-004c: 1335: node refcnt is 6
-[    2.319587] max9286 4-004c: 1356: node refcnt is 6
-[    2.324432] max9286 4-004c: 1364: (in for_each) node refcnt is 6
-[    2.330503] max9286 4-004c: 1364: (in for_each) node refcnt is 6
-[    2.336575] max9286 4-004c: 1364: (in for_each) node refcnt is 6
-[    2.342656] max9286 4-004c: 1364: (in for_each) node refcnt is 6
-[    2.348724] max9286 4-004c: 1364: (in for_each) node refcnt is 6
-[    2.354808] max9286 4-004c: 1437: node refcnt is 6
-[    2.359644] max9286 4-004c: B: node refcnt is 6
-
-I've added a comment to explain the extra of_node_get() but the exercise
-identified that the driver was incorrectly calling of_node_put() on the
-same node. Those have been removed.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/media/i2c/max9286.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 31 +++++++++++++++++++++++++-
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  2 ++
+ 2 files changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-index 66201dc4b7f7..590f384161a5 100644
---- a/drivers/media/i2c/max9286.c
-+++ b/drivers/media/i2c/max9286.c
-@@ -1108,11 +1108,11 @@ static int max9286_parse_dt(struct max9286_priv *priv)
- 	struct device_node *node = NULL;
- 	unsigned int i2c_mux_mask = 0;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index fbe927278634..e86b3192a991 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -212,6 +212,8 @@ static const struct soc_device_attribute rcar_du_r8a7795_es1[] = {
  
-+	/* Balance the of_node_put() performed by of_find_node_by_name(). */
- 	of_node_get(dev->of_node);
- 	i2c_mux = of_find_node_by_name(dev->of_node, "i2c-mux");
- 	if (!i2c_mux) {
- 		dev_err(dev, "Failed to find i2c-mux node\n");
--		of_node_put(dev->of_node);
- 		return -EINVAL;
+ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ {
++	const struct rcar_du_crtc_state *state =
++		to_rcar_crtc_state(rcrtc->crtc.state);
+ 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
+ 	struct rcar_du_device *rcdu = rcrtc->dev;
+ 	unsigned long mode_clock = mode->clock * 1000;
+@@ -286,6 +288,9 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 		escr = params.escr;
  	}
  
-@@ -1160,7 +1160,6 @@ static int max9286_parse_dt(struct max9286_priv *priv)
- 					of_fwnode_handle(node), &vep);
- 			if (ret) {
- 				of_node_put(node);
--				of_node_put(dev->of_node);
- 				return ret;
- 			}
++	if (state->bus_flags & DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE)
++		escr |= ESCR_DCLKOINV;
++
+ 	dev_dbg(rcrtc->dev->dev, "%s: ESCR 0x%08x\n", __func__, escr);
  
-@@ -1170,7 +1169,6 @@ static int max9286_parse_dt(struct max9286_priv *priv)
- 					vep.bus_type);
- 				v4l2_fwnode_endpoint_free(&vep);
- 				of_node_put(node);
--				of_node_put(dev->of_node);
- 				return -EINVAL;
- 			}
+ 	rcar_du_crtc_write(rcrtc, rcrtc->index % 2 ? ESCR13 : ESCR02, escr);
+@@ -684,6 +689,8 @@ static void rcar_du_crtc_stop(struct rcar_du_crtc *rcrtc)
+ static int rcar_du_crtc_atomic_check(struct drm_crtc *crtc,
+ 				     struct drm_crtc_state *state)
+ {
++	const unsigned int bus_flags_mask = DRM_BUS_FLAG_PIXDATA_DRIVE_POSEDGE
++					  | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE;
+ 	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(state);
+ 	struct drm_connector_state *conn_state;
+ 	struct drm_connector *connector;
+@@ -694,11 +701,15 @@ static int rcar_du_crtc_atomic_check(struct drm_crtc *crtc,
+ 	if (ret)
+ 		return ret;
  
-@@ -1208,7 +1206,6 @@ static int max9286_parse_dt(struct max9286_priv *priv)
- 		priv->nsources++;
+-	/* Store the routes from the CRTC output to the DU outputs. */
++	/*
++	 * Store the routes from the CRTC output to the DU outputs and validate
++	 * the bus flags.
++	 */
+ 	rstate->outputs = 0;
+ 
+ 	for_each_new_connector_in_state(state->state, connector, conn_state, i) {
+ 		struct drm_encoder *encoder = conn_state->best_encoder;
++		struct drm_bridge *bridge;
+ 
+ 		if (!encoder)
+ 			continue;
+@@ -708,8 +719,22 @@ static int rcar_du_crtc_atomic_check(struct drm_crtc *crtc,
+ 			continue;
+ 
+ 		rstate->outputs |= BIT(to_rcar_encoder(encoder)->output);
++
++		bridge = drm_bridge_chain_get_first_bridge(encoder);
++
++		if (bridge && bridge->timings)
++			rstate->bus_flags |= bridge->timings->input_bus_flags;
++		else
++			rstate->bus_flags |= connector->display_info.bus_flags;
  	}
- 	of_node_put(node);
--	of_node_put(dev->of_node);
  
- 	priv->route_mask = priv->source_mask;
++	/*
++	 * If multiple connectors require different clock edges the
++	 * configuration is invalid.
++	 */
++	if (rstate->bus_flags == bus_flags_mask)
++		return -EINVAL;
++
+ 	return 0;
+ }
  
+@@ -944,6 +969,8 @@ rcar_du_crtc_atomic_duplicate_state(struct drm_crtc *crtc)
+ 
+ 	__drm_atomic_helper_crtc_duplicate_state(crtc, &copy->state);
+ 
++	copy->bus_flags = 0;
++
+ 	return &copy->state;
+ }
+ 
+@@ -979,6 +1006,8 @@ static void rcar_du_crtc_reset(struct drm_crtc *crtc)
+ 	state->crc.source = VSP1_DU_CRC_NONE;
+ 	state->crc.index = 0;
+ 
++	state->bus_flags = 0;
++
+ 	crtc->state = &state->state;
+ 	crtc->state->crtc = crtc;
+ }
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+index 5f2940c42225..652b798154ff 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+@@ -83,12 +83,14 @@ struct rcar_du_crtc {
+  * @state: base DRM CRTC state
+  * @crc: CRC computation configuration
+  * @outputs: bitmask of the outputs (enum rcar_du_output) driven by this CRTC
++ * @bus_flags: signal polarities for the CRTC output bus (DRM_BUS_FLAG_*)
+  */
+ struct rcar_du_crtc_state {
+ 	struct drm_crtc_state state;
+ 
+ 	struct vsp1_du_crc_config crc;
+ 	unsigned int outputs;
++	unsigned int bus_flags;
+ };
+ 
+ #define to_rcar_crtc_state(s) container_of(s, struct rcar_du_crtc_state, state)
 -- 
-2.25.1
+Regards,
+
+Laurent Pinchart
 
