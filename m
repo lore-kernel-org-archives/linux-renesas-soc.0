@@ -2,100 +2,88 @@ Return-Path: <SRS0=IUT2=64=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 657EDC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 May 2020 15:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5565C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 May 2020 15:17:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BBCF205CB
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 May 2020 15:07:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A863D20756
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 May 2020 15:17:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Hu1B2QGa"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Y/Mj54Tv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbgENPHK (ORCPT
+        id S1726245AbgENPRc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 May 2020 11:07:10 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:39768 "EHLO
+        Thu, 14 May 2020 11:17:32 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:39856 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727891AbgENPHJ (ORCPT
+        with ESMTP id S1726191AbgENPRc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 May 2020 11:07:09 -0400
-Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0125B259;
-        Thu, 14 May 2020 17:07:07 +0200 (CEST)
+        Thu, 14 May 2020 11:17:32 -0400
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E53FA259;
+        Thu, 14 May 2020 17:17:29 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1589468828;
-        bh=5FGPTrgZceHOPzO7FIcH6Gx6954XCnoKXy/ymuM7vRw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Hu1B2QGa8y4CLA/2jsXnrzrx6EmI5yvQ0OnCej0ui4hkzVnA4lhdcjkMb8QG6yG8H
-         dw2ST8/8B0QOCd8udHw+Sh8Kgz/IKflwouWjg6LgVKD0gQEshTMmLegpTzuJ7KKWBo
-         nzseT5fgqD7e80TsB7TjOhbrSsg43Mr4asib72lQ=
-From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 1/2] drm: rcar-du: Iterate over connectors in rcar_du_crtc_atomic_check()
-Date:   Thu, 14 May 2020 18:06:56 +0300
-Message-Id: <20200514150657.25431-1-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.26.2
+        s=mail; t=1589469450;
+        bh=IQ/w7wNceyepVhZCFavDD7WAfqN9SfwRMZjfpAXoYxo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y/Mj54TvBe8FySE2wDJYUPU6rnYLTLTzjRWUxwsBSWobCbdpzJYLmlZSEz9uBaDe1
+         /ypUmEmHkSummueBxEXO3/x0eHNhrvnRy4DbvUgkmFamJef2IF2tGwnf3MovyG6DT2
+         jP8qOajAXVuGxJjXAHw/g4hBKIH1edCshHUpggcw=
+Date:   Thu, 14 May 2020 18:17:21 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v1.1 4/4] dt-bindings: display: bridge: renesas,lvds:
+ Convert binding to YAML
+Message-ID: <20200514151721.GF5955@pendragon.ideasonboard.com>
+References: <20200405232318.26833-5-laurent.pinchart+renesas@ideasonboard.com>
+ <20200513232840.22687-1-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdXRiP3topBOeLdLhJ9wMBAMFEnLYJPPpdmmdK7TKN4X6g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXRiP3topBOeLdLhJ9wMBAMFEnLYJPPpdmmdK7TKN4X6g@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace iteration over encoders with iteration over connectors. This is
-a bit more aligned with the atomic framework, but more importantly, the
-change prepares for code that will need to access the connector.
+Hi Geert,
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+On Thu, May 14, 2020 at 09:31:53AM +0200, Geert Uytterhoeven wrote:
+> On Thu, May 14, 2020 at 1:29 AM Laurent Pinchart wrote:
+> > Convert the Renesas R-Car LVDS encoder text binding to YAML.
+> >
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > Acked-by: Maxime Ripard <mripard@kernel.org>
+> 
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.yaml
+> 
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/renesas-cpg-mssr.h>
+> > +    #include <dt-bindings/power/r8a7795-sysc.h>
+> > +
+> > +    lvds@feb90000 {
+> > +        compatible = "renesas,r8a7795-lvds";
+> > +        reg = <0 0xfeb90000 0 0x14>;
+> 
+> #{address,size}-cells = <1> for examples.
+> Applies to all nodes below, too.
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index d73e88ddecd0..fbe927278634 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -685,7 +685,9 @@ static int rcar_du_crtc_atomic_check(struct drm_crtc *crtc,
- 				     struct drm_crtc_state *state)
- {
- 	struct rcar_du_crtc_state *rstate = to_rcar_crtc_state(state);
--	struct drm_encoder *encoder;
-+	struct drm_connector_state *conn_state;
-+	struct drm_connector *connector;
-+	unsigned int i;
- 	int ret;
- 
- 	ret = rcar_du_cmm_check(crtc, state);
-@@ -695,15 +697,17 @@ static int rcar_du_crtc_atomic_check(struct drm_crtc *crtc,
- 	/* Store the routes from the CRTC output to the DU outputs. */
- 	rstate->outputs = 0;
- 
--	drm_for_each_encoder_mask(encoder, crtc->dev, state->encoder_mask) {
--		struct rcar_du_encoder *renc;
-+	for_each_new_connector_in_state(state->state, connector, conn_state, i) {
-+		struct drm_encoder *encoder = conn_state->best_encoder;
-+
-+		if (!encoder)
-+			continue;
- 
- 		/* Skip the writeback encoder. */
- 		if (encoder->encoder_type == DRM_MODE_ENCODER_VIRTUAL)
- 			continue;
- 
--		renc = to_rcar_encoder(encoder);
--		rstate->outputs |= BIT(renc->output);
-+		rstate->outputs |= BIT(to_rcar_encoder(encoder)->output);
- 	}
- 
- 	return 0;
+Why ?
+
 -- 
 Regards,
 
 Laurent Pinchart
-
