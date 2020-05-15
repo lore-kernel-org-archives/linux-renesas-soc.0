@@ -2,37 +2,38 @@ Return-Path: <SRS0=JsZ3=65=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60ECAC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 10:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A6BC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 12:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 390B820787
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 10:06:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58F4220758
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 12:50:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728228AbgEOKGD (ORCPT
+        id S1726141AbgEOMu5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 May 2020 06:06:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49678 "EHLO
+        Fri, 15 May 2020 08:50:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728279AbgEOKGB (ORCPT
+        with ESMTP id S1726135AbgEOMu4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 May 2020 06:06:01 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8D00EC05BD0A
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 May 2020 03:06:01 -0700 (PDT)
+        Fri, 15 May 2020 08:50:56 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F78FC061A0C
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 May 2020 05:50:56 -0700 (PDT)
 Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:ad37:48f9:900a:523e])
-        by andre.telenet-ops.be with bizsmtp
-        id ey5w2200D1TfvYq01y5w1Z; Fri, 15 May 2020 12:05:59 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id f0qp2200V1TfvYq010qp6s; Fri, 15 May 2020 14:50:52 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jZXE4-0008Qi-D2; Fri, 15 May 2020 12:05:56 +0200
+        id 1jZZnd-0005Y5-Fs; Fri, 15 May 2020 14:50:49 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jZXE4-0003pY-9l; Fri, 15 May 2020 12:05:56 +0200
+        id 1jZZnd-0005we-DI; Fri, 15 May 2020 14:50:49 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: <soc.lore.kernel.org>
 To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
@@ -40,10 +41,13 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/5] Renesas SoC updates for v5.8 (take two)
-Date:   Fri, 15 May 2020 12:05:42 +0200
-Message-Id: <20200515100547.14671-1-geert+renesas@glider.be>
+Subject: [GIT PULL] Renesas fixes for v5.7 (take two)
+Date:   Fri, 15 May 2020 14:50:43 +0200
+Message-Id: <20200515125043.22811-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -51,43 +55,53 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 	Hi arm-soc folks,
 
-This is my second pull request for the inclusion of Renesas SoC updates
-for v5.8.
+The following changes since commit b704fc1da9b84d7145db550a13e2b7140f6b419b:
 
-It consists of 5 parts:
+  ARM: dts: r7s9210: Remove bogus clock-names from OSTM nodes (2020-04-28 10:15:38 +0200)
 
-  [GIT PULL 1/5] Renesas ARM defconfig updates for v5.8 (take two)
+are available in the Git repository at:
 
-    - Enable support for the new RZ/G1H SoC in the shmobile and multi_v7
-      defconfigs.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-fixes-for-v5.7-tag2
 
-  [GIT PULL 2/5] Renesas ARM DT updates for v5.8 (take two)
+for you to fetch changes up to c8e233bfba3b21cb6b9814b4bfe2502478c7b895:
 
-    - Initial support for the Renesas RZ/G1H SoC on the iWave RainboW
-      Qseven SOM (G21M) and board (G21D),
-    - Support for the AISTARVISION MIPI Adapter V2.1 camera board on the
-      Silicon Linux EK874 RZ/G2E evaluation kit.
+  ARM: dts: iwg20d-q7-dbcm-ca: Remove unneeded properties in hdmi@39 (2020-05-15 10:41:35 +0200)
 
-  [GIT PULL 3/5] Renesas ARM SoC updates for v5.8 (take two)
+----------------------------------------------------------------
+Renesas fixes for v5.7 (take two)
 
-    - Add debug-ll support for RZ/G1H.
-
-  [GIT PULL 4/5] Renesas driver updates for v5.8 (take two)
-
-    - Add the main config option for the RZ/G1H SoC.
-
-  [GIT PULL 5/5] Renesas DT binding updates for v5.8 (take two)
-
-    - Document support for the RZ/G1H-based iWave RainboW Qseven SOM
-      (G21M) and board (G21D).
-
-Note that the new Renesas RZ/G1H DT Binding Definitions are shared by
-driver and DT source files, and thus included in multiple pull requests:
-  - "[GIT PULL 2/5] Renesas ARM DT updates for v5.8 (take two)",
-  - "[GIT PULL 4/5] Renesas driver updates for v5.8" (previous PR),
-  - "[GIT PULL] clk: renesas: Updates for v5.8" (for clk).
+  - Fix a wrong clock configuration on R-Mobile A1,
+  - Minor fixes that are fast-tracked to avoid introducing regressions
+    during conversion of DT bindings to json-schema.
 
 Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      ARM: dts: r8a7740: Add missing extal2 to CPG node
+
+Ricardo Cañuelo (3):
+      arm64: dts: renesas: Make hdmi encoder nodes compliant with DT bindings
+      ARM: dts: renesas: Make hdmi encoder nodes compliant with DT bindings
+      ARM: dts: iwg20d-q7-dbcm-ca: Remove unneeded properties in hdmi@39
+
+ arch/arm/boot/dts/iwg20d-q7-dbcm-ca.dtsi            |  2 --
+ arch/arm/boot/dts/r8a7740.dtsi                      |  2 +-
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm-dbhd-ca.dts |  2 --
+ arch/arm/boot/dts/r8a7790-lager.dts                 |  2 --
+ arch/arm/boot/dts/r8a7790-stout.dts                 |  2 --
+ arch/arm/boot/dts/r8a7791-koelsch.dts               |  2 --
+ arch/arm/boot/dts/r8a7791-porter.dts                |  2 --
+ arch/arm/boot/dts/r8a7792-blanche.dts               |  2 --
+ arch/arm/boot/dts/r8a7792-wheat.dts                 | 12 ++++--------
+ arch/arm/boot/dts/r8a7793-gose.dts                  |  2 --
+ arch/arm/boot/dts/r8a7794-silk.dts                  |  2 --
+ arch/arm64/boot/dts/renesas/r8a77970-eagle.dts      |  2 --
+ arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts      |  2 --
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts     |  2 --
+ arch/arm64/boot/dts/renesas/r8a77980-v3hsk.dts      |  2 --
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts      |  2 --
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts      |  6 ++----
+ 17 files changed, 7 insertions(+), 41 deletions(-)
 
 Gr{oetje,eeting}s,
 
