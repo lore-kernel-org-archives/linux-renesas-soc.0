@@ -2,89 +2,76 @@ Return-Path: <SRS0=JsZ3=65=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DE1C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 10:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 309BCC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 10:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C7F82065C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 10:00:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Rv18VFVJ"
+	by mail.kernel.org (Postfix) with ESMTP id 040F4207C4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 10:06:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbgEOKAh (ORCPT
+        id S1728005AbgEOKF7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 May 2020 06:00:37 -0400
-Received: from www.zeus03.de ([194.117.254.33]:51924 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727946AbgEOKAh (ORCPT
+        Fri, 15 May 2020 06:05:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49666 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728154AbgEOKF7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 May 2020 06:00:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=fYUVPs++nmdMEYCgzvedZ83aAnzf
-        x/lKJ984o8rMT9s=; b=Rv18VFVJZrSecu/ZAbNawLJ+e4c4WfWuxdN7NGlW+Qlu
-        Y21iDaK212/rP4tJrw4K1mX6yKzP2yeeH8hcKrLwLsDFlkaGovLX1FuTFUiNzqcU
-        /W0364yRE7uj40Vt4DNYtJYGZBYBc0loFCTsEPAxS3+kaVvawCrTEHf44GAULZA=
-Received: (qmail 4131671 invoked from network); 15 May 2020 12:00:34 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 15 May 2020 12:00:34 +0200
-X-UD-Smtp-Session: l3s3148p1@lKVe4qylJqYgAwDPXwnHAMSqtBM6FBGP
-Date:   Fri, 15 May 2020 12:00:34 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Patrick Williams <patrick@stwcx.xyz>
-Subject: Re: [PATCH] i2c: slave-eeprom: add support for 24c512 EEPROMs
-Message-ID: <20200515100033.GH2077@ninjato>
-References: <20200512142046.26454-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="poemUeGtc2GQvHuH"
-Content-Disposition: inline
-In-Reply-To: <20200512142046.26454-1-wsa+renesas@sang-engineering.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 15 May 2020 06:05:59 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E0A0C05BD09
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 May 2020 03:05:58 -0700 (PDT)
+Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:ad37:48f9:900a:523e])
+        by xavier.telenet-ops.be with bizsmtp
+        id ey5w2200E1TfvYq01y5w6L; Fri, 15 May 2020 12:05:56 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jZXE4-0008Qq-Ez; Fri, 15 May 2020 12:05:56 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jZXE4-0003pj-Du; Fri, 15 May 2020 12:05:56 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: <soc.lore.kernel.org>
+To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL 4/5] Renesas driver updates for v5.8 (take two)
+Date:   Fri, 15 May 2020 12:05:46 +0200
+Message-Id: <20200515100547.14671-5-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200515100547.14671-1-geert+renesas@glider.be>
+References: <20200515100547.14671-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+The following changes since commit 2f71832755a9422f5a62a13ea3e805df7b173837:
 
---poemUeGtc2GQvHuH
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  soc: renesas: rcar-rst: Add support for RZ/G1H (2020-04-30 10:01:39 +0200)
 
-On Tue, May 12, 2020 at 04:20:46PM +0200, Wolfram Sang wrote:
-> I don't plan to support every EEPROM type, but the 24c512 ones need a
-> tiny code update, so let's have that upstream.
->=20
-> Reported-by: Patrick Williams <patrick@stwcx.xyz>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+are available in the Git repository at:
 
-Applied to for-next, thanks!
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-drivers-for-v5.8-tag2
 
+for you to fetch changes up to cdc8abe763c99a6c2b854d7096eaf1ea21017a42:
 
---poemUeGtc2GQvHuH
-Content-Type: application/pgp-signature; name="signature.asc"
+  soc: renesas: Add Renesas R8A7742 config option (2020-05-04 14:27:20 +0200)
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+Renesas driver updates for v5.8 (take two)
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl6+aD4ACgkQFA3kzBSg
-KbaIDg//ZfNDzlwK2oONEW9OH/V5qRtl2bBx5haW6rLnat0tq6QOHqMZaRYtbbUB
-18KdGDfgM5z8e71ZFKZhNFFonFumto+Sy8dphhKbA71qDl7ACqTagrqdzhyfFCkZ
-pmjQO7KUaCzU6JV78rPhkFdsJofD6FmNIp3CWW2DwoSOyfiq6J0tQNTu4kNfM5We
-YehbTmBKYTAfogh5v7x0HBP1TbdZd4n9z9rsxFyvsiCm92StsYKk1I+WbY+Q3OFr
-OTryFhtAfdnBEoKtk94hGuCyC9OzzmpSpj6xG6zU9Ssy8i1fOe9382woK8Y/zAyZ
-UmeMdJEkWwNoJU1QV8IVOQGnX9Nlh9Uc916K2KgbtO4ii4C2dzZyT/BH0xNp1HR4
-LzNSiCIP2Pf1NuylYaoVeHMgrjhYab62ryTC1+QpGui0g0OEI3GuZ+zoT4zPW60l
-1bCPu3oOvM7XZ30w7u8+IUgpLbgJ26tBvyzJBNPOUoU7n3cXIQHCqDf+K8dLG+Hy
-KpFtpa/pomjsHgUmmBTKzIcXal/zD2q/YWQzkJ6EzoShl8adpViOdr0V5OqZY5Do
-7v73Z6qsmSj4wTRzDklf5Q02p50PdO7/zoG2P0GTuhPHcS+5AtjvVnL1It5kAR4P
-6kTscVDq2FrowlkqkX0KJ8vy+SypOtReqUn4wk13b60dwUJl8sg=
-=IuFi
------END PGP SIGNATURE-----
+  - Add the main config option for the RZ/G1H SoC.
 
---poemUeGtc2GQvHuH--
+----------------------------------------------------------------
+Lad Prabhakar (1):
+      soc: renesas: Add Renesas R8A7742 config option
+
+ drivers/soc/renesas/Kconfig | 7 +++++++
+ 1 file changed, 7 insertions(+)
