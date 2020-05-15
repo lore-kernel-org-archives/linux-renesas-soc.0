@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004BFC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 17:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0E7C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 17:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF3CC20756
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 17:40:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1847520657
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 17:40:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbgEORki (ORCPT
+        id S1726206AbgEORki (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 15 May 2020 13:40:38 -0400
-Received: from mga12.intel.com ([192.55.52.136]:57600 "EHLO mga12.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:16568 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbgEORki (ORCPT
+        id S1726191AbgEORki (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 15 May 2020 13:40:38 -0400
-IronPort-SDR: h7ssW5PoLuY4Lf9IwUYV01E3zVa7Mp0aQqgd9okJGjGHxQCPnNDV64HVrb9u0FE8yvS9nJHVl+
- 8IsAUb7URapA==
+IronPort-SDR: A+n1SSAsTOr+OFF8SsUGVxBzOwqMSp7BlLApdKnyfltzB8I3MnUvtg2XDHexDJujtgZb25b2Tp
+ iDZ38H+1gDSA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2020 10:40:37 -0700
-IronPort-SDR: X+Gvr1LKG2g625yKnIClDyqGzXcvHtOAiW08tBqWV1mg0uHk/OaBJ821/kK08nm9rKsRA+tWUp
- 0TcDe1Ed6Zrg==
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2020 10:40:38 -0700
+IronPort-SDR: 2YnnAtbGjYbW8wN2fmCmWpmsoCcpYewXYpoe4d8gXeAOHB1ronMIuW8A6bkvGKB6Mu0/rpF8PR
+ 3o25fTmGoD+w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,396,1583222400"; 
-   d="scan'208";a="342045912"
+   d="scan'208";a="281288770"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 15 May 2020 10:40:36 -0700
+  by orsmga002.jf.intel.com with ESMTP; 15 May 2020 10:40:36 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jZeK4-000DPE-07; Sat, 16 May 2020 01:40:36 +0800
-Date:   Sat, 16 May 2020 01:39:39 +0800
+        id 1jZeK3-000DP4-VB; Sat, 16 May 2020 01:40:35 +0800
+Date:   Sat, 16 May 2020 01:39:42 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- 1bd79704bee273dc5cc6b09a5b46f9baae49e996
-Message-ID: <5ebed3db.gLmVPNxImwM0OI9b%lkp@intel.com>
+Subject: [renesas-devel:renesas-dt-bindings-for-v5.8] BUILD SUCCESS
+ 0b5832238d369a71f90a221d17b92761595c8067
+Message-ID: <5ebed3de.ChKyShWcGHemZvVj%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,8 +52,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  next
-branch HEAD: 1bd79704bee273dc5cc6b09a5b46f9baae49e996  Merge branch 'renesas-dt-bindings-for-v5.8' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-dt-bindings-for-v5.8
+branch HEAD: 0b5832238d369a71f90a221d17b92761595c8067  dt-bindings: arm: renesas: Document iW-RainboW-G21D-Qseven-RZG1H board
 
 elapsed time: 484m
 
@@ -86,12 +86,6 @@ m68k                             allmodconfig
 m68k                              allnoconfig
 m68k                           sun3_defconfig
 m68k                                defconfig
-nios2                               defconfig
-nios2                            allyesconfig
-openrisc                            defconfig
-c6x                              allyesconfig
-c6x                               allnoconfig
-openrisc                         allyesconfig
 nds32                               defconfig
 nds32                             allnoconfig
 csky                             allyesconfig
@@ -107,6 +101,12 @@ arc                              allyesconfig
 sh                               allmodconfig
 sh                                allnoconfig
 microblaze                        allnoconfig
+nios2                               defconfig
+nios2                            allyesconfig
+openrisc                            defconfig
+c6x                              allyesconfig
+c6x                               allnoconfig
+openrisc                         allyesconfig
 mips                              allnoconfig
 mips                             allmodconfig
 parisc                            allnoconfig
@@ -130,12 +130,12 @@ i386                 randconfig-a003-20200515
 i386                 randconfig-a001-20200515
 i386                 randconfig-a004-20200515
 i386                 randconfig-a002-20200515
-i386                 randconfig-a016-20200515
-i386                 randconfig-a011-20200515
-i386                 randconfig-a015-20200515
 i386                 randconfig-a012-20200515
+i386                 randconfig-a016-20200515
 i386                 randconfig-a014-20200515
+i386                 randconfig-a011-20200515
 i386                 randconfig-a013-20200515
+i386                 randconfig-a015-20200515
 riscv                            allyesconfig
 riscv                             allnoconfig
 riscv                               defconfig
