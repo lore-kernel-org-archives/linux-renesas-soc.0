@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01451C433E3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 15:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7636C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 15:11:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF563207C3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 15:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAC86207C4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 15:11:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728271AbgEOPKi (ORCPT
+        id S1726727AbgEOPLY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 May 2020 11:10:38 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:32716 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728243AbgEOPKf (ORCPT
+        Fri, 15 May 2020 11:11:24 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:14629 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728054AbgEOPKR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 May 2020 11:10:35 -0400
+        Fri, 15 May 2020 11:10:17 -0400
 X-IronPort-AV: E=Sophos;i="5.73,395,1583161200"; 
-   d="scan'208";a="46974914"
+   d="scan'208";a="47188404"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 16 May 2020 00:10:33 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 May 2020 00:10:15 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id C1CCE400D4CD;
-        Sat, 16 May 2020 00:10:29 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 051D6400E8F9;
+        Sat, 16 May 2020 00:10:11 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
@@ -43,9 +43,9 @@ Cc:     linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-watchdog@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 14/17] dt-bindings: power: renesas,apmu: Document r8a7742 support
-Date:   Fri, 15 May 2020 16:08:54 +0100
-Message-Id: <1589555337-5498-15-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 10/17] dt-bindings: net: renesas,ravb: Add support for r8a7742 SoC
+Date:   Fri, 15 May 2020 16:08:50 +0100
+Message-Id: <1589555337-5498-11-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1589555337-5498-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1589555337-5498-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -54,27 +54,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document APMU and SMP enable method for RZ/G1H (also known as r8a7742)
-SoC.
+Document RZ/G1H (R8A7742) SoC bindings.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/power/renesas,apmu.yaml | 1 +
+ Documentation/devicetree/bindings/net/renesas,ravb.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,apmu.yaml b/Documentation/devicetree/bindings/power/renesas,apmu.yaml
-index 078b2cb..60a23b3 100644
---- a/Documentation/devicetree/bindings/power/renesas,apmu.yaml
-+++ b/Documentation/devicetree/bindings/power/renesas,apmu.yaml
-@@ -18,6 +18,7 @@ properties:
-   compatible:
-     items:
-       - enum:
-+          - renesas,r8a7742-apmu  # RZ/G1H
-           - renesas,r8a7743-apmu  # RZ/G1M
-           - renesas,r8a7744-apmu  # RZ/G1N
-           - renesas,r8a7745-apmu  # RZ/G1E
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index 87dad2d..032b76f 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -5,6 +5,7 @@ interface contains.
+ 
+ Required properties:
+ - compatible: Must contain one or more of the following:
++      - "renesas,etheravb-r8a7742" for the R8A7742 SoC.
+       - "renesas,etheravb-r8a7743" for the R8A7743 SoC.
+       - "renesas,etheravb-r8a7744" for the R8A7744 SoC.
+       - "renesas,etheravb-r8a7745" for the R8A7745 SoC.
 -- 
 2.7.4
 
