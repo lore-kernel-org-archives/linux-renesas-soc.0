@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AE7EC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 17:40:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB587C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 18:45:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 780BB20756
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 17:40:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95D3C2070A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 May 2020 18:45:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbgEORkj (ORCPT
+        id S1726227AbgEOSpm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 May 2020 13:40:39 -0400
-Received: from mga04.intel.com ([192.55.52.120]:16568 "EHLO mga04.intel.com"
+        Fri, 15 May 2020 14:45:42 -0400
+Received: from mga09.intel.com ([134.134.136.24]:63749 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbgEORkj (ORCPT
+        id S1726191AbgEOSpm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 May 2020 13:40:39 -0400
-IronPort-SDR: y+PEM4DKNJLCiZarHBW+nCY7nymQ9IOXgBdoRtR3+xy7rqRr7eNvLVMJBahFk17VVRXY3iJRh8
- JApQpmSOJlJw==
+        Fri, 15 May 2020 14:45:42 -0400
+IronPort-SDR: AaLCVxVNzow0qt/cpq5iwIM1JTzL1+Za36JO1nMg6XldsFnolwn/UcOZK7juFOQa0l4R2O5qFj
+ xTmkBeJ0A1UQ==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2020 10:40:37 -0700
-IronPort-SDR: yQn/E1gu/NdduVyyqqeyjQb4xmQ327DSycNpRLjKDap9gp9maPRe/Vc00Jj2Vr3PnnNSV4aUeS
- MC4fND48JLOg==
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2020 11:45:41 -0700
+IronPort-SDR: IXov82j1gRMk7VnCoh5C0mXy3a5itE8c8UxXsP3f+tfMrqUGvmlrUAih4CG0AHjUho0rSQQw+p
+ AH3AYutER10A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,396,1583222400"; 
-   d="scan'208";a="287861990"
+   d="scan'208";a="266691061"
 Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 15 May 2020 10:40:36 -0700
+  by orsmga006.jf.intel.com with ESMTP; 15 May 2020 11:45:40 -0700
 Received: from kbuild by lkp-server01 with local (Exim 4.89)
         (envelope-from <lkp@intel.com>)
-        id 1jZeK4-000DPS-10; Sat, 16 May 2020 01:40:36 +0800
-Date:   Sat, 16 May 2020 01:39:41 +0800
+        id 1jZfL1-000IDA-CG; Sat, 16 May 2020 02:45:39 +0800
+Date:   Sat, 16 May 2020 02:45:16 +0800
 From:   kbuild test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:renesas-fixes-for-v5.7] BUILD SUCCESS
- c8e233bfba3b21cb6b9814b4bfe2502478c7b895
-Message-ID: <5ebed3dd.PzMD6Uw/u/IDlzaT%lkp@intel.com>
+Subject: [renesas-devel:master] BUILD SUCCESS
+ 733f3d519b1c376f8bf53e30191de05f81f88f1c
+Message-ID: <5ebee33c.ztj2uLjVDZqMDtRo%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,13 +52,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-fixes-for-v5.7
-branch HEAD: c8e233bfba3b21cb6b9814b4bfe2502478c7b895  ARM: dts: iwg20d-q7-dbcm-ca: Remove unneeded properties in hdmi@39
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
+branch HEAD: 733f3d519b1c376f8bf53e30191de05f81f88f1c  Merge branch 'renesas-next' into renesas-devel
 
-elapsed time: 484m
+elapsed time: 549m
 
 configs tested: 98
-configs skipped: 142
+configs skipped: 1
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -72,8 +72,8 @@ arm64                               defconfig
 arm64                            allmodconfig
 arm64                             allnoconfig
 sparc                            allyesconfig
-mips                             allyesconfig
 m68k                             allyesconfig
+mips                             allyesconfig
 i386                              allnoconfig
 i386                             allyesconfig
 i386                                defconfig
@@ -86,6 +86,12 @@ m68k                             allmodconfig
 m68k                              allnoconfig
 m68k                           sun3_defconfig
 m68k                                defconfig
+nios2                               defconfig
+nios2                            allyesconfig
+openrisc                            defconfig
+c6x                              allyesconfig
+c6x                               allnoconfig
+openrisc                         allyesconfig
 nds32                               defconfig
 nds32                             allnoconfig
 csky                             allyesconfig
@@ -101,12 +107,6 @@ arc                              allyesconfig
 sh                               allmodconfig
 sh                                allnoconfig
 microblaze                        allnoconfig
-nios2                               defconfig
-nios2                            allyesconfig
-openrisc                            defconfig
-c6x                              allyesconfig
-c6x                               allnoconfig
-openrisc                         allyesconfig
 mips                              allnoconfig
 mips                             allmodconfig
 parisc                            allnoconfig
@@ -124,18 +124,18 @@ i386                 randconfig-a003-20200515
 i386                 randconfig-a001-20200515
 i386                 randconfig-a004-20200515
 i386                 randconfig-a002-20200515
+i386                 randconfig-a012-20200515
+i386                 randconfig-a016-20200515
+i386                 randconfig-a014-20200515
+i386                 randconfig-a013-20200515
+i386                 randconfig-a011-20200515
+i386                 randconfig-a015-20200515
 x86_64               randconfig-a005-20200515
 x86_64               randconfig-a003-20200515
 x86_64               randconfig-a006-20200515
 x86_64               randconfig-a004-20200515
 x86_64               randconfig-a001-20200515
 x86_64               randconfig-a002-20200515
-i386                 randconfig-a012-20200515
-i386                 randconfig-a016-20200515
-i386                 randconfig-a014-20200515
-i386                 randconfig-a011-20200515
-i386                 randconfig-a013-20200515
-i386                 randconfig-a015-20200515
 riscv                            allyesconfig
 riscv                             allnoconfig
 riscv                               defconfig
