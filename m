@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CC5C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 May 2020 18:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AED29C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 May 2020 18:23:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C37620715
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 May 2020 18:10:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93F8320849
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 May 2020 18:23:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589825437;
-	bh=aEbCs/ehsd1uykQYJPlIZO/uC6PeDCBHQ8EMD2l9lFY=;
+	s=default; t=1589826199;
+	bh=seknKxSv+DaRyGlwZogVGF+DYMRm5Pq8n3UvU5yQipQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xYg8R4RpO+bLjDicwoxhxwxrd+NH29r2l9y3fbP0GTzoAM8vb8Lvu5+JsjQ9nqLV4
-	 8wO/HvYQ3OSfuhN45jIG4vsfLhhzdFAow/XQvDzi6jT8TQLVVVWejflg8dsHvoJRo5
-	 XbQJwr+35LrEpNfbd25fZKbEgErDSIGA0xtvy9sc=
+	b=ax2ZLx/mWqU23qWG/+QrYQIwXPw/mJYnE438hkRaDKzwBwLhVeLIfbh/JKdZV2ZhN
+	 iZrxYwcEpjEmk2MDxluYGqIRHm43siZ+Rk1Pmi884uLrIo1+KdQ0UtR9VlsN64BzC4
+	 p7FKWNvMSfaPpPIXqKPULSF+3+HqPKUS+eOMN5Z4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732970AbgERSFe (ORCPT
+        id S1729804AbgERSXN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 May 2020 14:05:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53182 "EHLO mail.kernel.org"
+        Mon, 18 May 2020 14:23:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729470AbgERSFd (ORCPT
+        id S1730523AbgERRtZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 May 2020 14:05:33 -0400
+        Mon, 18 May 2020 13:49:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D41120671;
-        Mon, 18 May 2020 18:05:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D00520715;
+        Mon, 18 May 2020 17:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589825132;
-        bh=aEbCs/ehsd1uykQYJPlIZO/uC6PeDCBHQ8EMD2l9lFY=;
+        s=default; t=1589824164;
+        bh=seknKxSv+DaRyGlwZogVGF+DYMRm5Pq8n3UvU5yQipQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gc4qRFWqVvLTB/CpRNx2jyqWugkZj5aiwcsMzOwkhm2HPswUykrzVu/5+zYRVTCBP
-         1NYhApjCdQGf49MJ/tIkIlC3U3NyN5hyggZ84zFAVOFg09fyhqL7b4r6PF1CgZwtjk
-         ILlSlcjkmTPlz8lKw5mjMTGjlRUh71Nxgvcpsqtg=
+        b=MvWG+ZRkPpmR7R8PPs+U7cyC8yYXrlb+BHxBvhaW6h8k+dvBWyq2lSOpQhuzVZbAG
+         zj6Rc/cSSXlyRzLNmD+r6SOlZZrMAv8Oe0ELaSrzmF4L6TticuFQPW5j57Nujj49+Q
+         TwDdVDCD8CWLQSyLyTj1DwgsRUqTXTSJSPqJ8wNc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -48,12 +48,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
         Kai-Heng Feng <kai.heng.feng@canonical.com>,
         Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: [PATCH 5.6 142/194] usb: core: hub: limit HUB_QUIRK_DISABLE_AUTOSUSPEND to USB5534B
-Date:   Mon, 18 May 2020 19:37:12 +0200
-Message-Id: <20200518173543.121249652@linuxfoundation.org>
+Subject: [PATCH 4.14 097/114] usb: core: hub: limit HUB_QUIRK_DISABLE_AUTOSUSPEND to USB5534B
+Date:   Mon, 18 May 2020 19:37:09 +0200
+Message-Id: <20200518173519.260708121@linuxfoundation.org>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200518173531.455604187@linuxfoundation.org>
-References: <20200518173531.455604187@linuxfoundation.org>
+In-Reply-To: <20200518173503.033975649@linuxfoundation.org>
+References: <20200518173503.033975649@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -109,7 +109,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 --- a/drivers/usb/core/hub.c
 +++ b/drivers/usb/core/hub.c
-@@ -39,6 +39,7 @@
+@@ -37,6 +37,7 @@
  
  #define USB_VENDOR_GENESYS_LOGIC		0x05e3
  #define USB_VENDOR_SMSC				0x0424
@@ -117,7 +117,7 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
  #define HUB_QUIRK_CHECK_PORT_AUTOSUSPEND	0x01
  #define HUB_QUIRK_DISABLE_AUTOSUSPEND		0x02
  
-@@ -5621,8 +5622,11 @@ out_hdev_lock:
+@@ -5317,8 +5318,11 @@ out_hdev_lock:
  }
  
  static const struct usb_device_id hub_id_table[] = {
