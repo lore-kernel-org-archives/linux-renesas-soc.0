@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B39C2C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 May 2020 01:17:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3380AC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 May 2020 01:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93E2020849
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 May 2020 01:17:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A52D207ED
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 May 2020 01:17:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="M8ZM1SoM"
+	dkim=pass (2048-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="EkiEQDMf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728285AbgESBRG (ORCPT
+        id S1728183AbgESBRC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 May 2020 21:17:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46212 "EHLO
+        Mon, 18 May 2020 21:17:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728262AbgESBRG (ORCPT
+        with ESMTP id S1728148AbgESBRC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 May 2020 21:17:06 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF08DC061A0C
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2020 18:17:04 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id d21so11881496ljg.9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2020 18:17:04 -0700 (PDT)
+        Mon, 18 May 2020 21:17:02 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A43E8C05BD0B
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2020 18:17:01 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id e125so8977527lfd.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 May 2020 18:17:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=globallogic.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=QY2FcltY0EU5SZNLeQZ/bghwB586RniSqq2Ul+aCeaU=;
-        b=M8ZM1SoMkxd47Lromp+963VReUpjvPpHbVv3ObLi4Id6r2e2fZqM8oiAovSpnEXPVy
-         JzwAyJSwspm+N3YFoak3QZdCaibZLS1xSH2hVruJShCv2SxIpmEvOOBIwPvCxKMEMmTF
-         3QcYKEj1DZ7+kN3+Xn0YkgSPZ12x1++yz8es5kVd3QuodInBo2xaZ1sbdI1a283o/xvQ
-         anGw67YXxLmZ8lybkh6LolDwI58vX0zL/c9/j0j0TvowcPnCzO87PWQwGcBzma38D2J0
-         GZyBhl+wbrC9IeJ7KE/n1BZyVQZvF6LlVIf5RZXVZBe7PN9CiXDVuQYNPW3aXPSDvwe/
-         lh3w==
+        bh=xOPgjvAjIx8tLUowGcMfjYDQ/kMehnrvLIphz2d0rPY=;
+        b=EkiEQDMfNl49SJQUh3VX4e4ZDXfYZkzM/bgAJ22dkDNT+EP8mBkjqYmyoOLAFAJQU0
+         MSynuvhWa6CwBkkZLybzB/l17FH7MbM2L1h1ZNyQlmclrMKDmO851BzolEWeYwTrgTgL
+         itAfqpHQ2dtpVS8HiZlIbzK3s5vT0Qmg28ESIM5EPpJgsr5GC/S/VSuDjL5bkP9L6d+J
+         0M3xpnJkjiMTA/K0HXX3t8FkDBy7/vjN5IJ7+KnUoIZh6Xgbut8OYoPDkB9iKl+gfqVk
+         Cz/Tu3eCHQF8Ui9x9TQNHW4/DumOaTkg6LwObSmeWEHcvGrHN/ii5+zu83WOiajNJxZO
+         0cSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=QY2FcltY0EU5SZNLeQZ/bghwB586RniSqq2Ul+aCeaU=;
-        b=SaCiOHkjfLc+fJMSqX0S+hlU/uHLA4R9tI4rx3FCuzchaRoCF4Xf0n4z+S0Y5a+gsd
-         raz12ZHrMIvOTMd36/IEBFEvqe+ZGEu28T9+1W1uSVpT5CyAYKaZ2o8rLa0Qel1TQFph
-         oiEkuPWgyBCN2GtG0C17W7ujyfiIxtnM0PvPL59UFey5FkO6Hf9yXPKg/UWfbKNt5lr/
-         9oLvq+V92qF4atYqvp34cos8naYZsVdImg/MBPDdSaghdIxaNCZGkNgoDo7jmCEjGz0k
-         /x0gfAkebDVzX4gei+o8AosY5/pjZGobpgA9w9rmJNcP9F1jU8yMFh9kNs/LzlVgCkee
-         nv8A==
-X-Gm-Message-State: AOAM530bSYLVN7AOCFMA0IBKsxX2t/PBZFGbdt5PYdZKWj9kaltsiC/+
-        GquTwdp+svxLG4cY5rN6t9ADog==
-X-Google-Smtp-Source: ABdhPJwnGIquuk4Es/g66AqivQwR0BXPGS+TOz2v2aoAyrgSBcJh0g1WaEYtdHV4/uMMQ4+TxEAPDQ==
-X-Received: by 2002:a05:651c:1207:: with SMTP id i7mr11981865lja.86.1589851023349;
-        Mon, 18 May 2020 18:17:03 -0700 (PDT)
+        bh=xOPgjvAjIx8tLUowGcMfjYDQ/kMehnrvLIphz2d0rPY=;
+        b=HCsFZkiIyX13pxIM2Ix+o2MozmEkq8EsoTIcrNx/eLEksGPLAQ60kPJo0X8s2/NaV+
+         U1pteuKD68pjygd+15XXRjWqMtHA1mylzXagehdTM+3IiYyTcGXoQmd9uoJAWbjnovfq
+         2meNtLs9++0WDnBJJ/zT92YdEFwQdm/kUpqT8w64bh4nmhJd+K8C2ugbDxcJ3BhR2qYK
+         uUCphGVrkxZYK35BkL/GyFIICubsiGMyuVmw3O9jguO2Pi0/Zty9z3bUyfUhGbWTCxb6
+         JedRFBEvShach1ANKGeeEB0FBGRSgE4m+iOLM3pF5ITrvFcyr5OrvisInzPzDzmIlywP
+         /Btw==
+X-Gm-Message-State: AOAM531zXQl5cK6mFQ5VEEaNywHG9asGGtecbsz9jy9hR0Tk42ALzv6Y
+        kW6XASNIFtpDdSO7M4xaNRb3FA==
+X-Google-Smtp-Source: ABdhPJzVl+KELPsmRULh2Rc+eqv6+X6Lx0uX+EQYpcjDteuAXY8yjhlADFiglvYPcwsLTRa48Eey6Q==
+X-Received: by 2002:a05:6512:3ea:: with SMTP id n10mr13576037lfq.127.1589851020077;
+        Mon, 18 May 2020 18:17:00 -0700 (PDT)
 Received: from localhost.localdomain ([159.224.5.60])
-        by smtp.googlemail.com with ESMTPSA id i8sm4764244lfl.72.2020.05.18.18.17.01
+        by smtp.googlemail.com with ESMTPSA id i8sm4764244lfl.72.2020.05.18.18.16.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2020 18:17:02 -0700 (PDT)
+        Mon, 18 May 2020 18:16:59 -0700 (PDT)
 From:   Roman Kovalivskyi <roman.kovalivskyi@globallogic.com>
 To:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
@@ -77,9 +77,9 @@ Cc:     Luis Oliveira <lolivei@synopsys.com>,
         Eugeniu Rosca <erosca@de.adit-jv.com>,
         Dave Stevenson <dave.stevenson@raspberrypi.org>,
         Roman Kovalivskyi <roman.kovalivskyi@globallogic.com>
-Subject: [PATCH v2 6/6] media: dt-bindings: ov5647: Add property for non-continuous clock
-Date:   Tue, 19 May 2020 04:16:21 +0300
-Message-Id: <d7c647ee8e886560e59ebaf96c7a7daa3643756c.1589850165.git.roman.kovalivskyi@globallogic.com>
+Subject: [PATCH v2 4/6] media: ov5647: Use gpiod_set_value_cansleep
+Date:   Tue, 19 May 2020 04:16:19 +0300
+Message-Id: <ff9d9fe93a50efdeced9efab7b38d72c7dabc08f.1589850165.git.roman.kovalivskyi@globallogic.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1589847910.git.roman.kovalivskyi@globallogic.com>
 References: <cover.1589847910.git.roman.kovalivskyi@globallogic.com>
@@ -90,35 +90,60 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add optional clock-noncontinuous property to configure whether the
-clock is continuous or not.
+From: Dave Stevenson <dave.stevenson@raspberrypi.org>
 
+All calls to the gpio library are in contexts that can sleep,
+therefore there is no issue with having those GPIOs controlled
+by controllers which require sleeping (eg I2C GPIO expanders).
+
+Switch to using gpiod_set_value_cansleep instead of gpiod_set_value
+to avoid triggering the warning in gpiolib should the GPIO
+controller need to sleep.
+
+Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
 Signed-off-by: Roman Kovalivskyi <roman.kovalivskyi@globallogic.com>
 ---
- Documentation/devicetree/bindings/media/i2c/ov5647.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/i2c/ov5647.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/ov5647.txt b/Documentation/devicetree/bindings/media/i2c/ov5647.txt
-index 70f06c24f470..fefba0a69b07 100644
---- a/Documentation/devicetree/bindings/media/i2c/ov5647.txt
-+++ b/Documentation/devicetree/bindings/media/i2c/ov5647.txt
-@@ -12,6 +12,8 @@ Required properties:
+diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
+index 10f35c637f91..7600b4844f16 100644
+--- a/drivers/media/i2c/ov5647.c
++++ b/drivers/media/i2c/ov5647.c
+@@ -378,7 +378,7 @@ static int ov5647_sensor_power(struct v4l2_subdev *sd, int on)
+ 		dev_dbg(&client->dev, "OV5647 power on\n");
  
- Optional Properties:
- - pwdn-gpios: reference to the GPIO connected to the pwdn pin, if any.
-+- clock-noncontinuous: presence of this boolean property decides whether the
-+		       MIPI CSI-2 clock is continuous or non-continuous.
+ 		if (ov5647->pwdn) {
+-			gpiod_set_value(ov5647->pwdn, 0);
++			gpiod_set_value_cansleep(ov5647->pwdn, 0);
+ 			msleep_range(PWDN_ACTIVE_DELAY_MS);
+ 		}
  
- The common video interfaces bindings (see video-interfaces.txt) should be
- used to specify link to the image data receiver. The OV5647 device
-@@ -33,6 +35,7 @@ Example:
- 			port {
- 				camera_1: endpoint {
- 					remote-endpoint = <&csi1_ep1>;
-+					clock-noncontinuous;
- 				};
- 			};
- 		};
+@@ -420,7 +420,7 @@ static int ov5647_sensor_power(struct v4l2_subdev *sd, int on)
+ 
+ 		clk_disable_unprepare(ov5647->xclk);
+ 
+-		gpiod_set_value(ov5647->pwdn, 1);
++		gpiod_set_value_cansleep(ov5647->pwdn, 1);
+ 	}
+ 
+ 	/* Update the power count. */
+@@ -661,13 +661,13 @@ static int ov5647_probe(struct i2c_client *client)
+ 		goto mutex_remove;
+ 
+ 	if (sensor->pwdn) {
+-		gpiod_set_value(sensor->pwdn, 0);
++		gpiod_set_value_cansleep(sensor->pwdn, 0);
+ 		msleep_range(PWDN_ACTIVE_DELAY_MS);
+ 	}
+ 
+ 	ret = ov5647_detect(sd);
+ 
+-	gpiod_set_value(sensor->pwdn, 1);
++	gpiod_set_value_cansleep(sensor->pwdn, 1);
+ 
+ 	if (ret < 0)
+ 		goto error;
 -- 
 2.17.1
 
