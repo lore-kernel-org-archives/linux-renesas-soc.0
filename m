@@ -2,97 +2,117 @@ Return-Path: <SRS0=6Nvj=7B=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCA90C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 May 2020 07:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F27B0C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 May 2020 07:52:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD020207C4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 May 2020 07:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBA642075F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 May 2020 07:52:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728159AbgESHt6 (ORCPT
+        id S1728667AbgESHwq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 May 2020 03:49:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbgESHt6 (ORCPT
+        Tue, 19 May 2020 03:52:46 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:32973 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727057AbgESHwq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 May 2020 03:49:58 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6BC2C05BD09
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 May 2020 00:49:57 -0700 (PDT)
-Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:918e:b928:22c1:d715])
-        by michel.telenet-ops.be with bizsmtp
-        id gXpu2200Y4CPMDc06XpuSk; Tue, 19 May 2020 09:49:56 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jax0c-0008UA-OA; Tue, 19 May 2020 09:49:54 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jax0c-0006L9-LZ; Tue, 19 May 2020 09:49:54 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Simon Horman <horms+renesas@verge.net.au>,
-        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: rtc: rtc-sh: Add missing power-domains property
-Date:   Tue, 19 May 2020 09:49:53 +0200
-Message-Id: <20200519074953.24328-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Tue, 19 May 2020 03:52:46 -0400
+X-Originating-IP: 93.34.118.233
+Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 948E1E0003;
+        Tue, 19 May 2020 07:52:43 +0000 (UTC)
+Date:   Tue, 19 May 2020 09:56:01 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     sakari.ailus@iki.fi, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] fixes! [max9286]: Validate link formats
+Message-ID: <20200519075601.wdykflbxgvqvfl3x@uno.localdomain>
+References: <e898b72f-f793-6c0d-27a8-5a34c61f763e@ideasonboard.com>
+ <20200518161159.2185855-1-kieran.bingham+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200518161159.2185855-1-kieran.bingham+renesas@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-make dtbs_check:
+Hi Kieran,
 
-    arch/arm/boot/dts/r7s72100-rskrza1.dt.yaml: rtc@fcff1000: 'power-domains' does not match any of the regexes: 'pinctrl-[0-9]+'
+On Mon, May 18, 2020 at 05:11:59PM +0100, Kieran Bingham wrote:
+> Disallow setting a format on the source link, but enable link validation
+> by returning the format of the first bound source when getting the
+> format of the source pad.
+>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
+>  drivers/media/i2c/max9286.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+> index ef824d2b26b8..6c01595936d7 100644
+> --- a/drivers/media/i2c/max9286.c
+> +++ b/drivers/media/i2c/max9286.c
+> @@ -711,7 +711,10 @@ static int max9286_set_fmt(struct v4l2_subdev *sd,
+>  	struct max9286_priv *priv = sd_to_max9286(sd);
+>  	struct v4l2_mbus_framefmt *cfg_fmt;
+>
+> -	if (format->pad >= MAX9286_SRC_PAD)
+> +	/* \todo: Multiplexed streams support
 
-Fix this by documenting the missing power-domains property.
-Update the example to match reality.
+I know where \todo comes from, but it's usually TODO.
+Also
+        /*
+         * TODO:
 
-Fixes: 7f464532b05dadc8 ("dt-bindings: Add missing 'additionalProperties: false'")
-Fixes: 7ae8b2f5dfb357f0 ("dt-bindings: rtc: rtc-sh: convert bindings to json-schema")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+if the comment is multiline
 
-diff --git a/Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml b/Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml
-index b95cb017f469613e..eff9df4b856ac8c2 100644
---- a/Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml
-+++ b/Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml
-@@ -43,6 +43,9 @@ properties:
-     items:
-       enum: [ fck, rtc_x1, rtc_x3, extal ]
- 
-+  power-domains:
-+    maxItems: 1
-+
- required:
-   - compatible
-   - reg
-@@ -50,6 +53,7 @@ required:
-   - interrupt-names
-   - clocks
-   - clock-names
-+  - power-domains
- 
- additionalProperties: false
- 
-@@ -68,5 +72,6 @@ examples:
-         interrupt-names = "alarm", "period", "carry";
-         clocks = <&mstp6_clks R7S72100_CLK_RTC>, <&rtc_x1_clk>,
-                  <&rtc_x3_clk>, <&extal_clk>;
-+        power-domains = <&cpg_clocks>;
-         clock-names = "fck", "rtc_x1", "rtc_x3", "extal";
-     };
--- 
-2.17.1
+> +	 * Prevent setting the format on the shared multiplexed bus.
+> +	 */
+> +	if (format->pad == MAX9286_SRC_PAD)
+>  		return -EINVAL;
+>
+>  	/* Refuse non YUV422 formats as we hardcode DT to 8 bit YUV422 */
+> @@ -743,11 +746,17 @@ static int max9286_get_fmt(struct v4l2_subdev *sd,
+>  {
+>  	struct max9286_priv *priv = sd_to_max9286(sd);
+>  	struct v4l2_mbus_framefmt *cfg_fmt;
+> +	unsigned int pad = format->pad;
+>
+> -	if (format->pad >= MAX9286_SRC_PAD)
+> -		return -EINVAL;
+> +	/* \todo: Multiplexed Stream Support
+> +	 * Support link validation by returning the format of the first bound
+> +	 * link. All links must have the same format, as we do not support
+> +	 * mixing, and matching of cameras connected to the max9286.
+> +	 */
+> +	if (format->pad == MAX9286_SRC_PAD)
 
+You can use pad
+
+> +		pad = ffs(priv->bound_sources);
+>
+> -	cfg_fmt = max9286_get_pad_format(priv, cfg, format->pad, format->which);
+> +	cfg_fmt = max9286_get_pad_format(priv, cfg, pad, format->which);
+
+Or you could add one entry to struct max9286_priv.fmt for the source
+pad format, set the format there when is set on one sink, and just
+drop the check on the pad index in get_fmt. Up to you.
+
+Please squash in v10
+
+Thanks
+  j
+
+>  	if (!cfg_fmt)
+>  		return -EINVAL;
+>
+> --
+> 2.25.1
+>
