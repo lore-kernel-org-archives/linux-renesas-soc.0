@@ -2,130 +2,101 @@ Return-Path: <SRS0=kHkO=7E=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E806C433E3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 May 2020 20:17:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886B1C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 May 2020 20:24:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 802DE2070A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 May 2020 20:17:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ACC120759
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 May 2020 20:24:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Ec8eVWo4"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lG6Lr1pX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731007AbgEVURb (ORCPT
+        id S1731181AbgEVUYK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 May 2020 16:17:31 -0400
-Received: from www.zeus03.de ([194.117.254.33]:44594 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730965AbgEVURb (ORCPT
+        Fri, 22 May 2020 16:24:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52678 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731056AbgEVUYE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 May 2020 16:17:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=Kya5RXx7oQs/zCB1bwTMAzThdfrb
-        CPSEAKSAoDM4i74=; b=Ec8eVWo4lKhBy7z/mkF3YeGr4KLIbg2JWm4ggnbVq53H
-        BSIXQc7krWS0eJnN9yj2CIQmp1LMqs8bWFjSoPlmgCMRJHDAo1DB8pwePXDjFKpQ
-        fqcFX0e99NFqQkjO+jzqW8juYPjBt+mGLEySHdWJdV5fVcAK19ZaVZgMpcGF2ds=
-Received: (qmail 1450736 invoked from network); 22 May 2020 22:17:28 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 May 2020 22:17:28 +0200
-X-UD-Smtp-Session: l3s3148p1@kXB2UUKm9tkgAwDPXwlcAL8MbszJrcSX
-Date:   Fri, 22 May 2020 22:17:27 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-ide@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>
-Subject: Re: [PATCH 03/17] ARM: dts: r8a7742: Add I2C and IIC support
-Message-ID: <20200522201727.GA21376@ninjato>
-References: <1589555337-5498-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1589555337-5498-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200515171031.GB19423@ninjato>
- <CA+V-a8t6rPs4s8uMCpBQEAUvwsVn7Cte-vX3z2atWRhy_RFLQw@mail.gmail.com>
- <20200518092601.GA3268@ninjato>
- <CAMuHMdVWe1EEAtP64VW+0zXNingM1LiENv_Rfz5qTQ+C0dtGSw@mail.gmail.com>
- <CA+V-a8tVx6D8Vh=rYD2=Z-14GAW0puo009FtjYM++sw8PAtJug@mail.gmail.com>
+        Fri, 22 May 2020 16:24:04 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF8ECC05BD43;
+        Fri, 22 May 2020 13:24:03 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F0390B55;
+        Fri, 22 May 2020 22:24:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1590179041;
+        bh=eHYE+NQkQ5F13N+F0zH4qMpO6wi5gp39cWdyPaPGwMc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lG6Lr1pXS+PdX3mO4+MCydqQxgESvaSwVRqZOYRatNHph9oPDsxoUxVNB9ZR0bIXM
+         rKm1pxsciai7SfU65O5Wv6cgey0Xo7pjoLxbKAPrVGuSPWp1FdDeAmPoq2wg2XrvrM
+         +SX/50OE2QwcASuwJjiEXod9Rd7Av1KnlpbZQauk=
+Date:   Fri, 22 May 2020 23:23:49 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Daniel Gomez <dagmcr@gmail.com>
+Cc:     daniel@ffwll.ch, airlied@linux.ie,
+        kieran.bingham+renesas@ideasonboard.com,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: rcar-du: Fix build error
+Message-ID: <20200522202349.GF5824@pendragon.ideasonboard.com>
+References: <20200518201646.48312-1-dagmcr@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+V-a8tVx6D8Vh=rYD2=Z-14GAW0puo009FtjYM++sw8PAtJug@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200518201646.48312-1-dagmcr@gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Daniel,
 
---Qxx1br4bt0+wmkIi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patch.
 
+On Mon, May 18, 2020 at 10:16:46PM +0200, Daniel Gomez wrote:
+> Select DRM_KMS_HELPER dependency.
+> 
+> Build error when DRM_KMS_HELPER is not selected:
+> 
+> drivers/gpu/drm/rcar-du/rcar_lvds.o:(.rodata+0xd48): undefined reference to `drm_atomic_helper_bridge_duplicate_state'
+> drivers/gpu/drm/rcar-du/rcar_lvds.o:(.rodata+0xd50): undefined reference to `drm_atomic_helper_bridge_destroy_state'
+> drivers/gpu/drm/rcar-du/rcar_lvds.o:(.rodata+0xd70): undefined reference to `drm_atomic_helper_bridge_reset'
+> drivers/gpu/drm/rcar-du/rcar_lvds.o:(.rodata+0xdc8): undefined reference to `drm_atomic_helper_connector_reset'
+> drivers/gpu/drm/rcar-du/rcar_lvds.o:(.rodata+0xde0): undefined reference to `drm_helper_probe_single_connector_modes'
+> drivers/gpu/drm/rcar-du/rcar_lvds.o:(.rodata+0xe08): undefined reference to `drm_atomic_helper_connector_duplicate_state'
+> drivers/gpu/drm/rcar-du/rcar_lvds.o:(.rodata+0xe10): undefined reference to `drm_atomic_helper_connector_destroy_state'
+> 
+> Signed-off-by: Daniel Gomez <dagmcr@gmail.com>
 
-> > According to the Hardware User's Manual Rev. 1.00, the registers do exi=
-st
-> > on all RZ/G1, except for RZ/G1E (see below).
-> >
-> >    "(automatic transmission can be used as a hardware function, but thi=
-s is
-> >     not meaningful for actual use cases)."
-> >
-> > (whatever that comment may mean?)
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Strange comment, in deed. Given the paragraph before, I would guess Gen1
-maybe had a "fitting" PMIC where SoC/PMIC handled DVFS kind of magically
-with this automatic transfer feature? And Gen2 has not.
+and taken in my tree for v5.9. If you think it should get in v5.8 as a
+fix, I can do so as well, could you then provide a Fixes: tag ?
 
-> > On R-Car E3 and RZ/G2E, which have a single IIC instance, we
-> > handled that by:
-> >
-> >         The r8a77990 (R-Car E3) and r8a774c0 (RZ/G2E)
-> >         controllers are not considered compatible with
-> >         "renesas,rcar-gen3-iic" or "renesas,rmobile-iic"
-> >         due to the absence of automatic transmission registers.
+> ---
+>  drivers/gpu/drm/rcar-du/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+> index 0919f1f159a4..f65d1489dc50 100644
+> --- a/drivers/gpu/drm/rcar-du/Kconfig
+> +++ b/drivers/gpu/drm/rcar-du/Kconfig
+> @@ -31,6 +31,7 @@ config DRM_RCAR_DW_HDMI
+>  config DRM_RCAR_LVDS
+>  	tristate "R-Car DU LVDS Encoder Support"
+>  	depends on DRM && DRM_BRIDGE && OF
+> +	select DRM_KMS_HELPER
+>  	select DRM_PANEL
+>  	select OF_FLATTREE
+>  	select OF_OVERLAY
 
-=46rom a "describe the HW" point of view, this still makes sense to me.
-Although, it is unlikely we will add support for the automatic
-transmission feature (maybe famous last words).
+-- 
+Regards,
 
-> > On R-Car E2 and RZ/G1E, we forgot, and used both SoC-specific and
-> > family-specific compatible values.
-
-Okay, but we can fix DTs when they have bugs, or?
-
-
---Qxx1br4bt0+wmkIi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl7IM1MACgkQFA3kzBSg
-KbavTxAAorpBPKca5mdOGo3gbsj/1JqXSYqq0SnjdWLU6QdlVYuIsv1XCCDaWHzy
-eiJeY2VIMeqdoOHtcqc8W4QF4/Zo6O72JIalnQUzjG6JMs3AWDkbdRQQ8ULF6MMv
-iHd/h+E+GmtklAPGTMlMrC5KAMwRXbp6ot1F9T7J0nv8ET+2Rw741cydM7a7F+Hh
-AaMHRVsJMOD4nGsAd5A6/oF0Vc2LqER4Jki+dkQSw2AJCTvyRpQ5MSpq290HZJHv
-Ln5nGpxzHLznFpbMqLeqRr5mk1QmVH3k76gB6sLYoo0UFfkCn/6aMRXn0OGqgqV/
-DS450PHShO1TdfTgekd5++BCGMFfTB0Ud0uhKSJ3TvLNSeojilWaC0zxaMY84K15
-rcr9tKV35NJxualpbGP8ziWsDOQa36tJXa7x10I5Aetnrle23Sot6k9PbxUh6Bso
-V/VtWKuUyNqe6wsMVXNvVj3WAE5NKCiKf1D8hzzyVYYoNPsp5dra6pzEhMVx+fQk
-+KcYFHNwGnYLYZv/bU3pf8084R4QO1JqqSsHFaba21O6taURty+bBwE7fLeVwlcb
-z1//GXsaHLZGqq++IjfqjrM8KgTZmmSQy8noLOBkD97xbqVnbYCobp5CWsokD6W8
-VNjooWfgi0uj1I3A1AZPa+7ydJiAwB6OvQsAymOS6tm9kukzhd8=
-=QVjR
------END PGP SIGNATURE-----
-
---Qxx1br4bt0+wmkIi--
+Laurent Pinchart
