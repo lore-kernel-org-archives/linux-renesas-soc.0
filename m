@@ -1,87 +1,84 @@
-Return-Path: <SRS0=Ow69=7F=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=piiD=7G=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10771C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 May 2020 11:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C117DC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 24 May 2020 21:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E6DAA20826
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 23 May 2020 11:54:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A08DB207FB
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 24 May 2020 21:38:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387741AbgEWLyi (ORCPT
+        id S2388013AbgEXViM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 23 May 2020 07:54:38 -0400
-Received: from mail.zju.edu.cn ([61.164.42.155]:21770 "EHLO zju.edu.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728749AbgEWLyi (ORCPT
+        Sun, 24 May 2020 17:38:12 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:26877 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387879AbgEXViL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 23 May 2020 07:54:38 -0400
-Received: from localhost.localdomain (unknown [222.205.77.158])
-        by mail-app3 (Coremail) with SMTP id cC_KCgC3TkHyDslepNH5AA--.6321S4;
-        Sat, 23 May 2020 19:54:30 +0800 (CST)
-From:   Dinghao Liu <dinghao.liu@zju.edu.cn>
-To:     dinghao.liu@zju.edu.cn, kjlu@umn.edu
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] media: vsp1: Fix runtime PM imbalance in vsp1_probe
-Date:   Sat, 23 May 2020 19:54:26 +0800
-Message-Id: <20200523115426.19285-1-dinghao.liu@zju.edu.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: cC_KCgC3TkHyDslepNH5AA--.6321S4
-X-Coremail-Antispam: 1UD129KBjvdXoWrKrW7ZFW3Gr18JF1xWF4UArb_yoWftFX_Wr
-        s8ZF47Wr4rGr1vqr1UKFy3ZrySqFZ8Wr18C3Z3tF1ay3yUu3WvqryUZr98uw47Z3yUZFy8
-        JFZ3WFy7Cr9a9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbIkFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AK
-        wVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20x
-        vE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E
-        87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c
-        8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_
-        JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
-        xGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r4kMxAIw28IcxkI7VAKI48J
-        MxAIw28IcVCjz48v1sIEY20_GFWkJr1UJwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
-        GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
-        14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-        9x0JUHv38UUUUU=
-X-CM-SenderInfo: qrrzjiaqtzq6lmxovvfxof0/1tbiAgoJBlZdtORR7AACsj
+        Sun, 24 May 2020 17:38:11 -0400
+X-IronPort-AV: E=Sophos;i="5.73,430,1583161200"; 
+   d="scan'208";a="47678059"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 25 May 2020 06:38:09 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 05AB740E3D4A;
+        Mon, 25 May 2020 06:38:05 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     dmaengine@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/8] R8A7742 add support for HSUSB and USB2.0/3.0
+Date:   Sun, 24 May 2020 22:37:49 +0100
+Message-Id: <1590356277-19993-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-pm_runtime_get_sync() increments the runtime PM usage counter even
-when it returns an error code. Thus a pairing decrement is needed on
-the error handling path to keep the counter balanced.
+Hi All,
 
-Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
----
- drivers/media/platform/vsp1/vsp1_drv.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+This patch series adds support for HSUSB, USB2.0 and USB3.0 to
+R8A7742 SoC DT.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index c650e45bb0ad..017a54f2fdd8 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -846,8 +846,10 @@ static int vsp1_probe(struct platform_device *pdev)
- 	pm_runtime_enable(&pdev->dev);
- 
- 	ret = pm_runtime_get_sync(&pdev->dev);
--	if (ret < 0)
-+	if (ret < 0) {
-+		pm_runtime_put_sync(&pdev->dev);
- 		goto done;
-+	}
- 
- 	vsp1->version = vsp1_read(vsp1, VI6_IP_VERSION);
- 	pm_runtime_put_sync(&pdev->dev);
+This patch series applies on-top of [1].
+
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=288491
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (8):
+  dt-bindings: phy: rcar-gen2: Add r8a7742 support
+  dt-bindings: PCI: pci-rcar-gen2: Add device tree support for r8a7742
+  dt-bindings: usb: renesas,usbhs: Add support for r8a7742
+  dt-bindings: dmaengine: renesas,usb-dmac: Add binding for r8a7742
+  dt-bindings: usb: usb-xhci: Document r8a7742 support
+  ARM: dts: r8a7742: Add USB 2.0 host support
+  ARM: dts: r8a7742: Add USB-DMAC and HSUSB device nodes
+  ARM: dts: r8a7742: Add xhci support
+
+ .../devicetree/bindings/dma/renesas,usb-dmac.yaml  |   1 +
+ .../devicetree/bindings/pci/pci-rcar-gen2.txt      |   3 +-
+ .../devicetree/bindings/phy/rcar-gen2-phy.txt      |   3 +-
+ .../devicetree/bindings/usb/renesas,usbhs.yaml     |   1 +
+ Documentation/devicetree/bindings/usb/usb-xhci.txt |   1 +
+ arch/arm/boot/dts/r8a7742.dtsi                     | 173 +++++++++++++++++++++
+ 6 files changed, 180 insertions(+), 2 deletions(-)
+
 -- 
-2.17.1
+2.7.4
 
