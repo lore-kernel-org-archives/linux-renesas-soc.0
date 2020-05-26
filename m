@@ -1,119 +1,123 @@
-Return-Path: <SRS0=8q2f=7H=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=R92x=7I=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 725B8C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 May 2020 23:37:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70503C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 May 2020 01:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5177A2078B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 May 2020 23:37:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 521C02068D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 May 2020 01:15:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vhADncQw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726029AbgEYXh4 (ORCPT
+        id S2388233AbgEZBPb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 25 May 2020 19:37:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48908 "EHLO
+        Mon, 25 May 2020 21:15:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbgEYXhz (ORCPT
+        with ESMTP id S2388169AbgEZBPa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 May 2020 19:37:55 -0400
-Received: from omr2.cc.vt.edu (omr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:33:fb76:806e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95C61C05BD43
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 May 2020 16:37:55 -0700 (PDT)
-Received: from mr2.cc.vt.edu (inbound.smtp.ipv6.vt.edu [IPv6:2607:b400:92:9:0:9d:8fcb:4116])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id 04PNbrkA027111
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 May 2020 19:37:53 -0400
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id 04PNbm09018165
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 May 2020 19:37:53 -0400
-Received: by mail-qt1-f199.google.com with SMTP id q21so4057858qtn.20
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 May 2020 16:37:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=0Y4uTL21HCKuXUBHqUrAWLjf+83eCCInE3zQVj/p+oM=;
-        b=TMylh6KP44NEFJLg5BFQ1rnbSPgQ64E7Gj3jmzfa7D8uVWB4YHXFNZiMA0M6y2tkMo
-         3/GGF5dU+MvaBIDxBdXg1g3893F7yK8vX9fGdp4hP9uUidrz4BfBhQkEoGqAX3I3fdx6
-         dbH+NFTtM0huJufmIUKmcHN7s8yLlYT6wy+d1BwfcgvkvAzFsyPXaih66Eteyg1IHlVQ
-         xUH+hB0UpBIBJ+Nh9Eo8k/7KuaXrI0cC0y/MxVO4FTljgoOA9n45yIQKgEfAtilGwFtS
-         3YJNplpknW0H2ytqSfbTcnF11Otq2a7BYjNYnQ2hJ7Gx5gtz3krd/BCTxpNSWDKnX2gc
-         SAnQ==
-X-Gm-Message-State: AOAM532GilM2fmAY13bB0OnSM24dS2OKGh8NvMs68ccvWuOnsUTHsCci
-        7xF5tvuuNoCsI+h2dYPr2jgD4ei7IBAheCo7hMgvO4iILGWxSJtHFICWjto7DSEvQJl78zm6B3U
-        BacNjvIYlsef90BUATiY692/jDQNe7xVBGN8IVX2blw==
-X-Received: by 2002:ac8:3f5d:: with SMTP id w29mr30195872qtk.192.1590449868448;
-        Mon, 25 May 2020 16:37:48 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJy/kIKFi+vyRhQzAcfWv1PgD82LNG4zT04fDiifrOM3PqyiRWxZEMlnOS00CB0w/QJOWPRl6Q==
-X-Received: by 2002:ac8:3f5d:: with SMTP id w29mr30195855qtk.192.1590449868128;
-        Mon, 25 May 2020 16:37:48 -0700 (PDT)
-Received: from turing-police ([2601:5c0:c001:c9e1::359])
-        by smtp.gmail.com with ESMTPSA id p12sm4199151qkp.129.2020.05.25.16.37.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 May 2020 16:37:46 -0700 (PDT)
-From:   "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <valdis.kletnieks@vt.edu>
-X-Google-Original-From: "Valdis Kl=?utf-8?Q?=c4=93?=tnieks" <Valdis.Kletnieks@vt.edu>
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Anders Roxell <anders.roxell@linaro.org>, geert+renesas@glider.be,
-        magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
-        sre@kernel.org, robh@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] power: reset: vexpress: fix build issue
-In-Reply-To: <20200524222025.GA3116034@ubuntu-s3-xlarge-x86>
-References: <20200522220103.908307-1-anders.roxell@linaro.org>
- <20200524222025.GA3116034@ubuntu-s3-xlarge-x86>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1590449865_16657P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 25 May 2020 19:37:45 -0400
-Message-ID: <292277.1590449865@turing-police>
+        Mon, 25 May 2020 21:15:30 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8728BC061A0E
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 May 2020 18:15:30 -0700 (PDT)
+Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 615F1814;
+        Tue, 26 May 2020 03:15:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1590455725;
+        bh=kf4EJmTwgc32zxKqxdC4W0sDrp/0RuppckiLOUzdao4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=vhADncQwBofeKK03SOLt/bwsSNnOj2B0H6SwPj7J9rgiZ/qyHNxyc4UBY3Cx1CsX6
+         lcSUnuQGW9lSDKZ7uiCAhinK/BPEGHImFCd38lvogLG6XU8gBRpQxblzXfgRSpbWo2
+         LV8yb4ePf3prsopgd+kRg38iqz/fJqsqWVtJ4xeg=
+From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH 01/27] drm: bridge: adv7511: Split EDID read to a separate function
+Date:   Tue, 26 May 2020 04:14:39 +0300
+Message-Id: <20200526011505.31884-2-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200526011505.31884-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20200526011505.31884-1-laurent.pinchart+renesas@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
---==_Exmh_1590449865_16657P
-Content-Type: text/plain; charset=us-ascii
+To prepare for the implementation of the DRM bridge connector
+operations, move EDID read out of adv7511_get_modes() to a separate
+function.
 
-On Sun, 24 May 2020 15:20:25 -0700, Nathan Chancellor said:
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
+---
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 23 ++++++++++++++------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
-> arm-linux-gnueabi-ld: drivers/power/reset/vexpress-poweroff.o: in function `vexpress_reset_probe':
-> vexpress-poweroff.c:(.text+0x36c): undefined reference to `devm_regmap_init_vexpress_config'
+diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+index 87b58c1acff4..58d02e92b6b9 100644
+--- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
++++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
+@@ -589,11 +589,10 @@ static int adv7511_get_edid_block(void *data, u8 *buf, unsigned int block,
+  * ADV75xx helpers
+  */
+ 
+-static int adv7511_get_modes(struct adv7511 *adv7511,
+-			     struct drm_connector *connector)
++static struct edid *adv7511_get_edid(struct adv7511 *adv7511,
++				     struct drm_connector *connector)
+ {
+ 	struct edid *edid;
+-	unsigned int count;
+ 
+ 	/* Reading the EDID only works if the device is powered */
+ 	if (!adv7511->powered) {
+@@ -612,15 +611,25 @@ static int adv7511_get_modes(struct adv7511 *adv7511,
+ 	if (!adv7511->powered)
+ 		__adv7511_power_off(adv7511);
+ 
+-
+-	drm_connector_update_edid_property(connector, edid);
+-	count = drm_add_edid_modes(connector, edid);
+-
+ 	adv7511_set_config_csc(adv7511, connector, adv7511->rgb,
+ 			       drm_detect_hdmi_monitor(edid));
+ 
+ 	cec_s_phys_addr_from_edid(adv7511->cec_adap, edid);
+ 
++	return edid;
++}
++
++static int adv7511_get_modes(struct adv7511 *adv7511,
++			     struct drm_connector *connector)
++{
++	struct edid *edid;
++	unsigned int count;
++
++	edid = adv7511_get_edid(adv7511, connector);
++
++	drm_connector_update_edid_property(connector, edid);
++	count = drm_add_edid_modes(connector, edid);
++
+ 	kfree(edid);
+ 
+ 	return count;
+-- 
+Regards,
 
-The part I can't figure out is that git blame tells me there's already an
-export:
+Laurent Pinchart
 
-3b9334ac835bb (Pawel Moll      2014-04-30 16:46:29 +0100 154)   return regmap;
-3b9334ac835bb (Pawel Moll      2014-04-30 16:46:29 +0100 155) }
-b33cdd283bd91 (Arnd Bergmann   2014-05-26 17:25:22 +0200 156) EXPORT_SYMBOL_GPL(devm_regmap_init_vexpress_config);
-3b9334ac835bb (Pawel Moll      2014-04-30 16:46:29 +0100 157)
-
-but I can't figure out where or if drivers/power/reset/vexpress-poweroff.c gets
-a MODULE_LICENSE from...
-
---==_Exmh_1590449865_16657P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.9.0 11/07/2018
-
-iQIVAwUBXsxWyQdmEQWDXROgAQKJMw/+LVSCrU+vJAzxclsrfbDe/OtM6Q9eNp6H
-gLk7jtHTVhF2gxHjIUDO1prxqP0UvjDIdFELT6wPM5tSLbnQ+LR2K4VmfO0Dnqay
-zzIhhfyCko81tYkF9vi44SIAQp4fVhousbwJYo5LQ8ukCeIzUgbxPqMBcsJwwZbq
-xiQxWuFv5K+QrXR/dPBSkv0DZ+nFjn8oqwo/HwXNeHOj2z/eYepzeG7FW/HvFwfI
-MG9J+CM8FPxvsOJRDHg9xP21CyEEGrnj61hQmZ7Otzhlfha5RIcWX/3JfArd2Ic5
-sRttZ+fI1g3+q0Sypyw0lYl0R1Sc0/ynnsjAKlqAuUp/hzW/v5jeMByAl1j2YTVO
-3QwDA+LhzpVU+erxgYq9B2Aqj38mJ/nBKvUdR8+CNeoAVcoHiYLv5KHy7wBPtF7O
-ES+yoq/yc6YFqzy8Um74Op1xgAg13D/wcxW8lfGnZn3IRggYC6HMG0W91CSJ+rg5
-xj/uimdjd6AGIxfnQbGZzoJEFOI3TzB3BLOyARliLqZIi1h6OosUATpvVUVqEHVL
-dQ95eyBGOzSaJ3LgvmdNbVTE8V+DkiV3y4eAI0F3kpZQqLFBgO13jiWiDC+n6dZ2
-ESirUcXrKRR0p++VDXZdMFI0rparnJmbNCmn2u2OHFwaFpe7NYEXY1uBNV0oYYFp
-sIubTjf8DqU=
-=nu0y
------END PGP SIGNATURE-----
-
---==_Exmh_1590449865_16657P--
