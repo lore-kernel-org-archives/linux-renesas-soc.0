@@ -7,32 +7,35 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ADDFC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 May 2020 01:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF08C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 May 2020 01:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B0922071C
+	by mail.kernel.org (Postfix) with ESMTP id D67A42068D
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 May 2020 01:15:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Qv13sn/F"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="r3PeXRca"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388169AbgEZBPd (ORCPT
+        id S2388393AbgEZBPd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 25 May 2020 21:15:33 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54224 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388294AbgEZBPc (ORCPT
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36894 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388363AbgEZBPd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 May 2020 21:15:32 -0400
+        Mon, 25 May 2020 21:15:33 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D1E7C061A0E
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 May 2020 18:15:33 -0700 (PDT)
 Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 091C6B63;
-        Tue, 26 May 2020 03:15:25 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6D259DC3;
+        Tue, 26 May 2020 03:15:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1590455726;
-        bh=M6C9iN/KP04aFXoeEOm5CpkqV4p403+RkQUAkfOUFBE=;
+        s=mail; t=1590455727;
+        bh=8ngUfkSpeA7Td3HepuMqjPeUcyXhqfMkpwkc5tLP/dM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qv13sn/FHavIQdSzQpaJTdyw7hS6e39r0oVNnYXgNgLzU28I9QCrRe9XUv8+3Suzb
-         ri9f5fCgFP99ja3gaKUZ6+kH+8SEOf0OoIuV+ku1eo6lI8epmr5yt3Gm2qaxnb6qN7
-         B/XNWs2XW4H5IxJG9ybahuxSJVkPcAnQQ+b71vPc=
+        b=r3PeXRcakmizn59StZmIvHRyrgeybp/diTpP3Qb4L7khlYujnNtCEMkMGObYk9kNi
+         4qfEQawvPNWr0Qv9WssM78m6mTCdH+UwscavBjjr8lhDgBQ0DhHd2wPYEn+q/ifKPe
+         qLXotXw0zH90bgRrg8oQ4N1j1BzVLkK8H7rsfogQ=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -42,9 +45,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>,
         Sam Ravnborg <sam@ravnborg.org>,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 02/27] drm: bridge: adv7511: Split connector creation to a separate function
-Date:   Tue, 26 May 2020 04:14:40 +0300
-Message-Id: <20200526011505.31884-3-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 04/27] drm: bridge: adv7511: Make connector creation optional
+Date:   Tue, 26 May 2020 04:14:42 +0300
+Message-Id: <20200526011505.31884-5-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200526011505.31884-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20200526011505.31884-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -55,107 +58,43 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-To prepare for making the connector creation optional, move the related
-code out of adv7511_bridge_attach() to a separate function.
+Now that the driver supports all the connector-related bridge
+operations, make the connector creation optional. This enables usage of
+the adv7511 with the DRM bridge connector helper.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Acked-by: Sam Ravnborg <sam@ravnborg.org>
 ---
-Changes since v1:
-
-- Test for (ret < 0) instead of (ret)
----
- drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 62 +++++++++++++-------
- 1 file changed, 40 insertions(+), 22 deletions(-)
+ drivers/gpu/drm/bridge/adv7511/adv7511_drv.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-index 58d02e92b6b9..f0992b6d654f 100644
+index 2662f28f8007..f45cdca9cce5 100644
 --- a/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
 +++ b/drivers/gpu/drm/bridge/adv7511/adv7511_drv.c
-@@ -783,7 +783,10 @@ static void adv7511_mode_set(struct adv7511 *adv7511,
- 	adv7511->f_tmds = mode->clock;
- }
- 
--/* Connector funcs */
-+/* -----------------------------------------------------------------------------
-+ * DRM Connector Operations
-+ */
-+
- static struct adv7511 *connector_to_adv7511(struct drm_connector *connector)
+@@ -902,17 +902,14 @@ static int adv7511_bridge_attach(struct drm_bridge *bridge,
+ 				 enum drm_bridge_attach_flags flags)
  {
- 	return container_of(connector, struct adv7511, connector);
-@@ -827,7 +830,40 @@ static const struct drm_connector_funcs adv7511_connector_funcs = {
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
- };
+ 	struct adv7511 *adv = bridge_to_adv7511(bridge);
+-	int ret;
++	int ret = 0;
  
--/* Bridge funcs */
-+static int adv7511_connector_init(struct adv7511 *adv)
-+{
-+	struct drm_bridge *bridge = &adv->bridge;
-+	int ret;
-+
-+	if (!bridge->encoder) {
-+		DRM_ERROR("Parent encoder object not found");
-+		return -ENODEV;
-+	}
-+
-+	if (adv->i2c_main->irq)
-+		adv->connector.polled = DRM_CONNECTOR_POLL_HPD;
-+	else
-+		adv->connector.polled = DRM_CONNECTOR_POLL_CONNECT |
-+				DRM_CONNECTOR_POLL_DISCONNECT;
-+
-+	ret = drm_connector_init(bridge->dev, &adv->connector,
-+				 &adv7511_connector_funcs,
-+				 DRM_MODE_CONNECTOR_HDMIA);
-+	if (ret < 0) {
-+		DRM_ERROR("Failed to initialize connector with drm\n");
-+		return ret;
-+	}
-+	drm_connector_helper_add(&adv->connector,
-+				 &adv7511_connector_helper_funcs);
-+	drm_connector_attach_encoder(&adv->connector, bridge->encoder);
-+
-+	return 0;
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * DRM Bridge Operations
-+ */
-+
- static struct adv7511 *bridge_to_adv7511(struct drm_bridge *bridge)
- {
- 	return container_of(bridge, struct adv7511, bridge);
-@@ -867,27 +903,9 @@ static int adv7511_bridge_attach(struct drm_bridge *bridge,
- 		return -EINVAL;
+-	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR) {
+-		DRM_ERROR("Fix bridge driver to make connector optional!");
+-		return -EINVAL;
++	if (!(flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)) {
++		ret = adv7511_connector_init(adv);
++		if (ret < 0)
++			return ret;
  	}
  
--	if (!bridge->encoder) {
--		DRM_ERROR("Parent encoder object not found");
--		return -ENODEV;
--	}
+-	ret = adv7511_connector_init(adv);
+-	if (ret < 0)
+-		return ret;
 -
--	if (adv->i2c_main->irq)
--		adv->connector.polled = DRM_CONNECTOR_POLL_HPD;
--	else
--		adv->connector.polled = DRM_CONNECTOR_POLL_CONNECT |
--				DRM_CONNECTOR_POLL_DISCONNECT;
--
--	ret = drm_connector_init(bridge->dev, &adv->connector,
--				 &adv7511_connector_funcs,
--				 DRM_MODE_CONNECTOR_HDMIA);
--	if (ret) {
--		DRM_ERROR("Failed to initialize connector with drm\n");
-+	ret = adv7511_connector_init(adv);
-+	if (ret < 0)
- 		return ret;
--	}
--	drm_connector_helper_add(&adv->connector,
--				 &adv7511_connector_helper_funcs);
--	drm_connector_attach_encoder(&adv->connector, bridge->encoder);
- 
  	if (adv->type == ADV7533 || adv->type == ADV7535)
  		ret = adv7533_attach_dsi(adv);
+ 
 -- 
 Regards,
 
