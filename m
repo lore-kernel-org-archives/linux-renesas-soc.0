@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1199EC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 May 2020 01:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B98A8C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 May 2020 01:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E334F2071C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 May 2020 01:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C6D8207DA
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 May 2020 01:15:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HxokBSlr"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pKs/y5cI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388428AbgEZBPi (ORCPT
+        id S2388417AbgEZBPl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 25 May 2020 21:15:38 -0400
+        Mon, 25 May 2020 21:15:41 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:54362 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388402AbgEZBPi (ORCPT
+        with ESMTP id S2388402AbgEZBPl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 May 2020 21:15:38 -0400
+        Mon, 25 May 2020 21:15:41 -0400
 Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0C120814;
-        Tue, 26 May 2020 03:15:30 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 023EA1314;
+        Tue, 26 May 2020 03:15:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1590455731;
-        bh=tX/kaJoS2tg/KxJoTFoK0JdEn86SN0RFJWg8kbQmH5k=;
+        s=mail; t=1590455735;
+        bh=ngk1Waix5Zpn+HT6o76C7ZdVINWe1mFIPSqyGvKJb74=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HxokBSlrT8tydERKrxfl37x5W1hiaycLMRoy8xfQInpCdV+Ic0ukMQa8nLU/hfFRX
-         HyIeGLu9LDX3keLAfz7d9bCzWvIQ4hyXQ8ly8lD7KXoE61vDor2rTWRY6loh1GCKaK
-         Sq8MjvZ42cVibYtz1YSylYsT8cZ3tmICvyEGvkcs=
+        b=pKs/y5cInnTQYQvl9AEHmIrXJGEycV9un4aM7e0Nd7f9ExxYJBg6OVFz8LRpGSihV
+         EhKHwir7TTZDPhOgOwfFu8XjZ/MTEHcbyxUiQwB67iwJ9Q9rCgreWmVrI3aWg8K6V4
+         McvGO2H2qVuCL/TjUYHUqUcqGhj6V1SnenxJCdJc=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -41,10 +41,15 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Jonas Karlman <jonas@kwiboo.se>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Sam Ravnborg <sam@ravnborg.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 08/27] drm: rcar-du: lvds: Convert to DRM panel bridge helper
-Date:   Tue, 26 May 2020 04:14:46 +0300
-Message-Id: <20200526011505.31884-9-laurent.pinchart+renesas@ideasonboard.com>
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-amlogic@lists.infradead.org
+Subject: [PATCH 11/27] drm: bridge: dw-hdmi: Pass private data pointer to .mode_valid()
+Date:   Tue, 26 May 2020 04:14:49 +0300
+Message-Id: <20200526011505.31884-12-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200526011505.31884-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20200526011505.31884-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -55,202 +60,184 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace the manual panel handling with usage of the DRM panel bridge
-helper. This simplifies the driver, and brings support for
-DRM_BRIDGE_ATTACH_NO_CONNECTOR as an added bonus.
+Platform glue drivers for dw_hdmi may need to access device-specific
+data from their .mode_valid() implementation. They currently have no
+clean way to do so, and one driver hacks around it by accessing the
+dev_private data of the drm_device retrieved from the connector.
+
+Add a priv_data void pointer to the dw_hdmi_plat_data structure, and
+pass it to the .mode_valid() function.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_lvds.c | 124 +++-------------------------
- 1 file changed, 12 insertions(+), 112 deletions(-)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c   |  6 ++++--
+ drivers/gpu/drm/imx/dw_hdmi-imx.c           |  6 ++++--
+ drivers/gpu/drm/meson/meson_dw_hdmi.c       |  3 ++-
+ drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c      |  3 ++-
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c |  3 ++-
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c       |  6 ++++--
+ drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h       |  3 ++-
+ include/drm/bridge/dw_hdmi.h                | 14 ++++++++++++--
+ 8 files changed, 32 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_lvds.c b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-index ab0d49618cf9..9404f12813d1 100644
---- a/drivers/gpu/drm/rcar-du/rcar_lvds.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_lvds.c
-@@ -63,7 +63,6 @@ struct rcar_lvds {
- 	struct drm_bridge bridge;
- 
- 	struct drm_bridge *next_bridge;
--	struct drm_connector connector;
- 	struct drm_panel *panel;
- 
- 	void __iomem *mmio;
-@@ -80,73 +79,11 @@ struct rcar_lvds {
- #define bridge_to_rcar_lvds(b) \
- 	container_of(b, struct rcar_lvds, bridge)
- 
--#define connector_to_rcar_lvds(c) \
--	container_of(c, struct rcar_lvds, connector)
--
- static void rcar_lvds_write(struct rcar_lvds *lvds, u32 reg, u32 data)
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index b535354150db..2b3f203cf467 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -2771,6 +2771,7 @@ dw_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
+ 			  const struct drm_display_mode *mode)
  {
- 	iowrite32(data, lvds->mmio + reg);
+ 	struct dw_hdmi *hdmi = bridge->driver_private;
++	const struct dw_hdmi_plat_data *pdata = hdmi->plat_data;
+ 	struct drm_connector *connector = &hdmi->connector;
+ 	enum drm_mode_status mode_status = MODE_OK;
+ 
+@@ -2778,8 +2779,9 @@ dw_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
+ 	if (mode->flags & DRM_MODE_FLAG_DBLCLK)
+ 		return MODE_BAD;
+ 
+-	if (hdmi->plat_data->mode_valid)
+-		mode_status = hdmi->plat_data->mode_valid(connector, mode);
++	if (pdata->mode_valid)
++		mode_status = pdata->mode_valid(hdmi, pdata->priv_data,
++						connector, mode);
+ 
+ 	return mode_status;
+ }
+diff --git a/drivers/gpu/drm/imx/dw_hdmi-imx.c b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+index ba4ca17fd4d8..95aed4666c95 100644
+--- a/drivers/gpu/drm/imx/dw_hdmi-imx.c
++++ b/drivers/gpu/drm/imx/dw_hdmi-imx.c
+@@ -145,7 +145,8 @@ static const struct drm_encoder_helper_funcs dw_hdmi_imx_encoder_helper_funcs =
+ };
+ 
+ static enum drm_mode_status
+-imx6q_hdmi_mode_valid(struct drm_connector *con,
++imx6q_hdmi_mode_valid(struct dw_hdmi *hdmi, void *data,
++		      struct drm_connector *con,
+ 		      const struct drm_display_mode *mode)
+ {
+ 	if (mode->clock < 13500)
+@@ -158,7 +159,8 @@ imx6q_hdmi_mode_valid(struct drm_connector *con,
  }
  
--/* -----------------------------------------------------------------------------
-- * Connector & Panel
-- */
--
--static int rcar_lvds_connector_get_modes(struct drm_connector *connector)
--{
--	struct rcar_lvds *lvds = connector_to_rcar_lvds(connector);
--
--	return drm_panel_get_modes(lvds->panel, connector);
--}
--
--static int rcar_lvds_connector_atomic_check(struct drm_connector *connector,
--					    struct drm_atomic_state *state)
--{
--	struct rcar_lvds *lvds = connector_to_rcar_lvds(connector);
--	const struct drm_display_mode *panel_mode;
--	struct drm_connector_state *conn_state;
--	struct drm_crtc_state *crtc_state;
--
--	conn_state = drm_atomic_get_new_connector_state(state, connector);
--	if (!conn_state->crtc)
--		return 0;
--
--	if (list_empty(&connector->modes)) {
--		dev_dbg(lvds->dev, "connector: empty modes list\n");
--		return -EINVAL;
--	}
--
--	panel_mode = list_first_entry(&connector->modes,
--				      struct drm_display_mode, head);
--
--	/* We're not allowed to modify the resolution. */
--	crtc_state = drm_atomic_get_crtc_state(state, conn_state->crtc);
--	if (IS_ERR(crtc_state))
--		return PTR_ERR(crtc_state);
--
--	if (crtc_state->mode.hdisplay != panel_mode->hdisplay ||
--	    crtc_state->mode.vdisplay != panel_mode->vdisplay)
--		return -EINVAL;
--
--	/* The flat panel mode is fixed, just copy it to the adjusted mode. */
--	drm_mode_copy(&crtc_state->adjusted_mode, panel_mode);
--
--	return 0;
--}
--
--static const struct drm_connector_helper_funcs rcar_lvds_conn_helper_funcs = {
--	.get_modes = rcar_lvds_connector_get_modes,
--	.atomic_check = rcar_lvds_connector_atomic_check,
--};
--
--static const struct drm_connector_funcs rcar_lvds_conn_funcs = {
--	.reset = drm_atomic_helper_connector_reset,
--	.fill_modes = drm_helper_probe_single_connector_modes,
--	.destroy = drm_connector_cleanup,
--	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
--	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
--};
--
- /* -----------------------------------------------------------------------------
-  * PLL Setup
-  */
-@@ -583,11 +520,6 @@ static void __rcar_lvds_atomic_enable(struct drm_bridge *bridge,
- 	/* Turn the output on. */
- 	lvdcr0 |= LVDCR0_LVRES;
- 	rcar_lvds_write(lvds, LVDCR0, lvdcr0);
--
--	if (lvds->panel) {
--		drm_panel_prepare(lvds->panel);
--		drm_panel_enable(lvds->panel);
--	}
+ static enum drm_mode_status
+-imx6dl_hdmi_mode_valid(struct drm_connector *con,
++imx6dl_hdmi_mode_valid(struct dw_hdmi *hdmi, void *data,
++		       struct drm_connector *con,
+ 		       const struct drm_display_mode *mode)
+ {
+ 	if (mode->clock < 13500)
+diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+index 5be963e9db05..5cc311c1b8e0 100644
+--- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
++++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+@@ -630,7 +630,8 @@ static irqreturn_t dw_hdmi_top_thread_irq(int irq, void *dev_id)
  }
  
- static void rcar_lvds_atomic_enable(struct drm_bridge *bridge,
-@@ -609,11 +541,6 @@ static void rcar_lvds_atomic_disable(struct drm_bridge *bridge,
+ static enum drm_mode_status
+-dw_hdmi_mode_valid(struct drm_connector *connector,
++dw_hdmi_mode_valid(struct dw_hdmi *hdmi, void *data,
++		   struct drm_connector *connector,
+ 		   const struct drm_display_mode *mode)
  {
- 	struct rcar_lvds *lvds = bridge_to_rcar_lvds(bridge);
+ 	struct meson_drm *priv = connector->dev->dev_private;
+diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+index 452461dc96f2..4d837a4d302d 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
++++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+@@ -38,7 +38,8 @@ static const struct rcar_hdmi_phy_params rcar_hdmi_phy_params[] = {
+ };
  
--	if (lvds->panel) {
--		drm_panel_disable(lvds->panel);
--		drm_panel_unprepare(lvds->panel);
--	}
--
- 	rcar_lvds_write(lvds, LVDCR0, 0);
- 	rcar_lvds_write(lvds, LVDCR1, 0);
- 	rcar_lvds_write(lvds, LVDPLLCR, 0);
-@@ -648,49 +575,13 @@ static int rcar_lvds_attach(struct drm_bridge *bridge,
- 			    enum drm_bridge_attach_flags flags)
+ static enum drm_mode_status
+-rcar_hdmi_mode_valid(struct drm_connector *connector,
++rcar_hdmi_mode_valid(struct dw_hdmi *hdmi, void *data,
++		     struct drm_connector *connector,
+ 		     const struct drm_display_mode *mode)
  {
- 	struct rcar_lvds *lvds = bridge_to_rcar_lvds(bridge);
--	struct drm_connector *connector = &lvds->connector;
--	struct drm_encoder *encoder = bridge->encoder;
--	int ret;
- 
--	/* If we have a next bridge just attach it. */
--	if (lvds->next_bridge)
--		return drm_bridge_attach(bridge->encoder, lvds->next_bridge,
--					 bridge, flags);
--
--	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR) {
--		DRM_ERROR("Fix bridge driver to make connector optional!");
--		return -EINVAL;
--	}
--
--	/* Otherwise if we have a panel, create a connector. */
--	if (!lvds->panel)
--		return 0;
--
--	ret = drm_connector_init(bridge->dev, connector, &rcar_lvds_conn_funcs,
--				 DRM_MODE_CONNECTOR_LVDS);
--	if (ret < 0)
--		return ret;
--
--	drm_connector_helper_add(connector, &rcar_lvds_conn_helper_funcs);
--
--	ret = drm_connector_attach_encoder(connector, encoder);
--	if (ret < 0)
--		return ret;
--
--	return drm_panel_attach(lvds->panel, connector);
--}
--
--static void rcar_lvds_detach(struct drm_bridge *bridge)
--{
--	struct rcar_lvds *lvds = bridge_to_rcar_lvds(bridge);
--
--	if (lvds->panel)
--		drm_panel_detach(lvds->panel);
-+	return drm_bridge_attach(bridge->encoder, lvds->next_bridge, bridge,
-+				 flags);
+ 	/*
+diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+index 121aa8a63a76..d08f86783a28 100644
+--- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
++++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
+@@ -220,7 +220,8 @@ static int rockchip_hdmi_parse_dt(struct rockchip_hdmi *hdmi)
  }
  
- static const struct drm_bridge_funcs rcar_lvds_bridge_ops = {
- 	.attach = rcar_lvds_attach,
--	.detach = rcar_lvds_detach,
- 	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
- 	.atomic_reset = drm_atomic_helper_bridge_reset,
-@@ -763,7 +654,7 @@ static int rcar_lvds_parse_dt_companion(struct rcar_lvds *lvds)
- 		 * that we are expected to generate even pixels from the primary
- 		 * encoder, and odd pixels from the companion encoder.
- 		 */
--		if (lvds->next_bridge && lvds->next_bridge->timings &&
-+		if (lvds->next_bridge->timings &&
- 		    lvds->next_bridge->timings->dual_link)
- 			lvds->link_type = RCAR_LVDS_DUAL_LINK_EVEN_ODD_PIXELS;
- 		else
-@@ -815,6 +706,15 @@ static int rcar_lvds_parse_dt(struct rcar_lvds *lvds)
- 	if (ret)
- 		goto done;
+ static enum drm_mode_status
+-dw_hdmi_rockchip_mode_valid(struct drm_connector *connector,
++dw_hdmi_rockchip_mode_valid(struct dw_hdmi *hdmi, void *data,
++			    struct drm_connector *connector,
+ 			    const struct drm_display_mode *mode)
+ {
+ 	const struct dw_hdmi_mpll_config *mpll_cfg = rockchip_mpll_cfg;
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+index 972682bb8000..0a3637442ba6 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c
+@@ -31,7 +31,8 @@ sun8i_dw_hdmi_encoder_helper_funcs = {
+ };
  
-+	if (lvds->panel) {
-+		lvds->next_bridge = devm_drm_panel_bridge_add(lvds->dev,
-+							      lvds->panel);
-+		if (IS_ERR_OR_NULL(lvds->next_bridge)) {
-+			ret = -EINVAL;
-+			goto done;
-+		}
-+	}
+ static enum drm_mode_status
+-sun8i_dw_hdmi_mode_valid_a83t(struct drm_connector *connector,
++sun8i_dw_hdmi_mode_valid_a83t(struct dw_hdmi *hdmi, void *data,
++			      struct drm_connector *connector,
+ 			      const struct drm_display_mode *mode)
+ {
+ 	if (mode->clock > 297000)
+@@ -41,7 +42,8 @@ sun8i_dw_hdmi_mode_valid_a83t(struct drm_connector *connector,
+ }
+ 
+ static enum drm_mode_status
+-sun8i_dw_hdmi_mode_valid_h6(struct drm_connector *connector,
++sun8i_dw_hdmi_mode_valid_h6(struct dw_hdmi *hdmi, void *data,
++			    struct drm_connector *connector,
+ 			    const struct drm_display_mode *mode)
+ {
+ 	/*
+diff --git a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+index 8e64945167e9..8587b8d2590e 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
++++ b/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.h
+@@ -176,7 +176,8 @@ struct sun8i_hdmi_phy {
+ };
+ 
+ struct sun8i_dw_hdmi_quirks {
+-	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
++	enum drm_mode_status (*mode_valid)(struct dw_hdmi *hdmi, void *data,
++					   struct drm_connector *connector,
+ 					   const struct drm_display_mode *mode);
+ 	unsigned int set_rate : 1;
+ 	unsigned int use_drm_infoframe : 1;
+diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
+index 0b34a12c4a1c..66a811f75b91 100644
+--- a/include/drm/bridge/dw_hdmi.h
++++ b/include/drm/bridge/dw_hdmi.h
+@@ -124,13 +124,23 @@ struct dw_hdmi_phy_ops {
+ 
+ struct dw_hdmi_plat_data {
+ 	struct regmap *regm;
+-	enum drm_mode_status (*mode_valid)(struct drm_connector *connector,
+-					   const struct drm_display_mode *mode);
 +
- 	if (lvds->info->quirks & RCAR_LVDS_QUIRK_DUAL_LINK)
- 		ret = rcar_lvds_parse_dt_companion(lvds);
+ 	unsigned long input_bus_format;
+ 	unsigned long input_bus_encoding;
+ 	bool use_drm_infoframe;
+ 	bool ycbcr_420_allowed;
  
++	/*
++	 * Private data passed to all the .mode_valid() and .configure_phy()
++	 * callback functions.
++	 */
++	void *priv_data;
++
++	/* Platform-specific mode validation (optional). */
++	enum drm_mode_status (*mode_valid)(struct dw_hdmi *hdmi, void *data,
++					   struct drm_connector *connector,
++					   const struct drm_display_mode *mode);
++
+ 	/* Vendor PHY support */
+ 	const struct dw_hdmi_phy_ops *phy_ops;
+ 	const char *phy_name;
 -- 
 Regards,
 
