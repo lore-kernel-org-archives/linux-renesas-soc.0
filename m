@@ -2,73 +2,76 @@ Return-Path: <SRS0=3wrY=7J=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B382AC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 May 2020 21:19:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7C1C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 May 2020 23:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 927C4207E8
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 May 2020 21:19:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C1E3208C3
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 May 2020 23:24:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728767AbgE0VTf (ORCPT
+        id S1725941AbgE0XYv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 May 2020 17:19:35 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:4050 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726482AbgE0VTf (ORCPT
+        Wed, 27 May 2020 19:24:51 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:32062 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725267AbgE0XYv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 May 2020 17:19:35 -0400
+        Wed, 27 May 2020 19:24:51 -0400
+Date:   28 May 2020 08:24:49 +0900
 X-IronPort-AV: E=Sophos;i="5.73,442,1583161200"; 
-   d="scan'208";a="48177567"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 28 May 2020 06:19:34 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 41371400C44F;
-        Thu, 28 May 2020 06:19:32 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+   d="scan'208";a="47971639"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 28 May 2020 08:24:49 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id CF343411CEA4;
+        Thu, 28 May 2020 08:24:49 +0900 (JST)
+Message-ID: <87lfld0xmm.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 3/4] dt-bindings: timer: renesas,cmt: Document r8a7742 CMT support
-Date:   Wed, 27 May 2020 22:18:39 +0100
-Message-Id: <1590614320-30160-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1590614320-30160-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1590614320-30160-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: r8a7742: Add audio support
+In-Reply-To: <CAMuHMdWQ5i4QiMuSEPrHC4i6fDGa2aJrKO5gzyrsc=uCCdYAhQ@mail.gmail.com>
+References: <1590526904-13855-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        <1590526904-13855-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        <CAMuHMdWQ5i4QiMuSEPrHC4i6fDGa2aJrKO5gzyrsc=uCCdYAhQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 Emacs/25.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document SoC specific compatible strings for r8a7742. No driver change
-is needed as the fallback strings will activate the right code.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Hi
+
+> > Add sound support for the RZ/G1H SoC (a.k.a. R8A7742).
+> >
+> > This work is based on similar work done on the R8A7744 SoC.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+> 
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-devel for v5.9.
+
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+Thank you for your help !!
+
+Best regards
 ---
- Documentation/devicetree/bindings/timer/renesas,cmt.txt | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/timer/renesas,cmt.txt b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-index a747fab..995fbcf 100644
---- a/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-+++ b/Documentation/devicetree/bindings/timer/renesas,cmt.txt
-@@ -19,6 +19,8 @@ Required Properties:
-     - "renesas,r8a7740-cmt2" for the 32-bit CMT2 device included in r8a7740.
-     - "renesas,r8a7740-cmt3" for the 32-bit CMT3 device included in r8a7740.
-     - "renesas,r8a7740-cmt4" for the 32-bit CMT4 device included in r8a7740.
-+    - "renesas,r8a7742-cmt0" for the 32-bit CMT0 device included in r8a7742.
-+    - "renesas,r8a7742-cmt1" for the 48-bit CMT1 device included in r8a7742.
-     - "renesas,r8a7743-cmt0" for the 32-bit CMT0 device included in r8a7743.
-     - "renesas,r8a7743-cmt1" for the 48-bit CMT1 device included in r8a7743.
-     - "renesas,r8a7744-cmt0" for the 32-bit CMT0 device included in r8a7744.
--- 
-2.7.4
-
+Kuninori Morimoto
