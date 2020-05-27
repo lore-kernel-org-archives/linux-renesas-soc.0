@@ -2,95 +2,68 @@ Return-Path: <SRS0=3wrY=7J=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8156C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 May 2020 20:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D28A8C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 May 2020 21:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1D4520890
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 May 2020 20:52:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="WyvaIFrA"
+	by mail.kernel.org (Postfix) with ESMTP id BA62B207E8
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 May 2020 21:19:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbgE0Uwm (ORCPT
+        id S1728124AbgE0VTC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 May 2020 16:52:42 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:53104 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726129AbgE0Uwm (ORCPT
+        Wed, 27 May 2020 17:19:02 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:19589 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728255AbgE0VTC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 May 2020 16:52:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=gKAXQgUdWQP/zL1P3eNew3G65B4gJ6Xt1zF4bmT1hDg=; b=WyvaIFrAsWiNdYbeeSXajmyKD6
-        6I8uuI6yBuqgB3E3YJb/fM/ogGpVN6EhTp9s1KROW2q6RwLo9hFHGFaGz8E86tphPbfvG8p5+xnMf
-        sGW6H/UMHw8y6QxnMjTQRLU/Qwgf3L6OJ4PFdtaTMogDnXyqRrvzHFcIlrmKLtm3N/6c=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.93)
-        (envelope-from <andrew@lunn.ch>)
-        id 1je32D-003S61-VH; Wed, 27 May 2020 22:52:21 +0200
-Date:   Wed, 27 May 2020 22:52:21 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        "sergei.shtylyov@cogentembedded.com" 
-        <sergei.shtylyov@cogentembedded.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "david@protonic.nl" <david@protonic.nl>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH net-next v3] net: phy: micrel: add phy-mode support for
- the KSZ9031 PHY
-Message-ID: <20200527205221.GA818296@lunn.ch>
-References: <20200422072137.8517-1-o.rempel@pengutronix.de>
- <CAMuHMdU1ZmSm_tjtWxoFNako2fzmranGVz5qqD2YRNEFRjX0Sw@mail.gmail.com>
- <20200428154718.GA24923@lunn.ch>
- <6791722391359fce92b39e3a21eef89495ccf156.camel@toradex.com>
- <CAMuHMdXm7n6cE5-ZjwxU_yKSrCaZCwqc_tBA+M_Lq53hbH2-jg@mail.gmail.com>
- <20200429092616.7ug4kdgdltxowkcs@pengutronix.de>
- <CAMuHMdWf1f95ZcOLd=k1rd4WE98T1qh_3YsJteyDGtYm1m_Nfg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWf1f95ZcOLd=k1rd4WE98T1qh_3YsJteyDGtYm1m_Nfg@mail.gmail.com>
+        Wed, 27 May 2020 17:19:02 -0400
+X-IronPort-AV: E=Sophos;i="5.73,442,1583161200"; 
+   d="scan'208";a="47965343"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 28 May 2020 06:19:00 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 89F09400C44F;
+        Thu, 28 May 2020 06:18:58 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/4] Add thermal and CMT to R8A7742 SOC
+Date:   Wed, 27 May 2020 22:18:36 +0100
+Message-Id: <1590614320-30160-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-> You may wonder what's the difference between 3 and 4? It's not just the
-> PHY driver that looks at phy-mode!
-> drivers/net/ethernet/renesas/ravb_main.c:ravb_set_delay_mode() also
-> does, and configures an additional TX clock delay of 1.8 ns if TXID is
-> enabled.
+Hi All,
 
-Hi Geert
+This patch series adds thermal and CMT support on RZ/G1H
+(R8A7742) SOC DT.
 
-That sounds like a MAC bug. Either the MAC insert the delay, or the
-PHY does. If the MAC decides it is going to insert the delay, it
-should be masking what it passes to phylib so that the PHY does not
-add a second delay.
+Cheers,
+Prabhakar
 
-This whole area of RGMII delays has a number of historical bugs, which
-often counter act each other. So you fix one, and it break somewhere
-else.
+Lad Prabhakar (4):
+  dt-bindings: thermal: rcar-thermal: Add device tree support for
+    r8a7742
+  ARM: dts: r8a7742: Add thermal device to DT
+  dt-bindings: timer: renesas,cmt: Document r8a7742 CMT support
+  ARM: dts: r8a7742: Add CMT SoC specific support
 
-In this case, not allowing skews for plain RGMII is probably being too
-strict. We probably should relax that constrain in this case, for this
-PHY driver.
+ .../devicetree/bindings/thermal/rcar-thermal.yaml  |  1 +
+ .../devicetree/bindings/timer/renesas,cmt.txt      |  2 +
+ arch/arm/boot/dts/r8a7742.dtsi                     | 62 ++++++++++++++++++++++
+ 3 files changed, 65 insertions(+)
 
-    Andrew
+-- 
+2.7.4
+
