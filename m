@@ -7,23 +7,26 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 040EBC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 May 2020 19:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E00EBC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 May 2020 19:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE13C212CC
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 May 2020 19:23:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6CA0207BC
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 May 2020 19:24:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406405AbgE1TVx (ORCPT
+        id S2406350AbgE1TV2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 May 2020 15:21:53 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57664 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406397AbgE1TVu (ORCPT
+        Thu, 28 May 2020 15:21:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59368 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406306AbgE1TVS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 May 2020 15:21:50 -0400
+        Thu, 28 May 2020 15:21:18 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C397C08C5C6;
+        Thu, 28 May 2020 12:21:18 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: andrzej.p)
-        with ESMTPSA id 8F5282A2B09
+        with ESMTPSA id E87022A41C0
 From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
         netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
@@ -68,9 +71,9 @@ Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH v4 03/11] thermal: Add current mode to thermal zone device
-Date:   Thu, 28 May 2020 21:20:43 +0200
-Message-Id: <20200528192051.28034-4-andrzej.p@collabora.com>
+Subject: [PATCH v4 01/11] acpi: thermal: Fix error handling in the register function
+Date:   Thu, 28 May 2020 21:20:41 +0200
+Message-Id: <20200528192051.28034-2-andrzej.p@collabora.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200528192051.28034-1-andrzej.p@collabora.com>
 References: <Message-ID: <4493c0e4-51aa-3907-810c-74949ff27ca4@samsung.com>
@@ -80,36 +83,58 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Prepare for changing the place where the mode is stored: now it is in
-drivers, which might or might not implement get_mode()/set_mode() methods.
-A lot of cleanup can be done thanks to storing it in struct tzd. The
-get_mode() methods will become redundant.
+The acpi_thermal_register_thermal_zone() is missing any error handling.
+This needs to be fixed.
 
 Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 ---
- include/linux/thermal.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/acpi/thermal.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index 216185bb3014..5f91d7f04512 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -128,6 +128,7 @@ struct thermal_cooling_device {
-  * @trip_temp_attrs:	attributes for trip points for sysfs: trip temperature
-  * @trip_type_attrs:	attributes for trip points for sysfs: trip type
-  * @trip_hyst_attrs:	attributes for trip points for sysfs: trip hysteresis
-+ * @mode:		current mode of this thermal zone
-  * @devdata:	private pointer for device private data
-  * @trips:	number of trip points the thermal zone supports
-  * @trips_disabled;	bitmap for disabled trips
-@@ -170,6 +171,7 @@ struct thermal_zone_device {
- 	struct thermal_attr *trip_temp_attrs;
- 	struct thermal_attr *trip_type_attrs;
- 	struct thermal_attr *trip_hyst_attrs;
-+	enum thermal_device_mode mode;
- 	void *devdata;
- 	int trips;
- 	unsigned long trips_disabled;	/* bitmap for disabled trips */
+diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+index 19067a5e5293..6de8066ca1e7 100644
+--- a/drivers/acpi/thermal.c
++++ b/drivers/acpi/thermal.c
+@@ -901,23 +901,35 @@ static int acpi_thermal_register_thermal_zone(struct acpi_thermal *tz)
+ 	result = sysfs_create_link(&tz->device->dev.kobj,
+ 				   &tz->thermal_zone->device.kobj, "thermal_zone");
+ 	if (result)
+-		return result;
++		goto unregister_tzd;
+ 
+ 	result = sysfs_create_link(&tz->thermal_zone->device.kobj,
+ 				   &tz->device->dev.kobj, "device");
+ 	if (result)
+-		return result;
++		goto remove_tz_link;
+ 
+ 	status =  acpi_bus_attach_private_data(tz->device->handle,
+ 					       tz->thermal_zone);
+-	if (ACPI_FAILURE(status))
+-		return -ENODEV;
++	if (ACPI_FAILURE(status)) {
++		result = -ENODEV;
++		goto remove_dev_link;
++	}
+ 
+ 	tz->tz_enabled = 1;
+ 
+ 	dev_info(&tz->device->dev, "registered as thermal_zone%d\n",
+ 		 tz->thermal_zone->id);
++
+ 	return 0;
++
++remove_dev_link:
++	sysfs_remove_link(&tz->thermal_zone->device.kobj, "device");
++remove_tz_link:
++	sysfs_remove_link(&tz->device->dev.kobj, "thermal_zone");
++unregister_tzd:
++	thermal_zone_device_unregister(tz->thermal_zone);
++
++	return result;
+ }
+ 
+ static void acpi_thermal_unregister_thermal_zone(struct acpi_thermal *tz)
 -- 
 2.17.1
 
