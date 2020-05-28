@@ -2,1025 +2,261 @@ Return-Path: <SRS0=/ydl=7K=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86698C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 May 2020 18:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB0CDC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 May 2020 19:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 58E702074B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 May 2020 18:52:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590691970;
-	bh=IeAFqApY6k0LNXcqTMzXqVSRIvyxxmuc2m6NbXbwoYU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tiLKAZK4LEYcFXlyYp56m7BzMCK5BG0AC0MI1MOIKWPy+YURUKoHMHtXaUTDkbM1X
-	 t6XkQo2a5K/rpW7mjX11s78gdrdxU7inkBdQ5+RnKkNdyeMg4rrKD29QT2zmzLuK9Q
-	 h1FHCsJu3ZJYH2X+O/OcnGGSx6u1ngbkozbl88ko=
+	by mail.kernel.org (Postfix) with ESMTP id C40742078C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 May 2020 19:21:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405972AbgE1Swt (ORCPT
+        id S2406383AbgE1TVo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 May 2020 14:52:49 -0400
-Received: from mail-il1-f173.google.com ([209.85.166.173]:34119 "EHLO
-        mail-il1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405912AbgE1Sws (ORCPT
+        Thu, 28 May 2020 15:21:44 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57628 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406306AbgE1TVf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 May 2020 14:52:48 -0400
-Received: by mail-il1-f173.google.com with SMTP id v11so1324396ilh.1;
-        Thu, 28 May 2020 11:52:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=0Fz5MiaQp70eeOuFCJV3/xefSBjk2vY90EIv5bN2fzc=;
-        b=ds1Id//+Eb9MXgrymjePVJjSLm6iGxYG79+Z8py4pV0lzxS3R2xXyb/a1Vun6UQSoB
-         oXfghalZZWC2QwdmwGnhSONyvhEc5U0tGwqwJVQ3H3ks8IPoL5swAIk/nhA20fRaxW4K
-         shZF2JOqYoSCSBh/eOxE1PZgr3wNTvZfQz9bZasn4DRNhqcVfDYvrIbs3AoJ2FgvaKkj
-         BUO4GHK/BiMevle7K0x9lg3gcbfskBbN7Zki6qr2cLRUVl5LytWkHl/i2qOgUlYqdJv5
-         rF7IzPYD1of47snS5zMkJnK31j2kXmkqPIIPO2ji6/AF7KFxq93Sd1vkeHc7yapR/srD
-         8brA==
-X-Gm-Message-State: AOAM532Z7FCJvIglmvUF2Rrw5JJSULoQfn3Cbnv4dwj9EP8xKC/NMFH8
-        uJGNeCQIz2W8SFK2WeK9Fg==
-X-Google-Smtp-Source: ABdhPJyLlPhUl64Hn0pkxe+N3RGm14+0RM4I2mONub/Ar8vKVBhN64jxsXqzZ+iO5OFXRcHQPrx0xw==
-X-Received: by 2002:a92:290c:: with SMTP id l12mr3947053ilg.279.1590691965834;
-        Thu, 28 May 2020 11:52:45 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id n12sm2713758iog.25.2020.05.28.11.52.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 May 2020 11:52:45 -0700 (PDT)
-Received: (nullmailer pid 494588 invoked by uid 1000);
-        Thu, 28 May 2020 18:52:44 -0000
-Date:   Thu, 28 May 2020 12:52:44 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        Thu, 28 May 2020 15:21:35 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: andrzej.p)
+        with ESMTPSA id EDF002A41C4
+From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: Re: [PATCH] dt-bindings: display: renesas,du: Convert binding to YAML
-Message-ID: <20200528185244.GA400585@bogus>
-References: <20200515003340.18191-1-laurent.pinchart+renesas@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200515003340.18191-1-laurent.pinchart+renesas@ideasonboard.com>
+        linux-rockchip@lists.infradead.org
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Vishal Kulkarni <vishal@chelsio.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Peter Kaestle <peter@piie.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Enrico Weigelt <info@metux.net>,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        kernel@collabora.com
+Subject: [PATCH v4 02/11] thermal: Store thermal mode in a dedicated enum
+Date:   Thu, 28 May 2020 21:20:42 +0200
+Message-Id: <20200528192051.28034-3-andrzej.p@collabora.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200528192051.28034-1-andrzej.p@collabora.com>
+References: <Message-ID: <4493c0e4-51aa-3907-810c-74949ff27ca4@samsung.com>
+ <20200528192051.28034-1-andrzej.p@collabora.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, May 15, 2020 at 03:33:40AM +0300, Laurent Pinchart wrote:
-> Convert the Renesas R-Car DU text binding to YAML.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->  .../bindings/display/renesas,du.txt           | 139 ---
->  .../bindings/display/renesas,du.yaml          | 915 ++++++++++++++++++
+Prepare for storing mode in struct thermal_zone_device.
 
-A 'normal' conversion is about double the lines. I guess this is a sign 
-that the original was not well specified.
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+---
+ drivers/acpi/thermal.c                        | 27 +++++++++----------
+ drivers/platform/x86/acerhdf.c                |  8 ++++--
+ .../intel/int340x_thermal/int3400_thermal.c   | 18 +++++--------
+ 3 files changed, 25 insertions(+), 28 deletions(-)
 
-Maybe this can be split to reduce some of the if/then? One way is define 
-a common 'include' file that each specific instance can reference
+diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+index 6de8066ca1e7..fb46070c66d8 100644
+--- a/drivers/acpi/thermal.c
++++ b/drivers/acpi/thermal.c
+@@ -172,7 +172,7 @@ struct acpi_thermal {
+ 	struct acpi_thermal_trips trips;
+ 	struct acpi_handle_list devices;
+ 	struct thermal_zone_device *thermal_zone;
+-	int tz_enabled;
++	enum thermal_device_mode mode;
+ 	int kelvin_offset;	/* in millidegrees */
+ 	struct work_struct thermal_check_work;
+ };
+@@ -500,7 +500,7 @@ static void acpi_thermal_check(void *data)
+ {
+ 	struct acpi_thermal *tz = data;
+ 
+-	if (!tz->tz_enabled)
++	if (tz->mode != THERMAL_DEVICE_ENABLED)
+ 		return;
+ 
+ 	thermal_zone_device_update(tz->thermal_zone,
+@@ -534,8 +534,7 @@ static int thermal_get_mode(struct thermal_zone_device *thermal,
+ 	if (!tz)
+ 		return -EINVAL;
+ 
+-	*mode = tz->tz_enabled ? THERMAL_DEVICE_ENABLED :
+-		THERMAL_DEVICE_DISABLED;
++	*mode = tz->mode;
+ 
+ 	return 0;
+ }
+@@ -544,27 +543,25 @@ static int thermal_set_mode(struct thermal_zone_device *thermal,
+ 				enum thermal_device_mode mode)
+ {
+ 	struct acpi_thermal *tz = thermal->devdata;
+-	int enable;
+ 
+ 	if (!tz)
+ 		return -EINVAL;
+ 
++	if (mode != THERMAL_DEVICE_DISABLED &&
++	    mode != THERMAL_DEVICE_ENABLED)
++		return -EINVAL;
+ 	/*
+ 	 * enable/disable thermal management from ACPI thermal driver
+ 	 */
+-	if (mode == THERMAL_DEVICE_ENABLED)
+-		enable = 1;
+-	else if (mode == THERMAL_DEVICE_DISABLED) {
+-		enable = 0;
++	if (mode == THERMAL_DEVICE_DISABLED)
+ 		pr_warn("thermal zone will be disabled\n");
+-	} else
+-		return -EINVAL;
+ 
+-	if (enable != tz->tz_enabled) {
+-		tz->tz_enabled = enable;
++	if (mode != tz->mode) {
++		tz->mode = mode;
+ 		ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+ 			"%s kernel ACPI thermal control\n",
+-			tz->tz_enabled ? "Enable" : "Disable"));
++			tz->mode == THERMAL_DEVICE_ENABLED ?
++			"Enable" : "Disable"));
+ 		acpi_thermal_check(tz);
+ 	}
+ 	return 0;
+@@ -915,7 +912,7 @@ static int acpi_thermal_register_thermal_zone(struct acpi_thermal *tz)
+ 		goto remove_dev_link;
+ 	}
+ 
+-	tz->tz_enabled = 1;
++	tz->mode = THERMAL_DEVICE_ENABLED;
+ 
+ 	dev_info(&tz->device->dev, "registered as thermal_zone%d\n",
+ 		 tz->thermal_zone->id);
+diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
+index 8cc86f4e3ac1..830a8b060e74 100644
+--- a/drivers/platform/x86/acerhdf.c
++++ b/drivers/platform/x86/acerhdf.c
+@@ -68,6 +68,7 @@ static int kernelmode = 1;
+ #else
+ static int kernelmode;
+ #endif
++static enum thermal_device_mode thermal_mode;
+ 
+ static unsigned int interval = 10;
+ static unsigned int fanon = 60000;
+@@ -397,6 +398,7 @@ static inline void acerhdf_revert_to_bios_mode(void)
+ {
+ 	acerhdf_change_fanstate(ACERHDF_FAN_AUTO);
+ 	kernelmode = 0;
++	thermal_mode = THERMAL_DEVICE_DISABLED;
+ 	if (thz_dev)
+ 		thz_dev->polling_delay = 0;
+ 	pr_notice("kernel mode fan control OFF\n");
+@@ -404,6 +406,7 @@ static inline void acerhdf_revert_to_bios_mode(void)
+ static inline void acerhdf_enable_kernelmode(void)
+ {
+ 	kernelmode = 1;
++	thermal_mode = THERMAL_DEVICE_ENABLED;
+ 
+ 	thz_dev->polling_delay = interval*1000;
+ 	thermal_zone_device_update(thz_dev, THERMAL_EVENT_UNSPECIFIED);
+@@ -416,8 +419,7 @@ static int acerhdf_get_mode(struct thermal_zone_device *thermal,
+ 	if (verbose)
+ 		pr_notice("kernel mode fan control %d\n", kernelmode);
+ 
+-	*mode = (kernelmode) ? THERMAL_DEVICE_ENABLED
+-			     : THERMAL_DEVICE_DISABLED;
++	*mode = thermal_mode;
+ 
+ 	return 0;
+ }
+@@ -739,6 +741,8 @@ static int __init acerhdf_register_thermal(void)
+ 	if (IS_ERR(cl_dev))
+ 		return -EINVAL;
+ 
++	thermal_mode = kernelmode ?
++		THERMAL_DEVICE_ENABLED : THERMAL_DEVICE_DISABLED;
+ 	thz_dev = thermal_zone_device_register("acerhdf", 2, 0, NULL,
+ 					      &acerhdf_dev_ops,
+ 					      &acerhdf_zone_params, 0,
+diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+index 0b3a62655843..e84faaadff87 100644
+--- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
++++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+@@ -48,7 +48,7 @@ struct int3400_thermal_priv {
+ 	struct acpi_device *adev;
+ 	struct platform_device *pdev;
+ 	struct thermal_zone_device *thermal;
+-	int mode;
++	enum thermal_device_mode mode;
+ 	int art_count;
+ 	struct art *arts;
+ 	int trt_count;
+@@ -395,24 +395,20 @@ static int int3400_thermal_set_mode(struct thermal_zone_device *thermal,
+ 				enum thermal_device_mode mode)
+ {
+ 	struct int3400_thermal_priv *priv = thermal->devdata;
+-	bool enable;
+ 	int result = 0;
+ 
+ 	if (!priv)
+ 		return -EINVAL;
+ 
+-	if (mode == THERMAL_DEVICE_ENABLED)
+-		enable = true;
+-	else if (mode == THERMAL_DEVICE_DISABLED)
+-		enable = false;
+-	else
++	if (mode != THERMAL_DEVICE_ENABLED &&
++	    mode != THERMAL_DEVICE_DISABLED)
+ 		return -EINVAL;
+ 
+-	if (enable != priv->mode) {
+-		priv->mode = enable;
++	if (mode != priv->mode) {
++		priv->mode = mode;
+ 		result = int3400_thermal_run_osc(priv->adev->handle,
+-						 priv->current_uuid_index,
+-						 enable);
++						priv->current_uuid_index,
++						mode == THERMAL_DEVICE_ENABLED);
+ 	}
+ 
+ 	evaluate_odvp(priv);
+-- 
+2.17.1
 
-[...]
-
-> diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
-> new file mode 100644
-> index 000000000000..ca48065afe1f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
-> @@ -0,0 +1,915 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/renesas,du.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas R-Car Display Unit (DU)
-> +
-> +maintainers:
-> +  - Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> +
-> +description: |
-> +  These DT bindings describe the Display Unit embedded in the Renesas R-Car
-> +  Gen1, R-Car Gen2, R-Car Gen3, RZ/G1 and RZ/G2 SoCs.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - renesas,du-r8a7743 # for RZ/G1M compatible DU
-> +      - renesas,du-r8a7744 # for RZ/G1N compatible DU
-> +      - renesas,du-r8a7745 # for RZ/G1E compatible DU
-> +      - renesas,du-r8a77470 # for RZ/G1C compatible DU
-> +      - renesas,du-r8a774a1 # for RZ/G2M compatible DU
-> +      - renesas,du-r8a774b1 # for RZ/G2N compatible DU
-> +      - renesas,du-r8a774c0 # for RZ/G2E compatible DU
-> +      - renesas,du-r8a7779 # for R-Car H1 compatible DU
-> +      - renesas,du-r8a7790 # for R-Car H2 compatible DU
-> +      - renesas,du-r8a7791 # for R-Car M2-W compatible DU
-> +      - renesas,du-r8a7792 # for R-Car V2H compatible DU
-> +      - renesas,du-r8a7793 # for R-Car M2-N compatible DU
-> +      - renesas,du-r8a7794 # for R-Car E2 compatible DU
-> +      - renesas,du-r8a7795 # for R-Car H3 compatible DU
-> +      - renesas,du-r8a7796 # for R-Car M3-W compatible DU
-> +      - renesas,du-r8a77965 # for R-Car M3-N compatible DU
-> +      - renesas,du-r8a77970 # for R-Car V3M compatible DU
-> +      - renesas,du-r8a77980 # for R-Car V3H compatible DU
-> +      - renesas,du-r8a77990 # for R-Car E3 compatible DU
-> +      - renesas,du-r8a77995 # for R-Car D3 compatible DU
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  # See compatible-specific constraints below.
-> +  clocks: true
-> +  clock-names: true
-> +  interrupts: true
-> +  resets: true
-> +  reset-names: true
-> +
-> +  ports:
-> +    type: object
-> +    description: |
-> +      The connections to the DU output video ports are modeled using the OF
-> +      graph bindings specified in Documentation/devicetree/bindings/graph.txt.
-> +      The number of ports and their assignment are model-dependent. Each port
-> +      shall have a single endpoint.
-> +
-> +    properties:
-> +      '#address-cells':
-> +        const: 1
-> +
-> +      '#size-cells':
-> +        const: 0
-> +
-> +    patternProperties:
-> +      "^port@[0-3]$":
-> +        type: object
-> +
-> +        properties:
-> +          reg:
-> +            maxItems: 1
-> +
-> +          endpoint:
-> +            type: object
-> +
-> +            properties:
-> +              remote-endpoint:
-> +                $ref: /schemas/types.yaml#/definitions/phandle
-> +
-> +            required:
-> +              - remote-endpoint
-> +
-> +            additionalProperties: false
-> +
-> +        additionalProperties: false
-
-You can drop this and assume there's a generic check for this. Though I 
-guess this does ensure only 'remote-endpoint' is present which a generic 
-schema couldn't do.
-
-> +
-> +    required:
-> +      - port@0
-> +      - port@1
-> +
-> +    additionalProperties: false
-> +
-> +  renesas,cmms:
-> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-> +    description:
-> +      A list of phandles to the CMM instances present in the SoC, one for each
-> +      available DU channel.
-> +
-> +  renesas,vsps:
-> +    $ref: "/schemas/types.yaml#/definitions/phandle-array"
-> +    description:
-> +      A list of phandle and channel index tuples to the VSPs that handle the
-> +      memory interfaces for the DU channels. The phandle identifies the VSP
-> +      instance that serves the DU channel, and the channel index identifies
-> +      the LIF instance in that VSP.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - interrupts
-> +  - resets
-> +  - ports
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,du-r8a7779
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 1
-> +          maxItems: 3
-> +          items:
-> +            - description: Functional clock
-> +            - description: DU_DOTCLKIN0 input clock
-> +            - description: DU_DOTCLKIN1 input clock
-> +
-> +        clock-names:
-> +          minItems: 1
-> +          maxItems: 3
-> +          items:
-> +            - const: du.0
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-
-Here and elsewhere:
-
-- pattern: "^dclkin\.[01]$"
-
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +
-> +        interrupts:
-> +          maxItems: 1
-> +
-> +        resets:
-> +          maxItems: 1
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DPAD 0
-> +            port@1:
-> +              description: DPAD 1
-> +            # port@2 is TCON, not supported yet
-
-Does that matter?
-
-> +            port@2: false
-> +            port@3: false
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +
-> +      required:
-> +        - interrupts
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,du-r8a7743
-> +              - renesas,du-r8a7744
-> +              - renesas,du-r8a7791
-> +              - renesas,du-r8a7793
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 4
-> +          items:
-> +            - description: Functional clock for DU0
-> +            - description: Functional clock for DU1
-> +            - description: DU_DOTCLKIN0 input clock
-> +            - description: DU_DOTCLKIN1 input clock
-> +
-> +        clock-names:
-> +          minItems: 2
-> +          maxItems: 4
-> +          items:
-> +            - const: du.0
-> +            - const: du.1
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +
-> +        interrupts:
-> +          maxItems: 2
-> +
-> +        resets:
-> +          maxItems: 1
-> +
-> +        reset-names:
-> +          items:
-> +            - const: du.0
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DPAD 0
-> +            port@1:
-> +              description: LVDS 0
-> +            # port@2 is TCON, not supported yet
-> +            port@2: false
-> +            port@3: false
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +
-> +      required:
-> +        - clock-names
-> +        - interrupts
-> +        - resets
-> +        - reset-names
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,du-r8a7745
-> +              - renesas,du-r8a7792
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 4
-> +          items:
-> +            - description: Functional clock for DU0
-> +            - description: Functional clock for DU1
-> +            - description: DU_DOTCLKIN0 input clock
-> +            - description: DU_DOTCLKIN1 input clock
-> +
-> +        clock-names:
-> +          minItems: 2
-> +          maxItems: 4
-> +          items:
-> +            - const: du.0
-> +            - const: du.1
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +
-> +        interrupts:
-> +          maxItems: 2
-> +
-> +        resets:
-> +          maxItems: 1
-> +
-> +        reset-names:
-> +          items:
-> +            - const: du.0
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DPAD 0
-> +            port@1:
-> +              description: DPAD 1
-> +            port@2: false
-> +            port@3: false
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +
-> +      required:
-> +        - clock-names
-> +        - interrupts
-> +        - resets
-> +        - reset-names
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,du-r8a7794
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 4
-> +          items:
-> +            - description: Functional clock for DU0
-> +            - description: Functional clock for DU1
-> +            - description: DU_DOTCLKIN0 input clock
-> +            - description: DU_DOTCLKIN1 input clock
-> +
-> +        clock-names:
-> +          minItems: 2
-> +          maxItems: 4
-> +          items:
-> +            - const: du.0
-> +            - const: du.1
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +
-> +        interrupts:
-> +          maxItems: 2
-> +
-> +        resets:
-> +          maxItems: 1
-> +
-> +        reset-names:
-> +          items:
-> +            - const: du.0
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DPAD 0
-> +            port@1:
-> +              description: DPAD 1
-> +            # port@2 is TCON, not supported yet
-> +            port@2: false
-> +            port@3: false
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +
-> +      required:
-> +        - clock-names
-> +        - interrupts
-> +        - resets
-> +        - reset-names
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,du-r8a77470
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 4
-> +          items:
-> +            - description: Functional clock for DU0
-> +            - description: Functional clock for DU1
-> +            - description: DU_DOTCLKIN0 input clock
-> +            - description: DU_DOTCLKIN1 input clock
-> +
-> +        clock-names:
-> +          minItems: 2
-> +          maxItems: 4
-> +          items:
-> +            - const: du.0
-> +            - const: du.1
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +
-> +        interrupts:
-> +          maxItems: 2
-> +
-> +        resets:
-> +          maxItems: 1
-> +
-> +        reset-names:
-> +          items:
-> +            - const: du.0
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DPAD 0
-> +            port@1:
-> +              description: DPAD 1
-> +            port@2:
-> +              description: LVDS 0
-> +            # port@3 is DVENC, not supported yet
-> +            port@3: false
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +            - port@2
-> +
-> +      required:
-> +        - clock-names
-> +        - interrupts
-> +        - resets
-> +        - reset-names
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,du-r8a7790
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
-> +          maxItems: 6
-> +          items:
-> +            - description: Functional clock for DU0
-> +            - description: Functional clock for DU1
-> +            - description: Functional clock for DU2
-> +            - description: DU_DOTCLKIN0 input clock
-> +            - description: DU_DOTCLKIN1 input clock
-> +            - description: DU_DOTCLKIN2 input clock
-> +
-> +        clock-names:
-> +          minItems: 3
-> +          maxItems: 6
-> +          items:
-> +            - const: du.0
-> +            - const: du.1
-> +            - const: du.2
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.2
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.2
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.2
-> +
-> +        interrupts:
-> +          maxItems: 3
-> +
-> +        resets:
-> +          maxItems: 1
-> +
-> +        reset-names:
-> +          items:
-> +            - const: du.0
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DPAD 0
-> +            port@1:
-> +              description: LVDS 0
-> +            port@2:
-> +              description: LVDS 1
-> +            # port@3 is TCON, not supported yet
-> +            port@3: false
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +            - port@2
-> +
-> +      required:
-> +        - clock-names
-> +        - interrupts
-> +        - resets
-> +        - reset-names
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,du-r8a7795
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 4
-> +          maxItems: 8
-> +          items:
-> +            - description: Functional clock for DU0
-> +            - description: Functional clock for DU1
-> +            - description: Functional clock for DU2
-> +            - description: Functional clock for DU4
-> +            - description: DU_DOTCLKIN0 input clock
-> +            - description: DU_DOTCLKIN1 input clock
-> +            - description: DU_DOTCLKIN2 input clock
-> +            - description: DU_DOTCLKIN3 input clock
-> +
-> +        clock-names:
-> +          minItems: 4
-> +          maxItems: 8
-> +          items:
-> +            - const: du.0
-> +            - const: du.1
-> +            - const: du.2
-> +            - const: du.3
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.2
-> +              - dclkin.3
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.2
-> +              - dclkin.3
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.2
-> +              - dclkin.3
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.2
-> +              - dclkin.3
-> +
-> +        interrupts:
-> +          maxItems: 4
-> +
-> +        resets:
-> +          maxItems: 2
-> +
-> +        reset-names:
-> +          items:
-> +            - const: du.0
-> +            - const: du.2
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DPAD 0
-> +            port@1:
-> +              description: HDMI 0
-> +            port@2:
-> +              description: HDMI 1
-> +            port@3:
-> +              description: LVDS 0
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +            - port@2
-> +            - port@3
-> +
-> +        renesas,cmms:
-> +          minItems: 4
-> +
-> +        renesas,vsps:
-> +          minItems: 4
-> +
-> +      required:
-> +        - clock-names
-> +        - interrupts
-> +        - resets
-> +        - reset-names
-> +        - renesas,vsps
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,du-r8a774a1
-> +              - renesas,du-r8a7796
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
-> +          maxItems: 6
-> +          items:
-> +            - description: Functional clock for DU0
-> +            - description: Functional clock for DU1
-> +            - description: Functional clock for DU2
-> +            - description: DU_DOTCLKIN0 input clock
-> +            - description: DU_DOTCLKIN1 input clock
-> +            - description: DU_DOTCLKIN2 input clock
-> +
-> +        clock-names:
-> +          minItems: 3
-> +          maxItems: 6
-> +          items:
-> +            - const: du.0
-> +            - const: du.1
-> +            - const: du.2
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.2
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.2
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.2
-> +
-> +        interrupts:
-> +          maxItems: 3
-> +
-> +        resets:
-> +          maxItems: 2
-> +
-> +        reset-names:
-> +          items:
-> +            - const: du.0
-> +            - const: du.2
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DPAD 0
-> +            port@1:
-> +              description: HDMI 0
-> +            port@2:
-> +              description: LVDS 0
-> +            port@3: false
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +            - port@2
-> +
-> +        renesas,cmms:
-> +          minItems: 3
-> +
-> +        renesas,vsps:
-> +          minItems: 3
-> +
-> +      required:
-> +        - clock-names
-> +        - interrupts
-> +        - resets
-> +        - reset-names
-> +        - renesas,vsps
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,du-r8a774b1
-> +              - renesas,du-r8a77965
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 3
-> +          maxItems: 6
-> +          items:
-> +            - description: Functional clock for DU0
-> +            - description: Functional clock for DU1
-> +            - description: Functional clock for DU3
-> +            - description: DU_DOTCLKIN0 input clock
-> +            - description: DU_DOTCLKIN1 input clock
-> +            - description: DU_DOTCLKIN3 input clock
-> +
-> +        clock-names:
-> +          minItems: 3
-> +          maxItems: 6
-> +          items:
-> +            - const: du.0
-> +            - const: du.1
-> +            - const: du.3
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.3
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.3
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +              - dclkin.3
-> +
-> +        interrupts:
-> +          maxItems: 3
-> +
-> +        resets:
-> +          maxItems: 2
-> +
-> +        reset-names:
-> +          items:
-> +            - const: du.0
-> +            - const: du.3
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DPAD 0
-> +            port@1:
-> +              description: HDMI 0
-> +            port@2:
-> +              description: LVDS 0
-> +            port@3: false
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +            - port@2
-> +
-> +        renesas,cmms:
-> +          minItems: 3
-> +
-> +        renesas,vsps:
-> +          minItems: 3
-> +
-> +      required:
-> +        - clock-names
-> +        - interrupts
-> +        - resets
-> +        - reset-names
-> +        - renesas,vsps
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,du-r8a77970
-> +              - renesas,du-r8a77980
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 1
-> +          maxItems: 2
-> +          items:
-> +            - description: Functional clock for DU0
-> +            - description: DU_DOTCLKIN0 input clock
-> +
-> +        clock-names:
-> +          minItems: 1
-> +          maxItems: 2
-> +          items:
-> +            - const: du.0
-> +            - const: dclkin.0
-> +
-> +        interrupts:
-> +          maxItems: 1
-> +
-> +        resets:
-> +          maxItems: 1
-> +
-> +        reset-names:
-> +          items:
-> +            - const: du.0
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DPAD 0
-> +            port@1:
-> +              description: LVDS 0
-> +            port@2: false
-> +            port@3: false
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +
-> +        renesas,vsps:
-> +          minItems: 1
-> +
-> +      required:
-> +        - clock-names
-> +        - interrupts
-> +        - resets
-> +        - reset-names
-> +        - renesas,vsps
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,du-r8a774c0
-> +              - renesas,du-r8a77990
-> +              - renesas,du-r8a77995
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 4
-> +          items:
-> +            - description: Functional clock for DU0
-> +            - description: Functional clock for DU1
-> +            - description: DU_DOTCLKIN0 input clock
-> +            - description: DU_DOTCLKIN1 input clock
-> +
-> +        clock-names:
-> +          minItems: 2
-> +          maxItems: 4
-> +          items:
-> +            - const: du.0
-> +            - const: du.1
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +            - enum:
-> +              - dclkin.0
-> +              - dclkin.1
-> +
-> +        interrupts:
-> +          maxItems: 2
-> +
-> +        resets:
-> +          maxItems: 1
-> +
-> +        reset-names:
-> +          items:
-> +            - const: du.0
-> +
-> +        ports:
-> +          properties:
-> +            port@0:
-> +              description: DPAD 0
-> +            port@1:
-> +              description: LVDS 0
-> +            port@2:
-> +              description: LVDS 1
-> +            # port@3 is TCON, not supported yet
-> +            port@3: false
-> +
-> +          required:
-> +            - port@0
-> +            - port@1
-> +            - port@2
-> +
-> +        renesas,cmms:
-> +          minItems: 2
-> +
-> +        renesas,vsps:
-> +          minItems: 2
-> +
-> +      required:
-> +        - clock-names
-> +        - interrupts
-> +        - resets
-> +        - reset-names
-> +        - renesas,vsps
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  # R-Car H3 ES2.0 DU
-> +  - |
-> +    #include <dt-bindings/clock/renesas-cpg-mssr.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    display@feb00000 {
-> +        compatible = "renesas,du-r8a7795";
-> +        reg = <0xfeb00000 0x80000>;
-> +        interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
-> +        clocks = <&cpg CPG_MOD 724>,
-> +                 <&cpg CPG_MOD 723>,
-> +                 <&cpg CPG_MOD 722>,
-> +                 <&cpg CPG_MOD 721>;
-> +        clock-names = "du.0", "du.1", "du.2", "du.3";
-> +        resets = <&cpg 724>, <&cpg 722>;
-> +        reset-names = "du.0", "du.2";
-> +
-> +        renesas,cmms = <&cmm0>, <&cmm1>, <&cmm2>, <&cmm3>;
-> +        renesas,vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>, <&vspd0 1>;
-> +
-> +        ports {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            port@0 {
-> +                reg = <0>;
-> +                endpoint {
-> +                    remote-endpoint = <&adv7123_in>;
-> +                };
-> +            };
-> +            port@1 {
-> +                reg = <1>;
-> +                endpoint {
-> +                    remote-endpoint = <&dw_hdmi0_in>;
-> +                };
-> +            };
-> +            port@2 {
-> +                reg = <2>;
-> +                endpoint {
-> +                    remote-endpoint = <&dw_hdmi1_in>;
-> +                };
-> +            };
-> +            port@3 {
-> +                reg = <3>;
-> +                endpoint {
-> +                    remote-endpoint = <&lvds0_in>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +...
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
