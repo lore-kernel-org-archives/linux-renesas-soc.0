@@ -2,111 +2,90 @@ Return-Path: <SRS0=p4t+=7S=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B6C8C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Jun 2020 03:23:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D05C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Jun 2020 10:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E53C3207D3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Jun 2020 03:23:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54C1A2053B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Jun 2020 10:12:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BsECjqK/"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="axwqmy9z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbgFEDX0 (ORCPT
+        id S1726441AbgFEKMe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Jun 2020 23:23:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60060 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725954AbgFEDX0 (ORCPT
+        Fri, 5 Jun 2020 06:12:34 -0400
+Received: from www.zeus03.de ([194.117.254.33]:34704 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726393AbgFEKMd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Jun 2020 23:23:26 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 124DBC08C5C0;
-        Thu,  4 Jun 2020 20:23:23 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id j8so8727413iog.13;
-        Thu, 04 Jun 2020 20:23:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=liGwaubP6mRdOHGTrmXeXAs4GL+KhvggzrIcxZzyx0s=;
-        b=BsECjqK/peoemX1wSKgJWtYnYAwXEFm3muWD8NLgko+6QYL8xjksliOJm54JMZ2qq9
-         iuJDTR4sFH2cIsTu/toCDJpvHQ1JRzzbloU7G3Ne8r1uRgTQ5TcwDMKPwjp9M0nfBiv7
-         mJu75OQe0m1Epn/xL78C/zwsVAHPMVGDDqy+UcJzyahDNgbiWiMWrMbNvGMiaGC8Rl1y
-         Xrqy98jXFQVy/d3Rk4Kk9qzcJjQ26Y3fSqAiqFjGUj5oln6jgWiS1J7zHSHrSMKNcjUd
-         DBxjZ6GhvEIMT1w/t95w3j4K2AfZY6SbXPmGsVYpRz3o+RO6KnsXmSda17GAqdW9U0TQ
-         y7Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=liGwaubP6mRdOHGTrmXeXAs4GL+KhvggzrIcxZzyx0s=;
-        b=TRDpcQgE4CZagH/SD+oZ/67FsJRbiPBWFkqK0OXAmXfGg/z0c+rPm9Wr2zwAhANDNQ
-         UvxAXV22WRBQoTJKAJLVYUlpAsAwyp9DxKT+k8Vy2DSIc9d5iaRXHQLPoCRH0l+fk0Fv
-         GxXgJ+3kGG+mI/TkIzRRfLDDTIma35EHieNoLFzrW8rjGY2aYJQ6GkmY9VaVfNnj/VLL
-         ETTxhAyNVA5z/ue+133IZBRTHiOhXEcFbHCvAF5e+1U7L7zWpwd/iAT/Hli3VOI4FttZ
-         YrvzKotigM3NYpIPl5Um6gzsjZ/jm8TNZV4lDaKn2OKceSd9lyYBSNBz1jB865Wml80R
-         IovQ==
-X-Gm-Message-State: AOAM532upp7g+NIkdw7kzzqngwKZ4IL+KVcLTb89KnyV3ot56I8Vyy/x
-        2Eif4HSgyV5QVKuWn4z7WlY=
-X-Google-Smtp-Source: ABdhPJyOP4IZmR82ZM345ctXo67aV+7jNU5IS3XlCDu55+aWNLOqM3cD5hOm3ggE4dnuAOCV+l3B/g==
-X-Received: by 2002:a02:2581:: with SMTP id g123mr6733130jag.35.1591327402381;
-        Thu, 04 Jun 2020 20:23:22 -0700 (PDT)
-Received: from cs-u-kase.dtc.umn.edu (cs-u-kase.cs.umn.edu. [160.94.64.2])
-        by smtp.googlemail.com with ESMTPSA id 13sm2315880ilg.24.2020.06.04.20.23.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 04 Jun 2020 20:23:21 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-To:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Fri, 5 Jun 2020 06:12:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=geolHvEIFJdhr1
+        O7xNDDaH9ERBFP97XHJhFBPhVVr8o=; b=axwqmy9zptGY5TlbHtJ6MWWJNWD1rt
+        lahNPy1ILHk23hp21FWg7YHrrV2+46lTXRlYAXE7jLHrrE2US3Stj4kaThhJ8S7O
+        bK3Sf8o880JJsc0QDOC97jabiG6UF+eqq8w+KmDZkdtr7eeHUXmhGEmV7QByRPfb
+        pCig5+UEwsOh0=
+Received: (qmail 2053870 invoked from network); 5 Jun 2020 12:12:31 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 5 Jun 2020 12:12:31 +0200
+X-UD-Smtp-Session: l3s3148p1@963Hf1OnmJsgAwDPXwgPAMwULGf5QH9H
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-mmc@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     emamd001@umn.edu, wu000273@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>
-Subject: [PATCH] PCI: rcar: handle the failure case of pm_runtime_get_sync
-Date:   Thu,  4 Jun 2020 22:23:15 -0500
-Message-Id: <20200605032315.39071-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/2] mmc: tmio: add generic hook to fixup after a completed request
+Date:   Fri,  5 Jun 2020 12:12:21 +0200
+Message-Id: <20200605101222.10783-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200605101222.10783-1-wsa+renesas@sang-engineering.com>
+References: <20200605101222.10783-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Calling pm_runtime_get_sync increments the counter even in case of
-failure, causing incorrect ref count. Call pm_runtime_put if
-pm_runtime_get_sync fails.
+Sadly, due to HW bugs, we need a callback to work around issues just
+before completing the request.
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/pci/controller/pcie-rcar.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/mmc/host/tmio_mmc.h      | 1 +
+ drivers/mmc/host/tmio_mmc_core.c | 3 +++
+ 2 files changed, 4 insertions(+)
 
-diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
-index 759c6542c5c8..6b4181c0710e 100644
---- a/drivers/pci/controller/pcie-rcar.c
-+++ b/drivers/pci/controller/pcie-rcar.c
-@@ -1137,7 +1137,7 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 	err = pm_runtime_get_sync(pcie->dev);
- 	if (err < 0) {
- 		dev_err(pcie->dev, "pm_runtime_get_sync failed\n");
--		goto err_pm_disable;
-+		goto err_pm_put;
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index b4cf10109162..766a6116a9d1 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -177,6 +177,7 @@ struct tmio_mmc_host {
+ 	void (*reset)(struct tmio_mmc_host *host);
+ 	void (*hw_reset)(struct tmio_mmc_host *host);
+ 	bool (*check_retune)(struct tmio_mmc_host *host);
++	void (*fixup_request)(struct tmio_mmc_host *host, struct mmc_request *mrq);
+ 
+ 	/*
+ 	 * Mandatory callback for tuning to occur which is optional for SDR50
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index d7fde57c78c1..1672c849f78a 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -827,6 +827,9 @@ static void tmio_mmc_finish_request(struct tmio_mmc_host *host)
+ 		return;
  	}
  
- 	err = rcar_pcie_get_resources(pcie);
-@@ -1208,8 +1208,6 @@ static int rcar_pcie_probe(struct platform_device *pdev)
- 
- err_pm_put:
- 	pm_runtime_put(dev);
--
--err_pm_disable:
- 	pm_runtime_disable(dev);
- 	pci_free_resource_list(&pcie->resources);
++	if (host->fixup_request)
++		host->fixup_request(host, mrq);
++
+ 	mmc_request_done(host->mmc, mrq);
+ }
  
 -- 
-2.17.1
+2.20.1
 
