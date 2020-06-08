@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B069C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 09:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73760C433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 09:59:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 54CC52076C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 09:59:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 516752076A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 09:59:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729330AbgFHJ7r (ORCPT
+        id S1729334AbgFHJ7s (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 Jun 2020 05:59:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57122 "EHLO
+        Mon, 8 Jun 2020 05:59:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728745AbgFHJ7q (ORCPT
+        with ESMTP id S1729335AbgFHJ7r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Jun 2020 05:59:46 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5643EC008744
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  8 Jun 2020 02:59:44 -0700 (PDT)
+        Mon, 8 Jun 2020 05:59:47 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F583C08C5C3
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  8 Jun 2020 02:59:45 -0700 (PDT)
 Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:c85f:a5bf:b1bd:702b])
-        by michel.telenet-ops.be with bizsmtp
-        id oZzi2200E0R8aca06Zziop; Mon, 08 Jun 2020 11:59:42 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id oZzi2200P0R8aca01Zzis9; Mon, 08 Jun 2020 11:59:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jiEZC-0007PE-FS; Mon, 08 Jun 2020 11:59:42 +0200
+        id 1jiEZC-0007P6-D9; Mon, 08 Jun 2020 11:59:42 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jiEZC-0007xI-Dt; Mon, 08 Jun 2020 11:59:42 +0200
+        id 1jiEZC-0007xC-Be; Mon, 08 Jun 2020 11:59:42 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Chris Brandt <chris.brandt@renesas.com>, linux-spi@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/8] spi: rspi: Increase bit rate range for RSPI on SH
-Date:   Mon,  8 Jun 2020 11:59:37 +0200
-Message-Id: <20200608095940.30516-6-geert+renesas@glider.be>
+Subject: [PATCH 3/8] spi: rspi: Clean up Bit Rate Division Setting handling
+Date:   Mon,  8 Jun 2020 11:59:35 +0200
+Message-Id: <20200608095940.30516-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200608095940.30516-1-geert+renesas@glider.be>
 References: <20200608095940.30516-1-geert+renesas@glider.be>
@@ -49,81 +49,55 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Increase bit rate range for RSPI on legacy SH by making use of the Bit
-Rate Frequency Division Setting field in Command Registers, just like is
-already done on RZ/A.  This decreases the lower limit by a factor of 8.
+Add a macro for configuring the Bit Rate Division Setting field in
+Command Registers, instead of open-coding the same operation using a
+hardcoded shift.
+Rename "div" to "brdv", as it is not a plain divider value, but controls
+a power-of-two divider.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Untested due to lack of hardware, but the formulas in the datasheets for
-SH7753, RZ/A1H, and RZ/A2M are the same.
----
- drivers/spi/spi-rspi.c | 35 ++++++++++++++++++-----------------
- 1 file changed, 18 insertions(+), 17 deletions(-)
+ drivers/spi/spi-rspi.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index ad4ac867170b101a..ea3f2680d3c13e02 100644
+index 1b635d6b7881f5b9..450a42ec2141a895 100644
 --- a/drivers/spi/spi-rspi.c
 +++ b/drivers/spi/spi-rspi.c
-@@ -248,19 +248,32 @@ struct spi_ops {
- 	u8 num_hw_ss;
- };
+@@ -161,6 +161,7 @@
+ #define SPCMD_SPRW		0x0010	/* SPI Read/Write Access (Dual/Quad) */
+ #define SPCMD_SSLA(i)		((i) << 4)	/* SSL Assert Signal Setting */
+ #define SPCMD_BRDV_MASK		0x000c	/* Bit Rate Division Setting */
++#define SPCMD_BRDV(brdv)	((brdv) << 2)
+ #define SPCMD_CPOL		0x0002	/* Clock Polarity Setting */
+ #define SPCMD_CPHA		0x0001	/* Clock Phase Setting */
  
-+static void rspi_set_rate(struct rspi_data *rspi)
-+{
-+	unsigned long clksrc;
-+	int brdv = 0, spbr;
-+
-+	clksrc = clk_get_rate(rspi->clk);
-+	spbr = DIV_ROUND_UP(clksrc, 2 * rspi->speed_hz) - 1;
-+	while (spbr > 255 && brdv < 3) {
-+		brdv++;
-+		spbr = DIV_ROUND_UP(spbr + 1, 2) - 1;
-+	}
-+
-+	rspi_write8(rspi, clamp(spbr, 0, 255), RSPI_SPBR);
-+	rspi->spcmd |= SPCMD_BRDV(brdv);
-+}
-+
- /*
-  * functions for RSPI on legacy SH
-  */
- static int rspi_set_config_register(struct rspi_data *rspi, int access_size)
- {
--	int spbr;
--
- 	/* Sets output mode, MOSI signal, and (optionally) loopback */
- 	rspi_write8(rspi, rspi->sppcr, RSPI_SPPCR);
- 
- 	/* Sets transfer bit rate */
--	spbr = DIV_ROUND_UP(clk_get_rate(rspi->clk), 2 * rspi->speed_hz) - 1;
--	rspi_write8(rspi, clamp(spbr, 0, 255), RSPI_SPBR);
-+	rspi_set_rate(rspi);
- 
- 	/* Disable dummy transmission, set 16-bit word access, 1 frame */
- 	rspi_write8(rspi, 0, RSPI_SPDCR);
-@@ -290,23 +303,11 @@ static int rspi_set_config_register(struct rspi_data *rspi, int access_size)
-  */
+@@ -290,24 +291,24 @@ static int rspi_set_config_register(struct rspi_data *rspi, int access_size)
  static int rspi_rz_set_config_register(struct rspi_data *rspi, int access_size)
  {
--	int spbr;
--	int brdv = 0;
--	unsigned long clksrc;
--
+ 	int spbr;
+-	int div = 0;
++	int brdv = 0;
+ 	unsigned long clksrc;
+ 
  	/* Sets output mode, MOSI signal, and (optionally) loopback */
  	rspi_write8(rspi, rspi->sppcr, RSPI_SPPCR);
  
--	clksrc = clk_get_rate(rspi->clk);
--	spbr = DIV_ROUND_UP(clksrc, 2 * rspi->speed_hz) - 1;
--	while (spbr > 255 && brdv < 3) {
--		brdv++;
--		spbr = DIV_ROUND_UP(spbr + 1, 2) - 1;
--	}
--
+ 	clksrc = clk_get_rate(rspi->clk);
+-	while (div < 3) {
++	while (brdv < 3) {
+ 		if (rspi->speed_hz >= clksrc/4) /* 4=(CLK/2)/2 */
+ 			break;
+-		div++;
++		brdv++;
+ 		clksrc /= 2;
+ 	}
+ 
  	/* Sets transfer bit rate */
--	rspi_write8(rspi, clamp(spbr, 0, 255), RSPI_SPBR);
--	rspi->spcmd |= SPCMD_BRDV(brdv);
-+	rspi_set_rate(rspi);
+ 	spbr = DIV_ROUND_UP(clksrc, 2 * rspi->speed_hz) - 1;
+ 	rspi_write8(rspi, clamp(spbr, 0, 255), RSPI_SPBR);
+-	rspi->spcmd |= div << 2;
++	rspi->spcmd |= SPCMD_BRDV(brdv);
  
  	/* Disable dummy transmission, set byte access */
  	rspi_write8(rspi, SPDCR_SPLBYTE, RSPI_SPDCR);
