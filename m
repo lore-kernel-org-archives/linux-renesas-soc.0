@@ -2,108 +2,78 @@ Return-Path: <SRS0=5Okl=7V=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLACK autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DCCC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 03:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF84C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 03:33:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C6C42076A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 03:16:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="vAfR95G9"
+	by mail.kernel.org (Postfix) with ESMTP id 9F5D320774
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 03:33:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728725AbgFHDQo (ORCPT
+        id S1728931AbgFHDdq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 7 Jun 2020 23:16:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51394 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbgFHDQm (ORCPT
+        Sun, 7 Jun 2020 23:33:46 -0400
+Received: from spam.zju.edu.cn ([61.164.42.155]:21694 "EHLO zju.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728065AbgFHDdq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 7 Jun 2020 23:16:42 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3EC9C08C5C3;
-        Sun,  7 Jun 2020 20:16:42 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3307E50E;
-        Mon,  8 Jun 2020 05:16:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1591586201;
-        bh=6TgKI1jVQYslyb1a1HdNbPziRJxdo68JBXeIOXHORE0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vAfR95G9CZ5d43UoGZriq6t1D22VF4sqB2cWxJ/OSVmmldGfUkntZ0ljOl2rkt0uY
-         lFOBKZJV6w0dla1LkUQQ76xSCIN00g2A+k7HdyuAjpJYlq1MR7O3fdK2LTxjz1x0+L
-         YPQpn8oEBUuLPBCul4W2BluLnSOxxf/sGRngEUHs=
-Date:   Mon, 8 Jun 2020 06:16:22 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Qian Cai <cai@lca.pw>
-Cc:     kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
-        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/rcar-du: DRM_RCAR_WRITEBACK depends on DRM
-Message-ID: <20200608031622.GQ22208@pendragon.ideasonboard.com>
-References: <20200608025340.3050-1-cai@lca.pw>
- <20200608031442.GP22208@pendragon.ideasonboard.com>
+        Sun, 7 Jun 2020 23:33:46 -0400
+Received: by ajax-webmail-mail-app4 (Coremail) ; Mon, 8 Jun 2020 11:33:34
+ +0800 (GMT+08:00)
+X-Originating-IP: [222.205.62.26]
+Date:   Mon, 8 Jun 2020 11:33:34 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From:   dinghao.liu@zju.edu.cn
+To:     "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>
+Cc:     kjlu@umn.edu,
+        "Kieran Bingham" <kieran.bingham+renesas@ideasonboard.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Re: Re: [PATCH] media: vsp1: Fix runtime PM imbalance in
+ vsp1_probe
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.10 build 20190906(84e8bf8f)
+ Copyright (c) 2002-2020 www.mailtech.cn zju.edu.cn
+In-Reply-To: <20200608031134.GO22208@pendragon.ideasonboard.com>
+References: <20200523115426.19285-1-dinghao.liu@zju.edu.cn>
+ <20200608015456.GJ22208@pendragon.ideasonboard.com>
+ <20200608015753.GK22208@pendragon.ideasonboard.com>
+ <7b79863f.f636d.17291e1ff94.Coremail.dinghao.liu@zju.edu.cn>
+ <20200608031134.GO22208@pendragon.ideasonboard.com>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200608031442.GP22208@pendragon.ideasonboard.com>
+Message-ID: <769e1fbf.f668c.17291fd9673.Coremail.dinghao.liu@zju.edu.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: cS_KCgC3WeSOsd1ewnfVAA--.20728W
+X-CM-SenderInfo: qrrzjiaqtzq6lmxovvfxof0/1tbiAgYFBlZdtOhd1AACsb
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJTRUUUbX0S07vEb7Iv0x
+        C_Cr1lV2xY67kC6x804xWlV2xY67CY07I20VC2zVCF04k26cxKx2IYs7xG6rWj6s0DMIAI
+        bVAFxVCF77xC64kEw24lV2xY67C26IkvcIIF6IxKo4kEV4ylV2xY628lY4IE4IxF12IF4w
+        CS07vE84x0c7CEj48ve4kI8wCS07vE84ACjcxK6xIIjxv20xvE14v26w1j6s0DMIAIbVA2
+        z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW0oVCq3wCS07vE84ACjcxK6I8E87Iv67AKxVW0oV
+        Cq3wCS07vE84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DMIAIbVAS0I0E0xvYzxvE52x0
+        82IY62kv0487MIAIbVAqx4xG64xvF2IEw4CE5I8CrVC2j2WlV2xY6cIj6xIIjxv20xvE14
+        v26r1j6r18MIAIbVAv7VC2z280aVAFwI0_Jr0_Gr1lV2xY6cvjeVCFs4IE7xkEbVWUJVW8
+        JwCS07vE7I0Y64k_MIAIbVCY02Avz4vE14v_Gr4lV2xY6xkI7II2jI8vz4vEwIxGrwCS07
+        vE42xK82IY6x8ErcxFaVAv8VW8uw4UJr1UMIAIbVCF72vE77IF4wCS07vE4I8I3I0E4IkC
+        6x0Yz7v_Jr0_Gr1lV2xY6I8I3I0E5I8CrVAFwI0_Jr0_Jr4lV2xY6I8I3I0E7480Y4vE14
+        v26r106r1rMIAIbVC2zVAF1VAY17CE14v26r126r1DMIAIbVCI42IY6xIIjxv20xvE14v2
+        6r1j6r1xMIAIbVCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lV2xY6IIF0xvE42xK8V
+        AvwI8IcIk0rVWrJr0_WFyUJwCS07vEIxAIcVC2z280aVAFwI0_Jr0_Gr1lV2xY6IIF0xvE
+        x4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Qian,
-
-I forgot to mention, I think the subject line should be
-
-drm/rcar-du: Make DRM_RCAR_WRITEBACK depend on DRM_RCAR_DU
-
-Could you please let me know if you're OK with these two small changes ?
-
-On Mon, Jun 08, 2020 at 06:14:43AM +0300, Laurent Pinchart wrote:
-> On Sun, Jun 07, 2020 at 10:53:40PM -0400, Qian Cai wrote:
-> > There is no need to select DRM_RCAR_WRITEBACK if DRM=n which just make
-> 
-> s/DRM=n/DRM_RCAR_DU=n/ here.
-> 
-> > the generated .config a bit ugly.
-> > 
-> >  # ARM devices
-> >  #
-> >  # end of ARM devices
-> > 
-> >  CONFIG_DRM_RCAR_WRITEBACK=y
-> > 
-> >  #
-> >  # Frame buffer Devices
-> > 
-> > Let DRM_RCAR_WRITEBACK depend on DRM_RCAR_DU instead.
-> > 
-> > Signed-off-by: Qian Cai <cai@lca.pw>
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> 
-> No need to submit a v3 if you agree with the above change, I'll fix it
-> in my tree.
-> 
-> > ---
-> >  drivers/gpu/drm/rcar-du/Kconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
-> > index 0919f1f159a4..3304b41f5611 100644
-> > --- a/drivers/gpu/drm/rcar-du/Kconfig
-> > +++ b/drivers/gpu/drm/rcar-du/Kconfig
-> > @@ -48,3 +48,4 @@ config DRM_RCAR_VSP
-> >  config DRM_RCAR_WRITEBACK
-> >  	bool
-> >  	default y if ARM64
-> > +	depends on DRM_RCAR_DU
-
--- 
-Regards,
-
-Laurent Pinchart
+Cj4gCj4gVGhlIHZzcDFfcHJvYmUoKSBmdW5jdGlvbiBoYXMgYSBzdHJ1Y3QgdnNwMV9kZXZpY2Ug
+d2hvc2UgZGV2IGZpZWxkIGlzCj4gcG9wdWxhdGVkIGJ5IHRoZSB0aW1lIGl0IG5lZWRzIHRvIGNh
+bGwgcG1fcnVudGltZV9nZXRfc3luYygpIGFuZAo+IHBtX3J1bnRpbWVfZ2V0X3B1dCgpLCBzbyBJ
+IHRoaW5rIHlvdSBjYW4gdXNlIHZzcDFfZGV2aWNlX2dldCgpIGFuZAo+IHZzcDFfZGV2aWNlX3B1
+dCgpIGFzIGRyb3AtaW4gcmVwbGFjZW1lbnRzIHdpdGhvdXQgY2hhbmdpbmcgdGhlCj4gcGFyYW1l
+dGVycyB0byB0aGVzZSB0d28gZnVuY3Rpb25zLgo+IAoKSXQncyBjbGVhciB0byBtZSwgdGhhbmtz
+IQoKUmVnYXJkcywKRGluZ2hhbwo=
