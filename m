@@ -7,54 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 530FDC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 00:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E892C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 00:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E70120775
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 00:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30AA2206C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 00:38:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591661606;
-	bh=vqpwzmqgPum7xJcl5MJ2NPLpxEZEaPhP2tB5CEtYRks=;
+	s=default; t=1591663080;
+	bh=S5DIYHBVPtyga/0O3sP4/9sG7cR7paSmpGq1tweZE3E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=flFmqWbGjPLIWSaMOqE7guHLAxZWfbLXZjpgvqAj1UDgKY0sEKpGFi/ZCfVrnFQDQ
-	 /EBpaNa/A6Q2Jw41aVF9OR/itlgMfsGoheMokuIi+1OPnpCe5Sd+i6OuAkNybevFYC
-	 GlMkpRIh8dqxb03imKxa+IBN8lbvtpOOOhGjDGEI=
+	b=LFsip0rmyiPysGoKmAioh1Vs25iQYINMJgVtPQD6zW9D/Fp0sNKo/zZzgsYw1bIhh
+	 bHtS2u6i/s2Zo1C9V1o2sDhDkCHJ0JyGBghRKbms2ICD3Iio9KTxvB5X1AVKR6YhVT
+	 n/ctsRJhQ7WVPNcb2YtNH9JGZowrJFzyhPscmOTU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728088AbgFIANV (ORCPT
+        id S1729467AbgFHXNc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 Jun 2020 20:13:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42244 "EHLO mail.kernel.org"
+        Mon, 8 Jun 2020 19:13:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730792AbgFHXTa (ORCPT
+        id S1729403AbgFHXNa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:19:30 -0400
+        Mon, 8 Jun 2020 19:13:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B99220842;
-        Mon,  8 Jun 2020 23:19:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CD3321508;
+        Mon,  8 Jun 2020 23:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591658370;
-        bh=vqpwzmqgPum7xJcl5MJ2NPLpxEZEaPhP2tB5CEtYRks=;
+        s=default; t=1591658010;
+        bh=S5DIYHBVPtyga/0O3sP4/9sG7cR7paSmpGq1tweZE3E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rVwVODDPLLdtupXmCn2fDw2JWBK/7bzBZzEXi1x4Y48lgPLVlPGs1Qx/Galz4nD4S
-         jAHpqdM2i6zPYiC3zA+q/+WpQ4KXOJmIiEe1Pa1oOUAyCEtbO7gadCOk+biIIDZbnS
-         5FNNOpDgOjkTWqkqD0PR7n6uQl4SKu9yG+nDzN0w=
+        b=LDRI/QtBON6/Hlo6gZ+srpDWwtbZdYWGAV1BN2qqarZ4ksCrobZFfNXlJxN8uFrxH
+         fWdArLlPC/GMyRrbFHQtG1+O3Vl3pPVLiCtPgQ36YcfLXobRa2v1eTTPAPE5m5t6ad
+         JSxLeq06IQA05LXKLlIK8ocAXOHXc+EX5VHwIq68=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tomohito Esaki <etom@igel.co.jp>,
-        Yoshihito Ogawa <yoshihito.ogawa.kc@renesas.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Daniel Stone <daniels@collabora.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 033/175] drm: rcar-du: Set primary plane zpos immutably at initializing
-Date:   Mon,  8 Jun 2020 19:16:26 -0400
-Message-Id: <20200608231848.3366970-33-sashal@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.6 065/606] ARM: dts: r8a7740: Add missing extal2 to CPG node
+Date:   Mon,  8 Jun 2020 19:03:10 -0400
+Message-Id: <20200608231211.3363633-65-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200608231848.3366970-1-sashal@kernel.org>
-References: <20200608231848.3366970-1-sashal@kernel.org>
+In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
+References: <20200608231211.3363633-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -64,80 +61,40 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Tomohito Esaki <etom@igel.co.jp>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 7982471d01aac33994276bf567c8f1f3a137648a ]
+commit e47cb97f153193d4b41ca8d48127da14513d54c7 upstream.
 
-According to drm_plane_create_zpos_property() function documentation,
-all planes zpos range should be set if zpos property is supported.
-However, the rcar-du driver didn't set primary plane zpos range. Since
-the primary plane's zpos is fixed, set it immutably.
+The Clock Pulse Generator (CPG) device node lacks the extal2 clock.
+This may lead to a failure registering the "r" clock, or to a wrong
+parent for the "usb24s" clock, depending on MD_CK2 pin configuration and
+boot loader CPG_USBCKCR register configuration.
 
-Reported-by: Yoshihito Ogawa <yoshihito.ogawa.kc@renesas.com>
-Reported-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Signed-off-by: Tomohito Esaki <etom@igel.co.jp>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Daniel Stone <daniels@collabora.com>
-[Turn continue into if ... else ...]
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+This went unnoticed, as this does not affect the single upstream board
+configuration, which relies on the first clock input only.
+
+Fixes: d9ffd583bf345e2e ("ARM: shmobile: r8a7740: add SoC clocks to DTS")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Link: https://lore.kernel.org/r/20200508095918.6061-1-geert+renesas@glider.be
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 16 +++++++++-------
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 14 ++++++++------
- 2 files changed, 17 insertions(+), 13 deletions(-)
+ arch/arm/boot/dts/r8a7740.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index c6430027169f..a0021fc25b27 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -785,13 +785,15 @@ int rcar_du_planes_init(struct rcar_du_group *rgrp)
- 
- 		drm_plane_create_alpha_property(&plane->plane);
- 
--		if (type == DRM_PLANE_TYPE_PRIMARY)
--			continue;
--
--		drm_object_attach_property(&plane->plane.base,
--					   rcdu->props.colorkey,
--					   RCAR_DU_COLORKEY_NONE);
--		drm_plane_create_zpos_property(&plane->plane, 1, 1, 7);
-+		if (type == DRM_PLANE_TYPE_PRIMARY) {
-+			drm_plane_create_zpos_immutable_property(&plane->plane,
-+								 0);
-+		} else {
-+			drm_object_attach_property(&plane->plane.base,
-+						   rcdu->props.colorkey,
-+						   RCAR_DU_COLORKEY_NONE);
-+			drm_plane_create_zpos_property(&plane->plane, 1, 1, 7);
-+		}
- 	}
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index 5e4faf258c31..f1a81c9b184d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -392,12 +392,14 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
- 		drm_plane_helper_add(&plane->plane,
- 				     &rcar_du_vsp_plane_helper_funcs);
- 
--		if (type == DRM_PLANE_TYPE_PRIMARY)
--			continue;
--
--		drm_plane_create_alpha_property(&plane->plane);
--		drm_plane_create_zpos_property(&plane->plane, 1, 1,
--					       vsp->num_planes - 1);
-+		if (type == DRM_PLANE_TYPE_PRIMARY) {
-+			drm_plane_create_zpos_immutable_property(&plane->plane,
-+								 0);
-+		} else {
-+			drm_plane_create_alpha_property(&plane->plane);
-+			drm_plane_create_zpos_property(&plane->plane, 1, 1,
-+						       vsp->num_planes - 1);
-+		}
- 	}
- 
- 	return 0;
+diff --git a/arch/arm/boot/dts/r8a7740.dtsi b/arch/arm/boot/dts/r8a7740.dtsi
+index ebc1ff64f530..90feb2cf9960 100644
+--- a/arch/arm/boot/dts/r8a7740.dtsi
++++ b/arch/arm/boot/dts/r8a7740.dtsi
+@@ -479,7 +479,7 @@ fsibck_clk: fsibck {
+ 		cpg_clocks: cpg_clocks@e6150000 {
+ 			compatible = "renesas,r8a7740-cpg-clocks";
+ 			reg = <0xe6150000 0x10000>;
+-			clocks = <&extal1_clk>, <&extalr_clk>;
++			clocks = <&extal1_clk>, <&extal2_clk>, <&extalr_clk>;
+ 			#clock-cells = <1>;
+ 			clock-output-names = "system", "pllc0", "pllc1",
+ 					     "pllc2", "r",
 -- 
 2.25.1
 
