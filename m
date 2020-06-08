@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94226C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 23:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A2DC433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 23:48:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68ADC20659
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 23:43:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9613207C3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Jun 2020 23:48:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591659802;
-	bh=kcCuyZoiJ+pUggvJQfB4raYkD2sDjxEX9vIpKv3z4/Q=;
+	s=default; t=1591660122;
+	bh=gurwdtib4L861NscFcX0tABfxzET9woljcbtDY2AjP4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Lv1CfBKFgW6s8s2jsBKBxeL2jHKN7QvlrUwzDUWIUem0p8Dz9SHJdzu22onNJFYYJ
-	 /vcPZBCX4Q7Xr2QPqNn80obQJI822ExJr/cKNdksBMxigQ0aPBLHnABxT0WjXoy5Hy
-	 KhVHhR+Lv+OYSihZ81vsdjv9Ad7dlEbIPV3gHlwk=
+	b=i7vxG8nkNhvztt2WjYm72cp1UL1/8lsYFxPw2ozgDc9MChnCry3V3dlTAfvDzgHAF
+	 qID5So9I5u1+yd+8SMGshtxY3pSlSBVrwukYXbMKd5Vmy1UUGvPb3MYwX9FKpMmwPt
+	 SAmruw77+NRmak9Wq0McHFb40WY7yxoxj25994aM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731410AbgFHX1N (ORCPT
+        id S1732493AbgFHXs0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 Jun 2020 19:27:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55378 "EHLO mail.kernel.org"
+        Mon, 8 Jun 2020 19:48:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729356AbgFHX1L (ORCPT
+        id S1731332AbgFHXZp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:27:11 -0400
+        Mon, 8 Jun 2020 19:25:45 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C829920812;
-        Mon,  8 Jun 2020 23:27:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36B6E20812;
+        Mon,  8 Jun 2020 23:25:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591658830;
-        bh=kcCuyZoiJ+pUggvJQfB4raYkD2sDjxEX9vIpKv3z4/Q=;
+        s=default; t=1591658745;
+        bh=gurwdtib4L861NscFcX0tABfxzET9woljcbtDY2AjP4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yYlmJKsYiQXkgfyfYEvqMZMcS0j2JP6PFhGufOAlaCToZw5hB7kmzxd/hezJp5qTH
-         uRLII+b5qV5qbwP6L1ORPJnbItczYdKsj1ba6Yr51oibGai7gEeIQGWOCc0dSnUVVy
-         5YhOhF+ZS0WG7o3VKudwB4ZWMmS98FuajnY2Xs9Q=
+        b=UJjd5vCRnVZM8opQB2aMIgc9oDwPrwADeQTlIw5NxVWN7kv6cJ6i1T2kI7C1Jilb9
+         4ivg0Z1y4elic79nDzXq9BPWGCEfHGY7lu3azYDlNacsNLwvKEFCmS467bxliodRmY
+         KqcmiRqh/fLDU0FVFsM1sgauvwfi1a3j73fN7TK0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
@@ -48,12 +48,12 @@ Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 21/50] media: platform: fcp: Set appropriate DMA parameters
-Date:   Mon,  8 Jun 2020 19:26:11 -0400
-Message-Id: <20200608232640.3370262-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 31/72] media: platform: fcp: Set appropriate DMA parameters
+Date:   Mon,  8 Jun 2020 19:24:19 -0400
+Message-Id: <20200608232500.3369581-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200608232640.3370262-1-sashal@kernel.org>
-References: <20200608232640.3370262-1-sashal@kernel.org>
+In-Reply-To: <20200608232500.3369581-1-sashal@kernel.org>
+References: <20200608232500.3369581-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -97,7 +97,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 5 insertions(+)
 
 diff --git a/drivers/media/platform/rcar-fcp.c b/drivers/media/platform/rcar-fcp.c
-index f3a3f31cdfa9..8e9c3bd36d03 100644
+index 2988031d285d..0047d144c932 100644
 --- a/drivers/media/platform/rcar-fcp.c
 +++ b/drivers/media/platform/rcar-fcp.c
 @@ -12,6 +12,7 @@
@@ -116,7 +116,7 @@ index f3a3f31cdfa9..8e9c3bd36d03 100644
  };
  
  static LIST_HEAD(fcp_devices);
-@@ -140,6 +142,9 @@ static int rcar_fcp_probe(struct platform_device *pdev)
+@@ -139,6 +141,9 @@ static int rcar_fcp_probe(struct platform_device *pdev)
  
  	fcp->dev = &pdev->dev;
  
