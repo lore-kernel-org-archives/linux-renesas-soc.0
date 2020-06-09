@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D653AC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:47:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE72CC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB0EB20890
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:47:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94FC920853
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:47:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aZGKXShJ"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="qyPP2O01"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729613AbgFIMqk (ORCPT
+        id S1729602AbgFIMqk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 9 Jun 2020 08:46:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729580AbgFIMqe (ORCPT
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54342 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729594AbgFIMqg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jun 2020 08:46:34 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85AB7C05BD1E;
-        Tue,  9 Jun 2020 05:46:33 -0700 (PDT)
+        Tue, 9 Jun 2020 08:46:36 -0400
 Received: from Q.local (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E2A9F18DB;
-        Tue,  9 Jun 2020 14:46:31 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B7EDA18F5;
+        Tue,  9 Jun 2020 14:46:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1591706792;
-        bh=4//tYS7h1eeHKXDB8pvKQKTZW/4D6PifWzVG1mI1mXw=;
+        s=mail; t=1591706794;
+        bh=bJXiI1PY8sfOtq2Yflmn9ep268J3jqJ88sOgCJyR8uM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aZGKXShJKzKrdfWUePwrRQYjx3qGsI8ynhIjEY0lbZf1fh7WYu8GBw4+D2dvJe00Y
-         qYWE4K2PUqCzneNsa+CoHYd70+tG3bSPdAbZWWLjNgwb0d+qk7NpdMAm3oq0I4srcn
-         yYR07JNKvCTHnilbUsrH1xZuMMT3gVF+fxZ8ZoYA=
+        b=qyPP2O01AWYg3ib9TWCRF0+8KEwPBkz5WdcgL9AfV0LepEslOPWer8lRt+V7AVFet
+         RLSXwAzec37f1YYasXfP0m9IUbYPNFs0kbcwZnvDSXdP7kJ1TOBd3jZku/KScLhrzP
+         6n5h3NzfvG7OurPeQKSLieAk/bOhHiorHtZjb1/4=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
 Cc:     linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Jiri Kosina <trivial@kernel.org>,
-        linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 07/17] drivers: usb: Fix trivial spelling
-Date:   Tue,  9 Jun 2020 13:46:00 +0100
-Message-Id: <20200609124610.3445662-8-kieran.bingham+renesas@ideasonboard.com>
+        linux-kernel@vger.kernel.org (open list:VOLTAGE AND CURRENT REGULATOR
+        FRAMEWORK)
+Subject: [PATCH 09/17] drivers: regulator: Fix trivial spelling
+Date:   Tue,  9 Jun 2020 13:46:02 +0100
+Message-Id: <20200609124610.3445662-10-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200609124610.3445662-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20200609124610.3445662-1-kieran.bingham+renesas@ideasonboard.com>
@@ -64,22 +62,22 @@ Fix it up accordingly:
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/usb/core/of.c | 2 +-
+ drivers/regulator/fixed.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/core/of.c b/drivers/usb/core/of.c
-index 651708d8c908..617e92569b2c 100644
---- a/drivers/usb/core/of.c
-+++ b/drivers/usb/core/of.c
-@@ -45,7 +45,7 @@ EXPORT_SYMBOL_GPL(usb_of_get_device_node);
-  *
-  * Determine whether a USB device has a so called combined node which is
-  * shared with its sole interface. This is the case if and only if the device
-- * has a node and its decriptors report the following:
-+ * has a node and its descriptors report the following:
-  *
-  *	1) bDeviceClass is 0 or 9, and
-  *	2) bNumConfigurations is 1, and
+diff --git a/drivers/regulator/fixed.c b/drivers/regulator/fixed.c
+index bc0bbd99e98d..d54830e48b8d 100644
+--- a/drivers/regulator/fixed.c
++++ b/drivers/regulator/fixed.c
+@@ -210,7 +210,7 @@ static int reg_fixed_voltage_probe(struct platform_device *pdev)
+ 
+ 	/*
+ 	 * The signal will be inverted by the GPIO core if flagged so in the
+-	 * decriptor.
++	 * descriptor.
+ 	 */
+ 	if (config->enabled_at_boot)
+ 		gflags = GPIOD_OUT_HIGH;
 -- 
 2.25.1
 
