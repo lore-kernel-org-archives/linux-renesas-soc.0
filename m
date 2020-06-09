@@ -2,98 +2,102 @@ Return-Path: <SRS0=0/JR=7W=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7041C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6469DC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1A7920823
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:48:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="SDySORNG"
+	by mail.kernel.org (Postfix) with ESMTP id 27710206A4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:50:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1591707014;
+	bh=mb5BHpg+BlUVM5LIoAF9EaqEf3JUMMSjWdvZrwmh12o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Nr2wikYpyXXrQLPhvBljHXlKiE2JXVPBOW9HRu4Gq5b/UQyt3Z917V6T2yoQr7Ffo
+	 SaAI9Vl0ff0x7CiUe/MZMQf//eIAlPyl/XoJ8Cn7iumn0qFeQ1nfG9T2Qa5ap7HuGu
+	 bzpIufo/+PykPEnZChjjxUwtMv7Qg0FpeHfNO5qA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729839AbgFIMr4 (ORCPT
+        id S1726784AbgFIMuN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 9 Jun 2020 08:47:56 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54176 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727928AbgFIMqX (ORCPT
+        Tue, 9 Jun 2020 08:50:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52742 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726083AbgFIMuM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jun 2020 08:46:23 -0400
-Received: from Q.local (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 787005A7;
-        Tue,  9 Jun 2020 14:46:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1591706777;
-        bh=F3Ya/6PQv1SlRbTx4KyzibdoKoXxwCzeytd+fhCKwkY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SDySORNGnG1mum/ZNj+SeAgtP5e5qLE7lerIUS6G8lIW0rlzBn5tg0A04g0h50g08
-         VgXqzuAxVGnCEwaxszxwGexbdxm5jEDbH64LPNeWS8UZkp/3JS1M/kXr4VKNHm1S4b
-         85JaNNvIoSy80En3mX8pTLj77i5VWuUqfTYYIwR0=
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tue, 9 Jun 2020 08:50:12 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DD05206A4;
+        Tue,  9 Jun 2020 12:50:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1591707010;
+        bh=mb5BHpg+BlUVM5LIoAF9EaqEf3JUMMSjWdvZrwmh12o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dNfcud/2EeiI0vJXbs00wfklZgUQEggKGn7xblQN/w+qUYxzQn5XiaSyx8eXHvzhw
+         3LTuY1EMw4fVrZ6VlNlDAH5nT2bHcG4amnTwFNMCbWbgMvM4yHY+Fj4KQqmKNgAKN/
+         wlVy9k3mxN67vHj69NPv0LPy2meEp3hoUBoDi+qE=
+Date:   Tue, 9 Jun 2020 13:50:07 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Jiri Kosina <trivial@kernel.org>,
-        linux-rdma@vger.kernel.org (open list:HFI1 DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 02/17] drivers: infiniband: Fix trivial spelling
-Date:   Tue,  9 Jun 2020 13:45:55 +0100
-Message-Id: <20200609124610.3445662-3-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200609124610.3445662-1-kieran.bingham+renesas@ideasonboard.com>
+        "open list:VOLTAGE AND CURRENT REGULATOR FRAMEWORK" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/17] drivers: regulator: Fix trivial spelling
+Message-ID: <20200609125007.GD4583@sirena.org.uk>
 References: <20200609124610.3445662-1-kieran.bingham+renesas@ideasonboard.com>
+ <20200609124610.3445662-10-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LTeJQqWS0MN7I/qa"
+Content-Disposition: inline
+In-Reply-To: <20200609124610.3445662-10-kieran.bingham+renesas@ideasonboard.com>
+X-Cookie: Be careful!  Is it classified?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The word 'descriptor' is misspelled throughout the tree.
 
-Fix it up accordingly:
-    decriptors -> descriptors
+--LTeJQqWS0MN7I/qa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/infiniband/hw/hfi1/iowait.h      | 2 +-
- drivers/infiniband/hw/hfi1/verbs_txreq.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+On Tue, Jun 09, 2020 at 01:46:02PM +0100, Kieran Bingham wrote:
+> The word 'descriptor' is misspelled throughout the tree.
+>=20
+> Fix it up accordingly:
+>     decriptors -> descriptors
+>=20
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-diff --git a/drivers/infiniband/hw/hfi1/iowait.h b/drivers/infiniband/hw/hfi1/iowait.h
-index 07847cb72169..d580aa17ae37 100644
---- a/drivers/infiniband/hw/hfi1/iowait.h
-+++ b/drivers/infiniband/hw/hfi1/iowait.h
-@@ -399,7 +399,7 @@ static inline void iowait_get_priority(struct iowait *w)
-  * @wait_head: the wait queue
-  *
-  * This function is called to insert an iowait struct into a
-- * wait queue after a resource (eg, sdma decriptor or pio
-+ * wait queue after a resource (eg, sdma descriptor or pio
-  * buffer) is run out.
-  */
- static inline void iowait_queue(bool pkts_sent, struct iowait *w,
-diff --git a/drivers/infiniband/hw/hfi1/verbs_txreq.h b/drivers/infiniband/hw/hfi1/verbs_txreq.h
-index bfa6e081cb56..d2d526c5a756 100644
---- a/drivers/infiniband/hw/hfi1/verbs_txreq.h
-+++ b/drivers/infiniband/hw/hfi1/verbs_txreq.h
-@@ -91,7 +91,7 @@ static inline struct verbs_txreq *get_txreq(struct hfi1_ibdev *dev,
- 	tx->mr = NULL;
- 	tx->sde = priv->s_sde;
- 	tx->psc = priv->s_sendcontext;
--	/* so that we can test if the sdma decriptors are there */
-+	/* so that we can test if the sdma descriptors are there */
- 	tx->txreq.num_desc = 0;
- 	/* Set the header type */
- 	tx->phdr.hdr.hdr_type = priv->hdr_type;
--- 
-2.25.1
+For changes like these that are a bunch of trivial fixes independent of
+each other it's generally better to send them independently rather than
+as a series since only having part of the series (as is the case here)
+usually begs questions about dependencies.  I'm hoping there aren't any
+here and will queue these...
 
+--LTeJQqWS0MN7I/qa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl7fhX4ACgkQJNaLcl1U
+h9B9nQf9FwzB5vMSW8IRVFyyLTJL2DnPj/ZQNSsCDnVu5DnIAhT15EjuZKPfDy1y
+/7mBvH1pdxlrneDLatcc732i4hMWSr0VdypgXYgauc7IV6mL5exIXNZqS7yTe/7X
+VL7LxPR97oetlOpjRvwOjme3dwx+RqG1fQ4Wej1aPowIMmTN7eEcmiVhnQwy1l3j
+xIj7PTBgVT/B5iSjTNPFbhVxFsfNJjkNwgrbG5TwH/p0g+/uqvVIjmMycaNqlg+i
+4cFbtIiHr+hPIvmZoNoD4fyxv8TPbe8OxYTXnfOtYdBiM7E+JXU33n9e9uTVNDK6
+Lm9LCoA+9DagbXmca9dfbRi+5tk/VQ==
+=NQ5y
+-----END PGP SIGNATURE-----
+
+--LTeJQqWS0MN7I/qa--
