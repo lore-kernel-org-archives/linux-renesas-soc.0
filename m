@@ -7,49 +7,59 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CAEC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC10AC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2AF992083E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A629920853
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Jun 2020 12:47:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WFGsSysa"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WMQo4K5+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729546AbgFIMqa (ORCPT
+        id S1729815AbgFIMrk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 9 Jun 2020 08:46:30 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:54176 "EHLO
+        Tue, 9 Jun 2020 08:47:40 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:54248 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729524AbgFIMq1 (ORCPT
+        with ESMTP id S1727048AbgFIMqb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Jun 2020 08:46:27 -0400
+        Tue, 9 Jun 2020 08:46:31 -0400
 Received: from Q.local (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6D4B21314;
-        Tue,  9 Jun 2020 14:46:22 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BF9701227;
+        Tue,  9 Jun 2020 14:46:27 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1591706784;
-        bh=k2d6Fgi2DgTc07BY1d7t3Uj5hqRkZW7TQacEh7wmTzg=;
+        s=mail; t=1591706788;
+        bh=jIDnNlqQO8hAVuTBSxCrpbpRndavULdtblkTlqt+A/c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WFGsSysaYs+5unqI2BUTf63py99p8e6AsjzRDMPr/wx2ZOkReZbwRY72uyNfMcphz
-         C5o/B9a1Gl/4fq7clChpv0yA0dkgMyCFVsiUfhNlzSB2skBccLhn0BOnanRGLgBB9B
-         GMDi8Czfb+rWvc2bfNBYWfEib1hdQn3Vri9kHj9Y=
+        b=WMQo4K5+weFVoq0+O9ilxiYdak5BJs+Zl0EZ4GXf3KB/gljQMgkHUHn9dZC+9GK+K
+         bvqRyBw+URwzIVfZa7DNNq2crk9+6BP3ygsbK7ICnHBoERNcBHIYxzp04RPQoQH/Rp
+         Ng5LBBrhbT65j0VTMzNMLLNoKR2mBA6zxfnEdxTA=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
 Cc:     linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Jiri Kosina <trivial@kernel.org>,
+        Martin Habets <mhabets@solarflare.com>,
+        Shannon Nelson <snelson@pensando.io>,
+        Colin Ian King <colin.king@canonical.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Eric Dumazet <edumazet@google.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
         Wenwen Wang <wenwen@cs.uga.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-mtd@lists.infradead.org (open list:NAND FLASH SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 04/17] drivers: mtd: nand: raw: Fix trivial spelling
-Date:   Tue,  9 Jun 2020 13:45:57 +0100
-Message-Id: <20200609124610.3445662-5-kieran.bingham+renesas@ideasonboard.com>
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+        linux-kernel@vger.kernel.org (open list),
+        ath10k@lists.infradead.org (open list:QUALCOMM ATHEROS ATH10K WIRELESS
+        DRIVER),
+        linux-wireless@vger.kernel.org (open list:NETWORKING DRIVERS (WIRELESS))
+Subject: [PATCH 05/17] drivers: net: Fix trivial spelling
+Date:   Tue,  9 Jun 2020 13:45:58 +0100
+Message-Id: <20200609124610.3445662-6-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200609124610.3445662-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20200609124610.3445662-1-kieran.bingham+renesas@ideasonboard.com>
@@ -67,36 +77,64 @@ Fix it up accordingly:
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/mtd/nand/raw/mxc_nand.c | 2 +-
- drivers/mtd/nand/raw/nand_bbt.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wan/lmc/lmc_main.c        | 2 +-
+ drivers/net/wireless/ath/ath10k/usb.c | 2 +-
+ drivers/net/wireless/ath/ath6kl/usb.c | 2 +-
+ drivers/net/wireless/cisco/airo.c     | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/mtd/nand/raw/mxc_nand.c b/drivers/mtd/nand/raw/mxc_nand.c
-index 59554c187e01..81659c09770a 100644
---- a/drivers/mtd/nand/raw/mxc_nand.c
-+++ b/drivers/mtd/nand/raw/mxc_nand.c
-@@ -1432,7 +1432,7 @@ static int mxc_nand_get_features(struct nand_chip *chip, int addr,
- }
+diff --git a/drivers/net/wan/lmc/lmc_main.c b/drivers/net/wan/lmc/lmc_main.c
+index a20f467ca48a..842def21e089 100644
+--- a/drivers/net/wan/lmc/lmc_main.c
++++ b/drivers/net/wan/lmc/lmc_main.c
+@@ -2063,7 +2063,7 @@ static void lmc_driver_timeout(struct net_device *dev, unsigned int txqueue)
+     /*
+      * Chip seems to have locked up
+      * Reset it
+-     * This whips out all our decriptor
++     * This whips out all our descriptor
+      * table and starts from scartch
+      */
  
- /*
-- * The generic flash bbt decriptors overlap with our ecc
-+ * The generic flash bbt descriptors overlap with our ecc
-  * hardware, so define some i.MX specific ones.
-  */
- static uint8_t bbt_pattern[] = { 'B', 'b', 't', '0' };
-diff --git a/drivers/mtd/nand/raw/nand_bbt.c b/drivers/mtd/nand/raw/nand_bbt.c
-index 96045d60471e..344a24fd2ca8 100644
---- a/drivers/mtd/nand/raw/nand_bbt.c
-+++ b/drivers/mtd/nand/raw/nand_bbt.c
-@@ -1226,7 +1226,7 @@ static int nand_scan_bbt(struct nand_chip *this, struct nand_bbt_descr *bd)
- 		return -ENOMEM;
+diff --git a/drivers/net/wireless/ath/ath10k/usb.c b/drivers/net/wireless/ath/ath10k/usb.c
+index b7daf344d012..05a620ff6fe2 100644
+--- a/drivers/net/wireless/ath/ath10k/usb.c
++++ b/drivers/net/wireless/ath/ath10k/usb.c
+@@ -824,7 +824,7 @@ static int ath10k_usb_setup_pipe_resources(struct ath10k *ar,
  
- 	/*
--	 * If no primary table decriptor is given, scan the device to build a
-+	 * If no primary table descriptor is given, scan the device to build a
- 	 * memory based bad block table.
- 	 */
- 	if (!td) {
+ 	ath10k_dbg(ar, ATH10K_DBG_USB, "usb setting up pipes using interface\n");
+ 
+-	/* walk decriptors and setup pipes */
++	/* walk descriptors and setup pipes */
+ 	for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
+ 		endpoint = &iface_desc->endpoint[i].desc;
+ 
+diff --git a/drivers/net/wireless/ath/ath6kl/usb.c b/drivers/net/wireless/ath/ath6kl/usb.c
+index 53b66e9434c9..5372e948e761 100644
+--- a/drivers/net/wireless/ath/ath6kl/usb.c
++++ b/drivers/net/wireless/ath/ath6kl/usb.c
+@@ -311,7 +311,7 @@ static int ath6kl_usb_setup_pipe_resources(struct ath6kl_usb *ar_usb)
+ 
+ 	ath6kl_dbg(ATH6KL_DBG_USB, "setting up USB Pipes using interface\n");
+ 
+-	/* walk decriptors and setup pipes */
++	/* walk descriptors and setup pipes */
+ 	for (i = 0; i < iface_desc->desc.bNumEndpoints; ++i) {
+ 		endpoint = &iface_desc->endpoint[i].desc;
+ 
+diff --git a/drivers/net/wireless/cisco/airo.c b/drivers/net/wireless/cisco/airo.c
+index 827bb6d74815..e3ad77666ba8 100644
+--- a/drivers/net/wireless/cisco/airo.c
++++ b/drivers/net/wireless/cisco/airo.c
+@@ -2450,7 +2450,7 @@ static void mpi_unmap_card(struct pci_dev *pci)
+ 
+ /*************************************************************
+  *  This routine assumes that descriptors have been setup .
+- *  Run at insmod time or after reset  when the decriptors
++ *  Run at insmod time or after reset when the descriptors
+  *  have been initialized . Returns 0 if all is well nz
+  *  otherwise . Does not allocate memory but sets up card
+  *  using previously allocated descriptors.
 -- 
 2.25.1
 
