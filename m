@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B23C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A89BBC433E1
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Jun 2020 12:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE7A2072E
+	by mail.kernel.org (Postfix) with ESMTP id 8738420760
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Jun 2020 12:46:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbgFJMqi (ORCPT
+        id S1729016AbgFJMqj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 10 Jun 2020 08:46:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47664 "EHLO
+        Wed, 10 Jun 2020 08:46:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
         with ESMTP id S1728540AbgFJMqi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 10 Jun 2020 08:46:38 -0400
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21348C03E96B
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jun 2020 05:46:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85741C03E96F
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Jun 2020 05:46:38 -0700 (PDT)
 Received: from Q.local (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B304BFD2;
-        Wed, 10 Jun 2020 14:46:28 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 745FBFE0;
+        Wed, 10 Jun 2020 14:46:30 +0200 (CEST)
 From:   Kieran Bingham <kieran@ksquared.org.uk>
 To:     Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
 Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v9.2 3/9] fixes! [max9286]: Use single sample per pixel
-Date:   Wed, 10 Jun 2020 13:46:17 +0100
-Message-Id: <20200610124623.51085-4-kieran@bingham.xyz>
+Subject: [PATCH v9.2 6/9] fixes! [max9286-dt]: Add GPIO controller support
+Date:   Wed, 10 Jun 2020 13:46:20 +0100
+Message-Id: <20200610124623.51085-7-kieran@bingham.xyz>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200610124623.51085-1-kieran@bingham.xyz>
 References: <20200610124623.51085-1-kieran@bingham.xyz>
@@ -46,61 +46,38 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-MBUS formats for a serial bus should be specified as a single sample
-point.
+The MAX9286 exposes a GPIO controller to control the two GPIO out pins
+of the chip.
 
-This change requires updating user-space test scripts to configure as
-1x16 accordingly:
+These can in some configurations be used to control the power of the
+cameras, and in the case of the V3M, it is used to enable power up
+of the GMSL PoC regulator.
 
--    media-ctl -d $mdev -V "'$CSI':$IDX [fmt:UYVY8_2X8/1280x800 field:none]"
-+    media-ctl -d $mdev -V "'$CSI':$IDX [fmt:UYVY8_1X16/1280x800 field:none]"
+The regulator can not (currently) be moddelled as a regulator due to
+probe time issues, and instead are controlled through the use of a
+gpio-hog.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/media/i2c/max9286.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ .../devicetree/bindings/media/i2c/maxim,max9286.yaml         | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-index 7e59391a5736..807024a9a149 100644
---- a/drivers/media/i2c/max9286.c
-+++ b/drivers/media/i2c/max9286.c
-@@ -684,7 +684,7 @@ static int max9286_enum_mbus_code(struct v4l2_subdev *sd,
- 	if (code->pad || code->index > 0)
- 		return -EINVAL;
+diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
+index f9d3e5712c59..7d75c3b63c0b 100644
+--- a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
+@@ -46,6 +46,11 @@ properties:
+     description: GPIO connected to the \#PWDN pin with inverted polarity
+     maxItems: 1
  
--	code->code = MEDIA_BUS_FMT_UYVY8_2X8;
-+	code->code = MEDIA_BUS_FMT_UYVY8_1X16;
- 
- 	return 0;
- }
-@@ -720,13 +720,13 @@ static int max9286_set_fmt(struct v4l2_subdev *sd,
- 
- 	/* Refuse non YUV422 formats as we hardcode DT to 8 bit YUV422 */
- 	switch (format->format.code) {
--	case MEDIA_BUS_FMT_UYVY8_2X8:
--	case MEDIA_BUS_FMT_VYUY8_2X8:
--	case MEDIA_BUS_FMT_YUYV8_2X8:
--	case MEDIA_BUS_FMT_YVYU8_2X8:
-+	case MEDIA_BUS_FMT_UYVY8_1X16:
-+	case MEDIA_BUS_FMT_VYUY8_1X16:
-+	case MEDIA_BUS_FMT_YUYV8_1X16:
-+	case MEDIA_BUS_FMT_YVYU8_1X16:
- 		break;
- 	default:
--		format->format.code = MEDIA_BUS_FMT_UYVY8_2X8;
-+		format->format.code = MEDIA_BUS_FMT_UYVY8_1X16;
- 		break;
- 	}
- 
-@@ -788,7 +788,7 @@ static void max9286_init_format(struct v4l2_mbus_framefmt *fmt)
- {
- 	fmt->width		= 1280;
- 	fmt->height		= 800;
--	fmt->code		= MEDIA_BUS_FMT_UYVY8_2X8;
-+	fmt->code		= MEDIA_BUS_FMT_UYVY8_1X16;
- 	fmt->colorspace		= V4L2_COLORSPACE_SRGB;
- 	fmt->field		= V4L2_FIELD_NONE;
- 	fmt->ycbcr_enc		= V4L2_YCBCR_ENC_DEFAULT;
++  gpio-controller: true
++
++  '#gpio-cells':
++      const: 2
++
+   ports:
+     type: object
+     description: |
 -- 
 2.25.1
 
