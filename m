@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B334C433E3
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Jun 2020 23:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E73B7C433E4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Jun 2020 23:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EDE92081A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Jun 2020 23:06:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5CF22078D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Jun 2020 23:06:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbgFJXGA (ORCPT
+        id S1726553AbgFJXGD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 10 Jun 2020 19:06:00 -0400
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:62363 "EHLO
+        Wed, 10 Jun 2020 19:06:03 -0400
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:28040 "EHLO
         bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726380AbgFJXGA (ORCPT
+        by vger.kernel.org with ESMTP id S1726776AbgFJXGD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Jun 2020 19:06:00 -0400
-X-Halon-ID: eed6ab18-ab6e-11ea-933e-005056917a89
+        Wed, 10 Jun 2020 19:06:03 -0400
+X-Halon-ID: f05f6433-ab6e-11ea-933e-005056917a89
 Authorized-sender: niklas@soderlund.pp.se
 Received: from bismarck.berto.se (p4fca2eca.dip0.t-ipconnect.de [79.202.46.202])
         by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
-        id eed6ab18-ab6e-11ea-933e-005056917a89;
-        Thu, 11 Jun 2020 01:05:53 +0200 (CEST)
+        id f05f6433-ab6e-11ea-933e-005056917a89;
+        Thu, 11 Jun 2020 01:05:55 +0200 (CEST)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     Hans Verkuil <hverkuil@xs4all.nl>,
@@ -34,9 +34,9 @@ To:     Hans Verkuil <hverkuil@xs4all.nl>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/5] uapi/linux/media.h: add flags field to struct media_v2_topology
-Date:   Thu, 11 Jun 2020 01:05:37 +0200
-Message-Id: <20200610230541.1603067-2-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 5/5] rcar-vin: Do not unregister video device when a subdevice is unbound
+Date:   Thu, 11 Jun 2020 01:05:41 +0200
+Message-Id: <20200610230541.1603067-6-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200610230541.1603067-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20200610230541.1603067-1-niklas.soderlund+renesas@ragnatech.se>
@@ -48,62 +48,46 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a flags field to the media_v2_topology structure by taking one
-of the reserved u32 fields. Also define a flag to carry information
-about if the graph is complete. The use-case is to have a way to report
-to user-space if the media graph contains all subdevices.
+If the v4l2-async notifier have once been complete and the video
+device(s) have been register, do not unregister them if one subdevice is
+unbound. Depending on which subdevice is unbound other parts of the
+pipeline could still be functional. For example if one of multiple
+sensors connected to a CSI-2 transmitter is unbound other sensors in
+that pipeline are still useable.
 
-The other bits in the flags field are unused for now, but could be
-claimed to carry other type of information in the future.
+This problem is extra critical for R-Car VIN which registers two
+independent CSI-2 receivers in the same media graph as they can both be
+used by the same dma-engines. If one of the CSI-2 receivers are unbound
+the other CSI-2 receiver pipeline is still fully functional.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/mc/mc-device.c | 2 +-
- include/uapi/linux/media.h   | 4 +++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-diff --git a/drivers/media/mc/mc-device.c b/drivers/media/mc/mc-device.c
-index da8088351135298a..c2ef5bb512a5fba0 100644
---- a/drivers/media/mc/mc-device.c
-+++ b/drivers/media/mc/mc-device.c
-@@ -242,6 +242,7 @@ static long media_device_get_topology(struct media_device *mdev, void *arg)
- 	int ret = 0;
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 7440c8965d27e64f..6b0f13618556cac4 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -525,7 +525,6 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
  
- 	topo->topology_version = mdev->topology_version;
-+	topo->flags = 0;
+ static void rvin_parallel_subdevice_detach(struct rvin_dev *vin)
+ {
+-	rvin_v4l2_unregister(vin);
+ 	vin->parallel->subdev = NULL;
  
- 	/* Get entities and number of entities */
- 	i = 0;
-@@ -269,7 +270,6 @@ static long media_device_get_topology(struct media_device *mdev, void *arg)
- 		uentity++;
- 	}
- 	topo->num_entities = i;
--	topo->reserved1 = 0;
+ 	if (!vin->info->use_mc) {
+@@ -747,10 +746,6 @@ static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
+ 	struct rvin_dev *vin = v4l2_dev_to_vin(notifier->v4l2_dev);
+ 	unsigned int i;
  
- 	/* Get interfaces and number of interfaces */
- 	i = 0;
-diff --git a/include/uapi/linux/media.h b/include/uapi/linux/media.h
-index 383ac7b7d8f07eca..7c07b9939252c768 100644
---- a/include/uapi/linux/media.h
-+++ b/include/uapi/linux/media.h
-@@ -351,7 +351,7 @@ struct media_v2_topology {
- 	__u64 topology_version;
+-	for (i = 0; i < RCAR_VIN_NUM; i++)
+-		if (vin->group->vin[i])
+-			rvin_v4l2_unregister(vin->group->vin[i]);
+-
+ 	mutex_lock(&vin->group->lock);
  
- 	__u32 num_entities;
--	__u32 reserved1;
-+	__u32 flags;
- 	__u64 ptr_entities;
- 
- 	__u32 num_interfaces;
-@@ -367,6 +367,8 @@ struct media_v2_topology {
- 	__u64 ptr_links;
- } __attribute__ ((packed));
- 
-+#define MEDIA_TOPOLOGY_FLAG_COMPLETE	(1 << 0)
-+
- /* ioctls */
- 
- #define MEDIA_IOC_DEVICE_INFO	_IOWR('|', 0x00, struct media_device_info)
+ 	for (i = 0; i < RVIN_CSI_MAX; i++) {
 -- 
 2.27.0
 
