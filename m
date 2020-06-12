@@ -2,232 +2,293 @@ Return-Path: <SRS0=6/Uc=7Z=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8CBC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 13:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD57C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 14:47:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B40192074B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 13:22:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91FC220842
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 14:47:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bingham-xyz.20150623.gappssmtp.com header.i=@bingham-xyz.20150623.gappssmtp.com header.b="d0N9W5uZ"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Ai1NCP3W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726262AbgFLNWa (ORCPT
+        id S1726546AbgFLOrY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 12 Jun 2020 09:22:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45546 "EHLO
+        Fri, 12 Jun 2020 10:47:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbgFLNW3 (ORCPT
+        with ESMTP id S1726542AbgFLOrX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jun 2020 09:22:29 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363C9C03E96F
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jun 2020 06:22:28 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id y17so9699927wrn.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 12 Jun 2020 06:22:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bingham-xyz.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=L1qYFiXdrWRLGehThfw+VGc3K2F+7G7hE4TLQnF4A4A=;
-        b=d0N9W5uZ/m8EXBts1qB6HaMHra7R+qboeLzq+V99FKehGB+ZtsMSKtKBjpciZ6y1rd
-         9GlMMGQkx6+G+d5mPiFRZtGI9r+Jr0ikoE1XoaXQxtj/MGbJojc/zw9VVpbwVhsaSSqb
-         veaQeiR4ioxh+JBMfLoqcOP9QAW42isCz86Z4IyyeX0AXtdEsVm4vM8bbiWKM3MFNiRf
-         TUZEHj8vYyDlyeoy06hejTFlPlHleYtbkiUkAkDS3doXHYhxznE2JaUFRYHX3TS+W1PH
-         RoL+frmI7Uiuo0W0pkjrAEuy8gwXC1nekzMhDShZKrHs76ofgdNCc5zUkONKV9dUaxpa
-         0u9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=L1qYFiXdrWRLGehThfw+VGc3K2F+7G7hE4TLQnF4A4A=;
-        b=LdmkUxFb3a579M5Ghp1T0+dUriCe6JeFCiQmqZE+SX/mNQFwMS1E1DCYMGU5hqFBQx
-         h6VEJ6cc+Lp5Cxl9WSBIRoZJES8NpnmMomhIW9QfsZltoIKkq+NQdDLWljRWYZOvN8lu
-         njKxrNArnkk/k7nNCAQlT4GVPDRXgQJ+8noaGJF5akWVV70QANAJ64kq6Z9ot5RstDZ+
-         NY5lvlPmDrMCNU2QX5wHRqqkBmbcd1cBguwQruswkk/lbzFGBvpXR1v4ENvBjh4W0AoR
-         nPYLDviF+3ShFQ7r33WF6I0pvIMOxZn0tiZpcF9hXzRCAhV6h7/QilCGuB85Isy9Boyg
-         9hEQ==
-X-Gm-Message-State: AOAM531UHsHHw38oyhUozxUMy6ToQrSvSG+u6WUuy0I2HbXfi3zAMeIK
-        6aZjld1HC8FZ7E7bdEH+BCRkputaL1I=
-X-Google-Smtp-Source: ABdhPJyxuw+l5AyB7en4cHy7qfauS3qoxhdw8+Xdt8/+Ii8blutdK3mGUxseH0Ejk058lHzS1vhEuA==
-X-Received: by 2002:a5d:4a04:: with SMTP id m4mr16413706wrq.153.1591968146887;
-        Fri, 12 Jun 2020 06:22:26 -0700 (PDT)
-Received: from [192.168.0.20] (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net. [86.31.129.233])
-        by smtp.gmail.com with ESMTPSA id l204sm9424178wmf.19.2020.06.12.06.22.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jun 2020 06:22:25 -0700 (PDT)
-Subject: Re: [PATCH v9.2 2/9] fixes! [max9286]: Validate link formats
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     linux-renesas-soc@vger.kernel.org,
+        Fri, 12 Jun 2020 10:47:23 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7530DC03E96F;
+        Fri, 12 Jun 2020 07:47:23 -0700 (PDT)
+Received: from Q.local (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4D121B1A;
+        Fri, 12 Jun 2020 16:47:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1591973242;
+        bh=zsgqf8RLDeGBCTHNd5KBZWdXP+BQTaHck9Vt+IcKzeY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ai1NCP3W7T8o7ReurqbVkkYV9xjTfh/ma4ckUHh+KedCs84Q46vG7EWKDfNhiiH4j
+         7KmLWZMSW5dccOotqNtSqBjZNbqnA+QsMoEehtTUPV+u5QZ55MN8lkjPKyFousevT1
+         yBu6/oXbotwwnaG8Mm8kGznyMObuUlSSRGXr+ALY=
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To:     linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        sakari.ailus@iki.fi
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-References: <20200610124623.51085-1-kieran@bingham.xyz>
- <20200610124623.51085-3-kieran@bingham.xyz>
- <20200610150246.ovw6n2amobg5ynmm@uno.localdomain>
-From:   Kieran Bingham <kieran@ksquared.org.uk>
-Autocrypt: addr=kieran@bingham.xyz; keydata=
- mQINBFMtlTkBEADvhPl7usumM98GeJgEv0R+atr1fwfMtV2pkpqkTc7RrO+VKc++WDDXGqWG
- wnNX0FzJ7/TEJoO5BZ+VyHqB1kMjxAckmCKQIrj2/UxkZ/R5lxKzvbve7XDvihnTgQrZv3bw
- 52Tz81DMTFG+N0yeUOZWnq+mPoNCf9OnkKkPnyWVPdtYeLJmi2oE5ql7/ZEBU6m0BAzRKYny
- k69pyQO1zzTb3U6GHGEUc+8CgGolqBQ63qp+MmaQYlA2ytOw8DMiBLJZipVUWS/WgvCvIWkH
- lVoI4r8cBSgN4pgRJEKeVXVw+uY8xAbOU3r2y/MfyykzJn99oiaHeNer39EIVRdxKnazYw95
- q/RE6dtbroSGcAfa7hIqfqya5nTGzONbxNPdUaWpj3vkej/o5aESXcRk98fH+XCKlS+a/tri
- 7dfq3/Daoq0LR3wmHvEXN8p52NQlbMCnfEhE+haSLqLEgxTqCMpBt4cgwaW9CmKW8pR91oXF
- kIDVY9e/VU9tw3IuoHVK5JXmZeaUe1wLmot2oiq2hmuRonQNGEYWqU6lnoDHTQArLfZPaT9Y
- hQqf9C7faWF/VvEwXYYquWOX+waY8YPyH16hycmWoePM+oMpIG+04lpjEefSHDUvOciC0p1o
- CfePg3iVEKB56V0j9nMAfTr/5oOvTP5EeHHvT6a5ZcGanJYmbQARAQABtCNLaWVyYW4gQmlu
- Z2hhbSA8a2llcmFuQGJpbmdoYW0ueHl6PokCVQQTAQoAPwIbAwYLCQgHAwIGFQgCCQoLBBYC
- AwECHgECF4AWIQSor+z47OVRZQR+u5Yjhj3Dgx2ysQUCXWTt6gUJDfm/sQAKCRAjhj3Dgx2y
- sXNuEACOOFM9Kwq1U8a1hC57HCD37GAcwPXEe5+elO6ORGALzjjHmq9GJf3FbIuV9b0pzyGU
- XsNiZKqxmFga9+FocN28REHzKp5eo9/5yFcDsZJYqgEwbqQ5Yw9ZONr6Gw+x+a4VeMVao9+w
- BAwWK3nNqsfbW6Y+ewq1EIg0BajfHEaESGizyQ5DnOefTf+uGcmZ+XYASwUTkqXvwSVoRTS0
- 4nXCOVG2LGhM9bc5zLXXsgPjH2xx8vLSqebXyIuam0d8X2/R6mFHkI9Oh0n5feEs0i80vMyB
- eEYDeZGNnkrPkosWKYo6KeC/QmpAIqYytDuevhJMD/cK5ugWc9tfzpwkKb7mFm+7aUU7wUhl
- 9OO/lhAAO5B8uVgv55ZxFS1wVrgi/0DnWZx7dDj+b0xubexMoRqdtNMBcw4ey9sQ2TMfLuLX
- saq93eNA8tmKLRZrFKuGeSQBj0u/1KGKitDUxGEOjCkZZ5R7i0IhOmMXCCpSlRH6TYzHtkLC
- qLMGnCSuHv0AUtXE37OlRPLf3cga8SqJJyLJ+2jwDCr1xT32cLiD19jYgfsnS0+gvl52gn9a
- f4K76WtYlFf/RMGl4N1fLLcVLMt3QuYjPbVQVcMxXWS5cIQFpUSWo2d8Z7kWrHJ8jL4/ZxxZ
- mPkwI2lLHEmvvlBO0tsnECtkApB/hc9/aQCa1gUWzLkCDQRTLZU5ARAAsqUr9WS+cuZ3aZP/
- UV2vO6HZ6L8gHJQcMVV22uBRccuet4QEPQ9UgURac9lWjqUlCOmWU1HgISjM1oD3siakeqRB
- THvRv3p7Za55DJOlYj+HhM7q4l2m7FlSKqlEABIuL02FvjtRMsobPhpTu1vjBGe0VMKafqkG
- 0CbLKnFwkRxjVMZSqVMws1hlXEeTK27IJxzoxptfDHKj6w54J367tO0ofubxLA3RvebxZG7D
- 1vWe8NTrNYItuMaXtq4tbbxGY3In2YE+8G9mAQsG1p+XSIm6UBO0lBZJ+NURy/aYmpma39Ji
- 9hE1YZmcDhuRfBPXKSXJa8VavEAON8VbFAtqcXtS/8GbXLzSmUKf/fULHbiWWgspKoMhoWCD
- ryOgABqoc8pu1+XL6uTsr2VksbgXun0IdadI1EVXzc9Hgtra7bZ7C8KzTOgp8u1MFHTyynlO
- QnAosbxVcXSQ95KcEb3V1nMhmzJ5r85Nvlxs2ROqM+/e/Cf16DYPe4iaoHhxuPrAe0ul4/21
- doJq4WVkknqIUpTZkVV/6rLfuFhjKszF5sUXIcOqOn3tYCz/eCxQsXXaq0DBw1IOsQpnq8yP
- MXJ7mNV7ZcKd/4ocX3F6PLFMf2SBGoeive37xf3wdM1Nf4s342D778suPHJmf5+0BQLSv1R0
- VhTpst0W0c7ge0ozFOcAEQEAAYkCHwQYAQIACQUCUy2VOQIbDAAKCRAjhj3Dgx2ysQmtEADF
- KynuTGR5fIVFM0wkAvPBWkh9kMcQwK+PjDR1p7JqNXnlIraBOHlRfxXdu6uYabQ4pyAAPiHt
- fCoCzIvsebXsArbdl7IGBc7gBw/pBXAo7Bt24JfbGCrKkpzu6y2iKT/G8oZP37TlkK6D86nm
- YBY/UqbMbNe28CUeIhTyeVDx28gbDJc1rndOL2cz4BIlzg3Di47woMWnEuaCQ536KM61LnY7
- p/pJ9RcvLrOIm2ESy5M5gHouH7iXNzn5snKFhfi1zbTT/UrtEuY1VjCtiTcCXzXbzy2oy/zw
- ERaDwkRzhcVrFdsttMYDyaNY3GQfJSBq4Q9rADG2nn/87e3g7dmPecVYS5YFxocCk77Zg7xx
- GxSDtXgJEVmdGTGYCrM+SrW8ywj03kfwnURqOnxbsbHaSUmJtVovA+ZzdpHV1e7S91AvxbXt
- LrxWADsl+pzz9rJ25+Hh7f/HeflGaUDYbOycQVzcyKekKkuIlibpv+S0nPiitxlV91agRV0i
- cpG0pX8PrmjQ0YV8pvfUFyrfHtHzTMA4ktMNzF5FhNkE1WNwXZHD+P6nmPEZiOi45tqI7Ro6
- mX/IKTr6GLCzg0OVP6NSsgSJeR6Hd2GvSI2Vw1jfnZI4tCNU2BmODPBkGBRLhNR+L5eRqOMm
- QglrIkyNWSZm4Hhw98VxYDwOwmYhoXmAFg==
-Message-ID: <ad7311db-8677-d3de-5219-87f6e7161e5d@bingham.xyz>
-Date:   Fri, 12 Jun 2020 14:22:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Jacopo Mondi <jacopo@jmondi.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Hyun Kwon <hyunk@xilinx.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v10 3/4] dt-bindings: media: i2c: Add bindings for IMI RDACM2x
+Date:   Fri, 12 Jun 2020 15:47:12 +0100
+Message-Id: <20200612144713.502006-4-kieran.bingham+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200612144713.502006-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20200612144713.502006-1-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-In-Reply-To: <20200610150246.ovw6n2amobg5ynmm@uno.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-On 10/06/2020 16:02, Jacopo Mondi wrote:
-> Hi Kieran,
->   a few small nits.
-> 
-> The patch is fine, feel free to squash it in v10.
+The IMI RDACM20 and IMI RDACM21 are Gigabit Multimedia Serial Link
+(GMSL) camera capable of transmitting video and I2C control messages on
+a coax cable physical link for automotive applications.
 
-Thanks,
+Document their device tree bindings.
 
-> 
-> On Wed, Jun 10, 2020 at 01:46:16PM +0100, Kieran Bingham wrote:
->> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>
->> Disallow setting a format on the source link, but enable link validation
->> by returning the format of the first bound source when getting the
->> format of the source pad.
->>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->> ---
->>  drivers/media/i2c/max9286.c | 19 +++++++++++++++----
->>  1 file changed, 15 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
->> index ef824d2b26b8..7e59391a5736 100644
->> --- a/drivers/media/i2c/max9286.c
->> +++ b/drivers/media/i2c/max9286.c
->> @@ -711,7 +711,11 @@ static int max9286_set_fmt(struct v4l2_subdev *sd,
->>  	struct max9286_priv *priv = sd_to_max9286(sd);
->>  	struct v4l2_mbus_framefmt *cfg_fmt;
->>
->> -	if (format->pad >= MAX9286_SRC_PAD)
->> +	/* TODO:
->> +	 * Multiplexed Stream Support: Prevent setting the format on the shared
->> +	 * multiplexed bus.
->> +	 */
-> 
-> I am not sure I would mention multiplexed stream support, and this is
-> not a TODO item. Simply, max9286 does not allow any format conversion
-> on its source pad, so the format is propagated from one of its sink to
-> the source (assuming all sinks have the same format applied).
-> 
-> Quite a common thing, isn't it ?
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Ok - I'll just drop the comment then.
+---
+v2:
+ - Provide imi vendor prefix
+ - Fix minor spelling
 
+v3:
+ - update binding descriptions
 
-> 
->> +	if (format->pad == MAX9286_SRC_PAD)
->>  		return -EINVAL;
->>
->>  	/* Refuse non YUV422 formats as we hardcode DT to 8 bit YUV422 */
->> @@ -743,11 +747,18 @@ static int max9286_get_fmt(struct v4l2_subdev *sd,
->>  {
->>  	struct max9286_priv *priv = sd_to_max9286(sd);
->>  	struct v4l2_mbus_framefmt *cfg_fmt;
->> +	unsigned int pad = format->pad;
->>
->> -	if (format->pad >= MAX9286_SRC_PAD)
-> 
-> I was about to comment we'ra nowe allowing pads > MAX9286_SRC_PAD, but the
-> core actually checks that for us.
-> 
->> -		return -EINVAL;
->> +	/* TODO:
->> +	 * Multiplexed Stream Support: Support link validation by returning the
->> +	 * format of the first bound link. All links must have the same format,
->> +	 * as we do not support mixing, and matching of cameras connected to
-> 
-> nit: is the comma in 'mixing,' intentional ?
+v4:
+ - No change
 
-No, it should be removed.
+v5:
+ - Specify optional third reg address for the MCU
 
-> Same comment about multiplexed stream support in comment.
-> 
-> Theoretically, a set_fmt on a sink should propagate the format to the
-> source pad, and you could access it through
-> priv->fmts[MAX9286_SRC_PAD] and drop this check.
-> 
-> The result is actually the same, so it's up to you.
+v7:
+ [Jacopo]
+ - Rename to imi,rdacm2x-gmsl.yaml
+ - Exand bindings to describe RDACM21
 
-I'll stick with what we've got then, and just remove those comments, if
-you think they get in the way.
+v9:
+  [Jacopo]
+  - Rework 'compatible' property as suggested by Rob
+  - Re-order vendor prefixes ('g' comes before 'i' ... )
+  - Add Rob's tag
 
+ .../bindings/media/i2c/imi,rdacm2x-gmsl.yaml  | 159 ++++++++++++++++++
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ 2 files changed, 161 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm2x-gmsl.yaml
 
-
-> 
-> Thanks
->   j
-> 
->> +	 * the max9286.
->> +	 */
->> +	if (pad == MAX9286_SRC_PAD)
->> +		pad = __ffs(priv->bound_sources);
->>
->> -	cfg_fmt = max9286_get_pad_format(priv, cfg, format->pad, format->which);
->> +	cfg_fmt = max9286_get_pad_format(priv, cfg, pad, format->which);
->>  	if (!cfg_fmt)
->>  		return -EINVAL;
->>
->> --
->> 2.25.1
->>
+diff --git a/Documentation/devicetree/bindings/media/i2c/imi,rdacm2x-gmsl.yaml b/Documentation/devicetree/bindings/media/i2c/imi,rdacm2x-gmsl.yaml
+new file mode 100644
+index 000000000000..fe524490e6a2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/imi,rdacm2x-gmsl.yaml
+@@ -0,0 +1,159 @@
++# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
++# Copyright (C) 2019 Renesas Electronics Corp.
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/i2c/imi,rdacm2x-gmsl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title:  IMI D&D RDACM20 and RDACM21 Automotive Camera Platforms
++
++maintainers:
++  - Jacopo Mondi <jacopo+renesas@jmondi.org>
++  - Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
++  - Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
++  - Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
++
++description: -|
++  The IMI D&D RDACM20 and RDACM21 are GMSL-compatible camera designed for
++  automotive applications.
++
++  The RDACM20 camera module encloses a Maxim Integrated MAX9271 GMSL serializer,
++  coupled with an OV10635 image sensor and an embedded MCU. Both the MCU and
++  the image sensor are connected to the serializer local I2C bus and are
++  accessible by the host SoC by direct addressing.
++
++  The RDACM21 camera module encloses the same serializer, coupled with an
++  OV10640 image sensor and an OV490 ISP. Only the OV490 ISP is interfaced to
++  the serializer local I2C bus while the image sensor is not accessible from
++  the host SoC.
++
++  They both connect to a remote GMSL endpoint through a coaxial cable.
++
++                                                   IMI RDACM20
++  +---------------+                        +--------------------------------+
++  |      GMSL     |   <- Video Stream      |       <- Video--------\        |
++  |               |< === GMSL Link ====== >|MAX9271<- I2C bus-> <-->OV10635 |
++  | de-serializer |   <- I2C messages ->   |                   \<-->MCU     |
++  +---------------+                        +--------------------------------+
++
++                                                   IMI RDACM21
++  +---------------+                        +--------------------------------+
++  |      GMSL     |   <- Video Stream      |       <- Video--------\        |
++  |               |< === GMSL Link ====== >|MAX9271<- I2C bus-> <-->OV490   |
++  |               |   <- I2C messages ->   |                          |     |
++  | de-serializer |                        |          OV10640 <-------|     |
++  +---------------+                        +--------------------------------+
++
++  Both camera modules serialize video data generated by the embedded camera
++  sensor on the GMSL serial channel to a remote GMSL de-serializer. They also
++  receive and transmit I2C messages encapsulated and transmitted on the GMSL
++  bidirectional control channel.
++
++  All I2C traffic received on the GMSL link not directed to the serializer is
++  propagated on the local I2C bus to the remote device there connected. All the
++  I2C traffic generated on the local I2C bus not directed to the serializer is
++  propagated to the remote de-serializer encapsulated in the GMSL control
++  channel.
++
++  The RDACM20 and RDACM21 DT node should be a direct child of the GMSL
++  deserializer's I2C bus corresponding to the GMSL link that the camera is
++  attached to.
++
++properties:
++  '#address-cells':
++    const: 1
++
++  '#size-cells':
++    const: 0
++
++  compatible:
++    enum:
++      - imi,rdacm20
++      - imi,rdacm21
++
++  reg:
++    description: -|
++      I2C device addresses, the first to be assigned to the serializer, the
++      following ones to be assigned to the remote devices.
++
++      For RDACM20 the second entry of the property is assigned to the
++      OV10635 image sensor and the optional third one to the embedded MCU.
++
++      For RDACM21 the second entry is assigned to the OV490 ISP and the optional
++      third one ignored.
++
++    minItems: 2
++    maxItems: 3
++
++  port:
++    type: object
++    additionalProperties: false
++    description: -|
++      Connection to the remote GMSL endpoint are modelled using the OF graph
++      bindings in accordance with the video interface bindings defined in
++      Documentation/devicetree/bindings/media/video-interfaces.txt.
++
++      The device node contains a single "port" child node with a single
++      "endpoint" sub-device.
++
++    properties:
++      endpoint:
++        type: object
++        additionalProperties: false
++
++        properties:
++          remote-endpoint:
++            description: -|
++              phandle to the remote GMSL endpoint sub-node in the remote node
++              port.
++            maxItems: 1
++
++        required:
++          - remote-endpoint
++
++    required:
++      - endpoint
++
++required:
++  - compatible
++  - reg
++  - port
++
++examples:
++  - |
++    i2c@e66d8000 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      reg = <0 0xe66d8000 0 0x40>;
++
++      camera@31 {
++        compatible = "imi,rdacm20";
++        reg = <0x31>, <0x41>, <0x51>;
++
++        port {
++          rdacm20_out0: endpoint {
++            remote-endpoint = <&max9286_in0>;
++          };
++        };
++      };
++    };
++
++  - |
++    i2c@e66d8000 {
++      #address-cells = <1>;
++      #size-cells = <0>;
++
++      reg = <0 0xe66d8000 0 0x40>;
++
++      camera@31 {
++        compatible = "imi,rdacm21";
++        reg = <0x31>, <0x41>;
++
++        port {
++          rdacm21_out0: endpoint {
++            remote-endpoint = <&max9286_in0>;
++          };
++        };
++      };
++    };
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index d3891386d671..f0f09a4c23ad 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -455,6 +455,8 @@ patternProperties:
+     description: ILI Technology Corporation (ILITEK)
+   "^img,.*":
+     description: Imagination Technologies Ltd.
++  "^imi,.*":
++    description: Integrated Micro-Electronics Inc.
+   "^incircuit,.*":
+     description: In-Circuit GmbH
+   "^inet-tek,.*":
+-- 
+2.25.1
 
