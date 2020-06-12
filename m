@@ -2,59 +2,207 @@ Return-Path: <SRS0=6/Uc=7Z=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAFAC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 15:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F64C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 15:08:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 986AA20835
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 15:00:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591974042;
-	bh=GGJRJROk6oDbdIoY+gYmDMvZSQcvIYPNfN15FQDd4sE=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=EUZAhXDVRKtwUZAPjM+kdmu81g4G8SFaRQ274LgHFcM2v5WxpbOUqWq8DqbZ3hm4c
-	 5A1Z0oCXSvN8jYbOc8/VHFf+p4Ea9WSt9hnsevBBf3y35lO6lYd/RkCRBG5XL0oSBu
-	 mkQK6sbuBAMfYu52URw458EkxsDKX6qYMLUSwL2Q=
+	by mail.kernel.org (Postfix) with ESMTP id 27C802081A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 15:08:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbgFLPAm (ORCPT
+        id S1726257AbgFLPIx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 12 Jun 2020 11:00:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726085AbgFLPAm (ORCPT
+        Fri, 12 Jun 2020 11:08:53 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:58039 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbgFLPIx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jun 2020 11:00:42 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591974041;
-        bh=GGJRJROk6oDbdIoY+gYmDMvZSQcvIYPNfN15FQDd4sE=;
-        h=Subject:From:Date:To:From;
-        b=EzBv09MhFxlFEsNtwZUG0ALAsAjlFXET4bYzNEMVK/mKnfNMvyt0mY+IJlDP/n+Sm
-         KfY3PmEPO0wP6c4HyvGh6KhhMQIDOELy7QN9new8O9mgzJUTBARjbXYmPUSlTB5+RY
-         GtyHLxgWb46I8OMVzj0OzvR2U9fUKLjs6s5kq2AU=
+        Fri, 12 Jun 2020 11:08:53 -0400
+Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id E67C8100012;
+        Fri, 12 Jun 2020 15:08:44 +0000 (UTC)
+Date:   Fri, 12 Jun 2020 17:12:09 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        hien.dang.eb@renesas.com, michael.klein@renesas.com,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, uli+renesas@fpond.eu,
+        VenkataRajesh.Kalakodima@in.bosch.com, airlied@linux.ie,
+        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
+        Harsha.ManjulaMallikarjun@in.bosch.com, ezequiel@collabora.com,
+        seanpaul@chromium.org, linux-renesas-soc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        michael.dege@renesas.com, gotthard.voellmeke@renesas.com,
+        efriedrich@de.adit-jv.com, mrodin@de.adit-jv.com,
+        ChaitanyaKumar.Borah@in.bosch.com,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH v5 0/8] drm: rcar-du: Add Color Management Module (CMM)
+Message-ID: <20200612151209.xdaqimvpq7ysvu2q@uno.localdomain>
+References: <20191015104621.62514-1-jacopo+renesas@jmondi.org>
+ <20200527071555.GA23912@lxhi-065.adit-jv.com>
+ <20200605132900.on527xcggg6f6pil@uno.localdomain>
+ <20200605134124.GA28734@lxhi-065.adit-jv.com>
+ <20200605135315.xlph44pl7kvmt23a@uno.localdomain>
+ <20200607024158.GD7339@pendragon.ideasonboard.com>
+ <20200608094432.GA27063@lxhi-065.adit-jv.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <159197404151.14692.6822467369655232013.git-patchwork-housekeeping@kernel.org>
-Date:   Fri, 12 Jun 2020 15:00:41 +0000
-To:     linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200608094432.GA27063@lxhi-065.adit-jv.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v10] MAX9286 GMSL Support (+RDACM20) (2020-06-12T14:47:12)
-  Superseding: [v9] MAX9286 GMSL Support (+RDACM20) (2020-05-12T15:51:01):
-    [v9,1/4] dt-bindings: media: i2c: Add bindings for Maxim Integrated MAX9286
-    [v9,2/4] media: i2c: Add MAX9286 driver
-    [v9,3/4] dt-bindings: media: i2c: Add bindings for IMI RDACM2x
-    [v9,4/4] media: i2c: Add RDACM20 driver
+Hi Eugeniu
 
+On Mon, Jun 08, 2020 at 11:44:32AM +0200, Eugeniu Rosca wrote:
+> Hello,
+>
+> Many thanks for your comments and involvement.
+>
+> On Sun, Jun 07, 2020 at 05:41:58AM +0300, Laurent Pinchart wrote:
+> > On Fri, Jun 05, 2020 at 03:53:15PM +0200, Jacopo Mondi wrote:
+> > > On Fri, Jun 05, 2020 at 03:41:24PM +0200, Eugeniu Rosca wrote:
+> > > > On Fri, Jun 05, 2020 at 03:29:00PM +0200, Jacopo Mondi wrote:
+> > > >> On Wed, May 27, 2020 at 09:15:55AM +0200, Eugeniu Rosca wrote:
+> > > >>> Could you kindly share the cross compilation steps for your kmsxx fork?
+> > > >>
+> > > >> I usually build it on the target :)
+> > > >
+> > > > Interesting approach. With ARM getting more and more potent, why not? :)
+> > >
+> > > For 'small' utilities like kmsxx it's doable
+> > >
+> > > >>> Just out of curiosity, have you ever tried to pull the display's HDMI
+> > > >>> cable while reading from CM2_LUT_TBL?
+> > > >>
+> > > >> Ahem, not really :) Did I get you right, you mean disconnecting the
+> > > >> HDMI cable from the board ?
+> > > >
+> > > > Right.
+> > >
+> > > So, no, I have not tried. Do you see any intersting failure with the
+> > > mainline version ?
+> >
+> > Jacopo, would you be able to give this a try ?
+>
+> FWIW, I seem to hit pre-existing issues in vanilla rcar-du,
+> while unplugging HDMI cable during a cyclic suspend-resume:
+>
+> HW: H3 ES2.0 Salvator-X
+> SW: renesas-drivers-2020-06-02-v5.7
+> .config: renesas_defconfig +CONFIG_PM_DEBUG +CONFIG_PM_ADVANCED_DEBUG
+> Use-case:
+>
+>   --------8<---------
+> $ cat s2ram.sh
+> modprobe i2c-dev
+> echo 9 > /proc/sys/kernel/printk
+> i2cset -f -y 7 0x30 0x20 0x0F
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+According to
+https://elinux.org/R-Car/Boards/Salvator-X#Suspend-to-RAM
+this is not needed anymore
+
+> echo 0 > /sys/module/suspend/parameters/pm_test_delay
+> echo core  > /sys/power/pm_test
+> echo deep > /sys/power/mem_sleep
+> echo 1 > /sys/power/pm_debug_messages
+> echo 0 > /sys/power/pm_print_times
+> echo mem > /sys/power/state
+>
+> $ while true; do sh s2ram.sh ; done
+> $ # unplug HDMI cable several times
+
+I tried unplugging an plugging the cable while the system was
+suspended and after resume but I was not able to reproduce anything.
+
+Could you provide more precise instructions on how to reproduce this ?
+I.e. when to disconnect the cable to trigger the below error.
+
+Thanks
+  j
+
+>
+> [   55.568051] PM: noirq resume of devices complete after 3.862 msecs
+> [   55.583253] PM: early resume of devices complete after 8.496 msecs
+> [   65.757023] [drm:drm_atomic_helper_wait_for_flip_done] *ERROR* [CRTC:74:crtc-1] flip_done timed out
+> [   75.996123] [drm:drm_atomic_helper_wait_for_flip_done] *ERROR* [CRTC:74:crtc-1] flip_done timed out
+> [   86.236112] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CRTC:74:crtc-1] flip_done timed out
+> [   96.476111] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CONNECTOR:80:HDMI-A-1] flip_done timed out
+> [  106.716109] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [PLANE:45:plane-5] flip_done timed out
+> [  116.956111] [drm:drm_atomic_helper_wait_for_flip_done] *ERROR* [CRTC:74:crtc-1] flip_done timed out
+> [  127.196112] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CRTC:74:crtc-1] flip_done timed out
+> [  137.436116] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [CONNECTOR:80:HDMI-A-1] flip_done timed out
+> [  147.676111] [drm:drm_atomic_helper_wait_for_dependencies] *ERROR* [PLANE:45:plane-5] flip_done timed out
+> [  157.916110] [drm:drm_atomic_helper_wait_for_flip_done] *ERROR* [CRTC:74:crtc-1] flip_done timed out
+>   --------8<---------
+>
+> This looks to be unrelated to the CMM lockup I initially reported.
+>
+> JYI, graphics pipelines in production R-Car3 targets are significantly
+> more complex (involving binding/unbinding serializer ICs at runtime
+> during non-trivial shutdown/suspend/resume sequences), as opposed
+> to the relatively straightforward VGA/HDMI outputs present on the
+> reference targets. So, my hope is that Renesas community can take
+> HDMI hot plugging seriously and make it a regular test-case during
+> rcar-du patch review, since this is a precondition for the R-Car3
+> platform and products to succeed as a whole.
+>
+> BTW, if you happen to know an affordable programmable HDMI switcher
+> which can do the hot-plugging job in an automated test environment,
+> please let me know.
+>
+> >
+> > > >>> At least with the out-of-tree CMM implementation [*], this sends the
+> > > >>> R-Car3 reference targets into an unrecoverable freeze, with no lockup
+> > > >>> reported by the kernel (i.e. looks like an serious HW issue).
+> > > >>>
+> > > >>>> CMM functionalities are retained between suspend/resume cycles (tested with
+> > > >>>> suspend-to-idle) without requiring a re-programming of the LUT tables.
+> > > >>>
+> > > >>> Hmm. Is this backed up by any statement in the HW User's manual?
+> > > >>> This comes in contrast with the original Renesas CMM implementation [**]
+> > > >>> which does make use of suspend (where the freeze actually happens).
+> > > >>>
+> > > >>> Can we infer, based on your statement, that we could also get rid of
+> > > >>> the suspend callback in [**]?
+> > > >>
+> > > >> As Geert (thanks) explained what I've tested with is suspend-to-idle,
+> > > >> which retains the state of the LUT tables (and I assume other
+> > > >> not-yet-implemented CMM features, like CLU). I recall the out-of-tree
+> > > >> driver has suspend/resume routines but I never really tested that.
+> > > >
+> > > > I see. JFYI, there is a flaw in the suspend handling in the out-of-tree
+> > > > CMM patch [*], which renders the SoC unresponsive on HDMI hotplug. The
+> > > > fix is currently under review. Hopefully it will make its way to [*]
+> > > > in the nearest future. Just to keep in mind for the moment when CMM
+> > > > s2ram will become a mainline feature.
+> > >
+> > > Thanks, let's keep this in mind. Next week I'll run a few tests again
+> > > with s2ram and will get back to you.
+> >
+> > Note that the CMM driver is controlled by the DU driver. As the DU
+> > driver will reenable the display during resume, it will call
+> > rcar_du_cmm_setup() at resume time, which will reprogram the CMM. There
+> > should thus be no need for manual suspend/resume handling in the CMM as
+> > far as I can tell, but we need to ensure that the CMM is suspended
+> > before and resumed after the DU. I believe this could be implemented
+> > using device links.
+>
+> Does this apply to vanilla rcar-du only (where CMM support differs
+> from [*]) or would also be relevant for rcar.9.6 kernel?
+>
+> >
+> > > >>> [*] https://github.com/renesas-rcar/du_cmm
+> > > >>> [**] https://github.com/renesas-rcar/du_cmm/blob/c393ed49834bdbc/meta-rcar-gen3/recipes-kernel/linux/linux-renesas/0001-drm-rcar-du-Add-DU-CMM-support.patch#L1912
+>
+> --
+> Best regards,
+> Eugeniu Rosca
