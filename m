@@ -2,121 +2,113 @@ Return-Path: <SRS0=6/Uc=7Z=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63578C433E5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 14:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D304FC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 14:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 44B7920888
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 14:48:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JUrEayeG"
+	by mail.kernel.org (Postfix) with ESMTP id B5EDB20835
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Jun 2020 14:57:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726392AbgFLOrV (ORCPT
+        id S1726286AbgFLO5T (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 12 Jun 2020 10:47:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58686 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbgFLOrU (ORCPT
+        Fri, 12 Jun 2020 10:57:19 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:49809 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbgFLO5T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Jun 2020 10:47:20 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 865FAC03E96F;
-        Fri, 12 Jun 2020 07:47:20 -0700 (PDT)
-Received: from Q.local (cpc89242-aztw30-2-0-cust488.18-1.cable.virginm.net [86.31.129.233])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id C38E924F;
-        Fri, 12 Jun 2020 16:47:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1591973238;
-        bh=uU2xQmtH42tW6IeH3dGPC0lnUtMW5Hht2lqVT2Xjgz4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JUrEayeG7tbFE0EaqcSKTcecMDVLls8Vl7ypODt5Ph1HOtNgfrQ1Zmg1qSwHLRPqh
-         kgIq1pd3nDQVwWbcFRnWnH049/v3J4k+xQ6QU6ImcPQiwLax0fDUjtIR2/1YEIJQLJ
-         ZEhpP4JcSnMVu8Q4167QaYmuGVgCiu8KZ/WMAlz0=
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        sakari.ailus@iki.fi
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Hyun Kwon <hyunk@xilinx.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v10 0/4] MAX9286 GMSL Support (+RDACM20)
-Date:   Fri, 12 Jun 2020 15:47:09 +0100
-Message-Id: <20200612144713.502006-1-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 12 Jun 2020 10:57:19 -0400
+Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 9DDD9100009;
+        Fri, 12 Jun 2020 14:57:08 +0000 (UTC)
+Date:   Fri, 12 Jun 2020 17:00:32 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham+renesas@ideasonboard.com, geert@linux-m68k.org,
+        horms@verge.net.au, uli+renesas@fpond.eu,
+        VenkataRajesh.Kalakodima@in.bosch.com, airlied@linux.ie,
+        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
+        Harsha.ManjulaMallikarjun@in.bosch.com, ezequiel@collabora.com,
+        seanpaul@chromium.org, linux-renesas-soc@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        michael.dege@renesas.com, gotthard.voellmeke@renesas.com,
+        efriedrich@de.adit-jv.com, mrodin@de.adit-jv.com,
+        ChaitanyaKumar.Borah@in.bosch.com,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH v5 0/8] drm: rcar-du: Add Color Management Module (CMM)
+Message-ID: <20200612150032.pnqaqip54qfrbqst@uno.localdomain>
+References: <20191015104621.62514-1-jacopo+renesas@jmondi.org>
+ <20200527071555.GA23912@lxhi-065.adit-jv.com>
+ <20200605132900.on527xcggg6f6pil@uno.localdomain>
+ <20200605134124.GA28734@lxhi-065.adit-jv.com>
+ <20200605135315.xlph44pl7kvmt23a@uno.localdomain>
+ <20200607024158.GD7339@pendragon.ideasonboard.com>
+ <20200609142959.GA621@lxhi-065.adit-jv.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200609142959.GA621@lxhi-065.adit-jv.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This series provides a pair of drivers for the GMSL cameras on the R-Car ADAS
-platforms.
+Hi Eugeniu,
 
-These drivers originate from Cogent Embedded, and have been refactored to split
-the MAX9286 away from the RDACM20 drivers which were once very tightly coupled.
+On Tue, Jun 09, 2020 at 04:29:59PM +0200, Eugeniu Rosca wrote:
+> Hi Laurent,
+>
+> On Sun, Jun 07, 2020 at 05:41:58AM +0300, Laurent Pinchart wrote:
+> > Note that the CMM driver is controlled by the DU driver. As the DU
+> > driver will reenable the display during resume, it will call
+> > rcar_du_cmm_setup() at resume time, which will reprogram the CMM. There
+> > should thus be no need for manual suspend/resume handling in the CMM as
+> > far as I can tell, but we need to ensure that the CMM is suspended
+> > before and resumed after the DU. I believe this could be implemented
+> > using device links.
+>
+> Based on below quote [*] from Jacopo's commit [**], isn't the device
+> link relationship already in place?
 
-The MAX9286 is capable of capturing up to 4 streams simultaneously, and while
-the V4L2-Multiplexed streams series is not available, this works purely on the
-assumption that the receiver will correctly map each of the 4 VCs to separate
-video nodes, as the RCar-VIN does.
+Yes, it's in place already.
 
-This driver along with a camera driver for the RDACM20 and the
-associated platform support for the Renesas R-Car Salvator-X, and the Eagle-V3M
-can be found at:
+I added pm_ops to cmm just to be able to printout when suspend/resume
+happens and the sequence is what comment [*] reports
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git gmsl/v10
+[  222.909002] rcar_du_pm_suspend:505
+[  223.145497] rcar_cmm_pm_suspend:193
 
-This latest v10 cleans up the DT bindings validation, and several comments
-from Sakari's review in v9.
+[  223.208053] rcar_cmm_pm_resume:200
+[  223.460094] rcar_du_pm_resume:513
 
-It has been successfully tested to capture from all 4 inputs simultaneously.
+However, Laurent mentioned that in his comment here that he expects
+the opposite sequence to happen (CMM to suspend before and resume after
+DU).
 
-We're very much hoping that we can aim to get the max9286 into the next
-merge-window. Please let us know if there are any issues blocking this.
+I still think what is implemented is correct:
+- CMM is suspended after DU: when CMM is suspended, DU is not feeding
+  it with data
+- CMM is resumed before: once DU restart operations CMM is ready to
+  receive data.
 
-Jacopo Mondi (2):
-  dt-bindings: media: i2c: Add bindings for IMI RDACM2x
-  media: i2c: Add RDACM20 driver
+Laurent, what do you think ?
 
-Kieran Bingham (1):
-  media: i2c: Add MAX9286 driver
+Thanks
+  j
 
-Laurent Pinchart (1):
-  dt-bindings: media: i2c: Add bindings for Maxim Integrated MAX9286
-
- .../bindings/media/i2c/imi,rdacm2x-gmsl.yaml  |  159 ++
- .../bindings/media/i2c/maxim,max9286.yaml     |  366 +++++
- .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
- MAINTAINERS                                   |   22 +
- drivers/media/i2c/Kconfig                     |   26 +
- drivers/media/i2c/Makefile                    |    3 +
- drivers/media/i2c/max9271.c                   |  341 +++++
- drivers/media/i2c/max9271.h                   |  224 +++
- drivers/media/i2c/max9286.c                   | 1320 +++++++++++++++++
- drivers/media/i2c/rdacm20.c                   |  667 +++++++++
- 10 files changed, 3130 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/media/i2c/imi,rdacm2x-gmsl.yaml
- create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
- create mode 100644 drivers/media/i2c/max9271.c
- create mode 100644 drivers/media/i2c/max9271.h
- create mode 100644 drivers/media/i2c/max9286.c
- create mode 100644 drivers/media/i2c/rdacm20.c
-
--- 
-2.25.1
-
+>
+> [*] Quote from commit [**]
+>    Enforce the probe and suspend/resume ordering of DU and CMM by
+>    creating a stateless device link between the two.
+>
+> [**] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8de707aeb45241
+>     ("drm: rcar-du: kms: Initialize CMM instances")
+>
+> --
+> Best regards,
+> Eugeniu Rosca
