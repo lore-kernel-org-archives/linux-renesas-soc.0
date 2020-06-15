@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E095C433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F1BC433E2
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jun 2020 18:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07E102080D
+	by mail.kernel.org (Postfix) with ESMTP id 2A08720810
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jun 2020 18:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbgFOSOi (ORCPT
+        id S1728585AbgFOSOj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Jun 2020 14:14:38 -0400
-Received: from mga03.intel.com ([134.134.136.65]:59358 "EHLO mga03.intel.com"
+        Mon, 15 Jun 2020 14:14:39 -0400
+Received: from mga06.intel.com ([134.134.136.31]:38081 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728585AbgFOSOh (ORCPT
+        id S1731260AbgFOSOi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Jun 2020 14:14:37 -0400
-IronPort-SDR: 7ALcQusOPHpuezpAx9WxCp3PK7at4uRBvg/RG6Pg9TGgXye1tTzM2J/F8jlvfNLMXi33OG6GIr
- FGHZl4IcZ2pw==
+        Mon, 15 Jun 2020 14:14:38 -0400
+IronPort-SDR: PKEs/+NFmUEo1kjNBRY2dKxM6dAO9KK4CeHUv+qNpUkmAQupu6esbkucD/FOu5Q862HAlvFUhK
+ Z9YrhhYHkmcA==
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2020 11:14:35 -0700
-IronPort-SDR: eIGqMOke+sB05Tmoeoj20Be7UaI6IkZ44V2aMorfIoy1ZwqxFxcPKCvMKK1YLyEfTn70WWXE/G
- JpmEm1N9RO4w==
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2020 11:14:35 -0700
+IronPort-SDR: JahT+rLFsIlKDwyIzlwiHAhjkCqrHU3Ws6zc4SLgiuNsrRsRl2+5jPuyqLDitoPIuIov542qPt
+ XcuOSoXpNnmw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.73,515,1583222400"; 
-   d="scan'208";a="449491218"
+   d="scan'208";a="261174396"
 Received: from lkp-server02.sh.intel.com (HELO ec7aa6149bd9) ([10.239.97.151])
-  by orsmga005.jf.intel.com with ESMTP; 15 Jun 2020 11:14:33 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 15 Jun 2020 11:14:34 -0700
 Received: from kbuild by ec7aa6149bd9 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1jktcv-00008W-9Z; Mon, 15 Jun 2020 18:14:33 +0000
-Date:   Tue, 16 Jun 2020 02:13:47 +0800
+        id 1jktcv-00008d-Aa; Mon, 15 Jun 2020 18:14:33 +0000
+Date:   Tue, 16 Jun 2020 02:13:50 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:master] BUILD SUCCESS
- 1d410b477c547056d7111264f5ef45068820ac78
-Message-ID: <5ee7ba5b.ON85fZDQLQC/7JPV%lkp@intel.com>
+Subject: [renesas-devel:next] BUILD SUCCESS
+ a3fa35e196507a46f19cfa096e0681c4531e133a
+Message-ID: <5ee7ba5e.mK+RNLjFIbDZA3F0%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,13 +52,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
-branch HEAD: 1d410b477c547056d7111264f5ef45068820ac78  Merge branch 'renesas-next' into renesas-devel
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  next
+branch HEAD: a3fa35e196507a46f19cfa096e0681c4531e133a  Merge branch 'renesas-arm-dt-for-v5.9' into renesas-next
 
 elapsed time: 481m
 
-configs tested: 108
-configs skipped: 2
+configs tested: 102
+configs skipped: 100
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -71,16 +71,11 @@ arm64                            allyesconfig
 arm64                               defconfig
 arm64                            allmodconfig
 arm64                             allnoconfig
-sh                   secureedge5410_defconfig
-mips                       capcella_defconfig
-sparc64                          alldefconfig
-arm                         s3c2410_defconfig
-arc                          axs103_defconfig
-mips                           ip28_defconfig
-mips                           ip27_defconfig
-c6x                        evmc6678_defconfig
-arm                       netwinder_defconfig
-sh                           se7721_defconfig
+arm                             pxa_defconfig
+um                           x86_64_defconfig
+mips                      pic32mzda_defconfig
+arm                       versatile_defconfig
+ia64                      gensparse_defconfig
 i386                              allnoconfig
 i386                             allyesconfig
 i386                                defconfig
@@ -159,10 +154,9 @@ sparc64                             defconfig
 sparc64                           allnoconfig
 sparc64                          allyesconfig
 sparc64                          allmodconfig
-um                               allmodconfig
 um                                allnoconfig
 um                                  defconfig
-um                               allyesconfig
+um                               allmodconfig
 x86_64                               rhel-7.6
 x86_64                    rhel-7.6-kselftests
 x86_64                               rhel-8.3
