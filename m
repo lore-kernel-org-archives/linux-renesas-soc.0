@@ -6,82 +6,78 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A090DC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jun 2020 23:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59145C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jun 2020 23:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 841ED2080D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jun 2020 23:41:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B8ED208FE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Jun 2020 23:41:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592264491;
-	bh=4B3zxx0t4t/cAMnTcb1CgWAE+WyO6z4UCRqXbi4xzFg=;
+	s=default; t=1592264494;
+	bh=N1Ij/usB8zQH3UBOLC7sOuqSq5QNpKZThVTtUkokQlU=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:List-ID:From;
-	b=nC3+7HADOAu9KfhYYzxSn19Xve9M9eBamrbkmwpwRwUfHfd4YfvE21akhc6In+I8v
-	 S2rLYu7ybq/vysfwo5SK882fFlNgdCDaIUvMFWUo8818KqR8BmRs8pH4kagjh9xBgM
-	 IA0hV5x9RZI50ZIAlgmBARd/riZCfMg/jufJ/yZ4=
+	b=CokmJvN5n16aV1KZamTXWdpOe02c3V3F3F1BlyCuaODSSQYuiX8sBx/ln0GLQLgWA
+	 cbKZmsvP0Y8yRxaZfD2NZmc9ZRcmUFK3HtwugRHr40Mou33mxeO/iFK7lYIXIlInOT
+	 FrB0PTim5RgIqCSGDv8o5xoKh1Xmdxw+J9OZZqnw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727054AbgFOXlU (ORCPT
+        id S1726847AbgFOXld (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Jun 2020 19:41:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54060 "EHLO mail.kernel.org"
+        Mon, 15 Jun 2020 19:41:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725960AbgFOXlR (ORCPT
+        id S1726546AbgFOXld (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Jun 2020 19:41:17 -0400
+        Mon, 15 Jun 2020 19:41:33 -0400
 Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B32D20714;
-        Mon, 15 Jun 2020 23:41:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54BD52080D;
+        Mon, 15 Jun 2020 23:41:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592264477;
-        bh=4B3zxx0t4t/cAMnTcb1CgWAE+WyO6z4UCRqXbi4xzFg=;
+        s=default; t=1592264492;
+        bh=N1Ij/usB8zQH3UBOLC7sOuqSq5QNpKZThVTtUkokQlU=;
         h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-        b=AxBMUE88327gyD7AWPGhve+Wh8ybmWBfw1Vr5OWesrVIVG7NxKRQswpbnAXtofFbO
-         sLu3+N4jgXfA/ewD0/dj0zcDJeqxyFwsdjQymufuXtNvL6JVXHeVeKRAOTHmv+8yXX
-         grzN41FYi/g6IrCDmey/eZzzF6h2ijQ5jvrYbNpA=
-Date:   Tue, 16 Jun 2020 00:41:15 +0100
+        b=kvFwLRFSbEs5scz61K7kuHQL196g5fyYJPoHYLKA+b/8sSSzZW+z0JTFrUwPYQ1it
+         l3zXX3FSQv2cQ6/9Dep7/KG1wkUqiJU5uF4WKW7zYSwH//iofye5WkOtT7cxxx+D0J
+         NMiwC4OSbciUwPUuyr3j0oBN/0W+xSoNk9tlvl6c=
+Date:   Tue, 16 Jun 2020 00:41:30 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     linux-gpio@vger.kernel.org, ath10k@lists.infradead.org,
-        linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        linux-scsi@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-rdma@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20200609124610.3445662-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20200609124610.3445662-1-kieran.bingham+renesas@ideasonboard.com>
-Subject: Re: [PATCH 00/17] spelling.txt: /decriptors/descriptors/
-Message-Id: <159226447507.27673.16785893373246037922.b4-ty@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org
+In-Reply-To: <1591736054-568-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <1591736054-568-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 0/2] Add MSIOF support for R8A7742 SOC
+Message-Id: <159226448569.27735.1827248945903303044.b4-ty@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, 9 Jun 2020 13:45:53 +0100, Kieran Bingham wrote:
-> I wouldn't normally go through spelling fixes, but I caught sight of
-> this typo twice, and then foolishly grepped the tree for it, and saw how
-> pervasive it was.
+On Tue, 9 Jun 2020 21:54:12 +0100, Lad Prabhakar wrote:
+> This patch series adds support for MSIOF on R8A7742 SOC.
 > 
-> so here I am ... fixing a typo globally... but with an addition in
-> scripts/spelling.txt so it shouldn't re-appear ;-)
+> Cheers,
+> Prabhakar
+> 
+> Lad Prabhakar (2):
+>   dt-bindings: spi: renesas,sh-msiof: Add r8a7742 support
+>   ARM: dts: r8a7742: Add MSIOF[0123] support
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/2] regulator: Fix trivial spelling
-      commit: d3f3723387f97118c337689fc73e4199fb4331ce
-[2/2] regulator: gpio: Fix trivial spelling
-      commit: 1f0b740004f09d2f1b716fd6c2fdca81004ded05
+[1/1] spi: renesas,sh-msiof: Add r8a7742 support
+      commit: 6383b118efafff8cce8fc8fa5b7e893a523b698f
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
