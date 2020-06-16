@@ -2,109 +2,114 @@ Return-Path: <SRS0=vXxs=75=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DB2C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jun 2020 16:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F87FC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jun 2020 16:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFE542075E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jun 2020 16:29:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="BPX2NBTL"
+	by mail.kernel.org (Postfix) with ESMTP id 57DC22098B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jun 2020 16:55:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592326556;
+	bh=yKr5wwutWeyD3jubWBBo/Tas2qiPPBydjljqL+ty00U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GdoUKH/XSJfXa8frtSa7TOtJrRek8tvPopebZNxi3uVyoCfQ2WPQSW3EpaeMU5LCj
+	 TAY+2GoEldnqJqKc/9YvDCzYn+kixCwP6soJIr1wWvwho+fzIFqAv4YEid/syfRI7h
+	 o/MYYfyqNXD1WZ+OTM1y3MgursTWZ7KD4Ev/TB7U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730786AbgFPQ3k (ORCPT
+        id S1729578AbgFPQz4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Jun 2020 12:29:40 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.52]:27423 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729167AbgFPQ3j (ORCPT
+        Tue, 16 Jun 2020 12:55:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49976 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728928AbgFPQzz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Jun 2020 12:29:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1592324977;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=5rLze8ETBM66W9eUWsBWbpRpC1OnX9lhrFGmWOBpeY8=;
-        b=BPX2NBTLqBFt0zn3h+xmE6WkrjVt1s4Uk8KbAxJTx9tmGCdr7fo6PkxzwsFDCrcXxG
-        Ijdjckfv2kRA9X+Vvnu8vDFPqZeIrkHKgNKsi/64gy3Sp2r2wxWkRc32jNW9dwH23ZGO
-        VCwxsiwb/m4btnj7uWWytRgpkRR05lkfqn/c07lPs5Lcqbbbv9s/swgf6TBkr0mlKzdb
-        vFOOFQEcEEWLDzxVEMQUrMCeGosZW1kuDZloEzWx5ns4co+/xa6ujlepIL9wxayzOZPw
-        kybGksqPfodlhojOHRelPcw1/20SVqqAENED9//P2O9Y3pNy4pn2ZPKTHwp/aCbcpU+b
-        75xw==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR8WdEaEuFwQ=="
-X-RZG-CLASS-ID: mo00
-Received: from groucho.site
-        by smtp.strato.de (RZmta 46.10.4 DYNA|AUTH)
-        with ESMTPSA id a0ab6bw5GGQbFwS
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Tue, 16 Jun 2020 18:26:37 +0200 (CEST)
-From:   Ulrich Hecht <uli+renesas@fpond.eu>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org, wsa@the-dreams.de, geert@linux-m68k.org,
-        magnus.damm@gmail.com, Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH v4 1/3] clk: renesas: cpg-mssr: mark clocks as critical only if on at boot
-Date:   Tue, 16 Jun 2020 18:26:24 +0200
-Message-Id: <20200616162626.27944-2-uli+renesas@fpond.eu>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200616162626.27944-1-uli+renesas@fpond.eu>
-References: <20200616162626.27944-1-uli+renesas@fpond.eu>
+        Tue, 16 Jun 2020 12:55:55 -0400
+Received: from localhost (unknown [171.61.66.58])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 542F9208E4;
+        Tue, 16 Jun 2020 16:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592326555;
+        bh=yKr5wwutWeyD3jubWBBo/Tas2qiPPBydjljqL+ty00U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=suSvvi7UEgk7SHH3CDiT9fDfcZkrta8DfsVoYixnnZSWh4FovZpdkOIKLGf7/WET6
+         MqoIWN8gpYEago792XBC2Lg+Zlhj7OynR+Lx2+zHHmYitDLieLZfncOjLdLRuMkkH+
+         N1Ihtd+UUsTbX5KITGBLYq5Lo4b3iS4CyBE+qIdg=
+Date:   Tue, 16 Jun 2020 22:25:50 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     dmaengine@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dma: sh: usb-dmac: Fix residue after the commit
+ 24461d9792c2
+Message-ID: <20200616165550.GP2324254@vkoul-mobl>
+References: <1590061573-12576-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1590061573-12576-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This allows us to add the RWDT clock to the list of critical clocks without
-keeping it enabled needlessly if not used.
+On 21-05-20, 20:46, Yoshihiro Shimoda wrote:
+> This driver assumed that freed descriptors have "done_cookie".
+> But, after the commit 24461d9792c2 ("dmaengine: virt-dma: Fix
+> access after free in vchan_complete()"), since the desc is freed
+> after callback function was called, this driver could not
+> match any done_cookie when a client driver (renesas_usbhs driver)
+> calls dmaengine_tx_status() in the callback function.
 
-Changing the semantics of crit_mod_clks in this way is safe for the current
-user (INTC-AP) because it is never off at boot time.
+Hmmm, I am not sure about this, why should we try to match! cookie is
+monotonically increasing number so if you see that current cookie
+completed is > requested you should return DMA_COMPLETE
 
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
----
- drivers/clk/renesas/renesas-cpg-mssr.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+The below case of checking residue should not even get executed
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index dcb6e2706d37..4648a829db66 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -416,14 +416,6 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
- 	init.name = mod->name;
- 	init.ops = &cpg_mstp_clock_ops;
- 	init.flags = CLK_SET_RATE_PARENT;
--	for (i = 0; i < info->num_crit_mod_clks; i++)
--		if (id == info->crit_mod_clks[i]) {
--			dev_dbg(dev, "MSTP %s setting CLK_IS_CRITICAL\n",
--				mod->name);
--			init.flags |= CLK_IS_CRITICAL;
--			break;
--		}
--
- 	parent_name = __clk_get_name(parent);
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
-@@ -432,6 +424,15 @@ static void __init cpg_mssr_register_mod_clk(const struct mssr_mod_clk *mod,
- 	clock->priv = priv;
- 	clock->hw.init = &init;
- 
-+	for (i = 0; i < info->num_crit_mod_clks; i++)
-+		if (id == info->crit_mod_clks[i] &&
-+		    cpg_mstp_clock_is_enabled(&clock->hw)) {
-+			dev_dbg(dev, "MSTP %s setting CLK_IS_CRITICAL\n",
-+				mod->name);
-+			init.flags |= CLK_IS_CRITICAL;
-+			break;
-+		}
-+
- 	clk = clk_register(NULL, &clock->hw);
- 	if (IS_ERR(clk))
- 		goto fail;
+> So, add to check both descriptor types (freed and got) to fix
+> the issue.
+> 
+> Reported-by: Hien Dang <hien.dang.eb@renesas.com>
+> Fixes: 24461d9792c2 ("dmaengine: virt-dma: Fix access after free in vchan_complete()")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/dma/sh/usb-dmac.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
+> index b218a01..c0adc1c8 100644
+> --- a/drivers/dma/sh/usb-dmac.c
+> +++ b/drivers/dma/sh/usb-dmac.c
+> @@ -488,16 +488,17 @@ static u32 usb_dmac_chan_get_residue_if_complete(struct usb_dmac_chan *chan,
+>  						 dma_cookie_t cookie)
+>  {
+>  	struct usb_dmac_desc *desc;
+> -	u32 residue = 0;
+>  
+> +	list_for_each_entry_reverse(desc, &chan->desc_got, node) {
+> +		if (desc->done_cookie == cookie)
+> +			return desc->residue;
+> +	}
+>  	list_for_each_entry_reverse(desc, &chan->desc_freed, node) {
+> -		if (desc->done_cookie == cookie) {
+> -			residue = desc->residue;
+> -			break;
+> -		}
+> +		if (desc->done_cookie == cookie)
+> +			return desc->residue;
+>  	}
+>  
+> -	return residue;
+> +	return 0;
+>  }
+>  
+>  static u32 usb_dmac_chan_get_residue(struct usb_dmac_chan *chan,
+> -- 
+> 2.7.4
+
 -- 
-2.20.1
-
+~Vinod
