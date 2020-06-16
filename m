@@ -2,107 +2,64 @@ Return-Path: <SRS0=vXxs=75=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C94CAC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jun 2020 14:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A28C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jun 2020 14:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A68AF206F1
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jun 2020 14:10:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 563DF20786
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Jun 2020 14:20:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592317240;
+	bh=s4TUl0nLYF0VoX5QEiTbb5nn76AFoAtT0p/ptlvFZv8=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=0++R22hxoZLiGvBtayMLvLjDAh5k2y0cVEXHun27KOSzhODNpuKOd828swhrIvBoH
+	 8CI7iWOfkXNZ5SRZyrOb8JDixDzWcrVbKYOlyiaBINfq/x6+njyMIHFdv0KpYGIdi1
+	 3C7Sfv/l4tW7Nj24D+0RmogEgu9obZuKpU11qCOE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729576AbgFPOJ4 (ORCPT
+        id S1726692AbgFPOUk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Jun 2020 10:09:56 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:40043 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728947AbgFPOJz (ORCPT
+        Tue, 16 Jun 2020 10:20:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50826 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726526AbgFPOUk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Jun 2020 10:09:55 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 59354E0004;
-        Tue, 16 Jun 2020 14:09:51 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        niklas.soderlund+renesas@ragnatech.se,
-        kieran.bingham@ideasonboard.com, dave.stevenson@raspberrypi.com,
-        hyun.kwon@xilinx.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 08/10] media: i2c: adv748x: Implement get_mbus_config
-Date:   Tue, 16 Jun 2020 16:12:43 +0200
-Message-Id: <20200616141244.49407-9-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200616141244.49407-1-jacopo+renesas@jmondi.org>
-References: <20200616141244.49407-1-jacopo+renesas@jmondi.org>
+        Tue, 16 Jun 2020 10:20:40 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592317239;
+        bh=s4TUl0nLYF0VoX5QEiTbb5nn76AFoAtT0p/ptlvFZv8=;
+        h=Subject:From:Date:To:From;
+        b=GT2R5m+nL/vj7pdPpacL+vfTI8joGixk55nqoLOAzlAVXpQ0JruyPa0hQkTFKtZJX
+         HMMDmASMw3LPjs8wWMYx1Q3LPEhEqt8yQMhOsaG5cPpU+zmynuHpiQWgYQOohj0eKi
+         qDmg22qX7tXCj4oYl0E1EwwvSObTNn2g/nzA9Jto=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <159231723968.30726.1143815980353210274.git-patchwork-housekeeping@kernel.org>
+Date:   Tue, 16 Jun 2020 14:20:39 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Implement the newly introduced get_mbus_config operation to report the
-number of currently used data lanes on the MIPI CSI-2 interface.
+Latest series: [v5] v4l2-subdev: Introduce [g|s]et_mbus_format pad op (2020-06-16T14:12:35)
+  Superseding: [v4] v4l2-subdev: Introduce [g|s]et_mbus_format pad op (2020-06-11T16:16:42):
+    [v4,1/9] media: v4l2-subdv: Introduce [get|set]_mbus_config pad ops
+    [v4,2/9] media: i2c: Use the new get_mbus_config pad op
+    [v4,3/9] media: i2c: ov6650: Use new [get|set]_mbus_config ops
+    [v4,4/9] media: pxa_camera: Use the new set_mbus_config op
+    [v4,5/9] media: v4l2-subdev: Remove [s|g]_mbus_config video ops
+    [v4,6/9] staging: media: imx: Update TODO entry
+    [v4,7/9] media: i2c: adv748x: Adjust TXA data lanes number
+    [v4,8/9] media: i2c: adv748x: Implement get_mbus_config
+    [v4,9/9] media: rcar-csi2: Negotiate data lanes number
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/i2c/adv748x/adv748x-csi2.c | 31 ++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 2091cda50935..99bb63d05eef 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -214,9 +214,40 @@ static int adv748x_csi2_set_format(struct v4l2_subdev *sd,
- 	return ret;
- }
- 
-+static int adv748x_csi2_get_mbus_config(struct v4l2_subdev *sd, unsigned int pad,
-+					struct v4l2_mbus_config *config)
-+{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+
-+	if (pad != ADV748X_CSI2_SOURCE)
-+		return -EINVAL;
-+
-+	config->type = V4L2_MBUS_CSI2_DPHY;
-+	switch (tx->active_lanes) {
-+	case 1:
-+		config->flags = V4L2_MBUS_CSI2_1_LANE;
-+		break;
-+
-+	case 2:
-+		config->flags = V4L2_MBUS_CSI2_2_LANE;
-+		break;
-+
-+	case 3:
-+		config->flags = V4L2_MBUS_CSI2_3_LANE;
-+		break;
-+
-+	case 4:
-+		config->flags = V4L2_MBUS_CSI2_4_LANE;
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
- 	.get_fmt = adv748x_csi2_get_format,
- 	.set_fmt = adv748x_csi2_set_format,
-+	.get_mbus_config = adv748x_csi2_get_mbus_config,
- };
- 
- /* -----------------------------------------------------------------------------
 -- 
-2.27.0
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
