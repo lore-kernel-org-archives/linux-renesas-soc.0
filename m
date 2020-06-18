@@ -2,176 +2,132 @@ Return-Path: <SRS0=2rCm=77=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DD39C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Jun 2020 00:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E95E4C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Jun 2020 02:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBE7F21924
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Jun 2020 00:56:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="qaQdl4xP"
+	by mail.kernel.org (Postfix) with ESMTP id C45312220E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Jun 2020 02:02:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592445730;
+	bh=UkXyf9kYBQIkJQA4Uae3t8gTA4YWOmQvIdILmgIUKZs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=WLN5312bjsc6BDtY8ZMUEDVXt0DtO5GCGeJqJ+NcP/g2vxsW/y0uC6rkicJsLSzlJ
+	 YoH/yPFVCrb/qnoZBGIa1QSVT0JFdZ+kNalGXWT/2M0PAw5H7VN4qvMlWgmVdXkD9o
+	 QQ38YHRIWkHqankPO2uQO0v7CHSppEWpNhmijaFM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbgFRA4G (ORCPT
+        id S1733257AbgFRCB7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 17 Jun 2020 20:56:06 -0400
-Received: from mail-eopbgr1310109.outbound.protection.outlook.com ([40.107.131.109]:50176
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726893AbgFRA4G (ORCPT
+        Wed, 17 Jun 2020 22:01:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58234 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731114AbgFRBYB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jun 2020 20:56:06 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VGupuI8XKysuHhT3vynODNFd96KjqfRwyceCY8P/OLteAqYY0sCIetq5/DK4Z7TOXtXfxIpcwNJs5omDJiXi3HcQaSbpYrTlcAhxBg/BIjY89DUUstJv/FrbTwNe4/7Et9b1YtnQLl6lPwFw0vBvVdUXX5jimjSOiSkIBvRDBEY0JBDbxVZkrrUw0Jy4nfI/qWDdnkcajy+EOM0WMj+FmWJ9DqTigmg/76kxoKWqr1YkRNeo8DGFx2U2YZeeVtTkJmf8SmJkz7J+hhu1JnXwyfdrjeh/44A7d0Y/7M95VHvWzXG6pHWEIwirA1HgzrOb/j0UAJ8QQgPLiP6LITJD0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5JM/LHZsnYmOEuh1YZwQbw90FKmlEIQl5NiDJXxm96w=;
- b=VaUcrhmaIhD1Mmg1eKMrxAKBFRqGhh5PlsmiuYb0bqPRxO0fhRpp3H+kU3O93GduQIsT7Ud10hft5zT/QAiIcCYykRzCqk1cWCKd8T2NQb+EkdNbKihePzEzP/uRcjW6hZ/k9NoO498twItT7UsfSi9DyAyR/vme08wrBj/+Fwe4QAju6mqTidurZaRgo9PMe9GbZKbnbtZrAdbfOsXAaJ4BKHQ7rZMQeA/WZM0XYX7crohUJy+1EMxTWWqA4KlpV5Kk2vbh2o0t3Hmg217SLttQj61zhMUYdvm/Qn7ryQNueO4/6gX53Ll1i00Snk+ucOo8W+B6Vt6eWoLEWtJQug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5JM/LHZsnYmOEuh1YZwQbw90FKmlEIQl5NiDJXxm96w=;
- b=qaQdl4xPo+umXKg362TKT4t2tUOY3s8NMOB4qGDStCJG4dEY7DxcswPpI8Ydk6SREJlMyixL4tdgt1838SiCEZVBBjmK1mvBrwSYlwwIpYfCSIPmFDgjkafnaQVo56fJkOKCDbM3BgA/SznubB/ckNfWlIE1jskv7VRKKcRGfAY=
-Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com (2603:1096:404:d5::22)
- by TY2PR01MB4603.jpnprd01.prod.outlook.com (2603:1096:404:10f::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3109.22; Thu, 18 Jun
- 2020 00:56:01 +0000
-Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com
- ([fe80::2da1:bdb7:9089:7f43]) by TY2PR01MB3692.jpnprd01.prod.outlook.com
- ([fe80::2da1:bdb7:9089:7f43%3]) with mapi id 15.20.3109.021; Thu, 18 Jun 2020
- 00:56:01 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Vinod Koul <vkoul@kernel.org>
-CC:     "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] dma: sh: usb-dmac: Fix residue after the commit
- 24461d9792c2
-Thread-Topic: [PATCH] dma: sh: usb-dmac: Fix residue after the commit
- 24461d9792c2
-Thread-Index: AQHWL2V2RkH5colCb0+zPor5o0eqOajbny8AgAIVYeA=
-Date:   Thu, 18 Jun 2020 00:56:01 +0000
-Message-ID: <TY2PR01MB3692283C5F3695033D20A7AFD89B0@TY2PR01MB3692.jpnprd01.prod.outlook.com>
-References: <1590061573-12576-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20200616165550.GP2324254@vkoul-mobl>
-In-Reply-To: <20200616165550.GP2324254@vkoul-mobl>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=renesas.com;
-x-originating-ip: [124.210.22.195]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 719b806d-a21a-4c6b-fe5b-08d813225ed3
-x-ms-traffictypediagnostic: TY2PR01MB4603:
-x-microsoft-antispam-prvs: <TY2PR01MB46037162E609B90D41806BE6D89B0@TY2PR01MB4603.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:411;
-x-forefront-prvs: 0438F90F17
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: JrIyl1Je40WKwvPAqkbXASVrtfmhVIqxVwmmnlb6Fwv1pq4lYx+nG7mp2DYgQb1buUNP+QvH63dHqSONMSBgrcXLRzmWEjxBK5GmX0bfs5v99RLnxsp3boKKYpxj+tocV6b3kdZRS+8tev4o/uIehxxtvE51mltDLe1o2gKwlZCo8Q26GwUlPpggcS7QdzURC4rle9YXBMmSTDDjsyFc6pwZR1pQSa4Nf+8DyEdC7lvK+/4+pYLi1z4NTzDtjE3pgNs2eLtU7h+nlvIrsHxJhmbghNqYJPxxDBdhE2vhEjMcJ7uN9EXOZiwzvOOV17A8R6zM1Tnx6WoJItUrlF6s2A==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB3692.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(396003)(376002)(346002)(366004)(136003)(39860400002)(54906003)(478600001)(55016002)(8936002)(6916009)(8676002)(66446008)(64756008)(316002)(2906002)(33656002)(4326008)(66476007)(5660300002)(71200400001)(66556008)(26005)(66946007)(186003)(6506007)(53546011)(86362001)(76116006)(83380400001)(9686003)(55236004)(7696005)(52536014);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: V3o4Tr5msD0Lba0WcNChP3MJPc32P9rAo4e3rJl+FAq2DBw+GxtSCJVsgqhhP0mrcWkGYbWzlzadtuFAzEImzY8MaVljyyFv/U/ZC8XPFWvBS3AkEpARBnBjJnTd4Rpb+Y3H7Ml0YO/vniX2XYR8D5Qnhh610BdwMjLGQkvQ75ClNEDsHMtzKnFawBeTox8QvwJfrkSkgZ3u0LhWdAGQvFX3JP2JvG6Qw6U1wltLXFub5DkZT6icQEXOoAoDy0sFshOWGaqXlFuVYxONVooBKQfKNsriE0C58pzx9k074dVCPoqBBxdaHmqG4lvUsfsd+duzd9LBeFaNK4TgJdUP89eWqtgNS5PUl2uFHlkQqLbz1fNf75eUSzx1tWlie2YKB8EC+Z//hfz/A9Kg2lr+ho7x7f9uT7VPMxX8eDGbp5MkxVZDJTZoIOojWQLq+r2wsbaGb+7ZCEtYGdugqkITCZsjAoSOnS58P6oezECl3kwaPFG8OKezRnnqLCy/l4QP
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 17 Jun 2020 21:24:01 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4651620B1F;
+        Thu, 18 Jun 2020 01:24:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592443441;
+        bh=UkXyf9kYBQIkJQA4Uae3t8gTA4YWOmQvIdILmgIUKZs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fyLT9+3vLz6wvF6Ka4Evf0uPxiFv7wzCDhhn9eUmOvI/ASn3e26OMl3Vd/IWMuMjT
+         yrvp5avkePRPdXOoHLbijub0yIQI0XBwO3/5GOYMoOJUMYvFyn/0yqi+t+GPwC07fc
+         ozmYEY25YJ5jpv5KIrew+zdEF8g4+dHPEFLnPg2c=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Andrew Murray <andrew.murray@arm.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 078/172] PCI: rcar: Fix incorrect programming of OB windows
+Date:   Wed, 17 Jun 2020 21:20:44 -0400
+Message-Id: <20200618012218.607130-78-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200618012218.607130-1-sashal@kernel.org>
+References: <20200618012218.607130-1-sashal@kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 719b806d-a21a-4c6b-fe5b-08d813225ed3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2020 00:56:01.1413
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: TtoTB3iD/wy5dOGPFpRQZgeGMRjgY1iQ8VgFJJwp4NGspEjHLqXogDPvqjYqU46w5xIzX7X022zIzA5o338pZJy8ih9Gm92PGMkrypJ/yXm0wL48xO9c7dXUfK2mCWhJ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB4603
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Vinod,
+From: Andrew Murray <andrew.murray@arm.com>
 
-> From: Vinod Koul, Sent: Wednesday, June 17, 2020 1:56 AM
->=20
-> On 21-05-20, 20:46, Yoshihiro Shimoda wrote:
-> > This driver assumed that freed descriptors have "done_cookie".
-> > But, after the commit 24461d9792c2 ("dmaengine: virt-dma: Fix
-> > access after free in vchan_complete()"), since the desc is freed
-> > after callback function was called, this driver could not
-> > match any done_cookie when a client driver (renesas_usbhs driver)
-> > calls dmaengine_tx_status() in the callback function.
->=20
-> Hmmm, I am not sure about this, why should we try to match! cookie is
-> monotonically increasing number so if you see that current cookie
-> completed is > requested you should return DMA_COMPLETE
+[ Upstream commit 2b9f217433e31d125fb697ca7974d3de3ecc3e92 ]
 
-The reason is this hardware is possible to stop the transfer even if
-all transfer length is not received. This is related to one of USB
-specification which allows to stop when getting a short packet.
-So, a client driver has to get residue even if DMA_COMPLETE.
+The outbound windows (PCIEPAUR(x), PCIEPALR(x)) describe a mapping between
+a CPU address (which is determined by the window number 'x') and a
+programmed PCI address - Thus allowing the controller to translate CPU
+accesses into PCI accesses.
 
-> The below case of checking residue should not even get executed
+However the existing code incorrectly writes the CPU address - lets fix
+this by writing the PCI address instead.
 
-I see...
-So, I'm thinking the current implementation was a tricky because we didn't
-have dma_async_tx_callback_result when I wrote this usb-dmac driver.
-I'll try this to fix the issue.
+For memory transactions, existing DT users describe a 1:1 identity mapping
+and thus this change should have no effect. However the same isn't true for
+I/O.
 
-Best regards,
-Yoshihiro Shimoda
+Link: https://lore.kernel.org/r/20191004132941.6660-1-andrew.murray@arm.com
+Fixes: c25da4778803 ("PCI: rcar: Add Renesas R-Car PCIe driver")
+Tested-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Signed-off-by: Andrew Murray <andrew.murray@arm.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/pci/controller/pcie-rcar.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-> > So, add to check both descriptor types (freed and got) to fix
-> > the issue.
-> >
-> > Reported-by: Hien Dang <hien.dang.eb@renesas.com>
-> > Fixes: 24461d9792c2 ("dmaengine: virt-dma: Fix access after free in vch=
-an_complete()")
-> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> > ---
-> >  drivers/dma/sh/usb-dmac.c | 13 +++++++------
-> >  1 file changed, 7 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/dma/sh/usb-dmac.c b/drivers/dma/sh/usb-dmac.c
-> > index b218a01..c0adc1c8 100644
-> > --- a/drivers/dma/sh/usb-dmac.c
-> > +++ b/drivers/dma/sh/usb-dmac.c
-> > @@ -488,16 +488,17 @@ static u32 usb_dmac_chan_get_residue_if_complete(=
-struct usb_dmac_chan *chan,
-> >  						 dma_cookie_t cookie)
-> >  {
-> >  	struct usb_dmac_desc *desc;
-> > -	u32 residue =3D 0;
-> >
-> > +	list_for_each_entry_reverse(desc, &chan->desc_got, node) {
-> > +		if (desc->done_cookie =3D=3D cookie)
-> > +			return desc->residue;
-> > +	}
-> >  	list_for_each_entry_reverse(desc, &chan->desc_freed, node) {
-> > -		if (desc->done_cookie =3D=3D cookie) {
-> > -			residue =3D desc->residue;
-> > -			break;
-> > -		}
-> > +		if (desc->done_cookie =3D=3D cookie)
-> > +			return desc->residue;
-> >  	}
-> >
-> > -	return residue;
-> > +	return 0;
-> >  }
-> >
-> >  static u32 usb_dmac_chan_get_residue(struct usb_dmac_chan *chan,
-> > --
-> > 2.7.4
->=20
-> --
-> ~Vinod
+diff --git a/drivers/pci/controller/pcie-rcar.c b/drivers/pci/controller/pcie-rcar.c
+index 333ab6092f17..00296c5eacb9 100644
+--- a/drivers/pci/controller/pcie-rcar.c
++++ b/drivers/pci/controller/pcie-rcar.c
+@@ -335,11 +335,12 @@ static struct pci_ops rcar_pcie_ops = {
+ };
+ 
+ static void rcar_pcie_setup_window(int win, struct rcar_pcie *pcie,
+-				   struct resource *res)
++				   struct resource_entry *window)
+ {
+ 	/* Setup PCIe address space mappings for each resource */
+ 	resource_size_t size;
+ 	resource_size_t res_start;
++	struct resource *res = window->res;
+ 	u32 mask;
+ 
+ 	rcar_pci_write_reg(pcie, 0x00000000, PCIEPTCTLR(win));
+@@ -353,9 +354,9 @@ static void rcar_pcie_setup_window(int win, struct rcar_pcie *pcie,
+ 	rcar_pci_write_reg(pcie, mask << 7, PCIEPAMR(win));
+ 
+ 	if (res->flags & IORESOURCE_IO)
+-		res_start = pci_pio_to_address(res->start);
++		res_start = pci_pio_to_address(res->start) - window->offset;
+ 	else
+-		res_start = res->start;
++		res_start = res->start - window->offset;
+ 
+ 	rcar_pci_write_reg(pcie, upper_32_bits(res_start), PCIEPAUR(win));
+ 	rcar_pci_write_reg(pcie, lower_32_bits(res_start) & ~0x7F,
+@@ -384,7 +385,7 @@ static int rcar_pcie_setup(struct list_head *resource, struct rcar_pcie *pci)
+ 		switch (resource_type(res)) {
+ 		case IORESOURCE_IO:
+ 		case IORESOURCE_MEM:
+-			rcar_pcie_setup_window(i, pci, res);
++			rcar_pcie_setup_window(i, pci, win);
+ 			i++;
+ 			break;
+ 		case IORESOURCE_BUS:
+-- 
+2.25.1
+
