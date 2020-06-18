@@ -2,520 +2,90 @@ Return-Path: <SRS0=2rCm=77=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E116C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Jun 2020 02:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 947D1C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Jun 2020 05:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18CA720776
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Jun 2020 02:52:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592448766;
-	bh=IeWIS46IeaHcbE+ILKyGGVA02wS6QtLXW2LFlM4IIxc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CHUJ7Konsy/ZJRSc2yxZl8g2vv9D6mBoLUfAwzEek4Hu08zzLSzjMv1UjZ4qjWGaB
-	 ZqhkZnYQLjYI88iW0iZdmq9JBGOvZQG1ZC23yM6zKl1HGJvKI7ZomSD3pyqSk7Xx9e
-	 gISjeDqKILb/9RHEK1GOWHLONM4Hc3kG0FWRjgPE=
+	by mail.kernel.org (Postfix) with ESMTP id F357B20897
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Jun 2020 05:39:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="3ed8SRqu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbgFRBId (ORCPT
+        id S1726995AbgFRFjr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:08:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34084 "EHLO mail.kernel.org"
+        Thu, 18 Jun 2020 01:39:47 -0400
+Received: from www.zeus03.de ([194.117.254.33]:34434 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727782AbgFRBI1 (ORCPT
+        id S1725953AbgFRFjr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:08:27 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72C9A21974;
-        Thu, 18 Jun 2020 01:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442506;
-        bh=IeWIS46IeaHcbE+ILKyGGVA02wS6QtLXW2LFlM4IIxc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MiojPmtzZIMhYQGByqvIbbZJkMvnuZ8y6rdfFw3WmJACIxhPk+WDi45ajzALwIQET
-         /U7XL6Kesi+D0kdIHgHP2Iik02sR2K8yqywt8feJRV8tUiWpu8P5vuAMDqQl5mDBbD
-         naosnkJA3lIAw+211G0F3xSI0lWrDKJL3HJH2PCQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 015/388] ARM: dts: renesas: Fix IOMMU device node names
-Date:   Wed, 17 Jun 2020 21:01:52 -0400
-Message-Id: <20200618010805.600873-15-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
-References: <20200618010805.600873-1-sashal@kernel.org>
+        Thu, 18 Jun 2020 01:39:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=iC83Ym0C/HcbMWo3LBEpygjGUIdB
+        H1z0NWt2TnOqP/s=; b=3ed8SRquexMZOZiguMZtrKLFd2qQ4W6z1oZR7ho7MbBU
+        0REIXH999WFxMCYDqC2X0zf7+itqLl/Uh9VwqdLP3737aSPMkYUI2iDa+iyk98pO
+        1+SSNwenlHKU0Han7+1NRiyetm9eWZZ5saFDJoImYZ92zBavzuxgp1RlNprOlyk=
+Received: (qmail 2040142 invoked from network); 18 Jun 2020 07:39:44 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Jun 2020 07:39:44 +0200
+X-UD-Smtp-Session: l3s3148p1@wVcyNFWojswgAwDPXwquAEh09UUtPuGD
+Date:   Thu, 18 Jun 2020 07:39:44 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 0/2] mmc: renesas_sdhi: support manual calibration
+Message-ID: <20200618053944.GA1121@ninjato>
+References: <20200605101222.10783-1-wsa+renesas@sang-engineering.com>
+ <CAPDyKFrZHYeUa9ryen_F0uyrvvEDr_W+Q5xyOKt_YwyiaM+6cQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFrZHYeUa9ryen_F0uyrvvEDr_W+Q5xyOKt_YwyiaM+6cQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-[ Upstream commit ae990a1de014396ffc8d0fcc31b6888c9b0ce59a ]
+--SLDf9lqlvOQaIe6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix IOMMU device node names as "iommu@".
+=09
+> I tried applying this, but got some conflict. I guess you have based
+> this on some of the other series that's in the pipe. Maybe you can
+> give me some advice about the order or how to apply things?
 
-Fixes: bbb44da0b595 ("ARM: dts: r8a7743: Add IPMMU DT nodes")
-Fixes: 0dcba3de5835 ("ARM: dts: r8a7745: Add IPMMU DT nodes")
-Fixes: 350ae49b97c4 ("ARM: dts: r8a7744: Add IPMMU DT nodes")
-Fixes: 70496727c082 ("ARM: shmobile: r8a7790: Add IPMMU DT nodes")
-Fixes: f1951852ed17 ("ARM: shmobile: r8a7791: Add IPMMU DT nodes")
-Fixes: 098cb3a601e6 ("ARM: shmobile: r8a7793: Add IPMMU nodes")
-Fixes: 1cb2794f6082 ("ARM: shmobile: r8a7794: Add IPMMU DT nodes")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Link: https://lore.kernel.org/r/1587461756-13317-1-git-send-email-yoshihiro.shimoda.uh@renesas.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm/boot/dts/r8a7743.dtsi | 12 ++++++------
- arch/arm/boot/dts/r8a7744.dtsi | 12 ++++++------
- arch/arm/boot/dts/r8a7745.dtsi | 12 ++++++------
- arch/arm/boot/dts/r8a7790.dtsi | 12 ++++++------
- arch/arm/boot/dts/r8a7791.dtsi | 14 +++++++-------
- arch/arm/boot/dts/r8a7793.dtsi | 14 +++++++-------
- arch/arm/boot/dts/r8a7794.dtsi | 12 ++++++------
- 7 files changed, 44 insertions(+), 44 deletions(-)
+Sorry, this depends on the stalled SCC patchset and I need to send a
+second version of that (hopefully next week). Should have mentioned it
+here, mea culpa! So, this needs to wait a little.
 
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index e8b340bb99bc..fff123753b85 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -338,7 +338,7 @@ thermal: thermal@e61f0000 {
- 			#thermal-sensor-cells = <0>;
- 		};
- 
--		ipmmu_sy0: mmu@e6280000 {
-+		ipmmu_sy0: iommu@e6280000 {
- 			compatible = "renesas,ipmmu-r8a7743",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6280000 0 0x1000>;
-@@ -348,7 +348,7 @@ ipmmu_sy0: mmu@e6280000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_sy1: mmu@e6290000 {
-+		ipmmu_sy1: iommu@e6290000 {
- 			compatible = "renesas,ipmmu-r8a7743",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6290000 0 0x1000>;
-@@ -357,7 +357,7 @@ ipmmu_sy1: mmu@e6290000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_ds: mmu@e6740000 {
-+		ipmmu_ds: iommu@e6740000 {
- 			compatible = "renesas,ipmmu-r8a7743",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6740000 0 0x1000>;
-@@ -367,7 +367,7 @@ ipmmu_ds: mmu@e6740000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mp: mmu@ec680000 {
-+		ipmmu_mp: iommu@ec680000 {
- 			compatible = "renesas,ipmmu-r8a7743",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xec680000 0 0x1000>;
-@@ -376,7 +376,7 @@ ipmmu_mp: mmu@ec680000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mx: mmu@fe951000 {
-+		ipmmu_mx: iommu@fe951000 {
- 			compatible = "renesas,ipmmu-r8a7743",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xfe951000 0 0x1000>;
-@@ -386,7 +386,7 @@ ipmmu_mx: mmu@fe951000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_gp: mmu@e62a0000 {
-+		ipmmu_gp: iommu@e62a0000 {
- 			compatible = "renesas,ipmmu-r8a7743",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe62a0000 0 0x1000>;
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index def840b8b2d3..5050ac19041d 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -338,7 +338,7 @@ thermal: thermal@e61f0000 {
- 			#thermal-sensor-cells = <0>;
- 		};
- 
--		ipmmu_sy0: mmu@e6280000 {
-+		ipmmu_sy0: iommu@e6280000 {
- 			compatible = "renesas,ipmmu-r8a7744",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6280000 0 0x1000>;
-@@ -348,7 +348,7 @@ ipmmu_sy0: mmu@e6280000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_sy1: mmu@e6290000 {
-+		ipmmu_sy1: iommu@e6290000 {
- 			compatible = "renesas,ipmmu-r8a7744",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6290000 0 0x1000>;
-@@ -357,7 +357,7 @@ ipmmu_sy1: mmu@e6290000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_ds: mmu@e6740000 {
-+		ipmmu_ds: iommu@e6740000 {
- 			compatible = "renesas,ipmmu-r8a7744",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6740000 0 0x1000>;
-@@ -367,7 +367,7 @@ ipmmu_ds: mmu@e6740000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mp: mmu@ec680000 {
-+		ipmmu_mp: iommu@ec680000 {
- 			compatible = "renesas,ipmmu-r8a7744",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xec680000 0 0x1000>;
-@@ -376,7 +376,7 @@ ipmmu_mp: mmu@ec680000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mx: mmu@fe951000 {
-+		ipmmu_mx: iommu@fe951000 {
- 			compatible = "renesas,ipmmu-r8a7744",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xfe951000 0 0x1000>;
-@@ -386,7 +386,7 @@ ipmmu_mx: mmu@fe951000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_gp: mmu@e62a0000 {
-+		ipmmu_gp: iommu@e62a0000 {
- 			compatible = "renesas,ipmmu-r8a7744",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe62a0000 0 0x1000>;
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 7ab58d8bb740..b0d1fc24e97e 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -302,7 +302,7 @@ irqc: interrupt-controller@e61c0000 {
- 			resets = <&cpg 407>;
- 		};
- 
--		ipmmu_sy0: mmu@e6280000 {
-+		ipmmu_sy0: iommu@e6280000 {
- 			compatible = "renesas,ipmmu-r8a7745",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6280000 0 0x1000>;
-@@ -312,7 +312,7 @@ ipmmu_sy0: mmu@e6280000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_sy1: mmu@e6290000 {
-+		ipmmu_sy1: iommu@e6290000 {
- 			compatible = "renesas,ipmmu-r8a7745",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6290000 0 0x1000>;
-@@ -321,7 +321,7 @@ ipmmu_sy1: mmu@e6290000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_ds: mmu@e6740000 {
-+		ipmmu_ds: iommu@e6740000 {
- 			compatible = "renesas,ipmmu-r8a7745",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6740000 0 0x1000>;
-@@ -331,7 +331,7 @@ ipmmu_ds: mmu@e6740000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mp: mmu@ec680000 {
-+		ipmmu_mp: iommu@ec680000 {
- 			compatible = "renesas,ipmmu-r8a7745",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xec680000 0 0x1000>;
-@@ -340,7 +340,7 @@ ipmmu_mp: mmu@ec680000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mx: mmu@fe951000 {
-+		ipmmu_mx: iommu@fe951000 {
- 			compatible = "renesas,ipmmu-r8a7745",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xfe951000 0 0x1000>;
-@@ -350,7 +350,7 @@ ipmmu_mx: mmu@fe951000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_gp: mmu@e62a0000 {
-+		ipmmu_gp: iommu@e62a0000 {
- 			compatible = "renesas,ipmmu-r8a7745",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe62a0000 0 0x1000>;
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index e5ef9fd4284a..166d5566229d 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -427,7 +427,7 @@ thermal: thermal@e61f0000 {
- 			#thermal-sensor-cells = <0>;
- 		};
- 
--		ipmmu_sy0: mmu@e6280000 {
-+		ipmmu_sy0: iommu@e6280000 {
- 			compatible = "renesas,ipmmu-r8a7790",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6280000 0 0x1000>;
-@@ -437,7 +437,7 @@ ipmmu_sy0: mmu@e6280000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_sy1: mmu@e6290000 {
-+		ipmmu_sy1: iommu@e6290000 {
- 			compatible = "renesas,ipmmu-r8a7790",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6290000 0 0x1000>;
-@@ -446,7 +446,7 @@ ipmmu_sy1: mmu@e6290000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_ds: mmu@e6740000 {
-+		ipmmu_ds: iommu@e6740000 {
- 			compatible = "renesas,ipmmu-r8a7790",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6740000 0 0x1000>;
-@@ -456,7 +456,7 @@ ipmmu_ds: mmu@e6740000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mp: mmu@ec680000 {
-+		ipmmu_mp: iommu@ec680000 {
- 			compatible = "renesas,ipmmu-r8a7790",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xec680000 0 0x1000>;
-@@ -465,7 +465,7 @@ ipmmu_mp: mmu@ec680000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mx: mmu@fe951000 {
-+		ipmmu_mx: iommu@fe951000 {
- 			compatible = "renesas,ipmmu-r8a7790",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xfe951000 0 0x1000>;
-@@ -475,7 +475,7 @@ ipmmu_mx: mmu@fe951000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_rt: mmu@ffc80000 {
-+		ipmmu_rt: iommu@ffc80000 {
- 			compatible = "renesas,ipmmu-r8a7790",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xffc80000 0 0x1000>;
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 6e5bd86731cd..09e47cc17765 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -350,7 +350,7 @@ thermal: thermal@e61f0000 {
- 			#thermal-sensor-cells = <0>;
- 		};
- 
--		ipmmu_sy0: mmu@e6280000 {
-+		ipmmu_sy0: iommu@e6280000 {
- 			compatible = "renesas,ipmmu-r8a7791",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6280000 0 0x1000>;
-@@ -360,7 +360,7 @@ ipmmu_sy0: mmu@e6280000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_sy1: mmu@e6290000 {
-+		ipmmu_sy1: iommu@e6290000 {
- 			compatible = "renesas,ipmmu-r8a7791",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6290000 0 0x1000>;
-@@ -369,7 +369,7 @@ ipmmu_sy1: mmu@e6290000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_ds: mmu@e6740000 {
-+		ipmmu_ds: iommu@e6740000 {
- 			compatible = "renesas,ipmmu-r8a7791",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6740000 0 0x1000>;
-@@ -379,7 +379,7 @@ ipmmu_ds: mmu@e6740000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mp: mmu@ec680000 {
-+		ipmmu_mp: iommu@ec680000 {
- 			compatible = "renesas,ipmmu-r8a7791",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xec680000 0 0x1000>;
-@@ -388,7 +388,7 @@ ipmmu_mp: mmu@ec680000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mx: mmu@fe951000 {
-+		ipmmu_mx: iommu@fe951000 {
- 			compatible = "renesas,ipmmu-r8a7791",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xfe951000 0 0x1000>;
-@@ -398,7 +398,7 @@ ipmmu_mx: mmu@fe951000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_rt: mmu@ffc80000 {
-+		ipmmu_rt: iommu@ffc80000 {
- 			compatible = "renesas,ipmmu-r8a7791",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xffc80000 0 0x1000>;
-@@ -407,7 +407,7 @@ ipmmu_rt: mmu@ffc80000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_gp: mmu@e62a0000 {
-+		ipmmu_gp: iommu@e62a0000 {
- 			compatible = "renesas,ipmmu-r8a7791",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe62a0000 0 0x1000>;
-diff --git a/arch/arm/boot/dts/r8a7793.dtsi b/arch/arm/boot/dts/r8a7793.dtsi
-index dadbda16161b..1b62a7e06b42 100644
---- a/arch/arm/boot/dts/r8a7793.dtsi
-+++ b/arch/arm/boot/dts/r8a7793.dtsi
-@@ -336,7 +336,7 @@ thermal: thermal@e61f0000 {
- 			#thermal-sensor-cells = <0>;
- 		};
- 
--		ipmmu_sy0: mmu@e6280000 {
-+		ipmmu_sy0: iommu@e6280000 {
- 			compatible = "renesas,ipmmu-r8a7793",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6280000 0 0x1000>;
-@@ -346,7 +346,7 @@ ipmmu_sy0: mmu@e6280000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_sy1: mmu@e6290000 {
-+		ipmmu_sy1: iommu@e6290000 {
- 			compatible = "renesas,ipmmu-r8a7793",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6290000 0 0x1000>;
-@@ -355,7 +355,7 @@ ipmmu_sy1: mmu@e6290000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_ds: mmu@e6740000 {
-+		ipmmu_ds: iommu@e6740000 {
- 			compatible = "renesas,ipmmu-r8a7793",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6740000 0 0x1000>;
-@@ -365,7 +365,7 @@ ipmmu_ds: mmu@e6740000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mp: mmu@ec680000 {
-+		ipmmu_mp: iommu@ec680000 {
- 			compatible = "renesas,ipmmu-r8a7793",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xec680000 0 0x1000>;
-@@ -374,7 +374,7 @@ ipmmu_mp: mmu@ec680000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mx: mmu@fe951000 {
-+		ipmmu_mx: iommu@fe951000 {
- 			compatible = "renesas,ipmmu-r8a7793",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xfe951000 0 0x1000>;
-@@ -384,7 +384,7 @@ ipmmu_mx: mmu@fe951000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_rt: mmu@ffc80000 {
-+		ipmmu_rt: iommu@ffc80000 {
- 			compatible = "renesas,ipmmu-r8a7793",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xffc80000 0 0x1000>;
-@@ -393,7 +393,7 @@ ipmmu_rt: mmu@ffc80000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_gp: mmu@e62a0000 {
-+		ipmmu_gp: iommu@e62a0000 {
- 			compatible = "renesas,ipmmu-r8a7793",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe62a0000 0 0x1000>;
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index 2c9e7a1ebfec..8d7f8798628a 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -290,7 +290,7 @@ irqc0: interrupt-controller@e61c0000 {
- 			resets = <&cpg 407>;
- 		};
- 
--		ipmmu_sy0: mmu@e6280000 {
-+		ipmmu_sy0: iommu@e6280000 {
- 			compatible = "renesas,ipmmu-r8a7794",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6280000 0 0x1000>;
-@@ -300,7 +300,7 @@ ipmmu_sy0: mmu@e6280000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_sy1: mmu@e6290000 {
-+		ipmmu_sy1: iommu@e6290000 {
- 			compatible = "renesas,ipmmu-r8a7794",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6290000 0 0x1000>;
-@@ -309,7 +309,7 @@ ipmmu_sy1: mmu@e6290000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_ds: mmu@e6740000 {
-+		ipmmu_ds: iommu@e6740000 {
- 			compatible = "renesas,ipmmu-r8a7794",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe6740000 0 0x1000>;
-@@ -319,7 +319,7 @@ ipmmu_ds: mmu@e6740000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mp: mmu@ec680000 {
-+		ipmmu_mp: iommu@ec680000 {
- 			compatible = "renesas,ipmmu-r8a7794",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xec680000 0 0x1000>;
-@@ -328,7 +328,7 @@ ipmmu_mp: mmu@ec680000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_mx: mmu@fe951000 {
-+		ipmmu_mx: iommu@fe951000 {
- 			compatible = "renesas,ipmmu-r8a7794",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xfe951000 0 0x1000>;
-@@ -338,7 +338,7 @@ ipmmu_mx: mmu@fe951000 {
- 			status = "disabled";
- 		};
- 
--		ipmmu_gp: mmu@e62a0000 {
-+		ipmmu_gp: iommu@e62a0000 {
- 			compatible = "renesas,ipmmu-r8a7794",
- 				     "renesas,ipmmu-vmsa";
- 			reg = <0 0xe62a0000 0 0x1000>;
--- 
-2.25.1
 
+--SLDf9lqlvOQaIe6s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl7q/hwACgkQFA3kzBSg
+KbZ/Iw/+NBjnWSJurj0Qbr0KXH3/l3uIKDXIwiV0SBvDuTZNCiQx9wmiQBea6zux
+CcpBUCTagJPDTlUebxe67QWibEwToFuU4IGKhuw4I+qqmNBiKKl1AH5Mf+l7RFZ6
+tWnn1Um2IPw9NsoHuN1+Qe3UTbbODVM58G9jVqN4XvPdCpgvFUXb7Qsf5055DFSD
+iXgE5y6bGIjfucjIU4fXnHtYGCl4P4sYLRUuB8kX6nB8LhOo6Q9rf6jbXGHAKP//
+NR1OtQavJNAtpnF7k8BCvRZyLJDVnpu2aP4RJSSDJF4WDgr4HbNvSFPhm5J3cpT4
+t5rsLyThdvaxwrpL0hQL4TJopSy3kFb93SP4w6QyDLs3JVHcKdaSiO2iMdnv1ZKq
+3DgIPNhTJ91D3qVtQOOaVvHFtZvJhOYzNK8lMwS+L4RhWnKzef+wsyD2cUJpizLN
+B8nrWLnzmhUsDJhG2xzx5ELTzvIcOS/Lg8x8YKeA7wL2FHSz4HdONL89V+pu+4GQ
+ApaWJO8zYIGD6cPlpDZ4qqrXdLCnWWAHs12tJk/Iru47FenZBhfXhUKtUSWYTZO5
++PLup9UC+IwV4ALTtE7p1Qob30zOJJzPUBTt1ld/g+yy5xVdyGplQXSCU4X8+tMx
+GuGwl1c1tXEusE4044wBBIeNpPSb9Fzu2T6CtqXwMgg7Xm0UOnM=
+=W5kf
+-----END PGP SIGNATURE-----
+
+--SLDf9lqlvOQaIe6s--
