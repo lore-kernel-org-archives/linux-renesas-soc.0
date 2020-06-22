@@ -2,118 +2,82 @@ Return-Path: <SRS0=HWyP=AD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 204DFC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Jun 2020 12:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49679C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Jun 2020 12:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEEA420732
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Jun 2020 12:51:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DlogWzSV"
+	by mail.kernel.org (Postfix) with ESMTP id 2F78B2071A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Jun 2020 12:51:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728085AbgFVMvj (ORCPT
+        id S1728105AbgFVMvz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 22 Jun 2020 08:51:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41940 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727979AbgFVMvj (ORCPT
+        Mon, 22 Jun 2020 08:51:55 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:37322 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728085AbgFVMvz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Jun 2020 08:51:39 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F2BBC061794
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2020 05:51:39 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id d12so1552678ply.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 22 Jun 2020 05:51:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:date:message-id:subject;
-        bh=kLpRTdtCS1jI8ypODI0Dc1KkKDHCGe+xoE6NZxA4z1g=;
-        b=DlogWzSVibYL3Lav32srao8mU4NZyW6VxEP2o9NTc8ADQQjKKDx7dyeIN/LkIb0UBM
-         yst26kKmPZD7eVtCjlVk0TapIeWsKyKSmeHF2bqOfhEGish/MvxzdVWo7bLI/JARIBA7
-         irBdgJfYwGz5IsWZRFL17k+GDec9dx8occfqlFKNMxHtW6kWbasbmdXQbkZ0VeD+quf4
-         CYXKk7Au6nduz+lueYI1CCldN4XWJnTrfeYcRaPJQruzozmyY0Rd++HM6fH0Yn3FAqOc
-         R8wQ42zJhfOQ2G+YLmbWkX9YzE3lJVetWv2ndK1cmBxdrUFOfd+UDoOWP8KPW9wqXnKu
-         gCVw==
+        Mon, 22 Jun 2020 08:51:55 -0400
+Received: by mail-ot1-f65.google.com with SMTP id v13so12935167otp.4;
+        Mon, 22 Jun 2020 05:51:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:date:message-id:subject;
-        bh=kLpRTdtCS1jI8ypODI0Dc1KkKDHCGe+xoE6NZxA4z1g=;
-        b=Q5KK92GxQdbX8AHiC1nU0uRlJLoA2enFvpypmmFj0YkADSBhQu7GgD7yrfdNknsJgY
-         kf3pUp7iksT0RjBL253M1FCQ491sgXMXnLcJxTgkGhXX6t9ao3pKkTrvt2hM0FXaoVRH
-         VNqSWlluWuaYI8w+GrxoQHWoy7LOY/xDBU5pHE6LGOFg80deuwUlgG+UA6rBR5LptHXO
-         wI1n8ee8g9G+tpd4xsA68iHQ2wl9papPj4OpzXBZ8M76FDFM51Iuc5h5Cq25lAiwwBwo
-         OB6KZoPn/Q53/hOMvWs/2+rIlJd1ibv/w0J4SWItHe/5DDpLB/st2YXWgKzaB+peiLQm
-         gQhg==
-X-Gm-Message-State: AOAM533XeQQaSOGgVSVtXtNUDlFN73aAb4ziaV7N3ezI3eCyCi7jcrGn
-        GYt3wJVqOck21Rx0W58+czFPwjGUFOg=
-X-Google-Smtp-Source: ABdhPJynO3/dUWkpC6SYsLG/tYtCUOPYPZBpjeCR7QmPqMFGxA6oCuHG+zsF/h9cKVHDvsd4arln3w==
-X-Received: by 2002:a17:90a:c70d:: with SMTP id o13mr17900507pjt.73.1592830298528;
-        Mon, 22 Jun 2020 05:51:38 -0700 (PDT)
-Received: from [127.0.0.1] (FL1-122-134-243-221.iwa.mesh.ad.jp. [122.134.243.221])
-        by smtp.gmail.com with ESMTPSA id q129sm13293923pfc.60.2020.06.22.05.51.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 22 Jun 2020 05:51:37 -0700 (PDT)
-From:   Magnus Damm <magnus.damm@gmail.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Magnus Damm <magnus.damm@gmail.com>, geert@glider.be
-Date:   Mon, 22 Jun 2020 21:37:09 +0900
-Message-Id: <159282942947.12451.16657662841957319548.sendpatchset@octo>
-Subject: [PATCH/RFC] arm64: dts: renesas: r8a77995-draak: gpio-leds prototype
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bcnqERUuRE3U2yH/W0ufgrcsAslQTzrr4GZBgqoa+ME=;
+        b=hQ83TTWOyilyrDxW71spdDBw700HMhvxve6WIlQ/7kXDnG186o/iWr+r1ix29pJUsM
+         spaMyqL42VrwX7ZvLDIGebKpNP0EgfHK9fbzlIxeH8J68KvURBAP3FD1u1/lJcVzuH68
+         f89weDVrcxeG67Sms42Q+b5oUB8HurFdyWStM1PyGHGIkLudLEkYwWyreWouxcWOzfC+
+         Qe1ceLNrnH43jqApvpy7sb+lDe7AIMrrao7JbXikWTIJyKmigfUZYvjKaCFPNwn2ojFq
+         YN0vvStWa56R7Du+4fcicOyK6EZGyejROJn3k5XGUL3ye/7UKDD2sfybfe1frKRA0nRH
+         y/IA==
+X-Gm-Message-State: AOAM5308uJRk+ntH8st+qa0bd1beKO0iJ/UZs8nc4faFL9m5F1WAMBrT
+        2wvzat1VHiWjuUd0bDIqVx+J6jvldyK3jnc7qCDRcQ==
+X-Google-Smtp-Source: ABdhPJyhnToa3B88JNuj5AYcrAJwc+DYzgpIuVGCROnvLjHakRTzvdXFk/YhdzJJTq2ylx+KVoo1XcgQRIV9Ukse2S8=
+X-Received: by 2002:a05:6830:141a:: with SMTP id v26mr13943928otp.250.1592830314734;
+ Mon, 22 Jun 2020 05:51:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <1591555267-21822-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1591555267-21822-9-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1591555267-21822-9-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 22 Jun 2020 14:51:43 +0200
+Message-ID: <CAMuHMdWg8nNfcUV9Tb9Q=UJsq9Uj0-9sQ6-=R4NO0ZngmSBCgA@mail.gmail.com>
+Subject: Re: [PATCH 09/11] arm64: dts: renesas: Add HiHope RZ/G2N Rev.3.0/4.0
+ main board support
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Sun, Jun 7, 2020 at 8:42 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add support for HiHope RZ/G2N Rev.3.0/4.0 main board support based on
+> r8a774b1 SoC.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 
-This patch adds support for a couple of LEDs on the r8a77995 Draak board.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-It also ignores the issue that push switches are also used on the same GPIOs.
+Gr{oetje,eeting}s,
 
-The approach is the same as in the earlier posted patch for other boards:
-[PATCH/RFC] arm64: dts: renesas: salvator-common: gpio-leds prototype
+                        Geert
 
-The limitations of DT bindings and kernel software support remain the same.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-As Geert pointed out we need to extend the software to allow sharing of
-GPIOs somehow. On this board and several others the GPIOs used for LEDs
-are also used for push switches. Both DT bindings and drivers need to
-be extended, most likely together with the GPIO subsystem. And to make it
-more fun it is probably possible to get interrupts from these GPIOs as well.
-
-In the patch the LED order and the GPIO number assignments look quite random
-but match the schematics.
-
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
-
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts |   14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a77995-draak.dts
-+++ work/arch/arm64/boot/dts/renesas/r8a77995-draak.dts	2020-06-22 21:00:20.000000000 +0900
-@@ -91,6 +91,20 @@
- 		};
- 	};
- 
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led13 {
-+			gpios = <&gpio4 7 GPIO_ACTIVE_HIGH>;
-+		};
-+		led12 {
-+			gpios = <&gpio1 30 GPIO_ACTIVE_HIGH>;
-+		};
-+		led14 {
-+			gpios = <&gpio4 25 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
- 	memory@48000000 {
- 		device_type = "memory";
- 		/* first 128MB is reserved for secure area. */
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
