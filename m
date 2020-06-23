@@ -2,184 +2,145 @@ Return-Path: <SRS0=2bxv=AE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77DEC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Jun 2020 08:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C13C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Jun 2020 12:06:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C429A20738
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Jun 2020 08:35:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9198A2072E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Jun 2020 12:06:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ij3LAsP9"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IgZ2WLFP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731725AbgFWIfL (ORCPT
+        id S1732539AbgFWMGy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 Jun 2020 04:35:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55814 "EHLO
+        Tue, 23 Jun 2020 08:06:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60626 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731567AbgFWIfL (ORCPT
+        with ESMTP id S1732333AbgFWMGx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Jun 2020 04:35:11 -0400
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1935CC061573;
-        Tue, 23 Jun 2020 01:35:11 -0700 (PDT)
-Received: by mail-ot1-x343.google.com with SMTP id 18so1104434otv.6;
-        Tue, 23 Jun 2020 01:35:11 -0700 (PDT)
+        Tue, 23 Jun 2020 08:06:53 -0400
+Received: from mail-vk1-xa41.google.com (mail-vk1-xa41.google.com [IPv6:2607:f8b0:4864:20::a41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9BB9C061755
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Jun 2020 05:06:53 -0700 (PDT)
+Received: by mail-vk1-xa41.google.com with SMTP id m23so4763516vko.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Jun 2020 05:06:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=goSzzxDsgzxsQuY6F1h0SsNpCeO6nw7HQJbzXsVCZxo=;
-        b=ij3LAsP9p1irjc88wp1/WWNHRrwz3UZn4dmSUurQcPXlkh41m+MnezeltpEXliOxCt
-         3kxSCX/4mPnFXq4aU057VjYSGpTGZrzzbJh5hHQi7dNdKWoa+CeUDBGmwvYnMD0T0e7g
-         Zf3DMSrWTgKKz2RUHr6MjNXLPC7iat4GzmFDvoGBlMzY8c1YInfnPOGF2SOjDI/FkzUB
-         jGgTDY0j5xpx3tobTOPpKWUnG8uoy3BLAWFeis2vjxDOhRP25kXrtnKqd/ZB1ALr1kuQ
-         xX+XKpRAYJioif5IWq6jAiewZ4Oky2moCN/xQsOeuFpvjGUzrMMsAoCqh4Elq8QWcRD6
-         ZuXg==
+        bh=MvMXHhq+2NXSlQ0VxA/FKQ9PJItTwUoUNVjQj2ToK20=;
+        b=IgZ2WLFPg8aUvzMOKHeBblyB/RLQhvJCgzxaUbdaIrmAPo5rkvLoMLUdEUU2LltL0w
+         tOUsjceIQIUr+vDaR3cXgWKu3ucGNYAKWBoFskye6TwAg4BZ7E7uBGKMKDaFkerBPKTA
+         qosnNK1QD0sZRhCvkzad0OjRyqWzzA/thpJIta3zstAT05Z61+uhW8S1VWVo4dqZwErH
+         cndTRjhZ5sHbTPkGGiK3C09LQ0/aeoObjDjM9l09bU66tovrxuupS1pg0wL0yrXJMT5X
+         JB6/Z7GK+whBsUzWXr3n5UJkA9nl1oLRk0Wrn1Tbwkt8ymG6CiLAcJTHmDZe0co7QXfO
+         ctag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=goSzzxDsgzxsQuY6F1h0SsNpCeO6nw7HQJbzXsVCZxo=;
-        b=PpfK3U8zyxd2buZJtox4W0jSmc1M1wMSeixVekqgfcqTyaH2ge/bkb2W0aQ2S2utaQ
-         nhaQoFsNlmorw8nKC3EWA0CLs7ZhZ1w4U9/4UB7kR+NXvjuTkaQBbp7dQ8+monyn1wr8
-         zmX+JhBejofPrLP7XMG7QAwzzVNWEqTY17mbLUL/neBdRyxTWkcMw8errylzRr38iv0M
-         rICWE9WP0FkNgP8i2W73otecrkzNAoDv3nc7rjg14nC3URZp9g8RNBM3LqV6zvdn9yNC
-         YIQ8c1lyX4tCxn6vYFTL+hzIhFdkWvWDIQl+n3f+AbcL1ezvqwctLKTg2nr+40gcSMOK
-         bmRw==
-X-Gm-Message-State: AOAM5317u/5teCkY10D2Q8VVweDdmDysQogfDgUzLTDFpMPSPfeMHzdE
-        70Qb1tzR9egnVvtZ0ze4TBRL9YPChizRtpePSvo=
-X-Google-Smtp-Source: ABdhPJwffdh0M4nKESM3uobBBa2UiPZNyiH0quaHQH7SdqqFBJmq9vJwUIlp8hKAj1M9RkRbx/6mjjn2BU9Qv+N0dQQ=
-X-Received: by 2002:a9d:6546:: with SMTP id q6mr16850481otl.365.1592901310350;
- Tue, 23 Jun 2020 01:35:10 -0700 (PDT)
+        bh=MvMXHhq+2NXSlQ0VxA/FKQ9PJItTwUoUNVjQj2ToK20=;
+        b=jwZhxwl19C+yYq/1bGJGr35+kmKNOfvayXmKveF3INRRZNDeG1L8sOMry6h+UG7A+O
+         m0mQzqwAyrBimIswV7dT/DLR5xMCxzWWqBjXgLwkk1dQ6QUi+6Tm+JTTygCvMxodG8vI
+         a14VzXxMPV6EW30N+TTbqzScOHY49Ut7Gbzw0wNdluMmZPL883mOEv1rAsbOcm1qj2KS
+         U1d5DWYby4k3QXuX8ANLgO+NmeajpF2Nt7I12SjAjI6kiDP1B/HwD0Hnl/B3k1ebR711
+         kx2s8XwBz+wyLaU7uaabcKY/tZCPCO285srj9yoiBhNa4hqPqQEJ4q7Fg6otJnSccf4L
+         i8Lg==
+X-Gm-Message-State: AOAM531LH813MjZQzJVwzhHp6e4SIadtQXJCxc0clod6d/+WBWKnyR2L
+        9VWSqVP4VxPYy0nW4Z+GfFxZwz7T7LmZ0oqHJERBoA==
+X-Google-Smtp-Source: ABdhPJxDSHXtW5m1dVDzqMXNbJ15G50w48MEPPMvuHd0IZtHCeCnuTvqKdT/kQKwxcrQAWPPa6fdLlL7KvI+lwbBCs4=
+X-Received: by 2002:a1f:b202:: with SMTP id b2mr19506666vkf.86.1592914012493;
+ Tue, 23 Jun 2020 05:06:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <1591555267-21822-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1591555267-21822-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdWKhq63yT9XbbV4Nmr0EJZcGQ396pVCqkrzMTmgunznaQ@mail.gmail.com>
- <CA+V-a8ueb-3VD-=Bcg6dJqZhLRoCBxu-Zo+key_oEFchNc_APA@mail.gmail.com>
- <CA+V-a8vAfoQGpv-sXvJ11i9QC=EvKg750yusHBhLp8C17KmJbA@mail.gmail.com> <CAMuHMdWp6dL3g56EGDGnDBs+GNHeaO7ejy1k_4EaM_RY+dV=Cg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWp6dL3g56EGDGnDBs+GNHeaO7ejy1k_4EaM_RY+dV=Cg@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Tue, 23 Jun 2020 09:34:44 +0100
-Message-ID: <CA+V-a8tUvT1Q+nhsk1Te5CrYSSTbEqvO1=8QyRHY4q2VYNzoKQ@mail.gmail.com>
-Subject: Re: [PATCH 03/11] arm64: dts: renesas: hihope-common: Separate out
- Rev.2.0 specific into hihope-common-rev2.dtsi file
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1591703110-14869-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1591703110-14869-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Tue, 23 Jun 2020 17:36:41 +0530
+Message-ID: <CAHLCerOxKuqhzfNSEMk6dB7B8Y_nvhQ0F0yO+BGrUE-P4SKBEA@mail.gmail.com>
+Subject: Re: [PATCH v2] thermal: rcar_gen3_thermal: Fix undefined temperature
+ if negative
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        niklas.soderlund+renesas@ragnatech.se, van.do.xw@renesas.com,
+        dien.pham.ry@renesas.com, Linux PM list <linux-pm@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hi,
 
-On Tue, Jun 23, 2020 at 9:14 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Tue, Jun 9, 2020 at 5:15 PM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
 >
-> Hi Prabhakar,
+> From: Dien Pham <dien.pham.ry@renesas.com>
 >
-> On Tue, Jun 23, 2020 at 9:51 AM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Mon, Jun 8, 2020 at 3:59 PM Lad, Prabhakar
-> > <prabhakar.csengg@gmail.com> wrote:
-> > > On Mon, Jun 8, 2020 at 3:47 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > On Sun, Jun 7, 2020 at 8:41 PM Lad Prabhakar
-> > > > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > > > > Separate out Rev.2.0 specific hardware changes into
-> > > > > hihope-common-rev2.dtsi file so that hihope-common.dtsi can be used
-> > > > > by all the variants for RZ/G2M[N] boards.
-> > > > >
-> > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+> As description for DIV_ROUND_CLOSEST in file include/linux/kernel.h.
+>   "Result is undefined for negative divisors if the dividend variable
+>    type is unsigned and for negative dividends if the divisor variable
+>    type is unsigned."
 >
-> > > > > @@ -0,0 +1,101 @@
-> > > > > +// SPDX-License-Identifier: GPL-2.0
-> > > > > +/*
-> > > > > + * Device Tree Source for the HiHope RZ/G2[MN] main board Rev.2.0 common
-> > > > > + * parts
-> > > > > + *
-> > > > > + * Copyright (C) 2020 Renesas Electronics Corp.
-> > > > > + */
-> > > > > +
-> > > > > +#include <dt-bindings/gpio/gpio.h>
-> > > > > +
-> > > > > +/ {
-> > > > > +       leds {
-> > > > > +               compatible = "gpio-leds";
-> > > > > +
-> > > > > +               bt_active_led {
-> > > > > +                       label = "blue:bt";
-> > > > > +                       gpios = <&gpio7  0 GPIO_ACTIVE_HIGH>;
-> > > > > +                       linux,default-trigger = "hci0-power";
-> > > > > +                       default-state = "off";
-> > > > > +               };
-> > > > > +
-> > > > > +               led0 {
-> > > > > +                       gpios = <&gpio6 11 GPIO_ACTIVE_HIGH>;
-> > > > > +               };
-> > > > > +
-> > > > > +               led1 {
-> > > > > +                       gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
-> > > > > +               };
-> > > > > +
-> > > > > +               led2 {
-> > > > > +                       gpios = <&gpio6 13 GPIO_ACTIVE_HIGH>;
-> > > > > +               };
-> > > > > +
-> > > > > +               led3 {
-> > > > > +                       gpios = <&gpio0  0 GPIO_ACTIVE_HIGH>;
-> > > > > +               };
-> > > >
-> > > > led1, led2, and led3 are present on both, so I'd keep them in
-> > > > hihope-common.dtsi.
-> > > >
-> > > The leds defined in hihope-common-rev4.dtsi are as per the label names
-> > > on the schematics/board so that it's easier to identify the LED's by
-> > > name.
-> > >
-> > I was waiting on the above to be confirmed.
+> In current code, the FIXPT_DIV uses DIV_ROUND_CLOSEST but has not
+> checked sign of divisor before using. It makes undefined temperature
+> value in case the value is negative.
 >
-> I can confirm the naming of the LEDs on the rev4 board.
-> However, following the same reasoning, the rev2 LEDs should be renamed
-> led2201, led2202, led2203, and led2402 ;-)
+> This patch fixes to satisfy DIV_ROUND_CLOSEST description
+> and fix bug too. Note that the name "reg" is not good because it should
+> be the same type as rcar_gen3_thermal_read(). So, rename it with "ctemp".
+>
+> Signed-off-by: Van Do <van.do.xw@renesas.com>
+> Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
+> [shimoda: minor fixes, add Fixes tag]
+> Fixes: 564e73d283af ("thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  Changes from v1:
+>  - Use int instead of long.
+>  - Rename "reg" with "ctemp".
+>  https://patchwork.kernel.org/patch/11593051/
+>
+>  drivers/thermal/rcar_gen3_thermal.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+> index 58fe7c1..49ea330 100644
+> --- a/drivers/thermal/rcar_gen3_thermal.c
+> +++ b/drivers/thermal/rcar_gen3_thermal.c
+> @@ -167,16 +167,16 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
+>  {
+>         struct rcar_gen3_thermal_tsc *tsc = devdata;
+>         int mcelsius, val;
+> -       u32 reg;
+> +       int ctemp;
 
-I didn't want to change any behaviour if some was using the LED's with names.
+Wouldn't it be better to change the variable type to fix the bug in
+this patch and make a separate one for the variable rename?
 
-> Does anyone rely on the names?  If not, it may make sense to use the
-> rev4 names for both, in the common file?
->
-Not sure, but I'll take your suggestion and just name them as per rev4 naming.
+Regards,
+Amit
 
-> Not even considering the switches...
-> Seems they forgot to rename switches SW220[123] when renaming LED220[123].
-> Worse, on rev2, you have SW220_2_/LED220_1_ sharing a GPIO, and
-> SW220_1_/LED220_2_ sharing another one.
+>         /* Read register and convert to mili Celsius */
+> -       reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
+> +       ctemp = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
 >
-> And on rev4, GP6_11/GP_LED/TSW_0_ is driving LED_4_ and SW220_2_?
->
-> Conclusion: I don't care how you name them ;-)
->
- :)
-
-Cheers,
---Prabhakar
-
-> Gr{oetje,eeting}s,
->
->                         Geert
+> -       if (reg <= thcode[tsc->id][1])
+> -               val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1,
+> +       if (ctemp <= thcode[tsc->id][1])
+> +               val = FIXPT_DIV(FIXPT_INT(ctemp) - tsc->coef.b1,
+>                                 tsc->coef.a1);
+>         else
+> -               val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2,
+> +               val = FIXPT_DIV(FIXPT_INT(ctemp) - tsc->coef.b2,
+>                                 tsc->coef.a2);
+>         mcelsius = FIXPT_TO_MCELSIUS(val);
 >
 > --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 2.7.4
 >
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
