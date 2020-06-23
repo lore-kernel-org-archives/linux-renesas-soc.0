@@ -2,145 +2,160 @@ Return-Path: <SRS0=2bxv=AE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C13C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Jun 2020 12:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51866C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Jun 2020 14:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9198A2072E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Jun 2020 12:06:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2914E206EB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Jun 2020 14:38:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IgZ2WLFP"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S/38hRP9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732539AbgFWMGy (ORCPT
+        id S1732880AbgFWOh6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 Jun 2020 08:06:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60626 "EHLO
+        Tue, 23 Jun 2020 10:37:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732333AbgFWMGx (ORCPT
+        with ESMTP id S1732855AbgFWOh5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Jun 2020 08:06:53 -0400
-Received: from mail-vk1-xa41.google.com (mail-vk1-xa41.google.com [IPv6:2607:f8b0:4864:20::a41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9BB9C061755
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Jun 2020 05:06:53 -0700 (PDT)
-Received: by mail-vk1-xa41.google.com with SMTP id m23so4763516vko.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Jun 2020 05:06:53 -0700 (PDT)
+        Tue, 23 Jun 2020 10:37:57 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13C21C061797
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Jun 2020 07:37:57 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id q15so1562815wmj.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Jun 2020 07:37:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MvMXHhq+2NXSlQ0VxA/FKQ9PJItTwUoUNVjQj2ToK20=;
-        b=IgZ2WLFPg8aUvzMOKHeBblyB/RLQhvJCgzxaUbdaIrmAPo5rkvLoMLUdEUU2LltL0w
-         tOUsjceIQIUr+vDaR3cXgWKu3ucGNYAKWBoFskye6TwAg4BZ7E7uBGKMKDaFkerBPKTA
-         qosnNK1QD0sZRhCvkzad0OjRyqWzzA/thpJIta3zstAT05Z61+uhW8S1VWVo4dqZwErH
-         cndTRjhZ5sHbTPkGGiK3C09LQ0/aeoObjDjM9l09bU66tovrxuupS1pg0wL0yrXJMT5X
-         JB6/Z7GK+whBsUzWXr3n5UJkA9nl1oLRk0Wrn1Tbwkt8ymG6CiLAcJTHmDZe0co7QXfO
-         ctag==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ceG/rp64xRAj8gur9y870c/+SKauz/Pvvf3Ek5gAYHE=;
+        b=S/38hRP9jJeEO0648j5i0HwQUkmAn8MPLasoGaNt8LdCbQqEVydbz8k0QMIB7TcSxT
+         mB8W7q1gDfv+vrDORU79pdT175xGSNJNn9FeFSOeCambF0o+fNWV7YZc6bTiG/1Z6IfR
+         QyqfeR3sUuTOxKqqFW+5Mj6QQ1oGWLVdX8LKSRdVg1scMMyLuhkobEB7qpI1w1w/qH7z
+         jwaDjR41jrisZougD+3Uuakf/CAy6jS5bQHpWHTAieha1OiW3LJqSFRQr/vLShLUiHPk
+         yPP9bihWulsfYdzcIcoqxokyu81EfkMggDs54t64ujxNzfIYZShzXVRQcjXTRd7mV3TJ
+         lmtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MvMXHhq+2NXSlQ0VxA/FKQ9PJItTwUoUNVjQj2ToK20=;
-        b=jwZhxwl19C+yYq/1bGJGr35+kmKNOfvayXmKveF3INRRZNDeG1L8sOMry6h+UG7A+O
-         m0mQzqwAyrBimIswV7dT/DLR5xMCxzWWqBjXgLwkk1dQ6QUi+6Tm+JTTygCvMxodG8vI
-         a14VzXxMPV6EW30N+TTbqzScOHY49Ut7Gbzw0wNdluMmZPL883mOEv1rAsbOcm1qj2KS
-         U1d5DWYby4k3QXuX8ANLgO+NmeajpF2Nt7I12SjAjI6kiDP1B/HwD0Hnl/B3k1ebR711
-         kx2s8XwBz+wyLaU7uaabcKY/tZCPCO285srj9yoiBhNa4hqPqQEJ4q7Fg6otJnSccf4L
-         i8Lg==
-X-Gm-Message-State: AOAM531LH813MjZQzJVwzhHp6e4SIadtQXJCxc0clod6d/+WBWKnyR2L
-        9VWSqVP4VxPYy0nW4Z+GfFxZwz7T7LmZ0oqHJERBoA==
-X-Google-Smtp-Source: ABdhPJxDSHXtW5m1dVDzqMXNbJ15G50w48MEPPMvuHd0IZtHCeCnuTvqKdT/kQKwxcrQAWPPa6fdLlL7KvI+lwbBCs4=
-X-Received: by 2002:a1f:b202:: with SMTP id b2mr19506666vkf.86.1592914012493;
- Tue, 23 Jun 2020 05:06:52 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ceG/rp64xRAj8gur9y870c/+SKauz/Pvvf3Ek5gAYHE=;
+        b=YGTUdmjbPAY65EFm4XVQ9nZ9uaLv9QrA9JQwpGhDd/Bz4Iy3jxkyehsMRaqaXp3eT1
+         gzazATpW9GV1eqSIOFuHJr0ysm4r9m4T52YSncOPibYCqz5l9q0P+q/Tt7MF5ndaIAfA
+         2+O7PzFyBtK/8pzlQlqdEb3Ephnz1Hc4j+INlrpTbNYiDXa7i/N5na0sxMDENu08WUBU
+         wJqi6WqMqDiWLEUZ62WFrPO6F3eBa3Zz+h+VrE/HRTjh1eSeRTOJfbbYuD3Btz9ZJAGc
+         LXvtKXzKK2wezLshcvmUuWoJV8AsozsgHYnMjNncQXB1l7nnFgjSHP5T5MBlQK0b63KW
+         3iqg==
+X-Gm-Message-State: AOAM530IgFI+gqVmB2U4vVJAOBubYpk9n6aUzuAzvvWJ1oHau8jaasC2
+        36zByfpFB2QtI23fb9Af1FPchA==
+X-Google-Smtp-Source: ABdhPJzFhA2lwUjrw8Uh+XlYz4CBl1VsesMxrJl8KjSj+B5PacC6wuAYbyLBKbmaRzqOKAPJJSOTSQ==
+X-Received: by 2002:a1c:9943:: with SMTP id b64mr24802648wme.102.1592923075430;
+        Tue, 23 Jun 2020 07:37:55 -0700 (PDT)
+Received: from [192.168.0.41] (lns-bzn-59-82-252-131-168.adsl.proxad.net. [82.252.131.168])
+        by smtp.googlemail.com with ESMTPSA id h14sm6949375wrt.36.2020.06.23.07.37.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jun 2020 07:37:54 -0700 (PDT)
+Subject: Re: [PATCH v4 00/11] Stop monitoring disabled devices
+To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
+        linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
+        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Vishal Kulkarni <vishal@chelsio.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Peter Kaestle <peter@piie.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Enrico Weigelt <info@metux.net>,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        kernel@collabora.com
+References: <Message-ID: <4493c0e4-51aa-3907-810c-74949ff27ca4@samsung.com>
+ <20200528192051.28034-1-andrzej.p@collabora.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <9cbffad6-69e4-0b33-4640-fde7c4f6a6e7@linaro.org>
+Date:   Tue, 23 Jun 2020 16:37:51 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-References: <1591703110-14869-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1591703110-14869-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Tue, 23 Jun 2020 17:36:41 +0530
-Message-ID: <CAHLCerOxKuqhzfNSEMk6dB7B8Y_nvhQ0F0yO+BGrUE-P4SKBEA@mail.gmail.com>
-Subject: Re: [PATCH v2] thermal: rcar_gen3_thermal: Fix undefined temperature
- if negative
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        niklas.soderlund+renesas@ragnatech.se, van.do.xw@renesas.com,
-        dien.pham.ry@renesas.com, Linux PM list <linux-pm@vger.kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200528192051.28034-1-andrzej.p@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
 
-On Tue, Jun 9, 2020 at 5:15 PM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
->
-> From: Dien Pham <dien.pham.ry@renesas.com>
->
-> As description for DIV_ROUND_CLOSEST in file include/linux/kernel.h.
->   "Result is undefined for negative divisors if the dividend variable
->    type is unsigned and for negative dividends if the divisor variable
->    type is unsigned."
->
-> In current code, the FIXPT_DIV uses DIV_ROUND_CLOSEST but has not
-> checked sign of divisor before using. It makes undefined temperature
-> value in case the value is negative.
->
-> This patch fixes to satisfy DIV_ROUND_CLOSEST description
-> and fix bug too. Note that the name "reg" is not good because it should
-> be the same type as rcar_gen3_thermal_read(). So, rename it with "ctemp".
->
-> Signed-off-by: Van Do <van.do.xw@renesas.com>
-> Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
-> [shimoda: minor fixes, add Fixes tag]
-> Fixes: 564e73d283af ("thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver")
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  Changes from v1:
->  - Use int instead of long.
->  - Rename "reg" with "ctemp".
->  https://patchwork.kernel.org/patch/11593051/
->
->  drivers/thermal/rcar_gen3_thermal.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-> index 58fe7c1..49ea330 100644
-> --- a/drivers/thermal/rcar_gen3_thermal.c
-> +++ b/drivers/thermal/rcar_gen3_thermal.c
-> @@ -167,16 +167,16 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
->  {
->         struct rcar_gen3_thermal_tsc *tsc = devdata;
->         int mcelsius, val;
-> -       u32 reg;
-> +       int ctemp;
+Hi Andrzej,
 
-Wouldn't it be better to change the variable type to fix the bug in
-this patch and make a separate one for the variable rename?
 
-Regards,
-Amit
+On 28/05/2020 21:20, Andrzej Pietrasiewicz wrote:
+> There is already a reviewed v3 (not to be confused with RFC v3), which can
+> be considered for merging:
+> 
+> https://lore.kernel.org/linux-pm/20200423165705.13585-2-andrzej.p@collabora.com/
+> 
+> Let me cite Bartlomiej Zolnierkiewicz:
+> 
+> "I couldn't find the problems with the patch itself (no new issues
+> being introduced, all changes seem to be improvements over the current
+> situation).
+> 
+> Also the patch is not small but it also not that big and it mostly
+> removes the code:
+> 
+> 17 files changed, 105 insertions(+), 244 deletions(-)"
 
->         /* Read register and convert to mili Celsius */
-> -       reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
-> +       ctemp = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
->
-> -       if (reg <= thcode[tsc->id][1])
-> -               val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1,
-> +       if (ctemp <= thcode[tsc->id][1])
-> +               val = FIXPT_DIV(FIXPT_INT(ctemp) - tsc->coef.b1,
->                                 tsc->coef.a1);
->         else
-> -               val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b2,
-> +               val = FIXPT_DIV(FIXPT_INT(ctemp) - tsc->coef.b2,
->                                 tsc->coef.a2);
->         mcelsius = FIXPT_TO_MCELSIUS(val);
->
-> --
-> 2.7.4
->
+
+Thanks for this nice cleanup. Given the series was tested, reviewed and
+acked, I would like to merge it as soon as possible.
+
+Can you send the V5 with the EXPORT_SYMBOL_GPL fixed ? So the series can
+enter the integration loop.
+
+Thanks
+
+ -- Daniel
+
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
