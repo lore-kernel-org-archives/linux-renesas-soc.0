@@ -2,108 +2,238 @@ Return-Path: <SRS0=4iRV=AF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F72C433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:31:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18F58C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AEA2120738
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:31:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFAF920823
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:31:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="Y7MI90oF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403951AbgFXNbD (ORCPT
+        id S2403956AbgFXNbN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 09:31:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41384 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403950AbgFXNbC (ORCPT
+        Wed, 24 Jun 2020 09:31:13 -0400
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:51011 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2403950AbgFXNbN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 09:31:02 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C47A0C061798
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Jun 2020 06:31:01 -0700 (PDT)
-Received: from ramsan ([IPv6:2a02:1810:ac12:ed20:55d:3294:1dc4:d387])
-        by xavier.telenet-ops.be with bizsmtp
-        id v1Wz2200W3ySsk1011Wz2D; Wed, 24 Jun 2020 15:30:59 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jo5UR-0002Zz-DK; Wed, 24 Jun 2020 15:30:59 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jo5UR-0001XQ-CZ; Wed, 24 Jun 2020 15:30:59 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/LOCAL 2/7] arm64: renesas: defconfig: Enable WL1837 support
-Date:   Wed, 24 Jun 2020 15:30:52 +0200
-Message-Id: <20200624133057.5860-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200624133057.5860-1-geert+renesas@glider.be>
-References: <20200624133057.5860-1-geert+renesas@glider.be>
+        Wed, 24 Jun 2020 09:31:13 -0400
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id o5UTjhTn1Nb6lo5UXjtYFd; Wed, 24 Jun 2020 15:31:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1593005469; bh=MDEddShRHZ2kQyBZBQSICoZD5Jdb8Z94kNEjYu7s8DE=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=Y7MI90oFR2JYlXXzwNsONDV7XaAFWkwG/xyfFgI3Ol0igF6PjvcgQdrOLQPsm+c98
+         M6fgZDDvgqM83xfHXdQqd2SjHIqQjsyrxszqCXg87sIYepKmTDwk9dOB15tApagnvB
+         wWVOAYx9/KeCnunGkUKgJ3++d90kaw+x/0lJgp58sY2uGCMOyM27c61RNMhD08Z7KN
+         wV8N44paRL79PrZABbKT6ylOIvOoBAbFbtgfdMOdMayfZlrytrO7JpVyiTXz6hDfA2
+         DOW0n/MNg+CntALZbSWk+PkiJ9wNEqPZxSlmDi0uMgHKFDniPV2f0gOjsPnK5HVopc
+         G350vPytAdIyw==
+Subject: Re: [PATCH] media: rcar-vin: Move media_device_register to async
+ completion
+To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Michael Rodin <mrodin@de.adit-jv.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, michael@rodin.online,
+        efriedrich@de.adit-jv.com, erosca@de.adit-jv.com,
+        Steve Longerbeam <steve_longerbeam@mentor.com>
+References: <1592328696-84533-1-git-send-email-mrodin@de.adit-jv.com>
+ <20200617105646.GB2850317@oden.dyn.berto.se>
+ <20200617151537.GB88066@vmlxhi-121.adit-jv.com>
+ <20200617152857.GA2936315@oden.dyn.berto.se>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <427325ff-e21f-91fd-6236-6d1f6615ca41@xs4all.nl>
+Date:   Wed, 24 Jun 2020 15:31:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
+MIME-Version: 1.0
+In-Reply-To: <20200617152857.GA2936315@oden.dyn.berto.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfAVplMJPHvtR2aXNKfwkT4KgjUl73JGbwOXzs3eY1Rkn/wL4GbwHFIJmDehJwHa5ARGtdcYU6afiWeFGOLB6IsaMrnEfLn5AJEmjvmRCvulKGKnlhnU0
+ 5V/P/i4uOk+yDl2A2HXfOUxZgzVJXxvyAVV2c7+nX3LT8xxpd2sQflmdXNQysnM9om6O4oPtfLAF+5z0WV47mC8YGPMdfi92dMtpvMVe1/Tc0jcDn71sKEHJ
+ 2DOv6BokZ+htfdoOQDZYGuqj6AlC4rft2AQ7t0pqPS28KypTaJo6HFHDBHWZktW+NUGp89AqOauerGWjN2WfZHoKz24YE+B4wGxBP+6HQ/1Fl2AolQTj2p7+
+ VlgUo2XuT3nEq68rMFuPqo1SRYBKMRN3YL0KAjhXUFAaO+qj1BvE51GDOHR0F9FIoCMI5ny+FX5BTddSfYhoIGL0L5LAkMusHuPvL8mGS5BfHDkBJXVT1PdY
+ SAgvJ8lini11xCiEndLsldjhIfkXDLfr1aKKB1DcSiBtgXyRNfuxcvlsVP4=
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enable support for the Texas Instruments WL1837 Wi-Fi and Bluetooth
-module, which is used on the HiHope RZ/G2[MN] and Silicon Linux RZ/G2E
-boards.
+On 17/06/2020 17:28, Niklas Söderlund wrote:
+> Hi Michael,
+> 
+> On 2020-06-17 17:15:37 +0200, Michael Rodin wrote:
+>> Hi Niklas and Steve,
+>>
+>> On Wed, Jun 17, 2020 at 12:56:46PM +0200, Niklas Söderlund wrote:
+>>> Hi Michael and Steve,
+>>>
+>>> On 2020-06-16 19:31:36 +0200, Michael Rodin wrote:
+>>>> From: Steve Longerbeam <steve_longerbeam@mentor.com>
+>>>>
+>>>> The media_device is registered during driver probe, before async
+>>>> completion, so it is possible for .link_notify to be called before
+>>>> all devices are bound.
+>>>>
+>>>> Fix this by moving media_device_register() to rvin_group_notify_complete().
+>>>> This ensures that all devices are now bound (the rcar-csi2 subdevices and
+>>>> and video capture devices) before .link_notify can be called.
+>>>
+>>> I'm curious to what situation created the need for this change. I'm 
+>>> currently trying to take the VIN driver in the opposite direction [1] 
+>>> with the end goal of registering video devices at probe time and then 
+>>> allow the media graph to populate as devices becomes available.
+>>
+>> It looks like almost all platform drivers call media_device_register() in
+>> the completion callback. From my understaning it is necessary to ensure
+>> that all subdevices are bound and all links are created before the user
+>> can enable any link (which would trigger link_notify callback execution)
+>> and set formats. If I am not mistaken, Steve could observe an "OOPS" or
+>> at least it is theoretically possible.
+> 
+> If an OOPS have been observed I would be interested to see it. That way 
+> we can fix the OOPS and keep the media graph registration where it is 
+> today.
+> 
+>>
+>> Actually I found that this patch alone is not enough even if it is correct,
+>> because we also have to register the media device in rvin_parallel_notify_complete()
+>> in case if there is only a parallel video input device attached.
+>>
+>>> My reason for this is that we could have a functional pipeline inside 
+>>> the graph even if it's not complete. This came out of the GMSL work done
+>>> a while pack where I had a faulty camera that would prevent the other 7 
+>>> in the system to function.
+>>
+>> I agree that if a probe of a faulty subdevice fails, this should not affect
+>> functionality of the other attached subdevices. The "complete" callback of
+>> the async notifier is probably not executed in this case, so I guess, we
+>> would have to register the media device in the "bound" callback after the first
+>> subdevice has been probed? Otherwise there is not much sense to have video
+>> capture devices, which are not connected to any source.
+> 
+> Calling it in the bound callback is mostly the same as it is today, as 
+> link_notify could then be called when not all entities are in the graph.  
+> In fact even if we where tp move the media device registration to the t
+> complete callback we have this problem if any of the subdevices are 
+> unbound. Then we are back to the state with a registerd media device 
+> where not all entities are present.
+> 
+> I think the solution here is to address the issue (if any) in the 
+> link_notify callback when the graph is not fully populated.
 
-Drop CONFIG_LEDS_TRIGGERS=y, as it is selected by CONFIG_BT_LEDS and
-CONFIG_MAC80211_LEDS.
+As I have mentioned in other threads in this mailinglist (e.g.
+https://www.spinics.net/lists/linux-media/msg171067.html), this is part
+of a bigger problem: what to do if only part of a graph comes up, or
+a part disappears. Today this is not supported.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm64/configs/renesas_defconfig | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+It is certainly desirable to support this, but I want to see an RFC first
+detailing the interaction with userspace. And remember that today the
+expectation of applications is that device nodes are only created if all
+components of the device probed successfully.
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 8a9dc37a4b32a906..1b626e1894bb90c8 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -87,6 +87,13 @@ CONFIG_NETFILTER=y
- CONFIG_CAN=y
- CONFIG_CAN_RCAR=y
- CONFIG_CAN_RCAR_CANFD=y
-+CONFIG_BT=y
-+CONFIG_BT_LEDS=y
-+CONFIG_BT_HCIUART=y
-+CONFIG_BT_HCIUART_LL=y
-+CONFIG_CFG80211=y
-+CONFIG_MAC80211=y
-+CONFIG_MAC80211_LEDS=y
- CONFIG_PCI=y
- CONFIG_PCIEPORTBUS=y
- CONFIG_HOTPLUG_PCI_PCIE=y
-@@ -116,7 +123,8 @@ CONFIG_RAVB=y
- CONFIG_MDIO_BUS_MUX_MMIOREG=y
- CONFIG_MICREL_PHY=y
- CONFIG_REALTEK_PHY=y
--# CONFIG_WLAN is not set
-+CONFIG_WLCORE=y
-+CONFIG_WLCORE_SDIO=y
- CONFIG_INPUT_MATRIXKMAP=y
- CONFIG_INPUT_EVDEV=y
- # CONFIG_KEYBOARD_ATKBD is not set
-@@ -125,6 +133,7 @@ CONFIG_KEYBOARD_GPIO=y
- CONFIG_INPUT_MISC=y
- # CONFIG_SERIO is not set
- CONFIG_SERIAL_SH_SCI=y
-+CONFIG_SERIAL_DEV_BUS=y
- CONFIG_VIRTIO_CONSOLE=y
- # CONFIG_HW_RANDOM is not set
- CONFIG_I2C_CHARDEV=y
-@@ -261,7 +270,6 @@ CONFIG_NEW_LEDS=y
- CONFIG_LEDS_CLASS=y
- CONFIG_LEDS_GPIO=y
- CONFIG_LEDS_PWM=y
--CONFIG_LEDS_TRIGGERS=y
- CONFIG_LEDS_TRIGGER_HEARTBEAT=y
- CONFIG_LEDS_TRIGGER_CPU=y
- CONFIG_LEDS_TRIGGER_DEFAULT_ON=y
--- 
-2.17.1
+My preference is that rcar-vin is first changed to conform to current
+expectations (i.e. /dev/mediaX is only registered at async completion).
+
+After a proper discussion on how to handle partial initialization and
+after we have a good plan, then this can be implemented in rcar-vin.
+
+Note that I really want to support partial initialization, but I want
+to see an RFC with a proper analysis and proposal first.
+
+Regards,
+
+	Hans
+
+> 
+>>
+>> (Delayed) population of the media graph after media device registration
+>> sounds also like a requirement for device tree overlay support, which would
+>> also be a nice feature.
+>>
+>>> 1. [PATCH 0/5] media-device: Report if graph is complete
+>>>
+>>>>
+>>>> Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+>>>> Signed-off-by: Michael Rodin <mrodin@de.adit-jv.com>
+>>>> ---
+>>>>  drivers/media/platform/rcar-vin/rcar-core.c | 14 ++++++--------
+>>>>  1 file changed, 6 insertions(+), 8 deletions(-)
+>>>>
+>>>> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+>>>> index 7440c89..e70f83b 100644
+>>>> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+>>>> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+>>>> @@ -253,7 +253,6 @@ static int rvin_group_init(struct rvin_group *group, struct rvin_dev *vin)
+>>>>  	struct media_device *mdev = &group->mdev;
+>>>>  	const struct of_device_id *match;
+>>>>  	struct device_node *np;
+>>>> -	int ret;
+>>>>  
+>>>>  	mutex_init(&group->lock);
+>>>>  
+>>>> @@ -266,7 +265,6 @@ static int rvin_group_init(struct rvin_group *group, struct rvin_dev *vin)
+>>>>  	vin_dbg(vin, "found %u enabled VIN's in DT", group->count);
+>>>>  
+>>>>  	mdev->dev = vin->dev;
+>>>> -	mdev->ops = &rvin_media_ops;
+>>>>  
+>>>>  	match = of_match_node(vin->dev->driver->of_match_table,
+>>>>  			      vin->dev->of_node);
+>>>> @@ -278,11 +276,7 @@ static int rvin_group_init(struct rvin_group *group, struct rvin_dev *vin)
+>>>>  
+>>>>  	media_device_init(mdev);
+>>>>  
+>>>> -	ret = media_device_register(&group->mdev);
+>>>> -	if (ret)
+>>>> -		rvin_group_cleanup(group);
+>>>> -
+>>>> -	return ret;
+>>>> +	return 0;
+>>>>  }
+>>>>  
+>>>>  static void rvin_group_release(struct kref *kref)
+>>>> @@ -688,6 +682,8 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
+>>>>  		return ret;
+>>>>  	}
+>>>>  
+>>>> +	vin->group->mdev.ops = &rvin_media_ops;
+>>>> +
+>>>>  	/* Register all video nodes for the group. */
+>>>>  	for (i = 0; i < RCAR_VIN_NUM; i++) {
+>>>>  		if (vin->group->vin[i] &&
+>>>> @@ -736,8 +732,10 @@ static int rvin_group_notify_complete(struct v4l2_async_notifier *notifier)
+>>>>  		}
+>>>>  	}
+>>>>  	mutex_unlock(&vin->group->lock);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>>  
+>>>> -	return ret;
+>>>> +	return media_device_register(&vin->group->mdev);
+>>>>  }
+>>>>  
+>>>>  static void rvin_group_notify_unbind(struct v4l2_async_notifier *notifier,
+>>>> -- 
+>>>> 2.7.4
+>>>>
+>>>
+>>> -- 
+>>> Regards,
+>>> Niklas Söderlund
+>>
+>> -- 
+>> Best Regards,
+>> Michael
+> 
 
