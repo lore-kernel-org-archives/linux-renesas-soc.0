@@ -2,74 +2,66 @@ Return-Path: <SRS0=4iRV=AF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FE28C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8621FC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1450320720
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:19:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6286C20836
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:20:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593004844;
+	bh=7sm5kpSt/BXDy3KEHFUH+6inxHuH7lwitg/cy1rhUzk=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=IXBtMg0DsR098Ix3pf++en0kFEVX/+HgjqbsLcIc8HBEBAYgIKauDhY0bTC+FyfuD
+	 vhKiJCblBXOk+oFOWLfY0tr7x272nnIYtKp8lEGLmaQ9/mxr5XeD2jgpgULJl+NwCc
+	 +E/Hmvo4ciVb9Out27V5Fqp6snilfhA8clcsutP8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389688AbgFXNTl (ORCPT
+        id S2388123AbgFXNUo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 09:19:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39630 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389469AbgFXNTl (ORCPT
+        Wed, 24 Jun 2020 09:20:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387915AbgFXNUn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 09:19:41 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDACBC061573
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Jun 2020 06:19:40 -0700 (PDT)
-Received: from ramsan ([IPv6:2a02:1810:ac12:ed20:55d:3294:1dc4:d387])
-        by baptiste.telenet-ops.be with bizsmtp
-        id v1KY2200X3ySsk1011KY7s; Wed, 24 Jun 2020 15:19:39 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jo5JM-00027M-LP; Wed, 24 Jun 2020 15:19:32 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jo5JM-0000yM-Ko; Wed, 24 Jun 2020 15:19:32 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/7] ARM: shmobile: defconfig: Enable DA9063 ONKEY support
-Date:   Wed, 24 Jun 2020 15:19:26 +0200
-Message-Id: <20200624131931.3686-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200624131931.3686-1-geert+renesas@glider.be>
-References: <20200624131931.3686-1-geert+renesas@glider.be>
+        Wed, 24 Jun 2020 09:20:43 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593004843;
+        bh=7sm5kpSt/BXDy3KEHFUH+6inxHuH7lwitg/cy1rhUzk=;
+        h=Subject:From:Date:To:From;
+        b=Jw15gz5S4nC7bCMcmpAxr5PaA0qaU36pitj6Kg3TotchriitQxQtK3BOgZA1qv/jK
+         j5Jpez+xPGvkTenC9BMTv2D7YA/Qj3zTqwaBIIdFFvUd4cLR4zXL40OPZDtVGJTEsA
+         zLKAzIxxH2qPAoNyds/4qfHE2UvqTva08fNscdw0=
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <159300484337.14195.7228507137282580345.git-patchwork-housekeeping@kernel.org>
+Date:   Wed, 24 Jun 2020 13:20:43 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enable support for the "ONKEY" of the Dialog DA9063 PMIC, which is used
-on the Stout and Silk boards.
+Latest series: [v2] Add support for HiHope RZ/G2M[N] Rev.3.0/4.0 (2020-06-24T13:11:59)
+  Superseding: [v1] Add support for HiHope RZ/G2M[N] Rev.3.0/4.0 (2020-06-07T18:34:35):
+    [01/11] arm64: dts: renesas: r8a774a1-hihope-rzg2m[-ex/-ex-idk-1110wr]: Rename HiHope RZ/G2M boards
+    [02/11] arm64: dts: renesas: r8a774b1-hihope-rzg2n[-ex]: Rename HiHope RZ/G2N boards
+    [03/11] arm64: dts: renesas: hihope-common: Separate out Rev.2.0 specific into hihope-common-rev2.dtsi file
+    [04/11] arm64: dts: renesas: Add HiHope RZ/G2M[N] Rev.3.0/4.0 specific into common file
+    [05/11] arm64: dts: renesas: Add HiHope RZ/G2M Rev.3.0/4.0 main board support
+    [06/11] arm64: dts: renesas: Add HiHope RZ/G2M Rev.3.0/4.0 sub board support
+    [07/11] arm64: dts: renesas: hihope-rzg2-ex: Separate out lvds specific nodes into common file
+    [08/11] arm64: dts: renesas: Add HiHope RZ/G2M Rev.3.0/4.0 board with idk-1110wr display
+    [09/11] arm64: dts: renesas: Add HiHope RZ/G2N Rev.3.0/4.0 main board support
+    [10/11] arm64: dts: renesas: Add HiHope RZ/G2N Rev.3.0/4.0 sub board support
+    [11/11] arm64: dts: renesas: Add HiHope RZ/G2N Rev2.0/3.0/4.0 board with idk-1110wr display
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/configs/shmobile_defconfig | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/configs/shmobile_defconfig b/arch/arm/configs/shmobile_defconfig
-index 99ad932193268ce0..a8a8cc8a834c8972 100644
---- a/arch/arm/configs/shmobile_defconfig
-+++ b/arch/arm/configs/shmobile_defconfig
-@@ -65,6 +65,7 @@ CONFIG_INPUT_TOUCHSCREEN=y
- CONFIG_TOUCHSCREEN_EDT_FT5X06=y
- CONFIG_TOUCHSCREEN_ST1232=y
- CONFIG_INPUT_MISC=y
-+CONFIG_INPUT_DA9063_ONKEY=y
- CONFIG_INPUT_ADXL34X=y
- # CONFIG_LEGACY_PTYS is not set
- CONFIG_SERIAL_8250=y
 -- 
-2.17.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
