@@ -2,66 +2,74 @@ Return-Path: <SRS0=4iRV=AF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8621FC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C52C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6286C20836
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:20:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593004844;
-	bh=7sm5kpSt/BXDy3KEHFUH+6inxHuH7lwitg/cy1rhUzk=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=IXBtMg0DsR098Ix3pf++en0kFEVX/+HgjqbsLcIc8HBEBAYgIKauDhY0bTC+FyfuD
-	 vhKiJCblBXOk+oFOWLfY0tr7x272nnIYtKp8lEGLmaQ9/mxr5XeD2jgpgULJl+NwCc
-	 +E/Hmvo4ciVb9Out27V5Fqp6snilfhA8clcsutP8=
+	by mail.kernel.org (Postfix) with ESMTP id 8769620836
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Jun 2020 13:31:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388123AbgFXNUo (ORCPT
+        id S2403940AbgFXNbC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Jun 2020 09:20:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51408 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387915AbgFXNUn (ORCPT
+        Wed, 24 Jun 2020 09:31:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41376 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403943AbgFXNbB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Jun 2020 09:20:43 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593004843;
-        bh=7sm5kpSt/BXDy3KEHFUH+6inxHuH7lwitg/cy1rhUzk=;
-        h=Subject:From:Date:To:From;
-        b=Jw15gz5S4nC7bCMcmpAxr5PaA0qaU36pitj6Kg3TotchriitQxQtK3BOgZA1qv/jK
-         j5Jpez+xPGvkTenC9BMTv2D7YA/Qj3zTqwaBIIdFFvUd4cLR4zXL40OPZDtVGJTEsA
-         zLKAzIxxH2qPAoNyds/4qfHE2UvqTva08fNscdw0=
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <159300484337.14195.7228507137282580345.git-patchwork-housekeeping@kernel.org>
-Date:   Wed, 24 Jun 2020 13:20:43 +0000
-To:     linux-renesas-soc@vger.kernel.org
+        Wed, 24 Jun 2020 09:31:01 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2C6CC061795
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Jun 2020 06:31:00 -0700 (PDT)
+Received: from ramsan ([IPv6:2a02:1810:ac12:ed20:55d:3294:1dc4:d387])
+        by baptiste.telenet-ops.be with bizsmtp
+        id v1Wz2200d3ySsk1011Wzvr; Wed, 24 Jun 2020 15:30:59 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jo5UR-0002a7-Fr; Wed, 24 Jun 2020 15:30:59 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jo5UR-0001Xa-Et; Wed, 24 Jun 2020 15:30:59 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/LOCAL 5/7] arm64: renesas: defconfig: Enable IMX219 and OV5645 support
+Date:   Wed, 24 Jun 2020 15:30:55 +0200
+Message-Id: <20200624133057.5860-6-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200624133057.5860-1-geert+renesas@glider.be>
+References: <20200624133057.5860-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v2] Add support for HiHope RZ/G2M[N] Rev.3.0/4.0 (2020-06-24T13:11:59)
-  Superseding: [v1] Add support for HiHope RZ/G2M[N] Rev.3.0/4.0 (2020-06-07T18:34:35):
-    [01/11] arm64: dts: renesas: r8a774a1-hihope-rzg2m[-ex/-ex-idk-1110wr]: Rename HiHope RZ/G2M boards
-    [02/11] arm64: dts: renesas: r8a774b1-hihope-rzg2n[-ex]: Rename HiHope RZ/G2N boards
-    [03/11] arm64: dts: renesas: hihope-common: Separate out Rev.2.0 specific into hihope-common-rev2.dtsi file
-    [04/11] arm64: dts: renesas: Add HiHope RZ/G2M[N] Rev.3.0/4.0 specific into common file
-    [05/11] arm64: dts: renesas: Add HiHope RZ/G2M Rev.3.0/4.0 main board support
-    [06/11] arm64: dts: renesas: Add HiHope RZ/G2M Rev.3.0/4.0 sub board support
-    [07/11] arm64: dts: renesas: hihope-rzg2-ex: Separate out lvds specific nodes into common file
-    [08/11] arm64: dts: renesas: Add HiHope RZ/G2M Rev.3.0/4.0 board with idk-1110wr display
-    [09/11] arm64: dts: renesas: Add HiHope RZ/G2N Rev.3.0/4.0 main board support
-    [10/11] arm64: dts: renesas: Add HiHope RZ/G2N Rev.3.0/4.0 sub board support
-    [11/11] arm64: dts: renesas: Add HiHope RZ/G2N Rev2.0/3.0/4.0 board with idk-1110wr display
+Enable support for the Sony IMX219 and OmniVision OV5645 cameras, which
+are used on the AISTARVISION MIPI Adapter V2.1.
 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/configs/renesas_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 0d4c7597f7d65258..dd1619e8ccd34d96 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -183,6 +183,8 @@ CONFIG_VIDEO_ADV7180=y
+ CONFIG_VIDEO_ADV748X=y
+ CONFIG_VIDEO_ADV7604=y
+ CONFIG_VIDEO_ADV7604_CEC=y
++CONFIG_VIDEO_IMX219=y
++CONFIG_VIDEO_OV5645=y
+ # CONFIG_MEDIA_TUNER_SIMPLE is not set
+ # CONFIG_MEDIA_TUNER_TDA18250 is not set
+ # CONFIG_MEDIA_TUNER_TDA8290 is not set
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+2.17.1
+
