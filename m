@@ -2,105 +2,56 @@ Return-Path: <SRS0=wJDX=AG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A20BC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jun 2020 11:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65141C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jun 2020 11:40:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A31920CC7
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jun 2020 11:38:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 437D92088E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jun 2020 11:40:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593085242;
+	bh=PDimuf+0Iukcje9bMy6Wouo1UWtAj5ra04zLDHuAJb0=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=DDpKrA55VPCHf1TBU5t4d/QIOTVVmvIaSuGTOxoCnYdW6bDxmt/ZmI60f67cIgLvC
+	 3OQo8lLdekSEBj/DhXBYjjYOO4KUdG1krxobu6m6Wjl7rCh90kFvijGRIBFWa3x86m
+	 zEakv1VMjpeDxoJzBzAK8de8qtGdAN6WxeC8911I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404321AbgFYLil (ORCPT
+        id S2404276AbgFYLkm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 25 Jun 2020 07:38:41 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:16162 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2404313AbgFYLik (ORCPT
+        Thu, 25 Jun 2020 07:40:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404228AbgFYLkl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jun 2020 07:38:40 -0400
-X-IronPort-AV: E=Sophos;i="5.75,279,1589209200"; 
-   d="scan'208";a="50366953"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Jun 2020 20:38:38 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B190F421C958;
-        Thu, 25 Jun 2020 20:38:38 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     rui.zhang@intel.com, daniel.lezcano@linaro.org,
-        amit.kucheria@verdurent.com
-Cc:     niklas.soderlund+renesas@ragnatech.se, van.do.xw@renesas.com,
-        dien.pham.ry@renesas.com, linux-pm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v4] thermal: rcar_gen3_thermal: Fix undefined temperature if negative
-Date:   Thu, 25 Jun 2020 20:38:19 +0900
-Message-Id: <1593085099-2057-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 25 Jun 2020 07:40:41 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593085241;
+        bh=PDimuf+0Iukcje9bMy6Wouo1UWtAj5ra04zLDHuAJb0=;
+        h=Subject:From:Date:To:From;
+        b=WQw1CzSHRerr938zsZg1yZsURw43nzNtu6sEvdLCx4iZwvJ6MndGAquggZOPbw+G/
+         r8nIe+yGw9dtUhZ1K01SE9kjq/N5WbgkNQIe2SZqe903sj4y2trq0PYaphzdWmncqR
+         /lKNjTn9aATGXzRzp7vaI5kqCvpaDY2vcvZcw8PA=
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <159308524150.7065.3690560758693233657.git-patchwork-housekeeping@kernel.org>
+Date:   Thu, 25 Jun 2020 11:40:41 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Dien Pham <dien.pham.ry@renesas.com>
+Latest series: [v4] thermal: rcar_gen3_thermal: Fix undefined temperature if negative (2020-06-25T11:38:19)
+  Superseding: [v3] thermal: rcar_gen3_thermal: Fix undefined temperature if negative (2020-06-25T02:56:08):
+    [v3] thermal: rcar_gen3_thermal: Fix undefined temperature if negative
 
-As description for DIV_ROUND_CLOSEST in file include/linux/kernel.h.
-  "Result is undefined for negative divisors if the dividend variable
-   type is unsigned and for negative dividends if the divisor variable
-   type is unsigned."
 
-In current code, the FIXPT_DIV uses DIV_ROUND_CLOSEST but has not
-checked sign of divisor before using. It makes undefined temperature
-value in case the value is negative.
-
-This patch fixes to satisfy DIV_ROUND_CLOSEST description
-and fix bug too. Note that the variable name "reg" is not good
-because it should be the same type as rcar_gen3_thermal_read().
-However, it's better to rename the "reg" in a further patch as
-cleanup.
-
-Signed-off-by: Van Do <van.do.xw@renesas.com>
-Signed-off-by: Dien Pham <dien.pham.ry@renesas.com>
-[shimoda: minor fixes, add Fixes tag]
-Fixes: 564e73d283af ("thermal: rcar_gen3_thermal: Add R-Car Gen3 thermal driver")
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- Changes from v3:
- - Add Amit's Reviewed-by.
- - Fix typos in the commit description.
- https://patchwork.kernel.org/patch/11624619/
-
- Changes from v2:
- - Add Niklas-san's Reviewed-by and Tested-by.
- - Keep the variable name "reg" and revise the commit description for it.
- https://patchwork.kernel.org/patch/11595327/
-
- Changes from v1:
- - Use int instead of long.
- - Rename "reg" with "ctemp".
- https://patchwork.kernel.org/patch/11593051/
-
- drivers/thermal/rcar_gen3_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 58fe7c1..c48c5e9 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -167,7 +167,7 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
- {
- 	struct rcar_gen3_thermal_tsc *tsc = devdata;
- 	int mcelsius, val;
--	u32 reg;
-+	int reg;
- 
- 	/* Read register and convert to mili Celsius */
- 	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
 -- 
-2.7.4
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
