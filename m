@@ -2,128 +2,135 @@ Return-Path: <SRS0=wJDX=AG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B77C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jun 2020 08:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7211C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jun 2020 09:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1253A2076E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jun 2020 08:58:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEE5020578
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Jun 2020 09:26:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390771AbgFYI6F (ORCPT
+        id S2390143AbgFYJ00 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 25 Jun 2020 04:58:05 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37192 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390330AbgFYI6F (ORCPT
+        Thu, 25 Jun 2020 05:26:26 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41444 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726149AbgFYJ00 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 25 Jun 2020 04:58:05 -0400
-Received: by mail-ot1-f66.google.com with SMTP id v13so4576756otp.4;
-        Thu, 25 Jun 2020 01:58:03 -0700 (PDT)
+        Thu, 25 Jun 2020 05:26:26 -0400
+Received: by mail-oi1-f195.google.com with SMTP id a21so4365338oic.8;
+        Thu, 25 Jun 2020 02:26:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qLPZD7PFE1Gd0rOLnIGy3Ohui9fGoP3OOJI6weOrvCc=;
-        b=GlgKsX1EvGkXIGaSR7PKaPyxJPWvYATJ/wF/js5HVj1f87/5u+a1dTEYxDY4Di6sWV
-         P6Lz8uZ3FxBAlyEbYnHPi49IVuueTxMlq4Qcc1Id6xfiXg7Lt/jAD3Jtjxl5NYAVJgpN
-         qC5juJ3YtbSrJ2KcHUFUJcqOy1UVPIrTxFxAP3UyA7cqX1Wu8M4TWNjhZU309oCTvbyu
-         Vb6bKnIYZP1So6lZ5lWgEoYjrZOkxcRj/gmhk9aXDyPxGKI+MpQVS0tLRyonJdHqzTKS
-         lL7bNI1Q+iUheJ5Gax7kqdfM8KiXRPpuA5TCsB6FLqD2vY2zuBnHbLnHIs/KENBIzB+X
-         uR7w==
-X-Gm-Message-State: AOAM533YdzmxTHT5aZQnG4IYDQaeZ2wtArHwpa38fLBIr0ilEOthYOBv
-        bkfJSg411pzpNhPyVI/NPkUfkpsqapDjIK+UeZo=
-X-Google-Smtp-Source: ABdhPJykpfn0DLcmVLEthmAqqqmjCHMhTsy0UwLlx+zOOQgay++hZ1cGg1mJxWDV9LviySSWeN+kBuSsGmUWVMQOlpQ=
-X-Received: by 2002:a9d:6254:: with SMTP id i20mr1590023otk.145.1593075483314;
- Thu, 25 Jun 2020 01:58:03 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=yjzuDu5iqeNsu8xsS5EjF8Gr+ffGuq2vYXMsQZ3k7jM=;
+        b=t5r1W+kC9nS+TaTm1T6GoKesiKPG6wHWBa3urlMP2Wk5ej3xwKueRPVpEvMznSE1C8
+         1dj2ne/+ypF24KAPqm05ZX+caR+PNr2FLFuPXmE0RSqF589iHjzCr6YsjeMgxm8QGyyx
+         S0NLHObNlI54stIVoGyuT+mKt7NxCYXPwmIXZqtUEv1o+u6GxNyE45W9+ocMWsAD9esq
+         j7d3qgTnn7oaMK/XV6/h3qxYmUsBma5GA0QZKibtwm8KiOUthLpR5ZFZYOTcltlDpfg5
+         BWGHA315ckMAkqSINUp9By5e1MUOJsvvyIzeT4hImlp9PCw1XVa5kW8UkVRTK8ikAx/D
+         uIDQ==
+X-Gm-Message-State: AOAM530sP7mjd//Ylw9yurtMjjquLVT90WIhi29S6GeSxUkGJfoHM4n6
+        V1fwXuNCXpJjtNM+u3crtis2qkpFObyz43NfQPs=
+X-Google-Smtp-Source: ABdhPJwsgOEyHOyhQZQfhnuYyoD/aYDE50iovKEbQsMjIg8T4WNNLfeSIQT55JpX+5PPkCNy8BmSIizKd1H9+owNtRU=
+X-Received: by 2002:a54:4006:: with SMTP id x6mr1352366oie.148.1593077185115;
+ Thu, 25 Jun 2020 02:26:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200625032430.152447-1-saravanak@google.com>
-In-Reply-To: <20200625032430.152447-1-saravanak@google.com>
+References: <1592792699-24638-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1592792699-24638-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAPDyKFq-dEPaU094hrk2xg18VpJAsbnf8enieFmcMhKiB1bW1A@mail.gmail.com>
+ <CAMuHMdXjU7N4oG89YsozGijMpjgKGN6ezw2qm6FeGX=JyRhsvg@mail.gmail.com> <TY2PR01MB36921A71A493ABD624A28C42D8920@TY2PR01MB3692.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY2PR01MB36921A71A493ABD624A28C42D8920@TY2PR01MB3692.jpnprd01.prod.outlook.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 25 Jun 2020 10:57:52 +0200
-Message-ID: <CAMuHMdWiAPOGPh+LCwxebfwZTxQvwEi7G3R1btdEz6xWkbFPUQ@mail.gmail.com>
-Subject: Re: [PATCH v1] driver core: Fix suspend/resume order issue with
- deferred probe
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, Toan Le <toanle@apm.com>,
-        Feng Kan <fkan@apm.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Thu, 25 Jun 2020 11:26:14 +0200
+Message-ID: <CAMuHMdWLWBvZmHNqPFk2GW6XLnBx-sqfCo6d=B4iei88ONWX=w@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] mmc: core: Call mmc_poweroff_nofity() if pm_suspend_via_firmware()
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Mark Brown <broonie@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Saravana,
+Hi Shimoda-san,
 
-Thanks for your patch!
+CC broonie
 
-On Thu, Jun 25, 2020 at 5:24 AM Saravana Kannan <saravanak@google.com> wrote:
-> Under the following conditions:
-> - driver A is built in and can probe device-A
-> - driver B is a module and can probe device-B
-
-I think this is not correct: in my case driver B is builtin, too.
-
-> - device-A is supplier of device-B
+On Thu, Jun 25, 2020 at 8:31 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> > From: Geert Uytterhoeven, Sent: Wednesday, June 24, 2020 8:13 PM
+> > On Wed, Jun 24, 2020 at 12:06 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > On Mon, 22 Jun 2020 at 04:25, Yoshihiro Shimoda
+> > > <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > > > If pm_suspend_via_firmware() returns true, the system will be able
+> > > > to cut both vcc and vccq in the suspend. So, call
+> > > > mmc_poweroff_nofity() if pm_suspend_via_firmware() returns true.
+> > > >
+> > > > Note that we should not update the MMC_CAP2_FULL_PWR_CYCLE caps
+> > > > because the mmc_select_voltage() checks the caps when attaches
+> > > > a mmc/sd.
+> >
+> > > > --- a/drivers/mmc/core/mmc.c
+> > > > +++ b/drivers/mmc/core/mmc.c
+> > > > @@ -2038,7 +2039,8 @@ static int _mmc_suspend(struct mmc_host *host, bool is_suspend)
+> > > >                 goto out;
+> > > >
+> > > >         if (mmc_can_poweroff_notify(host->card) &&
+> > > > -               ((host->caps2 & MMC_CAP2_FULL_PWR_CYCLE) || !is_suspend))
+> > > > +           ((host->caps2 & MMC_CAP2_FULL_PWR_CYCLE) || !is_suspend ||
+> > > > +            pm_suspend_via_firmware()))
+> > >
+> > > Sorry, but this doesn't work.
+> > >
+> > > Even if PSCI is a generic FW interface, it doesn't mean that all PSCI
+> > > implementations will cut the vcc and vccq for the MMC card at system
+> > > suspend.
+> >
+> > Indeed, there's nothing guaranteed here.  Nor documented how it should
+> > behave.  Basically the firmware is free to power off the SoC. Or not do that.
+> > "If firmware is involved, all odds are off".
 >
-> Without this patch:
-> 1. device-A is added.
-> 2. device-B is added.
-> 3. dpm_list is now [device-A, device-B].
-> 4. driver-A defers probe of device-A.
-> 5. deferred probe of device-A is reattempted
-
-I think this is misleading: in my case driver-A did not defer the probe
-of device-A, and driver-A never returned -EPROBE_DEFER.
-Probing was merely paused, due to fw_devlink_pause();
-
-> 6. device-A is moved to end of dpm_list.
-> 6. dpm_list is now [device-B, device-A].
-> 7. driver-B is loaded and probes device-B.
-> 8. dpm_list stays as [device-B, device-A].
+> I thought we could be guaranteed. But, I understood we could not be guaranteed...
 >
-> Suspend (which goes in the reverse order of dpm_list) fails because
-> device-A (supplier) is suspended before device-B (consumer).
+> > > Instead, you need to decide this based on some specific DT property.
+> > > Perhaps in conjunction with using pm_suspend_via_firmware().
+> >
+> > Last time I was involved in a discussion about this, the PSCI people
+> > didn't want to add any properties describing particular PSCI behavior...
+> > "If firmware is involved, all odds are off".
+> >
+> > So the only safe thing to do is to expect the worst, and prepare for it...
 >
-> With this patch:
-> 1. device-A is added.
-> 2. device-B is added.
-> 3. dpm_list is now [device-A, device-B].
-> 4. driver-A defers probe of device-A.
-> 5. deferred probe of device-A is reattempted later.
-> 6. dpm_list is now [device-B, device-A].
-> 7. driver-B is loaded and probes device-B.
-> 8. dpm_list is now [device-A, device-B].
->
-> Suspend works because device-B (consumer) is suspended before device-A
-> (supplier).
->
-> Fixes: 494fd7b7ad10 ("PM / core: fix deferred probe breaking suspend resume order")
-> Fixes: 716a7a259690 ("driver core: fw_devlink: Add support for batching fwnode parsing")
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> A headache point is an eMMC device consumes much power if that the system
+> doesn't cut the vcc and vccq and doesn’t enter the sleep mode.
+> In other words, in power consumption point of view, this patch will
+> cause a regression in such a case...
 
-This fixes wake-up by GPIO key on r8a7740/armadillo and sh73a0/kzm9g.
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Indeed.
 
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -109,6 +109,8 @@ static void deferred_probe_work_func(struct work_struct *work)
->                  * probe makes that very unsafe.
->                  */
->                 device_pm_move_to_tail(dev);
-> +               /* Greg/Rafael: SHOULD I DELETE THIS? ^^ I think I should, but
-> +                * I'm worried if it'll have some unintended consequeneces. */
+> By the way, about adding specific DT property, the regulator can have
+> regulator-off-in-suspend property in regulator-state-mem subnode.
+> For now, we doesn't seem to get the property from a regulator consumer though.
+> So, I'll try to add an API of regulator for it.
 
-Works fine for me with the call to device_pm_move_to_tail() removed, too
-(at least on the two boards that showed the issue before).
+Oh right, the eMMC is described in DT as being connected to two
+regulators.
+Note that the semantics of regulator-off-in-suspend are that the
+regulator should be disabled (by the regulator core) during suspend, not
+that the regulator is disabled during suspend by a third party.
+No idea if that will work with a fixed-regulator without GPIO control,
+but of course you can try.
 
 Gr{oetje,eeting}s,
 
