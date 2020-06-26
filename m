@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3EAC433DF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB88BC433E0
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Jun 2020 22:12:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F49120C09
+	by mail.kernel.org (Postfix) with ESMTP id 9E35420663
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Jun 2020 22:12:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725838AbgFZWMi (ORCPT
+        id S1725834AbgFZWMi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 26 Jun 2020 18:12:38 -0400
-Received: from mga03.intel.com ([134.134.136.65]:13181 "EHLO mga03.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:19541 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbgFZWMh (ORCPT
+        id S1725803AbgFZWMi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Jun 2020 18:12:37 -0400
-IronPort-SDR: x/DJBW2utI+ArliPJUdTJK1eyJzWgj5iW0ZwHPJXbuWGGTgzcm2CANNMln3YmX4mz/Ae5TAVGl
- LRmwIGZ6P0Nw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9664"; a="145550168"
+        Fri, 26 Jun 2020 18:12:38 -0400
+IronPort-SDR: 001T8/tOVac0ptBmBbDGhfF9Y7NSmJgG+3oLKCJBdxAPoQcDXgE6DFHOn9iqoVw8AQR7fyoxvR
+ R1ntOd7hPHoQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9664"; a="163539222"
 X-IronPort-AV: E=Sophos;i="5.75,285,1589266800"; 
-   d="scan'208";a="145550168"
+   d="scan'208";a="163539222"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2020 15:12:36 -0700
-IronPort-SDR: oWia2mwpGTsqtq4M1jVD5td+ChPYRXXpLfg92JO6DVpoVjXn3pvoJPUxrOAe0bvBSTQbmX3YzF
- Dp2jqthKiOrg==
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2020 15:12:36 -0700
+IronPort-SDR: 13v5wblLOKf5L+AH83QlMS4dRxj8nBWYQA5i0aJFMxcC/lpis9+7Flr39UlS8in0OYxUWrJ2/d
+ VKRbdtz+iI7g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,285,1589266800"; 
-   d="scan'208";a="264325659"
+   d="scan'208";a="265726802"
 Received: from lkp-server01.sh.intel.com (HELO 538b5e3c8319) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 26 Jun 2020 15:12:35 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 26 Jun 2020 15:12:35 -0700
 Received: from kbuild by 538b5e3c8319 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1jowaI-0002U8-Vy; Fri, 26 Jun 2020 22:12:34 +0000
-Date:   Sat, 27 Jun 2020 06:11:37 +0800
+        id 1jowaJ-0002UE-3Y; Fri, 26 Jun 2020 22:12:35 +0000
+Date:   Sat, 27 Jun 2020 06:11:43 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:master] BUILD SUCCESS
- a9c1da309248d250196ee61db6147c2621f23b3b
-Message-ID: <5ef67299./u05KjRNgJTXSnT3%lkp@intel.com>
+Subject: [renesas-devel:renesas-arm-dt-for-v5.9] BUILD SUCCESS
+ 667175f5029c5f6ec7a72811fc6b14c33d252286
+Message-ID: <5ef6729f.MJM/YGefcTQlcepB%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -55,29 +55,25 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
-branch HEAD: a9c1da309248d250196ee61db6147c2621f23b3b  Merge branch 'renesas-next' into renesas-devel
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-arm-dt-for-v5.9
+branch HEAD: 667175f5029c5f6ec7a72811fc6b14c33d252286  arm64: dts: renesas: Add HiHope RZ/G2N Rev2.0/3.0/4.0 board with idk-1110wr display
 
 elapsed time: 721m
 
-configs tested: 115
-configs skipped: 5
+configs tested: 112
+configs skipped: 107
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
-arm                                 defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-arm                               allnoconfig
 arm64                            allyesconfig
 arm64                               defconfig
 arm64                            allmodconfig
 arm64                             allnoconfig
-arc                     haps_hs_smp_defconfig
-powerpc                          g5_defconfig
-mips                        jmr3927_defconfig
-s390                             allyesconfig
+arm                                 defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+arm                               allnoconfig
 sh                           se7751_defconfig
 arm                       imx_v6_v7_defconfig
 arm                            xcep_defconfig
@@ -92,7 +88,6 @@ i386                             alldefconfig
 nds32                             allnoconfig
 sh                           se7724_defconfig
 mips                     loongson1b_defconfig
-parisc                            allnoconfig
 arm                            lart_defconfig
 i386                              allnoconfig
 i386                             allyesconfig
@@ -130,6 +125,7 @@ microblaze                        allnoconfig
 mips                             allyesconfig
 mips                              allnoconfig
 mips                             allmodconfig
+parisc                            allnoconfig
 parisc                              defconfig
 parisc                           allyesconfig
 parisc                           allmodconfig
@@ -138,6 +134,12 @@ powerpc                          allyesconfig
 powerpc                          rhel-kconfig
 powerpc                          allmodconfig
 powerpc                           allnoconfig
+x86_64               randconfig-a004-20200624
+x86_64               randconfig-a002-20200624
+x86_64               randconfig-a003-20200624
+x86_64               randconfig-a005-20200624
+x86_64               randconfig-a001-20200624
+x86_64               randconfig-a006-20200624
 i386                 randconfig-a002-20200624
 i386                 randconfig-a006-20200624
 i386                 randconfig-a003-20200624
@@ -150,16 +152,11 @@ i386                 randconfig-a012-20200624
 i386                 randconfig-a014-20200624
 i386                 randconfig-a011-20200624
 i386                 randconfig-a015-20200624
-x86_64               randconfig-a004-20200624
-x86_64               randconfig-a002-20200624
-x86_64               randconfig-a003-20200624
-x86_64               randconfig-a005-20200624
-x86_64               randconfig-a001-20200624
-x86_64               randconfig-a006-20200624
 riscv                            allyesconfig
 riscv                             allnoconfig
 riscv                               defconfig
 riscv                            allmodconfig
+s390                             allyesconfig
 s390                              allnoconfig
 s390                             allmodconfig
 s390                                defconfig
