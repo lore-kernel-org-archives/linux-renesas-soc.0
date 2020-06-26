@@ -2,101 +2,92 @@ Return-Path: <SRS0=7H4x=AH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62442C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Jun 2020 09:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83ADEC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Jun 2020 09:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CB77212CC
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Jun 2020 09:32:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B82D20DD4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Jun 2020 09:58:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725900AbgFZJc3 (ORCPT
+        id S1726920AbgFZJ6n (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Jun 2020 05:32:29 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:24970 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725280AbgFZJc3 (ORCPT
+        Fri, 26 Jun 2020 05:58:43 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38643 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbgFZJ6m (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Jun 2020 05:32:29 -0400
-X-IronPort-AV: E=Sophos;i="5.75,283,1589209200"; 
-   d="scan'208";a="50446466"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 26 Jun 2020 18:32:28 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 45998420330E;
-        Fri, 26 Jun 2020 18:32:28 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     ulf.hansson@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
-        geert+renesas@glider.be, magnus.damm@gmail.com
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH/RFC v4 0/4] treewide: add regulator condition on _mmc_suspend()
-Date:   Fri, 26 Jun 2020 18:32:18 +0900
-Message-Id: <1593163942-5087-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 26 Jun 2020 05:58:42 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 64so8077880oti.5;
+        Fri, 26 Jun 2020 02:58:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e2dqcwXTdyOJAFVvkqHrRHyY1o/I4KrR4eUDymmwSkA=;
+        b=HLkuc+2j9EcYcjRBflVwOSdSJo0EPSb1rOy2KiiSM6KQNnRENndSASWtaVWINRlovW
+         ZErHl+7juS00Xc77/dIirSyU1FDiAO5o7q2SAyucM5+WsfPE/u7evsqWHjRA9k5PDgO9
+         C3EGfH9YeVND9jz/WRFkcn9Qmp2WWpzHuAG99JdDqf477plyBXyx91sNsl06VUggHtVV
+         6o+7EUFmvYnAysl9ZQxVqJIUw7Ki5epxHbT873DJOEsNhiyc8M/0GzODg7iDhkFvZHGD
+         uItxdxnin3O6tbcSM21/ksr5Gs5DriNFUZqJLPljeMR44oBudHpqDuAtGRFY/sbwQQK5
+         E7BQ==
+X-Gm-Message-State: AOAM530WNjCd65mR5tIiRfkJBXHpwiRudx9T1eTcYYHxCcp9SbAx84OC
+        SoP0ILThw0H9durxMXh1+GkS41nIbB/BrHKe7E4=
+X-Google-Smtp-Source: ABdhPJy2mJyJ72REVvD0ZwWCNMyRQAYZeawpbyg+bPbm81IWgnDp+gA1PIi22cZ3RKxCTxZSNukTskI2qqvQ2O4VQIQ=
+X-Received: by 2002:a4a:db4b:: with SMTP id 11mr1707518oot.11.1593165521783;
+ Fri, 26 Jun 2020 02:58:41 -0700 (PDT)
+MIME-Version: 1.0
+References: <1593004330-5039-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1593004330-5039-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 26 Jun 2020 11:58:30 +0200
+Message-ID: <CAMuHMdVAnmE6d3cc7ejnOZuFTZbPgavB3rpTZ0R6H-SQjw4COA@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] Add support for HiHope RZ/G2M[N] Rev.3.0/4.0
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The regulator-fixed driver is possible to be off by firmware
-like PSCI while the system is suspended. If a consumer could get
-such a condition from regulator_is_enabled(), it's useful by
-consumers.
+Hi Prabhakar,
 
-The patch series alllows MMC subsystem to get the disabled condition
-and then eMMC device condition of my environment (r8a77951-salvator-xs)
-will be better than before.
- before:
-  - enter sleep mode and then turn the vmmc and vqmmc off without
-    any Power Off Notification.
- after:
-  - call mmc_poweroff_nofity() and then turn the vmmc and vqmmc off.
+On Wed, Jun 24, 2020 at 3:12 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> This patch series adds supports for HiHope RZ/G2M[N] Rev.3.0/4.0
+> boards.
+>
+> Patches are based on top of renesas-arm-dt-for-v5.9 branch [1].
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git
+>
+> Changes for v2:
+> * Added Reviewed-by tag from Geert
+> * Renamed hihope-common-rev2.dtsi to hihope-rev2.dtsi
+> * Added comment wrt SW43 in r8a774a1-hihope-rzg2m-rev2-ex.dts
+> * Renamed hihope-common-rev4.dtsi to hihope-rev4.dtsi
+> * LED node names in hihope-common.dtsi are updated according to Rev.4.0
+> * Removed extra line from patch 10/11
 
-We can apply each patch to each subsystem without any dependency.
+Thanks, queued in renesas-devel for v5.9, with the old hihope-common-rev*
+references updated.
 
-Note that v5.8-rc2 with r8a77951-salvator-xs seems to cause panic from
-PCI driver when the system is suspended. So, I disabled the PCI
-devices when I tested this patch series.
+Gr{oetje,eeting}s,
 
-Changes from v3:
- - Modify regulator subsytem and regulator/fixed driver.
- - Use regulator_is_enabled() instead of firmware API.
- - Update R-Car Gen3 related dts files for the reference.
-   But, I have only tested on r8a779{5,61}-salvaltor-xs.dts.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=306281
-
-Changes from v2:
- - Fix typo of function name in patch2.
- - Remove RFC.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=305523
-
-Changes from v1:
- - Use pm_suspend_via_firmware() API instead of pm_suspend_target_state.
- - Modify the psci driver to call pm_set_suspend_via_firmware.
- https://patchwork.kernel.org/patch/11557505/
-
-Yoshihiro Shimoda (4):
-  regulator: core: add prepare and resume_early
-  regulator: fixed: add regulator_ops members for suspend/resume
-  mmc: core: Call mmc_poweroff_nofity() if regulators are disabled
-  arm64: dts: renesas: add regulator-off-in-suspend property for eMMC
-
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts   | 10 ++++--
- arch/arm64/boot/dts/renesas/r8a77980-condor.dts  | 10 ++++--
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts   | 10 ++++--
- arch/arm64/boot/dts/renesas/r8a77995-draak.dts   |  9 ++++-
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 10 ++++--
- arch/arm64/boot/dts/renesas/ulcb.dtsi            | 10 ++++--
- drivers/mmc/core/mmc.c                           | 16 ++++++++-
- drivers/regulator/core.c                         | 42 ++++++++++++++++++++++++
- drivers/regulator/fixed.c                        | 29 ++++++++++++++++
- include/linux/regulator/driver.h                 |  6 ++++
- 10 files changed, 140 insertions(+), 12 deletions(-)
+                        Geert
 
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
