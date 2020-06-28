@@ -2,75 +2,56 @@ Return-Path: <SRS0=C3Fa=AJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB5AC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 28 Jun 2020 18:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60764C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 28 Jun 2020 19:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B51E206C0
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 28 Jun 2020 18:55:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="kZfn7i9W"
+	by mail.kernel.org (Postfix) with ESMTP id 3F485206C0
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 28 Jun 2020 19:00:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593370845;
+	bh=KB3dJJuYblvKcE7i08jt5cqeKmRYqHEUM2EF5XqosqQ=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=CGrOxxQlgqnRXMDumcWHtZlp6k8l1nhwxgNlCAzUogg3qym5Dn+9c2x6WY0TwRgWD
+	 d2vwV62qXSEh9sClb1xfTA8GVnG2wQDS6hMJZbHKBRd9o/My99V+0fUMlNXMExWUCH
+	 Fsn5CHKZ3k95jDAv6hkStm8P26fkXy5ld8KyEXjY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726613AbgF1Sz0 (ORCPT
+        id S1726654AbgF1TAp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 28 Jun 2020 14:55:26 -0400
-Received: from www.zeus03.de ([194.117.254.33]:51914 "EHLO mail.zeus03.de"
+        Sun, 28 Jun 2020 15:00:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37192 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726060AbgF1SzZ (ORCPT
+        id S1726585AbgF1TAo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 28 Jun 2020 14:55:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=Yfmsj+7wXhN8b8NtYfPXAou0as7
-        Bt6r1pF7j1SGNfVY=; b=kZfn7i9WI0RFs0SBPKLOZxABCk7qLbGLqF1d2t6mUrW
-        rRqXJfrLnPpMDBvXe7cJcJJBYgKEmD4Ylz0ZT2tYq53mYIVyTySWGFhQwILxgpIJ
-        +RdLvtMtTr+f9srGmaXcmVTN9+vwEBY7R9LfRd6ubJsvhOnXAFbiHZdl4rQ/vMnk
-        =
-Received: (qmail 1787558 invoked from network); 28 Jun 2020 20:55:24 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Jun 2020 20:55:24 +0200
-X-UD-Smtp-Session: l3s3148p1@KccWfCmpgK8gAwDPXykLAJ34nb66bSnN
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] i2c: add Kconfig help text for slave mode
-Date:   Sun, 28 Jun 2020 20:55:22 +0200
-Message-Id: <20200628185522.5902-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.20.1
+        Sun, 28 Jun 2020 15:00:44 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593370844;
+        bh=KB3dJJuYblvKcE7i08jt5cqeKmRYqHEUM2EF5XqosqQ=;
+        h=Subject:From:Date:To:From;
+        b=Emt/mwbksdp/J6FcRGy0kgV3iIYSqgJJym7n6TxQj8i9VhP5EsVnRdw2UNN5EQ9sm
+         DRbEgQkl7zL87GLTAl9o3bHraO3P+ucFneQs7pGPrqLAKJDeGdjxGuOTzlL7rLNa0M
+         +YS/dRbQ8ICKD+BMwclp4pg5q9s2ELbt2HmD1fUI=
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <159337084464.27784.11969720340896416064.git-patchwork-housekeeping@kernel.org>
+Date:   Sun, 28 Jun 2020 19:00:44 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I can't recall why there was none, but we surely want to have it.
+Latest series: [v2] i2c: slave-eeprom: update documentation (2020-06-28T18:54:26)
+  Superseding: [v1] i2c: slave-eeprom: update documentation (2020-06-28T18:45:54):
+    i2c: slave-eeprom: update documentation
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/Kconfig | 5 +++++
- 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/i2c/Kconfig b/drivers/i2c/Kconfig
-index dbcbb8a6024e..e2d6063bdb4d 100644
---- a/drivers/i2c/Kconfig
-+++ b/drivers/i2c/Kconfig
-@@ -114,6 +114,11 @@ config I2C_STUB
- config I2C_SLAVE
- 	bool "I2C slave support"
- 
-+	help
-+	  This enables Linux to act as an I2C slave device. Note that your I2C
-+	  bus master driver also needs to support this functionality. Please
-+	  read Documentation/i2c/slave-interface.rst for further details.
-+
- if I2C_SLAVE
- 
- config I2C_SLAVE_EEPROM
 -- 
-2.20.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
