@@ -2,130 +2,275 @@ Return-Path: <SRS0=FoF8=AK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0105C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 02:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60D2C433E4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 18:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFF4F20724
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 02:49:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2B1321D81
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 18:38:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="WO+QZ4pc"
+	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="WeSAP/a5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725983AbgF2Cte (ORCPT
+        id S1726416AbgF2Sik (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 28 Jun 2020 22:49:34 -0400
-Received: from mail-eopbgr1400130.outbound.protection.outlook.com ([40.107.140.130]:34748
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725934AbgF2Cte (ORCPT
+        Mon, 29 Jun 2020 14:38:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37572 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727928AbgF2SiC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 28 Jun 2020 22:49:34 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YC+wdMeL6KxPxwW7anJIJ2NFmH6ai1Iqu32imfqnLoBmCt1/74cH8HwhmIKdOnrOBqB6svJ1kU0zamxVL9giIuDiNHtv7kB/w/AykK6kb8tiAt4u4ZdA+uHj16E5qBWgNpkiSM1Av1t6Z9Bg6rxwA/NME7qr2Rjc4a66IVLsWnXRWb3O1JJr2XcvPPXzYUTMtD9wtGSuY4xb5zNCPxjunyOu3rxgAnGE3KU+N2+uza8DKK/ZNFhyozbke2YT7iJMhgVfi3V38J/CSzHOF9ROxsok0nbtsM17noigtR/HFiOBqBor5AOXd0D5QQyw5Hl6V3hRHnYW0U46PFU2J/88CQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FE1V1JHUxciUnSqOxiMQ0Ld99J67xsUFcnbEWx7VBXk=;
- b=X/Q73dzTvTE/RWHmqhcdssOWny/MFL5MikPW1yQLpsDsF/biuRrU21cu3d6iFDBrRD3B9dlCpCWfq2cqFCb8lded63UiVhHHc8DKAXCxndLLjaIf8ucm6r1gFw6SmCbMYGs4YCkZlZqExkTWH0lI8TuXAtkJc7niL8XPreOPDwm9Bksz+6HQV8cJEtNQ0ipeCMYFtFXGlTGKQKSNdktPzhdwWSO76eEREi2ldl//ZdWaLYVgrJaDh1rA/O36QiJtbc5DZIee4sfjeh0U7wrvNc/GPq70IwnSRxJEcx0MvLTSJrfQuLrY328I4aRbfPCwrLYr4+OD3P6VQauGQEoXDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
+        Mon, 29 Jun 2020 14:38:02 -0400
+Received: from mail-ua1-x941.google.com (mail-ua1-x941.google.com [IPv6:2607:f8b0:4864:20::941])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF974C02A541
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2020 05:49:02 -0700 (PDT)
+Received: by mail-ua1-x941.google.com with SMTP id u6so2487190uau.8
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2020 05:49:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FE1V1JHUxciUnSqOxiMQ0Ld99J67xsUFcnbEWx7VBXk=;
- b=WO+QZ4pcq7m8obCi5qa+KebnKVygDAoQNspHmYMBe0crIwPcy19X+6/wY0dzZgISn6ajigKKY7qm+mLSLjGgfiHJEIxKJO9gdl0zzOLvKScu99cmhHK+gkOMlE49zM+7tVgwY/UCliQTZUtnq8TxOAtlr5hu+4hI0qL50EN7nLM=
-Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com (2603:1096:404:d5::22)
- by TYAPR01MB4221.jpnprd01.prod.outlook.com (2603:1096:404:cc::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.20; Mon, 29 Jun
- 2020 02:49:30 +0000
-Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com
- ([fe80::9083:6001:8090:9f3]) by TY2PR01MB3692.jpnprd01.prod.outlook.com
- ([fe80::9083:6001:8090:9f3%6]) with mapi id 15.20.3131.026; Mon, 29 Jun 2020
- 02:49:30 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH/RFC v4 3/4] mmc: core: Call mmc_poweroff_nofity() if
- regulators are disabled
-Thread-Topic: [PATCH/RFC v4 3/4] mmc: core: Call mmc_poweroff_nofity() if
- regulators are disabled
-Thread-Index: AQHWS5y2P9SOm+4ShEmD+FQrAiQE9qjrAYcAgAPlY2A=
-Date:   Mon, 29 Jun 2020 02:49:30 +0000
-Message-ID: <TY2PR01MB36925C9FF9C023C9FAD63D13D86E0@TY2PR01MB3692.jpnprd01.prod.outlook.com>
-References: <1593163942-5087-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1593163942-5087-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20200626151342.GF5289@sirena.org.uk>
-In-Reply-To: <20200626151342.GF5289@sirena.org.uk>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=renesas.com;
-x-originating-ip: [124.210.22.195]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: efb09d15-6652-4777-ccd3-08d81bd70c37
-x-ms-traffictypediagnostic: TYAPR01MB4221:
-x-microsoft-antispam-prvs: <TYAPR01MB42212410969BC37D32DE6777D86E0@TYAPR01MB4221.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2657;
-x-forefront-prvs: 044968D9E1
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ZDeskdBBfwKoWd/C2XIKqM5vbne8B4vRs4lL1AeaifgdC3V8/H/oZF5o8f05YRqscz+s+3/bie1XTkPkxAGfTge4p7ZuQvzYTYZuiHd9RWmFyS/hB0MI+kjQKeExWodb20OTsBKqaZ+RulQtyZ3dty26iZ4ll/nqcDpubVWX09b2jWyDkNXc7tILXYo0+07fbApmHqs9U97sdvCyo9vGNNlvR6nZjNgDGC2r+Oai2woBkjv5ZmHJfggz1kCGd9OLTgcQrZ+NeZ6w5bK2vGdpAucNbcBZq84p2Y5eR89wq3CI+2VaZ2L3xfZcYCXVN3Yv
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB3692.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(366004)(136003)(396003)(39860400002)(376002)(346002)(26005)(6506007)(55236004)(8936002)(54906003)(8676002)(186003)(2906002)(33656002)(52536014)(66476007)(66446008)(66556008)(66946007)(64756008)(86362001)(5660300002)(4744005)(316002)(76116006)(9686003)(83380400001)(7696005)(55016002)(6916009)(478600001)(71200400001)(4326008);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: g++oz9OeQigpgZxDerU33vauhqfaLEgHn6AEEOcY2GWTHw00327o678zOBl/9u9vy1qoFWAtIIUAqW4+p0zrRGljAAydJNwpv77VuFo+2n0WmgFvrho7SKh2w8er85HWGDPu/PeMnVj+M5i15p38TrbG+5kpCcuaU77j0M/Lp2Wy25a5jDQ7tJeuDZWgZIYe+3sb+ffL1+okuDubGC96ahJNUyW7b68WVSlruI392+oJr2sriTxCUFajHW+hC968txi6nYIc2CaRH2uRxvbYNY2EPfhrCkxk3YTb/RCKpHXeLOpuJNcw7CpYkbEdF624PWwVIxl9GXJam5adSxyW9zxgGSauTZdvcBXGoX2z45Q4QpS+OBFLzYRKUAWSIKkWwNuhOvelQkw7ZMOBgRYvvl0ryA3sfEgs9HuKI5nvzPtM2YP83hz7sg/XXJjG3hw5a67Frs3ead6zB9/FIQm8MurISB1xv724y/toJIzsmPd2HabO621aPxsKYpHfaQnX
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/czzbe3TtUcJIflJ99q2lIskXBgVNXfpcq83W982SW4=;
+        b=WeSAP/a5lZp6nQMEdDIM8axmsEfnvdtP2chd3VGBSckQwa2U21YukiLtyPPobyXRuz
+         qYvGnoJy2SUKgfnYrOr3jRhoupwpMs3QX+xGwrqTeAtGDEL8iTdjC6PN+tFU5iplVnnH
+         3ucRfvHL7WjJ+gtGhev0U+/hV5HrD3ymzqRKeQrv4+5ImAO6zhR9vLGZVRJQqMfrVxZw
+         uToRn6fmJ1MVQd0H0L4UGrVpsm529MFKG1jOf/g8cOtAWlx/5fXAYzhwDiBp5fWyHkNG
+         fKlGAU5e05jHLGweiiNV7g/5A5MRWrfBh7NP6PF2Tq8mI41CfWsoaTZ3omYxPZGLOXHS
+         jCbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/czzbe3TtUcJIflJ99q2lIskXBgVNXfpcq83W982SW4=;
+        b=EMCbDz6BDiGvmihEVdesiPhzM1H8vs5dclfcSfj7qYIL1gZen6o7IxjEfAi3lH5S1C
+         i8+9H9LKv1uUZ7fl+beEmmGk0R4JZaclf8zn66k8k8dtF1v3KdFqIoRkdQDcMdNubbYz
+         LWf3ErBhGEkq9v8cgDMANziLIHzoXvigrsknScbGTMUqTNuyRUoS9boHwv9R/qgL4J0q
+         x0cPAKKQWcZOifcCTrrNYWhjQFvZFWqSbq17h/lMASE/jZdsPNnxMX2y9CYRcn2bUrtm
+         4wofFYnwA/E9TtgukmGqIPBVgOSvpb/Vfvk0J7EbpSh8N7WCgQc0hWx3qO2k87XWt1qG
+         XsTg==
+X-Gm-Message-State: AOAM5317o3yQuy7GUAUgAGuSmIxGvdHbJ4kNahjyE6O9YwqCXWZrz+vJ
+        gppMj5bRdq8jLKbAJ1AjMmu+Ui3i8T3DnOPTrWRQqA==
+X-Google-Smtp-Source: ABdhPJykO05gG5Bb+nA0Vnr/X3v2J1XSrulYz3voXHdt/RxIAbgJ9ID8IoL5WSwYX4Qy51z7VQCupXXNmThb4Z9Upd0=
+X-Received: by 2002:ab0:232:: with SMTP id 47mr10473617uas.48.1593434941649;
+ Mon, 29 Jun 2020 05:49:01 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB3692.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: efb09d15-6652-4777-ccd3-08d81bd70c37
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jun 2020 02:49:30.8348
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BDw5C5sN6f6uGPgKvIlqQhJhFBaQkY4NJWKtjlzwb5//jjBJ68fwFxFtOfUzAOZJGR0vW/dbGqNMBoOUQaW2jzSPhHN8feUXgtjFQC7ZYEjIJZQ/W2hSa3IOGBYmJGz9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB4221
+References: <20200629122925.21729-1-andrzej.p@collabora.com> <20200629122925.21729-12-andrzej.p@collabora.com>
+In-Reply-To: <20200629122925.21729-12-andrzej.p@collabora.com>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Mon, 29 Jun 2020 18:18:50 +0530
+Message-ID: <CAHLCerONdxx=x_ykO=JjpM5AB08ZX3ukhKVWgPARcS5V7q80Gw@mail.gmail.com>
+Subject: Re: [PATCH v7 11/11] thermal: Rename set_mode() to change_mode()
+To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+Cc:     Linux PM list <linux-pm@vger.kernel.org>,
+        linux-acpi@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        lakml <linux-arm-kernel@lists.infradead.org>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Vishal Kulkarni <vishal@chelsio.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Peter Kaestle <peter@piie.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Support Opensource <support.opensource@diasemi.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Enrico Weigelt <info@metux.net>,
+        Gayatri Kammela <gayatri.kammela@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Mark,
+On Mon, Jun 29, 2020 at 6:00 PM Andrzej Pietrasiewicz
+<andrzej.p@collabora.com> wrote:
+>
+> set_mode() is only called when tzd's mode is about to change. Actual
+> setting is performed in thermal_core, in thermal_zone_device_set_mode().
+> The meaning of set_mode() callback is actually to notify the driver about
+> the mode being changed and giving the driver a chance to oppose such
+> change.
+>
+> To better reflect the purpose of the method rename it to change_mode()
+>
+> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+> [for acerhdf]
+> Acked-by: Peter Kaestle <peter@piie.net>
+> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-> From: Mark Brown, Sent: Saturday, June 27, 2020 12:14 AM
->=20
-> On Fri, Jun 26, 2020 at 06:32:21PM +0900, Yoshihiro Shimoda wrote:
-> > Note that this is possible to happen when the regulator-fixed driver
-> > turns the vmmc and vqmmc off by firmware like PSCI while the system
-> > is suspended.
->=20
-> This is not a good interface, if there's a need to query the state over
-> suspend then we should query the state over suspend rather than trying
-> to somehow shoehorn it via the runtime enable state which is going to
-> break any other users and relies on the regulator driver doing dodgy
-> stuff representing the enable state.
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
 
-I understood it.
-So, as I mentioned other email thread, I'm thinking adding a new property
-into MMC is better.
-
-Best regards,
-Yoshihiro Shimoda
-
+> ---
+>  drivers/platform/x86/acerhdf.c                          | 6 +++---
+>  drivers/thermal/imx_thermal.c                           | 8 ++++----
+>  drivers/thermal/intel/int340x_thermal/int3400_thermal.c | 6 +++---
+>  drivers/thermal/intel/intel_quark_dts_thermal.c         | 6 +++---
+>  drivers/thermal/thermal_core.c                          | 4 ++--
+>  include/linux/thermal.h                                 | 2 +-
+>  6 files changed, 16 insertions(+), 16 deletions(-)
+>
+> diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
+> index 76323855c80c..f816a8a13039 100644
+> --- a/drivers/platform/x86/acerhdf.c
+> +++ b/drivers/platform/x86/acerhdf.c
+> @@ -413,8 +413,8 @@ static inline void acerhdf_enable_kernelmode(void)
+>   *          the temperature and the fan.
+>   * disabled: the BIOS takes control of the fan.
+>   */
+> -static int acerhdf_set_mode(struct thermal_zone_device *thermal,
+> -                           enum thermal_device_mode mode)
+> +static int acerhdf_change_mode(struct thermal_zone_device *thermal,
+> +                              enum thermal_device_mode mode)
+>  {
+>         if (mode == THERMAL_DEVICE_DISABLED && kernelmode)
+>                 acerhdf_revert_to_bios_mode();
+> @@ -473,7 +473,7 @@ static struct thermal_zone_device_ops acerhdf_dev_ops = {
+>         .bind = acerhdf_bind,
+>         .unbind = acerhdf_unbind,
+>         .get_temp = acerhdf_get_ec_temp,
+> -       .set_mode = acerhdf_set_mode,
+> +       .change_mode = acerhdf_change_mode,
+>         .get_trip_type = acerhdf_get_trip_type,
+>         .get_trip_hyst = acerhdf_get_trip_hyst,
+>         .get_trip_temp = acerhdf_get_trip_temp,
+> diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
+> index a02398118d88..9700ae39feb7 100644
+> --- a/drivers/thermal/imx_thermal.c
+> +++ b/drivers/thermal/imx_thermal.c
+> @@ -330,8 +330,8 @@ static int imx_get_temp(struct thermal_zone_device *tz, int *temp)
+>         return 0;
+>  }
+>
+> -static int imx_set_mode(struct thermal_zone_device *tz,
+> -                       enum thermal_device_mode mode)
+> +static int imx_change_mode(struct thermal_zone_device *tz,
+> +                          enum thermal_device_mode mode)
+>  {
+>         struct imx_thermal_data *data = tz->devdata;
+>         struct regmap *map = data->tempmon;
+> @@ -447,7 +447,7 @@ static struct thermal_zone_device_ops imx_tz_ops = {
+>         .bind = imx_bind,
+>         .unbind = imx_unbind,
+>         .get_temp = imx_get_temp,
+> -       .set_mode = imx_set_mode,
+> +       .change_mode = imx_change_mode,
+>         .get_trip_type = imx_get_trip_type,
+>         .get_trip_temp = imx_get_trip_temp,
+>         .get_crit_temp = imx_get_crit_temp,
+> @@ -860,7 +860,7 @@ static int __maybe_unused imx_thermal_suspend(struct device *dev)
+>          * Need to disable thermal sensor, otherwise, when thermal core
+>          * try to get temperature before thermal sensor resume, a wrong
+>          * temperature will be read as the thermal sensor is powered
+> -        * down. This is done in set_mode() operation called from
+> +        * down. This is done in change_mode() operation called from
+>          * thermal_zone_device_disable()
+>          */
+>         ret = thermal_zone_device_disable(data->tz);
+> diff --git a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+> index ce49d3b100d5..d3732f624913 100644
+> --- a/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+> +++ b/drivers/thermal/intel/int340x_thermal/int3400_thermal.c
+> @@ -377,8 +377,8 @@ static int int3400_thermal_get_temp(struct thermal_zone_device *thermal,
+>         return 0;
+>  }
+>
+> -static int int3400_thermal_set_mode(struct thermal_zone_device *thermal,
+> -                               enum thermal_device_mode mode)
+> +static int int3400_thermal_change_mode(struct thermal_zone_device *thermal,
+> +                                      enum thermal_device_mode mode)
+>  {
+>         struct int3400_thermal_priv *priv = thermal->devdata;
+>         int result = 0;
+> @@ -399,7 +399,7 @@ static int int3400_thermal_set_mode(struct thermal_zone_device *thermal,
+>
+>  static struct thermal_zone_device_ops int3400_thermal_ops = {
+>         .get_temp = int3400_thermal_get_temp,
+> -       .set_mode = int3400_thermal_set_mode,
+> +       .change_mode = int3400_thermal_change_mode,
+>  };
+>
+>  static struct thermal_zone_params int3400_thermal_params = {
+> diff --git a/drivers/thermal/intel/intel_quark_dts_thermal.c b/drivers/thermal/intel/intel_quark_dts_thermal.c
+> index e29c3e330b17..3eafc6b0e6c3 100644
+> --- a/drivers/thermal/intel/intel_quark_dts_thermal.c
+> +++ b/drivers/thermal/intel/intel_quark_dts_thermal.c
+> @@ -298,8 +298,8 @@ static int sys_get_curr_temp(struct thermal_zone_device *tzd,
+>         return 0;
+>  }
+>
+> -static int sys_set_mode(struct thermal_zone_device *tzd,
+> -                               enum thermal_device_mode mode)
+> +static int sys_change_mode(struct thermal_zone_device *tzd,
+> +                          enum thermal_device_mode mode)
+>  {
+>         int ret;
+>
+> @@ -319,7 +319,7 @@ static struct thermal_zone_device_ops tzone_ops = {
+>         .get_trip_type = sys_get_trip_type,
+>         .set_trip_temp = sys_set_trip_temp,
+>         .get_crit_temp = sys_get_crit_temp,
+> -       .set_mode = sys_set_mode,
+> +       .change_mode = sys_change_mode,
+>  };
+>
+>  static void free_soc_dts(struct soc_sensor_entry *aux_entry)
+> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+> index e613f5c07bad..a61e91513584 100644
+> --- a/drivers/thermal/thermal_core.c
+> +++ b/drivers/thermal/thermal_core.c
+> @@ -482,8 +482,8 @@ static int thermal_zone_device_set_mode(struct thermal_zone_device *tz,
+>                 return ret;
+>         }
+>
+> -       if (tz->ops->set_mode)
+> -               ret = tz->ops->set_mode(tz, mode);
+> +       if (tz->ops->change_mode)
+> +               ret = tz->ops->change_mode(tz, mode);
+>
+>         if (!ret)
+>                 tz->mode = mode;
+> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> index df013c39ba9b..b9efaa780d88 100644
+> --- a/include/linux/thermal.h
+> +++ b/include/linux/thermal.h
+> @@ -76,7 +76,7 @@ struct thermal_zone_device_ops {
+>                        struct thermal_cooling_device *);
+>         int (*get_temp) (struct thermal_zone_device *, int *);
+>         int (*set_trips) (struct thermal_zone_device *, int, int);
+> -       int (*set_mode) (struct thermal_zone_device *,
+> +       int (*change_mode) (struct thermal_zone_device *,
+>                 enum thermal_device_mode);
+>         int (*get_trip_type) (struct thermal_zone_device *, int,
+>                 enum thermal_trip_type *);
+> --
+> 2.17.1
+>
