@@ -2,63 +2,105 @@ Return-Path: <SRS0=FoF8=AK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB14EC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE98C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A585820748
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:37:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 040A2206C0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:38:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387888AbgF2Uhy (ORCPT
+        id S1729817AbgF2UiV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 16:37:54 -0400
-Received: from foss.arm.com ([217.140.110.172]:39570 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729926AbgF2TT4 (ORCPT
+        Mon, 29 Jun 2020 16:38:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43350 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731761AbgF2TOU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:19:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B80811474;
-        Mon, 29 Jun 2020 07:33:10 -0700 (PDT)
-Received: from bogus (unknown [10.37.8.30])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB5D23F73C;
-        Mon, 29 Jun 2020 07:33:08 -0700 (PDT)
-Date:   Mon, 29 Jun 2020 15:33:02 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
-        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH/RFC v2 1/2] firmware: psci: call
- pm_set_suspend_via_firmware()
-Message-ID: <20200629141025.GA25875@bogus>
-References: <1592566143-4546-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1592566143-4546-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 29 Jun 2020 15:14:20 -0400
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9CADC0076FD;
+        Mon, 29 Jun 2020 04:28:28 -0700 (PDT)
+Received: by mail-ot1-x344.google.com with SMTP id k15so15087679otp.8;
+        Mon, 29 Jun 2020 04:28:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aUOFgBAon7H8BmxSht9yRn787q41Dfxrba2uWvIKf7I=;
+        b=MgY4TeM2oqnGohr5MJ5PTJrL55M+EPq4g50K7MF1dlzWzUNfVGXbm5A0PPNhYJSTI5
+         tLrVHP7kf39x0KjSFXEgE3GU2voDMasc4C01HfHbw70RW1cylfHTdaXKweQ6KE2mNfqe
+         lUn2f0PjUiGr4hHWvzPXElKzjOo7E+eXs/BUvLYhuu0IdhLaofUg0X2yF4H/vXRpgPQw
+         O+oZ+GZGzi3JTxyu2GbVw1aRECUQ1jqqAYuF7jWgdxQSqJ2kIUjgiaAu554qYW+eUc2+
+         NJblX8QL3rRgFIaOT34k18MiRfYFId2mLxl4hBdzsxc/PgTISVnpS0eAnFIELpoEi7DE
+         /TAg==
+X-Gm-Message-State: AOAM533vGMIu03KnsmwbrM51MnGdMpkNhrSF1v2x2dRPuVHvD1q0TxTv
+        /w494MiDzjY6V6SUYEqeW4iYzHsVmIORP3NiXDP4xtq+
+X-Google-Smtp-Source: ABdhPJw3YbqisB0rK2AsRQEp7Js/wTXayWafaNgtmPHh6jn6+bGHRcepv+OetrHOKKSuy2xQds4VqBIN958wXwmsnB8=
+X-Received: by 2002:a9d:2646:: with SMTP id a64mr12059234otb.107.1593430107969;
+ Mon, 29 Jun 2020 04:28:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1592566143-4546-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200628185522.5902-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdXFgR__hnUO-o+2ukxOYc_6U63wjP1PJyip3KGg277gDA@mail.gmail.com> <20200629112119.GA1932@ninjato>
+In-Reply-To: <20200629112119.GA1932@ninjato>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 29 Jun 2020 13:28:16 +0200
+Message-ID: <CAMuHMdXaXxDJ_bgR=wLnyCjmfH0kC-SuVBPRZv96qzKbvbWsHQ@mail.gmail.com>
+Subject: Re: [PATCH] i2c: add Kconfig help text for slave mode
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-(This patch never made it to my inbox, may be due to ALKML issues on that day)
+Hi Wolfram,
 
-On Fri, Jun 19, 2020 at 08:29:02PM +0900, Yoshihiro Shimoda wrote:
-> Call pm_set_suspend_via_firmware() in .begin() of psci_suspend_ops
-> to use pm_suspend_via_firmware() on PSCI environment.
+On Mon, Jun 29, 2020 at 1:21 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> > >  config I2C_SLAVE
+> > >         bool "I2C slave support"
+> > >
+> >
+> > Why the blank line here ^^^?
 >
+> Sure, I can fix before applying.
+>
+> >
+> > > +       help
+> > > +         This enables Linux to act as an I2C slave device. Note that your I2C
+> > > +         bus master driver also needs to support this functionality. Please
+> > > +         read Documentation/i2c/slave-interface.rst for further details.
+> > > +
+> > >  if I2C_SLAVE
+> > >
+> > >  config I2C_SLAVE_EEPROM
+> >
+> > The rest looks fine to me.
+>
+> Thanks, Geert!
+>
+> > As you don't like conditional R-b's, I'll add mine on v2 ;-)
+>
+> I don't? I can't recall that :) Maybe there was a corner case once...
 
-I don't have issues with this change as such, but I need to understand
-how and why this is used. I will comment on that separately.
+Lore does not forgive, and does not forget ;-)
+https://lore.kernel.org/r/20190802133656.GA23542@kunai
 
---
-Regards,
-Sudeep
+Hence with the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
