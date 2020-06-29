@@ -2,70 +2,104 @@ Return-Path: <SRS0=FoF8=AK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BADC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 644D6C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 042B220720
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593465653;
-	bh=3c7406qD/LhRQtK6JfxCno34UH7cDPTrkYKz1vxsnTs=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=RfBNXlUwkRaDOvQMsfa3p0DFxcwDEhA8J//Ub6dPGHh14CmtHHF5VCDwvirsAYYrs
-	 rRubh/lOpHkIU4s8xAANQih4xpChdr0PaBzN8tsdb5wCc6JaXWXslZaMCbYCT+tjQW
-	 1QgU/frfc37E3NUt+d6JfxTOzZ11FRH/WOMj/ar4=
+	by mail.kernel.org (Postfix) with ESMTP id 4D845214F1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729379AbgF2VUv (ORCPT
+        id S1726832AbgF2VZU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:20:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40222 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729508AbgF2VUu (ORCPT
+        Mon, 29 Jun 2020 17:25:20 -0400
+Received: from asavdk4.altibox.net ([109.247.116.15]:53500 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728392AbgF2Stz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 17:20:50 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593465650;
-        bh=3c7406qD/LhRQtK6JfxCno34UH7cDPTrkYKz1vxsnTs=;
-        h=Subject:From:Date:To:From;
-        b=qYcaQzAd1U5sh0AHgcdnNgrzEK8ka23xsyGxX6Idik3zHa87oF+oSX0nm/lYsnpn7
-         GWZsaIQExgwwLCWVKTA/lCgxx1HfRRUm6fYSvinztVjaFPmcGwSxXLuq7z0C8LPVnT
-         VCDQlDpclYUblXr8Rc8o0wGni0R8SL+Gggqv5lb4=
+        Mon, 29 Jun 2020 14:49:55 -0400
+Received: from ravnborg.org (unknown [188.228.123.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 68F48804A4;
+        Mon, 29 Jun 2020 10:11:42 +0200 (CEST)
+Date:   Mon, 29 Jun 2020 10:11:40 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH 6/4] dt-bindings: display: renesas: lvds: RZ/G2E needs
+ renesas,companion too
+Message-ID: <20200629081140.GG227119@ravnborg.org>
+References: <20200405232318.26833-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20200513233908.23629-1-laurent.pinchart+renesas@ideasonboard.com>
+ <CAMuHMdWL9xhzbVhZ6N1xbh+YmP_RBMO4H1uMXXexbJXq6amcLA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <159346564995.3919.1002751318796039467.git-patchwork-housekeeping@kernel.org>
-Date:   Mon, 29 Jun 2020 21:20:49 +0000
-To:     linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdWL9xhzbVhZ6N1xbh+YmP_RBMO4H1uMXXexbJXq6amcLA@mail.gmail.com>
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=aP3eV41m c=1 sm=1 tr=0
+        a=S6zTFyMACwkrwXSdXUNehg==:117 a=S6zTFyMACwkrwXSdXUNehg==:17
+        a=kj9zAlcOel0A:10 a=P1BnusSwAAAA:8 a=yC-0_ovQAAAA:8 a=tBb2bbeoAAAA:8
+        a=e5mUnYsNAAAA:8 a=vFHsjM1-0c_F3_rMw0gA:9 a=CjuIK1q_8ugA:10
+        a=CojVow1nldcA:10 a=D0XLA9XvdZm18NrgonBM:22 a=QsnFDINu91a9xkgZirup:22
+        a=Oj-tNtZlA1e06AYgeCfH:22 a=Vxmtnl_E_bksehYqCbjh:22
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v6] acpi: thermal: Fix error handling in the register function (2020-06-29T11:16:08)
-  Superseding: [v5] acpi: thermal: Fix error handling in the register function (2020-06-26T17:37:45):
-    [v5,01/11] acpi: thermal: Fix error handling in the register function
-    [v5,02/11] thermal: Store thermal mode in a dedicated enum
-    [v5,03/11] thermal: Add current mode to thermal zone device
-    [v5,04/11] thermal: Store device mode in struct thermal_zone_device
-    [v5,05/11] thermal: remove get_mode() operation of drivers
-    [v5,06/11] thermal: Add mode helpers
-    [v5,07/11] thermal: Use mode helpers in drivers
-    [v5,08/11] thermal: Explicitly enable non-changing thermal zone devices
-    [v5,09/11] thermal: core: Stop polling DISABLED thermal devices
-    [v5,10/11] thermal: Simplify or eliminate unnecessary set_mode() methods
-    [v5,11/11] thermal: Rename set_mode() to change_mode()
+On Thu, May 14, 2020 at 08:44:19AM +0200, Geert Uytterhoeven wrote:
+> On Thu, May 14, 2020 at 1:39 AM Laurent Pinchart
+> <laurent.pinchart+renesas@ideasonboard.com> wrote:
+> > From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> >
+> > Document RZ/G2E support for property renesas,companion.
+> >
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> > --- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.yaml
+> > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.yaml
+> > @@ -81,9 +81,9 @@ properties:
+> >      $ref: /schemas/types.yaml#/definitions/phandle
+> >      description:
+> >        phandle to the companion LVDS encoder. This property is mandatory
+> > -      for the first LVDS encoder on D3 and E3 SoCs, and shall point to
+> > -      the second encoder to be used as a companion in dual-link mode. It
+> > -      shall not be set for any other LVDS encoder.
+> > +      for the first LVDS encoder on D3, R-Car E3 and RZ/G2E SoCs, and shall
+> 
+> R-Car D3 and E3, and RZ/G2E SoCs
+> 
+> > +      point to the second encoder to be used as a companion in dual-link mode.
+> > +      It shall not be set for any other LVDS encoder.
 
-Latest series: [v2] i2c: rcar: slave: only send STOP event when we have been addressed (2020-06-29T16:15:06)
-  Superseding: [v1] i2c: rcar: slave: only send STOP event when we have been addressed (2020-06-29T15:38:07):
-    i2c: rcar: slave: only send STOP event when we have been addressed
+Laurent, I assume you will re-spin a ne version wth the changelog
+corrected.
 
+	Sam
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
