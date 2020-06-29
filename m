@@ -2,87 +2,63 @@ Return-Path: <SRS0=FoF8=AK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E667AC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB14EC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5D85206C0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:37:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Dr2u6Rl7"
+	by mail.kernel.org (Postfix) with ESMTP id A585820748
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:37:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389206AbgF2Uh0 (ORCPT
+        id S2387888AbgF2Uhy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 16:37:26 -0400
-Received: from www.zeus03.de ([194.117.254.33]:52276 "EHLO mail.zeus03.de"
+        Mon, 29 Jun 2020 16:37:54 -0400
+Received: from foss.arm.com ([217.140.110.172]:39570 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731076AbgF2UhZ (ORCPT
+        id S1729926AbgF2TT4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 16:37:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=EWfaYWeirl3pnTKs+71ODmecYj9O
-        pi4u86/kiiI96/A=; b=Dr2u6Rl715BATmfuQ0VGT7UIJBTNpTSsnxv9i1f8WK6p
-        JtozOtBTIZg3rYcbNg1Mnyf9nwPRKyS2iGDkF3aN5qawqxseIOctiRKd2vc2g0bA
-        3aVmdIjQfMaXXwmchtUxBzl7/HuX0LB+ZSTegamwq3/40O9SyvqRHw15IvN2nQg=
-Received: (qmail 2019385 invoked from network); 29 Jun 2020 13:37:23 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jun 2020 13:37:23 +0200
-X-UD-Smtp-Session: l3s3148p1@gXtzezepHLAgAwDPXwOPAD5GWjq5uCZs
-Date:   Mon, 29 Jun 2020 13:37:22 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] i2c: add Kconfig help text for slave mode
-Message-ID: <20200629113722.GB1932@ninjato>
-References: <20200628185522.5902-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdXFgR__hnUO-o+2ukxOYc_6U63wjP1PJyip3KGg277gDA@mail.gmail.com>
- <20200629112119.GA1932@ninjato>
- <CAMuHMdXaXxDJ_bgR=wLnyCjmfH0kC-SuVBPRZv96qzKbvbWsHQ@mail.gmail.com>
+        Mon, 29 Jun 2020 15:19:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B80811474;
+        Mon, 29 Jun 2020 07:33:10 -0700 (PDT)
+Received: from bogus (unknown [10.37.8.30])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AB5D23F73C;
+        Mon, 29 Jun 2020 07:33:08 -0700 (PDT)
+Date:   Mon, 29 Jun 2020 15:33:02 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     mark.rutland@arm.com, lorenzo.pieralisi@arm.com,
+        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH/RFC v2 1/2] firmware: psci: call
+ pm_set_suspend_via_firmware()
+Message-ID: <20200629141025.GA25875@bogus>
+References: <1592566143-4546-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1592566143-4546-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="s/l3CgOIzMHHjg/5"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXaXxDJ_bgR=wLnyCjmfH0kC-SuVBPRZv96qzKbvbWsHQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1592566143-4546-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+(This patch never made it to my inbox, may be due to ALKML issues on that day)
 
---s/l3CgOIzMHHjg/5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Fri, Jun 19, 2020 at 08:29:02PM +0900, Yoshihiro Shimoda wrote:
+> Call pm_set_suspend_via_firmware() in .begin() of psci_suspend_ops
+> to use pm_suspend_via_firmware() on PSCI environment.
+>
 
+I don't have issues with this change as such, but I need to understand
+how and why this is used. I will comment on that separately.
 
-> Lore does not forgive, and does not forget ;-)
-> https://lore.kernel.org/r/20190802133656.GA23542@kunai
-
-Ah, right. That reasoning still makes sense to me.
-
-
---s/l3CgOIzMHHjg/5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl750nIACgkQFA3kzBSg
-KbYkNQ/9FSJImu7iLyknpLOqTblrD7HjKzv3ouD/7mNiL/wf1adG9p6HQ3Ee+92u
-Kanijo9sS24UAyAmE82s+aVrLus4LISvw3RNEmP7PR+OjSlpT7VdHo+Ax1MoZM7F
-KPrvlMhnxIEDLF1w/p8RoT08lsKkQu0W8z043lzxSzDSuEoxGfMECzTMrA3aRP1j
-TojQzznIBbYXJrhOyPajiWnN+ZtTaQS/tAYBmnFzoFsbyRilr/G0Og+AiyWPdVzG
-WR6AliDqunoQL1BUZ2BIZgfMFoKrxmFfX0mPBocC27VmX4qU6eyNg29ocn06K4bc
-Py7Qf7F+tg+2h+QXsFsKWGogu0UmhNoTazEcU078EjRN++RiToiEoh82Kxz5erF3
-xDTvR+ryQpp8T1c7pxrKgaDdy73/XjXXpReoHsci2Rr6oLcFjWE1czYfjiLOpcrB
-oBLGqr3Lw6jdYUOohDIoIbFzKnEcNUHHAN9qeFcbkDbBy1dt8IeCjjWkChQLzIcC
-voDvwI62kNuqoGqOsBZSQjwp71BV9cvQh1k0yH8NTThXmV/NGkfdjZsWGbDjvEeZ
-x5viW6+eEezpX36bbkGRXXvqNXEdMF8p72v9zXo5H5AOgm2udxRHUGhWfpV3+YUY
-XfYvJwxkdTenFZW1SAuwxtUek3nO27liopJnxbU8XVEFJsUpr5o=
-=/yBl
------END PGP SIGNATURE-----
-
---s/l3CgOIzMHHjg/5--
+--
+Regards,
+Sudeep
