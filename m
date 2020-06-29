@@ -2,155 +2,312 @@ Return-Path: <SRS0=FoF8=AK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E645C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 19:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF1EC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 19:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A847206C3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 19:19:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BBB220674
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 19:53:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="ttB2j8Ew"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ysZs96y3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731768AbgF2TS4 (ORCPT
+        id S1732803AbgF2Txa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 15:18:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43380 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731764AbgF2TOU (ORCPT
+        Mon, 29 Jun 2020 15:53:30 -0400
+Received: from www.zeus03.de ([194.117.254.33]:43738 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730106AbgF2Tx3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:14:20 -0400
-Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3230C09B056
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2020 00:20:02 -0700 (PDT)
-Received: by mail-vs1-xe43.google.com with SMTP id p25so888389vsg.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2020 00:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FLsjiHozNvDgrzZmIQ2WouKu5DGkcV6Zi4pLil1Ar3w=;
-        b=ttB2j8EwlPtN89bjJxgTu6zN6r9fAS6dOKjdEH5q5VgMNoawKPbasYLeO6Wib3Imiu
-         Txm/pUueF19FSodecKaZf3ZCJfrG2w/E1RbAWvWvaWLmozbRr0o+MyQ7Vxyu66mUVwFe
-         /MZk9rP3wex38QGJdlpG8PBJhrr5KQXRJnt7Ook8usx2iRD6oBwGhzP3MrMOF9jCbkfq
-         eSr9Kpja5TQMUcLHo5FvLvaFIOmhzprhE5iUWmMHkVkAKT40wuc3HhlD8Mu+pYd20+vk
-         8fp8IK3heEU6zqUmyhzEWQIjcRkJvNFJ8lZm1mu5e2bjNw9dQXVcD8D+oPj0s/f4WY+P
-         5OuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FLsjiHozNvDgrzZmIQ2WouKu5DGkcV6Zi4pLil1Ar3w=;
-        b=QOSt2HF3fLfYkh+2oaNf6AeN0VElWXzQbTrom6tv5dw970ixsvdpahVN/PXgxbsCWe
-         GB8zmoD97pwsT4B4HvAMDMq4ErGPqMQGcinrcTVuwTeMMDDynjlYBQtXvznjmeTQx0xg
-         Z99rsgCpcrJ/pyIu8TzbuP7cL8q+kzsES25agbnXQMZzjhihEp/arg/kummv53ohzjJH
-         PiNTBdeelaq1YequyesHPx19565DYxsnAVa+u3RkFhXORJAr/Im6ue7YaKyKpLPr6A4j
-         JVowfkm7dL71E+NJkg6xwLfxeMJBxpVXSO1xgvsJ3N9rs+h60+61RbT+WqZA9Mj4mOUd
-         Lfcw==
-X-Gm-Message-State: AOAM530quK2ckGnb7dreQstrYRujpkwVOpcPHD2XwcIjvxFqT5dNZHCX
-        x2UCm9SkCp/FITtBp/RCGzIJ1vvxUtFWaZJrkjAvrA==
-X-Google-Smtp-Source: ABdhPJw1dMYfsxBM8+BKZp4XBDpFgIheslKYpyoIyIHIog2rFo9mF/XWUJd4HbD/zb2zQFhnhGkGFwPawu8DZjqwdrU=
-X-Received: by 2002:a67:7f04:: with SMTP id a4mr5058336vsd.9.1593415201875;
- Mon, 29 Jun 2020 00:20:01 -0700 (PDT)
+        Mon, 29 Jun 2020 15:53:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=lqZUmstMNT4gD0
+        Zj6S7k7KsrZLOZpCrTBlqmktbSzV8=; b=ysZs96y3hbmYSbSQ5UjhZisV0auIGX
+        vJl8aQN1qhW/MXJzjyaNrzvIL/QuGaOXphq7OYzVWVq1kuh2wyBv91Op0aMr+34v
+        nxA+pUZnt9GYBHekOD5oaec/4iIY7LOgQkEJy0BGHEEI1e9J+cGnIOTXNOnTqgvb
+        L34iZ5Jfkr5QA=
+Received: (qmail 2142431 invoked from network); 29 Jun 2020 20:53:25 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jun 2020 20:53:25 +0200
+X-UD-Smtp-Session: l3s3148p1@sBDUkj2pYrQgAwDPXwOPAD5GWjq5uCZs
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Alain Volmat <alain.volmat@st.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH RFC 1/1] i2c: add slave testunit driver
+Date:   Mon, 29 Jun 2020 20:53:18 +0200
+Message-Id: <20200629185318.23381-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200629185318.23381-1-wsa+renesas@sang-engineering.com>
+References: <20200629185318.23381-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-References: <9cbffad6-69e4-0b33-4640-fde7c4f6a6e7@linaro.org>
- <20200626173755.26379-1-andrzej.p@collabora.com> <20200626173755.26379-4-andrzej.p@collabora.com>
-In-Reply-To: <20200626173755.26379-4-andrzej.p@collabora.com>
-From:   Amit Kucheria <amit.kucheria@verdurent.com>
-Date:   Mon, 29 Jun 2020 12:49:51 +0530
-Message-ID: <CAHLCerNXcst72EDWf-xRTdUJ78jMDhhxpf31MO2WPgtJxzv6bA@mail.gmail.com>
-Subject: Re: [PATCH v5 03/11] thermal: Add current mode to thermal zone device
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     Linux PM list <linux-pm@vger.kernel.org>,
-        linux-acpi@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        lakml <linux-arm-kernel@lists.infradead.org>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Vishal Kulkarni <vishal@chelsio.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Peter Kaestle <peter@piie.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Enrico Weigelt <info@metux.net>,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jun 26, 2020 at 11:08 PM Andrzej Pietrasiewicz
-<andrzej.p@collabora.com> wrote:
->
-> Prepare for changing the place where the mode is stored: now it is in
-> drivers, which might or might not implement get_mode()/set_mode() methods.
-> A lot of cleanup can be done thanks to storing it in struct tzd. The
-> get_mode() methods will become redundant.
->
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Here is a I2C slave backend driver which allows to test some uncommon
+functionalities of the I2C and SMBus world. Usually, you need specific
+devices to test e.g. SMBus Host Notify and such. With this driver you
+just need the slave interface of your host controller.
 
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+This initial version has testcases for multi-master and SMBus Host
+Notify. Already planned but not yet implemented are SMBus Alert and
+messages with I2C_M_RECV_LEN.
 
+Please read the documentation for further details.
 
-> ---
->  include/linux/thermal.h | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index 216185bb3014..5f91d7f04512 100644
-> --- a/include/linux/thermal.h
-> +++ b/include/linux/thermal.h
-> @@ -128,6 +128,7 @@ struct thermal_cooling_device {
->   * @trip_temp_attrs:   attributes for trip points for sysfs: trip temperature
->   * @trip_type_attrs:   attributes for trip points for sysfs: trip type
->   * @trip_hyst_attrs:   attributes for trip points for sysfs: trip hysteresis
-> + * @mode:              current mode of this thermal zone
->   * @devdata:   private pointer for device private data
->   * @trips:     number of trip points the thermal zone supports
->   * @trips_disabled;    bitmap for disabled trips
-> @@ -170,6 +171,7 @@ struct thermal_zone_device {
->         struct thermal_attr *trip_temp_attrs;
->         struct thermal_attr *trip_type_attrs;
->         struct thermal_attr *trip_hyst_attrs;
-> +       enum thermal_device_mode mode;
->         void *devdata;
->         int trips;
->         unsigned long trips_disabled;   /* bitmap for disabled trips */
-> --
-> 2.17.1
->
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ Documentation/i2c/slave-testunit-backend.rst |  48 ++++++
+ drivers/i2c/Kconfig                          |   8 +
+ drivers/i2c/Makefile                         |   1 +
+ drivers/i2c/i2c-slave-testunit.c             | 146 +++++++++++++++++++
+ 4 files changed, 203 insertions(+)
+ create mode 100644 Documentation/i2c/slave-testunit-backend.rst
+ create mode 100644 drivers/i2c/i2c-slave-testunit.c
+
+diff --git a/Documentation/i2c/slave-testunit-backend.rst b/Documentation/i2c/slave-testunit-backend.rst
+new file mode 100644
+index 000000000000..f4f79db0917a
+--- /dev/null
++++ b/Documentation/i2c/slave-testunit-backend.rst
+@@ -0,0 +1,48 @@
++================================
++Linux I2C slave testunit backend
++================================
++
++by Wolfram Sang <wsa@sang-engineering.com> in 2020
++
++This backend can be used to trigger test cases for I2C bus masters which
++require a remote device with certain capabilities (and which are usually not so
++easy to obtain). Examples include multi-master testing, and SMBus Host Notify
++testing. For tests marked with '*', your I2C controller must be able to switch
++between master and slave mode because it needs to send data.
++
++Instantiating the device is regular. Example for bus 0, address 0x30:
++
++# echo "slave-testunit 0x1030" > /sys/bus/i2c/devices/i2c-0/new_device
++
++After that, you will have a write-only device listening. Reads will only return
++0xff. The device consists of 4 8-bit registers and all must be written to start
++a testcase, i.e. you must always write 4 bytes to the device. The registers are:
++
++0x00 CMD   - which test to trigger
++0x01 DATAL - configuration byte 1 for the test
++0x02 DATAH - configuration byte 2 for the test
++0x03 DELAY - delay in n * 100ms until test is started
++
++Commands
++--------
++
++0x00 READ_BYTES*
++   DATAL - address to read data from
++   DATAH - number of bytes to read
++
++This is useful to test if your bus master driver is handling multi-master
++correctly. You can trigger the testunit to read bytes from another device on
++the bus. If the bus master under test also wants to access the bus, it will be
++busy. Example to read 128 bytes from device 0x50 after 500ms of delay:
++
++# i2cset -y 1 0x30 0x00 0x50 0x80 0x05 i
++
++0x01 SMBUS_HOST_NOTIFY*
++   DATAL - low byte of the status word to send
++   DATAH - high byte of the status word to send
++
++This test will send an SMBUS_HOST_NOTIFY message to the host. Note that the
++status word is currently ignored in the Linux Kernel. Example to send a
++notification after 100ms:
++
++# i2cset -y 1 0x30 0x01 0x42 0x42 0x01 i
+diff --git a/drivers/i2c/Kconfig b/drivers/i2c/Kconfig
+index bae1dc08ec9a..2b550b5168e5 100644
+--- a/drivers/i2c/Kconfig
++++ b/drivers/i2c/Kconfig
+@@ -126,6 +126,14 @@ config I2C_SLAVE_EEPROM
+ 	  This backend makes Linux behave like an I2C EEPROM. Please read
+ 	  Documentation/i2c/slave-eeprom-backend.rst for further details.
+ 
++config I2C_SLAVE_TESTUNIT
++	tristate "I2C eeprom testunit driver"
++	help
++	  This backend can be used to trigger test cases for I2C bus masters
++	  which require a remote device with certain capabilities, e.g.
++	  multi-master, SMBus Host Notify, etc. Please read
++	  Documentation/i2c/slave-testunit-backend.rst for further details.
++
+ endif
+ 
+ config I2C_DEBUG_CORE
+diff --git a/drivers/i2c/Makefile b/drivers/i2c/Makefile
+index bed6ba63c983..c1d493dc9bac 100644
+--- a/drivers/i2c/Makefile
++++ b/drivers/i2c/Makefile
+@@ -16,5 +16,6 @@ obj-$(CONFIG_I2C_MUX)		+= i2c-mux.o
+ obj-y				+= algos/ busses/ muxes/
+ obj-$(CONFIG_I2C_STUB)		+= i2c-stub.o
+ obj-$(CONFIG_I2C_SLAVE_EEPROM)	+= i2c-slave-eeprom.o
++obj-$(CONFIG_I2C_SLAVE_TESTUNIT)	+= i2c-slave-testunit.o
+ 
+ ccflags-$(CONFIG_I2C_DEBUG_CORE) := -DDEBUG
+diff --git a/drivers/i2c/i2c-slave-testunit.c b/drivers/i2c/i2c-slave-testunit.c
+new file mode 100644
+index 000000000000..ba82712eac5f
+--- /dev/null
++++ b/drivers/i2c/i2c-slave-testunit.c
+@@ -0,0 +1,146 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * I2C slave mode testunit
++ *
++ * Copyright (C) 2020 by Wolfram Sang, Sang Engineering <wsa@sang-engineering.com>
++ * Copyright (C) 2020 by Renesas Electronics Corporation
++ */
++
++#include <linux/i2c.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/slab.h>
++#include <linux/workqueue.h> // FIXME: own workqueue?
++
++enum testunit_cmds {
++	TU_CMD_READ_BYTES,
++	TU_CMD_HOST_NOTIFY,
++};
++
++enum testunit_regs {
++	TU_REG_CMD,
++	TU_REG_DATAL,
++	TU_REG_DATAH,
++	TU_REG_DELAY,
++	TU_NUM_REGS
++};
++
++struct testunit_data {
++	u8 regs[TU_NUM_REGS];	//FIXME: add locking
++	u8 reg_idx;
++	struct i2c_client *client;
++	struct delayed_work worker;
++	struct i2c_msg msg;
++	u8 msgbuf[256];
++};
++
++static void i2c_slave_testunit_work(struct work_struct *work)
++{
++	struct testunit_data *tu = container_of(work, struct testunit_data, worker.work);
++	int ret;
++
++	switch (tu->regs[TU_REG_CMD]) {
++
++	case TU_CMD_READ_BYTES:
++		tu->msg.addr = tu->regs[TU_REG_DATAL];
++		tu->msg.flags = I2C_M_RD;
++		tu->msg.len = tu->regs[TU_REG_DATAH];
++		break;
++
++	case TU_CMD_HOST_NOTIFY:
++		tu->msg.addr = 0x08;
++		tu->msg.flags = 0;
++		tu->msg.len = 3;
++		tu->msgbuf[0] = tu->client->addr;
++		tu->msgbuf[1] = tu->regs[TU_REG_DATAL];
++		tu->msgbuf[2] = tu->regs[TU_REG_DATAH];
++		break;
++	}
++
++	ret = i2c_transfer(tu->client->adapter, &tu->msg, 1);
++	if (ret != 1)
++		dev_err(&tu->client->dev, "CMD%02X failed (%d)\n", tu->regs[TU_REG_CMD], ret);
++}
++
++static int i2c_slave_testunit_slave_cb(struct i2c_client *client,
++				     enum i2c_slave_event event, u8 *val)
++{
++	struct testunit_data *tu = i2c_get_clientdata(client);
++	int ret = 0;
++
++	switch (event) {
++	case I2C_SLAVE_WRITE_REQUESTED:
++		break;
++
++	case I2C_SLAVE_WRITE_RECEIVED:
++		if (tu->reg_idx < TU_NUM_REGS)
++			tu->regs[tu->reg_idx] = *val;
++		else
++			ret = -EMSGSIZE;
++
++		if (tu->reg_idx <= TU_NUM_REGS)
++			tu->reg_idx++;
++
++		break;
++
++	case I2C_SLAVE_STOP:
++		if (tu->reg_idx == TU_NUM_REGS)
++			queue_delayed_work(system_long_wq, &tu->worker,
++					   msecs_to_jiffies(100 * tu->regs[TU_REG_DELAY]));
++		tu->reg_idx = 0;
++		break;
++
++	case I2C_SLAVE_READ_REQUESTED:
++	case I2C_SLAVE_READ_PROCESSED:
++		*val = 0xff;
++		break;
++	}
++
++	return ret;
++}
++
++static int i2c_slave_testunit_probe(struct i2c_client *client)
++{
++	struct testunit_data *tu;
++
++	tu = devm_kzalloc(&client->dev, sizeof(struct testunit_data), GFP_KERNEL);
++	if (!tu)
++		return -ENOMEM;
++
++	tu->msg.buf = tu->msgbuf;
++	tu->client = client;
++	i2c_set_clientdata(client, tu);
++	INIT_DELAYED_WORK(&tu->worker, i2c_slave_testunit_work);
++
++	return i2c_slave_register(client, i2c_slave_testunit_slave_cb);
++};
++
++static int i2c_slave_testunit_remove(struct i2c_client *client)
++{
++	struct testunit_data *tu = i2c_get_clientdata(client);
++
++	cancel_delayed_work_sync(&tu->worker);
++	i2c_slave_unregister(client);
++	return 0;
++}
++
++static const struct i2c_device_id i2c_slave_testunit_id[] = {
++	{ "slave-testunit", 0 },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, i2c_slave_testunit_id);
++
++static struct i2c_driver i2c_slave_testunit_driver = {
++	.driver = {
++		.name = "i2c-slave-testunit",
++	},
++	.probe_new = i2c_slave_testunit_probe,
++	.remove = i2c_slave_testunit_remove,
++	.id_table = i2c_slave_testunit_id,
++};
++module_i2c_driver(i2c_slave_testunit_driver);
++
++MODULE_AUTHOR("Wolfram Sang <wsa@sang-engineering.com>");
++MODULE_DESCRIPTION("I2C slave mode test unit");
++MODULE_LICENSE("GPL v2");
+-- 
+2.20.1
+
