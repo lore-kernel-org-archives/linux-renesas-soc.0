@@ -2,120 +2,93 @@ Return-Path: <SRS0=FoF8=AK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 503F6C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 962C2C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 360F220759
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:04:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB3672073E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:04:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Iu4+Icxw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731084AbgF2VEE (ORCPT
+        id S2387686AbgF2VE7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:04:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43366 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731121AbgF2TMp (ORCPT
+        Mon, 29 Jun 2020 17:04:59 -0400
+Received: from www.zeus03.de ([194.117.254.33]:58312 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390275AbgF2VE5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:12:45 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 814D9C0085D8;
-        Mon, 29 Jun 2020 04:16:29 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id 5CAD22A21CE
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Vishal Kulkarni <vishal@chelsio.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Peter Kaestle <peter@piie.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Enrico Weigelt <info@metux.net>,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCH v6 03/11] thermal: Add current mode to thermal zone device
-Date:   Mon, 29 Jun 2020 13:16:07 +0200
-Message-Id: <20200629111615.18131-4-andrzej.p@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200629111615.18131-1-andrzej.p@collabora.com>
-References: <CAHLCerO2XOOX9akEwaTu_cjSqRycFpNmoVxkSe36L8B4ALWidA@mail.gmail.com>
- <20200629111615.18131-1-andrzej.p@collabora.com>
+        Mon, 29 Jun 2020 17:04:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=XyELTfetusW4VBoR00hLLWOgmZS
+        fcaubs1yryHnn78s=; b=Iu4+IcxwmCtCvwGfXRYDhaPZC+idgyhiWuIxmz6YMZt
+        F6wUKyx47kANSR0Fm1k7aJrp0fJAvATDKccpE8Hnq8ngCnbbZnNYdRyP9seMTS6R
+        WeaoUJQ77IwFWVSnwhAeA95RQhZbjTkrMHw1Y4dr4/mFaKyuY9EMc9lYF6oQ59Co
+        =
+Received: (qmail 2098223 invoked from network); 29 Jun 2020 17:38:13 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jun 2020 17:38:13 +0200
+X-UD-Smtp-Session: l3s3148p1@m/C82DqpJLIgAwDPXwOPAD5GWjq5uCZs
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] i2c: rcar: slave: only send STOP event when we have been addressed
+Date:   Mon, 29 Jun 2020 17:38:07 +0200
+Message-Id: <20200629153807.15744-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Prepare for changing the place where the mode is stored: now it is in
-drivers, which might or might not implement get_mode()/set_mode() methods.
-A lot of cleanup can be done thanks to storing it in struct tzd. The
-get_mode() methods will become redundant.
+When the SSR interrupt is activated, it will detect every STOP condition
+on the bus, not only the ones after we have been addressed. So, enable
+this interrupt only after we have been addressed, and disable it
+otherwise.
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+Fixes: de20d1857dd6 ("i2c: rcar: add slave support")
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- include/linux/thermal.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/i2c/busses/i2c-rcar.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index 216185bb3014..5f91d7f04512 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -128,6 +128,7 @@ struct thermal_cooling_device {
-  * @trip_temp_attrs:	attributes for trip points for sysfs: trip temperature
-  * @trip_type_attrs:	attributes for trip points for sysfs: trip type
-  * @trip_hyst_attrs:	attributes for trip points for sysfs: trip hysteresis
-+ * @mode:		current mode of this thermal zone
-  * @devdata:	private pointer for device private data
-  * @trips:	number of trip points the thermal zone supports
-  * @trips_disabled;	bitmap for disabled trips
-@@ -170,6 +171,7 @@ struct thermal_zone_device {
- 	struct thermal_attr *trip_temp_attrs;
- 	struct thermal_attr *trip_type_attrs;
- 	struct thermal_attr *trip_hyst_attrs;
-+	enum thermal_device_mode mode;
- 	void *devdata;
- 	int trips;
- 	unsigned long trips_disabled;	/* bitmap for disabled trips */
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index a45c4bf1ec01..c2921e1d8c4c 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -583,13 +583,14 @@ static bool rcar_i2c_slave_irq(struct rcar_i2c_priv *priv)
+ 			rcar_i2c_write(priv, ICSIER, SDR | SSR | SAR);
+ 		}
+ 
+-		rcar_i2c_write(priv, ICSSR, ~SAR & 0xff);
++		/* Clear SSR, too, because of old STOPs to other clients than us */
++		rcar_i2c_write(priv, ICSSR, ~(SAR | SSR) & 0xff);
+ 	}
+ 
+ 	/* master sent stop */
+ 	if (ssr_filtered & SSR) {
+ 		i2c_slave_event(priv->slave, I2C_SLAVE_STOP, &value);
+-		rcar_i2c_write(priv, ICSIER, SAR | SSR);
++		rcar_i2c_write(priv, ICSIER, SAR);
+ 		rcar_i2c_write(priv, ICSSR, ~SSR & 0xff);
+ 	}
+ 
+@@ -853,7 +854,7 @@ static int rcar_reg_slave(struct i2c_client *slave)
+ 	priv->slave = slave;
+ 	rcar_i2c_write(priv, ICSAR, slave->addr);
+ 	rcar_i2c_write(priv, ICSSR, 0);
+-	rcar_i2c_write(priv, ICSIER, SAR | SSR);
++	rcar_i2c_write(priv, ICSIER, SAR);
+ 	rcar_i2c_write(priv, ICSCR, SIE | SDBS);
+ 
+ 	return 0;
 -- 
-2.17.1
+2.20.1
 
