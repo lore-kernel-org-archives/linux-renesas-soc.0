@@ -4,168 +4,160 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA8BC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C033C433E3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56D40206E9
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:44:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E5362063A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 21:45:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="UI0fGaRC"
+	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="OQH0L9cB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727796AbgF2Voz (ORCPT
+        id S1727784AbgF2VpR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:44:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37558 "EHLO
+        Mon, 29 Jun 2020 17:45:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727797AbgF2Shp (ORCPT
+        with ESMTP id S1727780AbgF2Sho (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 14:37:45 -0400
-Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BED7C00F82B
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2020 05:46:51 -0700 (PDT)
-Received: by mail-vs1-xe44.google.com with SMTP id p25so1360937vsg.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2020 05:46:51 -0700 (PDT)
+        Mon, 29 Jun 2020 14:37:44 -0400
+Received: from mail-vk1-xa43.google.com (mail-vk1-xa43.google.com [IPv6:2607:f8b0:4864:20::a43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EE2BC02A544
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2020 05:51:33 -0700 (PDT)
+Received: by mail-vk1-xa43.google.com with SMTP id h190so3694479vkh.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2020 05:51:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=verdurent-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=3mjyd6r9Z8NRgSnG+P9PSoNzsHa0OVoXa5dJDxRkCYk=;
-        b=UI0fGaRCmq5A6fZ2aN3n8WBb3g7VvOCURSeOI/vJzfqMe8q0IkabtA9TAG27ldXDI4
-         z+qW6f7rvAAhml7TWg3s6TCc3UwBj8qbwNL/MoBsGqaL93xt/lMkkNwHR7FZDnRdUe26
-         IJTGZwp8wFrDid5i4wCANbEQxqmks/buB/LqOLygjOkSAS569gUFnJm1iu7wSqU6J4mi
-         WaUPsQa5oFkBDxtSoUnrhRPFtXhTMn7YFowZMtA/btLIDP7fV053z75lagCKW3U3sf9y
-         A8ESITsuDw5aZvkzmvkyodLVZ6crbpaei0phkK3XLxRzXsByhgG8E5nSjNXa6qVAk8Nh
-         57xg==
+        bh=xHEvnwaXIaI22DXPizYpJcrsTL4/AwhMEQ6IhYTQKlQ=;
+        b=OQH0L9cBVHLRgTVZhw1jd+9UWSypZQN30gG3yvEpHJvc2VXIoNz+hyJGcfUcBU+7e4
+         oCc7XEKBqBQPleKnUVnLbIp6WsDfC+WCcVQhpW8dNcfHdlE37M0unZrcRr+0gg3/aEvf
+         PMdPFYwgtQ+R9ZtNcXAgyQyPNtpr4cbByuURBHAnjcHM+1N71I+sWI1yfCbGzQcEdiAN
+         yY4uALwvM8jRmBCwqjPgXEIl4AGsHRadzBeA2q8DcqrH+lwiFBEB3A6DNV046uaF3RHg
+         gXgPPRlYEZ8ZU+Sn3QHjIt7k5b5qK/HGOI6FP26Yjc3r+mq7qoc4ZOwpVuG+VUgxyPPT
+         2jyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=3mjyd6r9Z8NRgSnG+P9PSoNzsHa0OVoXa5dJDxRkCYk=;
-        b=UGX4k5ws5Ird9piMDD1LIB1OBztbSba8NfwOp+145zc2bzRIrKhzx4aHT716OXn+82
-         DAOiV7lJFCKIk5ZUTSnDjmOUJ8Ea/u/SlIiMfgEtN4hWFHrAKC2Hdra/CZIia+yaCyUd
-         9VCYI0HQG8Hufd8PifhshTYLiBWuzKnJ+Q8Ic4yzth5fDND1ogobJzztAOciYifSlfql
-         Cr/R8m5lQ2Q4G3HbLxl3xWPDxO2EvAqdFm/ZidLAckmwNL7nBxe2vKRuFitNbymr7hme
-         ewAi5BA47YcWMv9b4qQJXERD36AK55hZbfv1fkqoZJLcc0A3i2EkIQ8iMmyBdPeejFib
-         dA3Q==
-X-Gm-Message-State: AOAM530UUTR5wsq/noDAU9JrmKTiTXcT9gKTJEsmKsihS5wDlRIftpvG
-        SnRYGvwxYJti+YAqBIpz8JOavNZshAUSwFdPg3pmwA==
-X-Google-Smtp-Source: ABdhPJy1QcNgfU4ZI0hGPqS1qMQ8m9mfv0gvwG3ncZShGHd/Tn9b42wi7vNTUL7hBQwk2F/xnYQAVj7TYIYTHORozvE=
-X-Received: by 2002:a67:ea98:: with SMTP id f24mr10128329vso.159.1593434810843;
- Mon, 29 Jun 2020 05:46:50 -0700 (PDT)
+        bh=xHEvnwaXIaI22DXPizYpJcrsTL4/AwhMEQ6IhYTQKlQ=;
+        b=PBF0s7FHdVlQxtYQ4/HnnChbSEZ7/k+K8+EQyWejLm4GefAtJXIc07Pd12eGYb1jD6
+         Jp7EeUM8/pL2vI+Z5mEkeVktN39NYhtYVbLMDkVEMDEd051InbnjlmceY3B5DXn94RB3
+         r16qGqnnBiC6Apr1tFw/wqMUTdLZ9a8KCo/MvsRlWoIvF/zs7nqJFy4ukI4pMpZssU8B
+         h2NXg281pTs1IedBWL1ROHW1W+dt5STCeDjRXxmgxSeM4q+pd/y7wkIf0yaszaQ6UtyK
+         hSJOgfBf7LBAQFkNn8IDfkLGe+2b3r+hukzthqVyn/ljMonJFfb0Q7MzaafX+hPbQX0X
+         TtEA==
+X-Gm-Message-State: AOAM5316/Rw2dvphbIsbw/rNt0GsrdelsOzJxDlf+Albl9xy+AS4EiQ/
+        jf+eSNeaanHTZcBgzGBe4QbbNTmNguSioe5yOLAeLKgvFOGGxw==
+X-Google-Smtp-Source: ABdhPJxV2IA2m9d5l16yBy3n1SZ0g7UHEZV6/cJ+b6V/XLPjujs0azTgjgMwltUJn2YBO0p0U04OWasRwsCDgvXmOEE=
+X-Received: by 2002:ac5:c189:: with SMTP id z9mr9880244vkb.79.1593435092807;
+ Mon, 29 Jun 2020 05:51:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200629122925.21729-1-andrzej.p@collabora.com> <20200629122925.21729-10-andrzej.p@collabora.com>
-In-Reply-To: <20200629122925.21729-10-andrzej.p@collabora.com>
+References: <20200619151541.15069-1-geert+renesas@glider.be>
+In-Reply-To: <20200619151541.15069-1-geert+renesas@glider.be>
 From:   Amit Kucheria <amit.kucheria@verdurent.com>
-Date:   Mon, 29 Jun 2020 18:16:39 +0530
-Message-ID: <CAHLCerNsXrkJqU5_Tw_PA8YQLGsHzDg7POrBRtvisBtJixU+CA@mail.gmail.com>
-Subject: Re: [PATCH v7 09/11] thermal: core: Stop polling DISABLED thermal devices
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Cc:     Linux PM list <linux-pm@vger.kernel.org>,
-        linux-acpi@vger.kernel.org, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        lakml <linux-arm-kernel@lists.infradead.org>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Vishal Kulkarni <vishal@chelsio.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Peter Kaestle <peter@piie.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
+Date:   Mon, 29 Jun 2020 18:21:21 +0530
+Message-ID: <CAHLCerMfp42VHDxhCfnFmxphic0OVD55ZzmzwnrEvfF6WUARgg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: thermal: rcar-thermal: Improve schema validation
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
         =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Enrico Weigelt <info@metux.net>,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        kernel@collabora.com
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jun 29, 2020 at 6:00 PM Andrzej Pietrasiewicz
-<andrzej.p@collabora.com> wrote:
+On Fri, Jun 19, 2020 at 8:45 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
 >
-> Polling DISABLED devices is not desired, as all such "disabled" devices
-> are meant to be handled by userspace. This patch introduces and uses
-> should_stop_polling() to decide whether the device should be polled or not.
+>   - Document missing "#thermal-sensor-cells",
+>   - Factor out common required properties,
+>   - "interrupts", "clocks", and "power-domains" are required on R-Mobile
+>     APE6, too,
+>   - Invert logic to simplify descriptions,
+>   - Add "additionalProperties: false".
 >
-> Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
 
 > ---
->  drivers/thermal/thermal_core.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
+>  .../bindings/thermal/rcar-thermal.yaml        | 53 ++++++++++++-------
+>  1 file changed, 34 insertions(+), 19 deletions(-)
 >
-> diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-> index 52d136780577..e613f5c07bad 100644
-> --- a/drivers/thermal/thermal_core.c
-> +++ b/drivers/thermal/thermal_core.c
-> @@ -301,13 +301,22 @@ static void thermal_zone_device_set_polling(struct thermal_zone_device *tz,
->                 cancel_delayed_work(&tz->poll_queue);
->  }
+> diff --git a/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml b/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml
+> index 0994693d240f9ff4..88787b98992fe7c9 100644
+> --- a/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml
+> +++ b/Documentation/devicetree/bindings/thermal/rcar-thermal.yaml
+> @@ -59,25 +59,40 @@ properties:
+>    resets:
+>      maxItems: 1
 >
-> +static inline bool should_stop_polling(struct thermal_zone_device *tz)
-> +{
-> +       return !thermal_zone_device_is_enabled(tz);
-> +}
+> -if:
+> -  properties:
+> -    compatible:
+> -      contains:
+> -        enum:
+> -          - renesas,thermal-r8a73a4 # R-Mobile APE6
+> -          - renesas,thermal-r8a7779 # R-Car H1
+> -then:
+> -  required:
+> -    - compatible
+> -    - reg
+> -else:
+> -  required:
+> -    - compatible
+> -    - reg
+> -    - interrupts
+> -    - clocks
+> -    - power-domains
+> -    - resets
+> +  '#thermal-sensor-cells':
+> +    const: 0
 > +
->  static void monitor_thermal_zone(struct thermal_zone_device *tz)
->  {
-> +       bool stop;
+> +required:
+> +  - compatible
+> +  - reg
 > +
-> +       stop = should_stop_polling(tz);
+> +allOf:
+> +  - if:
+> +      not:
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              enum:
+> +                - renesas,thermal-r8a73a4 # R-Mobile APE6
+> +                - renesas,thermal-r8a7779 # R-Car H1
+> +    then:
+> +      required:
+> +        - resets
+> +        - '#thermal-sensor-cells'
 > +
->         mutex_lock(&tz->lock);
->
-> -       if (tz->passive)
-> +       if (!stop && tz->passive)
->                 thermal_zone_device_set_polling(tz, tz->passive_delay);
-> -       else if (tz->polling_delay)
-> +       else if (!stop && tz->polling_delay)
->                 thermal_zone_device_set_polling(tz, tz->polling_delay);
->         else
->                 thermal_zone_device_set_polling(tz, 0);
-> @@ -517,6 +526,9 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
->  {
->         int count;
->
-> +       if (should_stop_polling(tz))
-> +               return;
+> +  - if:
+> +      not:
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              const: renesas,thermal-r8a7779 # R-Car H1
+> +    then:
+> +      required:
+> +        - interrupts
+> +        - clocks
+> +        - power-domains
 > +
->         if (atomic_read(&in_suspend))
->                 return;
+> +additionalProperties: false
 >
+>  examples:
+>    # Example (non interrupt support)
 > --
 > 2.17.1
 >
