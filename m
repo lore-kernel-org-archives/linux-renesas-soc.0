@@ -2,136 +2,167 @@ Return-Path: <SRS0=FoF8=AK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B5ABC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DD9C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 419AA206E2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BAFD206F1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Jun 2020 20:55:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731529AbgF2Uxr (ORCPT
+        id S1731396AbgF2Uyb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 Jun 2020 16:53:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43382 "EHLO
+        Mon, 29 Jun 2020 16:54:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43356 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731326AbgF2TNU (ORCPT
+        with ESMTP id S1731318AbgF2TNT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:13:20 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA52AC0085AF;
-        Mon, 29 Jun 2020 04:16:41 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: andrzej.p)
-        with ESMTPSA id E6EC627D8DE
-From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Vishal Kulkarni <vishal@chelsio.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Peter Kaestle <peter@piie.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Enrico Weigelt <info@metux.net>,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        kernel@collabora.com
-Subject: [PATCH v6 09/11] thermal: core: Stop polling DISABLED thermal devices
-Date:   Mon, 29 Jun 2020 13:16:13 +0200
-Message-Id: <20200629111615.18131-10-andrzej.p@collabora.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200629111615.18131-1-andrzej.p@collabora.com>
-References: <CAHLCerO2XOOX9akEwaTu_cjSqRycFpNmoVxkSe36L8B4ALWidA@mail.gmail.com>
- <20200629111615.18131-1-andrzej.p@collabora.com>
+        Mon, 29 Jun 2020 15:13:19 -0400
+Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C65C2C0068BC
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2020 04:49:33 -0700 (PDT)
+Received: by mail-ot1-x342.google.com with SMTP id t18so2367008otq.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Jun 2020 04:49:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eAltZ05f8fVkZXm0bUQuhx6MIO2x12H5beaeCAbA5dQ=;
+        b=iN3x2x+mF8tcZAxq+YCOvIkR+AKIGaYLncs18xXnM5ejOQ4v2FumovwYlM2RmzpbgW
+         ugMgv0DUGl0b2xW+bJIm+sL5u3rEeoKLzBEOMSkR9SpKODkOSELv7jvygXzwFriD5TCv
+         PI4I8DArmrERA7QKPQ/0MXh4uO9ACP1cMUhsUfQHrBKTwvhM9DQcMUymML/Q+nD9jEue
+         wWOmN0QKtCPcghild7OMIjR+NkGjDU0hTTitrymLhLkFWu+RA0PuK3dihDF7Y2DPYokn
+         mSVYNvZQrj0i5A2w5W0NIl/1LetSgC8xo9LWgdsk2KuLTiBZ9LeLDKNlBTL/rrgiKmwi
+         9+Ag==
+X-Gm-Message-State: AOAM5307zJiqoULLO4YChnSuNxtb0wkKc3Sfrpyc8XDVwGFScjxVM1ZF
+        YK23m2V9NXwE6+dRor7yiYMdL5RxR8RIWIby2aY=
+X-Google-Smtp-Source: ABdhPJykhmys+OEr55fIKpepMspu36NxczTviy/NGrdQ6uIBGNIkCFLjTyj5J+v8CHZF4mA9eVVIC/G8xfL+I9T68UU=
+X-Received: by 2002:a9d:2646:: with SMTP id a64mr12118558otb.107.1593431373141;
+ Mon, 29 Jun 2020 04:49:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <1593163942-5087-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdU0OEA7seCDadrSsNYXHQJOuSRrm8O439PK_pf3NoLxsg@mail.gmail.com> <TY2PR01MB3692FBE296EC373130842219D86E0@TY2PR01MB3692.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY2PR01MB3692FBE296EC373130842219D86E0@TY2PR01MB3692.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 29 Jun 2020 13:49:22 +0200
+Message-ID: <CAMuHMdXh1Hh6H35Mp8hBJBykUucRNwxTmW+U9SHM+xhrcwasDA@mail.gmail.com>
+Subject: Re: [PATCH/RFC v4 0/4] treewide: add regulator condition on _mmc_suspend()
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Polling DISABLED devices is not desired, as all such "disabled" devices
-are meant to be handled by userspace. This patch introduces and uses
-should_stop_polling() to decide whether the device should be polled or not.
+Hi Shimoda-san,
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
-Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/thermal/thermal_core.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+On Mon, Jun 29, 2020 at 12:04 PM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> > From: Geert Uytterhoeven, Sent: Friday, June 26, 2020 7:13 PM
+> > On Fri, Jun 26, 2020 at 11:32 AM Yoshihiro Shimoda
+> > <yoshihiro.shimoda.uh@renesas.com> wrote:
+> > > Note that v5.8-rc2 with r8a77951-salvator-xs seems to cause panic from
+> > > PCI driver when the system is suspended. So, I disabled the PCI
+> > > devices when I tested this patch series.
+> >
+> > Does this happen with current renesas-devel and renesas_defconfig?
+> > (it doesn't for me)
+>
+> Yes. I enabled PM_DEBUG and E1000E though.
+>
+> > Do you have any PCIe devices attached? (I haven't)
+>
+> Yes. (Intel Ethernet card is connected to the PCI slot.)
+>
+> < my environment >
+> - r8a77961-salvator-xs
+> - renesas-devel-2020-06-26-v5.8-rc2
+>  + renesas_defconfig + PM_DEBUG + E1000E
+> - initramfs
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 52d136780577..e613f5c07bad 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -301,13 +301,22 @@ static void thermal_zone_device_set_polling(struct thermal_zone_device *tz,
- 		cancel_delayed_work(&tz->poll_queue);
- }
- 
-+static inline bool should_stop_polling(struct thermal_zone_device *tz)
-+{
-+	return !thermal_zone_device_is_enabled(tz);
-+}
-+
- static void monitor_thermal_zone(struct thermal_zone_device *tz)
- {
-+	bool stop;
-+
-+	stop = should_stop_polling(tz);
-+
- 	mutex_lock(&tz->lock);
- 
--	if (tz->passive)
-+	if (!stop && tz->passive)
- 		thermal_zone_device_set_polling(tz, tz->passive_delay);
--	else if (tz->polling_delay)
-+	else if (!stop && tz->polling_delay)
- 		thermal_zone_device_set_polling(tz, tz->polling_delay);
- 	else
- 		thermal_zone_device_set_polling(tz, 0);
-@@ -517,6 +526,9 @@ void thermal_zone_device_update(struct thermal_zone_device *tz,
- {
- 	int count;
- 
-+	if (should_stop_polling(tz))
-+		return;
-+
- 	if (atomic_read(&in_suspend))
- 		return;
- 
+Doesn't fail for me on R-Car H3 ES2.0, so it needs the presence of a
+PCIe card.  Unfortunately I haven't any (added to shopping wishlist).
+
+Is this the board in Magnus' farm?
+I do have access to that one.
+
+> ~ # echo mem > /sys/power/state
+> [  374.072298] PM: suspend entry (deep)
+> [  374.075994] Filesystems sync: 0.000 seconds
+> [  374.083159] Freezing user space processes ... (elapsed 0.001 seconds) done.
+> [  374.091570] OOM killer disabled.
+> [  374.094823] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
+> [  374.227534] e1000e: EEE TX LPI TIMER: 00000000
+> [  374.354388] SError Interrupt on CPU0, code 0xbf000002 -- SError
+> [  374.354390] CPU: 0 PID: 633 Comm: kworker/u12:4 Not tainted 5.8.0-rc2-arm64-renesas #57
+> [  374.354392] Hardware name: Renesas Salvator-X 2nd version board based on r8a77961 (DT)
+> [  374.354393] Workqueue: events_unbound async_run_entry_fn
+> [  374.354395] pstate: 40000085 (nZcv daIf -PAN -UAO BTYPE=--)
+> [  374.354396] pc : rcar_pci_read_reg+0xc/0x20
+> [  374.354397] lr : rcar_pcie_config_access+0xe4/0x1c0
+> [  374.354398] sp : ffff8000148aba80
+> [  374.354399] x29: ffff8000148aba80 x28: 0000000000000000
+> [  374.354402] x27: ffff800011fb0000 x26: 0000000000000000
+> [  374.354404] x25: 00000000000000cc x24: 0000000000000000
+> [  374.354406] x23: ffff8000148abb54 x22: 0000000000000000
+> [  374.354408] x21: ffff0006b484f800 x20: 0000000000000000
+> [  374.354411] x19: ffff0006b3a14580 x18: 0000000000000000
+> [  374.354413] x17: 0000000000000000 x16: 0000000000000000
+> [  374.354415] x15: 0000000000000000 x14: 000006e45d8ca55e
+> [  374.354417] x13: 0000000000000330 x12: 000000000000016d
+> [  374.354419] x11: 0000000000000000 x10: 0000000000000000
+> [  374.354421] x9 : ffff800012059120 x8 : ffff800011fb0948
+> [  374.354423] x7 : ffff8000105075a8 x6 : 0000000000000000
+> [  374.354425] x5 : ffff8000148abb54 x4 : 00000000000000cc
+> [  374.354427] x3 : 0000000000000000 x2 : ffff800013700018
+> [  374.354429] x1 : 0000000000000020 x0 : 00000000ffffffff
+> [  374.354432] Kernel panic - not syncing: Asynchronous SError Interrupt
+> [  374.354433] CPU: 0 PID: 633 Comm: kworker/u12:4 Not tainted 5.8.0-rc2-arm64-renesas #57
+> [  374.354434] Hardware name: Renesas Salvator-X 2nd version board based on r8a77961 (DT)
+> [  374.354435] Workqueue: events_unbound async_run_entry_fn
+> [  374.354437] Call trace:
+> [  374.354438]  dump_backtrace+0x0/0x1d8
+> [  374.354439]  show_stack+0x14/0x20
+> [  374.354439]  dump_stack+0xe8/0x130
+> [  374.354440]  panic+0x168/0x380
+> [  374.354441]  nmi_panic+0x6c/0x70
+> [  374.354442]  arm64_serror_panic+0x74/0x88
+> [  374.354443]  do_serror+0x88/0x1a0
+> [  374.354444]  el1_error+0x84/0x100
+> [  374.354444]  rcar_pci_read_reg+0xc/0x20
+> [  374.354445]  rcar_pcie_read_conf+0x38/0xb0
+> [  374.354446]  pci_bus_read_config_word+0x84/0xe0
+> [  374.354447]  pci_read_config_word+0x28/0x40
+> [  374.354448]  pci_raw_set_power_state+0x108/0x2a8
+> [  374.354449]  pci_set_power_state+0x5c/0x150
+> [  374.354450]  pci_prepare_to_sleep+0x60/0x98
+> [  374.354451]  pci_pm_suspend_noirq+0xe4/0x278
+> [  374.354451]  dpm_run_callback+0x88/0x3c0
+> [  374.354452]  __device_suspend_noirq+0x68/0x1f0
+> [  374.354453]  async_suspend_noirq+0x20/0xa8
+> [  374.354454]  async_run_entry_fn+0x44/0x108
+> [  374.354455]  process_one_work+0x2a0/0x718
+> [  374.354456]  worker_thread+0x40/0x458
+> [  374.354457]  kthread+0x150/0x158
+> [  374.354457]  ret_from_fork+0x10/0x18
+> [  374.354484] SMP: stopping secondary CPUs
+> [  374.354485] Kernel Offset: disabled
+> [  374.354486] CPU features: 0x200022,21006004
+
+The failure mode looks like the PCI card is accessed while the PCI host
+bridge has been suspended.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
