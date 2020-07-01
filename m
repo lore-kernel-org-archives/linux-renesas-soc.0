@@ -2,58 +2,104 @@ Return-Path: <SRS0=94ze=AM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03509C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Jul 2020 06:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25240C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Jul 2020 07:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D179120747
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Jul 2020 06:40:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593585648;
-	bh=N5vwdGSxd4Xtdp2TGAGI4zUEmmJF0jNotkvUktYNgLw=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=nxJJbSgjwsP7oRFmsQT5VPyNZ8BlecLUHPj9swdHcOwqqdZqSvfVaCsWF5mEawBur
-	 q0xGwHbeGu1dgnLENHE2xGCTGdYB8N1XJmKfeBq2u1L6/5ArAEe8yhOF0xFr1o0Shn
-	 ShN4Vi43AecB7gzflGGj/YldQECD7h5YB4IVQDb0=
+	by mail.kernel.org (Postfix) with ESMTP id 064F6206A1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Jul 2020 07:34:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727769AbgGAGks (ORCPT
+        id S1728291AbgGAHeW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 1 Jul 2020 02:40:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbgGAGks (ORCPT
+        Wed, 1 Jul 2020 03:34:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42248 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728142AbgGAHeW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Jul 2020 02:40:48 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593585648;
-        bh=N5vwdGSxd4Xtdp2TGAGI4zUEmmJF0jNotkvUktYNgLw=;
-        h=Subject:From:Date:To:From;
-        b=rTcjuD0QxqTImyV6tJMPWY4BifByUMvN01TnBwKWMBEfLzjxe2951ttXHR7OFL0ZP
-         /dezH1gwkRp/daGYIu8MEAmrFWZdwnZVeWa6F+zAuUjvctXQJmf3XlE92V3nXPDIFU
-         u5gBoHefXAWWMDF0H8q9wmMcfJha6rRpJp6FCgf8=
+        Wed, 1 Jul 2020 03:34:22 -0400
+Received: from hillosipuli.retiisi.org.uk (hillosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::81:2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5289DC061755;
+        Wed,  1 Jul 2020 00:34:22 -0700 (PDT)
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 3DA42634C87;
+        Wed,  1 Jul 2020 10:34:05 +0300 (EEST)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1jqXFt-0000nt-C5; Wed, 01 Jul 2020 10:34:05 +0300
+Date:   Wed, 1 Jul 2020 10:34:05 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Lad Prabhakar <prabhakar.csengg@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        devicetree@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] device property: Add a function to test is a
+ fwnode is a graph endpoint
+Message-ID: <20200701073405.GB836@valkosipuli.retiisi.org.uk>
+References: <20200701062140.12953-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20200701062140.12953-2-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <159358564828.9275.14657363323386710656.git-patchwork-housekeeping@kernel.org>
-Date:   Wed, 01 Jul 2020 06:40:48 +0000
-To:     linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200701062140.12953-2-laurent.pinchart+renesas@ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v4] media: v4l2-async: Accept endpoints and devices for fwnode matching (2020-07-01T06:21:36)
-  Superseding: [v3] media: v4l2-async: Accept endpoints and devices for fwnode matching (2020-06-21T00:00:25):
-    [v3,1/3] media: v4l2-async: Accept endpoints and devices for fwnode matching
-    [v3,2/3] media: v4l2-async: Pass notifier pointer to match functions
-    [v3,3/3] media: v4l2-async: Log message in case of heterogeneous fwnode match
+Hi Laurent,
 
+On Wed, Jul 01, 2020 at 09:21:37AM +0300, Laurent Pinchart wrote:
+> Drivers may need to test if a fwnode is a graph endpoint. To avoid
+> hand-written solutions that wouldn't work for all fwnode types, add a
+> new fwnode_graph_is_endpoint() function for this purpose. We don't need
+> to wire it up to different backends for OF and ACPI for now, as the
+> implementation can simply be based on checkout the presence of a
+> remote-endpoint property.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  include/linux/property.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index 10d03572f52e..9f805c442819 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -389,6 +389,11 @@ struct fwnode_handle *
+>  fwnode_graph_get_remote_node(const struct fwnode_handle *fwnode, u32 port,
+>  			     u32 endpoint);
+>  
+> +static inline bool fwnode_graph_is_endpoint(struct fwnode_handle *fwnode)
+> +{
+> +	return fwnode_property_present(fwnode, "remote-endpoint");
+> +}
+> +
+>  /*
+>   * Fwnode lookup flags
+>   *
+
+Thanks for the patch. I've bounced it to devicetree and linux-acpi lists
+(now cc'd) --- hope that works.
+
+Rafael: do you think this simple patch could go though the media tree,
+assuming that folks are generally fine with the patch as such?
+Alternatively,
+
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+Kind regards,
+
+Sakari Ailus
