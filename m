@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	LONGWORDS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D46CC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Jul 2020 01:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D763C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Jul 2020 02:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76F6E2074D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Jul 2020 01:27:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69FD920771
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Jul 2020 02:05:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726015AbgGAB1l (ORCPT
+        id S1725862AbgGACFI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 30 Jun 2020 21:27:41 -0400
-Received: from mga02.intel.com ([134.134.136.20]:61215 "EHLO mga02.intel.com"
+        Tue, 30 Jun 2020 22:05:08 -0400
+Received: from mga01.intel.com ([192.55.52.88]:46495 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbgGAB1l (ORCPT
+        id S1725805AbgGACFH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 30 Jun 2020 21:27:41 -0400
-IronPort-SDR: Xm2aBXfnEXDzMq5AbIMLEkJFLlU/uG0oEwxB9eg4fHHy3DU2emhpt493R6HTprVPHi4x2Ucwbj
- um18Vt650XPQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9668"; a="134723845"
+        Tue, 30 Jun 2020 22:05:07 -0400
+IronPort-SDR: MBrCrW/svAEf8birec9a6MeJmW2b49U8M8klmircnqVuIs5hOsnOz3UpUn3LJA/X/y0gh3uMQy
+ HJAoWHc8LsqQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9668"; a="164440641"
 X-IronPort-AV: E=Sophos;i="5.75,298,1589266800"; 
-   d="scan'208";a="134723845"
+   d="scan'208";a="164440641"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2020 18:27:39 -0700
-IronPort-SDR: PRmbCfnpri5h9YwV7nQ0LbDDi04aGVSs2TE9lSJfZXKsvffjMGpCC/dbGada21dfy/F9i58aKt
- pG6jMPpsxS4g==
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jun 2020 19:05:01 -0700
+IronPort-SDR: VceXhWkg99nPWxUQDESa5G4k07ojkP+ZfKIT64ac6dcu02vpwXnqtKhYGDtzNrMfjKtV5bY7fP
+ kYo1Abdd4wcQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,298,1589266800"; 
-   d="scan'208";a="313602798"
+   d="scan'208";a="303657486"
 Received: from lkp-server01.sh.intel.com (HELO 28879958b202) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 30 Jun 2020 18:27:38 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 30 Jun 2020 19:04:59 -0700
 Received: from kbuild by 28879958b202 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1jqRXF-0002JJ-82; Wed, 01 Jul 2020 01:27:37 +0000
-Date:   Wed, 01 Jul 2020 09:26:13 +0800
+        id 1jqS7O-0002KD-V0; Wed, 01 Jul 2020 02:04:58 +0000
+Date:   Wed, 01 Jul 2020 10:04:50 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- 93580ed92e86d98f1546801d098aa51811d4be3a
-Message-ID: <5efbe635.FvyHRsbtgKtgUsVy%lkp@intel.com>
+Subject: [renesas-devel:topic/renesas-defconfig] BUILD SUCCESS
+ 9275b1588a501ddc4c421b9faf7c99a37bfb8785
+Message-ID: <5efbef42.JT+k8IqAXhgN/nj/%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -55,45 +55,41 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  next
-branch HEAD: 93580ed92e86d98f1546801d098aa51811d4be3a  Merge branches 'renesas-arm-defconfig-for-v5.9' and 'renesas-arm-dt-for-v5.9' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  topic/renesas-defconfig
+branch HEAD: 9275b1588a501ddc4c421b9faf7c99a37bfb8785  arm64: renesas: defconfig: Enable HD3SS3220 support
 
-elapsed time: 2404m
+elapsed time: 2442m
 
-configs tested: 126
-configs skipped: 118
+configs tested: 113
+configs skipped: 10
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
-arm                                 defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-arm                               allnoconfig
 arm64                            allyesconfig
 arm64                               defconfig
 arm64                            allmodconfig
 arm64                             allnoconfig
-mips                           mtx1_defconfig
-arm                         orion5x_defconfig
-mips                        bcm63xx_defconfig
-arm                             pxa_defconfig
-mips                 pnx8335_stb225_defconfig
-mips                      pic32mzda_defconfig
-mips                           xway_defconfig
+arm                                 defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+arm                               allnoconfig
+mips                         tb0287_defconfig
+powerpc                  mpc866_ads_defconfig
+mips                      pistachio_defconfig
+sparc64                          allyesconfig
+s390                             alldefconfig
+riscv                          rv32_defconfig
+sh                           se7751_defconfig
+mips                     loongson1b_defconfig
+arm                           sama5_defconfig
+sh                           sh2007_defconfig
 sh                      rts7751r2d1_defconfig
 arm                           viper_defconfig
 powerpc                      ppc44x_defconfig
-arm                          moxart_defconfig
-arm                        mvebu_v7_defconfig
-arm                          exynos_defconfig
 xtensa                       common_defconfig
+arm                         orion5x_defconfig
 arm                         nhk8815_defconfig
-sh                                  defconfig
-m68k                          amiga_defconfig
-m68k                          sun3x_defconfig
-mips                  mips_paravirt_defconfig
-sh                     sh7710voipgw_defconfig
 i386                              allnoconfig
 i386                             allyesconfig
 i386                                defconfig
@@ -140,30 +136,18 @@ powerpc                          allyesconfig
 powerpc                          rhel-kconfig
 powerpc                          allmodconfig
 powerpc                           allnoconfig
-i386                 randconfig-a001-20200630
-i386                 randconfig-a003-20200630
-i386                 randconfig-a002-20200630
-i386                 randconfig-a004-20200630
-i386                 randconfig-a005-20200630
-i386                 randconfig-a006-20200630
 i386                 randconfig-a006-20200629
 i386                 randconfig-a002-20200629
 i386                 randconfig-a003-20200629
 i386                 randconfig-a001-20200629
 i386                 randconfig-a005-20200629
 i386                 randconfig-a004-20200629
-x86_64               randconfig-a011-20200630
-x86_64               randconfig-a014-20200630
-x86_64               randconfig-a013-20200630
-x86_64               randconfig-a015-20200630
-x86_64               randconfig-a016-20200630
-x86_64               randconfig-a012-20200630
-i386                 randconfig-a011-20200630
-i386                 randconfig-a016-20200630
-i386                 randconfig-a015-20200630
-i386                 randconfig-a012-20200630
-i386                 randconfig-a014-20200630
-i386                 randconfig-a013-20200630
+x86_64               randconfig-a011-20200629
+x86_64               randconfig-a012-20200629
+x86_64               randconfig-a013-20200629
+x86_64               randconfig-a014-20200629
+x86_64               randconfig-a015-20200629
+x86_64               randconfig-a016-20200629
 i386                 randconfig-a013-20200629
 i386                 randconfig-a016-20200629
 i386                 randconfig-a014-20200629
@@ -182,8 +166,11 @@ sparc                            allyesconfig
 sparc                               defconfig
 sparc64                             defconfig
 sparc64                           allnoconfig
-sparc64                          allyesconfig
 sparc64                          allmodconfig
+um                               allmodconfig
+um                                allnoconfig
+um                               allyesconfig
+um                                  defconfig
 x86_64                               rhel-7.6
 x86_64                    rhel-7.6-kselftests
 x86_64                               rhel-8.3
