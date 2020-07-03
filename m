@@ -2,185 +2,84 @@ Return-Path: <SRS0=mT0N=AO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF92C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 12:05:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7934C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 12:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEEDA204EA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 12:05:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FwFjz9kc"
+	by mail.kernel.org (Postfix) with ESMTP id B08CD2084C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 12:06:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726157AbgGCMFO (ORCPT
+        id S1726276AbgGCMG5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 3 Jul 2020 08:05:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49204 "EHLO
+        Fri, 3 Jul 2020 08:06:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbgGCMFI (ORCPT
+        with ESMTP id S1726035AbgGCMG5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Jul 2020 08:05:08 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E35AC08C5DE
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Jul 2020 05:05:07 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id f18so33850105wml.3
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 03 Jul 2020 05:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=b/2h7xwQ3PLCO21KCpNHtwNw5XKKdaueZj6bzj1qaFI=;
-        b=FwFjz9kczp/fmEq/3CY2LzY2MoAX4g3txWk2jZPo1VMcZhFboGhbIg3T8rhW0rPtbh
-         qKWbZioeDBQZ9CKsivZWPupCioAGqQYcUfu4IlduD6az4TVr0iBMZzhBOKPL9J7uMbWA
-         mquofFZR7KwyKNOmBpOWqsQ2cDTqZBtJ4MhCqXeld9v0yHNq686i8GUu6NvzX52yGtCB
-         wdhzw6IXYtGUX0Q+WUJVgugYssLiqaRgCYqUWIi7yrmmC5szxCxNsSn3Qy+dVlKZF2Z/
-         21oufd7NY1SMIhg2z1KYznt2bu66fmWXV174+G1DLqnoRRv5lvwFG0EieYGNbAm9E8hr
-         EE6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=b/2h7xwQ3PLCO21KCpNHtwNw5XKKdaueZj6bzj1qaFI=;
-        b=jOHa/DNBGvPt5H/+XpFYtdtG3BjWhmqpgbHj3D2cuJYojZldwrJw4Ni1U3i2pyIkm9
-         gXcwgOOW18U2XL/C6UTW+CPFykCgvNGi546y41Og5oboB5uxiFMKc5vGSVV4MY0pequs
-         GM85ltmEoku77dUYpLKhKNAjeQRAXdoj9rHH7GSv+QV5ZUJNlVlwuVn3kFQPNfXTPbYZ
-         4gUcsD8s4oTlyZi7LoKXAQKlXuz/DrhSFrSfpkMBfoOnofLsLI7t5muD9NYz+5fRnofN
-         Bg01qn027v92VPntgPfTZr5abEIVeK4JsHeds8uiXK780DbO8dmrixPwsM/pDN+QcCB3
-         yefQ==
-X-Gm-Message-State: AOAM533Bo+a7rAfr3Df0nYC5Grq9O0/9DOPoCg957xqOjaJMuKpDnMxS
-        fxjHqDD0OGUKhVs4NEv02PI1Cw==
-X-Google-Smtp-Source: ABdhPJwumsxgGpUFT/dRsPTyUr8OuykwTKjzsUJJ7FiUIydVdbcw33LRfbaUoxiLbcb0XM3MhDfEJQ==
-X-Received: by 2002:a1c:9e84:: with SMTP id h126mr25473497wme.61.1593777905183;
-        Fri, 03 Jul 2020 05:05:05 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:7019:4e9b:2970:f860? ([2a01:e34:ed2f:f020:7019:4e9b:2970:f860])
-        by smtp.googlemail.com with ESMTPSA id k20sm13379403wmi.27.2020.07.03.05.05.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jul 2020 05:05:04 -0700 (PDT)
-Subject: Re: [PATCH 0/3] Fixes for stop monitoring disabled devices series
-To:     Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
-        linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
-        netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
-        platform-driver-x86@vger.kernel.org,
+        Fri, 3 Jul 2020 08:06:57 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0B75C08C5DD
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Jul 2020 05:06:56 -0700 (PDT)
+Received: from ramsan ([IPv6:2a02:1810:ac12:ed20:e8cd:dde5:943b:dfd3])
+        by michel.telenet-ops.be with bizsmtp
+        id yc6t2200s1UkkT806c6uMw; Fri, 03 Jul 2020 14:06:54 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jrKSz-0004Ts-R1; Fri, 03 Jul 2020 14:06:53 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jrKSz-0001Ll-OB; Fri, 03 Jul 2020 14:06:53 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: <soc.lore.kernel.org>
+To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Vishal Kulkarni <vishal@chelsio.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Peter Kaestle <peter@piie.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Support Opensource <support.opensource@diasemi.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Allison Randal <allison@lohutok.net>,
-        Enrico Weigelt <info@metux.net>,
-        Gayatri Kammela <gayatri.kammela@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        kernel@collabora.com
-References: <20200703104354.19657-1-andrzej.p@collabora.com>
- <fc1bb7f5-2096-a604-8c30-81d34bf5b737@linaro.org>
- <91db4c89-0615-4a69-9695-ed5d3c42e1b7@collabora.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <79ae59af-d3b9-852c-d5f3-5b80d9c6ea8c@linaro.org>
-Date:   Fri, 3 Jul 2020 14:05:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <91db4c89-0615-4a69-9695-ed5d3c42e1b7@collabora.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL 0/2] Renesas ARM SoC updates for v5.9
+Date:   Fri,  3 Jul 2020 14:06:40 +0200
+Message-Id: <20200703120642.5128-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 03/07/2020 13:57, Andrzej Pietrasiewicz wrote:
-> Hi,
-> 
-> W dniu 03.07.2020 o 13:06, Daniel Lezcano pisze:
->> On 03/07/2020 12:43, Andrzej Pietrasiewicz wrote:
->>> This short series contains fixes for "Stop monitoring disabled devices"
->>> series https://www.spinics.net/lists/arm-kernel/msg817861.html
->>>
->>> Invocation of thermal_zone_device_is_enabled() in acpi/thermal is now
->>> redundant, because thermal_zone_device_update() now is capable of
->>> handling disabled devices.
->>>
->>> In imx's ->get_temp() the lock must not be taken, otherwise a deadlock
->>> happens. The decision whether explicitly running a measurement cycle
->>> is needed is taken based on driver's local irq_enabled variable.
->>>
->>> Finally, thermal_zone_device_is_enabled() is made available to the
->>> core only, as there are no driver users of it.
->>>
->>> Andrzej Pietrasiewicz (3):
->>>    acpi: thermal: Don't call thermal_zone_device_is_enabled()
->>>    thermal: imx: Use driver's local data to decide whether to run a
->>>      measurement
->>>    thermal: Make thermal_zone_device_is_enabled() available to core only
->>>
->>>   drivers/acpi/thermal.c         | 3 ---
->>>   drivers/thermal/imx_thermal.c  | 7 ++++---
->>>   drivers/thermal/thermal_core.c | 1 -
->>>   drivers/thermal/thermal_core.h | 2 ++
->>>   include/linux/thermal.h        | 5 -----
->>>   5 files changed, 6 insertions(+), 12 deletions(-)
->>
->> Is this series easily merge-able with the other series?
->>
-> 
-> So-so.
-> 
-> Some simple conflicts needed to be resolved.
-> 
-> I have created a branch for you to look at and decide
-> how far off it is from the original and whether the
-> original Acked-by/Reviewed-by can be retained.
-> 
-> Note that I might have lost some portions of code
-> during conflict resolution. It seems to me I haven't
-> but you know.
-> 
-> The branch:
-> 
-> https://gitlab.collabora.com/andrzej.p/kernel-tests/-/tree/thermal-dont-poll-disabled-for-daniel
+	Hi arm-soc folks,
 
-Ok, I propose to keep the these three patches on top of V7.
+This is my first pull request for the inclusion of Renesas SoC updates
+for v5.9.
 
-Rui are you fine with that ?
+It consists of 2 parts:
 
+  [GIT PULL 1/2] Renesas ARM defconfig updates for v5.9
 
+    - Refresh shmobile_defconfig for v5.8-rc1
+    - Enable additional support for Renesas platforms to
+      shmobile_defconfig, multi_v7_defconfig, and the arm64 defconfig.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+  [GIT PULL 2/2] Renesas ARM DT updates for v5.9
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+    - Increase support for the Renesas RZ/G1H SoC on the iWave RainboW
+      Qseven board (G21D), and its camera expansion board,
+    - IPMMU support for R-Car M3-W+,
+    - Support for Rev.3.0/4.0 of the HopeRun HiHope RZ/G2M and RZ/G2N
+      boards,
+    - Minor fixes and improvements.
+
+Thanks for pulling!
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
