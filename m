@@ -2,27 +2,28 @@ Return-Path: <SRS0=mT0N=AO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 047D7C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 10:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA6AC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 10:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD78820836
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 10:44:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3294C20723
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 10:44:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbgGCKoH (ORCPT
+        id S1726317AbgGCKoL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 3 Jul 2020 06:44:07 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42032 "EHLO
+        Fri, 3 Jul 2020 06:44:11 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:42136 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725915AbgGCKoH (ORCPT
+        with ESMTP id S1726063AbgGCKoJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Jul 2020 06:44:07 -0400
+        Fri, 3 Jul 2020 06:44:09 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: andrzej.p)
-        with ESMTPSA id CFB3C2A251D
+        with ESMTPSA id 72A552A63E6
 From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
         netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
@@ -67,42 +68,52 @@ Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH 0/3] Fixes for stop monitoring disabled devices series
-Date:   Fri,  3 Jul 2020 12:43:51 +0200
-Message-Id: <20200703104354.19657-1-andrzej.p@collabora.com>
+Subject: [PATCH 2/3] thermal: imx: Use driver's local data to decide whether to run a measurement
+Date:   Fri,  3 Jul 2020 12:43:53 +0200
+Message-Id: <20200703104354.19657-3-andrzej.p@collabora.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200703104354.19657-1-andrzej.p@collabora.com>
+References: <20200703104354.19657-1-andrzej.p@collabora.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This short series contains fixes for "Stop monitoring disabled devices"
-series https://www.spinics.net/lists/arm-kernel/msg817861.html
+Use driver's local data to evaluate the need to run or not to run a
+measurement.
 
-Invocation of thermal_zone_device_is_enabled() in acpi/thermal is now
-redundant, because thermal_zone_device_update() now is capable of
-handling disabled devices.
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
+---
+ drivers/thermal/imx_thermal.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-In imx's ->get_temp() the lock must not be taken, otherwise a deadlock
-happens. The decision whether explicitly running a measurement cycle
-is needed is taken based on driver's local irq_enabled variable.
-
-Finally, thermal_zone_device_is_enabled() is made available to the
-core only, as there are no driver users of it.
-
-Andrzej Pietrasiewicz (3):
-  acpi: thermal: Don't call thermal_zone_device_is_enabled()
-  thermal: imx: Use driver's local data to decide whether to run a
-    measurement
-  thermal: Make thermal_zone_device_is_enabled() available to core only
-
- drivers/acpi/thermal.c         | 3 ---
- drivers/thermal/imx_thermal.c  | 7 ++++---
- drivers/thermal/thermal_core.c | 1 -
- drivers/thermal/thermal_core.h | 2 ++
- include/linux/thermal.h        | 5 -----
- 5 files changed, 6 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
+index 9700ae39feb7..c0efa7bc48e2 100644
+--- a/drivers/thermal/imx_thermal.c
++++ b/drivers/thermal/imx_thermal.c
+@@ -252,10 +252,11 @@ static int imx_get_temp(struct thermal_zone_device *tz, int *temp)
+ 	const struct thermal_soc_data *soc_data = data->socdata;
+ 	struct regmap *map = data->tempmon;
+ 	unsigned int n_meas;
+-	bool wait;
++	bool wait, run_measurement;
+ 	u32 val;
+ 
+-	if (thermal_zone_device_is_enabled(tz)) {
++	run_measurement = !data->irq_enabled;
++	if (!run_measurement) {
+ 		/* Check if a measurement is currently in progress */
+ 		regmap_read(map, soc_data->temp_data, &val);
+ 		wait = !(val & soc_data->temp_valid_mask);
+@@ -282,7 +283,7 @@ static int imx_get_temp(struct thermal_zone_device *tz, int *temp)
+ 
+ 	regmap_read(map, soc_data->temp_data, &val);
+ 
+-	if (!thermal_zone_device_is_enabled(tz)) {
++	if (run_measurement) {
+ 		regmap_write(map, soc_data->sensor_ctrl + REG_CLR,
+ 			     soc_data->measure_temp_mask);
+ 		regmap_write(map, soc_data->sensor_ctrl + REG_SET,
 -- 
 2.17.1
 
