@@ -4,53 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4188AC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 12:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE31BC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 12:17:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22DA520772
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 12:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B439A20B80
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 12:17:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbgGCMG6 (ORCPT
+        id S1726245AbgGCMRh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 3 Jul 2020 08:06:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49492 "EHLO
+        Fri, 3 Jul 2020 08:17:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbgGCMG5 (ORCPT
+        with ESMTP id S1726183AbgGCMRh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Jul 2020 08:06:57 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EA53C08C5DD
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Jul 2020 05:06:57 -0700 (PDT)
+        Fri, 3 Jul 2020 08:17:37 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF9EAC08C5C1
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Jul 2020 05:17:36 -0700 (PDT)
 Received: from ramsan ([IPv6:2a02:1810:ac12:ed20:e8cd:dde5:943b:dfd3])
-        by laurent.telenet-ops.be with bizsmtp
-        id yc6t2200m1UkkT801c6uGA; Fri, 03 Jul 2020 14:06:55 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id ycHZ220061UkkT806cHZg5; Fri, 03 Jul 2020 14:17:35 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jrKSz-0004Tt-RS; Fri, 03 Jul 2020 14:06:53 +0200
+        id 1jrKdJ-0004hZ-0t; Fri, 03 Jul 2020 14:17:33 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jrKSz-0001Ln-Pk; Fri, 03 Jul 2020 14:06:53 +0200
+        id 1jrKdI-0001kT-U4; Fri, 03 Jul 2020 14:17:32 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-List-Id: <soc.lore.kernel.org>
-To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 1/2] Renesas ARM defconfig updates for v5.9
-Date:   Fri,  3 Jul 2020 14:06:41 +0200
-Message-Id: <20200703120642.5128-2-geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.9
+Date:   Fri,  3 Jul 2020 14:17:29 +0200
+Message-Id: <20200703121729.6678-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200703120642.5128-1-geert+renesas@glider.be>
-References: <20200703120642.5128-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
+
+	Hi Mike, Stephen,
 
 The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
 
@@ -58,32 +56,64 @@ The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-defconfig-for-v5.9-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.9-tag1
 
-for you to fetch changes up to 1d21a0a32f93e24711b13af493ac5fe728a7be1f:
+for you to fetch changes up to 52bc5ea6edde35bc65ed6ecd7639534e78002c74:
 
-  arm64: defconfig: Enable additional support for Renesas platforms (2020-07-03 12:02:05 +0200)
-
-----------------------------------------------------------------
-Renesas ARM defconfig updates for v5.9
-
-  - Refresh shmobile_defconfig for v5.8-rc1
-  - Enable additional support for Renesas platforms to
-    shmobile_defconfig, multi_v7_defconfig, and the arm64 defconfig.
+  clk: renesas: rzg2: Mark RWDT clocks as critical (2020-06-22 16:54:32 +0200)
 
 ----------------------------------------------------------------
-Geert Uytterhoeven (9):
-      ARM: shmobile: defconfig: Refresh for v5.8-rc1
-      ARM: shmobile: defconfig: Enable DA9063 ONKEY support
-      ARM: shmobile: defconfig: Enable CAT9554 support
-      ARM: shmobile: defconfig: Enable RZ/A watchdog support
-      ARM: shmobile: defconfig: Enable RZ/A1 CEU support
-      ARM: shmobile: defconfig: Enable ADV7612 CEC support
-      ARM: shmobile: defconfig: Enable RZ/A1H RTC support
-      ARM: multi_v7_defconfig: Enable additional support for Renesas platforms
-      arm64: defconfig: Enable additional support for Renesas platforms
+clk: renesas: Updates for v5.9
 
- arch/arm/configs/multi_v7_defconfig |  6 ++++++
- arch/arm/configs/shmobile_defconfig | 13 ++++++++-----
- arch/arm64/configs/defconfig        |  4 ++++
- 3 files changed, 18 insertions(+), 5 deletions(-)
+  - One more conversion of DT bindings to json-schema,
+  - Enhance critical clock handling to only consider clocks that were
+    enabled at boot time, and use it for watchdog clock handling on
+    R-Car Gen3 and RZ/G2 SoCs.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      dt-bindings: clock: renesas: cpg: Convert to json-schema
+
+Ulrich Hecht (3):
+      clk: renesas: cpg-mssr: Mark clocks as critical only if on at boot
+      clk: renesas: rcar-gen3: Mark RWDT clocks as critical
+      clk: renesas: rzg2: Mark RWDT clocks as critical
+
+ .../bindings/clock/renesas,cpg-clocks.yaml         | 241 +++++++++++++++++++++
+ .../bindings/clock/renesas,r8a73a4-cpg-clocks.txt  |  33 ---
+ .../bindings/clock/renesas,r8a7740-cpg-clocks.txt  |  41 ----
+ .../bindings/clock/renesas,r8a7778-cpg-clocks.txt  |  47 ----
+ .../bindings/clock/renesas,r8a7779-cpg-clocks.txt  |  49 -----
+ .../bindings/clock/renesas,rz-cpg-clocks.txt       |  53 -----
+ .../bindings/clock/renesas,sh73a0-cpg-clocks.txt   |  35 ---
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c            |   1 +
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c            |   1 +
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c            |   1 +
+ drivers/clk/renesas/r8a7795-cpg-mssr.c             |   2 +-
+ drivers/clk/renesas/r8a7796-cpg-mssr.c             |   2 +-
+ drivers/clk/renesas/r8a77965-cpg-mssr.c            |   1 +
+ drivers/clk/renesas/r8a77970-cpg-mssr.c            |   2 +-
+ drivers/clk/renesas/r8a77980-cpg-mssr.c            |   2 +-
+ drivers/clk/renesas/r8a77990-cpg-mssr.c            |   1 +
+ drivers/clk/renesas/r8a77995-cpg-mssr.c            |   2 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c             |  17 +-
+ 18 files changed, 260 insertions(+), 271 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a73a4-cpg-clocks.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7740-cpg-clocks.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,sh73a0-cpg-clocks.txt
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
