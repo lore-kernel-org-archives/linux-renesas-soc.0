@@ -5,25 +5,28 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9024BC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 10:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A58C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 10:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78A2720723
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 10:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E4F220826
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Jul 2020 10:44:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbgGCKoL (ORCPT
+        id S1726281AbgGCKoI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 3 Jul 2020 06:44:11 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:42184 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725915AbgGCKoK (ORCPT
+        Fri, 3 Jul 2020 06:44:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36718 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726244AbgGCKoH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Jul 2020 06:44:10 -0400
+        Fri, 3 Jul 2020 06:44:07 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B6DEC08C5C1;
+        Fri,  3 Jul 2020 03:44:07 -0700 (PDT)
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: andrzej.p)
-        with ESMTPSA id BDDD92A63E7
+        with ESMTPSA id 2E6282A63E2
 From:   Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 To:     linux-pm@vger.kernel.org, linux-acpi@vger.kernel.org,
         netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
@@ -68,9 +71,9 @@ Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Andrzej Pietrasiewicz <andrzej.p@collabora.com>,
         kernel@collabora.com
-Subject: [PATCH 3/3] thermal: Make thermal_zone_device_is_enabled() available to core only
-Date:   Fri,  3 Jul 2020 12:43:54 +0200
-Message-Id: <20200703104354.19657-4-andrzej.p@collabora.com>
+Subject: [PATCH 1/3] acpi: thermal: Don't call thermal_zone_device_is_enabled()
+Date:   Fri,  3 Jul 2020 12:43:52 +0200
+Message-Id: <20200703104354.19657-2-andrzej.p@collabora.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200703104354.19657-1-andrzej.p@collabora.com>
 References: <20200703104354.19657-1-andrzej.p@collabora.com>
@@ -79,61 +82,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This function is not needed by drivers.
+thermal_zone_device_update() can now handle disabled thermal zones, so
+the check here is not needed.
 
 Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@collabora.com>
 ---
- drivers/thermal/thermal_core.c | 1 -
- drivers/thermal/thermal_core.h | 2 ++
- include/linux/thermal.h        | 5 -----
- 3 files changed, 2 insertions(+), 6 deletions(-)
+ drivers/acpi/thermal.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index a61e91513584..052343c59b0a 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -519,7 +519,6 @@ int thermal_zone_device_is_enabled(struct thermal_zone_device *tz)
+diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+index 29a2b73fe035..12c0ece746f0 100644
+--- a/drivers/acpi/thermal.c
++++ b/drivers/acpi/thermal.c
+@@ -499,9 +499,6 @@ static void acpi_thermal_check(void *data)
+ {
+ 	struct acpi_thermal *tz = data;
  
- 	return mode == THERMAL_DEVICE_ENABLED;
- }
--EXPORT_SYMBOL_GPL(thermal_zone_device_is_enabled);
- 
- void thermal_zone_device_update(struct thermal_zone_device *tz,
- 				enum thermal_notify_event event)
-diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_core.h
-index c95689586e19..b1464b3a21e2 100644
---- a/drivers/thermal/thermal_core.h
-+++ b/drivers/thermal/thermal_core.h
-@@ -166,4 +166,6 @@ of_thermal_get_trip_points(struct thermal_zone_device *tz)
- }
- #endif
- 
-+int thermal_zone_device_is_enabled(struct thermal_zone_device *tz);
-+
- #endif /* __THERMAL_CORE_H__ */
-diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-index b9efaa780d88..108251f23e5c 100644
---- a/include/linux/thermal.h
-+++ b/include/linux/thermal.h
-@@ -418,7 +418,6 @@ void thermal_cdev_update(struct thermal_cooling_device *);
- void thermal_notify_framework(struct thermal_zone_device *, int);
- int thermal_zone_device_enable(struct thermal_zone_device *tz);
- int thermal_zone_device_disable(struct thermal_zone_device *tz);
--int thermal_zone_device_is_enabled(struct thermal_zone_device *tz);
- #else
- static inline struct thermal_zone_device *thermal_zone_device_register(
- 	const char *type, int trips, int mask, void *devdata,
-@@ -472,10 +471,6 @@ static inline int thermal_zone_device_enable(struct thermal_zone_device *tz)
- 
- static inline int thermal_zone_device_disable(struct thermal_zone_device *tz)
- { return -ENODEV; }
+-	if (!thermal_zone_device_is_enabled(tz->thermal_zone))
+-		return;
 -
--static inline int
--thermal_zone_device_is_enabled(struct thermal_zone_device *tz)
--{ return -ENODEV; }
- #endif /* CONFIG_THERMAL */
- 
- #endif /* __THERMAL_H__ */
+ 	thermal_zone_device_update(tz->thermal_zone,
+ 				   THERMAL_EVENT_UNSPECIFIED);
+ }
 -- 
 2.17.1
 
