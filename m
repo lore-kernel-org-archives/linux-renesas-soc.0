@@ -2,263 +2,89 @@ Return-Path: <SRS0=yEp9=AR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9E1C433E5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jul 2020 14:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4CDC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jul 2020 14:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 663A320715
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jul 2020 14:36:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21A1920715
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  6 Jul 2020 14:37:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729437AbgGFOf5 (ORCPT
+        id S1729193AbgGFOhF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 6 Jul 2020 10:35:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56868 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729391AbgGFOfn (ORCPT
+        Mon, 6 Jul 2020 10:37:05 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:59333 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729148AbgGFOhE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 6 Jul 2020 10:35:43 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B4BBC08C5EE
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  6 Jul 2020 07:35:42 -0700 (PDT)
-Received: from ramsan ([IPv6:2a02:1810:ac12:ed20:e012:1552:6e81:c371])
-        by michel.telenet-ops.be with bizsmtp
-        id zqbX2200J0tDR5Q06qbXVT; Mon, 06 Jul 2020 16:35:40 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jsSDT-0004kY-GK; Mon, 06 Jul 2020 16:35:31 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jsSDT-0004mP-EI; Mon, 06 Jul 2020 16:35:31 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 5/7] arm64: dts: renesas: rcar-gen3: Convert EtherAVB to explicit delay handling
-Date:   Mon,  6 Jul 2020 16:35:27 +0200
-Message-Id: <20200706143529.18306-6-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200706143529.18306-1-geert+renesas@glider.be>
-References: <20200706143529.18306-1-geert+renesas@glider.be>
+        Mon, 6 Jul 2020 10:37:04 -0400
+Received: from mail-qv1-f46.google.com ([209.85.219.46]) by
+ mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MGR3r-1k8d8c11Tx-00GmOt for <linux-renesas-soc@vger.kernel.org>; Mon, 06
+ Jul 2020 16:37:03 +0200
+Received: by mail-qv1-f46.google.com with SMTP id e3so10948932qvo.10
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 06 Jul 2020 07:37:03 -0700 (PDT)
+X-Gm-Message-State: AOAM532rnvA3zKe0qAA8Lp2oif+atcLOpuilXVfxFHzaV0P2CCODWJpD
+        XAI4m7TSgmjA3cVSGJ+V8bV3YyGv8wLIbAa7Wqg=
+X-Google-Smtp-Source: ABdhPJzb4vc/KIsQewDha5f6age/2aoU9Z4ftKMYp986EdyUdqLsue/vgbkSVrJkNgTWUMOm2Qb8AjhqU0fYM+pz3DA=
+X-Received: by 2002:a0c:a992:: with SMTP id a18mr36746711qvb.211.1594046222180;
+ Mon, 06 Jul 2020 07:37:02 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200703120642.5128-1-geert+renesas@glider.be> <20200703120642.5128-2-geert+renesas@glider.be>
+In-Reply-To: <20200703120642.5128-2-geert+renesas@glider.be>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 6 Jul 2020 16:36:46 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0GTf-NBAixvgefyvx_nRpLgYZ6gZdp_VAUNTOV2=+t0g@mail.gmail.com>
+Message-ID: <CAK8P3a0GTf-NBAixvgefyvx_nRpLgYZ6gZdp_VAUNTOV2=+t0g@mail.gmail.com>
+Subject: Re: [GIT PULL 1/2] Renesas ARM defconfig updates for v5.9
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: <soc.lore.kernel.org>
+Cc:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:znOV++QT2c/5xePNyB3Zu0JtjowQem+CZ/Lck+atjyg2hOziAMV
+ /EPo0QbSugEO05YMMu9GQ+UGxadsukEdLuFbe4Z49zT7l6WM8YQ7x8uGsjKmVemXXMWvIqB
+ OfNONSQEAkw43LgcvWX4QF0Y3ahv91kQPYcSIHxMHNi9nCJuuABNuEXYGkOh8dPXRhASqsR
+ CE/vOLnnJUL8kDuDmegvg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:0SZ8GMECmoI=:3CVe/xIGUZjOF7MSp5akVY
+ bP11GXsEGGjZbiBoUqJ0n1QuMYKKznd64Dj178LNc/54g5X25xGLwFHocv2XXABX/W0A3pDli
+ E7KhHbt6RcHy7cnRJg4tuPr30hQbfoGkY0No5Ka3IKiDf7f2+lavMdl4ahwbKVf0A7FcHgLCG
+ GcyWg3yosB75LlNmeYJhfXUtcqfkfmCSxtL98b/fN50uhObUU+6s4H125OrKJpaxbMGQFOA1+
+ TyfEagqibu7ssL/qHKE1iUV5sgmwTNO89S+2GjBPg3iCm6shoro/eju3yxgE9gx5RQKWJR/97
+ omgjqBY1hxy98i2UCEcPVrvNwyd4qqb4SFYZ6wl723RZ8/VS7CADsurErBYa6AqvwSTWNdml0
+ 8Scr7JgWuLpmZwrYWDcPeK3wRpt/OwjgxiUjx6X+FW9dZkfeb4qX7QByEIVUhKjFg7ubY8AWc
+ aGPnx5iI7VczQmkk2tlhqg2Y/NVBZFszJ5dm5/C7oFVYCPKwMnjwgiy16q6bKRukoj8T8NEG1
+ 9AeIvL6aw5PU+Dq3Qg1F15fQM9SQWnSHRbyf/Zxpk+4LvVYrSSZnxXyfNw5iW+MKvgKagZjEB
+ AAcT4dv9Kf3+s3D09OrX93QeQQ7T5qSHjGnWeIFNq9LUInJOybN1nYfKxHfd1QDCds7qLj31H
+ 5nvsSes9qC7peTau/GpphHKubZfpJ4SK6XgNJ7oFIE+BNCHDXnH72I9ALhBs2+aQMCXPVslL3
+ d/4LkZpiPs3jvGyoW4b27UfNDFoBIel7xwHhlfvjZqXPncpumxHI6Uk7j/BM33cVEED+1xm6+
+ FMYdc5/CnRTGD10uPANd0Req78lEd9iuA/Nh+pqH+XBpw9UGkpPA+QyZKifnJxV3kEtEl5D
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Some EtherAVB variants support internal clock delay configuration, which
-can add larger delays than the delays that are typically supported by
-the PHY (using an "rgmii-*id" PHY mode, and/or "[rt]xc-skew-ps"
-properties).
+On Fri, Jul 3, 2020 at 2:07 PM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> ----------------------------------------------------------------
+> Renesas ARM defconfig updates for v5.9
+>
+>   - Refresh shmobile_defconfig for v5.8-rc1
+>   - Enable additional support for Renesas platforms to
+>     shmobile_defconfig, multi_v7_defconfig, and the arm64 defconfig.
+>
 
-Historically, the EtherAVB driver configured these delays based on the
-"rgmii-*id" PHY mode.  This was wrong, as these are meant solely for the
-PHY, not for the MAC.  Hence properties were introduced for explicit
-configuration of these delays.
+As you write on one of the commits
 
-Convert the R-Car Gen3 DTS files from the old to the new scheme:
-  - Add default "rx-internal-delay-ps" and "tx-internal-delay-ps"
-    properties to the SoC .dtsi files, to be overridden by board files
-    where needed,
-  - Convert board files from "rgmii-*id" PHY modes to "rgmii", adding
-    the appropriate "rx-internal-delay-ps" and/or "tx-internal-delay-ps"
-    overrides.
+   "All of the above are modular, except for Ethernet support (HDMI Audio
+    support is an optional feature of the modular ADV7511 driver)."
 
-Notes:
-  - R-Car E3 and D3 do not support TX internal delay handling,
-  - On R-Car D3, TX internal delay handling must always be enabled,
-    hence this fixes a bug on Draak,
-  - On R-Car V3H, RX internal delay handling must always be enabled.
+I'm starting to see some demand for making more drivers loadable modules
+that are traditionally built-in. Can you give a more specific reason why
+this one (and I guess CONFIG_RAVB next to it) should not a loadable module?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Replace "renesas,[rt]xc-delay-ps" by "[rt]x-internal-delay-ps".
----
- arch/arm64/boot/dts/renesas/r8a77951.dtsi        | 2 ++
- arch/arm64/boot/dts/renesas/r8a77960.dtsi        | 2 ++
- arch/arm64/boot/dts/renesas/r8a77961.dtsi        | 2 ++
- arch/arm64/boot/dts/renesas/r8a77965.dtsi        | 2 ++
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts   | 3 ++-
- arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts   | 3 ++-
- arch/arm64/boot/dts/renesas/r8a77970.dtsi        | 2 ++
- arch/arm64/boot/dts/renesas/r8a77980.dtsi        | 2 ++
- arch/arm64/boot/dts/renesas/r8a77990.dtsi        | 1 +
- arch/arm64/boot/dts/renesas/r8a77995.dtsi        | 1 +
- arch/arm64/boot/dts/renesas/salvator-common.dtsi | 2 +-
- arch/arm64/boot/dts/renesas/ulcb.dtsi            | 2 +-
- 12 files changed, 20 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a77951.dtsi b/arch/arm64/boot/dts/renesas/r8a77951.dtsi
-index 61d67d9714ab9531..507b37f4dfbcf3cf 100644
---- a/arch/arm64/boot/dts/renesas/r8a77951.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77951.dtsi
-@@ -1250,6 +1250,8 @@
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <0>;
-+			tx-internal-delay-ps = <0>;
- 			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77960.dtsi b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
-index 33bf62acffbb73d2..c4d486dce65f05d5 100644
---- a/arch/arm64/boot/dts/renesas/r8a77960.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
-@@ -1126,6 +1126,8 @@
- 			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <0>;
-+			tx-internal-delay-ps = <0>;
- 			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77961.dtsi b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-index 760e738b75b3da9a..78fd532335b37616 100644
---- a/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-@@ -923,6 +923,8 @@
- 			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <0>;
-+			tx-internal-delay-ps = <0>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
- 			status = "disabled";
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-index 6f7ab39fd2824b46..deae4e86fc32824c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
-@@ -988,6 +988,8 @@
- 			power-domains = <&sysc R8A77965_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <0>;
-+			tx-internal-delay-ps = <0>;
- 			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index ac2156ab3e626174..34041cdc72ae7a5c 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -81,7 +81,8 @@
- 
- 	renesas,no-ether-link;
- 	phy-handle = <&phy0>;
--	phy-mode = "rgmii-id";
-+	rx-internal-delay-ps = <1800>;
-+	tx-internal-delay-ps = <2000>;
- 	status = "okay";
- 
- 	phy0: ethernet-phy@0 {
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-index 01c4ba0f7be1caff..d108cd28097b078b 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
-@@ -102,7 +102,8 @@
- 
- 	renesas,no-ether-link;
- 	phy-handle = <&phy0>;
--	phy-mode = "rgmii-id";
-+	rx-internal-delay-ps = <1800>;
-+	tx-internal-delay-ps = <2000>;
- 	status = "okay";
- 
- 	phy0: ethernet-phy@0 {
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970.dtsi b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-index bd95ecb1b40d8f4d..c02b502072045b3f 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77970.dtsi
-@@ -615,6 +615,8 @@
- 			power-domains = <&sysc R8A77970_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <0>;
-+			tx-internal-delay-ps = <0>;
- 			iommus = <&ipmmu_rt 3>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77980.dtsi b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-index 387e6d99f2f365f0..6ffac04152da80cb 100644
---- a/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77980.dtsi
-@@ -667,6 +667,8 @@
- 			power-domains = <&sysc R8A77980_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <0>;
-+			tx-internal-delay-ps = <2000>;
- 			iommus = <&ipmmu_ds1 33>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-index cd11f24744d4af55..284b1c50a9481b43 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
-@@ -938,6 +938,7 @@
- 			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <0>;
- 			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index e5617ec0f49cb6de..41252ecd6f60d940 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -628,6 +628,7 @@
- 			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			phy-mode = "rgmii";
-+			rx-internal-delay-ps = <1800>;
- 			iommus = <&ipmmu_ds0 16>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 98bbcafc8c0d030c..93935b77e464d922 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -324,7 +324,7 @@
- 	pinctrl-0 = <&avb_pins>;
- 	pinctrl-names = "default";
- 	phy-handle = <&phy0>;
--	phy-mode = "rgmii-txid";
-+	tx-internal-delay-ps = <2000>;
- 	status = "okay";
- 
- 	phy0: ethernet-phy@0 {
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index ff88af8e39d3fa10..bd4efdf91afca42b 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -144,7 +144,7 @@
- 	pinctrl-0 = <&avb_pins>;
- 	pinctrl-names = "default";
- 	phy-handle = <&phy0>;
--	phy-mode = "rgmii-txid";
-+	tx-internal-delay-ps = <2000>;
- 	status = "okay";
- 
- 	phy0: ethernet-phy@0 {
--- 
-2.17.1
-
+        Arnd
