@@ -2,31 +2,31 @@ Return-Path: <SRS0=jO7F=AT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0CEC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B38C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90A35206E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:48:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17707206E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbgGHRsj (ORCPT
+        id S1728249AbgGHRsq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Jul 2020 13:48:39 -0400
+        Wed, 8 Jul 2020 13:48:46 -0400
 Received: from relmlor1.renesas.com ([210.160.252.171]:48841 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725953AbgGHRsj (ORCPT
+        by vger.kernel.org with ESMTP id S1725953AbgGHRsp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Jul 2020 13:48:39 -0400
+        Wed, 8 Jul 2020 13:48:45 -0400
 X-IronPort-AV: E=Sophos;i="5.75,328,1589209200"; 
-   d="scan'208";a="51641764"
+   d="scan'208";a="51641770"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 09 Jul 2020 02:48:36 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 09 Jul 2020 02:48:44 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E89474005E3D;
-        Thu,  9 Jul 2020 02:48:32 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id DDF294005E3D;
+        Thu,  9 Jul 2020 02:48:40 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -43,58 +43,37 @@ Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 0/8] Add basic DT support for R8A774E1 SoC enabling HiHope RZ/G2H board
-Date:   Wed,  8 Jul 2020 18:48:23 +0100
-Message-Id: <1594230511-24790-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 2/8] dt-bindings: serial: renesas,hscif: Document r8a774e1 bindings
+Date:   Wed,  8 Jul 2020 18:48:25 +0100
+Message-Id: <1594230511-24790-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1594230511-24790-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <1594230511-24790-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi All,
+RZ/G2H (R8A774E1) SoC also has the R-Car gen3 compatible HSCIF ports,
+so document the SoC specific bindings.
 
-This patch series adds basic SOC DT support for RZ/G2H and enabling
-HiHope RZ/G2H board. With these minimalist DT the HiHope RZ/G2H
-board can be booted from initramfs/eMMC.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/serial/renesas,hscif.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-This patch series is dependent [1].
-
-[1] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=314235
-
-Cheers,
-Prabhakar
-
-
-Lad Prabhakar (3):
-  dt-bindings: serial: renesas,scif: Document r8a774e1 bindings
-  dt-bindings: serial: renesas,hscif: Document r8a774e1 bindings
-  dt-bindings: mmc: renesas,sdhi: Add r8a774e1 support
-
-Marian-Cristian Rotariu (5):
-  dt-bindings: irqchip: renesas-irqc: Document r8a774e1 bindings
-  arm64: defconfig: Enable R8A774E1 SoC
-  arm64: dts: renesas: Initial r8a774e1 SoC device tree
-  arm64: dts: renesas: Add HiHope RZ/G2H main board support
-  arm64: dts: renesas: Add HiHope RZ/G2H sub board support
-
- .../interrupt-controller/renesas,irqc.yaml    |   1 +
- .../devicetree/bindings/mmc/renesas,sdhi.txt  |   1 +
- .../bindings/serial/renesas,hscif.yaml        |   1 +
- .../bindings/serial/renesas,scif.yaml         |   1 +
- arch/arm64/boot/dts/renesas/Makefile          |   2 +
- .../arm64/boot/dts/renesas/hihope-common.dtsi |   4 +-
- arch/arm64/boot/dts/renesas/hihope-rev4.dtsi  |   4 +-
- .../boot/dts/renesas/hihope-rzg2-ex.dtsi      |   2 +-
- .../dts/renesas/r8a774e1-hihope-rzg2h-ex.dts  |  15 +
- .../dts/renesas/r8a774e1-hihope-rzg2h.dts     |  26 +
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi     | 652 ++++++++++++++++++
- arch/arm64/configs/defconfig                  |   1 +
- 12 files changed, 705 insertions(+), 5 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-
+diff --git a/Documentation/devicetree/bindings/serial/renesas,hscif.yaml b/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
+index 6b04c0451d41..9fb87a648c1b 100644
+--- a/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
++++ b/Documentation/devicetree/bindings/serial/renesas,hscif.yaml
+@@ -42,6 +42,7 @@ properties:
+               - renesas,hscif-r8a774a1     # RZ/G2M
+               - renesas,hscif-r8a774b1     # RZ/G2N
+               - renesas,hscif-r8a774c0     # RZ/G2E
++              - renesas,hscif-r8a774e1     # RZ/G2H
+               - renesas,hscif-r8a7795      # R-Car H3
+               - renesas,hscif-r8a7796      # R-Car M3-W
+               - renesas,hscif-r8a77961     # R-Car M3-W+
 -- 
 2.17.1
 
