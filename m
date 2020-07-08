@@ -2,78 +2,126 @@ Return-Path: <SRS0=jO7F=AT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C40DC433E4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6448AC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B63A206DF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:49:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BCAA207C4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:53:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594230822;
+	bh=ZXTVrAxt2BMAWE6jdwxSDmOlWWlY67skJb6anAFgFQs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=1wo/Pw7K1+ju/k1IL+pLdEkUwZPAVRddW0tOJIEzRCY7CxH/KdLYbEu7+Xumhw85x
+	 02fNxUh9nJtAChiq822zAshI35qhXEPMTFwzJoSIhGIjiYRXi9uISlXwrwfC48XOcl
+	 j5OnKmOhVoOx6sqO89KsAVgPMQuNdGfZ9mZxb2wk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbgGHRsm (ORCPT
+        id S1726352AbgGHRxi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Jul 2020 13:48:42 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:48841 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725953AbgGHRsl (ORCPT
+        Wed, 8 Jul 2020 13:53:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726100AbgGHRxi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Jul 2020 13:48:41 -0400
-X-IronPort-AV: E=Sophos;i="5.75,328,1589209200"; 
-   d="scan'208";a="51641767"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 09 Jul 2020 02:48:40 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E74BE4005E3D;
-        Thu,  9 Jul 2020 02:48:36 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 8 Jul 2020 13:53:38 -0400
+Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62219206E9;
+        Wed,  8 Jul 2020 17:53:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594230817;
+        bh=ZXTVrAxt2BMAWE6jdwxSDmOlWWlY67skJb6anAFgFQs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SK/e44KLdRfJM29yIStfOo7N8ICd0pwunnsQJIXgfumzLPch2QwpB2QHz9mBmw2xn
+         6xaAol7QCiZYkv8cMVtkv3AsX4AHhZXZhy14C5eY2zM1ED/InYBzdqvDoUcJCJKwie
+         ffhJ3RezTrRyIf6y1p8ootCJOKI+f62QSz63DCGQ=
+Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
+        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.92)
+        (envelope-from <maz@kernel.org>)
+        id 1jtEGF-00AAKr-Te; Wed, 08 Jul 2020 18:53:36 +0100
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 08 Jul 2020 18:53:35 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Will Deacon <will@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-mmc@vger.kernel.org, linux-serial@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 1/8] dt-bindings: serial: renesas,scif: Document r8a774e1 bindings
-Date:   Wed,  8 Jul 2020 18:48:24 +0100
-Message-Id: <1594230511-24790-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1594230511-24790-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH 6/8] arm64: dts: renesas: Initial r8a774e1 SoC device tree
+In-Reply-To: <1594230511-24790-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1594230511-24790-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1594230511-24790-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+User-Agent: Roundcube Webmail/1.4.5
+Message-ID: <daf83dafc069b12b6a10205e5f93793a@kernel.org>
+X-Sender: maz@kernel.org
+X-SA-Exim-Connect-IP: 51.254.78.96
+X-SA-Exim-Rcpt-To: prabhakar.mahadev-lad.rj@bp.renesas.com, geert+renesas@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org, tglx@linutronix.de, jason@lakedaemon.net, ulf.hansson@linaro.org, gregkh@linuxfoundation.org, catalin.marinas@arm.com, will@kernel.org, linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-mmc@vger.kernel.org, linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, prabhakar.csengg@gmail.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-RZ/G2H (R8A774E1) SoC also has the R-Car gen3 compatible SCIF ports,
-so document the SoC specific bindings.
+On 2020-07-08 18:48, Lad Prabhakar wrote:
+> From: Marian-Cristian Rotariu 
+> <marian-cristian.rotariu.rb@bp.renesas.com>
+> 
+> Basic support for the RZ/G2H SoC.
+> 
+> Signed-off-by: Marian-Cristian Rotariu
+> <marian-cristian.rotariu.rb@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 652 ++++++++++++++++++++++
+>  1 file changed, 652 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+> b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+> new file mode 100644
+> index 000000000000..6637e157ffcd
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- Documentation/devicetree/bindings/serial/renesas,scif.yaml | 1 +
- 1 file changed, 1 insertion(+)
+[...]
+> +		gic: interrupt-controller@f1010000 {
+> +			compatible = "arm,gic-400";
+> +			#interrupt-cells = <3>;
+> +			#address-cells = <0>;
+> +			interrupt-controller;
+> +			reg = <0x0 0xf1010000 0 0x1000>,
+> +			      <0x0 0xf1020000 0 0x20000>,
+> +			      <0x0 0xf1040000 0 0x20000>,
+> +			      <0x0 0xf1060000 0 0x20000>;
+> +			interrupts = <GIC_PPI 9
+> +					(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,scif.yaml b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-index 570b379f9f19..f589ac7577ae 100644
---- a/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-@@ -51,6 +51,7 @@ properties:
-               - renesas,scif-r8a774a1     # RZ/G2M
-               - renesas,scif-r8a774b1     # RZ/G2N
-               - renesas,scif-r8a774c0     # RZ/G2E
-+              - renesas,scif-r8a774e1     # RZ/G2H
-               - renesas,scif-r8a7795      # R-Car H3
-               - renesas,scif-r8a7796      # R-Car M3-W
-               - renesas,scif-r8a77961     # R-Car M3-W+
+You seem to have a bit more than only 2 CPUs in this system.
+
+> +			clocks = <&cpg CPG_MOD 408>;
+> +			clock-names = "clk";
+> +			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
+> +			resets = <&cpg 408>;
+> +		};
+
+         M.
 -- 
-2.17.1
-
+Jazz is not dead. It just smells funny...
