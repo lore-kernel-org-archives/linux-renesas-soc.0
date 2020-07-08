@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41194C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEA8C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20C5A206E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:48:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F634206E9
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Jul 2020 17:49:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728448AbgGHRsv (ORCPT
+        id S1728705AbgGHRs5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Jul 2020 13:48:51 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:30298 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728364AbgGHRsu (ORCPT
+        Wed, 8 Jul 2020 13:48:57 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:48241 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728022AbgGHRs5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Jul 2020 13:48:50 -0400
+        Wed, 8 Jul 2020 13:48:57 -0400
 X-IronPort-AV: E=Sophos;i="5.75,328,1589209200"; 
-   d="scan'208";a="51430133"
+   d="scan'208";a="51641778"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 09 Jul 2020 02:48:48 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 09 Jul 2020 02:48:56 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D07D54005E3D;
-        Thu,  9 Jul 2020 02:48:44 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id B6AE84005E3D;
+        Thu,  9 Jul 2020 02:48:52 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -43,9 +43,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 3/8] dt-bindings: irqchip: renesas-irqc: Document r8a774e1 bindings
-Date:   Wed,  8 Jul 2020 18:48:26 +0100
-Message-Id: <1594230511-24790-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 5/8] arm64: defconfig: Enable R8A774E1 SoC
+Date:   Wed,  8 Jul 2020 18:48:28 +0100
+Message-Id: <1594230511-24790-6-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1594230511-24790-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1594230511-24790-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -56,26 +56,26 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 
-Document SoC specific bindings for RZ/G2H (r8a774e1) SoC.
+Enable the Renesas RZ/G2H (R8A774E1) SoC in the ARM64 defconfig.
 
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../devicetree/bindings/interrupt-controller/renesas,irqc.yaml   | 1 +
+ arch/arm64/configs/defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml
-index b67b8cbd33fc..9f3946a904e5 100644
---- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml
-@@ -27,6 +27,7 @@ properties:
-           - renesas,intc-ex-r8a774a1    # RZ/G2M
-           - renesas,intc-ex-r8a774b1    # RZ/G2N
-           - renesas,intc-ex-r8a774c0    # RZ/G2E
-+          - renesas,intc-ex-r8a774e1    # RZ/G2H
-           - renesas,intc-ex-r8a7795     # R-Car H3
-           - renesas,intc-ex-r8a7796     # R-Car M3-W
-           - renesas,intc-ex-r8a77965    # R-Car M3-N
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 89538d9e39e5..9f4856044060 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -875,6 +875,7 @@ CONFIG_QCOM_APR=m
+ CONFIG_ARCH_R8A774A1=y
+ CONFIG_ARCH_R8A774B1=y
+ CONFIG_ARCH_R8A774C0=y
++CONFIG_ARCH_R8A774E1=y
+ CONFIG_ARCH_R8A77950=y
+ CONFIG_ARCH_R8A77951=y
+ CONFIG_ARCH_R8A77960=y
 -- 
 2.17.1
 
