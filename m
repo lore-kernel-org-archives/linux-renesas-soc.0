@@ -2,39 +2,40 @@ Return-Path: <SRS0=9Cy4=AY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E94C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jul 2020 11:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E8FC433E4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jul 2020 11:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 466CB20656
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jul 2020 11:10:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B0E1206F0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jul 2020 11:19:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728950AbgGMLKd (ORCPT
+        id S1729616AbgGMLTz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Jul 2020 07:10:33 -0400
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:31093 "EHLO
+        Mon, 13 Jul 2020 07:19:55 -0400
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:61341 "EHLO
         vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727890AbgGMLKd (ORCPT
+        with ESMTP id S1729259AbgGMLTy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Jul 2020 07:10:33 -0400
-X-Halon-ID: 5441fa3b-c4f9-11ea-86ee-0050569116f7
+        Mon, 13 Jul 2020 07:19:54 -0400
+X-Halon-ID: c19b930d-c4fa-11ea-8fb8-005056917f90
 Authorized-sender: niklas@soderlund.pp.se
 Received: from bismarck.berto.se (p4fca2eca.dip0.t-ipconnect.de [79.202.46.202])
-        by bin-vsp-out-03.atm.binero.net (Halon) with ESMTPA
-        id 5441fa3b-c4f9-11ea-86ee-0050569116f7;
-        Mon, 13 Jul 2020 13:09:36 +0200 (CEST)
+        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
+        id c19b930d-c4fa-11ea-8fb8-005056917f90;
+        Mon, 13 Jul 2020 13:19:53 +0200 (CEST)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] ARM: dts: gose: Fix ports node name for adv7612
-Date:   Mon, 13 Jul 2020 13:10:16 +0200
-Message-Id: <20200713111016.523189-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/3] dt-bindings: adv7604: Convert bindings to json-schema
+Date:   Mon, 13 Jul 2020 13:18:41 +0200
+Message-Id: <20200713111844.528313-1-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,28 +45,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When adding the adv7612 device node the ports node was misspelled as
-port, fix this.
+Hi Hans,
 
-Fixes: bc63cd87f3ce924f ("ARM: dts: gose: add HDMI input")
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm/boot/dts/r8a7793-gose.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series converts the ADV7604 bindings to YAML and lists the new file
+under MAINTAINERS. I have used the schema to validate the usage of the
+bindings and only found one issue that is fixed in [1].
 
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 79baf06019f5a6ff..5974253973041633 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -394,7 +394,7 @@ hdmi-in@4c {
- 			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
- 			default-input = <0>;
- 
--			port {
-+			ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
- 
+1. [PATCH] ARM: dts: gose: Fix ports node name for adv7612
+
+Niklas Söderlund (3):
+  dt-bindings: adv7604: Fix documentation for hpd-gpios
+  dt-bindings: adv7604: Convert bindings to json-schema
+  MAINTAINERS: Add ADV7604 bindings documentation
+
+ .../devicetree/bindings/media/i2c/adv7604.txt |  88 ---------
+ .../bindings/media/i2c/adv7604.yaml           | 171 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 3 files changed, 172 insertions(+), 88 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/adv7604.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/adv7604.yaml
+
 -- 
 2.27.0
 
