@@ -2,80 +2,241 @@ Return-Path: <SRS0=9Cy4=AY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 284BBC43467
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F32C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jul 2020 23:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 07B4A20DD4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jul 2020 21:36:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E13202145D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Jul 2020 23:04:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XimzrWfB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727906AbgGMVg0 (ORCPT
+        id S1726356AbgGMXEz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Jul 2020 17:36:26 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:6771 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726150AbgGMVfw (ORCPT
+        Mon, 13 Jul 2020 19:04:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52906 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbgGMXEz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Jul 2020 17:35:52 -0400
-X-IronPort-AV: E=Sophos;i="5.75,348,1589209200"; 
-   d="scan'208";a="52016003"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 14 Jul 2020 06:35:51 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 532E640F7FC8;
-        Tue, 14 Jul 2020 06:35:47 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, iommu@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH 6/9] dt-bindings: gpio: renesas,rcar-gpio: Add r8a774e1 support
-Date:   Mon, 13 Jul 2020 22:35:17 +0100
-Message-Id: <1594676120-5862-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1594676120-5862-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1594676120-5862-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Mon, 13 Jul 2020 19:04:55 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C8D7C061755
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 13 Jul 2020 16:04:55 -0700 (PDT)
+Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1BD12C9;
+        Tue, 14 Jul 2020 01:04:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1594681491;
+        bh=z/sWiRcAzasgUzNozLfAVzhTStQvqUjDjxSETv5cQlY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XimzrWfBTnej57KrfwfTjZL4ffw5TtfGE8TavkMXnoTTD3nbKRlbkCHC0s59MmAfV
+         SmziaCRYxOSusQ73GfK86SizPgmr2H6kATzqibYdsskzrvaPEQankAaTre+cHM4ewp
+         PO49HbwIsDEl6yV0e2B+yWq2WqhXgVtSfE29GEGk=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [kms-test] [PATCH] Add license and copyright information
+Date:   Tue, 14 Jul 2020 02:04:38 +0300
+Message-Id: <20200713230438.2087-1-laurent.pinchart@ideasonboard.com>
+X-Mailer: git-send-email 2.27.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document Renesas RZ/G2H (R8A774E1) GPIO blocks compatibility within the
-relevant dt-bindings.
+Add SPDX tags to describe license and copyright information to all files
+in the repository.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ Makefile                         | 2 ++
+ README                           | 3 +++
+ tests/Makefile                   | 2 ++
+ tests/kms-test-allplanes.py      | 2 ++
+ tests/kms-test-brxalloc.py       | 2 ++
+ tests/kms-test-connectors.py     | 2 ++
+ tests/kms-test-crc.py            | 2 ++
+ tests/kms-test-formats.py        | 2 ++
+ tests/kms-test-legacy-modeset.py | 2 ++
+ tests/kms-test-modes.py          | 2 ++
+ tests/kms-test-modeset.py        | 2 ++
+ tests/kms-test-pageflip.py       | 2 ++
+ tests/kms-test-planeposition.py  | 2 ++
+ tests/kms-test-routing.py        | 2 ++
+ tests/kmstest.py                 | 2 ++
+ 15 files changed, 31 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-index 397d9383d15a..a9a9dd0854e7 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-@@ -37,6 +37,7 @@ properties:
-              - renesas,gpio-r8a774a1     # RZ/G2M
-              - renesas,gpio-r8a774b1     # RZ/G2N
-              - renesas,gpio-r8a774c0     # RZ/G2E
-+             - renesas,gpio-r8a774e1     # RZ/G2H
-              - renesas,gpio-r8a7795      # R-Car H3
-              - renesas,gpio-r8a7796      # R-Car M3-W
-              - renesas,gpio-r8a77961     # R-Car M3-W+
+diff --git a/Makefile b/Makefile
+index 3fe6ed9604bc..1f0da15546b8 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,3 +1,5 @@
++# SPDX-License-Identifier: CC0-1.0
++
+ SUBDIRS=tests
+ 
+ recursive=all clean install
+diff --git a/README b/README
+index 69a3bc5eef6c..7f770d4170a3 100644
+--- a/README
++++ b/README
+@@ -1,3 +1,6 @@
++.. SPDX-License-Identifier: CC-BY-SA-4.0
++.. SPDX-FileCopyrightText: 2017 Renesas Electronics Corporation
++
+ du-tests
+ --------
+ 
+diff --git a/tests/Makefile b/tests/Makefile
+index 521761af28cf..0a921e5f56cd 100644
+--- a/tests/Makefile
++++ b/tests/Makefile
+@@ -1,3 +1,5 @@
++# SPDX-License-Identifier: CC0-1.0
++
+ SCRIPTS=$(wildcard *.py)
+ 
+ all:
+diff --git a/tests/kms-test-allplanes.py b/tests/kms-test-allplanes.py
+index ca7baa07af42..d88326293782 100755
+--- a/tests/kms-test-allplanes.py
++++ b/tests/kms-test-allplanes.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2017-2019 Renesas Electronics Corporation
+ 
+ import kmstest
+ import pykms
+diff --git a/tests/kms-test-brxalloc.py b/tests/kms-test-brxalloc.py
+index a0ae46a8b53e..dbdc78946b04 100755
+--- a/tests/kms-test-brxalloc.py
++++ b/tests/kms-test-brxalloc.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2018-2019 Renesas Electronics Corporation
+ 
+ import kmstest
+ import pykms
+diff --git a/tests/kms-test-connectors.py b/tests/kms-test-connectors.py
+index 25fc5dc8f60e..4c58b99f8fbf 100755
+--- a/tests/kms-test-connectors.py
++++ b/tests/kms-test-connectors.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2017 Renesas Electronics Corporation
+ 
+ import kmstest
+ import pykms
+diff --git a/tests/kms-test-crc.py b/tests/kms-test-crc.py
+index e0e0eabd9950..d936d1d4fb90 100755
+--- a/tests/kms-test-crc.py
++++ b/tests/kms-test-crc.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2017-2019 Renesas Electronics Corporation
+ 
+ import kmstest
+ import pykms
+diff --git a/tests/kms-test-formats.py b/tests/kms-test-formats.py
+index 15e6f591aea9..77c9fe775a7c 100755
+--- a/tests/kms-test-formats.py
++++ b/tests/kms-test-formats.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2019 Renesas Electronics Corporation
+ 
+ import kmstest
+ import pykms
+diff --git a/tests/kms-test-legacy-modeset.py b/tests/kms-test-legacy-modeset.py
+index 17a81792a2b8..4b5605345391 100755
+--- a/tests/kms-test-legacy-modeset.py
++++ b/tests/kms-test-legacy-modeset.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2018-2019 Renesas Electronics Corporation
+ 
+ import kmstest
+ import pykms
+diff --git a/tests/kms-test-modes.py b/tests/kms-test-modes.py
+index 82a1a3b21e93..b298a19beedf 100755
+--- a/tests/kms-test-modes.py
++++ b/tests/kms-test-modes.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2017-2019 Renesas Electronics Corporation
+ 
+ import kmstest
+ import pykms
+diff --git a/tests/kms-test-modeset.py b/tests/kms-test-modeset.py
+index 224b39143a8e..0dbe67fb2a4f 100755
+--- a/tests/kms-test-modeset.py
++++ b/tests/kms-test-modeset.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2017-2019 Renesas Electronics Corporation
+ 
+ import kmstest
+ import pykms
+diff --git a/tests/kms-test-pageflip.py b/tests/kms-test-pageflip.py
+index bef1f4990a10..19c3adaa601f 100755
+--- a/tests/kms-test-pageflip.py
++++ b/tests/kms-test-pageflip.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2017-2019 Renesas Electronics Corporation
+ 
+ import kmstest
+ import pykms
+diff --git a/tests/kms-test-planeposition.py b/tests/kms-test-planeposition.py
+index ac4b4d0eb407..a7cc11113aa9 100755
+--- a/tests/kms-test-planeposition.py
++++ b/tests/kms-test-planeposition.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2017-2019 Renesas Electronics Corporation
+ 
+ import kmstest
+ import pykms
+diff --git a/tests/kms-test-routing.py b/tests/kms-test-routing.py
+index a24dc1c0fb1e..806adb8c68a8 100755
+--- a/tests/kms-test-routing.py
++++ b/tests/kms-test-routing.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2019 Renesas Electronics Corporation
+ 
+ import kmstest
+ import pykms
+diff --git a/tests/kmstest.py b/tests/kmstest.py
+index 8a483d7b5259..f13e3fb7aa32 100755
+--- a/tests/kmstest.py
++++ b/tests/kmstest.py
+@@ -1,4 +1,6 @@
+ #!/usr/bin/python3
++# SPDX-License-Identifier: GPL-2.0-or-later
++# SPDX-FileCopyrightText: 2017-2019 Renesas Electronics Corporation
+ 
+ import collections.abc
+ import errno
 -- 
-2.17.1
+Regards,
+
+Laurent Pinchart
 
