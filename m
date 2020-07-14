@@ -2,29 +2,30 @@ Return-Path: <SRS0=eQbE=AZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 067BBC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 469FBC433E5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:54:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E3CC0224D4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25A3D224D4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:54:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbgGNNyy (ORCPT
+        id S1726945AbgGNNy7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Jul 2020 09:54:54 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:46517 "EHLO
+        Tue, 14 Jul 2020 09:54:59 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:36457 "EHLO
         relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725906AbgGNNyx (ORCPT
+        with ESMTP id S1726766AbgGNNy6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Jul 2020 09:54:53 -0400
+        Tue, 14 Jul 2020 09:54:58 -0400
 X-Originating-IP: 93.34.118.233
 Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 5C3C91C0002;
-        Tue, 14 Jul 2020 13:54:48 +0000 (UTC)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id CA9C91C0006;
+        Tue, 14 Jul 2020 13:54:53 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
         sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com
@@ -33,125 +34,261 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         kieran.bingham@ideasonboard.com, dave.stevenson@raspberrypi.com,
         hyun.kwon@xilinx.com, jmkrzyszt@gmail.com, robert.jarzmik@free.fr,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 0/9] v4l2-subdev: Introduce [g|s]et_mbus_format pad op
-Date:   Tue, 14 Jul 2020 15:58:03 +0200
-Message-Id: <20200714135812.55158-1-jacopo+renesas@jmondi.org>
+Subject: [PATCH v6 2/9] media: i2c: Use the new get_mbus_config pad op
+Date:   Tue, 14 Jul 2020 15:58:05 +0200
+Message-Id: <20200714135812.55158-3-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200714135812.55158-1-jacopo+renesas@jmondi.org>
+References: <20200714135812.55158-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Minor update to the ov6650 to address some of Janusz's comments there.
-(now in Cc with Robert for the pxa part. Sorry for missing that in the
-previous versions).
+Move the existing users of the g_mbus_config video operation to use the
+newly introduced get_mbus_config pad operations.
 
-Quoting the previous cover letters:
+All the ported drivers report a static media bus configuration and do no
+support s_mbus_config so the operation implementation has not changed.
 
--------------------------------------------------------------------------------
-Most of the existing users are i2c camera drivers reporting a static media bus
-configuration though g_mbus_config. Porting them is performed in a single
-hopefully not controversial patch [2/8]
+Bridge drivers needs to call the new pad operation and will receive an
+-ENOICTLCMD when calling the old g_mbus_config video operation
 
-Two existing users stand-out, and they've probably been developed together:
-pxa_camera and ov6650. Those have bee ported separately in single patches
-with extensive change logs as their operations semantic had to change to port
-them to use the new operations. Not having any of those two platforms, the
-changes have been compile-tested only.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/media/i2c/adv7180.c   | 7 ++++---
+ drivers/media/i2c/ml86v7667.c | 7 ++++---
+ drivers/media/i2c/mt9m001.c   | 7 ++++---
+ drivers/media/i2c/mt9m111.c   | 7 ++++---
+ drivers/media/i2c/ov9640.c    | 7 ++++---
+ drivers/media/i2c/tc358743.c  | 7 ++++---
+ drivers/media/i2c/tvp5150.c   | 7 ++++---
+ 7 files changed, 28 insertions(+), 21 deletions(-)
 
-The only existing users of the s|g_mbus_config ops are now the soc_camera based
-drivers currently living in staging.
-
-The last three patches are similar to the ones posted in v2, with the exception
-that they have been updated to use the V4L2_MBUS_* flags as well.
--------------------------------------------------------------------------------
-
-Will report again the use cases I'm trying to address here:
-------------------------------------------------------------------------------
-Quoting:
-https://patchwork.kernel.org/cover/10855919/
-"The use case this series cover is the following one:
-the Gen-3 R-Car boards include an ADV748x HDMI/CVBS to CSI-2 converter
-connected to its CSI-2 receivers. The ADV748x chip has recently gained support
-for routing both HDMI and analogue video streams through its 4 lanes TXA
-transmitter, specifically to support the Ebisu board that has a single CSI-2
-receiver, compared to all other Gen-3 board where the ADV748x TXes are connected
-to different CSI-2 receivers, and where analogue video is streamed out from the
-ADV748x single lane TXB transmitter.
-To properly support transmission of analogue video through TXA, the number of
-data lanes shall be dynamically reduced to 1, in order to comply with the MIPI
-CSI-2 minimum clock frequency requirements"
-
-During the discussion of the RFC, Dave reported another use case for media
-bus parameter negotiation on his platform:
-https://patchwork.kernel.org/patch/10855923/#22569149
-
-Hyun is now using this series to configure GMSL devices.
-------------------------------------------------------------------------------
-
-Thanks
-   j
-
-v5->v6:
-- Report V4L2_MBUS_DATA_ACTIVE_HIGH in ov6650 get_mbus_config
-- Check for the return value of get_mbus_config() at the end of
-  set_mbus_config() in ov6650 driver
-
-v4->v5:
-- Address Sakari's comment on documentation (s/should/shall)
-- Use a local variable for the number of active lanes in 9/9
-- Add Kieran's tags to 7/9 and 8/9
-- Fix a warning on operator precedence on 3/9
-
-v3->v4:
-- Remove g/s_mbus_config video operation
-- Adjust pxa quick capture interface to properly handle bus mastering
-- Reword the two new operations documentation
-
-v2->v3:
-- Re-use v4l2_mbus_config and V4L2_MBUS_* flags
-- Port existing drivers
-- Update adv748x and rcar-csi2 patches to use V4L2_MBUS_* flags
-
-v1->v2:
-- Address Sakari's comment to use unsigned int in place of bools
-- Add two new patches to address documentation
-- Adjust rcar-csi2 patch as much as possible according to Niklas comments
-- Add Niklas's tags
-
-
-
-Jacopo Mondi (9):
-  media: v4l2-subdev: Introduce [get|set]_mbus_config pad ops
-  media: i2c: Use the new get_mbus_config pad op
-  media: i2c: ov6650: Use new [get|set]_mbus_config ops
-  media: pxa_camera: Use the new set_mbus_config op
-  media: v4l2-subdev: Remove [s|g]_mbus_config video ops
-  staging: media: imx: Update TODO entry
-  media: i2c: adv748x: Adjust TXA data lanes number
-  media: i2c: adv748x: Implement get_mbus_config
-  media: rcar-csi2: Negotiate data lanes number
-
- drivers/media/i2c/adv7180.c                 |   7 +-
- drivers/media/i2c/adv748x/adv748x-core.c    |  31 +++-
- drivers/media/i2c/adv748x/adv748x-csi2.c    |  31 ++++
- drivers/media/i2c/adv748x/adv748x.h         |   1 +
- drivers/media/i2c/ml86v7667.c               |   7 +-
- drivers/media/i2c/mt9m001.c                 |   7 +-
- drivers/media/i2c/mt9m111.c                 |   7 +-
- drivers/media/i2c/ov6650.c                  |  56 ++++--
- drivers/media/i2c/ov9640.c                  |   7 +-
- drivers/media/i2c/tc358743.c                |   7 +-
- drivers/media/i2c/tvp5150.c                 |   7 +-
- drivers/media/platform/pxa_camera.c         | 189 ++++++--------------
- drivers/media/platform/rcar-vin/rcar-csi2.c |  74 +++++++-
- drivers/staging/media/imx/TODO              |   4 +
- include/media/v4l2-subdev.h                 |  37 ++--
- 15 files changed, 271 insertions(+), 201 deletions(-)
-
---
+diff --git a/drivers/media/i2c/adv7180.c b/drivers/media/i2c/adv7180.c
+index 00159daa6fcd..e8744efe3cf0 100644
+--- a/drivers/media/i2c/adv7180.c
++++ b/drivers/media/i2c/adv7180.c
+@@ -760,8 +760,9 @@ static int adv7180_init_cfg(struct v4l2_subdev *sd,
+ 	return adv7180_set_pad_format(sd, cfg, &fmt);
+ }
+ 
+-static int adv7180_g_mbus_config(struct v4l2_subdev *sd,
+-				 struct v4l2_mbus_config *cfg)
++static int adv7180_get_mbus_config(struct v4l2_subdev *sd,
++				   unsigned int pad,
++				   struct v4l2_mbus_config *cfg)
+ {
+ 	struct adv7180_state *state = to_state(sd);
+ 
+@@ -852,7 +853,6 @@ static const struct v4l2_subdev_video_ops adv7180_video_ops = {
+ 	.querystd = adv7180_querystd,
+ 	.g_input_status = adv7180_g_input_status,
+ 	.s_routing = adv7180_s_routing,
+-	.g_mbus_config = adv7180_g_mbus_config,
+ 	.g_pixelaspect = adv7180_g_pixelaspect,
+ 	.g_tvnorms = adv7180_g_tvnorms,
+ 	.s_stream = adv7180_s_stream,
+@@ -869,6 +869,7 @@ static const struct v4l2_subdev_pad_ops adv7180_pad_ops = {
+ 	.enum_mbus_code = adv7180_enum_mbus_code,
+ 	.set_fmt = adv7180_set_pad_format,
+ 	.get_fmt = adv7180_get_pad_format,
++	.get_mbus_config = adv7180_get_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_sensor_ops adv7180_sensor_ops = {
+diff --git a/drivers/media/i2c/ml86v7667.c b/drivers/media/i2c/ml86v7667.c
+index c444bd6a0658..ff212335326a 100644
+--- a/drivers/media/i2c/ml86v7667.c
++++ b/drivers/media/i2c/ml86v7667.c
+@@ -219,8 +219,9 @@ static int ml86v7667_fill_fmt(struct v4l2_subdev *sd,
+ 	return 0;
+ }
+ 
+-static int ml86v7667_g_mbus_config(struct v4l2_subdev *sd,
+-				   struct v4l2_mbus_config *cfg)
++static int ml86v7667_get_mbus_config(struct v4l2_subdev *sd,
++				     unsigned int pad,
++				     struct v4l2_mbus_config *cfg)
+ {
+ 	cfg->flags = V4L2_MBUS_MASTER | V4L2_MBUS_PCLK_SAMPLE_RISING |
+ 		     V4L2_MBUS_DATA_ACTIVE_HIGH;
+@@ -291,13 +292,13 @@ static const struct v4l2_subdev_video_ops ml86v7667_subdev_video_ops = {
+ 	.s_std = ml86v7667_s_std,
+ 	.querystd = ml86v7667_querystd,
+ 	.g_input_status = ml86v7667_g_input_status,
+-	.g_mbus_config = ml86v7667_g_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_pad_ops ml86v7667_subdev_pad_ops = {
+ 	.enum_mbus_code = ml86v7667_enum_mbus_code,
+ 	.get_fmt = ml86v7667_fill_fmt,
+ 	.set_fmt = ml86v7667_fill_fmt,
++	.get_mbus_config = ml86v7667_get_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_core_ops ml86v7667_subdev_core_ops = {
+diff --git a/drivers/media/i2c/mt9m001.c b/drivers/media/i2c/mt9m001.c
+index 210ea76adb53..3b0ba8ed5233 100644
+--- a/drivers/media/i2c/mt9m001.c
++++ b/drivers/media/i2c/mt9m001.c
+@@ -689,8 +689,9 @@ static int mt9m001_enum_mbus_code(struct v4l2_subdev *sd,
+ 	return 0;
+ }
+ 
+-static int mt9m001_g_mbus_config(struct v4l2_subdev *sd,
+-				struct v4l2_mbus_config *cfg)
++static int mt9m001_get_mbus_config(struct v4l2_subdev *sd,
++				   unsigned int pad,
++				   struct v4l2_mbus_config *cfg)
+ {
+ 	/* MT9M001 has all capture_format parameters fixed */
+ 	cfg->flags = V4L2_MBUS_PCLK_SAMPLE_FALLING |
+@@ -703,7 +704,6 @@ static int mt9m001_g_mbus_config(struct v4l2_subdev *sd,
+ 
+ static const struct v4l2_subdev_video_ops mt9m001_subdev_video_ops = {
+ 	.s_stream	= mt9m001_s_stream,
+-	.g_mbus_config	= mt9m001_g_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_sensor_ops mt9m001_subdev_sensor_ops = {
+@@ -717,6 +717,7 @@ static const struct v4l2_subdev_pad_ops mt9m001_subdev_pad_ops = {
+ 	.set_selection	= mt9m001_set_selection,
+ 	.get_fmt	= mt9m001_get_fmt,
+ 	.set_fmt	= mt9m001_set_fmt,
++	.get_mbus_config = mt9m001_get_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_ops mt9m001_subdev_ops = {
+diff --git a/drivers/media/i2c/mt9m111.c b/drivers/media/i2c/mt9m111.c
+index 17e8253f5748..69697386ffcd 100644
+--- a/drivers/media/i2c/mt9m111.c
++++ b/drivers/media/i2c/mt9m111.c
+@@ -1137,8 +1137,9 @@ static int mt9m111_init_cfg(struct v4l2_subdev *sd,
+ 	return 0;
+ }
+ 
+-static int mt9m111_g_mbus_config(struct v4l2_subdev *sd,
+-				struct v4l2_mbus_config *cfg)
++static int mt9m111_get_mbus_config(struct v4l2_subdev *sd,
++				   unsigned int pad,
++				   struct v4l2_mbus_config *cfg)
+ {
+ 	struct mt9m111 *mt9m111 = container_of(sd, struct mt9m111, subdev);
+ 
+@@ -1155,7 +1156,6 @@ static int mt9m111_g_mbus_config(struct v4l2_subdev *sd,
+ }
+ 
+ static const struct v4l2_subdev_video_ops mt9m111_subdev_video_ops = {
+-	.g_mbus_config	= mt9m111_g_mbus_config,
+ 	.s_stream	= mt9m111_s_stream,
+ 	.g_frame_interval = mt9m111_g_frame_interval,
+ 	.s_frame_interval = mt9m111_s_frame_interval,
+@@ -1168,6 +1168,7 @@ static const struct v4l2_subdev_pad_ops mt9m111_subdev_pad_ops = {
+ 	.set_selection	= mt9m111_set_selection,
+ 	.get_fmt	= mt9m111_get_fmt,
+ 	.set_fmt	= mt9m111_set_fmt,
++	.get_mbus_config = mt9m111_get_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_ops mt9m111_subdev_ops = {
+diff --git a/drivers/media/i2c/ov9640.c b/drivers/media/i2c/ov9640.c
+index 3a21f51d9325..fbd5d7b75811 100644
+--- a/drivers/media/i2c/ov9640.c
++++ b/drivers/media/i2c/ov9640.c
+@@ -648,8 +648,9 @@ static const struct v4l2_subdev_core_ops ov9640_core_ops = {
+ };
+ 
+ /* Request bus settings on camera side */
+-static int ov9640_g_mbus_config(struct v4l2_subdev *sd,
+-				struct v4l2_mbus_config *cfg)
++static int ov9640_get_mbus_config(struct v4l2_subdev *sd,
++				  unsigned int pad,
++				  struct v4l2_mbus_config *cfg)
+ {
+ 	cfg->flags = V4L2_MBUS_PCLK_SAMPLE_RISING | V4L2_MBUS_MASTER |
+ 		V4L2_MBUS_VSYNC_ACTIVE_HIGH | V4L2_MBUS_HSYNC_ACTIVE_HIGH |
+@@ -661,13 +662,13 @@ static int ov9640_g_mbus_config(struct v4l2_subdev *sd,
+ 
+ static const struct v4l2_subdev_video_ops ov9640_video_ops = {
+ 	.s_stream	= ov9640_s_stream,
+-	.g_mbus_config	= ov9640_g_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_pad_ops ov9640_pad_ops = {
+ 	.enum_mbus_code = ov9640_enum_mbus_code,
+ 	.get_selection	= ov9640_get_selection,
+ 	.set_fmt	= ov9640_set_fmt,
++	.get_mbus_config = ov9640_get_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_ops ov9640_subdev_ops = {
+diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.c
+index dbbab75f135e..a03dcab5ce61 100644
+--- a/drivers/media/i2c/tc358743.c
++++ b/drivers/media/i2c/tc358743.c
+@@ -1602,8 +1602,9 @@ static int tc358743_dv_timings_cap(struct v4l2_subdev *sd,
+ 	return 0;
+ }
+ 
+-static int tc358743_g_mbus_config(struct v4l2_subdev *sd,
+-			     struct v4l2_mbus_config *cfg)
++static int tc358743_get_mbus_config(struct v4l2_subdev *sd,
++				    unsigned int pad,
++				    struct v4l2_mbus_config *cfg)
+ {
+ 	struct tc358743_state *state = to_state(sd);
+ 
+@@ -1836,7 +1837,6 @@ static const struct v4l2_subdev_video_ops tc358743_video_ops = {
+ 	.s_dv_timings = tc358743_s_dv_timings,
+ 	.g_dv_timings = tc358743_g_dv_timings,
+ 	.query_dv_timings = tc358743_query_dv_timings,
+-	.g_mbus_config = tc358743_g_mbus_config,
+ 	.s_stream = tc358743_s_stream,
+ };
+ 
+@@ -1848,6 +1848,7 @@ static const struct v4l2_subdev_pad_ops tc358743_pad_ops = {
+ 	.set_edid = tc358743_s_edid,
+ 	.enum_dv_timings = tc358743_enum_dv_timings,
+ 	.dv_timings_cap = tc358743_dv_timings_cap,
++	.get_mbus_config = tc358743_get_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_ops tc358743_ops = {
+diff --git a/drivers/media/i2c/tvp5150.c b/drivers/media/i2c/tvp5150.c
+index 9df575238952..1c2050944b92 100644
+--- a/drivers/media/i2c/tvp5150.c
++++ b/drivers/media/i2c/tvp5150.c
+@@ -1191,8 +1191,9 @@ static int tvp5150_get_selection(struct v4l2_subdev *sd,
+ 	}
+ }
+ 
+-static int tvp5150_g_mbus_config(struct v4l2_subdev *sd,
+-				 struct v4l2_mbus_config *cfg)
++static int tvp5150_get_mbus_config(struct v4l2_subdev *sd,
++				   unsigned int pad,
++				   struct v4l2_mbus_config *cfg)
+ {
+ 	struct tvp5150 *decoder = to_tvp5150(sd);
+ 
+@@ -1721,7 +1722,6 @@ static const struct v4l2_subdev_video_ops tvp5150_video_ops = {
+ 	.querystd = tvp5150_querystd,
+ 	.s_stream = tvp5150_s_stream,
+ 	.s_routing = tvp5150_s_routing,
+-	.g_mbus_config = tvp5150_g_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_vbi_ops tvp5150_vbi_ops = {
+@@ -1739,6 +1739,7 @@ static const struct v4l2_subdev_pad_ops tvp5150_pad_ops = {
+ 	.get_fmt = tvp5150_fill_fmt,
+ 	.get_selection = tvp5150_get_selection,
+ 	.set_selection = tvp5150_set_selection,
++	.get_mbus_config = tvp5150_get_mbus_config,
+ };
+ 
+ static const struct v4l2_subdev_ops tvp5150_ops = {
+-- 
 2.27.0
 
