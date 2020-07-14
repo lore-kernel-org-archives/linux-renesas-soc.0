@@ -2,205 +2,334 @@ Return-Path: <SRS0=eQbE=AZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E291EC43459
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C60DCC433FB
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4B1820760
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:55:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A05F122510
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:57:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594735050;
+	bh=anOkgRGBEMl/XKw2buzvSOBQZ/OCdvpI2l0MBdv9laI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=2puc9w5IyaIgPdKdYljV0oanF5ShubagsmmbC5W4bAi3d0LH5aI88x/ClLYuZ8KB0
+	 YVt+zgDnUdB3mU87IP7RmultaO9xFKuHEPaWYKi5UiHI1V4ONvNlOetluxi08kgyDz
+	 P+VhyiCB3PXWHc5iZW43RnQnQNmU9OwgUyzjEgRg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728284AbgGNNzP (ORCPT
+        id S1728257AbgGNN5a (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Jul 2020 09:55:15 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:43313 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726801AbgGNNzO (ORCPT
+        Tue, 14 Jul 2020 09:57:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34928 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728095AbgGNN53 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Jul 2020 09:55:14 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 8C8A41C0009;
-        Tue, 14 Jul 2020 13:55:10 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        niklas.soderlund+renesas@ragnatech.se,
-        kieran.bingham@ideasonboard.com, dave.stevenson@raspberrypi.com,
-        hyun.kwon@xilinx.com, jmkrzyszt@gmail.com, robert.jarzmik@free.fr,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 9/9] media: rcar-csi2: Negotiate data lanes number
-Date:   Tue, 14 Jul 2020 15:58:12 +0200
-Message-Id: <20200714135812.55158-10-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200714135812.55158-1-jacopo+renesas@jmondi.org>
-References: <20200714135812.55158-1-jacopo+renesas@jmondi.org>
+        Tue, 14 Jul 2020 09:57:29 -0400
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 890E322512;
+        Tue, 14 Jul 2020 13:57:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594735048;
+        bh=anOkgRGBEMl/XKw2buzvSOBQZ/OCdvpI2l0MBdv9laI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ttteglnPO8kwRXFeQtRwVICizqXHDJHt4IvI4Olwam2up4wa0m5vYWHRtK9hY67/n
+         hmk9iXjDD9GxA/JQ84LgJgL+x2xGODNe0uMXcm7T0Zn/XZhJkIKRAIw8+yOA4y2bRr
+         cvCtWaWII9Yvew6vnirELHNgPZQEACYfv5ds1fyI=
+Received: by mail-ot1-f54.google.com with SMTP id t18so13081680otq.5;
+        Tue, 14 Jul 2020 06:57:28 -0700 (PDT)
+X-Gm-Message-State: AOAM531F90QcZlsGOcOiclKdEsrQ8F95WPFyRW++7eJYz+vy/PBmY2fi
+        t+ZERfcJkvwGtsXI6n7qNdcqPK/qRFrnTKJXKA==
+X-Google-Smtp-Source: ABdhPJyvJtNZ6AovmC6N3Uf290TAiRrNFPNQ2ge621fVPSlVbwTn0jNpHg5QrJVyxju7szdTK7/jWtfI/J/bQ3Gynjk=
+X-Received: by 2002:a05:6830:3104:: with SMTP id b4mr4257242ots.192.1594735047801;
+ Tue, 14 Jul 2020 06:57:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200713111844.528313-1-niklas.soderlund+renesas@ragnatech.se>
+ <20200713111844.528313-3-niklas.soderlund+renesas@ragnatech.se>
+ <20200713154449.GA256154@bogus> <20200713181740.GO2866302@oden.dyn.berto.se>
+In-Reply-To: <20200713181740.GO2866302@oden.dyn.berto.se>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 14 Jul 2020 07:57:14 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKJwMET3_VqrJi3KJJMbrNy-aR0yr26VFXYbgN_yPNfGw@mail.gmail.com>
+Message-ID: <CAL_JsqKJwMET3_VqrJi3KJJMbrNy-aR0yr26VFXYbgN_yPNfGw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: adv7604: Convert bindings to json-schema
+To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        devicetree@vger.kernel.org,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Use the newly introduced get_mbus_config() subdevice pad operation to
-retrieve the remote subdevice MIPI CSI-2 bus configuration and configure
-the number of active data lanes accordingly.
+On Mon, Jul 13, 2020 at 12:17 PM Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+>
+> Hi Rob,
+>
+> Thanks for your feedback.
+>
+> On 2020-07-13 09:44:49 -0600, Rob Herring wrote:
+> > On Mon, Jul 13, 2020 at 01:18:43PM +0200, Niklas S=C3=B6derlund wrote:
+> > > Convert ADV7604 video decoder documentation to json-schema.
+> > >
+> > > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnat=
+ech.se>
+> > > ---
+> > >  .../devicetree/bindings/media/i2c/adv7604.txt |  87 ---------
+> > >  .../bindings/media/i2c/adv7604.yaml           | 171 ++++++++++++++++=
+++
+> > >  2 files changed, 171 insertions(+), 87 deletions(-)
+> > >  delete mode 100644 Documentation/devicetree/bindings/media/i2c/adv76=
+04.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/adv76=
+04.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.txt =
+b/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+> > > deleted file mode 100644
+> > > index 8c7cdc7cd7aaebc8..0000000000000000
+> > > --- a/Documentation/devicetree/bindings/media/i2c/adv7604.txt
+> > > +++ /dev/null
+> > > @@ -1,87 +0,0 @@
+> > > -* Analog Devices ADV7604/11/12 video decoder with HDMI receiver
+> > > -
+> > > -The ADV7604 and ADV7611/12 are multiformat video decoders with an in=
+tegrated
+> > > -HDMI receiver. The ADV7604 has four multiplexed HDMI inputs and one =
+analog
+> > > -input, and the ADV7611 has one HDMI input and no analog input. The 7=
+612 is
+> > > -similar to the 7611 but has 2 HDMI inputs.
+> > > -
+> > > -These device tree bindings support the ADV7611/12 only at the moment=
+.
+> > > -
+> > > -Required Properties:
+> > > -
+> > > -  - compatible: Must contain one of the following
+> > > -    - "adi,adv7611" for the ADV7611
+> > > -    - "adi,adv7612" for the ADV7612
+> > > -
+> > > -  - reg: I2C slave addresses
+> > > -    The ADV76xx has up to thirteen 256-byte maps that can be accesse=
+d via the
+> > > -    main I2C ports. Each map has it own I2C address and acts as a st=
+andard
+> > > -    slave device on the I2C bus. The main address is mandatory, othe=
+rs are
+> > > -    optional and revert to defaults if not specified.
+> > > -
+> > > -The device node must contain one 'port' child node per device input =
+and output
+> > > -port, in accordance with the video interface bindings defined in
+> > > -Documentation/devicetree/bindings/media/video-interfaces.txt. The po=
+rt nodes
+> > > -are numbered as follows.
+> > > -
+> > > -  Port                     ADV7611    ADV7612
+> > > -------------------------------------------------------------
+> > > -  HDMI                     0             0, 1
+> > > -  Digital output   1                2
+> > > -
+> > > -The digital output port node must contain at least one endpoint.
+> > > -
+> > > -Optional Properties:
+> > > -
+> > > -  - hpd-gpios: References to the GPIOs that control the HDMI hot-plu=
+g
+> > > -    detection pins, one per HDMI input. The active flag indicates th=
+e GPIO
+> > > -    level that enables hot-plug detection.
+> > > -  - reset-gpios: Reference to the GPIO connected to the device's res=
+et pin.
+> > > -  - default-input: Select which input is selected after reset.
+> > > -  - reg-names : Names of maps with programmable addresses.
+> > > -           It can contain any map needing a non-default address.
+> > > -           Possible maps names are :
+> > > -             "main", "avlink", "cec", "infoframe", "esdp", "dpp", "a=
+fe",
+> > > -             "rep", "edid", "hdmi", "test", "cp", "vdp"
+> > > -
+> > > -Optional Endpoint Properties:
+> > > -
+> > > -  The following three properties are defined in video-interfaces.txt=
+ and are
+> > > -  valid for source endpoints only.
+> > > -
+> > > -  - hsync-active: Horizontal synchronization polarity. Defaults to a=
+ctive low.
+> > > -  - vsync-active: Vertical synchronization polarity. Defaults to act=
+ive low.
+> > > -  - pclk-sample: Pixel clock polarity. Defaults to output on the fal=
+ling edge.
+> > > -
+> > > -  If none of hsync-active, vsync-active and pclk-sample is specified=
+ the
+> > > -  endpoint will use embedded BT.656 synchronization.
+> > > -
+> > > -Example:
+> > > -
+> > > -   hdmi_receiver@4c {
+> > > -           compatible =3D "adi,adv7611";
+> > > -           /*
+> > > -            * The edid page will be accessible @ 0x66 on the I2C bus=
+. All
+> > > -            * other maps will retain their default addresses.
+> > > -            */
+> > > -           reg =3D <0x4c>, <0x66>;
+> > > -           reg-names =3D "main", "edid";
+> > > -
+> > > -           reset-gpios =3D <&ioexp 0 GPIO_ACTIVE_LOW>;
+> > > -           hpd-gpios =3D <&ioexp 2 GPIO_ACTIVE_HIGH>;
+> > > -
+> > > -           #address-cells =3D <1>;
+> > > -           #size-cells =3D <0>;
+> > > -
+> > > -           default-input =3D <0>;
+> > > -
+> > > -           port@0 {
+> > > -                   reg =3D <0>;
+> > > -           };
+> > > -           port@1 {
+> > > -                   reg =3D <1>;
+> > > -                   hdmi_in: endpoint {
+> > > -                           remote-endpoint =3D <&ccdc_in>;
+> > > -                   };
+> > > -           };
+> > > -   };
+> > > diff --git a/Documentation/devicetree/bindings/media/i2c/adv7604.yaml=
+ b/Documentation/devicetree/bindings/media/i2c/adv7604.yaml
+> > > new file mode 100644
+> > > index 0000000000000000..d354fd8e0cc88d93
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/media/i2c/adv7604.yaml
+> > > @@ -0,0 +1,171 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/media/i2c/adv7604.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Analog Devices ADV7604/11/12 video decoder with HDMI receiver
+> > > +
+> > > +maintainers:
+> > > +  - Hans Verkuil <hverkuil-cisco@xs4all.nl>
+> > > +
+> > > +description:
+> > > +  The ADV7604 and ADV7611/12 are multiformat video decoders with an =
+integrated
+> > > +  HDMI receiver. The ADV7604 has four multiplexed HDMI inputs and on=
+e analog
+> > > +  input, and the ADV7611 has one HDMI input and no analog input. The=
+ 7612 is
+> > > +  similar to the 7611 but has 2 HDMI inputs.
+> > > +
+> > > +  These device tree bindings support the ADV7611/12 only at the mome=
+nt.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    items:
+> > > +      - enum:
+> > > +        - adi,adv7611
+> > > +        - adi,adv7612
+> > > +
+> > > +  reg:
+> > > +    minItems: 1
+> > > +    maxItems: 13
+> > > +
+> > > +  reg-names:
+> > > +    items:
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> > > +      - enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, e=
+did, hdmi, test, cp, vdp ]
+> >
+> > This can be simplified to:
+> >
+> > items:
+> >   enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, edid, hdmi=
+, test, cp, vdp ]
+>
+> I tried this at first,
+>
+> properties:
+>   reg-names:
+>     items:
+>       enum: [ main, avlink, cec, infoframe, esdp, dpp, afe, rep, edid, hd=
+mi, test, cp, vdp ]
+>
+> But running the dt_binding_check on it fails with,
+>
+> $ make dt_binding_check DT_SCHEMA_FILES=3DDocumentation/devicetree/bindin=
+gs/media/i2c/adv7604.yaml
+>   CHKDT   Documentation/devicetree/bindings/media/i2c/adv7604.yaml
+> /mnt/build/linux/Documentation/devicetree/bindings/media/i2c/adv7604.yaml=
+: properties:reg-names:items: {'enum': ['main', 'avlink', 'cec', 'infoframe=
+', 'esdp', 'dpp', 'afe', 'rep', 'edid', 'hdmi', 'test', 'cp', 'vdp']} is no=
+t of type 'array'
+> make[1]: *** [Documentation/devicetree/bindings/Makefile:20: Documentatio=
+n/devicetree/bindings/media/i2c/adv7604.example.dts] Error 1
+> make: *** [Makefile:1334: dt_binding_check] Error 2
+>
+> What am I missing? I'm using latest master of dt-schema [1] if it makes
+> any difference.
 
-In order to be able to call the remote subdevice operation cache the
-index of the remote pad connected to the single CSI-2 input port.
+If 'items' is not an array, you need 'minItems' and 'maxItems' since
+there is no size.
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/platform/rcar-vin/rcar-csi2.c | 74 +++++++++++++++++++--
- 1 file changed, 67 insertions(+), 7 deletions(-)
+> 1. 1330cddcba757bee ("schemas: Make additionalProperties/unevaluatedPrope=
+rties explicit")
+>
+> >
+> > (Make items a schema applying to all items, rather than a list)
+> >
+> > Though we may want to enforce 'main' is first with:
+> >
+> > minItems: 1
+> > maxItems: 13
+> > items:
+> >   - const: main
+> >
+> > These 2 can be combined under an 'allOf'.
+>
+> I also had this idea by dropping main from the list of enums for all but
+> the first one. But I can't find any argument for why main needs to go
+> first, but I agree it feels like the right thing.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index c6cc4f473a07..d39f312ebff9 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -364,6 +364,7 @@ struct rcar_csi2 {
- 	struct v4l2_async_notifier notifier;
- 	struct v4l2_async_subdev asd;
- 	struct v4l2_subdev *remote;
-+	unsigned int remote_pad;
- 
- 	struct v4l2_mbus_framefmt mf;
- 
-@@ -409,13 +410,14 @@ static void rcsi2_exit_standby(struct rcar_csi2 *priv)
- 	reset_control_deassert(priv->rstc);
- }
- 
--static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
-+static int rcsi2_wait_phy_start(struct rcar_csi2 *priv,
-+				unsigned int active_lanes)
- {
- 	unsigned int timeout;
- 
- 	/* Wait for the clock and data lanes to enter LP-11 state. */
- 	for (timeout = 0; timeout <= 20; timeout++) {
--		const u32 lane_mask = (1 << priv->lanes) - 1;
-+		const u32 lane_mask = (1 << active_lanes) - 1;
- 
- 		if ((rcsi2_read(priv, PHCLM_REG) & PHCLM_STOPSTATECKL)  &&
- 		    (rcsi2_read(priv, PHDLM_REG) & lane_mask) == lane_mask)
-@@ -447,7 +449,8 @@ static int rcsi2_set_phypll(struct rcar_csi2 *priv, unsigned int mbps)
- 	return 0;
- }
- 
--static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
-+static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp,
-+			   unsigned int active_lanes)
- {
- 	struct v4l2_subdev *source;
- 	struct v4l2_ctrl *ctrl;
-@@ -472,15 +475,63 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
- 	 * bps = link_freq * 2
- 	 */
- 	mbps = v4l2_ctrl_g_ctrl_int64(ctrl) * bpp;
--	do_div(mbps, priv->lanes * 1000000);
-+	do_div(mbps, active_lanes * 1000000);
- 
- 	return mbps;
- }
- 
-+static int rcsi2_config_active_lanes(struct rcar_csi2 *priv,
-+				     unsigned int *active_lanes)
-+{
-+	struct v4l2_mbus_config mbus_config = { 0 };
-+	unsigned int num_lanes = (-1U);
-+	int ret;
-+
-+	*active_lanes = priv->lanes;
-+	ret = v4l2_subdev_call(priv->remote, pad, get_mbus_config,
-+			       priv->remote_pad, &mbus_config);
-+	if (ret == -ENOIOCTLCMD) {
-+		dev_dbg(priv->dev, "No remote mbus configuration available\n");
-+		return 0;
-+	}
-+
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to get remote mbus configuration\n");
-+		return ret;
-+	}
-+
-+	if (mbus_config.type != V4L2_MBUS_CSI2_DPHY) {
-+		dev_err(priv->dev, "Unsupported media bus type %u\n",
-+			mbus_config.type);
-+		return -EINVAL;
-+	}
-+
-+	if (mbus_config.flags & V4L2_MBUS_CSI2_1_LANE)
-+		num_lanes = 1;
-+	else if (mbus_config.flags & V4L2_MBUS_CSI2_2_LANE)
-+		num_lanes = 2;
-+	else if (mbus_config.flags & V4L2_MBUS_CSI2_3_LANE)
-+		num_lanes = 3;
-+	else if (mbus_config.flags & V4L2_MBUS_CSI2_4_LANE)
-+		num_lanes = 4;
-+
-+	if (num_lanes > priv->lanes) {
-+		dev_err(priv->dev,
-+			"Unsupported mbus config: too many data lanes %u\n",
-+			num_lanes);
-+		return -EINVAL;
-+	}
-+
-+	*active_lanes = num_lanes;
-+
-+	return 0;
-+}
-+
- static int rcsi2_start_receiver(struct rcar_csi2 *priv)
- {
- 	const struct rcar_csi2_format *format;
- 	u32 phycnt, vcdt = 0, vcdt2 = 0, fld = 0;
-+	unsigned int active_lanes;
- 	unsigned int i;
- 	int mbps, ret;
- 
-@@ -522,10 +573,18 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
- 			fld |= FLD_FLD_NUM(1);
- 	}
- 
-+	/*
-+	 * Get the number of active data lanes inspecting the remote mbus
-+	 * configuration.
-+	 */
-+	ret = rcsi2_config_active_lanes(priv, &active_lanes);
-+	if (ret)
-+		return ret;
-+
- 	phycnt = PHYCNT_ENABLECLK;
--	phycnt |= (1 << priv->lanes) - 1;
-+	phycnt |= (1 << active_lanes) - 1;
- 
--	mbps = rcsi2_calc_mbps(priv, format->bpp);
-+	mbps = rcsi2_calc_mbps(priv, format->bpp, active_lanes);
- 	if (mbps < 0)
- 		return mbps;
- 
-@@ -572,7 +631,7 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
- 	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ);
- 	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ | PHYCNT_RSTZ);
- 
--	ret = rcsi2_wait_phy_start(priv);
-+	ret = rcsi2_wait_phy_start(priv, active_lanes);
- 	if (ret)
- 		return ret;
- 
-@@ -749,6 +808,7 @@ static int rcsi2_notify_bound(struct v4l2_async_notifier *notifier,
- 	}
- 
- 	priv->remote = subdev;
-+	priv->remote_pad = pad;
- 
- 	dev_dbg(priv->dev, "Bound %s pad: %d\n", subdev->name, pad);
- 
--- 
-2.27.0
+For DT we want the order defined as much as possible which is usually
+required entries first, then optional entries. Unfortunately there's
+no way in json-schema to express entries may be missing from a list.
 
+Rob
