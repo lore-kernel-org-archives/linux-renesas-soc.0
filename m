@@ -2,136 +2,156 @@ Return-Path: <SRS0=eQbE=AZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EB2C433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 067BBC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:54:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CB68224B2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:45:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o7Zg0wey"
+	by mail.kernel.org (Postfix) with ESMTP id E3CC0224D4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:54:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726050AbgGNNpN (ORCPT
+        id S1726762AbgGNNyy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Jul 2020 09:45:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47192 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbgGNNpM (ORCPT
+        Tue, 14 Jul 2020 09:54:54 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:46517 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725906AbgGNNyx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Jul 2020 09:45:12 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2A40C061794
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Jul 2020 06:45:10 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id f139so6121668wmf.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Jul 2020 06:45:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=smSfqWzZJxpTQw/VqREmipLrv4Sx7Dys34CbnDlAU7E=;
-        b=o7Zg0weyxdSjrD0g+eqgXHWEfH1xUQCcFTXIZpziuL+Ae/jug80qQ+38INEd+CeNk3
-         OUVkxKRnZx5Z+CCK0LlUJpo2dx5CtPOE/PFy4Y0lIrP7fVs5Zn6L2h+f1Be3FKlF2Vj9
-         EgBToUVUcXEue4hVPV5YVs1mCyJRsct0jGA23IhQyB/fVLwQ+hBt7d3acmjW4eIyOi5y
-         HgpArNzY9DLbtCP5MG7D5EviZLSLvoQvGJ8BklMgjmnU26hb2iWIlp7lUPpYjJUWOkSu
-         3QXpJh7UZ2HMKB5/6TLKPoDaNWwSm6u8QqF+KQRI9FxzdpxYmieTSTXacwN8CGQB4Zzz
-         S2dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=smSfqWzZJxpTQw/VqREmipLrv4Sx7Dys34CbnDlAU7E=;
-        b=qQXAbZtq4Y577U7BERiObYnYa+c+NFzewNIiRHBm/4NUedZC9tjPQE3aJJi6oshVBt
-         fVRi+Vhhm1KZWba+SOJt6tXwizQQj9OHxORnmuRnKNWd+/xkuy4/gTBfwyAmT96qe4eX
-         zPA8jRfwHnGHVGdLdPnkNJZh1T93fbrKNftfPIUjJjbSxVBBfgDqHDhBqugVmf+GlxMh
-         tLPROqO4wY2x8Ark+cXLOU0Dg9HSD5E1qBZhXt+SKt77irLK/gu2i+Ks2vubayUgLQHo
-         qiTgLvedCqTGOIsHc9lugAzML7XlK4eK4kwZ7Tsdkc7xQJF+gNJhzOlH5J1ujj7SQ2Ur
-         8aPA==
-X-Gm-Message-State: AOAM533DsPlmv9mWegXuE2/eyWLWva4fxHDO2eX2ipjjzVHHq4rWsQH/
-        W4KQ6euDVZcLdhDJX359P8TCWw==
-X-Google-Smtp-Source: ABdhPJziCnTeG9/CGGJq5nJ2MGQ74Vd+XsXnjOYZY5B8Y+Ou8W9YV+1+WO3chgu59IGqHE4wX6r9Lg==
-X-Received: by 2002:a05:600c:2249:: with SMTP id a9mr4415026wmm.163.1594734308586;
-        Tue, 14 Jul 2020 06:45:08 -0700 (PDT)
-Received: from dell ([2.31.163.61])
-        by smtp.gmail.com with ESMTPSA id z132sm4901605wmb.21.2020.07.14.06.45.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jul 2020 06:45:07 -0700 (PDT)
-Date:   Tue, 14 Jul 2020 14:45:04 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     linus.walleij@linaro.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 20/25] pinctrl: pinctrl-rza1: Demote some kerneldoc
- headers and fix others
-Message-ID: <20200714134504.GA1398296@dell>
-References: <20200713144930.1034632-1-lee.jones@linaro.org>
- <20200713144930.1034632-21-lee.jones@linaro.org>
- <20200714131403.eguxpnzsioxfzzko@uno.localdomain>
+        Tue, 14 Jul 2020 09:54:53 -0400
+X-Originating-IP: 93.34.118.233
+Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 5C3C91C0002;
+        Tue, 14 Jul 2020 13:54:48 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund+renesas@ragnatech.se,
+        kieran.bingham@ideasonboard.com, dave.stevenson@raspberrypi.com,
+        hyun.kwon@xilinx.com, jmkrzyszt@gmail.com, robert.jarzmik@free.fr,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v6 0/9] v4l2-subdev: Introduce [g|s]et_mbus_format pad op
+Date:   Tue, 14 Jul 2020 15:58:03 +0200
+Message-Id: <20200714135812.55158-1-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200714131403.eguxpnzsioxfzzko@uno.localdomain>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, 14 Jul 2020, Jacopo Mondi wrote:
+Minor update to the ov6650 to address some of Janusz's comments there.
+(now in Cc with Robert for the pxa part. Sorry for missing that in the
+previous versions).
 
-> Hi Lee,
-> 
-> On Mon, Jul 13, 2020 at 03:49:25PM +0100, Lee Jones wrote:
-> > Some description blocks are void of any description/documentation,
-> > others are missing 'struct' identifiers, there are also a couple of
-> > misspellings of function parameter names.  Fix all of them.
-> >
-> > Fixes the following W=1 kernel build warning(s):
-> >
-> >  drivers/pinctrl/pinctrl-rza1.c:81: warning: cannot understand function prototype: 'struct rza1_bidir_pin '
-> >  drivers/pinctrl/pinctrl-rza1.c:90: warning: cannot understand function prototype: 'struct rza1_bidir_entry '
-> >  drivers/pinctrl/pinctrl-rza1.c:98: warning: cannot understand function prototype: 'struct rza1_swio_pin '
-> >  drivers/pinctrl/pinctrl-rza1.c:108: warning: cannot understand function prototype: 'struct rza1_swio_entry '
-> >  drivers/pinctrl/pinctrl-rza1.c:116: warning: cannot understand function prototype: 'struct rza1_pinmux_conf '
-> >  drivers/pinctrl/pinctrl-rza1.c:443: warning: cannot understand function prototype: 'struct rza1_mux_conf '
-> >  drivers/pinctrl/pinctrl-rza1.c:462: warning: cannot understand function prototype: 'struct rza1_port '
-> >  drivers/pinctrl/pinctrl-rza1.c:482: warning: cannot understand function prototype: 'struct rza1_pinctrl '
-> >  drivers/pinctrl/pinctrl-rza1.c:546: warning: Function parameter or member 'port' not described in 'rza1_pinmux_get_flags'
-> >  drivers/pinctrl/pinctrl-rza1.c:546: warning: Function parameter or member 'pin' not described in 'rza1_pinmux_get_flags'
-> >  drivers/pinctrl/pinctrl-rza1.c:546: warning: Function parameter or member 'func' not described in 'rza1_pinmux_get_flags'
-> >  drivers/pinctrl/pinctrl-rza1.c:546: warning: Function parameter or member 'rza1_pctl' not described in 'rza1_pinmux_get_flags'
-> >  drivers/pinctrl/pinctrl-rza1.c:575: warning: Function parameter or member 'port' not described in 'rza1_set_bit'
-> >  drivers/pinctrl/pinctrl-rza1.c:575: warning: Function parameter or member 'reg' not described in 'rza1_set_bit'
-> >  drivers/pinctrl/pinctrl-rza1.c:575: warning: Function parameter or member 'bit' not described in 'rza1_set_bit'
-> >  drivers/pinctrl/pinctrl-rza1.c:575: warning: Function parameter or member 'set' not described in 'rza1_set_bit'
-> >  drivers/pinctrl/pinctrl-rza1.c:672: warning: Function parameter or member 'rza1_pctl' not described in 'rza1_pin_mux_single'
-> >  drivers/pinctrl/pinctrl-rza1.c:672: warning: Excess function parameter 'pinctrl' description in 'rza1_pin_mux_single'
-> >
-> > Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> > Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > Cc: linux-renesas-soc@vger.kernel.org
-> > Signed-off-by: Lee Jones <lee.jones@linaro.org>
-> 
-> Thanks, at the time I had no real idea about the implications of
-> documenting with kerneldoc :)
+Quoting the previous cover letters:
 
-You and 1000 others! :D
+-------------------------------------------------------------------------------
+Most of the existing users are i2c camera drivers reporting a static media bus
+configuration though g_mbus_config. Porting them is performed in a single
+hopefully not controversial patch [2/8]
 
-Don't lose any sleep over it.
+Two existing users stand-out, and they've probably been developed together:
+pxa_camera and ov6650. Those have bee ported separately in single patches
+with extensive change logs as their operations semantic had to change to port
+them to use the new operations. Not having any of those two platforms, the
+changes have been compile-tested only.
 
-> Acked-by: Jacopo Mondi <jacopo@jmondi.org>
+The only existing users of the s|g_mbus_config ops are now the soc_camera based
+drivers currently living in staging.
 
-Thanks.
+The last three patches are similar to the ones posted in v2, with the exception
+that they have been updated to use the V4L2_MBUS_* flags as well.
+-------------------------------------------------------------------------------
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Will report again the use cases I'm trying to address here:
+------------------------------------------------------------------------------
+Quoting:
+https://patchwork.kernel.org/cover/10855919/
+"The use case this series cover is the following one:
+the Gen-3 R-Car boards include an ADV748x HDMI/CVBS to CSI-2 converter
+connected to its CSI-2 receivers. The ADV748x chip has recently gained support
+for routing both HDMI and analogue video streams through its 4 lanes TXA
+transmitter, specifically to support the Ebisu board that has a single CSI-2
+receiver, compared to all other Gen-3 board where the ADV748x TXes are connected
+to different CSI-2 receivers, and where analogue video is streamed out from the
+ADV748x single lane TXB transmitter.
+To properly support transmission of analogue video through TXA, the number of
+data lanes shall be dynamically reduced to 1, in order to comply with the MIPI
+CSI-2 minimum clock frequency requirements"
+
+During the discussion of the RFC, Dave reported another use case for media
+bus parameter negotiation on his platform:
+https://patchwork.kernel.org/patch/10855923/#22569149
+
+Hyun is now using this series to configure GMSL devices.
+------------------------------------------------------------------------------
+
+Thanks
+   j
+
+v5->v6:
+- Report V4L2_MBUS_DATA_ACTIVE_HIGH in ov6650 get_mbus_config
+- Check for the return value of get_mbus_config() at the end of
+  set_mbus_config() in ov6650 driver
+
+v4->v5:
+- Address Sakari's comment on documentation (s/should/shall)
+- Use a local variable for the number of active lanes in 9/9
+- Add Kieran's tags to 7/9 and 8/9
+- Fix a warning on operator precedence on 3/9
+
+v3->v4:
+- Remove g/s_mbus_config video operation
+- Adjust pxa quick capture interface to properly handle bus mastering
+- Reword the two new operations documentation
+
+v2->v3:
+- Re-use v4l2_mbus_config and V4L2_MBUS_* flags
+- Port existing drivers
+- Update adv748x and rcar-csi2 patches to use V4L2_MBUS_* flags
+
+v1->v2:
+- Address Sakari's comment to use unsigned int in place of bools
+- Add two new patches to address documentation
+- Adjust rcar-csi2 patch as much as possible according to Niklas comments
+- Add Niklas's tags
+
+
+
+Jacopo Mondi (9):
+  media: v4l2-subdev: Introduce [get|set]_mbus_config pad ops
+  media: i2c: Use the new get_mbus_config pad op
+  media: i2c: ov6650: Use new [get|set]_mbus_config ops
+  media: pxa_camera: Use the new set_mbus_config op
+  media: v4l2-subdev: Remove [s|g]_mbus_config video ops
+  staging: media: imx: Update TODO entry
+  media: i2c: adv748x: Adjust TXA data lanes number
+  media: i2c: adv748x: Implement get_mbus_config
+  media: rcar-csi2: Negotiate data lanes number
+
+ drivers/media/i2c/adv7180.c                 |   7 +-
+ drivers/media/i2c/adv748x/adv748x-core.c    |  31 +++-
+ drivers/media/i2c/adv748x/adv748x-csi2.c    |  31 ++++
+ drivers/media/i2c/adv748x/adv748x.h         |   1 +
+ drivers/media/i2c/ml86v7667.c               |   7 +-
+ drivers/media/i2c/mt9m001.c                 |   7 +-
+ drivers/media/i2c/mt9m111.c                 |   7 +-
+ drivers/media/i2c/ov6650.c                  |  56 ++++--
+ drivers/media/i2c/ov9640.c                  |   7 +-
+ drivers/media/i2c/tc358743.c                |   7 +-
+ drivers/media/i2c/tvp5150.c                 |   7 +-
+ drivers/media/platform/pxa_camera.c         | 189 ++++++--------------
+ drivers/media/platform/rcar-vin/rcar-csi2.c |  74 +++++++-
+ drivers/staging/media/imx/TODO              |   4 +
+ include/media/v4l2-subdev.h                 |  37 ++--
+ 15 files changed, 271 insertions(+), 201 deletions(-)
+
+--
+2.27.0
+
