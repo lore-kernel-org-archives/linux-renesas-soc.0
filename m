@@ -2,64 +2,207 @@ Return-Path: <SRS0=eQbE=AZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADFCC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 14:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A43ECC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 14:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 479F92225A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 14:00:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594735247;
-	bh=ICtTlO9Acy6HtQ1v1t1Ytavi6yhvX9/tEDcehzFBdtU=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=DAAsZuU18Z359qrzmkauoQiDzPseulFLAP2ljpTXYmahB/p9Cq995hLE7y7kTzW+M
-	 kt51fdp7iwRa3ycKcWKQ2BVD8lyVYbf5BfjI3EKhScgaR8UPmM8KwnNroNqktN2azT
-	 9TvtjiBpYUgOEy19LLxivt+9VsZ8ZjRlFJItss88=
+	by mail.kernel.org (Postfix) with ESMTP id 8B27721D7A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 14:25:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725981AbgGNOAq (ORCPT
+        id S1728329AbgGNOZj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Jul 2020 10:00:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37076 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbgGNOAq (ORCPT
+        Tue, 14 Jul 2020 10:25:39 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:48025 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725803AbgGNOZj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Jul 2020 10:00:46 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594735246;
-        bh=ICtTlO9Acy6HtQ1v1t1Ytavi6yhvX9/tEDcehzFBdtU=;
-        h=Subject:From:Date:To:From;
-        b=uxMPpNTxaajfI5k76+uenQmb/OByxoc0LcVofwXc1ozyjx1DN3px123ehv5Bh2shb
-         wLMAd4nRpzY9Hak+ITsSORtsoRGSZDr33qrih9anQzq3tkAYRY9az8CLjW2gD49mZ7
-         FE+AnoLyijDZoLOadSbjJ/3kIu+CNyMhEB4o/XEc=
+        Tue, 14 Jul 2020 10:25:39 -0400
+X-Originating-IP: 93.34.118.233
+Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 8261E24000E;
+        Tue, 14 Jul 2020 14:25:34 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-media@vger.kernel.org
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+        dave.stevenson@raspberrypi.com, dongchun.zhu@mediatek.com,
+        linux-renesas-soc@vger.kernel.org,
+        laurent.pinchart@ideasonboard.com,
+        roman.kovalivskyi@globallogic.com, Rob Herring <robh@kernel.org>,
+        Jacopo Mondi <jacopo@jmondi.org>
+Subject: [PATCH v2 1/3] dt-bindings: media: ov5647: Convert to json-schema
+Date:   Tue, 14 Jul 2020 16:28:54 +0200
+Message-Id: <20200714142856.58365-2-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200714142856.58365-1-jacopo+renesas@jmondi.org>
+References: <20200714142856.58365-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <159473524629.19079.11406680159444423853.git-patchwork-housekeeping@kernel.org>
-Date:   Tue, 14 Jul 2020 14:00:46 +0000
-To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v6] v4l2-subdev: Introduce [g|s]et_mbus_format pad op (2020-07-14T13:58:03)
-  Superseding: [v5] v4l2-subdev: Introduce [g|s]et_mbus_format pad op (2020-06-16T14:12:35):
-    [v5,01/10] media: v4l2-subdev: Introduce [get|set]_mbus_config pad ops
-    [v5,02/10] media: i2c: Use the new get_mbus_config pad op
-    [v5,03/10] media: i2c: ov6650: Use new [get|set]_mbus_config ops
-    [v5,04/10] media: pxa_camera: Use the new set_mbus_config op
-    [v5,05/10] media: v4l2-subdev: Remove [s|g]_mbus_config video ops
-    [v5,06/10] staging: media: imx: Update TODO entry
-    [v5,07/10] media: i2c: adv748x: Adjust TXA data lanes number
-    [v5,08/10] media: i2c: adv748x: Implement get_mbus_config
-    [v5,09/10] media: rcar-csi2: Negotiate data lanes number
+Convert the ov5647 image sensor bindings to DT schema and add
+the file entry to MAINTAINERS.
 
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+---
+ .../devicetree/bindings/media/i2c/ov5647.txt  | 35 --------
+ .../devicetree/bindings/media/i2c/ov5647.yaml | 82 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 3 files changed, 83 insertions(+), 35 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/ov5647.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/ov5647.yaml
 
+diff --git a/Documentation/devicetree/bindings/media/i2c/ov5647.txt b/Documentation/devicetree/bindings/media/i2c/ov5647.txt
+deleted file mode 100644
+index 22e44945b661..000000000000
+--- a/Documentation/devicetree/bindings/media/i2c/ov5647.txt
++++ /dev/null
+@@ -1,35 +0,0 @@
+-Omnivision OV5647 raw image sensor
+----------------------------------
+-
+-OV5647 is a raw image sensor with MIPI CSI-2 and CCP2 image data interfaces
+-and CCI (I2C compatible) control bus.
+-
+-Required properties:
+-
+-- compatible		: "ovti,ov5647".
+-- reg			: I2C slave address of the sensor.
+-- clocks		: Reference to the xclk clock.
+-
+-The common video interfaces bindings (see video-interfaces.txt) should be
+-used to specify link to the image data receiver. The OV5647 device
+-node should contain one 'port' child node with an 'endpoint' subnode.
+-
+-Endpoint node mandatory properties:
+-
+-- remote-endpoint: A phandle to the bus receiver's endpoint node.
+-
+-Example:
+-
+-	i2c@2000 {
+-		...
+-		ov: camera@36 {
+-			compatible = "ovti,ov5647";
+-			reg = <0x36>;
+-			clocks = <&camera_clk>;
+-			port {
+-				camera_1: endpoint {
+-					remote-endpoint = <&csi1_ep1>;
+-				};
+-			};
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/media/i2c/ov5647.yaml b/Documentation/devicetree/bindings/media/i2c/ov5647.yaml
+new file mode 100644
+index 000000000000..067e222e0c7c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/ov5647.yaml
+@@ -0,0 +1,82 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/i2c/ov5647.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Omnivision OV5647 raw image sensor
++
++maintainers:
++  - Dave Stevenson <dave.stevenson@raspberrypi.com>
++
++description: |-
++  OV5647 is a raw image sensor with MIPI CSI-2 and CCP2 image data interfaces
++  and CCI (I2C compatible) control bus.
++
++properties:
++  compatible:
++    const: ovti,ov5647
++
++  reg:
++    description: I2C device address
++    maxItems: 1
++
++  clocks:
++    description: Reference to the xclk clock
++    maxItems: 1
++
++  port:
++    type: object
++    description: |-
++      Should contain one endpoint sub-node used to model connection to the
++      video receiver according to the specification defined in
++      Documentation/devicetree/bindings/media/video-interfaces.txt
++
++    properties:
++      endpoint:
++        type: object
++
++        properties:
++          remote-endpoint:
++            description: |-
++              phandle to the video receiver input port
++
++        required:
++          - remote-endpoint
++
++        additionalProperties: false
++
++    required:
++      - endpoint
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - port
++
++additionalProperties: false
++
++examples:
++  - |
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        ov5647: camera@36 {
++            compatible = "ovti,ov5647";
++            reg = <0x36>;
++            clocks = <&camera_clk>;
++
++            port {
++                camera_out: endpoint {
++                    remote-endpoint = <&csi1_ep1>;
++                };
++            };
++        };
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2730af1265ea..1742fa1a88cd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12612,6 +12612,7 @@ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ T:	git git://linuxtv.org/media_tree.git
+ F:	drivers/media/i2c/ov5647.c
++F:	Documentation/devicetree/bindings/media/i2c/ov5647.yaml
+ 
+ OMNIVISION OV5670 SENSOR DRIVER
+ M:	Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+2.27.0
+
