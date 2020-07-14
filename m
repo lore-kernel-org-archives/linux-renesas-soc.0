@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF73C433ED
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E21E1C433E3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:54:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99B8822509
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:55:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC641224D4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 13:54:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbgGNNzH (ORCPT
+        id S1726801AbgGNNyz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Jul 2020 09:55:07 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:58099 "EHLO
+        Tue, 14 Jul 2020 09:54:55 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:45125 "EHLO
         relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727096AbgGNNzE (ORCPT
+        with ESMTP id S1726766AbgGNNyz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Jul 2020 09:55:04 -0400
+        Tue, 14 Jul 2020 09:54:55 -0400
 X-Originating-IP: 93.34.118.233
 Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id BA7811C0005;
-        Tue, 14 Jul 2020 13:55:00 +0000 (UTC)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 6EBE61C0005;
+        Tue, 14 Jul 2020 13:54:51 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
         sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com
@@ -34,9 +34,9 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         kieran.bingham@ideasonboard.com, dave.stevenson@raspberrypi.com,
         hyun.kwon@xilinx.com, jmkrzyszt@gmail.com, robert.jarzmik@free.fr,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v6 5/9] media: v4l2-subdev: Remove [s|g]_mbus_config video ops
-Date:   Tue, 14 Jul 2020 15:58:08 +0200
-Message-Id: <20200714135812.55158-6-jacopo+renesas@jmondi.org>
+Subject: [PATCH v6 1/9] media: v4l2-subdev: Introduce [get|set]_mbus_config pad ops
+Date:   Tue, 14 Jul 2020 15:58:04 +0200
+Message-Id: <20200714135812.55158-2-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200714135812.55158-1-jacopo+renesas@jmondi.org>
 References: <20200714135812.55158-1-jacopo+renesas@jmondi.org>
@@ -47,43 +47,63 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-With all sensor and platform drivers now converted to use the new
-get_mbus_config and set_mbus_config pad operations, remove the
-deprecated video operations g_mbus_config and s_mbus_config.
+Introduce two new pad operations to allow retrieving and configuring the
+media bus parameters on a subdevice pad.
+
+The newly introduced operations aims to replace the s/g_mbus_config video
+operations, which have been on their way for deprecation since a long
+time.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- include/media/v4l2-subdev.h | 10 ----------
- 1 file changed, 10 deletions(-)
+ include/media/v4l2-subdev.h | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
 diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
-index d8b9d5735307..98975248a033 100644
+index f7fe78a6f65a..d8b9d5735307 100644
 --- a/include/media/v4l2-subdev.h
 +++ b/include/media/v4l2-subdev.h
-@@ -402,12 +402,6 @@ struct v4l2_mbus_frame_desc {
+@@ -670,6 +670,29 @@ struct v4l2_subdev_pad_config {
   *
-  * @query_dv_timings: callback for VIDIOC_QUERY_DV_TIMINGS() ioctl handler code.
-  *
-- * @g_mbus_config: get supported mediabus configurations
-- *
-- * @s_mbus_config: set a certain mediabus configuration. This operation is added
-- *	for compatibility with soc-camera drivers and should not be used by new
-- *	software.
-- *
-  * @s_rx_buffer: set a host allocated memory buffer for the subdev. The subdev
-  *	can adjust @size to a lower value and must not write more data to the
-  *	buffer starting at @data than the original value of @size.
-@@ -435,10 +429,6 @@ struct v4l2_subdev_video_ops {
- 			struct v4l2_dv_timings *timings);
- 	int (*query_dv_timings)(struct v4l2_subdev *sd,
- 			struct v4l2_dv_timings *timings);
--	int (*g_mbus_config)(struct v4l2_subdev *sd,
--			     struct v4l2_mbus_config *cfg);
--	int (*s_mbus_config)(struct v4l2_subdev *sd,
--			     const struct v4l2_mbus_config *cfg);
- 	int (*s_rx_buffer)(struct v4l2_subdev *sd, void *buf,
- 			   unsigned int *size);
+  * @set_frame_desc: set the low level media bus frame parameters, @fd array
+  *                  may be adjusted by the subdev driver to device capabilities.
++ *
++ * @get_mbus_config: get the media bus configuration of a remote sub-device.
++ *		     The media bus configuration is usually retrieved from the
++ *		     firmware interface at sub-device probe time, immediately
++ *		     applied to the hardware and eventually adjusted by the
++ *		     driver. Remote sub-devices (usually video receivers) shall
++ *		     use this operation to query the transmitting end bus
++ *		     configuration in order to adjust their own one accordingly.
++ *		     Callers should make sure they get the most up-to-date as
++ *		     possible configuration from the remote end, likely calling
++ *		     this operation as close as possible to stream on time. The
++ *		     operation shall fail if the pad index it has been called on
++ *		     is not valid.
++ *
++ * @set_mbus_config: set the media bus configuration of a remote sub-device.
++ *		     This operations is intended to allow, in combination with
++ *		     the get_mbus_config operation, the negotiation of media bus
++ *		     configuration parameters between media sub-devices. The
++ *		     operation shall not fail if the requested configuration is
++ *		     not supported, but the driver shall update the content of
++ *		     the %config argument to reflect what has been actually
++ *		     applied to the hardware. The operation shall fail if the
++ *		     pad index it has been called on is not valid.
+  */
+ struct v4l2_subdev_pad_ops {
+ 	int (*init_cfg)(struct v4l2_subdev *sd,
+@@ -710,6 +733,10 @@ struct v4l2_subdev_pad_ops {
+ 			      struct v4l2_mbus_frame_desc *fd);
+ 	int (*set_frame_desc)(struct v4l2_subdev *sd, unsigned int pad,
+ 			      struct v4l2_mbus_frame_desc *fd);
++	int (*get_mbus_config)(struct v4l2_subdev *sd, unsigned int pad,
++			       struct v4l2_mbus_config *config);
++	int (*set_mbus_config)(struct v4l2_subdev *sd, unsigned int pad,
++			       struct v4l2_mbus_config *config);
  };
+ 
+ /**
 -- 
 2.27.0
 
