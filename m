@@ -3,91 +3,117 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0941AC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 13:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24710C433E3
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 14:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D8A5920578
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 13:38:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C7AE205CB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 14:06:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731855AbgGONiK (ORCPT
+        id S1732032AbgGOOGa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 09:38:10 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44854 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731790AbgGONiK (ORCPT
+        Wed, 15 Jul 2020 10:06:30 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:35955 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727822AbgGOOGa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Jul 2020 09:38:10 -0400
-Received: by mail-oi1-f193.google.com with SMTP id k6so2190145oij.11;
-        Wed, 15 Jul 2020 06:38:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rpk7FoJIXYoDhquzw41W4uL8Bx2a/st8jnaCqpOsLRM=;
-        b=k4UPQtKX6p3MdHVQtXU8l4vD6W5kFBkz6h/c4RmYVDEJZ08acL++W+K9QHlYK/dgrk
-         vSpIjOdyBfKvflSBF+7gvK3ngVKS2EVwBrhDPzbtqY5Zl2If5Ev9jORm7ZpUPncaEL7u
-         +yguhKoSz8DkZxPzRpXKE4P2MoSb7+LcsJ5KV5rZuZPXMJsuMb6G8ymf9sID+ySc2J43
-         lmkomHC5lJIt1elyLJuPQQTFL7sesFHsPORVB1AnpxSKU4UsulXhj6A5DNt+5TqNYTfY
-         cynhquYOg1BUWjcLy8Ur6NkA5XlIEQzv1+xDvyNj0f0bgZn+ceJ6oiglRQAnRFxWKuYK
-         m8KQ==
-X-Gm-Message-State: AOAM532u6Z6b+F+qsUEpSgTlTIA/G5StxymzKcjONasrmPYBIElJE2jL
-        KuAKg8HD9AfwaBaXflS3uYw4MnIypxCqu29u4Jc=
-X-Google-Smtp-Source: ABdhPJx1CUlhcD4Tr/xaysC9VroMO0L/051qAqViZDTkfJwuC4MVmSl9LK3B9crOXglBMXe9jUrp0udBT4APMg+COM8=
-X-Received: by 2002:aca:ac10:: with SMTP id v16mr7418357oie.153.1594820289414;
- Wed, 15 Jul 2020 06:38:09 -0700 (PDT)
+        Wed, 15 Jul 2020 10:06:30 -0400
+X-Originating-IP: 93.34.118.233
+Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 0F97BFF813;
+        Wed, 15 Jul 2020 14:06:25 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-media@vger.kernel.org
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+        laurent.pinchart@ideasonboard.com,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/8] dt-bindings: media: i2c: Convert to json-schema
+Date:   Wed, 15 Jul 2020 16:09:43 +0200
+Message-Id: <20200715140951.90753-1-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-References: <20200714123419.3390-1-aford173@gmail.com> <20200714123419.3390-2-aford173@gmail.com>
- <CAMuHMdVS6Hf344EbyroGCWR_yxtO3DZh=JUJhauy5OeVG2hajA@mail.gmail.com> <CAHCN7xKpXErWc8Bjji1==8+AL-9oeFn3QsP-qmE4QD2NpGt=3Q@mail.gmail.com>
-In-Reply-To: <CAHCN7xKpXErWc8Bjji1==8+AL-9oeFn3QsP-qmE4QD2NpGt=3Q@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 15 Jul 2020 15:37:58 +0200
-Message-ID: <CAMuHMdUy8KApTe=hKVsqaEhSJzne+ZwcWT8fcLu+2OdNDTLiYw@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] dt-bindings: arm: renesas: Document beacon-rzg2m
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Adam,
+Convert to json schema the bindings file for the following sensor
+drivers:
 
-On Wed, Jul 15, 2020 at 3:27 PM Adam Ford <aford173@gmail.com> wrote:
-> On Wed, Jul 15, 2020 at 3:58 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Tue, Jul 14, 2020 at 2:34 PM Adam Ford <aford173@gmail.com> wrote:
-> > > Beacon EmbeddedWorks in introducing a development kit based on the
-> > > Renesas RZ/G2M platform.  This patch adds the entry to the bindings
-> > > list.
-> > >
-> > > Signed-off-by: Adam Ford <aford173@gmail.com>
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > i.e. will queue in renesas-devel for v5.9, with the typo pointed out
-> > by Sergei fixed.
->
-> Since you pointed out some stuff I should correct in patch 1/2.
-> Should I just re-submit the first patch by itself, or do you want me
-> to submit 2/2 with these fixes?
+- ov5640
+- ov5645
+- ov772x
+- mt9v111
+- imx214
+- imx274
+- imx290
 
-Just resubmitting the first patch is fine for me.
+On top of the conversion to yaml, rename the files to include the
+vendor prefix (I kept this separate as I'm not sure it's actually desired).
 
-Gr{oetje,eeting}s,
+The series requires:
+[PATCH v3 0/3] dt-bidings: media: ov5647 bindings + small fix
+which converts the ov5647 bindings to yaml which I sent separately
+as it was already in review.
 
-                        Geert
+Individual maintainers Cc-ed for each single patch where available.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Thanks
+  j
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Jacopo Mondi (8):
+  dt-bindings: media: ov5640: Convert to json-schema
+  dt-bindings: media: ov5645: Convert to json-schema
+  dt-bindings: media: mt9v111: Convert to json-schema
+  dt-bindings: media: imx290: Convert to json-schema
+  dt-bindings: media: imx274: Convert to json-schema
+  dt-bindings: media: imx214: Convert to json-schema
+  dt-bindings: media: ov772x: Convert to json-schema
+  dt-bindings: media: i2c: Add prefix to yaml bindings
+
+ .../bindings/media/i2c/aptina,mt9v111.txt     |  46 -----
+ .../bindings/media/i2c/aptina,mt9v111.yaml    |  87 +++++++++
+ .../devicetree/bindings/media/i2c/imx274.txt  |  33 ----
+ .../devicetree/bindings/media/i2c/imx290.txt  |  57 ------
+ .../devicetree/bindings/media/i2c/ov5640.txt  |  92 ---------
+ .../devicetree/bindings/media/i2c/ov5645.txt  |  54 ------
+ .../devicetree/bindings/media/i2c/ov772x.txt  |  40 ----
+ .../bindings/media/i2c/ovti,ov5640.yaml       | 181 ++++++++++++++++++
+ .../bindings/media/i2c/ovti,ov5645.yaml       | 123 ++++++++++++
+ .../i2c/{ov5647.yaml => ovti,ov5647.yaml}     |   0
+ .../bindings/media/i2c/ovti,ov772x.yaml       |  89 +++++++++
+ .../i2c/{ov8856.yaml => ovti,ov8856.yaml}     |   0
+ .../bindings/media/i2c/sony,imx214.txt        |  53 -----
+ .../bindings/media/i2c/sony,imx214.yaml       | 124 ++++++++++++
+ .../i2c/{imx219.yaml => sony,imx219.yaml}     |   0
+ .../bindings/media/i2c/sony,imx274.yaml       |  74 +++++++
+ .../bindings/media/i2c/sony,imx290.yaml       | 124 ++++++++++++
+ MAINTAINERS                                   |  25 ++-
+ 18 files changed, 819 insertions(+), 383 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/imx274.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/imx290.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/ov5640.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/ov5645.txt
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/ov772x.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/ovti,ov5640.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/ovti,ov5645.yaml
+ rename Documentation/devicetree/bindings/media/i2c/{ov5647.yaml => ovti,ov5647.yaml} (100%)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
+ rename Documentation/devicetree/bindings/media/i2c/{ov8856.yaml => ovti,ov8856.yaml} (100%)
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx214.yaml
+ rename Documentation/devicetree/bindings/media/i2c/{imx219.yaml => sony,imx219.yaml} (100%)
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx274.yaml
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx290.yaml
+
+--
+2.27.0
+
