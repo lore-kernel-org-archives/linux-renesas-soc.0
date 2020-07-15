@@ -6,87 +6,83 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9562C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 19:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B3FC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 20:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8BBC62065D
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 19:25:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D07C52065F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 20:10:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594841102;
-	bh=e7/zdR4sGg9DMQYM8vH2pH6wFMjDqW6xhYxwXMhIQBw=;
+	s=default; t=1594843840;
+	bh=veD3gQwtR5xBNbzaWSM5ZRATUYDWWzB7tnHYGbi+MEs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tHnKVdL2/jrN7YOvhXZ+xgCxBhcUd+MDFTPTHknSr4nGFgroQV4G1zGU63f+wRcCt
-	 0WwIrWhLRhxQlyvb6bZWuPHcs/bHe+Dx0/20nvWcmXxufhGUZMgrtl105FVC1B2pUp
-	 QV6o9abe19u3nrbvo5F1D/ZEv+f+YzIOWc6ZSLMA=
+	b=lLx2xS2kNmmGuDL71KahWFbKPVzxuXm7kCgZ+AV/7KhMTQ4BhsgL5wqRRrJerRrV8
+	 ODeuFrzNvUNgvIHHFfUUYlg2ENuc18jdqEbBP79N7vfPJDBQBjZfEXIie4pVt79UbA
+	 6EYglVnGK8WGh1n78CNTcahoRpfbSc1wEQvYN1KA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbgGOTZC (ORCPT
+        id S1726878AbgGOUKk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 15:25:02 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:46170 "EHLO
+        Wed, 15 Jul 2020 16:10:40 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:37967 "EHLO
         mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726479AbgGOTZB (ORCPT
+        with ESMTP id S1726736AbgGOUKj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Jul 2020 15:25:01 -0400
-Received: by mail-io1-f66.google.com with SMTP id a12so3449501ion.13;
-        Wed, 15 Jul 2020 12:25:01 -0700 (PDT)
+        Wed, 15 Jul 2020 16:10:39 -0400
+Received: by mail-io1-f66.google.com with SMTP id l1so3625208ioh.5;
+        Wed, 15 Jul 2020 13:10:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=Av/nglgHYTh4wCaoP+Mdg19AlGfKhVEQACet9eEyJ+U=;
-        b=ENzIjbEPTEAOs/mVh9Mgj/UD7L6Mu5j8JV6+6Tl8DemAF0+1h4jox/8Oh0xHPU32Mr
-         TgM9Jb/zjNBtj+Cybw6AB2PNDYwZfReWDH6piNFVKPjvd/yQg0yflllsT4djnAFKxsCa
-         m3MltFcv0OVwpblwrPjL56dBjoNPjdH32ORenLusGhEOvxSr4ZfljoJJXh5ll4e7YpEB
-         GQFJe5jm0/dpUQCEZYWsakQYKGp1LaT4I1M35jPjhLY5XQovr/uMaPgev90gXPEMA3sV
-         kKtUPgUrqOdXEsOg1ZSwhqZWN8qShd62cSelktBF1p2UvhuvOI5934FYd8ceDkBsW4Ea
-         YiqA==
-X-Gm-Message-State: AOAM532FFEBIlA9oKOUDT6XLluz5nzVbZYvG3ar1XuPIJIEf9T9ewTlB
-        fU9afL5Uy3LWkLF1Hxy1zQ==
-X-Google-Smtp-Source: ABdhPJw+JKckZiWMOAV6s9bN5tbPRf6zRYcACbF2Zulp6ybuwhWjrcZ19V/SLqi1V5XEy8mp37hBFw==
-X-Received: by 2002:a5d:97d3:: with SMTP id k19mr844652ios.45.1594841100862;
-        Wed, 15 Jul 2020 12:25:00 -0700 (PDT)
+        bh=PZjB8/CMEETpBkbeRKx9ftE2fCGVRM7G1ohhFyo9PMg=;
+        b=krlWrOuPvUBKpsqSlMPM9n4x+pvxebZm/Zhi2yIj7xOaagG9Ut7Nx4Gwv7eb9kfTft
+         DjviPJXJB2yQ3JK/WL72ytpv3jPq/G6zJb8mUzo6tcGWx/OuL1ZqdWiWqPpmwkA8+HtF
+         im/2QPeXzEfSLMsHAT6ldWmjIBBqbAp7YHNXEJ9Jzu8e/z+X4BV0eeWWBvQXVZLiKNZF
+         cXFNU5qN45KM6QwfTAp8TKzkndMD85r7mrnx78UGUi+chsWgmif00BobW3hWt4vcI0Fv
+         zMh0nZA6psyGOuY8EGRgq//QVhGKMtkfnlPm0k3cypVty/eMaN+IbVTMOtihsTUSgedI
+         UGbA==
+X-Gm-Message-State: AOAM5338G3Sg5W7DdG1rvewc1RdaSrAyiaQKBKL1H323ewTGsNldYwl3
+        wDnqjZQoL5SfESdQIETpQ883ZoKTUg==
+X-Google-Smtp-Source: ABdhPJy6W+PX8HhKheesu2WdiQZ34JavrPknF9JZGonu6FiRXX7RyrwS3AnDpAPkyCihjlpTtoY0XA==
+X-Received: by 2002:a6b:f012:: with SMTP id w18mr1023275ioc.5.1594843838686;
+        Wed, 15 Jul 2020 13:10:38 -0700 (PDT)
 Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id d6sm1569647ioo.9.2020.07.15.12.24.59
+        by smtp.gmail.com with ESMTPSA id c9sm1509666ilm.57.2020.07.15.13.10.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 12:25:00 -0700 (PDT)
-Received: (nullmailer pid 679381 invoked by uid 1000);
-        Wed, 15 Jul 2020 19:24:59 -0000
-Date:   Wed, 15 Jul 2020 13:24:59 -0600
+        Wed, 15 Jul 2020 13:10:38 -0700 (PDT)
+Received: (nullmailer pid 740419 invoked by uid 1000);
+        Wed, 15 Jul 2020 20:10:37 -0000
+Date:   Wed, 15 Jul 2020 14:10:37 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     devicetree@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>, Zhang Rui <rui.zhang@intel.com>,
-        linux-pm@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
+Cc:     Chris Brandt <chris.brandt@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: thermal: rcar-thermal: Improve schema
- validation
-Message-ID: <20200715192459.GA679343@bogus>
-References: <20200619151541.15069-1-geert+renesas@glider.be>
+        linux-renesas-soc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: pinctrl: renesas,rza2-pinctrl: Convert to
+ json-schema
+Message-ID: <20200715201037.GA740389@bogus>
+References: <20200626143638.16512-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200619151541.15069-1-geert+renesas@glider.be>
+In-Reply-To: <20200626143638.16512-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, 19 Jun 2020 17:15:41 +0200, Geert Uytterhoeven wrote:
->   - Document missing "#thermal-sensor-cells",
->   - Factor out common required properties,
->   - "interrupts", "clocks", and "power-domains" are required on R-Mobile
->     APE6, too,
->   - Invert logic to simplify descriptions,
->   - Add "additionalProperties: false".
+On Fri, 26 Jun 2020 16:36:38 +0200, Geert Uytterhoeven wrote:
+> Convert the Renesas RZ/A2 combined Pin and GPIO controller Device Tree
+> binding documentation to json-schema.
 > 
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  .../bindings/thermal/rcar-thermal.yaml        | 53 ++++++++++++-------
->  1 file changed, 34 insertions(+), 19 deletions(-)
+>  .../bindings/pinctrl/renesas,rza2-pinctrl.txt |  87 ---------------
+>  .../pinctrl/renesas,rza2-pinctrl.yaml         | 100 ++++++++++++++++++
+>  2 files changed, 100 insertions(+), 87 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.txt
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
