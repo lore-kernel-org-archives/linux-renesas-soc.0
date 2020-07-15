@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3FC8C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 09:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D11C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 09:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6C8E2053B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 09:16:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A8AA206D5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 09:30:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730310AbgGOJQx (ORCPT
+        id S1730738AbgGOJac (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 05:16:53 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45093 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729592AbgGOJQx (ORCPT
+        Wed, 15 Jul 2020 05:30:32 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40061 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726988AbgGOJab (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Jul 2020 05:16:53 -0400
-Received: by mail-ot1-f65.google.com with SMTP id h1so911866otq.12
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2020 02:16:52 -0700 (PDT)
+        Wed, 15 Jul 2020 05:30:31 -0400
+Received: by mail-oi1-f195.google.com with SMTP id t198so1700164oie.7
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2020 02:30:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MRfnAWsqydd6pciKSNwgxu43TXF2fRvJxFUv2/iX85U=;
-        b=Gwe8vLtIzmqwIqHqUlGV6KvGK8aLYFkDe0UqkIrgIlVPAo5fMEXaVqm4MjvKhm0gsj
-         fJwjOdXs1x0dB+3QYWu2G6+r7T1FBc7hx//gg5T+RJa0Hr0jNiJ7NX7LSPkAmC8P6TCy
-         v8z2Y/9zklBhjZevilbT8SlYTkH3Oo8rd59SChOGIf1UIAZqPH46C91ils2UdqDzxG1J
-         wxUMZIDVkNmYKwJPIfW5hp+R/as5KDpGzaA90W95K4ZvjMyOJGY+QnYw/3d0aeO51K0w
-         zmrwlZXv2nfVs5k/abUSP6yWx3v7AGZc16Pl9QecYqFp4/FHw9KcnEeiS9Ja63PEykbG
-         n58Q==
-X-Gm-Message-State: AOAM532jUZEcHQaTjBguH17npyysT39EaRkgZWHWXaiZEjjlqEO6AbRJ
-        kQKlUH6LM1XN8dQMdVUYnZdHGqohJEXZ8zhlmLw=
-X-Google-Smtp-Source: ABdhPJx9NOaK5eJdgBGUPbUZRFuYB1FIY988KHPBWBErd3BciEpEbFouJhJn29i4mN31OTRvFpqiwPSFf+iO/+h4j50=
-X-Received: by 2002:a9d:1b0d:: with SMTP id l13mr7761716otl.145.1594804612257;
- Wed, 15 Jul 2020 02:16:52 -0700 (PDT)
+        bh=JuS5I7KEYQFSqVmWKoY6oLr3hFeFLtHkZO28nl6DOKo=;
+        b=FVWKHhBYNt/cU2b/OPkH1cysGyxLuF9/HtiBmRfbi4TYu3hG3XQx6Uma0iITxS2fPE
+         XmFguNYLxVsTauNNtF/xC1OV8FhZ6klwR1pE7bLnj2cJgxW3VmTdbcyKYHqCGggmsV5t
+         H2svGgxieAVxTHAIt8ID3knk+0gSQhZojfYDM7Zxy03/PLVvD8439UIE+met53i5AmYU
+         CoyHVw6d6BFradkqiuJ96wY3SDvpksdFiQ0amU20PMXbZwJjf2z9UqErhp9nA0bexUu5
+         5z+tF5L68bdZXZgE3axfjVn2hHaKirhY0CrK8MvKBW6uKyTZ/yUgRKO6OATZQ8ROCrCU
+         m8hQ==
+X-Gm-Message-State: AOAM5327ifnSHrKhOVzTbypbYw1MrICHbQckWJAiVJ8TlpO/6TnMYlti
+        F85RsDpLB0/HG0xWANvBbWhvADEXGOIh3au4AL4=
+X-Google-Smtp-Source: ABdhPJyZ7ex/xiy6dVvbhYdHUoqmbG6NZ50/tRyrGTFz6+phSxR+gvdv+LTMnG93PrcQrGBQJQdet78c0XMXy5uE7Wo=
+X-Received: by 2002:aca:5c41:: with SMTP id q62mr6789358oib.148.1594805430525;
+ Wed, 15 Jul 2020 02:30:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <1594382634-13714-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1594382634-13714-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1594382936-14114-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1594382936-14114-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 15 Jul 2020 11:16:41 +0200
-Message-ID: <CAMuHMdX1Hv8rq-WjSe5286GTcx34WWtURmqnGDOZxas5KMZKzg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: Fix SD Card/eMMC interface device
+Date:   Wed, 15 Jul 2020 11:30:16 +0200
+Message-ID: <CAMuHMdWTfmZb6ThBUsRTU_h=9Gt9krON8OVRwn5Y9Q5gV9J7nQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: shmobile: Fix SD Card/eMMC interface device
  node names
 To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
@@ -55,28 +55,34 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jul 10, 2020 at 2:04 PM Yoshihiro Shimoda
+On Fri, Jul 10, 2020 at 2:09 PM Yoshihiro Shimoda
 <yoshihiro.shimoda.uh@renesas.com> wrote:
 > Fix the device node names as "mmc@".
 >
-> Fixes: 663386c3e1aa ("arm64: dts: renesas: r8a774a1: Add SDHI nodes")
-> Fixes: 9b33e3001b67 ("arm64: dts: renesas: Initial r8a774b1 SoC device tree")
-> Fixes: 77223211f44d ("arm64: dts: renesas: r8a774c0: Add SDHI nodes")
-> Fixes: d9d67010e0c6 ("arm64: dts: r8a7795: Add SDHI support to dtsi")
-> Fixes: a513cf1e6457 ("arm64: dts: r8a7796: add SDHI nodes")
-> Fixes: 111cc9ace2b5 ("arm64: dts: renesas: r8a77961: Add SDHI nodes")
-> Fixes: f51746ad7d1f ("arm64: dts: renesas: Add Renesas R8A77961 SoC support")
-> Fixes: df863d6f95f5 ("arm64: dts: renesas: initial R8A77965 SoC device tree")
-> Fixes: 9aa3558a02f0 ("arm64: dts: renesas: ebisu: Add and enable SDHI device nodes")
-> Fixes: 83f18749c2f6 ("arm64: dts: renesas: r8a77995: Add SDHI (MMC) support")
+> Fixes: 66474697923c ("ARM: dts: r7s72100: add sdhi to device tree")
+> Fixes: a49f76cddaee ("ARM: dts: r7s9210: Add SDHI support")
+> Fixes: 43304a5f5106 ("ARM: shmobile: r8a73a4: tidyup DT node naming")
+> Fixes: 7d907894bfe3 ("ARM: shmobile: r8a7740: tidyup DT node naming")
+> Fixes: 3ab2ea5fd1ce ("ARM: dts: r8a7742: Add SDHI nodes")
+> Fixes: 63ce8a617b51 ("ARM: dts: r8a7743: Add SDHI controllers")
+> Fixes: b591e323b271 ("ARM: dts: r8a7744: Add SDHI nodes")
+> Fixes: d83010f87ab3 ("ARM: dts: r8a7744: Initial SoC device tree")
+> Fixes: 7079131ef9b9 ("ARM: dts: r8a7745: Add SDHI controllers")
+> Fixes: 0485da788028 ("ARM: dts: r8a77470: Add SDHI1 support")
+> Fixes: 15aa5a95e820 ("ARM: dts: r8a77470: Add SDHI0 support")
+> Fixes: f068cc816015 ("ARM: dts: r8a77470: Add SDHI2 support")
+> Fixes: 14e1d9147d96 ("ARM: shmobile: r8a7778: tidyup DT node naming")
+> Fixes: 2624705ceb7b ("ARM: shmobile: r8a7779: tidyup DT node naming")
+> Fixes: b718aa448378 ("ARM: shmobile: r8a7790: tidyup DT node naming")
+> Fixes: b7ed8a0dd4f1 ("ARM: shmobile: Add SDHI devices to r8a7791 DTSI")
+> Fixes: ce01b14ecf19 ("ARM: dts: r8a7792: add SDHI support")
+> Fixes: fc9ee228f500 ("ARM: dts: r8a7793: Add SDHI controllers")
+> Fixes: b8e8ea127d00 ("ARM: shmobile: r8a7794: add SDHI DT support")
+> Fixes: 33f6be3bf6b7 ("ARM: shmobile: sh73a0: tidyup DT node naming")
 > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-devel for v5.9.
-
-In the meantime we have r8a774e1.dtsi, too. As it doesn't make much sense
-to officially fix a commit that hasn't been pulled by arm-soc yet, I'll
-fix it in the commit that introduced the file.
 
 Gr{oetje,eeting}s,
 
