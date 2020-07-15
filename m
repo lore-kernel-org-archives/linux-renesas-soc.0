@@ -2,106 +2,94 @@ Return-Path: <SRS0=PQ6+=A2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5439C433E3
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 10:22:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 151A5C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 10:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A5856205CB
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 10:22:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="l26Njrlp"
+	by mail.kernel.org (Postfix) with ESMTP id EFDE5205CB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 10:21:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbgGOKWa (ORCPT
+        id S1728017AbgGOKVd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 06:22:30 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:49445 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726798AbgGOKW3 (ORCPT
+        Wed, 15 Jul 2020 06:21:33 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34546 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbgGOKVd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Jul 2020 06:22:29 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1594808549; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=ko3g57NhBIWKq4qu1jUjxFkit/z6wz9jriCusjnaDMU=;
- b=l26Njrlpn20WEoGzLM9zwcly2EbKtoJQPMo1iIeVdjmxY08dc5yIr7lRHxc6vnQ05zJGIpA9
- AoKdeK8RvN3i0d518Yrv9MFTK67RuBiCxKZXlW5Voz3H9B6vo18/6KBOXU15KbSD8r8fYUcP
- ftba+1Z+Nlj6zARaZ9pUq0bB14o=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyIyZjFhOCIsICJsaW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n12.prod.us-west-2.postgun.com with SMTP id
- 5f0ed8d2512812c070cbee86 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 15 Jul 2020 10:22:10
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id F36A3C433BA; Wed, 15 Jul 2020 10:22:09 +0000 (UTC)
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9BB90C433C9;
-        Wed, 15 Jul 2020 10:22:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9BB90C433C9
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Wed, 15 Jul 2020 06:21:33 -0400
+Received: by mail-oi1-f194.google.com with SMTP id e4so1829623oib.1;
+        Wed, 15 Jul 2020 03:21:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6inM0ocEyZQ5HchWw8zVdrmAmJqjlnWoNUy7SfSkBcE=;
+        b=meIiyqJUcAkSWwdFluY+XPfRnwJBwaOF3Dyr23Cp7d/DzqyOZ791+G2msQQbrlKdxw
+         8NnC5UugtdXi7eSllJn8hQA8BjLIkPDwIHRcDUDVlwerCuXbGuNCnwo+BCcPC1uzdN+l
+         i3jOV4+RzYDvABgeWqggD8nyS3JKhsFdOO7OKanhxNtd1QeVCHSJcXCjTZXe95y53nDN
+         Gbhzua+U99tlCu7d4N0X33rzFMYaAC9YMdhWH1iRe+LLyESberD3/cz+VpJGUuWUyn1L
+         iRObY8oSuxLKvI2nvmO7Zyjcqjf4kwUMm0/8MZJDI8awZMIKBG+90d8JoOi4+GFkKLAq
+         Iing==
+X-Gm-Message-State: AOAM530tYhetsPke71IvK7VC6ff/vsxn8qkUzPkXulsQyN+EPTuFY0vr
+        QoXWvnZRIDCSlIm9aaTCOzq+VdOta7CPAlTuDkE=
+X-Google-Smtp-Source: ABdhPJxYdI5rswCbbqKyGuRp4F+uj/OCEoqH521lJ2O2n+yEpcXSA2cgisjpKCexy5j/wlDx5/JSDUabZJAJaHhTISE=
+X-Received: by 2002:a05:6808:64a:: with SMTP id z10mr7225247oih.54.1594808492194;
+ Wed, 15 Jul 2020 03:21:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH 05/17] drivers: net: Fix trivial spelling
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20200609124610.3445662-6-kieran.bingham+renesas@ideasonboard.com>
-References: <20200609124610.3445662-6-kieran.bingham+renesas@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+References: <1594676120-5862-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1594676120-5862-8-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1594676120-5862-8-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 15 Jul 2020 12:21:21 +0200
+Message-ID: <CAMuHMdV4w75-CNiamJo_nxHBA2kugQj58edPYDh_dx-PN4Vx-w@mail.gmail.com>
+Subject: Re: [PATCH 7/9] arm64: dts: renesas: r8a774e1: Add GPIO device nodes
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
-        Jiri Kosina <trivial@kernel.org>,
-        Martin Habets <mhabets@solarflare.com>,
-        Shannon Nelson <snelson@pensando.io>,
-        Colin Ian King <colin.king@canonical.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Eric Dumazet <edumazet@google.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Wenwen Wang <wenwen@cs.uga.edu>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-        linux-kernel@vger.kernel.org (open list),
-        ath10k@lists.infradead.org (open list:QUALCOMM ATHEROS ATH10K WIRELESS
-        DRIVER),
-        linux-wireless@vger.kernel.org (open list:NETWORKING DRIVERS (WIRELESS))
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
-Message-Id: <20200715102209.F36A3C433BA@smtp.codeaurora.org>
-Date:   Wed, 15 Jul 2020 10:22:09 +0000 (UTC)
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Kieran Bingham <kieran.bingham+renesas@ideasonboard.com> wrote:
+On Mon, Jul 13, 2020 at 11:35 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+>
+> Add GPIO device nodes to the DT of the r8a774e1 SoC.
+>
+> Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-> The word 'descriptor' is misspelled throughout the tree.
-> 
-> Fix it up accordingly:
->     decriptors -> descriptors
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.9.
 
-I recommend splitting wan and wireless changes to separate patches as I
-cannot take changes to wan subsystem.
+Gr{oetje,eeting}s,
 
-Patch set to Changes Requested.
+                        Geert
 
 -- 
-https://patchwork.kernel.org/patch/11595487/
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
