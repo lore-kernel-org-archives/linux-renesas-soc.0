@@ -2,268 +2,106 @@ Return-Path: <SRS0=PQ6+=A2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 559ECC433E3
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 07:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07109C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 07:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3544A2065E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 07:09:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8DB32064C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 07:30:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728832AbgGOHJ7 (ORCPT
+        id S1729324AbgGOHa0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 03:09:59 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:51307 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728590AbgGOHJ6 (ORCPT
+        Wed, 15 Jul 2020 03:30:26 -0400
+Received: from mail-oo1-f66.google.com ([209.85.161.66]:40396 "EHLO
+        mail-oo1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728888AbgGOHa0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Jul 2020 03:09:58 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 3FDC01C000C;
-        Wed, 15 Jul 2020 07:09:52 +0000 (UTC)
-Date:   Wed, 15 Jul 2020 09:13:25 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        hverkuil-cisco@xs4all.nl, sakari.ailus@linux.intel.com,
-        laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
-        dave.stevenson@raspberrypi.com, hyun.kwon@xilinx.com,
-        jmkrzyszt@gmail.com, robert.jarzmik@free.fr,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v6 9/9] media: rcar-csi2: Negotiate data lanes number
-Message-ID: <20200715071325.epyuci3urjqoex4m@uno.localdomain>
-References: <20200714135812.55158-1-jacopo+renesas@jmondi.org>
- <20200714135812.55158-10-jacopo+renesas@jmondi.org>
- <20200715065538.GI3051471@oden.dyn.berto.se>
+        Wed, 15 Jul 2020 03:30:26 -0400
+Received: by mail-oo1-f66.google.com with SMTP id p26so275694oos.7;
+        Wed, 15 Jul 2020 00:30:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RLNkBPIW71RcOqElB3Id5RxSoGdsejG2KtjK1rMAFHY=;
+        b=YNBw4OmW97icHYFH3RxLG5i6hChddV/tKD10rh2DLgdp9k2LQYLScp27mnCNP+IS+A
+         BKJs8YMj/39XFtvaLrZ5yLkKSmyjcDwgjzYRV1eqjtNl6dftZvYkK8pHAWx8LYUUavj3
+         7V8POU1C6HF3HVgDOkEXnEDD64xYxQzQPYCnVzVwPf9YgXjobAGkGXcQ4GOcI8JZ10aN
+         5X2ro1Ywu+p9PDLjV8cX46a/7cUBiOmNld6PpdrCE8xPQ2cO1IZwJ2Zn4PpFern7+xqQ
+         r0Iyms39EhsHxDgf7Kwgg7Fvkv+qpM+Rs4w051k376d5YYI5XPme2DytGJKoCLNep1or
+         2zag==
+X-Gm-Message-State: AOAM532TQyI1lLnNnjzs41Oj2L/sC9Q+QhlOInTnuMBq+L8KavuFKlyT
+        b3x+m8rVeMB7WP6G0wW9qTeo68Mron0Wxbotz4fUfFQJ
+X-Google-Smtp-Source: ABdhPJwUcUtIg7K2JzyI+BERW5m83JdHkH6A19d4/+jRcXY/W3rEJUYw/7y2g8mT8rfWN3ZWRip0YQBAdckvjUkwTN8=
+X-Received: by 2002:a4a:8c2f:: with SMTP id u44mr8289648ooj.11.1594798225239;
+ Wed, 15 Jul 2020 00:30:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200715065538.GI3051471@oden.dyn.berto.se>
+References: <20200713144930.1034632-1-lee.jones@linaro.org> <20200713144930.1034632-21-lee.jones@linaro.org>
+In-Reply-To: <20200713144930.1034632-21-lee.jones@linaro.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 15 Jul 2020 09:30:14 +0200
+Message-ID: <CAMuHMdWMUN8sU09J1eSsSJ9sXMhf10GUHeP47UDf6+yp8vnAnw@mail.gmail.com>
+Subject: Re: [PATCH 20/25] pinctrl: pinctrl-rza1: Demote some kerneldoc
+ headers and fix others
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
+Hi Lee,
 
-On Wed, Jul 15, 2020 at 08:55:38AM +0200, Niklas Söderlund wrote:
-> Hi Jacopo,
+On Mon, Jul 13, 2020 at 4:49 PM Lee Jones <lee.jones@linaro.org> wrote:
+> Some description blocks are void of any description/documentation,
+> others are missing 'struct' identifiers, there are also a couple of
+> misspellings of function parameter names.  Fix all of them.
 >
-> Thanks for your work.
+> Fixes the following W=1 kernel build warning(s):
 >
-> On 2020-07-14 15:58:12 +0200, Jacopo Mondi wrote:
-> > Use the newly introduced get_mbus_config() subdevice pad operation to
-> > retrieve the remote subdevice MIPI CSI-2 bus configuration and configure
-> > the number of active data lanes accordingly.
-> >
-> > In order to be able to call the remote subdevice operation cache the
-> > index of the remote pad connected to the single CSI-2 input port.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  drivers/media/platform/rcar-vin/rcar-csi2.c | 74 +++++++++++++++++++--
-> >  1 file changed, 67 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > index c6cc4f473a07..d39f312ebff9 100644
-> > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > @@ -364,6 +364,7 @@ struct rcar_csi2 {
-> >  	struct v4l2_async_notifier notifier;
-> >  	struct v4l2_async_subdev asd;
-> >  	struct v4l2_subdev *remote;
-> > +	unsigned int remote_pad;
-> >
-> >  	struct v4l2_mbus_framefmt mf;
-> >
-> > @@ -409,13 +410,14 @@ static void rcsi2_exit_standby(struct rcar_csi2 *priv)
-> >  	reset_control_deassert(priv->rstc);
-> >  }
-> >
-> > -static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
-> > +static int rcsi2_wait_phy_start(struct rcar_csi2 *priv,
-> > +				unsigned int active_lanes)
+>  drivers/pinctrl/pinctrl-rza1.c:81: warning: cannot understand function prototype: 'struct rza1_bidir_pin '
+>  drivers/pinctrl/pinctrl-rza1.c:90: warning: cannot understand function prototype: 'struct rza1_bidir_entry '
+>  drivers/pinctrl/pinctrl-rza1.c:98: warning: cannot understand function prototype: 'struct rza1_swio_pin '
+>  drivers/pinctrl/pinctrl-rza1.c:108: warning: cannot understand function prototype: 'struct rza1_swio_entry '
+>  drivers/pinctrl/pinctrl-rza1.c:116: warning: cannot understand function prototype: 'struct rza1_pinmux_conf '
+>  drivers/pinctrl/pinctrl-rza1.c:443: warning: cannot understand function prototype: 'struct rza1_mux_conf '
+>  drivers/pinctrl/pinctrl-rza1.c:462: warning: cannot understand function prototype: 'struct rza1_port '
+>  drivers/pinctrl/pinctrl-rza1.c:482: warning: cannot understand function prototype: 'struct rza1_pinctrl '
+>  drivers/pinctrl/pinctrl-rza1.c:546: warning: Function parameter or member 'port' not described in 'rza1_pinmux_get_flags'
+>  drivers/pinctrl/pinctrl-rza1.c:546: warning: Function parameter or member 'pin' not described in 'rza1_pinmux_get_flags'
+>  drivers/pinctrl/pinctrl-rza1.c:546: warning: Function parameter or member 'func' not described in 'rza1_pinmux_get_flags'
+>  drivers/pinctrl/pinctrl-rza1.c:546: warning: Function parameter or member 'rza1_pctl' not described in 'rza1_pinmux_get_flags'
+>  drivers/pinctrl/pinctrl-rza1.c:575: warning: Function parameter or member 'port' not described in 'rza1_set_bit'
+>  drivers/pinctrl/pinctrl-rza1.c:575: warning: Function parameter or member 'reg' not described in 'rza1_set_bit'
+>  drivers/pinctrl/pinctrl-rza1.c:575: warning: Function parameter or member 'bit' not described in 'rza1_set_bit'
+>  drivers/pinctrl/pinctrl-rza1.c:575: warning: Function parameter or member 'set' not described in 'rza1_set_bit'
+>  drivers/pinctrl/pinctrl-rza1.c:672: warning: Function parameter or member 'rza1_pctl' not described in 'rza1_pin_mux_single'
+>  drivers/pinctrl/pinctrl-rza1.c:672: warning: Excess function parameter 'pinctrl' description in 'rza1_pin_mux_single'
 >
-> Maybe s/active_lanes/lanes/ here and below?
->
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Cc: linux-renesas-soc@vger.kernel.org
+> Signed-off-by: Lee Jones <lee.jones@linaro.org>
 
-ok, I guess it's not important to convey the distinction between
-active and available lanes here.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in sh-pfc-for-v5.9.
 
-> >  {
-> >  	unsigned int timeout;
-> >
-> >  	/* Wait for the clock and data lanes to enter LP-11 state. */
-> >  	for (timeout = 0; timeout <= 20; timeout++) {
-> > -		const u32 lane_mask = (1 << priv->lanes) - 1;
-> > +		const u32 lane_mask = (1 << active_lanes) - 1;
-> >
-> >  		if ((rcsi2_read(priv, PHCLM_REG) & PHCLM_STOPSTATECKL)  &&
-> >  		    (rcsi2_read(priv, PHDLM_REG) & lane_mask) == lane_mask)
-> > @@ -447,7 +449,8 @@ static int rcsi2_set_phypll(struct rcar_csi2 *priv, unsigned int mbps)
-> >  	return 0;
-> >  }
-> >
-> > -static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
-> > +static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp,
-> > +			   unsigned int active_lanes)
-> >  {
-> >  	struct v4l2_subdev *source;
-> >  	struct v4l2_ctrl *ctrl;
-> > @@ -472,15 +475,63 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
-> >  	 * bps = link_freq * 2
-> >  	 */
-> >  	mbps = v4l2_ctrl_g_ctrl_int64(ctrl) * bpp;
-> > -	do_div(mbps, priv->lanes * 1000000);
-> > +	do_div(mbps, active_lanes * 1000000);
-> >
-> >  	return mbps;
-> >  }
-> >
-> > +static int rcsi2_config_active_lanes(struct rcar_csi2 *priv,
-> > +				     unsigned int *active_lanes)
->
-> I would name this rcsi2_get_active_lanes() as it does not configure
-> anything just queries the subdevice for information.
->
+Gr{oetje,eeting}s,
 
-ack
+                        Geert
 
-> > +{
-> > +	struct v4l2_mbus_config mbus_config = { 0 };
-> > +	unsigned int num_lanes = (-1U);
->
-> This looks odd and could just be set 0 with the same effect but clearer
-> to read.
->
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Not really.
-
-Have a look at this part:
-
-	if (mbus_config.flags & V4L2_MBUS_CSI2_1_LANE)
-		num_lanes = 1;
-	else if (mbus_config.flags & V4L2_MBUS_CSI2_2_LANE)
-		num_lanes = 2;
-	else if (mbus_config.flags & V4L2_MBUS_CSI2_3_LANE)
-		num_lanes = 3;
-	else if (mbus_config.flags & V4L2_MBUS_CSI2_4_LANE)
-		num_lanes = 4;
-
-	if (num_lanes > priv->lanes) {
-
-        ^^ I should then change this one to:
-
-        if (!num_lanes)
-
-But this does not protect against the case num_lanes is actually set
-to a meaningful value, but it's larger than the number of actually
-available lanes (which is held by priv->lanes).
-
-I would keep this one as it is.
-
-Thanks
-  j
-
-> > +	int ret;
-> > +
-> > +	*active_lanes = priv->lanes;
-> > +	ret = v4l2_subdev_call(priv->remote, pad, get_mbus_config,
-> > +			       priv->remote_pad, &mbus_config);
-> > +	if (ret == -ENOIOCTLCMD) {
-> > +		dev_dbg(priv->dev, "No remote mbus configuration available\n");
-> > +		return 0;
-> > +	}
-> > +
-> > +	if (ret) {
-> > +		dev_err(priv->dev, "Failed to get remote mbus configuration\n");
-> > +		return ret;
-> > +	}
-> > +
-> > +	if (mbus_config.type != V4L2_MBUS_CSI2_DPHY) {
-> > +		dev_err(priv->dev, "Unsupported media bus type %u\n",
-> > +			mbus_config.type);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	if (mbus_config.flags & V4L2_MBUS_CSI2_1_LANE)
-> > +		num_lanes = 1;
-> > +	else if (mbus_config.flags & V4L2_MBUS_CSI2_2_LANE)
-> > +		num_lanes = 2;
-> > +	else if (mbus_config.flags & V4L2_MBUS_CSI2_3_LANE)
-> > +		num_lanes = 3;
-> > +	else if (mbus_config.flags & V4L2_MBUS_CSI2_4_LANE)
-> > +		num_lanes = 4;
-> > +
-> > +	if (num_lanes > priv->lanes) {
-> > +		dev_err(priv->dev,
-> > +			"Unsupported mbus config: too many data lanes %u\n",
-> > +			num_lanes);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	*active_lanes = num_lanes;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >  {
-> >  	const struct rcar_csi2_format *format;
-> >  	u32 phycnt, vcdt = 0, vcdt2 = 0, fld = 0;
-> > +	unsigned int active_lanes;
-> >  	unsigned int i;
-> >  	int mbps, ret;
-> >
-> > @@ -522,10 +573,18 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >  			fld |= FLD_FLD_NUM(1);
-> >  	}
-> >
-> > +	/*
-> > +	 * Get the number of active data lanes inspecting the remote mbus
-> > +	 * configuration.
-> > +	 */
-> > +	ret = rcsi2_config_active_lanes(priv, &active_lanes);
-> > +	if (ret)
-> > +		return ret;
-> > +
-> >  	phycnt = PHYCNT_ENABLECLK;
-> > -	phycnt |= (1 << priv->lanes) - 1;
-> > +	phycnt |= (1 << active_lanes) - 1;
-> >
-> > -	mbps = rcsi2_calc_mbps(priv, format->bpp);
-> > +	mbps = rcsi2_calc_mbps(priv, format->bpp, active_lanes);
-> >  	if (mbps < 0)
-> >  		return mbps;
-> >
-> > @@ -572,7 +631,7 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
-> >  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ);
-> >  	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ | PHYCNT_RSTZ);
-> >
-> > -	ret = rcsi2_wait_phy_start(priv);
-> > +	ret = rcsi2_wait_phy_start(priv, active_lanes);
-> >  	if (ret)
-> >  		return ret;
-> >
-> > @@ -749,6 +808,7 @@ static int rcsi2_notify_bound(struct v4l2_async_notifier *notifier,
-> >  	}
-> >
-> >  	priv->remote = subdev;
-> > +	priv->remote_pad = pad;
-> >
-> >  	dev_dbg(priv->dev, "Bound %s pad: %d\n", subdev->name, pad);
-> >
-> > --
-> > 2.27.0
-> >
->
-> --
-> Regards,
-> Niklas Söderlund
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
