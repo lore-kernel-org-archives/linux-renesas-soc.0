@@ -2,129 +2,73 @@ Return-Path: <SRS0=PQ6+=A2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A6C0C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 07:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E92BCC433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 07:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 073EC2072E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 07:26:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B28CB2064C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 07:58:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729265AbgGOHWl (ORCPT
+        id S1729508AbgGOH62 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 03:22:41 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:38843 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729066AbgGOHWl (ORCPT
+        Wed, 15 Jul 2020 03:58:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729001AbgGOH62 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Jul 2020 03:22:41 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 3E77C4000A;
-        Wed, 15 Jul 2020 07:22:36 +0000 (UTC)
-Date:   Wed, 15 Jul 2020 09:26:08 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, robh+dt@kernel.org
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-        mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        dave.stevenson@raspberrypi.com, dongchun.zhu@mediatek.com,
-        linux-renesas-soc@vger.kernel.org,
-        roman.kovalivskyi@globallogic.com
-Subject: Re: [PATCH v2 2/3] dt-bindings: media: i2c: Document
- 'remote-endpoint'
-Message-ID: <20200715072608.hvog74szw7udx4sk@uno.localdomain>
-References: <20200714142856.58365-1-jacopo+renesas@jmondi.org>
- <20200714142856.58365-3-jacopo+renesas@jmondi.org>
- <20200714234535.GN5854@pendragon.ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200714234535.GN5854@pendragon.ideasonboard.com>
+        Wed, 15 Jul 2020 03:58:28 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC032C061755
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2020 00:58:27 -0700 (PDT)
+Received: from ramsan ([84.195.186.194])
+        by baptiste.telenet-ops.be with bizsmtp
+        id 3KyR2300D4C55Sk01KyRnD; Wed, 15 Jul 2020 09:58:25 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jvcJ7-0006IV-Dr; Wed, 15 Jul 2020 09:58:25 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jvcJ7-0007r5-Bv; Wed, 15 Jul 2020 09:58:25 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/LOCAL] arm64: renesas: defconfig: Enable R8A774E1 SoC
+Date:   Wed, 15 Jul 2020 09:58:24 +0200
+Message-Id: <20200715075824.30154-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
+Enable the Renesas RZ/G2H (R8A774E1) SoC in the ARM64 renesas_defconfig.
 
-On Wed, Jul 15, 2020 at 02:45:35AM +0300, Laurent Pinchart wrote:
-> Hi Jacopo,
->
-> Thank you for the patch.
->
-> On Tue, Jul 14, 2020 at 04:28:55PM +0200, Jacopo Mondi wrote:
-> > Document the 'remote-endpoint' property and add it to the list of required
-> > endpoint properties in imx219 and ov8856 dt-schema binding files.
-> >
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-> > ---
-> >  Documentation/devicetree/bindings/media/i2c/imx219.yaml | 5 +++++
-> >  Documentation/devicetree/bindings/media/i2c/ov8856.yaml | 5 +++++
-> >  2 files changed, 10 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/media/i2c/imx219.yaml b/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-> > index dfc4d29a4f04..0251e15fe0a7 100644
-> > --- a/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-> > +++ b/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-> > @@ -71,8 +71,13 @@ properties:
-> >              description:
-> >                Allowed data bus frequencies.
-> >
-> > +          remote-endpoint:
-> > +            description: |-
-> > +              phandle to the video receiver input port
-> > +
-> >          required:
-> >            - link-frequencies
-> > +          - remote-endpoint
-> >
-> >  required:
-> >    - compatible
-> > diff --git a/Documentation/devicetree/bindings/media/i2c/ov8856.yaml b/Documentation/devicetree/bindings/media/i2c/ov8856.yaml
-> > index 1956b2a32bf4..c1f363bb5aee 100644
-> > --- a/Documentation/devicetree/bindings/media/i2c/ov8856.yaml
-> > +++ b/Documentation/devicetree/bindings/media/i2c/ov8856.yaml
-> > @@ -84,9 +84,14 @@ properties:
-> >                Allowed data bus frequencies. 360000000, 180000000 Hz or both
-> >                are supported by the driver.
-> >
-> > +          remote-endpoint:
-> > +            description: |-
-> > +              phandle to the video receiver input port
-> > +
->
-> Extraneous blank line ?
->
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Not intended for upstream merge.
+To be applied to topic/renesas-defconfig.
 
-Yes indeed.
+ arch/arm64/configs/renesas_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-I'll fix and resend with your comments taken in (this and the one in
-the previous patch).
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index f7b43ed12fef707b..8cec36543ae8e441 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -306,6 +306,7 @@ CONFIG_IOMMU_IO_PGTABLE_LPAE=y
+ CONFIG_ARCH_R8A774A1=y
+ CONFIG_ARCH_R8A774B1=y
+ CONFIG_ARCH_R8A774C0=y
++CONFIG_ARCH_R8A774E1=y
+ CONFIG_ARCH_R8A77950=y
+ CONFIG_ARCH_R8A77951=y
+ CONFIG_ARCH_R8A77960=y
+-- 
+2.17.1
 
-Rob, Hans:
-Should this go in through the media tree or through rob ?
-
-Thanks
-  j
-
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> >
-> >          required:
-> >            - link-frequencies
-> > +          - remote-endpoint
-> >
-> >      required:
-> >        - endpoint
->
-> --
-> Regards,
->
-> Laurent Pinchart
