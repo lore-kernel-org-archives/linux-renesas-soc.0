@@ -1,233 +1,186 @@
-Return-Path: <SRS0=eQbE=AZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=PQ6+=A2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,LONGWORDS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECE9C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 23:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77021C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 01:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7EA72072D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Jul 2020 23:44:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fHAkLGfM"
+	by mail.kernel.org (Postfix) with ESMTP id 55ED220674
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 01:58:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbgGNXod (ORCPT
+        id S1726793AbgGOB6C (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Jul 2020 19:44:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56282 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726542AbgGNXod (ORCPT
+        Tue, 14 Jul 2020 21:58:02 -0400
+Received: from mga03.intel.com ([134.134.136.65]:7239 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726670AbgGOB6B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Jul 2020 19:44:33 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E47C061755;
-        Tue, 14 Jul 2020 16:44:32 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E01A771D;
-        Wed, 15 Jul 2020 01:44:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1594770270;
-        bh=BlgHswt5o7rZqUfB4W5bNSHos/OcygyFLCNV4tKAzw8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fHAkLGfMZfQQf2tY4NQZfUcyIAGVPkU7FroBy4x+xhA5O8b7t1JKue/5CSHvFNeX+
-         O/zfcx2z69J2n3lnLPHnbMbx6CDyL2Dbqf+6Dfx1L5sDow85+EE3OROXT0efYmQ3/H
-         XDA2DB7lMAhQTx88WLSXV+Zo9le6EN5j4oC/LoCk=
-Date:   Wed, 15 Jul 2020 02:44:23 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
-        dave.stevenson@raspberrypi.com, dongchun.zhu@mediatek.com,
-        linux-renesas-soc@vger.kernel.org,
-        roman.kovalivskyi@globallogic.com, Rob Herring <robh@kernel.org>,
-        Jacopo Mondi <jacopo@jmondi.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: media: ov5647: Convert to json-schema
-Message-ID: <20200714234423.GM5854@pendragon.ideasonboard.com>
-References: <20200714142856.58365-1-jacopo+renesas@jmondi.org>
- <20200714142856.58365-2-jacopo+renesas@jmondi.org>
+        Tue, 14 Jul 2020 21:58:01 -0400
+IronPort-SDR: Mdp9nAuEygWHVaO9qqk06RGNDEoqdWzYp8rpwG2yA4gmQf9uzKgBdqF9V7cBoEwLuYw6GGHnUn
+ gv0oWnDXFwuA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9682"; a="149057037"
+X-IronPort-AV: E=Sophos;i="5.75,353,1589266800"; 
+   d="scan'208";a="149057037"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Jul 2020 18:58:00 -0700
+IronPort-SDR: O5N16lTK0HiaBHepiFoTTmXnZkDobFmSzF360ExLBRZHHeuyZwcWLtHkKVERfR8GnxyFKayWlH
+ l8ynalxGrcOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,353,1589266800"; 
+   d="scan'208";a="324706048"
+Received: from lkp-server01.sh.intel.com (HELO e1edd1aee32c) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 14 Jul 2020 18:58:00 -0700
+Received: from kbuild by e1edd1aee32c with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1jvWgI-00000h-Rg; Wed, 15 Jul 2020 01:57:58 +0000
+Date:   Wed, 15 Jul 2020 09:57:16 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [renesas-devel:next] BUILD SUCCESS
+ 7d0a3251459cb312cc5c2d12e7d6474cf7789997
+Message-ID: <5f0e627c.EDfxaxbupGZvCnru%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200714142856.58365-2-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  next
+branch HEAD: 7d0a3251459cb312cc5c2d12e7d6474cf7789997  Merge branch 'renesas-arm-dt-for-v5.9' into renesas-next
 
-Thank you for the patch.
+elapsed time: 1057m
 
-On Tue, Jul 14, 2020 at 04:28:54PM +0200, Jacopo Mondi wrote:
-> Convert the ov5647 image sensor bindings to DT schema and add
-> the file entry to MAINTAINERS.
-> 
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-> ---
->  .../devicetree/bindings/media/i2c/ov5647.txt  | 35 --------
->  .../devicetree/bindings/media/i2c/ov5647.yaml | 82 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  3 files changed, 83 insertions(+), 35 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/media/i2c/ov5647.txt
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/ov5647.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ov5647.txt b/Documentation/devicetree/bindings/media/i2c/ov5647.txt
-> deleted file mode 100644
-> index 22e44945b661..000000000000
-> --- a/Documentation/devicetree/bindings/media/i2c/ov5647.txt
-> +++ /dev/null
-> @@ -1,35 +0,0 @@
-> -Omnivision OV5647 raw image sensor
-> ----------------------------------
-> -
-> -OV5647 is a raw image sensor with MIPI CSI-2 and CCP2 image data interfaces
-> -and CCI (I2C compatible) control bus.
-> -
-> -Required properties:
-> -
-> -- compatible		: "ovti,ov5647".
-> -- reg			: I2C slave address of the sensor.
-> -- clocks		: Reference to the xclk clock.
-> -
-> -The common video interfaces bindings (see video-interfaces.txt) should be
-> -used to specify link to the image data receiver. The OV5647 device
-> -node should contain one 'port' child node with an 'endpoint' subnode.
-> -
-> -Endpoint node mandatory properties:
-> -
-> -- remote-endpoint: A phandle to the bus receiver's endpoint node.
-> -
-> -Example:
-> -
-> -	i2c@2000 {
-> -		...
-> -		ov: camera@36 {
-> -			compatible = "ovti,ov5647";
-> -			reg = <0x36>;
-> -			clocks = <&camera_clk>;
-> -			port {
-> -				camera_1: endpoint {
-> -					remote-endpoint = <&csi1_ep1>;
-> -				};
-> -			};
-> -		};
-> -	};
-> diff --git a/Documentation/devicetree/bindings/media/i2c/ov5647.yaml b/Documentation/devicetree/bindings/media/i2c/ov5647.yaml
-> new file mode 100644
-> index 000000000000..067e222e0c7c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/ov5647.yaml
-> @@ -0,0 +1,82 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/i2c/ov5647.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Omnivision OV5647 raw image sensor
-> +
-> +maintainers:
-> +  - Dave Stevenson <dave.stevenson@raspberrypi.com>
-> +
-> +description: |-
-> +  OV5647 is a raw image sensor with MIPI CSI-2 and CCP2 image data interfaces
-> +  and CCI (I2C compatible) control bus.
-> +
-> +properties:
-> +  compatible:
-> +    const: ovti,ov5647
-> +
-> +  reg:
-> +    description: I2C device address
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    description: Reference to the xclk clock
-> +    maxItems: 1
-> +
-> +  port:
-> +    type: object
-> +    description: |-
-> +      Should contain one endpoint sub-node used to model connection to the
-> +      video receiver according to the specification defined in
-> +      Documentation/devicetree/bindings/media/video-interfaces.txt
-> +
-> +    properties:
-> +      endpoint:
-> +        type: object
-> +
-> +        properties:
-> +          remote-endpoint:
-> +            description: |-
-> +              phandle to the video receiver input port
-> +
-> +        required:
-> +          - remote-endpoint
-> +
-> +        additionalProperties: false
-> +
-> +    required:
-> +      - endpoint
+configs tested: 113
+configs skipped: 3
 
-We usually make it valid for a port to contain no endpoint. This can be
-used, for instance, to create a base DT that doesn't describe the
-connections, where an overlay will then wire the components together.
-I'd thus drop the required property here. Apart from that,
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+arm64                            allyesconfig
+arm64                               defconfig
+arm64                            allmodconfig
+arm64                             allnoconfig
+arm                                 defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+arm                               allnoconfig
+sh                           se7724_defconfig
+sh                          sdk7786_defconfig
+arm                          tango4_defconfig
+sh                            migor_defconfig
+i386                             allyesconfig
+arm                         s3c6400_defconfig
+m68k                         amcore_defconfig
+c6x                               allnoconfig
+powerpc                     pq2fads_defconfig
+powerpc                 linkstation_defconfig
+arm                           h3600_defconfig
+sh                            titan_defconfig
+arm                          moxart_defconfig
+sparc                               defconfig
+mips                        maltaup_defconfig
+mips                          rb532_defconfig
+powerpc                mpc7448_hpc2_defconfig
+mips                        nlm_xlp_defconfig
+i386                              allnoconfig
+i386                                defconfig
+i386                              debian-10.3
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                              allnoconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                              allnoconfig
+m68k                           sun3_defconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+nios2                            allyesconfig
+openrisc                            defconfig
+c6x                              allyesconfig
+openrisc                         allyesconfig
+csky                             allyesconfig
+alpha                            allyesconfig
+nds32                               defconfig
+nds32                             allnoconfig
+csky                                defconfig
+alpha                               defconfig
+xtensa                              defconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+h8300                            allmodconfig
+arc                                 defconfig
+arc                              allyesconfig
+sh                               allmodconfig
+sh                                allnoconfig
+microblaze                        allnoconfig
+mips                             allyesconfig
+mips                             allmodconfig
+mips                              allnoconfig
+parisc                            allnoconfig
+parisc                              defconfig
+parisc                           allyesconfig
+parisc                           allmodconfig
+powerpc                             defconfig
+powerpc                          allyesconfig
+powerpc                          rhel-kconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+i386                 randconfig-a001-20200714
+i386                 randconfig-a005-20200714
+i386                 randconfig-a002-20200714
+i386                 randconfig-a006-20200714
+i386                 randconfig-a003-20200714
+i386                 randconfig-a004-20200714
+x86_64               randconfig-a012-20200714
+x86_64               randconfig-a011-20200714
+x86_64               randconfig-a013-20200714
+x86_64               randconfig-a015-20200714
+x86_64               randconfig-a016-20200714
+x86_64               randconfig-a014-20200714
+i386                 randconfig-a016-20200714
+i386                 randconfig-a011-20200714
+i386                 randconfig-a015-20200714
+i386                 randconfig-a012-20200714
+i386                 randconfig-a013-20200714
+i386                 randconfig-a014-20200714
+x86_64               randconfig-a005-20200715
+x86_64               randconfig-a006-20200715
+x86_64               randconfig-a002-20200715
+x86_64               randconfig-a001-20200715
+x86_64               randconfig-a003-20200715
+x86_64               randconfig-a004-20200715
+riscv                            allyesconfig
+riscv                               defconfig
+riscv                            allmodconfig
+riscv                             allnoconfig
+s390                             allyesconfig
+s390                              allnoconfig
+s390                             allmodconfig
+s390                                defconfig
+sparc                            allyesconfig
+sparc64                             defconfig
+sparc64                          allyesconfig
+sparc64                          allmodconfig
+sparc64                           allnoconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                               rhel-8.3
+x86_64                                  kexec
+x86_64                                   rhel
+x86_64                                    lkp
+x86_64                              fedora-25
 
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - port
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        ov5647: camera@36 {
-> +            compatible = "ovti,ov5647";
-> +            reg = <0x36>;
-> +            clocks = <&camera_clk>;
-> +
-> +            port {
-> +                camera_out: endpoint {
-> +                    remote-endpoint = <&csi1_ep1>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2730af1265ea..1742fa1a88cd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12612,6 +12612,7 @@ L:	linux-media@vger.kernel.org
->  S:	Maintained
->  T:	git git://linuxtv.org/media_tree.git
->  F:	drivers/media/i2c/ov5647.c
-> +F:	Documentation/devicetree/bindings/media/i2c/ov5647.yaml
->  
->  OMNIVISION OV5670 SENSOR DRIVER
->  M:	Chiranjeevi Rapolu <chiranjeevi.rapolu@intel.com>
-
--- 
-Regards,
-
-Laurent Pinchart
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
