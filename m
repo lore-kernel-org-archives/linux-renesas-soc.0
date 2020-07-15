@@ -2,93 +2,77 @@ Return-Path: <SRS0=PQ6+=A2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE66EC433ED
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 11:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A60AC43445
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 11:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C094320771
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 11:09:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 850AD2071B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Jul 2020 11:09:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731476AbgGOLJj (ORCPT
+        id S1731540AbgGOLJx convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 15 Jul 2020 07:09:39 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:14131 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728871AbgGOLJh (ORCPT
+        Wed, 15 Jul 2020 07:09:53 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36525 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731536AbgGOLJv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 15 Jul 2020 07:09:37 -0400
-X-IronPort-AV: E=Sophos;i="5.75,355,1589209200"; 
-   d="scan'208";a="51981857"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 15 Jul 2020 20:09:34 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 090304006DF5;
-        Wed, 15 Jul 2020 20:09:28 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Niklas <niklas.soderlund@ragnatech.se>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 03/20] thermal: rcar_gen3_thermal: Add r8a774e1 support
-Date:   Wed, 15 Jul 2020 12:08:53 +0100
-Message-Id: <1594811350-14066-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1594811350-14066-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1594811350-14066-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Wed, 15 Jul 2020 07:09:51 -0400
+Received: by mail-ot1-f65.google.com with SMTP id 72so1148560otc.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Jul 2020 04:09:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kU3/MoMoF/KLtN2PgNM+bX3aSeZV3xOgu7ZJuX7RzGg=;
+        b=HJcTC+NO80uDH7xuobLCo0Cp5B6xl4iVKnbsCKsqcRIxPuxn7DpKsSeEtnvHWtnwxI
+         //gwjXUKNx85nyTp2q+DPAm+7KbBEuZPhBVoTiuNBpXFpBUY4dqSsAbqo3LKRBEJDj9E
+         /dDnMtrX7jZIiKe9BUdm2zLS7b2p4TD5GNHCMnB36w0Lcvx6tZh1LAk+aQt1dnGB8qJ1
+         JlAqwub6etIZ52Z5gS28d7QF98DnLdVAeov4lMj0dqrOxi/RoEwywcUlqt8++hAQVcBW
+         ugNc9tOa6MGZbc6IOZ582voYgF51az/DscIFfIdcebqksUsuhzfUyn05K4NiYZkNw4g6
+         VgfA==
+X-Gm-Message-State: AOAM530kGJUBRlwqvvl1FEjV5lCj4HaKYuI4o1puRs5ZxvT0qzls6m0t
+        jLyhjGMpQ+h2Qtt65i5OBGmVl+vOBSAnxT1JplMACLA9
+X-Google-Smtp-Source: ABdhPJziW/WyIhT+1v/Wtfq0idv2SAADrZEqFGzpJkPZjCR70QURss5xvrYSFOe+GdhqlqX69zDuEk7uEkpKd2pl8FE=
+X-Received: by 2002:a05:6830:1451:: with SMTP id w17mr8327177otp.250.1594811390712;
+ Wed, 15 Jul 2020 04:09:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200713111016.523189-1-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20200713111016.523189-1-niklas.soderlund+renesas@ragnatech.se>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 15 Jul 2020 13:09:39 +0200
+Message-ID: <CAMuHMdVxLiDepTgPhRa0jHMhAH=BRZsUEtK2rtdMtNWc915GAw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: gose: Fix ports node name for adv7612
+To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+On Mon, Jul 13, 2020 at 1:10 PM Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> When adding the adv7612 device node the ports node was misspelled as
+> port, fix this.
+>
+> Fixes: bc63cd87f3ce924f ("ARM: dts: gose: add HDMI input")
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Add r8a774e1 specific compatible string.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.9.
 
-Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/thermal/rcar_gen3_thermal.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index c48c5e9b8f20..3f129ce4adc0 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -314,6 +314,10 @@ static const struct of_device_id rcar_gen3_thermal_dt_ids[] = {
- 		.compatible = "renesas,r8a774b1-thermal",
- 		.data = &rcar_gen3_ths_tj_1,
- 	},
-+	{
-+		.compatible = "renesas,r8a774e1-thermal",
-+		.data = &rcar_gen3_ths_tj_1,
-+	},
- 	{
- 		.compatible = "renesas,r8a7795-thermal",
- 		.data = &rcar_gen3_ths_tj_1,
+                        Geert
+
 -- 
-2.17.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
