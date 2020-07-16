@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2216CC4363A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 17:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1E2C2BD07
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 17:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01F392082F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 17:20:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C98B20656
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 17:20:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbgGPRUB (ORCPT
+        id S1729780AbgGPRUW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jul 2020 13:20:01 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:62356 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729690AbgGPRUA (ORCPT
+        Thu, 16 Jul 2020 13:20:22 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:28434 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729722AbgGPRUV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jul 2020 13:20:00 -0400
+        Thu, 16 Jul 2020 13:20:21 -0400
 X-IronPort-AV: E=Sophos;i="5.75,360,1589209200"; 
-   d="scan'208";a="52318964"
+   d="scan'208";a="52107442"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Jul 2020 02:19:57 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 17 Jul 2020 02:20:19 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A6C2640B55ED;
-        Fri, 17 Jul 2020 02:19:52 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7311240B5998;
+        Fri, 17 Jul 2020 02:20:14 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
@@ -48,9 +48,9 @@ Cc:     linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-renesas-soc@vger.kernel.org,
         linux-usb@vger.kernel.org, Prabhakar <prabhakar.csengg@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 14/20] dt-bindings: sound: renesas,rsnd: Document r8a774e1 bindings
-Date:   Thu, 16 Jul 2020 18:18:29 +0100
-Message-Id: <1594919915-5225-15-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 18/20] media: rcar-csi2: Enable support for R8A774E1
+Date:   Thu, 16 Jul 2020 18:18:33 +0100
+Message-Id: <1594919915-5225-19-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1594919915-5225-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1594919915-5225-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -59,26 +59,30 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document SoC specific bindings for RZ/G2H (r8a774e1) SoC.
+Add the MIPI CSI-2 driver support for RZ/G2H (R8A774E1) SoC.
+The CSI-2 module of RZ/G2H is similar to R-Car H3.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/sound/renesas,rsnd.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-index 1596f0d1e2fe..b39743d3f7c4 100644
---- a/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-+++ b/Documentation/devicetree/bindings/sound/renesas,rsnd.txt
-@@ -271,6 +271,7 @@ Required properties:
- 				    - "renesas,rcar_sound-r8a774a1" (RZ/G2M)
- 				    - "renesas,rcar_sound-r8a774b1" (RZ/G2N)
- 				    - "renesas,rcar_sound-r8a774c0" (RZ/G2E)
-+				    - "renesas,rcar_sound-r8a774e1" (RZ/G2H)
- 				    - "renesas,rcar_sound-r8a7778" (R-Car M1A)
- 				    - "renesas,rcar_sound-r8a7779" (R-Car H1)
- 				    - "renesas,rcar_sound-r8a7790" (R-Car H2)
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index c6cc4f473a07..2325e3b103e4 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -1090,6 +1090,10 @@ static const struct of_device_id rcar_csi2_of_table[] = {
+ 		.compatible = "renesas,r8a774c0-csi2",
+ 		.data = &rcar_csi2_info_r8a77990,
+ 	},
++	{
++		.compatible = "renesas,r8a774e1-csi2",
++		.data = &rcar_csi2_info_r8a7795,
++	},
+ 	{
+ 		.compatible = "renesas,r8a7795-csi2",
+ 		.data = &rcar_csi2_info_r8a7795,
 -- 
 2.17.1
 
