@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 415EEC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 21:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC38C433F1
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 23:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27AFF20760
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 21:58:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0801021473
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 23:09:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726002AbgGPV6t (ORCPT
+        id S1726189AbgGPXJI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jul 2020 17:58:49 -0400
-Received: from mga18.intel.com ([134.134.136.126]:31608 "EHLO mga18.intel.com"
+        Thu, 16 Jul 2020 19:09:08 -0400
+Received: from mga03.intel.com ([134.134.136.65]:15259 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726201AbgGPV6s (ORCPT
+        id S1727850AbgGPXJC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jul 2020 17:58:48 -0400
-IronPort-SDR: Ui2GPsO6bJJve9n/6c80+Y+6qVzAUPb91/3xpdQLamJMl2IF2FIoHPqk48/fy5NyISBA7JChhR
- 3hHoFiEbEVFQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9684"; a="136957570"
+        Thu, 16 Jul 2020 19:09:02 -0400
+IronPort-SDR: 9M4rUN1NFWpptIxWAsRATE1sQlE6iMfAw62h0tGY/Cz3pL0scXo9ST3/HmmXFYFd9nnXEp5VNn
+ RxrJ6WnqtIrg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9684"; a="149492753"
 X-IronPort-AV: E=Sophos;i="5.75,360,1589266800"; 
-   d="scan'208";a="136957570"
+   d="scan'208";a="149492753"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2020 14:58:47 -0700
-IronPort-SDR: /U3xhftU95rl1xws5Ki9EWAYHSUvSm3/SyEAxk99cjEnEZpzKHNpLYDoPjqRMGnsQ7l6DDTyGx
- 6rILBnASdzYA==
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2020 16:05:59 -0700
+IronPort-SDR: DJ3tRx7US4zx6Y3z4KCJ8B+1FID8cult88i9X3ZqUSboi0PGuCn4W+pkg1wEe2U4zCZpRFKTNN
+ 8SKsCfgtCF0w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,360,1589266800"; 
-   d="scan'208";a="326661080"
+   d="scan'208";a="460647988"
 Received: from lkp-server01.sh.intel.com (HELO 70d1600e1569) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 16 Jul 2020 14:58:46 -0700
+  by orsmga005.jf.intel.com with ESMTP; 16 Jul 2020 16:05:58 -0700
 Received: from kbuild by 70d1600e1569 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1jwBtt-0000D8-WC; Thu, 16 Jul 2020 21:58:45 +0000
-Date:   Fri, 17 Jul 2020 05:57:47 +0800
+        id 1jwCwv-0000ER-Q4; Thu, 16 Jul 2020 23:05:57 +0000
+Date:   Fri, 17 Jul 2020 07:04:46 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:renesas-dt-bindings-for-v5.9] BUILD SUCCESS
- 8210a6c057703b15d75f6bb841e7611726c4a551
-Message-ID: <5f10cd5b.MuT6GFMWRkNKhoqS%lkp@intel.com>
+Subject: [renesas-drivers:sh-pfc] BUILD SUCCESS
+ 4d0e62679f17b8bde01aa9995233b5b9ca05ab7f
+Message-ID: <5f10dd0e.TnjuYjIEmwEc1aHo%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -56,25 +56,25 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-dt-bindings-for-v5.9
-branch HEAD: 8210a6c057703b15d75f6bb841e7611726c4a551  dt-bindings: arm: renesas: Document beacon-rzg2m
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git  sh-pfc
+branch HEAD: 4d0e62679f17b8bde01aa9995233b5b9ca05ab7f  dt-bindings: pinctrl: renesas,rza2-pinctrl: Convert to json-schema
 
-elapsed time: 723m
+elapsed time: 725m
 
-configs tested: 86
+configs tested: 74
 configs skipped: 1
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
-arm                                 defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-arm                               allnoconfig
 arm64                            allyesconfig
 arm64                               defconfig
 arm64                            allmodconfig
 arm64                             allnoconfig
+arm                                 defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+arm                               allnoconfig
 i386                              allnoconfig
 i386                             allyesconfig
 i386                                defconfig
@@ -94,12 +94,6 @@ csky                             allyesconfig
 csky                                defconfig
 alpha                               defconfig
 alpha                            allyesconfig
-nios2                               defconfig
-nios2                            allyesconfig
-openrisc                            defconfig
-c6x                              allyesconfig
-c6x                               allnoconfig
-openrisc                         allyesconfig
 xtensa                           allyesconfig
 h8300                            allyesconfig
 h8300                            allmodconfig
@@ -109,6 +103,12 @@ arc                              allyesconfig
 sh                               allmodconfig
 sh                                allnoconfig
 microblaze                        allnoconfig
+nios2                               defconfig
+nios2                            allyesconfig
+openrisc                            defconfig
+c6x                              allyesconfig
+c6x                               allnoconfig
+openrisc                         allyesconfig
 mips                             allyesconfig
 mips                              allnoconfig
 mips                             allmodconfig
@@ -116,23 +116,11 @@ parisc                            allnoconfig
 parisc                              defconfig
 parisc                           allyesconfig
 parisc                           allmodconfig
-powerpc                             defconfig
 powerpc                          allyesconfig
 powerpc                          rhel-kconfig
 powerpc                          allmodconfig
 powerpc                           allnoconfig
-i386                 randconfig-a001-20200716
-i386                 randconfig-a005-20200716
-i386                 randconfig-a002-20200716
-i386                 randconfig-a006-20200716
-i386                 randconfig-a003-20200716
-i386                 randconfig-a004-20200716
-i386                 randconfig-a016-20200716
-i386                 randconfig-a011-20200716
-i386                 randconfig-a015-20200716
-i386                 randconfig-a012-20200716
-i386                 randconfig-a013-20200716
-i386                 randconfig-a014-20200716
+powerpc                             defconfig
 riscv                            allyesconfig
 riscv                             allnoconfig
 riscv                               defconfig
