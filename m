@@ -2,109 +2,170 @@ Return-Path: <SRS0=NDfh=A3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965BBC433E8
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 14:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0270C43458
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 14:24:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 724F020787
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 14:24:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A43220825
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 14:24:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbgGPOYr (ORCPT
+        id S1728845AbgGPOYY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jul 2020 10:24:47 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:46266 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728054AbgGPOYn (ORCPT
+        Thu, 16 Jul 2020 10:24:24 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:48193 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728863AbgGPOYX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jul 2020 10:24:43 -0400
-Received: by mail-oi1-f194.google.com with SMTP id l63so5186168oih.13;
-        Thu, 16 Jul 2020 07:24:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nnjKMypguJ4/5J3zi+nKWFTG5kpjunUyDYMlZ/jwgmI=;
-        b=fljkMAfPrYpQHm6VSG9c4mw47QxwvwLX2xcyThbqNeOX0Ub890r4mKq2raSy+Kjumi
-         e0Po3Gz2uX5SmyqxQW/kbWsJe0LqKwty9vaTTM11BcgfEuRbPa0zrrJQajz2bOx8DJYE
-         sk4ZkXDuySgxHZ+4Epfturpaq0V4TDSr0RwKEgJc1hIY6kkgADcUl2Ve62C2XnZwPI6l
-         zx3hgZ1W4qPut0+6muJG3AfHCzujDD4T645a3zmslqib4BQ+y5qFrOyZ31IppDOzloGa
-         i7d3y4W/PK+KgRNhYbo9X/AMK52ztH2DArl0MCYzIL3AiIIxeCF7+p5aiLF1NPXx4E0k
-         8dXQ==
-X-Gm-Message-State: AOAM531CnzAXl+i/5IvbH6pGr5FJz0BHKzCVGeSI9CLIuAZ1JWn2aec6
-        5IWqNAGLiYIe2an6uI+ysih/OhzilYaBUW3c9oc=
-X-Google-Smtp-Source: ABdhPJyuNSqQvBAEiTGasOgiHD3JNckbgGTJFnCjccv3IdfLUIQhxKYJFQ1pLgsPHo273k3ak0/gYQzGEMNEPFjDFtA=
-X-Received: by 2002:aca:5c41:: with SMTP id q62mr3871180oib.148.1594909482264;
- Thu, 16 Jul 2020 07:24:42 -0700 (PDT)
+        Thu, 16 Jul 2020 10:24:23 -0400
+X-Originating-IP: 93.34.118.233
+Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 5E43B1BF212;
+        Thu, 16 Jul 2020 14:24:18 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund+renesas@ragnatech.se,
+        kieran.bingham@ideasonboard.com, dave.stevenson@raspberrypi.com,
+        hyun.kwon@xilinx.com, jmkrzyszt@gmail.com, robert.jarzmik@free.fr,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v7 08/10] media: i2c: adv748x: Adjust TXA data lanes number
+Date:   Thu, 16 Jul 2020 16:27:11 +0200
+Message-Id: <20200716142713.110655-9-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200716142713.110655-1-jacopo+renesas@jmondi.org>
+References: <20200716142713.110655-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-References: <1594811350-14066-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1594811350-14066-8-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <1594811350-14066-8-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 16 Jul 2020 16:24:27 +0200
-Message-ID: <CAMuHMdXJFkWn--wvuxG_o4THHiq5jtnLjNc_4LUWUSMF2mSdEQ@mail.gmail.com>
-Subject: Re: [PATCH 07/20] dt-bindings: timer: renesas,tmu: Document r8a774e1 bindings
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Niklas <niklas.soderlund@ragnatech.se>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-can@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jul 15, 2020 at 1:10 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
->
-> Document RZ/G2H (R8A774E1) SoC in the Renesas TMU bindings.
->
-> Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+When outputting SD-Core output through the TXA MIPI CSI-2 interface,
+the number of enabled data lanes should be reduced in order to guarantee
+that the two video formats produced by the SD-Core (480i and 576i)
+generate a MIPI CSI-2 link clock frequency compatible with the MIPI D-PHY
+specifications.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Limit the number of enabled data lanes to 2, which is guaranteed to
+support 480i and 576i formats.
 
-> ---
->  Documentation/devicetree/bindings/timer/renesas,tmu.txt | 1 +
+Cache the number of enabled data lanes to be able to report it through
+the new get_mbus_config operation.
 
-Daniel: looks like "[PATCH v3] dt-bindings: timer: renesas: tmu: Convert
-to json-schema"[1] hasn't made it into linux-next yet?
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/media/i2c/adv748x/adv748x-core.c | 31 ++++++++++++++++++------
+ drivers/media/i2c/adv748x/adv748x.h      |  1 +
+ 2 files changed, 25 insertions(+), 7 deletions(-)
 
-[1] https://lore.kernel.org/r/20200518081506.23423-1-geert+renesas@glider.be
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+index 23e02ff27b17..1fe7f97c6d52 100644
+--- a/drivers/media/i2c/adv748x/adv748x-core.c
++++ b/drivers/media/i2c/adv748x/adv748x-core.c
+@@ -241,10 +241,10 @@ static int adv748x_power_up_tx(struct adv748x_csi2 *tx)
+ 	int ret = 0;
+ 
+ 	/* Enable n-lane MIPI */
+-	adv748x_write_check(state, page, 0x00, 0x80 | tx->num_lanes, &ret);
++	adv748x_write_check(state, page, 0x00, 0x80 | tx->active_lanes, &ret);
+ 
+ 	/* Set Auto DPHY Timing */
+-	adv748x_write_check(state, page, 0x00, 0xa0 | tx->num_lanes, &ret);
++	adv748x_write_check(state, page, 0x00, 0xa0 | tx->active_lanes, &ret);
+ 
+ 	/* ADI Required Write */
+ 	if (tx->src == &state->hdmi.sd) {
+@@ -270,7 +270,7 @@ static int adv748x_power_up_tx(struct adv748x_csi2 *tx)
+ 	usleep_range(2000, 2500);
+ 
+ 	/* Power-up CSI-TX */
+-	adv748x_write_check(state, page, 0x00, 0x20 | tx->num_lanes, &ret);
++	adv748x_write_check(state, page, 0x00, 0x20 | tx->active_lanes, &ret);
+ 	usleep_range(1000, 1500);
+ 
+ 	/* ADI Required Writes */
+@@ -292,7 +292,7 @@ static int adv748x_power_down_tx(struct adv748x_csi2 *tx)
+ 	adv748x_write_check(state, page, 0x1e, 0x00, &ret);
+ 
+ 	/* Enable n-lane MIPI */
+-	adv748x_write_check(state, page, 0x00, 0x80 | tx->num_lanes, &ret);
++	adv748x_write_check(state, page, 0x00, 0x80 | tx->active_lanes, &ret);
+ 
+ 	/* i2c_mipi_pll_en - 1'b1 */
+ 	adv748x_write_check(state, page, 0xda, 0x01, &ret);
+@@ -357,14 +357,29 @@ static int adv748x_link_setup(struct media_entity *entity,
+ 	if (state->afe.tx) {
+ 		/* AFE Requires TXA enabled, even when output to TXB */
+ 		io10 |= ADV748X_IO_10_CSI4_EN;
+-		if (is_txa(tx))
++		if (is_txa(tx)) {
++			/*
++			 * Output from the SD-core (480i and 576i) from the TXA
++			 * interface requires reducing the number of enabled
++			 * data lanes in order to guarantee a valid link
++			 * frequency.
++			 */
++			tx->active_lanes = min(tx->num_lanes, 2U);
+ 			io10 |= ADV748X_IO_10_CSI4_IN_SEL_AFE;
+-		else
++		} else {
++			/* TXB has a single data lane, no need to adjust. */
+ 			io10 |= ADV748X_IO_10_CSI1_EN;
++		}
+ 	}
+ 
+-	if (state->hdmi.tx)
++	if (state->hdmi.tx) {
++		/*
++		 * Restore the number of active lanes, in case we have gone
++		 * through an AFE->TXA streaming sessions.
++		 */
++		tx->active_lanes = tx->num_lanes;
+ 		io10 |= ADV748X_IO_10_CSI4_EN;
++	}
+ 
+ 	return io_clrset(state, ADV748X_IO_10, io10_mask, io10);
+ }
+@@ -596,6 +611,7 @@ static int adv748x_parse_csi2_lanes(struct adv748x_state *state,
+ 		}
+ 
+ 		state->txa.num_lanes = num_lanes;
++		state->txa.active_lanes = num_lanes;
+ 		adv_dbg(state, "TXA: using %u lanes\n", state->txa.num_lanes);
+ 	}
+ 
+@@ -607,6 +623,7 @@ static int adv748x_parse_csi2_lanes(struct adv748x_state *state,
+ 		}
+ 
+ 		state->txb.num_lanes = num_lanes;
++		state->txb.active_lanes = num_lanes;
+ 		adv_dbg(state, "TXB: using %u lanes\n", state->txb.num_lanes);
+ 	}
+ 
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index fccb388ce179..1061f425ece5 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -79,6 +79,7 @@ struct adv748x_csi2 {
+ 	unsigned int page;
+ 	unsigned int port;
+ 	unsigned int num_lanes;
++	unsigned int active_lanes;
+ 
+ 	struct media_pad pads[ADV748X_CSI2_NR_PADS];
+ 	struct v4l2_ctrl_handler ctrl_hdl;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.27.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
