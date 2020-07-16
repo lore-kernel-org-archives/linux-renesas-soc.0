@@ -2,208 +2,100 @@ Return-Path: <SRS0=NDfh=A3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 765E3C4345A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 14:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C56C433FC
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 14:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FEBB206F4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 14:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 683C9206F4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Jul 2020 14:25:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728909AbgGPOYa (ORCPT
+        id S1728993AbgGPOZi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Jul 2020 10:24:30 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:36977 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728521AbgGPOYa (ORCPT
+        Thu, 16 Jul 2020 10:25:38 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37951 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728054AbgGPOZi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Jul 2020 10:24:30 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 272251BF21D;
-        Thu, 16 Jul 2020 14:24:24 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        niklas.soderlund+renesas@ragnatech.se,
-        kieran.bingham@ideasonboard.com, dave.stevenson@raspberrypi.com,
-        hyun.kwon@xilinx.com, jmkrzyszt@gmail.com, robert.jarzmik@free.fr,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v7 10/10] media: rcar-csi2: Negotiate data lanes number
-Date:   Thu, 16 Jul 2020 16:27:13 +0200
-Message-Id: <20200716142713.110655-11-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200716142713.110655-1-jacopo+renesas@jmondi.org>
-References: <20200716142713.110655-1-jacopo+renesas@jmondi.org>
+        Thu, 16 Jul 2020 10:25:38 -0400
+Received: by mail-oi1-f195.google.com with SMTP id r8so5216728oij.5;
+        Thu, 16 Jul 2020 07:25:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=91Je2qAcGCzgn2zcz7wtNREQl6Cl2nhLo4wLUfE5WtI=;
+        b=XtMOE0v7nHTx/6b7/1J2cqW3bb+rQgO8WrZycFFizVY8G0VWj7k6Hk/nX4/vFmTG+e
+         d4ad+Z1hNI+lcgFLyZNDbb+Bg38U/k/gTBknid7klI7DBz4zRBsBtY1J0E57KsPan4Vk
+         gqOWtWadqrArSikc+d2xJQT6KDDGuGTknIwmGUwOdC3dXtI+oDz2QnAY7eCYsKUsGua9
+         tz8vGAlvjagXZDyd9BXzPO0dV8UlKJ7tq9Z7vrPo9m/Hj0xWisr3g/N4ztIKPMKf0FAI
+         r0OwhcbdfecTnfIIvII0hjXZp98Vp7Q2SzwnvEvavAYH/RJ4Csi3rytoHdQ/ru5m/kt8
+         ic1w==
+X-Gm-Message-State: AOAM532DMv9PZHY1VYU2JDTNpz6cRSh/6iochJyLoORTEEvb2cKqWP6M
+        bWtpmwRyGGzHBO/S+xjhENl8a7ND7A56ao7nOWI=
+X-Google-Smtp-Source: ABdhPJwIAN8f7bRLJuYAyK2do3tAZg+scN8MvNy6h4Jd28iwoL68rvxkRime7NVAhQfqpWkxvClPG0FKsK2Ss5qAiXM=
+X-Received: by 2002:a05:6808:64a:: with SMTP id z10mr4044483oih.54.1594909536875;
+ Thu, 16 Jul 2020 07:25:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1594811350-14066-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1594811350-14066-12-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1594811350-14066-12-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 16 Jul 2020 16:25:25 +0200
+Message-ID: <CAMuHMdWqmVSgUu6N8vBA8fRwwP0jhFCLBHN+AL4YoHn4yejn3A@mail.gmail.com>
+Subject: Re: [PATCH 11/20] dt-bindings: i2c: renesas,i2c: Document r8a774e1 support
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Niklas <niklas.soderlund@ragnatech.se>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-can@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Use the newly introduced get_mbus_config() subdevice pad operation to
-retrieve the remote subdevice MIPI CSI-2 bus configuration and configure
-the number of active data lanes accordingly.
+On Wed, Jul 15, 2020 at 1:10 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Document i2c controller for RZ/G2H (R8A774E1) SoC, which is compatible
+> with R-Car Gen3 SoC family.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 
-In order to be able to call the remote subdevice operation cache the
-index of the remote pad connected to the single CSI-2 input port.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/platform/rcar-vin/rcar-csi2.c | 75 +++++++++++++++++++--
- 1 file changed, 68 insertions(+), 7 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index c6cc4f473a07..cbb3e8a2887d 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -364,6 +364,7 @@ struct rcar_csi2 {
- 	struct v4l2_async_notifier notifier;
- 	struct v4l2_async_subdev asd;
- 	struct v4l2_subdev *remote;
-+	unsigned int remote_pad;
- 
- 	struct v4l2_mbus_framefmt mf;
- 
-@@ -409,13 +410,14 @@ static void rcsi2_exit_standby(struct rcar_csi2 *priv)
- 	reset_control_deassert(priv->rstc);
- }
- 
--static int rcsi2_wait_phy_start(struct rcar_csi2 *priv)
-+static int rcsi2_wait_phy_start(struct rcar_csi2 *priv,
-+				unsigned int lanes)
- {
- 	unsigned int timeout;
- 
- 	/* Wait for the clock and data lanes to enter LP-11 state. */
- 	for (timeout = 0; timeout <= 20; timeout++) {
--		const u32 lane_mask = (1 << priv->lanes) - 1;
-+		const u32 lane_mask = (1 << lanes) - 1;
- 
- 		if ((rcsi2_read(priv, PHCLM_REG) & PHCLM_STOPSTATECKL)  &&
- 		    (rcsi2_read(priv, PHDLM_REG) & lane_mask) == lane_mask)
-@@ -447,7 +449,8 @@ static int rcsi2_set_phypll(struct rcar_csi2 *priv, unsigned int mbps)
- 	return 0;
- }
- 
--static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
-+static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp,
-+			   unsigned int lanes)
- {
- 	struct v4l2_subdev *source;
- 	struct v4l2_ctrl *ctrl;
-@@ -472,15 +475,64 @@ static int rcsi2_calc_mbps(struct rcar_csi2 *priv, unsigned int bpp)
- 	 * bps = link_freq * 2
- 	 */
- 	mbps = v4l2_ctrl_g_ctrl_int64(ctrl) * bpp;
--	do_div(mbps, priv->lanes * 1000000);
-+	do_div(mbps, lanes * 1000000);
- 
- 	return mbps;
- }
- 
-+static int rcsi2_get_active_lanes(struct rcar_csi2 *priv,
-+				  unsigned int *lanes)
-+{
-+	struct v4l2_mbus_config mbus_config = { 0 };
-+	unsigned int num_lanes = UINT_MAX;
-+	int ret;
-+
-+	*lanes = priv->lanes;
-+
-+	ret = v4l2_subdev_call(priv->remote, pad, get_mbus_config,
-+			       priv->remote_pad, &mbus_config);
-+	if (ret == -ENOIOCTLCMD) {
-+		dev_dbg(priv->dev, "No remote mbus configuration available\n");
-+		return 0;
-+	}
-+
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to get remote mbus configuration\n");
-+		return ret;
-+	}
-+
-+	if (mbus_config.type != V4L2_MBUS_CSI2_DPHY) {
-+		dev_err(priv->dev, "Unsupported media bus type %u\n",
-+			mbus_config.type);
-+		return -EINVAL;
-+	}
-+
-+	if (mbus_config.flags & V4L2_MBUS_CSI2_1_LANE)
-+		num_lanes = 1;
-+	else if (mbus_config.flags & V4L2_MBUS_CSI2_2_LANE)
-+		num_lanes = 2;
-+	else if (mbus_config.flags & V4L2_MBUS_CSI2_3_LANE)
-+		num_lanes = 3;
-+	else if (mbus_config.flags & V4L2_MBUS_CSI2_4_LANE)
-+		num_lanes = 4;
-+
-+	if (num_lanes > priv->lanes) {
-+		dev_err(priv->dev,
-+			"Unsupported mbus config: too many data lanes %u\n",
-+			num_lanes);
-+		return -EINVAL;
-+	}
-+
-+	*lanes = num_lanes;
-+
-+	return 0;
-+}
-+
- static int rcsi2_start_receiver(struct rcar_csi2 *priv)
- {
- 	const struct rcar_csi2_format *format;
- 	u32 phycnt, vcdt = 0, vcdt2 = 0, fld = 0;
-+	unsigned int lanes;
- 	unsigned int i;
- 	int mbps, ret;
- 
-@@ -522,10 +574,18 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
- 			fld |= FLD_FLD_NUM(1);
- 	}
- 
-+	/*
-+	 * Get the number of active data lanes inspecting the remote mbus
-+	 * configuration.
-+	 */
-+	ret = rcsi2_get_active_lanes(priv, &lanes);
-+	if (ret)
-+		return ret;
-+
- 	phycnt = PHYCNT_ENABLECLK;
--	phycnt |= (1 << priv->lanes) - 1;
-+	phycnt |= (1 << lanes) - 1;
- 
--	mbps = rcsi2_calc_mbps(priv, format->bpp);
-+	mbps = rcsi2_calc_mbps(priv, format->bpp, lanes);
- 	if (mbps < 0)
- 		return mbps;
- 
-@@ -572,7 +632,7 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
- 	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ);
- 	rcsi2_write(priv, PHYCNT_REG, phycnt | PHYCNT_SHUTDOWNZ | PHYCNT_RSTZ);
- 
--	ret = rcsi2_wait_phy_start(priv);
-+	ret = rcsi2_wait_phy_start(priv, lanes);
- 	if (ret)
- 		return ret;
- 
-@@ -749,6 +809,7 @@ static int rcsi2_notify_bound(struct v4l2_async_notifier *notifier,
- 	}
- 
- 	priv->remote = subdev;
-+	priv->remote_pad = pad;
- 
- 	dev_dbg(priv->dev, "Bound %s pad: %d\n", subdev->name, pad);
- 
+                        Geert
+
 -- 
-2.27.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
