@@ -2,37 +2,38 @@ Return-Path: <SRS0=836u=A4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24495C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C39C433E3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 047C620775
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:24:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F03DD2083E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:24:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726200AbgGQLYh (ORCPT
+        id S1726200AbgGQLYo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Jul 2020 07:24:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43734 "EHLO
+        Fri, 17 Jul 2020 07:24:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726000AbgGQLYh (ORCPT
+        with ESMTP id S1726000AbgGQLYo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Jul 2020 07:24:37 -0400
+        Fri, 17 Jul 2020 07:24:44 -0400
 Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF2BCC061755
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2020 04:24:36 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36090C061755
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2020 04:24:44 -0700 (PDT)
 Received: from ramsan ([84.195.186.194])
         by albert.telenet-ops.be with bizsmtp
-        id 4BQX2300M4C55Sk06BQY6R; Fri, 17 Jul 2020 13:24:35 +0200
+        id 4BQj2300Q4C55Sk06BQj84; Fri, 17 Jul 2020 13:24:43 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jwOTf-00025l-Pc; Fri, 17 Jul 2020 13:24:31 +0200
+        id 1jwOTr-00026E-Oh; Fri, 17 Jul 2020 13:24:43 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jwOTf-0006n7-Nd; Fri, 17 Jul 2020 13:24:31 +0200
+        id 1jwOTr-0006nS-NA; Fri, 17 Jul 2020 13:24:43 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: <soc.lore.kernel.org>
 To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
@@ -40,58 +41,57 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/3] Renesas ARM SoC updates for v5.9 (take two)
-Date:   Fri, 17 Jul 2020 13:24:24 +0200
-Message-Id: <20200717112427.26032-1-geert+renesas@glider.be>
+Subject: [GIT PULL 2/3] Renesas driver updates for v5.9
+Date:   Fri, 17 Jul 2020 13:24:26 +0200
+Message-Id: <20200717112427.26032-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200717112427.26032-1-geert+renesas@glider.be>
+References: <20200717112427.26032-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi arm-soc folks,
+The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c7407:
 
-This is my second pull request for the inclusion of Renesas SoC updates
-for v5.9.
+  Linux 5.8-rc1 (2020-06-14 12:45:04 -0700)
 
-It consists of 3 parts:
+are available in the Git repository at:
 
-  [GIT PULL 1/3] Renesas ARM DT updates for v5.9 (take two)
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-drivers-for-v5.9-tag1
 
-    - SPI Multi I/O Bus Controller (RPC-IF) support for R-Car V3H and V3M,
-      including QSPI support for the Condor, Eagle, V3HSK, and V3MSK
-      boards,
-    - Initial support for the RZ/G2H SoC on the HopeRun HiHope RZ/G2H
-      board,
-    - Initial support for the Beacon EmbeddedWorks RZ/G2M board,
-    - Minor fixes and improvements.
+for you to fetch changes up to 7f8fa833dc739c4a28574c335eb08dbde2cb23d0:
 
-  [GIT PULL 2/3] Renesas driver updates for v5.9
+  soc: renesas: rcar-rst: Add support for RZ/G2H (2020-07-13 10:34:41 +0200)
 
-    - Add core support for the new RZ/G2H (R8A774E1) SoC, including System
-      Controller (SYSC) and Reset (RST) support.
+----------------------------------------------------------------
+Renesas driver updates for v5.9
 
-  [GIT PULL 3/3] Renesas DT binding updates for v5.9
+  - Add core support for the new RZ/G2H (R8A774E1) SoC, including System
+    Controller (SYSC) and Reset (RST) support.
 
-    - Document core support for the RZ/G2H SoC,
-    - Document support for the HopeRun HiHope RZ/G2H, and Beacon
-      EmbeddedWorks RZ/G2M boards.
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      Merge tag 'renesas-r8a774e1-dt-binding-defs-tag' into renesas-drivers-for-v5.9
 
-Note that the new Renesas RZ/G2H DT Binding Definitions are shared by
-driver and DT source files, and thus included in multiple pull requests:
-  - "[GIT PULL] clk: renesas: Updates for v5.9 (take two)" (for clk),
-  - "[GIT PULL 1/3] Renesas ARM DT updates for v5.9 (take two)" (for arm-soc),
-  - "[GIT PULL 2/3] Renesas driver updates for v5.9" (for arm-soc).
+Marian-Cristian Rotariu (6):
+      dt-bindings: power: Add r8a774e1 SYSC power domain definitions
+      clk: renesas: Add r8a774e1 CPG Core Clock Definitions
+      soc: renesas: rcar-sysc: Add r8a774e1 support
+      soc: renesas: Add Renesas R8A774E1 config option
+      soc: renesas: Identify RZ/G2H
+      soc: renesas: rcar-rst: Add support for RZ/G2H
 
-Thanks for pulling!
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ drivers/soc/renesas/Kconfig                   | 11 +++++
+ drivers/soc/renesas/Makefile                  |  1 +
+ drivers/soc/renesas/r8a774e1-sysc.c           | 43 +++++++++++++++++++
+ drivers/soc/renesas/rcar-rst.c                |  1 +
+ drivers/soc/renesas/rcar-sysc.c               |  3 ++
+ drivers/soc/renesas/rcar-sysc.h               |  1 +
+ drivers/soc/renesas/renesas-soc.c             |  8 ++++
+ include/dt-bindings/clock/r8a774e1-cpg-mssr.h | 59 +++++++++++++++++++++++++++
+ include/dt-bindings/power/r8a774e1-sysc.h     | 36 ++++++++++++++++
+ 9 files changed, 163 insertions(+)
+ create mode 100644 drivers/soc/renesas/r8a774e1-sysc.c
+ create mode 100644 include/dt-bindings/clock/r8a774e1-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/r8a774e1-sysc.h
