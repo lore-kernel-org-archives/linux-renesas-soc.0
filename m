@@ -2,85 +2,192 @@ Return-Path: <SRS0=836u=A4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FB0C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7031EC433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6554B20717
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:38:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VzvFF3da"
+	by mail.kernel.org (Postfix) with ESMTP id 556D020768
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:45:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbgGQLic (ORCPT
+        id S1726256AbgGQLpC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Jul 2020 07:38:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45882 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbgGQLib (ORCPT
+        Fri, 17 Jul 2020 07:45:02 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:35903 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726013AbgGQLpC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Jul 2020 07:38:31 -0400
-Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45988C061755
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2020 04:38:31 -0700 (PDT)
-Received: by mail-lj1-x22c.google.com with SMTP id s9so12181228ljm.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2020 04:38:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SFJatZiPd3q4Ge25iIBb4A6tpk6jKl9wVvHTvMggx0A=;
-        b=VzvFF3daDT32SYArgEhQB8Gjc0wPG2zfX08NRmzcXVON+AAHHUZeORxrzsh2fVDOzY
-         fwG5bZnYMDrXNh/LKe5BCQ0qKZNSFhlaEQZCocn0g/Li1r2GMEsNoCejCuOeqwyQoXjy
-         Wuj9l2fNzTUuSQbryr+nzy5Wpq2ZQgFep6+ea+k9qb59XKGCeMJ48K+Nt70lgqiZCagR
-         aG6MgOvdUool0/M5qm2Jlbt4SiECa6wLjKesF9W+3uYbN94gYqk10UPyxuW/BtPraztg
-         cPXewAtvL44IUZunAMZaLT/BIT/IlJNXjpQIfXt5jtnjrcT00Wa0VMqVe+Ot0XQcXkm9
-         mcXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SFJatZiPd3q4Ge25iIBb4A6tpk6jKl9wVvHTvMggx0A=;
-        b=TUVmv286IQE/vAO/EW2wRVZ3W5MK0egUU0FnzrP2jWcQeoaZA52NuCrIcCAK6Bk0nv
-         iY/x2W7GdvBtr0Y2iFPdfUkJhF0cD0vjG3SVgWh5emhrZ0gK3wkte6CiMDigDMI4xxk2
-         0hgIDkG6HeWjxaqBMnRkYjPR7dBg3aacTOzq1ijck5A6d6n8lIHppAXutQ8elha9gBWs
-         sm0TqqGzKM6uC+9SJ+J7gDoxwys7o7e1eoxDiNVTkLIZyTfVPJgCXWmtXS3HP1lroHNH
-         s6umng/DtKquTO0/JYVv067iXJ1IGRmXyeO0a3ilIRJFwdZXov4e506HUsqn39yjnowz
-         6tCg==
-X-Gm-Message-State: AOAM531BvnD9w2FKJ/PPLUbSMdVCXEHOAYUv9/VtgscUVrACJ7y75kU/
-        B771vJ6/ZdRk85a7uCPCY7U1Lp04gtJDFTHF0DFNZQ==
-X-Google-Smtp-Source: ABdhPJxGGqTq2L3ZGRxA/ALVYKMO3cg85lXJmKN6Tj2s0ZQ6g83NJgrXBF5hKYSVUntqiyaBKDe+U0cXUxnm/PxBw6A=
-X-Received: by 2002:a2e:8046:: with SMTP id p6mr4596515ljg.100.1594985909292;
- Fri, 17 Jul 2020 04:38:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200717100944.15966-1-geert+renesas@glider.be>
-In-Reply-To: <20200717100944.15966-1-geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 17 Jul 2020 13:38:18 +0200
-Message-ID: <CACRpkdZeFA2DkE5WxOD_2Sq4p0Xnww7wPUhfqGR8rK21RS_R8A@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: sh-pfc: Updates for v5.9 (take two)
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 17 Jul 2020 07:45:02 -0400
+X-IronPort-AV: E=Sophos;i="5.75,362,1589209200"; 
+   d="scan'208";a="52194509"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 17 Jul 2020 20:45:01 +0900
+Received: from localhost.localdomain (unknown [10.166.252.89])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 368044267DB8;
+        Fri, 17 Jul 2020 20:45:01 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     kishon@ti.com, vkoul@kernel.org
+Cc:     wsa+renesas@sang-engineering.com, geert+renesas@glider.be,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 1/2] phy: renesas: rcar-gen3-usb2: move irq registration to init
+Date:   Fri, 17 Jul 2020 20:44:56 +0900
+Message-Id: <1594986297-12434-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1594986297-12434-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1594986297-12434-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 12:58 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+If CONFIG_DEBUG_SHIRQ was enabled, r8a77951-salvator-xs could boot
+correctly. If we appended "earlycon keep_bootcon" to the kernel
+command like, we could get kernel log like below.
 
-> The following changes since commit b2fc9b4eb1d79c03fd78e50b810c2ea27178e1e3:
->
->   pinctrl: sh-pfc: r8a77970: Add RPC pins, groups, and functions (2020-06-22 16:58:23 +0200)
->
-> are available in the Git repository at:
+    SError Interrupt on CPU0, code 0xbf000002 -- SError
+    CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.8.0-rc3-salvator-x-00505-g6c843129e6faaf01 #785
+    Hardware name: Renesas Salvator-X 2nd version board based on r8a77951 (DT)
+    pstate: 60400085 (nZCv daIf +PAN -UAO BTYPE=--)
+    pc : rcar_gen3_phy_usb2_irq+0x14/0x54
+    lr : free_irq+0xf4/0x27c
 
-Thanks, pulled in to my devel branch.
+This means free_irq() calls the interrupt handler while PM runtime
+is not getting if DEBUG_SHIRQ is enabled and rcar_gen3_phy_usb2_probe()
+failed. To fix the issue, move the irq registration place to
+rcar_gen3_phy_usb2_init() which is ready to handle the interrupts.
 
-Yours,
-Linus Walleij
+Note that after the commit 549b6b55b005 ("phy: renesas: rcar-gen3-usb2:
+enable/disable independent irqs") which is merged into v5.2, since this
+driver creates multiple phy instances, needs to check whether one of
+phy instances is initialized. However, if we backport this patch to v5.1
+or less, we don't need to check it because such kernel have single
+phy instance.
+
+Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 9f391c574efc ("phy: rcar-gen3-usb2: add runtime ID/VBUS pin detection")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c | 61 +++++++++++++++++---------------
+ 1 file changed, 33 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+index bfb22f8..5087b7c 100644
+--- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
++++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+@@ -111,6 +111,7 @@ struct rcar_gen3_chan {
+ 	struct work_struct work;
+ 	struct mutex lock;	/* protects rphys[...].powered */
+ 	enum usb_dr_mode dr_mode;
++	int irq;
+ 	bool extcon_host;
+ 	bool is_otg_channel;
+ 	bool uses_otg_pins;
+@@ -389,12 +390,38 @@ static void rcar_gen3_init_otg(struct rcar_gen3_chan *ch)
+ 	rcar_gen3_device_recognition(ch);
+ }
+ 
++static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
++{
++	struct rcar_gen3_chan *ch = _ch;
++	void __iomem *usb2_base = ch->base;
++	u32 status = readl(usb2_base + USB2_OBINTSTA);
++	irqreturn_t ret = IRQ_NONE;
++
++	if (status & USB2_OBINT_BITS) {
++		dev_vdbg(ch->dev, "%s: %08x\n", __func__, status);
++		writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
++		rcar_gen3_device_recognition(ch);
++		ret = IRQ_HANDLED;
++	}
++
++	return ret;
++}
++
+ static int rcar_gen3_phy_usb2_init(struct phy *p)
+ {
+ 	struct rcar_gen3_phy *rphy = phy_get_drvdata(p);
+ 	struct rcar_gen3_chan *channel = rphy->ch;
+ 	void __iomem *usb2_base = channel->base;
+ 	u32 val;
++	int ret;
++
++	if (!rcar_gen3_is_any_rphy_initialized(channel) && channel->irq >= 0) {
++		INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
++		ret = request_irq(channel->irq, rcar_gen3_phy_usb2_irq,
++				  IRQF_SHARED, dev_name(channel->dev), channel);
++		if (ret < 0)
++			dev_err(channel->dev, "No irq handler (%d)\n", channel->irq);
++	}
+ 
+ 	/* Initialize USB2 part */
+ 	val = readl(usb2_base + USB2_INT_ENABLE);
+@@ -433,6 +460,9 @@ static int rcar_gen3_phy_usb2_exit(struct phy *p)
+ 		val &= ~USB2_INT_ENABLE_UCOM_INTEN;
+ 	writel(val, usb2_base + USB2_INT_ENABLE);
+ 
++	if (channel->irq >= 0 && !rcar_gen3_is_any_rphy_initialized(channel))
++		free_irq(channel->irq, channel);
++
+ 	return 0;
+ }
+ 
+@@ -503,23 +533,6 @@ static const struct phy_ops rz_g1c_phy_usb2_ops = {
+ 	.owner		= THIS_MODULE,
+ };
+ 
+-static irqreturn_t rcar_gen3_phy_usb2_irq(int irq, void *_ch)
+-{
+-	struct rcar_gen3_chan *ch = _ch;
+-	void __iomem *usb2_base = ch->base;
+-	u32 status = readl(usb2_base + USB2_OBINTSTA);
+-	irqreturn_t ret = IRQ_NONE;
+-
+-	if (status & USB2_OBINT_BITS) {
+-		dev_vdbg(ch->dev, "%s: %08x\n", __func__, status);
+-		writel(USB2_OBINT_BITS, usb2_base + USB2_OBINTSTA);
+-		rcar_gen3_device_recognition(ch);
+-		ret = IRQ_HANDLED;
+-	}
+-
+-	return ret;
+-}
+-
+ static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
+ 	{
+ 		.compatible = "renesas,usb2-phy-r8a77470",
+@@ -598,7 +611,7 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	struct phy_provider *provider;
+ 	struct resource *res;
+ 	const struct phy_ops *phy_usb2_ops;
+-	int irq, ret = 0, i;
++	int ret = 0, i;
+ 
+ 	if (!dev->of_node) {
+ 		dev_err(dev, "This driver needs device tree\n");
+@@ -614,16 +627,8 @@ static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+ 	if (IS_ERR(channel->base))
+ 		return PTR_ERR(channel->base);
+ 
+-	/* call request_irq for OTG */
+-	irq = platform_get_irq_optional(pdev, 0);
+-	if (irq >= 0) {
+-		INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
+-		irq = devm_request_irq(dev, irq, rcar_gen3_phy_usb2_irq,
+-				       IRQF_SHARED, dev_name(dev), channel);
+-		if (irq < 0)
+-			dev_err(dev, "No irq handler (%d)\n", irq);
+-	}
+-
++	/* get irq number here and request_irq for OTG in phy_init */
++	channel->irq = platform_get_irq_optional(pdev, 0);
+ 	channel->dr_mode = rcar_gen3_get_dr_mode(dev->of_node);
+ 	if (channel->dr_mode != USB_DR_MODE_UNKNOWN) {
+ 		int ret;
+-- 
+2.7.4
+
