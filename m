@@ -2,103 +2,114 @@ Return-Path: <SRS0=836u=A4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 739A5C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 17:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 038F2C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 17:16:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52083208E4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 17:00:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D82D320737
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 17:16:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595006180;
+	bh=BMFDpLiXiIkNg05MYBPfN+bjURAfepPCUIPuHQlUSiY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vGzTc+Ba7yoV88o022eLsHa+oHUWXgoCpu9OPWVsIZGLLf4WKbvB5j5L/6NEnDVnZ
+	 wHlfRbRFSqZC+sfcLWx7FTIco3osWPAGHFQ8TaldqdzuAVMdudsIsfolcW2zN4Uq0i
+	 s4NRt+LV9+y59rc/ONwgxmfrFQ7ltqbWGKMmIi/I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbgGQRAl (ORCPT
+        id S1726557AbgGQRQU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Jul 2020 13:00:41 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:21061 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726938AbgGQRAc (ORCPT
+        Fri, 17 Jul 2020 13:16:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726463AbgGQRQU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Jul 2020 13:00:32 -0400
-X-IronPort-AV: E=Sophos;i="5.75,362,1589209200"; 
-   d="scan'208";a="52419821"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 18 Jul 2020 02:00:30 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9500D40061A0;
-        Sat, 18 Jul 2020 02:00:28 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 1/2] pinctrl: sh-pfc: r8a7790: Add USB1 PWEN pin and group
-Date:   Fri, 17 Jul 2020 18:00:24 +0100
-Message-Id: <1595005225-11519-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1595005225-11519-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1595005225-11519-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Fri, 17 Jul 2020 13:16:20 -0400
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94967206BE;
+        Fri, 17 Jul 2020 17:16:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595006179;
+        bh=BMFDpLiXiIkNg05MYBPfN+bjURAfepPCUIPuHQlUSiY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MAqrX9/PcmveaIgPJnYWRFY21xgtKg5EMWwxh3g7nMazwXEBJonijbZPHU1R1AQSa
+         sag/nVtSM5RSL7FnVUtetWrUo05JniCdQjp8Hf6CEV9x3VnWZizsBv5sP2Ay/dRjQC
+         vJr/42dT/FSeYxESIvBNs8Ae8GKXBGnAmzp/RL9Y=
+Date:   Fri, 17 Jul 2020 13:16:18 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Qais Yousef <qais.yousef@arm.com>
+Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        Tony Prisk <linux@prisktech.co.nz>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Oliver Neukum <oneukum@suse.de>,
+        linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>
+Subject: Re: [PATCH 4.14 105/136] usb/ehci-platform: Set PM runtime as active
+ on resume
+Message-ID: <20200717171618.GQ2722994@sasha-vm>
+References: <20200623195303.601828702@linuxfoundation.org>
+ <20200623195308.955410923@linuxfoundation.org>
+ <20200709070023.GA18414@lxhi-065.adit-jv.com>
+ <20200717161639.37ptgbolborimcvs@e107158-lin.cambridge.arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20200717161639.37ptgbolborimcvs@e107158-lin.cambridge.arm.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add USB1 PWEN pin and group for USB1 interface.
+On Fri, Jul 17, 2020 at 05:17:23PM +0100, Qais Yousef wrote:
+>Hi Eugeniu
+>
+>On 07/09/20 09:00, Eugeniu Rosca wrote:
+>> Hello everyone,
+>>
+>> Cc: linux-renesas-soc
+>> Cc: linux-pm
+>
+>[...]
+>
+>> After integrating v4.14.186 commit 5410d158ca2a50 ("usb/ehci-platform:
+>> Set PM runtime as active on resume") into downstream v4.14.x, we started
+>> to consistently experience below panic [1] on every second s2ram of
+>> R-Car H3 Salvator-X Renesas reference board.
+>>
+>> After some investigations, we concluded the following:
+>>  - the issue does not exist in vanilla v5.8-rc4+
+>>  - [bisecting shows that] the panic on v4.14.186 is caused by the lack
+>>    of v5.6-rc1 commit 987351e1ea7772 ("phy: core: Add consumer device
+>>    link support"). Getting evidence for that is easy. Reverting
+>>    987351e1ea7772 in vanilla leads to a similar backtrace [2].
+>>
+>> Questions:
+>>  - Backporting 987351e1ea7772 ("phy: core: Add consumer device
+>>    link support") to v4.14.187 looks challenging enough, so probably not
+>>    worth it. Anybody to contradict this?
+>>  - Assuming no plans to backport the missing mainline commit to v4.14.x,
+>>    should the following three v4.14.186 commits be reverted on v4.14.x?
+>>    * baef809ea497a4 ("usb/ohci-platform: Fix a warning when hibernating")
+>>    * 9f33eff4958885 ("usb/xhci-plat: Set PM runtime as active on resume")
+>>    * 5410d158ca2a50 ("usb/ehci-platform: Set PM runtime as active on resume")
+>
+>Thanks for investigating this.
+>
+>Alan, Greg, do you have any ideas?
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/pinctrl/sh-pfc/pfc-r8a7790.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+I've reverted these 3 commits from 5.4 and earlier, thank you for
+investigating this issue.
 
-diff --git a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-index f524401fec5f..39ba1e7cc1c3 100644
---- a/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-+++ b/drivers/pinctrl/sh-pfc/pfc-r8a7790.c
-@@ -3611,6 +3611,13 @@ static const unsigned int usb1_pins[] = {
- static const unsigned int usb1_mux[] = {
- 	USB1_PWEN_MARK, USB1_OVC_MARK,
- };
-+static const unsigned int usb1_pwen_pins[] = {
-+	/* PWEN */
-+	RCAR_GP_PIN(5, 20),
-+};
-+static const unsigned int usb1_pwen_mux[] = {
-+	USB1_PWEN_MARK,
-+};
- /* - USB2 ------------------------------------------------------------------- */
- static const unsigned int usb2_pins[] = {
- 	/* PWEN, OVC */
-@@ -3939,7 +3946,7 @@ static const unsigned int vin3_clk_mux[] = {
- };
- 
- static const struct {
--	struct sh_pfc_pin_group common[289];
-+	struct sh_pfc_pin_group common[290];
- 	struct sh_pfc_pin_group automotive[1];
- } pinmux_groups = {
- 	.common = {
-@@ -4193,6 +4200,7 @@ static const struct {
- 		SH_PFC_PIN_GROUP(usb0),
- 		SH_PFC_PIN_GROUP(usb0_ovc_vbus),
- 		SH_PFC_PIN_GROUP(usb1),
-+		SH_PFC_PIN_GROUP(usb1_pwen),
- 		SH_PFC_PIN_GROUP(usb2),
- 		VIN_DATA_PIN_GROUP(vin0_data, 24),
- 		VIN_DATA_PIN_GROUP(vin0_data, 20),
-@@ -4640,6 +4648,7 @@ static const char * const usb0_groups[] = {
- 
- static const char * const usb1_groups[] = {
- 	"usb1",
-+	"usb1_pwen",
- };
- 
- static const char * const usb2_groups[] = {
 -- 
-2.17.1
-
+Thanks,
+Sasha
