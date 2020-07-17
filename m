@@ -2,93 +2,189 @@ Return-Path: <SRS0=836u=A4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3DEC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 07:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F1FBC433E5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 07:38:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8594320704
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 07:18:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 480C120768
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 07:38:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726200AbgGQHSS (ORCPT
+        id S1726201AbgGQHi2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Jul 2020 03:18:18 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:37199 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbgGQHSS (ORCPT
+        Fri, 17 Jul 2020 03:38:28 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:41352 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726060AbgGQHi1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Jul 2020 03:18:18 -0400
-Received: by mail-oi1-f195.google.com with SMTP id 12so7270519oir.4;
-        Fri, 17 Jul 2020 00:18:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a5hTKsShr1r3N7ckghpJVGyfr7q/TFPmmyprZtIxXpA=;
-        b=UlNfzIWCZAOyLy0eE6A9t2GfjZVT3oCCOPAx2qCb+ld7moJ9NFw6Ryw/j8cqEKBUMB
-         oVItLNwIHjzTdQT77Rk5bXWLovd9Ms9uM9o27D6iraI/qxaDdT7uBahhPpIN8AJKVpII
-         lHDSEplnbdVpDJO0MRJmYli7hvrcxjUm8CKnpav2XVrGYMs/vShrvsMS7lBPdeL+aK22
-         34bekdSMHV+snBg6d6T/c4Khbv/tQYm0qHmVaM9GX973RUxlJ3ItY/DJbpyM33zFPhVS
-         515MPt0ZbtSINxub67tPi6k3LowcqWWyaFDqhEAH/nTb7a/9jGhbWzYsKjbRGCDBVSST
-         FxNw==
-X-Gm-Message-State: AOAM533lzcQq8iJssfQQm49vLbvBpZAsn64H1LFb2lK2M0HtxQx4zIYb
-        BqYBc2EIjrQ+QbfSH4aC4Qi7oFMVlunOsOOd2H8=
-X-Google-Smtp-Source: ABdhPJxlyTHAAuX2MIEk8itC1oT3cHf7n9+SAmrvOegCDH4dUIhUmVSg+H3YLLWpUP0fnB5/i4BOHOfR15M/I5rhJjw=
-X-Received: by 2002:aca:ac10:: with SMTP id v16mr6263830oie.153.1594970296950;
- Fri, 17 Jul 2020 00:18:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200716211517.GA17174@embeddedor>
-In-Reply-To: <20200716211517.GA17174@embeddedor>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 17 Jul 2020 09:18:06 +0200
-Message-ID: <CAMuHMdU7p6wY3vzV2mRzWrvn_nDuJBFVtc5QK-mLQ7kJbm1HqA@mail.gmail.com>
-Subject: Re: [PATCH][next] PCI: rcar-gen2: Use fallthrough pseudo-keyword
-To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Fri, 17 Jul 2020 03:38:27 -0400
+X-IronPort-AV: E=Sophos;i="5.75,362,1589209200"; 
+   d="scan'208";a="52385293"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 17 Jul 2020 16:38:27 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 373614209D48;
+        Fri, 17 Jul 2020 16:38:24 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Content-Type: text/plain; charset="UTF-8"
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 2/2] dt-bindings: usb: convert ti,hd3ss3220 bindings to json-schema
+Date:   Fri, 17 Jul 2020 08:34:34 +0100
+Message-Id: <1594971274-48027-2-git-send-email-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1594971274-48027-1-git-send-email-biju.das.jz@bp.renesas.com>
+References: <1594971274-48027-1-git-send-email-biju.das.jz@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Gustavo,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thanks for your patch!
+Convert ti,hd3ss3220.txt to YAML.
 
-On Thu, Jul 16, 2020 at 11:11 PM Gustavo A. R. Silva
-<gustavoars@kernel.org> wrote:
-> Replace the existing /* fall through */ comments and its variants with
-> the new pseudo-keyword macro fallthrough[1]. Also, remove unnecessary
-> fall-through markings when it is the case.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ .../devicetree/bindings/usb/ti,hd3ss3220.txt       | 38 ------------
+ .../devicetree/bindings/usb/ti,hd3ss3220.yaml      | 70 ++++++++++++++++++++++
+ 2 files changed, 70 insertions(+), 38 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
 
-Which unnecessary marking is being removed?
-I don't see any.
-
->
-> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html?highlight=fallthrough#implicit-switch-case-fall-through
->
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-
-For the actual patch contents:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+deleted file mode 100644
+index 2bd21b2..0000000
+--- a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
++++ /dev/null
+@@ -1,38 +0,0 @@
+-TI HD3SS3220 TypeC DRP Port Controller.
+-
+-Required properties:
+- - compatible: Must be "ti,hd3ss3220".
+- - reg: I2C slave address, must be 0x47 or 0x67 based on ADDR pin.
+- - interrupts: An interrupt specifier.
+-
+-Required sub-node:
+- - connector: The "usb-c-connector" attached to the hd3ss3220 chip. The
+-   bindings of the connector node are specified in:
+-
+-	Documentation/devicetree/bindings/connector/usb-connector.yaml
+-
+-Example:
+-hd3ss3220@47 {
+-	compatible = "ti,hd3ss3220";
+-	reg = <0x47>;
+-	interrupt-parent = <&gpio6>;
+-	interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+-
+-	connector {
+-		compatible = "usb-c-connector";
+-		label = "USB-C";
+-		data-role = "dual";
+-
+-		ports {
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+-
+-			port@1 {
+-				reg = <1>;
+-				hd3ss3220_ep: endpoint {
+-					remote-endpoint = <&usb3_role_switch>;
+-				};
+-			};
+-		};
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+new file mode 100644
+index 0000000..cd7b124
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/ti,hd3ss3220.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: TI HD3SS3220 TypeC DRP Port Controller
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++description: |-
++  HD3SS3220 is a USB SuperSpeed (SS) 2:1 mux with DRP port controller. The device provides Channel
++  Configuration (CC) logic and 5V VCONN sourcing for ecosystems implementing USB Type-C. The
++  HD3SS3220 can be configured as a Downstream Facing Port (DFP), Upstream Facing Port (UFP) or a
++  Dual Role Port (DRP) making it ideal for any application.
++
++properties:
++  compatible:
++   const: ti,hd3ss3220
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  connector:
++    $ref: /schemas/connector/usb-connector.yaml#
++
++required:
++  - compatible
++  - reg
++  - interrupts
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c0 {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        hd3ss3220@47 {
++            compatible = "ti,hd3ss3220";
++            reg = <0x47>;
++            interrupt-parent = <&gpio6>;
++            interrupts = <3>;
++
++            connector {
++                compatible = "usb-c-connector";
++                label = "USB-C";
++                data-role = "dual";
++
++                ports {
++                    #address-cells = <1>;
++                    #size-cells = <0>;
++
++                    port@1 {
++                        reg = <1>;
++                        hd3ss3220_ep: endpoint {
++                            remote-endpoint = <&usb3_role_switch>;
++                        };
++                    };
++                };
++            };
++        };
++    };
++
++...
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
