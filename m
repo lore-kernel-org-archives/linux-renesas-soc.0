@@ -2,73 +2,110 @@ Return-Path: <SRS0=836u=A4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2704BC433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B625C433E8
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CD63204EA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3CDF20775
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 11:59:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594987174;
+	bh=IBC0fxfS9D7A/ESzV86wlZOweut+yTh9ShR/uTQtWsM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gVblw9itrxoQGLEMO771f7AdDZa9mLGmzVT2U1PA4yPIqpkr8XUWZ2B4jm0zm09Ob
+	 cT5yqKplUiVpi9AsBITkCaVpTrdgU4wGYpVgOaETIOflBoPw5I3HfTYI7sJ2Aq0qPo
+	 eaqa47zLuoVuxZt/URpyFOumAiRXiVldO6ri3+CM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbgGQLpE (ORCPT
+        id S1726775AbgGQL71 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Jul 2020 07:45:04 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:38979 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726446AbgGQLpD (ORCPT
+        Fri, 17 Jul 2020 07:59:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55682 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725950AbgGQL70 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Jul 2020 07:45:03 -0400
-X-IronPort-AV: E=Sophos;i="5.75,362,1589209200"; 
-   d="scan'208";a="52406122"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 17 Jul 2020 20:45:01 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 466964267DBC;
-        Fri, 17 Jul 2020 20:45:01 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     kishon@ti.com, vkoul@kernel.org
-Cc:     wsa+renesas@sang-engineering.com, geert+renesas@glider.be,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 2/2] phy: renesas: rcar-gen3-usb2: exit if request_irq() failed
-Date:   Fri, 17 Jul 2020 20:44:57 +0900
-Message-Id: <1594986297-12434-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1594986297-12434-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1594986297-12434-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Fri, 17 Jul 2020 07:59:26 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C01032065D;
+        Fri, 17 Jul 2020 11:59:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594987166;
+        bh=IBC0fxfS9D7A/ESzV86wlZOweut+yTh9ShR/uTQtWsM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=l3he7Zb25ylwXTM+e0bCR6vU9eGg6EbkNVm+2ZjuZJklUHo0TgJywhDGe6XZm1pB+
+         WWjgpTpBmhJVa9E5E8uFYvmf/cGv3uAUeOHIgU3RcuPY82Yneo4mqNrDBHWDWUxM15
+         DmmiA+K8Q86iYdDD1GMBM4uHo9m9kYvctKGCRmLw=
+Date:   Fri, 17 Jul 2020 12:59:15 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Niklas <niklas.soderlund@ragnatech.se>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-watchdog@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH 14/20] dt-bindings: spi: renesas,sh-msiof: Add r8a774e1
+ support
+Message-ID: <20200717115915.GD4316@sirena.org.uk>
+References: <1594811350-14066-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1594811350-14066-15-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="EP0wieDxd4TSJjHq"
+Content-Disposition: inline
+In-Reply-To: <1594811350-14066-15-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Cookie: No other warranty expressed or implied.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-To avoid unexpected behaviors, it's better to exit if request_irq()
-failed.
 
-Suggested-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+--EP0wieDxd4TSJjHq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index 5087b7c..e34e447 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -419,8 +419,10 @@ static int rcar_gen3_phy_usb2_init(struct phy *p)
- 		INIT_WORK(&channel->work, rcar_gen3_phy_usb2_work);
- 		ret = request_irq(channel->irq, rcar_gen3_phy_usb2_irq,
- 				  IRQF_SHARED, dev_name(channel->dev), channel);
--		if (ret < 0)
-+		if (ret < 0) {
- 			dev_err(channel->dev, "No irq handler (%d)\n", channel->irq);
-+			return ret;
-+		}
- 	}
- 
- 	/* Initialize USB2 part */
--- 
-2.7.4
+On Wed, Jul 15, 2020 at 12:09:04PM +0100, Lad Prabhakar wrote:
+> Document RZ/G2H (R8A774E1) SoC bindings.
 
+Please in future could you split things like this up into per subsystem
+serieses?  That's a more normal approach and avoids the huge threads and
+CC lists.
+
+--EP0wieDxd4TSJjHq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl8RkpIACgkQJNaLcl1U
+h9C49gf/eW/cjPlYI1cbSfRXBxXem11Bis/Eyf7JldTeF1+MuH3As7rZdLb/Echg
+mYjYxsQ/gYm2DjC32f3rK+qY8Enzqz3k2jl7qJZ8R+pPEtfW9+ZrDHFAUyuE/Bwb
+sG+qKb/lwZ3KgqIO85RfL9b5WGktXWg26M182qVbBIZTGYRysCksSaUN6fxSKfwN
+icZD/vNKlJ9tJcfFxsjKl37Ti8ipK6ht46YI880NPw/lVkl7aFbJOsHY3LHW2JkR
+qTH281KenQZDUUXHaIqusmXvyMhns1zbIhsZxaZ9txJFNZX43TK1krvBVznJYK20
+K3YSdEJoHNWVwjPSdMbWIO1iOR9SSQ==
+=3N6n
+-----END PGP SIGNATURE-----
+
+--EP0wieDxd4TSJjHq--
