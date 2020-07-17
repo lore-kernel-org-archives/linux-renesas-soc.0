@@ -4,96 +4,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18371C433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A8B8C433E6
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 10:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA29B2076A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 10:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4186020775
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 10:58:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726113AbgGQK6p (ORCPT
+        id S1726198AbgGQK6q (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Jul 2020 06:58:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39750 "EHLO
+        Fri, 17 Jul 2020 06:58:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbgGQK6p (ORCPT
+        with ESMTP id S1725950AbgGQK6p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 17 Jul 2020 06:58:45 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3FC8C08C5DC
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF5ACC061755
         for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2020 03:58:44 -0700 (PDT)
 Received: from ramsan ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id 4Ayg2300F4C55Sk01AygN1; Fri, 17 Jul 2020 12:58:42 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id 4Ayg2300f4C55Sk06AygVh; Fri, 17 Jul 2020 12:58:40 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jwO4e-0001Kd-IL; Fri, 17 Jul 2020 12:58:40 +0200
+        id 1jwO4e-0001Kd-Gk; Fri, 17 Jul 2020 12:58:40 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1jwNJJ-0004AJ-Mf; Fri, 17 Jul 2020 12:09:45 +0200
+        id 1jwNJ8-00048y-St; Fri, 17 Jul 2020 12:09:34 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] pinctrl: sh-pfc: Updates for v5.9 (take two)
-Date:   Fri, 17 Jul 2020 12:09:44 +0200
-Message-Id: <20200717100944.15966-1-geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.9 (take two)
+Date:   Fri, 17 Jul 2020 12:09:31 +0200
+Message-Id: <20200717100931.15885-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Linus,
+	Hi Mike, Stephen,
 
-The following changes since commit b2fc9b4eb1d79c03fd78e50b810c2ea27178e1e3:
+The following changes since commit 52bc5ea6edde35bc65ed6ecd7639534e78002c74:
 
-  pinctrl: sh-pfc: r8a77970: Add RPC pins, groups, and functions (2020-06-22 16:58:23 +0200)
+  clk: renesas: rzg2: Mark RWDT clocks as critical (2020-06-22 16:54:32 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/sh-pfc-for-v5.9-tag2
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.9-tag2
 
-for you to fetch changes up to 4d0e62679f17b8bde01aa9995233b5b9ca05ab7f:
+for you to fetch changes up to c8a53fa1d211936ddcabf82ff991c18672b3d63a:
 
-  dt-bindings: pinctrl: renesas,rza2-pinctrl: Convert to json-schema (2020-07-16 09:57:50 +0200)
+  clk: renesas: cpg-mssr: Add r8a774e1 support (2020-07-13 10:36:33 +0200)
 
 ----------------------------------------------------------------
-pinctrl: sh-pfc: Updates for v5.9 (take two)
+clk: renesas: Updates for v5.9 (take two)
 
-  - Add support for the new RZ/G2H (R8A774E1) SoC,
-  - One more conversion of DT bindings to json-schema,
-  - Fix RZ/A1 kerneldoc.
+  - Add support for the new RZ/G2H (R8A774E1) SoC.
+
+Note that the new Renesas RZ/G2H DT Binding Definitions are shared by
+driver and DT source files, and thus included in multiple pull requests:
+  - "[GIT PULL 1/3] Renesas ARM DT updates for v5.9 (take two)" (for arm-soc),
+  - "[GIT PULL 2/3] Renesas driver updates for v5.9" (for arm-soc),
+  - "[GIT PULL] clk: renesas: Updates for v5.9 (take two)" (for clk).
 
 Thanks for pulling!
 ----------------------------------------------------------------
 Geert Uytterhoeven (1):
-      dt-bindings: pinctrl: renesas,rza2-pinctrl: Convert to json-schema
+      Merge tag 'renesas-r8a774e1-dt-binding-defs-tag' into clk-renesas-for-v5.9
 
-Lad Prabhakar (1):
-      pinctrl: sh-pfc: pfc-r8a77951: Add R8A774E1 PFC support
+Marian-Cristian Rotariu (4):
+      dt-bindings: power: Add r8a774e1 SYSC power domain definitions
+      clk: renesas: Add r8a774e1 CPG Core Clock Definitions
+      dt-bindings: clock: renesas,cpg-mssr: Document r8a774e1
+      clk: renesas: cpg-mssr: Add r8a774e1 support
 
-Lee Jones (1):
-      pinctrl: rza1: Demote some kerneldoc headers and fix others
-
-Marian-Cristian Rotariu (1):
-      dt-bindings: pinctrl: sh-pfc: Document r8a774e1 PFC support
-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   1 +
- .../bindings/pinctrl/renesas,rza2-pinctrl.txt      |  87 --
- .../bindings/pinctrl/renesas,rza2-pinctrl.yaml     | 100 +++
- drivers/pinctrl/pinctrl-rza1.c                     |  24 +-
- drivers/pinctrl/sh-pfc/Kconfig                     |   4 +
- drivers/pinctrl/sh-pfc/Makefile                    |   1 +
- drivers/pinctrl/sh-pfc/core.c                      |   6 +
- drivers/pinctrl/sh-pfc/pfc-r8a77951.c              | 877 +++++++++++----------
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   1 +
- 9 files changed, 587 insertions(+), 514 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml
+ .../bindings/clock/renesas,cpg-mssr.yaml           |   1 +
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a774e1-cpg-mssr.c            | 349 +++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ include/dt-bindings/clock/r8a774e1-cpg-mssr.h      |  59 ++++
+ include/dt-bindings/power/r8a774e1-sysc.h          |  36 +++
+ 8 files changed, 458 insertions(+)
+ create mode 100644 drivers/clk/renesas/r8a774e1-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a774e1-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/r8a774e1-sysc.h
 
 Gr{oetje,eeting}s,
 
