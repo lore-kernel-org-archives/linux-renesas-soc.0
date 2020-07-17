@@ -2,105 +2,170 @@ Return-Path: <SRS0=836u=A4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B604C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 07:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F396C433E3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 07:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 305A520704
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 07:13:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 087A920704
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Jul 2020 07:16:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbgGQHNB (ORCPT
+        id S1726959AbgGQHQv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Jul 2020 03:13:01 -0400
-Received: from mail-oo1-f65.google.com ([209.85.161.65]:42273 "EHLO
-        mail-oo1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726201AbgGQHNA (ORCPT
+        Fri, 17 Jul 2020 03:16:51 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:56177 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbgGQHQv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Jul 2020 03:13:00 -0400
-Received: by mail-oo1-f65.google.com with SMTP id y9so1679768oot.9
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Jul 2020 00:13:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aFoMkl6GTaIMZpODLQW2vB+naukLWDmCTw4VMdk5//I=;
-        b=sPoQO3lqLNjnXaLHDmE8urHBgKCWFhrwV94z+4xmh9IZO3AqhMpdr01wm5ZDIO+zJ8
-         4pmU8sxQ64ZccPCkds/36XQz04//Qx76NoQs1PMYASM+Z0WrZ2Esh0D2QTDx01f/3Nf2
-         CZv1TYarr19OMZHudjpB3+WJ9CTcOf03l9l+KZ6DdcXhr3xqE68tbOTr5jynXI7d+W9g
-         CNLiyIF5G8gDKr1L5YkiS3BaoKvQ/4pkM79pnAPqqAEPWwyvZehck8aHsD7/FeCgByGY
-         nqPIn92yHhLjDVR6LX7HJqxk8Mm5nsT4JBoyeCUNUxEvUyiNF1IPiFDT3e4Btgp225FD
-         2PGA==
-X-Gm-Message-State: AOAM530aKw778dW91kuI7TRV61Mnia6zM5UHlqnIFRdJDiz0i5qOxykv
-        PY79zUosMSLVw9XHF/vbrW3Su+OSKZGihRT3H4Y=
-X-Google-Smtp-Source: ABdhPJwvRwjGCRG8cYSKyR9WCGWfaqoJXPVYbM/PD/HXjK1JVEl3aylB3uJt/AftSNZdOihIo7CQRO9dtEfKBkpi+vA=
-X-Received: by 2002:a4a:5209:: with SMTP id d9mr7485920oob.40.1594969979564;
- Fri, 17 Jul 2020 00:12:59 -0700 (PDT)
+        Fri, 17 Jul 2020 03:16:51 -0400
+Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 16886200007;
+        Fri, 17 Jul 2020 07:16:45 +0000 (UTC)
+Date:   Fri, 17 Jul 2020 09:20:18 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Cc:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
+        sakari.ailus@linux.intel.com, laurent.pinchart@ideasonboard.com,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        niklas.soderlund+renesas@ragnatech.se,
+        kieran.bingham@ideasonboard.com, dave.stevenson@raspberrypi.com,
+        hyun.kwon@xilinx.com, robert.jarzmik@free.fr,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v7 01/10] media: v4l2-subdev: Introduce
+ [get|set]_mbus_config pad ops
+Message-ID: <20200717072018.crgmvfrm44kgmvcb@uno.localdomain>
+References: <20200716142713.110655-1-jacopo+renesas@jmondi.org>
+ <20200716142713.110655-2-jacopo+renesas@jmondi.org>
+ <4042930.ejJDZkT8p0@z50>
 MIME-Version: 1.0
-References: <1594382612-13664-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdVqFU538syZq2B=An-MA3zo3RT115JmvaVxyt5mb-Wvsg@mail.gmail.com> <TY2PR01MB3692CD5627D9848ADDA88BF0D87C0@TY2PR01MB3692.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY2PR01MB3692CD5627D9848ADDA88BF0D87C0@TY2PR01MB3692.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 17 Jul 2020 09:12:48 +0200
-Message-ID: <CAMuHMdVzO=wwTyYhHj2Cg3g_rRQCHQ_97DVH8zXAkg_ki5ZHhw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: add full-pwr-cycle-in-suspend into
- eMMC nodes
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4042930.ejJDZkT8p0@z50>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Shimoda-san,
+Hi Janusz,
+  thanks for review
 
-On Fri, Jul 17, 2020 at 7:44 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> > From: Geert Uytterhoeven, Sent: Wednesday, July 15, 2020 6:05 PM
-> > On Fri, Jul 10, 2020 at 2:03 PM Yoshihiro Shimoda
-> > <yoshihiro.shimoda.uh@renesas.com> wrote:
-> > > Add full-pwr-cycle-in-suspend property to do a graceful shutdown of
-> > > the eMMC device in system suspend.
-> > >
-> > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > i.e. will queue in renesas-devel for v5.9.
+On Fri, Jul 17, 2020 at 12:15:27AM +0200, Janusz Krzysztofik wrote:
+> Hi Jacopo,
 >
-> Thanks!
->
-> > >  arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts   | 1 +
-> > >  arch/arm64/boot/dts/renesas/salvator-common.dtsi | 1 +
+> On Thursday, July 16, 2020 4:27:04 P.M. CEST Jacopo Mondi wrote:
+> > Introduce two new pad operations to allow retrieving and configuring the
+> > media bus parameters on a subdevice pad.
 > >
-> > I assume we need this on other boards, too?
-> > At least ULCB uses the BD9571 PMIC, and has a similar PSCI s2ram
-> > implementation as Salvator-X(S) and Ebisu.
+> > The newly introduced operations aims to replace the s/g_mbus_config video
+> > operations, which have been on their way for deprecation since a long
+> > time.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> >  include/media/v4l2-subdev.h | 27 +++++++++++++++++++++++++++
+> >  1 file changed, 27 insertions(+)
+> >
+> > diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+> > index f7fe78a6f65a..d8b9d5735307 100644
+> > --- a/include/media/v4l2-subdev.h
+> > +++ b/include/media/v4l2-subdev.h
+> > @@ -670,6 +670,29 @@ struct v4l2_subdev_pad_config {
+> >   *
+> >   * @set_frame_desc: set the low level media bus frame parameters, @fd array
+> >   *                  may be adjusted by the subdev driver to device capabilities.
+> > + *
+> > + * @get_mbus_config: get the media bus configuration of a remote sub-device.
+> > + *		     The media bus configuration is usually retrieved from the
+> > + *		     firmware interface at sub-device probe time, immediately
+> > + *		     applied to the hardware and eventually adjusted by the
+> > + *		     driver. Remote sub-devices (usually video receivers) shall
+> > + *		     use this operation to query the transmitting end bus
+> > + *		     configuration in order to adjust their own one accordingly.
+> > + *		     Callers should make sure they get the most up-to-date as
+> > + *		     possible configuration from the remote end, likely calling
+> > + *		     this operation as close as possible to stream on time. The
+> > + *		     operation shall fail if the pad index it has been called on
+> > + *		     is not valid.
+> > + *
+> > + * @set_mbus_config: set the media bus configuration of a remote sub-device.
+> > + *		     This operations is intended to allow, in combination with
+> > + *		     the get_mbus_config operation, the negotiation of media bus
+> > + *		     configuration parameters between media sub-devices. The
+> > + *		     operation shall not fail if the requested configuration is
+> > + *		     not supported, but the driver shall update the content of
+> > + *		     the %config argument to reflect what has been actually
+> > + *		     applied to the hardware. The operation shall fail if the
+> > + *		     pad index it has been called on is not valid.
+
+First of all, Hans sent a pull request for this series yesterday. Are
+you ok with that and with sending patches on top, or do you think the
+inclusion of the series should be post-poned ? (you can imagine what
+my preference is :)
+
 >
-> I think so. And, I also thin ULCB+KF should not have this because
-> it doesn't support Suspend-to-RAM. But, what do you think?
+> Could this description also clarify what results are expected in case of
+> hardware errors?  The ov6650 implementation you propose may suggest such
+> errors may be expected to be ignored silently as long as current configuration
+> can be successfully obtained from hardware and passed back to the caller.
 
-How come ULCB+KF doesn't support s2ram?
-Isn't KingFisher just an extension board for ULCB?
-Does it require a firmware upgrade?
+I guess "it depends"(tm)
+I know this doesn't sound like a good answer :)
 
-> JFYI, I could such environment if I added the property into ulcb.dtsi
-> and added "/delete-property/" into ulcb-kf.dtsi.
+A failure in applying or reading register likely means the driver is
+trying to access the hardware while it is in low power state. In this
+case I would consider this a driver bug, as it should try to be smart
+and cache settings and apply them at the proper time and return the
+current configuration, which should be cached as well.
 
-Iff that's the case, that's a valid solution.
+Of course things could go wrong for several reasons, and in the case
+if any unexpected error occurs I think an error is expected to be
+reported. Please note that this v7 of ov6650 does that by returning
+the return value of ov6650_get_mbus_config() at the end of
+ov6650_set_mbus_config.
 
-Gr{oetje,eeting}s,
+I guess this is pretty regular behaviour, although I missed it in the
+previous version, so it might be worth adding an additional line to
+the documentation.
 
-                        Geert
+>
+> Moreover, since validity of the pad argument is expected to be verified, I
+> think this should be handled by the media infrastructure layer with the
+> drivers/media/v4l2-core/v4l2-subdev.c:check_pad() helper called from a
+> .set_mbus_config() wrapper added to v4l2_subdev_call_pad_wrappers, freeing
+> drivers from reimplementing it.
+>
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Good point, and indeed my bad as I thought v4l2_subdev_call() would
+already do that by default, but looking at the actual implementation a
+wrapper might be a good idea indeed.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Patches on top ?
+
+Thanks
+  j
+
+> Thanks,
+> Janusz
+>
+> >   */
+> >  struct v4l2_subdev_pad_ops {
+> >  	int (*init_cfg)(struct v4l2_subdev *sd,
+> > @@ -710,6 +733,10 @@ struct v4l2_subdev_pad_ops {
+> >  			      struct v4l2_mbus_frame_desc *fd);
+> >  	int (*set_frame_desc)(struct v4l2_subdev *sd, unsigned int pad,
+> >  			      struct v4l2_mbus_frame_desc *fd);
+> > +	int (*get_mbus_config)(struct v4l2_subdev *sd, unsigned int pad,
+> > +			       struct v4l2_mbus_config *config);
+> > +	int (*set_mbus_config)(struct v4l2_subdev *sd, unsigned int pad,
+> > +			       struct v4l2_mbus_config *config);
+> >  };
+> >
+> >  /**
+> >
+>
+>
+>
+>
