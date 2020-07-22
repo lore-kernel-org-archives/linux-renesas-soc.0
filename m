@@ -2,95 +2,56 @@ Return-Path: <SRS0=3RBk=BB=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=BAYES_00,
-	BODY_QUOTE_MALF_MSGID,DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2355C433E3
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Jul 2020 03:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF924C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Jul 2020 03:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76116207BB
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Jul 2020 03:23:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5A3720714
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Jul 2020 03:40:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595388199;
-	bh=uM6fyj+PQ5qOmnVhpZd9ufFET3RZbSsFk/iuwvXvJBw=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=se9KkOs5+F83axs91OeVTy1Knv99aK1jqS48nsRi4BYuY6icIfpEumoBHa0Gthsea
-	 b6/NFgNEzwfxxM+SnovDjzO4tuvltpjorFUFOIdgMlkEbeUGNMXbGagK4mR/Du1t2x
-	 fC5qbpHvcxo6bnMWbIfPHq87rXXIfKJat/DHPUvM=
+	s=default; t=1595389241;
+	bh=RHaf8W9vLHd4vZ2C1NagFKca3JSJHLsYv4BfSsbW25M=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=Bh0cuivA7YzFo2I6wIzJ4UJDuP0kOxx1q/bZOQuJCYhmx/It67XqY4z4fNx7QrZxU
+	 oyksL6XEPiU0tuW7bIQ4W9XrTuDYW2m9ckVaY3fgo58Bhud2UQ3TtEiVMwrpO+5sml
+	 UTb/OgbvTx3H/FiwbvHvnYK2N0DE3pYWjmzPxV6A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731859AbgGVDXQ (ORCPT
+        id S1731857AbgGVDkl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 21 Jul 2020 23:23:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52762 "EHLO mail.kernel.org"
+        Tue, 21 Jul 2020 23:40:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58626 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731781AbgGVDXP (ORCPT
+        id S1731793AbgGVDkl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Jul 2020 23:23:15 -0400
-Received: from embeddedor (unknown [201.162.241.127])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 216B42073A;
-        Wed, 22 Jul 2020 03:23:12 +0000 (UTC)
+        Tue, 21 Jul 2020 23:40:41 -0400
+Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595388195;
-        bh=uM6fyj+PQ5qOmnVhpZd9ufFET3RZbSsFk/iuwvXvJBw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=bTpAYBskiiDA2AEnBpXKU9F74egBStaz5fCX4tMbBPOJ9qqY9Vwjon9V/kbGodXrh
-         TGKa2xmqZ5bgYJf4XSxmAaspA1fZLcmO/3fPQwF8+kvmg0v8tw6ywcap/h5mMXTHYj
-         Syx2lWVUH7S8Cp9pIWNBAylQJjUG/KMGUb40dVD8=
-Date:   Tue, 21 Jul 2020 22:28:51 -0500
-From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v2][next] PCI: rcar-gen2: Use fallthrough pseudo-keyword
-Message-ID: <20200722032851.GA4251@embeddedor>
+        s=default; t=1595389241;
+        bh=RHaf8W9vLHd4vZ2C1NagFKca3JSJHLsYv4BfSsbW25M=;
+        h=Subject:From:Date:To:From;
+        b=niTlzv5mmGmLKIvcVhF0m7BVSEWJlPLE92/9rTRN77ijmaCyt3bBLUenWneMt7eQh
+         C0y1TgyEt9Ni/ln75jyw8gRDKEKv8abrrGt9K8w2IvlXJaRuuDnW96rjIp6TpHvlyu
+         6AWOqPQOaNVl7+lZxHoXvkoF761VdLErwKVjgfgw=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <159538924108.17625.14138572433200334980.git-patchwork-housekeeping@kernel.org>
+Date:   Wed, 22 Jul 2020 03:40:41 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace the existing /* fall through */ comments and its variants with
-the new pseudo-keyword macro fallthrough[1].
+Latest series: [v2] PCI: rcar-gen2: Use fallthrough pseudo-keyword (2020-07-22T03:28:51)
+  Superseding: [v1] PCI: rcar-gen2: Use fallthrough pseudo-keyword (2020-07-16T21:15:17):
+    [next] PCI: rcar-gen2: Use fallthrough pseudo-keyword
 
-[1] https://www.kernel.org/doc/html/v5.7/process/deprecated.html?highlight=fallthrough#implicit-switch-case-fall-through
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
-Changes in v2:
- - Update URL. Use proper URL to Linux v5.7 documentation.
- - Add Geert's Reviewed-by tag.
- - Update changelog text.
-
- drivers/pci/controller/pci-rcar-gen2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/controller/pci-rcar-gen2.c b/drivers/pci/controller/pci-rcar-gen2.c
-index 326171cb1a97..2ec7093a7588 100644
---- a/drivers/pci/controller/pci-rcar-gen2.c
-+++ b/drivers/pci/controller/pci-rcar-gen2.c
-@@ -228,7 +228,7 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
- 		pr_warn("unknown window size %ld - defaulting to 256M\n",
- 			priv->window_size);
- 		priv->window_size = SZ_256M;
--		/* fall-through */
-+		fallthrough;
- 	case SZ_256M:
- 		val |= RCAR_USBCTR_PCIAHB_WIN1_256M;
- 		break;
 -- 
-2.27.0
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
