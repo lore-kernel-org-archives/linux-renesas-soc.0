@@ -2,175 +2,144 @@ Return-Path: <SRS0=3RBk=BB=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE86C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Jul 2020 03:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C982FC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Jul 2020 08:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A6707207DD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Jul 2020 03:41:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EDD320849
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Jul 2020 08:10:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="pVEz8v+5"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ii92gK2l"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731857AbgGVDlT (ORCPT
+        id S1726963AbgGVIKB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 21 Jul 2020 23:41:19 -0400
-Received: from gateway20.websitewelcome.com ([192.185.68.24]:26955 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731793AbgGVDlT (ORCPT
+        Wed, 22 Jul 2020 04:10:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49304 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbgGVIKB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 21 Jul 2020 23:41:19 -0400
-X-Greylist: delayed 1282 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jul 2020 23:41:17 EDT
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 0B675400C802E
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 21 Jul 2020 20:58:02 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id y5IQjIhMBhmVTy5IQjgoPC; Tue, 21 Jul 2020 22:19:54 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=k3PxIux8DcUqM16BlxYvPSjiVJeLosCqYWWdsc8vVy8=; b=pVEz8v+589UUIhSudE0lUmQ6BJ
-        osrOgYJtrfmt8LoQCitF6Lldd+UlBDiR+ZE/AJ9cKZLbRAjbzmcrQyICIqJAGGpgXWdpxRUeC1HbH
-        BZsaCDUDP8fe7hQLuEnWemJBawj0QAMHLgfKm0HWaMpmECcvEoSfzjArX8kYR6k76ri4zMfu1KpK8
-        tAiT+wHZdBDv3cnjtrTGK6wx+sxJZH+qD4jJqyk13lmwJn1l/HTlA1o6JN8gUs6C2+IL7Y5jhLcvw
-        E3MZVCARpGfY8N+fWHfPUMEghlBuqp43mCuCd/ond8A2kNzIPxyrR+SesOVRNvydybIzs5ixeloWm
-        OucGWnIQ==;
-Received: from [201.162.241.127] (port=12588 helo=[192.168.43.132])
-        by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1jy5IP-000rbJ-NN; Tue, 21 Jul 2020 22:19:53 -0500
-Subject: Re: [PATCH][next] PCI: rcar-gen2: Use fallthrough pseudo-keyword
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20200716211517.GA17174@embeddedor>
- <CAMuHMdU7p6wY3vzV2mRzWrvn_nDuJBFVtc5QK-mLQ7kJbm1HqA@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- xsFNBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
- 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
- tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
- DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
- 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
- YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
- m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
- NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
- qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
- LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABzStHdXN0YXZvIEEu
- IFIuIFNpbHZhIDxndXN0YXZvYXJzQGtlcm5lbC5vcmc+wsGrBBMBCAA+FiEEkmRahXBSurMI
- g1YvRwW0y0cG2zEFAl6zFvQCGyMFCQlmAYAFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AAIQkQ
- RwW0y0cG2zEWIQSSZFqFcFK6swiDVi9HBbTLRwbbMZsEEACWjJyXLjtTAF21Vuf1VDoGzitP
- oE69rq9UhXIGR+e0KACyIFoB9ibG/1j/ESMa0RPSwLpJDLgfvi/I18H/9cKtdo2uz0XNbDT8
- i3llIu0b43nzGIDzRudINBXC8Coeob+hrp/MMZueyzt0CUoAnY4XqpHQbQsTfTrpFeHT02Qz
- ITw6kTSmK7dNbJj2naH2vSrU11qGdU7aFzI7jnVvGgv4NVQLPxm/t4jTG1o+P1Xk4N6vKafP
- zqzkxj99JrUAPt+LyPS2VpNvmbSNq85PkQ9gpeTHpkio/D9SKsMW62njITPgy6M8TFAmx8JF
- ZAI6k8l1eU29F274WnlQ6ZokkJoNctwHa+88euWKHWUDolCmQpegJJ8932www83GLn1mdUZn
- NsymjFSdMWE+y8apWaV9QsDOKWf7pY2uBuE6GMPRhX7e7h5oQwa1lYeO2L9LTDeXkEOJe+hE
- qQdEEvkC/nok0eoRlBlZh433DQlv4+IvSsfN/uWld2TuQFyjDCLIm1CPRfe7z0TwiCM27F+O
- lHnUspCFSgpnrxqNH6CM4aj1EF4fEX+ZyknTSrKL9BGZ/qRz7Xe9ikU2/7M1ov6rOXCI4NR9
- THsNax6etxCBMzZs2bdMHMcajP5XdRsOIARuN08ytRjDolR2r8SkTN2YMwxodxNWWDC3V8X2
- RHZ4UwQw487BTQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJBH1AAh8tq2ULl
- 7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0DbnWSOrG7z9H
- IZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo5NwYiwS0lGis
- LTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOPotJTApqGBq80
- X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfFl5qH5RFY/qVn
- 3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpDjKxY/HBUSmaE
- 9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+ezS/pzC/YTzAv
- CWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQI6Zk91jbx96n
- rdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqozol6ioMHMb+In
- rHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcAEQEAAcLBZQQY
- AQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QSUMebQRFjKavw
- XB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sdXvUjUocKgUQq
- 6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4WrZGh/1hAYw4
- ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVnimua0OpqRXhC
- rEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfgfBNOb1p1jVnT
- 2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF8ieyHVq3qatJ
- 9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDCORYf5kW61fcr
- HEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86YJWH93PN+ZUh
- 6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9ehGZEO3+gCDFmK
- rjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrSVtSixD1uOgyt
- AP7RWS474w==
-Message-ID: <40316d8d-3d17-5ed1-b6ef-e965b657e1b6@embeddedor.com>
-Date:   Tue, 21 Jul 2020 22:25:34 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        Wed, 22 Jul 2020 04:10:01 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF60DC0619DC
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Jul 2020 01:10:00 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id w9so1227956ejc.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 22 Jul 2020 01:10:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8/oqCUNmFc1OqEXIlUblc8Jp0aa/CFYxFmL2eg8Khmw=;
+        b=Ii92gK2l3xsjB7pc4zpJzWubUCqWxaXjaGz1827ZLCYraTZxLI4GEXebasVLB3raxd
+         wZJky5lLRe1rG9dscfydrF0dm1kNwnqgAYnY/3d+QFiJ5FLNDduQYcSlNbi8A6c+hx8y
+         CMQ7YTioQyWvZ58SIDmp13HKuqAcIahEawSKmLIUkXZFAGP7AlJ9epnj8TyhUz4jPBGc
+         fnaV9dGFbwM5PHac4f+dsTHjzhdh5Osyv1qU+uHGVZTHuAtIhf62pzyqyuIzc5EZNAjg
+         yLFKrzGWu3gTBfTq/CQpP+sJRVgukDv6YCw8FAWlsZGXAfOc7ZuQZAS7rrLaazG5V1Ks
+         YsIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8/oqCUNmFc1OqEXIlUblc8Jp0aa/CFYxFmL2eg8Khmw=;
+        b=hxill2n140wuFnrsTjmMYQVlmq5Phlx7e8q8kh8aMRtEZzeygZqu5ZrevLVGjtxLN+
+         8weMqKsQ07ey74dw2tt5/MRD8KyxkIXXcn9q4KCje4oWVtyH1jlM58HIsIRJL+JPq0lD
+         fzh9Gn1ifxFSwrlOQjHD8vwdtZ74HRklzCxCF4l5aCsj2ghmviSp8c8otgNv+gUd1oN0
+         GE6tTvF2J9Li2wal4BF6LcbWK8tm2FPRAN3CaLSgJDBCUoBQabchISwAMjjZfoV+rYEv
+         qaObxxNbTtb4n5u70yNA+qrkTE/4Y26ExMKZezI/DpKjx0PZ6SdSomQCG1WiY+XgqCPk
+         rfLA==
+X-Gm-Message-State: AOAM532p2CDBBqSYDc4Y25Ork+hj4yDk1OIYWCm5qE5cY9wRum9OO2td
+        aX5dDGSuymt5GwB9Dmndq1nLY0Z3hYNYpRbruFe2Xg==
+X-Google-Smtp-Source: ABdhPJy0jQhddfBD9VXXPKyqiTXDORIrWINJapjugf6TEhdbEYQZQa7Fm4tW9glCGrENg3DnQz945cD77jRoWWq1Rdw=
+X-Received: by 2002:a17:906:2296:: with SMTP id p22mr28296124eja.510.1595405399348;
+ Wed, 22 Jul 2020 01:09:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdU7p6wY3vzV2mRzWrvn_nDuJBFVtc5QK-mLQ7kJbm1HqA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.162.241.127
-X-Source-L: No
-X-Exim-ID: 1jy5IP-000rbJ-NN
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.43.132]) [201.162.241.127]:12588
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 24
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20200717132859.237120-1-jacopo+renesas@jmondi.org>
+ <20200717132859.237120-3-jacopo+renesas@jmondi.org> <20200717193509.GD5961@pendragon.ideasonboard.com>
+In-Reply-To: <20200717193509.GD5961@pendragon.ideasonboard.com>
+From:   Loic Poulain <loic.poulain@linaro.org>
+Date:   Wed, 22 Jul 2020 10:14:52 +0200
+Message-ID: <CAMZdPi-wOmbMi-BxB31HoDhcBSxoSnFssceb=KR2Q=SeU9rN=w@mail.gmail.com>
+Subject: Re: [PATCH 02/13] arm64: dts: qcom: apq8016-sbc: Fix CSI-2 lanes routing
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+On Fri, 17 Jul 2020 at 21:35, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Jacopo,
+>
+> On Fri, Jul 17, 2020 at 03:28:48PM +0200, Jacopo Mondi wrote:
+> > The ov5640 sensor does not support lanes reconfiguration according
+> > to version of the datasheet I have (version 2.03) and the driver
+> > does not parse the properties to try to reconfigure them.
+> >
+> > Fix the properties values in the camera and cci node.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > ---
+> > Loic, I see you added the camera nodes in
+> > 39e0ce6cd1bf ("arm64: dts: qcom: apq8016-sbc: Add CCI/Sensor nodes")
+> >
+> > Do you have any idea how lanes could be swapped if, from my understanding,
+> > nor the sensor nor the driver supports that ?
+>
+> It's not supported on the OV5640 side, so I think the second hunk of
+> this patch is correct, but I believe that the CAMSS supports lane
+> reordering, so the first hunk is likely incorrect and should be dropped.
 
-On 7/17/20 02:18, Geert Uytterhoeven wrote:
-> Hi Gustavo,
-> 
-> Thanks for your patch!
-> 
-> On Thu, Jul 16, 2020 at 11:11 PM Gustavo A. R. Silva
-> <gustavoars@kernel.org> wrote:
->> Replace the existing /* fall through */ comments and its variants with
->> the new pseudo-keyword macro fallthrough[1]. Also, remove unnecessary
->> fall-through markings when it is the case.
-> 
-> Which unnecessary marking is being removed?
-> I don't see any.
-> 
+Indeed, camss supports lane configuration (cf camss_of_parse_endpoint_node).
+The sensor doesn't, so that can be removed on its side.
 
-There is none. I will remove those lines and send v2 with a URL
-to the proper documentation for Linux v5.7 instead of 'lastest',
-see:
+Regards,
+Loic
 
-https://www.kernel.org/doc/html/v5.7/process/deprecated.html?highlight=fallthrough#implicit-switch-case-fall-through
-
-I'll add your Reviewed-by tag. :)
-
->>
->> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html?highlight=fallthrough#implicit-switch-case-fall-through
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
-> 
-> For the actual patch contents:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-
-Thanks!
---
-Gustavo
+>
+> > ---
+> >  arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+> > index 8a4b790aa7ff..fe6613676e45 100644
+> > --- a/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi
+> > @@ -591,8 +591,8 @@ ports {
+> >               port@0 {
+> >                       reg = <0>;
+> >                       csiphy0_ep: endpoint {
+> > -                             clock-lanes = <1>;
+> > -                             data-lanes = <0 2>;
+> > +                             clock-lanes = <0>;
+> > +                             data-lanes = <1 2>;
+> >                               remote-endpoint = <&ov5640_ep>;
+> >                               status = "okay";
+> >                       };
+> > @@ -627,8 +627,8 @@ camera_rear@3b {
+> >
+> >               port {
+> >                       ov5640_ep: endpoint {
+> > -                             clock-lanes = <1>;
+> > -                             data-lanes = <0 2>;
+> > +                             clock-lanes = <0>;
+> > +                             data-lanes = <1 2>;
+> >                               remote-endpoint = <&csiphy0_ep>;
+> >                       };
+> >               };
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
