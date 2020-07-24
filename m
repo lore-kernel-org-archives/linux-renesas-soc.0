@@ -2,130 +2,126 @@ Return-Path: <SRS0=51O3=BD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D37C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Jul 2020 15:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1632C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Jul 2020 19:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E30C2206D7
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Jul 2020 15:08:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B0662070B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Jul 2020 19:36:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="v/Zrt837"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbgGXPIZ (ORCPT
+        id S1726703AbgGXTgi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 24 Jul 2020 11:08:25 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:42486 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726366AbgGXPIY (ORCPT
+        Fri, 24 Jul 2020 15:36:38 -0400
+Received: from www.zeus03.de ([194.117.254.33]:55938 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726085AbgGXTgi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Jul 2020 11:08:24 -0400
-X-IronPort-AV: E=Sophos;i="5.75,391,1589209200"; 
-   d="scan'208";a="52963390"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 25 Jul 2020 00:08:23 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A16C54005E3C;
-        Sat, 25 Jul 2020 00:08:21 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 1/2] media: i2c: ov772x: Add support for BT656 mode
-Date:   Fri, 24 Jul 2020 16:08:15 +0100
-Message-Id: <1595603296-25903-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1595603296-25903-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1595603296-25903-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Fri, 24 Jul 2020 15:36:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=mFPNGxnSoQUdb6k/VzG0fz/rutu6
+        dTuAHUYpm/qxMqs=; b=v/Zrt837fn9ovjusIoYahQIybEM8GANvNGOpwv7cd4vO
+        C7RRvJG/dSKd8IsuUcOx74ymvyw2dWLZ8LYLD70KqqTmVrlSzYptlSRSLKsWFl+0
+        iho2L4Nd9KQPI+I7gDJVd9QlXNNb+2beAxt6fAs0ire4bYSalxVLVZmuTKo7INs=
+Received: (qmail 3783945 invoked from network); 24 Jul 2020 21:36:36 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 24 Jul 2020 21:36:36 +0200
+X-UD-Smtp-Session: l3s3148p1@1flQFzWrsp4gAwDPXwcRAJKYSnl1dekZ
+Date:   Fri, 24 Jul 2020 21:36:35 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, Alain Volmat <alain.volmat@st.com>
+Subject: Re: [PATCH] i2c: add binding to mark a bus as SMBus
+Message-ID: <20200724193635.GC1227@ninjato>
+References: <20200701214830.3174-1-wsa+renesas@sang-engineering.com>
+ <20200715203843.GA776042@bogus>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="i7F3eY7HS/tUJxUd"
+Content-Disposition: inline
+In-Reply-To: <20200715203843.GA776042@bogus>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support to read the bus-type and enable BT656 mode if needed.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- drivers/media/i2c/ov772x.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+--i7F3eY7HS/tUJxUd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
-index 2cc6a67..3b7dfba 100644
---- a/drivers/media/i2c/ov772x.c
-+++ b/drivers/media/i2c/ov772x.c
-@@ -31,6 +31,7 @@
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-event.h>
-+#include <media/v4l2-fwnode.h>
- #include <media/v4l2-image-sizes.h>
- #include <media/v4l2-subdev.h>
- 
-@@ -434,6 +435,7 @@ struct ov772x_priv {
- #ifdef CONFIG_MEDIA_CONTROLLER
- 	struct media_pad pad;
- #endif
-+	struct v4l2_fwnode_endpoint ep;
- };
- 
- /*
-@@ -585,7 +587,6 @@ static int ov772x_s_stream(struct v4l2_subdev *sd, int enable)
- 				 enable ? 0 : SOFT_SLEEP_MODE);
- 	if (ret)
- 		goto done;
--
- 	if (enable) {
- 		dev_dbg(&client->dev, "format %d, win %s\n",
- 			priv->cfmt->code, priv->win->name);
-@@ -1104,7 +1105,10 @@ static int ov772x_set_params(struct ov772x_priv *priv,
- 		goto ov772x_set_fmt_error;
- 
- 	/* COM7: Sensor resolution and output format control. */
--	ret = regmap_write(priv->regmap, COM7, win->com7_bit | cfmt->com7);
-+	val = win->com7_bit | cfmt->com7;
-+	if (priv->ep.bus_type == V4L2_MBUS_BT656)
-+		val |= ITU656_ON_OFF;
-+	ret = regmap_write(priv->regmap, COM7, val);
- 	if (ret < 0)
- 		goto ov772x_set_fmt_error;
- 
-@@ -1354,6 +1358,7 @@ static const struct v4l2_subdev_ops ov772x_subdev_ops = {
- 
- static int ov772x_probe(struct i2c_client *client)
- {
-+	struct fwnode_handle *endpoint;
- 	struct ov772x_priv	*priv;
- 	int			ret;
- 	static const struct regmap_config ov772x_regmap_config = {
-@@ -1415,6 +1420,20 @@ static int ov772x_probe(struct i2c_client *client)
- 		goto error_clk_put;
- 	}
- 
-+	endpoint = fwnode_graph_get_next_endpoint(dev_fwnode(&client->dev),
-+						  NULL);
-+	if (!endpoint) {
-+		dev_err(&client->dev, "endpoint node not found\n");
-+		goto error_clk_put;
-+	}
-+
-+	ret = v4l2_fwnode_endpoint_parse(endpoint, &priv->ep);
-+	fwnode_handle_put(endpoint);
-+	if (ret) {
-+		dev_err(&client->dev, "Could not parse endpoint\n");
-+		goto error_clk_put;
-+	}
-+
- 	ret = ov772x_video_probe(priv);
- 	if (ret < 0)
- 		goto error_gpio_put;
--- 
-2.7.4
+Hi Rob,
 
+> > SMBus is largely compatible with I2C but there are some specifics. In
+> > case we need them on a bus, we can now use this new binding.
+> >=20
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > ---
+> >  Documentation/devicetree/bindings/i2c/i2c.txt | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentat=
+ion/devicetree/bindings/i2c/i2c.txt
+> > index 438ae123107e..d1f8cf3bd236 100644
+> > --- a/Documentation/devicetree/bindings/i2c/i2c.txt
+> > +++ b/Documentation/devicetree/bindings/i2c/i2c.txt
+> > @@ -77,6 +77,11 @@ wants to support one of the below features, it shoul=
+d adapt these bindings.
+> >  	this information to detect a stalled bus more reliably, for example.
+> >  	Can not be combined with 'multi-master'.
+> > =20
+> > +- smbus
+>=20
+> This is a boolean?
+
+Yes.
+
+>=20
+> > +	states that additional SMBus restrictions and features apply to this =
+bus.
+> > +	Examples of features are SMBusHostNotify and SMBusAlert. Examples of
+>=20
+> Do features need to be enumerated separately?
+
+They could be, do you think this is of advantage? For now, we would then
+need "host-notify" and "smbus-alert". Maybe later things like "timeout"
+could show up.
+
+>=20
+> > +	restrictions are more reserved addresses and timeout definitions.
+> > +
+
+All the best,
+
+   Wolfram
+
+
+--i7F3eY7HS/tUJxUd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl8bOEMACgkQFA3kzBSg
+KbZ8LxAAsQVic9wW1K+JiiY5IUC/9AEZNfjH9v02Kc5eTqm4Ib6Kg++h4Csv7FVp
+hzRn2gOdgbM84Ea7pyWPHWe3+n2pEjU4F3yuRmMBV8+8A2A3vz1nhJvzaayfIV2t
+L0yrQVJfY9AUUbyZZ0mxPUuHe3+SYv1usKhgpvJhnbx8bqeZfFhTpkmfzDTZVExf
+psl8PWjJo841vFzfyxiqn4kqNUg9k9IqZDJpPql1nXUzvhVeURG9KHyoG6owUEDH
+4pTM1rNYZt9X7izrGmj9p0VWOXzQQVtafqPVdK/mcThuaKi36Tragwl821ReA3vK
+OBNMeneCmc6T55F7SFPLzdC/LW/WvgaXxBrPkjmVIK7K/KRwea+Jm0Ky2Jo5UGfb
+Gw6kov9QrQ3EJKmwZyGnMOAiB7i03M4W4bQTmFBKzW1jmlHUCaPh+pQeGXqVCY/u
+6xAkTEujNIUlyVXUQYQJQG1hkKFIfdSUVtJkCkCnc/wXtXvvnMiWNLgt6LYIwt9o
+PEyw+hzjBbZOnMK0+SutYEyAQ/yGjYrDhBeK/T/vkEFy27WjWCaR0v8SqgYNY0Dm
+K9egVpxhaEdedq76lKG4LKABzqDR//k59s5P1yOQuyL6ciBhDyURd1c1uF4XEtvi
+CxyHoy065TEzITzk7MMt87Wvo7jADfko/lMYrHLDNacI7EAr7l8=
+=lFJs
+-----END PGP SIGNATURE-----
+
+--i7F3eY7HS/tUJxUd--
