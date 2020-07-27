@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB365C43469
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jul 2020 23:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7059C433E8
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jul 2020 23:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7C2E20786
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jul 2020 23:27:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 962B4208E4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jul 2020 23:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595892420;
-	bh=XTzEKkCiT3hDLUuKnQImLhNJnYrQpx71QkDX6t+ecwA=;
+	s=default; t=1595892455;
+	bh=bgAddR/u870zWR7NHJFFnORjmWhzCSF1Zmk3C6mtp4o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FVPyZAYvofOl4ew58RedMo/rdXF6i9fxX+eGIUdYTROU6yvqkCEGNqASf6tA/R3aQ
-	 nWg1r+LJKAW5vGnT0yNwexTqJ/obmRIWi0RFx/mOEdFgSMMlN/y5z/C4m57la991kn
-	 N4fBb1jdJ38UsvIELvG5i7+RDOHRCPHIbXjwMrdI=
+	b=C3AGvuGXYRi9j/AfuG0+L9FP73vbh4qvVj4vWs9e2Jzg0I3+Kb1tw/Q01fhdeL87T
+	 56FZEUVpkplvzmkIC/j1IKKuaBXFCOHH4Odo//EzBDqropeEhkt9nvgtd4f3AucH38
+	 HhRxliX/KBsYV1CwmdFbvkws0M0A/wdO0sKNAGTY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbgG0X0t (ORCPT
+        id S1728100AbgG0X13 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 27 Jul 2020 19:26:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36354 "EHLO mail.kernel.org"
+        Mon, 27 Jul 2020 19:27:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728498AbgG0XZH (ORCPT
+        id S1728314AbgG0XYw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Jul 2020 19:25:07 -0400
+        Mon, 27 Jul 2020 19:24:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5906C20786;
-        Mon, 27 Jul 2020 23:25:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0BE0E22B40;
+        Mon, 27 Jul 2020 23:24:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595892306;
-        bh=XTzEKkCiT3hDLUuKnQImLhNJnYrQpx71QkDX6t+ecwA=;
+        s=default; t=1595892291;
+        bh=bgAddR/u870zWR7NHJFFnORjmWhzCSF1Zmk3C6mtp4o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1PDYGTYNNPjuItrs1mQ40wf1Pl5ga2XC2+aHXrhbpNbdpbCgeRLU8ueYmtSCvNDER
-         GKa+6dLZqKmCkxjsZMJgTX0rYENFLIIkCEkPP2A71JZU+F9iIQMYEODnAuxeggrpbB
-         uP6kkbGQJyrS1jArCxcWW3FtD+MtOMoHk7uid50E=
+        b=hPdMPOgYT/kMi9qj3Z56zjSAaEtlPTRkzZFpfk6FVVCwP9asoO6amYy1Esrx8z2Rr
+         +qtUSE8EXdfIPy75RMFjeuPA9d84aK5NSXNKWFuBt6rmrKEFP0zPgYHX6gntdw1foo
+         8rHc3q0rJaE2LGvFCfebKc3prrluWRje1Z0qk/+g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
@@ -48,12 +48,12 @@ Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 05/10] net: ethernet: ravb: exit if re-initialization fails in tx timeout
-Date:   Mon, 27 Jul 2020 19:24:53 -0400
-Message-Id: <20200727232458.718131-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 05/10] net: ethernet: ravb: exit if re-initialization fails in tx timeout
+Date:   Mon, 27 Jul 2020 19:24:38 -0400
+Message-Id: <20200727232443.718000-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200727232458.718131-1-sashal@kernel.org>
-References: <20200727232458.718131-1-sashal@kernel.org>
+In-Reply-To: <20200727232443.718000-1-sashal@kernel.org>
+References: <20200727232443.718000-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -96,10 +96,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 24 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index d73617cc3b159..9f4d93a16b7e5 100644
+index faaf74073a120..569e698b5c807 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1482,6 +1482,7 @@ static void ravb_tx_timeout_work(struct work_struct *work)
+@@ -1445,6 +1445,7 @@ static void ravb_tx_timeout_work(struct work_struct *work)
  	struct ravb_private *priv = container_of(work, struct ravb_private,
  						 work);
  	struct net_device *ndev = priv->ndev;
@@ -107,7 +107,7 @@ index d73617cc3b159..9f4d93a16b7e5 100644
  
  	netif_tx_stop_all_queues(ndev);
  
-@@ -1490,15 +1491,36 @@ static void ravb_tx_timeout_work(struct work_struct *work)
+@@ -1453,15 +1454,36 @@ static void ravb_tx_timeout_work(struct work_struct *work)
  		ravb_ptp_stop(ndev);
  
  	/* Wait for DMA stopping */
