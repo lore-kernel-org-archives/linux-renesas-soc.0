@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 304F7C43466
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jul 2020 23:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F00C28E84
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jul 2020 23:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0B4EB20786
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jul 2020 23:28:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51D0E2173E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 27 Jul 2020 23:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595892502;
-	bh=ChVaTdwZsimVO9XXRPpvGgqVvr8Bhfap1whGtgk08Gc=;
+	s=default; t=1595892581;
+	bh=cRKjqNxHua9T76fRL5VIQta7CPlRoJFYlQ27sbGlFXw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pMOAH9J7EGLD0Pl8Y/GYkqXTaoLPdpUhQ8DlSv/i0eh01isRZV14sOkdysYTZwPVM
-	 jGJ1Yb/l5Brkmx2BgM/KPT+8s1ilbBdUlz25u7rsANAqlRFI49ORwGrz96WCZ+J/m1
-	 QlJcbOGA4w7ZnyFYPp7HILlKHBm7XOfv606NxG0s=
+	b=vRMGjyFLuOkUhyJHOqVuStN31JZ30KiLIHRr8KB0nx1M4iCcgOvFV/tlyXu09JKYG
+	 hynRq+xlcr6U5DGSdAqjBa/T4EaT7vCqWtLLksID10zFLSL5r0Fzhh6L30a/lmggAy
+	 eBHuBNKXsBwChvfFmKS7kfTnOh3kUUvydIIF2DBg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728281AbgG0XYe (ORCPT
+        id S1728041AbgG0XYF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 27 Jul 2020 19:24:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35626 "EHLO mail.kernel.org"
+        Mon, 27 Jul 2020 19:24:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728272AbgG0XYd (ORCPT
+        id S1728037AbgG0XYE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 27 Jul 2020 19:24:33 -0400
+        Mon, 27 Jul 2020 19:24:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2DBB20A8B;
-        Mon, 27 Jul 2020 23:24:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3976C20A8B;
+        Mon, 27 Jul 2020 23:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595892272;
-        bh=ChVaTdwZsimVO9XXRPpvGgqVvr8Bhfap1whGtgk08Gc=;
+        s=default; t=1595892244;
+        bh=cRKjqNxHua9T76fRL5VIQta7CPlRoJFYlQ27sbGlFXw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1dsH665sibEizPRZIx3vouiiFWlHi9rA6/RpEh9zkeXTZFMKJS6dv8xE9wrhoQtFC
-         RexKLcToPmxBumPdM0hBer/4rOJixb9lEpDit/gpcUMQoIoPI+7MwP58Gln1KMhRlT
-         kDgYKm0lWzr0m1gwVPOKtjYfUlbaw2T4neJ2mTGY=
+        b=B/aEPEoCIu2xfbzSY55MnYSkUDH1mE2vnv8NXaIbU1bBaHIJSpI7WOHbWHP4ifXWU
+         w8YJ+PpeyHyzmEXmibnv0t1NzV6uZm5Eh5LnLjYZl+lAiieZPNfgVHmzqvwMmBF/HK
+         N1nYkQ6raYmrSDPN8JeYUca4I4InRVDi7NdhjFGI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
@@ -48,12 +48,12 @@ Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 09/17] net: ethernet: ravb: exit if re-initialization fails in tx timeout
-Date:   Mon, 27 Jul 2020 19:24:12 -0400
-Message-Id: <20200727232420.717684-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.7 13/25] net: ethernet: ravb: exit if re-initialization fails in tx timeout
+Date:   Mon, 27 Jul 2020 19:23:33 -0400
+Message-Id: <20200727232345.717432-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200727232420.717684-1-sashal@kernel.org>
-References: <20200727232420.717684-1-sashal@kernel.org>
+In-Reply-To: <20200727232345.717432-1-sashal@kernel.org>
+References: <20200727232345.717432-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -96,7 +96,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 24 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 3f165c137236d..30cdabf64ccc1 100644
+index 067ad25553b92..ab335f7dab828 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
 @@ -1444,6 +1444,7 @@ static void ravb_tx_timeout_work(struct work_struct *work)
