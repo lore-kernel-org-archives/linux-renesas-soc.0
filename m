@@ -2,127 +2,158 @@ Return-Path: <SRS0=wBjX=BK=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D83EC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Jul 2020 09:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B85DC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Jul 2020 09:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 570772072A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Jul 2020 09:08:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="N62qO5wG"
+	by mail.kernel.org (Postfix) with ESMTP id 843D222CA1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 31 Jul 2020 09:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731981AbgGaJIS (ORCPT
+        id S1732720AbgGaJZR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 31 Jul 2020 05:08:18 -0400
-Received: from mail-eopbgr1300112.outbound.protection.outlook.com ([40.107.130.112]:3296
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728437AbgGaJIR (ORCPT
+        Fri, 31 Jul 2020 05:25:17 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:59301 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732711AbgGaJZO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 31 Jul 2020 05:08:17 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SpFvtDHQxCGg7cINZIGnZkvlMAFjKxbESrkPPaKdtJWIF/o3f3PP6OI2FUqhOcRzo8HzpZEpuYJGNU0aavmo2WuBsovtcMdYKpkpjSK8Hgklfzvsf2K2DYguEiWADEvPGC92gPWQOZ0n+O+gUSLoevEU+tovQYloT12DZKmeouGgcw9lqNjbl8w3B9Wr7LbYbOKT/Cshmr+Da6dvv+c9V6pqAu5qK8wnNtGKxYGH+Xrs7/+droE/1KJmarlaKiIeIDXQQqCqoi0u/B2yxVHu87LaLq5OMAXRZ9YbKUchfsmgfu5Ih6ss6wbJnwgzuNhYD2EBwdpYs6EOgunBrzrDYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YZe+GeX8gEp3tpKSIQYaiQmaKoTTBNCq9uZ9jj4YTw4=;
- b=bmEYOQyhQcF+T0Nxg/KuF9pHJI3JtQsT/cY7Ne8mDK48GUd/SZDR7HapsrDBxaoXb5hpAn0wTQqnR7lorzQBXw8AmT4SjqFq+gcWKYf0KXAHdoGc7kpnWd/n0mL3xvKFSYubPQPqVuUUomdveILM9kmdXxhFj3cmgUGrDSnTTHlKX8WThV+EgtA7Aooa/Yy/agfKNEPChIB/br428pdezmiYP44xIciGEwqes6MJlMSyqFJbot+Cwb19yOFxHkHh/3Zm2GcpCsl/uPWnJVFdvczkdaFq8pFxjFMaNXL7jyw8F1NqiOR0KhgAY0IOxbWGos4SlUXKX6qPpQILNKbAYQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YZe+GeX8gEp3tpKSIQYaiQmaKoTTBNCq9uZ9jj4YTw4=;
- b=N62qO5wGMDAZHI0muPlDlawZ6RRHtlBuhCKskfifd/rPxKg2UDdiCXqEZmAiJu010ZvsZiKWqrtP8UMPL+E41PEhOUDyzIWYKmJ0Pl84gH7XuGOR/Ldngv80xDt37bHPhZi3s7zZGdW3YhmrTXnC2qNzKRw+pxR2wiabA7j9EUs=
-Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com (2603:1096:404:d5::22)
- by TY2PR01MB3515.jpnprd01.prod.outlook.com (2603:1096:404:d6::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.20; Fri, 31 Jul
- 2020 09:08:12 +0000
-Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com
- ([fe80::9083:6001:8090:9f3]) by TY2PR01MB3692.jpnprd01.prod.outlook.com
- ([fe80::9083:6001:8090:9f3%6]) with mapi id 15.20.3239.017; Fri, 31 Jul 2020
- 09:08:11 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: RE: [PATCH v2][next] PCI: rcar-gen2: Use fallthrough pseudo-keyword
-Thread-Topic: [PATCH v2][next] PCI: rcar-gen2: Use fallthrough pseudo-keyword
-Thread-Index: AQHWX9dxg3v+SSLQ3Uetc/hFRqLsz6khdGEw
-Date:   Fri, 31 Jul 2020 09:08:10 +0000
-Message-ID: <TY2PR01MB369218139A78BB84DB6B2FDAD84E0@TY2PR01MB3692.jpnprd01.prod.outlook.com>
-References: <20200722032851.GA4251@embeddedor>
-In-Reply-To: <20200722032851.GA4251@embeddedor>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=renesas.com;
-x-originating-ip: [240f:60:5f3e:1:7d28:3e82:377f:8a0]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 5d623a29-132d-4257-4963-08d835314034
-x-ms-traffictypediagnostic: TY2PR01MB3515:
-x-microsoft-antispam-prvs: <TY2PR01MB3515BE6E83C386B42C5EC7D5D84E0@TY2PR01MB3515.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: lplCsK/T9b29Boqiod+W7QaesWeguRnsEM8UQWkiaGp6O2GPtOKBDjrRh0IzkJR+NJ+e7qCFyjwKnHhTDCSRT34m1LH98obSQ5VrWetz8LPtdlePDcnLiaHa7wh5mOzLlfCydSQ8Y6GhVZDckTLzSCwF4cJ6tGmUj5pqt75PlgLySMPFZvpPitoN6HwOFw0fYzuyayUTc1JSk98CgJoH4Ftzd6dGauYYfSm8Va+1GhosmAzwzO9P5yQS5I3hPT5HOgiP6SnPOVfe2h9epjoZ9J4fg4f9EdhfVcynhnL5DmDG+9ms/5N9UusLPOVsoleT1DLXn1q4kTos5bxwEKmAn1vYXigBFGL3ut0V88+gt/qoNMYrT96omlDoMdUOEiSfx6uTZXALneDbr8+ZnNvCMA==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB3692.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(376002)(396003)(39860400002)(346002)(366004)(136003)(33656002)(86362001)(71200400001)(9686003)(966005)(55016002)(110136005)(5660300002)(4744005)(66946007)(66556008)(66446008)(76116006)(52536014)(478600001)(64756008)(66476007)(8676002)(54906003)(7696005)(2906002)(7416002)(316002)(186003)(8936002)(4326008)(6506007);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: S0mWKjs+hZjnCkWiQQ+x6uq+rGrVD72haST3vhF/TH0GjfkA9Ckhh8wowOqqIi4lCcWo2h5f22qR6DqU5ywvS90FjMHqcXQqXQOLeXqNs5BVnOTYQJTDr8oILfl5vfaTEQZF0GE/ncra7SKQ5ijkQ+fXJcRaHgwtb6/BOTE9BteUq/QXCssfUJmtL9O+q8vuGJP4IGSSDCjyKN17DegkI3/lYUD/FTatelrQEj8CLr8M+3abKzvPZ1vvRdBXb8x7toIWmpr2NJprqzNcMvhBpZHHcOCirxhcQRqdQDVz5L3kzofLawHECQyCocveeiN6JzGqIuIcf/12scNlp+eUxOJW8llPvmJ0GqSG6NMTQDUSqbdY6k5I2wdfbdLAFhMTmm81PY01defnY6K4YQoTqD4d8UiX6dA7dSDnk6Q/xB9OLwP/4Ks1rLEFK1piHBtb0t/FNtgdMUW9vuTktJ0LSX47R1zqeLKUxERPjLtNr0XXpH6DsPfHZZoRNA3GtdOid8UFR95Lu21waHZF7JnTF5nnHP+pn0isIrQ7yCHetq6Cdu1n5WJ+cL0+XmgsyDngef5e62yskEt4WBhWJdN/k3s9Fih3PoJj421d1yKwA742OJaIHswwGhVc7MenDVxomc1PaKZnm5PE0pcT4htD27CF88VGD1vayZoNkgeAhyJJHKpNY6up1o/x6SPDbIB+RJxR4I2pOVE43tosZ+U0wQ==
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB3692.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d623a29-132d-4257-4963-08d835314034
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2020 09:08:11.5036
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: b55ULJNfF7qYu2VBeYMQMj2W8zH0/gEZHrSMWt+2uEu2HeJEu9OD8KxenVAyGvImVdir2rTcdtSYmnc612W6dVftlFIRIqgKisOXrzuozzCAx5XWx1I1G84kewRruhDE
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB3515
+        Fri, 31 Jul 2020 05:25:14 -0400
+X-IronPort-AV: E=Sophos;i="5.75,417,1589209200"; 
+   d="scan'208";a="53330059"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 31 Jul 2020 18:25:13 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D0B9E400C9E4;
+        Fri, 31 Jul 2020 18:25:10 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Jacopo Mondi <jacopo@jmondi.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 2/2] media: i2c: ov5640: Add support for BT656 mode
+Date:   Fri, 31 Jul 2020 10:24:47 +0100
+Message-Id: <1596187487-31403-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1596187487-31403-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <1596187487-31403-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+Enable support for BT656 mode.
 
-> From: Gustavo A. R. Silva, Sent: Wednesday, July 22, 2020 12:29 PM
->=20
-> Replace the existing /* fall through */ comments and its variants with
-> the new pseudo-keyword macro fallthrough[1].
->=20
-> [1]
-> https://www.kernel.org/doc/html/v5.7/process/deprecated.html?highlight=3D=
-fallthrough#implicit-switch-case-fall-through
->=20
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/media/i2c/ov5640.c | 48 +++++++++++++++++++++++++++++++---------------
+ 1 file changed, 33 insertions(+), 15 deletions(-)
 
-Thank you for the patch!
-
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-
-Best regards,
-Yoshihiro Shimoda
+diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
+index ac305a5..2b23988 100644
+--- a/drivers/media/i2c/ov5640.c
++++ b/drivers/media/i2c/ov5640.c
+@@ -82,6 +82,7 @@
+ #define OV5640_REG_VFIFO_HSIZE		0x4602
+ #define OV5640_REG_VFIFO_VSIZE		0x4604
+ #define OV5640_REG_JPG_MODE_SELECT	0x4713
++#define OV5640_REG_CCIR656_CTRL00	0x4730
+ #define OV5640_REG_POLARITY_CTRL00	0x4740
+ #define OV5640_REG_MIPI_CTRL00		0x4800
+ #define OV5640_REG_DEBUG_MODE		0x4814
+@@ -1213,6 +1214,17 @@ static int ov5640_set_stream_dvp(struct ov5640_dev *sensor, bool on)
+ 	return ov5640_write_reg(sensor, OV5640_REG_SYS_CTRL0, on ? 0x2 : 0x42);
+ }
+ 
++static int ov5640_set_stream_bt656(struct ov5640_dev *sensor, bool on)
++{
++	int ret;
++
++	ret = ov5640_write_reg(sensor, OV5640_REG_CCIR656_CTRL00, on ? 0x1 : 0x00);
++	if (ret)
++		return ret;
++
++	return ov5640_write_reg(sensor, OV5640_REG_SYS_CTRL0, on ? 0x2 : 0x42);
++}
++
+ static int ov5640_set_stream_mipi(struct ov5640_dev *sensor, bool on)
+ {
+ 	int ret;
+@@ -1998,18 +2010,21 @@ static int ov5640_set_power(struct ov5640_dev *sensor, bool on)
+ 			 *		datasheet and hardware, 0 is active high
+ 			 *		and 1 is active low...)
+ 			 */
+-			if (flags & V4L2_MBUS_PCLK_SAMPLE_RISING)
+-				pclk_pol = 1;
+-			if (flags & V4L2_MBUS_HSYNC_ACTIVE_HIGH)
+-				hsync_pol = 1;
+-			if (flags & V4L2_MBUS_VSYNC_ACTIVE_LOW)
+-				vsync_pol = 1;
+-
+-			ret = ov5640_write_reg(sensor, OV5640_REG_POLARITY_CTRL00,
+-					       (pclk_pol << 5) | (hsync_pol << 1) | vsync_pol);
+-
+-			if (ret)
+-				goto power_off;
++			if (sensor->ep.bus_type == V4L2_MBUS_PARALLEL) {
++				if (flags & V4L2_MBUS_PCLK_SAMPLE_RISING)
++					pclk_pol = 1;
++				if (flags & V4L2_MBUS_HSYNC_ACTIVE_HIGH)
++					hsync_pol = 1;
++				if (flags & V4L2_MBUS_VSYNC_ACTIVE_LOW)
++					vsync_pol = 1;
++
++				ret = ov5640_write_reg(sensor, OV5640_REG_POLARITY_CTRL00,
++						       (pclk_pol << 5) | (hsync_pol << 1) |
++						       vsync_pol);
++
++				if (ret)
++					goto power_off;
++			}
+ 
+ 			/*
+ 			 * powerdown MIPI TX/RX PHY & disable MIPI
+@@ -2033,7 +2048,9 @@ static int ov5640_set_power(struct ov5640_dev *sensor, bool on)
+ 			 * - 4:		PCLK output enable
+ 			 * - [3:0]:	D[9:6] output enable
+ 			 */
+-			ret = ov5640_write_reg(sensor, OV5640_REG_PAD_OUTPUT_ENABLE01, 0x7f);
++			ret = ov5640_write_reg(sensor, OV5640_REG_PAD_OUTPUT_ENABLE01,
++					       sensor->ep.bus_type == V4L2_MBUS_PARALLEL ?
++					       0x7f : 0x1f);
+ 			if (ret)
+ 				goto power_off;
+ 
+@@ -2047,7 +2064,6 @@ static int ov5640_set_power(struct ov5640_dev *sensor, bool on)
+ 			if (ret)
+ 				goto power_off;
+ 		}
+-
+ 	} else {
+ 		if (sensor->ep.bus_type == V4L2_MBUS_CSI2_DPHY) {
+ 			/* Reset MIPI bus settings to their default values. */
+@@ -2875,8 +2891,10 @@ static int ov5640_s_stream(struct v4l2_subdev *sd, int enable)
+ 
+ 		if (sensor->ep.bus_type == V4L2_MBUS_CSI2_DPHY)
+ 			ret = ov5640_set_stream_mipi(sensor, enable);
+-		else
++		else if (sensor->ep.bus_type == V4L2_MBUS_PARALLEL)
+ 			ret = ov5640_set_stream_dvp(sensor, enable);
++		else
++			ret = ov5640_set_stream_bt656(sensor, enable);
+ 
+ 		if (!ret)
+ 			sensor->streaming = enable;
+-- 
+2.7.4
 
