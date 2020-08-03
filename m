@@ -2,57 +2,84 @@ Return-Path: <SRS0=kYII=BN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF78C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Aug 2020 12:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A0BC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Aug 2020 12:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA4BC20678
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Aug 2020 12:00:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596456056;
-	bh=Du9OQpd/VOGf/iA7IlXDEvI2jIkyD8HIhsY9DMglglQ=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=dCH44bY3RsMirR7+FxYQ3khjaHBC3tpX8ufMQ4hyT90ON59+UNyDNBISsuoEvzz37
-	 xzKtz7hrHCkT5XU9At2n+tn4vTgs/tXXm/QIjQbx4Ba7Rcs5TNNobFhH2vV9OdaCzw
-	 1kremMvuU9eZFVO+J3Or6NpE3cCHai+eV1ScGvUw=
+	by mail.kernel.org (Postfix) with ESMTP id 23B4520A8B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  3 Aug 2020 12:26:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725965AbgHCMA4 (ORCPT
+        id S1728366AbgHCM00 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 3 Aug 2020 08:00:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726370AbgHCMAy (ORCPT
+        Mon, 3 Aug 2020 08:26:26 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:38701 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728355AbgHCM0Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 3 Aug 2020 08:00:54 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596456043;
-        bh=Du9OQpd/VOGf/iA7IlXDEvI2jIkyD8HIhsY9DMglglQ=;
-        h=Subject:From:Date:To:From;
-        b=QxWgX6iK53U6LyvfC9yIIVInhCHMXDWb19QNVZAj7I2gz5tUMfol5+c3xRTuyWmH/
-         nhmzH8b2DgFulQ6ANQzuLiSuu2DueTMdXliK7DuzWN/Yw1k4+NpIKSdeV5XgdJWDlJ
-         UVDGkQduOp7+YcpqPdonyDfjd0ouBLXYJP/GRf9E=
+        Mon, 3 Aug 2020 08:26:24 -0400
+Received: by mail-ot1-f67.google.com with SMTP id q9so12076736oth.5;
+        Mon, 03 Aug 2020 05:26:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3dohou5RSw8QoQG6bAPJAcX/Qp198r37ym/TNY4Yqz4=;
+        b=FE2btXu3ZkdNaPOSKwQoTknevvVnZ+h2eTLZaBwhH09wuADhKyf8gpdsLWMYDW8vmO
+         xDD0bXz0yk1QZ5YlHg89wC6Fab2c8UdtzBUU612Oi7Du3QQ7qyokffmSrIldvR1kZqdp
+         VJN8gYYhR96gmOFKIUczM9T5EJgN8pdprGeVHmGKRWUu/muOAfuluvk1RCjqzWqaXuey
+         e1bfi6/Ue8cgGj1mAVEu7RhAjetvPUaW7n2iFkIHZyDhFJ63X3Xml4cXpJnNoSaLAhzK
+         JgY9Qzav0x/InW1qx/vZb6Zr6gC4HoNKLHAT3pimGit+WHNkQVNIMH/9KGQAQxhqS33s
+         5jPg==
+X-Gm-Message-State: AOAM530DLSeZhI0giAL5bxedpPBAjzfqHo3JtnUPXB/YfQoRnoed1bo2
+        59psVG+Xy1Cg7sU5AOCEQG72zKnMIdaFQqLWamJT0vAD
+X-Google-Smtp-Source: ABdhPJzKQzVSBq1MRtlA56QD10eECEH20woK/Y5hY2exzJK2bn0gx9Yb/l3Q6If2znAS+f6eplUpkupVZciaC7VEgzw=
+X-Received: by 2002:a9d:1b0d:: with SMTP id l13mr13030193otl.145.1596457584051;
+ Mon, 03 Aug 2020 05:26:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <159645604358.8465.16006197297804602029.git-patchwork-housekeeping@kernel.org>
-Date:   Mon, 03 Aug 2020 12:00:43 +0000
-To:     linux-renesas-soc@vger.kernel.org
+References: <20200802173059.122595-1-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20200802173059.122595-1-niklas.soderlund+renesas@ragnatech.se>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 3 Aug 2020 14:26:13 +0200
+Message-ID: <CAMuHMdUrN0YBugFvuCLeNw1obdjCY+aZa7vDQEAUqCZUyjQTyg@mail.gmail.com>
+Subject: Re: [PATCH] rcar-vin: Remove redundant compatible values
+To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v2] media: i2c: ov772x: Enable BT656 mode and test pattern support (2020-08-03T11:39:10)
-  Superseding: [v1] media: i2c: ov772x: Enable BT656 mode and test pattern support (2020-07-24T15:08:14):
-    [1/2] media: i2c: ov772x: Add support for BT656 mode
-    [2/2] media: i2c: ov772x: Add test pattern control
+Hi Niklas,
 
+On Sun, Aug 2, 2020 at 8:05 PM Niklas Söderlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> The compatible value 'renesas,rcar-gen2-vin' have always been mandatory
+> for all Gen2 platforms. Remove device redundant values.
+
+That's not true: the DTS files for R-Car H2, M2-W, and E2 lacked the
+family-specific compatible values during the first few years of their
+existence.  However, given we dropped support for the old CPG and MSTP
+DT bindings, it's reasonable to assume all working systems have them.
+
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+With a slight update of the description:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
