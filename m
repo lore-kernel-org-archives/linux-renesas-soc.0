@@ -2,94 +2,120 @@ Return-Path: <SRS0=jx7C=BO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CCE0C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Aug 2020 12:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2C0C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Aug 2020 14:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74F4822BED
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Aug 2020 12:30:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C6AE21744
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Aug 2020 14:53:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbgHDMaL (ORCPT
+        id S1728097AbgHDOx3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 4 Aug 2020 08:30:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38918 "EHLO
+        Tue, 4 Aug 2020 10:53:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725924AbgHDMaB (ORCPT
+        with ESMTP id S1726580AbgHDOx1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Aug 2020 08:30:01 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B04AC061757
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Aug 2020 05:04:39 -0700 (PDT)
+        Tue, 4 Aug 2020 10:53:27 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2F01C06174A
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Aug 2020 07:53:26 -0700 (PDT)
 Received: from ramsan ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id BQ4b2300g4C55Sk01Q4bRa; Tue, 04 Aug 2020 14:04:36 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id BStP2300L4C55Sk01StPpG; Tue, 04 Aug 2020 16:53:23 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1k2vgJ-0000fz-Qm; Tue, 04 Aug 2020 14:04:35 +0200
+        id 1k2yJf-0004Xk-Aq
+        for linux-renesas-soc@vger.kernel.org; Tue, 04 Aug 2020 16:53:23 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1k2vgJ-0002Q0-Nm; Tue, 04 Aug 2020 14:04:35 +0200
+        id 1k2yJf-0001oT-8r
+        for linux-renesas-soc@vger.kernel.org; Tue, 04 Aug 2020 16:53:23 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Rob Herring <robh@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>
-Cc:     linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] PCI: rcar-gen2: Fix crash in resource_list_first_type()
-Date:   Tue,  4 Aug 2020 14:04:30 +0200
-Message-Id: <20200804120430.9253-1-geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2020-08-04-v5.8
+Date:   Tue,  4 Aug 2020 16:53:23 +0200
+Message-Id: <20200804145323.6927-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The conversion to modern host bridge probing made the driver allocate
-its private data using devm_pci_alloc_host_bridge(), but forgot to
-remove the old allocation.  Hence part of the driver initialization is
-done using the new instance, while another part is done using the old
-instance, leading to a crash due to uninitialized bridge DMA ranges:
+I have pushed renesas-drivers-2020-08-04-v5.8 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-    Unable to handle kernel NULL pointer dereference at virtual address 00000008
-    pgd = (ptrval)
-    [00000008] *pgd=00000000
-    Internal error: Oops: 5 [#1] SMP ARM
-    CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.8.0-rc1-shmobile-00035-g92d69cc6275845a7 #645
-    Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
-    PC is at rcar_pci_probe+0x154/0x340
-    LR is at _raw_spin_unlock_irqrestore+0x18/0x20
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the master branch of my
+renesas-devel.git tree.
 
-Fix this by dropping the old allocation.
+Today's version is based on renesas-devel-2020-08-03-v5.8.
 
-Fixes: 92d69cc6275845a7 ("PCI: rcar-gen2: Convert to use modern host bridge probe functions")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pci/controller/pci-rcar-gen2.c | 4 ----
- 1 file changed, 4 deletions(-)
+Included branches with driver code:
+  - clk-renesas
+  - sh-pfc
+  - topic/ravb-internal-clock-delays-v3
+  - git://git.ragnatech.se/linux#for-renesas-drivers
 
-diff --git a/drivers/pci/controller/pci-rcar-gen2.c b/drivers/pci/controller/pci-rcar-gen2.c
-index 046965d284a6d54e..c9530038ca9a53fc 100644
---- a/drivers/pci/controller/pci-rcar-gen2.c
-+++ b/drivers/pci/controller/pci-rcar-gen2.c
-@@ -302,10 +302,6 @@ static int rcar_pci_probe(struct platform_device *pdev)
- 	if (mem_res->start & 0xFFFF)
- 		return -EINVAL;
- 
--	priv = devm_kzalloc(dev, sizeof(struct rcar_pci_priv), GFP_KERNEL);
--	if (!priv)
--		return -ENOMEM;
--
- 	priv->mem_res = *mem_res;
- 	priv->cfg_res = cfg_res;
- 
--- 
-2.17.1
+Included fixes:
+  - PCI: rcar-gen2: Fix crash in resource_list_first_type()
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
 
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#timers/drivers/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.infradead.org/users/vkoul/slave-dma.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
