@@ -6,61 +6,85 @@ X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5650CC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 19:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE9AC433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 20:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4CC20842
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 19:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2197822B42
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 20:08:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbgHETyT (ORCPT
+        id S1728851AbgHEUIZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 Aug 2020 15:54:19 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:39746 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728094AbgHEQs5 (ORCPT
+        Wed, 5 Aug 2020 16:08:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43802 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbgHEQce (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Aug 2020 12:48:57 -0400
-Received: by mail-ua1-f66.google.com with SMTP id y17so7890769uaq.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Aug 2020 09:48:55 -0700 (PDT)
+        Wed, 5 Aug 2020 12:32:34 -0400
+Received: from mail-oo1-xc42.google.com (mail-oo1-xc42.google.com [IPv6:2607:f8b0:4864:20::c42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EC18C008691;
+        Wed,  5 Aug 2020 07:33:09 -0700 (PDT)
+Received: by mail-oo1-xc42.google.com with SMTP id x1so6635989oox.6;
+        Wed, 05 Aug 2020 07:33:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DzqbPUlf3vkITjRSPP4jqUNQq2HjOeVWi+/hpMFqakk=;
-        b=U3WcyvLChaXUXHUvPEII91SHAUQMVMzORADWxoXkZ+O/p6KuQ6MxEiCnxjzWrgKGNA
-         7iN7VGoON4B9Usr0AatUdYX+uyDFA/9L5Tzl1+xcjhhhm2nKuLC+O0tu7of2mh6OILQg
-         Ru9sOWPdFRcCeDspx4VArQhnhTjZN2Sosep3iK7+QvBGO4k6M88Prs+kRQrf0YH7FWuv
-         Z2KcFB9qh0mFpnNeLPuGuRKrWjrOr2lxJoXo1x9+4NYmuGoHZQgDIc3C2orgmi6NMNLV
-         nmsN+FlRsf01nuz9ghRkh7jgId3OivMgyZLNvpl1XkYLS0A1n6IF8dV78F3p4tEitxXs
-         vlYQ==
-X-Gm-Message-State: AOAM533EQe9/CIQDl5ANHF6SF+sDb5u58bBhdxw/r5rsvOpdUIKCMJuc
-        N3hHSHBxaA0Uen3lpJKiIsI/TzFhpZjjUbP3jg15fA==
-X-Google-Smtp-Source: ABdhPJxBIIGoCbvgNYwQ0gul5eerSD5PFRtEiE6mJv19QdQ+yovZhQEvBIYEby0TQaBleKPpHd1HBGQPRcxttNaFx5k=
-X-Received: by 2002:a9d:7d8c:: with SMTP id j12mr2271497otn.250.1596627269280;
- Wed, 05 Aug 2020 04:34:29 -0700 (PDT)
+        bh=tpO2xc5Co4QKfwe/fUkQqUFFAe1WeeGtz1oyCqUMySo=;
+        b=LhYz9i6I5AM4ZFtxHd+I9u1ASrO4rAxTxI/t4siugm6WhxTGylbyg693lSH2SkAJZg
+         IIGDv8cuq2Atkg6a/memP/3ZxkHNwXGhTlhzGgql3a+l8cb4BSqpY41/FoS2Dey738US
+         HNY7oS82tp4qxK0zU5KSG+5wR25XkLh17nddtBS+6isamMTdOSpgHAG7z+Dv3ZLvYKSj
+         WGny2c2fiRFPZvJ/1bYdsySXuQgp4q5b00waN4/XfIO6UGXfbhT3GB3aIdI6DdpTqwQf
+         PttRBBuebLldZ7pofLVcvbU+u/4I905HPTm1+H9J+KjyGphDBVlO8Qd1DI2oAJ/StVAp
+         dTsA==
+X-Gm-Message-State: AOAM533LjPC09EQ93J7+rqUEO7o2QGimyEUznlys74pspdXXuJB5yAAR
+        UXzpdrWWpUaJ+hWv1tXbOuarwbxyZUyw1hXSS06MMhU6
+X-Google-Smtp-Source: ABdhPJxign8Uk2fIcUs7RpIodong0uS1bWU72pwITdrYewzbK7L9StNz09TcvScLc02ZC/yaUnpVr8Fq/+75ppivh0g=
+X-Received: by 2002:a4a:9d19:: with SMTP id w25mr2320144ooj.11.1596626166283;
+ Wed, 05 Aug 2020 04:16:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <1594989201-24228-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1594989201-24228-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1594919915-5225-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1594919915-5225-16-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1594919915-5225-16-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 5 Aug 2020 13:34:18 +0200
-Message-ID: <CAMuHMdXqkJ34w3qUgQB8B9UFbuQFEac_gxJXtqkRwofTE--76w@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: renesas: ulcb: add full-pwr-cycle-in-suspend
- into eMMC nodes
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Wed, 5 Aug 2020 13:15:54 +0200
+Message-ID: <CAMuHMdWzwQpjhOeVDkj1b1L7mJuxnLpVMO-3WMMLF3oJMzgAmg@mail.gmail.com>
+Subject: Re: [PATCH 15/20] arm64: dts: renesas: r8a774e1: Add audio support
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Niklas <niklas.soderlund@ragnatech.se>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-ide@vger.kernel.org,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 2:33 PM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Add full-pwr-cycle-in-suspend property to do a graceful shutdown of
-> the eMMC device in system suspend.
+On Thu, Jul 16, 2020 at 7:20 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add sound support for the RZ/G2H SoC (a.k.a. R8A774E1).
 >
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-devel for v5.10.
