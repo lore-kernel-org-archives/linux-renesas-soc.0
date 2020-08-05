@@ -2,230 +2,123 @@ Return-Path: <SRS0=ZXdK=BP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A3BC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 03:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 338D9C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 06:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F28F1207FC
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 03:18:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F1FF2245C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 06:33:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u+hjsVhI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725904AbgHEDSO (ORCPT
+        id S1728014AbgHEGdA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 4 Aug 2020 23:18:14 -0400
-Received: from mga09.intel.com ([134.134.136.24]:40460 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725981AbgHEDSO (ORCPT
+        Wed, 5 Aug 2020 02:33:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35892 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbgHEGc4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Aug 2020 23:18:14 -0400
-IronPort-SDR: a4Ac3yUcspAtoNbGDf/UcUCsg8Xoo/7Gv4E2ayk2qJRL58+IG9HS8fkWOgYdeCux5f9qLqewM0
- I3RyrM3sO2lA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9703"; a="153604211"
-X-IronPort-AV: E=Sophos;i="5.75,436,1589266800"; 
-   d="scan'208";a="153604211"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2020 20:17:43 -0700
-IronPort-SDR: aCAQCkmrjSOhUJvmZ5Pq9C/aNeHAhxODtjkGR4BRd6akdDTsOjZYGn4q8rGWOwMhlNezUa8Pwz
- 9P4mwk3COCvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,436,1589266800"; 
-   d="scan'208";a="315588491"
-Received: from lkp-server02.sh.intel.com (HELO 37a337f97289) ([10.239.97.151])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Aug 2020 20:17:41 -0700
-Received: from kbuild by 37a337f97289 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1k39vx-0000YY-8j; Wed, 05 Aug 2020 03:17:41 +0000
-Date:   Wed, 05 Aug 2020 11:16:36 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-drivers:master] BUILD REGRESSION
- 54034a54970a00ea36ec15cd575bc9cdde4af286
-Message-ID: <5f2a2494.uRYLCEJ5c/VezrAC%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Wed, 5 Aug 2020 02:32:56 -0400
+Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FF83C06174A
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  4 Aug 2020 23:32:56 -0700 (PDT)
+Received: by mail-vs1-xe42.google.com with SMTP id j23so15882341vsq.7
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 04 Aug 2020 23:32:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3i8XFESZihDO6mc3/4tfcR56mY/Nrg7Lzf+GDZhYM0g=;
+        b=u+hjsVhIDKbvRcozTis1DkPn0ESZP+Sd8wJOYW7WIDQKDcD7a4CcJkAWutLduFx1Ac
+         2jOZERHr/wrMd0HMCF3FNsxtJxv3fiLLKPX4kzcT9AOdYmXNV68G2Qzcjxj1YffFf50R
+         2xg3/w5dyp8w+Dbj3V1/VawrbYwILC569f3qDEjI0SFAak1NcLF9cMesEXGrZ+XP3Xry
+         WBn4lK7J2UIPYRV2SZtBvzCcdSQlRsWQo2/DuhaLoKYe/JQ7SM30i00eYs12UP0YBniE
+         yl0hpANKnYMyu9U8yCOpAbgs+p5G3lAxsa2PEMhfyT2+RVpnQL4tDH5uxTswkKlYq0ky
+         IcNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3i8XFESZihDO6mc3/4tfcR56mY/Nrg7Lzf+GDZhYM0g=;
+        b=sHzV1t3YJp6nNZB8GlzmAETcKOu0me5jQSgQeX4ljChgu2veeODqxkShNbN5WAUsQY
+         O130t47JXlHw+j25SmlBf/4p4tk8p3eCfdfziE1jzI1qpIxUZLjLPI4OlubzXWwvwguY
+         4tpGMRAxMrA0bd1gnEG3/B1QEsz8M18CGp5+CsRfzUOAjLplSpPwSDFTI8lK4Oad38He
+         PM7fcahwfbf/ZEm+4JUfmJ96PRw5jHyFGMklckZm13ouw1WmjxGb6JgTTPSjfLbF7/ve
+         yPGdCeD98/r6bVhLViAIKoRDqFjEgERnQLlhVcDnSfY/HCi2RZZOQZe9FMseNCbYrcZC
+         GqNw==
+X-Gm-Message-State: AOAM532EWePLii0Zeh+YBiMPlc0rowceVnh8az+mmOGoqF1F/qgnKdBX
+        L9kblw2jekmU5NjshMyWwH/tqoJAPSC0ise22fHR/w==
+X-Google-Smtp-Source: ABdhPJwRtcGnWnSrfLNC1GRoMPhliXQgGipO4zbcYB0cTmrrdPOh4Q7PwFb5o1O0BAF8kY6G3DlVTaO3sR41MJVFDyg=
+X-Received: by 2002:a05:6102:382:: with SMTP id m2mr883411vsq.34.1596609175004;
+ Tue, 04 Aug 2020 23:32:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+References: <1594230511-24790-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1594230511-24790-5-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1594230511-24790-5-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 5 Aug 2020 08:32:18 +0200
+Message-ID: <CAPDyKFqeiEUeajprG=Bx3Nion8bGpVrDOuM7q6-kLDpOMY-QbQ@mail.gmail.com>
+Subject: Re: [PATCH 4/8] dt-bindings: mmc: renesas,sdhi: Add r8a774e1 support
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git  master
-branch HEAD: 54034a54970a00ea36ec15cd575bc9cdde4af286  [LOCAL] arm64: defconfig: Update renesas_defconfig
+On Wed, 8 Jul 2020 at 19:48, Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+>
+> Document SDHI controller for RZ/G2H (R8A774E1) SoC, which is compatible
+> with R-Car Gen3 SoC family.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 
-Error/Warning in current branch:
+Sorry, but this doesn't apply as the DT doc has been converted to
+YAML. Can you please rebase and respin.
 
-drivers/net/ethernet/sfc/efx_common.c:1231:25: error: function declaration isn't a prototype [-Werror=strict-prototypes]
-drivers/net/ethernet/sfc/efx_common.c:1232:17: warning: 'enum pci_channel_state' declared inside parameter list will not be visible outside of this definition or declaration
-drivers/net/ethernet/sfc/efx_common.c:1232:35: error: parameter 2 ('state') has incomplete type
+Kind regards
+Uffe
 
-Error/Warning ids grouped by kconfigs:
 
-recent_errors
-|-- alpha-allmodconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- alpha-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- arc-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- arm-allmodconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- arm-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- arm64-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- i386-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- ia64-allmodconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- ia64-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- ia64-randconfig-c004-20200805
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- mips-allmodconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- mips-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- parisc-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- parisc-randconfig-r024-20200805
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- powerpc-allmodconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- powerpc-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- riscv-allmodconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- riscv-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- s390-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- sparc-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- x86_64-allyesconfig
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-|-- x86_64-rhel-7.6-kselftests
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-|   |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-|   `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
-`-- xtensa-allyesconfig
-    |-- drivers-net-ethernet-sfc-efx_common.c:error:function-declaration-isn-t-a-prototype
-    |-- drivers-net-ethernet-sfc-efx_common.c:error:parameter-(-state-)-has-incomplete-type
-    `-- drivers-net-ethernet-sfc-efx_common.c:warning:enum-pci_channel_state-declared-inside-parameter-list-will-not-be-visible-outside-of-this-definition-or-declaration
 
-elapsed time: 720m
-
-configs tested: 59
-configs skipped: 1
-
-arm                                 defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-arm64                            allyesconfig
-arm64                               defconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-c6x                              allyesconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-s390                             allyesconfig
-parisc                           allyesconfig
-s390                                defconfig
-parisc                              defconfig
-sparc                               defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-i386                                defconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-powerpc                             defconfig
-powerpc                          allyesconfig
-i386                 randconfig-a005-20200805
-i386                 randconfig-a004-20200805
-i386                 randconfig-a006-20200805
-x86_64               randconfig-a016-20200805
-x86_64               randconfig-a015-20200805
-x86_64               randconfig-a014-20200805
-i386                 randconfig-a011-20200805
-i386                 randconfig-a012-20200805
-i386                 randconfig-a013-20200805
-i386                 randconfig-a014-20200805
-i386                 randconfig-a015-20200805
-i386                 randconfig-a016-20200805
-riscv                            allyesconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                            allmodconfig
-x86_64                           allyesconfig
-x86_64                    rhel-7.6-kselftests
-x86_64                              defconfig
-x86_64                                  kexec
-x86_64                               rhel-8.3
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> ---
+>  Documentation/devicetree/bindings/mmc/renesas,sdhi.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.txt b/Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
+> index 0ca9a622cce0..779e484fa3ef 100644
+> --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
+> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.txt
+> @@ -14,6 +14,7 @@ Required properties:
+>                 "renesas,sdhi-r8a774a1" - SDHI IP on R8A774A1 SoC
+>                 "renesas,sdhi-r8a774b1" - SDHI IP on R8A774B1 SoC
+>                 "renesas,sdhi-r8a774c0" - SDHI IP on R8A774C0 SoC
+> +               "renesas,sdhi-r8a774e1" - SDHI IP on R8A774E1 SoC
+>                 "renesas,sdhi-r8a77470" - SDHI IP on R8A77470 SoC
+>                 "renesas,sdhi-mmc-r8a77470" - SDHI/MMC IP on R8A77470 SoC
+>                 "renesas,sdhi-r8a7778" - SDHI IP on R8A7778 SoC
+> --
+> 2.17.1
+>
