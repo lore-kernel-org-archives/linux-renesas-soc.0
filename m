@@ -6,88 +6,122 @@ X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31842C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 19:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4139CC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 19:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F37BF22CAD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 19:25:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B86020842
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 19:53:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbgHETZK (ORCPT
+        id S1728414AbgHETxv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 Aug 2020 15:25:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52822 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728577AbgHERZG (ORCPT
+        Wed, 5 Aug 2020 15:53:51 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:36736 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728122AbgHEQtd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Aug 2020 13:25:06 -0400
-Received: from mail-oi1-x244.google.com (mail-oi1-x244.google.com [IPv6:2607:f8b0:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DA5BC0086A6;
-        Wed,  5 Aug 2020 07:46:41 -0700 (PDT)
-Received: by mail-oi1-x244.google.com with SMTP id v13so23174659oiv.13;
-        Wed, 05 Aug 2020 07:46:41 -0700 (PDT)
+        Wed, 5 Aug 2020 12:49:33 -0400
+Received: by mail-oi1-f193.google.com with SMTP id l204so11423619oib.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 05 Aug 2020 09:49:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=a747GTvzdj8BhTC99m/ltqffKPbWLknrH4UGCy7e+04=;
-        b=rx4G6ali42qaP1XHM/3dxNM9N32RXYC90XDH13dCFvCuQE5nEC2SKndrWA1Ie0QM7S
-         ezkvzSM2i8lafkAgtm1zUyLUZf3GeD4Vd0ts1FW+G6aOiCuLMKVX9g3yrcVAaWb25Q1/
-         UuEbBKFc18FoVVCVauRntkumg7dcVHp+khSrm6YNG+h44L31cZ/P4g8/iFP0WY7iWNEP
-         tSORMkowazJHMGpHn7YGoId8llCJWyuVhcjSSGiKJMQJW6fqBUxIWdgWJGQfLtkwsGdU
-         cJDqr9WWtb64EhtmBX9uAw0gm8IsXtKmLeVhSZheEL8nKT7dqasoc7/lWyTq54nXtgNY
-         hOOw==
-X-Gm-Message-State: AOAM530bfeRays6JRYcl9Jh6UofxignYBe8JLo4m2ms3N+Db/oZU/M6V
-        Lb/RFB32tjmPRPwFHpoYvaPE/S9lp36FDTsWnBY0Qg==
-X-Google-Smtp-Source: ABdhPJxOLh0H5vKRdwT+SgNB4/VJFY79xxN/fk4jyCR22Pxw8fbAj3AqGa5onUuCO90I+Y+bzEmqLPTLGI8ksjYr6g8=
-X-Received: by 2002:aca:b742:: with SMTP id h63mr2149267oif.148.1596625738500;
- Wed, 05 Aug 2020 04:08:58 -0700 (PDT)
+        bh=6uljOmFBDcXjht755lAopTNR9CCmJpe3vlR5toHcn9A=;
+        b=fJu4N4r6eRMtMz93eObZR6WQCw2qXevvKSSMqe4qjrkHUjtEELXj+fNG6iyMHi2UXR
+         +83DlfXYuORAJQivaJwl5syvNIj5GRE/dtwlkxjKZ9TYsGJ42pU3S66jmgHn6uKkxlKb
+         vDFMqmFEVWwFwpxdmuCR8WkdwOwz79IGqdFT0UuKPxgofcZ8yUZ3tOaIDrHn/Z1NDx9c
+         WcwUOxZEaUEktu6tNFemgR9TgU0EQWsfq3eCLs9YfTF3Nq4nFfRFcdiOYLzqeT203vG2
+         YMgpd3F2XXSDPoW2giru1BxtJva7gBP2+cbq+8fwasoJEswfCUsAxtBszurF1oq7a7dP
+         Qgiw==
+X-Gm-Message-State: AOAM5337+9AxYYXV4UVecpe4ajrJdkH9E/fDvISew5GsHwAx3hzXGlVX
+        7jkD5Xlcbji29eJNiNPrBDkMUiOOrDLeeRbLXPxEzbaB
+X-Google-Smtp-Source: ABdhPJzhNt/EXHThIadzIZ3hdM26FpACi7FQ+axpuz8IJU1ybZ81wLDKzytOtqpuVV1kXi3+E5aj94Ti1vOq21a7V8U=
+X-Received: by 2002:aca:adc4:: with SMTP id w187mr2400852oie.153.1596630853536;
+ Wed, 05 Aug 2020 05:34:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <1594919915-5225-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1594919915-5225-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <1594919915-5225-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <87sgd3gcv4.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87sgd3gcv4.wl-kuninori.morimoto.gx@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 5 Aug 2020 13:08:47 +0200
-Message-ID: <CAMuHMdVNrbi2twUoJ1wB4DY++M+VgsLVQXxS_NTK9YtExF8BBg@mail.gmail.com>
-Subject: Re: [PATCH 02/20] arm64: dts: renesas: r8a774e1: Add PCIe device nodes
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Niklas <niklas.soderlund@ragnatech.se>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-ide@vger.kernel.org,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>
+Date:   Wed, 5 Aug 2020 14:34:02 +0200
+Message-ID: <CAMuHMdUB=--G6PGYrKtkDUZweDeJuOGJhUErPkNB4+dVixsAyQ@mail.gmail.com>
+Subject: Re: [PATCH] soc: renesas: use menu for Renesas SoC
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jul 16, 2020 at 7:18 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Add PCIe{0,1} device nodes for R8A774E1 SoC.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Hi Morimoto-san,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.10.
+On Tue, Aug 4, 2020 at 8:12 AM Kuninori Morimoto
+<kuninori.morimoto.gx@renesas.com> wrote:
+> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>
+> Renesas related SoC settings are located on TOP level menu
+> when menuconfig, thus it is very verbose.
+> This patch groups Renesas related settings into
+> "Renesas SoC driver support" menu.
+>
+> And it aligns config menu names.
+>
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+Thanks for your patch!
+Unfortunately it doesn't apply against renesas-devel, as new SoCs have
+been added.
+
+> --- a/drivers/soc/renesas/Kconfig
+> +++ b/drivers/soc/renesas/Kconfig
+> @@ -1,5 +1,5 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> -config SOC_RENESAS
+> +menuconfig SOC_RENESAS
+
+Yes, that helps.
+
+>         bool "Renesas SoC driver support" if COMPILE_TEST && !ARCH_RENESAS
+>         default y if ARCH_RENESAS
+>         select SOC_BUS
+> @@ -174,35 +174,35 @@ endif # ARM
+>  if ARM64
+>
+>  config ARCH_R8A774A1
+> -       bool "Renesas RZ/G2M SoC Platform"
+> +       bool "SoC Platform support for RZ/G2M"
+>         select ARCH_RCAR_GEN3
+>         select SYSC_R8A774A1
+>         help
+>           This enables support for the Renesas RZ/G2M SoC.
+>
+>  config ARCH_R8A774B1
+> -       bool "Renesas RZ/G2N SoC Platform"
+> +       bool "SoC Platform support for RZ/G2N"
+
+[...]
+
+Why these changes?
+
+> @@ -262,79 +262,79 @@ endif # ARM64
+>
+>  # SoC
+>  config SYSC_R8A7743
+> -       bool "RZ/G1M System Controller support" if COMPILE_TEST
+> +       bool "System Controller support for RZ/G1M" if COMPILE_TEST
+>         select SYSC_RCAR
+>
+>  config SYSC_R8A7745
+> -       bool "RZ/G1E System Controller support" if COMPILE_TEST
+> +       bool "System Controller support for RZ/G1E" if COMPILE_TEST
+
+[...]
+
+Why these changes?
+
+BTW, if you want to increase consistency, please also update the
+descriptions for arm32 and family-specific options.
 
 Gr{oetje,eeting}s,
 
