@@ -2,128 +2,90 @@ Return-Path: <SRS0=ZXdK=BP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52D1C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 17:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E80C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 17:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC16A22CF8
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 17:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FF092073E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 17:41:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbgHERZR (ORCPT
+        id S1728945AbgHERll (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 Aug 2020 13:25:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52814 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728103AbgHERZG (ORCPT
+        Wed, 5 Aug 2020 13:41:41 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43119 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728707AbgHERdc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Aug 2020 13:25:06 -0400
-Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E34BAC0086AB;
-        Wed,  5 Aug 2020 07:47:02 -0700 (PDT)
-Received: by mail-ot1-x343.google.com with SMTP id t7so19695374otp.0;
-        Wed, 05 Aug 2020 07:47:02 -0700 (PDT)
+        Wed, 5 Aug 2020 13:33:32 -0400
+Received: by mail-ot1-f68.google.com with SMTP id r21so23438915ota.10;
+        Wed, 05 Aug 2020 10:33:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=EwNbORxDFIbm44T1fVXX43x3s7U+jU8SsrHPB/cPJqU=;
-        b=WN/1bEFCBuQuFMVyLXsLFREdhs5LBhNQDp9WlpeR8TFfmrsaiar8PDzY8vtjTLeeym
-         NFBWux02Y5Pb0QK/RldxA7IjdZwx6B8QR+cV1LJyLY9slvVlcK6yzCVSWNpa9PkycwUU
-         rbUu0mrPH6iyAYUcE7pod0BoNbNhKE9WJY2tK5w8cFi5/juzE8TIWJi2HHLdc6NYWW6g
-         UDXYnU2TX5zHGAV2GOfVLWoIOxb2kn82/UVIhSxKUJynCZ5lwzd/CP1Bb78leIujhMOY
-         /iiVTsnBVWtW8QQKU8lKrt8Cy497lmMco0lTmKtakxHOFeKYMSE7w9AdvE/j32lgkJM0
-         4lUg==
-X-Gm-Message-State: AOAM530gplRzia9Htz6QHmP6qv4JA8qk2/s6ujy1nysTa5Klo2rm4D5v
-        x09bKW138Vfbmva7mMl298XRwrnpT37rnVfKNOo/7g==
-X-Google-Smtp-Source: ABdhPJzt7h8RrIxvZX2vRMm2/bzqaHnsQxVVdhFRu4B03RG5Stg3lPBllx3+yunGKjo04+1O1mlapSD/aeoZS8HU1PE=
-X-Received: by 2002:a9d:1b0d:: with SMTP id l13mr2165602otl.145.1596627711771;
- Wed, 05 Aug 2020 04:41:51 -0700 (PDT)
+        bh=nGe/Je8IarDkuCxG/u56QffSTYctpnR0YPw4MQUjy6A=;
+        b=rST3AuFgwVSXUW3gEpFnjQUuP+b9s0ZTn6PGbKOKO0OK/j1Bz2VXk0llZOWxlZuVO0
+         9oIMGAghTHl7Je5+n5+2DXDu/GznsnJ4YNQOMq5PtIygh1yiaj8pArkwAmdJGmw8t7vV
+         y8yVoeNhoS3DYIqAsy4Gt6Y1yh5ITWzLCzU1shD/pXIGj70jEE7glN6xEDbz2IORtivs
+         WWjD+NIisqKh2drx89yWWNp/pgChSLiBCf9nJaimJgGRP2okuj6v03kDhH2XQucahukI
+         6ZDcExgwrTEUAt5FKxmlIh2ncsblVHaIKbyGltSkjVye87qelLo/EG/OHkS4skdvIjpS
+         +5RQ==
+X-Gm-Message-State: AOAM530uffkeniOlIrjfH8CawBS6dbRM7pQSfv6ViYuOMMS6DLOMtgfK
+        /66F6f4Ls6S2Wp3IhNdRu6md7VSYEPbJdtBJFCPm8E5j
+X-Google-Smtp-Source: ABdhPJy6BJnijQ4U9574JZCK6kDHqx7/zV93wpejrM8Eh19/YBjLybIlzjjbGdFEBSswTARB1GJ4M2QmhRRIOA+7jHM=
+X-Received: by 2002:a9d:1b0d:: with SMTP id l13mr2076468otl.145.1596625795521;
+ Wed, 05 Aug 2020 04:09:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200729122602.9561-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20200729122602.9561-1-biju.das.jz@bp.renesas.com>
+References: <1594919915-5225-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1594919915-5225-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1594919915-5225-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 5 Aug 2020 13:41:40 +0200
-Message-ID: <CAMuHMdXPRsB3N=sfL0VgvAxxHLNCHhotsc501kG9-KMDoYXRJA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: iwg22d-sodimm: Fix dt nodes sorting
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+Date:   Wed, 5 Aug 2020 13:09:43 +0200
+Message-ID: <CAMuHMdWhmQS56j4vkZhK94qQVkVhCA1eceZRNW1XipX-Sr6+8A@mail.gmail.com>
+Subject: Re: [PATCH 06/20] arm64: dts: renesas: r8a774e1: Add USB2.0 phy and
+ host (EHCI/OHCI) device nodes
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Rob Herring <robh+dt@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Niklas <niklas.soderlund@ragnatech.se>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+        <devicetree@vger.kernel.org>, linux-ide@vger.kernel.org,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
-
-On Wed, Jul 29, 2020 at 2:26 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Some device nodes in the r8a7745-iwg22d-sodimm.dts are not sorted
-> alphabetically. This patch fixes the sorting of nodes and also fixes a
-> typo in the stmpe node.
+On Thu, Jul 16, 2020 at 7:19 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add USB2.0 phy and host (EHCI/OHCI) device nodes on RZ/G2H SoC dtsi.
 >
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 
-Thanks for your patch!
-
-> --- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-> +++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-> @@ -53,6 +53,25 @@
->                 clock-frequency = <26000000>;
->         };
->
-> +       backlight_lcd: backlight {
-> +               compatible = "pwm-backlight";
-> +               pwms = <&tpu 3 5000000 PWM_POLARITY_INVERTED>;
-> +               brightness-levels = <0 4 8 16 32 64 128 255>;
-> +               default-brightness-level = <7>;
-> +       };
-> +
-> +       lcd_panel: lcd {
-> +               compatible = "edt,etm043080dh6gp";
-> +               power-supply = <&vccq_panel>;
-> +               backlight = <&backlight_lcd>;
-> +
-> +               port {
-> +                       lcd_in: endpoint {
-> +                               remote-endpoint = <&du_out_rgb0>;
-> +                       };
-> +               };
-> +       };
-> +
->         rsnd_sgtl5000: sound {
-
-Shouldn't the sound node be moved below the regulator nodes?
-
->                 compatible = "simple-audio-card";
->                 simple-audio-card,format = "i2s";
-> @@ -68,18 +87,6 @@
->                 };
->         };
->
-> -       vccq_sdhi0: regulator-vccq-sdhi0 {
-> -               compatible = "regulator-gpio";
-> -
-> -               regulator-name = "SDHI0 VccQ";
-> -               regulator-min-microvolt = <1800000>;
-> -               regulator-max-microvolt = <3300000>;
-> -
-> -               gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
-> -               gpios-states = <1>;
-> -               states = <3300000 1>, <1800000 0>;
-> -       };
-> -
->         vccq_panel: regulator-vccq-panel {
->                 compatible = "regulator-fixed";
->                 regulator-name = "Panel VccQ";
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.10.
 
 Gr{oetje,eeting}s,
 
