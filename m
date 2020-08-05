@@ -1,155 +1,154 @@
-Return-Path: <SRS0=jx7C=BO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=ZXdK=BP=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42F59C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Aug 2020 17:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04A4C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 03:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A92922B42
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 Aug 2020 17:48:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0198207FC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 Aug 2020 03:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728920AbgHDRst (ORCPT
+        id S1727066AbgHEDRk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 4 Aug 2020 13:48:49 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:24954 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726338AbgHDRss (ORCPT
+        Tue, 4 Aug 2020 23:17:40 -0400
+Received: from mga17.intel.com ([192.55.52.151]:61975 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725981AbgHEDRk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 Aug 2020 13:48:48 -0400
-X-IronPort-AV: E=Sophos;i="5.75,434,1589209200"; 
-   d="scan'208";a="53649497"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Aug 2020 02:48:48 +0900
-Received: from localhost.localdomain (unknown [172.29.52.222])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2361340B92DF;
-        Wed,  5 Aug 2020 02:48:45 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 5/5] arm64: dts: renesas: beacon-renesom-baseboard: Move connector node out of hd3ss3220 device
-Date:   Tue,  4 Aug 2020 18:48:28 +0100
-Message-Id: <20200804174828.8339-6-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200804174828.8339-1-biju.das.jz@bp.renesas.com>
-References: <20200804174828.8339-1-biju.das.jz@bp.renesas.com>
+        Tue, 4 Aug 2020 23:17:40 -0400
+IronPort-SDR: vyFsyDOK8cF349DxJpU+20QyoCSIh8PQwe/IF4vxw/jQ7Q+2vNea6TT0ZxysvTM05U/nqua1Rh
+ ULnEoVCFmAZQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9703"; a="132533678"
+X-IronPort-AV: E=Sophos;i="5.75,436,1589266800"; 
+   d="scan'208";a="132533678"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2020 20:17:39 -0700
+IronPort-SDR: HWO8lITh1HGbQUgR2YIl1z3aJf9eZgcoQnt7a+vsRiJcJM9IHqOj9kRuGGF83o5lHJiMJboZpO
+ LXiMke+EOjRg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,436,1589266800"; 
+   d="scan'208";a="322972834"
+Received: from lkp-server02.sh.intel.com (HELO 37a337f97289) ([10.239.97.151])
+  by orsmga008.jf.intel.com with ESMTP; 04 Aug 2020 20:17:37 -0700
+Received: from kbuild by 37a337f97289 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1k39vt-0000YT-3F; Wed, 05 Aug 2020 03:17:37 +0000
+Date:   Wed, 05 Aug 2020 11:16:38 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [renesas-drivers:topic/ravb-internal-clock-delays-v3] BUILD
+ SUCCESS 041c6874403e6deab5aa6bbb79ddd17b5fe8c8e2
+Message-ID: <5f2a2496.jYgXaZvaKSh+J2hV%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Move connector node out of hd3ss3220 device in order to comply with usb
-connector bindings.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git  topic/ravb-internal-clock-delays-v3
+branch HEAD: 041c6874403e6deab5aa6bbb79ddd17b5fe8c8e2  squash! arm64: dts: renesas: rcar-gen3: Convert EtherAVB to explicit delay handling
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+elapsed time: 720m
+
+configs tested: 81
+configs skipped: 6
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+sh                           se7750_defconfig
+mips                            gpr_defconfig
+arm                       spear13xx_defconfig
+mips                      maltasmvp_defconfig
+arm                  colibri_pxa300_defconfig
+arm                       netwinder_defconfig
+arm                       versatile_defconfig
+powerpc                mpc7448_hpc2_defconfig
+mips                        bcm63xx_defconfig
+sh                          r7785rp_defconfig
+sh                            shmin_defconfig
+arm                        multi_v7_defconfig
+powerpc                      chrp32_defconfig
+powerpc                     powernv_defconfig
+sh                          sdk7786_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                             allyesconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                             defconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+i386                 randconfig-a005-20200805
+i386                 randconfig-a004-20200805
+i386                 randconfig-a001-20200805
+i386                 randconfig-a003-20200805
+i386                 randconfig-a002-20200805
+i386                 randconfig-a006-20200805
+x86_64               randconfig-a013-20200805
+x86_64               randconfig-a011-20200805
+x86_64               randconfig-a012-20200805
+x86_64               randconfig-a016-20200805
+x86_64               randconfig-a015-20200805
+x86_64               randconfig-a014-20200805
+i386                 randconfig-a011-20200805
+i386                 randconfig-a012-20200805
+i386                 randconfig-a013-20200805
+i386                 randconfig-a014-20200805
+i386                 randconfig-a015-20200805
+i386                 randconfig-a016-20200805
+riscv                            allyesconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                            allmodconfig
+x86_64                                   rhel
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                                  kexec
+
 ---
- .../dts/renesas/beacon-renesom-baseboard.dtsi | 67 ++++++++++++++-----
- 1 file changed, 50 insertions(+), 17 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-index 66c9153b3101..e66b5b36e489 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-@@ -223,6 +223,29 @@
- 		#clock-cells = <0>;
- 		clock-frequency = <25000000>;
- 	};
-+
-+	connector {
-+		compatible = "usb-c-connector";
-+		label = "USB-C";
-+		data-role = "dual";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			port@0 {
-+				reg = <0>;
-+				hs_ep: endpoint {
-+					remote-endpoint = <&usb3_hs_ep>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				ss_ep: endpoint {
-+					remote-endpoint = <&hd3ss3220_in_ep>;
-+				};
-+			};
-+		};
-+	};
- };
- 
- &audio_clk_a {
-@@ -427,20 +450,19 @@
- 		interrupt-parent = <&gpio6>;
- 		interrupts = <4 IRQ_TYPE_LEVEL_LOW>;
- 
--		connector {
--			compatible = "usb-c-connector";
--			label = "USB-C";
--			data-role = "dual";
--
--			ports {
--				#address-cells = <1>;
--				#size-cells = <0>;
--
--				port@1 {
--					reg = <1>;
--					hd3ss3220_ep: endpoint {
--						remote-endpoint = <&usb3_role_switch>;
--					};
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			port@0 {
-+				reg = <0>;
-+				hd3ss3220_in_ep: endpoint {
-+					remote-endpoint = <&ss_ep>;
-+				};
-+			};
-+			port@1 {
-+				reg = <1>;
-+				hd3ss3220_out_ep: endpoint {
-+					remote-endpoint = <&usb3_role_switch>;
- 				};
- 			};
- 		};
-@@ -714,9 +736,20 @@
- 	status = "okay";
- 	usb-role-switch;
- 
--	port {
--		usb3_role_switch: endpoint {
--			remote-endpoint = <&hd3ss3220_ep>;
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		port@0 {
-+			reg = <0>;
-+			usb3_hs_ep: endpoint {
-+				remote-endpoint = <&hs_ep>;
-+			};
-+		};
-+		port@1 {
-+			reg = <1>;
-+			usb3_role_switch: endpoint {
-+				remote-endpoint = <&hd3ss3220_out_ep>;
-+			};
- 		};
- 	};
- };
--- 
-2.17.1
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
