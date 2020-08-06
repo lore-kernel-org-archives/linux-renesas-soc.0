@@ -2,80 +2,134 @@ Return-Path: <SRS0=aa6b=BQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2D1C433E3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF073C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 148702245C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:29:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C29622B40
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:34:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="m6fWXBwb"
+	dkim=pass (1024-bit key) header.d=fujitsu.onmicrosoft.com header.i=@fujitsu.onmicrosoft.com header.b="n6RiQMBu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbgHFC3C (ORCPT
+        id S1726013AbgHFCeB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 Aug 2020 22:29:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52168 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726881AbgHFC3C (ORCPT
+        Wed, 5 Aug 2020 22:34:01 -0400
+Received: from esa8.fujitsucc.c3s2.iphmx.com ([68.232.159.88]:30466 "EHLO
+        esa8.fujitsucc.c3s2.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725999AbgHFCd7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Aug 2020 22:29:02 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7E19C061574
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  5 Aug 2020 19:29:01 -0700 (PDT)
-Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 54D9650E;
-        Thu,  6 Aug 2020 04:28:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1596680898;
-        bh=z7jO7YGy0oA+E1mZ0kd+pSrB4kFkmX0MrOoSxeumiPY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=m6fWXBwbFRjoA47Nj+eicITMPgOhV/T6kohS66rbuc+wKUfSqnrDC0jSFISBeKxeY
-         2DNQLwK68ZXO7WiMX/SMTA3A82CD/9VRn9JlsiHRFiX6nrN/kGl/bTqbEUeiT7rawd
-         D9LCzyLzJXZfEy+Wrah/VKKl9jB3RCPQz0K9io6I=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 0/3] kms-tests: Small fixes and enhancements
-Date:   Thu,  6 Aug 2020 05:27:59 +0300
-Message-Id: <20200806022802.22813-1-laurent.pinchart@ideasonboard.com>
-X-Mailer: git-send-email 2.27.0
+        Wed, 5 Aug 2020 22:33:59 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Wed, 05 Aug 2020 22:33:58 EDT
+IronPort-SDR: NC2A5MvsphO1tdQ+xt2YUSxaofJfqPllqFcGEIVj8Ksc08dA5Kw2Pv6+GWLSGa6hHxs9OZwt13
+ 3u6wYEN3q8bn0q2+JRycAJA7ttVG2F51FOi0C9mOS27AP13jKEmm0LecN3oQYbNPYmZaersNMK
+ R2zQvceOtcugv/4ERIpdAvy7gFOj/CdcalrXRBoBhzGiunjjiMM93JiXHqLKFkz6dURDKiggBZ
+ dfHNVgwvbkZuMHghcbLhTVsFehiiV68s01cJ+tOsPTJXHcdCop194qS7+WYyHdufW23DLeyuHR
+ xxA=
+X-IronPort-AV: E=McAfee;i="6000,8403,9704"; a="16495925"
+X-IronPort-AV: E=Sophos;i="5.75,440,1589209200"; 
+   d="scan'208";a="16495925"
+Received: from mail-ty1jpn01lp2052.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([104.47.93.52])
+  by ob1.fujitsucc.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Aug 2020 11:26:42 +0900
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fFeWMVAOAeIAVuZtoUnSsBa5rGWeFF/LJ1voVKRW9xbTHt+VdsRvOGIvX4lMKtWur0M1brcaVR0YvDWmse0ldKO1Uz+TY96NSgrFMCjp5dNpE4E0vZ2BA9Dp06SnE5QylQZ+NxFgZdZN9zxY0iVPk1osU0K4L973rkXdEQ6AFmZ87pk5Xl8uCyeASpyS9+HAAd4OoV9aVn2VVYXoTs6usmaceRrK9VWZko1eYhqoifXRru9VT0vFSpZVGubRckbGSSnEqVtEKZRr7qgcVDll3OP0VjxNrnTU9hBw/CAZyGT3qDLhriClHu3mhla6DXh68R5G9/Zq3kikCfR/yCKtAA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CGc/Lm5UYWho7u7j5uS60DGaN3vOdSRDkaWnzmlKZLc=;
+ b=muJwOGnnNJRquGiHJS161HfPIYNTF8b5wV8oFrEyDm+DPOTr4i8+wjNKVItPsk+14LZ9sjiOV4Trz6LS79ZA4BuRC9YzYGA1NvpViluGgc32xmIYxfdHA93pM698HmDXXXSx50SJIqo97nee9wLMlfrEhgO8vJvU2sfs4jlKeTxmuhGtY1tCsjNIBCcM65eSfSZkcGY4iGmglqquXHVgoSv3D6xk7ehaaLl1W/IlgfP3+67aorxcX/LHkA8YGxxJswmWkU4cerDq/oSy6CudWuXYj8qihvtMGq1XWLs7Hnv1/AHC0zf+0FYk2yPv+vlXXhVTBZtxpmfIwKSBu0ouFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fujitsu.com; dmarc=pass action=none header.from=fujitsu.com;
+ dkim=pass header.d=fujitsu.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=fujitsu.onmicrosoft.com; s=selector2-fujitsu-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CGc/Lm5UYWho7u7j5uS60DGaN3vOdSRDkaWnzmlKZLc=;
+ b=n6RiQMBuftftK0fbE23jjBYqCB4EWD/h3qUr4G0XeK2AH8EpaIh0jj8M6CLorbCEgM4hG70VQpVYrvJ685pfL6rgOqvurcJxu0i9rUv09LdYT7oYCFEtgmhGXJe2ZeGy/o3Q+b1fzDJilofrBcoobfQnEuq9OsmgbAFBSNAywnY=
+Received: from OSAPR01MB3844.jpnprd01.prod.outlook.com (2603:1096:604:5d::13)
+ by OSBPR01MB1574.jpnprd01.prod.outlook.com (2603:1096:603:1::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.21; Thu, 6 Aug
+ 2020 02:26:36 +0000
+Received: from OSAPR01MB3844.jpnprd01.prod.outlook.com
+ ([fe80::d4d3:eba6:7557:dab6]) by OSAPR01MB3844.jpnprd01.prod.outlook.com
+ ([fe80::d4d3:eba6:7557:dab6%5]) with mapi id 15.20.3239.022; Thu, 6 Aug 2020
+ 02:26:36 +0000
+From:   "ashiduka@fujitsu.com" <ashiduka@fujitsu.com>
+To:     'Sergei Shtylyov' <sergei.shtylyov@gmail.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: RE: [PATCH v2] ravb: Fixed the problem that rmmod can not be done
+Thread-Topic: [PATCH v2] ravb: Fixed the problem that rmmod can not be done
+Thread-Index: AQHWZliVF0gqbKeTM0q7YOFUctSlU6kgSWOAgAEpsHCAAG+FAIAEB8Ug
+Date:   Thu, 6 Aug 2020 02:26:36 +0000
+Message-ID: <OSAPR01MB384475DE7B02563005FCF67CDF480@OSAPR01MB3844.jpnprd01.prod.outlook.com>
+References: <20200730035649.5940-1-ashiduka@fujitsu.com>
+ <20200730100151.7490-1-ashiduka@fujitsu.com>
+ <ce81e95d-b3b0-7f1c-8f97-8bdcb23d5a8e@gmail.com>
+ <OSAPR01MB3844C77766155CAB10BE296CDF4E0@OSAPR01MB3844.jpnprd01.prod.outlook.com>
+ <32d3b998-322b-7c0a-b14a-41ca66dc601a@gmail.com>
+In-Reply-To: <32d3b998-322b-7c0a-b14a-41ca66dc601a@gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.6.2
+x-shieldmailcheckerpolicyversion: FJ-ISEC-20181130-VDI-enc
+x-shieldmailcheckermailid: 26cd4b64ae534207be5656c31801da05
+authentication-results: gmail.com; dkim=none (message not signed)
+ header.d=none;gmail.com; dmarc=none action=none header.from=fujitsu.com;
+x-originating-ip: [118.155.224.182]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: aba36aea-0edb-4781-5f7b-08d839b02489
+x-ms-traffictypediagnostic: OSBPR01MB1574:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <OSBPR01MB15748F2DC2BD95B261A74B10DF480@OSBPR01MB1574.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: DplxOZ5BPKcKetAyHxTW/a3RSYaMGDDd6DLxScfHqhLnaatSgXNhJ/xJKiGE28FGGI0KmrCuW0opYGjTltm+tu5tBrYFWJTIEThXoys0WJFn3klxK8u17O3i3NFf4tTV2ynGj3UhCQf22EJqEoURB7xcI7CIb4JRma8ieBkItPGeklx/qp6k5ozd6Rv3zXRgF31v+9TThlxb0r27+EeFkwKIzuYhMzxy2OuxnY/R5mY08wp9UYtEeoI7RjuWLHedXbZnNaWzZZLQyk3hytM1eIYETUXhrmnOQfVrniVHbwDt5MMjMGYLQQCMCF1mn6Y0FKGXkCPe9PRf1AxqPT/ZVxvOZAtaFvM2ORALaSshgjfjPq4EB37PHu0B6Mo66wag
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSAPR01MB3844.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(396003)(376002)(136003)(39860400002)(366004)(346002)(86362001)(71200400001)(4744005)(5660300002)(2906002)(478600001)(8936002)(52536014)(54906003)(85182001)(316002)(66946007)(6916009)(66476007)(66446008)(64756008)(66556008)(6506007)(26005)(76116006)(4326008)(33656002)(83380400001)(7696005)(8676002)(55016002)(186003)(9686003)(777600001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: GkGL6vAQkXMKP7Uca1zc7YAKi1eeX7cytaCZMv7WY/RDb5vqZVmWPIhju4N0BWiPPWfN8UFi48VjDIJXlAEE8KhW1YBpWQnbFG9QV2+qGMlDwRvfvddRVyTu5MbCazfcEEmJ+jJn3pflKQ5+hHjtqHncfQZLKl7g9URqgPkxYAL4j7DkZfx51F2cOBFuGTUFWfwrHd7ISjC0HrAEkycGqUUjJyKBsNkB2jhxlRVR0gtsuF8W7KRUDTF1/kvCW1Day74rXVMozmPAjpwrhJ0Mdm34OLzNJz+DVwZQk9NYCq4UDUPlzjIwMIGSj8KNysP8dBNhOrGrBz2IB5b/Mpa8esotvVgbUuyCc3MpLyhP0sOFaU2JsSyxrVTIPVyBlahhpoTuG+iu8z24duuBv8B0OJhfYFSxw8oXuM/DbiTZLvfw89cL7XoEOKlwjJ8/wgEC0sMPi/50Xl8ihLAGnmzcFKkaxArOClgqrXWDHAmnB/SZnwzyVpEGC+PXryUxeIidaR8AKcp9pAKvxzu23BB5E7RFXWWK/dl+1d1DX2LsB8Hq8RF/VkM7rl/LztOCk8XOvHM9ba6gAQMkOoF8xiLp6mWeULYJk3hbQ88hmVlOFGRz88q5npw1b+6uuHnMIOabR0MfPjQGVBtQG+iN13E81Q==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: fujitsu.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSAPR01MB3844.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aba36aea-0edb-4781-5f7b-08d839b02489
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2020 02:26:36.2375
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a19f121d-81e1-4858-a9d8-736e267fd4c7
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 98b94yEdEDlDcA6kO1iJiLuxvAaXxDs+G0nNHOVyCtRi0Hw8zH8cN4IeK8f4W7QIgVMbb6SK22TruyBVGM5d7g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB1574
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
-
-This small patch series fixes a problem in kms-test-crc.py (patch 1/3),
-and improves kms-test-formats.py with better progress and error
-reporting (2/3 and 3/3).
-
-While working on this, I noticed that many formats were skipped in
-kms-test-formats.py, as they were not supported by kmsxx. This is now
-fixed, and the patches have been sent to the linux-renesas-soc mailing
-list in "[PATCH 0/8] kmsxx: Various fixes and improvements".
-
-Another discovery during this work was that fully planar formats are
-broken in the DU driver. The fix has also been submitted in
-"[PATCH] drm: rcar-du: Fix pitch handling for fully planar YUV formats".
-
-Laurent Pinchart (3):
-  tests: crc: Fix AtomicRequest usage
-  tests: formats: Add progress reporting
-  tests: formats: Improve error reporting
-
- tests/kms-test-crc.py     |  2 +-
- tests/kms-test-formats.py | 19 ++++++++++++++++---
- 2 files changed, 17 insertions(+), 4 deletions(-)
-
--- 
-Regards,
-
-Laurent Pinchart
-
+SGkgU2VyZ2VpLA0KDQo+ICAgIFRoZSBzdWJqZWN0IGFsc28gY291bGQgYmUgbW9yZSBjb25jaXNl
+Li4uDQoNCkknbGwgdGhpbmsgYWJvdXQgaXQuIFRoYW5rIHlvdSENCg0KPiAgICAgTm90IGF0IGFs
+bCBzbyBjb21tb24gYXMgSSB0aG91Z2h0ISBPbmx5IDQgZHJpdmVycyB1c2UgbWRpby1iaXRiYW5n
+LA0KPiAyIG9mIHRoZW0gYXJlIGZvciB0aGUgUmVuZXNhcyBTb0NzLi4uDQoNClllcy4NCg0KPiAg
+ICAgRG8geXVvIGhhdmUgUi1DYXIgVjNIIGF0IGhhbmQsIGJ5IGNoYW5jZT8gSXQgZG9lcyBoYXZl
+IGEgR0V0aGVyDQo+IGNvbnRyb2xlciB1c2VkIGZvciBib290aW5nIHVwLi4uDQoNCkknbSBzb3Jy
+eS4gSSBkb24ndCBoYXZlIGl0Lg0KVGhlcmUgaXMgYSBTSUxLIGJvYXJkIG9mIFItQ2FyIEdlbjIg
+aW4gdGhlIG9mZmljZSB3aGVyZSBJIHdvcmsuDQpCdXQgSSBjYW4ndCBnbyB0byB0aGUgb2ZmaWNl
+IG5vdyBiZWNhdXNlIG9mIHRoZSBDT1ZJRC0xOSBwcm9ibGVtLiANCklmIEkgY2FuIGdvIHRvIHRo
+ZSBvZmZpY2UsIEknbGwgYnJpbmcgaG9tZSB0aGUgU0lMSyBib2FyZC4NCg0KPiBXZWxsLCBkdWUg
+dG8gdXN1YWxseSB1c2luZyBORlMgdGhlIEV0aGVyQVZCIChhbmQgRXRoZXIgdG9vKSBkcml2ZXIg
+aXMNCj4gcHJvYmFibHkgYWx3YXlzYnVpbHQgaW4ta2VybmVsLi4uDQoNClllcy4gSSB0aGluayBz
+bywgdG9vLg0KU2luY2UgaXQgaXMgbmVjZXNzYXJ5IHRvIHJlZHVjZSB0aGUgSW1hZ2Ugc2l6ZSBm
+b3IgZW1iZWRkZWQgdXNlLCBJIGZvdW5kDQp0aGlzIHByb2JsZW0gd2hlbiBjaGFuZ2luZyB0byBh
+IG1vZHVsZSBhbmQgdGVzdGluZy4NCg0KPiAgICBUcmltIHlvdXIgbWVzc2FnZXMgYWZ0ZXIgeW91
+ciBnb29kYnllLiBUaGF0IG9yaWdpbmFsIG1lc3NhZ2Ugc3R1ZmYNCj4gdHlwaWNhbGx5IGlzbid0
+IHRvbGVyYXRlZCBpbiB0aGUgTGludXggbWFpbGluZyBsaXN0cywgbmVhcmx5IHRoZSBzYW1lIGFz
+DQo+IHRvcC1wb3N0aW5nLi4uDQoNCk9LLiBUaGFua3MuDQoNClRoYW5rcyAmIEJlc3QgUmVnYXJk
+cywNCll1dXN1a2UgQXNoaXp1a2EgPGFzaGlkdWthQGZ1aml0c3UuY29tPg0K
