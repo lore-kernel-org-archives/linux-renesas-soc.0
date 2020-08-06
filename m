@@ -2,47 +2,46 @@ Return-Path: <SRS0=aa6b=BQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FA4C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA69DC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:18:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E3222173E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:18:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B47A02173E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 Aug 2020 02:18:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Vr4eqPcJ"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="myAItzQR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbgHFCSb (ORCPT
+        id S1726829AbgHFCSd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 Aug 2020 22:18:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50558 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbgHFCSb (ORCPT
+        Wed, 5 Aug 2020 22:18:33 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:38262 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbgHFCSc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 Aug 2020 22:18:31 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1811C061575
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  5 Aug 2020 19:18:30 -0700 (PDT)
+        Wed, 5 Aug 2020 22:18:32 -0400
 Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0148750E;
-        Thu,  6 Aug 2020 04:18:22 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 93886BB3;
+        Thu,  6 Aug 2020 04:18:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1596680303;
-        bh=3UAp4hYzcI5CX7ZOkSfNhuLQEl6hcG4xp2FsuTJffLU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Vr4eqPcJDa9d4EOwLs2wzAbcUMJ5eyzTxdl+WilLVNWwcHA+Uf/yzxKRlEG75q04x
-         h+/8W/oS6cWoY9z+1oXXsrEnvVeluHL3PPcLijnyHuGxjMbuW+iFK6Mi/KbqClf3mu
-         Zi0n8PioijzHz4VZTR1glnJsMwyzkOay7BqbNFhs=
+        s=mail; t=1596680304;
+        bh=d+iUtdR2N/TwG8Y9Nh2sBdu+qbpKZXzEgOFAfWAZ4/Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=myAItzQRZ2WWgvA7TY/s6ljvXNDEelSnMAocuVTYPpEphbkkR5eZfc1Hg0B0yz9gJ
+         usQfCpdC/U651/aOPzXPVG0Ac4sqEhgYT9ebWQLN9hacY62RlSaFSyYzga91iGWfma
+         n0bgg1kwSa20FB2gNp+q2kmhPeaSs4PX/fcztV88=
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/8] kmsxx: Various fixes and improvements
-Date:   Thu,  6 Aug 2020 05:17:58 +0300
-Message-Id: <20200806021807.21863-1-laurent.pinchart@ideasonboard.com>
+Subject: [PATCH 3/8] dumbfb: Add support tri- or quadri-planar buffers
+Date:   Thu,  6 Aug 2020 05:18:01 +0300
+Message-Id: <20200806021807.21863-4-laurent.pinchart@ideasonboard.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200806021807.21863-1-laurent.pinchart@ideasonboard.com>
+References: <20200806021807.21863-1-laurent.pinchart@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -50,73 +49,41 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Tomi,
+The DumbFrameBuffer class supports up to 4 planes, as required by the
+DRM/KMS API, but only considers planes 0 and 1 when constructing the
+buffer. Fix it.
 
-This patch series fixes a few issues in kmsxx, mainly related to support
-for additional pixel formats.
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ kms++/src/dumbframebuffer.cpp | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-Patch 1/8 is a small API extension proposal to expose the card device
-minor number, and patch 2/8 is a typo fix in a method name.
-
-The remaining patches add support for additional RGB and YUV formats,
-fixing a few issues in the dumb frame buffer class for fully planar
-buffers (patches 3/8 and 4/8), and adding support for the new formats in
-patches 5/8 to 8/8.
-
-All the new formats have been tested on a Renesas R-Car Gen3 device,
-which supports
-
-- PixelFormat.RGB332
-- PixelFormat.ARGB4444
-- PixelFormat.XRGB4444
-- PixelFormat.ARGB1555
-- PixelFormat.XRGB1555
-- PixelFormat.RGB565
-- PixelFormat.BGR888
-- PixelFormat.RGB888
-- PixelFormat.BGRA8888
-- PixelFormat.BGRX8888
-- PixelFormat.ARGB8888
-- PixelFormat.XRGB8888
-- PixelFormat.UYVY
-- PixelFormat.YUYV
-- PixelFormat.YVYU
-- PixelFormat.NV12
-- PixelFormat.NV21
-- PixelFormat.NV16
-- PixelFormat.NV61
-- PixelFormat.YUV420
-- PixelFormat.YVU420
-- PixelFormat.YUV422
-- PixelFormat.YVU422
-- PixelFormat.YUV444
-- PixelFormat.YVU444
-
-Laurent Pinchart (8):
-  card: Add a method to retrieve the device minor
-  card: Rename has_has_universal_planes to has_universal_planes
-  dumbfb: Add support tri- or quadri-planar buffers
-  dumbfb: Fix pitch for tri-planar formats
-  pykmsbase: Add missing pixel formats
-  kms++: Add support for semiplanar YUV422 formats (NV16 and NV61)
-  kms++: Add support for the planar YUV formats
-  kms++: Add support for missing 8 -and 16-bit RGB formats
-
- kms++/inc/kms++/card.h              |   5 +-
- kms++/inc/kms++/pixelformats.h      |  14 ++
- kms++/src/card.cpp                  |  11 ++
- kms++/src/dumbframebuffer.cpp       |  23 ++-
- kms++/src/pixelformats.cpp          |  18 +-
- kms++/src/plane.cpp                 |   2 +-
- kms++util/inc/kms++util/color.h     |   1 +
- kms++util/inc/kms++util/kms++util.h |   1 +
- kms++util/src/color.cpp             |   5 +
- kms++util/src/drawing.cpp           | 279 +++++++++++++++++++++++++---
- kms++util/src/testpat.cpp           |  16 +-
- py/pykms/pykmsbase.cpp              |  33 ++++
- utils/kmsprint.cpp                  |   4 +-
- 13 files changed, 370 insertions(+), 42 deletions(-)
-
+diff --git a/kms++/src/dumbframebuffer.cpp b/kms++/src/dumbframebuffer.cpp
+index 3448fb149df2..18f3f152943d 100644
+--- a/kms++/src/dumbframebuffer.cpp
++++ b/kms++/src/dumbframebuffer.cpp
+@@ -56,9 +56,18 @@ DumbFramebuffer::DumbFramebuffer(Card& card, uint32_t width, uint32_t height, Pi
+ 	}
+ 
+ 	/* create framebuffer object for the dumb-buffer */
+-	uint32_t bo_handles[4] = { m_planes[0].handle, m_planes[1].handle };
+-	uint32_t pitches[4] = { m_planes[0].stride, m_planes[1].stride };
+-	uint32_t offsets[4] = {  m_planes[0].offset, m_planes[1].offset };
++	uint32_t bo_handles[4] = {
++		m_planes[0].handle, m_planes[1].handle,
++		m_planes[2].handle, m_planes[3].handle,
++	};
++	uint32_t pitches[4] = {
++		m_planes[0].stride, m_planes[1].stride,
++		m_planes[2].stride, m_planes[3].stride,
++	};
++	uint32_t offsets[4] = {
++		m_planes[0].offset, m_planes[1].offset,
++		m_planes[2].offset, m_planes[3].offset,
++	};
+ 	uint32_t id;
+ 	r = drmModeAddFB2(card.fd(), width, height, (uint32_t)format,
+ 			  bo_handles, pitches, offsets, &id, 0);
 -- 
 Regards,
 
