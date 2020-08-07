@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D90BC433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DD4C433E1
 	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Aug 2020 22:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F17DC2075A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Aug 2020 22:34:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5446B2075A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Aug 2020 22:34:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726015AbgHGWeU (ORCPT
+        id S1726045AbgHGWeV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 7 Aug 2020 18:34:20 -0400
-Received: from mga03.intel.com ([134.134.136.65]:13424 "EHLO mga03.intel.com"
+        Fri, 7 Aug 2020 18:34:21 -0400
+Received: from mga17.intel.com ([192.55.52.151]:6929 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbgHGWeU (ORCPT
+        id S1726038AbgHGWeU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 7 Aug 2020 18:34:20 -0400
-IronPort-SDR: LxK9kgbFsIjpg/7RkJXp+YWVdw0DGWaxPYJfoQBKUGE5cE8aCtiKTA24etd2/GvvkNUD/MUzyn
- ACjjikRD6XcQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9706"; a="153177007"
+IronPort-SDR: qInvwV/btVrd8XslJ8AlXiLn4tNNb1Gsx1gkTijZYauACtZlYdh8qpYQ79RGEJgZOBukxzmczb
+ K6LvAVZhhRgA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9706"; a="133271554"
 X-IronPort-AV: E=Sophos;i="5.75,447,1589266800"; 
-   d="scan'208";a="153177007"
+   d="scan'208";a="133271554"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2020 15:34:19 -0700
-IronPort-SDR: iYxVpG8nTKMEo07kYb7D/P420btcnxeOCJ63C2xFy014NVdT1+7o70pbuWYFOAYX3hXa+cOQKK
- XeTbZUP+H30g==
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Aug 2020 15:34:19 -0700
+IronPort-SDR: 8Dhk+PT+svjoTOETIJYFaNuxeUvt+leUkSJDOKf6xaW/q8IqG3onTHkCaymuQUQmC4LmQwbxAb
+ Km6M8CZBuBQQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.75,447,1589266800"; 
-   d="scan'208";a="275491437"
+   d="scan'208";a="289764698"
 Received: from lkp-server02.sh.intel.com (HELO 090e49ab5480) ([10.239.97.151])
-  by fmsmga007.fm.intel.com with ESMTP; 07 Aug 2020 15:34:18 -0700
+  by orsmga003.jf.intel.com with ESMTP; 07 Aug 2020 15:34:18 -0700
 Received: from kbuild by 090e49ab5480 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1k4AwL-0000XG-Um; Fri, 07 Aug 2020 22:34:17 +0000
-Date:   Sat, 08 Aug 2020 06:34:09 +0800
+        id 1k4AwL-0000XD-U5; Fri, 07 Aug 2020 22:34:17 +0000
+Date:   Sat, 08 Aug 2020 06:34:12 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:master] BUILD SUCCESS
- f022d152b4eb2b7a3f2e5344f7d3201108ffc019
-Message-ID: <5f2dd6e1.+Wvbo3JX4NTpe6QD%lkp@intel.com>
+Subject: [renesas-devel:renesas-arm-dt-for-v5.10] BUILD SUCCESS
+ 6d202dfaf38d0dfe636fae6cf2da069f96055896
+Message-ID: <5f2dd6e4.fvF3ecCeZX+H8+iW%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -55,8 +55,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
-branch HEAD: f022d152b4eb2b7a3f2e5344f7d3201108ffc019  Merge branches 'renesas-arm-defconfig-for-v5.10' and 'renesas-arm-dt-for-v5.10' into renesas-devel
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-arm-dt-for-v5.10
+branch HEAD: 6d202dfaf38d0dfe636fae6cf2da069f96055896  ARM: dts: r8a7742: Add TPU support
 
 elapsed time: 722m
 
