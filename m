@@ -2,83 +2,151 @@ Return-Path: <SRS0=llTS=BR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9125C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Aug 2020 17:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF13C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Aug 2020 19:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C388A2086A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Aug 2020 17:50:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36B53204EC
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  7 Aug 2020 19:35:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jqQc8PA5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728113AbgHGRuC (ORCPT
+        id S1726038AbgHGTfl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 7 Aug 2020 13:50:02 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:29111 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728107AbgHGRuB (ORCPT
+        Fri, 7 Aug 2020 15:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36006 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725970AbgHGTfl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 7 Aug 2020 13:50:01 -0400
-X-IronPort-AV: E=Sophos;i="5.75,446,1589209200"; 
-   d="scan'208";a="54150725"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 08 Aug 2020 02:50:00 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E5486400A887;
-        Sat,  8 Aug 2020 02:49:57 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 1/7] dt-bindings: display: renesas,du: Document the r8a7742 bindings
-Date:   Fri,  7 Aug 2020 18:49:48 +0100
-Message-Id: <20200807174954.14448-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200807174954.14448-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20200807174954.14448-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Fri, 7 Aug 2020 15:35:41 -0400
+Received: from mail-yb1-xb41.google.com (mail-yb1-xb41.google.com [IPv6:2607:f8b0:4864:20::b41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FAA8C061756
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  7 Aug 2020 12:35:41 -0700 (PDT)
+Received: by mail-yb1-xb41.google.com with SMTP id q3so1577752ybp.7
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 07 Aug 2020 12:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=afAsSMqQpR+Y09at6eN72Jen5jmnTwor/YAMd2Api9E=;
+        b=jqQc8PA51AnLwte4/3t0oMY31IweGZueO5qloEvIeJ758vYssZN5o7DDpm17ZPN7aL
+         wijU46CqZQfmel090Z5h2XM8ChPW27oKH9uK+Xkl3nYOSQ9AbqivGDsuQ3FalSikeDCR
+         qU8klwbWLaopD1pyu91Z1LFC17dkcFMa4isnqOvd5wt9tK1NKfiLnyS0Tvvq3LzEi5PR
+         oZKeuzd/HxkgBnw4heuPgJI7BjzfQfTAIoOSB0CoHFylh9F8zXAPrDxNLl5RVXr2+kcy
+         pZkMOyP1Uk66JbfHDQOZ8TcTxTKhQSJnce4IfreW5YGN0Ic3E43cQG18VeMKpvutrUqk
+         n3hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=afAsSMqQpR+Y09at6eN72Jen5jmnTwor/YAMd2Api9E=;
+        b=Ou/LP7vGIurwGcnrmgrCIx1HQfVuLBQwWpS0bsz2Rtv7kjjYA0QBDy5u6DZUKzuFKT
+         i9Y1nXAHzSb5RlMYZURUc+LFa/+J0E6arDO5eXVMt91NojsJJFJSwXHqU9tvcT5tbVfW
+         MlGoo/ZPltMLo8gF4QyGoXyJlMAfx6pw3p3jmnkERD+/TIXp0LivbUsVEx5uIuuSY0iC
+         41/o1uCzX7gfGGXsZ0vLwllCI7eOgbx0NAT1rw2InX+mwnbgQDfc5fPCIFUfnRwEpAzC
+         ZIt0ti+QoxVv9Itma6jeQiqx0qHqbwDlHCIE9EXxdOwCYFn9oiwkAdij5/zo7XXqXAsM
+         v69Q==
+X-Gm-Message-State: AOAM532m1xrFCxKfPvvxJRk26oxk61HWvZISSx8nvpWicurFJty8Ux7j
+        CPPrSMFg6AYzkrErSVFFxYPwqM9MTj5kq5TVxAGnaXDrQHs=
+X-Google-Smtp-Source: ABdhPJxGmmjaTJAxfVKt65YnMrrmGzL820vK0C9k4xEKjCX2jtFil4mbwCr2zzTuYJ8vn03sEh1sIu98X8gUs+WQmV0=
+X-Received: by 2002:a25:2f4d:: with SMTP id v74mr2264866ybv.401.1596828939900;
+ Fri, 07 Aug 2020 12:35:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <CA+V-a8vFU24w0XYxsksZMJF5iLbT8UU_q3UieCRyWDH9BwVpzQ@mail.gmail.com>
+ <CAMuHMdW9CrG6__-L89ZPvN0H_SJyNmf3RcojHJaAx8M5FJOm_A@mail.gmail.com>
+In-Reply-To: <CAMuHMdW9CrG6__-L89ZPvN0H_SJyNmf3RcojHJaAx8M5FJOm_A@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Fri, 7 Aug 2020 20:35:12 +0100
+Message-ID: <CA+V-a8t0e7Ys7Mspmh4pU04U7kOJumvJ4+pNzxGqXd1ZcMTQsg@mail.gmail.com>
+Subject: Re: EXT4 issues on block devices
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the RZ/G1H (R8A7742) SoC in the R-Car DU bindings.
+Hi Geert,
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
----
- Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
- 1 file changed, 2 insertions(+)
+On Fri, Aug 7, 2020 at 9:05 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, Aug 6, 2020 at 7:01 PM Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+> > During adding support for SATA on RZ/G2H, I was trying some stress
+>
+> RZ/G2N, according to the logs?
+>
+> > testing on the stock 5.8.0 kernel.
+> >
+> > $ dd if=/dev/urandom of="${TMP_DIR}/random-data" bs=1M count=1000 # Works OK
+> > $ time bonnie++ -d "${MNT_DIR}" -u root # Worked OK, as Biju pointed
+> > out earlier he had seen an issue with this and disabling
+> > CONFIG_PROVE_LOCKING fixes it.
+> > $ for i in {1..50}; do echo $i;cp random-data random-data-$i;sync;
+> > done # This is where I saw random kernel panics/EXT4 errors
+> >
+> > To prove it out it's not the SATA I switched to USB3 and kept on
+> > seeing similar issues. To make sure if the device is OK I tested the
+> > devices on VLP1.0.4 release and saw no such behaviour.
+> >
+> >  I have been using renesas_defconfig + enabled modules + added USB3
+> > firmware file
+> > * Tried disabling cma (cma=0 in bootargs)
+> > * Before mounting the device made sure I run e2fsck
+> > * Also ran badblocks tool on the device and saw no issues
+> > * Disabled CONFIG_HUGETLBFS/CONFIG_ZONE_DMA32
+> >
+> > I also tested on R-car M3N with renesas_defconfig and saw no issues
+> > with USB ext4.
+>
+> I assume you can run the same kernel on R-Car M3-N and RZ/G2N, if you
+> enable support for both SoCs.  Does that show the problem on both?
+>
+Yes I did use the same kernel on bot the platforms.
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index 51cd4d162770..3f1e3ca4bea9 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -3,6 +3,7 @@
- Required Properties:
- 
-   - compatible: must be one of the following.
-+    - "renesas,du-r8a7742" for R8A7742 (RZ/G1H) compatible DU
-     - "renesas,du-r8a7743" for R8A7743 (RZ/G1M) compatible DU
-     - "renesas,du-r8a7744" for R8A7744 (RZ/G1N) compatible DU
-     - "renesas,du-r8a7745" for R8A7745 (RZ/G1E) compatible DU
-@@ -68,6 +69,7 @@ corresponding to each DU output.
- 
-                         Port0          Port1          Port2          Port3
- -----------------------------------------------------------------------------
-+ R8A7742 (RZ/G1H)       DPAD 0         LVDS 0         LVDS 1         -
-  R8A7743 (RZ/G1M)       DPAD 0         LVDS 0         -              -
-  R8A7744 (RZ/G1N)       DPAD 0         LVDS 0         -              -
-  R8A7745 (RZ/G1E)       DPAD 0         DPAD 1         -              -
--- 
-2.17.1
+> > Any thoughts on what could be causing this issue. (I will start
+> > comparing the VLP kernel)
+>
+> What's the VLP kernel?
+>
+Eventually you found it out :)
 
+> If you have two kernels, one that works, and one that doesn't, you can
+> bisect the issue.  Might be not so simple, if the two versions have
+> diverged, but you can always try rebasing the newest tree on top of the
+> oldest one, and run git bisect on that.
+>
+> Your log for M3-N doesn't show the firmware boot log, but your RZ/G2N
+> board has "Lossy Decomp areas".  My R-Car M3-N Salvator-XS doesn't
+> have those.  Also, there may be a difference in the QoS settings.
+>
+> Good luck finding the cause!
+>
+Using the latest e2fsprogs tools [1] I am no more seeing any kernel
+panics now. Sorry for the noise.
+
+[1] https://mirrors.edge.kernel.org/pub/linux/kernel/people/tytso/e2fsprogs/v1.45.6/
+
+Cheers,
+--Prabhakar
+
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
