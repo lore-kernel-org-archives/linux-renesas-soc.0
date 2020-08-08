@@ -2,101 +2,96 @@ Return-Path: <SRS0=8vr7=BS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF1DC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 22:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B586C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 098B1206CD
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 22:14:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pkeCatPY"
+	by mail.kernel.org (Postfix) with ESMTP id F3C0A207FB
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:36:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596929798;
+	bh=uiIpGsEYTqwL6nQJ02O5kTo3YTu+/mkyN/E6AG/P8pM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=dCwGVan/zchXHQBeqBwsqXw7rW5j53lolGwVrDtiPhuMsp6LbaPuF80ejEJXVNna5
+	 9CAtacKSapNPi4MOkf9FHKVjd5h/A8c8IaWSNtEs3TPv34qVV//R6mJskdWgoeDdFn
+	 +YbHRp/kDPqD/WNNQlb0SEVpsPxb94irr9JkcZ0g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725950AbgHHWO4 (ORCPT
+        id S1726960AbgHHXgh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 8 Aug 2020 18:14:56 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:38660 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725779AbgHHWO4 (ORCPT
+        Sat, 8 Aug 2020 19:36:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49186 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726935AbgHHXgf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Aug 2020 18:14:56 -0400
-Received: from pendragon.ideasonboard.com (85-76-78-184-nat.elisa-mobile.fi [85.76.78.184])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3030DF9;
-        Sun,  9 Aug 2020 00:14:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1596924892;
-        bh=r7hf7EgufZlTn8rVV8MpIWTBFm5knrHF8nG3RI/xP/o=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pkeCatPYjgOMF1yjUpwk8YSjwj1swrFOvJWQUN0+nh2WOzVCk+sOIC+uafsQybvji
-         +0lE42K2igg+/XW05KpQQ0axiO/vL3Bp18wMmKdsTFrv1K0F0qx0Wb2Hq2dQ/DO6Ef
-         TFE3r2DZ8cCCu/LlRqMpBUsGeY639+JeBvE4lTnk=
-Date:   Sun, 9 Aug 2020 01:14:39 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 4/8] dumbfb: Fix pitch for tri-planar formats
-Message-ID: <20200808221439.GA6186@pendragon.ideasonboard.com>
-References: <20200806021807.21863-1-laurent.pinchart@ideasonboard.com>
- <20200806021807.21863-5-laurent.pinchart@ideasonboard.com>
- <8181b48a-ce19-4083-c96e-493d75a1691f@ti.com>
+        Sat, 8 Aug 2020 19:36:35 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E837206C3;
+        Sat,  8 Aug 2020 23:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596929795;
+        bh=uiIpGsEYTqwL6nQJ02O5kTo3YTu+/mkyN/E6AG/P8pM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=M4HsklInVhAAE+r1pxZvszRr3vg6bs0tUrYr9JhyIH23SK41a+bOG1EstShHNE1Lh
+         +ZVHuGZHltKSyCD+qGfp4M3SL9OhozWnnlO37Z2lAWbo7y8ncdKPr7EWry6Wj7m+1p
+         7KZunv757XTYq63cgSW6QjQZxMYRnzmxJS7VVE8M=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.8 34/72] ARM: dts: gose: Fix ports node name for adv7612
+Date:   Sat,  8 Aug 2020 19:35:03 -0400
+Message-Id: <20200808233542.3617339-34-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200808233542.3617339-1-sashal@kernel.org>
+References: <20200808233542.3617339-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8181b48a-ce19-4083-c96e-493d75a1691f@ti.com>
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Tomi,
+From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-On Thu, Aug 06, 2020 at 12:21:39PM +0300, Tomi Valkeinen wrote:
-> On 06/08/2020 05:18, Laurent Pinchart wrote:
-> > The BO pitches are unconditionally set to the frame buffer pitch, for
-> > all planes. This is correct for semiplanar YUV formats, as they
-> > subsample chroma horizontally by two but combined U and V in a single
-> > plane, cancelling each other. For fully planar YUV formats, however, the
-> > horizontal subsampling need to be taken into account to compute the
-> > pitch. Fix it.
-> > 
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > ---
-> >  kms++/src/dumbframebuffer.cpp | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
-> > 
-> > diff --git a/kms++/src/dumbframebuffer.cpp b/kms++/src/dumbframebuffer.cpp
-> > index 18f3f152943d..4c3c03164a90 100644
-> > --- a/kms++/src/dumbframebuffer.cpp
-> > +++ b/kms++/src/dumbframebuffer.cpp
-> > @@ -42,6 +42,14 @@ DumbFramebuffer::DumbFramebuffer(Card& card, uint32_t width, uint32_t height, Pi
-> >  		struct drm_mode_create_dumb creq = drm_mode_create_dumb();
-> >  		creq.width = width;
-> >  		creq.height = height / pi.ysub;
-> > +		/*
-> > +		 * For fully planar YUV buffers, the chroma planes don't combine
-> > +		 * U and V components, their width must thus be divided by the
-> > +		 * horizontal subsampling factor.
-> > +		 */
-> > +		if (format_info.type == PixelColorType::YUV &&
-> > +		    format_info.num_planes == 3)
-> > +			creq.width /= pi.xsub;
-> 
-> This feels a bit of a hack... I think we should somehow have the
-> relevant information in the PixelFormatInfo. Having the same plane
-> info, { 8, 2, 2 }, for both NV12 UV plane and YUV420 U and V planes
-> doesn't sound correct.
-> 
-> Should NV12's UV plane be { 16, 2, 2 }? Subsampled formats are
-> confusing... =)
+[ Upstream commit 59692ac5a7bb8c97ff440fc8917828083fbc38d6 ]
 
-I'll give it a try. I however wonder if all drivers will expect 16bpp.
-The ones based on drm_gem_cma_dumb_create() will be fine, but other
-drivers may not expect this.
+When adding the adv7612 device node the ports node was misspelled as
+port, fix this.
 
+Fixes: bc63cd87f3ce924f ("ARM: dts: gose: add HDMI input")
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Link: https://lore.kernel.org/r/20200713111016.523189-1-niklas.soderlund+renesas@ragnatech.se
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/r8a7793-gose.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
+index a378b54867bb4..10c3536b8e3d9 100644
+--- a/arch/arm/boot/dts/r8a7793-gose.dts
++++ b/arch/arm/boot/dts/r8a7793-gose.dts
+@@ -394,7 +394,7 @@ hdmi-in@4c {
+ 			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
+ 			default-input = <0>;
+ 
+-			port {
++			ports {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+ 
 -- 
-Regards,
+2.25.1
 
-Laurent Pinchart
