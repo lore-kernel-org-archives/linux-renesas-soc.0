@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05930C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3291DC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD94C2075D
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:36:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03CAE20829
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:38:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596929797;
-	bh=z7ZNn6eeYtfkCDO8d2hkE9LchQxp4kDowcvpH3wRMhk=;
+	s=default; t=1596929895;
+	bh=FayhK48XD6LCySWNLP0EHUcGUO9hym0PaArFbF+l6/A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eDIoHQBZJNNOZjYmgjK+xlVJy2zP9lJtxbOWsZp58rZ1crItqP2PdO59oUEsnl0pS
-	 DRYXy2+dQd/I9CCtObly/TnWWu9jscWbFPtECaYirhGyeGe21ykFUV3hTSMb6LSAnG
-	 Mg/JPo/YGdjyDnWrV0av6zkCSrOUJeNT8vt0VjYU=
+	b=KY6UYe/liuRvUCzESOo3vW/xrqR6QuWPMHPkaSTqlv+VaXtvdzxVIHSOm/RioL5zs
+	 Y5p3okzDCr31UXa+GFRvVIkwOAxl0gQBzmDs7Oy5KZTNVAt6/JOVM+YQkL05k93R+1
+	 d+NTubgNdBSH5+CTPIKLpAn9t/zdeuDxHn3QBxhc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbgHHXgg (ORCPT
+        id S1728204AbgHHXiO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 8 Aug 2020 19:36:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49134 "EHLO mail.kernel.org"
+        Sat, 8 Aug 2020 19:38:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726927AbgHHXgf (ORCPT
+        id S1728092AbgHHXiJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Aug 2020 19:36:35 -0400
+        Sat, 8 Aug 2020 19:38:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB238206E9;
-        Sat,  8 Aug 2020 23:36:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D192B22BF5;
+        Sat,  8 Aug 2020 23:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596929793;
-        bh=z7ZNn6eeYtfkCDO8d2hkE9LchQxp4kDowcvpH3wRMhk=;
+        s=default; t=1596929888;
+        bh=FayhK48XD6LCySWNLP0EHUcGUO9hym0PaArFbF+l6/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IJUz+BtzxzrRhMd0WLpixWZTwGYpaIiBSL2YJW4C3fS3syc+IvnQCsDl3/1XdnILR
-         HJHVa4WKFZ/jhs2rgfgplzw3LRUMTCmpKVS+Jm3kHsbPsRY8Wsp5AaCTu8B9Ehy1h5
-         yLHyVFvCEk8mpYFwrrEHyno0G6gMNYyiBba++fsg=
+        b=2Foool0165NR3TER5sdvTNrSvIXLRuKfATeUdv0v3ubgdEoo53QAf2OO6Sqf6kxpN
+         WM5u+oO++J6SvNg5PvLwfihkrPdxnRLvcQ1AEGdKNqxvM4q/JjK4kJtWdHGLoPGQ6u
+         eFKlR5fpUl0aVfw+74tE8UbnHnhL+8BQLWcnqt6c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.8 33/72] arm64: dts: renesas: Fix SD Card/eMMC interface device node names
-Date:   Sat,  8 Aug 2020 19:35:02 -0400
-Message-Id: <20200808233542.3617339-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.7 30/58] arm64: dts: renesas: Fix SD Card/eMMC interface device node names
+Date:   Sat,  8 Aug 2020 19:36:56 -0400
+Message-Id: <20200808233724.3618168-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200808233542.3617339-1-sashal@kernel.org>
-References: <20200808233542.3617339-1-sashal@kernel.org>
+In-Reply-To: <20200808233724.3618168-1-sashal@kernel.org>
+References: <20200808233724.3618168-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -285,11 +285,11 @@ index 33bf62acffbb7..4dfb7f0767871 100644
  				     "renesas,rcar-gen3-sdhi";
  			reg = <0 0xee160000 0 0x2000>;
 diff --git a/arch/arm64/boot/dts/renesas/r8a77961.dtsi b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-index 760e738b75b3d..eabb0e635cd4c 100644
+index 0d96f2d3492b6..8227b68b5646a 100644
 --- a/arch/arm64/boot/dts/renesas/r8a77961.dtsi
 +++ b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-@@ -1257,7 +1257,7 @@ usb2_phy1: usb-phy@ee0a0200 {
- 			status = "disabled";
+@@ -928,7 +928,7 @@ usb2_phy1: usb-phy@ee0a0200 {
+ 			/* placeholder */
  		};
  
 -		sdhi0: sd@ee100000 {
@@ -297,7 +297,7 @@ index 760e738b75b3d..eabb0e635cd4c 100644
  			compatible = "renesas,sdhi-r8a77961",
  				     "renesas,rcar-gen3-sdhi";
  			reg = <0 0xee100000 0 0x2000>;
-@@ -1269,7 +1269,7 @@ sdhi0: sd@ee100000 {
+@@ -940,7 +940,7 @@ sdhi0: sd@ee100000 {
  			status = "disabled";
  		};
  
@@ -306,7 +306,7 @@ index 760e738b75b3d..eabb0e635cd4c 100644
  			compatible = "renesas,sdhi-r8a77961",
  				     "renesas,rcar-gen3-sdhi";
  			reg = <0 0xee120000 0 0x2000>;
-@@ -1281,7 +1281,7 @@ sdhi1: sd@ee120000 {
+@@ -952,7 +952,7 @@ sdhi1: sd@ee120000 {
  			status = "disabled";
  		};
  
@@ -315,7 +315,7 @@ index 760e738b75b3d..eabb0e635cd4c 100644
  			compatible = "renesas,sdhi-r8a77961",
  				     "renesas,rcar-gen3-sdhi";
  			reg = <0 0xee140000 0 0x2000>;
-@@ -1293,7 +1293,7 @@ sdhi2: sd@ee140000 {
+@@ -964,7 +964,7 @@ sdhi2: sd@ee140000 {
  			status = "disabled";
  		};
  
