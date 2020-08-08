@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEA8FC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C01C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:50:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFCAF206B5
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:47:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECD60206B5
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  8 Aug 2020 23:50:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596930421;
-	bh=uiIpGsEYTqwL6nQJ02O5kTo3YTu+/mkyN/E6AG/P8pM=;
+	s=default; t=1596930641;
+	bh=jUQYFr/zNcIZpn8MHrRMQ4VbgAFjyryo9kcyksEqlsg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RGvCr12i7wx9W0mbjnz9gJMyGpW8wkHUwCwBjh7DRdpS7TkoQqyNKdh5tYU23LTWr
-	 plQrn9xVDqPUZAUJOdnIG2X2j61JAbD/409+rzv+C/Q5vjm2WOW+K54U3WVT7krqGr
-	 NCfk+NdjYb+7XjxtYzW8+VgMUCEap6+w0CpFKlnk=
+	b=2rzQHtkGLXBq6mwlyoaKMJLMqJAXw/BvdB+EkNtQ1qrZ+BAWx4woFy7ru3In/76V4
+	 sgw2qkwmObYkALTXIjHJ7e5VoC1MuderTP5iBcABCxheIUJ8fjzQ+HIgU6GGlTBBbU
+	 tN2A23uCQXMGFnvJohPscgxvn4CfukWZFwFB4x6M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbgHHXiN (ORCPT
+        id S1726915AbgHHXgc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 8 Aug 2020 19:38:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51844 "EHLO mail.kernel.org"
+        Sat, 8 Aug 2020 19:36:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728190AbgHHXiK (ORCPT
+        id S1726903AbgHHXgc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 8 Aug 2020 19:38:10 -0400
+        Sat, 8 Aug 2020 19:36:32 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BE6620825;
-        Sat,  8 Aug 2020 23:38:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29EFA20716;
+        Sat,  8 Aug 2020 23:36:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596929889;
-        bh=uiIpGsEYTqwL6nQJ02O5kTo3YTu+/mkyN/E6AG/P8pM=;
+        s=default; t=1596929791;
+        bh=jUQYFr/zNcIZpn8MHrRMQ4VbgAFjyryo9kcyksEqlsg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iKR4SJcgVH/eQUvyrcz/7PrDSefmfGKcgclf8POE9tyg/xO5qcWf0/9rLIGBpZ3XK
-         RqTPy556940JES6jgsEV0U+VAi3D049U0mpn9a8LFLACquMgnhGO0YlC9W6I4UA8V7
-         gtHOjWE5uoLCQJkltU4fPoUvUiTdcN7nT2F4LRpE=
+        b=p1Rgaam9xGBgbuPmqqtlYwYQuehpa0gMXCDoWjbbCwdTSeXU9nD8v28MRahTsrO/C
+         Bp5XR9swxtlAkFBCiCRRCyZIUVI+0b6C6NiUcVtrjppY4NS+cFB4HQf9Bg0Y9a+2iH
+         0DOYKwIn7xkFjz3GaRj6NLTrfVMPfNhb6kW5b/M4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
@@ -47,12 +47,12 @@ Cc:     =?UTF-8?q?Niklas=20S=C3=B6derlund?=
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 31/58] ARM: dts: gose: Fix ports node name for adv7612
-Date:   Sat,  8 Aug 2020 19:36:57 -0400
-Message-Id: <20200808233724.3618168-31-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.8 32/72] ARM: dts: gose: Fix ports node name for adv7180
+Date:   Sat,  8 Aug 2020 19:35:01 -0400
+Message-Id: <20200808233542.3617339-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200808233724.3618168-1-sashal@kernel.org>
-References: <20200808233724.3618168-1-sashal@kernel.org>
+In-Reply-To: <20200808233542.3617339-1-sashal@kernel.org>
+References: <20200808233542.3617339-1-sashal@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 X-stable: review
@@ -65,14 +65,14 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-[ Upstream commit 59692ac5a7bb8c97ff440fc8917828083fbc38d6 ]
+[ Upstream commit d344234abde938ae1062edb6c05852b0bafb4a03 ]
 
-When adding the adv7612 device node the ports node was misspelled as
+When adding the adv7180 device node the ports node was misspelled as
 port, fix this.
 
-Fixes: bc63cd87f3ce924f ("ARM: dts: gose: add HDMI input")
+Fixes: 8cae359049a88b75 ("ARM: dts: gose: add composite video input")
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Link: https://lore.kernel.org/r/20200713111016.523189-1-niklas.soderlund+renesas@ragnatech.se
+Link: https://lore.kernel.org/r/20200704155856.3037010-2-niklas.soderlund+renesas@ragnatech.se
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
@@ -80,12 +80,12 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index a378b54867bb4..10c3536b8e3d9 100644
+index 79baf06019f5a..a378b54867bb4 100644
 --- a/arch/arm/boot/dts/r8a7793-gose.dts
 +++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -394,7 +394,7 @@ hdmi-in@4c {
- 			interrupts = <2 IRQ_TYPE_LEVEL_LOW>;
- 			default-input = <0>;
+@@ -336,7 +336,7 @@ composite-in@20 {
+ 			reg = <0x20>;
+ 			remote = <&vin1>;
  
 -			port {
 +			ports {
