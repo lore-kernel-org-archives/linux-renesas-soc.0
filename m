@@ -4,44 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBD1C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Aug 2020 15:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C0B1C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Aug 2020 15:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 815A120768
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Aug 2020 15:22:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83EFA20774
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Aug 2020 15:42:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728235AbgHJPWl (ORCPT
+        id S1727855AbgHJPWg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Aug 2020 11:22:41 -0400
+        Mon, 10 Aug 2020 11:22:36 -0400
 Received: from relmlor2.renesas.com ([210.160.252.172]:5536 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728224AbgHJPWi (ORCPT
+        by vger.kernel.org with ESMTP id S1728225AbgHJPWe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Aug 2020 11:22:38 -0400
+        Mon, 10 Aug 2020 11:22:34 -0400
 X-IronPort-AV: E=Sophos;i="5.75,457,1589209200"; 
-   d="scan'208";a="54088471"
+   d="scan'208";a="54088463"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Aug 2020 00:22:37 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 11 Aug 2020 00:22:34 +0900
 Received: from localhost.localdomain (unknown [172.29.52.120])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D06DF4001962;
-        Tue, 11 Aug 2020 00:22:34 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 32CE44008545;
+        Tue, 11 Aug 2020 00:22:31 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        dri-devel@lists.freedesktop.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 3/3] ARM: dts: iwg20d-q7-common: Fix touch controller probe failure
-Date:   Mon, 10 Aug 2020 16:22:19 +0100
-Message-Id: <20200810152219.6254-4-biju.das.jz@bp.renesas.com>
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 2/3] drm/bridge: lvds-codec: Add support for regulator
+Date:   Mon, 10 Aug 2020 16:22:18 +0100
+Message-Id: <20200810152219.6254-3-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200810152219.6254-1-biju.das.jz@bp.renesas.com>
 References: <20200810152219.6254-1-biju.das.jz@bp.renesas.com>
@@ -50,65 +55,93 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As per the iWave RZ/G1M schematic, the signal LVDS_PPEN controls supply
-voltage for touch panel, LVDS receiver and RGB LCD panel. Add regulator
-for these device nodes and remove powerdown-gpios property from
-lvds-receiver node as it results in touch controller driver probe failure.
+Add the support for enabling optional regulator that may be used as VCC
+source.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- v1->v2 : Add regulator in touch panel, LVDS receiver and RGB LCD panel device nodes
- v1 : https://patchwork.kernel.org/patch/11705819/
+New Patch Ref: Ref:https://patchwork.kernel.org/patch/11705819/
 ---
- arch/arm/boot/dts/iwg20d-q7-common.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/gpu/drm/bridge/lvds-codec.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 4c8b9a6b0125..056f93119d8a 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -57,6 +57,7 @@
+diff --git a/drivers/gpu/drm/bridge/lvds-codec.c b/drivers/gpu/drm/bridge/lvds-codec.c
+index 24fb1befdfa2..5858a29aafe6 100644
+--- a/drivers/gpu/drm/bridge/lvds-codec.c
++++ b/drivers/gpu/drm/bridge/lvds-codec.c
+@@ -10,13 +10,16 @@
+ #include <linux/of_device.h>
+ #include <linux/of_graph.h>
+ #include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
  
- 	lvds-receiver {
- 		compatible = "ti,ds90cf384a", "lvds-decoder";
-+		vcc-supply = <&vcc_3v3_tft1>;
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_panel.h>
  
- 		ports {
- 			#address-cells = <1>;
-@@ -80,6 +81,7 @@
- 	panel {
- 		compatible = "edt,etm0700g0dh6";
- 		backlight = <&lcd_backlight>;
-+		power-supply = <&vcc_3v3_tft1>;
- 
- 		port {
- 			panel_in: endpoint {
-@@ -112,6 +114,17 @@
- 		};
- 	};
- 
-+	vcc_3v3_tft1: regulator-panel {
-+		compatible = "regulator-fixed";
-+
-+		regulator-name = "Panel Vcc";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		enable-active-high;
-+		startup-delay-us = <70000>;
-+		gpio = <&gpio7 25 GPIO_ACTIVE_HIGH>;
-+	};
-+
- 	vcc_sdhi1: regulator-vcc-sdhi1 {
- 		compatible = "regulator-fixed";
- 
-@@ -206,6 +219,7 @@
- 		reg = <0x38>;
- 		interrupt-parent = <&gpio2>;
- 		interrupts = <12 IRQ_TYPE_EDGE_FALLING>;
-+		vcc-supply = <&vcc_3v3_tft1>;
- 	};
+ struct lvds_codec {
++	struct device *dev;
+ 	struct drm_bridge bridge;
+ 	struct drm_bridge *panel_bridge;
++	struct regulator *vcc;
+ 	struct gpio_desc *powerdown_gpio;
+ 	u32 connector_type;
  };
+@@ -38,6 +41,14 @@ static int lvds_codec_attach(struct drm_bridge *bridge,
+ static void lvds_codec_enable(struct drm_bridge *bridge)
+ {
+ 	struct lvds_codec *lvds_codec = to_lvds_codec(bridge);
++	int ret;
++
++	ret = regulator_enable(lvds_codec->vcc);
++	if (ret) {
++		dev_err(lvds_codec->dev,
++			"Failed to enable regulator \"vcc\": %d\n", ret);
++		return;
++	}
  
+ 	if (lvds_codec->powerdown_gpio)
+ 		gpiod_set_value_cansleep(lvds_codec->powerdown_gpio, 0);
+@@ -46,9 +57,15 @@ static void lvds_codec_enable(struct drm_bridge *bridge)
+ static void lvds_codec_disable(struct drm_bridge *bridge)
+ {
+ 	struct lvds_codec *lvds_codec = to_lvds_codec(bridge);
++	int ret;
+ 
+ 	if (lvds_codec->powerdown_gpio)
+ 		gpiod_set_value_cansleep(lvds_codec->powerdown_gpio, 1);
++
++	ret = regulator_disable(lvds_codec->vcc);
++	if (ret)
++		dev_err(lvds_codec->dev,
++			"Failed to disable regulator \"vcc\": %d\n", ret);
+ }
+ 
+ static const struct drm_bridge_funcs funcs = {
+@@ -63,12 +80,24 @@ static int lvds_codec_probe(struct platform_device *pdev)
+ 	struct device_node *panel_node;
+ 	struct drm_panel *panel;
+ 	struct lvds_codec *lvds_codec;
++	int error;
+ 
+ 	lvds_codec = devm_kzalloc(dev, sizeof(*lvds_codec), GFP_KERNEL);
+ 	if (!lvds_codec)
+ 		return -ENOMEM;
+ 
++	lvds_codec->dev = &pdev->dev;
+ 	lvds_codec->connector_type = (uintptr_t)of_device_get_match_data(dev);
++
++	lvds_codec->vcc = devm_regulator_get(lvds_codec->dev, "vcc");
++	if (IS_ERR(lvds_codec->vcc)) {
++		error = PTR_ERR(lvds_codec->vcc);
++		if (error != -EPROBE_DEFER)
++			dev_err(lvds_codec->dev,
++				"Unable to get \"vcc\" supply: %d\n", error);
++		return error;
++	}
++
+ 	lvds_codec->powerdown_gpio = devm_gpiod_get_optional(dev, "powerdown",
+ 							     GPIOD_OUT_HIGH);
+ 	if (IS_ERR(lvds_codec->powerdown_gpio)) {
 -- 
 2.17.1
 
