@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E03AC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Aug 2020 14:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD8F5C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Aug 2020 14:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5700920829
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Aug 2020 14:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A785420855
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Aug 2020 14:03:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbgHLODM (ORCPT
+        id S1726980AbgHLODW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 Aug 2020 10:03:12 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:17492 "EHLO
+        Wed, 12 Aug 2020 10:03:22 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:3074 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726651AbgHLODH (ORCPT
+        by vger.kernel.org with ESMTP id S1726976AbgHLODV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Aug 2020 10:03:07 -0400
+        Wed, 12 Aug 2020 10:03:21 -0400
 X-IronPort-AV: E=Sophos;i="5.76,304,1592838000"; 
-   d="scan'208";a="54444336"
+   d="scan'208";a="54444371"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 12 Aug 2020 23:03:06 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Aug 2020 23:03:19 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2144F4008C6D;
-        Wed, 12 Aug 2020 23:03:02 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1A18A40078D1;
+        Wed, 12 Aug 2020 23:03:16 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -39,12 +39,10 @@ To:     Geert Uytterhoeven <geert+renesas@glider.be>,
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Marian-Cristian Rotariu 
-        <marian-cristian.rotariu.rb@bp.renesas.com>
-Subject: [PATCH 5/9] dt-bindings: display: renesas,dw-hdmi: Add r8a774e1 support
-Date:   Wed, 12 Aug 2020 15:02:13 +0100
-Message-Id: <20200812140217.24251-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 9/9] arm64: dts: renesas: r8a774e1-hihope-rzg2h: Setup DU clocks
+Date:   Wed, 12 Aug 2020 15:02:17 +0100
+Message-Id: <20200812140217.24251-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200812140217.24251-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20200812140217.24251-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -53,28 +51,32 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Setup up the required clocks for the DU to be functional.
 
-Document RZ/G2H (R8A774E1) SoC bindings.
-
-Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../devicetree/bindings/display/bridge/renesas,dw-hdmi.txt       | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h.dts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-index 819f3e31013c..f275997ab947 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-@@ -14,6 +14,7 @@ Required properties:
- - compatible : Shall contain one or more of
-   - "renesas,r8a774a1-hdmi" for R8A774A1 (RZ/G2M) compatible HDMI TX
-   - "renesas,r8a774b1-hdmi" for R8A774B1 (RZ/G2N) compatible HDMI TX
-+  - "renesas,r8a774e1-hdmi" for R8A774E1 (RZ/G2H) compatible HDMI TX
-   - "renesas,r8a7795-hdmi" for R8A7795 (R-Car H3) compatible HDMI TX
-   - "renesas,r8a7796-hdmi" for R8A7796 (R-Car M3-W) compatible HDMI TX
-   - "renesas,r8a77965-hdmi" for R8A77965 (R-Car M3-N) compatible HDMI TX
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h.dts b/arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h.dts
+index cdbe527e9340..12f9242e263b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h.dts
+@@ -24,3 +24,14 @@
+ 		reg = <0x5 0x00000000 0x0 0x80000000>;
+ 	};
+ };
++
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 721>,
++		 <&versaclock5 1>,
++		 <&x302_clk>,
++		 <&versaclock5 2>;
++	clock-names = "du.0", "du.1", "du.3",
++		      "dclkin.0", "dclkin.1", "dclkin.3";
++};
 -- 
 2.17.1
 
