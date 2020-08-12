@@ -2,87 +2,151 @@ Return-Path: <SRS0=bKbj=BW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAB9C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Aug 2020 14:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F60CC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Aug 2020 14:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9416207F7
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Aug 2020 14:03:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48651204FD
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 Aug 2020 14:13:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iMx16CFM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgHLOC4 (ORCPT
+        id S1726488AbgHLONL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 Aug 2020 10:02:56 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:50532 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726434AbgHLOCy (ORCPT
+        Wed, 12 Aug 2020 10:13:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44010 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbgHLONK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 Aug 2020 10:02:54 -0400
-X-IronPort-AV: E=Sophos;i="5.76,304,1592838000"; 
-   d="scan'208";a="54230926"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Aug 2020 23:02:52 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8D10B40078D1;
-        Wed, 12 Aug 2020 23:02:49 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Marian-Cristian Rotariu 
-        <marian-cristian.rotariu.rb@bp.renesas.com>
-Subject: [PATCH 1/9] dt-bindings: display: renesas,du: Document r8a774e1 bindings
-Date:   Wed, 12 Aug 2020 15:02:09 +0100
-Message-Id: <20200812140217.24251-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200812140217.24251-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20200812140217.24251-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Wed, 12 Aug 2020 10:13:10 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50257C061385
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Aug 2020 07:13:10 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id a5so2183908wrm.6
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 12 Aug 2020 07:13:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BAYgOfe5stUcl69x3S7eimrTDZBSiHB9OvfmPx9Zdrw=;
+        b=iMx16CFMmDH2fRRYk1rZbM/ORr/ooYW/ce6+lp1QXcOJO7DkGjJvgbPjnQ9dpqFOcR
+         BQd9bFmrHx259fF4+pnLrDLKzHU8BN60APCkxTzh2CWJUqLCcqsalXd8riNjZXhure06
+         HoP1PAiNEs/gdPQ2RJCkMX+syFcxq6J2jDdvuRzhAZUZpeK3levdB9KTIGXns2WLSY+7
+         jeUM2TP2BBlHH7cwC28jej7YkL0SnN61RWDV1CGs+WI+4pNEn0OBcrpVWB4jvF7RazvK
+         FD7XjCicKe1WmhUCAo36zCBymfbB9PK95AKScfv0XaONkZOZKhdAptUin0T8jRh7jV7D
+         fmxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BAYgOfe5stUcl69x3S7eimrTDZBSiHB9OvfmPx9Zdrw=;
+        b=RltrdTTuwoaS1QTZEGYB0eI9iZKYRz6CQMnh602HNHBOUBM6hKo6Bo50f+HAEyhktO
+         Ze4ZPMhj45EBOjgTpO2WH5RxGqBaXVS1bJqxoL0IFTGqQdXBC5yWoS/TLPFpk0pNJfdq
+         cgJ25pK74su+k27IsviBLfSUd/nv1peGZk5Nas2crm9/NkMcLCFhmIhkjReFwgsv5a+J
+         v7v+i3sSGidXfMl5yr+XNXqBkHO/HxKX8EJOUriHBes4Dx8f7cQkoVM+F9LHMk2S1f74
+         ulnpNoKz0/QeHXJtuijwhHOWy8HwtDAq4suTgBkheVvyignDrCfk/7xt6QSQaaHIfgtt
+         eSgg==
+X-Gm-Message-State: AOAM531PoOOaS9aJyiR4EQ9xd/EC2AnJJc/ckbEbQGtd1rb2vChWDmS9
+        stuyhCnMpk/ln3gcnRaur7OcwISdaTM71mTq+q2E3g7e
+X-Google-Smtp-Source: ABdhPJzHu2ZRSBGxhkIBggfOak2BaqrqSKgARW9ic/KPrejEq5Og+5of1oDTl5faeGNIqwjzmhEgxDeTRZCKa32paBc=
+X-Received: by 2002:adf:f248:: with SMTP id b8mr36015334wrp.247.1597241588772;
+ Wed, 12 Aug 2020 07:13:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200811081712.4981-1-geert+renesas@glider.be>
+In-Reply-To: <20200811081712.4981-1-geert+renesas@glider.be>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 12 Aug 2020 16:12:32 +0200
+Message-ID: <CAPDyKFpsWpvsQjG6Oh=FudUbWFUvJv_3PtzauGOckKLtOx8BRg@mail.gmail.com>
+Subject: Re: [PATCH v2] ata: sata_rcar: Fix DMA boundary mask
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        linux-ide@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+On Tue, 11 Aug 2020 at 10:17, Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+> Before commit 9495b7e92f716ab2 ("driver core: platform: Initialize
+> dma_parms for platform devices"), the R-Car SATA device didn't have DMA
+> parameters.  Hence the DMA boundary mask supplied by its driver was
+> silently ignored, as __scsi_init_queue() doesn't check the return value
+> of dma_set_seg_boundary(), and the default value of 0xffffffff was used.
+>
+> Now the device has gained DMA parameters, the driver-supplied value is
+> used, and the following warning is printed on Salvator-XS:
+>
+>     DMA-API: sata_rcar ee300000.sata: mapping sg segment across boundary [start=0x00000000ffffe000] [end=0x00000000ffffefff] [boundary=0x000000001ffffffe]
+>     WARNING: CPU: 5 PID: 38 at kernel/dma/debug.c:1233 debug_dma_map_sg+0x298/0x300
+>
+> (the range of start/end values depend on whether IOMMU support is
+>  enabled or not)
+>
+> The issue here is that SATA_RCAR_DMA_BOUNDARY doesn't have bit 0 set, so
+> any typical end value, which is odd, will trigger the check.
+>
+> Fix this by increasing the DMA boundary value by 1.
+>
+> Fixes: 8bfbeed58665dbbf ("sata_rcar: correct 'sata_rcar_sht'")
+> Fixes: 9495b7e92f716ab2 ("driver core: platform: Initialize dma_parms for platform devices")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Cc: stable <stable@vger.kernel.org>
 
-Document the RZ/G2H (a.k.a. r8a774e1) SoC in the R-Car DU bindings.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
- 1 file changed, 2 insertions(+)
+Kind regards
+Uffe
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-index 51cd4d162770..67cded5ad827 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.txt
-+++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-@@ -10,6 +10,7 @@ Required Properties:
-     - "renesas,du-r8a774a1" for R8A774A1 (RZ/G2M) compatible DU
-     - "renesas,du-r8a774b1" for R8A774B1 (RZ/G2N) compatible DU
-     - "renesas,du-r8a774c0" for R8A774C0 (RZ/G2E) compatible DU
-+    - "renesas,du-r8a774e1" for R8A774E1 (RZ/G2H) compatible DU
-     - "renesas,du-r8a7779" for R8A7779 (R-Car H1) compatible DU
-     - "renesas,du-r8a7790" for R8A7790 (R-Car H2) compatible DU
-     - "renesas,du-r8a7791" for R8A7791 (R-Car M2-W) compatible DU
-@@ -75,6 +76,7 @@ corresponding to each DU output.
-  R8A774A1 (RZ/G2M)      DPAD 0         HDMI 0         LVDS 0         -
-  R8A774B1 (RZ/G2N)      DPAD 0         HDMI 0         LVDS 0         -
-  R8A774C0 (RZ/G2E)      DPAD 0         LVDS 0         LVDS 1         -
-+ R8A774E1 (RZ/G2H)      DPAD 0         HDMI 0         LVDS 0         -
-  R8A7779 (R-Car H1)     DPAD 0         DPAD 1         -              -
-  R8A7790 (R-Car H2)     DPAD 0         LVDS 0         LVDS 1         -
-  R8A7791 (R-Car M2-W)   DPAD 0         LVDS 0         -              -
--- 
-2.17.1
-
+> ---
+> v2:
+>   - Add Reviewed-by, Tested-by, Cc.
+>
+> This is a fix for a regression in v5.7-rc5 that fell through the cracks.
+> https://lore.kernel.org/linux-ide/20200513110426.22472-1-geert+renesas@glider.be/
+>
+> As by default the DMA debug code prints the first error only, this issue
+> may be hidden on plain v5.7-rc5, where the FCP driver triggers a similar
+> warning.  Merging commit dd844fb8e50b12e6 ("media: platform: fcp: Set
+> appropriate DMA parameters", in v5.8-rc1) from the media tree fixes the
+> FCP issue, and exposes the SATA issue.
+>
+> I added the second fixes tag because that commit is already being
+> backported to stable kernels, and this patch thus needs backporting,
+> too.
+> ---
+>  drivers/ata/sata_rcar.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
+> index 141ac600b64c87ef..44b0ed8f6bb8a120 100644
+> --- a/drivers/ata/sata_rcar.c
+> +++ b/drivers/ata/sata_rcar.c
+> @@ -120,7 +120,7 @@
+>  /* Descriptor table word 0 bit (when DTA32M = 1) */
+>  #define SATA_RCAR_DTEND                        BIT(0)
+>
+> -#define SATA_RCAR_DMA_BOUNDARY         0x1FFFFFFEUL
+> +#define SATA_RCAR_DMA_BOUNDARY         0x1FFFFFFFUL
+>
+>  /* Gen2 Physical Layer Control Registers */
+>  #define RCAR_GEN2_PHY_CTL1_REG         0x1704
+> --
+> 2.17.1
+>
