@@ -2,128 +2,110 @@ Return-Path: <SRS0=0R5B=BZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3116DC433E4
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Aug 2020 21:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627ECC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Aug 2020 21:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 110D4206B6
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Aug 2020 21:54:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4163C206B6
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Aug 2020 21:58:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JscczZiB"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j+5o5C/d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729239AbgHOVyn (ORCPT
+        id S1729079AbgHOV6j (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 15 Aug 2020 17:54:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45624 "EHLO
+        Sat, 15 Aug 2020 17:58:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729093AbgHOVwc (ORCPT
+        with ESMTP id S1728947AbgHOVv6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 15 Aug 2020 17:52:32 -0400
+        Sat, 15 Aug 2020 17:51:58 -0400
 Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E39EC03B3D2;
-        Sat, 15 Aug 2020 01:45:40 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id h19so12311364ljg.13;
-        Sat, 15 Aug 2020 01:45:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39132C08E819
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Aug 2020 03:28:45 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id f26so12446302ljc.8
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 15 Aug 2020 03:28:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Jwsjl5Yl1LFkiTpIfV4FC2pCDY0RlfTGIWFy5618czY=;
-        b=JscczZiBHiR/E30j1ODTRjEZ1J6tzdLICchjfKYD9oDq4hBTSw16cEKX38WSL3gIRR
-         xrnOqDQrO6y6nSFgZXIXzbnTdDu/52bbdqMewnXiQwAXD4xwaQ5W/NwThRCamidnVbmi
-         +OlUdBEBVMhTn2wgmOeXl6eQAS5m7c4rvBo0DLKI2UIO242DkP5o4nz2udq02GRUsqvU
-         nz5Syvq8CziHecgVZN5uKOS2Z/hKrUDqLlYS/7A+CIhHbPQO7h7h90xHiEBwYg/VpZsi
-         Hk/phvDKEAzoetTrUL85EGK3C692AW4EDjNNzVdsvul0ZuYBcZUwoFMdM1I+OhdgZN87
-         3y0Q==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nkLgD7iEvbBky6d3/oef7jImu+P2rpQPLUTujy6Xnso=;
+        b=j+5o5C/dlrGxkrEuO+EuFQ7sKWq2qNtTZnhtvTmI+Ld4yKE3EF4D2nLwDHrwFQVUSv
+         kbQE7lto6PmlyY0WW8lNSD6i2BZRTcpHNp/m0SeF5EzK4YIS1ShuBcBm6/mSOfe5auCK
+         cmgZgdv+QEQTBtjg36p2zxzkMdug3D6z+2smGaTmKUsj9o9eYmTov12HivIki6SK79xo
+         VvhVU5VZRSvYuF/1i5FJjiE7L05J2GOP6pJm+bnc8HysP8PtYx1GpmJblJBvByUVLQLw
+         yW3OxtDGujv0wcGvX9aeiZ6RVIM5UzLvv5lqOjhKUc1E3104jw1dng7IP5pnAEP10MEa
+         dmhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Jwsjl5Yl1LFkiTpIfV4FC2pCDY0RlfTGIWFy5618czY=;
-        b=exEXvbWnvm/975OkswMu12dF470FkJxH/W2gACT96ituYQUvo4xznEJxaPEjqcp2hw
-         e5tx9r0Tfq8goRDeO493KT4dPz77mRmVv94IAsH4kvrBUGjZggPyiyJTIx/SWt+hbZaW
-         c2hCthKcuT1hjan4ZQpXgWal4Itk0wr238qLRrGLWt0+d/cgm933emLWn7bO58CPTH3U
-         R668z6UeSHR0inuw5bc8NcwNq9YDRce618SjXSZsZggby0haXDipZzJIBwWY/JxFneUq
-         pRhrIhtoD1ol6Z4w0Kk6Xkwb+xZfEVN3N7LLUmC3I5X9WENunrc0qCFjXREWT7g+Sffh
-         a7rQ==
-X-Gm-Message-State: AOAM530KkoUDm23CgyqT30bT/mFuRIe6+IQ03RnlBOPVAlKo/bcjcqH3
-        Iqprgt57QfFq/eRVtyKcCZk=
-X-Google-Smtp-Source: ABdhPJxfJPykrCx26X5MYrFKAvPWACW5EIexq2GfCBCd7z/Z++I/TIHakOXnD8XGsq3zFFne/FcS3Q==
-X-Received: by 2002:a2e:808f:: with SMTP id i15mr3244164ljg.151.1597481138853;
-        Sat, 15 Aug 2020 01:45:38 -0700 (PDT)
-Received: from ?IPv6:2a00:1fa0:6e9:851e:a10b:7957:433d:a960? ([2a00:1fa0:6e9:851e:a10b:7957:433d:a960])
-        by smtp.gmail.com with ESMTPSA id f3sm2331191ljo.81.2020.08.15.01.45.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Aug 2020 01:45:38 -0700 (PDT)
-Subject: Re: [PATCH 3/5] arm64: dts: renesas: r8a774a1: Add PCIe EP nodes
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-References: <20200814173037.17822-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200814173037.17822-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Organization: Brain-dead Software
-Message-ID: <fcabccab-54fb-8b8a-7034-9b0da9d32339@gmail.com>
-Date:   Sat, 15 Aug 2020 11:45:23 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.11.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nkLgD7iEvbBky6d3/oef7jImu+P2rpQPLUTujy6Xnso=;
+        b=C61rhmjUoey2YRd0e9aj85tfNasrZRKLVXkA0QP97aRM6hzBpIwyYLmxMUaPEWh8VW
+         mg1TbGVjf2WTQqJONzYcu7geHJC02VBp/ZQshyBm5wbY3gYuYX45W8UK3EfPFdBq7wuR
+         Az64NubbGZ1LSu6M3R1mg00gbu3CECqrMxS3pFvju50Ka8pbxgBBvkCPYxG3s5XK1Grr
+         +j0onS+7jqYLBV6WTkKOGEgC3dPJYe+BV6AFQzQLu/Od5qX4XjGgPOvommoWfxtP3EsG
+         qQh4Be1QN4uZ4NjhjqZLq+zIWKoRdZ3j1zfXcszeMYsnorZCqh78idvsFyK1o0oXkxkM
+         52xw==
+X-Gm-Message-State: AOAM531opky47xpsjLcNpdaBHNCZfCMncySHouZI0s/+7N6VLSzNzlAl
+        R67CdIho9uwl1BteTezv04cMPM/8Wyfy9J/e/Wi0yw==
+X-Google-Smtp-Source: ABdhPJzABDyPO/xmYqNIMR2E89o8T9unT4yPsJuhrVXqrczY/Jat3KJnhjb8zhQgrTcdLhWN0elUL+likKcPWm4te7k=
+X-Received: by 2002:a2e:8144:: with SMTP id t4mr3429779ljg.100.1597487323671;
+ Sat, 15 Aug 2020 03:28:43 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200814173037.17822-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200706150205.22053-1-geert+renesas@glider.be>
+ <CACRpkdZD3gVLdcjaOL9ZCfZD+hrOUB0-q0NpoHu6m1Ujupw6Fw@mail.gmail.com>
+ <CAK8P3a33AWe-fa8jJnRrme56Hgc-hLdNH4FK6FEPyZ0=O=vwtg@mail.gmail.com>
+ <CACRpkdbxQrmNtByZ1cHSROyX7rwwaa2Mb=GQLpVcDi4FsZ06FQ@mail.gmail.com>
+ <159546718359.3847286.13460778905630969897@swboyd.mtv.corp.google.com>
+ <CACRpkdaN22OjWsG+d-hp_NEw==3VVAsWHkFsiG642KmbjD_6Mg@mail.gmail.com> <20200815091620.GV1551@shell.armlinux.org.uk>
+In-Reply-To: <20200815091620.GV1551@shell.armlinux.org.uk>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 15 Aug 2020 12:28:32 +0200
+Message-ID: <CACRpkdY=d8n1TSaSEGomO_ReC3HZKBqwTU93iTVX+tnNHCJ6Kg@mail.gmail.com>
+Subject: Re: [PATCH/RFC v7] ARM: boot: Obtain start of physical memory from DTB
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Kumar Gala <kumar.gala@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Lukasz Stelmach <l.stelmach@samsung.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Eric Miao <eric.miao@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+On Sat, Aug 15, 2020 at 11:16 AM Russell King - ARM Linux admin
+<linux@armlinux.org.uk> wrote:
+> On Fri, Aug 14, 2020 at 04:03:41PM +0200, Linus Walleij wrote:
+> > But TEXT_OFFSET is also used inside the kernel to offset the
+> > virtual memory. This means that when we set up the virtual
+> > memory split, the kernel virtual memory is also bumped by
+> > these 2 MB so the virtual memory starts at 0xC0208000
+> > instead of 0xC0008000 as is normal.
+>
+> No.  Virtual memory starts without the 32KiB offset.  The L1 swapper
+> page table starts 16KiB below (or slightly more if LPAE) for example.
 
-On 14.08.2020 20:30, Lad Prabhakar wrote:
+Thanks Russell, I am struggling to learn these things. Slow learner.
+I'm reading through the assembler line-by-line and trying to learn
+things from the ground up now, let's see if I manage to get these
+things eventually.
 
-> Add PCIe EP nodes to R8A774A1 (RZ/G2M) SoC dtsi.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
->   arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 38 +++++++++++++++++++++++
->   1 file changed, 38 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-> index a603d947970e..50e9ed16a36d 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-> @@ -2369,6 +2369,44 @@
->   			status = "disabled";
->   		};
->   
-> +		pciec0_ep: pcie_ep@fe000000 {
-
-    Hyphens are preferred over underscores in the node/prop names.
-
-[...]> +		pciec1_ep: pcie_ep@ee800000 {
-
-    Ditto, should be "pci-ep@ee800000".
-
-[...]
-
-MBR, Sergei
+Best regards,
+Linus Walleij
