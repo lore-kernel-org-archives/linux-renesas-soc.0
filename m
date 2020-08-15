@@ -1,98 +1,134 @@
-Return-Path: <SRS0=+c6B=BY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=0R5B=BZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA94AC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Aug 2020 17:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1A7C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Aug 2020 21:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C3FBF20866
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 Aug 2020 17:34:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 299A82053B
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 15 Aug 2020 21:53:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0+BYyOk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726270AbgHNReQ (ORCPT
+        id S1728522AbgHOVxY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 Aug 2020 13:34:16 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:6977 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726241AbgHNReP (ORCPT
+        Sat, 15 Aug 2020 17:53:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45658 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729152AbgHOVwn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 Aug 2020 13:34:15 -0400
-X-IronPort-AV: E=Sophos;i="5.76,313,1592838000"; 
-   d="scan'208";a="54383380"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 15 Aug 2020 02:34:14 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id F3F5540062AC;
-        Sat, 15 Aug 2020 02:34:10 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
+        Sat, 15 Aug 2020 17:52:43 -0400
+Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCB28C08E81C;
+        Sat, 15 Aug 2020 03:35:04 -0700 (PDT)
+Received: by mail-yb1-xb43.google.com with SMTP id x2so6587041ybf.12;
+        Sat, 15 Aug 2020 03:35:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9FdBEk/PFONKRBL3ptMIHWrtdhPvwvR5FjJYMrVCgHg=;
+        b=W0+BYyOkemwI7h+hvaQAo9s1FdDmpB1n0aNtcGAEnmapUJuIHMqNKh1Gel888k+TBR
+         2rJRGW/9mDlu1hhxgiKEEQIj54ljTE2rlP6NpfoSJfDFo5URkupbE+RayKBnPF2Ui1CO
+         qhL3AFYQRU/OF7JheALPd9Xma4NxeJ7UQ35Xszq0opOlLLCDCryugaoLMyN6c8BSTJ/I
+         0GO0bJin77B3ez6SH1jCcUBFaavqNClT/nMnhuFG9bzl8nYX/+2JLdeUEOfhV3AfM1Ka
+         sTSJa8KrMmB86rmTT6dwUqw+ab6HYYxc78Vp2bhz+FWvAaegeWHjWLXI6i4isi5xTuZ5
+         orcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9FdBEk/PFONKRBL3ptMIHWrtdhPvwvR5FjJYMrVCgHg=;
+        b=Z/Uix5qVrF/lUlxst9LAudbpTaaSmAHsemZVUKFXzSEs1NJnTLl8u0wnqFULyPNk1h
+         aQ2fjJmaaXFbAyHW8Q4B+2p4pp65uA/FL9C6cFHK95UpnJUca/fj4mxY+5zmjuBc+nQi
+         gQv96ERrp9JRjFyZmo0kN3TcUoPgLdNu9ID0/iKMnZZ0seyxEN9zSw/7g2BcBm9mAoIz
+         o0r55GKR08oN460ufAVtpOn9NZ2Lq7RMKY0fDvdkJ/UEugGxHFzdAYgGJWDVWAvCXiQX
+         tLwKgFXUiZtVIrZno6Z0ns/Qb0CXhRsQetSe7rxqBk6hbxUCqkN0WfLkTbJrWVffxLrU
+         p7Xw==
+X-Gm-Message-State: AOAM532nyelMvqRTYjfaA+71jw77kVn7IMbgUU3L9YSllxTBl51xYo7K
+        GeSz4BJ1+TiirMaaX1xw+zNdnwDp8enGzT/He5E=
+X-Google-Smtp-Source: ABdhPJz73oqfRaOfnalXbIezKUlfuEnoM5U/cUCYFspm9g39RLuwP9rmVKplgEBHzq46yz+aGDTTKBATvPsaKi73+34=
+X-Received: by 2002:a5b:40f:: with SMTP id m15mr8401661ybp.25.1597487699922;
+ Sat, 15 Aug 2020 03:34:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <1596454753-13612-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1596454753-13612-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1596454753-13612-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Sat, 15 Aug 2020 11:34:33 +0100
+Message-ID: <CA+V-a8sjxL-rbYAti8Djj2ch2+Zf+88_wNjbZHzKVBB66aZJ0g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: media: ov772x: Document endpoint properties
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH 5/5] arm64: dts: renesas: r8a774c0: Add PCIe EP node
-Date:   Fri, 14 Aug 2020 18:30:37 +0100
-Message-Id: <20200814173037.17822-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200814173037.17822-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20200814173037.17822-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add PCIe EP node to R8A774C0 (RZ/G2E) SoC dtsi.
+Hi Jacopo,
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+On Mon, Aug 3, 2020 at 12:39 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+>
+> Document endpoint properties required for parallel interface
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  .../devicetree/bindings/media/i2c/ov772x.txt     | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>
+I see you already have a patch for YAML conversion for OV772x binding
+[1], if you plan to post a v2 would you be OK to pick these changes as
+part of your conversion changes ?
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index 5c72a7efbb03..81f218539688 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -1698,6 +1698,25 @@
- 			status = "disabled";
- 		};
- 
-+		pciec0_ep: pcie_ep@fe000000 {
-+			compatible = "renesas,r8a774c0-pcie-ep",
-+				     "renesas,rcar-gen3-pcie-ep";
-+			reg = <0x0 0xfe000000 0 0x80000>,
-+			      <0x0 0xfe100000 0 0x100000>,
-+			      <0x0 0xfe200000 0 0x200000>,
-+			      <0x0 0x30000000 0 0x8000000>,
-+			      <0x0 0x38000000 0 0x8000000>;
-+			reg-names = "apb-base", "memory0", "memory1", "memory2", "memory3";
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 319>;
-+			clock-names = "pcie";
-+			resets = <&cpg 319>;
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			status = "disabled";
-+		};
-+
- 		vspb0: vsp@fe960000 {
- 			compatible = "renesas,vsp2";
- 			reg = <0 0xfe960000 0 0x8000>;
--- 
-2.17.1
+[1] https://www.spinics.net/lists/linux-media/msg173201.html
 
+Cheers,
+Prabhakar
+
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ov772x.txt b/Documentation/devicetree/bindings/media/i2c/ov772x.txt
+> index 0b3ede5b8e6a..1f4153484717 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/ov772x.txt
+> +++ b/Documentation/devicetree/bindings/media/i2c/ov772x.txt
+> @@ -21,6 +21,22 @@ subnode for its digital output video port, in accordance with the video
+>  interface bindings defined in Documentation/devicetree/bindings/media/
+>  video-interfaces.txt.
+>
+> +Endpoint node required properties for parallel connection are:
+> +- remote-endpoint: a phandle to the bus receiver's endpoint node.
+> +- bus-width: shall be set to <8> for 8 bits parallel bus
+> +            or <10> for 10 bits parallel bus
+> +- data-shift: shall be set to <2> for 8 bits parallel bus
+> +             (lines 9:2 are used) or <0> for 10 bits parallel bus
+> +- hsync-active: active state of the HSYNC signal, 0/1 for LOW/HIGH respectively.
+> +               (Not required for bus-type equal 6)
+> +- vsync-active: active state of the VSYNC signal, 0/1 for LOW/HIGH respectively.
+> +               (Not required for bus-type equal 6)
+> +- pclk-sample: sample data on rising (1) or falling (0) edge of the pixel clock
+> +              signal. (Not required for bus-type equal 6)
+> +- bus-type: data bus type. Possible values are:
+> +           5 - Parallel
+> +           6 - Bt.656
+> +
+>  Example:
+>
+>  &i2c0 {
+> --
+> 2.17.1
+>
