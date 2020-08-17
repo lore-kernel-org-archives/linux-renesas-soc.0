@@ -2,60 +2,115 @@ Return-Path: <SRS0=+nxL=B3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CABC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 05:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F197C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 08:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3901C20578
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 05:00:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597640441;
-	bh=7rVsO1fCVLr+jZWcC3a5UGlgrCtMtWSpDzbSm+/llRM=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=Spo3R6nC8WhV/LtbnrtDpYD4b7BwrHiPY2g42/BbTWc/tL9eOfUMsd8/xvq1fy9RX
-	 McDhs9TEnIEbAJEKoECl4Et4wnmUn1M1l3j6x7lPtzG9DB0nY+5kuUsGfWZMJutxoT
-	 akUk+Yb0YBgXNwHF8iCquZ6ouelQSyW+z2BEpBPk=
+	by mail.kernel.org (Postfix) with ESMTP id EAA2B20829
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 08:08:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726114AbgHQFAk (ORCPT
+        id S1726977AbgHQIIC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Aug 2020 01:00:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbgHQFAj (ORCPT
+        Mon, 17 Aug 2020 04:08:02 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:52071 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbgHQIIC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Aug 2020 01:00:39 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597640439;
-        bh=7rVsO1fCVLr+jZWcC3a5UGlgrCtMtWSpDzbSm+/llRM=;
-        h=Subject:From:Date:To:From;
-        b=pL+6rZ4kV+X0pF5tGUzoVPgAF499di/ckCoZzDF/JtN4bb+VJEqeCSFMJ7p3MUIIt
-         eeKqF2lohaBxtHw6gtO9rcsucX5S/DJ4q3Pfl8ABHqkzAgK3FbjSEjB+0oai4Z2haP
-         wEodct7lf/HjsIN4Ail71sBbdShO3S52i+cbuto0=
+        Mon, 17 Aug 2020 04:08:02 -0400
+X-Originating-IP: 93.34.118.233
+Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id BB259FF80B;
+        Mon, 17 Aug 2020 08:07:55 +0000 (UTC)
+Date:   Mon, 17 Aug 2020 10:11:38 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: media: ov772x: Document endpoint
+ properties
+Message-ID: <20200817081138.dog5lhpmszbu2mgc@uno.localdomain>
+References: <1596454753-13612-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1596454753-13612-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CA+V-a8sjxL-rbYAti8Djj2ch2+Zf+88_wNjbZHzKVBB66aZJ0g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <159764043930.2008.9456437635852968776.git-patchwork-housekeeping@kernel.org>
-Date:   Mon, 17 Aug 2020 05:00:39 +0000
-To:     linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CA+V-a8sjxL-rbYAti8Djj2ch2+Zf+88_wNjbZHzKVBB66aZJ0g@mail.gmail.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v2] soc: renesas: use menu for Renesas SoC (2020-08-17T04:50:24)
-  Superseding: [v1] soc: renesas: use menu for Renesas SoC (2020-08-04T06:12:20):
-    soc: renesas: use menu for Renesas SoC
+Hello Prabhakar,
 
-Latest series: [v2] pinctrl: sh-pfc: collect Renesas related CONFIGs in one place (2020-08-17T04:44:55)
-  Superseding: [v1] pinctrl: sh-pfc: collect Renesas related CONFIGs in one place (2020-08-04T06:11:04):
-    pinctrl: sh-pfc: collect Renesas related CONFIGs in one place
+On Sat, Aug 15, 2020 at 11:34:33AM +0100, Lad, Prabhakar wrote:
+> Hi Jacopo,
+>
+> On Mon, Aug 3, 2020 at 12:39 PM Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> >
+> > Document endpoint properties required for parallel interface
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  .../devicetree/bindings/media/i2c/ov772x.txt     | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >
+> I see you already have a patch for YAML conversion for OV772x binding
+> [1], if you plan to post a v2 would you be OK to pick these changes as
+> part of your conversion changes ?
 
+Sure thing, I'll add the following properties to the series!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+Thanks
+  j
+
+>
+> [1] https://www.spinics.net/lists/linux-media/msg173201.html
+>
+> Cheers,
+> Prabhakar
+>
+> > diff --git a/Documentation/devicetree/bindings/media/i2c/ov772x.txt b/Documentation/devicetree/bindings/media/i2c/ov772x.txt
+> > index 0b3ede5b8e6a..1f4153484717 100644
+> > --- a/Documentation/devicetree/bindings/media/i2c/ov772x.txt
+> > +++ b/Documentation/devicetree/bindings/media/i2c/ov772x.txt
+> > @@ -21,6 +21,22 @@ subnode for its digital output video port, in accordance with the video
+> >  interface bindings defined in Documentation/devicetree/bindings/media/
+> >  video-interfaces.txt.
+> >
+> > +Endpoint node required properties for parallel connection are:
+> > +- remote-endpoint: a phandle to the bus receiver's endpoint node.
+> > +- bus-width: shall be set to <8> for 8 bits parallel bus
+> > +            or <10> for 10 bits parallel bus
+> > +- data-shift: shall be set to <2> for 8 bits parallel bus
+> > +             (lines 9:2 are used) or <0> for 10 bits parallel bus
+> > +- hsync-active: active state of the HSYNC signal, 0/1 for LOW/HIGH respectively.
+> > +               (Not required for bus-type equal 6)
+> > +- vsync-active: active state of the VSYNC signal, 0/1 for LOW/HIGH respectively.
+> > +               (Not required for bus-type equal 6)
+> > +- pclk-sample: sample data on rising (1) or falling (0) edge of the pixel clock
+> > +              signal. (Not required for bus-type equal 6)
+> > +- bus-type: data bus type. Possible values are:
+> > +           5 - Parallel
+> > +           6 - Bt.656
+> > +
+> >  Example:
+> >
+> >  &i2c0 {
+> > --
+> > 2.17.1
+> >
