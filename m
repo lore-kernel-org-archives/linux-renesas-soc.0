@@ -2,84 +2,93 @@ Return-Path: <SRS0=+nxL=B3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D8CC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 20:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61305C433F2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 22:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B30E2065D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 20:52:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 351B62076E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 22:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597697558;
-	bh=qq/Aq6gH91HmodHUuGstQfY62H36imeGZ9HxFm3ZU38=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=bFQCualuz3rhwABhPc7bUUK4w1omY6M5UUTEWK4U8ZUoLwkLro2hdbg6k9HmdYbNL
-	 jqlzrGlyyegVFRm0wIO3PoeIsfiOBUCwg5mnqhPNCzVQGEr/ILQj09UprQ46WLmmJd
-	 jStkSmVX0dLgXp71ZESMMXqIb6lVUPB/N/2sdPxo=
+	s=default; t=1597702252;
+	bh=wOKwKxI61xyGhvk3gR+YZ1rqMZruMPuo9REyDXaQ8hk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0gL5ghk9l/u6rHpPZzjSdeSElPWZwhs5FDZintwxldb/sZR32x9BTB5hf8dFsdSNG
+	 BdDNvXveEU1A/cX6VyTA9RSzFPpcFbyMv6nDMEjNUzyS9p8rF+TnETTvABoMv7lRDT
+	 bv1tA+itHhvvI9zMkrn8458//hg3cs/ogG+dZOkE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgHQUwh (ORCPT
+        id S1730198AbgHQWKv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Aug 2020 16:52:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726165AbgHQUwg (ORCPT
+        Mon, 17 Aug 2020 18:10:51 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:39105 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729671AbgHQWKt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Aug 2020 16:52:36 -0400
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B15F22065D;
-        Mon, 17 Aug 2020 20:52:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597697555;
-        bh=qq/Aq6gH91HmodHUuGstQfY62H36imeGZ9HxFm3ZU38=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hS2LVsyU8NJ8bR4fK4TKRsh1j9DVIs2drJXjOHGbvQtu+jFjV4NV3NdQosReQua6P
-         9n8I9NIi+xITfG7i7wnRkxOwy13Ki2qzGPcHipkdQ2Olz6dGmdQWupXmAiia2TjEKA
-         6+d0V9wMAWqvt1xFEumTyNJVU6kYZstFp0EI0MSU=
-Received: by mail-ot1-f45.google.com with SMTP id h22so14518413otq.11;
-        Mon, 17 Aug 2020 13:52:35 -0700 (PDT)
-X-Gm-Message-State: AOAM530JTTqA1twM3ko5WKkKKmVLX6/TD/V0YstDQh0GJExO2jrB98ur
-        zUU6oqLB3SDpoM1lv6fhIVKYjl6m5sM4vsvUKg==
-X-Google-Smtp-Source: ABdhPJxaF0nYdin2AdmlzdGbIHiRf2CI5TWBbErlxvKR1Popk5mGNuff8kbE7smq29spDmT37s+s0UIO+v4pPWaQ6I4=
-X-Received: by 2002:a05:6830:1d8e:: with SMTP id y14mr12789084oti.129.1597697555093;
- Mon, 17 Aug 2020 13:52:35 -0700 (PDT)
+        Mon, 17 Aug 2020 18:10:49 -0400
+Received: by mail-il1-f196.google.com with SMTP id f12so8323602ils.6;
+        Mon, 17 Aug 2020 15:10:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=FV71Do6+ddR98mWO5xKm3RuJ/5xQqaLemwdBMVqmXAo=;
+        b=etALAuzKtl6oUZGAQN88VeJ/mAmzI0YogCfUx+SpstWgqxsPpvgfcg6raHA5srguNo
+         tec5VUz84q3JQJ3xDmxxGoXqL+Qx/VNsd9TM0JUddkFHLpGQaIA6ZyJX9LQTIQ0CTNHe
+         bhHe1aWtzVd5zinLiZJtVyPbSDCltBZgrvL+RtsNPSGWw4zXwYTBOW8GachV09GrorBY
+         nvJ7ZqXiVQjDwiX0mz8JxhBMT6MrbQq8p7kw61ghkceZHXJ4rt1pyrQ0cT5l+P9BZSPu
+         +V5AR+AyENmZDUrJ4iLYkj3nUoSA6+wh7obqqu5fZOnVDcebtnpzH6IWc/AZWOM+uNMN
+         QzaA==
+X-Gm-Message-State: AOAM5300x34+bqm57343DhY41z34oilWWHga2mOrPRCRmH5pjpDDPikp
+        9fmYC4uIW4oya6JNpDpynw==
+X-Google-Smtp-Source: ABdhPJyB6SidyKz94Gaxsq4OtzXh2gXZ2ntCkmBG5Iud74qbldnH8x/in1Yz0oyzKaetuNZng0GE0g==
+X-Received: by 2002:a92:bad5:: with SMTP id t82mr15563469ill.22.1597702248443;
+        Mon, 17 Aug 2020 15:10:48 -0700 (PDT)
+Received: from xps15 ([64.188.179.249])
+        by smtp.gmail.com with ESMTPSA id t16sm2865203ili.75.2020.08.17.15.10.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Aug 2020 15:10:47 -0700 (PDT)
+Received: (nullmailer pid 1664783 invoked by uid 1000);
+        Mon, 17 Aug 2020 22:10:46 -0000
+Date:   Mon, 17 Aug 2020 16:10:46 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        linux-pwm@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH 2/5] dt-bindings: pwm: renesas,pwm-rcar: Add r8a7742
+ support
+Message-ID: <20200817221046.GA1664753@bogus>
+References: <20200806183152.11809-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200806183152.11809-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-References: <20200817160037.255972-1-jacopo+renesas@jmondi.org> <20200817191855.u55o75iby6ib7hhe@uno.localdomain>
-In-Reply-To: <20200817191855.u55o75iby6ib7hhe@uno.localdomain>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 17 Aug 2020 14:52:23 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJFaewwrqM_vfGWGS5RGcJ2h144wV8dgWgCtO3hQQwF0w@mail.gmail.com>
-Message-ID: <CAL_JsqJFaewwrqM_vfGWGS5RGcJ2h144wV8dgWgCtO3hQQwF0w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: media: imx274: Convert to json-schema
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        devicetree@vger.kernel.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Leon Luo <leonl@leopardimaging.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200806183152.11809-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Aug 17, 2020 at 1:15 PM Jacopo Mondi <jacopo@jmondi.org> wrote:
->
-> Slightly better with a subject  =)
->
-> I made a formatting error, empty line between receivers list and Subject:
->
-> Sorry about this :)
+On Thu, 06 Aug 2020 19:31:49 +0100, Lad Prabhakar wrote:
+> Document RZ/G1H (R8A7742) SoC bindings.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Just resend so all the tooling works. My scripts barfed on it as it
-seems to not be in lore.
-
-Rob
+Acked-by: Rob Herring <robh@kernel.org>
