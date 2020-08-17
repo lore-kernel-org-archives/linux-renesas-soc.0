@@ -7,38 +7,36 @@ X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 573B7C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 15:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 543BFC433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 18:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C00120885
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 15:56:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 445CB204EC
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 18:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387828AbgHQP4S (ORCPT
+        id S2391108AbgHQSkW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Aug 2020 11:56:18 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:52387 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388029AbgHQPzl (ORCPT
+        Mon, 17 Aug 2020 14:40:22 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:38819 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730909AbgHQP55 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Aug 2020 11:55:41 -0400
+        Mon, 17 Aug 2020 11:57:57 -0400
+X-Originating-IP: 93.34.118.233
 Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 772B524000E;
-        Mon, 17 Aug 2020 15:55:35 +0000 (UTC)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id A5B7A1BF208;
+        Mon, 17 Aug 2020 15:57:51 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+        linux-media@vger.kernel.org
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
         sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
         laurent.pinchart@ideasonboard.com,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 1/3] dt-bindings: media: ov772x: Convert to json-schema
-Date:   Mon, 17 Aug 2020 17:59:08 +0200
-Message-Id: <20200817155910.255883-2-jacopo+renesas@jmondi.org>
+Subject: [PATCH] dt-bindings: media: mt9v111: Convert to json-schema
+Date:   Mon, 17 Aug 2020 18:01:29 +0200
+Message-Id: <20200817160129.256085-1-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200817155910.255883-1-jacopo+renesas@jmondi.org>
-References: <20200817155910.255883-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -46,91 +44,98 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert the ov772x binding document to json-schema and update
+Convert the mt9v111 bindings document to json-schema and update
 the MAINTAINERS file accordingly.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- .../devicetree/bindings/media/i2c/ov772x.txt  | 40 ---------
- .../devicetree/bindings/media/i2c/ov772x.yaml | 84 +++++++++++++++++++
+ .../bindings/media/i2c/aptina,mt9v111.txt     | 46 ----------
+ .../bindings/media/i2c/aptina,mt9v111.yaml    | 83 +++++++++++++++++++
  MAINTAINERS                                   |  2 +-
- 3 files changed, 85 insertions(+), 41 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/i2c/ov772x.txt
- create mode 100644 Documentation/devicetree/bindings/media/i2c/ov772x.yaml
+ 3 files changed, 84 insertions(+), 47 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/ov772x.txt b/Documentation/devicetree/bindings/media/i2c/ov772x.txt
+diff --git a/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt b/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
 deleted file mode 100644
-index 0b3ede5b8e6a..000000000000
---- a/Documentation/devicetree/bindings/media/i2c/ov772x.txt
+index bd896e9f67d1..000000000000
+--- a/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
 +++ /dev/null
-@@ -1,40 +0,0 @@
--* Omnivision OV7720/OV7725 CMOS sensor
+@@ -1,46 +0,0 @@
+-* Aptina MT9V111 CMOS sensor
+-----------------------------
 -
--The Omnivision OV7720/OV7725 sensor supports multiple resolutions output,
--such as VGA, QVGA, and any size scaling down from CIF to 40x30. It also can
--support the YUV422, RGB565/555/444, GRB422 or raw RGB output formats.
+-The Aptina MT9V111 is a 1/4-Inch VGA-format digital image sensor with a core
+-based on Aptina MT9V011 sensor and an integrated Image Flow Processor (IFP).
 -
--Required Properties:
--- compatible: shall be one of
--	"ovti,ov7720"
--	"ovti,ov7725"
--- clocks: reference to the xclk input clock.
+-The sensor has an active pixel array of 640x480 pixels and can output a number
+-of image resolution and formats controllable through a simple two-wires
+-interface.
 -
--Optional Properties:
--- reset-gpios: reference to the GPIO connected to the RSTB pin which is
--  active low, if any.
--- powerdown-gpios: reference to the GPIO connected to the PWDN pin which is
--  active high, if any.
+-Required properties:
+---------------------
 -
--The device node shall contain one 'port' child node with one child 'endpoint'
--subnode for its digital output video port, in accordance with the video
--interface bindings defined in Documentation/devicetree/bindings/media/
--video-interfaces.txt.
+-- compatible: shall be "aptina,mt9v111".
+-- clocks: reference to the system clock input provider.
+-
+-Optional properties:
+---------------------
+-
+-- enable-gpios: output enable signal, pin name "OE#". Active low.
+-- standby-gpios: low power state control signal, pin name "STANDBY".
+-  Active high.
+-- reset-gpios: chip reset signal, pin name "RESET#". Active low.
+-
+-The device node must contain one 'port' child node with one 'endpoint' child
+-sub-node for its digital output video port, in accordance with the video
+-interface bindings defined in:
+-Documentation/devicetree/bindings/media/video-interfaces.txt
 -
 -Example:
+---------
 -
--&i2c0 {
--	ov772x: camera@21 {
--		compatible = "ovti,ov7725";
--		reg = <0x21>;
--		reset-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
--		powerdown-gpios = <&axi_gpio_0 1 GPIO_ACTIVE_LOW>;
--		clocks = <&xclk>;
+-        &i2c1 {
+-                camera@48 {
+-                        compatible = "aptina,mt9v111";
+-                        reg = <0x48>;
 -
--		port {
--			ov772x_0: endpoint {
--				remote-endpoint = <&vcap1_in0>;
--			};
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/media/i2c/ov772x.yaml b/Documentation/devicetree/bindings/media/i2c/ov772x.yaml
+-                        clocks = <&camera_clk>;
+-
+-                        port {
+-                                mt9v111_out: endpoint {
+-                                        remote-endpoint = <&ceu_in>;
+-                                };
+-                        };
+-                };
+-        };
+diff --git a/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml b/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
 new file mode 100644
-index 000000000000..2b84fefeb4aa
+index 000000000000..54cc136aa239
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/ov772x.yaml
-@@ -0,0 +1,84 @@
++++ b/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
+@@ -0,0 +1,83 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/media/i2c/ov772x.yaml#
++$id: http://devicetree.org/schemas/media/i2c/aptina,mt9v111.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title:  Omnivision OV7720/OV7725 CMOS sensor
++title: Aptina MT9V111 CMOS sensor
 +
 +maintainers:
 +  - Jacopo Mondi <jacopo@jmondi.org>
 +
 +description: -|
-+  The Omnivision OV7720/OV7725 sensor supports multiple resolutions output,
-+  such as VGA, QVGA, and any size scaling down from CIF to 40x30. It also can
-+  support the YUV422, RGB565/555/444, GRB422 or raw RGB output formats.
++  The Aptina MT9V111 is a 1/4-Inch VGA-format digital image sensor with a core
++  based on Aptina MT9V011 sensor and an integrated Image Flow Processor (IFP).
++
++  The sensor has an active pixel array of 640x480 pixels and can output a number
++  of image resolution and formats controllable through a simple two-wires
++  interface.
 +
 +properties:
 +  compatible:
-+    enum:
-+      - ovti,ov7720
-+      - ovti,ov7725
++    const: aptina,mt9v111
 +
 +  reg:
 +    maxItems: 1
@@ -138,14 +143,16 @@ index 000000000000..2b84fefeb4aa
 +  clocks:
 +    maxItems: 1
 +
-+  reset-gpios:
-+    description: -|
-+      Reference to the GPIO connected to the RSTB pin which is active low.
++  enable-gpios:
++    description: Enable signal, pin name "OE#". Active low.
 +    maxItems: 1
 +
-+  powerdown-gpios:
-+    description: -|
-+      Reference to the GPIO connected to the PWDN pin which is active high.
++  standby-gpios:
++    description: Low power state control signal, pin name "STANBY". Active high.
++    maxItems: 1
++
++  reset-gpios:
++    description: Chip reset signal, pin name "RESET#". Active low.
 +    maxItems: 1
 +
 +  port:
@@ -168,26 +175,22 @@ index 000000000000..2b84fefeb4aa
 +  - compatible
 +  - reg
 +  - clocks
-+  - reset-gpios
-+  - powerdown-gpios
++  - port
 +
 +examples:
 +  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
 +    i2c0 {
 +        #address-cells = <1>;
 +        #size-cells = <0>;
-+        ov772x: camera@21 {
-+            compatible = "ovti,ov7725";
-+            reg = <0x21>;
-+            reset-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
-+            powerdown-gpios = <&axi_gpio_0 1 GPIO_ACTIVE_LOW>;
-+            clocks = <&xclk>;
++
++        camera@48 {
++            compatible = "aptina,mt9v111";
++            reg = <0x48>;
++            clocks = <&camera_clk>;
 +
 +            port {
-+                ov772x_0: endpoint {
-+                    remote-endpoint = <&vcap1_in0>;
++                mt9v111_out: endpoint {
++                    remote-endpoint = <&ceu_in>;
 +                };
 +            };
 +        };
@@ -195,18 +198,18 @@ index 000000000000..2b84fefeb4aa
 +
 +...
 diff --git a/MAINTAINERS b/MAINTAINERS
-index d1a6173d3b64..d0a20214eaaf 100644
+index 5392f00cec46..18bc4427e6b0 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -12666,7 +12666,7 @@ M:	Jacopo Mondi <jacopo@jmondi.org>
+@@ -11688,7 +11688,7 @@ M:	Jacopo Mondi <jacopo@jmondi.org>
  L:	linux-media@vger.kernel.org
- S:	Odd fixes
+ S:	Maintained
  T:	git git://linuxtv.org/media_tree.git
--F:	Documentation/devicetree/bindings/media/i2c/ov772x.txt
-+F:	Documentation/devicetree/bindings/media/i2c/ov772x.yaml
- F:	drivers/media/i2c/ov772x.c
- F:	include/media/i2c/ov772x.h
- 
--- 
+-F:	Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
++F:	Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
+ F:	drivers/media/i2c/mt9v111.c
+
+ MULTIFUNCTION DEVICES (MFD)
+--
 2.27.0
 
