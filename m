@@ -2,100 +2,84 @@ Return-Path: <SRS0=+nxL=B3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A54A2C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 20:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D8CC433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 20:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8338C205CB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 20:14:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ql+5PffL"
+	by mail.kernel.org (Postfix) with ESMTP id 7B30E2065D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 20:52:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597697558;
+	bh=qq/Aq6gH91HmodHUuGstQfY62H36imeGZ9HxFm3ZU38=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=bFQCualuz3rhwABhPc7bUUK4w1omY6M5UUTEWK4U8ZUoLwkLro2hdbg6k9HmdYbNL
+	 jqlzrGlyyegVFRm0wIO3PoeIsfiOBUCwg5mnqhPNCzVQGEr/ILQj09UprQ46WLmmJd
+	 jStkSmVX0dLgXp71ZESMMXqIb6lVUPB/N/2sdPxo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbgHQUOP (ORCPT
+        id S1726867AbgHQUwh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Aug 2020 16:14:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50160 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729263AbgHQUOJ (ORCPT
+        Mon, 17 Aug 2020 16:52:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35988 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726165AbgHQUwg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Aug 2020 16:14:09 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53B80C061344;
-        Mon, 17 Aug 2020 13:14:09 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id w25so18866125ljo.12;
-        Mon, 17 Aug 2020 13:14:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xsAai51rIb4zpMco9xIZ5n8l/j6uQ8HM/aDD4YTbjTU=;
-        b=Ql+5PffLCx1G0k/jst0OLoyNod+UKXLpkoTHsvO2UIaSMgueJIwuUYfs+rWXJI/gbc
-         UFP6fhCQgQ3YABIDnLFxMCTfgWELQAAtJjIK2uPjPPBmuHUcPc1lYYZ1C06EvZ7z+NXb
-         qXyOmYGpdCGzmmgOi7ckSmqXXlHGy3/vI+1YQuYYhPo7u+GHDpu0Ci/4bynUf0VhenC7
-         9j+W/CQrUYvx5GpXYWr5duYPujTuZkZTgvMDyk1oYkGKnGnnIGhsuKs86js4iIflN2Lp
-         rPIC21g1PvZDv2P6usjVV4i+Mq+qflIpIHzI7l6R8AamqnMPPwZXdulDh6jKCMU9PBeo
-         5owA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xsAai51rIb4zpMco9xIZ5n8l/j6uQ8HM/aDD4YTbjTU=;
-        b=Gwlxw6/EVfXO8qnhr7+IiRVAsmGcmih//tWTaqYDDh31kSWM/6XNR/S3hEZdjDBmYF
-         Rzb1Cf1JyBWukj4chYHYNFnG40eQaJSL9Olc0YJfeo5MqG2yD6YBuAU9JH3JO6V818ci
-         Y/8sC9zLpSJW5qrOasd+fopAO35G41F1XTnOBWBjpHe5gwKFyxQC+IJM83JsfgpRdMpv
-         JVpRK9afKS+tJGGAj6wJj+/xXYJfhhR+HbiUW3ms6vKJxHqv+iiQLDbLNdPk6eV23x+E
-         8BXI7fu9JyovhghPLtsd+LDA0PHziiPHuj5SZ7xaHcUIU+rL2SDgSRusukj6zK3hMfO4
-         H7gQ==
-X-Gm-Message-State: AOAM531FnngHGZnRvhzCl7L0C/jR5c88gfWmZGGVwHFZcdoOpD5+YF8U
-        99Tg3+VYbTHadzKeGGKCLlNbQsa0XnsHtnkB
-X-Google-Smtp-Source: ABdhPJykGHQPzT8NA4rxKSHmF2T84DBFXMgOY8u/Nt1GXu494jd/XQzBugXalclx80TpJNA1z53lxw==
-X-Received: by 2002:a2e:9516:: with SMTP id f22mr7666051ljh.24.1597695247494;
-        Mon, 17 Aug 2020 13:14:07 -0700 (PDT)
-Received: from wasted.omprussia.ru ([2a00:1fa0:44e:940:d3b7:2194:831f:16b4])
-        by smtp.gmail.com with ESMTPSA id c5sm5740883lfb.24.2020.08.17.13.14.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 17 Aug 2020 13:14:06 -0700 (PDT)
-Subject: Re: [PATCH 2/3] dt-bindings: media: ov772x: Make bus-type mandatory
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        hverkuil-cisco@xs4all.nl, laurent.pinchart@ideasonboard.com,
-        linux-renesas-soc@vger.kernel.org
-References: <20200817155910.255883-1-jacopo+renesas@jmondi.org>
- <20200817155910.255883-3-jacopo+renesas@jmondi.org>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Message-ID: <2a942333-695c-bd99-af63-7ac55682700b@gmail.com>
-Date:   Mon, 17 Aug 2020 23:14:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Mon, 17 Aug 2020 16:52:36 -0400
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B15F22065D;
+        Mon, 17 Aug 2020 20:52:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597697555;
+        bh=qq/Aq6gH91HmodHUuGstQfY62H36imeGZ9HxFm3ZU38=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=hS2LVsyU8NJ8bR4fK4TKRsh1j9DVIs2drJXjOHGbvQtu+jFjV4NV3NdQosReQua6P
+         9n8I9NIi+xITfG7i7wnRkxOwy13Ki2qzGPcHipkdQ2Olz6dGmdQWupXmAiia2TjEKA
+         6+d0V9wMAWqvt1xFEumTyNJVU6kYZstFp0EI0MSU=
+Received: by mail-ot1-f45.google.com with SMTP id h22so14518413otq.11;
+        Mon, 17 Aug 2020 13:52:35 -0700 (PDT)
+X-Gm-Message-State: AOAM530JTTqA1twM3ko5WKkKKmVLX6/TD/V0YstDQh0GJExO2jrB98ur
+        zUU6oqLB3SDpoM1lv6fhIVKYjl6m5sM4vsvUKg==
+X-Google-Smtp-Source: ABdhPJxaF0nYdin2AdmlzdGbIHiRf2CI5TWBbErlxvKR1Popk5mGNuff8kbE7smq29spDmT37s+s0UIO+v4pPWaQ6I4=
+X-Received: by 2002:a05:6830:1d8e:: with SMTP id y14mr12789084oti.129.1597697555093;
+ Mon, 17 Aug 2020 13:52:35 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200817155910.255883-3-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200817160037.255972-1-jacopo+renesas@jmondi.org> <20200817191855.u55o75iby6ib7hhe@uno.localdomain>
+In-Reply-To: <20200817191855.u55o75iby6ib7hhe@uno.localdomain>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 17 Aug 2020 14:52:23 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJFaewwrqM_vfGWGS5RGcJ2h144wV8dgWgCtO3hQQwF0w@mail.gmail.com>
+Message-ID: <CAL_JsqJFaewwrqM_vfGWGS5RGcJ2h144wV8dgWgCtO3hQQwF0w@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: media: imx274: Convert to json-schema
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        devicetree@vger.kernel.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Leon Luo <leonl@leopardimaging.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 8/17/20 6:59 PM, Jacopo Mondi wrote:
+On Mon, Aug 17, 2020 at 1:15 PM Jacopo Mondi <jacopo@jmondi.org> wrote:
+>
+> Slightly better with a subject  =)
+>
+> I made a formatting error, empty line between receivers list and Subject:
+>
+> Sorry about this :)
 
-> In order to establish required properties based on the selected
-> bus type, make the 'bus-type' property mandatory.
-> 
-> Binary compatibility with existing DTB is kept as the driver does not
-> enforce the property to be present, and shall fall-back to default
-> parallel bus configuration, which was the only supported bus type, if
-> the property is not specified.
+Just resend so all the tooling works. My scripts barfed on it as it
+seems to not be in lore.
 
-   Signed-off-by?
-
-[...]
-
-MBR, Sergei
+Rob
