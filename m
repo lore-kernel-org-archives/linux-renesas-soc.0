@@ -2,131 +2,95 @@ Return-Path: <SRS0=3qy3=B5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62B82C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 12:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DADC4C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 434E9206B5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 12:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B82EE206FA
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:00:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbgHSMri (ORCPT
+        id S1728585AbgHSM7z (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Aug 2020 08:47:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34022 "EHLO
+        Wed, 19 Aug 2020 08:59:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728538AbgHSMpl (ORCPT
+        with ESMTP id S1728577AbgHSM7a (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Aug 2020 08:45:41 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A5A3C061757
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2020 05:45:40 -0700 (PDT)
+        Wed, 19 Aug 2020 08:59:30 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A451C061343
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2020 05:59:15 -0700 (PDT)
 Received: from ramsan ([84.195.186.194])
-        by michel.telenet-ops.be with bizsmtp
-        id HQlg230044C55Sk06Qlgcw; Wed, 19 Aug 2020 14:45:40 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id HQz6230034C55Sk01Qz6d4; Wed, 19 Aug 2020 14:59:06 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1k8NTI-0002Nb-5r; Wed, 19 Aug 2020 14:45:40 +0200
+        id 1k8NgI-0002bi-1P; Wed, 19 Aug 2020 14:59:06 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1k8NTI-0005HL-4R; Wed, 19 Aug 2020 14:45:40 +0200
+        id 1k8NgI-0005Sg-0U; Wed, 19 Aug 2020 14:59:06 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Chris Brandt <chris.brandt@renesas.com>, linux-spi@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] dt-bindings: net: renesas,ether: Improve schema validation
-Date:   Wed, 19 Aug 2020 14:45:39 +0200
-Message-Id: <20200819124539.20239-1-geert+renesas@glider.be>
+Subject: [PATCH v2 3/7] spi: rspi: Increase bit rate accuracy on RZ/A
+Date:   Wed, 19 Aug 2020 14:59:00 +0200
+Message-Id: <20200819125904.20938-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200819125904.20938-1-geert+renesas@glider.be>
+References: <20200819125904.20938-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-  - Remove pinctrl consumer properties, as they are handled by core
-    dt-schema,
-  - Document missing properties,
-  - Document missing PHY child node,
-  - Add "additionalProperties: false".
+rspi_rz_set_config_register() favors high values of "brdv" over high
+values of "spbr".  As "brdv" is not a plain divider, but controls a
+power-of-two divider, this may cause the selection of non-optimal
+divider values.  E.g. on RSK+RZA1, when 3.8 MHz is requested, the actual
+configured bit rate is 2.08 MHz (spbr = 1, brdv = 3), while 3.7 MHz
+would be possible (spbr = 8, brdv = 0).
+
+Fix this by only resorting to higher "brdv" values when really needed.
+This makes the driver always pick optimal divider values on RZ/A.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 v2:
-  - Add Reviewed-by.
----
- .../bindings/net/renesas,ether.yaml           | 22 +++++++++++++------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+  - No changes.
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,ether.yaml b/Documentation/devicetree/bindings/net/renesas,ether.yaml
-index 08678af5ed9364cd..8ce5ed8a58dd76e6 100644
---- a/Documentation/devicetree/bindings/net/renesas,ether.yaml
-+++ b/Documentation/devicetree/bindings/net/renesas,ether.yaml
-@@ -59,9 +59,15 @@ properties:
-   clocks:
-     maxItems: 1
+ drivers/spi/spi-rspi.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
+index 450a42ec2141a895..ad4ac867170b101a 100644
+--- a/drivers/spi/spi-rspi.c
++++ b/drivers/spi/spi-rspi.c
+@@ -298,15 +298,13 @@ static int rspi_rz_set_config_register(struct rspi_data *rspi, int access_size)
+ 	rspi_write8(rspi, rspi->sppcr, RSPI_SPPCR);
  
--  pinctrl-0: true
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
+ 	clksrc = clk_get_rate(rspi->clk);
+-	while (brdv < 3) {
+-		if (rspi->speed_hz >= clksrc/4) /* 4=(CLK/2)/2 */
+-			break;
++	spbr = DIV_ROUND_UP(clksrc, 2 * rspi->speed_hz) - 1;
++	while (spbr > 255 && brdv < 3) {
+ 		brdv++;
+-		clksrc /= 2;
++		spbr = DIV_ROUND_UP(spbr + 1, 2) - 1;
+ 	}
  
--  pinctrl-names: true
-+  phy-mode: true
-+
-+  phy-handle: true
+ 	/* Sets transfer bit rate */
+-	spbr = DIV_ROUND_UP(clksrc, 2 * rspi->speed_hz) - 1;
+ 	rspi_write8(rspi, clamp(spbr, 0, 255), RSPI_SPBR);
+ 	rspi->spcmd |= SPCMD_BRDV(brdv);
  
-   renesas,no-ether-link:
-     type: boolean
-@@ -74,6 +80,11 @@ properties:
-       specify when the Ether LINK signal is active-low instead of normal
-       active-high
- 
-+patternProperties:
-+  "^ethernet-phy@[0-9a-f]$":
-+    type: object
-+    $ref: ethernet-phy.yaml#
-+
- required:
-   - compatible
-   - reg
-@@ -83,7 +94,8 @@ required:
-   - '#address-cells'
-   - '#size-cells'
-   - clocks
--  - pinctrl-0
-+
-+additionalProperties: false
- 
- examples:
-   # Lager board
-@@ -99,8 +111,6 @@ examples:
-         clocks = <&mstp8_clks R8A7790_CLK_ETHER>;
-         phy-mode = "rmii";
-         phy-handle = <&phy1>;
--        pinctrl-0 = <&ether_pins>;
--        pinctrl-names = "default";
-         renesas,ether-link-active-low;
-         #address-cells = <1>;
-         #size-cells = <0>;
-@@ -109,7 +119,5 @@ examples:
-             reg = <1>;
-             interrupt-parent = <&irqc0>;
-             interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
--            pinctrl-0 = <&phy1_pins>;
--            pinctrl-names = "default";
-         };
-     };
 -- 
 2.17.1
 
