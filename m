@@ -2,123 +2,64 @@ Return-Path: <SRS0=3qy3=B5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12FBAC433E4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C5AC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0975206FA
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:00:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A68A2065F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:05:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597842338;
+	bh=XG8FOxg1uPedI+Y/mB0QTKSvn044L1zapKciWYjqlGw=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=exau6yeFP4eqjglRRhjH5TUlHphsr4mXI6NOd8G4ZDujwOKHUuyt/LQ28+wsVxbrv
+	 45TKSBjD7Gin7U00xwQvMOIqp/SBuGzRAfZ+qlqi59Aw3JjYdSJm/fS5E+EtUxTfje
+	 2K9GM3Vp2nIoyjwCZkOkEF/kT7bWfZMu2G5m/AME=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbgHSNAU (ORCPT
+        id S1728591AbgHSNFf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Aug 2020 09:00:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36260 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728531AbgHSM7q (ORCPT
+        Wed, 19 Aug 2020 09:05:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49070 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727854AbgHSNAm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Aug 2020 08:59:46 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70DE6C061345
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2020 05:59:12 -0700 (PDT)
-Received: from ramsan ([84.195.186.194])
-        by baptiste.telenet-ops.be with bizsmtp
-        id HQz62300G4C55Sk01Qz6yB; Wed, 19 Aug 2020 14:59:06 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1k8NgI-0002bw-4s; Wed, 19 Aug 2020 14:59:06 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1k8NgI-0005Ss-3u; Wed, 19 Aug 2020 14:59:06 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Chris Brandt <chris.brandt@renesas.com>, linux-spi@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 7/7] spi: rspi: Fill in controller speed limits
-Date:   Wed, 19 Aug 2020 14:59:04 +0200
-Message-Id: <20200819125904.20938-8-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200819125904.20938-1-geert+renesas@glider.be>
-References: <20200819125904.20938-1-geert+renesas@glider.be>
+        Wed, 19 Aug 2020 09:00:42 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597842041;
+        bh=XG8FOxg1uPedI+Y/mB0QTKSvn044L1zapKciWYjqlGw=;
+        h=Subject:From:Date:To:From;
+        b=CgLmWNGGm97ffFza5dpwCeKce3yOtjOSELO4D5cV400A6Vd6X/A+ClYVsbBzRRtIg
+         UyyCdMAgISB6GuKf3+gJqJntdV0iHoEdl2sCq62y6TmhEpHtzEkSPygvM3Ro/4YY/W
+         AjWTfrU7xQsqsc0D7EUkc1UzscHHijmstXi5h/EA=
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <159784204167.22816.421402966713714332.git-patchwork-housekeeping@kernel.org>
+Date:   Wed, 19 Aug 2020 13:00:41 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fill in the controller speed limits, so the SPI core can use them for
-validating SPI transfers, and adjusting them where needed.
+Latest series: [v2] dt-bindings: thermal: rcar-thermal: Improve schema validation (2020-08-19T12:44:50)
+  Superseding: [v1] dt-bindings: thermal: rcar-thermal: Improve schema validation (2020-06-19T15:15:41):
+    dt-bindings: thermal: rcar-thermal: Improve schema validation
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
+Latest series: [v4] dt-bindings: timer: renesas: tmu: Convert to json-schema (2020-08-19T12:43:02)
+  Superseding: [v3] dt-bindings: timer: renesas: tmu: Convert to json-schema (2020-05-18T08:15:06):
+    [v3] dt-bindings: timer: renesas: tmu: Convert to json-schema
 
- drivers/spi/spi-rspi.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Latest series: [v2] dt-bindings: net: renesas,ether: Improve schema validation (2020-08-19T12:45:39)
+  Superseding: [v1] dt-bindings: net: renesas,ether: Improve schema validation (2020-06-19T15:14:29):
+    dt-bindings: net: renesas,ether: Improve schema validation
 
-diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 2b5334e22ae421b5..e39fd38f5180efb3 100644
---- a/drivers/spi/spi-rspi.c
-+++ b/drivers/spi/spi-rspi.c
-@@ -243,6 +243,8 @@ struct spi_ops {
- 	int (*transfer_one)(struct spi_controller *ctlr,
- 			    struct spi_device *spi, struct spi_transfer *xfer);
- 	u16 extra_mode_bits;
-+	u16 min_div;
-+	u16 max_div;
- 	u16 flags;
- 	u16 fifo_size;
- 	u8 num_hw_ss;
-@@ -1181,6 +1183,8 @@ static int rspi_remove(struct platform_device *pdev)
- static const struct spi_ops rspi_ops = {
- 	.set_config_register =	rspi_set_config_register,
- 	.transfer_one =		rspi_transfer_one,
-+	.min_div =		2,
-+	.max_div =		4096,
- 	.flags =		SPI_CONTROLLER_MUST_TX,
- 	.fifo_size =		8,
- 	.num_hw_ss =		2,
-@@ -1189,6 +1193,8 @@ static const struct spi_ops rspi_ops = {
- static const struct spi_ops rspi_rz_ops = {
- 	.set_config_register =	rspi_rz_set_config_register,
- 	.transfer_one =		rspi_rz_transfer_one,
-+	.min_div =		2,
-+	.max_div =		4096,
- 	.flags =		SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX,
- 	.fifo_size =		8,	/* 8 for TX, 32 for RX */
- 	.num_hw_ss =		1,
-@@ -1199,6 +1205,8 @@ static const struct spi_ops qspi_ops = {
- 	.transfer_one =		qspi_transfer_one,
- 	.extra_mode_bits =	SPI_TX_DUAL | SPI_TX_QUAD |
- 				SPI_RX_DUAL | SPI_RX_QUAD,
-+	.min_div =		1,
-+	.max_div =		4080,
- 	.flags =		SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX,
- 	.fifo_size =		32,
- 	.num_hw_ss =		1,
-@@ -1260,6 +1268,7 @@ static int rspi_probe(struct platform_device *pdev)
- 	int ret;
- 	const struct rspi_plat_data *rspi_pd;
- 	const struct spi_ops *ops;
-+	unsigned long clksrc;
- 
- 	ctlr = spi_alloc_master(&pdev->dev, sizeof(struct rspi_data));
- 	if (ctlr == NULL)
-@@ -1312,6 +1321,9 @@ static int rspi_probe(struct platform_device *pdev)
- 	ctlr->unprepare_message = rspi_unprepare_message;
- 	ctlr->mode_bits = SPI_CPHA | SPI_CPOL | SPI_CS_HIGH | SPI_LSB_FIRST |
- 			  SPI_LOOP | ops->extra_mode_bits;
-+	clksrc = clk_get_rate(rspi->clk);
-+	ctlr->min_speed_hz = DIV_ROUND_UP(clksrc, ops->max_div);
-+	ctlr->max_speed_hz = DIV_ROUND_UP(clksrc, ops->min_div);
- 	ctlr->flags = ops->flags;
- 	ctlr->dev.of_node = pdev->dev.of_node;
- 	ctlr->use_gpio_descriptors = true;
+
 -- 
-2.17.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
