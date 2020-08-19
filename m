@@ -2,221 +2,147 @@ Return-Path: <SRS0=3qy3=B5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 241CBC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A55DC433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:51:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0516E204FD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:48:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Vna714sS"
+	by mail.kernel.org (Postfix) with ESMTP id E6F4B204FD
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:51:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbgHSNsN (ORCPT
+        id S1728413AbgHSNuo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Aug 2020 09:48:13 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:58328 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728684AbgHSNrk (ORCPT
+        Wed, 19 Aug 2020 09:50:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43232 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728437AbgHSNn7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Aug 2020 09:47:40 -0400
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BD22529E;
-        Wed, 19 Aug 2020 15:47:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1597844848;
-        bh=qPDwphTXyFXbPbkN7vE8BKFucRpOytrUX371l7umWAk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Vna714sS+6Dd60PsDIL7WCzaNki7Jhj/tklM9k3oMXXNXReJF5Gb7lR/Ucql9rLZ1
-         3q8SMXcjSCuG6msP5/C09iJONbhhxKbLfvRvzXWBMpVO/nrBTVywcL9f3uxQnTUN23
-         ZQlinPHF6qfRRgg6MCKqRCc6Vezm94OrCGhGdSSA=
-Date:   Wed, 19 Aug 2020 16:47:11 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
-        mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        hverkuil-cisco@xs4all.nl, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: media: imx274: Convert to json-schema
-Message-ID: <20200819134711.GI6049@pendragon.ideasonboard.com>
-References: <20200818121821.37776-1-jacopo+renesas@jmondi.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200818121821.37776-1-jacopo+renesas@jmondi.org>
+        Wed, 19 Aug 2020 09:43:59 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD82C061383
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2020 06:43:58 -0700 (PDT)
+Received: from ramsan ([84.195.186.194])
+        by xavier.telenet-ops.be with bizsmtp
+        id HRjl2300H4C55Sk01RjlxX; Wed, 19 Aug 2020 15:43:56 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1k8ONV-0003Dq-Dq; Wed, 19 Aug 2020 15:43:45 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1k8ONV-0007FV-CD; Wed, 19 Aug 2020 15:43:45 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v3 2/7] dt-bindings: net: renesas,ravb: Document internal clock delay properties
+Date:   Wed, 19 Aug 2020 15:43:39 +0200
+Message-Id: <20200819134344.27813-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200819134344.27813-1-geert+renesas@glider.be>
+References: <20200819134344.27813-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+Some EtherAVB variants support internal clock delay configuration, which
+can add larger delays than the delays that are typically supported by
+the PHY (using an "rgmii-*id" PHY mode, and/or "[rt]xc-skew-ps"
+properties).
 
-Thank you for the patch.
+Add properties for configuring the internal MAC delays.
+These properties are mandatory, even when specified as zero, to
+distinguish between old and new DTBs.
 
-On Tue, Aug 18, 2020 at 02:18:21PM +0200, Jacopo Mondi wrote:
-> Convert the imx274 bindings document to json-schema and update
-> the MAINTAINERS file accordingly.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  .../devicetree/bindings/media/i2c/imx274.txt  | 33 ---------
->  .../devicetree/bindings/media/i2c/imx274.yaml | 69 +++++++++++++++++++
+Update the (bogus) example accordingly.
 
-Could you rename the file to sony,imx274.yaml ? Don't forget to change
-the $id.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+v3:
+  - Add Reviewed-by,
 
->  MAINTAINERS                                   |  2 +-
->  3 files changed, 70 insertions(+), 34 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/media/i2c/imx274.txt
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx274.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/imx274.txt b/Documentation/devicetree/bindings/media/i2c/imx274.txt
-> deleted file mode 100644
-> index 80f2e89568e1..000000000000
-> --- a/Documentation/devicetree/bindings/media/i2c/imx274.txt
-> +++ /dev/null
-> @@ -1,33 +0,0 @@
-> -* Sony 1/2.5-Inch 8.51Mp CMOS Digital Image Sensor
-> -
-> -The Sony imx274 is a 1/2.5-inch CMOS active pixel digital image sensor with
-> -an active array size of 3864H x 2202V. It is programmable through I2C
-> -interface. The I2C address is fixed to 0x1a as per sensor data sheet.
-> -Image data is sent through MIPI CSI-2, which is configured as 4 lanes
-> -at 1440 Mbps.
-> -
-> -
-> -Required Properties:
-> -- compatible: value should be "sony,imx274" for imx274 sensor
-> -- reg: I2C bus address of the device
-> -
-> -Optional Properties:
-> -- reset-gpios: Sensor reset GPIO
-> -
-> -The imx274 device node should contain one 'port' child node with
-> -an 'endpoint' subnode. For further reading on port node refer to
-> -Documentation/devicetree/bindings/media/video-interfaces.txt.
-> -
-> -Example:
-> -	sensor@1a {
-> -		compatible = "sony,imx274";
-> -		reg = <0x1a>;
-> -		#address-cells = <1>;
-> -		#size-cells = <0>;
-> -		reset-gpios = <&gpio_sensor 0 0>;
-> -		port {
-> -			sensor_out: endpoint {
-> -				remote-endpoint = <&csiss_in>;
-> -			};
-> -		};
-> -	};
-> diff --git a/Documentation/devicetree/bindings/media/i2c/imx274.yaml b/Documentation/devicetree/bindings/media/i2c/imx274.yaml
-> new file mode 100644
-> index 000000000000..71d67466cbd8
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/imx274.yaml
-> @@ -0,0 +1,69 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/media/i2c/imx274.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sony 1/2.5-Inch 8.51Mp CMOS Digital Image Sensor
+v2:
+  - Replace "renesas,[rt]xc-delay-ps" by "[rt]x-internal-delay-ps",
+  - Add "(bogus)" to the example update, to avoid people considering it
+    a one-to-one conversion.
+---
+ .../devicetree/bindings/net/renesas,ravb.txt  | 29 ++++++++++---------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
-s/Mp/MP/
-
-> +
-> +maintainers:
-> +  - Leon Luo <leonl@leopardimaging.com>
-> +
-> +description: -|
-> +  The Sony imx274 is a 1/2.5-inch CMOS active pixel digital image sensor with
-
-s/imx274/IMX274/
-
-> +  an active array size of 3864H x 2202V. It is programmable through I2C
-> +  interface. The I2C address is fixed to 0x1a as per sensor data sheet.
-
-I'd drop the last sentence, and add a const: 0x1a to the reg property.
-
-> +  Image data is sent through MIPI CSI-2, which is configured as 4 lanes
-> +  at 1440 Mbps.
-> +
-> +properties:
-> +  compatible:
-> +    const: sony,imx274
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-> +  port:
-> +    type: object
-> +    description: |
-> +      The device node must contain one 'port' child node for its digital output
-> +      video port, in accordance with the video interface bindings defined in
-> +      Documentation/devicetree/bindings/media/video-interfaces.txt.
-> +
-> +    properties:
-> +      endpoint:
-> +        type: object
-> +        properties:
-> +          remote-endpoint:
-> +            description: A phandle to the bus receiver's endpoint node.
-> +
-
-We probably want to add clocks and regulators, as well as data-lanes,
-but that's out of scope for the conversion.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - port
-> +
-> +examples:
-> +  - |
-> +    i2c0 {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        imx274: camera-sensor@1a {
-> +            compatible = "sony,imx274";
-> +            reg = <0x1a>;
-> +            reset-gpios = <&gpio_sensor 0 0>;
-> +
-> +            port {
-> +                sensor_out: endpoint {
-> +                    remote-endpoint = <&csiss_in>;
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +...
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 18bc4427e6b0..6c8e98238a7b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15941,7 +15941,7 @@ M:	Leon Luo <leonl@leopardimaging.com>
->  L:	linux-media@vger.kernel.org
->  S:	Maintained
->  T:	git git://linuxtv.org/media_tree.git
-> -F:	Documentation/devicetree/bindings/media/i2c/imx274.txt
-> +F:	Documentation/devicetree/bindings/media/i2c/imx274.yaml
->  F:	drivers/media/i2c/imx274.c
-> 
->  SONY IMX290 SENSOR DRIVER
-
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index 032b76f14f4fdb38..4a62dd11d5c488f4 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -64,6 +64,18 @@ Optional properties:
+ 			 AVB_LINK signal.
+ - renesas,ether-link-active-low: boolean, specify when the AVB_LINK signal is
+ 				 active-low instead of normal active-high.
++- rx-internal-delay-ps: Internal RX clock delay.
++			This property is mandatory and valid only on R-Car Gen3
++			and RZ/G2 SoCs.
++			Valid values are 0 and 1800.
++			A non-zero value is allowed only if phy-mode = "rgmii".
++			Zero is not supported on R-Car D3.
++- tx-internal-delay-ps: Internal TX clock delay.
++			This property is mandatory and valid only on R-Car H3,
++			M3-W, M3-W+, M3-N, V3M, and V3H, and RZ/G2M and RZ/G2N.
++			Valid values are 0 and 2000.
++			A non-zero value is allowed only if phy-mode = "rgmii".
++			Zero is not supported on R-Car V3H.
+ 
+ Example:
+ 
+@@ -105,8 +117,10 @@ Example:
+ 				  "ch24";
+ 		clocks = <&cpg CPG_MOD 812>;
+ 		power-domains = <&cpg>;
+-		phy-mode = "rgmii-id";
++		phy-mode = "rgmii";
+ 		phy-handle = <&phy0>;
++		rx-internal-delay-ps = <0>;
++		tx-internal-delay-ps = <2000>;
+ 
+ 		pinctrl-0 = <&ether_pins>;
+ 		pinctrl-names = "default";
+@@ -115,18 +129,7 @@ Example:
+ 		#size-cells = <0>;
+ 
+ 		phy0: ethernet-phy@0 {
+-			rxc-skew-ps = <900>;
+-			rxdv-skew-ps = <0>;
+-			rxd0-skew-ps = <0>;
+-			rxd1-skew-ps = <0>;
+-			rxd2-skew-ps = <0>;
+-			rxd3-skew-ps = <0>;
+-			txc-skew-ps = <900>;
+-			txen-skew-ps = <0>;
+-			txd0-skew-ps = <0>;
+-			txd1-skew-ps = <0>;
+-			txd2-skew-ps = <0>;
+-			txd3-skew-ps = <0>;
++			rxc-skew-ps = <1500>;
+ 			reg = <0>;
+ 			interrupt-parent = <&gpio2>;
+ 			interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
 -- 
-Regards,
+2.17.1
 
-Laurent Pinchart
