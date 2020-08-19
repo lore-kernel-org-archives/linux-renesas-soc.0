@@ -2,64 +2,88 @@ Return-Path: <SRS0=3qy3=B5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C5AC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA6CC433E5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:07:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A68A2065F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:05:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597842338;
-	bh=XG8FOxg1uPedI+Y/mB0QTKSvn044L1zapKciWYjqlGw=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=exau6yeFP4eqjglRRhjH5TUlHphsr4mXI6NOd8G4ZDujwOKHUuyt/LQ28+wsVxbrv
-	 45TKSBjD7Gin7U00xwQvMOIqp/SBuGzRAfZ+qlqi59Aw3JjYdSJm/fS5E+EtUxTfje
-	 2K9GM3Vp2nIoyjwCZkOkEF/kT7bWfZMu2G5m/AME=
+	by mail.kernel.org (Postfix) with ESMTP id D9B8D20825
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbgHSNFf (ORCPT
+        id S1728358AbgHSNHU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Aug 2020 09:05:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49070 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727854AbgHSNAm (ORCPT
+        Wed, 19 Aug 2020 09:07:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36260 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728189AbgHSNAN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Aug 2020 09:00:42 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597842041;
-        bh=XG8FOxg1uPedI+Y/mB0QTKSvn044L1zapKciWYjqlGw=;
-        h=Subject:From:Date:To:From;
-        b=CgLmWNGGm97ffFza5dpwCeKce3yOtjOSELO4D5cV400A6Vd6X/A+ClYVsbBzRRtIg
-         UyyCdMAgISB6GuKf3+gJqJntdV0iHoEdl2sCq62y6TmhEpHtzEkSPygvM3Ro/4YY/W
-         AjWTfrU7xQsqsc0D7EUkc1UzscHHijmstXi5h/EA=
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <159784204167.22816.421402966713714332.git-patchwork-housekeeping@kernel.org>
-Date:   Wed, 19 Aug 2020 13:00:41 +0000
-To:     linux-renesas-soc@vger.kernel.org
+        Wed, 19 Aug 2020 09:00:13 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF2CAC06134F
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2020 05:59:15 -0700 (PDT)
+Received: from ramsan ([84.195.186.194])
+        by andre.telenet-ops.be with bizsmtp
+        id HQz6230064C55Sk01Qz62X; Wed, 19 Aug 2020 14:59:06 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1k8NgI-0002bc-03; Wed, 19 Aug 2020 14:59:06 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1k8NgH-0005SY-U6; Wed, 19 Aug 2020 14:59:05 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Chris Brandt <chris.brandt@renesas.com>, linux-spi@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/7] spi: rspi: Bit rate improvements
+Date:   Wed, 19 Aug 2020 14:58:57 +0200
+Message-Id: <20200819125904.20938-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v2] dt-bindings: thermal: rcar-thermal: Improve schema validation (2020-08-19T12:44:50)
-  Superseding: [v1] dt-bindings: thermal: rcar-thermal: Improve schema validation (2020-06-19T15:15:41):
-    dt-bindings: thermal: rcar-thermal: Improve schema validation
+	Hi Mark,
 
-Latest series: [v4] dt-bindings: timer: renesas: tmu: Convert to json-schema (2020-08-19T12:43:02)
-  Superseding: [v3] dt-bindings: timer: renesas: tmu: Convert to json-schema (2020-05-18T08:15:06):
-    [v3] dt-bindings: timer: renesas: tmu: Convert to json-schema
+This patch series contains several improvements for the Renesas SPI/QSPI
+driver related to bit rate configuration.
 
-Latest series: [v2] dt-bindings: net: renesas,ether: Improve schema validation (2020-08-19T12:45:39)
-  Superseding: [v1] dt-bindings: net: renesas,ether: Improve schema validation (2020-06-19T15:14:29):
-    dt-bindings: net: renesas,ether: Improve schema validation
+Changes compared to v1
+(https://lore.kernel.org/r/20200608095940.30516-1-geert+renesas@glider.be):
+  - Drop accepted patch.
 
+This has been tested on RSK+RZA1 (RSPI) and R-Car M2-W/Koelsch (QSPI),
+using a scope and logic analyzer, except for the by-one divider on QSPI.
+This has not been tested on legacy SuperH, due to lack of hardware.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (7):
+  spi: rspi: Remove useless .set_config_register() check
+  spi: rspi: Clean up Bit Rate Division Setting handling
+  spi: rspi: Increase bit rate accuracy on RZ/A
+  spi: rspi: Increase bit rate range for RSPI on SH
+  spi: rspi: Increase bit rate range for QSPI
+  spi: rspi: Fill in spi_transfer.effective_speed_hz
+  spi: rspi: Fill in controller speed limits
+
+ drivers/spi/spi-rspi.c | 81 +++++++++++++++++++++++++++---------------
+ 1 file changed, 52 insertions(+), 29 deletions(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
