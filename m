@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 519C3C433EA
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:07:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F80C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26FD520825
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:07:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62C6620825
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:07:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728677AbgHSNHU (ORCPT
+        id S1728565AbgHSNHX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Aug 2020 09:07:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36354 "EHLO
+        Wed, 19 Aug 2020 09:07:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36274 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728467AbgHSNAO (ORCPT
+        with ESMTP id S1728510AbgHSM7r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Aug 2020 09:00:14 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FCBC061358
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2020 05:59:15 -0700 (PDT)
+        Wed, 19 Aug 2020 08:59:47 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43F96C061349
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2020 05:59:12 -0700 (PDT)
 Received: from ramsan ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id HQz6230024C55Sk01Qz6d3; Wed, 19 Aug 2020 14:59:06 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id HQz62300F4C55Sk01Qz6y9; Wed, 19 Aug 2020 14:59:06 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1k8NgI-0002be-0X; Wed, 19 Aug 2020 14:59:06 +0200
+        id 1k8NgI-0002bq-31; Wed, 19 Aug 2020 14:59:06 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1k8NgH-0005Sc-W0; Wed, 19 Aug 2020 14:59:05 +0200
+        id 1k8NgI-0005Sm-2B; Wed, 19 Aug 2020 14:59:06 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Chris Brandt <chris.brandt@renesas.com>, linux-spi@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/7] spi: rspi: Clean up Bit Rate Division Setting handling
-Date:   Wed, 19 Aug 2020 14:58:59 +0200
-Message-Id: <20200819125904.20938-3-geert+renesas@glider.be>
+Subject: [PATCH v2 5/7] spi: rspi: Increase bit rate range for QSPI
+Date:   Wed, 19 Aug 2020 14:59:02 +0200
+Message-Id: <20200819125904.20938-6-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200819125904.20938-1-geert+renesas@glider.be>
 References: <20200819125904.20938-1-geert+renesas@glider.be>
@@ -50,61 +50,56 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a macro for configuring the Bit Rate Division Setting field in
-Command Registers, instead of open-coding the same operation using a
-hardcoded shift.
-Rename "div" to "brdv", as it is not a plain divider value, but controls
-a power-of-two divider.
+Increase bit rate range for QSPI by extending the range of supported
+dividers:
+  1. QSPI supports a divider of 1, by setting SPBR to zero, increasing
+     the upper limit from 48.75 to 97.5 MHz on R-Car Gen2,
+  2. Make use of the Bit Rate Frequency Division Setting field in
+     Command Registers, to decrease the lower limit from 191 to 24 kbps
+     on R-Car Gen2.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
   - No changes.
 
- drivers/spi/spi-rspi.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/spi/spi-rspi.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/spi/spi-rspi.c b/drivers/spi/spi-rspi.c
-index 1b635d6b7881f5b9..450a42ec2141a895 100644
+index ea3f2680d3c13e02..38c0cd7febabf114 100644
 --- a/drivers/spi/spi-rspi.c
 +++ b/drivers/spi/spi-rspi.c
-@@ -161,6 +161,7 @@
- #define SPCMD_SPRW		0x0010	/* SPI Read/Write Access (Dual/Quad) */
- #define SPCMD_SSLA(i)		((i) << 4)	/* SSL Assert Signal Setting */
- #define SPCMD_BRDV_MASK		0x000c	/* Bit Rate Division Setting */
-+#define SPCMD_BRDV(brdv)	((brdv) << 2)
- #define SPCMD_CPOL		0x0002	/* Clock Polarity Setting */
- #define SPCMD_CPHA		0x0001	/* Clock Phase Setting */
- 
-@@ -290,24 +291,24 @@ static int rspi_set_config_register(struct rspi_data *rspi, int access_size)
- static int rspi_rz_set_config_register(struct rspi_data *rspi, int access_size)
+@@ -334,14 +334,26 @@ static int rspi_rz_set_config_register(struct rspi_data *rspi, int access_size)
+  */
+ static int qspi_set_config_register(struct rspi_data *rspi, int access_size)
  {
- 	int spbr;
--	int div = 0;
-+	int brdv = 0;
- 	unsigned long clksrc;
+-	int spbr;
++	unsigned long clksrc;
++	int brdv = 0, spbr;
  
  	/* Sets output mode, MOSI signal, and (optionally) loopback */
  	rspi_write8(rspi, rspi->sppcr, RSPI_SPPCR);
  
- 	clksrc = clk_get_rate(rspi->clk);
--	while (div < 3) {
-+	while (brdv < 3) {
- 		if (rspi->speed_hz >= clksrc/4) /* 4=(CLK/2)/2 */
- 			break;
--		div++;
-+		brdv++;
- 		clksrc /= 2;
- 	}
- 
  	/* Sets transfer bit rate */
- 	spbr = DIV_ROUND_UP(clksrc, 2 * rspi->speed_hz) - 1;
- 	rspi_write8(rspi, clamp(spbr, 0, 255), RSPI_SPBR);
--	rspi->spcmd |= div << 2;
+-	spbr = DIV_ROUND_UP(clk_get_rate(rspi->clk), 2 * rspi->speed_hz);
+-	rspi_write8(rspi, clamp(spbr, 0, 255), RSPI_SPBR);
++	clksrc = clk_get_rate(rspi->clk);
++	if (rspi->speed_hz >= clksrc) {
++		spbr = 0;
++	} else {
++		spbr = DIV_ROUND_UP(clksrc, 2 * rspi->speed_hz);
++		while (spbr > 255 && brdv < 3) {
++			brdv++;
++			spbr = DIV_ROUND_UP(spbr, 2);
++		}
++		spbr = clamp(spbr, 0, 255);
++	}
++	rspi_write8(rspi, spbr, RSPI_SPBR);
 +	rspi->spcmd |= SPCMD_BRDV(brdv);
  
  	/* Disable dummy transmission, set byte access */
- 	rspi_write8(rspi, SPDCR_SPLBYTE, RSPI_SPDCR);
+ 	rspi_write8(rspi, 0, RSPI_SPDCR);
 -- 
 2.17.1
 
