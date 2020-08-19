@@ -2,193 +2,221 @@ Return-Path: <SRS0=3qy3=B5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A340C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 241CBC433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 307EA2076E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0516E204FD
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Aug 2020 13:48:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Vna714sS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728411AbgHSNq2 (ORCPT
+        id S1727975AbgHSNsN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Aug 2020 09:46:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43292 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728551AbgHSNoV (ORCPT
+        Wed, 19 Aug 2020 09:48:13 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:58328 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728684AbgHSNrk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 19 Aug 2020 09:44:21 -0400
-Received: from leibniz.telenet-ops.be (leibniz.telenet-ops.be [IPv6:2a02:1800:110:4::f00:d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFD83C06135B
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2020 06:44:01 -0700 (PDT)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4BWpsQ4wp7zMqcgn
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Aug 2020 15:43:54 +0200 (CEST)
-Received: from ramsan ([84.195.186.194])
-        by baptiste.telenet-ops.be with bizsmtp
-        id HRjl2300T4C55Sk01RjlZi; Wed, 19 Aug 2020 15:43:54 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1k8ONV-0003Dm-Bo; Wed, 19 Aug 2020 15:43:45 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1k8ONV-0007FR-8G; Wed, 19 Aug 2020 15:43:45 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 0/7] net/ravb: Add support for explicit internal clock delay configuration
-Date:   Wed, 19 Aug 2020 15:43:37 +0200
-Message-Id: <20200819134344.27813-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Wed, 19 Aug 2020 09:47:40 -0400
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BD22529E;
+        Wed, 19 Aug 2020 15:47:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1597844848;
+        bh=qPDwphTXyFXbPbkN7vE8BKFucRpOytrUX371l7umWAk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Vna714sS+6Dd60PsDIL7WCzaNki7Jhj/tklM9k3oMXXNXReJF5Gb7lR/Ucql9rLZ1
+         3q8SMXcjSCuG6msP5/C09iJONbhhxKbLfvRvzXWBMpVO/nrBTVywcL9f3uxQnTUN23
+         ZQlinPHF6qfRRgg6MCKqRCc6Vezm94OrCGhGdSSA=
+Date:   Wed, 19 Aug 2020 16:47:11 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>,
+        mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hverkuil-cisco@xs4all.nl, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: media: imx274: Convert to json-schema
+Message-ID: <20200819134711.GI6049@pendragon.ideasonboard.com>
+References: <20200818121821.37776-1-jacopo+renesas@jmondi.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200818121821.37776-1-jacopo+renesas@jmondi.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+Hi Jacopo,
 
-Some Renesas EtherAVB variants support internal clock delay
-configuration, which can add larger delays than the delays that are
-typically supported by the PHY (using an "rgmii-*id" PHY mode, and/or
-"[rt]xc-skew-ps" properties).
+Thank you for the patch.
 
-Historically, the EtherAVB driver configured these delays based on the
-"rgmii-*id" PHY mode.  This caused issues with PHY drivers that
-implement PHY internal delays properly[1].  Hence a backwards-compatible
-workaround was added by masking the PHY mode[2].
+On Tue, Aug 18, 2020 at 02:18:21PM +0200, Jacopo Mondi wrote:
+> Convert the imx274 bindings document to json-schema and update
+> the MAINTAINERS file accordingly.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  .../devicetree/bindings/media/i2c/imx274.txt  | 33 ---------
+>  .../devicetree/bindings/media/i2c/imx274.yaml | 69 +++++++++++++++++++
 
-This patch series implements the next step of the plan outlined in [3],
-and adds proper support for explicit configuration of the MAC internal
-clock delays using new "[rt]x-internal-delay-ps" properties.  If none of
-these properties is present, the driver falls back to the old handling.
+Could you rename the file to sony,imx274.yaml ? Don't forget to change
+the $id.
 
-This can be considered the MAC counterpart of commit 9150069bf5fc0e86
-("dt-bindings: net: Add tx and rx internal delays"), which applies to
-the PHY.  Note that unlike commit 92252eec913b2dd5 ("net: phy: Add a
-helper to return the index for of the internal delay"), no helpers are
-provided to parse the DT properties, as so far there is a single user
-only, which supports only zero or a single fixed value.  Of course such
-helpers can be added later, when the need arises, or when deemed useful
-otherwise.
+>  MAINTAINERS                                   |  2 +-
+>  3 files changed, 70 insertions(+), 34 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/media/i2c/imx274.txt
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/imx274.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/imx274.txt b/Documentation/devicetree/bindings/media/i2c/imx274.txt
+> deleted file mode 100644
+> index 80f2e89568e1..000000000000
+> --- a/Documentation/devicetree/bindings/media/i2c/imx274.txt
+> +++ /dev/null
+> @@ -1,33 +0,0 @@
+> -* Sony 1/2.5-Inch 8.51Mp CMOS Digital Image Sensor
+> -
+> -The Sony imx274 is a 1/2.5-inch CMOS active pixel digital image sensor with
+> -an active array size of 3864H x 2202V. It is programmable through I2C
+> -interface. The I2C address is fixed to 0x1a as per sensor data sheet.
+> -Image data is sent through MIPI CSI-2, which is configured as 4 lanes
+> -at 1440 Mbps.
+> -
+> -
+> -Required Properties:
+> -- compatible: value should be "sony,imx274" for imx274 sensor
+> -- reg: I2C bus address of the device
+> -
+> -Optional Properties:
+> -- reset-gpios: Sensor reset GPIO
+> -
+> -The imx274 device node should contain one 'port' child node with
+> -an 'endpoint' subnode. For further reading on port node refer to
+> -Documentation/devicetree/bindings/media/video-interfaces.txt.
+> -
+> -Example:
+> -	sensor@1a {
+> -		compatible = "sony,imx274";
+> -		reg = <0x1a>;
+> -		#address-cells = <1>;
+> -		#size-cells = <0>;
+> -		reset-gpios = <&gpio_sensor 0 0>;
+> -		port {
+> -			sensor_out: endpoint {
+> -				remote-endpoint = <&csiss_in>;
+> -			};
+> -		};
+> -	};
+> diff --git a/Documentation/devicetree/bindings/media/i2c/imx274.yaml b/Documentation/devicetree/bindings/media/i2c/imx274.yaml
+> new file mode 100644
+> index 000000000000..71d67466cbd8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/imx274.yaml
+> @@ -0,0 +1,69 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/i2c/imx274.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Sony 1/2.5-Inch 8.51Mp CMOS Digital Image Sensor
 
-This series consists of 4 parts:
-  1. DT binding updates documenting the new properties, for both the
-     generic ethernet-controller and the EtherAVB-specific bindings,
-     => intended to be merged through net-next.
+s/Mp/MP/
 
-  2. Conversion to json-schema of the Renesas EtherAVB DT bindings.
-     Technically, the conversion is independent of all of the above.
-     I included it in this series, as it shows how all sanity checks on
-     "[rt]x-internal-delay-ps" values are implemented as DT binding
-     checks.
-     => intended to be merged through net-next, or devicetree (ignoring
-        any conflict due to 1.).
+> +
+> +maintainers:
+> +  - Leon Luo <leonl@leopardimaging.com>
+> +
+> +description: -|
+> +  The Sony imx274 is a 1/2.5-inch CMOS active pixel digital image sensor with
 
-  3. EtherAVB driver update implementing support for the new properties.
-     => intended to be merged through net-next.
+s/imx274/IMX274/
 
-  4. DT updates, one for R-Car Gen3 and RZ/G2 SoC families each.
-     => intended to be merged through renesas-devel and arm-soc, but
-	only _after_ 3. has hit upstream.
+> +  an active array size of 3864H x 2202V. It is programmable through I2C
+> +  interface. The I2C address is fixed to 0x1a as per sensor data sheet.
 
-Changes compared to v2[4]:
-  - Update recently added board DTS files,
-  - Add Reviewed-by.
+I'd drop the last sentence, and add a const: 0x1a to the reg property.
 
-Changes compared to v1[5]:
-  - Added "[PATCH 1/7] dt-bindings: net: ethernet-controller: Add
-    internal delay properties",
-  - Replace "renesas,[rt]xc-delay-ps" by "[rt]x-internal-delay-ps",
-  - Incorporated EtherAVB DT binding conversion to json-schema,
-  - Add Reviewed-by.
+> +  Image data is sent through MIPI CSI-2, which is configured as 4 lanes
+> +  at 1440 Mbps.
+> +
+> +properties:
+> +  compatible:
+> +    const: sony,imx274
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    maxItems: 1
+> +
+> +  port:
+> +    type: object
+> +    description: |
+> +      The device node must contain one 'port' child node for its digital output
+> +      video port, in accordance with the video interface bindings defined in
+> +      Documentation/devicetree/bindings/media/video-interfaces.txt.
+> +
+> +    properties:
+> +      endpoint:
+> +        type: object
+> +        properties:
+> +          remote-endpoint:
+> +            description: A phandle to the bus receiver's endpoint node.
+> +
 
-Impacted, tested:
-  - Salvator-X(S) with R-Car H3 ES1.0 and ES2.0, M3-W, and M3-N.
+We probably want to add clocks and regulators, as well as data-lanes,
+but that's out of scope for the conversion.
 
-Not impacted, tested:
-  - Ebisu with R-Car E3.
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Impacted, not tested:
-  - Salvator-X(S) with other SoC variants,
-  - ULCB with R-Car H3/M3-W/M3-N variants,
-  - V3MSK and Eagle with R-Car V3M,
-  - Draak with R-Car V3H,
-  - HiHope RZ/G2[MN] with RZ/G2M or RZ/G2N,
-  - Beacon EmbeddedWorks RZ/G2M Development Kit.
-
-To ease testing, I have pushed this series to the
-topic/ravb-internal-clock-delays-v3 branch of my renesas-drivers
-repository at
-git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git.
-
-Thanks for your comments!
-
-References:
-  [1] Commit bcf3440c6dd78bfe ("net: phy: micrel: add phy-mode support
-      for the KSZ9031 PHY")
-  [2] Commit 9b23203c32ee02cd ("ravb: Mask PHY mode to avoid inserting
-      delays twice").
-      https://lore.kernel.org/r/20200529122540.31368-1-geert+renesas@glider.be/
-  [3] https://lore.kernel.org/r/CAMuHMdU+MR-2tr3-pH55G0GqPG9HwH3XUd=8HZxprFDMGQeWUw@mail.gmail.com/
-  [4] https://lore.kernel.org/linux-devicetree/20200706143529.18306-1-geert+renesas@glider.be/
-  [5] https://lore.kernel.org/linux-devicetree/20200619191554.24942-1-geert+renesas@glider.be/
-
-Geert Uytterhoeven (7):
-  dt-bindings: net: ethernet-controller: Add internal delay properties
-  dt-bindings: net: renesas,ravb: Document internal clock delay
-    properties
-  dt-bindings: net: renesas,etheravb: Convert to json-schema
-  ravb: Split delay handling in parsing and applying
-  ravb: Add support for explicit internal clock delay configuration
-  arm64: dts: renesas: rcar-gen3: Convert EtherAVB to explicit delay
-    handling
-  arm64: dts: renesas: rzg2: Convert EtherAVB to explicit delay handling
-
- .../bindings/net/ethernet-controller.yaml     |  14 +
- .../bindings/net/renesas,etheravb.yaml        | 261 ++++++++++++++++++
- .../devicetree/bindings/net/renesas,ravb.txt  | 134 ---------
- .../boot/dts/renesas/beacon-renesom-som.dtsi  |   3 +-
- .../boot/dts/renesas/hihope-rzg2-ex.dtsi      |   2 +-
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi     |   2 +
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi     |   2 +
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi     |   1 +
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi     |   2 +
- arch/arm64/boot/dts/renesas/r8a77951.dtsi     |   2 +
- arch/arm64/boot/dts/renesas/r8a77960.dtsi     |   2 +
- arch/arm64/boot/dts/renesas/r8a77961.dtsi     |   2 +
- arch/arm64/boot/dts/renesas/r8a77965.dtsi     |   2 +
- .../arm64/boot/dts/renesas/r8a77970-eagle.dts |   3 +-
- .../arm64/boot/dts/renesas/r8a77970-v3msk.dts |   3 +-
- arch/arm64/boot/dts/renesas/r8a77970.dtsi     |   2 +
- arch/arm64/boot/dts/renesas/r8a77980.dtsi     |   2 +
- arch/arm64/boot/dts/renesas/r8a77990.dtsi     |   1 +
- arch/arm64/boot/dts/renesas/r8a77995.dtsi     |   1 +
- .../boot/dts/renesas/salvator-common.dtsi     |   2 +-
- arch/arm64/boot/dts/renesas/ulcb.dtsi         |   2 +-
- drivers/net/ethernet/renesas/ravb.h           |   5 +-
- drivers/net/ethernet/renesas/ravb_main.c      |  53 +++-
- 23 files changed, 350 insertions(+), 153 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/renesas,etheravb.yaml
- delete mode 100644 Documentation/devicetree/bindings/net/renesas,ravb.txt
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - port
+> +
+> +examples:
+> +  - |
+> +    i2c0 {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        imx274: camera-sensor@1a {
+> +            compatible = "sony,imx274";
+> +            reg = <0x1a>;
+> +            reset-gpios = <&gpio_sensor 0 0>;
+> +
+> +            port {
+> +                sensor_out: endpoint {
+> +                    remote-endpoint = <&csiss_in>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 18bc4427e6b0..6c8e98238a7b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15941,7 +15941,7 @@ M:	Leon Luo <leonl@leopardimaging.com>
+>  L:	linux-media@vger.kernel.org
+>  S:	Maintained
+>  T:	git git://linuxtv.org/media_tree.git
+> -F:	Documentation/devicetree/bindings/media/i2c/imx274.txt
+> +F:	Documentation/devicetree/bindings/media/i2c/imx274.yaml
+>  F:	drivers/media/i2c/imx274.c
+> 
+>  SONY IMX290 SENSOR DRIVER
 
 -- 
-2.17.1
+Regards,
 
+Laurent Pinchart
