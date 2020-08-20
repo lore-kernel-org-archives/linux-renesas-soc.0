@@ -2,250 +2,93 @@ Return-Path: <SRS0=r728=B6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D42FC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Aug 2020 12:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D73C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Aug 2020 13:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E27392078B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Aug 2020 12:55:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D390C207DA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Aug 2020 13:05:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730383AbgHTMwh (ORCPT
+        id S1729457AbgHTNFm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 20 Aug 2020 08:52:37 -0400
-Received: from mgwym02.jp.fujitsu.com ([211.128.242.41]:60770 "EHLO
-        mgwym02.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729153AbgHTJn1 (ORCPT
+        Thu, 20 Aug 2020 09:05:42 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46206 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730133AbgHTNFi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Aug 2020 05:43:27 -0400
-Received: from yt-mxoi1.gw.nic.fujitsu.com (unknown [192.168.229.67]) by mgwym02.jp.fujitsu.com with smtp
-         id 76c8_28a8_92070d3d_ad7c_414e_b0ec_05f740a4b370;
-        Thu, 20 Aug 2020 18:43:12 +0900
-Received: from durio.utsfd.cs.fujitsu.co.jp (durio.utsfd.cs.fujitsu.co.jp [10.24.20.112])
-        by yt-mxoi1.gw.nic.fujitsu.com (Postfix) with ESMTP id 87FACAC00D0;
-        Thu, 20 Aug 2020 18:43:11 +0900 (JST)
-Received: by durio.utsfd.cs.fujitsu.co.jp (Postfix, from userid 1006)
-        id 0F7D51FF2DC; Thu, 20 Aug 2020 18:43:10 +0900 (JST)
-From:   Yuusuke Ashizuka <ashiduka@fujitsu.com>
-To:     sergei.shtylyov@gmail.com, davem@davemloft.net, kuba@kernel.org
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        ashiduka@fujitsu.com
-Subject: [PATCH v3] ravb: Fixed to be able to unload modules
-Date:   Thu, 20 Aug 2020 18:43:07 +0900
-Message-Id: <20200820094307.3977-1-ashiduka@fujitsu.com>
-X-Mailer: git-send-email 2.17.1
-X-TM-AS-GCONF: 00
+        Thu, 20 Aug 2020 09:05:38 -0400
+Received: by mail-ot1-f68.google.com with SMTP id v6so1353927ota.13;
+        Thu, 20 Aug 2020 06:05:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sg8ZwoLVDdjGpQuxoN9M/5AY3B7WmgGus1lYO1T9dMo=;
+        b=VOje/ZOvdbR4Kzl9Pq7i5MK4qY0v4TY9gexkiK5NB+alFvQorGZ9GvZmbGJ75n1ZO0
+         2kItntJC6uMsGNxfsVtIx/59/U0Fg1tWWjBxxvl7RbKmk0WAx4BhQxlm31qPPm2QHj1U
+         K1hYhOpl7Y+uq2G5+Gkm1OcMqmLMyNKGedpYwDSCPrc3pEcHoP9R9Gv6TYs2tz6l/pAT
+         4sl0h5kD0RjIhoa8ikpUeJjeN+4aLfmehasNlgmZgStUKRCNKgcdJLLbVWjqW2Zsr5lf
+         OClGZI0FZa8B5kLi6/zhaKz6OEZoJwyY17AASdTYOk/LxK+SzhnLLg3JhPmqEzboD0Of
+         08Qg==
+X-Gm-Message-State: AOAM53358gS8tGTqrCyeEHZe1TKQBGTAxOd617qtUQRNNboBzfozQBCG
+        pIN27BejbKdA8BgiJuex/G3HulECZvTI6lk109w=
+X-Google-Smtp-Source: ABdhPJwUV3KXd1HI11sLhl5ptjIK3LAapipNtJfRztkV8qdLHzVc7KCPljUS3MazWyrN26NRAgTnugJUC1FbS8aKnic=
+X-Received: by 2002:a05:6830:1b79:: with SMTP id d25mr1920248ote.107.1597928737463;
+ Thu, 20 Aug 2020 06:05:37 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200819124539.20239-1-geert+renesas@glider.be> <df7f61fe-3103-168e-0744-d6b20ee42224@gmail.com>
+In-Reply-To: <df7f61fe-3103-168e-0744-d6b20ee42224@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 20 Aug 2020 15:05:25 +0200
+Message-ID: <CAMuHMdVA2-c+T_XHEV9GrQ0Dmf9OfsmiO4UeNKvPu26fQXKU-w@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: net: renesas,ether: Improve schema validation
+To:     Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Cc:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When this driver is built as a module, I cannot rmmod it after insmoding
-it.
-This is because that this driver calls ravb_mdio_init() at the time of
-probe, and module->refcnt is incremented by alloc_mdio_bitbang() called
-after that.
-Therefore, even if ifup is not performed, the driver is in use and rmmod
-cannot be performed.
+Hi Sergei,
 
-$ lsmod
-Module                  Size  Used by
-ravb                   40960  1
-$ rmmod ravb
-rmmod: ERROR: Module ravb is in use
+On Thu, Aug 20, 2020 at 2:26 PM Sergei Shtylyov
+<sergei.shtylyov@gmail.com> wrote:
+> On 8/19/20 3:45 PM, Geert Uytterhoeven wrote:
+>
+> >   - Remove pinctrl consumer properties, as they are handled by core
+>
+>    So you're removing them even from the example?
 
-Call ravb_mdio_init() at open and free_mdio_bitbang() at close, thereby
-rmmod is possible in the ifdown state.
+Yes, as they're completely generic.
 
-Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-Signed-off-by: Yuusuke Ashizuka <ashiduka@fujitsu.com>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@gmail.com>
----
-Changes in v3:
- - Update the commit subject and description.
- - Add Fixes c156633f1353.
- - Add Reviewed-by Sergei.
- https://patchwork.kernel.org/patch/11692719/
+> >     dt-schema,
+> >   - Document missing properties,
+> >   - Document missing PHY child node,
+> >   - Add "additionalProperties: false".
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> [...]
+>
+> Reviewed-by: Sergei Shtylyov <sergei.shtylyov@gmail.com>
 
-Changes in v2:
- - Fix build error
+Gr{oetje,eeting}s,
 
- drivers/net/ethernet/renesas/ravb_main.c | 110 +++++++++++++++----------------
- 1 file changed, 55 insertions(+), 55 deletions(-)
+                        Geert
 
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 99f7aae..df89d09 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1342,6 +1342,51 @@ static inline int ravb_hook_irq(unsigned int irq, irq_handler_t handler,
- 	return error;
- }
- 
-+/* MDIO bus init function */
-+static int ravb_mdio_init(struct ravb_private *priv)
-+{
-+	struct platform_device *pdev = priv->pdev;
-+	struct device *dev = &pdev->dev;
-+	int error;
-+
-+	/* Bitbang init */
-+	priv->mdiobb.ops = &bb_ops;
-+
-+	/* MII controller setting */
-+	priv->mii_bus = alloc_mdio_bitbang(&priv->mdiobb);
-+	if (!priv->mii_bus)
-+		return -ENOMEM;
-+
-+	/* Hook up MII support for ethtool */
-+	priv->mii_bus->name = "ravb_mii";
-+	priv->mii_bus->parent = dev;
-+	snprintf(priv->mii_bus->id, MII_BUS_ID_SIZE, "%s-%x",
-+		 pdev->name, pdev->id);
-+
-+	/* Register MDIO bus */
-+	error = of_mdiobus_register(priv->mii_bus, dev->of_node);
-+	if (error)
-+		goto out_free_bus;
-+
-+	return 0;
-+
-+out_free_bus:
-+	free_mdio_bitbang(priv->mii_bus);
-+	return error;
-+}
-+
-+/* MDIO bus release function */
-+static int ravb_mdio_release(struct ravb_private *priv)
-+{
-+	/* Unregister mdio bus */
-+	mdiobus_unregister(priv->mii_bus);
-+
-+	/* Free bitbang info */
-+	free_mdio_bitbang(priv->mii_bus);
-+
-+	return 0;
-+}
-+
- /* Network device open function for Ethernet AVB */
- static int ravb_open(struct net_device *ndev)
- {
-@@ -1350,6 +1395,13 @@ static int ravb_open(struct net_device *ndev)
- 	struct device *dev = &pdev->dev;
- 	int error;
- 
-+	/* MDIO bus init */
-+	error = ravb_mdio_init(priv);
-+	if (error) {
-+		netdev_err(ndev, "failed to initialize MDIO\n");
-+		return error;
-+	}
-+
- 	napi_enable(&priv->napi[RAVB_BE]);
- 	napi_enable(&priv->napi[RAVB_NC]);
- 
-@@ -1427,6 +1479,7 @@ static int ravb_open(struct net_device *ndev)
- out_napi_off:
- 	napi_disable(&priv->napi[RAVB_NC]);
- 	napi_disable(&priv->napi[RAVB_BE]);
-+	ravb_mdio_release(priv);
- 	return error;
- }
- 
-@@ -1736,6 +1789,8 @@ static int ravb_close(struct net_device *ndev)
- 	ravb_ring_free(ndev, RAVB_BE);
- 	ravb_ring_free(ndev, RAVB_NC);
- 
-+	ravb_mdio_release(priv);
-+
- 	return 0;
- }
- 
-@@ -1887,51 +1942,6 @@ static const struct net_device_ops ravb_netdev_ops = {
- 	.ndo_set_features	= ravb_set_features,
- };
- 
--/* MDIO bus init function */
--static int ravb_mdio_init(struct ravb_private *priv)
--{
--	struct platform_device *pdev = priv->pdev;
--	struct device *dev = &pdev->dev;
--	int error;
--
--	/* Bitbang init */
--	priv->mdiobb.ops = &bb_ops;
--
--	/* MII controller setting */
--	priv->mii_bus = alloc_mdio_bitbang(&priv->mdiobb);
--	if (!priv->mii_bus)
--		return -ENOMEM;
--
--	/* Hook up MII support for ethtool */
--	priv->mii_bus->name = "ravb_mii";
--	priv->mii_bus->parent = dev;
--	snprintf(priv->mii_bus->id, MII_BUS_ID_SIZE, "%s-%x",
--		 pdev->name, pdev->id);
--
--	/* Register MDIO bus */
--	error = of_mdiobus_register(priv->mii_bus, dev->of_node);
--	if (error)
--		goto out_free_bus;
--
--	return 0;
--
--out_free_bus:
--	free_mdio_bitbang(priv->mii_bus);
--	return error;
--}
--
--/* MDIO bus release function */
--static int ravb_mdio_release(struct ravb_private *priv)
--{
--	/* Unregister mdio bus */
--	mdiobus_unregister(priv->mii_bus);
--
--	/* Free bitbang info */
--	free_mdio_bitbang(priv->mii_bus);
--
--	return 0;
--}
--
- static const struct of_device_id ravb_match_table[] = {
- 	{ .compatible = "renesas,etheravb-r8a7790", .data = (void *)RCAR_GEN2 },
- 	{ .compatible = "renesas,etheravb-r8a7794", .data = (void *)RCAR_GEN2 },
-@@ -2174,13 +2184,6 @@ static int ravb_probe(struct platform_device *pdev)
- 		eth_hw_addr_random(ndev);
- 	}
- 
--	/* MDIO bus init */
--	error = ravb_mdio_init(priv);
--	if (error) {
--		dev_err(&pdev->dev, "failed to initialize MDIO\n");
--		goto out_dma_free;
--	}
--
- 	netif_napi_add(ndev, &priv->napi[RAVB_BE], ravb_poll, 64);
- 	netif_napi_add(ndev, &priv->napi[RAVB_NC], ravb_poll, 64);
- 
-@@ -2202,8 +2205,6 @@ static int ravb_probe(struct platform_device *pdev)
- out_napi_del:
- 	netif_napi_del(&priv->napi[RAVB_NC]);
- 	netif_napi_del(&priv->napi[RAVB_BE]);
--	ravb_mdio_release(priv);
--out_dma_free:
- 	dma_free_coherent(ndev->dev.parent, priv->desc_bat_size, priv->desc_bat,
- 			  priv->desc_bat_dma);
- 
-@@ -2235,7 +2236,6 @@ static int ravb_remove(struct platform_device *pdev)
- 	unregister_netdev(ndev);
- 	netif_napi_del(&priv->napi[RAVB_NC]);
- 	netif_napi_del(&priv->napi[RAVB_BE]);
--	ravb_mdio_release(priv);
- 	pm_runtime_disable(&pdev->dev);
- 	free_netdev(ndev);
- 	platform_set_drvdata(pdev, NULL);
 -- 
-2.7.4
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
