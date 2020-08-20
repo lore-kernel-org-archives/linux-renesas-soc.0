@@ -7,71 +7,72 @@ X-Spam-Status: No, score=-6.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F78C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Aug 2020 12:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3287C433E3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Aug 2020 12:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CFD0320738
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Aug 2020 12:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4B6B20738
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 Aug 2020 12:31:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="psPwQJDM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RljuvLmG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730007AbgHTMaC (ORCPT
+        id S1729457AbgHTMbh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 20 Aug 2020 08:30:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56662 "EHLO
+        Thu, 20 Aug 2020 08:31:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729936AbgHTM37 (ORCPT
+        with ESMTP id S1730103AbgHTMbc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 Aug 2020 08:29:59 -0400
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1D44C061385;
-        Thu, 20 Aug 2020 05:29:56 -0700 (PDT)
-Received: by mail-lj1-x22d.google.com with SMTP id w14so1877576ljj.4;
-        Thu, 20 Aug 2020 05:29:56 -0700 (PDT)
+        Thu, 20 Aug 2020 08:31:32 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A472C061385;
+        Thu, 20 Aug 2020 05:31:32 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id v12so1857046ljc.10;
+        Thu, 20 Aug 2020 05:31:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xTQl+WhOEFyBUEPU2y35AZP/kKPmwXIUhguF6dralO0=;
-        b=psPwQJDMeJ5F2i7CFGRKuG4cazqwYLE5VVeBVXOEj/hC7nLP2YH6a0kOJxtihGIIVW
-         S8CN8Zk0AxWpD1SSZcZIFvE8yHyJUMDTFoXn1vjwIR+x7fOhqB9mLAhICjgARGjp5T+h
-         LPXOFfSIb61HQAwK6kJzM/trNqMvKTmoo7tnFR9FnYFQ8YyCkNdFVlg8+KzhGWJX8dk5
-         MKVuQBiWMJtWtQCZUdicBg6R+L4e+H+57+q3lCc4J6avCfAPNKUM2BXxrHqSVrMrVUeF
-         PQOTmwbgdtBTViwi5JKOpSQf86Xaco99X/n/h/tQp6VbFJpATWvx8zDVhyCd+IoSVxSa
-         GunA==
+        bh=sLaFDqmhBKvCa66SIGjGPAggYoHsxbTGhHXTzFaeO7I=;
+        b=RljuvLmGHRDuQE1e9PkIln2c5TnJO/Q3bCV+HDJ3ERWcd5eu5GWH8U8447eR+Q6UKN
+         NE5OiBZgS5s35Mrm8r57nkzmMONIEQNV4wDJGyW+zzOHUr1/Go5eZ9pkW/0nZkHbtjxj
+         OhED3iBZDaRsu7yaihnMLUSLcgTeJvrtYWJzYIFoQQtDH90ihQ1NeM7CtN9Em7OxuXIN
+         jC9Hyh8b25NKF4+MKzbxxSr8vpWFdYH+R02jxcrsTtJpXV4K03Dh4BDaXbEEPDwsIvCx
+         HsqqEmkyAuKsNOJmJdQ8WzxCOc7lU8ogbGogN4vGUE8xMhOHy57wypnssPMdP1ldDlD8
+         d3og==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=xTQl+WhOEFyBUEPU2y35AZP/kKPmwXIUhguF6dralO0=;
-        b=Gn1WYXgnZrYOGONXwfIK7lx0Gi9qXVh6aLHpWiF1oU3P23nPDOECAz/Stqnu8Aw9+z
-         c3bt+fJIgsKlr/WHye2RzgqJjzbDHiRNSezI+YVmhGYKGQ8jfaYbU5GIYKgwMVhxZQhW
-         NSI4B8irEmh6rmj+QOybJ95Gm7R6mAfA8PzJ/J5+XRlCuL3KGfXRcQNjKV86VS0fIKOO
-         54tWoV8niw5wa+QlLLU73zNUSic7tatbBkfHPexuq9KYr0PSXqrtX1MZk41Fe/NMxaJJ
-         K6ux/W/V2rZl7YRkXahhpiiGvTW0HWK7/euyP0gzd1YicP11A55NMyKxHcREwdKuM9Fw
-         Eclg==
-X-Gm-Message-State: AOAM530BkeyOlGgtGuBYYpjbjx5qAMO4CWsATX9hMIHMML/5NuHJEMMk
-        K36CYbx6qXzY6jdmh0vbQ98bpy5sstQUyQ==
-X-Google-Smtp-Source: ABdhPJxTpdKmSRcDAYXa5l/TzFSzo9SsjV6q6N60RuD50GInEMuO6nJuMqvEwDsc9ZD0kBMV25PGlA==
-X-Received: by 2002:a2e:8999:: with SMTP id c25mr1604603lji.430.1597926593850;
-        Thu, 20 Aug 2020 05:29:53 -0700 (PDT)
+        bh=sLaFDqmhBKvCa66SIGjGPAggYoHsxbTGhHXTzFaeO7I=;
+        b=pQEf9UVtefVUcYmIRs4t9sxZ+CNlm2/GQiBgMTFCUt1ac6XGvB1xqCswI3Sum+5naD
+         RLbnKe7Q56r44xtnmWNpQ7/dxSiWkIBLpvXsk9H7EWpPvHX84sxhcyavtVG1t82L3NH9
+         wEY6NEvJGAnHz51/qltpWQdWvwUj+/xkC51KBQAbBXaDNE2VaoRkyg480nizGOHWyQrJ
+         IE8wdILKlKTXN7w3sv3cJ2D0noloA3SDRyPSs3tTj5zCgCQ25J9pk2EOeFhgnP9/mJO4
+         +fRRU5EhATpRsewC0WWJHwFaTyo1m8+OzLDRgU5/LKF5vUaim18IAx24QsqW2meGaiy2
+         s4vg==
+X-Gm-Message-State: AOAM533gEs0zMeeA4DKe3RU0qMU6nTbk5Eiby9HAG2yWnqmuU5G6//27
+        0yBUuFQ4q91JDZaLO6SkjeAfTza03ubMwA==
+X-Google-Smtp-Source: ABdhPJwtTloWdfwP67KjGtYImwnrwLGmvfiVdtdTgpJ7Hs/0RAHkHZhjbJGS3dfCWQwB0iE/od+SpQ==
+X-Received: by 2002:a2e:8215:: with SMTP id w21mr1493576ljg.43.1597926690796;
+        Thu, 20 Aug 2020 05:31:30 -0700 (PDT)
 Received: from wasted.omprussia.ru ([2a00:1fa0:46d7:4a60:acca:c7f9:9bba:62e5])
-        by smtp.gmail.com with ESMTPSA id d10sm421918ljg.87.2020.08.20.05.29.52
+        by smtp.gmail.com with ESMTPSA id b16sm430034ljk.24.2020.08.20.05.31.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Aug 2020 05:29:53 -0700 (PDT)
+        Thu, 20 Aug 2020 05:31:30 -0700 (PDT)
 Subject: Re: [PATCH v3] ravb: Fixed to be able to unload modules
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
 To:     Yuusuke Ashizuka <ashiduka@fujitsu.com>, davem@davemloft.net,
         kuba@kernel.org
 Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 References: <20200820094307.3977-1-ashiduka@fujitsu.com>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Message-ID: <f5cf5e82-cc35-4141-982a-7abc4794e789@gmail.com>
-Date:   Thu, 20 Aug 2020 15:29:52 +0300
+ <f5cf5e82-cc35-4141-982a-7abc4794e789@gmail.com>
+Message-ID: <bd5d2d20-eeb0-12fb-4e25-c596f0ff5898@gmail.com>
+Date:   Thu, 20 Aug 2020 15:31:29 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.11.0
 MIME-Version: 1.0
-In-Reply-To: <20200820094307.3977-1-ashiduka@fujitsu.com>
+In-Reply-To: <f5cf5e82-cc35-4141-982a-7abc4794e789@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -80,4 +81,10 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-   Also, s/Fixed/fix/ in the subject. Nearly missed it. :-)
+On 8/20/20 3:29 PM, Sergei Shtylyov wrote:
+
+>    Also, s/Fixed/fix/ in the subject. Nearly missed it. :-)
+
+   And overall, I'd call the patch "ravb: fix module unloading".
+
+MBR, Sergei
