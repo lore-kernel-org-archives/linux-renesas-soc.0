@@ -2,367 +2,256 @@ Return-Path: <SRS0=V/pW=B7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C3BC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Aug 2020 11:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC460C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Aug 2020 11:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 171312072D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Aug 2020 11:25:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0FDD2054F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 21 Aug 2020 11:26:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="maN2Sm8U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727106AbgHULZY (ORCPT
+        id S1726907AbgHUL0j (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 21 Aug 2020 07:25:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43218 "EHLO
+        Fri, 21 Aug 2020 07:26:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727899AbgHULVB (ORCPT
+        with ESMTP id S1726872AbgHUL0c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 21 Aug 2020 07:21:01 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87565C061387
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 21 Aug 2020 04:21:00 -0700 (PDT)
-Received: from ramsan ([84.195.186.194])
-        by michel.telenet-ops.be with bizsmtp
-        id JBM0230044C55Sk06BM0lC; Fri, 21 Aug 2020 13:21:00 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1k956S-0002rx-0a; Fri, 21 Aug 2020 13:21:00 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1k956R-0001LW-VM; Fri, 21 Aug 2020 13:20:59 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Gareth Williams <gareth.williams.jx@renesas.com>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: pinctrl: rzn1: Convert to json-schema
-Date:   Fri, 21 Aug 2020 13:20:59 +0200
-Message-Id: <20200821112059.5133-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Fri, 21 Aug 2020 07:26:32 -0400
+Received: from mail-yb1-xb42.google.com (mail-yb1-xb42.google.com [IPv6:2607:f8b0:4864:20::b42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD20AC061388;
+        Fri, 21 Aug 2020 04:26:31 -0700 (PDT)
+Received: by mail-yb1-xb42.google.com with SMTP id y134so866875yby.2;
+        Fri, 21 Aug 2020 04:26:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=skzxqD/NGUvc/HsTmn3oZ/wYku/kyh5WrekF3HvBqWk=;
+        b=maN2Sm8UNpQ2+YyUUFwdz9eUgQbi1RNvHlRQR7ndfum9z8ZDa1fJOt0NvhoCMuuMqE
+         MSWSdrdgyi036Tjautm7k5OJVbOMbx9bxVbFQ5N3xA3fi3owA+XZhIUOaAPSjg0GFFMf
+         Qu0AKQNdS+jo0ctNdXiULmIQAegFkB5OLbasQyC+AOBrJ4Go5FgHgZRpek4WASiMtINi
+         FbTzg4ZLPuMETG8XTIzZmEPGG2T0HsY/tSshmQpkxewQd31bpQNsN23O8+LCw6YPxCF6
+         D3eJS5uNH2H2WIoIqGnRcvrLqm2U8VLDFNffn5mXHWHeWPfMaPtE2sEz+O4PJiOGBZNs
+         Uc3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=skzxqD/NGUvc/HsTmn3oZ/wYku/kyh5WrekF3HvBqWk=;
+        b=qBGnZaDi0lUHlDxg0JrGpM8Du5OJ9gnm4j0FKtXLwzhcNu3oFFZmWy4CAGq/BUWpoy
+         kkr7RurrF/6FEyJ8WK6VZbJe+0iVQtCbee3h/13ERHPSBBoQtTxJea/XWyC3IYsDYFLv
+         oUZOzAju5ae8yXFe/FQj4RGuKwbq4wFh7OzHQmRXfOTmlueMX/lj3WKC8TBsRD9gpowi
+         PVg+AQJ/JxzdB6xGaSDWZdQXg7iaYivnG7iSEB/3bO2gF+hPrmZp1VbV461F71gv+e1l
+         CRpWkTpDGZdP+eilMmzRL9pFi2wl/acxUtXdY+GLTAR392IQLDy+ycfNes4zvctZ86Y2
+         s+ew==
+X-Gm-Message-State: AOAM530YEz9y4QunXaVvOXPSqUzbQpy0sQhzSSpqRpaqODJN2nY8X5Fl
+        WRNgCIxY0B40bLZTD6FZxKd/ZZWZYFtKMsbzVdc=
+X-Google-Smtp-Source: ABdhPJz6BOVQq+uU27DB2+qhiIgEVSq1rjdKnbRYDgmRKVlriKEHtn2fcEqXV1NjXbmtF65nIdwAiC8GYEr5wwL8D+Q=
+X-Received: by 2002:a25:2f4d:: with SMTP id v74mr2814821ybv.401.1598009190877;
+ Fri, 21 Aug 2020 04:26:30 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200818122012.37956-1-jacopo+renesas@jmondi.org> <20200818122012.37956-2-jacopo+renesas@jmondi.org>
+In-Reply-To: <20200818122012.37956-2-jacopo+renesas@jmondi.org>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Fri, 21 Aug 2020 12:26:04 +0100
+Message-ID: <CA+V-a8vSz0z0Crq+552ZtWcK_KkTJxVEs6xX9m8G8YObiTi=LQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: media: ov772x: Convert to json-schema
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert the Renesas RZ/N1 Pin controller Device Tree binding
-documentation to json-schema.
+Hi Jacopo,
 
-Use "pinctrl" generic node name.
-Drop generic and consumer examples, as they do not belong here.
+Thank you for the patch.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Note: "phandle: true" is needed because dt-schema does not add it
-      automatically to subnodes.
+On Tue, Aug 18, 2020 at 1:16 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+>
+> Convert the ov772x binding document to json-schema and update
+> the MAINTAINERS file accordingly.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  .../devicetree/bindings/media/i2c/ov772x.txt  | 40 ---------
+>  .../devicetree/bindings/media/i2c/ov772x.yaml | 84 +++++++++++++++++++
+>  MAINTAINERS                                   |  2 +-
+>  3 files changed, 85 insertions(+), 41 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/media/i2c/ov772x.txt
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/ov772x.yaml
+>
 
-To be queued in sh-pfc for v5.10.
----
- .../bindings/pinctrl/renesas,rzn1-pinctrl.txt | 153 ------------------
- .../pinctrl/renesas,rzn1-pinctrl.yaml         | 129 +++++++++++++++
- 2 files changed, 129 insertions(+), 153 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
- create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.yaml
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
-deleted file mode 100644
-index 25e53acd523e2bea..0000000000000000
---- a/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.txt
-+++ /dev/null
-@@ -1,153 +0,0 @@
--Renesas RZ/N1 SoC Pinctrl node description.
--
--Pin controller node
---------------------
--Required properties:
--- compatible: SoC-specific compatible string "renesas,<soc-specific>-pinctrl"
--  followed by "renesas,rzn1-pinctrl" as fallback. The SoC-specific compatible
--  strings must be one of:
--	"renesas,r9a06g032-pinctrl" for RZ/N1D
--	"renesas,r9a06g033-pinctrl" for RZ/N1S
--- reg: Address base and length of the memory area where the pin controller
--  hardware is mapped to.
--- clocks: phandle for the clock, see the description of clock-names below.
--- clock-names: Contains the name of the clock:
--    "bus", the bus clock, sometimes described as pclk, for register accesses.
--
--Example:
--	pinctrl: pin-controller@40067000 {
--	    compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
--	    reg = <0x40067000 0x1000>, <0x51000000 0x480>;
--	    clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
--	    clock-names = "bus";
--	};
--
--Sub-nodes
-----------
--
--The child nodes of the pin controller node describe a pin multiplexing
--function.
--
--- Pin multiplexing sub-nodes:
--  A pin multiplexing sub-node describes how to configure a set of
--  (or a single) pin in some desired alternate function mode.
--  A single sub-node may define several pin configurations.
--  Please refer to pinctrl-bindings.txt to get to know more on generic
--  pin properties usage.
--
--  The allowed generic formats for a pin multiplexing sub-node are the
--  following ones:
--
--  node-1 {
--      pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
--      GENERIC_PINCONFIG;
--  };
--
--  node-2 {
--      sub-node-1 {
--          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
--          GENERIC_PINCONFIG;
--      };
--
--      sub-node-2 {
--          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
--          GENERIC_PINCONFIG;
--      };
--
--      ...
--
--      sub-node-n {
--          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
--          GENERIC_PINCONFIG;
--      };
--  };
--
--  node-3 {
--      pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
--      GENERIC_PINCONFIG;
--
--      sub-node-1 {
--          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
--          GENERIC_PINCONFIG;
--      };
--
--      ...
--
--      sub-node-n {
--          pinmux = <PIN_ID_AND_MUX>, <PIN_ID_AND_MUX>, ... ;
--          GENERIC_PINCONFIG;
--      };
--  };
--
--  Use the latter two formats when pins part of the same logical group need to
--  have different generic pin configuration flags applied. Note that the generic
--  pinconfig in node-3 does not apply to the sub-nodes.
--
--  Client sub-nodes shall refer to pin multiplexing sub-nodes using the phandle
--  of the most external one.
--
--  Eg.
--
--  client-1 {
--      ...
--      pinctrl-0 = <&node-1>;
--      ...
--  };
--
--  client-2 {
--      ...
--      pinctrl-0 = <&node-2>;
--      ...
--  };
--
--  Required properties:
--    - pinmux:
--      integer array representing pin number and pin multiplexing configuration.
--      When a pin has to be configured in alternate function mode, use this
--      property to identify the pin by its global index, and provide its
--      alternate function configuration number along with it.
--      When multiple pins are required to be configured as part of the same
--      alternate function they shall be specified as members of the same
--      argument list of a single "pinmux" property.
--      Integers values in the "pinmux" argument list are assembled as:
--      (PIN | MUX_FUNC << 8)
--      where PIN directly corresponds to the pl_gpio pin number and MUX_FUNC is
--      one of the alternate function identifiers defined in:
--      <include/dt-bindings/pinctrl/rzn1-pinctrl.h>
--      These identifiers collapse the IO Multiplex Configuration Level 1 and
--      Level 2 numbers that are detailed in the hardware reference manual into a
--      single number. The identifiers for Level 2 are simply offset by 10.
--      Additional identifiers are provided to specify the MDIO source peripheral.
--
--  Optional generic pinconf properties:
--    - bias-disable		- disable any pin bias
--    - bias-pull-up		- pull up the pin with 50 KOhm
--    - bias-pull-down		- pull down the pin with 50 KOhm
--    - bias-high-impedance	- high impedance mode
--    - drive-strength		- sink or source at most 4, 6, 8 or 12 mA
--
--  Example:
--  A serial communication interface with a TX output pin and an RX input pin.
--
--  &pinctrl {
--	pins_uart0: pins_uart0 {
--		pinmux = <
--			RZN1_PINMUX(103, RZN1_FUNC_UART0_I)	/* UART0_TXD */
--			RZN1_PINMUX(104, RZN1_FUNC_UART0_I)	/* UART0_RXD */
--		>;
--	};
--  };
--
--  Example 2:
--  Here we set the pull up on the RXD pin of the UART.
--
--  &pinctrl {
--	pins_uart0: pins_uart0 {
--		pinmux = <RZN1_PINMUX(103, RZN1_FUNC_UART0_I)>;	/* TXD */
--
--		pins_uart6_rx {
--			pinmux = <RZN1_PINMUX(104, RZN1_FUNC_UART0_I)>; /* RXD */
--			bias-pull-up;
--		};
--	};
--  };
-diff --git a/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.yaml
-new file mode 100644
-index 0000000000000000..4a43af0d6e02a68b
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/renesas,rzn1-pinctrl.yaml
-@@ -0,0 +1,129 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pinctrl/renesas,rzn1-pinctrl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Renesas RZ/N1 Pin Controller
-+
-+maintainers:
-+  - Gareth Williams <gareth.williams.jx@renesas.com>
-+  - Geert Uytterhoeven <geert+renesas@glider.be>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,r9a06g032-pinctrl # RZ/N1D
-+          - renesas,r9a06g033-pinctrl # RZ/N1S
-+      - const: renesas,rzn1-pinctrl   # Generic RZ/N1
-+
-+  reg:
-+    items:
-+      - description: GPIO Multiplexing Level1 Register Block
-+      - description: GPIO Multiplexing Level2 Register Block
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: bus
-+    description:
-+      The bus clock, sometimes described as pclk, for register accesses.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+additionalProperties:
-+  anyOf:
-+    - type: object
-+      allOf:
-+        - $ref: pincfg-node.yaml#
-+        - $ref: pinmux-node.yaml#
-+
-+      description:
-+        A pin multiplexing sub-node describes how to configure a set of (or a
-+        single) pin in some desired alternate function mode.
-+        A single sub-node may define several pin configurations.
-+
-+      properties:
-+        pinmux:
-+          description: |
-+            Integer array representing pin number and pin multiplexing
-+            configuration.
-+            When a pin has to be configured in alternate function mode, use
-+            this property to identify the pin by its global index, and provide
-+            its alternate function configuration number along with it.
-+            When multiple pins are required to be configured as part of the
-+            same alternate function they shall be specified as members of the
-+            same argument list of a single "pinmux" property.
-+            Integers values in the "pinmux" argument list are assembled as:
-+            (PIN | MUX_FUNC << 8)
-+            where PIN directly corresponds to the pl_gpio pin number and
-+            MUX_FUNC is one of the alternate function identifiers defined in:
-+            <include/dt-bindings/pinctrl/rzn1-pinctrl.h>
-+            These identifiers collapse the IO Multiplex Configuration Level 1
-+            and Level 2 numbers that are detailed in the hardware reference
-+            manual into a single number. The identifiers for Level 2 are simply
-+            offset by 10.  Additional identifiers are provided to specify the
-+            MDIO source peripheral.
-+
-+        phandle: true
-+        bias-disable: true
-+        bias-pull-up:
-+          description: Pull up the pin with 50 kOhm
-+        bias-pull-down:
-+          description: Pull down the pin with 50 kOhm
-+        bias-high-impedance: true
-+        drive-strength:
-+          enum: [ 4, 6, 8, 12 ]
-+
-+      required:
-+        - pinmux
-+
-+      additionalProperties:
-+        $ref: "#/additionalProperties/anyOf/0"
-+
-+    - type: object
-+      properties:
-+        phandle: true
-+
-+      additionalProperties:
-+        $ref: "#/additionalProperties/anyOf/0"
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r9a06g032-sysctrl.h>
-+    #include <dt-bindings/pinctrl/rzn1-pinctrl.h>
-+    pinctrl: pinctrl@40067000 {
-+            compatible = "renesas,r9a06g032-pinctrl", "renesas,rzn1-pinctrl";
-+            reg = <0x40067000 0x1000>, <0x51000000 0x480>;
-+            clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-+            clock-names = "bus";
-+
-+            /*
-+             * A serial communication interface with a TX output pin and an RX
-+             * input pin.
-+             */
-+            pins_uart0: pins_uart0 {
-+                    pinmux = <
-+                            RZN1_PINMUX(103, RZN1_FUNC_UART0_I) /* UART0_TXD */
-+                            RZN1_PINMUX(104, RZN1_FUNC_UART0_I) /* UART0_RXD */
-+                    >;
-+            };
-+
-+            /*
-+             * Set the pull-up on the RXD pin of the UART.
-+             */
-+            pins_uart0_alt: pins_uart0_alt {
-+                    pinmux = <RZN1_PINMUX(103, RZN1_FUNC_UART0_I)>;
-+
-+                    pins_uart6_rx {
-+                            pinmux = <RZN1_PINMUX(104, RZN1_FUNC_UART0_I)>;
-+                            bias-pull-up;
-+                    };
-+            };
-+    };
--- 
-2.17.1
+Cheers,
+Prabbhakar
 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ov772x.txt b/Documentation/devicetree/bindings/media/i2c/ov772x.txt
+> deleted file mode 100644
+> index 0b3ede5b8e6a..000000000000
+> --- a/Documentation/devicetree/bindings/media/i2c/ov772x.txt
+> +++ /dev/null
+> @@ -1,40 +0,0 @@
+> -* Omnivision OV7720/OV7725 CMOS sensor
+> -
+> -The Omnivision OV7720/OV7725 sensor supports multiple resolutions output,
+> -such as VGA, QVGA, and any size scaling down from CIF to 40x30. It also can
+> -support the YUV422, RGB565/555/444, GRB422 or raw RGB output formats.
+> -
+> -Required Properties:
+> -- compatible: shall be one of
+> -       "ovti,ov7720"
+> -       "ovti,ov7725"
+> -- clocks: reference to the xclk input clock.
+> -
+> -Optional Properties:
+> -- reset-gpios: reference to the GPIO connected to the RSTB pin which is
+> -  active low, if any.
+> -- powerdown-gpios: reference to the GPIO connected to the PWDN pin which is
+> -  active high, if any.
+> -
+> -The device node shall contain one 'port' child node with one child 'endpoint'
+> -subnode for its digital output video port, in accordance with the video
+> -interface bindings defined in Documentation/devicetree/bindings/media/
+> -video-interfaces.txt.
+> -
+> -Example:
+> -
+> -&i2c0 {
+> -       ov772x: camera@21 {
+> -               compatible = "ovti,ov7725";
+> -               reg = <0x21>;
+> -               reset-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
+> -               powerdown-gpios = <&axi_gpio_0 1 GPIO_ACTIVE_LOW>;
+> -               clocks = <&xclk>;
+> -
+> -               port {
+> -                       ov772x_0: endpoint {
+> -                               remote-endpoint = <&vcap1_in0>;
+> -                       };
+> -               };
+> -       };
+> -};
+> diff --git a/Documentation/devicetree/bindings/media/i2c/ov772x.yaml b/Documentation/devicetree/bindings/media/i2c/ov772x.yaml
+> new file mode 100644
+> index 000000000000..2b84fefeb4aa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/ov772x.yaml
+> @@ -0,0 +1,84 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/i2c/ov772x.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title:  Omnivision OV7720/OV7725 CMOS sensor
+> +
+> +maintainers:
+> +  - Jacopo Mondi <jacopo@jmondi.org>
+> +
+> +description: -|
+> +  The Omnivision OV7720/OV7725 sensor supports multiple resolutions output,
+> +  such as VGA, QVGA, and any size scaling down from CIF to 40x30. It also can
+> +  support the YUV422, RGB565/555/444, GRB422 or raw RGB output formats.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ovti,ov7720
+> +      - ovti,ov7725
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    description: -|
+> +      Reference to the GPIO connected to the RSTB pin which is active low.
+> +    maxItems: 1
+> +
+> +  powerdown-gpios:
+> +    description: -|
+> +      Reference to the GPIO connected to the PWDN pin which is active high.
+> +    maxItems: 1
+> +
+> +  port:
+> +    type: object
+> +    description: |
+> +      The device node must contain one 'port' child node for its digital output
+> +      video port, in accordance with the video interface bindings defined in
+> +      Documentation/devicetree/bindings/media/video-interfaces.txt.
+> +
+> +    properties:
+> +      endpoint:
+> +        type: object
+> +        properties:
+> +          remote-endpoint:
+> +            description: A phandle to the bus receiver's endpoint node.
+> +
+> +    additionalProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - reset-gpios
+> +  - powerdown-gpios
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    i2c0 {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        ov772x: camera@21 {
+> +            compatible = "ovti,ov7725";
+> +            reg = <0x21>;
+> +            reset-gpios = <&axi_gpio_0 0 GPIO_ACTIVE_LOW>;
+> +            powerdown-gpios = <&axi_gpio_0 1 GPIO_ACTIVE_LOW>;
+> +            clocks = <&xclk>;
+> +
+> +            port {
+> +                ov772x_0: endpoint {
+> +                    remote-endpoint = <&vcap1_in0>;
+> +                };
+> +            };
+> +        };
+> +    };
+> +
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d1a6173d3b64..d0a20214eaaf 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12666,7 +12666,7 @@ M:      Jacopo Mondi <jacopo@jmondi.org>
+>  L:     linux-media@vger.kernel.org
+>  S:     Odd fixes
+>  T:     git git://linuxtv.org/media_tree.git
+> -F:     Documentation/devicetree/bindings/media/i2c/ov772x.txt
+> +F:     Documentation/devicetree/bindings/media/i2c/ov772x.yaml
+>  F:     drivers/media/i2c/ov772x.c
+>  F:     include/media/i2c/ov772x.h
+>
+> --
+> 2.27.0
+>
