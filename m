@@ -2,65 +2,73 @@ Return-Path: <SRS0=Xfzj=CD=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE3BC433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Aug 2020 10:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4249CC433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Aug 2020 10:45:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53EC52068F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Aug 2020 10:00:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598349654;
-	bh=oXsNaRSwLTtNJI5cjDjpryeQDD+fJMQGkTGifQ3UxFI=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=lOpTKW3syA8VVi06K+jInxOkG6bLG6saORCwvFFs10zJouIOTmj4y1CN2C8dOXPsG
-	 nDT3Lx5Rt/Oc8huzAslv8wvNfGiP3buNY45Fpeh7MN0eM6W5JLvJkD2BZ/j1L4F/Z+
-	 1XbOUhsJC6PC2kCfY9NFJ/OXWaLTova9IoHaTTgM=
+	by mail.kernel.org (Postfix) with ESMTP id 2B51A2068E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Aug 2020 10:45:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbgHYKAx (ORCPT
+        id S1729862AbgHYKpB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 Aug 2020 06:00:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54034 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729741AbgHYKAv (ORCPT
+        Tue, 25 Aug 2020 06:45:01 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:61687 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729797AbgHYKpB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Aug 2020 06:00:51 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1598349651;
-        bh=oXsNaRSwLTtNJI5cjDjpryeQDD+fJMQGkTGifQ3UxFI=;
-        h=Subject:From:Date:To:From;
-        b=aTQvmANi/O81yY8Qk9Kz4S1bwiEPV5ITpgzNy3Fk2IDy+9EJpB2/t538TGZNyYeq/
-         6p/nnKl0Sm8bdn2UYdNdQBhK//WfOKUAkZbV/ivengQL5SoSgWitIb8FN3rS66HOrf
-         JXewr3E4+ZI3KubsD1lizM+dVnuaJ6oASzCC7m6o=
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <159834965170.20747.16083550937539143991.git-patchwork-summary@kernel.org>
-Date:   Tue, 25 Aug 2020 10:00:51 +0000
-To:     linux-renesas-soc@vger.kernel.org
+        Tue, 25 Aug 2020 06:45:01 -0400
+X-IronPort-AV: E=Sophos;i="5.76,352,1592838000"; 
+   d="scan'208";a="55260239"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 25 Aug 2020 19:44:58 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 720BF4001B7F;
+        Tue, 25 Aug 2020 19:44:56 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-pwm@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: [PATCH 0/2] r8a774e1 add PWM support
+Date:   Tue, 25 Aug 2020 11:44:53 +0100
+Message-Id: <20200825104455.18000-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+Hi All,
 
-The following patches were marked "accepted", because they were applied to
-geert/renesas-devel (refs/heads/master):
+This patch series adds PWM support to R8A774E1 (RZ/G2H) SoC.
 
-Series: arm64: renesas: defconfig: Updates
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=335091
-  Link: <20200819100952.11913-1-geert+renesas@glider.be>
-    Patches: [PATCH/LOCAL,1/2] arm64: renesas: defconfig: Enable RPC-IF support
-             [PATCH/LOCAL,2/2] arm64: renesas: defconfig: Refresh for v5.9-rc1
+Patches apply on top of [1].
 
-Total patches: 2
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/
+    renesas-devel.git/log/?h=renesas-arm-dt-for-v5.10
+
+Cheers,
+Prabhakar
+
+Marian-Cristian Rotariu (2):
+  dt-bindings: pwm: renesas,pwm-rcar: Add r8a774e1 support
+  arm64: dts: renesas: r8a774e1: Add PWM device nodes
+
+ .../bindings/pwm/renesas,pwm-rcar.yaml        |  1 +
+ arch/arm64/boot/dts/renesas/r8a774e1.dtsi     | 64 ++++++++++++++++++-
+ 2 files changed, 64 insertions(+), 1 deletion(-)
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+2.17.1
+
