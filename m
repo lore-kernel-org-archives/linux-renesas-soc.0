@@ -1,42 +1,78 @@
-Return-Path: <SRS0=+nxL=B3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=7Bty=CE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01EA8C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 18:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F295CC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Aug 2020 22:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E7529204EC
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 17 Aug 2020 18:42:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC5412074A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Aug 2020 22:57:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rmayaXWk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731694AbgHQSmb (ORCPT
+        id S1726894AbgHZW4o (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Aug 2020 14:42:31 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:45407 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388098AbgHQP5L (ORCPT
+        Wed, 26 Aug 2020 18:56:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53220 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbgHZW4n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Aug 2020 11:57:11 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id E14B040004;
-        Mon, 17 Aug 2020 15:56:59 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org, Leon Luo <leonl@leopardimaging.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
-        laurent.pinchart@ideasonboard.com,
+        Wed, 26 Aug 2020 18:56:43 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 947B9C061574;
+        Wed, 26 Aug 2020 15:56:42 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id v12so1860539lfo.13;
+        Wed, 26 Aug 2020 15:56:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=2Dgulwv05jUoieJr+gqcUbQ6wpsVte9CAar23MNPJ7E=;
+        b=rmayaXWkWon2jv52c0auSoGgImYxb3cXWfOnKRA4JOfzmQKy9JgRZUW5E61t2ZXFmU
+         NDiEf5cfhEwL+1ryqaLPW4Bv8vPhk8u3mD4MP762mnfR8F4Z6KmcJwCkSGndRZ/uhz8z
+         aey38Qfael4u/gcoPJlhChRqR5HKWa1mYMhneH/rQpc2zTUiGZl81HaOWtf5TufEpEZc
+         r0Wt3DqSSclJZa5RjuQa+D267u4yZ2Tb/1bzM29WPiurojFaB9f8jXz5/BRAPQjKUUXc
+         jcU/Mel3qHPZiUPzcMxUi08lh17P3PX6AU2Oi21fFvJWfEuwRnTWY3WM8ziy46/h/PSF
+         2VXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=2Dgulwv05jUoieJr+gqcUbQ6wpsVte9CAar23MNPJ7E=;
+        b=F8rMQn99Neb73xdkgb2VllQ/f/RR54yl7nF7+g+vh3y2tdxk4/8bi5qXTA6DRhnBHW
+         kJvhRZrDaOyrie5xkPdkqsNZ4Zryue8ZkuP9umYIBQn5yhY60OwCCjhfkInp7zm/CW4g
+         YJh4+y71md1qt+nDljbpEs71OKx40c47QeKlMz+OGnT4ZT/rkCUKqZXnaKGhEmROci1Y
+         N67EWm9bDH8wMvrcDI0fBj8wVCkESyWAqYgKq4MpKsdb/KSxLd583XaoDkCUU3QvtWPv
+         FZY/IEJzFiTznr2rXncJsiRExTdGubCQpCvw9i/618OlgeEqWapDawOLrr3rhpZzx/Rx
+         5gaA==
+X-Gm-Message-State: AOAM5318CEb1+Os8oCc8se8PmqV3rsniIXmzmyQygPhSZdooQihhRLfR
+        fnuKb400r+q5hxRLd815fag=
+X-Google-Smtp-Source: ABdhPJxIJrPEx4P5UUrtxzsS1aOaGySDzu0RLJFkjjQOlyjUVa6SZkN+2o4/SzbCk2Fw+RtWQj4FWw==
+X-Received: by 2002:ac2:598f:: with SMTP id w15mr8514645lfn.216.1598482601018;
+        Wed, 26 Aug 2020 15:56:41 -0700 (PDT)
+Received: from localhost.localdomain (h-82-196-111-59.NA.cust.bahnhof.se. [82.196.111.59])
+        by smtp.gmail.com with ESMTPSA id u28sm49075ljd.39.2020.08.26.15.56.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Aug 2020 15:56:40 -0700 (PDT)
+From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
+To:     "David S . Miller" <davem@davemloft.net>
+Cc:     Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: 
-Date:   Mon, 17 Aug 2020 18:00:37 +0200
-Message-Id: <20200817160037.255972-1-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.27.0
+Subject: [PATCH net-next 2/6] net: ethernet: ravb: constify bb_ops
+Date:   Thu, 27 Aug 2020 00:56:04 +0200
+Message-Id: <20200826225608.90299-3-rikard.falkeborn@gmail.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200826225608.90299-1-rikard.falkeborn@gmail.com>
+References: <20200826225608.90299-1-rikard.falkeborn@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -44,222 +80,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Subject: [PATCH] dt-bindings: media: imx274: Convert to json-schema
+The only usage of bb_ops is to assign its address to the ops field in
+the mdiobb_ctrl struct, which is a const pointer. Make it const to allow
+the compiler to put it in read-only memory.
 
-Convert the imx274 bindings document to json-schema and update
-the MAINTAINERS file accordingly.
-
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
 ---
- .../bindings/media/i2c/sony,imx214.txt        |  53 --------
- .../bindings/media/i2c/sony,imx214.yaml       | 124 ++++++++++++++++++
- MAINTAINERS                                   |   2 +-
- 3 files changed, 125 insertions(+), 54 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
- create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx214.yaml
+ drivers/net/ethernet/renesas/ravb_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt b/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
-deleted file mode 100644
-index f11f28a5fda4..000000000000
---- a/Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
-+++ /dev/null
-@@ -1,53 +0,0 @@
--* Sony 1/3.06-Inch 13.13Mp CMOS Digital Image Sensor
--
--The Sony imx214 is a 1/3.06-inch CMOS active pixel digital image sensor with
--an active array size of 4224H x 3200V. It is programmable through an I2C
--interface.
--Image data is sent through MIPI CSI-2, through 2 or 4 lanes at a maximum
--throughput of 1.2Gbps/lane.
--
--
--Required Properties:
--- compatible: Shall be "sony,imx214".
--- reg: I2C bus address of the device. Depending on how the sensor is wired,
--       it shall be <0x10> or <0x1a>;
--- enable-gpios: GPIO descriptor for the enable pin.
--- vdddo-supply: Chip digital IO regulator (1.8V).
--- vdda-supply: Chip analog regulator (2.7V).
--- vddd-supply: Chip digital core regulator (1.12V).
--- clocks: Reference to the xclk clock.
--- clock-frequency: Frequency of the xclk clock.
--
--Optional Properties:
--- flash-leds: See ../video-interfaces.txt
--- lens-focus: See ../video-interfaces.txt
--
--The imx214 device node shall contain one 'port' child node with
--an 'endpoint' subnode. For further reading on port node refer to
--Documentation/devicetree/bindings/media/video-interfaces.txt.
--
--Required Properties on endpoint:
--- data-lanes: check ../video-interfaces.txt
--- link-frequencies: check ../video-interfaces.txt
--- remote-endpoint: check ../video-interfaces.txt
--
--Example:
--
--	camera-sensor@1a {
--		compatible = "sony,imx214";
--		reg = <0x1a>;
--		vdddo-supply = <&pm8994_lvs1>;
--		vddd-supply = <&camera_vddd_1v12>;
--		vdda-supply = <&pm8994_l17>;
--		lens-focus = <&ad5820>;
--		enable-gpios = <&msmgpio 25 GPIO_ACTIVE_HIGH>;
--		clocks = <&mmcc CAMSS_MCLK0_CLK>;
--		clock-frequency = <24000000>;
--		port {
--			imx214_ep: endpoint {
--				data-lanes = <1 2 3 4>;
--				link-frequencies = /bits/ 64 <480000000>;
--				remote-endpoint = <&csiphy0_ep>;
--			};
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx214.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx214.yaml
-new file mode 100644
-index 000000000000..ddd4627214b1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/sony,imx214.yaml
-@@ -0,0 +1,124 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/i2c/sony,imx214.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Sony 1/3.06-Inch 13.13Mp CMOS Digital Image Sensor
-+
-+maintainers:
-+  - Ricardo Ribalda <ribalda@kernel.org>
-+
-+description: -|
-+  The Sony imx214 is a 1/3.06-inch CMOS active pixel digital image sensor with
-+  an active array size of 4224H x 3200V. It is programmable through an I2C
-+  interface.  Image data is sent through MIPI CSI-2, through 2 or 4 lanes at a
-+  maximum throughput of 1.2Gbps/lane.
-+
-+properties:
-+  compatible:
-+    const: sony,imx214
-+
-+  reg:
-+    description: -|
-+      I2C device address. Depends on how the sensor is wired, it shall be
-+    enum:
-+      - 0x10
-+      - 0x1a
-+
-+  clocks:
-+    description: Reference to the xclk clock.
-+    maxItems: 1
-+
-+  clock-frequency:
-+    description: Frequency of the xclk clock in Hz.
-+
-+  enable-gpios:
-+    description: GPIO descriptor for the enable pin.
-+    maxItems: 1
-+
-+  vdddo-supply:
-+    description: Chip digital IO regulator (1.8V).
-+    maxItems: 1
-+
-+  vdda-supply:
-+    description: Chip analog regulator (2.7V).
-+    maxItems: 1
-+
-+  vddd-supply:
-+    description: Chip digital core regulator (1.12V).
-+    maxItems: 1
-+
-+  flash-leds:
-+    description: See ../video-interfaces.txt
-+
-+  lens-focus:
-+    description: See ../video-interfaces.txt
-+
-+  port:
-+    type: object
-+    description: |
-+      The device node must contain one 'port' child node for its digital output
-+      video port, in accordance with the video interface bindings defined in
-+      Documentation/devicetree/bindings/media/video-interfaces.txt.
-+
-+    properties:
-+      endpoint:
-+        type: object
-+        properties:
-+          remote-endpoint:
-+            description: See ../video-interfaces.txt
-+
-+          data-lanes:
-+            description: See ../video-interfaces.txt
-+
-+          link-frequencies:
-+            description: See ../video-interfaces.txt
-+
-+        required:
-+          - data-lanes
-+          - link-frequencies
-+
-+    additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-frequency
-+  - enable-gpios
-+  - vdddo-supply
-+  - vdda-supply
-+  - vddd-supply
-+  - port
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    i2c0 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        camera-sensor@1a {
-+            compatible = "sony,imx214";
-+            reg = <0x1a>;
-+            vdddo-supply = <&pm8994_lvs1>;
-+            vddd-supply = <&camera_vddd_1v12>;
-+            vdda-supply = <&pm8994_l17>;
-+            lens-focus = <&ad5820>;
-+            enable-gpios = <&msmgpio 25 GPIO_ACTIVE_HIGH>;
-+            clocks = <&camera_clk>;
-+            clock-frequency = <24000000>;
-+
-+            port {
-+                imx214_ep: endpoint {
-+                    data-lanes = <1 2 3 4>;
-+                    link-frequencies = /bits/ 64 <480000000>;
-+                    remote-endpoint = <&csiphy0_ep>;
-+                };
-+            };
-+        };
-+    };
-+
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 6c8e98238a7b..d1a6173d3b64 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15918,7 +15918,7 @@ M:	Ricardo Ribalda <ribalda@kernel.org>
- L:	linux-media@vger.kernel.org
- S:	Maintained
- T:	git git://linuxtv.org/media_tree.git
--F:	Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
-+F:	Documentation/devicetree/bindings/media/i2c/sony,imx214.yaml
- F:	drivers/media/i2c/imx214.c
-
- SONY IMX219 SENSOR DRIVER
---
-2.27.0
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index df89d09b253e..f684296df871 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -162,7 +162,7 @@ static int ravb_get_mdio_data(struct mdiobb_ctrl *ctrl)
+ }
+ 
+ /* MDIO bus control struct */
+-static struct mdiobb_ops bb_ops = {
++static const struct mdiobb_ops bb_ops = {
+ 	.owner = THIS_MODULE,
+ 	.set_mdc = ravb_set_mdc,
+ 	.set_mdio_dir = ravb_set_mdio_dir,
+-- 
+2.28.0
 
