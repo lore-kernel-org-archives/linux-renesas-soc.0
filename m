@@ -7,150 +7,83 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A7F3C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Aug 2020 14:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4880C433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Aug 2020 15:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73C6622B4B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Aug 2020 14:53:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA85422B40
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Aug 2020 15:31:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbgH0Oxf (ORCPT
+        id S1728210AbgH0Pay (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 10:53:35 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:3877 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728013AbgH0OxX (ORCPT
+        Thu, 27 Aug 2020 11:30:54 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:48312 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727998AbgH0Paw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Aug 2020 10:53:23 -0400
+        Thu, 27 Aug 2020 11:30:52 -0400
 X-IronPort-AV: E=Sophos;i="5.76,359,1592838000"; 
-   d="scan'208";a="55482017"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 27 Aug 2020 23:53:22 +0900
+   d="scan'208";a="55700862"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 28 Aug 2020 00:30:50 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9829A40065C9;
-        Thu, 27 Aug 2020 23:53:20 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 229C9400759E;
+        Fri, 28 Aug 2020 00:30:47 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
         Rob Herring <robh+dt@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+Cc:     linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a774e1: Add cpuidle support for CA5x cores
-Date:   Thu, 27 Aug 2020 15:53:15 +0100
-Message-Id: <20200827145315.26261-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 2/2] dt-bindings: can: rcar_can: Document r8a774e1 support
+Date:   Thu, 27 Aug 2020 16:30:41 +0100
+Message-Id: <20200827153041.27806-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200827145315.26261-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20200827145315.26261-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20200827153041.27806-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20200827153041.27806-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enable cpuidle (core shutdown) support for RZ/G2H CA5x cores.
+Document SoC specific bindings for RZ/G2H (R8A774E1) SoC.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 30 +++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ Documentation/devicetree/bindings/net/can/rcar_can.txt | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-index 34fdb9a0c325..e5445ba99e84 100644
---- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-@@ -127,6 +127,7 @@
- 			power-domains = <&sysc R8A774E1_PD_CA57_CPU0>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_0>;
- 			dynamic-power-coefficient = <854>;
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
-@@ -141,6 +142,7 @@
- 			power-domains = <&sysc R8A774E1_PD_CA57_CPU1>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			capacity-dmips-mhz = <1024>;
-@@ -154,6 +156,7 @@
- 			power-domains = <&sysc R8A774E1_PD_CA57_CPU2>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_0>;
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			capacity-dmips-mhz = <1024>;
-@@ -167,6 +170,7 @@
- 			power-domains = <&sysc R8A774E1_PD_CA57_CPU3>;
- 			next-level-cache = <&L2_CA57>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_1>;
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
- 			operating-points-v2 = <&cluster0_opp>;
- 			capacity-dmips-mhz = <1024>;
-@@ -180,6 +184,7 @@
- 			power-domains = <&sysc R8A774E1_PD_CA53_CPU0>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_1>;
- 			#cooling-cells = <2>;
- 			dynamic-power-coefficient = <277>;
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
-@@ -194,6 +199,7 @@
- 			power-domains = <&sysc R8A774E1_PD_CA53_CPU1>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_1>;
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
- 			capacity-dmips-mhz = <535>;
-@@ -206,6 +212,7 @@
- 			power-domains = <&sysc R8A774E1_PD_CA53_CPU2>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_1>;
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
- 			capacity-dmips-mhz = <535>;
-@@ -218,6 +225,7 @@
- 			power-domains = <&sysc R8A774E1_PD_CA53_CPU3>;
- 			next-level-cache = <&L2_CA53>;
- 			enable-method = "psci";
-+			cpu-idle-states = <&CPU_SLEEP_1>;
- 			clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
- 			operating-points-v2 = <&cluster1_opp>;
- 			capacity-dmips-mhz = <535>;
-@@ -236,6 +244,28 @@
- 			cache-unified;
- 			cache-level = <2>;
- 		};
-+
-+		idle-states {
-+			entry-method = "psci";
-+
-+			CPU_SLEEP_0: cpu-sleep-0 {
-+				compatible = "arm,idle-state";
-+				arm,psci-suspend-param = <0x0010000>;
-+				local-timer-stop;
-+				entry-latency-us = <400>;
-+				exit-latency-us = <500>;
-+				min-residency-us = <4000>;
-+			};
-+
-+			CPU_SLEEP_1: cpu-sleep-1 {
-+				compatible = "arm,idle-state";
-+				arm,psci-suspend-param = <0x0010000>;
-+				local-timer-stop;
-+				entry-latency-us = <700>;
-+				exit-latency-us = <700>;
-+				min-residency-us = <5000>;
-+			};
-+		};
- 	};
+diff --git a/Documentation/devicetree/bindings/net/can/rcar_can.txt b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+index 85c6551b602a..21d6780874cc 100644
+--- a/Documentation/devicetree/bindings/net/can/rcar_can.txt
++++ b/Documentation/devicetree/bindings/net/can/rcar_can.txt
+@@ -9,6 +9,7 @@ Required properties:
+ 	      "renesas,can-r8a774a1" if CAN controller is a part of R8A774A1 SoC.
+ 	      "renesas,can-r8a774b1" if CAN controller is a part of R8A774B1 SoC.
+ 	      "renesas,can-r8a774c0" if CAN controller is a part of R8A774C0 SoC.
++	      "renesas,can-r8a774e1" if CAN controller is a part of R8A774E1 SoC.
+ 	      "renesas,can-r8a7778" if CAN controller is a part of R8A7778 SoC.
+ 	      "renesas,can-r8a7779" if CAN controller is a part of R8A7779 SoC.
+ 	      "renesas,can-r8a7790" if CAN controller is a part of R8A7790 SoC.
+@@ -37,8 +38,8 @@ Required properties:
+ - pinctrl-0: pin control group to be used for this controller.
+ - pinctrl-names: must be "default".
  
- 	extal_clk: extal {
+-Required properties for R8A774A1, R8A774B1, R8A774C0, R8A7795, R8A7796,
+-R8A77965, R8A77990, and R8A77995:
++Required properties for R8A774A1, R8A774B1, R8A774C0, R8A774E1, R8A7795,
++R8A7796, R8A77965, R8A77990, and R8A77995:
+ For the denoted SoCs, "clkp2" can be CANFD clock. This is a div6 clock and can
+ be used by both CAN and CAN FD controller at the same time. It needs to be
+ scaled to maximum frequency if any of these controllers use it. This is done
 -- 
 2.17.1
 
