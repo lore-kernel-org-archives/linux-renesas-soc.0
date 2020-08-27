@@ -2,75 +2,107 @@ Return-Path: <SRS0=9kdc=CF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E62C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Aug 2020 15:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B590C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Aug 2020 16:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AD9D22B40
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Aug 2020 15:31:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CD2622BF5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 27 Aug 2020 16:40:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="un7kjnEQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726232AbgH0Paq (ORCPT
+        id S1728083AbgH0QkR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 27 Aug 2020 11:30:46 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:9247 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726120AbgH0Paq (ORCPT
+        Thu, 27 Aug 2020 12:40:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728027AbgH0QkN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 27 Aug 2020 11:30:46 -0400
-X-IronPort-AV: E=Sophos;i="5.76,359,1592838000"; 
-   d="scan'208";a="55483987"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 28 Aug 2020 00:30:44 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3503C400759E;
-        Fri, 28 Aug 2020 00:30:42 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Thu, 27 Aug 2020 12:40:13 -0400
+Received: from mail-yb1-xb42.google.com (mail-yb1-xb42.google.com [IPv6:2607:f8b0:4864:20::b42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4432BC061264;
+        Thu, 27 Aug 2020 09:40:13 -0700 (PDT)
+Received: by mail-yb1-xb42.google.com with SMTP id x2so3289974ybf.12;
+        Thu, 27 Aug 2020 09:40:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WYSs0Dku1zdRA2KBaI0ZluOi6UmY5Y9GrXFeF+fDRFw=;
+        b=un7kjnEQ+aqsO+z8jtw8rj5enqEblNxAaBGnKPz5YF1M/H5UYX4IB2itVqzx4F9M+A
+         4Iw61Lgg+T2/csniC5jvZ46vzCXwe+6ucpfL//IIr2N4fzxId6yxup8IcTBmIH9J1wxH
+         xmgaggsssg9MRIaVUt4/uLPzY6xuiGzR9l3f6wTubw05+rhnAtN3ucwXRVkyO/E+iL2c
+         Jv+81bmqvmke2b2srFFNR6de7skjpZkTrzLADYU47UvUFd5kFw73lM1gHC3O60ILOWxW
+         I4ZCr2cSWmKOElAxgXNe3UVqleDnJSO5F8AP+wHoBbyarZgklem/skA1eZo7nJRMkMI8
+         wO1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WYSs0Dku1zdRA2KBaI0ZluOi6UmY5Y9GrXFeF+fDRFw=;
+        b=LknddWT94iGwy0TUuCFh4aLqFIfCjoDmqKnHuHRzAe3mBhxYE3N6pyN+K+hCo1ayhi
+         GISOETSch4gSBSmQfx2ezhAqfv72V4vOx4lhUehDRAbgmmhvFg/y39Uwb6xu/HQf/b1W
+         Xmmg3a7dXIydDk3QosNJBQrWfhv6K2Ohx4clTluOWNXf72cQcDUwVWjTC0aDV5Xn5Bf/
+         g3gA4O29cVgNrnEwz7+5Hm23SFCbqnp9gjo1wlEADOrIQwkLSti03udpArwC96EhBLsP
+         Oer5G2WVSiwYQWWUkGaP+Oe+ZAPtoQdQvITRhweqsgwL4NQyP8cpNPtawYeTwiwEHHPh
+         TIdA==
+X-Gm-Message-State: AOAM530j74d+cEuCNcQqM+Xpqex1b3UPzFhssKPkriQiZ4qFaFR8W1Pm
+        FkRB+bTBL1O6UYjXUI11MSyKhNqjiUnx7te1ntZ3ebl1odM=
+X-Google-Smtp-Source: ABdhPJxrvVPIJbZVxMNdYQbfcSKbpYNpnY4WH7M5vvvn2G4XY4Uv7BI34VoTls0DSRQbKIiloMf4ZMzXPy4YgYSJnGI=
+X-Received: by 2002:a25:2f4d:: with SMTP id v74mr28209467ybv.401.1598546412501;
+ Thu, 27 Aug 2020 09:40:12 -0700 (PDT)
+MIME-Version: 1.0
+References: <1594676120-5862-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1594676120-5862-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1594676120-5862-7-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Thu, 27 Aug 2020 17:39:46 +0100
+Message-ID: <CA+V-a8tZAp_oTpG2MsdC47TtGP7=oM6CubCnjBoR6UhV4=opNg@mail.gmail.com>
+Subject: Re: [PATCH 6/9] dt-bindings: gpio: renesas,rcar-gpio: Add r8a774e1 support
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH v2 0/2] dt-bindings: can: document R8A774E1
-Date:   Thu, 27 Aug 2020 16:30:39 +0100
-Message-Id: <20200827153041.27806-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Magnus Damm <magnus.damm@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi All,
+Hi Linus and Bartosz,
 
-Both the patches are part of series [1] (patch 18/20, 19/20),
-rest of the patches have been acked/merged so just sending
-two patches from the series.
-
-[1] https://lkml.org/lkml/2020/7/15/515
+On Mon, Jul 13, 2020 at 10:35 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+>
+> Document Renesas RZ/G2H (R8A774E1) GPIO blocks compatibility within the
+> relevant dt-bindings.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+>
+Gentle ping.
 
 Cheers,
 Prabhakar
-
-Changes for v2:
-* Added R8A774E1 to the list of SoCs that can use CANFD through "clkp2".
-* Added R8A774E1 to the list of SoCs that can use the CANFD clock.
-
-Lad Prabhakar (2):
-  dt-bindings: can: rcar_canfd: Document r8a774e1 support
-  dt-bindings: can: rcar_can: Document r8a774e1 support
-
- Documentation/devicetree/bindings/net/can/rcar_can.txt   | 5 +++--
- Documentation/devicetree/bindings/net/can/rcar_canfd.txt | 5 +++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
--- 
-2.17.1
-
