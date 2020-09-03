@@ -2,154 +2,136 @@ Return-Path: <SRS0=w2kQ=CM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB6DC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 13:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD8EC433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 14:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E2817208B3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 13:53:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9A4C20716
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 14:54:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhQ8s42i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728875AbgICNwq (ORCPT
+        id S1728917AbgICOyI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 09:52:46 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41182 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728788AbgICMjl (ORCPT
+        Thu, 3 Sep 2020 10:54:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39866 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729272AbgICOxq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 08:39:41 -0400
-Received: by mail-oi1-f196.google.com with SMTP id 2so2945706ois.8;
-        Thu, 03 Sep 2020 05:39:40 -0700 (PDT)
+        Thu, 3 Sep 2020 10:53:46 -0400
+Received: from mail-yb1-xb42.google.com (mail-yb1-xb42.google.com [IPv6:2607:f8b0:4864:20::b42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26492C061244;
+        Thu,  3 Sep 2020 07:53:46 -0700 (PDT)
+Received: by mail-yb1-xb42.google.com with SMTP id q3so2387534ybp.7;
+        Thu, 03 Sep 2020 07:53:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BUTCAz6NpTHnYSy41tDHUPK10I/ooWiW5ynjjM0xqGo=;
+        b=OhQ8s42iE3dDc5kXXKOjtj3ByKV7HNPHcTT/8BS+MTRq93ngVIXKHbgdetcF1nYstS
+         WzLJ9n1oGPeeSyqUKe9Ascrsc/Z0DKH6wDG1xw1T5ewzXHUzI6zTas600zMEUKUuPeov
+         urB/YG7EOEeEJ6MhTZhgLyDpanOwbbwsCPMx4eORDVW9pMiCanKW9uL//CprvQ6yi9PG
+         pZaLrX2BGXoND12Dw5gcq/XGR0FY9JoYFg3qhBr1pkkix/UZJJ6xid8IncCCB26XORL9
+         u/bDKaBnPpbcNDGc2WYwuOVqyvu4/fFfc5XfN1N9vr4/Cq3N8fSzgQEafkz2vFwZQSAO
+         ao7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5bmZl5dewM0LfN2Vd/uTPl9Sbm07TZQjqrLN7VKwBa0=;
-        b=dWi4D+dSE4sr0NjIrS47/WYD6RcbnT69FWqkeQsCZYHoS1/DVXl8bw5Xy5NxFGbu72
-         5msLTgmghf1qmnWqWQaqbA+ApGl6f3zgrBu7YxTlB//91muAtZU4tQCGKV/cJD1Nb5B3
-         nIPr2fJQVoFHMFxvykS/4aSAXGJPDRsTQvmbWNetQzqiHyNxv7idaTrdsaBK5inAL3gi
-         FPo8lY88GoGa9GZXCGbtoI8ewY0BQHTPcDgSK3l8TnrjibFM3ApPloTPBUlAVwbvOjIx
-         QoLWAHSzsSAgq/8XUUtVbCplQE83pOxYWJ8foPi1BxoHZ/57ltQji1RA8MJWe78iXWCy
-         uFIg==
-X-Gm-Message-State: AOAM532CKES2Ml4YLjJMnUTha3DMNourb7gOPK1SNl2M9dLYVKvqiLzz
-        /zEB8gopVgAsFtoKoTraKJ6q/RzZpGQgHMADdiA=
-X-Google-Smtp-Source: ABdhPJy1/sdSoJipDH2zAn63gAkE5ka8nPP+P8VYe40HBdY0l6jOfQEjhBLbTclJeIqB4Fw49mMpUX4/d8R3pxkt4ds=
-X-Received: by 2002:aca:b742:: with SMTP id h63mr1799607oif.148.1599136780383;
- Thu, 03 Sep 2020 05:39:40 -0700 (PDT)
+        bh=BUTCAz6NpTHnYSy41tDHUPK10I/ooWiW5ynjjM0xqGo=;
+        b=gStFiw8gUpQAkm3YECZss+788ZzJUgX5DRGV9xKIe2ZEfiJJbyRfclkX0hIRN9lC00
+         /ASBGKiXkEIFmeQis4KY7PucsuTdubtQmZKu7kT/Mt543zSAbfZmkk9R/5jYFKbC1Ui7
+         sVd8WHAMjURNMDePxlfaMtyJoTUcR5SC8LDc066yGhYJoC+QP/K9/dOTsomY6lpH798m
+         XTKZGZqxn1Q7bP09C8wAf72gNAw2MuOrevH2HZcbtbvKy396Iv33XKhGEDEplbQyfnv2
+         fplm3yVff+ORXZpmB5OIhG1BNITwArlbis4PQzHMsdLhkCU68QMazd3JV+TAv9RL1J8M
+         L55A==
+X-Gm-Message-State: AOAM5315xAJ3bDwWbAMAJp8ComXlJrlK523xggDuY/lz3pVv7CUHFsJJ
+        y1UTbhX6WoPFKPsvTMys76aQparmo0PQHzS7FSk=
+X-Google-Smtp-Source: ABdhPJzbm+ZT1PvppuhUQJcxzBdWcarzRL8lEAPC8ShJTmlv8eKrLSJ9hvyeIWhnAF79PlsOC+1g4btwsGdYP7cA4pU=
+X-Received: by 2002:a25:86cf:: with SMTP id y15mr2953409ybm.25.1599144825202;
+ Thu, 03 Sep 2020 07:53:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200827145315.26261-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200827145315.26261-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20200827145315.26261-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 3 Sep 2020 14:39:29 +0200
-Message-ID: <CAMuHMdUKMr+uaXYXyRrJS+HZT93H5LiPoPRcmjNj9Pph7RVnPQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a774e1: Add cpuidle support
- for CA5x cores
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+References: <1596187745-31596-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200801090456.GB1379367@oden.dyn.berto.se> <CA+V-a8sOHct_JetCsug8Z2BQpMLH2p39hj2XNw_1N5gkBQp1Gg@mail.gmail.com>
+ <20200803192108.GB2297236@oden.dyn.berto.se> <6d659e56-1e1f-c9c7-2e66-4ddc4e7fad15@xs4all.nl>
+In-Reply-To: <6d659e56-1e1f-c9c7-2e66-4ddc4e7fad15@xs4all.nl>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Thu, 3 Sep 2020 15:53:18 +0100
+Message-ID: <CA+V-a8uzznUvzGgZ5A4B8ASEDbmMCrQPSAcEjO7v45zmAkdGDQ@mail.gmail.com>
+Subject: Re: [PATCH] media: rcar-vin: Update crop and compose settings for
+ every s_fmt call
+To:     Niklas <niklas.soderlund@ragnatech.se>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-media <linux-media@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>
+        LKML <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Prabhakar,
-
-On Thu, Aug 27, 2020 at 4:53 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Enable cpuidle (core shutdown) support for RZ/G2H CA5x cores.
+On Wed, Aug 19, 2020 at 3:08 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
 >
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> On 03/08/2020 21:21, Niklas wrote:
+> > Hi Lad, Hans,
+> >
+> > On 2020-08-03 19:11:32 +0100, Lad, Prabhakar wrote:
+> >> Hi Hans,
+> >>
+> >> On Sat, Aug 1, 2020 at 10:04 AM Niklas <niklas.soderlund@ragnatech.se> wrote:
+> >>>
+> >>> Hi Lad,
+> >>>
+> >>> Thanks for your work.
+> >>>
+> >>> On 2020-07-31 10:29:05 +0100, Lad Prabhakar wrote:
+> >>>> The crop and compose settings for VIN in non mc mode werent updated
+> >>>> in s_fmt call this resulted in captured images being clipped.
+> >>>>
+> >>>> With the below sequence on the third capture where size is set to
+> >>>> 640x480 resulted in clipped image of size 320x240.
+> >>>>
+> >>>> high(640x480) -> low (320x240) -> high (640x480)
+> >>>>
+> >>>> This patch makes sure the VIN crop and compose settings are updated.
+> >>>
+> >>> This is clearly an inconsistency in the VIN driver that should be fixed.
+> >>> But I think the none-mc mode implements the correct behavior. That is
+> >>> that S_FMT should not modify the crop/compose rectangles other then make
+> >>> sure they don't go out of bounds. This is an area we tried to clarify in
+> >>> the past but I'm still not sure what the correct answer to.
+> >>>
+> >> What should be the exact behaviour of the bridge driver  for s_fmt
+> >> call. Should the crop/compose settings be updated for every s_fmt
+> >> callback or should they be only updated on s_selection callback.
+> >> Currently the non-mc rcar-vin doesnt update the crop/compose setting
+> >> in s_fmt callback due to which I see the above issue as mentioned.
+> >
+> > This is not entirely correct. It does update the crop and compose
+> > rectangles on s_fmt, it makes sure they are not out-of-bounds for the
+> > new format if it's accepted by s_fmt. See v4l2_rect_map_inside() calls
+> > in the snippet bellow.
+>
+> For non-mc mode s_fmt must update any crop/compose rectangles to ensure that
+> they are not out-of-bounds. But for mc mode the validation is done when you
+> start streaming, so I think s_fmt won't make any changes in that mode.
+>
+Thank you Hans.
 
-> --- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-> @@ -127,6 +127,7 @@
->                         power-domains = <&sysc R8A774E1_PD_CA57_CPU0>;
->                         next-level-cache = <&L2_CA57>;
->                         enable-method = "psci";
-> +                       cpu-idle-states = <&CPU_SLEEP_0>;
->                         dynamic-power-coefficient = <854>;
->                         clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
->                         operating-points-v2 = <&cluster0_opp>;
-> @@ -141,6 +142,7 @@
->                         power-domains = <&sysc R8A774E1_PD_CA57_CPU1>;
->                         next-level-cache = <&L2_CA57>;
->                         enable-method = "psci";
-> +                       cpu-idle-states = <&CPU_SLEEP_0>;
->                         clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
->                         operating-points-v2 = <&cluster0_opp>;
->                         capacity-dmips-mhz = <1024>;
-> @@ -154,6 +156,7 @@
->                         power-domains = <&sysc R8A774E1_PD_CA57_CPU2>;
->                         next-level-cache = <&L2_CA57>;
->                         enable-method = "psci";
-> +                       cpu-idle-states = <&CPU_SLEEP_0>;
->                         clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
->                         operating-points-v2 = <&cluster0_opp>;
->                         capacity-dmips-mhz = <1024>;
-> @@ -167,6 +170,7 @@
->                         power-domains = <&sysc R8A774E1_PD_CA57_CPU3>;
->                         next-level-cache = <&L2_CA57>;
->                         enable-method = "psci";
-> +                       cpu-idle-states = <&CPU_SLEEP_1>;
+> Double-check that with Laurent, though...
+>
+Niklas/Laurent - How do we proceed on this ?
 
-CPU_SLEEP_0
-
->                         clocks = <&cpg CPG_CORE R8A774E1_CLK_Z>;
->                         operating-points-v2 = <&cluster0_opp>;
->                         capacity-dmips-mhz = <1024>;
-> @@ -180,6 +184,7 @@
->                         power-domains = <&sysc R8A774E1_PD_CA53_CPU0>;
->                         next-level-cache = <&L2_CA53>;
->                         enable-method = "psci";
-> +                       cpu-idle-states = <&CPU_SLEEP_1>;
->                         #cooling-cells = <2>;
->                         dynamic-power-coefficient = <277>;
->                         clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
-> @@ -194,6 +199,7 @@
->                         power-domains = <&sysc R8A774E1_PD_CA53_CPU1>;
->                         next-level-cache = <&L2_CA53>;
->                         enable-method = "psci";
-> +                       cpu-idle-states = <&CPU_SLEEP_1>;
->                         clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
->                         operating-points-v2 = <&cluster1_opp>;
->                         capacity-dmips-mhz = <535>;
-> @@ -206,6 +212,7 @@
->                         power-domains = <&sysc R8A774E1_PD_CA53_CPU2>;
->                         next-level-cache = <&L2_CA53>;
->                         enable-method = "psci";
-> +                       cpu-idle-states = <&CPU_SLEEP_1>;
->                         clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
->                         operating-points-v2 = <&cluster1_opp>;
->                         capacity-dmips-mhz = <535>;
-> @@ -218,6 +225,7 @@
->                         power-domains = <&sysc R8A774E1_PD_CA53_CPU3>;
->                         next-level-cache = <&L2_CA53>;
->                         enable-method = "psci";
-> +                       cpu-idle-states = <&CPU_SLEEP_1>;
->                         clocks = <&cpg CPG_CORE R8A774E1_CLK_Z2>;
->                         operating-points-v2 = <&cluster1_opp>;
->                         capacity-dmips-mhz = <535>;
-
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-No need to resend, will fix while queueing in renesas-devel for v5.10.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+Prabhakar
