@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FDAC433E9
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 12:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 957A0C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 12:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B70C20775
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 12:26:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75A5520639
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 12:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbgICM0i (ORCPT
+        id S1728603AbgICMdx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 08:26:38 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35156 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728756AbgICMZQ (ORCPT
+        Thu, 3 Sep 2020 08:33:53 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43657 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728685AbgICMco (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 08:25:16 -0400
-Received: by mail-ot1-f65.google.com with SMTP id i4so2526229ota.2;
-        Thu, 03 Sep 2020 05:25:15 -0700 (PDT)
+        Thu, 3 Sep 2020 08:32:44 -0400
+Received: by mail-ot1-f66.google.com with SMTP id v16so2499503otp.10;
+        Thu, 03 Sep 2020 05:32:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yoH8otJKneHhR+opHL4Qe3/H5myYYwGysCvobqpQrFU=;
-        b=qNuPrdImKETtHEhctvhPOLQv3LzCc1JEWOBIulpHGKUcGGBbTaadJ5kJT0HrJVkeQL
-         RM4iLwqrLubl33Q5LTHZYEh3sPVKS1DvfJpL1MTvrK/6ZF99xitJy3rrtC+NgPKCcz6I
-         SUcHDNWIXE2Cj6KWNx6PfuWaTkPRrASdtPmJPQRAuTvC8u8MF5Tsuuo8iWW+CcqMPIil
-         aKUOP1z8yIhM9av/R9dj6LDSV0bCLorNoC84vMqufqCPV6u3gDR1tdbdE3ZY4PzdGrTR
-         qXCq+5/oEfnzCTtQl/SQKaqeIS+VA0wJVrG+gr5O6E0s0nlqYtPKgZrk/add/yhcHd37
-         N2gQ==
-X-Gm-Message-State: AOAM531SThgdb9mwXJ/39HtCR+9cMifM6jzAuLG5BFSMQsDYLlpVFIzU
-        31cYS4tQDe9cd1uxtjOQfp5fUvlvnsrGpLLnRQt9d90JplY=
-X-Google-Smtp-Source: ABdhPJx6avH3C2TKsyCvh/3I9dhPX40IElmyXMkGAOAO9ix8cDNZKHbE66NR+61my3IRjdnIpw+n+bSrWEBHgpegwSk=
-X-Received: by 2002:a9d:1b62:: with SMTP id l89mr1331699otl.145.1599135265698;
- Thu, 03 Sep 2020 05:14:25 -0700 (PDT)
+        bh=can7pBcZYDul0Yv961+RYr27uzFiovUj2L4qqu06vo4=;
+        b=m0at/2ZddyPOrGauz8Gik9j7DIC1dBfoT9idULCGENTPwCcWJcRmA8up5jC3ZEtz+G
+         hp/s36QaYWVnK6h78VXGRtowL0MvGKs+LJujLgp9a5hndSKjQ7ct6wHs8GB4NtIEfpdB
+         IbihvUZzu4JVsY8fTin9i/YYnkYYzQ+p9wuHTvq7ckMi3UYDaKrxnk4LqCkLEZdvEC6e
+         mkw0msAD9irWXrQHUB/KTaveirn9L7B3lv8RT0CSWf+LCm6Xt1x+fgkhoGpxAut8heKD
+         o2tp5MCr16PEY7rbMwTer1Ru67k1KcY7AwuTFUFFs8xsTrog/lVf3b2A3ifjjQRuYijy
+         pfng==
+X-Gm-Message-State: AOAM532xBakKRoNlzv4q1UFNZ/iCX1cQ1TseWex00otlESEZSqaSAiD4
+        /kL7NsPhclU8mB15oCBassTfwK4t1mA9gZZ3T3a6eLcg
+X-Google-Smtp-Source: ABdhPJx6ZN6dIKCLmZa8/h6JuRl/a8sbPFsQdsiD7b3k8qmpNJCRyue7gicu/8dRp3YgYp1zte94/1mVNN5TwHZSEPk=
+X-Received: by 2002:a9d:1b62:: with SMTP id l89mr1387866otl.145.1599136328504;
+ Thu, 03 Sep 2020 05:32:08 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200825162718.5838-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200825162718.5838-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20200825162718.5838-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20200827145315.26261-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200827145315.26261-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20200827145315.26261-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 3 Sep 2020 14:14:14 +0200
-Message-ID: <CAMuHMdUbxtb+Yg=3dgRXWXn2k2tGYcmVzbS-n6rLM0QAJrfo-A@mail.gmail.com>
-Subject: Re: [PATCH 3/4] ARM: dts: r8a7742-iwg21d-q7: Add can0 support to
- carrier board
+Date:   Thu, 3 Sep 2020 14:31:57 +0200
+Message-ID: <CAMuHMdWs-K=i7Z7fcsWTPj0N_eqs03KUGL6msiCyQXd6v2tq0g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a774e1: Add FDP1 device nodes
 To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -60,60 +59,17 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Prabhakar,
-
-On Tue, Aug 25, 2020 at 6:28 PM Lad Prabhakar
+On Thu, Aug 27, 2020 at 4:53 PM Lad Prabhakar
 <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> This patch enables CAN0 interface exposed through connector J20 on the
-> carrier board.
+> From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 >
+> Add FDP1 device nodes to R8A774E1 (RZ/G2H) SoC dtsi.
+>
+> Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
-According to my schematics, the CAN port on J20 has its signals named
-CAN0_[RT]XD on the carrier board, but connected to CAN1[RT]X (GP4_[67])
-on the SoM.
-
-Or am I looking at the wrong file?
-
-> --- a/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
-> +++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
-> @@ -198,6 +198,13 @@
->         };
->  };
->
-> +&can0 {
-
-can1
-
-> +       pinctrl-0 = <&can0_pins>;
-
-can1_pins
-
-> +       pinctrl-names = "default";
-> +
-> +       status = "okay";
-> +};
-> +
->  &cmt0 {
->         status = "okay";
->  };
-
-> @@ -287,6 +303,11 @@
->                 function = "tpu0";
->         };
->
-> +       can0_pins: can0 {
-> +               groups = "can0_data_d";
-
-can1_data_b
-
-> +               function = "can0";
-> +       };
-> +
->         i2c2_pins: i2c2 {
->                 groups = "i2c2_b";
->                 function = "i2c2";
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.10.
 
 Gr{oetje,eeting}s,
 
