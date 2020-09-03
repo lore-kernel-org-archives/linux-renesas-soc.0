@@ -2,89 +2,128 @@ Return-Path: <SRS0=w2kQ=CM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45800C433E9
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 12:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0797BC433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 13:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BF6420767
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 12:53:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D68A720758
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 13:13:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbgICMvd (ORCPT
+        id S1729007AbgICNNB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 08:51:33 -0400
-Received: from mail-oo1-f67.google.com ([209.85.161.67]:46272 "EHLO
-        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728875AbgICMud (ORCPT
+        Thu, 3 Sep 2020 09:13:01 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:65055 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728984AbgICNJc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 08:50:33 -0400
-Received: by mail-oo1-f67.google.com with SMTP id r6so726857oon.13;
-        Thu, 03 Sep 2020 05:50:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1yBWyc30bteRaNTbWi/EHvxP4KqoZ2tFWWNTbRmlkVg=;
-        b=LBQe1SCYwo2RDdltUNQaSMxBfC+8NEmVEbLDKnf9raanYm12UtLTQcxzibdr1M5Zq2
-         hDjw3yGtAaKFPgL1+Jr5oLXT/cOnln2rTpIIPpFB7i5J9ZIR+jiwNTYjSTqoXE+dsjK0
-         7EifohrWpnTeRfrm9JbqsLvzkE502g0lKvSJxRQA+Dj0LvzzaUpsleNrxmGqcX9ny7Xf
-         Vom9FwrDh3zL+QM60bF2ud8UdJ18EzQOdDrTwoZMEpYUUlf9X08UaB2PN2u/KSK/LIgR
-         OSEPDF4Vb9vOEnBhJ+GkcQM7Fob1dXwvRup9o1lYo7Fvz2pURSESM4edFGwK9sZLrrnc
-         EOlA==
-X-Gm-Message-State: AOAM530uCZoi+7Pd260eGG0XXN/uVoJvBLMgNcpE09g3ICnf9Zkn5XO1
-        dTaR/ifPaWN9FEb1gjlQymRpeBr5uZuNTZJ9eRg=
-X-Google-Smtp-Source: ABdhPJwgUA8/9dTAUlU6cdfP4MyPR6AGrwuHJomj48EOQHbXLlXOR6xpU06maOKGZ+lkXERSWteneVva1v5pLewTTtE=
-X-Received: by 2002:a4a:5403:: with SMTP id t3mr1634127ooa.11.1599137432385;
- Thu, 03 Sep 2020 05:50:32 -0700 (PDT)
+        Thu, 3 Sep 2020 09:09:32 -0400
+X-Originating-IP: 2.224.242.101
+Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id C6F9C40026;
+        Thu,  3 Sep 2020 13:07:03 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-media@vger.kernel.org,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+        laurent.pinchart@ideasonboard.com,
+        linux-renesas-soc@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v4 3/3] dt-bindings: media: ov772x: Document endpoint props
+Date:   Thu,  3 Sep 2020 15:10:29 +0200
+Message-Id: <20200903131029.18334-4-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200903131029.18334-1-jacopo+renesas@jmondi.org>
+References: <20200903131029.18334-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-References: <20200831183722.8165-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20200831183722.8165-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 3 Sep 2020 14:50:21 +0200
-Message-ID: <CAMuHMdUnOuEppcU5XYeD0inMErPErrWZ7Ufrno4fg=VBYtc76w@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: cpg-mssr: Rename vsp1-(sy|rt) clocks to vsp(s|r)
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Aug 31, 2020 at 8:37 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> VSP1 instances VSPS (which stands for "VSP Standard") and VSPR (which
-> stands for "VSP for Resizing") were wrongly named as "vsp1-sy" and
-> "vsp1-rt". The clock section in the SoC datasheets misunderstood the
-> abbreviations as meaning VSP System and VSP Realtime, and named the
-> corresponding clocks VSP1(SY) and VSP1(RT). This mistake has been
-> carried over to the kernel code.
->
-> This patch fixes this by renaming the clock names to "vsps" and "vspr".
->
-> Inspired from commit 79ea9934b8df ("ARM: shmobile: r8a7790: Rename
-> VSP1_(SY|RT) clocks to VSP1_(S|R)")
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Document endpoint properties for the parallel bus type and
+add them to the example.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.10.
+Specify a few constraints:
+- If the bus type is BT.656 no hsync or vsycn polarities can be
+  specified.
+- If the bus width is 10 bits, not data-shift can be applied.
 
-Gr{oetje,eeting}s,
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ .../bindings/media/i2c/ovti,ov772x.yaml       | 44 +++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
+index 406e9cd463a2..c596cbd1e92d 100644
+--- a/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
+@@ -52,6 +52,45 @@ properties:
+           bus-type:
+             enum: [5, 6]
+ 
++          bus-width:
++            enum: [8, 10]
++            default: 10
++
++          data-shift:
++            enum: [0, 2]
++            default: 0
++
++          hsync-active:
++            enum: [0, 1]
++            default: 1
++
++          vsync-active:
++            enum: [0, 1]
++            default: 1
++
++          pclk-sample:
++            enum: [0, 1]
++            default: 1
++
++        allOf:
++          - if:
++              properties:
++                bus-type:
++                  const: 6
++            then:
++                properties:
++                  hsync-active: false
++                  vsync-active: false
++
++          - if:
++              properties:
++                bus-width:
++                  const: 10
++            then:
++                properties:
++                  data-shift:
++                    const: 0
++
+         required:
+           - remote-endpoint
+           - bus-type
+@@ -85,6 +124,11 @@ examples:
+             port {
+                 ov772x_0: endpoint {
+                     bus-type = <5>;
++                    vsync-active = <0>;
++                    hsync-active = <0>;
++                    pclk-sample = <0>;
++                    bus-width = <8>;
++                    data-shift = <0>;
+                     remote-endpoint = <&vcap1_in0>;
+                 };
+             };
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.28.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
