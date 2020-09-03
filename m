@@ -2,30 +2,29 @@ Return-Path: <SRS0=w2kQ=CM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D209C433E9
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 13:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AD3C433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 13:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 335BD20775
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 13:28:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64FA020786
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 13:32:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729021AbgICNNO (ORCPT
+        id S1729064AbgICNcD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 09:13:14 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:63503 "EHLO
+        Thu, 3 Sep 2020 09:32:03 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:55911 "EHLO
         relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728973AbgICNIu (ORCPT
+        with ESMTP id S1728935AbgICNIu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 3 Sep 2020 09:08:50 -0400
 X-Originating-IP: 2.224.242.101
 Received: from uno.lan (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 284DE4000C;
-        Thu,  3 Sep 2020 13:06:59 +0000 (UTC)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 60B0840019;
+        Thu,  3 Sep 2020 13:06:53 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
         linux-media@vger.kernel.org,
@@ -33,14 +32,11 @@ To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
         sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
         laurent.pinchart@ideasonboard.com,
-        linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 2/3] dt-bindings: media: ov772x: Make bus-type mandatory
-Date:   Thu,  3 Sep 2020 15:10:28 +0200
-Message-Id: <20200903131029.18334-3-jacopo+renesas@jmondi.org>
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 0/3] dt-bindings: media: ov772x: Convert to json-schema
+Date:   Thu,  3 Sep 2020 15:10:26 +0200
+Message-Id: <20200903131029.18334-1-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200903131029.18334-1-jacopo+renesas@jmondi.org>
-References: <20200903131029.18334-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -48,62 +44,31 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-In order to establish required properties based on the selected
-bus type, make the 'bus-type' property mandatory. As this change
-documents an endpoint property, also document the 'remote-endpoint'
-one now that the 'endpoint' schema has been expanded.
+Convert the ov722x bindings to json-schema and add endpoint properties and
+bus-type.
 
-Binary compatibility with existing DTB is kept as the driver does not
-enforce the property to be present, and shall fall-back to default
-parallel bus configuration, which was the only supported bus type, if
-the property is not specified.
+Compared to v3 in 1/3 I have not documented 'endpoint'
+Then 2/3 introduces the 'bus-type' endpoint properties, so I had to document
+'endpoint' and list 'remote-endpoint' as required (which makes me think I
+could have kept it in 1/3, but for sake of consistency...)
+3/3 adds endpoint properties, whose presence is conditional to the specified
+bus-type.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- .../bindings/media/i2c/ovti,ov772x.yaml       | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+Thanks
+  j
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
-index e7e2d31fcc23..406e9cd463a2 100644
---- a/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
-@@ -41,6 +41,25 @@ properties:
-     description: |
-       Video output port. See ../video-interfaces.txt.
- 
-+    properties:
-+      endpoint:
-+        type: object
-+
-+        properties:
-+          remote-endpoint:
-+            description: See ../video-interfaces.txt
-+
-+          bus-type:
-+            enum: [5, 6]
-+
-+        required:
-+          - remote-endpoint
-+          - bus-type
-+
-+        additionalProperties: false
-+
-+    additionalProperties: false
-+
- required:
-   - compatible
-   - reg
-@@ -65,6 +84,7 @@ examples:
- 
-             port {
-                 ov772x_0: endpoint {
-+                    bus-type = <5>;
-                     remote-endpoint = <&vcap1_in0>;
-                 };
-             };
--- 
+Jacopo Mondi (3):
+  dt-bindings: media: ov772x: Convert to json-schema
+  dt-bindings: media: ov772x: Make bus-type mandatory
+  dt-bindings: media: ov772x: Document endpoint props
+
+ .../devicetree/bindings/media/i2c/ov772x.txt  |  40 -----
+ .../bindings/media/i2c/ovti,ov772x.yaml       | 138 ++++++++++++++++++
+ MAINTAINERS                                   |   2 +-
+ 3 files changed, 139 insertions(+), 41 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/ov772x.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
+
+--
 2.28.0
 
