@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 205D6C433E9
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 12:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E6CC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 12:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDF9F2072A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 12:01:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1FCB20767
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 12:23:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728591AbgICL7f (ORCPT
+        id S1726327AbgICMXF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 07:59:35 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:37790 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728646AbgICL7Q (ORCPT
+        Thu, 3 Sep 2020 08:23:05 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42161 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728788AbgICMUo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 07:59:16 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 37so2442294oto.4;
-        Thu, 03 Sep 2020 04:59:15 -0700 (PDT)
+        Thu, 3 Sep 2020 08:20:44 -0400
+Received: by mail-oi1-f193.google.com with SMTP id x14so2883154oic.9;
+        Thu, 03 Sep 2020 05:20:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9ImNPfe7CCahb0OVlVwJzlrDCDsuxJrxvrkCtfeRX6E=;
-        b=cdqMLjRA/mbdU6rkFPcQBa/Z+1kkBpUc0pXWz+wutZb4q6pzTx+dPxD48ZAqN1SvXA
-         /RDUh5t61SDy8hSNragnrhBlWqzLLag9HrIs1ojuXaI1z6757v5OqUO+4Yh+mXl6jB3k
-         XdbmyR0ltogzORZshcWLu/FPki0Dkk2cuhV4pD7pmrQs/B15jPhFJRx9OWZtb6firV/s
-         2Is66E/9nKFQkeApRs1uH3EIUTI/E+R7a/sqVSErf0oBPUgDkXRy8CYyAIg3uVMQe1Me
-         35chlc5JZugrW6qiBHcja5k0cZrExRGa/QLQvFoG19bIt5y0Uq89y59drTH1FU7T7mU8
-         QrAw==
-X-Gm-Message-State: AOAM532Gk0X431ImfwteHN0d4JYYvZYNA0TB428DUVOs+N/TaIp7Lt1h
-        JZVITaPYoLdvNsTkM0BN2yBy0jGb3pKwSCtFWi4AMvOOa3A=
-X-Google-Smtp-Source: ABdhPJxVMGiJTBSxcKTjbAnuB4JjiObB+hMYFGLmWixYQnn1WNtT3AEXJ9StsQu0r70/kt1B0UdLSv0+rEtB5Fin9K4=
-X-Received: by 2002:a9d:162:: with SMTP id 89mr1340662otu.250.1599134355136;
- Thu, 03 Sep 2020 04:59:15 -0700 (PDT)
+        bh=b0ZpySPy7yqyV6pHx8W2hSYMz0jzeiFIxsxLxJiD2v0=;
+        b=UreiSPv7jZpNexLepp754X/0i2pAh15YPG19kwE7alEtsHrxNuYvoI8WInwIlZvy0e
+         Wft4K/5FHIt3yhrwAoTyFV1iD5cjHqtVCxrcWe/64qYXxAWCCJcxEJdUY0cqfVX0YTpj
+         A3srpaz9YJSNp4Y0d5khGw9B6hoEgRuwlETmQFztjU2sjq+D4JabnDcXDAHPABqGG9mu
+         2N9KMJr7bGPIhvGioUJi57XY9CdXU8lL7N4j+Tfwkr1HAk0f3DdzFrjhmgRAn2ngO58r
+         vA2+hqKzjo8BSOa/xSACr1o2oU3POrKjyVUB5wrZzi0W54ytu466LhR26SxtwwZin63e
+         68WQ==
+X-Gm-Message-State: AOAM531pQsFVbQndflilVDV8gHW/rCG+nGeY9leZMpvsTcxtI7+acgvn
+        VZaW/zCCR2mElVn9r2xy6eA/CmboFMViy8UcKt0=
+X-Google-Smtp-Source: ABdhPJzi0RqG44kBfG7yCJKST/WW8DdmYKQRVvygPG19xSbPCTmfEGN6JDpJovKl1yQPxiTTd5NyotNlR35Bf088kaU=
+X-Received: by 2002:aca:b742:: with SMTP id h63mr1755272oif.148.1599135622590;
+ Thu, 03 Sep 2020 05:20:22 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200825162718.5838-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200825162718.5838-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20200825162718.5838-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20200825162718.5838-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200825162718.5838-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20200825162718.5838-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 3 Sep 2020 13:59:04 +0200
-Message-ID: <CAMuHMdXm9D8-bg3XdGqD7AKe2vMiZLNWENH3A0w-b7j=qZS=pA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] ARM: dts: r8a7742-iwg21d-q7: Add SPI NOR support
+Date:   Thu, 3 Sep 2020 14:20:11 +0200
+Message-ID: <CAMuHMdXkGBfwNOwd5-=U3wg6U0O+3BErbXuybbuytgzsCmZqRQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] ARM: dts: r8a7742-iwg21d-q7: Enable SD2 LED indication
 To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -63,61 +63,39 @@ Hi Prabhakar,
 
 On Tue, Aug 25, 2020 at 6:28 PM Lad Prabhakar
 <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Add support for the SPI NOR device which is connected to MSIOF0 interface
-> on the iWave RainboW-G21d-q7 board.
+> Add support for LED trigger on SD2 interface.
 >
 > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 
 > --- a/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
 > +++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
-> @@ -220,6 +220,32 @@
->         status = "okay";
->  };
->
-> +&msiof0 {
-> +       pinctrl-0 = <&msiof0_pins>;
-> +       pinctrl-names = "default";
-> +       cs-gpios = <&gpio5 13 GPIO_ACTIVE_LOW>;
-> +
-> +       status = "okay";
-> +
-> +       flash1: flash@0 {
-> +               compatible = "sst,sst25vf016b", "jedec,spi-nor";
-> +               reg = <0>;
-> +               spi-max-frequency = <50000000>;
-> +               m25p,fast-read;
-> +
-> +               partitions {
-> +                       compatible = "fixed-partitions";
-> +                       #address-cells = <1>;
-> +                       #size-cells = <1>;
-> +
-> +                       partition@0 {
-> +                               label = "user";
-> +                               reg = <0x00000000 0x00200000>;
-> +                       };
-> +               };
-> +       };
-> +};
-> +
->  &pci0 {
->         pinctrl-0 = <&usb0_pins>;
->         pinctrl-names = "default";
-> @@ -266,6 +292,11 @@
->                 function = "i2c2";
+> @@ -63,6 +63,16 @@
+>                 enable-gpios = <&gpio3 11 GPIO_ACTIVE_HIGH>;
 >         };
 >
-> +       msiof0_pins: msiof0 {
-> +               groups = "msiof0_clk", "msiof0_tx", "msiof0_rx";
+> +       leds {
+> +               compatible = "gpio-leds";
+> +
+> +               sdhi2_led {
+> +                       label = "sdio-led";
+> +                       gpios = <&gpio5 22 GPIO_ACTIVE_LOW>;
 
-I think you're missing "msiof0_sync", connected to SPI_CS0#?
+GPIO_ACTIVE_HIGH?
 
-With that fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The LED is driven by an NPN transistor, with the LED between 3.3V and
+the transistor's collector.
 
-> +               function = "msiof0";
+> +                       linux,default-trigger = "mmc1";
+> +               };
 > +       };
+> +
+>         lvds-receiver {
+>                 compatible = "ti,ds90cf384a", "lvds-decoder";
+>                 vcc-supply = <&vcc_3v3_tft1>;
+
+With the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
