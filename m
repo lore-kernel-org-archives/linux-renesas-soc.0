@@ -2,165 +2,145 @@ Return-Path: <SRS0=w2kQ=CM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA48C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 15:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CECA4C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 15:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49D1B20578
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 15:20:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l23jQ5rF"
+	by mail.kernel.org (Postfix) with ESMTP id B265B2072A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Sep 2020 15:55:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728957AbgICPU3 (ORCPT
+        id S1728514AbgICPzW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Sep 2020 11:20:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35976 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728548AbgICL1B (ORCPT
+        Thu, 3 Sep 2020 11:55:22 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:64095 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728483AbgICPzW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Sep 2020 07:27:01 -0400
-Received: from mail-yb1-xb42.google.com (mail-yb1-xb42.google.com [IPv6:2607:f8b0:4864:20::b42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB2F1C061246;
-        Thu,  3 Sep 2020 04:18:28 -0700 (PDT)
-Received: by mail-yb1-xb42.google.com with SMTP id h20so1939061ybj.8;
-        Thu, 03 Sep 2020 04:18:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=vSTdiuU7UW8q2OVQi9q+98jV2wni9irf58KIjeuCLZE=;
-        b=l23jQ5rFCiIyga1ZOrbBcnNyWnB9gGbwRMVitiYAhAKXGULvVU1UksrMHHDstOCrli
-         L/MsoQI3hPI1M6BSun/jbMy0j7qljuwZplYaXKFETuH7yEduLZZv3sb4nUDnWsKjqs6H
-         X+ucJJFhk96Alf4w4WeUVcsklvBI5i4mIETEx48aydiOCb4ynwBV6NUWyYQeGuMxo227
-         Ap/8BZ/yYPSnQENMXdjvelgOeIHCTYjCQdXBQU+elhlBYhd35+KaTbfJLFXOEdFf/x4U
-         vIbQ+VtBD5P1XUMM34xhXOmHVyWiEDwa5mS4w3ny/ndWa0XoO6hdDMM2TSsiorBkU9Bk
-         e9hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=vSTdiuU7UW8q2OVQi9q+98jV2wni9irf58KIjeuCLZE=;
-        b=O1bMFNDhrl1tGlJJXWswytqahTBOCmk8aO50D8nxkQhomSAws7nNwn1/qGkydpzIbn
-         nUJmFM1YrigN/b1Tem+WOh5wTPEBi/f3JFlmwwX137M1vu+Fw8ckGmYReBQVcG3zM/Fk
-         +RrNfZRRDbQziAtL8dMLb9m7GIHaDSzM65K13bMzvVSSxNcAcH4cKAvmiLFSttbwExbR
-         vymOwZ/19tmOvPvGKYqpTxRca0hGdKYlTc5phqSsszGpROisgYYUZtAqzdFOZaOn5unR
-         OGphqIEqgcSqBMtZScUTWVKXutG5/C8aTeknFlKUOh4nQd4+Oaxj8ztTzkRbVsCBFNPE
-         aEWQ==
-X-Gm-Message-State: AOAM531iXyS8/WSxty0VYnxA08e4BjubYtwmXTF7pbhH/vs74OXHp3W5
-        0waupDdXQXKK6v++xa0+burKHirnM2Lu1DYv49g=
-X-Google-Smtp-Source: ABdhPJzVF1YWU0hFuTeXXBWlQUQXW13GtCNpXXV/WX/2S85bIjmuraoJzeRVrhZaoiJXYKvUCHyFvwpP1gI72OwwzXU=
-X-Received: by 2002:a25:dc0c:: with SMTP id y12mr1834334ybe.395.1599131908024;
- Thu, 03 Sep 2020 04:18:28 -0700 (PDT)
+        Thu, 3 Sep 2020 11:55:22 -0400
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 95975240011;
+        Thu,  3 Sep 2020 15:55:16 +0000 (UTC)
+Date:   Thu, 3 Sep 2020 17:59:02 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH v3 1/2] media: i2c: ov772x: Add support for BT656 mode
+Message-ID: <20200903155902.3opuzv52jdpiszuw@uno.localdomain>
+References: <20200824190406.27478-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200824190406.27478-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-References: <20200825162718.5838-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200825162718.5838-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVVvDEq-GSsPDrx09TCfGCWkNQvGYrNWP4gK2=63G2z1w@mail.gmail.com>
-In-Reply-To: <CAMuHMdVVvDEq-GSsPDrx09TCfGCWkNQvGYrNWP4gK2=63G2z1w@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 3 Sep 2020 12:18:01 +0100
-Message-ID: <CA+V-a8sqVGHHQ0ayH7CvKANyCpsFPBy6OuqoGQHPS7iOX20rCg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] ARM: dts: r8a7742-iwg21d-q7: Enable PCIe Controller
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200824190406.27478-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hi Prabhakar,
 
-Thank you for the review.
+On Mon, Aug 24, 2020 at 08:04:05PM +0100, Lad Prabhakar wrote:
+> Add support to read the bus-type and enable BT656 mode if needed.
+>
+> Also fail probe if unsupported bus_type is detected.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-On Thu, Sep 3, 2020 at 11:18 AM Geert Uytterhoeven <geert@linux-m68k.org> w=
-rote:
->
-> Hi Prabhakar,
->
-> On Tue, Aug 25, 2020 at 6:28 PM Lad Prabhakar
-> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > Enable PCIe Controller and set PCIe bus clock frequency.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-devel for v5.10.
->
-> One thing to double-check below.
->
-> > --- a/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
-> > +++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
-> > @@ -238,6 +238,18 @@
-> >         /* status =3D "okay"; */
-> >  };
-> >
-> > +&pcie_bus_clk {
-> > +       clock-frequency =3D <100000000>;
-> > +};
-> > +
-> > +&pciec {
-> > +       /* SW2[6] determines which connector is activated
-> > +        * ON =3D PCIe X4 (connector-J7)
-> > +        * OFF =3D mini-PCIe (connector-J26)
->
-> The table on page 14 says it's the other way around.
->
-> According to the CBTL02042ABQ datasheet, PCIe_SEL =3D low
-> selects the first channel (PCIe x4), while PCIe_SEL =3D high selects the
-> second channel (mini-PCIe).
-> Enabling the switch ties the signal low, so the table must be wrong.
->
-Referring to [1] page 3:
+Looks good to me
+Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
 
-SEL =3D LOW: A=E2=86=94B
-SEL =3D HIGH: A=E2=86=94C
+Thanks
+  j
 
-And as per the schematic iW-PREJD-CS-01-R2.0-REL1.5.pdf channel B is
-J7 (PCIe X 4) and channel C is J26 (mini PCIe slot).
-
-Enabling the switch SW2[6] (ON) ties SEL to LOW -> channel B is J7 (PCIe X =
-4)
-Disabling the switch SW2[6] (OFF) ties SEL to HIGH -> channel C is J26
-(mini PCIe)
-
-Also iW-PREJD-CS-01-R2.0-REL1.5.pdf page 14 (General purpose table DIP
-Switch) mentions the above.
-
-[1] https://www.mouser.co.uk/datasheet/2/302/CBTL02042A_CBTL02042B-1126164.=
-pdf
-
-Cheers,
-Prabhakar
-
-> > +        */
-> > +       status =3D "okay";
-> > +};
-> > +
-> >  &pfc {
-> >         avb_pins: avb {
-> >                 groups =3D "avb_mdio", "avb_gmii";
+> ---
+>  drivers/media/i2c/ov772x.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 >
-> Gr{oetje,eeting}s,
+> diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
+> index 2cc6a678069a..67764d647526 100644
+> --- a/drivers/media/i2c/ov772x.c
+> +++ b/drivers/media/i2c/ov772x.c
+> @@ -31,6 +31,7 @@
+>  #include <media/v4l2-ctrls.h>
+>  #include <media/v4l2-device.h>
+>  #include <media/v4l2-event.h>
+> +#include <media/v4l2-fwnode.h>
+>  #include <media/v4l2-image-sizes.h>
+>  #include <media/v4l2-subdev.h>
 >
->                         Geert
+> @@ -434,6 +435,7 @@ struct ov772x_priv {
+>  #ifdef CONFIG_MEDIA_CONTROLLER
+>  	struct media_pad pad;
+>  #endif
+> +	struct v4l2_fwnode_endpoint ep;
+>  };
 >
+>  /*
+> @@ -581,6 +583,13 @@ static int ov772x_s_stream(struct v4l2_subdev *sd, int enable)
+>  	if (priv->streaming == enable)
+>  		goto done;
+>
+> +	if (priv->ep.bus_type == V4L2_MBUS_BT656) {
+> +		ret = regmap_update_bits(priv->regmap, COM7, ITU656_ON_OFF,
+> +					 enable ? ITU656_ON_OFF : ~ITU656_ON_OFF);
+> +		if (ret)
+> +			goto done;
+> +	}
+> +
+>  	ret = regmap_update_bits(priv->regmap, COM2, SOFT_SLEEP_MODE,
+>  				 enable ? 0 : SOFT_SLEEP_MODE);
+>  	if (ret)
+> @@ -1354,6 +1363,7 @@ static const struct v4l2_subdev_ops ov772x_subdev_ops = {
+>
+>  static int ov772x_probe(struct i2c_client *client)
+>  {
+> +	struct fwnode_handle *endpoint;
+>  	struct ov772x_priv	*priv;
+>  	int			ret;
+>  	static const struct regmap_config ov772x_regmap_config = {
+> @@ -1415,6 +1425,28 @@ static int ov772x_probe(struct i2c_client *client)
+>  		goto error_clk_put;
+>  	}
+>
+> +	endpoint = fwnode_graph_get_next_endpoint(dev_fwnode(&client->dev),
+> +						  NULL);
+> +	if (!endpoint) {
+> +		dev_err(&client->dev, "endpoint node not found\n");
+> +		ret = -EINVAL;
+> +		goto error_clk_put;
+> +	}
+> +
+> +	ret = v4l2_fwnode_endpoint_parse(endpoint, &priv->ep);
+> +	fwnode_handle_put(endpoint);
+> +	if (ret) {
+> +		dev_err(&client->dev, "Could not parse endpoint\n");
+> +		goto error_clk_put;
+> +	}
+> +
+> +	if (priv->ep.bus_type != V4L2_MBUS_PARALLEL &&
+> +	    priv->ep.bus_type != V4L2_MBUS_BT656) {
+> +		dev_err(&client->dev, "Unsupported bus type %d\n",
+> +			priv->ep.bus_type);
+> +		goto error_clk_put;
+> +	}
+> +
+>  	ret = ov772x_video_probe(priv);
+>  	if (ret < 0)
+>  		goto error_gpio_put;
 > --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m6=
-8k.org
+> 2.17.1
 >
-> In personal conversations with technical people, I call myself a hacker. =
-But
-> when I'm talking to journalists I just say "programmer" or something like=
- that.
->                                 -- Linus Torvalds
