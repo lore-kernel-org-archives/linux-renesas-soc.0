@@ -2,37 +2,38 @@ Return-Path: <SRS0=yd6p=CN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 805D5C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 11:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85AB6C2BB84
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 11:48:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C01820709
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 11:48:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 612EB20709
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 11:48:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730006AbgIDLsi (ORCPT
+        id S1729969AbgIDLsi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 4 Sep 2020 07:48:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35432 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729969AbgIDLsd (ORCPT
+        with ESMTP id S1729897AbgIDLsc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Sep 2020 07:48:33 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 279AEC061247
+        Fri, 4 Sep 2020 07:48:32 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1CDEC061245
         for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Sep 2020 04:48:31 -0700 (PDT)
 Received: from ramsan ([84.195.186.194])
-        by michel.telenet-ops.be with bizsmtp
-        id PnoM2300E4C55Sk06noMQy; Fri, 04 Sep 2020 13:48:21 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id PnoM2300S4C55Sk06noMoN; Fri, 04 Sep 2020 13:48:21 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kEACb-0004eK-71; Fri, 04 Sep 2020 13:48:21 +0200
+        id 1kEACb-0004eM-7Y; Fri, 04 Sep 2020 13:48:21 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kEACb-0007sk-4i; Fri, 04 Sep 2020 13:48:21 +0200
+        id 1kEACb-0007so-6d; Fri, 04 Sep 2020 13:48:21 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: <soc.lore.kernel.org>
 To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
@@ -40,54 +41,104 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/3] Renesas ARM SoC updates for v5.10
-Date:   Fri,  4 Sep 2020 13:48:16 +0200
-Message-Id: <20200904114819.30254-1-geert+renesas@glider.be>
+Subject: [GIT PULL 2/3] Renesas ARM DT updates for v5.10
+Date:   Fri,  4 Sep 2020 13:48:18 +0200
+Message-Id: <20200904114819.30254-3-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200904114819.30254-1-geert+renesas@glider.be>
+References: <20200904114819.30254-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi arm-soc folks,
+The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
 
-This is my first pull request for the inclusion of Renesas SoC updates
-for v5.10.
+  Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
 
-It consists of 3 parts:
+are available in the Git repository at:
 
-  [GIT PULL 1/3] Renesas ARM defconfig updates for v5.10
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-dt-for-v5.10-tag1
 
-    - Enable touchscreen support on the iWave RZ/G1E platform,
-    - Update for PCIE_RCAR => CONFIG_PCIE_RCAR_{HOST,EP} split, including
-      enabling the latter,
-    - Enable FLASH support on various R-Car Gen3 boards,
-    - Refresh shmobile_defconfig for v5.9-rc1.
+for you to fetch changes up to e9f0fb53ac88c1ccf3728b47c687838b6054f481:
 
-  [GIT PULL 2/3] Renesas ARM DT updates for v5.10
+  arm64: dts: renesas: Add HiHope RZ/G2H board with idk-1110wr display (2020-09-04 09:54:39 +0200)
 
-    - Increase support for the RZ/G2H SoC on the HopeRun HiHope RZ/G2H
-      board, and its display panel expansion board,
-    - Increase support for the RZ/G1H SoC on the iWave RainboW SoM (G21M)
-      and Qseven board (G21D),
-    - SATA support for the HopeRun HiHope RZ/G2N board,
-    - PCIe endpoint support for the RZ/G2M, RZ/G2E, and RZ/G2H SoCs,
-    - Audio support for the R-Car M3-W+ SoC.
-    - Minor fixes and improvements.
+----------------------------------------------------------------
+Renesas ARM DT updates for v5.10
 
-  [GIT PULL 3/3] Renesas driver updates for v5.10
+  - Increase support for the RZ/G2H SoC on the HopeRun HiHope RZ/G2H
+    board, and its display panel expansion board,
+  - Increase support for the RZ/G1H SoC on the iWave RainboW SoM (G21M)
+    and Qseven board (G21D),
+  - SATA support for the HopeRun HiHope RZ/G2N board,
+  - PCIe endpoint support for the RZ/G2M, RZ/G2E, and RZ/G2H SoCs,
+  - Audio support for the R-Car M3-W+ SoC.
+  - Minor fixes and improvements.
 
-    - Improve visual Kconfig structure.
+----------------------------------------------------------------
+Biju Das (2):
+      ARM: dts: iwg22d-sodimm: Fix dt nodes sorting
+      arm64: dts: renesas: r8a774e1-hihope-rzg2h: Enable HS400 mode
 
-Thanks for pulling!
+Kuninori Morimoto (1):
+      arm64: dts: renesas: r8a77961: Enable Sound / Audio-DMAC
 
-Gr{oetje,eeting}s,
+Lad Prabhakar (28):
+      arm64: dts: renesas: r8a774e1: Add PCIe device nodes
+      arm64: dts: renesas: r8a774e1: Add SATA controller node
+      arm64: dts: renesas: r8a774e1: Add USB2.0 phy and host (EHCI/OHCI) device nodes
+      arm64: dts: renesas: r8a774e1: Add USB3.0 device nodes
+      arm64: dts: renesas: r8a774e1: Add USB-DMAC and HSUSB device nodes
+      arm64: dts: renesas: r8a774e1: Add audio support
+      arm64: dts: renesas: r8a774e1: Add VIN and CSI-2 nodes
+      ARM: dts: r8a7742-iwg21d-q7: Enable HSUSB, USB2.0 and xHCI
+      ARM: dts: r8a7742-iwg21d-q7: Enable cmt0
+      ARM: dts: r8a7742: Add PWM SoC support
+      ARM: dts: r8a7742: Add TPU support
+      ARM: dts: r8a7742: Add DU support
+      ARM: dts: r8a7742: Add LVDS support
+      arm64: dts: renesas: r8a774b1-hihope-rzg2n-ex: Enable sata
+      ARM: dts: r8a7742: Add PCIe Controller device node
+      arm64: dts: renesas: r8a774e1-hihope-rzg2h: Setup DU clocks
+      ARM: dts: r8a7742: Add QSPI support
+      arm64: dts: renesas: r8a774a1: Add PCIe EP nodes
+      arm64: dts: renesas: r8a774b1: Add PCIe EP nodes
+      arm64: dts: renesas: r8a774c0: Add PCIe EP node
+      ARM: dts: r8a7742: Add CAN support
+      ARM: dts: r8a7742-iwg21m: Sort the nodes alphabetically
+      ARM: dts: r8a7742-iwg21m: Add RTC support
+      ARM: dts: r8a7742-iwg21m: Add SPI NOR support
+      ARM: dts: r8a7742: Add IPMMU DT nodes
+      ARM: dts: r8a7742-iwg21d-q7: Enable PCIe Controller
+      arm64: dts: renesas: r8a774e1: Add cpuidle support for CA5x cores
+      arm64: dts: renesas: Add HiHope RZ/G2H board with idk-1110wr display
 
-						Geert
+Marian-Cristian Rotariu (7):
+      arm64: dts: renesas: r8a774e1: Add FCPF and FCPV instances
+      arm64: dts: renesas: r8a774e1: Add VSP instances
+      arm64: dts: renesas: r8a774e1: Populate DU device node
+      arm64: dts: renesas: r8a774e1: Populate HDMI encoder node
+      arm64: dts: renesas: r8a774e1: Add LVDS device node
+      arm64: dts: renesas: r8a774e1: Add PWM device nodes
+      arm64: dts: renesas: r8a774e1: Add FDP1 device nodes
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Yoshihiro Shimoda (1):
+      arm64: dts: renesas: ulcb: add full-pwr-cycle-in-suspend into eMMC nodes
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ arch/arm/boot/dts/r8a7742-iwg21d-q7.dts            |   58 +
+ arch/arm/boot/dts/r8a7742-iwg21m.dtsi              |   79 +-
+ arch/arm/boot/dts/r8a7742.dtsi                     |  303 +++++
+ arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts        |  112 +-
+ arch/arm64/boot/dts/renesas/Makefile               |    1 +
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi          |   38 +
+ .../boot/dts/renesas/r8a774b1-hihope-rzg2n-ex.dts  |    5 +
+ arch/arm64/boot/dts/renesas/r8a774b1.dtsi          |   38 +
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi          |   19 +
+ .../r8a774e1-hihope-rzg2h-ex-idk-1110wr.dts        |   15 +
+ .../boot/dts/renesas/r8a774e1-hihope-rzg2h.dts     |   15 +
+ arch/arm64/boot/dts/renesas/r8a774e1.dtsi          | 1294 +++++++++++++++++++-
+ arch/arm64/boot/dts/renesas/r8a77961.dtsi          |  483 +++++++-
+ arch/arm64/boot/dts/renesas/ulcb.dtsi              |    1 +
+ 14 files changed, 2367 insertions(+), 94 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex-idk-1110wr.dts
