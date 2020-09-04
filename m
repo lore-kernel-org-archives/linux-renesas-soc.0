@@ -2,103 +2,116 @@ Return-Path: <SRS0=yd6p=CN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5ADC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 10:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13040C28E83
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 10:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6B83206D4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 10:40:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB109208B3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 10:41:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730013AbgIDKkd (ORCPT
+        id S1730137AbgIDKkU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Sep 2020 06:40:33 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:38157 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729957AbgIDKkb (ORCPT
+        Fri, 4 Sep 2020 06:40:20 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:3569 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728118AbgIDKkK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Sep 2020 06:40:31 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 7269C1C000D;
-        Fri,  4 Sep 2020 10:40:27 +0000 (UTC)
-Date:   Fri, 4 Sep 2020 12:44:14 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Paul <paul.kocialkowski@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+        Fri, 4 Sep 2020 06:40:10 -0400
+X-IronPort-AV: E=Sophos;i="5.76,389,1592838000"; 
+   d="scan'208";a="56385867"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 04 Sep 2020 19:40:05 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 31B62400D0FC;
+        Fri,  4 Sep 2020 19:40:02 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Prabhakar <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v3 1/3] media: i2c: ov5640: Enable data pins on poweron
- for DVP mode
-Message-ID: <20200904104414.ilqc2qhustefiwdx@uno.localdomain>
-References: <20200813171337.5540-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200813171337.5540-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20200901221052.GC32646@paasikivi.fi.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200901221052.GC32646@paasikivi.fi.intel.com>
+Subject: [PATCH 2/3] arm64: dts: renesas: r8a774e1: Add PCIe EP nodes
+Date:   Fri,  4 Sep 2020 11:38:50 +0100
+Message-Id: <20200904103851.3946-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200904103851.3946-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20200904103851.3946-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Prabhakar, Sakari,
+Add PCIe EP nodes for R8A774E1 Soc dtsi.
 
-On Wed, Sep 02, 2020 at 01:10:53AM +0300, Sakari Ailus wrote:
-> Hi Prabhakar,
->
-> My apologies for the late reply.
->
-> On Thu, Aug 13, 2020 at 06:13:35PM +0100, Lad Prabhakar wrote:
-> > During testing this sensor on iW-RainboW-G21D-Qseven platform in 8-bit DVP
-> > mode with rcar-vin bridge noticed the capture worked fine for the first run
-> > (with yavta), but for subsequent runs the bridge driver waited for the
-> > frame to be captured. Debugging further noticed the data lines were
-> > enabled/disabled in stream on/off callback and dumping the register
-> > contents 0x3017/0x3018 in ov5640_set_stream_dvp() reported the correct
-> > values, but yet frame capturing failed.
-> >
-> > To get around this issue the following actions are performed for
-> > parallel mode (DVP):
-> > 1: Keeps the sensor in software power down mode and is woken up only in
-> >    ov5640_set_stream_dvp() callback.
->
-> I'd suppose with s_power, the main driver would power the device off
-> when it's not streaming.
->
-> > 2: Enables data lines in s_power callback
-> > 3: Configures HVP lines in s_power callback instead of configuring
-> >    everytime in ov5640_set_stream_dvp().
-> > 4: Disables MIPI interface.
->
-> Could you split this into two (or even more) patches so that the first
-> refactors the receiver setup and another one changes how it actually works?
-> That way this would be quite a bit easier to review.
->
-> While some of the above seem entirely reasonable, the changes are vast and
-> testing should be done on different boards to make sure things won't break.
-> That said, this depends on others who have the hardware.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 38 +++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-I left it as a comment during review of v2, but now more formally:
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+index e5445ba99e84..272df6022442 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+@@ -2468,6 +2468,44 @@
+ 			status = "disabled";
+ 		};
+ 
++		pciec0_ep: pcie-ep@fe000000 {
++			compatible = "renesas,r8a774e1-pcie-ep",
++				     "renesas,rcar-gen3-pcie-ep";
++			reg = <0x0 0xfe000000 0 0x80000>,
++			      <0x0 0xfe100000 0 0x100000>,
++			      <0x0 0xfe200000 0 0x200000>,
++			      <0x0 0x30000000 0 0x8000000>,
++			      <0x0 0x38000000 0 0x8000000>;
++			reg-names = "apb-base", "memory0", "memory1", "memory2", "memory3";
++			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 319>;
++			clock-names = "pcie";
++			resets = <&cpg 319>;
++			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
++		pciec1_ep: pcie-ep@ee800000 {
++			compatible = "renesas,r8a774e1-pcie-ep",
++				     "renesas,rcar-gen3-pcie-ep";
++			reg = <0x0 0xee800000 0 0x80000>,
++			      <0x0 0xee900000 0 0x100000>,
++			      <0x0 0xeea00000 0 0x200000>,
++			      <0x0 0xc0000000 0 0x8000000>,
++			      <0x0 0xc8000000 0 0x8000000>;
++			reg-names = "apb-base", "memory0", "memory1", "memory2", "memory3";
++			interrupts = <GIC_SPI 148 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 149 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 150 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 318>;
++			clock-names = "pcie";
++			resets = <&cpg 318>;
++			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
++			status = "disabled";
++		};
++
+ 		vspbc: vsp@fe920000 {
+ 			compatible = "renesas,vsp2";
+ 			reg = <0 0xfe920000 0 0x8000>;
+-- 
+2.17.1
 
-For CSI-2 capture operations:
-Tested-by: Jacopo Mondi <jacopo@jmondi.org>
-
-Thanks
-  j
-
->
-> --
-> Kind regards,
->
-> Sakari Ailus
