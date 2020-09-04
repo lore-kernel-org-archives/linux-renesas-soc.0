@@ -2,32 +2,32 @@ Return-Path: <SRS0=yd6p=CN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14988C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 10:40:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A30C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 10:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBF512084D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 10:40:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFCE2206D4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Sep 2020 10:40:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730056AbgIDKkL (ORCPT
+        id S1729297AbgIDKkW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Sep 2020 06:40:11 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:60430 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729584AbgIDKkG (ORCPT
+        Fri, 4 Sep 2020 06:40:22 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:58099 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728658AbgIDKkK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Sep 2020 06:40:06 -0400
+        Fri, 4 Sep 2020 06:40:10 -0400
 X-IronPort-AV: E=Sophos;i="5.76,389,1592838000"; 
-   d="scan'208";a="56169404"
+   d="scan'208";a="56385879"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 04 Sep 2020 19:39:56 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 04 Sep 2020 19:40:09 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 26DBB40061A2;
-        Fri,  4 Sep 2020 19:39:52 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id DAB77400C751;
+        Fri,  4 Sep 2020 19:40:05 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -44,41 +44,46 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH 0/3] Add PCIe EP to RZ/G2H
-Date:   Fri,  4 Sep 2020 11:38:48 +0100
-Message-Id: <20200904103851.3946-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 3/3] misc: pci_endpoint_test: Add Device ID for RZ/G2H PCIe controller
+Date:   Fri,  4 Sep 2020 11:38:51 +0100
+Message-Id: <20200904103851.3946-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200904103851.3946-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20200904103851.3946-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi All,
+Add Renesas R8A774E1 in pci_device_id table so that pci-epf-test
+can be used for testing PCIe EP on RZ/G2H.
 
-This patch series adds PCIe EP support to R8A774E1 SoC.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/misc/pci_endpoint_test.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-patch 2/3 applies on top of [1] and patch 3/3 is dependent
-on series [2].
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/
-    renesas-devel.git/log/?h=renesas-arm-dt-for-v5.10
-[2] https://patchwork.kernel.org/project/linux-pci/list/
-    ?series=332849&submitter=&state=&q=&archive=&delegate=
-
-Cheers,
-Prabhakar
-
-
-Lad Prabhakar (3):
-  dt-bindings: pci: rcar-pci-ep: Document r8a774e1
-  arm64: dts: renesas: r8a774e1: Add PCIe EP nodes
-  misc: pci_endpoint_test: Add Device ID for RZ/G2H PCIe controller
-
- .../devicetree/bindings/pci/rcar-pci-ep.yaml  |  1 +
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi     | 38 +++++++++++++++++++
- drivers/misc/pci_endpoint_test.c              |  2 +
- 3 files changed, 41 insertions(+)
-
+diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+index ba654f42dc10..ed7425bb073d 100644
+--- a/drivers/misc/pci_endpoint_test.c
++++ b/drivers/misc/pci_endpoint_test.c
+@@ -77,6 +77,7 @@
+ #define PCI_DEVICE_ID_RENESAS_R8A774A1		0x0028
+ #define PCI_DEVICE_ID_RENESAS_R8A774B1		0x002b
+ #define PCI_DEVICE_ID_RENESAS_R8A774C0		0x002d
++#define PCI_DEVICE_ID_RENESAS_R8A774E1		0x0025
+ 
+ static DEFINE_IDA(pci_endpoint_test_ida);
+ 
+@@ -955,6 +956,7 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A774A1),},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A774B1),},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A774C0),},
++	{ PCI_DEVICE(PCI_VENDOR_ID_RENESAS, PCI_DEVICE_ID_RENESAS_R8A774E1),},
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_J721E),
+ 	  .driver_data = (kernel_ulong_t)&j721e_data,
+ 	},
 -- 
 2.17.1
 
