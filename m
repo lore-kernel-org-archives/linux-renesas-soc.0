@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE013C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 09:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48983C2D0E0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 09:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7574F208C7
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 09:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F33721481
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 09:20:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728374AbgIGJUM (ORCPT
+        id S1728386AbgIGJUS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 05:20:12 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:15998 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728223AbgIGJUJ (ORCPT
+        Mon, 7 Sep 2020 05:20:18 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:44534 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728331AbgIGJUM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 05:20:09 -0400
+        Mon, 7 Sep 2020 05:20:12 -0400
 X-IronPort-AV: E=Sophos;i="5.76,401,1592838000"; 
-   d="scan'208";a="56565782"
+   d="scan'208";a="56349417"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Sep 2020 18:20:07 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 07 Sep 2020 18:20:09 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id B9E3140031D1;
-        Mon,  7 Sep 2020 18:20:07 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 6A03540065CD;
+        Mon,  7 Sep 2020 18:20:09 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     geert+renesas@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 01/14] dt-bindings: arm: renesas: Document R-Car V3U SoC DT bindings
-Date:   Mon,  7 Sep 2020 18:19:37 +0900
-Message-Id: <1599470390-29719-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 14/14] arm64: dts: renesas: Add Renesas Falcon boards support
+Date:   Mon,  7 Sep 2020 18:19:50 +0900
+Message-Id: <1599470390-29719-15-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1599470390-29719-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1599470390-29719-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -43,29 +43,107 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device tree bindings documentation for Renesas R-Car V3U
-(r8a779a0).
+Initial support for the Renesas Falcon CPU and BreakOut boards
+support.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- Documentation/devicetree/bindings/arm/renesas.yaml | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/renesas/Makefile            |  2 ++
+ arch/arm64/boot/dts/renesas/falcon-cpu.dtsi     | 44 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts | 23 +++++++++++++
+ 3 files changed, 69 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/falcon-cpu.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/arm/renesas.yaml
-index 0d4dabb..9f8c3353 100644
---- a/Documentation/devicetree/bindings/arm/renesas.yaml
-+++ b/Documentation/devicetree/bindings/arm/renesas.yaml
-@@ -281,6 +281,10 @@ properties:
-               - renesas,draak # Draak (RTP0RC77995SEB0010S)
-           - const: renesas,r8a77995
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index d790229..6757d66 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -53,3 +53,5 @@ dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-v3hsk.dtb
+ dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
  
-+      - description: R-Car V3U (R8A779A0)
-+        items:
-+          - const: renesas,r8a779a0
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
 +
-       - description: RZ/N1D (R9A06G032)
-         items:
-           - enum:
++dtb-$(CONFIG_ARCH_R8A779A0) += r8a779a0-falcon.dtb
+diff --git a/arch/arm64/boot/dts/renesas/falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/falcon-cpu.dtsi
+new file mode 100644
+index 0000000..0286279
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/falcon-cpu.dtsi
+@@ -0,0 +1,44 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the Falcon CPU board
++ *
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
++
++/ {
++	model = "Renesas Falcon CPU board";
++	compatible = "renesas,falcon-cpu";
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++
++	memory@500000000 {
++		device_type = "memory";
++		reg = <0x5 0x00000000 0x0 0x80000000>;
++	};
++
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x80000000>;
++	};
++
++	memory@700000000 {
++		device_type = "memory";
++		reg = <0x7 0x00000000 0x0 0x80000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <16666666>;
++};
++
++&extalr_clk {
++	clock-frequency = <32768>;
++};
++
++&scif0 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+new file mode 100644
+index 0000000..56c0e5f
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+@@ -0,0 +1,23 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the Falcon board
++ *
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r8a779a0.dtsi"
++#include "falcon-cpu.dtsi"
++
++/ {
++	model = "Renesas Falcon board based on r8a779a0";
++	compatible = "renesas,falcon-cpu", "renesas,r8a779a0";
++
++	aliases {
++		serial0 = &scif0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
 -- 
 2.7.4
 
