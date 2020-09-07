@@ -8,62 +8,62 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D1A4C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 08:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1D9C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 08:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFB912145D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 08:07:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71FD22145D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 08:10:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vFg4C207"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="msB7OU2C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727773AbgIGIHJ (ORCPT
+        id S1727954AbgIGIKU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 04:07:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40362 "EHLO
+        Mon, 7 Sep 2020 04:10:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727935AbgIGIGZ (ORCPT
+        with ESMTP id S1727921AbgIGIKK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 04:06:25 -0400
-Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD8EDC061573;
-        Mon,  7 Sep 2020 01:06:24 -0700 (PDT)
-Received: by mail-lf1-x142.google.com with SMTP id u8so1495290lff.1;
-        Mon, 07 Sep 2020 01:06:24 -0700 (PDT)
+        Mon, 7 Sep 2020 04:10:10 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C3FFC061573;
+        Mon,  7 Sep 2020 01:10:09 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id y4so15013098ljk.8;
+        Mon, 07 Sep 2020 01:10:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:organization:message-id:date
+        h=subject:from:to:cc:references:organization:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=d2UKtxSDsLOJMZMvP4V6fDHQ9DOK38Nub6TkWq2gStU=;
-        b=vFg4C207s1HYEz3DxFduhR35WgnfoYhDmDerHgHdYFuDCemywqeA2dEAKzMmt93QxI
-         RI9/AYrJGw39gr3JEB8H5Z6BNrq/of0J4kSiWqMuuqhnUaYVe1CxuQ1SwWhm7tsnvhzu
-         rk3+M8zBe3OOOu7dTuYYzZmSJ9ty57aY+46fLPTbBmcubNdRwIwGW2mxZKbrVzN2nfkT
-         1PsIFUOudcginzFbN9TwBL+QrV8lRO/Fkt8mI0M6t9/s/VwnlNWwOeUexzdRtcbcbyWa
-         9in9OfoYHHu/S2RFfb2Jjei/bqpqUzdDlKgixUsZCdmrxp2Luu1jAiM9imvMqLsC4EbY
-         2OzQ==
+        bh=xDotO2hIGScy379wQahz2M8ztp2ZYXXRt81YQ3ss4Dc=;
+        b=msB7OU2C6lpqrvWjU5mynyi/AaWRIZpWT7OdJNJZar90EMPKIjbjrY7+YNSZsXIAIg
+         fO67nUaPkNlL00hW0fh95bP/BxXjC07MLRocHkg4A5+nz/sJ7Q5AcT9p/aLq93on33bX
+         8dCf8HLPjYCbsIhB67O9HfEFH7xTdYmYdK0MCV3tjHPRdpA1I4NY8vXWurngNB/SkZxC
+         RruyXTnwmmb44N2Nh8kPrSVvfuVEwc3ndKgZNAWr9qU4w7qUKnI/eiZz2XJAzjdN1Jav
+         Dks66b9luVSZJDiYXAIPSrp9RI9Shncznxp7WjkTVPPzpggT65T+WUsxSFR0SCC6NPy4
+         ZZUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
+        h=x-gm-message-state:subject:from:to:cc:references:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=d2UKtxSDsLOJMZMvP4V6fDHQ9DOK38Nub6TkWq2gStU=;
-        b=N4s4lI+GSR9FUnqjJx9wyb62F/IDiaK5522trgcTYGUp5LuIrBDVEro/GCwZEsQjeB
-         qB7uPY1qvLeKuQ/5uxblJn7u6o5ArNJc27pYKYW+gG+Oqj/ON8R4xGbhgeOVs1amwu3f
-         U22WOUaBpiWMq7ftky87dXp1ChCYXTXKzTIVQeEXZddTuO2eX8rmKDhx2OHTndsd33I9
-         c4mWQBuZSUIjqizB3O0CNLXxD5kBnlWlZ8NRU/am1Gvn1KSrL/zPjgzWJQWC+RJOdhVE
-         +VkXXBRDsjZNHuKrQWJlVwFjWXoTKtix62wtiLBQYccF1piiUWNnTfq8Eqo5IJ0p+uAs
-         OwDg==
-X-Gm-Message-State: AOAM5321WKktTiDyAXdFSIa2G4pvK6daUBV7SJNtmwCj5nCRbB5YvR50
-        2TRSuNtt9VkPFBK48AnngAk=
-X-Google-Smtp-Source: ABdhPJz9n9KbuzMzDlSQa4iknXvJcYJO+CSM3n5dQxn6kAweLvkB4JJPqXoF448FuJjg3rn3KOOgAw==
-X-Received: by 2002:a19:7e02:: with SMTP id z2mr9554798lfc.130.1599465982981;
-        Mon, 07 Sep 2020 01:06:22 -0700 (PDT)
+        bh=xDotO2hIGScy379wQahz2M8ztp2ZYXXRt81YQ3ss4Dc=;
+        b=A9SsFBZlilMZSELpDSkOOQ53s1XYwFi8pGdn7gH+5F4UduvOZ/XfupJhhaJMLQA/AZ
+         CHAmT66RDTKHBPYUFvKyMFAjSmeQh1pn/9YqR/UQUFiQ/f6CPJnVwwQ+F+F2VaHqacl1
+         ReuN+lSYTwlPwZpT4Ev2LFsAevq0WMJl+p94O8vyLKiD0w/vOy0pll1bmhEELz9VWoqJ
+         Qc90j+p4l/cICkbgeJA3euqzteTR63tYwLj+BUe2+sUA7ak6QALrVYwIaH1F5U13GE79
+         pQnSnBL6IUQWYltJI84/kp0oMwXrvEXvNjumf/EMgXuTvQHRs34Kr5nDrgpL02TS0Fbn
+         9vgg==
+X-Gm-Message-State: AOAM532101fZL1QWDyL09IR4Ai3SaSAU9dVUdbM4o5OUZc1EqfWcghkm
+        v6A3WCraV+kt3SE+8LhoHAk=
+X-Google-Smtp-Source: ABdhPJzNlKcJI7jtGEMuFEx/r/EP1I4zmImDZ2D8wVruQ/zbs+0BIL12VhKglLQyvxFgHbntWx1GYw==
+X-Received: by 2002:a2e:548:: with SMTP id 69mr10216545ljf.386.1599466208061;
+        Mon, 07 Sep 2020 01:10:08 -0700 (PDT)
 Received: from ?IPv6:2a00:1fa0:6a2:89f3:b416:2a89:c3ba:d276? ([2a00:1fa0:6a2:89f3:b416:2a89:c3ba:d276])
-        by smtp.gmail.com with ESMTPSA id q22sm6725588lfp.40.2020.09.07.01.06.21
+        by smtp.gmail.com with ESMTPSA id p18sm4538854ljg.26.2020.09.07.01.10.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Sep 2020 01:06:22 -0700 (PDT)
-Subject: Re: [PATCH 8/9] arm64: dts: renesas: r8a77961-salvator-xs: add HDMI
- Display support
+        Mon, 07 Sep 2020 01:10:07 -0700 (PDT)
+Subject: Re: [PATCH 5/9] arm64: dts: renesas: r8a77961: Add VSP device nodes
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
 To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Laurent <laurent.pinchart@ideasonboard.com>,
@@ -77,36 +77,35 @@ Cc:     Magnus <magnus.damm@gmail.com>,
         "(Renesas) shimoda" <yoshihiro.shimoda.uh@renesas.com>,
         dri-devel@lists.freedesktop.org
 References: <87sgbu70tq.wl-kuninori.morimoto.gx@renesas.com>
- <87h7sa70r7.wl-kuninori.morimoto.gx@renesas.com>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+ <87lfhm70s6.wl-kuninori.morimoto.gx@renesas.com>
+ <f106c6df-b85a-1850-d36a-ac18ec629986@gmail.com>
 Organization: Brain-dead Software
-Message-ID: <17f337ce-99db-18c3-491b-d29f1046d0e9@gmail.com>
-Date:   Mon, 7 Sep 2020 11:06:19 +0300
+Message-ID: <fc837810-9d86-df62-94b2-a2976f6d5463@gmail.com>
+Date:   Mon, 7 Sep 2020 11:10:05 +0300
 User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.12.0
 MIME-Version: 1.0
-In-Reply-To: <87h7sa70r7.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <f106c6df-b85a-1850-d36a-ac18ec629986@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+On 07.09.2020 11:08, Sergei Shtylyov wrote:
 
-On 07.09.2020 5:59, Kuninori Morimoto wrote:
-
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+>>
+>> This patch adds VSP device nodes for R-Car M3-W+ (r8a77961) SoC.
+>> This patch is test on R-Car M3-W+ Salvator-XS board.
 > 
-> This patch enables HDMI Display on R-Car M3-W+ Salvator-XS board.
-> This patch is test on R-Car M3-W+ Salvator-XS board.
+>     Was tested?
 
-    Was tested, perhaps?
+    The same comment to the patches 6 & 7.
 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-[...]
+>> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> [...]
 
 MBR, Sergei
-
