@@ -2,76 +2,118 @@ Return-Path: <SRS0=biIG=CQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9442CC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 15:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C9CC43461
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6527D21473
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 15:57:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CB02208C7
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 16:05:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730248AbgIGP5P (ORCPT
+        id S1729852AbgIGOrw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 11:57:15 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:34986 "EHLO
+        Mon, 7 Sep 2020 10:47:52 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:10372 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730176AbgIGP4X (ORCPT
+        by vger.kernel.org with ESMTP id S1729957AbgIGOrM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 11:56:23 -0400
+        Mon, 7 Sep 2020 10:47:12 -0400
 X-IronPort-AV: E=Sophos;i="5.76,402,1592838000"; 
-   d="scan'208";a="56587344"
+   d="scan'208";a="56583841"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 08 Sep 2020 00:55:48 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 07 Sep 2020 23:46:09 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id AA5C1400E2D0;
-        Tue,  8 Sep 2020 00:55:46 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 5E6B542FBA1A;
+        Mon,  7 Sep 2020 23:46:07 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH v2 0/3] iWave G21D-Q7 enable flash, CAN and SD2 LED
-Date:   Mon,  7 Sep 2020 16:55:38 +0100
-Message-Id: <20200907155541.2011-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 2/2] ARM: dts: r8a7742: Add VIN DT nodes
+Date:   Mon,  7 Sep 2020 15:45:09 +0100
+Message-Id: <20200907144509.8861-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200907144509.8861-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20200907144509.8861-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi All,
+Add VIN[0123] instances found in the r8a7742 SoC.
 
-This patch series enables PCIe, SPI NOR flash, CAN0 and SD2 LED indication
-on iWave G21D-Q7 board.
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ arch/arm/boot/dts/r8a7742.dtsi | 44 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-Patches apply on top of [1] and also dependent on patch [2]
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/
-    renesas-devel.git/log/?h=renesas-arm-dt-for-v5.10
-[2] https://patchwork.kernel.org/patch/11712541/
-
-Cheers,
-Prabhakar
-
-v1->v2
-* Set SD2 LED trigger GPIO as GPIO_ACTIVE_HIGH
-* Added missing "msiof0_sync" in msiof0 pins
-* Corrected to can1 interface on carrier board
-
-Lad Prabhakar (3):
-  ARM: dts: r8a7742-iwg21d-q7: Add SPI NOR support
-  ARM: dts: r8a7742-iwg21d-q7: Add can1 support to carrier board
-  ARM: dts: r8a7742-iwg21d-q7: Enable SD2 LED indication
-
- arch/arm/boot/dts/r8a7742-iwg21d-q7.dts | 62 +++++++++++++++++++++++++
- 1 file changed, 62 insertions(+)
-
+diff --git a/arch/arm/boot/dts/r8a7742.dtsi b/arch/arm/boot/dts/r8a7742.dtsi
+index c62e26876f95..24647cf13c2b 100644
+--- a/arch/arm/boot/dts/r8a7742.dtsi
++++ b/arch/arm/boot/dts/r8a7742.dtsi
+@@ -1103,6 +1103,50 @@
+ 			status = "disabled";
+ 		};
+ 
++		vin0: video@e6ef0000 {
++			compatible = "renesas,vin-r8a7742",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef0000 0 0x1000>;
++			interrupts = <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 811>;
++			power-domains = <&sysc R8A7742_PD_ALWAYS_ON>;
++			resets = <&cpg 811>;
++			status = "disabled";
++		};
++
++		vin1: video@e6ef1000 {
++			compatible = "renesas,vin-r8a7742",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef1000 0 0x1000>;
++			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 810>;
++			power-domains = <&sysc R8A7742_PD_ALWAYS_ON>;
++			resets = <&cpg 810>;
++			status = "disabled";
++		};
++
++		vin2: video@e6ef2000 {
++			compatible = "renesas,vin-r8a7742",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef2000 0 0x1000>;
++			interrupts = <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 809>;
++			power-domains = <&sysc R8A7742_PD_ALWAYS_ON>;
++			resets = <&cpg 809>;
++			status = "disabled";
++		};
++
++		vin3: video@e6ef3000 {
++			compatible = "renesas,vin-r8a7742",
++				     "renesas,rcar-gen2-vin";
++			reg = <0 0xe6ef3000 0 0x1000>;
++			interrupts = <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 808>;
++			power-domains = <&sysc R8A7742_PD_ALWAYS_ON>;
++			resets = <&cpg 808>;
++			status = "disabled";
++		};
++
+ 		rcar_sound: sound@ec500000 {
+ 			/*
+ 			 * #sound-dai-cells is required
 -- 
 2.17.1
 
