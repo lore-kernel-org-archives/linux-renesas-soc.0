@@ -2,62 +2,67 @@ Return-Path: <SRS0=biIG=CQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E9E9C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 15:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BD3C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 15:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C78921473
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 15:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 200EC21481
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 15:56:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mw2nVh2/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730290AbgIGPyI (ORCPT
+        id S1730200AbgIGP4V (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 11:54:08 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44492 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730014AbgIGOuq (ORCPT
+        Mon, 7 Sep 2020 11:56:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56510 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730104AbgIGPzs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 10:50:46 -0400
-Received: by mail-oi1-f193.google.com with SMTP id 185so13748344oie.11;
-        Mon, 07 Sep 2020 07:50:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NocdxbzOwXFNFlWIr6/cqeHsmP04fNIWa9z1kM4h3ac=;
-        b=Sblszzmw/jDfgffc+vY7E+ulIz/1vCdo21SrsyrgcT9/aJEKxmw8SrkZTG3wWfi95d
-         DXsvDDtShIcmNeBCA4gDMDPNq2JR9ndB/JQcqioVvfaFaYk1bNKu0JMqPoQbaaFP0SLF
-         +wtTSB8rHy/pbudgWcuHszPQcLWs2vd5cD42c4DSRd/Dy96AS9TaZdot35RcXoR0z2aN
-         DQiHF5t7KJgrPAoZkRv3/0Rk/9+Qw+p9D+mG4qGekmJa1rDMryNcG+9S/cROjVL2gPc2
-         A05kwi6m+zgj6kzsJgRx7K42xsv6WjOMSdnOu1v6A9kp1z6lZC3LALCj59250G5QQCnR
-         yqUQ==
-X-Gm-Message-State: AOAM533R1Zh62R3h1WeKJupPHvGH5lZfUV5SDusDVFltt7SPtlXISWUV
-        aRV4AGvgIzyYxV8Bmd4GxbQEY82AsGheg4ONBV8=
-X-Google-Smtp-Source: ABdhPJxPEeOz9rD4CfjHYipCYAJC4QkIqyBMHvsKbLfrLvLKIyCWCxxTkUZb5VVmim8i5VZiOO3KPF8rJoL+7tO1GAQ=
-X-Received: by 2002:aca:b742:: with SMTP id h63mr12128676oif.148.1599490245942;
- Mon, 07 Sep 2020 07:50:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <87sgbu70tq.wl-kuninori.morimoto.gx@renesas.com> <87r1re70sv.wl-kuninori.morimoto.gx@renesas.com>
-In-Reply-To: <87r1re70sv.wl-kuninori.morimoto.gx@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 7 Sep 2020 16:50:34 +0200
-Message-ID: <CAMuHMdVvnDLogOgQaASYLhFxNCq=eVpdZKV2J2eX=h5UzvNtfw@mail.gmail.com>
-Subject: Re: [PATCH 1/9] dt-bindings: display: renesas: du: Document the
- r8a77961 bindings
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mon, 7 Sep 2020 11:55:48 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DE08C061574;
+        Mon,  7 Sep 2020 08:55:44 -0700 (PDT)
+Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 800833E;
+        Mon,  7 Sep 2020 17:55:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1599494107;
+        bh=ePFs/RPBL9rw0BM8t2BDNCfTz5P+uLJypOhdDkXDWVc=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mw2nVh2/FK9JmNKXQcVQdZqMjJ7x9Bb5KdwTmil+ECNMUzBOgM6FbdMGVetb+I3wF
+         LqcFcRRMEmhPPlEVxp+uz57vsR2yWrUOgZR0tDEIJo+oLiRVNHvd+P5XV2fhb1Sr7q
+         1Vxai3AExKaP0uqfmmoq7EMbzSsw17haOF/fHIPw=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 5/9] arm64: dts: renesas: r8a77961: Add VSP device nodes
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Laurent <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Magnus <magnus.damm@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Magnus <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux-DT <devicetree@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+        "(Renesas) shimoda" <yoshihiro.shimoda.uh@renesas.com>,
+        dri-devel@lists.freedesktop.org
+References: <87sgbu70tq.wl-kuninori.morimoto.gx@renesas.com>
+ <87lfhm70s6.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <31ec6196-7613-8eb3-e092-07d0c874632a@ideasonboard.com>
+Date:   Mon, 7 Sep 2020 16:55:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <87lfhm70s6.wl-kuninori.morimoto.gx@renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -65,37 +70,110 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Morimoto-san,
 
-On Mon, Sep 7, 2020 at 4:58 AM Kuninori Morimoto
-<kuninori.morimoto.gx@renesas.com> wrote:
+On 07/09/2020 03:59, Kuninori Morimoto wrote:
+> 
 > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
->
-> Document the R-Car M3-W+ (R8A77961) SoC in the R-Car DU bindings.
->
+> 
+> This patch adds VSP device nodes for R-Car M3-W+ (r8a77961) SoC.
+> This patch is test on R-Car M3-W+ Salvator-XS board.
+> 
 > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> ---
+>  arch/arm64/boot/dts/renesas/r8a77961.dtsi | 55 +++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77961.dtsi b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
+> index fe0db11b9cb9..c2a6918ed5e6 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77961.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
+> @@ -2056,6 +2056,61 @@ fcpvd2: fcp@fea37000 {
+>  			iommus = <&ipmmu_vi0 10>;
+>  		};
 
-Thanks for your patch!
+The FCP's added are:
 
-> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
-> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-> @@ -18,6 +18,7 @@ Required Properties:
->      - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
->      - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
->      - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
-> +    - "renesas,du-r8a77961" for R8A77961 (R-Car M3-W+) compatible DU
->      - "renesas,du-r8a77965" for R8A77965 (R-Car M3-N) compatible DU
->      - "renesas,du-r8a77970" for R8A77970 (R-Car V3M) compatible DU
->      - "renesas,du-r8a77980" for R8A77980 (R-Car V3H) compatible DU
+                fcpf0: fcp@fe950000 {
+                fcpf1: fcp@fe951000 {
+                fcpvb0: fcp@fe96f000 {
+                fcpvb1: fcp@fe92f000 {
+                fcpvi0: fcp@fe9af000 {
+                fcpvi1: fcp@fe9bf000 {
+                fcpvd0: fcp@fea27000 {
+                fcpvd1: fcp@fea2f000 {
+                fcpvd2: fcp@fea37000 {
 
-Looks good to me, but please also add an entry to the table below
-describing the port mappings.
+So indeed, the first fcpf0 comes before fe960000.
 
-Gr{oetje,eeting}s,
+Do we keep the items grouped by the first occurrence? or sort the nodes
+based on address?
 
-                        Geert
+for some reason I thought we were ordering based on address, but I see
+other situations where we group too - so I'm confused (and wishing there
+was an automatic tool to get the sorting correct without fuss).
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Is there a set policy?
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--
+Kieran
+
+
+> +		vspb: vsp@fe960000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfe960000 0 0x8000>;
+> +			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 626>;
+> +			power-domains = <&sysc R8A77961_PD_A3VC>;
+> +			resets = <&cpg 626>;
+> +
+> +			renesas,fcp = <&fcpvb0>;
+> +		};
+> +
+> +		vspd0: vsp@fea20000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfea20000 0 0x5000>;
+> +			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 623>;
+> +			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
+> +			resets = <&cpg 623>;
+> +
+> +			renesas,fcp = <&fcpvd0>;
+> +		};
+> +
+> +		vspd1: vsp@fea28000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfea28000 0 0x5000>;
+> +			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 622>;
+> +			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
+> +			resets = <&cpg 622>;
+> +
+> +			renesas,fcp = <&fcpvd1>;
+> +		};
+> +
+> +		vspd2: vsp@fea30000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfea30000 0 0x5000>;
+> +			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 621>;
+> +			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
+> +			resets = <&cpg 621>;
+> +
+> +			renesas,fcp = <&fcpvd2>;
+> +		};
+> +
+> +		vspi0: vsp@fe9a0000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfe9a0000 0 0x8000>;
+> +			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 631>;
+> +			power-domains = <&sysc R8A77961_PD_A3VC>;
+> +			resets = <&cpg 631>;
+> +
+> +			renesas,fcp = <&fcpvi0>;
+> +		};
+> +
+>  		csi20: csi2@fea80000 {
+>  			reg = <0 0xfea80000 0 0x10000>;
+>  			/* placeholder */
+> 
+
