@@ -6,50 +6,48 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FC5C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 15:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A99C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 15:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6C0921481
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 15:26:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B44CF206B8
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Sep 2020 15:52:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730079AbgIGPVG (ORCPT
+        id S1730201AbgIGPvd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Sep 2020 11:21:06 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45390 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730110AbgIGPSM (ORCPT
+        Mon, 7 Sep 2020 11:51:33 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41482 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730152AbgIGPbW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Sep 2020 11:18:12 -0400
-Received: by mail-ot1-f65.google.com with SMTP id g96so12474915otb.12;
-        Mon, 07 Sep 2020 08:18:11 -0700 (PDT)
+        Mon, 7 Sep 2020 11:31:22 -0400
+Received: by mail-ot1-f68.google.com with SMTP id a65so12527451otc.8;
+        Mon, 07 Sep 2020 08:31:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gMIeplfOIYBeXg87OauSkaEFjHQu8iny75rFp+6XgYU=;
-        b=KRyo3pvKPAiH5phfGpnu1n/NTdPVdoKLDVqZfEKiurv4sVTkTQsxh7zUe3fuS9kTe+
-         O7OHQE9iz7FtIotIN2ow07HSWtgSrUNUrXnAgY3GQWoTSdpUJulx0of0Lc+pf8dwVFzW
-         nOexLMbIg2R/tpfRHm3rse9F+VSGaQ/iHCZ8HYne4nVV8ONEMpD3u9V5zlz09I9Bl5QB
-         iHA5UrtWxcPaVbDcqj+fBsdSWGZVca/R+UthBxMu/0CAQwh7bcIVV4edK09GRzmGofby
-         wb0ixWWf9i4RGGOvJyZwPNt68sKUgE7jpyr6k4hNVr5I5njU3ImoLBnNn3U6RojBM3Co
-         DluQ==
-X-Gm-Message-State: AOAM53190KmjV9zOKd77vQC78uMfV2P4aqK0U6p7FCR9CME0yO48obhX
-        0U3Su/D5QiKYshxWgpcpyLcA7wfcgZLox4cNrEU/nc/G
-X-Google-Smtp-Source: ABdhPJwL+05hdkopa0MIF9W1CBL6HFgybeu9Ue4c2x0Be04LwhWuvb2GnT7UOxEe3ZGsazpwPHOPmCH2ltEbTRvSyOE=
-X-Received: by 2002:a9d:162:: with SMTP id 89mr15214661otu.250.1599491891261;
- Mon, 07 Sep 2020 08:18:11 -0700 (PDT)
+        bh=bUcsfQOAo+ulI8N6sQJ5DSyXLs3OgmbFHyWfg6ytgJY=;
+        b=B727fH74HKnHNPeswteMep6ebNBY9qUSUUAvfVXNyQgx3BpbQ8N78GUjy0XgQBjNa5
+         QKIHoRxVv2wrTTt4nzvSz0TCfNI1qmT3t5tFoyaDW7r+4bKGkj43c+Z8ggdW0PUYOtyS
+         3bbMr1isMciVqiK0FXbtcbFzjFXN/JfXZxytrq+Bi6qcCfW+fLBRHm1iGYvBLW0UOBzK
+         qtboKOFw1ljVtb+j3kU8G0yy5syRckDLp9+MhCNYGJCuepcGFhkotNA7syHH/2j5m3uY
+         OTYGeJxIvBbJmNqXKbxgoT58M/UWiq/OahH9Re4OdfOYp2RqOT0QFP5KsBWx3SQo464N
+         /iHA==
+X-Gm-Message-State: AOAM530xnyKRGrcXAmiHSRWlY6knj3LuKkOc4rfwWhAM3rEFIjnAKlxZ
+        GR1l3Q2l6aw6LDoOqLUbJ4mSJSh0K/LtZGequ0c=
+X-Google-Smtp-Source: ABdhPJwx41RjYhxw7IAAm/QynytRpltpx/8vMIqhtjL/0QA4rA1pb9nsQKNZE0io406i9e+i987aep2inBQ2yOiTliM=
+X-Received: by 2002:a9d:1b62:: with SMTP id l89mr14587437otl.145.1599492679753;
+ Mon, 07 Sep 2020 08:31:19 -0700 (PDT)
 MIME-Version: 1.0
 References: <1599470390-29719-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1599470390-29719-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1599470390-29719-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1599470390-29719-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1599470390-29719-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 7 Sep 2020 17:17:59 +0200
-Message-ID: <CAMuHMdX9qr9Q0zAgNCS+iGtZf1J0DTg8DunX59j9YbC_g9VmWw@mail.gmail.com>
-Subject: Re: [PATCH 01/14] dt-bindings: arm: renesas: Document R-Car V3U SoC
- DT bindings
+Date:   Mon, 7 Sep 2020 17:31:08 +0200
+Message-ID: <CAMuHMdX_be=+3soDGQBxPGvjF5Ty40wDEPaki3Z=SwbDToPA3g@mail.gmail.com>
+Subject: Re: [PATCH 02/14] dt-bindings: arm: renesas: Document Renesas Falcon boards
 To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
@@ -60,15 +58,46 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Shimoda-san,
+
 On Mon, Sep 7, 2020 at 11:20 AM Yoshihiro Shimoda
 <yoshihiro.shimoda.uh@renesas.com> wrote:
 > Add device tree bindings documentation for Renesas R-Car V3U
-> (r8a779a0).
+> Falcon CPU and BreakOut boards.
 >
 > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.10.
+Thanks for your patch!
+
+> --- a/Documentation/devicetree/bindings/arm/renesas.yaml
+> +++ b/Documentation/devicetree/bindings/arm/renesas.yaml
+> @@ -283,6 +283,9 @@ properties:
+>
+>        - description: R-Car V3U (R8A779A0)
+>          items:
+> +          - enum:
+> +              - renesas,falcon-cpu # Falcon CPU board (RTP0RC779A0CPB0010S)
+> +              - renesas,falcon-breakout # Falcon BreakOut board (RTP0RC779A0BOB0010S)
+>            - const: renesas,r8a779a0
+
+How is this intended to be used?
+
+The above means its users should declare either
+
+    compatible = "renesas,falcon-cpu", "renesas,r8a779a0";
+
+or
+
+    compatible = "renesas,falcon-breakout", "renesas,r8a779a0";
+
+However, falcon-cpu.dtsi has just
+
+    compatible = "renesas,falcon-cpu";
+
+Who will use "renesas,falcon-breakout"?
+
+>
+>        - description: RZ/N1D (R9A06G032)
 
 Gr{oetje,eeting}s,
 
