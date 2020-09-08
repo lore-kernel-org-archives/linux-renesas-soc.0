@@ -2,120 +2,87 @@ Return-Path: <SRS0=caTn=CR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1B3C2D0E1
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E64C2BC11
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C424208FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:13:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="b2/TxslK"
+	by mail.kernel.org (Postfix) with ESMTP id 97E7321741
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:52:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599598342;
+	bh=mxEqibooUH0sO45nHnKhKZmXcn8yeqi5Onb6kYFqsJQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=szGpPDgfuxkO0TQe9t11KCy+fjhla2Ij2Qcrp4Ub3jSuHDm6PTc4KpIrnfmVz6cgM
+	 MxS/ql28R3HDZjdgAff4NLehjGAF11UD6vKCSg4/vbPkdGIVGpWiEhzAfPOm74hBsB
+	 AiUdwFgpw+XaF7CmGpLb75mDWWPXVsed1SuYTGmA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730182AbgIHUNE (ORCPT
+        id S1729912AbgIHUwV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 16:13:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46408 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729961AbgIHPLR (ORCPT
+        Tue, 8 Sep 2020 16:52:21 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:34373 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726699AbgIHUwV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 11:11:17 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79FAAC09B050;
-        Tue,  8 Sep 2020 07:48:55 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0E6623B;
-        Tue,  8 Sep 2020 16:43:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1599576222;
-        bh=BdI0mo6eUHVfUXSrDwJy0WdXPPXWR7rIn+Hw/QeDrUw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=b2/TxslKry0QOEPzP+VPWZS2buO+bF1ApD4YuLmYmBCQVnezP83TYeYXiqUxsFVUQ
-         gb1DC0bMQtlZydH4ZklFF2exgipcn//n+6y3E5R3RLI1taAiyIT1TVNCVh5iP+Rwi2
-         8wL3ttJUUp3OTR/nRVCQmRzvrRlf54Q4xNaEmFSE=
-Date:   Tue, 8 Sep 2020 17:43:17 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Magnus <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-DT <devicetree@vger.kernel.org>,
-        "(Renesas) shimoda" <yoshihiro.shimoda.uh@renesas.com>,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 02/10] dt-bindings: display: renesas: dw-hdmi: tidyup
- example compatible.
-Message-ID: <20200908144317.GA11405@pendragon.ideasonboard.com>
-References: <87o8mhrtxo.wl-kuninori.morimoto.gx@renesas.com>
- <87lfhlrtwp.wl-kuninori.morimoto.gx@renesas.com>
- <6e1eedf0-d05f-81cd-e437-33fc4c7337f3@ideasonboard.com>
+        Tue, 8 Sep 2020 16:52:21 -0400
+Received: by mail-io1-f67.google.com with SMTP id m17so880814ioo.1;
+        Tue, 08 Sep 2020 13:52:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JzepCYrGAGrYES9D47w2RisPkLkEF03INGsKvpBbxRY=;
+        b=KxAiqQo1sgQEYEPjNtOsyWyCSuEguB+4OMXrm4Ig7CZ9boaG2GezSaCw2u3V1Sle4A
+         b7nGOwJL/lxKDpl67n3FHOlyDEKvP4lZYkL7NkO+u1x4coMKmPncB+VHVY1DYSfAaHME
+         yBR6aDY6FkpmLe8o+FaJ1laJMwmfgqIVo1iUdcTts5JEIe4cUNTbC3HWG0f/OUykXdCz
+         ir/9/Wf0G1tIbR51P0surEZTG3WXgtyB8XB9iAz0T3fBVMsK3IDZFUlwckAPRnDEgvKS
+         zjqpGOvjEqXwEycNSZi8jmA/YiuujbWxgB92hX7i+UEyppJN9pLW/1y4aW9oqRYYOI74
+         nD8g==
+X-Gm-Message-State: AOAM533AHRazEO4NvO1h8d+VgKg1hQBkYChlCilLvaHmVSoJ+FHHsW/Y
+        STSc9+eDBSzDmj1M0/z+1A==
+X-Google-Smtp-Source: ABdhPJxLB3kOj8pf6Yly17ORHTH8WuKy2jZOn9ohFBy9irVHuogpqDPXWV9q86vA+IYz8U0MDdVCYg==
+X-Received: by 2002:a05:6638:22ba:: with SMTP id z26mr839301jas.55.1599598340138;
+        Tue, 08 Sep 2020 13:52:20 -0700 (PDT)
+Received: from xps15 ([64.188.179.251])
+        by smtp.gmail.com with ESMTPSA id r8sm199831iot.51.2020.09.08.13.52.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Sep 2020 13:52:19 -0700 (PDT)
+Received: (nullmailer pid 898720 invoked by uid 1000);
+        Tue, 08 Sep 2020 20:52:17 -0000
+Date:   Tue, 8 Sep 2020 14:52:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Chris Brandt <chris.brandt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] dt-bindings: pinctrl: renesas,rza2-pinctrl: Fix pin
+ controller node name
+Message-ID: <20200908205217.GA898665@bogus>
+References: <20200821111127.3771-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6e1eedf0-d05f-81cd-e437-33fc4c7337f3@ideasonboard.com>
+In-Reply-To: <20200821111127.3771-1-geert+renesas@glider.be>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+On Fri, 21 Aug 2020 13:11:27 +0200, Geert Uytterhoeven wrote:
+> According to Devicetree Specification v0.2 and later, Section "Generic
+> Names Recommendation", the node name for a pin controller device node
+> should be "pinctrl".
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in sh-pfc for v5.10.
+> 
+>  .../devicetree/bindings/pinctrl/renesas,rza2-pinctrl.yaml       | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-On Tue, Sep 08, 2020 at 03:18:20PM +0100, Kieran Bingham wrote:
-> On 08/09/2020 01:34, Kuninori Morimoto wrote:
-> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> > 
-> > required is "renesas,r8a7795-hdmi", instead of "renesas,r8a7795-dw-hdmi"
-> 
-> Hrm, technically the driver will currently only match on :
->   "renesas,rcar-gen3-hdmi"
-> 
-> But I see how the '-dw-' has probably snuck in from other devices, and
-> is inappropriate.
-> 
-> Perhaps this should be more clear that it matches on the generic compatible:
-> 	renesas,rcar-gen3-hdmi
-> 
-> (or a combination of both?)
->
-> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
-> But if the generic isn't required, then this patch alone does fix what I
-> would call an error, so ...
-
-You're right, the generic compatible string should be required. I'll
-update this patch accordingly, and will address the bindings as part of
-the conversion to YAML.
-
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> We could always make this more clear when converting to YAML.
->
-> > ---
-> >  .../devicetree/bindings/display/bridge/renesas,dw-hdmi.txt      | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-> > index 819f3e31013c..e6526ab485d0 100644
-> > --- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-> > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-> > @@ -42,7 +42,7 @@ Optional properties:
-> >  Example:
-> >  
-> >  	hdmi0: hdmi@fead0000 {
-> > -		compatible = "renesas,r8a7795-dw-hdmi";
-> > +		compatible = "renesas,r8a7795-hdmi";
-> >  		reg = <0 0xfead0000 0 0x10000>;
-> >  		interrupts = <0 389 IRQ_TYPE_LEVEL_HIGH>;
-> >  		clocks = <&cpg CPG_CORE R8A7795_CLK_S0D4>, <&cpg CPG_MOD 729>;
-> > 
-
--- 
-Regards,
-
-Laurent Pinchart
+Acked-by: Rob Herring <robh@kernel.org>
