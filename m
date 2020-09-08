@@ -7,33 +7,36 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C8C1C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D071C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 516B22166E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:03:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3E8A2166E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 06:04:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="GsAGNYPG"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ugtEGusr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728654AbgIHGD0 (ORCPT
+        id S1728876AbgIHGEY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 02:03:26 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:46000 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728474AbgIHGDX (ORCPT
+        Tue, 8 Sep 2020 02:04:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47222 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728680AbgIHGEY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 02:03:23 -0400
+        Tue, 8 Sep 2020 02:04:24 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38812C061573;
+        Mon,  7 Sep 2020 23:04:23 -0700 (PDT)
 Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EDD3E35;
-        Tue,  8 Sep 2020 08:03:20 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B9F5E35;
+        Tue,  8 Sep 2020 08:04:21 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1599545001;
-        bh=xXpRO665MiNTYqVjhDpDFFsQ4yl5B22DqI7a60PCOPM=;
+        s=mail; t=1599545061;
+        bh=ca7O6RFFRSVQZqqqL9m9ZU0O5qL+e0TLreO9J8eIsQ0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GsAGNYPGAtWnMo7G8xHxrEuUe+4w7FL8wU/ELnEX6sawXgLk1lp3/MN4/L4vT2N9s
-         3s4laE2RQdHbb0YtTmeNJqE0CXN5vzKsp4gguF+S0t3LJXTwW8/fHiOlg3Orw4fPDJ
-         zD7rASZatCmHdl3XEmb3fMbPTLqBvr8aDr/GmN6Y=
-Date:   Tue, 8 Sep 2020 09:02:56 +0300
+        b=ugtEGusrDDt1uwGWsO3xbJwMaj9Q5XSrz3taDRhJlivsqszwzK0zh4X7XB8R7redg
+         qd+vYleIfP0NRZjVbK4yCFzwejIcGbLQiaQSfHvy9AClB8KuB/EkNPiqGt/NJjtS2w
+         zATIxjw8cWBZlWtWJJbyJen332/mcBkJWbAoq6Ds=
+Date:   Tue, 8 Sep 2020 09:03:57 +0300
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -46,15 +49,15 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         shimoda <yoshihiro.shimoda.uh@renesas.com>,
         dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH v2 07/10] arm64: dts: renesas: r8a77961: Add DU device
+Subject: Re: [PATCH v2 08/10] arm64: dts: renesas: r8a77961: Add HDMI device
  nodes
-Message-ID: <20200908060256.GR6047@pendragon.ideasonboard.com>
+Message-ID: <20200908060357.GS6047@pendragon.ideasonboard.com>
 References: <87o8mhrtxo.wl-kuninori.morimoto.gx@renesas.com>
- <87eendrtv1.wl-kuninori.morimoto.gx@renesas.com>
+ <87d02xrtux.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87eendrtv1.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87d02xrtux.wl-kuninori.morimoto.gx@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -64,11 +67,11 @@ Hi Morimoto-san,
 
 Thank you for the patch.
 
-On Tue, Sep 08, 2020 at 09:35:10AM +0900, Kuninori Morimoto wrote:
+On Tue, Sep 08, 2020 at 09:35:15AM +0900, Kuninori Morimoto wrote:
 > 
 > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > 
-> This patch adds DU device nodes for R-Car M3-W+ (r8a77961) SoC.
+> This patch adds HDMI device nodes for R-Car M3-W+ (r8a77961) SoC.
 > This patch was tested on R-Car M3-W+ Salvator-XS board.
 > 
 > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
@@ -76,34 +79,46 @@ On Tue, Sep 08, 2020 at 09:35:10AM +0900, Kuninori Morimoto wrote:
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
 > ---
->  arch/arm64/boot/dts/renesas/r8a77961.dtsi | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/renesas/r8a77961.dtsi | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 > 
 > diff --git a/arch/arm64/boot/dts/renesas/r8a77961.dtsi b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-> index 423808b6cd58..c7fabd9e875b 100644
+> index c7fabd9e875b..7f21491f6436 100644
 > --- a/arch/arm64/boot/dts/renesas/r8a77961.dtsi
 > +++ b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-> @@ -2165,8 +2165,19 @@ port@2 {
+> @@ -2145,14 +2145,23 @@ port@1 {
 >  		};
 >  
->  		du: display@feb00000 {
-> +			compatible = "renesas,du-r8a77961";
->  			reg = <0 0xfeb00000 0 0x70000>;
+>  		hdmi0: hdmi@fead0000 {
+> +			compatible = "renesas,r8a77961-hdmi", "renesas,rcar-gen3-hdmi";
+>  			reg = <0 0xfead0000 0 0x10000>;
 > -			/* placeholder */
-> +			interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-> +				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
-> +				 <&cpg CPG_MOD 722>;
-> +			clock-names = "du.0", "du.1", "du.2";
-> +			resets = <&cpg 724>, <&cpg 722>;
-> +			reset-names = "du.0", "du.2";
-> +
-> +			renesas,vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>;
+> +			interrupts = <GIC_SPI 389 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 729>, <&cpg CPG_CORE R8A77961_CLK_HDMI>;
+> +			clock-names = "iahb", "isfr";
+> +			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
+> +			resets = <&cpg 729>;
 > +			status = "disabled";
 >  
 >  			ports {
 >  				#address-cells = <1>;
+>  				#size-cells = <0>;
+>  				port@0 {
+>  					reg = <0>;
+> +					dw_hdmi0_in: endpoint {
+> +						remote-endpoint = <&du_out_hdmi0>;
+> +					};
+>  				};
+>  				port@1 {
+>  					reg = <1>;
+> @@ -2191,6 +2200,7 @@ du_out_rgb: endpoint {
+>  				port@1 {
+>  					reg = <1>;
+>  					du_out_hdmi0: endpoint {
+> +						remote-endpoint = <&dw_hdmi0_in>;
+>  					};
+>  				};
+>  				port@2 {
 
 -- 
 Regards,
