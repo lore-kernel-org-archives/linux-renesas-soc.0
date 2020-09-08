@@ -2,79 +2,140 @@ Return-Path: <SRS0=caTn=CR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2358C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 08:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5854DC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 08:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB853218AC
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 08:08:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19BF220738
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 08:30:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DWTQ+t3m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbgIHIIf (ORCPT
+        id S1729234AbgIHIan (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 04:08:35 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33843 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729591AbgIHIIb (ORCPT
+        Tue, 8 Sep 2020 04:30:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41448 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729299AbgIHIam (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 04:08:31 -0400
-Received: by mail-oi1-f194.google.com with SMTP id n2so4337876oij.1;
-        Tue, 08 Sep 2020 01:08:31 -0700 (PDT)
+        Tue, 8 Sep 2020 04:30:42 -0400
+Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C48B9C061573
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2020 01:30:41 -0700 (PDT)
+Received: by mail-yb1-xb43.google.com with SMTP id x10so10732730ybj.13
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2020 01:30:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nTN3ARsr9hpQI6BCuk/GsEtjfCkbwQSE9qWBM1r1Vi4=;
+        b=DWTQ+t3mBGmuQH5ns0RFYEgUgO3RBJQhQCTxou3iGyjHWzuvspeR2zMoAzxokz+lTm
+         F+nNi4xDjXpwUjtKLD52UfnVAHTORbB5MAQNZfBTF4Nvl8EWkVfsXpWfN0b+c9pCwG4K
+         j3eFauUsRhnOz11Dg34x5GHhPJ0tUtCQjzv/a1y4IjuuIIha+QactO++jTlBimolsUsK
+         52YgCLBS0tnmdLnereZ/uDaVmJxsbGzIngJLn9hLMTspe7MOXsYnpnf8zMn8OjPgmDEl
+         YzWhomtAC1Y4ckLXQnmuamG9UCygaPiuSKW+9kzp0dk9cgeQrqbjS4p41VE+uzqfEQBg
+         ZrVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=6ZZ8juEB5ESWt7COft3OIz6Zh7GIcQEgWmY/PNedOlU=;
-        b=cZDF+5JblUYQ+kTzoIOnBU/unadxkyicBuOjHm/kdpWNV26X6uVdOl1N3w6H1I/xMJ
-         YXEVRfo2KdDFiAhYzHgorH6K6LAGz/5ftxf08mKB804aDazdk0lDCzM/TgTcZJcYK77H
-         U4ZOtBmw/4niCgkKdtyMZSZHcXu/i9zUyJWL45U3cNYrBYxMlGk3oXK6cn+9+ttQZcf/
-         erEFwItobeqT7rfZgFWATUIuZTJnloxm66/C9pzcEkGls//jkWbNLVi0hdddZiEmfb2H
-         n83kt/EP+T/IFCNcEo9jwiVx0jzMBTVHJ26Yn8J2WFoLgU+jtfx+3oSBA7/FQaZg5ddA
-         XMPg==
-X-Gm-Message-State: AOAM5310yABAEiz8XmMVZZ65azNLMdb261RwS/thg407NSYCeLJI9ATS
-        PsqricsNNYg4y01iZXhCBtB6dwy0bTaFbaBhRfE=
-X-Google-Smtp-Source: ABdhPJzy+7JmKXzdfJg+7LCk72Fc+JazGVeVFSgK5eqy8lP90dfBkzxF4fY1BSAtwjb8jmzQ33sj1lSP4Bu5N7l41A4=
-X-Received: by 2002:aca:52d6:: with SMTP id g205mr1929838oib.54.1599552510880;
- Tue, 08 Sep 2020 01:08:30 -0700 (PDT)
+        bh=nTN3ARsr9hpQI6BCuk/GsEtjfCkbwQSE9qWBM1r1Vi4=;
+        b=RrYUE2COdony54plaLcGtGsB0/aEYCN3iDYnDUWzoNR51aI6yCZvwtHdCPH5+0bdRC
+         F6AijFzSArYXwlLUnIRuCjkXMjJkZlMWyt89ibhCgtUJXumNzUWquEvPXLv8btq3CzRg
+         tLw8uAgRFMRRN3kfpjdZoIeRw4sFqWWhWV5i6gqLgDfUILjXmMg5AfJ29nct2FDr9qu4
+         WgweMqnBSxPpIRWt+nhIlcFNDgw/hIb5Ovk5KmkOAOki6v7r+x7HYkEahn5TYVOCzDPv
+         LCtoMQF+m3LNdzCrIflTBfNg3meZ4Sx6JB6fbh0Lxs+ZLU2zbvuFXW82rB4QgJQ8DXhd
+         Xm+g==
+X-Gm-Message-State: AOAM532FuTmTZeZY/59yPdv/5PQcZ756cyg3pRsr6Ah/V0jvKwawYaYd
+        QzaWaMeCGyX7bSHWJfF2dVb+FiM6bY2uz785vNOYMYvSaz4=
+X-Google-Smtp-Source: ABdhPJz8lSBwGkbPccwvuANIGInTX7shxXKmHwL4T6XQCozw8acV3PmKl9+LHmgfRl9qdGHiRiPURUZ+M1c0FPcezfI=
+X-Received: by 2002:a25:bbcf:: with SMTP id c15mr32109754ybk.127.1599553840855;
+ Tue, 08 Sep 2020 01:30:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <1599470390-29719-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1599470390-29719-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1599470390-29719-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 8 Sep 2020 10:08:19 +0200
-Message-ID: <CAMuHMdXQ1v+rFeOX4GSDcWgKKeJAG2WhjEb-4-QLrGROjUg-UQ@mail.gmail.com>
-Subject: Re: [PATCH 03/14] dt-bindings: power: renesas,rcar-sysc: Document
- r8a779a0 SYSC binding
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+References: <CA+V-a8skJu_kqqWqvv=ar20tFv48EfQePV8XQ=7eBYJuJui9eg@mail.gmail.com>
+ <CAMuHMdUvBaNmtwHN=N055RcfOWt_uO=U6S7wy26s=U=i+DXS_g@mail.gmail.com>
+ <CA+V-a8sw0kg6ChrcrkdzL51K+1A=ce_RpzO02-KB9XAEm+29aQ@mail.gmail.com> <CAMuHMdWh3=OytzygTt5Kt90Shpm1O-QScbtOSwo_XGaRiSYufA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWh3=OytzygTt5Kt90Shpm1O-QScbtOSwo_XGaRiSYufA@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Tue, 8 Sep 2020 09:30:14 +0100
+Message-ID: <CA+V-a8uKmHctxFYHECgB9m_3i=rbpTsnbWCEpP_32q95x7EMQg@mail.gmail.com>
+Subject: Re: bonnie++ causing kernel panic
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
+        Chris Paterson <Chris.Paterson2@renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Sep 7, 2020 at 11:20 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Document bindings for the R-Car V3U (aka R8A779A0) SYSC block.
+Hi Geert,
+
+On Tue, Sep 8, 2020 at 8:05 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 >
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Hi Prabhakar,
+>
+> On Mon, Sep 7, 2020 at 11:27 PM Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+> > On Mon, Sep 7, 2020 at 1:05 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > On Fri, Sep 4, 2020 at 11:04 AM Lad, Prabhakar
+> > > <prabhakar.csengg@gmail.com> wrote:
+> > > > I am seeing "Unable to handle kernel paging request at virtual address
+> > > > xxxxxxxxxx" panic while running bonnie++ (version 1.04). I have
+> > > > managed to replicate this issue on R-Car M3N, G2[HMN]. I have been
+> > > > using renesas_defconfig for all the platforms and I have tested on
+> > > > Linux 5.9.0-rc3 for all the 4 platforms.
+> > > >
+> > > > Initially I was testing bonnie++ on eMMC device and later discovered
+> > > > even running bonnie++ on NFS mount is causing this issue. I have
+> > > > attached the logs for M3N while running bonnie++ on NFS and logs for
+> > > > G2N while running on eMMC.
+> > > >
+> > > > I even traced back to 5.2 kernel where initial G2M support was added
+> > > > and still able to see this issue.
+> > >
+> > > Thanks for your report!
+> > >
+> > > While the crash symptoms seem to be the same in all crash logs, the
+> > > backtraces aren't.
+> > >
+> > > Does disabling SMP (maxcpus=1) help?
+> > unfortunately no.
+>
+> OK, so it's not an SMP issue.
+>
+> > > Does switching from SLUB to SLAB, and enabling CONFIG_DEBUG_SLAB
+> > > reveal memory corruption?
+> > >
+> > attached are the logs for SLUB and SLAB with debug enabled on G2M
+> > rev.4.0 board (bonnie++-1.04) all the 4 combinations cause the kernel
+> > panic!
+> >
+> > SLUB -> 1 CPU -> BUG radix_tree_node (Not tainted): Padding overwritten.
+> > SLUB -> all 6 CPU's -> BUG kmalloc-2k (Not tainted): Padding overwritten.
+> >
+> > SLAB -> 1 CPU -> Slab corruption (Not tainted): nfs_write_data
+> > start=ffff000016c08840, len=912
+> > SLAB -> all 6 CPU's -> Unable to handle kernel paging request at
+> > virtual address 7d81858c9c9d9dd0 ([7d81858c9c9d9dd0] address between
+> > user and kernel address ranges)
+>
+> OK. So now we know something's overwriting its memory block.  Either
+> it's writing too far, or a use-after-free case.
+> Now comes the hard part of finding who's responsible...
+>
+:)
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.10.
+I checked out the very first commit where support for G2M was added
+and tested even this had an issue, so now I'll switch to R-Car M3N and
+perform the tests. Unfortunately I don't have any  non Renesas arm64
+platform to perform similar tests.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+Prabhakar
