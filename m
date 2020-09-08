@@ -2,114 +2,151 @@ Return-Path: <SRS0=caTn=CR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D399C2D0A7
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D97C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C17621919
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:05:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E32362137B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:05:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sBPNOifh"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nerJ56Bo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731434AbgIHUFG (ORCPT
+        id S1731371AbgIHUFO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 16:05:06 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51488 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730161AbgIHPWF (ORCPT
+        Tue, 8 Sep 2020 16:05:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48188 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730172AbgIHPWE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 11:22:05 -0400
+        Tue, 8 Sep 2020 11:22:04 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3875AC09B04E;
+        Tue,  8 Sep 2020 07:47:07 -0700 (PDT)
 Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 838AF3B;
-        Tue,  8 Sep 2020 17:21:17 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3646247;
+        Tue,  8 Sep 2020 16:46:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1599578477;
-        bh=LMM+o53Loonyo3K7NsY/3nOFPFD/RwsRCBZOk1MmTyI=;
+        s=mail; t=1599576410;
+        bh=RSK952bhlHi49suHIZc7d6qiORR1jel+b2zV6JRNGfA=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sBPNOifhWcZEx8UJjl51ursiwoqD6krJiG6VQGLDMjSN9gUwmMK5iTFoXJKOpvf2t
-         pAMZ2zgEnzAtfIJgPttDVvxELcDi213fX9QOd/T6JTaSXir50iuRgmMvWxZ0YGTcL7
-         Dno37GnwVU0Ro8tDpMtcB0Nia5jn8trdB5GvWR/k=
-Date:   Tue, 8 Sep 2020 18:20:52 +0300
+        b=nerJ56Bo/ACyXiuYStye+Z40isGeZr0T2w7UunIrue9jbV1y0Tp/EGavuLZCwNJLJ
+         Xqlrz+7LrtNvNUdobIaX68MI0x5n5vtmqPihbFui2aeIU8XngIcl4e3C7mOP8SNIF2
+         4jmQZ60eIe9n7jRtWNFavPQA9IPrxPW6Z76owfjA=
+Date:   Tue, 8 Sep 2020 17:46:23 +0300
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-        mchehab@kernel.org, sakari.ailus@linux.intel.com,
-        hverkuil-cisco@xs4all.nl, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] dt-bindings: media: i2c: Convert 3 sensor bindings
-Message-ID: <20200908152052.GC11405@pendragon.ideasonboard.com>
-References: <20200903115143.13717-1-jacopo+renesas@jmondi.org>
- <20200903211420.GF6492@pendragon.ideasonboard.com>
- <20200904080302.47yshw6z6n33xh7k@uno.localdomain>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-DT <devicetree@vger.kernel.org>,
+        "(Renesas) shimoda" <yoshihiro.shimoda.uh@renesas.com>,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v2 02/10] dt-bindings: display: renesas: dw-hdmi: tidyup
+ example compatible.
+Message-ID: <20200908144623.GB11405@pendragon.ideasonboard.com>
+References: <87o8mhrtxo.wl-kuninori.morimoto.gx@renesas.com>
+ <87lfhlrtwp.wl-kuninori.morimoto.gx@renesas.com>
+ <6e1eedf0-d05f-81cd-e437-33fc4c7337f3@ideasonboard.com>
+ <20200908144317.GA11405@pendragon.ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200904080302.47yshw6z6n33xh7k@uno.localdomain>
+In-Reply-To: <20200908144317.GA11405@pendragon.ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
-
-On Fri, Sep 04, 2020 at 10:03:02AM +0200, Jacopo Mondi wrote:
-> On Fri, Sep 04, 2020 at 12:14:20AM +0300, Laurent Pinchart wrote:
-> > On Thu, Sep 03, 2020 at 01:51:40PM +0200, Jacopo Mondi wrote:
-> > > I know I've sent the previous version first as part of a longer list of patches,
-> > > later individually, and now grouped together again. Sorry for the fuss, hope
-> > > it's not too confusing.
-> > >
-> > > These three sensor bindings conversions go together as they all happen in a
-> > > single patch, so I deemed it was easier to just group them.
-> > >
-> > > In v4 after finalizing the discussion with Laurent and Rob on how to handle
-> > > of-graph endpoint, I have dropped them from mt9v111 and imx274. For imx214 as I
-> > > have endpoint properties to document I have also documented 'endpoint' (not
-> > > mandatory) and 'remote-endpoint' (mandatory). Hope I got the outcome of the
-> > > discussion right. For imx214 I also took in Laurent's suggestion on how to
-> > > document the 'data-lanes' supported values.
+On Tue, Sep 08, 2020 at 05:43:25PM +0300, Laurent Pinchart wrote:
+> Hi Kieran,
+> 
+> On Tue, Sep 08, 2020 at 03:18:20PM +0100, Kieran Bingham wrote:
+> > On 08/09/2020 01:34, Kuninori Morimoto wrote:
+> > > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > > 
+> > > required is "renesas,r8a7795-hdmi", instead of "renesas,r8a7795-dw-hdmi"
+> > 
+> > Hrm, technically the driver will currently only match on :
+> >   "renesas,rcar-gen3-hdmi"
+> > 
+> > But I see how the '-dw-' has probably snuck in from other devices, and
+> > is inappropriate.
+> > 
+> > Perhaps this should be more clear that it matches on the generic compatible:
+> > 	renesas,rcar-gen3-hdmi
+> > 
+> > (or a combination of both?)
 > >
-> > I think you can drop remote-endpoint, it will be defined in
-> > of-graph.yaml. Apart from that, it sounds good to me.
+> > > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > 
+> > But if the generic isn't required, then this patch alone does fix what I
+> > would call an error, so ...
 > 
-> Will I ever get this right ? Should we record the policy to document
-> endpoints until we don't have an of-graph.yaml to avoid other to have
-> go through 5 iterations to do it right ?
+> You're right, the generic compatible string should be required. I'll
+> update this patch accordingly, and will address the bindings as part of
+> the conversion to YAML.
 
-I'll give graph.yaml a go :-)
+Proposed new commit:
 
-> On this patch:
-> I owe an updated to the imx274 patch but I'm waiting for this
-> discussion to get somewhere (you're welcome to step-in :)
-> https://patchwork.linuxtv.org/project/linux-media/patch/1599012278-10203-3-git-send-email-skomatineni@nvidia.com/
-> 
-> Then I'll re-send a v5
-> 
-> > > Individual maintainers cc-ed per-patch.
-> > >
-> > > Jacopo Mondi (3):
-> > >   dt-bindings: media: mt9v111: Convert to json-schema
-> > >   dt-bindings: media: imx274: Convert to json-schema
-> > >   dt-bindings: media: imx214: Convert to json-schema
-> > >
-> > >  .../bindings/media/i2c/aptina,mt9v111.txt     |  46 ------
-> > >  .../bindings/media/i2c/aptina,mt9v111.yaml    |  75 ++++++++++
-> > >  .../devicetree/bindings/media/i2c/imx274.txt  |  38 -----
-> > >  .../bindings/media/i2c/sony,imx214.txt        |  53 -------
-> > >  .../bindings/media/i2c/sony,imx214.yaml       | 137 ++++++++++++++++++
-> > >  .../bindings/media/i2c/sony,imx274.yaml       |  59 ++++++++
-> > >  MAINTAINERS                                   |   6 +-
-> > >  7 files changed, 274 insertions(+), 140 deletions(-)
-> > >  delete mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
-> > >  delete mode 100644 Documentation/devicetree/bindings/media/i2c/imx274.txt
-> > >  delete mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx214.txt
-> > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx214.yaml
-> > >  create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx274.yaml
+commit cc487cbb06d841ca76efade63201a41bd04f6015
+Author: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Date:   Tue Sep 8 09:34:11 2020 +0900
+
+    dt-bindings: display: renesas: dw-hdmi: Tidyup example compatible
+
+    The DT example erronously uses the "renesas,r8a7795-dw-hdmi", when the
+    correct value is "renesas,r8a7795-hdmi". It is furthermore missing the
+    generic "renesas,rcar-gen3-hdmi" compatible string. Fix it.
+
+    Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+    Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+    Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+    [Add "renesas,rcar-gen3-hdmi" and rework commit message]
+    Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+index f275997ab947..9c56c5169a88 100644
+--- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
++++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+@@ -43,7 +43,7 @@ Optional properties:
+ Example:
+
+ 	hdmi0: hdmi@fead0000 {
+-		compatible = "renesas,r8a7795-dw-hdmi";
++		compatible = "renesas,r8a7795-hdmi", "renesas,rcar-gen3-hdmi";
+ 		reg = <0 0xfead0000 0 0x10000>;
+ 		interrupts = <0 389 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&cpg CPG_CORE R8A7795_CLK_S0D4>, <&cpg CPG_MOD 729>;
+
+> > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > 
+> > We could always make this more clear when converting to YAML.
+> >
+> > > ---
+> > >  .../devicetree/bindings/display/bridge/renesas,dw-hdmi.txt      | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+> > > index 819f3e31013c..e6526ab485d0 100644
+> > > --- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+> > > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
+> > > @@ -42,7 +42,7 @@ Optional properties:
+> > >  Example:
+> > >  
+> > >  	hdmi0: hdmi@fead0000 {
+> > > -		compatible = "renesas,r8a7795-dw-hdmi";
+> > > +		compatible = "renesas,r8a7795-hdmi";
+> > >  		reg = <0 0xfead0000 0 0x10000>;
+> > >  		interrupts = <0 389 IRQ_TYPE_LEVEL_HIGH>;
+> > >  		clocks = <&cpg CPG_CORE R8A7795_CLK_S0D4>, <&cpg CPG_MOD 729>;
 
 -- 
 Regards,
