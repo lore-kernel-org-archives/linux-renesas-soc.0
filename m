@@ -2,117 +2,123 @@ Return-Path: <SRS0=caTn=CR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1285C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F412C2BC11
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A03A52076C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:20:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A6DF2087D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:20:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="XtAMJBhr"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="wivPxHYd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731473AbgIHTU2 (ORCPT
+        id S1731119AbgIHTU2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 8 Sep 2020 15:20:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54344 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54336 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731119AbgIHQCR (ORCPT
+        with ESMTP id S1731125AbgIHQCR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 8 Sep 2020 12:02:17 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C2ABC08C5EA;
-        Tue,  8 Sep 2020 07:18:27 -0700 (PDT)
-Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9AE7639;
-        Tue,  8 Sep 2020 16:18:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1599574703;
-        bh=YdLhhX1YXIgXvVADm+8UlIZ3RcNUC3MnuoMlrS6ie2E=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=XtAMJBhr0zA7V+OyWB5mD+NFXiOMRmJalFA49DcnKi9OsKg4l7ag7DdpY4vrejEl+
-         D0xAd45duxD1W2dmaIKBR+6v72+a46M4ckM8ZZhkOhl+wUChxjkD/PbyN9GsRubmbf
-         X8P/aq8+hcY7rTQsPz9pB7A/bFJyIweOpfmfg6uk=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH v2 02/10] dt-bindings: display: renesas: dw-hdmi: tidyup
- example compatible.
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A70DFC0610E5
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2020 08:30:02 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id y11so9432862lfl.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2020 08:30:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Di/sRB46OQMighQk5dHQr7eSM0Xs2HG6mVJOqpHAQVA=;
+        b=wivPxHYd6n7P0VAEx89iYB0CDqiBmKAo8bMzcLJfB2IiCRpxk5jYQTa829s47y/wno
+         40r/qjNvtJXqW07sGgOhSY/HZAjUZxaTZhtMPSqKN9fEpuZ4CSnpLMNQuWlpJzLMM7fs
+         IjlQCq8zRJb/BaBSivOSB4R5Wwu4b1YYCM8rPodch7mYWFCK70cCGVs8t8TZjLu7WN1e
+         SiYzFROl6IUYKLWKvvO61Za6fBzGcFbxWI2+IBQ9rr45F6MlSdVG6CUeyWlEB/Wpi3UY
+         quha/AzAYYYLaGPkTLNp/jY5SKnnT236N0YwjedIYIuNHh+ogwxXas/gPuTCgKN9zRYj
+         CLJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Di/sRB46OQMighQk5dHQr7eSM0Xs2HG6mVJOqpHAQVA=;
+        b=J940UxLf7XYLUQK35bSjbI0KpLA/qhEoM5Ugy/ntz7Qo+ufwdYnDIRg6c2BqdC5t9s
+         hUYMxyiIW79uTAHKhYhYiuFVPpaTGMOlaUJyzvcXTIDJy+XFfgJLDR9pGoujuSLYnffP
+         0PAZFiqYAWqN374etV31vttVAqQ/as9S4qsW8Omr79J/4ez8r6uC4zrIDobXVR8k1cC+
+         4f4Lf6tIIUo935FhvIHWZTwnVAtoesCz4Q90/jXwoVqC5hgPJ61AoTJ7xXupJPdwRwUL
+         9hNjv+LgdKiMu9HZTIhWq2A7nOk83sZHsHf2/12PdXeuYa6/JAVmNGIQeTYOyDvtSAw5
+         lQqA==
+X-Gm-Message-State: AOAM533WCv8iu1Ldc6nsxqxrfzsFNUJBVih03vAnKPSX/cP3QZ8FWcqK
+        hRPFejRlnUa9LwQEVNsjJZ6qxw==
+X-Google-Smtp-Source: ABdhPJwjWseqWyMRsUahDpNm7GhAt9M3g9XoH9LfcntDMA996o6s40LVXSJbHhYXWYKWxabeQtFRwg==
+X-Received: by 2002:ac2:5327:: with SMTP id f7mr12488078lfh.8.1599579000908;
+        Tue, 08 Sep 2020 08:30:00 -0700 (PDT)
+Received: from localhost (h-209-203.A463.priv.bahnhof.se. [155.4.209.203])
+        by smtp.gmail.com with ESMTPSA id l4sm10066362ljg.42.2020.09.08.08.30.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Sep 2020 08:30:00 -0700 (PDT)
+Date:   Tue, 8 Sep 2020 17:29:59 +0200
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Laurent <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Magnus <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-DT <devicetree@vger.kernel.org>,
-        "(Renesas) shimoda" <yoshihiro.shimoda.uh@renesas.com>,
-        dri-devel@lists.freedesktop.org
-References: <87o8mhrtxo.wl-kuninori.morimoto.gx@renesas.com>
- <87lfhlrtwp.wl-kuninori.morimoto.gx@renesas.com>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <6e1eedf0-d05f-81cd-e437-33fc4c7337f3@ideasonboard.com>
-Date:   Tue, 8 Sep 2020 15:18:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH 0/2] Add VIN instances to r8a7742 SoC
+Message-ID: <20200908152959.GC2984648@oden.dyn.berto.se>
+References: <20200907144509.8861-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-In-Reply-To: <87lfhlrtwp.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200907144509.8861-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Morimoto-san,
+Hi Lad,
 
-On 08/09/2020 01:34, Kuninori Morimoto wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Thanks for your work.
+
+On 2020-09-07 15:45:07 +0100, Lad Prabhakar wrote:
+> Hi All,
 > 
-> required is "renesas,r8a7795-hdmi", instead of "renesas,r8a7795-dw-hdmi"
+> This patch series adds support for VIN to r8a7742 (RZ/G1H) SoC.
+> 
+> Patches apply on top of [1].
+> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/
+>     renesas-devel.git/log/?h=renesas-arm-dt-for-v5.10
 
-Hrm, technically the driver will currently only match on :
-  "renesas,rcar-gen3-hdmi"
+For the whole series,
 
-But I see how the '-dw-' has probably snuck in from other devices, and
-is inappropriate.
-
-Perhaps this should be more clear that it matches on the generic compatible:
-	renesas,rcar-gen3-hdmi
-
-(or a combination of both?)
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
 > 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-
-But if the generic isn't required, then this patch alone does fix what I
-would call an error, so ...
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-We could always make this more clear when converting to YAML.
-
-
-> ---
->  .../devicetree/bindings/display/bridge/renesas,dw-hdmi.txt      | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Cheers,
+> Prabhakar
 > 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-> index 819f3e31013c..e6526ab485d0 100644
-> --- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-> +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-> @@ -42,7 +42,7 @@ Optional properties:
->  Example:
->  
->  	hdmi0: hdmi@fead0000 {
-> -		compatible = "renesas,r8a7795-dw-hdmi";
-> +		compatible = "renesas,r8a7795-hdmi";
->  		reg = <0 0xfead0000 0 0x10000>;
->  		interrupts = <0 389 IRQ_TYPE_LEVEL_HIGH>;
->  		clocks = <&cpg CPG_CORE R8A7795_CLK_S0D4>, <&cpg CPG_MOD 729>;
+> Lad Prabhakar (2):
+>   dt-bindings: media: renesas,vin: Add device tree support for r8a7742
+>   ARM: dts: r8a7742: Add VIN DT nodes
+> 
+>  .../bindings/media/renesas,vin.yaml           |  1 +
+>  arch/arm/boot/dts/r8a7742.dtsi                | 44 +++++++++++++++++++
+>  2 files changed, 45 insertions(+)
+> 
+> -- 
+> 2.17.1
 > 
 
+-- 
+Regards,
+Niklas Söderlund
