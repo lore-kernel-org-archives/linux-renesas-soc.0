@@ -2,145 +2,103 @@ Return-Path: <SRS0=caTn=CR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79CB8C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9B9C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 407662078B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:26:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="Vi3MWJGf"
+	by mail.kernel.org (Postfix) with ESMTP id 4FA022087D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599593278;
+	bh=P32hrheM3XHI3hTzptMJ7G2yosA8KkleDbFzT5mxRX0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
+	b=ug2yAAoWzKj6d+RQK8AA5SK24o52dEb63YeuF8g1TGfhtQYK8hjXDn528uz9YJOtP
+	 4kw9sRoRGxAR3ZerVAb5xDIHWP1eHcme0EyIyPZU1Um6Dr7VVCCqJTLjPAJOIp2EhH
+	 kyWDcORNOk7GI6BiLXDYts6UQ+fFBAnD+Z8GgTQg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731093AbgIHTZo (ORCPT
+        id S1732200AbgIHT1w (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 15:25:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54564 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731076AbgIHQAj (ORCPT
+        Tue, 8 Sep 2020 15:27:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37684 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731064AbgIHT1o (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 12:00:39 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABD2AC0612F6
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2020 08:24:20 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id r24so1661616ljm.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Sep 2020 08:24:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=0slGM3+BtCMgZjKNZb6MUZdPEoVjx0bEKge0FUahQT8=;
-        b=Vi3MWJGf/a6vH7y1d5TtuyTnAHQbusiEhwf7I0wIl2k42GFwDJx5VTdrWvhsll5hfd
-         s6LDJGZIUwwZgWOb3vs6Z1G4Fp3VZEY5NiMEvtOpgxDAn/4QtCKzsC7Rei8wu4DwvZ5A
-         MzYKYBuFDF9mRkG1r4GbrMwI4JxU+N2AkMPYyK+Ep0RQJ5cUB0ydVe1meHAsb0F0eBpn
-         MT+r7Ld5SC2VyEYvgUy00asetcsZedJ55Jf0btn0GFRrZ1mrGATxd+jgVjKERb0hCtrF
-         EDPhoBbgzwYS2MvyEgXpyXAw6uiyOCYIuWCFd+ojpdtiLvdLgusGL4gT5H8uRp4qazp2
-         OJ+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=0slGM3+BtCMgZjKNZb6MUZdPEoVjx0bEKge0FUahQT8=;
-        b=KDRBODq9R21wnslQ2Xj7qUokdM2xf3f/64WBtjfGNqpo816xVrMjwmtRWy6gIWWgVr
-         pcBqcyluYeyQ4o1n25a/WkRkmdCnS43j0JlDGVv9yYVYXWMPPUukBOsDwMIwDaJ8eSkD
-         y1yp2mrmfSWvL+Zng/09RPr6Of338qzutM0aHY9twK7x2LTHfv1oVhzr8fyhGRg+7oP+
-         AhezQqckBMlFgbim7NxOrWagvyMC7+NJwrlGbaWF8bDB84CjWn71OH1JOjimLEle+Rwb
-         fvl6XJdocKp0Ed1KPhQOj1qeBDpyFV46NTUjm1Skfer6H1v9QnqP4u7rYbjPgOfGS+oB
-         nOgQ==
-X-Gm-Message-State: AOAM532auMN4TiHFoRA4rMiWXrMI6D570HXYCNpeB7w6RctbPNOdGMSA
-        fnuDgGgnIgis1Z6Ym85xnmY3TQ==
-X-Google-Smtp-Source: ABdhPJy2o7S+OqLyzWdKvjsBTPrqHMSajqGGhg9IKe0/sfT3U0z/qCTkw+G2zqDyw6DoW1CWMW3XFw==
-X-Received: by 2002:a2e:8541:: with SMTP id u1mr14118617ljj.101.1599578659137;
-        Tue, 08 Sep 2020 08:24:19 -0700 (PDT)
-Received: from localhost (h-209-203.A463.priv.bahnhof.se. [155.4.209.203])
-        by smtp.gmail.com with ESMTPSA id e17sm10462605ljg.85.2020.09.08.08.24.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Sep 2020 08:24:18 -0700 (PDT)
-Date:   Tue, 8 Sep 2020 17:24:18 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: shmobile: rcar-gen2: Make
- rcar_gen2_{timer_init,reserve}() static
-Message-ID: <20200908152418.GB2984648@oden.dyn.berto.se>
-References: <20200908074403.4379-1-geert+renesas@glider.be>
+        Tue, 8 Sep 2020 15:27:44 -0400
+Received: from localhost (35.sub-72-107-115.myvzw.com [72.107.115.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 536B52078B;
+        Tue,  8 Sep 2020 19:27:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599593263;
+        bh=P32hrheM3XHI3hTzptMJ7G2yosA8KkleDbFzT5mxRX0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=ESpLf9qQ48q6G0oYZK0DDSxnAToFh8X+OLSi3TXK319kaqsGFStN2BElD1KojPhuh
+         POzL3Ry4hoAitBnLT11VgU8pHxTX/BzCj+72EVjRXki4Tfci2NuCXMjEE1Tyj4vDkV
+         ZQTXd1Ouvmsamzfw0DAWvM0OfoUOX0K4yATha7XA=
+Date:   Tue, 8 Sep 2020 14:27:42 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: pci: rcar-pci-ep: Document r8a774e1
+Message-ID: <20200908192742.GA615450@bjorn-Precision-5520>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200908074403.4379-1-geert+renesas@glider.be>
+In-Reply-To: <20200908192600.GA615209@bjorn-Precision-5520>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
-
-Thanks for your patch.
-
-On 2020-09-08 09:44:03 +0200, Geert Uytterhoeven wrote:
-> As of commit 1e90fea35b80cfe1 ("ARM: shmobile: r8a7791: Use common R-Car
-> Gen2 machine definition"), there are no more users of
-> rcar_gen2_timer_init() and rcar_gen2_reserve() outside
-> arch/arm/mach-shmobile/setup-rcar-gen2.c.
+On Tue, Sep 08, 2020 at 02:26:01PM -0500, Bjorn Helgaas wrote:
+> On Fri, Sep 04, 2020 at 11:38:49AM +0100, Lad Prabhakar wrote:
+> > Document the support for R-Car PCIe EP on R8A774E1 SoC device.
+> > 
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > ---
+> >  Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+> > index 70c45f72ab20..a059c96c294b 100644
+> > --- a/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+> > +++ b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+> > @@ -18,6 +18,7 @@ properties:
+> >            - renesas,r8a774a1-pcie-ep     # RZ/G2M
+> >            - renesas,r8a774b1-pcie-ep     # RZ/G2N
+> >            - renesas,r8a774c0-pcie-ep     # RZ/G2E
+> > +          - renesas,r8a774e1-pcie-ep     # RZ/G2H
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> To be queued in renesas-devel for v5.10.
+> This is on Lorenzo's pci/rcar branch and headed to -next.
 > 
->  arch/arm/mach-shmobile/rcar-gen2.h       | 2 --
->  arch/arm/mach-shmobile/setup-rcar-gen2.c | 4 ++--
->  2 files changed, 2 insertions(+), 4 deletions(-)
+> There's a similar older commit on that branch, 2de82ec86674
+> ("dt-bindings: pci: rcar-pci-ep: Document r8a774a1 and r8a774b1") that
+> came with a companion that added device IDs to pci_endpoint_test.c:
+> cfb824ddd1c0 ("misc: pci_endpoint_test: Add Device ID for RZ/G2M and
+> RZ/G2N PCIe controllers").
 > 
-> diff --git a/arch/arm/mach-shmobile/rcar-gen2.h b/arch/arm/mach-shmobile/rcar-gen2.h
-> index 4777fff2de413b7e..af9dbd6aa49e4d30 100644
-> --- a/arch/arm/mach-shmobile/rcar-gen2.h
-> +++ b/arch/arm/mach-shmobile/rcar-gen2.h
-> @@ -2,8 +2,6 @@
->  #ifndef __ASM_RCAR_GEN2_H__
->  #define __ASM_RCAR_GEN2_H__
->  
-> -void rcar_gen2_timer_init(void);
-> -void rcar_gen2_reserve(void);
->  void rcar_gen2_pm_init(void);
->  
->  #endif /* __ASM_RCAR_GEN2_H__ */
-> diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> index fa1b00547d164b42..287dcbdb20de493a 100644
-> --- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> +++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-> @@ -61,7 +61,7 @@ static unsigned int __init get_extal_freq(void)
->  #define CNTCR 0
->  #define CNTFID0 0x20
->  
-> -void __init rcar_gen2_timer_init(void)
-> +static void __init rcar_gen2_timer_init(void)
->  {
->  	bool need_update = true;
->  	void __iomem *base;
-> @@ -193,7 +193,7 @@ static int __init rcar_gen2_scan_mem(unsigned long node, const char *uname,
->  	return 0;
->  }
->  
-> -void __init rcar_gen2_reserve(void)
-> +static void __init rcar_gen2_reserve(void)
->  {
->  	struct memory_reserve_config mrc;
->  
-> -- 
-> 2.17.1
-> 
+> Is there, or should there be a similar device ID patch for
+> renesas,r8a774e1-pcie-ep?
 
--- 
-Regards,
-Niklas Söderlund
+Sheesh, sorry, could have saved all of us a little time if I'd
+scrolled up to see the next patch, a63c5f3db07d ("misc:
+pci_endpoint_test: Add Device ID for RZ/G2H PCIe controller") 
