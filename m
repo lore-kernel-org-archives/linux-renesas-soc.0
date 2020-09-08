@@ -2,100 +2,96 @@ Return-Path: <SRS0=caTn=CR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 523EFC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 08:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E85C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 09:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2452E21741
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 08:57:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA66721741
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 09:23:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbgIHI5D (ORCPT
+        id S1728676AbgIHJXu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 04:57:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45530 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727867AbgIHI5C (ORCPT
+        Tue, 8 Sep 2020 05:23:50 -0400
+Received: from mail-oo1-f68.google.com ([209.85.161.68]:41051 "EHLO
+        mail-oo1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728670AbgIHJXt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 04:57:02 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B8CEC061573
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Sep 2020 01:57:01 -0700 (PDT)
-Received: from ramsan ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id RLwr230074C55Sk01Lwrau; Tue, 08 Sep 2020 10:56:51 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kFZQp-0000Bo-07; Tue, 08 Sep 2020 10:56:51 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kFYIO-00019X-GC; Tue, 08 Sep 2020 09:44:04 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ARM: shmobile: rcar-gen2: Make rcar_gen2_{timer_init,reserve}() static
-Date:   Tue,  8 Sep 2020 09:44:03 +0200
-Message-Id: <20200908074403.4379-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Tue, 8 Sep 2020 05:23:49 -0400
+Received: by mail-oo1-f68.google.com with SMTP id t3so3790419ook.8;
+        Tue, 08 Sep 2020 02:23:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9Iz0ruY3yvKXS6LyI8Ocmtn6E9Rp8lkvxXQ/gea+7FY=;
+        b=pLkd7PmCwWTgY5jN8rOtBpdXNWYMpLsMt50B3ExBA3bm3tE+SkzktfyMikP3c+0cpR
+         Xcki79AN1J94nhBc08X3T9dLAGpT+C12MBjI/wZah0/iU1e1x033KLHG4ZCcpcQeMv7x
+         D1T7CTsMnTz8mlYenq7cI8jzPL5jW62B8gHoqJ+zG6a/ifEAuJYQ6s+jplN51mhvO+qc
+         L1oqUjl2zmWl1/rk2epcjNLz9E34ujEcOF+RpyNZcFji/ELJsC3kzhWVIhFXbhm8NZ27
+         1BP9IoZOPU9Qd5DnFqolsYEJBq2s/gwfQ9fj2M0rr9y60N5w1tQdKWiOSX/2hL7UcdwJ
+         f55A==
+X-Gm-Message-State: AOAM531GVo5wP20c5vME0KbVqGiyF7CmA7Dr3UXH1CFfBpF6Nr4d8AJA
+        +9Lki1/GOPRAov1Fy0WCVL5m/UzbDHi4jbAF0Jo=
+X-Google-Smtp-Source: ABdhPJysafklVmp1jmJLUFf4djRpvRwwxsWfQQKiAG/RC5YiNo605e9vnQLXzNGkTZ5O3odGIqJOJNxj2eBvLdpTAAk=
+X-Received: by 2002:a4a:5403:: with SMTP id t3mr18005858ooa.11.1599557028413;
+ Tue, 08 Sep 2020 02:23:48 -0700 (PDT)
+MIME-Version: 1.0
+References: <1599470390-29719-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1599470390-29719-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1599470390-29719-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 8 Sep 2020 11:23:37 +0200
+Message-ID: <CAMuHMdVRco32Dm+UyN5OUpbhVcJCuCm-jNF6+R5=m74vqjEEoA@mail.gmail.com>
+Subject: Re: [PATCH 06/14] dt-bindings: clock: renesas,cpg-mssr: Document r8a779a0
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-As of commit 1e90fea35b80cfe1 ("ARM: shmobile: r8a7791: Use common R-Car
-Gen2 machine definition"), there are no more users of
-rcar_gen2_timer_init() and rcar_gen2_reserve() outside
-arch/arm/mach-shmobile/setup-rcar-gen2.c.
+On Mon, Sep 7, 2020 at 11:20 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Add binding documentation for the R-Car V3U (R8A779A0) Clock Pulse
+> Generator.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-devel for v5.10.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
- arch/arm/mach-shmobile/rcar-gen2.h       | 2 --
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 4 ++--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> @@ -47,6 +47,7 @@ properties:
+>        - renesas,r8a77980-cpg-mssr # R-Car V3H
+>        - renesas,r8a77990-cpg-mssr # R-Car E3
+>        - renesas,r8a77995-cpg-mssr # R-Car D3
+> +      - renesas,r8a779a0-cpg-mssr # R-Car V3U
+>
+>    reg:
+>      maxItems: 1
+> --
+> 2.7.4
+>
 
-diff --git a/arch/arm/mach-shmobile/rcar-gen2.h b/arch/arm/mach-shmobile/rcar-gen2.h
-index 4777fff2de413b7e..af9dbd6aa49e4d30 100644
---- a/arch/arm/mach-shmobile/rcar-gen2.h
-+++ b/arch/arm/mach-shmobile/rcar-gen2.h
-@@ -2,8 +2,6 @@
- #ifndef __ASM_RCAR_GEN2_H__
- #define __ASM_RCAR_GEN2_H__
- 
--void rcar_gen2_timer_init(void);
--void rcar_gen2_reserve(void);
- void rcar_gen2_pm_init(void);
- 
- #endif /* __ASM_RCAR_GEN2_H__ */
-diff --git a/arch/arm/mach-shmobile/setup-rcar-gen2.c b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-index fa1b00547d164b42..287dcbdb20de493a 100644
---- a/arch/arm/mach-shmobile/setup-rcar-gen2.c
-+++ b/arch/arm/mach-shmobile/setup-rcar-gen2.c
-@@ -61,7 +61,7 @@ static unsigned int __init get_extal_freq(void)
- #define CNTCR 0
- #define CNTFID0 0x20
- 
--void __init rcar_gen2_timer_init(void)
-+static void __init rcar_gen2_timer_init(void)
- {
- 	bool need_update = true;
- 	void __iomem *base;
-@@ -193,7 +193,7 @@ static int __init rcar_gen2_scan_mem(unsigned long node, const char *uname,
- 	return 0;
- }
- 
--void __init rcar_gen2_reserve(void)
-+static void __init rcar_gen2_reserve(void)
- {
- 	struct memory_reserve_config mrc;
- 
--- 
-2.17.1
+FIXME check clock-names
 
+
+--
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
