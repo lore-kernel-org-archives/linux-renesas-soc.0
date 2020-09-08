@@ -8,37 +8,38 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 914F8C2BC11
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1682BC43461
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C0E72177B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:12:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEEBA208FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 20:13:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="N0wpce4z"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="trUskd4t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728971AbgIHPPn (ORCPT
+        id S1730170AbgIHPLR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 11:15:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47044 "EHLO
+        Tue, 8 Sep 2020 11:11:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730204AbgIHPOM (ORCPT
+        with ESMTP id S1729614AbgIHPKl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 11:14:12 -0400
+        Tue, 8 Sep 2020 11:10:41 -0400
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7035C0A3BF8;
-        Tue,  8 Sep 2020 07:55:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C508AC0A3BFD;
+        Tue,  8 Sep 2020 07:56:51 -0700 (PDT)
 Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5AEAB47;
-        Tue,  8 Sep 2020 16:49:06 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9A5F53B;
+        Tue,  8 Sep 2020 16:56:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1599576547;
-        bh=VZxVwE367zy4rnEIhb63fedqnKUY0kWbKadgCVRNRv0=;
+        s=mail; t=1599577010;
+        bh=NGdIGQYHgvOnBu350R3owi+GaFcb1QuAKzhjqhy8r+A=;
         h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=N0wpce4zDfPAHsgZads0/14dzBak9A0fu+bjbQ6s1Y6lSytdhL4L3h3IS5xIf5OOu
-         ppkmpwp78QggvOf4/EUoydmRywUQWczmGMMkERPe1zxPb8doIsnDfQDkw6HQenJSOB
-         NDHinoqWTFdTuaaI4LcXStCULWi+jI6ZQX6GhBew=
+        b=trUskd4tAYZHuRs76pPaud1uOe7aXS4bBD0DEF39D91utJ1YNaxtoogdOFpex29XZ
+         dWrBLUO7niI6EsuApWegVcEocPI/DN+Ej3N/V5D8Aq+9+DBc6u7h1g+wd2qkwiAAL/
+         pF/hchx6QQhdiiJkiUxRr5l/4K2xzMxiCqPQ5EGg=
 Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH v2 04/10] drm: rcar-du: Add r8a77961 support
+Subject: Re: [PATCH v2 06/10] arm64: dts: renesas: r8a77961: Add VSP device
+ nodes
 To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Rob Herring <robh+dt@kernel.org>,
         Laurent <laurent.pinchart@ideasonboard.com>,
@@ -51,15 +52,15 @@ Cc:     Magnus <magnus.damm@gmail.com>,
         "(Renesas) shimoda" <yoshihiro.shimoda.uh@renesas.com>,
         dri-devel@lists.freedesktop.org
 References: <87o8mhrtxo.wl-kuninori.morimoto.gx@renesas.com>
- <87imcprtw3.wl-kuninori.morimoto.gx@renesas.com>
+ <87ft7trtvd.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Organization: Ideas on Board
-Message-ID: <e398fbd9-5dcc-5373-b23b-5bd80779bd30@ideasonboard.com>
-Date:   Tue, 8 Sep 2020 15:49:03 +0100
+Message-ID: <1ca68a4d-3974-71ce-9f42-93aa3ac99c19@ideasonboard.com>
+Date:   Tue, 8 Sep 2020 15:56:46 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <87imcprtw3.wl-kuninori.morimoto.gx@renesas.com>
+In-Reply-To: <87ft7trtvd.wl-kuninori.morimoto.gx@renesas.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
@@ -74,30 +75,114 @@ On 08/09/2020 01:34, Kuninori Morimoto wrote:
 > 
 > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 > 
-> This patch adds R-Car M3-W+ (R8A77961) support which has
-> compatible to R-Car M3-W (R8A77960).
+> This patch adds VSP device nodes for R-Car M3-W+ (r8a77961) SoC.
+> This patch was tested on R-Car M3-W+ Salvator-XS board.
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-With the "which is compatible with" as suggested-by Laurent:
+Thanks, I think this is better now you've sorted the nodes.
+It's nicer having the paired FCP/VSP nodes adjacent I think.
 
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
 > ---
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm64/boot/dts/renesas/r8a77961.dtsi | 55 +++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> index f53b0ec71085..64533cbdbef0 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -458,6 +458,7 @@ static const struct of_device_id rcar_du_of_table[] = {
->  	{ .compatible = "renesas,du-r8a7794", .data = &rcar_du_r8a7794_info },
->  	{ .compatible = "renesas,du-r8a7795", .data = &rcar_du_r8a7795_info },
->  	{ .compatible = "renesas,du-r8a7796", .data = &rcar_du_r8a7796_info },
-> +	{ .compatible = "renesas,du-r8a77961", .data = &rcar_du_r8a7796_info },
->  	{ .compatible = "renesas,du-r8a77965", .data = &rcar_du_r8a77965_info },
->  	{ .compatible = "renesas,du-r8a77970", .data = &rcar_du_r8a77970_info },
->  	{ .compatible = "renesas,du-r8a77980", .data = &rcar_du_r8a77970_info },
+> diff --git a/arch/arm64/boot/dts/renesas/r8a77961.dtsi b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
+> index fe0db11b9cb9..423808b6cd58 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a77961.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
+> @@ -2012,6 +2012,17 @@ fcpf0: fcp@fe950000 {
+>  			resets = <&cpg 615>;
+>  		};
+>  
+> +		vspb: vsp@fe960000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfe960000 0 0x8000>;
+> +			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 626>;
+> +			power-domains = <&sysc R8A77961_PD_A3VC>;
+> +			resets = <&cpg 626>;
+> +
+> +			renesas,fcp = <&fcpvb0>;
+> +		};
+> +
+>  		fcpvb0: fcp@fe96f000 {
+>  			compatible = "renesas,fcpv";
+>  			reg = <0 0xfe96f000 0 0x200>;
+> @@ -2020,6 +2031,17 @@ fcpvb0: fcp@fe96f000 {
+>  			resets = <&cpg 607>;
+>  		};
+>  
+> +		vspi0: vsp@fe9a0000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfe9a0000 0 0x8000>;
+> +			interrupts = <GIC_SPI 444 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 631>;
+> +			power-domains = <&sysc R8A77961_PD_A3VC>;
+> +			resets = <&cpg 631>;
+> +
+> +			renesas,fcp = <&fcpvi0>;
+> +		};
+> +
+>  		fcpvi0: fcp@fe9af000 {
+>  			compatible = "renesas,fcpv";
+>  			reg = <0 0xfe9af000 0 0x200>;
+> @@ -2029,6 +2051,17 @@ fcpvi0: fcp@fe9af000 {
+>  			iommus = <&ipmmu_vc0 19>;
+>  		};
+>  
+> +		vspd0: vsp@fea20000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfea20000 0 0x5000>;
+> +			interrupts = <GIC_SPI 466 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 623>;
+> +			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
+> +			resets = <&cpg 623>;
+> +
+> +			renesas,fcp = <&fcpvd0>;
+> +		};
+> +
+>  		fcpvd0: fcp@fea27000 {
+>  			compatible = "renesas,fcpv";
+>  			reg = <0 0xfea27000 0 0x200>;
+> @@ -2038,6 +2071,17 @@ fcpvd0: fcp@fea27000 {
+>  			iommus = <&ipmmu_vi0 8>;
+>  		};
+>  
+> +		vspd1: vsp@fea28000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfea28000 0 0x5000>;
+> +			interrupts = <GIC_SPI 467 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 622>;
+> +			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
+> +			resets = <&cpg 622>;
+> +
+> +			renesas,fcp = <&fcpvd1>;
+> +		};
+> +
+>  		fcpvd1: fcp@fea2f000 {
+>  			compatible = "renesas,fcpv";
+>  			reg = <0 0xfea2f000 0 0x200>;
+> @@ -2047,6 +2091,17 @@ fcpvd1: fcp@fea2f000 {
+>  			iommus = <&ipmmu_vi0 9>;
+>  		};
+>  
+> +		vspd2: vsp@fea30000 {
+> +			compatible = "renesas,vsp2";
+> +			reg = <0 0xfea30000 0 0x5000>;
+> +			interrupts = <GIC_SPI 468 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cpg CPG_MOD 621>;
+> +			power-domains = <&sysc R8A77961_PD_ALWAYS_ON>;
+> +			resets = <&cpg 621>;
+> +
+> +			renesas,fcp = <&fcpvd2>;
+> +		};
+> +
+>  		fcpvd2: fcp@fea37000 {
+>  			compatible = "renesas,fcpv";
+>  			reg = <0 0xfea37000 0 0x200>;
 > 
 
