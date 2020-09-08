@@ -2,110 +2,401 @@ Return-Path: <SRS0=caTn=CR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CE3AC43461
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 722FDC2D0A7
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60D2B2098B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:35:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BB02207DE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 19:42:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o/ZioOvS"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mclh8Nqs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732309AbgIHTe6 (ORCPT
+        id S1730917AbgIHTmS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 15:34:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54220 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730832AbgIHP5a (ORCPT
+        Tue, 8 Sep 2020 15:42:18 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51686 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730850AbgIHPwv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 11:57:30 -0400
-Received: from mail-yb1-xb42.google.com (mail-yb1-xb42.google.com [IPv6:2607:f8b0:4864:20::b42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 501AAC061573;
-        Tue,  8 Sep 2020 04:54:45 -0700 (PDT)
-Received: by mail-yb1-xb42.google.com with SMTP id v78so11085769ybv.5;
-        Tue, 08 Sep 2020 04:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cL3PNWhyNAiygS2fKeCGKkHLdzzbSTf5CFsAzvXhVIc=;
-        b=o/ZioOvSrmbKkCWAvGMuu44+jTXgqVyP19XMAhvHqqrO2ACsyDq9NeQJrwb913wD5u
-         wCZWUnfdjSWDAQ2F+lnDvVDClA7Qwj3CNp+QX+L+3M+U+OOr8g1DgrVGSYbRzd1Uh2Lk
-         xDGI4ilg/9zY3YuUCzwlQCPp5Ss7kvN94EG8qdOaHPHAb6M4An3lO023vHASM3Li9Ii4
-         afTg5uiMbfTzzImvOoFCi/GV+ehze96hBhRpG4Ib5EP5DfiQ1qSXtpgHf6XlHUr2K0MW
-         sXQJXLW2Fvmq6HObfuC5PPRUvHBudPCwg0ks2tJiq+YOTd7VHWg0BQLNK7QpQ0sI5EZW
-         +XCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cL3PNWhyNAiygS2fKeCGKkHLdzzbSTf5CFsAzvXhVIc=;
-        b=NNseXYhJTfAKO09m0Y2l+MDtFi0FhDhFTUJT9VEziFRsMCO7k7yrgutWoi6ISDzMKl
-         ZSOyVwaoV2VO1WM1pL1TtVFCSYESRbBHX82grnFbBTN+nm1kUrNwDrv7NOFlZtpU92q0
-         nauIV4s5Xf2wSX1k66rXPDVVe6ZlpcFU4lRMJSeu8dtuO88ySCcKot7ISJvRoux51Uor
-         X2sQ8ixz1xlhg5ViPMAoiQSBWrAA/JHn0FMzQOho6K6ERgFkxSt9I023JJ4qBW+MblgG
-         ZMirALh6HAH3YwjGq8SZGwBwkDEEmbBocLw2+U0dw9ICsylMuCd1lc9/Jc6q+zh4GrND
-         90uw==
-X-Gm-Message-State: AOAM532O+vjgeNR5XZKmSpJopUs69zRzoDoMTYv49G3WolCkLJmDYeqd
-        RIwSX01KgwN293pq7ad8497yCTZVaa1IhzSB8+o=
-X-Google-Smtp-Source: ABdhPJyQInhue+DlddoZBgO8uBL4O09RA4EKtxxJsOSZSUJFu1uCkxOZEpGO9sz6Qzi0PK33pZ4iV34kj76CqAkmK38=
-X-Received: by 2002:a25:bbcf:: with SMTP id c15mr33057595ybk.127.1599566084641;
- Tue, 08 Sep 2020 04:54:44 -0700 (PDT)
+        Tue, 8 Sep 2020 11:52:51 -0400
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9643A3B;
+        Tue,  8 Sep 2020 17:52:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1599580353;
+        bh=OL3z5iwluHLblCbZLAbf2QXrcIPlluVDPQElO/f/1vw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mclh8NqsDxRRq1lRHNpwNpxkWyTDiR8X3wi7KCTCm8YrZjy4VzLbrPefNgiFeJ4/6
+         BXCSQe3D9sveR+bl1AnqgH9MLaSLd3aRV/Jokr+wZAYEl6bz8QiwKZb4Kpgj7fx4JU
+         y6t0RoPPSvrSzZvlIt1TsaXS4kcp2v/cvI18GqGc=
+Date:   Tue, 8 Sep 2020 18:52:08 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] drm: rcar-du: Fix pitch handling for fully planar YUV
+ formats
+Message-ID: <20200908155208.GF11405@pendragon.ideasonboard.com>
+References: <20200806022649.22506-1-laurent.pinchart+renesas@ideasonboard.com>
+ <3c2147d8-b5bc-b0e8-6435-4d3ec0154249@ideasonboard.com>
 MIME-Version: 1.0
-References: <20200908110640.5003-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXD88LKVUcXTa=yWreqWZ0O0G+dF7WK=ioVwJo2OTd_PQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXD88LKVUcXTa=yWreqWZ0O0G+dF7WK=ioVwJo2OTd_PQ@mail.gmail.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Tue, 8 Sep 2020 12:54:18 +0100
-Message-ID: <CA+V-a8tg2UpcKKnqnXTbhOOikbYaPziwgkP+yWKOJ8Lt-f4UVw@mail.gmail.com>
-Subject: Re: [PATCH] dmaengine: Kconfig: Update description for RCAR_DMAC config
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3c2147d8-b5bc-b0e8-6435-4d3ec0154249@ideasonboard.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+Hi Kieran,
 
-Thank you for the review.
+On Tue, Sep 08, 2020 at 04:42:58PM +0100, Kieran Bingham wrote:
+> On 06/08/2020 03:26, Laurent Pinchart wrote:
+> > When creating a frame buffer, the driver verifies that the pitches for
+> > the chroma planes match the luma plane. This is done incorrectly for
+> > fully planar YUV formats, without taking horizontal subsampling into
+> > account. Fix it.
+> > 
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >  drivers/gpu/drm/rcar-du/rcar_du_kms.c | 52 ++++++++++++++++++++++++++-
+> >  drivers/gpu/drm/rcar-du/rcar_du_kms.h |  1 +
+> >  2 files changed, 52 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > index 482329102f19..2fda3734a57e 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+> > @@ -40,6 +40,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+> >  		.v4l2 = V4L2_PIX_FMT_RGB565,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  		.pnmr = PnMR_SPIM_TP | PnMR_DDDF_16BPP,
+> >  		.edf = PnDDCR4_EDF_NONE,
+> >  	}, {
+> > @@ -47,6 +48,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+> >  		.v4l2 = V4L2_PIX_FMT_ARGB555,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  		.pnmr = PnMR_SPIM_ALP | PnMR_DDDF_ARGB,
+> >  		.edf = PnDDCR4_EDF_NONE,
+> >  	}, {
+> > @@ -61,6 +63,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+> >  		.v4l2 = V4L2_PIX_FMT_XBGR32,
+> >  		.bpp = 32,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  		.pnmr = PnMR_SPIM_TP | PnMR_DDDF_16BPP,
+> >  		.edf = PnDDCR4_EDF_RGB888,
+> >  	}, {
+> > @@ -68,6 +71,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+> >  		.v4l2 = V4L2_PIX_FMT_ABGR32,
+> >  		.bpp = 32,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  		.pnmr = PnMR_SPIM_ALP | PnMR_DDDF_16BPP,
+> >  		.edf = PnDDCR4_EDF_ARGB8888,
+> >  	}, {
+> > @@ -75,6 +79,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+> >  		.v4l2 = V4L2_PIX_FMT_UYVY,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 2,
+> >  		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+> >  		.edf = PnDDCR4_EDF_NONE,
+> >  	}, {
+> > @@ -82,6 +87,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+> >  		.v4l2 = V4L2_PIX_FMT_YUYV,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 2,
+> >  		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+> >  		.edf = PnDDCR4_EDF_NONE,
+> >  	}, {
+> > @@ -89,6 +95,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+> >  		.v4l2 = V4L2_PIX_FMT_NV12M,
+> >  		.bpp = 12,
+> >  		.planes = 2,
+> > +		.hsub = 2,
+> >  		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+> >  		.edf = PnDDCR4_EDF_NONE,
+> >  	}, {
+> > @@ -96,6 +103,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+> >  		.v4l2 = V4L2_PIX_FMT_NV21M,
+> >  		.bpp = 12,
+> >  		.planes = 2,
+> > +		.hsub = 2,
+> >  		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+> >  		.edf = PnDDCR4_EDF_NONE,
+> >  	}, {
+> > @@ -103,6 +111,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+> >  		.v4l2 = V4L2_PIX_FMT_NV16M,
+> >  		.bpp = 16,
+> >  		.planes = 2,
+> > +		.hsub = 2,
+> >  		.pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
+> >  		.edf = PnDDCR4_EDF_NONE,
+> >  	},
+> > @@ -115,156 +124,187 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
+> >  		.v4l2 = V4L2_PIX_FMT_RGB332,
+> >  		.bpp = 8,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_ARGB4444,
+> >  		.v4l2 = V4L2_PIX_FMT_ARGB444,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_XRGB4444,
+> >  		.v4l2 = V4L2_PIX_FMT_XRGB444,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_RGBA4444,
+> >  		.v4l2 = V4L2_PIX_FMT_RGBA444,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_RGBX4444,
+> >  		.v4l2 = V4L2_PIX_FMT_RGBX444,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_ABGR4444,
+> >  		.v4l2 = V4L2_PIX_FMT_ABGR444,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_XBGR4444,
+> >  		.v4l2 = V4L2_PIX_FMT_XBGR444,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_BGRA4444,
+> >  		.v4l2 = V4L2_PIX_FMT_BGRA444,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_BGRX4444,
+> >  		.v4l2 = V4L2_PIX_FMT_BGRX444,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_RGBA5551,
+> >  		.v4l2 = V4L2_PIX_FMT_RGBA555,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_RGBX5551,
+> >  		.v4l2 = V4L2_PIX_FMT_RGBX555,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_ABGR1555,
+> >  		.v4l2 = V4L2_PIX_FMT_ABGR555,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_XBGR1555,
+> >  		.v4l2 = V4L2_PIX_FMT_XBGR555,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_BGRA5551,
+> >  		.v4l2 = V4L2_PIX_FMT_BGRA555,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_BGRX5551,
+> >  		.v4l2 = V4L2_PIX_FMT_BGRX555,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_BGR888,
+> >  		.v4l2 = V4L2_PIX_FMT_RGB24,
+> >  		.bpp = 24,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_RGB888,
+> >  		.v4l2 = V4L2_PIX_FMT_BGR24,
+> >  		.bpp = 24,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_RGBA8888,
+> >  		.v4l2 = V4L2_PIX_FMT_BGRA32,
+> >  		.bpp = 32,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_RGBX8888,
+> >  		.v4l2 = V4L2_PIX_FMT_BGRX32,
+> >  		.bpp = 32,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_ABGR8888,
+> >  		.v4l2 = V4L2_PIX_FMT_RGBA32,
+> >  		.bpp = 32,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_XBGR8888,
+> >  		.v4l2 = V4L2_PIX_FMT_RGBX32,
+> >  		.bpp = 32,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_BGRA8888,
+> >  		.v4l2 = V4L2_PIX_FMT_ARGB32,
+> >  		.bpp = 32,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_BGRX8888,
+> >  		.v4l2 = V4L2_PIX_FMT_XRGB32,
+> >  		.bpp = 32,
+> >  		.planes = 1,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_YVYU,
+> >  		.v4l2 = V4L2_PIX_FMT_YVYU,
+> >  		.bpp = 16,
+> >  		.planes = 1,
+> > +		.hsub = 2,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_NV61,
+> >  		.v4l2 = V4L2_PIX_FMT_NV61M,
+> >  		.bpp = 16,
+> >  		.planes = 2,
+> > +		.hsub = 2,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_YUV420,
+> >  		.v4l2 = V4L2_PIX_FMT_YUV420M,
+> >  		.bpp = 12,
+> >  		.planes = 3,
+> > +		.hsub = 2,
+> 
+> I guess vertical subsampling is handled distinctly?
+> (perhaps the height of the plane or such?)
 
-On Tue, Sep 8, 2020 at 12:22 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Tue, Sep 8, 2020 at 1:06 PM Lad Prabhakar
-> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > rcar-dmac driver is used on Renesas R-Car Gen2 and Gen3 devices
-> > update the same to reflect the description for RCAR_DMAC config.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Do you want to mention RZ/G1 and RZ/G2?
->
-Agreed. will include RZ/G as well and post a v2.
+Vertical subsampling doesn't affect the pitch, so there's no specific
+constraint there.
 
-Cheers,
-Prabhakar
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_YVU420,
+> >  		.v4l2 = V4L2_PIX_FMT_YVU420M,
+> >  		.bpp = 12,
+> >  		.planes = 3,
+> > +		.hsub = 2,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_YUV422,
+> >  		.v4l2 = V4L2_PIX_FMT_YUV422M,
+> >  		.bpp = 16,
+> >  		.planes = 3,
+> > +		.hsub = 2,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_YVU422,
+> >  		.v4l2 = V4L2_PIX_FMT_YVU422M,
+> >  		.bpp = 16,
+> >  		.planes = 3,
+> > +		.hsub = 2,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_YUV444,
+> >  		.v4l2 = V4L2_PIX_FMT_YUV444M,
+> >  		.bpp = 24,
+> >  		.planes = 3,
+> > +		.hsub = 1,
+> >  	}, {
+> >  		.fourcc = DRM_FORMAT_YVU444,
+> >  		.v4l2 = V4L2_PIX_FMT_YVU444M,
+> >  		.bpp = 24,
+> >  		.planes = 3,
+> > +		.hsub = 1,
+> >  	},
+> >  };
+> >  
+> 
+> I wonder when we can have a global/generic set of format tables so that
+> all of this isn't duplicated on a per-driver basis.
 
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Note that this table also contains register values, so at least that
+part will need to be kept. For the rest, do you mean a 4CC library that
+would be shared between DRM/KMS and V4L2 ? That's a great idea. Too bad
+it has been shot down when patches were submitted :-S
+
+> > @@ -311,6 +351,7 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+> >  {
+> >  	struct rcar_du_device *rcdu = dev->dev_private;
+> >  	const struct rcar_du_format_info *format;
+> > +	unsigned int chroma_pitch;
+> >  	unsigned int max_pitch;
+> >  	unsigned int align;
+> >  	unsigned int i;
+> > @@ -353,8 +394,17 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+> >  		return ERR_PTR(-EINVAL);
+> >  	}
+> >  
+> > +	/*
+> > +	 * Calculate the chroma plane(s) pitch using the horizontal subsampling
+> > +	 * factor. For semi-planar formats, the U and V planes are combined, the
+> > +	 * pitch must thus be doubled.
+> > +	 */
+> > +	chroma_pitch = mode_cmd->pitches[0] / format->hsub;
+> > +	if (format->planes == 2)
+> > +		chroma_pitch *= 2;
+> > +
+> >  	for (i = 1; i < format->planes; ++i) {
+> > -		if (mode_cmd->pitches[i] != mode_cmd->pitches[0]) {
+> > +		if (mode_cmd->pitches[i] != chroma_pitch) {
+> >  			dev_dbg(dev->dev,
+> >  				"luma and chroma pitches do not match\n");
+> 
+> Is this statement still sufficient?
+> I'd perhaps say 'are not compatible' or 'are not correct'. - but its
+> only a debug print, so it really doesn't matter.
+
+I like "are not compatible", I'll switch to that.
+
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> >  			return ERR_PTR(-EINVAL);
+> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.h b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
+> > index 0346504d8c59..8f5fff176754 100644
+> > --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.h
+> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
+> > @@ -22,6 +22,7 @@ struct rcar_du_format_info {
+> >  	u32 v4l2;
+> >  	unsigned int bpp;
+> >  	unsigned int planes;
+> > +	unsigned int hsub;
+> >  	unsigned int pnmr;
+> >  	unsigned int edf;
+> >  };
+
+-- 
+Regards,
+
+Laurent Pinchart
