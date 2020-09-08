@@ -2,107 +2,129 @@ Return-Path: <SRS0=caTn=CR=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B531DC43461
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 17:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E39F4C2BC11
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 18:52:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8219C2078B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 17:43:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="eG9xY8+Z"
+	by mail.kernel.org (Postfix) with ESMTP id A97992080A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Sep 2020 18:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599591128;
+	bh=rvDSCZvFRJ66ihgClWK76JHomlIvsS1g+T/SMib0umM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=vXy7wY09d+sdZe9nCVG4uzQx4K/slTkL4e/ChRZP42oazE1cnbI+dKPRaDJFpWjv4
+	 RUf+6Nv2cxi9tleQ8Cg9ng0eZT4E+N1fxCdJSzcz0c483ktBeuokhN+ZZr9s6Jrx00
+	 +V8szh+imjL+ZeljSTAfCsnOClW8XSq6X+TaOrbU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731352AbgIHRmE (ORCPT
+        id S1731354AbgIHSvn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Sep 2020 13:42:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56906 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731657AbgIHQOE (ORCPT
+        Tue, 8 Sep 2020 14:51:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731340AbgIHSvQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Sep 2020 12:14:04 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 68135C06137C;
-        Tue,  8 Sep 2020 05:52:32 -0700 (PDT)
-Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 74FB639;
-        Tue,  8 Sep 2020 14:52:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1599569532;
-        bh=82Ig7qKF5ln6orTKjywtdCUifvSel0QPp4ksH4LLSQQ=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=eG9xY8+ZjcQTDTCt6MNaxU1rJ4v1NkZC7T+D6Exlm/PguyuFPNTF6omQauBB5Ckfm
-         ZLsKSJQXnGoz//rSPMHuQ76piQH3Z6O6k3zvbAJjKsOeCJwQiy5623nix/bmPZWXfd
-         bcBd7Uyfn1yihzEVG78h2FzBpdM0W+BT+KIm9ru0=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH v2 01/10] dt-bindings: display: renesas: du: Document the
- r8a77961 bindings
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Laurent <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Magnus <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-DT <devicetree@vger.kernel.org>,
-        "(Renesas) shimoda" <yoshihiro.shimoda.uh@renesas.com>,
-        dri-devel@lists.freedesktop.org
-References: <87o8mhrtxo.wl-kuninori.morimoto.gx@renesas.com>
- <87mu21rtww.wl-kuninori.morimoto.gx@renesas.com>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <0e94a8c9-7f87-ebdf-4514-7f4984a6860f@ideasonboard.com>
-Date:   Tue, 8 Sep 2020 13:52:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Tue, 8 Sep 2020 14:51:16 -0400
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34B672145D;
+        Tue,  8 Sep 2020 18:51:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599591076;
+        bh=rvDSCZvFRJ66ihgClWK76JHomlIvsS1g+T/SMib0umM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=yWhrHS3OaHQKIXLtXl/3PqXpcHs1osUNt7jXkd8Xn2GhWTEoDbR1haU7D8WFUom9x
+         Ohgi+U2+srPsDvjwhloOatHxq/YfBtA7jcTnL1T16ztSmpFsE/YpwjVRwnSeA9QgBS
+         sVLvXC7AWIWKSDnvmIZixB75xvPYx7qL9Pq0Peu4=
+Received: by mail-ot1-f52.google.com with SMTP id 60so118643otw.3;
+        Tue, 08 Sep 2020 11:51:16 -0700 (PDT)
+X-Gm-Message-State: AOAM5320l/bjzJCYxBzRhZNmJ3Uake7u79QarAnlrFQ+2Qzs7vR9Q6yL
+        L//8okSUm75sVbtIbXDTivKdwgBu8qvJjFV66w==
+X-Google-Smtp-Source: ABdhPJzzsAvOaaljadNcHpgbxTqCs+adpWfZ02pFKHSsMEMcvlU/v9W9Zbxnn3nCzVOy+k0EXol3VOtmmA9i/wf9ekc=
+X-Received: by 2002:a9d:6b0d:: with SMTP id g13mr331886otp.129.1599591075501;
+ Tue, 08 Sep 2020 11:51:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87mu21rtww.wl-kuninori.morimoto.gx@renesas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20200810152219.6254-1-biju.das.jz@bp.renesas.com>
+ <20200810152219.6254-2-biju.das.jz@bp.renesas.com> <20200824230458.GA3489164@bogus>
+ <20200901102714.GC5821@pendragon.ideasonboard.com>
+In-Reply-To: <20200901102714.GC5821@pendragon.ideasonboard.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 8 Sep 2020 12:51:04 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJtPMah6WskUc08JAhGskSM+cFJa4pRJKAyuqqBOKPhxQ@mail.gmail.com>
+Message-ID: <CAL_JsqJtPMah6WskUc08JAhGskSM+cFJa4pRJKAyuqqBOKPhxQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: display: bridge: lvds-codec: Document
+ vcc-supply property
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Morimoto-san,
+On Tue, Sep 1, 2020 at 4:27 AM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>
+> Hi Rob,
+>
+> On Mon, Aug 24, 2020 at 05:04:58PM -0600, Rob Herring wrote:
+> > On Mon, Aug 10, 2020 at 04:22:17PM +0100, Biju Das wrote:
+> > > Document optional vcc-supply property that may be used as VCC source.
+> > >
+> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > ---
+> > > New patch Ref: Ref:https://patchwork.kernel.org/patch/11705819/
+> > > ---
+> > >  .../devicetree/bindings/display/bridge/lvds-codec.yaml         | 3 +++
+> > >  1 file changed, 3 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+> > > index 68951d56ebba..3248be31eceb 100644
+> > > --- a/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+> > > +++ b/Documentation/devicetree/bindings/display/bridge/lvds-codec.yaml
+> > > @@ -79,6 +79,9 @@ properties:
+> > >        The GPIO used to control the power down line of this device.
+> > >      maxItems: 1
+> > >
+> > > +  vcc-supply:
+> > > +    maxItems: 1
+> >
+> > Probably should be 'power-supply' to align with the 'simple' panels.
+> > That's also to signify there's only 1 supply. Using 'vcc' would
+> > encourage adding 'vdd-supply', 'vddio-supply', etc. A second supply I'll
+> > NAK because at that point it's not a simple bridge with no configuration
+> > (it's arguably already there).
+>
+> Fully agreed.
+>
+> Do I get your Ab or Rb line with s/vcc/power/ and the commit message
+> updated to
+>
+>     dt-bindings: display: bridge: lvds-codec: Document power-supply property
+>
+>     Document optional power-supply property that may be used to specify the
+>     regulator powering up the device.
+>
+> ?
 
-On 08/09/2020 01:34, Kuninori Morimoto wrote:
-> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> 
-> Document the R-Car M3-W+ (R8A77961) SoC in the R-Car DU bindings.
-> 
-> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Yes, if not too late.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> ---
->  Documentation/devicetree/bindings/display/renesas,du.txt | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/renesas,du.txt b/Documentation/devicetree/bindings/display/renesas,du.txt
-> index 51cd4d162770..317c9dd2d57c 100644
-> --- a/Documentation/devicetree/bindings/display/renesas,du.txt
-> +++ b/Documentation/devicetree/bindings/display/renesas,du.txt
-> @@ -18,6 +18,7 @@ Required Properties:
->      - "renesas,du-r8a7794" for R8A7794 (R-Car E2) compatible DU
->      - "renesas,du-r8a7795" for R8A7795 (R-Car H3) compatible DU
->      - "renesas,du-r8a7796" for R8A7796 (R-Car M3-W) compatible DU
-> +    - "renesas,du-r8a77961" for R8A77961 (R-Car M3-W+) compatible DU
->      - "renesas,du-r8a77965" for R8A77965 (R-Car M3-N) compatible DU
->      - "renesas,du-r8a77970" for R8A77970 (R-Car V3M) compatible DU
->      - "renesas,du-r8a77980" for R8A77980 (R-Car V3H) compatible DU
-> @@ -83,6 +84,7 @@ corresponding to each DU output.
->   R8A7794 (R-Car E2)     DPAD 0         DPAD 1         -              -
->   R8A7795 (R-Car H3)     DPAD 0         HDMI 0         HDMI 1         LVDS 0
->   R8A7796 (R-Car M3-W)   DPAD 0         HDMI 0         LVDS 0         -
-> + R8A77961 (R-Car M3-W+) DPAD 0         HDMI 0         LVDS 0         -
->   R8A77965 (R-Car M3-N)  DPAD 0         HDMI 0         LVDS 0         -
->   R8A77970 (R-Car V3M)   DPAD 0         LVDS 0         -              -
->   R8A77980 (R-Car V3H)   DPAD 0         LVDS 0         -              -
-> 
-
+Reviewed-by: Rob Herring <robh@kernel.org>
