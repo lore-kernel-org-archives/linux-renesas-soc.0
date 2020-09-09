@@ -2,124 +2,117 @@ Return-Path: <SRS0=18hO=CS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B7D2C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 11:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26990C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 13:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA6F21D6C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 11:45:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="R/HBDZ8O"
+	by mail.kernel.org (Postfix) with ESMTP id D1D5A215A4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 13:15:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730068AbgIILob (ORCPT
+        id S1730299AbgIINOd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Sep 2020 07:44:31 -0400
-Received: from www.zeus03.de ([194.117.254.33]:55832 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730021AbgIILo3 (ORCPT
+        Wed, 9 Sep 2020 09:14:33 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:49169 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730328AbgIINNn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Sep 2020 07:44:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=tM7cWgnJUQTZ+8zw0k6ph15lgunQ
-        9GxTudYwUe71iHc=; b=R/HBDZ8OmO6QIUJhgdqM6c8SrnR6HTXT0y+7YucZrOJu
-        IAjwHmv9NQ0F4Odfr/e8jeitJtjlOVVyZuqxH3V6fjqnTTrpaDCdLKi/Krn1um23
-        wobk3sSKVnrV77pAL91SA5JX65WF6hp66mtO7mx2iiezHSfI6HP2M67LMjodOFw=
-Received: (qmail 284838 invoked from network); 9 Sep 2020 13:37:46 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Sep 2020 13:37:46 +0200
-X-UD-Smtp-Session: l3s3148p1@nFxm4d+uTIUgAwDPXwesAAPl1NpCEY8B
-Date:   Wed, 9 Sep 2020 13:37:45 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wed, 9 Sep 2020 09:13:43 -0400
+X-IronPort-AV: E=Sophos;i="5.76,409,1592838000"; 
+   d="scan'208";a="56620012"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 09 Sep 2020 22:13:42 +0900
+Received: from localhost.localdomain (unknown [10.166.252.89])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 758D449DB584;
+        Wed,  9 Sep 2020 22:13:42 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     geert+renesas@glider.be, magnus.damm@gmail.com
+Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [RFT] mmc: tmio: reset device on timeout, too
-Message-ID: <20200909113745.GK2272@ninjato>
-References: <20200821081654.28280-1-wsa+renesas@sang-engineering.com>
- <CAPDyKFp7rsHDY2vREakrR+PFJLs0n8JBR+URV1vCu5bydEhHuA@mail.gmail.com>
- <20200830130357.GA2194@kunai>
- <CAPDyKFr24YxoJ3m5r1C_4-UAdtJQp_MK0+wwZjsQXzrs5dxLjw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tKtFalx5NIx0HZ72"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFr24YxoJ3m5r1C_4-UAdtJQp_MK0+wwZjsQXzrs5dxLjw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Subject: [PATCH v2 1/4] dt-bindings: clock: Add r8a779a0 CPG Core Clock Definitions
+Date:   Wed,  9 Sep 2020 22:13:28 +0900
+Message-Id: <1599657211-17504-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1599657211-17504-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1599657211-17504-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Add all Clock Pulse Generator Core Clock Outputs for the Renesas R-Car
+V3U (R8A779A0) SoC.
 
---tKtFalx5NIx0HZ72
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ include/dt-bindings/clock/r8a779a0-cpg-mssr.h | 55 +++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a779a0-cpg-mssr.h
 
-Hi Ulf,
+diff --git a/include/dt-bindings/clock/r8a779a0-cpg-mssr.h b/include/dt-bindings/clock/r8a779a0-cpg-mssr.h
+new file mode 100644
+index 0000000..f1d737c
+--- /dev/null
++++ b/include/dt-bindings/clock/r8a779a0-cpg-mssr.h
+@@ -0,0 +1,55 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
++#ifndef __DT_BINDINGS_CLOCK_R8A779A0_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A779A0_CPG_MSSR_H__
++
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
++
++/* r8a779A0 CPG Core Clocks */
++#define R8A779A0_CLK_Z0			0
++#define R8A779A0_CLK_ZX			1
++#define R8A779A0_CLK_Z1			2
++#define R8A779A0_CLK_ZR			3
++#define R8A779A0_CLK_ZS			4
++#define R8A779A0_CLK_ZT			5
++#define R8A779A0_CLK_ZTR		6
++#define R8A779A0_CLK_S1D1		7
++#define R8A779A0_CLK_S1D2		8
++#define R8A779A0_CLK_S1D4		9
++#define R8A779A0_CLK_S1D8		10
++#define R8A779A0_CLK_S1D12		11
++#define R8A779A0_CLK_S3D1		12
++#define R8A779A0_CLK_S3D2		13
++#define R8A779A0_CLK_S3D4		14
++#define R8A779A0_CLK_LB			15
++#define R8A779A0_CLK_CP			16
++#define R8A779A0_CLK_CL			17
++#define R8A779A0_CLK_CL16MCK		18
++#define R8A779A0_CLK_ZB30		19
++#define R8A779A0_CLK_ZB30D2		20
++#define R8A779A0_CLK_ZB30D4		21
++#define R8A779A0_CLK_ZB31		22
++#define R8A779A0_CLK_ZB31D2		23
++#define R8A779A0_CLK_ZB31D4		24
++#define R8A779A0_CLK_SD0H		25
++#define R8A779A0_CLK_SD0		26
++#define R8A779A0_CLK_RPC		27
++#define R8A779A0_CLK_RPCD2		28
++#define R8A779A0_CLK_MSO		29
++#define R8A779A0_CLK_CANFD		30
++#define R8A779A0_CLK_CSI0		31
++#define R8A779A0_CLK_FRAY		32
++#define R8A779A0_CLK_DSI		33
++#define R8A779A0_CLK_VIP		34
++#define R8A779A0_CLK_ADGH		35
++#define R8A779A0_CLK_CNNDSP		36
++#define R8A779A0_CLK_ICU		37
++#define R8A779A0_CLK_ICUD2		38
++#define R8A779A0_CLK_VCBUS		39
++#define R8A779A0_CLK_CBFUSA		40
++#define R8A779A0_CLK_R			41
++#define R8A779A0_CLK_OSC		42
++
++#endif /* __DT_BINDINGS_CLOCK_R8A779A0_CPG_MSSR_H__ */
+-- 
+2.7.4
 
-> > Hmm, there are some wireless drivers using it as well. I am confused, is
-> > this considered "upper layer"?
-> >
-> > drivers/net/wireless/ath/ath10k/sdio.c: ret =3D mmc_hw_reset(ar_sdio->f=
-unc->card->host);
-> > drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c:        mmc_hw_=
-reset(sdiodev->func1->card->host);
-> > drivers/net/wireless/marvell/mwifiex/sdio.c:    ret =3D mmc_hw_reset(fu=
-nc->card->host);
-> > drivers/net/wireless/ti/wlcore/sdio.c:  mmc_hw_reset(card->host);
->=20
-> Correct, these are "upper layers". The same applies for the mmc block
-> device driver.
->=20
-> In this way there is a guarantee that the struct mmc_card is still presen=
-t.
-
-Ah, now I get it. "upper layers" as in consumers. And because consumers
-sit on a card, this guarantees that mmc_card is still there. Correct?
-
-> That would be great. I appreciate all kinds of improvements on the doc pa=
-rts.
-
-You are welcome!
-
-> Perhaps a better option is to return a specific error code for the
-> last request, that makes the core run mmc_hw_reset(). Or potentially,
-> add a host cap and let the core treat some error code, specifically
-> for hosts like tmio.
-
-A specific errno could work. I don't see the advantage of a CAP (besides
-it is rather a quirk than a cap). We could also have
-'mmc_controller_card_reset()' or something which ensures mmc_card is
-present and let that controllers call when they see fit. Or?
-
-Thanks for your help,
-
-   Wolfram
-
-
---tKtFalx5NIx0HZ72
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl9YvokACgkQFA3kzBSg
-KbZfmA//azKjz4Gk7mPb7bDj5wnUWB/Vo6zpR/nlqO8njiKu5635jNow9XZLMEgT
-CgPLPAnLyNj1/yBKHLmTdu3CU/3eg6Grelp+QrghWRdxkXiQyN/nNKZxbMYwGCg7
-Bdl+qbCLJ/99LcHfF7w9TZeMRh0hrFHR/Ch2WKV/w1YwINDqe/FUi3DLjOlYdMsl
-tbfTRiTIgNGtIbOMtJA6c3cauoIwO4v4bOMDGMr28gGW7VyTWauQ9hDkUZQ0pSdE
-nOnI/7i6gcdTIA8cWEoXfHKKzwFXm+8mj/wsetE7YnqHxW8vNdOaFaIrsgaDFlXO
-hY3MF2Onv7/KGrB8c2x5A3DZJDQIZpnWMPdFMFTZL6NMoPAdyM7SF7bDANQxU+0Q
-K/s2c9WW3XcNCEMRreHMka/WzQdzBdM79X28Yw42pPKBt1IvPzJVBuld4aVga7eX
-fA3ys2j7DDVjosSLH0xeAC1t/MjTmYc/SNVgLt7lcoaUuOpVTUpqZna8IQWXFFS7
-Bfh6P3EeH2Ns6k1HirO5D6JzCzl/B64sD/ABrXQColY1Ls2YJ312bjtUvNb05zdN
-jpALQYhjm/t02u9oPwRExGI6f5+UkV1gOJ6134S2sfgaHNVCNOIuEhlTnlh64n22
-kXheME4ISdeZ+MdcxF7mlMmF4Bc3A13UcOvA8+huMFsXiWLWasU=
-=J+pI
------END PGP SIGNATURE-----
-
---tKtFalx5NIx0HZ72--
