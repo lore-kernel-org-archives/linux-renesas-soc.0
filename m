@@ -2,185 +2,260 @@ Return-Path: <SRS0=18hO=CS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C22C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 16:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD1CC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 17:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B74821D40
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 16:50:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="aFP3mbdf"
+	by mail.kernel.org (Postfix) with ESMTP id 6A0DD2166E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 17:04:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599671060;
+	bh=JIDA/cRRI0indPE0r3wuMYo5P+C7fvkBFrVCEVChMe8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=TdpeTTYJuluAnE7NnZMvuEsmEV9nsxBpyRyOE1IHfXCA/08WomLEXpzYluPgDwdoZ
+	 Cp5hqAXCE0JONsbaRs0zCjA4f3jQYZaWkKoFmoke04evWUuQv+clw0znMuZ+xml4xT
+	 hye0JpPmMyq3kBFbYbeZjx0/EdNq0IEl+V1QemoI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730770AbgIIQu0 (ORCPT
+        id S1730627AbgIIREF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Sep 2020 12:50:26 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:46744 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730560AbgIIQGM (ORCPT
+        Wed, 9 Sep 2020 13:04:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57776 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730922AbgIIRD7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Sep 2020 12:06:12 -0400
-Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6F8A839;
-        Wed,  9 Sep 2020 18:06:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1599667564;
-        bh=BOVuJQkYbStHUnnXVNptk38h3Hxi6q7yOdvlG8izAts=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=aFP3mbdf1M9oYd/JkJlwQ0bTVoYYnZgFHG9io497bm1xt/8kcj2CYnvE1HoZvcGFh
-         ziKMnNgmbjfYxyUwzsrvuYFlVgmhgY3GtJQ1DJj64LmMi5i1+u+q8A1ULu1n1V4HZu
-         3BTgvsdpVYUPce2CEGoPIqJm96GcSmu2At9mngDk=
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH] drm: rcar-du: Fix pitch handling for fully planar YUV
- formats
-To:     =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-References: <20200806022649.22506-1-laurent.pinchart+renesas@ideasonboard.com>
- <3c2147d8-b5bc-b0e8-6435-4d3ec0154249@ideasonboard.com>
- <20200908155208.GF11405@pendragon.ideasonboard.com>
- <6e66b920-96d6-591a-af59-353558b89f98@ideasonboard.com>
- <20200909120835.GJ6112@intel.com>
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
- 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
- WZw01QYHU/GUV/zHJSFk
-Organization: Ideas on Board
-Message-ID: <490b02de-8b4f-057e-a0c6-07f73f6ce052@ideasonboard.com>
-Date:   Wed, 9 Sep 2020 17:06:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 9 Sep 2020 13:03:59 -0400
+Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com [209.85.167.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D796521D40;
+        Wed,  9 Sep 2020 17:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599671038;
+        bh=JIDA/cRRI0indPE0r3wuMYo5P+C7fvkBFrVCEVChMe8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=f/YvIKLyyfTdH/P3B2nWwFzJumK0wc+x6JNV89QvHGG8y/xDDKSDI1Etlu41wgLxo
+         NlvhFMD/3dP5vO4h46JxzR9HlQFdx2T8SUN1EC805YxOrLNbwOQWDpAvxbjTPPxsnM
+         ic2Ei+gt3fV89IQHKswAiynRQRYXnksS9kzatd3I=
+Received: by mail-oi1-f177.google.com with SMTP id d189so3031871oig.12;
+        Wed, 09 Sep 2020 10:03:57 -0700 (PDT)
+X-Gm-Message-State: AOAM53308i3xpmUz1hp6GYkMjYRWRNf6QrDxLAO9vHP/O7Cy2z249V7Q
+        VycTC+jtlFWToYlN527i8tXPYtds5plnam9iLA==
+X-Google-Smtp-Source: ABdhPJwMDEAWsz0YP+IUUIAwNVr87N71/p34095Drcq1C+VinwmF5SZiMbHS+Zs30a9A/NvW6uK0PeVBiWDbc8U3iGg=
+X-Received: by 2002:aca:1711:: with SMTP id j17mr1278976oii.152.1599671037167;
+ Wed, 09 Sep 2020 10:03:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200909120835.GJ6112@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+References: <20200824141053.5062-1-biju.das.jz@bp.renesas.com>
+ <20200824141053.5062-2-biju.das.jz@bp.renesas.com> <20200908223651.GA1042906@bogus>
+ <TYBPR01MB5309786FAFF729AB8998B5D786260@TYBPR01MB5309.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYBPR01MB5309786FAFF729AB8998B5D786260@TYBPR01MB5309.jpnprd01.prod.outlook.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 9 Sep 2020 11:03:45 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+TKjfHh=4a-NFUaYzjedVonP69ourL5YzZuxPLEY6T-Q@mail.gmail.com>
+Message-ID: <CAL_Jsq+TKjfHh=4a-NFUaYzjedVonP69ourL5YzZuxPLEY6T-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/5] dt-bindings: usb: convert ti,hd3ss3220 bindings to json-schema
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Ville, Laurent,
+On Wed, Sep 9, 2020 at 2:21 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+>
+> Hi Rob,
+>
+> Thanks for the feedback.
+>
+> > Subject: Re: [PATCH v3 1/5] dt-bindings: usb: convert ti,hd3ss3220 bindings to
+> > json-schema
+> >
+> > On Mon, Aug 24, 2020 at 03:10:49PM +0100, Biju Das wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Convert ti,hd3ss3220.txt to YAML. Updated the binding documentation as
+> > > graph bindings of this device model Super Speed (SS) data bus to the
+> > > Super Speed (SS) capable connector.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-
+> > lad.rj@bp.renesas.com>
+> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > ---
+> > > v2->v3: Replaced Tabs with spaces in the example section.
+> > > v1->v2 : No change
+> > > Ref: https://patchwork.kernel.org/patch/11669423/
+> > > ---
+> > >  .../devicetree/bindings/usb/ti,hd3ss3220.txt  | 38 ---------
+> > > .../devicetree/bindings/usb/ti,hd3ss3220.yaml | 81
+> > +++++++++++++++++++
+> > >  2 files changed, 81 insertions(+), 38 deletions(-)  delete mode
+> > > 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+> > >  create mode 100644
+> > > Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+> > > b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+> > > deleted file mode 100644
+> > > index 2bd21b22ce95..000000000000
+> > > --- a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+> > > +++ /dev/null
+> > > @@ -1,38 +0,0 @@
+> > > -TI HD3SS3220 TypeC DRP Port Controller.
+> > > -
+> > > -Required properties:
+> > > - - compatible: Must be "ti,hd3ss3220".
+> > > - - reg: I2C slave address, must be 0x47 or 0x67 based on ADDR pin.
+> > > - - interrupts: An interrupt specifier.
+> > > -
+> > > -Required sub-node:
+> > > - - connector: The "usb-c-connector" attached to the hd3ss3220 chip. The
+> > > -   bindings of the connector node are specified in:
+> > > -
+> > > -Documentation/devicetree/bindings/connector/usb-connector.yaml
+> > > -
+> > > -Example:
+> > > -hd3ss3220@47 {
+> > > -compatible = "ti,hd3ss3220";
+> > > -reg = <0x47>;
+> > > -interrupt-parent = <&gpio6>;
+> > > -interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+> > > -
+> > > -connector {
+> > > -compatible = "usb-c-connector";
+> > > -label = "USB-C";
+> > > -data-role = "dual";
+> > > -
+> > > -ports {
+> > > -#address-cells = <1>;
+> > > -#size-cells = <0>;
+> > > -
+> > > -port@1 {
+> > > -reg = <1>;
+> > > -hd3ss3220_ep: endpoint {
+> > > -remote-endpoint =
+> > <&usb3_role_switch>;
+> > > -};
+> > > -};
+> > > -};
+> > > -};
+> > > -};
+> > > diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+> > > b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+> > > new file mode 100644
+> > > index 000000000000..750a099529c0
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+> > > @@ -0,0 +1,81 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause) %YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/usb/ti,hd3ss3220.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: TI HD3SS3220 TypeC DRP Port Controller
+> > > +
+> > > +maintainers:
+> > > +  - Biju Das <biju.das.jz@bp.renesas.com>
+> > > +
+> > > +description: |-
+> > > +  HD3SS3220 is a USB SuperSpeed (SS) 2:1 mux with DRP port
+> > > +controller. The device provides Channel
+> > > +  Configuration (CC) logic and 5V VCONN sourcing for ecosystems
+> > > +implementing USB Type-C. The
+> > > +  HD3SS3220 can be configured as a Downstream Facing Port (DFP),
+> > > +Upstream Facing Port (UFP) or a
+> > > +  Dual Role Port (DRP) making it ideal for any application.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +   const: ti,hd3ss3220
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  interrupts:
+> > > +    maxItems: 1
+> > > +
+> > > +  ports:
+> > > +    description: OF graph bindings (specified in bindings/graph.txt) that
+> > model
+> > > +      SS data bus to the SS capable connector.
+> > > +    type: object
+> > > +    properties:
+> > > +      port@0:
+> > > +        type: object
+> > > +        description: Super Speed (SS) capable connector.
+> > > +
+> > > +      port@1:
+> > > +        type: object
+> > > +        description: Super Speed (SS) data bus.
+> > > +
+> > > +    required:
+> > > +      - port@0
+> > > +      - port@1
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - interrupts
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    i2c0 {
+> > > +        #address-cells = <1>;
+> > > +        #size-cells = <0>;
+> > > +
+> > > +        hd3ss3220@47 {
+> > > +                compatible = "ti,hd3ss3220";
+> > > +                reg = <0x47>;
+> > > +                interrupt-parent = <&gpio6>;
+> > > +                interrupts = <3>;
+> > > +
+> > > +                ports {
+> > > +                        #address-cells = <1>;
+> > > +                        #size-cells = <0>;
+> > > +                        port@0 {
+> > > +                                reg = <0>;
+> > > +                                hd3ss3220_in_ep: endpoint {
+> > > +                                        remote-endpoint = <&ss_ep>;
+> > > +                                };
+> > > +                        };
+> > > +                        port@1 {
+> > > +                                reg = <1>;
+> > > +                                hd3ss3220_out_ep: endpoint {
+> > > +                                        remote-endpoint = <&usb3_role_switch>;
+> > > +                                };
+> >
+> > If you have 2 inputs muxed, then there would be 2 endpoints here? Please
+> > show the fullest or most complicated case for the example. The port@1
+> > description could be a bit better.
+>
+> As per [1] "HD3SS3220 has integrated USB 3.0/3.1 SS/SS+ MUX with 2 channel 2:1 switching required to handle cable flips".
+> The four Superspeed differential pairs (two Tx and two Rx pairs) pairs from the USB-C receptacle is connected to this device
+> and the output of the Mux is connected to the  SoC .
 
-On 09/09/2020 13:08, Ville Syrjälä wrote:
-> On Tue, Sep 08, 2020 at 05:05:48PM +0100, Kieran Bingham wrote:
->> Hi Laurent,
->>
->> On 08/09/2020 16:52, Laurent Pinchart wrote:
->>> Hi Kieran,
->>>
->>> On Tue, Sep 08, 2020 at 04:42:58PM +0100, Kieran Bingham wrote:
->>>> On 06/08/2020 03:26, Laurent Pinchart wrote:
->>>>> When creating a frame buffer, the driver verifies that the pitches for
->>>>> the chroma planes match the luma plane. This is done incorrectly for
->>>>> fully planar YUV formats, without taking horizontal subsampling into
->>>>> account. Fix it.
->>>>>
->>>>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>>>> ---
-> <snip>
->>>>>  	}, {
->>>>>  		.fourcc = DRM_FORMAT_YVU444,
->>>>>  		.v4l2 = V4L2_PIX_FMT_YVU444M,
->>>>>  		.bpp = 24,
->>>>>  		.planes = 3,
->>>>> +		.hsub = 1,
->>>>>  	},
->>>>>  };
->>>>>  
->>>>
->>>> I wonder when we can have a global/generic set of format tables so that
->>>> all of this isn't duplicated on a per-driver basis.
->>>
->>> Note that this table also contains register values, so at least that
->>> part will need to be kept. For the rest, do you mean a 4CC library that
->>
->> Yes, the driver specific mappings of course need to be driver specific.
->>
->>
->>> would be shared between DRM/KMS and V4L2 ? That's a great idea. Too bad
->>> it has been shot down when patches were submitted :-S
->>
->>
->>  /o\ ... It just seems like so much data replication that must be used
->> by many drivers.
->>
->> Even without mapping the DRM/V4L2 fourccs - even a common table in each
->> subsystem would be beneficial wouldn't it?
->>
->> I mean - RCar-DU isn't the only device that needs to know how many
->> planes DRM_FORMAT_YUV422 has, or what horizontal subsampling it uses?
->>
->> Anyway, that's not an issue with this patch, it just seems glaring to me
->> that these entries are common across all hardware that use them ...
->>
->> (the bpp/planes/subsampling of course, not the hardware specific registers).
-> 
-> See drm_format_info() & co.
+Ah, I was thinking this was muxing 2 functions (such as DP) rather
+than cable flip handling. I guess the example doesn't need anything
+else, but the description does. In the case of directly connected to
+the SoC, how are cable flips handled? The SoC phy handles it?
 
-Aha perfect, That's what I was looking for.
-I'm glad to see that's common (at least for the DRM parts).
+There's some issues in the connector binding with how the SS signals
+are handled that needs to be solved. This all needs to be addressed
+looking at various possible h/w designs.
 
-The question is - why aren't we using it in RCar-DU.
-
-Laurent, would you see any issue in obtaining the struct drm_format_info
-rather than re-encoding all the data in these tables?
-
-And if not - would you prefer to convert on top of this patch, or
-preceding this patch?
-
-Or simply prefer to keep the existing tables ?
-
-Given that this fixes a bug - I'd say getting this patch in now is
-probably best.
-
--- 
-Regards
---
-Kieran
+Rob
