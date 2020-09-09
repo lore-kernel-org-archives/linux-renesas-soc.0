@@ -2,489 +2,115 @@ Return-Path: <SRS0=18hO=CS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AEC8C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 15:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7996C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 15:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 481EE2226A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 15:04:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BAF221919
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 15:16:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="QiALuz1i"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QAazgdff"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbgIIPEI (ORCPT
+        id S1727893AbgIIPQT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Sep 2020 11:04:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45834 "EHLO
+        Wed, 9 Sep 2020 11:16:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729941AbgIIMSl (ORCPT
+        with ESMTP id S1729455AbgIILcN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Sep 2020 08:18:41 -0400
-Received: from mail-ot1-x341.google.com (mail-ot1-x341.google.com [IPv6:2607:f8b0:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F31D9C06179E
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2020 05:17:19 -0700 (PDT)
-Received: by mail-ot1-x341.google.com with SMTP id u25so2072118otq.6
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2020 05:17:19 -0700 (PDT)
+        Wed, 9 Sep 2020 07:32:13 -0400
+Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24322C061795
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2020 04:24:59 -0700 (PDT)
+Received: by mail-vs1-xe34.google.com with SMTP id a16so1097173vsp.12
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2020 04:24:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5sk7BCWu7uTrrEXhCDzowgQp262uwpVX2mj3sACcYvw=;
-        b=QiALuz1ie6MsTqecTWiph/yJ5Kcb1XhjLM8+SfG77FwnKp0Bo6slhDpq80dMi9olnW
-         VTHLsOL87z+8FYBiJ+sz/FvUTT8qOreTYUd7dGnkwvd/wo/CK5KFgX3XnxM+P16MlEVx
-         XH5eixpMWr5q/SyRpnr+3OmBC+BYo5qnlgOgY=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=YwF7oGdkWmJxr0DaGGL2B5zSMTxCBRgZEPjg5JlP9Ks=;
+        b=QAazgdff84HXGeKSgLpqmQVikaFSdP5UNb6QrEEWjbfQtYZbq/0ISulDu4wVRDbAgV
+         Blzaz406rfa9YdqqZ5byBj240HvKycb6mfHlmdSRBOaSWl+UNf/kM3UM8Nu53SmvTycg
+         3DG2b4SlvINhCnVkLOheyROaLI1GgGzumTLHyV1QTg1hRGVrFNoeyAQ+WuglXbW6AUCl
+         mGwzRhpfqjEiby8FgSU1jXPWUl9uJGpKpD6VcUs0sl5sTt910ES8bg+jdlhLxGjQsC+1
+         1LCpHDV2JXl79AMSuB/lgZeCe5RvygOAaXT6CdcFlDcMmv25hU03bv87mITUk7WP9GAD
+         AQKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5sk7BCWu7uTrrEXhCDzowgQp262uwpVX2mj3sACcYvw=;
-        b=Plvhfm8hQEotR1ZqxVF7HaKe8ZJHfLHPAZyIkLG86bwc4pWY5bR4WKDvY6Mv60ci5R
-         UHN7Y54x9kWPs1Yp3ZoFDQb9cWgMuT1hvKLG9pq6Minhg1hmHI2LTb04i38D3n/rZZTm
-         elwE3YqLWXtBxYQ9ICwUwrxc82CweZeD/OfPcOSwkrSfbbvk942mPrPCGjR6FXVw2kO3
-         omcMd92Fbhe5WGQrz0Y0CyRGhM/LEu1axqUXEkI7nHrRqk4c8xRbl4q17SNmUe1ma/NM
-         4Yktxt2/MfBeuKGj6Jl8YIAVuRC9Fnhcu1oT3L6zEqoRzVGuvhMT7SG77QkZdju5Ovxy
-         hHdg==
-X-Gm-Message-State: AOAM5323j1Xk69GddYeVdkm8AT20v/sNs5wb+cXzaKeaeyMSt2Fkz7JU
-        eBkgisPfofsoSGu5EoWN8FWtR+vQi4Wq0rBXFWbD6Q==
-X-Google-Smtp-Source: ABdhPJyCtCbjbu27Le1efhvwBJtfMMTDolo2xiqiG5T2GpZP4+BPTHzYFjbQytZxLLgSkFb8heVZujBIw3fRu6WPNdc=
-X-Received: by 2002:a05:6830:1e56:: with SMTP id e22mr456672otj.303.1599653836543;
- Wed, 09 Sep 2020 05:17:16 -0700 (PDT)
+         :message-id:subject:to;
+        bh=YwF7oGdkWmJxr0DaGGL2B5zSMTxCBRgZEPjg5JlP9Ks=;
+        b=lJnCo/yTIjk4s6L9Ef+lkooU2SK8AKrK8+CIELy9TwtGdor57yeMufKpHPxSJ2bU0T
+         ZBHc5TkcSYE8OsEdLQRmvDoKsOdTdEwDAEQj+DdlYVW/NWfurNtmbwmj6WdfuHwrK20n
+         HiXpe/qfdr6kHcduvLHYrU5PN+h8iDvi80n6lYU+tRfotL9zMfZy388JwuAAu7oJbRjD
+         bLLTBY8pKg7p42gVO5zCkWFNMb7fYJ3R0aKKQmcLPNgnhnEZbEBTCY2UqajXbvieqBVa
+         eIuhSQMjjI8dQr03cN3cXj2YxFORrkB6NN0htREiHbQx3UEopB77Fd46ZlKbKnUjZI46
+         vRTw==
+X-Gm-Message-State: AOAM531YO/UM3HS+3hkavnW/lK/hovYSqMJ5J5cR7tMTD4cBe4du5+6r
+        3G3diANlr2RAsp3QsHrW9pPR04K2Whp6I9WjQdbKCA==
+X-Google-Smtp-Source: ABdhPJyX26PiK8pf7hK5CA4/JStCB7QVEAiAc0iFsKHA7XBKfawE+lpIL55g2UGbvOG2rRpZZjOsbTjNKTGylQm5SnU=
+X-Received: by 2002:a67:e355:: with SMTP id s21mr145683vsm.50.1599650697707;
+ Wed, 09 Sep 2020 04:24:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200806022649.22506-1-laurent.pinchart+renesas@ideasonboard.com>
- <3c2147d8-b5bc-b0e8-6435-4d3ec0154249@ideasonboard.com> <20200908155208.GF11405@pendragon.ideasonboard.com>
- <6e66b920-96d6-591a-af59-353558b89f98@ideasonboard.com>
-In-Reply-To: <6e66b920-96d6-591a-af59-353558b89f98@ideasonboard.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 9 Sep 2020 14:17:05 +0200
-Message-ID: <CAKMK7uGHyWpsQ2HWa_jhZ7iDVqUYGESSMQty7cYseudoy-ebuQ@mail.gmail.com>
-Subject: Re: [PATCH] drm: rcar-du: Fix pitch handling for fully planar YUV formats
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "open list:DRM DRIVERS FOR RENESAS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>
+References: <20200821081654.28280-1-wsa+renesas@sang-engineering.com>
+ <CAPDyKFp7rsHDY2vREakrR+PFJLs0n8JBR+URV1vCu5bydEhHuA@mail.gmail.com> <20200830130357.GA2194@kunai>
+In-Reply-To: <20200830130357.GA2194@kunai>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 9 Sep 2020 13:24:21 +0200
+Message-ID: <CAPDyKFr24YxoJ3m5r1C_4-UAdtJQp_MK0+wwZjsQXzrs5dxLjw@mail.gmail.com>
+Subject: Re: [RFT] mmc: tmio: reset device on timeout, too
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Sep 8, 2020 at 6:05 PM Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
->
-> Hi Laurent,
->
-> On 08/09/2020 16:52, Laurent Pinchart wrote:
-> > Hi Kieran,
-> >
-> > On Tue, Sep 08, 2020 at 04:42:58PM +0100, Kieran Bingham wrote:
-> >> On 06/08/2020 03:26, Laurent Pinchart wrote:
-> >>> When creating a frame buffer, the driver verifies that the pitches for
-> >>> the chroma planes match the luma plane. This is done incorrectly for
-> >>> fully planar YUV formats, without taking horizontal subsampling into
-> >>> account. Fix it.
-> >>>
-> >>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> >>> ---
-> >>>  drivers/gpu/drm/rcar-du/rcar_du_kms.c | 52 ++++++++++++++++++++++++++-
-> >>>  drivers/gpu/drm/rcar-du/rcar_du_kms.h |  1 +
-> >>>  2 files changed, 52 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> >>> index 482329102f19..2fda3734a57e 100644
-> >>> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> >>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> >>> @@ -40,6 +40,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
-> >>>             .v4l2 = V4L2_PIX_FMT_RGB565,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>             .pnmr = PnMR_SPIM_TP | PnMR_DDDF_16BPP,
-> >>>             .edf = PnDDCR4_EDF_NONE,
-> >>>     }, {
-> >>> @@ -47,6 +48,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
-> >>>             .v4l2 = V4L2_PIX_FMT_ARGB555,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>             .pnmr = PnMR_SPIM_ALP | PnMR_DDDF_ARGB,
-> >>>             .edf = PnDDCR4_EDF_NONE,
-> >>>     }, {
-> >>> @@ -61,6 +63,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
-> >>>             .v4l2 = V4L2_PIX_FMT_XBGR32,
-> >>>             .bpp = 32,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>             .pnmr = PnMR_SPIM_TP | PnMR_DDDF_16BPP,
-> >>>             .edf = PnDDCR4_EDF_RGB888,
-> >>>     }, {
-> >>> @@ -68,6 +71,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
-> >>>             .v4l2 = V4L2_PIX_FMT_ABGR32,
-> >>>             .bpp = 32,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>             .pnmr = PnMR_SPIM_ALP | PnMR_DDDF_16BPP,
-> >>>             .edf = PnDDCR4_EDF_ARGB8888,
-> >>>     }, {
-> >>> @@ -75,6 +79,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
-> >>>             .v4l2 = V4L2_PIX_FMT_UYVY,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 2,
-> >>>             .pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
-> >>>             .edf = PnDDCR4_EDF_NONE,
-> >>>     }, {
-> >>> @@ -82,6 +87,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
-> >>>             .v4l2 = V4L2_PIX_FMT_YUYV,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 2,
-> >>>             .pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
-> >>>             .edf = PnDDCR4_EDF_NONE,
-> >>>     }, {
-> >>> @@ -89,6 +95,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
-> >>>             .v4l2 = V4L2_PIX_FMT_NV12M,
-> >>>             .bpp = 12,
-> >>>             .planes = 2,
-> >>> +           .hsub = 2,
-> >>>             .pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
-> >>>             .edf = PnDDCR4_EDF_NONE,
-> >>>     }, {
-> >>> @@ -96,6 +103,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
-> >>>             .v4l2 = V4L2_PIX_FMT_NV21M,
-> >>>             .bpp = 12,
-> >>>             .planes = 2,
-> >>> +           .hsub = 2,
-> >>>             .pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
-> >>>             .edf = PnDDCR4_EDF_NONE,
-> >>>     }, {
-> >>> @@ -103,6 +111,7 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
-> >>>             .v4l2 = V4L2_PIX_FMT_NV16M,
-> >>>             .bpp = 16,
-> >>>             .planes = 2,
-> >>> +           .hsub = 2,
-> >>>             .pnmr = PnMR_SPIM_TP_OFF | PnMR_DDDF_YC,
-> >>>             .edf = PnDDCR4_EDF_NONE,
-> >>>     },
-> >>> @@ -115,156 +124,187 @@ static const struct rcar_du_format_info rcar_du_format_infos[] = {
-> >>>             .v4l2 = V4L2_PIX_FMT_RGB332,
-> >>>             .bpp = 8,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_ARGB4444,
-> >>>             .v4l2 = V4L2_PIX_FMT_ARGB444,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_XRGB4444,
-> >>>             .v4l2 = V4L2_PIX_FMT_XRGB444,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_RGBA4444,
-> >>>             .v4l2 = V4L2_PIX_FMT_RGBA444,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_RGBX4444,
-> >>>             .v4l2 = V4L2_PIX_FMT_RGBX444,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_ABGR4444,
-> >>>             .v4l2 = V4L2_PIX_FMT_ABGR444,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_XBGR4444,
-> >>>             .v4l2 = V4L2_PIX_FMT_XBGR444,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_BGRA4444,
-> >>>             .v4l2 = V4L2_PIX_FMT_BGRA444,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_BGRX4444,
-> >>>             .v4l2 = V4L2_PIX_FMT_BGRX444,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_RGBA5551,
-> >>>             .v4l2 = V4L2_PIX_FMT_RGBA555,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_RGBX5551,
-> >>>             .v4l2 = V4L2_PIX_FMT_RGBX555,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_ABGR1555,
-> >>>             .v4l2 = V4L2_PIX_FMT_ABGR555,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_XBGR1555,
-> >>>             .v4l2 = V4L2_PIX_FMT_XBGR555,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_BGRA5551,
-> >>>             .v4l2 = V4L2_PIX_FMT_BGRA555,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_BGRX5551,
-> >>>             .v4l2 = V4L2_PIX_FMT_BGRX555,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_BGR888,
-> >>>             .v4l2 = V4L2_PIX_FMT_RGB24,
-> >>>             .bpp = 24,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_RGB888,
-> >>>             .v4l2 = V4L2_PIX_FMT_BGR24,
-> >>>             .bpp = 24,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_RGBA8888,
-> >>>             .v4l2 = V4L2_PIX_FMT_BGRA32,
-> >>>             .bpp = 32,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_RGBX8888,
-> >>>             .v4l2 = V4L2_PIX_FMT_BGRX32,
-> >>>             .bpp = 32,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_ABGR8888,
-> >>>             .v4l2 = V4L2_PIX_FMT_RGBA32,
-> >>>             .bpp = 32,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_XBGR8888,
-> >>>             .v4l2 = V4L2_PIX_FMT_RGBX32,
-> >>>             .bpp = 32,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_BGRA8888,
-> >>>             .v4l2 = V4L2_PIX_FMT_ARGB32,
-> >>>             .bpp = 32,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_BGRX8888,
-> >>>             .v4l2 = V4L2_PIX_FMT_XRGB32,
-> >>>             .bpp = 32,
-> >>>             .planes = 1,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_YVYU,
-> >>>             .v4l2 = V4L2_PIX_FMT_YVYU,
-> >>>             .bpp = 16,
-> >>>             .planes = 1,
-> >>> +           .hsub = 2,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_NV61,
-> >>>             .v4l2 = V4L2_PIX_FMT_NV61M,
-> >>>             .bpp = 16,
-> >>>             .planes = 2,
-> >>> +           .hsub = 2,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_YUV420,
-> >>>             .v4l2 = V4L2_PIX_FMT_YUV420M,
-> >>>             .bpp = 12,
-> >>>             .planes = 3,
-> >>> +           .hsub = 2,
-> >>
-> >> I guess vertical subsampling is handled distinctly?
-> >> (perhaps the height of the plane or such?)
-> >
-> > Vertical subsampling doesn't affect the pitch, so there's no specific
-> > constraint there.
->
-> Good point, I wrongly assumed there would be a need to validate that
-> specifically.
->
-> But the height covers it.
->
-> >
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_YVU420,
-> >>>             .v4l2 = V4L2_PIX_FMT_YVU420M,
-> >>>             .bpp = 12,
-> >>>             .planes = 3,
-> >>> +           .hsub = 2,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_YUV422,
-> >>>             .v4l2 = V4L2_PIX_FMT_YUV422M,
-> >>>             .bpp = 16,
-> >>>             .planes = 3,
-> >>> +           .hsub = 2,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_YVU422,
-> >>>             .v4l2 = V4L2_PIX_FMT_YVU422M,
-> >>>             .bpp = 16,
-> >>>             .planes = 3,
-> >>> +           .hsub = 2,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_YUV444,
-> >>>             .v4l2 = V4L2_PIX_FMT_YUV444M,
-> >>>             .bpp = 24,
-> >>>             .planes = 3,
-> >>> +           .hsub = 1,
-> >>>     }, {
-> >>>             .fourcc = DRM_FORMAT_YVU444,
-> >>>             .v4l2 = V4L2_PIX_FMT_YVU444M,
-> >>>             .bpp = 24,
-> >>>             .planes = 3,
-> >>> +           .hsub = 1,
-> >>>     },
-> >>>  };
-> >>>
-> >>
-> >> I wonder when we can have a global/generic set of format tables so that
-> >> all of this isn't duplicated on a per-driver basis.
-> >
-> > Note that this table also contains register values, so at least that
-> > part will need to be kept. For the rest, do you mean a 4CC library that
->
-> Yes, the driver specific mappings of course need to be driver specific.
+On Sun, 30 Aug 2020 at 15:04, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 >
 >
-> > would be shared between DRM/KMS and V4L2 ? That's a great idea. Too bad
-> > it has been shot down when patches were submitted :-S
+> > This isn't how mmc_hw_reset() is intended to be used. Instead, the
+> > idea is that it should be called by upper layer code, when some error
+> > path is triggered for an I/O request.
 >
+> Hmm, there are some wireless drivers using it as well. I am confused, is
+> this considered "upper layer"?
 >
->  /o\ ... It just seems like so much data replication that must be used
-> by many drivers.
+> drivers/net/wireless/ath/ath10k/sdio.c: ret = mmc_hw_reset(ar_sdio->func->card->host);
+> drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c:        mmc_hw_reset(sdiodev->func1->card->host);
+> drivers/net/wireless/marvell/mwifiex/sdio.c:    ret = mmc_hw_reset(func->card->host);
+> drivers/net/wireless/ti/wlcore/sdio.c:  mmc_hw_reset(card->host);
 
-Just to clarify: It wasn't shot down categorically, but I shot down
-the specific approach of first sharing code, and then trying to align
-the subsystems somehow later on with lots of hand-waving.
+Correct, these are "upper layers". The same applies for the mmc block
+device driver.
 
-The trouble with format enumerations that the devil's always in the
-details, so you have to absolutely align first, and then share code
-second, or it'll just become a complete mess.
+In this way there is a guarantee that the struct mmc_card is still present.
 
-E.g. even in the drm world we lots of overlapping enumerations because
-they come from different standard bodies. There's a bit of a push to
-fully standardize on drm_fourcc.h codes at least in the low-level
-stuff, but e.g. vk/gl will always have their own.
-
-So yeah if you want to share format code with v4l, step 1 is to figure
-out how to establish common definitions. And not as in "we'll use the
-same numbers", but with stuff like userspace in gstreamer and
-everywhere assuming that they match perfectly (like we do between mesa
-and drm-modesetting drivers), with all that implies. And we're not
-even close to such a world.
-
-Cheers, Daniel
-
-> Even without mapping the DRM/V4L2 fourccs - even a common table in each
-> subsystem would be beneficial wouldn't it?
 >
-> I mean - RCar-DU isn't the only device that needs to know how many
-> planes DRM_FORMAT_YUV422 has, or what horizontal subsampling it uses?
->
-> Anyway, that's not an issue with this patch, it just seems glaring to me
-> that these entries are common across all hardware that use them ...
->
-> (the bpp/planes/subsampling of course, not the hardware specific registers).
->
->
->
-> >>> @@ -311,6 +351,7 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
-> >>>  {
-> >>>     struct rcar_du_device *rcdu = dev->dev_private;
-> >>>     const struct rcar_du_format_info *format;
-> >>> +   unsigned int chroma_pitch;
-> >>>     unsigned int max_pitch;
-> >>>     unsigned int align;
-> >>>     unsigned int i;
-> >>> @@ -353,8 +394,17 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
-> >>>             return ERR_PTR(-EINVAL);
-> >>>     }
-> >>>
-> >>> +   /*
-> >>> +    * Calculate the chroma plane(s) pitch using the horizontal subsampling
-> >>> +    * factor. For semi-planar formats, the U and V planes are combined, the
-> >>> +    * pitch must thus be doubled.
-> >>> +    */
-> >>> +   chroma_pitch = mode_cmd->pitches[0] / format->hsub;
-> >>> +   if (format->planes == 2)
-> >>> +           chroma_pitch *= 2;
-> >>> +
-> >>>     for (i = 1; i < format->planes; ++i) {
-> >>> -           if (mode_cmd->pitches[i] != mode_cmd->pitches[0]) {
-> >>> +           if (mode_cmd->pitches[i] != chroma_pitch) {
-> >>>                     dev_dbg(dev->dev,
-> >>>                             "luma and chroma pitches do not match\n");
-> >>
-> >> Is this statement still sufficient?
-> >> I'd perhaps say 'are not compatible' or 'are not correct'. - but its
-> >> only a debug print, so it really doesn't matter.
-> >
-> > I like "are not compatible", I'll switch to that.
-> >
-> >> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> >>
-> >>>                     return ERR_PTR(-EINVAL);
-> >>> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.h b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
-> >>> index 0346504d8c59..8f5fff176754 100644
-> >>> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.h
-> >>> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.h
-> >>> @@ -22,6 +22,7 @@ struct rcar_du_format_info {
-> >>>     u32 v4l2;
-> >>>     unsigned int bpp;
-> >>>     unsigned int planes;
-> >>> +   unsigned int hsub;
-> >>>     unsigned int pnmr;
-> >>>     unsigned int edf;
-> >>>  };
-> >
->
-> --
-> Regards
-> --
-> Kieran
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+> I'd like to understand, so I can add some docs. Because the intended use
+> is nowhere documented to the best of my knowledge.
 
+That would be great. I appreciate all kinds of improvements on the doc parts.
 
+>
+> > However, let me think a bit about this.
+>
+> Sure, thanks for the help!
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Thinking more about this.
+
+Perhaps a better option is to return a specific error code for the
+last request, that makes the core run mmc_hw_reset(). Or potentially,
+add a host cap and let the core treat some error code, specifically
+for hosts like tmio.
+
+Kind regards
+Uffe
