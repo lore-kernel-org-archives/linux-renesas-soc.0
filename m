@@ -2,181 +2,254 @@ Return-Path: <SRS0=18hO=CS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D80BC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 17:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA0CC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 17:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 02F7821D7F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 17:19:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F67B206D4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 17:34:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VDxiHWdo"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="ccWPY2nP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730424AbgIIRS7 (ORCPT
+        id S1727870AbgIIRew (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Sep 2020 13:18:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45958 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbgIIP12 (ORCPT
+        Wed, 9 Sep 2020 13:34:52 -0400
+Received: from mail-eopbgr1400134.outbound.protection.outlook.com ([40.107.140.134]:59808
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726415AbgIIRes (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Sep 2020 11:27:28 -0400
-Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2C1CC061757
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2020 04:11:02 -0700 (PDT)
-Received: by mail-vs1-xe42.google.com with SMTP id b123so1079111vsd.10
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2020 04:11:02 -0700 (PDT)
+        Wed, 9 Sep 2020 13:34:48 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DRnV2gELW/UOWK8twyl6qO39nXG6mRPSBZrp06FEFxFhPN9U7wSgmA8LCyEnStwXsYaweNKwVnnSWLS9tnwILYmBeWHZ2iVFVhlFMDpHvibW5KK9LqEtroNvdw1C801J2isgiP+IWRRgJMXbCB8ITyQH0MF2MG1GQ2X5v3nEbO6zbI6de0u5UGJNLDeC1QWPPUpdCe0hbCpHKC9r4oyk4ECBxrhTdvgjdcPO6UAi1IoTfPKuFXM5xsGMNNimHnJaVZmZvRKlMkMy6qt+aHbf3/gnj9M23Wmhx/e9MSu7BNggFRWBe0jFs4LLdVcZP9IKk1J0MPqVatf0Ka6PGGXClQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YmfI1dAgg1QFTz6z+PRgMExRMpZtJGOuWjpKIx0Q1Zg=;
+ b=MQFSZZiZ+53ljEXeZZJrG8smQN/ufzCc64gUWZ2lHblhKxRNiuE/N/tpWtVVHEXEsRdoILmmhgKawgMmRm5t/V+5gOG6WNM93at0ri3fCMjL1xbtrV/ArgS0wS4DSR8V4XI+wdQKKR7a3bgO/syYazivoK8N2f5fo7SBsGejzuWRVvH9YsWdBEzw91o0ZJQq4ULaDYA+UvObkGTdbcT2rzWUT5mCFCBnNPxRVKpYPQngye1Z1TdSKShXZIC75o7sk4//Z8V2v9lEeTLB6PzDOyPmYdoinxIV2JYRFDThG8HTioiKhUpBtx4qU0tFqVrciPTvDClC0pvk62PaP+eazw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=khWyhAe+lN07SqtNkMSWgvbuoeZTuOj4AYam/mxcJqA=;
-        b=VDxiHWdoA6M16HlkWBnXofA9gCh5u4mUs3a4g7d3yx3bXnwWeVnhEbXVxfNOJ2jsWI
-         uZA6+5fKK7Wyj/Va++px8gtMcgyBMzUXpSQNPXFXZoueO33i291qK/z2eKBpKr1mchb6
-         e6n8SewJ4hFBL6xSc7xSUF4yHAb2r9JosEIGXan6ZOo61vc8lvHt6bA1IEC/WfNjFdcs
-         Kr7VLRW4ih/5x974ps3zfEJuQiSfzL6vMkLq617OQhkXn3yvy3PN6PhgF6W+6+s8Ni0+
-         p1+FZHQqiwk1Dac+xzQf5H/1Gn2022/S8eQFdX7jRVHQyldLJc0Qszr8GfxwgOLcUllm
-         5llw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=khWyhAe+lN07SqtNkMSWgvbuoeZTuOj4AYam/mxcJqA=;
-        b=TCohVWof71WQd/YTsTNuDVPih7Nw3k94jOIMzV67YVvSv1tJ3x05H8uwWgUh0ouRy3
-         T8feuzDNZZHo75GlJG45ctCJgzh4ZVp2HWt5knf37hioOxh6f+KBrVpqv1sv/YRfx/yx
-         BlOO1Xuj0XcS1Fq/GWEA9qr++A+exMOhKJly2rG+5VXljz/MOfLaaDk6zXDcAneCq1/E
-         McIuz+DKBoPKP1kCPlUyrEzH7lefV7QjwZkmKq77y8mlSV6M+DWQ6dvV4v0OAkZSogjC
-         IwCmxfZ7p98DqQQa6+NSW/a+PT0aUofcWOpgZsNEuRHLeasvS4jhlWnkHmB9XUp3p0HD
-         1BZA==
-X-Gm-Message-State: AOAM532phQTV6+eCKLynJDASpeE0v23Ok2Mwekd0szlKB0sSdcdffac0
-        ayrrc5GZwU+qhoCUMpMG0EiI3kyVB6oC2RRUApyKrg==
-X-Google-Smtp-Source: ABdhPJyrhzUCjcXsxzlSgTTgLnzBPVGFjXoK2d+f6coDVgjEfNWL7TMizPQxlX5earJnYx3MmYEBFJXkH/Ia4T3/tI0=
-X-Received: by 2002:a67:e355:: with SMTP id s21mr123357vsm.50.1599649861771;
- Wed, 09 Sep 2020 04:11:01 -0700 (PDT)
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YmfI1dAgg1QFTz6z+PRgMExRMpZtJGOuWjpKIx0Q1Zg=;
+ b=ccWPY2nPkQFthBIpeacMhqDKVwWh/4c1Qz1wMdi/fvqlQ6YJgYrOG6y/wzBGKeUdfWBQm7hqmUnj08sGA8yJiT0JFcxTqjcSCncqs02QVPrso9JO+OkHd9Wu0h5YX9AGOjJFEvlVR+Mq4GndC+T+H1pRqBwYkNjigL58a5MtQlA=
+Received: from TYBPR01MB5309.jpnprd01.prod.outlook.com
+ (2603:1096:404:8025::15) by TYAPR01MB5532.jpnprd01.prod.outlook.com
+ (2603:1096:404:8040::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3348.15; Wed, 9 Sep
+ 2020 17:34:43 +0000
+Received: from TYBPR01MB5309.jpnprd01.prod.outlook.com
+ ([fe80::757f:58cf:296e:9f84]) by TYBPR01MB5309.jpnprd01.prod.outlook.com
+ ([fe80::757f:58cf:296e:9f84%3]) with mapi id 15.20.3370.016; Wed, 9 Sep 2020
+ 17:34:43 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v3 1/5] dt-bindings: usb: convert ti,hd3ss3220 bindings to
+ json-schema
+Thread-Topic: [PATCH v3 1/5] dt-bindings: usb: convert ti,hd3ss3220 bindings
+ to json-schema
+Thread-Index: AQHWeiBm7RRdOc7Pp0aB6GJsD3dNDqlfbNaAgACVPJCAAKAHgIAAAKxQ
+Date:   Wed, 9 Sep 2020 17:34:42 +0000
+Message-ID: <TYBPR01MB53096D5A92B7AA149E5803D786260@TYBPR01MB5309.jpnprd01.prod.outlook.com>
+References: <20200824141053.5062-1-biju.das.jz@bp.renesas.com>
+ <20200824141053.5062-2-biju.das.jz@bp.renesas.com>
+ <20200908223651.GA1042906@bogus>
+ <TYBPR01MB5309786FAFF729AB8998B5D786260@TYBPR01MB5309.jpnprd01.prod.outlook.com>
+ <CAL_Jsq+TKjfHh=4a-NFUaYzjedVonP69ourL5YzZuxPLEY6T-Q@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+TKjfHh=4a-NFUaYzjedVonP69ourL5YzZuxPLEY6T-Q@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=bp.renesas.com;
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: bb53eb04-44d0-4324-ebda-08d854e6a342
+x-ms-traffictypediagnostic: TYAPR01MB5532:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <TYAPR01MB553281447CC171607BA7612586260@TYAPR01MB5532.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: bo3ysn5rKoZtmH1kzdQaMxkSxgjM+otsRfRaQeHcDtpRMNq1LLqyAQds8yJaoOMIrVgOdVSbuLMoHq7dGmGzj2FhvHdJPX/KkgwArmBryA8SiUgbS/jbvjr10j28PuXjIkDUIhjOI7Iq27dSjUva5XhQsTfbobEYmuohUMrXQmCI2EjvGslBBc9aaxv6LOP93XU9pEvtgjP15HZBqbGu9xYWARn4y0cX30UEsho7XA3FDpA/fU81Mi1nqetbdmdxfdUbPON7q8p3bed2j9F0tIbIBONagfpZr8LURzlmank5+y/m4mVKwMGtZ469V+RRZmvi0ProhIxcrFeN+DPvw0VWkPJSZZXsAEZANFxILP5hlsg/RNo0RQUBEwvhaZ97T+7u7biOjadlGyNdIVOUOoFPpYD7okoMWCFI6gQhyx/uU8l7x0IPrjHhwx77m77a
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYBPR01MB5309.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(376002)(346002)(136003)(396003)(39860400002)(4326008)(52536014)(66946007)(71200400001)(53546011)(66446008)(66556008)(66476007)(76116006)(6506007)(26005)(966005)(33656002)(6916009)(186003)(7696005)(64756008)(478600001)(2906002)(8676002)(55016002)(83380400001)(54906003)(5660300002)(316002)(86362001)(9686003)(8936002)(142933001);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: FVVoyri4A03pCUt3XwYNWdI1WVW/siKGxhzkFUzAqNYh4opMrLeG8zGqtk3llml0EBYje8tqKy75Dk1JXA2PgEeSkoT7IiA1LOKJwmbszD8Fc3rBPaUQhM695w6nLIsz4KGJZ0ZNuf1L7blk9R1+06/9PMDmMAy8LEmQVqd+ZsilEz+8z5bFxfIp3xguaUz0xZ/13/dVKpBoPPclHKLMmjHfxAvyuQjxB1T5YQ4s1zhAl1IWo4WCyAo3jJdHmHdJns71tyRP4oA2T1Wu77qq7NnvnnsuUJJhBJNywRorkkBe3h8Do05CG//TYPc4bREzRgDEW1Ytmua863+NBkous3zpTMhZoGLEgxEczC672Ay3hf7tWKWLOaAUT+WbUsNsRNQA0NOiTK6lObbe4w0kFOxKm+ldNLNBD7Axq3sgUa5ca9O6cUDr73bZ8ibA8ucx4BhB334kJRnz4DTsR1Mzwdx93/av7nVmFopAaY+lexbFwZTpnl5ldKCm7zPrpK+CIV+28JoDM1AyRFE42c7XEfzd7VPDkJ1j806T5QX2mPGMWutKgwkEfpM+bG2AHdUVeNVwY/tyoPDGIIlQRyY9EgZ1urmYvboI9A6VCRgrUgmveENIiRkL0wn028Vgq3pESv4UEdyLZQunSuNOt43rjg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20200902081812.1591-1-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20200902081812.1591-1-wsa+renesas@sang-engineering.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 9 Sep 2020 13:10:25 +0200
-Message-ID: <CAPDyKFq6NiK1dopS=mBd2r8Eq3TwbT8ZfRG7ujWbYEKeAbDokg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] mmc: renesas_sdhi: support manual calibration
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYBPR01MB5309.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bb53eb04-44d0-4324-ebda-08d854e6a342
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2020 17:34:42.9376
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uAQl9zmGkIGGihCEpJdEDWQ6Kz4mU/auob2m87K2xIbyGOMxCqFXT3O/YfIflz5RJAmwCbStnatwCLqp8P/14HbVnsb3yevyH420yzTloFo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5532
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 2 Sep 2020 at 10:18, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> Some R-Car Gen3 SoCs need corrections after they tuned to HS400. This
-> series implements that. Please have a look at the patch descriptions for
-> details. The origins were patches in the BSP from Takeshi Saito.
->
-> Changes since v1:
->         * correction is now enabled after tuning is complete not when it
->           is initiated
->         * rebased to new version of "fix stalled SCC series" which is a
->           dependency for this
->
-> There is a branch for testing here (with the debug patch on top):
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/sdhi/new_manual_calib-for-5.10
->
-> Current test results (little different to v1):
-> ----------------------------------------------
->
-> An SDHI instance with a HS400 capable eMMC connected (R-Car M3-N):
->
-> When preparing HS400 tuning, a calib table is found. So, (potential) old
-> HS400 tuning gets reset and the manual adjustment gets disabled. Unlike
-> previous series, the runtime flag is not enabled yet.
->
->      kworker/1:2-139   [001] ....     4.160517: renesas_sdhi_reset_hs400_mode: ee140000.mmc: calib table ffff800010bc15f8
->      kworker/1:2-139   [001] ....     4.160522: renesas_sdhi_reset_hs400_mode: ee140000.mmc: adjustment disabled
->
-> Lots of tuning CMDs, runtime flag still disabled:
->
->      kworker/0:1-21    [000] ....     4.160630: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.160725: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.160831: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.160936: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.161024: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.161122: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.161214: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.161305: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.161407: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.161496: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.161579: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.161669: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.161762: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.161845: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.161927: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.162011: renesas_sdhi_fixup_request: ee140000.mmc: opcode 21, flag 0
->      kworker/0:1-21    [000] ....     4.162074: renesas_sdhi_fixup_request: ee140000.mmc: opcode 6, flag 0
->      kworker/0:1-21    [000] ....     4.162612: renesas_sdhi_fixup_request: ee140000.mmc: opcode 13, flag 0
->      kworker/0:1-21    [000] ....     4.162671: renesas_sdhi_fixup_request: ee140000.mmc: opcode 6, flag 0
->      kworker/0:1-21    [000] ....     4.162722: renesas_sdhi_fixup_request: ee140000.mmc: opcode 13, flag 0
->      kworker/0:1-21    [000] ....     4.162778: renesas_sdhi_fixup_request: ee140000.mmc: opcode 6, flag 0
->
-> Tuning was successful, now the runtime flag gets enabled:
->
->      kworker/1:2-139   [001] ....     4.163274: renesas_sdhi_hs400_complete: ee140000.mmc: flag enabled
->
-> First CMD13 after successful tuning, enable adjustment, clear runtime
-> flag, show replacement value. The replacement value is now also around
-> 16 which is what Shimoda-san said to be an expected value at room
-> temerature. It used to be 31 in v1 of the series.
->
->      kworker/0:1-21    [000] ....     4.163416: renesas_sdhi_fixup_request: ee140000.mmc: opcode 13, flag 1
->      kworker/0:1-21    [000] ....     4.163421: renesas_sdhi_fixup_request: ee140000.mmc: adjustment enabled, flag disabled
->      kworker/0:1-21    [000] ....     4.163422: renesas_sdhi_fixup_request: code 17 replacement 18
->
-> Normal operation continues. Some switching and block reads:
->
->      kworker/0:1-21    [000] ....     4.163592: renesas_sdhi_fixup_request: ee140000.mmc: opcode 6, flag 0
->      kworker/0:1-21    [000] ....     4.163645: renesas_sdhi_fixup_request: ee140000.mmc: opcode 13, flag 0
->      kworker/0:1-21    [000] ....     4.163700: renesas_sdhi_fixup_request: ee140000.mmc: opcode 6, flag 0
->      kworker/0:1-21    [000] ....     4.163747: renesas_sdhi_fixup_request: ee140000.mmc: opcode 13, flag 0
->      kworker/0:1-21    [000] ....     4.217134: renesas_sdhi_fixup_request: ee140000.mmc: opcode 17, flag 0
->      kworker/0:1-21    [000] ....     4.217357: renesas_sdhi_fixup_request: ee140000.mmc: opcode 17, flag 0
->         ...
->
-> And then checksumming a large file works without performance
-> regressions. Unlike the previous version, retunes do not happen
-> occasionally, so the new replacement value is indeed better.
->
-> So, again a lot of text but I want interested parties to verify results.
->
-> Looking forward to comments, although I won't complain if this is the
-> final version ;)
->
-> Thanks and kind regards,
->
->    Wolfram
->
->
-> Wolfram Sang (2):
->   mmc: tmio: add generic hook to fixup after a completed request
->   mmc: renesas_sdhi: support manual calibration
->
->  drivers/mmc/host/renesas_sdhi.h      |   5 +
->  drivers/mmc/host/renesas_sdhi_core.c | 152 ++++++++++++++++++++++++++-
->  drivers/mmc/host/tmio_mmc.h          |   1 +
->  drivers/mmc/host/tmio_mmc_core.c     |   3 +
->  4 files changed, 159 insertions(+), 2 deletions(-)
->
-> --
-> 2.20.1
->
-
-Applied for next, thanks!
-
-Kind regards
-Uffe
+SGkgUm9iLA0KDQpUaGFua3MgZm9yIHRoZSBmZWVkYmFjay4NCg0KPiBTdWJqZWN0OiBSZTogW1BB
+VENIIHYzIDEvNV0gZHQtYmluZGluZ3M6IHVzYjogY29udmVydCB0aSxoZDNzczMyMjAgYmluZGlu
+Z3MgdG8NCj4ganNvbi1zY2hlbWENCj4NCj4gT24gV2VkLCBTZXAgOSwgMjAyMCBhdCAyOjIxIEFN
+IEJpanUgRGFzIDxiaWp1LmRhcy5qekBicC5yZW5lc2FzLmNvbT4NCj4gd3JvdGU6DQo+ID4NCj4g
+PiBIaSBSb2IsDQo+ID4NCj4gPiBUaGFua3MgZm9yIHRoZSBmZWVkYmFjay4NCj4gPg0KPiA+ID4g
+U3ViamVjdDogUmU6IFtQQVRDSCB2MyAxLzVdIGR0LWJpbmRpbmdzOiB1c2I6IGNvbnZlcnQgdGks
+aGQzc3MzMjIwDQo+ID4gPiBiaW5kaW5ncyB0byBqc29uLXNjaGVtYQ0KPiA+ID4NCj4gPiA+IE9u
+IE1vbiwgQXVnIDI0LCAyMDIwIGF0IDAzOjEwOjQ5UE0gKzAxMDAsIEJpanUgRGFzIHdyb3RlOg0K
+PiA+ID4gPiBGcm9tOiBMYWQgUHJhYmhha2FyIDxwcmFiaGFrYXIubWFoYWRldi1sYWQucmpAYnAu
+cmVuZXNhcy5jb20+DQo+ID4gPiA+DQo+ID4gPiA+IENvbnZlcnQgdGksaGQzc3MzMjIwLnR4dCB0
+byBZQU1MLiBVcGRhdGVkIHRoZSBiaW5kaW5nDQo+ID4gPiA+IGRvY3VtZW50YXRpb24gYXMgZ3Jh
+cGggYmluZGluZ3Mgb2YgdGhpcyBkZXZpY2UgbW9kZWwgU3VwZXIgU3BlZWQNCj4gPiA+ID4gKFNT
+KSBkYXRhIGJ1cyB0byB0aGUgU3VwZXIgU3BlZWQgKFNTKSBjYXBhYmxlIGNvbm5lY3Rvci4NCj4g
+PiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogTGFkIFByYWJoYWthciA8cHJhYmhha2FyLm1h
+aGFkZXYtDQo+ID4gPiBsYWQucmpAYnAucmVuZXNhcy5jb20+DQo+ID4gPiA+IFNpZ25lZC1vZmYt
+Ynk6IEJpanUgRGFzIDxiaWp1LmRhcy5qekBicC5yZW5lc2FzLmNvbT4NCj4gPiA+ID4gLS0tDQo+
+ID4gPiA+IHYyLT52MzogUmVwbGFjZWQgVGFicyB3aXRoIHNwYWNlcyBpbiB0aGUgZXhhbXBsZSBz
+ZWN0aW9uLg0KPiA+ID4gPiB2MS0+djIgOiBObyBjaGFuZ2UNCj4gPiA+ID4gUmVmOiBodHRwczov
+L3BhdGNod29yay5rZXJuZWwub3JnL3BhdGNoLzExNjY5NDIzLw0KPiA+ID4gPiAtLS0NCj4gPiA+
+ID4gIC4uLi9kZXZpY2V0cmVlL2JpbmRpbmdzL3VzYi90aSxoZDNzczMyMjAudHh0ICB8IDM4IC0t
+LS0tLS0tLQ0KPiA+ID4gPiAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy91c2IvdGksaGQzc3MzMjIw
+LnlhbWwgfCA4MQ0KPiA+ID4gKysrKysrKysrKysrKysrKysrKw0KPiA+ID4gPiAgMiBmaWxlcyBj
+aGFuZ2VkLCA4MSBpbnNlcnRpb25zKCspLCAzOCBkZWxldGlvbnMoLSkgIGRlbGV0ZSBtb2RlDQo+
+ID4gPiA+IDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL3RpLGhk
+M3NzMzIyMC50eHQNCj4gPiA+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NA0KPiA+ID4gPiBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL3RpLGhkM3NzMzIyMC55YW1sDQo+ID4gPiA+
+DQo+ID4gPiA+IGRpZmYgLS1naXQNCj4gPiA+ID4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvdXNiL3RpLGhkM3NzMzIyMC50eHQNCj4gPiA+ID4gYi9Eb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvdXNiL3RpLGhkM3NzMzIyMC50eHQNCj4gPiA+ID4gZGVsZXRlZCBm
+aWxlIG1vZGUgMTAwNjQ0DQo+ID4gPiA+IGluZGV4IDJiZDIxYjIyY2U5NS4uMDAwMDAwMDAwMDAw
+DQo+ID4gPiA+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy91c2IvdGks
+aGQzc3MzMjIwLnR4dA0KPiA+ID4gPiArKysgL2Rldi9udWxsDQo+ID4gPiA+IEBAIC0xLDM4ICsw
+LDAgQEANCj4gPiA+ID4gLVRJIEhEM1NTMzIyMCBUeXBlQyBEUlAgUG9ydCBDb250cm9sbGVyLg0K
+PiA+ID4gPiAtDQo+ID4gPiA+IC1SZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+ID4gPiAtIC0gY29t
+cGF0aWJsZTogTXVzdCBiZSAidGksaGQzc3MzMjIwIi4NCj4gPiA+ID4gLSAtIHJlZzogSTJDIHNs
+YXZlIGFkZHJlc3MsIG11c3QgYmUgMHg0NyBvciAweDY3IGJhc2VkIG9uIEFERFIgcGluLg0KPiA+
+ID4gPiAtIC0gaW50ZXJydXB0czogQW4gaW50ZXJydXB0IHNwZWNpZmllci4NCj4gPiA+ID4gLQ0K
+PiA+ID4gPiAtUmVxdWlyZWQgc3ViLW5vZGU6DQo+ID4gPiA+IC0gLSBjb25uZWN0b3I6IFRoZSAi
+dXNiLWMtY29ubmVjdG9yIiBhdHRhY2hlZCB0byB0aGUgaGQzc3MzMjIwIGNoaXAuDQo+IFRoZQ0K
+PiA+ID4gPiAtICAgYmluZGluZ3Mgb2YgdGhlIGNvbm5lY3RvciBub2RlIGFyZSBzcGVjaWZpZWQg
+aW46DQo+ID4gPiA+IC0NCj4gPiA+ID4gLURvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
+cy9jb25uZWN0b3IvdXNiLWNvbm5lY3Rvci55YW1sDQo+ID4gPiA+IC0NCj4gPiA+ID4gLUV4YW1w
+bGU6DQo+ID4gPiA+IC1oZDNzczMyMjBANDcgew0KPiA+ID4gPiAtY29tcGF0aWJsZSA9ICJ0aSxo
+ZDNzczMyMjAiOw0KPiA+ID4gPiAtcmVnID0gPDB4NDc+Ow0KPiA+ID4gPiAtaW50ZXJydXB0LXBh
+cmVudCA9IDwmZ3BpbzY+Ow0KPiA+ID4gPiAtaW50ZXJydXB0cyA9IDwzIElSUV9UWVBFX0xFVkVM
+X0xPVz47DQo+ID4gPiA+IC0NCj4gPiA+ID4gLWNvbm5lY3RvciB7DQo+ID4gPiA+IC1jb21wYXRp
+YmxlID0gInVzYi1jLWNvbm5lY3RvciI7DQo+ID4gPiA+IC1sYWJlbCA9ICJVU0ItQyI7DQo+ID4g
+PiA+IC1kYXRhLXJvbGUgPSAiZHVhbCI7DQo+ID4gPiA+IC0NCj4gPiA+ID4gLXBvcnRzIHsNCj4g
+PiA+ID4gLSNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPiA+ID4gPiAtI3NpemUtY2VsbHMgPSA8MD47
+DQo+ID4gPiA+IC0NCj4gPiA+ID4gLXBvcnRAMSB7DQo+ID4gPiA+IC1yZWcgPSA8MT47DQo+ID4g
+PiA+IC1oZDNzczMyMjBfZXA6IGVuZHBvaW50IHsNCj4gPiA+ID4gLXJlbW90ZS1lbmRwb2ludCA9
+DQo+ID4gPiA8JnVzYjNfcm9sZV9zd2l0Y2g+Ow0KPiA+ID4gPiAtfTsNCj4gPiA+ID4gLX07DQo+
+ID4gPiA+IC19Ow0KPiA+ID4gPiAtfTsNCj4gPiA+ID4gLX07DQo+ID4gPiA+IGRpZmYgLS1naXQN
+Cj4gPiA+ID4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdXNiL3RpLGhkM3Nz
+MzIyMC55YW1sDQo+ID4gPiA+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3Vz
+Yi90aSxoZDNzczMyMjAueWFtbA0KPiA+ID4gPiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPiA+ID4g
+PiBpbmRleCAwMDAwMDAwMDAwMDAuLjc1MGEwOTk1MjljMA0KPiA+ID4gPiAtLS0gL2Rldi9udWxs
+DQo+ID4gPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy91c2IvdGks
+aGQzc3MzMjIwLnlhbWwNCj4gPiA+ID4gQEAgLTAsMCArMSw4MSBAQA0KPiA+ID4gPiArIyBTUERY
+LUxpY2Vuc2UtSWRlbnRpZmllcjogKEdQTC0yLjAgT1IgQlNELTItQ2xhdXNlKSAlWUFNTCAxLjIN
+Cj4gPiA+ID4gKy0tLQ0KPiA+ID4gPiArJGlkOiBodHRwOi8vZGV2aWNldHJlZS5vcmcvc2NoZW1h
+cy91c2IvdGksaGQzc3MzMjIwLnlhbWwjDQo+ID4gPiA+ICskc2NoZW1hOiBodHRwOi8vZGV2aWNl
+dHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMNCj4gPiA+ID4gKw0KPiA+ID4gPiArdGl0
+bGU6IFRJIEhEM1NTMzIyMCBUeXBlQyBEUlAgUG9ydCBDb250cm9sbGVyDQo+ID4gPiA+ICsNCj4g
+PiA+ID4gK21haW50YWluZXJzOg0KPiA+ID4gPiArICAtIEJpanUgRGFzIDxiaWp1LmRhcy5qekBi
+cC5yZW5lc2FzLmNvbT4NCj4gPiA+ID4gKw0KPiA+ID4gPiArZGVzY3JpcHRpb246IHwtDQo+ID4g
+PiA+ICsgIEhEM1NTMzIyMCBpcyBhIFVTQiBTdXBlclNwZWVkIChTUykgMjoxIG11eCB3aXRoIERS
+UCBwb3J0DQo+ID4gPiA+ICtjb250cm9sbGVyLiBUaGUgZGV2aWNlIHByb3ZpZGVzIENoYW5uZWwN
+Cj4gPiA+ID4gKyAgQ29uZmlndXJhdGlvbiAoQ0MpIGxvZ2ljIGFuZCA1ViBWQ09OTiBzb3VyY2lu
+ZyBmb3IgZWNvc3lzdGVtcw0KPiA+ID4gPiAraW1wbGVtZW50aW5nIFVTQiBUeXBlLUMuIFRoZQ0K
+PiA+ID4gPiArICBIRDNTUzMyMjAgY2FuIGJlIGNvbmZpZ3VyZWQgYXMgYSBEb3duc3RyZWFtIEZh
+Y2luZyBQb3J0IChERlApLA0KPiA+ID4gPiArVXBzdHJlYW0gRmFjaW5nIFBvcnQgKFVGUCkgb3Ig
+YQ0KPiA+ID4gPiArICBEdWFsIFJvbGUgUG9ydCAoRFJQKSBtYWtpbmcgaXQgaWRlYWwgZm9yIGFu
+eSBhcHBsaWNhdGlvbi4NCj4gPiA+ID4gKw0KPiA+ID4gPiArcHJvcGVydGllczoNCj4gPiA+ID4g
+KyAgY29tcGF0aWJsZToNCj4gPiA+ID4gKyAgIGNvbnN0OiB0aSxoZDNzczMyMjANCj4gPiA+ID4g
+Kw0KPiA+ID4gPiArICByZWc6DQo+ID4gPiA+ICsgICAgbWF4SXRlbXM6IDENCj4gPiA+ID4gKw0K
+PiA+ID4gPiArICBpbnRlcnJ1cHRzOg0KPiA+ID4gPiArICAgIG1heEl0ZW1zOiAxDQo+ID4gPiA+
+ICsNCj4gPiA+ID4gKyAgcG9ydHM6DQo+ID4gPiA+ICsgICAgZGVzY3JpcHRpb246IE9GIGdyYXBo
+IGJpbmRpbmdzIChzcGVjaWZpZWQgaW4NCj4gPiA+ID4gKyBiaW5kaW5ncy9ncmFwaC50eHQpIHRo
+YXQNCj4gPiA+IG1vZGVsDQo+ID4gPiA+ICsgICAgICBTUyBkYXRhIGJ1cyB0byB0aGUgU1MgY2Fw
+YWJsZSBjb25uZWN0b3IuDQo+ID4gPiA+ICsgICAgdHlwZTogb2JqZWN0DQo+ID4gPiA+ICsgICAg
+cHJvcGVydGllczoNCj4gPiA+ID4gKyAgICAgIHBvcnRAMDoNCj4gPiA+ID4gKyAgICAgICAgdHlw
+ZTogb2JqZWN0DQo+ID4gPiA+ICsgICAgICAgIGRlc2NyaXB0aW9uOiBTdXBlciBTcGVlZCAoU1Mp
+IGNhcGFibGUgY29ubmVjdG9yLg0KPiA+ID4gPiArDQo+ID4gPiA+ICsgICAgICBwb3J0QDE6DQo+
+ID4gPiA+ICsgICAgICAgIHR5cGU6IG9iamVjdA0KPiA+ID4gPiArICAgICAgICBkZXNjcmlwdGlv
+bjogU3VwZXIgU3BlZWQgKFNTKSBkYXRhIGJ1cy4NCj4gPiA+ID4gKw0KPiA+ID4gPiArICAgIHJl
+cXVpcmVkOg0KPiA+ID4gPiArICAgICAgLSBwb3J0QDANCj4gPiA+ID4gKyAgICAgIC0gcG9ydEAx
+DQo+ID4gPiA+ICsNCj4gPiA+ID4gK3JlcXVpcmVkOg0KPiA+ID4gPiArICAtIGNvbXBhdGlibGUN
+Cj4gPiA+ID4gKyAgLSByZWcNCj4gPiA+ID4gKyAgLSBpbnRlcnJ1cHRzDQo+ID4gPiA+ICsNCj4g
+PiA+ID4gK2FkZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZQ0KPiA+ID4gPiArDQo+ID4gPiA+ICtl
+eGFtcGxlczoNCj4gPiA+ID4gKyAgLSB8DQo+ID4gPiA+ICsgICAgaTJjMCB7DQo+ID4gPiA+ICsg
+ICAgICAgICNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPiA+ID4gPiArICAgICAgICAjc2l6ZS1jZWxs
+cyA9IDwwPjsNCj4gPiA+ID4gKw0KPiA+ID4gPiArICAgICAgICBoZDNzczMyMjBANDcgew0KPiA+
+ID4gPiArICAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAidGksaGQzc3MzMjIwIjsNCj4gPiA+
+ID4gKyAgICAgICAgICAgICAgICByZWcgPSA8MHg0Nz47DQo+ID4gPiA+ICsgICAgICAgICAgICAg
+ICAgaW50ZXJydXB0LXBhcmVudCA9IDwmZ3BpbzY+Ow0KPiA+ID4gPiArICAgICAgICAgICAgICAg
+IGludGVycnVwdHMgPSA8Mz47DQo+ID4gPiA+ICsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICBw
+b3J0cyB7DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAjYWRkcmVzcy1jZWxscyA9
+IDwxPjsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICNzaXplLWNlbGxzID0gPDA+
+Ow0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAgcG9ydEAwIHsNCj4gPiA+ID4gKyAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcmVnID0gPDA+Ow0KPiA+ID4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBoZDNzczMyMjBfaW5fZXA6IGVuZHBvaW50IHsNCj4g
+PiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZW1vdGUtZW5k
+cG9pbnQgPSA8JnNzX2VwPjsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgfTsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgIH07DQo+ID4gPiA+ICsgICAg
+ICAgICAgICAgICAgICAgICAgICBwb3J0QDEgew0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICByZWcgPSA8MT47DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgIGhkM3NzMzIyMF9vdXRfZXA6IGVuZHBvaW50IHsNCj4gPiA+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByZW1vdGUtZW5kcG9pbnQgPSA8JnVzYjNf
+cm9sZV9zd2l0Y2g+Ow0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB9
+Ow0KPiA+ID4NCj4gPiA+IElmIHlvdSBoYXZlIDIgaW5wdXRzIG11eGVkLCB0aGVuIHRoZXJlIHdv
+dWxkIGJlIDIgZW5kcG9pbnRzIGhlcmU/DQo+ID4gPiBQbGVhc2Ugc2hvdyB0aGUgZnVsbGVzdCBv
+ciBtb3N0IGNvbXBsaWNhdGVkIGNhc2UgZm9yIHRoZSBleGFtcGxlLg0KPiA+ID4gVGhlIHBvcnRA
+MSBkZXNjcmlwdGlvbiBjb3VsZCBiZSBhIGJpdCBiZXR0ZXIuDQo+ID4NCj4gPiBBcyBwZXIgWzFd
+ICJIRDNTUzMyMjAgaGFzIGludGVncmF0ZWQgVVNCIDMuMC8zLjEgU1MvU1MrIE1VWCB3aXRoIDIN
+Cj4gY2hhbm5lbCAyOjEgc3dpdGNoaW5nIHJlcXVpcmVkIHRvIGhhbmRsZSBjYWJsZSBmbGlwcyIu
+DQo+ID4gVGhlIGZvdXIgU3VwZXJzcGVlZCBkaWZmZXJlbnRpYWwgcGFpcnMgKHR3byBUeCBhbmQg
+dHdvIFJ4IHBhaXJzKSBwYWlycw0KPiA+IGZyb20gdGhlIFVTQi1DIHJlY2VwdGFjbGUgaXMgY29u
+bmVjdGVkIHRvIHRoaXMgZGV2aWNlIGFuZCB0aGUgb3V0cHV0IG9mDQo+IHRoZSBNdXggaXMgY29u
+bmVjdGVkIHRvIHRoZSAgU29DIC4NCj4NCj4gQWgsIEkgd2FzIHRoaW5raW5nIHRoaXMgd2FzIG11
+eGluZyAyIGZ1bmN0aW9ucyAoc3VjaCBhcyBEUCkgcmF0aGVyIHRoYW4gY2FibGUNCj4gZmxpcCBo
+YW5kbGluZy4gSSBndWVzcyB0aGUgZXhhbXBsZSBkb2Vzbid0IG5lZWQgYW55dGhpbmcgZWxzZSwg
+YnV0IHRoZQ0KPiBkZXNjcmlwdGlvbiBkb2VzLiBJbiB0aGUgY2FzZSBvZiBkaXJlY3RseSBjb25u
+ZWN0ZWQgdG8gdGhlIFNvQywgaG93IGFyZSBjYWJsZQ0KPiBmbGlwcyBoYW5kbGVkPyBUaGUgU29D
+IHBoeSBoYW5kbGVzIGl0Pw0KDQpDYWJsZSBkaXJlY3Rpb24gZGV0ZWN0aW9uIGFuZCBhc3NvY2lh
+dGVkIG11eCBjaGFubmVsIHNlbGVjdGlvbiBpcyBkb25lIGF1dG9tYXRpY2FsbHkgYnkgdGhlIEhh
+cmR3YXJlLg0KDQpJbiBzb2Z0d2FyZSwgd2UgZ2V0IGFuIGludGVycnVwdCwgd2hlbiB3ZSBjb25u
+ZWN0IHRoZSBjYWJsZS4gVGhlIHN0YXR1cyByZWdpc3RlciBoYXZlIHRoZSBpbmZvcm1hdGlvbiBy
+ZWxhdGVkIHRvIGF0dGFjaGVkDQpzdGF0ZSBhbmQgY2FibGUgZGlyZWN0aW9uLiBCYXNlZCBvbiB0
+aGUgYXR0YWNoZWQgc3RhdGUsICB0aGlzIGRyaXZlciBjYWxscyB1c2Igcm9sZSBzd2l0Y2ggZnJh
+bWV3b3JrIGFwaSdzIHRvIGFzc2lnbiB0aGUgcm9sZSAoSG9zdCBvciBkZXZpY2UpLg0KDQo+DQo+
+IFRoZXJlJ3Mgc29tZSBpc3N1ZXMgaW4gdGhlIGNvbm5lY3RvciBiaW5kaW5nIHdpdGggaG93IHRo
+ZSBTUyBzaWduYWxzIGFyZQ0KPiBoYW5kbGVkIHRoYXQgbmVlZHMgdG8gYmUgc29sdmVkLiBUaGlz
+IGFsbCBuZWVkcyB0byBiZSBhZGRyZXNzZWQgbG9va2luZyBhdA0KPiB2YXJpb3VzIHBvc3NpYmxl
+IGgvdyBkZXNpZ25zLg0KDQpPay4NCg0KVGhhbmtzLA0KQmlqdQ0KDQoNClJlbmVzYXMgRWxlY3Ry
+b25pY3MgRXVyb3BlIEdtYkgsIEdlc2NoYWVmdHNmdWVocmVyL1ByZXNpZGVudDogQ2Fyc3RlbiBK
+YXVjaCwgU2l0eiBkZXIgR2VzZWxsc2NoYWZ0L1JlZ2lzdGVyZWQgb2ZmaWNlOiBEdWVzc2VsZG9y
+ZiwgQXJjYWRpYXN0cmFzc2UgMTAsIDQwNDcyIER1ZXNzZWxkb3JmLCBHZXJtYW55LCBIYW5kZWxz
+cmVnaXN0ZXIvQ29tbWVyY2lhbCBSZWdpc3RlcjogRHVlc3NlbGRvcmYsIEhSQiAzNzA4IFVTdC1J
+RE5yLi9UYXggaWRlbnRpZmljYXRpb24gbm8uOiBERSAxMTkzNTM0MDYgV0VFRS1SZWcuLU5yLi9X
+RUVFIHJlZy4gbm8uOiBERSAxNDk3ODY0Nw0K
