@@ -2,225 +2,126 @@ Return-Path: <SRS0=18hO=CS=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DEDC43461
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 14:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F24B9C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 14:30:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 86DE721D7E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 14:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8C9622269
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Sep 2020 14:30:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lHchZD9e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730224AbgIIOGX (ORCPT
+        id S1727804AbgIIO3u (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Sep 2020 10:06:23 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:58451 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730177AbgIINOT (ORCPT
+        Wed, 9 Sep 2020 10:29:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51826 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730256AbgIIM5S (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Sep 2020 09:14:19 -0400
-X-IronPort-AV: E=Sophos;i="5.76,409,1592838000"; 
-   d="scan'208";a="56837035"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 09 Sep 2020 22:13:42 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8151149DB585;
-        Wed,  9 Sep 2020 22:13:42 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     geert+renesas@glider.be, magnus.damm@gmail.com
-Cc:     linux-renesas-soc@vger.kernel.org,
+        Wed, 9 Sep 2020 08:57:18 -0400
+Received: from mail-vs1-xe42.google.com (mail-vs1-xe42.google.com [IPv6:2607:f8b0:4864:20::e42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24910C061786
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Sep 2020 05:46:18 -0700 (PDT)
+Received: by mail-vs1-xe42.google.com with SMTP id x203so1230366vsc.11
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 09 Sep 2020 05:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rOOi9G5yd8K6h51VynUxd0PypjiCWrC4mFiMS8Wcf+A=;
+        b=lHchZD9e8fVEUhyyPmD9ZJ5Q8Vqz/Zd824nUhUxMWUHzUWjAJLOMctBVLiW3+1sVC0
+         Yp1GsT5V6zooiNvTkpbisdw642L+0MduASirosMlkPCSf2ZieRRwJ8LCyvbxwMAFunVB
+         Mjz3oc2a84q7EibTEBsbVNAvJKfSi3dyeiOf7ZyrrcT1Lra5OoIP6RYOLLz7xrhLZeuv
+         zYHh6OR2Jjq7lj9BFvu1ebf8ckecIzB/a9rCd/sdSelzlLhv1wp7Fpd1uB2XCwiBfljU
+         +IuRzNszzcYBUs3aV886PUPJ78WN563gkzmK68jjia/g0DNRrTydCy8rkaI+KIS5s0hl
+         zQoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rOOi9G5yd8K6h51VynUxd0PypjiCWrC4mFiMS8Wcf+A=;
+        b=gzLrpH9tkXvVtEOHLlheAETXhpLQ/PVpHHdpQ9jV03N2y/m2zwyUuzJvTPBUR55914
+         v2DVs9Va5UG0af99JDQr0PtwIYGbY4j3nsZfqQ7Vc3c3K5GjIVCmU76vMuLuFvA4cyM+
+         KONA1RF4iRHCKnFZM8X6BDgqTIhnQjLH8ZpNfaob3VH9gqHq2MKEZ6pJjKR8q1BmASxm
+         5fBYgexaV+stKCWJSzySCnIXMF4dUwqwDpMoXRON2M1ziUX1c0ukqnuNgF1EwlaXIe8p
+         ZDpCeaCDnp+AIQatYoeopur1VfWWnc00VzITQh4+Tyc4duUcSkgJqsbYruiKgQ4ufcS/
+         to9Q==
+X-Gm-Message-State: AOAM532gnXDA2x2T5VO+KTNYlUPvuQNffErs+QnmMHnb6gOFFxH8f9d3
+        erV2ErdVqdHdr2z/N9hV/AAkb0javQmFNUA8QID1RA==
+X-Google-Smtp-Source: ABdhPJxF7W+9PErnGC/FzGCmAOLlQJ4/XLqKXXwqmlAzX1SeA1LY4T96oPXXL2PnGOHOWmEQbQfy5NuQIo/Ewdvyowk=
+X-Received: by 2002:a67:2d48:: with SMTP id t69mr415544vst.27.1599655577190;
+ Wed, 09 Sep 2020 05:46:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200821081654.28280-1-wsa+renesas@sang-engineering.com>
+ <CAPDyKFp7rsHDY2vREakrR+PFJLs0n8JBR+URV1vCu5bydEhHuA@mail.gmail.com>
+ <20200830130357.GA2194@kunai> <CAPDyKFr24YxoJ3m5r1C_4-UAdtJQp_MK0+wwZjsQXzrs5dxLjw@mail.gmail.com>
+ <20200909113745.GK2272@ninjato>
+In-Reply-To: <20200909113745.GK2272@ninjato>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 9 Sep 2020 14:45:40 +0200
+Message-ID: <CAPDyKFoPn_x_NDp7pXpf9q8Kvf_fVA+xwJSfm4g-oLubmU9nyQ@mail.gmail.com>
+Subject: Re: [RFT] mmc: tmio: reset device on timeout, too
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 2/4] clk: renesas: cpg-mssr: Use enum clk_reg_layout instead of a boolean flag
-Date:   Wed,  9 Sep 2020 22:13:29 +0900
-Message-Id: <1599657211-17504-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1599657211-17504-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1599657211-17504-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Geert suggested defining multiple registers layout variants using
-an enum [1] to support further devices like R-Car V3U. So, use enum
-clk_reg_layout instead of a boolean .stbyctrl flag. No behavior change.
+On Wed, 9 Sep 2020 at 13:37, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Hi Ulf,
+>
+> > > Hmm, there are some wireless drivers using it as well. I am confused, is
+> > > this considered "upper layer"?
+> > >
+> > > drivers/net/wireless/ath/ath10k/sdio.c: ret = mmc_hw_reset(ar_sdio->func->card->host);
+> > > drivers/net/wireless/broadcom/brcm80211/brcmfmac/sdio.c:        mmc_hw_reset(sdiodev->func1->card->host);
+> > > drivers/net/wireless/marvell/mwifiex/sdio.c:    ret = mmc_hw_reset(func->card->host);
+> > > drivers/net/wireless/ti/wlcore/sdio.c:  mmc_hw_reset(card->host);
+> >
+> > Correct, these are "upper layers". The same applies for the mmc block
+> > device driver.
+> >
+> > In this way there is a guarantee that the struct mmc_card is still present.
+>
+> Ah, now I get it. "upper layers" as in consumers. And because consumers
+> sit on a card, this guarantees that mmc_card is still there. Correct?
 
-[1]
-https://lore.kernel.org/linux-renesas-soc/CAMuHMdVAgN69p9FFnQdO4iHk2CHkeNaVui2Q-FOY6_BFVjQ-Nw@mail.gmail.com/
+Yes.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/clk/renesas/r7s9210-cpg-mssr.c |  2 +-
- drivers/clk/renesas/renesas-cpg-mssr.c | 27 ++++++++++++++-------------
- drivers/clk/renesas/renesas-cpg-mssr.h |  7 ++++++-
- 3 files changed, 21 insertions(+), 15 deletions(-)
+>
+> > That would be great. I appreciate all kinds of improvements on the doc parts.
+>
+> You are welcome!
+>
+> > Perhaps a better option is to return a specific error code for the
+> > last request, that makes the core run mmc_hw_reset(). Or potentially,
+> > add a host cap and let the core treat some error code, specifically
+> > for hosts like tmio.
+>
+> A specific errno could work. I don't see the advantage of a CAP (besides
+> it is rather a quirk than a cap). We could also have
+> 'mmc_controller_card_reset()' or something which ensures mmc_card is
+> present and let that controllers call when they see fit. Or?
 
-diff --git a/drivers/clk/renesas/r7s9210-cpg-mssr.c b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-index 443bff0..a85227c 100644
---- a/drivers/clk/renesas/r7s9210-cpg-mssr.c
-+++ b/drivers/clk/renesas/r7s9210-cpg-mssr.c
-@@ -214,7 +214,7 @@ const struct cpg_mssr_info r7s9210_cpg_mssr_info __initconst = {
- 	.cpg_clk_register = rza2_cpg_clk_register,
- 
- 	/* RZ/A2 has Standby Control Registers */
--	.stbyctrl = true,
-+	.reg_layout = CLK_REG_LAYOUT_RZ_A,
- };
- 
- static void __init r7s9210_cpg_mssr_early_init(struct device_node *np)
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 5a306d2..1b289c8 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -111,12 +111,12 @@ static const u16 srcr[] = {
-  * @rcdev: Optional reset controller entity
-  * @dev: CPG/MSSR device
-  * @base: CPG/MSSR register block base address
-+ * @reg_layout: CPG/MSSR register layout
-  * @rmw_lock: protects RMW register accesses
-  * @np: Device node in DT for this CPG/MSSR module
-  * @num_core_clks: Number of Core Clocks in clks[]
-  * @num_mod_clks: Number of Module Clocks in clks[]
-  * @last_dt_core_clk: ID of the last Core Clock exported to DT
-- * @stbyctrl: This device has Standby Control Registers
-  * @notifiers: Notifier chain to save/restore clock state for system resume
-  * @smstpcr_saved[].mask: Mask of SMSTPCR[] bits under our control
-  * @smstpcr_saved[].val: Saved values of SMSTPCR[]
-@@ -128,13 +128,13 @@ struct cpg_mssr_priv {
- #endif
- 	struct device *dev;
- 	void __iomem *base;
-+	enum clk_reg_layout reg_layout;
- 	spinlock_t rmw_lock;
- 	struct device_node *np;
- 
- 	unsigned int num_core_clks;
- 	unsigned int num_mod_clks;
- 	unsigned int last_dt_core_clk;
--	bool stbyctrl;
- 
- 	struct raw_notifier_head notifiers;
- 	struct {
-@@ -177,7 +177,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 		enable ? "ON" : "OFF");
- 	spin_lock_irqsave(&priv->rmw_lock, flags);
- 
--	if (priv->stbyctrl) {
-+	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A) {
- 		value = readb(priv->base + STBCR(reg));
- 		if (enable)
- 			value &= ~bitmask;
-@@ -199,7 +199,7 @@ static int cpg_mstp_clock_endisable(struct clk_hw *hw, bool enable)
- 
- 	spin_unlock_irqrestore(&priv->rmw_lock, flags);
- 
--	if (!enable || priv->stbyctrl)
-+	if (!enable || priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
- 		return 0;
- 
- 	for (i = 1000; i > 0; --i) {
-@@ -233,7 +233,7 @@ static int cpg_mstp_clock_is_enabled(struct clk_hw *hw)
- 	struct cpg_mssr_priv *priv = clock->priv;
- 	u32 value;
- 
--	if (priv->stbyctrl)
-+	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
- 		value = readb(priv->base + STBCR(clock->index / 32));
- 	else
- 		value = readl(priv->base + MSTPSR(clock->index / 32));
-@@ -272,7 +272,7 @@ struct clk *cpg_mssr_clk_src_twocell_get(struct of_phandle_args *clkspec,
- 
- 	case CPG_MOD:
- 		type = "module";
--		if (priv->stbyctrl) {
-+		if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A) {
- 			idx = MOD_CLK_PACK_10(clkidx);
- 			range_check = 7 - (clkidx % 10);
- 		} else {
-@@ -825,7 +825,8 @@ static int cpg_mssr_suspend_noirq(struct device *dev)
- 	/* Save module registers with bits under our control */
- 	for (reg = 0; reg < ARRAY_SIZE(priv->smstpcr_saved); reg++) {
- 		if (priv->smstpcr_saved[reg].mask)
--			priv->smstpcr_saved[reg].val = priv->stbyctrl ?
-+			priv->smstpcr_saved[reg].val =
-+				priv->reg_layout == CLK_REG_LAYOUT_RZ_A ?
- 				readb(priv->base + STBCR(reg)) :
- 				readl(priv->base + SMSTPCR(reg));
- 	}
-@@ -855,7 +856,7 @@ static int cpg_mssr_resume_noirq(struct device *dev)
- 		if (!mask)
- 			continue;
- 
--		if (priv->stbyctrl)
-+		if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
- 			oldval = readb(priv->base + STBCR(reg));
- 		else
- 			oldval = readl(priv->base + SMSTPCR(reg));
-@@ -864,7 +865,7 @@ static int cpg_mssr_resume_noirq(struct device *dev)
- 		if (newval == oldval)
- 			continue;
- 
--		if (priv->stbyctrl) {
-+		if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A) {
- 			writeb(newval, priv->base + STBCR(reg));
- 			/* dummy read to ensure write has completed */
- 			readb(priv->base + STBCR(reg));
-@@ -887,8 +888,8 @@ static int cpg_mssr_resume_noirq(struct device *dev)
- 
- 		if (!i)
- 			dev_warn(dev, "Failed to enable %s%u[0x%x]\n",
--				 priv->stbyctrl ? "STB" : "SMSTP", reg,
--				 oldval & mask);
-+				 priv->reg_layout == CLK_REG_LAYOUT_RZ_A ?
-+				 "STB" : "SMSTP", reg, oldval & mask);
- 	}
- 
- 	return 0;
-@@ -937,7 +938,7 @@ static int __init cpg_mssr_common_init(struct device *dev,
- 	priv->num_mod_clks = info->num_hw_mod_clks;
- 	priv->last_dt_core_clk = info->last_dt_core_clk;
- 	RAW_INIT_NOTIFIER_HEAD(&priv->notifiers);
--	priv->stbyctrl = info->stbyctrl;
-+	priv->reg_layout = info->reg_layout;
- 
- 	for (i = 0; i < nclks; i++)
- 		priv->clks[i] = ERR_PTR(-ENOENT);
-@@ -1015,7 +1016,7 @@ static int __init cpg_mssr_probe(struct platform_device *pdev)
- 		return error;
- 
- 	/* Reset Controller not supported for Standby Control SoCs */
--	if (info->stbyctrl)
-+	if (priv->reg_layout == CLK_REG_LAYOUT_RZ_A)
- 		return 0;
- 
- 	error = cpg_mssr_reset_controller_register(priv);
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.h b/drivers/clk/renesas/renesas-cpg-mssr.h
-index 1cc5694..5b65c78 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.h
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.h
-@@ -85,6 +85,11 @@ struct mssr_mod_clk {
- 
- struct device_node;
- 
-+enum clk_reg_layout {
-+	CLK_REG_LAYOUT_RCAR_GEN2_AND_GEN3 = 0,
-+	CLK_REG_LAYOUT_RZ_A,
-+};
-+
-     /**
-      * SoC-specific CPG/MSSR Description
-      *
-@@ -130,7 +135,7 @@ struct cpg_mssr_info {
- 	unsigned int num_core_clks;
- 	unsigned int last_dt_core_clk;
- 	unsigned int num_total_core_clks;
--	bool stbyctrl;
-+	enum clk_reg_layout reg_layout;
- 
- 	/* Module Clocks */
- 	const struct mssr_mod_clk *mod_clks;
--- 
-2.7.4
+Maybe something like "mmc_controller_card_reset" could work, but it's
+not going to be that straight forward. In the end, we depend on the
+context for when the host driver would call such a function. In some
+cases it must call mmc_claim_host() while in others it shouldn't.
 
+BTW, I see that tmio_mmc_reset() is called at
+tmio_mmc_host_runtime_resume(). This seems to work fine without having
+to make a full reset of the card. Why can't you do something similar
+to that instead?
+
+Kind regards
+Uffe
