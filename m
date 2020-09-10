@@ -2,107 +2,150 @@ Return-Path: <SRS0=jird=CT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE461C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 11:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A5DC07548
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 12:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 82F082145D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 11:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC172208FE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 12:04:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbgIJLhC (ORCPT
+        id S1726324AbgIJMD6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 07:37:02 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:38553 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730262AbgIJLOm (ORCPT
+        Thu, 10 Sep 2020 08:03:58 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:2748 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730354AbgIJMDZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 07:14:42 -0400
-Received: by mail-ot1-f65.google.com with SMTP id y5so5006135otg.5;
-        Thu, 10 Sep 2020 04:14:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9xHYYa0YnjNSaaS4AAXDNFvD8uCg/SHwbL+LjIfUjrA=;
-        b=Gqe/BjoTxNf9Opef0ji7Kzw+oWIZzNp7Wz/jgvX3hxdk9sWayLARvW4lJ3Xyw1X/89
-         ACcUdO69Go9j1NAyTeRrrbS365n/W9xMMMJrCfcHg4rFr8r0gl/Um476GItxaWrcSJ5c
-         AnXT55xqVb9HF3s01QMdgIRP5xpsR4Jsms7+tMw1AqJ4+IvO1zLAOpNobfpV+wy3ejYv
-         d/IoPDdhWYxIz00jNntikeKkfr0S701ZMI6mkjYjMPoJjGb2MLlGNoXZtynB7Q79bq5h
-         WEySZnpoSwUNe6R2LXfjBivrDNoZMqwBAYLVkjR6Pwq+SMz5nFu1VCgd8kbO/QepMNrb
-         KQRQ==
-X-Gm-Message-State: AOAM530oYFGiCwO75mke9Gdsse8veNqC4Zd6ju8Jol0ZM1lWQNToRAwc
-        EoyW+xsssavrb6H6XPTSGUFYKggENROxVShPGxXa4qO5jps=
-X-Google-Smtp-Source: ABdhPJwmbtlvpBUp+sHVracs+W4GvwqvVIolvlptH9HHDYBMwv2/0qwquVkPEbRU/cUTsiAkaLGe8QUPnd3udTncQJ4=
-X-Received: by 2002:a9d:5a92:: with SMTP id w18mr467527oth.145.1599736448277;
- Thu, 10 Sep 2020 04:14:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <1599470390-29719-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1599470390-29719-15-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <CAMuHMdUXUvU5dPkBFdW_ZVhnBKpFEPVLD3mdOkhrmakZjCHErg@mail.gmail.com> <TY2PR01MB36929138C1723ABE87358597D8270@TY2PR01MB3692.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY2PR01MB36929138C1723ABE87358597D8270@TY2PR01MB3692.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 10 Sep 2020 13:13:57 +0200
-Message-ID: <CAMuHMdU6TLz09bvNCK8kRruu-W+B8c9Bnbr5kTCZzW-38cqO8A@mail.gmail.com>
-Subject: Re: [PATCH 14/14] arm64: dts: renesas: Add Renesas Falcon boards support
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 10 Sep 2020 08:03:25 -0400
+X-IronPort-AV: E=Sophos;i="5.76,412,1592838000"; 
+   d="scan'208";a="56936707"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Sep 2020 21:03:06 +0900
+Received: from localhost.localdomain (unknown [10.166.252.89])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B7710425E932;
+        Thu, 10 Sep 2020 21:03:06 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     geert+renesas@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 4/4] arm64: dts: renesas: Add Renesas Falcon boards support
+Date:   Thu, 10 Sep 2020 21:02:52 +0900
+Message-Id: <1599739372-30669-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1599739372-30669-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1599739372-30669-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Shimoda-san,
+Initial support for the Renesas Falcon CPU and BreakOut boards
+support.
 
-On Thu, Sep 10, 2020 at 1:04 PM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> > From: Geert Uytterhoeven, Sent: Wednesday, September 9, 2020 2:21 AM
-> > On Mon, Sep 7, 2020 at 11:20 AM Yoshihiro Shimoda
-> > <yoshihiro.shimoda.uh@renesas.com> wrote:
-> > > Initial support for the Renesas Falcon CPU and BreakOut boards
-> > > support.
-> > >
-> > > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> > > --- /dev/null
-> > > +++ b/arch/arm64/boot/dts/renesas/falcon-cpu.dtsi
-> > > @@ -0,0 +1,44 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * Device Tree Source for the Falcon CPU board
-> > > + *
-> > > + * Copyright (C) 2020 Renesas Electronics Corp.
-> > > + */
-> >
-> > As this board contains the CPU, I had expected
-> >
-> >     #include "r8a779a0.dtsi"
-> >
-> > here.
->
-> I got it. I'll add it.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ arch/arm64/boot/dts/renesas/Makefile               |  2 +
+ .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi      | 46 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts    | 23 +++++++++++
+ 3 files changed, 71 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
 
-Thanks!
-
-BTW, I forgot to mention that the file should probably be named
-r8a779a0-falcon-cpu.dtsi, i.e. incl. the SoC part number prefix.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 4644547..dffefe0 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -54,3 +54,5 @@ dtb-$(CONFIG_ARCH_R8A77980) += r8a77980-v3hsk.dtb
+ dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
++
++dtb-$(CONFIG_ARCH_R8A779A0) += r8a779a0-falcon.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+new file mode 100644
+index 0000000..4ba269a
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+@@ -0,0 +1,46 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the Falcon CPU board
++ *
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
++
++#include "r8a779a0.dtsi"
++
++/ {
++	model = "Renesas Falcon CPU board";
++	compatible = "renesas,falcon-cpu", "renesas,r8a779a0";
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++
++	memory@500000000 {
++		device_type = "memory";
++		reg = <0x5 0x00000000 0x0 0x80000000>;
++	};
++
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x80000000>;
++	};
++
++	memory@700000000 {
++		device_type = "memory";
++		reg = <0x7 0x00000000 0x0 0x80000000>;
++	};
++};
++
++&extal_clk {
++	clock-frequency = <16666666>;
++};
++
++&extalr_clk {
++	clock-frequency = <32768>;
++};
++
++&scif0 {
++	status = "okay";
++};
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+new file mode 100644
+index 0000000..aa988a9
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+@@ -0,0 +1,23 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the Falcon CPU and BreakOut boards
++ *
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r8a779a0.dtsi"
++#include "r8a779a0-falcon-cpu.dtsi"
++
++/ {
++	model = "Renesas Falcon CPU and Breakout boards based on r8a779a0";
++	compatible = "renesas,falcon-breakout", "renesas,falcon-cpu", "renesas,r8a779a0";
++
++	aliases {
++		serial0 = &scif0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.7.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
