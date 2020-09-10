@@ -6,76 +6,93 @@ X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE28C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 21:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26E35C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 23:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95C8920731
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 21:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2950207EA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 23:21:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbgIJVmt (ORCPT
+        id S1725294AbgIJXVA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 17:42:49 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45268 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730680AbgIJM4n (ORCPT
+        Thu, 10 Sep 2020 19:21:00 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:57795 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725280AbgIJXU7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 08:56:43 -0400
-Received: by mail-ot1-f66.google.com with SMTP id g96so5210557otb.12
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2020 05:56:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=btETPjdOdP0VzFcqrLBzUykLPUNEpuLAEA2xfMk2SeM=;
-        b=YiuC3iDPO6k0iym9gCnXaIkoqgOouqJaH8r1BcrwP1Y7yi5iAmbO1Kvor+qJjUobZN
-         Ip3RlZ0lymzlR07Zvp87qHy2Q8M9lVHVDI7WvzZlva8YR4acEpzs/g+u7qiK0KuF/61y
-         66WI+JNQeB4aRK9bZ1/31H//JKxa+RaHI1QLqP1bPGb6/xsJuGNN/CBrGCJTHmwMuwV8
-         U/fT1QPQttZxqGFJ3ywBVaw5TTA5//dcrBK0gTuoi7mJ24b/WXo1EPuX0BKGTIv0t3Q/
-         G/Xbx+5+03NXfTB/cIddF7mOssHuZ1ADXGIziezNXJTum4jstehOOyGd6HrT5H03U6ji
-         tq1Q==
-X-Gm-Message-State: AOAM530Jbo24VTdJQOdF7AJpHCfzGYCVFseJqvhaEvSimkhtTfChvXmO
-        Wkw95eYm6YhGTBl4nljJEdaVBcmGOI0kT37HcQk=
-X-Google-Smtp-Source: ABdhPJy6LbIOst0S+aSeApAn5m6RkzND0aMUN5wEvMZ8ZhsHoz18crEDHhWsfkBWkR0Z2gkhWLta5u0h7ltcVc4BVmw=
-X-Received: by 2002:a9d:3b76:: with SMTP id z109mr3889043otb.250.1599742602539;
- Thu, 10 Sep 2020 05:56:42 -0700 (PDT)
-MIME-Version: 1.0
-References: <1599657211-17504-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1599657211-17504-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1599657211-17504-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 10 Sep 2020 14:56:31 +0200
-Message-ID: <CAMuHMdXYXrLGNjJqDdD8qsWbVhKRb4x3=yhVjdsL_Hjv0BeNkg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: Add r8a779a0 CPG Core Clock Definitions
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 10 Sep 2020 19:20:59 -0400
+Date:   11 Sep 2020 08:20:56 +0900
+X-IronPort-AV: E=Sophos;i="5.76,413,1592838000"; 
+   d="scan'208";a="56751956"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 11 Sep 2020 08:20:56 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A176D4006DFB;
+        Fri, 11 Sep 2020 08:20:56 +0900 (JST)
+Message-ID: <87wo11te4z.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Laurent <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Magnus <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-DT <devicetree@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v2 07/10] arm64: dts: renesas: r8a77961: Add DU device nodes
+In-Reply-To: <CAMuHMdUmfavKH03LRj4WNoOEbu+oY64_Mic74zCfFbK4rO9KSw@mail.gmail.com>
+References: <87o8mhrtxo.wl-kuninori.morimoto.gx@renesas.com>
+        <87eendrtv1.wl-kuninori.morimoto.gx@renesas.com>
+        <CAMuHMdUmfavKH03LRj4WNoOEbu+oY64_Mic74zCfFbK4rO9KSw@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Shimoda-san,
 
-On Wed, Sep 9, 2020 at 3:13 PM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> Add all Clock Pulse Generator Core Clock Outputs for the Renesas R-Car
-> V3U (R8A779A0) SoC.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Hi Geert
 
-Thanks for the update!
+> > From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> >
+> > This patch adds DU device nodes for R-Car M3-W+ (r8a77961) SoC.
+> > This patch was tested on R-Car M3-W+ Salvator-XS board.
+> >
+> > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > ---
+(snip)
+> >                 du: display@feb00000 {
+> > +                       compatible = "renesas,du-r8a77961";
+> >                         reg = <0 0xfeb00000 0 0x70000>;
+> > -                       /* placeholder */
+> > +                       interrupts = <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                    <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
+> > +                                    <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>;
+> > +                       clocks = <&cpg CPG_MOD 724>, <&cpg CPG_MOD 723>,
+> > +                                <&cpg CPG_MOD 722>;
+> > +                       clock-names = "du.0", "du.1", "du.2";
+> > +                       resets = <&cpg 724>, <&cpg 722>;
+> > +                       reset-names = "du.0", "du.2";
+> > +
+> > +                       renesas,vsps = <&vspd0 0>, <&vspd1 0>, <&vspd2 0>;
+> > +                       status = "disabled";
+> 
+> Do you want support for CMMs?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v5.10.
+I'm not sure how it works.
+Thus I dropped such features from initial support.
 
-Gr{oetje,eeting}s,
+I hope Laurent or Kieran will support it
+when he received physical board.
+Some comment for iommu.
 
-                        Geert
+Thank you for your help !!
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards
+---
+Kuninori Morimoto
