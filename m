@@ -2,60 +2,49 @@ Return-Path: <SRS0=jird=CT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD42C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F39C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B02220C09
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E753207EA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:09:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599760950;
-	bh=lL3jIIz1t0R62zEUJ1rN3wIUT3Kdvw6jVlhzOS2XCdU=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=V62TPPVhqzdHATcYigJUMkjg/CrPkS8ZLbh7OsMwYP687l5vO4LP0GmxhX9GsbP1/
-	 7aUbx3c0DP5Au1B2aKPTxV8DbgoLZJF9XBsjJhjAQA8Cw4ilVm5c6JOVrkU/1W8ffI
-	 OJZ+zI7uO6W7okwjic4k1JJCEGd3JWHDWTt846wo=
+	s=default; t=1599761381;
+	bh=761zDxdXKDgTK0JSlpGwt9ghMs+g4BFzNJFURh3ro3I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=SILJJu66uK+cMbTDhGZ9lxA8UBJh62p5fps2HnBWrS7CvTMT+WgpwAsxoRiSjrss5
+	 3k7Ra4Q2CFMoJ5i0C/9uth3KD/pPslFwsvhKj6ovM5oNMyp2r75GKqeFlqxj0u+gAz
+	 P5FMmpBYuy1T2DO1FUIBIVPXqexsErDeDewu2vsE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbgIJSC0 (ORCPT
+        id S1726801AbgIJSIj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 14:02:26 -0400
-Received: from mail-ej1-f65.google.com ([209.85.218.65]:33007 "EHLO
-        mail-ej1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbgIJSBm (ORCPT
+        Thu, 10 Sep 2020 14:08:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37116 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726807AbgIJR72 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 14:01:42 -0400
-Received: by mail-ej1-f65.google.com with SMTP id j11so10113674ejk.0;
-        Thu, 10 Sep 2020 11:01:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vzlILYYSQksxsWvenp+0BQ/ZzGG+3vsuxeefhQwKuys=;
-        b=mwTzLPsoHkTZHv7eITzwGJGiLpcSM9a0eSAiXuJS0Pkbr8WAQm6yt5JR1TK/HanrZF
-         blUI7hI/ATdAwNbw/jVLBIwryzQijskvDIEy5CYtIQ7SdrUj2i6Lp3y/YeQgz2ysX3T+
-         XiPuF5PnN0WdLmACkie6BDqDAxY6uluk8d2FzNbx7D5qK0pHbcy5xmlXTjdiZl1uRAfv
-         oSDf1Yj0+R7Qf/+41FGSHtkNPkrncvOciByv/PRg4dQ9qpdNcfL02e6GS53looXZE9GE
-         b6l0JhxxlxSeALw2PbZ5JnDmKJFTSR/V+TU5y/hkzAk0IXFe/IDH21V9R3fkX0pAg/9J
-         t9kQ==
-X-Gm-Message-State: AOAM531DM/OBR9DpuVNXvd2Abg7Nf0u5QzTFnjjtF6+HoTAycDPP0kQD
-        aizNvnSMAF3ZSA+pZwbS6aI=
-X-Google-Smtp-Source: ABdhPJwT6JbyXfUrGZCRSOFBx+boMTdYFSDTFrULKEN0eqYHOZ15ua7zgfpIH84oBBIKMt8Sze2wOQ==
-X-Received: by 2002:a17:906:a4b:: with SMTP id x11mr10673914ejf.368.1599760899958;
-        Thu, 10 Sep 2020 11:01:39 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.174])
-        by smtp.googlemail.com with ESMTPSA id 1sm7839797ejn.50.2020.09.10.11.01.37
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Sep 2020 11:01:38 -0700 (PDT)
-Date:   Thu, 10 Sep 2020 20:01:35 +0200
+        Thu, 10 Sep 2020 13:59:28 -0400
+Received: from localhost.localdomain (unknown [194.230.155.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41D6F21D79;
+        Thu, 10 Sep 2020 17:59:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599760767;
+        bh=761zDxdXKDgTK0JSlpGwt9ghMs+g4BFzNJFURh3ro3I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zRkjmdTa7gbAktlFYrjxcRUY4d6ZSLoFPt8I76S3yJlVe+pMlLO1yZvq1GKw6nrgA
+         GNuYvkQYqzVYORH3bBDutC9k9PT1TLS8dPJhHwlLygQFq2P/RjLxKjbe4HkVBCuMB+
+         sk2SwkNwVK9r3XwdVkXWd978CKbND1N9TP4N7HAU=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
         Tony Lindgren <tony@atomide.com>,
         Russell King <linux@armlinux.org.uk>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -78,35 +67,116 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 08/15] ARM: dts: am335x: lxm: fix PCA9539 GPIO
- expander properties
-Message-ID: <20200910180135.GA11154@kozik-lap>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 14/15] ARM: dts: armada: align GPIO hog names with dtschema
+Date:   Thu, 10 Sep 2020 19:57:32 +0200
+Message-Id: <20200910175733.11046-15-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200910175733.11046-1-krzk@kernel.org>
 References: <20200910175733.11046-1-krzk@kernel.org>
- <20200910175733.11046-9-krzk@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200910175733.11046-9-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Sep 10, 2020 at 07:57:26PM +0200, Krzysztof Kozlowski wrote:
-> The PCA9539 GPIO expander requires GPIO controller properties to operate
-> properly.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+The convention for node names is to use hyphens, not underscores.
+dtschema for pca95xx requires GPIO hogs to end with 'hog' prefix.
 
-I forgot to add here Ack from v1:
-Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arm/boot/dts/armada-388-clearfog.dts  |  4 ++--
+ arch/arm/boot/dts/armada-388-clearfog.dtsi | 10 +++++-----
+ arch/arm/boot/dts/armada-388-helios4.dts   |  6 +++---
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
-Tony,
-
-I think it should go through sub-architecture maintainers, not as entire
-series.
-
-Best regards,
-Krzysztof
+diff --git a/arch/arm/boot/dts/armada-388-clearfog.dts b/arch/arm/boot/dts/armada-388-clearfog.dts
+index 20f8d4667753..4140a5303b48 100644
+--- a/arch/arm/boot/dts/armada-388-clearfog.dts
++++ b/arch/arm/boot/dts/armada-388-clearfog.dts
+@@ -73,13 +73,13 @@
+ 	 * 14-SFP_TX_DISABLE
+ 	 * 15-SFP_MOD_DEF0
+ 	 */
+-	pcie2_0_clkreq {
++	pcie2-0-clkreq-hog {
+ 		gpio-hog;
+ 		gpios = <4 GPIO_ACTIVE_LOW>;
+ 		input;
+ 		line-name = "pcie2.0-clkreq";
+ 	};
+-	pcie2_0_w_disable {
++	pcie2-0-w-disable-hog {
+ 		gpio-hog;
+ 		gpios = <7 GPIO_ACTIVE_LOW>;
+ 		output-low;
+diff --git a/arch/arm/boot/dts/armada-388-clearfog.dtsi b/arch/arm/boot/dts/armada-388-clearfog.dtsi
+index a0aa1d188f0c..f8a06ae4a3c9 100644
+--- a/arch/arm/boot/dts/armada-388-clearfog.dtsi
++++ b/arch/arm/boot/dts/armada-388-clearfog.dtsi
+@@ -141,31 +141,31 @@
+ 		#gpio-cells = <2>;
+ 		reg = <0x20>;
+ 
+-		pcie1_0_clkreq {
++		pcie1-0-clkreq-hog {
+ 			gpio-hog;
+ 			gpios = <0 GPIO_ACTIVE_LOW>;
+ 			input;
+ 			line-name = "pcie1.0-clkreq";
+ 		};
+-		pcie1_0_w_disable {
++		pcie1-0-w-disable-hog {
+ 			gpio-hog;
+ 			gpios = <3 GPIO_ACTIVE_LOW>;
+ 			output-low;
+ 			line-name = "pcie1.0-w-disable";
+ 		};
+-		usb3_ilimit {
++		usb3-ilimit-hog {
+ 			gpio-hog;
+ 			gpios = <5 GPIO_ACTIVE_LOW>;
+ 			input;
+ 			line-name = "usb3-current-limit";
+ 		};
+-		usb3_power {
++		usb3-power-hog {
+ 			gpio-hog;
+ 			gpios = <6 GPIO_ACTIVE_HIGH>;
+ 			output-high;
+ 			line-name = "usb3-power";
+ 		};
+-		m2_devslp {
++		m2-devslp-hog {
+ 			gpio-hog;
+ 			gpios = <11 GPIO_ACTIVE_HIGH>;
+ 			output-low;
+diff --git a/arch/arm/boot/dts/armada-388-helios4.dts b/arch/arm/boot/dts/armada-388-helios4.dts
+index fb49df2a3bce..b3728de3bd3f 100644
+--- a/arch/arm/boot/dts/armada-388-helios4.dts
++++ b/arch/arm/boot/dts/armada-388-helios4.dts
+@@ -166,19 +166,19 @@
+ 					interrupt-controller;
+ 					#interrupt-cells = <2>;
+ 
+-					board_rev_bit_0 {
++					board-rev-bit-0-hog {
+ 						gpio-hog;
+ 						gpios = <0 GPIO_ACTIVE_LOW>;
+ 						input;
+ 						line-name = "board-rev-0";
+ 					};
+-					board_rev_bit_1 {
++					board-rev-bit-1-hog {
+ 						gpio-hog;
+ 						gpios = <1 GPIO_ACTIVE_LOW>;
+ 						input;
+ 						line-name = "board-rev-1";
+ 					};
+-					usb3_ilimit {
++					usb3-ilimit-hog {
+ 						gpio-hog;
+ 						gpios = <5 GPIO_ACTIVE_HIGH>;
+ 						input;
+-- 
+2.17.1
 
