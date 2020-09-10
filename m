@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B9DC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED35DC2D0E1
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:14:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E645207EA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:14:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8575F207EA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:14:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599761665;
-	bh=UC3OFw0SUr5PBSeWnQOTk6uMeflPyNmlay7v1RLLJw8=;
+	s=default; t=1599761681;
+	bh=udNEmeVyLPWdARKfdcfI5Aq87zp3Ww2DikohbfSaNM8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iNoPIKMZF72fO2RQ0ptBruQ79RWjp+a25OWkjNi9FoVr8XRi5X1M6gizSvzPeataw
-	 lGPQPCkS2V2/qYWZY9+mDIB0A6ChQM9NdwaBkrugPlv02ldRPxcfqj22/8BHIqF0et
-	 Ba0p4ASdHkocHaAEGPDZj9lmrx28ZnTIb96t2Ctc=
+	b=ZsDKT96ctqh0WWC3XIu8BBjWJgUsL0aEUE5jJwTpXXxu5rIk6XSZCas2AHULCTzft
+	 kk3I8jwraLtaEJHSoJW5XPwh6jwIIqlrqf3zFWd2sY5yBq3qbl0yO+hzO49sOXE/tp
+	 /u76psWJ5U2W+aasuhJ3VbfM8uuF7BnmG3nClZnE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726176AbgIJSOD (ORCPT
+        id S1726855AbgIJSOi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 14:14:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35734 "EHLO mail.kernel.org"
+        Thu, 10 Sep 2020 14:14:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726760AbgIJR6j (ORCPT
+        id S1725820AbgIJR6T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 13:58:39 -0400
+        Thu, 10 Sep 2020 13:58:19 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46BE3214F1;
-        Thu, 10 Sep 2020 17:58:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D80B221E2;
+        Thu, 10 Sep 2020 17:58:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599760719;
-        bh=UC3OFw0SUr5PBSeWnQOTk6uMeflPyNmlay7v1RLLJw8=;
+        s=default; t=1599760697;
+        bh=udNEmeVyLPWdARKfdcfI5Aq87zp3Ww2DikohbfSaNM8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pr+ZvUa/6oP9kDHCo1sayvtfcwy4WTShFITbY25GX52chyVTdTy0/lS0Qna16enYD
-         XldEV8L/rJP0gAPbPGhI3bFVQVzhhE4OBMtX17QRMcXBps9W4rViEpF5UDV4fKsEGQ
-         q5wmPq/dl0SO9L4mz0iCTxB0xLIQgQJAOmWFJm/I=
+        b=qD5SpAJwCblaZ3hpivgzqSRdZQmdif0nTbQ5ZZR/4Ap7SjEnTGOn0O40cxdUSHxIh
+         H4nKxTtrt62dnBPCVnbSj6iAmKxNIPHtNBHSjXxeLpYie8/AToVbQnbpmwtdc0ftvn
+         irlcQJl2LjvNbp7iPMunJ2IqkMB6RfQJGgTnExSM=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -68,9 +68,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 07/15] arm64: dts: xilinx: align GPIO hog names with dtschema
-Date:   Thu, 10 Sep 2020 19:57:25 +0200
-Message-Id: <20200910175733.11046-8-krzk@kernel.org>
+Subject: [PATCH v2 04/15] arm64: dts: mediatek: align GPIO hog names with dtschema
+Date:   Thu, 10 Sep 2020 19:57:22 +0200
+Message-Id: <20200910175733.11046-5-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200910175733.11046-1-krzk@kernel.org>
 References: <20200910175733.11046-1-krzk@kernel.org>
@@ -84,43 +84,118 @@ dtschema for pca95xx requires GPIO hogs to end with 'hog' prefix.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ .../boot/dts/mediatek/pumpkin-common.dtsi     | 26 +++++++++----------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-index 4f801721564f..f1255f635dfd 100644
---- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-@@ -203,25 +203,25 @@
- 		gpio-line-names = "PS_GTR_LAN_SEL0", "PS_GTR_LAN_SEL1", "PS_GTR_LAN_SEL2", "PS_GTR_LAN_SEL3",
- 				"PCI_CLK_DIR_SEL", "IIC_MUX_RESET_B", "GEM3_EXP_RESET_B",
- 				"", "", "", "", "", "", "", "", "";
--		gtr-sel0 {
-+		gtr-sel0-hog {
+diff --git a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi b/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
+index 29d8cf6df46b..351a1905a074 100644
+--- a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
++++ b/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
+@@ -63,91 +63,91 @@
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 
+-		eint20_mux_sel0 {
++		eint20-mux-sel0-hog {
  			gpio-hog;
  			gpios = <0 0>;
- 			output-low; /* PCIE = 0, DP = 1 */
- 			line-name = "sel0";
+ 			input;
+ 			line-name = "eint20_mux_sel0";
  		};
--		gtr-sel1 {
-+		gtr-sel1-hog {
+ 
+-		expcon_mux_sel1 {
++		expcon-mux-sel1-hog {
  			gpio-hog;
  			gpios = <1 0>;
- 			output-high; /* PCIE = 0, DP = 1 */
- 			line-name = "sel1";
+ 			input;
+ 			line-name = "expcon_mux_sel1";
  		};
--		gtr-sel2 {
-+		gtr-sel2-hog {
+ 
+-		mrg_di_mux_sel2 {
++		mrg-di-mux-sel2-hog {
  			gpio-hog;
  			gpios = <2 0>;
- 			output-high; /* PCIE = 0, USB0 = 1 */
- 			line-name = "sel2";
+ 			input;
+ 			line-name = "mrg_di_mux_sel2";
  		};
--		gtr-sel3 {
-+		gtr-sel3-hog {
+ 
+-		sd_sdio_mux_sel3 {
++		sd-sdio-mux-sel3-hog {
  			gpio-hog;
  			gpios = <3 0>;
- 			output-high; /* PCIE = 0, SATA = 1 */
+ 			input;
+ 			line-name = "sd_sdio_mux_sel3";
+ 		};
+ 
+-		sd_sdio_mux_ctrl7 {
++		sd-sdio-mux-ctrl7-hog {
+ 			gpio-hog;
+ 			gpios = <7 0>;
+ 			output-low;
+ 			line-name = "sd_sdio_mux_ctrl7";
+ 		};
+ 
+-		hw_id0 {
++		hw-id0-hog {
+ 			gpio-hog;
+ 			gpios = <8 0>;
+ 			input;
+ 			line-name = "hw_id0";
+ 		};
+ 
+-		hw_id1 {
++		hw-id1-hog {
+ 			gpio-hog;
+ 			gpios = <9 0>;
+ 			input;
+ 			line-name = "hw_id1";
+ 		};
+ 
+-		hw_id2 {
++		hw-id2-hog {
+ 			gpio-hog;
+ 			gpios = <10 0>;
+ 			input;
+ 			line-name = "hw_id2";
+ 		};
+ 
+-		fg_int_n {
++		fg-int-n-hog {
+ 			gpio-hog;
+ 			gpios = <11 0>;
+ 			input;
+ 			line-name = "fg_int_n";
+ 		};
+ 
+-		usba_pwr_en {
++		usba-pwr-en-hog {
+ 			gpio-hog;
+ 			gpios = <12 0>;
+ 			output-high;
+ 			line-name = "usba_pwr_en";
+ 		};
+ 
+-		wifi_3v3_pg {
++		wifi-3v3-pg-hog {
+ 			gpio-hog;
+ 			gpios = <13 0>;
+ 			input;
+ 			line-name = "wifi_3v3_pg";
+ 		};
+ 
+-		cam_rst {
++		cam-rst-hog {
+ 			gpio-hog;
+ 			gpios = <14 0>;
+ 			output-low;
+ 			line-name = "cam_rst";
+ 		};
+ 
+-		cam_pwdn {
++		cam-pwdn-hog {
+ 			gpio-hog;
+ 			gpios = <15 0>;
+ 			output-low;
 -- 
 2.17.1
 
