@@ -2,212 +2,140 @@ Return-Path: <SRS0=jird=CT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C8A0C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C23C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:58:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 061E920795
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:42:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6FFE21941
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:58:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599760718;
+	bh=muQ6zjVn/mf+iXsfCUdXzl3dZG6B8J8l8bbNbkMxaHs=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=naqZ7c3BDTyK0FhX/t4QNW7drrLfygWd/VPwrowIeHPUrnzSZP7FxfBtvZcTj4CQT
+	 lpr9h5gk1DFIBS3wqTMGaf5hbxz8WpWgo+bIwJ4ocGcNbBWfX/oVvOk7qg2SX1KAlK
+	 PtSMNWtkAjitd4RUgvU/y9p1ECzjp341Q59ZX0Sw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727023AbgIJRlx (ORCPT
+        id S1726384AbgIJR6Z (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 13:41:53 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:52313 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725996AbgIJQQ2 (ORCPT
+        Thu, 10 Sep 2020 13:58:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34288 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725807AbgIJR5s (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 12:16:28 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id E32981BF20D;
-        Thu, 10 Sep 2020 16:16:09 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
-        laurent.pinchart@ideasonboard.com,
+        Thu, 10 Sep 2020 13:57:48 -0400
+Received: from localhost.localdomain (unknown [194.230.155.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3808820BED;
+        Thu, 10 Sep 2020 17:57:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599760667;
+        bh=muQ6zjVn/mf+iXsfCUdXzl3dZG6B8J8l8bbNbkMxaHs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=1/dJz17PLrZMeRIjQd6sFEAce0o7eu4K+r0dL+zosiqq0luiYlHoWB51FielsPqaO
+         Wa3TSJxOyAyZi6SExx28ze23dGlUmJasReiKbjSU4S7it/I5rb2rMggP0mkbcOPGUV
+         cSry5a/sdkrgJlogKXiGfjplhGDzzPpiCOwVMjVI=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v5] dt-bindings: media: mt9v111: Convert to json-schema
-Date:   Thu, 10 Sep 2020 18:19:49 +0200
-Message-Id: <20200910161949.613922-1-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.28.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 00/15] ARM: dts: / gpio: Add dtschema for NXP PCA953x and correct dts
+Date:   Thu, 10 Sep 2020 19:57:18 +0200
+Message-Id: <20200910175733.11046-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert the mt9v111 bindings document to json-schema and update
-the MAINTAINERS file accordingly.
+Hi,
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
-v4->v5:
-- No changes, sent separately as other patches in the series have been
-  under discussion while I think this one could be collected as is.
+Changes since v1:
+1. Patch 1: Use additionalProperties, Add wakeup-source, Add hogs, Extend example with hogs.
+2. New patches: 3, 4, 5, 6, 7, 9, 10, 12, 14 and 15.
 
----
- .../bindings/media/i2c/aptina,mt9v111.txt     | 46 ------------
- .../bindings/media/i2c/aptina,mt9v111.yaml    | 75 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 76 insertions(+), 47 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
- create mode 100644 Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
+The patches could be picked up independently if dtschema makes sense.
+The fixes for pins make sense anyway, regardless of dtschema.
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt b/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
-deleted file mode 100644
-index bd896e9f67d1..000000000000
---- a/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
-+++ /dev/null
-@@ -1,46 +0,0 @@
--* Aptina MT9V111 CMOS sensor
------------------------------
--
--The Aptina MT9V111 is a 1/4-Inch VGA-format digital image sensor with a core
--based on Aptina MT9V011 sensor and an integrated Image Flow Processor (IFP).
--
--The sensor has an active pixel array of 640x480 pixels and can output a number
--of image resolution and formats controllable through a simple two-wires
--interface.
--
--Required properties:
----------------------
--
--- compatible: shall be "aptina,mt9v111".
--- clocks: reference to the system clock input provider.
--
--Optional properties:
----------------------
--
--- enable-gpios: output enable signal, pin name "OE#". Active low.
--- standby-gpios: low power state control signal, pin name "STANDBY".
--  Active high.
--- reset-gpios: chip reset signal, pin name "RESET#". Active low.
--
--The device node must contain one 'port' child node with one 'endpoint' child
--sub-node for its digital output video port, in accordance with the video
--interface bindings defined in:
--Documentation/devicetree/bindings/media/video-interfaces.txt
--
--Example:
----------
--
--        &i2c1 {
--                camera@48 {
--                        compatible = "aptina,mt9v111";
--                        reg = <0x48>;
--
--                        clocks = <&camera_clk>;
--
--                        port {
--                                mt9v111_out: endpoint {
--                                        remote-endpoint = <&ceu_in>;
--                                };
--                        };
--                };
--        };
-diff --git a/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml b/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
-new file mode 100644
-index 000000000000..ff9546e95d05
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
-@@ -0,0 +1,75 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/i2c/aptina,mt9v111.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Aptina MT9V111 CMOS sensor
-+
-+maintainers:
-+  - Jacopo Mondi <jacopo@jmondi.org>
-+
-+description: |
-+  The Aptina MT9V111 is a 1/4-Inch VGA-format digital image sensor with a core
-+  based on Aptina MT9V011 sensor and an integrated Image Flow Processor (IFP).
-+
-+  The sensor has an active pixel array of 640x480 pixels and can output a number
-+  of image resolutions and formats controllable through a simple two-wires
-+  interface.
-+
-+properties:
-+  compatible:
-+    const: aptina,mt9v111
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  enable-gpios:
-+    description: Enable signal, pin name "OE#". Active low.
-+    maxItems: 1
-+
-+  standby-gpios:
-+    description: |
-+      Low power state control signal, pin name "STANDBY". Active high.
-+    maxItems: 1
-+
-+  reset-gpios:
-+    description: Chip reset signal, pin name "RESET#". Active low.
-+    maxItems: 1
-+
-+  port:
-+    type: object
-+    description: |
-+      Output video port. See ../video-interfaces.txt.
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - port
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c0 {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        camera@48 {
-+            compatible = "aptina,mt9v111";
-+            reg = <0x48>;
-+            clocks = <&camera_clk>;
-+
-+            port {
-+                mt9v111_out: endpoint {
-+                    remote-endpoint = <&ceu_in>;
-+                };
-+            };
-+        };
-+    };
-+
-+...
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4e68598c16fa..355f9c04b56b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11823,7 +11823,7 @@ M:	Jacopo Mondi <jacopo@jmondi.org>
- L:	linux-media@vger.kernel.org
- S:	Maintained
- T:	git git://linuxtv.org/media_tree.git
--F:	Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.txt
-+F:	Documentation/devicetree/bindings/media/i2c/aptina,mt9v111.yaml
- F:	drivers/media/i2c/mt9v111.c
+Best regards,
+Krzysztof
 
- MULTIFUNCTION DEVICES (MFD)
---
-2.28.0
+
+Krzysztof Kozlowski (15):
+  dt-bindings: gpio: convert bindings for NXP PCA953x family to dtschema
+  dt-bindings: gpio: convert bindings for Maxim MAX732x family to
+    dtschema
+  arm64: dts: mediatek: fix tca6416 reset GPIOs in pumpkin
+  arm64: dts: mediatek: align GPIO hog names with dtschema
+  arm64: dts: renesas: align GPIO hog names with dtschema
+  arm64: dts: ti: align GPIO hog names with dtschema
+  arm64: dts: xilinx: align GPIO hog names with dtschema
+  ARM: dts: am335x: lxm: fix PCA9539 GPIO expander properties
+  ARM: dts: am335x: t335: align GPIO hog names with dtschema
+  ARM: dts: am3874: iceboard: fix GPIO expander reset GPIOs
+  ARM: dts: aspeed: fix PCA95xx GPIO expander properties on Portwell
+  ARM: dts: aspeed: align GPIO hog names with dtschema
+  ARM: dts: dove: fix PCA95xx GPIO expander properties on A510
+  ARM: dts: armada: align GPIO hog names with dtschema
+  ARM: dts: imx6q: align GPIO hog names with dtschema
+
+ .../devicetree/bindings/gpio/gpio-max732x.txt |  58 -----
+ .../devicetree/bindings/gpio/gpio-pca953x.txt |  90 -------
+ .../bindings/gpio/gpio-pca95xx.yaml           | 234 ++++++++++++++++++
+ .../devicetree/bindings/trivial-devices.yaml  |   4 -
+ arch/arm/boot/dts/am335x-lxm.dts              |   4 +
+ arch/arm/boot/dts/am335x-sbc-t335.dts         |   4 +-
+ arch/arm/boot/dts/am3874-iceboard.dts         |   8 +-
+ arch/arm/boot/dts/armada-388-clearfog.dts     |   4 +-
+ arch/arm/boot/dts/armada-388-clearfog.dtsi    |  10 +-
+ arch/arm/boot/dts/armada-388-helios4.dts      |   6 +-
+ arch/arm/boot/dts/aspeed-bmc-ibm-rainier.dts  |   2 +-
+ arch/arm/boot/dts/aspeed-bmc-opp-mihawk.dts   |  16 +-
+ .../boot/dts/aspeed-bmc-portwell-neptune.dts  |   2 +
+ arch/arm/boot/dts/dove-sbc-a510.dts           |   1 +
+ arch/arm/boot/dts/imx6q-b450v3.dts            |  14 +-
+ arch/arm/boot/dts/imx6q-b650v3.dts            |  12 +-
+ arch/arm/boot/dts/imx6q-b850v3.dts            |   4 +-
+ arch/arm/boot/dts/imx6q-bx50v3.dtsi           |  12 +-
+ .../boot/dts/mediatek/pumpkin-common.dtsi     |  28 +--
+ .../boot/dts/renesas/r8a77951-salvator-xs.dts |   2 +-
+ .../boot/dts/renesas/r8a77965-salvator-xs.dts |   2 +-
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi      |  14 +-
+ .../dts/ti/k3-j721e-common-proc-board.dts     |   4 +-
+ .../boot/dts/xilinx/zynqmp-zcu102-revA.dts    |   8 +-
+ 24 files changed, 316 insertions(+), 227 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-max732x.txt
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-pca953x.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-pca95xx.yaml
+
+-- 
+2.17.1
 
