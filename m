@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07160C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7832BC43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B350D20BED
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:59:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2026A20C09
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599760798;
-	bh=MQoFz3cO6qn2Ot7E8t6E9HrOy47NGq2Kvr7IiaaZoT8=;
+	s=default; t=1599760845;
+	bh=4N+AVz1iFewUv22C1sZLRU1oZ3vPM6n5YgLdZX5yJcs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=singC3tqPKVgCVu44G+owDmqIIJBmhmUVYZkMd3/AhYZ1KL+RM33XineYzbxBLzpX
-	 VtIcYGzsBfBepVCUJvesZF6wPQ5NUUUl3cQH0IMPp063d/h4WnkB2lN5HTZJuXI2g2
-	 MeWp6PoUSVEK/nwdhnF8Acddgsa8vQ5gdXyyXfkM=
+	b=D1JRvQ70Bawg41k34Sot/2rkz1u+aS0OG96GsMICHGCgZR+HBTv0VIpPXeplFxD4l
+	 cj5DHUkWeTa6xEqeZIzi27LpR8vIE7uZFIgqOmnlzzH9bNmsDcaRNnxP85nDm6h/G5
+	 qnNNOe1edRa2uW/2FHTjrFpXvpHkuNjfnNouA07I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbgIJR7L (ORCPT
+        id S1726419AbgIJSAA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 13:59:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35926 "EHLO mail.kernel.org"
+        Thu, 10 Sep 2020 14:00:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726773AbgIJR6r (ORCPT
+        id S1726805AbgIJR7V (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 13:58:47 -0400
+        Thu, 10 Sep 2020 13:59:21 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D81F20C09;
-        Thu, 10 Sep 2020 17:58:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFB6120C09;
+        Thu, 10 Sep 2020 17:59:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599760725;
-        bh=MQoFz3cO6qn2Ot7E8t6E9HrOy47NGq2Kvr7IiaaZoT8=;
+        s=default; t=1599760760;
+        bh=4N+AVz1iFewUv22C1sZLRU1oZ3vPM6n5YgLdZX5yJcs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rWxHwoNvaUnswT+ncDwdktI9HoGlBSaZF+c2Om6ShOyISl5AzV6sDbourCR9dtfzw
-         IigXE8X/TGHrSHHYIviRoVKf/kMKicOgOyW9xTk5c/ogGpGqpsgicqILO1jMjV4K7f
-         qD5EOucNicRNczBDKQaB20qai/PdstnkCQK0wSAc=
+        b=N9Q8v8rYJEGYTGOGYdjCjPtkPabMqxu9+jIF3945v1aI8f8LKhOUot2QegtJ+jYFD
+         4nGGpy3v3t1Da+kE5INyAPk2VWb2YuDZkg0/DcceHwbDtT6sQwhm8ObmtjOEmxmjBu
+         76bSjuzPwQzWPUYVTdBieRSM7tdXbX7qQJ8oM3U0=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -68,9 +68,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 08/15] ARM: dts: am335x: lxm: fix PCA9539 GPIO expander properties
-Date:   Thu, 10 Sep 2020 19:57:26 +0200
-Message-Id: <20200910175733.11046-9-krzk@kernel.org>
+Subject: [PATCH v2 13/15] ARM: dts: dove: fix PCA95xx GPIO expander properties on A510
+Date:   Thu, 10 Sep 2020 19:57:31 +0200
+Message-Id: <20200910175733.11046-14-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200910175733.11046-1-krzk@kernel.org>
 References: <20200910175733.11046-1-krzk@kernel.org>
@@ -79,34 +79,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The PCA9539 GPIO expander requires GPIO controller properties to operate
+The PCA95xx GPIO expander requires GPIO controller properties to operate
 properly.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/am335x-lxm.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/dove-sbc-a510.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/am335x-lxm.dts b/arch/arm/boot/dts/am335x-lxm.dts
-index cd55f11260ea..0f078465297a 100644
---- a/arch/arm/boot/dts/am335x-lxm.dts
-+++ b/arch/arm/boot/dts/am335x-lxm.dts
-@@ -160,11 +160,15 @@
- 	serial_config1: serial_config1@20 {
- 		compatible = "nxp,pca9539";
+diff --git a/arch/arm/boot/dts/dove-sbc-a510.dts b/arch/arm/boot/dts/dove-sbc-a510.dts
+index 2bb85a9b7614..df021f9b0117 100644
+--- a/arch/arm/boot/dts/dove-sbc-a510.dts
++++ b/arch/arm/boot/dts/dove-sbc-a510.dts
+@@ -143,6 +143,7 @@
+ 	gpio_ext: gpio@20 {
+ 		compatible = "nxp,pca9555";
  		reg = <0x20>;
 +		gpio-controller;
-+		#gpio-cells = <2>;
+ 		#gpio-cells = <2>;
  	};
- 
- 	serial_config2: serial_config2@21 {
- 		compatible = "nxp,pca9539";
- 		reg = <0x21>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
- 	};
- 
- 	tps: tps@2d {
+ };
 -- 
 2.17.1
 
