@@ -2,133 +2,77 @@ Return-Path: <SRS0=jird=CT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E45C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 19:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5731C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 19:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5793F20BED
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 19:14:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yl4BPTxd"
+	by mail.kernel.org (Postfix) with ESMTP id 8155F20882
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 19:58:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbgIJTON (ORCPT
+        id S1726922AbgIJT6f (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 15:14:13 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:46390 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726848AbgIJTNy (ORCPT
+        Thu, 10 Sep 2020 15:58:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51174 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725820AbgIJT5y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 15:13:54 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 08AJD8rM024418;
-        Thu, 10 Sep 2020 14:13:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1599765188;
-        bh=wVHpXIuoo9L0dFhVi0aJ08O8whODuj4HNYWrOX4NFVw=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=yl4BPTxdastirBjKVIUEbYlKhJVs+eC45YfSESLfNSGpRaj5H77Wldw4r+pESKZsA
-         GdjSwevWbvMm9fEk+EOkbjovsCE08XrltrwJ+zugtJRJRX9XUlJZ7oALrK6tDZdhKW
-         ZKzX5baYKc4I7S2SLccZUq0PnF4UKdn5S7ybT5/k=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 08AJD8s5064725
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 10 Sep 2020 14:13:08 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 10
- Sep 2020 14:13:07 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Thu, 10 Sep 2020 14:13:07 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 08AJD5v2030041;
-        Thu, 10 Sep 2020 14:13:07 -0500
-Date:   Thu, 10 Sep 2020 14:13:05 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-aspeed@lists.ozlabs.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v2 01/15] dt-bindings: gpio: convert bindings for NXP
- PCA953x family to dtschema
-Message-ID: <20200910191305.phjtijx2fhkhqavu@akan>
-References: <20200910175733.11046-1-krzk@kernel.org>
- <20200910175733.11046-2-krzk@kernel.org>
- <20200910182814.veviax3n377undkv@akan>
- <CAJKOXPdQJz7aLu4sjds46SiZwxvB-VMBR=stjpUme+8iEo+d-w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAJKOXPdQJz7aLu4sjds46SiZwxvB-VMBR=stjpUme+8iEo+d-w@mail.gmail.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 10 Sep 2020 15:57:54 -0400
+Received: from shards.monkeyblade.net (shards.monkeyblade.net [IPv6:2620:137:e000::1:9])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CCC7C061756;
+        Thu, 10 Sep 2020 12:57:53 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id DF39412A3546A;
+        Thu, 10 Sep 2020 12:41:04 -0700 (PDT)
+Date:   Thu, 10 Sep 2020 12:57:50 -0700 (PDT)
+Message-Id: <20200910.125750.498770212913076506.davem@davemloft.net>
+To:     yoshihiro.shimoda.uh@renesas.com
+Cc:     andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
+        kuba@kernel.org, Jisheng.Zhang@synaptics.com,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 RESEND] net: phy: call phy_disable_interrupts() in
+ phy_attach_direct() instead
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1599630194-3052-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1599630194-3052-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: Mew version 6.8 on Emacs 27.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [2620:137:e000::1:9]); Thu, 10 Sep 2020 12:41:05 -0700 (PDT)
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 20:53-20200910, Krzysztof Kozlowski wrote:
-> On Thu, 10 Sep 2020 at 20:28, Nishanth Menon <nm@ti.com> wrote:
-> >
-> > On 19:57-20200910, Krzysztof Kozlowski wrote:
-> > [...]
-> > > +  wakeup-source:
-> > > +    $ref: /schemas/types.yaml#/definitions/flag
-> > > +
-> > > +patternProperties:
-> > > +  "^(hog-[0-9]+|.+-hog(-[0-9]+)?)$":
-> >
-> > I wonder if "hog" is too generic and might clash with "something-hog" in
-> > the future?
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Date: Wed,  9 Sep 2020 14:43:14 +0900
+
+> Since the micrel phy driver calls phy_init_hw() as a workaround,
+> the commit 9886a4dbd2aa ("net: phy: call phy_disable_interrupts()
+> in phy_init_hw()") disables the interrupt unexpectedly. So,
+> call phy_disable_interrupts() in phy_attach_direct() instead.
+> Otherwise, the phy cannot link up after the ethernet cable was
+> disconnected.
 > 
-> This pattern is already used in
-> Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml. It will
-> match only children and so far it did not find any other nodes in ARM
-> and ARM64 dts. I don't expect clashes. Also the question is then - if
-> one adds a child of GPIO expander named "foobar-hog" and it is not a
-> GPIO hog, then what is it?
+> Note that other drivers (like at803x.c) also calls phy_init_hw().
+> So, perhaps, the driver caused a similar issue too.
+> 
+> Fixes: 9886a4dbd2aa ("net: phy: call phy_disable_interrupts() in phy_init_hw()")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  Changes from v1:
+>  - Fix build failure. I used two PCs: PC 1) for testing, PC 2) for
+>    submitting patches. I tested on the PC 1. But, after that, I wrote
+>    a patch on the PC2 again, and it seemed I didn't do a compile...
+>    Today, I got some emails from kernel test bot. So, I realized
+>    I had submitted an awful patch. To avoid such failure, I'll use
+>    one PC only from now on.
+> 
 
-Probably a nitpick.. but then,.. I have'nt seen us depend on hierarchy
-for uniqueness of naming.. we choose for example "bus" no matter where
-in the hierarchy it falls in, as long it is a bus.. etc.. same argument
-holds good for properties as well.. "gpio-hog;" is kinda redundant if
-you think of it for a compatible that is already gpio ;)..
-
-I did'nt mean to de-rail the discussion, but was curious what the DT
-maintainers think..
-
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+Applied and queued up for -stable, thanks.
