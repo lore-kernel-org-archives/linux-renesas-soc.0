@@ -2,104 +2,68 @@ Return-Path: <SRS0=jird=CT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C575C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D332C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:41:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D69182064B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:21:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0F4B2067C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:41:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1599759707;
+	bh=ZWm0HRO+fKkToboNNLAeyiheCir18CQue/mmAWTUlWg=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=oK2TMQzMIBmx6mTOfIAdSHg0epcGgdCstgG1sUIvOLFkSFzoeBJb5K7cZfLt41riW
+	 M7Vv8+Hs7eKESD9UOm+xLhfblGwD8NjpDW11oaTbFb0Jh3X2/qV3+qPBpPild6pLvT
+	 2eMA6Hq0ZdxFYXobWuTnXEZiP4APqxlZh3bpglms=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbgIJRVM (ORCPT
+        id S1726440AbgIJRlj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 13:21:12 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:41143 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726738AbgIJQRm (ORCPT
+        Thu, 10 Sep 2020 13:41:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50638 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726957AbgIJRka (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 12:17:42 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id BAF0BC0009;
-        Thu, 10 Sep 2020 16:17:27 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
-        laurent.pinchart@ideasonboard.com,
-        linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 2/3] dt-bindings: media: ov772x: Make bus-type mandatory
-Date:   Thu, 10 Sep 2020 18:20:54 +0200
-Message-Id: <20200910162055.614089-3-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200910162055.614089-1-jacopo+renesas@jmondi.org>
-References: <20200910162055.614089-1-jacopo+renesas@jmondi.org>
+        Thu, 10 Sep 2020 13:40:30 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1599759630;
+        bh=ZWm0HRO+fKkToboNNLAeyiheCir18CQue/mmAWTUlWg=;
+        h=Subject:From:Date:To:From;
+        b=QfniQjwr0WMPjnAeIp6K+1QfZdZ+fcJkAzlljl1TYs0vFivXn3xIGEv92PShR5H0g
+         F/hLTYkPFhqurZPn/AEeKNkcS8OH915icEGNo0jPGLwHcWWg81hqDjFqbo23jyTnsO
+         YKJf/WSgF+gRocrZ7UmPApB138uj0VyXm594LFSQ=
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Patchwork summary for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <159975963004.6616.8114355587917977770.git-patchwork-summary@kernel.org>
+Date:   Thu, 10 Sep 2020 17:40:30 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-In order to establish required properties based on the selected
-bus type, make the 'bus-type' property mandatory. As this change
-documents an endpoint property, also document the 'remote-endpoint'
-one now that the 'endpoint' schema has been expanded.
+Hello:
 
-Binary compatibility with existing DTB is kept as the driver does not
-enforce the property to be present, and shall fall-back to default
-parallel bus configuration, which was the only supported bus type, if
-the property is not specified.
+The following patches were marked "accepted", because they were applied to
+geert/renesas-devel (refs/heads/next):
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- .../bindings/media/i2c/ovti,ov772x.yaml          | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Patch: ARM: shmobile: rcar-gen2: Make rcar_gen2_{timer_init,reserve}() static
+  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=345095
+  Link: <20200908074403.4379-1-geert+renesas@glider.be>
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
-index e7e2d31fcc23..b034953b92e9 100644
---- a/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
-@@ -41,6 +41,21 @@ properties:
-     description: |
-       Video output port. See ../video-interfaces.txt.
- 
-+    properties:
-+      endpoint:
-+        type: object
-+
-+        properties:
-+          bus-type:
-+            enum: [5, 6]
-+
-+        required:
-+          - bus-type
-+
-+        unevaluatedProperties: false
-+
-+    additionalProperties: false
-+
- required:
-   - compatible
-   - reg
-@@ -65,6 +80,7 @@ examples:
- 
-             port {
-                 ov772x_0: endpoint {
-+                    bus-type = <5>;
-                     remote-endpoint = <&vcap1_in0>;
-                 };
-             };
+Patch: arm64: dts: renesas: r8a774e1-hihope-rzg2h-ex: Enable sata
+  Submitter: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=344393
+  Link: <20200907073214.13929-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Total patches: 2
+
 -- 
-2.28.0
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
