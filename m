@@ -2,45 +2,43 @@ Return-Path: <SRS0=jird=CT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE36C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A61F4C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA2220C09
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 618F020C09
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 17:20:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726911AbgIJRTy (ORCPT
+        id S1726800AbgIJRUV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 13:19:54 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:35013 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbgIJQRm (ORCPT
+        Thu, 10 Sep 2020 13:20:21 -0400
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:60829 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbgIJQRm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 10 Sep 2020 12:17:42 -0400
 X-Originating-IP: 93.34.118.233
 Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 10637C0019;
-        Thu, 10 Sep 2020 16:17:29 +0000 (UTC)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 1BFCC1C0015;
+        Thu, 10 Sep 2020 16:16:32 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-media@vger.kernel.org,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+To:     Leon Luo <leonl@leopardimaging.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-media@vger.kernel.org
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>, mchehab@kernel.org,
         sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
         laurent.pinchart@ideasonboard.com,
-        linux-renesas-soc@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 3/3] dt-bindings: media: ov772x: Document endpoint props
-Date:   Thu, 10 Sep 2020 18:20:55 +0200
-Message-Id: <20200910162055.614089-4-jacopo+renesas@jmondi.org>
+        linux-renesas-soc@vger.kernel.org, luca@lucaceresoli.net
+Subject: [PATCH v5] dt-bindings: media: imx274: Convert to json-schema
+Date:   Thu, 10 Sep 2020 18:20:09 +0200
+Message-Id: <20200910162009.613976-1-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20200910162055.614089-1-jacopo+renesas@jmondi.org>
-References: <20200910162055.614089-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -48,83 +46,168 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document endpoint properties for the parallel bus type and
-add them to the example.
-
-Specify a few constraints:
-- If the bus type is BT.656 no hsync or vsync polarities can be
-  specified.
-- If the bus width is 10 bits, not data-shift can be applied.
+Convert the imx274 bindings document to json-schema and update
+the MAINTAINERS file accordingly.
 
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- .../bindings/media/i2c/ovti,ov772x.yaml       | 44 +++++++++++++++++++
- 1 file changed, 44 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml b/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
-index b034953b92e9..63b3779d7289 100644
---- a/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/ovti,ov772x.yaml
-@@ -49,6 +49,45 @@ properties:
-           bus-type:
-             enum: [5, 6]
- 
-+          bus-width:
-+            enum: [8, 10]
-+            default: 10
+v4->v5:
+- Add optional properties that were upstreamed in v5.9-rc2 in the textual
+  bindings
+- Move them to be lowercase: this patch should be fast-tracked through the
+  fixes branch to make sure it gets in before v5.9 is released, otherwise the
+  textual bindings will have supplies names in uppercase
+
+---
+ .../devicetree/bindings/media/i2c/imx274.txt  | 38 ---------
+ .../bindings/media/i2c/sony,imx274.yaml       | 77 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 78 insertions(+), 39 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/media/i2c/imx274.txt
+ create mode 100644 Documentation/devicetree/bindings/media/i2c/sony,imx274.yaml
+
+diff --git a/Documentation/devicetree/bindings/media/i2c/imx274.txt b/Documentation/devicetree/bindings/media/i2c/imx274.txt
+deleted file mode 100644
+index 0727079d2410..000000000000
+--- a/Documentation/devicetree/bindings/media/i2c/imx274.txt
++++ /dev/null
+@@ -1,38 +0,0 @@
+-* Sony 1/2.5-Inch 8.51Mp CMOS Digital Image Sensor
+-
+-The Sony imx274 is a 1/2.5-inch CMOS active pixel digital image sensor with
+-an active array size of 3864H x 2202V. It is programmable through I2C
+-interface. The I2C address is fixed to 0x1a as per sensor data sheet.
+-Image data is sent through MIPI CSI-2, which is configured as 4 lanes
+-at 1440 Mbps.
+-
+-
+-Required Properties:
+-- compatible: value should be "sony,imx274" for imx274 sensor
+-- reg: I2C bus address of the device
+-
+-Optional Properties:
+-- reset-gpios: Sensor reset GPIO
+-- clocks: Reference to the input clock.
+-- clock-names: Should be "inck".
+-- VANA-supply: Sensor 2.8v analog supply.
+-- VDIG-supply: Sensor 1.8v digital core supply.
+-- VDDL-supply: Sensor digital IO 1.2v supply.
+-
+-The imx274 device node should contain one 'port' child node with
+-an 'endpoint' subnode. For further reading on port node refer to
+-Documentation/devicetree/bindings/media/video-interfaces.txt.
+-
+-Example:
+-	sensor@1a {
+-		compatible = "sony,imx274";
+-		reg = <0x1a>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		reset-gpios = <&gpio_sensor 0 0>;
+-		port {
+-			sensor_out: endpoint {
+-				remote-endpoint = <&csiss_in>;
+-			};
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/media/i2c/sony,imx274.yaml b/Documentation/devicetree/bindings/media/i2c/sony,imx274.yaml
+new file mode 100644
+index 000000000000..fe81def68466
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/i2c/sony,imx274.yaml
+@@ -0,0 +1,77 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/media/i2c/sony,imx274.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+          data-shift:
-+            enum: [0, 2]
-+            default: 0
++title: Sony 1/2.5-Inch 8.51MP CMOS Digital Image Sensor
 +
-+          hsync-active:
-+            enum: [0, 1]
-+            default: 1
++maintainers:
++  - Leon Luo <leonl@leopardimaging.com>
 +
-+          vsync-active:
-+            enum: [0, 1]
-+            default: 1
++description: |
++  The Sony IMX274 is a 1/2.5-inch CMOS active pixel digital image sensor with an
++  active array size of 3864H x 2202V. It is programmable through I2C interface.
++  Image data is sent through MIPI CSI-2, which is configured as 4 lanes at 1440
++  Mbps.
 +
-+          pclk-sample:
-+            enum: [0, 1]
-+            default: 1
++properties:
++  compatible:
++    const: sony,imx274
 +
-+        allOf:
-+          - if:
-+              properties:
-+                bus-type:
-+                  const: 6
-+            then:
-+                properties:
-+                  hsync-active: false
-+                  vsync-active: false
++  reg:
++    const: 0x1a
 +
-+          - if:
-+              properties:
-+                bus-width:
-+                  const: 10
-+            then:
-+                properties:
-+                  data-shift:
-+                    const: 0
++  reset-gpios:
++    maxItems: 1
 +
-         required:
-           - bus-type
- 
-@@ -81,6 +120,11 @@ examples:
-             port {
-                 ov772x_0: endpoint {
-                     bus-type = <5>;
-+                    vsync-active = <0>;
-+                    hsync-active = <0>;
-+                    pclk-sample = <0>;
-+                    bus-width = <8>;
-+                    data-shift = <0>;
-                     remote-endpoint = <&vcap1_in0>;
-                 };
-             };
--- 
++  port:
++    type: object
++    description: |
++      Output video port. See ../video-interfaces.txt.
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    const: inck
++
++  vana-supply:
++    description: Sensor 2.8v analog supply.
++    maxItems: 1
++
++  vdig-supply:
++    description: Sensor 2.8v analog supply.
++    maxItems: 1
++
++  vddl-supply:
++    description: Sensor 2.8v analog supply.
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - port
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c0 {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        imx274: camera-sensor@1a {
++            compatible = "sony,imx274";
++            reg = <0x1a>;
++            reset-gpios = <&gpio_sensor 0 0>;
++
++            port {
++                sensor_out: endpoint {
++                    remote-endpoint = <&csiss_in>;
++                };
++            };
++        };
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 355f9c04b56b..2c9393a7e1ba 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16150,7 +16150,7 @@ M:	Leon Luo <leonl@leopardimaging.com>
+ L:	linux-media@vger.kernel.org
+ S:	Maintained
+ T:	git git://linuxtv.org/media_tree.git
+-F:	Documentation/devicetree/bindings/media/i2c/imx274.txt
++F:	Documentation/devicetree/bindings/media/i2c/sony,imx274.yaml
+ F:	drivers/media/i2c/imx274.c
+
+ SONY IMX290 SENSOR DRIVER
+--
 2.28.0
 
