@@ -2,97 +2,117 @@ Return-Path: <SRS0=jird=CT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C019C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 13:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AF88C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 13:25:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C8559207FB
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 13:24:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0DFA2076D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 13:25:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730336AbgIJNYE (ORCPT
+        id S1730585AbgIJNZe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 09:24:04 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42358 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730131AbgIJNLZ (ORCPT
+        Thu, 10 Sep 2020 09:25:34 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:11774 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730674AbgIJNY4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 09:11:25 -0400
-Received: by mail-ot1-f66.google.com with SMTP id g10so5269049otq.9
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Sep 2020 06:11:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kTxrQxjlXCXYRxUF7VwkUwbVyAfGqaT/aCsiLx65qhU=;
-        b=bOw/1v9i5a1Ti/GsS8AnfHpaD8LB2My3i/FTBYiYuGZcyOoyWr9i0oAnrh9BeYTTRt
-         tQaaeSe5tj+A0+Wsg0Arv9jnuG3mbQUMG7d60Ox1+dxbL6tSIzzglEce7vj6zrheVgxu
-         P4Ujy1Io6s/9+ku68VhjWt1OVg4eUiPqVJd7dkfeLGauTQ5+FzMR4Opms7qp0Ch0kNgv
-         N8mcmUwpnctQC3jYuGSt6mZkt5Aujvj0mpE2/WEJGuR+GmMP/27/uMyj17nx9D4GV4YZ
-         0VFC13qynDDlrs20W0jV2QQTfamEbad0O2F5yfyvT8TpZff/IoMOQOPHoGuTt37F0vf8
-         KJmw==
-X-Gm-Message-State: AOAM533az1qtSi9EgMOLq5O9sLJ8Zw+S/wa2WiMQttC4+m8tGUuo7Hmi
-        z7/d8Lq2ZROdG4SCyDoicuPRLKxqxz2ecOkbu7I=
-X-Google-Smtp-Source: ABdhPJyMYxSD1LXG9iWjLGUOxZUaqRL7BJLikPmpYtcWF6JGYP4G9VY5+xlnceWjfvW0D/nZjDt13T7NTfStF3HXNVQ=
-X-Received: by 2002:a9d:3b76:: with SMTP id z109mr3949067otb.250.1599743485311;
- Thu, 10 Sep 2020 06:11:25 -0700 (PDT)
+        Thu, 10 Sep 2020 09:24:56 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 1B9D3F4FDC170165F4B4;
+        Thu, 10 Sep 2020 21:24:41 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.487.0; Thu, 10 Sep 2020
+ 21:24:35 +0800
+From:   Yu Kuai <yukuai3@huawei.com>
+To:     <laurent.pinchart@ideasonboard.com>,
+        <kieran.bingham+renesas@ideasonboard.com>, <airlied@linux.ie>,
+        <daniel@ffwll.ch>
+CC:     <dri-devel@lists.freedesktop.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <yukuai3@huawei.com>,
+        <yi.zhang@huawei.com>
+Subject: [PATCH] drm: rcar-du: add missing put_device() call in rcar_du_vsp_init()
+Date:   Thu, 10 Sep 2020 21:23:54 +0800
+Message-ID: <20200910132354.692397-1-yukuai3@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-References: <1599657211-17504-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1599657211-17504-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1599657211-17504-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 10 Sep 2020 15:11:14 +0200
-Message-ID: <CAMuHMdV=svSDGJu4HoaeiEdWT2nk4eQFARMZKn3x7kvJx2QBgQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] clk: renesas: cpg-mssr: add register pointers into
- struct cpg_mssr_priv
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Shimoda-san,
+if of_find_device_by_node() succeed, rcar_du_vsp_init() doesn't have
+a corresponding put_device(). Thus add a jump target to fix the exception
+handling for this function implementation.
 
-On Wed, Sep 9, 2020 at 3:13 PM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> To support other register layout in the future, add register pointers
-> of control_regs and status_regs into struct cpg_mssr_priv. After that,
-> we can remove unused macros like MSTPSR(). No behavior changes.
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Fixes: 6d62ef3ac30b ("drm: rcar-du: Expose the VSP1 compositor through KMS planes")
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/renesas-cpg-mssr.c
-> +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-
-> @@ -137,6 +130,8 @@ struct cpg_mssr_priv {
->         unsigned int last_dt_core_clk;
->
->         struct raw_notifier_head notifiers;
-> +       const u16 *status_regs;
-> +       const u16 *control_regs;
-
-Please add new fields to the struct's kerneldoc comments above.
-
-Note that you need to use a similar dispatching for the Software Reset
-and Software Reset Clearing Registers, as their offsets differ from
-previous SoCs.
-
-The reset looks good to me, thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index f1a81c9b184d..172ee3f3b21c 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -352,14 +352,16 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+ 
+ 	/* Find the VSP device and initialize it. */
+ 	pdev = of_find_device_by_node(np);
+-	if (!pdev)
+-		return -ENXIO;
++	if (!pdev) {
++		ret = -ENXIO;
++		goto put_device;
++	}
+ 
+ 	vsp->vsp = &pdev->dev;
+ 
+ 	ret = vsp1_du_init(vsp->vsp);
+ 	if (ret < 0)
+-		return ret;
++		goto put_device;
+ 
+ 	 /*
+ 	  * The VSP2D (Gen3) has 5 RPFs, but the VSP1D (Gen2) is limited to
+@@ -369,8 +371,10 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+ 
+ 	vsp->planes = devm_kcalloc(rcdu->dev, vsp->num_planes,
+ 				   sizeof(*vsp->planes), GFP_KERNEL);
+-	if (!vsp->planes)
+-		return -ENOMEM;
++	if (!vsp->planes) {
++		ret = -ENOMEM;
++		goto put_device;
++	}
+ 
+ 	for (i = 0; i < vsp->num_planes; ++i) {
+ 		enum drm_plane_type type = i < num_crtcs
+@@ -387,7 +391,7 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+ 					       ARRAY_SIZE(rcar_du_vsp_formats),
+ 					       NULL, type, NULL);
+ 		if (ret < 0)
+-			return ret;
++			goto put_device;
+ 
+ 		drm_plane_helper_add(&plane->plane,
+ 				     &rcar_du_vsp_plane_helper_funcs);
+@@ -403,4 +407,7 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+ 	}
+ 
+ 	return 0;
++put_device:
++	put_device(&pdev->dev);
++	return ret;
+ }
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.4
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
