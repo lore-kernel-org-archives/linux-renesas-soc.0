@@ -2,194 +2,97 @@ Return-Path: <SRS0=jird=CT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A031AC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 12:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C58C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 12:13:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71B862076D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 12:12:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E050020C09
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 12:13:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730408AbgIJMDz (ORCPT
+        id S1730093AbgIJMMj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 08:03:55 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:55864 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730189AbgIJMDZ (ORCPT
+        Thu, 10 Sep 2020 08:12:39 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:49725 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730309AbgIJMDI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 08:03:25 -0400
+        Thu, 10 Sep 2020 08:03:08 -0400
 X-IronPort-AV: E=Sophos;i="5.76,412,1592838000"; 
-   d="scan'208";a="56719479"
+   d="scan'208";a="56936701"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 10 Sep 2020 21:03:06 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 10 Sep 2020 21:03:06 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A8CAA425ACDC;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 63A98425ACDC;
         Thu, 10 Sep 2020 21:03:06 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     geert+renesas@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 3/4] arm64: dts: renesas: Add Renesas R8A779A0 SoC support
-Date:   Thu, 10 Sep 2020 21:02:51 +0900
-Message-Id: <1599739372-30669-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 0/4] treewide: add support for R-Car V3U
+Date:   Thu, 10 Sep 2020 21:02:48 +0900
+Message-Id: <1599739372-30669-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1599739372-30669-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1599739372-30669-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add initial support for the Renesas R8A77990 (R-Car V3U) support.
+This patch series is like incremental patches from the v1 series [1].
+And, this patch series fix patch 2, 10, 13 and 14/14 of
+the v1 series. In other words, I don't include other patches because:
+ - some patches (1, 3 to 6, 8, 9, 11) already got Reviewed-by [1].
+ - I submitted incremental v2 patches [2] for patch 6/14 and 12/14.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 133 ++++++++++++++++++++++++++++++
- 1 file changed, 133 insertions(+)
+[1]
+https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=344457
+
+[2]
+https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=345847
+
+Changes from v1:
+ - In the patch 1:
+ -- Fix renesas,falcon-breakout.
+ - In the patch 2:
+ -- Fix Remove #include rcar-sysc.h.
+ -- Use r8a779a0_sysc_{area,info} instead of rcar_sysc_{area,info}.
+ -- Use SYSCSR_BUSY instead of SYSCSR_P{ON,OFF}ENB.
+ -- Remove struct rcar_sysc_ch.
+ -- Replace keywords of "rcar" to "r8a779a0".
+ -- Clean up r8a779a0_sysc_pwr_on_off().
+ -- Use readl_poll_timeout_"atomic()" because held by spin_lock_irqsave().
+ -- Remove has_cpg_mstp flag.
+ -- Remove #ifdef CONFIG_SYSC_R8A779A0
+ - In the patch 3:
+ -- Fix the length of sysc.
+ -- Add resets property into scif0.
+ -- Fix GIC_CPU_MAS_SIMPLE() argument to 1.
+ - In the patch 4:
+ -- Add #include "r8a779a0.dtsi".
+ -- Fix compatible in falcon-cpu.dtsi and r8a779a0-falcon.dts.
+
+Yoshihiro Shimoda (4):
+  dt-bindings: arm: renesas: Document Renesas Falcon boards
+  soc: renesas: r8a779a0-sysc: Add r8a779a0 support
+  arm64: dts: renesas: Add Renesas R8A779A0 SoC support
+  arm64: dts: renesas: Add Renesas Falcon boards support
+
+ Documentation/devicetree/bindings/arm/renesas.yaml |   8 +
+ arch/arm64/boot/dts/renesas/Makefile               |   2 +
+ .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi      |  46 +++
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts    |  23 ++
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi          | 133 ++++++
+ drivers/soc/renesas/Kconfig                        |   4 +
+ drivers/soc/renesas/Makefile                       |   1 +
+ drivers/soc/renesas/r8a779a0-sysc.c                | 450 +++++++++++++++++++++
+ 8 files changed, 667 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
  create mode 100644 arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+ create mode 100644 drivers/soc/renesas/r8a779a0-sysc.c
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-new file mode 100644
-index 0000000..6cf77ce
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the R-Car V3U (R8A779A0) SoC
-+ *
-+ * Copyright (C) 2020 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/clock/r8a779a0-cpg-mssr.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/power/r8a779a0-sysc.h>
-+
-+/ {
-+	compatible = "renesas,r8a779a0";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		a76_0: cpu@0 {
-+			compatible = "arm,cortex-a76";
-+			reg = <0>;
-+			device_type = "cpu";
-+			power-domains = <&sysc R8A779A0_PD_A1E0D0C0>;
-+			next-level-cache = <&L3_CA76_0>;
-+		};
-+
-+		L3_CA76_0: cache-controller-0 {
-+			compatible = "cache";
-+			power-domains = <&sysc R8A779A0_PD_A2E0D0>;
-+			cache-unified;
-+			cache-level = <3>;
-+		};
-+	};
-+
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	extalr_clk: extalr {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	pmu_a76 {
-+		compatible = "arm,cortex-a76-pmu";
-+		interrupts-extended = <&gic GIC_SPI 139 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 140 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>,
-+				      <&gic GIC_SPI 142 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
-+	/* External SCIF clock - to be overridden by boards that provide it */
-+	scif_clk: scif {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
-+	soc: soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		cpg: clock-controller@e6150000 {
-+			compatible = "renesas,r8a779a0-cpg-mssr";
-+			reg = <0 0xe6150000 0 0x4000>;
-+			clocks = <&extal_clk>, <&extalr_clk>;
-+			clock-names = "extal", "extalr";
-+			#clock-cells = <2>;
-+			#power-domain-cells = <0>;
-+			#reset-cells = <1>;
-+		};
-+
-+		rst: reset-controller@e6160000 {
-+			compatible = "renesas,r8a779a0-rst";
-+			reg = <0 0xe6160000 0 0x4000>;
-+		};
-+
-+		sysc: system-controller@e6180000 {
-+			compatible = "renesas,r8a779a0-sysc";
-+			reg = <0 0xe6180000 0 0x4000>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		scif0: serial@e6e60000 {
-+			compatible = "renesas,scif-r8a779a0",
-+				     "renesas,rcar-gen3-scif", "renesas,scif";
-+			reg = <0 0xe6e60000 0 64>;
-+			interrupts = <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 702>,
-+				 <&cpg CPG_CORE R8A779A0_CLK_S1D2>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets = <&cpg 702>;
-+			status = "disabled";
-+		};
-+
-+		gic: interrupt-controller@f1000000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0xf1000000 0 0x20000>,
-+			      <0x0 0xf1060000 0 0x110000>;
-+			interrupts = <GIC_PPI 9
-+				      (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_HIGH)>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+		};
-+
-+		prr: chipid@fff00044 {
-+			compatible = "renesas,prr";
-+			reg = <0 0xfff00044 0 4>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
 -- 
 2.7.4
 
