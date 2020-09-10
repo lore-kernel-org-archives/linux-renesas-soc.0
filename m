@@ -2,196 +2,131 @@ Return-Path: <SRS0=jird=CT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B57CC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 11:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 886C5C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 11:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B6852214F1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 11:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 337D12078B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 11:33:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="GDFKU9Kn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729525AbgIJLNR (ORCPT
+        id S1728626AbgIJLdk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 07:13:17 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:40926 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730413AbgIJLJ2 (ORCPT
+        Thu, 10 Sep 2020 07:33:40 -0400
+Received: from mail-eopbgr1310119.outbound.protection.outlook.com ([40.107.131.119]:5440
+        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730321AbgIJLYp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 07:09:28 -0400
-Received: by mail-oi1-f193.google.com with SMTP id t76so5514693oif.7;
-        Thu, 10 Sep 2020 04:09:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XHyLYBCvV/QBPG8y5LyMG37sKoWK6MV97mkGdWUv8vs=;
-        b=eFp8JL4zPppzTfa738UVSolQO1BPXQn3Ur0vBE6eaIZzWMNlKOiihaGmIW+aa6nUB+
-         af09Kbv4b9aq0ZJ8wE2g9wAapCadfuiIeygAkdjHgPanj7XVAdtf+LmzVhROyl5QE6Qm
-         NCLeSwEN4wvPd7oqbB6W0zFNcZ62DlgVHjEIR30/vJRvESZu4wuTjGijiXxCyk+z6lf+
-         26kC6CDgWl5dBVFzALpz2zIHWGbO4oab7Li+xdIjo0DOznQHJTA0phNVKtn53jUA1hhL
-         f4SU2U0avYJ4nAYYg8qJ5nBK03qHwlmBnLtqQSFb3A1XuOBK1x58edLa6LHRm1GZ2vE9
-         TXGw==
-X-Gm-Message-State: AOAM532f4HVprQfGePSfF/1H9k6hA3bUafZtdqbBeG9ncZJcnq93UMm/
-        uPianON/FE/AcM21KDnNlky7CtYoPiXtJARfgJ4vLZTj
-X-Google-Smtp-Source: ABdhPJyRR/8Bfk+8m5dk07edfLMGgniqflKGYa4vK8RrPJXBSGfpDUqz8PGEAe2B9sDx97OhvfrRJ65SBY8tODhzOjw=
-X-Received: by 2002:aca:52d6:: with SMTP id g205mr3377102oib.54.1599736163569;
- Thu, 10 Sep 2020 04:09:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <87sgbu70tq.wl-kuninori.morimoto.gx@renesas.com>
- <87lfhm70s6.wl-kuninori.morimoto.gx@renesas.com> <31ec6196-7613-8eb3-e092-07d0c874632a@ideasonboard.com>
- <CAMuHMdVHGQ0FFcLjQfXhke5PKJKnNfZ3NOF-p08v3QrQ-87npA@mail.gmail.com> <f1ed4b08-59eb-986e-4036-820887993f00@ideasonboard.com>
-In-Reply-To: <f1ed4b08-59eb-986e-4036-820887993f00@ideasonboard.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 10 Sep 2020 13:09:12 +0200
-Message-ID: <CAMuHMdVGFOaBFCejGDgzf8AUbHFis0TOM-DDJ3h9k0+fuu=umQ@mail.gmail.com>
-Subject: Re: [PATCH 5/9] arm64: dts: renesas: r8a77961: Add VSP device nodes
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Thu, 10 Sep 2020 07:24:45 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EwD22/dcpnH6a/sbjig+x5NhG71iL8ptpkkmI3Cob50dtvh8I6VEgM31UEQ0+UrV0PQmb+ZecMCUOw7sOXeoabKBEneC8I3xCWkHViVZ+mEMCySg8BFdycS56z0tBaelvv2jNaaWiTKFvkurNHAXOeaOnKoQIQ444SlGYROZJwnP1mTJ5vc7QWsE5EnlrHqL8H67iCysBxbHo5HIbXf+z3HduZq8W/h8WWUlJj4h/ddrclvMd14x2J1ibONBzGV2ce/uLUPr9bW1b421kAq9OAQcSRBE5AKleB+OcOMKUkVTPDrwCQjZxugAyMLiBjYNcUFP7D6oHylP1nVrdcxvOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CzLX3toqOStQTFy60LrGjLGlTT71uOju5tCD6g8HA5Y=;
+ b=VPIyuyG1kXbfLqt7pMawAyP9GjhdBD9NkDbigkf9PqzDjgR8QnxUZUu0KFUZ0b75AuSbachC+OioKyHqm8X0WDCLsjtaARxPVXrSLSl2/L0RROSAq2jqsR1PA7KVCSvKYy1CytqmxUr20jc9mEEhEtqcPDo0OXzJU4fOEuGOHMs33WVEZrXhwfX+j6YGlDUljjl/zO17PaOQ68QZDhJCdVabHvcIs4cpokkw2RlFuEknQQE3mgFuX6ZVi/yovT//x3y8yhgQMsnQH1vdgQU2Sfj0v2cWqD9OVRB4STxHt642iUgEU5OANHr1RVVXAkb+Ev6OZMzMva7+/8uywZUlAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CzLX3toqOStQTFy60LrGjLGlTT71uOju5tCD6g8HA5Y=;
+ b=GDFKU9KngrExYpua2bPhYNIfh+G7B8jbXcC2+LgfVgNpMeglB0i16khuwarbERFt6khb8+ZoIdm4DvMa7j6VK1ZRe1hU7qrD7NPr6Ais15OD/zkG1KloFSKWt2k3ExB2GARjhD0DPkkeD5TTYYL5LYeyMcaMbaLXCzQyii2WJfw=
+Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com (2603:1096:404:d5::22)
+ by TY2PR01MB2569.jpnprd01.prod.outlook.com (2603:1096:404:74::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3348.15; Thu, 10 Sep
+ 2020 11:24:21 +0000
+Received: from TY2PR01MB3692.jpnprd01.prod.outlook.com
+ ([fe80::9055:525d:2d64:b625]) by TY2PR01MB3692.jpnprd01.prod.outlook.com
+ ([fe80::9055:525d:2d64:b625%5]) with mapi id 15.20.3348.019; Thu, 10 Sep 2020
+ 11:24:20 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Laurent <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Magnus <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux-DT <devicetree@vger.kernel.org>,
-        "(Renesas) shimoda" <yoshihiro.shimoda.uh@renesas.com>,
-        DRI Development <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: RE: [PATCH 14/14] arm64: dts: renesas: Add Renesas Falcon boards
+ support
+Thread-Topic: [PATCH 14/14] arm64: dts: renesas: Add Renesas Falcon boards
+ support
+Thread-Index: AQHWhPgXPxjJ48KvYUmh4Lgcbyf/male/suAgAK7PuCAAAL6gIAAAqXw
+Date:   Thu, 10 Sep 2020 11:24:20 +0000
+Message-ID: <TY2PR01MB36929567AEB2CB7BB45B2036D8270@TY2PR01MB3692.jpnprd01.prod.outlook.com>
+References: <1599470390-29719-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1599470390-29719-15-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdUXUvU5dPkBFdW_ZVhnBKpFEPVLD3mdOkhrmakZjCHErg@mail.gmail.com>
+ <TY2PR01MB36929138C1723ABE87358597D8270@TY2PR01MB3692.jpnprd01.prod.outlook.com>
+ <CAMuHMdU6TLz09bvNCK8kRruu-W+B8c9Bnbr5kTCZzW-38cqO8A@mail.gmail.com>
+In-Reply-To: <CAMuHMdU6TLz09bvNCK8kRruu-W+B8c9Bnbr5kTCZzW-38cqO8A@mail.gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: linux-m68k.org; dkim=none (message not signed)
+ header.d=none;linux-m68k.org; dmarc=none action=none header.from=renesas.com;
+x-originating-ip: [240f:60:5f3e:1:29e4:1562:227f:bbc3]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ae683b2a-abec-4d87-3469-08d8557c103a
+x-ms-traffictypediagnostic: TY2PR01MB2569:
+x-microsoft-antispam-prvs: <TY2PR01MB25699F5EAF96E1836C694FBAD8270@TY2PR01MB2569.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4502;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ILQm4gEWlvJ4ldguesj14A8jFQSVt00FgOYAu27XclPKoWw9Cmkzx3MVtxJ+Nr1so1rxwbcSSbJzWhp6jzOLa4/U4B5LzKx2kBLx8ktYzhxxmzrYvxlomuT9ddNZruP0I7zByE4qDRLnpXSCWiEO5IGr1Vj5n+z261S9p38tbc1jNAY1+OORNXznQsssbuFFuOIE/6IalOsZSLvrcPB+vuT6pKmZkZh6oRsnJezDy+DzboFw+6UkeIx7bCNZ/GZIiO/cqzne12hpTqvuyjjvWb0iOYRN+CIqbaIBTZreaTr22oAXkq5tn9sTpLA2l1FupTKK07DgJQkmx1P2Ecd8Gw==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY2PR01MB3692.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(376002)(39860400002)(136003)(346002)(396003)(366004)(478600001)(76116006)(53546011)(71200400001)(66556008)(66476007)(64756008)(6506007)(55016002)(66446008)(4326008)(186003)(6916009)(7696005)(5660300002)(52536014)(2906002)(86362001)(54906003)(66946007)(33656002)(8676002)(8936002)(316002)(9686003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: qefNlo8kn2uyVHy98PHx4K+RmleG5nBE60XgknRoaNt34Z4hiy+hsCiAcMTz5e1TboTrz1bGUxSUqmEImXk3oSZbLTbwIlwZppTkPOnaGMCF3aosmSvAaCmrZT6H+Bj5ehKe77H+0++L2UASI39tO6ii4hcVnU6uvQJajg2JdA19jrNSh6G/ARJgPdMWsYe4ddYj1ZuPnizxImVgD9vQz2qOiR9BRCFc5N6LG1lVSTbum68jwSpVqefHb5YiaHOK5caWFWL6yLwTrwJ9mqpr4o9HnWjJ0MPSk9PMa8omTqxetvgKhfdfizvxpwWdr8/A0z/MZq5fwcvR6AYMWUG23679cIj62oJnQgfQw/264Gx4gliU5pmqoBIkaSMmT25gkOJsl9pYgfisQwstoAgw7I7tS4j9uSgMYlOl/5ofTTp3XF3KdERyntVcLb6K7JtykCsEaxOxieupWvEbw3EeVzWSezQaEFLJP/eTn7aR1lp0l24mgNqGQt5Gi17wH7qxOrfDCdmtSccM61oR9Di2NC4H5SCXDRsTfJKFQbi30KDE7umVrrnQpDGimGGd0slh87cPlll9OlcKpiSY4tJLsBeXmHT05TkYVLk39t9/4RsfM9Ivif+myfX8JZugMGpSpYXsNDlXbY/DQ2CCOnI9DD6Df7+SV3b/LWi4S63bj3zLOjbAMf1D/BkOaeVnxlLZXM4AC4RKNIGk2yB912crdQ==
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY2PR01MB3692.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae683b2a-abec-4d87-3469-08d8557c103a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Sep 2020 11:24:20.7991
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: WNg95zNMchuAFc+fMFdY0+HvknyVVwBGW8Z61Yc/EJ7KFqACAnFa2MQbf5cc4V2V9RYMdSjE8tOPqL/G+3VzzjMRDm5rqlhpIvrEBx44wIHyWSCpEud0Gpw6PCpA5ksR
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2569
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
-
-On Thu, Sep 10, 2020 at 12:34 PM Kieran Bingham
-<kieran.bingham+renesas@ideasonboard.com> wrote:
-> On 10/09/2020 10:44, Geert Uytterhoeven wrote:
-> > On Mon, Sep 7, 2020 at 5:55 PM Kieran Bingham
-> > <kieran.bingham+renesas@ideasonboard.com> wrote:
-> >> On 07/09/2020 03:59, Kuninori Morimoto wrote:
-> >>> From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> >>>
-> >>> This patch adds VSP device nodes for R-Car M3-W+ (r8a77961) SoC.
-> >>> This patch is test on R-Car M3-W+ Salvator-XS board.
-> >>>
-> >>> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-> >>> ---
-> >>>  arch/arm64/boot/dts/renesas/r8a77961.dtsi | 55 +++++++++++++++++++++++
-> >>>  1 file changed, 55 insertions(+)
-> >>>
-> >>> diff --git a/arch/arm64/boot/dts/renesas/r8a77961.dtsi b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-> >>> index fe0db11b9cb9..c2a6918ed5e6 100644
-> >>> --- a/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-> >>> +++ b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
-> >>> @@ -2056,6 +2056,61 @@ fcpvd2: fcp@fea37000 {
-> >>>                       iommus = <&ipmmu_vi0 10>;
-> >>>               };
-> >>
-> >> The FCP's added are:
-> >>
-> >>                 fcpf0: fcp@fe950000 {
-> >>                 fcpf1: fcp@fe951000 {
-> >>                 fcpvb0: fcp@fe96f000 {
-> >>                 fcpvb1: fcp@fe92f000 {
-> >>                 fcpvi0: fcp@fe9af000 {
-> >>                 fcpvi1: fcp@fe9bf000 {
-> >>                 fcpvd0: fcp@fea27000 {
-> >>                 fcpvd1: fcp@fea2f000 {
-> >>                 fcpvd2: fcp@fea37000 {
-> >>
-> >> So indeed, the first fcpf0 comes before fe960000.
-> >>
-> >> Do we keep the items grouped by the first occurrence? or sort the nodes
-> >> based on address?
-> >>
-> >> for some reason I thought we were ordering based on address, but I see
-> >> other situations where we group too - so I'm confused (and wishing there
-> >> was an automatic tool to get the sorting correct without fuss).
-> >>
-> >> Is there a set policy?
-> >
-> > For nodes with a unit-address, we usually[*] sort by unit-address, but we keep
-> > similar nodes grouped.  Hence I prefer this v1 over v2.
->
-> I assume then the groups are sorted by the first entry,
->
-> I.e. hypothetically:
->
-> fdp@0
-> fcp@1
-> vsp@2
-> fdp@3
-> fcp@4
-> vsp@5
-> cmm@6
-> cmm@7
->
-> would become
->
-> fdp@0
-> fdp@3
-> fcp@1
-> fcp@4
-> vsp@2
-> vsp@5
-> cmm@6
-> cmm@7
-
-Exactly.  That's how we (Reneas SoCs) have been (trying to) doing it.
-I am aware there are some deviations (e.g. do you keep all 4 possible
-SCIF types together (they're all serial@), or do you group them per
-type? And some nodes (ipmmu) may be sorted alphabetically by label).
-
-> Has anyone already created any scripting/validation to automate the
-> sorting requirements?
-
-Not yet, AFAIK. I've been thinking about doing that several times,
-though ;-)
-
-> > [*] Seems like FCP/VSP are interleaved in r8a77990.dsi, doh.
-> >
->
-> Personally I prefer that - but my opinion doesn't matter here - so as
-> long as the rules are defined (or even better, automatically
-> enforceable) that's fine.
-
-Indeed.
-
-Perhaps creating rules is something to be handled at a higher level
-(i.e. common for all DTS files)?
-
-Summarizing "our" rules:
-  1. Nodes without unit-address are sorted alphabetically, by node name,
-  2. Nodes with unit-address are sorted numerically, by unit-address,
-       a. Nodes of the same type are grouped together, i.e. the whole
-          group is sorted w.r.t. to other nodes/groups based on the
-          unit-address of the first member of the group.
-  3. Anchors are sorted alphabetically, but anchor name.
-
-Do they make sense?
-
-> >>> +             vspb: vsp@fe960000 {
-> >>> +                     compatible = "renesas,vsp2";
-> >>> +                     reg = <0 0xfe960000 0 0x8000>;
-> >>> +                     interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-> >>> +                     clocks = <&cpg CPG_MOD 626>;
-> >>> +                     power-domains = <&sysc R8A77961_PD_A3VC>;
-> >>> +                     resets = <&cpg 626>;
-> >>> +
-> >>> +                     renesas,fcp = <&fcpvb0>;
-> >>> +             };
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+SGkgR2VlcnQtc2FuLA0KDQo+IEZyb206IEdlZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogVGh1cnNk
+YXksIFNlcHRlbWJlciAxMCwgMjAyMCA4OjE0IFBNDQo+IA0KPiBIaSBTaGltb2RhLXNhbiwNCj4g
+DQo+IE9uIFRodSwgU2VwIDEwLCAyMDIwIGF0IDE6MDQgUE0gWW9zaGloaXJvIFNoaW1vZGENCj4g
+PHlvc2hpaGlyby5zaGltb2RhLnVoQHJlbmVzYXMuY29tPiB3cm90ZToNCj4gPiA+IEZyb206IEdl
+ZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogV2VkbmVzZGF5LCBTZXB0ZW1iZXIgOSwgMjAyMCAyOjIx
+IEFNDQo+ID4gPiBPbiBNb24sIFNlcCA3LCAyMDIwIGF0IDExOjIwIEFNIFlvc2hpaGlybyBTaGlt
+b2RhDQo+ID4gPiA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+IHdyb3RlOg0KPiA+
+ID4gPiBJbml0aWFsIHN1cHBvcnQgZm9yIHRoZSBSZW5lc2FzIEZhbGNvbiBDUFUgYW5kIEJyZWFr
+T3V0IGJvYXJkcw0KPiA+ID4gPiBzdXBwb3J0Lg0KPiA+ID4gPg0KPiA+ID4gPiBTaWduZWQtb2Zm
+LWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+
+DQo+ID4gPg0KPiA+ID4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiA+ID4NCj4gPiA+ID4gLS0t
+IC9kZXYvbnVsbA0KPiA+ID4gPiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL3JlbmVzYXMvZmFs
+Y29uLWNwdS5kdHNpDQo+ID4gPiA+IEBAIC0wLDAgKzEsNDQgQEANCj4gPiA+ID4gKy8vIFNQRFgt
+TGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wDQo+ID4gPiA+ICsvKg0KPiA+ID4gPiArICogRGV2
+aWNlIFRyZWUgU291cmNlIGZvciB0aGUgRmFsY29uIENQVSBib2FyZA0KPiA+ID4gPiArICoNCj4g
+PiA+ID4gKyAqIENvcHlyaWdodCAoQykgMjAyMCBSZW5lc2FzIEVsZWN0cm9uaWNzIENvcnAuDQo+
+ID4gPiA+ICsgKi8NCj4gPiA+DQo+ID4gPiBBcyB0aGlzIGJvYXJkIGNvbnRhaW5zIHRoZSBDUFUs
+IEkgaGFkIGV4cGVjdGVkDQo+ID4gPg0KPiA+ID4gICAgICNpbmNsdWRlICJyOGE3NzlhMC5kdHNp
+Ig0KPiA+ID4NCj4gPiA+IGhlcmUuDQo+ID4NCj4gPiBJIGdvdCBpdC4gSSdsbCBhZGQgaXQuDQo+
+IA0KPiBUaGFua3MhDQo+IA0KPiBCVFcsIEkgZm9yZ290IHRvIG1lbnRpb24gdGhhdCB0aGUgZmls
+ZSBzaG91bGQgcHJvYmFibHkgYmUgbmFtZWQNCj4gcjhhNzc5YTAtZmFsY29uLWNwdS5kdHNpLCBp
+LmUuIGluY2wuIHRoZSBTb0MgcGFydCBudW1iZXIgcHJlZml4Lg0KDQpJIGdvdCBpdC4gSSdsbCBy
+ZW5hbWUgdGhlIGZpbGUgb24gdjIgcGF0Y2guDQoNCkJlc3QgcmVnYXJkcywNCllvc2hpaGlybyBT
+aGltb2RhDQoNCg==
