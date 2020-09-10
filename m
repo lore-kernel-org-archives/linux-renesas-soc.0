@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2676C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AADE2C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:14:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92E872078B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:13:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D387207EA
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:14:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599761624;
-	bh=z54NT2te4cQqCwvnxGuhIvp2W2PqIQwX8Rfrwo03n6k=;
+	s=default; t=1599761643;
+	bh=nYdsEt4eLLJRNSq2tYSCZbVTWwm5iqC5mEub4SpLTXE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AriUFVoFwDXFGb0ptYiefFByI5TBDi1oADSmufexy9D3I4K8iCYAV3J4E4y6DNYJy
-	 H6jKOiMjH5EQ9P2uevGJEGim1ONBs8XNOvVHYe7BPYYZ/h8Rblcju3/2GI8Th+yZfH
-	 6t7bKsCtsA14A6tzzqqnUnBNtf5Fh9V9ebZeU3Ew=
+	b=lCtL4ggL5gS7k9bk346ajfvmIF7HiWujTsvO5MPg1jtKmuDv2J3721nirFfw3iTEv
+	 iWGblBMwq5JC8YPunxsCEg6kVcQ+HvTgazhautLdfKJ3xLhRT1EMPGK5rxxIuMuWxf
+	 Iq8cAuR2VCMmi0GBP5LwVsCS83jOEZv6B2xDWpH8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbgIJSMt (ORCPT
+        id S1726399AbgIJSMr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 14:12:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36092 "EHLO mail.kernel.org"
+        Thu, 10 Sep 2020 14:12:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726293AbgIJR6x (ORCPT
+        id S1725864AbgIJR7G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 13:58:53 -0400
+        Thu, 10 Sep 2020 13:59:06 -0400
 Received: from localhost.localdomain (unknown [194.230.155.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BA2C21D91;
-        Thu, 10 Sep 2020 17:58:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E9FC21D90;
+        Thu, 10 Sep 2020 17:58:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599760732;
-        bh=z54NT2te4cQqCwvnxGuhIvp2W2PqIQwX8Rfrwo03n6k=;
+        s=default; t=1599760746;
+        bh=nYdsEt4eLLJRNSq2tYSCZbVTWwm5iqC5mEub4SpLTXE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2OOohK7bgkjAXYZUoUF88z1ixnRLPLaG9nVyygZBQjzzZVOCec049BIyjZwe20Mwf
-         +ouY0f9kxGpb3soYwmQAOsBWuvUYeBR7gtDaLgtnbXiR6fzUxlQjTpFNUF2g/KvCr/
-         ueqLjaySfRBT8IvG2CyiV+4Sw8zMOxbXyu+/FmcU=
+        b=qxe1ewZk3ANKT0jYpzLPsJG3fIjRqBF2b5XH1uhcD5ON03tM0IgyhVDcSybWHCGOU
+         6aoLL/1Kttdp8WUIZMxwUgI1EaIJGdFTkieikEhJsSh3VNEdrruhn9MIfPD+bQe3Ca
+         neb6d0Kuq2FduigMJzjlultnMq8A5ivf+gYrtpOo=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -68,9 +68,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 09/15] ARM: dts: am335x: t335: align GPIO hog names with dtschema
-Date:   Thu, 10 Sep 2020 19:57:27 +0200
-Message-Id: <20200910175733.11046-10-krzk@kernel.org>
+Subject: [PATCH v2 11/15] ARM: dts: aspeed: fix PCA95xx GPIO expander properties on Portwell
+Date:   Thu, 10 Sep 2020 19:57:29 +0200
+Message-Id: <20200910175733.11046-12-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200910175733.11046-1-krzk@kernel.org>
 References: <20200910175733.11046-1-krzk@kernel.org>
@@ -79,34 +79,27 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The convention for node names is to use hyphens, not underscores.
-dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.
+The PCA95xx GPIO expander requires GPIO controller properties to operate
+properly.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm/boot/dts/am335x-sbc-t335.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/am335x-sbc-t335.dts b/arch/arm/boot/dts/am335x-sbc-t335.dts
-index a3f6bc4072d9..81e4453687ba 100644
---- a/arch/arm/boot/dts/am335x-sbc-t335.dts
-+++ b/arch/arm/boot/dts/am335x-sbc-t335.dts
-@@ -155,13 +155,13 @@
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		reg = <0x26>;
--		dvi_ena {
-+		dvi-ena-hog {
- 			gpio-hog;
- 			gpios = <13 GPIO_ACTIVE_HIGH>;
- 			output-high;
- 			line-name = "dvi-enable";
- 		};
--		lcd_ena {
-+		lcd-ena-hog {
- 			gpio-hog;
- 			gpios = <11 GPIO_ACTIVE_HIGH>;
- 			output-high;
+diff --git a/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts b/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
+index 4a1ca8f5b6a7..03c161493ffc 100644
+--- a/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
++++ b/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
+@@ -121,6 +121,8 @@
+ 	pca9555@27 {
+ 		compatible = "nxp,pca9555";
+ 		reg = <0x27>;
++		gpio-controller;
++		#gpio-cells = <2>;
+ 	};
+ };
+ 
 -- 
 2.17.1
 
