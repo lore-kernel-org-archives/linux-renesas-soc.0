@@ -2,49 +2,59 @@ Return-Path: <SRS0=jird=CT=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45826C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E02C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1E53206A2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:16:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1599761806;
-	bh=9vEz3caNfDoekMkEldtsPOm1s72Th5+Yg8h2PhuTrWE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XKO66HfKdAF/mRcz93/k8uqMgDre3J4uoWiKZ569oyjXXKToi3mnWl5+JzUJOCEGS
-	 61Un1EL2YsGNzYgXis5l1z0vmS7pcHEkk4zchyK5HVLUtlZItQgQ/VINkflXNWkjQk
-	 x8vpJoIAt0FaSfJHtmBWn04S59fk7wAGNwi5pwws=
+	by mail.kernel.org (Postfix) with ESMTP id 1D8492080A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Sep 2020 18:33:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ON8eBfGm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726663AbgIJSP6 (ORCPT
+        id S1726440AbgIJSbm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Sep 2020 14:15:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbgIJR6I (ORCPT
+        Thu, 10 Sep 2020 14:31:42 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:59750 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbgIJS3n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Sep 2020 13:58:08 -0400
-Received: from localhost.localdomain (unknown [194.230.155.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06F6221941;
-        Thu, 10 Sep 2020 17:58:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1599760688;
-        bh=9vEz3caNfDoekMkEldtsPOm1s72Th5+Yg8h2PhuTrWE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JfSBrW4n9ALVGeYax0pjN4g9utKWMKJqAzrptfdBpo/h2cIhJrexdaBHceTCGAEIF
-         ezW+6VbN5WT5FEBu1ZWU30dPoT45GIfk2RbH8Loxb9rrs5vdfjpWg6vOT13WM0oGvA
-         fmeUt419EE3qF+QMmv8QiOtIZsp/gAVBG1+sYxl0=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+        Thu, 10 Sep 2020 14:29:43 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 08AISHSD084673;
+        Thu, 10 Sep 2020 13:28:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1599762497;
+        bh=/p00wrLZKxm3tUdvkQZ3Zas+TvF5YzDvm0LLgn7D3xQ=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=ON8eBfGmOQBQZAOZzSzMJXoaAUONGx+PNaEnoSbTXzBrY10dzuDqJ4nJHVJ9C3xlj
+         E7Dhx3GpS+UNp5WpcmR2xgjrVCOcY6TJfa7P/HAb8DhdkYRe8A5Deqk72nyekQtKkN
+         dhc9G7Q3PZPA57dy53JiDEkqPS5ygGvh9+c+kTQ0=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 08AISHdJ130436
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Sep 2020 13:28:17 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 10
+ Sep 2020 13:28:17 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Thu, 10 Sep 2020 13:28:17 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 08AISFXN107099;
+        Thu, 10 Sep 2020 13:28:16 -0500
+Date:   Thu, 10 Sep 2020 13:28:14 -0500
+From:   Nishanth Menon <nm@ti.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+CC:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
         Tony Lindgren <tony@atomide.com>,
         Russell King <linux@armlinux.org.uk>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -60,45 +70,43 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
         Michal Simek <michal.simek@xilinx.com>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 03/15] arm64: dts: mediatek: fix tca6416 reset GPIOs in pumpkin
-Date:   Thu, 10 Sep 2020 19:57:21 +0200
-Message-Id: <20200910175733.11046-4-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200910175733.11046-1-krzk@kernel.org>
+        Guenter Roeck <linux@roeck-us.net>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v2 01/15] dt-bindings: gpio: convert bindings for NXP
+ PCA953x family to dtschema
+Message-ID: <20200910182814.veviax3n377undkv@akan>
 References: <20200910175733.11046-1-krzk@kernel.org>
+ <20200910175733.11046-2-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20200910175733.11046-2-krzk@kernel.org>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Correct the property for reset GPIOs of tca6416 GPIO expander.
+On 19:57-20200910, Krzysztof Kozlowski wrote:
+[...]
+> +  wakeup-source:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +
+> +patternProperties:
+> +  "^(hog-[0-9]+|.+-hog(-[0-9]+)?)$":
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I wonder if "hog" is too generic and might clash with "something-hog" in
+the future?
 
-diff --git a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi b/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
-index dfceffe6950a..29d8cf6df46b 100644
---- a/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/pumpkin-common.dtsi
-@@ -56,7 +56,7 @@
- 	tca6416: gpio@20 {
- 		compatible = "ti,tca6416";
- 		reg = <0x20>;
--		rst-gpio = <&pio 65 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&pio 65 GPIO_ACTIVE_HIGH>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&tca6416_pins>;
- 
 -- 
-2.17.1
-
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
