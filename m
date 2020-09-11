@@ -2,66 +2,70 @@ Return-Path: <SRS0=JlV5=CU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69DEFC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Sep 2020 10:15:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 415AAC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Sep 2020 10:17:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F32422204
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Sep 2020 10:15:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AA47206B8
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Sep 2020 10:17:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725850AbgIKKOe (ORCPT
+        id S1725854AbgIKKRK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Sep 2020 06:14:34 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:59494 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725710AbgIKKOd (ORCPT
+        Fri, 11 Sep 2020 06:17:10 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:44300 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725829AbgIKKRJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Sep 2020 06:14:33 -0400
+        Fri, 11 Sep 2020 06:17:09 -0400
 X-IronPort-AV: E=Sophos;i="5.76,414,1592838000"; 
-   d="scan'208";a="57031544"
+   d="scan'208";a="56814567"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Sep 2020 19:14:32 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 11 Sep 2020 19:17:07 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4BE7A4007548;
-        Fri, 11 Sep 2020 19:14:30 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E3B674007526;
+        Fri, 11 Sep 2020 19:17:05 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH 0/2] media: rcar-vin: Kconfig: Update Kconfig
-Date:   Fri, 11 Sep 2020 11:14:20 +0100
-Message-Id: <20200911101422.20333-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: Kconfig: Update description for CLK_RCAR_GEN3_CPG config
+Date:   Fri, 11 Sep 2020 11:17:03 +0100
+Message-Id: <20200911101703.20521-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi All,
+rcar-gen3-cpg driver is also used on Renesas RZ/G2 SoC's, update the same
+to reflect the description for CLK_RCAR_GEN3_CPG config.
 
-This is trivial patch series updating the rcar-vin Kconfig to
-include Renesas RZ/Gx SoC's
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+---
+ drivers/clk/renesas/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers,
-Prabhakar
-
-Lad Prabhakar (2):
-  media: rcar-vin: Kconfig: Update help description for VIDEO_RCAR_CSI2
-    config
-  media: rcar-vin: Kconfig: Update help description for VIDEO_RCAR_VIN
-    config
-
- drivers/media/platform/rcar-vin/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 28e8730ce263..1277d5f90389 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -162,7 +162,7 @@ config CLK_RCAR_GEN2_CPG
+ 	select CLK_RENESAS_CPG_MSSR
+ 
+ config CLK_RCAR_GEN3_CPG
+-	bool "R-Car Gen3 CPG clock support" if COMPILE_TEST
++	bool "R-Car Gen3 and RZ/G2 CPG clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSSR
+ 
+ config CLK_RCAR_USB2_CLOCK_SEL
 -- 
 2.17.1
 
