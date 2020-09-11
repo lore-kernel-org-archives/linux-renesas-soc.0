@@ -2,110 +2,215 @@ Return-Path: <SRS0=JlV5=CU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E109C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Sep 2020 09:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C04AFC43461
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Sep 2020 09:34:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 32400208E4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Sep 2020 09:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FC7921D40
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Sep 2020 09:34:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725784AbgIKJXT (ORCPT
+        id S1725784AbgIKJev (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Sep 2020 05:23:19 -0400
-Received: from mga05.intel.com ([192.55.52.43]:23204 "EHLO mga05.intel.com"
+        Fri, 11 Sep 2020 05:34:51 -0400
+Received: from mga05.intel.com ([192.55.52.43]:24035 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725764AbgIKJXS (ORCPT
+        id S1725554AbgIKJeu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Sep 2020 05:23:18 -0400
-IronPort-SDR: TpwDP/xHxjROwi02V/eBqq3Nz+Bq7IITcnY8pTD6N6O4UMva1wm8CsrM56Iif5BnZgdPLtKkwX
- jIevQhLx68wA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9740"; a="243545237"
+        Fri, 11 Sep 2020 05:34:50 -0400
+IronPort-SDR: 0BRVW2c/vNZhc41vMdvlijvxDhMgg/ngOMSweYS0lH94NK60ikmFHut9MPLzPY0Wz4KTAFqVku
+ CRXSXJ+2qa7g==
+X-IronPort-AV: E=McAfee;i="6000,8403,9740"; a="243546598"
 X-IronPort-AV: E=Sophos;i="5.76,414,1592895600"; 
-   d="scan'208";a="243545237"
+   d="scan'208";a="243546598"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 02:23:17 -0700
-IronPort-SDR: C7HG9sa2Vx4WvDEyLxFCHuctA0mzklzfk0PgBaKBKqzfcfStylldgCUdi7FLUzqVzv/waetQ2D
- AXg7AVbYB4sA==
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 02:34:49 -0700
+IronPort-SDR: EE6cF2uj4ZOF5MLgDF4wTxeJBI0HWfvfcWHfTQ0v8VVmYMZzkZA1Af40kAvPu1SvZT+qVUbIEf
+ bQcQMjpcHYng==
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.76,414,1592895600"; 
-   d="scan'208";a="334458287"
-Received: from paasikivi.fi.intel.com ([10.237.72.42])
-  by orsmga008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Sep 2020 02:23:14 -0700
-Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
-        id 2E3B82079D; Fri, 11 Sep 2020 12:23:12 +0300 (EEST)
-Date:   Fri, 11 Sep 2020 12:23:12 +0300
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "hverkuil-cisco@xs4all.nl" <hverkuil-cisco@xs4all.nl>,
-        "laurent.pinchart@ideasonboard.com" 
-        <laurent.pinchart@ideasonboard.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>, Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v5 2/3] dt-bindings: media: ov772x: Make bus-type
- mandatory
-Message-ID: <20200911092312.GA26842@paasikivi.fi.intel.com>
-References: <20200910162055.614089-1-jacopo+renesas@jmondi.org>
- <20200910162055.614089-3-jacopo+renesas@jmondi.org>
- <20200911053757.GF6566@paasikivi.fi.intel.com>
- <20200911085837.kyxx3p465ovowcel@uno.localdomain>
- <OSBPR01MB5048CACE31FB094F753F4F55AA240@OSBPR01MB5048.jpnprd01.prod.outlook.com>
+   d="scan'208";a="342247653"
+Received: from lkp-server01.sh.intel.com (HELO a75722977aa5) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 11 Sep 2020 02:34:48 -0700
+Received: from kbuild by a75722977aa5 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1kGfSC-00009p-5x; Fri, 11 Sep 2020 09:34:48 +0000
+Date:   Fri, 11 Sep 2020 17:34:08 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [renesas-devel:renesas-drivers-for-v5.10] BUILD SUCCESS
+ 8e9529f5cde7c99a0c528d96c600b5affad71908
+Message-ID: <5f5b4490.zvOoY5NCBlFJILuL%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <OSBPR01MB5048CACE31FB094F753F4F55AA240@OSBPR01MB5048.jpnprd01.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Sep 11, 2020 at 08:59:13AM +0000, Prabhakar Mahadev Lad wrote:
-> Hi Jacopo,
-> 
-> > -----Original Message-----
-> > From: Jacopo Mondi <jacopo@jmondi.org>
-> > Sent: 11 September 2020 09:59
-> > To: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>; robh+dt@kernel.org; devicetree@vger.kernel.org; linux-media@vger.kernel.org; Lad,
-> > Prabhakar <prabhakar.csengg@gmail.com>; mchehab@kernel.org; hverkuil-cisco@xs4all.nl; laurent.pinchart@ideasonboard.com; linux-
-> > renesas-soc@vger.kernel.org; Rob Herring <robh@kernel.org>; Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Subject: Re: [PATCH v5 2/3] dt-bindings: media: ov772x: Make bus-type mandatory
-> >
-> > Hi Sakari,
-> >
-> > On Fri, Sep 11, 2020 at 08:37:57AM +0300, Sakari Ailus wrote:
-> > > Hi Jacopo,
-> > >
-> > > On Thu, Sep 10, 2020 at 06:20:54PM +0200, Jacopo Mondi wrote:
-> > > > In order to establish required properties based on the selected
-> > > > bus type, make the 'bus-type' property mandatory. As this change
-> > > > documents an endpoint property, also document the 'remote-endpoint'
-> > > > one now that the 'endpoint' schema has been expanded.
-> > > >
-> > > > Binary compatibility with existing DTB is kept as the driver does not
-> > > > enforce the property to be present, and shall fall-back to default
-> > > > parallel bus configuration, which was the only supported bus type, if
-> > > > the property is not specified.
-> > >
-> > > Could you add a comment on this to the driver, so this feature isn't
-> > > accidentally removed?
-> >
-> > Sure, can I send a patch in reply to this series to avoid a v6 ?
-> If you don’t mind Ill handle this as part of bt656 additions ?
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-drivers-for-v5.10
+branch HEAD: 8e9529f5cde7c99a0c528d96c600b5affad71908  soc: renesas: rcar-rst: Add support for R-Car V3U
 
-Both are fine for me.
+elapsed time: 724m
 
--- 
-Sakari Ailus
+configs tested: 140
+configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm                              allyesconfig
+arm                              allmodconfig
+arm64                               defconfig
+powerpc                 mpc832x_rdb_defconfig
+arm                            lart_defconfig
+powerpc                      ppc64e_defconfig
+arm                           omap1_defconfig
+powerpc                      acadia_defconfig
+arm                        trizeps4_defconfig
+arm                         lpc18xx_defconfig
+mips                           ip27_defconfig
+arm                              zx_defconfig
+sh                          sdk7786_defconfig
+powerpc                     rainier_defconfig
+sh                           sh2007_defconfig
+arm                           stm32_defconfig
+powerpc                      bamboo_defconfig
+sh                            shmin_defconfig
+mips                        qi_lb60_defconfig
+mips                            e55_defconfig
+powerpc                     ksi8560_defconfig
+ia64                             alldefconfig
+sh                          lboxre2_defconfig
+mips                        workpad_defconfig
+mips                           gcw0_defconfig
+sh                          sdk7780_defconfig
+openrisc                    or1ksim_defconfig
+arm                          imote2_defconfig
+arm                            zeus_defconfig
+sh                                  defconfig
+powerpc                    mvme5100_defconfig
+arm                        cerfcube_defconfig
+mips                          ath79_defconfig
+xtensa                           allyesconfig
+arm                       omap2plus_defconfig
+arc                 nsimosci_hs_smp_defconfig
+h8300                    h8300h-sim_defconfig
+mips                            gpr_defconfig
+powerpc                    sam440ep_defconfig
+arc                          axs101_defconfig
+sh                          rsk7264_defconfig
+arc                    vdk_hs38_smp_defconfig
+arm                         ebsa110_defconfig
+powerpc                    adder875_defconfig
+powerpc                     asp8347_defconfig
+arm                         s3c2410_defconfig
+h8300                     edosk2674_defconfig
+powerpc                   bluestone_defconfig
+arm                         lubbock_defconfig
+powerpc                 mpc837x_mds_defconfig
+arm                            u300_defconfig
+xtensa                           alldefconfig
+nios2                         3c120_defconfig
+powerpc                     powernv_defconfig
+sh                ecovec24-romimage_defconfig
+arm                       cns3420vb_defconfig
+ia64                            zx1_defconfig
+powerpc                     ep8248e_defconfig
+powerpc                     taishan_defconfig
+mips                      loongson3_defconfig
+microblaze                    nommu_defconfig
+arc                          axs103_defconfig
+mips                         rt305x_defconfig
+sh                          kfr2r09_defconfig
+arm                         cm_x300_defconfig
+sh                          polaris_defconfig
+mips                        maltaup_defconfig
+powerpc                 mpc8272_ads_defconfig
+arm                           h3600_defconfig
+sparc64                             defconfig
+sh                        apsh4ad0a_defconfig
+arm                        multi_v5_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                             allyesconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+powerpc                             defconfig
+i386                 randconfig-a004-20200911
+i386                 randconfig-a006-20200911
+i386                 randconfig-a001-20200911
+i386                 randconfig-a003-20200911
+i386                 randconfig-a002-20200911
+i386                 randconfig-a005-20200911
+x86_64               randconfig-a014-20200911
+x86_64               randconfig-a011-20200911
+x86_64               randconfig-a012-20200911
+x86_64               randconfig-a016-20200911
+x86_64               randconfig-a015-20200911
+x86_64               randconfig-a013-20200911
+i386                 randconfig-a015-20200911
+i386                 randconfig-a014-20200911
+i386                 randconfig-a011-20200911
+i386                 randconfig-a013-20200911
+i386                 randconfig-a016-20200911
+i386                 randconfig-a012-20200911
+riscv                            allyesconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                            allmodconfig
+x86_64                                   rhel
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                                  kexec
+
+clang tested configs:
+x86_64               randconfig-a004-20200911
+x86_64               randconfig-a006-20200911
+x86_64               randconfig-a003-20200911
+x86_64               randconfig-a002-20200911
+x86_64               randconfig-a005-20200911
+x86_64               randconfig-a001-20200911
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
