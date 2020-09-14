@@ -2,94 +2,75 @@ Return-Path: <SRS0=4bSJ=CX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2D7C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Sep 2020 20:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFE2C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Sep 2020 21:51:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94FAA208DB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Sep 2020 20:15:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600114508;
-	bh=7Idav457hr/WP2VLV+z61v8x+TFmfPemXdaTZKDthtM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PUfJmmsgvjG4TRrwI8m5gexuyRln+VHEdWQAar1M2qS+lTHEqtFDhH7mt6WyfvM47
-	 SwxTpEVmiY8H6dWUTVaeVw02v4BmNfqGY1lYe4rvpt1RrXwFm5jRNf99erfEzcOLLR
-	 SdNE8rinjaBXyyxHvrEHwAYt1tsls2j0wOe/2VRA=
+	by mail.kernel.org (Postfix) with ESMTP id C12AB21741
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Sep 2020 21:51:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725961AbgINUPH (ORCPT
+        id S1726073AbgINVvN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Sep 2020 16:15:07 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:37633 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbgINUPG (ORCPT
+        Mon, 14 Sep 2020 17:51:13 -0400
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:34552 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726061AbgINVvJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Sep 2020 16:15:06 -0400
-Received: by mail-il1-f193.google.com with SMTP id q4so835038ils.4;
-        Mon, 14 Sep 2020 13:15:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=n0MSpQUUz3/AeMyW1sKXcTCeGErt+hRzppRfjEwGRP4=;
-        b=hh5pAJxkh9u3EekrJNCs8j83bafCP71/evlLh8ndlWbft43TWnxwNyxKK+KY29Yi6d
-         DT2+9l6/+xf+DYN36KuJ7mI1VOkMuwhIg1dY22qjciXdnNWa+Rh1cO0U4CgHOSPczLiS
-         vq+6e6hwzoT9QQBZATuNc5/nTmaSiyTnBjNMjZI/HjRwJcyudmye5VKeMG8l7l9rRdjI
-         QCCeUzuI3dvFzqYOOFIFYU8mu2sQh79y3MWJO5SkmFsiMsrX/cGQ3doYAYcHRjBSLqRM
-         bJOSutbebcO3tHolMCwvHzLVbJPx6tjyiPA9OgQHVjbfJJ9ozLfAgTBKncuA+mrs1iD8
-         J89w==
-X-Gm-Message-State: AOAM531QT4H5YglTzV2vIcR9Ck0XSBRH1TUyZapA0Uo7XklKsmXPBLFc
-        CcdkzZkYfPCmNjXLFvVzyg==
-X-Google-Smtp-Source: ABdhPJzwYkYIciGDUUmcf97fSVYjBK/rofVqSufC/hvYJ1di0l08bkmMVv+r2CHb5xTuqV9d8SlfhA==
-X-Received: by 2002:a92:1f1a:: with SMTP id i26mr7541134ile.201.1600114505427;
-        Mon, 14 Sep 2020 13:15:05 -0700 (PDT)
-Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id d1sm7395332ila.67.2020.09.14.13.15.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2020 13:15:04 -0700 (PDT)
-Received: (nullmailer pid 164938 invoked by uid 1000);
-        Mon, 14 Sep 2020 20:15:03 -0000
-Date:   Mon, 14 Sep 2020 14:15:03 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: timer: renesas,cmt: Document r8a7742 CMT
- support
-Message-ID: <20200914201503.GA164883@bogus>
-References: <20200902091927.32211-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Mon, 14 Sep 2020 17:51:09 -0400
+X-Halon-ID: 642d2a8e-f6d4-11ea-a39b-005056917f90
+Authorized-sender: niklas.soderlund@fsdn.se
+Received: from bismarck.berto.se (p54ac52a8.dip0.t-ipconnect.de [84.172.82.168])
+        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
+        id 642d2a8e-f6d4-11ea-a39b-005056917f90;
+        Mon, 14 Sep 2020 23:51:06 +0200 (CEST)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] rcar-csi2: Set bus type when parsing fwnode
+Date:   Mon, 14 Sep 2020 23:50:11 +0200
+Message-Id: <20200914215011.339387-3-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200914215011.339387-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20200914215011.339387-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200902091927.32211-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 02 Sep 2020 10:19:27 +0100, Lad Prabhakar wrote:
-> Document SoC specific compatible strings for r8a7742. No driver change
-> is needed as the fallback strings will activate the right code.
-> 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v1->v2
-> * Reabsed the patch on top YAML conversion
-> * Restored the Acks
-> ---
->  Documentation/devicetree/bindings/timer/renesas,cmt.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+The only supported bus for the R-Car CSI-2 driver is CSI-2 DPHY, specify
+this before parsing the fwnode.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index 23e89ef2429d310a..b2e58f51b94fccd7 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -874,7 +874,9 @@ static int rcsi2_parse_dt(struct rcar_csi2 *priv)
+ 	struct v4l2_async_subdev *asd;
+ 	struct fwnode_handle *fwnode;
+ 	struct fwnode_handle *ep;
+-	struct v4l2_fwnode_endpoint v4l2_ep = { .bus_type = 0 };
++	struct v4l2_fwnode_endpoint v4l2_ep = {
++		.bus_type = V4L2_MBUS_CSI2_DPHY
++	};
+ 	int ret;
+ 
+ 	ep = fwnode_graph_get_endpoint_by_id(dev_fwnode(priv->dev), 0, 0, 0);
+-- 
+2.28.0
+
