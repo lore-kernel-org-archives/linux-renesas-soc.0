@@ -2,130 +2,166 @@ Return-Path: <SRS0=4bSJ=CX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1241C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Sep 2020 17:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4436CC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Sep 2020 18:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 601CB20EDD
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Sep 2020 17:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2DB621974
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Sep 2020 18:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="yAUfhrrL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PsMLBBfs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbgINRq1 (ORCPT
+        id S1726056AbgINS0z (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Sep 2020 13:46:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43308 "EHLO
+        Mon, 14 Sep 2020 14:26:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726076AbgINMD4 (ORCPT
+        with ESMTP id S1726048AbgINS0r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Sep 2020 08:03:56 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0432CC06178A
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2020 04:54:13 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id k25so18370229ljk.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Sep 2020 04:54:12 -0700 (PDT)
+        Mon, 14 Sep 2020 14:26:47 -0400
+Received: from mail-yb1-xb41.google.com (mail-yb1-xb41.google.com [IPv6:2607:f8b0:4864:20::b41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE064C06178A;
+        Mon, 14 Sep 2020 11:26:46 -0700 (PDT)
+Received: by mail-yb1-xb41.google.com with SMTP id p81so560669ybc.12;
+        Mon, 14 Sep 2020 11:26:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=zjdRdVewBNz6bXTR/96hRuG4jQDF97H/qFQIJtyLqPA=;
-        b=yAUfhrrLWO2cjdsnZ04SwrIq5fnFFZArwfa1/vIyn86XuOOmFfGPlece+QLayEvxVP
-         8DQXfQE9UkMLy0EvSppwOq2pIZFyTCeWgo/lMJGIDxbYSA4wUUSsD4pZZbXC95sRrCFb
-         EItLsdbBGtfv3Vcth8EPlhv/3kEno6NdgeKf+pP8wqoPeFRamAy7Y5dzkIzm3ZgBXpYd
-         WVIuq9M3YN55jmcRVj+IvtAYRnRgLlfJd+LAL0AtBLbIGQjCLQfQ7pv3s5bZVKASZ2Cm
-         sT0/pzW22uexJGfOoIifZVYbCEsqcGADe39Hb55wK35XZE0L2r+TEPjJ9HmxNeUq9qXt
-         nhJg==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=orsG+I+8/k9sx4wSScsBpY6FXaWOiunslMG52trpArQ=;
+        b=PsMLBBfsKcpnPHJNGDfWdPwaIPbSmT+6lwaJphJURdI124bvLiEYBfhbGovIVXhfnQ
+         E0zfi357NZVQWAPDChaKEunbAkTXBeasXdE5miKI69BltTA7nj6wGoTEiNGQs82YJ4no
+         BUd+E2CdOzzph6GQnuV1Q5oLnwPA9ZKSlr7X77BhSdxHpK9eKt0AeVKwd3qOjK5Et2f+
+         HN3j+AxREIx00+XCdLgvUncxrdGCHWjdPqDHz2nCnRRUZcIl0TnxtQiBRR118+uM7GJz
+         InYFEKZDJzTxQnhOLj2DZOyEb/syj6PjJcvGVWJ7vpA7YLapaYpOd6munu5vcuoSN5+k
+         ehkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=zjdRdVewBNz6bXTR/96hRuG4jQDF97H/qFQIJtyLqPA=;
-        b=sj0LtedFBKbBR43gYqEPL+BqRU0bXH1sM97b2HnefMo7c4aeHnjuZAuKpcUGoMaGh8
-         Ahj0R0mBUkERUj2flEFGzFYQg89VtklCdbwgfuxJ+N5GUzXUKxtnC79fkAS00bZphnLp
-         aDcwS9OODHU13r5FroYgv2oxDAq0daR9buZLrflf1VExb4nkrn1ImtVj2U07bnK8cRTJ
-         FGK1M1niEZKAP+x0741cVFGGfEgQoeUJSi3+/XK+AYVb1TDvPiEfif0CvSBRaB7Wcv6v
-         Dcrc6KSKm/warFCr+Hh/Ukf7GLCylrni2apFtrZs6RiC3WfjYjpzVkggo2vvw9kEkd6c
-         8uXA==
-X-Gm-Message-State: AOAM531EcidnIwhT5WskHEfJ7EOc1/jKnjwEWSzbgfoSuo6CxNJQc8Lh
-        Au1Cc1Oy9tjX1hPkW7EwTWy6nMzZWZYUGg==
-X-Google-Smtp-Source: ABdhPJzInNQ1q7yxRTp/DjL1B7Zb0KZiWbCU68M5qyRxDaZUvRJqhtmoFPL1TgDxKjuDrF3Py5+Dkg==
-X-Received: by 2002:a2e:240e:: with SMTP id k14mr4719168ljk.169.1600084451418;
-        Mon, 14 Sep 2020 04:54:11 -0700 (PDT)
-Received: from localhost (h-209-203.A463.priv.bahnhof.se. [155.4.209.203])
-        by smtp.gmail.com with ESMTPSA id z6sm3332234lfq.297.2020.09.14.04.54.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Sep 2020 04:54:10 -0700 (PDT)
-Date:   Mon, 14 Sep 2020 13:54:10 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] mmc: core: clear 'doing_init_tune' also after failures
-Message-ID: <20200914115410.GM1127199@oden.dyn.berto.se>
-References: <20200914112845.21855-1-wsa+renesas@sang-engineering.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=orsG+I+8/k9sx4wSScsBpY6FXaWOiunslMG52trpArQ=;
+        b=Xc15CZrypad56yOFx04QXETOVSE7UKk1qy6aVYxB/mLVzDFv2R/0G9t65WHem86jXm
+         88wakfdfA+TpXI4R4zhr1JMV1cnr+yz5hGehu5Rc8yinY1/RYn7bAMPYe/bLi2ylLNSw
+         yZGtRPTj9iQHwWVAl2PSCUJJ9n0eTvlfzzVryGtCnQLD4WnlMmzlW+Dt7IvHWXWlLF+Z
+         YmxkWtURyWK/7/OtASejW8U9Mu70K5LqsTZy+EMKnnnWVAFss1x5YJvzNp+rdmQq+vT9
+         1zBY9aJBA61/3Rm6MyYKw6FD5F1/IyjkYv6BV1Lf6QxhcB5xismn8fvuFQwxpiYzPbUG
+         vW2g==
+X-Gm-Message-State: AOAM532H7rX5PE128qvZcZP/wtlmalypKBNPjMDczCn/WWUERxZ4iL6c
+        z0Z/PqZd+aokpIqO9xaXR0esXzzpe6BjhemTQHHTk6tl2ELrBg==
+X-Google-Smtp-Source: ABdhPJyKionoFzIjpDwMOuti0uX2GCz6L8GG13ZsyOqaOWwcu3pgXx9gXkJ5n92H3ltSPoY8hFh9owXdfQZ42A8ihaA=
+X-Received: by 2002:a25:aba1:: with SMTP id v30mr3965574ybi.518.1600108005948;
+ Mon, 14 Sep 2020 11:26:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200914112845.21855-1-wsa+renesas@sang-engineering.com>
+References: <20200913184247.618-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200913184247.618-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <20200914065415.GK26842@paasikivi.fi.intel.com>
+In-Reply-To: <20200914065415.GK26842@paasikivi.fi.intel.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Mon, 14 Sep 2020 19:26:19 +0100
+Message-ID: <CA+V-a8vmJo00vBqFWEnJWKagXm0ievGXW=kwG+w_oNWSmP1vcA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/3] media: i2c: ov772x: Parse endpoint properties
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+Hi Sakari,
 
-Thanks for your work.
+THank you for the review.
 
-On 2020-09-14 13:28:45 +0200, Wolfram Sang wrote:
-> Reorganize the code, so that the flag is always cleared independently of
-> a good or bad case.
-> 
-> Fixes: 97a7d87e96b0 ("mmc: core: add a 'doing_init_tune' flag and a 'mmc_doing_tune' helper")
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, Sep 14, 2020 at 7:54 AM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Prabhakar,
+>
+> Thanks for the patchset.
+>
+> On Sun, Sep 13, 2020 at 07:42:45PM +0100, Lad Prabhakar wrote:
+> > Parse endpoint properties using v4l2_fwnode_endpoint_alloc_parse()
+> > to determine bus-type and store it locally in priv data.
+> >
+> > Also for backward compatibility with the existing DT where bus-type
+> > isnt specified fallback to V4L2_MBUS_PARALLEL.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/media/i2c/ov772x.c | 24 ++++++++++++++++++++++++
+> >  1 file changed, 24 insertions(+)
+> >
+> > diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
+> > index 2cc6a678069a..551082aa7026 100644
+> > --- a/drivers/media/i2c/ov772x.c
+> > +++ b/drivers/media/i2c/ov772x.c
+> > @@ -31,6 +31,7 @@
+> >  #include <media/v4l2-ctrls.h>
+> >  #include <media/v4l2-device.h>
+> >  #include <media/v4l2-event.h>
+> > +#include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-image-sizes.h>
+> >  #include <media/v4l2-subdev.h>
+> >
+> > @@ -434,6 +435,7 @@ struct ov772x_priv {
+> >  #ifdef CONFIG_MEDIA_CONTROLLER
+> >       struct media_pad pad;
+> >  #endif
+> > +     enum v4l2_mbus_type               bus_type;
+> >  };
+> >
+> >  /*
+> > @@ -1354,6 +1356,8 @@ static const struct v4l2_subdev_ops ov772x_subdev_ops = {
+> >
+> >  static int ov772x_probe(struct i2c_client *client)
+> >  {
+> > +     struct v4l2_fwnode_endpoint bus_cfg = { .bus_type = 0 };
+> > +     struct fwnode_handle    *ep;
+> >       struct ov772x_priv      *priv;
+> >       int                     ret;
+> >       static const struct regmap_config ov772x_regmap_config = {
+> > @@ -1415,6 +1419,26 @@ static int ov772x_probe(struct i2c_client *client)
+> >               goto error_clk_put;
+> >       }
+> >
+> > +     ep = fwnode_graph_get_next_endpoint(dev_fwnode(&client->dev),
+> > +                                         NULL);
+> > +     if (!ep) {
+> > +             dev_err(&client->dev, "endpoint node not found\n");
+> > +             ret = -EINVAL;
+> > +             goto error_clk_put;
+> > +     }
+> > +
+> > +     bus_cfg.bus_type = V4L2_MBUS_PARALLEL;
+> > +     ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
+> > +     priv->bus_type = bus_cfg.bus_type;
+> > +     v4l2_fwnode_endpoint_free(&bus_cfg);
+> > +     if (ret) {
+> > +             /* For backward compatibility with the existing DT where
+> > +              * bus-type isnt specified fallback to V4L2_MBUS_PARALLEL
+>
+> "isn't", "fall back", and a period, please.
+>
+Will fix that.
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > +              */
+> > +             priv->bus_type = V4L2_MBUS_PARALLEL;
+> > +             dev_notice(&client->dev, "Falling back to V4L2_MBUS_PARALLEL mode\n");
+>
+> I'd just use dev_dbg().
+>
+OK will switch to dev_dbg()
 
-> ---
-> 
-> Sorry for overlooking this :(
-> 
->  drivers/mmc/core/mmc.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index 67e95eba0e82..ff3063ce2acd 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -1766,14 +1766,14 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
->  		host->doing_init_tune = 1;
->  
->  		err = mmc_hs200_tuning(card);
-> -		if (err)
-> -			goto free_card;
-> +		if (!err)
-> +			err = mmc_select_hs400(card);
-> +
-> +		host->doing_init_tune = 0;
->  
-> -		err = mmc_select_hs400(card);
->  		if (err)
->  			goto free_card;
->  
-> -		host->doing_init_tune = 0;
->  	} else if (!mmc_card_hs400es(card)) {
->  		/* Select the desired bus width optionally */
->  		err = mmc_select_bus_width(card);
-> -- 
-> 2.20.1
-> 
-
--- 
-Regards,
-Niklas Söderlund
+Cheers,
+Prabhakar
