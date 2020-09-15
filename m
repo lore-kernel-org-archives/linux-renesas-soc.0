@@ -7,120 +7,71 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F8DC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 17:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF1EC2D0E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 18:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F1FD2080C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 17:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CB0B21974
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 18:13:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727979AbgIORqq (ORCPT
+        id S1727978AbgIOSNI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 13:46:46 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:28656 "EHLO
+        Tue, 15 Sep 2020 14:13:08 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:40998 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727958AbgIORoX (ORCPT
+        by vger.kernel.org with ESMTP id S1727962AbgIOSJ6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 13:44:23 -0400
+        Tue, 15 Sep 2020 14:09:58 -0400
 X-IronPort-AV: E=Sophos;i="5.76,430,1592838000"; 
-   d="scan'208";a="57128212"
+   d="scan'208";a="57129186"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Sep 2020 02:44:19 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 16 Sep 2020 03:09:57 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A1C23400753C;
-        Wed, 16 Sep 2020 02:44:17 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id CD8634006DF6;
+        Wed, 16 Sep 2020 03:09:55 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Biju Das <biju.das.jz@bp.renesas.com>,
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH v5 3/3] media: i2c: ov772x: Add test pattern control
-Date:   Tue, 15 Sep 2020 18:42:35 +0100
-Message-Id: <20200915174235.1229-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2] clk: renesas: rcar-gen3: Update description for RZ/G2
+Date:   Tue, 15 Sep 2020 19:09:53 +0100
+Message-Id: <20200915180953.2019-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200915174235.1229-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20200915174235.1229-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for test pattern control supported by the sensor.
+The rcar-gen3-cpg driver is also used on Renesas RZ/G2 SoC's, update the
+description for the CLK_RCAR_GEN3_CPG config symbol to reflect this.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/media/i2c/ov772x.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+v1->v2
+* Updated commit message
+* Included RB from Geert
+---
+ drivers/clk/renesas/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
-index 869f2d94faec..3f68801692f4 100644
---- a/drivers/media/i2c/ov772x.c
-+++ b/drivers/media/i2c/ov772x.c
-@@ -227,7 +227,7 @@
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 28e8730ce263..1277d5f90389 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -162,7 +162,7 @@ config CLK_RCAR_GEN2_CPG
+ 	select CLK_RENESAS_CPG_MSSR
  
- /* COM3 */
- #define SWAP_MASK       (SWAP_RGB | SWAP_YUV | SWAP_ML)
--#define IMG_MASK        (VFLIP_IMG | HFLIP_IMG)
-+#define IMG_MASK        (VFLIP_IMG | HFLIP_IMG | SCOLOR_TEST)
+ config CLK_RCAR_GEN3_CPG
+-	bool "R-Car Gen3 CPG clock support" if COMPILE_TEST
++	bool "R-Car Gen3 and RZ/G2 CPG clock support" if COMPILE_TEST
+ 	select CLK_RENESAS_CPG_MSSR
  
- #define VFLIP_IMG       0x80	/* Vertical flip image ON/OFF selection */
- #define HFLIP_IMG       0x40	/* Horizontal mirror image ON/OFF selection */
-@@ -425,6 +425,7 @@ struct ov772x_priv {
- 	const struct ov772x_win_size     *win;
- 	struct v4l2_ctrl		 *vflip_ctrl;
- 	struct v4l2_ctrl		 *hflip_ctrl;
-+	unsigned int			  test_pattern;
- 	/* band_filter = COM8[5] ? 256 - BDBASE : 0 */
- 	struct v4l2_ctrl		 *band_filter_ctrl;
- 	unsigned int			  fps;
-@@ -540,6 +541,11 @@ static const struct ov772x_win_size ov772x_win_sizes[] = {
- 	},
- };
- 
-+static const char * const ov772x_test_pattern_menu[] = {
-+	"Disabled",
-+	"Vertical Color Bar Type 1",
-+};
-+
- /*
-  * frame rate settings lists
-  */
-@@ -809,6 +815,9 @@ static int ov772x_s_ctrl(struct v4l2_ctrl *ctrl)
- 		}
- 
- 		return ret;
-+	case V4L2_CID_TEST_PATTERN:
-+		priv->test_pattern = ctrl->val;
-+		return 0;
- 	}
- 
- 	return -EINVAL;
-@@ -1107,6 +1116,8 @@ static int ov772x_set_params(struct ov772x_priv *priv,
- 		val ^= VFLIP_IMG;
- 	if (priv->hflip_ctrl->val)
- 		val ^= HFLIP_IMG;
-+	if (priv->test_pattern)
-+		val |= SCOLOR_TEST;
- 
- 	ret = regmap_update_bits(priv->regmap, COM3, SWAP_MASK | IMG_MASK, val);
- 	if (ret < 0)
-@@ -1405,6 +1416,10 @@ static int ov772x_probe(struct i2c_client *client)
- 	priv->band_filter_ctrl = v4l2_ctrl_new_std(&priv->hdl, &ov772x_ctrl_ops,
- 						   V4L2_CID_BAND_STOP_FILTER,
- 						   0, 256, 1, 0);
-+	v4l2_ctrl_new_std_menu_items(&priv->hdl, &ov772x_ctrl_ops,
-+				     V4L2_CID_TEST_PATTERN,
-+				     ARRAY_SIZE(ov772x_test_pattern_menu) - 1,
-+				     0, 0, ov772x_test_pattern_menu);
- 	priv->subdev.ctrl_handler = &priv->hdl;
- 	if (priv->hdl.error) {
- 		ret = priv->hdl.error;
+ config CLK_RCAR_USB2_CLOCK_SEL
 -- 
 2.17.1
 
