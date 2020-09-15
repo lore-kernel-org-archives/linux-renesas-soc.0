@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD59C2D0E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 18:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8436BC2D0E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 18:29:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51739206DB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 18:29:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 538CB206B7
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 18:29:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727915AbgIOS3U (ORCPT
+        id S1727631AbgIOS3W (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 14:29:20 -0400
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:49862 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727786AbgIOSVU (ORCPT
+        Tue, 15 Sep 2020 14:29:22 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:22065 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727992AbgIOSUd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 14:21:20 -0400
-X-Halon-ID: 344f444e-f780-11ea-a39b-005056917f90
-Authorized-sender: niklas.soderlund@fsdn.se
-Received: from bismarck.berto.se (p54ac52a8.dip0.t-ipconnect.de [84.172.82.168])
-        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
-        id 344f444e-f780-11ea-a39b-005056917f90;
-        Tue, 15 Sep 2020 20:21:05 +0200 (CEST)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Tue, 15 Sep 2020 14:20:33 -0400
+X-IronPort-AV: E=Sophos;i="5.76,430,1592838000"; 
+   d="scan'208";a="57347034"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 16 Sep 2020 03:20:31 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 13B07400755E;
+        Wed, 16 Sep 2020 03:20:29 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v4 0/3] dt-bindings: adv7604: Convert bindings to json-schema
-Date:   Tue, 15 Sep 2020 20:19:41 +0200
-Message-Id: <20200915181944.1037620-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.28.0
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: [PATCH v2 0/2] media: rcar-vin: Kconfig: Update Kconfig
+Date:   Tue, 15 Sep 2020 19:20:25 +0100
+Message-Id: <20200915182027.2787-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -45,28 +46,27 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Hans,
+Hi All,
 
-This series converts the ADV7604 bindings to YAML and lists the new file
-under MAINTAINERS. I have used the schema to validate the usage of the
-bindings and no issues are found.
+This is trivial patch series updating the rcar-vin Kconfig to
+include Renesas RZ/Gx SoC's
 
-Previous versions of this series referred to issues found when running 
-the validation and patches that fixed them. All those patches have now 
-been picked up.
+Cheers,
+Prabhakar
 
-Niklas Söderlund (3):
-  dt-bindings: adv7604: Fix documentation for hpd-gpios
-  dt-bindings: adv7604: Convert bindings to json-schema
-  MAINTAINERS: Add ADV7604 bindings documentation
+v1->v2
+* Updated commit description
+* included RB from Niklas
 
- .../devicetree/bindings/media/i2c/adv7604.txt |  88 ---------
- .../bindings/media/i2c/adv7604.yaml           | 178 ++++++++++++++++++
- MAINTAINERS                                   |   1 +
- 3 files changed, 179 insertions(+), 88 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/i2c/adv7604.txt
- create mode 100644 Documentation/devicetree/bindings/media/i2c/adv7604.yaml
+Lad Prabhakar (2):
+  media: rcar-vin: Kconfig: Update help description for VIDEO_RCAR_CSI2
+    config
+  media: rcar-vin: Kconfig: Update help description for VIDEO_RCAR_VIN
+    config
+
+ drivers/media/platform/rcar-vin/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 -- 
-2.28.0
+2.17.1
 
