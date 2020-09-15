@@ -2,120 +2,146 @@ Return-Path: <SRS0=pR6V=CY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD2FCC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B8E0C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B06B9212CC
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:24:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18AEC20936
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:31:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="b7CmHkzj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727264AbgIOXY4 (ORCPT
+        id S1727406AbgIOXbi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 19:24:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726202AbgIOOiA (ORCPT
+        Tue, 15 Sep 2020 19:31:38 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42862 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727384AbgIOXag (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 10:38:00 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85459C06174A
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Sep 2020 07:37:56 -0700 (PDT)
-Received: from ramsan ([84.195.186.194])
-        by albert.telenet-ops.be with bizsmtp
-        id UEdt2300X4C55Sk06Eduin; Tue, 15 Sep 2020 16:37:54 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kIC5h-0002o6-St
-        for linux-renesas-soc@vger.kernel.org; Tue, 15 Sep 2020 16:37:53 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kIC5h-0003bU-RQ
-        for linux-renesas-soc@vger.kernel.org; Tue, 15 Sep 2020 16:37:53 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     linux-renesas-soc@vger.kernel.org
-Subject: renesas-drivers-2020-09-15-v5.9-rc5
-Date:   Tue, 15 Sep 2020 16:37:53 +0200
-Message-Id: <20200915143753.13787-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Tue, 15 Sep 2020 19:30:36 -0400
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EA529FD8;
+        Wed, 16 Sep 2020 01:30:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1600212634;
+        bh=zIzDuf1sKDcdjxVaHFr72m3U6IU/kzjy98ujrCuNe7U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b7CmHkzjWKj408c2UdMQbTaLVvuS79BYfLqrvLwNuYCVUHZqyvwLEpbE4+k2KJjDt
+         85IoaKvkbNXPZn5Fo2fj3aC98878mMGPd0H6Uj1R496lar6TB2PLjJR0xQ6a4KAtdN
+         wwQj3z+JNadelAFPbOgMzZSI83h8HyJVA159mHv4=
+Date:   Wed, 16 Sep 2020 02:30:04 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Yu Kuai <yukuai3@huawei.com>
+Cc:     kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yi.zhang@huawei.com
+Subject: Re: [PATCH] drm: rcar-du: add missing put_device() call in
+ rcar_du_vsp_init()
+Message-ID: <20200915233004.GD14954@pendragon.ideasonboard.com>
+References: <20200910132354.692397-1-yukuai3@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200910132354.692397-1-yukuai3@huawei.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-I have pushed renesas-drivers-2020-09-15-v5.9-rc5 to
-https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
+Hi Yu,
 
-This tree is meant to ease development of platform support and drivers
-for Renesas ARM SoCs. It is created by merging (a) the for-next branches
-of various subsystem trees and (b) branches with driver code submitted
-or planned for submission to maintainers into the master branch of my
-renesas-devel.git tree.
+Thank you for the patch.
 
-Today's version is based on renesas-devel-2020-09-15-v5.9-rc5.
+On Thu, Sep 10, 2020 at 09:23:54PM +0800, Yu Kuai wrote:
+> if of_find_device_by_node() succeed, rcar_du_vsp_init() doesn't have
+> a corresponding put_device(). Thus add a jump target to fix the exception
+> handling for this function implementation.
+> 
+> Fixes: 6d62ef3ac30b ("drm: rcar-du: Expose the VSP1 compositor through KMS planes")
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 19 +++++++++++++------
+>  1 file changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> index f1a81c9b184d..172ee3f3b21c 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> @@ -352,14 +352,16 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+>  
+>  	/* Find the VSP device and initialize it. */
+>  	pdev = of_find_device_by_node(np);
+> -	if (!pdev)
+> -		return -ENXIO;
+> +	if (!pdev) {
+> +		ret = -ENXIO;
+> +		goto put_device;
+> +	}
 
-Included branches with driver code:
-  - clk-renesas
-  - renesas-pinctrl
-  - topic/ravb-internal-clock-delays-v3
-  - git://git.ragnatech.se/linux#for-renesas-drivers
+This change isn't needed, and will actually cause a crash, as pdev is
+NULL.
 
-Included fixes:
-  - ARM: shmobile: defconfig: Update shmobile_defconfig
-  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+>  
+>  	vsp->vsp = &pdev->dev;
+>  
+>  	ret = vsp1_du_init(vsp->vsp);
+>  	if (ret < 0)
+> -		return ret;
+> +		goto put_device;
+>  
+>  	 /*
+>  	  * The VSP2D (Gen3) has 5 RPFs, but the VSP1D (Gen2) is limited to
+> @@ -369,8 +371,10 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+>  
+>  	vsp->planes = devm_kcalloc(rcdu->dev, vsp->num_planes,
+>  				   sizeof(*vsp->planes), GFP_KERNEL);
+> -	if (!vsp->planes)
+> -		return -ENOMEM;
+> +	if (!vsp->planes) {
+> +		ret = -ENOMEM;
+> +		goto put_device;
+> +	}
+>  
+>  	for (i = 0; i < vsp->num_planes; ++i) {
+>  		enum drm_plane_type type = i < num_crtcs
+> @@ -387,7 +391,7 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+>  					       ARRAY_SIZE(rcar_du_vsp_formats),
+>  					       NULL, type, NULL);
+>  		if (ret < 0)
+> -			return ret;
+> +			goto put_device;
+>  
+>  		drm_plane_helper_add(&plane->plane,
+>  				     &rcar_du_vsp_plane_helper_funcs);
+> @@ -403,4 +407,7 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+>  	}
+>  
+>  	return 0;
 
-Included subsystem trees:
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
-  - git://git.freedesktop.org/git/drm/drm.git#drm-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
-  - git://linuxtv.org/media_tree.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
-  - git://git.linaro.org/people/daniel.lezcano/linux.git#timers/drivers/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
-  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
-  - git://github.com/bzolnier/linux.git#fbdev-for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
-  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
-  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
-  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
+I would add a blank line here.
 
-Gr{oetje,eeting}s,
+> +put_device:
 
-						Geert
+And maybe name the label "error" ?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +	put_device(&pdev->dev);
+> +	return ret;
+>  }
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+We need more than this, we also need to call put_device() when the
+driver is unloaded. The way to handle cleanup in DRM is through
+drmm_add_action() nowadays, and I think we could thus simply replace the
+change above with a cleanup action that is run both in the error path
+and at driver remove.
+
+I'll post a proposal in a reply to this e-mail.
+
+-- 
+Regards,
+
+Laurent Pinchart
