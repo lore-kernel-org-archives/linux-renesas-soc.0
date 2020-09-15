@@ -2,126 +2,94 @@ Return-Path: <SRS0=pR6V=CY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F264C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66747C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CFB820809
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:12:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4D7120770
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:32:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WixtAFmw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbgIOQnC (ORCPT
+        id S1727613AbgIOQRR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 12:43:02 -0400
-Received: from mga05.intel.com ([192.55.52.43]:10809 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727779AbgIOQmO (ORCPT
+        Tue, 15 Sep 2020 12:17:17 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:37152 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727610AbgIOQQO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 12:42:14 -0400
-IronPort-SDR: KWegu6OuociK4oIxPsIY26z5IqrF2MWT8JlhLv+6SMID37EilqUGfOs/iSPYvmIiVc9Uzfu8+K
- ac31BoeuOpoQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9745"; a="244130883"
-X-IronPort-AV: E=Sophos;i="5.76,430,1592895600"; 
-   d="scan'208";a="244130883"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2020 09:41:36 -0700
-IronPort-SDR: X1Z8bwqnLS38s1hSAEgytpQLbi6j4B/9YrhjrX4W475Rl5ZLgkvoZXnWAYIpVQfTQCszaMK3rj
- J8RyfodN2jpQ==
-X-IronPort-AV: E=Sophos;i="5.76,430,1592895600"; 
-   d="scan'208";a="338733991"
-Received: from jbrandeb-mobl3.amr.corp.intel.com (HELO localhost) ([10.212.118.172])
-  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2020 09:41:36 -0700
-Date:   Tue, 15 Sep 2020 09:41:35 -0700
-From:   Jesse Brandeburg <jesse.brandeburg@intel.com>
-To:     Saeed Mahameed <saeed@kernel.org>
-Cc:     netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH net-next v2 06/10] drivers/net/ethernet: handle one
- warning explicitly
-Message-ID: <20200915094135.00005d21@intel.com>
-In-Reply-To: <e15b85af416c7257aaa601901b18c7c9bc9586e0.camel@kernel.org>
-References: <20200915014455.1232507-1-jesse.brandeburg@intel.com>
-        <20200915014455.1232507-7-jesse.brandeburg@intel.com>
-        <e15b85af416c7257aaa601901b18c7c9bc9586e0.camel@kernel.org>
-X-Mailer: Claws Mail 3.12.0 (GTK+ 2.24.28; i686-w64-mingw32)
+        Tue, 15 Sep 2020 12:16:14 -0400
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3BCE3276;
+        Tue, 15 Sep 2020 18:12:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1600186327;
+        bh=yWcHzfZaIL+JJoYu6WgRXH1lmt2hAIodJaLy5+l5lQ0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WixtAFmwupVy7MRyDTZqdZRI02yRepxuWJ4yPMNnxeJtBh+AktZupVFYDc6j/uPZv
+         l1VpY8FBzuH0HnIh/pcPbkaK060agSmlL6VBG9R3sca6dF87vJkU+nP2QN7Zg3Jrhk
+         Z6YpX097SeLzHq2RkY1wMphh7PvJZUGsMYtNd14U=
+Date:   Tue, 15 Sep 2020 19:11:38 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH 1/3] MAINTAINERS: Add Fabrizio Castro to Renesas DRIF
+Message-ID: <20200915161138.GB26029@pendragon.ideasonboard.com>
+References: <20200915131216.21137-1-fabrizio.castro.jz@renesas.com>
+ <20200915131216.21137-2-fabrizio.castro.jz@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200915131216.21137-2-fabrizio.castro.jz@renesas.com>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Fabrizio,
 
-Saeed Mahameed wrote:
+Thank you for the patch.
 
-> On Mon, 2020-09-14 at 18:44 -0700, Jesse Brandeburg wrote:
-> > While fixing the W=1 builds, this warning came up because the
-> > developers used a very tricky way to get structures initialized
-> > to a non-zero value, but this causes GCC to warn about an
-> > override. In this case the override was intentional, so just
-> > disable the warning for this code with a macro that results
-> > in disabling the warning for compiles on GCC versions after 8.
-> > 
-> > NOTE: the __diag_ignore macro currently only accepts a second
-> > argument of 8 (version 80000)
-> > 
-> > Signed-off-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
-> > ---
-> >  drivers/net/ethernet/renesas/sh_eth.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/drivers/net/ethernet/renesas/sh_eth.c
-> > b/drivers/net/ethernet/renesas/sh_eth.c
-> > index 586642c33d2b..c63304632935 100644
-> > --- a/drivers/net/ethernet/renesas/sh_eth.c
-> > +++ b/drivers/net/ethernet/renesas/sh_eth.c
-> > @@ -45,6 +45,15 @@
-> >  #define SH_ETH_OFFSET_DEFAULTS			\
-> >  	[0 ... SH_ETH_MAX_REGISTER_OFFSET - 1] = SH_ETH_OFFSET_INVALID
-> >  
-> > +/* use some intentionally tricky logic here to initialize the whole
-> > struct to
-> > + * 0xffff, but then override certain fields, requiring us to
-> > indicate that we
-> > + * "know" that there are overrides in this structure, and we'll need
-> > to disable
-> > + * that warning from W=1 builds. GCC has supported this option since
-> > 4.2.X, but
-> > + * the macros available to do this only define GCC 8.
-> > + */
-> > +__diag_push();
-> > +__diag_ignore(GCC, 8, "-Woverride-init",
-> > +	      "logic to initialize all and then override some is OK");
-> >  static const u16 sh_eth_offset_gigabit[SH_ETH_MAX_REGISTER_OFFSET] =
-> > {
-> >  	SH_ETH_OFFSET_DEFAULTS,
-> >  
-> > @@ -332,6 +341,7 @@ static const u16
-> > sh_eth_offset_fast_sh3_sh2[SH_ETH_MAX_REGISTER_OFFSET] = {
-> >  
-> >  	[TSU_ADRH0]	= 0x0100,
-> >  };
-> > +__diag_pop();
-> >  
+On Tue, Sep 15, 2020 at 02:12:14PM +0100, Fabrizio Castro wrote:
+> Renesas are expanding their DRIF support and offering,
+> I'll be the internal maintainer for DRIF.
 > 
-> I don't have any strong feeling against disabling compiler warnings,
-> but maybe the right thing to do here is to initialize the gaps to the
-> invalid value instead of pre-initializing the whole thing first and
-> then setting up the valid values on the 2nd pass.
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+
+Thank you for volunteering :-)
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> I don't think there are too many gaps to fill, it is doable, so maybe
-> add this as a comment to this driver maintainer so they could pickup
-> the work from here.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 26af84f97353..9f49e5ac90d8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -10898,6 +10898,7 @@ F:	include/media/drv-intf/renesas-ceu.h
+>  
+>  MEDIA DRIVERS FOR RENESAS - DRIF
+>  M:	Ramesh Shanmugasundaram <rashanmu@gmail.com>
+> +M:	Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+>  L:	linux-media@vger.kernel.org
+>  L:	linux-renesas-soc@vger.kernel.org
+>  S:	Supported
 
+-- 
+Regards,
 
-added linux-renesas-soc list. @list, any comments on Saeed's comment
-above?
-
-Thanks,
- Jesse
+Laurent Pinchart
