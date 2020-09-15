@@ -2,94 +2,56 @@ Return-Path: <SRS0=pR6V=CY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAE7DC43461
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 12:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87329C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 12:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F32120770
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 12:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44EB32068D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 12:42:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600173735;
+	bh=5q7wuNtLEFxDyjq9xFjoNOod1VAuMkmKctUQeXmKVXk=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=M2Swe8U9efTdd29uWYaIqRgLQzQRILu09fuV13ysVPHuIvbYvzkhmHjHOJfnbWdCj
+	 q0Id2KxV7V73Odysrubzo+eumwidfeLqahrjrcxXQ1QFGtF2Jt2WhfiVDptANAf2fY
+	 H4tYpYog4npDqMi0UeTov/h6JYK34VUSdErFCTJ8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726178AbgIOMf7 (ORCPT
+        id S1726281AbgIOMlT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 08:35:59 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:41135 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbgIOMfx (ORCPT
+        Tue, 15 Sep 2020 08:41:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55286 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726310AbgIOMkv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 08:35:53 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 666011BF20C;
-        Tue, 15 Sep 2020 12:35:42 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v2] media: i2c: max9286: Fix async subdev size
-Date:   Tue, 15 Sep 2020 14:39:14 +0200
-Message-Id: <20200915123914.22807-1-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.28.0
+        Tue, 15 Sep 2020 08:40:51 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600173644;
+        bh=5q7wuNtLEFxDyjq9xFjoNOod1VAuMkmKctUQeXmKVXk=;
+        h=Subject:From:Date:To:From;
+        b=kyGuSjUtZXvuAoxXB1mBoltEYcvtildXBXYE7xi08GC0rqr3jI2Ux4y9G1CfRI0o9
+         rfvETT/mkyWXDoR2iqpg1NX7hQ9ZRSdzqz7c0ZfqpIsZizyaOesQrR+y4PKiPWR0Ac
+         6sUDXntyf8q+2UQHLjxiYTtJidaCwcc0mcAun6L4=
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <160017364399.18947.16019959079244470992.git-patchwork-housekeeping@kernel.org>
+Date:   Tue, 15 Sep 2020 12:40:43 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Since
-commit 86d37bf31af6 ("media: i2c: max9286: Allocate v4l2_async_subdev dynamically")
-the async subdevice registered to the max9286 notifier is dynamically
-allocated by the v4l2 framework by using the
-v4l2_async_notifier_add_fwnode_subdev() function. In order to allocate
-enough space for max9286_asd structure that encloses the async subdevice
-paired with a pointer to the corresponding source, pass to the framework
-the size of the whole structure in place of the one of the enclosed async
-subdev.
+Latest series: [v2] media: i2c: max9286: Fix async subdev size (2020-09-15T12:39:14)
+  Superseding: [v1] media: i2c: max9286: Fix async subdev size (2020-09-14T15:57:49):
+    media: i2c: max9286: Fix async subdev size
 
-Fixes: 86d37bf31af6 ("media: i2c: max9286: Allocate v4l2_async_subdev dynamically")
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/i2c/max9286.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-index c82c1493e099..6852448284ea 100644
---- a/drivers/media/i2c/max9286.c
-+++ b/drivers/media/i2c/max9286.c
-@@ -577,10 +577,11 @@ static int max9286_v4l2_notifier_register(struct max9286_priv *priv)
- 	for_each_source(priv, source) {
- 		unsigned int i = to_index(priv, source);
- 		struct v4l2_async_subdev *asd;
-+		struct max9286_asd *masd;
-
- 		asd = v4l2_async_notifier_add_fwnode_subdev(&priv->notifier,
- 							    source->fwnode,
--							    sizeof(*asd));
-+							    sizeof(*masd));
- 		if (IS_ERR(asd)) {
- 			dev_err(dev, "Failed to add subdev for source %u: %ld",
- 				i, PTR_ERR(asd));
-@@ -588,7 +589,8 @@ static int max9286_v4l2_notifier_register(struct max9286_priv *priv)
- 			return PTR_ERR(asd);
- 		}
-
--		to_max9286_asd(asd)->source = source;
-+		masd = to_max9286_asd(asd);
-+		masd->source = source;
- 	}
-
- 	priv->notifier.ops = &max9286_notify_ops;
---
-2.28.0
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
