@@ -2,84 +2,165 @@ Return-Path: <SRS0=pR6V=CY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBCEC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4206EC43461
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A48AC20795
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:51:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600210310;
-	bh=/ufDCEfM90uJxgU0EO4IA1ZEZJrYNpr60Jkn+O1YiZc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Fbe37mjoYqADCwJbng4pFDOdashisH7zRgpKvLjjp/mGtrbc4BqcjDtTjYwKMG1Fo
-	 Z/zrNibU+xFJp2SYgcmbeycMFZQqD5t+R6XCrem+npw+IH/3RqofyXLYPhXIrOL7ZK
-	 PrJJaeiIsyiFpTKtdQ6dY+nE2jqrC4QoZUI18GG0=
+	by mail.kernel.org (Postfix) with ESMTP id 10E28206DC
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 23:02:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727410AbgIOWvt (ORCPT
+        id S1727330AbgIOXCX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 18:51:49 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44264 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727439AbgIOPmg (ORCPT
+        Tue, 15 Sep 2020 19:02:23 -0400
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:53166 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727508AbgIOXCR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 11:42:36 -0400
-Received: by mail-io1-f68.google.com with SMTP id g128so4528719iof.11;
-        Tue, 15 Sep 2020 08:42:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=b2gN/1Vxx6QXOeyAQrqTUo00mXGC5F6z/gWZvfn3KiI=;
-        b=H0/R9iO4OJZTuF3dvnt3SmVIRBqwigI6g/eYdJkOaQCQ7RDAIGJN2N10sh0OBjMpnf
-         7TUEWFzOgmj/uICt5NPlLRddykO3eAXJhN8pc+DOMxEvY47Diqc4mcP4Z/ZU3I/5vj8R
-         nOrVCoaOZNZiM2delyD8vjr0QOigHUiooheg4oNScvmidym60jbRmV4KlKNRcdByKGjY
-         ARLWqrVokogAR0IZo5DH7JwjZ27Ic0DdFkSneJEO6k0c4g9NgJhfO3nvKuqmkvoYzd0O
-         lqa67B6z/j2yWF0P409hMkL7vC9/37l+CAfyorL2W8zLksl3z8YGw2Uy/C4MobvvBwsv
-         CCPw==
-X-Gm-Message-State: AOAM530VIz+RKyA8PdHDq6CqVyEk95a4nHZgvKc8ZEfg9c7KnmjIqayL
-        RrgXsgtq9YonLoOQ5i/m0//hG37PSpU+
-X-Google-Smtp-Source: ABdhPJxpK6uJvf7Hkfowl+VTeoG/xrtLJqMZAFGEChdqCkFoRctMW7L1895iNr01xpQPfgKJLoDHsw==
-X-Received: by 2002:a02:cdcd:: with SMTP id m13mr18669584jap.69.1600184550866;
-        Tue, 15 Sep 2020 08:42:30 -0700 (PDT)
-Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id d23sm7819480ioh.22.2020.09.15.08.42.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2020 08:42:30 -0700 (PDT)
-Received: (nullmailer pid 2000976 invoked by uid 1000);
-        Tue, 15 Sep 2020 15:42:28 -0000
-Date:   Tue, 15 Sep 2020 09:42:28 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     geert+renesas@glider.be, magnus.damm@gmail.com,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org
-Subject: Re: [PATCH 06/14] dt-bindings: clock: renesas,cpg-mssr: Document
- r8a779a0
-Message-ID: <20200915154228.GA2000922@bogus>
-References: <1599470390-29719-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1599470390-29719-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 15 Sep 2020 19:02:17 -0400
+X-Halon-ID: 79bb749e-f7a7-11ea-92dc-005056917a89
+Authorized-sender: niklas.soderlund@fsdn.se
+Received: from bismarck.berto.se (p54ac52a8.dip0.t-ipconnect.de [84.172.82.168])
+        by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
+        id 79bb749e-f7a7-11ea-92dc-005056917a89;
+        Wed, 16 Sep 2020 01:02:06 +0200 (CEST)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] rcar-vin: Extend RAW8 support to all RGB layouts
+Date:   Wed, 16 Sep 2020 01:01:40 +0200
+Message-Id: <20200915230140.1201187-3-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20200915230140.1201187-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20200915230140.1201187-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1599470390-29719-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, 07 Sep 2020 18:19:42 +0900, Yoshihiro Shimoda wrote:
-> Add binding documentation for the R-Car V3U (R8A779A0) Clock Pulse
-> Generator.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Extend the list of supported formats to include all RGB layouts of RAW8.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c  | 28 ++++++++++++++++++++-
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 27 ++++++++++++++++++++
+ 2 files changed, 54 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index a5dbb90c5210bae7..7f8997536aba6f0b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -598,8 +598,16 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+ 	/* For RAW8 format bpp is 1, but the hardware process RAW8
+ 	 * format in 2 pixel unit hence configure VNIS_REG as stride / 2.
+ 	 */
+-	if (vin->format.pixelformat == V4L2_PIX_FMT_SRGGB8)
++	switch (vin->format.pixelformat) {
++	case MEDIA_BUS_FMT_SBGGR8_1X8:
++	case MEDIA_BUS_FMT_SGBRG8_1X8:
++	case MEDIA_BUS_FMT_SGRBG8_1X8:
++	case MEDIA_BUS_FMT_SRGGB8_1X8:
+ 		stride /= 2;
++		break;
++	default:
++		break;
++	}
+ 
+ 	rvin_write(vin, stride, VNIS_REG);
+ }
+@@ -683,6 +691,9 @@ static int rvin_setup(struct rvin_dev *vin)
+ 
+ 		input_is_yuv = true;
+ 		break;
++	case MEDIA_BUS_FMT_SBGGR8_1X8:
++	case MEDIA_BUS_FMT_SGBRG8_1X8:
++	case MEDIA_BUS_FMT_SGRBG8_1X8:
+ 	case MEDIA_BUS_FMT_SRGGB8_1X8:
+ 		vnmc |= VNMC_INF_RAW8;
+ 		break;
+@@ -747,6 +758,9 @@ static int rvin_setup(struct rvin_dev *vin)
+ 	case V4L2_PIX_FMT_ABGR32:
+ 		dmr = VNDMR_A8BIT(vin->alpha) | VNDMR_EXRGB | VNDMR_DTMD_ARGB;
+ 		break;
++	case V4L2_PIX_FMT_SBGGR8:
++	case V4L2_PIX_FMT_SGBRG8:
++	case V4L2_PIX_FMT_SGRBG8:
+ 	case V4L2_PIX_FMT_SRGGB8:
+ 		dmr = 0;
+ 		break;
+@@ -1124,6 +1138,18 @@ static int rvin_mc_validate_format(struct rvin_dev *vin, struct v4l2_subdev *sd,
+ 	case MEDIA_BUS_FMT_UYVY10_2X10:
+ 	case MEDIA_BUS_FMT_RGB888_1X24:
+ 		break;
++	case MEDIA_BUS_FMT_SBGGR8_1X8:
++		if (vin->format.pixelformat != V4L2_PIX_FMT_SBGGR8)
++			return -EPIPE;
++		break;
++	case MEDIA_BUS_FMT_SGBRG8_1X8:
++		if (vin->format.pixelformat != V4L2_PIX_FMT_SGBRG8)
++			return -EPIPE;
++		break;
++	case MEDIA_BUS_FMT_SGRBG8_1X8:
++		if (vin->format.pixelformat != V4L2_PIX_FMT_SGRBG8)
++			return -EPIPE;
++		break;
+ 	case MEDIA_BUS_FMT_SRGGB8_1X8:
+ 		if (vin->format.pixelformat != V4L2_PIX_FMT_SRGGB8)
+ 			return -EPIPE;
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index 0e066bba747e0b73..4071d9bd554ab88f 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -66,6 +66,18 @@ static const struct rvin_video_format rvin_formats[] = {
+ 		.fourcc			= V4L2_PIX_FMT_ABGR32,
+ 		.bpp			= 4,
+ 	},
++	{
++		.fourcc			= V4L2_PIX_FMT_SBGGR8,
++		.bpp			= 1,
++	},
++	{
++		.fourcc			= V4L2_PIX_FMT_SGBRG8,
++		.bpp			= 1,
++	},
++	{
++		.fourcc			= V4L2_PIX_FMT_SGRBG8,
++		.bpp			= 1,
++	},
+ 	{
+ 		.fourcc			= V4L2_PIX_FMT_SRGGB8,
+ 		.bpp			= 1,
+@@ -366,6 +378,21 @@ static int rvin_enum_fmt_vid_cap(struct file *file, void *priv,
+ 	case MEDIA_BUS_FMT_UYVY10_2X10:
+ 	case MEDIA_BUS_FMT_RGB888_1X24:
+ 		break;
++	case MEDIA_BUS_FMT_SBGGR8_1X8:
++		if (f->index)
++			return -EINVAL;
++		f->pixelformat = V4L2_PIX_FMT_SBGGR8;
++		return 0;
++	case MEDIA_BUS_FMT_SGBRG8_1X8:
++		if (f->index)
++			return -EINVAL;
++		f->pixelformat = V4L2_PIX_FMT_SGBRG8;
++		return 0;
++	case MEDIA_BUS_FMT_SGRBG8_1X8:
++		if (f->index)
++			return -EINVAL;
++		f->pixelformat = V4L2_PIX_FMT_SGRBG8;
++		return 0;
+ 	case MEDIA_BUS_FMT_SRGGB8_1X8:
+ 		if (f->index)
+ 			return -EINVAL;
+-- 
+2.28.0
+
