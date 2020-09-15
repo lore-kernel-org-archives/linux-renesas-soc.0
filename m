@@ -2,108 +2,126 @@ Return-Path: <SRS0=pR6V=CY=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A20FC31E40
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F264C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6680B206A5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:10:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600207845;
-	bh=KSFMKbw9T6dQAvg05veFpNSYsnS7Tt7VHJBpFBVEaII=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rgFko2VPGyEWjSO6WzpBi9fuMmZfKPtmHJovHNGkPK/bCSFDyIeDvXZ0Tkdd+60p4
-	 q3y4dK3LomxQYIOmXKKMYIcBBwP1FVEoK/wEw9Kx3UBmS0HFNniCpRqGQ8N0cwVOeI
-	 sK24TMfK2NUZYBg3bSFXdOxLvFuelO5vHIugL0JM=
+	by mail.kernel.org (Postfix) with ESMTP id 0CFB820809
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Sep 2020 22:12:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbgIOWKS (ORCPT
+        id S1727501AbgIOQnC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Sep 2020 18:10:18 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41568 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727826AbgIOUCq (ORCPT
+        Tue, 15 Sep 2020 12:43:02 -0400
+Received: from mga05.intel.com ([192.55.52.43]:10809 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727779AbgIOQmO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Sep 2020 16:02:46 -0400
-Received: by mail-io1-f67.google.com with SMTP id z13so5525174iom.8;
-        Tue, 15 Sep 2020 13:00:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=L7om6RUUpmy9Tp9WTJ6hem3a68ltpv04YXLuQ+XuUpg=;
-        b=GV1G4P0FlxSFwJEMqN8Qqv6F037+uwDELcHJkwzTCoNdIhyoTQFOzuSufljKDWllZL
-         nFlRD7HDagQ2B0+g7PRldlA3XgUC6zrMHBStEkM5BR/6TaD7AfJXvsC3rb8r9UKZBr32
-         Wq0cLf0QVinmVsduv6HGQ/KgpsxX2ZnHSHRfCDoAnRxGGWKV7OXeVBLkkU0ITlpSTUbo
-         t6s0kx0ryiNF4etzZVX2psYfmmQxBDaHjb8A3E/NRaXwzUvl5h4CKnEwAEWI/CYBvNZ/
-         ZUeYJXf0SwphFqg3XBJTQGNabdyGe7fFAT/Euz0J4OzkqsB87Ddt+anvJF1FbRY3Cswu
-         7yYw==
-X-Gm-Message-State: AOAM530qjV18lQRHTyb1DJZYyYwZr/PTDC/lT9mKgZpn1N51EO80XJyk
-        w5c1j7w/Yc+YlB0RuAQY1A==
-X-Google-Smtp-Source: ABdhPJyJashEW2xOKvfkZqHZZXucxwlHXqNC9JTw65ZlLFsAeTHaT5GzkbPEe9aLJArEiug2L8iMqA==
-X-Received: by 2002:a6b:590c:: with SMTP id n12mr17087310iob.25.1600200038094;
-        Tue, 15 Sep 2020 13:00:38 -0700 (PDT)
-Received: from xps15 ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id d71sm9595617ill.52.2020.09.15.13.00.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Sep 2020 13:00:37 -0700 (PDT)
-Received: (nullmailer pid 2409290 invoked by uid 1000);
-        Tue, 15 Sep 2020 20:00:32 -0000
-Date:   Tue, 15 Sep 2020 14:00:32 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-mediatek@lists.infradead.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-aspeed@lists.ozlabs.org,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        linux-kernel@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-renesas-soc@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        Joel Stanley <joel@jms.id.au>, Nishanth Menon <nm@ti.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Andrew Jeffery <andrew@aj.id.au>, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2 02/15] dt-bindings: gpio: convert bindings for Maxim
- MAX732x family to dtschema
-Message-ID: <20200915200032.GA2409250@bogus>
-References: <20200910175733.11046-1-krzk@kernel.org>
- <20200910175733.11046-3-krzk@kernel.org>
+        Tue, 15 Sep 2020 12:42:14 -0400
+IronPort-SDR: KWegu6OuociK4oIxPsIY26z5IqrF2MWT8JlhLv+6SMID37EilqUGfOs/iSPYvmIiVc9Uzfu8+K
+ ac31BoeuOpoQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9745"; a="244130883"
+X-IronPort-AV: E=Sophos;i="5.76,430,1592895600"; 
+   d="scan'208";a="244130883"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2020 09:41:36 -0700
+IronPort-SDR: X1Z8bwqnLS38s1hSAEgytpQLbi6j4B/9YrhjrX4W475Rl5ZLgkvoZXnWAYIpVQfTQCszaMK3rj
+ J8RyfodN2jpQ==
+X-IronPort-AV: E=Sophos;i="5.76,430,1592895600"; 
+   d="scan'208";a="338733991"
+Received: from jbrandeb-mobl3.amr.corp.intel.com (HELO localhost) ([10.212.118.172])
+  by fmsmga002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Sep 2020 09:41:36 -0700
+Date:   Tue, 15 Sep 2020 09:41:35 -0700
+From:   Jesse Brandeburg <jesse.brandeburg@intel.com>
+To:     Saeed Mahameed <saeed@kernel.org>
+Cc:     netdev@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH net-next v2 06/10] drivers/net/ethernet: handle one
+ warning explicitly
+Message-ID: <20200915094135.00005d21@intel.com>
+In-Reply-To: <e15b85af416c7257aaa601901b18c7c9bc9586e0.camel@kernel.org>
+References: <20200915014455.1232507-1-jesse.brandeburg@intel.com>
+        <20200915014455.1232507-7-jesse.brandeburg@intel.com>
+        <e15b85af416c7257aaa601901b18c7c9bc9586e0.camel@kernel.org>
+X-Mailer: Claws Mail 3.12.0 (GTK+ 2.24.28; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200910175733.11046-3-krzk@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 10 Sep 2020 19:57:20 +0200, Krzysztof Kozlowski wrote:
-> Convert the Maxim MAX732x family of GPIO expanders bindings to device
-> tree schema by merging it with existing PCA95xx schema.  These are quite
-> similar so merging reduces duplication.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  .../devicetree/bindings/gpio/gpio-max732x.txt | 58 ---------------
->  .../bindings/gpio/gpio-pca95xx.yaml           | 72 ++++++++++++++++++-
->  2 files changed, 70 insertions(+), 60 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/gpio/gpio-max732x.txt
-> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Saeed Mahameed wrote:
+
+> On Mon, 2020-09-14 at 18:44 -0700, Jesse Brandeburg wrote:
+> > While fixing the W=1 builds, this warning came up because the
+> > developers used a very tricky way to get structures initialized
+> > to a non-zero value, but this causes GCC to warn about an
+> > override. In this case the override was intentional, so just
+> > disable the warning for this code with a macro that results
+> > in disabling the warning for compiles on GCC versions after 8.
+> > 
+> > NOTE: the __diag_ignore macro currently only accepts a second
+> > argument of 8 (version 80000)
+> > 
+> > Signed-off-by: Jesse Brandeburg <jesse.brandeburg@intel.com>
+> > ---
+> >  drivers/net/ethernet/renesas/sh_eth.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/drivers/net/ethernet/renesas/sh_eth.c
+> > b/drivers/net/ethernet/renesas/sh_eth.c
+> > index 586642c33d2b..c63304632935 100644
+> > --- a/drivers/net/ethernet/renesas/sh_eth.c
+> > +++ b/drivers/net/ethernet/renesas/sh_eth.c
+> > @@ -45,6 +45,15 @@
+> >  #define SH_ETH_OFFSET_DEFAULTS			\
+> >  	[0 ... SH_ETH_MAX_REGISTER_OFFSET - 1] = SH_ETH_OFFSET_INVALID
+> >  
+> > +/* use some intentionally tricky logic here to initialize the whole
+> > struct to
+> > + * 0xffff, but then override certain fields, requiring us to
+> > indicate that we
+> > + * "know" that there are overrides in this structure, and we'll need
+> > to disable
+> > + * that warning from W=1 builds. GCC has supported this option since
+> > 4.2.X, but
+> > + * the macros available to do this only define GCC 8.
+> > + */
+> > +__diag_push();
+> > +__diag_ignore(GCC, 8, "-Woverride-init",
+> > +	      "logic to initialize all and then override some is OK");
+> >  static const u16 sh_eth_offset_gigabit[SH_ETH_MAX_REGISTER_OFFSET] =
+> > {
+> >  	SH_ETH_OFFSET_DEFAULTS,
+> >  
+> > @@ -332,6 +341,7 @@ static const u16
+> > sh_eth_offset_fast_sh3_sh2[SH_ETH_MAX_REGISTER_OFFSET] = {
+> >  
+> >  	[TSU_ADRH0]	= 0x0100,
+> >  };
+> > +__diag_pop();
+> >  
+> 
+> I don't have any strong feeling against disabling compiler warnings,
+> but maybe the right thing to do here is to initialize the gaps to the
+> invalid value instead of pre-initializing the whole thing first and
+> then setting up the valid values on the 2nd pass.
+> 
+> I don't think there are too many gaps to fill, it is doable, so maybe
+> add this as a comment to this driver maintainer so they could pickup
+> the work from here.
+
+
+added linux-renesas-soc list. @list, any comments on Saeed's comment
+above?
+
+Thanks,
+ Jesse
