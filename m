@@ -2,56 +2,126 @@ Return-Path: <SRS0=hv6C=CZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD3DC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3451C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37B6921D43
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600282861;
-	bh=0DmDgspG2F1DbUW2FbA3VeWRZjSjDzj/7XZufLTuVVg=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=BXDV8SdgXaKT/ykpYht6J8v+En7nwG/kWLLCBz4WFeR4Uxr1/B4Nt3Ju7NItZa+dN
-	 QBC2h9O+5GxNg0L0ReQjqkNl+67Cjoi73um40vZ1kBNl0uL3lslBcosMd5idX62AMA
-	 /KmEE/XC6L44ikTZQq3bmvkK/7RY27YcJva+59xo=
+	by mail.kernel.org (Postfix) with ESMTP id 4D161206DC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HMFsbCyj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbgIPTAw (ORCPT
+        id S1728364AbgIPTEE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 15:00:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54678 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727915AbgIPTAs (ORCPT
+        Wed, 16 Sep 2020 15:04:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727463AbgIPRrx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 15:00:48 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600282848;
-        bh=0DmDgspG2F1DbUW2FbA3VeWRZjSjDzj/7XZufLTuVVg=;
-        h=Subject:From:Date:To:From;
-        b=aOYuYTzfChbmeC5AzAYtDRY+7dW5fC2wOEZc2b4J5PwhKh4nc32wBFoLeElpJMNNO
-         DoYexnTVGHHvOZcCq693LLeBWDK9EqEBUz0BYpxZ+UWRsuZN/BMsLs2aE9bWM3D+yw
-         pi0N3wQeyomfq06OipLC7S4pzQ+L0OzRnhJLiVzA=
+        Wed, 16 Sep 2020 13:47:53 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93313C02C2B4;
+        Wed, 16 Sep 2020 08:52:27 -0700 (PDT)
+Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B07C6276;
+        Wed, 16 Sep 2020 17:46:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1600271190;
+        bh=vU4CX35WdhIO84M8bi8/e3UppxFuPqd6yDjuzFb8N+Q=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=HMFsbCyj8EQ0JR7wU4Y7kx0qzhdXYQ1yA5H2OJTJH354j6YhL9GfDp8DLestnF1AI
+         H6LbT3tai6ISYHNdWBRknp0aNofOfLRBYHM3hO6EUhU9ompuZ51rWMPksekHzS19wf
+         yy31jFwzEiHUyljAxNYrWhYyBTeA7JPbWbBJddC8=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH 2/5] media: rcar_drif: Fix fwnode reference leak when
+ parsing DT
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>
+References: <20200811205939.19550-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20200811205939.19550-3-laurent.pinchart+renesas@ideasonboard.com>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <ba59bb4e-733f-a76d-413d-cde7e1bcad9d@ideasonboard.com>
+Date:   Wed, 16 Sep 2020 16:46:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <160028284838.7285.15145009135057680760.git-patchwork-housekeeping@kernel.org>
-Date:   Wed, 16 Sep 2020 19:00:48 +0000
-To:     linux-renesas-soc@vger.kernel.org
+In-Reply-To: <20200811205939.19550-3-laurent.pinchart+renesas@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v2] tests: Provide {un,}bind testing (2020-09-16T14:18:15)
-  Superseding: [v1] tests: Provide {un,}bind testing (2020-05-25T13:21:48):
-    [VSP-Tests] tests: Provide {un,}bind testing
+Hi Laurent,
 
+On 11/08/2020 21:59, Laurent Pinchart wrote:
+> The fwnode reference corresponding to the endpoint is leaked in an error
+> path of the rcar_drif_parse_subdevs() function. Fix it, and reorganize
+> fwnode reference handling in the function to release references early,
+> simplifying error paths.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+Simplified indeed.
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> ---
+>  drivers/media/platform/rcar_drif.c | 16 +++++-----------
+>  1 file changed, 5 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar_drif.c b/drivers/media/platform/rcar_drif.c
+> index 3d2451ac347d..3f1e5cb8b197 100644
+> --- a/drivers/media/platform/rcar_drif.c
+> +++ b/drivers/media/platform/rcar_drif.c
+> @@ -1227,28 +1227,22 @@ static int rcar_drif_parse_subdevs(struct rcar_drif_sdr *sdr)
+>  	if (!ep)
+>  		return 0;
+>  
+> +	/* Get the endpoint properties */
+> +	rcar_drif_get_ep_properties(sdr, ep);
+> +
+>  	fwnode = fwnode_graph_get_remote_port_parent(ep);
+> +	fwnode_handle_put(ep);
+>  	if (!fwnode) {
+>  		dev_warn(sdr->dev, "bad remote port parent\n");
+> -		fwnode_handle_put(ep);
+>  		return -EINVAL;
+>  	}
+>  
+>  	sdr->ep.asd.match.fwnode = fwnode;
+>  	sdr->ep.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
+>  	ret = v4l2_async_notifier_add_subdev(notifier, &sdr->ep.asd);
+> -	if (ret) {
+> -		fwnode_handle_put(fwnode);
+> -		return ret;
+> -	}
+> -
+> -	/* Get the endpoint properties */
+> -	rcar_drif_get_ep_properties(sdr, ep);
+> -
+>  	fwnode_handle_put(fwnode);
+> -	fwnode_handle_put(ep);
+>  
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  /* Check if the given device is the primary bond */
+> 
+
