@@ -2,113 +2,140 @@ Return-Path: <SRS0=hv6C=CZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A9AC43461
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 21:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 832BAC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 21:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A83B921941
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 21:00:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600290016;
-	bh=wyPmzC4NHbsZu5CEn9G5Z8eCB/nHoC/xFKB5B2bqx3c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MC3AXNrA/ol0BxA4o3NOQ6tGcgM2QlnLxLWToKWlJCASOAXirow2hijdYM/gC3BxT
-	 0XAhCUBukKP8QoS9cc+/IqtAtpX+bc719r5dIgQ+jYf62MZw8eMzTbdcDrqX/5BEzT
-	 vPifGwHK17tx4ul+qPT87xsYW+ZA0z+TfokUIjhw=
+	by mail.kernel.org (Postfix) with ESMTP id DD5DA20731
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 21:00:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cyEa0EER"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728631AbgIPVAI (ORCPT
+        id S1726868AbgIPVAr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 17:00:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43074 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbgIPQae (ORCPT
+        Wed, 16 Sep 2020 17:00:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51228 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726420AbgIPQaY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 12:30:34 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F04B2245D;
-        Wed, 16 Sep 2020 15:58:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600271915;
-        bh=wyPmzC4NHbsZu5CEn9G5Z8eCB/nHoC/xFKB5B2bqx3c=;
+        Wed, 16 Sep 2020 12:30:24 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD0ADC00217D
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2020 07:45:15 -0700 (PDT)
+Received: from Q.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D876426B;
+        Wed, 16 Sep 2020 16:43:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1600267446;
+        bh=vqpEThUN815HEH+3aLWRHIezd8cwcQPFVZJ1JB5ol3k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kFmrLMvHie1rZdTr2MQXMcBAEJNhP9kC7phlzQSPUc6Rbu1gF/gl9XyoAFvVHOYcz
-         YKDErYBxNoI8NdNaXX4AS5DmlalS5OaBdgI/Hu4M46Fyf9G5rsj8ETJbN+t/3q+UJP
-         8HUppa3L8lmRCEKlvCdPbAGCqZs2sleWD0Nu9IEY=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        b=cyEa0EERzK7jTN3/LryXkFHi0vYRckamY4HtrbJdcnMuHwwS5QJmGr8rFMJ+EgTa1
+         ftQQ8lU4G1lZCg2ByUqnMMODrru2XONUWmlTqA79dt1+LXFgAybe1Ux9gyMiRF3kcX
+         8bUHeUIScAvFd09n5BsXt129ULM41tRyOQ1SvL+I=
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 08/15] ARM: dts: am335x: lxm: fix PCA9539 GPIO expander properties
-Date:   Wed, 16 Sep 2020 17:57:08 +0200
-Message-Id: <20200916155715.21009-9-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200916155715.21009-1-krzk@kernel.org>
-References: <20200916155715.21009-1-krzk@kernel.org>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [VSP-Tests PATCH 2/3] src: monotonic-ts: Monotonic timestamp logging
+Date:   Wed, 16 Sep 2020 15:43:01 +0100
+Message-Id: <20200916144302.1483470-3-kieran.bingham@ideasonboard.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200916144302.1483470-1-kieran.bingham@ideasonboard.com>
+References: <20200916144302.1483470-1-kieran.bingham@ideasonboard.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The PCA9539 GPIO expander requires GPIO controller properties to operate
-properly.
+Introduce a new utility which prefixes a monotonic timestamp rendered in the
+same format as the kernel logs to all lines fed in through stdin.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 ---
- arch/arm/boot/dts/am335x-lxm.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+ src/Makefile       | 10 +++++++---
+ src/monotonic-ts.c | 37 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 44 insertions(+), 3 deletions(-)
+ create mode 100644 src/monotonic-ts.c
 
-diff --git a/arch/arm/boot/dts/am335x-lxm.dts b/arch/arm/boot/dts/am335x-lxm.dts
-index cd55f11260ea..0f078465297a 100644
---- a/arch/arm/boot/dts/am335x-lxm.dts
-+++ b/arch/arm/boot/dts/am335x-lxm.dts
-@@ -160,11 +160,15 @@
- 	serial_config1: serial_config1@20 {
- 		compatible = "nxp,pca9539";
- 		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
- 	};
+diff --git a/src/Makefile b/src/Makefile
+index d7f901f58be6..67216e81ffc4 100644
+--- a/src/Makefile
++++ b/src/Makefile
+@@ -7,18 +7,22 @@ CFLAGS	?= -O0 -g -W -Wall -Wno-unused-parameter -Iinclude
+ LDFLAGS	?=
+ LIBS	:= -lm
+ GEN-IMAGE := gen-image
++MONOTONIC_TS := monotonic-ts
  
- 	serial_config2: serial_config2@21 {
- 		compatible = "nxp,pca9539";
- 		reg = <0x21>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
- 	};
+ %.o : %.c
+ 	$(CC) $(CFLAGS) -c -o $@ $<
  
- 	tps: tps@2d {
+-all: $(GEN-IMAGE)
++all: $(GEN-IMAGE) $(MONOTONIC_TS)
+ 
+ $(GEN-IMAGE): gen-image.o
+ 	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
+ 
++$(MONOTONIC_TS): monotonic-ts.o
++	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
++
+ clean:
+ 	-rm -f *.o
+-	-rm -f $(GEN-IMAGE)
++	-rm -f $(GEN-IMAGE) $(MONOTONIC_TS)
+ 
+ install:
+-	cp $(GEN-IMAGE) $(INSTALL_DIR)/
++	cp $(GEN-IMAGE) $(MONOTONIC_TS) $(INSTALL_DIR)/
+diff --git a/src/monotonic-ts.c b/src/monotonic-ts.c
+new file mode 100644
+index 000000000000..fcb671e06d27
+--- /dev/null
++++ b/src/monotonic-ts.c
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/* SPDX-FileCopyrightText: 2020 Kieran Bingham <kieran.bingham@ideasonboard.com> */
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <time.h>
++
++int main(int argc, char ** argv)
++{
++	struct timespec tp;
++	char *line = NULL;
++	size_t size = 0;
++	const char *label = "";
++
++	if (argc > 1)
++		label = argv[1];
++
++	/*
++	 * Explicitly set line buffering on stdin to be sure it is delivered
++	 * in a timely fashion for our timestamping purposes when data is fed
++	 * through a pipe.
++	 */
++	setlinebuf(stdin);
++
++	do {
++		if (getline(&line, &size, stdin) <= 0)
++			break;
++
++		clock_gettime(CLOCK_MONOTONIC, &tp);
++		printf("[%ld.%.9ld]%s %s", tp.tv_sec, tp.tv_nsec, label, line);
++	} while (!feof(stdin));
++
++	free(line);
++
++	return 0;
++}
++
 -- 
-2.17.1
+2.25.1
 
