@@ -4,39 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1704BC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD99C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCA3F223E8
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:23:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCD7022403
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbgIPRWm (ORCPT
+        id S1726987AbgIPRYv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 13:22:42 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:47758 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbgIPRVr (ORCPT
+        Wed, 16 Sep 2020 13:24:51 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:42073 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726377AbgIPRYo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:21:47 -0400
-Received: from relay2-d.mail.gandi.net (unknown [217.70.183.194])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id CE0F63AD954
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2020 15:53:47 +0000 (UTC)
-X-Originating-IP: 93.34.118.233
-Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id D241F4000E;
-        Wed, 16 Sep 2020 15:52:08 +0000 (UTC)
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] vin-tests: Add capture script for RDACM21
-Date:   Wed, 16 Sep 2020 17:55:46 +0200
-Message-Id: <20200916155546.160450-1-jacopo@jmondi.org>
-X-Mailer: git-send-email 2.28.0
+        Wed, 16 Sep 2020 13:24:44 -0400
+X-IronPort-AV: E=Sophos;i="5.76,432,1592838000"; 
+   d="scan'208";a="57210328"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 16 Sep 2020 20:00:04 +0900
+Received: from devel.example.org?044ree.adwin.renesas.com (unknown [10.226.36.120])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A32294278DAC;
+        Wed, 16 Sep 2020 20:00:01 +0900 (JST)
+From:   Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v2 3/3] media: dt-bindings: media: renesas,drif: Add r8a77990 support
+Date:   Wed, 16 Sep 2020 11:59:49 +0100
+Message-Id: <20200916105949.24858-4-fabrizio.castro.jz@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200916105949.24858-1-fabrizio.castro.jz@renesas.com>
+References: <20200916105949.24858-1-fabrizio.castro.jz@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
@@ -44,124 +53,34 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add script to capture from RDACM21 on Eagle V3-M.
+The r8a77990 (a.k.a. R-Car E3) device tree schema is
+compatible with R-Car H3 and M3-W schema.
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+Document r8a77990 support within renesas,drif.yaml.
+
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- gmsl-rdacm21-yavta.sh | 104 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 104 insertions(+)
- create mode 100755 gmsl-rdacm21-yavta.sh
+v1->v2:
+* No change
 
-diff --git a/gmsl-rdacm21-yavta.sh b/gmsl-rdacm21-yavta.sh
-new file mode 100755
-index 0000000..36ba024
---- /dev/null
-+++ b/gmsl-rdacm21-yavta.sh
-@@ -0,0 +1,104 @@
-+#!/bin/bash
-+
-+base=$(dirname $(readlink -f $0))
-+
-+source $base/scripts/vin-tests.sh
-+source $base/scripts/boards.sh
-+
-+mdev=$(mc_get_mdev)
-+
-+out=$base/output
-+rm -fr $out
-+mkdir $out
-+
-+function conf() {
-+    CSI="$1"
-+    IDX="$2"
-+    VIN="$3"
-+
-+    media-ctl -d $mdev -V "'$CSI':$IDX [fmt:YUYV8_1X16/1280x1080 field:none]"
-+    mc_set_link "$CSI" $IDX "$VIN" 1
-+}
-+
-+function conf_gmsl() {
-+	set -x
-+	MAX9286="max9286 3-0048"
-+
-+    for pad in `seq 0 3`; do
-+		media-ctl -d $mdev -V "'$MAX9286':$pad [fmt:YUYV8_1X16/1280x1080 field:none colorspace:srgb xfer:none ycbcr:601 quantization:full-range]"
-+	done
-+
-+	set +x
-+}
-+
-+function capture() {
-+    VID="$1"
-+    vid=$(eval echo \$$VID)
-+    echo $vid
-+
-+    yavta -f YUYV -s 1280x1080 -c10 --skip 7 --file="$out/$VID-#.bin" /dev/$vid &
-+}
-+
-+mc_reset
-+
-+# Need to configure all formats going through each MAX9286
-+conf1234=0
-+conf5678=0
-+
-+for cam in "$@"; do
-+	case $cam in
-+        1|2|3|4)
-+            if [[ $conf1234 -ne 1 ]]; then
-+                conf  "$csi40name" 1 "$vinname0"
-+                conf  "$csi40name" 2 "$vinname1"
-+                conf  "$csi40name" 3 "$vinname2"
-+                conf  "$csi40name" 4 "$vinname3"
-+                conf1234=1
-+            fi
-+            ;;
-+        5|6|7|8)
-+            if [[ $conf5678 -ne 1 ]]; then
-+                conf  "$csi41name" 1 "$vinname4"
-+                conf  "$csi41name" 2 "$vinname5"
-+                conf  "$csi41name" 3 "$vinname6"
-+                conf  "$csi41name" 4 "$vinname7"
-+                conf5678=1
-+            fi
-+            ;;
-+	    *)
-+		echo "Unrecognised camera $cam"
-+		;;
-+	esac
-+done
-+
-+conf_gmsl
-+
-+for cam in "$@"
-+do
-+	echo "Capturing camera $cam"
-+	case $cam in
-+	    1)	capture vin0 ;;
-+	    2)	capture vin1 ;;
-+	    3)	capture vin2 ;;
-+	    4)	capture vin3 ;;
-+
-+	    5)	capture vin4 ;;
-+	    6)	capture vin5 ;;
-+	    7)	capture vin6 ;;
-+	    8)	capture vin7 ;;
-+
-+	    *)
-+		echo "Unrecognised camera $cam"
-+		;;
-+	esac
-+done;
-+
-+wait
-+
-+for f in $out/*bin; do
-+    name=$(basename $f .bin)
-+    raw2rgbpnm -f YUYV -s 1280x1080 $out/$name.bin $out/$name.ppm
-+    convert $out/$name.ppm $out/$name.png
-+done
-+
-+convert $out/vin*-000007.png -background white -append $out/collage.png
---
-2.28.0
+ Documentation/devicetree/bindings/media/renesas,drif.yaml | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Documentation/devicetree/bindings/media/renesas,drif.yaml b/Documentation/devicetree/bindings/media/renesas,drif.yaml
+index 4763a6009e8b..2e12b353b395 100644
+--- a/Documentation/devicetree/bindings/media/renesas,drif.yaml
++++ b/Documentation/devicetree/bindings/media/renesas,drif.yaml
+@@ -53,6 +53,7 @@ properties:
+       - enum:
+         - renesas,r8a7795-drif        # R-Car H3
+         - renesas,r8a7796-drif        # R-Car M3-W
++        - renesas,r8a77990-drif       # R-Car E3
+       - const: renesas,rcar-gen3-drif # Generic R-Car Gen3 compatible device
+ 
+   reg:
+-- 
+2.25.1
 
