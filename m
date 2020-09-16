@@ -2,112 +2,180 @@ Return-Path: <SRS0=hv6C=CZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A95C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69D1C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89B4821941
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:31:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600281077;
-	bh=z54NT2te4cQqCwvnxGuhIvp2W2PqIQwX8Rfrwo03n6k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KLyGh0SXUi3P+/e14N50nYhnLdMp6QivYtKDxFQJP9rhymaCh2MDKqg+INbIv1a8x
-	 WljGj9KBxCUPJD5TNsQXW9DUPAGeQooiQJWI6ZiNKxoOUiIJhm2MQ/Dy6jGYybCYJo
-	 5ibqPbPWFp7jK+lSU1XoacxfeJEojoOLRh34n8ZQ=
+	by mail.kernel.org (Postfix) with ESMTP id 7145220809
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:45:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwjKQCgR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbgIPSbQ (ORCPT
+        id S1728040AbgIPSo7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:31:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58762 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727823AbgIPSab (ORCPT
+        Wed, 16 Sep 2020 14:44:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41210 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727952AbgIPSWy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:30:31 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6614422470;
-        Wed, 16 Sep 2020 15:58:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600271923;
-        bh=z54NT2te4cQqCwvnxGuhIvp2W2PqIQwX8Rfrwo03n6k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HK32OVkYHkBdJOofLkJ+eUoiFHxyVHCmMnup/A7LJvnMbmFRiwsgEMgYtwJqubXXq
-         JCspG3tYh6jh9B4NAgWMrK96wSIlk+dYeGSlk9dnzukQSbkIiOSIKR8DOI5Es5fyRl
-         4yJvpL+qxOp5+HXbERF/ET+85d6NF+YAf9Huy1sY=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        Wed, 16 Sep 2020 14:22:54 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90B8BC0073DD;
+        Wed, 16 Sep 2020 06:52:13 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id e23so10475938eja.3;
+        Wed, 16 Sep 2020 06:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=knIMaMUCGrh0edGmjYkoyqXQYs65u/gq3+WHV7EF01I=;
+        b=XwjKQCgR26K6dCKqDRqsruE6dmpYaMX+wfKn20Xf5URUuMBQLo/39Kt7rueD4szZa5
+         oyVI7R6KQLYWd8WD/4pvkU7YDrfvkm9iXF2bSjcl/ZYqJgDIyGvdmR8Nuu7NUVXzBQ/V
+         XLGk2BeV9MBDIK+aecspxpYEcZpdmkL3sFpBE4ygKFaCY2NLqbbhMo4i8W0/lw0ksUEe
+         ytQWJDThVoGPPgZPx2nCYivw7cS6IltCHmB+tjlqm1fJqo3LHACpGVhnw3tO7MYr8CDb
+         OV/G0kdDgJx77SZg9Nqeae93RwDeUm3+zR1eVjYMcYf8lB9ZVEMl+GNaGTyqqnf1y4nY
+         /KwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=knIMaMUCGrh0edGmjYkoyqXQYs65u/gq3+WHV7EF01I=;
+        b=HU1ADAvJOnEDl7aUvWUekvHrVbRYqTyEv2pqkdEg3u0nw8iQm27nqTn/JjklQwa5fI
+         S9imAseRdoRhQSAfDVa3p4L2UCRMSiRFUwGZ5jZ9bH9RKIcpxTss1jhEgB4b2kC72ujG
+         NcNwyDteAE1bWl/IV9IO27fbSpO6rbjKcxcMmzFlibkSATraPmh0Eq6WJr6JqX8PXxcV
+         nFzqmpc62CqrZgjVrGmybOojn/Ldgjzo817zqFENVX006/WifQDX0MM7HNqo/9O2PkDC
+         vmr5OJfXigJ5JTtEUryekxfQ9nkne8iNscylKUcpg88C1D09oO+G7/itjnaCkHuinHuV
+         xagw==
+X-Gm-Message-State: AOAM530l1ct45UrFCwjlYqdYCskkjSB9CF23wdAV1VMb/VPM9Yz9YK2E
+        t27sXcTSxVCoUcZ4Rw+Wyeg1y2n2+VM=
+X-Google-Smtp-Source: ABdhPJwxKq1iydP+/l4cyZ6LCbIUy0E6UMKWWIjNTqgh+Q9F9D8LJMDJeO0wOyMvBF7/QYKcF9tGsQ==
+X-Received: by 2002:a17:907:64d:: with SMTP id wq13mr25000244ejb.513.1600264331665;
+        Wed, 16 Sep 2020 06:52:11 -0700 (PDT)
+Received: from [192.168.1.4] (ip-89-176-112-137.net.upcbroadband.cz. [89.176.112.137])
+        by smtp.gmail.com with ESMTPSA id h13sm13143005ejl.77.2020.09.16.06.52.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Sep 2020 06:52:10 -0700 (PDT)
+Subject: Re: [PATCH] PCI: rcar: Add L1 link state fix into data abort hook
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 09/15] ARM: dts: am335x: t335: align GPIO hog names with dtschema
-Date:   Wed, 16 Sep 2020 17:57:09 +0200
-Message-Id: <20200916155715.21009-10-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200916155715.21009-1-krzk@kernel.org>
-References: <20200916155715.21009-1-krzk@kernel.org>
+References: <20200914040140.GA1237003@bjorn-Precision-5520>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <22c5e9f0-5333-5b12-6f65-fac0fa2d5e37@gmail.com>
+Date:   Wed, 16 Sep 2020 15:50:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
+MIME-Version: 1.0
+In-Reply-To: <20200914040140.GA1237003@bjorn-Precision-5520>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The convention for node names is to use hyphens, not underscores.
-dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.
+On 9/14/20 6:01 AM, Bjorn Helgaas wrote:
+> On Mon, Sep 14, 2020 at 03:36:08AM +0200, Marek Vasut wrote:
+>> On 9/13/20 7:22 PM, Bjorn Helgaas wrote:
+>>
+>> [...]
+>>
+>>>> The R-Car PCIe controller is capable of handling L0s/L1 link states.
+>>>> While the controller can enter and exit L0s link state, and exit L1
+>>>> link state, without any additional action from the driver, to enter
+>>>> L1 link state, the driver must complete the link state transition by
+>>>> issuing additional commands to the controller.
+>>>
+>>> So IIUC an R-Car Root Port can't enter L1 without help from the
+>>> driver?  That *sounds* like a hardware defect, since ASPM is supposed
+>>> to be "hardware-autonomous" once configured.
+>>
+>> The driver needs to complete the switch from L0 to L1 link state, yes.
+>>
+>>>> The problem is, this transition is not atomic. The controller sets
+>>>> PMEL1RX bit in PMSR register upon reception of PM_ENTER_L1 DLLP from
+>>>> the PCIe card, but then the controller enters some sort of inbetween
+>>>> state. The driver must detect this condition and complete the link
+>>>> state transition, by setting L1IATN bit in PMCTLR and waiting for
+>>>> the link state transition to complete.
+>>>>
+>>>> If a PCIe access happens inside of this window, where the controller
+>>>> is inbetween L0 and L1 link states, the access generates a fault and
+>>>> the ARM 'imprecise external abort' handler is invoked.
+>>>
+>>> Let me see if I understand this.
+>>>
+>>>   1) Endpoint sends PM_ENTER_L1
+>>>   2) R-Car Root Port receives PM_ENTER_L1, sets PMEL1RX
+>>>   3) R-Car driver does something to complete transition to L1
+>>>
+>>> And if the Endpoint driver does an MMIO access between 2) and 3), it
+>>> causes an external abort?
+>>
+>> Yes, because the link is in this inbetween state. So you need 3) to
+>> complete that transition.
+>>
+>>> I couldn't find anything in the R-Car driver today that completes the
+>>> transition to L1.
+>>
+>> That's because this patch adds it.
+> 
+> So with this patch, we finish the transition to L1 and immediately
+> return to L0.  That must mean that even in this in-between state we
+> save some power?
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/am335x-sbc-t335.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Yes, that's how I understand it from the datasheet.
 
-diff --git a/arch/arm/boot/dts/am335x-sbc-t335.dts b/arch/arm/boot/dts/am335x-sbc-t335.dts
-index a3f6bc4072d9..81e4453687ba 100644
---- a/arch/arm/boot/dts/am335x-sbc-t335.dts
-+++ b/arch/arm/boot/dts/am335x-sbc-t335.dts
-@@ -155,13 +155,13 @@
- 		gpio-controller;
- 		#gpio-cells = <2>;
- 		reg = <0x26>;
--		dvi_ena {
-+		dvi-ena-hog {
- 			gpio-hog;
- 			gpios = <13 GPIO_ACTIVE_HIGH>;
- 			output-high;
- 			line-name = "dvi-enable";
- 		};
--		lcd_ena {
-+		lcd-ena-hog {
- 			gpio-hog;
- 			gpios = <11 GPIO_ACTIVE_HIGH>;
- 			output-high;
--- 
-2.17.1
+> And the link may stay in that in-between state indefinitely, until the
+> CPU does an MMIO access or the device initiates a DMA?  But it will
+> never spend any time in L1 because the link never actually *gets* to
+> L1 until some event that will take it back to L0 occurs?
 
+It is in power saving mode as far as I can tell. It only needs this
+extra bump to get fully in L1 and then back to L0.
+
+>>> And the MMIO access will immediately bring the link back to L0, won't
+>>> it?
+>>
+>> Yes
+>>
+>>> Is there any benefit to L1 at all for this Root Port?  If it can't
+>>> enter L1 and just stays in the in-between state until some event that
+>>> will bring it *out* of L1, maybe we just need a quirk to stop
+>>> advertising support for L1 in the first place.
+>>
+>> Power saving I would say.
+>>
+>>>> Just like other PCI controller drivers, here we hook the fault handler,
+>>>> perform the fixup to help the controller enter L1 link state, and then
+>>>> restart the instruction which triggered the fault. Since the controller
+>>>> is in L1 link state now, the link can exit from L1 link state to L0 and
+>>>> successfully complete the access.
+>>>>
+>>>> Note that this fixup is applicable only to Aarch32 R-Car controllers,
+>>>> the Aarch64 R-Car perform the same fixup in TFA, see TFA commit
+>>>> 0969397f2 ("rcar_gen3: plat: Prevent PCIe hang during L1X config access")
+>>>
+>>> TFA?  This doesn't seem to be an upstream Linux commit; can you give a
+>>> more specific reference?
+>>
+>> This is the Trusted Firmware from ARM, in this case it behaves similar
+>> to ACPI. See e.g.:
+>>
+>> https://github.com/ARM-software/arm-trusted-firmware/commit/0969397f295621aa26b3d14b76dd397d22be58bf
+> 
+> Thanks for that; please include it in the commit log for the next
+> version.
+
+OK
