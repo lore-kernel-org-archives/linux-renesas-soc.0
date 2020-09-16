@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EFDC2BB84
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0635C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB67120936
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:21:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D49021941
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:21:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600287689;
-	bh=wdAkw2TjM1udxEqqVOzxHnXaiuAOFMCD3JyJ0x6GXJI=;
+	s=default; t=1600287710;
+	bh=nvskr1+D9obXaMbDfZyLjyzIPbiTAGWd9iB4g/+Kc0U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KKf1UD0Xwgknn7/qxVTgivTIbFi34qHaGQafhdnjipvmHb2kd0OLrY40aKwdx3Uyt
-	 nTG5xMt5THoIQiMY5gPIy1ykCLVK1OdcQIYFjWHJcdiZoEFXABqUOOyDHQBEp0VXls
-	 Rn3PnTcvrFpFvcTBEddxSXhpmUyCaC30W2jqNEyU=
+	b=uqC9ltarU6dCEfcz5f7L4KABICkzKqdwmUXAh9WtukbX6A9A9hfPEoNjRvpB75wLc
+	 vT56bLmqfUSp0Pe+rY0mfeuYICY+SpFKJ3/pvGgZqBvFBpv/6zev9Vud38nDGrRr7M
+	 ZfZ2m2Fsn2zEjkc56GQaLUKRS6zG8TKtBgPhuJiM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbgIPUV0 (ORCPT
+        id S1727174AbgIPUVr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:21:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43846 "EHLO mail.kernel.org"
+        Wed, 16 Sep 2020 16:21:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727160AbgIPRau (ORCPT
+        id S1727161AbgIPRau (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 16 Sep 2020 13:30:50 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D3B922464;
-        Wed, 16 Sep 2020 15:58:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC99D224BE;
+        Wed, 16 Sep 2020 15:59:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600271894;
-        bh=wdAkw2TjM1udxEqqVOzxHnXaiuAOFMCD3JyJ0x6GXJI=;
+        s=default; t=1600271956;
+        bh=nvskr1+D9obXaMbDfZyLjyzIPbiTAGWd9iB4g/+Kc0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CEkiTIX+Fl0xgU9GaFowB3IBFoj0LdQvWJp6D/j5lf4NecsiG9e7rpukGJOxIsOGX
-         OiHfB2CHjp8UzjXsoU4dCoauEfCjSPEEzbwnAko1gQFeuf/NUQwGG6LcEcvfRUlBi8
-         pOcI/Xun6ff/784JHIbliYALEOTgbG6oNJuCy1EA=
+        b=YTeS3iuxG8yxC4hEj6utIjUJUoYa1OQMcJ+8zesYwSyOeN4OONfNJWUOjPI6x6u1K
+         Op+AxGXSn8ZFmnLXPw+XRqaU+dopclTQpu3KAH6HzRuDFk2i7EDl6RtvOlP1/G4a8v
+         0LGrjW5uqieq+VfZoTXzlj9T5cGhZrws9DM9fz/I=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -69,9 +69,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 05/15] arm64: dts: renesas: align GPIO hog names with dtschema
-Date:   Wed, 16 Sep 2020 17:57:05 +0200
-Message-Id: <20200916155715.21009-6-krzk@kernel.org>
+Subject: [PATCH v3 13/15] ARM: dts: dove: fix PCA95xx GPIO expander properties on A510
+Date:   Wed, 16 Sep 2020 17:57:13 +0200
+Message-Id: <20200916155715.21009-14-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200916155715.21009-1-krzk@kernel.org>
 References: <20200916155715.21009-1-krzk@kernel.org>
@@ -80,103 +80,27 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The convention for node names is to use hyphens, not underscores.
-dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.
+The PCA95xx GPIO expander requires GPIO controller properties to operate
+properly.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- .../boot/dts/renesas/r8a77951-salvator-xs.dts      |  2 +-
- .../boot/dts/renesas/r8a77965-salvator-xs.dts      |  2 +-
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi           | 14 +++++++-------
- 3 files changed, 9 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/dove-sbc-a510.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts
-index cef9da4376a3..e5922329a4b8 100644
---- a/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts
-@@ -118,7 +118,7 @@
+diff --git a/arch/arm/boot/dts/dove-sbc-a510.dts b/arch/arm/boot/dts/dove-sbc-a510.dts
+index 2bb85a9b7614..df021f9b0117 100644
+--- a/arch/arm/boot/dts/dove-sbc-a510.dts
++++ b/arch/arm/boot/dts/dove-sbc-a510.dts
+@@ -143,6 +143,7 @@
+ 	gpio_ext: gpio@20 {
+ 		compatible = "nxp,pca9555";
+ 		reg = <0x20>;
++		gpio-controller;
+ 		#gpio-cells = <2>;
+ 	};
  };
- 
- &pca9654 {
--	pcie_sata_switch {
-+	pcie-sata-switch-hog {
- 		gpio-hog;
- 		gpios = <7 GPIO_ACTIVE_HIGH>;
- 		output-low; /* enable SATA by default */
-diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-index 5cef64605464..d7e621101af7 100644
---- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
-@@ -55,7 +55,7 @@
- };
- 
- &pca9654 {
--	pcie_sata_switch {
-+	pcie-sata-switch-hog {
- 		gpio-hog;
- 		gpios = <7 GPIO_ACTIVE_HIGH>;
- 		output-low; /* enable SATA by default */
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index 202177706cde..e9ed2597f1c2 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -143,49 +143,49 @@
- 		interrupt-parent = <&gpio6>;
- 		interrupts = <8 IRQ_TYPE_EDGE_FALLING>;
- 
--		audio_out_off {
-+		audio-out-off-hog {
- 			gpio-hog;
- 			gpios = <0 GPIO_ACTIVE_HIGH>; /* P00 */
- 			output-high;
- 			line-name = "Audio_Out_OFF";
- 		};
- 
--		hub_pwen {
-+		hub-pwen-hog {
- 			gpio-hog;
- 			gpios = <6 GPIO_ACTIVE_HIGH>;
- 			output-high;
- 			line-name = "HUB pwen";
- 		};
- 
--		hub_rst {
-+		hub-rst-hog {
- 			gpio-hog;
- 			gpios = <7 GPIO_ACTIVE_HIGH>;
- 			output-high;
- 			line-name = "HUB rst";
- 		};
- 
--		otg_extlpn {
-+		otg-extlpn-hog {
- 			gpio-hog;
- 			gpios = <9 GPIO_ACTIVE_HIGH>;
- 			output-high;
- 			line-name = "OTG EXTLPn";
- 		};
- 
--		otg_offvbusn {
-+		otg-offvbusn-hog {
- 			gpio-hog;
- 			gpios = <8 GPIO_ACTIVE_HIGH>;
- 			output-low;
- 			line-name = "OTG OFFVBUSn";
- 		};
- 
--		sd-wifi-mux {
-+		sd-wifi-mux-hog {
- 			gpio-hog;
- 			gpios = <5 GPIO_ACTIVE_HIGH>;
- 			output-low;	/* Connect WL1837 */
- 			line-name = "SD WiFi mux";
- 		};
- 
--		snd_rst {
-+		snd-rst-hog {
- 			gpio-hog;
- 			gpios = <15 GPIO_ACTIVE_HIGH>; /* P17 */
- 			output-high;
 -- 
 2.17.1
 
