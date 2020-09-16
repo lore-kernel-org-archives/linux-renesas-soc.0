@@ -2,150 +2,181 @@ Return-Path: <SRS0=hv6C=CZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 253FEC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EFDC2BB84
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB8C020936
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:21:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB67120936
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:21:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600287689;
+	bh=wdAkw2TjM1udxEqqVOzxHnXaiuAOFMCD3JyJ0x6GXJI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=KKf1UD0Xwgknn7/qxVTgivTIbFi34qHaGQafhdnjipvmHb2kd0OLrY40aKwdx3Uyt
+	 nTG5xMt5THoIQiMY5gPIy1ykCLVK1OdcQIYFjWHJcdiZoEFXABqUOOyDHQBEp0VXls
+	 Rn3PnTcvrFpFvcTBEddxSXhpmUyCaC30W2jqNEyU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbgIPUVY (ORCPT
+        id S1727658AbgIPUV0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:21:24 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:60768 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbgIPRa5 (ORCPT
+        Wed, 16 Sep 2020 16:21:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727160AbgIPRau (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:30:57 -0400
-Received: from relay3-d.mail.gandi.net (unknown [217.70.183.195])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 55EE63AA95C;
-        Wed, 16 Sep 2020 11:20:03 +0000 (UTC)
-X-Originating-IP: 93.34.118.233
-Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 90FEE6000A;
-        Wed, 16 Sep 2020 11:14:40 +0000 (UTC)
-Date:   Wed, 16 Sep 2020 13:18:32 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v2] media: i2c: max9286: Fix async subdev size
-Message-ID: <20200916111832.sdjfvc6tfyi33jzh@uno.localdomain>
-References: <20200915123914.22807-1-jacopo+renesas@jmondi.org>
- <82d2c47e-9197-776d-b78b-6ca7cdecb94c@ideasonboard.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <82d2c47e-9197-776d-b78b-6ca7cdecb94c@ideasonboard.com>
+        Wed, 16 Sep 2020 13:30:50 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D3B922464;
+        Wed, 16 Sep 2020 15:58:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600271894;
+        bh=wdAkw2TjM1udxEqqVOzxHnXaiuAOFMCD3JyJ0x6GXJI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CEkiTIX+Fl0xgU9GaFowB3IBFoj0LdQvWJp6D/j5lf4NecsiG9e7rpukGJOxIsOGX
+         OiHfB2CHjp8UzjXsoU4dCoauEfCjSPEEzbwnAko1gQFeuf/NUQwGG6LcEcvfRUlBi8
+         pOcI/Xun6ff/784JHIbliYALEOTgbG6oNJuCy1EA=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 05/15] arm64: dts: renesas: align GPIO hog names with dtschema
+Date:   Wed, 16 Sep 2020 17:57:05 +0200
+Message-Id: <20200916155715.21009-6-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200916155715.21009-1-krzk@kernel.org>
+References: <20200916155715.21009-1-krzk@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+The convention for node names is to use hyphens, not underscores.
+dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.
 
-On Wed, Sep 16, 2020 at 12:00:53PM +0100, Kieran Bingham wrote:
-> Hi Jacopo,
->
-> On 15/09/2020 13:39, Jacopo Mondi wrote:
-> > Since
->
-> Does 'Since' really need it's own line ;-)
->
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ .../boot/dts/renesas/r8a77951-salvator-xs.dts      |  2 +-
+ .../boot/dts/renesas/r8a77965-salvator-xs.dts      |  2 +-
+ arch/arm64/boot/dts/renesas/ulcb-kf.dtsi           | 14 +++++++-------
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-If you don't want to break the following one (which I understand is
-better on a single line) yes
+diff --git a/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts
+index cef9da4376a3..e5922329a4b8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts
+@@ -118,7 +118,7 @@
+ };
+ 
+ &pca9654 {
+-	pcie_sata_switch {
++	pcie-sata-switch-hog {
+ 		gpio-hog;
+ 		gpios = <7 GPIO_ACTIVE_HIGH>;
+ 		output-low; /* enable SATA by default */
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+index 5cef64605464..d7e621101af7 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77965-salvator-xs.dts
+@@ -55,7 +55,7 @@
+ };
+ 
+ &pca9654 {
+-	pcie_sata_switch {
++	pcie-sata-switch-hog {
+ 		gpio-hog;
+ 		gpios = <7 GPIO_ACTIVE_HIGH>;
+ 		output-low; /* enable SATA by default */
+diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+index 202177706cde..e9ed2597f1c2 100644
+--- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
++++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
+@@ -143,49 +143,49 @@
+ 		interrupt-parent = <&gpio6>;
+ 		interrupts = <8 IRQ_TYPE_EDGE_FALLING>;
+ 
+-		audio_out_off {
++		audio-out-off-hog {
+ 			gpio-hog;
+ 			gpios = <0 GPIO_ACTIVE_HIGH>; /* P00 */
+ 			output-high;
+ 			line-name = "Audio_Out_OFF";
+ 		};
+ 
+-		hub_pwen {
++		hub-pwen-hog {
+ 			gpio-hog;
+ 			gpios = <6 GPIO_ACTIVE_HIGH>;
+ 			output-high;
+ 			line-name = "HUB pwen";
+ 		};
+ 
+-		hub_rst {
++		hub-rst-hog {
+ 			gpio-hog;
+ 			gpios = <7 GPIO_ACTIVE_HIGH>;
+ 			output-high;
+ 			line-name = "HUB rst";
+ 		};
+ 
+-		otg_extlpn {
++		otg-extlpn-hog {
+ 			gpio-hog;
+ 			gpios = <9 GPIO_ACTIVE_HIGH>;
+ 			output-high;
+ 			line-name = "OTG EXTLPn";
+ 		};
+ 
+-		otg_offvbusn {
++		otg-offvbusn-hog {
+ 			gpio-hog;
+ 			gpios = <8 GPIO_ACTIVE_HIGH>;
+ 			output-low;
+ 			line-name = "OTG OFFVBUSn";
+ 		};
+ 
+-		sd-wifi-mux {
++		sd-wifi-mux-hog {
+ 			gpio-hog;
+ 			gpios = <5 GPIO_ACTIVE_HIGH>;
+ 			output-low;	/* Connect WL1837 */
+ 			line-name = "SD WiFi mux";
+ 		};
+ 
+-		snd_rst {
++		snd-rst-hog {
+ 			gpio-hog;
+ 			gpios = <15 GPIO_ACTIVE_HIGH>; /* P17 */
+ 			output-high;
+-- 
+2.17.1
 
-> > commit 86d37bf31af6 ("media: i2c: max9286: Allocate v4l2_async_subdev dynamically")
-> > the async subdevice registered to the max9286 notifier is dynamically
-> > allocated by the v4l2 framework by using the
-> > v4l2_async_notifier_add_fwnode_subdev() function. In order to allocate
->
-> A newline before 'In order to' would be nice to split 'what happened'
-> from 'what is going to happen'. Oh, in fact it doesn't describe what
-> happened though...
->
-> > enough space for max9286_asd structure that encloses the async subdevice
->
-> for "the" max9286_asd...
->
->
-> > paired with a pointer to the corresponding source, pass to the framework
-> > the size of the whole structure in place of the one of the enclosed async
-> > subdev.
->
-> That's quite hard to parse though, and I don't think describing the
-> contents of max9286_asd really matters here?
->
-> How about:
->
-> Since commit 86d37bf31af6 ("media: i2c: max9286: Allocate
-> v4l2_async_subdev dynamically") the async subdevice registered to the
-> max9286 notifier is dynamically allocated by the v4l2 framework by using
-> the v4l2_async_notifier_add_fwnode_subdev() function, but provides an
-> incorrect size, potentially leading to incorrect memory accesses.
->
-> Allocate enough space for the driver specific max9286_asd structure
-> (which contains the async subdevice) by passing the size of the correct
-> structure.
->
-> > Fixes: 86d37bf31af6 ("media: i2c: max9286: Allocate v4l2_async_subdev dynamically")
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->
-> The code is fine though, so with any commit message updates you deem
-> necessary:
->
-> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-Ok, better than mine, I'll take it in.
-
-Thanks.
-    j
-
->
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  drivers/media/i2c/max9286.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-> > index c82c1493e099..6852448284ea 100644
-> > --- a/drivers/media/i2c/max9286.c
-> > +++ b/drivers/media/i2c/max9286.c
-> > @@ -577,10 +577,11 @@ static int max9286_v4l2_notifier_register(struct max9286_priv *priv)
-> >  	for_each_source(priv, source) {
-> >  		unsigned int i = to_index(priv, source);
-> >  		struct v4l2_async_subdev *asd;
-> > +		struct max9286_asd *masd;
-> >
-> >  		asd = v4l2_async_notifier_add_fwnode_subdev(&priv->notifier,
-> >  							    source->fwnode,
-> > -							    sizeof(*asd));
-> > +							    sizeof(*masd));
-> >  		if (IS_ERR(asd)) {
-> >  			dev_err(dev, "Failed to add subdev for source %u: %ld",
-> >  				i, PTR_ERR(asd));
-> > @@ -588,7 +589,8 @@ static int max9286_v4l2_notifier_register(struct max9286_priv *priv)
-> >  			return PTR_ERR(asd);
-> >  		}
-> >
-> > -		to_max9286_asd(asd)->source = source;
-> > +		masd = to_max9286_asd(asd);
-> > +		masd->source = source;
-> >  	}
-> >
-> >  	priv->notifier.ops = &max9286_notify_ops;
-> > --
-> > 2.28.0
-> >
->
