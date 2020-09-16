@@ -2,131 +2,58 @@ Return-Path: <SRS0=hv6C=CZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9514DC433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02393C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4105320872
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:36:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0CBB21D24
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:42:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600288601;
-	bh=euoNrh4CREhCtBrTlTDs/D23cyiar9mHO2VGZrvJGGw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SP6LtGVcwJNMA3m2bk/7oZAclbYEla+awjB0zbMhpdsn0oQDB4/1xKwesn51Qzzat
-	 1VHsZHbE9LXozP7Ip8TjDyyLoT8u7EvuoOe75XnhREvXRq+98UsUC+VvBddRIQRZxo
-	 i0Oq+IqkNbutpzH8YhDambRKIJyy3HSw2NHa5Y7w=
+	s=default; t=1600288956;
+	bh=YqjNp7PnHo99yNayFOQCYelU0KqLrLV16G5PDmBLJjE=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=WfH03cph67uiCpWTRmULd/RpfmnAjRBR2gJQfWhJ2Hp1fGKuGY2EklOE+ezeyv7rj
+	 SKGx7rIT0/uPqlHlbaQMWkoh6VIt7Sk670yr3FJS7+UI/hTCnwQpsrXrFJNA3ECWE9
+	 fkFPw59njEJ4j53+eLLW20AeSnIOADPttdsLgsGk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727013AbgIPUgi (ORCPT
+        id S1726863AbgIPUkx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:36:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60440 "EHLO mail.kernel.org"
+        Wed, 16 Sep 2020 16:40:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726876AbgIPRKa (ORCPT
+        id S1726786AbgIPUks (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:10:30 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA7EF22473;
-        Wed, 16 Sep 2020 15:58:43 +0000 (UTC)
+        Wed, 16 Sep 2020 16:40:48 -0400
+Content-Type: text/plain; charset="utf-8"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600271933;
-        bh=euoNrh4CREhCtBrTlTDs/D23cyiar9mHO2VGZrvJGGw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=r7ZBSAWp7ngag0GivIYwEMRvi2kI5TJyoUxd2xusn24/6ovXSjFvdFXYscQlIvUlL
-         gqpGyfwBEw0kKQGlha2BEP6GReJ4HpHYs1ZIL5ck1dgiJaZmcAsukmLwMClRxnlD9/
-         4owCOsi3+7MgIuO0CrXIPLYDZ/BRpPcnZzBOBK/A=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 10/15] ARM: dts: am3874: iceboard: fix GPIO expander reset GPIOs
-Date:   Wed, 16 Sep 2020 17:57:10 +0200
-Message-Id: <20200916155715.21009-11-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200916155715.21009-1-krzk@kernel.org>
-References: <20200916155715.21009-1-krzk@kernel.org>
+        s=default; t=1600288847;
+        bh=YqjNp7PnHo99yNayFOQCYelU0KqLrLV16G5PDmBLJjE=;
+        h=Subject:From:Date:To:From;
+        b=B9jpwDGYpJ5fEWvQKCW5OhSYxjXbiE6lqd7VcKEvZ5YnitmztIjcyZ7zY20YtZ766
+         PaWErVuJV6DISE7TOCKhQKAC8TniByOjh7tdovwCwxI4+oIfeL5IUEngQWCrtwYThd
+         KJ+MrzftT0NvKAjMFqNQgAkqsG9sBqPu7m9a7OVc=
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <160028884754.14946.3325080610627180182.git-patchwork-housekeeping@kernel.org>
+Date:   Wed, 16 Sep 2020 20:40:47 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Correct the property for reset GPIOs of the GPIO expander.
+Latest series: [v2] Document r8a77990 DRIF support (2020-09-16T10:59:48)
+  Superseding: [v1] Document r8a77990 DRIF support (2020-09-15T13:12:15):
+    [1/3] MAINTAINERS: Add Fabrizio Castro to Renesas DRIF
+    [2/3] media: dt-bindings: media: renesas,drif: Convert to json-schema
+    [3/3] media: dt-bindings: media: renesas,drif: Add r8a77990 support
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/boot/dts/am3874-iceboard.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/am3874-iceboard.dts b/arch/arm/boot/dts/am3874-iceboard.dts
-index 1bb57019d082..9423e9feaa10 100644
---- a/arch/arm/boot/dts/am3874-iceboard.dts
-+++ b/arch/arm/boot/dts/am3874-iceboard.dts
-@@ -195,7 +195,7 @@
- 					"FMCA_PG_C2M", "FMCA_PRSNT_M2C_L", "FMCA_CLK_DIR", "SFP_LOS",
- 					"FMCB_EN_12V0", "FMCB_EN_3V3", "FMCB_EN_VADJ", "FMCB_PG_M2C",
- 					"FMCB_PG_C2M", "FMCB_PRSNT_M2C_L", "FMCB_CLK_DIR", "SFP_ModPrsL";
--				reset_gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
-+				reset-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
- 			};
- 
- 			u42: pca9575@21 {
-@@ -208,7 +208,7 @@
- 					"QSFPA_LPMode", "QSFPB_ModPrsL", "QSFPB_IntL", "QSFPB_ResetL",
- 					"SFP_TxFault", "SFP_TxDisable", "SFP_RS0", "SFP_RS1",
- 					"QSFPB_ModSelL", "QSFPB_LPMode", "SEL_SFP", "ARM_MR";
--				reset_gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
-+				reset-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
- 			};
- 
- 			u48: pca9575@22 {
-@@ -227,7 +227,7 @@
- 					"GP_SW5", "GP_SW6", "GP_SW7", "GP_SW8",
- 					"GP_LED8", "GP_LED7", "GP_LED6", "GP_LED5",
- 					"GP_LED4", "GP_LED3", "GP_LED2", "GP_LED1";
--				reset_gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
-+				reset-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
- 			};
- 
- 			u59: pca9575@23 {
-@@ -240,7 +240,7 @@
- 					"GTX1V8PowerFault", "PHYAPowerFault", "PHYBPowerFault", "ArmPowerFault",
- 					"BP_SLOW_GPIO0", "BP_SLOW_GPIO1", "BP_SLOW_GPIO2", "BP_SLOW_GPIO3",
- 					"BP_SLOW_GPIO4", "BP_SLOW_GPIO5", "__unused_u59_p16", "__unused_u59_p17";
--				reset_gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
-+				reset-gpios = <&gpio2 11 GPIO_ACTIVE_LOW>;
- 			};
- 
- 			tmp100@48 { compatible = "ti,tmp100"; reg = <0x48>; };
 -- 
-2.17.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
