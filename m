@@ -2,85 +2,106 @@ Return-Path: <SRS0=hv6C=CZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD99C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AED13C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DCD7022403
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:24:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7389E2080C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:31:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600277505;
+	bh=0+FFO17wAr4hb0tN/J0gdkpjUduKv6+0Pfegkab7QXQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=efdSXtZwSg+sGHN8OpV5maqbGPa/CYgymb9zy/9bN0N1XwUizoM4hPNDsm4Y1IpzQ
+	 4MqWleNH4snMKAR+V0/eEmbQ0TAatl1hTJIe8osC3k90EUMFOjQmYt/UD6TRTBcOY1
+	 Z078sPEyxzLPSp5AQxjKpJEyOpWrRhi8ldrrn08E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726987AbgIPRYv (ORCPT
+        id S1727107AbgIPRbW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 13:24:51 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:42073 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726377AbgIPRYo (ORCPT
+        Wed, 16 Sep 2020 13:31:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43850 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727162AbgIPRat (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:24:44 -0400
-X-IronPort-AV: E=Sophos;i="5.76,432,1592838000"; 
-   d="scan'208";a="57210328"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Sep 2020 20:00:04 +0900
-Received: from devel.example.org?044ree.adwin.renesas.com (unknown [10.226.36.120])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id A32294278DAC;
-        Wed, 16 Sep 2020 20:00:01 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Wed, 16 Sep 2020 13:30:49 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECA15224BD;
+        Wed, 16 Sep 2020 15:58:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600271941;
+        bh=0+FFO17wAr4hb0tN/J0gdkpjUduKv6+0Pfegkab7QXQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UkMrjjtEx8nJ2MjbDqluecoI+lmlFdY6lBVeB1DtyEZ4P5/9ibyTca30rHWlt84X2
+         7ISNGu6iFk3BvKg+ZvWwWHTE+Pw/Y20sjvuPMAEJAonWbJieF84+M3r0FhIzg++Fvu
+         4EdKzMtFbIDODiPmNDwOcbxVDAdYRSP9M2EXJdTQ=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v2 3/3] media: dt-bindings: media: renesas,drif: Add r8a77990 support
-Date:   Wed, 16 Sep 2020 11:59:49 +0100
-Message-Id: <20200916105949.24858-4-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200916105949.24858-1-fabrizio.castro.jz@renesas.com>
-References: <20200916105949.24858-1-fabrizio.castro.jz@renesas.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 11/15] ARM: dts: aspeed: fix PCA95xx GPIO expander properties on Portwell
+Date:   Wed, 16 Sep 2020 17:57:11 +0200
+Message-Id: <20200916155715.21009-12-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200916155715.21009-1-krzk@kernel.org>
+References: <20200916155715.21009-1-krzk@kernel.org>
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The r8a77990 (a.k.a. R-Car E3) device tree schema is
-compatible with R-Car H3 and M3-W schema.
+The PCA95xx GPIO expander requires GPIO controller properties to operate
+properly.
 
-Document r8a77990 support within renesas,drif.yaml.
-
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Acked-by: Joel Stanley <joel@jms.id.au>
 ---
-v1->v2:
-* No change
+ arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
- Documentation/devicetree/bindings/media/renesas,drif.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/media/renesas,drif.yaml b/Documentation/devicetree/bindings/media/renesas,drif.yaml
-index 4763a6009e8b..2e12b353b395 100644
---- a/Documentation/devicetree/bindings/media/renesas,drif.yaml
-+++ b/Documentation/devicetree/bindings/media/renesas,drif.yaml
-@@ -53,6 +53,7 @@ properties:
-       - enum:
-         - renesas,r8a7795-drif        # R-Car H3
-         - renesas,r8a7796-drif        # R-Car M3-W
-+        - renesas,r8a77990-drif       # R-Car E3
-       - const: renesas,rcar-gen3-drif # Generic R-Car Gen3 compatible device
+diff --git a/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts b/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
+index 4a1ca8f5b6a7..03c161493ffc 100644
+--- a/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
++++ b/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
+@@ -121,6 +121,8 @@
+ 	pca9555@27 {
+ 		compatible = "nxp,pca9555";
+ 		reg = <0x27>;
++		gpio-controller;
++		#gpio-cells = <2>;
+ 	};
+ };
  
-   reg:
 -- 
-2.25.1
+2.17.1
 
