@@ -2,126 +2,129 @@ Return-Path: <SRS0=hv6C=CZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3451C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2520FC2BB84
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D161206DC
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:04:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HMFsbCyj"
+	by mail.kernel.org (Postfix) with ESMTP id CB989206DC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:07:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbgIPTEE (ORCPT
+        id S1727384AbgIPRpH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 15:04:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35644 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727463AbgIPRrx (ORCPT
+        Wed, 16 Sep 2020 13:45:07 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:52634 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbgIPRog (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:47:53 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93313C02C2B4;
-        Wed, 16 Sep 2020 08:52:27 -0700 (PDT)
-Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B07C6276;
-        Wed, 16 Sep 2020 17:46:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1600271190;
-        bh=vU4CX35WdhIO84M8bi8/e3UppxFuPqd6yDjuzFb8N+Q=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HMFsbCyj8EQ0JR7wU4Y7kx0qzhdXYQ1yA5H2OJTJH354j6YhL9GfDp8DLestnF1AI
-         H6LbT3tai6ISYHNdWBRknp0aNofOfLRBYHM3hO6EUhU9ompuZ51rWMPksekHzS19wf
-         yy31jFwzEiHUyljAxNYrWhYyBTeA7JPbWbBJddC8=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH 2/5] media: rcar_drif: Fix fwnode reference leak when
- parsing DT
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>
-References: <20200811205939.19550-1-laurent.pinchart+renesas@ideasonboard.com>
- <20200811205939.19550-3-laurent.pinchart+renesas@ideasonboard.com>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <ba59bb4e-733f-a76d-413d-cde7e1bcad9d@ideasonboard.com>
-Date:   Wed, 16 Sep 2020 16:46:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 16 Sep 2020 13:44:36 -0400
+Received: from relay10.mail.gandi.net (unknown [217.70.178.230])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 298A13AB401;
+        Wed, 16 Sep 2020 15:45:18 +0000 (UTC)
+Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 8435A24000F;
+        Wed, 16 Sep 2020 15:39:54 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     kieran.bingham+renesas@ideasonboard.com,
+        laurent.pinchart+renesas@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, mchehab@kernel.org
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Hyun Kwon <hyunk@xilinx.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH 0/2] media: i2c: Add support for RDACM21 camera module
+Date:   Wed, 16 Sep 2020 17:43:36 +0200
+Message-Id: <20200916154338.159747-1-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <20200811205939.19550-3-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
+Hello,
+   this series introduces support for the RDACM21 camera module, an automotive
+camera module based on GMSL technology.
 
-On 11/08/2020 21:59, Laurent Pinchart wrote:
-> The fwnode reference corresponding to the endpoint is leaked in an error
-> path of the rcar_drif_parse_subdevs() function. Fix it, and reorganize
-> fwnode reference handling in the function to release references early,
-> simplifying error paths.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+The camera module integrates a MAX9271 serializer, and OV10640 image sensor
+coupled with an OV490 ISP. The image sensor and the ISP are programmed loading
+the content of an EEPROM chip integrated in the camera module package and
+are configured to produce images in 1280x1080 YUYV8 format.
 
-Simplified indeed.
+The camera module driver uses the max9271 library to control the serializer,
+as the RDACM20 does, to maximize code reuse.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+And that's for patch 2/2: it's all unicorns and rainbows!
 
-> ---
->  drivers/media/platform/rcar_drif.c | 16 +++++-----------
->  1 file changed, 5 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar_drif.c b/drivers/media/platform/rcar_drif.c
-> index 3d2451ac347d..3f1e5cb8b197 100644
-> --- a/drivers/media/platform/rcar_drif.c
-> +++ b/drivers/media/platform/rcar_drif.c
-> @@ -1227,28 +1227,22 @@ static int rcar_drif_parse_subdevs(struct rcar_drif_sdr *sdr)
->  	if (!ep)
->  		return 0;
->  
-> +	/* Get the endpoint properties */
-> +	rcar_drif_get_ep_properties(sdr, ep);
-> +
->  	fwnode = fwnode_graph_get_remote_port_parent(ep);
-> +	fwnode_handle_put(ep);
->  	if (!fwnode) {
->  		dev_warn(sdr->dev, "bad remote port parent\n");
-> -		fwnode_handle_put(ep);
->  		return -EINVAL;
->  	}
->  
->  	sdr->ep.asd.match.fwnode = fwnode;
->  	sdr->ep.asd.match_type = V4L2_ASYNC_MATCH_FWNODE;
->  	ret = v4l2_async_notifier_add_subdev(notifier, &sdr->ep.asd);
-> -	if (ret) {
-> -		fwnode_handle_put(fwnode);
-> -		return ret;
-> -	}
-> -
-> -	/* Get the endpoint properties */
-> -	rcar_drif_get_ep_properties(sdr, ep);
-> -
->  	fwnode_handle_put(fwnode);
-> -	fwnode_handle_put(ep);
->  
-> -	return 0;
-> +	return ret;
->  }
->  
->  /* Check if the given device is the primary bond */
-> 
+Patch 1/2 is the less nice one, and is sent as RFC to trigger discussions.
+
+The camera module is connected to a MAXIM development board which integrates a
+MAX9286 deserializer. The same expansion board is used with the RDACM20 camera
+module and the max9286 driver is meant to work with both cameras without
+modifications.
+
+Unfortunately, each camera module has its own characteristics, in details:
+
+- the RDACM20 module integrates a micro-controller unit that pre-programs the
+  embedded max9271 serializer at power-up time. The serializer then operates
+  with the GMSL reverse channel towards the de-serializer with electrical
+  noise immunity feature enabled ("high-threshold" as per chip manual), and
+  requires the de-serializer to communicate with the camera module with the
+  reverse channel amplitude compensated to 170mV.
+
+- the RDACM21 module is not pre-programmed by any micro-controller, and requires
+  the de-serializer to initially maintain the reverse channel amplitude to
+  100mV, then after the remote ends have been probed and have enabled the noise
+  immunity feature on their reverse channels to increase the amplitude to 170mV
+  to guarantee stability of the communications.
+
+For that reason, a mechanism to control the reverse channel amplitude of the
+GMSL channel is required. The channel amplitude is controlled by the
+de-serializer, but depends on the properties of the remote serializer.
+
+We have explored a few solutions in the past:
+1) A dt property that specifies the initial reverse channel amplitude (or simply
+   a boolean property that specifies if any channel pre-compensation is
+   required). Issue is that the property should be set in the de-serializer
+   but depends on the remote side configuration and on which camera module
+   is currently connected.
+
+2) Use get_mbus_config to retrieve the GMSL channel configuration. Hyun has
+   added to get_mbus_config support for GMSL parameters to control the signal
+   polarities[1]. This seems nice, but the channel amplitude has to be set
+   -before- the remote end is probed and no subdev operation can be called
+   until the remote sub-device have registered.
+
+In this initial version, [1/2] simply adjust the reverse channel after all
+remotes have probed, allowing support for RDACM21 but breaking compatibility
+with RDACM20.
+
+Any comment on how this should better be handled ?
+
+Thanks
+  j
+
+[1] https://github.com/xlnx-hyunkwon/linux-xlnx/commits/hyunk/vision-wip-5.4-next
+
+Jacopo Mondi (2):
+  RFC: media: i2c: max9286: Compensate reverse channel
+  media: i2c: Add driver for RDACM21 camera module
+
+ MAINTAINERS                 |  12 +
+ drivers/media/i2c/Kconfig   |  13 +
+ drivers/media/i2c/Makefile  |   2 +
+ drivers/media/i2c/max9286.c |   8 +-
+ drivers/media/i2c/rdacm21.c | 541 ++++++++++++++++++++++++++++++++++++
+ 5 files changed, 574 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/media/i2c/rdacm21.c
+
+--
+2.28.0
 
