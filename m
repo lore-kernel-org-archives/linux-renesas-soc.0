@@ -2,110 +2,157 @@ Return-Path: <SRS0=hv6C=CZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5A0C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B54C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA7CD206BE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:45:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="lut+i5aC"
+	by mail.kernel.org (Postfix) with ESMTP id 0BDD8206BE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 20:49:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbgIPUpo (ORCPT
+        id S1726680AbgIPUt2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 16:45:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56674 "EHLO
+        Wed, 16 Sep 2020 16:49:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726743AbgIPRDY (ORCPT
+        with ESMTP id S1726186AbgIPRAU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:03:24 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E12A3C02C2B3;
-        Wed, 16 Sep 2020 08:49:24 -0700 (PDT)
-Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 257E326B;
-        Wed, 16 Sep 2020 17:44:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1600271046;
-        bh=lySLVcxndFknMXMSgr2EWx9F9cUXcq47wEXfwbGQSAE=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=lut+i5aCD6jc5yaQ3ck1RNYa7TomqMY5PjmXtCNkxtBLse1CVJIQoAKLFJ0eVLMXj
-         MsSx0YblCWJWyPqQEjHGUNhgDqiWIZgEntThVADIVmeNaTHMnzbzA6bd/Ws699AALq
-         BDhnYjHsHJCRO9Kx99CMVn0ZX5ZudtNN9n90w0tw=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH 1/5] media: v4l2-async: Document asd allocation
- requirements
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>
-References: <20200811205939.19550-1-laurent.pinchart+renesas@ideasonboard.com>
- <20200811205939.19550-2-laurent.pinchart+renesas@ideasonboard.com>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <0dca7898-01ff-79a2-bb7e-7e946706deb1@ideasonboard.com>
-Date:   Wed, 16 Sep 2020 16:44:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 16 Sep 2020 13:00:20 -0400
+Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1007AC0A8893;
+        Wed, 16 Sep 2020 05:54:06 -0700 (PDT)
+Received: by mail-yb1-xb43.google.com with SMTP id h206so5291522ybc.11;
+        Wed, 16 Sep 2020 05:54:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WO3syF/M9e56VH+E25OjUqz06UwD3a6Jzn9YO6t60/E=;
+        b=f86F656I5co/9TxN+CnGlwTyXzh4qBVFqSju9TCMr9oTlR39YuzwfFDnGBVDTxzBer
+         JaGX6mOx+fIVB/SLo9iSIxIoEcTyi90p+vwLb/UlRHnhokLje0gvUNmi3kEJZJPinS0w
+         Fuya4BKzceXMzbG93901ng7zssyDw/n10bR1Y8h/sb7cYP2Iewq5kFLJREAttN3sejQ2
+         ljAgobjDX/q8t5b1EMCNIv4RYBpsSV+5fl+0YFP1yJjYqH4/wwbAUoRYrUSJvFrVzkdc
+         aqg2r7niXNzjbR6Y5aphZSo5NE8yNudVcfOndIv9O2SR7ecZCEkCgEafIj3YVVouWM2q
+         lHgg==
+X-Gm-Message-State: AOAM532l0tcbK8I3mA8qdvm8GYi4yIvB8p1qQobIysoHCzYEhNQsPj/5
+        pXRnouJVLzoWPseNXKTr/xEeQV18A5XbbgGT5b2W+JITWfE=
+X-Google-Smtp-Source: ABdhPJw9JhOUVVk0nXDZMrInOMNSfBdmFCRb/dxUUtOOA6AAPN+olQ2XjC6/zVyeqD8ZeryslTEl6ull+9Nvbu2x7Ew=
+X-Received: by 2002:a05:6830:1008:: with SMTP id a8mr14999633otp.107.1600256862276;
+ Wed, 16 Sep 2020 04:47:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200811205939.19550-2-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <1600255098-21411-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1600255098-21411-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 16 Sep 2020 13:47:30 +0200
+Message-ID: <CAMuHMdXo6nRhR0hUB0iNvdZSsg1BCb9gDH7u+Z5+SNvmEfdtJg@mail.gmail.com>
+Subject: Re: [PATCH RFC] ata: sata-rcar: Fix .dma_boundary for WRITE DMA EXT
+ timeout issue
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        linux-ide@vger.kernel.org,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
+Hi Shimoda-san,
 
-On 11/08/2020 21:59, Laurent Pinchart wrote:
-> The v4l2_async_notifier_add_subdev() function requires the asd pointer
-> it receives to be allocated dynamically, but doesn't explicitly say so.
-> Only one driver out of 13 get its right (atmel-sama5d2-isc.c, but with
-> memory leaks in the error paths), clearly showing we have an issue.
-> 
-> Update the v4l2_async_notifier_add_subdev() documentation to clearly
-> state the allocation requirement. Whether this will be enough to avoid
-> new offending code isn't certain, but it's a good first step
-> nonetheless.
-> 
-> Fixes: 9ca465312132 ("media: v4l: fwnode: Support generic parsing of graph endpoints in a device")
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On Wed, Sep 16, 2020 at 1:27 PM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> When we wrote data to an SATA HDD, the following timeout issue
+> happened after the commit 429120f3df2d ("block: fix splitting
+> segments on boundary masks") was applied:
+>
+>     # dd if=/dev/urandom of=/mnt/de1/file1-1024M bs=1M count=1024
+>     ata1.00: exception Emask 0x0 SAct 0x0 SErr 0x0 action 0x6 frozen
+>     ata1.00: failed command: WRITE DMA EXT
+>     ata1.00: cmd 35/00:00:00:e6:0c/00:0a:00:00:00/e0 tag 0 dma 1310720 out
+>     res 40/00:01:00:00:00/00:00:00:00:00/00 Emask 0x4 (timeout)
+>     ata1.00: status: { DRDY }
+>
+> Since the commit changed get_max_segment_size()'s behavior,
+> unexpected behavior happens if .dma_boundary of this sata-rcar driver
+> is 0x1ffffffe in somewhere (my guess).
+>
+> By the way, the commit 8bfbeed58665 ("sata_rcar: correct
+> 'sata_rcar_sht'") changed the .dma_boundary as 0x1ffffffe, but this
+> number is related to ATAPI_DMA_TRANS_CNT register. So, we should set
+> the .dma_boundary as ATA_DMA_BOUNDARY (0xffff), and set
+> .max_segment_size to min(0x1ffffffe, dma_max_mapping_size()).
+>
+> After applied this, the timeout issue disappeared.
+>
+> Fixes: 8bfbeed58665 ("sata_rcar: correct 'sata_rcar_sht'")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Seems reasonable to me:
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Thanks for your patch!
 
 > ---
->  include/media/v4l2-async.h | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
-> index 8319284c93cb..d6e31234826f 100644
-> --- a/include/media/v4l2-async.h
-> +++ b/include/media/v4l2-async.h
-> @@ -154,8 +154,9 @@ void v4l2_async_notifier_init(struct v4l2_async_notifier *notifier);
->   * @notifier: pointer to &struct v4l2_async_notifier
->   * @asd: pointer to &struct v4l2_async_subdev
->   *
-> - * Call this function before registering a notifier to link the
-> - * provided asd to the notifiers master @asd_list.
-> + * Call this function before registering a notifier to link the provided @asd to
-> + * the notifiers master @asd_list. The @asd must be allocated with k*alloc() as
-> + * it will be freed by the framework when the notifier is destroyed.
->   */
->  int v4l2_async_notifier_add_subdev(struct v4l2_async_notifier *notifier,
->  				   struct v4l2_async_subdev *asd);
-> 
+>  As I wrote the commit description, I couldn't find why the issue
+> was related to the .dma_boundary. So, I marked RFC on this patch.
+> I would appreciate it if you would give me some advice.
 
+There's also "[PATCH v2] ata: sata_rcar: Fix DMA boundary mask"
+(https://lore.kernel.org/linux-ide/20200811081712.4981-1-geert+renesas@glider.be/)
+
+Is this related?
+Does my patch fix your issue, too?
+
+> --- a/drivers/ata/sata_rcar.c
+> +++ b/drivers/ata/sata_rcar.c
+> @@ -120,7 +120,7 @@
+>  /* Descriptor table word 0 bit (when DTA32M = 1) */
+>  #define SATA_RCAR_DTEND                        BIT(0)
+>
+> -#define SATA_RCAR_DMA_BOUNDARY         0x1FFFFFFEUL
+> +#define SATA_RCAR_DMA_TRANS_CNT                0x1FFFFFFEUL
+>
+>  /* Gen2 Physical Layer Control Registers */
+>  #define RCAR_GEN2_PHY_CTL1_REG         0x1704
+> @@ -636,14 +636,7 @@ static u8 sata_rcar_bmdma_status(struct ata_port *ap)
+>  }
+>
+>  static struct scsi_host_template sata_rcar_sht = {
+> -       ATA_BASE_SHT(DRV_NAME),
+> -       /*
+> -        * This controller allows transfer chunks up to 512MB which cross 64KB
+> -        * boundaries, therefore the DMA limits are more relaxed than standard
+> -        * ATA SFF.
+> -        */
+> -       .sg_tablesize           = ATA_MAX_PRD,
+> -       .dma_boundary           = SATA_RCAR_DMA_BOUNDARY,
+> +       ATA_BMDMA_SHT(DRV_NAME),
+>  };
+>
+>  static struct ata_port_operations sata_rcar_port_ops = {
+> @@ -930,6 +923,14 @@ static int sata_rcar_probe(struct platform_device *pdev)
+>         /* initialize host controller */
+>         sata_rcar_init_controller(host);
+>
+> +       /*
+> +        * This controller allows transfer chunks up to 512MB which cross 64KB
+> +        * boundaries, therefore the DMA limits are more relaxed than standard
+> +        * ATA SFF.
+> +        */
+> +       sata_rcar_sht.max_segment_size = min_t(unsigned int,
+> +                                              SATA_RCAR_DMA_TRANS_CNT,
+> +                                              dma_max_mapping_size(dev));
+>         ret = ata_host_activate(host, irq, sata_rcar_interrupt, 0,
+>                                 &sata_rcar_sht);
+>         if (!ret)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
