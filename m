@@ -2,137 +2,56 @@ Return-Path: <SRS0=hv6C=CZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C2A3C2BB84
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD3DC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1871820809
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:57:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="WkSs/a4E"
+	by mail.kernel.org (Postfix) with ESMTP id 37B6921D43
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 19:01:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600282861;
+	bh=0DmDgspG2F1DbUW2FbA3VeWRZjSjDzj/7XZufLTuVVg=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=BXDV8SdgXaKT/ykpYht6J8v+En7nwG/kWLLCBz4WFeR4Uxr1/B4Nt3Ju7NItZa+dN
+	 QBC2h9O+5GxNg0L0ReQjqkNl+67Cjoi73um40vZ1kBNl0uL3lslBcosMd5idX62AMA
+	 /KmEE/XC6L44ikTZQq3bmvkK/7RY27YcJva+59xo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726507AbgIPS5q (ORCPT
+        id S1727662AbgIPTAw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:57:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36530 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727413AbgIPRxQ (ORCPT
+        Wed, 16 Sep 2020 15:00:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54678 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727915AbgIPTAs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 13:53:16 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DF56C002184
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2020 07:18:37 -0700 (PDT)
-Received: from Q.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0DD0A26B;
-        Wed, 16 Sep 2020 16:18:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1600265905;
-        bh=4o5DTKHE0f9KxLdQkHn0OQUhAax/CuHlASp1v/HedD4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=WkSs/a4E6OLtAag8eJJNoGMVhnFOS4BQgiUVYay1lQ8bkTEWc9AQkewcAcJxqGwCt
-         wGf+SXTkI6Cglh802obpsAjbZcijXUo6HSBQOgDJCXxtjzVLXAuj7PtuxwbKbPmH0O
-         dHv6tvIkQx6gP6Jem1RPrDKbzTbqYA6xY4Nh3uC0=
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-To:     linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2] tests: Provide {un,}bind testing
-Date:   Wed, 16 Sep 2020 15:18:15 +0100
-Message-Id: <20200916141815.1481807-1-kieran.bingham@ideasonboard.com>
-X-Mailer: git-send-email 2.25.1
+        Wed, 16 Sep 2020 15:00:48 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600282848;
+        bh=0DmDgspG2F1DbUW2FbA3VeWRZjSjDzj/7XZufLTuVVg=;
+        h=Subject:From:Date:To:From;
+        b=aOYuYTzfChbmeC5AzAYtDRY+7dW5fC2wOEZc2b4J5PwhKh4nc32wBFoLeElpJMNNO
+         DoYexnTVGHHvOZcCq693LLeBWDK9EqEBUz0BYpxZ+UWRsuZN/BMsLs2aE9bWM3D+yw
+         pi0N3wQeyomfq06OipLC7S4pzQ+L0OzRnhJLiVzA=
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <160028284838.7285.15145009135057680760.git-patchwork-housekeeping@kernel.org>
+Date:   Wed, 16 Sep 2020 19:00:48 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Perform unbind-bind testing of the VSP devices to validate
-successful removal of the drivers.
-
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
----
-
-v2:
- - Semi-colons removed
- - duplicated tests removed.
-
-This is the updated patch, I intend to push to master.
-
---
-Kieran
+Latest series: [v2] tests: Provide {un,}bind testing (2020-09-16T14:18:15)
+  Superseding: [v1] tests: Provide {un,}bind testing (2020-05-25T13:21:48):
+    [VSP-Tests] tests: Provide {un,}bind testing
 
 
- tests/vsp-unit-test-0026.sh | 55 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100755 tests/vsp-unit-test-0026.sh
-
-diff --git a/tests/vsp-unit-test-0026.sh b/tests/vsp-unit-test-0026.sh
-new file mode 100755
-index 000000000000..0e013cec881b
---- /dev/null
-+++ b/tests/vsp-unit-test-0026.sh
-@@ -0,0 +1,55 @@
-+#!/bin/sh
-+
-+#
-+# Test unbinding and binding all VSP1 devices, performing a simple
-+# copy test to validate the hardware afterwards.
-+#
-+
-+. ./vsp-lib.sh
-+
-+features="rpf.0 wpf.0"
-+
-+vsp1_driver=/sys/bus/platform/drivers/vsp1
-+vsps=$(cd /sys/bus/platform/devices/; ls | grep vsp)
-+
-+unbind_vsp() {
-+	echo $1 > $vsp1_driver/unbind
-+}
-+
-+bind_vsp() {
-+	echo $1 > $vsp1_driver/bind
-+}
-+
-+# Input is directly copied to the output. No change in format or size.
-+test_copy() {
-+	local format=$1
-+	local insize=$2
-+
-+	test_start "simple hardware validation after unbind/bind cycles"
-+
-+	pipe_configure rpf-wpf 0 0
-+	format_configure rpf-wpf 0 0 $format $insize $format
-+
-+	vsp_runner rpf.0 &
-+	vsp_runner wpf.0
-+
-+	local result=$(compare_frames)
-+
-+	test_complete $result
-+}
-+
-+test_main() {
-+	local format
-+
-+	# Unbind and rebind VSPs individually
-+	for v in $vsps; do
-+		unbind_vsp $v
-+		bind_vsp $v
-+	done
-+
-+	# Perform a simple copy test to validate HW is alive
-+	test_copy RGB24 128x128
-+}
-+
-+test_init $0 "$features"
-+test_run
 -- 
-2.25.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
