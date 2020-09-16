@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C12C35256
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A95C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 50ED620936
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:26:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89B4821941
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 18:31:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600280795;
-	bh=Z5wRBaFYmniCz5bdSyAlyJEj5GnVzIH19M/ATqEsQ3c=;
+	s=default; t=1600281077;
+	bh=z54NT2te4cQqCwvnxGuhIvp2W2PqIQwX8Rfrwo03n6k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ONzaicxhrk1kWriHe6jHf1mtTzZw7+lN38P+Iw6ukEk9s71raw36C0K8VVTBWMPnJ
-	 sKz7fsFjnLrLyRNwjp+nloH7ycG9Ucmqsc8DgZRFB37EkKXyOYvZeo5E1aEPLbeElQ
-	 gVspoet8tT+T3+NWaic1A8/d3wHuVL3itFExvQxA=
+	b=KLyGh0SXUi3P+/e14N50nYhnLdMp6QivYtKDxFQJP9rhymaCh2MDKqg+INbIv1a8x
+	 WljGj9KBxCUPJD5TNsQXW9DUPAGeQooiQJWI6ZiNKxoOUiIJhm2MQ/Dy6jGYybCYJo
+	 5ibqPbPWFp7jK+lSU1XoacxfeJEojoOLRh34n8ZQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbgIPS0d (ORCPT
+        id S1727835AbgIPSbQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 14:26:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56694 "EHLO mail.kernel.org"
+        Wed, 16 Sep 2020 14:31:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58762 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728002AbgIPSZl (ORCPT
+        id S1727823AbgIPSab (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 14:25:41 -0400
+        Wed, 16 Sep 2020 14:30:31 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDD862247F;
-        Wed, 16 Sep 2020 15:58:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6614422470;
+        Wed, 16 Sep 2020 15:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600271908;
-        bh=Z5wRBaFYmniCz5bdSyAlyJEj5GnVzIH19M/ATqEsQ3c=;
+        s=default; t=1600271923;
+        bh=z54NT2te4cQqCwvnxGuhIvp2W2PqIQwX8Rfrwo03n6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R0qBr5FPZ/kISCBNje3pqD5b63CHmR/0V5AydWnLKbkdTUasYYZKuNOlHII9w/arZ
-         pBCRBnlQW1PEeoKwRVWDwsvzdGvex/repj1lCR6DpJWI+asNzeRh39Qh2EtnUare2K
-         eYcQOWiM5Bt5zWED12AosjsB/8YI56QtH9PYPRD4=
+        b=HK32OVkYHkBdJOofLkJ+eUoiFHxyVHCmMnup/A7LJvnMbmFRiwsgEMgYtwJqubXXq
+         JCspG3tYh6jh9B4NAgWMrK96wSIlk+dYeGSlk9dnzukQSbkIiOSIKR8DOI5Es5fyRl
+         4yJvpL+qxOp5+HXbERF/ET+85d6NF+YAf9Huy1sY=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -69,9 +69,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 07/15] arm64: dts: xilinx: align GPIO hog names with dtschema
-Date:   Wed, 16 Sep 2020 17:57:07 +0200
-Message-Id: <20200916155715.21009-8-krzk@kernel.org>
+Subject: [PATCH v3 09/15] ARM: dts: am335x: t335: align GPIO hog names with dtschema
+Date:   Wed, 16 Sep 2020 17:57:09 +0200
+Message-Id: <20200916155715.21009-10-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200916155715.21009-1-krzk@kernel.org>
 References: <20200916155715.21009-1-krzk@kernel.org>
@@ -85,43 +85,29 @@ dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/am335x-sbc-t335.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-index 4f801721564f..f1255f635dfd 100644
---- a/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-+++ b/arch/arm64/boot/dts/xilinx/zynqmp-zcu102-revA.dts
-@@ -203,25 +203,25 @@
- 		gpio-line-names = "PS_GTR_LAN_SEL0", "PS_GTR_LAN_SEL1", "PS_GTR_LAN_SEL2", "PS_GTR_LAN_SEL3",
- 				"PCI_CLK_DIR_SEL", "IIC_MUX_RESET_B", "GEM3_EXP_RESET_B",
- 				"", "", "", "", "", "", "", "", "";
--		gtr-sel0 {
-+		gtr-sel0-hog {
+diff --git a/arch/arm/boot/dts/am335x-sbc-t335.dts b/arch/arm/boot/dts/am335x-sbc-t335.dts
+index a3f6bc4072d9..81e4453687ba 100644
+--- a/arch/arm/boot/dts/am335x-sbc-t335.dts
++++ b/arch/arm/boot/dts/am335x-sbc-t335.dts
+@@ -155,13 +155,13 @@
+ 		gpio-controller;
+ 		#gpio-cells = <2>;
+ 		reg = <0x26>;
+-		dvi_ena {
++		dvi-ena-hog {
  			gpio-hog;
- 			gpios = <0 0>;
- 			output-low; /* PCIE = 0, DP = 1 */
- 			line-name = "sel0";
+ 			gpios = <13 GPIO_ACTIVE_HIGH>;
+ 			output-high;
+ 			line-name = "dvi-enable";
  		};
--		gtr-sel1 {
-+		gtr-sel1-hog {
+-		lcd_ena {
++		lcd-ena-hog {
  			gpio-hog;
- 			gpios = <1 0>;
- 			output-high; /* PCIE = 0, DP = 1 */
- 			line-name = "sel1";
- 		};
--		gtr-sel2 {
-+		gtr-sel2-hog {
- 			gpio-hog;
- 			gpios = <2 0>;
- 			output-high; /* PCIE = 0, USB0 = 1 */
- 			line-name = "sel2";
- 		};
--		gtr-sel3 {
-+		gtr-sel3-hog {
- 			gpio-hog;
- 			gpios = <3 0>;
- 			output-high; /* PCIE = 0, SATA = 1 */
+ 			gpios = <11 GPIO_ACTIVE_HIGH>;
+ 			output-high;
 -- 
 2.17.1
 
