@@ -2,223 +2,166 @@ Return-Path: <SRS0=hv6C=CZ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ACB0C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 16:13:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1704BC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B76622581
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 16:13:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600272814;
-	bh=sVRW+Q4w/VIyVW+IR4tgq66N90jKOapREO5ueA+lxUY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jrx1L4WnBhSxiP16TF4WEzmvU+ss2r1fmA42n8vTOz9uxvpxOQ5q82J0Wtg0oZl2g
-	 klVpTos9ZH73YmmC8Ga+NwLXsfmU/DpbjlMpXlKdKzQukEDN6l/OX8+001Bm2Q/WpQ
-	 a/KDdC8734oh2sy+AhHF3D63j80kWm5BKV1ly2HY=
+	by mail.kernel.org (Postfix) with ESMTP id CCA3F223E8
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Sep 2020 17:23:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbgIPQMr (ORCPT
+        id S1726918AbgIPRWm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 12:12:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34570 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726496AbgIPQLv (ORCPT
+        Wed, 16 Sep 2020 13:22:42 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:47758 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbgIPRVr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 12:11:51 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 488FE224D1;
-        Wed, 16 Sep 2020 15:59:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600271972;
-        bh=sVRW+Q4w/VIyVW+IR4tgq66N90jKOapREO5ueA+lxUY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jlud3ZfnHWw7zTZF2T9cB6BlWS09yQycNhBZqAyoDK+lyMZ+TxuwDSYneGZtg8u6D
-         Ng/l+RwM7zHlz3rDcjw2ByKDzWA1kUVYekTUzwHMFQKZc20hWBRokgls6nVd1+TzNO
-         L0+qiQjbFVgHa5z9jQyCaXAuUWBKgNknv11M93vY=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 15/15] ARM: dts: imx6q: align GPIO hog names with dtschema
-Date:   Wed, 16 Sep 2020 17:57:15 +0200
-Message-Id: <20200916155715.21009-16-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200916155715.21009-1-krzk@kernel.org>
-References: <20200916155715.21009-1-krzk@kernel.org>
+        Wed, 16 Sep 2020 13:21:47 -0400
+Received: from relay2-d.mail.gandi.net (unknown [217.70.183.194])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id CE0F63AD954
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2020 15:53:47 +0000 (UTC)
+X-Originating-IP: 93.34.118.233
+Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id D241F4000E;
+        Wed, 16 Sep 2020 15:52:08 +0000 (UTC)
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     Jacopo Mondi <jacopo@jmondi.org>, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] vin-tests: Add capture script for RDACM21
+Date:   Wed, 16 Sep 2020 17:55:46 +0200
+Message-Id: <20200916155546.160450-1-jacopo@jmondi.org>
+X-Mailer: git-send-email 2.28.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-renesas-soc-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.  While
-touching the hogs, fix indentation (spaces -> tabs).
+Add script to capture from RDACM21 on Eagle V3-M.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
 ---
- arch/arm/boot/dts/imx6q-b450v3.dts  | 14 +++++++-------
- arch/arm/boot/dts/imx6q-b650v3.dts  | 12 ++++++------
- arch/arm/boot/dts/imx6q-b850v3.dts  |  4 ++--
- arch/arm/boot/dts/imx6q-bx50v3.dtsi | 12 ++++++------
- 4 files changed, 21 insertions(+), 21 deletions(-)
+ gmsl-rdacm21-yavta.sh | 104 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 104 insertions(+)
+ create mode 100755 gmsl-rdacm21-yavta.sh
 
-diff --git a/arch/arm/boot/dts/imx6q-b450v3.dts b/arch/arm/boot/dts/imx6q-b450v3.dts
-index fb0980190aa0..604f2420370f 100644
---- a/arch/arm/boot/dts/imx6q-b450v3.dts
-+++ b/arch/arm/boot/dts/imx6q-b450v3.dts
-@@ -84,19 +84,19 @@
- };
- 
- &pca9539 {
--	P04 {
-+	P04-hog {
- 		gpio-hog;
- 		gpios = <4 0>;
- 		output-low;
- 		line-name = "PCA9539-P04";
- 	};
- 
--        P07 {
--                gpio-hog;
--                gpios = <7 0>;
--                output-low;
--                line-name = "PCA9539-P07";
--        };
-+	P07-hog {
-+		gpio-hog;
-+		gpios = <7 0>;
-+		output-low;
-+		line-name = "PCA9539-P07";
-+	};
- };
- 
- &pci_root {
-diff --git a/arch/arm/boot/dts/imx6q-b650v3.dts b/arch/arm/boot/dts/imx6q-b650v3.dts
-index 8f762d9c5ae9..56d2aeb1900c 100644
---- a/arch/arm/boot/dts/imx6q-b650v3.dts
-+++ b/arch/arm/boot/dts/imx6q-b650v3.dts
-@@ -84,12 +84,12 @@
- };
- 
- &pca9539 {
--        P07 {
--                gpio-hog;
--                gpios = <7 0>;
--                output-low;
--                line-name = "PCA9539-P07";
--        };
-+	P07-hog {
-+		gpio-hog;
-+		gpios = <7 0>;
-+		output-low;
-+		line-name = "PCA9539-P07";
-+	};
- };
- 
- &usbphy1 {
-diff --git a/arch/arm/boot/dts/imx6q-b850v3.dts b/arch/arm/boot/dts/imx6q-b850v3.dts
-index 1ea64ecf4291..3d6b757bf325 100644
---- a/arch/arm/boot/dts/imx6q-b850v3.dts
-+++ b/arch/arm/boot/dts/imx6q-b850v3.dts
-@@ -199,14 +199,14 @@
- };
- 
- &pca9539 {
--	P10 {
-+	P10-hog {
- 		gpio-hog;
- 		gpios = <8 0>;
- 		output-low;
- 		line-name = "PCA9539-P10";
- 	};
- 
--	P11 {
-+	P11-hog {
- 		gpio-hog;
- 		gpios = <9 0>;
- 		output-low;
-diff --git a/arch/arm/boot/dts/imx6q-bx50v3.dtsi b/arch/arm/boot/dts/imx6q-bx50v3.dtsi
-index 02812e6cb302..2a98cc657595 100644
---- a/arch/arm/boot/dts/imx6q-bx50v3.dtsi
-+++ b/arch/arm/boot/dts/imx6q-bx50v3.dtsi
-@@ -248,42 +248,42 @@
- 				interrupt-parent = <&gpio2>;
- 				interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
- 
--				P12 {
-+				P12-hog {
- 					gpio-hog;
- 					gpios = <10 0>;
- 					output-low;
- 					line-name = "PCA9539-P12";
- 				};
- 
--				P13 {
-+				P13-hog {
- 					gpio-hog;
- 					gpios = <11 0>;
- 					output-low;
- 					line-name = "PCA9539-P13";
- 				};
- 
--				P14 {
-+				P14-hog {
- 					gpio-hog;
- 					gpios = <12 0>;
- 					output-low;
- 					line-name = "PCA9539-P14";
- 				};
- 
--				P15 {
-+				P15-hog {
- 					gpio-hog;
- 					gpios = <13 0>;
- 					output-low;
- 					line-name = "PCA9539-P15";
- 				};
- 
--				P16 {
-+				P16-hog {
- 					gpio-hog;
- 					gpios = <14 0>;
- 					output-low;
- 					line-name = "PCA9539-P16";
- 				};
- 
--				P17 {
-+				P17-hog {
- 					gpio-hog;
- 					gpios = <15 0>;
- 					output-low;
--- 
-2.17.1
+diff --git a/gmsl-rdacm21-yavta.sh b/gmsl-rdacm21-yavta.sh
+new file mode 100755
+index 0000000..36ba024
+--- /dev/null
++++ b/gmsl-rdacm21-yavta.sh
+@@ -0,0 +1,104 @@
++#!/bin/bash
++
++base=$(dirname $(readlink -f $0))
++
++source $base/scripts/vin-tests.sh
++source $base/scripts/boards.sh
++
++mdev=$(mc_get_mdev)
++
++out=$base/output
++rm -fr $out
++mkdir $out
++
++function conf() {
++    CSI="$1"
++    IDX="$2"
++    VIN="$3"
++
++    media-ctl -d $mdev -V "'$CSI':$IDX [fmt:YUYV8_1X16/1280x1080 field:none]"
++    mc_set_link "$CSI" $IDX "$VIN" 1
++}
++
++function conf_gmsl() {
++	set -x
++	MAX9286="max9286 3-0048"
++
++    for pad in `seq 0 3`; do
++		media-ctl -d $mdev -V "'$MAX9286':$pad [fmt:YUYV8_1X16/1280x1080 field:none colorspace:srgb xfer:none ycbcr:601 quantization:full-range]"
++	done
++
++	set +x
++}
++
++function capture() {
++    VID="$1"
++    vid=$(eval echo \$$VID)
++    echo $vid
++
++    yavta -f YUYV -s 1280x1080 -c10 --skip 7 --file="$out/$VID-#.bin" /dev/$vid &
++}
++
++mc_reset
++
++# Need to configure all formats going through each MAX9286
++conf1234=0
++conf5678=0
++
++for cam in "$@"; do
++	case $cam in
++        1|2|3|4)
++            if [[ $conf1234 -ne 1 ]]; then
++                conf  "$csi40name" 1 "$vinname0"
++                conf  "$csi40name" 2 "$vinname1"
++                conf  "$csi40name" 3 "$vinname2"
++                conf  "$csi40name" 4 "$vinname3"
++                conf1234=1
++            fi
++            ;;
++        5|6|7|8)
++            if [[ $conf5678 -ne 1 ]]; then
++                conf  "$csi41name" 1 "$vinname4"
++                conf  "$csi41name" 2 "$vinname5"
++                conf  "$csi41name" 3 "$vinname6"
++                conf  "$csi41name" 4 "$vinname7"
++                conf5678=1
++            fi
++            ;;
++	    *)
++		echo "Unrecognised camera $cam"
++		;;
++	esac
++done
++
++conf_gmsl
++
++for cam in "$@"
++do
++	echo "Capturing camera $cam"
++	case $cam in
++	    1)	capture vin0 ;;
++	    2)	capture vin1 ;;
++	    3)	capture vin2 ;;
++	    4)	capture vin3 ;;
++
++	    5)	capture vin4 ;;
++	    6)	capture vin5 ;;
++	    7)	capture vin6 ;;
++	    8)	capture vin7 ;;
++
++	    *)
++		echo "Unrecognised camera $cam"
++		;;
++	esac
++done;
++
++wait
++
++for f in $out/*bin; do
++    name=$(basename $f .bin)
++    raw2rgbpnm -f YUYV -s 1280x1080 $out/$name.bin $out/$name.ppm
++    convert $out/$name.ppm $out/$name.png
++done
++
++convert $out/vin*-000007.png -background white -append $out/collage.png
+--
+2.28.0
 
