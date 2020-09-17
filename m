@@ -2,123 +2,61 @@ Return-Path: <SRS0=E5el=C2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35429C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 368BAC43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC3D52078D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:19:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C65C620838
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600352552;
+	bh=Ry5WCA8++9jbQHp/+37QTDfujb+GmQhxiFjvZR6P2Tk=;
+	h=Subject:From:Date:To:List-ID:From;
+	b=cdvGHqSVr+UJ2NSWtiwoduVhASaJZkk/BC8duwsa0DR4KRqSueu+QXaxdpW/oLcZ7
+	 JpvYaLcvP9jyslDGQ6p8wZIxO/ZEyuzmxkr3q68AqDuvfVMTH/cW+SRewOR5OPxmgJ
+	 c4sX1Ti+k1BGX01agp8AfEDQM/y8qF83F9yyt614=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbgIQONl (ORCPT
+        id S1727404AbgIQOWP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Sep 2020 10:13:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53940 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727216AbgIQN6D (ORCPT
+        Thu, 17 Sep 2020 10:22:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35022 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727426AbgIQOUz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Sep 2020 09:58:03 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74DAAC0698C0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2020 06:57:26 -0700 (PDT)
-Received: from ramsan ([84.195.186.194])
-        by michel.telenet-ops.be with bizsmtp
-        id V1xD230034C55Sk061xDYE; Thu, 17 Sep 2020 15:57:22 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kIuPQ-0001Ka-Vy; Thu, 17 Sep 2020 15:57:12 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kIuPQ-0003HV-Ud; Thu, 17 Sep 2020 15:57:12 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Oleksij Rempel <linux@rempel-privat.de>,
-        Philippe Schenker <philippe.schenker@toradex.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH net-next v4 1/5] dt-bindings: net: ethernet-controller: Add internal delay properties
-Date:   Thu, 17 Sep 2020 15:57:03 +0200
-Message-Id: <20200917135707.12563-2-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200917135707.12563-1-geert+renesas@glider.be>
-References: <20200917135707.12563-1-geert+renesas@glider.be>
+        Thu, 17 Sep 2020 10:20:55 -0400
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600352448;
+        bh=Ry5WCA8++9jbQHp/+37QTDfujb+GmQhxiFjvZR6P2Tk=;
+        h=Subject:From:Date:To:From;
+        b=m+wTts2zy7jnckr6mTwB2AJrieOm9ebyNbc7+GoHBtYzHA+056lOTMrD4Aq8pdgD4
+         nip8lxD8wD/+ixYCiZmyb4qGSDp3G2LkBdOxsuDGrs/kj7FKikOrm49d901QnrlVTW
+         WIzmBIOv3tgymeO2N4j7SbKxrfw7dnGe+YLO2rD0=
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork housekeeping for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <160035244834.18498.17934312683024281351.git-patchwork-housekeeping@kernel.org>
+Date:   Thu, 17 Sep 2020 14:20:48 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Internal Receive and Transmit Clock Delays are a common setting for
-RGMII capable devices.
+Latest series: [v4] net/ravb: Add support for explicit internal clock delay configuration (2020-09-17T13:57:07)
+  Superseding: [v3] net/ravb: Add support for explicit internal clock delay configuration (2020-08-19T13:43:41):
+    [v3,1/7] dt-bindings: net: ethernet-controller: Add internal delay properties
+    [v3,2/7] dt-bindings: net: renesas,ravb: Document internal clock delay properties
+    [v3,3/7] dt-bindings: net: renesas,etheravb: Convert to json-schema
+    [v3,4/7] ravb: Split delay handling in parsing and applying
+    [v3,5/7] ravb: Add support for explicit internal clock delay configuration
+    [v3,6/7] arm64: dts: renesas: rcar-gen3: Convert EtherAVB to explicit delay handling
+    [v3,7/7] arm64: dts: renesas: rzg2: Convert EtherAVB to explicit delay handling
 
-While these delays are typically applied by the PHY, some MACs support
-configuring internal clock delay settings, too.  Hence add standardized
-properties to configure this.
 
-This is the MAC counterpart of commit 9150069bf5fc0e86 ("dt-bindings:
-net: Add tx and rx internal delays"), which applies to the PHY.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
----
-v4:
-  - Add Reviewed-by,
-
-v3:
-  - Add Reviewed-by,
-
-v2:
-  - New.
----
- .../bindings/net/ethernet-controller.yaml          | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/net/ethernet-controller.yaml b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-index 1c4474036d46a9dc..e9bb386066540676 100644
---- a/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
-@@ -119,6 +119,13 @@ properties:
-       and is useful for determining certain configuration settings
-       such as flow control thresholds.
- 
-+  rx-internal-delay-ps:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      RGMII Receive Clock Delay defined in pico seconds.
-+      This is used for controllers that have configurable RX internal delays.
-+      If this property is present then the MAC applies the RX delay.
-+
-   sfp:
-     $ref: /schemas/types.yaml#definitions/phandle
-     description:
-@@ -130,6 +137,13 @@ properties:
-       The size of the controller\'s transmit fifo in bytes. This
-       is used for components that can have configurable fifo sizes.
- 
-+  tx-internal-delay-ps:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: |
-+      RGMII Transmit Clock Delay defined in pico seconds.
-+      This is used for controllers that have configurable TX internal delays.
-+      If this property is present then the MAC applies the TX delay.
-+
-   managed:
-     description:
-       Specifies the PHY management type. If auto is set and fixed-link
 -- 
-2.17.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/pwbot
