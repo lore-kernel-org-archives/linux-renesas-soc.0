@@ -2,61 +2,95 @@ Return-Path: <SRS0=E5el=C2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 368BAC43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB5BC43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C65C620838
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:22:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600352552;
-	bh=Ry5WCA8++9jbQHp/+37QTDfujb+GmQhxiFjvZR6P2Tk=;
-	h=Subject:From:Date:To:List-ID:From;
-	b=cdvGHqSVr+UJ2NSWtiwoduVhASaJZkk/BC8duwsa0DR4KRqSueu+QXaxdpW/oLcZ7
-	 JpvYaLcvP9jyslDGQ6p8wZIxO/ZEyuzmxkr3q68AqDuvfVMTH/cW+SRewOR5OPxmgJ
-	 c4sX1Ti+k1BGX01agp8AfEDQM/y8qF83F9yyt614=
+	by mail.kernel.org (Postfix) with ESMTP id 86CE021974
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:28:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Z1q//gBP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbgIQOWP (ORCPT
+        id S1726478AbgIQO2m (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Sep 2020 10:22:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35022 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727426AbgIQOUz (ORCPT
+        Thu, 17 Sep 2020 10:28:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58796 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727562AbgIQO2X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Sep 2020 10:20:55 -0400
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600352448;
-        bh=Ry5WCA8++9jbQHp/+37QTDfujb+GmQhxiFjvZR6P2Tk=;
-        h=Subject:From:Date:To:From;
-        b=m+wTts2zy7jnckr6mTwB2AJrieOm9ebyNbc7+GoHBtYzHA+056lOTMrD4Aq8pdgD4
-         nip8lxD8wD/+ixYCiZmyb4qGSDp3G2LkBdOxsuDGrs/kj7FKikOrm49d901QnrlVTW
-         WIzmBIOv3tgymeO2N4j7SbKxrfw7dnGe+YLO2rD0=
+        Thu, 17 Sep 2020 10:28:23 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7D59C06121E
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2020 07:05:56 -0700 (PDT)
+Received: from Q.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 168172DB;
+        Thu, 17 Sep 2020 16:04:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1600351494;
+        bh=1DXRMznDHGALjYRXyTjbVwZMDpXXHk1Bi1LR7NuJYoQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Z1q//gBPT3HwTBNBqwLeh7t7eOBt2hWFYYyJPoiGDEWyTXmF9jKysSyPzA6vnMsiI
+         wpsgH7Vp/rUTwODWFDQNiwrpndJ3RW3IN5vTDDm3pUlEQox0GIc/TJXIDggGd4BvbS
+         qEA/zWMa/JxywSY50IuwE/DLhviXSmpiDXjgTWKQ=
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [VSP-Tests PATCH v2 0/3] Run as user, and python3 support
+Date:   Thu, 17 Sep 2020 15:04:47 +0100
+Message-Id: <20200917140450.12264-1-kieran.bingham@ideasonboard.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork housekeeping for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <160035244834.18498.17934312683024281351.git-patchwork-housekeeping@kernel.org>
-Date:   Thu, 17 Sep 2020 14:20:48 +0000
-To:     linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Latest series: [v4] net/ravb: Add support for explicit internal clock delay configuration (2020-09-17T13:57:07)
-  Superseding: [v3] net/ravb: Add support for explicit internal clock delay configuration (2020-08-19T13:43:41):
-    [v3,1/7] dt-bindings: net: ethernet-controller: Add internal delay properties
-    [v3,2/7] dt-bindings: net: renesas,ravb: Document internal clock delay properties
-    [v3,3/7] dt-bindings: net: renesas,etheravb: Convert to json-schema
-    [v3,4/7] ravb: Split delay handling in parsing and applying
-    [v3,5/7] ravb: Add support for explicit internal clock delay configuration
-    [v3,6/7] arm64: dts: renesas: rcar-gen3: Convert EtherAVB to explicit delay handling
-    [v3,7/7] arm64: dts: renesas: rzg2: Convert EtherAVB to explicit delay handling
+My development target now runs as a user, rather than root and fails to
+obtain timestamps through the /proc/timer_list which requires root
+access, and generates a warning on every log output.
 
+Whilst not fatal, this can be fixed by using a c-based implementation to
+read the monotonic timestamps without parsing proc manually with awk.
+
+This has the extra advantage of not spawning extra processes for every
+line that is logged, and simplifies the timestamp handling.
+
+Furthermore, python2 is no longer available on my platforms so the
+gen-lut.py script is updated to run as python3.
+
+I am aware that there is a second python2 tool in this repository, for
+converting histograms, however I have not yet identified what files this
+process so I have not completed the python3 migration for that file yet.
+
+If someone wants to complete this, I have the initial conversion, or
+alternatively - if someone has a set of appropriate histograms to give
+me I can update and validate the tool myself.
+
+
+Version two updated with comments from Laurent, and collects his tags.
+
+--
+Regards
+
+Kieran
+
+Kieran Bingham (3):
+  gen-lut: Update for python3
+  src: monotonic-ts: Monotonic timestamp logging
+  scripts/logger: Use new monotonic-ts tool
+
+ data/frames/gen-lut.py | 18 +++++++++---------
+ scripts/logger.sh      | 20 ++++----------------
+ src/Makefile           |  9 +++++++--
+ src/monotonic-ts.c     | 36 ++++++++++++++++++++++++++++++++++++
+ 4 files changed, 56 insertions(+), 27 deletions(-)
+ create mode 100644 src/monotonic-ts.c
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/pwbot
+2.25.1
+
