@@ -7,33 +7,33 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEE6C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35429C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B474820708
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC3D52078D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 14:19:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbgIQONu (ORCPT
+        id S1727123AbgIQONl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Sep 2020 10:13:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53976 "EHLO
+        Thu, 17 Sep 2020 10:13:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727101AbgIQN6D (ORCPT
+        with ESMTP id S1727216AbgIQN6D (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 17 Sep 2020 09:58:03 -0400
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77890C0698C4
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74DAAC0698C0
         for <linux-renesas-soc@vger.kernel.org>; Thu, 17 Sep 2020 06:57:26 -0700 (PDT)
 Received: from ramsan ([84.195.186.194])
         by michel.telenet-ops.be with bizsmtp
-        id V1xD230064C55Sk061xDYG; Thu, 17 Sep 2020 15:57:22 +0200
+        id V1xD230034C55Sk061xDYE; Thu, 17 Sep 2020 15:57:22 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kIuPR-0001Kk-2P; Thu, 17 Sep 2020 15:57:13 +0200
+        id 1kIuPQ-0001Ka-Vy; Thu, 17 Sep 2020 15:57:12 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kIuPR-0003Hf-0t; Thu, 17 Sep 2020 15:57:13 +0200
+        id 1kIuPQ-0003HV-Ud; Thu, 17 Sep 2020 15:57:12 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     "David S . Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
@@ -51,9 +51,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH net-next v4 4/5] ravb: Split delay handling in parsing and applying
-Date:   Thu, 17 Sep 2020 15:57:06 +0200
-Message-Id: <20200917135707.12563-5-geert+renesas@glider.be>
+Subject: [PATCH net-next v4 1/5] dt-bindings: net: ethernet-controller: Add internal delay properties
+Date:   Thu, 17 Sep 2020 15:57:03 +0200
+Message-Id: <20200917135707.12563-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200917135707.12563-1-geert+renesas@glider.be>
 References: <20200917135707.12563-1-geert+renesas@glider.be>
@@ -61,96 +61,64 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Currently, full delay handling is done in both the probe and resume
-paths.  Split it in two parts, so the resume path doesn't have to redo
-the parsing part over and over again.
+Internal Receive and Transmit Clock Delays are a common setting for
+RGMII capable devices.
+
+While these delays are typically applied by the PHY, some MACs support
+configuring internal clock delay settings, too.  Hence add standardized
+properties to configure this.
+
+This is the MAC counterpart of commit 9150069bf5fc0e86 ("dt-bindings:
+net: Add tx and rx internal delays"), which applies to the PHY.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
 v4:
   - Add Reviewed-by,
 
 v3:
-  - No changes,
+  - Add Reviewed-by,
 
 v2:
-  - Add Reviewed-by,
-  - Use 1 instead of true when assigning to a single-bit bitfield.
+  - New.
 ---
- drivers/net/ethernet/renesas/ravb.h      |  4 +++-
- drivers/net/ethernet/renesas/ravb_main.c | 21 ++++++++++++++++-----
- 2 files changed, 19 insertions(+), 6 deletions(-)
+ .../bindings/net/ethernet-controller.yaml          | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 9f88b5db4f89843a..e5ca12ce93c730a9 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1036,7 +1036,9 @@ struct ravb_private {
- 	unsigned no_avb_link:1;
- 	unsigned avb_link_active_low:1;
- 	unsigned wol_enabled:1;
--	int num_tx_desc;	/* TX descriptors per packet */
-+	unsigned rxcidm:1;		/* RX Clock Internal Delay Mode */
-+	unsigned txcidm:1;		/* TX Clock Internal Delay Mode */
-+	int num_tx_desc;		/* TX descriptors per packet */
- };
+diff --git a/Documentation/devicetree/bindings/net/ethernet-controller.yaml b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
+index 1c4474036d46a9dc..e9bb386066540676 100644
+--- a/Documentation/devicetree/bindings/net/ethernet-controller.yaml
++++ b/Documentation/devicetree/bindings/net/ethernet-controller.yaml
+@@ -119,6 +119,13 @@ properties:
+       and is useful for determining certain configuration settings
+       such as flow control thresholds.
  
- static inline u32 ravb_read(struct net_device *ndev, enum ravb_reg reg)
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 99f7aae102ce12a1..59dadd971345e0d1 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1989,23 +1989,32 @@ static const struct soc_device_attribute ravb_delay_mode_quirk_match[] = {
- };
- 
- /* Set tx and rx clock internal delay modes */
--static void ravb_set_delay_mode(struct net_device *ndev)
-+static void ravb_parse_delay_mode(struct net_device *ndev)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
--	int set = 0;
- 
- 	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
- 	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_RXID)
--		set |= APSR_DM_RDM;
-+		priv->rxcidm = 1;
- 
- 	if (priv->phy_interface == PHY_INTERFACE_MODE_RGMII_ID ||
- 	    priv->phy_interface == PHY_INTERFACE_MODE_RGMII_TXID) {
- 		if (!WARN(soc_device_match(ravb_delay_mode_quirk_match),
- 			  "phy-mode %s requires TX clock internal delay mode which is not supported by this hardware revision. Please update device tree",
- 			  phy_modes(priv->phy_interface)))
--			set |= APSR_DM_TDM;
-+			priv->txcidm = 1;
- 	}
-+}
- 
-+static void ravb_set_delay_mode(struct net_device *ndev)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+	u32 set = 0;
++  rx-internal-delay-ps:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      RGMII Receive Clock Delay defined in pico seconds.
++      This is used for controllers that have configurable RX internal delays.
++      If this property is present then the MAC applies the RX delay.
 +
-+	if (priv->rxcidm)
-+		set |= APSR_DM_RDM;
-+	if (priv->txcidm)
-+		set |= APSR_DM_TDM;
- 	ravb_modify(ndev, APSR, APSR_DM, set);
- }
+   sfp:
+     $ref: /schemas/types.yaml#definitions/phandle
+     description:
+@@ -130,6 +137,13 @@ properties:
+       The size of the controller\'s transmit fifo in bytes. This
+       is used for components that can have configurable fifo sizes.
  
-@@ -2138,8 +2147,10 @@ static int ravb_probe(struct platform_device *pdev)
- 	/* Request GTI loading */
- 	ravb_modify(ndev, GCCR, GCCR_LTI, GCCR_LTI);
- 
--	if (priv->chip_id != RCAR_GEN2)
-+	if (priv->chip_id != RCAR_GEN2) {
-+		ravb_parse_delay_mode(ndev);
- 		ravb_set_delay_mode(ndev);
-+	}
- 
- 	/* Allocate descriptor base address table */
- 	priv->desc_bat_size = sizeof(struct ravb_desc) * DBAT_ENTRY_NUM;
++  tx-internal-delay-ps:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      RGMII Transmit Clock Delay defined in pico seconds.
++      This is used for controllers that have configurable TX internal delays.
++      If this property is present then the MAC applies the TX delay.
++
+   managed:
+     description:
+       Specifies the PHY management type. If auto is set and fixed-link
 -- 
 2.17.1
 
