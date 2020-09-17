@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5931BC43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 16:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 741F3C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 16:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0656C21D24
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 16:55:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23E2E2078D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 16:55:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1600361703;
-	bh=4AabZbuK+N6lbfohVlt0qp5YZ6D+w3XFtXgytzSRvZg=;
+	s=default; t=1600361709;
+	bh=fNcuVWkN1TjhyVwmEX+PcPTSMs1C1wjtAwGI/ZRYd+M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kRG3mk8BjxX6n6uMRlyhkApShqwviKqrE6cG/ERHipEfG3dkFFXYTJ+mTQVpIkfbt
-	 dqNo5vqhL/XzidBeH3cpE13rzvU6FpSh9evxbPV5Q1SytFfuEOdDFJfsEmZhy1ONMV
-	 ItdSW4BQpLWczyWw0jRIfkC+KOrwXYRN7Ez/T0Dw=
+	b=IeKrlKntpsKBLS8Qory8Bq06fc4rd8VnLGHUw9QQmlWRkgZnalGgoR5UdkoZxIMql
+	 S7Mfxl0jZtSDkbhpcioAgbq1pgDVlvaAzFe8KzV1JftobQjV9Z9m8fpK/78qTFlmeK
+	 6MX6PA/DJzYTK/qphj53QxnXeokdVj9IfmYQU6Ek=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbgIQQy6 (ORCPT
+        id S1728737AbgIQQzE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Sep 2020 12:54:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59298 "EHLO mail.kernel.org"
+        Thu, 17 Sep 2020 12:55:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728707AbgIQQyR (ORCPT
+        id S1728720AbgIQQy6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Sep 2020 12:54:17 -0400
+        Thu, 17 Sep 2020 12:54:58 -0400
 Received: from kozik-lap.mshome.net (unknown [194.230.155.191])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1292B21D90;
-        Thu, 17 Sep 2020 16:53:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A726C2220E;
+        Thu, 17 Sep 2020 16:54:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1600361657;
-        bh=4AabZbuK+N6lbfohVlt0qp5YZ6D+w3XFtXgytzSRvZg=;
+        s=default; t=1600361696;
+        bh=fNcuVWkN1TjhyVwmEX+PcPTSMs1C1wjtAwGI/ZRYd+M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qbl1M2aI7xqVYvVw5qLFkwT4ysLWiNTKVtOgbxzptc2Qf3KT7zGdStHXKb4tjxwiL
-         xAqFECrQQ0vlgvkhjgqTpHM0jQIjrAgBdO4zsdmaPTKCNyqAB2neAxj3Vo2aa2OUav
-         nxTHPK9FOShUL7Fzz4Yt9KeMpHsu33w/EBwirIR8=
+        b=zpxZ/+ZXGlBj5MNaI/974Dki8/8VL5VyYoNaEF/LZxSaNVvXInAY18Uz37fXnnux7
+         jL3dTTS6yVo7Kwm3rNyarw+MJZaHMeDWD8JypkrYWvy8w/sFIymtEtQRmXo2sPuFhQ
+         K+zaRu6fODRoRA66uRciZ8w7dD7YuswX0ETQb5us=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
@@ -103,9 +103,9 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 03/13] dt-bindings: gpio: pl061: add missing properties and include common schema
-Date:   Thu, 17 Sep 2020 18:52:51 +0200
-Message-Id: <20200917165301.23100-4-krzk@kernel.org>
+Subject: [PATCH v2 04/13] dt-bindings: gpio: fsl-imx-gpio: add i.MX ARMv6 and ARMv7 compatibles
+Date:   Thu, 17 Sep 2020 18:52:52 +0200
+Message-Id: <20200917165301.23100-5-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200917165301.23100-1-krzk@kernel.org>
 References: <20200917165301.23100-1-krzk@kernel.org>
@@ -113,39 +113,45 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Describe all GPIO controller properties and include the common GPIO
-schema to be sure all common properties are properly validated.
+Several DTSes with ARMv6 and ARMv7 i.MX SoCs introduce their own
+compatibles so add them to fix dtbs_check warnings like:
+
+  arch/arm/boot/dts/imx35-pdk.dt.yaml: gpio@53fa4000:
+    compatible: ['fsl,imx35-gpio', 'fsl,imx31-gpio'] is not valid under any of the given schemas
+
+  arch/arm/boot/dts/imx51-babbage.dt.yaml: gpio@73f90000:
+    compatible: ['fsl,imx51-gpio', 'fsl,imx35-gpio'] is not valid under any of the given schemas
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- Documentation/devicetree/bindings/gpio/pl061-gpio.yaml | 6 ++++++
- 1 file changed, 6 insertions(+)
+ .../devicetree/bindings/gpio/fsl-imx-gpio.yaml       | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-index 313b17229247..6cbf10d8e120 100644
---- a/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/pl061-gpio.yaml
-@@ -19,6 +19,9 @@ select:
-   required:
-     - compatible
- 
-+allOf:
-+  - $ref: gpio-common.yaml#
-+
- properties:
-   $nodename:
-     pattern: "^gpio@[0-9a-f]+$"
-@@ -51,7 +54,10 @@ properties:
- 
-   gpio-controller: true
- 
-+  gpio-line-names: true
-+
-   gpio-ranges:
-+    minItems: 1
-     maxItems: 8
- 
- required:
+diff --git a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
+index 737756e081fb..ad761e2f380a 100644
+--- a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
+@@ -21,8 +21,20 @@ properties:
+           - fsl,imx31-gpio
+           - fsl,imx35-gpio
+           - fsl,imx7d-gpio
++      - items:
++          - const: fsl,imx35-gpio
++          - const: fsl,imx31-gpio
+       - items:
+           - enum:
++              - fsl,imx50-gpio
++              - fsl,imx51-gpio
++              - fsl,imx53-gpio
++              - fsl,imx6q-gpio
++              - fsl,imx6sl-gpio
++              - fsl,imx6sll-gpio
++              - fsl,imx6sx-gpio
++              - fsl,imx6ul-gpio
++              - fsl,imx7d-gpio
+               - fsl,imx8mm-gpio
+               - fsl,imx8mn-gpio
+               - fsl,imx8mp-gpio
 -- 
 2.17.1
 
