@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D2CC43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 00:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB7BC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 01:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26DDE206B2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 00:59:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 772A6206C9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 01:01:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="pW6TVDvR"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="dIBq3o73"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726169AbgIQA7d (ORCPT
+        id S1726202AbgIQBBM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Sep 2020 20:59:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46316 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726149AbgIQA73 (ORCPT
+        Wed, 16 Sep 2020 21:01:12 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60300 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbgIQBBK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Sep 2020 20:59:29 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18FDEC06178C
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Sep 2020 17:59:27 -0700 (PDT)
+        Wed, 16 Sep 2020 21:01:10 -0400
 Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7A747276;
-        Thu, 17 Sep 2020 02:59:18 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8D05C276;
+        Thu, 17 Sep 2020 03:01:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1600304358;
-        bh=Gf7Z7BkSgET7C7N0LtmaziVbqkkp53gKZLWUhI+NGIQ=;
+        s=mail; t=1600304464;
+        bh=S+09xnVx+kGGHRbfyavUGlLFQiDG9ddnOL6zJBcmxdo=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pW6TVDvROJODaIB1jJN+3/Xyw3AoqXZcc9eMyfFUt3+FX7Evo2h9+BOv0kuYFq/J/
-         JJM3DqgdgwAuoV6yK72rEyr1rvrUg60cYMuYLKwjo7xqmVOLXZ5c4bu01vIUBwE0Xj
-         mpow0ZJ2rmKEXI3+l2SN1dqJukV5K1WBtQApMLWs=
-Date:   Thu, 17 Sep 2020 03:58:48 +0300
+        b=dIBq3o73A7EFh2wRgRXh78JvC4iur6dn8bgTsZGySyLmgkhH5Ch0garGwIsQWyrvV
+         78gE+HiE84vW5Vnrl9xSO+0buJwCHqSWQpZCohnNW1Y5Goz11HED+v+q4dwzcBD7bj
+         knHBnjUSaoJ9pZqFFuhLQttiYIBF0paVk6p9GmOo=
+Date:   Thu, 17 Sep 2020 04:00:34 +0300
 From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2] tests: Provide {un,}bind testing
-Message-ID: <20200917005848.GR3853@pendragon.ideasonboard.com>
-References: <20200916141815.1481807-1-kieran.bingham@ideasonboard.com>
+Subject: Re: [VSP-Tests PATCH 1/3] gen-lut: Update for python3
+Message-ID: <20200917010034.GS3853@pendragon.ideasonboard.com>
+References: <20200916144302.1483470-1-kieran.bingham@ideasonboard.com>
+ <20200916144302.1483470-2-kieran.bingham@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20200916141815.1481807-1-kieran.bingham@ideasonboard.com>
+In-Reply-To: <20200916144302.1483470-2-kieran.bingham@ideasonboard.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -55,92 +53,66 @@ Hi Kieran,
 
 Thank you for the patch.
 
-On Wed, Sep 16, 2020 at 03:18:15PM +0100, Kieran Bingham wrote:
-> Perform unbind-bind testing of the VSP devices to validate
-> successful removal of the drivers.
-
-This unbinds all VSP instances, including the ones used by the DU and
-not exposed through V4L2. What happens to the display ?
-
+On Wed, Sep 16, 2020 at 03:43:00PM +0100, Kieran Bingham wrote:
+> Python2 has now gone end-of-life and is discontinued.
+> 
+> Update the gen-lut utility to use python3 directly, converting xrange
+> usages to range, and using bytearray to store the tables and write them
+> directly removing the discontinued file object.
+> 
 > Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
 > ---
+>  data/frames/gen-lut.py | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
 > 
-> v2:
->  - Semi-colons removed
->  - duplicated tests removed.
-> 
-> This is the updated patch, I intend to push to master.
-> 
-> --
-> Kieran
-> 
-> 
->  tests/vsp-unit-test-0026.sh | 55 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100755 tests/vsp-unit-test-0026.sh
-> 
-> diff --git a/tests/vsp-unit-test-0026.sh b/tests/vsp-unit-test-0026.sh
-> new file mode 100755
-> index 000000000000..0e013cec881b
-> --- /dev/null
-> +++ b/tests/vsp-unit-test-0026.sh
-> @@ -0,0 +1,55 @@
-> +#!/bin/sh
-> +
-> +#
-> +# Test unbinding and binding all VSP1 devices, performing a simple
-> +# copy test to validate the hardware afterwards.
-> +#
-> +
-> +. ./vsp-lib.sh
-> +
-> +features="rpf.0 wpf.0"
-> +
-> +vsp1_driver=/sys/bus/platform/drivers/vsp1
-> +vsps=$(cd /sys/bus/platform/devices/; ls | grep vsp)
-> +
-> +unbind_vsp() {
-> +	echo $1 > $vsp1_driver/unbind
-> +}
-> +
-> +bind_vsp() {
-> +	echo $1 > $vsp1_driver/bind
-> +}
-> +
-> +# Input is directly copied to the output. No change in format or size.
-> +test_copy() {
-> +	local format=$1
-> +	local insize=$2
-> +
-> +	test_start "simple hardware validation after unbind/bind cycles"
-> +
-> +	pipe_configure rpf-wpf 0 0
-> +	format_configure rpf-wpf 0 0 $format $insize $format
-> +
-> +	vsp_runner rpf.0 &
-> +	vsp_runner wpf.0
-> +
-> +	local result=$(compare_frames)
-> +
-> +	test_complete $result
-> +}
-> +
-> +test_main() {
-> +	local format
-> +
-> +	# Unbind and rebind VSPs individually
-> +	for v in $vsps; do
-> +		unbind_vsp $v
-> +		bind_vsp $v
-> +	done
-> +
-> +	# Perform a simple copy test to validate HW is alive
-> +	test_copy RGB24 128x128
-> +}
-> +
-> +test_init $0 "$features"
-> +test_run
+> diff --git a/data/frames/gen-lut.py b/data/frames/gen-lut.py
+> index 07889b11f4ac..335b9f1613bc 100755
+> --- a/data/frames/gen-lut.py
+> +++ b/data/frames/gen-lut.py
+> @@ -1,4 +1,4 @@
+> -#!/usr/bin/python
+> +#!/usr/bin/python3
+>  # SPDX-License-Identifier: GPL-2.0-or-later
+>  # SPDX-FileCopyrightText: 2016 Renesas Electronics Corporation
+>  
+> @@ -49,26 +49,26 @@ def clu_value(x, y, z, scale, a, freq, weights):
+>  	return (z, y, x, 0)
+>  
+>  def generate_clu(config):
+> -	clu = []
+> +	clu = bytearray()
+>  
+> -	for z in xrange(17):
+> -		for y in xrange(17):
+> -			for x in xrange(17):
+> +	for z in range(17):
+> +		for y in range(17):
+> +			for x in range(17):
+>  				clu.extend(clu_value(x, y, z, **config[1]))
+>  
+> -	file('clu-%s.bin' % config[0], 'wb').write(''.join([chr(c) for c in clu]))
+> +	open('clu-%s.bin' % config[0], 'wb').write(clu)
+>  
+>  
+>  def gamma(vin, gamma, scale):
+>  	return int(255 * scale * math.pow(vin / 255., gamma))
+>  
+>  def generate_lut(config):
+> -	lut = []
+> -	for i in xrange(256):
+> +	lut = bytearray()
+> +	for i in range(256):
+>  		lut.extend([gamma(i, g, config[1]) for g in config[2:]])
+>  		lut.append(0)
+>  
+> -	file('lut-%s.bin' % config[0], 'wb').write(''.join([chr(c) for c in lut]))
+> +	open('lut-%s.bin' % config[0], 'wb').write(lut)
+>  
+>  
+>  def main(argv):
 
 -- 
 Regards,
