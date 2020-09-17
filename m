@@ -2,129 +2,251 @@ Return-Path: <SRS0=E5el=C2=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1E7C433E2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 17:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F32C433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 17:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AFF7820872
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 17:51:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C0EF20872
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Sep 2020 17:53:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="sUM+x7wh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbgIQRuL (ORCPT
+        id S1726630AbgIQRxA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Sep 2020 13:50:11 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:34197 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726547AbgIQRnQ (ORCPT
+        Thu, 17 Sep 2020 13:53:00 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:31815 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726609AbgIQRw5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Sep 2020 13:43:16 -0400
-X-IronPort-AV: E=Sophos;i="5.77,271,1596466800"; 
-   d="scan'208";a="57335094"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 18 Sep 2020 02:42:33 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2240B40BC9F5;
-        Fri, 18 Sep 2020 02:42:30 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Subject: [PATCH v6 1/3] media: i2c: ov772x: Parse endpoint properties
-Date:   Thu, 17 Sep 2020 18:42:22 +0100
-Message-Id: <20200917174224.11430-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200917174224.11430-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20200917174224.11430-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Thu, 17 Sep 2020 13:52:57 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1600365176; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=OsGJzh7AbAIFeAPQukAez6thOj5mT0cSe2xT4U55hI0=; b=sUM+x7whhRvdAK/LdJCi9/OG1v6qV+xAitosqBcsd7bd6qQg0B58TMAWzCY4WHr5e+eJwUUA
+ U71g4BWQv4oukwkh0M8lRwTZPM3iTo6c/YocVM1UVJQNWjeX0b3PcAB74iQMJKCr8Vabh/lT
+ 57Rt9dfZdkk3So0Kxmk9onfzCiI=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyIyZjFhOCIsICJsaW51eC1yZW5lc2FzLXNvY0B2Z2VyLmtlcm5lbC5vcmciLCAiYmU5ZTRhIl0=
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n02.prod.us-east-1.postgun.com with SMTP id
+ 5f639d5e6fe64d5a7f3747ff (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 17 Sep 2020 17:31:10
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5A7A4C433FE; Thu, 17 Sep 2020 17:31:09 +0000 (UTC)
+Received: from [10.110.125.142] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: wcheng)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4F3FBC433C8;
+        Thu, 17 Sep 2020 17:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4F3FBC433C8
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=fail smtp.mailfrom=wcheng@codeaurora.org
+Subject: Re: [PATCH v3 1/5] dt-bindings: usb: convert ti,hd3ss3220 bindings to
+ json-schema
+To:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <20200824141053.5062-1-biju.das.jz@bp.renesas.com>
+ <20200824141053.5062-2-biju.das.jz@bp.renesas.com>
+From:   Wesley Cheng <wcheng@codeaurora.org>
+Message-ID: <da7b8ea3-8cc1-5590-2200-c495e6c733af@codeaurora.org>
+Date:   Thu, 17 Sep 2020 10:31:06 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.0
+MIME-Version: 1.0
+In-Reply-To: <20200824141053.5062-2-biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Parse endpoint properties using v4l2_fwnode_endpoint_alloc_parse()
-to determine the bus type and store it in the driver structure.
 
-Set bus_type to V4L2_MBUS_PARALLEL as it's the only supported one
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/media/i2c/ov772x.c | 34 ++++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+On 8/24/2020 7:10 AM, Biju Das wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> Convert ti,hd3ss3220.txt to YAML. Updated the binding documentation
+> as graph bindings of this device model Super Speed (SS) data bus to
+> the Super Speed (SS) capable connector.
+> 
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+> v2->v3: Replaced Tabs with spaces in the example section.
+> v1->v2 : No change
+> Ref: https://patchwork.kernel.org/patch/11669423/
+> ---
+>  .../devicetree/bindings/usb/ti,hd3ss3220.txt  | 38 ---------
+>  .../devicetree/bindings/usb/ti,hd3ss3220.yaml | 81 +++++++++++++++++++
+>  2 files changed, 81 insertions(+), 38 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+>  create mode 100644 Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+> deleted file mode 100644
+> index 2bd21b22ce95..000000000000
+> --- a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.txt
+> +++ /dev/null
+> @@ -1,38 +0,0 @@
+> -TI HD3SS3220 TypeC DRP Port Controller.
+> -
+> -Required properties:
+> - - compatible: Must be "ti,hd3ss3220".
+> - - reg: I2C slave address, must be 0x47 or 0x67 based on ADDR pin.
+> - - interrupts: An interrupt specifier.
+> -
+> -Required sub-node:
+> - - connector: The "usb-c-connector" attached to the hd3ss3220 chip. The
+> -   bindings of the connector node are specified in:
+> -
+> -	Documentation/devicetree/bindings/connector/usb-connector.yaml
+> -
+> -Example:
+> -hd3ss3220@47 {
+> -	compatible = "ti,hd3ss3220";
+> -	reg = <0x47>;
+> -	interrupt-parent = <&gpio6>;
+> -	interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
+> -
+> -	connector {
+> -		compatible = "usb-c-connector";
+> -		label = "USB-C";
+> -		data-role = "dual";
+> -
+> -		ports {
+> -			#address-cells = <1>;
+> -			#size-cells = <0>;
+> -
+> -			port@1 {
+> -				reg = <1>;
+> -				hd3ss3220_ep: endpoint {
+> -					remote-endpoint = <&usb3_role_switch>;
+> -				};
+> -			};
+> -		};
+> -	};
+> -};
+> diff --git a/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+> new file mode 100644
+> index 000000000000..750a099529c0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/ti,hd3ss3220.yaml
+> @@ -0,0 +1,81 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/usb/ti,hd3ss3220.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI HD3SS3220 TypeC DRP Port Controller
+> +
+> +maintainers:
+> +  - Biju Das <biju.das.jz@bp.renesas.com>
+> +
+> +description: |-
+> +  HD3SS3220 is a USB SuperSpeed (SS) 2:1 mux with DRP port controller. The device provides Channel
+> +  Configuration (CC) logic and 5V VCONN sourcing for ecosystems implementing USB Type-C. The
+> +  HD3SS3220 can be configured as a Downstream Facing Port (DFP), Upstream Facing Port (UFP) or a
+> +  Dual Role Port (DRP) making it ideal for any application.
+> +
+> +properties:
+> +  compatible:
+> +   const: ti,hd3ss3220
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  ports:
+> +    description: OF graph bindings (specified in bindings/graph.txt) that model
+> +      SS data bus to the SS capable connector.
+> +    type: object
+> +    properties:
+> +      port@0:
+> +        type: object
+> +        description: Super Speed (SS) capable connector.
+> +
+> +      port@1:
+> +        type: object
+> +        description: Super Speed (SS) data bus.
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c0 {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        hd3ss3220@47 {
+> +                compatible = "ti,hd3ss3220";
+> +                reg = <0x47>;
+> +                interrupt-parent = <&gpio6>;
+> +                interrupts = <3>;
+> +
+> +                ports {
+> +                        #address-cells = <1>;
+> +                        #size-cells = <0>;
+> +                        port@0 {
+> +                                reg = <0>;
+> +                                hd3ss3220_in_ep: endpoint {
+> +                                        remote-endpoint = <&ss_ep>;
+> +                                };
 
-diff --git a/drivers/media/i2c/ov772x.c b/drivers/media/i2c/ov772x.c
-index 2cc6a678069a..f61a3f09ad64 100644
---- a/drivers/media/i2c/ov772x.c
-+++ b/drivers/media/i2c/ov772x.c
-@@ -31,6 +31,7 @@
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-device.h>
- #include <media/v4l2-event.h>
-+#include <media/v4l2-fwnode.h>
- #include <media/v4l2-image-sizes.h>
- #include <media/v4l2-subdev.h>
- 
-@@ -434,6 +435,7 @@ struct ov772x_priv {
- #ifdef CONFIG_MEDIA_CONTROLLER
- 	struct media_pad pad;
- #endif
-+	enum v4l2_mbus_type		  bus_type;
- };
- 
- /*
-@@ -1348,6 +1350,34 @@ static const struct v4l2_subdev_ops ov772x_subdev_ops = {
- 	.pad	= &ov772x_subdev_pad_ops,
- };
- 
-+static int ov772x_parse_dt(struct i2c_client *client,
-+			   struct ov772x_priv *priv)
-+{
-+	struct v4l2_fwnode_endpoint bus_cfg;
-+	struct fwnode_handle *ep;
-+	int ret;
-+
-+	ep = fwnode_graph_get_next_endpoint(dev_fwnode(&client->dev),
-+					    NULL);
-+	if (!ep) {
-+		dev_err(&client->dev, "Endpoint node not found\n");
-+		return -EINVAL;
-+	}
-+
-+	bus_cfg.bus_type = V4L2_MBUS_PARALLEL;
-+	ret = v4l2_fwnode_endpoint_alloc_parse(ep, &bus_cfg);
-+	if (ret)
-+		goto error_fwnode_put;
-+
-+	priv->bus_type = bus_cfg.bus_type;
-+	v4l2_fwnode_endpoint_free(&bus_cfg);
-+
-+error_fwnode_put:
-+	fwnode_handle_put(ep);
-+
-+	return ret;
-+}
-+
- /*
-  * i2c_driver function
-  */
-@@ -1415,6 +1445,10 @@ static int ov772x_probe(struct i2c_client *client)
- 		goto error_clk_put;
- 	}
- 
-+	ret = ov772x_parse_dt(client, priv);
-+	if (ret)
-+		goto error_clk_put;
-+
- 	ret = ov772x_video_probe(priv);
- 	if (ret < 0)
- 		goto error_gpio_put;
+Hi Biju,
+
+I'm involved in a separate thread[1] and I just wanted to get your
+inputs on how you understood the port and endpoint assignments for the
+USB type C connectors in different designs.
+
+Since the hd3ss3220 does the type C lane detect and has an integrated
+lane select mux, what is the ss_ep being used for?
+
+Thanks
+Wesley
+
+[1]
+https://lore.kernel.org/linux-usb/0101017458361303-16620b87-c433-4c00-a061-b1e688363539-000000@us-west-2.amazonses.com/
+> +                        };
+> +                        port@1 {
+> +                                reg = <1>;
+> +                                hd3ss3220_out_ep: endpoint {
+> +                                        remote-endpoint = <&usb3_role_switch>;
+> +                                };
+> +                        };
+> +                };
+> +        };
+> +    };
+> 
+
 -- 
-2.17.1
-
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
