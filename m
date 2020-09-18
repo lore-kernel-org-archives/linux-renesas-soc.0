@@ -2,96 +2,108 @@ Return-Path: <SRS0=cDZa=C3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D72F7C43465
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Sep 2020 12:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F1BC43463
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Sep 2020 12:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A55462311A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Sep 2020 12:48:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A09192311D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Sep 2020 12:48:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbgIRMsS (ORCPT
+        id S1726986AbgIRMs0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Sep 2020 08:48:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40204 "EHLO
+        Fri, 18 Sep 2020 08:48:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbgIRMsF (ORCPT
+        with ESMTP id S1726707AbgIRMsV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Sep 2020 08:48:05 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D62B9C06178A
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2020 05:48:04 -0700 (PDT)
+        Fri, 18 Sep 2020 08:48:21 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E11FCC06174A
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Sep 2020 05:48:20 -0700 (PDT)
 Received: from ramsan ([84.195.186.194])
-        by laurent.telenet-ops.be with bizsmtp
-        id VQo22300M4C55Sk01Qo2Y7; Fri, 18 Sep 2020 14:48:02 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id VQoL2300A4C55Sk06QoLd2; Fri, 18 Sep 2020 14:48:20 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kJFo2-000255-DY; Fri, 18 Sep 2020 14:48:02 +0200
+        id 1kJFoK-00025R-Em; Fri, 18 Sep 2020 14:48:20 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kJFo2-00043o-AP; Fri, 18 Sep 2020 14:48:02 +0200
+        id 1kJFoK-00045S-D6; Fri, 18 Sep 2020 14:48:20 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-List-Id: <soc.lore.kernel.org>
-To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 1/4] Renesas ARM SoC updates for v5.10 (take two)
-Date:   Fri, 18 Sep 2020 14:47:56 +0200
-Message-Id: <20200918124800.15555-1-geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.10 (take two)
+Date:   Fri, 18 Sep 2020 14:48:19 +0200
+Message-Id: <20200918124819.15652-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi arm-soc folks,
+	Hi Mike, Stephen,
 
-This is my second pull request for the inclusion of Renesas SoC updates
-for v5.10.
+The following changes since commit e41cb217932969a20cea9c44299c449236058e43:
 
-It consists of 4 parts:
+  clk: renesas: rcar-gen2: Rename vsp1-(sy|rt) clocks to vsp(s|r) (2020-09-04 09:42:01 +0200)
 
-  [GIT PULL 1/4] Renesas ARM DT updates for v5.10 (take two)
+are available in the Git repository at:
 
-    - PCIe endpoint support for the RZ/G2H SoC,
-    - SATA support for the HopeRun HiHope RZ/G2H board,
-    - Increase support (CAN, LED, SPI NOR, VIN, VSP) for the RZ/G1H SoC on
-      the iWave Qseven board (G21D), and its camera add-on board,
-    - Initial support for the R-Car V3U SoC on the Falcon CPU and BreakOut
-      boards,
-    - HDMI display and sound support for the R-Car M3-W+ SoC on the
-      Salvator-XS board,
-    - Digital Radio Interface (DRIF) support for the R-Car E3 SoC,
-    - Minor fixes and cleanups.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.10-tag2
 
-  [GIT PULL 2/4] Renesas ARM SoC updates for v5.10
+for you to fetch changes up to 15d683e61bdded719e6202fed2c7401f4dcd95ab:
 
-    - Make two local functions static.
+  clk: renesas: rcar-gen3: Update description for RZ/G2 (2020-09-17 15:32:25 +0200)
 
-  [GIT PULL 3/4] Renesas driver updates for v5.10 (take two)
+----------------------------------------------------------------
+clk: renesas: Updates for v5.10 (take two)
 
-    - Add core support for the R-Car V3U (R8A779A0) SoC, including System
-      Controller (SYSC) and Reset (RST) support,
-    - Various Kconfig cleanups.
-
-  [GIT PULL 4/4] Renesas DT binding updates for v5.10
-
-    - Document core support for the R-Car V3U (R8A779A0) SoC and the
-      Renesas Falcon CPU and BreakOut boards.
+  - Add support for the new R-Car V3U (R8A779A0) SoC,
+  - Minor fixes and improvements.
 
 Note that the new Renesas R-Car V3U DT Binding Definitions are shared by
 driver and DT source files, and thus included in multiple pull requests:
-  - "[GIT PULL] clk: renesas: Updates for v5.10 (take two)" (for clk),
   - "[GIT PULL 1/4] Renesas ARM DT updates for v5.10 (take two)" (for
     arm-soc),
   - "[GIT PULL 3/4] Renesas driver updates for v5.10 (take two)" (for
-    arm-soc).
+    arm-soc),
+  - "[GIT PULL] clk: renesas: Updates for v5.10 (take two)" (for clk).
 
 Thanks for pulling!
+----------------------------------------------------------------
+Geert Uytterhoeven (1):
+      Merge tag 'renesas-r8a779a0-dt-binding-defs-tag' into clk-renesas-for-v5.10
+
+Lad Prabhakar (1):
+      clk: renesas: rcar-gen3: Update description for RZ/G2
+
+Yoshihiro Shimoda (6):
+      dt-bindings: power: Add r8a779a0 SYSC power domain definitions
+      dt-bindings: clock: Add r8a779a0 CPG Core Clock Definitions
+      dt-bindings: clock: renesas,cpg-mssr: Document r8a779a0
+      clk: renesas: cpg-mssr: Use enum clk_reg_layout instead of a boolean flag
+      clk: renesas: cpg-mssr: Add register pointers into struct cpg_mssr_priv
+      clk: renesas: cpg-mssr: Add support for R-Car V3U
+
+ .../bindings/clock/renesas,cpg-mssr.yaml           |   1 +
+ drivers/clk/renesas/Kconfig                        |   7 +-
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r7s9210-cpg-mssr.c             |   2 +-
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c            | 276 +++++++++++++++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             | 136 ++++++----
+ drivers/clk/renesas/renesas-cpg-mssr.h             |  14 +-
+ include/dt-bindings/clock/r8a779a0-cpg-mssr.h      |  55 ++++
+ include/dt-bindings/power/r8a779a0-sysc.h          |  59 +++++
+ 9 files changed, 498 insertions(+), 53 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a779a0-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a779a0-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/r8a779a0-sysc.h
 
 Gr{oetje,eeting}s,
 
