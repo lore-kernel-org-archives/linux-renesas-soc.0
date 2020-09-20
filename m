@@ -1,140 +1,241 @@
-Return-Path: <SRS0=mNk5=C4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=X99v=C5=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C05C43466
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Sep 2020 11:25:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4090BC43465
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Sep 2020 01:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16C4E21582
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Sep 2020 11:25:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gTwa8afS"
+	by mail.kernel.org (Postfix) with ESMTP id 0979B208B8
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Sep 2020 01:01:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgISLZr (ORCPT
+        id S1726794AbgITBBR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 19 Sep 2020 07:25:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52456 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726332AbgISLZr (ORCPT
+        Sat, 19 Sep 2020 21:01:17 -0400
+Received: from lists.levonline.com ([217.70.33.37]:47864 "EHLO
+        lists.levonline.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbgITBBR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 19 Sep 2020 07:25:47 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBC92C0613D2
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 19 Sep 2020 04:25:46 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id e17so7631914wme.0
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 19 Sep 2020 04:25:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1DD3p2InLpuc1wZ6+ArMyt2jtw02/u4MJluFtFegrEw=;
-        b=gTwa8afSUvU9hYVm25e8bTxFk8cwpK81K+DidtbkYO89iBSHHyR/GIwwcI2jI/icij
-         A6/kXqxyXGjBqbWqczg7y3pl6t6dHXLJZQCdIVOUyW8tLWz5b1hMAiuMFgiUCgaJ7N3v
-         139DYyKaGI0R/ANXO1O1LXdogdyg9d9xBt3uvFv4w84GLY3oukI16YzcwV1dTNZwnG2y
-         WddNukhTiNaf3Iv/SKpKDZVnXf0CK4uComulK2a24yN56vXuHh707XIS05ceKKCZjbdG
-         Py/GmWOu5hhdmP0Q47tu/Nbgc4dpNu7o4laDoHGNQFhHO1HQxi0oYJsExxCGju+McK7l
-         MnSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1DD3p2InLpuc1wZ6+ArMyt2jtw02/u4MJluFtFegrEw=;
-        b=BmNxuNlqyrlvBswbaen+L1rk0oRtM5V7GRFimOBAWhiW0ZqGK+ApHGIJosUis/pzki
-         77goouHnXZtuhT7yvskgCKsJvoJy0LDaBgOCkp5HJ929+3LWu4xqLpPNDPoEvtYXMqte
-         tLRp9c9R+XCjBHLUCZgJTELXM6Eqof8Z1q6/54R6pde5IyEgihw8x4PrNvnxlZaoIuAF
-         jmK/T1IHvA45UNbSI0vXrzM5nWNxUMOvtl8NS7Q51FQNwYfin5+/EJCx0LNZOndwiUJ9
-         nX25l+7rpQMNrBDYvDuUdWQro8zhAxtnqApeY+pBgUdh8sw//qbK+NC+zOKZ1iTdZyCz
-         ptAA==
-X-Gm-Message-State: AOAM531Rs6EJX5yuTkrg6Ve4SMzOvi/QnTu5CrPwVHv+2p+8SGeSUltR
-        1RbEAOykWI3ENnbJxak+JpeupA==
-X-Google-Smtp-Source: ABdhPJyF1kBWHNq5hH1sVEgtu3Qk1xgHZAzNNJKdql79su8qhtMOz0aVE29ME9G064v4G9FJtGlgVw==
-X-Received: by 2002:a7b:cbd4:: with SMTP id n20mr21318770wmi.105.1600514744986;
-        Sat, 19 Sep 2020 04:25:44 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:9142:20e7:201d:cd11? ([2a01:e34:ed2f:f020:9142:20e7:201d:cd11])
-        by smtp.googlemail.com with ESMTPSA id x2sm11083178wrl.13.2020.09.19.04.25.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 19 Sep 2020 04:25:44 -0700 (PDT)
-Subject: Re: [PATCH 02/20] dt-bindings: thermal: rcar-gen3-thermal: Add
- r8a774e1 support
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Niklas <niklas.soderlund@ragnatech.se>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, linux-can@vger.kernel.org,
-        netdev <netdev@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>
-References: <1594811350-14066-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1594811350-14066-3-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CA+V-a8vwhtTWjaoXkfMBjKx90WkcoejD5ryPkXnQNEbtgnJGXQ@mail.gmail.com>
- <CA+V-a8tzELW-F3GLqq+M3pKoYZwfsc28K-PVVQq-sxJN0pL73Q@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <39217547-dc5d-b84f-e709-dbf3a9d688e1@linaro.org>
-Date:   Sat, 19 Sep 2020 13:25:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <CA+V-a8tzELW-F3GLqq+M3pKoYZwfsc28K-PVVQq-sxJN0pL73Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Sat, 19 Sep 2020 21:01:17 -0400
+Received: from exc-halon1.levonline.com (exc-halon1.levonline.com [217.70.32.123])
+        by lists.levonline.com (Postfix) with ESMTP id 183663A0D6E
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 20 Sep 2020 02:51:13 +0200 (CEST)
+X-SA-score: -1
+X-Halon-ID: dced8a67-fadb-11ea-9775-0050568168d4
+Received: from ormen2.djurnet.levonline.com (ormen2.djurnet.levonline.com [192.168.17.32])
+        by exc-halon1.levonline.com (Halon) with ESMTPS
+        id dced8a67-fadb-11ea-9775-0050568168d4;
+        Sun, 20 Sep 2020 02:54:40 +0200 (CEST)
+Received: from [127.0.0.1] (15.178.138.210.rev.vmobile.jp [210.138.178.15])
+        (authenticated bits=0)
+        by ormen2.djurnet.levonline.com (8.13.8/8.13.8) with ESMTP id 08K0sab1029404;
+        Sun, 20 Sep 2020 02:54:38 +0200
+X-Origin-Levonline: b0359001
+From:   Magnus Damm <damm@opensource.se>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Magnus Damm <damm@opensource.se>
+Date:   Sun, 20 Sep 2020 09:33:48 +0900
+Message-Id: <160056202800.9912.14989698496810743383.sendpatchset@octo>
+In-Reply-To: <160056199852.9912.5581183514421117508.sendpatchset@octo>
+References: <160056199852.9912.5581183514421117508.sendpatchset@octo>
+Subject: [PATCH 2/2] UIO CMT test program
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 19/09/2020 13:05, Lad, Prabhakar wrote:
-> Hi Niklas/Zhang/Daniel,
-> 
-> On Thu, Aug 27, 2020 at 5:52 PM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
->>
->> Hi Zhang,Daniel,Amit,
->>
->> On Wed, Jul 15, 2020 at 12:09 PM Lad Prabhakar
->> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
->>>
->>> Document RZ/G2H (R8A774E1) SoC bindings.
->>>
->>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->>> ---
->>>  Documentation/devicetree/bindings/thermal/rcar-gen3-thermal.yaml | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->> Gentle ping.
->>
-> Could either of please pick this patch.
-
-Applied, thanks
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--- /dev/null	2010-09-19 00:27:13.659405289 +0900
++++ uio-cmt-test-20200919.c	2020-09-19 08:55:12.571385363 +0900
+@@ -0,0 +1,190 @@
++/*
++ * uio-cmt-test-20200919.c - UIO CMT example test code, 20200919 Magnus Damm
++ *
++ * A small linux program that programs the CMT timer and waits for IRQ
++ *
++ * Compile for Linux using:
++ * $ cross-gcc -o uio-cmt-test uio-cmt-test.c
++ * 
++ * Designed to work with the Linux UIO kernel driver uio_pdrv_genirq.c
++ */
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <string.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/mman.h>
++#include <fcntl.h>
++
++static int fgets_with_openclose(char *fname, char *buf, size_t maxlen) {
++       FILE *fp;
++
++       if ((fp = fopen(fname, "r")) != NULL) {
++               fgets(buf, maxlen, fp);
++               fclose(fp);
++               return strlen(buf);
++       } else {
++               return -1;
++       }
++}
++
++struct uio_device {
++       char *name;
++       char *path;
++       int fd;
++};
++
++#define MAXUIOIDS  100
++#define MAXNAMELEN 256
++
++static int locate_uio_device(char *name, struct uio_device *udp)
++{
++       char fname[MAXNAMELEN], buf[MAXNAMELEN];
++       int uio_id, i;
++
++       for (uio_id = 0; uio_id < MAXUIOIDS; uio_id++) {
++               sprintf(fname, "/sys/class/uio/uio%d/name", uio_id);
++               if (fgets_with_openclose(fname, buf, MAXNAMELEN) < 0)
++                       continue;
++               if (strncmp(name, buf, strlen(name)) == 0)
++                       break;
++       }
++
++       if (uio_id >= MAXUIOIDS)
++               return -1;
++
++       udp->name = strdup(buf);
++       udp->path = strdup(fname);
++       udp->path[strlen(udp->path) - 4] = '\0';
++
++       sprintf(buf, "/dev/uio%d", uio_id);
++       udp->fd = open(buf, O_RDWR|O_SYNC /*| O_NONBLOCK*/);
++
++       if (udp->fd < 0) {
++               perror("open");
++               return -1;
++       }
++
++       return 0;
++}
++
++#define CMT_CMCLKE 0x1000 /* start/stop register, some bits reserved as 1 */
++#define CMT_CMCLKE_CH0 0x20 /* set bit to one to start channel */
++#define CMT_CMCSR 0x510 /* 0x124 enables interrupts and selects CLK/8 */
++#define CMT_CMCNT 0x514 /* counting up, set to 0 */
++#define CMT_CMCOR 0x518 /* match value, set to ~0 */
++
++struct uio_map {
++       unsigned long address;
++       unsigned long size;
++       void *iomem;
++};
++
++static int setup_uio_map(struct uio_device *udp, int nr, struct uio_map *ump)
++{
++       char fname[MAXNAMELEN], buf[MAXNAMELEN];
++ 
++       sprintf(fname, "%s/maps/map%d/addr", udp->path, nr);
++       if (fgets_with_openclose(fname, buf, MAXNAMELEN) <= 0)
++               return -1;
++
++       ump->address = strtoul(buf, NULL, 0);
++
++       sprintf(fname, "%s/maps/map%d/size", udp->path, nr);
++       if (fgets_with_openclose(fname, buf, MAXNAMELEN) <= 0)
++               return -1;
++
++       ump->size = strtoul(buf, NULL, 0);
++
++       ump->iomem = mmap(0, ump->size,
++                         PROT_READ|PROT_WRITE, MAP_SHARED,
++                         udp->fd, nr * getpagesize());
++
++       if (ump->iomem == MAP_FAILED)
++               return -1;
++
++       return 0;
++}
++
++struct uio_device uio_dev;
++struct uio_map uio_mmio;
++
++int main(int argc, char *argv[])
++{
++	int ret;
++
++	ret = locate_uio_device("timer", &uio_dev);
++	if (ret < 0)
++		return ret;
++       
++	printf("found matching UIO device at %s\n", uio_dev.path);
++
++	ret = setup_uio_map(&uio_dev, 0, &uio_mmio);
++	if (ret < 0)
++		return ret;
++
++	printf("CLKE\n");
++	/* Stop timer channel */
++	{
++		unsigned long *p = (uio_mmio.iomem + CMT_CMCLKE);
++
++		*p = *p & ~CMT_CMCLKE_CH0;
++	}
++
++	printf("CMCSR\n");
++	/* CMCSR */
++	{
++		unsigned long *p = (uio_mmio.iomem + CMT_CMCSR);
++
++		*p = 0x124;
++	}
++
++	printf("CMCOR\n");
++	/* CMCOR */
++	{
++		unsigned long *p = (uio_mmio.iomem + CMT_CMCOR);
++
++		*p = (32768 / 8) * 2; /* interrupt after about 2s */
++	}
++
++	printf("waiting 10s");
++	sleep(10);
++	
++	printf("UIO write\n");
++	/* Enable interrupt in UIO driver */
++	{
++		unsigned long enable = 1;
++
++		write(uio_dev.fd, &enable, sizeof(u_long));
++	}
++
++	printf("CLKE\n");
++	/* Start timer channel */
++	{
++		unsigned long *p = (uio_mmio.iomem + CMT_CMCLKE);
++
++		*p = *p | CMT_CMCLKE_CH0;
++	}
++
++	printf("UIO read\n");
++	/* Wait for interrupt */
++	{
++		unsigned long n_pending;
++
++		read(uio_dev.fd, &n_pending, sizeof(u_long));
++
++		printf("got CMT IRQ\n");
++	}
++
++	printf("CLKE\n");
++	/* Stop timer channel */
++	{
++		unsigned long *p = (uio_mmio.iomem + CMT_CMCLKE);
++
++		*p = *p & ~CMT_CMCLKE_CH0;
++	}
++	
++	return 0;
++}
