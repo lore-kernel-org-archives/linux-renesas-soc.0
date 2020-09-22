@@ -1,91 +1,92 @@
-Return-Path: <SRS0=/1E3=C6=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=Wq11=C7=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC844C4727C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Sep 2020 21:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5ECC4346E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Sep 2020 02:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 658BD23A60
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Sep 2020 21:44:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wyoWj6nN"
+	by mail.kernel.org (Postfix) with ESMTP id 8788123A7A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Sep 2020 02:00:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1600740022;
+	bh=kYNJxkMo2anS/8PuLnAzPGHb8GTmWTIcIgZzUe5W7ys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=e8nQ+zq95RClCKN7k0tPKuFPyGxBn6ADYSwxjpen+JWnAJrV62v+c+BujrtPgOuCJ
+	 4SByNyEmeQmhbo+J6WsNL+YFH+gqKCERr0hLbCiCejDzRDoUphTXKkoxIY2XfOQTAy
+	 2h1GRRcBW0nny7zhrO4TGQVB1AYfVmY3Pq2D0AKQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726452AbgIUVo0 (ORCPT
+        id S1729242AbgIVCAW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Sep 2020 17:44:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52188 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727435AbgIUVo0 (ORCPT
+        Mon, 21 Sep 2020 22:00:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42446 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728501AbgIVCAV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Sep 2020 17:44:26 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AE8FBC0613CF
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2020 14:44:25 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id w3so12377257ljo.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Sep 2020 14:44:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=98wrZWm5rD6s8sDxcYcqY37rnvB1KaQTfMpqS0lg8EM=;
-        b=wyoWj6nN2lE6+YFgFmEqZTDuIp6aWaRMJ/WRz++Gax8tTYyet52O7y4DnC377q6Jeh
-         Kt4+vINzKRRiWa8XAPe4WbRqbeiXN7TRXQ8rD5mvBZxFgoBIA55qVyu+2HCCl4GiSNf0
-         NI1HNz+tet8jEWxUzT/cfwbjbrRxXBrMz22a+xKO3eplke5/e3L9mS+d/xgi9RGTGmb8
-         jrIThCIBDpPigfSleE6ZwAzKUZVT6VIjCEdxK4MasG00vt8mmFQFnQwUO8iFf4tK6Vnv
-         RP9RoVAhDSlJc+2pj3huE6fc4MvYg1PW5+5lJGZft/Dx0aI6BStDoIJu+dIG7d39Rj9c
-         ynJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=98wrZWm5rD6s8sDxcYcqY37rnvB1KaQTfMpqS0lg8EM=;
-        b=DvwT6upG30sF31jvSIc7kDyiP+3SQQr/8QEWlkh9GWOxZ52eq8AaBj2K6Um7qRTUEF
-         Q8t+UbpHegQH/O27mReKKNnpaCZ4vtZq/2XLWjX+H8c/CLM94LfXWSXz5hVLhThAH78J
-         nGy0ii1O0IZpu38OC0fmwYaMgnrJA+vpQJ58YXMDrun8+w7uCbj7Df4NeolxulxQ5/jR
-         YvUGSNb3dhZcV+GCvuNaR5KksEfhDu8JFJ6JiD/2o56IDVMdicy1QWwZmF7PfY/JVjfW
-         yRUpQ5IjaN+jxrvsjUK1J6i3ydwzOUtjJX50ar8LMIESVpoGPBL2Ig4ectXhGcvGTf4L
-         kJvg==
-X-Gm-Message-State: AOAM531JFLx1wDwWgRO6rxeTDApXoM31hAYhihOX5U5b0wl/tIv1+eS5
-        MHuS1/C8FGnTnjGThBANkq7fwJTms9Epf8gUpTAutQ==
-X-Google-Smtp-Source: ABdhPJxHeQas0kXkbcq87Kx4lesaj8HHnzoP9rPiV/go6yBMDgrM4H8/fPd5pR/oXLAYeP3EKWCMrKpjEz38AHx+p7E=
-X-Received: by 2002:a2e:9988:: with SMTP id w8mr537665lji.286.1600724663995;
- Mon, 21 Sep 2020 14:44:23 -0700 (PDT)
+        Mon, 21 Sep 2020 22:00:21 -0400
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F5C123A74;
+        Tue, 22 Sep 2020 02:00:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1600740021;
+        bh=kYNJxkMo2anS/8PuLnAzPGHb8GTmWTIcIgZzUe5W7ys=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=k7OXLPC+wJQNc62e75OkkvOiY2XUHlpSW94FG2mbCavbr9OoBUthgvnsAshDdYrUd
+         ibQI7tJ4iX38/3FFnZCHsMhglmYZQeSMe3r2mawzxgw+hjL0YPQ/nNwakkwvAKJMQ3
+         E7m61S9bPggx+TW6vXYL1dGfP3KmZ6aU+Oj1XC3w=
+Date:   Tue, 22 Sep 2020 10:00:12 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?iso-8859-1?Q?Beno=EEt?= Cousson <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 15/15] ARM: dts: imx6q: align GPIO hog names with
+ dtschema
+Message-ID: <20200922020011.GQ25109@dragon>
+References: <20200916155715.21009-1-krzk@kernel.org>
+ <20200916155715.21009-16-krzk@kernel.org>
 MIME-Version: 1.0
-References: <20200918124828.15729-1-geert+renesas@glider.be>
-In-Reply-To: <20200918124828.15729-1-geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 21 Sep 2020 23:44:13 +0200
-Message-ID: <CACRpkdZRxTz+Vf-Gbv_9W7gG4snZ2kSa+CL3qB1+q0nyw3y48Q@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: sh-pfc: Updates for v5.10 (take two)
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200916155715.21009-16-krzk@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Sep 18, 2020 at 2:48 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+On Wed, Sep 16, 2020 at 05:57:15PM +0200, Krzysztof Kozlowski wrote:
+> dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.  While
+> touching the hogs, fix indentation (spaces -> tabs).
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> The following changes since commit 9123e3a74ec7b934a4a099e98af6a61c2f80bbf5:
->
->   Linux 5.9-rc1 (2020-08-16 13:04:57 -0700)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v5.10-tag1
->
-> for you to fetch changes up to 540d9757cea8274a44d69cbadcff5b8c381bae8d:
->
->   pinctrl: renesas: Reintroduce SH_PFC for common sh-pfc code (2020-09-15 10:04:35 +0200)
-
-Pulled into my "devel" branch for v5.10, excellent work as always!
-
-Yours,
-Linus Walleij
+Applied, thanks.
