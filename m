@@ -6,25 +6,24 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A561C4363D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E943C4741F
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Sep 2020 11:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB7A721775
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Sep 2020 11:45:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D774221EB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Sep 2020 11:45:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbgIYLpz (ORCPT
+        id S1728315AbgIYLpz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 25 Sep 2020 07:45:55 -0400
-Received: from muru.com ([72.249.23.125]:45552 "EHLO muru.com"
+Received: from muru.com ([72.249.23.125]:45554 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728056AbgIYLpz (ORCPT
+        id S1728302AbgIYLpz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 25 Sep 2020 07:45:55 -0400
-X-Greylist: delayed 538 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Sep 2020 07:45:54 EDT
 Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id DBB9C80B0;
-        Fri, 25 Sep 2020 11:36:52 +0000 (UTC)
-Date:   Fri, 25 Sep 2020 14:36:46 +0300
+        by muru.com (Postfix) with ESMTPS id 802E18106;
+        Fri, 25 Sep 2020 11:38:58 +0000 (UTC)
+Date:   Fri, 25 Sep 2020 14:38:52 +0300
 From:   Tony Lindgren <tony@atomide.com>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -53,23 +52,22 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 08/15] ARM: dts: am335x: lxm: fix PCA9539 GPIO
- expander properties
-Message-ID: <20200925113646.GJ9471@atomide.com>
+Subject: Re: [PATCH v3 10/15] ARM: dts: am3874: iceboard: fix GPIO expander
+ reset GPIOs
+Message-ID: <20200925113852.GL9471@atomide.com>
 References: <20200916155715.21009-1-krzk@kernel.org>
- <20200916155715.21009-9-krzk@kernel.org>
+ <20200916155715.21009-11-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200916155715.21009-9-krzk@kernel.org>
+In-Reply-To: <20200916155715.21009-11-krzk@kernel.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 * Krzysztof Kozlowski <krzk@kernel.org> [200916 18:58]:
-> The PCA9539 GPIO expander requires GPIO controller properties to operate
-> properly.
+> Correct the property for reset GPIOs of the GPIO expander.
 
-I'm picking this patch into omap-for-v5.10/dt thanks.
+Picking up this too thanks.
 
 Tony
