@@ -2,74 +2,73 @@ Return-Path: <SRS0=OCes=DC=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1413FC4363D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Sep 2020 11:07:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C612C4727C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Sep 2020 11:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC45C221E5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Sep 2020 11:07:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0247A2083B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Sep 2020 11:45:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbgIYLHR (ORCPT
+        id S1728056AbgIYLpz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 25 Sep 2020 07:07:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50770 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbgIYLHR (ORCPT
+        Fri, 25 Sep 2020 07:45:55 -0400
+Received: from muru.com ([72.249.23.125]:45556 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728328AbgIYLpz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Sep 2020 07:07:17 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BECC0613CE
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 25 Sep 2020 04:07:16 -0700 (PDT)
-Received: from ramsan ([84.195.186.194])
-        by albert.telenet-ops.be with bizsmtp
-        id YB7E2300T4C55Sk06B7EJx; Fri, 25 Sep 2020 13:07:14 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kLlZK-0001Hc-Dp; Fri, 25 Sep 2020 13:07:14 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kLlZK-0000hV-Bq; Fri, 25 Sep 2020 13:07:14 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] MAINTAINERS: Update git repo for Renesas clock drivers
-Date:   Fri, 25 Sep 2020 13:07:13 +0200
-Message-Id: <20200925110713.2652-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Fri, 25 Sep 2020 07:45:55 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id CDB9180EE;
+        Fri, 25 Sep 2020 11:38:02 +0000 (UTC)
+Date:   Fri, 25 Sep 2020 14:37:56 +0300
+From:   Tony Lindgren <tony@atomide.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 09/15] ARM: dts: am335x: t335: align GPIO hog names
+ with dtschema
+Message-ID: <20200925113756.GK9471@atomide.com>
+References: <20200916155715.21009-1-krzk@kernel.org>
+ <20200916155715.21009-10-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200916155715.21009-10-krzk@kernel.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Align the clock branch name with other renesas-* branches pulled by
-subsystem maintainers.
+* Krzysztof Kozlowski <krzk@kernel.org> [200916 18:58]:
+> The convention for node names is to use hyphens, not underscores.
+> dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk-for-v5.11.
+I'm picking up this too into omap-for-v5.10/dt thanks.
 
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e0f796f1f00ad096..5fc2d6efc2d200d0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14850,7 +14850,7 @@ RENESAS CLOCK DRIVERS
- M:	Geert Uytterhoeven <geert+renesas@glider.be>
- L:	linux-renesas-soc@vger.kernel.org
- S:	Supported
--T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git clk-renesas
-+T:	git git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
- F:	Documentation/devicetree/bindings/clock/renesas,*
- F:	drivers/clk/renesas/
- 
--- 
-2.17.1
-
+Tony
