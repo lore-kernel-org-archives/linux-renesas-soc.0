@@ -6,24 +6,25 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C612C4727C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A561C4363D
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Sep 2020 11:45:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0247A2083B
+	by mail.kernel.org (Postfix) with ESMTP id DB7A721775
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Sep 2020 11:45:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbgIYLpz (ORCPT
+        id S1728343AbgIYLpz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 25 Sep 2020 07:45:55 -0400
-Received: from muru.com ([72.249.23.125]:45556 "EHLO muru.com"
+Received: from muru.com ([72.249.23.125]:45552 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728328AbgIYLpz (ORCPT
+        id S1728056AbgIYLpz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 25 Sep 2020 07:45:55 -0400
+X-Greylist: delayed 538 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Sep 2020 07:45:54 EDT
 Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id CDB9180EE;
-        Fri, 25 Sep 2020 11:38:02 +0000 (UTC)
-Date:   Fri, 25 Sep 2020 14:37:56 +0300
+        by muru.com (Postfix) with ESMTPS id DBB9C80B0;
+        Fri, 25 Sep 2020 11:36:52 +0000 (UTC)
+Date:   Fri, 25 Sep 2020 14:36:46 +0300
 From:   Tony Lindgren <tony@atomide.com>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -52,23 +53,23 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
         linux-aspeed@lists.ozlabs.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3 09/15] ARM: dts: am335x: t335: align GPIO hog names
- with dtschema
-Message-ID: <20200925113756.GK9471@atomide.com>
+Subject: Re: [PATCH v3 08/15] ARM: dts: am335x: lxm: fix PCA9539 GPIO
+ expander properties
+Message-ID: <20200925113646.GJ9471@atomide.com>
 References: <20200916155715.21009-1-krzk@kernel.org>
- <20200916155715.21009-10-krzk@kernel.org>
+ <20200916155715.21009-9-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200916155715.21009-10-krzk@kernel.org>
+In-Reply-To: <20200916155715.21009-9-krzk@kernel.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 * Krzysztof Kozlowski <krzk@kernel.org> [200916 18:58]:
-> The convention for node names is to use hyphens, not underscores.
-> dtschema for pca95xx expects GPIO hogs to end with 'hog' prefix.
+> The PCA9539 GPIO expander requires GPIO controller properties to operate
+> properly.
 
-I'm picking up this too into omap-for-v5.10/dt thanks.
+I'm picking this patch into omap-for-v5.10/dt thanks.
 
 Tony
