@@ -1,67 +1,120 @@
-Return-Path: <SRS0=i2RR=DE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=jYEb=DF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54923C4346E
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 27 Sep 2020 20:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF22C47423
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Sep 2020 07:26:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0D4D323A01
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 27 Sep 2020 20:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09F9B2080A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Sep 2020 07:26:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbgI0UcU (ORCPT
+        id S1726534AbgI1H02 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 27 Sep 2020 16:32:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43934 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbgI0UcU (ORCPT
+        Mon, 28 Sep 2020 03:26:28 -0400
+Received: from mail-oo1-f65.google.com ([209.85.161.65]:45913 "EHLO
+        mail-oo1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbgI1H02 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 27 Sep 2020 16:32:20 -0400
-Received: from shards.monkeyblade.net (shards.monkeyblade.net [IPv6:2620:137:e000::1:9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 938D1C0613CE;
-        Sun, 27 Sep 2020 13:32:20 -0700 (PDT)
-Received: from localhost (unknown [IPv6:2601:601:9f00:477::3d5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3D1B013BB09D4;
-        Sun, 27 Sep 2020 13:15:32 -0700 (PDT)
-Date:   Sun, 27 Sep 2020 13:32:18 -0700 (PDT)
-Message-Id: <20200927.133218.1538000520701421658.davem@davemloft.net>
-To:     prabhakar.mahadev-lad.rj@bp.renesas.com
-Cc:     kuba@kernel.org, robh+dt@kernel.org, netdev@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        sergei.shtylyov@gmail.com, linux-kernel@vger.kernel.org,
-        prabhakar.csengg@gmail.com,
-        marian-cristian.rotariu.rb@bp.renesas.com
-Subject: Re: [RESEND PATCH] dt-bindings: net: renesas,ravb: Add support for
- r8a774e1 SoC
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20200927123439.29300-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20200927123439.29300-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: Mew version 6.8 on Emacs 27.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [2620:137:e000::1:9]); Sun, 27 Sep 2020 13:15:32 -0700 (PDT)
+        Mon, 28 Sep 2020 03:26:28 -0400
+Received: by mail-oo1-f65.google.com with SMTP id h8so53116ooc.12;
+        Mon, 28 Sep 2020 00:26:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FIXuEXH1Fk3QAlLQe9GSnuwlSzVtMlZPFzZmwI9UqQo=;
+        b=G8Dq8Z9bC5ToYVrQ0mJoIEE28SO9kMXZRC8Nk9wSswSc0AjjSQLeNSSpo8LDOkFp11
+         UViMrkmSptv9jHQgvq26jdeHtgUbOH31rKEEbhvrMt5xryiYTNqKuKZIPNnifkmzihq5
+         5FQblJ/8puYRx9k2W5Tq4KN99zql01CRiD6rvtK2NbRudLXuJWfcWqDuI7Kg4fXzV0cH
+         E8LGtob2DsNJJTgtFJmsvlNYIPxD/q2jEWwd4oKL4oEhOuuAqdytiojmTeBvEWMoAjBK
+         /VSiRdjmqDVvdDMlJmXZ+0wMoQib5krm2Nu9yoU1xnFNm3/M1aWjjXL9hoobnW66zotJ
+         lwkg==
+X-Gm-Message-State: AOAM532rhQIwHf3s0r4q60VpzjshCMNYfF/iCJbstIJLQ16wZZQR8+Im
+        3TZRxtcGCMJquU31sRWqe1/Th3WaKYnQLjwHAj0=
+X-Google-Smtp-Source: ABdhPJwi1FqBvCqk6eXHKuHxD5zI6xr62zVsPkSsss785K8jM34uDKUyzRoSrlbneMqYlq2BfkG/5PiagZhx5YxubQ0=
+X-Received: by 2002:a4a:e616:: with SMTP id f22mr155254oot.11.1601277987442;
+ Mon, 28 Sep 2020 00:26:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200813140041.5082-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200824004816.GS6002@pendragon.ideasonboard.com> <CA+V-a8uq44hKOxbwBXZ_90q6e4JjCEPwOWp4BDY7BJJaP1Cg6g@mail.gmail.com>
+ <20200927200418.GA3986@pendragon.ideasonboard.com>
+In-Reply-To: <20200927200418.GA3986@pendragon.ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 28 Sep 2020 09:26:15 +0200
+Message-ID: <CAMuHMdX0_VDVw41ZuGy0M+d6sgNMujSas4x+YqZMWwpF-TvOZg@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: r8a7742-iwg21d-q7: Add LCD support
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Date: Sun, 27 Sep 2020 13:34:39 +0100
+Hi Prabhakar,
 
-> From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-> 
-> Document RZ/G2H (R8A774E1) SoC bindings.
-> 
-> Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Sergei Shtylyov <sergei.shtylyov@gmail.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Rob Herring <robh@kernel.org>
+On Sun, Sep 27, 2020 at 10:04 PM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Sun, Sep 27, 2020 at 02:01:50PM +0100, Lad, Prabhakar wrote:
+> > On Mon, Aug 24, 2020 at 1:48 AM Laurent Pinchart wrote:
+> > > On Thu, Aug 13, 2020 at 03:00:41PM +0100, Lad Prabhakar wrote:
+> > > > The iwg21d comes with a 7" capacitive touch screen, therefore
+> > > > add support for it.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+> > >
+> > > Everything seems to match the schematics :-)
+> > >
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > >
+> > > > ---
+> > > > v1->v2
+> > > > * This patch is part of series [1] (rest of the patches have be accepted
+> > > >   by Geert [2]).
+> > > > * Added regulator for lvds
+> > > > * Added reset pin for touchpanel
+> > > > * This patch is based on series [3]
+> > > >
+> > > > [1] https://patchwork.kernel.org/project/linux-renesas-soc/list/
+> > > >     ?series=330277
+> > > > [2] https://git.kernel.org/pub/scm/linux/kernel/git/geert/
+> > > >     renesas-devel.git/log/?h=renesas-arm-dt-for-v5.10
+> > > > [3] https://patchwork.kernel.org/project/linux-renesas-soc/list/
+> > > >     ?series=330957
+> > > > ---
+> > > >  arch/arm/boot/dts/r8a7742-iwg21d-q7.dts | 99 +++++++++++++++++++++++++
+> > > >  1 file changed, 99 insertions(+)
+> >
+> > Would you be queueing this patch along with DRM driver patches for v5.10 ?
+>
+> No, I expect Geert to do so, DT patches go through his tree. I handle
+> the drivers and DT bindings.
 
-Applied.
+Indeed.
+
+As the dependencies are now in linux-next, I'm queueing this in
+renesas-devel for v5.11, after fixing all conflicts due to recent
+additions, and sorting &lvds0 before &pfc.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
