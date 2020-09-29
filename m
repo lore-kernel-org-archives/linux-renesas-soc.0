@@ -2,90 +2,249 @@ Return-Path: <SRS0=XcLD=DG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-17.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F319C4727F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Sep 2020 12:05:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4289CC4727C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Sep 2020 14:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D879206F7
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Sep 2020 12:05:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wueAy6HO"
+	by mail.kernel.org (Postfix) with ESMTP id EB3EB20C09
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Sep 2020 14:05:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731863AbgI2MFA (ORCPT
+        id S1729171AbgI2OFH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 29 Sep 2020 08:05:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42662 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731857AbgI2ME6 (ORCPT
+        Tue, 29 Sep 2020 10:05:07 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:21448 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728481AbgI2OFH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Sep 2020 08:04:58 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E324C0613D2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2020 05:04:58 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id q13so14588519ejo.9
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Sep 2020 05:04:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XuEHP21dhMBh5T4WXO9Xuu69AATfQ0zf7NJ5Z9eebL4=;
-        b=wueAy6HOAcQyM2KhegOErfUpHxD3ely0mqmCcGRxYnv3LowQpHQRGXzC6yDv0wkNb0
-         q/2L+bZxK2En+oYdP4J/VWWKl8wZrbIWNov3utIVNEkmeyiqR2Zfiu3/KysFtIrl9kHG
-         NobTiJSZKFQ+c9ivq+xh2OC4JdKJnV69ciBMS8lZGV1csYb1uGJWIH2RWSMYKMw/sLVv
-         fhBlEFeu6iO9KS+6RWx43LwE0GC59Su6pD6RHyNpeAoI2UzfHYyUc2mqv1GYjVVq+RW0
-         rEGEy9sugD7TRBKcyGXGQHBwlHP0NrfzO/KYAH6NjJ+2XAQzINGCTrM5OgPtod+o4TPM
-         Jopg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XuEHP21dhMBh5T4WXO9Xuu69AATfQ0zf7NJ5Z9eebL4=;
-        b=VlS1ly/1SSsOH/h0DXFfsx25Lr56kyf9rqgsVqM7Pt9jYOpfZxsyHRSrg1yx6nP3BG
-         KHxJSF3FzUa6nBJwQ3N2cnwrmXCSQLRxi+UlywAJQSlpYOrF4fiHnyAXh41Ms8JIvqNh
-         +D0OEychrlsFBbCe9nF98L8+EYm58YRpIfXDHz/S6r0qb77OhOMmkCuRfXbcXJ6cxG3I
-         akIaVpWQJ6QxS2+MqxbJWw7Ub+6LISgs/m7nOu+QALxv3W3op55jdGCCM+ghAfhSZ0Yn
-         rUN/g5WO0HU+mjoBsCyngJwhbDrwwLMK0iTbPzuAMRzVzntVinUyzueajsSPU4arrFuU
-         GMAg==
-X-Gm-Message-State: AOAM530G7Id4btdxVQO8P4q+c8/AxZzfJlXtp9ZLW98G6CpGeJ+F6LNV
-        nMjs1GDYs9MIdNw0erldNIvkrm0IP/JW2RMMSGuWUg==
-X-Google-Smtp-Source: ABdhPJz7awWKdkxeqGhj84kwINNLUBgCSDG/lRgEu5OC3wXnNTaiMCnWTwxOEKPk82plp2jM6wXgrPtvn8DqUzUc2Vo=
-X-Received: by 2002:a17:906:311a:: with SMTP id 26mr3426532ejx.226.1601381096838;
- Tue, 29 Sep 2020 05:04:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200928184515.7345-1-krzk@kernel.org>
-In-Reply-To: <20200928184515.7345-1-krzk@kernel.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 29 Sep 2020 14:04:46 +0200
-Message-ID: <CACRpkdZ9vbsFTsT4A+BH=8x++Uc4EujnMd9DTMvRfQ7QPnLU2w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: pinctrl: renesas,pfc: align example GPIO hog
- name with dtschema
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tue, 29 Sep 2020 10:05:07 -0400
+X-IronPort-AV: E=Sophos;i="5.77,318,1596466800"; 
+   d="scan'208";a="58254312"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 29 Sep 2020 23:05:05 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 8E7F34006DF0;
+        Tue, 29 Sep 2020 23:05:03 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-kernel@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: [PATCH v3] ARM: dts: r8a7742-iwg21d-q7: Add LCD support
+Date:   Tue, 29 Sep 2020 15:05:02 +0100
+Message-Id: <20200929140502.16017-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Sep 28, 2020 at 8:45 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+The iwg21d comes with a 7" capacitive touch screen, therefore
+add support for it.
 
-> The convention for node names is to use hyphens, not underscores.
-> dtschema expects GPIO hogs to end with 'hog' suffix.  Adjust the example
-> DTS in the binding.  No changes to binding itself.
->
-> Reported-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2->v3
+* Renamed vcc-supply to power-supply due to recent bindings changes [4]
+  (similar changes done for G1[MN] [5]).
+* Restored RB tags from Laurent and Geert.
+* Sorted the DTS
 
-Patch applied!
+v1->v2
+* This patch is part of series [1] (rest of the patches have be accepted
+  by Geert [2]).
+* Added regulator for lvds
+* Added reset pin for touchpanel
+* This patch is based on series [3]
 
-Yours,
-Linus Walleij
+[1] https://patchwork.kernel.org/project/linux-renesas-soc/list/
+    ?series=330277
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/geert/
+    renesas-devel.git/log/?h=renesas-arm-dt-for-v5.10
+[3] https://patchwork.kernel.org/project/linux-renesas-soc/list/
+    ?series=330957
+[4] https://patchwork.kernel.org/patch/11792205/
+[5] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/
+    commit/?h=next-20200929&id=08d7a73fffb6769b1cf2278bf697e692daba3abf
+---
+ arch/arm/boot/dts/r8a7742-iwg21d-q7.dts | 99 +++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts b/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
+index c2c05c9685d1..0063ef92f50e 100644
+--- a/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
++++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
+@@ -30,6 +30,7 @@
+ 
+ /dts-v1/;
+ #include "r8a7742-iwg21m.dtsi"
++#include <dt-bindings/pwm/pwm.h>
+ 
+ / {
+ 	model = "iWave Systems RainboW-G21D-Qseven board based on RZ/G1H";
+@@ -52,6 +53,16 @@
+ 		clock-frequency = <26000000>;
+ 	};
+ 
++	lcd_backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&tpu 2 5000000 0>;
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		pinctrl-0 = <&backlight_pins>;
++		pinctrl-names = "default";
++		default-brightness-level = <7>;
++		enable-gpios = <&gpio3 11 GPIO_ACTIVE_HIGH>;
++	};
++
+ 	leds {
+ 		compatible = "gpio-leds";
+ 
+@@ -62,6 +73,41 @@
+ 		};
+ 	};
+ 
++	lvds-receiver {
++		compatible = "ti,ds90cf384a", "lvds-decoder";
++		power-supply = <&vcc_3v3_tft1>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				lvds_receiver_in: endpoint {
++					remote-endpoint = <&lvds0_out>;
++				};
++			};
++			port@1 {
++				reg = <1>;
++				lvds_receiver_out: endpoint {
++					remote-endpoint = <&panel_in>;
++				};
++			};
++		};
++	};
++
++	panel {
++		compatible = "edt,etm0700g0dh6";
++		backlight = <&lcd_backlight>;
++		power-supply = <&vcc_3v3_tft1>;
++
++		port {
++			panel_in: endpoint {
++				remote-endpoint = <&lvds_receiver_out>;
++			};
++		};
++	};
++
+ 	reg_1p5v: 1p5v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "1P5V";
+@@ -85,6 +131,17 @@
+ 		};
+ 	};
+ 
++	vcc_3v3_tft1: regulator-panel {
++		compatible = "regulator-fixed";
++
++		regulator-name = "vcc-3v3-tft1";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		enable-active-high;
++		startup-delay-us = <500>;
++		gpio = <&gpio5 28 GPIO_ACTIVE_HIGH>;
++	};
++
+ 	vcc_sdhi2: regulator-vcc-sdhi2 {
+ 		compatible = "regulator-fixed";
+ 
+@@ -139,6 +196,16 @@
+ 		VDDIO-supply = <&reg_3p3v>;
+ 		VDDD-supply = <&reg_1p5v>;
+ 	};
++
++	touch: touchpanel@38 {
++		compatible = "edt,edt-ft5406";
++		reg = <0x38>;
++		interrupt-parent = <&gpio0>;
++		interrupts = <24 IRQ_TYPE_EDGE_FALLING>;
++		/* GP1_29 is also shared with audio codec reset pin */
++		reset-gpios = <&gpio1 29 GPIO_ACTIVE_LOW>;
++		vcc-supply = <&vcc_3v3_tft1>;
++	};
+ };
+ 
+ &can1 {
+@@ -152,6 +219,18 @@
+ 	status = "okay";
+ };
+ 
++&du {
++	status = "okay";
++};
++
++&gpio0 {
++	touch-interrupt {
++		gpio-hog;
++		gpios = <24 GPIO_ACTIVE_LOW>;
++		input;
++	};
++};
++
+ &gpio1 {
+ 	can-trx-en-gpio{
+ 		gpio-hog;
+@@ -167,6 +246,17 @@
+ 	status = "okay";
+ };
+ 
++&lvds0 {
++	status = "okay";
++	ports {
++		port@1 {
++			lvds0_out: endpoint {
++				remote-endpoint = <&lvds_receiver_in>;
++			};
++		};
++	};
++};
++
+ &msiof0 {
+ 	pinctrl-0 = <&msiof0_pins>;
+ 	pinctrl-names = "default";
+@@ -229,6 +319,11 @@
+ 		function = "avb";
+ 	};
+ 
++	backlight_pins: backlight {
++		groups = "tpu0_to2";
++		function = "tpu0";
++	};
++
+ 	can1_pins: can1 {
+ 		groups = "can1_data_b";
+ 		function = "can1";
+@@ -335,6 +430,10 @@
+ 	shared-pin;
+ };
+ 
++&tpu {
++	status = "okay";
++};
++
+ &usbphy {
+ 	status = "okay";
+ };
+-- 
+2.17.1
+
