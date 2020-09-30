@@ -1,265 +1,149 @@
-Return-Path: <SRS0=XcLD=DG=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=HQUn=DH=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B3FC4727D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Sep 2020 22:16:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C75E4C4727E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Sep 2020 09:48:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F4852083B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Sep 2020 22:16:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7380D2074A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Sep 2020 09:48:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lr028ipx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728391AbgI2WQq (ORCPT
+        id S1728957AbgI3JsN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 29 Sep 2020 18:16:46 -0400
-Received: from mga01.intel.com ([192.55.52.88]:32278 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728329AbgI2WQq (ORCPT
+        Wed, 30 Sep 2020 05:48:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46180 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729062AbgI3JsM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Sep 2020 18:16:46 -0400
-IronPort-SDR: eA8inOrzPWTytdiraf9Fcd0HJ0lkwFjwXV52nsDMgnPKmNbbmizsxXpcCTwLZeOhowdSsGB2ws
- 2YihM6QwtRog==
-X-IronPort-AV: E=McAfee;i="6000,8403,9759"; a="180468164"
-X-IronPort-AV: E=Sophos;i="5.77,320,1596524400"; 
-   d="scan'208";a="180468164"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Sep 2020 15:16:45 -0700
-IronPort-SDR: hTQ5WfHa9F6ltz4wIix6zUq6Ko/nr4+otDEN9EBiy06XSSjukOE06zprA8QGXDnnFWq/z6K6X/
- bkJ/kRoDsucw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.77,320,1596524400"; 
-   d="scan'208";a="457433018"
-Received: from lkp-server02.sh.intel.com (HELO 10ae44db8633) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 29 Sep 2020 15:16:42 -0700
-Received: from kbuild by 10ae44db8633 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1kNNvO-0000L4-BB; Tue, 29 Sep 2020 22:16:42 +0000
-Date:   Wed, 30 Sep 2020 06:16:38 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-drivers:renesas-clk] BUILD SUCCESS
- 308ba04e78d60b21408eacef75efebe1a78874c8
-Message-ID: <5f73b246.HF9FvBLYVd1su6wk%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Wed, 30 Sep 2020 05:48:12 -0400
+Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2CC1C061755
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Sep 2020 02:48:11 -0700 (PDT)
+Received: by mail-yb1-xb43.google.com with SMTP id k18so816784ybh.1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 30 Sep 2020 02:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aikeScTKcyzQhnU7zL+JwvJru4KFooDtBQYXfaLP03I=;
+        b=lr028ipxNOTcnoOreFi6SVUjzzids4xVYYKQ5XFGSq6nRd5bJaz/DXUvu5+and0xHA
+         IJtdMXxb81OmZf8t83MnuyfD9YYiV2qeiQoQ7gH4vihRcCUsyLmV3lzfM8rpyzCJP0IM
+         zexO/eqGi4RMwM5zgIQK4XcRaxFdHT44eoGfHazkT5uVnMR9jj5/D81/bxxZey1rCdUR
+         uekXINqhtj58u249NN5moxOTW0K2lbXD3SeQzYf9rJrozJNWHRQ9w78osABtoVYq6MbV
+         eeSEnf2VVutIxTBpGwIR0r/dMRA3rkmWc6FJV9MkQ7bn8jqT4tBEpJ3vlZ+2hfEVVDdh
+         JNlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aikeScTKcyzQhnU7zL+JwvJru4KFooDtBQYXfaLP03I=;
+        b=pT4SDDidm+WtWUZKW1AZi1p9hFYKoX9PIeJ3kzprQ1TZ09xFwcTi8oSwhKsq6ke1vI
+         yPweg0znDZMYXA9x2GnBINiEfzFY29YVX2Ztcot15u00gutQNpAi922PT5ZSbntu1STI
+         zhkJDuHp9+g3076mMN2+R9JQsqS/K+wOkVeM3zrc2LEBWKIxjLZlEpfn9wot3lBgllw2
+         XvSJ4+rthG5wYDpGg8oBp7Jp/mfGB/4FGLEwCAYamDC/fUcq1z4MBbdf4p2kJV7Uw4Da
+         LF/aw5B4wPXU1+YdLi7sXhuEZjWKZ/s5VN50/dWHYkbbUJ2+A7PM3Oe53y8lxa9qHKrW
+         sFVg==
+X-Gm-Message-State: AOAM530z9Er7F1Fc7K2l7iw909klDueG2obE7bfu5x9kJuA7PIjw1rNZ
+        R5LTjZKBhaktE1x/xfN/URmvJSJolvRbDwlMn2sAltVAsni69Q==
+X-Google-Smtp-Source: ABdhPJzFZOsc26tvpKUvkwEWJqk4wmLfKfBsUdV6pbpO+PzACfGENvi8O1fqLsYDQl77NCup/B703hLil2UeYSBAvRY=
+X-Received: by 2002:a25:aba1:: with SMTP id v30mr2220756ybi.518.1601459291065;
+ Wed, 30 Sep 2020 02:48:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+References: <CA+V-a8skJu_kqqWqvv=ar20tFv48EfQePV8XQ=7eBYJuJui9eg@mail.gmail.com>
+ <CAMuHMdUvBaNmtwHN=N055RcfOWt_uO=U6S7wy26s=U=i+DXS_g@mail.gmail.com>
+ <CA+V-a8sw0kg6ChrcrkdzL51K+1A=ce_RpzO02-KB9XAEm+29aQ@mail.gmail.com>
+ <CAMuHMdWh3=OytzygTt5Kt90Shpm1O-QScbtOSwo_XGaRiSYufA@mail.gmail.com> <CA+V-a8uKmHctxFYHECgB9m_3i=rbpTsnbWCEpP_32q95x7EMQg@mail.gmail.com>
+In-Reply-To: <CA+V-a8uKmHctxFYHECgB9m_3i=rbpTsnbWCEpP_32q95x7EMQg@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Wed, 30 Sep 2020 10:47:44 +0100
+Message-ID: <CA+V-a8vF++iCNA+_GL6fA-Ldx9KKaxSC2qgRErcc-aM-Z0V2ng@mail.gmail.com>
+Subject: Re: bonnie++ causing kernel panic
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git  renesas-clk
-branch HEAD: 308ba04e78d60b21408eacef75efebe1a78874c8  MAINTAINERS: Update git repo for Renesas clock drivers
+Hi Geert,
 
-elapsed time: 724m
+On Tue, Sep 8, 2020 at 9:30 AM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+>
+> Hi Geert,
+>
+> On Tue, Sep 8, 2020 at 8:05 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> >
+> > Hi Prabhakar,
+> >
+> > On Mon, Sep 7, 2020 at 11:27 PM Lad, Prabhakar
+> > <prabhakar.csengg@gmail.com> wrote:
+> > > On Mon, Sep 7, 2020 at 1:05 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > On Fri, Sep 4, 2020 at 11:04 AM Lad, Prabhakar
+> > > > <prabhakar.csengg@gmail.com> wrote:
+> > > > > I am seeing "Unable to handle kernel paging request at virtual address
+> > > > > xxxxxxxxxx" panic while running bonnie++ (version 1.04). I have
+> > > > > managed to replicate this issue on R-Car M3N, G2[HMN]. I have been
+> > > > > using renesas_defconfig for all the platforms and I have tested on
+> > > > > Linux 5.9.0-rc3 for all the 4 platforms.
+> > > > >
+> > > > > Initially I was testing bonnie++ on eMMC device and later discovered
+> > > > > even running bonnie++ on NFS mount is causing this issue. I have
+> > > > > attached the logs for M3N while running bonnie++ on NFS and logs for
+> > > > > G2N while running on eMMC.
+> > > > >
+> > > > > I even traced back to 5.2 kernel where initial G2M support was added
+> > > > > and still able to see this issue.
+> > > >
+> > > > Thanks for your report!
+> > > >
+> > > > While the crash symptoms seem to be the same in all crash logs, the
+> > > > backtraces aren't.
+> > > >
+> > > > Does disabling SMP (maxcpus=1) help?
+> > > unfortunately no.
+> >
+> > OK, so it's not an SMP issue.
+> >
+> > > > Does switching from SLUB to SLAB, and enabling CONFIG_DEBUG_SLAB
+> > > > reveal memory corruption?
+> > > >
+> > > attached are the logs for SLUB and SLAB with debug enabled on G2M
+> > > rev.4.0 board (bonnie++-1.04) all the 4 combinations cause the kernel
+> > > panic!
+> > >
+> > > SLUB -> 1 CPU -> BUG radix_tree_node (Not tainted): Padding overwritten.
+> > > SLUB -> all 6 CPU's -> BUG kmalloc-2k (Not tainted): Padding overwritten.
+> > >
+> > > SLAB -> 1 CPU -> Slab corruption (Not tainted): nfs_write_data
+> > > start=ffff000016c08840, len=912
+> > > SLAB -> all 6 CPU's -> Unable to handle kernel paging request at
+> > > virtual address 7d81858c9c9d9dd0 ([7d81858c9c9d9dd0] address between
+> > > user and kernel address ranges)
+> >
+> > OK. So now we know something's overwriting its memory block.  Either
+> > it's writing too far, or a use-after-free case.
+> > Now comes the hard part of finding who's responsible...
+> >
+> :)
+>
+> I checked out the very first commit where support for G2M was added
+> and tested even this had an issue, so now I'll switch to R-Car M3N and
+> perform the tests. Unfortunately I don't have any  non Renesas arm64
+> platform to perform similar tests.
+>
+To keep you posted, the issue has been cornered and is related to TFA
+changes on RZ/G2x.
 
-configs tested: 190
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-powerpc                 xes_mpc85xx_defconfig
-arc                      axs103_smp_defconfig
-arc                         haps_hs_defconfig
-arm                         orion5x_defconfig
-powerpc                    ge_imp3a_defconfig
-xtensa                           alldefconfig
-mips                          ath79_defconfig
-sh                        sh7757lcr_defconfig
-m68k                            q40_defconfig
-arc                           tb10x_defconfig
-m68k                        mvme147_defconfig
-sh                  sh7785lcr_32bit_defconfig
-mips                         tb0219_defconfig
-mips                         bigsur_defconfig
-arc                             nps_defconfig
-h8300                            alldefconfig
-sh                            hp6xx_defconfig
-ia64                        generic_defconfig
-mips                       rbtx49xx_defconfig
-powerpc                      pmac32_defconfig
-powerpc64                        alldefconfig
-sh                        sh7785lcr_defconfig
-xtensa                         virt_defconfig
-powerpc                   bluestone_defconfig
-arm                         s5pv210_defconfig
-arm                           efm32_defconfig
-arm                         cm_x300_defconfig
-powerpc64                           defconfig
-sh                         apsh4a3a_defconfig
-um                             i386_defconfig
-arm                             ezx_defconfig
-powerpc                      pasemi_defconfig
-powerpc                 mpc8540_ads_defconfig
-powerpc                     sequoia_defconfig
-mips                           ip32_defconfig
-powerpc                    amigaone_defconfig
-sh                           se7751_defconfig
-mips                      malta_kvm_defconfig
-powerpc                     rainier_defconfig
-arm                      tct_hammer_defconfig
-powerpc                        icon_defconfig
-powerpc                  mpc866_ads_defconfig
-nios2                         3c120_defconfig
-powerpc                 mpc832x_mds_defconfig
-mips                             allmodconfig
-m68k                             alldefconfig
-arm                         socfpga_defconfig
-arm                       spear13xx_defconfig
-powerpc                     kmeter1_defconfig
-ia64                             allmodconfig
-arm                          gemini_defconfig
-i386                                defconfig
-powerpc                     stx_gp3_defconfig
-xtensa                           allyesconfig
-mips                          rm200_defconfig
-m68k                       m5249evb_defconfig
-arc                    vdk_hs38_smp_defconfig
-mips                        maltaup_defconfig
-arm                       versatile_defconfig
-powerpc                  mpc885_ads_defconfig
-arm                             pxa_defconfig
-sh                           se7722_defconfig
-riscv                    nommu_virt_defconfig
-mips                      loongson3_defconfig
-powerpc                     tqm8541_defconfig
-m68k                        mvme16x_defconfig
-powerpc                 mpc8560_ads_defconfig
-mips                      pistachio_defconfig
-s390                                defconfig
-powerpc                 mpc837x_rdb_defconfig
-s390                       zfcpdump_defconfig
-powerpc                      ep88xc_defconfig
-s390                             allyesconfig
-arm                            u300_defconfig
-sh                   sh7724_generic_defconfig
-powerpc                     tqm8555_defconfig
-sh                            shmin_defconfig
-xtensa                  cadence_csp_defconfig
-arc                        vdk_hs38_defconfig
-m68k                                defconfig
-powerpc                     akebono_defconfig
-c6x                        evmc6457_defconfig
-ia64                      gensparse_defconfig
-powerpc                     ppa8548_defconfig
-arm                      pxa255-idp_defconfig
-powerpc                mpc7448_hpc2_defconfig
-arm                          simpad_defconfig
-sh                        edosk7705_defconfig
-powerpc                    socrates_defconfig
-arm                              zx_defconfig
-c6x                         dsk6455_defconfig
-sh                   sh7770_generic_defconfig
-arm                           h5000_defconfig
-powerpc               mpc834x_itxgp_defconfig
-arm                       multi_v4t_defconfig
-sh                             shx3_defconfig
-microblaze                          defconfig
-mips                   sb1250_swarm_defconfig
-powerpc                      ppc6xx_defconfig
-mips                        nlm_xlr_defconfig
-um                            kunit_defconfig
-powerpc                 mpc836x_mds_defconfig
-arm                          ep93xx_defconfig
-sh                           se7780_defconfig
-parisc                           alldefconfig
-arm                             mxs_defconfig
-mips                            gpr_defconfig
-ia64                            zx1_defconfig
-c6x                        evmc6474_defconfig
-arm                        spear3xx_defconfig
-powerpc                 mpc836x_rdk_defconfig
-arm                       aspeed_g5_defconfig
-sparc                            alldefconfig
-sh                         ecovec24_defconfig
-riscv                          rv32_defconfig
-mips                        bcm63xx_defconfig
-nds32                               defconfig
-mips                       capcella_defconfig
-powerpc                     mpc83xx_defconfig
-openrisc                    or1ksim_defconfig
-sh                      rts7751r2d1_defconfig
-alpha                            alldefconfig
-sh                           se7712_defconfig
-mips                     loongson1c_defconfig
-um                           x86_64_defconfig
-arm                        multi_v7_defconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-c6x                              allyesconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-parisc                              defconfig
-parisc                           allyesconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-mips                             allyesconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-i386                 randconfig-a006-20200929
-i386                 randconfig-a002-20200929
-i386                 randconfig-a003-20200929
-i386                 randconfig-a004-20200929
-i386                 randconfig-a005-20200929
-i386                 randconfig-a001-20200929
-x86_64               randconfig-a011-20200929
-x86_64               randconfig-a013-20200929
-x86_64               randconfig-a015-20200929
-x86_64               randconfig-a014-20200929
-x86_64               randconfig-a016-20200929
-x86_64               randconfig-a012-20200929
-i386                 randconfig-a012-20200929
-i386                 randconfig-a016-20200929
-i386                 randconfig-a014-20200929
-i386                 randconfig-a013-20200929
-i386                 randconfig-a015-20200929
-i386                 randconfig-a011-20200929
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                            allmodconfig
-x86_64                                   rhel
-x86_64                           allyesconfig
-x86_64                    rhel-7.6-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                                  kexec
-
-clang tested configs:
-x86_64               randconfig-a005-20200929
-x86_64               randconfig-a003-20200929
-x86_64               randconfig-a004-20200929
-x86_64               randconfig-a002-20200929
-x86_64               randconfig-a006-20200929
-x86_64               randconfig-a001-20200929
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Cheers,
+Prabhakar
