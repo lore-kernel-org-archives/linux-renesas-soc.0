@@ -2,167 +2,150 @@ Return-Path: <SRS0=enx7=DI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B67DC4727C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Oct 2020 07:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE223C4727F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Oct 2020 10:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6867E21531
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Oct 2020 07:14:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFC242137B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Oct 2020 10:10:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730671AbgJAHOK (ORCPT
+        id S1731950AbgJAKKZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 1 Oct 2020 03:14:10 -0400
-Received: from esa3.mentor.iphmx.com ([68.232.137.180]:49102 "EHLO
-        esa3.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725878AbgJAHOK (ORCPT
+        Thu, 1 Oct 2020 06:10:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46204 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731921AbgJAKKW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Oct 2020 03:14:10 -0400
-IronPort-SDR: xhHhcrYDFEl+vS29il0sag8AtnMhCGiXX4GvkpvwgvzJG2xawyMpVRDj7MoDAa/0/6Pjj6Pc15
- CVbe1rNqAYq9Rz1nY5BLnDcuipmBe4OWVda4QhY9/2ttOCVR/ufOLLRWazNj1BmDpNmNsyBXxa
- t9TF2JsLkA/FYIlXjaZdkizw9gXrUUT+lpAi84JRigxHYcVKh2J21wwqukPxH9sR6pzNgdjMzH
- p3o79s/XU95nbMLvf9J9TJCSsSpeAzkxJg7PvDUNn+fWePjR3n1+1tq7Sfs3zX9cE+BLeDOAV0
- 6AQ=
-X-IronPort-AV: E=Sophos;i="5.77,323,1596528000"; 
-   d="scan'208";a="53450460"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa3.mentor.iphmx.com with ESMTP; 30 Sep 2020 23:14:09 -0800
-IronPort-SDR: 6qp/5MCh8TZrAUwcXGzSfCbMayY5W5IJffvz4BaVkerN6NCzGdjhHJMnrm4J/AzfNZbvKEylD3
- DUGuReh8WZthwG0JyTpwm7pE6WE2AejMfsAp8CEPUK6nk1tcUhIwiB4CuNpEOvHz8xkR71l4Zf
- xlWgEynqWtqJSu3EjByNqCq8bf58p5j6Xxhn3dt4J9b54YhZE+jKpjAttnwuEWKu2mi8hjlkQe
- A2mMghnPc+N7WYnK/zMyaCXhVi2X6IXN1SM+QdK1JdRNh53RLvpA5U+MzymHOFcan12v52+++8
- FRk=
-From:   Andrew Gabbasov <andrew_gabbasov@mentor.com>
-To:     Sergei Shtylyov <sergei.shtylyov@gmail.com>
-CC:     <linux-renesas-soc@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>, <geert+renesas@glider.be>,
-        Julia Lawall <julia.lawall@inria.fr>,
-        "Behme, Dirk - Bosch" <dirk.behme@de.bosch.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-References: <20200930192124.25060-1-andrew_gabbasov@mentor.com>
-In-Reply-To: <20200930192124.25060-1-andrew_gabbasov@mentor.com>
-Subject: RE: [PATCH net] ravb: Fix bit fields checking in ravb_hwtstamp_get()
-Date:   Thu, 1 Oct 2020 10:13:54 +0300
-Organization: Mentor Graphics Corporation
-Message-ID: <000001d697c2$71651d70$542f5850$@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQHWl179dggpQ/YNgUW3t7t7L6TDlKmCUESw
-Content-Language: en-us
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-07.mgc.mentorg.com (139.181.222.7) To
- svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
+        Thu, 1 Oct 2020 06:10:22 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45418C0613A7
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Oct 2020 03:10:21 -0700 (PDT)
+Received: from ramsan ([84.195.186.194])
+        by albert.telenet-ops.be with bizsmtp
+        id aaAA230054C55Sk06aAABm; Thu, 01 Oct 2020 12:10:19 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kNvXN-0001MY-V8; Thu, 01 Oct 2020 12:10:09 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kNvXN-0003ka-Uv; Thu, 01 Oct 2020 12:10:09 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        Philippe Schenker <philippe.schenker@toradex.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Dan Murphy <dmurphy@ti.com>,
+        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH net-next v4 resend 2/5] dt-bindings: net: renesas,ravb: Document internal clock delay properties
+Date:   Thu,  1 Oct 2020 12:10:05 +0200
+Message-Id: <20201001101008.14365-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201001101008.14365-1-geert+renesas@glider.be>
+References: <20201001101008.14365-1-geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sergei,
+Some EtherAVB variants support internal clock delay configuration, which
+can add larger delays than the delays that are typically supported by
+the PHY (using an "rgmii-*id" PHY mode, and/or "[rt]xc-skew-ps"
+properties).
 
-> -----Original Message-----
-> From: Gabbasov, Andrew
-> Sent: Wednesday, September 30, 2020 10:21 PM
-> To: linux-renesas-soc@vger.kernel.org; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; Sergei Shtylyov <sergei.shtylyov@gmail.com>; David
-> S. Miller <davem@davemloft.net>; geert+renesas@glider.be; Julia Lawall
-> <julia.lawall@inria.fr>; Behme, Dirk - Bosch <dirk.behme@de.bosch.com>;
-> Eugeniu Rosca <erosca@de.adit-jv.com>; Gabbasov, Andrew
-> <Andrew_Gabbasov@mentor.com>
-> Subject: [PATCH net] ravb: Fix bit fields checking in ravb_hwtstamp_get()
-> 
-> In the function ravb_hwtstamp_get() in ravb_main.c with the existing
-values
-> for RAVB_RXTSTAMP_TYPE_V2_L2_EVENT (0x2) and RAVB_RXTSTAMP_TYPE_ALL
-> (0x6)
-> 
-> if (priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE_V2_L2_EVENT)
-> 	config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT;
-> else if (priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE_ALL)
-> 	config.rx_filter = HWTSTAMP_FILTER_ALL;
-> 
-> if the test on RAVB_RXTSTAMP_TYPE_ALL should be true, it will never be
-> reached.
-> 
-> This issue can be verified with 'hwtstamp_config' testing program
-> (tools/testing/selftests/net/hwtstamp_config.c). Setting filter type to
-ALL
-> and subsequent retrieving it gives incorrect value:
-> 
-> $ hwtstamp_config eth0 OFF ALL
-> flags = 0
-> tx_type = OFF
-> rx_filter = ALL
-> $ hwtstamp_config eth0
-> flags = 0
-> tx_type = OFF
-> rx_filter = PTP_V2_L2_EVENT
-> 
-> Correct this by converting if-else's to switch.
+Add properties for configuring the internal MAC delays.
+These properties are mandatory, even when specified as zero, to
+distinguish between old and new DTBs.
 
-Earlier you proposed to fix this issue by changing the value
-of RAVB_RXTSTAMP_TYPE_ALL constant to 0x4.
-Unfortunately, simple changing of the constant value will not
-be enough, since the code in ravb_rx() (actually determining
-if timestamp is needed)
+Update the (bogus) example accordingly.
 
-u32 get_ts = priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE;
-[...]
-get_ts &= (q == RAVB_NC) ?
-                RAVB_RXTSTAMP_TYPE_V2_L2_EVENT :
-                ~RAVB_RXTSTAMP_TYPE_V2_L2_EVENT;
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+v4:
+  - Add Reviewed-by,
 
-will work incorrectly and will need to be fixed too, making this
-piece of code more complicated.
+v3:
+  - Add Reviewed-by,
 
-So, it's probably easier and safer to keep the constant value and
-the code in ravb_rx() intact, and just fix the get ioctl code,
-where the issue is actually located.
+v2:
+  - Replace "renesas,[rt]xc-delay-ps" by "[rt]x-internal-delay-ps",
+  - Add "(bogus)" to the example update, to avoid people considering it
+    a one-to-one conversion.
+---
+ .../devicetree/bindings/net/renesas,ravb.txt  | 29 ++++++++++---------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
 
-Thanks!
-
-Best regards,
-Andrew
-
-> 
-> Fixes: c156633f1353 ("Renesas Ethernet AVB driver proper")
-> Reported-by: Julia Lawall <julia.lawall@inria.fr>
-> Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-> ---
->  drivers/net/ethernet/renesas/ravb_main.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c
-> b/drivers/net/ethernet/renesas/ravb_main.c
-> index df89d09b253e..c0610b2d3b14 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -1802,12 +1802,16 @@ static int ravb_hwtstamp_get(struct net_device
-> *ndev, struct ifreq *req)
->  	config.flags = 0;
->  	config.tx_type = priv->tstamp_tx_ctrl ? HWTSTAMP_TX_ON :
->  						HWTSTAMP_TX_OFF;
-> -	if (priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE_V2_L2_EVENT)
-> +	switch (priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE) {
-> +	case RAVB_RXTSTAMP_TYPE_V2_L2_EVENT:
->  		config.rx_filter = HWTSTAMP_FILTER_PTP_V2_L2_EVENT;
-> -	else if (priv->tstamp_rx_ctrl & RAVB_RXTSTAMP_TYPE_ALL)
-> +		break;
-> +	case RAVB_RXTSTAMP_TYPE_ALL:
->  		config.rx_filter = HWTSTAMP_FILTER_ALL;
-> -	else
-> +		break;
-> +	default:
->  		config.rx_filter = HWTSTAMP_FILTER_NONE;
-> +	}
-> 
->  	return copy_to_user(req->ifr_data, &config, sizeof(config)) ?
->  		-EFAULT : 0;
-> --
-> 2.21.0
-
+diff --git a/Documentation/devicetree/bindings/net/renesas,ravb.txt b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+index 032b76f14f4fdb38..4a62dd11d5c488f4 100644
+--- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
++++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+@@ -64,6 +64,18 @@ Optional properties:
+ 			 AVB_LINK signal.
+ - renesas,ether-link-active-low: boolean, specify when the AVB_LINK signal is
+ 				 active-low instead of normal active-high.
++- rx-internal-delay-ps: Internal RX clock delay.
++			This property is mandatory and valid only on R-Car Gen3
++			and RZ/G2 SoCs.
++			Valid values are 0 and 1800.
++			A non-zero value is allowed only if phy-mode = "rgmii".
++			Zero is not supported on R-Car D3.
++- tx-internal-delay-ps: Internal TX clock delay.
++			This property is mandatory and valid only on R-Car H3,
++			M3-W, M3-W+, M3-N, V3M, and V3H, and RZ/G2M and RZ/G2N.
++			Valid values are 0 and 2000.
++			A non-zero value is allowed only if phy-mode = "rgmii".
++			Zero is not supported on R-Car V3H.
+ 
+ Example:
+ 
+@@ -105,8 +117,10 @@ Example:
+ 				  "ch24";
+ 		clocks = <&cpg CPG_MOD 812>;
+ 		power-domains = <&cpg>;
+-		phy-mode = "rgmii-id";
++		phy-mode = "rgmii";
+ 		phy-handle = <&phy0>;
++		rx-internal-delay-ps = <0>;
++		tx-internal-delay-ps = <2000>;
+ 
+ 		pinctrl-0 = <&ether_pins>;
+ 		pinctrl-names = "default";
+@@ -115,18 +129,7 @@ Example:
+ 		#size-cells = <0>;
+ 
+ 		phy0: ethernet-phy@0 {
+-			rxc-skew-ps = <900>;
+-			rxdv-skew-ps = <0>;
+-			rxd0-skew-ps = <0>;
+-			rxd1-skew-ps = <0>;
+-			rxd2-skew-ps = <0>;
+-			rxd3-skew-ps = <0>;
+-			txc-skew-ps = <900>;
+-			txen-skew-ps = <0>;
+-			txd0-skew-ps = <0>;
+-			txd1-skew-ps = <0>;
+-			txd2-skew-ps = <0>;
+-			txd3-skew-ps = <0>;
++			rxc-skew-ps = <1500>;
+ 			reg = <0>;
+ 			interrupt-parent = <&gpio2>;
+ 			interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+-- 
+2.17.1
 
