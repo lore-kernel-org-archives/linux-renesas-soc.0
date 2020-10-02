@@ -1,78 +1,89 @@
-Return-Path: <SRS0=enx7=DI=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=fDlz=DJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A37EFC4727E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Oct 2020 20:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F5D7C4363D
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Oct 2020 10:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 657C0207DE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Oct 2020 20:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9156206B6
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Oct 2020 10:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730073AbgJAUHQ (ORCPT
+        id S1726329AbgJBK3I (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 1 Oct 2020 16:07:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53574 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726606AbgJAUHQ (ORCPT
+        Fri, 2 Oct 2020 06:29:08 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:23139 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725993AbgJBK3I (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Oct 2020 16:07:16 -0400
-Received: from hillosipuli.retiisi.eu (hillosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::81:2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4E84C0613D0;
-        Thu,  1 Oct 2020 13:07:15 -0700 (PDT)
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by hillosipuli.retiisi.eu (Postfix) with ESMTPS id EAA6A634C87;
-        Thu,  1 Oct 2020 23:06:50 +0300 (EEST)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1kO4qo-0000sq-Ou; Thu, 01 Oct 2020 23:06:50 +0300
-Date:   Thu, 1 Oct 2020 23:06:50 +0300
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-media <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Fri, 2 Oct 2020 06:29:08 -0400
+X-IronPort-AV: E=Sophos;i="5.77,327,1596466800"; 
+   d="scan'208";a="58760633"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 02 Oct 2020 19:29:06 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B1440422F1FD;
+        Fri,  2 Oct 2020 19:29:04 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v5] dt-bindings: media: imx214: Convert to json-schema
-Message-ID: <20201001200650.GM2024@valkosipuli.retiisi.org.uk>
-References: <20200910162030.614029-1-jacopo+renesas@jmondi.org>
- <CAPybu_0+mga9FvOs=aWS90sVnb1ZvYYuP2AUckov60jAXyPqXw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPybu_0+mga9FvOs=aWS90sVnb1ZvYYuP2AUckov60jAXyPqXw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        UlrichHechtuli+renesas@fpond.eu, linux-renesas-soc@vger.kernel.org,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] media: rcar-vin: rcar-dma: Fix setting VNIS_REG for RAW8 formats
+Date:   Fri,  2 Oct 2020 11:26:52 +0100
+Message-Id: <20201002102652.9154-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Ricardo,
+pixelformat in vin priv structure holds V4L2_PIX_FMT_* and not
+MEDIA_BUS_FMT_* so make sure we check against V4L2_PIX_FMT_* formats
+while setting the VNIS_REG.
 
-On Fri, Sep 11, 2020 at 08:28:40AM +0200, Ricardo Ribalda Delgado wrote:
-> Thanks for the port
-> 
-> 
-> On Thu, Sep 10, 2020 at 6:17 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> >
-> > Convert the imx214 bindings document to json-schema and update
-> > the MAINTAINERS file accordingly.
-> >
-> > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Signed-off-by: Ricardo Ribalda <ribalda@kernel.org>
+Fixes: 8c3e0f67df6c9 ("media: rcar-vin: Extend RAW8 support to all RGB layouts")
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+Hi Hans,
 
-Sob or Acked-by?
+If it isn't too late for v5.10 could you please queue up this patch.
 
+Cheers,
+Prabhakar
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index e9a47b705acc..692dea300b0d 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -600,10 +600,10 @@ void rvin_crop_scale_comp(struct rvin_dev *vin)
+ 	 * format in 2 pixel unit hence configure VNIS_REG as stride / 2.
+ 	 */
+ 	switch (vin->format.pixelformat) {
+-	case MEDIA_BUS_FMT_SBGGR8_1X8:
+-	case MEDIA_BUS_FMT_SGBRG8_1X8:
+-	case MEDIA_BUS_FMT_SGRBG8_1X8:
+-	case MEDIA_BUS_FMT_SRGGB8_1X8:
++	case V4L2_PIX_FMT_SBGGR8:
++	case V4L2_PIX_FMT_SGBRG8:
++	case V4L2_PIX_FMT_SGRBG8:
++	case V4L2_PIX_FMT_SRGGB8:
+ 		stride /= 2;
+ 		break;
+ 	default:
 -- 
-Sakari Ailus
+2.17.1
+
