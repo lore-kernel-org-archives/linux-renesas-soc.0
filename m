@@ -2,98 +2,72 @@ Return-Path: <SRS0=ECGd=DM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969FBC4363A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Oct 2020 08:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EEBAC4363A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Oct 2020 11:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56D0020776
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Oct 2020 08:22:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7013D20774
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Oct 2020 11:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725891AbgJEIWw (ORCPT
+        id S1725947AbgJEL0G (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 5 Oct 2020 04:22:52 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:57786 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbgJEIWt (ORCPT
+        Mon, 5 Oct 2020 07:26:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39222 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbgJELZy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Oct 2020 04:22:49 -0400
-Received: from relay3-d.mail.gandi.net (unknown [217.70.183.195])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id E0E653B081A;
-        Mon,  5 Oct 2020 08:15:29 +0000 (UTC)
-X-Originating-IP: 93.34.118.233
-Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 5F22F60016;
-        Mon,  5 Oct 2020 08:15:06 +0000 (UTC)
-Date:   Mon, 5 Oct 2020 10:19:06 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-Cc:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] rcar-csi2: Set bus type when parsing fwnode
-Message-ID: <20201005081906.6usj2eydbjjbxkxe@uno.localdomain>
-References: <20200914215011.339387-1-niklas.soderlund+renesas@ragnatech.se>
- <20200914215011.339387-3-niklas.soderlund+renesas@ragnatech.se>
- <20200915112752.f2vpxnvusson65uz@uno.localdomain>
- <20201002212103.GO2024@valkosipuli.retiisi.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201002212103.GO2024@valkosipuli.retiisi.org.uk>
+        Mon, 5 Oct 2020 07:25:54 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3466C0613CE
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  5 Oct 2020 04:25:53 -0700 (PDT)
+Received: from ramsan ([84.195.186.194])
+        by xavier.telenet-ops.be with bizsmtp
+        id cBRq2300M4C55Sk01BRqFe; Mon, 05 Oct 2020 13:25:51 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kPOco-0005HY-L4; Mon, 05 Oct 2020 13:25:50 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kPOco-0005nC-IV; Mon, 05 Oct 2020 13:25:50 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>
+Cc:     linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] spi: renesas,sh-msiof: Add r8a77961 support
+Date:   Mon,  5 Oct 2020 13:25:47 +0200
+Message-Id: <20201005112549.22222-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sakari,
+Document R-Car M3-W+ (R8A77961) SoC bindings.
 
-On Sat, Oct 03, 2020 at 12:21:03AM +0300, Sakari Ailus wrote:
-> Hi Jacopo,
->
-> On Tue, Sep 15, 2020 at 01:27:52PM +0200, Jacopo Mondi wrote:
-> > Hi Niklas,
-> >
-> > On Mon, Sep 14, 2020 at 11:50:11PM +0200, Niklas Söderlund wrote:
-> > > The only supported bus for the R-Car CSI-2 driver is CSI-2 DPHY, specify
-> > > this before parsing the fwnode.
-> > >
-> > > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> > > ---
-> > >  drivers/media/platform/rcar-vin/rcar-csi2.c | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > > index 23e89ef2429d310a..b2e58f51b94fccd7 100644
-> > > --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > > +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> > > @@ -874,7 +874,9 @@ static int rcsi2_parse_dt(struct rcar_csi2 *priv)
-> > >  	struct v4l2_async_subdev *asd;
-> > >  	struct fwnode_handle *fwnode;
-> > >  	struct fwnode_handle *ep;
-> > > -	struct v4l2_fwnode_endpoint v4l2_ep = { .bus_type = 0 };
-> > > +	struct v4l2_fwnode_endpoint v4l2_ep = {
-> > > +		.bus_type = V4L2_MBUS_CSI2_DPHY
-> > > +	};
-> >
-> > I would also take the occasion to make bus-type mandatory in
-> > bindings as v4l2_fwnode_endpoint_parse() will fail only if it detect a
-> > mismatch between bus_type and "bus-type".
->
-> You don't really need bus-type property if the hardware supports a single
-> type. Then you can, as above, parse the endpoint with that type set by the
-> caller.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Tested on Salvator-XS with R-Car M3-W+ and spi-loopback-test.
 
-Ok, that's a bit confusing as if there's no bus-type property no
-bus mismatch could ever be detected, not at run-time by the v4l2-fwnode
-framework, nor by DTS validation. Of course, the chances that a DTS for a
-device that only supports CSI-2 specifies (in example) parallel bus
-properties are quite low, so I'm fine with the way things are.
+ Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> --
-> Sakari Ailus
+diff --git a/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml b/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
+index 9f7b118adcaf7d20..3d3b60ee1ca46b9d 100644
+--- a/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
++++ b/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
+@@ -41,6 +41,7 @@ properties:
+               - renesas,msiof-r8a774e1      # RZ/G2H
+               - renesas,msiof-r8a7795       # R-Car H3
+               - renesas,msiof-r8a7796       # R-Car M3-W
++              - renesas,msiof-r8a77961      # R-Car M3-W+
+               - renesas,msiof-r8a77965      # R-Car M3-N
+               - renesas,msiof-r8a77970      # R-Car V3M
+               - renesas,msiof-r8a77980      # R-Car V3H
+-- 
+2.17.1
+
