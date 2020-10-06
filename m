@@ -2,217 +2,129 @@ Return-Path: <SRS0=0gsm=DN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D893AC4727D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 11:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9486C4363D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 12:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 990EA20760
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 11:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83983206F7
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 12:48:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UalqqU/Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726143AbgJFL1S (ORCPT
+        id S1726525AbgJFMsg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 6 Oct 2020 07:27:18 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:21444 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726131AbgJFL1R (ORCPT
+        Tue, 6 Oct 2020 08:48:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48390 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbgJFMsf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Oct 2020 07:27:17 -0400
-X-IronPort-AV: E=Sophos;i="5.77,342,1596466800"; 
-   d="scan'208";a="59050102"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Oct 2020 20:27:16 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9590D42CD75E;
-        Tue,  6 Oct 2020 20:27:14 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/4] arm64: dts: renesas: Add support for MIPI Adapter V2.1 connected to HiHope RZ/G2H
-Date:   Tue,  6 Oct 2020 12:26:59 +0100
-Message-Id: <20201006112701.11800-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20201006112701.11800-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20201006112701.11800-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Tue, 6 Oct 2020 08:48:35 -0400
+Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D15C061755
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Oct 2020 05:48:35 -0700 (PDT)
+Received: by mail-pj1-x1043.google.com with SMTP id x5so867208pjv.3
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Oct 2020 05:48:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sQ1ZRFw1JVrb5mdbUnbQ1Xk6xyYpoV5fP4T8uAyz2hw=;
+        b=UalqqU/Z4KF3vbZHbjIAfQig+pegJIOxqYiWL3gE2jPszs3jZTgNm72XNKp1ktSBl0
+         P0DrPhYxjP92TkK+Tfx4UYVBfVvTOTHUbzfIpsmDtsGUQgPnAwTNyL0jhjDrXIjKmjwS
+         25f+VrZAN7jHTdovX7Sm84YxtK/nCdB3vj14lNHA3QFSdyYd5XYXrRc9GhYmJOXaWCDW
+         0l+as7z3dms6Lv2sT1SCz0TJqDJUfL8YrQBsu3pBXkmqTsom0EVy23LLx/xm+YEsDpOl
+         Vx0HH0Dt104si2kx4f5kc+7p+JWCuVudnHX3f+XCG7amVwTzGlBGKAsNSQYgPCdevAq2
+         Ve9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sQ1ZRFw1JVrb5mdbUnbQ1Xk6xyYpoV5fP4T8uAyz2hw=;
+        b=iqTOvn+ipTJaPFc7hGw4c4zG6eqLxLTIpNndekMf5c7MXzz55Z/hvSplpa77N8R3xp
+         A9Ih9jvVhXGSQqvArZ5fo3vhW6kv6nfAbsvi78uri8cG2AfUxIEAq/er9deWx2ZASln3
+         ri8qlm278SWiGBzkIp+UW45LEWcGoZkN+rmqvnYaM1GguL0BBMvJ555X04iR3lLnxSc9
+         sMc7FyX4jYHH3UYjIK8jIpu2TWTphSR/J4CmgdyYLkP8aJAwLmKi78YJr9CPph8BeYaq
+         wwszDrF0n9pgrJq+CDCGqzcNIC8Ql1ymKRl89YrUirS1lgkPrnx60m07Wh0wMeRyIOvR
+         Oo1g==
+X-Gm-Message-State: AOAM5330jNsOpIbqe2TZ/Pfa6I7fAvEPDI9TYeZ091lYfG/H6zKWDRVR
+        PeC1zr3CEYV1KSCOhw0nS1LcZP3FN6bA+ig1L/xBTw==
+X-Google-Smtp-Source: ABdhPJxuTIkgeLojC1+VzV9TJd68luIqrRj+YDKPNYmX1CJV4VYlVmG35Q89ehXC3dXM9OFSlZ37iW033GsrkAVyMuI=
+X-Received: by 2002:a17:90a:6043:: with SMTP id h3mr4137676pjm.41.1601988514966;
+ Tue, 06 Oct 2020 05:48:34 -0700 (PDT)
+MIME-Version: 1.0
+References: <0000000000004831d405b0fc41d2@google.com> <0b0de451147224657e5ac42d755c05447ee530b0.camel@suse.de>
+In-Reply-To: <0b0de451147224657e5ac42d755c05447ee530b0.camel@suse.de>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Tue, 6 Oct 2020 14:48:23 +0200
+Message-ID: <CAAeHK+xf6dxUcTyP_5+wJ0tZTXgn8TYcyxM9biomiPKSkf3e2g@mail.gmail.com>
+Subject: Re: INFO: task hung in hub_port_init
+To:     Oliver Neukum <oneukum@suse.de>
+Cc:     syzbot <syzbot+74d6ef051d3d2eacf428@syzkaller.appspotmail.com>,
+        coreteam@netfilter.org, "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        gustavoars@kernel.org, ingrassia@epigenesys.com,
+        Patrick McHardy <kaber@trash.net>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-renesas-soc@vger.kernel.org,
+        USB list <linux-usb@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>, netfilter-devel@vger.kernel.org,
+        niklas.soderlund+renesas@ragnatech.se,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        sergei.shtylyov@cogentembedded.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for AISTARVISION MIPI Adapter V2.1 board connected to HiHope
-RZ/G2H board.
+On Tue, Oct 6, 2020 at 10:56 AM Oliver Neukum <oneukum@suse.de> wrote:
+>
+> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=152bb760500000
+> > final oops:     https://syzkaller.appspot.com/x/report.txt?x=172bb760500000
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=132bb760500000
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+74d6ef051d3d2eacf428@syzkaller.appspotmail.com
+> > Fixes: 6dcf45e51497 ("sh_eth: use correct name for ECMR_MPDE bit")
+> >
+> > INFO: task kworker/0:0:5 blocked for more than 143 seconds.
+> >       Not tainted 5.9.0-rc7-syzkaller #0
+> > "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> > task:kworker/0:0     state:D stack:27664 pid:    5 ppid:     2 flags:0x00004000
+> > Workqueue: usb_hub_wq hub_event
+> > Call Trace:
+> >  context_switch kernel/sched/core.c:3778 [inline]
+> >  __schedule+0xec9/0x2280 kernel/sched/core.c:4527
+> >  schedule+0xd0/0x2a0 kernel/sched/core.c:4602
+>
+> By this time urb_dequeue() has been killed and has returned.
+>
+> >  usb_kill_urb.part.0+0x197/0x220 drivers/usb/core/urb.c:696
+> >  usb_kill_urb+0x7c/0x90 drivers/usb/core/urb.c:691
+> >  usb_start_wait_urb+0x24a/0x2b0 drivers/usb/core/message.c:64
+> >  usb_internal_control_msg drivers/usb/core/message.c:102 [inline]
+> >  usb_control_msg+0x31c/0x4a0 drivers/usb/core/message.c:153
+> >  hub_port_init+0x11ae/0x2d80 drivers/usb/core/hub.c:4689
+> >  hub_port_connect drivers/usb/core/hub.c:5140 [inline]
+> >  hub_port_connect_change drivers/usb/core/hub.c:5348 [inline]
+> >  port_event drivers/usb/core/hub.c:5494 [inline]
+> >
+>
+> This looks like it should.
+>
+> Which HC driver are you using for these tests?
 
-Common file hihope-rzg2-ex-aistarvision-mipi-adapter-2.1.dtsi is created
-which will be used by RZ/G2{HMN}, by default the CSI20 node is tied to
-ov5645 camera endpoint and the imx219 camera endpoint is tied to CSI40.
+Hi Oliver,
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/Makefile          |   1 +
- ...rzg2-ex-aistarvision-mipi-adapter-2.1.dtsi | 109 ++++++++++++++++++
- .../r8a774e1-hihope-rzg2h-ex-mipi-2.1.dts     |  16 +++
- 3 files changed, 126 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/hihope-rzg2-ex-aistarvision-mipi-adapter-2.1.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex-mipi-2.1.dts
+This is the USB/IP one, based on what I see in the reproducer.
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index dffefe030a76..f98e9e2e520d 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -22,6 +22,7 @@ dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-ek874-mipi-2.1.dtb
- dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h.dtb
- dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h-ex.dtb
- dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h-ex-idk-1110wr.dtb
-+dtb-$(CONFIG_ARCH_R8A774E1) += r8a774e1-hihope-rzg2h-ex-mipi-2.1.dtb
- 
- dtb-$(CONFIG_ARCH_R8A77950) += r8a77950-salvator-x.dtb
- dtb-$(CONFIG_ARCH_R8A77950) += r8a77950-ulcb.dtb
-diff --git a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex-aistarvision-mipi-adapter-2.1.dtsi b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex-aistarvision-mipi-adapter-2.1.dtsi
-new file mode 100644
-index 000000000000..c62ddb9b2ba5
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex-aistarvision-mipi-adapter-2.1.dtsi
-@@ -0,0 +1,109 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the HiHope RZ/G2[HMN] MIPI common parts
-+ *
-+ * Copyright (C) 2020 Renesas Electronics Corp.
-+ */
-+
-+#define MIPI_OV5645_PARENT_I2C i2c2
-+#define MIPI_IMX219_PARENT_I2C i2c3
-+#include "aistarvision-mipi-adapter-2.1.dtsi"
-+
-+&csi20 {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+			csi20_in: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+				remote-endpoint = <&ov5645_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&csi40 {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			reg = <0>;
-+			csi40_in: endpoint {
-+				clock-lanes = <0>;
-+				data-lanes = <1 2>;
-+				remote-endpoint = <&imx219_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c3 {
-+	pinctrl-0 = <&i2c3_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&imx219 {
-+	port {
-+		imx219_ep: endpoint {
-+			clock-lanes = <0>;
-+			data-lanes = <1 2>;
-+			link-frequencies = /bits/ 64 <456000000>;
-+			remote-endpoint = <&csi40_in>;
-+		};
-+	};
-+};
-+
-+&ov5645 {
-+	enable-gpios = <&gpio6 4 GPIO_ACTIVE_HIGH>;
-+	reset-gpios = <&gpio6 8 GPIO_ACTIVE_LOW>;
-+
-+	port {
-+		ov5645_ep: endpoint {
-+			clock-lanes = <0>;
-+			data-lanes = <1 2>;
-+			remote-endpoint = <&csi20_in>;
-+		};
-+	};
-+};
-+
-+&pfc {
-+	i2c3_pins: i2c3 {
-+		groups = "i2c3";
-+		function = "i2c3";
-+	};
-+};
-+
-+&vin0 {
-+	status = "okay";
-+};
-+
-+&vin1 {
-+	status = "okay";
-+};
-+
-+&vin2 {
-+	status = "okay";
-+};
-+
-+&vin3 {
-+	status = "okay";
-+};
-+
-+&vin4 {
-+	status = "okay";
-+};
-+
-+&vin5 {
-+	status = "okay";
-+};
-+
-+&vin6 {
-+	status = "okay";
-+};
-+
-+&vin7 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex-mipi-2.1.dts b/arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex-mipi-2.1.dts
-new file mode 100644
-index 000000000000..46adb6efb5e6
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex-mipi-2.1.dts
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the HiHope RZ/G2H board
-+ * connected with aistarvision-mipi-v2-adapter board
-+ *
-+ * Copyright (C) 2020 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r8a774e1-hihope-rzg2h-ex.dts"
-+#include "hihope-rzg2-ex-aistarvision-mipi-adapter-2.1.dtsi"
-+
-+/ {
-+	model = "HopeRun HiHope RZ/G2H with sub board connected with aistarvision-mipi-v2-adapter board";
-+	compatible = "hoperun,hihope-rzg2h", "renesas,r8a774e1";
-+};
--- 
-2.17.1
+Thanks!
 
+> It looks like
+> the HCD is not acting on urb_dequeue(), rather than a locking
+> issue.
