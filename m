@@ -2,74 +2,113 @@ Return-Path: <SRS0=0gsm=DN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B777C4727E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 08:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AF2C4727E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 08:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5CA4720FC3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 08:19:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 210572075A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 08:56:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbgJFITa (ORCPT
+        id S1726000AbgJFI4s (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 6 Oct 2020 04:19:30 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:34866 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726779AbgJFITV (ORCPT
+        Tue, 6 Oct 2020 04:56:48 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45466 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725891AbgJFI4s (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Oct 2020 04:19:21 -0400
-X-IronPort-AV: E=Sophos;i="5.77,342,1596466800"; 
-   d="scan'208";a="59034259"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 06 Oct 2020 17:19:14 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 429F2400265E;
-        Tue,  6 Oct 2020 17:19:11 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH v2 0/2] dt-bindings: Document tpu, pwm support for R8A7742
-Date:   Tue,  6 Oct 2020 09:19:08 +0100
-Message-Id: <20201006081910.1238-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 6 Oct 2020 04:56:48 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 491D6AD08;
+        Tue,  6 Oct 2020 08:56:46 +0000 (UTC)
+Message-ID: <0b0de451147224657e5ac42d755c05447ee530b0.camel@suse.de>
+Subject: Re: INFO: task hung in hub_port_init
+From:   Oliver Neukum <oneukum@suse.de>
+To:     syzbot <syzbot+74d6ef051d3d2eacf428@syzkaller.appspotmail.com>,
+        coreteam@netfilter.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, gustavoars@kernel.org,
+        ingrassia@epigenesys.com, kaber@trash.net,
+        kadlec@blackhole.kfki.hu, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        niklas.soderlund+renesas@ragnatech.se, pablo@netfilter.org,
+        sergei.shtylyov@cogentembedded.com, syzkaller-bugs@googlegroups.com
+Date:   Tue, 06 Oct 2020 10:56:40 +0200
+In-Reply-To: <0000000000004831d405b0fc41d2@google.com>
+References: <0000000000004831d405b0fc41d2@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi All,
+Am Dienstag, den 06.10.2020, 01:19 -0700 schrieb syzbot:
 
-This patches are part of series [1], where patch 1/2 was missed to be applied
-before YAML conversation and patch 2/2 was never applied.
+Hi,
 
-I have restored the Acks for patch 1/2 and patch 2/2 is unchanged.
+> HEAD commit:    d3d45f82 Merge tag 'pinctrl-v5.9-2' of git://git.kernel.or..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=14c3b3db900000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=89ab6a0c48f30b49
+> dashboard link: https://syzkaller.appspot.com/bug?extid=74d6ef051d3d2eacf428
+> compiler:       gcc (GCC) 10.1.0-syz 20200507
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=153bf5bd900000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=124c92af900000
+> 
+> The issue was bisected to:
+> 
+> commit 6dcf45e514974a1ff10755015b5e06746a033e5f
+> Author: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Date:   Mon Jan 9 15:34:04 2017 +0000
+> 
+>     sh_eth: use correct name for ECMR_MPDE bit
 
-[1] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=329853
+I am afraid this has bisected a race condition into neverland.
 
-Cheers,
-Prabhakar
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=152bb760500000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=172bb760500000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=132bb760500000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+74d6ef051d3d2eacf428@syzkaller.appspotmail.com
+> Fixes: 6dcf45e51497 ("sh_eth: use correct name for ECMR_MPDE bit")
+> 
+> INFO: task kworker/0:0:5 blocked for more than 143 seconds.
+>       Not tainted 5.9.0-rc7-syzkaller #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:kworker/0:0     state:D stack:27664 pid:    5 ppid:     2 flags:0x00004000
+> Workqueue: usb_hub_wq hub_event
+> Call Trace:
+>  context_switch kernel/sched/core.c:3778 [inline]
+>  __schedule+0xec9/0x2280 kernel/sched/core.c:4527
+>  schedule+0xd0/0x2a0 kernel/sched/core.c:4602
 
-Lad Prabhakar (2):
-  dt-bindings: pwm: renesas,tpu-pwm: Document r8a7742 support
-  dt-bindings: pwm: renesas,pwm-rcar: Add r8a7742 support
+By this time urb_dequeue() has been killed and has returned.
 
- Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.yaml | 1 +
- Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml  | 1 +
- 2 files changed, 2 insertions(+)
+>  usb_kill_urb.part.0+0x197/0x220 drivers/usb/core/urb.c:696
+>  usb_kill_urb+0x7c/0x90 drivers/usb/core/urb.c:691
+>  usb_start_wait_urb+0x24a/0x2b0 drivers/usb/core/message.c:64
+>  usb_internal_control_msg drivers/usb/core/message.c:102 [inline]
+>  usb_control_msg+0x31c/0x4a0 drivers/usb/core/message.c:153
+>  hub_port_init+0x11ae/0x2d80 drivers/usb/core/hub.c:4689
+>  hub_port_connect drivers/usb/core/hub.c:5140 [inline]
+>  hub_port_connect_change drivers/usb/core/hub.c:5348 [inline]
+>  port_event drivers/usb/core/hub.c:5494 [inline]
+> 
 
--- 
-2.17.1
+This looks like it should.
+
+Which HC driver are you using for these tests? It looks like
+the HCD is not acting on urb_dequeue(), rather than a locking
+issue.
+
+	Regards
+		Oliver
+
 
