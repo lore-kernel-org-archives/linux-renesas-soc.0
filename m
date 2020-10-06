@@ -2,79 +2,78 @@ Return-Path: <SRS0=0gsm=DN=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F2DC41604
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 07:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C600C41604
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 08:19:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CAB7E206F4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 07:59:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="hD23K9UG"
+	by mail.kernel.org (Postfix) with ESMTP id 50A35208FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Oct 2020 08:19:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725947AbgJFH7Z (ORCPT
+        id S1726512AbgJFITS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 6 Oct 2020 03:59:25 -0400
-Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.219]:26713 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbgJFH7Z (ORCPT
+        Tue, 6 Oct 2020 04:19:18 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:40297 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726410AbgJFITS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Oct 2020 03:59:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1601971163;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=MHJ/AaYzurHr9F8plviGVBELLffgMer4Xh9xNz4R5VE=;
-        b=hD23K9UGpu4cPSI91aqCWsCVC0jpFzeZ5MHweJWju2JOIiIMyaToAqxxvWLY5QtG67
-        ntt5XmlL7ovKX+3oeLsxtnLZMMSVR/y2pq8fz0q4lblsgJHA7g/uFKZHozst64YKL1oo
-        suIhuE5bvXIbjeCaoMTUJRA4qXNR3pwPBUTTGRsAAPTnf+a8EYYjR7FUz+8ck0pxxvli
-        xiwlVg0utbKv6D/M4ut7fJNic92Q5HT7uWvn3Yhs3Brd9FpJHBAkCPTKI1otY3fJa9mT
-        FOia7Wdo/Nr1E6RfLLmdQm2MBoxU5tDjgJzCRdgRbQYzetoKyGIh5c+LGNdMlwmcMMoM
-        8dlA==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fCt/7B6PNk="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp04-01.back.ox.d0m.de
-        by smtp-ox.front (RZmta 47.2.1 AUTH)
-        with ESMTPSA id a056fbw967xL9ql
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Tue, 6 Oct 2020 09:59:21 +0200 (CEST)
-Date:   Tue, 6 Oct 2020 09:59:21 +0200 (CEST)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Cc:     linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        linux-i2c@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Message-ID: <1440786741.680679.1601971161395@webmail.strato.com>
-In-Reply-To: <20201002154423.GA16758@ninjato>
-References: <20200928155950.1185-1-uli+renesas@fpond.eu>
- <20201002154423.GA16758@ninjato>
-Subject: Re: [PATCH v4] i2c: sh_mobile: implement atomic transfers
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.3-Rev22
-X-Originating-Client: open-xchange-appsuite
+        Tue, 6 Oct 2020 04:19:18 -0400
+X-IronPort-AV: E=Sophos;i="5.77,342,1596466800"; 
+   d="scan'208";a="58818942"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 06 Oct 2020 17:19:16 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 4913940031F4;
+        Tue,  6 Oct 2020 17:19:14 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: [PATCH v2 1/2] dt-bindings: pwm: renesas,tpu-pwm: Document r8a7742 support
+Date:   Tue,  6 Oct 2020 09:19:09 +0100
+Message-Id: <20201006081910.1238-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201006081910.1238-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20201006081910.1238-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Document r8a7742 specific compatible strings. No driver change is
+needed as the fallback compatible string "renesas,tpu" activates the
+right code in the driver.
 
-> On 10/02/2020 5:44 PM Wolfram Sang <wsa@the-dreams.de> wrote:
-> > +				if (sr & (ICSR_AL   | ICSR_TACK |
-> > +					  ICSR_WAIT | ICSR_DTE)) {
-> > +					sh_mobile_i2c_isr(0, pd);
-> > +					udelay(150);
-> > +				} else {
-> 
-> And where does the value 150us come from?
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Anything more than (IIRC) 50us or so works, but I tried to be conservative. Not waiting at all does not work, though. It is not quite clear to me why, because the bits tested here are the conditions for an interrupt to be triggered.
+diff --git a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
+index 4bf62a3d5bba..aa9a4570c906 100644
+--- a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
++++ b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
+@@ -15,6 +15,7 @@ properties:
+       - enum:
+           - renesas,tpu-r8a73a4   # R-Mobile APE6
+           - renesas,tpu-r8a7740   # R-Mobile A1
++          - renesas,tpu-r8a7742   # RZ/G1H
+           - renesas,tpu-r8a7743   # RZ/G1M
+           - renesas,tpu-r8a7744   # RZ/G1N
+           - renesas,tpu-r8a7745   # RZ/G1E
+-- 
+2.17.1
 
-CU
-Uli
