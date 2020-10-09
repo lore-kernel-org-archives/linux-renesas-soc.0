@@ -2,139 +2,103 @@ Return-Path: <SRS0=nXoj=DQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0A8C433E7
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Oct 2020 11:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDA9C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Oct 2020 17:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9111522269
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Oct 2020 11:30:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HYYqpSAo"
+	by mail.kernel.org (Postfix) with ESMTP id 7DACB22276
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Oct 2020 17:37:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388104AbgJILai (ORCPT
+        id S1732979AbgJIRgf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 9 Oct 2020 07:30:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53882 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729986AbgJILai (ORCPT
+        Fri, 9 Oct 2020 13:36:35 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:38864 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732880AbgJIRgT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Oct 2020 07:30:38 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D2AC0613D2;
-        Fri,  9 Oct 2020 04:30:37 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id l16so8989801eds.3;
-        Fri, 09 Oct 2020 04:30:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cmzLh7799a8AwMknnddM1AHF6UxknT8ZEXggO3stiRM=;
-        b=HYYqpSAoSy4H1yNP56Um2CGJOZ14fsizdBwfpG5Kw+5vk46CFyLzekDdN74eaQEtat
-         xohHGmPtXgMjHCZD5nLd3viri39PfVUOnFn21Y/6wOUATYtJ5grJDUevR2e1SnzcPZOf
-         2w4nRL0+vlWDy6SdFdA3ZZzUewuewU8s/iRdgkkPUP49M1RvCebkjUCDfdlboarqSOKs
-         IzkZDRutIuwjTbom4Ty2NyXvdMephIFIXwfu7YZOrnrtFN/UN5FgRVvOsxcyuV280LE4
-         GWkzD1+Y6qp67mFwTDOZu/cCE8UesSyGH/6ECp3BMu7T8oKWgZtErBOXTXNMqvjTmEd9
-         aPFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cmzLh7799a8AwMknnddM1AHF6UxknT8ZEXggO3stiRM=;
-        b=YjaH4tNOjQOnlDRMsS+RDK8US3g2eFwwZGRagjGeSdtUJbWLH8vOy77lVYNF1StjaB
-         eOm8ISxdZ8LWC5b1LpA6AufAtegCfouKbJ7qdVV0LQ58SceSeRYpWz1bcRI6bmNfcIor
-         POCLhqdJmoJSiM9e7Tep60lRzvB4rPGtY2tDzJQaHZtpPPU24Okk+XLh5MEDe6/R5Sqf
-         w2NUfXxPuHKANsjsZeazYivdU3VkbdbfresoJMhb/IhnMIF9qwg3rwr9L1O4cMRlv2Hv
-         Fxqtc+hmF7COccheiQbtqzCrgJCIrXNwPbbNwntj8KAOcc3cphjQq57pTtEJ6UMvGXD+
-         67iw==
-X-Gm-Message-State: AOAM533QO1KYD95GatTob/xtuDUNn1yQRnvSMcV4iAM2WSiDTYnT35S8
-        nlID37mPqHQDpvBRygbHoKc=
-X-Google-Smtp-Source: ABdhPJzpeqGvsfbEYNdmYNuLrq27oT7l7P8raftX0Mao/IlG/V/3jYwz8CDa4jcuxdFB0UsKNv5m/g==
-X-Received: by 2002:aa7:cb05:: with SMTP id s5mr13966105edt.363.1602243036219;
-        Fri, 09 Oct 2020 04:30:36 -0700 (PDT)
-Received: from localhost ([217.111.27.204])
-        by smtp.gmail.com with ESMTPSA id h12sm5994544eds.22.2020.10.09.04.30.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Oct 2020 04:30:33 -0700 (PDT)
-Date:   Fri, 9 Oct 2020 13:30:32 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Fri, 9 Oct 2020 13:36:19 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id B4C5D1C0B88; Fri,  9 Oct 2020 19:36:17 +0200 (CEST)
+Date:   Fri, 9 Oct 2020 19:36:17 +0200
+From:   Pavel Machek <pavel@denx.de>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        linux-leds@vger.kernel.org, dmurphy@ti.com
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH v2 0/2] dt-bindings: Document tpu, pwm support for R8A7742
-Message-ID: <20201009113032.GA447979@ulmo>
-References: <20201006081910.1238-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v2 3/3] ARM: dts: r8a7742-iwg21d-q7: Enable SD2 LED
+ indication
+Message-ID: <20201009173617.GA31847@duo.ucw.cz>
+References: <20200907155541.2011-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20200907155541.2011-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20201009073349.GD10335@amd>
+ <CA+V-a8tEtQwfz=NstFdBXdJiSy4-QJDoT5HjOh1kgUbuFpgs4g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="PNTmBPCT7hxwcZjr"
 Content-Disposition: inline
-In-Reply-To: <20201006081910.1238-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-User-Agent: Mutt/1.14.7 (2020-08-29)
+In-Reply-To: <CA+V-a8tEtQwfz=NstFdBXdJiSy4-QJDoT5HjOh1kgUbuFpgs4g@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---pWyiEgJYm5f9v55/
+--PNTmBPCT7hxwcZjr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 06, 2020 at 09:19:08AM +0100, Lad Prabhakar wrote:
-> Hi All,
->=20
-> This patches are part of series [1], where patch 1/2 was missed to be app=
-lied
-> before YAML conversation and patch 2/2 was never applied.
->=20
-> I have restored the Acks for patch 1/2 and patch 2/2 is unchanged.
->=20
-> [1] https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=
-=3D329853
->=20
-> Cheers,
-> Prabhakar
->=20
-> Lad Prabhakar (2):
->   dt-bindings: pwm: renesas,tpu-pwm: Document r8a7742 support
->   dt-bindings: pwm: renesas,pwm-rcar: Add r8a7742 support
->=20
->  Documentation/devicetree/bindings/pwm/renesas,pwm-rcar.yaml | 1 +
->  Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml  | 1 +
->  2 files changed, 2 insertions(+)
+Hi!
 
-Applied, thanks.
+> Thank you for the review.
 
-Thierry
+Note I'm LED maintainer.
 
---pWyiEgJYm5f9v55/
+> > > +     leds {
+> > > +             compatible =3D "gpio-leds";
+> > > +
+> > > +             sdhi2_led {
+> > > +                     label =3D "sdio-led";
+> >
+> > This should use appropriate label... probably mmc1:green:activity.
+> >
+> $ grep -nr mmc | grep -i activity
+> $ grep -nr  sd | grep -i activity
+>=20
+> Results in 0 outputs in dts folder.
+
+Well, so does
+
+grep -ri label.*sdio-led arch/arm*
+
+:-). Feel free to suggest other name following documentation in
+Documentation/leds/leds-class.rst .
+
+(And yes, we have lot of work to get this to some kind of consistent
+state).
+
+								Pavel
+--=20
+DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--PNTmBPCT7hxwcZjr
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl+ASdQACgkQ3SOs138+
-s6E2rQ//YrShguVFFG7u4sQvUa08ItxuFHT7b2pTJHkeLuSIdPAyCtQ5tpS6LAyJ
-pESS9NnrAdmFmLXEgXCZjx4G1XyeSCx6l9hRbBjxVgST1QjssS4R//LcgCe5CHiT
-A1iHikOlevX3YXRXLopsgVyZCcQtPIkpPu6BhRjAi/I4ePISMHnGHSVOsDZG1SMd
-PinfjCk+cmsGi2uHugcSz5A0wIx5ISuoNQ0hlBhqCChxeZggLRwbxmZXfi2A/Cv8
-AtCLlfwleIV7POILIlUHMuoOFKXxpe2IJqBEZOIFnn2spRvD6HCZCJ5rYD6OuI8P
-xLmzfPZi1KBkRiqIKWI79ipFihCA/99QUho9JrQEnxuD9lKjlgjH4BGxX8wVcc7l
-qk4VFmWFVtDzlIRWB82GpCphUYdTmw5WNthPZMyvoLQ/G92pKjKn11dO27LKkWMp
-NmVqdsmdOw0L9bz6uYzBNU4YsTZ7yR06np7UzlHpketfPxX2Kw3OFGuR1fF1uPUQ
-q2PnZ4nNnRTLBOweMkfszknbVnszQWPa3eQy8OUgBKEfuveHkoYl1AJDFbx4uc5f
-MRDNZ+DlZjQDtNdxQy19gtoo0dlDGph3cYQJGkUvpNf7663xgXkukMqCGF8jFsZO
-vnOP1xDwJF25Vbos84kQ/uT8Q5yPU2s7hczDzcmVN14UAynGuxk=
-=nKum
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCX4CfkQAKCRAw5/Bqldv6
+8vDQAKCmQ65JgESIKoQueOHDnt0GT/ed+wCeMw4yFiNFb92i8yk1tZxZ7oqqZFg=
+=d6V6
 -----END PGP SIGNATURE-----
 
---pWyiEgJYm5f9v55/--
+--PNTmBPCT7hxwcZjr--
