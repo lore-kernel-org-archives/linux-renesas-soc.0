@@ -2,86 +2,99 @@ Return-Path: <SRS0=nXoj=DQ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4782C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Oct 2020 07:48:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9462DC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8268A22267
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Oct 2020 07:48:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 321F922275
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Oct 2020 08:34:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vHw74wOe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729278AbgJIHsN (ORCPT
+        id S1732806AbgJIIeV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 9 Oct 2020 03:48:13 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:51942 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732295AbgJIHsN (ORCPT
+        Fri, 9 Oct 2020 04:34:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54924 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732758AbgJIIeU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Oct 2020 03:48:13 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 4A6511C0B88; Fri,  9 Oct 2020 09:48:10 +0200 (CEST)
-Date:   Fri, 9 Oct 2020 09:48:09 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
+        Fri, 9 Oct 2020 04:34:20 -0400
+Received: from mail-yb1-xb42.google.com (mail-yb1-xb42.google.com [IPv6:2607:f8b0:4864:20::b42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A311BC0613D2;
+        Fri,  9 Oct 2020 01:34:18 -0700 (PDT)
+Received: by mail-yb1-xb42.google.com with SMTP id 67so6635062ybt.6;
+        Fri, 09 Oct 2020 01:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2L4Z60y4H9EDAfsYotDNv8cFBrjpmybuc3nSYCgHVY4=;
+        b=vHw74wOeqHMUnWPc0RXBbjYyWBenl8fVoXSF3QKVpIpQ0hjBmmkvCL1FyyxWbNPLsU
+         SpCct8ZXFXM16eAoVeC1OqdSPOln3d1fz7TGBMErCHG2WIIPlESZvMkmGlm3/iAql6z7
+         dqdkuQh2KABglxNjTWHEYlHuaGsCiD63JHsZ82jGNhCiXMZLVg7ffBCEa/6SWolrRIBv
+         gGzdea4iP51r6Xa71G11bW9xW8diDFPKgTjKlK7R0gj9yFbxw9fJoRIw2bhwQN5S8EVb
+         HDWrtT0ZtVijbskBNsk96aKQBJqoCqiKk2DMBChvmQ/y4WVks/EAREklQyn4xL6J97KS
+         uiGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2L4Z60y4H9EDAfsYotDNv8cFBrjpmybuc3nSYCgHVY4=;
+        b=CmYhAX0Vxh3Z2Zg0Na231i9nFmLsxrw8LLYuHEAUGHcUeGGClkEWa3/3xgoL9+SjYG
+         scn7CnPk/XLcAbyxNiYNdYykHqnTcaB2sbSU8L8+LQ3drHQFa6bYD8v2omaL1XJrrkoD
+         lAM/g79CqrI9CczbavXraeslNPyojKCPnwJ62CZD54HiMBs3l1L3IhhTaWXwEuKUEGpr
+         jhXXFOAqfOh3t+ZyB7CDVPr1KT2ppbdSuCg3cSAUyQqqexXWD9jBR41FJ8gQt+ShPTvs
+         Ss6KgVTeQVXSk8vXKLEmXS4xyxfWiJkhBcs0amHGS3gZWUl1hbcPk3/AztuffmYThdDI
+         BXdQ==
+X-Gm-Message-State: AOAM532wJcX49VvPCBljj59ICr9TbJGof33OAIDx3C3bTPdtM9/8pZNQ
+        LvonZ55lraOknexX4jo/1pvo3WPqQlrsoOxyoZVW1tH06PApPe+P
+X-Google-Smtp-Source: ABdhPJz2T+pQRsbMSfuJSs2HYk5QGzEEgrESzEQ2ok/0t9NYX2jHwcUhnC1WN0DK629ULyE4VUUs52UXArEsEcMgNPM=
+X-Received: by 2002:a25:5507:: with SMTP id j7mr16662411ybb.214.1602232457859;
+ Fri, 09 Oct 2020 01:34:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20201006112701.11800-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20201006112701.11800-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <20201009074809.GE10335@amd>
+In-Reply-To: <20201009074809.GE10335@amd>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Fri, 9 Oct 2020 09:33:51 +0100
+Message-ID: <CA+V-a8tLuC7j_rbvwVaJ3EDD4YtUc9CvQaZNYY7GUZbOt-yhyg@mail.gmail.com>
 Subject: Re: [PATCH 2/4] arm64: dts: renesas: Add support for MIPI Adapter
  V2.1 connected to HiHope RZ/G2H
-Message-ID: <20201009074809.GE10335@amd>
-References: <20201006112701.11800-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20201006112701.11800-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="FEz7ebHBGB6b2e8X"
-Content-Disposition: inline
-In-Reply-To: <20201006112701.11800-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+To:     Pavel Machek <pavel@denx.de>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Pavel,
 
---FEz7ebHBGB6b2e8X
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the review.
 
-Hi!
+On Fri, Oct 9, 2020 at 8:48 AM Pavel Machek <pavel@denx.de> wrote:
+>
+> Hi!
+>
+> > index 000000000000..c62ddb9b2ba5
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex-aistarvision-mipi-adapter-2.1.dtsi
+> > @@ -0,0 +1,109 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+>
+> dts files are normally dual-licensed...?
+>
+All the Renesas dts files are GPL-2.0
 
-> index 000000000000..c62ddb9b2ba5
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex-aistarvision-mipi-adapte=
-r-2.1.dtsi
-> @@ -0,0 +1,109 @@
-> +// SPDX-License-Identifier: GPL-2.0
-
-dts files are normally dual-licensed...?
-
-Best regards,
-								Pavel
-							=09
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---FEz7ebHBGB6b2e8X
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl+AFbkACgkQMOfwapXb+vJhUQCcCnk/rOgedQZB419VdeB8rDzc
-Q2EAoLyCNfXl+u5ArDL45fLrPFFEHqQp
-=2YF9
------END PGP SIGNATURE-----
-
---FEz7ebHBGB6b2e8X--
+Cheers,
+Prabhakar
