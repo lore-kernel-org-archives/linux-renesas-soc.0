@@ -2,31 +2,32 @@ Return-Path: <SRS0=BhjE=DU=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 004E9C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Oct 2020 15:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCEC6C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Oct 2020 15:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9730248A4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Oct 2020 15:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 982E8248C6
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Oct 2020 15:02:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730870AbgJMPCI (ORCPT
+        id S2389119AbgJMPCe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 13 Oct 2020 11:02:08 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:31830 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727112AbgJMPCG (ORCPT
+        Tue, 13 Oct 2020 11:02:34 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:42312 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2387958AbgJMPCS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Oct 2020 11:02:06 -0400
+        Tue, 13 Oct 2020 11:02:18 -0400
 X-IronPort-AV: E=Sophos;i="5.77,371,1596466800"; 
-   d="scan'208";a="59459472"
+   d="scan'208";a="59674410"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 14 Oct 2020 00:02:05 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 14 Oct 2020 00:02:17 +0900
 Received: from devel.example.org?044ree.adwin.renesas.com (unknown [10.226.36.120])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 898214004D1E;
-        Wed, 14 Oct 2020 00:02:02 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 933C94009410;
+        Wed, 14 Oct 2020 00:02:14 +0900 (JST)
 From:   Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -39,41 +40,43 @@ Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v3 0/5] Add r8a77965 DRIF support
-Date:   Tue, 13 Oct 2020 16:01:45 +0100
-Message-Id: <20201013150150.14801-1-fabrizio.castro.jz@renesas.com>
+Subject: [PATCH v3 4/5] media: dt-bindings: media: renesas,drif: Add r8a77965 support
+Date:   Tue, 13 Oct 2020 16:01:49 +0100
+Message-Id: <20201013150150.14801-5-fabrizio.castro.jz@renesas.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201013150150.14801-1-fabrizio.castro.jz@renesas.com>
+References: <20201013150150.14801-1-fabrizio.castro.jz@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Dear All,
+The r8a77965 (a.k.a. R-Car M3-N) device tree schema is
+compatible with the already documented R-Car Gen3 devices.
 
-this series is to add DRIF support for the r8a77965
-(a.k.a. R-Car M3-N), but it also (re)includes the patches
-for the MAINTAINERS and documentation files, modified
-according to Ramesh's and Geert's comments.
+Document r8a77965 support within renesas,drif.yaml.
 
-Thanks,
-Fab
+Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+---
+v2->v3:
+* New patch
 
-Fabrizio Castro (5):
-  MAINTAINERS: Update MAINTAINERS for Renesas DRIF driver
-  media: dt-bindings: media: renesas,drif: Convert to json-schema
-  media: dt-bindings: media: renesas,drif: Add r8a77990 support
-  media: dt-bindings: media: renesas,drif: Add r8a77965 support
-  arm64: dts: r8a77965: Add DRIF support
+ Documentation/devicetree/bindings/media/renesas,drif.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
- .../bindings/media/renesas,drif.txt           | 177 -----------
- .../bindings/media/renesas,drif.yaml          | 284 ++++++++++++++++++
- MAINTAINERS                                   |   4 +-
- arch/arm64/boot/dts/renesas/r8a77965.dtsi     | 120 ++++++++
- 4 files changed, 406 insertions(+), 179 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
- create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.yaml
-
+diff --git a/Documentation/devicetree/bindings/media/renesas,drif.yaml b/Documentation/devicetree/bindings/media/renesas,drif.yaml
+index ae50b1448320..89445ddd598e 100644
+--- a/Documentation/devicetree/bindings/media/renesas,drif.yaml
++++ b/Documentation/devicetree/bindings/media/renesas,drif.yaml
+@@ -53,6 +53,7 @@ properties:
+       - enum:
+         - renesas,r8a7795-drif        # R-Car H3
+         - renesas,r8a7796-drif        # R-Car M3-W
++        - renesas,r8a77965-drif       # R-Car M3-N
+         - renesas,r8a77990-drif       # R-Car E3
+       - const: renesas,rcar-gen3-drif # Generic R-Car Gen3 compatible device
+ 
 -- 
 2.25.1
 
