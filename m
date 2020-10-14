@@ -2,123 +2,114 @@ Return-Path: <SRS0=QiEA=DV=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10032C433E7
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Oct 2020 09:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B9EC433E7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Oct 2020 09:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE51D206DD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Oct 2020 09:25:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YH2hkUqX"
+	by mail.kernel.org (Postfix) with ESMTP id 382D6207C3
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Oct 2020 09:58:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730437AbgJNJTk (ORCPT
+        id S1728579AbgJNJ5u (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Oct 2020 05:19:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39952 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729386AbgJNJTj (ORCPT
+        Wed, 14 Oct 2020 05:57:50 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:38010 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728671AbgJNJ5Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Oct 2020 05:19:39 -0400
-Received: from mail-yb1-xb44.google.com (mail-yb1-xb44.google.com [IPv6:2607:f8b0:4864:20::b44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7CBFC0613B0;
-        Tue, 13 Oct 2020 14:51:17 -0700 (PDT)
-Received: by mail-yb1-xb44.google.com with SMTP id x20so905648ybs.8;
-        Tue, 13 Oct 2020 14:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bDJBmimFNcOmrJNpw4Oo6sx1hDGNtJ/+J7J3Qbb7Q5U=;
-        b=YH2hkUqX2f8W5yQYRQMPpKC9XI12UPzVpfiS+7ZBXDRAasSrD8haZ1SNvnWNkpl18k
-         2If8oVXPZBj8gMa5G3maonPOS8P15Tn5sp6vuKqe1UjfjCaWUKv7i8HviHeTviLdszH+
-         G59RHti+FnraYoBWxm1nqK8H9WuS3kJjnoDLLAqQXnwz3dr+Zrk8u/USvWX5HWBFVskM
-         912EWpVLKSiamruMNvg4KQAF9CxzldcGQ8vLKrKR9t8I7AlL5xk/GItjVCliAuOeCQaP
-         7WEi8+GiWrgQ6ugG2vTjAj57WFFOQN4eFr/o/BqjG0oINMLB+2gmsaAvUfHNj3f5eEn0
-         hSYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bDJBmimFNcOmrJNpw4Oo6sx1hDGNtJ/+J7J3Qbb7Q5U=;
-        b=eKesgDMgnj5vlXLSJaMqoQW09Wn0lXNWXttyCi7x2Ctm9IjrkdMvydet9lnAawT25S
-         famgS+cBklaKQYy7mw3l6IKQsWZ8zV6auZUYUJim1PtNnC0Mzgl4V6BObspdr+imv6on
-         hm/mbXjiR5DiAr7RpDW95ngJEGu5Y8paXOi+d9iTHyKDFPcM10fVcZjMNruYGttnB75E
-         QmTX+V6KtJleMe7LpMNm7PLdQ+eifwLVtlFsgb6hJhNixg5lW6CDNFkj8EL9YFBrJwvI
-         EroPdD7t+Izs++Y4OqSEUTZ5Ph3c4wN09mL2SBGCAapTwmF4M3T9v+Fyi2ubyU7ccC4T
-         fZng==
-X-Gm-Message-State: AOAM531HFSaH2Tkh8CpOExKBcipFpt1SmkW8ohpWXfVWIgExqXGSAWge
-        qqrgKxNb8LZjBHY6+q6KSdTpgqePxn/jH//4e+o=
-X-Google-Smtp-Source: ABdhPJxGCPKnVEzsu1M02mAZXJtBJDfgufwzl58JQIGZ2xKBkBSpNl6Dgkx6DS7D2cXXW9xRJBq/4P8awdlhDzQpkCo=
-X-Received: by 2002:a25:5507:: with SMTP id j7mr2926439ybb.214.1602625877227;
- Tue, 13 Oct 2020 14:51:17 -0700 (PDT)
+        Wed, 14 Oct 2020 05:57:25 -0400
+Received: from relay5-d.mail.gandi.net (unknown [217.70.183.197])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 529FD3B7108
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Oct 2020 09:41:16 +0000 (UTC)
+X-Originating-IP: 93.34.118.233
+Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id E4FA91C0013;
+        Wed, 14 Oct 2020 09:40:51 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
+        laurent.pinchart@ideasonboard.com
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/6] arm64: dts: renesas: r8a779a0: Add CSI-2 nodes
+Date:   Wed, 14 Oct 2020 11:44:40 +0200
+Message-Id: <20201014094443.11070-4-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201014094443.11070-1-jacopo+renesas@jmondi.org>
+References: <20201014094443.11070-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-References: <20201013150150.14801-1-fabrizio.castro.jz@renesas.com> <20201013150150.14801-5-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20201013150150.14801-5-fabrizio.castro.jz@renesas.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Tue, 13 Oct 2020 22:50:50 +0100
-Message-ID: <CA+V-a8tJgp1VDt9rQeRzwWcPybwU+ehyHNHaAeYJVwECPMNgFA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] media: dt-bindings: media: renesas,drif: Add
- r8a77965 support
-To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Fabrizio,
+Add CSI-2 nodes to R8A779A0 R-Car V3U SoC.
 
-Thank you for the patch.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-On Tue, Oct 13, 2020 at 6:25 PM Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
->
-> The r8a77965 (a.k.a. R-Car M3-N) device tree schema is
-> compatible with the already documented R-Car Gen3 devices.
->
-> Document r8a77965 support within renesas,drif.yaml.
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> ---
-> v2->v3:
-> * New patch
->
->  Documentation/devicetree/bindings/media/renesas,drif.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+The chip manual reports that the CSI-2 units are fed with S1D1 and S1D2
+clocks. The same applies to other SoCs, but none lists the two
+additional clocks in the DTS node. So I left them out here as well.
+---
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 41 +++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-Cheers,
-Prabhakar
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+index 6cf77ce9aa93..83962ad30a1d 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+@@ -105,6 +105,47 @@ scif0: serial@e6e60000 {
+ 			status = "disabled";
+ 		};
+ 
++		csi40: csi2@feaa0000 {
++			compatible = "renesas,r8a779a0-csi2";
++			reg = <0 0xfeaa0000 0 0x10000>;
++			interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 331>;
++			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
++			resets = <&cpg 331>;
++			status = "disabled";
++		};
++
++		csi41: csi2@feab0000 {
++			compatible = "renesas,r8a779a0-csi2";
++			reg = <0 0xfeab0000 0 0x10000>;
++			interrupts = <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 400>;
++			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
++			resets = <&cpg 400>;
++			status = "disabled";
++		};
++
++		csi42: csi2@fed60000 {
++			compatible = "renesas,r8a779a0-csi2";
++			reg = <0 0xfed60000 0 0x10000>;
++			interrupts = <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 401>;
++			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
++			resets = <&cpg 401>;
++			status = "disabled";
++
++		};
++
++		csi43: csi2@fed70000 {
++			compatible = "renesas,r8a779a0-csi2";
++			reg = <0 0xfed70000 0 0x10000>;
++			interrupts = <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 402>;
++			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
++			resets = <&cpg 402>;
++			status = "disabled";
++		};
++
+ 		gic: interrupt-controller@f1000000 {
+ 			compatible = "arm,gic-v3";
+ 			#interrupt-cells = <3>;
+-- 
+2.28.0
 
-> diff --git a/Documentation/devicetree/bindings/media/renesas,drif.yaml b/Documentation/devicetree/bindings/media/renesas,drif.yaml
-> index ae50b1448320..89445ddd598e 100644
-> --- a/Documentation/devicetree/bindings/media/renesas,drif.yaml
-> +++ b/Documentation/devicetree/bindings/media/renesas,drif.yaml
-> @@ -53,6 +53,7 @@ properties:
->        - enum:
->          - renesas,r8a7795-drif        # R-Car H3
->          - renesas,r8a7796-drif        # R-Car M3-W
-> +        - renesas,r8a77965-drif       # R-Car M3-N
->          - renesas,r8a77990-drif       # R-Car E3
->        - const: renesas,rcar-gen3-drif # Generic R-Car Gen3 compatible device
->
-> --
-> 2.25.1
->
