@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 470D8C43457
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CA0C4363A
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 23:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 13BEA207BC
+	by mail.kernel.org (Postfix) with ESMTP id 6F7682076A
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 23:21:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389085AbgJOXVG (ORCPT
+        id S2389065AbgJOXVH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 15 Oct 2020 19:21:06 -0400
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:56767 "EHLO
+        Thu, 15 Oct 2020 19:21:07 -0400
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:46477 "EHLO
         vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389067AbgJOXUg (ORCPT
+        with ESMTP id S2389033AbgJOXUe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Oct 2020 19:20:36 -0400
-X-Halon-ID: 25deee0c-0f3c-11eb-9f83-005056917a89
+        Thu, 15 Oct 2020 19:20:34 -0400
+X-Halon-ID: 240a1678-0f3c-11eb-9f83-005056917a89
 Authorized-sender: niklas.soderlund@fsdn.se
 Received: from bismarck.berto.se (p4fca2fef.dip0.t-ipconnect.de [79.202.47.239])
         by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
-        id 25deee0c-0f3c-11eb-9f83-005056917a89;
-        Fri, 16 Oct 2020 01:14:17 +0200 (CEST)
+        id 240a1678-0f3c-11eb-9f83-005056917a89;
+        Fri, 16 Oct 2020 01:14:14 +0200 (CEST)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -34,9 +34,9 @@ To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 5/5] rcar-vin: Add support for suspend and resume
-Date:   Fri, 16 Oct 2020 01:14:08 +0200
-Message-Id: <20201015231408.2399933-6-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/5] rcar-vin: Use scratch buffer when not in running state
+Date:   Fri, 16 Oct 2020 01:14:04 +0200
+Message-Id: <20201015231408.2399933-2-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201015231408.2399933-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20201015231408.2399933-1-niklas.soderlund+renesas@ragnatech.se>
@@ -47,130 +47,102 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for suspend and resume by stopping and starting the video
-pipeline while still retaining all buffers given to the driver by
-user-space and internally allocated ones, this gives the application a
-seamless experience.
+In its early stages the VIN driver did not use an internal scratch
+buffer. This lead to a unnecessary complex start and stop behavior,
+specially for TB/BT. The driver now always allocates a scratch buffer to
+deal with buffer under-runs, use the scratch buffer to also simplify
+starting and stopping.
 
-Buffers are never returned to user-space unprocessed so user-space don't
-notice when suspending. When resuming the driver restarts the capture
-session using the internal scratch buffer, this happens before
-user-space is unfrozen, this leads to speedy response times once the
-application resumes its execution.
+When capture is starting use the scratch buffer instead of a user-space
+buffers while syncing the driver with the hardware state. This allows
+the driver to know that no user-space buffers is given to the hardware
+before the running state is reached.
 
-As the entire pipeline is stopped on suspend all subdevices in use are
-also stopped, and if they enter a shutdown state when not streaming
-(such as the R-Car CSI-2 driver) they too will be suspended and resumed
-in sync with the VIN driver.
+When capture is stopping use the scratch buffer instead of leaving the
+user-space buffers in place and add a check that all user-space buffers
+are processed by the hardware before transitioning from the stopping to
+stopped state. This allows the driver to know all user-space buffers
+given to the hardware are fully processed.
 
-To be able to do keep track of which VINs should be resumed a new
-internal state SUSPENDED is added to recode this.
+This change in itself does not improve the driver much but it paves way
+for future simplifications and enhancements. One direct improvement of
+this change is that TB/BT buffers returned to user-space wile stopping
+will always contains both fields, that was not guaranteed before.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 51 +++++++++++++++++++++
- drivers/media/platform/rcar-vin/rcar-vin.h  | 10 ++--
- 2 files changed, 57 insertions(+), 4 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-dma.c | 30 +++++++++++++++-------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 34d003e0e9b9c25a..4adf4ce518f79c93 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -918,6 +918,54 @@ static int rvin_mc_init(struct rvin_dev *vin)
- 	return ret;
- }
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 692dea300b0de8b5..ca90bde8d29f77d1 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -905,7 +905,7 @@ static void rvin_fill_hw_slot(struct rvin_dev *vin, int slot)
+ 				vin->format.sizeimage / 2;
+ 			break;
+ 		}
+-	} else if (list_empty(&vin->buf_list)) {
++	} else if (vin->state != RUNNING || list_empty(&vin->buf_list)) {
+ 		vin->buf_hw[slot].buffer = NULL;
+ 		vin->buf_hw[slot].type = FULL;
+ 		phys_addr = vin->scratch_phys;
+@@ -998,12 +998,6 @@ static irqreturn_t rvin_irq(int irq, void *data)
+ 		goto done;
+ 	}
  
-+/* -----------------------------------------------------------------------------
-+ * Suspend / Resume
-+ */
+-	/* Nothing to do if capture status is 'STOPPING' */
+-	if (vin->state == STOPPING) {
+-		vin_dbg(vin, "IRQ while state stopping\n");
+-		goto done;
+-	}
+-
+ 	/* Prepare for capture and update state */
+ 	vnms = rvin_read(vin, VNMS_REG);
+ 	slot = (vnms & VNMS_FBS_MASK) >> VNMS_FBS_SHIFT;
+@@ -1313,14 +1307,32 @@ static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
+ static void rvin_stop_streaming(struct vb2_queue *vq)
+ {
+ 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
++	unsigned int i, retries;
+ 	unsigned long flags;
+-	int retries = 0;
++	bool buffersFreed;
+ 
+ 	spin_lock_irqsave(&vin->qlock, flags);
+ 
+ 	vin->state = STOPPING;
+ 
++	/* Wait until only scratch buffer is used, max 3 interrupts. */
++	retries = 0;
++	while (retries++ < RVIN_RETRIES) {
++		buffersFreed = true;
++		for (i = 0; i < HW_BUFFER_NUM; i++)
++			if (vin->buf_hw[i].buffer)
++				buffersFreed = false;
 +
-+static int __maybe_unused rvin_suspend(struct device *dev)
-+{
-+	struct rvin_dev *vin = dev_get_drvdata(dev);
++		if (buffersFreed)
++			break;
 +
-+	if (vin->state != RUNNING)
-+		return 0;
-+
-+	rvin_stop_streaming(vin);
-+
-+	vin->state = SUSPENDED;
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused rvin_resume(struct device *dev)
-+{
-+	struct rvin_dev *vin = dev_get_drvdata(dev);
-+
-+	if (vin->state != SUSPENDED)
-+		return 0;
-+
-+	/*
-+	 * Restore group master CHSEL setting.
-+	 *
-+	 * This needs to be by every VIN resuming not only the master
-+	 * as we don't know if and in which order the master VINs will
-+	 * be resumed.
-+	 */
-+	if (vin->info->use_mc) {
-+		unsigned int master_id = rvin_group_id_to_master(vin->id);
-+		struct rvin_dev *master = vin->group->vin[master_id];
-+		int ret;
-+
-+		if (WARN_ON(!master))
-+			return -ENODEV;
-+
-+		ret = rvin_set_channel_routing(master, master->chsel);
-+		if (ret)
-+			return ret;
++		spin_unlock_irqrestore(&vin->qlock, flags);
++		msleep(RVIN_TIMEOUT_MS);
++		spin_lock_irqsave(&vin->qlock, flags);
 +	}
 +
-+	return rvin_start_streaming(vin);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Platform Device Driver
-  */
-@@ -1421,9 +1469,12 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 	return 0;
- }
+ 	/* Wait for streaming to stop */
++	retries = 0;
+ 	while (retries++ < RVIN_RETRIES) {
  
-+static SIMPLE_DEV_PM_OPS(rvin_pm_ops, rvin_suspend, rvin_resume);
-+
- static struct platform_driver rcar_vin_driver = {
- 	.driver = {
- 		.name = "rcar-vin",
-+		.pm = &rvin_pm_ops,
- 		.of_match_table = rvin_of_id_table,
- 	},
- 	.probe = rcar_vin_probe,
-diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
-index 4ec8584709c847a9..4539bd53d9d41e9c 100644
---- a/drivers/media/platform/rcar-vin/rcar-vin.h
-+++ b/drivers/media/platform/rcar-vin/rcar-vin.h
-@@ -49,16 +49,18 @@ enum rvin_csi_id {
- };
+ 		rvin_capture_stop(vin);
+@@ -1336,7 +1348,7 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
+ 		spin_lock_irqsave(&vin->qlock, flags);
+ 	}
  
- /**
-- * STOPPED  - No operation in progress
-- * STARTING - Capture starting up
-- * RUNNING  - Operation in progress have buffers
-- * STOPPING - Stopping operation
-+ * STOPPED   - No operation in progress
-+ * STARTING  - Capture starting up
-+ * RUNNING   - Operation in progress have buffers
-+ * STOPPING  - Stopping operation
-+ * SUSPENDED - Capture is suspended
-  */
- enum rvin_dma_state {
- 	STOPPED = 0,
- 	STARTING,
- 	RUNNING,
- 	STOPPING,
-+	SUSPENDED,
- };
- 
- /**
+-	if (vin->state != STOPPED) {
++	if (!buffersFreed || vin->state != STOPPED) {
+ 		/*
+ 		 * If this happens something have gone horribly wrong.
+ 		 * Set state to stopped to prevent the interrupt handler
 -- 
 2.28.0
 
