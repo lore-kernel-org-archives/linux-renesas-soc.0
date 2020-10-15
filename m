@@ -2,156 +2,74 @@ Return-Path: <SRS0=rPsL=DW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A74C433E7
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 08:00:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F5AC433E7
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 12:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 852AC22243
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 08:00:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hVkVVKlL"
+	by mail.kernel.org (Postfix) with ESMTP id 83D9B22248
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 12:35:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730097AbgJOIAT (ORCPT
+        id S1726149AbgJOMfV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 15 Oct 2020 04:00:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53238 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730017AbgJOIAS (ORCPT
+        Thu, 15 Oct 2020 08:35:21 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:43296 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbgJOMfV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Oct 2020 04:00:18 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 616B8C061755;
-        Thu, 15 Oct 2020 01:00:18 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id y16so2204709ljk.1;
-        Thu, 15 Oct 2020 01:00:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GUVIS48kKC77t6jdyKn+dopbQ3M+OKPCuFIPcBhR+JQ=;
-        b=hVkVVKlLJkN++hWJjnX0kB1YjbwdlZ0wrANRJYtos+YK+WY/SjuSXp16Yc9lZXxJGg
-         sCxk2hqv3CKRHdwdhWKR8EuRskRkTZLvpd4HDOPpX3QhGoii4qLQd/urXY8SKbeNE3c+
-         gNlxxtCVz/LI8HfLzF5000foCgYUzXg7V3MZKgXjGoterj/7CC6Fmx/8ZYJEBVVDL5eu
-         0zzNl37ReibfFfKtsWxdhfyDwhjhHMU6QJNkFUYX2RU+5Khbb5TFoKWSYcsb7c8XV6kI
-         0axxs7Vr0Y2rygjGx4GWa5dMMmT/XgRPOZjFaCfB7wn2zTjL33mPUIeoXR8ekyFOS9Pb
-         UdEg==
+        Thu, 15 Oct 2020 08:35:21 -0400
+Received: by mail-oi1-f194.google.com with SMTP id l85so2888341oih.10;
+        Thu, 15 Oct 2020 05:35:19 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=GUVIS48kKC77t6jdyKn+dopbQ3M+OKPCuFIPcBhR+JQ=;
-        b=khrq6ufMmzXO6A0bcS/I0Bm2zDkjuGDVLWPhqcmaeRMgntpMIcTmc6q9rC0oI23PKo
-         lbtyzbuzUYPRN+nmHp5slFHDzm0Rx8A6UgpS72xCU2SHiucepKHuV0LL6xao0EqRXZlh
-         k/BaW07YVN0v4PSnZ39qtHfWue4E3x4r3zoq87RI4LBsogAQp5EeUXmbLhW/QxhdkiXO
-         uTPnKv7xHvVfpqW6DsdW7y1EHWUsHHZ4VxR6mdIAVbx8rlAVExRqisYxsnnCQTfKTwcP
-         pMAyChqIRqbfYUyOTdRwcMLP3Jka9oQsQ56noNod5JLQpa4d3k7ORMJxeowuVPdfrSt6
-         aKrw==
-X-Gm-Message-State: AOAM5305E82aeA4hKOlYORdzcPMyQF+DlSOni2/5RhktVnzHUzuJyhhQ
-        oh6Xh7R+T5Wbi4448eCptHUsUt3YQXA=
-X-Google-Smtp-Source: ABdhPJyIzjfsdNejKPFGyjiqpOzC39VHDLtOeAqzzwQA5isFxKvYAwVyNkj4gVtUcc8BN8cMCN06OQ==
-X-Received: by 2002:a05:651c:96:: with SMTP id 22mr818458ljq.76.1602748816698;
-        Thu, 15 Oct 2020 01:00:16 -0700 (PDT)
-Received: from ?IPv6:2a00:1fa0:46ee:db0d:fce7:c400:51d0:be7a? ([2a00:1fa0:46ee:db0d:fce7:c400:51d0:be7a])
-        by smtp.gmail.com with ESMTPSA id u14sm741288lfr.119.2020.10.15.01.00.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Oct 2020 01:00:16 -0700 (PDT)
-Subject: Re: [PATCH 4/6] clk: renesas: r8a779a0: Add VIN[00-31] clocks
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, geert+renesas@glider.be,
-        laurent.pinchart@ideasonboard.com, linux-kernel@vger.kernel.org
-References: <20201014094443.11070-1-jacopo+renesas@jmondi.org>
- <20201014094443.11070-5-jacopo+renesas@jmondi.org>
- <0de062e4-0385-444b-1abc-881c313a6479@gmail.com>
- <20201015093227.y3n5ohzuydg2fe3t@uno.localdomain>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Organization: Brain-dead Software
-Message-ID: <f75c5be2-ef40-bd08-dc0b-b025045b15d4@gmail.com>
-Date:   Thu, 15 Oct 2020 11:00:04 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JYxE7+1GIr9Y7Alby7j1jIy6dZhSk+zAk9I33SomSlo=;
+        b=qnEDOhsLzfhuob0cJqmoiW0pf/ogyCzatxP/wi7ZRbL0Bn/YgQ+AgaXOm03TC7BcD9
+         6BMqEFl9VpsAJdplI/XMDucleWxfAjuadxDf++Qx+N8WslYmwvbuMB170/8JQUXLj7r+
+         rpIfLdaL/x+RgUDHrsiZ29guTgoww5FIzRZ0RrTmR3iREtARg7tkiH2KlakumRD/rb1T
+         w0PyAaAnqbJoSIkbprdyodA9EBdopjzUweK1N4wThNBjDOyW3mN4ULOpfU7kY9UPskG+
+         Kr8IHfS+2zepZgHujUCIEzNVCWB3OBxK8ZA7ft8bop5CLq9LeA6XQZe6/avjD+WUx6qc
+         z2MQ==
+X-Gm-Message-State: AOAM5337R1meV/zvVpwXI4M0CBlkI5sOXQkAohvuHlEXuPgPofGqblWp
+        JESq0daSyBId3jEti+oRvDy7h3XnxWG3I9BgdNOiQZgK
+X-Google-Smtp-Source: ABdhPJyeHzVNtD4u+iYZTBH+/7EAr+AaR2E6W0QVHO0jXNt72LqnZBjvtzoG7HuSxobPBloquV4FEhQrkHaFyc0gQZw=
+X-Received: by 2002:aca:4441:: with SMTP id r62mr1848993oia.153.1602765318932;
+ Thu, 15 Oct 2020 05:35:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20201015093227.y3n5ohzuydg2fe3t@uno.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201014094443.11070-1-jacopo+renesas@jmondi.org> <20201014094443.11070-2-jacopo+renesas@jmondi.org>
+In-Reply-To: <20201014094443.11070-2-jacopo+renesas@jmondi.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 15 Oct 2020 14:35:07 +0200
+Message-ID: <CAMuHMdUkj+nVPYtc7WsofTcLwpAKXJwM0V7qmgg1sTBN0UzyFg@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: renesas: r8a779a0: Add CSI4[0-3] clocks
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+On Wed, Oct 14, 2020 at 11:40 AM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Add clock definitions of the CSI-2 receivers for R-Car V3U.
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-On 15.10.2020 12:32, Jacopo Mondi wrote:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.11.
 
-[...]
->>> Add clock definitions of the VIN instances for R-Car V3U.
->>>
->>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->>>
->>> ---
->>> Clocks at indexes 730 and 731 are named 'vin0' and 'vin1'.
->>> I assumed it's a typographic error and renamed them 'vin00' and 'vin01'
->>> ---
->>>   drivers/clk/renesas/r8a779a0-cpg-mssr.c | 32 +++++++++++++++++++++++++
->>>   1 file changed, 32 insertions(+)
->>>
->>> diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
->>> index bd54a28c50ee..2a00eb82013f 100644
->>> --- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
->>> +++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
->>> @@ -149,6 +149,38 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
->>>   	DEF_MOD("scif1",	703,	R8A779A0_CLK_S1D8),
->>>   	DEF_MOD("scif3",	704,	R8A779A0_CLK_S1D8),
->>>   	DEF_MOD("scif4",	705,	R8A779A0_CLK_S1D8),
->>> +	DEF_MOD("vin00",	730,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin01",	731,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin02",	800,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin03",	801,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin04",	802,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin05",	803,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin06",	804,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin07",	805,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin10",	806,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin11",	807,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin12",	808,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin13",	809,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin14",	810,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin15",	811,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin16",	812,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin17",	813,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin20",	814,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin21",	815,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin22",	816,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin23",	817,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin24",	818,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin25",	819,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin26",	820,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin27",	821,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin30",	822,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin31",	823,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin32",	824,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin33",	825,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin34",	826,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin35",	827,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin36",	828,	R8A779A0_CLK_S1D1),
->>> +	DEF_MOD("vin37",	829,	R8A779A0_CLK_S1D1),
-> 
-> There are 32 VIN instances (hence the [0-31] in the subject), grouped
-> in 4 units of 8 channels each.
-> 
-> I can drop the [0-31] in the subject if it's confusing.
+Gr{oetje,eeting}s,
 
-    Please do. :-)
+                        Geert
 
->>     The subject says VIN[0-31]?
->>
->> [...]
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-MBR, Sergei
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
