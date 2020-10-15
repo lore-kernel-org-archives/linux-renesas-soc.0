@@ -2,106 +2,103 @@ Return-Path: <SRS0=rPsL=DW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4C1C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 13:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30EC9C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 16:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78D792222B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 13:42:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7E3B22255
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 16:27:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729735AbgJONmI (ORCPT
+        id S2389553AbgJOQ1g (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 15 Oct 2020 09:42:08 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41076 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729543AbgJONmI (ORCPT
+        Thu, 15 Oct 2020 12:27:36 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:36689 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388357AbgJOQ1g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Oct 2020 09:42:08 -0400
-Received: by mail-oi1-f196.google.com with SMTP id q136so3132295oic.8;
-        Thu, 15 Oct 2020 06:42:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=orF3cUU9oOlrO0FJRLdebs2VBGQcFMsbBrA1OLiycKc=;
-        b=E/Pycu/0l1XZnpUdw5stPYHepQP6695avZbWdQQM8OOaKtWzpwfKWnA8qWYOwrWWlP
-         Uyo9GrzhkM8gIM0wUEmfv00ojlMBa9FnODWiggpBiedP+pDsU5SvcOdIyTWyoUELDuA4
-         5YcY3ypl+8rHci2Po9LUsNX2wduaWarlG/mejOmOinVrfSVxqxLLW3U2OJ9egLLEJIx7
-         EzPV4quwaotN8pKh7OAL7pdUlmbt/o+bkHSojx/hYSzOaI6OYmq9LHl0MHP+4cdEEvQP
-         evRBMf0VgHWceVXlHB0cziYH8LN2L+heK8jfwzQ/uxN0qcM3g3+MpxqV/5fKCEzOuqNY
-         ESRQ==
-X-Gm-Message-State: AOAM533TeRMSSjUyj51A+aiQ/sUwCf7FGxVHJxbBhaYiQ3KO0rb/0c54
-        C02YCTlvXw04r+o80u2UaH80Nb6+jCTZSvvYO4w=
-X-Google-Smtp-Source: ABdhPJwIHm97HoA7V3FJf/i1TcP1cp8zPRHXwEDlwF/Nb56j3OiUhYXo+FNYC1Wl0GFutzFDpqRcyF818BuYmu4Dmng=
-X-Received: by 2002:aca:c490:: with SMTP id u138mr2200333oif.54.1602769327067;
- Thu, 15 Oct 2020 06:42:07 -0700 (PDT)
+        Thu, 15 Oct 2020 12:27:36 -0400
+X-Originating-IP: 93.34.118.233
+Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 72CB2FF802;
+        Thu, 15 Oct 2020 16:27:31 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     kieran.bingham+renesas@ideasonboard.com,
+        laurent.pinchart+renesas@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Hyun Kwon <hyunk@xilinx.com>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 0/7] media: i2c: Add support for RDACM21 camera module
+Date:   Thu, 15 Oct 2020 20:27:03 +0200
+Message-Id: <20201015182710.54795-1-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-References: <20201015132350.8360-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20201015132350.8360-1-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 15 Oct 2020 15:41:56 +0200
-Message-ID: <CAMuHMdUogbfHYv+g3+2=7JwhgH3MngmDEe5nvjZwkjTOJyn9dQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: renesas: hihope-rzg2-ex: Drop rxc-skew-ps
- from ethernet-phy node
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
+Hello,
+  v2 of support for RDACM21 camera module in this series.
 
-On Thu, Oct 15, 2020 at 3:24 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> HiHope RZG2[HMN] boards uses Realtek phy and the driver does not support
-> rxc-skew-ps property. So remove rxc-skew-ps from ethernet-phy node.
->
-> Fixes: 7433f1fb8ec8fe ("arm64: dts: renesas: Add HiHope RZ/G2M sub board support")
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Patch [1/7] introduces the camera module driver.
+Only change compared to v1:
+- Increase pixel clock to 55MHz
 
-Thanks for your patch!
+From [2/7] to [5/7] there's a proposal of a possible way to support
+both RDACM20 and RDACM21 with the same deserializer driver.
+See v1 cover letter for details:
+https://www.spinics.net/lists/linux-renesas-soc/msg52886.html
 
-> --- a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
-> @@ -23,7 +23,6 @@
->         status = "okay";
->
->         phy0: ethernet-phy@0 {
-> -               rxc-skew-ps = <1500>;
->                 reg = <0>;
->                 interrupt-parent = <&gpio2>;
->                 interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+I have tested on Eagle V3M with 4 RDACM21, but the whole point of
+this series is to retain compatibility with RDACM20.
 
-Should "rx-internal-delay-ps = <1800>" be added to the avb node instead
-(after [1] has entered v5.10-rc1, and the DTS part of [2] has been
- applied to renesas-devel)?
+For this reason I have included 2 patches on top, not intended for merge
+that re-propose DTS support for the MAXIM max9286 expansion board connected
+to Salvator-X and add the newly introduced property to the DTS file.
 
-[1] [PATCH net-next v4 resend 5/5] ravb: Add support for explicit
-internal clock delay configuration
-    https://lore.kernel.org/linux-renesas-soc/20201001101008.14365-6-geert+renesas@glider.be/
-[2] [PATCH v3 0/7] net/ravb: Add support for explicit internal clock
-delay configuration
-    https://lore.kernel.org/linux-renesas-soc/20200819134344.27813-1-geert+renesas@glider.be
+Kieran, I know you have a working setup with RDACM20, the final two patches are
+meant for ease your testing. Can you give this series a spin ?
+For your convenience I pushed a branch
+git://jmondi.org/linux #gmsl/jmondi/renesas-drivers-2020-10-13-v5.9/rdacm21_high-threshold
 
-Gr{oetje,eeting}s,
+Series based on latest renesas-drivers tag: renesas-drivers-2020-10-13-v5.9
 
-                        Geert
+If I get a confirmation this setup works on Salvator-X, I'll submit the new
+property for inclusion to devicetree people, which I have left out at the
+moment.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Thanks
+  j
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Jacopo Mondi (6):
+  media: i2c: Add driver for RDACM21 camera module
+  dt-bindings: media: max9286: Document 'maxim,high-threshold'
+  media: i2c: max9286: Break-out reverse channel setup
+  media: i2c: max9286: Make channel amplitude programmable
+  media: i2c: max9286: Configure reverse channel amplitude
+  [DNI] arm64: dts: renesas: salvator-x-max9286: Use high-threshold
+
+Laurent Pinchart (1):
+  arm64: dts: renesas: salvator-x: Add MAX9286 expansion board
+
+ .../bindings/media/i2c/maxim,max9286.yaml     |  15 +
+ MAINTAINERS                                   |  12 +
+ .../boot/dts/renesas/salvator-x-max9286.dtsi  | 396 +++++++++++++
+ drivers/media/i2c/Kconfig                     |  13 +
+ drivers/media/i2c/Makefile                    |   2 +
+ drivers/media/i2c/max9286.c                   |  54 +-
+ drivers/media/i2c/rdacm21.c                   | 538 ++++++++++++++++++
+ 7 files changed, 1020 insertions(+), 10 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/salvator-x-max9286.dtsi
+ create mode 100644 drivers/media/i2c/rdacm21.c
+
+--
+2.28.0
+
