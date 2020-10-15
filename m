@@ -2,143 +2,225 @@ Return-Path: <SRS0=rPsL=DW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE7BC433E7
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 20:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B50BC433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 23:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D1E08206DD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 20:00:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="LaslllP2"
+	by mail.kernel.org (Postfix) with ESMTP id DBFF32076A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 23:21:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392058AbgJOUAr (ORCPT
+        id S2389634AbgJOXVG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 15 Oct 2020 16:00:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52270 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392040AbgJOUAr (ORCPT
+        Thu, 15 Oct 2020 19:21:06 -0400
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:63428 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389085AbgJOXUg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Oct 2020 16:00:47 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CECDBC061755;
-        Thu, 15 Oct 2020 13:00:46 -0700 (PDT)
-Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D0345556;
-        Thu, 15 Oct 2020 22:00:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1602792043;
-        bh=izH9H8iQTzC30m7jO8b83gxSPSpkQpnsFsc295p+2gQ=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=LaslllP2tLXqaertoBfp3WntC4heYm1W8By273rWKlQkyrZxzDO5A8Kq5JGEZJPkC
-         dLC8pDPWJ9zZVgQ7GLL+6udaihaWK97uCTDO/xlyyAXwrCaF4pYJV5o4cyEqKnAYND
-         99Nwzj4XVtPwjm98ZVEpQTtD6sHw8z+Acbc6ljec=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH v2 4/7] media: i2c: max9286: Make channel amplitude
- programmable
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Hyun Kwon <hyunk@xilinx.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-References: <20201015182710.54795-1-jacopo+renesas@jmondi.org>
- <20201015182710.54795-5-jacopo+renesas@jmondi.org>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <c9506b37-2831-bdd9-fbf4-8b8fb53a6f87@ideasonboard.com>
-Date:   Thu, 15 Oct 2020 21:00:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 15 Oct 2020 19:20:36 -0400
+X-Halon-ID: 255f27c2-0f3c-11eb-9f83-005056917a89
+Authorized-sender: niklas.soderlund@fsdn.se
+Received: from bismarck.berto.se (p4fca2fef.dip0.t-ipconnect.de [79.202.47.239])
+        by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
+        id 255f27c2-0f3c-11eb-9f83-005056917a89;
+        Fri, 16 Oct 2020 01:14:16 +0200 (CEST)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 4/5] rcar-vin: Break out hardware start and stop to new methods
+Date:   Fri, 16 Oct 2020 01:14:07 +0200
+Message-Id: <20201015231408.2399933-5-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201015231408.2399933-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20201015231408.2399933-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20201015182710.54795-5-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+To support suspend and resume the ability to start and stop the hardware
+needs to be available internally in the driver. Currently this code is
+in the start and stop callbacks of the vb2_ops struct. In these
+callbacks the code is intertwined with buffer allocation and freeing.
 
-On 15/10/2020 19:27, Jacopo Mondi wrote:
-> Instrument the function that configures the reverse channel with a
-> programmable amplitude value.
-> 
-> This change serves to prepare to adjust the reverse channel amplitude
-> depending on the remote end high-threshold configuration.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/media/i2c/max9286.c | 22 ++++++++++++++++------
->  1 file changed, 16 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-> index 89a7248f5c25..163e102199e3 100644
-> --- a/drivers/media/i2c/max9286.c
-> +++ b/drivers/media/i2c/max9286.c
-> @@ -906,19 +906,29 @@ static void max9286_v4l2_unregister(struct max9286_priv *priv)
->   * Probe/Remove
->   */
->  
-> -static void max9286_reverse_channel_setup(struct max9286_priv *priv)
-> +static void max9286_reverse_channel_setup(struct max9286_priv *priv,
-> +					  unsigned int chan_amplitude)
->  {
-> +	/* Reverse channel transmission time: default to 1. */
-> +	u8 chan_config = MAX9286_REV_TRF(1);
-> +
->  	/*
->  	 * Reverse channel setup.
->  	 *
->  	 * - Enable custom reverse channel configuration (through register 0x3f)
->  	 *   and set the first pulse length to 35 clock cycles.
-> -	 * - Increase the reverse channel amplitude to 170mV to accommodate the
-> -	 *   high threshold enabled by the serializer driver.
-> +	 * - Adjust reverse channel amplitude: values > 130 are programmed
-> +	 *   using the additional +100mV REV_AMP_X boost flag
->  	 */
->  	max9286_write(priv, 0x3f, MAX9286_EN_REV_CFG | MAX9286_REV_FLEN(35));
-> -	max9286_write(priv, 0x3b, MAX9286_REV_TRF(1) | MAX9286_REV_AMP(70) |
-> -		      MAX9286_REV_AMP_X);
-> +
+Prepare for suspend and resume support by braking out the hardware
+start/stop code into new methods.
 
-Should we also clamp to min/max values at all?
-Probably not needed, as it's only an internal helper.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 78 +++++++++++++---------
+ drivers/media/platform/rcar-vin/rcar-vin.h |  3 +
+ 2 files changed, 48 insertions(+), 33 deletions(-)
 
-
-> +	if (chan_amplitude > 100) {
-> +		/* It is not possible express values (100 < x < 130) */
-
-'possible to express'
-
-> +		chan_amplitude = chan_amplitude < 130
-> +			       ? 30 : chan_amplitude - 100;
-
-We could round < 115 to 100, and >= 115 to 130, but that's probably more
-effort that it's worth, so I think this is fine.
-
-I think it's really helpful to codify this parameter though:
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> +		chan_config |= MAX9286_REV_AMP_X;
-> +	}
-> +	max9286_write(priv, 0x3b, chan_config | MAX9286_REV_AMP(chan_amplitude));
->  	usleep_range(2000, 2500);
->  }
->  
-> @@ -957,7 +967,7 @@ static int max9286_setup(struct max9286_priv *priv)
->  	 * only. This should be disabled after the mux is initialised.
->  	 */
->  	max9286_configure_i2c(priv, true);
-> -	max9286_reverse_channel_setup(priv);
-> +	max9286_reverse_channel_setup(priv, 170);
->  
->  	/*
->  	 * Enable GMSL links, mask unused ones and autodetect link
-> 
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index f65deac4c2dbed54..5a5f0e5007478c8d 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -1050,16 +1050,20 @@ static irqreturn_t rvin_irq(int irq, void *data)
+ 	return IRQ_RETVAL(handled);
+ }
+ 
+-/* Need to hold qlock before calling */
+ static void return_unused_buffers(struct rvin_dev *vin,
+ 				  enum vb2_buffer_state state)
+ {
+ 	struct rvin_buffer *buf, *node;
++	unsigned long flags;
++
++	spin_lock_irqsave(&vin->qlock, flags);
+ 
+ 	list_for_each_entry_safe(buf, node, &vin->buf_list, list) {
+ 		vb2_buffer_done(&buf->vb.vb2_buf, state);
+ 		list_del(&buf->list);
+ 	}
++
++	spin_unlock_irqrestore(&vin->qlock, flags);
+ }
+ 
+ static int rvin_queue_setup(struct vb2_queue *vq, unsigned int *nbuffers,
+@@ -1243,53 +1247,55 @@ static int rvin_set_stream(struct rvin_dev *vin, int on)
+ 	return ret;
+ }
+ 
+-static int rvin_start_streaming(struct vb2_queue *vq, unsigned int count)
++int rvin_start_streaming(struct rvin_dev *vin)
+ {
+-	struct rvin_dev *vin = vb2_get_drv_priv(vq);
+ 	unsigned long flags;
+ 	int ret;
+ 
+-	/* Allocate scratch buffer. */
+-	vin->scratch = dma_alloc_coherent(vin->dev, vin->format.sizeimage,
+-					  &vin->scratch_phys, GFP_KERNEL);
+-	if (!vin->scratch) {
+-		spin_lock_irqsave(&vin->qlock, flags);
+-		return_unused_buffers(vin, VB2_BUF_STATE_QUEUED);
+-		spin_unlock_irqrestore(&vin->qlock, flags);
+-		vin_err(vin, "Failed to allocate scratch buffer\n");
+-		return -ENOMEM;
+-	}
+-
+ 	ret = rvin_set_stream(vin, 1);
+-	if (ret) {
+-		spin_lock_irqsave(&vin->qlock, flags);
+-		return_unused_buffers(vin, VB2_BUF_STATE_QUEUED);
+-		spin_unlock_irqrestore(&vin->qlock, flags);
+-		goto out;
+-	}
++	if (ret)
++		return ret;
+ 
+ 	spin_lock_irqsave(&vin->qlock, flags);
+ 
+ 	vin->sequence = 0;
+ 
+ 	ret = rvin_capture_start(vin);
+-	if (ret) {
+-		return_unused_buffers(vin, VB2_BUF_STATE_QUEUED);
++	if (ret)
+ 		rvin_set_stream(vin, 0);
+-	}
+ 
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+-out:
+-	if (ret)
+-		dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
+-				  vin->scratch_phys);
+ 
+ 	return ret;
+ }
+ 
+-static void rvin_stop_streaming(struct vb2_queue *vq)
++static int rvin_start_streaming_vq(struct vb2_queue *vq, unsigned int count)
+ {
+ 	struct rvin_dev *vin = vb2_get_drv_priv(vq);
++	int ret = -ENOMEM;
++
++	/* Allocate scratch buffer. */
++	vin->scratch = dma_alloc_coherent(vin->dev, vin->format.sizeimage,
++					  &vin->scratch_phys, GFP_KERNEL);
++	if (!vin->scratch)
++		goto err_scratch;
++
++	ret = rvin_start_streaming(vin);
++	if (ret)
++		goto err_start;
++
++	return 0;
++err_start:
++	dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
++			  vin->scratch_phys);
++err_scratch:
++	return_unused_buffers(vin, VB2_BUF_STATE_QUEUED);
++
++	return ret;
++}
++
++void rvin_stop_streaming(struct rvin_dev *vin)
++{
+ 	unsigned int i, retries;
+ 	unsigned long flags;
+ 	bool buffersFreed;
+@@ -1341,27 +1347,33 @@ static void rvin_stop_streaming(struct vb2_queue *vq)
+ 		vin->state = STOPPED;
+ 	}
+ 
+-	/* Return all unused buffers. */
+-	return_unused_buffers(vin, VB2_BUF_STATE_ERROR);
+-
+ 	spin_unlock_irqrestore(&vin->qlock, flags);
+ 
+ 	rvin_set_stream(vin, 0);
+ 
+ 	/* disable interrupts */
+ 	rvin_disable_interrupts(vin);
++}
++
++static void rvin_stop_streaming_vq(struct vb2_queue *vq)
++{
++	struct rvin_dev *vin = vb2_get_drv_priv(vq);
++
++	rvin_stop_streaming(vin);
+ 
+ 	/* Free scratch buffer. */
+ 	dma_free_coherent(vin->dev, vin->format.sizeimage, vin->scratch,
+ 			  vin->scratch_phys);
++
++	return_unused_buffers(vin, VB2_BUF_STATE_ERROR);
+ }
+ 
+ static const struct vb2_ops rvin_qops = {
+ 	.queue_setup		= rvin_queue_setup,
+ 	.buf_prepare		= rvin_buffer_prepare,
+ 	.buf_queue		= rvin_buffer_queue,
+-	.start_streaming	= rvin_start_streaming,
+-	.stop_streaming		= rvin_stop_streaming,
++	.start_streaming	= rvin_start_streaming_vq,
++	.stop_streaming		= rvin_stop_streaming_vq,
+ 	.wait_prepare		= vb2_ops_wait_prepare,
+ 	.wait_finish		= vb2_ops_wait_finish,
+ };
+diff --git a/drivers/media/platform/rcar-vin/rcar-vin.h b/drivers/media/platform/rcar-vin/rcar-vin.h
+index 2fef23470e3ddfe3..4ec8584709c847a9 100644
+--- a/drivers/media/platform/rcar-vin/rcar-vin.h
++++ b/drivers/media/platform/rcar-vin/rcar-vin.h
+@@ -299,4 +299,7 @@ void rvin_crop_scale_comp(struct rvin_dev *vin);
+ int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel);
+ void rvin_set_alpha(struct rvin_dev *vin, unsigned int alpha);
+ 
++int rvin_start_streaming(struct rvin_dev *vin);
++void rvin_stop_streaming(struct rvin_dev *vin);
++
+ #endif
+-- 
+2.28.0
 
