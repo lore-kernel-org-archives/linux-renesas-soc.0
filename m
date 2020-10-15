@@ -2,102 +2,72 @@ Return-Path: <SRS0=rPsL=DW=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C308C433E7
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 13:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B203C433E7
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 13:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 09AB62225C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 13:13:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0E2622210
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Oct 2020 13:23:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727674AbgJONNN (ORCPT
+        id S1728639AbgJONX5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 15 Oct 2020 09:13:13 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:53839 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727384AbgJONNN (ORCPT
+        Thu, 15 Oct 2020 09:23:57 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:50099 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726959AbgJONX4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Oct 2020 09:13:13 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id B685460004;
-        Thu, 15 Oct 2020 13:13:09 +0000 (UTC)
-Date:   Thu, 15 Oct 2020 17:12:53 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Thu, 15 Oct 2020 09:23:56 -0400
+X-IronPort-AV: E=Sophos;i="5.77,379,1596466800"; 
+   d="scan'208";a="59882948"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 15 Oct 2020 22:23:55 +0900
+Received: from localhost.localdomain (unknown [172.29.52.47])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 3F1724007546;
+        Thu, 15 Oct 2020 22:23:53 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/6] arm64: dts: renesas: r8a779a0: Add CSI-2 nodes
-Message-ID: <20201015151253.36jpl2rnqc3hcrxn@uno.localdomain>
-References: <20201014094443.11070-1-jacopo+renesas@jmondi.org>
- <20201014094443.11070-4-jacopo+renesas@jmondi.org>
- <CAMuHMdW_z3Rppv4LcMabbfZ9SLY+TxDjw7=13F2sWStMdEdaag@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdW_z3Rppv4LcMabbfZ9SLY+TxDjw7=13F2sWStMdEdaag@mail.gmail.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 1/2] arm64: dts: renesas: hihope-rzg2-ex: Drop rxc-skew-ps from ethernet-phy node
+Date:   Thu, 15 Oct 2020 14:23:49 +0100
+Message-Id: <20201015132350.8360-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+HiHope RZG2[HMN] boards uses Realtek phy and the driver does not support
+rxc-skew-ps property. So remove rxc-skew-ps from ethernet-phy node.
 
-On Thu, Oct 15, 2020 at 02:43:51PM +0200, Geert Uytterhoeven wrote:
-> Hi Jacopo,
->
-> On Wed, Oct 14, 2020 at 11:40 AM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> > Add CSI-2 nodes to R8A779A0 R-Car V3U SoC.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->
-> Thanks for your patch!
->
-> > The chip manual reports that the CSI-2 units are fed with S1D1 and S1D2
-> > clocks. The same applies to other SoCs, but none lists the two
-> > additional clocks in the DTS node. So I left them out here as well.
->
-> As these clocks are always-on, and as long as the driver does't
-> care about the actual clock rates, that is fine.
->
-> > --- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-> > @@ -105,6 +105,47 @@ scif0: serial@e6e60000 {
-> >                         status = "disabled";
-> >                 };
-> >
-> > +               csi40: csi2@feaa0000 {
-> > +                       compatible = "renesas,r8a779a0-csi2";
-> > +                       reg = <0 0xfeaa0000 0 0x10000>;
-> > +                       interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>;
-> > +                       clocks = <&cpg CPG_MOD 331>;
-> > +                       power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-> > +                       resets = <&cpg 331>;
-> > +                       status = "disabled";
->
-> Missing "ports" subnode?
+Fixes: 7433f1fb8ec8fe ("arm64: dts: renesas: Add HiHope RZ/G2M sub board support")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-I decided to left the nodes unconnected, but without 'ports' the dts
-will probably fail at validation time.
+diff --git a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
+index 178401a34cbf..b9e46aed5336 100644
+--- a/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
++++ b/arch/arm64/boot/dts/renesas/hihope-rzg2-ex.dtsi
+@@ -23,7 +23,6 @@
+ 	status = "okay";
+ 
+ 	phy0: ethernet-phy@0 {
+-		rxc-skew-ps = <1500>;
+ 		reg = <0>;
+ 		interrupt-parent = <&gpio2>;
+ 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+-- 
+2.17.1
 
-Same for the VINs.
-
->
-> Apart from that:
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
