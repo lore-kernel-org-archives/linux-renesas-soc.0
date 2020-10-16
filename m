@@ -2,161 +2,167 @@ Return-Path: <SRS0=L9bH=DX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACCFFC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 16:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23603C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 21:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51C0F2084C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 16:40:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESgt/PDn"
+	by mail.kernel.org (Postfix) with ESMTP id D084A214DB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 21:13:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409116AbgJPQkF (ORCPT
+        id S2410926AbgJPVNq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 16 Oct 2020 12:40:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46490 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2409112AbgJPQkF (ORCPT
+        Fri, 16 Oct 2020 17:13:46 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:36078 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410923AbgJPVNq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Oct 2020 12:40:05 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E038CC061755;
-        Fri, 16 Oct 2020 09:40:05 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id n9so1765326pgf.9;
-        Fri, 16 Oct 2020 09:40:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IckxrY+DJUgifghNLeuNR0thZvPKeVF++1zmyr1erYw=;
-        b=ESgt/PDnWql9lpWADVRcvJtTdx/yh6tAhrYC8ZbqFWYpenEaoveVB1MkC0MmzrYBkq
-         A2hcACvYNVxP+qeCOXAm6TAoHg/hA945fUoFPjZyDgwGUzM0gBZIAAgt2f2WdEixOwMc
-         MuvuXD0etsBBlcYQYZVQb0nnaZp6KJlo0Db6lw+kJqZnzH3zDaZxJ8q6h45XeRph8MCx
-         rDJyF81mIAxRxSew5JoQXhgwt1mXtnZ6p+gLQPRXbuD31FMcP8zYOHwfP4c+cBdpMPa/
-         g3a4a6g6G4qJAcV8hOS7BmEgZ9IbBpK/hWsUtfcO9d6EafuL7fBhEFwToR4bak2AEIOr
-         WedQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IckxrY+DJUgifghNLeuNR0thZvPKeVF++1zmyr1erYw=;
-        b=ZQZ7syF6ObbW2/ktYVm4DWNpDvLu3y6rjFWc2PXj/62SrFct7P8BaJJMFTJONq03MY
-         O+mHGh2RAu0YLR3OVezwATVRnDZxKNQAbiRk4ZfyPhQ8XLO/0SbFz7qoSUXUQ8vSEuf5
-         qnh2XHnqFFKMf5ZELakTo9pJThyZWZvPdllkdOOujZhSwl9N5SxXLzcTxaYqf73pj6aL
-         /sabuLrPbXIHVrVPpYqsjgY4HTe6zCaxUpbDy/2CfkpnRXNK4gjpTBrDiSrBbkY3Ccnh
-         ezVs5TYKR5vuXRCkpPcgLaZuCtAEBmY0Wz86O00LdjnpT1bQiPA9/S/1SrlKZd5q8lmo
-         2HCw==
-X-Gm-Message-State: AOAM533aUFtw8ySkRAmoysJY6n6RRmf84/dCjCzU8y/NeoiN2HTMB+ie
-        Y8MqcYCWSogu+OIBUbhrERWGwHzHOI+wsSx/3CkKziFATDl9AA==
-X-Google-Smtp-Source: ABdhPJx6pQLev1hrd9p9RQDKLQbYA4y9N4AoDM8hkHzN15gVHnEjk9hji9W0yK8afB4GH5dGC6kXh6x1X4qhgS5fHFQ=
-X-Received: by 2002:a63:308:: with SMTP id 8mr3912525pgd.203.1602866405342;
- Fri, 16 Oct 2020 09:40:05 -0700 (PDT)
+        Fri, 16 Oct 2020 17:13:46 -0400
+X-Greylist: delayed 563 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Oct 2020 17:13:45 EDT
+Received: from ravnborg.org (unknown [188.228.123.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id BAF4320030;
+        Fri, 16 Oct 2020 23:04:20 +0200 (CEST)
+Date:   Fri, 16 Oct 2020 23:04:19 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH v3] drm/bridge: lvds-codec: Add support for regulator
+Message-ID: <20201016210419.GD1496366@ravnborg.org>
+References: <20200922105526.5252-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-References: <20200917130920.6689-1-geert+renesas@glider.be>
-In-Reply-To: <20200917130920.6689-1-geert+renesas@glider.be>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 16 Oct 2020 19:40:54 +0300
-Message-ID: <CAHp75Vd3s1N_f9oM=MiMv6ZhtrOzYMKAQz+CURVkxG4JgGVw+Q@mail.gmail.com>
-Subject: Re: [PATCH v3] ata: sata_rcar: Fix DMA boundary mask
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Jens Axboe <axboe@kernel.dk>, Ulf Hansson <ulf.hansson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-ide@vger.kernel.org,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200922105526.5252-1-laurent.pinchart+renesas@ideasonboard.com>
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=S433PrkP c=1 sm=1 tr=0
+        a=S6zTFyMACwkrwXSdXUNehg==:117 a=S6zTFyMACwkrwXSdXUNehg==:17
+        a=kj9zAlcOel0A:10 a=yC-0_ovQAAAA:8 a=P1BnusSwAAAA:8 a=e5mUnYsNAAAA:8
+        a=mSdEz-HRsigmF5DYOmMA:9 a=CjuIK1q_8ugA:10 a=QsnFDINu91a9xkgZirup:22
+        a=D0XLA9XvdZm18NrgonBM:22 a=Vxmtnl_E_bksehYqCbjh:22
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Sep 17, 2020 at 4:12 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
-> Before commit 9495b7e92f716ab2 ("driver core: platform: Initialize
-> dma_parms for platform devices"), the R-Car SATA device didn't have DMA
-> parameters.  Hence the DMA boundary mask supplied by its driver was
-> silently ignored, as __scsi_init_queue() doesn't check the return value
-> of dma_set_seg_boundary(), and the default value of 0xffffffff was used.
->
-> Now the device has gained DMA parameters, the driver-supplied value is
-> used, and the following warning is printed on Salvator-XS:
->
->     DMA-API: sata_rcar ee300000.sata: mapping sg segment across boundary [start=0x00000000ffffe000] [end=0x00000000ffffefff] [boundary=0x000000001ffffffe]
->     WARNING: CPU: 5 PID: 38 at kernel/dma/debug.c:1233 debug_dma_map_sg+0x298/0x300
->
-> (the range of start/end values depend on whether IOMMU support is
->  enabled or not)
->
-> The issue here is that SATA_RCAR_DMA_BOUNDARY doesn't have bit 0 set, so
-> any typical end value, which is odd, will trigger the check.
->
-> Fix this by increasing the DMA boundary value by 1.
->
-> This also fixes the following WRITE DMA EXT timeout issue:
->
->     # dd if=/dev/urandom of=/mnt/de1/file1-1024M bs=1M count=1024
->     ata1.00: exception Emask 0x0 SAct 0x0 SErr 0x0 action 0x6 frozen
->     ata1.00: failed command: WRITE DMA EXT
->     ata1.00: cmd 35/00:00:00:e6:0c/00:0a:00:00:00/e0 tag 0 dma 1310720 out
->     res 40/00:01:00:00:00/00:00:00:00:00/00 Emask 0x4 (timeout)
->     ata1.00: status: { DRDY }
->
-> as seen by Shimoda-san since commit 429120f3df2dba2b ("block: fix
-> splitting segments on boundary masks").
->
-> Fixes: 8bfbeed58665dbbf ("sata_rcar: correct 'sata_rcar_sht'")
-> Fixes: 9495b7e92f716ab2 ("driver core: platform: Initialize dma_parms for platform devices")
-> Fixes: 429120f3df2dba2b ("block: fix splitting segments on boundary masks")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Cc: stable <stable@vger.kernel.org>
+Hi Biju, Laurent
+
+On Tue, Sep 22, 2020 at 01:55:26PM +0300, Laurent Pinchart wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> Add the support for enabling optional regulator that may be used as VCC
+> source.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> [Replaced 'error' variable with 'ret']
+> [Renamed regulator from 'vcc' to 'power']
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+
+Applied to drm-misc-next.
+Biju, could you make a follow-up patch that introduces dev_err_probe()
+where appropriate? I did not fix up the code but this was a good
+candidate.
+
+	Sam
+
 > ---
-> v3:
->   - Add Reviewed-by, Tested-by,
->   - Augment description and Fixes: with Shimoda-san's problem report
->     https://lore.kernel.org/r/1600255098-21411-1-git-send-email-yoshihiro.shimoda.uh@renesas.com,
->
-> v2:
->   - Add Reviewed-by, Tested-by, Cc.
+> Changes since v2:
+> 
+> - Use the correct regulator name
 > ---
->  drivers/ata/sata_rcar.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-> index 141ac600b64c87ef..44b0ed8f6bb8a120 100644
-> --- a/drivers/ata/sata_rcar.c
-> +++ b/drivers/ata/sata_rcar.c
-> @@ -120,7 +120,7 @@
->  /* Descriptor table word 0 bit (when DTA32M = 1) */
->  #define SATA_RCAR_DTEND                        BIT(0)
->
-> -#define SATA_RCAR_DMA_BOUNDARY         0x1FFFFFFEUL
-> +#define SATA_RCAR_DMA_BOUNDARY         0x1FFFFFFFUL
-
-Wondering if GENMASK() here will be better to avoid such mistakes.
-
->
->  /* Gen2 Physical Layer Control Registers */
->  #define RCAR_GEN2_PHY_CTL1_REG         0x1704
-> --
-> 2.17.1
->
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+>  drivers/gpu/drm/bridge/lvds-codec.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/lvds-codec.c b/drivers/gpu/drm/bridge/lvds-codec.c
+> index f19d9f7a5db2..f52ccffc1bd1 100644
+> --- a/drivers/gpu/drm/bridge/lvds-codec.c
+> +++ b/drivers/gpu/drm/bridge/lvds-codec.c
+> @@ -10,13 +10,16 @@
+>  #include <linux/of_device.h>
+>  #include <linux/of_graph.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/regulator/consumer.h>
+>  
+>  #include <drm/drm_bridge.h>
+>  #include <drm/drm_panel.h>
+>  
+>  struct lvds_codec {
+> +	struct device *dev;
+>  	struct drm_bridge bridge;
+>  	struct drm_bridge *panel_bridge;
+> +	struct regulator *vcc;
+>  	struct gpio_desc *powerdown_gpio;
+>  	u32 connector_type;
+>  };
+> @@ -38,6 +41,14 @@ static int lvds_codec_attach(struct drm_bridge *bridge,
+>  static void lvds_codec_enable(struct drm_bridge *bridge)
+>  {
+>  	struct lvds_codec *lvds_codec = to_lvds_codec(bridge);
+> +	int ret;
+> +
+> +	ret = regulator_enable(lvds_codec->vcc);
+> +	if (ret) {
+> +		dev_err(lvds_codec->dev,
+> +			"Failed to enable regulator \"vcc\": %d\n", ret);
+> +		return;
+> +	}
+>  
+>  	if (lvds_codec->powerdown_gpio)
+>  		gpiod_set_value_cansleep(lvds_codec->powerdown_gpio, 0);
+> @@ -46,9 +57,15 @@ static void lvds_codec_enable(struct drm_bridge *bridge)
+>  static void lvds_codec_disable(struct drm_bridge *bridge)
+>  {
+>  	struct lvds_codec *lvds_codec = to_lvds_codec(bridge);
+> +	int ret;
+>  
+>  	if (lvds_codec->powerdown_gpio)
+>  		gpiod_set_value_cansleep(lvds_codec->powerdown_gpio, 1);
+> +
+> +	ret = regulator_disable(lvds_codec->vcc);
+> +	if (ret)
+> +		dev_err(lvds_codec->dev,
+> +			"Failed to disable regulator \"vcc\": %d\n", ret);
+>  }
+>  
+>  static const struct drm_bridge_funcs funcs = {
+> @@ -63,12 +80,24 @@ static int lvds_codec_probe(struct platform_device *pdev)
+>  	struct device_node *panel_node;
+>  	struct drm_panel *panel;
+>  	struct lvds_codec *lvds_codec;
+> +	int ret;
+>  
+>  	lvds_codec = devm_kzalloc(dev, sizeof(*lvds_codec), GFP_KERNEL);
+>  	if (!lvds_codec)
+>  		return -ENOMEM;
+>  
+> +	lvds_codec->dev = &pdev->dev;
+>  	lvds_codec->connector_type = (uintptr_t)of_device_get_match_data(dev);
+> +
+> +	lvds_codec->vcc = devm_regulator_get(lvds_codec->dev, "power");
+> +	if (IS_ERR(lvds_codec->vcc)) {
+> +		ret = PTR_ERR(lvds_codec->vcc);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(lvds_codec->dev,
+> +				"Unable to get \"vcc\" supply: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+>  	lvds_codec->powerdown_gpio = devm_gpiod_get_optional(dev, "powerdown",
+>  							     GPIOD_OUT_HIGH);
+>  	if (IS_ERR(lvds_codec->powerdown_gpio))
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
