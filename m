@@ -2,115 +2,76 @@ Return-Path: <SRS0=L9bH=DX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDBAC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 12:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B18DCC433E7
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 12:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 412FF2083B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 12:04:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AbuFMvGp"
+	by mail.kernel.org (Postfix) with ESMTP id 6811E20874
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 12:17:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407120AbgJPMEn (ORCPT
+        id S2407324AbgJPMRU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 16 Oct 2020 08:04:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60004 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406845AbgJPMEl (ORCPT
+        Fri, 16 Oct 2020 08:17:20 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:52101 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2405588AbgJPMRU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Oct 2020 08:04:41 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B49BC061755;
-        Fri, 16 Oct 2020 05:04:40 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id h24so2736519ejg.9;
-        Fri, 16 Oct 2020 05:04:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=99xt5tOxYL+SsaIFtCFHk6b78TJvFfz6VlYtP/wHSYo=;
-        b=AbuFMvGpPxRfTL0Vkv6wAp+YVoZ+whZsEj43YJm114aAlLx625EC1u/srVJNFN1TCC
-         G+K86rE8ptlqoY4+Ytn1Rrq5kKmuvHcYNmKxZOtkBh0806jurIDiL8iSwp99+kf8KKE/
-         YAVmXkE8a801FFX/0zTyt8b0RIFCa695HTQBmzwCIpAcn7rPDe15pCDNvgBqgJ+kz65J
-         f4gTRCj5ViPxdG5IBArXJTrFGCaYofVs/b4CnHXgPky197QMpfNw+iExW3S8s8WJckMq
-         +ClQ5QS6J9fq70XpZ2i5r+1uopRCp751MF0Jvlo1uUIefTq6vuurS0crkIwbh9ngHYF0
-         hegA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=99xt5tOxYL+SsaIFtCFHk6b78TJvFfz6VlYtP/wHSYo=;
-        b=ryOQKUuwuBIpsvDKjo3SqY8z+kTnWzpvNCTG1/OqCn1R572V0E7IFB0NXLxgnScW75
-         k1LXK1IGsgLN6PZ4KjbPzhwLARnxT+F22AW7/eJt/pgvKm1wnrWmzAzRF65fVNT0uiS5
-         Sipu84SLDmztavoFAAiNBfVV9jcjtgfej4SjjTM/rvxRhAF0TioqyXTBFq0e+35/G8aA
-         wKYVAUzoX22Z/UtJuYCzMiuJeZ+dJ9HJWjEpm27WLaqUglh5Rkjc0PVamz8HFjT1TdfB
-         ecgIsjMNr60xvlX3qJal1UszFSyJN4KjzeWdYks4cd0b+U8b4gr0s3FXQhmdD+EIcoL/
-         t0MQ==
-X-Gm-Message-State: AOAM532Fjb3rvc5uWYvY1uQdgxNML6CU+8NWGZQDhrk/HHtp8K2XzqSI
-        d1C57QV+RZQWnCc924Tqh2cZRS+xCqm24Q==
-X-Google-Smtp-Source: ABdhPJx96sTZPYVmd1ghvhar6UA0CdNGRd8QNjox83Ax1W1Vq/YQtzqh/rrU7JIMwtMpdOSQqPb1dw==
-X-Received: by 2002:a17:906:1f08:: with SMTP id w8mr3260880ejj.181.1602849879120;
-        Fri, 16 Oct 2020 05:04:39 -0700 (PDT)
-Received: from localhost.localdomain (ip-89-176-112-137.net.upcbroadband.cz. [89.176.112.137])
-        by smtp.gmail.com with ESMTPSA id g18sm1450298eje.12.2020.10.16.05.04.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Oct 2020 05:04:38 -0700 (PDT)
-From:   marek.vasut@gmail.com
-To:     linux-pci@vger.kernel.org
-Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] PCI: rcar: Always allocate MSI addresses in 32bit space
-Date:   Fri, 16 Oct 2020 14:04:31 +0200
-Message-Id: <20201016120431.7062-1-marek.vasut@gmail.com>
-X-Mailer: git-send-email 2.28.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 16 Oct 2020 08:17:20 -0400
+X-IronPort-AV: E=Sophos;i="5.77,382,1596466800"; 
+   d="scan'208";a="59986358"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 16 Oct 2020 21:17:18 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 42FC643871A2;
+        Fri, 16 Oct 2020 21:17:16 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/4] Renesas RZ/G2x enable RPC clocks
+Date:   Fri, 16 Oct 2020 13:17:05 +0100
+Message-Id: <20201016121709.8447-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+Hi All,
 
-This fixes MSI operation on legacy PCI cards, which cannot issue 64bit MSIs.
-The R-Car controller only has one MSI trigger address instead of two, one
-for 64bit and one for 32bit MSI, set the address to 32bit PCIe space so that
-legacy PCI cards can also trigger MSIs.
+This patch series enables RPC clocks on RZ/G2x SoC's.
 
-Fixes: 290c1fb35860 ("PCI: rcar: Add MSI support for PCIe")
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org
----
- drivers/pci/controller/pcie-rcar-host.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This series applies on top of [1].
 
-diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-index 1194d5f3341b..ac5c7d7573a6 100644
---- a/drivers/pci/controller/pcie-rcar-host.c
-+++ b/drivers/pci/controller/pcie-rcar-host.c
-@@ -753,7 +753,7 @@ static int rcar_pcie_enable_msi(struct rcar_pcie_host *host)
- 	}
- 
- 	/* setup MSI data target */
--	msi->pages = __get_free_pages(GFP_KERNEL, 0);
-+	msi->pages = __get_free_pages(GFP_KERNEL | GFP_DMA32, 0);
- 	rcar_pcie_hw_enable_msi(host);
- 
- 	return 0;
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/
+    renesas-drivers.git/log/?h=renesas-clk-for-v5.11
+
+Cheers,
+Prabhakar
+
+Biju Das (2):
+  clk: renesas: r8a774a1: Add RPC clocks
+  clk: renesas: r8a774b1: Add RPC clocks
+
+Lad Prabhakar (2):
+  clk: renesas: rcar-gen3: Add support to pass custom RPCSRC div table
+  clk: renesas: r8a774c0: Add RPC clocks
+
+ drivers/clk/renesas/r8a774a1-cpg-mssr.c |  8 ++++++++
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c |  8 ++++++++
+ drivers/clk/renesas/r8a774c0-cpg-mssr.c | 14 ++++++++++++++
+ drivers/clk/renesas/rcar-gen3-cpg.c     |  2 ++
+ drivers/clk/renesas/renesas-cpg-mssr.h  |  6 ++++++
+ 5 files changed, 38 insertions(+)
+
 -- 
-2.28.0
+2.17.1
 
