@@ -2,126 +2,197 @@ Return-Path: <SRS0=L9bH=DX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE7AC43457
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 10:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 789F5C433E7
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 10:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D4B920848
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 10:07:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20885207F7
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 10:46:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="uAVW5LZ0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406578AbgJPKHK (ORCPT
+        id S2395482AbgJPKqd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 16 Oct 2020 06:07:10 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:36061 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406570AbgJPKHI (ORCPT
+        Fri, 16 Oct 2020 06:46:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47916 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395480AbgJPKqd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Oct 2020 06:07:08 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 2BC2AE0010;
-        Fri, 16 Oct 2020 10:07:03 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     kieran.bingham+renesas@ideasonboard.com,
-        laurent.pinchart+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Hyun Kwon <hyunk@xilinx.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 5/7] media: i2c: max9286: Configure reverse channel amplitude
-Date:   Fri, 16 Oct 2020 14:06:23 +0200
-Message-Id: <20201016120625.64337-6-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201016120625.64337-1-jacopo+renesas@jmondi.org>
-References: <20201016120625.64337-1-jacopo+renesas@jmondi.org>
+        Fri, 16 Oct 2020 06:46:33 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF691C0613D3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Oct 2020 03:46:32 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id 184so2263666lfd.6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Oct 2020 03:46:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=GxWpsonXHZk3zzIguQtFY3XPmOS5ItUSqY/CvWrQDc0=;
+        b=uAVW5LZ0qDoTr11vN0BBe+1vX4rbwGvp1XMQ/KEaZr5f8W+mk4dcL3Hgw++zlnaVSB
+         qzBQgmXWZ9vDUwe0nFRnajnG7HorEG1vaaUA/rpdEGxwwzHhy5FHmWiwsziwdjCV3n/o
+         j1jhzHz4h1apXSkrGBMeve4P5jamP+ZkiIyooQ0d4wuURiXbv4zBbW3H8CDfSOyLr/tv
+         cQhpOTL0DB8If7bRY6fYQM62OIylS7oWEHSrKuDZ/0JXEiwwp78Fd5tFQaeQkbW19orn
+         gGsUmMlU7HLVhxT5SniR8+MJsn4664VJOAd/0NrqaADR2qS9LX4WILVoRV5lDg8iBMzV
+         RgOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=GxWpsonXHZk3zzIguQtFY3XPmOS5ItUSqY/CvWrQDc0=;
+        b=kejmQRIhY/iwxrkWf2keULiSWPHNGMCcro7542EKqJiCCqbu+xIBV70mvEc/GgK4f/
+         Oe7qfPQFcGjc0bhDAPaC+/8kdUxGkjL67BeESEaYCBI3E+SCecXzsdc37o19QDKqtDyC
+         1OF3WR4rIp5pxgvfZDs7iJ1lE13YpqHAEhcovciwCE18YTWyDL6cQBH+kHXi3r49Ofx3
+         k+oP7p5b8r5oc0ASPbr9OlAGPYTMHNSS5TOYHfQsdKW88UwkSmJK6ABL01plvqTwn6Tk
+         PdqiSMty6sukCWNX9Q1E51vL36AUCeFvAbZlMO3WkuKgqiFRQqR4DmZOiM4udhtcT6cf
+         LRoA==
+X-Gm-Message-State: AOAM5324CVF96Ul4Uldv3WJMaltlFKia6BzF2PWqZSS9w0/aOKxTTXVA
+        iUlA+NPfXblmBcwYw9+Gg2rrqg==
+X-Google-Smtp-Source: ABdhPJwn+emKMSImv/ay6it3kVmAQdJapmCqNQeyL62QfTbrTgeXOFuxoVIoJrgyIbbuV0Xr3WfHKQ==
+X-Received: by 2002:a19:350:: with SMTP id 77mr1194910lfd.92.1602845191026;
+        Fri, 16 Oct 2020 03:46:31 -0700 (PDT)
+Received: from localhost (h-209-203.A463.priv.bahnhof.se. [155.4.209.203])
+        by smtp.gmail.com with ESMTPSA id z19sm704004lfr.46.2020.10.16.03.46.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Oct 2020 03:46:30 -0700 (PDT)
+Date:   Fri, 16 Oct 2020 12:46:29 +0200
+From:   Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH 0/5] rcar-vin: Support suspend and resume
+Message-ID: <20201016104629.xy4fb23ibglwh574@oden.dyn.berto.se>
+References: <20201015231408.2399933-1-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdWnchxP=s84SArS9XWg+uZESVXbkfOXWrpbpwUqNRk91g@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdWnchxP=s84SArS9XWg+uZESVXbkfOXWrpbpwUqNRk91g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Adjust reverse channel amplitude according to the presence of
-the 'high-threshold" DTS property.
+Hi Geert,
 
-If no high threshold compensation is required, start with a low
-amplitude (100mV) and increase it after the remote serializers
-have probed and have enabled noise immunity on their reverse
-channels.
+On 2020-10-16 09:06:20 +0200, Geert Uytterhoeven wrote:
+> Hi Niklas,
+> 
+> On Fri, Oct 16, 2020 at 4:01 AM Niklas Söderlund
+> <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > This series add suspend and resume support directly to R-Car VIN and
+> > indirectly to R-Car CSI-2 and other subdevices in the VIN capture
+> > pipeline. The capture pipeline is stopped when suspending and started
+> > when resuming, all while retaining the buffers provided from user-space.
+> > This makes the start and stop of the pipeline transparent from an
+> > application point of view.
+> >
+> > As the pipeline is switched off subdevices that poweroff themself when
+> > not in use (such as R-Car CSI-2) are also switched off and are
+> > indirectly serviced by the suspend support in VIN.
+> 
+> Thanks for your series!
+> 
+> > This work is based on-top of the media-tree and is tested on both R-Car
+> > Gen2 and Gen3 without any regressions.
+> 
+> FTR: did you test on Gen3 with both s2idle and s2ram, the latter powering
+> off the SoC?
 
-If high threshold compensation is required, configure the reverse
-channel with a 170mV amplitude before the remote serializers have
-probed.
+I have only been able to test it with s2idle. My issue is that s2ram 
+fails to reconnect the Ethernet (ravb) and I use nfsroot. If I instead 
+use a initramfs I can resume from s2ram but I don't have the setup to 
+test capture in that environment.
 
-This change is required for both rdacm20 and rdacm21 camera modules
-to be correctly probed when used in combination with the max9286
-deserializer.
+My procedure for s2idle that works with nfsroot is,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/i2c/max9286.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+    # path=$(find /sys -path '/sys/devices/platform/*/ttySC0/power/wakeup')
+    # echo enabled > $path
+    # echo N > /sys/module/printk/parameters/console_suspend
+    # echo s2idle > /sys/power/mem_slee
+    # echo mem > /sys/power/state
+    ** Wait a while and then wakeup using the console **
+    #
 
-diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-index 31e27d0f34f1..4c72e1e6b27b 100644
---- a/drivers/media/i2c/max9286.c
-+++ b/drivers/media/i2c/max9286.c
-@@ -163,6 +163,8 @@ struct max9286_priv {
- 	unsigned int mux_channel;
- 	bool mux_open;
- 
-+	bool high_threshold;
-+
- 	struct v4l2_ctrl_handler ctrls;
- 	struct v4l2_ctrl *pixelrate;
- 
-@@ -557,10 +559,14 @@ static int max9286_notify_bound(struct v4l2_async_notifier *notifier,
- 	 * All enabled sources have probed and enabled their reverse control
- 	 * channels:
- 	 *
-+	 * - Increase the reverse channel amplitude to compensate for the
-+	 *   remote ends high threshold, if not done already
- 	 * - Verify all configuration links are properly detected
- 	 * - Disable auto-ack as communication on the control channel are now
- 	 *   stable.
- 	 */
-+	if (!priv->high_threshold)
-+		max9286_reverse_channel_setup(priv, 170);
- 	max9286_check_config_link(priv, priv->source_mask);
- 
- 	/*
-@@ -967,7 +973,12 @@ static int max9286_setup(struct max9286_priv *priv)
- 	 * only. This should be disabled after the mux is initialised.
- 	 */
- 	max9286_configure_i2c(priv, true);
--	max9286_reverse_channel_setup(priv, 170);
-+
-+	/*
-+	 * Compensate the remote end high threshold with a larger channel
-+	 * amplitude if necessary.
-+	 */
-+	max9286_reverse_channel_setup(priv, priv->high_threshold ? 170 : 100);
- 
- 	/*
- 	 * Enable GMSL links, mask unused ones and autodetect link
-@@ -1235,6 +1246,12 @@ static int max9286_parse_dt(struct max9286_priv *priv)
- 	}
- 	of_node_put(node);
- 
-+	/*
-+	 * Parse 'high_threshold' property to configure the reverse channel
-+	 * amplitude.
-+	 */
-+	priv->high_threshold = device_property_present(dev, "high_threshold");
-+
- 	priv->route_mask = priv->source_mask;
- 
- 	return 0;
+My procedure for s2ram that does _not_ work with nfsroot (but do with 
+initramfs). Both tests are done on a M3-N.
+
+    # echo N > /sys/module/printk/parameters/console_suspend
+    # echo on > /sys/bus/i2c/drivers/bd9571mwv/*/bd9571mwv-regulator*/backup_mode
+    ** flipp SW23 off **
+    # echo mem > /sys/power/state
+    [  347.096336] PM: suspend entry (deep)
+    [  347.104251] Filesystems sync: 0.003 seconds
+    [  347.123751] Freezing user space processes ... (elapsed 0.007 seconds) done.
+    [  347.138760] OOM killer disabled.
+    [  347.142099] Freezing remaining freezable tasks ... (elapsed 0.002 seconds) done.
+    [  347.167466] ravb e6800000.ethernet eth0: Link is Down
+    [  347.440549] Disabling non-boot CPUs ...
+    [  347.448805] CPU1: shutdown
+    [  347.451731] psci: CPU1 killed (polled 0 ms)
+    ** Waits 30+ seconds then switch SW23 on **
+    INFO:    ARM GICv2 driver initialized
+    NOTICE:  BL2: R-Car Gen3 Initial Program Loader(CA57) Rev.2.0.6
+    NOTICE:  BL2: PRR is R-Car M3N Ver.1.0
+    NOTICE:  BL2: Board is Salvator-XS Rev.1.0
+    NOTICE:  BL2: Boot device is HyperFlash(160MHz)
+    NOTICE:  BL2: LCM state is CM
+    NOTICE:  AVS setting succeeded. DVFS_SetVID=0x53
+    NOTICE:  BL2: DDR3200(rev.0.40)
+    NOTICE:  BL2: [WARM_BOOT]
+    NOTICE:  BL2: DRAM Split is OFF
+    NOTICE:  BL2: QoS is default setting(rev.0.09)
+    NOTICE:  BL2: DRAM refresh interval 1.95 usec
+    NOTICE:  BL2: Periodic Write DQ Training
+    NOTICE:  BL2: CH0: 400000000 - 47fffffff, 2 GiB
+    NOTICE:  BL2: FDT at 0xe6322508
+    NOTICE:  BL2: v2.3(release):v2.3-188-g9935047b2086faa3
+    NOTICE:  BL2: Built : 23:31:02, Jun 18 2020
+    NOTICE:  BL2: Normal boot
+    INFO:    BL2: Doing platform setup
+    [  347.461237] Enabling non-boot CPUs ...
+    [  347.465551] Detected PIPT I-cache on CPU1
+    [  347.465611] CPU1: Booted secondary processor 0x0000000001 [0x411fd073]
+    [  347.468691] CPU1 is up
+    [  347.607806] usb usb2: root hub lost power or was reset
+    [  347.613594] usb usb1: root hub lost power or was reset
+    [  347.767713] usb usb4: root hub lost power or was reset
+    [  347.773424] usb usb3: root hub lost power or was reset
+    [  347.775223] libphy: ravb_mii: probed
+    [  347.782808] mdio_bus e6800000.ethernet-ffffffff: MDIO device at address 0 is missing.
+    [  347.794508] ravb e6800000.ethernet eth0: failed to connect PHY
+    [  347.802223] PM: dpm_run_callback(): ravb_resume+0x0/0x190 returns -2
+    [  347.808739] PM: Device e6800000.ethernet failed to resume: error -2
+    [  347.929701] ata1: link resume succeeded after 1 retries
+    [  347.989934] OOM killer enabled.
+    [  347.993184] Restarting tasks ... done.
+    [  348.004321] PM: suspend exit
+    [  348.039400] ata1: SATA link down (SStatus 0 SControl 300)
+    [  529.376515] nfs: server 10.0.1.1 not responding, still trying
+    [  529.376702] nfs: server 10.0.1.1 not responding, still trying
+    [  529.385628] nfs: server 10.0.1.1 not responding, still trying
+    ** Board never reaches user-space **
+
+Is there a known fix for this?
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
 -- 
-2.28.0
-
+Regards,
+Niklas Söderlund
