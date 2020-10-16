@@ -2,147 +2,280 @@ Return-Path: <SRS0=L9bH=DX=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3DCDC433E7
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 08:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE769C433E7
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 08:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67E00207F7
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 08:02:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 577882080A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 16 Oct 2020 08:07:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LUk9zq96"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404979AbgJPICB (ORCPT
+        id S2405041AbgJPIHg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 16 Oct 2020 04:02:01 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:38409 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404892AbgJPICA (ORCPT
+        Fri, 16 Oct 2020 04:07:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51444 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404950AbgJPIHf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 16 Oct 2020 04:02:00 -0400
-X-Originating-IP: 93.34.118.233
-Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 22A9E1BF210;
-        Fri, 16 Oct 2020 08:01:56 +0000 (UTC)
-Date:   Fri, 16 Oct 2020 12:01:42 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
+        Fri, 16 Oct 2020 04:07:35 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DDC5EC061755
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Oct 2020 01:07:35 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id w11so841510pll.8
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 16 Oct 2020 01:07:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DlwW+fcfTWBNvcnVu7Sv80xFknbWTFutzwDIk9gaJjE=;
+        b=LUk9zq96kNpGkHO/ADwxoe55gSIsO56LL+guLwbM2CXIRklwg/6JMCduPgun4K2lL4
+         SQO0QTieKgx69/9XRT8N/YF46aidklbIyD5rkzZ7NZBLUl8VFw1EzhrZtUtggf0Iurou
+         Y0vWoVIpb2O4YfNX8uFxS1Z09YQHcvqKFXQOo0L/NXecKisBafRsY8v+RJ3GlhFz0gNs
+         S6xEPf+HQBte/gEkPQl/W77cYzwIfYnx/dUKEG19m+lLJc2yA0TdSlbDmpI2Hjbu2lmj
+         +rBrYweFXEhvy2qE8pdq/pKWMMwlaSrUfTiYE/d000SDJb2/o0UQpCV+GvQAHPzL0vrw
+         he/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DlwW+fcfTWBNvcnVu7Sv80xFknbWTFutzwDIk9gaJjE=;
+        b=IDfEdFLWOHy2tzKJ/xEHWJLdmHJ655gkQ4+NsurrUsBhB2tPn5JhPFKHE4D3b5YJGg
+         5vGxSI1iMoN9AI+9cjvR6oh/5oFIJRX2v6Y8Jt9MzJUxgmW/71Vijt1M3khyCZ67r97x
+         6NoijUEyM8IBbzd2wsuOdFWgskIArZ/m1hciuZatwr9yP335fBes3Zd4ix5iyYSXb5Zc
+         NPVyKUeWrVXJj3K+Z+h9IIWcNWrueol2mXg/G0y+csf8cl67cba6/JpHp80O8wRMZQny
+         /Bsg5yiQNnTh9b0geAPk5cOavnDo4OQ164wwBMVAvZG5nSF9Y8lfjqn4FR7yTOsMXS2E
+         BP0w==
+X-Gm-Message-State: AOAM530oe0S7P0g/vbK+rBAfKowqOnqzZWhnqch+RAIUk15LHvlthpcE
+        AJT7yCNek9p/JNgEFtGt5WEQVg==
+X-Google-Smtp-Source: ABdhPJxAlUjMkrXQRc67VkrTCWmyjbtdtJMb9iHzky/anOb+gSL7iwG+IcTfGyhEIhk+gfXsZZMDhw==
+X-Received: by 2002:a17:902:8ec7:b029:d2:42fe:37de with SMTP id x7-20020a1709028ec7b02900d242fe37demr2624044plo.23.1602835655145;
+        Fri, 16 Oct 2020 01:07:35 -0700 (PDT)
+Received: from localhost ([122.181.54.133])
+        by smtp.gmail.com with ESMTPSA id k3sm1750426pff.71.2020.10.16.01.07.33
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Oct 2020 01:07:33 -0700 (PDT)
+Date:   Fri, 16 Oct 2020 13:37:30 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/6] clk: renesas: r8a779a0: Add VIN[00-31] clocks
-Message-ID: <20201016100142.c6fg4xltz5m6dbjp@uno.localdomain>
-References: <20201014094443.11070-1-jacopo+renesas@jmondi.org>
- <20201014094443.11070-5-jacopo+renesas@jmondi.org>
- <0de062e4-0385-444b-1abc-881c313a6479@gmail.com>
- <20201015093227.y3n5ohzuydg2fe3t@uno.localdomain>
- <CAMuHMdVNmQ6f09M8Hkrq0xuMNtQM4RGDOrmPENNRcWz36gZXgA@mail.gmail.com>
+Cc:     Stephan Gerhold <stephan@gerhold.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
+        nks@flawful.org, Georgi Djakov <georgi.djakov@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH V2 2/2] cpufreq: dt: Refactor initialization to handle
+ probe deferral properly
+Message-ID: <20201016080730.h7u3jmlyjbyhqn3t@vireshk-i7>
+References: <24ff92dd1b0ee1b802b45698520f2937418f8094.1598260050.git.viresh.kumar@linaro.org>
+ <f75c61f193f396608d592ae2a9938264d582c038.1598260050.git.viresh.kumar@linaro.org>
+ <CAMuHMdXLQKN5n58NvOp43vhc3ryLXWurBSsmcW9Q=oW502PYOQ@mail.gmail.com>
+ <20201013095613.mbgmjwzojg5wxmau@vireshk-i7>
+ <CAMuHMdVAJdHVMtK3Sc4sJiJGAwz1J4dKODBFcNzgstaktyKkOw@mail.gmail.com>
+ <20201016050347.ers54itzmxgijzsy@vireshk-i7>
+ <CAMuHMdUUzoFxbJts3gVC7i5A5daa_TYzKdrGEHho=3a1eeC_ww@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVNmQ6f09M8Hkrq0xuMNtQM4RGDOrmPENNRcWz36gZXgA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUUzoFxbJts3gVC7i5A5daa_TYzKdrGEHho=3a1eeC_ww@mail.gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+On 16-10-20, 08:44, Geert Uytterhoeven wrote:
+> On Fri, Oct 16, 2020 at 7:03 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > On 14-10-20, 18:40, Geert Uytterhoeven wrote:
+> > > On this platform (r8a7791-koelsch.dts), there is no opp table in DT.
+> 
+> I think you missed the clue above:
 
-On Thu, Oct 15, 2020 at 06:30:03PM +0200, Geert Uytterhoeven wrote:
-> Hi Jacopo,
->
-> On Thu, Oct 15, 2020 at 9:32 AM Jacopo Mondi <jacopo@jmondi.org> wrote:
-> > On Wed, Oct 14, 2020 at 09:55:32PM +0300, Sergei Shtylyov wrote:
-> > > On 10/14/20 12:44 PM, Jacopo Mondi wrote:
-> > > > Add clock definitions of the VIN instances for R-Car V3U.
-> > > >
-> > > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > >
-> > > > ---
-> > > > Clocks at indexes 730 and 731 are named 'vin0' and 'vin1'.
-> > > > I assumed it's a typographic error and renamed them 'vin00' and 'vin01'
+I read it earlier as well.
 
-Add this to the list of things which not exactly clear in the current
-documentation
+> this DTS does not have an opp-table
+> with operating-points-v2, but cpu0 does have the operating-points (v1)
+> property (note the latter is something I missed before).
 
-> > > > ---
-> > > >  drivers/clk/renesas/r8a779a0-cpg-mssr.c | 32 +++++++++++++++++++++++++
-> > > >  1 file changed, 32 insertions(+)
-> > > >
-> > > > diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-> > > > index bd54a28c50ee..2a00eb82013f 100644
-> > > > --- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-> > > > +++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-> > > > @@ -149,6 +149,38 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
-> > > >     DEF_MOD("scif1",        703,    R8A779A0_CLK_S1D8),
-> > > >     DEF_MOD("scif3",        704,    R8A779A0_CLK_S1D8),
-> > > >     DEF_MOD("scif4",        705,    R8A779A0_CLK_S1D8),
-> > > > +   DEF_MOD("vin00",        730,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin01",        731,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin02",        800,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin03",        801,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin04",        802,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin05",        803,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin06",        804,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin07",        805,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin10",        806,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin11",        807,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin12",        808,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin13",        809,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin14",        810,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin15",        811,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin16",        812,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin17",        813,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin20",        814,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin21",        815,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin22",        816,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin23",        817,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin24",        818,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin25",        819,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin26",        820,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin27",        821,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin30",        822,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin31",        823,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin32",        824,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin33",        825,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin34",        826,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin35",        827,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin36",        828,    R8A779A0_CLK_S1D1),
-> > > > +   DEF_MOD("vin37",        829,    R8A779A0_CLK_S1D1),
+This is different than having no OPP table in DT.
+
+> > >
+> > >   Before:
 > >
-> > >    The subject says VIN[0-31]?
+> > I assume this means before this patchset came in..
+> 
+> Indeed.
+> 
+> > >     boot:
+> > >       cpufreq-dt cpufreq-dt: dt_cpufreq_probe:362
+> > >       cpu cpu0: resources_available:95
+> > >       cpu cpu0: resources_available:102: clk_get() returned z
+> > >       cpu cpu0: resources_available:120:
+> > > dev_pm_opp_of_find_icc_paths() returned 0
+> > >       cpu cpu0: resources_available:125: find_supply_name() returned cpu0
+> > >       cpu cpu0: resources_available:132: regulator_get_optional()
+> > > returned -EPROBE_DEFER
+> > >       cpu cpu0: cpu0 regulator not ready, retry
+> > >       cpufreq-dt cpufreq-dt: dt_cpufreq_probe:371:
+> > > resources_available() returned -517
 > >
-> > There are 32 VIN instances (hence the [0-31] in the subject), grouped
-> > in 4 units of 8 channels each.
+> > we deferred probe once.
 > >
-> > I can drop the [0-31] in the subject if it's confusing.
->
-> The VIN naming in the R-Car V3U documentation is very confusing.
-> E.g. all of the following are used, and refer to the same channel:
->   1. VIN37,
->   2. VIN31,
->   3. vin3 ch7.
->
-> Looks good to me, but I cannot verify the parent clocks
+> > >       ...
+> > >       cpufreq-dt cpufreq-dt: dt_cpufreq_probe:362
+> > >       cpu cpu0: resources_available:95
+> > >       cpu cpu0: resources_available:102: clk_get() returned z
+> > >       cpu cpu0: resources_available:120:
+> > > dev_pm_opp_of_find_icc_paths() returned 0
+> > >       cpu cpu0: resources_available:125: find_supply_name() returned cpu0
+> > >       cpu cpu0: resources_available:132: regulator_get_optional()
+> > > returned (ptrval)
+> >
+> > found regulator next time.
+> >
+> > >       cpufreq-dt cpufreq-dt: dt_cpufreq_probe:371:
+> > > resources_available() returned 0
+> > >       cpufreq-dt cpufreq-dt: dt_cpufreq_probe:375
+> > >       cpufreq_dt: cpufreq_init:162
+> > >       cpu cpu0: cpufreq_init:170: clk_get() returned z
+> > >       cpu cpu0: cpufreq_init:179: dev_pm_opp_of_get_sharing_cpus() returned -2
+> > >       cpu cpu0: cpufreq_init:198: find_supply_name() returned cpu0
+> > >       <i2c comm>
+> > >       cpu cpu0: cpufreq_init:201: dev_pm_opp_set_regulators() returned (ptrval)
+> > >       <i2c comm>
+> > >       cpu cpu0: cpufreq_init:230: dev_pm_opp_of_cpumask_add_table() returned 0
+> > >       cpu cpu0: cpufreq_init:239: dev_pm_opp_get_opp_count() returned 0
+> > >       cpu cpu0: OPP table is not ready, deferring probe
+> >
+> > This failed, as we couldn't have deferred probe from cpufreq_init.
+> > Which means that cpufreq didn't work here.
+> 
+> No opp-table in DT.
 
-I got them from the downstream driver, as they're not documented.
+V1 is also an OPP table.
 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Shouldn't it use operating-points v1 instead?
 
-Thanks
-  j
+Both v1 and v2 are considered as OPP tables. When we say that the
+opp-count is 0, it means that it failed to find any of them.
 
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+> > >       cpufreq_dt: cpufreq_init:162
+> > >       cpu cpu1: cpufreq_init:170: clk_get() returned z
+> > >       cpu cpu1: cpufreq_init:179: dev_pm_opp_of_get_sharing_cpus() returned -2
+> > >       cpu cpu1: no regulator for cpu1
+> > >       cpu cpu1: cpufreq_init:198: find_supply_name() returned (null)
+> > >       cpu cpu1: cpufreq_init:230: dev_pm_opp_of_cpumask_add_table() returned 0
+> > >       cpu cpu1: cpufreq_init:239: dev_pm_opp_get_opp_count() returned 0
+> > >       cpu cpu1: OPP table is not ready, deferring probe
+> >
+> > Same for CPU1.
+> 
+> Note that only CPU0 has operating-points v1.
+
+Both should have it ideally, though it works if CPU0 gets probed
+first. But if CPU0 is hotplugged out and we try to probe CPU1, then it
+will fail.
+
+The fact that cpufreq core tried to probe CPU1 means that it failed
+for CPU0. And this is before the patchset in question came in.
+
+I don't think cpufreq was working earlier for your platform, please
+check why.
+
+> >
+> > >
+> > >     s2ram:
+> > >       cpufreq_dt: cpufreq_init:162
+> > >       cpu cpu1: cpufreq_init:170: clk_get() returned z
+> > >       cpu cpu1: cpufreq_init:179: dev_pm_opp_of_get_sharing_cpus() returned -2
+> > >       cpu cpu1: no regulator for cpu1
+> > >       cpu cpu1: cpufreq_init:198: find_supply_name() returned (null)
+> > >       cpu cpu1: cpufreq_init:230: dev_pm_opp_of_cpumask_add_table() returned 0
+> > >       cpu cpu1: cpufreq_init:239: dev_pm_opp_get_opp_count() returned 0
+> > >       cpu cpu1: OPP table is not ready, deferring probe
+> >
+> > And same here.
+> >
+> > >       CPU1 is up
+> > >
+> > >   After:
+> > >     boot:
+> > >       cpufreq-dt cpufreq-dt: dt_cpufreq_probe:356
+> > >       cpufreq_dt: dt_cpufreq_early_init:251
+> > >       cpu cpu0: dt_cpufreq_early_init:256
+> > >       cpu cpu0: dt_cpufreq_early_init:271: dev_pm_opp_get_opp_table()
+> > > returned (ptrval)
+> > >       cpu cpu0: dt_cpufreq_early_init:284: find_supply_name() returned cpu0
+> > >       cpu cpu0: dt_cpufreq_early_init:288: dev_pm_opp_set_regulators()
+> > > returned -EPROBE_DEFER
+> > >       cpufreq-dt cpufreq-dt: dt_cpufreq_probe:360:
+> > > dt_cpufreq_early_init() returned -517
+> > >       ...
+> > >       cpufreq-dt cpufreq-dt: dt_cpufreq_probe:356
+> > >       cpufreq_dt: dt_cpufreq_early_init:251
+> > >       cpu cpu0: dt_cpufreq_early_init:256
+> > >       cpu cpu0: dt_cpufreq_early_init:271: dev_pm_opp_get_opp_table()
+> > > returned (ptrval)
+> > >       cpu cpu0: dt_cpufreq_early_init:284: find_supply_name() returned cpu0
+> > >       cpu cpu0: dt_cpufreq_early_init:288: dev_pm_opp_set_regulators()
+> > > returned (ptrval)
+> > >       cpu cpu0: dt_cpufreq_early_init:301:
+> > > dev_pm_opp_of_get_sharing_cpus() returned -2
+> > >       cpufreq-dt cpufreq-dt: dt_cpufreq_probe:360:
+> > > dt_cpufreq_early_init() returned 0
+> > >       cpufreq_dt: dt_cpufreq_early_init:251
+> > >       cpufreq-dt cpufreq-dt: dt_cpufreq_probe:360:
+> > > dt_cpufreq_early_init() returned 0
+> > >       cpufreq-dt cpufreq-dt: dt_cpufreq_probe:365
+> > >       cpufreq_dt: cpufreq_init:114
+> > >       cpu cpu0: cpufreq_init:124: clk_get() returned z
+> > >       cpu cpu0: cpufreq_init:142: dev_pm_opp_of_cpumask_add_table() returned 0
+> > >       cpu cpu0: cpufreq_init:151: dev_pm_opp_get_opp_count() returned 0
+> > >       cpu cpu0: OPP table can't be empty
+> >
+> > Same issue here.
+> >
+> > >       cpufreq_dt: cpufreq_init:114
+> > >       cpu cpu0: cpufreq_init:124: clk_get() returned z
+> > >       <i2c comm>
+> > >       cpu cpu0: cpufreq_init:142: dev_pm_opp_of_cpumask_add_table() returned 0
+> > >       cpu cpu0: cpufreq_init:151: dev_pm_opp_get_opp_count() returned 0
+> > >
+> > >     s2ram:
+> > >
+> > >       cpufreq_dt: cpufreq_init:114
+> > >       cpu cpu0: cpufreq_init:124: clk_get() returned z
+> > >       WARNING: CPU: 1 PID: 14 at drivers/i2c/i2c-core.h:54
+> > > __i2c_transfer+0x2d8/0x310
+> > >       i2c i2c-6: Transfer while suspended
+> > >       cpu cpu0: cpufreq_init:142: dev_pm_opp_of_cpumask_add_table() returned 0
+> > >       cpu cpu0: cpufreq_init:151: dev_pm_opp_get_opp_count() returned 0
+> > >       cpu cpu0: OPP table can't be empty
+> > >       CPU1 is up
+> > >
+> > > I hope this helps.
+> >
+> > Unfortunately it raised more questions than what it answered :(
+> 
+> Before, it bailed out before talking to the regulator during s2ram,
+> After, it talks to the regulator before bailing out, triggering the WARN().
+
+It wasn't working before and it isn't working now. Though I do see a
+problem with cpufreq core where it tries suspend/resume even though
+->init() failed for all CPUs earlier. I will fix that separately.
+
+I think someone needs to see why it wasn't working earlier and then we
+can see if we have pending issues.
+
+-- 
+viresh
