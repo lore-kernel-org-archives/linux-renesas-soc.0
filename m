@@ -5,41 +5,41 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BF1C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB75C433E7
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 666812231B
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F31E4204FD
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 18 Oct 2020 19:33:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603049073;
-	bh=VT0Bmb4Wg8Imwpbfcbw7Zxqc2bJh0Cmv2/xczKlzgA0=;
+	s=default; t=1603049621;
+	bh=lvpSOiowpkc4Fz/zItNb7eMapzCbdBEdXFPaVboawhE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZLwQiMsTcW2rOCx8EdsB1Nmpel49gUXaXLrw8CldN/R9iOLglfihhe7aSRo4xEE9L
-	 WnFMQzYIQGALwY8Qf4ZuZSzf66/07nqtbxwWxviPDFrUijOtth9d22986cwNrH/3k4
-	 VoN111jYKP7K5v3u3Dg4YwqzypN+T6OcUGIS6xGI=
+	b=Ms26i7Vg5Y/qmS1OK0CuyCSKP3QI0/4HW1Stzm5y5KIwCViWXEdxDLNMvDu/gsexD
+	 RxW7lK08x5H/z8KEJtWk8GwU2uG1Re5ahZPXB9HPLN3Gpf0ZyXyjHGcuCHbdNQp1Ja
+	 yVVdy7GGsJ11TmzJ0TbJxSiyALAuZCAy/MYsZj0g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730800AbgJRTYc (ORCPT
+        id S1732399AbgJRTdb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 18 Oct 2020 15:24:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38548 "EHLO mail.kernel.org"
+        Sun, 18 Oct 2020 15:33:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729506AbgJRTYc (ORCPT
+        id S1731780AbgJRT0q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 18 Oct 2020 15:24:32 -0400
+        Sun, 18 Oct 2020 15:26:46 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EC12223AB;
-        Sun, 18 Oct 2020 19:24:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD951222C8;
+        Sun, 18 Oct 2020 19:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603049071;
-        bh=VT0Bmb4Wg8Imwpbfcbw7Zxqc2bJh0Cmv2/xczKlzgA0=;
+        s=default; t=1603049205;
+        bh=lvpSOiowpkc4Fz/zItNb7eMapzCbdBEdXFPaVboawhE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OYBV8JzaAt2ZvumhnUk2OJwwFKtwe8FFgWwYuWGr1b1w2HBXGuaF20FxE/rcARCB0
-         6NzmL8xO/C1AU1WTzl9AcSfLLhWBvO903DCLtu1uDQq2rNU46EMohQmrKVfCHjcbtZ
-         SFeKgpJBBbO5HigPzR/Ys2GguVml24ptA8rii01I=
+        b=rfYWbNqOIQVNLPYIIToV5+xfjjDD5H0Pb8i/7/5cHI6x5HP59OL3mH7GyIeIpgQtL
+         MX6O/QOvl5AUymUreK9MMXkLovWbWfqYEjkQHA9NkXNQuI/3VEX692PnHzNMXYK8IX
+         IhKDM3KEFC9ZZjmKSzokS6hDgrO3nM2bCdrk3b5w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
@@ -49,12 +49,12 @@ Cc:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 10/56] media: vsp1: Fix runtime PM imbalance on error
-Date:   Sun, 18 Oct 2020 15:23:31 -0400
-Message-Id: <20201018192417.4055228-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 07/41] media: vsp1: Fix runtime PM imbalance on error
+Date:   Sun, 18 Oct 2020 15:26:01 -0400
+Message-Id: <20201018192635.4056198-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201018192417.4055228-1-sashal@kernel.org>
-References: <20201018192417.4055228-1-sashal@kernel.org>
+In-Reply-To: <20201018192635.4056198-1-sashal@kernel.org>
+References: <20201018192635.4056198-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -82,10 +82,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index b6619c9c18bb4..4e6530ee809af 100644
+index 4ac1ff482a0b3..fcb1838d670d4 100644
 --- a/drivers/media/platform/vsp1/vsp1_drv.c
 +++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -562,7 +562,12 @@ int vsp1_device_get(struct vsp1_device *vsp1)
+@@ -487,7 +487,12 @@ int vsp1_device_get(struct vsp1_device *vsp1)
  	int ret;
  
  	ret = pm_runtime_get_sync(vsp1->dev);
@@ -99,7 +99,7 @@ index b6619c9c18bb4..4e6530ee809af 100644
  }
  
  /*
-@@ -845,12 +850,12 @@ static int vsp1_probe(struct platform_device *pdev)
+@@ -727,12 +732,12 @@ static int vsp1_probe(struct platform_device *pdev)
  	/* Configure device parameters based on the version register. */
  	pm_runtime_enable(&pdev->dev);
  
