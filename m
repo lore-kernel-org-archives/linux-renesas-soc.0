@@ -4,30 +4,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB11C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF067C433E7
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD81622283
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:52:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 683F322250
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:52:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406691AbgJTMwM (ORCPT
+        id S2406742AbgJTMwU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 20 Oct 2020 08:52:12 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:6503 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2406027AbgJTMwL (ORCPT
+        Tue, 20 Oct 2020 08:52:20 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:60469 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2406732AbgJTMwS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Oct 2020 08:52:11 -0400
+        Tue, 20 Oct 2020 08:52:18 -0400
 X-IronPort-AV: E=Sophos;i="5.77,397,1596466800"; 
-   d="scan'208";a="60080892"
+   d="scan'208";a="60296206"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Oct 2020 21:52:10 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 20 Oct 2020 21:52:17 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 859EA421A443;
-        Tue, 20 Oct 2020 21:52:08 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4E768421A443;
+        Tue, 20 Oct 2020 21:52:15 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -37,9 +37,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH v2 1/4] arm64: dts: renesas: aistarvision-mipi-adapter-2.1: Add parent macro for each sensor
-Date:   Tue, 20 Oct 2020 13:51:31 +0100
-Message-Id: <20201020125134.22625-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 4/4] arm64: dts: renesas: Add support for MIPI Adapter V2.1 connected to HiHope RZ/G2N
+Date:   Tue, 20 Oct 2020 13:51:34 +0100
+Message-Id: <20201020125134.22625-5-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20201020125134.22625-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20201020125134.22625-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -47,58 +47,53 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-For HiHope RZ/G2H the OV5645 sensor is populated on i2c2 whereas the imx219
-sensor is populated on i2c3 so add support for handling such cases by
-adding a parent macro for each sensor.
-
-Also update r8a774c0-ek874-mipi-2.1.dts to incorporate the changes.
+Add support for AISTARVISION MIPI Adapter V2.1 board connected to HiHope
+RZ/G2N board.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
 v1->v2 - No change
 ---
- .../arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi | 4 +++-
- arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts       | 3 ++-
- 2 files changed, 5 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/Makefile             |  1 +
+ .../r8a774b1-hihope-rzg2n-ex-mipi-2.1.dts        | 16 ++++++++++++++++
+ 2 files changed, 17 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-ex-mipi-2.1.dts
 
-diff --git a/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi b/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
-index dac6ff49020f..7ce986f0a06f 100644
---- a/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
-@@ -61,7 +61,7 @@
- 	};
- };
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 6581d19a3217..5f163af16180 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -14,6 +14,7 @@ dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex-idk-1110wr.dtb
+ dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-rev2.dtb
+ dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-rev2-ex.dtb
+ dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-rev2-ex-idk-1110wr.dtb
++dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex-mipi-2.1.dtb
  
--&MIPI_PARENT_I2C {
-+&MIPI_OV5645_PARENT_I2C {
- 	ov5645: ov5645@3c {
- 		compatible = "ovti,ov5645";
- 		reg = <0x3c>;
-@@ -77,7 +77,9 @@
- 			};
- 		};
- 	};
+ dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-cat874.dtb
+ dtb-$(CONFIG_ARCH_R8A774C0) += r8a774c0-ek874.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-ex-mipi-2.1.dts b/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-ex-mipi-2.1.dts
+new file mode 100644
+index 000000000000..ce8e3bcc7dc9
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-ex-mipi-2.1.dts
+@@ -0,0 +1,16 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Device Tree Source for the HiHope RZ/G2N board
++ * connected with aistarvision-mipi-v2-adapter board
++ *
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r8a774b1-hihope-rzg2n-ex.dts"
++#include "hihope-rzg2-ex-aistarvision-mipi-adapter-2.1.dtsi"
++
++/ {
++	model = "HopeRun HiHope RZ/G2N with sub board connected with aistarvision-mipi-v2-adapter board";
++	compatible = "hoperun,hihope-rzg2n", "renesas,r8a774b1";
 +};
- 
-+&MIPI_IMX219_PARENT_I2C {
- 	imx219: imx219@10 {
- 		compatible = "sony,imx219";
- 		reg = <0x10>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
-index f0829e905506..e7b4a929bb17 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
-@@ -8,7 +8,8 @@
- 
- /dts-v1/;
- #include "r8a774c0-ek874.dts"
--#define MIPI_PARENT_I2C i2c3
-+#define MIPI_OV5645_PARENT_I2C i2c3
-+#define MIPI_IMX219_PARENT_I2C i2c3
- #include "aistarvision-mipi-adapter-2.1.dtsi"
- 
- / {
 -- 
 2.17.1
 
