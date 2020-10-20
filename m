@@ -7,68 +7,98 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C03C433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Oct 2020 09:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BB11C433DF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE5C2223C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Oct 2020 09:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD81622283
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:52:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730193AbgJTJtR (ORCPT
+        id S2406691AbgJTMwM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 20 Oct 2020 05:49:17 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:13439 "EHLO
+        Tue, 20 Oct 2020 08:52:12 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:6503 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729960AbgJTJtR (ORCPT
+        by vger.kernel.org with ESMTP id S2406027AbgJTMwL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Oct 2020 05:49:17 -0400
-X-IronPort-AV: E=Sophos;i="5.77,396,1596466800"; 
-   d="scan'208";a="60068410"
+        Tue, 20 Oct 2020 08:52:11 -0400
+X-IronPort-AV: E=Sophos;i="5.77,397,1596466800"; 
+   d="scan'208";a="60080892"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Oct 2020 18:49:16 +0900
-Received: from localhost.localdomain (unknown [172.29.52.189])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7CD224235FBA;
-        Tue, 20 Oct 2020 18:49:13 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] drm/panel: panel-simple: Add connector_type for EDT ETM0700G0DH6 panel
-Date:   Tue, 20 Oct 2020 10:49:10 +0100
-Message-Id: <20201020094910.4756-1-biju.das.jz@bp.renesas.com>
+  by relmlie6.idc.renesas.com with ESMTP; 20 Oct 2020 21:52:10 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 859EA421A443;
+        Tue, 20 Oct 2020 21:52:08 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [PATCH v2 1/4] arm64: dts: renesas: aistarvision-mipi-adapter-2.1: Add parent macro for each sensor
+Date:   Tue, 20 Oct 2020 13:51:31 +0100
+Message-Id: <20201020125134.22625-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20201020125134.22625-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20201020125134.22625-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fix the warning message "missing connector type" by adding connector_type
-for EDT ETM0700G0DH6 panel.
+For HiHope RZ/G2H the OV5645 sensor is populated on i2c2 whereas the imx219
+sensor is populated on i2c3 so add support for handling such cases by
+adding a parent macro for each sensor.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Also update r8a774c0-ek874-mipi-2.1.dts to incorporate the changes.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/gpu/drm/panel/panel-simple.c | 1 +
- 1 file changed, 1 insertion(+)
+v1->v2 - No change
+---
+ .../arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi | 4 +++-
+ arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts       | 3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 8b82ec33f08a..41bab82dffea 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -1812,6 +1812,7 @@ static const struct panel_desc edt_etm0700g0dh6 = {
- 	},
- 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
- 	.bus_flags = DRM_BUS_FLAG_DE_HIGH | DRM_BUS_FLAG_PIXDATA_DRIVE_NEGEDGE,
-+	.connector_type = DRM_MODE_CONNECTOR_DPI,
+diff --git a/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi b/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
+index dac6ff49020f..7ce986f0a06f 100644
+--- a/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
++++ b/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
+@@ -61,7 +61,7 @@
+ 	};
  };
  
- static const struct panel_desc edt_etm0700g0bdh6 = {
+-&MIPI_PARENT_I2C {
++&MIPI_OV5645_PARENT_I2C {
+ 	ov5645: ov5645@3c {
+ 		compatible = "ovti,ov5645";
+ 		reg = <0x3c>;
+@@ -77,7 +77,9 @@
+ 			};
+ 		};
+ 	};
++};
+ 
++&MIPI_IMX219_PARENT_I2C {
+ 	imx219: imx219@10 {
+ 		compatible = "sony,imx219";
+ 		reg = <0x10>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
+index f0829e905506..e7b4a929bb17 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
+@@ -8,7 +8,8 @@
+ 
+ /dts-v1/;
+ #include "r8a774c0-ek874.dts"
+-#define MIPI_PARENT_I2C i2c3
++#define MIPI_OV5645_PARENT_I2C i2c3
++#define MIPI_IMX219_PARENT_I2C i2c3
+ #include "aistarvision-mipi-adapter-2.1.dtsi"
+ 
+ / {
 -- 
 2.17.1
 
