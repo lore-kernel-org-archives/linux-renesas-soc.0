@@ -2,92 +2,187 @@ Return-Path: <SRS0=ByE+=D4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69402C55178
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Oct 2020 13:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C58C388F9
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Oct 2020 16:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E8DA21741
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Oct 2020 13:54:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 244B221D7B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Oct 2020 16:16:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="Qa9wgWSd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2443100AbgJUNxs (ORCPT
+        id S2444387AbgJUQQE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 21 Oct 2020 09:53:48 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:29050 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2443030AbgJUNxs (ORCPT
+        Wed, 21 Oct 2020 12:16:04 -0400
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.21]:35442 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732713AbgJUQQD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Oct 2020 09:53:48 -0400
-X-IronPort-AV: E=Sophos;i="5.77,401,1596466800"; 
-   d="scan'208";a="60410357"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Oct 2020 22:53:47 +0900
-Received: from devel.example.org?044ree.adwin.renesas.com (unknown [10.226.36.120])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B1B7E429809D;
-        Wed, 21 Oct 2020 22:53:44 +0900 (JST)
-From:   Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v5 3/5] media: dt-bindings: media: renesas,drif: Add r8a77990 support
-Date:   Wed, 21 Oct 2020 14:53:30 +0100
-Message-Id: <20201021135332.4928-4-fabrizio.castro.jz@renesas.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201021135332.4928-1-fabrizio.castro.jz@renesas.com>
-References: <20201021135332.4928-1-fabrizio.castro.jz@renesas.com>
+        Wed, 21 Oct 2020 12:16:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1603296958;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=bqZvEy87OzoHTPXNvjpsVr4rrjHgCD2qfQ332Ib3HFA=;
+        b=Qa9wgWSdm8s54PS1gXTGLfChFiAtp63BEFAJ2KHDt1MIsP5JmoMhh2DwdDGJ+tQHt9
+        17btbMBhwm587s2mv3++9+ePaZ4XOVQatkJqnjKJYR5I6NFcrv1p63kqc6RFlJPnqUFT
+        0lX8sSZvO4p6SgqCGFPz86xwvoeWJtPN1u5vs2vVY92oXp+0CwdSvzs29prfC7am3WZS
+        ZpKE+r+GEv4njY96evyB7fwBuU9K8rSLt30OLheuRmCo3g9XhuTncFrCUXtLN5FXni2W
+        a98JJjCKU+oP9Dbth4iq+KU5Zw2+Xc5SWet7AqEfplGyVMpSRdM1w3BP8u9y8ekUDzRS
+        SMMw==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fCs/87J3I0="
+X-RZG-CLASS-ID: mo00
+Received: from oxapp05-03.back.ox.d0m.de
+        by smtp-ox.front (RZmta 47.2.1 AUTH)
+        with ESMTPSA id a056fbw9LGFm0Ah
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Wed, 21 Oct 2020 18:15:48 +0200 (CEST)
+Date:   Wed, 21 Oct 2020 18:15:48 +0200 (CEST)
+From:   Ulrich Hecht <uli@fpond.eu>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-clk@vger.kernel.org, Phong Hoang <phong.hoang.wz@renesas.com>
+Message-ID: <404689346.305772.1603296948760@webmail.strato.com>
+In-Reply-To: <20201019120614.22149-6-geert+renesas@glider.be>
+References: <20201019120614.22149-1-geert+renesas@glider.be>
+ <20201019120614.22149-6-geert+renesas@glider.be>
+Subject: Re: [PATCH/RFC 5/6] gpio: rcar: Add support for R-Car V3U
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.3-Rev25
+X-Originating-Client: open-xchange-appsuite
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The r8a77990 (a.k.a. R-Car E3) device tree schema is
-compatible with R-Car H3 and M3-W schema.
+Thank you for your patch!
 
-Document r8a77990 support within renesas,drif.yaml.
+> On 10/19/2020 2:06 PM Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> 
+>  
+> From: Phong Hoang <phong.hoang.wz@renesas.com>
+> 
+> Add support for the R-Car V3U (r8a779a0) SoC.
+> This includes support for the new "General Input Enable" register to
+> control input enable.
+> 
+> Signed-off-by: Phong Hoang <phong.hoang.wz@renesas.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Untested on actual hardware.
+> 
+> Should input be enabled unconditionally, as recommended by the Hardware
+> Manual for backwards compatibility with existing software?
+> As per (errata?) commit ae9550f635533b1c ("gpio-rcar: Use OUTDT when
+> reading GPIOs configured as output"), the gpio-rcar driver does not use
+> the INDT register to read the status of a GPIO line when configured for
+> output.
+> ---
+>  drivers/gpio/gpio-rcar.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+> index a924cf8ac8df7f8f..44d09a0028db49e9 100644
+> --- a/drivers/gpio/gpio-rcar.c
+> +++ b/drivers/gpio/gpio-rcar.c
+> @@ -42,6 +42,7 @@ struct gpio_rcar_priv {
+>  	atomic_t wakeup_path;
+>  	bool has_outdtsel;
+>  	bool has_both_edge_trigger;
+> +	bool has_inen;
+>  	struct gpio_rcar_bank_info bank_info;
+>  };
+>  
+> @@ -58,6 +59,7 @@ struct gpio_rcar_priv {
+>  #define FILONOFF 0x28	/* Chattering Prevention On/Off Register */
+>  #define OUTDTSEL 0x40	/* Output Data Select Register */
+>  #define BOTHEDGE 0x4c	/* One Edge/Both Edge Select Register */
+> +#define INEN 0x50	/* General Input Enable Register */
+>  
+>  #define RCAR_MAX_GPIO_PER_BANK		32
+>  
+> @@ -126,6 +128,10 @@ static void gpio_rcar_config_interrupt_input_mode(struct gpio_rcar_priv *p,
+>  	if (p->has_both_edge_trigger)
+>  		gpio_rcar_modify_bit(p, BOTHEDGE, hwirq, both);
+>  
+> +	/* Select "Input Enable" in INEN */
+> +	if (p->has_inen)
+> +		gpio_rcar_modify_bit(p, INEN, hwirq, true);
+> +
+>  	/* Select "Interrupt Input Mode" in IOINTSEL */
+>  	gpio_rcar_modify_bit(p, IOINTSEL, hwirq, true);
+>  
+> @@ -231,6 +237,10 @@ static void gpio_rcar_config_general_input_output_mode(struct gpio_chip *chip,
+>  	/* Configure positive logic in POSNEG */
+>  	gpio_rcar_modify_bit(p, POSNEG, gpio, false);
+>  
+> +	/* Select "Input Enable/Disable" in INEN */
 
-Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
-v4->v5:
-* Fixed indentation
-v3->v4:
-* No change
-v2->v3:
-* No change
-v1->v2:
-* No change
+Nit: It's always called "Input Enable" in the DS.
 
- Documentation/devicetree/bindings/media/renesas,drif.yaml | 1 +
- 1 file changed, 1 insertion(+)
+> +	if (p->has_inen)
+> +		gpio_rcar_modify_bit(p, INEN, gpio, !output);
+> +
+>  	/* Select "General Input/Output Mode" in IOINTSEL */
+>  	gpio_rcar_modify_bit(p, IOINTSEL, gpio, false);
+>  
+> @@ -349,16 +359,25 @@ static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
+>  struct gpio_rcar_info {
+>  	bool has_outdtsel;
+>  	bool has_both_edge_trigger;
+> +	bool has_inen;
+>  };
+>  
+>  static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
+>  	.has_outdtsel = false,
+>  	.has_both_edge_trigger = false,
+> +	.has_inen = false,
+>  };
+>  
+>  static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
+>  	.has_outdtsel = true,
+>  	.has_both_edge_trigger = true,
+> +	.has_inen = false,
+> +};
+> +
+> +static const struct gpio_rcar_info gpio_rcar_info_v3u = {
+> +	.has_outdtsel = true,
+> +	.has_both_edge_trigger = true,
+> +	.has_inen = true,
+>  };
+>  
+>  static const struct of_device_id gpio_rcar_of_table[] = {
+> @@ -389,6 +408,9 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+>  		.compatible = "renesas,gpio-r8a7796",
+>  		/* Gen3 GPIO is identical to Gen2. */
+>  		.data = &gpio_rcar_info_gen2,
+> +	}, {
+> +		.compatible = "renesas,gpio-r8a779a0",
+> +		.data = &gpio_rcar_info_v3u,
+>  	}, {
+>  		.compatible = "renesas,rcar-gen1-gpio",
+>  		.data = &gpio_rcar_info_gen1,
+> @@ -419,6 +441,7 @@ static int gpio_rcar_parse_dt(struct gpio_rcar_priv *p, unsigned int *npins)
+>  	info = of_device_get_match_data(p->dev);
+>  	p->has_outdtsel = info->has_outdtsel;
+>  	p->has_both_edge_trigger = info->has_both_edge_trigger;
+> +	p->has_inen = info->has_inen;
+>  
+>  	ret = of_parse_phandle_with_fixed_args(np, "gpio-ranges", 3, 0, &args);
+>  	*npins = ret == 0 ? args.args[2] : RCAR_MAX_GPIO_PER_BANK;
+> -- 
+> 2.17.1
 
-diff --git a/Documentation/devicetree/bindings/media/renesas,drif.yaml b/Documentation/devicetree/bindings/media/renesas,drif.yaml
-index 7d86c581a65f..0b1a25ccb959 100644
---- a/Documentation/devicetree/bindings/media/renesas,drif.yaml
-+++ b/Documentation/devicetree/bindings/media/renesas,drif.yaml
-@@ -53,6 +53,7 @@ properties:
-       - enum:
-           - renesas,r8a7795-drif        # R-Car H3
-           - renesas,r8a7796-drif        # R-Car M3-W
-+          - renesas,r8a77990-drif       # R-Car E3
-       - const: renesas,rcar-gen3-drif   # Generic R-Car Gen3 compatible device
- 
-   reg:
--- 
-2.25.1
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
+CU
+Uli
