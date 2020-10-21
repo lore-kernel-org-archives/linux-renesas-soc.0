@@ -1,90 +1,80 @@
-Return-Path: <SRS0=X8Wi=D3=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=ByE+=D4=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3300AC433DF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0224C388F2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Oct 2020 03:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D02F92222D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Oct 2020 12:52:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DB7322249
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Oct 2020 03:04:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406693AbgJTMwJ (ORCPT
+        id S2406831AbgJUDEy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 20 Oct 2020 08:52:09 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:6503 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2406027AbgJTMwJ (ORCPT
+        Tue, 20 Oct 2020 23:04:54 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:37502 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2406694AbgJUDEy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Oct 2020 08:52:09 -0400
-X-IronPort-AV: E=Sophos;i="5.77,397,1596466800"; 
-   d="scan'208";a="60080887"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 20 Oct 2020 21:52:08 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 431C8421A443;
-        Tue, 20 Oct 2020 21:52:06 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Subject: [PATCH v2 0/4] HiHope RZ/G2x add MIPI Adapter board support
-Date:   Tue, 20 Oct 2020 13:51:30 +0100
-Message-Id: <20201020125134.22625-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 20 Oct 2020 23:04:54 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A26D780450BD7FB833D0;
+        Wed, 21 Oct 2020 11:04:51 +0800 (CST)
+Received: from localhost.localdomain (10.69.192.56) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.487.0; Wed, 21 Oct 2020 11:04:46 +0800
+From:   Tian Tao <tiantao6@hisilicon.com>
+To:     <niklas.soderlund@ragnatech.se>, <rui.zhang@intel.com>,
+        <daniel.lezcano@linaro.org>, <amitk@kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] thermal: replace spin_lock_irqsave by spin_lock in hard IRQ
+Date:   Wed, 21 Oct 2020 11:05:30 +0800
+Message-ID: <1603249530-25218-1-git-send-email-tiantao6@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.69.192.56]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi All,
+The code has been in a irq-disabled context since it is hard IRQ. There
+is no necessity to do it again.
 
-This patch series adds support for MIPI Adapter V2.1 connected to
-HiHope RZ/G2{HMN}.
+Signed-off-by: Tian Tao <tiantao6@hisilicon.com>
+---
+ drivers/thermal/rcar_thermal.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Patches apply on top of [1].
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/
-    renesas-devel.git/log/?h=renesas-arm-dt-for-v5.11
-
-Cheers,
-Prabhakar
-
-Changes for v2:
-* patches {1,2,4}/4 unchanged
-* patch 3/4 disabled csi40 and imx219 nodes
-
-Lad Prabhakar (4):
-  arm64: dts: renesas: aistarvision-mipi-adapter-2.1: Add parent macro
-    for each sensor
-  arm64: dts: renesas: Add support for MIPI Adapter V2.1 connected to
-    HiHope RZ/G2H
-  arm64: dts: renesas: Add support for MIPI Adapter V2.1 connected to
-    HiHope RZ/G2M
-  arm64: dts: renesas: Add support for MIPI Adapter V2.1 connected to
-    HiHope RZ/G2N
-
- arch/arm64/boot/dts/renesas/Makefile          |   3 +
- .../aistarvision-mipi-adapter-2.1.dtsi        |   4 +-
- ...rzg2-ex-aistarvision-mipi-adapter-2.1.dtsi | 109 ++++++++++++++++++
- .../r8a774a1-hihope-rzg2m-ex-mipi-2.1.dts     |  29 +++++
- .../r8a774b1-hihope-rzg2n-ex-mipi-2.1.dts     |  16 +++
- .../dts/renesas/r8a774c0-ek874-mipi-2.1.dts   |   3 +-
- .../r8a774e1-hihope-rzg2h-ex-mipi-2.1.dts     |  16 +++
- 7 files changed, 178 insertions(+), 2 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/hihope-rzg2-ex-aistarvision-mipi-adapter-2.1.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774a1-hihope-rzg2m-ex-mipi-2.1.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774b1-hihope-rzg2n-ex-mipi-2.1.dts
- create mode 100644 arch/arm64/boot/dts/renesas/r8a774e1-hihope-rzg2h-ex-mipi-2.1.dts
-
+diff --git a/drivers/thermal/rcar_thermal.c b/drivers/thermal/rcar_thermal.c
+index 5c2a13b..6ae757d 100644
+--- a/drivers/thermal/rcar_thermal.c
++++ b/drivers/thermal/rcar_thermal.c
+@@ -409,16 +409,15 @@ static irqreturn_t rcar_thermal_irq(int irq, void *data)
+ {
+ 	struct rcar_thermal_common *common = data;
+ 	struct rcar_thermal_priv *priv;
+-	unsigned long flags;
+ 	u32 status, mask;
+ 
+-	spin_lock_irqsave(&common->lock, flags);
++	spin_lock(&common->lock);
+ 
+ 	mask	= rcar_thermal_common_read(common, INTMSK);
+ 	status	= rcar_thermal_common_read(common, STR);
+ 	rcar_thermal_common_write(common, STR, 0x000F0F0F & mask);
+ 
+-	spin_unlock_irqrestore(&common->lock, flags);
++	spin_unlock(&common->lock);
+ 
+ 	status = status & ~mask;
+ 
 -- 
-2.17.1
+2.7.4
 
