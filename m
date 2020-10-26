@@ -5,53 +5,53 @@ X-Spam-Level:
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A03CC56201
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 26 Oct 2020 23:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F0DFC2D0A3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 26 Oct 2020 23:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C16182224E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 26 Oct 2020 23:51:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4FBA221FC
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 26 Oct 2020 23:54:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603756306;
+	s=default; t=1603756477;
 	bh=DgsLJmdwDm+iZqr9b4sB4qpBpPNmURVNQ9bdUajr2T0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SrHRmohh8LeJ0YeInLg+FLPsGzlXp7WvQSdVX3X4YPl31bPWHkwK/sqldNAmLDPtz
-	 tRm1ZmZUIibXbY/LCimGNaIDn6nku8696QBeqfiAqbUueOfPe3prQ54bII2RMnOa+u
-	 QzXT6Qun2yA2CRZ1zWuIQ9sNCGqMmg2VWC58Z5rU=
+	b=mABRnR8+MTSGbRVxuBWG/BpdSxPn+rc6GZLC38qAr5Br9021p2VMkL4gZJuwdST0e
+	 Qinu589bNfttH4hO7NXKwavh9CB/jtZDFVjrVzxlKbIaczfDDWXkJ8SVe/2aePvUhn
+	 G9vsV5zPHwZbl1lNW4ZaXDUeZYKgIoo1sAtJtogo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409512AbgJZXvp (ORCPT
+        id S2410501AbgJZXyh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 26 Oct 2020 19:51:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52814 "EHLO mail.kernel.org"
+        Mon, 26 Oct 2020 19:54:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409509AbgJZXvo (ORCPT
+        id S2410491AbgJZXyf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Oct 2020 19:51:44 -0400
+        Mon, 26 Oct 2020 19:54:35 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 405B7217A0;
-        Mon, 26 Oct 2020 23:51:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4DF420B1F;
+        Mon, 26 Oct 2020 23:54:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1603756304;
+        s=default; t=1603756474;
         bh=DgsLJmdwDm+iZqr9b4sB4qpBpPNmURVNQ9bdUajr2T0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iYERH+L0wcK01x997I9EgeqJbTAwdiPrpnBbHwZhsyn76b+AkPlFy7Res3AU7fYs3
-         g3kdLNDvwn4Ao77plr5FguafQBmjC98RN04amhCE/D8xb2OuoaT0NX3dLDNGRSLpnD
-         OHs/uuXUKlq4+f4/81y+/wLAZzL746ijRvIYo3j4=
+        b=ysJZec5XVvn7Eo7qWoTU7wVUxL/WG/Th0YfcNKedVOj5TQ63rqJGQKTblgYd92Wbm
+         M+0Qqykk/h5CEN/rspT6NzmquJkbC2Mpswy3qni87kJZ4kH9X9BR2ahHtIUuXQnFiI
+         j3ctoj074dmkCORU4kvhkMkf/p/FtCAFsztK1B6U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.9 129/147] arm64: dts: renesas: ulcb: add full-pwr-cycle-in-suspend into eMMC nodes
-Date:   Mon, 26 Oct 2020 19:48:47 -0400
-Message-Id: <20201026234905.1022767-129-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.8 120/132] arm64: dts: renesas: ulcb: add full-pwr-cycle-in-suspend into eMMC nodes
+Date:   Mon, 26 Oct 2020 19:51:52 -0400
+Message-Id: <20201026235205.1023962-120-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201026234905.1022767-1-sashal@kernel.org>
-References: <20201026234905.1022767-1-sashal@kernel.org>
+In-Reply-To: <20201026235205.1023962-1-sashal@kernel.org>
+References: <20201026235205.1023962-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
