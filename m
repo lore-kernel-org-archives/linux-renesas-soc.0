@@ -2,111 +2,170 @@ Return-Path: <SRS0=8N/7=ED=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3AA4C55179
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE1DCC4363A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53B5E246CD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:54:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1603922085;
-	bh=NmuMkX3jIaTN7lQIN3KvoqabTDKn16tIELqhxOaWm5c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ueQcSZbaYl8/XroJXAMXdTXJSuvbps2dWaQ9e9WeHp1m1BAK7gDpOx72zPB6eJVtH
-	 wj/2vgxeZZJlsPXDOUsQbQdKY0zjHwc9la5XStojn+2VYJ3OHqRumJuwlhbKFmKAwy
-	 m9Iho0Pzn4g51JIc6tNbvhgZf0IjuGflAKwTbVnc=
+	by mail.kernel.org (Postfix) with ESMTP id 59B3C206D4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:22:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728801AbgJ1Vyl (ORCPT
+        id S1732617AbgJ1WWP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:54:41 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36250 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728764AbgJ1Vyi (ORCPT
+        Wed, 28 Oct 2020 18:22:15 -0400
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:42116 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732593AbgJ1WV7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:54:38 -0400
-Received: by mail-oi1-f195.google.com with SMTP id y186so1166822oia.3;
-        Wed, 28 Oct 2020 14:54:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Uc78x8CmwZLzrKJ78c98Bv6j8H6O42mQH8+34OvgxWs=;
-        b=CfLad6XA+URAMmONLs7b5YFk1mHUAf4qjcUe8DI/9oDAlz54boCzbDAKkTmf/CCWsl
-         gHEVo6hlLzXiKHvmhPx6HluQBtx1UON4ioMgTG6jkfmfK+qG8sMzT2xPizgejuQxgO5y
-         1FAxWzIrn2YxMYnkg/a7NSQHEEiaG/5CuxPkkl7upE8iTB3p0uNuG4HfhMFsiiW/l1ln
-         K4C5yrvAhMrf0bH7AF0TNuoYpk8vMVyAKy2rXR7SEOfjs7N2zJhDEPiBKl88T5lbBgLb
-         RA1nAgNC6E9BgEMX0Eu/ySQXhY09yq5dHrjyQlr+jognx+uhdUNuuK9C8oyXaI5QJsZy
-         v5MA==
-X-Gm-Message-State: AOAM533I7KlG0uCOBss75cPbYyMhld80JTisozrAP/XNAb+NSAhfMhju
-        TSuXCssD3XRn5t+xXW6ehNVlPxBZmQ==
-X-Google-Smtp-Source: ABdhPJzBeWZH6SAY7afIgY1/3BfjtQmztEeFkp69qvQ5J2PDJhbpSiCR8mcjBJXcwrLL2OvDMKpx/g==
-X-Received: by 2002:aca:4ac6:: with SMTP id x189mr4914954oia.58.1603896288433;
-        Wed, 28 Oct 2020 07:44:48 -0700 (PDT)
-Received: from xps15 (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v123sm2710068oif.29.2020.10.28.07.44.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Oct 2020 07:44:47 -0700 (PDT)
-Received: (nullmailer pid 3995233 invoked by uid 1000);
-        Wed, 28 Oct 2020 14:44:47 -0000
-Date:   Wed, 28 Oct 2020 09:44:47 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     prabhakar.mahadev-lad.rj@bp.renesas.com,
-        marek.vasut+renesas@gmail.com, linux-renesas-soc@vger.kernel.org,
-        linux-pci@vger.kernel.org, bhelgaas@google.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: pci: rcar-pci-host: convert bindings to
- json-schema
-Message-ID: <20201028144447.GA3994930@bogus>
-References: <1603850751-32762-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1603850751-32762-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 28 Oct 2020 18:21:59 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4CLsc86HSVzMv7nl
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Oct 2020 16:16:40 +0100 (CET)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by xavier.telenet-ops.be with bizsmtp
+        id lTGg2300M4C55Sk01TGg27; Wed, 28 Oct 2020 16:16:40 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kXnBo-000pDf-43; Wed, 28 Oct 2020 16:16:40 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kXnBn-007H9B-Ac; Wed, 28 Oct 2020 16:16:39 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 6/8] pinctrl: renesas: r8a7778: Use physical addresses for PUPR regs
+Date:   Wed, 28 Oct 2020 16:16:35 +0100
+Message-Id: <20201028151637.1734130-7-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201028151637.1734130-1-geert+renesas@glider.be>
+References: <20201028151637.1734130-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1603850751-32762-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 28 Oct 2020 11:05:49 +0900, Yoshihiro Shimoda wrote:
-> Convert Renesas PCIe Host controller bindings documentation to
-> json-schema. Note that some compatible doesn't contain on
-> the original documantation so that incremental patches are required
-> for it.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  .../devicetree/bindings/pci/rcar-pci-host.yaml     | 146 +++++++++++++++++++++
->  Documentation/devicetree/bindings/pci/rcar-pci.txt |  72 ----------
->  2 files changed, 146 insertions(+), 72 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/pci/rcar-pci-host.yaml
->  delete mode 100644 Documentation/devicetree/bindings/pci/rcar-pci.txt
-> 
+The handling of the LSI Pin Pull-Up Control Registers (PUPR) on R-Car
+M1A uses register offsets instead of register physical addresses.
+This is different from the handling on other R-Car parts.
 
+Convert the bias handling from register offsets to physical addresses.
+This increases uniformity, and prepares for consolidation of the bias
+handling.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/renesas/pfc-r8a7778.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/pci/rcar-pci-host.yaml:18:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-./Documentation/devicetree/bindings/pci/rcar-pci-host.yaml:27:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
-
-dtschema/dtc warnings/errors:
-
-
-See https://patchwork.ozlabs.org/patch/1389094
-
-The base for the patch is generally the last rc1. Any dependencies
-should be noted.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7778.c b/drivers/pinctrl/renesas/pfc-r8a7778.c
+index a9875038ed9b664e..debf0c9a281cee31 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7778.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7778.c
+@@ -2909,7 +2909,7 @@ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
+ };
+ 
+ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+-	{ PINMUX_BIAS_REG("PUPR0", 0x100, "N/A", 0) {
++	{ PINMUX_BIAS_REG("PUPR0", 0xfffc0100, "N/A", 0) {
+ 		[ 0] = RCAR_GP_PIN(0,  6),	/* A0 */
+ 		[ 1] = RCAR_GP_PIN(0,  7),	/* A1 */
+ 		[ 2] = RCAR_GP_PIN(0,  8),	/* A2 */
+@@ -2943,7 +2943,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[30] = RCAR_GP_PIN(1,  7),	/* /EX_CS4 */
+ 		[31] = RCAR_GP_PIN(1,  8),	/* /EX_CS5 */
+ 	} },
+-	{ PINMUX_BIAS_REG("PUPR1", 0x104, "N/A", 0) {
++	{ PINMUX_BIAS_REG("PUPR1", 0xfffc0104, "N/A", 0) {
+ 		[ 0] = RCAR_GP_PIN(0,  0),	/* /PRESETOUT	*/
+ 		[ 1] = RCAR_GP_PIN(0,  5),	/* /BS		*/
+ 		[ 2] = RCAR_GP_PIN(1,  0),	/* RD//WR	*/
+@@ -2977,7 +2977,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[30] = SH_PFC_PIN_NONE,
+ 		[31] = SH_PFC_PIN_NONE,
+ 	} },
+-	{ PINMUX_BIAS_REG("PUPR2", 0x108, "N/A", 0) {
++	{ PINMUX_BIAS_REG("PUPR2", 0xfffc0108, "N/A", 0) {
+ 		[ 0] = RCAR_GP_PIN(1, 22),	/* DU0_DR0	*/
+ 		[ 1] = RCAR_GP_PIN(1, 23),	/* DU0_DR1	*/
+ 		[ 2] = RCAR_GP_PIN(1, 24),	/* DU0_DR2	*/
+@@ -3011,7 +3011,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[30] = RCAR_GP_PIN(2, 21),	/* DU0_CDE	*/
+ 		[31] = RCAR_GP_PIN(2, 16),	/* DU0_DOTCLKOUT1 */
+ 	} },
+-	{ PINMUX_BIAS_REG("PUPR3", 0x10c, "N/A", 0) {
++	{ PINMUX_BIAS_REG("PUPR3", 0xfffc010c, "N/A", 0) {
+ 		[ 0] = RCAR_GP_PIN(3, 24),	/* VI0_CLK	*/
+ 		[ 1] = RCAR_GP_PIN(3, 25),	/* VI0_CLKENB	*/
+ 		[ 2] = RCAR_GP_PIN(3, 26),	/* VI0_FIELD	*/
+@@ -3045,7 +3045,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[30] = RCAR_GP_PIN(4, 18),	/* ETH_MDIO	*/
+ 		[31] = RCAR_GP_PIN(4, 19),	/* ETH_LINK	*/
+ 	} },
+-	{ PINMUX_BIAS_REG("PUPR4", 0x110, "N/A", 0) {
++	{ PINMUX_BIAS_REG("PUPR4", 0xfffc0110, "N/A", 0) {
+ 		[ 0] = RCAR_GP_PIN(3,  6),	/* SSI_SCK012	*/
+ 		[ 1] = RCAR_GP_PIN(3,  7),	/* SSI_WS012	*/
+ 		[ 2] = RCAR_GP_PIN(3, 10),	/* SSI_SDATA0	*/
+@@ -3079,7 +3079,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 		[30] = RCAR_GP_PIN(1, 14),	/* IRQ2		*/
+ 		[31] = RCAR_GP_PIN(1, 15),	/* IRQ3		*/
+ 	} },
+-	{ PINMUX_BIAS_REG("PUPR5", 0x114, "N/A", 0) {
++	{ PINMUX_BIAS_REG("PUPR5", 0xfffc0114, "N/A", 0) {
+ 		[ 0] = RCAR_GP_PIN(0,  1),	/* PENC0	*/
+ 		[ 1] = RCAR_GP_PIN(0,  2),	/* PENC1	*/
+ 		[ 2] = RCAR_GP_PIN(0,  3),	/* USB_OVC0	*/
+@@ -3120,16 +3120,13 @@ static unsigned int r8a7778_pinmux_get_bias(struct sh_pfc *pfc,
+ 					    unsigned int pin)
+ {
+ 	const struct pinmux_bias_reg *reg;
+-	void __iomem *addr;
+ 	unsigned int bit;
+ 
+ 	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
+ 	if (!reg)
+ 		return PIN_CONFIG_BIAS_DISABLE;
+ 
+-	addr = pfc->windows->virt + reg->puen;
+-
+-	if (ioread32(addr) & BIT(bit))
++	if (sh_pfc_read(pfc, reg->puen) & BIT(bit))
+ 		return PIN_CONFIG_BIAS_PULL_UP;
+ 	else
+ 		return PIN_CONFIG_BIAS_DISABLE;
+@@ -3139,7 +3136,6 @@ static void r8a7778_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+ 				   unsigned int bias)
+ {
+ 	const struct pinmux_bias_reg *reg;
+-	void __iomem *addr;
+ 	unsigned int bit;
+ 	u32 value;
+ 
+@@ -3147,12 +3143,10 @@ static void r8a7778_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+ 	if (!reg)
+ 		return;
+ 
+-	addr = pfc->windows->virt + reg->puen;
+-
+-	value = ioread32(addr) & ~BIT(bit);
++	value = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
+ 	if (bias == PIN_CONFIG_BIAS_PULL_UP)
+ 		value |= BIT(bit);
+-	iowrite32(value, addr);
++	sh_pfc_write(pfc, reg->puen, value);
+ }
+ 
+ static const struct sh_pfc_soc_operations r8a7778_pfc_ops = {
+-- 
+2.25.1
 
