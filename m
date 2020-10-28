@@ -2,104 +2,94 @@ Return-Path: <SRS0=8N/7=ED=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093A8C4363A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E58C4363A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9AF6324842
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:37:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3863024680
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 21:40:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbgJ1VhD (ORCPT
+        id S1727180AbgJ1VkZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 17:37:03 -0400
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:47630 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726847AbgJ1Vg7 (ORCPT
+        Wed, 28 Oct 2020 17:40:25 -0400
+Received: from newton.telenet-ops.be ([195.130.132.45]:60414 "EHLO
+        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727200AbgJ1VkX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 17:36:59 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4CLt714S6QzN68Ls
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Oct 2020 16:39:57 +0100 (CET)
+        Wed, 28 Oct 2020 17:40:23 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 4CLkR13trJzMs3bB
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Oct 2020 10:53:17 +0100 (CET)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by albert.telenet-ops.be with bizsmtp
-        id lTfw2304W4C55Sk06Tfxz5; Wed, 28 Oct 2020 16:39:57 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
+        by xavier.telenet-ops.be with bizsmtp
+        id lMtG2300W4C55Sk01MtGMp; Wed, 28 Oct 2020 10:53:17 +0100
+Received: from geert (helo=localhost)
+        by ramsan.of.borg with local-esmtp (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kXnYK-000pTp-M8; Wed, 28 Oct 2020 16:39:56 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kXnYK-007Hp8-6a; Wed, 28 Oct 2020 16:39:56 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] irqchip/renesas-intc-irqpin: Merge irlm_bit and needs_irlm
-Date:   Wed, 28 Oct 2020 16:39:55 +0100
-Message-Id: <20201028153955.1736767-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        id 1kXi8q-000lf0-Hq; Wed, 28 Oct 2020 10:53:16 +0100
+Date:   Wed, 28 Oct 2020 10:53:16 +0100 (CET)
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+cc:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] opp: Don't always remove static OPPs in
+ _of_add_opp_table_v1()
+In-Reply-To: <2c73ab54717ef358b118ea0cfb727b1427e7730a.1602648719.git.viresh.kumar@linaro.org>
+Message-ID: <alpine.DEB.2.22.394.2010281050200.183010@ramsan.of.borg>
+References: <2c73ab54717ef358b118ea0cfb727b1427e7730a.1602648719.git.viresh.kumar@linaro.org>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Get rid of the separate flag to indicate if the IRLM bit is present in
-the INTC/Interrupt Control Register 0, by considering -1 an invalid
-irlm_bit value.
+ 	Hi Viresh,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Tested on r8a7778/bock-w, r8a7779/marzen, r8a7740/armadillo. and
-sh73a0/kzm9g.
+On Wed, 14 Oct 2020, Viresh Kumar wrote:
+> The patch missed returning 0 early in case of success and hence the
+> static OPPs got removed by mistake. Fix it.
+>
+> Fixes: 90d46d71cce2 ("opp: Handle multiple calls for same OPP table in _of_add_opp_table_v1()")
+> Reported-by: Aisheng Dong <aisheng.dong@nxp.com>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
- drivers/irqchip/irq-renesas-intc-irqpin.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+This revives cpufreq on R-Car Gen2, and fixes a later s2ram regression
+in commit dc279ac6e5b4e06e ("cpufreq: dt: Refactor initialization to
+handle probe deferral properly"), where the PMIC is accessesed while
+the I2C controller is still suspended.
 
-diff --git a/drivers/irqchip/irq-renesas-intc-irqpin.c b/drivers/irqchip/irq-renesas-intc-irqpin.c
-index 3819185bfd02c63f..cb7f60b3b4a920c2 100644
---- a/drivers/irqchip/irq-renesas-intc-irqpin.c
-+++ b/drivers/irqchip/irq-renesas-intc-irqpin.c
-@@ -71,8 +71,7 @@ struct intc_irqpin_priv {
- };
- 
- struct intc_irqpin_config {
--	unsigned int irlm_bit;
--	unsigned needs_irlm:1;
-+	int irlm_bit;		/* -1 if non-existent */
- };
- 
- static unsigned long intc_irqpin_read32(void __iomem *iomem)
-@@ -349,11 +348,10 @@ static const struct irq_domain_ops intc_irqpin_irq_domain_ops = {
- 
- static const struct intc_irqpin_config intc_irqpin_irlm_r8a777x = {
- 	.irlm_bit = 23, /* ICR0.IRLM0 */
--	.needs_irlm = 1,
- };
- 
- static const struct intc_irqpin_config intc_irqpin_rmobile = {
--	.needs_irlm = 0,
-+	.irlm_bit = -1,
- };
- 
- static const struct of_device_id intc_irqpin_dt_ids[] = {
-@@ -470,7 +468,7 @@ static int intc_irqpin_probe(struct platform_device *pdev)
- 	}
- 
- 	/* configure "individual IRQ mode" where needed */
--	if (config && config->needs_irlm) {
-+	if (config && config->irlm_bit >= 0) {
- 		if (io[INTC_IRQPIN_REG_IRLM])
- 			intc_irqpin_read_modify_write(p, INTC_IRQPIN_REG_IRLM,
- 						      config->irlm_bit, 1, 1);
--- 
-2.25.1
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+> --- a/drivers/opp/of.c
+> +++ b/drivers/opp/of.c
+> @@ -944,6 +944,8 @@ static int _of_add_opp_table_v1(struct device *dev, struct opp_table *opp_table)
+> 		nr -= 2;
+> 	}
+>
+> +	return 0;
+> +
+> remove_static_opp:
+> 	_opp_remove_all_static(opp_table);
+>
+> -- 
+> 2.25.0.rc1.19.g042ed3e048af
+
+Gr{oetje,eeting}s,
+
+ 						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+ 							    -- Linus Torvalds
