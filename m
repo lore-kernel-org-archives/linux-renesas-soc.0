@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28878C4363A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5657C4363A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD50120709
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F47F206F4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Oct 2020 22:25:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732827AbgJ1WZV (ORCPT
+        id S1732936AbgJ1WZc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 28 Oct 2020 18:25:21 -0400
-Received: from newton.telenet-ops.be ([195.130.132.45]:49430 "EHLO
+        Wed, 28 Oct 2020 18:25:32 -0400
+Received: from newton.telenet-ops.be ([195.130.132.45]:49956 "EHLO
         newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732859AbgJ1WZU (ORCPT
+        with ESMTP id S1732858AbgJ1WZZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Oct 2020 18:25:20 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 4CLsc85q3dzMwFwT
+        Wed, 28 Oct 2020 18:25:25 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 4CLsc85x7YzMwcJy
         for <linux-renesas-soc@vger.kernel.org>; Wed, 28 Oct 2020 16:16:40 +0100 (CET)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id lTGf2300h4C55Sk01TGf1z; Wed, 28 Oct 2020 16:16:40 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id lTGg230054C55Sk01TGgH2; Wed, 28 Oct 2020 16:16:40 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kXnBn-000pDZ-Ii; Wed, 28 Oct 2020 16:16:39 +0100
+        id 1kXnBn-000pDd-PD; Wed, 28 Oct 2020 16:16:39 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kXnBn-007H8m-67; Wed, 28 Oct 2020 16:16:39 +0100
+        id 1kXnBn-007H97-9X; Wed, 28 Oct 2020 16:16:39 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
@@ -42,9 +42,9 @@ Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/8] pinctrl: renesas: Remove superfluous goto in sh_pfc_gpio_set_direction()
-Date:   Wed, 28 Oct 2020 16:16:30 +0100
-Message-Id: <20201028151637.1734130-2-geert+renesas@glider.be>
+Subject: [PATCH 5/8] pinctrl: renesas: Factor out common R-Car Gen3 bias handling
+Date:   Wed, 28 Oct 2020 16:16:34 +0100
+Message-Id: <20201028151637.1734130-6-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201028151637.1734130-1-geert+renesas@glider.be>
 References: <20201028151637.1734130-1-geert+renesas@glider.be>
@@ -54,32 +54,372 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Commit b13431ed6eab808a ("pinctrl: sh-pfc: Remove incomplete flag
-"cfg->type"") removed the last statement in between the goto and the
-label.  Hence remove both.
+All pin control drivers for R-Car Gen3 SoCs contain identical bias
+handling.  Reduce code duplication by moving it to the common pinctrl.c
+code.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pinctrl.c | 5 -----
- 1 file changed, 5 deletions(-)
+ drivers/pinctrl/renesas/core.h         |  4 +++
+ drivers/pinctrl/renesas/pfc-r8a77950.c | 45 ++------------------------
+ drivers/pinctrl/renesas/pfc-r8a77951.c | 45 ++------------------------
+ drivers/pinctrl/renesas/pfc-r8a7796.c  | 45 ++------------------------
+ drivers/pinctrl/renesas/pfc-r8a77965.c | 45 ++------------------------
+ drivers/pinctrl/renesas/pfc-r8a77990.c | 45 ++------------------------
+ drivers/pinctrl/renesas/pinctrl.c      | 40 +++++++++++++++++++++++
+ 7 files changed, 54 insertions(+), 215 deletions(-)
 
+diff --git a/drivers/pinctrl/renesas/core.h b/drivers/pinctrl/renesas/core.h
+index b5b1d163e98ab8d4..5ca7e0830ae9de38 100644
+--- a/drivers/pinctrl/renesas/core.h
++++ b/drivers/pinctrl/renesas/core.h
+@@ -33,4 +33,8 @@ const struct pinmux_bias_reg *
+ sh_pfc_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
+ 		       unsigned int *bit);
+ 
++unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin);
++void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
++			  unsigned int bias);
++
+ #endif /* __SH_PFC_CORE_H__ */
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77950.c b/drivers/pinctrl/renesas/pfc-r8a77950.c
+index 04812e62f3a476a8..32b66b9999b871eb 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77950.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77950.c
+@@ -5820,51 +5820,10 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 	{ /* sentinel */ },
+ };
+ 
+-static unsigned int r8a77950_pinmux_get_bias(struct sh_pfc *pfc,
+-					     unsigned int pin)
+-{
+-	const struct pinmux_bias_reg *reg;
+-	unsigned int bit;
+-
+-	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
+-	if (!reg)
+-		return PIN_CONFIG_BIAS_DISABLE;
+-
+-	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
+-		return PIN_CONFIG_BIAS_DISABLE;
+-	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
+-		return PIN_CONFIG_BIAS_PULL_UP;
+-	else
+-		return PIN_CONFIG_BIAS_PULL_DOWN;
+-}
+-
+-static void r8a77950_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+-				     unsigned int bias)
+-{
+-	const struct pinmux_bias_reg *reg;
+-	u32 enable, updown;
+-	unsigned int bit;
+-
+-	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
+-	if (!reg)
+-		return;
+-
+-	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
+-	if (bias != PIN_CONFIG_BIAS_DISABLE)
+-		enable |= BIT(bit);
+-
+-	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
+-	if (bias == PIN_CONFIG_BIAS_PULL_UP)
+-		updown |= BIT(bit);
+-
+-	sh_pfc_write(pfc, reg->pud, updown);
+-	sh_pfc_write(pfc, reg->puen, enable);
+-}
+-
+ static const struct sh_pfc_soc_operations r8a77950_pinmux_ops = {
+ 	.pin_to_pocctrl = r8a77950_pin_to_pocctrl,
+-	.get_bias = r8a77950_pinmux_get_bias,
+-	.set_bias = r8a77950_pinmux_set_bias,
++	.get_bias = rcar_pinmux_get_bias,
++	.set_bias = rcar_pinmux_set_bias,
+ };
+ 
+ const struct sh_pfc_soc_info r8a77950_pinmux_info = {
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77951.c b/drivers/pinctrl/renesas/pfc-r8a77951.c
+index 8d1262c170af0085..72252fdcbc21b821 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77951.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77951.c
+@@ -6201,51 +6201,10 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 	{ /* sentinel */ },
+ };
+ 
+-static unsigned int r8a77951_pinmux_get_bias(struct sh_pfc *pfc,
+-					     unsigned int pin)
+-{
+-	const struct pinmux_bias_reg *reg;
+-	unsigned int bit;
+-
+-	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
+-	if (!reg)
+-		return PIN_CONFIG_BIAS_DISABLE;
+-
+-	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
+-		return PIN_CONFIG_BIAS_DISABLE;
+-	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
+-		return PIN_CONFIG_BIAS_PULL_UP;
+-	else
+-		return PIN_CONFIG_BIAS_PULL_DOWN;
+-}
+-
+-static void r8a77951_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+-				     unsigned int bias)
+-{
+-	const struct pinmux_bias_reg *reg;
+-	u32 enable, updown;
+-	unsigned int bit;
+-
+-	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
+-	if (!reg)
+-		return;
+-
+-	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
+-	if (bias != PIN_CONFIG_BIAS_DISABLE)
+-		enable |= BIT(bit);
+-
+-	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
+-	if (bias == PIN_CONFIG_BIAS_PULL_UP)
+-		updown |= BIT(bit);
+-
+-	sh_pfc_write(pfc, reg->pud, updown);
+-	sh_pfc_write(pfc, reg->puen, enable);
+-}
+-
+ static const struct sh_pfc_soc_operations r8a77951_pinmux_ops = {
+ 	.pin_to_pocctrl = r8a77951_pin_to_pocctrl,
+-	.get_bias = r8a77951_pinmux_get_bias,
+-	.set_bias = r8a77951_pinmux_set_bias,
++	.get_bias = rcar_pinmux_get_bias,
++	.set_bias = rcar_pinmux_set_bias,
+ };
+ 
+ #ifdef CONFIG_PINCTRL_PFC_R8A774E1
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7796.c b/drivers/pinctrl/renesas/pfc-r8a7796.c
+index 88e9c46003d93327..6e8e023410c4c298 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7796.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7796.c
+@@ -6150,51 +6150,10 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 	{ /* sentinel */ },
+ };
+ 
+-static unsigned int r8a7796_pinmux_get_bias(struct sh_pfc *pfc,
+-					    unsigned int pin)
+-{
+-	const struct pinmux_bias_reg *reg;
+-	unsigned int bit;
+-
+-	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
+-	if (!reg)
+-		return PIN_CONFIG_BIAS_DISABLE;
+-
+-	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
+-		return PIN_CONFIG_BIAS_DISABLE;
+-	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
+-		return PIN_CONFIG_BIAS_PULL_UP;
+-	else
+-		return PIN_CONFIG_BIAS_PULL_DOWN;
+-}
+-
+-static void r8a7796_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+-				   unsigned int bias)
+-{
+-	const struct pinmux_bias_reg *reg;
+-	u32 enable, updown;
+-	unsigned int bit;
+-
+-	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
+-	if (!reg)
+-		return;
+-
+-	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
+-	if (bias != PIN_CONFIG_BIAS_DISABLE)
+-		enable |= BIT(bit);
+-
+-	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
+-	if (bias == PIN_CONFIG_BIAS_PULL_UP)
+-		updown |= BIT(bit);
+-
+-	sh_pfc_write(pfc, reg->pud, updown);
+-	sh_pfc_write(pfc, reg->puen, enable);
+-}
+-
+ static const struct sh_pfc_soc_operations r8a7796_pinmux_ops = {
+ 	.pin_to_pocctrl = r8a7796_pin_to_pocctrl,
+-	.get_bias = r8a7796_pinmux_get_bias,
+-	.set_bias = r8a7796_pinmux_set_bias,
++	.get_bias = rcar_pinmux_get_bias,
++	.set_bias = rcar_pinmux_set_bias,
+ };
+ 
+ #ifdef CONFIG_PINCTRL_PFC_R8A774A1
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77965.c b/drivers/pinctrl/renesas/pfc-r8a77965.c
+index 38b7b844abe9cc4a..590e5f8006d4c035 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77965.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77965.c
+@@ -6404,51 +6404,10 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 	{ /* sentinel */ },
+ };
+ 
+-static unsigned int r8a77965_pinmux_get_bias(struct sh_pfc *pfc,
+-					    unsigned int pin)
+-{
+-	const struct pinmux_bias_reg *reg;
+-	unsigned int bit;
+-
+-	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
+-	if (!reg)
+-		return PIN_CONFIG_BIAS_DISABLE;
+-
+-	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
+-		return PIN_CONFIG_BIAS_DISABLE;
+-	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
+-		return PIN_CONFIG_BIAS_PULL_UP;
+-	else
+-		return PIN_CONFIG_BIAS_PULL_DOWN;
+-}
+-
+-static void r8a77965_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+-				   unsigned int bias)
+-{
+-	const struct pinmux_bias_reg *reg;
+-	u32 enable, updown;
+-	unsigned int bit;
+-
+-	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
+-	if (!reg)
+-		return;
+-
+-	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
+-	if (bias != PIN_CONFIG_BIAS_DISABLE)
+-		enable |= BIT(bit);
+-
+-	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
+-	if (bias == PIN_CONFIG_BIAS_PULL_UP)
+-		updown |= BIT(bit);
+-
+-	sh_pfc_write(pfc, reg->pud, updown);
+-	sh_pfc_write(pfc, reg->puen, enable);
+-}
+-
+ static const struct sh_pfc_soc_operations r8a77965_pinmux_ops = {
+ 	.pin_to_pocctrl = r8a77965_pin_to_pocctrl,
+-	.get_bias = r8a77965_pinmux_get_bias,
+-	.set_bias = r8a77965_pinmux_set_bias,
++	.get_bias = rcar_pinmux_get_bias,
++	.set_bias = rcar_pinmux_set_bias,
+ };
+ 
+ #ifdef CONFIG_PINCTRL_PFC_R8A774B1
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77990.c b/drivers/pinctrl/renesas/pfc-r8a77990.c
+index 6f9f7638703dbf60..a51c1e684439106a 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77990.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77990.c
+@@ -5237,51 +5237,10 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
+ 	{ /* sentinel */ },
+ };
+ 
+-static unsigned int r8a77990_pinmux_get_bias(struct sh_pfc *pfc,
+-					     unsigned int pin)
+-{
+-	const struct pinmux_bias_reg *reg;
+-	unsigned int bit;
+-
+-	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
+-	if (!reg)
+-		return PIN_CONFIG_BIAS_DISABLE;
+-
+-	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
+-		return PIN_CONFIG_BIAS_DISABLE;
+-	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
+-		return PIN_CONFIG_BIAS_PULL_UP;
+-	else
+-		return PIN_CONFIG_BIAS_PULL_DOWN;
+-}
+-
+-static void r8a77990_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+-				     unsigned int bias)
+-{
+-	const struct pinmux_bias_reg *reg;
+-	u32 enable, updown;
+-	unsigned int bit;
+-
+-	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
+-	if (!reg)
+-		return;
+-
+-	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
+-	if (bias != PIN_CONFIG_BIAS_DISABLE)
+-		enable |= BIT(bit);
+-
+-	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
+-	if (bias == PIN_CONFIG_BIAS_PULL_UP)
+-		updown |= BIT(bit);
+-
+-	sh_pfc_write(pfc, reg->pud, updown);
+-	sh_pfc_write(pfc, reg->puen, enable);
+-}
+-
+ static const struct sh_pfc_soc_operations r8a77990_pinmux_ops = {
+ 	.pin_to_pocctrl = r8a77990_pin_to_pocctrl,
+-	.get_bias = r8a77990_pinmux_get_bias,
+-	.set_bias = r8a77990_pinmux_set_bias,
++	.get_bias = rcar_pinmux_get_bias,
++	.set_bias = rcar_pinmux_set_bias,
+ };
+ 
+ #ifdef CONFIG_PINCTRL_PFC_R8A774C0
 diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
-index 212a4a9c3a8fc1c7..f8d5fae66e862fd6 100644
+index d34079726039c39d..4a030600f4fd0dd0 100644
 --- a/drivers/pinctrl/renesas/pinctrl.c
 +++ b/drivers/pinctrl/renesas/pinctrl.c
-@@ -460,12 +460,7 @@ static int sh_pfc_gpio_set_direction(struct pinctrl_dev *pctldev,
- 	}
+@@ -823,3 +823,43 @@ int sh_pfc_register_pinctrl(struct sh_pfc *pfc)
  
- 	spin_lock_irqsave(&pfc->lock, flags);
--
- 	ret = sh_pfc_config_mux(pfc, pin->enum_id, new_type);
--	if (ret < 0)
--		goto done;
--
--done:
- 	spin_unlock_irqrestore(&pfc->lock, flags);
- 	return ret;
+ 	return pinctrl_enable(pmx->pctl);
  }
++
++unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
++{
++	const struct pinmux_bias_reg *reg;
++	unsigned int bit;
++
++	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
++	if (!reg)
++		return PIN_CONFIG_BIAS_DISABLE;
++
++	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
++		return PIN_CONFIG_BIAS_DISABLE;
++	else if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
++		return PIN_CONFIG_BIAS_PULL_UP;
++	else
++		return PIN_CONFIG_BIAS_PULL_DOWN;
++}
++
++void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
++			  unsigned int bias)
++{
++	const struct pinmux_bias_reg *reg;
++	u32 enable, updown;
++	unsigned int bit;
++
++	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
++	if (!reg)
++		return;
++
++	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
++	if (bias != PIN_CONFIG_BIAS_DISABLE)
++		enable |= BIT(bit);
++
++	updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
++	if (bias == PIN_CONFIG_BIAS_PULL_UP)
++		updown |= BIT(bit);
++
++	sh_pfc_write(pfc, reg->pud, updown);
++	sh_pfc_write(pfc, reg->puen, enable);
++}
 -- 
 2.25.1
 
