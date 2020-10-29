@@ -2,112 +2,79 @@ Return-Path: <SRS0=H2oM=EE=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97961C55179
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 29 Oct 2020 13:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C7EC4363A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 29 Oct 2020 13:49:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E8DD20809
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 29 Oct 2020 13:46:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D8EC20809
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 29 Oct 2020 13:49:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbgJ2Nqr (ORCPT
+        id S1727381AbgJ2NtM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 29 Oct 2020 09:46:47 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:43978 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727512AbgJ2Nqq (ORCPT
+        Thu, 29 Oct 2020 09:49:12 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39758 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727250AbgJ2NtL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 29 Oct 2020 09:46:46 -0400
-X-Greylist: delayed 510 seconds by postgrey-1.27 at vger.kernel.org; Thu, 29 Oct 2020 09:46:45 EDT
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id E6A9A3C057F;
-        Thu, 29 Oct 2020 14:38:19 +0100 (CET)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id jZfYc79CLMZM; Thu, 29 Oct 2020 14:38:14 +0100 (CET)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 4196E3C0579;
-        Thu, 29 Oct 2020 14:38:14 +0100 (CET)
-Received: from lxhi-065.adit-jv.com (10.72.94.34) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.487.0; Thu, 29 Oct
- 2020 14:38:13 +0100
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        <linux-renesas-soc@vger.kernel.org>
-CC:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Steffen Pengel <spengel@de.adit-jv.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: [PATCH 2/2] arm64: dts: renesas: r8a77961: ulcb-kf: Initial device tree
-Date:   Thu, 29 Oct 2020 14:37:41 +0100
-Message-ID: <20201029133741.25721-2-erosca@de.adit-jv.com>
-X-Mailer: git-send-email 2.29.0
-In-Reply-To: <20201029133741.25721-1-erosca@de.adit-jv.com>
-References: <20201029133741.25721-1-erosca@de.adit-jv.com>
+        Thu, 29 Oct 2020 09:49:11 -0400
+Received: by mail-oi1-f195.google.com with SMTP id u127so3225179oib.6;
+        Thu, 29 Oct 2020 06:49:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b/PkxtW4lbE3bw7TdrBLMQnlZPKOuOmDD8hftAGjdvI=;
+        b=Jv1KKivVwiqEA0GsQseSWaVfe29kq4AUXpi9XNMlG4eBW79ms2X48SQjAPWZ//v3Y8
+         AgOOhI8hs38G2Aa69syQBrK0oxfabONhCmjFHUcj38EijUiWbdhjIEXqqD82dBKqdDIM
+         NscSDA6PyWNDRGiJlUTQ/4dqApAL0DCDBbV5yMzVMForp4z/D6jtZs6RMNU+wVUuCJPY
+         R2ufZBmeojET5f0TGwQRwq4dtn8+wno509YZlbQ4j3Uuoe/e1wZUjFJ4j9JlgfhQf8Bo
+         QddeHWFfEhlUWyoglTG4CaLgK5CDkPidf0FIef8jfpxCipyKtUxttnaPBLa3GUKTTvFf
+         unbg==
+X-Gm-Message-State: AOAM533VUjMLNeoipX++fnTVa8DNSbxT/ndVvTrLkPZSamyZAXyc4AKg
+        WgFUY9t4Aq/WrC9YmCK5dKN++H+B+5pePRMfGx4O9PDRWs3a2g==
+X-Google-Smtp-Source: ABdhPJxmRcdoWxm1NaLMAUSOxyn4a6MI2KmbXeDRvzKPAhLdGmjGP48bxLTQ3TbbczBcc/E5NCNuLYJuP7qWUctOiw0=
+X-Received: by 2002:aca:f40c:: with SMTP id s12mr2821188oih.153.1603979350829;
+ Thu, 29 Oct 2020 06:49:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.72.94.34]
+References: <1603850751-32762-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1603850751-32762-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1603850751-32762-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 29 Oct 2020 14:48:59 +0100
+Message-ID: <CAMuHMdWccCTv=YEyv6EZRbnWxwv_x455+XoTEXQritkHgLebHw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: pci: rcar-pci-host: document r8a77965 bindings
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-pci <linux-pci@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Create a dedicated DTB for M3-ES3.0 + ULCB + Kingfisher combo.
-Inspire from the pre-existing ULCB-KF device trees:
+On Wed, Oct 28, 2020 at 10:41 PM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Document the R-Car M3-N (R8A77965) SoC in the R-Car PCIe bindings.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-$ ls -1 arch/arm64/boot/dts/renesas/*ulcb-kf.dts
-arch/arm64/boot/dts/renesas/r8a77950-ulcb-kf.dts
-arch/arm64/boot/dts/renesas/r8a77951-ulcb-kf.dts
-arch/arm64/boot/dts/renesas/r8a77960-ulcb-kf.dts
-arch/arm64/boot/dts/renesas/r8a77965-ulcb-kf.dts
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Eugeniu Rosca <erosca@de.adit-jv.com>
----
- arch/arm64/boot/dts/renesas/Makefile             |  1 +
- arch/arm64/boot/dts/renesas/r8a77961-ulcb-kf.dts | 15 +++++++++++++++
- 2 files changed, 16 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a77961-ulcb-kf.dts
+Gr{oetje,eeting}s,
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index dffefe030a76..4215b7023d88 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -39,6 +39,7 @@ dtb-$(CONFIG_ARCH_R8A77960) += r8a77960-ulcb-kf.dtb
- 
- dtb-$(CONFIG_ARCH_R8A77961) += r8a77961-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77961) += r8a77961-ulcb.dtb
-+dtb-$(CONFIG_ARCH_R8A77961) += r8a77961-ulcb-kf.dtb
- 
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-x.dtb
- dtb-$(CONFIG_ARCH_R8A77965) += r8a77965-salvator-xs.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a77961-ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a77961-ulcb-kf.dts
-new file mode 100644
-index 000000000000..6ec958348eb0
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a77961-ulcb-kf.dts
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the M3ULCB Kingfisher board
-+ *
-+ * Copyright (C) 2020 Eugeniu Rosca <rosca.eugeniu@gmail.com>
-+ */
-+
-+#include "r8a77961-ulcb.dts"
-+#include "ulcb-kf.dtsi"
-+
-+/ {
-+	model = "Renesas M3ULCB Kingfisher board based on r8a77961";
-+	compatible = "shimafuji,kingfisher", "renesas,m3ulcb",
-+		     "renesas,r8a77961";
-+};
+                        Geert
+
 -- 
-2.29.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
