@@ -2,107 +2,159 @@ Return-Path: <SRS0=9jE+=EF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7FDDC00A89
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Oct 2020 07:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FC8C5517A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Oct 2020 08:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 96AEE22210
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Oct 2020 07:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 677022223F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Oct 2020 08:15:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725808AbgJ3Hze (ORCPT
+        id S1725948AbgJ3IP3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 30 Oct 2020 03:55:34 -0400
-Received: from mail-oo1-f67.google.com ([209.85.161.67]:36053 "EHLO
-        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725355AbgJ3Hze (ORCPT
+        Fri, 30 Oct 2020 04:15:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32812 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbgJ3IP2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Oct 2020 03:55:34 -0400
-Received: by mail-oo1-f67.google.com with SMTP id j6so1388632oot.3;
-        Fri, 30 Oct 2020 00:55:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i23jS/gbz5X7YN7KU9IqT0XWSw21v9qjwEgB0M7JaQM=;
-        b=P8avz5J2YYC5arHRgMlkWfbqNCHBsJwfOXqCIJ24J0T9JBhEULWpC67WEGnHPRZZuh
-         Y388zxjLVNAckW5WUKGSquMdtXfHqNErsKTIvjmbkj6e68U3dqRX7GqF9A0ExewkOl9s
-         MMRx1SMJHJkQ8HAHRlx5iWjhYKfn1GlSQ5glZu+pCa5mvdxDVbZyyf630fGlOjgKhKyd
-         mbReQ82T2Raw9WGb66qttzpnMu7XUT3wgiIN9wJNwq6KDn4eCQdrS2eHGzwwQUCSX0DT
-         L+MdnfL6bCqv822INYgmQkU7Vn367vM4jP2SabTg2EUJ7m1wEsTPqs6XRMJoWRT1M5/C
-         HOOQ==
-X-Gm-Message-State: AOAM532WchCJrGnQgZYohbob0MjtGCuHs6ZdFpD4BWoYAYRX9NBblMCG
-        MLi3Rm8K1sw7qbi4yMXD3S4QlisLLA9Mic6eskSrAZQl80Q=
-X-Google-Smtp-Source: ABdhPJzwt6U2dN2noBCm4rBxAA8dll1gAIICIkruPqhq0tUoD/H23nOY3qY9x9+ZBK5Y6BShJKmej98K+uA4CIwDFQ4=
-X-Received: by 2002:a4a:e80b:: with SMTP id b11mr813437oob.1.1604044532122;
- Fri, 30 Oct 2020 00:55:32 -0700 (PDT)
+        Fri, 30 Oct 2020 04:15:28 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98A12C0613D4
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2020 01:15:28 -0700 (PDT)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by baptiste.telenet-ops.be with bizsmtp
+        id m8FR2300B4C55Sk018FRtr; Fri, 30 Oct 2020 09:15:25 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kYPZF-0019fe-03; Fri, 30 Oct 2020 09:15:25 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kYPZE-009daS-HS; Fri, 30 Oct 2020 09:15:24 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Phong Hoang <phong.hoang.wz@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH/RFC v2 1/2] gpio: rcar: Optimize GPIO pin state read on R-Car Gen3
+Date:   Fri, 30 Oct 2020 09:15:21 +0100
+Message-Id: <20201030081522.2297074-2-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201030081522.2297074-1-geert+renesas@glider.be>
+References: <20201030081522.2297074-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <20201029105515.16309-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVGO+DEgsTr62nA+egU2etZA_vwE9GrOG1JPWBvv90UXg@mail.gmail.com>
-In-Reply-To: <CAMuHMdVGO+DEgsTr62nA+egU2etZA_vwE9GrOG1JPWBvv90UXg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 30 Oct 2020 08:55:21 +0100
-Message-ID: <CAMuHMdVPHhot+noBYwqfCtwYzKJD4hkwjBk_gwN4pDR0agwipg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: r8a774c0: Add RPC clocks
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Prabhakar,
+Currently, the R-Car GPIO driver treats R-Car Gen2 and R-Car Gen3 GPIO
+controllers the same.  However, there exist small differences, like the
+behavior of the General Input Register (INDT):
+  - On R-Car Gen1, R-Car Gen2, and RZ/G1, INDT only reflects the state
+    of an input pin if the GPIO is configured for input,
+  - On R-Car Gen3 and RZ/G2, INDT always reflects the state of the input
+    pins.
+Hence to accommodate all variants, the driver does not use the INDT
+register to read the status of a GPIO line when configured for output,
+at the expense of doing 2 or 3 register reads instead of 1.
 
-On Thu, Oct 29, 2020 at 3:28 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> On Thu, Oct 29, 2020 at 11:55 AM Lad Prabhakar
-> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > Describe the RPCSRC internal clock and the RPC[D2] clocks derived from it,
-> > as well as the RPC-IF module clock, in the RZ/G2E (R8A774C0) CPG/MSSR
-> > driver.
+Given register accesses are slow, change the .get() and .get_multiple()
+callbacks to always use INDT to read pin state on SoCs where this is
+supported.
 
-> > +               if (e3_rpcsrc_parent) {
-> > +                       parent = clks[core->parent >> 16];
-> > +                       if (IS_ERR(parent))
-> > +                               return ERR_CAST(parent);
-> > +               }
-> > +
-> > +               return clk_register_divider_table(NULL, core->name,
-> > +                                                 __clk_get_name(parent), 0,
-> > +                                                 base + CPG_RPCCKCR, 3, 2, 0,
-> > +                                                 e3_rpcsrc_parent ?
-> > +                                                 cpg_rpcsrc_e3_pll1_div_table :
-> > +                                                 cpg_rpcsrc_e3_pll0_div_table,
-> > +                                                 &cpg_lock);
-> > +
->
-> So you want to keep the parent clock selection fixed, but still allow
-> the system to change the divider?
-> Why not support changing the parent too, by modeling this as a composite
-> clock consisting of a mux and a divider?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/gpio/gpio-rcar.c | 29 ++++++++++++++++++++---------
+ 1 file changed, 20 insertions(+), 9 deletions(-)
 
-To clarify: basically you have two options here:
-  1. Model this clock as a non-mutable clock, based on the register settings
-     at the time the kernel boots.  I.e. register it as a fixed-divider clock.
-     This is how we handle the PLLx clocks.
-  2. Model this clock as a fully-programmable clock.  I.e. implement both
-     dynamic parent selection and dynamic divider selection.
-
-You have picked something in between ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index 0b572dbc4a36801d..cbe9257fff9fc50f 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -35,6 +35,7 @@ struct gpio_rcar_bank_info {
+ struct gpio_rcar_info {
+ 	bool has_outdtsel;
+ 	bool has_both_edge_trigger;
++	bool has_always_in;
+ };
+ 
+ struct gpio_rcar_priv {
+@@ -302,9 +303,9 @@ static int gpio_rcar_get(struct gpio_chip *chip, unsigned offset)
+ 	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
+ 	u32 bit = BIT(offset);
+ 
+-	/* testing on r8a7790 shows that INDT does not show correct pin state
+-	 * when configured as output, so use OUTDT in case of output pins */
+-	if (gpio_rcar_read(p, INOUTSEL) & bit)
++	/* Before R-Car Gen3, INDT does not show correct pin state when
++	 * configured as output, so use OUTDT in case of output pins */
++	if (!p->info.has_always_in && (gpio_rcar_read(p, INOUTSEL) & bit))
+ 		return !!(gpio_rcar_read(p, OUTDT) & bit);
+ 	else
+ 		return !!(gpio_rcar_read(p, INDT) & bit);
+@@ -324,6 +325,11 @@ static int gpio_rcar_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+ 	if (!bankmask)
+ 		return 0;
+ 
++	if (p->info.has_always_in) {
++		bits[0] = gpio_rcar_read(p, INDT) & bankmask;
++		return 0;
++	}
++
+ 	spin_lock_irqsave(&p->lock, flags);
+ 	outputs = gpio_rcar_read(p, INOUTSEL);
+ 	m = outputs & bankmask;
+@@ -383,11 +389,19 @@ static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
+ static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
+ 	.has_outdtsel = false,
+ 	.has_both_edge_trigger = false,
++	.has_always_in = false,
+ };
+ 
+ static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
+ 	.has_outdtsel = true,
+ 	.has_both_edge_trigger = true,
++	.has_always_in = false,
++};
++
++static const struct gpio_rcar_info gpio_rcar_info_gen3 = {
++	.has_outdtsel = true,
++	.has_both_edge_trigger = true,
++	.has_always_in = true,
+ };
+ 
+ static const struct of_device_id gpio_rcar_of_table[] = {
+@@ -412,12 +426,10 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+ 		.data = &gpio_rcar_info_gen2,
+ 	}, {
+ 		.compatible = "renesas,gpio-r8a7795",
+-		/* Gen3 GPIO is identical to Gen2. */
+-		.data = &gpio_rcar_info_gen2,
++		.data = &gpio_rcar_info_gen3,
+ 	}, {
+ 		.compatible = "renesas,gpio-r8a7796",
+-		/* Gen3 GPIO is identical to Gen2. */
+-		.data = &gpio_rcar_info_gen2,
++		.data = &gpio_rcar_info_gen3,
+ 	}, {
+ 		.compatible = "renesas,rcar-gen1-gpio",
+ 		.data = &gpio_rcar_info_gen1,
+@@ -426,8 +438,7 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+ 		.data = &gpio_rcar_info_gen2,
+ 	}, {
+ 		.compatible = "renesas,rcar-gen3-gpio",
+-		/* Gen3 GPIO is identical to Gen2. */
+-		.data = &gpio_rcar_info_gen2,
++		.data = &gpio_rcar_info_gen3,
+ 	}, {
+ 		.compatible = "renesas,gpio-rcar",
+ 		.data = &gpio_rcar_info_gen1,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
