@@ -2,92 +2,78 @@ Return-Path: <SRS0=9jE+=EF=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BB3C00A89
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Oct 2020 08:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3C8C4742C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Oct 2020 08:33:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 93BB822243
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Oct 2020 08:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0470C20739
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Oct 2020 08:33:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725946AbgJ3IP3 (ORCPT
+        id S1726003AbgJ3Icz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 30 Oct 2020 04:15:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32810 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725784AbgJ3IP3 (ORCPT
+        Fri, 30 Oct 2020 04:32:55 -0400
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:56367 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbgJ3Icy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Oct 2020 04:15:29 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89F59C0613D2
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Oct 2020 01:15:27 -0700 (PDT)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id m8FR2300T4C55Sk018FRlL; Fri, 30 Oct 2020 09:15:25 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kYPZF-0019fd-Gt; Fri, 30 Oct 2020 09:15:25 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1kYPZE-009daP-Gi; Fri, 30 Oct 2020 09:15:24 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        Phong Hoang <phong.hoang.wz@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC v2 0/2] R-Car V3U GPIO support
-Date:   Fri, 30 Oct 2020 09:15:20 +0100
-Message-Id: <20201030081522.2297074-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Fri, 30 Oct 2020 04:32:54 -0400
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id 7DA163C0582;
+        Fri, 30 Oct 2020 09:32:11 +0100 (CET)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id dBtUJhKgMeXU; Fri, 30 Oct 2020 09:32:05 +0100 (CET)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 26EFF3C0594;
+        Fri, 30 Oct 2020 09:31:26 +0100 (CET)
+Received: from lxhi-065.adit-jv.com (10.72.94.31) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.487.0; Fri, 30 Oct
+ 2020 09:31:25 +0100
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        <linux-renesas-soc@vger.kernel.org>
+CC:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Steffen Pengel <spengel@de.adit-jv.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>
+Subject: [PATCH v2 0/3] Add R-Car M3-W+ ULCB with Kingfisher
+Date:   Fri, 30 Oct 2020 09:30:48 +0100
+Message-ID: <20201030083051.18752-1-erosca@de.adit-jv.com>
+X-Mailer: git-send-email 2.29.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.72.94.31]
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+Add initial M3-ES3.0-ULCB-KF support.
 
-This RFC patch series adds support for the GPIO blocks on the R-Car V3U
-(r8a77990) SoC.  As this is an RFC, I didn't include patches from v1[1]
-that have not changed.  This series depends on [2].
+v2: Add "Reviewed-by". Update renesas.yaml.
+v1:
+ - https://lore.kernel.org/linux-renesas-soc/20201029133741.25721-1-erosca@de.adit-jv.com/
+ - https://lore.kernel.org/linux-renesas-soc/20201029133741.25721-2-erosca@de.adit-jv.com/
 
-Compared to v1 and the BSP, v2 takes a different approach to handle the
-new General Input Register (INDT): instead of programming this register
-during GPIO line configuration and depending on GPIO line direction, v2
-enables input unconditionally in probe and resume, so the driver can
-read pin state at all times.
+Eugeniu Rosca (3):
+  arm64: dts: renesas: r8a77961: Add CAN{0,1} placeholder nodes
+  arm64: dts: renesas: r8a77961: ulcb-kf: Initial device tree
+  dt-bindings: arm: renesas: Add R-Car M3-W+ ULCB with Kingfisher
 
-Due to lack of hardware, the second patch is compile-tested only.
-
-Thanks for your comments!
-
-[1] "[PATCH/RFC 0/6] R-Car V3U GPIO support"
-    https://lore.kernel.org/linux-renesas-soc/20201019120614.22149-1-geert+renesas@glider.be/
-[2] "[PATCH 0/4] gpio: rcar: Cleanups and improvements"
-    https://lore.kernel.org/linux-renesas-soc/20201028141504.1729093-1-geert+renesas@glider.be/
-
-Geert Uytterhoeven (2):
-  gpio: rcar: Optimize GPIO pin state read on R-Car Gen3
-  gpio: rcar: Add R-Car V3U (R8A7799A) support
-
- drivers/gpio/gpio-rcar.c | 64 ++++++++++++++++++++++++++++++++++------
- 1 file changed, 55 insertions(+), 9 deletions(-)
+ Documentation/devicetree/bindings/arm/renesas.yaml |  1 +
+ arch/arm64/boot/dts/renesas/Makefile               |  1 +
+ arch/arm64/boot/dts/renesas/r8a77961-ulcb-kf.dts   | 15 ++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77961.dtsi          | 10 ++++++++
+ 4 files changed, 27 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a77961-ulcb-kf.dts
 
 -- 
-2.25.1
+2.29.0
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
