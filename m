@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DEC2C00A89
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6832C388F9
 	for <linux-renesas-soc@archiver.kernel.org>; Sat, 31 Oct 2020 01:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D34DC208B6
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 31 Oct 2020 01:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 595D7208B6
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 31 Oct 2020 01:45:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726022AbgJaBpr (ORCPT
+        id S1725446AbgJaBpr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 30 Oct 2020 21:45:47 -0400
-Received: from mga14.intel.com ([192.55.52.115]:20827 "EHLO mga14.intel.com"
+Received: from mga03.intel.com ([134.134.136.65]:26796 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbgJaBpr (ORCPT
+        id S1725856AbgJaBpr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 30 Oct 2020 21:45:47 -0400
-IronPort-SDR: fFYbMd1cNr8JGC8t3PWLs2gZgDE4f8tI8YpU16UYKdd4vifqHnKEFLYeJxt0oGv2IL0T+GFGqq
- aZUCCh2C0VOg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9790"; a="167905694"
+IronPort-SDR: jyYUWekA9fhxq5HhDdYe5I+/cBGX8Aq2c8PsLs70dAFqcXIb3rk0xfQYxClnagUxGu0MIPtuMx
+ jpnPLerRIA3w==
+X-IronPort-AV: E=McAfee;i="6000,8403,9790"; a="168785021"
 X-IronPort-AV: E=Sophos;i="5.77,435,1596524400"; 
-   d="scan'208";a="167905694"
+   d="scan'208";a="168785021"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2020 18:45:46 -0700
-IronPort-SDR: kKlltg1k6h2j15xrLrSL0gEAhw5BXkXHG0wCjPsCC5/FxWA2vUTuZ25juNjsyuCOvY7daE27Ti
- ZlRHaJVCenRg==
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2020 18:45:47 -0700
+IronPort-SDR: taAK2EDF4zYL0KwBkJ6m9XWzCteIEy7U5x0pzmumeN+jW0dgqaG79ncvf9lAccVilpsVYPHubt
+ qkxSvCM0gjQw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.77,435,1596524400"; 
-   d="scan'208";a="352052208"
+   d="scan'208";a="362018418"
 Received: from lkp-server02.sh.intel.com (HELO fcc9f8859912) ([10.239.97.151])
-  by fmsmga004.fm.intel.com with ESMTP; 30 Oct 2020 18:45:45 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 30 Oct 2020 18:45:45 -0700
 Received: from kbuild by fcc9f8859912 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1kYfxg-0000NY-Rh; Sat, 31 Oct 2020 01:45:44 +0000
-Date:   Sat, 31 Oct 2020 09:44:56 +0800
+        id 1kYfxg-0000Ne-W8; Sat, 31 Oct 2020 01:45:44 +0000
+Date:   Sat, 31 Oct 2020 09:44:53 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- fc52536ffcefaef6f5956abd03939811b02ea451
-Message-ID: <5f9cc198.4XTVLz0DP8YzXkDB%lkp@intel.com>
+Subject: [renesas-devel:renesas-arm-dt-for-v5.11] BUILD SUCCESS
+ bfada98f210b4ffc45a7d76f0d387f3509f51c17
+Message-ID: <5f9cc195.8pvyATlLSTZA7sd5%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -55,13 +55,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  next
-branch HEAD: fc52536ffcefaef6f5956abd03939811b02ea451  Merge branch 'renesas-arm-dt-for-v5.11' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-arm-dt-for-v5.11
+branch HEAD: bfada98f210b4ffc45a7d76f0d387f3509f51c17  arm64: dts: renesas: r8a77961: ulcb-kf: Initial device tree
 
 elapsed time: 724m
 
-configs tested: 169
-configs skipped: 2
+configs tested: 149
+configs skipped: 79
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -76,10 +76,6 @@ arm                         shannon_defconfig
 parisc                           alldefconfig
 h8300                    h8300h-sim_defconfig
 mips                      maltasmvp_defconfig
-arc                                 defconfig
-sh                          r7785rp_defconfig
-arm                          ep93xx_defconfig
-arc                     nsimosci_hs_defconfig
 sh                          rsk7203_defconfig
 sh                 kfr2r09-romimage_defconfig
 powerpc                     taishan_defconfig
@@ -97,21 +93,11 @@ xtensa                  nommu_kc705_defconfig
 mips                           mtx1_defconfig
 sh                             shx3_defconfig
 mips                      loongson3_defconfig
-arm                       imx_v4_v5_defconfig
-mips                         tb0219_defconfig
-s390                             allyesconfig
-arm                            xcep_defconfig
-powerpc                      ppc6xx_defconfig
+arc                     nsimosci_hs_defconfig
 parisc                generic-64bit_defconfig
 powerpc                     asp8347_defconfig
 mips                        jmr3927_defconfig
 sh                          rsk7201_defconfig
-nios2                               defconfig
-powerpc                   motionpro_defconfig
-arm                     eseries_pxa_defconfig
-sh                          r7780mp_defconfig
-arm                           omap1_defconfig
-powerpc                     kilauea_defconfig
 arc                        vdk_hs38_defconfig
 arm                          exynos_defconfig
 arm                            pleb_defconfig
@@ -123,17 +109,6 @@ powerpc                      ep88xc_defconfig
 mips                malta_qemu_32r6_defconfig
 arm                     am200epdkit_defconfig
 mips                       lemote2f_defconfig
-arm                           efm32_defconfig
-mips                malta_kvm_guest_defconfig
-mips                           ip22_defconfig
-powerpc                 mpc837x_rdb_defconfig
-riscv                            alldefconfig
-sh                          sdk7786_defconfig
-arm                        cerfcube_defconfig
-sh                            hp6xx_defconfig
-alpha                               defconfig
-mips                         tb0226_defconfig
-sh                        dreamcast_defconfig
 powerpc                      chrp32_defconfig
 mips                     loongson1c_defconfig
 powerpc                     kmeter1_defconfig
@@ -152,10 +127,12 @@ arm                         socfpga_defconfig
 powerpc                 mpc8560_ads_defconfig
 m68k                       bvme6000_defconfig
 powerpc                 mpc834x_mds_defconfig
+arm                           efm32_defconfig
 sh                      rts7751r2d1_defconfig
 powerpc                        fsp2_defconfig
 arc                        nsim_700_defconfig
 microblaze                      mmu_defconfig
+nios2                               defconfig
 powerpc                       maple_defconfig
 m68k                        m5307c3_defconfig
 m68k                       m5208evb_defconfig
@@ -183,11 +160,14 @@ c6x                              allyesconfig
 nds32                               defconfig
 nios2                            allyesconfig
 csky                                defconfig
+alpha                               defconfig
 alpha                            allyesconfig
 xtensa                           allyesconfig
 h8300                            allyesconfig
+arc                                 defconfig
 sh                               allmodconfig
 parisc                              defconfig
+s390                             allyesconfig
 parisc                           allyesconfig
 s390                                defconfig
 i386                             allyesconfig
