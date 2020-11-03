@@ -2,100 +2,92 @@ Return-Path: <SRS0=YFY/=EJ=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7EEC2D0A3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Nov 2020 16:25:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66891C2D0A3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Nov 2020 22:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6518B20674
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Nov 2020 16:25:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DC192242A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  3 Nov 2020 22:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1604420722;
-	bh=p6SQM1UMwof5wLchb2Qt88XEkIATt19vgignrCZa8iE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Eg4Twy3+1qgxIuBBj68rieoJk95TYY5M8ghncEDD+zUSQuKguhoOmSKSJxKSSANiL
-	 pGtyPDptkvQzpJa3/3cwiGWORQJpBF25E2NQQjXj5L9okHcnC/rQL8IaMpn9gPa5dJ
-	 AmE5pEwSa6fmxbfX0+quy2Ztt0OdDuYqh8EAWTlY=
+	s=default; t=1604443059;
+	bh=alGO7l081fbLxENgyUANQp2DJKzDlClpHItGzHVenpI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
+	b=FrGNbv48l/AAkIbf+fihW5I2nzv7QQGxVqtfWbB/1ovcFjv8Idb6s4FRvcgbKpFdv
+	 +3tPKm1pjcYRRc8dfaW+eDT56PqlNTmSrqtPNspwzrRh57PC8WBdAQB2sf3hsvVsWF
+	 u/KG9gQ9h9EtIXsceg6wxbIbWZwOS266gxcxHa6U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbgKCQYz (ORCPT
+        id S1730343AbgKCWhi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 3 Nov 2020 11:24:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51508 "EHLO mail.kernel.org"
+        Tue, 3 Nov 2020 17:37:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728405AbgKCQYy (ORCPT
+        id S1729342AbgKCWhi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 3 Nov 2020 11:24:54 -0500
-Received: from localhost.localdomain (adsl-84-226-167-205.adslplus.ch [84.226.167.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Tue, 3 Nov 2020 17:37:38 -0500
+Received: from localhost (230.sub-72-107-127.myvzw.com [72.107.127.230])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EB1920773;
-        Tue,  3 Nov 2020 16:24:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD8CD223C6;
+        Tue,  3 Nov 2020 22:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1604420693;
-        bh=p6SQM1UMwof5wLchb2Qt88XEkIATt19vgignrCZa8iE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XwM08dkdb9vy7Xg3UBxGclvykQL2LanGM27iv1yZ9ieSskMXjRtFXtPu3Hlk+horX
-         wyf48rJCXIDqoFhgtkLhgfgNJ7QcGWJfWI2Wc1mf5TBQ7Y8WFNgBHBEoSXSxxg3qUC
-         AFESLoIsbNEW5mAvcejSZLUcBwTkX9f7Yw57a1yU=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        s=default; t=1604443058;
+        bh=alGO7l081fbLxENgyUANQp2DJKzDlClpHItGzHVenpI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=BNG78IeCTtKTR9mC8s7C6PJdRxVBP8JQhM8VBKQ9udqSn56aae9EeAx5IeiH3n3MQ
+         reVqUActE6b/2phX9L5Jl5KoCidj/Rfb9+EeKWbr8DF4KuD9rI7/r70Vod8OSP0XEN
+         UsoIbRERVWFFmKfLGyIZd2Tmnf2TcxokCQld4sAk=
+Date:   Tue, 3 Nov 2020 16:37:36 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     bhelgaas@google.com, marek.vasut+renesas@gmail.com,
+        robh+dt@kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH 4/8] clk: imx8mp: drop of_match_ptr from of_device_id table
-Date:   Tue,  3 Nov 2020 17:24:31 +0100
-Message-Id: <20201103162435.13689-4-krzk@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201103162435.13689-1-krzk@kernel.org>
-References: <20201103162435.13689-1-krzk@kernel.org>
+Subject: Re: [PATCH v2 0/3] dt-bindings: pci: rcar-pci-host: convert bindings
+ to json-schema
+Message-ID: <20201103223736.GA271290@bjorn-Precision-5520>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1604035745-22095-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The driver can match only via the DT table so the table should be always
-used and the of_match_ptr does not have any sense (this also allows ACPI
-matching via PRP0001, even though it might be not relevant here).  This
-fixes compile warning (!CONFIG_OF && !CONFIG_MODULES):
+Please follow the subject line convention, e.g.,
 
-    drivers/clk/imx/clk-imx8mp.c:751:34: warning:
-        ‘imx8mp_clk_of_match’ defined but not used [-Wunused-const-variable=]
+  dt-bindings: PCI: rcar-pci-host: Convert ...
+  dt-bindings: PCI: rcar-pci-host: Document ...
 
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/imx/clk-imx8mp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 12ce4770f702..5295a5156ab0 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -763,7 +763,7 @@ static struct platform_driver imx8mp_clk_driver = {
- 		 * reloading the driver will crash or break devices.
- 		 */
- 		.suppress_bind_attrs = true,
--		.of_match_table = of_match_ptr(imx8mp_clk_of_match),
-+		.of_match_table = imx8mp_clk_of_match,
- 	},
- };
- module_platform_driver(imx8mp_clk_driver);
--- 
-2.25.1
-
+On Fri, Oct 30, 2020 at 02:29:02PM +0900, Yoshihiro Shimoda wrote:
+> Convert bindings of rcar-pci.txt to json-schema.
+> 
+> Changes from v1:
+>  - In patch 1/3
+>  -- Fix indentation which yamllint detects.
+>  -- Fix typo which checkpatch.pl detects.
+>  -- Add ref: pci-bus.yaml
+>  -- Remove some properties which the pci-bus.yaml defines.
+>  -- Use unevaluatedProperties instead of additionalProperties.
+>  - In patch 2/3
+>  -- Add Reviewed-by from Geert-san.
+> 
+> Lad Prabhakar (1):
+>   dt-bindings: pci: rcar-pci: Add device tree support for r8a774e1
+> 
+> Yoshihiro Shimoda (2):
+>   dt-bindings: pci: rcar-pci-host: convert bindings to json-schema
+>   dt-bindings: pci: rcar-pci-host: document r8a77965 bindings
+> 
+>  .../devicetree/bindings/pci/rcar-pci-host.yaml     | 115 +++++++++++++++++++++
+>  Documentation/devicetree/bindings/pci/rcar-pci.txt |  72 -------------
+>  2 files changed, 115 insertions(+), 72 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/rcar-pci-host.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/pci/rcar-pci.txt
+> 
+> -- 
+> 2.7.4
+> 
