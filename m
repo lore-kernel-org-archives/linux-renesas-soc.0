@@ -2,102 +2,87 @@ Return-Path: <SRS0=/EIa=EM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABE8C388F7
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Nov 2020 02:03:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DA26C2D0A3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Nov 2020 07:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2A7CC20782
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Nov 2020 02:03:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30214208FE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Nov 2020 07:25:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20150623.gappssmtp.com header.i=@dabbelt-com.20150623.gappssmtp.com header.b="OifMrK+x"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="SADMdHqb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731111AbgKFCDA (ORCPT
+        id S1726293AbgKFHZ4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 Nov 2020 21:03:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40184 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730414AbgKFCDA (ORCPT
+        Fri, 6 Nov 2020 02:25:56 -0500
+Received: from www.zeus03.de ([194.117.254.33]:41452 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725842AbgKFHZ4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Nov 2020 21:03:00 -0500
-Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 384A0C0613CF
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  5 Nov 2020 18:02:59 -0800 (PST)
-Received: by mail-pg1-x542.google.com with SMTP id i26so2733594pgl.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 05 Nov 2020 18:02:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20150623.gappssmtp.com; s=20150623;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MfUR8zFkzj3kr4PPBmXznA83GIqjmqrQi8dR4mnY5LM=;
-        b=OifMrK+xYjA8lLgOUadiWJP+wSmcvuyLPJy8oZM5a4NU04wONUPxxyyTv0muleVrpf
-         pKcbl7OS+5OBXTUQ5QZuvqqwhB/dix35NP+i273CjetfCHbFbdiq5r7cx47LwHz75s4M
-         3sxaBTtvg0MYq/ttNf3mI9L6qr+lst9TdEAJ1rChG5EmJSI89BoqB0XyvQ8/N5KfYrJe
-         r4feXgllxVNASUUFjmRMjgT8j6IZKT9eSEesWG/x9A8z3F2FdVj9PvwaBR33Vh1YVeFN
-         0CDTmgTxUZpq5+dmcr69uz2gR3O5V1UDu39p3T9twUe7FUxW3DlZ1evqVwSvx15ZAws4
-         ShMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=MfUR8zFkzj3kr4PPBmXznA83GIqjmqrQi8dR4mnY5LM=;
-        b=IAgxRH5Npll+gyCfHuk2iw4z+VCiPuH2BsQId2Sv0Au4xdtV9oGsakiahs1ba04ChX
-         f2HrIl7ctbAaGuJpCizhruPDJu3yVg2Xb4yO8zWynLqmriDw+1MRSTG8Nrl4cJ3jgR8z
-         ckt0Q0Yl2ipe+ipmXXJaPu0GNM8n1QpSbmZ124IuwLtZXctreMExYbJYXvbFNwkXQwlm
-         JVhmIX8Y7wC8k/LPQaeb+sZdOEGKA4hCIwy3xGINjinUD2V6XNH8sTazKAh+O5+SQ/dY
-         vCkqR+RtKbfiGwo3zgIxaX9izTIk/Ir3KnKzYCVlbADTHZ1lFgTF8aIkWooj7wUy+6rg
-         HpjQ==
-X-Gm-Message-State: AOAM531eoe5Tiu/4M15xsNNbX0gWO5T8C0XjhBfPQnIkW8t15k8518QM
-        pZyR/aFTuEVE0CqPKIXdV3K9gw==
-X-Google-Smtp-Source: ABdhPJxYtyDZKGpxHAIXw60/WyXXonc+jGAUmrNQl1hZQ7jn6G63WSJpYGmmn54EdIUI/L3TW85EsA==
-X-Received: by 2002:a17:90a:d104:: with SMTP id l4mr5261081pju.194.1604628178688;
-        Thu, 05 Nov 2020 18:02:58 -0800 (PST)
-Received: from localhost (76-210-143-223.lightspeed.sntcca.sbcglobal.net. [76.210.143.223])
-        by smtp.gmail.com with ESMTPSA id i10sm3467604pjz.44.2020.11.05.18.02.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Nov 2020 18:02:58 -0800 (PST)
-Date:   Thu, 05 Nov 2020 18:02:58 -0800 (PST)
-X-Google-Original-Date: Thu, 05 Nov 2020 18:02:56 PST (-0800)
-Subject:     Re: [RFC PATCH] irqchip/sifive-plic: Fix getting wrong chip_data when interrupt is hierarchy
-In-Reply-To: <87y2jl81ft.fsf@nanos.tec.linutronix.de>
-CC:     Marc Zyngier <maz@kernel.org>, jason@lakedaemon.net,
-        geert+renesas@glider.be, greentime.hu@sifive.com,
-        linux-kernel@vger.kernel.org, Atish Patra <Atish.Patra@wdc.com>,
-        linux-riscv@lists.infradead.org,
-        Paul Walmsley <paul.walmsley@sifive.com>, anup@brainfault.org,
-        uli+renesas@fpond.eu, linux-renesas-soc@vger.kernel.org
-From:   Palmer Dabbelt <palmer@dabbelt.com>
-To:     tglx@linutronix.de
-Message-ID: <mhng-8b35a163-6996-484c-a9e9-09662614f1b1@palmerdabbelt-glaptop1>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Fri, 6 Nov 2020 02:25:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=2YW8An1DBe+NNP
+        SWVLGuVoEIEfzNzbqtC+jRBe9FCe0=; b=SADMdHqbAhlW0pjmIgVKvCTWDsKREy
+        Sx/U3lDWudw0f9w3sH59+9obNUEbDupvHrG0ugiB9Cf/GdBlzS9zhw60dUhnXqS2
+        Zj3Mh1sYvNFTbeyEnxNF95Dgneh8JvubIM588Ql1qskb8rcmRetK1aOkTxxAP4H7
+        rgUwgVUG0rB/k=
+Received: (qmail 858584 invoked from network); 6 Nov 2020 08:25:54 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Nov 2020 08:25:54 +0100
+X-UD-Smtp-Session: l3s3148p1@iNt6H2uzVIggAwDPXwt7AGjsMIC0/1f/
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-mmc@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/3] mmc: tmio: when resetting, reset DMA controller, too
+Date:   Fri,  6 Nov 2020 08:25:47 +0100
+Message-Id: <20201106072549.1495-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201106072549.1495-1-wsa+renesas@sang-engineering.com>
+References: <20201106072549.1495-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, 01 Nov 2020 08:52:06 PST (-0800), tglx@linutronix.de wrote:
-> On Sun, Nov 01 2020 at 12:10, Marc Zyngier wrote:
->
->> On Thu, 29 Oct 2020 10:37:38 +0800, Greentime Hu wrote:
->>> This oops is caused by a wrong chip_data and it is because plic_irq_unmask
->>> uses irq_get_chip_data(irq_data->irq) to get the chip_data. However it may
->>> get another irq_data with the same irq_data->irq if it is hierarchy.
->>>
->>> In this case, it will get irq_data of sifive_gpio_irqchip instead of
->>> plic_chip so that it will get a wrong chip_data and then the wrong lmask
->>> of it to cause this oops.
->>>
->>> [...]
->>
->> Applied to irq/irqchip-next, thanks!
->
-> That should go into urgent, the offending commit is in Linus tree already
+When applying a revert, the assumption that DMA only needs to be cleared
+in specific cases was wrong. We want to reset the DMA controller every
+time the rest of the HW gets reset, too.
 
-I agree.  I'm assuming that's for Marc, but LMK if you guys want me to take it.
+Fixes: 34e3211e5492 ("Revert "mmc: tmio: fix reset operation"")
+Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/tmio_mmc_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Palmer Dabbelt <palmerdabbelt@google.com>
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 2fce0518632d..cfb53d7c63d7 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -175,6 +175,8 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+ 	if (host->reset)
+ 		host->reset(host);
+ 
++	tmio_mmc_abort_dma(host);
++
+ 	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
+ 		sd_ctrl_write16(host, CTL_SDIO_IRQ_MASK, host->sdio_irq_mask);
+ 		sd_ctrl_write16(host, CTL_TRANSACTION_CTL, 0x0001);
+@@ -223,8 +225,6 @@ static void tmio_mmc_reset_work(struct work_struct *work)
+ 
+ 	/* Ready for new calls */
+ 	host->mrq = NULL;
+-
+-	tmio_mmc_abort_dma(host);
+ 	mmc_request_done(host->mmc, mrq);
+ }
+ 
+-- 
+2.28.0
 
-Thanks!
