@@ -2,84 +2,68 @@ Return-Path: <SRS0=/EIa=EM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 066CEC5DF9D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Nov 2020 07:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEE6C2D0A3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Nov 2020 09:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95E78208FE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Nov 2020 07:26:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="RD8v87mI"
+	by mail.kernel.org (Postfix) with ESMTP id 5E30D2087E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Nov 2020 09:25:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725848AbgKFHZ5 (ORCPT
+        id S1726459AbgKFJZm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 6 Nov 2020 02:25:57 -0500
-Received: from www.zeus03.de ([194.117.254.33]:41468 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726190AbgKFHZ4 (ORCPT
+        Fri, 6 Nov 2020 04:25:42 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:51853 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725924AbgKFJZl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Nov 2020 02:25:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=u8BmXfQE8Q7zzy
-        pkikRD2J/m3RuKZ3y+1kFKMF9gU3w=; b=RD8v87mI75VZ0yGVE7/QfLx5e+FKLx
-        5aKyWYGcnG4JJjfBxNfFzzMxJpn+468QgJXwFxq9l588uFx/9S+v6VgPgCv/2zQI
-        fUbki/ZBK16xvUPiHpRxXEuZ628yEPEcHH4X37n/kHVWiFLz1sUkiohW4TH+2yni
-        qG+mlPCHaI1Fo=
-Received: (qmail 858618 invoked from network); 6 Nov 2020 08:25:54 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 6 Nov 2020 08:25:54 +0100
-X-UD-Smtp-Session: l3s3148p1@26KAH2uzVoggAwDPXwt7AGjsMIC0/1f/
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-mmc@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>
-Subject: [PATCH 2/3] mmc: tmio: bring tuning HW to a sane state with MMC_POWER_OFF
-Date:   Fri,  6 Nov 2020 08:25:48 +0100
-Message-Id: <20201106072549.1495-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201106072549.1495-1-wsa+renesas@sang-engineering.com>
-References: <20201106072549.1495-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 6 Nov 2020 04:25:41 -0500
+X-IronPort-AV: E=Sophos;i="5.77,456,1596466800"; 
+   d="scan'208";a="61863766"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 06 Nov 2020 18:25:39 +0900
+Received: from localhost.localdomain (unknown [10.166.252.89])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id DE3DC400F797;
+        Fri,  6 Nov 2020 18:25:39 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     ulf.hansson@linaro.org, wsa+renesas@sang-engineering.com
+Cc:     kuninori.morimoto.gx@renesas.com, linux-mmc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] mmc: host: renesas_sdhi_core: Missing tmio_mmc_host_free() in renesas_sdhi_remove()
+Date:   Fri,  6 Nov 2020 18:25:30 +0900
+Message-Id: <1604654730-29914-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When powering off a card, we need to disable the tuning HW (like SCC for
-the Renesas SDHI) to get to a sane state and allow for re-tuning new
-cards. This was hidden before because we wrongly did that in hw_reset()
-before which was an unintended use of hw_reset(). Now that we corrected
-the use of hw_reset() meanwhile, we revealed this shortcoming and need
-to fix it properly by explicitly calling the downgrade callback.
+The commit 94b110aff867 ("mmc: tmio: add tmio_mmc_host_alloc/free()")
+added tmio_mmc_host_free(), but missed the function calling in
+the sh_mobile_sdhi_remove() at that time. So, fix it. Otherwise,
+we cannot rebind the sdhi/mmc devices when we use aliases of mmc.
 
-Fixes: 6e7d4de10890 ("mmc: renesas_sdhi: move wrong 'hw_reset' to 'reset'")
-Suggested-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-Reviewed-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Fixes: 94b110aff867 ("mmc: tmio: add tmio_mmc_host_alloc/free()")
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/mmc/host/tmio_mmc_core.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/renesas_sdhi_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index cfb53d7c63d7..cb4149fd12e0 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -927,6 +927,9 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 	switch (ios->power_mode) {
- 	case MMC_POWER_OFF:
- 		tmio_mmc_power_off(host);
-+		/* Downgrade ensures a sane state for tuning HW (e.g. SCC) */
-+		if (host->mmc->ops->hs400_downgrade)
-+			host->mmc->ops->hs400_downgrade(host->mmc);
- 		host->set_clock(host, 0);
- 		break;
- 	case MMC_POWER_UP:
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 4143141..03c905a 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -1160,6 +1160,7 @@ int renesas_sdhi_remove(struct platform_device *pdev)
+ 
+ 	tmio_mmc_host_remove(host);
+ 	renesas_sdhi_clk_disable(host);
++	tmio_mmc_host_free(host);
+ 
+ 	return 0;
+ }
 -- 
-2.28.0
+2.7.4
 
