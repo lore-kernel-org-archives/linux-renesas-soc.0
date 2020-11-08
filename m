@@ -1,91 +1,68 @@
-Return-Path: <SRS0=/EIa=EM=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
+Return-Path: <SRS0=W3QV=EO=vger.kernel.org=linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3734C2D0A3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Nov 2020 14:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA321C388F9
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  8 Nov 2020 14:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52C5420719
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  6 Nov 2020 14:27:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69205206F4
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  8 Nov 2020 14:45:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726317AbgKFO1j (ORCPT
+        id S1727844AbgKHOpU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 6 Nov 2020 09:27:39 -0500
-Received: from sauhun.de ([88.99.104.3]:45396 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726010AbgKFO1i (ORCPT
+        Sun, 8 Nov 2020 09:45:20 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:34592 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727570AbgKHOpT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 6 Nov 2020 09:27:38 -0500
-Received: from localhost (p54b33740.dip0.t-ipconnect.de [84.179.55.64])
-        by pokefinder.org (Postfix) with ESMTPSA id 4243E2C056C;
-        Fri,  6 Nov 2020 15:27:36 +0100 (CET)
-Date:   Fri, 6 Nov 2020 15:27:25 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Ulrich Hecht <uli+renesas@fpond.eu>
-Cc:     linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        linux-i2c@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v4] i2c: sh_mobile: implement atomic transfers
-Message-ID: <20201106142725.GA1059@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        linux-i2c@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20200928155950.1185-1-uli+renesas@fpond.eu>
- <20201008094807.GA76290@ninjato>
+        Sun, 8 Nov 2020 09:45:19 -0500
+Received: from ravnborg.org (unknown [188.228.123.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id 6F2C2804D5;
+        Sun,  8 Nov 2020 15:45:15 +0100 (CET)
+Date:   Sun, 8 Nov 2020 15:45:13 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        dri-devel@lists.freedesktop.org,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] drm/panel: panel-simple: Add connector_type for EDT
+ ETM0700G0DH6 panel
+Message-ID: <20201108144513.GA1212257@ravnborg.org>
+References: <20201020094910.4756-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20201008094807.GA76290@ninjato>
+In-Reply-To: <20201020094910.4756-1-biju.das.jz@bp.renesas.com>
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=VafZwmh9 c=1 sm=1 tr=0
+        a=S6zTFyMACwkrwXSdXUNehg==:117 a=S6zTFyMACwkrwXSdXUNehg==:17
+        a=kj9zAlcOel0A:10 a=yC-0_ovQAAAA:8 a=LhomchRxGllHYqC2xSsA:9
+        a=CjuIK1q_8ugA:10 a=QsnFDINu91a9xkgZirup:22
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Biju
 
---VS++wcV0S1rZb1Fb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 20, 2020 at 10:49:10AM +0100, Biju Das wrote:
+> Fix the warning message "missing connector type" by adding connector_type
+> for EDT ETM0700G0DH6 panel.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-On Thu, Oct 08, 2020 at 11:48:07AM +0200, Wolfram Sang wrote:
-> On Mon, Sep 28, 2020 at 05:59:50PM +0200, Ulrich Hecht wrote:
-> > Implements atomic transfers to fix reboot/shutdown on r8a7790 Lager and
-> > similar boards.
-> >=20
-> > Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
-> > Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> > Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
->=20
-> Fixed the blank line issues and applied to for-next, thanks!
+Thanks, applied to drm-misc-next.
 
-Sorry, I did something wrong somewhere so this was not in my pull
-requests during the merge window. I'll put it back into for-current now.
-
-
---VS++wcV0S1rZb1Fb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl+lXUkACgkQFA3kzBSg
-KbZ56w//RSJoC0CO6aJkhFIuo0MP9YGo1p+5DHheXI2VH3LZ+icFCzL09ZhUwmcy
-wBBl2pjyofmPHhIO2QqsSK++QPGAHF83t3bdhHxrDEhTaxTWnSyrnohWXpArkynd
-BToY8ikCgb7OM6a+GnZ0yAECuahRhbdugVI9AXgTDmJHfqqot42ISI5MsJyaDvIh
-VQeMJ74NZnfxlwODwB3vguriHkKOfrCysCqPL9xOjP7EAJwXW8CH5LlFwiwik+Vn
-FKj+1qA+uabfl9GlTj+oDu59+MkW3w7xBJ6iG+DqwBXraQ0/aEdnT1Es739jMAmj
-WJmhlhID7woCrw7jtrvtEdh6ou0eUjbHcxaUpJLy4yJJpttccW9VG5BcHltI92ax
-L9UYOZgBJWknPrhuw2nOhb6xN9poiqFr3K2BgN76xlBB6EKo4566ycZPCFIsZF5C
-fUizAb8EBowO2sk5Np3sahKefYaVTKpF2pysfauY11c0Y3Fg5/NxvU/J9Gh0/xnq
-VEBfCl9OyJVfusVr/Lsr0P0rYDSpzfoFwCrcDqkivl3Hkdrz8z7jKmqYNr9hMHVp
-01O7DUf/jovuDxy5sXN6KVCLEqkCSr7aWrGF7lENtDXahHSq7E/fyhnlEtoOucKF
-FY2WkUNvpMQw6OugD+jBkhhG/GBEkeTT/LcHuKsggjwzNKFH3mg=
-=LoPF
------END PGP SIGNATURE-----
-
---VS++wcV0S1rZb1Fb--
+	Sam
