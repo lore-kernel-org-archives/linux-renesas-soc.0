@@ -2,77 +2,140 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58EFAC63699
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Nov 2020 16:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85569C388F7
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Nov 2020 23:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0765620797
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Nov 2020 16:22:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="vly0EXax"
+	by mail.kernel.org (Postfix) with ESMTP id 44014207E8
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Nov 2020 23:48:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727344AbgKJQWB (ORCPT
+        id S1726706AbgKJXsb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Nov 2020 11:22:01 -0500
-Received: from www.zeus03.de ([194.117.254.33]:35262 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729227AbgKJQWA (ORCPT
+        Tue, 10 Nov 2020 18:48:31 -0500
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:16215 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731657AbgKJXsb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Nov 2020 11:22:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=E08gAQ9g7L2mVS
-        BW50SK/40b7jG9Lr4VHYgUpPCZVQs=; b=vly0EXaxDRCaJBq3EviN7v4YgCEViZ
-        0fFP+2n8qwfbnZNgQUpzD51hhDbrpnKrZqQ589zY3gdyJ3xxHTOuje5qF2Rti14T
-        PakZxZae0U9tDC3NiAETkDQLJoE3yw55pNBa4heyIELfUx7rb4TNxTSKYP3M5gje
-        6OYdrYBYorULM=
-Received: (qmail 2226100 invoked from network); 10 Nov 2020 17:21:59 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 10 Nov 2020 17:21:59 +0100
-X-UD-Smtp-Session: l3s3148p1@z20BFMOzTssgAwDPXxAvAEQD26z+TKuA
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-mmc@vger.kernel.org
+        Tue, 10 Nov 2020 18:48:31 -0500
+X-Halon-ID: 3aef1ded-23af-11eb-954c-0050569116f7
+Authorized-sender: niklas.soderlund@fsdn.se
+Received: from bismarck.berto.se (p4fca2458.dip0.t-ipconnect.de [79.202.36.88])
+        by bin-vsp-out-03.atm.binero.net (Halon) with ESMTPA
+        id 3aef1ded-23af-11eb-954c-0050569116f7;
+        Wed, 11 Nov 2020 00:48:28 +0100 (CET)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 3/3] mmc: renesas_sdhi: remove superfluous SCLKEN
-Date:   Tue, 10 Nov 2020 17:21:51 +0100
-Message-Id: <20201110162151.37622-4-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201110162151.37622-1-wsa+renesas@sang-engineering.com>
-References: <20201110162151.37622-1-wsa+renesas@sang-engineering.com>
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/4] pinctrl: renesas: r8a77951: Add vin{4,5}_g8 pins
+Date:   Wed, 11 Nov 2020 00:47:49 +0100
+Message-Id: <20201110234752.52846-2-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201110234752.52846-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20201110234752.52846-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-All previously called functions handle SCLKEN on their own, no need to
-enable it again in sdhi_reset().
+This patch adds VIN{4,5}_g8 support to the R8A77951 SoC.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/mmc/host/renesas_sdhi_core.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a77951.c | 30 +++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index a77dc9b46041..25c6a1993f8e 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -556,9 +556,6 @@ static void renesas_sdhi_reset(struct tmio_mmc_host *host)
- 		renesas_sdhi_reset_hs400_mode(host, priv);
- 		priv->needs_adjust_hs400 = false;
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77951.c b/drivers/pinctrl/renesas/pfc-r8a77951.c
+index a94ebe0bf5d06127..21864223c880b3ec 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77951.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77951.c
+@@ -4074,6 +4074,18 @@ static const union vin_data vin4_data_b_mux = {
+ 		VI4_DATA22_MARK, VI4_DATA23_MARK,
+ 	},
+ };
++static const unsigned int vin4_g8_pins[] = {
++	RCAR_GP_PIN(1, 0),  RCAR_GP_PIN(1, 1),
++	RCAR_GP_PIN(1, 2),  RCAR_GP_PIN(1, 3),
++	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
++	RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
++};
++static const unsigned int vin4_g8_mux[] = {
++	VI4_DATA8_MARK,  VI4_DATA9_MARK,
++	VI4_DATA10_MARK, VI4_DATA11_MARK,
++	VI4_DATA12_MARK, VI4_DATA13_MARK,
++	VI4_DATA14_MARK, VI4_DATA15_MARK,
++};
+ static const unsigned int vin4_sync_pins[] = {
+ 	/* HSYNC#, VSYNC# */
+ 	RCAR_GP_PIN(1, 18), RCAR_GP_PIN(1, 17),
+@@ -4128,6 +4140,18 @@ static const union vin_data16 vin5_data_mux = {
+ 		VI5_DATA14_MARK, VI5_DATA15_MARK,
+ 	},
+ };
++static const unsigned int vin5_g8_pins[] = {
++	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
++	RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 15),
++	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
++	RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
++};
++static const unsigned int vin5_g8_mux[] = {
++	VI5_DATA8_MARK,  VI5_DATA9_MARK,
++	VI5_DATA10_MARK, VI5_DATA11_MARK,
++	VI5_DATA12_MARK, VI5_DATA13_MARK,
++	VI5_DATA14_MARK, VI5_DATA15_MARK,
++};
+ static const unsigned int vin5_sync_pins[] = {
+ 	/* HSYNC#, VSYNC# */
+ 	RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 9),
+@@ -4158,7 +4182,7 @@ static const unsigned int vin5_clk_mux[] = {
+ };
  
--		sd_ctrl_write16(host, CTL_SD_CARD_CLK_CTL, CLK_CTL_SCLKEN |
--				sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
--
- 		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL,
- 			       ~SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &
- 			       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
+ static const struct {
+-	struct sh_pfc_pin_group common[320];
++	struct sh_pfc_pin_group common[322];
+ 	struct sh_pfc_pin_group automotive[30];
+ } pinmux_groups = {
+ 	.common = {
+@@ -4470,6 +4494,7 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(vin4_data18_b),
+ 		VIN_DATA_PIN_GROUP(vin4_data, 20, _b),
+ 		VIN_DATA_PIN_GROUP(vin4_data, 24, _b),
++		SH_PFC_PIN_GROUP(vin4_g8),
+ 		SH_PFC_PIN_GROUP(vin4_sync),
+ 		SH_PFC_PIN_GROUP(vin4_field),
+ 		SH_PFC_PIN_GROUP(vin4_clkenb),
+@@ -4478,6 +4503,7 @@ static const struct {
+ 		VIN_DATA_PIN_GROUP(vin5_data, 10),
+ 		VIN_DATA_PIN_GROUP(vin5_data, 12),
+ 		VIN_DATA_PIN_GROUP(vin5_data, 16),
++		SH_PFC_PIN_GROUP(vin5_g8),
+ 		SH_PFC_PIN_GROUP(vin5_sync),
+ 		SH_PFC_PIN_GROUP(vin5_field),
+ 		SH_PFC_PIN_GROUP(vin5_clkenb),
+@@ -5022,6 +5048,7 @@ static const char * const vin4_groups[] = {
+ 	"vin4_data18_b",
+ 	"vin4_data20_b",
+ 	"vin4_data24_b",
++	"vin4_g8",
+ 	"vin4_sync",
+ 	"vin4_field",
+ 	"vin4_clkenb",
+@@ -5033,6 +5060,7 @@ static const char * const vin5_groups[] = {
+ 	"vin5_data10",
+ 	"vin5_data12",
+ 	"vin5_data16",
++	"vin5_g8",
+ 	"vin5_sync",
+ 	"vin5_field",
+ 	"vin5_clkenb",
 -- 
-2.28.0
+2.29.2
 
