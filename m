@@ -2,110 +2,94 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A6CC388F9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 12:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F23C5517A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 13:13:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE75620709
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 12:51:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ErHe2RL/"
+	by mail.kernel.org (Postfix) with ESMTP id DBE2D2068D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 13:13:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725908AbgKKMvR (ORCPT
+        id S1726771AbgKKNNC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 11 Nov 2020 07:51:17 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51792 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725859AbgKKMvQ (ORCPT
+        Wed, 11 Nov 2020 08:13:02 -0500
+Received: from pbmsgap02.intersil.com ([192.157.179.202]:39352 "EHLO
+        pbmsgap02.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726039AbgKKNNB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Nov 2020 07:51:16 -0500
-Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AFC9CA19;
-        Wed, 11 Nov 2020 13:51:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1605099073;
-        bh=03M0H/6Q0FicpBXAUeyVuY0edxiXRr6HBE6AiMF79ww=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ErHe2RL/x6Y/SPZxGetJaGeswP2lSlkaY4isAPzANK1DAIymBivHDOyzsuHP59fDZ
-         sHd/cKPas4Hv3u2XzuJFSPt7896Z+LE9apQXOILg+13Q08uWmD9ikmuSIznDnEKS9u
-         NFNOoqnq3djqrNj/ZFIjZgKwEitVGGPrcJeaXcIk=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH] drm: rcar-du: Fix the return check of of_parse_phandle
- and of_find_device_by_node
-To:     Wang Xiaojun <wangxiaojun11@huawei.com>,
-        laurent.pinchart@ideasonboard.com, airlied@linux.ie,
-        daniel@ffwll.ch
-Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <20201111031452.3659714-1-wangxiaojun11@huawei.com>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <360b40b7-cc94-0665-be5f-b18d992100f5@ideasonboard.com>
-Date:   Wed, 11 Nov 2020 12:51:10 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Wed, 11 Nov 2020 08:13:01 -0500
+Received: from pps.filterd (pbmsgap02.intersil.com [127.0.0.1])
+        by pbmsgap02.intersil.com (8.16.0.42/8.16.0.42) with SMTP id 0ABDCs5q026026;
+        Wed, 11 Nov 2020 08:12:54 -0500
+Received: from pbmxdp01.intersil.corp (pbmxdp01.pb.intersil.com [132.158.200.222])
+        by pbmsgap02.intersil.com with ESMTP id 34npmk9w5p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 11 Nov 2020 08:12:54 -0500
+Received: from pbmxdp02.intersil.corp (132.158.200.223) by
+ pbmxdp01.intersil.corp (132.158.200.222) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
+ 15.1.1979.3; Wed, 11 Nov 2020 08:12:52 -0500
+Received: from localhost.localdomain (132.158.202.109) by
+ pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Wed, 11 Nov 2020 08:12:52 -0500
+From:   Chris Brandt <chris.brandt@renesas.com>
+To:     Oliver Neukum <oneukum@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     <linux-usb@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
+        "Jesse Pfeister" <jpfeister@fender.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        stable <stable@vger.kernel.org>
+Subject: [PATCH] usb: cdc-acm: Add DISABLE_ECHO for Renesas USB Download mode
+Date:   Wed, 11 Nov 2020 08:12:09 -0500
+Message-ID: <20201111131209.3977903-1-chris.brandt@renesas.com>
+X-Mailer: git-send-email 2.28.0
 MIME-Version: 1.0
-In-Reply-To: <20201111031452.3659714-1-wangxiaojun11@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.312,18.0.737
+ definitions=2020-11-11_06:2020-11-10,2020-11-11 signatures=0
+X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 spamscore=0 mlxlogscore=983
+ malwarescore=0 phishscore=0 adultscore=0 suspectscore=2 bulkscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2009150000 definitions=main-2011110075
+X-Proofpoint-Spam-Reason: mlx
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wang Xiaojun,
+Renesas R-Car and RZ/G SoCs have a firmware download mode over USB.
+However, on reset a banner string is transmitted out which is not expected
+to be echoed back and will corrupt the protocol.
 
-On 11/11/2020 03:14, Wang Xiaojun wrote:
-> of_parse_phandle and of_find_device_by_node may return NULL
-> which cannot be checked by IS_ERR.
+Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+Cc: stable <stable@vger.kernel.org>
+---
+ drivers/usb/class/cdc-acm.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Indeed, both of these functions return either NULL or the correct value,
-and no an errno.
-
-> 
-> Signed-off-by: Wang Xiaojun <wangxiaojun11@huawei.com>
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-
-Fixes: 8de707aeb452 ("drm: rcar-du: kms: Initialize CMM instances")
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_kms.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> index 72dda446355f..fcfddf7ad3f3 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> @@ -700,10 +700,10 @@ static int rcar_du_cmm_init(struct rcar_du_device *rcdu)
->  		int ret;
->  
->  		cmm = of_parse_phandle(np, "renesas,cmms", i);
-> -		if (IS_ERR(cmm)) {
-> +		if (!cmm) {
->  			dev_err(rcdu->dev,
->  				"Failed to parse 'renesas,cmms' property\n");
-> -			return PTR_ERR(cmm);
-> +			return -ENODEV;
->  		}
->  
->  		if (!of_device_is_available(cmm)) {
-> @@ -713,10 +713,10 @@ static int rcar_du_cmm_init(struct rcar_du_device *rcdu)
->  		}
->  
->  		pdev = of_find_device_by_node(cmm);
-> -		if (IS_ERR(pdev)) {
-> +		if (!pdev) {
->  			dev_err(rcdu->dev, "No device found for CMM%u\n", i);
->  			of_node_put(cmm);
-> -			return PTR_ERR(pdev);
-> +			return -ENODEV;
->  		}
->  
->  		of_node_put(cmm);
-> 
+diff --git a/drivers/usb/class/cdc-acm.c b/drivers/usb/class/cdc-acm.c
+index 1e7568867910..f52f1bc0559f 100644
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1693,6 +1693,15 @@ static const struct usb_device_id acm_ids[] = {
+ 	{ USB_DEVICE(0x0870, 0x0001), /* Metricom GS Modem */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
++	{ USB_DEVICE(0x045b, 0x023c),	/* Renesas USB Download mode */
++	.driver_info = DISABLE_ECHO,	/* Don't echo banner */
++	},
++	{ USB_DEVICE(0x045b, 0x0248),	/* Renesas USB Download mode */
++	.driver_info = DISABLE_ECHO,	/* Don't echo banner */
++	},
++	{ USB_DEVICE(0x045b, 0x024D),	/* Renesas USB Download mode */
++	.driver_info = DISABLE_ECHO,	/* Don't echo banner */
++	},
+ 	{ USB_DEVICE(0x0e8d, 0x0003), /* FIREFLY, MediaTek Inc; andrey.arapov@gmail.com */
+ 	.driver_info = NO_UNION_NORMAL, /* has no union descriptor */
+ 	},
+-- 
+2.28.0
 
