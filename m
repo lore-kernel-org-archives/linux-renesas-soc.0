@@ -4,78 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6443C388F9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 22:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 968BAC56201
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 01:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77C8D205CB
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 22:13:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3808820791
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 01:32:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="uodQw/I6"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="NBhlVTDt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbgKKWNg (ORCPT
+        id S1728303AbgKLBcK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 11 Nov 2020 17:13:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49954 "EHLO
+        Wed, 11 Nov 2020 20:32:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726459AbgKKWNf (ORCPT
+        with ESMTP id S1727991AbgKKX4T (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Nov 2020 17:13:35 -0500
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7228DC0613D4
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2020 14:13:35 -0800 (PST)
-Received: by mail-lf1-x144.google.com with SMTP id 74so5394182lfo.5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2020 14:13:35 -0800 (PST)
+        Wed, 11 Nov 2020 18:56:19 -0500
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B191EC0613D1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2020 15:56:18 -0800 (PST)
+Received: by mail-lj1-x243.google.com with SMTP id o24so4054903ljj.6
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2020 15:56:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=/RtCsQrJjqfgxayVrq4/1DDstPiK9fZla8GSUyX2SHc=;
-        b=uodQw/I6mcdI6C0gg3wFP024K5ybNYBGsT1u+kDnYkvRJkgR+/lrEnhvY9K8M+oQ7a
-         pIsrmyLNyws2awvqFY45Pzu8puH8IAV4nZUH+svFoKAdWSr/4Fwppa9hKidXRYrSJDL7
-         a1FK3SMgPKnBfi5rKpIg4E61H/zwJuFEdsel/WtoMIc+uhCwV613Yoc8guVXCE/rJ18f
-         I99/5+ImCHa1Fo49NXvsJy2KzlqiUlm+GOFrs3nUA6jvAY7QgLOBUtB730UUlvwD6hpY
-         yV+j4QaSQS3WNp4YTtKTvESA8uHkB4ZZ/opAEce9H5wpoJKo9PKC2+0cDThhKXEODV5C
-         lcRA==
+        bh=yZBInjEhqGJoQNzhkaJOLMFbqjSqBvR/K7kmtW5Xg1E=;
+        b=NBhlVTDtw5GtpKvQgUL1lnCappyhHsYiRieriM+llP2UueqvCoxFQshv9Qxq6SXgks
+         w9WcFO+AHzN+zLIMk3xNvLmdlhguwXpPOKzBhw66wydE5vdBcK5n/CpeaQXj4TUoMMpB
+         xDJ5zVeK8jTqXHBc4/ZO4WROjOlv6/tnM+Nt48CBQIFpbDxGcgm1dU/BSEeqrgW9z/s/
+         RqfkAQvX/bDXEcczJBk4ezpUp93aHwXo3YXN/qAvqh+8liD0Kfn5un3OO+a5bzu4Pc64
+         n1ds6A2RBSz+uOTApo5129NzLbCjmr8j4tUBkYCiGFd8T6nWwSNr5vNV4TSfkELshFk2
+         tklg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to;
-        bh=/RtCsQrJjqfgxayVrq4/1DDstPiK9fZla8GSUyX2SHc=;
-        b=WGlr2AspGpMyYzqwMw3b4iHMYy8yUmI1jbrImnUghpWwIx1+/3mW4epQ0boOwzLqad
-         UgTJudSsFAB0+hwRjyPk6woPPMLiOsQwDNTxvBgX7aGP6ydYMDO8jBNfEyUcCtMG/GRl
-         69JtGYgBl++ZrZEgiZNl6GNZEGPptU8qY8XVk68T/Uyd8mMCaNCtq+X8r+PO8NkGO3Il
-         jkkLFAETYSrg+aEo5G0cGnJAUnz9HJQO/9DnlgvQYgibfpcVEix1CfzJ5ozW2X/GdtNT
-         WXP45eMrAVmBwNaq9hU3gGtqYNuGv0XRUCeNMm3X9RJe8dUOfmIA8m1/UgVesT/+rBI3
-         M7bg==
-X-Gm-Message-State: AOAM530mh5YsJQLTtzJyAMcU17GehvjA7KuvOa+78vFuFZfVNWWaRikw
-        zmM9pLrPFeDSf72+LP+wMyeK5Q==
-X-Google-Smtp-Source: ABdhPJwcMQH4bfkDaUx4a6BiOrFf/HfFfQ+tkbEh5L+7ZzIgSn35zFxtoUZTsWUHlmebkMGO7YPayQ==
-X-Received: by 2002:a19:7f02:: with SMTP id a2mr11118944lfd.48.1605132813992;
-        Wed, 11 Nov 2020 14:13:33 -0800 (PST)
+        bh=yZBInjEhqGJoQNzhkaJOLMFbqjSqBvR/K7kmtW5Xg1E=;
+        b=KO+HiBgc8pVow8dFsztAJ46jLD36Sn67CGKTR5sjLVeMEeu2NzuKEROn7xc2GfW2Yb
+         Af3wG5exIhwKlj8hqlFtZ46nxGjEPwbjsOPRnq5pw6pnRIL2jZTy6FbiC5tlK+S0mteT
+         PrySChcKUuqEnBC7Gx3IdWPdRBY6oaa/n0o/R+sKI2KJ8Ix/FhdqpUPdOeUbOKHatm1Y
+         sHKgsmqCLZkosI3wXoHcjxy8LONIdwd92qdjA5wP6a+prpRi3vlk/+wPlb0ZNkr2zSQA
+         fX+eKOxL9hUIXM9iuxC3XBEj1Mn+vSYlHpCnrlaQs/ynxKvhxyRZswVf16V3kbA3otK4
+         AYdQ==
+X-Gm-Message-State: AOAM5330sloWrzmsqVUOlXlHEHiKXEMDNxe75F+hsVAf71rLV1qfAX3P
+        iuDomrzYbRoSt1sQnC+wCfpkl7YDLCe8iQ==
+X-Google-Smtp-Source: ABdhPJxJbswP/LoSLpqOlKmpJS7kGci5xukGqAeg9hHP+pHsHjG5+76/XAqdhfg5wS6CwL0dwCHtWw==
+X-Received: by 2002:a2e:8098:: with SMTP id i24mr6111469ljg.152.1605138977138;
+        Wed, 11 Nov 2020 15:56:17 -0800 (PST)
 Received: from localhost (h-209-203.A463.priv.bahnhof.se. [155.4.209.203])
-        by smtp.gmail.com with ESMTPSA id z5sm352418lfj.290.2020.11.11.14.13.33
+        by smtp.gmail.com with ESMTPSA id s5sm366513lfd.58.2020.11.11.15.56.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2020 14:13:33 -0800 (PST)
-Date:   Wed, 11 Nov 2020 23:13:32 +0100
+        Wed, 11 Nov 2020 15:56:16 -0800 (PST)
+Date:   Thu, 12 Nov 2020 00:56:15 +0100
 From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
         <niklas.soderlund@ragnatech.se>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [RFC PATCH 2/4] mmc: renesas_sdhi: probe into TMIO after SCC
- parameters have been setup
-Message-ID: <20201111221332.GA1263071@oden.dyn.berto.se>
+Subject: Re: [RFC PATCH 4/4] mmc: renesas_sdhi: simplify reset routine a
+ little
+Message-ID: <20201111235615.GC1263071@oden.dyn.berto.se>
 References: <20201110142058.36393-1-wsa+renesas@sang-engineering.com>
- <20201110142058.36393-3-wsa+renesas@sang-engineering.com>
+ <20201110142058.36393-5-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201110142058.36393-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20201110142058.36393-5-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
@@ -84,45 +84,41 @@ Hi Wolfram,
 
 Thanks for your work.
 
-On 2020-11-10 15:20:56 +0100, Wolfram Sang wrote:
-> Setting up the SCC parameters does not need a probed TMIO device. But in
-> the near future, probing the TMIO device needs the SCC parameters setup.
-> So, fix the ordering.
+On 2020-11-10 15:20:58 +0100, Wolfram Sang wrote:
+> The 'reset' pointer is only populated for Gen2+. So, we don't need to
+> check for that flag inside the routine.
 > 
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
 > ---
->  drivers/mmc/host/renesas_sdhi_core.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>  drivers/mmc/host/renesas_sdhi_core.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 > 
 > diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index a395f835e836..17ebaa324ca1 100644
+> index 4a1ed5bf216c..1fabf8c5773c 100644
 > --- a/drivers/mmc/host/renesas_sdhi_core.c
 > +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -1067,10 +1067,6 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->  			quirks->hs400_calib_table + 1);
+> @@ -552,6 +552,7 @@ static int renesas_sdhi_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_io
+>  	return 0;
+>  }
+>  
+> +/* only populated for TMIO_MMC_MIN_RCAR2 */
+>  static void renesas_sdhi_reset(struct tmio_mmc_host *host)
+>  {
+>  	struct renesas_sdhi *priv = host_to_priv(host);
+> @@ -569,9 +570,7 @@ static void renesas_sdhi_reset(struct tmio_mmc_host *host)
+>  			       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
 >  	}
 >  
-> -	ret = tmio_mmc_host_probe(host);
-> -	if (ret < 0)
-> -		goto edisclk;
-> -
->  	/* Enable tuning iff we have an SCC and a supported mode */
->  	if (of_data && of_data->scc_offset &&
->  	    (host->mmc->caps & MMC_CAP_UHS_SDR104 ||
-> @@ -1102,6 +1098,10 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->  		host->ops.hs400_complete = renesas_sdhi_hs400_complete;
->  	}
+> -	if (host->pdata->flags & TMIO_MMC_MIN_RCAR2)
+> -		sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK,
+> -					     TMIO_MASK_INIT_RCAR2);
+> +	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, TMIO_MASK_INIT_RCAR2);
+>  }
 >  
-> +	ret = tmio_mmc_host_probe(host);
-> +	if (ret < 0)
-> +		goto edisclk;
-> +
->  	num_irqs = platform_irq_count(pdev);
->  	if (num_irqs < 0) {
->  		ret = num_irqs;
+>  #define SH_MOBILE_SDHI_MIN_TAP_ROW 3
 > -- 
 > 2.28.0
 > 
