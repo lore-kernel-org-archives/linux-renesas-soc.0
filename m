@@ -2,77 +2,98 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C10AFC56201
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 10:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DCBC63699
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 10:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0E919207D3
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 10:02:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38DF520729
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 10:02:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GzH8Nq+7"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="z93UkeA6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726719AbgKKKCz (ORCPT
+        id S1726136AbgKKKCz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 11 Nov 2020 05:02:55 -0500
-Received: from www.zeus03.de ([194.117.254.33]:47524 "EHLO mail.zeus03.de"
+Received: from www.zeus03.de ([194.117.254.33]:47564 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbgKKKCy (ORCPT
+        id S1726725AbgKKKCy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 11 Nov 2020 05:02:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=gJhuVf2u77p9axHBPzGy+D8eEIE
-        +mlfeZyceOt0HfX0=; b=GzH8Nq+7CZAD5BnKMFll9IZ8haH+Eycug21ORR+JxdQ
-        ZF1E/KXL16x0TBcZ/68EfOP3HtPe5SxYV4HwiG049KuckfwzbCvWeyhi9S5IrxJC
-        fvlPxHiARjPEUBnEDoQRTSXLgXFE8zGOoYzDJ3VFRbIbbG3gmp1TGmUDs6jObztw
-        =
-Received: (qmail 2440279 invoked from network); 11 Nov 2020 11:02:51 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Nov 2020 11:02:51 +0100
-X-UD-Smtp-Session: l3s3148p1@auz15dGzVJMgAwDPXwjxAOzndPPvnXZD
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=CH5wlrFhrfWWT+
+        D2/lxdR/5dd3aKOAJJCEpHlYZhwoY=; b=z93UkeA6YCh+gziWPZb5aXaMDO5kaC
+        EtdSrqB7fCf0hLVetdH8btrd+x3rOD0MKuNz1iUpEafDfgTRCnsYDfAc5n5HzVvF
+        9JGExBPVRY2MaDdZunr/FVdzFXQ7rx6ZNtnIPzTV7LfveiZ7roPPTrH+W3Btpt75
+        TyGgtFMpV58eo=
+Received: (qmail 2440363 invoked from network); 11 Nov 2020 11:02:52 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Nov 2020 11:02:52 +0100
+X-UD-Smtp-Session: l3s3148p1@VfoF5tGzWpMgAwDPXwjxAOzndPPvnXZD
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-mmc@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 0/3] mmc: renesas_sdhi: generic cleanups
-Date:   Wed, 11 Nov 2020 11:02:41 +0100
-Message-Id: <20201111100244.15823-1-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 3/3] mmc: renesas_sdhi: sort includes
+Date:   Wed, 11 Nov 2020 11:02:44 +0100
+Message-Id: <20201111100244.15823-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201111100244.15823-1-wsa+renesas@sang-engineering.com>
+References: <20201111100244.15823-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Here are a few patches fixing cosmetic issues which always annoyed me
-when working on this driver. Patches #1+#2 improve naming and remove
-hardcoded values. Patch #3 sorts the defines. The object files were
-identical here before and after the patchset, as expected.
+Better prevent double includes.
 
-The patches depend on the series "[PATCH 0/3] mmc: renesas_sdhi:
-refactor SCC reset" and are part of this branch:
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/sdhi/tap_en_v2
-
-Hope you'll like it,
-
-   Wolfram
-
-
-Wolfram Sang (3):
-  mmc: renesas_sdhi: improve HOST_MODE usage
-  mmc: renesas_sdhi: don't hardcode SDIF values
-  mmc: renesas_sdhi: sort includes
-
- drivers/mmc/host/renesas_sdhi_core.c | 49 +++++++++++++++++-----------
- drivers/mmc/host/tmio_mmc.h          |  1 -
- 2 files changed, 30 insertions(+), 20 deletions(-)
-
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 55633826d38c..bb937411c2ec 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -18,22 +18,22 @@
+  *
+  */
+ 
+-#include <linux/kernel.h>
+ #include <linux/clk.h>
+-#include <linux/slab.h>
+-#include <linux/module.h>
+-#include <linux/of_device.h>
+-#include <linux/platform_device.h>
+-#include <linux/pm_domain.h>
++#include <linux/delay.h>
++#include <linux/kernel.h>
++#include <linux/mfd/tmio.h>
+ #include <linux/mmc/host.h>
+ #include <linux/mmc/mmc.h>
+ #include <linux/mmc/slot-gpio.h>
+-#include <linux/mfd/tmio.h>
+-#include <linux/sh_dma.h>
+-#include <linux/delay.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pinctrl/pinctrl-state.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/sh_dma.h>
++#include <linux/slab.h>
+ #include <linux/sys_soc.h>
+ 
+ #include "renesas_sdhi.h"
 -- 
 2.28.0
 
