@@ -2,58 +2,127 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.6 required=3.0 tests=BAYES_50,DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FREEMAIL_REPLYTO_END_DIGIT,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D81AFC56202
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 07:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3591AC388F9
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 10:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA22F221F1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 07:24:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09CF920729
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 10:02:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="MjzU5vGE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726227AbgKKHXe convert rfc822-to-8bit (ORCPT
+        id S1726840AbgKKKCy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 11 Nov 2020 02:23:34 -0500
-Received: from sw73-70-41.adsl.seed.net.tw ([203.73.70.41]:42219 "EHLO
-        oa.trendtek.com.tw" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbgKKHXV (ORCPT
+        Wed, 11 Nov 2020 05:02:54 -0500
+Received: from www.zeus03.de ([194.117.254.33]:47534 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726395AbgKKKCy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Nov 2020 02:23:21 -0500
-X-Greylist: delayed 68738 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Nov 2020 02:23:20 EST
-Received: from [156.96.44.214] ([156.96.44.214])
-        (authenticated bits=0)
-        by oa.trendtek.com.tw (8.13.8/8.13.1) with ESMTP id 0AB7Lw7n021318
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2020 15:22:47 +0800
-Message-Id: <202011110722.0AB7Lw7n021318@oa.trendtek.com.tw>
-Content-Type: text/plain; charset="iso-8859-1"
+        Wed, 11 Nov 2020 05:02:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=n8Gi3QPLhRpJD0
+        CXun5HzOY47PMuSQ9DGAr0KyEXrlE=; b=MjzU5vGEcc0zSFoH2uh5i46XNxDEHH
+        2Q2qNbH/sC4owKqbLBBywyiKKwWFVdfAAzGOZG4JKM0o8lzebEGg1WutwUF2hdi/
+        3T5FmapguVpXziTb342G37ZREhMVByu35bDWbibejQns1chH3Xp9Ed9iamr0CdXe
+        zTrQhKdH7krqc=
+Received: (qmail 2440301 invoked from network); 11 Nov 2020 11:02:51 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Nov 2020 11:02:51 +0100
+X-UD-Smtp-Session: l3s3148p1@Elr75dGzVpMgAwDPXwjxAOzndPPvnXZD
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-mmc@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/3] mmc: renesas_sdhi: improve HOST_MODE usage
+Date:   Wed, 11 Nov 2020 11:02:42 +0100
+Message-Id: <20201111100244.15823-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201111100244.15823-1-wsa+renesas@sang-engineering.com>
+References: <20201111100244.15823-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Description: Mail message body
-Subject: Corporate and Personal Loan *
-To:     linux-renesas-soc@vger.kernel.org
-From:   "Investment  Corporate" <financialcapability6@gmail.com>
-Date:   Wed, 11 Nov 2020 00:29:58 -0800
-Reply-To: hmurrah39@gmail.com
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello linux-renesas-soc@vger.kernel.org
+HOST_MODE should have a CTL_ prefix, too. This makes the code more
+readable because we immediately know what it is. Also, remove the
+hardcoded values with something readable, too.
 
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
-We are Base Investment Company offering Corporate and Personal Loan at 3% Interest Rate for a duration of 10Years.
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 25c6a1993f8e..b3eb0182c4af 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -39,7 +39,15 @@
+ #include "renesas_sdhi.h"
+ #include "tmio_mmc.h"
+ 
+-#define HOST_MODE		0xe4
++#define CTL_HOST_MODE	0xe4
++#define HOST_MODE_GEN2_SDR50_WMODE	BIT(0)
++#define HOST_MODE_GEN2_SDR104_WMODE	BIT(0)
++#define HOST_MODE_GEN3_WMODE		BIT(0)
++#define HOST_MODE_GEN3_BUSWIDTH		BIT(8)
++
++#define HOST_MODE_GEN3_16BIT	HOST_MODE_GEN3_WMODE
++#define HOST_MODE_GEN3_32BIT	(HOST_MODE_GEN3_WMODE | HOST_MODE_GEN3_BUSWIDTH)
++#define HOST_MODE_GEN3_64BIT	0
+ 
+ #define SDHI_VER_GEN2_SDR50	0x490c
+ #define SDHI_VER_RZ_A1		0x820b
+@@ -60,26 +68,26 @@ static void renesas_sdhi_sdbuf_width(struct tmio_mmc_host *host, int width)
+ 	 */
+ 	switch (sd_ctrl_read16(host, CTL_VERSION)) {
+ 	case SDHI_VER_GEN2_SDR50:
+-		val = (width == 32) ? 0x0001 : 0x0000;
++		val = (width == 32) ? HOST_MODE_GEN2_SDR50_WMODE : 0;
+ 		break;
+ 	case SDHI_VER_GEN2_SDR104:
+-		val = (width == 32) ? 0x0000 : 0x0001;
++		val = (width == 32) ? 0 : HOST_MODE_GEN2_SDR104_WMODE;
+ 		break;
+ 	case SDHI_VER_GEN3_SD:
+ 	case SDHI_VER_GEN3_SDMMC:
+ 		if (width == 64)
+-			val = 0x0000;
++			val = HOST_MODE_GEN3_64BIT;
+ 		else if (width == 32)
+-			val = 0x0101;
++			val = HOST_MODE_GEN3_32BIT;
+ 		else
+-			val = 0x0001;
++			val = HOST_MODE_GEN3_16BIT;
+ 		break;
+ 	default:
+ 		/* nothing to do */
+ 		return;
+ 	}
+ 
+-	sd_ctrl_write16(host, HOST_MODE, val);
++	sd_ctrl_write16(host, CTL_HOST_MODE, val);
+ }
+ 
+ static int renesas_sdhi_clk_enable(struct tmio_mmc_host *host)
+@@ -795,7 +803,7 @@ static int renesas_sdhi_write16_hook(struct tmio_mmc_host *host, int addr)
+ 	case CTL_SD_MEM_CARD_OPT:
+ 	case CTL_TRANSACTION_CTL:
+ 	case CTL_DMA_ENABLE:
+-	case HOST_MODE:
++	case CTL_HOST_MODE:
+ 		if (host->pdata->flags & TMIO_MMC_HAVE_CBSY)
+ 			bit = TMIO_STAT_CMD_BUSY;
+ 		fallthrough;
+-- 
+2.28.0
 
-
-We also pay 1% commission to brokers, who introduce project owners for finance or other opportunities.
-
-
-Please get back to me if you are interested for more
-
-details.
-
-
-Yours faithfully,
-
-Hashim Murrah
