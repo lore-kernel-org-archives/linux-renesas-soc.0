@@ -2,108 +2,77 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBB6C4742C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C10AFC56201
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 10:02:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0AFBD2075A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 10:02:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E919207D3
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 10:02:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="V6L3CBRS"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="GzH8Nq+7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726395AbgKKKCz (ORCPT
+        id S1726719AbgKKKCz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 11 Nov 2020 05:02:55 -0500
-Received: from www.zeus03.de ([194.117.254.33]:47556 "EHLO mail.zeus03.de"
+Received: from www.zeus03.de ([194.117.254.33]:47524 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726719AbgKKKCy (ORCPT
+        id S1725995AbgKKKCy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 11 Nov 2020 05:02:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=YCy8wxg1ufxHfZ
-        ISYOWIDzjZu1g2JJvtQZltsM1gT/0=; b=V6L3CBRSm11S+DClWWr0p9iMu5PFGi
-        prNNqxnf9/jAsrUMx+IoWM8t2ThvKYvakjEIfAQzooMg277hEiQPNt+vgUVeczli
-        pu9oH/meb0An5y/EWzhzoMnAO+CLLP20arL39HpL6IzXtpvK+42R4F2FGCUCD7IB
-        lu4T5VbLLYb9o=
-Received: (qmail 2440327 invoked from network); 11 Nov 2020 11:02:51 +0100
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=gJhuVf2u77p9axHBPzGy+D8eEIE
+        +mlfeZyceOt0HfX0=; b=GzH8Nq+7CZAD5BnKMFll9IZ8haH+Eycug21ORR+JxdQ
+        ZF1E/KXL16x0TBcZ/68EfOP3HtPe5SxYV4HwiG049KuckfwzbCvWeyhi9S5IrxJC
+        fvlPxHiARjPEUBnEDoQRTSXLgXFE8zGOoYzDJ3VFRbIbbG3gmp1TGmUDs6jObztw
+        =
+Received: (qmail 2440279 invoked from network); 11 Nov 2020 11:02:51 +0100
 Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Nov 2020 11:02:51 +0100
-X-UD-Smtp-Session: l3s3148p1@rq0A5tGzWJMgAwDPXwjxAOzndPPvnXZD
+X-UD-Smtp-Session: l3s3148p1@auz15dGzVJMgAwDPXwjxAOzndPPvnXZD
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-mmc@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/3] mmc: renesas_sdhi: don't hardcode SDIF values
-Date:   Wed, 11 Nov 2020 11:02:43 +0100
-Message-Id: <20201111100244.15823-3-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/3] mmc: renesas_sdhi: generic cleanups
+Date:   Wed, 11 Nov 2020 11:02:41 +0100
+Message-Id: <20201111100244.15823-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201111100244.15823-1-wsa+renesas@sang-engineering.com>
-References: <20201111100244.15823-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Use a macro to name the hardcoded values. Also, move the SDIF register
-definition into the SDHI driver because this is an SDHI extension.
+Here are a few patches fixing cosmetic issues which always annoyed me
+when working on this driver. Patches #1+#2 improve naming and remove
+hardcoded values. Patch #3 sorts the defines. The object files were
+identical here before and after the patchset, as expected.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/renesas_sdhi_core.c | 7 +++++--
- drivers/mmc/host/tmio_mmc.h          | 1 -
- 2 files changed, 5 insertions(+), 3 deletions(-)
+The patches depend on the series "[PATCH 0/3] mmc: renesas_sdhi:
+refactor SCC reset" and are part of this branch:
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index b3eb0182c4af..55633826d38c 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -49,6 +49,9 @@
- #define HOST_MODE_GEN3_32BIT	(HOST_MODE_GEN3_WMODE | HOST_MODE_GEN3_BUSWIDTH)
- #define HOST_MODE_GEN3_64BIT	0
- 
-+#define CTL_SDIF_MODE	0xe6
-+#define SDIF_MODE_HS400		BIT(0)
-+
- #define SDHI_VER_GEN2_SDR50	0x490c
- #define SDHI_VER_RZ_A1		0x820b
- /* very old datasheets said 0x490c for SDR104, too. They are wrong! */
-@@ -381,7 +384,7 @@ static void renesas_sdhi_hs400_complete(struct mmc_host *mmc)
- 		sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
- 
- 	/* Set HS400 mode */
--	sd_ctrl_write16(host, CTL_SDIF_MODE, 0x0001 |
-+	sd_ctrl_write16(host, CTL_SDIF_MODE, SDIF_MODE_HS400 |
- 			sd_ctrl_read16(host, CTL_SDIF_MODE));
- 
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DT2FF,
-@@ -529,7 +532,7 @@ static void renesas_sdhi_reset_hs400_mode(struct tmio_mmc_host *host,
- 			sd_ctrl_read16(host, CTL_SD_CARD_CLK_CTL));
- 
- 	/* Reset HS400 mode */
--	sd_ctrl_write16(host, CTL_SDIF_MODE, ~0x0001 &
-+	sd_ctrl_write16(host, CTL_SDIF_MODE, ~SDIF_MODE_HS400 &
- 			sd_ctrl_read16(host, CTL_SDIF_MODE));
- 
- 	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_DT2FF, priv->scc_tappos);
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 9546e542619c..7ff41185896a 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -42,7 +42,6 @@
- #define CTL_DMA_ENABLE 0xd8
- #define CTL_RESET_SD 0xe0
- #define CTL_VERSION 0xe2
--#define CTL_SDIF_MODE 0xe6
- 
- /* Definitions for values the CTL_STOP_INTERNAL_ACTION register can take */
- #define TMIO_STOP_STP		BIT(0)
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/sdhi/tap_en_v2
+
+Hope you'll like it,
+
+   Wolfram
+
+
+Wolfram Sang (3):
+  mmc: renesas_sdhi: improve HOST_MODE usage
+  mmc: renesas_sdhi: don't hardcode SDIF values
+  mmc: renesas_sdhi: sort includes
+
+ drivers/mmc/host/renesas_sdhi_core.c | 49 +++++++++++++++++-----------
+ drivers/mmc/host/tmio_mmc.h          |  1 -
+ 2 files changed, 30 insertions(+), 20 deletions(-)
+
 -- 
 2.28.0
 
