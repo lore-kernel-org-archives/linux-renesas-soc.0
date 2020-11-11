@@ -2,140 +2,213 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1CBC388F7
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Nov 2020 23:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F3DC388F7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 02:28:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E73720809
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Nov 2020 23:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66D7421D91
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Nov 2020 02:28:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbgKJXte (ORCPT
+        id S1725984AbgKKC21 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Nov 2020 18:49:34 -0500
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:14679 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730254AbgKJXte (ORCPT
+        Tue, 10 Nov 2020 21:28:27 -0500
+Received: from mga02.intel.com ([134.134.136.20]:12758 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725882AbgKKC21 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Nov 2020 18:49:34 -0500
-X-Halon-ID: 3b4909e9-23af-11eb-954c-0050569116f7
-Authorized-sender: niklas.soderlund@fsdn.se
-Received: from bismarck.berto.se (p4fca2458.dip0.t-ipconnect.de [79.202.36.88])
-        by bin-vsp-out-03.atm.binero.net (Halon) with ESMTPA
-        id 3b4909e9-23af-11eb-954c-0050569116f7;
-        Wed, 11 Nov 2020 00:48:28 +0100 (CET)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/4] pinctrl: renesas: r8a7796: Add vin{4,5}_g8 pins
-Date:   Wed, 11 Nov 2020 00:47:50 +0100
-Message-Id: <20201110234752.52846-3-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201110234752.52846-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20201110234752.52846-1-niklas.soderlund+renesas@ragnatech.se>
+        Tue, 10 Nov 2020 21:28:27 -0500
+IronPort-SDR: RJEDI3zxMSrKfwawlz7RWp9/+FN5zsya8t0TyWWK9/dIul8NqnusdjVBNn7znDHsU+JOJlDmSs
+ EM/vgFHQ8MIQ==
+X-IronPort-AV: E=McAfee;i="6000,8403,9801"; a="157091214"
+X-IronPort-AV: E=Sophos;i="5.77,468,1596524400"; 
+   d="scan'208";a="157091214"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Nov 2020 18:28:26 -0800
+IronPort-SDR: WhA4fih/AxdPq1G32vBGmsCD1E/B5isfglmlDLd9v7gxz5FjOFe7EU6vfmiHFAVWbpTvXoaOZ7
+ GA0z6rCIAmuQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.77,468,1596524400"; 
+   d="scan'208";a="356431753"
+Received: from lkp-server02.sh.intel.com (HELO c6c5fbb3488a) ([10.239.97.151])
+  by fmsmga004.fm.intel.com with ESMTP; 10 Nov 2020 18:28:25 -0800
+Received: from kbuild by c6c5fbb3488a with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1kcfs1-0000aw-0b; Wed, 11 Nov 2020 02:28:25 +0000
+Date:   Wed, 11 Nov 2020 10:28:18 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [renesas-drivers:renesas-pinctrl-for-v5.11] BUILD SUCCESS
+ 86f52edb7374a83c294ffad3a1fb58dbe76c5a06
+Message-ID: <5fab4c42.5YyAetKYWph+xocf%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds VIN{4,5}_g8 support to the R8A7796 SoC.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git  renesas-pinctrl-for-v5.11
+branch HEAD: 86f52edb7374a83c294ffad3a1fb58dbe76c5a06  pinctrl: renesas: Constify sh73a0_vccq_mc0_ops
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+elapsed time: 723m
+
+configs tested: 139
+configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                               defconfig
+arm                              allmodconfig
+arm64                            allyesconfig
+arm                              allyesconfig
+arm                       aspeed_g4_defconfig
+sh                   sh7724_generic_defconfig
+mips                malta_qemu_32r6_defconfig
+sh                          lboxre2_defconfig
+arm                         shannon_defconfig
+powerpc                  mpc866_ads_defconfig
+mips                         bigsur_defconfig
+m68k                          hp300_defconfig
+nios2                         3c120_defconfig
+parisc                           alldefconfig
+m68k                        m5407c3_defconfig
+m68k                        stmark2_defconfig
+sh                           se7721_defconfig
+powerpc                   motionpro_defconfig
+sh                           se7750_defconfig
+arm                          moxart_defconfig
+powerpc                          g5_defconfig
+mips                           ip22_defconfig
+arm                      jornada720_defconfig
+arm                            zeus_defconfig
+arc                 nsimosci_hs_smp_defconfig
+sparc64                             defconfig
+arm                          badge4_defconfig
+m68k                           sun3_defconfig
+m68k                          multi_defconfig
+sh                          polaris_defconfig
+m68k                            q40_defconfig
+sh                        edosk7760_defconfig
+xtensa                       common_defconfig
+arm                           corgi_defconfig
+sh                               j2_defconfig
+powerpc                   currituck_defconfig
+ia64                         bigsur_defconfig
+sh                              ul2_defconfig
+arm                       omap2plus_defconfig
+mips                     loongson1b_defconfig
+arm                   milbeaut_m10v_defconfig
+mips                           ip32_defconfig
+mips                         tb0287_defconfig
+powerpc                    amigaone_defconfig
+powerpc                    klondike_defconfig
+mips                            ar7_defconfig
+mips                   sb1250_swarm_defconfig
+sparc                               defconfig
+arm                       versatile_defconfig
+arm                  colibri_pxa270_defconfig
+microblaze                          defconfig
+sh                   rts7751r2dplus_defconfig
+powerpc                      ppc44x_defconfig
+m68k                       m5475evb_defconfig
+m68k                          atari_defconfig
+arm                             rpc_defconfig
+m68k                         amcore_defconfig
+arm                            hisi_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                             allyesconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+i386                                defconfig
+sparc                            allyesconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                           allnoconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+x86_64               randconfig-a006-20201110
+x86_64               randconfig-a003-20201110
+x86_64               randconfig-a005-20201110
+x86_64               randconfig-a004-20201110
+x86_64               randconfig-a002-20201110
+x86_64               randconfig-a001-20201110
+i386                 randconfig-a006-20201110
+i386                 randconfig-a005-20201110
+i386                 randconfig-a002-20201110
+i386                 randconfig-a001-20201110
+i386                 randconfig-a003-20201110
+i386                 randconfig-a004-20201110
+i386                 randconfig-a006-20201111
+i386                 randconfig-a005-20201111
+i386                 randconfig-a002-20201111
+i386                 randconfig-a001-20201111
+i386                 randconfig-a003-20201111
+i386                 randconfig-a004-20201111
+i386                 randconfig-a012-20201110
+i386                 randconfig-a014-20201110
+i386                 randconfig-a016-20201110
+i386                 randconfig-a011-20201110
+i386                 randconfig-a015-20201110
+i386                 randconfig-a013-20201110
+i386                 randconfig-a012-20201111
+i386                 randconfig-a014-20201111
+i386                 randconfig-a016-20201111
+i386                 randconfig-a011-20201111
+i386                 randconfig-a015-20201111
+i386                 randconfig-a013-20201111
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                                   rhel
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                                  kexec
+
+clang tested configs:
+x86_64               randconfig-a015-20201110
+x86_64               randconfig-a011-20201110
+x86_64               randconfig-a014-20201110
+x86_64               randconfig-a013-20201110
+x86_64               randconfig-a016-20201110
+x86_64               randconfig-a012-20201110
+
 ---
- drivers/pinctrl/renesas/pfc-r8a7796.c | 30 ++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/renesas/pfc-r8a7796.c b/drivers/pinctrl/renesas/pfc-r8a7796.c
-index 55f0344a3d3e9af6..91591fbcec86c3f8 100644
---- a/drivers/pinctrl/renesas/pfc-r8a7796.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a7796.c
-@@ -4048,6 +4048,18 @@ static const union vin_data vin4_data_b_mux = {
- 		VI4_DATA22_MARK, VI4_DATA23_MARK,
- 	},
- };
-+static const unsigned int vin4_g8_pins[] = {
-+	RCAR_GP_PIN(1, 0),  RCAR_GP_PIN(1, 1),
-+	RCAR_GP_PIN(1, 2),  RCAR_GP_PIN(1, 3),
-+	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
-+	RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
-+};
-+static const unsigned int vin4_g8_mux[] = {
-+	VI4_DATA8_MARK,  VI4_DATA9_MARK,
-+	VI4_DATA10_MARK, VI4_DATA11_MARK,
-+	VI4_DATA12_MARK, VI4_DATA13_MARK,
-+	VI4_DATA14_MARK, VI4_DATA15_MARK,
-+};
- static const unsigned int vin4_sync_pins[] = {
- 	/* HSYNC#, VSYNC# */
- 	RCAR_GP_PIN(1, 18), RCAR_GP_PIN(1, 17),
-@@ -4102,6 +4114,18 @@ static const union vin_data16 vin5_data_mux = {
- 		VI5_DATA14_MARK, VI5_DATA15_MARK,
- 	},
- };
-+static const unsigned int vin5_g8_pins[] = {
-+	RCAR_GP_PIN(1, 12), RCAR_GP_PIN(1, 13),
-+	RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 15),
-+	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
-+	RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
-+};
-+static const unsigned int vin5_g8_mux[] = {
-+	VI5_DATA8_MARK,  VI5_DATA9_MARK,
-+	VI5_DATA10_MARK, VI5_DATA11_MARK,
-+	VI5_DATA12_MARK, VI5_DATA13_MARK,
-+	VI5_DATA14_MARK, VI5_DATA15_MARK,
-+};
- static const unsigned int vin5_sync_pins[] = {
- 	/* HSYNC#, VSYNC# */
- 	RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 9),
-@@ -4132,7 +4156,7 @@ static const unsigned int vin5_clk_mux[] = {
- };
- 
- static const struct {
--	struct sh_pfc_pin_group common[316];
-+	struct sh_pfc_pin_group common[318];
- 	struct sh_pfc_pin_group automotive[30];
- } pinmux_groups = {
- 	.common = {
-@@ -4440,6 +4464,7 @@ static const struct {
- 		SH_PFC_PIN_GROUP(vin4_data18_b),
- 		VIN_DATA_PIN_GROUP(vin4_data, 20, _b),
- 		VIN_DATA_PIN_GROUP(vin4_data, 24, _b),
-+		SH_PFC_PIN_GROUP(vin4_g8),
- 		SH_PFC_PIN_GROUP(vin4_sync),
- 		SH_PFC_PIN_GROUP(vin4_field),
- 		SH_PFC_PIN_GROUP(vin4_clkenb),
-@@ -4448,6 +4473,7 @@ static const struct {
- 		VIN_DATA_PIN_GROUP(vin5_data, 10),
- 		VIN_DATA_PIN_GROUP(vin5_data, 12),
- 		VIN_DATA_PIN_GROUP(vin5_data, 16),
-+		SH_PFC_PIN_GROUP(vin5_g8),
- 		SH_PFC_PIN_GROUP(vin5_sync),
- 		SH_PFC_PIN_GROUP(vin5_field),
- 		SH_PFC_PIN_GROUP(vin5_clkenb),
-@@ -4978,6 +5004,7 @@ static const char * const vin4_groups[] = {
- 	"vin4_data18_b",
- 	"vin4_data20_b",
- 	"vin4_data24_b",
-+	"vin4_g8",
- 	"vin4_sync",
- 	"vin4_field",
- 	"vin4_clkenb",
-@@ -4989,6 +5016,7 @@ static const char * const vin5_groups[] = {
- 	"vin5_data10",
- 	"vin5_data12",
- 	"vin5_data16",
-+	"vin5_g8",
- 	"vin5_sync",
- 	"vin5_field",
- 	"vin5_clkenb",
--- 
-2.29.2
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
