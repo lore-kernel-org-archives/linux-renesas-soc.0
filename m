@@ -2,83 +2,80 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 552F3C55ABD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAF6C55ABD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E293122228
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:33:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EC99216FD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:46:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fki1c333"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DNCauhmr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbgKLLdQ (ORCPT
+        id S1727916AbgKLLpN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 12 Nov 2020 06:33:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59906 "EHLO
+        Thu, 12 Nov 2020 06:45:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728031AbgKLLcy (ORCPT
+        with ESMTP id S1728244AbgKLLpF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Nov 2020 06:32:54 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA363C0613D1
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2020 03:32:52 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id a3so5170752wmb.5
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2020 03:32:52 -0800 (PST)
+        Thu, 12 Nov 2020 06:45:05 -0500
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 883FBC0613D1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2020 03:45:04 -0800 (PST)
+Received: by mail-wm1-x343.google.com with SMTP id d142so4984919wmd.4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2020 03:45:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=os5khahHPpWn88KMb1Vr8p8L3JIWYK0ZBr9FMB2vL0w=;
-        b=fki1c333F915w4zFn8q2oOpYqkI7PxR0+mBFi4LEeODBMzzkPfR+IPXf726dBZaqD0
-         f9RQewNzP/8HvVg0NAZmNJOlBfDB6r/EGLAKj7KJgmEwtZkXDAuCeFTFaNKVSKCSF4i0
-         lT5c51hDRifK7TQPpYZ5EHNcvgT7AULWAUFJMqmDJgPDbNM19DXdzy2kKSYzc13/oxVi
-         wvdNfkUBxhlkuZlbrGweY8e59SDhpSec54qntjAXNM8aubDywJ7BlYmSRK02+p0Ut6nD
-         8x87nqMBQShPpoVh57f8+40KlJ0nSSo0oDn/UFKoMTacizC66jJlDIzNXgQahKEqHVvU
-         E98w==
+        bh=W4rTVHjbd+mpguywWNkSROq0hOpiSxqsmTDa7iGbWzE=;
+        b=DNCauhmrLLDTzPZ+mQbVBE0eqe/PQovUWayd6SBm7RrhfibTuoWKWG0EWv3oHEhUwE
+         FVgr/6Rrg3Y+NcpsqF5u0zlvXOlJ0VnIB6hCciiAebVa1zVaG9TenreCe0QjoQ3R0xRc
+         IyACffreqtASl9MdO4+nLmgZbhDvXWrSZkkpOn8PHOU/uT6PUZEUJYQjr9WC/xzoku4z
+         FxTjaOEnhNR08GW0xyrZY+uyTfDDOazCtoMMjR7a37auwVi9r6K1ySWeaOVQXQp/BRd3
+         IzraqvYlBkxo+tGSBgxGDaAGnqm2Lfc/D6IIwxasUBraNQqG/YYxpJuXXwDB9ONdvMl2
+         9/+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=os5khahHPpWn88KMb1Vr8p8L3JIWYK0ZBr9FMB2vL0w=;
-        b=GqSboAL1bFpjxg41/um7uY0mNEojeplXTFhOINNFdpEMdlD618+Em2QSG2KE+Yb2Nl
-         zDrSx8/8ypE4WJFQ6Kc+4hEfIq4caw3ksCpeGSY4cdzLccRGE77JWsI94BVZuqBeZp9u
-         bCBxIGUJHSRkHJtSsb5kpyeo3+n7jh7UPlE4WvRg/Go0VWBp7qj52zuMhK9h4NnxNFf8
-         OnMdeOgr3r+nR5TGzFl036KYUdY+f0QYicnc+6yHnuTgW1fl/8lAUmpyAzgTmbWLfHeH
-         FqyRagbyHkaTb0Yu5fll0TbBMEW3s/n32fhxlXv47eAku89o1hSx1n3xVvXYZDwT2bG6
-         AVKQ==
-X-Gm-Message-State: AOAM531nvYpG858AJoO7BhLOTVULYyhnZ27PAJNWcNHg6SP7M7DxtHXM
-        2qMzusS2kr0PFFqbQ7uwoPLbAA==
-X-Google-Smtp-Source: ABdhPJxFHnwQpKvKP0sLSEDE51QQO9sH5IG91X48mB+/3vpw9ApQgn+iMRc5v+DP5drtBLYqVugkGw==
-X-Received: by 2002:a1c:acc1:: with SMTP id v184mr8648685wme.63.1605180771454;
-        Thu, 12 Nov 2020 03:32:51 -0800 (PST)
+        bh=W4rTVHjbd+mpguywWNkSROq0hOpiSxqsmTDa7iGbWzE=;
+        b=Q3XckiLPIiqHIeGhDfrnDFoQF2XhJW2km+pTY7QqMlp3uLhRLrxaHVBsMcc64zPRuy
+         f4IXzcvwdCuSqkOYZ4d+eJug5Gjz4HIOVgfxEuX7rXJx1kh9JC/8TLx0nq32tNg4Q1xX
+         po1rpsfOUam1YEpEO6vqrGmgqafDaYaJfeNM5I2T8TKu5oDc1pDDwsKzfIixdiUsb3Ua
+         GT8TdRUm9BngBteZavtbsFPBH1TKCblpO3B2EHFiije/8k3CGjf9lyCqALNxo7S408JX
+         PKvyGUCqp3wVZAx9O9eT8ONIssMKG3SJcxxzZY3p/thzG8IUFKs3gxfegKvfnA4sRSmc
+         VO+A==
+X-Gm-Message-State: AOAM531F3QPtrgRnBAgZoot1/yJr+XACqoGWK/+j+vag/88+Tq7Q5ZGt
+        iJ5i3PlmX/yO/oOcu0E0mR3ffA==
+X-Google-Smtp-Source: ABdhPJx6GWoJgz5qXJzSTiQQAr2TDZDRCT0AUD+HPdj5y/7wWse8oZFJ5ZN/sD6m25n3mlGvcJg0Ig==
+X-Received: by 2002:a05:600c:2204:: with SMTP id z4mr8822414wml.57.1605181503138;
+        Thu, 12 Nov 2020 03:45:03 -0800 (PST)
 Received: from ?IPv6:2a01:e34:ed2f:f020:6971:b700:3764:fa96? ([2a01:e34:ed2f:f020:6971:b700:3764:fa96])
-        by smtp.googlemail.com with ESMTPSA id t74sm6330516wmt.8.2020.11.12.03.32.50
+        by smtp.googlemail.com with ESMTPSA id o184sm6215357wmo.37.2020.11.12.03.45.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 12 Nov 2020 03:32:50 -0800 (PST)
-Subject: Re: [PATCH v3] dt-bindings: thermal: rcar-thermal: Improve schema
- validation
+        Thu, 12 Nov 2020 03:45:02 -0800 (PST)
+Subject: Re: [PATCH v5 0/2] dt-bindings: timer: renesas: tmu: Document
+ r8a774e1 and
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Rob Herring <robh@kernel.org>
-References: <20201028153541.1736279-1-geert+renesas@glider.be>
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20201110162014.3290109-1-geert+renesas@glider.be>
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <7c83cb9f-d8fc-b349-1da8-5e0bcb6da89f@linaro.org>
-Date:   Thu, 12 Nov 2020 12:32:49 +0100
+Message-ID: <a70ced89-3e47-9211-e914-84e3fbae0583@linaro.org>
+Date:   Thu, 12 Nov 2020 12:45:01 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20201028153541.1736279-1-geert+renesas@glider.be>
+In-Reply-To: <20201110162014.3290109-1-geert+renesas@glider.be>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -86,17 +83,25 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 28/10/2020 16:35, Geert Uytterhoeven wrote:
->   - Factor out common required properties,
->   - "interrupts", "clocks", and "power-domains" are required on R-Mobile
->     APE6, too,
->   - Invert logic to simplify descriptions.
+On 10/11/2020 17:20, Geert Uytterhoeven wrote:
+> 	Hi Daniel, Thomas,
 > 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Niklas Söderlund <niklas.soderlund@ragnatech.se>
-> Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
+> This patch series picks up missing Device Tree binding updates for the
+> Renesas Timer Unit (TMU), and converts the bindings to json-schema.
+> 
+> Thanks for applying!
+> 
+> Geert Uytterhoeven (1):
+>   dt-bindings: timer: renesas: tmu: Convert to json-schema
+> 
+> Marian-Cristian Rotariu (1):
+>   dt-bindings: timer: renesas: tmu: Document r8a774e1 bindings
+> 
+>  .../devicetree/bindings/timer/renesas,tmu.txt | 49 ---------
+>  .../bindings/timer/renesas,tmu.yaml           | 99 +++++++++++++++++++
+>  2 files changed, 99 insertions(+), 49 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/timer/renesas,tmu.txt
+>  create mode 100644 Documentation/devicetree/bindings/timer/renesas,tmu.yaml
 
 Applied, thanks
 
