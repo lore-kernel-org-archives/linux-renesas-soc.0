@@ -2,40 +2,43 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C660C2D0E4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A55F7C388F7
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 22:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B43DA2085B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 22:53:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AAA222227
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 22:53:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726526AbgKLWxI (ORCPT
+        id S1725973AbgKLWxJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 12 Nov 2020 17:53:08 -0500
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:58856 "EHLO
+        Thu, 12 Nov 2020 17:53:09 -0500
+Received: from vsp-unauthed02.binero.net ([195.74.38.227]:58860 "EHLO
         vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726102AbgKLWxI (ORCPT
+        with ESMTP id S1726306AbgKLWxI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 12 Nov 2020 17:53:08 -0500
-X-Halon-ID: 7ad7cd74-2539-11eb-bcc0-005056917f90
+X-Halon-ID: 81eed9d3-2539-11eb-bcc0-005056917f90
 Authorized-sender: niklas.soderlund@fsdn.se
 Received: from bismarck.berto.se (p4fca2458.dip0.t-ipconnect.de [79.202.36.88])
         by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
-        id 7ad7cd74-2539-11eb-bcc0-005056917f90;
-        Thu, 12 Nov 2020 23:50:47 +0100 (CET)
+        id 81eed9d3-2539-11eb-bcc0-005056917f90;
+        Thu, 12 Nov 2020 23:50:49 +0100 (CET)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     linux-media@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/4] rcar-csi2: Update handling of transfer error
-Date:   Thu, 12 Nov 2020 23:51:43 +0100
-Message-Id: <20201112225147.1672622-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/4] rcar-vin: Do not try to stop stream if not running
+Date:   Thu, 12 Nov 2020 23:51:44 +0100
+Message-Id: <20201112225147.1672622-2-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201112225147.1672622-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20201112225147.1672622-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -43,39 +46,29 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+Do not attempt to stop the streaming if the stream is not running.
 
-This series adapts the R-Car CSI-2 receiver recovery logic to match 
-updates in the datasheet. The later datasheets recommend that the whole 
-video pipeline shall be stopped if an transmission error is detected 
-instead of just restarting the CSI-2 receiver.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-To do this we leverage the recent changes to support suspend/resume of 
-time the whole pipeline and inform the C-Car VIN driver of the detected 
-error so it can stop the whole pipeline and inform user-space of the 
-detected fault.
-
-Patch 1/4 and 2/4 fixes faults in the VIN driver that where detected 
-when working on this. Patch 3/4 prepares the VIN driver to deal with the 
-EOS event from R-Car CSI-2 driver And patch 4/4 changes the error logic 
-of the CSI-2 receiver to match the datasheet.
-
-This is tested on M3-N and a fault is injected by quickly removing and 
-re-inserting the HDMI cable while streaming. This method does not always 
-hit and is time consuming. To consistently prove correctness of handling 
-a fake fault was introduced by a HACK and a debugfs entry.
-
-Niklas Söderlund (4):
-  rcar-vin: Do not try to stop stream if not running
-  rcar-vin: Route events to correct video device
-  rcar-vin: Stop stream when subdevice signal EOS
-  rcar-csi2: Do not try to recover after transfer error
-
- drivers/media/platform/rcar-vin/rcar-csi2.c | 14 +++--
- drivers/media/platform/rcar-vin/rcar-dma.c  |  5 ++
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 58 ++++++++++++++++++---
- 3 files changed, 63 insertions(+), 14 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 5a5f0e5007478c8d..eae25972ed7df2b6 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -1302,6 +1302,11 @@ void rvin_stop_streaming(struct rvin_dev *vin)
+ 
+ 	spin_lock_irqsave(&vin->qlock, flags);
+ 
++	if (vin->state == STOPPED) {
++		spin_unlock_irqrestore(&vin->qlock, flags);
++		return;
++	}
++
+ 	vin->state = STOPPING;
+ 
+ 	/* Wait until only scratch buffer is used, max 3 interrupts. */
 -- 
 2.29.2
 
