@@ -2,67 +2,129 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC64C55ABD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE0DC2D0A3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 12:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A2A412220B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E79882223F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 12:02:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="FzguKGOU"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="t5Ae5vgE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727223AbgKLLrn (ORCPT
+        id S1728226AbgKLMCT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 12 Nov 2020 06:47:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46918 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728202AbgKLLlw (ORCPT
+        Thu, 12 Nov 2020 07:02:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36280 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728115AbgKLMCE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Nov 2020 06:41:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1605181307;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=X/n6UpDyJVwB5goaPNmbsDM4fZLd8WdN7ZS7QZYSWBc=;
-        b=FzguKGOUo6kDKnHsaIA7oukI5xSjiIcH4VwZDbDprUL5euMZrNZUtH+cA2amv7Z/swbvkC
-        9PVVZpvKyp0ApLHc3StJLUxIZPKKspCcu8j2qXb0HxJxmCGGWVqjMFlAa8nFjHk8v/7TFv
-        Keh32ZZk/9WUAUQvg7MyZtTAEDGCl1E=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 31ACBAB95;
-        Thu, 12 Nov 2020 11:41:47 +0000 (UTC)
-Message-ID: <5e366bb0d11d1d2f95f964406dfe01fda59214af.camel@suse.com>
-Subject: Re: [PATCH] usb: cdc-acm: Add DISABLE_ECHO for Renesas USB Download
- mode
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Chris Brandt <chris.brandt@renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Jesse Pfeister <jpfeister@fender.com>,
-        stable <stable@vger.kernel.org>
-Date:   Thu, 12 Nov 2020 12:41:44 +0100
-In-Reply-To: <20201111131209.3977903-1-chris.brandt@renesas.com>
-References: <20201111131209.3977903-1-chris.brandt@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.34.4 
+        Thu, 12 Nov 2020 07:02:04 -0500
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED13DC0613D6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2020 04:02:03 -0800 (PST)
+Received: by mail-lf1-x144.google.com with SMTP id a9so7001989lfh.2
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2020 04:02:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=14Jg7fRrUNjbh+scNrkVvkCbyMn1CNVg4Z+2y6X2BtY=;
+        b=t5Ae5vgEMQ6JnmH2rCQUblx68b3fBE7apqv1Mnw8O7XZ4FPZZT7rqrPnLNykqzkJG9
+         EndUEdWLmyee+ezylrBTb9T52dp2kSeyRvbAjD7qq6VhMNdXu4eAMbpkVYArAaoAbSmJ
+         di5S1oWaBR0SaywJlREGohzhZAEzbe2gluBsxGURVmwW1R6dad9+dIZjwmokn22lBj+H
+         mdkbs5ZafQXrUi4pv5iXm6TXhQOTqQddM7tMbzIDmgEEJojARMABnafF4tAiizdKeh8q
+         iwJo/ttrCktjf7JjQFeeB00B8SEXntjfkGRspjuVGDsYlGSTmlqtx5ZCcs/mMRKprDs3
+         +HBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=14Jg7fRrUNjbh+scNrkVvkCbyMn1CNVg4Z+2y6X2BtY=;
+        b=JddD+UPMiyegdR48hn2q9TWcJmOxg0aiY4LuLrLVcdjGCEPGtc2lAYhV9lAYEM32Nb
+         MGhUu9PICJluuJHSFghX3+KGuTEoPyyCMPLDz9GS7967QN8c/Kz0CV18Ns1oabbA+1l3
+         ty7UBD/+vN6BPlWvs4kYDtplcndusbUCPP3jjP70PHWWVWKw8xX0QpxMeuFos0rr9hq9
+         USWMzTyaPYgz/o7wYNK3MOtkIc9kPcLAKSNqFnYP11rXL20MvRS2FSvASDuJssorAqus
+         yUWF+BqCy2cewk/ofBHTzPhMI5I817N4nYaf90DUKu+SQcMtRBLdtEA5yAsAGmqH2Dn1
+         mC8g==
+X-Gm-Message-State: AOAM531iZg7QyJGEUetRufokTE2VGJtGBEdEMIHzu99GRB19rNGFBCRk
+        hLpSfoj2CboIwgHVyjdbeORX4A==
+X-Google-Smtp-Source: ABdhPJz1mpmGtDKnFxBpeMtCpHVKA1s6nzVg/BcEYmJvQoGAzlRaLjD7u//vdhJNVRxj+W8qze7/Ig==
+X-Received: by 2002:a19:85c6:: with SMTP id h189mr7077308lfd.451.1605182522412;
+        Thu, 12 Nov 2020 04:02:02 -0800 (PST)
+Received: from localhost (h-209-203.A463.priv.bahnhof.se. [155.4.209.203])
+        by smtp.gmail.com with ESMTPSA id g6sm533483lfb.291.2020.11.12.04.02.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 12 Nov 2020 04:02:01 -0800 (PST)
+Date:   Thu, 12 Nov 2020 13:02:00 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH 0/3] mmc: renesas_sdhi: refactor SCC reset
+Message-ID: <20201112120200.GA1491229@oden.dyn.berto.se>
+References: <20201110162151.37622-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201110162151.37622-1-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Am Mittwoch, den 11.11.2020, 08:12 -0500 schrieb Chris Brandt:
-> Renesas R-Car and RZ/G SoCs have a firmware download mode over USB.
-> However, on reset a banner string is transmitted out which is not expected
-> to be echoed back and will corrupt the protocol.
-> 
-> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
-> Cc: stable <stable@vger.kernel.org>
-Acked-by: Oliver Neukum <oneukum@suse.com>
+Hi Wolfram,
 
+Thanks for your work.
+
+On 2020-11-10 17:21:48 +0100, Wolfram Sang wrote:
+> So, after some preparations, we can take the next step and improve
+> resetting the SCC. Patch #1 is a fix requested by the BSP team to be
+> more robust in case the firmware did something unexpected before.
+> Patches #2 and #3 are cleanups made possible after patch #1.
+> 
+> Patches have been tested on a Renesas Salvator-XS (R-Car M3-N) and a
+> Renesas Lager (R-Car H2) board.
+> 
+> A note to Shimoda-san: I did not forget that the BSP team also suggested
+> to use the SRCR3 register for a reset in probe(). However, it appears
+> there is more to discuss there. This is why I decided to send out this
+> series first because we want to have it anyhow. I'll send the SRCR3
+> RFC-patch later this week.
+> 
+> This series depends on the just sent out series "[RFC PATCH 0/4] mmc:
+> renesas_sdhi: reset SCC only when available". A branch (with some more
+> extras) can be found here:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/sdhi/tap_en_v2
+
+For the whole series,
+
+Tested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> 
+> All the best,
+> 
+>    Wolfram
+> 
+> 
+> Wolfram Sang (3):
+>   mmc: renesas_sdhi: clear TAPEN when resetting, too
+>   mmc: renesas_sdhi: merge the SCC reset functions
+>   mmc: renesas_sdhi: remove superfluous SCLKEN
+> 
+>  drivers/mmc/host/renesas_sdhi_core.c | 19 +++++--------------
+>  1 file changed, 5 insertions(+), 14 deletions(-)
+> 
+> -- 
+> 2.28.0
+> 
+
+-- 
+Regards,
+Niklas Söderlund
