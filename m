@@ -2,135 +2,108 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8742C56202
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 01:51:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552F3C55ABD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:33:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E363206CA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 01:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E293122228
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Nov 2020 11:33:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="WgB49Zx+"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fki1c333"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbgKLBcK (ORCPT
+        id S1728049AbgKLLdQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 11 Nov 2020 20:32:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54628 "EHLO
+        Thu, 12 Nov 2020 06:33:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbgKKWpf (ORCPT
+        with ESMTP id S1728031AbgKLLcy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Nov 2020 17:45:35 -0500
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E207C061A4C
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2020 14:45:31 -0800 (PST)
-Received: by mail-lj1-x242.google.com with SMTP id v20so3895845ljk.8
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Nov 2020 14:45:31 -0800 (PST)
+        Thu, 12 Nov 2020 06:32:54 -0500
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA363C0613D1
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2020 03:32:52 -0800 (PST)
+Received: by mail-wm1-x344.google.com with SMTP id a3so5170752wmb.5
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Nov 2020 03:32:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=9qtMsgKiVIFryrruwz2wXWM8Ya/YcSkqnLASynZmkWg=;
-        b=WgB49Zx+TEOouEUA8Srdham4PkuH9g5OoWTXT0mH1OXhi9buel8NRoPb0Qwy/ct2NF
-         DUa/8eijWxUsTW6AkKnLo/Edj5GvEBaxxxNKTO4MK+1AicXautKYt8Nxj1b52M0BW1oe
-         oijwUeltf7WG+rB922JIv0NBkmyFuvx3/3RnE0bZIBGaE1aAclNgW0xJSRXqYakwwh88
-         UEMFuMX+FyPRDV/CcBnDWbaHLRTft+qJrp/UQ7tweWESFPnFHkvBYP1Nh5/tu5ZNocbO
-         1NqGmiPC9ejOIwPlqXYLGVhWorWGHYGpZrZV5IWf7QJRyIsunWb1GTLPT2Plfdl6ssa3
-         hSUg==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=os5khahHPpWn88KMb1Vr8p8L3JIWYK0ZBr9FMB2vL0w=;
+        b=fki1c333F915w4zFn8q2oOpYqkI7PxR0+mBFi4LEeODBMzzkPfR+IPXf726dBZaqD0
+         f9RQewNzP/8HvVg0NAZmNJOlBfDB6r/EGLAKj7KJgmEwtZkXDAuCeFTFaNKVSKCSF4i0
+         lT5c51hDRifK7TQPpYZ5EHNcvgT7AULWAUFJMqmDJgPDbNM19DXdzy2kKSYzc13/oxVi
+         wvdNfkUBxhlkuZlbrGweY8e59SDhpSec54qntjAXNM8aubDywJ7BlYmSRK02+p0Ut6nD
+         8x87nqMBQShPpoVh57f8+40KlJ0nSSo0oDn/UFKoMTacizC66jJlDIzNXgQahKEqHVvU
+         E98w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=9qtMsgKiVIFryrruwz2wXWM8Ya/YcSkqnLASynZmkWg=;
-        b=MUOlvpdi7iGYzaIbpyiwLB0X1Na1W2IR9zDeQo1pi+DX78wuuZ8cgv+MQ0cjcMytSo
-         oBQZ1bXqvQfV9z1iYQP0MoAgO//YRltSOrf/8HkMeAwNbtqkeoqm6fnNwCaSfR+X3b8q
-         iQd7mBRPhS7nf2bLqAWMS9mJqi50ZSXm0bBNIq1YvU28+nYEfJBlJpX2A/giQvgQ5y9F
-         tFNof8gklNG+I+uNiqDKfSDaMQFCw2xAwWDyxTK4/zbAouR1eibnIz4Kg86PMu/pyaZp
-         9RF1jrbkF9YfPJa3quqYwRbowbvyyCJQwU+37Ufgc6qNXfmzL9lgSY9G6j8ufCbRwkud
-         BIrw==
-X-Gm-Message-State: AOAM5320+1jZZla19ZiS63/WMSu4BWPTsmrkNnJsGysd/jwlZjaHGarf
-        lvL9wKAGCjU/ZZOHygDV9x/LhA==
-X-Google-Smtp-Source: ABdhPJzGiIzAeCeHMmS1cDfSLB1dJNwrQqbkrZY8BzPeAAbVIzxLAkeSln8xuECElQdQbCR7iKFELQ==
-X-Received: by 2002:a2e:a375:: with SMTP id i21mr9000678ljn.421.1605134729941;
-        Wed, 11 Nov 2020 14:45:29 -0800 (PST)
-Received: from localhost (h-209-203.A463.priv.bahnhof.se. [155.4.209.203])
-        by smtp.gmail.com with ESMTPSA id j2sm353275lfe.23.2020.11.11.14.45.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 11 Nov 2020 14:45:29 -0800 (PST)
-Date:   Wed, 11 Nov 2020 23:45:28 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [RFC PATCH 3/4] mmc: renesas_sdhi: populate SCC pointer at the
- proper place
-Message-ID: <20201111224528.GB1263071@oden.dyn.berto.se>
-References: <20201110142058.36393-1-wsa+renesas@sang-engineering.com>
- <20201110142058.36393-4-wsa+renesas@sang-engineering.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=os5khahHPpWn88KMb1Vr8p8L3JIWYK0ZBr9FMB2vL0w=;
+        b=GqSboAL1bFpjxg41/um7uY0mNEojeplXTFhOINNFdpEMdlD618+Em2QSG2KE+Yb2Nl
+         zDrSx8/8ypE4WJFQ6Kc+4hEfIq4caw3ksCpeGSY4cdzLccRGE77JWsI94BVZuqBeZp9u
+         bCBxIGUJHSRkHJtSsb5kpyeo3+n7jh7UPlE4WvRg/Go0VWBp7qj52zuMhK9h4NnxNFf8
+         OnMdeOgr3r+nR5TGzFl036KYUdY+f0QYicnc+6yHnuTgW1fl/8lAUmpyAzgTmbWLfHeH
+         FqyRagbyHkaTb0Yu5fll0TbBMEW3s/n32fhxlXv47eAku89o1hSx1n3xVvXYZDwT2bG6
+         AVKQ==
+X-Gm-Message-State: AOAM531nvYpG858AJoO7BhLOTVULYyhnZ27PAJNWcNHg6SP7M7DxtHXM
+        2qMzusS2kr0PFFqbQ7uwoPLbAA==
+X-Google-Smtp-Source: ABdhPJxFHnwQpKvKP0sLSEDE51QQO9sH5IG91X48mB+/3vpw9ApQgn+iMRc5v+DP5drtBLYqVugkGw==
+X-Received: by 2002:a1c:acc1:: with SMTP id v184mr8648685wme.63.1605180771454;
+        Thu, 12 Nov 2020 03:32:51 -0800 (PST)
+Received: from ?IPv6:2a01:e34:ed2f:f020:6971:b700:3764:fa96? ([2a01:e34:ed2f:f020:6971:b700:3764:fa96])
+        by smtp.googlemail.com with ESMTPSA id t74sm6330516wmt.8.2020.11.12.03.32.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 12 Nov 2020 03:32:50 -0800 (PST)
+Subject: Re: [PATCH v3] dt-bindings: thermal: rcar-thermal: Improve schema
+ validation
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amitk@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Rob Herring <robh@kernel.org>
+References: <20201028153541.1736279-1-geert+renesas@glider.be>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <7c83cb9f-d8fc-b349-1da8-5e0bcb6da89f@linaro.org>
+Date:   Thu, 12 Nov 2020 12:32:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20201028153541.1736279-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20201110142058.36393-4-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
-
-Thanks for your patch.
-
-On 2020-11-10 15:20:57 +0100, Wolfram Sang wrote:
-> The SCC pointer is currently filled whenever the SoC is Gen2+. This is
-> wrong because there is a Gen2-variant without SCC (SDHI_VER_GEN2_SDR50).
-> We have been lucky because the writes to unintended registers have not
-> caused problems so far. But further refactoring work exposed the
-> problem. So, move the pointer initialization to the place where we know
-> that the SDHI instance supports tuning. And also populate the 'reset'
-> pointer unconditionally to make sure the interrupt enable register is
-> always properly set for Gen2+.
+On 28/10/2020 16:35, Geert Uytterhoeven wrote:
+>   - Factor out common required properties,
+>   - "interrupts", "clocks", and "power-domains" are required on R-Mobile
+>     APE6, too,
+>   - Invert logic to simplify descriptions.
 > 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Niklas SÃ¶derlund <niklas.soderlund@ragnatech.se>
+> Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
->  drivers/mmc/host/renesas_sdhi_core.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-> index 17ebaa324ca1..4a1ed5bf216c 100644
-> --- a/drivers/mmc/host/renesas_sdhi_core.c
-> +++ b/drivers/mmc/host/renesas_sdhi_core.c
-> @@ -1007,11 +1007,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->  		host->ops.start_signal_voltage_switch =
->  			renesas_sdhi_start_signal_voltage_switch;
->  		host->sdcard_irq_setbit_mask = TMIO_STAT_ALWAYS_SET_27;
-> -
-> -		if (of_data && of_data->scc_offset) {
-> -			priv->scc_ctl = host->ctl + of_data->scc_offset;
-> -			host->reset = renesas_sdhi_reset;
-> -		}
-> +		host->reset = renesas_sdhi_reset;
->  	}
->  
->  	/* Orginally registers were 16 bit apart, could be 32 or 64 nowadays */
-> @@ -1091,6 +1087,7 @@ int renesas_sdhi_probe(struct platform_device *pdev,
->  		if (!hit)
->  			dev_warn(&host->pdev->dev, "Unknown clock rate for tuning\n");
->  
-> +		priv->scc_ctl = host->ctl + of_data->scc_offset;
->  		host->check_retune = renesas_sdhi_check_scc_error;
->  		host->ops.execute_tuning = renesas_sdhi_execute_tuning;
->  		host->ops.prepare_hs400_tuning = renesas_sdhi_prepare_hs400_tuning;
-> -- 
-> 2.28.0
-> 
+
+Applied, thanks
+
 
 -- 
-Regards,
-Niklas Söderlund
+<http://www.linaro.org/> Linaro.org â”‚ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
