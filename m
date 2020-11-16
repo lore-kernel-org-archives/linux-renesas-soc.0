@@ -2,29 +2,30 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD0BC4742C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Nov 2020 13:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AB3C6379F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Nov 2020 13:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1462222B9
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Nov 2020 13:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 701B122280
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Nov 2020 13:53:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729163AbgKPNx1 (ORCPT
+        id S1729592AbgKPNxe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Nov 2020 08:53:27 -0500
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:64191 "EHLO
+        Mon, 16 Nov 2020 08:53:34 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:49921 "EHLO
         relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726286AbgKPNx0 (ORCPT
+        with ESMTP id S1729572AbgKPNxe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Nov 2020 08:53:26 -0500
+        Mon, 16 Nov 2020 08:53:34 -0500
 X-Originating-IP: 93.34.118.233
 Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id ACCF84000A;
-        Mon, 16 Nov 2020 13:53:21 +0000 (UTC)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id F2F4640017;
+        Mon, 16 Nov 2020 13:53:28 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     kieran.bingham+renesas@ideasonboard.com,
         laurent.pinchart+renesas@ideasonboard.com,
@@ -33,78 +34,82 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org, Hyun Kwon <hyunk@xilinx.com>,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        sergei.shtylyov@gmail.com
-Subject: [PATCH v5 0/8] media: i2c: Add RDACM21 camera module
-Date:   Mon, 16 Nov 2020 14:52:57 +0100
-Message-Id: <20201116135305.81319-1-jacopo+renesas@jmondi.org>
+        sergei.shtylyov@gmail.com,
+        Kieran Bingham <kieran.bingham+renesasa@ideasonboard.com>
+Subject: [PATCH v5 3/8] media: i2c: max9286: Break-out reverse channel setup
+Date:   Mon, 16 Nov 2020 14:53:00 +0100
+Message-Id: <20201116135305.81319-4-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.29.1
+In-Reply-To: <20201116135305.81319-1-jacopo+renesas@jmondi.org>
+References: <20201116135305.81319-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
-   this v5 mostly changes how the rdacm21 driver handles writes to the
-OV490 chip by handling the 'high' part of the sensor register through an
-helper function as suggested by Kieran and Laurent.
+Break out the reverse channel setup configuration procedure to its own
+function.
 
-The diff is available at:
-https://paste.debian.net/1172700/
+This change prepares for configuring the reverse channel conditionally
+to the remote side high threshold configuration.
 
-Minor fixes in patches subjects and in bindings as reported by Sergei and
-Kieran.
+No functional changes intended.
 
-Bindings have now been sent to DT people now that they've been reviewed
-by Kieran.
+Reviewed-by: Kieran Bingham <kieran.bingham+renesasa@ideasonboard.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/media/i2c/max9286.c | 30 +++++++++++++++++-------------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
-v4: https://patchwork.linuxtv.org/project/linux-media/list/?series=3847
-v3: https://patchwork.linuxtv.org/project/linux-media/list/?series=3657
-
-Background in v1 cover letter:
-https://www.spinics.net/lists/linux-renesas-soc/msg52886.html
-
-I have tested on Eagle V3M with 4 RDACM21, but the whole point of
-this series is to retain compatibility with RDACM20.
-
-For this reason I have included 2 patches on top, not intended for merge
-that re-propose DTS support for the MAXIM max9286 expansion board connected
-to Salvator-X and add the newly introduced property to the DTS file.
-
-Kieran, I know you have a working setup with RDACM20, the final patches are
-meant for ease your testing. Can you give this series a spin ?
-
-Series based on latest renesas-drivers tag: renesas-drivers-2020-11-10-v5.10-rc3
-
-Thanks
-  j
-
-Jacopo Mondi (7):
-  media: i2c: Add driver for RDACM21 camera module
-  dt-bindings: media: max9286: Document
-    'maxim,initial-reverse-channel-mV'
-  media: i2c: max9286: Break-out reverse channel setup
-  media: i2c: max9286: Make channel amplitude programmable
-  media: i2c: max9286: Configure reverse channel amplitude
-  [DNI] arm64: dts: renesas: salvator-x-max9286: Specify channel
-    amplitude
-  [DNI] arm64: dts: renesas: eagle: Specify channel amplitude
-
-Laurent Pinchart (1):
-  arm64: dts: renesas: salvator-x: Add MAX9286 expansion board
-
- .../bindings/media/i2c/maxim,max9286.yaml     |  23 +
- MAINTAINERS                                   |  12 +
- .../arm64/boot/dts/renesas/r8a77970-eagle.dts |   1 +
- .../boot/dts/renesas/salvator-x-max9286.dtsi  | 396 ++++++++++++
- drivers/media/i2c/Kconfig                     |  13 +
- drivers/media/i2c/Makefile                    |   2 +
- drivers/media/i2c/max9286.c                   |  58 +-
- drivers/media/i2c/rdacm21.c                   | 595 ++++++++++++++++++
- 8 files changed, 1087 insertions(+), 13 deletions(-)
- create mode 100644 arch/arm64/boot/dts/renesas/salvator-x-max9286.dtsi
- create mode 100644 drivers/media/i2c/rdacm21.c
-
---
+diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+index d969ac21a058..526b6e557dfb 100644
+--- a/drivers/media/i2c/max9286.c
++++ b/drivers/media/i2c/max9286.c
+@@ -336,6 +336,22 @@ static void max9286_configure_i2c(struct max9286_priv *priv, bool localack)
+ 	usleep_range(3000, 5000);
+ }
+ 
++static void max9286_reverse_channel_setup(struct max9286_priv *priv)
++{
++	/*
++	 * Reverse channel setup.
++	 *
++	 * - Enable custom reverse channel configuration (through register 0x3f)
++	 *   and set the first pulse length to 35 clock cycles.
++	 * - Increase the reverse channel amplitude to 170mV to accommodate the
++	 *   high threshold enabled by the serializer driver.
++	 */
++	max9286_write(priv, 0x3f, MAX9286_EN_REV_CFG | MAX9286_REV_FLEN(35));
++	max9286_write(priv, 0x3b, MAX9286_REV_TRF(1) | MAX9286_REV_AMP(70) |
++		      MAX9286_REV_AMP_X);
++	usleep_range(2000, 2500);
++}
++
+ /*
+  * max9286_check_video_links() - Make sure video links are detected and locked
+  *
+@@ -941,19 +957,7 @@ static int max9286_setup(struct max9286_priv *priv)
+ 	 * only. This should be disabled after the mux is initialised.
+ 	 */
+ 	max9286_configure_i2c(priv, true);
+-
+-	/*
+-	 * Reverse channel setup.
+-	 *
+-	 * - Enable custom reverse channel configuration (through register 0x3f)
+-	 *   and set the first pulse length to 35 clock cycles.
+-	 * - Increase the reverse channel amplitude to 170mV to accommodate the
+-	 *   high threshold enabled by the serializer driver.
+-	 */
+-	max9286_write(priv, 0x3f, MAX9286_EN_REV_CFG | MAX9286_REV_FLEN(35));
+-	max9286_write(priv, 0x3b, MAX9286_REV_TRF(1) | MAX9286_REV_AMP(70) |
+-		      MAX9286_REV_AMP_X);
+-	usleep_range(2000, 2500);
++	max9286_reverse_channel_setup(priv);
+ 
+ 	/*
+ 	 * Enable GMSL links, mask unused ones and autodetect link
+-- 
 2.29.1
 
