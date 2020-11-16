@@ -2,59 +2,69 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4994C4742C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Nov 2020 12:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF6AC5519F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Nov 2020 12:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 924C12224B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Nov 2020 12:29:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ih+GJ7z3"
+	by mail.kernel.org (Postfix) with ESMTP id AA71A20853
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Nov 2020 12:37:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728695AbgKPLA1 (ORCPT
+        id S1729654AbgKPLEk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Nov 2020 06:00:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728603AbgKPLA1 (ORCPT
+        Mon, 16 Nov 2020 06:04:40 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:34791 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbgKPLEk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Nov 2020 06:00:27 -0500
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1605524426;
-        bh=DZi7kgyxkI2WBrKCz7dqB1DYsL71dVCRIpwu/cmUWu8=;
-        h=Subject:From:Date:To:From;
-        b=Ih+GJ7z3cG6Kf4FdE49h2KvfEGu71FmNuO9kU3pVG5shjKXryCdnyV81K59N1WFnA
-         cQ092KL5W295YVU1Dts3YCXGvIOYk20TvvD2YuoRibNcvuwJmzkNCHhrhoNtD4jXIW
-         KQX3gyDzJMKoEJMB1C7WKbKz3GVwDV5IFugNeTrc=
+        Mon, 16 Nov 2020 06:04:40 -0500
+X-Originating-IP: 93.34.118.233
+Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id DF19840014;
+        Mon, 16 Nov 2020 11:04:37 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     koji.matsuoka.xm@renesas.com,
+        niklas.soderlund+renesas@ragnatech.se,
+        laurent.pinchart@ideasonboard.com
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2 1/2] media: rcar-vin: Remove unused macro
+Date:   Mon, 16 Nov 2020 12:04:27 +0100
+Message-Id: <20201116110428.27338-2-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.29.1
+In-Reply-To: <20201116110428.27338-1-jacopo+renesas@jmondi.org>
+References: <20201116110428.27338-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <160552442641.18636.17495830760421704727.git-patchwork-summary@kernel.org>
-Date:   Mon, 16 Nov 2020 11:00:26 +0000
-To:     linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+The VNCSI_IFMD_CSI_CHSEL_MASK is not used: remove it.
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (refs/heads/master):
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Patch: usb: cdc-acm: Add DISABLE_ECHO for Renesas USB Download mode
-  Submitter: Chris Brandt <chris.brandt@renesas.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=382065
-  Lore link: https://lore.kernel.org/r/20201111131209.3977903-1-chris.brandt@renesas.com
-
-Total patches: 1
-
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index f6e84fa29bce..378514a75bc2 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -137,7 +137,6 @@
+ #define VNCSI_IFMD_DES1		(1 << 26)
+ #define VNCSI_IFMD_DES0		(1 << 25)
+ #define VNCSI_IFMD_CSI_CHSEL(n) (((n) & 0xf) << 0)
+-#define VNCSI_IFMD_CSI_CHSEL_MASK 0xf
+ 
+ /* Video n scaling control register (Gen3) */
+ #define VNUDS_CTRL_AMD		(1 << 30)
+-- 
+2.29.1
 
