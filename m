@@ -2,75 +2,95 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5626AC6379F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 09:03:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6884C2D0E4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 10:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1965E2463B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 09:03:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55FA122202
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 10:30:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726196AbgKQJDi (ORCPT
+        id S1727350AbgKQKac (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 Nov 2020 04:03:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47912 "EHLO
+        Tue, 17 Nov 2020 05:30:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726035AbgKQJDf (ORCPT
+        with ESMTP id S1726338AbgKQKab (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Nov 2020 04:03:35 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 929D2C061A04
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2020 01:03:34 -0800 (PST)
+        Tue, 17 Nov 2020 05:30:31 -0500
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5486AC0613CF
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2020 02:30:31 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id tM3X230024C55Sk01M3Xrb; Tue, 17 Nov 2020 10:03:31 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id tNWV2300A4C55Sk06NWVKt; Tue, 17 Nov 2020 11:30:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kewte-003A6N-PV
-        for linux-renesas-soc@vger.kernel.org; Tue, 17 Nov 2020 10:03:30 +0100
+        id 1keyFo-003Bbu-RL; Tue, 17 Nov 2020 11:30:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kewte-008vq2-0E
-        for linux-renesas-soc@vger.kernel.org; Tue, 17 Nov 2020 10:03:30 +0100
+        id 1keyFo-008xoz-5B; Tue, 17 Nov 2020 11:30:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     linux-renesas-soc@vger.kernel.org
-Subject: [PATCH RFC 1/4] spi: renesas,sh-msiof: Add r8a779a0 (V3U) support
-Date:   Tue, 17 Nov 2020 10:03:26 +0100
-Message-Id: <20201117090329.2128904-2-geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/7] ARM: shmobile: Remove IOMEM and static mappings
+Date:   Tue, 17 Nov 2020 11:30:15 +0100
+Message-Id: <20201117103022.2136527-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201117090329.2128904-1-geert+renesas@glider.be>
-References: <20201117090329.2128904-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+	Hi all,
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml | 1 +
- 1 file changed, 1 insertion(+)
+This long-overdue patch series gets rid of the last remaining users of
+the legacy IOMEM() macro and the needed static mappings on Renesas ARM
+SoCs.
 
-diff --git a/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml b/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
-index 44c7ddb4b1098e15..b104899205f6d2da 100644
---- a/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
-+++ b/Documentation/devicetree/bindings/spi/renesas,sh-msiof.yaml
-@@ -47,6 +47,7 @@ properties:
-               - renesas,msiof-r8a77980      # R-Car V3H
-               - renesas,msiof-r8a77990      # R-Car E3
-               - renesas,msiof-r8a77995      # R-Car D3
-+              - renesas,msiof-r8a779a0      # R-Car V3U
-           - const: renesas,rcar-gen3-msiof  # generic R-Car Gen3 and RZ/G2
-                                             # compatible device
-       - items:
+Ideally, all addresses used should be obtained from DT, but given the
+maintenance status of R-Car Gen1 and SH-Mobile SoCs, it is very unlikely
+the needed DT bindings will ever be written, and the needed DT nodes
+will ever be added.
+
+This has been tested on r8a7778/bockw, r8a7779/marzen, and sh73a0/kzm9g.
+I plan to queue this series in renesas-devel for v5.11.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (7):
+  ARM: shmobile: r8a7778: Introduce HPBREG_BASE
+  ARM: shmobile: r8a7779: Use ioremap() to map INTC2 registers
+  ARM: shmobile: r8a7779: Use ioremap() to map SMP registers
+  ARM: shmobile: r8a7779: Remove obsolete static mappings
+  ARM: shmobile: sh73a0: Use ioremap() to map L2C registers
+  ARM: shmobile: sh73a0: Use ioremap() to map SMP registers
+  ARM: shmobile: sh73a0: Remove obsolete static mapping
+
+ arch/arm/mach-shmobile/setup-r8a7778.c |  4 +-
+ arch/arm/mach-shmobile/setup-r8a7779.c | 56 +++++++++-----------------
+ arch/arm/mach-shmobile/setup-sh73a0.c  | 21 +---------
+ arch/arm/mach-shmobile/smp-r8a7779.c   | 12 ++++--
+ arch/arm/mach-shmobile/smp-sh73a0.c    | 33 ++++++++++-----
+ 5 files changed, 54 insertions(+), 72 deletions(-)
+
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
