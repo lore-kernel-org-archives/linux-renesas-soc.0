@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86485C64E75
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34069C5519F
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 10:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E186222E8
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 10:30:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 027A5223C7
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 10:30:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726338AbgKQKad (ORCPT
+        id S1727740AbgKQKac (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 Nov 2020 05:30:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33090 "EHLO
+        Tue, 17 Nov 2020 05:30:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727731AbgKQKac (ORCPT
+        with ESMTP id S1727377AbgKQKac (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 17 Nov 2020 05:30:32 -0500
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E62B3C0617A7
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFC4CC061A04
         for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2020 02:30:31 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
         by laurent.telenet-ops.be with bizsmtp
-        id tNWU2300r4C55Sk01NWUrz; Tue, 17 Nov 2020 11:30:29 +0100
+        id tNWU2300q4C55Sk01NWUry; Tue, 17 Nov 2020 11:30:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1keyFo-003Bbt-K6; Tue, 17 Nov 2020 11:30:28 +0100
+        id 1keyFo-003Bbw-Kt; Tue, 17 Nov 2020 11:30:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1keyFo-008xp2-6H; Tue, 17 Nov 2020 11:30:28 +0100
+        id 1keyFo-008xpC-7s; Tue, 17 Nov 2020 11:30:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/7] ARM: shmobile: r8a7778: Introduce HPBREG_BASE
-Date:   Tue, 17 Nov 2020 11:30:16 +0100
-Message-Id: <20201117103022.2136527-2-geert+renesas@glider.be>
+Subject: [PATCH 3/7] ARM: shmobile: r8a7779: Use ioremap() to map SMP registers
+Date:   Tue, 17 Nov 2020 11:30:18 +0100
+Message-Id: <20201117103022.2136527-4-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201117103022.2136527-1-geert+renesas@glider.be>
 References: <20201117103022.2136527-1-geert+renesas@glider.be>
@@ -52,35 +52,48 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace the hardcoded address of the HPB Register block by a macro.
+Replace using the legacy IOMEM() macro to map the ARM Reset Vector
+Address Register (AVECR) by ioremap().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-shmobile/setup-r8a7778.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/mach-shmobile/smp-r8a7779.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7778.c b/arch/arm/mach-shmobile/setup-r8a7778.c
-index 2bc93f391bcf8e5d..819dbda47298ae88 100644
---- a/arch/arm/mach-shmobile/setup-r8a7778.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7778.c
-@@ -14,6 +14,8 @@
- 
+diff --git a/arch/arm/mach-shmobile/smp-r8a7779.c b/arch/arm/mach-shmobile/smp-r8a7779.c
+index 0ed73b650c141e58..f6713886ee16b279 100644
+--- a/arch/arm/mach-shmobile/smp-r8a7779.c
++++ b/arch/arm/mach-shmobile/smp-r8a7779.c
+@@ -20,8 +20,10 @@
  #include "common.h"
+ #include "r8a7779.h"
  
-+#define HPBREG_BASE	0xfe700000
+-#define AVECR IOMEM(0xfe700040)
+-#define R8A7779_SCU_BASE 0xf0000000
++#define HPBREG_BASE		0xfe700000
++#define AVECR			0x0040	/* ARM Reset Vector Address Register */
 +
- #define INT2SMSKCR0	0x82288 /* 0xfe782288 */
- #define INT2SMSKCR1	0x8228c /* 0xfe78228c */
++#define R8A7779_SCU_BASE	0xf0000000
  
-@@ -22,7 +24,7 @@
- 
- static void __init r8a7778_init_irq_dt(void)
+ static int r8a7779_boot_secondary(unsigned int cpu, struct task_struct *idle)
  {
--	void __iomem *base = ioremap(0xfe700000, 0x00100000);
-+	void __iomem *base = ioremap(HPBREG_BASE, 0x00100000);
+@@ -36,11 +38,15 @@ static int r8a7779_boot_secondary(unsigned int cpu, struct task_struct *idle)
  
- 	BUG_ON(!base);
+ static void __init r8a7779_smp_prepare_cpus(unsigned int max_cpus)
+ {
++	void __iomem *base = ioremap(HPBREG_BASE, 0x1000);
++
+ 	/* Map the reset vector (in headsmp-scu.S, headsmp.S) */
+-	__raw_writel(__pa(shmobile_boot_vector), AVECR);
++	__raw_writel(__pa(shmobile_boot_vector), base + AVECR);
  
+ 	/* setup r8a7779 specific SCU bits */
+ 	shmobile_smp_scu_prepare_cpus(R8A7779_SCU_BASE, max_cpus);
++
++	iounmap(base);
+ }
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
 -- 
 2.25.1
 
