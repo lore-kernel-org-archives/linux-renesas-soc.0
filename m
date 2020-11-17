@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E9FDC63798
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2E0C6379D
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 10:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D409722202
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 10:30:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 286CB20E65
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 10:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727728AbgKQKac (ORCPT
+        id S1727408AbgKQKab (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 Nov 2020 05:30:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33094 "EHLO
+        Tue, 17 Nov 2020 05:30:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727740AbgKQKac (ORCPT
+        with ESMTP id S1727350AbgKQKab (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Nov 2020 05:30:32 -0500
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0241EC061A47
+        Tue, 17 Nov 2020 05:30:31 -0500
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5C4FFC0617A6
         for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2020 02:30:31 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by laurent.telenet-ops.be with bizsmtp
-        id tNWV230014C55Sk01NWVs8; Tue, 17 Nov 2020 11:30:29 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id tNWV2300G4C55Sk06NWVKw; Tue, 17 Nov 2020 11:30:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1keyFo-003Bbv-S2; Tue, 17 Nov 2020 11:30:28 +0100
+        id 1keyFo-003Bbz-VZ; Tue, 17 Nov 2020 11:30:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1keyFo-008xp6-6v; Tue, 17 Nov 2020 11:30:28 +0100
+        id 1keyFo-008xpR-A4; Tue, 17 Nov 2020 11:30:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Arnd Bergmann <arnd@arndb.de>, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/7] ARM: shmobile: r8a7779: Use ioremap() to map INTC2 registers
-Date:   Tue, 17 Nov 2020 11:30:17 +0100
-Message-Id: <20201117103022.2136527-3-geert+renesas@glider.be>
+Subject: [PATCH 6/7] ARM: shmobile: sh73a0: Use ioremap() to map SMP registers
+Date:   Tue, 17 Nov 2020 11:30:21 +0100
+Message-Id: <20201117103022.2136527-7-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201117103022.2136527-1-geert+renesas@glider.be>
 References: <20201117103022.2136527-1-geert+renesas@glider.be>
@@ -53,68 +53,71 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Replace using the legacy IOMEM() macro to map various registers related
-to INTC2 configuration by ioremap().
+to secondary CPU bringup by ioremap().
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-shmobile/setup-r8a7779.c | 34 +++++++++++++++-----------
- 1 file changed, 20 insertions(+), 14 deletions(-)
+ arch/arm/mach-shmobile/smp-sh73a0.c | 33 +++++++++++++++++++----------
+ 1 file changed, 22 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/mach-shmobile/setup-r8a7779.c b/arch/arm/mach-shmobile/setup-r8a7779.c
-index 86406e3f9b22e31f..07c1bc96d4d9767f 100644
---- a/arch/arm/mach-shmobile/setup-r8a7779.c
-+++ b/arch/arm/mach-shmobile/setup-r8a7779.c
-@@ -38,30 +38,36 @@ static void __init r8a7779_map_io(void)
- 	iotable_init(r8a7779_io_desc, ARRAY_SIZE(r8a7779_io_desc));
- }
+diff --git a/arch/arm/mach-shmobile/smp-sh73a0.c b/arch/arm/mach-shmobile/smp-sh73a0.c
+index 0403aa8629ddc10a..6d892d11d81c524d 100644
+--- a/arch/arm/mach-shmobile/smp-sh73a0.c
++++ b/arch/arm/mach-shmobile/smp-sh73a0.c
+@@ -16,31 +16,42 @@
+ #include "common.h"
+ #include "sh73a0.h"
  
-+#define HPBREG_BASE	0xfe700000
+-#define WUPCR		IOMEM(0xe6151010)
+-#define SRESCR		IOMEM(0xe6151018)
+-#define PSTR		IOMEM(0xe6151040)
+-#define SBAR		IOMEM(0xe6180020)
+-#define APARMBAREA	IOMEM(0xe6f10020)
++#define CPG_BASE2	0xe6151000
++#define WUPCR		0x10	/* System-CPU Wake Up Control Register */
++#define SRESCR		0x18	/* System-CPU Software Reset Control Register */
++#define PSTR		0x40	/* System-CPU Power Status Register */
 +
- /* IRQ */
--#define INT2SMSKCR0 IOMEM(0xfe7822a0)
--#define INT2SMSKCR1 IOMEM(0xfe7822a4)
--#define INT2SMSKCR2 IOMEM(0xfe7822a8)
--#define INT2SMSKCR3 IOMEM(0xfe7822ac)
--#define INT2SMSKCR4 IOMEM(0xfe7822b0)
-+#define INT2SMSKCR0	0x822a0	/* Interrupt Submask Clear Register 0 */
-+#define INT2SMSKCR1	0x822a4	/* Interrupt Submask Clear Register 1 */
-+#define INT2SMSKCR2	0x822a8	/* Interrupt Submask Clear Register 2 */
-+#define INT2SMSKCR3	0x822ac	/* Interrupt Submask Clear Register 3 */
-+#define INT2SMSKCR4	0x822b0	/* Interrupt Submask Clear Register 4 */
++#define SYSC_BASE	0xe6180000
++#define SBAR		0x20	/* SYS Boot Address Register */
++
++#define AP_BASE		0xe6f10000
++#define APARMBAREA	0x20	/* Address Translation Area Register */
  
--#define INT2NTSR0 IOMEM(0xfe700060)
--#define INT2NTSR1 IOMEM(0xfe700064)
-+#define INT2NTSR0	0x00060	/* Interrupt Notification Select Register 0 */
-+#define INT2NTSR1	0x00064	/* Interrupt Notification Select Register 1 */
+ #define SH73A0_SCU_BASE 0xf0000000
  
- static void __init r8a7779_init_irq_dt(void)
+ static int sh73a0_boot_secondary(unsigned int cpu, struct task_struct *idle)
  {
-+	void __iomem *base = ioremap(HPBREG_BASE, 0x00100000);
-+
- 	irqchip_init();
+ 	unsigned int lcpu = cpu_logical_map(cpu);
++	void __iomem *cpg2 = ioremap(CPG_BASE2, PAGE_SIZE);
  
- 	/* route all interrupts to ARM */
--	__raw_writel(0xffffffff, INT2NTSR0);
--	__raw_writel(0x3fffffff, INT2NTSR1);
-+	__raw_writel(0xffffffff, base + INT2NTSR0);
-+	__raw_writel(0x3fffffff, base + INT2NTSR1);
- 
- 	/* unmask all known interrupts in INTCS2 */
--	__raw_writel(0xfffffff0, INT2SMSKCR0);
--	__raw_writel(0xfff7ffff, INT2SMSKCR1);
--	__raw_writel(0xfffbffdf, INT2SMSKCR2);
--	__raw_writel(0xbffffffc, INT2SMSKCR3);
--	__raw_writel(0x003fee3f, INT2SMSKCR4);
-+	__raw_writel(0xfffffff0, base + INT2SMSKCR0);
-+	__raw_writel(0xfff7ffff, base + INT2SMSKCR1);
-+	__raw_writel(0xfffbffdf, base + INT2SMSKCR2);
-+	__raw_writel(0xbffffffc, base + INT2SMSKCR3);
-+	__raw_writel(0x003fee3f, base + INT2SMSKCR4);
-+
-+	iounmap(base);
+-	if (((__raw_readl(PSTR) >> (4 * lcpu)) & 3) == 3)
+-		__raw_writel(1 << lcpu, WUPCR);	/* wake up */
++	if (((__raw_readl(cpg2 + PSTR) >> (4 * lcpu)) & 3) == 3)
++		__raw_writel(1 << lcpu, cpg2 + WUPCR);	/* wake up */
+ 	else
+-		__raw_writel(1 << lcpu, SRESCR);	/* reset */
+-
++		__raw_writel(1 << lcpu, cpg2 + SRESCR);	/* reset */
++	iounmap(cpg2);
+ 	return 0;
  }
  
- static const char *const r8a7779_compat_dt[] __initconst = {
+ static void __init sh73a0_smp_prepare_cpus(unsigned int max_cpus)
+ {
++	void __iomem *ap = ioremap(AP_BASE, PAGE_SIZE);
++	void __iomem *sysc = ioremap(SYSC_BASE, PAGE_SIZE);
++
+ 	/* Map the reset vector (in headsmp.S) */
+-	__raw_writel(0, APARMBAREA);      /* 4k */
+-	__raw_writel(__pa(shmobile_boot_vector), SBAR);
++	__raw_writel(0, ap + APARMBAREA);      /* 4k */
++	__raw_writel(__pa(shmobile_boot_vector), sysc + SBAR);
++	iounmap(sysc);
++	iounmap(ap);
+ 
+ 	/* setup sh73a0 specific SCU bits */
+ 	shmobile_smp_scu_prepare_cpus(SH73A0_SCU_BASE, max_cpus);
 -- 
 2.25.1
 
