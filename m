@@ -2,241 +2,80 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEFFAC388F9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 02:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AED4AC2D0E4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 09:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8594524699
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 02:08:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A0482417E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Nov 2020 09:03:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgKQCIh (ORCPT
+        id S1726297AbgKQJDh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Nov 2020 21:08:37 -0500
-Received: from mga07.intel.com ([134.134.136.100]:38754 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbgKQCIh (ORCPT
+        Tue, 17 Nov 2020 04:03:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47914 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725770AbgKQJDf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Nov 2020 21:08:37 -0500
-IronPort-SDR: tJVgECZkFqgqihA84Wfdpb3OO815y0RU87vUxobNP/gfQc1X7NcZOMzpcXDYPwpZsvqAOf+4Mk
- g7Y3/+VfEslA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9807"; a="234998628"
-X-IronPort-AV: E=Sophos;i="5.77,484,1596524400"; 
-   d="scan'208";a="234998628"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Nov 2020 18:08:31 -0800
-IronPort-SDR: 6wDmXiuENruk+52eoig4ZAy0Y4VpLOu8mnP1XRm1Mrt2llolfWUiTyEtkcj9PFpMDGpzP25RrO
- DkYpOt8gJH/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.77,484,1596524400"; 
-   d="scan'208";a="358695708"
-Received: from lkp-server01.sh.intel.com (HELO 5abab2bd15ab) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 16 Nov 2020 18:08:28 -0800
-Received: from kbuild by 5abab2bd15ab with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1keqQ0-00001W-4z; Tue, 17 Nov 2020 02:08:28 +0000
-Date:   Tue, 17 Nov 2020 10:07:52 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:master] BUILD SUCCESS
- 2a323cdab73739ab28725e19129d440c6db35fc4
-Message-ID: <5fb33078.r5+oCBUBRTI+Y2N8%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Tue, 17 Nov 2020 04:03:35 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 995C9C061A47
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Nov 2020 01:03:34 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by xavier.telenet-ops.be with bizsmtp
+        id tM3X230014C55Sk01M3Xra; Tue, 17 Nov 2020 10:03:31 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kewte-003A6O-PC
+        for linux-renesas-soc@vger.kernel.org; Tue, 17 Nov 2020 10:03:30 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kewte-008vq6-0q
+        for linux-renesas-soc@vger.kernel.org; Tue, 17 Nov 2020 10:03:30 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: [PATCH RFC 2/4] clk: renesas: r8a779a0: Add MSIOF clocks
+Date:   Tue, 17 Nov 2020 10:03:27 +0100
+Message-Id: <20201117090329.2128904-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201117090329.2128904-1-geert+renesas@glider.be>
+References: <20201117090329.2128904-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
-branch HEAD: 2a323cdab73739ab28725e19129d440c6db35fc4  Merge tag 'v5.10-rc4' into renesas-devel
+Add the module clocks used by the Clock-Synchronized Serial Interface
+with FIFO (MSIOF) instances on the Renesas R-Car V3U (r8a779a0) SoC.
 
-elapsed time: 723m
-
-configs tested: 167
-configs skipped: 2
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-powerpc                     tqm8541_defconfig
-arm                            qcom_defconfig
-ia64                        generic_defconfig
-m68k                         amcore_defconfig
-arm                      footbridge_defconfig
-mips                     cu1830-neo_defconfig
-arm                         socfpga_defconfig
-nios2                         10m50_defconfig
-powerpc                 mpc8315_rdb_defconfig
-xtensa                  nommu_kc705_defconfig
-sh                          rsk7203_defconfig
-arm                       netwinder_defconfig
-arm                     am200epdkit_defconfig
-m68k                            q40_defconfig
-m68k                       m5475evb_defconfig
-arm                       cns3420vb_defconfig
-arm                        mini2440_defconfig
-arm                        vexpress_defconfig
-mips                  decstation_64_defconfig
-powerpc               mpc834x_itxgp_defconfig
-mips                         bigsur_defconfig
-sh                           sh2007_defconfig
-mips                        bcm63xx_defconfig
-arc                                 defconfig
-nios2                         3c120_defconfig
-sh                          landisk_defconfig
-arm                          ep93xx_defconfig
-arm                         lpc32xx_defconfig
-arm                  colibri_pxa270_defconfig
-arm                              alldefconfig
-arm                        shmobile_defconfig
-openrisc                            defconfig
-sh                         microdev_defconfig
-sh                             espt_defconfig
-powerpc                     tqm8555_defconfig
-mips                         tb0219_defconfig
-arc                      axs103_smp_defconfig
-mips                        qi_lb60_defconfig
-m68k                            mac_defconfig
-mips                          ath79_defconfig
-sh                         ecovec24_defconfig
-mips                           xway_defconfig
-riscv                             allnoconfig
-powerpc                     mpc512x_defconfig
-m68k                          hp300_defconfig
-arm                          gemini_defconfig
-arm                      tct_hammer_defconfig
-mips                        bcm47xx_defconfig
-arm                            zeus_defconfig
-arm                     eseries_pxa_defconfig
-sh                               alldefconfig
-arm                           h3600_defconfig
-arm                        neponset_defconfig
-mips                        jmr3927_defconfig
-powerpc                       holly_defconfig
-xtensa                          iss_defconfig
-powerpc                     mpc83xx_defconfig
-mips                      bmips_stb_defconfig
-powerpc                   lite5200b_defconfig
-sh                        apsh4ad0a_defconfig
-s390                             alldefconfig
-arm                           sunxi_defconfig
-powerpc                  mpc885_ads_defconfig
-arm                           h5000_defconfig
-arm                          simpad_defconfig
-powerpc                     ppa8548_defconfig
-sh                          rsk7264_defconfig
-powerpc                     tqm5200_defconfig
-mips                            e55_defconfig
-powerpc                     tqm8560_defconfig
-sh                     sh7710voipgw_defconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-c6x                              allyesconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-sh                               allmodconfig
-parisc                              defconfig
-s390                             allyesconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-x86_64               randconfig-a003-20201116
-x86_64               randconfig-a005-20201116
-x86_64               randconfig-a004-20201116
-x86_64               randconfig-a002-20201116
-x86_64               randconfig-a001-20201116
-x86_64               randconfig-a006-20201116
-i386                 randconfig-a006-20201116
-i386                 randconfig-a005-20201116
-i386                 randconfig-a001-20201116
-i386                 randconfig-a002-20201116
-i386                 randconfig-a004-20201116
-i386                 randconfig-a003-20201116
-i386                 randconfig-a006-20201115
-i386                 randconfig-a005-20201115
-i386                 randconfig-a001-20201115
-i386                 randconfig-a002-20201115
-i386                 randconfig-a004-20201115
-i386                 randconfig-a003-20201115
-x86_64               randconfig-a015-20201115
-x86_64               randconfig-a011-20201115
-x86_64               randconfig-a016-20201115
-x86_64               randconfig-a012-20201115
-x86_64               randconfig-a014-20201115
-x86_64               randconfig-a013-20201115
-i386                 randconfig-a012-20201116
-i386                 randconfig-a014-20201116
-i386                 randconfig-a016-20201116
-i386                 randconfig-a011-20201116
-i386                 randconfig-a015-20201116
-i386                 randconfig-a013-20201116
-i386                 randconfig-a012-20201115
-i386                 randconfig-a014-20201115
-i386                 randconfig-a016-20201115
-i386                 randconfig-a011-20201115
-i386                 randconfig-a015-20201115
-i386                 randconfig-a013-20201115
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-x86_64                                   rhel
-x86_64                           allyesconfig
-x86_64                    rhel-7.6-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                                  kexec
-
-clang tested configs:
-x86_64               randconfig-a003-20201115
-x86_64               randconfig-a005-20201115
-x86_64               randconfig-a004-20201115
-x86_64               randconfig-a002-20201115
-x86_64               randconfig-a001-20201115
-x86_64               randconfig-a006-20201115
-x86_64               randconfig-a015-20201116
-x86_64               randconfig-a011-20201116
-x86_64               randconfig-a014-20201116
-x86_64               randconfig-a013-20201116
-x86_64               randconfig-a016-20201116
-x86_64               randconfig-a012-20201116
-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+index efecb87065adeff2..c4aa561bb01152df 100644
+--- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+@@ -152,6 +152,12 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
+ 	DEF_MOD("csi41",	400,	R8A779A0_CLK_CSI0),
+ 	DEF_MOD("csi42",	401,	R8A779A0_CLK_CSI0),
+ 	DEF_MOD("csi43",	402,	R8A779A0_CLK_CSI0),
++	DEF_MOD("msi0",		618,	R8A779A0_CLK_MSO),
++	DEF_MOD("msi1",		619,	R8A779A0_CLK_MSO),
++	DEF_MOD("msi2",		620,	R8A779A0_CLK_MSO),
++	DEF_MOD("msi3",		621,	R8A779A0_CLK_MSO),
++	DEF_MOD("msi4",		622,	R8A779A0_CLK_MSO),
++	DEF_MOD("msi5",		623,	R8A779A0_CLK_MSO),
+ 	DEF_MOD("scif0",	702,	R8A779A0_CLK_S1D8),
+ 	DEF_MOD("scif1",	703,	R8A779A0_CLK_S1D8),
+ 	DEF_MOD("scif3",	704,	R8A779A0_CLK_S1D8),
+-- 
+2.25.1
+
