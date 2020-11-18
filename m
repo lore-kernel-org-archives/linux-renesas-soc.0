@@ -2,88 +2,119 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB34FC56202
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Nov 2020 09:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F35C56202
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Nov 2020 10:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81A6E2463B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Nov 2020 09:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFED42222C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Nov 2020 10:25:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726020AbgKRJXM (ORCPT
+        id S1726289AbgKRKYp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Nov 2020 04:23:12 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:32929 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbgKRJXL (ORCPT
+        Wed, 18 Nov 2020 05:24:45 -0500
+Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:59967 "EHLO
+        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726141AbgKRKYo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Nov 2020 04:23:11 -0500
-Received: by mail-ot1-f66.google.com with SMTP id i18so1124497ots.0
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 18 Nov 2020 01:23:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8kxS7s4is0R3FqkU/faX4elb5MyljxZ4bf3ee4DPd1M=;
-        b=puqjqzoFvpGpUs5nfjY8ARDXypOLSGomAbIMlE+jB78k1QVOc3LYgW7N7z8kikxX2/
-         3b5Pu0hHmjeB3ARKwHpSHixjO/RwcT5UkJBNWGfOV+Y5QZVEYPgzfRYaIJ4Uaq+DAjrI
-         UiVRWZO8OwWZOAbXkp6fwgMFSlEUwiajZkWqbS5LOd7MF5DwS2+HhXKNwnTRTLT184ud
-         LqepgHs7rPWjTr+EkdhJuuGWKIwdf5hq9rjMPJW+OOUioHCqfcqThj8V5wm7T+LDbClP
-         trwpg6J89NDRe06fcZXMdT24d1M3EAE/jeri+vIFKgIOIMUO4yY6+e4xldAp7W9SfeoN
-         59nQ==
-X-Gm-Message-State: AOAM532VdWCXTokJJd9AkOZLwlRj4Er/wPf6od+t4nyhTHx978ws1dit
-        4NIrwTmpoLbYhxGCpUkMi9gbuR11LPh3cWw1JTw=
-X-Google-Smtp-Source: ABdhPJzN4W3cdQHcMc+MQ6wz2rUNcP1YzsB8b2X7E3R2rcMY+iXKOuodEuEAYV0yS8FOPMRboMajCk2a37lTw34qYWI=
-X-Received: by 2002:a9d:5e14:: with SMTP id d20mr5604565oti.107.1605691390938;
- Wed, 18 Nov 2020 01:23:10 -0800 (PST)
-MIME-Version: 1.0
+        Wed, 18 Nov 2020 05:24:44 -0500
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.94)
+          with esmtps (TLS1.2)
+          tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1kfKdk-001roL-8r; Wed, 18 Nov 2020 11:24:40 +0100
+Received: from suse-laptop.physik.fu-berlin.de ([160.45.32.140])
+          by inpost2.zedat.fu-berlin.de (Exim 4.94)
+          with esmtpsa (TLS1.2)
+          tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1kfKdk-000UEk-2l; Wed, 18 Nov 2020 11:24:40 +0100
+Subject: Re: [PATCH 2/7] ARM: shmobile: r8a7779: Use ioremap() to map INTC2
+ registers
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@kernel.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>
 References: <20201117103022.2136527-1-geert+renesas@glider.be>
- <20201117103022.2136527-6-geert+renesas@glider.be> <d46368c6-5528-e39f-663a-950e026b84e4@gmail.com>
- <CAMuHMdW7Auao=4YMxaY+19qUPciY+vCd+cJeOUHM0+4Bu3ZKDQ@mail.gmail.com> <d87571dc-cdba-2e47-c185-e5a9f8bdcbc7@gmail.com>
-In-Reply-To: <d87571dc-cdba-2e47-c185-e5a9f8bdcbc7@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 18 Nov 2020 10:22:59 +0100
-Message-ID: <CAMuHMdUQVg0HUYJ7DU_5SM72gweJzBia=5W1VV6FaxHj9y1ozA@mail.gmail.com>
-Subject: Re: [PATCH 5/7] ARM: shmobile: sh73a0: Use ioremap() to map L2C registers
-To:     Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+ <20201117103022.2136527-3-geert+renesas@glider.be>
+ <CAK8P3a1CAmC3=QFA1EryDsx0aR-OF+=mf=Xj9cPrObe+qRoJKQ@mail.gmail.com>
+ <CAMuHMdWTuzxg-a0f5MfPN=66EXcEqLfHCQMhiSAWH04p1BQ2ng@mail.gmail.com>
+ <CAK8P3a363pGBYAyGgV1r+evpNk9Cpcu-vE++s7Ma4YB25AW+yg@mail.gmail.com>
+ <CAMuHMdVFRXMcOgv5Qa6QgEAKsU31sKDBsTPs6ONdSqLAQZShow@mail.gmail.com>
+ <CAK8P3a3QZJjV99Oo=GytUc3q3RkSrtccTC12Vgd=E=UByFX7ZA@mail.gmail.com>
+ <CAMuHMdW6aw2M=SiV_pr6oQWaQRDcb9O2P8GRg_WRTjcpL5i4mA@mail.gmail.com>
+ <CAK8P3a3bgbm29z8L66kYo25yKP2EKKLhVZSjS-mcYTO4J2m70A@mail.gmail.com>
+ <CAMuHMdVeRXbhzGit7y2OHJxbJpO5zOurF=We31KLnu+iMJOBng@mail.gmail.com>
+ <CAK8P3a0LJMuCzhd0dM5PuzvUeXPmJvbQ2WUdivbPoHZBHmDtLw@mail.gmail.com>
+ <CAMuHMdWzoa3pOVqp40euW5ZecW-fGjbRtDfh6n=DugeeLmz1Ww@mail.gmail.com>
+From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Message-ID: <f7a667e8-e179-d08f-3c0e-30501bc01696@physik.fu-berlin.de>
+Date:   Wed, 18 Nov 2020 11:24:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.4.0
+MIME-Version: 1.0
+In-Reply-To: <CAMuHMdWzoa3pOVqp40euW5ZecW-fGjbRtDfh6n=DugeeLmz1Ww@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-Originating-IP: 160.45.32.140
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Sergei,
+Hi Geert!
 
-On Wed, Nov 18, 2020 at 9:50 AM Sergei Shtylyov
-<sergei.shtylyov@gmail.com> wrote:
-> On 18.11.2020 11:44, Geert Uytterhoeven wrote:
->
-> [...]
-> >>> Replace using the legacy IOMEM() macro to map the L2C registers by
-> >>
-> >>      Mapping? Else it doesn't rhyme. ;-)
-> >
-> > Can you please elaborate?
->
->     Replace using ... to mapping ..., no? Or rather s/to/with/?
->
-> >>> ioremap().
+On 11/18/20 9:40 AM, Geert Uytterhoeven wrote:
+> CC Adrian
+> 
+> On Wed, Nov 18, 2020 at 9:27 AM Arnd Bergmann <arnd@kernel.org> wrote:
+>> On Tue, Nov 17, 2020 at 5:49 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>>> On Tue, Nov 17, 2020 at 5:37 PM Arnd Bergmann <arnd@kernel.org> wrote:
+>>>> On Tue, Nov 17, 2020 at 4:52 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>>>>> Doh, and even Debian ports doesn't support armeb anymore, else it
+>>>>> would just be a debootstrap away...
+>>>>
+>>>> Debian actually dropped all big-endian platforms other than s390
+>>>> now, the last other one was mips32 (mips32el is still there for the
+>>>> moment).
+>>>
+>>> I did mean "Debian Ports", which still supports a few more. But no
+>>> armeb.
+>>
+>> Ok, got it. I guess the old armeb ports was never in Debian, and predated
+>> the debian-ports system.
+>>
+>> Debian ports indeed still contain packages for big-endian m68k (obviously)
+>> as well as hppa, powerpc, ppc64 (in addition to the official ppc64le) and
+>> sparc64). I'm surprised nobody so far tried restarting the openrisc port,
+>> which got dropped when it appeared the corresponding gcc port would not
+>> be upstreamed.
+> 
+> I guess that is partly due to the limited availability of OpenRISC
+> hardware?  I had it running on a DE0-NANO, but 32 MiB RAM and
+> no Ethernet doesn't bring you far...
 
-"to map" applies to "using".
+The Debian wiki has some information on armeb and OpenRISC:
 
-"by" applies to "replace" (replace A by B).
+> https://wiki.debian.org/ArmPorts
+> https://wiki.debian.org/OpenRISC
 
-Gr{oetje,eeting}s,
+Apparently, interest for armeb was lost after people realized the hardware
+being used could run little-endian as well and OpenRISC apparently had
+licensing issues.
 
-                        Geert
+Adrian
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer - glaubitz@debian.org
+`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
