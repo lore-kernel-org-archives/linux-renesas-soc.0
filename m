@@ -2,84 +2,116 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 513EEC5519F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 14:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EF9C71155
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 15:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C81262224C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 14:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A978722226
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 15:07:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="zmhhMpBU"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="O1jzibQ4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbgKTOvO (ORCPT
+        id S1728320AbgKTPG7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 20 Nov 2020 09:51:14 -0500
-Received: from www.zeus03.de ([194.117.254.33]:39080 "EHLO mail.zeus03.de"
+        Fri, 20 Nov 2020 10:06:59 -0500
+Received: from www.zeus03.de ([194.117.254.33]:43456 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727421AbgKTOvO (ORCPT
+        id S1728770AbgKTPG4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Nov 2020 09:51:14 -0500
+        Fri, 20 Nov 2020 10:06:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=1rCGpsXgE6NUHy85wd86XpoNDlTq
-        HrGpHm9mYeyg5bM=; b=zmhhMpBUak7u4Td9EiKi9B2lriOeErSYA3v4ifxLj7Qa
-        icWgRd/0htvCSy3r0fGrU9kMFN2an/2plzWtJUKiFQ/K4FAP5Pwt8CBXFM9R033t
-        CmEf5NmjcVyCXhWhB3VO632sUEsIuDbjmzwI9nt4sRuWN/DHgTkPoo6Na6qwUL4=
-Received: (qmail 1516414 invoked from network); 20 Nov 2020 15:51:12 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2020 15:51:12 +0100
-X-UD-Smtp-Session: l3s3148p1@b/m9+Yq0/NwgAwDPXwi7AEBAgYxIRHZX
-Date:   Fri, 20 Nov 2020 15:51:11 +0100
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=US1jiov3Q39Q8O
+        HNdgriM3I4d/ngv0XuinAIEULvBe8=; b=O1jzibQ4MJATu6NSPuZrYQEnLNIeG7
+        if8WaG4dBwguqtPkCBWDQ0tn/2KlXGey3rBcvSKVIsENX70EDbnfw6V3xMYEazu3
+        6sXEZA0Fad+DnNteTHyiiuAxwdFJFZwykGYhPwEqQFIK1mliAsiD3l1ZuNSFQxLB
+        +PahJJSFqmkis=
+Received: (qmail 1520255 invoked from network); 20 Nov 2020 16:06:54 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2020 16:06:54 +0100
+X-UD-Smtp-Session: l3s3148p1@DU3pMYu0Ft0gAwDPXwi7AEBAgYxIRHZX
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-mmc@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH RFT 1/3] mmc: tmio: set max_busy_timeout
-Message-ID: <20201120145111.GB2353@ninjato>
-References: <20201120142629.98222-1-wsa+renesas@sang-engineering.com>
- <20201120142629.98222-2-wsa+renesas@sang-engineering.com>
+        Masahiro Yamada <masahiroy@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH RFT v2 3/3] mmc: renesas_sdhi: enable WAIT_WHILE_BUSY
+Date:   Fri, 20 Nov 2020 16:06:47 +0100
+Message-Id: <20201120150647.123237-4-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201120150647.123237-1-wsa+renesas@sang-engineering.com>
+References: <20201120150647.123237-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="H+4ONPRPur6+Ovig"
-Content-Disposition: inline
-In-Reply-To: <20201120142629.98222-2-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Now that we got the timeout handling in the driver correct, we can use
+this capability to avoid polling via the MMC core.
 
---H+4ONPRPur6+Ovig
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 4 ++--
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 7 ++++---
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index fe13e1ea22dc..d8b811c46628 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -88,7 +88,7 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
+ 
+ static const struct renesas_sdhi_of_data of_rza2_compatible = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
+-			  TMIO_MMC_HAVE_CBSY,
++			  TMIO_MMC_HAVE_CBSY | MMC_CAP_WAIT_WHILE_BUSY,
+ 	.tmio_ocr_mask	= MMC_VDD_32_33,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+ 			  MMC_CAP_CMD23,
+@@ -105,7 +105,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
+ 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+-			  MMC_CAP_CMD23,
++			  MMC_CAP_CMD23 | MMC_CAP_WAIT_WHILE_BUSY,
+ 	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT | MMC_CAP2_MERGE_CAPABLE,
+ 	.bus_shift	= 2,
+ 	.scc_offset	= 0x1000,
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index c5f789675302..0a3494fcc5e8 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -31,13 +31,14 @@ static const struct renesas_sdhi_of_data of_default_cfg = {
+ 
+ static const struct renesas_sdhi_of_data of_rz_compatible = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_32BIT_DATA_PORT |
+-			  TMIO_MMC_HAVE_CBSY,
++			  TMIO_MMC_HAVE_CBSY | MMC_CAP_WAIT_WHILE_BUSY,
+ 	.tmio_ocr_mask	= MMC_VDD_32_33,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
+ };
+ 
+ static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
+-	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL,
++	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
++			  MMC_CAP_WAIT_WHILE_BUSY,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
+ 	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
+ };
+@@ -58,7 +59,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
+ 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
+ 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
+ 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
+-			  MMC_CAP_CMD23,
++			  MMC_CAP_CMD23 | MMC_CAP_WAIT_WHILE_BUSY,
+ 	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
+ 	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
+ 	.dma_rx_offset	= 0x2000,
+-- 
+2.28.0
 
-> +	host->mmc->max_busy_timeout = cycles / (clk_rate * MSEC_PER_SEC);
-
-This should be "/ MSEC_PER_SEC"! Sorry, it was a bad merge conflict
-resolution :(
-
-
---H+4ONPRPur6+Ovig
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl+319sACgkQFA3kzBSg
-KbYU3w//XWZHKpPEywjJw4Dq8HGSMxEWcnSFPpdBg51/vS5TuPiKPcGQSAX9AdCS
-dKkN8Xwf/89p0A+9Du7UfZy/gLcimKC9QcHvqezFfykT1ZX2J5T1BhW+WmgGunGx
-L+htmJs3qn+DZZh1Jx6sDd9wZ1dFtsMT8QNa+G7KnZJmlVzOCMLDMWuleBbe1Xp/
-/LJDGS9OOh8O89CKzmDHpAXh6iCuHLYqp9ysdGwzDS/Ozbb5bOWOK+u7OGbF4p7C
-VFMyz9P3ksTd2UHYMozBzN2JybouvmhG3Cv1JISDIlD6mwC0hqwADZo/nt79aaoX
-7jHewecNLm0CPvCgJxMZWtuCfu6fky3pWHzhhbL4Tqof5UEnIeObsQtEiYsp2Utq
-UIGMN7rtsBeAvEOILgvG5IZb9jBeSrOjqVOlv7/OMh4V69dF/6dW9IPYa9sePc8K
-bejvTxclkPWDUun2v1nTt+SnhyEM6HPPo2aX5sqHNU01wOkbfLGjGFnCBdLXRt1y
-rKVrmVaJs1GFpQKdNikL8jvzBx5V0W7rhaJ0mCEPfaWdvTyAfTlmak/MDyvJ4ugc
-+wVl0nfwcV1Ub/CuDxinVP25EqnQpVUJ9iyIvP+pWHVT7bUvDM3Zr4kUUWTn9a+z
-oOIuK1vuc5eI18370MOtgB/TyUDw3WgpmtGiRVp4LEGcUDtEhIc=
-=FvCM
------END PGP SIGNATURE-----
-
---H+4ONPRPur6+Ovig--
