@@ -3,115 +3,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EF9C71155
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 15:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A09C5519F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 15:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A978722226
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 15:07:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FF2D2225B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 15:07:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="O1jzibQ4"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="wlOLLAbY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728320AbgKTPG7 (ORCPT
+        id S1728766AbgKTPHD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 20 Nov 2020 10:06:59 -0500
-Received: from www.zeus03.de ([194.117.254.33]:43456 "EHLO mail.zeus03.de"
+        Fri, 20 Nov 2020 10:07:03 -0500
+Received: from www.zeus03.de ([194.117.254.33]:43430 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728770AbgKTPG4 (ORCPT
+        id S1728762AbgKTPG4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 20 Nov 2020 10:06:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=US1jiov3Q39Q8O
-        HNdgriM3I4d/ngv0XuinAIEULvBe8=; b=O1jzibQ4MJATu6NSPuZrYQEnLNIeG7
-        if8WaG4dBwguqtPkCBWDQ0tn/2KlXGey3rBcvSKVIsENX70EDbnfw6V3xMYEazu3
-        6sXEZA0Fad+DnNteTHyiiuAxwdFJFZwykGYhPwEqQFIK1mliAsiD3l1ZuNSFQxLB
-        +PahJJSFqmkis=
-Received: (qmail 1520255 invoked from network); 20 Nov 2020 16:06:54 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2020 16:06:54 +0100
-X-UD-Smtp-Session: l3s3148p1@DU3pMYu0Ft0gAwDPXwi7AEBAgYxIRHZX
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=0cEj12D45/gnrPeg+tP43kdtsVz
+        0cBSJpjREvk5JLU0=; b=wlOLLAbY82PPydElgh91wNQI8r78myOnO8O0m1h7/n2
+        0sF/Q/molBhKXV0LHg5pqViuhv1bIkzeCkKx9ZnRffEcz2ajBBqcS0z+E9rd5/Nk
+        8SOeGpN7hucdQqAwEdWJYKm1FEW224iZVhAnnYZt0tNGKy7RSyLDH1z/KAIKtsSg
+        =
+Received: (qmail 1520170 invoked from network); 20 Nov 2020 16:06:53 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2020 16:06:53 +0100
+X-UD-Smtp-Session: l3s3148p1@3/jRMYu0EN0gAwDPXwi7AEBAgYxIRHZX
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-mmc@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Masahiro Yamada <masahiroy@kernel.org>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFT v2 3/3] mmc: renesas_sdhi: enable WAIT_WHILE_BUSY
-Date:   Fri, 20 Nov 2020 16:06:47 +0100
-Message-Id: <20201120150647.123237-4-wsa+renesas@sang-engineering.com>
+Subject: [PATCH RFT v2 0/3] mmc: tmio: honor busy timeouts properly
+Date:   Fri, 20 Nov 2020 16:06:44 +0100
+Message-Id: <20201120150647.123237-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201120150647.123237-1-wsa+renesas@sang-engineering.com>
-References: <20201120150647.123237-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Now that we got the timeout handling in the driver correct, we can use
-this capability to avoid polling via the MMC core.
+(I fixed the typo in patch 1 and retested again. Sorry for the noise!)
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 4 ++--
- drivers/mmc/host/renesas_sdhi_sys_dmac.c      | 7 ++++---
- 2 files changed, 6 insertions(+), 5 deletions(-)
+TMIO has a HW busy timeout detection which was always running but the
+driver did not handle it yet in a proper way. This series fixes that.
 
-diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-index fe13e1ea22dc..d8b811c46628 100644
---- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
-@@ -88,7 +88,7 @@ static struct renesas_sdhi_scc rcar_gen3_scc_taps[] = {
- 
- static const struct renesas_sdhi_of_data of_rza2_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
--			  TMIO_MMC_HAVE_CBSY,
-+			  TMIO_MMC_HAVE_CBSY | MMC_CAP_WAIT_WHILE_BUSY,
- 	.tmio_ocr_mask	= MMC_VDD_32_33,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
- 			  MMC_CAP_CMD23,
-@@ -105,7 +105,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen3_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
--			  MMC_CAP_CMD23,
-+			  MMC_CAP_CMD23 | MMC_CAP_WAIT_WHILE_BUSY,
- 	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT | MMC_CAP2_MERGE_CAPABLE,
- 	.bus_shift	= 2,
- 	.scc_offset	= 0x1000,
-diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-index c5f789675302..0a3494fcc5e8 100644
---- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-+++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
-@@ -31,13 +31,14 @@ static const struct renesas_sdhi_of_data of_default_cfg = {
- 
- static const struct renesas_sdhi_of_data of_rz_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_32BIT_DATA_PORT |
--			  TMIO_MMC_HAVE_CBSY,
-+			  TMIO_MMC_HAVE_CBSY | MMC_CAP_WAIT_WHILE_BUSY,
- 	.tmio_ocr_mask	= MMC_VDD_32_33,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
- };
- 
- static const struct renesas_sdhi_of_data of_rcar_gen1_compatible = {
--	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL,
-+	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
-+			  MMC_CAP_WAIT_WHILE_BUSY,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ,
- 	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- };
-@@ -58,7 +59,7 @@ static const struct renesas_sdhi_of_data of_rcar_gen2_compatible = {
- 	.tmio_flags	= TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
- 			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
- 	.capabilities	= MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
--			  MMC_CAP_CMD23,
-+			  MMC_CAP_CMD23 | MMC_CAP_WAIT_WHILE_BUSY,
- 	.capabilities2	= MMC_CAP2_NO_WRITE_PROTECT,
- 	.dma_buswidth	= DMA_SLAVE_BUSWIDTH_4_BYTES,
- 	.dma_rx_offset	= 0x2000,
+Patch 1 sets max_busy_timeout, so the MMC core will not use R1B when it
+is beyond the maximum HW timeout. Patch 2 adds proper handling of the
+timeout interrupt. After ensuring both, we can finally enable the
+WAIT_WHILE_BUSY capability to save the polling.
+
+This was tested using my Renesas Salvator-XS (R-Car M3-N) and Lager
+(R-Car H2). However, more advanced testing from the BSP team and/or
+Shimoda-san would be much appreciated.
+
+The branch is based on mmc/next plus one patch "[PATCH RFT v2] mmc: tmio: Fix
+command error processing". A branch is available here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/sdhi/busy_timeout
+
+Yamada-san: I enabled setting max_busy_timeout for Uniphier as well
+because I am quite sure this HW supports it and it will fix timeout
+issues with long erase timeouts. I did not enable WAIT_WHILE_BUSY
+because this is "only" an improvement and not a fix. I think opt-in
+after some testing is good for that case.
+
+I think all patches are 5.11 material to get enough testing. Patch 1
+is IMHO stable material, nonetheless. I am open for discussions, of
+course.
+
+Looking forward to comments, reviews, tags...
+
+Thanks and happy hacking,
+
+   Wolfram
+
+
+Masaharu Hayakawa (1):
+  mmc: tmio: Add data timeout error detection
+
+Wolfram Sang (2):
+  mmc: tmio: set max_busy_timeout
+  mmc: renesas_sdhi: enable WAIT_WHILE_BUSY
+
+ drivers/mmc/host/renesas_sdhi_core.c          |  3 ++
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c |  4 +--
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  7 ++--
+ drivers/mmc/host/tmio_mmc.h                   |  8 +++--
+ drivers/mmc/host/tmio_mmc_core.c              | 32 +++++++++++++++----
+ drivers/mmc/host/uniphier-sd.c                |  1 +
+ include/linux/mfd/tmio.h                      |  7 +++-
+ 7 files changed, 48 insertions(+), 14 deletions(-)
+
 -- 
 2.28.0
 
