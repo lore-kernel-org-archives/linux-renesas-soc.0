@@ -2,168 +2,197 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC544C8300B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 15:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4861C63777
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 15:14:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88AB622269
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 15:07:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="UmL0aLvY"
+	by mail.kernel.org (Postfix) with ESMTP id 540AF22252
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 20 Nov 2020 15:14:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728770AbgKTPHB (ORCPT
+        id S1729049AbgKTPNy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 20 Nov 2020 10:07:01 -0500
-Received: from www.zeus03.de ([194.117.254.33]:43446 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728768AbgKTPG4 (ORCPT
+        Fri, 20 Nov 2020 10:13:54 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:23669 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728923AbgKTPNy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 20 Nov 2020 10:06:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=0YDYEEb1QJjPX6
-        RzZTagATEA25hUdBIWiOiE/NKSz1s=; b=UmL0aLvY23nLcs5Wzoctxl4C5Icy5B
-        m53Of7ETFEFFPtVAQQ3eR0TkxFYaP8Zj0vxbJ3amWn9pk4Q9X58QvPU3Xt7Ff9iG
-        HfJKux7dH5lqBpZIUUZ/XC0gAky0JzH1zFARm5AgXwO4EbZZSwWliHIazkSVOZhw
-        YAMI3fx2bGWLk=
-Received: (qmail 1520195 invoked from network); 20 Nov 2020 16:06:53 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Nov 2020 16:06:53 +0100
-X-UD-Smtp-Session: l3s3148p1@hwjZMYu0Et0gAwDPXwi7AEBAgYxIRHZX
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-mmc@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH RFT v2 1/3] mmc: tmio: set max_busy_timeout
-Date:   Fri, 20 Nov 2020 16:06:45 +0100
-Message-Id: <20201120150647.123237-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201120150647.123237-1-wsa+renesas@sang-engineering.com>
-References: <20201120150647.123237-1-wsa+renesas@sang-engineering.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 20 Nov 2020 10:13:54 -0500
+X-IronPort-AV: E=Sophos;i="5.78,356,1599490800"; 
+   d="scan'208";a="63383353"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 21 Nov 2020 00:13:51 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 290BB4004CFA;
+        Sat, 21 Nov 2020 00:13:49 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] ARM: dts: r8a7742-iwg21d-q7-dbcm-ca: Add OV7725 nodes
+Date:   Fri, 20 Nov 2020 15:13:43 +0000
+Message-Id: <20201120151343.24175-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Set max_busy_timeouts for variants known to support the TOPxx bits in
-the SD_OPTION register. The timeout mechanism was running in the
-background but not yet properly handled in the driver. So, let the MMC
-core know when to not use R1B to avoid unhandled timeouts.
+Add the ov7725 endpoint nodes to the camera daughter board. The ov7725
+sensors can be populated on I2C{0,1,2,3} buses.
 
-My datasheets for older variants (tmio_mmc.c) suggest that they support
-it, too. However, actual bit descriptions are lacking, so I chose an
-opt-in approach.
+By default the VIN{0,1,2,3} are tied to OV5640{0,1,2,3} endpoints
+respectively in the camera DB dts hence the remote-endpoint property in
+OV7725{0,1,2,3} endpoints is commented out.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
+Hi All,
 
-Change since v1:
-* fix wrong multiplication to correct division due to a bad merge
-  conflict resolution 
+This patch is based on top of [1].
 
- drivers/mmc/host/renesas_sdhi_core.c |  3 +++
- drivers/mmc/host/tmio_mmc.h          |  2 ++
- drivers/mmc/host/tmio_mmc_core.c     | 15 +++++++++++++++
- drivers/mmc/host/uniphier-sd.c       |  1 +
- include/linux/mfd/tmio.h             |  7 ++++++-
- 5 files changed, 27 insertions(+), 1 deletion(-)
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/
+    renesas-devel.git/log/?h=renesas-arm-dt-for-v5.11
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index bb937411c2ec..153767054c05 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -1041,6 +1041,9 @@ int renesas_sdhi_probe(struct platform_device *pdev,
- 	/* All SDHI have SDIO status bits which must be 1 */
- 	mmc_data->flags |= TMIO_MMC_SDIO_STATUS_SETBITS;
- 
-+	/* All SDHI support HW busy detection */
-+	mmc_data->flags |= TMIO_MMC_USE_BUSY_TIMEOUT;
+Cheers,
+Prabhakar
+---
+ .../boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts    | 93 +++++++++++++++++++
+ 1 file changed, 93 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+index 98c3fbd89fa6..d1386bf7bdbe 100644
+--- a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
++++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+@@ -108,6 +108,29 @@
+ 			};
+ 		};
+ 	};
 +
- 	dev_pm_domain_start(&pdev->dev);
- 
- 	ret = renesas_sdhi_clk_enable(host);
-diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
-index 7ff41185896a..819198af17f4 100644
---- a/drivers/mmc/host/tmio_mmc.h
-+++ b/drivers/mmc/host/tmio_mmc.h
-@@ -80,6 +80,8 @@
- #define	CLK_CTL_SCLKEN		BIT(8)
- 
- /* Definitions for values the CTL_SD_MEM_CARD_OPT register can take */
-+#define CARD_OPT_TOP_MASK	0xf0
-+#define CARD_OPT_TOP_SHIFT	4
- #define CARD_OPT_WIDTH8		BIT(13)
- #define CARD_OPT_WIDTH		BIT(15)
- 
-diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
-index 7f4a28125010..4727fcfdf95f 100644
---- a/drivers/mmc/host/tmio_mmc_core.c
-+++ b/drivers/mmc/host/tmio_mmc_core.c
-@@ -887,6 +887,18 @@ static void tmio_mmc_set_bus_width(struct tmio_mmc_host *host,
- 	sd_ctrl_write16(host, CTL_SD_MEM_CARD_OPT, reg);
- }
- 
-+static void tmio_mmc_max_busy_timeout(struct tmio_mmc_host *host)
-+{
-+	u16 val = sd_ctrl_read16(host, CTL_SD_MEM_CARD_OPT);
-+	unsigned int clk_rate = host->mmc->actual_clock ?: host->mmc->f_max;
-+	unsigned int cycles;
++	ov7725@21 {
++		compatible = "ovti,ov7725";
++		reg = <0x21>;
++		clocks = <&mclk_cam1>;
 +
-+	val = (val & CARD_OPT_TOP_MASK) >> CARD_OPT_TOP_SHIFT;
-+	cycles = 1 << (13  + val);
++		port {
++			ov7725_0: endpoint {
++				bus-width = <8>;
++				bus-type = <6>;
++				/*
++				 * uncomment remote-endpoint property to
++				 * tie ov7725_0 to vin0ep also make
++				 * sure to comment/remove remote-endpoint
++				 * property from ov5640_0 endpoint and
++				 * replace remote-endpoint property in
++				 * vin0ep node with
++				 * remote-endpoint = <&ov7725_0>;
++				 */
++				/* remote-endpoint = <&vin0ep>; */
++			};
++		};
++	};
+ };
+ 
+ &i2c1 {
+@@ -133,6 +156,29 @@
+ 			};
+ 		};
+ 	};
 +
-+	host->mmc->max_busy_timeout = cycles / (clk_rate / MSEC_PER_SEC);
-+}
++	ov7725@21 {
++		compatible = "ovti,ov7725";
++		reg = <0x21>;
++		clocks = <&mclk_cam2>;
 +
- /* Set MMC clock / power.
-  * Note: This controller uses a simple divider scheme therefore it cannot
-  * run a MMC card at full speed (20MHz). The max clock is 24MHz on SD, but as
-@@ -945,6 +957,9 @@ static void tmio_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 		break;
- 	}
++		port {
++			ov7725_1: endpoint {
++				bus-width = <8>;
++				bus-type = <6>;
++				/*
++				 * uncomment remote-endpoint property to
++				 * tie ov7725_1 to vin1ep also make
++				 * sure to comment/remove remote-endpoint
++				 * property from ov5640_1 endpoint and
++				 * replace remote-endpoint property in
++				 * vin1ep node with
++				 * remote-endpoint = <&ov7725_1>;
++				 */
++				/* remote-endpoint = <&vin1ep>; */
++			};
++		};
++	};
+ };
  
-+	if (host->pdata->flags & TMIO_MMC_USE_BUSY_TIMEOUT)
-+		tmio_mmc_max_busy_timeout(host);
+ &i2c2 {
+@@ -152,6 +198,30 @@
+ 			};
+ 		};
+ 	};
 +
- 	/* Let things settle. delay taken from winCE driver */
- 	usleep_range(140, 200);
- 	if (PTR_ERR(host->mrq) == -EINTR)
-diff --git a/drivers/mmc/host/uniphier-sd.c b/drivers/mmc/host/uniphier-sd.c
-index 3092466a99ab..a6cd16771d4e 100644
---- a/drivers/mmc/host/uniphier-sd.c
-+++ b/drivers/mmc/host/uniphier-sd.c
-@@ -586,6 +586,7 @@ static int uniphier_sd_probe(struct platform_device *pdev)
++	ov7725@21 {
++		status = "disabled";
++		compatible = "ovti,ov7725";
++		reg = <0x21>;
++		clocks = <&mclk_cam3>;
++
++		port {
++			ov7725_2: endpoint {
++				bus-width = <8>;
++				bus-type = <6>;
++				/*
++				 * uncomment remote-endpoint property to
++				 * tie ov7725_2 to vin2ep also make
++				 * sure to comment/remove remote-endpoint
++				 * property from ov5640_2 endpoint and
++				 * replace remote-endpoint property in
++				 * vin2ep node with
++				 * remote-endpoint = <&ov7725_2>;
++				 */
++				/* remote-endpoint = <&vin2ep>; */
++			};
++		};
++	};
+ };
  
- 	tmio_data = &priv->tmio_data;
- 	tmio_data->flags |= TMIO_MMC_32BIT_DATA_PORT;
-+	tmio_data->flags |= TMIO_MMC_USE_BUSY_TIMEOUT;
+ &i2c3 {
+@@ -177,6 +247,29 @@
+ 			};
+ 		};
+ 	};
++
++	ov7725@21 {
++		compatible = "ovti,ov7725";
++		reg = <0x21>;
++		clocks = <&mclk_cam4>;
++
++		port {
++			ov7725_3: endpoint {
++				bus-width = <8>;
++				bus-type = <6>;
++				/*
++				 * uncomment remote-endpoint property to
++				 * tie ov7725_3 to vin3ep also make
++				 * sure to comment/remove remote-endpoint
++				 * property from ov5640_3 endpoint and
++				 * replace remote-endpoint property in
++				 * vin3ep node with
++				 * remote-endpoint = <&ov7725_3>;
++				 */
++				/* remote-endpoint = <&vin3ep>; */
++			};
++		};
++	};
+ };
  
- 	host = tmio_mmc_host_alloc(pdev, tmio_data);
- 	if (IS_ERR(host))
-diff --git a/include/linux/mfd/tmio.h b/include/linux/mfd/tmio.h
-index 8ba042430d8e..27264fe4b3b9 100644
---- a/include/linux/mfd/tmio.h
-+++ b/include/linux/mfd/tmio.h
-@@ -55,7 +55,12 @@
-  */
- #define TMIO_MMC_HAS_IDLE_WAIT		BIT(4)
- 
--/* BIT(5) is unused */
-+/*
-+ * Use the busy timeout feature. Probably all TMIO versions support it. Yet,
-+ * we don't have documentation for old variants, so we enable only known good
-+ * variants with this flag. Can be removed once all variants are known good.
-+ */
-+#define TMIO_MMC_USE_BUSY_TIMEOUT	BIT(5)
- 
- /*
-  * Some controllers have CMD12 automatically
+ &pfc {
 -- 
-2.28.0
+2.17.1
 
