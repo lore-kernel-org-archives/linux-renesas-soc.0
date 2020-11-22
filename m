@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 098A8C6379D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D54C6379F
 	for <linux-renesas-soc@archiver.kernel.org>; Sun, 22 Nov 2020 16:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D636D20789
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 22 Nov 2020 16:37:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25D7D20782
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 22 Nov 2020 16:37:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbgKVQhU (ORCPT
+        id S1728231AbgKVQhX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 22 Nov 2020 11:37:20 -0500
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:19842 "EHLO
+        Sun, 22 Nov 2020 11:37:23 -0500
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:19855 "EHLO
         bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728006AbgKVQhU (ORCPT
+        by vger.kernel.org with ESMTP id S1728175AbgKVQhX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 22 Nov 2020 11:37:20 -0500
-X-Halon-ID: 452226e5-2cdf-11eb-8a9c-005056917a89
+        Sun, 22 Nov 2020 11:37:23 -0500
+X-Halon-ID: 46d3f113-2cdf-11eb-8a9c-005056917a89
 Authorized-sender: niklas.soderlund@fsdn.se
 Received: from bismarck.berto.se (p4fca2458.dip0.t-ipconnect.de [79.202.36.88])
         by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
-        id 452226e5-2cdf-11eb-8a9c-005056917a89;
-        Sun, 22 Nov 2020 17:25:02 +0100 (CET)
+        id 46d3f113-2cdf-11eb-8a9c-005056917a89;
+        Sun, 22 Nov 2020 17:25:04 +0100 (CET)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     linux-media@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/3] adv748x: afe: Select input port when device is reset
-Date:   Sun, 22 Nov 2020 17:36:35 +0100
-Message-Id: <20201122163637.3590465-2-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 3/3] adv748x: Configure device when resuming from sleep
+Date:   Sun, 22 Nov 2020 17:36:37 +0100
+Message-Id: <20201122163637.3590465-4-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201122163637.3590465-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20201122163637.3590465-1-niklas.soderlund+renesas@ragnatech.se>
@@ -46,69 +46,59 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-It's not enough to select the AFE input port during probe it also needs
-to be set when the device is reset. Move the port selection to
-adv748x_reset() that is called during probe and when the device needs to
-be reset.
+If the device is powered off for example during system suspend to ram
+the devices loses its configuration, specially the slave i2c mappings
+and other configuration set at probe time. This renders the device
+unusable and only way to recover is to unbind and rebind the device to
+the driver to run the probe setup again.
+
+Add an early resume callback that reinitializes the device and setup the
+slave i2c address mappings and other probe time configuration.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/i2c/adv748x/adv748x-afe.c  | 6 +-----
- drivers/media/i2c/adv748x/adv748x-core.c | 4 ++++
- drivers/media/i2c/adv748x/adv748x.h      | 1 +
- 3 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/media/i2c/adv748x/adv748x-core.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
-index dbbb1e4d63637a33..4052cf67bf16c7fb 100644
---- a/drivers/media/i2c/adv748x/adv748x-afe.c
-+++ b/drivers/media/i2c/adv748x/adv748x-afe.c
-@@ -154,7 +154,7 @@ static void adv748x_afe_set_video_standard(struct adv748x_state *state,
- 		   (sdpstd & 0xf) << ADV748X_SDP_VID_SEL_SHIFT);
- }
- 
--static int adv748x_afe_s_input(struct adv748x_afe *afe, unsigned int input)
-+int adv748x_afe_s_input(struct adv748x_afe *afe, unsigned int input)
- {
- 	struct adv748x_state *state = adv748x_afe_to_state(afe);
- 
-@@ -520,10 +520,6 @@ int adv748x_afe_init(struct adv748x_afe *afe)
- 		}
- 	}
- 
--	adv748x_afe_s_input(afe, afe->input);
--
--	adv_dbg(state, "AFE Default input set to %d\n", afe->input);
--
- 	/* Entity pads and sinks are 0-indexed to match the pads */
- 	for (i = ADV748X_AFE_SINK_AIN0; i <= ADV748X_AFE_SINK_AIN7; i++)
- 		afe->pads[i].flags = MEDIA_PAD_FL_SINK;
 diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
-index 00966fe104881a14..8676ad2428856dd3 100644
+index b578a01cfebe7217..4e54148147b9adec 100644
 --- a/drivers/media/i2c/adv748x/adv748x-core.c
 +++ b/drivers/media/i2c/adv748x/adv748x-core.c
-@@ -516,6 +516,10 @@ static int adv748x_reset(struct adv748x_state *state)
- 	if (ret)
- 		return ret;
+@@ -565,6 +565,18 @@ static int adv748x_identify_chip(struct adv748x_state *state)
+ 	return 0;
+ }
  
-+	adv748x_afe_s_input(&state->afe, state->afe.input);
++/* -----------------------------------------------------------------------------
++ * Suspend / Resume
++ */
 +
-+	adv_dbg(state, "AFE Default input set to %d\n", state->afe.input);
++static int __maybe_unused adv748x_resume_early(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct adv748x_state *state = i2c_get_clientdata(client);
 +
- 	/* Reset TXA and TXB */
- 	adv748x_tx_power(&state->txa, 1);
- 	adv748x_tx_power(&state->txa, 0);
-diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
-index 1061f425ece5989e..747947ea3e316451 100644
---- a/drivers/media/i2c/adv748x/adv748x.h
-+++ b/drivers/media/i2c/adv748x/adv748x.h
-@@ -435,6 +435,7 @@ int adv748x_tx_power(struct adv748x_csi2 *tx, bool on);
++	return adv748x_reset(state);
++}
++
+ /* -----------------------------------------------------------------------------
+  * i2c driver
+  */
+@@ -827,10 +839,15 @@ static const struct of_device_id adv748x_of_table[] = {
+ };
+ MODULE_DEVICE_TABLE(of, adv748x_of_table);
  
- int adv748x_afe_init(struct adv748x_afe *afe);
- void adv748x_afe_cleanup(struct adv748x_afe *afe);
-+int adv748x_afe_s_input(struct adv748x_afe *afe, unsigned int input);
- 
- int adv748x_csi2_init(struct adv748x_state *state, struct adv748x_csi2 *tx);
- void adv748x_csi2_cleanup(struct adv748x_csi2 *tx);
++static const struct dev_pm_ops adv748x_pm_ops = {
++	SET_LATE_SYSTEM_SLEEP_PM_OPS(NULL, adv748x_resume_early)
++};
++
+ static struct i2c_driver adv748x_driver = {
+ 	.driver = {
+ 		.name = "adv748x",
+ 		.of_match_table = adv748x_of_table,
++		.pm = &adv748x_pm_ops,
+ 	},
+ 	.probe_new = adv748x_probe,
+ 	.remove = adv748x_remove,
 -- 
 2.29.2
 
