@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A059C63697
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Nov 2020 03:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 836EFC2D0E4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Nov 2020 03:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 032D620857
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Nov 2020 03:16:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 295A620857
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Nov 2020 03:16:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbgKXDQu (ORCPT
+        id S1728989AbgKXDQv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 23 Nov 2020 22:16:50 -0500
-Received: from mga12.intel.com ([192.55.52.136]:56135 "EHLO mga12.intel.com"
+        Mon, 23 Nov 2020 22:16:51 -0500
+Received: from mga18.intel.com ([134.134.136.126]:56903 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728989AbgKXDQu (ORCPT
+        id S1728990AbgKXDQv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Nov 2020 22:16:50 -0500
-IronPort-SDR: e/z/6njCecyv0fQSwoA+lK1aL8d84Jn+ij7niQB7nAcRycz6ZfxfVFy6ThhPcXgsbomEFRMW0x
- 0WWlmTbqdc5Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9814"; a="151142695"
+        Mon, 23 Nov 2020 22:16:51 -0500
+IronPort-SDR: jhehZP989KvmjXz217ZxwSpE+77z/gDt+OCVRP222iAM/+MHX79g6S3omuTbnue5hRB35m1aKV
+ XRZPU6qWRsqA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9814"; a="159651589"
 X-IronPort-AV: E=Sophos;i="5.78,364,1599548400"; 
-   d="scan'208";a="151142695"
+   d="scan'208";a="159651589"
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 19:16:45 -0800
-IronPort-SDR: uKhWJOqGWG6/iTLlXLvW5eiRRknU40ce0tHTwREa/XSTioUWEa5IJQk+Zr2Nd+Z3ej/mPeUE1l
- gse2Yr3zJwew==
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 19:16:46 -0800
+IronPort-SDR: hkmHFD9yBDahXu047D7toqPMzCvmdTEqq08+B+t5k7yOm/qrIp/F6w6CKN1yfU58aqh4T7Rb0L
+ Age71T7+Fa5w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.78,364,1599548400"; 
-   d="scan'208";a="370270670"
+   d="scan'208";a="370236158"
 Received: from lkp-server01.sh.intel.com (HELO 1138cb5768e3) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 23 Nov 2020 19:16:44 -0800
+  by orsmga007.jf.intel.com with ESMTP; 23 Nov 2020 19:16:45 -0800
 Received: from kbuild by 1138cb5768e3 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1khOou-0000Jo-21; Tue, 24 Nov 2020 03:16:44 +0000
-Date:   Tue, 24 Nov 2020 11:16:02 +0800
+        id 1khOou-0000Jr-Mg; Tue, 24 Nov 2020 03:16:44 +0000
+Date:   Tue, 24 Nov 2020 11:15:50 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:renesas-arm-soc-for-v5.11] BUILD SUCCESS
- d4a617c9bbef94e4a776901cf12c95eafd54504a
-Message-ID: <5fbc7af2.cuX+9LvZ+RPs20RC%lkp@intel.com>
+Subject: [renesas-devel:renesas-arm-drivers-for-v5.11] BUILD SUCCESS
+ c01f4b1c02123170959e4d4766df939925c1e6b4
+Message-ID: <5fbc7ae6.+8DVCwbSeCeQPZdW%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -55,13 +55,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-arm-soc-for-v5.11
-branch HEAD: d4a617c9bbef94e4a776901cf12c95eafd54504a  ARM: shmobile: Stop using __raw_*() I/O accessors
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  renesas-arm-drivers-for-v5.11
+branch HEAD: c01f4b1c02123170959e4d4766df939925c1e6b4  soc: renesas: rmobile-sysc: Stop using __raw_*() I/O accessors
 
 elapsed time: 722m
 
-configs tested: 144
-configs skipped: 59
+configs tested: 152
+configs skipped: 2
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -82,6 +82,12 @@ arm                     eseries_pxa_defconfig
 arm                      tct_hammer_defconfig
 powerpc                 mpc8560_ads_defconfig
 arm                         s5pv210_defconfig
+arm                       mainstone_defconfig
+arm                          moxart_defconfig
+openrisc                         alldefconfig
+ia64                                defconfig
+arm                        mvebu_v5_defconfig
+powerpc                      makalu_defconfig
 mips                             allyesconfig
 arm                        keystone_defconfig
 mips                           ip32_defconfig
@@ -90,7 +96,6 @@ x86_64                           allyesconfig
 sh                        apsh4ad0a_defconfig
 xtensa                          iss_defconfig
 powerpc                     skiroot_defconfig
-powerpc                      makalu_defconfig
 powerpc                        icon_defconfig
 powerpc                      tqm8xx_defconfig
 m68k                        mvme16x_defconfig
@@ -116,12 +121,16 @@ nios2                         3c120_defconfig
 sh                             espt_defconfig
 powerpc                      bamboo_defconfig
 powerpc                      ppc6xx_defconfig
+sh                          landisk_defconfig
+mips                           mtx1_defconfig
+mips                        nlm_xlr_defconfig
+xtensa                       common_defconfig
+mips                      maltaaprp_defconfig
 nds32                            alldefconfig
 arm                         cm_x300_defconfig
 mips                        jmr3927_defconfig
 ia64                      gensparse_defconfig
 mips                     decstation_defconfig
-arm                        mvebu_v5_defconfig
 m68k                             allmodconfig
 arm                            xcep_defconfig
 arm                        mvebu_v7_defconfig
@@ -148,7 +157,6 @@ xtensa                generic_kc705_defconfig
 mips                          rb532_defconfig
 powerpc                 canyonlands_defconfig
 ia64                             allmodconfig
-ia64                                defconfig
 ia64                             allyesconfig
 m68k                                defconfig
 m68k                             allyesconfig
