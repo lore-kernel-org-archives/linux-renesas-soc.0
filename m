@@ -2,185 +2,144 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F46C2D0E4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Nov 2020 03:16:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFB0C64E7A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Nov 2020 09:04:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5DF6020857
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Nov 2020 03:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D15020782
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Nov 2020 09:04:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728996AbgKXDQ4 (ORCPT
+        id S1731055AbgKXJEb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 23 Nov 2020 22:16:56 -0500
-Received: from mga02.intel.com ([134.134.136.20]:44286 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728990AbgKXDQz (ORCPT
+        Tue, 24 Nov 2020 04:04:31 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39112 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731023AbgKXJE0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 23 Nov 2020 22:16:55 -0500
-IronPort-SDR: dmBnrubdlTKbax/wV2DGp0PXe+ctqq+dpC55L7omvjewUr/sYzFRYzhkY1QKchRJJ3JXSIRM7T
- wlGfm8z4woKg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9814"; a="158925222"
-X-IronPort-AV: E=Sophos;i="5.78,364,1599548400"; 
-   d="scan'208";a="158925222"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Nov 2020 19:16:47 -0800
-IronPort-SDR: cEkgiSVe6hIW+2iWDFoVuEbqTa3olSpJcqZmDhrPPvKGqE4DqmD+6IOb72vUGddfJNDA7plCN0
- DhnWKzn6TY/Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.78,364,1599548400"; 
-   d="scan'208";a="358671907"
-Received: from lkp-server01.sh.intel.com (HELO 1138cb5768e3) ([10.239.97.150])
-  by orsmga008.jf.intel.com with ESMTP; 23 Nov 2020 19:16:45 -0800
-Received: from kbuild by 1138cb5768e3 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1khOou-0000Ju-UR; Tue, 24 Nov 2020 03:16:44 +0000
-Date:   Tue, 24 Nov 2020 11:15:44 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:master] BUILD SUCCESS
- 718ef9c3945c913ae453f35905d308248abf0093
-Message-ID: <5fbc7ae0.tNEmpm3EpeMbZxW2%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Tue, 24 Nov 2020 04:04:26 -0500
+Received: by mail-oi1-f196.google.com with SMTP id f11so23034876oij.6;
+        Tue, 24 Nov 2020 01:04:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HDln+MF4Og4pxTzlbRB1WWrgmraT8A0lS+6Tk698BA0=;
+        b=MRc48UHgRKOdZdt0JyOtCDmirIpAyLFyjbdDIx2tbLdf8bPJEVsgKpa2ZfjtyengmI
+         7lBA5GWsAqBAiEMOTItMs5Uw8FOAASIo3RzTnCDWTT4udSdgzLYQlOxtW+FNh6dGiEIx
+         18D/hEcO6wS05MofZ1i3n6TG6pheLCyMNb3F9o75f55HwYMkLrWZre9KXoogQPdSv4qE
+         AtqwPARU8x8sWU31nB8u1t6zJpZ7Bb3hZJ6LF7T0jq+ISdiPfsPCcOFtyG0L++jzX+0G
+         2UVbIpC/0gf+Kvy045EQCaqixq4HMYdWKIiFAR1eKVuQKFGYK08h26piYi4q41SsWmYg
+         6gqw==
+X-Gm-Message-State: AOAM531k/OqQnSVuVkBZCU1FPqMAkNklDPiJUUumQLdELYxHz0qYOW39
+        G5JskSqKdfRI6xDtFdoRSIuVd78uOHoyqmwSJ5U=
+X-Google-Smtp-Source: ABdhPJxNFA/tZqDvBNTpqCkcGvjFOSJprxFigqV1tG5tuqSnrmVFEbhmW8IbUU/K4hYLxaPpIgDUFL6cm7YVYbGdY5s=
+X-Received: by 2002:aca:1c0f:: with SMTP id c15mr2169564oic.54.1606208665308;
+ Tue, 24 Nov 2020 01:04:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+References: <20201120151343.24175-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20201120151343.24175-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 24 Nov 2020 10:04:13 +0100
+Message-ID: <CAMuHMdXAB-eUAMSeptptajr0eReHXHFuoR5HZkB-X+AKBUsyxA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: r8a7742-iwg21d-q7-dbcm-ca: Add OV7725 nodes
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
-branch HEAD: 718ef9c3945c913ae453f35905d308248abf0093  Merge branch 'renesas-next' into renesas-devel
+Hi Prabhakar,
 
-elapsed time: 722m
+On Fri, Nov 20, 2020 at 4:13 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add the ov7725 endpoint nodes to the camera daughter board. The ov7725
+> sensors can be populated on I2C{0,1,2,3} buses.
+>
+> By default the VIN{0,1,2,3} are tied to OV5640{0,1,2,3} endpoints
+> respectively in the camera DB dts hence the remote-endpoint property in
+> OV7725{0,1,2,3} endpoints is commented out.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-configs tested: 111
-configs skipped: 2
+Thanks for your patch!
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+The camera definitions look mostly OK to me.
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-powerpc                      pcm030_defconfig
-arm                         s3c6400_defconfig
-sh                        sh7763rdp_defconfig
-powerpc                        warp_defconfig
-arm                             ezx_defconfig
-mips                         bigsur_defconfig
-arm                        spear6xx_defconfig
-powerpc                 mpc8560_ads_defconfig
-alpha                               defconfig
-sh                           sh2007_defconfig
-riscv                          rv32_defconfig
-mips                             allyesconfig
-arm                        keystone_defconfig
-mips                           ip32_defconfig
-arm                            u300_defconfig
-powerpc                      tqm8xx_defconfig
-m68k                        mvme16x_defconfig
-powerpc                  storcenter_defconfig
-powerpc                      acadia_defconfig
-powerpc                     mpc512x_defconfig
-mips                        vocore2_defconfig
-sh                          rsk7203_defconfig
-arm                          gemini_defconfig
-arm                         s5pv210_defconfig
-sparc64                          alldefconfig
-arm                         hackkit_defconfig
-mips                         tb0219_defconfig
-arm                         lubbock_defconfig
-arm                        mini2440_defconfig
-arm                          iop32x_defconfig
-powerpc                 mpc8540_ads_defconfig
-sh                         apsh4a3a_defconfig
-powerpc                    mvme5100_defconfig
-arm                        magician_defconfig
-mips                       lemote2f_defconfig
-arm                       omap2plus_defconfig
-arm                     eseries_pxa_defconfig
-sh                          rsk7269_defconfig
-powerpc                      katmai_defconfig
-arm                          exynos_defconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-c6x                              allyesconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-parisc                              defconfig
-s390                             allyesconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-i386                 randconfig-a004-20201123
-i386                 randconfig-a003-20201123
-i386                 randconfig-a002-20201123
-i386                 randconfig-a005-20201123
-i386                 randconfig-a001-20201123
-i386                 randconfig-a006-20201123
-x86_64               randconfig-a015-20201123
-x86_64               randconfig-a011-20201123
-x86_64               randconfig-a014-20201123
-x86_64               randconfig-a016-20201123
-x86_64               randconfig-a012-20201123
-x86_64               randconfig-a013-20201123
-i386                 randconfig-a012-20201123
-i386                 randconfig-a013-20201123
-i386                 randconfig-a011-20201123
-i386                 randconfig-a016-20201123
-i386                 randconfig-a014-20201123
-i386                 randconfig-a015-20201123
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                            allmodconfig
-x86_64                                   rhel
-x86_64                           allyesconfig
-x86_64                    rhel-7.6-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                                  kexec
+IIUIC, these are 4 plug-in cameras, that can be used instead of the
+(currently described) 4 other OV5640-based plug-in cameras?
+In addition, the user can mix and match them, in the 4 available
+slots (J11-J14), which would require editing the DTS?
 
-clang tested configs:
-x86_64               randconfig-a006-20201123
-x86_64               randconfig-a003-20201123
-x86_64               randconfig-a004-20201123
-x86_64               randconfig-a005-20201123
-x86_64               randconfig-a002-20201123
-x86_64               randconfig-a001-20201123
+Wouldn't it be easier to have separate DTS files for the OV7725 and
+OV5640 cameras, and #include them from r8a7742-iwg21d-q7-dbcm-ca.dts?
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+    /* 8bit CMOS Camera 1 (J13) */
+    #define MCLK_CAM    &mclk_cam1
+    #define ...
+    /* Comment the below according to connected cameras */
+    #include "ov5640.dts"
+    //#include "ov7725.dts"
+    #undef MCLK_CAM
+    #undef ...
+
+    [...]
+
+> --- a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+> +++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+
+> @@ -152,6 +198,30 @@
+>                         };
+>                 };
+>         };
+> +
+> +       ov7725@21 {
+> +               status = "disabled";
+
+This one is disabled, the three others aren't?
+
+> +               compatible = "ovti,ov7725";
+> +               reg = <0x21>;
+> +               clocks = <&mclk_cam3>;
+> +
+> +               port {
+> +                       ov7725_2: endpoint {
+> +                               bus-width = <8>;
+> +                               bus-type = <6>;
+> +                               /*
+> +                                * uncomment remote-endpoint property to
+> +                                * tie ov7725_2 to vin2ep also make
+> +                                * sure to comment/remove remote-endpoint
+> +                                * property from ov5640_2 endpoint and
+> +                                * replace remote-endpoint property in
+> +                                * vin2ep node with
+> +                                * remote-endpoint = <&ov7725_2>;
+> +                                */
+> +                               /* remote-endpoint = <&vin2ep>; */
+> +                       };
+> +               };
+> +       };
+>  };
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
