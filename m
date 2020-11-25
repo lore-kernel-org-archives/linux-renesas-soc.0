@@ -2,91 +2,66 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A693C5519F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 25 Nov 2020 07:17:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A906FC5519F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 25 Nov 2020 07:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBA4E20B1F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 25 Nov 2020 07:17:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48A3020857
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 25 Nov 2020 07:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbgKYHR3 (ORCPT
+        id S1727527AbgKYHmP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 25 Nov 2020 02:17:29 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45003 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726708AbgKYHR3 (ORCPT
+        Wed, 25 Nov 2020 02:42:15 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:35730 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726595AbgKYHmO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 25 Nov 2020 02:17:29 -0500
-Received: by mail-oi1-f196.google.com with SMTP id y74so1744248oia.11;
-        Tue, 24 Nov 2020 23:17:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qyS68A7KMuFoblISe8M6QxBpltTR6sqwPG+dCZ5S8FE=;
-        b=CZeS96gaCpF9hqzvd0juSAPIIL/pXbmfdv0icxGIO7z6/aIBKvc6F5ZkCHIj7YOhUR
-         j7NrTK9jLy9sj1nOCObZbWgppOdQxr7u5zY+ohKs8xmTMDSwd4hkAHaw4045fp57tRF9
-         fuqpraKrC7JOlr8IyjPWQNftDdKOXOviRd5aT6yev2THZuFg3LBQl2zaNAuIzdghueFL
-         GVUMdlGFeluJStf1YwgfKBO0BNmtswseUxHBOq1iqrOJQ+MIp3qyGhsPiupmJ0E3ORAC
-         qoSCi6pbTp7gVb/BWu1g9rDwEXNx+TK4gkskvIFyYB9OvVsXQDLyn1obdD9s0kTniait
-         bKfA==
-X-Gm-Message-State: AOAM533pYhuK/z0zQ+JdczWJ6DrzBfn9oSMrx6pGz6wp/QZwEsqTkYvY
-        v+npfNv7A7jV6N+I2r3wQ5kVKGBx4DAmV7tX0o0=
-X-Google-Smtp-Source: ABdhPJyj14zPbljhO27Xvj9+1jKdzF0FLAssTkgwwij+JnnmekDCWO6+pXDdv5x78CYhXZg1G6KxfpSsLdrOs1ZgmfM=
-X-Received: by 2002:aca:4bc3:: with SMTP id y186mr1341405oia.153.1606288648251;
- Tue, 24 Nov 2020 23:17:28 -0800 (PST)
+        Wed, 25 Nov 2020 02:42:14 -0500
+X-IronPort-AV: E=Sophos;i="5.78,368,1599490800"; 
+   d="scan'208";a="63822508"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 25 Nov 2020 16:37:11 +0900
+Received: from localhost.localdomain (unknown [10.166.15.86])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E4A8E4004CE6;
+        Wed, 25 Nov 2020 16:37:10 +0900 (JST)
+From:   Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>
+To:     linux-pci@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: pci: rcar-pci-ep: Document r8a7795
+Date:   Wed, 25 Nov 2020 16:33:02 +0900
+Message-Id: <20201125073303.19057-2-yuya.hamamachi.sx@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201125073303.19057-1-yuya.hamamachi.sx@renesas.com>
+References: <20201125073303.19057-1-yuya.hamamachi.sx@renesas.com>
 MIME-Version: 1.0
-References: <20201119125053.4065746-1-geert+renesas@glider.be> <160626282503.2717324.11024656692958658754@swboyd.mtv.corp.google.com>
-In-Reply-To: <160626282503.2717324.11024656692958658754@swboyd.mtv.corp.google.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 25 Nov 2020 08:17:17 +0100
-Message-ID: <CAMuHMdWt0HizEuT-PmNrBadK=w6-gVmuBzuAHoSYGJaAabtg1Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: sh73a0: Stop using __raw_*() I/O accessors
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Arnd Bergmann <arnd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Stephen,
+Document the support for R-Car PCIe EP on R8A7795 SoC device.
 
-On Wed, Nov 25, 2020 at 1:07 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2020-11-19 04:50:53)
-> > There is no reason to keep on using the __raw_{read,write}l() I/O
-> > accessors in Renesas ARM driver code.  Switch to using the plain
-> > {read,write}l() I/O accessors, to have a chance that this works on
-> > big-endian.
-> >
-> > Suggested-by: Arnd Bergmann <arnd@kernel.org>
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
->
-> Note that this now includes a barrier. It wasn't mentioned in the commit
-> text so I'm just mentioning it now in case having a barrier now causes
-> some sort of problem, which is highly unlikely.
+Signed-off-by: Yuya Hamamachi <yuya.hamamachi.sx@renesas.com>
+---
+ Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Indeed, the barrier doesn't matter here.
-
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+index 84eeb7fe6e01..fb97f4ea0e63 100644
+--- a/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
++++ b/Documentation/devicetree/bindings/pci/rcar-pci-ep.yaml
+@@ -19,6 +19,7 @@ properties:
+           - renesas,r8a774b1-pcie-ep     # RZ/G2N
+           - renesas,r8a774c0-pcie-ep     # RZ/G2E
+           - renesas,r8a774e1-pcie-ep     # RZ/G2H
++          - renesas,r8a7795-pcie-ep      # R-Car H3
+       - const: renesas,rcar-gen3-pcie-ep # R-Car Gen3 and RZ/G2
+ 
+   reg:
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
