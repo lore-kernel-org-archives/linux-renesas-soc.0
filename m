@@ -2,67 +2,65 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA40C6379D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 19:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C1E3C56202
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 19:38:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51E8621973
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 19:33:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA6B821D7E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 19:38:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgPQcCxN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tYjcVBLK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732613AbgKZTdg (ORCPT
+        id S2404194AbgKZTiB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 26 Nov 2020 14:33:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56698 "EHLO
+        Thu, 26 Nov 2020 14:38:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728078AbgKZTdg (ORCPT
+        with ESMTP id S1728078AbgKZTiA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Nov 2020 14:33:36 -0500
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA1B1C0613D4;
-        Thu, 26 Nov 2020 11:33:35 -0800 (PST)
-Received: by mail-lj1-x244.google.com with SMTP id t22so3510229ljk.0;
-        Thu, 26 Nov 2020 11:33:35 -0800 (PST)
+        Thu, 26 Nov 2020 14:38:00 -0500
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57D2BC0613D4;
+        Thu, 26 Nov 2020 11:38:00 -0800 (PST)
+Received: by mail-lf1-x142.google.com with SMTP id t6so3937685lfl.13;
+        Thu, 26 Nov 2020 11:38:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0Gz+M9IfD+qGLBaMKNLa97bF26clyC9BCzo6sAtKUI8=;
-        b=jgPQcCxNavgwQSFkaOL1RzAPSSbAWhb5D8LceQW6OTW12eBdjZr7dd+SB8bH8qYxD1
-         c8ZTcL+5TfOi5pljot/npbolUrPbA6MHR+fAPBPi2JubA+n100BaC2ZpIWizKW91wDFZ
-         /NkpWbXRb3VcRPDv0j3qen8+mVmrGCFhSmUiv4sP6QFMIyCybUnIALR56kfpTj1DgGlv
-         bQ5nNYDnNX+L1ZgdgBKkw1ywD6akayuMYDw1KHZ2muoQpbE6ybxtPmRJ/sVjY6hiVYX7
-         ISADAXqsnlH2rQB9cbeY+VNOZZXgnnQ3NFsj4SfoTl8VX+ufd9t0QoyufpOlkTzjFXxU
-         SxSA==
+        bh=5QyGNLQXxlgfPVb7GFlTMWTGFOCo2TM20uYJcJe6adg=;
+        b=tYjcVBLKofRyux7TmpRywDhK2h5xeftj8t6LIJX9Fdt6qwu8OPwg7NBnTKs30qKfl1
+         wb5vXtGCYcVho2O3NW0jz8lJlFpR0eFbPQNEHirTDgdyfuVsvIuKuWS84PsJvikejCLs
+         ozA1BrNb3k69cuPf6PAl2eEfuj4EcrpMOB+O2hgZ6KN+6JuX1CKeVAXOHMxnMVHksBvb
+         Vj6QhWpVjOFU85WuZ2Yw1A81SccA7vSa9HxabwXLdZ7iiOzi89CeofTiQzZVUUnr2yUb
+         LliDWx1v7Lgx/pI0+5XyJpQhAKo+id8yO0WVanaS3w09DmoNO7w2dE40v+QeBOpAynjU
+         uaTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=0Gz+M9IfD+qGLBaMKNLa97bF26clyC9BCzo6sAtKUI8=;
-        b=ohcOhTpP125esbcRXRVUqCpp8l11mNsnVrHXQ9vIdx+BhJE8X4/phqY8UuS8mOpA6j
-         IQIZJA+y4qnuubvNKddbI8ZwwJOYq5UrT+DxtspXgLa1EG3yHyDQv8Q83KQjEybJuLph
-         e+8jE85pjwyh7ekVwzcHTaE/MeeNTPMZm4oiDS5vNlcc/EEzdZ0XyREde9FEiZHxQRTs
-         Zbx8Jf3SvkLMCWLQaN5ptMwk2VHEuKF4DndZh+xmNQcqhQViUv0qEiLSdqB0TLviukb4
-         UarNft7b7JT59EYvSucD0mCNmajXL5zNyOrMH6pVGOYHihTi9A3h7SfO5x1qdPjnyEx7
-         YDNQ==
-X-Gm-Message-State: AOAM531+PuLC7kLf3M9CF8MFZv1DzoebJHSfaU7hl8mBI+/VIeAdg2lU
-        kK4KQyOMlpg9DXqCtvVgmUdp7vU+EpHLag==
-X-Google-Smtp-Source: ABdhPJwJLck7QX/0Y/7/+O4AocTsS9qJNaemJ9an7USw23rpqW9T4yoSV3EC9/d4FOSUyoJlRAGntg==
-X-Received: by 2002:a2e:8745:: with SMTP id q5mr1819437ljj.347.1606419213990;
-        Thu, 26 Nov 2020 11:33:33 -0800 (PST)
+        bh=5QyGNLQXxlgfPVb7GFlTMWTGFOCo2TM20uYJcJe6adg=;
+        b=g6ADl+A3Zu8jIHfL6hFW6cMh0mKd8b8tq9o/ImHPL4oNDlHgR8DeLxgKZDc6ROoIPD
+         TghCxU1/m4TPMTrHA7YV4mgNtMePjNMIGdFQCwjusLFEb0pZUEpARicw/TIc4ha2RHCg
+         VEVziCt9ZoM5nV9cGvk30ff9PdqvfT85qNEDeU13tUDttaySQ2QIOQcMGlYLdDKfaKrq
+         wk1vchOxzjKPYirIrFp3F2lCDKfPc/G3rXWxgFpsDtxkk/O0iL71jbLhJNyXrjFp46Wr
+         kwKJHdlpKkj31BCfn+h2ezBh7p41u8uPoWbcwJw01xOQE98J1+sZaIVUMRGR07o8T1VM
+         PJfg==
+X-Gm-Message-State: AOAM531PHZ9La5taa+GygW/OUL9wID6NPMVF2+regDreCL6LPAo4mFKT
+        Mv53fPFz0nzyCMj34yFW5gI=
+X-Google-Smtp-Source: ABdhPJxPeCHQTiePLnWS07bgYBnjfw5VFvp2iXJdXUO4AX6rmkHZRIuoGt9lC3HQCvoSF5HUpEqPkQ==
+X-Received: by 2002:a19:c815:: with SMTP id y21mr1816781lff.589.1606419478722;
+        Thu, 26 Nov 2020 11:37:58 -0800 (PST)
 Received: from ?IPv6:2a00:1fa0:4282:4e35:1b33:42ef:d169:a655? ([2a00:1fa0:4282:4e35:1b33:42ef:d169:a655])
-        by smtp.gmail.com with ESMTPSA id f26sm417449lfl.159.2020.11.26.11.33.32
+        by smtp.gmail.com with ESMTPSA id 202sm416680lfg.203.2020.11.26.11.37.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Nov 2020 11:33:33 -0800 (PST)
-Subject: Re: [PATCH v2 2/5] memory: renesas-rpc-if: Fix unbalanced
- pm_runtime_enable in rpcif_{enable,disable}_rpm
+        Thu, 26 Nov 2020 11:37:58 -0800 (PST)
+Subject: Re: [PATCH v2 0/5] memory: renesas-rpc-if: Trivial fixes
 To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
         Philipp Zabel <p.zabel@pengutronix.de>,
@@ -71,16 +69,15 @@ To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, Pavel Machek <pavel@denx.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>, stable@vger.kernel.org
+        Prabhakar <prabhakar.csengg@gmail.com>
 References: <20201126191146.8753-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20201126191146.8753-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
 From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Message-ID: <0d051546-4c91-8f2b-f189-5bd8848a9f69@gmail.com>
-Date:   Thu, 26 Nov 2020 22:33:32 +0300
+Message-ID: <a42dc8dd-9a67-bf5b-c289-ae73c5218dc5@gmail.com>
+Date:   Thu, 26 Nov 2020 22:37:57 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.4.0
 MIME-Version: 1.0
-In-Reply-To: <20201126191146.8753-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20201126191146.8753-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -90,19 +87,19 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On 11/26/20 10:11 PM, Lad Prabhakar wrote:
 
-> rpcif_enable_rpm calls pm_runtime_enable, so rpcif_disable_rpm needs to
-> call pm_runtime_disable and not pm_runtime_put_sync.
+> This patch series fixes trivial issues in RPC-IF driver.
 > 
-> Fixes: ca7d8b980b67f ("memory: add Renesas RPC-IF driver")
-> Reported-by: Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Changes for v2:
+> * Balanced PM in rpcif_disable_rpm
+> * Fixed typo in patch 4/5
+> * Dropped C++ style fixes patch
 
-   Reported by reported? :-)
+   The part that fixed the comment style wasd good, you should\ve kept it...
 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Cc: stable@vger.kernel.org
-
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@gmail.com>
-
+> * Included RB tags from Sergei
+> 
+> Cheers,
+> Prabhakar
 [...]
 
 MBR, Sergei
