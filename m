@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E81C63697
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3EFC64E75
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F96621D7F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4489821D7E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="XT4mEIvM"
+	dkim=pass (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="lrpvZKf1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404147AbgKZR2E (ORCPT
+        id S2403903AbgKZR2G (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 26 Nov 2020 12:28:04 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:36550 "EHLO
+        Thu, 26 Nov 2020 12:28:06 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.169]:21252 "EHLO
         mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726677AbgKZR2E (ORCPT
+        with ESMTP id S2404169AbgKZR2G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Nov 2020 12:28:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1606411682;
+        Thu, 26 Nov 2020 12:28:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1606411684;
         s=strato-dkim-0002; d=fpond.eu;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=Ttit0N0/z8Wj4oY2cmg9r8oZypuhbulbYvLqQcA3QUw=;
-        b=XT4mEIvM2w6au+USs/nGHSyO0c7SkTTCmvLQXEKaquD9YvVZYP387nRVqzrpv4JkiL
-        YBmU1/sO2qr4AVTeTwLdQduAzpgA2Gcy9syMgJvc03l2Kg9dHdjaA8cOnegjJ6MG1t+k
-        YRqG2CckLEwT7E5TBCfpNvGv0b9QNCAnybCQLrGJ4CP/mgxWlpp8aSQ4gofCXXjppzwT
-        pc+j4E1FFVxda9Z1rQJbf9oWNDdrqG6RXOuUQsaMYDrBwRd9/7vjjke7ZKD5CiLeaq4I
-        lqh4h5D3qYftBAVGjgu4dCJuT1tVbV/VhGe528bQvYqoACvqcq/NC/+OIWncMhHCrq7D
-        A4VA==
+        bh=nvQNbue7AhD6cq+KqS/H2LTt6NJvgGEYUVfwXlp5yGo=;
+        b=lrpvZKf1kHE9H6qoHNaTp51UB/xHcwQzlABnjl2iTtTAyCpK1k955CC20BZqqQTBx9
+        r523c6C2XlZURCn08q/bPIY/Cmmkvo3xr6xzxvvXUm7+MF5c4TaVzX+a9zQWp6HMgNC7
+        BWT7eeLA5cNGLfycBKFZUeCFJVOYzgWGqXBCYfjBsw7ZH4ZQDR1Jh+CBZWVE9CBLafUz
+        0nIuNvhSYwgudn2uQoZH1pdVAwCjvzAkUygtIF7cuV7ndccr8/cJTWykVKY/4Qj0JdF6
+        bFfUEpAhcrjf1dNZxOTsoddQOdP+B7urDFuFSwnA5bEnDoPRGp1MB+Pb07wnS5Z2UL5l
+        ETPA==
 X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR82ped3jxkhQ="
 X-RZG-CLASS-ID: mo00
 Received: from groucho.site
         by smtp.strato.de (RZmta 47.3.3 DYNA|AUTH)
-        with ESMTPSA id 60ba70wAQHM1Mpg
+        with ESMTPSA id 60ba70wAQHM4Mpl
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Thu, 26 Nov 2020 18:22:01 +0100 (CET)
+        Thu, 26 Nov 2020 18:22:04 +0100 (CET)
 From:   Ulrich Hecht <uli+renesas@fpond.eu>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     wsa@the-dreams.de, geert@linux-m68k.org, hoai.luu.ub@renesas.com,
         Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH 03/11] pinctrl: renesas: r8a779a0: Add DU pins, groups and function
-Date:   Thu, 26 Nov 2020 18:21:46 +0100
-Message-Id: <20201126172154.25625-4-uli+renesas@fpond.eu>
+Subject: [PATCH 08/11] pinctrl: renesas: r8a779a0: Add PWM pins, groups and functions
+Date:   Thu, 26 Nov 2020 18:21:51 +0100
+Message-Id: <20201126172154.25625-9-uli+renesas@fpond.eu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201126172154.25625-1-uli+renesas@fpond.eu>
 References: <20201126172154.25625-1-uli+renesas@fpond.eu>
@@ -58,109 +58,123 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds DU pins, groups and function for the R8A779A0 (V3U) SoC.
+This patch adds PWM0-4 pins, groups and functions to the R8A779A0 (V3U)
+SoC.
 
 Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 ---
- drivers/pinctrl/renesas/pfc-r8a779a0.c | 64 ++++++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+ drivers/pinctrl/renesas/pfc-r8a779a0.c | 77 ++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
 diff --git a/drivers/pinctrl/renesas/pfc-r8a779a0.c b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-index 725d6b58bb4d..9b1f140372fd 100644
+index 403c6fca3282..a5ed01a50857 100644
 --- a/drivers/pinctrl/renesas/pfc-r8a779a0.c
 +++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-@@ -1736,6 +1736,53 @@ static const unsigned int canfd_clk_mux[] = {
- 	CAN_CLK_MARK,
+@@ -2306,6 +2306,51 @@ static const unsigned int msiof5_rxd_mux[] = {
+ 	MSIOF5_RXD_MARK,
  };
  
-+/* - DU --------------------------------------------------------------------- */
-+static const unsigned int du_rgb888_pins[] = {
-+	/* DU_DR[7:2], DU_DG[7:2], DU_DB[7:2] */
-+	RCAR_GP_PIN(1, 11), RCAR_GP_PIN(1, 10), RCAR_GP_PIN(1, 9),
-+	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 7), RCAR_GP_PIN(1, 6),
-+	RCAR_GP_PIN(1, 17), RCAR_GP_PIN(1, 16), RCAR_GP_PIN(1, 15),
-+	RCAR_GP_PIN(1, 14), RCAR_GP_PIN(1, 13), RCAR_GP_PIN(1, 12),
-+	RCAR_GP_PIN(1, 23), RCAR_GP_PIN(1, 22), RCAR_GP_PIN(1, 21),
-+	RCAR_GP_PIN(1, 20), RCAR_GP_PIN(1, 19), RCAR_GP_PIN(1, 18),
++/* - PWM0 ------------------------------------------------------------------- */
++static const unsigned int pwm0_pins[] = {
++	/* PWM0 */
++	RCAR_GP_PIN(3, 5),
 +};
-+static const unsigned int du_rgb888_mux[] = {
-+	DU_DR7_MARK, DU_DR6_MARK, DU_DR5_MARK,
-+	DU_DR4_MARK, DU_DR3_MARK, DU_DR2_MARK,
-+	DU_DG7_MARK, DU_DG6_MARK, DU_DG5_MARK,
-+	DU_DG4_MARK, DU_DG3_MARK, DU_DG2_MARK,
-+	DU_DB7_MARK, DU_DB6_MARK, DU_DB5_MARK,
-+	DU_DB4_MARK, DU_DB3_MARK, DU_DB2_MARK,
-+};
-+static const unsigned int du_clk_out_pins[] = {
-+	/* DU_DOTCLKOUT */
-+	RCAR_GP_PIN(1, 24),
-+};
-+static const unsigned int du_clk_out_mux[] = {
-+	DU_DOTCLKOUT_MARK,
-+};
-+static const unsigned int du_oddf_pins[] = {
-+	/* DU_EXODDF/DU_ODDF/DISP/CDE */
-+	RCAR_GP_PIN(1, 27),
-+};
-+static const unsigned int du_oddf_mux[] = {
-+	DU_ODDF_DISP_CDE_MARK,
-+};
-+static const unsigned int du_cde_pins[] = {
-+	/* DU_CDE */
-+	RCAR_GP_PIN(1, 27),
-+};
-+static const unsigned int du_cde_mux[] = {
-+	DU_ODDF_DISP_CDE_MARK,
-+};
-+static const unsigned int du_disp_pins[] = {
-+	/* DU_DISP */
-+	RCAR_GP_PIN(1, 27),
-+};
-+static const unsigned int du_disp_mux[] = {
-+	DU_ODDF_DISP_CDE_MARK,
++static const unsigned int pwm0_mux[] = {
++	PWM0_MARK,
 +};
 +
- /* - I2C0 ------------------------------------------------------------------- */
- 
- static const unsigned int i2c0_pins[] = {
-@@ -1972,6 +2019,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(canfd7_data),
- 	SH_PFC_PIN_GROUP(canfd_clk),
- 
-+	SH_PFC_PIN_GROUP(du_rgb888),
-+	SH_PFC_PIN_GROUP(du_clk_out),
-+	SH_PFC_PIN_GROUP(du_oddf),
-+	SH_PFC_PIN_GROUP(du_cde),
-+	SH_PFC_PIN_GROUP(du_disp),
++/* - PWM1 ------------------------------------------------------------------- */
++static const unsigned int pwm1_pins[] = {
++	/* PWM1 */
++	RCAR_GP_PIN(3, 6),
++};
++static const unsigned int pwm1_mux[] = {
++	PWM1_MARK,
++};
 +
- 	SH_PFC_PIN_GROUP(i2c0),
- 	SH_PFC_PIN_GROUP(i2c1),
- 	SH_PFC_PIN_GROUP(i2c2),
-@@ -2103,6 +2156,15 @@ static const char * const canfd_clk_groups[] = {
- 	"canfd_clk",
++/* - PWM2 ------------------------------------------------------------------- */
++static const unsigned int pwm2_pins[] = {
++	/* PWM2 */
++	RCAR_GP_PIN(3, 7),
++};
++static const unsigned int pwm2_mux[] = {
++	PWM2_MARK,
++};
++
++/* - PWM3 ------------------------------------------------------------------- */
++static const unsigned int pwm3_pins[] = {
++	/* PWM3 */
++	RCAR_GP_PIN(3, 8),
++};
++static const unsigned int pwm3_mux[] = {
++	PWM3_MARK,
++};
++
++/* - PWM4 ------------------------------------------------------------------- */
++static const unsigned int pwm4_pins[] = {
++	/* PWM4 */
++	RCAR_GP_PIN(3, 9),
++};
++static const unsigned int pwm4_mux[] = {
++	PWM4_MARK,
++};
++
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX0, TX0 */
+@@ -2545,6 +2590,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(msiof3_txd),
+ 	SH_PFC_PIN_GROUP(msiof3_rxd),
+ 
++	SH_PFC_PIN_GROUP(pwm0),
++	SH_PFC_PIN_GROUP(pwm1),
++	SH_PFC_PIN_GROUP(pwm2),
++	SH_PFC_PIN_GROUP(pwm3),
++	SH_PFC_PIN_GROUP(pwm4),
++
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -2784,6 +2835,26 @@ static const char * const msiof3_groups[] = {
+ 	"msiof3_rxd",
  };
  
-+static const char * const du_groups[] = {
-+	"du_rgb888",
-+	"du_clk_out",
-+	"du_sync",
-+	"du_oddf",
-+	"du_cde",
-+	"du_disp",
++static const char * const pwm0_groups[] = {
++	"pwm0",
 +};
 +
- static const char * const i2c0_groups[] = {
- 	"i2c0",
- };
-@@ -2177,6 +2239,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(canfd7),
- 	SH_PFC_FUNCTION(canfd_clk),
- 
-+	SH_PFC_FUNCTION(du),
++static const char * const pwm1_groups[] = {
++	"pwm1",
++};
 +
- 	SH_PFC_FUNCTION(i2c0),
- 	SH_PFC_FUNCTION(i2c1),
- 	SH_PFC_FUNCTION(i2c2),
++static const char * const pwm2_groups[] = {
++	"pwm2",
++};
++
++static const char * const pwm3_groups[] = {
++	"pwm3",
++};
++
++static const char * const pwm4_groups[] = {
++	"pwm4",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -2854,6 +2925,12 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(msiof2),
+ 	SH_PFC_FUNCTION(msiof3),
+ 
++	SH_PFC_FUNCTION(pwm0),
++	SH_PFC_FUNCTION(pwm1),
++	SH_PFC_FUNCTION(pwm2),
++	SH_PFC_FUNCTION(pwm3),
++	SH_PFC_FUNCTION(pwm4),
++
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(scif3),
 -- 
 2.20.1
 
