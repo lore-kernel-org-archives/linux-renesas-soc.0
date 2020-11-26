@@ -2,89 +2,146 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29EC9C56202
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D3DCC63697
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DAF2D21D7E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:27:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C94C321D7F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="Z1K+GVL7"
+	dkim=pass (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="cezG0rod"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391670AbgKZR17 (ORCPT
+        id S2391347AbgKZR2A (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 26 Nov 2020 12:27:59 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:16693 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391347AbgKZR17 (ORCPT
+        Thu, 26 Nov 2020 12:28:00 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:15210 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391667AbgKZR2A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Nov 2020 12:27:59 -0500
+        Thu, 26 Nov 2020 12:28:00 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1606411678;
         s=strato-dkim-0002; d=fpond.eu;
-        h=Message-Id:Date:Subject:Cc:To:From:X-RZG-CLASS-ID:X-RZG-AUTH:From:
-        Subject:Sender;
-        bh=k5JOWTy3QxI7WVOocCw0MKMvftvz6NJfEFSIxUiwzds=;
-        b=Z1K+GVL7jxsNuvyY8fjFzxyJQ17qPLf2yeK/5PPtDYwe2AcQ+k0gPSoSxNRSl1I5ie
-        +V+OdqHCZEvCQmkBZF1J8OlnScpqYjZ2R25yXGOp9IAR3rsiEIEaYK/6nOoRBtJjil95
-        wHn/izy3XrnSJXCxeoXzB3Y/kJakjqTo/MhEobw30z+44Evnif9AoJJ475xSA5GDns2s
-        gXw5hRZa/rdxESFFIiZPS5B3Dfu3AbKpnhggxSEcPvLnzNHy6CPWtyF3Nrj3oEWpAiC8
-        lUzXUSGvz4xiqFshobq+otyJXtFADXpAYPt3KDVsQnJsVGJ1K3qYPo29j8uuwLb5XavT
-        kNoA==
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=xTVPd3sSSkFH3682ltza1NAYTOpPttElFcVGbTLCr9w=;
+        b=cezG0rodITAhEYBLedGvVircsMNsd2g3OdJcp0ZavTo47IqYPPs8v0Pq9nhqH+IsW2
+        QirVxQVF17xWXGZSI2DgEGden1grlzZ8EkrHQRmA549lZPzrgX5MXVHC1wkjmW21Hz+F
+        yYMhDFzJuSEKup5r9Vin6gLya18eOLXsvervWkJA6gHSSoJdpv7sb/ab2CUQb11BY3lC
+        jNRVoOtop6RNpAqFTrw/n6mItPIWw3KSyj0gszo10o3d3G5a2JAQOmRHHX6ffXnz1S6B
+        DdtgJMNLcXCASc8h8A+ELflCpwRs04DuJLxtEwbv9GzfyYLfiaop11xOipJ4t0CAqg0r
+        l4Pw==
 X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR82ped3jxkhQ="
 X-RZG-CLASS-ID: mo00
 Received: from groucho.site
         by smtp.strato.de (RZmta 47.3.3 DYNA|AUTH)
-        with ESMTPSA id 60ba70wAQHLwMpd
+        with ESMTPSA id 60ba70wAQHM6Mpo
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Thu, 26 Nov 2020 18:21:58 +0100 (CET)
+        Thu, 26 Nov 2020 18:22:06 +0100 (CET)
 From:   Ulrich Hecht <uli+renesas@fpond.eu>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     wsa@the-dreams.de, geert@linux-m68k.org, hoai.luu.ub@renesas.com,
         Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH 00/11] pinctrl: renesas: R8A779A0 (V3U) device support
-Date:   Thu, 26 Nov 2020 18:21:43 +0100
-Message-Id: <20201126172154.25625-1-uli+renesas@fpond.eu>
+Subject: [PATCH 11/11] pinctrl: renesas: r8a779a0: Add TPU pins, groups and functions
+Date:   Thu, 26 Nov 2020 18:21:54 +0100
+Message-Id: <20201126172154.25625-12-uli+renesas@fpond.eu>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20201126172154.25625-1-uli+renesas@fpond.eu>
+References: <20201126172154.25625-1-uli+renesas@fpond.eu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi!
+Add pins, groups and functions for the 16-Bit Timer Pulse Unit outputs
+on the R-Car R8A779A0 (V3U) SoC.
 
-This series adds V3U pin control support for EtherAVB, CANFD, DU, HSCIF,
-INTC-EX, MMC, MSIOF, PWM, QSPI, TMU and TPU.
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+---
+ drivers/pinctrl/renesas/pfc-r8a779a0.c | 44 ++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-It has been ported from the BSP and has been compile-tested only. It
-depends on the "pinctrl: renesas: basic R8A779A0 (V3U) support" series
-posted earlier.
-
-CU
-Uli
-
-
-Ulrich Hecht (11):
-  pinctrl: renesas: r8a779a0: Add EtherAVB pins, groups and functions
-  pinctrl: renesas: r8a779a0: Add CANFD pins, groups and functions
-  pinctrl: renesas: r8a779a0: Add DU pins, groups and function
-  pinctrl: renesas: r8a779a0: Add HSCIF pins, groups and functions
-  pinctrl: renesas: r8a779a0: Add INTC-EX pins, groups and function
-  pinctrl: renesas: r8a779a0: Add MMC pins, groups and functions
-  pinctrl: renesas: r8a779a0: Add MSIOF pins, groups and functions
-  pinctrl: renesas: r8a779a0: Add PWM pins, groups and functions
-  pinctrl: renesas: r8a779a0: Add QSPI pins, groups, and functions
-  pinctrl: renesas: r8a779a0: Add TMU pins, groups and functions
-  pinctrl: renesas: r8a779a0: Add TPU pins, groups and functions
-
- drivers/pinctrl/renesas/pfc-r8a779a0.c | 1641 ++++++++++++++++++++++++
- 1 file changed, 1641 insertions(+)
-
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779a0.c b/drivers/pinctrl/renesas/pfc-r8a779a0.c
+index 4aa725b3fbca..ec5d9708a5e9 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779a0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
+@@ -2535,6 +2535,36 @@ static const unsigned int tmu_tclk4_mux[] = {
+ 	TCLK4_MARK,
+ };
+ 
++/* - TPU ------------------------------------------------------------------- */
++static const unsigned int tpu_to0_pins[] = {
++	/* TPU0TO0 */
++	RCAR_GP_PIN(2, 21),
++};
++static const unsigned int tpu_to0_mux[] = {
++	TPU0TO0_MARK,
++};
++static const unsigned int tpu_to1_pins[] = {
++	/* TPU0TO1 */
++	RCAR_GP_PIN(2, 22),
++};
++static const unsigned int tpu_to1_mux[] = {
++	TPU0TO1_MARK,
++};
++static const unsigned int tpu_to2_pins[] = {
++	/* TPU0TO2 */
++	RCAR_GP_PIN(3, 5),
++};
++static const unsigned int tpu_to2_mux[] = {
++	TPU0TO2_MARK,
++};
++static const unsigned int tpu_to3_pins[] = {
++	/* TPU0TO3 */
++	RCAR_GP_PIN(3, 6),
++};
++static const unsigned int tpu_to3_mux[] = {
++	TPU0TO3_MARK,
++};
++
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(avb0_link),
+ 	SH_PFC_PIN_GROUP(avb0_magic),
+@@ -2704,6 +2734,11 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(tmu_tclk2),
+ 	SH_PFC_PIN_GROUP(tmu_tclk3),
+ 	SH_PFC_PIN_GROUP(tmu_tclk4),
++
++	SH_PFC_PIN_GROUP(tpu_to0),
++	SH_PFC_PIN_GROUP(tpu_to1),
++	SH_PFC_PIN_GROUP(tpu_to2),
++	SH_PFC_PIN_GROUP(tpu_to3),
+ };
+ 
+ static const char * const avb0_groups[] = {
+@@ -2997,6 +3032,13 @@ static const char * const tmu_groups[] = {
+ 	"tmu_tclk4",
+ };
+ 
++static const char * const tpu_groups[] = {
++	"tpu_to0",
++	"tpu_to1",
++	"tpu_to2",
++	"tpu_to3",
++};
++
+ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(avb0),
+ 	SH_PFC_FUNCTION(avb1),
+@@ -3055,6 +3097,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(scif_clk),
+ 
+ 	SH_PFC_FUNCTION(tmu),
++
++	SH_PFC_FUNCTION(tpu),
+ };
+ 
+ static const struct pinmux_cfg_reg pinmux_config_regs[] = {
 -- 
 2.20.1
 
