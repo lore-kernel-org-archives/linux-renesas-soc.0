@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC46C63798
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6429FC6379D
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B34FE21D7E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 139F821D7F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="Dyey/hyk"
+	dkim=pass (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="TtbA13/J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbgKZR2E (ORCPT
+        id S2404321AbgKZR2G (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 26 Nov 2020 12:28:04 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:31201 "EHLO
+        Thu, 26 Nov 2020 12:28:06 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.170]:12687 "EHLO
         mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403903AbgKZR2E (ORCPT
+        with ESMTP id S2403903AbgKZR2G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Nov 2020 12:28:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1606411682;
+        Thu, 26 Nov 2020 12:28:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1606411684;
         s=strato-dkim-0002; d=fpond.eu;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=W/nEZ1q0CLOJohuQCNEhetGMctpjI7eyhO6G1XEczTc=;
-        b=Dyey/hykZ/OeY4GcZlnzrlzoFRiOD5x/f6kvIMM77TPE3PCNor9gKK8DgQr73ngHgd
-        y5Gpc0InK9VBWLjnfQb8pjCfMJ7rgywQv7I0vRN7tpmVO+FU+xM0Gj0HGdTYzWbVJD2k
-        MJWQJaRqnZ5aZ+2Re8gvh0d71snD8CoZxBgUX70jLkZ+lZS1qB2ux92FogC8VHem1D0c
-        sgr97at2KRbI+wgHFqlns3a9uLakq6yKHP5NyAJZKCcmUuOeM1gFaLilbfJi689fIMuX
-        AT5JAJBNSU9xMvutVvqFjBOCwpLR0WEkL5Zvv1Qh+IifY2eI1SMvxy5WbXtapQlQBjrB
-        AyWg==
+        bh=tMKH2p1QXdFetBmyys28ZozvQtINKADJqFZMTSrCpQQ=;
+        b=TtbA13/J8s0fkw4H6vXMKTMd03RIm1SDWWCaEr1fnmsWvkA/yHzz+2ZzDupHHV+23+
+        B74R5bfYmOEb/cNJ2/1VFxcSzf1+VDOM99YrqDmey2gXmJR74QqB0WG6T05PtTyoqtE6
+        Gm4v9WgpNISP2KUqYoJUebzhw5RvftT1ACmi1NELXdlJXgW4e5l3ELIZEc0EIY2T78Fh
+        aZ03fLwZVC7J0kAL8pr5p4r5VKqL7rAhNmcZUKAuqU/3YJK/s2lA3PH2EI6Pt6522IWE
+        oTW/kZrbbL+06lH5r17tvQzKfOzwSp1TsfVZuNKCHg49B8LLCeNM1mQx6BAHywguaDWm
+        t4ig==
 X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR82ped3jxkhQ="
 X-RZG-CLASS-ID: mo00
 Received: from groucho.site
         by smtp.strato.de (RZmta 47.3.3 DYNA|AUTH)
-        with ESMTPSA id 60ba70wAQHM3Mpj
+        with ESMTPSA id 60ba70wAQHM5Mpm
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Thu, 26 Nov 2020 18:22:03 +0100 (CET)
+        Thu, 26 Nov 2020 18:22:05 +0100 (CET)
 From:   Ulrich Hecht <uli+renesas@fpond.eu>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     wsa@the-dreams.de, geert@linux-m68k.org, hoai.luu.ub@renesas.com,
         Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH 06/11] pinctrl: renesas: r8a779a0: Add MMC pins, groups and functions
-Date:   Thu, 26 Nov 2020 18:21:49 +0100
-Message-Id: <20201126172154.25625-7-uli+renesas@fpond.eu>
+Subject: [PATCH 09/11] pinctrl: renesas: r8a779a0: Add QSPI pins, groups, and functions
+Date:   Thu, 26 Nov 2020 18:21:52 +0100
+Message-Id: <20201126172154.25625-10-uli+renesas@fpond.eu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20201126172154.25625-1-uli+renesas@fpond.eu>
 References: <20201126172154.25625-1-uli+renesas@fpond.eu>
@@ -58,120 +58,114 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds MMC pins, groups and functions to R8A779A0 (V3U) SoC.
+Add the QSPI0-1 pins, groups and functions to the R8A779A0 (V3U) PFC
+driver.
 
 Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 ---
- drivers/pinctrl/renesas/pfc-r8a779a0.c | 79 ++++++++++++++++++++++++++
- 1 file changed, 79 insertions(+)
+ drivers/pinctrl/renesas/pfc-r8a779a0.c | 72 ++++++++++++++++++++++++++
+ 1 file changed, 72 insertions(+)
 
 diff --git a/drivers/pinctrl/renesas/pfc-r8a779a0.c b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-index 8b5313a7917a..854b60653d0c 100644
+index a5ed01a50857..a83b6fa9ab9e 100644
 --- a/drivers/pinctrl/renesas/pfc-r8a779a0.c
 +++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-@@ -1983,6 +1983,65 @@ static const unsigned int intc_ex_irq5_mux[] = {
- 	IRQ5_MARK,
+@@ -2351,6 +2351,56 @@ static const unsigned int pwm4_mux[] = {
+ 	PWM4_MARK,
  };
  
-+/* - MMC -------------------------------------------------------------------- */
-+static const unsigned int mmc_data1_pins[] = {
-+	/* MMC_SD_D0 */
-+	RCAR_GP_PIN(0, 19),
++/* - QSPI0 ------------------------------------------------------------------ */
++static const unsigned int qspi0_ctrl_pins[] = {
++	/* SPCLK, SSL */
++	RCAR_GP_PIN(0, 0), RCAR_GP_PIN(0, 5),
 +};
-+static const unsigned int mmc_data1_mux[] = {
-+	MMC_SD_D0_MARK,
++static const unsigned int qspi0_ctrl_mux[] = {
++	QSPI0_SPCLK_MARK, QSPI0_SSL_MARK,
 +};
-+static const unsigned int mmc_data4_pins[] = {
-+	/* MMC_SD_D[0:3] */
-+	RCAR_GP_PIN(0, 19), RCAR_GP_PIN(0, 20),
-+	RCAR_GP_PIN(0, 21), RCAR_GP_PIN(0, 22),
++static const unsigned int qspi0_data2_pins[] = {
++	/* MOSI_IO0, MISO_IO1 */
++	RCAR_GP_PIN(0, 1), RCAR_GP_PIN(0, 2),
 +};
-+static const unsigned int mmc_data4_mux[] = {
-+	MMC_SD_D0_MARK, MMC_SD_D1_MARK,
-+	MMC_SD_D2_MARK, MMC_SD_D3_MARK,
++static const unsigned int qspi0_data2_mux[] = {
++	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
 +};
-+static const unsigned int mmc_data8_pins[] = {
-+	/* MMC_SD_D[0:3], MMC_D[4:7] */
-+	RCAR_GP_PIN(0, 19), RCAR_GP_PIN(0, 20),
-+	RCAR_GP_PIN(0, 21), RCAR_GP_PIN(0, 22),
-+	RCAR_GP_PIN(0, 24), RCAR_GP_PIN(0, 25),
-+	RCAR_GP_PIN(0, 26), RCAR_GP_PIN(0, 27),
++static const unsigned int qspi0_data4_pins[] = {
++	/* MOSI_IO0, MISO_IO1, IO2, IO3 */
++	RCAR_GP_PIN(0, 1), RCAR_GP_PIN(0, 2),
++	RCAR_GP_PIN(0, 3), RCAR_GP_PIN(0, 4),
 +};
-+static const unsigned int mmc_data8_mux[] = {
-+	MMC_SD_D0_MARK, MMC_SD_D1_MARK,
-+	MMC_SD_D2_MARK, MMC_SD_D3_MARK,
-+	MMC_D4_MARK, MMC_D5_MARK,
-+	MMC_D6_MARK, MMC_D7_MARK,
++static const unsigned int qspi0_data4_mux[] = {
++	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
++	QSPI0_IO2_MARK, QSPI0_IO3_MARK
 +};
-+static const unsigned int mmc_ctrl_pins[] = {
-+	/* MMC_SD_CLK, MMC_SD_CMD */
-+	RCAR_GP_PIN(0, 23), RCAR_GP_PIN(0, 18),
++
++/* - QSPI1 ------------------------------------------------------------------ */
++static const unsigned int qspi1_ctrl_pins[] = {
++	/* SPCLK, SSL */
++	RCAR_GP_PIN(0, 6), RCAR_GP_PIN(0, 11),
 +};
-+static const unsigned int mmc_ctrl_mux[] = {
-+	MMC_SD_CLK_MARK, MMC_SD_CMD_MARK,
++static const unsigned int qspi1_ctrl_mux[] = {
++	QSPI1_SPCLK_MARK, QSPI1_SSL_MARK,
 +};
-+static const unsigned int mmc_cd_pins[] = {
-+	/* SD_CD */
-+	RCAR_GP_PIN(0, 16),
++static const unsigned int qspi1_data2_pins[] = {
++	/* MOSI_IO0, MISO_IO1 */
++	RCAR_GP_PIN(0, 7), RCAR_GP_PIN(0, 8),
 +};
-+static const unsigned int mmc_cd_mux[] = {
-+	SD_CD_MARK,
++static const unsigned int qspi1_data2_mux[] = {
++	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
 +};
-+static const unsigned int mmc_wp_pins[] = {
-+	/* SD_WP */
-+	RCAR_GP_PIN(0, 15),
++static const unsigned int qspi1_data4_pins[] = {
++	/* MOSI_IO0, MISO_IO1, IO2, IO3 */
++	RCAR_GP_PIN(0, 7), RCAR_GP_PIN(0, 8),
++	RCAR_GP_PIN(0, 9), RCAR_GP_PIN(0, 10),
 +};
-+static const unsigned int mmc_wp_mux[] = {
-+	SD_WP_MARK,
-+};
-+static const unsigned int mmc_ds_pins[] = {
-+	/* MMC_DS */
-+	RCAR_GP_PIN(0, 17),
-+};
-+static const unsigned int mmc_ds_mux[] = {
-+	MMC_DS_MARK,
++static const unsigned int qspi1_data4_mux[] = {
++	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
++	QSPI1_IO2_MARK, QSPI1_IO3_MARK
 +};
 +
  /* - SCIF0 ------------------------------------------------------------------ */
  static const unsigned int scif0_data_pins[] = {
  	/* RX0, TX0 */
-@@ -2189,6 +2248,14 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(intc_ex_irq4),
- 	SH_PFC_PIN_GROUP(intc_ex_irq5),
+@@ -2596,6 +2646,13 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(pwm3),
+ 	SH_PFC_PIN_GROUP(pwm4),
  
-+	SH_PFC_PIN_GROUP(mmc_data1),
-+	SH_PFC_PIN_GROUP(mmc_data4),
-+	SH_PFC_PIN_GROUP(mmc_data8),
-+	SH_PFC_PIN_GROUP(mmc_ctrl),
-+	SH_PFC_PIN_GROUP(mmc_cd),
-+	SH_PFC_PIN_GROUP(mmc_wp),
-+	SH_PFC_PIN_GROUP(mmc_ds),
++	SH_PFC_PIN_GROUP(qspi0_ctrl),
++	SH_PFC_PIN_GROUP(qspi0_data2),
++	SH_PFC_PIN_GROUP(qspi0_data4),
++	SH_PFC_PIN_GROUP(qspi1_ctrl),
++	SH_PFC_PIN_GROUP(qspi1_data2),
++	SH_PFC_PIN_GROUP(qspi1_data4),
 +
  	SH_PFC_PIN_GROUP(scif0_data),
  	SH_PFC_PIN_GROUP(scif0_clk),
  	SH_PFC_PIN_GROUP(scif0_ctrl),
-@@ -2382,6 +2449,16 @@ static const char * const intc_ex_groups[] = {
- 	"intc_ex_irq5",
+@@ -2855,6 +2912,18 @@ static const char * const pwm4_groups[] = {
+ 	"pwm4",
  };
  
-+static const char * const mmc_groups[] = {
-+	"mmc_data1",
-+	"mmc_data4",
-+	"mmc_data8",
-+	"mmc_ctrl",
-+	"mmc_cd",
-+	"mmc_wp",
-+	"mmc_ds",
++static const char * const qspi0_groups[] = {
++	"qspi0_ctrl",
++	"qspi0_data2",
++	"qspi0_data4",
++};
++
++static const char * const qspi1_groups[] = {
++	"qspi1_ctrl",
++	"qspi1_data2",
++	"qspi1_data4",
 +};
 +
  static const char * const scif0_groups[] = {
  	"scif0_data",
  	"scif0_clk",
-@@ -2445,6 +2522,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
+@@ -2931,6 +3000,9 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(pwm3),
+ 	SH_PFC_FUNCTION(pwm4),
  
- 	SH_PFC_FUNCTION(intc_ex),
- 
-+	SH_PFC_FUNCTION(mmc),
++	SH_PFC_FUNCTION(qspi0),
++	SH_PFC_FUNCTION(qspi1),
 +
  	SH_PFC_FUNCTION(scif0),
  	SH_PFC_FUNCTION(scif1),
