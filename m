@@ -2,94 +2,162 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 165F0C56202
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 13:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C85C56202
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 14:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B5B8E2223D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 13:40:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12DF320679
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 14:20:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390488AbgKZNkB (ORCPT
+        id S2390372AbgKZOUn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 26 Nov 2020 08:40:01 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44235 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390022AbgKZNkA (ORCPT
+        Thu, 26 Nov 2020 09:20:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36568 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389684AbgKZOUm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Nov 2020 08:40:00 -0500
-Received: by mail-ot1-f66.google.com with SMTP id f16so1869133otl.11;
-        Thu, 26 Nov 2020 05:40:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9OlAdx9Rt6+mn/zk0WSoIGgVl8CTxRmkVr/YvGJNstU=;
-        b=j4t1+xrs26iGu0wOKwTnYe1CZ2OpWRFNm1gkYdDo7Jpaaeze+XS/as7ebATlwQ0MhM
-         fvT63cbFMX4Zh3bD0xDmJ+g/S40kcYGbQmZznf9BuVlB35FLA32QmPWX2LEMulrW8NFr
-         N0ahFmBPl/yd+bgt+RgDnxcXelL4izsnIdMcZPai/5Md77Ti9dsYaZoaqVP5dDYFNxk0
-         vK2QRC1NKZ2mjFLyHVPiUOc7J++T0B5/nzveCe7mQNTYOeMVaG5OCH8ebIQPPyrpWRvw
-         edmntlWoM+Cx+flSpp+MDCcwS6L990OHrgNG5hLZMIxck4R6sU+W/YkS7Myjr37b2wXQ
-         NpXw==
-X-Gm-Message-State: AOAM531Mmxy7PsNN+6pS5I8Fp6GR5NwzbWb4wBnXjri7c4obDyypY3l+
-        qrrBvNMbAxDZiQSGZRY8JkJ79s0Xbx8mPWb5nKc=
-X-Google-Smtp-Source: ABdhPJwNETSfqAyCdIUe4k54K76c140v7K2yoFDKFTeoubpUNvU99YsrpBxv/Hw5TNyQlNc9DnBeAXwvbx0JvDdeEAQ=
-X-Received: by 2002:a05:6830:210a:: with SMTP id i10mr2248038otc.145.1606398000341;
- Thu, 26 Nov 2020 05:40:00 -0800 (PST)
-MIME-Version: 1.0
-References: <20201126103053.29881-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20201126103053.29881-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20201126103053.29881-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Thu, 26 Nov 2020 09:20:42 -0500
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4227BC0613D4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2020 06:20:42 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by michel.telenet-ops.be with bizsmtp
+        id x2Ld2300H4C55Sk062LdkD; Thu, 26 Nov 2020 15:20:37 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kiI8T-005s37-3W; Thu, 26 Nov 2020 15:20:37 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kiHVh-00HGZJ-35; Thu, 26 Nov 2020 14:40:33 +0100
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 26 Nov 2020 14:39:49 +0100
-Message-ID: <CAMuHMdXF82Or_bew1aNfpZ9ZtWF6BwXhZwU79fajexXZRT3Y-Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] ARM: dts: r8a7742-iwg21d-q7-dbcm-ca: Add support
- for 8-bit ov7725 sensors
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     Prabhakar <prabhakar.csengg@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH v4 2/2] ARM: dts: r8a7742-iwg21d-q7-dbcm-ca: Add support for 8-bit ov7725 sensors
+Date:   Thu, 26 Nov 2020 14:40:31 +0100
+Message-Id: <20201126134031.4115211-3-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201126134031.4115211-1-geert@linux-m68k.org>
+References: <20201126134031.4115211-1-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Prabhakar,
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Thu, Nov 26, 2020 at 11:31 AM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> The 8-bit ov7725 sensors can also be connected to the camera daughter
-> board.
->
-> This patch creates a separate dtsi file for ov7725 sensors and is included
-> in r8a7742-iwg21d-q7-dbcm-ca.dts. The user can set VINx_SENSOR depending
-> on the cameras connected.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+The 8-bit ov7725 sensors can also be connected to the camera daughter
+board.
 
-Thanks for your patch!
+This patch creates a separate dtsi file to describe an ov7725 sensor,
+and includes it multiple times in r8a7742-iwg21d-q7-dbcm-ca.dts. The
+user can (un)comment #include statements depending on the cameras
+connected.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+[geert: describe a single camera in the .dtsi, include multiple times]
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+v4:
+  - Describe a single camera in the .dtsi file,
+  - Include the .dtsi multiple times,
 
-However, I think this can still be improved upon.  As it's a bit difficult
-to explain, I'll send an updated version of your series with my
-suggestions applied.
+ .../boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts    |  6 ++++-
+ .../r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi | 27 +++++++++++++++++++
+ 2 files changed, 32 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+index 00634eb58ce39da5..4d95991bde09c28b 100644
+--- a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
++++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+@@ -198,7 +198,7 @@ &scifb1 {
+ /*
+  * Below configuration ties VINx endpoints to ov5640/ov7725 camera endpoints
+  *
+- * Uncomment the #include statements to change configuration
++ * (un)comment the #include statements to change configuration
+  */
+ 
+ /* 8bit CMOS Camera 1 (J13) */
+@@ -208,6 +208,7 @@ &scifb1 {
+ #define VIN_EP			vin0ep
+ #undef CAM_ENABLED
+ #include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++//#include "r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi"
+ 
+ #ifdef CAM_ENABLED
+ &vin0 {
+@@ -241,6 +242,7 @@ vin0ep: endpoint {
+ #define VIN_EP			vin1ep
+ #undef CAM_ENABLED
+ #include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++//#include "r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi"
+ 
+ #ifdef CAM_ENABLED
+ &vin1 {
+@@ -272,6 +274,7 @@ vin1ep: endpoint {
+ #define VIN_EP			vin2ep
+ #undef CAM_ENABLED
+ #include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++//#include "r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi"
+ 
+ #ifdef CAM_ENABLED
+ &vin2 {
+@@ -302,6 +305,7 @@ vin2ep: endpoint {
+ #define VIN_EP			vin3ep
+ #undef CAM_ENABLED
+ #include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++//#include "r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi"
+ 
+ #ifdef CAM_ENABLED
+ &vin3 {
+diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi
+new file mode 100644
+index 0000000000000000..46a6832694d78aaa
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi
+@@ -0,0 +1,27 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * This include file ties a VIN interface with a single ov7725 sensor on
++ * the iWave-RZ/G1H Qseven board development platform connected with the
++ * camera daughter board.
++ *
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
++
++#define CAM_ENABLED	1
++
++&CAM_PARENT_I2C {
++	ov7725@21 {
++		compatible = "ovti,ov7725";
++		reg = <0x21>;
++		clocks = <&MCLK_CAM>;
++		status = "okay";
++
++		port {
++			CAM_EP: endpoint {
++				bus-width = <8>;
++				bus-type = <6>;
++				remote-endpoint = <&VIN_EP>;
++			};
++		};
++	};
++};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
