@@ -2,39 +2,39 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C85C56202
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 14:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411A8C64E90
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 14:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12DF320679
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 14:20:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12F56221F1
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 14:21:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390372AbgKZOUn (ORCPT
+        id S2390428AbgKZOUn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 26 Nov 2020 09:20:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36568 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36572 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389684AbgKZOUm (ORCPT
+        with ESMTP id S2389925AbgKZOUm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 26 Nov 2020 09:20:42 -0500
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4227BC0613D4
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51F7AC061A04
         for <linux-renesas-soc@vger.kernel.org>; Thu, 26 Nov 2020 06:20:42 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
         by michel.telenet-ops.be with bizsmtp
-        id x2Ld2300H4C55Sk062LdkD; Thu, 26 Nov 2020 15:20:37 +0100
+        id x2Ld2300G4C55Sk062LdkE; Thu, 26 Nov 2020 15:20:39 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kiI8T-005s37-3W; Thu, 26 Nov 2020 15:20:37 +0100
+        id 1kiI8T-005s37-4k; Thu, 26 Nov 2020 15:20:37 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kiHVh-00HGZJ-35; Thu, 26 Nov 2020 14:40:33 +0100
+        id 1kiHVh-00HGZE-1q; Thu, 26 Nov 2020 14:40:33 +0100
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
 To:     Prabhakar <prabhakar.csengg@gmail.com>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -44,9 +44,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         linux-kernel@vger.kernel.org,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v4 2/2] ARM: dts: r8a7742-iwg21d-q7-dbcm-ca: Add support for 8-bit ov7725 sensors
-Date:   Thu, 26 Nov 2020 14:40:31 +0100
-Message-Id: <20201126134031.4115211-3-geert@linux-m68k.org>
+Subject: [PATCH v4 1/2] ARM: dts: r8a7742-iwg21d-q7-dbcm-ca: Separate out ov5640 nodes
+Date:   Thu, 26 Nov 2020 14:40:30 +0100
+Message-Id: <20201126134031.4115211-2-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201126134031.4115211-1-geert@linux-m68k.org>
 References: <20201126134031.4115211-1-geert@linux-m68k.org>
@@ -58,13 +58,9 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The 8-bit ov7725 sensors can also be connected to the camera daughter
-board.
-
-This patch creates a separate dtsi file to describe an ov7725 sensor,
-and includes it multiple times in r8a7742-iwg21d-q7-dbcm-ca.dts. The
-user can (un)comment #include statements depending on the cameras
-connected.
+The camera daughter board can also be connected to 8-bit ov7725 sensors,
+so in preparation for configurable option to choose depending on the
+camera's connected separate out the ov5640 nodes in a dtsi file.
 
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
@@ -75,65 +71,249 @@ v4:
   - Describe a single camera in the .dtsi file,
   - Include the .dtsi multiple times,
 
- .../boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts    |  6 ++++-
- .../r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi | 27 +++++++++++++++++++
- 2 files changed, 32 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi
+ .../boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts    | 151 +++++++++---------
+ .../r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi |  30 ++++
+ 2 files changed, 103 insertions(+), 78 deletions(-)
+ create mode 100644 arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi
 
 diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
-index 00634eb58ce39da5..4d95991bde09c28b 100644
+index 98c3fbd89fa6c5c7..00634eb58ce39da5 100644
 --- a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
 +++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
-@@ -198,7 +198,7 @@ &scifb1 {
- /*
-  * Below configuration ties VINx endpoints to ov5640/ov7725 camera endpoints
-  *
-- * Uncomment the #include statements to change configuration
-+ * (un)comment the #include statements to change configuration
-  */
+@@ -91,67 +91,12 @@ &hscif0 {
+ 	status = "okay";
+ };
  
- /* 8bit CMOS Camera 1 (J13) */
-@@ -208,6 +208,7 @@ &scifb1 {
- #define VIN_EP			vin0ep
- #undef CAM_ENABLED
- #include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
-+//#include "r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi"
+-&i2c0 {
+-	ov5640@3c {
+-		compatible = "ovti,ov5640";
+-		reg = <0x3c>;
+-		clocks = <&mclk_cam1>;
+-		clock-names = "xclk";
+-
+-		port {
+-			ov5640_0: endpoint {
+-				bus-width = <8>;
+-				data-shift = <2>;
+-				bus-type = <6>;
+-				pclk-sample = <1>;
+-				remote-endpoint = <&vin0ep>;
+-			};
+-		};
+-	};
+-};
+-
+ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+ 	pinctrl-names = "default";
  
- #ifdef CAM_ENABLED
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+-
+-	ov5640@3c {
+-		compatible = "ovti,ov5640";
+-		reg = <0x3c>;
+-		clocks = <&mclk_cam2>;
+-		clock-names = "xclk";
+-
+-		port {
+-			ov5640_1: endpoint {
+-				bus-width = <8>;
+-				data-shift = <2>;
+-				bus-type = <6>;
+-				pclk-sample = <1>;
+-				remote-endpoint = <&vin1ep>;
+-			};
+-		};
+-	};
+-};
+-
+-&i2c2 {
+-	ov5640@3c {
+-		compatible = "ovti,ov5640";
+-		reg = <0x3c>;
+-		clocks = <&mclk_cam3>;
+-		clock-names = "xclk";
+-
+-		port {
+-			ov5640_2: endpoint {
+-				bus-width = <8>;
+-				data-shift = <2>;
+-				bus-type = <6>;
+-				pclk-sample = <1>;
+-				remote-endpoint = <&vin2ep>;
+-			};
+-		};
+-	};
+ };
+ 
+ &i2c3 {
+@@ -160,23 +105,6 @@ &i2c3 {
+ 
+ 	status = "okay";
+ 	clock-frequency = <400000>;
+-
+-	ov5640@3c {
+-		compatible = "ovti,ov5640";
+-		reg = <0x3c>;
+-		clocks = <&mclk_cam4>;
+-		clock-names = "xclk";
+-
+-		port {
+-			ov5640_3: endpoint {
+-				bus-width = <8>;
+-				data-shift = <2>;
+-				bus-type = <6>;
+-				pclk-sample = <1>;
+-				remote-endpoint = <&vin3ep>;
+-			};
+-		};
+-	};
+ };
+ 
+ &pfc {
+@@ -267,6 +195,21 @@ &scifb1 {
+ 	cts-gpios = <&gpio4 17 GPIO_ACTIVE_LOW>;
+ };
+ 
++/*
++ * Below configuration ties VINx endpoints to ov5640/ov7725 camera endpoints
++ *
++ * Uncomment the #include statements to change configuration
++ */
++
++/* 8bit CMOS Camera 1 (J13) */
++#define CAM_PARENT_I2C		i2c0
++#define MCLK_CAM		mclk_cam1
++#define CAM_EP			cam0ep
++#define VIN_EP			vin0ep
++#undef CAM_ENABLED
++#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++
++#ifdef CAM_ENABLED
  &vin0 {
-@@ -241,6 +242,7 @@ vin0ep: endpoint {
- #define VIN_EP			vin1ep
- #undef CAM_ENABLED
- #include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
-+//#include "r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi"
+ 	/*
+ 	 * Set SW2 switch on the SOM to 'ON'
+@@ -278,13 +221,28 @@ &vin0 {
  
- #ifdef CAM_ENABLED
+ 	port {
+ 		vin0ep: endpoint {
+-			remote-endpoint = <&ov5640_0>;
++			remote-endpoint = <&cam0ep>;
+ 			bus-width = <8>;
+ 			bus-type = <6>;
+ 		};
+ 	};
+ };
+-
++#endif /* CAM_ENABLED */
++
++#undef CAM_PARENT_I2C
++#undef MCLK_CAM
++#undef CAM_EP
++#undef VIN_EP
++
++/* 8bit CMOS Camera 2 (J14) */
++#define CAM_PARENT_I2C		i2c1
++#define MCLK_CAM		mclk_cam2
++#define CAM_EP			cam1ep
++#define VIN_EP			vin1ep
++#undef CAM_ENABLED
++#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++
++#ifdef CAM_ENABLED
  &vin1 {
-@@ -272,6 +274,7 @@ vin1ep: endpoint {
- #define VIN_EP			vin2ep
- #undef CAM_ENABLED
- #include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
-+//#include "r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi"
+ 	/* Set SW1 switch on the SOM to 'ON' */
+ 	status = "okay";
+@@ -293,13 +251,29 @@ &vin1 {
  
- #ifdef CAM_ENABLED
+ 	port {
+ 		vin1ep: endpoint {
+-			remote-endpoint = <&ov5640_1>;
++			remote-endpoint = <&cam1ep>;
+ 			bus-width = <8>;
+ 			bus-type = <6>;
+ 		};
+ 	};
+ };
+ 
++#endif /* CAM_ENABLED */
++
++#undef CAM_PARENT_I2C
++#undef MCLK_CAM
++#undef CAM_EP
++#undef VIN_EP
++
++/* 8bit CMOS Camera 3 (J12) */
++#define CAM_PARENT_I2C		i2c2
++#define MCLK_CAM		mclk_cam3
++#define CAM_EP			cam2ep
++#define VIN_EP			vin2ep
++#undef CAM_ENABLED
++#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++
++#ifdef CAM_ENABLED
  &vin2 {
-@@ -302,6 +305,7 @@ vin2ep: endpoint {
- #define VIN_EP			vin3ep
- #undef CAM_ENABLED
- #include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
-+//#include "r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi"
+ 	status = "okay";
+ 	pinctrl-0 = <&vin2_pins>;
+@@ -307,14 +281,29 @@ &vin2 {
  
- #ifdef CAM_ENABLED
+ 	port {
+ 		vin2ep: endpoint {
+-			remote-endpoint = <&ov5640_2>;
++			remote-endpoint = <&cam2ep>;
+ 			bus-width = <8>;
+ 			data-shift = <8>;
+ 			bus-type = <6>;
+ 		};
+ 	};
+ };
+-
++#endif /* CAM_ENABLED */
++
++#undef CAM_PARENT_I2C
++#undef MCLK_CAM
++#undef CAM_EP
++#undef VIN_EP
++
++/* 8bit CMOS Camera 4 (J11) */
++#define CAM_PARENT_I2C		i2c3
++#define MCLK_CAM		mclk_cam4
++#define CAM_EP			cam3ep
++#define VIN_EP			vin3ep
++#undef CAM_ENABLED
++#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++
++#ifdef CAM_ENABLED
  &vin3 {
-diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi
+ 	status = "okay";
+ 	pinctrl-0 = <&vin3_pins>;
+@@ -322,9 +311,15 @@ &vin3 {
+ 
+ 	port {
+ 		vin3ep: endpoint {
+-			remote-endpoint = <&ov5640_3>;
++			remote-endpoint = <&cam3ep>;
+ 			bus-width = <8>;
+ 			bus-type = <6>;
+ 		};
+ 	};
+ };
++#endif /* CAM_ENABLED */
++
++#undef CAM_PARENT_I2C
++#undef MCLK_CAM
++#undef CAM_EP
++#undef VIN_EP
+diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi
 new file mode 100644
-index 0000000000000000..46a6832694d78aaa
+index 0000000000000000..408016620f5b1a04
 --- /dev/null
-+++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov7725-single.dtsi
-@@ -0,0 +1,27 @@
++++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi
+@@ -0,0 +1,30 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * This include file ties a VIN interface with a single ov7725 sensor on
++ * This include file ties a VIN interface with a single ov5640 sensor on
 + * the iWave-RZ/G1H Qseven board development platform connected with the
 + * camera daughter board.
 + *
@@ -143,16 +323,19 @@ index 0000000000000000..46a6832694d78aaa
 +#define CAM_ENABLED	1
 +
 +&CAM_PARENT_I2C {
-+	ov7725@21 {
-+		compatible = "ovti,ov7725";
-+		reg = <0x21>;
++	ov5640@3c {
++		compatible = "ovti,ov5640";
++		reg = <0x3c>;
 +		clocks = <&MCLK_CAM>;
++		clock-names = "xclk";
 +		status = "okay";
 +
 +		port {
 +			CAM_EP: endpoint {
 +				bus-width = <8>;
++				data-shift = <2>;
 +				bus-type = <6>;
++				pclk-sample = <1>;
 +				remote-endpoint = <&VIN_EP>;
 +			};
 +		};
