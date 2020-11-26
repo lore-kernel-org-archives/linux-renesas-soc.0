@@ -2,697 +2,422 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEE9C64E7D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 922B1C6379D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4CDC21D7F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:28:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45F8621D7E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Nov 2020 17:42:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="SqvTkhBN"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="f2SPkkuL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404141AbgKZR2J (ORCPT
+        id S2404454AbgKZRmd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 26 Nov 2020 12:28:09 -0500
-Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.84]:12618 "EHLO
-        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404278AbgKZR2I (ORCPT
+        Thu, 26 Nov 2020 12:42:33 -0500
+Received: from mail-eopbgr1400129.outbound.protection.outlook.com ([40.107.140.129]:28053
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2404320AbgKZRmc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Nov 2020 12:28:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1606411684;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=0FWs0GZ2M1BSPUxty6o3l4qTn1Z12M+5IyxJGEWK6b4=;
-        b=SqvTkhBN+f0/KV2XWMgclS4/AEVDFZBX/y/GgSm17KEQUUYUZjuGUKSGYCCBscT7DM
-        akQvUC1wszPALr0nYn1vy9xCyB94p2dOfR8EOoSmytEnF3sTiFwWXkBOp411ye6ldHjQ
-        LYmXqWLG1sU4YxaNgWoyR5sLT5BKFmOEyvLk9ewXej+yfOwv1MRLdk2SCOrpy8pGieah
-        9uLulqywMbfw3M7pj36fXqb916yA3O3MzDySO2QJ5fwkvwybfCigivwY8cBWTTY446Ey
-        Gig9EBY+M3U+f5zjA7Ic2G5XCRmhuCANlh0fsNwAk8XhV8altx+0hY9T20ZNoJN0JFpS
-        D98A==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR82ped3jxkhQ="
-X-RZG-CLASS-ID: mo00
-Received: from groucho.site
-        by smtp.strato.de (RZmta 47.3.3 DYNA|AUTH)
-        with ESMTPSA id 60ba70wAQHM0Mpe
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Thu, 26 Nov 2020 18:22:00 +0100 (CET)
-From:   Ulrich Hecht <uli+renesas@fpond.eu>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     wsa@the-dreams.de, geert@linux-m68k.org, hoai.luu.ub@renesas.com,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH 01/11] pinctrl: renesas: r8a779a0: Add EtherAVB pins, groups and functions
-Date:   Thu, 26 Nov 2020 18:21:44 +0100
-Message-Id: <20201126172154.25625-2-uli+renesas@fpond.eu>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20201126172154.25625-1-uli+renesas@fpond.eu>
-References: <20201126172154.25625-1-uli+renesas@fpond.eu>
+        Thu, 26 Nov 2020 12:42:32 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VmgR29jM3lo6Jphiq6KmZ0cD6xZ7NIX6pddaxqOdvb59Ukjiwo8Xy6q/GnSYd8pQyqIlGxWj6RfegbrV2evomxZG5w0FZZS9wy6G246Hwy83MNZ05owME7UD5HYPqpzbEZKDcY6gCoH6ZyEaTyY8cVqeeemfdwc8/DdRe+KI7+S4VN4UljKnCg6fxP+D0I/RmeAeSPtu937MpMBxEDZjVICAWhU4uP1rA8ZUD2citoXtpkNrst4yhc5H6UlojLGyAkfc2DfoHwrNdFLAu0r2oPQ5VUvVh6cdX7pweOeAiuN7720NVvdYBrH5Y0a1oMf8V2ixM54sfIUrOozd2Goy1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oESO4pvWhdlONiHpJfpcBSu/z4Lk8AkdU/F7oMD67e4=;
+ b=EoR8DNJpuHsNgSNnHtlyyZgiVdSdXTZ5MlD70uwdX4UkNrS4vwImUC3B9CyBQX8WursXJQYwqWY3Gg1/8Up/pW7WR5oy/zJ6S37y5hB5ORAblfEV3cUviBkgNCg9nwha4lBRwJxUtjV16cQqKoNvOuMZVKpqxxD5wdPBQwxuQsStb59eo6YvBm5Q87nzoFzCDX+du9opP0TTI5MjhsZAqIG/I3Mc12rPydZkjRqjx+zL3yfKTYFGG0lCsqqTUJ4cTUgoobLEzyFVvn6GG5GhFYBhkCame7QZ31f5WrcDjWfxcglIq306kxXxDGMpp2Izpb7lQ+sjKDyCicnvx2DbNg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oESO4pvWhdlONiHpJfpcBSu/z4Lk8AkdU/F7oMD67e4=;
+ b=f2SPkkuLsUZpV+HmkvfSYivbEJJdVfOyKZRJ8EjouGSFgwA8c3N62PRwvXJNv2eEcna0lkeatbZ0fKlsDS+8cfcyFmUgjrPv+c5kNJk5D38NiU40kjbe4PLOFsJGcjsEo1qJYOkTPrgbA3IoHikrA3bFBUArQbHQUkYuLiRVy9w=
+Received: from OSBPR01MB5048.jpnprd01.prod.outlook.com (2603:1096:604:38::10)
+ by OS0PR01MB5859.jpnprd01.prod.outlook.com (2603:1096:604:b8::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3589.21; Thu, 26 Nov
+ 2020 17:42:27 +0000
+Received: from OSBPR01MB5048.jpnprd01.prod.outlook.com
+ ([fe80::18f:c7ea:e9e4:db70]) by OSBPR01MB5048.jpnprd01.prod.outlook.com
+ ([fe80::18f:c7ea:e9e4:db70%3]) with mapi id 15.20.3589.025; Thu, 26 Nov 2020
+ 17:42:27 +0000
+From:   Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Biju Das <biju.das.jz@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v4 1/2] ARM: dts: r8a7742-iwg21d-q7-dbcm-ca: Separate out
+ ov5640 nodes
+Thread-Topic: [PATCH v4 1/2] ARM: dts: r8a7742-iwg21d-q7-dbcm-ca: Separate out
+ ov5640 nodes
+Thread-Index: AQHWw/9UPOaFqxmSLkudy+21evfaLqnarTJg
+Date:   Thu, 26 Nov 2020 17:42:27 +0000
+Message-ID: <OSBPR01MB50483C8B0A3AC24C0987F14EAAF90@OSBPR01MB5048.jpnprd01.prod.outlook.com>
+References: <20201126134031.4115211-1-geert@linux-m68k.org>
+ <20201126134031.4115211-2-geert@linux-m68k.org>
+In-Reply-To: <20201126134031.4115211-2-geert@linux-m68k.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: linux-m68k.org; dkim=none (message not signed)
+ header.d=none;linux-m68k.org; dmarc=none action=none
+ header.from=bp.renesas.com;
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: c431e460-1141-47e8-bf9b-08d89232a447
+x-ms-traffictypediagnostic: OS0PR01MB5859:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <OS0PR01MB585980C70DF0475926778A29AAF90@OS0PR01MB5859.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: J82zyS+VdPjEz60BHPjjkH+cspGTeLeA3OU3xBoCbZKiyyGH5ROtmh0j/ApHupLuW+CRk1RIa0565KD3+5SpLC2JsW+feiUYjEqKu4UCcQ1rsTQe85iT+9ijpkOvEkckqlecTbBeOI9Oiq7g2TMBXYtLqSHuAD6QD5252Fp3hfLRAwIiePmiAc6XKhnnUPLP/YcJrB/I3yEMKdkT0Vw32VpQveysJYyOx0hBButuM00SNt6eo6D8+NZmVZH0uzbjFqR79f7KhuO1P4EzRZrWfelKZr6rLIXpA0z6md+IjColfodFG6KfsYq26W+TcUj7+22sWU0WqjPX6xfPc5qBnmXmHEcjAvBBTzJE7Vx/GqViRBCSWPGagBSNSQtCIJl0
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSBPR01MB5048.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(396003)(39860400002)(136003)(346002)(376002)(186003)(71200400001)(54906003)(478600001)(110136005)(26005)(316002)(6506007)(4326008)(53546011)(7696005)(86362001)(76116006)(83380400001)(8936002)(33656002)(52536014)(8676002)(9686003)(66476007)(5660300002)(66556008)(66946007)(55016002)(64756008)(2906002)(66446008)(473944003);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata: WjlhaGDSXkB6F7foFRNfNLBTnsyYDv5V+T1/HjzGNGGLTzQce3xUc+iwQN6uR+ehNrBoGoNcb3EFtxpUm7gqBhViE33XuiZfMqwudPYZzBbfUDKeKUe9FhUZrnUvPhUKe+ONRYmpLAoCheR1XU9QnB+puoxZVpt0qNyH22XhOG2kpJbMGcbqsdSokeg10H9/iuNyTrYCkWQTloHO/QufsriRybALfEr3xNLXUoOlVDf23ZvSpdbLHUQQZsNix3YS27+/FvssurJUg3q5BTftH1Gof3BhPPOhkEOGLbpuuEh/tFDu+jX2oUKkDI6Apb2ukTrobGTeOZK0pLD+H3n8Fq/1PKRy8sd+H8nVG4H7kd3fjuqZSRw7WEZR1qvZPdNgoJYc7EHdXPhchdqanzrQeWpiiZVhF1xq1CWH2/c8iZQFSALHpBSrhkhFe2+n/1MCP96yByR8WyZFsmbXX3YkB+s0u0XZwSWvV4/azaO+Ty/PY8FqD3KqoHNn6/5V/KMSeOiibD0xlSfgFwlBJ6XhGLG4oxHpro07l/zRoGgLdqQD0PnmZwK97X6gqNYNzULPdJOL3LE7EAhNGpIdLd1cDItMFXNO/VnTBkiD9IT/7zyZJI1rEurrAUBI7yIdmdLjaDlVT+rHEyFXlQgjMsfnIMaBlH63BktHiOV9Cw4FzVu1iilCl/cxTWVVe8TOGuKAPQAN8tX32Ce2OvzeraNHCwoHW2v/DkJ6PAin7o+lT1En/tpXjTm+t+6QsurDwgmjprmnhY41muSVXy8hGFpa6PhVtA5FCmUPhaKHoQ8+6SFRosMJbI+gF3BhPtGJB39NL4BLDdDiwVcBTnGDJXpvsfwrYcIM9XA3FBdPjLTy0opfs10PQB1duSlcavszvX1s2TP9iexVrxrnO18g2C2swQ==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OSBPR01MB5048.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c431e460-1141-47e8-bf9b-08d89232a447
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Nov 2020 17:42:27.4121
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: H4JPGY9pAjshTF8pRcezA1yFXizRVTw8KDHK0x+iarf6K6rhKvzgPg5u7vtiF1xvLnXRn4C0pHChP0qGHHVadw4IaEpHLQ80MzvrADD0a3VzDz9Vx+0Qm7ZvwYY+j9bt
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5859
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch adds groups and function for AVB PHY, LINK, MAGIC, MII and
-PTP pins for the R8A779A0 (V3U) SoC.
+Hi Geert,
 
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
----
- drivers/pinctrl/renesas/pfc-r8a779a0.c | 595 +++++++++++++++++++++++++
- 1 file changed, 595 insertions(+)
+> -----Original Message-----
+> From: Geert Uytterhoeven <geert@linux-m68k.org>
+> Sent: 26 November 2020 13:41
+> To: Prabhakar <prabhakar.csengg@gmail.com>; Magnus Damm <magnus.damm@gmai=
+l.com>; Rob Herring
+> <robh+dt@kernel.org>
+> Cc: Biju Das <biju.das.jz@bp.renesas.com>; linux-renesas-soc@vger.kernel.=
+org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; Prabhakar Mahad=
+ev Lad <prabhakar.mahadev-
+> lad.rj@bp.renesas.com>; Geert Uytterhoeven <geert@linux-m68k.org>
+> Subject: [PATCH v4 1/2] ARM: dts: r8a7742-iwg21d-q7-dbcm-ca: Separate out=
+ ov5640 nodes
+>=20
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> The camera daughter board can also be connected to 8-bit ov7725 sensors,
+> so in preparation for configurable option to choose depending on the
+> camera's connected separate out the ov5640 nodes in a dtsi file.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> [geert: describe a single camera in the .dtsi, include multiple times]
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> v4:
+>   - Describe a single camera in the .dtsi file,
+>   - Include the .dtsi multiple times,
+>=20
+>  .../boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts    | 151 +++++++++---------
+>  .../r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi |  30 ++++
+>  2 files changed, 103 insertions(+), 78 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-singl=
+e.dtsi
+>=20
+That looks much cleaner thank you.
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a779a0.c b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-index d0d0a682b13b..5fcc8e60167e 100644
---- a/drivers/pinctrl/renesas/pfc-r8a779a0.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-@@ -1199,6 +1199,462 @@ static const struct sh_pfc_pin pinmux_pins[] = {
- 	PINMUX_GPIO_GP_ALL(),
- };
- 
-+/* - AVB0 ------------------------------------------------ */
-+static const unsigned int avb0_link_pins[] = {
-+	/* AVB0_LINK */
-+	RCAR_GP_PIN(4, 17),
-+};
-+static const unsigned int avb0_link_mux[] = {
-+	AVB0_LINK_MARK,
-+};
-+static const unsigned int avb0_magic_pins[] = {
-+	/* AVB0_MAGIC */
-+	RCAR_GP_PIN(4, 15),
-+};
-+static const unsigned int avb0_magic_mux[] = {
-+	AVB0_MAGIC_MARK,
-+};
-+static const unsigned int avb0_phy_int_pins[] = {
-+	/* AVB0_PHY_INT */
-+	RCAR_GP_PIN(4, 16),
-+};
-+static const unsigned int avb0_phy_int_mux[] = {
-+	AVB0_PHY_INT_MARK,
-+};
-+static const unsigned int avb0_mdio_pins[] = {
-+	/* AVB0_MDC, AVB0_MDIO */
-+	RCAR_GP_PIN(4, 14), RCAR_GP_PIN(4, 13),
-+};
-+static const unsigned int avb0_mdio_mux[] = {
-+	AVB0_MDC_MARK, AVB0_MDIO_MARK,
-+};
-+static const unsigned int avb0_rgmii_pins[] = {
-+	/*
-+	 * AVB0_TX_CTL, AVB0_TXC, AVB0_TD0, AVB0_TD1, AVB0_TD2, AVB0_TD3,
-+	 * AVB0_RX_CTL, AVB0_RXC, AVB0_RD0, AVB0_RD1, AVB0_RD2, AVB0_RD3,
-+	 */
-+	RCAR_GP_PIN(4, 6), RCAR_GP_PIN(4, 7),
-+	RCAR_GP_PIN(4, 8), RCAR_GP_PIN(4, 9),
-+	RCAR_GP_PIN(4, 10), RCAR_GP_PIN(4, 11),
-+	RCAR_GP_PIN(4, 0), RCAR_GP_PIN(4, 1),
-+	RCAR_GP_PIN(4, 2), RCAR_GP_PIN(4, 3),
-+	RCAR_GP_PIN(4, 4), RCAR_GP_PIN(4, 5),
-+};
-+static const unsigned int avb0_rgmii_mux[] = {
-+	AVB0_TX_CTL_MARK, AVB0_TXC_MARK,
-+	AVB0_TD0_MARK, AVB0_TD1_MARK, AVB0_TD2_MARK, AVB0_TD3_MARK,
-+	AVB0_RX_CTL_MARK, AVB0_RXC_MARK,
-+	AVB0_RD0_MARK, AVB0_RD1_MARK, AVB0_RD2_MARK, AVB0_RD3_MARK,
-+};
-+static const unsigned int avb0_txcrefclk_pins[] = {
-+	/* AVB0_TXCREFCLK */
-+	RCAR_GP_PIN(4, 12),
-+};
-+static const unsigned int avb0_txcrefclk_mux[] = {
-+	AVB0_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb0_avtp_pps_pins[] = {
-+	/* AVB0_AVTP_PPS */
-+	RCAR_GP_PIN(4, 20),
-+};
-+static const unsigned int avb0_avtp_pps_mux[] = {
-+	AVB0_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb0_avtp_capture_pins[] = {
-+	/* AVB0_AVTP_CAPTURE */
-+	RCAR_GP_PIN(4, 19),
-+};
-+static const unsigned int avb0_avtp_capture_mux[] = {
-+	AVB0_AVTP_CAPTURE_MARK,
-+};
-+static const unsigned int avb0_avtp_match_pins[] = {
-+	/* AVB0_AVTP_MATCH */
-+	RCAR_GP_PIN(4, 18),
-+};
-+static const unsigned int avb0_avtp_match_mux[] = {
-+	AVB0_AVTP_MATCH_MARK,
-+};
-+
-+/* - AVB1 ------------------------------------------------ */
-+static const unsigned int avb1_link_pins[] = {
-+	/* AVB1_LINK */
-+	RCAR_GP_PIN(5, 17),
-+};
-+static const unsigned int avb1_link_mux[] = {
-+	AVB1_LINK_MARK,
-+};
-+static const unsigned int avb1_magic_pins[] = {
-+	/* AVB1_MAGIC */
-+	RCAR_GP_PIN(5, 15),
-+};
-+static const unsigned int avb1_magic_mux[] = {
-+	AVB1_MAGIC_MARK,
-+};
-+static const unsigned int avb1_phy_int_pins[] = {
-+	/* AVB1_PHY_INT */
-+	RCAR_GP_PIN(5, 16),
-+};
-+static const unsigned int avb1_phy_int_mux[] = {
-+	AVB1_PHY_INT_MARK,
-+};
-+static const unsigned int avb1_mdio_pins[] = {
-+	/* AVB1_MDC, AVB1_MDIO */
-+	RCAR_GP_PIN(5, 14), RCAR_GP_PIN(5, 13),
-+};
-+static const unsigned int avb1_mdio_mux[] = {
-+	AVB1_MDC_MARK, AVB1_MDIO_MARK,
-+};
-+static const unsigned int avb1_rgmii_pins[] = {
-+	/*
-+	 * AVB1_TX_CTL, AVB1_TXC, AVB1_TD0, AVB1_TD1, AVB1_TD2, AVB1_TD3,
-+	 * AVB1_RX_CTL, AVB1_RXC, AVB1_RD0, AVB1_RD1, AVB1_RD2, AVB1_RD3,
-+	 */
-+	RCAR_GP_PIN(5, 6), RCAR_GP_PIN(5, 7),
-+	RCAR_GP_PIN(5, 8), RCAR_GP_PIN(5, 9),
-+	RCAR_GP_PIN(5, 10), RCAR_GP_PIN(5, 11),
-+	RCAR_GP_PIN(5, 0), RCAR_GP_PIN(5, 1),
-+	RCAR_GP_PIN(5, 2), RCAR_GP_PIN(5, 3),
-+	RCAR_GP_PIN(5, 4), RCAR_GP_PIN(5, 5),
-+};
-+static const unsigned int avb1_rgmii_mux[] = {
-+	AVB1_TX_CTL_MARK, AVB1_TXC_MARK,
-+	AVB1_TD0_MARK, AVB1_TD1_MARK, AVB1_TD2_MARK, AVB1_TD3_MARK,
-+	AVB1_RX_CTL_MARK, AVB1_RXC_MARK,
-+	AVB1_RD0_MARK, AVB1_RD1_MARK, AVB1_RD2_MARK, AVB1_RD3_MARK,
-+};
-+static const unsigned int avb1_txcrefclk_pins[] = {
-+	/* AVB1_TXCREFCLK */
-+	RCAR_GP_PIN(5, 12),
-+};
-+static const unsigned int avb1_txcrefclk_mux[] = {
-+	AVB1_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb1_avtp_pps_pins[] = {
-+	/* AVB1_AVTP_PPS */
-+	RCAR_GP_PIN(5, 20),
-+};
-+static const unsigned int avb1_avtp_pps_mux[] = {
-+	AVB1_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb1_avtp_capture_pins[] = {
-+	/* AVB1_AVTP_CAPTURE */
-+	RCAR_GP_PIN(5, 19),
-+};
-+static const unsigned int avb1_avtp_capture_mux[] = {
-+	AVB1_AVTP_CAPTURE_MARK,
-+};
-+static const unsigned int avb1_avtp_match_pins[] = {
-+	/* AVB1_AVTP_MATCH */
-+	RCAR_GP_PIN(5, 18),
-+};
-+static const unsigned int avb1_avtp_match_mux[] = {
-+	AVB1_AVTP_MATCH_MARK,
-+};
-+
-+/* - AVB2 ------------------------------------------------ */
-+static const unsigned int avb2_link_pins[] = {
-+	/* AVB2_LINK */
-+	RCAR_GP_PIN(6, 17),
-+};
-+static const unsigned int avb2_link_mux[] = {
-+	AVB2_LINK_MARK,
-+};
-+static const unsigned int avb2_magic_pins[] = {
-+	/* AVB2_MAGIC */
-+	RCAR_GP_PIN(6, 15),
-+};
-+static const unsigned int avb2_magic_mux[] = {
-+	AVB2_MAGIC_MARK,
-+};
-+static const unsigned int avb2_phy_int_pins[] = {
-+	/* AVB2_PHY_INT */
-+	RCAR_GP_PIN(6, 16),
-+};
-+static const unsigned int avb2_phy_int_mux[] = {
-+	AVB2_PHY_INT_MARK,
-+};
-+static const unsigned int avb2_mdio_pins[] = {
-+	/* AVB2_MDC, AVB2_MDIO */
-+	RCAR_GP_PIN(6, 14), RCAR_GP_PIN(6, 13),
-+};
-+static const unsigned int avb2_mdio_mux[] = {
-+	AVB2_MDC_MARK, AVB2_MDIO_MARK,
-+};
-+static const unsigned int avb2_rgmii_pins[] = {
-+	/*
-+	 * AVB2_TX_CTL, AVB2_TXC, AVB2_TD0, AVB2_TD1, AVB2_TD2, AVB2_TD3,
-+	 * AVB2_RX_CTL, AVB2_RXC, AVB2_RD0, AVB2_RD1, AVB2_RD2, AVB2_RD3,
-+	 */
-+	RCAR_GP_PIN(6, 6), RCAR_GP_PIN(6, 7),
-+	RCAR_GP_PIN(6, 8), RCAR_GP_PIN(6, 9),
-+	RCAR_GP_PIN(6, 10), RCAR_GP_PIN(6, 11),
-+	RCAR_GP_PIN(6, 0), RCAR_GP_PIN(6, 1),
-+	RCAR_GP_PIN(6, 2), RCAR_GP_PIN(6, 3),
-+	RCAR_GP_PIN(6, 4), RCAR_GP_PIN(6, 5),
-+};
-+static const unsigned int avb2_rgmii_mux[] = {
-+	AVB2_TX_CTL_MARK, AVB2_TXC_MARK,
-+	AVB2_TD0_MARK, AVB2_TD1_MARK, AVB2_TD2_MARK, AVB2_TD3_MARK,
-+	AVB2_RX_CTL_MARK, AVB2_RXC_MARK,
-+	AVB2_RD0_MARK, AVB2_RD1_MARK, AVB2_RD2_MARK, AVB2_RD3_MARK,
-+};
-+static const unsigned int avb2_txcrefclk_pins[] = {
-+	/* AVB2_TXCREFCLK */
-+	RCAR_GP_PIN(6, 12),
-+};
-+static const unsigned int avb2_txcrefclk_mux[] = {
-+	AVB2_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb2_avtp_pps_pins[] = {
-+	/* AVB2_AVTP_PPS */
-+	RCAR_GP_PIN(6, 20),
-+};
-+static const unsigned int avb2_avtp_pps_mux[] = {
-+	AVB2_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb2_avtp_capture_pins[] = {
-+	/* AVB2_AVTP_CAPTURE */
-+	RCAR_GP_PIN(6, 19),
-+};
-+static const unsigned int avb2_avtp_capture_mux[] = {
-+	AVB2_AVTP_CAPTURE_MARK,
-+};
-+static const unsigned int avb2_avtp_match_pins[] = {
-+	/* AVB2_AVTP_MATCH */
-+	RCAR_GP_PIN(6, 18),
-+};
-+static const unsigned int avb2_avtp_match_mux[] = {
-+	AVB2_AVTP_MATCH_MARK,
-+};
-+
-+/* - AVB3 ------------------------------------------------ */
-+static const unsigned int avb3_link_pins[] = {
-+	/* AVB3_LINK */
-+	RCAR_GP_PIN(7, 17),
-+};
-+static const unsigned int avb3_link_mux[] = {
-+	AVB3_LINK_MARK,
-+};
-+static const unsigned int avb3_magic_pins[] = {
-+	/* AVB3_MAGIC */
-+	RCAR_GP_PIN(7, 15),
-+};
-+static const unsigned int avb3_magic_mux[] = {
-+	AVB3_MAGIC_MARK,
-+};
-+static const unsigned int avb3_phy_int_pins[] = {
-+	/* AVB3_PHY_INT */
-+	RCAR_GP_PIN(7, 16),
-+};
-+static const unsigned int avb3_phy_int_mux[] = {
-+	AVB3_PHY_INT_MARK,
-+};
-+static const unsigned int avb3_mdio_pins[] = {
-+	/* AVB3_MDC, AVB3_MDIO */
-+	RCAR_GP_PIN(7, 14), RCAR_GP_PIN(7, 13),
-+};
-+static const unsigned int avb3_mdio_mux[] = {
-+	AVB3_MDC_MARK, AVB3_MDIO_MARK,
-+};
-+static const unsigned int avb3_rgmii_pins[] = {
-+	/*
-+	 * AVB3_TX_CTL, AVB3_TXC, AVB3_TD0, AVB3_TD1, AVB3_TD2, AVB3_TD3,
-+	 * AVB3_RX_CTL, AVB3_RXC, AVB3_RD0, AVB3_RD1, AVB3_RD2, AVB3_RD3,
-+	 */
-+	RCAR_GP_PIN(7, 6), RCAR_GP_PIN(7, 7),
-+	RCAR_GP_PIN(7, 8), RCAR_GP_PIN(7, 9),
-+	RCAR_GP_PIN(7, 10), RCAR_GP_PIN(7, 11),
-+	RCAR_GP_PIN(7, 0), RCAR_GP_PIN(7, 1),
-+	RCAR_GP_PIN(7, 2), RCAR_GP_PIN(7, 3),
-+	RCAR_GP_PIN(7, 4), RCAR_GP_PIN(7, 5),
-+};
-+static const unsigned int avb3_rgmii_mux[] = {
-+	AVB3_TX_CTL_MARK, AVB3_TXC_MARK,
-+	AVB3_TD0_MARK, AVB3_TD1_MARK, AVB3_TD2_MARK, AVB3_TD3_MARK,
-+	AVB3_RX_CTL_MARK, AVB3_RXC_MARK,
-+	AVB3_RD0_MARK, AVB3_RD1_MARK, AVB3_RD2_MARK, AVB3_RD3_MARK,
-+};
-+static const unsigned int avb3_txcrefclk_pins[] = {
-+	/* AVB3_TXCREFCLK */
-+	RCAR_GP_PIN(7, 12),
-+};
-+static const unsigned int avb3_txcrefclk_mux[] = {
-+	AVB3_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb3_avtp_pps_pins[] = {
-+	/* AVB3_AVTP_PPS */
-+	RCAR_GP_PIN(7, 20),
-+};
-+static const unsigned int avb3_avtp_pps_mux[] = {
-+	AVB3_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb3_avtp_capture_pins[] = {
-+	/* AVB3_AVTP_CAPTURE */
-+	RCAR_GP_PIN(7, 19),
-+};
-+static const unsigned int avb3_avtp_capture_mux[] = {
-+	AVB3_AVTP_CAPTURE_MARK,
-+};
-+static const unsigned int avb3_avtp_match_pins[] = {
-+	/* AVB3_AVTP_MATCH */
-+	RCAR_GP_PIN(7, 18),
-+};
-+static const unsigned int avb3_avtp_match_mux[] = {
-+	AVB3_AVTP_MATCH_MARK,
-+};
-+
-+/* - AVB4 ------------------------------------------------ */
-+static const unsigned int avb4_link_pins[] = {
-+	/* AVB4_LINK */
-+	RCAR_GP_PIN(8, 17),
-+};
-+static const unsigned int avb4_link_mux[] = {
-+	AVB4_LINK_MARK,
-+};
-+static const unsigned int avb4_magic_pins[] = {
-+	/* AVB4_MAGIC */
-+	RCAR_GP_PIN(8, 15),
-+};
-+static const unsigned int avb4_magic_mux[] = {
-+	AVB4_MAGIC_MARK,
-+};
-+static const unsigned int avb4_phy_int_pins[] = {
-+	/* AVB4_PHY_INT */
-+	RCAR_GP_PIN(8, 16),
-+};
-+static const unsigned int avb4_phy_int_mux[] = {
-+	AVB4_PHY_INT_MARK,
-+};
-+static const unsigned int avb4_mdio_pins[] = {
-+	/* AVB4_MDC, AVB4_MDIO */
-+	RCAR_GP_PIN(8, 14), RCAR_GP_PIN(8, 13),
-+};
-+static const unsigned int avb4_mdio_mux[] = {
-+	AVB4_MDC_MARK, AVB4_MDIO_MARK,
-+};
-+static const unsigned int avb4_rgmii_pins[] = {
-+	/*
-+	 * AVB4_TX_CTL, AVB4_TXC, AVB4_TD0, AVB4_TD1, AVB4_TD2, AVB4_TD3,
-+	 * AVB4_RX_CTL, AVB4_RXC, AVB4_RD0, AVB4_RD1, AVB4_RD2, AVB4_RD3,
-+	 */
-+	RCAR_GP_PIN(8, 6), RCAR_GP_PIN(8, 7),
-+	RCAR_GP_PIN(8, 8), RCAR_GP_PIN(8, 9),
-+	RCAR_GP_PIN(8, 10), RCAR_GP_PIN(8, 11),
-+	RCAR_GP_PIN(8, 0), RCAR_GP_PIN(8, 1),
-+	RCAR_GP_PIN(8, 2), RCAR_GP_PIN(8, 3),
-+	RCAR_GP_PIN(8, 4), RCAR_GP_PIN(8, 5),
-+};
-+static const unsigned int avb4_rgmii_mux[] = {
-+	AVB4_TX_CTL_MARK, AVB4_TXC_MARK,
-+	AVB4_TD0_MARK, AVB4_TD1_MARK, AVB4_TD2_MARK, AVB4_TD3_MARK,
-+	AVB4_RX_CTL_MARK, AVB4_RXC_MARK,
-+	AVB4_RD0_MARK, AVB4_RD1_MARK, AVB4_RD2_MARK, AVB4_RD3_MARK,
-+};
-+static const unsigned int avb4_txcrefclk_pins[] = {
-+	/* AVB4_TXCREFCLK */
-+	RCAR_GP_PIN(8, 12),
-+};
-+static const unsigned int avb4_txcrefclk_mux[] = {
-+	AVB4_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb4_avtp_pps_pins[] = {
-+	/* AVB4_AVTP_PPS */
-+	RCAR_GP_PIN(8, 20),
-+};
-+static const unsigned int avb4_avtp_pps_mux[] = {
-+	AVB4_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb4_avtp_capture_pins[] = {
-+	/* AVB4_AVTP_CAPTURE */
-+	RCAR_GP_PIN(8, 19),
-+};
-+static const unsigned int avb4_avtp_capture_mux[] = {
-+	AVB4_AVTP_CAPTURE_MARK,
-+};
-+static const unsigned int avb4_avtp_match_pins[] = {
-+	/* AVB4_AVTP_MATCH */
-+	RCAR_GP_PIN(8, 18),
-+};
-+static const unsigned int avb4_avtp_match_mux[] = {
-+	AVB4_AVTP_MATCH_MARK,
-+};
-+
-+/* - AVB5 ------------------------------------------------ */
-+static const unsigned int avb5_link_pins[] = {
-+	/* AVB5_LINK */
-+	RCAR_GP_PIN(9, 17),
-+};
-+static const unsigned int avb5_link_mux[] = {
-+	AVB5_LINK_MARK,
-+};
-+static const unsigned int avb5_magic_pins[] = {
-+	/* AVB5_MAGIC */
-+	RCAR_GP_PIN(9, 15),
-+};
-+static const unsigned int avb5_magic_mux[] = {
-+	AVB5_MAGIC_MARK,
-+};
-+static const unsigned int avb5_phy_int_pins[] = {
-+	/* AVB5_PHY_INT */
-+	RCAR_GP_PIN(9, 16),
-+};
-+static const unsigned int avb5_phy_int_mux[] = {
-+	AVB5_PHY_INT_MARK,
-+};
-+static const unsigned int avb5_mdio_pins[] = {
-+	/* AVB5_MDC, AVB5_MDIO */
-+	RCAR_GP_PIN(9, 14), RCAR_GP_PIN(9, 13),
-+};
-+static const unsigned int avb5_mdio_mux[] = {
-+	AVB5_MDC_MARK, AVB5_MDIO_MARK,
-+};
-+static const unsigned int avb5_rgmii_pins[] = {
-+	/*
-+	 * AVB5_TX_CTL, AVB5_TXC, AVB5_TD0, AVB5_TD1, AVB5_TD2, AVB5_TD3,
-+	 * AVB5_RX_CTL, AVB5_RXC, AVB5_RD0, AVB5_RD1, AVB5_RD2, AVB5_RD3,
-+	 */
-+	RCAR_GP_PIN(9, 6), RCAR_GP_PIN(9, 7),
-+	RCAR_GP_PIN(9, 8), RCAR_GP_PIN(9, 9),
-+	RCAR_GP_PIN(9, 10), RCAR_GP_PIN(9, 11),
-+	RCAR_GP_PIN(9, 0), RCAR_GP_PIN(9, 1),
-+	RCAR_GP_PIN(9, 2), RCAR_GP_PIN(9, 3),
-+	RCAR_GP_PIN(9, 4), RCAR_GP_PIN(9, 5),
-+};
-+static const unsigned int avb5_rgmii_mux[] = {
-+	AVB5_TX_CTL_MARK, AVB5_TXC_MARK,
-+	AVB5_TD0_MARK, AVB5_TD1_MARK, AVB5_TD2_MARK, AVB5_TD3_MARK,
-+	AVB5_RX_CTL_MARK, AVB5_RXC_MARK,
-+	AVB5_RD0_MARK, AVB5_RD1_MARK, AVB5_RD2_MARK, AVB5_RD3_MARK,
-+};
-+static const unsigned int avb5_txcrefclk_pins[] = {
-+	/* AVB5_TXCREFCLK */
-+	RCAR_GP_PIN(9, 12),
-+};
-+static const unsigned int avb5_txcrefclk_mux[] = {
-+	AVB5_TXCREFCLK_MARK,
-+};
-+static const unsigned int avb5_avtp_pps_pins[] = {
-+	/* AVB5_AVTP_PPS */
-+	RCAR_GP_PIN(9, 20),
-+};
-+static const unsigned int avb5_avtp_pps_mux[] = {
-+	AVB5_AVTP_PPS_MARK,
-+};
-+static const unsigned int avb5_avtp_capture_pins[] = {
-+	/* AVB5_AVTP_CAPTURE */
-+	RCAR_GP_PIN(9, 19),
-+};
-+static const unsigned int avb5_avtp_capture_mux[] = {
-+	AVB5_AVTP_CAPTURE_MARK,
-+};
-+static const unsigned int avb5_avtp_match_pins[] = {
-+	/* AVB5_AVTP_MATCH */
-+	RCAR_GP_PIN(9, 18),
-+};
-+static const unsigned int avb5_avtp_match_mux[] = {
-+	AVB5_AVTP_MATCH_MARK,
-+};
-+
- /* - I2C0 ------------------------------------------------------------------- */
- 
- static const unsigned int i2c0_pins[] = {
-@@ -1365,6 +1821,66 @@ static const unsigned int scif_clk_mux[] = {
- };
- 
- static const struct sh_pfc_pin_group pinmux_groups[] = {
-+	SH_PFC_PIN_GROUP(avb0_link),
-+	SH_PFC_PIN_GROUP(avb0_magic),
-+	SH_PFC_PIN_GROUP(avb0_phy_int),
-+	SH_PFC_PIN_GROUP(avb0_mdio),
-+	SH_PFC_PIN_GROUP(avb0_rgmii),
-+	SH_PFC_PIN_GROUP(avb0_txcrefclk),
-+	SH_PFC_PIN_GROUP(avb0_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb0_avtp_capture),
-+	SH_PFC_PIN_GROUP(avb0_avtp_match),
-+
-+	SH_PFC_PIN_GROUP(avb1_link),
-+	SH_PFC_PIN_GROUP(avb1_magic),
-+	SH_PFC_PIN_GROUP(avb1_phy_int),
-+	SH_PFC_PIN_GROUP(avb1_mdio),
-+	SH_PFC_PIN_GROUP(avb1_rgmii),
-+	SH_PFC_PIN_GROUP(avb1_txcrefclk),
-+	SH_PFC_PIN_GROUP(avb1_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb1_avtp_capture),
-+	SH_PFC_PIN_GROUP(avb1_avtp_match),
-+
-+	SH_PFC_PIN_GROUP(avb2_link),
-+	SH_PFC_PIN_GROUP(avb2_magic),
-+	SH_PFC_PIN_GROUP(avb2_phy_int),
-+	SH_PFC_PIN_GROUP(avb2_mdio),
-+	SH_PFC_PIN_GROUP(avb2_rgmii),
-+	SH_PFC_PIN_GROUP(avb2_txcrefclk),
-+	SH_PFC_PIN_GROUP(avb2_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb2_avtp_capture),
-+	SH_PFC_PIN_GROUP(avb2_avtp_match),
-+
-+	SH_PFC_PIN_GROUP(avb3_link),
-+	SH_PFC_PIN_GROUP(avb3_magic),
-+	SH_PFC_PIN_GROUP(avb3_phy_int),
-+	SH_PFC_PIN_GROUP(avb3_mdio),
-+	SH_PFC_PIN_GROUP(avb3_rgmii),
-+	SH_PFC_PIN_GROUP(avb3_txcrefclk),
-+	SH_PFC_PIN_GROUP(avb3_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb3_avtp_capture),
-+	SH_PFC_PIN_GROUP(avb3_avtp_match),
-+
-+	SH_PFC_PIN_GROUP(avb4_link),
-+	SH_PFC_PIN_GROUP(avb4_magic),
-+	SH_PFC_PIN_GROUP(avb4_phy_int),
-+	SH_PFC_PIN_GROUP(avb4_mdio),
-+	SH_PFC_PIN_GROUP(avb4_rgmii),
-+	SH_PFC_PIN_GROUP(avb4_txcrefclk),
-+	SH_PFC_PIN_GROUP(avb4_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb4_avtp_capture),
-+	SH_PFC_PIN_GROUP(avb4_avtp_match),
-+
-+	SH_PFC_PIN_GROUP(avb5_link),
-+	SH_PFC_PIN_GROUP(avb5_magic),
-+	SH_PFC_PIN_GROUP(avb5_phy_int),
-+	SH_PFC_PIN_GROUP(avb5_mdio),
-+	SH_PFC_PIN_GROUP(avb5_rgmii),
-+	SH_PFC_PIN_GROUP(avb5_txcrefclk),
-+	SH_PFC_PIN_GROUP(avb5_avtp_pps),
-+	SH_PFC_PIN_GROUP(avb5_avtp_capture),
-+	SH_PFC_PIN_GROUP(avb5_avtp_match),
-+
- 	SH_PFC_PIN_GROUP(i2c0),
- 	SH_PFC_PIN_GROUP(i2c1),
- 	SH_PFC_PIN_GROUP(i2c2),
-@@ -1388,6 +1904,78 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(scif_clk),
- };
- 
-+static const char * const avb0_groups[] = {
-+	"avb0_link",
-+	"avb0_magic",
-+	"avb0_phy_int",
-+	"avb0_mdio",
-+	"avb0_rgmii",
-+	"avb0_txcrefclk",
-+	"avb0_avtp_pps",
-+	"avb0_avtp_capture",
-+	"avb0_avtp_match",
-+};
-+
-+static const char * const avb1_groups[] = {
-+	"avb1_link",
-+	"avb1_magic",
-+	"avb1_phy_int",
-+	"avb1_mdio",
-+	"avb1_rgmii",
-+	"avb1_txcrefclk",
-+	"avb1_avtp_pps",
-+	"avb1_avtp_capture",
-+	"avb1_avtp_match",
-+};
-+
-+static const char * const avb2_groups[] = {
-+	"avb2_link",
-+	"avb2_magic",
-+	"avb2_phy_int",
-+	"avb2_mdio",
-+	"avb2_rgmii",
-+	"avb2_txcrefclk",
-+	"avb2_avtp_pps",
-+	"avb2_avtp_capture",
-+	"avb2_avtp_match",
-+};
-+
-+static const char * const avb3_groups[] = {
-+	"avb3_link",
-+	"avb3_magic",
-+	"avb3_phy_int",
-+	"avb3_mdio",
-+	"avb3_rgmii",
-+	"avb3_txcrefclk",
-+	"avb3_avtp_pps",
-+	"avb3_avtp_capture",
-+	"avb3_avtp_match",
-+};
-+
-+static const char * const avb4_groups[] = {
-+	"avb4_link",
-+	"avb4_magic",
-+	"avb4_phy_int",
-+	"avb4_mdio",
-+	"avb4_rgmii",
-+	"avb4_txcrefclk",
-+	"avb4_avtp_pps",
-+	"avb4_avtp_capture",
-+	"avb4_avtp_match",
-+};
-+
-+static const char * const avb5_groups[] = {
-+	"avb5_link",
-+	"avb5_magic",
-+	"avb5_phy_int",
-+	"avb5_mdio",
-+	"avb5_rgmii",
-+	"avb5_txcrefclk",
-+	"avb5_avtp_pps",
-+	"avb5_avtp_capture",
-+	"avb5_avtp_match",
-+};
-+
- static const char * const i2c0_groups[] = {
- 	"i2c0",
- };
-@@ -1445,6 +2033,13 @@ static const char * const scif_clk_groups[] = {
- };
- 
- static const struct sh_pfc_function pinmux_functions[] = {
-+	SH_PFC_FUNCTION(avb0),
-+	SH_PFC_FUNCTION(avb1),
-+	SH_PFC_FUNCTION(avb2),
-+	SH_PFC_FUNCTION(avb3),
-+	SH_PFC_FUNCTION(avb4),
-+	SH_PFC_FUNCTION(avb5),
-+
- 	SH_PFC_FUNCTION(i2c0),
- 	SH_PFC_FUNCTION(i2c1),
- 	SH_PFC_FUNCTION(i2c2),
--- 
-2.20.1
+Cheers,
+Prabhakar
+
+> diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts b/arch/arm/b=
+oot/dts/r8a7742-iwg21d-q7-
+> dbcm-ca.dts
+> index 98c3fbd89fa6c5c7..00634eb58ce39da5 100644
+> --- a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+> +++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+> @@ -91,67 +91,12 @@ &hscif0 {
+>  	status =3D "okay";
+>  };
+>=20
+> -&i2c0 {
+> -	ov5640@3c {
+> -		compatible =3D "ovti,ov5640";
+> -		reg =3D <0x3c>;
+> -		clocks =3D <&mclk_cam1>;
+> -		clock-names =3D "xclk";
+> -
+> -		port {
+> -			ov5640_0: endpoint {
+> -				bus-width =3D <8>;
+> -				data-shift =3D <2>;
+> -				bus-type =3D <6>;
+> -				pclk-sample =3D <1>;
+> -				remote-endpoint =3D <&vin0ep>;
+> -			};
+> -		};
+> -	};
+> -};
+> -
+>  &i2c1 {
+>  	pinctrl-0 =3D <&i2c1_pins>;
+>  	pinctrl-names =3D "default";
+>=20
+>  	status =3D "okay";
+>  	clock-frequency =3D <400000>;
+> -
+> -	ov5640@3c {
+> -		compatible =3D "ovti,ov5640";
+> -		reg =3D <0x3c>;
+> -		clocks =3D <&mclk_cam2>;
+> -		clock-names =3D "xclk";
+> -
+> -		port {
+> -			ov5640_1: endpoint {
+> -				bus-width =3D <8>;
+> -				data-shift =3D <2>;
+> -				bus-type =3D <6>;
+> -				pclk-sample =3D <1>;
+> -				remote-endpoint =3D <&vin1ep>;
+> -			};
+> -		};
+> -	};
+> -};
+> -
+> -&i2c2 {
+> -	ov5640@3c {
+> -		compatible =3D "ovti,ov5640";
+> -		reg =3D <0x3c>;
+> -		clocks =3D <&mclk_cam3>;
+> -		clock-names =3D "xclk";
+> -
+> -		port {
+> -			ov5640_2: endpoint {
+> -				bus-width =3D <8>;
+> -				data-shift =3D <2>;
+> -				bus-type =3D <6>;
+> -				pclk-sample =3D <1>;
+> -				remote-endpoint =3D <&vin2ep>;
+> -			};
+> -		};
+> -	};
+>  };
+>=20
+>  &i2c3 {
+> @@ -160,23 +105,6 @@ &i2c3 {
+>=20
+>  	status =3D "okay";
+>  	clock-frequency =3D <400000>;
+> -
+> -	ov5640@3c {
+> -		compatible =3D "ovti,ov5640";
+> -		reg =3D <0x3c>;
+> -		clocks =3D <&mclk_cam4>;
+> -		clock-names =3D "xclk";
+> -
+> -		port {
+> -			ov5640_3: endpoint {
+> -				bus-width =3D <8>;
+> -				data-shift =3D <2>;
+> -				bus-type =3D <6>;
+> -				pclk-sample =3D <1>;
+> -				remote-endpoint =3D <&vin3ep>;
+> -			};
+> -		};
+> -	};
+>  };
+>=20
+>  &pfc {
+> @@ -267,6 +195,21 @@ &scifb1 {
+>  	cts-gpios =3D <&gpio4 17 GPIO_ACTIVE_LOW>;
+>  };
+>=20
+> +/*
+> + * Below configuration ties VINx endpoints to ov5640/ov7725 camera endpo=
+ints
+> + *
+> + * Uncomment the #include statements to change configuration
+> + */
+> +
+> +/* 8bit CMOS Camera 1 (J13) */
+> +#define CAM_PARENT_I2C		i2c0
+> +#define MCLK_CAM		mclk_cam1
+> +#define CAM_EP			cam0ep
+> +#define VIN_EP			vin0ep
+> +#undef CAM_ENABLED
+> +#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
+> +
+> +#ifdef CAM_ENABLED
+>  &vin0 {
+>  	/*
+>  	 * Set SW2 switch on the SOM to 'ON'
+> @@ -278,13 +221,28 @@ &vin0 {
+>=20
+>  	port {
+>  		vin0ep: endpoint {
+> -			remote-endpoint =3D <&ov5640_0>;
+> +			remote-endpoint =3D <&cam0ep>;
+>  			bus-width =3D <8>;
+>  			bus-type =3D <6>;
+>  		};
+>  	};
+>  };
+> -
+> +#endif /* CAM_ENABLED */
+> +
+> +#undef CAM_PARENT_I2C
+> +#undef MCLK_CAM
+> +#undef CAM_EP
+> +#undef VIN_EP
+> +
+> +/* 8bit CMOS Camera 2 (J14) */
+> +#define CAM_PARENT_I2C		i2c1
+> +#define MCLK_CAM		mclk_cam2
+> +#define CAM_EP			cam1ep
+> +#define VIN_EP			vin1ep
+> +#undef CAM_ENABLED
+> +#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
+> +
+> +#ifdef CAM_ENABLED
+>  &vin1 {
+>  	/* Set SW1 switch on the SOM to 'ON' */
+>  	status =3D "okay";
+> @@ -293,13 +251,29 @@ &vin1 {
+>=20
+>  	port {
+>  		vin1ep: endpoint {
+> -			remote-endpoint =3D <&ov5640_1>;
+> +			remote-endpoint =3D <&cam1ep>;
+>  			bus-width =3D <8>;
+>  			bus-type =3D <6>;
+>  		};
+>  	};
+>  };
+>=20
+> +#endif /* CAM_ENABLED */
+> +
+> +#undef CAM_PARENT_I2C
+> +#undef MCLK_CAM
+> +#undef CAM_EP
+> +#undef VIN_EP
+> +
+> +/* 8bit CMOS Camera 3 (J12) */
+> +#define CAM_PARENT_I2C		i2c2
+> +#define MCLK_CAM		mclk_cam3
+> +#define CAM_EP			cam2ep
+> +#define VIN_EP			vin2ep
+> +#undef CAM_ENABLED
+> +#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
+> +
+> +#ifdef CAM_ENABLED
+>  &vin2 {
+>  	status =3D "okay";
+>  	pinctrl-0 =3D <&vin2_pins>;
+> @@ -307,14 +281,29 @@ &vin2 {
+>=20
+>  	port {
+>  		vin2ep: endpoint {
+> -			remote-endpoint =3D <&ov5640_2>;
+> +			remote-endpoint =3D <&cam2ep>;
+>  			bus-width =3D <8>;
+>  			data-shift =3D <8>;
+>  			bus-type =3D <6>;
+>  		};
+>  	};
+>  };
+> -
+> +#endif /* CAM_ENABLED */
+> +
+> +#undef CAM_PARENT_I2C
+> +#undef MCLK_CAM
+> +#undef CAM_EP
+> +#undef VIN_EP
+> +
+> +/* 8bit CMOS Camera 4 (J11) */
+> +#define CAM_PARENT_I2C		i2c3
+> +#define MCLK_CAM		mclk_cam4
+> +#define CAM_EP			cam3ep
+> +#define VIN_EP			vin3ep
+> +#undef CAM_ENABLED
+> +#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
+> +
+> +#ifdef CAM_ENABLED
+>  &vin3 {
+>  	status =3D "okay";
+>  	pinctrl-0 =3D <&vin3_pins>;
+> @@ -322,9 +311,15 @@ &vin3 {
+>=20
+>  	port {
+>  		vin3ep: endpoint {
+> -			remote-endpoint =3D <&ov5640_3>;
+> +			remote-endpoint =3D <&cam3ep>;
+>  			bus-width =3D <8>;
+>  			bus-type =3D <6>;
+>  		};
+>  	};
+>  };
+> +#endif /* CAM_ENABLED */
+> +
+> +#undef CAM_PARENT_I2C
+> +#undef MCLK_CAM
+> +#undef CAM_EP
+> +#undef VIN_EP
+> diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi =
+b/arch/arm/boot/dts/r8a7742-
+> iwg21d-q7-dbcm-ov5640-single.dtsi
+> new file mode 100644
+> index 0000000000000000..408016620f5b1a04
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi
+> @@ -0,0 +1,30 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * This include file ties a VIN interface with a single ov5640 sensor on
+> + * the iWave-RZ/G1H Qseven board development platform connected with the
+> + * camera daughter board.
+> + *
+> + * Copyright (C) 2020 Renesas Electronics Corp.
+> + */
+> +
+> +#define CAM_ENABLED	1
+> +
+> +&CAM_PARENT_I2C {
+> +	ov5640@3c {
+> +		compatible =3D "ovti,ov5640";
+> +		reg =3D <0x3c>;
+> +		clocks =3D <&MCLK_CAM>;
+> +		clock-names =3D "xclk";
+> +		status =3D "okay";
+> +
+> +		port {
+> +			CAM_EP: endpoint {
+> +				bus-width =3D <8>;
+> +				data-shift =3D <2>;
+> +				bus-type =3D <6>;
+> +				pclk-sample =3D <1>;
+> +				remote-endpoint =3D <&VIN_EP>;
+> +			};
+> +		};
+> +	};
+> +};
+> --
+> 2.25.1
 
