@@ -2,90 +2,82 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8060C83016
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 22:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 550BEC8301B
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 22:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A35A2222C2
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 22:24:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRfGr7Rs"
+	by mail.kernel.org (Postfix) with ESMTP id 3CCD6222C2
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 22:24:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388050AbgK1VtU (ORCPT
+        id S2388038AbgK1VtT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 28 Nov 2020 16:49:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56334 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387567AbgK1Thg (ORCPT
+        Sat, 28 Nov 2020 16:49:19 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39734 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387547AbgK1TaS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 28 Nov 2020 14:37:36 -0500
-Received: from kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com (c-67-180-217-166.hsd1.ca.comcast.net [67.180.217.166])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E23021527;
-        Sat, 28 Nov 2020 19:36:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1606592215;
-        bh=c1x2VcILF4zR3MrshwEk2bDeOnWYpbs+y6qDeQ6KUus=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GRfGr7Rsp5EHCuDMUjcuQXQrQzvJqpRDGPnYhTHYbAOwRTCvNbJzBPXJu5bIEY6hK
-         7O2kalbqiakzUmGjJE1vGxR5DkAUykD8ZOHG/s6+soZOg/4dEPffwYFvjInnOmbRbQ
-         J0Rk5Q6Dxsw+KJ9No3/jUm7AD25/v7CDQ9bxAVv4=
-Date:   Sat, 28 Nov 2020 11:36:54 -0800
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        PowerPC <linuxppc-dev@lists.ozlabs.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Daniel Axtens <dja@axtens.net>, Joel Stanley <joel@jms.id.au>,
+        Sat, 28 Nov 2020 14:30:18 -0500
+Received: by mail-lj1-f196.google.com with SMTP id o24so10115232ljj.6;
+        Sat, 28 Nov 2020 11:30:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=jwkQXnv7ZyII/fGbCnZTZmAtdZL9K4+A6kNTmn7lIDc=;
+        b=crHyVfgtUCnYKhp7VfFV9UHX1fvAspZgiwR4BPQaegDhs2FJ6VtKE4M8JfepJc/XW1
+         lP+AzbgtoeVabPWxssFHPVoc3hMNr8m04koFYp1bcVbf/L3mA2sPXoG8RcQBlgXjJqTa
+         scVCw2kGU3Yu6m8tpTLUgIA+7De9uoQC1yXLPNNz6HHbQpFnf1ZanvlIBdVOp3b7lyKX
+         aQr+isHa9z1uJNJo1o3buXPtAGcxAnnxnwVh6kzLEgdgPg3ZFk4dnIDFRQqcFhAF6Vxw
+         8ItBx2tlSDrlOXSJrymJ2VaOaO9nyIGlomDon+Aawq7S/rSp4UzUJPPBnqzm7023Mxx9
+         aTsw==
+X-Gm-Message-State: AOAM5338fnZaLrNvNXvNSXdRD8TBXlPiKmy+bxVrOXpfRmhwrc4uvcl7
+        bVdHKFMr1zHS9d+2vJx5tHO6IMIB67g=
+X-Google-Smtp-Source: ABdhPJyZz60kIEBhl7zZpRtZYCgDK0CEzNXaB5CG6FPXgHFASauifGdreGpG2MQPaJT6uMJ37PI/6A==
+X-Received: by 2002:a17:906:4009:: with SMTP id v9mr12541669ejj.97.1606563708621;
+        Sat, 28 Nov 2020 03:41:48 -0800 (PST)
+Received: from kozik-lap (adsl-84-226-167-205.adslplus.ch. [84.226.167.205])
+        by smtp.googlemail.com with ESMTPSA id i7sm659288edr.61.2020.11.28.03.41.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Nov 2020 03:41:47 -0800 (PST)
+Date:   Sat, 28 Nov 2020 12:41:45 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jiri Kosina <trivial@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, Pavel Machek <pavel@denx.de>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        Yunsheng Lin <linyunsheng@huawei.com>,
-        Huazhong Tan <tanhuazhong@huawei.com>
-Subject: Re: [PATCH] powerpc: fix the allyesconfig build
-Message-ID: <20201128113654.4f2dcabe@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
-In-Reply-To: <20201128162054.575aea29@canb.auug.org.au>
-References: <20201128122819.32187696@canb.auug.org.au>
-        <20201127175642.45502b20@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
-        <20201128162054.575aea29@canb.auug.org.au>
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH v2 5/5] memory: renesas-rpc-if: Export symbols as GPL
+Message-ID: <20201128114145.GE4761@kozik-lap>
+References: <20201126191146.8753-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20201126191146.8753-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20201126191146.8753-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sat, 28 Nov 2020 16:20:54 +1100 Stephen Rothwell wrote:
-> On Fri, 27 Nov 2020 17:56:42 -0800 Jakub Kicinski <kuba@kernel.org> wrote:
-> >
-> > What's the offending structure in hisilicon? I'd rather have a look
-> > packing structs with pointers in 'em sounds questionable.
-> > 
-> > I only see these two:
-> > 
-> > $ git grep packed drivers/net/ethernet/hisilicon/
-> > drivers/net/ethernet/hisilicon/hns/hnae.h:struct __packed hnae_desc {
-> > drivers/net/ethernet/hisilicon/hns3/hns3_enet.h:struct __packed hns3_desc {  
-> 
-> struct hclge_dbg_reg_type_info which is 28 bytes long due to the
-> included struct struct hclge_dbg_reg_common_msg (which is 12 bytes
-> long).  They are surrounded by #pragma pack(1)/pack().
-> 
-> This forces the 2 pointers in each second array element of
-> hclge_dbg_reg_info[] to be 4 byte aligned (where pointers are 8 bytes
-> long on PPC64).
+On Thu, Nov 26, 2020 at 07:11:46PM +0000, Lad Prabhakar wrote:
+> Renesas RPC-IF driver is licensed under GPL2.0, to be in sync export the
+> symbols as GPL.
 
-Ah! Thanks, I don't see a reason for these to be packed. 
-Looks  like an accident, there is no reason to pack anything 
-past struct hclge_dbg_reg_common_msg AFAICT.
+It's not a valid reason to export them as GPL. Entire Linux source code
+is licensed as GPL-2.0, so are you going to change all EXPORT_SYMBOL to
+GPL?
 
-Huawei folks, would you mind sending a fix if the analysis is correct?
+Please describe it better. Usually the symbols are exported as GPL if
+they are considered tightly coupled with the kernel code. So tightly
+that basically it is not a interface anymore but part of kernel
+internals and therefore any usage of it is a derivative work of Linux
+kernel. If this is the case here, please describe in commit msg why
+these match this criteria.
+
+Best regards,
+Krzysztof
