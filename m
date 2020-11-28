@@ -2,198 +2,158 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED0CC3E8C5
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 00:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC47C63798
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 01:55:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B25A82223F
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 00:24:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90A4B22245
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 01:55:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rUZMICqI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729742AbgK1AW4 (ORCPT
+        id S1730991AbgK1Bmf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 27 Nov 2020 19:22:56 -0500
-Received: from mga05.intel.com ([192.55.52.43]:14267 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731807AbgK1AWh (ORCPT
+        Fri, 27 Nov 2020 20:42:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52800 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730194AbgK1BmS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Nov 2020 19:22:37 -0500
-IronPort-SDR: Gb46ZRvQKDilueVnXXx0o9HMV+op01Mk1QNcDaXHR0BYHzc/2ngWwlwAFRfNjJebX/Wsdx8a3Z
- 9N1DL2qb7X6Q==
-X-IronPort-AV: E=McAfee;i="6000,8403,9818"; a="257151278"
-X-IronPort-AV: E=Sophos;i="5.78,376,1599548400"; 
-   d="scan'208";a="257151278"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2020 16:22:05 -0800
-IronPort-SDR: WAkSS1VsvKgsX44/WI52Id3MHuvIJJ0Q8H/9575UIt3j4QpfaO/gbE3QypYGHCoFuqE/IEjg6d
- u2QXLbpXaAVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.78,376,1599548400"; 
-   d="scan'208";a="333815945"
-Received: from lkp-server01.sh.intel.com (HELO b5888d13d5a5) ([10.239.97.150])
-  by orsmga006.jf.intel.com with ESMTP; 27 Nov 2020 16:22:04 -0800
-Received: from kbuild by b5888d13d5a5 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1kio03-0000Dl-IK; Sat, 28 Nov 2020 00:22:03 +0000
-Date:   Sat, 28 Nov 2020 08:21:01 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:master] BUILD SUCCESS
- 3332d8b14e2ad9439e3452261f41a282eb2577e2
-Message-ID: <5fc197ed.BAGrMPndyVMqByBq%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Fri, 27 Nov 2020 20:42:18 -0500
+Received: from ozlabs.org (bilbo.ozlabs.org [IPv6:2401:3900:2:1::2])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6E36C0613D3;
+        Fri, 27 Nov 2020 17:28:27 -0800 (PST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CjYm52j5Hz9s1l;
+        Sat, 28 Nov 2020 12:28:21 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1606526904;
+        bh=pizqWbx6kpcLHzpqpXf5UA/FRNefEUnZ0fLu0XqqZds=;
+        h=Date:From:To:Cc:Subject:From;
+        b=rUZMICqIkh9bteswcTjhiv3kijzQks3QgHUeEEd4HGX0WQz0cxguPHfQPWwPGmRuf
+         C6PdreWjq9uaLYKYrvkv1EAnBUHVobo0SO0EVtjnGReL7pdgv2Lk2e0/34wzhicHvB
+         fjMfnyasaDArAXSRgzTm/uKoS1TUJJqU7k0/nRiKZXfjeAS4HJIX2tHhRUoTq2+RAU
+         NdiUWZneTnEmbcjcV8+SowD+xi4/W9mM8GCe3x5jVeVwT+3sRT0ozQ1OnfudQ5dYs+
+         cOE+SBu2Kdt0oBLbIuqF4YJeEJXeNIrIS3gnvBwGsystqYvHA04TPN0PvaKfQQShtV
+         23YK7YKH4F/tA==
+Date:   Sat, 28 Nov 2020 12:28:19 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     PowerPC <linuxppc-dev@lists.ozlabs.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Daniel Axtens <dja@axtens.net>, Joel Stanley <joel@jms.id.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+Subject: [PATCH] powerpc: fix the allyesconfig build
+Message-ID: <20201128122819.32187696@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/KuY.fQqVIIg2ziwEsNY9G9S";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
-branch HEAD: 3332d8b14e2ad9439e3452261f41a282eb2577e2  Merge branch 'renesas-next' into renesas-devel
+--Sig_/KuY.fQqVIIg2ziwEsNY9G9S
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-elapsed time: 724m
+There are 2 drivers that have arrays of packed structures that contain
+pointers that end up at unaligned offsets.  These produce warnings in
+the PowerPC allyesconfig build like this:
 
-configs tested: 125
-configs skipped: 3
+WARNING: 148 bad relocations
+c00000000e56510b R_PPC64_UADDR64   .rodata+0x0000000001c72378
+c00000000e565126 R_PPC64_UADDR64   .rodata+0x0000000001c723c0
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+They are not drivers that are used on PowerPC (I assume), so mark them
+to not be built on PPC64 when CONFIG_RELOCATABLE is enabled.
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-powerpc                  mpc885_ads_defconfig
-sh                          r7780mp_defconfig
-parisc                              defconfig
-ia64                        generic_defconfig
-riscv                          rv32_defconfig
-arm                           efm32_defconfig
-powerpc                    sam440ep_defconfig
-m68k                       m5475evb_defconfig
-xtensa                    smp_lx200_defconfig
-arm                         mv78xx0_defconfig
-arm                    vt8500_v6_v7_defconfig
-arm                           omap1_defconfig
-powerpc                     sequoia_defconfig
-arm                        keystone_defconfig
-arm                           sunxi_defconfig
-mips                        workpad_defconfig
-nds32                             allnoconfig
-powerpc                      arches_defconfig
-mips                            gpr_defconfig
-m68k                           sun3_defconfig
-sh                         ap325rxa_defconfig
-powerpc                      pasemi_defconfig
-mips                         bigsur_defconfig
-mips                        omega2p_defconfig
-xtensa                       common_defconfig
-powerpc                     kilauea_defconfig
-arm                       omap2plus_defconfig
-arm                          pxa3xx_defconfig
-xtensa                generic_kc705_defconfig
-powerpc                     pq2fads_defconfig
-ia64                            zx1_defconfig
-arm                       aspeed_g5_defconfig
-arc                        nsim_700_defconfig
-arm                            xcep_defconfig
-powerpc                     skiroot_defconfig
-arm                         lpc18xx_defconfig
-m68k                        m5407c3_defconfig
-mips                     cu1000-neo_defconfig
-x86_64                           alldefconfig
-powerpc                 mpc834x_itx_defconfig
-sh                          polaris_defconfig
-arm                            pleb_defconfig
-powerpc                 mpc834x_mds_defconfig
-arm                          simpad_defconfig
-nios2                         10m50_defconfig
-arc                           tb10x_defconfig
-mips                           ip32_defconfig
-sh                             shx3_defconfig
-sh                        sh7757lcr_defconfig
-arm                      jornada720_defconfig
-sh                           se7722_defconfig
-powerpc                 linkstation_defconfig
-arm                        oxnas_v6_defconfig
-sh                          rsk7201_defconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-c6x                              allyesconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-s390                             allyesconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-i386                 randconfig-a004-20201127
-i386                 randconfig-a003-20201127
-i386                 randconfig-a002-20201127
-i386                 randconfig-a005-20201127
-i386                 randconfig-a001-20201127
-i386                 randconfig-a006-20201127
-x86_64               randconfig-a015-20201127
-x86_64               randconfig-a011-20201127
-x86_64               randconfig-a014-20201127
-x86_64               randconfig-a016-20201127
-x86_64               randconfig-a012-20201127
-x86_64               randconfig-a013-20201127
-i386                 randconfig-a012-20201127
-i386                 randconfig-a013-20201127
-i386                 randconfig-a011-20201127
-i386                 randconfig-a016-20201127
-i386                 randconfig-a014-20201127
-i386                 randconfig-a015-20201127
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                            allmodconfig
-x86_64                                   rhel
-x86_64                           allyesconfig
-x86_64                    rhel-7.6-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                                  kexec
-
-clang tested configs:
-x86_64               randconfig-a006-20201127
-x86_64               randconfig-a003-20201127
-x86_64               randconfig-a004-20201127
-x86_64               randconfig-a005-20201127
-x86_64               randconfig-a002-20201127
-x86_64               randconfig-a001-20201127
-
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Yisen Zhuang <yisen.zhuang@huawei.com>
+Cc: Salil Mehta <salil.mehta@huawei.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Nicholas Piggin  <npiggin@gmail.com>
+Cc: Daniel Axtens <dja@axtens.net>
+Cc: Joel Stanley <joel@jms.id.au>
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ drivers/clk/renesas/Kconfig            | 4 ++++
+ drivers/net/ethernet/hisilicon/Kconfig | 4 ++++
+ 2 files changed, 8 insertions(+)
+
+It might be easiest to put this through the PowerPC (fixes?) tree, if
+people woulf just sned ACKs, please?
+
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 18915d668a30..53f24a0cad7a 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -151,6 +151,10 @@ config CLK_R8A779A0
+ 	select CLK_RENESAS_CPG_MSSR
+=20
+ config CLK_R9A06G032
++	# PPC64 RELOCATABLE kernels cannot handle relocations to
++	# unaligned locations that are produced by the array of
++	# packed structures in this driver.
++	depends on !(PPC64 && RELOCATABLE)
+ 	bool "Renesas R9A06G032 clock driver"
+ 	help
+ 	  This is a driver for R9A06G032 clocks
+diff --git a/drivers/net/ethernet/hisilicon/Kconfig b/drivers/net/ethernet/=
+hisilicon/Kconfig
+index 44f9279cdde1..bf47e504b365 100644
+--- a/drivers/net/ethernet/hisilicon/Kconfig
++++ b/drivers/net/ethernet/hisilicon/Kconfig
+@@ -102,6 +102,10 @@ config HNS3_HCLGE
+ 	tristate "Hisilicon HNS3 HCLGE Acceleration Engine & Compatibility Layer =
+Support"
+ 	default m
+ 	depends on PCI_MSI
++	# PPC64 RELOCATABLE kernels cannot handle relocations to
++	# unaligned locations that are produced by the array of
++	# packed structures in this driver.
++	depends on !(PPC64 && RELOCATABLE)
+ 	help
+ 	  This selects the HNS3_HCLGE network acceleration engine & its hardware
+ 	  compatibility layer. The engine would be used in Hisilicon hip08 family=
+ of
+--=20
+2.29.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/KuY.fQqVIIg2ziwEsNY9G9S
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/Bp7MACgkQAVBC80lX
+0GyPBQgAkMvCmiFhqnL7o7DUVRLmNMqGGyl4yTMxo8SW8iDwovOI5Lpejsoif1Js
+pKQZtjlq5ToIWffxcAEs0XFr8LhSkOQb5pIBRit3YG/GfVFJCduwbwSFm+HYjaeN
+1PVg9Y1//xbcNPCgRi3T9cvk1RYIy2UCSnmHEdyLqaQcBXISg+NNxtEELdIY/Bv9
+BQ/rZ/etXC55M+Sn9rxtpKSRXptkqjipJkvUnQOBEGErwVV8lqvJP3KGEipvIESC
+jMjNYqyL5sm2I534Qj37zx66tLcy9ptWaM0KCHJ0xQVzGHP9dN1cduVbnGlMd3JJ
+7S0Fqhozs6aKsd9v+8Of9/ArMx3kuA==
+=DZFT
+-----END PGP SIGNATURE-----
+
+--Sig_/KuY.fQqVIIg2ziwEsNY9G9S--
