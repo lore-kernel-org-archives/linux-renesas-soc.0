@@ -2,37 +2,49 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D48C3E8C5
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 02:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA03C64E7A
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 17:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8300D2222A
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 02:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A3DE22456
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 28 Nov 2020 17:56:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XHHWgToQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbgK1ChM (ORCPT
+        id S1726986AbgK1FWT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 27 Nov 2020 21:37:12 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:8055 "EHLO
-        szxga05-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729604AbgK1CgW (ORCPT
+        Sat, 28 Nov 2020 00:22:19 -0500
+Received: from bilbo.ozlabs.org ([203.11.71.1]:48829 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731234AbgK1FVc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 27 Nov 2020 21:36:22 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4CjbFs0wC4zhcHy;
-        Sat, 28 Nov 2020 10:35:45 +0800 (CST)
-Received: from [10.74.191.121] (10.74.191.121) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.487.0; Sat, 28 Nov 2020 10:36:00 +0800
-Subject: Re: [PATCH] powerpc: fix the allyesconfig build
-To:     Jakub Kicinski <kuba@kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-CC:     Michael Ellerman <mpe@ellerman.id.au>,
+        Sat, 28 Nov 2020 00:21:32 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4CjfwR6yCVz9sRR;
+        Sat, 28 Nov 2020 16:20:55 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1606540859;
+        bh=G/77mzVGVkJ1P21yhssVEcy7P8QkwU8Fmt2CZ6ER9dU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=XHHWgToQWBNQiIj5urNkvUcFWLEOEOJr7nuz7VRQ0iudZqaDy2foY5rnPmU1x7WIF
+         UpApdenPnR3/MvtLskNqfM97OMZA+ugDgK1m/R5+u+vvOieWxikDpbyc5QnedfH9JX
+         izmbVDvMp9XH/BesR/Y6ODaLOu/90Tm/uqgffgdO/2lmCoRW01PGniSbfEIIdCCHJg
+         rYFT04geQrwr9JMJoPRpIoYuLJpA40+rZBh6xVs2S7rMk6cAPTWAaewj/gDRfyFg+1
+         1pBhzOkzE9SWGlnyydGHc1Cg0HQv4GJk8xu140490yXWa1WwkMvDZGEs3dGl9ABK1v
+         qQTEtn3a07sIw==
+Date:   Sat, 28 Nov 2020 16:20:54 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jakub Kicinski <kuba@kernel.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
         PowerPC <linuxppc-dev@lists.ozlabs.org>,
         Nicholas Piggin <npiggin@gmail.com>,
-        "Daniel Axtens" <dja@axtens.net>, Joel Stanley <joel@jms.id.au>,
+        Daniel Axtens <dja@axtens.net>, Joel Stanley <joel@jms.id.au>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -41,94 +53,61 @@ CC:     Michael Ellerman <mpe@ellerman.id.au>,
         "David S. Miller" <davem@davemloft.net>,
         <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
-References: <20201128122819.32187696@canb.auug.org.au>
- <20201127175642.45502b20@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
-From:   Yunsheng Lin <linyunsheng@huawei.com>
-Message-ID: <382701ba-c50e-18cf-83be-60eeab228372@huawei.com>
-Date:   Sat, 28 Nov 2020 10:36:00 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
+Subject: Re: [PATCH] powerpc: fix the allyesconfig build
+Message-ID: <20201128162054.575aea29@canb.auug.org.au>
 In-Reply-To: <20201127175642.45502b20@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.74.191.121]
-X-CFilter-Loop: Reflected
+References: <20201128122819.32187696@canb.auug.org.au>
+        <20201127175642.45502b20@kicinski-fedora-pc1c0hjn.DHCP.thefacebook.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/I=3tiLN0XLZrAWSSuz2Ag_u";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2020/11/28 9:56, Jakub Kicinski wrote:
-> On Sat, 28 Nov 2020 12:28:19 +1100 Stephen Rothwell wrote:
->> There are 2 drivers that have arrays of packed structures that contain
->> pointers that end up at unaligned offsets.  These produce warnings in
->> the PowerPC allyesconfig build like this:
->>
->> WARNING: 148 bad relocations
->> c00000000e56510b R_PPC64_UADDR64   .rodata+0x0000000001c72378
->> c00000000e565126 R_PPC64_UADDR64   .rodata+0x0000000001c723c0
->>
->> They are not drivers that are used on PowerPC (I assume), so mark them
->> to not be built on PPC64 when CONFIG_RELOCATABLE is enabled.
-> 
-> 😳😳
-> 
+--Sig_/I=3tiLN0XLZrAWSSuz2Ag_u
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi Jakub,
+
+On Fri, 27 Nov 2020 17:56:42 -0800 Jakub Kicinski <kuba@kernel.org> wrote:
+>
 > What's the offending structure in hisilicon? I'd rather have a look
 > packing structs with pointers in 'em sounds questionable.
-> 
+>=20
 > I only see these two:
-> 
+>=20
 > $ git grep packed drivers/net/ethernet/hisilicon/
 > drivers/net/ethernet/hisilicon/hns/hnae.h:struct __packed hnae_desc {
-> drivers/net/ethernet/hisilicon/hns3/hns3_enet.h:struct __packed hns3_desc {
+> drivers/net/ethernet/hisilicon/hns3/hns3_enet.h:struct __packed hns3_desc=
+ {
 
-I assmue "struct __packed hnae_desc" is the offending structure, because
-flag_ipoffset field is defined as __le32 and is not 32 bit aligned.
+struct hclge_dbg_reg_type_info which is 28 bytes long due to the
+included struct struct hclge_dbg_reg_common_msg (which is 12 bytes
+long).  They are surrounded by #pragma pack(1)/pack().
 
-struct __packed hnae_desc {
-	__le64 addr;							//0
-	union {
-		struct {						//64
-			union {
-				__le16 asid_bufnum_pid;
-				__le16 asid;
-			};
-			__le16 send_size;				//92
-			union {
-				__le32 flag_ipoffset;			//*108*
-				struct {
-					__u8 bn_pid;
-					__u8 ra_ri_cs_fe_vld;
-					__u8 ip_offset;
-					__u8 tse_vlan_snap_v6_sctp_nth;
-				};
-			};
-			__le16 mss;
-			__u8 l4_len;
-			__u8 reserved1;
-			__le16 paylen;
-			__u8 vmid;
-			__u8 qid;
-			__le32 reserved2[2];
-		} tx;
+This forces the 2 pointers in each second array element of
+hclge_dbg_reg_info[] to be 4 byte aligned (where pointers are 8 bytes
+long on PPC64).
+--=20
+Cheers,
+Stephen Rothwell
 
-		struct {
-			__le32 ipoff_bnum_pid_flag;
-			__le16 pkt_len;
-			__le16 size;
-			union {
-				__le32 vlan_pri_asid;
-				struct {
-					__le16 asid;
-					__le16 vlan_cfi_pri;
-				};
-			};
-			__le32 rss_hash;
-			__le32 reserved_1[2];
-		} rx;
-	};
-};
+--Sig_/I=3tiLN0XLZrAWSSuz2Ag_u
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> .
-> 
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl/B3jYACgkQAVBC80lX
+0GwFIgf4pkvlqKpzmRgyqk+s0V1tc9Gl8zToJYwqce1hR4QciFVaTeVkvik1MpR5
+j6pW1eb5DB+1p7nDsEH9W2e/3Y8NZAH58xIuYz8DtoMhVFZC/ag/eQFeq8f7YPbG
+v1166AaoNoBmBQaFYuLk+3fBc5RsedFSRik82Lpkad24U2KpjkTuTxEh19er5/3y
+FKo5d37D1e2vSxwfggOJQ09Z1UsHU6RRb0V4vkLh9QI9h2bxzhiMmi6KvATA7Xg2
+ecqbSb9293xx2VWSSn8I8PYyyVgkt4N6AwMvCdrJG/wIPBljcTCSqVbuh3lnGUD7
+uz4kcTQF5VXbzVvq7Ph+kLFhBbnk
+=fRdP
+-----END PGP SIGNATURE-----
+
+--Sig_/I=3tiLN0XLZrAWSSuz2Ag_u--
