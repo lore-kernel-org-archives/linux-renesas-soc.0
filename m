@@ -2,66 +2,52 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C559C64E8A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Dec 2020 10:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EF6C83012
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Dec 2020 10:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 277CB208A9
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Dec 2020 10:43:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C32B21D1A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Dec 2020 10:53:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728664AbgLCKnH (ORCPT
+        id S2388810AbgLCKxT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Dec 2020 05:43:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60942 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727431AbgLCKnH (ORCPT
+        Thu, 3 Dec 2020 05:53:19 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:38972 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387738AbgLCKxS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Dec 2020 05:43:07 -0500
-Received: from mail-yb1-xb43.google.com (mail-yb1-xb43.google.com [IPv6:2607:f8b0:4864:20::b43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81AF6C061A4E;
-        Thu,  3 Dec 2020 02:42:21 -0800 (PST)
-Received: by mail-yb1-xb43.google.com with SMTP id s8so1551314yba.13;
-        Thu, 03 Dec 2020 02:42:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hfm3YC+N0lPHZ6ksRkiUm92xWhUJaA74Y3jMuhyWfs8=;
-        b=L0zaM4a4o64DBsbJDO7dYT1Q9pkzr/Fymx8GIKWeaachDCrOYD4z2/uon0uaT6U73A
-         bdsFCCgzaRuYDNUk9FDbS8NnerYatLK4qdYUwteNbqmKzOTihoYs3SEA2L1Hbgyl8DuW
-         isa0fKwBWtTnG4jftCPOvrx7PTGYrEZzQToQpMkzXc5CyNf3hvvGTzkdwKkrNF4QooeQ
-         zQDfz9KfiBDtrJpHTxwEipJDKlXNubFvSCZfK2Yu8GLP/RZbLx2nJ70JKjK5ideuK17g
-         /tkrKUaLbD6TQHt5JV2ky/xsXfpTOT1aG0ZanUw953OKxDvXm7HvSvYQH2gjRg1pGAUW
-         1L5A==
+        Thu, 3 Dec 2020 05:53:18 -0500
+Received: by mail-oi1-f194.google.com with SMTP id f11so1716080oij.6;
+        Thu, 03 Dec 2020 02:53:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=hfm3YC+N0lPHZ6ksRkiUm92xWhUJaA74Y3jMuhyWfs8=;
-        b=fL6F54DXl6QeEIv+SsNlP4FFApVWUHDrpGNrOK8//wwBNHeaT2taqKzTma/UOiicWd
-         m6HQQJ9IXQKIw43stMh2Lq2CP4BKeNSxLEz8r23Hii3oYvhrKeXmbhCdeHly98QI7Hup
-         VGV9ZUfKXPgAJMTvOvTcy0P9jUmncIHpIJhi4hPZC6vtZVf4vmNgQA0JNQ4l+2hb26As
-         dJC3MNVTRndE1vOe4Ir/oDTfoe7wC4k8DLMxtoIh7QowsQEZOE6G7ogXheJKWYXSPCUN
-         nZ9Nc5coC2VfQSrjWGRHD4xBoxz19PXyccIeuAFlOnNzUJX2WNrLLh312fqEGvztMZPE
-         DDVQ==
-X-Gm-Message-State: AOAM531TKhH4zTuhdTcIMwsk+MiV6wJEUfUFT+3SALabkhqLwha/x3Re
-        i3w4WKX/1Tcgq5+zN082TfhygiGqMqEacyP52bs=
-X-Google-Smtp-Source: ABdhPJxVKrqsLes0pmj5XcNDHVPGuT72dSLFKSlykNNMhvPLVewk1WzacGkS8+DQLZTtQSGSihapk8/vyqOogGQq2QY=
-X-Received: by 2002:a25:209:: with SMTP id 9mr3780458ybc.127.1606992140812;
- Thu, 03 Dec 2020 02:42:20 -0800 (PST)
+        bh=u87Bb9nXMJHw/Gfzxqzm29W8srtApfEdU6ieh4IOwiU=;
+        b=aLdu+DjvrhfOzDOt3a7uOO0HeqDQ+kVFsROnoxhX+F2V3a/Nn/fvYGwbSVH/l7REXY
+         lUM+Bg0/NHDs9p7gjYMInbi2Z9Acbmrjhb+r8EWrncd8lPrXZWSDMPfyOMSfInfygG3u
+         DGniWar2ot+6T0ub/6d0VYN2H1jDjVzny/xPVJZrsyD/8hU33zNl3QGNM+8qSS3Z2kPP
+         bFeSqXmtA4Syeu7pWNOIdvJGWcT8cXjxq/Gy8CK69xiP/rQ8e/JBjYSobSQtRltGrufh
+         /wOp5J1X1f+ucGd3tY4ABu8507I5cYqR0r5ovKWfCGspvP9XP+Nst7aQFRo5NRdIjD6K
+         XJog==
+X-Gm-Message-State: AOAM531232LShwfFknQQWRft52UOBHaC0VTc54XINlyPiq81D94e4c9V
+        nuwjEXSl9r/eAAjGdin3yZUmff3fWzBeW6zL5bc=
+X-Google-Smtp-Source: ABdhPJyUZic5SnTn2IaqKK1W+5aU1SXH6m1g83YEfqbkq5edOir0vqd6gMMWiadrj+J6ahx77gVBlVWtKVqVAtUQBjA=
+X-Received: by 2002:aca:1c0f:: with SMTP id c15mr1419199oic.54.1606992757842;
+ Thu, 03 Dec 2020 02:52:37 -0800 (PST)
 MIME-Version: 1.0
-References: <20201126191146.8753-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20201126191146.8753-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Thu, 3 Dec 2020 10:41:54 +0000
-Message-ID: <CA+V-a8vjTQv7wrdJFe6TS3saUE=Sj6ty0JSz0VZUd=TyDVfp4Q@mail.gmail.com>
+References: <20201126191146.8753-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <CA+V-a8vjTQv7wrdJFe6TS3saUE=Sj6ty0JSz0VZUd=TyDVfp4Q@mail.gmail.com>
+In-Reply-To: <CA+V-a8vjTQv7wrdJFe6TS3saUE=Sj6ty0JSz0VZUd=TyDVfp4Q@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 3 Dec 2020 11:52:26 +0100
+Message-ID: <CAMuHMdUHujqMnCKH14GM1SzN+3_E4j9u1R8uDuM3YmVjcd_MTw@mail.gmail.com>
 Subject: Re: [PATCH v2 0/5] memory: renesas-rpc-if: Trivial fixes
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Jiri Kosina <trivial@kernel.org>,
@@ -75,43 +61,47 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Krzysztof,
+Hi Prabhakar,
 
-On Thu, Nov 26, 2020 at 7:11 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
->
-> Hi All,
->
-> This patch series fixes trivial issues in RPC-IF driver.
->
-> Changes for v2:
-> * Balanced PM in rpcif_disable_rpm
-> * Fixed typo in patch 4/5
-> * Dropped C++ style fixes patch
-> * Included RB tags from Sergei
->
-> Cheers,
-> Prabhakar
->
-> Lad Prabhakar (5):
->   memory: renesas-rpc-if: Return correct value to the caller of
->     rpcif_manual_xfer()
->   memory: renesas-rpc-if: Fix unbalanced pm_runtime_enable in
->     rpcif_{enable,disable}_rpm
->   memory: renesas-rpc-if: Fix a reference leak in rpcif_probe()
->   memory: renesas-rpc-if: Make rpcif_enable/disable_rpm() as static
->     inline
->   memory: renesas-rpc-if: Export symbols as GPL
->
-As these are fixes to the existing driver will these be part of v5.10 release ?
+On Thu, Dec 3, 2020 at 11:42 AM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Thu, Nov 26, 2020 at 7:11 PM Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> > This patch series fixes trivial issues in RPC-IF driver.
+> >
+> > Changes for v2:
+> > * Balanced PM in rpcif_disable_rpm
+> > * Fixed typo in patch 4/5
+> > * Dropped C++ style fixes patch
+> > * Included RB tags from Sergei
+> >
+> > Cheers,
+> > Prabhakar
+> >
+> > Lad Prabhakar (5):
+> >   memory: renesas-rpc-if: Return correct value to the caller of
+> >     rpcif_manual_xfer()
+> >   memory: renesas-rpc-if: Fix unbalanced pm_runtime_enable in
+> >     rpcif_{enable,disable}_rpm
+> >   memory: renesas-rpc-if: Fix a reference leak in rpcif_probe()
+> >   memory: renesas-rpc-if: Make rpcif_enable/disable_rpm() as static
+> >     inline
+> >   memory: renesas-rpc-if: Export symbols as GPL
+> >
+> As these are fixes to the existing driver will these be part of v5.10 release ?
 
-Cheers,
-Prabhakar
+IIUIC, only the first one[*] is a fix for an issue that could happen during
+normal operation?
 
->  drivers/memory/renesas-rpc-if.c | 28 +++++++++-------------------
->  include/memory/renesas-rpc-if.h | 13 +++++++++++--
->  2 files changed, 20 insertions(+), 21 deletions(-)
->
-> --
-> 2.25.1
->
+[*] -EPROBE_DEFER would be eaten, causing no reprobe to happen.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
