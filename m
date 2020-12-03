@@ -2,132 +2,167 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E0FC63777
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Dec 2020 07:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F41C64E7B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Dec 2020 07:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E44D20BED
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Dec 2020 07:13:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D27F820B80
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Dec 2020 07:53:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388031AbgLCHNZ (ORCPT
+        id S1726530AbgLCHxf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Dec 2020 02:13:25 -0500
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:59515 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388026AbgLCHNZ (ORCPT
+        Thu, 3 Dec 2020 02:53:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42332 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726325AbgLCHxf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Dec 2020 02:13:25 -0500
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id kigzkrzzXarN7kih2kqaKK; Thu, 03 Dec 2020 08:06:21 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
-        t=1606979181; bh=60r7yuQCVwjeOaZMoxg5FKxRZuzlL40/Na8UfJKaZLM=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=b5AVIdE1jrP+BT7KIxEPNqAM9t3voRUhX4h9Epm9P5bTrOQWUr64D/Tr5KUfuyoLZ
-         Xs44wOgZ3QFxAcGez62YDhPeP5mNksbToAJtm202fiLx8wxnq80IhD+JKvT6616LK6
-         kBGsa+Q5yY9w4rHJKF/joCt60/dUygUMSjWeI9E+FbygqhZwnwulM4aZFNzKoj5bRb
-         s42ixqfSg68aQNokgMZgi6giBceYQmoK3ZD5b1mcm4ncP7SzWR2DvlcjPMRPCSfCBg
-         ZsXa956H2+3XHUoD9dYY+BgC5W5iEUNL2Hd4qraHQw8D+hbnxDTLzK5lcEyfHaSlu9
-         3Mqj2XbiH+pHg==
-Subject: Re: [PATCH v3 0/2] media: rcar-vin: Mask access to VNCSI_IFMD
- register
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     koji.matsuoka.xm@renesas.com,
+        Thu, 3 Dec 2020 02:53:35 -0500
+Date:   Thu, 3 Dec 2020 08:52:48 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1606981974;
+        bh=JSYyuk0a7i4960Uke1Sa2Fn/mmq9vwQ8+tHqZBrxEqA=;
+        h=From:To:Cc:Subject:In-Reply-To:References:From;
+        b=shgUCKiKc41h/kDczRIbCo0krL3LKZxNQ5jzfyLhBhgRnveaYMJCzg92q8bK9p36V
+         OvN+mQqkogKiOb0LlsCfXnoxt3WQv5GTd8Q1KRw181nJpgq9H88AdqW9bE+S49parb
+         B+ETYGoWNB8VanblEyR7y7Kl9jY82uUXWw4+z5cq0+OmOylmNKy8vm3XlxJTX11a1z
+         /SSY46nTJvXEtFGioSN5S1pnKfbokRRm11GOSjM6PrxcWdp21bNEerRIq1EnDdk7Hw
+         ANdfilyrtyc0Ldcav+CGhHfbMdES14K8ykC3sN7rHjjNd5WylSmufUBj8i5WoLcSjO
+         Agm5JQrnWZzIA==
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        koji.matsuoka.xm@renesas.com,
         niklas.soderlund+renesas@ragnatech.se,
         laurent.pinchart@ideasonboard.com, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] media: rcar-vin: Mask access to VNCSI_IFMD
+ register
+Message-ID: <20201203085248.17a734d1@coco.lan>
+In-Reply-To: <bca27ed8-f6bc-f44e-df2e-ff210ac599a5@xs4all.nl>
 References: <20201126074757.2768-1-jacopo+renesas@jmondi.org>
- <20201203075830.2701c8b5@coco.lan>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <de509dc4-c164-18e5-00e6-c4f4d39eeecc@xs4all.nl>
-Date:   Thu, 3 Dec 2020 08:06:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.0
+        <20201203075830.2701c8b5@coco.lan>
+        <de509dc4-c164-18e5-00e6-c4f4d39eeecc@xs4all.nl>
+        <bca27ed8-f6bc-f44e-df2e-ff210ac599a5@xs4all.nl>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20201203075830.2701c8b5@coco.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4xfHgJLC1d62Tuk8XJ8oGMLnTnWfXtk2z9HmoIvLTYSJFhfC07so0FmAx+x2wSdzYScUPYatlmUVKkJANZbNb1D4X7nw5jdTzQZeTZB44pogqTyWJQt7/Z
- 044k16EjjgUD52VBRXyFFC2XP65sROdsBA8SUuSJk6d+JaU1ywwyvUyZOCia+iTIhUVPMLKA4fy+zhvwTU6r8lH/hyyrnKTzwUncvTNE+hdDZU5MnO43Qmqa
- A4KcQ1aGFukLQkvGOvMcJ1ImBpQy9K7UQbhNIW2A/UjXipnrvHZBE2PUU/voY+QHGkpmm3MIxhELgHty7R0YTLFmuLbeFBvU9Gvh2oQaxCRtLwrwybXbdD/R
- MPUncZ9cd5JospabDnbRRQPGBccrgf/kK/c3x1yNE1WgpoWzUM77XB79x5VTwrmUX1s+xGdhoqRMyJBotxIyP0LeskA0gGnznwrMDVjqogXiyuTgoNE=
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 03/12/2020 07:58, Mauro Carvalho Chehab wrote:
-> Em Thu, 26 Nov 2020 08:47:55 +0100
-> Jacopo Mondi <jacopo+renesas@jmondi.org> escreveu:
-> 
->> As reported in patch 2/2 commit message the the VNCSI_IFMD register
->> has the following limitations according to chip manual revision 2.20
->>
->> - V3M, V3H and E3 do not support the DES1 field has they do not feature
->> a CSI20 receiver.
->> - D3 only supports parallel input, and the whole register shall always
->> be written as 0.
->>
->> This patch upports the BSP change commit f54697394457
->> ("media: rcar-vin: Fix VnCSI_IFMD register access for r8a77990") from
->> Koji Matsuoka
-> 
-> As checkpatch warned:
-> 
-> 	-:22: WARNING: Unknown commit id 'f54697394457', maybe rebased or not pulled?
-> 	
-> There's no such commit upstream. Are you referring to an OOT patch?
-> 
-> If so, you should provide an URL from where the patch is stored,
-> as otherwise this comment won't make any sense upstream.
-> 
-> If you can't provide such URL, please adjust the comment to provide
-> a description that won't be dependent of such OOT commit.
+Em Thu, 3 Dec 2020 08:08:09 +0100
+Hans Verkuil <hverkuil@xs4all.nl> escreveu:
 
-Read the commit message:
+> On 03/12/2020 08:06, Hans Verkuil wrote:
+> > On 03/12/2020 07:58, Mauro Carvalho Chehab wrote:  
+> >> Em Thu, 26 Nov 2020 08:47:55 +0100
+> >> Jacopo Mondi <jacopo+renesas@jmondi.org> escreveu:
+> >>  
+> >>> As reported in patch 2/2 commit message the the VNCSI_IFMD register
+> >>> has the following limitations according to chip manual revision 2.20
+> >>>
+> >>> - V3M, V3H and E3 do not support the DES1 field has they do not feature
+> >>> a CSI20 receiver.
+> >>> - D3 only supports parallel input, and the whole register shall always
+> >>> be written as 0.
+> >>>
+> >>> This patch upports the BSP change commit f54697394457
+> >>> ("media: rcar-vin: Fix VnCSI_IFMD register access for r8a77990") from
+> >>> Koji Matsuoka  
+> >>
+> >> As checkpatch warned:
+> >>
+> >> 	-:22: WARNING: Unknown commit id 'f54697394457', maybe rebased or not pulled?
+> >> 	
+> >> There's no such commit upstream. Are you referring to an OOT patch?
+> >>
+> >> If so, you should provide an URL from where the patch is stored,
+> >> as otherwise this comment won't make any sense upstream.
+> >>
+> >> If you can't provide such URL, please adjust the comment to provide
+> >> a description that won't be dependent of such OOT commit.  
+> 
+> Ah, it's too early in the morning for me. I didn't read your email carefully
+> enough.
 
->> This patch upports the BSP change commit f54697394457
->> ("media: rcar-vin: Fix VnCSI_IFMD register access for r8a77990") from
->> Koji Matsuoka
+Yeah, I realized that the commit is for an OOT patch ;-)
 
-This commit is from the rcar BSP package, and does not refer to a kernel
-commit. So it is correct that the commit ID is unknown.
+The main point is that Patch descriptions should be self-contained, bringing
+everything that is needed to describe the patch on it. It is acceptable to have
+URLs pointing to some external references that will be there as long as the
+driver will remain at the Linux Kernel. The way the description currently is,
+it doesn't fulfill such criteria.
 
-Regards,
+-
 
-	Hans
+Btw, I was unable to find such commit, even googling for it.
+
+So, even now, people will find problems if they want to understand the
+description. Things will become a lot worse after a couple of years.
+
+So, such description has to be changed.
+
+For now, I'm merging the other patches of the PR without this one.
 
 > 
->>
->> Tested on r-car E3 Ebisu.
->>
->> v2 -> v3:
->> - Remove a few comments and add Niklas' tag to [2/2]
->>
->> v1 -> v2:
->> - Inspect the channel routing table to deduce the availability of DES1/DES0
->>   bits as suggested by Niklas.
->>
->> Jacopo Mondi (2):
->>   media: rcar-vin: Remove unused macro
->>   media: rcar-vin: Mask VNCSI_IFMD register
->>
->>  drivers/media/platform/rcar-vin/rcar-dma.c | 26 ++++++++++++++++++----
->>  1 file changed, 22 insertions(+), 4 deletions(-)
->>
->> --
->> 2.29.1
->>
+> Just ignore what I wrote.
 > 
+> Jacopo, can you repost with a URL? Or perhaps just drop this bit of text.
 > 
+> Regards,
 > 
-> Thanks,
-> Mauro
+> 	Hans
+> 
+> > 
+> > Read the commit message:
+> >   
+> >>> This patch upports the BSP change commit f54697394457
+> >>> ("media: rcar-vin: Fix VnCSI_IFMD register access for r8a77990") from
+> >>> Koji Matsuoka  
+> > 
+> > This commit is from the rcar BSP package, and does not refer to a kernel
+> > commit. So it is correct that the commit ID is unknown.
+> > 
+> > Regards,
+> > 
+> > 	Hans
+> >   
+> >>  
+> >>>
+> >>> Tested on r-car E3 Ebisu.
+> >>>
+> >>> v2 -> v3:
+> >>> - Remove a few comments and add Niklas' tag to [2/2]
+> >>>
+> >>> v1 -> v2:
+> >>> - Inspect the channel routing table to deduce the availability of DES1/DES0
+> >>>   bits as suggested by Niklas.
+> >>>
+> >>> Jacopo Mondi (2):
+> >>>   media: rcar-vin: Remove unused macro
+> >>>   media: rcar-vin: Mask VNCSI_IFMD register
+> >>>
+> >>>  drivers/media/platform/rcar-vin/rcar-dma.c | 26 ++++++++++++++++++----
+> >>>  1 file changed, 22 insertions(+), 4 deletions(-)
+> >>>
+> >>> --
+> >>> 2.29.1
+> >>>  
+> >>
+> >>
+> >>
+> >> Thanks,
+> >> Mauro
+> >>  
+> >   
 > 
 
+
+
+Thanks,
+Mauro
