@@ -2,88 +2,73 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E63C4361A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Dec 2020 22:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE48C4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Dec 2020 22:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 534E622CAE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Dec 2020 22:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5D4E22CA0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  4 Dec 2020 22:02:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725903AbgLDWC3 (ORCPT
+        id S1726149AbgLDWCa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Dec 2020 17:02:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51232 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbgLDWC2 (ORCPT
+        Fri, 4 Dec 2020 17:02:30 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:52062 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726023AbgLDWCa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Dec 2020 17:02:28 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A782DC0613D1
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  4 Dec 2020 14:01:48 -0800 (PST)
+        Fri, 4 Dec 2020 17:02:30 -0500
 Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 13E4399A;
-        Fri,  4 Dec 2020 23:01:45 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 15E5EF7F;
+        Fri,  4 Dec 2020 23:01:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1607119305;
-        bh=P6ebxqaRV9bCymyha5aYaBu0nIi1Oan3Apmv3xvyjts=;
-        h=From:To:Cc:Subject:Date:From;
-        b=HqqADjrSRmndwfpJyz+UHISwR8j5YD5cBZT5VAnEZjD/2ovCRK3IOYOYTaFP5YxPX
-         m2U96Q8DJkf5o49jgqNmnN7nDk53ejK3Ll+9GBy2baWpXT3Tsx0H52NvwFYKiPgWlS
-         tvA1NDfBp9pBL0fM1GxJyMpgM67jcHkzJ7mVkMRk=
+        s=mail; t=1607119306;
+        bh=tAq9o37PSYjRprEYfuzn9Wm7XARcW+0bWrGAcGlGnz8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GrG4rMCGnw3h7uRPkNH0rj45oLPmg+a+JA3bdCDvfPEs1n7I3u2/lCRD9cFOUg9eS
+         v0i56OqDaYWTxEBKAi6m7OPED8wJFljw8lmzf7xWTNLSReukD5aDzXylIJWm9+z6+D
+         GKjVWIHjkBgXrtT6gp93g2i2zjEPgy+5DTinibzE=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 0/9] drm: rcar-du: Fix LVDS-related crash
-Date:   Sat,  5 Dec 2020 00:01:30 +0200
-Message-Id: <20201204220139.15272-1-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 2/9] drm: rcar-du: Release vsp device reference in all error paths
+Date:   Sat,  5 Dec 2020 00:01:32 +0200
+Message-Id: <20201204220139.15272-3-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201204220139.15272-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20201204220139.15272-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+Use drmm_add_action_or_reset() instead of drmm_add_action() to ensure
+the vsp device reference is released in case the function call fails.
 
-This patch series fixes a crash in the LVDS encoder on D3 and E3 SoCs.
-See patch 1/9 for details. The next patches are additional cleanups.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Patches 4/9 to 6/9 fix incorrect usage of the devm_* API. They could be
-made simpler by using the proposed drmm_* allocators for encoders and
-planes ([1]), but those haven't landed yet. Not depending on them also
-helps backporting those fixes to stable kernels. I will switch to the
-new helpers when they will be available.
-
-[1] https://lore.kernel.org/dri-devel/20200911135724.25833-1-p.zabel@pengutronix.de/
-
-Laurent Pinchart (9):
-  drm: rcar-du: Fix crash when using LVDS1 clock for CRTC
-  drm: rcar-du: Release vsp device reference in all error paths
-  drm: rcar-du: Drop unneeded encoder cleanup in error path
-  drm: rcar-du: Use DRM-managed allocation for VSP planes
-  drm: rcar-du: Use DRM-managed allocation for encoders
-  drm: rcar-du: Embed drm_device in rcar_du_device
-  drm: rcar-du: Replace dev_private with container_of
-  drm: rcar-du: Skip encoder allocation for LVDS1 in dual-link mode
-  drm: rcar-du: Drop local encoder variable
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c      | 12 +--
- drivers/gpu/drm/rcar-du/rcar_du_drv.c       | 33 +++----
- drivers/gpu/drm/rcar-du/rcar_du_drv.h       | 13 ++-
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c   | 95 +++++++++++----------
- drivers/gpu/drm/rcar-du/rcar_du_encoder.h   |  2 -
- drivers/gpu/drm/rcar-du/rcar_du_kms.c       | 12 +--
- drivers/gpu/drm/rcar-du/rcar_du_plane.c     |  8 +-
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c       | 28 ++++--
- drivers/gpu/drm/rcar-du/rcar_du_writeback.c |  2 +-
- 9 files changed, 107 insertions(+), 98 deletions(-)
-
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+index f6a69aa116e6..4dcb1bfbe201 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+@@ -364,7 +364,7 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+ 
+ 	vsp->vsp = &pdev->dev;
+ 
+-	ret = drmm_add_action(rcdu->ddev, rcar_du_vsp_cleanup, vsp);
++	ret = drmm_add_action_or_reset(rcdu->ddev, rcar_du_vsp_cleanup, vsp);
+ 	if (ret < 0)
+ 		return ret;
+ 
 -- 
 Regards,
 
