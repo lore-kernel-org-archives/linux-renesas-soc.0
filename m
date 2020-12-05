@@ -2,112 +2,130 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD98C1B0E3
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 18:40:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B4D9C4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 18:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2DB5922E00
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 18:40:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7DF92310E
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 18:55:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbgLESkZ (ORCPT
+        id S1726196AbgLESza (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 5 Dec 2020 13:40:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43806 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbgLESkY (ORCPT
+        Sat, 5 Dec 2020 13:55:30 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40224 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbgLESz3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Dec 2020 13:40:24 -0500
-Received: from mxf2.seznam.cz (mxf2.seznam.cz [IPv6:2a02:598:2::123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E7A8C061A51;
-        Sat,  5 Dec 2020 10:39:38 -0800 (PST)
-Received: from email.seznam.cz
-        by email-smtpc2b.ng.seznam.cz (email-smtpc2b.ng.seznam.cz [10.23.13.45])
-        id 63cadaf238c48e9b626316ac;
-        Sat, 05 Dec 2020 19:39:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
-        t=1607193574; bh=ygDjAbkmvKrkg92N0x8aNLj/K1N+J/k2/6ydsyOdGA8=;
-        h=Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
-         References:MIME-Version:Content-Transfer-Encoding;
-        b=RC+cMPncoUpyzIyy5n2XmS5y8kav54nK/qpdEIevJZ/XA5otJHYmtN+DojnkDEOdp
-         FYRvxR4WI4Bmf88+zJP+i7vw+W0TDKS4cNoultzsScP70RPabarF5nbs/hDBryYJxn
-         Bm3I/3LejD4eJByseeNA38vXLbLGTL/+ssqfuASU=
-Received: from localhost.localdomain (ip-228-128.dynamic.ccinternet.cz [212.69.128.228])
-        by email-relay3.ng.seznam.cz (Seznam SMTPD 1.3.122) with ESMTP;
-        Sat, 05 Dec 2020 19:36:22 +0100 (CET)  
-From:   michael.srba@seznam.cz
-To:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Sat, 5 Dec 2020 13:55:29 -0500
+Received: by mail-ot1-f66.google.com with SMTP id j12so8624781ota.7;
+        Sat, 05 Dec 2020 10:55:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5313XC3NfbvTufqGnoEAJCgFERCH+JaQxzJ9SkuUnEI=;
+        b=GPgQcewdYOUcJbmjrgAPum8YziaQz1zD1qSAcoE8BqjHmRt9zEL2hFjNXWQPKoTJiP
+         rq0p+S/5mEqQp1t7GQqBCM4ZN5NgTwlQaRy+f1Bp3NQUQ7ux1SwmCJHISCJ7fzo64zbx
+         GIP6xR5rApk9d+k1StsoA8jw9MtAwetIYEPXlaB0SMJWGHcVy6SeqSxN1H8sTd9mGFFn
+         0Xh0h9IqTC9Yk3SZWcVDmJfKHCn4EDK6Ze/nolgDuC2U4z/WM237AtsMxFDrFlW70VwB
+         Ya9bvXLE2W6Ucah8es3oknVM3htGONItVNKNjeoKR90esUxulymjgkWKCMo1FjohzLip
+         SQQQ==
+X-Gm-Message-State: AOAM531bqJeHHvrzt8OEte7cyXPMTmpZYY2YBSRBWkrOv94HE8Izv3Nf
+        HDi744kO8bGvn8xI0ngKjNV6IKv2He2mtSM9lwE=
+X-Google-Smtp-Source: ABdhPJyHhcwE29b9kUY2JgtRiLm4Fpspo3qTwPzC7XurwuY7tdRsTokCyB+6/3Eipnvz05ZHTOnotkt0sxEnVBUvuP0=
+X-Received: by 2002:a9d:2203:: with SMTP id o3mr7913179ota.107.1607194483442;
+ Sat, 05 Dec 2020 10:54:43 -0800 (PST)
+MIME-Version: 1.0
+References: <20201205183355.6488-1-michael.srba@seznam.cz>
+In-Reply-To: <20201205183355.6488-1-michael.srba@seznam.cz>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sat, 5 Dec 2020 19:54:32 +0100
+Message-ID: <CAMuHMdXLQeTWGmAk9a3uE0VgPmTUsjbNn36q9-228eZufuYZ6w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] media: i2c: imx219: add support for specifying clock-frequencies
+To:     michael.srba@seznam.cz
+Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Michael Srba <Michael.Srba@seznam.cz>
-Subject: [PATCH 2/3] media: dt-bindings: media: i2c: imx219: document clock-frequency property
-Date:   Sat,  5 Dec 2020 19:33:54 +0100
-Message-Id: <20201205183355.6488-2-michael.srba@seznam.cz>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201205183355.6488-1-michael.srba@seznam.cz>
-References: <20201205183355.6488-1-michael.srba@seznam.cz>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Michael Srba <Michael.Srba@seznam.cz>
+Hi Michael,
 
-This patch documents the clock-frequency property, which allows the driver
-to change the clock frequency from it's default value.
+On Sat, Dec 5, 2020 at 7:36 PM <michael.srba@seznam.cz> wrote:
+> From: Michael Srba <Michael.Srba@seznam.cz>
+>
+> This patch adds 1% tolerance on input clock, similar to other camera sensor
+> drivers. It also allows for specifying the actual clock in the device tree,
+> instead of relying on it being already set to the right frequency (which is
+> often not the case).
+>
+> Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
 
-Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
----
- Documentation/devicetree/bindings/media/i2c/imx219.yaml | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Thanks for your patch!
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/imx219.yaml b/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-index dfc4d29a4f04..666b8a9da5be 100644
---- a/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-@@ -27,6 +27,10 @@ properties:
-   clocks:
-     maxItems: 1
- 
-+  clock-frequency:
-+    description:
-+      Frequency of the input clock in Hertz.
-+
-   VDIG-supply:
-     description:
-       Digital I/O voltage supply, 1.8 volts
-@@ -78,6 +82,7 @@ required:
-   - compatible
-   - reg
-   - clocks
-+  - clock-frequency
-   - VANA-supply
-   - VDIG-supply
-   - VDDL-supply
-@@ -95,6 +100,7 @@ examples:
-             compatible = "sony,imx219";
-             reg = <0x10>;
-             clocks = <&imx219_clk>;
-+            clock-frequency = <24000000>;
-             VANA-supply = <&imx219_vana>;   /* 2.8v */
-             VDIG-supply = <&imx219_vdig>;   /* 1.8v */
-             VDDL-supply = <&imx219_vddl>;   /* 1.2v */
- 
+> --- a/drivers/media/i2c/imx219.c
+> +++ b/drivers/media/i2c/imx219.c
+> @@ -1443,13 +1443,26 @@ static int imx219_probe(struct i2c_client *client)
+>                 return PTR_ERR(imx219->xclk);
+>         }
+>
+> -       imx219->xclk_freq = clk_get_rate(imx219->xclk);
+> -       if (imx219->xclk_freq != IMX219_XCLK_FREQ) {
+> +       ret = fwnode_property_read_u32(dev_fwnode(dev), "clock-frequency", &imx219->xclk_freq);
+> +       if (ret) {
+> +               dev_err(dev, "could not get xclk frequency\n");
+> +               return ret;
+
+This breaks compatibility with existing DTBs, which do not have the
+clock-frequency property.
+For backwards compatibility, you should assume the default 24 MHz
+instead of returning an error.
+
+> +       }
+> +
+> +       /* this driver currently expects 24MHz; allow 1% tolerance */
+> +       if (imx219->xclk_freq < 23760000 || imx219->xclk_freq > 24240000) {
+>                 dev_err(dev, "xclk frequency not supported: %d Hz\n",
+>                         imx219->xclk_freq);
+>                 return -EINVAL;
+>         }
+>
+> +       ret = clk_set_rate(imx219->xclk, imx219->xclk_freq);
+> +       if (ret) {
+> +               dev_err(dev, "could not set xclk frequency\n");
+> +               return ret;
+> +       }
+> +
+> +
+>         ret = imx219_get_regulators(imx219);
+>         if (ret) {
+>                 dev_err(dev, "failed to get regulators\n");
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.29.2
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
