@@ -2,112 +2,107 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51398C4361A
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 09:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A054EC19437
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 18:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E10D22D2A
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 09:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8838F230FE
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 18:40:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726043AbgLEJp7 (ORCPT
+        id S1726063AbgLESjk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 5 Dec 2020 04:45:59 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42199 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728872AbgLEJor (ORCPT
+        Sat, 5 Dec 2020 13:39:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43666 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726241AbgLESja (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 5 Dec 2020 04:44:47 -0500
-Received: by mail-oi1-f193.google.com with SMTP id l200so9233478oig.9;
-        Sat, 05 Dec 2020 01:44:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CGdaUmtB30TVsj7alwm/cJhVAoMWhBl+L16TLVJy0GU=;
-        b=OtRdZuRrRGqDSxza1pS8St7U/cLN2HB5k7GnUYU3RifXD84LXc6NCVRBvi4A+axxRe
-         nlnjcMgTneeeVGFKpl599qAG5ov0a9CnCE1l1ZDO0DzdxYzxqYUlIe4Yww9KOVrCXRPJ
-         RWwjaOX61C0M+FWx2xuphpM1XR4/J1KPZgJ2XVMA+wnmaYTLT7Z/AlccVi05gDD4IDQI
-         +HZpgKJ6OIxxnN2LupuN3CgfH29JWoSv3Y5hFqwhCAt/W1CZ3kTuBqDiK9PSF+pFZl61
-         O3lgFEE8W93choXbaPIE3VqEP9OXJydVwegG/caf2LpwBk4OrJtWsLmYboc6MNq+Peex
-         N7ow==
-X-Gm-Message-State: AOAM533Hv+Eccli9X2CMhL1ox4dUOJfYc36up5u+9UaXDrFUdbwWHGJx
-        x1tWfko8BocruSLQpyHaNR4az1Ld5ZdaQxzAfoAOtKpvufQ=
-X-Google-Smtp-Source: ABdhPJwLYvltQQGfaxz5Cw2w/zv1Y+C9MgjWhLpZYxRx4VvMLhZqNWb3xLk+V7UCvmYR02UJOryygCbm26eslneYzJA=
-X-Received: by 2002:aca:ec09:: with SMTP id k9mr5872940oih.153.1607159141323;
- Sat, 05 Dec 2020 01:05:41 -0800 (PST)
-MIME-Version: 1.0
-References: <20201130085743.1656317-1-geert+renesas@glider.be> <160714944657.1580929.4595234852977229885@swboyd.mtv.corp.google.com>
-In-Reply-To: <160714944657.1580929.4595234852977229885@swboyd.mtv.corp.google.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sat, 5 Dec 2020 10:05:29 +0100
-Message-ID: <CAMuHMdWJhiO5A7b3B8CH2YpURe_G0dEPEmES6R8n_8D-Z+Q65A@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: renesas: r9a06g032: Drop __packed for portability
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Sat, 5 Dec 2020 13:39:30 -0500
+X-Greylist: delayed 117 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 05 Dec 2020 10:38:43 PST
+Received: from mxf2.seznam.cz (mxf2.seznam.cz [IPv6:2a02:598:2::123])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52E54C061A4F;
+        Sat,  5 Dec 2020 10:38:43 -0800 (PST)
+Received: from email.seznam.cz
+        by email-smtpc27a.ng.seznam.cz (email-smtpc27a.ng.seznam.cz [10.23.18.38])
+        id 7f888d572486d93e7e214109;
+        Sat, 05 Dec 2020 19:38:39 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
+        t=1607193519; bh=ovobX8sOi5Y+dScdZ8OoMIVuBxTsi+gvOe2YjIqDOH0=;
+        h=Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
+         References:MIME-Version:Content-Transfer-Encoding;
+        b=NHRElxwC6s4DBWOAcMfgaQkOlNaYcI+9kfE084S0YxabwEmZys3EArXkNn4X0ZIJ/
+         ZpMeo1ge540Yl84Y/DMJhHoQZsodsScVDX9a6/Y+vyiGZ1AteN491+2pQ64gR+oyyI
+         35/wzBP+LEkhZwIDBtZJZu2+qDBwlB3+cJm3hnpg=
+Received: from localhost.localdomain (ip-228-128.dynamic.ccinternet.cz [212.69.128.228])
+        by email-relay3.ng.seznam.cz (Seznam SMTPD 1.3.122) with ESMTP;
+        Sat, 05 Dec 2020 19:36:23 +0100 (CET)  
+From:   michael.srba@seznam.cz
+To:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Michael Srba <Michael.Srba@seznam.cz>
+Subject: [PATCH 3/3] arm64: dts: update device trees to specify clock-frequency in imx219 node
+Date:   Sat,  5 Dec 2020 19:33:55 +0100
+Message-Id: <20201205183355.6488-3-michael.srba@seznam.cz>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201205183355.6488-1-michael.srba@seznam.cz>
+References: <20201205183355.6488-1-michael.srba@seznam.cz>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Stephen,
+From: Michael Srba <Michael.Srba@seznam.cz>
 
-On Sat, Dec 5, 2020 at 7:24 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2020-11-30 00:57:43)
-> > The R9A06G032 clock driver uses an array of packed structures to reduce
-> > kernel size.  However, this array contains pointers, which are no longer
-> > aligned naturally, and cannot be relocated on PPC64.  Hence when
-> > compile-testing this driver on PPC64 with CONFIG_RELOCATABLE=y (e.g.
-> > PowerPC allyesconfig), the following warnings are produced:
-> >
-> >     WARNING: 136 bad relocations
-> >     c000000000616be3 R_PPC64_UADDR64   .rodata+0x00000000000cf338
-> >     c000000000616bfe R_PPC64_UADDR64   .rodata+0x00000000000cf370
-> >     ...
-> >
-> > Fix this by dropping the __packed attribute from the r9a06g032_clkdesc
-> > definition, trading a small size increase for portability.
-> >
-> > This increases the 156-entry clock table by 1 byte per entry, but due to
-> > the compiler generating more efficient code for unpacked accesses, the
-> > net size increase is only 76 bytes (gcc 9.3.0 on arm32).
-> >
-> > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Fixes: 4c3d88526eba2143 ("clk: renesas: Renesas R9A06G032 clock driver")
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > ---
->
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
->
-> Unless you want me to pick this up for clk-fixes?
+This patch adds the clock-frequency property to all device trees that use
+the imx219 binding, with the value of exactly 24Mhz which was previously
+implicitly assumed.
 
-Yes please. Forgot to retain this comment for v2:
+Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
+---
+ arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi | 1 +
+ arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts        | 1 +
+ 2 files changed, 2 insertions(+)
 
-   "Please take directly (ppc or clk), as this is a build fix.
-    https://lore.kernel.org/linux-clk/20201128122819.32187696@canb.auug.org.au/"
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi b/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
+index dac6ff49020f..986c6c1f7312 100644
+--- a/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
++++ b/arch/arm64/boot/dts/renesas/aistarvision-mipi-adapter-2.1.dtsi
+@@ -82,6 +82,7 @@ imx219: imx219@10 {
+ 		compatible = "sony,imx219";
+ 		reg = <0x10>;
+ 		clocks = <&osc25250_clk>;
++		clock-frequency = <24000000>;
+ 		VANA-supply = <&imx219_vana_2v8>;
+ 		VDIG-supply = <&imx219_vdig_1v8>;
+ 		VDDL-supply = <&imx219_vddl_1v2>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
+index f0829e905506..db4b801b17b5 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
+@@ -59,6 +59,7 @@ &imx219 {
+ 	port {
+ 		imx219_ep: endpoint {
+ 			clock-lanes = <0>;
++			clock-frequency = <24000000>;
+ 			data-lanes = <1 2>;
+ 			link-frequencies = /bits/ 64 <456000000>;
+ 			/* uncomment remote-endpoint property to tie imx219 to
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.29.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
