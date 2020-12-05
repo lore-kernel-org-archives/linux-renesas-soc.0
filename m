@@ -2,315 +2,83 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE51C4361A
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 02:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E4BC4167B
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 06:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B12822E00
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 02:20:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEF9B22D58
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  5 Dec 2020 06:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725550AbgLECUV (ORCPT
+        id S1727414AbgLEGYs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 4 Dec 2020 21:20:21 -0500
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:15976 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725300AbgLECUV (ORCPT
+        Sat, 5 Dec 2020 01:24:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35532 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726999AbgLEGYs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 4 Dec 2020 21:20:21 -0500
-X-Halon-ID: e6c24d4b-369f-11eb-a076-005056917f90
-Authorized-sender: niklas.soderlund@fsdn.se
-Received: from bismarck.berto.se (p4fca2458.dip0.t-ipconnect.de [79.202.36.88])
-        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
-        id e6c24d4b-369f-11eb-a076-005056917f90;
-        Sat, 05 Dec 2020 03:16:40 +0100 (CET)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] timekeeping: Fix change_clocksource() for PM and sh_cmt
-Date:   Sat,  5 Dec 2020 03:19:19 +0100
-Message-Id: <20201205021921.1456190-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.29.2
+        Sat, 5 Dec 2020 01:24:48 -0500
+Content-Type: text/plain; charset="utf-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1607149448;
+        bh=r8vnqMmsHnbgwMXfSQZu84loY6DvrmHia8Sx1hc/RJQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=T4bFniftvCd2jeC6yESokQyOHoTMxC9vK6miqN2mi2XZsBNpieVpWrZWJ4/ROoVau
+         zIweZB3ouv+2OYfFYhW50zG34k1z/GoAAlXVdYhFfPpHAER9uNSy+ACWR4QnDhGuRN
+         uF3ewwCPsC0jNHoOsylZXbRo6pbi2K8WY92Dbcw+L49AQqk8J0jnR3fXB3D8pc9QKD
+         HkId29E+OBrSUtnds5+Pr4+rygtaP4uF6TpHP1UUg/g/s/MIu62pjr25Y6h887D3mo
+         0ABFaab5sm2/qsL/H6aOQgE5NCXBPsqOngGLlOeALbEVA6UTuZ/AUtHNc8K05eNVem
+         BV/WPUFP1yU7w==
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20201130085743.1656317-1-geert+renesas@glider.be>
+References: <20201130085743.1656317-1-geert+renesas@glider.be>
+Subject: Re: [PATCH v2] clk: renesas: r9a06g032: Drop __packed for portability
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Gareth Williams <gareth.williams.jx@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Date:   Fri, 04 Dec 2020 22:24:06 -0800
+Message-ID: <160714944657.1580929.4595234852977229885@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+Quoting Geert Uytterhoeven (2020-11-30 00:57:43)
+> The R9A06G032 clock driver uses an array of packed structures to reduce
+> kernel size.  However, this array contains pointers, which are no longer
+> aligned naturally, and cannot be relocated on PPC64.  Hence when
+> compile-testing this driver on PPC64 with CONFIG_RELOCATABLE=3Dy (e.g.
+> PowerPC allyesconfig), the following warnings are produced:
+>=20
+>     WARNING: 136 bad relocations
+>     c000000000616be3 R_PPC64_UADDR64   .rodata+0x00000000000cf338
+>     c000000000616bfe R_PPC64_UADDR64   .rodata+0x00000000000cf370
+>     ...
+>=20
+> Fix this by dropping the __packed attribute from the r9a06g032_clkdesc
+> definition, trading a small size increase for portability.
+>=20
+> This increases the 156-entry clock table by 1 byte per entry, but due to
+> the compiler generating more efficient code for unpacked accesses, the
+> net size increase is only 76 bytes (gcc 9.3.0 on arm32).
+>=20
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Fixes: 4c3d88526eba2143 ("clk: renesas: Renesas R9A06G032 clock driver")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-This series is an attempt to fix two potential deadlock situations and 
-allowing the tools/testing/selftests/timers/clocksource-switch test to 
-pass for the sh_cmt driver.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-The two patches are not directly related, but patch 1/2 fixes a local 
-problem in the sh_cmt driver that hides the issue in the timekeeping 
-core addressed in patch 2/2. In trying to give as an complete view of my 
-problem so I have opted to keep the two patches together.
-
-I'm in no way an expert on the timekeeping core but with these two 
-patches applied I can pass the clocksource-switch selftest on R-Car Gen2 
-and Gen3 boards. The selftest rapidly switches clock sources and without 
-these patches I lockup somewhere and the test fails, with this applied 
-it passes. Please se end of cover-letter for logs of the selftest runs, 
-and each patch for possible deadlock information.
-
-For each patch the easiest way demonstrate the each of the deadlock 
-situations all that is needed is to select the CMT clocksource,
-
-  # echo e60f0000.timer > /sys/devices/system/clocksource/clocksource0/current_clocksource
-
-I have tested on-top of v5.10-rc6 on R-Car M3-N (CMT0 and CMT1) and 
-Koelsch (CMT0).
-
-* R-Car M3-N without this series applied
-
-  # ./clocksource-switch 
-  Validating clocksource arch_sys_counter
-  Consistent CLOCK_REALTIME                 [OK]
-  Consistent CLOCK_MONOTONIC                [OK]
-  Consistent CLOCK_PROCESS_CPUTIME_ID       [OK]
-  Consistent CLOCK_THREAD_CPUTIME_ID        [OK]
-  Consistent CLOCK_MONOTONIC_RAW            [OK]
-  Consistent CLOCK_REALTIME_COARSE          [OK]
-  Consistent CLOCK_MONOTONIC_COARSE         [OK]
-  Consistent CLOCK_BOOTTIME                 [OK]
-  Consistent CLOCK_TAI                      [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Nanosleep CLOCK_REALTIME                  [OK]
-  Nanosleep CLOCK_MONOTONIC                 [OK]
-  Nanosleep CLOCK_MONOTONIC_RAW             [UNSUPPORTED]
-  Nanosleep CLOCK_REALTIME_COARSE           [UNSUPPORTED]
-  Nanosleep CLOCK_MONOTONIC_COARSE          [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME                  [OK]
-  Nanosleep CLOCK_REALTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_TAI                       [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Validating clocksource e60f0000.timer
-  Consistent CLOCK_REALTIME                 [OK]
-  Consistent CLOCK_MONOTONIC                [OK]
-  Consistent CLOCK_PROCESS_CPUTIME_ID       [OK]
-  Consistent CLOCK_THREAD_CPUTIME_ID        [OK]
-  Consistent CLOCK_MONOTONIC_RAW            [OK]
-  Consistent CLOCK_REALTIME_COARSE          [OK]
-  Consistent CLOCK_MONOTONIC_COARSE         [OK]
-  Consistent CLOCK_BOOTTIME                 [OK]
-  Consistent CLOCK_TAI                      [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Nanosleep CLOCK_REALTIME                  [OK]
-  Nanosleep CLOCK_MONOTONIC                 [OK]
-  Nanosleep CLOCK_MONOTONIC_RAW             [UNSUPPORTED]
-  Nanosleep CLOCK_REALTIME_COARSE           [UNSUPPORTED]
-  Nanosleep CLOCK_MONOTONIC_COARSE          [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME                  [OK]
-  Nanosleep CLOCK_REALTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_TAI                       [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Validating clocksource e6130000.timer
-  Consistent CLOCK_REALTIME                 [OK]
-  Consistent CLOCK_MONOTONIC                [OK]
-  Consistent CLOCK_PROCESS_CPUTIME_ID       [OK]
-  Consistent CLOCK_THREAD_CPUTIME_ID        [OK]
-  Consistent CLOCK_MONOTONIC_RAW            [OK]
-  Consistent CLOCK_REALTIME_COARSE          [OK]
-  Consistent CLOCK_MONOTONIC_COARSE         [OK]
-  Consistent CLOCK_BOOTTIME                 [OK]
-  Consistent CLOCK_TAI                      [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Nanosleep CLOCK_REALTIME                  [OK]
-  Nanosleep CLOCK_MONOTONIC                 [OK]
-  Nanosleep CLOCK_MONOTONIC_RAW             [UNSUPPORTED]
-  Nanosleep CLOCK_REALTIME_COARSE           [UNSUPPORTED]
-  Nanosleep CLOCK_MONOTONIC_COARSE          [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME                  [OK]
-  Nanosleep CLOCK_REALTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_TAI                       [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Running Asynchronous Switching Tests...
-  Consistent CLOCK_REALTIME                 Sat Dec  5 01:52:28 2020
-  
-  1607133200:750182652
-  1607133200:750182652
-  1607133200:750182772
-  1607133200:750182892
-  1607133200:750182892
-  1607133200:750183012
-  1607133200:750183133
-  1607133200:750183133
-  1607133200:750183253
-  1607133200:750183373
-  1607133200:750183373
-  1607133200:750183493
-  1607133200:750183493
-  1607133200:750183613
-  1607133200:750183734
-  1607133200:750183734
-  1607133200:750183854
-  1607133200:750183974
-  1607133200:750183974
-  1607133200:750184094
-  1607133200:750184214
-  1607133200:750184214
-  1607133200:750184335
-  1607133200:750184455
-  1607133200:750184455
-  1607133200:750184575
-  1607133200:750184695
-  1607133200:750184695
-  1607133200:750184815
-  1607133200:750184936
-  1607133200:750184936
-  1607133200:750185056
-  1607133200:750185056
-  1607133200:750185176
-  1607133200:750185296
-  1607133200:750185296
-  1607133200:750185416
-  1607133200:750185536
-  1607133200:750185536
-  1607133200:750185657
-  1607133200:750185777
-  1607133200:750185777
-  1607133200:750185897
-  1607133200:750186017
-  1607133200:750295633
-  1607133200:750295633
-  1607133200:750541817
-  1607133200:750541817
-  1607133200:750541817
-  1607133200:750541817
-  1607133200:750541817
-  1607133200:750541817
-  1607133200:750541817
-  --------------------
-  1607133200:750541817
-  1607133200:750295633
-  --------------------
-  1607133200:750295633
-  1607133200:750295633
-  1607133200:750295633
-  1607133200:750295633
-  1607133200:750295633
-  1607133200:750295633
-  1607133200:750295633
-  1607133200:750295633
-  1607133200:750295633
-  Delta: 246184 ns
-  Sat Dec  5 01:53:20 2020
-  
-  [FAILED]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-* R-Car M3-N with this series applied
-
-  # ./clocksource-switch 
-  Validating clocksource arch_sys_counter
-  Consistent CLOCK_REALTIME                 [OK]
-  Consistent CLOCK_MONOTONIC                [OK]
-  Consistent CLOCK_PROCESS_CPUTIME_ID       [OK]
-  Consistent CLOCK_THREAD_CPUTIME_ID        [OK]
-  Consistent CLOCK_MONOTONIC_RAW            [OK]
-  Consistent CLOCK_REALTIME_COARSE          [OK]
-  Consistent CLOCK_MONOTONIC_COARSE         [OK]
-  Consistent CLOCK_BOOTTIME                 [OK]
-  Consistent CLOCK_TAI                      [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Nanosleep CLOCK_REALTIME                  [OK]
-  Nanosleep CLOCK_MONOTONIC                 [OK]
-  Nanosleep CLOCK_MONOTONIC_RAW             [UNSUPPORTED]
-  Nanosleep CLOCK_REALTIME_COARSE           [UNSUPPORTED]
-  Nanosleep CLOCK_MONOTONIC_COARSE          [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME                  [OK]
-  Nanosleep CLOCK_REALTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_TAI                       [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Validating clocksource e60f0000.timer
-  Consistent CLOCK_REALTIME                 [OK]
-  Consistent CLOCK_MONOTONIC                [OK]
-  Consistent CLOCK_PROCESS_CPUTIME_ID       [OK]
-  Consistent CLOCK_THREAD_CPUTIME_ID        [OK]
-  Consistent CLOCK_MONOTONIC_RAW            [OK]
-  Consistent CLOCK_REALTIME_COARSE          [OK]
-  Consistent CLOCK_MONOTONIC_COARSE         [OK]
-  Consistent CLOCK_BOOTTIME                 [OK]
-  Consistent CLOCK_TAI                      [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Nanosleep CLOCK_REALTIME                  [OK]
-  Nanosleep CLOCK_MONOTONIC                 [OK]
-  Nanosleep CLOCK_MONOTONIC_RAW             [UNSUPPORTED]
-  Nanosleep CLOCK_REALTIME_COARSE           [UNSUPPORTED]
-  Nanosleep CLOCK_MONOTONIC_COARSE          [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME                  [OK]
-  Nanosleep CLOCK_REALTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_TAI                       [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Validating clocksource e6130000.timer
-  Consistent CLOCK_REALTIME                 [OK]
-  Consistent CLOCK_MONOTONIC                [OK]
-  Consistent CLOCK_PROCESS_CPUTIME_ID       [OK]
-  Consistent CLOCK_THREAD_CPUTIME_ID        [OK]
-  Consistent CLOCK_MONOTONIC_RAW            [OK]
-  Consistent CLOCK_REALTIME_COARSE          [OK]
-  Consistent CLOCK_MONOTONIC_COARSE         [OK]
-  Consistent CLOCK_BOOTTIME                 [OK]
-  Consistent CLOCK_TAI                      [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Nanosleep CLOCK_REALTIME                  [OK]
-  Nanosleep CLOCK_MONOTONIC                 [OK]
-  Nanosleep CLOCK_MONOTONIC_RAW             [UNSUPPORTED]
-  Nanosleep CLOCK_REALTIME_COARSE           [UNSUPPORTED]
-  Nanosleep CLOCK_MONOTONIC_COARSE          [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME                  [OK]
-  Nanosleep CLOCK_REALTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_TAI                       [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Running Asynchronous Switching Tests...
-  Consistent CLOCK_REALTIME                 [OK]
-  Consistent CLOCK_MONOTONIC                [OK]
-  Consistent CLOCK_PROCESS_CPUTIME_ID       [OK]
-  Consistent CLOCK_THREAD_CPUTIME_ID        [OK]
-  Consistent CLOCK_MONOTONIC_RAW            [OK]
-  Consistent CLOCK_REALTIME_COARSE          [OK]
-  Consistent CLOCK_MONOTONIC_COARSE         [OK]
-  Consistent CLOCK_BOOTTIME                 [OK]
-  Consistent CLOCK_TAI                      [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  Nanosleep CLOCK_REALTIME                  [OK]
-  Nanosleep CLOCK_MONOTONIC                 [OK]
-  Nanosleep CLOCK_MONOTONIC_RAW             [UNSUPPORTED]
-  Nanosleep CLOCK_REALTIME_COARSE           [UNSUPPORTED]
-  Nanosleep CLOCK_MONOTONIC_COARSE          [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME                  [OK]
-  Nanosleep CLOCK_REALTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_BOOTTIME_ALARM            [UNSUPPORTED]
-  Nanosleep CLOCK_TAI                       [OK]
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-  # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
-
-Niklas Söderlund (2):
-  clocksource/drivers/sh_cmt: Fix potential deadlock when calling
-    runtime PM
-  timekeeping: Allow runtime PM from change_clocksource()
-
- drivers/clocksource/sh_cmt.c | 18 ++++++++++++++----
- kernel/time/timekeeping.c    | 36 +++++++++++++++++++++++-------------
- 2 files changed, 37 insertions(+), 17 deletions(-)
-
--- 
-2.29.2
-
+Unless you want me to pick this up for clk-fixes?
