@@ -2,116 +2,145 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C932C1B0D8
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  6 Dec 2020 17:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C988C4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Dec 2020 06:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 117BF230F9
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  6 Dec 2020 17:33:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5FF7229C5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Dec 2020 06:01:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727333AbgLFRd0 (ORCPT
+        id S1725887AbgLGGAq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 6 Dec 2020 12:33:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44838 "EHLO
+        Mon, 7 Dec 2020 01:00:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbgLFRdX (ORCPT
+        with ESMTP id S1725773AbgLGGAq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 Dec 2020 12:33:23 -0500
-Received: from mxf1.seznam.cz (mxf1.seznam.cz [IPv6:2a02:598:a::78:123])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07999C0613D3;
-        Sun,  6 Dec 2020 09:32:37 -0800 (PST)
-Received: from email.seznam.cz
-        by email-smtpc12a.ko.seznam.cz (email-smtpc12a.ko.seznam.cz [10.53.11.105])
-        id 33927368689c2701323bbf36;
-        Sun, 06 Dec 2020 18:32:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seznam.cz; s=beta;
-        t=1607275954; bh=OsqIBbxu6dHOZRO3EWBlE2gBad2O349VxgymSsZsbuc=;
-        h=Received:From:To:Cc:Subject:Date:Message-Id:X-Mailer:In-Reply-To:
-         References:MIME-Version:Content-Transfer-Encoding;
-        b=BXoeWDuqgxmuSKf9kafBb8TjlOgNBXmz/9KWGBv4VXHxuDM/UQsITY3hETXOF+z5l
-         moTvUO0f9wzyFqsdys+ZJ1ofk2Rinz0CJMlB+jt5nc/UNwxVpNTLS11RD/R2NPwuKv
-         z8RFxhFyGt2WXousV4MENyoj0W/MOJpX0rZMk1Wo=
-Received: from localhost.localdomain (ip-228-128.dynamic.ccinternet.cz [212.69.128.228])
-        by email-relay23.ko.seznam.cz (Seznam SMTPD 1.3.122) with ESMTP;
-        Sun, 06 Dec 2020 18:29:46 +0100 (CET)  
-From:   michael.srba@seznam.cz
-To:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Mon, 7 Dec 2020 01:00:46 -0500
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0FEDC0613D4
+        for <linux-renesas-soc@vger.kernel.org>; Sun,  6 Dec 2020 22:00:05 -0800 (PST)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1km9Yx-0003Dh-4W; Mon, 07 Dec 2020 06:59:55 +0100
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <sha@pengutronix.de>)
+        id 1km9Yu-00024l-PM; Mon, 07 Dec 2020 06:59:52 +0100
+Date:   Mon, 7 Dec 2020 06:59:52 +0100
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     michael.srba@seznam.cz
+Cc:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>
-Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
-        Michael Srba <Michael.Srba@seznam.cz>
-Subject: [PATCH v2 2/3] media: dt-bindings: media: i2c: imx219: document clock-frequency property
-Date:   Sun,  6 Dec 2020 18:27:19 +0100
-Message-Id: <20201206172720.9406-2-michael.srba@seznam.cz>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201206172720.9406-1-michael.srba@seznam.cz>
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] media: i2c: imx219: add support for specifying
+ clock-frequencies
+Message-ID: <20201207055952.GB14307@pengutronix.de>
 References: <20201206172720.9406-1-michael.srba@seznam.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20201206172720.9406-1-michael.srba@seznam.cz>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 06:33:53 up 4 days, 18:00, 39 users,  load average: 0.07, 0.11, 0.14
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Michael Srba <Michael.Srba@seznam.cz>
+Hi Michael,
 
-This patch documents the clock-frequency property, which allows the driver
-to change the clock frequency from it's default value.
+On Sun, Dec 06, 2020 at 06:27:18PM +0100, michael.srba@seznam.cz wrote:
+> From: Michael Srba <Michael.Srba@seznam.cz>
+> 
+> This patch adds 1% tolerance on input clock, similar to other camera sensor
+> drivers. It also allows for specifying the actual clock in the device tree,
+> instead of relying on it being already set to the right frequency (which is
+> often not the case).
+> 
+> Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
+> 
+> ---
+> 
+> changes since v1: default to exactly 24MHz when `clock-frequency` is not present
+> 
+> ---
+>  drivers/media/i2c/imx219.c | 19 +++++++++++++++++--
+>  1 file changed, 17 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> index f64c0ef7a897..b6500e2ab19e 100644
+> --- a/drivers/media/i2c/imx219.c
+> +++ b/drivers/media/i2c/imx219.c
+> @@ -1443,13 +1443,28 @@ static int imx219_probe(struct i2c_client *client)
+>  		return PTR_ERR(imx219->xclk);
+>  	}
+>  
+> -	imx219->xclk_freq = clk_get_rate(imx219->xclk);
+> -	if (imx219->xclk_freq != IMX219_XCLK_FREQ) {
+> +	ret = fwnode_property_read_u32(dev_fwnode(dev), "clock-frequency", &imx219->xclk_freq);
+> +	if (ret) {
+> +		dev_warn(dev, "could not get xclk frequency\n");
+> +
+> +		/* default to 24MHz */
+> +		imx219->xclk_freq = 24000000;
+> +	}
+> +
+> +	/* this driver currently expects 24MHz; allow 1% tolerance */
+> +	if (imx219->xclk_freq < 23760000 || imx219->xclk_freq > 24240000) {
+>  		dev_err(dev, "xclk frequency not supported: %d Hz\n",
+>  			imx219->xclk_freq);
+>  		return -EINVAL;
+>  	}
+>  
+> +	ret = clk_set_rate(imx219->xclk, imx219->xclk_freq);
+> +	if (ret) {
+> +		dev_err(dev, "could not set xclk frequency\n");
+> +		return ret;
+> +	}
 
-Signed-off-by: Michael Srba <Michael.Srba@seznam.cz>
----
+clk_set_rate() returns successfully when the rate change has succeeded.
+It tells you nothing about the actual rate that has been set. The rate
+could be very different from what you want to get, depending on what the
+hardware is able to archieve. There's clk_round_rate() that tells you
+which rate you'll get when you call clk_set_rate() with that value.
+You would have to call clk_round_rate() first and see if you are happy
+with the result, afterwards set the rate. From that view it doesn't make
+much sense to check the device tree if a number between 23760000 and
+24240000 is specified there, the clk api will do rounding anyway.
 
-changes since v1: none
+Also there's the assigned-clocks device tree binding, see
+Documentation/devicetree/bindings/clock/clock-bindings.txt. This allows
+you to set the desired clock rate directly in the device tree. All
+that's left to do in the driver is to replace the check for the exact
+rate with a check which allows a certain tolerance.
 
----
- Documentation/devicetree/bindings/media/i2c/imx219.yaml | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Sascha
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/imx219.yaml b/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-index dfc4d29a4f04..666b8a9da5be 100644
---- a/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/imx219.yaml
-@@ -27,6 +27,10 @@ properties:
-   clocks:
-     maxItems: 1
- 
-+  clock-frequency:
-+    description:
-+      Frequency of the input clock in Hertz.
-+
-   VDIG-supply:
-     description:
-       Digital I/O voltage supply, 1.8 volts
-@@ -78,6 +82,7 @@ required:
-   - compatible
-   - reg
-   - clocks
-+  - clock-frequency
-   - VANA-supply
-   - VDIG-supply
-   - VDDL-supply
-@@ -95,6 +100,7 @@ examples:
-             compatible = "sony,imx219";
-             reg = <0x10>;
-             clocks = <&imx219_clk>;
-+            clock-frequency = <24000000>;
-             VANA-supply = <&imx219_vana>;   /* 2.8v */
-             VDIG-supply = <&imx219_vdig>;   /* 1.8v */
-             VDDL-supply = <&imx219_vddl>;   /* 1.2v */
- 
 -- 
-2.29.2
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
