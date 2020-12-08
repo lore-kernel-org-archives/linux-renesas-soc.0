@@ -2,227 +2,146 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1682AC2BBCA
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Dec 2020 08:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A42C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Dec 2020 10:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D13F123A5B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Dec 2020 08:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 522B523A84
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Dec 2020 10:19:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727844AbgLHIEn (ORCPT
+        id S1727992AbgLHKTQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Dec 2020 03:04:43 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:50630 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727725AbgLHIEm (ORCPT
+        Tue, 8 Dec 2020 05:19:16 -0500
+Received: from foss.arm.com ([217.140.110.172]:46982 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726703AbgLHKTQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Dec 2020 03:04:42 -0500
-X-IronPort-AV: E=Sophos;i="5.78,401,1599490800"; 
-   d="scan'208";a="65020043"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 08 Dec 2020 17:04:10 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id C7348422927B;
-        Tue,  8 Dec 2020 17:04:10 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org
-Cc:     khiem.nguyen.xt@renesas.com, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH 2/3] mfd: bd9571mwv: Make the driver more generic
-Date:   Tue,  8 Dec 2020 17:04:02 +0900
-Message-Id: <1607414643-25498-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1607414643-25498-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1607414643-25498-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Tue, 8 Dec 2020 05:19:16 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8FE061FB;
+        Tue,  8 Dec 2020 02:18:30 -0800 (PST)
+Received: from e121166-lin.cambridge.arm.com (e121166-lin.cambridge.arm.com [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8E9613F68F;
+        Tue,  8 Dec 2020 02:18:29 -0800 (PST)
+Date:   Tue, 8 Dec 2020 10:18:23 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Marek Vasut <marek.vasut@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     linux-pci@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V4] PCI: rcar: Add L1 link state fix into data abort hook
+Message-ID: <20201208101823.GA30579@e121166-lin.cambridge.arm.com>
+References: <20201016120416.7008-1-marek.vasut@gmail.com>
+ <20201119173553.GB23852@e121166-lin.cambridge.arm.com>
+ <57358982-ef8c-ed91-c011-00b8a48c4ebd@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57358982-ef8c-ed91-c011-00b8a48c4ebd@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+On Sun, Nov 29, 2020 at 02:05:08PM +0100, Marek Vasut wrote:
+> On 11/19/20 6:35 PM, Lorenzo Pieralisi wrote:
+> > > +#ifdef CONFIG_ARM
+> > > +/*
+> > > + * Here we keep a static copy of the remapped PCIe controller address.
+> > > + * This is only used on aarch32 systems, all of which have one single
+> > > + * PCIe controller, to provide quick access to the PCIe controller in
+> > > + * the L1 link state fixup function, called from the ARM fault handler.
+> > > + */
+> > > +static void __iomem *pcie_base;
+> > > +/*
+> > > + * Static copy of bus clock pointer, so we can check whether the clock
+> > > + * is enabled or not.
+> > > + */
+> > > +static struct clk *pcie_bus_clk;
+> > > +#endif
+> > 
+> > Don't think you can have multiple host bridges in a given platform,
+> > if it is a possible configuration this won't work.
+> 
+> Correct, all the affected platforms have only one host bridge.
+> 
+> > >   static inline struct rcar_msi *to_rcar_msi(struct msi_controller *chip)
+> > >   {
+> > >   	return container_of(chip, struct rcar_msi, chip);
+> > > @@ -804,6 +820,12 @@ static int rcar_pcie_get_resources(struct rcar_pcie_host *host)
+> > >   	}
+> > >   	host->msi.irq2 = i;
+> > > +#ifdef CONFIG_ARM
+> > > +	/* Cache static copy for L1 link state fixup hook on aarch32 */
+> > > +	pcie_base = pcie->base;
+> > > +	pcie_bus_clk = host->bus_clk;
+> > > +#endif
+> > > +
+> > >   	return 0;
+> > >   err_irq2:
+> > > @@ -1050,4 +1072,58 @@ static struct platform_driver rcar_pcie_driver = {
+> > >   	},
+> > >   	.probe = rcar_pcie_probe,
+> > >   };
+> > > +
+> > > +#ifdef CONFIG_ARM
+> > > +static int rcar_pcie_aarch32_abort_handler(unsigned long addr,
+> > > +		unsigned int fsr, struct pt_regs *regs)
+> > > +{
+> > > +	u32 pmsr;
+> > > +
+> > > +	if (!pcie_base || !__clk_is_enabled(pcie_bus_clk))
+> > > +		return 1;
+> > > +
+> > > +	pmsr = readl(pcie_base + PMSR);
+> > > +
+> > > +	/*
+> > > +	 * Test if the PCIe controller received PM_ENTER_L1 DLLP and
+> > > +	 * the PCIe controller is not in L1 link state. If true, apply
+> > > +	 * fix, which will put the controller into L1 link state, from
+> > > +	 * which it can return to L0s/L0 on its own.
+> > > +	 */
+> > > +	if ((pmsr & PMEL1RX) && ((pmsr & PMSTATE) != PMSTATE_L1)) {
+> > > +		writel(L1IATN, pcie_base + PMCTLR);
+> > > +		while (!(readl(pcie_base + PMSR) & L1FAEG))
+> > > +			;
+> > > +		writel(L1FAEG | PMEL1RX, pcie_base + PMSR);
+> > > +		return 0;
+> > > +	}
+> > 
+> > I suppose a fault on multiple cores can happen simultaneously, if it
+> > does this may not work well either - I assume all config/io/mem would
+> > trigger a fault.
+> > 
+> > As I mentioned in my reply to v1, is there a chance we can move
+> > this quirk into config accessors (if the PM_ENTER_L1_DLLP is
+> > subsequent to a write into PMCSR to programme a D state) ?
+> 
+> I don't think we can, since the userspace can do such a config space write
+> with e.g. setpci and then this fixup is still needed.
 
-Since the driver supports BD9571MWV PMIC only,
-this patch makes the functions and data structure become more generic
-so that it can support other PMIC variants as well.
 
-Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
-[shimoda: rebase and refactor]
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/mfd/bd9571mwv.c       | 47 ++++++++++++++++++++++++++++++++++---------
- include/linux/mfd/bd9571mwv.h | 19 +++++++++++++++++
- 2 files changed, 57 insertions(+), 9 deletions(-)
+Userspace goes via the kernel config accessors anyway, right ?
 
-diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
-index 80c6ef0..57bdb6a 100644
---- a/drivers/mfd/bd9571mwv.c
-+++ b/drivers/mfd/bd9571mwv.c
-@@ -3,6 +3,7 @@
-  * ROHM BD9571MWV-M MFD driver
-  *
-  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
-+ * Copyright (C) 2020 Renesas Electronics Corporation
-  *
-  * Based on the TPS65086 driver
-  */
-@@ -102,6 +103,15 @@ static struct regmap_irq_chip bd9571mwv_irq_chip = {
- 	.num_irqs	= ARRAY_SIZE(bd9571mwv_irqs),
- };
- 
-+static const struct bd957x_data bd9571mwv_data = {
-+	.product_code_val = BD9571MWV_PRODUCT_CODE_VAL,
-+	.part_number = BD9571MWV_PART_NUMBER,
-+	.regmap_config = &bd9571mwv_regmap_config,
-+	.irq_chip = &bd9571mwv_irq_chip,
-+	.cells = bd9571mwv_cells,
-+	.num_cells = ARRAY_SIZE(bd9571mwv_cells),
-+};
-+
- static int bd9571mwv_identify(struct bd9571mwv *bd)
- {
- 	struct device *dev = bd->dev;
-@@ -127,13 +137,12 @@ static int bd9571mwv_identify(struct bd9571mwv *bd)
- 			ret);
- 		return ret;
- 	}
--
--	if (value != BD9571MWV_PRODUCT_CODE_VAL) {
-+	/* Confirm the product code */
-+	if (value != bd->data->product_code_val) {
- 		dev_err(dev, "Invalid product code ID %02x (expected %02x)\n",
--			value, BD9571MWV_PRODUCT_CODE_VAL);
-+			value, bd->data->product_code_val);
- 		return -EINVAL;
- 	}
--
- 	ret = regmap_read(bd->regmap, BD9571MWV_PRODUCT_REVISION, &value);
- 	if (ret) {
- 		dev_err(dev, "Failed to read revision register (ret=%i)\n",
-@@ -141,7 +150,8 @@ static int bd9571mwv_identify(struct bd9571mwv *bd)
- 		return ret;
- 	}
- 
--	dev_info(dev, "Device: BD9571MWV rev. %d\n", value & 0xff);
-+	dev_info(dev, "Device: %s rev. %d\n", bd->data->part_number,
-+		 value & 0xff);
- 
- 	return 0;
- }
-@@ -150,6 +160,7 @@ static int bd9571mwv_probe(struct i2c_client *client,
- 			  const struct i2c_device_id *ids)
- {
- 	struct bd9571mwv *bd;
-+	unsigned int product_code;
- 	int ret;
- 
- 	bd = devm_kzalloc(&client->dev, sizeof(*bd), GFP_KERNEL);
-@@ -160,7 +171,25 @@ static int bd9571mwv_probe(struct i2c_client *client,
- 	bd->dev = &client->dev;
- 	bd->irq = client->irq;
- 
--	bd->regmap = devm_regmap_init_i2c(client, &bd9571mwv_regmap_config);
-+	/* Read the PMIC product code */
-+	ret = i2c_smbus_read_byte_data(client, BD9571MWV_PRODUCT_CODE);
-+	if (ret < 0) {
-+		dev_err(&client->dev, "failed reading at 0x%02x\n",
-+			BD9571MWV_PRODUCT_CODE);
-+		return ret;
-+	}
-+
-+	product_code = (unsigned int)ret;
-+	if (product_code == BD9571MWV_PRODUCT_CODE_VAL)
-+		bd->data = &bd9571mwv_data;
-+
-+	if (!bd->data) {
-+		dev_err(bd->dev, "No found supported device %d\n",
-+			product_code);
-+		return -ENOENT;
-+	}
-+
-+	bd->regmap = devm_regmap_init_i2c(client, bd->data->regmap_config);
- 	if (IS_ERR(bd->regmap)) {
- 		dev_err(bd->dev, "Failed to initialize register map\n");
- 		return PTR_ERR(bd->regmap);
-@@ -171,14 +200,14 @@ static int bd9571mwv_probe(struct i2c_client *client,
- 		return ret;
- 
- 	ret = regmap_add_irq_chip(bd->regmap, bd->irq, IRQF_ONESHOT, 0,
--				  &bd9571mwv_irq_chip, &bd->irq_data);
-+				  bd->data->irq_chip, &bd->irq_data);
- 	if (ret) {
- 		dev_err(bd->dev, "Failed to register IRQ chip\n");
- 		return ret;
- 	}
- 
--	ret = mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO, bd9571mwv_cells,
--			      ARRAY_SIZE(bd9571mwv_cells), NULL, 0,
-+	ret = mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO, bd->data->cells,
-+			      bd->data->num_cells, NULL, 0,
- 			      regmap_irq_get_domain(bd->irq_data));
- 	if (ret) {
- 		regmap_del_irq_chip(bd->irq, bd->irq_data);
-diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
-index bcc7092..0126b52 100644
---- a/include/linux/mfd/bd9571mwv.h
-+++ b/include/linux/mfd/bd9571mwv.h
-@@ -3,6 +3,7 @@
-  * ROHM BD9571MWV-M driver
-  *
-  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
-+ * Copyright (C) 2019 Renesas Electronics Corporation
-  *
-  * Based on the TPS65086 driver
-  */
-@@ -11,6 +12,7 @@
- #define __LINUX_MFD_BD9571MWV_H
- 
- #include <linux/device.h>
-+#include <linux/mfd/core.h>
- #include <linux/regmap.h>
- 
- /* List of registers for BD9571MWV */
-@@ -83,6 +85,8 @@
- 
- #define BD9571MWV_ACCESS_KEY			0xff
- 
-+#define BD9571MWV_PART_NUMBER			"BD9571MWV"
-+
- /* Define the BD9571MWV IRQ numbers */
- enum bd9571mwv_irqs {
- 	BD9571MWV_IRQ_MD1,
-@@ -96,6 +100,20 @@ enum bd9571mwv_irqs {
- };
- 
- /**
-+ * struct bd957x_data - internal data for the bd957x driver
-+ *
-+ * Internal data to distinguish bd9571mwv chip and bd9574mwf chip
-+ */
-+struct bd957x_data {
-+	int product_code_val;
-+	char *part_number;
-+	const struct regmap_config *regmap_config;
-+	const struct regmap_irq_chip *irq_chip;
-+	const struct mfd_cell *cells;
-+	int num_cells;
-+};
-+
-+/**
-  * struct bd9571mwv - state holder for the bd9571mwv driver
-  *
-  * Device data may be used to access the BD9571MWV chip
-@@ -103,6 +121,7 @@ enum bd9571mwv_irqs {
- struct bd9571mwv {
- 	struct device *dev;
- 	struct regmap *regmap;
-+	const struct bd957x_data *data;
- 
- 	/* IRQ Data */
- 	int irq;
--- 
-2.7.4
+I would like to avoid having arch specific hooks in PCI drivers so
+if we can work around it somehow it is much better.
 
+I can still merge this patch this week but I would like to explore
+alternatives before committing it.
+
+Lorenzo
+> 
+> > Config access is serialized but I suspect as I said above that this
+> > triggers on config/io/mem alike.
+> > 
+> > Just asking to try to avoid a fault handler if possible.
+> 
+> See above, I doubt we can fully avoid this workaround.
+> 
+> [...]
