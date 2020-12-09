@@ -2,135 +2,96 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD365C3526C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Dec 2020 20:21:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB63C1B0D8
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Dec 2020 20:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95E7E23A33
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Dec 2020 20:21:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAA3923D1F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Dec 2020 20:31:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388202AbgLIUVc (ORCPT
+        id S1728968AbgLIUbM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Dec 2020 15:21:32 -0500
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:14483 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388201AbgLIUVU (ORCPT
+        Wed, 9 Dec 2020 15:31:12 -0500
+Received: from www.zeus03.de ([194.117.254.33]:58644 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387663AbgLIUaz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Dec 2020 15:21:20 -0500
-X-Halon-ID: fafdd1a5-3a5b-11eb-a076-005056917f90
-Authorized-sender: niklas.soderlund@fsdn.se
-Received: from bismarck.berto.se (p4fca2458.dip0.t-ipconnect.de [79.202.36.88])
-        by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
-        id fafdd1a5-3a5b-11eb-a076-005056917f90;
-        Wed, 09 Dec 2020 21:20:30 +0100 (CET)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 2/6] arm64: dts: renesas: r8a77960: Add TMU nodes
-Date:   Wed,  9 Dec 2020 21:19:46 +0100
-Message-Id: <20201209201950.817566-3-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201209201950.817566-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20201209201950.817566-1-niklas.soderlund+renesas@ragnatech.se>
+        Wed, 9 Dec 2020 15:30:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=u2z400R8pY1xQzqzu92xvySPGOnt
+        0dmG3UM3Eb+6PwM=; b=0fhxmhYERCqNfXWJ8p+6pj7rnsYve1u4dWllef6XQZjc
+        ZElHuaR3UD22fnxzDpapaV6JG/cH+Xb/4bbANIYULv9roZQKjGedtP5qRtNtg2ih
+        ytiKLTX+298l0MdypjHRBODwsignQRXNXAfNm9ZawJJWm0Za9oKGAfKDg0ITGPQ=
+Received: (qmail 784576 invoked from network); 9 Dec 2020 21:30:12 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Dec 2020 21:30:12 +0100
+X-UD-Smtp-Session: l3s3148p1@Stca7Q222OcgAwDPXwVOALKD11jTFrpG
+Date:   Wed, 9 Dec 2020 21:30:11 +0100
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: sh_mobile: Mark adapter suspended during suspend
+Message-ID: <20201209203011.GE3499@kunai>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20201013141201.28338-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ep0oHQY+/Gbo/zt0"
+Content-Disposition: inline
+In-Reply-To: <20201013141201.28338-1-geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device nodes for the Timer Unit (TMU) on the Renesas R-Car M3-W
-(r8a77960) SoC.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
- arch/arm64/boot/dts/renesas/r8a77960.dtsi | 65 +++++++++++++++++++++++
- 1 file changed, 65 insertions(+)
+--ep0oHQY+/Gbo/zt0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77960.dtsi b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
-index 53b9aa26c9b13fa7..4c679384783a4e12 100644
---- a/arch/arm64/boot/dts/renesas/r8a77960.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
-@@ -585,6 +585,71 @@ intc_ex: interrupt-controller@e61c0000 {
- 			resets = <&cpg 407>;
- 		};
- 
-+		tmu0: timer@e61e0000 {
-+			compatible = "renesas,tmu-r8a7796", "renesas,tmu";
-+			reg = <0 0xe61e0000 0 0x30>;
-+			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 125>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 125>;
-+			status = "disabled";
-+		};
-+
-+		tmu1: timer@e6fc0000 {
-+			compatible = "renesas,tmu-r8a7796", "renesas,tmu";
-+			reg = <0 0xe6fc0000 0 0x30>;
-+			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 124>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 124>;
-+			status = "disabled";
-+		};
-+
-+		tmu2: timer@e6fd0000 {
-+			compatible = "renesas,tmu-r8a7796", "renesas,tmu";
-+			reg = <0 0xe6fd0000 0 0x30>;
-+			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 123>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 123>;
-+			status = "disabled";
-+		};
-+
-+		tmu3: timer@e6fe0000 {
-+			compatible = "renesas,tmu-r8a7796", "renesas,tmu";
-+			reg = <0 0xe6fe0000 0 0x30>;
-+			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 122>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 122>;
-+			status = "disabled";
-+		};
-+
-+		tmu4: timer@ffc00000 {
-+			compatible = "renesas,tmu-r8a7796", "renesas,tmu";
-+			reg = <0 0xffc00000 0 0x30>;
-+			interrupts = <GIC_SPI 438 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 439 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 440 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 121>;
-+			clock-names = "fck";
-+			power-domains = <&sysc R8A7796_PD_ALWAYS_ON>;
-+			resets = <&cpg 121>;
-+			status = "disabled";
-+		};
-+
- 		i2c0: i2c@e6500000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.29.2
+On Tue, Oct 13, 2020 at 04:12:01PM +0200, Geert Uytterhoeven wrote:
+> When a driver tries to send an I2C message while the adapter is
+> suspended, this typically fails with:
+>=20
+>     i2c-sh_mobile e60b0000.i2c: Transfer request timed out
+>=20
+> Avoid accessing the adapter while it is suspended by marking it
+> suspended during suspend.  This allows the I2C core to catch this, and
+> print a warning:
+>=20
+>     WARNING: CPU: 1 PID: 13 at drivers/i2c/i2c-core.h:54
+> __i2c_transfer+0x4a4/0x4e4
+>     i2c i2c-6: Transfer while suspended
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Applied to for-next, thanks!
+
+
+--ep0oHQY+/Gbo/zt0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl/RM9MACgkQFA3kzBSg
+KbbOeQ//bUZtTqP1JwWvpwoy2UafHD5+g3obxDMjJM0Icc323RrvV9FjLneGYG0d
+mP0aO9KEEFARLnnWPXfweo1+TOstoKrL9CThHWNIACLe4TnpAekBb1anR2NVzAtR
+sLy1IaAtrPvf3uR1eHS6bxHX7FP0MtFKuCdaWEewPyXzDofDfIxF59epWvloiLVr
+k6ZHmDGYUsCHLtP5Nw7jcPawwAVF91drWzBXjLZq3+gg755iPYEkyHqZGfCdZEdD
+1VXUSUwzv+l4Z1pcmJwD1EuC3Wuwwc7VN4NabNjtl3EIewHFIL4BnGdGEAv2HF7E
+e5gPOgzN/Oh4HeV2qnBrCw9QRxh0u53sd2Ejx1Ew331hTJEF1Se/J7kjo30ALuWp
+Bn2bfJtYG2AUaOP1dcbnlLMyTJFCt5VaMb/n0YfjAxHmd6ceMJh5vNnXj6Ah/4bT
+WPmf/pK5NTkAkEkWkSUPENYc0QATwSwj6a8J8FGv5EwqyN53J6gCpYE5cDLBk2in
+lrvyOTz8Xvs1AI97X6qihct2JR8BeRaDigDqT4CS1/fFCQiMvu4rMP9UK9oZf9/S
+NmIUuW1IRjiX3MD2G6p+ClcwTuTaUB9McxgGmTXRSw10P69zSIMhbtjFgFNVuNXj
+9QmNibY6MpvK9U2yRYzgIxi5xU5HcbFZfMIM2gd7C2hl5o1OrA8=
+=aFWS
+-----END PGP SIGNATURE-----
+
+--ep0oHQY+/Gbo/zt0--
