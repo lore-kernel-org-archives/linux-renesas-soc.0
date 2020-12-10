@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFFBAC2BBCD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Dec 2020 15:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDF9C0018C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Dec 2020 15:29:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 742B523B45
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Dec 2020 15:28:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CCF223DE5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Dec 2020 15:29:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391643AbgLJP2X (ORCPT
+        id S2391527AbgLJP2i (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Dec 2020 10:28:23 -0500
-Received: from bin-mail-out-05.binero.net ([195.74.38.228]:51052 "EHLO
-        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391719AbgLJP2X (ORCPT
+        Thu, 10 Dec 2020 10:28:38 -0500
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:18556 "EHLO
+        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391663AbgLJP2W (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Dec 2020 10:28:23 -0500
-X-Halon-ID: 3914a379-3afc-11eb-a542-005056917a89
+        Thu, 10 Dec 2020 10:28:22 -0500
+X-Halon-ID: 38440d53-3afc-11eb-a542-005056917a89
 Authorized-sender: niklas.soderlund@fsdn.se
 Received: from bismarck.berto.se (p4fca2458.dip0.t-ipconnect.de [79.202.36.88])
         by bin-vsp-out-01.atm.binero.net (Halon) with ESMTPA
-        id 3914a379-3afc-11eb-a542-005056917a89;
-        Thu, 10 Dec 2020 16:27:33 +0100 (CET)
+        id 38440d53-3afc-11eb-a542-005056917a89;
+        Thu, 10 Dec 2020 16:27:32 +0100 (CET)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -34,9 +34,9 @@ To:     Geert Uytterhoeven <geert+renesas@glider.be>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 6/6] arm64: dts: renesas: r8a77995: Add TMU nodes
-Date:   Thu, 10 Dec 2020 16:27:05 +0100
-Message-Id: <20201210152705.1535156-7-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 5/6] arm64: dts: renesas: r8a77990: Add TMU nodes
+Date:   Thu, 10 Dec 2020 16:27:04 +0100
+Message-Id: <20201210152705.1535156-6-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201210152705.1535156-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20201210152705.1535156-1-niklas.soderlund+renesas@ragnatech.se>
@@ -47,86 +47,86 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add device nodes for the Timer Unit (TMU) on the Renesas R-Car D3
-(r8a77995) SoC.
+Add device nodes for the Timer Unit (TMU) on the Renesas R-Car E3
+(r8a77990) SoC.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
 * Changes since v1
 - Use correct interrupts no for tmu4.
 ---
- arch/arm64/boot/dts/renesas/r8a77995.dtsi | 65 +++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 65 +++++++++++++++++++++++
  1 file changed, 65 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77995.dtsi b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-index aca0b2d015cfc769..2319271c881b69ce 100644
---- a/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a77995.dtsi
-@@ -312,6 +312,71 @@ intc_ex: interrupt-controller@e61c0000 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 87d41bc076a99d95..5010f23fafcc7f98 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -420,6 +420,71 @@ intc_ex: interrupt-controller@e61c0000 {
  			resets = <&cpg 407>;
  		};
  
 +		tmu0: timer@e61e0000 {
-+			compatible = "renesas,tmu-r8a77995", "renesas,tmu";
++			compatible = "renesas,tmu-r8a77990", "renesas,tmu";
 +			reg = <0 0xe61e0000 0 0x30>;
 +			interrupts = <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cpg CPG_MOD 125>;
 +			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
 +			resets = <&cpg 125>;
 +			status = "disabled";
 +		};
 +
 +		tmu1: timer@e6fc0000 {
-+			compatible = "renesas,tmu-r8a77995", "renesas,tmu";
++			compatible = "renesas,tmu-r8a77990", "renesas,tmu";
 +			reg = <0 0xe6fc0000 0 0x30>;
 +			interrupts = <GIC_SPI 128 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 129 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cpg CPG_MOD 124>;
 +			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
 +			resets = <&cpg 124>;
 +			status = "disabled";
 +		};
 +
 +		tmu2: timer@e6fd0000 {
-+			compatible = "renesas,tmu-r8a77995", "renesas,tmu";
++			compatible = "renesas,tmu-r8a77990", "renesas,tmu";
 +			reg = <0 0xe6fd0000 0 0x30>;
 +			interrupts = <GIC_SPI 303 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 304 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 305 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cpg CPG_MOD 123>;
 +			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
 +			resets = <&cpg 123>;
 +			status = "disabled";
 +		};
 +
 +		tmu3: timer@e6fe0000 {
-+			compatible = "renesas,tmu-r8a77995", "renesas,tmu";
++			compatible = "renesas,tmu-r8a77990", "renesas,tmu";
 +			reg = <0 0xe6fe0000 0 0x30>;
 +			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cpg CPG_MOD 122>;
 +			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
 +			resets = <&cpg 122>;
 +			status = "disabled";
 +		};
 +
 +		tmu4: timer@ffc00000 {
-+			compatible = "renesas,tmu-r8a77995", "renesas,tmu";
++			compatible = "renesas,tmu-r8a77990", "renesas,tmu";
 +			reg = <0 0xffc00000 0 0x30>;
 +			interrupts = <GIC_SPI 406 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 407 IRQ_TYPE_LEVEL_HIGH>,
 +				     <GIC_SPI 408 IRQ_TYPE_LEVEL_HIGH>;
 +			clocks = <&cpg CPG_MOD 121>;
 +			clock-names = "fck";
-+			power-domains = <&sysc R8A77995_PD_ALWAYS_ON>;
++			power-domains = <&sysc R8A77990_PD_ALWAYS_ON>;
 +			resets = <&cpg 121>;
 +			status = "disabled";
 +		};
