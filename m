@@ -2,50 +2,49 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A964AC4361B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Dec 2020 12:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6710EC4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Dec 2020 13:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A96823D50
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Dec 2020 12:59:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21A3D23DE8
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Dec 2020 13:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388352AbgLJM7T convert rfc822-to-8bit (ORCPT
+        id S2389187AbgLJNLJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Dec 2020 07:59:19 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40066 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732831AbgLJM7L (ORCPT
+        Thu, 10 Dec 2020 08:11:09 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43191 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389179AbgLJNLG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Dec 2020 07:59:11 -0500
-Received: by mail-ot1-f66.google.com with SMTP id j12so4734124ota.7;
-        Thu, 10 Dec 2020 04:58:55 -0800 (PST)
+        Thu, 10 Dec 2020 08:11:06 -0500
+Received: by mail-oi1-f196.google.com with SMTP id q25so5622185oij.10;
+        Thu, 10 Dec 2020 05:10:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Ghg05MC4S/bnxJ+svvza6c5G2cbCYHhUIsHHq9OSvdo=;
-        b=gRQZwwbloiTG/1/JLuFvo1TxmVjrg7tKNowt0Vqp2gkl1oj14XyxqHL0xhDF0WbDKF
-         /rdWueAslneQEYudN4ddowrBCnUux7gdX2eWYrP+KkVdK9+40af2Xni/PSEDa6Pxd4X9
-         D/913MPXW7s/hko3+QQ2hgEfxKZSIha2mbn2H/7o3fayGmJBGY8KzEV0fur/J9IkxlWn
-         Lq3SWCVKJBWdhEecUoLJN0ysOtRFKSNFXAF3ALV6EGvY7JfPSBOIIuqVAQPUy5ezx1R6
-         S0CNMK22eBmvBgq7wN9k/PTIRZjkbpDyBmNreo7OTzgcmddBnYtbAoqdaAA9qCqx0/iY
-         lN4Q==
-X-Gm-Message-State: AOAM531fSyszoPCEhyPdLS6oYD0pDfkAPOMVRnSZRZB24+FYFWFzd1vw
-        YwlCLQiJg8o9PqiaqbjrCNLFln3SOZ6+hfvBgg4=
-X-Google-Smtp-Source: ABdhPJz+wWfprNtfHT6L45mOHHUI/7Z0cwBmP+dw0Cf78cI82UDAN6HunCM9ykSP+kBa+dN/Rpr6lMAzEoguNcr0/Qg=
-X-Received: by 2002:a9d:2203:: with SMTP id o3mr5666650ota.107.1607605110474;
- Thu, 10 Dec 2020 04:58:30 -0800 (PST)
+        bh=AfjfEOiPwgm0cBi/nPKDivwriG4JoNrRdEPSRrhwuxM=;
+        b=ABmtcUTW2WZqZ58lM/El7YRJK3KHnGu8iCOQf2yFx66N0C8Lp0eVKOLSchp017R4Le
+         oDGPelgZxqeW/98WoqREjzJOmqGwswYQ5p9IVGspeG0hprwJsLuFTezi55rHeNDIkOr6
+         b5YzeuSXP/1kl36pc06eKN96vNgjQmhNlmc2BZ6BX9dtptL+TqyhYwpD60ZJ6+oopOhX
+         Xpe7YYq2vLq/eg8b/RI2qU3aibpnHp/KbOIC7oilnZpcLuSvQtXwyYU6wWwT/RyX0nWd
+         q1qaqnCpDyyDSfghcfJF9voBs1rqCZdboaBsp3MQol4Beb8MFCcZF6/osbw8fJzHtG3d
+         GTOA==
+X-Gm-Message-State: AOAM530HIz22DhY+MY2+P+wDI2cJFPtIztpgpG3L805lGDOS6ahmXk/x
+        TJrAd+DKHZCtpteeuTmRxJ2yIzJfEhxoxM/ceQ0=
+X-Google-Smtp-Source: ABdhPJzG5fM7j0DQ7gKLs8uvyKscZ7/6LsSwAsCrjkF+XbSlB2LeBBB/tJ3CPcKTV6vm+0nItqMbJ7SvnhzRA8+Hrvs=
+X-Received: by 2002:aca:5c08:: with SMTP id q8mr5379645oib.54.1607605825185;
+ Thu, 10 Dec 2020 05:10:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20201209200738.811173-1-niklas.soderlund+renesas@ragnatech.se> <20201209200738.811173-3-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20201209200738.811173-3-niklas.soderlund+renesas@ragnatech.se>
+References: <20201209201950.817566-1-niklas.soderlund+renesas@ragnatech.se> <20201209201950.817566-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20201209201950.817566-2-niklas.soderlund+renesas@ragnatech.se>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 10 Dec 2020 13:58:19 +0100
-Message-ID: <CAMuHMdVxEvZ=oN5qCOKjFPCE=+EXxMuHP5djHp5eYw-QK4d3dw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: r8a77995: Add CMT nodes
+Date:   Thu, 10 Dec 2020 14:10:14 +0100
+Message-ID: <CAMuHMdVHUqSjnVp8fTve1BB=ui5ay=nqNRtnmNKPPbmnN6VBdw@mail.gmail.com>
+Subject: Re: [PATCH 1/6] arm64: dts: renesas: r8a77951: Add TMU nodes
 To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -58,15 +57,30 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Dec 9, 2020 at 9:08 PM Niklas Söderlund
+Hi Niklas,
+
+On Wed, Dec 9, 2020 at 9:20 PM Niklas Söderlund
 <niklas.soderlund+renesas@ragnatech.se> wrote:
-> Add device nodes for the Compare Match Timer (CMT) on the Renesas R-Car
-> D3 (r8a77995) SoC.
+> Add device nodes for the Timer Unit (TMU) on the Renesas R-Car H3
+> (r8a77951) SoC.
 >
 > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.12.
+Thanks for your patch!
+
+> --- a/arch/arm64/boot/dts/renesas/r8a77951.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a77951.dtsi
+
+> +               tmu4: timer@ffc00000 {
+> +                       compatible = "renesas,tmu-r8a7795", "renesas,tmu";
+> +                       reg = <0 0xffc00000 0 0x30>;
+> +                       interrupts = <GIC_SPI 438 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 439 IRQ_TYPE_LEVEL_HIGH>,
+> +                                    <GIC_SPI 440 IRQ_TYPE_LEVEL_HIGH>;
+
+These interrupt numbers are wrong: they should be 406, 407, and 408.
+The rest looks good to me.
+Same comment for the other 5 patches.
 
 Gr{oetje,eeting}s,
 
