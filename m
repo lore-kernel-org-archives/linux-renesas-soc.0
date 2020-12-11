@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0400FC2BB48
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Dec 2020 12:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BD4C4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Dec 2020 12:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CED2623EB3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Dec 2020 12:41:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 601E523EB3
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Dec 2020 12:42:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395415AbgLKMlJ convert rfc822-to-8bit (ORCPT
+        id S2395425AbgLKMll convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Dec 2020 07:41:09 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39516 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391766AbgLKMkS (ORCPT
+        Fri, 11 Dec 2020 07:41:41 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:35272 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395292AbgLKMlT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Dec 2020 07:40:18 -0500
-Received: by mail-ot1-f68.google.com with SMTP id d8so8057776otq.6;
-        Fri, 11 Dec 2020 04:40:03 -0800 (PST)
+        Fri, 11 Dec 2020 07:41:19 -0500
+Received: by mail-oi1-f195.google.com with SMTP id s2so9653861oij.2;
+        Fri, 11 Dec 2020 04:41:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=sZC6YVFP85PKnOZHFsWuvPlPvuphh5kfYfzNbUUSwEo=;
-        b=IlOZP0I9IIH9qo5hbDWlSgCNJvYwStEkXbl/DdYmGAv5BcDKPwpwdnfKrDwILH6qRK
-         tXzrfTlAxh1oVkS+JUt7ytCtm70mtmmr9fiSza+Y/Cx6bOdqEdkP8Islr95CBAao4Tay
-         q6+d0qiV5S8Mi/yxXNp70Ag/Auc1Va2InL7hAaYYU16kjRKo8Ofdf6Q9vZ7C42lOEPyR
-         h6mS6loksAabb1h3jzY1XaduHqcKAyQtDoTWMu3DzaOXz7+0ZnfFT/dn+ChNN+HiHnNp
-         NPZGCZeWJGCpZI3EMdKURT4K7Wlco+WDZPlRrtOI1dwClvx2fxQ/4SXGMaYONblsyRPh
-         fLEA==
-X-Gm-Message-State: AOAM533BRNTLaWGG6ZeVZMOG7bJP7MXzj002bnjNgepJXFsDWdd83oVT
-        DB2XAa42WeDqWJzQPUaIpcpJ4o6bO+4Ucko+5T6P3YaL
-X-Google-Smtp-Source: ABdhPJzUrcoHo9bCn4961JD8r9MHPv4laWc/KugzBvuO6Acj62MAqMF5VmQF0+nNxtYnFXK+9W2NRoPZVqIUHmPkQlQ=
-X-Received: by 2002:a9d:2203:: with SMTP id o3mr9673259ota.107.1607690377886;
- Fri, 11 Dec 2020 04:39:37 -0800 (PST)
+        bh=6Bb6o06h8BdiZHWVT6GAukTUptqWBGvBlbDK3o3wGoQ=;
+        b=tbZKHI3/4W8DJiR5bzUHZiGrfvBqQJHwqrNTV6u39Ps3DiB1hQE6AnWIGMlNFZs54d
+         UoASxz51K3juS0LGkyhob67vLD6pY1J4BsTrTrvEnpsooZknp4npRgOZm4pMRPL0hEWt
+         JUd1Ml2ucEjPo2VLo+dXLirlPch2uBaMnzrblP1yQximUg/I6FKFFLYW3o/YeV4x5CJr
+         45PT205DxOuX0EBPewFHutiwEFlAEQxU5VXFGOxsID5LrN+WC6/HbdUPwi8gmFlnosnJ
+         ejBUtgH77xmTb5XO5bSqp43aJsaSmelhlyAuSH4P0jsnqD/g0rwrKdYzFoWSac+elab8
+         5VGw==
+X-Gm-Message-State: AOAM532XCIC2t2oZ4ExvmbMjE8TeWUuTbb6NsZy2WL+uIOEJDIIEjNdm
+        xjHiGXLIE59gyufr1FL2OAGg3WRPzKUJKtWEfPw=
+X-Google-Smtp-Source: ABdhPJz2Vf/UIvdsqH4sFBehsv3Ec2ZkKmfJvGaTEel5TI3Vtq1Jq6tR8sVUstb4URmi0GWWdtBf4hw/qgV02NjKN6M=
+X-Received: by 2002:aca:ec09:: with SMTP id k9mr9013514oih.153.1607690438587;
+ Fri, 11 Dec 2020 04:40:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20201210152705.1535156-1-niklas.soderlund+renesas@ragnatech.se> <20201210152705.1535156-2-niklas.soderlund+renesas@ragnatech.se>
-In-Reply-To: <20201210152705.1535156-2-niklas.soderlund+renesas@ragnatech.se>
+References: <20201210152705.1535156-1-niklas.soderlund+renesas@ragnatech.se> <20201210152705.1535156-4-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20201210152705.1535156-4-niklas.soderlund+renesas@ragnatech.se>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 11 Dec 2020 13:39:26 +0100
-Message-ID: <CAMuHMdXbzdJ-SqWUnTaqBfELgTObtvX+XDrdVi2-TfipfqUE+g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] arm64: dts: renesas: r8a77951: Add TMU nodes
+Date:   Fri, 11 Dec 2020 13:40:27 +0100
+Message-ID: <CAMuHMdUJBmeh0wGPPp==re8BPo2-yeVN3vj-jCxmGxjdSZsr_Q@mail.gmail.com>
+Subject: Re: [PATCH v2 3/6] arm64: dts: renesas: r8a77961: Add TMU nodes
 To:     =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -59,8 +59,8 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On Thu, Dec 10, 2020 at 4:27 PM Niklas Söderlund
 <niklas.soderlund+renesas@ragnatech.se> wrote:
-> Add device nodes for the Timer Unit (TMU) on the Renesas R-Car H3
-> (r8a77951) SoC.
+> Add device nodes for the Timer Unit (TMU) on the Renesas R-Car M3-W+
+> (r8a77961) SoC.
 >
 > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
