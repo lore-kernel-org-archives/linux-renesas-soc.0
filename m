@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A61C7C4167B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Dec 2020 11:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF26C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Dec 2020 11:30:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F37D23F2A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Dec 2020 11:29:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3120D23F2A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Dec 2020 11:30:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393663AbgLKL2g (ORCPT
+        id S2394522AbgLKL2g (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 11 Dec 2020 06:28:36 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:41506 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2394415AbgLKL23 (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:22276 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2394422AbgLKL23 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 11 Dec 2020 06:28:29 -0500
 X-IronPort-AV: E=Sophos;i="5.78,411,1599490800"; 
-   d="scan'208";a="65637576"
+   d="scan'208";a="65422229"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 11 Dec 2020 20:27:55 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 11 Dec 2020 20:27:56 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id DBE1D42D7EA3;
-        Fri, 11 Dec 2020 20:27:55 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8D4E542D7EA2;
+        Fri, 11 Dec 2020 20:27:56 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
         matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
@@ -37,9 +37,9 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 03/10] regulator: bd9571mwv: rid of using struct bd9571mwv
-Date:   Fri, 11 Dec 2020 20:27:33 +0900
-Message-Id: <1607686060-17448-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 09/10] mfd: bd9571mwv: Make the driver more generic
+Date:   Fri, 11 Dec 2020 20:27:39 +0900
+Message-Id: <1607686060-17448-10-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1607686060-17448-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1607686060-17448-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -47,168 +47,190 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-To simplify this driver, use dev_get_regmap() and
-rid of using struct bd9571mwv.
+From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
 
+Since the driver supports BD9571MWV PMIC only,
+this patch makes the functions and data structure become more generic
+so that it can support other PMIC variants as well.
+
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+[shimoda: rebase and refactor]
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/regulator/bd9571mwv-regulator.c | 49 +++++++++++++++++----------------
- 1 file changed, 26 insertions(+), 23 deletions(-)
+ drivers/mfd/bd9571mwv.c       | 71 +++++++++++++++++++++++++++++++++++--------
+ include/linux/mfd/bd9571mwv.h | 18 ++---------
+ 2 files changed, 62 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
-index e690c2c..02120b0 100644
---- a/drivers/regulator/bd9571mwv-regulator.c
-+++ b/drivers/regulator/bd9571mwv-regulator.c
-@@ -17,7 +17,7 @@
+diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
+index 80c6ef0..adb9e3d 100644
+--- a/drivers/mfd/bd9571mwv.c
++++ b/drivers/mfd/bd9571mwv.c
+@@ -3,6 +3,7 @@
+  * ROHM BD9571MWV-M MFD driver
+  *
+  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
++ * Copyright (C) 2020 Renesas Electronics Corporation
+  *
+  * Based on the TPS65086 driver
+  */
+@@ -14,6 +15,34 @@
+ 
  #include <linux/mfd/bd9571mwv.h>
  
- struct bd9571mwv_reg {
--	struct bd9571mwv *bd;
++/**
++ * struct bd957x_data - internal data for the bd957x driver
++ *
++ * Internal data to distinguish bd957x variants
++ */
++struct bd957x_data {
++	char *part_name;
++	const struct regmap_config *regmap_config;
++	const struct regmap_irq_chip *irq_chip;
++	const struct mfd_cell *cells;
++	int num_cells;
++};
++
++/**
++ * struct bd9571mwv - state holder for the bd9571mwv driver
++ *
++ * Device data may be used to access the BD9571MWV chip
++ */
++struct bd9571mwv {
++	struct device *dev;
 +	struct regmap *regmap;
- 
- 	/* DDR Backup Power */
- 	u8 bkup_mode_cnt_keepon;	/* from "rohm,ddr-backup-power" */
-@@ -137,26 +137,30 @@ static const struct regulator_desc regulators[] = {
++	const struct bd957x_data *data;
++
++	/* IRQ Data */
++	int irq;
++	struct regmap_irq_chip_data *irq_data;
++};
++
+ static const struct mfd_cell bd9571mwv_cells[] = {
+ 	{ .name = "bd9571mwv-regulator", },
+ 	{ .name = "bd9571mwv-gpio", },
+@@ -102,6 +131,14 @@ static struct regmap_irq_chip bd9571mwv_irq_chip = {
+ 	.num_irqs	= ARRAY_SIZE(bd9571mwv_irqs),
  };
  
- #ifdef CONFIG_PM_SLEEP
--static int bd9571mwv_bkup_mode_read(struct bd9571mwv *bd, unsigned int *mode)
-+static int bd9571mwv_bkup_mode_read(struct device * dev,
-+				    struct bd9571mwv_reg *bdreg,
-+				    unsigned int *mode)
++static const struct bd957x_data bd9571mwv_data = {
++	.part_name = BD9571MWV_PART_NAME,
++	.regmap_config = &bd9571mwv_regmap_config,
++	.irq_chip = &bd9571mwv_irq_chip,
++	.cells = bd9571mwv_cells,
++	.num_cells = ARRAY_SIZE(bd9571mwv_cells),
++};
++
+ static int bd9571mwv_identify(struct bd9571mwv *bd)
  {
- 	int ret;
- 
--	ret = regmap_read(bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
-+	ret = regmap_read(bdreg->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
- 	if (ret) {
--		dev_err(bd->dev, "failed to read backup mode (%d)\n", ret);
-+		dev_err(dev, "failed to read backup mode (%d)\n", ret);
+ 	struct device *dev = bd->dev;
+@@ -127,13 +164,6 @@ static int bd9571mwv_identify(struct bd9571mwv *bd)
+ 			ret);
  		return ret;
  	}
+-
+-	if (value != BD9571MWV_PRODUCT_CODE_VAL) {
+-		dev_err(dev, "Invalid product code ID %02x (expected %02x)\n",
+-			value, BD9571MWV_PRODUCT_CODE_VAL);
+-		return -EINVAL;
+-	}
+-
+ 	ret = regmap_read(bd->regmap, BD9571MWV_PRODUCT_REVISION, &value);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to read revision register (ret=%i)\n",
+@@ -141,7 +171,8 @@ static int bd9571mwv_identify(struct bd9571mwv *bd)
+ 		return ret;
+ 	}
+ 
+-	dev_info(dev, "Device: BD9571MWV rev. %d\n", value & 0xff);
++	dev_info(dev, "Device: %s rev. %d\n", bd->data->part_name,
++		 value & 0xff);
  
  	return 0;
  }
+@@ -160,7 +191,23 @@ static int bd9571mwv_probe(struct i2c_client *client,
+ 	bd->dev = &client->dev;
+ 	bd->irq = client->irq;
  
--static int bd9571mwv_bkup_mode_write(struct bd9571mwv *bd, unsigned int mode)
-+static int bd9571mwv_bkup_mode_write(struct device *dev,
-+				     struct bd9571mwv_reg *bdreg,
-+				     unsigned int mode)
- {
- 	int ret;
+-	bd->regmap = devm_regmap_init_i2c(client, &bd9571mwv_regmap_config);
++	/* Read the PMIC product code */
++	ret = i2c_smbus_read_byte_data(client, BD9571MWV_PRODUCT_CODE);
++	if (ret < 0) {
++		dev_err(&client->dev, "failed reading at 0x%02x\n",
++			BD9571MWV_PRODUCT_CODE);
++		return ret;
++	}
++	switch (ret) {
++	case BD9571MWV_PRODUCT_CODE_VAL:
++		bd->data = &bd9571mwv_data;
++		break;
++	default:
++		dev_err(bd->dev, "Unsupported device 0x%x\n", ret);
++		return -ENOENT;
++	}
++
++	bd->regmap = devm_regmap_init_i2c(client, bd->data->regmap_config);
+ 	if (IS_ERR(bd->regmap)) {
+ 		dev_err(bd->dev, "Failed to initialize register map\n");
+ 		return PTR_ERR(bd->regmap);
+@@ -171,14 +218,14 @@ static int bd9571mwv_probe(struct i2c_client *client,
+ 		return ret;
  
--	ret = regmap_write(bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
-+	ret = regmap_write(bdreg->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
+ 	ret = regmap_add_irq_chip(bd->regmap, bd->irq, IRQF_ONESHOT, 0,
+-				  &bd9571mwv_irq_chip, &bd->irq_data);
++				  bd->data->irq_chip, &bd->irq_data);
  	if (ret) {
--		dev_err(bd->dev, "failed to configure backup mode 0x%x (%d)\n",
-+		dev_err(dev, "failed to configure backup mode 0x%x (%d)\n",
- 			mode, ret);
+ 		dev_err(bd->dev, "Failed to register IRQ chip\n");
  		return ret;
  	}
-@@ -194,7 +198,7 @@ static ssize_t backup_mode_store(struct device *dev,
- 	 * Configure DDR Backup Mode, to change the role of the accessory power
- 	 * switch from a power switch to a wake-up switch, or vice versa
- 	 */
--	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
-+	ret = bd9571mwv_bkup_mode_read(dev, bdreg, &mode);
- 	if (ret)
- 		return ret;
  
-@@ -202,7 +206,7 @@ static ssize_t backup_mode_store(struct device *dev,
- 	if (bdreg->bkup_mode_enabled)
- 		mode |= bdreg->bkup_mode_cnt_keepon;
+-	ret = mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO, bd9571mwv_cells,
+-			      ARRAY_SIZE(bd9571mwv_cells), NULL, 0,
++	ret = mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO, bd->data->cells,
++			      bd->data->num_cells, NULL, 0,
+ 			      regmap_irq_get_domain(bd->irq_data));
+ 	if (ret) {
+ 		regmap_del_irq_chip(bd->irq, bd->irq_data);
+diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
+index bcc7092..5ab976a 100644
+--- a/include/linux/mfd/bd9571mwv.h
++++ b/include/linux/mfd/bd9571mwv.h
+@@ -3,6 +3,7 @@
+  * ROHM BD9571MWV-M driver
+  *
+  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
++ * Copyright (C) 2020 Renesas Electronics Corporation
+  *
+  * Based on the TPS65086 driver
+  */
+@@ -83,6 +84,8 @@
  
--	ret = bd9571mwv_bkup_mode_write(bdreg->bd, mode);
-+	ret = bd9571mwv_bkup_mode_write(dev, bdreg, mode);
- 	if (ret)
- 		return ret;
+ #define BD9571MWV_ACCESS_KEY			0xff
  
-@@ -221,7 +225,7 @@ static int bd9571mwv_suspend(struct device *dev)
- 		return 0;
- 
- 	/* Save DDR Backup Mode */
--	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
-+	ret = bd9571mwv_bkup_mode_read(dev, bdreg, &mode);
- 	if (ret)
- 		return ret;
- 
-@@ -235,7 +239,7 @@ static int bd9571mwv_suspend(struct device *dev)
- 	mode |= bdreg->bkup_mode_cnt_keepon;
- 
- 	if (mode != bdreg->bkup_mode_cnt_saved)
--		return bd9571mwv_bkup_mode_write(bdreg->bd, mode);
-+		return bd9571mwv_bkup_mode_write(dev, bdreg, mode);
- 
- 	return 0;
- }
-@@ -248,7 +252,7 @@ static int bd9571mwv_resume(struct device *dev)
- 		return 0;
- 
- 	/* Restore DDR Backup Mode */
--	return bd9571mwv_bkup_mode_write(bdreg->bd, bdreg->bkup_mode_cnt_saved);
-+	return bd9571mwv_bkup_mode_write(dev, bdreg, bdreg->bkup_mode_cnt_saved);
- }
- 
- static const struct dev_pm_ops bd9571mwv_pm  = {
-@@ -268,7 +272,6 @@ static int bd9571mwv_regulator_remove(struct platform_device *pdev)
- 
- static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- {
--	struct bd9571mwv *bd = dev_get_drvdata(pdev->dev.parent);
- 	struct regulator_config config = { };
- 	struct bd9571mwv_reg *bdreg;
- 	struct regulator_dev *rdev;
-@@ -279,40 +282,40 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
- 	if (!bdreg)
- 		return -ENOMEM;
- 
--	bdreg->bd = bd;
-+	bdreg->regmap = dev_get_regmap(pdev->dev.parent, NULL);
- 
- 	platform_set_drvdata(pdev, bdreg);
- 
- 	config.dev = &pdev->dev;
--	config.dev->of_node = bd->dev->of_node;
--	config.driver_data = bd;
--	config.regmap = bd->regmap;
-+	config.dev->of_node = pdev->dev.parent->of_node;
-+	config.driver_data = bdreg;
-+	config.regmap = bdreg->regmap;
- 
- 	for (i = 0; i < ARRAY_SIZE(regulators); i++) {
- 		rdev = devm_regulator_register(&pdev->dev, &regulators[i],
- 					       &config);
- 		if (IS_ERR(rdev)) {
--			dev_err(bd->dev, "failed to register %s regulator\n",
-+			dev_err(&pdev->dev, "failed to register %s regulator\n",
- 				pdev->name);
- 			return PTR_ERR(rdev);
- 		}
- 	}
- 
- 	val = 0;
--	of_property_read_u32(bd->dev->of_node, "rohm,ddr-backup-power", &val);
-+	of_property_read_u32(config.dev->of_node, "rohm,ddr-backup-power", &val);
- 	if (val & ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK) {
--		dev_err(bd->dev, "invalid %s mode %u\n",
-+		dev_err(&pdev->dev, "invalid %s mode %u\n",
- 			"rohm,ddr-backup-power", val);
- 		return -EINVAL;
- 	}
- 	bdreg->bkup_mode_cnt_keepon = val;
- 
--	bdreg->rstbmode_level = of_property_read_bool(bd->dev->of_node,
-+	bdreg->rstbmode_level = of_property_read_bool(config.dev->of_node,
- 						      "rohm,rstbmode-level");
--	bdreg->rstbmode_pulse = of_property_read_bool(bd->dev->of_node,
-+	bdreg->rstbmode_pulse = of_property_read_bool(config.dev->of_node,
- 						      "rohm,rstbmode-pulse");
- 	if (bdreg->rstbmode_level && bdreg->rstbmode_pulse) {
--		dev_err(bd->dev, "only one rohm,rstbmode-* may be specified");
-+		dev_err(&pdev->dev, "only one rohm,rstbmode-* may be specified");
- 		return -EINVAL;
- 	}
- 
++#define BD9571MWV_PART_NAME			"BD9571MWV"
++
+ /* Define the BD9571MWV IRQ numbers */
+ enum bd9571mwv_irqs {
+ 	BD9571MWV_IRQ_MD1,
+@@ -94,19 +97,4 @@ enum bd9571mwv_irqs {
+ 	BD9571MWV_IRQ_WDT_OF,
+ 	BD9571MWV_IRQ_BKUP_TRG,
+ };
+-
+-/**
+- * struct bd9571mwv - state holder for the bd9571mwv driver
+- *
+- * Device data may be used to access the BD9571MWV chip
+- */
+-struct bd9571mwv {
+-	struct device *dev;
+-	struct regmap *regmap;
+-
+-	/* IRQ Data */
+-	int irq;
+-	struct regmap_irq_chip_data *irq_data;
+-};
+-
+ #endif /* __LINUX_MFD_BD9571MWV_H */
 -- 
 2.7.4
 
