@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1649C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Dec 2020 11:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A85FC2BB40
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Dec 2020 11:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69C3923F2A
+	by mail.kernel.org (Postfix) with ESMTP id 00E7623EF6
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Dec 2020 11:30:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394484AbgLKL2f (ORCPT
+        id S2394443AbgLKL2e (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Dec 2020 06:28:35 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:22276 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2394418AbgLKL22 (ORCPT
+        Fri, 11 Dec 2020 06:28:34 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:41506 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2393663AbgLKL21 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Dec 2020 06:28:28 -0500
+        Fri, 11 Dec 2020 06:28:27 -0500
 X-IronPort-AV: E=Sophos;i="5.78,411,1599490800"; 
-   d="scan'208";a="65422225"
+   d="scan'208";a="65637573"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Dec 2020 20:27:56 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 11 Dec 2020 20:27:55 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3A34C42D7EA1;
-        Fri, 11 Dec 2020 20:27:56 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B9A2A42D7EA2;
+        Fri, 11 Dec 2020 20:27:55 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
         matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
@@ -37,9 +37,9 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 06/10] gpio: bd9571mwv: rid of using struct bd9571mwv
-Date:   Fri, 11 Dec 2020 20:27:36 +0900
-Message-Id: <1607686060-17448-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 02/10] mfd: rohm-generic: Add BD9571 and BD9574
+Date:   Fri, 11 Dec 2020 20:27:32 +0900
+Message-Id: <1607686060-17448-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1607686060-17448-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1607686060-17448-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -47,89 +47,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-To simplify this driver, use dev_get_regmap() and
-rid of using struct bd9571mwv.
+Add chip IDs for BD9571MWV and BD9574MWF.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- drivers/gpio/gpio-bd9571mwv.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+ include/linux/mfd/rohm-generic.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpio/gpio-bd9571mwv.c b/drivers/gpio/gpio-bd9571mwv.c
-index abb622c..0e5395f 100644
---- a/drivers/gpio/gpio-bd9571mwv.c
-+++ b/drivers/gpio/gpio-bd9571mwv.c
-@@ -16,8 +16,8 @@
- #include <linux/mfd/bd9571mwv.h>
- 
- struct bd9571mwv_gpio {
-+	struct regmap *regmap;
- 	struct gpio_chip chip;
--	struct bd9571mwv *bd;
+diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
+index 4283b5b..affacf8 100644
+--- a/include/linux/mfd/rohm-generic.h
++++ b/include/linux/mfd/rohm-generic.h
+@@ -12,6 +12,8 @@ enum rohm_chip_type {
+ 	ROHM_CHIP_TYPE_BD71847,
+ 	ROHM_CHIP_TYPE_BD70528,
+ 	ROHM_CHIP_TYPE_BD71828,
++	ROHM_CHIP_TYPE_BD9571,
++	ROHM_CHIP_TYPE_BD9574,
+ 	ROHM_CHIP_TYPE_AMOUNT
  };
  
- static int bd9571mwv_gpio_get_direction(struct gpio_chip *chip,
-@@ -26,7 +26,7 @@ static int bd9571mwv_gpio_get_direction(struct gpio_chip *chip,
- 	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
- 	int ret, val;
- 
--	ret = regmap_read(gpio->bd->regmap, BD9571MWV_GPIO_DIR, &val);
-+	ret = regmap_read(gpio->regmap, BD9571MWV_GPIO_DIR, &val);
- 	if (ret < 0)
- 		return ret;
- 	if (val & BIT(offset))
-@@ -40,8 +40,7 @@ static int bd9571mwv_gpio_direction_input(struct gpio_chip *chip,
- {
- 	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
- 
--	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_DIR,
--			   BIT(offset), 0);
-+	regmap_update_bits(gpio->regmap, BD9571MWV_GPIO_DIR, BIT(offset), 0);
- 
- 	return 0;
- }
-@@ -52,9 +51,9 @@ static int bd9571mwv_gpio_direction_output(struct gpio_chip *chip,
- 	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
- 
- 	/* Set the initial value */
--	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_OUT,
-+	regmap_update_bits(gpio->regmap, BD9571MWV_GPIO_OUT,
- 			   BIT(offset), value ? BIT(offset) : 0);
--	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_DIR,
-+	regmap_update_bits(gpio->regmap, BD9571MWV_GPIO_DIR,
- 			   BIT(offset), BIT(offset));
- 
- 	return 0;
-@@ -65,7 +64,7 @@ static int bd9571mwv_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
- 	int ret, val;
- 
--	ret = regmap_read(gpio->bd->regmap, BD9571MWV_GPIO_IN, &val);
-+	ret = regmap_read(gpio->regmap, BD9571MWV_GPIO_IN, &val);
- 	if (ret < 0)
- 		return ret;
- 
-@@ -77,7 +76,7 @@ static void bd9571mwv_gpio_set(struct gpio_chip *chip, unsigned int offset,
- {
- 	struct bd9571mwv_gpio *gpio = gpiochip_get_data(chip);
- 
--	regmap_update_bits(gpio->bd->regmap, BD9571MWV_GPIO_OUT,
-+	regmap_update_bits(gpio->regmap, BD9571MWV_GPIO_OUT,
- 			   BIT(offset), value ? BIT(offset) : 0);
- }
- 
-@@ -105,9 +104,9 @@ static int bd9571mwv_gpio_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, gpio);
- 
--	gpio->bd = dev_get_drvdata(pdev->dev.parent);
-+	gpio->regmap = dev_get_regmap(pdev->dev.parent, NULL);
- 	gpio->chip = template_chip;
--	gpio->chip.parent = gpio->bd->dev;
-+	gpio->chip.parent = pdev->dev.parent;
- 
- 	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->chip, gpio);
- 	if (ret < 0) {
 -- 
 2.7.4
 
