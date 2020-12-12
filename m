@@ -2,79 +2,80 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB68C4361B
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Dec 2020 17:56:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D04C4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Dec 2020 19:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1B8922262
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Dec 2020 17:56:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A467822262
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 12 Dec 2020 19:20:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387668AbgLLRzo (ORCPT
+        id S2439859AbgLLTUH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 12 Dec 2020 12:55:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59092 "EHLO
+        Sat, 12 Dec 2020 14:20:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727514AbgLLRzn (ORCPT
+        with ESMTP id S1726309AbgLLTUG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 12 Dec 2020 12:55:43 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 662FDC0613CF;
-        Sat, 12 Dec 2020 09:55:03 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id a8so19731575lfb.3;
-        Sat, 12 Dec 2020 09:55:03 -0800 (PST)
+        Sat, 12 Dec 2020 14:20:06 -0500
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9EFCC0613D3;
+        Sat, 12 Dec 2020 11:19:25 -0800 (PST)
+Received: by mail-ed1-x543.google.com with SMTP id u19so12980587edx.2;
+        Sat, 12 Dec 2020 11:19:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=t/n/SZO57zH+6NrngqhLDU18rnISd3B9T8WfYcT9OVY=;
-        b=Az53OnX215u3j5WV+PfOQiLX82i72LtCP7dvEQ96A8kK3qS8C3Yv4xUDOQWladxXs9
-         2SkA373eLzlsNOLBxk4M/73cAVEALP6c9NrqovDL5ZgLf93wbEVJwB+fOjdgbU3d8WLw
-         ibdYNObpMFPqCF7iRkEC9uVt5PV6NLsdHDKH5Mf37lkPsn+068an5K7wFCR4Quc221X0
-         5a76gyRf8R9oSvTwnuBYqMDBX92VLARbOd2fYRqP6ioFKCvghQhuZB1kTReh1DVcMsCJ
-         JYoeb8GDnrBHwj8sQDto795RDI+Kl+FZEBUgUSl1H7A+huK96BUAnoS1RULfbbfam+l1
-         B4rQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oPc/r9BQ5UB7YK8Ckj/oZJBlPi1FTCS20ucGiOtOZTo=;
+        b=M19p5ocdhhgKmeZNbHWkuzmEYib3WwK/6Psg+ocbHeQpxriAN4mBTnUA2Q/mBHd4A4
+         gnF4GvQ0Gz+7VoyKtOqpG2aAxhgkEe0phmcojk+DT84MYY2qnzn5zI8bZRVK/h65x2RH
+         k0Nh+HVvfcGD1nZJz7p6HSTlt78mxkhLVPmFxk+Tw9D/LwLmtlxBiYvtGGBsiEiiSk8e
+         153FmjTu7M4JBvT+C4svEHjp2pyXZYEGwN7oINXsfhcv1DM6ChXsiqLx0WeP14aBCe/w
+         MFBV4tzB1GA57nSducizMVnpmLxl63ju4/TbIFtWepV8ryxM0P+VyeS0fsJ/Upp86GPy
+         kliA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=t/n/SZO57zH+6NrngqhLDU18rnISd3B9T8WfYcT9OVY=;
-        b=Y9fnv8rKCnjEaK+yLlO75LSh2rkg0hb3An3AZHrmNmiebX3BaazFGX9lnphUobNl36
-         lkPErQVt0CJs/+pwFVrl1M6fdCf7jayiKuXb/0qn/JPwRB0IcZUY7l8Yrbex1i6aJhgH
-         iWsbT0Jub98QXJOq/rl/ipyObj2fNQw12UJbfrLoLKkHIChkbg+lZnfFIOWxZRVQsuig
-         o8VF8X852b+SaQ1rHGPXAUeMGneJdovvJn4JELOX/5TYngib73KMmmXcqq+4Q0rQeLWq
-         h0hgjC3kQ3j+DNW9PIdvrOXwodj/qqDB/m5g8w0EIJPJmM4t67qQ9EFrCrbUGzrH6/5M
-         g48g==
-X-Gm-Message-State: AOAM532tLO9WY1GelwjKho/89WOcJvC5dcO2J05vrow4gWZ4I4c4xKhd
-        z3fRZVftGUaO6tZZaFtOaLSh0u3hkuU=
-X-Google-Smtp-Source: ABdhPJz63qGvDMQ6+R7rSAFJUdfoExgTKPuNQY/FDHF03Qjn2z2Y9LdCAD6ipINPbcjxSxfthnxnuw==
-X-Received: by 2002:ac2:5691:: with SMTP id 17mr7391498lfr.537.1607795701603;
-        Sat, 12 Dec 2020 09:55:01 -0800 (PST)
-Received: from [192.168.1.100] ([31.173.85.216])
-        by smtp.gmail.com with ESMTPSA id k11sm1353981lfj.170.2020.12.12.09.55.00
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oPc/r9BQ5UB7YK8Ckj/oZJBlPi1FTCS20ucGiOtOZTo=;
+        b=iaFWO3KwC+XwkeyN9bIVmZ5VSPBXug1eUUwkv7gvoJgMV4uNskxDaUN8kXllQDFFAS
+         3Hj5LUgaqA/TAhJN4/cFwtUk6xfy9WpNQ682RFtidwgpT4WIfQezYDWh+OLkHDRjSNqM
+         I2HP7Wue6PdqqggIbuAycYBHu0ce2KBciPFhtUP8qQamcfcDO/D/iaZDt9RJ6+Yt2dpB
+         ksm8ATfjWJyQtuYqw9CQbIGiZQ45UcuA0vKGgGLsX4D+AWMDhxcDHir4RIKz3jYJCFfP
+         cUpsd/uzSgGwI2zSFbUL3pmz8tCMreDpyqMVpIy+LdUioXgNbk1Z04hPt1gbLVcfqKBW
+         JIfg==
+X-Gm-Message-State: AOAM532Is4vIToyeJvWAuNVPeXz1IIjCJTvPSBA8TzRdrMsy+SolInft
+        9Zga/kFEdKY/v+pwi62DqBAJwcmgLryixg==
+X-Google-Smtp-Source: ABdhPJzfvYCXPMJh6F26oER8D4cDCKw1FFhifttRoCFfjMThdKwBNP/R5vZp7/mxGvbhqFeaG9IZfQ==
+X-Received: by 2002:aa7:c749:: with SMTP id c9mr3414285eds.3.1607800764541;
+        Sat, 12 Dec 2020 11:19:24 -0800 (PST)
+Received: from [192.168.1.4] (ip-89-176-112-137.net.upcbroadband.cz. [89.176.112.137])
+        by smtp.gmail.com with ESMTPSA id ot18sm9544548ejb.54.2020.12.12.11.19.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Dec 2020 09:55:01 -0800 (PST)
-Subject: Re: [RFC] ravb: Add support for optional txc_refclk
-To:     Adam Ford <aford173@gmail.com>, linux-renesas-soc@vger.kernel.org
-Cc:     aford@beaconembedded.com, charles.stevens@logicpd.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20201212165648.166220-1-aford173@gmail.com>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Organization: Brain-dead Software
-Message-ID: <7f5f8ef2-3e4f-5076-0558-26b48e75b674@gmail.com>
-Date:   Sat, 12 Dec 2020 20:54:58 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
+        Sat, 12 Dec 2020 11:19:23 -0800 (PST)
+Subject: Re: [PATCH V4] PCI: rcar: Add L1 link state fix into data abort hook
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <a65139b9-3b06-0562-7b6e-9a438aecff66@gmail.com>
+ <20201208184627.GA2393103@bjorn-Precision-5520>
+ <20201210121250.GA31998@e121166-lin.cambridge.arm.com>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <b569d614-2548-5ce1-32f0-dc923a508710@gmail.com>
+Date:   Sat, 12 Dec 2020 20:12:16 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.5.1
 MIME-Version: 1.0
-In-Reply-To: <20201212165648.166220-1-aford173@gmail.com>
+In-Reply-To: <20201210121250.GA31998@e121166-lin.cambridge.arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -82,42 +83,51 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+On 12/10/20 1:12 PM, Lorenzo Pieralisi wrote:
 
-On 12.12.2020 19:56, Adam Ford wrote:
-
-> The SoC expects the txv_refclk is provided, but if it is provided
-> by a programmable clock, there needs to be a way to get and enable
-> this clock to operate.  It needs to be optional since it's only
-> necessary for those with programmable clocks.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
 [...]
-> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-> index bd30505fbc57..4c3f95923ef2 100644
-> --- a/drivers/net/ethernet/renesas/ravb_main.c
-> +++ b/drivers/net/ethernet/renesas/ravb_main.c
-> @@ -2148,6 +2148,18 @@ static int ravb_probe(struct platform_device *pdev)
->   		goto out_release;
->   	}
->   
-> +	priv->ref_clk = devm_clk_get(&pdev->dev, "txc_refclk");
 
-    Why not devm_clk_get_optional()?
+>>>>> +static int __init rcar_pcie_init(void)
+>>>>> +{
+>>>>> +	if (of_find_matching_node(NULL, rcar_pcie_abort_handler_of_match)) {
+>>>>> +#ifdef CONFIG_ARM_LPAE
+>>>>> +		hook_fault_code(17, rcar_pcie_aarch32_abort_handler, SIGBUS, 0,
+>>>>> +				"asynchronous external abort");
+>>>>> +#else
+>>>>> +		hook_fault_code(22, rcar_pcie_aarch32_abort_handler, SIGBUS, 0,
+>>>>> +				"imprecise external abort");
+>>>>> +#endif
+>>>>> +	}
+>>>>> +
+>>>>> +	return platform_driver_register(&rcar_pcie_driver);
+>>>>> +}
+>>>>> +device_initcall(rcar_pcie_init);
+>>>>> +#else
+>>>>>    builtin_platform_driver(rcar_pcie_driver);
+>>>>> +#endif
+>>>>
+>>>> Is the device_initcall() vs builtin_platform_driver() something
+>>>> related to the hook_fault_code()?  What would break if this were
+>>>> always builtin_platform_driver()?
+>>>
+>>> rcar_pcie_init() would not be called before probe.
+>>
+>> Sorry to be slow, but why does it need to be called before probe?
+>> Obviously software isn't putting the controller in D3 or enabling ASPM
+>> before probe.
+> 
+> I don't understand it either so it would be good to clarify.
 
-> +	if (IS_ERR(priv->ref_clk)) {
-> +		if (PTR_ERR(priv->ref_clk) == -EPROBE_DEFER) {
-> +			/* for Probe defer return error */
-> +			error = PTR_ERR(priv->ref_clk);
-> +			goto out_release;
-> +		}
-> +		/* Ignore other errors since it's optional */
-> +	} else {
-> +		(void)clk_prepare_enable(priv->ref_clk);
-> +	}
-> +
->   	ndev->max_mtu = 2048 - (ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN);
->   	ndev->min_mtu = ETH_MIN_MTU;
->   
+The hook_fault_code() is marked __init, so if probe() was deferred and 
+the kernel __init memory was free'd, attempt to call hook_fault_code() 
+from probe would lead to a crash.
 
-MBR, Sergei
+> Also, some of these platforms are SMP systems, I don't understand
+> what prevents multiple cores to fault at once given that the faults
+> can happen for config/io/mem accesses alike.
+> 
+> I understand that the immediate fix is for S2R, that is single
+> threaded but I would like to understand how comprehensive this fix
+> is.
+
+Are you suggesting to add some sort of locking ?
