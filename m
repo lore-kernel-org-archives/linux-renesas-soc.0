@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FD0C4361B
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0197BC4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5991D2335A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB97723123
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:43:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730828AbgLMSkB (ORCPT
+        id S2393138AbgLMSnA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 13 Dec 2020 13:40:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60194 "EHLO
+        Sun, 13 Dec 2020 13:43:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60186 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389284AbgLMSjy (ORCPT
+        with ESMTP id S2389478AbgLMSjy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Sun, 13 Dec 2020 13:39:54 -0500
-Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24900C0611CA;
-        Sun, 13 Dec 2020 10:38:43 -0800 (PST)
-Received: by mail-io1-xd32.google.com with SMTP id d9so14773757iob.6;
-        Sun, 13 Dec 2020 10:38:43 -0800 (PST)
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1C87C0611CC;
+        Sun, 13 Dec 2020 10:38:46 -0800 (PST)
+Received: by mail-io1-xd42.google.com with SMTP id t8so14763201iov.8;
+        Sun, 13 Dec 2020 10:38:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=R/HHs2XgLog47FdAUtHaQujfusotHEedoMJlKH9zwmk=;
-        b=jYsGGsVM0QKqTXmeCErNRsNXjwg7cc5lRzK+aZV/8OGSzNpTUmGH7xT8WGoKEDRlWp
-         VvWbM5Q1tWA04Uwp0tF/UBggOG2EFkk2+DhcCkjZ/HZP45ZP0wfqEQQxOfY1ul6UKYhR
-         +2F4NfzJZ0XU7IvlNTo4nFLsJea2vOnfVf/GNBbuVRBt3IuQxPYczzd3azBja1dxf7mg
-         mlKbeO5zG3e9CwWSS9MYF1yeIaCXk7Z4nLr3XFQySL/lUJLA8zvggI1L8AIpdJ11ThdP
-         /LAboHtwCZpc+ONw/3LwiXLIpuBBlRGY+jA64tkxdB05ImrSkIwA2o5G+L1cc0jKIMgz
-         iuhA==
+        bh=hxZ75yiZZjAmfO6Ayk+Zr2KNsAPQLuLMGWRzVxl4gr4=;
+        b=sxQM6RlnYDm2xBZqQULcTvLUhCf7CrRuNtZOSAWIFgoy/nEP9dQOlN1gi/FPGQjSsx
+         sHAF+toiJwjd8moQRtjNoh727fnSjL2cgDUNb8Iy3fM5jaIoQAa/zBiiHvd8U4U5biyx
+         sr6N6o/NVeheuH4nXA3AuyyS+um1Pr151DvFVZ74xEpzEzfnzdfp5PaKkxDDb/gjioyZ
+         0FYmKuCMYIZb3qtYM8A/jKdXc9rll0CJJYxguQ68Dh9qtU0zwumL3ik0qqqO6cgvd32N
+         FORADDX+EkGsSHaKqd48/KRUg0KsJr6ufUlkXf2LKczVaA6JZ6mUx1W288bPeU+0CFN3
+         m66Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=R/HHs2XgLog47FdAUtHaQujfusotHEedoMJlKH9zwmk=;
-        b=of8759x0jBWZ6Q2/elenYk282+Lg30ZDuYCC+5mTiMfclBbAA865sdWQoBKH+Nqg9d
-         XsWL2O42n7QGt4L93AGGzDNdt1xvH6PIH/eqF+90SPCXpWR0PW0RP/Luk/vzBcFF0b1I
-         DGAO+YAzTYZVRQVK2jX8KM/IaEtCR1wKABs7F/1YNE9x+RipWHGBYjE2z8GejptQXd49
-         C/L81OSBXw6H6YxzO/HEGZ04HPIyhYpH96iEEPotV0vV7yqI3p7BxZ4bOmnatXz/PmIZ
-         zh8aspOWIdUkYxvy5wGIRiJ9W08zaHVtvnMZ10pdlscZoTOGBoGR7jf4an8LhNajuio8
-         m6KQ==
-X-Gm-Message-State: AOAM532Jgd+5+bDKLJZUGzPJTNsY5yiOLL5JDuYXT+8vgDmHJ8HQOS8e
-        9oa+RTq+ELAyt06DsbkvNw3boi23SVk8Xw==
-X-Google-Smtp-Source: ABdhPJyM6GnHCP2QOQDXtZxhfEY7KSS2FagUd1OXFXY1aPRVzb8Bc49EfVzD6PYN09W7GR+kc9qClA==
-X-Received: by 2002:a02:63cd:: with SMTP id j196mr1468494jac.61.1607884722006;
-        Sun, 13 Dec 2020 10:38:42 -0800 (PST)
+        bh=hxZ75yiZZjAmfO6Ayk+Zr2KNsAPQLuLMGWRzVxl4gr4=;
+        b=M/mt5uOW5ngNajv/3KVnrXXeymKE0J0xYUxo1nS7pePfWxq4/HD3DvQJ3EBDldt4cc
+         p/Ga5VevZelaPEmYLcY4+gI6UhffHjQ8nFROJmGf/4xiR/l0IXEgsbTw7mG/gfnez+lB
+         lIjUSrQlbsFnEuTP/ybbn8qYn115S2Q+lupFEWeTh8xnLZd0eJXY0l2svMYJlXu7CjWp
+         av3xoDUud4iXQl6enGJij+2b4aGnaXLZMiHxkGuJQmYU18zlC6raUtRPE+Hh4IOrOvIc
+         TNu4XmpztFwCvG/2CLBINYlku5SGRTNra3x8Lwo6tYHE1ze/HLuAPcp2/Ann6Jj9aRGi
+         pHnA==
+X-Gm-Message-State: AOAM530z6Fq0MdjJlCNihBMPOqIZ8PZJkh3QoJbxYZM44cIXUqvy0AVm
+        QxDvuhrzilg3glxX9KGYc223I4FUCM4WDg==
+X-Google-Smtp-Source: ABdhPJywZrNKw5UvV6rXCm8Fmco+wQfuX1BR4kFryNMxnKCP74V5fJh3Q+Ko+kgi+JcawF4us2CiyA==
+X-Received: by 2002:a05:6638:f89:: with SMTP id h9mr28686537jal.89.1607884725882;
+        Sun, 13 Dec 2020 10:38:45 -0800 (PST)
 Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:f45d:df49:9a4c:4914])
-        by smtp.gmail.com with ESMTPSA id o11sm7804532ioa.37.2020.12.13.10.38.41
+        by smtp.gmail.com with ESMTPSA id o11sm7804532ioa.37.2020.12.13.10.38.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Dec 2020 10:38:41 -0800 (PST)
+        Sun, 13 Dec 2020 10:38:45 -0800 (PST)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
@@ -65,9 +65,9 @@ Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 15/18] arm64: dts: renesas: beacon-rzg2m-kit: Rearange SoC unique functions
-Date:   Sun, 13 Dec 2020 12:37:55 -0600
-Message-Id: <20201213183759.223246-16-aford173@gmail.com>
+Subject: [PATCH 17/18] arm64: dts: renesas: Introduce r8a774b1-beacon-rzg2n-kit
+Date:   Sun, 13 Dec 2020 12:37:57 -0600
+Message-Id: <20201213183759.223246-18-aford173@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201213183759.223246-1-aford173@gmail.com>
 References: <20201213183759.223246-1-aford173@gmail.com>
@@ -77,85 +77,84 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-In preparation for adding new dev kits, move anything specific to the
-RZ/G2M from the SOM-level and baseboard-levels and move them to the
-kit-level.  This allows the SOM and baseboard to be reused with
-other SoC's.
+Beacon EmebeddedWorks is introducing a new kit based on the
+RZ/G2N SoC from Renesas.
+
+The SOM supports eMMC, WiFi and Bluetooth, along with a Cat-M1
+cellular radio.
+
+The Baseboard has Ethernet, USB, HDMI, stereo audio in and out,
+along with a variety of push buttons and LED's, and support for
+a parallel RGB and an LVDS display.  It uses the same baseboard
+and SOM as the RZ/G2M.
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
- .../dts/renesas/beacon-renesom-baseboard.dtsi    | 15 ---------------
- .../boot/dts/renesas/beacon-renesom-som.dtsi     |  5 -----
- .../dts/renesas/r8a774a1-beacon-rzg2m-kit.dts    | 16 ++++++++++++++++
- 3 files changed, 16 insertions(+), 20 deletions(-)
+ arch/arm64/boot/dts/renesas/Makefile          |  1 +
+ .../dts/renesas/r8a774b1-beacon-rzg2n-kit.dts | 43 +++++++++++++++++++
+ 2 files changed, 44 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-index 7f499282f851..facb3e6d8010 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-@@ -273,21 +273,6 @@ &can1 {
- 	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 3b8b03705917..ea3d7d9bc52e 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2.dtb
+ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex.dtb
+ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex-idk-1110wr.dtb
  
--&du {
--	pinctrl-0 = <&du_pins>;
--	pinctrl-names = "default";
--	status = "okay";
--
--	clocks = <&cpg CPG_MOD 724>,
--		<&cpg CPG_MOD 723>,
--		<&cpg CPG_MOD 722>,
--		<&versaclock5 1>,
--		<&x302_clk>,
--		<&versaclock5 2>;
--	clock-names = "du.0", "du.1", "du.2",
--		"dclkin.0", "dclkin.1", "dclkin.2";
--};
--
- &du_out_rgb {
- 	remote-endpoint = <&rgb_panel>;
- };
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-index b5ba45261c0b..d68e9f5b8b38 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-@@ -13,11 +13,6 @@ memory@48000000 {
- 		reg = <0x0 0x48000000 0x0 0x78000000>;
- 	};
- 
--	memory@600000000 {
--		device_type = "memory";
--		reg = <0x6 0x00000000 0x0 0x80000000>;
--	};
--
- 	osc_32k: osc_32k {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
-index 2c5b057c30c6..581e4ec36bcb 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
-@@ -26,4 +26,20 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
++dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-beacon-rzg2n-kit.dtb
+ dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n.dtb
+ dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex.dtb
+ dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex-idk-1110wr.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
+new file mode 100644
+index 000000000000..01a233102976
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
+@@ -0,0 +1,43 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright 2020, Compass Electronics Group, LLC
++ */
 +
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x80000000>;
++/dts-v1/;
++
++#include "r8a774b1.dtsi"
++#include "beacon-renesom-som.dtsi"
++#include "beacon-renesom-baseboard.dtsi"
++
++/ {
++	model = "Beacon Embedded Works RZ/G2N Development Kit";
++	compatible =	"beacon,beacon-rzg2n", "renesas,r8a774b1";
++
++	aliases {
++		serial0 = &scif2;
++		serial1 = &hscif0;
++		serial2 = &hscif1;
++		serial3 = &scif0;
++		serial4 = &hscif2;
++		serial5 = &scif5;
++		serial6 = &scif4;
++		ethernet0 = &avb;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
 +	};
 +};
 +
 +&du {
++	status = "okay";
++
 +	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&versaclock5 1>,
-+		 <&x302_clk>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.2",
-+		      "dclkin.0", "dclkin.1", "dclkin.2";
- };
++		<&cpg CPG_MOD 723>,
++		<&cpg CPG_MOD 721>,
++		<&versaclock5 1>,
++		<&x302_clk>,
++		<&versaclock5 2>;
++	clock-names = "du.0", "du.1", "du.3",
++		"dclkin.0", "dclkin.1", "dclkin.3";
++};
 -- 
 2.25.1
 
