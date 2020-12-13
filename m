@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5576C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CE6C4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:39:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74DDB2335A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:39:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD8B023123
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:39:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731031AbgLMSjM (ORCPT
+        id S2388079AbgLMSjl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 13 Dec 2020 13:39:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60086 "EHLO
+        Sun, 13 Dec 2020 13:39:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727843AbgLMSi7 (ORCPT
+        with ESMTP id S1732756AbgLMSjh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 13 Dec 2020 13:38:59 -0500
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24D36C061793;
-        Sun, 13 Dec 2020 10:38:19 -0800 (PST)
-Received: by mail-il1-x144.google.com with SMTP id u12so13727779ilv.3;
-        Sun, 13 Dec 2020 10:38:19 -0800 (PST)
+        Sun, 13 Dec 2020 13:39:37 -0500
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6AF0C06138C;
+        Sun, 13 Dec 2020 10:38:30 -0800 (PST)
+Received: by mail-il1-x143.google.com with SMTP id x15so13824608ilq.1;
+        Sun, 13 Dec 2020 10:38:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=nirapVzmyBXtlR0zSXiW6nUnfOw2BvU+F4T6ARlrvxg=;
-        b=Ulx4DJdoJiPMBFJHRJhE7s0qoe2BunLbwy+/YU9Oby1X6yraveGrTQEYRTQefcq7Ah
-         w8x95Ie+zyQAouuWFFej0aGppBOCazKrevrrG25xzFWWH1Sv2GN5fKzajbMxnktxogv+
-         D+YEIkqnV3Pu2dbHrXhKaLrT67yJ2JTqv+16+H1EpFDqPpi8CKxTYcsHYdbfVIleP5IV
-         p1/k7520M0aorSG9cHA1Ty8vIBcqplPtNpVZ0ok0YKr47U1wZ002Qfm2dog/OvAIE3R+
-         pQbS7E1nxCR4V1JQPKLyHESDOO0GYCFMWpQU6OPzNLZIBBMbnbUPq6WSt1gt2+ARAtkz
-         Y9yQ==
+        bh=O1ofCR4SUjXYMe9N9sbwulVEYc062acKW/2Q1L8oy2A=;
+        b=PfkbrkyP283kZpJ2dD5xV4G/6CVkRCXBf1Xdojba88UmtM4e6WvyUMuBRP/MdUVX9u
+         BXLAHc+oPQ6T6Iv8DjhkitiqGONIXyCUpiU93LvX/wT65QpDkgnzwUyh59m6/SG6D95g
+         S4P2Hg+CdBZi900i8llkBkWsPN1t099Qy+kiTru5X/VsNaNPeK/GxPZL/QOLeeYn74A/
+         2xzX8GlQgXTbt6mBjcesg+jBNYIYShPTOczwqa6Gj1PjlMrqgsGFloj1cz6J9zQPdNPu
+         PW/x4LT6fx00zE0hyMw5GpvKan+l2Ajbnl4dA6c9UKgc9XrvUXky3GD7pjzVaskwArPM
+         0e+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=nirapVzmyBXtlR0zSXiW6nUnfOw2BvU+F4T6ARlrvxg=;
-        b=LlnS1ciyMNSsL7iv0cgkWsWPPBjKe2ptuFaI0qA+prmp13ni/hapGgHoPF7YNuh18S
-         +cBeoB4bXZ0fRmpyYEfobDekEG2dTUgBviHmHt65cnuZ/SRETQ7IjoI3Q9fa9YKFZvPU
-         N3GF31dL9R4A/wWqdJgb5p8yWnDKEO2epepzan/xhkR1/FyIG7BGU/kkfTqj9Vai4XqQ
-         26iaC8bO2h26kQWC6/vNuOY/XfbgBmKzfXsC3OLo20OtXWnPby/rc1ez14BsjvxyT/gq
-         hjBZ9ncwyzTvOSiSYsJHQFDzWXVCF6A4DWn7E5Qi4n+NT0HQMZn1qWiQ9jzm9tNQLw+U
-         NAoA==
-X-Gm-Message-State: AOAM530YnaPP9hjk0qic0aeej3F0XzYuZXKY/A694WSWco+KRHhVbkuP
-        L8rSPgScPLi0s7giXf5jYeSk32VgJBIvug==
-X-Google-Smtp-Source: ABdhPJzuqO7ExBQ42b6qpF+2h8qwDjlk11nn0HmZQj1OxT+des4uAQ9pSTi6lBTfiylltRvFnv8Kgw==
-X-Received: by 2002:a92:155b:: with SMTP id v88mr28688882ilk.303.1607884698202;
-        Sun, 13 Dec 2020 10:38:18 -0800 (PST)
+        bh=O1ofCR4SUjXYMe9N9sbwulVEYc062acKW/2Q1L8oy2A=;
+        b=FpLfD7AzIekz3Zai2+2GoTo0bkyj5ZQmPRdM5HQnR954uqoFML5yCnNJ/d6HFYpEeK
+         4KeVy1HT50rFGyTp/nUNbtO9eZey2CPGmdVqsLa54hrOK/EtixRFZ/8HxjzAkCr07tQG
+         eKFJTxWP3m0hxJUehGkvps5OFV3G/7OJfXqZi0CFlDe5TYieSvQI+D9w3UdOlgjU4o5I
+         9AIIj9vwfsHEjHt4bLUHueJH9yG2YaW0XvTai/FIJaSzn0MxvmKNnqm0orXdxYmqmHmD
+         +Fv3AlXs2e8TkqV4+Pw/BOMkTyoEXXhlbEOBtIHO9PGidkbZwlgzsZ+gUFTunThGDqEe
+         7TEA==
+X-Gm-Message-State: AOAM533LOUSDuwnvt3CO7zq9f2/ghcfJv8rMRQ/IZH7wPwGXLla9cO0N
+        ccNk+T9gloAqX/mzvvLrRgpldtcunu5GmA==
+X-Google-Smtp-Source: ABdhPJwptzTJmi8v6kTUJS1r9DxmXNy5TJtDR4V6qHc+KAu7UTZVHs9ToWl32dh/Tdblq+iE3u01Lw==
+X-Received: by 2002:a92:d44e:: with SMTP id r14mr28850227ilm.83.1607884709943;
+        Sun, 13 Dec 2020 10:38:29 -0800 (PST)
 Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:f45d:df49:9a4c:4914])
-        by smtp.gmail.com with ESMTPSA id o11sm7804532ioa.37.2020.12.13.10.38.17
+        by smtp.gmail.com with ESMTPSA id o11sm7804532ioa.37.2020.12.13.10.38.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Dec 2020 10:38:17 -0800 (PST)
+        Sun, 13 Dec 2020 10:38:29 -0800 (PST)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
@@ -65,9 +65,9 @@ Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 03/18] arm64: dts: renesas: beacon kit: Remove unnecessary nodes
-Date:   Sun, 13 Dec 2020 12:37:43 -0600
-Message-Id: <20201213183759.223246-4-aford173@gmail.com>
+Subject: [PATCH 09/18] arm64: dts: renesas: beacon: Fix RGB Display PWM Backlight
+Date:   Sun, 13 Dec 2020 12:37:49 -0600
+Message-Id: <20201213183759.223246-10-aford173@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201213183759.223246-1-aford173@gmail.com>
 References: <20201213183759.223246-1-aford173@gmail.com>
@@ -77,30 +77,46 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-VSPI0 and VSPB are already enabled by default.  There is no need
-to add extra nodes to enable them.  Remove the redundant nodes.
+The backlight didn't really work correctly due to some updates that were
+made in hardware.  It should be safe to apply these, because the older
+hardware was never shipped to anyone, so it shouldn't break anything.
+Because the display driver refers to the display as DPI, this also
+renames the backlight to use DPI for consistency.
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
- arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi | 8 --------
- 1 file changed, 8 deletions(-)
+ arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-index c50f8e63c80f..b093a34b0fa0 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-@@ -329,11 +329,3 @@ &usb_extal_clk {
- &usb3s0_clk {
- 	clock-frequency = <100000000>;
- };
--
--&vspb {
--	status = "okay";
--};
--
--&vspi0 {
--	status = "okay";
--};
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index bf047a9836ed..87a0f556cd2f 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -17,12 +17,12 @@ backlight_lvds: backlight-lvds {
+ 		default-brightness-level = <6>;
+ 	};
+ 
+-	backlight_rgb: backlight-rgb {
++	backlight_dpi: backlight-dpi {
+ 		compatible = "pwm-backlight";
+ 		power-supply = <&reg_lcd>;
+ 		enable-gpios = <&gpio_exp1 7 GPIO_ACTIVE_LOW>;
+-		pwms = <&pwm0 0 50000>;
+-		brightness-levels = <0 4 8 16 32 64 128 255>;
++		pwms = <&pwm0 0 25000>;
++		brightness-levels = <0 25 33 50 63 75 88 100>;
+ 		default-brightness-level = <6>;
+ 	};
+ 
+@@ -136,7 +136,7 @@ panel_in: endpoint {
+ 	rgb {
+ 		/* Different LCD with compatible timings */
+ 		compatible = "rocktech,rk070er9427";
+-		backlight = <&backlight_rgb>;
++		backlight = <&backlight_dpi>;
+ 		enable-gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
+ 		power-supply = <&reg_lcd>;
+ 		port {
 -- 
 2.25.1
 
