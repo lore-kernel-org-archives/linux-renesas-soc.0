@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90ED0C2BBCD
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C398EC4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9AD2072E
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:45:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D1E620723
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:47:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404092AbgLMSpo (ORCPT
+        id S2392871AbgLMSpo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Sun, 13 Dec 2020 13:45:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60184 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732425AbgLMSjg (ORCPT
+        with ESMTP id S1732699AbgLMSjg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Sun, 13 Dec 2020 13:39:36 -0500
-Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD676C0617A6;
-        Sun, 13 Dec 2020 10:38:24 -0800 (PST)
-Received: by mail-il1-x141.google.com with SMTP id n9so2821260ili.0;
-        Sun, 13 Dec 2020 10:38:24 -0800 (PST)
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE890C0617B0;
+        Sun, 13 Dec 2020 10:38:28 -0800 (PST)
+Received: by mail-il1-x143.google.com with SMTP id v3so13806430ilo.5;
+        Sun, 13 Dec 2020 10:38:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jcDVGybb7Pc9GBcQHLaSWMHVNO9chVKX8Fz4lnmvy7U=;
-        b=W+/NhBJJJGlftGfFsiQvAaV/iErFEK2vIB3Rqu0NxfujXPIfZjXgUr+ulMNatUeU7P
-         Xb/nyFrD5uK+hlIdLrNeHZBaS+2aJt4IFc5XUJR+WviUGezvbCDF0E0zHIWqyCmNl1gk
-         fYUFQD1OsYhaBcSZ8EODCjWiVFUqOYOBbkSXYUOeseK06DCqmvO5PjuPtds7G+Qna10O
-         z7wcRj1ERMvo8/WtWVw7C1we07XTbJpizDE9Aq3wDlgrBZtb+EpstESgN0fkgT3MVcC3
-         0/TyiDnwyJPLg9wykRob2UJ4IqvymLikZwLvUUHtc7YHIRmQG3s+uhhMgzismqu08fJw
-         JArA==
+        bh=m5YgN6qqhZgsLehjuXc972ccf0CgA0fEb+BYfoDU6UA=;
+        b=UTniVvkHiG+IuE3tQFTlnM8rkaY06ZUKDY26U5uW0vpWvgTKVHImIGpNU49ozYyYoT
+         zaj2aXwnPanlSurwjTzlozvZtoA3Xy5+VEVqOaf1307dWJMbzq3vWX/sP4VZgs3b/wGg
+         8HrL0RLc6BxJ1Ax8Ifm8WIsnUbSYlalaWS5e3Br+K9dKsV8+iZ4opjm9IoGrBrUfVJ9D
+         y76+ql/T6FWhZs8dd3u56HVzybNhn8YyimXo6U9I9lKgDS0dyd+9Oe/F2u2yUgRIlsUX
+         WLDHcg30V/wzzdv5Y8EmSP/KFpiBJf5or7xiKBLVbZIDO7r+06kyFVmg0NdhitmfseBz
+         FTTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jcDVGybb7Pc9GBcQHLaSWMHVNO9chVKX8Fz4lnmvy7U=;
-        b=lG3wIw35HQLXh6uD/z1rgd5So5DJIXWFKNShFlxhQdI3ccl4FLb9I8rCHdRoV7PrfI
-         KauTnngrmQVH9CMfZsWIrwsEbqsuXqXEGjc5eq+wvWxgUBl+uS2FUh+QouTIj7vn/Wrb
-         Fqirhfca97yDpiYBXNEq3T5Ap21g1/v+FdukUIPYMkTKhYJfR7VMl4nZa7s8bz9eGKVd
-         TvMHt5/jNGmpn4fE0GT81hGoFbS0Gp79T5dXM8KX/JoILlJlbGtv+s024eHXcvzqNVlh
-         I10RWg1k/FY18BuAK9Z91MLtEUMN9yPbvI0eVysCIDstzb8ZwByD5Zj1Cn5vkw/zZAQj
-         QYYg==
-X-Gm-Message-State: AOAM532gKPFt0n4OxX6Lu5+NW8ZneEp+F7Txr6rtvc2LsSTbAIICfLrg
-        WosIuyJiLRKv2h3nT1Qi3igEMVfIdlqCIg==
-X-Google-Smtp-Source: ABdhPJxXVbsEgXPKkFbcR+uSRGecZRKtw8R/+4vZ1REypgoPxMMsXD1hm1QTstg55lTxGFWGOoqC+Q==
-X-Received: by 2002:a92:cb52:: with SMTP id f18mr29745435ilq.41.1607884703989;
-        Sun, 13 Dec 2020 10:38:23 -0800 (PST)
+        bh=m5YgN6qqhZgsLehjuXc972ccf0CgA0fEb+BYfoDU6UA=;
+        b=LYOE1sG4+6as1ADEGlqI+XxiIjDotmEIgdNncfyVXXp4tAbTK+P4E6TQ7mYoLp9mhs
+         K5q7ocQx6XuTAB7a17unwDLBgRdPoMAr94fBu+Xa/1BoznhLX3S15cXo+EFzLiw3kJZ0
+         zcveI5itp3c499aK43ikMLct1U+AX1E5V0thyVaIpjW5VaoCfKtymKOSHJj8prnoJxXW
+         5uqEdyU5ML5MG8/rXq42EFqUmOgvShA/99+4Bypqgk3wFHYJUShpy9c20iX5QTbGIN8l
+         csRx2L/QZJPzdjAPiXXeplfftz3jUSV7qjW1B00FDTwlbY2HtHRu2KrVkPJvj333OvtL
+         dlGw==
+X-Gm-Message-State: AOAM532IsTxOdszfrVaxR2Okbld2r3hwyaRp8h9e3TOyTQYym3x+NU14
+        1kw5J3dxgPJPguuRD5WT+O4xNikj9fodjQ==
+X-Google-Smtp-Source: ABdhPJz6YYA+/0mMo3J9UskzFnH01qlEcNfdJvylEJB/Y8sHkY5/zcn8ZijzxlwjFox9j324jaVHBw==
+X-Received: by 2002:a92:5:: with SMTP id 5mr29848324ila.150.1607884707969;
+        Sun, 13 Dec 2020 10:38:27 -0800 (PST)
 Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:f45d:df49:9a4c:4914])
-        by smtp.gmail.com with ESMTPSA id o11sm7804532ioa.37.2020.12.13.10.38.23
+        by smtp.gmail.com with ESMTPSA id o11sm7804532ioa.37.2020.12.13.10.38.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Dec 2020 10:38:23 -0800 (PST)
+        Sun, 13 Dec 2020 10:38:27 -0800 (PST)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
@@ -65,9 +65,9 @@ Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 06/18] arm64: dts: renesas: beacon: Configure Audio CODEC clocks
-Date:   Sun, 13 Dec 2020 12:37:46 -0600
-Message-Id: <20201213183759.223246-7-aford173@gmail.com>
+Subject: [PATCH 08/18] arm64: dts: renesas: beacon: Enable SCIF4
+Date:   Sun, 13 Dec 2020 12:37:48 -0600
+Message-Id: <20201213183759.223246-9-aford173@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201213183759.223246-1-aford173@gmail.com>
 References: <20201213183759.223246-1-aford173@gmail.com>
@@ -77,37 +77,42 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-With the newly added configurable clock options, the audio CODEC can
-configure the mclk automatically.  Add the reference to the versaclock.
-Since the devices on I2C5 can communicate at 400KHz, let's also increase
-that too
+The baseboard supports SCIF4, enable the pins and the node for it.
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
- arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ .../boot/dts/renesas/beacon-renesom-baseboard.dtsi    | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-index ee7809e8db07..130993b1b20a 100644
+index aab39aae5ccb..bf047a9836ed 100644
 --- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
 +++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-@@ -424,13 +424,15 @@ &i2c0 {
+@@ -578,6 +578,11 @@ pwm2_pins: pwm2 {
+ 		function = "pwm2";
+ 	};
  
- &i2c5 {
++	scif4_pins: scif4 {
++		groups = "scif4_data_c";
++		function = "scif4";
++	};
++
+ 	sdhi0_pins: sd0 {
+ 		groups = "sdhi0_data4", "sdhi0_ctrl";
+ 		function = "sdhi0";
+@@ -706,6 +711,12 @@ &scif0 {
  	status = "okay";
--	clock-frequency = <100000>;
-+	clock-frequency = <400000>;
- 	pinctrl-0 = <&i2c5_pins>;
- 	pinctrl-names = "default";
+ };
  
- 	codec: wm8962@1a {
- 		compatible = "wlf,wm8962";
- 		reg = <0x1a>;
-+		clocks = <&versaclock6_bb 3>;
-+		clock-names = "mclk";
- 		DCVDD-supply = <&reg_audio>;
- 		DBVDD-supply = <&reg_audio>;
- 		AVDD-supply = <&reg_audio>;
++&scif4 {
++	pinctrl-0 = <&scif4_pins>;
++	pinctrl-names = "default";
++	status = "okay";
++};
++
+ &scif5 {
+ 	pinctrl-0 = <&scif5_pins>;
+ 	pinctrl-names = "default";
 -- 
 2.25.1
 
