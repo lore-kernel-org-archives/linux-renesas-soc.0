@@ -2,82 +2,124 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CCEC4361B
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 05:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91BC5C4167B
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:39:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A6412312A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 05:22:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B40223123
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:39:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725306AbgLMFWQ (ORCPT
+        id S1728355AbgLMSjG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 13 Dec 2020 00:22:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35840 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725287AbgLMFWQ (ORCPT
+        Sun, 13 Dec 2020 13:39:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60094 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730855AbgLMSjB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 13 Dec 2020 00:22:16 -0500
-Content-Type: text/plain; charset="utf-8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607836895;
-        bh=cV44tKi6E31BnITtCOWLyHjjS9XLowKnbRhNJZXaJOw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Dvra/5D2RYTkXWfQDsSyjOxTYcgxltABeZJVULPDQo/+W23kQkutGuebyBF3k9wDa
-         /UT3mbkXolf6NeCO/upjzstc/oITZaf1QnZTfZrm2zXKKxKO8bqZSUYeOtqQBMWWUN
-         q2Mib44yzw0PjAN3kcOvX+LucaQ/QYAz6+UuBaOmoc52voH+h8+J/9cbtGUl3R1W6o
-         bq0RZjFrT4eli8YQLmvegx+3KsxuMbIIfMFoF8yY57cbmkyHdauNV39vxGW1/uViay
-         3VWKWD2vr7nL43828x6xLgjAnHp89DR/3t3EPGR4JAqO+fjXbKfXb7cgLkR1wZw78w
-         7G8WYGUQ5Dl7w==
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20201210093201.2419737-1-geert+renesas@glider.be>
-References: <20201210093201.2419737-1-geert+renesas@glider.be>
-Subject: Re: [PATCH v11] ARM: uncompress: Validate start of physical memory against passed DTB
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Eric Miao <eric.miao@nvidia.com>,
-        Uwe =?utf-8?q?Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        Lukasz Stelmach <l.stelmach@samsung.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Ard Biesheuvel <ardb@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
+        Sun, 13 Dec 2020 13:39:01 -0500
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CD37C061794;
+        Sun, 13 Dec 2020 10:38:21 -0800 (PST)
+Received: by mail-io1-xd44.google.com with SMTP id i9so14776818ioo.2;
+        Sun, 13 Dec 2020 10:38:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=R39Rwz4DdlZNbxK0NlR+QqP+ugFFGtu+dGWo7hlUUtM=;
+        b=B/ncj1YbKpSLNRe4bjzanj92gLsIyL9UHz5JeSE7i/3AVH7OE1cCZZ7PZaKJ7tvUHe
+         PXlEjilKjx1PcVtdIcgS83cGZm/3rnMrqc9NWLxZEV2GgY1KWdyYKclJobEgncNQDvbe
+         RXRrrVcwL3detrRCG9OiFZOi/ykKyzxGKbuWLlFe2Gktc8cHhs8RhRZU49ncbW7+ptbq
+         /4u/eXWj6yjnEZn6JpoGfAkMlxh9+9IMvb9xv2otW9b7qX2w0V4bGGc9GZOp45SaKKd8
+         E3/tqxXQFyxUzlDwWQ1AiHIoBYBPsEv4jqBAHz9SgSUyEC6AGSeleD+vBKRbWQ2M+YLy
+         k04Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=R39Rwz4DdlZNbxK0NlR+QqP+ugFFGtu+dGWo7hlUUtM=;
+        b=UaZEvjau6Cq4mfxwEeNBCMU2X5kWq/OgL3C3jJNx4gbvDSDB2UUj3LKUNm71KCp2MB
+         tpyzmLZIyusWKMWaamp08kYQsGADiWJi0f3PIUcH3pDynLHmEMkJ+8VkijxnQ59rUe9+
+         CuZrElsa1pKz2AK62tyWr6b+vr4lmvaTowfWK5P60asmdbD7ziPa1hvj9N+hOUP7XKO7
+         2AdvIq8MBpMLfr3acU5I4uKIHAx7a16XpupwO9zsZBqHeOX2ZPm8ZV93mRqIMGKKW/5B
+         gKutoD2hxxgFs9N7x1rwMEWB2ATGPHJ7VjNXVhotzAFkkPpZVEO857gkgesprNov/ne6
+         FtjA==
+X-Gm-Message-State: AOAM5312VbHVf9H5bx4bBb/EcH1ZyAtNQy6fIE+K6vm4H/NDnBIuvWGG
+        SHuX3I0i6Q8maN+CBP5pZthi1CfFYzUiKQ==
+X-Google-Smtp-Source: ABdhPJzyegeJcyjn3ooQOokSHbBZ1dfTN30TM29clG8CYpCeTLYbcHf+6dIg8TtxT/d6I0tXItRguA==
+X-Received: by 2002:a5e:dd0d:: with SMTP id t13mr216306iop.132.1607884700132;
+        Sun, 13 Dec 2020 10:38:20 -0800 (PST)
+Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:f45d:df49:9a4c:4914])
+        by smtp.gmail.com with ESMTPSA id o11sm7804532ioa.37.2020.12.13.10.38.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Dec 2020 10:38:19 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Russell King <linux@armlinux.org.uk>
-Date:   Sat, 12 Dec 2020 21:21:34 -0800
-Message-ID: <160783689435.1580929.1038454293190061446@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 04/18] arm64: dts: renesas: beacon kit: Fix Audio Clock sources
+Date:   Sun, 13 Dec 2020 12:37:44 -0600
+Message-Id: <20201213183759.223246-5-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201213183759.223246-1-aford173@gmail.com>
+References: <20201213183759.223246-1-aford173@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2020-12-10 01:32:01)
-> diff --git a/arch/arm/boot/compressed/fdt_check_mem_start.c b/arch/arm/bo=
-ot/compressed/fdt_check_mem_start.c
-> new file mode 100644
-> index 0000000000000000..e58c3a79c8a31ec4
-> --- /dev/null
-> +++ b/arch/arm/boot/compressed/fdt_check_mem_start.c
-> @@ -0,0 +1,131 @@
-[...]
-> +
-> +static uint64_t get_val(const fdt32_t *cells, uint32_t ncells)
-> +{
-> +       uint64_t r =3D 0;
+The SoC was expecting two clock sources with different frequencies.
+One to support 44.1KHz and one to support 48KHz.  With the newly added
+ability to configure the programmably clock, configure both clocks.
 
-This assignment is unnecessary?
+Beacause the SoC is expecting a fixed clock/oscillator, it doesn't
+attempt to get and enable the clock for audio_clk_a. The choice to
+use a fixed-factor-clock was due to the fact that it will automatically
+enable the programmable clock frequency without change any code.
 
-> +
-> +       r =3D fdt32_ld(cells);
-> +       if (ncells > 1)
-> +               r =3D (r << 32) | fdt32_ld(cells + 1);
-> +
-> +       return r;
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ .../boot/dts/renesas/beacon-renesom-baseboard.dtsi    | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index 3c84e060c69f..5c09e64001cc 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -250,9 +250,12 @@ ss_ep: endpoint {
+ };
+ 
+ &audio_clk_a {
+-	clock-frequency = <24576000>;
+-	assigned-clocks = <&versaclock6_bb 4>;
+-	assigned-clock-rates = <24576000>;
++	/delete-property/ clock-frequency;
++	#clock-cells = <0>;
++	compatible = "fixed-factor-clock";
++	clock-mult = <1>;
++	clock-div = <1>;
++	clocks = <&versaclock6_bb 4>;
+ };
+ 
+ &audio_clk_b {
+@@ -591,7 +594,7 @@ sound_pins: sound {
+ 	};
+ 
+ 	sound_clk_pins: sound_clk {
+-		groups = "audio_clk_a_a";
++		groups = "audio_clk_a_a", "audio_clk_b_a";
+ 		function = "audio_clk";
+ 	};
+ 
+-- 
+2.25.1
+
