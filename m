@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B205C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5882EC4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:44:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4502054F
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:43:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A63E20575
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 13 Dec 2020 18:44:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbgLMSnA (ORCPT
+        id S2388643AbgLMSjl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 13 Dec 2020 13:43:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60188 "EHLO
+        Sun, 13 Dec 2020 13:39:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60204 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389529AbgLMSjy (ORCPT
+        with ESMTP id S1733026AbgLMSjj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 13 Dec 2020 13:39:54 -0500
-Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3FEFC0611CD;
-        Sun, 13 Dec 2020 10:38:48 -0800 (PST)
-Received: by mail-il1-x144.google.com with SMTP id 75so1755616ilv.13;
-        Sun, 13 Dec 2020 10:38:48 -0800 (PST)
+        Sun, 13 Dec 2020 13:39:39 -0500
+Received: from mail-io1-xd42.google.com (mail-io1-xd42.google.com [IPv6:2607:f8b0:4864:20::d42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1A45C061248;
+        Sun, 13 Dec 2020 10:38:36 -0800 (PST)
+Received: by mail-io1-xd42.google.com with SMTP id i18so14777724ioa.1;
+        Sun, 13 Dec 2020 10:38:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8U041WmRtyq8BrXAJ3gOrPaoRGECeAfxoPRSHkkfdX8=;
-        b=ScRCo9H/n9rcd41zcQ+TpdXmygMaZAocyJdzDRB9f+v9BNYWxVpGozPUIoAIBx//CO
-         Q6OdVoCgB7G319Y4h+ulvlrQoiYhbQjthHbjfcs2Va1sjKZsoRpClnjmIdzbpcVeD700
-         OGb/uKOZWNAlS7Ll9SWpppEcdNkbL1EvUCJU0OdA33WnVRXY29WxMqNZcAUX/e1WLlGL
-         BiTHZCfuDwNcMUooCxJxlg33AgnlJNYtSQyLgyNV1mRukYzjDKXPAOheefKipYoqn/R7
-         sFaW6PIMOIYap+oHK8IU4S/t9ZkmK2w7tiT7KMILpPh8/eJfZKtBbm4CaQRxWJ/5QkcS
-         93+A==
+        bh=/OgZeJlCecpw/jV69+gT7Zez3Y1kSFf/SBD2vw0Ux2Q=;
+        b=tSnrs/7FzmF6mfaLuacUNiYk/Ad39mxGqROYN5mgXlFOn9CeH4Og3byhIM4i9VYUOp
+         DNO8nNnZWZ00aECzVnDKNfvGrv8wsvHP1dCNrqkrG2PEz8Qzm0kbdtNcHgjxQBCGOsxV
+         RvQ2MDW9JBmmSizG3ontdtEzzxhqpltfZx65ct2vJTseF5gaDO/iz7cVLDzoqbhjd1p1
+         2hgq3bOiR7Jl1+qP4XB1+SaGKMZihJpkJgjKj4p34o2spJ2d7wR1evnq5BeFnrOY6p4s
+         5RfD9g2MCbpC7uKrLIvKzgTXLWOokl4osvaNl9H2y0WOyRsYTgaUNyMk16Sq53aHNfk2
+         KqjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8U041WmRtyq8BrXAJ3gOrPaoRGECeAfxoPRSHkkfdX8=;
-        b=ZMyIimco08OuWhN7dsBUUasFtX7pdrMSCJDkbUSzkhkVLGpDbMZ616NG9qZ4Hvxjm0
-         6E9a67b4BGDGT4zeeIgLDn6vJPxin0TczYqmuY1VlZGCv8tgWx1YhT1gsAn8a0Z11fwo
-         GEm1d7hYbFEnSIAZUJkm/yZST9qkeLwxYx1xrh9Q5o7RdzkokptY1wQoass4f/2Q7a7p
-         2xo/EYbjtEX1B7g6l1txwPFOKFycFwGZvEI391E0eu9BvZjzj6kNz2iZyZCSuLwFqlZ2
-         QD1TPOuQ7K1RdBocr8ycgkcSpgcrfYccR/LXlkPkw4fBomXpX1DruvhFtF1hXyyq4pIE
-         lxeA==
-X-Gm-Message-State: AOAM532pxF9nTxoiZLmjTOHmC8Fq2iSxL8i4r+b6TmLPokyikJIV5zR4
-        viHR8jPqrF1tPCxc6YxsqpLTw0bejaNwkA==
-X-Google-Smtp-Source: ABdhPJzPYh8wQw0Vw60pTqRwBugHjKzTNFBVh5w9mw4JaSxbSt55aritY+vpq0jrkgg0C5H3nlguUA==
-X-Received: by 2002:a92:cb0d:: with SMTP id s13mr30298321ilo.73.1607884727809;
-        Sun, 13 Dec 2020 10:38:47 -0800 (PST)
+        bh=/OgZeJlCecpw/jV69+gT7Zez3Y1kSFf/SBD2vw0Ux2Q=;
+        b=iwJlYstY1FgshPQA9FxiDFAiH0tw9o1dw7JWCGhMlQ+wIgqy4kAs35AGSqt6rxBJqf
+         L+BLWPF8h19AP0c+wJJGU95Mo5VCCiSVDxeIXuQuGN/I/z1/aBZ3L0KJHc9WcTjmwDKo
+         E0UrOSmSKmLGP3NzR4IisPxt07xRuKdaWpEgRu6SezzboagGLl23VYqmqEjie0HNdKMf
+         ml46B8xq8u1R68NVeMLgWLoNafM89ITIHsbGG+mBvQTn10uGphTvEQ4EnxThHCFDLImj
+         THEOv8JLgp5Bi+k/3ULHlMzQz6/rEThy/A+k2pG7USvZGX5C548wy2COVCATR0wh92fs
+         0z1g==
+X-Gm-Message-State: AOAM5318aTIiSp5ak2BMr4vlsTIIbtyCA1YOrF3OHjQyb+S3gCxjaXAS
+        yd+atVpGBUDZ2aXXn2182Ijjreuh1qmxRg==
+X-Google-Smtp-Source: ABdhPJyPh/wZ6QFwKP4YPqPV/IUi1Zpckn4JdOSPBuIzMkznX8wQBDEhGzhZvCnwerhMS0uvT4Ubbw==
+X-Received: by 2002:a6b:6b18:: with SMTP id g24mr27665386ioc.189.1607884715891;
+        Sun, 13 Dec 2020 10:38:35 -0800 (PST)
 Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:f45d:df49:9a4c:4914])
-        by smtp.gmail.com with ESMTPSA id o11sm7804532ioa.37.2020.12.13.10.38.46
+        by smtp.gmail.com with ESMTPSA id o11sm7804532ioa.37.2020.12.13.10.38.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Dec 2020 10:38:47 -0800 (PST)
+        Sun, 13 Dec 2020 10:38:35 -0800 (PST)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
@@ -65,9 +65,9 @@ Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 18/18] arm64: dts: renesas: Introduce r8a774e1-beacon-rzg2h-kit
-Date:   Sun, 13 Dec 2020 12:37:58 -0600
-Message-Id: <20201213183759.223246-19-aford173@gmail.com>
+Subject: [PATCH 12/18] arm64: dts: renesas: beacon: Better describe keys
+Date:   Sun, 13 Dec 2020 12:37:52 -0600
+Message-Id: <20201213183759.223246-13-aford173@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20201213183759.223246-1-aford173@gmail.com>
 References: <20201213183759.223246-1-aford173@gmail.com>
@@ -77,76 +77,68 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Beacon EmebeddedWorks is introducing a new kit based on the
-RZ/G2H SoC from Renesas.
-
-The SOM supports eMMC, WiFi and Bluetooth, along with a Cat-M1
-cellular radio.
-
-The Baseboard has Ethernet, USB, HDMI, stereo audio in and out,
-along with a variety of push buttons and LED's, and support for
-a parallel RGB and an LVDS display.  It uses the same baseboard
-and SOM files as the RZ/G2M and RZ/G2N kits.
+The keys on the baseboard are laid out in an diamond pattern, up, down,
+left, right and center.  Update the descriptions to make it easier to
+read.
 
 Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
- .../dts/renesas/r8a774e1-beacon-rzg2h-kit.dts | 48 +++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ .../dts/renesas/beacon-renesom-baseboard.dtsi | 20 +++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts
-new file mode 100644
-index 000000000000..8ff5856ac727
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774e1-beacon-rzg2h-kit.dts
-@@ -0,0 +1,48 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2020, Compass Electronics Group, LLC
-+ */
-+
-+/dts-v1/;
-+
-+#include "r8a774e1.dtsi"
-+#include "beacon-renesom-som.dtsi"
-+#include "beacon-renesom-baseboard.dtsi"
-+
-+/ {
-+	model = "Beacon Embedded Works RZ/G2H Development Kit";
-+	compatible =	"beacon,beacon-rzg2h", "renesas,r8a774e1";
-+
-+	aliases {
-+		serial0 = &scif2;
-+		serial1 = &hscif0;
-+		serial2 = &hscif1;
-+		serial3 = &scif0;
-+		serial4 = &hscif2;
-+		serial5 = &scif5;
-+		serial6 = &scif4;
-+		ethernet0 = &avb;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory@500000000 {
-+		device_type = "memory";
-+		reg = <0x5 0x00000000 0x0 0x80000000>;
-+	};
-+};
-+
-+&du {
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 724>,
-+		<&cpg CPG_MOD 723>,
-+		<&cpg CPG_MOD 721>,
-+		<&versaclock5 1>,
-+		<&x302_clk>,
-+		<&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.3",
-+		"dclkin.0", "dclkin.1", "dclkin.3";
-+};
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index beaea6de547b..db3ef33faac5 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -40,38 +40,38 @@ hdmi0_con: endpoint {
+ 	keys {
+ 		compatible = "gpio-keys";
+ 
+-		key-1 {
++		key-1 { /* S19 */
+ 			gpios = <&gpio4 6 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_1>;
+-			label = "Switch-1";
++			label = "Up";
+ 			wakeup-source;
+ 			debounce-interval = <20>;
+ 		};
+-		key-2 {
++		key-2 { /*S20 */
+ 			gpios = <&gpio3 13 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_2>;
+-			label = "Switch-2";
++			label = "Left";
+ 			wakeup-source;
+ 			debounce-interval = <20>;
+ 		};
+-		key-3 {
++		key-3 { /* S21 */
+ 			gpios = <&gpio5 17 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_3>;
+-			label = "Switch-3";
++			label = "Down";
+ 			wakeup-source;
+ 			debounce-interval = <20>;
+ 		};
+-		key-4 {
++		key-4 { /* S22 */
+ 			gpios = <&gpio5 20 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_4>;
+-			label = "Switch-4";
++			label = "Right";
+ 			wakeup-source;
+ 			debounce-interval = <20>;
+ 		};
+-		key-5 {
++		key-5 { /* S23 */
+ 			gpios = <&gpio5 22 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_5>;
+-			label = "Switch-4";
++			label = "Center";
+ 			wakeup-source;
+ 			debounce-interval = <20>;
+ 		};
 -- 
 2.25.1
 
