@@ -2,72 +2,176 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D7BC4361B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 20:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A21C4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 20:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CC90222473
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 20:40:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AEDF222BB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 20:53:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503363AbgLNUiz (ORCPT
+        id S2503159AbgLNUxM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Dec 2020 15:38:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60964 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2503362AbgLNUir (ORCPT
+        Mon, 14 Dec 2020 15:53:12 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51992 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503180AbgLNUxG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Dec 2020 15:38:47 -0500
-Date:   Mon, 14 Dec 2020 14:38:05 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1607978286;
-        bh=VxyJ4UtDTcxBmyqCR8InRULR9CxYNwYmHeq59aIftvc=;
-        h=From:To:Cc:Subject:In-Reply-To:From;
-        b=cKy1dubN6kvHJ5aGU5z4TmQdbYiGgWsiu6RJQfRNYxdRBoPmUlJTTkzpHBpZDsGlD
-         XZ1z8MVdAi2F6WTaPCPhYM8WAB3emjFlZo5qqt5h8c7PkonL2R19yYSy3qJTH30/XK
-         Jdl/Pi/yd4kmOUnvyKi/7jop3AorriUizetsJ3XRzIq4D7+9fPtOdxqSE4PS9Y0vAX
-         RtMm8Cnft5ngmHXBDHSF1w3hM3gqcysi5NEOaloWNtpJq4SJSZAUaR3qak6FL2/xDs
-         R9vs6er+VfwYJG52bjccwMjbEDg/fMkRfTOoqtlq/77W7NdpxoYq7EyxZTyz1M8qon
-         rz2wQegQQuE7Q==
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH V4] PCI: rcar: Add L1 link state fix into data abort hook
-Message-ID: <20201214203805.GA250639@bjorn-Precision-5520>
+        Mon, 14 Dec 2020 15:53:06 -0500
+Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 006DDD91;
+        Mon, 14 Dec 2020 21:52:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1607979140;
+        bh=8ujjnY+qkizrwnbt44JqEWeQKc9YuOcFgEAQtwqtz64=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=AJD8scBU+szBpzX8BRrS7KjEbhulDT2iktfGBFBA788esUeo+Ay/EemeWTvW4fh1d
+         NFnl+amjL0FN0ia2CY5Ayg6SYJag73+YJ41yi3nYxSP8kOtH9SNv612mZXXcz1p3wz
+         Xqj5vNAis5ZxH/YEGFJGeLuWhHTOOPdcXPE5GX6A=
+From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: [PATCH v2 5/9] drm: rcar-du: Use DRM-managed allocation for encoders
+Date:   Mon, 14 Dec 2020 22:52:04 +0200
+Message-Id: <20201214205208.10248-6-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201214205208.10248-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20201214205208.10248-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a65139b9-3b06-0562-7b6e-9a438aecff66@gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Dec 08, 2020 at 07:05:09PM +0100, Marek Vasut wrote:
-> On 12/8/20 5:40 PM, Bjorn Helgaas wrote:
+devm_kzalloc() is the wrong API to allocate encoders, as the lifetime of
+the encoders is tied to the DRM device, not the device to driver
+binding. drmm_kzalloc() isn't a good option either, as it would result
+in the encoder being freed before being unregistered during the managed
+cleanup of the DRM objects. Use a plain kzalloc(), and register a drmm
+action to cleanup the encoder.
 
-> > Does this problem occur in both these cases?
-> > 
-> >    1) When ASPM enters L1, and
-> > 
-> >    2) When software writes PCI_PM_CTRL to put the device in D3hot?
-> > 
-> > IIUC both cases require the link to go to L1.  I guess the same
-> > software workaround applies to both cases?
-> 
-> Yes
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 47 ++++++++++++++---------
+ 1 file changed, 29 insertions(+), 18 deletions(-)
 
-If ASPM puts the Link in L1 and the device needs to DMA, how does the
-Link get back to L0?  Do we use the same data abort hook?  If getting
-back to L0 requires help from software, it seems like that would
-invalidate the L1 exit latency advertised by the devices.  Wouldn't
-that mean we couldn't safely enable L1 at all unless the endpoint
-could tolerate unlimited exit latency?
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+index e4bac47caf16..55a0ecf45ebb 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+@@ -8,12 +8,13 @@
+  */
+ 
+ #include <linux/export.h>
++#include <linux/slab.h>
+ 
+ #include <drm/drm_bridge.h>
+ #include <drm/drm_crtc.h>
++#include <drm/drm_managed.h>
+ #include <drm/drm_modeset_helper_vtables.h>
+ #include <drm/drm_panel.h>
+-#include <drm/drm_simple_kms_helper.h>
+ 
+ #include "rcar_du_drv.h"
+ #include "rcar_du_encoder.h"
+@@ -44,6 +45,17 @@ static unsigned int rcar_du_encoder_count_ports(struct device_node *node)
+ 	return num_ports;
+ }
+ 
++static const struct drm_encoder_funcs rcar_du_encoder_funcs = {
++};
++
++static void rcar_du_encoder_release(struct drm_device *dev, void *res)
++{
++	struct rcar_du_encoder *renc = res;
++
++	drm_encoder_cleanup(&renc->base);
++	kfree(renc);
++}
++
+ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 			 enum rcar_du_output output,
+ 			 struct device_node *enc_node)
+@@ -53,7 +65,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 	struct drm_bridge *bridge;
+ 	int ret;
+ 
+-	renc = devm_kzalloc(rcdu->dev, sizeof(*renc), GFP_KERNEL);
++	renc = kzalloc(sizeof(*renc), GFP_KERNEL);
+ 	if (renc == NULL)
+ 		return -ENOMEM;
+ 
+@@ -75,20 +87,20 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 
+ 		if (IS_ERR(panel)) {
+ 			ret = PTR_ERR(panel);
+-			goto done;
++			goto error;
+ 		}
+ 
+ 		bridge = devm_drm_panel_bridge_add_typed(rcdu->dev, panel,
+ 							 DRM_MODE_CONNECTOR_DPI);
+ 		if (IS_ERR(bridge)) {
+ 			ret = PTR_ERR(bridge);
+-			goto done;
++			goto error;
+ 		}
+ 	} else {
+ 		bridge = of_drm_find_bridge(enc_node);
+ 		if (!bridge) {
+ 			ret = -EPROBE_DEFER;
+-			goto done;
++			goto error;
+ 		}
+ 
+ 		if (output == RCAR_DU_OUTPUT_LVDS0 ||
+@@ -103,28 +115,27 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+ 	if (rcdu->info->gen >= 3 && output == RCAR_DU_OUTPUT_LVDS1) {
+ 		if (rcar_lvds_dual_link(bridge)) {
+ 			ret = -ENOLINK;
+-			goto done;
++			goto error;
+ 		}
+ 	}
+ 
+-	ret = drm_simple_encoder_init(rcdu->ddev, encoder,
+-				      DRM_MODE_ENCODER_NONE);
++	ret = drm_encoder_init(rcdu->ddev, encoder, &rcar_du_encoder_funcs,
++			       DRM_MODE_ENCODER_NONE, NULL);
+ 	if (ret < 0)
+-		goto done;
++		goto error;
++
++	ret = drmm_add_action_or_reset(rcdu->ddev, rcar_du_encoder_release,
++				       renc);
++	if (ret)
++		return ret;
+ 
+ 	/*
+ 	 * Attach the bridge to the encoder. The bridge will create the
+ 	 * connector.
+ 	 */
+-	ret = drm_bridge_attach(encoder, bridge, NULL, 0);
+-	if (ret) {
+-		drm_encoder_cleanup(encoder);
+-		return ret;
+-	}
+-
+-done:
+-	if (ret < 0)
+-		devm_kfree(rcdu->dev, renc);
++	return drm_bridge_attach(encoder, bridge, NULL, 0);
+ 
++error:
++	kfree(renc);
+ 	return ret;
+ }
+-- 
+Regards,
 
-Bjorn
+Laurent Pinchart
+
