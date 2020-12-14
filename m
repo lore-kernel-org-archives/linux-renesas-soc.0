@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A21C4361B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6944C2BB48
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 20:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1AEDF222BB
+	by mail.kernel.org (Postfix) with ESMTP id 8E293222BB
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 20:53:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503159AbgLNUxM (ORCPT
+        id S1725816AbgLNUxN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Dec 2020 15:53:12 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:51992 "EHLO
+        Mon, 14 Dec 2020 15:53:13 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51944 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503180AbgLNUxG (ORCPT
+        with ESMTP id S1733110AbgLNUxC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Dec 2020 15:53:06 -0500
+        Mon, 14 Dec 2020 15:53:02 -0500
 Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 006DDD91;
-        Mon, 14 Dec 2020 21:52:19 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D42072C2;
+        Mon, 14 Dec 2020 21:52:17 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1607979140;
-        bh=8ujjnY+qkizrwnbt44JqEWeQKc9YuOcFgEAQtwqtz64=;
+        s=mail; t=1607979138;
+        bh=UARpDkXF/Qf5TotV3LPNwK86lbTfZ1fCb5p92srvO8s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AJD8scBU+szBpzX8BRrS7KjEbhulDT2iktfGBFBA788esUeo+Ay/EemeWTvW4fh1d
-         NFnl+amjL0FN0ia2CY5Ayg6SYJag73+YJ41yi3nYxSP8kOtH9SNv612mZXXcz1p3wz
-         Xqj5vNAis5ZxH/YEGFJGeLuWhHTOOPdcXPE5GX6A=
+        b=KjH2Hna3LI1LaUFRSOdDlsNgOlcvPsaIdA53jk98d8DblcJILZUDgTjiAo+ZNwvYr
+         YbDWbdLhuRHy0dZ9I6toayao3xca9f50mvpdG8XcYGitbSp/mRScEdDlTt9VH3+lCS
+         uoIoZhZTBKO6x3HmeScP2HI5clNXddf6XKGy0EbU=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 5/9] drm: rcar-du: Use DRM-managed allocation for encoders
-Date:   Mon, 14 Dec 2020 22:52:04 +0200
-Message-Id: <20201214205208.10248-6-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v2 1/9] drm: rcar-du: Fix crash when using LVDS1 clock for CRTC
+Date:   Mon, 14 Dec 2020 22:52:00 +0200
+Message-Id: <20201214205208.10248-2-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201214205208.10248-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20201214205208.10248-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -47,129 +47,128 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-devm_kzalloc() is the wrong API to allocate encoders, as the lifetime of
-the encoders is tied to the DRM device, not the device to driver
-binding. drmm_kzalloc() isn't a good option either, as it would result
-in the encoder being freed before being unregistered during the managed
-cleanup of the DRM objects. Use a plain kzalloc(), and register a drmm
-action to cleanup the encoder.
+On D3 and E3 platforms, the LVDS encoder includes a PLL that can
+generate a clock for the corresponding CRTC, used even when the CRTC
+output to a non-LVDS port. This mechanism is supported by the driver,
+but the implementation is broken in dual-link LVDS mode. In that case,
+the LVDS1 drm_encoder is skipped, which causes a crash when trying to
+access its bridge later on.
 
+Fix this by storing bridge pointers internally instead of retrieving
+them from the encoder. The rcar_du_device encoders field isn't used
+anymore and can be dropped.
+
+Fixes: 8e8fddab0d0a ("drm: rcar-du: Skip LVDS1 output on Gen3 when using dual-link LVDS mode")
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 47 ++++++++++++++---------
- 1 file changed, 29 insertions(+), 18 deletions(-)
+Changes since v1:
 
+- Drop rcar_du_device.encoders field
+- Add Fixes: tag
+---
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c    | 10 ++--------
+ drivers/gpu/drm/rcar-du/rcar_du_drv.h     |  6 +++---
+ drivers/gpu/drm/rcar-du/rcar_du_encoder.c |  5 ++++-
+ 3 files changed, 9 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index b5fb941e0f53..e23b9c7b4afe 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -730,13 +730,10 @@ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
+ 	 */
+ 	if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index) &&
+ 	    rstate->outputs == BIT(RCAR_DU_OUTPUT_DPAD0)) {
+-		struct rcar_du_encoder *encoder =
+-			rcdu->encoders[RCAR_DU_OUTPUT_LVDS0 + rcrtc->index];
++		struct drm_bridge *bridge = rcdu->lvds[rcrtc->index];
+ 		const struct drm_display_mode *mode =
+ 			&crtc->state->adjusted_mode;
+-		struct drm_bridge *bridge;
+ 
+-		bridge = drm_bridge_chain_get_first_bridge(&encoder->base);
+ 		rcar_lvds_clk_enable(bridge, mode->clock * 1000);
+ 	}
+ 
+@@ -764,15 +761,12 @@ static void rcar_du_crtc_atomic_disable(struct drm_crtc *crtc,
+ 
+ 	if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index) &&
+ 	    rstate->outputs == BIT(RCAR_DU_OUTPUT_DPAD0)) {
+-		struct rcar_du_encoder *encoder =
+-			rcdu->encoders[RCAR_DU_OUTPUT_LVDS0 + rcrtc->index];
+-		struct drm_bridge *bridge;
++		struct drm_bridge *bridge = rcdu->lvds[rcrtc->index];
+ 
+ 		/*
+ 		 * Disable the LVDS clock output, see
+ 		 * rcar_du_crtc_atomic_enable().
+ 		 */
+-		bridge = drm_bridge_chain_get_first_bridge(&encoder->base);
+ 		rcar_lvds_clk_disable(bridge);
+ 	}
+ 
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+index 61504c54e2ec..3597a179bfb7 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
+@@ -20,10 +20,10 @@
+ 
+ struct clk;
+ struct device;
++struct drm_bridge;
+ struct drm_device;
+ struct drm_property;
+ struct rcar_du_device;
+-struct rcar_du_encoder;
+ 
+ #define RCAR_DU_FEATURE_CRTC_IRQ_CLOCK	BIT(0)	/* Per-CRTC IRQ and clock */
+ #define RCAR_DU_FEATURE_VSP1_SOURCE	BIT(1)	/* Has inputs from VSP1 */
+@@ -71,6 +71,7 @@ struct rcar_du_device_info {
+ #define RCAR_DU_MAX_CRTCS		4
+ #define RCAR_DU_MAX_GROUPS		DIV_ROUND_UP(RCAR_DU_MAX_CRTCS, 2)
+ #define RCAR_DU_MAX_VSPS		4
++#define RCAR_DU_MAX_LVDS		2
+ 
+ struct rcar_du_device {
+ 	struct device *dev;
+@@ -83,11 +84,10 @@ struct rcar_du_device {
+ 	struct rcar_du_crtc crtcs[RCAR_DU_MAX_CRTCS];
+ 	unsigned int num_crtcs;
+ 
+-	struct rcar_du_encoder *encoders[RCAR_DU_OUTPUT_MAX];
+-
+ 	struct rcar_du_group groups[RCAR_DU_MAX_GROUPS];
+ 	struct platform_device *cmms[RCAR_DU_MAX_CRTCS];
+ 	struct rcar_du_vsp vsps[RCAR_DU_MAX_VSPS];
++	struct drm_bridge *lvds[RCAR_DU_MAX_LVDS];
+ 
+ 	struct {
+ 		struct drm_property *colorkey;
 diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index e4bac47caf16..55a0ecf45ebb 100644
+index b0335da0c161..50fc14534fa4 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -8,12 +8,13 @@
-  */
- 
- #include <linux/export.h>
-+#include <linux/slab.h>
- 
- #include <drm/drm_bridge.h>
- #include <drm/drm_crtc.h>
-+#include <drm/drm_managed.h>
- #include <drm/drm_modeset_helper_vtables.h>
- #include <drm/drm_panel.h>
--#include <drm/drm_simple_kms_helper.h>
- 
- #include "rcar_du_drv.h"
- #include "rcar_du_encoder.h"
-@@ -44,6 +45,17 @@ static unsigned int rcar_du_encoder_count_ports(struct device_node *node)
- 	return num_ports;
- }
- 
-+static const struct drm_encoder_funcs rcar_du_encoder_funcs = {
-+};
-+
-+static void rcar_du_encoder_release(struct drm_device *dev, void *res)
-+{
-+	struct rcar_du_encoder *renc = res;
-+
-+	drm_encoder_cleanup(&renc->base);
-+	kfree(renc);
-+}
-+
- int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 			 enum rcar_du_output output,
- 			 struct device_node *enc_node)
-@@ -53,7 +65,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	struct drm_bridge *bridge;
- 	int ret;
- 
--	renc = devm_kzalloc(rcdu->dev, sizeof(*renc), GFP_KERNEL);
-+	renc = kzalloc(sizeof(*renc), GFP_KERNEL);
+@@ -57,7 +57,6 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
  	if (renc == NULL)
  		return -ENOMEM;
  
-@@ -75,20 +87,20 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+-	rcdu->encoders[output] = renc;
+ 	renc->output = output;
+ 	encoder = rcar_encoder_to_drm_encoder(renc);
  
- 		if (IS_ERR(panel)) {
- 			ret = PTR_ERR(panel);
--			goto done;
-+			goto error;
- 		}
- 
- 		bridge = devm_drm_panel_bridge_add_typed(rcdu->dev, panel,
- 							 DRM_MODE_CONNECTOR_DPI);
- 		if (IS_ERR(bridge)) {
- 			ret = PTR_ERR(bridge);
--			goto done;
-+			goto error;
- 		}
- 	} else {
- 		bridge = of_drm_find_bridge(enc_node);
- 		if (!bridge) {
+@@ -91,6 +90,10 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
  			ret = -EPROBE_DEFER;
--			goto done;
-+			goto error;
+ 			goto done;
  		}
- 
- 		if (output == RCAR_DU_OUTPUT_LVDS0 ||
-@@ -103,28 +115,27 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	if (rcdu->info->gen >= 3 && output == RCAR_DU_OUTPUT_LVDS1) {
- 		if (rcar_lvds_dual_link(bridge)) {
- 			ret = -ENOLINK;
--			goto done;
-+			goto error;
- 		}
++
++		if (output == RCAR_DU_OUTPUT_LVDS0 ||
++		    output == RCAR_DU_OUTPUT_LVDS1)
++			rcdu->lvds[output - RCAR_DU_OUTPUT_LVDS0] = bridge;
  	}
  
--	ret = drm_simple_encoder_init(rcdu->ddev, encoder,
--				      DRM_MODE_ENCODER_NONE);
-+	ret = drm_encoder_init(rcdu->ddev, encoder, &rcar_du_encoder_funcs,
-+			       DRM_MODE_ENCODER_NONE, NULL);
- 	if (ret < 0)
--		goto done;
-+		goto error;
-+
-+	ret = drmm_add_action_or_reset(rcdu->ddev, rcar_du_encoder_release,
-+				       renc);
-+	if (ret)
-+		return ret;
- 
  	/*
- 	 * Attach the bridge to the encoder. The bridge will create the
- 	 * connector.
- 	 */
--	ret = drm_bridge_attach(encoder, bridge, NULL, 0);
--	if (ret) {
--		drm_encoder_cleanup(encoder);
--		return ret;
--	}
--
--done:
--	if (ret < 0)
--		devm_kfree(rcdu->dev, renc);
-+	return drm_bridge_attach(encoder, bridge, NULL, 0);
- 
-+error:
-+	kfree(renc);
- 	return ret;
- }
 -- 
 Regards,
 
