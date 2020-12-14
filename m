@@ -7,148 +7,110 @@ X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A53CC4361B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 10:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16FE4C1B0D8
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 11:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CEFC122BEF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 10:59:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA6DC22C7B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 11:06:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407508AbgLNK6t (ORCPT
+        id S2407556AbgLNLGW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Dec 2020 05:58:49 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:60631 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407504AbgLNK6m (ORCPT
+        Mon, 14 Dec 2020 06:06:22 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:52515 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407150AbgLNLGQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Dec 2020 05:58:42 -0500
+        Mon, 14 Dec 2020 06:06:16 -0500
 X-Originating-IP: 95.245.192.76
 Received: from uno.localdomain (host-95-245-192-76.retail.telecomitalia.it [95.245.192.76])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 65E1AE000D;
-        Mon, 14 Dec 2020 10:57:58 +0000 (UTC)
-Date:   Mon, 14 Dec 2020 11:58:08 +0100
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 59DCD1C0026;
+        Mon, 14 Dec 2020 11:05:33 +0000 (UTC)
+Date:   Mon, 14 Dec 2020 12:05:43 +0100
 From:   Jacopo Mondi <jacopo@jmondi.org>
 To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham@ideasonboard.com>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: Re: [PATCH 7/9] drm: rcar-du: Replace dev_private with container_of
-Message-ID: <20201214105808.xrjyul6hrjsremli@uno.localdomain>
+Subject: Re: [PATCH 9/9] drm: rcar-du: Drop local encoder variable
+Message-ID: <20201214110543.v3bt3ckz3bsen6c2@uno.localdomain>
 References: <20201204220139.15272-1-laurent.pinchart+renesas@ideasonboard.com>
- <20201204220139.15272-8-laurent.pinchart+renesas@ideasonboard.com>
+ <20201204220139.15272-10-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201204220139.15272-8-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20201204220139.15272-10-laurent.pinchart+renesas@ideasonboard.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Laurent,
+On Sat, Dec 05, 2020 at 12:01:39AM +0200, Laurent Pinchart wrote:
 
-On Sat, Dec 05, 2020 at 12:01:37AM +0200, Laurent Pinchart wrote:
-> Now that drm_device is embedded in rcar_du_device, we can use
-> container_of to get the rcar_du_device pointer from the drm_device,
-> instead of using the drm_device.dev_private field.
+> The local encoder variable is an alias for &renc->base, and is only use
+> twice. It doesn't help much, drop it, along with the
+> rcar_encoder_to_drm_encoder() macro that is then unused.
 >
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-
-De gustibus non est disputandum
 
 Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
 Thanks
-  j
+   j
 
 > ---
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c   | 2 --
->  drivers/gpu/drm/rcar-du/rcar_du_drv.h   | 5 +++++
->  drivers/gpu/drm/rcar-du/rcar_du_kms.c   | 8 ++++----
->  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 2 +-
->  4 files changed, 10 insertions(+), 7 deletions(-)
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 6 ++----
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.h | 2 --
+>  2 files changed, 2 insertions(+), 6 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> index 4ab99ac49891..d6a8b7899952 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -587,8 +587,6 @@ static int rcar_du_probe(struct platform_device *pdev)
->  		return PTR_ERR(rcdu->mmio);
->
->  	/* DRM/KMS objects */
-> -	rcdu->ddev.dev_private = rcdu;
-> -
->  	ret = rcar_du_modeset_init(rcdu);
->  	if (ret < 0) {
->  		if (ret != -EPROBE_DEFER)
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.h b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> index e5b6f456357e..98d6bac3f2fa 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.h
-> @@ -102,6 +102,11 @@ struct rcar_du_device {
->  	unsigned int vspd1_sink;
->  };
->
-> +static inline struct rcar_du_device *to_rcar_du_device(struct drm_device *dev)
-> +{
-> +	return container_of(dev, struct rcar_du_device, ddev);
-> +}
-> +
->  static inline bool rcar_du_has(struct rcar_du_device *rcdu,
->  			       unsigned int feature)
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> index 49c0b27e2f5a..9a565bd3380d 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> @@ -61,7 +61,6 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+>  			 struct device_node *enc_node)
 >  {
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> index 57bb0dc22807..d6b71a9361ca 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> @@ -327,7 +327,7 @@ const struct rcar_du_format_info *rcar_du_format_info(u32 fourcc)
->  int rcar_du_dumb_create(struct drm_file *file, struct drm_device *dev,
->  			struct drm_mode_create_dumb *args)
->  {
-> -	struct rcar_du_device *rcdu = dev->dev_private;
-> +	struct rcar_du_device *rcdu = to_rcar_du_device(dev);
->  	unsigned int min_pitch = DIV_ROUND_UP(args->width * args->bpp, 8);
->  	unsigned int align;
->
-> @@ -349,7 +349,7 @@ static struct drm_framebuffer *
->  rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
->  		  const struct drm_mode_fb_cmd2 *mode_cmd)
->  {
-> -	struct rcar_du_device *rcdu = dev->dev_private;
-> +	struct rcar_du_device *rcdu = to_rcar_du_device(dev);
->  	const struct rcar_du_format_info *format;
->  	unsigned int chroma_pitch;
->  	unsigned int max_pitch;
-> @@ -421,7 +421,7 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
->  static int rcar_du_atomic_check(struct drm_device *dev,
->  				struct drm_atomic_state *state)
->  {
-> -	struct rcar_du_device *rcdu = dev->dev_private;
-> +	struct rcar_du_device *rcdu = to_rcar_du_device(dev);
+>  	struct rcar_du_encoder *renc;
+> -	struct drm_encoder *encoder;
+>  	struct drm_bridge *bridge;
 >  	int ret;
 >
->  	ret = drm_atomic_helper_check(dev, state);
-> @@ -437,7 +437,7 @@ static int rcar_du_atomic_check(struct drm_device *dev,
->  static void rcar_du_atomic_commit_tail(struct drm_atomic_state *old_state)
->  {
->  	struct drm_device *dev = old_state->dev;
-> -	struct rcar_du_device *rcdu = dev->dev_private;
-> +	struct rcar_du_device *rcdu = to_rcar_du_device(dev);
->  	struct drm_crtc_state *crtc_state;
->  	struct drm_crtc *crtc;
->  	unsigned int i;
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> index 5f69ff4502c1..02e5f11f38eb 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> @@ -128,7 +128,7 @@ static int rcar_du_plane_hwalloc(struct rcar_du_plane *plane,
->  int rcar_du_atomic_check_planes(struct drm_device *dev,
->  				struct drm_atomic_state *state)
->  {
-> -	struct rcar_du_device *rcdu = dev->dev_private;
-> +	struct rcar_du_device *rcdu = to_rcar_du_device(dev);
->  	unsigned int group_freed_planes[RCAR_DU_MAX_GROUPS] = { 0, };
->  	unsigned int group_free_planes[RCAR_DU_MAX_GROUPS] = { 0, };
->  	bool needs_realloc = false;
+> @@ -108,12 +107,11 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+>
+>  	rcdu->encoders[output] = renc;
+>  	renc->output = output;
+> -	encoder = rcar_encoder_to_drm_encoder(renc);
+>
+>  	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
+>  		enc_node, output);
+>
+> -	ret = drm_encoder_init(&rcdu->ddev, encoder, &rcar_du_encoder_funcs,
+> +	ret = drm_encoder_init(&rcdu->ddev, &renc->base, &rcar_du_encoder_funcs,
+>  			       DRM_MODE_ENCODER_NONE, NULL);
+>  	if (ret < 0)
+>  		goto error;
+> @@ -127,7 +125,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+>  	 * Attach the bridge to the encoder. The bridge will create the
+>  	 * connector.
+>  	 */
+> -	return drm_bridge_attach(encoder, bridge, NULL, 0);
+> +	return drm_bridge_attach(&renc->base, bridge, NULL, 0);
+>
+>  error:
+>  	kfree(renc);
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+> index df9be4524301..73560563fb31 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+> @@ -22,8 +22,6 @@ struct rcar_du_encoder {
+>  #define to_rcar_encoder(e) \
+>  	container_of(e, struct rcar_du_encoder, base)
+>
+> -#define rcar_encoder_to_drm_encoder(e)	(&(e)->base)
+> -
+>  int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+>  			 enum rcar_du_output output,
+>  			 struct device_node *enc_node);
 > --
 > Regards,
 >
