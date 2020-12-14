@@ -2,173 +2,224 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56245C2BB40
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 20:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B73ADC4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 21:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 14F902250F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 20:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F07C2247F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Dec 2020 21:00:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503440AbgLNUyc (ORCPT
+        id S2502882AbgLNU7j (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Dec 2020 15:54:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48912 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503439AbgLNUyc (ORCPT
+        Mon, 14 Dec 2020 15:59:39 -0500
+Received: from mga03.intel.com ([134.134.136.65]:15092 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2503624AbgLNU7g (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Dec 2020 15:54:32 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99A13C0617A6
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Dec 2020 12:53:09 -0800 (PST)
-Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4BEF614C1;
-        Mon, 14 Dec 2020 21:52:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1607979141;
-        bh=8mrDJRgQ9P1MMDHh1ZFHaSmyf9vWkuxPhEyk9A4BI/I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=elwzjRT3plEKLMVQXcoPIn5/M9A3kYnTeSOtF0gIA8I2yFQzmPdttoGr8bA9EbhhQ
-         lJW0Uh462zNkcmLze5IlUv/ZdU8IjyiBTS2IY8MBB8+NsCcwDH28bDm4yXQ5kz8+FW
-         Xt4dlO9IlLiiPJxfH2RRj2GVghRxu69WHZJeZxaE=
-From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v2 8/9] drm: rcar-du: Skip encoder allocation for LVDS1 in dual-link mode
-Date:   Mon, 14 Dec 2020 22:52:07 +0200
-Message-Id: <20201214205208.10248-9-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20201214205208.10248-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20201214205208.10248-1-laurent.pinchart+renesas@ideasonboard.com>
+        Mon, 14 Dec 2020 15:59:36 -0500
+IronPort-SDR: ZhT3hCjvF4XeqPZTAuo9eKlbDd7EltzdrV/GblFcjIejyM8a1bEk290HNwxIw+WowWH2qCTLEH
+ 2u9suV77DA8Q==
+X-IronPort-AV: E=McAfee;i="6000,8403,9835"; a="174888490"
+X-IronPort-AV: E=Sophos;i="5.78,420,1599548400"; 
+   d="scan'208";a="174888490"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Dec 2020 12:58:53 -0800
+IronPort-SDR: lkxuQaQUqtVf+3imr+iUGpOLKiVjJ4Zyq9yDgt+/B07pBvLOUk/wRInXwlpBs7t+0hNR0QgKfl
+ f2m+pXkCToiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.78,420,1599548400"; 
+   d="scan'208";a="336305771"
+Received: from lkp-server02.sh.intel.com (HELO a947d92d0467) ([10.239.97.151])
+  by orsmga003.jf.intel.com with ESMTP; 14 Dec 2020 12:58:52 -0800
+Received: from kbuild by a947d92d0467 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1kouvj-0000Su-Bd; Mon, 14 Dec 2020 20:58:51 +0000
+Date:   Tue, 15 Dec 2020 04:58:46 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [renesas-drivers:renesas-clk-for-v5.12] BUILD SUCCESS
+ 5612ede5516f8ef9760231e03f73163061a3beb1
+Message-ID: <5fd7d206.ugXMac0jTlhw0Nco%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The rcar-du driver skips registration of the encoder for the LVDS1
-output when LVDS is used in dual-link mode, as the LVDS0 and LVDS1 links
-are bundled and handled through the LVDS0 output. It however still
-allocates the encoder and immediately destroys it, which is pointless.
-Skip allocation of the encoder altogether in that case.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git  renesas-clk-for-v5.12
+branch HEAD: 5612ede5516f8ef9760231e03f73163061a3beb1  clk: renesas: r8a77995: Add TMU clocks
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+elapsed time: 723m
+
+configs tested: 152
+configs skipped: 2
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+m68k                       m5249evb_defconfig
+powerpc                mpc7448_hpc2_defconfig
+microblaze                      mmu_defconfig
+sh                           se7705_defconfig
+sh                      rts7751r2d1_defconfig
+sh                           se7206_defconfig
+powerpc                   bluestone_defconfig
+sh                   secureedge5410_defconfig
+c6x                         dsk6455_defconfig
+xtensa                    smp_lx200_defconfig
+mips                          malta_defconfig
+h8300                            allyesconfig
+m68k                       m5208evb_defconfig
+openrisc                            defconfig
+sh                           se7712_defconfig
+riscv                             allnoconfig
+powerpc                  iss476-smp_defconfig
+xtensa                    xip_kc705_defconfig
+mips                           xway_defconfig
+sh                   rts7751r2dplus_defconfig
+powerpc                     ppa8548_defconfig
+microblaze                    nommu_defconfig
+arm                         hackkit_defconfig
+parisc                              defconfig
+mips                         bigsur_defconfig
+m68k                       m5275evb_defconfig
+arc                      axs103_smp_defconfig
+mips                          rm200_defconfig
+arm                       spear13xx_defconfig
+sh                                  defconfig
+c6x                        evmc6678_defconfig
+sh                        sh7763rdp_defconfig
+sparc                            alldefconfig
+powerpc                        fsp2_defconfig
+powerpc                        icon_defconfig
+i386                             alldefconfig
+arm                       cns3420vb_defconfig
+arc                            hsdk_defconfig
+m68k                          sun3x_defconfig
+powerpc                      acadia_defconfig
+arm                          pxa168_defconfig
+powerpc                    sam440ep_defconfig
+powerpc                      cm5200_defconfig
+xtensa                  audio_kc705_defconfig
+sh                        dreamcast_defconfig
+arm                        clps711x_defconfig
+mips                        jmr3927_defconfig
+i386                                defconfig
+arm                  colibri_pxa270_defconfig
+powerpc                     mpc512x_defconfig
+powerpc                         ps3_defconfig
+powerpc                      obs600_defconfig
+sh                ecovec24-romimage_defconfig
+sh                   sh7770_generic_defconfig
+powerpc                     kmeter1_defconfig
+mips                        nlm_xlp_defconfig
+powerpc                     akebono_defconfig
+powerpc                    adder875_defconfig
+m68k                          amiga_defconfig
+powerpc                       holly_defconfig
+mips                      maltaaprp_defconfig
+mips                     loongson1b_defconfig
+sh                             sh03_defconfig
+x86_64                           alldefconfig
+arm                      pxa255-idp_defconfig
+arm                         cm_x300_defconfig
+openrisc                         alldefconfig
+arm                         at91_dt_defconfig
+arm                       netwinder_defconfig
+arm                          ixp4xx_defconfig
+arm                          pxa910_defconfig
+sh                         ap325rxa_defconfig
+powerpc                     tqm5200_defconfig
+csky                             alldefconfig
+mips                      pistachio_defconfig
+arm                           sama5_defconfig
+arm                        mvebu_v5_defconfig
+mips                         mpc30x_defconfig
+m68k                       m5475evb_defconfig
+mips                        bcm47xx_defconfig
+m68k                          multi_defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+s390                             allyesconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                               tinyconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+i386                 randconfig-a001-20201214
+i386                 randconfig-a004-20201214
+i386                 randconfig-a003-20201214
+i386                 randconfig-a002-20201214
+i386                 randconfig-a006-20201214
+i386                 randconfig-a005-20201214
+x86_64               randconfig-a016-20201214
+x86_64               randconfig-a012-20201214
+x86_64               randconfig-a013-20201214
+x86_64               randconfig-a015-20201214
+x86_64               randconfig-a014-20201214
+x86_64               randconfig-a011-20201214
+i386                 randconfig-a014-20201214
+i386                 randconfig-a013-20201214
+i386                 randconfig-a012-20201214
+i386                 randconfig-a011-20201214
+i386                 randconfig-a015-20201214
+i386                 randconfig-a016-20201214
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                                   rhel
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                                  kexec
+
+clang tested configs:
+x86_64               randconfig-a003-20201214
+x86_64               randconfig-a006-20201214
+x86_64               randconfig-a002-20201214
+x86_64               randconfig-a005-20201214
+x86_64               randconfig-a004-20201214
+x86_64               randconfig-a001-20201214
+
 ---
-Changes since v1:
-
-- Drop error label
----
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 59 ++++++++++-------------
- 1 file changed, 25 insertions(+), 34 deletions(-)
-
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index 3afaf106d750..0d873f4b42dc 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -65,16 +65,6 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	struct drm_bridge *bridge;
- 	int ret;
- 
--	renc = kzalloc(sizeof(*renc), GFP_KERNEL);
--	if (renc == NULL)
--		return -ENOMEM;
--
--	renc->output = output;
--	encoder = rcar_encoder_to_drm_encoder(renc);
--
--	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
--		enc_node, output);
--
- 	/*
- 	 * Locate the DRM bridge from the DT node. For the DPAD outputs, if the
- 	 * DT node has a single port, assume that it describes a panel and
-@@ -85,23 +75,17 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	    rcar_du_encoder_count_ports(enc_node) == 1) {
- 		struct drm_panel *panel = of_drm_find_panel(enc_node);
- 
--		if (IS_ERR(panel)) {
--			ret = PTR_ERR(panel);
--			goto error;
--		}
-+		if (IS_ERR(panel))
-+			return PTR_ERR(panel);
- 
- 		bridge = devm_drm_panel_bridge_add_typed(rcdu->dev, panel,
- 							 DRM_MODE_CONNECTOR_DPI);
--		if (IS_ERR(bridge)) {
--			ret = PTR_ERR(bridge);
--			goto error;
--		}
-+		if (IS_ERR(bridge))
-+			return PTR_ERR(bridge);
- 	} else {
- 		bridge = of_drm_find_bridge(enc_node);
--		if (!bridge) {
--			ret = -EPROBE_DEFER;
--			goto error;
--		}
-+		if (!bridge)
-+			return -EPROBE_DEFER;
- 
- 		if (output == RCAR_DU_OUTPUT_LVDS0 ||
- 		    output == RCAR_DU_OUTPUT_LVDS1)
-@@ -109,20 +93,31 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	}
- 
- 	/*
--	 * On Gen3 skip the LVDS1 output if the LVDS1 encoder is used as a
--	 * companion for LVDS0 in dual-link mode.
-+	 * Create and initialize the encoder. On Gen3 skip the LVDS1 output if
-+	 * the LVDS1 encoder is used as a companion for LVDS0 in dual-link
-+	 * mode.
- 	 */
- 	if (rcdu->info->gen >= 3 && output == RCAR_DU_OUTPUT_LVDS1) {
--		if (rcar_lvds_dual_link(bridge)) {
--			ret = -ENOLINK;
--			goto error;
--		}
-+		if (rcar_lvds_dual_link(bridge))
-+			return -ENOLINK;
- 	}
- 
-+	renc = kzalloc(sizeof(*renc), GFP_KERNEL);
-+	if (renc == NULL)
-+		return -ENOMEM;
-+
-+	renc->output = output;
-+	encoder = rcar_encoder_to_drm_encoder(renc);
-+
-+	dev_dbg(rcdu->dev, "initializing encoder %pOF for output %u\n",
-+		enc_node, output);
-+
- 	ret = drm_encoder_init(&rcdu->ddev, encoder, &rcar_du_encoder_funcs,
- 			       DRM_MODE_ENCODER_NONE, NULL);
--	if (ret < 0)
--		goto error;
-+	if (ret < 0) {
-+		kfree(renc);
-+		return ret;
-+	}
- 
- 	ret = drmm_add_action_or_reset(&rcdu->ddev, rcar_du_encoder_release,
- 				       renc);
-@@ -134,8 +129,4 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	 * connector.
- 	 */
- 	return drm_bridge_attach(encoder, bridge, NULL, 0);
--
--error:
--	kfree(renc);
--	return ret;
- }
--- 
-Regards,
-
-Laurent Pinchart
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
