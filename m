@@ -7,131 +7,134 @@ X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33359C2BB9A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Dec 2020 11:15:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4F5C2BB9A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Dec 2020 11:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 023A82228A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Dec 2020 11:15:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A75322258
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 15 Dec 2020 11:16:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728441AbgLOLPF (ORCPT
+        id S1727448AbgLOLQp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Dec 2020 06:15:05 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:41885 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727783AbgLOLPF (ORCPT
+        Tue, 15 Dec 2020 06:16:45 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:36353 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727406AbgLOLQh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 15 Dec 2020 06:15:05 -0500
+        Tue, 15 Dec 2020 06:16:37 -0500
 X-Originating-IP: 93.34.118.233
 Received: from uno.localdomain (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id A9617E000D;
-        Tue, 15 Dec 2020 11:14:09 +0000 (UTC)
-Date:   Tue, 15 Dec 2020 12:14:20 +0100
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 202151BF20F;
+        Tue, 15 Dec 2020 11:15:50 +0000 (UTC)
+Date:   Tue, 15 Dec 2020 12:16:01 +0100
 From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham+renesas@ideasonboard.com,
-        laurent.pinchart+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, geert@linux-m68k.org,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hyun Kwon <hyunk@xilinx.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        sergei.shtylyov@gmail.com
-Subject: Re: [PATCH v5 2/8] dt-bindings: media: max9286: Document
- 'maxim,initial-reverse-channel-mV'
-Message-ID: <20201215111420.zpc67jkary3l5j4z@uno.localdomain>
-References: <20201116135305.81319-1-jacopo+renesas@jmondi.org>
- <20201116135305.81319-3-jacopo+renesas@jmondi.org>
- <20201130220048.GA3104550@robh.at.kernel.org>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Subject: Re: [PATCH v2 4/9] drm: rcar-du: Use DRM-managed allocation for VSP
+ planes
+Message-ID: <20201215111601.23p4vqgwj7445wuz@uno.localdomain>
+References: <20201214205208.10248-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20201214205208.10248-5-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20201130220048.GA3104550@robh.at.kernel.org>
+In-Reply-To: <20201214205208.10248-5-laurent.pinchart+renesas@ideasonboard.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+Hi Laurent,
 
-On Mon, Nov 30, 2020 at 03:00:48PM -0700, Rob Herring wrote:
-> On Mon, Nov 16, 2020 at 02:52:59PM +0100, Jacopo Mondi wrote:
-> > Document the 'initial-reverse-channel-mV' vendor property in the
-> > bindings document of the max9286 driver.
-> >
-> > The newly introduced property allows to specifying the initial
-> > configuration of the GMSL reverse control channel to accommodate
-> > remote serializers pre-programmed with the high threshold power
-> > supply noise immunity enabled.
-> >
-> > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > ---
-> >  .../bindings/media/i2c/maxim,max9286.yaml     | 23 +++++++++++++++++++
-> >  1 file changed, 23 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-> > index 9ea827092fdd..f61234d204fa 100644
-> > --- a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-> > +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-> > @@ -51,6 +51,26 @@ properties:
-> >    '#gpio-cells':
-> >      const: 2
-> >
-> > +  maxim,initial-reverse-channel-mV:
+On Mon, Dec 14, 2020 at 10:52:03PM +0200, Laurent Pinchart wrote:
+> devm_kcalloc() is the wrong API to allocate planes, as the lifetime of
+> the planes is tied to the DRM device, not the device to driver
+> binding. drmm_kcalloc() isn't a good option either, as it would result
+> in the planes being freed before being unregistered during the managed
+> cleanup of the DRM objects. Use a plain kcalloc(), and cleanup the
+> planes and free the memory in the existing rcar_du_vsp_cleanup()
+> handler.
 >
-> Use standard unit suffix.
->
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Which one ? :)
-I see in v5.10 one 'mV', three 'mv', one 'millivolts', several
-'microvolts'.
-
-I'll go with the majority and make this
-'maxim,initial-reverse-channel-mv'
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
 Thanks
-   j
+  j
 
-> > +    $ref: '/schemas/types.yaml#/definitions/uint32'
-> > +    minimum: 30
-> > +    maximum: 200
-> > +    default: 170
-> > +    description: |
-> > +      Initial amplitude of the reverse control channel, in millivolts.
-> > +
-> > +      The initial amplitude shall be adjusted to a value compatible with the
-> > +      configuration of the connected remote serializer.
-> > +
-> > +      Some camera modules (for example RDACM20) include an on-board MCU that
-> > +      pre-programs the embedded serializer with power supply noise immunity
-> > +      (high-threshold) enabled. A typical value of the deserializer's reverse
-> > +      channel amplitude to communicate with pre-programmed serializers is 170mV.
-> > +
-> > +      A typical value for the reverse channel amplitude to communicate with
-> > +      a remote serializer whose high-threshold noise immunity is not enabled
-> > +      is 100mV.
-> > +
-> >    ports:
-> >      type: object
-> >      description: |
-> > @@ -221,6 +241,7 @@ required:
-> >    - ports
-> >    - i2c-mux
-> >    - gpio-controller
-> > +  - maxim,initial-reverse-channel-mV
-> >
-> >  additionalProperties: false
-> >
-> > @@ -243,6 +264,8 @@ examples:
-> >          gpio-controller;
-> >          #gpio-cells = <2>;
-> >
-> > +        maxim,initial-reverse-channel-mV = <170>;
-> > +
-> >          ports {
-> >            #address-cells = <1>;
-> >            #size-cells = <0>;
-> > --
-> > 2.29.1
-> >
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c | 22 +++++++++++++++++-----
+>  1 file changed, 17 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> index 4dcb1bfbe201..78a886651d9f 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/dma-mapping.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/scatterlist.h>
+> +#include <linux/slab.h>
+>  #include <linux/videodev2.h>
+>
+>  #include <media/vsp1.h>
+> @@ -344,6 +345,15 @@ static const struct drm_plane_funcs rcar_du_vsp_plane_funcs = {
+>  static void rcar_du_vsp_cleanup(struct drm_device *dev, void *res)
+>  {
+>  	struct rcar_du_vsp *vsp = res;
+> +	unsigned int i;
+> +
+> +	for (i = 0; i < vsp->num_planes; ++i) {
+> +		struct rcar_du_vsp_plane *plane = &vsp->planes[i];
+> +
+> +		drm_plane_cleanup(&plane->plane);
+> +	}
+> +
+> +	kfree(vsp->planes);
+>
+>  	put_device(vsp->vsp);
+>  }
+> @@ -354,6 +364,7 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+>  	struct rcar_du_device *rcdu = vsp->dev;
+>  	struct platform_device *pdev;
+>  	unsigned int num_crtcs = hweight32(crtcs);
+> +	unsigned int num_planes;
+>  	unsigned int i;
+>  	int ret;
+>
+> @@ -376,14 +387,13 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+>  	  * The VSP2D (Gen3) has 5 RPFs, but the VSP1D (Gen2) is limited to
+>  	  * 4 RPFs.
+>  	  */
+> -	vsp->num_planes = rcdu->info->gen >= 3 ? 5 : 4;
+> +	num_planes = rcdu->info->gen >= 3 ? 5 : 4;
+>
+> -	vsp->planes = devm_kcalloc(rcdu->dev, vsp->num_planes,
+> -				   sizeof(*vsp->planes), GFP_KERNEL);
+> +	vsp->planes = kcalloc(num_planes, sizeof(*vsp->planes), GFP_KERNEL);
+>  	if (!vsp->planes)
+>  		return -ENOMEM;
+>
+> -	for (i = 0; i < vsp->num_planes; ++i) {
+> +	for (i = 0; i < num_planes; ++i) {
+>  		enum drm_plane_type type = i < num_crtcs
+>  					 ? DRM_PLANE_TYPE_PRIMARY
+>  					 : DRM_PLANE_TYPE_OVERLAY;
+> @@ -409,8 +419,10 @@ int rcar_du_vsp_init(struct rcar_du_vsp *vsp, struct device_node *np,
+>  		} else {
+>  			drm_plane_create_alpha_property(&plane->plane);
+>  			drm_plane_create_zpos_property(&plane->plane, 1, 1,
+> -						       vsp->num_planes - 1);
+> +						       num_planes - 1);
+>  		}
+> +
+> +		vsp->num_planes++;
+>  	}
+>
+>  	return 0;
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
