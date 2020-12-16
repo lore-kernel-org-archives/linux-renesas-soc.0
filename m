@@ -2,45 +2,46 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 983B9C2BB48
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75524C4361B
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Dec 2020 00:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6562122DD6
+	by mail.kernel.org (Postfix) with ESMTP id 4EC8322DA9
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Dec 2020 00:52:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726312AbgLPAv4 (ORCPT
+        id S1726268AbgLPAvz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 15 Dec 2020 19:51:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55390 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbgLPAvz (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 15 Dec 2020 19:51:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55386 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726249AbgLPAvy (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Tue, 15 Dec 2020 19:51:54 -0500
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B13BAC061793
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Dec 2020 16:51:15 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 440B4C0613D6
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 15 Dec 2020 16:51:14 -0800 (PST)
 Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9A088D95;
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 24BBBBBE;
         Wed, 16 Dec 2020 01:50:32 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
         s=mail; t=1608079832;
-        bh=lsoHVe4tePe5S30+UZ7AFMTvL8M0aFLZnLxaRmvrdWQ=;
+        bh=7qhbhjQahaK9N+tXjfFkjKUsFUKQOo1QWnXmw+ag19U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Gw0JnK5iubpEt8Wlg+tdwK2B02eXU6hphJN0oF9M/2dqr/2YJOoGtPmOn7SWjzwyW
-         Op0WRSNCEdhjAw1zuUHghvNf/KVppwz5MvE4NMrCkLMPkZYt5HiNUi71MPDrY69xRq
-         51rYpTIur/qkBlTJB+txDTgCE9x3pdSF7KxNceUc=
+        b=kCb5MfBu8KsUCJ8SNxHjMGqLV6E8YtIpNwGNTURK7i/tCERJm8bBack8in/KWA0DL
+         UqG/9bnRHCtyYBcm2Zf+jR3V9XQdbzC9LRNDCDGv5IiT5hQb1onA0VUy5chHIeEjNX
+         w1bH20Rcgmvvdiw5BC7fBPw9P43WForB5GjC1Hw0=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 4/4] drm: rcar-du: Use drm_bridge_connector_init() helper
-Date:   Wed, 16 Dec 2020 02:50:21 +0200
-Message-Id: <20201216005021.19518-5-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v2 3/4] drm: rcar-du: dw-hdmi: Set output port number
+Date:   Wed, 16 Dec 2020 02:50:20 +0200
+Message-Id: <20201216005021.19518-4-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20201216005021.19518-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20201216005021.19518-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -50,64 +51,26 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Use the drm_bridge_connector_init() helper to create a drm_connector for
-each output, instead of relying on the bridge drivers doing so. Attach
-the bridges with the DRM_BRIDGE_ATTACH_NO_CONNECTOR flag to instruct
-them not to create a connector.
+Report the DT output port number in dw_hdmi_plat_data to connect to the
+next bridge in the dw-hdmi driver.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 25 ++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-index ba8c6038cd63..10a66091391a 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-@@ -11,6 +11,7 @@
- #include <linux/slab.h>
- 
- #include <drm/drm_bridge.h>
-+#include <drm/drm_bridge_connector.h>
- #include <drm/drm_crtc.h>
- #include <drm/drm_managed.h>
- #include <drm/drm_modeset_helper_vtables.h>
-@@ -61,6 +62,7 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 			 struct device_node *enc_node)
- {
- 	struct rcar_du_encoder *renc;
-+	struct drm_connector *connector;
- 	struct drm_bridge *bridge;
- 	int ret;
- 
-@@ -122,9 +124,22 @@ int rcar_du_encoder_init(struct rcar_du_device *rcdu,
- 	if (ret)
- 		return ret;
- 
--	/*
--	 * Attach the bridge to the encoder. The bridge will create the
--	 * connector.
--	 */
--	return drm_bridge_attach(&renc->base, bridge, NULL, 0);
-+	/* Attach the bridge to the encoder. */
-+	ret = drm_bridge_attach(&renc->base, bridge, NULL,
-+				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
-+	if (ret) {
-+		dev_err(rcdu->dev, "failed to attach bridge for output %u\n",
-+			output);
-+		return ret;
-+	}
-+
-+	/* Create the connector for the chain of bridges. */
-+	connector = drm_bridge_connector_init(&rcdu->ddev, &renc->base);
-+	if (IS_ERR(connector)) {
-+		dev_err(rcdu->dev,
-+			"failed to created connector for output %u\n", output);
-+		return PTR_ERR(connector);
-+	}
-+
-+	return drm_connector_attach_encoder(connector, &renc->base);
+diff --git a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+index 7b8ec8310699..18ed14911b98 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
++++ b/drivers/gpu/drm/rcar-du/rcar_dw_hdmi.c
+@@ -75,6 +75,7 @@ static int rcar_hdmi_phy_configure(struct dw_hdmi *hdmi, void *data,
  }
+ 
+ static const struct dw_hdmi_plat_data rcar_dw_hdmi_plat_data = {
++	.output_port = 1,
+ 	.mode_valid = rcar_hdmi_mode_valid,
+ 	.configure_phy	= rcar_hdmi_phy_configure,
+ };
 -- 
 Regards,
 
