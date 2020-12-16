@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F24BC2BBCA
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Dec 2020 07:39:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0694C4743F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Dec 2020 07:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 426732337F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Dec 2020 07:39:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9E5F23380
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Dec 2020 07:39:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726020AbgLPHiy (ORCPT
+        id S1725913AbgLPHjH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Dec 2020 02:38:54 -0500
+        Wed, 16 Dec 2020 02:39:07 -0500
 Received: from relmlor2.renesas.com ([210.160.252.172]:48579 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725891AbgLPHix (ORCPT
+        by vger.kernel.org with ESMTP id S1725855AbgLPHiv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Dec 2020 02:38:53 -0500
+        Wed, 16 Dec 2020 02:38:51 -0500
 X-IronPort-AV: E=Sophos;i="5.78,423,1599490800"; 
-   d="scan'208";a="65934721"
+   d="scan'208";a="65934712"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
   by relmlie6.idc.renesas.com with ESMTP; 16 Dec 2020 16:38:20 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 61AB241EE371;
-        Wed, 16 Dec 2020 16:38:20 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id DD22241F1D7E;
+        Wed, 16 Dec 2020 16:38:19 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
         matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
@@ -37,9 +37,9 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 06/12] gpio: bd9571mwv: Use the SPDX license identifier
-Date:   Wed, 16 Dec 2020 16:37:49 +0900
-Message-Id: <1608104275-13174-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 02/12] dt-bindings: mfd: bd9571mwv: Document BD9574MWF
+Date:   Wed, 16 Dec 2020 16:37:45 +0900
+Message-Id: <1608104275-13174-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1608104275-13174-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1608104275-13174-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -47,37 +47,27 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Use the SPDX license identifier instead of a local description.
+Document other similar specification chip BD9574MWF.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/gpio/gpio-bd9571mwv.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ Documentation/devicetree/bindings/mfd/bd9571mwv.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-bd9571mwv.c b/drivers/gpio/gpio-bd9571mwv.c
-index c0abc9c..abb622c 100644
---- a/drivers/gpio/gpio-bd9571mwv.c
-+++ b/drivers/gpio/gpio-bd9571mwv.c
-@@ -1,17 +1,9 @@
-+// SPDX-License-Identifier: GPL-2.0-only
- /*
-  * ROHM BD9571MWV-M GPIO driver
-  *
-  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
-  *
-- * This program is free software; you can redistribute it and/or
-- * modify it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
-- *
-- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-- * kind, whether expressed or implied; without even the implied warranty
-- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License version 2 for more details.
-- *
-  * Based on the TPS65086 driver
-  *
-  * NOTE: Interrupts are not supported yet.
+diff --git a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+index 8c46786..1d6413e 100644
+--- a/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
++++ b/Documentation/devicetree/bindings/mfd/bd9571mwv.txt
+@@ -1,7 +1,7 @@
+-* ROHM BD9571MWV Power Management Integrated Circuit (PMIC) bindings
++* ROHM BD9571MWV/BD9574MWF Power Management Integrated Circuit (PMIC) bindings
+ 
+ Required properties:
+- - compatible		: Should be "rohm,bd9571mwv".
++ - compatible		: Should be "rohm,bd9571mwv" or "rohm,bd9574mwf".
+  - reg			: I2C slave address.
+  - interrupts		: The interrupt line the device is connected to.
+  - interrupt-controller	: Marks the device node as an interrupt controller.
 -- 
 2.7.4
 
