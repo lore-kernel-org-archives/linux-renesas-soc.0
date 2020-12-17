@@ -2,105 +2,154 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04617C2BBCD
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Dec 2020 17:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C76E8C4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Dec 2020 17:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4C34238EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Dec 2020 17:15:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89C2F2376F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Dec 2020 17:59:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729012AbgLQROp (ORCPT
+        id S1728080AbgLQR7E (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Dec 2020 12:14:45 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49630 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728081AbgLQROo (ORCPT
+        Thu, 17 Dec 2020 12:59:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40500 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727253AbgLQR7E (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Dec 2020 12:14:44 -0500
-Received: from localhost.localdomain (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id DE0FFA25;
-        Thu, 17 Dec 2020 18:14:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1608225242;
-        bh=GJa9bniVgUPByKWedW+oMjQX924g99UlZcvagQB4pUg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eYoWpXBuvZo6YJfG3YdicIN+nSROfMrXPL5FIq4ULplQwHT9pEAlLMppRrpGdy8A8
-         QTRipL965vNyLPoPD015UXnLNV8g4ExQ/uQSPO1Nhfc/KP96eyKW5ncpU6ZaDqZyh4
-         rSM1IY70LksUCLPpxSUPEObEg3aFxl0gkzkKHy+M=
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 1/2] media: vsp1: Add support for the V3U VSPD
-Date:   Thu, 17 Dec 2020 17:13:48 +0000
-Message-Id: <20201217171349.1030753-2-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201217171349.1030753-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20201217171349.1030753-1-kieran.bingham+renesas@ideasonboard.com>
+        Thu, 17 Dec 2020 12:59:04 -0500
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B614CC0617A7;
+        Thu, 17 Dec 2020 09:58:23 -0800 (PST)
+Received: by mail-io1-xd30.google.com with SMTP id 81so28306095ioc.13;
+        Thu, 17 Dec 2020 09:58:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Jy9Wo6K2J/ZSSCkdeQ2xq3mmopXJVycRBgl/dvb3y3M=;
+        b=ZWHmreiH5rqp0TCgo6Tc0AUX6gwk++F5zyVRI2cszk+zlJBORCLTYuPAP1EaF5Ws+J
+         t1/87AfU+EwrH7w2NFaRQMGrNTmzc1GBXhOFzSCU1SzTUd/H7qJEEZPicbDYG+FE1BiB
+         rfCUhlHFH9+cTlKreuUCB9pzkCIcOyUAHoINRYsEmWSuoNh2XLnz0yOKgXGinmEbjFHw
+         6nz38TBwwuhGK2H9ueOUyJsWIWRR1gDwsiP8SYZcLDR/rD+LQXGtYfezzSqfwqPovsL2
+         2LPXLq7Spblx2sCfdJaJqwCKSicmgi/wbkYDY50dO8WsF8pC+h6oTcE9UVeMJt2jz2Q8
+         BWdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Jy9Wo6K2J/ZSSCkdeQ2xq3mmopXJVycRBgl/dvb3y3M=;
+        b=on685f5O7eDYJjWX/wGY4zp3qXcUxBzvidCsZPGwIDJx7CsfqxrSs4qym57d+X3Lxr
+         QwxC/DuANKWDG67LFJVZLgJTZPWWrPbc//c3t18g/t5O6L2apRkrcbbF659rvHkLMO6q
+         ExPkml++uvs9jvtUz/mK2Jodymn/SK/kI28hMgnPiuP6xQpNeJlRP8Z6RhnGlkWImixO
+         UbP9THgtBi+913StxVH+uUH53bd2M03WxsaHHeVvf084ktaap1UTWGwjB26To6Bk5clM
+         XXunDIDB02YQ7+8YmWYKF4uVq1QUizTApQdBfPun46GZMOKo655KGubIa/im0Lv1PYHt
+         /fhA==
+X-Gm-Message-State: AOAM531ZgC5/2LwxOehExM1lE7NqxKRDMyWM6ooIvUugN7KoCq2DdUbX
+        1KY2np+M0rky9fPvDY7RcuMaI5UBxBIFbyilIG4=
+X-Google-Smtp-Source: ABdhPJxdAlerYP+JuD9biEEY39A4kN8rW0oldiaXIBGS0l5gLJQZoPQTKREgpdu4SWSftFhfVFo5D82LYpvmLPxAnkE=
+X-Received: by 2002:a6b:f401:: with SMTP id i1mr261498iog.142.1608227903009;
+ Thu, 17 Dec 2020 09:58:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201213183759.223246-1-aford173@gmail.com> <20201213183759.223246-7-aford173@gmail.com>
+ <CAMuHMdU+d7SZc9gh_3WS+bqd4EhXYh=kv0XvYrgUUckdQ7o5jw@mail.gmail.com> <CAHCN7xJf2T3uFLDtJxvjFYzCksWq02+CUY51_WmnU44YDJKy9Q@mail.gmail.com>
+In-Reply-To: <CAHCN7xJf2T3uFLDtJxvjFYzCksWq02+CUY51_WmnU44YDJKy9Q@mail.gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Thu, 17 Dec 2020 11:58:11 -0600
+Message-ID: <CAHCN7xKdVv==YLtSa3n2hQk2T+f+FkLqKDNTYkP_3ynnY+xRCg@mail.gmail.com>
+Subject: Re: [PATCH 06/18] arm64: dts: renesas: beacon: Configure Audio CODEC clocks
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The V3U provides two VSPD instances, with a new update to the version
-register to detect the new SoC.
+On Thu, Dec 17, 2020 at 7:33 AM Adam Ford <aford173@gmail.com> wrote:
+>
+> On Thu, Dec 17, 2020 at 5:12 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> >
+> > Hi Adam,
+> >
+> > CC alsa-devel
+> >
+> > On Sun, Dec 13, 2020 at 7:38 PM Adam Ford <aford173@gmail.com> wrote:
+> > > With the newly added configurable clock options, the audio CODEC can
+> > > configure the mclk automatically.  Add the reference to the versaclock.
+> > > Since the devices on I2C5 can communicate at 400KHz, let's also increase
+> > > that too
+> > >
+> > > Signed-off-by: Adam Ford <aford173@gmail.com>
+> >
+> > Thanks for your patch!
+> >
+> > > --- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+> > > +++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+> > > @@ -424,13 +424,15 @@ &i2c0 {
+> > >
+> > >  &i2c5 {
+> > >         status = "okay";
+> > > -       clock-frequency = <100000>;
+> > > +       clock-frequency = <400000>;
+> > >         pinctrl-0 = <&i2c5_pins>;
+> > >         pinctrl-names = "default";
+> > >
+> > >         codec: wm8962@1a {
+> > >                 compatible = "wlf,wm8962";
+> > >                 reg = <0x1a>;
+> > > +               clocks = <&versaclock6_bb 3>;
+> > > +               clock-names = "mclk";
+> >
+> > While the driver does get the (nameless) clock, the DT bindings lack any
+> > mention of a clocks property.  It would be good to update the bindings.
+>
+> Agreed.  I'll push an update to add the clocks property.
+>
 
-Add the new version and model detection, and detail the features
-available in this module.
+I pushed a change to add the optional clock information to the
+bindings txt file [1].
+> >
+> > Note that arch/arm/boot/dts/imx6-logicpd-baseboard.dtsi and
+> > arch/arm64/boot/dts/freescale/imx8mm-beacon-baseboard.dtsi (both by your
+> > hand) use "xclk" instead of "mclk"?
+>
+> On the schematics for the two imx boards, it's labeled as xclk, so it
+> was named as such.  For this board, the schematic names it mclk. The
+> driver doesn't care about the clock-names property, so I'll just
+> remove them.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/media/platform/vsp1/vsp1_drv.c  | 10 ++++++++++
- drivers/media/platform/vsp1/vsp1_regs.h |  3 +++
- 2 files changed, 13 insertions(+)
+I pushed patches to remove these nodes from the other boards [2].
+I'll remove them if V2 of the patch series for the Renesas board.
 
-diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-index dc62533cf32c..c59e865dfef2 100644
---- a/drivers/media/platform/vsp1/vsp1_drv.c
-+++ b/drivers/media/platform/vsp1/vsp1_drv.c
-@@ -785,6 +785,16 @@ static const struct vsp1_device_info vsp1_device_infos[] = {
- 		.uif_count = 2,
- 		.wpf_count = 2,
- 		.num_bru_inputs = 5,
-+	}, {
-+		.version = VI6_IP_VERSION_MODEL_VSPD_V3U,
-+		.model = "VSP2-D",
-+		.gen = 3,
-+		.features = VSP1_HAS_BRU | VSP1_HAS_CLU | VSP1_HAS_EXT_DL,
-+		.lif_count = 1,
-+		.rpf_count = 5,
-+		.uif_count = 2,
-+		.wpf_count = 1,
-+		.num_bru_inputs = 5,
- 	},
- };
- 
-diff --git a/drivers/media/platform/vsp1/vsp1_regs.h b/drivers/media/platform/vsp1/vsp1_regs.h
-index fe3130db1fa2..b378ea4451ce 100644
---- a/drivers/media/platform/vsp1/vsp1_regs.h
-+++ b/drivers/media/platform/vsp1/vsp1_regs.h
-@@ -766,6 +766,8 @@
- #define VI6_IP_VERSION_MODEL_VSPD_V3	(0x18 << 8)
- #define VI6_IP_VERSION_MODEL_VSPDL_GEN3	(0x19 << 8)
- #define VI6_IP_VERSION_MODEL_VSPBS_GEN3	(0x1a << 8)
-+#define VI6_IP_VERSION_MODEL_VSPD_V3U	(0x1c << 8)
-+
- #define VI6_IP_VERSION_SOC_MASK		(0xff << 0)
- #define VI6_IP_VERSION_SOC_H2		(0x01 << 0)
- #define VI6_IP_VERSION_SOC_V2H		(0x01 << 0)
-@@ -777,6 +779,7 @@
- #define VI6_IP_VERSION_SOC_D3		(0x04 << 0)
- #define VI6_IP_VERSION_SOC_M3N		(0x04 << 0)
- #define VI6_IP_VERSION_SOC_E3		(0x04 << 0)
-+#define VI6_IP_VERSION_SOC_V3U		(0x05 << 0)
- 
- /* -----------------------------------------------------------------------------
-  * RPF CLUT Registers
--- 
-2.25.1
+adam
+[1] - https://patchwork.kernel.org/project/alsa-devel/patch/20201217162740.1452000-1-aford173@gmail.com/
+[2] - https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=403739
 
+>
+> adam
+> >
+> > >                 DCVDD-supply = <&reg_audio>;
+> > >                 DBVDD-supply = <&reg_audio>;
+> > >                 AVDD-supply = <&reg_audio>;
+> >
+> > Gr{oetje,eeting}s,
+> >
+> >                         Geert
+> >
+> > --
+> > Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> >
+> > In personal conversations with technical people, I call myself a hacker. But
+> > when I'm talking to journalists I just say "programmer" or something like that.
+> >                                 -- Linus Torvalds
