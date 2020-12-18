@@ -2,158 +2,76 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8A0C4361B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Dec 2020 14:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B79C4361B
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Dec 2020 17:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9722123A84
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Dec 2020 14:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C505221E7
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Dec 2020 17:38:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbgLROY2 (ORCPT
+        id S1730808AbgLRRiT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Dec 2020 09:24:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59214 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbgLROY2 (ORCPT
+        Fri, 18 Dec 2020 12:38:19 -0500
+Received: from www.zeus03.de ([194.117.254.33]:35644 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728088AbgLRRiT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Dec 2020 09:24:28 -0500
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4BA2C0617A7;
-        Fri, 18 Dec 2020 06:23:47 -0800 (PST)
-Received: by mail-io1-xd36.google.com with SMTP id 81so2139653ioc.13;
-        Fri, 18 Dec 2020 06:23:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Kg+yAMgYFLTlHGrbICoaSFL1GosZ12/l4+s47nG2NxE=;
-        b=a41lRihDMJA4TP/nBOdw2eh8pG7oiVgvKaQQCFZk8Pzo1AuVl/osP+iqI2fp2+koGU
-         P9Lpy/mTk6V7mbOSA2rtpaXxdCobDJn1YRzFS83JnGcpvWz8rKy9d9NHcL3FlEEzUcf8
-         Mfeut7Y+n72ZZLdjqNZMns/c1BBr8pLnmn/R06ry9OOMh25KPd5znLBKguPh5wPbY3ZC
-         0BCWqiqC6ZN7wXdFiHpTN7A9bjTAFo4xQXaK8JMZdh6QPfbgCsMo33HH5C2L0g6waLo/
-         DfYyfzwNUHIfED0Ml9Jzk45/DifES6cyMHqF6xkpe6GjqpLETBsFf3ahBP6tQtEaWFS4
-         Hl6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Kg+yAMgYFLTlHGrbICoaSFL1GosZ12/l4+s47nG2NxE=;
-        b=meVgNi7NxbWHc+blRk8L+D2dZG2lRVEkyIerKedOvXDwCjYMqBPmxv9kAVGEl31ADo
-         +gwwPEW4on0dXtX0w7iizp+5GQJHSu5B3u/F5GxNES59WiNrP0FTi83WkzHCdlnJALqk
-         Rm/c5lxiKyMSxqOrlmwmzP1J6EbvxpIkXITKT6lrydw/XUkEyTgKn94lbqQ/HQRp4nYw
-         EXqGnHCf4v8UOAosPlDYG0BftSze56ukaJcxhZ0/dJi0Rq1rnOHluJnFo2e2PLgD3wnj
-         gnGkPCV+gLJcNAxe18UIeKdetlg41HODuTfSS4EN3F4UtC83mWYkoxRI4u+718PXTcAv
-         Q1hw==
-X-Gm-Message-State: AOAM530Q8p65jEUZJJHJTqE6t6g3bzw1fnyw8l8YbrmxdaUzNc25GWys
-        upyBaUi9ADQSVETM2ljiZNCOM2zvQFQscqwv/60=
-X-Google-Smtp-Source: ABdhPJypnNeIYn+W4o/Ji0n2E5B65wD4Kl9KP5xwOzucGSlZMNeu9e3eh+wZiO8tVDq4izdDW6Kkt1ZUGsqfN4R7140=
-X-Received: by 2002:a02:ca09:: with SMTP id i9mr3829996jak.135.1608301426863;
- Fri, 18 Dec 2020 06:23:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20201213183759.223246-1-aford173@gmail.com> <20201213183759.223246-7-aford173@gmail.com>
- <CAMuHMdU+d7SZc9gh_3WS+bqd4EhXYh=kv0XvYrgUUckdQ7o5jw@mail.gmail.com>
- <CAHCN7xJf2T3uFLDtJxvjFYzCksWq02+CUY51_WmnU44YDJKy9Q@mail.gmail.com> <CAMuHMdU5kBHV9-kBnJbtLp6zGcYRjyTxhmGsstKFnh=Qe4jcYg@mail.gmail.com>
-In-Reply-To: <CAMuHMdU5kBHV9-kBnJbtLp6zGcYRjyTxhmGsstKFnh=Qe4jcYg@mail.gmail.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Fri, 18 Dec 2020 08:23:35 -0600
-Message-ID: <CAHCN7xKyHckOvLh9U+21dsKMshwA1LyTzTexxAY0akVcJHJD0Q@mail.gmail.com>
-Subject: Re: [PATCH 06/18] arm64: dts: renesas: beacon: Configure Audio CODEC clocks
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
+        Fri, 18 Dec 2020 12:38:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=kk4glNSs1SM1Gf
+        XglI+JXECfzcYWZ8e1yzurd6rIGbo=; b=unMH8bNVe1M+SVyvga9p7RbIF81Z1j
+        7Vr2bhIV+UgFcQRzDh0OtmvEmwqvcJsgSP9OjeNJRDFC3VBmsxa/QuPTrlbsXogN
+        zsbsvaH/DN2ZctrO5Dav6rRyVVRRtJbevG37H/rRfvtUrXlj1NZNf/flEVrc7kwY
+        8hG4JAzXx38zE=
+Received: (qmail 3906687 invoked from network); 18 Dec 2020 18:37:36 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Dec 2020 18:37:36 +0100
+X-UD-Smtp-Session: l3s3148p1@sDVhkMC2ZpggAwDPXwIpAOUwDQytQs2L
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>
-Content-Type: text/plain; charset="UTF-8"
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] dt-bindings: watchdog: renesas,wdt: add r8a779a0 (V3U) support
+Date:   Fri, 18 Dec 2020 18:37:26 +0100
+Message-Id: <20201218173731.12839-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201218173731.12839-1-wsa+renesas@sang-engineering.com>
+References: <20201218173731.12839-1-wsa+renesas@sang-engineering.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Dec 18, 2020 at 6:57 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Adam,
->
-> On Thu, Dec 17, 2020 at 2:33 PM Adam Ford <aford173@gmail.com> wrote:
-> > On Thu, Dec 17, 2020 at 5:12 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > CC alsa-devel
-> > >
-> > > On Sun, Dec 13, 2020 at 7:38 PM Adam Ford <aford173@gmail.com> wrote:
-> > > > With the newly added configurable clock options, the audio CODEC can
-> > > > configure the mclk automatically.  Add the reference to the versaclock.
-> > > > Since the devices on I2C5 can communicate at 400KHz, let's also increase
-> > > > that too
-> > > >
-> > > > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > >
-> > > Thanks for your patch!
-> > >
-> > > > --- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-> > > > +++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-> > > > @@ -424,13 +424,15 @@ &i2c0 {
-> > > >
-> > > >  &i2c5 {
-> > > >         status = "okay";
-> > > > -       clock-frequency = <100000>;
-> > > > +       clock-frequency = <400000>;
-> > > >         pinctrl-0 = <&i2c5_pins>;
-> > > >         pinctrl-names = "default";
-> > > >
-> > > >         codec: wm8962@1a {
-> > > >                 compatible = "wlf,wm8962";
-> > > >                 reg = <0x1a>;
-> > > > +               clocks = <&versaclock6_bb 3>;
-> > > > +               clock-names = "mclk";
-> > >
-> > > While the driver does get the (nameless) clock, the DT bindings lack any
-> > > mention of a clocks property.  It would be good to update the bindings.
-> >
-> > Agreed.  I'll push an update to add the clocks property.
->
-> Thanks!
->
-> > > Note that arch/arm/boot/dts/imx6-logicpd-baseboard.dtsi and
-> > > arch/arm64/boot/dts/freescale/imx8mm-beacon-baseboard.dtsi (both by your
-> > > hand) use "xclk" instead of "mclk"?
-> >
-> > On the schematics for the two imx boards, it's labeled as xclk, so it
-> > was named as such.  For this board, the schematic names it mclk. The
-> > driver doesn't care about the clock-names property, so I'll just
-> > remove them.
->
-> If there's a single clock, not using clock-names is fine.
-> If you do use clock-names, the names should be clock-centric, not
-> board-centric.
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-I already submitted patches to remove the clock-names reference from
-the other two boards you noted [1].  I agree it should match  the
-driver and not the schematic.  That line was a left-over from our
-internal git repo where the decision was used to follow the schematic
-and not the driver.
+Please apply it to the watchdog-tree.
 
-Thanks for bringing that to my attention.
+ Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-adam
+diff --git a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+index 6933005b52bd..ab66d3f0c476 100644
+--- a/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/renesas,wdt.yaml
+@@ -50,6 +50,7 @@ properties:
+               - renesas,r8a77980-wdt     # R-Car V3H
+               - renesas,r8a77990-wdt     # R-Car E3
+               - renesas,r8a77995-wdt     # R-Car D3
++              - renesas,r8a779a0-wdt     # R-Car V3U
+           - const: renesas,rcar-gen3-wdt # R-Car Gen3 and RZ/G2
+ 
+   reg:
+-- 
+2.29.2
 
-[1] - https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=403739
-
->
-> BTW, looking at the WM8962 datasheet, it's called "MCLK".
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
