@@ -2,89 +2,85 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B8BC3526C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5854C3526D
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Dec 2020 17:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F51123B70
+	by mail.kernel.org (Postfix) with ESMTP id 7F14223B75
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Dec 2020 17:38:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732342AbgLRRi3 (ORCPT
+        id S1731339AbgLRRiU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Dec 2020 12:38:29 -0500
-Received: from www.zeus03.de ([194.117.254.33]:35734 "EHLO mail.zeus03.de"
+        Fri, 18 Dec 2020 12:38:20 -0500
+Received: from www.zeus03.de ([194.117.254.33]:35638 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732329AbgLRRi2 (ORCPT
+        id S1728056AbgLRRiT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Dec 2020 12:38:28 -0500
+        Fri, 18 Dec 2020 12:38:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=EVlZoJIUam2p2G
-        71uWZrVr32vMOVka9mDMDxL2BoFEg=; b=xjtOFa5uWqPFcKYHT38tj/QyzcUWyc
-        F2lLePqH7PJRrEn+nR1lra5A6+rjBAmMiiLr+AWpCqU8wE5EaL0Ty46BjSi6p+hI
-        7phmAb6f/KtxkAbp8m5NyXlj1JaTuda/rr8RnBNxVRJZXsQH13ZuocuyONYQFrXe
-        Jaldw1F8KGmYo=
-Received: (qmail 3906834 invoked from network); 18 Dec 2020 18:37:39 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Dec 2020 18:37:39 +0100
-X-UD-Smtp-Session: l3s3148p1@kzOQkMC2bpggAwDPXwIpAOUwDQytQs2L
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=TGknKXM6Qe5ZJYWFCEHpNo135/r
+        ukfSQ0kDyG0JgwkA=; b=BJ6iOEdYqUKeqnbhrJluWZWEvjPnYIfGTutPlSfrA51
+        OjeaHjy59ii/kyEmSem58nEkB5FIiW1r/c6q4rvMWZZrCIxYyCU7tkRvANCKlb0r
+        9cpkbZlh7bIh/WWcCrQNneobkvJ3FwaU637gOLyCE7JMmLJTWbmt6Tzm4GHV6rjs
+        =
+Received: (qmail 3906654 invoked from network); 18 Dec 2020 18:37:35 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Dec 2020 18:37:35 +0100
+X-UD-Smtp-Session: l3s3148p1@pU8fkMC2ZJggAwDPXwIpAOUwDQytQs2L
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] WIP soc: v3u: allow WDT reset
-Date:   Fri, 18 Dec 2020 18:37:30 +0100
-Message-Id: <20201218173731.12839-6-wsa+renesas@sang-engineering.com>
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: [PATCH 0/5] v3u: add support for RWDT
+Date:   Fri, 18 Dec 2020 18:37:25 +0100
+Message-Id: <20201218173731.12839-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20201218173731.12839-1-wsa+renesas@sang-engineering.com>
-References: <20201218173731.12839-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Other Gen3 SoCs do this in the bootloader. Maybe V3U will also later?
-For now, add it so we can properly reboot via remote.
+Here is the series to enable the RWDT on V3U. I took the DTS patches
+from the BSP, the rest was developed on mainline tree. Note that
+currently, the bootloader does not unmask the RWDT reset for us. This is
+why patch #5 is needed if you want a reboot. We need to see if this is
+going to be added to the bootloader later. Also, while the normal
+watchdog trigger works flawlessly, the 'reboot' command will triger a
+OOPS. This is a known issue also present on other Gen3 SoCs and will
+be addressed seperately soon.
 
-Not to be applied yet, just for demonstration.
+Other than that, patch #1 should go in via watchdog, the rest via
+Geert's various trees :)
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/soc/renesas/rcar-rst.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Looking forward to comments.
 
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index 8a1e402ea799..d3364fe57150 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -12,6 +12,13 @@
- 
- #define WDTRSTCR_RESET		0xA55A0002
- #define WDTRSTCR		0x0054
-+#define V3U_WDTRSTCR		0x0010
-+
-+static int v3u_rst_enable_wdt_reset(void __iomem *base)
-+{
-+	iowrite32(WDTRSTCR_RESET, base + V3U_WDTRSTCR);
-+	return 0;
-+}
- 
- static int rcar_rst_enable_wdt_reset(void __iomem *base)
- {
-@@ -39,6 +46,7 @@ static const struct rst_config rcar_rst_gen3 __initconst = {
- 
- static const struct rst_config rcar_rst_r8a779a0 __initconst = {
- 	.modemr = 0x00,		/* MODEMR0 and it has CPG related bits */
-+	.configure = v3u_rst_enable_wdt_reset,
- };
- 
- static const struct of_device_id rcar_rst_matches[] __initconst = {
+Happy hacking and have a nice weekend!
+
+
+Hoang Vo (2):
+  arm64: dts: renesas: r8a779a0: Add RWDT node
+  arm64: dts: renesas: falcon: Enable watchdog timer
+
+Wolfram Sang (3):
+  dt-bindings: watchdog: renesas,wdt: add r8a779a0 (V3U) support
+  clk: renesas: r8a779a0: Add RWDT clocks
+  WIP soc: v3u: allow WDT reset
+
+ .../devicetree/bindings/watchdog/renesas,wdt.yaml      |  1 +
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts        |  5 +++++
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi              | 10 ++++++++++
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c                |  9 +++++++++
+ drivers/soc/renesas/rcar-rst.c                         |  8 ++++++++
+ 5 files changed, 33 insertions(+)
+
 -- 
 2.29.2
 
