@@ -2,57 +2,76 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 529A1C4361B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4ABC0018C
 	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Dec 2020 14:37:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 15FB92226A
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Dec 2020 14:37:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58FAD2226A
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 19 Dec 2020 14:37:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726567AbgLSOhn (ORCPT
+        id S1726564AbgLSOhr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 19 Dec 2020 09:37:43 -0500
-Received: from www.zeus03.de ([194.117.254.33]:43580 "EHLO mail.zeus03.de"
+        Sat, 19 Dec 2020 09:37:47 -0500
+Received: from www.zeus03.de ([194.117.254.33]:43602 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726510AbgLSOhn (ORCPT
+        id S1726624AbgLSOho (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 19 Dec 2020 09:37:43 -0500
+        Sat, 19 Dec 2020 09:37:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=WsCPidwc8XpcsG27IlXc6q7MpST
-        LUZo5G4VwzAKi8Sw=; b=VwXXVufQZu7U/3fTt0Uedb9IwUBnL+mKBCakRqqTv/6
-        drG4for1mQIlcCGHaOF44hVCR4amLwAMLL3ovaCDRHos4LPBxFVhJA5sm2Ofg8dg
-        c7YnMO+bTrbi/WOWfTYSan0XEfq5JE+96NA0Xszs7btR7mAr7qLmj8Z8mA0Ta38o
-        =
-Received: (qmail 4149821 invoked from network); 19 Dec 2020 15:37:01 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Dec 2020 15:37:01 +0100
-X-UD-Smtp-Session: l3s3148p1@mVctKNK2eLYgAwDPXwIpAOUwDQytQs2L
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=dCM+zFfix8PFto
+        Sl76aTetpgNSznWtT79zg/CaTf1sQ=; b=S0looXZYWihUnpLtKddOm2v18vLRQF
+        RMgHGeXZKGwexRk+i76xR6kSET/uraUGOHprPNZ+pEp12YnBP3KfTzsA3S4A+GH5
+        z6vowOaCfRDualCJVDaywtcJqAjgUlebSOL3KpE6ljUne2mDPpauSf2WyAOpFb50
+        4fpOg72UCVIXo=
+Received: (qmail 4149879 invoked from network); 19 Dec 2020 15:37:02 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Dec 2020 15:37:02 +0100
+X-UD-Smtp-Session: l3s3148p1@0el9KNK2fLYgAwDPXwIpAOUwDQytQs2L
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] arm64: small updates to rebooting
-Date:   Sat, 19 Dec 2020 15:36:45 +0100
-Message-Id: <20201219143648.56217-1-wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] arm64: proper comment formatting in reboot handler
+Date:   Sat, 19 Dec 2020 15:36:47 +0100
+Message-Id: <20201219143648.56217-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201219143648.56217-1-wsa+renesas@sang-engineering.com>
+References: <20201219143648.56217-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Found these while working with a new prototype board.
+This comment was probably copied from arm32 and then shortened. It fits
+to single line now.
 
-Wolfram Sang (2):
-  arm64: add grace period when rebooting
-  arm64: proper comment formatting in reboot handler
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ arch/arm64/kernel/process.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
- arch/arm64/kernel/process.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
+diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+index 3c770329364f..e68dacbc6204 100644
+--- a/arch/arm64/kernel/process.c
++++ b/arch/arm64/kernel/process.c
+@@ -207,9 +207,7 @@ void machine_restart(char *cmd)
+ 	/* Give a grace period for failure to restart of 1s */
+ 	mdelay(1000);
+ 
+-	/*
+-	 * Whoops - the architecture was unable to reboot.
+-	 */
++	/* Whoops - the architecture was unable to reboot */
+ 	printk("Reboot failed -- System halted\n");
+ 	while (1);
+ }
 -- 
 2.29.2
 
