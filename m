@@ -2,95 +2,138 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD60C433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 16:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF6AC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 16:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F0CF23103
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 16:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 282A922525
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 16:57:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725793AbgLUQHe (ORCPT
+        id S1725807AbgLUQ5x (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Dec 2020 11:07:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725777AbgLUQHe (ORCPT
+        Mon, 21 Dec 2020 11:57:53 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.167]:34540 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgLUQ5w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Dec 2020 11:07:34 -0500
-Date:   Mon, 21 Dec 2020 17:06:51 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608566813;
-        bh=rvt2O1Qz5N5TZMf0qNsbllRsLgNiV7JGyIZ4XUTUZbY=;
-        h=From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RpCYbFKlyb2HD4MQt2A/TTwtlVMrYpEoXbD3Wzaeb2a4bRHoISQnp+vdiOeMZXFHd
-         ut+xekK0R1IuaeTpgMZdVtoTY+Cgg7mCqdeCnULbQEawF+65eFcGd92zxYBHe6WHlm
-         5Vq8CB8Wjr/cB0oxqmV+fEVO9B4QDonW/PHin0J36Lcjf+95/g2xoWGZ2tX7fpaWOb
-         My8MjCZw3zPIvceCA1P+KB+PEtgSLAJNySARMtU6l/jEQbVTmPDSWdSvSHLOL6xPBH
-         LqobBeXqxUkqKOwjfXafdg7b0r6w28SCuSMlC9pBkDfUifTUW5ynV5mjdwbqFOmykW
-         HBlPHnoxzCVUw==
-From:   Wolfram Sang <wsa@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH RFC 3/4] arm64: dts: renesas: r8a779a0: Add dmac1
- placeholder node
-Message-ID: <20201221160651.GC2585@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-renesas-soc@vger.kernel.org
-References: <20201117090329.2128904-1-geert+renesas@glider.be>
- <20201117090329.2128904-4-geert+renesas@glider.be>
+        Mon, 21 Dec 2020 11:57:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1608569700;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:From:
+        Subject:Sender;
+        bh=VC12K20oCPtboVN3UULo2HLq1MZksh+JC7dhaOZoi+U=;
+        b=nIyNAp/VGKJ0zrvLrmR5CSaa77OKIjvt6aEChtIOacrbVHYFmCG+iQtEEZLmhYCEpR
+        0OrwceLyTmdQHEFkjNMLsMbm021HhH0yeGsYw2/nrLpL7HaGJD56ecHvzWR9Bx0KnJG3
+        WGMHaWF3tYKZPaEBLm2p7fd2VzSYSNSa3/Jyn0tPII1S5JQGiXls4aOjLK64NMXQDUkB
+        N0MczhlhT73HH0y6Z4c//IoDdRGhq5ygdX/pBcA2xxKy9Wi41bGfvDDnZLlVXobyzS3D
+        SkaAiq0hrAOyd9ZD04Khk9ubs7qrwUdx6TG9ZQXs7Ckt0FED4E0nmRS+rQsF4Wq364wb
+        +GMQ==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR8GJSdzTYQw=="
+X-RZG-CLASS-ID: mo00
+Received: from groucho.site
+        by smtp.strato.de (RZmta 47.10.2 DYNA|AUTH)
+        with ESMTPSA id j05b20wBLGss0KA
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Mon, 21 Dec 2020 17:54:54 +0100 (CET)
+From:   Ulrich Hecht <uli+renesas@fpond.eu>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     wsa@the-dreams.de, geert@linux-m68k.org, hoai.luu.ub@renesas.com,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH v2 2/5] pinctrl: renesas: add I/O voltage level flag
+Date:   Mon, 21 Dec 2020 17:54:45 +0100
+Message-Id: <20201221165448.27312-3-uli+renesas@fpond.eu>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20201221165448.27312-1-uli+renesas@fpond.eu>
+References: <20201221165448.27312-1-uli+renesas@fpond.eu>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="TiqCXmo5T1hvSQQg"
-Content-Disposition: inline
-In-Reply-To: <20201117090329.2128904-4-geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+This patch adds config macros describing the voltage levels available on
+a pin. The current default (3.3V/1.8V) maps to zero to avoid having to
+change existing PFC implementations.
 
---TiqCXmo5T1hvSQQg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+---
+ drivers/pinctrl/renesas/pinctrl.c | 16 ++++++++++++++--
+ drivers/pinctrl/renesas/sh_pfc.h  |  9 +++++++++
+ 2 files changed, 23 insertions(+), 2 deletions(-)
 
-On Tue, Nov 17, 2020 at 10:03:28AM +0100, Geert Uytterhoeven wrote:
-> Add a placeholder node for the first Direct Memory Access Controller for
-> System (SYS-DMAC) instance, so it can be referred to from other device
-> nodes.
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Alternatively, we could omit the DMA properties in PATCH 4/4.
+diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
+index ac542d278a38..85a182191d7d 100644
+--- a/drivers/pinctrl/renesas/pinctrl.c
++++ b/drivers/pinctrl/renesas/pinctrl.c
+@@ -634,6 +634,9 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 	}
+ 
+ 	case PIN_CONFIG_POWER_SOURCE: {
++		int idx = sh_pfc_get_pin_index(pfc, _pin);
++		const struct sh_pfc_pin *pin = &pfc->info->pins[idx];
++		int lower_voltage;
+ 		u32 pocctrl, val;
+ 		int bit;
+ 
+@@ -648,7 +651,10 @@ static int sh_pfc_pinconf_get(struct pinctrl_dev *pctldev, unsigned _pin,
+ 		val = sh_pfc_read(pfc, pocctrl);
+ 		spin_unlock_irqrestore(&pfc->lock, flags);
+ 
+-		arg = (val & BIT(bit)) ? 3300 : 1800;
++		lower_voltage = (pin->configs & SH_PFC_PIN_VOLTAGE_25_33) ?
++			2500 : 1800;
++
++		arg = (val & BIT(bit)) ? 3300 : lower_voltage;
+ 		break;
+ 	}
+ 
+@@ -702,6 +708,9 @@ static int sh_pfc_pinconf_set(struct pinctrl_dev *pctldev, unsigned _pin,
+ 
+ 		case PIN_CONFIG_POWER_SOURCE: {
+ 			unsigned int mV = pinconf_to_config_argument(configs[i]);
++			int idx = sh_pfc_get_pin_index(pfc, _pin);
++			const struct sh_pfc_pin *pin = &pfc->info->pins[idx];
++			int lower_voltage;
+ 			u32 pocctrl, val;
+ 			int bit;
+ 
+@@ -712,7 +721,10 @@ static int sh_pfc_pinconf_set(struct pinctrl_dev *pctldev, unsigned _pin,
+ 			if (WARN(bit < 0, "invalid pin %#x", _pin))
+ 				return bit;
+ 
+-			if (mV != 1800 && mV != 3300)
++			lower_voltage = (pin->configs & SH_PFC_PIN_VOLTAGE_25_33) ?
++				2500 : 1800;
++
++			if (mV != lower_voltage && mV != 3300)
+ 				return -EINVAL;
+ 
+ 			spin_lock_irqsave(&pfc->lock, flags);
+diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
+index dc484c13f59c..00bfda90a7b7 100644
+--- a/drivers/pinctrl/renesas/sh_pfc.h
++++ b/drivers/pinctrl/renesas/sh_pfc.h
+@@ -31,6 +31,15 @@ enum {
+ 					 SH_PFC_PIN_CFG_PULL_DOWN)
+ #define SH_PFC_PIN_CFG_IO_VOLTAGE	(1 << 4)
+ #define SH_PFC_PIN_CFG_DRIVE_STRENGTH	(1 << 5)
++
++#define SH_PFC_PIN_VOLTAGE_18_33	(0 << 6)
++#define SH_PFC_PIN_VOLTAGE_25_33	(1 << 6)
++
++#define SH_PFC_PIN_CFG_IO_VOLTAGE_18_33	(SH_PFC_PIN_CFG_IO_VOLTAGE | \
++					 SH_PFC_PIN_VOLTAGE_18_33)
++#define SH_PFC_PIN_CFG_IO_VOLTAGE_25_33	(SH_PFC_PIN_CFG_IO_VOLTAGE | \
++					 SH_PFC_PIN_VOLTAGE_25_33)
++
+ #define SH_PFC_PIN_CFG_NO_GPIO		(1 << 31)
+ 
+ struct sh_pfc_pin {
+-- 
+2.20.1
 
-I'll add quite some devices in the near future and I like this
-placeholder a lot better!
-
-Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---TiqCXmo5T1hvSQQg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl/gyBcACgkQFA3kzBSg
-KbZ5GA//eNJQDwIzz9/AYl+yiNjB7LORC+hFjF3N4dGJt/P3V6VKOWf7FhhXgQwh
-aPGlIbW+MvkUhF8Y3g/V8Zkl0Lpp0MlGcanIFfCsTCZ9qwYGtPbAq1kSC6EJ5RPn
-AVj88qH0xJSTpvPq/CLC6TYDieqX/lMvulUr8P6TOHS4ZbGTOWibmJ/gLzYs3Pn6
-ZHFA70DFqzeV6ZfuuJ8ovW1aMSKOc+uerfdyn3OLKx69Qaxuv0NX+nlcUEh0gMQC
-NB6GcD/FZu34yEPwSD2BawsxPFBd1WEAalNUbCGTcxhaY61usO6ofiUtzZIEKbC6
-qaM/oJFi81/nEWCn+eosP+KEyqb8ufcz3iEfObvNv4sTmCB4n3gJv9dOvToDVytd
-ziYUgZsEBaEPGnuPTcdz5TIG7qPPAw2phAfw1OCKHuYoTv/LXe+H7JjxbtfgQady
-3vcw7Z1kXMZeKqfbZHD6DuvmFoHfqtpcFZqqyJr0RNpclaXtYNkPROaMhABRDJ3K
-JF3aALr/8kfd5kz5iMGQJwWvZhSJ/ZF+yWSIL0QlRCSjZy8xepmzQ8AKz+2LSMpO
-qp7gV/+K/adtr4urlFYEKbOlhhFtzeeRcSFrzRfQG+Len52ZWuJNVWX7uVxunTEt
-d0FWtPjJk4GWnjFzxOPHVq6TSjWd+PMcxTf5LXrgZreW1nsYlZI=
-=h4ff
------END PGP SIGNATURE-----
-
---TiqCXmo5T1hvSQQg--
