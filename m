@@ -2,409 +2,223 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2B9C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0BDC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7188A22D49
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:08:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9DE122D49
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbgLUSIW (ORCPT
+        id S1726044AbgLUSS6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Dec 2020 13:08:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49298 "EHLO
+        Mon, 21 Dec 2020 13:18:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51036 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbgLUSIV (ORCPT
+        with ESMTP id S1726039AbgLUSS5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Dec 2020 13:08:21 -0500
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A293C0613D3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Dec 2020 10:07:41 -0800 (PST)
-Received: by mail-pf1-x431.google.com with SMTP id v2so6890198pfm.9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Dec 2020 10:07:41 -0800 (PST)
+        Mon, 21 Dec 2020 13:18:57 -0500
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19455C061248;
+        Mon, 21 Dec 2020 10:18:10 -0800 (PST)
+Received: by mail-oi1-x230.google.com with SMTP id 9so12185497oiq.3;
+        Mon, 21 Dec 2020 10:18:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=XzvMh5tfRy0HIGfFH/GovknnlbuLVZpo/zLn1QWOG6s=;
-        b=M1/tGCk6uoA72HoCfY/nDSpkeSqUtJdgNZiBkHrS9OzG3PxNAX2M8axSKo+wXWCuYl
-         /srM78KXPxq7FyRF6GMcsAN8BIBtI6FVi1pXzQvr5CdIgqSFCRcMhlDfbSBZeSN/WZyP
-         4dUb5ddmrfT5rXIlLbPY+ZxXlL2GL7bSW5OJlLcsbnxLsA3ceXrJJ8fTXx/XtX34PsmY
-         CqAXDzBCKQ1qqKiQi2zRJmoWlczfQEFDNRlR1Ld3w9/fiP8/Tbme/+985pQUuN8SZymX
-         QP8ydmUQmmfW8tPm9SA/bH7HW8G8YbZhiL5BANxTPOQbcirnCa2hd2O0uQuMdkEhu2nk
-         iOuA==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=bjt7t0lHiDb8iNwGakGpRsBr5h+nuMVmrC8IPWSsSh8=;
+        b=QZQ6RZhpSFsc51rxiAvqFSG6kWQFjA/OHI+jdyTF2vmOPECGpU39poJD06q7Tz/iWM
+         jzGgeVgcwjYug2F7Yqo2yRbj7QwQrxrHK7diwmW8yQi1yKd4jAR0ruP/LoGUzSwFdQvR
+         zM0AD29KiSd/IIYyko5ERaa4i8Yk0M3DG7OzCTJIeOPgLtkLr1Icn6aGjuyGCx/xnnou
+         FTRJdLqGGtTpz45rXlJJ/qNgBPZuE20IkMSofeWcQsOCk1lAvf82B1eqFce1Vj8tBYb+
+         pb30OaAwgfGPABkCSYIQC8pqYfTGzlsMW+o3sW1AxNtcGS1GO/b351VAEZ/pTOonEMTR
+         f+Eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=XzvMh5tfRy0HIGfFH/GovknnlbuLVZpo/zLn1QWOG6s=;
-        b=XnKCyUf5w0Xgv5mO//P0opvEDWDZT8SGqU3feeXNydhrHvlHTPKx2F1y8pP6yQ/Vf5
-         XYq17TyCRFF4dPZJzjkBGNGi+hcYplIH6+LaTea2qoatSKAXFgdVEpAukf0avxz4aABr
-         M5yjV9H+syf0vRQkclCv7+3pwL1zj7h2j64cXkY4OXFOH1GVKFXee7UhLqYyigOYv1fG
-         gcK5fpnFwcit0gQYebcVaIB2bK2DfK7atTR8bQyGUj4weyzCOXXvQnzHWp7j6/q8tj0p
-         /JxI86SFA96paGyFyX7ipp11Rcku8E4LeM2TcbtGU9SC2hX7PJVlBUr5of7+hVzGAkj1
-         NNeA==
-X-Gm-Message-State: AOAM532n9WCL4XE4SJsocbKhjYm7Gfl/cBsSh+NQBq21ugpsWgGpBjsY
-        8rxNEDad51sn9Xh7fwaQsmPZk+pJJ+0UzQ==
-X-Google-Smtp-Source: ABdhPJwjGrZjOV9J+5OKanqFs3BH38OHV77YwoVMuNPkZsh/trZht01TTVHoCYqM6MjDIhQ5pGhHow==
-X-Received: by 2002:a62:1b16:0:b029:19e:238:8627 with SMTP id b22-20020a621b160000b029019e02388627mr15345003pfb.52.1608559164868;
-        Mon, 21 Dec 2020 05:59:24 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id 19sm16412945pfn.133.2020.12.21.05.59.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Dec 2020 05:59:23 -0800 (PST)
-Message-ID: <5fe0aa3b.1c69fb81.20f90.fd4d@mx.google.com>
-Date:   Mon, 21 Dec 2020 05:59:23 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=bjt7t0lHiDb8iNwGakGpRsBr5h+nuMVmrC8IPWSsSh8=;
+        b=P/et0dE9SolK4Ukk7cepElcefTDZw7LONnYFGhOuEx/ecrQSR74EsK4qH7h5KdcXll
+         QArPFHDH7Aigy6ZCcUQr6rd0U48kSTE6HRw/R/Xg6rhkoxZqgH/EIahLQLVVPk7qrF7u
+         S4k3JEvvMDgQwwsQj9JqtSkcYVR2EvbMGXfKIxKmcjrNkd5AHle9OIILUqt1RBw0bBbq
+         Tna226SmUVSXdXpySpvthmhE5oOfaH1w4y1A6Zr/8NNgNqNW+LcG1GzH1GgtRULy/bCt
+         I2cRm4kDna08zUfKs45LeGKiZsT42EsYI1hZA9/IOXKTV/cqBMKCglXMPVqrBDybGhTl
+         ixCw==
+X-Gm-Message-State: AOAM532In1N/4ep27YrYfZLTL/1xQoqcIrE/t6DpmBBLzAJQLQKaUSNU
+        C5ojBHsZnTAUszjzxe6EVmHxL3R7nVY=
+X-Google-Smtp-Source: ABdhPJzmgZadZ5X1o8itu+4Nry3pqWgeEu7wTNVqpBeXYOkpVRZRTnwLS6stIZVFT6sW1U1UpLnteQ==
+X-Received: by 2002:aca:5204:: with SMTP id g4mr11655218oib.91.1608568022724;
+        Mon, 21 Dec 2020 08:27:02 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id a52sm2605992otc.46.2020.12.21.08.27.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Dec 2020 08:27:01 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Subject: Re: [PATCH] watchdog: renesas_wdt: don't sleep in atomic context
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-watchdog@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org
+References: <20201219173415.21848-1-wsa+renesas@sang-engineering.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+Message-ID: <63c0b5ba-fe18-b667-d346-880287061c46@roeck-us.net>
+Date:   Mon, 21 Dec 2020 08:27:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: master
-X-Kernelci-Tree: renesas
-X-Kernelci-Kernel: renesas-devel-2020-12-21-v5.10
-X-Kernelci-Report-Type: test
-Subject: renesas/master baseline: 295 runs,
- 9 regressions (renesas-devel-2020-12-21-v5.10)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+In-Reply-To: <20201219173415.21848-1-wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master baseline: 295 runs, 9 regressions (renesas-devel-2020-12-21-=
-v5.10)
+On 12/19/20 9:34 AM, Wolfram Sang wrote:
+> In the restart handler, we hit multiple OOPSes. One because of
+> usleep_range() and one because of RPM. So, instead of re-using
+> rwdt_start(), we implement an atomic version of it in the restart
+> handler. As a little bonus, reboot will occur sooner because we can now
+> use the smallest divider in the custom restart routine.
+> 
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+
+> ---
+> 
+> It is problematic to add a Fixes: tag because we would need three of
+> them. So, I'd think we add a stable tag and as long as the patch
+> applies, all is fine. Other opinions?
+> 
+>  drivers/watchdog/renesas_wdt.c | 30 ++++++++++++++++++++++++------
+>  1 file changed, 24 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
+> index 47fce4de0110..d2b5074bca65 100644
+> --- a/drivers/watchdog/renesas_wdt.c
+> +++ b/drivers/watchdog/renesas_wdt.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+>  #include <linux/io.h>
+> +#include <linux/iopoll.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+> @@ -50,6 +51,7 @@ struct rwdt_priv {
+>  	struct watchdog_device wdev;
+>  	unsigned long clk_rate;
+>  	u8 cks;
+> +	struct clk *clk;
+>  };
+>  
+>  static void rwdt_write(struct rwdt_priv *priv, u32 val, unsigned int reg)
+> @@ -125,13 +127,30 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
+>  	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+>  }
+>  
+> +/* needs to be atomic - no RPM, no usleep_range, no scheduling! */
+>  static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
+>  			void *data)
+>  {
+>  	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
+> +	u8 val;
+> +
+> +	clk_prepare_enable(priv->clk);
+> +
+> +	/* Stop the timer before we modify any register */
+> +	val = readb_relaxed(priv->base + RWTCSRA) & ~RWTCSRA_TME;
+> +	rwdt_write(priv, val, RWTCSRA);
+> +	/* Delay 2 cycles before setting watchdog counter */
+> +	udelay(DIV_ROUND_UP(2 * 1000000, priv->clk_rate));
+>  
+> -	rwdt_start(wdev);
+>  	rwdt_write(priv, 0xffff, RWTCNT);
+> +	/* smallest divider to reboot soon */
+> +	rwdt_write(priv, 0, RWTCSRA);
+> +
+> +	readb_poll_timeout_atomic(priv->base + RWTCSRA, val,
+> +				  !(val & RWTCSRA_WRFLG), 1, 100);
+> +
+> +	rwdt_write(priv, RWTCSRA_TME, RWTCSRA);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -191,7 +210,6 @@ static int rwdt_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct rwdt_priv *priv;
+> -	struct clk *clk;
+>  	unsigned long clks_per_sec;
+>  	int ret, i;
+>  	u8 csra;
+> @@ -207,13 +225,13 @@ static int rwdt_probe(struct platform_device *pdev)
+>  	if (IS_ERR(priv->base))
+>  		return PTR_ERR(priv->base);
+>  
+> -	clk = devm_clk_get(dev, NULL);
+> -	if (IS_ERR(clk))
+> -		return PTR_ERR(clk);
+> +	priv->clk = devm_clk_get(dev, NULL);
+> +	if (IS_ERR(priv->clk))
+> +		return PTR_ERR(priv->clk);
+>  
+>  	pm_runtime_enable(dev);
+>  	pm_runtime_get_sync(dev);
+> -	priv->clk_rate = clk_get_rate(clk);
+> +	priv->clk_rate = clk_get_rate(priv->clk);
+>  	csra = readb_relaxed(priv->base + RWTCSRA);
+>  	priv->wdev.bootstatus = csra & RWTCSRA_WOVF ? WDIOF_CARDRESET : 0;
+>  	pm_runtime_put(dev);
+> 
 
-Regressions Summary
--------------------
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-imx6q-sabresd            | arm   | lab-nxp         | gcc-8    | imx_v6_v7_d=
-efconfig          | 1          =
-
-imx6q-var-dt6customboard | arm   | lab-baylibre    | gcc-8    | multi_v7_de=
-fc...CONFIG_SMP=3Dn | 1          =
-
-imx6ul-pico-hobbit       | arm   | lab-pengutronix | gcc-8    | imx_v6_v7_d=
-efconfig          | 1          =
-
-imx8mp-evk               | arm64 | lab-nxp         | gcc-8    | defconfig  =
-                  | 1          =
-
-meson-gxm-q200           | arm64 | lab-baylibre    | gcc-8    | defconfig  =
-                  | 2          =
-
-qemu_arm-versatilepb     | arm   | lab-baylibre    | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-qemu_arm-versatilepb     | arm   | lab-cip         | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-qemu_arm-versatilepb     | arm   | lab-collabora   | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2020-12-21-v5.10/plan/baseline/
-
-  Test:     baseline
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2020-12-21-v5.10
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      a0d9f5cfe680c9afb8a9bb2d57b6a1c707da9c3a =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-imx6q-sabresd            | arm   | lab-nxp         | gcc-8    | imx_v6_v7_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5fe074834fb002747fc94cd7
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: imx_v6_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/imx_v6_v7_defconfig/gcc-8/lab-nxp/baseline-imx6q-sabres=
-d.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/imx_v6_v7_defconfig/gcc-8/lab-nxp/baseline-imx6q-sabres=
-d.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5fe074834fb002747fc94=
-cd8
-        failing since 48 days (last pass: renesas-devel-2020-10-30-v5.10-rc=
-1, first fail: renesas-devel-2020-11-02-v5.10-rc2) =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-imx6q-var-dt6customboard | arm   | lab-baylibre    | gcc-8    | multi_v7_de=
-fc...CONFIG_SMP=3Dn | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5fe07600ddf9c865d7c94cc6
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig+CONFIG_SMP=3Dn
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/ba=
-seline-imx6q-var-dt6customboard.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/ba=
-seline-imx6q-var-dt6customboard.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5fe07600ddf9c865d7c94=
-cc7
-        failing since 48 days (last pass: renesas-devel-2020-10-30-v5.10-rc=
-1, first fail: renesas-devel-2020-11-02-v5.10-rc2) =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-imx6ul-pico-hobbit       | arm   | lab-pengutronix | gcc-8    | imx_v6_v7_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5fe073e12c4b4545eac94cb9
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: imx_v6_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/imx_v6_v7_defconfig/gcc-8/lab-pengutronix/baseline-imx6=
-ul-pico-hobbit.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/imx_v6_v7_defconfig/gcc-8/lab-pengutronix/baseline-imx6=
-ul-pico-hobbit.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5fe073e12c4b4545eac94=
-cba
-        new failure (last pass: renesas-devel-2020-12-14-v5.10) =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-imx8mp-evk               | arm64 | lab-nxp         | gcc-8    | defconfig  =
-                  | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5fe070ea45f4e1e9c1c94cd2
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm64/defconfig/gcc-8/lab-nxp/baseline-imx8mp-evk.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm64/defconfig/gcc-8/lab-nxp/baseline-imx8mp-evk.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/arm64/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5fe070ea45f4e1e9c1c94=
-cd3
-        new failure (last pass: renesas-devel-2020-12-14-v5.10) =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-meson-gxm-q200           | arm64 | lab-baylibre    | gcc-8    | defconfig  =
-                  | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5fe06f6c14c3df7188c94ccd
-
-  Results:     3 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm64/defconfig/gcc-8/lab-baylibre/baseline-meson-gxm-q200.=
-txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm64/defconfig/gcc-8/lab-baylibre/baseline-meson-gxm-q200.=
-html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/arm64/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/5fe06f6c14c3df7=
-188c94cd1
-        new failure (last pass: renesas-devel-2020-12-14-v5.10)
-        10 lines
-
-    2020-12-21 09:48:23.130000+00:00  kern  :alert : Mem abort info:
-    2020-12-21 09:48:23.130000+00:00  kern  :alert :   ESR =3D 0x96000004
-    2020-12-21 09:48:23.171000+00:00  kern  :alert :   EC =3D 0x25: DABT (c=
-urrent EL), IL =3D 32 bits
-    2020-12-21 09:48:23.171000+00:00  kern  :alert :   SET =3D 0, FnV =3D 0
-    2020-12-21 09:48:23.172000+00:00  kern  :alert :   EA =3D 0, S1PTW =3D 0
-    2020-12-21 09:48:23.172000+00:00  kern  :alert : Data abort info:
-    2020-12-21 09:48:23.172000+00:00  kern  :alert :   ISV =3D 0, ISS =3D 0=
-x00000004
-    2020-12-21 09:48:23.172000+00:00  kern  :alert :   CM =3D 0, WnR =3D 0
-    2020-12-21 09:48:23.172000+00:00  kern  :alert : [00020000400400a0] add=
-ress between user and kernel address ranges   =
-
-
-  * baseline.dmesg.emerg: https://kernelci.org/test/case/id/5fe06f6c14c3df7=
-188c94cd2
-        new failure (last pass: renesas-devel-2020-12-14-v5.10)
-        2 lines
-
-    2020-12-21 09:48:23.173000+00:00  kern  :emerg : Code: 97f4c44b 9100e3e=
-0 97f4c59d b4000280 (f9403000) =
-
-    2020-12-21 09:48:23.198000+00:00  + set +x   =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-qemu_arm-versatilepb     | arm   | lab-baylibre    | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5fe06fa62db02fdc10c94cda
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: versatile_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/versatile_defconfig/gcc-8/lab-baylibre/baseline-qemu_ar=
-m-versatilepb.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/versatile_defconfig/gcc-8/lab-baylibre/baseline-qemu_ar=
-m-versatilepb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5fe06fa62db02fdc10c94=
-cdb
-        failing since 33 days (last pass: renesas-devel-2020-11-10-v5.10-rc=
-3, first fail: renesas-devel-2020-11-16-v5.10-rc4) =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-qemu_arm-versatilepb     | arm   | lab-cip         | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5fe06f970cb3f09033c94cea
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: versatile_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/versatile_defconfig/gcc-8/lab-cip/baseline-qemu_arm-ver=
-satilepb.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/versatile_defconfig/gcc-8/lab-cip/baseline-qemu_arm-ver=
-satilepb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5fe06f970cb3f09033c94=
-ceb
-        failing since 33 days (last pass: renesas-devel-2020-11-10-v5.10-rc=
-3, first fail: renesas-devel-2020-11-16-v5.10-rc4) =
-
- =
-
-
-
-platform                 | arch  | lab             | compiler | defconfig  =
-                  | regressions
--------------------------+-------+-----------------+----------+------------=
-------------------+------------
-qemu_arm-versatilepb     | arm   | lab-collabora   | gcc-8    | versatile_d=
-efconfig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5fe06f635f7827092ac94cf6
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: versatile_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/versatile_defconfig/gcc-8/lab-collabora/baseline-qemu_a=
-rm-versatilepb.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-020-12-21-v5.10/arm/versatile_defconfig/gcc-8/lab-collabora/baseline-qemu_a=
-rm-versatilepb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/5fe06f635f7827092ac94=
-cf7
-        failing since 33 days (last pass: renesas-devel-2020-11-10-v5.10-rc=
-3, first fail: renesas-devel-2020-11-16-v5.10-rc4) =
-
- =20
