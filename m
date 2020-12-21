@@ -2,223 +2,355 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC0BDC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA84C433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A9DE122D49
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:19:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA26523105
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:37:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726044AbgLUSS6 (ORCPT
+        id S1727138AbgLUShO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Dec 2020 13:18:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51036 "EHLO
+        Mon, 21 Dec 2020 13:37:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726039AbgLUSS5 (ORCPT
+        with ESMTP id S1727125AbgLUShO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Dec 2020 13:18:57 -0500
-Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19455C061248;
-        Mon, 21 Dec 2020 10:18:10 -0800 (PST)
-Received: by mail-oi1-x230.google.com with SMTP id 9so12185497oiq.3;
-        Mon, 21 Dec 2020 10:18:10 -0800 (PST)
+        Mon, 21 Dec 2020 13:37:14 -0500
+Received: from mail-ot1-x329.google.com (mail-ot1-x329.google.com [IPv6:2607:f8b0:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DBF8AC061285
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Dec 2020 10:36:33 -0800 (PST)
+Received: by mail-ot1-x329.google.com with SMTP id n42so3750071ota.12
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Dec 2020 10:36:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bjt7t0lHiDb8iNwGakGpRsBr5h+nuMVmrC8IPWSsSh8=;
-        b=QZQ6RZhpSFsc51rxiAvqFSG6kWQFjA/OHI+jdyTF2vmOPECGpU39poJD06q7Tz/iWM
-         jzGgeVgcwjYug2F7Yqo2yRbj7QwQrxrHK7diwmW8yQi1yKd4jAR0ruP/LoGUzSwFdQvR
-         zM0AD29KiSd/IIYyko5ERaa4i8Yk0M3DG7OzCTJIeOPgLtkLr1Icn6aGjuyGCx/xnnou
-         FTRJdLqGGtTpz45rXlJJ/qNgBPZuE20IkMSofeWcQsOCk1lAvf82B1eqFce1Vj8tBYb+
-         pb30OaAwgfGPABkCSYIQC8pqYfTGzlsMW+o3sW1AxNtcGS1GO/b351VAEZ/pTOonEMTR
-         f+Eg==
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=3+MdQ2uV70E0/w5yDMsjfrNxO+jatM/HxQ1uAxOim2c=;
+        b=ZbnNtJntzYLBL8C8AbpP27OAvHvap+Z/ek7uLsvYQygj8K4VjX9V/Wn0p1HzimIRlN
+         l9uCqO8cvOyd82Fes78cyesSoNv0CXTsoA4hEObDZt8BrgVGyHmPpjzg/tz/0P16mVV9
+         w1UAzYjyr+divmgZJpiVUtQy06D37L4tWIiC0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=bjt7t0lHiDb8iNwGakGpRsBr5h+nuMVmrC8IPWSsSh8=;
-        b=P/et0dE9SolK4Ukk7cepElcefTDZw7LONnYFGhOuEx/ecrQSR74EsK4qH7h5KdcXll
-         QArPFHDH7Aigy6ZCcUQr6rd0U48kSTE6HRw/R/Xg6rhkoxZqgH/EIahLQLVVPk7qrF7u
-         S4k3JEvvMDgQwwsQj9JqtSkcYVR2EvbMGXfKIxKmcjrNkd5AHle9OIILUqt1RBw0bBbq
-         Tna226SmUVSXdXpySpvthmhE5oOfaH1w4y1A6Zr/8NNgNqNW+LcG1GzH1GgtRULy/bCt
-         I2cRm4kDna08zUfKs45LeGKiZsT42EsYI1hZA9/IOXKTV/cqBMKCglXMPVqrBDybGhTl
-         ixCw==
-X-Gm-Message-State: AOAM532In1N/4ep27YrYfZLTL/1xQoqcIrE/t6DpmBBLzAJQLQKaUSNU
-        C5ojBHsZnTAUszjzxe6EVmHxL3R7nVY=
-X-Google-Smtp-Source: ABdhPJzmgZadZ5X1o8itu+4Nry3pqWgeEu7wTNVqpBeXYOkpVRZRTnwLS6stIZVFT6sW1U1UpLnteQ==
-X-Received: by 2002:aca:5204:: with SMTP id g4mr11655218oib.91.1608568022724;
-        Mon, 21 Dec 2020 08:27:02 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id a52sm2605992otc.46.2020.12.21.08.27.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 21 Dec 2020 08:27:01 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Subject: Re: [PATCH] watchdog: renesas_wdt: don't sleep in atomic context
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-watchdog@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org
-References: <20201219173415.21848-1-wsa+renesas@sang-engineering.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-Message-ID: <63c0b5ba-fe18-b667-d346-880287061c46@roeck-us.net>
-Date:   Mon, 21 Dec 2020 08:27:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3+MdQ2uV70E0/w5yDMsjfrNxO+jatM/HxQ1uAxOim2c=;
+        b=r3JgKPpYNceVWCVIxnNGS+fnT9zFH/N0Tj1M5/uvSYKESFnjGYg4WNuNKjnvaKaxZr
+         1kIjuU44082TfjNqQZErG23j0wMk6PBONU1MCsUrANKmgMEnCyErHUQQH9C7k1MPJ25T
+         ozqB/cq9tXor+EwdNovBQKewivXynzAAoH4IvcIMc877Os2FVuHcZ+OAdMZP1Zhioij5
+         YUeVPdox9ga7UlywGBkFZyvfwM+DMcENjidmzf1TvSRXXtET+LB5whox8g2CPJ0iPhfY
+         9omFHCrqUzJmNFLkoJwYcGOKEjR4y0JtCge/1kQDZV166En+PXFkImvGXBb9H/f9f+lX
+         otGQ==
+X-Gm-Message-State: AOAM531G9bcivW95wO0fFHmLfgpYKej3w2SHj74PEpdjpQ14Wui1JifZ
+        AttgBQKeyxZjhAlrMAE6gVgnC1m/eP1X4VCPkVJNeg==
+X-Google-Smtp-Source: ABdhPJySMY8d5xlejCyHAhIKJ/NR/ivpsrRZLBogmjRTI9mgEjWB5QuaKI5D1iHt527SC6xeqYBr/rq39IkPwtgNCSk=
+X-Received: by 2002:a9d:4e08:: with SMTP id p8mr13007864otf.188.1608575793159;
+ Mon, 21 Dec 2020 10:36:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20201219173415.21848-1-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201221015730.28333-1-laurent.pinchart+renesas@ideasonboard.com> <20201221015730.28333-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20201221015730.28333-4-laurent.pinchart+renesas@ideasonboard.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Mon, 21 Dec 2020 19:36:22 +0100
+Message-ID: <CAKMK7uG1dT5mZT48sv4XewvZer-qm=WwQOeVd=Y-Yq_kzjdG+g@mail.gmail.com>
+Subject: Re: [PATCH 3/4] drm: Extend color correction to support 3D-CLU
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:DRM DRIVERS FOR RENESAS" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
+        Pekka Paalanen <ppaalanen@gmail.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 12/19/20 9:34 AM, Wolfram Sang wrote:
-> In the restart handler, we hit multiple OOPSes. One because of
-> usleep_range() and one because of RPM. So, instead of re-using
-> rwdt_start(), we implement an atomic version of it in the restart
-> handler. As a little bonus, reboot will occur sooner because we can now
-> use the smallest divider in the custom restart routine.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Mon, Dec 21, 2020 at 2:57 AM Laurent Pinchart
+<laurent.pinchart+renesas@ideasonboard.com> wrote:
+>
+> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>
+> Extend the existing color management properties to support provision
+> of a 3D cubic look up table, allowing for color specific adjustments.
+>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Co-developed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.=
+com>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.co=
+m>
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Assuming this is meant for merging to upstream: Needs igt + open
+userspace in a compositor that cares enough.
+-Daniel
 
 > ---
-> 
-> It is problematic to add a Fixes: tag because we would need three of
-> them. So, I'd think we add a stable tag and as long as the patch
-> applies, all is fine. Other opinions?
-> 
->  drivers/watchdog/renesas_wdt.c | 30 ++++++++++++++++++++++++------
->  1 file changed, 24 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/watchdog/renesas_wdt.c b/drivers/watchdog/renesas_wdt.c
-> index 47fce4de0110..d2b5074bca65 100644
-> --- a/drivers/watchdog/renesas_wdt.c
-> +++ b/drivers/watchdog/renesas_wdt.c
-> @@ -9,6 +9,7 @@
->  #include <linux/clk.h>
->  #include <linux/delay.h>
->  #include <linux/io.h>
-> +#include <linux/iopoll.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> @@ -50,6 +51,7 @@ struct rwdt_priv {
->  	struct watchdog_device wdev;
->  	unsigned long clk_rate;
->  	u8 cks;
-> +	struct clk *clk;
->  };
->  
->  static void rwdt_write(struct rwdt_priv *priv, u32 val, unsigned int reg)
-> @@ -125,13 +127,30 @@ static unsigned int rwdt_get_timeleft(struct watchdog_device *wdev)
->  	return DIV_BY_CLKS_PER_SEC(priv, 65536 - val);
+>  drivers/gpu/drm/drm_atomic_helper.c       |  1 +
+>  drivers/gpu/drm/drm_atomic_state_helper.c |  3 ++
+>  drivers/gpu/drm/drm_atomic_uapi.c         | 10 ++++++
+>  drivers/gpu/drm/drm_color_mgmt.c          | 41 +++++++++++++++++++----
+>  drivers/gpu/drm/drm_mode_config.c         | 14 ++++++++
+>  include/drm/drm_crtc.h                    |  9 +++++
+>  include/drm/drm_mode_config.h             | 11 ++++++
+>  7 files changed, 82 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_at=
+omic_helper.c
+> index ba1507036f26..0f54897d3c8d 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -3558,6 +3558,7 @@ int drm_atomic_helper_legacy_gamma_set(struct drm_c=
+rtc *crtc,
+>         replaced  =3D drm_property_replace_blob(&crtc_state->degamma_lut,=
+ NULL);
+>         replaced |=3D drm_property_replace_blob(&crtc_state->ctm, NULL);
+>         replaced |=3D drm_property_replace_blob(&crtc_state->gamma_lut, b=
+lob);
+> +       replaced |=3D drm_property_replace_blob(&crtc_state->cubic_lut, N=
+ULL);
+>         crtc_state->color_mgmt_changed |=3D replaced;
+>
+>         ret =3D drm_atomic_commit(state);
+> diff --git a/drivers/gpu/drm/drm_atomic_state_helper.c b/drivers/gpu/drm/=
+drm_atomic_state_helper.c
+> index ddcf5c2c8e6a..61c685b50677 100644
+> --- a/drivers/gpu/drm/drm_atomic_state_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_state_helper.c
+> @@ -141,6 +141,8 @@ void __drm_atomic_helper_crtc_duplicate_state(struct =
+drm_crtc *crtc,
+>                 drm_property_blob_get(state->ctm);
+>         if (state->gamma_lut)
+>                 drm_property_blob_get(state->gamma_lut);
+> +       if (state->cubic_lut)
+> +               drm_property_blob_get(state->cubic_lut);
+>         state->mode_changed =3D false;
+>         state->active_changed =3D false;
+>         state->planes_changed =3D false;
+> @@ -213,6 +215,7 @@ void __drm_atomic_helper_crtc_destroy_state(struct dr=
+m_crtc_state *state)
+>         drm_property_blob_put(state->degamma_lut);
+>         drm_property_blob_put(state->ctm);
+>         drm_property_blob_put(state->gamma_lut);
+> +       drm_property_blob_put(state->cubic_lut);
 >  }
->  
-> +/* needs to be atomic - no RPM, no usleep_range, no scheduling! */
->  static int rwdt_restart(struct watchdog_device *wdev, unsigned long action,
->  			void *data)
->  {
->  	struct rwdt_priv *priv = watchdog_get_drvdata(wdev);
-> +	u8 val;
+>  EXPORT_SYMBOL(__drm_atomic_helper_crtc_destroy_state);
+>
+> diff --git a/drivers/gpu/drm/drm_atomic_uapi.c b/drivers/gpu/drm/drm_atom=
+ic_uapi.c
+> index 268bb69c2e2f..07229acab71c 100644
+> --- a/drivers/gpu/drm/drm_atomic_uapi.c
+> +++ b/drivers/gpu/drm/drm_atomic_uapi.c
+> @@ -471,6 +471,14 @@ static int drm_atomic_crtc_set_property(struct drm_c=
+rtc *crtc,
+>                                         &replaced);
+>                 state->color_mgmt_changed |=3D replaced;
+>                 return ret;
+> +       } else if (property =3D=3D config->cubic_lut_property) {
+> +               ret =3D drm_atomic_replace_property_blob_from_id(dev,
+> +                                       &state->cubic_lut,
+> +                                       val,
+> +                                       -1, sizeof(struct drm_color_lut),
+> +                                       &replaced);
+> +               state->color_mgmt_changed |=3D replaced;
+> +               return ret;
+>         } else if (property =3D=3D config->prop_out_fence_ptr) {
+>                 s32 __user *fence_ptr =3D u64_to_user_ptr(val);
+>
+> @@ -516,6 +524,8 @@ drm_atomic_crtc_get_property(struct drm_crtc *crtc,
+>                 *val =3D (state->ctm) ? state->ctm->base.id : 0;
+>         else if (property =3D=3D config->gamma_lut_property)
+>                 *val =3D (state->gamma_lut) ? state->gamma_lut->base.id :=
+ 0;
+> +       else if (property =3D=3D config->cubic_lut_property)
+> +               *val =3D (state->cubic_lut) ? state->cubic_lut->base.id :=
+ 0;
+>         else if (property =3D=3D config->prop_out_fence_ptr)
+>                 *val =3D 0;
+>         else if (property =3D=3D crtc->scaling_filter_property)
+> diff --git a/drivers/gpu/drm/drm_color_mgmt.c b/drivers/gpu/drm/drm_color=
+_mgmt.c
+> index 3bcabc2f6e0e..85bbbc8ce8e5 100644
+> --- a/drivers/gpu/drm/drm_color_mgmt.c
+> +++ b/drivers/gpu/drm/drm_color_mgmt.c
+> @@ -33,7 +33,7 @@
+>  /**
+>   * DOC: overview
+>   *
+> - * Color management or color space adjustments is supported through a se=
+t of 5
+> + * Color management or color space adjustments is supported through a se=
+t of 7
+>   * properties on the &drm_crtc object. They are set up by calling
+>   * drm_crtc_enable_color_mgmt().
+>   *
+> @@ -60,7 +60,7 @@
+>   * =E2=80=9CCTM=E2=80=9D:
+>   *     Blob property to set the current transformation matrix (CTM) appl=
+y to
+>   *     pixel data after the lookup through the degamma LUT and before th=
+e
+> - *     lookup through the gamma LUT. The data is interpreted as a struct
+> + *     lookup through the cubic LUT. The data is interpreted as a struct
+>   *     &drm_color_ctm.
+>   *
+>   *     Setting this to NULL (blob property value set to 0) means a
+> @@ -68,13 +68,40 @@
+>   *     boot-up state too. Drivers can access the blob for the color conv=
+ersion
+>   *     matrix through &drm_crtc_state.ctm.
+>   *
+> + * =E2=80=9DCUBIC_LUT=E2=80=9D:
+> + *     Blob property to set the cubic (3D) lookup table performing color
+> + *     mapping after the transformation matrix and before the lookup thr=
+ough
+> + *     the gamma LUT. Unlike the degamma and gamma LUTs that map color
+> + *     components independently, the 3D LUT converts an input color to a=
+n
+> + *     output color by indexing into the 3D table using the color compon=
+ents
+> + *     as a 3D coordinate. The LUT is subsampled as 8-bit (or more) prec=
+ision
+> + *     would require too much storage space in the hardware, so the prec=
+ision
+> + *     of the color components is reduced before the look up, and the lo=
+w
+> + *     order bits may be used to interpolate between the nearest points =
+in 3D
+> + *     space.
+> + *
+> + *     The data is interpreted as an array of &struct drm_color_lut elem=
+ents.
+> + *     Hardware might choose not to use the full precision of the LUT
+> + *     elements.
+> + *
+> + *     Setting this to NULL (blob property value set to 0) means the out=
+put
+> + *     color is identical to the input color. This is generally the driv=
+er
+> + *     boot-up state too. Drivers can access this blob through
+> + *     &drm_crtc_state.cubic_lut.
+> + *
+> + * =E2=80=9DCUBIC_LUT_SIZE=E2=80=9D:
+> + *     Unsigned range property to give the size of the lookup table to b=
+e set
+> + *     on the CUBIC_LUT property (the size depends on the underlying har=
+dware).
+> + *     If drivers support multiple LUT sizes then they should publish th=
+e
+> + *     largest size, and sub-sample smaller sized LUTs appropriately.
+> + *
+>   * =E2=80=9CGAMMA_LUT=E2=80=9D:
+>   *     Blob property to set the gamma lookup table (LUT) mapping pixel d=
+ata
+> - *     after the transformation matrix to data sent to the connector. Th=
+e
+> - *     data is interpreted as an array of &struct drm_color_lut elements=
+.
+> - *     Hardware might choose not to use the full precision of the LUT el=
+ements
+> - *     nor use all the elements of the LUT (for example the hardware mig=
+ht
+> - *     choose to interpolate between LUT[0] and LUT[4]).
+> + *     after the cubic LUT to data sent to the connector. The data is
+> + *     interpreted as an array of &struct drm_color_lut elements. Hardwa=
+re
+> + *     might choose not to use the full precision of the LUT elements no=
+r use
+> + *     all the elements of the LUT (for example the hardware might choos=
+e to
+> + *     interpolate between LUT[0] and LUT[4]).
+>   *
+>   *     Setting this to NULL (blob property value set to 0) means a
+>   *     linear/pass-thru gamma table should be used. This is generally th=
+e
+> diff --git a/drivers/gpu/drm/drm_mode_config.c b/drivers/gpu/drm/drm_mode=
+_config.c
+> index f1affc1bb679..6c3324f60e7d 100644
+> --- a/drivers/gpu/drm/drm_mode_config.c
+> +++ b/drivers/gpu/drm/drm_mode_config.c
+> @@ -364,6 +364,20 @@ static int drm_mode_create_standard_properties(struc=
+t drm_device *dev)
+>                 return -ENOMEM;
+>         dev->mode_config.gamma_lut_size_property =3D prop;
+>
+> +       prop =3D drm_property_create(dev,
+> +                       DRM_MODE_PROP_BLOB,
+> +                       "CUBIC_LUT", 0);
+> +       if (!prop)
+> +               return -ENOMEM;
+> +       dev->mode_config.cubic_lut_property =3D prop;
 > +
-> +	clk_prepare_enable(priv->clk);
+> +       prop =3D drm_property_create_range(dev,
+> +                       DRM_MODE_PROP_IMMUTABLE,
+> +                       "CUBIC_LUT_SIZE", 0, UINT_MAX);
+> +       if (!prop)
+> +               return -ENOMEM;
+> +       dev->mode_config.cubic_lut_size_property =3D prop;
 > +
-> +	/* Stop the timer before we modify any register */
-> +	val = readb_relaxed(priv->base + RWTCSRA) & ~RWTCSRA_TME;
-> +	rwdt_write(priv, val, RWTCSRA);
-> +	/* Delay 2 cycles before setting watchdog counter */
-> +	udelay(DIV_ROUND_UP(2 * 1000000, priv->clk_rate));
->  
-> -	rwdt_start(wdev);
->  	rwdt_write(priv, 0xffff, RWTCNT);
-> +	/* smallest divider to reboot soon */
-> +	rwdt_write(priv, 0, RWTCSRA);
+>         prop =3D drm_property_create(dev,
+>                                    DRM_MODE_PROP_IMMUTABLE | DRM_MODE_PRO=
+P_BLOB,
+>                                    "IN_FORMATS", 0);
+> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
+> index 5f43d64d2a07..df5cc2239adb 100644
+> --- a/include/drm/drm_crtc.h
+> +++ b/include/drm/drm_crtc.h
+> @@ -288,6 +288,15 @@ struct drm_crtc_state {
+>          */
+>         struct drm_property_blob *gamma_lut;
+>
+> +       /**
+> +        * @cubic_lut:
+> +        *
+> +        * Cubic Lookup table for converting pixel data. See
+> +        * drm_crtc_enable_color_mgmt(). The blob (if not NULL) is a 3D a=
+rray
+> +        * of &struct drm_color_lut.
+> +        */
+> +       struct drm_property_blob *cubic_lut;
 > +
-> +	readb_poll_timeout_atomic(priv->base + RWTCSRA, val,
-> +				  !(val & RWTCSRA_WRFLG), 1, 100);
+>         /**
+>          * @target_vblank:
+>          *
+> diff --git a/include/drm/drm_mode_config.h b/include/drm/drm_mode_config.=
+h
+> index ab424ddd7665..8edb0094e5a7 100644
+> --- a/include/drm/drm_mode_config.h
+> +++ b/include/drm/drm_mode_config.h
+> @@ -800,6 +800,17 @@ struct drm_mode_config {
+>          */
+>         struct drm_property *gamma_lut_size_property;
+>
+> +       /**
+> +        * @cubic_lut_property: Optional CRTC property to set the 3D LUT =
+used to
+> +        * convert color spaces.
+> +        */
+> +       struct drm_property *cubic_lut_property;
+> +       /**
+> +        * @cubic_lut_size_property: Optional CRTC property for the size =
+of the
+> +        * 3D LUT as supported by the driver (read-only).
+> +        */
+> +       struct drm_property *cubic_lut_size_property;
 > +
-> +	rwdt_write(priv, RWTCSRA_TME, RWTCSRA);
-> +
->  	return 0;
->  }
->  
-> @@ -191,7 +210,6 @@ static int rwdt_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct rwdt_priv *priv;
-> -	struct clk *clk;
->  	unsigned long clks_per_sec;
->  	int ret, i;
->  	u8 csra;
-> @@ -207,13 +225,13 @@ static int rwdt_probe(struct platform_device *pdev)
->  	if (IS_ERR(priv->base))
->  		return PTR_ERR(priv->base);
->  
-> -	clk = devm_clk_get(dev, NULL);
-> -	if (IS_ERR(clk))
-> -		return PTR_ERR(clk);
-> +	priv->clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(priv->clk))
-> +		return PTR_ERR(priv->clk);
->  
->  	pm_runtime_enable(dev);
->  	pm_runtime_get_sync(dev);
-> -	priv->clk_rate = clk_get_rate(clk);
-> +	priv->clk_rate = clk_get_rate(priv->clk);
->  	csra = readb_relaxed(priv->base + RWTCSRA);
->  	priv->wdev.bootstatus = csra & RWTCSRA_WOVF ? WDIOF_CARDRESET : 0;
->  	pm_runtime_put(dev);
-> 
+>         /**
+>          * @suggested_x_property: Optional connector property with a hint=
+ for
+>          * the position of the output on the host's screen.
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
 
+
+--=20
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
