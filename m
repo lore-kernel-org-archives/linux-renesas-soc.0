@@ -2,73 +2,93 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55AC2C4332B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 02:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5933AC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 08:37:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22426230FB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 02:56:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2530322CA2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 08:37:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726166AbgLUC4F (ORCPT
+        id S1727051AbgLUIhK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 20 Dec 2020 21:56:05 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:14140 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726550AbgLUCzP (ORCPT
+        Mon, 21 Dec 2020 03:37:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45148 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbgLUIhJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 Dec 2020 21:55:15 -0500
-X-IronPort-AV: E=Sophos;i="5.78,436,1599490800"; 
-   d="scan'208";a="66626745"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 21 Dec 2020 11:54:44 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1368A41BA02F;
-        Mon, 21 Dec 2020 11:54:44 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
-        matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
-        broonie@kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com
-Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v4 03/12] mfd: rohm-generic: Add BD9571 and BD9574
-Date:   Mon, 21 Dec 2020 11:54:30 +0900
-Message-Id: <1608519279-13341-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1608519279-13341-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1608519279-13341-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Mon, 21 Dec 2020 03:37:09 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5935DC0613D3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Dec 2020 00:36:29 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by xavier.telenet-ops.be with bizsmtp
+        id 6wcS2400P4C55Sk01wcSgC; Mon, 21 Dec 2020 09:36:27 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1krGg6-00CgLK-CT; Mon, 21 Dec 2020 09:36:26 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1krGg5-00HRPh-2E; Mon, 21 Dec 2020 09:36:25 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH LOCAL] arm64: renesas: defconfig: Enable Transparent Hugepage madvise
+Date:   Mon, 21 Dec 2020 09:36:23 +0100
+Message-Id: <20201221083623.4156421-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add chip IDs for BD9571MWV and BD9574MWF.
+Enabling Transparent Hugepage always can increase the memory footprint
+of applications without a guaranteed benefit.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Documentation/admin-guide/mm/transhuge.rst says:
+
+    Embedded systems should enable hugepages only inside madvise regions
+    to eliminate any risk of wasting any precious byte of memory and to
+    only run faster.
+
+Hence enable Transparent Hugepage madvise instead, which will only
+provide a performance improvement benefit to the applications using
+madvise(MADV_HUGEPAGE), but it won't risk to increase the memory
+footprint of applications without a guaranteed benefit.
+
+Suggested-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- include/linux/mfd/rohm-generic.h | 2 ++
- 1 file changed, 2 insertions(+)
+Not intended for upstream merge; to be applied to the
+topic/renesas-defconfig only.
 
-diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
-index 4283b5b..affacf8 100644
---- a/include/linux/mfd/rohm-generic.h
-+++ b/include/linux/mfd/rohm-generic.h
-@@ -12,6 +12,8 @@ enum rohm_chip_type {
- 	ROHM_CHIP_TYPE_BD71847,
- 	ROHM_CHIP_TYPE_BD70528,
- 	ROHM_CHIP_TYPE_BD71828,
-+	ROHM_CHIP_TYPE_BD9571,
-+	ROHM_CHIP_TYPE_BD9574,
- 	ROHM_CHIP_TYPE_AMOUNT
- };
- 
+Perhaps this should be changed in arch/arm64/configs/defconfig, too?
+Perhaps the default should be changed in mm/Kconfig instead?
+---
+ arch/arm64/configs/renesas_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 71a6cb34ca89229c..f641a2675d0a425b 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -75,6 +75,7 @@ CONFIG_BLK_DEV_INTEGRITY=y
+ # CONFIG_CORE_DUMP_DEFAULT_ELF_HEADERS is not set
+ CONFIG_KSM=y
+ CONFIG_TRANSPARENT_HUGEPAGE=y
++CONFIG_TRANSPARENT_HUGEPAGE_MADVISE=y
+ CONFIG_CMA=y
+ CONFIG_NET=y
+ CONFIG_PACKET=y
 -- 
-2.7.4
+2.25.1
 
