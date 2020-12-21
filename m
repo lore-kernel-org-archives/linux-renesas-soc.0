@@ -2,81 +2,264 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 895EBC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 02:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87253C43331
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 02:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31BDF22EBD
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 02:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FD0E22EBD
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 02:55:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725935AbgLUCxy (ORCPT
+        id S1728394AbgLUCzY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 20 Dec 2020 21:53:54 -0500
-Received: from mail-lf1-f52.google.com ([209.85.167.52]:42674 "EHLO
-        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725902AbgLUCxy (ORCPT
+        Sun, 20 Dec 2020 21:55:24 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:9923 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728376AbgLUCzV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 Dec 2020 21:53:54 -0500
-Received: by mail-lf1-f52.google.com with SMTP id b26so10626796lff.9
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 20 Dec 2020 18:53:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xCNFr4f3wVLInkwunk0vPKzuNbBepmIVeNw0P+U3M9A=;
-        b=mPx4N1r3hH6RPSlBIymxtBc0cHodMt5J/O4pw9gxVOYbywIsGh7M+dE0zb4HPQ+lmC
-         vT/BJ+R2M/uwUAUYBHPg4hxYeMKAF5o3B7GKXJFvfTqsYtSSB7bNbPv8ajFpymMbjC7P
-         VhEc40OCd97uZb/bppQ/3Dg2NwQ6aYVkeURsdGZuezalJwPWdPw6JmMd2r40TWKowwWq
-         nJL+9rAP4KWNTHx1qQ+LkGfbnM7HRuAUsB33+sMTHZS7Xow6rflcXc67/gTHEZ+GFqp+
-         Yr7yM445Bt8UZrushISPdaRlGVPE73dhM+gjY3bKA7HxZLGSbSzT1ySP+3XJMjksDCnY
-         kFKQ==
-X-Gm-Message-State: AOAM530Ku/Xx4htdei13lD93cul+1QzpR9/1KY/nLyzCQPun6FvlbRHV
-        7weBb5x64aVyKErihaE1FPicBI4uTFU/wA==
-X-Google-Smtp-Source: ABdhPJxCgWALvl0dmCVJFXZIIp6LZuK1nbtklJixIHb6BZVnNtXB+i+Q4KrEaZJo4/zbwvxv+it7yQ==
-X-Received: by 2002:a19:7f46:: with SMTP id a67mr6025797lfd.514.1608519191443;
-        Sun, 20 Dec 2020 18:53:11 -0800 (PST)
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com. [209.85.167.50])
-        by smtp.gmail.com with ESMTPSA id q21sm1884560lfc.290.2020.12.20.18.53.10
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 20 Dec 2020 18:53:10 -0800 (PST)
-Received: by mail-lf1-f50.google.com with SMTP id o19so20223590lfo.1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 20 Dec 2020 18:53:10 -0800 (PST)
-X-Received: by 2002:a2e:8e62:: with SMTP id t2mr6426100ljk.463.1608519190106;
- Sun, 20 Dec 2020 18:53:10 -0800 (PST)
-MIME-Version: 1.0
-References: <20201220195005.26438-1-laurent.pinchart+renesas@ideasonboard.com> <20201220195005.26438-6-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20201220195005.26438-6-laurent.pinchart+renesas@ideasonboard.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 21 Dec 2020 10:52:58 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65F+g7YZE5rbOJK2eNztu_EvhO2V3Vz-nUA+AxT55qsRA@mail.gmail.com>
-Message-ID: <CAGb2v65F+g7YZE5rbOJK2eNztu_EvhO2V3Vz-nUA+AxT55qsRA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] dt-bindings: display: sun8i-a83t-dw-hdmi:
- Reference dw-hdmi YAML schema
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sandy Huang <hjc@rock-chips.com>,
-        "open list:ARM/SHMOBILE ARM..." <linux-renesas-soc@vger.kernel.org>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Mark Yao <mark.yao@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 20 Dec 2020 21:55:21 -0500
+X-IronPort-AV: E=Sophos;i="5.78,436,1599490800"; 
+   d="scan'208";a="66411311"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 21 Dec 2020 11:54:45 +0900
+Received: from localhost.localdomain (unknown [10.166.252.89])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1729741BA036;
+        Mon, 21 Dec 2020 11:54:45 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
+        matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
+        broonie@kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com
+Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v4 12/12] mfd: bd9571mwv: Add support for BD9574MWF
+Date:   Mon, 21 Dec 2020 11:54:39 +0900
+Message-Id: <1608519279-13341-13-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1608519279-13341-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1608519279-13341-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Dec 21, 2020 at 4:03 AM Laurent Pinchart
-<laurent.pinchart+renesas@ideasonboard.com> wrote:
->
-> Replace the reference to the DWC HDMI text DT binding with a reference
-> to the YAML equivalent.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Acked-by: Rob Herring <robh@kernel.org>
+From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+The new PMIC BD9574MWF inherits features from BD9571MWV.
+Add the support of new PMIC to existing bd9571mwv driver.
+
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Co-developed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+---
+ drivers/mfd/bd9571mwv.c       | 83 +++++++++++++++++++++++++++++++++++++++++--
+ include/linux/mfd/bd9571mwv.h | 17 +++++++--
+ 2 files changed, 95 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
+index c905ab4..ab753a9 100644
+--- a/drivers/mfd/bd9571mwv.c
++++ b/drivers/mfd/bd9571mwv.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * ROHM BD9571MWV-M MFD driver
++ * ROHM BD9571MWV-M and BD9574MVF-M core driver
+  *
+  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
+  * Copyright (C) 2020 Renesas Electronics Corporation
+@@ -11,6 +11,7 @@
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/mfd/core.h>
++#include <linux/mfd/rohm-generic.h>
+ #include <linux/module.h>
+ 
+ #include <linux/mfd/bd9571mwv.h>
+@@ -118,6 +119,79 @@ static const struct bd957x_ddata bd9571mwv_ddata = {
+ 	.num_cells = ARRAY_SIZE(bd9571mwv_cells),
+ };
+ 
++static const struct mfd_cell bd9574mwf_cells[] = {
++	{ .name = "bd9574mwf-regulator", },
++	{ .name = "bd9574mwf-gpio", },
++};
++
++static const struct regmap_range bd9574mwf_readable_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_VENDOR_CODE, BD9571MWV_PRODUCT_REVISION),
++	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
++	regmap_reg_range(BD9571MWV_DVFS_VINIT, BD9571MWV_DVFS_SETVMAX),
++	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_MONIVDAC),
++	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
++	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INTMASK),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTMASK),
++};
++
++static const struct regmap_access_table bd9574mwf_readable_table = {
++	.yes_ranges	= bd9574mwf_readable_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9574mwf_readable_yes_ranges),
++};
++
++static const struct regmap_range bd9574mwf_writable_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
++	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_SETVID),
++	regmap_reg_range(BD9571MWV_GPIO_DIR, BD9571MWV_GPIO_OUT),
++	regmap_reg_range(BD9571MWV_GPIO_INT_SET, BD9571MWV_GPIO_INTMASK),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTMASK),
++};
++
++static const struct regmap_access_table bd9574mwf_writable_table = {
++	.yes_ranges	= bd9574mwf_writable_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9574mwf_writable_yes_ranges),
++};
++
++static const struct regmap_range bd9574mwf_volatile_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_DVFS_MONIVDAC, BD9571MWV_DVFS_MONIVDAC),
++	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
++	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INT),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTREQ),
++};
++
++static const struct regmap_access_table bd9574mwf_volatile_table = {
++	.yes_ranges	= bd9574mwf_volatile_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9574mwf_volatile_yes_ranges),
++};
++
++static const struct regmap_config bd9574mwf_regmap_config = {
++	.reg_bits	= 8,
++	.val_bits	= 8,
++	.cache_type	= REGCACHE_RBTREE,
++	.rd_table	= &bd9574mwf_readable_table,
++	.wr_table	= &bd9574mwf_writable_table,
++	.volatile_table	= &bd9574mwf_volatile_table,
++	.max_register	= 0xff,
++};
++
++static struct regmap_irq_chip bd9574mwf_irq_chip = {
++	.name		= "bd9574mwf",
++	.status_base	= BD9571MWV_INT_INTREQ,
++	.mask_base	= BD9571MWV_INT_INTMASK,
++	.ack_base	= BD9571MWV_INT_INTREQ,
++	.init_ack_masked = true,
++	.num_regs	= 1,
++	.irqs		= bd9571mwv_irqs,
++	.num_irqs	= ARRAY_SIZE(bd9571mwv_irqs),
++};
++
++static const struct bd957x_ddata bd9574mwf_ddata = {
++	.regmap_config = &bd9574mwf_regmap_config,
++	.irq_chip = &bd9574mwf_irq_chip,
++	.cells = bd9574mwf_cells,
++	.num_cells = ARRAY_SIZE(bd9574mwf_cells),
++};
++
+ static int bd957x_identify(struct device *dev, struct regmap *regmap)
+ {
+ 	unsigned int value;
+@@ -171,6 +245,9 @@ static int bd9571mwv_probe(struct i2c_client *client,
+ 	case BD9571MWV_PRODUCT_CODE_BD9571MWV:
+ 		ddata = &bd9571mwv_ddata;
+ 		break;
++	case BD9571MWV_PRODUCT_CODE_BD9574MWF:
++		ddata = &bd9574mwf_ddata;
++		break;
+ 	default:
+ 		dev_err(dev, "Unsupported device 0x%x\n", ret);
+ 		return -ENODEV;
+@@ -200,12 +277,14 @@ static int bd9571mwv_probe(struct i2c_client *client,
+ 
+ static const struct of_device_id bd9571mwv_of_match_table[] = {
+ 	{ .compatible = "rohm,bd9571mwv", },
++	{ .compatible = "rohm,bd9574mwf", },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, bd9571mwv_of_match_table);
+ 
+ static const struct i2c_device_id bd9571mwv_id_table[] = {
+-	{ "bd9571mwv", 0 },
++	{ "bd9571mwv", ROHM_CHIP_TYPE_BD9571 },
++	{ "bd9574mwf", ROHM_CHIP_TYPE_BD9574 },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(i2c, bd9571mwv_id_table);
+diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
+index e1716ec..8efd99d 100644
+--- a/include/linux/mfd/bd9571mwv.h
++++ b/include/linux/mfd/bd9571mwv.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * ROHM BD9571MWV-M driver
++ * ROHM BD9571MWV-M and BD9574MWF-M driver
+  *
+  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
+  * Copyright (C) 2020 Renesas Electronics Corporation
+@@ -14,11 +14,12 @@
+ #include <linux/device.h>
+ #include <linux/regmap.h>
+ 
+-/* List of registers for BD9571MWV */
++/* List of registers for BD9571MWV and BD9574MWF */
+ #define BD9571MWV_VENDOR_CODE			0x00
+ #define BD9571MWV_VENDOR_CODE_VAL		0xdb
+ #define BD9571MWV_PRODUCT_CODE			0x01
+ #define BD9571MWV_PRODUCT_CODE_BD9571MWV	0x60
++#define BD9571MWV_PRODUCT_CODE_BD9574MWF	0x74
+ #define BD9571MWV_PRODUCT_REVISION		0x02
+ 
+ #define BD9571MWV_I2C_FUSA_MODE			0x10
+@@ -48,6 +49,7 @@
+ #define BD9571MWV_VD33_VID			0x44
+ 
+ #define BD9571MWV_DVFS_VINIT			0x50
++#define BD9574MWF_VD09_VINIT			0x51
+ #define BD9571MWV_DVFS_SETVMAX			0x52
+ #define BD9571MWV_DVFS_BOOSTVID			0x53
+ #define BD9571MWV_DVFS_SETVID			0x54
+@@ -61,6 +63,7 @@
+ #define BD9571MWV_GPIO_INT_SET			0x64
+ #define BD9571MWV_GPIO_INT			0x65
+ #define BD9571MWV_GPIO_INTMASK			0x66
++#define BD9574MWF_GPIO_MUX			0x67
+ 
+ #define BD9571MWV_REG_KEEP(n)			(0x70 + (n))
+ 
+@@ -70,6 +73,8 @@
+ #define BD9571MWV_PROT_ERROR_STATUS2		0x83
+ #define BD9571MWV_PROT_ERROR_STATUS3		0x84
+ #define BD9571MWV_PROT_ERROR_STATUS4		0x85
++#define BD9574MWF_PROT_ERROR_STATUS5		0x86
++#define BD9574MWF_SYSTEM_ERROR_STATUS		0x87
+ 
+ #define BD9571MWV_INT_INTREQ			0x90
+ #define BD9571MWV_INT_INTREQ_MD1_INT		BIT(0)
+@@ -82,6 +87,12 @@
+ #define BD9571MWV_INT_INTREQ_BKUP_TRG_INT	BIT(7)
+ #define BD9571MWV_INT_INTMASK			0x91
+ 
++#define BD9574MWF_SSCG_CNT			0xA0
++#define BD9574MWF_POFFB_MRB			0xA1
++#define BD9574MWF_SMRB_WR_PROT			0xA2
++#define BD9574MWF_SMRB_ASSERT			0xA3
++#define BD9574MWF_SMRB_STATUS			0xA4
++
+ #define BD9571MWV_ACCESS_KEY			0xff
+ 
+ /* Define the BD9571MWV IRQ numbers */
+@@ -91,7 +102,7 @@ enum bd9571mwv_irqs {
+ 	BD9571MWV_IRQ_MD2_E2,
+ 	BD9571MWV_IRQ_PROT_ERR,
+ 	BD9571MWV_IRQ_GP,
+-	BD9571MWV_IRQ_128H_OF,
++	BD9571MWV_IRQ_128H_OF,	/* BKUP_HOLD on BD9574MWF */
+ 	BD9571MWV_IRQ_WDT_OF,
+ 	BD9571MWV_IRQ_BKUP_TRG,
+ };
+-- 
+2.7.4
+
