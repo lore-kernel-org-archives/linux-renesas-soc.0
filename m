@@ -2,150 +2,208 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
+	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39483C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 17:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3087DC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0670022C9C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 17:22:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEFC022D49
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 18:02:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725878AbgLURWJ (ORCPT
+        id S1725946AbgLUSCK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Dec 2020 12:22:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725865AbgLURWJ (ORCPT
+        Mon, 21 Dec 2020 13:02:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48284 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725844AbgLUSCK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Dec 2020 12:22:09 -0500
-X-Gm-Message-State: AOAM531uEysNefMpx4fVbcz2zyHwSKHT5UWHm9jRJ8tdK18rSzTCLGGW
-        cQ2C5NnIDwXORJzlRZ+Mzgfi97R1nhT+gLBonA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1608571288;
-        bh=p5L2uvw4Xw+mZGbmFeQMvwPwFMJocnpG1YnXWsC/ohg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=AJhEeG3D0NCcWY94nRwWg0zaYAmvBrMIc2IbaEH2l4bQXK2Qa2qhdwcueWBnTjXJV
-         duNCE9wz/I4BRX54iuAJ/PNZP/qIMAy1h+eGSYZwEkt66dwYNs6Hmzm4ndgOSg09sx
-         8VwciqfN/zz8DS6Ty3fO0Yrfsh0JJVvyGxTii5vnzpo7mRFlVR+5iakkCpw/da5r3Y
-         Or7VJW1FJyhjy5VCVpYtmUs9NgvxeLSz+sCO7qN74Tw1AJdk5YrAVO5HCoOJwmdnfU
-         VssrjvVOrz0qRBE1c3JrFtaYlnQv5JlD/BfYkgXfVpEZiDipZAfHkvBmLm1t4S8y2j
-         WDTYPCK6lnAEQ==
-X-Google-Smtp-Source: ABdhPJxPmMLSn2dIoItk6K6RGiGZOaFEwhtsPT9myepBMIU4F8QBp+whNX0o/pIvd85eWVABdHjZUR2RaRzFyhLMM2k=
-X-Received: by 2002:aed:2c63:: with SMTP id f90mr17171370qtd.31.1608571287494;
- Mon, 21 Dec 2020 09:21:27 -0800 (PST)
+        Mon, 21 Dec 2020 13:02:10 -0500
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7E7BC0613D6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Dec 2020 10:01:29 -0800 (PST)
+Received: by mail-io1-xd31.google.com with SMTP id y5so9627000iow.5
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Dec 2020 10:01:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=Ea6JqtKjw7OzUUoWlF84vMDFAAdkRzZmOGZ52DF68G0=;
+        b=KRBZRLSjotuT/r6BoTPkKAP74Srd4F43y0TreLYeGwzbypBjSROrA/E5Dao8fNFIXo
+         5soVI0IVkp7zqeq0LRQkORxM0gIs1T7kcVYDoC+M/fF7KP3fFV0a1zUujF3wxWALMa6A
+         dP6piS0NRgMbll6pXNULLkVOr0SLsHdpiQ2+R7rEAiaInbsAroL+L8gRkQG0xJfDh65N
+         m1WBcwy9XHng4uNWfLeA09tA7Zb3WNlhcqySxzUSgMxYSbXVayj6V4FJvsD8bmMfJLX3
+         a++BG4yxnsu9Dg2wRR8vflZ+/0orlXPsjr4ZbIFKyA1jgy3w9u4SCyHcUbiAS8X1IvwS
+         Qx7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=Ea6JqtKjw7OzUUoWlF84vMDFAAdkRzZmOGZ52DF68G0=;
+        b=aRlCYjj9tjKAQWfuCDXgRuFeoz84qzy5JLnh3bMC3g2+BqZt5g8szfhPS9mzLt/Lv0
+         kr1W1OGgete7dqUFZ1KV0rnNOfOQL+esUjvtWZRUzMSxQh+CN9qhNmcNgAZk8ndRTAbF
+         yjvOmIlbiX10hLGJ/hs0QHxYDvATBogDK8dyVsh9KcUgdZ9Kl9MisP69gHKvsQen49wS
+         zBEIaB2gzvPbiLi40jxw3fE0eNu55n1fhYFxsOAeG6wD53GM5dGa8q9VHKq932i8d901
+         2aUMmQ5xdn2FIhq5XL4SyiNy2cEeBN1uaQFRnZhFCXeOX7Sn7hJEmdJMb+FMT438eJUB
+         KsWw==
+X-Gm-Message-State: AOAM531+8Q+U1H0TpIyk8gOOVpTr8oI18lKM0mPskgQ+xiNzuDbV1zTK
+        XaklMCGFhnJxbK6r8PaUviLZhVhxAT9EPw==
+X-Google-Smtp-Source: ABdhPJygrx9R6p3qmdKjTB3rlvGhe7h6cxEK/ui/lCcheG26r2Ogdk5m1bs/jnx6gWOKIQJmVol6DA==
+X-Received: by 2002:a63:597:: with SMTP id 145mr15400347pgf.252.1608559163681;
+        Mon, 21 Dec 2020 05:59:23 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id 198sm16650128pfw.29.2020.12.21.05.59.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Dec 2020 05:59:22 -0800 (PST)
+Message-ID: <5fe0aa3a.1c69fb81.57add.076d@mx.google.com>
+Date:   Mon, 21 Dec 2020 05:59:22 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20201216145231.1344317-1-geert+renesas@glider.be>
- <20201217235919.GA456454@robh.at.kernel.org> <CAMuHMdVO29He-KHDLp3S=2JyGwOT=tLcDCOw6MPqBvcBLdUCOw@mail.gmail.com>
- <CAL_JsqLcjhRgkTh=SNEpbq-uuv3LixJ3ivSw+TQvPdCCEtFYNw@mail.gmail.com> <CAMuHMdUqB9+3kKHe42nMHAzp5qrJbv2DbKh7fcPPw07R1yhcMA@mail.gmail.com>
-In-Reply-To: <CAMuHMdUqB9+3kKHe42nMHAzp5qrJbv2DbKh7fcPPw07R1yhcMA@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 21 Dec 2020 10:21:16 -0700
-X-Gmail-Original-Message-ID: <CAL_Jsq+qBmmR8pOabb21JRVVXdHGT1c6xPbeGEmr+OBMjjkV2A@mail.gmail.com>
-Message-ID: <CAL_Jsq+qBmmR8pOabb21JRVVXdHGT1c6xPbeGEmr+OBMjjkV2A@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Adam Ford <aford173@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+X-Kernelci-Kernel: renesas-devel-2020-12-21-v5.10
+X-Kernelci-Report-Type: test
+Subject: renesas/master baseline-nfs: 29 runs,
+ 3 regressions (renesas-devel-2020-12-21-v5.10)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Dec 20, 2020 at 3:24 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Rob,
->
-> On Fri, Dec 18, 2020 at 11:32 PM Rob Herring <robh@kernel.org> wrote:
-> > On Fri, Dec 18, 2020 at 5:42 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Fri, Dec 18, 2020 at 12:59 AM Rob Herring <robh@kernel.org> wrote:
-> > > > On Wed, Dec 16, 2020 at 03:52:31PM +0100, Geert Uytterhoeven wrote:
-> > > > >   - Add reference to clock.yaml, and switch to unevaluatedProperties, to
-> > > > >     stop complaining about the presence of "assigned-clock-rates" and
-> > > > >     "assigned-clocks" in board DTS files,
->
-> > > > > Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
-> > > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > > ---
-> > > > > Notes:
-> > > > >   1. The use of "idt,voltage-microvolts" (with trailing S) is a bit
-> > > > >      unfortunate, as Documentation/devicetree/bindings/property-units.txt
-> > > > >      suggests to not have the trailing edge.
-> > > > >      Can we still fix the driver and bindings?  While this entered
-> > > > >      uptstream in v5.9, there are no users in next-20201216.
-> > > > >
-> > > > >   2. Due to "clock-output-names" being part of
-> > > > >      dt-schema/schemas/clock/clock.yaml, the presence of this property
-> > > > >      does not trigger an error.  Adding "clock-output-names: false"
-> > > > >      can fix that.  But given this property is deprecated, except for
-> > > > >      very specific use cases, explicitly allowing it for those few use
-> > > > >      cases would be better.
-> > > > > ---
-> > > > >  .../bindings/clock/idt,versaclock5.yaml       | 53 ++++++++++---------
-> > > > >  1 file changed, 29 insertions(+), 24 deletions(-)
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > > > > index 2ac1131fd9222a86..14851e76f6342095 100644
-> > > > > --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > > > > @@ -33,6 +33,9 @@ description: |
-> > > > >  maintainers:
-> > > > >    - Luca Ceresoli <luca@lucaceresoli.net>
-> > > > >
-> > > > > +allOf:
-> > > > > +  - $ref: clock.yaml#
-> > > >
-> > > > No, that's not right. clock.yaml is already applied unconditionally.
-> > >
-> > > But without that, it complains about unevaluatedProperties?
-> >
-> > By design. You can't have other properties outside your binding unless
-> > you have a $ref to other schemas. Also, note that there's not a single
-> > other ref to clock.yaml.
-> >
-> > > > You need to define assigned-clocks, etc. here just like 'clocks' and
-> > > > define how many entries. Or convince me they should be allowed on any
-> > > > node.
-> > >
-> > > They are handled by of_clk_set_defaults(), which is applied to all
-> > > clock providers.
-> >
-> > What does that Linux implementation detail have to do with the bindings?
->
-> I consider Linux the reference implementation.
-> Is there any other real reference implementation? ;-)
+renesas/master baseline-nfs: 29 runs, 3 regressions (renesas-devel-2020-12-=
+21-v5.10)
 
-No comment. ;)
+Regressions Summary
+-------------------
 
-> > The only other exception we have is pinctrl properties. They often
-> > aren't that interesting unless you have more than one (maybe we should
-> > only automatically allow the single case). That's maybe true in the
-> > assigned-clocks case too. However the big difference I see is pinctrl
-> > properties are almost always present whereas assign-clocks is more the
-> > exception. So I think it's good to be explicit where they are used.
->
-> The problem with the assigned-clock* properties is that the DT binding
-> writer has no idea if they will be ever used or not.  These properties
-> come into play at an even higher level than the pinctrl properties.
-> While the DT binding writer usually[1] knows if there can be pinctrl
-> properties or not, this is not the case for the assigned-clock*
-> properties.  The former are expected and mandatory, the latter are
-> optional, and are added only during the system integration phase, and
-> may appear everywhere.
->
-> So I think they should be allowed on any node.  Unless we decide
-> assigned-clock* properties are a bad idea in general.
+platform              | arch  | lab           | compiler | defconfig       =
+   | regressions
+----------------------+-------+---------------+----------+-----------------=
+---+------------
+meson-gxm-khadas-vim2 | arm64 | lab-baylibre  | gcc-8    | defconfig       =
+   | 1          =
 
-Okay, let's add them automatically I guess. We can at least make them
-dependent on having a 'clocks' property.
+meson-gxm-q200        | arm64 | lab-baylibre  | gcc-8    | defconfig       =
+   | 1          =
 
-Rob
+odroid-xu3            | arm   | lab-collabora | gcc-8    | multi_v7_defconf=
+ig | 1          =
+
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2020-12-21-v5.10/plan/baseline-nfs/
+
+  Test:     baseline-nfs
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2020-12-21-v5.10
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      a0d9f5cfe680c9afb8a9bb2d57b6a1c707da9c3a =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+   | regressions
+----------------------+-------+---------------+----------+-----------------=
+---+------------
+meson-gxm-khadas-vim2 | arm64 | lab-baylibre  | gcc-8    | defconfig       =
+   | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/5fe07834012ba79d10c94ce2
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+020-12-21-v5.10/arm64/defconfig/gcc-8/lab-baylibre/baseline-nfs-meson-gxm-k=
+hadas-vim2.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+020-12-21-v5.10/arm64/defconfig/gcc-8/lab-baylibre/baseline-nfs-meson-gxm-k=
+hadas-vim2.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2020=
+1214.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/5fe07834012ba79d1=
+0c94ce3
+        new failure (last pass: renesas-devel-2020-12-07-v5.10-rc7) =
+
+ =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+   | regressions
+----------------------+-------+---------------+----------+-----------------=
+---+------------
+meson-gxm-q200        | arm64 | lab-baylibre  | gcc-8    | defconfig       =
+   | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/5fe0716fe88f7dfe97c94cc7
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+020-12-21-v5.10/arm64/defconfig/gcc-8/lab-baylibre/baseline-nfs-meson-gxm-q=
+200.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+020-12-21-v5.10/arm64/defconfig/gcc-8/lab-baylibre/baseline-nfs-meson-gxm-q=
+200.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2020=
+1214.0/arm64/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/5fe0716fe88f7dfe9=
+7c94cc8
+        failing since 24 days (last pass: renesas-devel-2020-10-23-v5.9, fi=
+rst fail: renesas-devel-2020-11-27-v5.10-rc5) =
+
+ =
+
+
+
+platform              | arch  | lab           | compiler | defconfig       =
+   | regressions
+----------------------+-------+---------------+----------+-----------------=
+---+------------
+odroid-xu3            | arm   | lab-collabora | gcc-8    | multi_v7_defconf=
+ig | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/5fe077ecb8521df1e0c94cdc
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+020-12-21-v5.10/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-nfs-odr=
+oid-xu3.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+020-12-21-v5.10/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-nfs-odr=
+oid-xu3.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2020=
+1214.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/5fe077ecb8521df1e=
+0c94cdd
+        failing since 20 days (last pass: renesas-devel-2020-11-27-v5.10-rc=
+5, first fail: renesas-devel-2020-11-30-v5.10-rc6) =
+
+ =20
