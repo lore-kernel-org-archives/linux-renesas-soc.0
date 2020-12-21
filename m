@@ -2,31 +2,32 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F90C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09C6C433E0
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 02:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 688D622EBD
+	by mail.kernel.org (Postfix) with ESMTP id 81F5E230FB
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 02:56:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726591AbgLUCzP (ORCPT
+        id S1727431AbgLUCzR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 20 Dec 2020 21:55:15 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:9923 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726166AbgLUCzP (ORCPT
+        Sun, 20 Dec 2020 21:55:17 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:14140 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727236AbgLUCzQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 Dec 2020 21:55:15 -0500
+        Sun, 20 Dec 2020 21:55:16 -0500
 X-IronPort-AV: E=Sophos;i="5.78,436,1599490800"; 
-   d="scan'208";a="66411289"
+   d="scan'208";a="66626748"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 21 Dec 2020 11:54:43 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 21 Dec 2020 11:54:44 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id AA30B41BA02A;
-        Mon, 21 Dec 2020 11:54:43 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3553041BA036;
+        Mon, 21 Dec 2020 11:54:44 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
         matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
@@ -36,83 +37,179 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v4 00/12] treewide: bd9571mwv: Add support for BD9574MWF
-Date:   Mon, 21 Dec 2020 11:54:27 +0900
-Message-Id: <1608519279-13341-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v4 04/12] regulator: bd9571mwv: rid of using struct bd9571mwv
+Date:   Mon, 21 Dec 2020 11:54:31 +0900
+Message-Id: <1608519279-13341-5-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1608519279-13341-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1608519279-13341-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add BD9574MWF support into bd9571mwv gpio, mfd and regulator drivers.
-Latest Ebisu-4D boards has this chip instead of BD9571MWV so that
-we need this patch series to detect this chip at runtime.
+To simplify this driver, use dev_get_regmap() and
+rid of using struct bd9571mwv.
 
-Note that the patch [1/12] is a bug-fix patch for mfd driver.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/regulator/bd9571mwv-regulator.c | 49 +++++++++++++++++----------------
+ 1 file changed, 26 insertions(+), 23 deletions(-)
 
-Changes from v3:
- - Add "Acked-for-MFD-by" in patch 1, 3, 9 and 10.
- - Use "Co-developed-by" instead in patch 11.
- - In patch 11:
- -- Remove abusing kernel-doc formatting in patch.
- -- Rename bd957x_data with bd957x_ddata in patch.
- -- Remove product name printk.
- -- Rename bd9571mwv_identify() with bd957x_identify().
- -- Remove argument "part_name" from bd957x_identify().
- -- Modify dev_err() string.
- -- Rename BD9571MWV_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9571MWV.
- -- Fix errno from -ENOENT to -ENODEV.
- - In patch 12:
- -- Rename "MFD driver" to "core driver".
- -- Remove unnecessary comments.
- -- Rename BD9574MWF_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9574MWF.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=402719
-
-Changes from v2:
- - Use devm_mfd_add_devices() to remove the mfd device in unload.
- - Update commit descriptions in patch 4 and 8.
- - Use regmap_get_device() to simplify in patch 4.
- - Remove "struct bd9571mwv" and bd9571mwv_remove().
- - Add Reviewed-by in patch 3 to 9.
- - Use devm_regmap_add_irq_chip() to simplify in patch 10.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=400477
-
-Changes from v1:
- - Document BD9574MWF on the dt-binding.
- - Add ROHM_CHIP_TYPE_BD957[14] into rohm-generic.h.
- - To simplify gpio and regulator drivers, using regmap instead of
-   using struct bd9571mwv.
- - Remove BD9574MWF definitions to make gpio and regulator driver
-   simple to support for BD9574MWF.
- - Add BD9574MWF support for gpio and regulator drivers.
- - Add missing regmap ranges for BD9574MWF.
- - Rename "part_number" with "part_name".
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=398059
-
-Khiem Nguyen (2):
-  mfd: bd9571mwv: Make the driver more generic
-  mfd: bd9571mwv: Add support for BD9574MWF
-
-Yoshihiro Shimoda (10):
-  mfd: bd9571mwv: Use devm_mfd_add_devices()
-  dt-bindings: mfd: bd9571mwv: Document BD9574MWF
-  mfd: rohm-generic: Add BD9571 and BD9574
-  regulator: bd9571mwv: rid of using struct bd9571mwv
-  regulator: bd9571mwv: Add BD9574MWF support
-  gpio: bd9571mwv: Use the SPDX license identifier
-  gpio: bd9571mwv: rid of using struct bd9571mwv
-  gpio: bd9571mwv: Add BD9574MWF support
-  mfd: bd9571mwv: Use the SPDX license identifier
-  mfd: bd9571mwv: Use devm_regmap_add_irq_chip()
-
- .../devicetree/bindings/mfd/bd9571mwv.txt          |   4 +-
- drivers/gpio/gpio-bd9571mwv.c                      |  35 ++--
- drivers/mfd/bd9571mwv.c                            | 197 ++++++++++++++-------
- drivers/regulator/bd9571mwv-regulator.c            |  59 +++---
- include/linux/mfd/bd9571mwv.h                      |  45 ++---
- include/linux/mfd/rohm-generic.h                   |   2 +
- 6 files changed, 203 insertions(+), 139 deletions(-)
-
+diff --git a/drivers/regulator/bd9571mwv-regulator.c b/drivers/regulator/bd9571mwv-regulator.c
+index e690c2c..42b6a70 100644
+--- a/drivers/regulator/bd9571mwv-regulator.c
++++ b/drivers/regulator/bd9571mwv-regulator.c
+@@ -17,7 +17,7 @@
+ #include <linux/mfd/bd9571mwv.h>
+ 
+ struct bd9571mwv_reg {
+-	struct bd9571mwv *bd;
++	struct regmap *regmap;
+ 
+ 	/* DDR Backup Power */
+ 	u8 bkup_mode_cnt_keepon;	/* from "rohm,ddr-backup-power" */
+@@ -137,26 +137,30 @@ static const struct regulator_desc regulators[] = {
+ };
+ 
+ #ifdef CONFIG_PM_SLEEP
+-static int bd9571mwv_bkup_mode_read(struct bd9571mwv *bd, unsigned int *mode)
++static int bd9571mwv_bkup_mode_read(struct bd9571mwv_reg *bdreg,
++				    unsigned int *mode)
+ {
+ 	int ret;
+ 
+-	ret = regmap_read(bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
++	ret = regmap_read(bdreg->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
+ 	if (ret) {
+-		dev_err(bd->dev, "failed to read backup mode (%d)\n", ret);
++		dev_err(regmap_get_device(bdreg->regmap),
++			"failed to read backup mode (%d)\n", ret);
+ 		return ret;
+ 	}
+ 
+ 	return 0;
+ }
+ 
+-static int bd9571mwv_bkup_mode_write(struct bd9571mwv *bd, unsigned int mode)
++static int bd9571mwv_bkup_mode_write(struct bd9571mwv_reg *bdreg,
++				     unsigned int mode)
+ {
+ 	int ret;
+ 
+-	ret = regmap_write(bd->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
++	ret = regmap_write(bdreg->regmap, BD9571MWV_BKUP_MODE_CNT, mode);
+ 	if (ret) {
+-		dev_err(bd->dev, "failed to configure backup mode 0x%x (%d)\n",
++		dev_err(regmap_get_device(bdreg->regmap),
++			"failed to configure backup mode 0x%x (%d)\n",
+ 			mode, ret);
+ 		return ret;
+ 	}
+@@ -194,7 +198,7 @@ static ssize_t backup_mode_store(struct device *dev,
+ 	 * Configure DDR Backup Mode, to change the role of the accessory power
+ 	 * switch from a power switch to a wake-up switch, or vice versa
+ 	 */
+-	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
++	ret = bd9571mwv_bkup_mode_read(bdreg, &mode);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -202,7 +206,7 @@ static ssize_t backup_mode_store(struct device *dev,
+ 	if (bdreg->bkup_mode_enabled)
+ 		mode |= bdreg->bkup_mode_cnt_keepon;
+ 
+-	ret = bd9571mwv_bkup_mode_write(bdreg->bd, mode);
++	ret = bd9571mwv_bkup_mode_write(bdreg, mode);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -221,7 +225,7 @@ static int bd9571mwv_suspend(struct device *dev)
+ 		return 0;
+ 
+ 	/* Save DDR Backup Mode */
+-	ret = bd9571mwv_bkup_mode_read(bdreg->bd, &mode);
++	ret = bd9571mwv_bkup_mode_read(bdreg, &mode);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -235,7 +239,7 @@ static int bd9571mwv_suspend(struct device *dev)
+ 	mode |= bdreg->bkup_mode_cnt_keepon;
+ 
+ 	if (mode != bdreg->bkup_mode_cnt_saved)
+-		return bd9571mwv_bkup_mode_write(bdreg->bd, mode);
++		return bd9571mwv_bkup_mode_write(bdreg, mode);
+ 
+ 	return 0;
+ }
+@@ -248,7 +252,7 @@ static int bd9571mwv_resume(struct device *dev)
+ 		return 0;
+ 
+ 	/* Restore DDR Backup Mode */
+-	return bd9571mwv_bkup_mode_write(bdreg->bd, bdreg->bkup_mode_cnt_saved);
++	return bd9571mwv_bkup_mode_write(bdreg, bdreg->bkup_mode_cnt_saved);
+ }
+ 
+ static const struct dev_pm_ops bd9571mwv_pm  = {
+@@ -268,7 +272,6 @@ static int bd9571mwv_regulator_remove(struct platform_device *pdev)
+ 
+ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+ {
+-	struct bd9571mwv *bd = dev_get_drvdata(pdev->dev.parent);
+ 	struct regulator_config config = { };
+ 	struct bd9571mwv_reg *bdreg;
+ 	struct regulator_dev *rdev;
+@@ -279,40 +282,40 @@ static int bd9571mwv_regulator_probe(struct platform_device *pdev)
+ 	if (!bdreg)
+ 		return -ENOMEM;
+ 
+-	bdreg->bd = bd;
++	bdreg->regmap = dev_get_regmap(pdev->dev.parent, NULL);
+ 
+ 	platform_set_drvdata(pdev, bdreg);
+ 
+ 	config.dev = &pdev->dev;
+-	config.dev->of_node = bd->dev->of_node;
+-	config.driver_data = bd;
+-	config.regmap = bd->regmap;
++	config.dev->of_node = pdev->dev.parent->of_node;
++	config.driver_data = bdreg;
++	config.regmap = bdreg->regmap;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(regulators); i++) {
+ 		rdev = devm_regulator_register(&pdev->dev, &regulators[i],
+ 					       &config);
+ 		if (IS_ERR(rdev)) {
+-			dev_err(bd->dev, "failed to register %s regulator\n",
++			dev_err(&pdev->dev, "failed to register %s regulator\n",
+ 				pdev->name);
+ 			return PTR_ERR(rdev);
+ 		}
+ 	}
+ 
+ 	val = 0;
+-	of_property_read_u32(bd->dev->of_node, "rohm,ddr-backup-power", &val);
++	of_property_read_u32(config.dev->of_node, "rohm,ddr-backup-power", &val);
+ 	if (val & ~BD9571MWV_BKUP_MODE_CNT_KEEPON_MASK) {
+-		dev_err(bd->dev, "invalid %s mode %u\n",
++		dev_err(&pdev->dev, "invalid %s mode %u\n",
+ 			"rohm,ddr-backup-power", val);
+ 		return -EINVAL;
+ 	}
+ 	bdreg->bkup_mode_cnt_keepon = val;
+ 
+-	bdreg->rstbmode_level = of_property_read_bool(bd->dev->of_node,
++	bdreg->rstbmode_level = of_property_read_bool(config.dev->of_node,
+ 						      "rohm,rstbmode-level");
+-	bdreg->rstbmode_pulse = of_property_read_bool(bd->dev->of_node,
++	bdreg->rstbmode_pulse = of_property_read_bool(config.dev->of_node,
+ 						      "rohm,rstbmode-pulse");
+ 	if (bdreg->rstbmode_level && bdreg->rstbmode_pulse) {
+-		dev_err(bd->dev, "only one rohm,rstbmode-* may be specified");
++		dev_err(&pdev->dev, "only one rohm,rstbmode-* may be specified");
+ 		return -EINVAL;
+ 	}
+ 
 -- 
 2.7.4
 
