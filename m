@@ -7,115 +7,204 @@ X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B103AC433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 16:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B67C4321A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 16:59:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C46E22525
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 16:58:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 981D822B3B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Dec 2020 16:59:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725865AbgLUQ5w (ORCPT
+        id S1726209AbgLUQ6r (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Dec 2020 11:57:52 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.50]:36395 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbgLUQ5w (ORCPT
+        Mon, 21 Dec 2020 11:58:47 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.80]:20249 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbgLUQ6p (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Dec 2020 11:57:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1608569700;
+        Mon, 21 Dec 2020 11:58:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1608569753;
         s=strato-dkim-0002; d=fpond.eu;
         h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:From:
         Subject:Sender;
-        bh=E8fODucT7NMP07QcLt5hFnI6M+SMTjHLe6E7Qar+0HM=;
-        b=LDezslk98ws+03ZU4X0xPA6uIdlcgsxLKxLR+P4mUcvLKho2FULhEfuuy6si85RcgI
-        DTz+rsq1tyxOqqAYlkquQEsP/4tY0rJexARh+N+KgnmHOK3CQ3W5bSs7kH46iFFnjhTh
-        Y0pPQsuWz0cXGMD3jV4j7QWCpc5WnMs71QU4RYzNQzE19emtEGatfvpnu9pphvHicuj1
-        EwZ4NoY8sQy2eCYxcaWa50CQpQV+7pDoEM3U3Ofs49xFYaZ1/toJQIBPYixtjTjebosX
-        vPiX4Pw2H2H5DNpn5AnVdxhPx6MUlHn8qkaNy51VeJ67+sPSo/1N610bQRVlBUvJUWAh
-        xKAQ==
+        bh=JfMvyVnwxZm41+wLq3Usu1N0reoi8mAuNiEmNJBHtZo=;
+        b=Jbj31lXDF4D6/1rQqrjkPc9A6i25UwSYkt0fsuXWJYRhavKWY9lhRaIunuz+iQwD+o
+        HoZudWaxNFtFYFjewc2q3qdq2vmSnc6RVtSy/82qv0DAGaqpZOjvDfShkQc4G8BIkei3
+        csbPR1Brse7YrTqzkPwiJ4zs7TVLMjr4fFOKkWZLRckKeAt62CTE1Dsbm01gc9HGWtkv
+        VEW4B9UQAU8yF61n8mRK205zvxnRGJgoLAcnLX+RO8u3TVcaytJzr80AYm4/iEDId8V6
+        eJz8PLVt9kf5qYvp8hloqSInnwh4OSNKG9gGOvT2wuETUsilaaCet2XzF1j6+ZdMT4x8
+        invg==
 X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR8GJSdzTYQw=="
 X-RZG-CLASS-ID: mo00
 Received: from groucho.site
         by smtp.strato.de (RZmta 47.10.2 DYNA|AUTH)
-        with ESMTPSA id j05b20wBLGss0K9
+        with ESMTPSA id j05b20wBLGtl0KO
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Mon, 21 Dec 2020 17:54:54 +0100 (CET)
+        Mon, 21 Dec 2020 17:55:47 +0100 (CET)
 From:   Ulrich Hecht <uli+renesas@fpond.eu>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     wsa@the-dreams.de, geert@linux-m68k.org, hoai.luu.ub@renesas.com,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH v2 1/5] pinctrl: renesas: implement unlock register masks
-Date:   Mon, 21 Dec 2020 17:54:44 +0100
-Message-Id: <20201221165448.27312-2-uli+renesas@fpond.eu>
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 01/12] pinctrl: renesas: r8a779a0: Add I2C pins, groups and functions
+Date:   Mon, 21 Dec 2020 17:55:30 +0100
+Message-Id: <20201221165541.27679-2-uli+renesas@fpond.eu>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20201221165448.27312-1-uli+renesas@fpond.eu>
-References: <20201221165448.27312-1-uli+renesas@fpond.eu>
+In-Reply-To: <20201221165541.27679-1-uli+renesas@fpond.eu>
+References: <20201221165541.27679-1-uli+renesas@fpond.eu>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The V3U SoC has several unlock registers, one per register group. They
-reside at offset zero in each 0x200 bytes-sized block.
-
-To avoid adding yet another table to the PFC implementation, this
-patch adds the option to specify an address mask instead of the fixed
-address in sh_pfc_soc_info::unlock_reg.
+This patch adds I2C0-6 pins, groups and functions to the R8A779A0 (V3U)
+SoC.
 
 Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/core.c | 28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a779a0.c | 107 +++++++++++++++++++++++++
+ 1 file changed, 107 insertions(+)
 
-diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
-index 2cc457279345..4cd95e220900 100644
---- a/drivers/pinctrl/renesas/core.c
-+++ b/drivers/pinctrl/renesas/core.c
-@@ -175,13 +175,25 @@ u32 sh_pfc_read(struct sh_pfc *pfc, u32 reg)
- 	return sh_pfc_read_raw_reg(sh_pfc_phys_to_virt(pfc, reg), 32);
- }
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779a0.c b/drivers/pinctrl/renesas/pfc-r8a779a0.c
+index 253387e47b55..c19fb6bc08a1 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779a0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
+@@ -1233,6 +1233,69 @@ static const struct sh_pfc_pin pinmux_pins[] = {
+ 	PINMUX_GPIO_GP_ALL(),
+ };
  
--void sh_pfc_write(struct sh_pfc *pfc, u32 reg, u32 data)
-+static void sh_pfc_unlock_reg(struct sh_pfc *pfc, u32 reg, u32 data)
- {
--	if (pfc->info->unlock_reg)
--		sh_pfc_write_raw_reg(
--			sh_pfc_phys_to_virt(pfc, pfc->info->unlock_reg), 32,
--			~data);
-+	u32 unlock;
++/* - I2C0 ------------------------------------------------------------------- */
++static const unsigned int i2c0_pins[] = {
++	/* SDA0, SCL0 */
++	RCAR_GP_PIN(2, 3), RCAR_GP_PIN(2, 2),
++};
++static const unsigned int i2c0_mux[] = {
++	SDA0_MARK, SCL0_MARK,
++};
 +
-+	if (!pfc->info->unlock_reg)
-+		return;
- 
-+	if (pfc->info->unlock_reg >= 0x80000000UL)
-+		unlock = pfc->info->unlock_reg;
-+	else
-+		/* unlock_reg is a mask */
-+		unlock = reg & ~pfc->info->unlock_reg;
++/* - I2C1 ------------------------------------------------------------------- */
++static const unsigned int i2c1_pins[] = {
++	/* SDA1, SCL1 */
++	RCAR_GP_PIN(2, 5), RCAR_GP_PIN(2, 4),
++};
++static const unsigned int i2c1_mux[] = {
++	SDA1_MARK, SCL1_MARK,
++};
 +
-+	sh_pfc_write_raw_reg(sh_pfc_phys_to_virt(pfc, unlock), 32, ~data);
-+}
++/* - I2C2 ------------------------------------------------------------------- */
++static const unsigned int i2c2_pins[] = {
++	/* SDA2, SCL2 */
++	RCAR_GP_PIN(2, 7), RCAR_GP_PIN(2, 6),
++};
++static const unsigned int i2c2_mux[] = {
++	SDA2_MARK, SCL2_MARK,
++};
 +
-+void sh_pfc_write(struct sh_pfc *pfc, u32 reg, u32 data)
-+{
-+	sh_pfc_unlock_reg(pfc, reg, data);
- 	sh_pfc_write_raw_reg(sh_pfc_phys_to_virt(pfc, reg), 32, data);
- }
++/* - I2C3 ------------------------------------------------------------------- */
++static const unsigned int i2c3_pins[] = {
++	/* SDA3, SCL3 */
++	RCAR_GP_PIN(2, 9), RCAR_GP_PIN(2, 8),
++};
++static const unsigned int i2c3_mux[] = {
++	SDA3_MARK, SCL3_MARK,
++};
++
++/* - I2C4 ------------------------------------------------------------------- */
++static const unsigned int i2c4_pins[] = {
++	/* SDA4, SCL4 */
++	RCAR_GP_PIN(2, 11), RCAR_GP_PIN(2, 10),
++};
++static const unsigned int i2c4_mux[] = {
++	SDA4_MARK, SCL4_MARK,
++};
++
++/* - I2C5 ------------------------------------------------------------------- */
++static const unsigned int i2c5_pins[] = {
++	/* SDA5, SCL5 */
++	RCAR_GP_PIN(2, 13), RCAR_GP_PIN(2, 12),
++};
++static const unsigned int i2c5_mux[] = {
++	SDA5_MARK, SCL5_MARK,
++};
++
++/* - I2C6 ------------------------------------------------------------------- */
++static const unsigned int i2c6_pins[] = {
++	/* SDA6, SCL6 */
++	RCAR_GP_PIN(2, 15), RCAR_GP_PIN(2, 14),
++};
++static const unsigned int i2c6_mux[] = {
++	SDA6_MARK, SCL6_MARK,
++};
++
+ /* - SCIF0 ------------------------------------------------------------------ */
+ static const unsigned int scif0_data_pins[] = {
+ 	/* RX0, TX0 */
+@@ -1342,6 +1405,14 @@ static const unsigned int scif_clk_mux[] = {
+ };
  
-@@ -227,11 +239,7 @@ static void sh_pfc_write_config_reg(struct sh_pfc *pfc,
- 	data &= mask;
- 	data |= value;
+ static const struct sh_pfc_pin_group pinmux_groups[] = {
++	SH_PFC_PIN_GROUP(i2c0),
++	SH_PFC_PIN_GROUP(i2c1),
++	SH_PFC_PIN_GROUP(i2c2),
++	SH_PFC_PIN_GROUP(i2c3),
++	SH_PFC_PIN_GROUP(i2c4),
++	SH_PFC_PIN_GROUP(i2c5),
++	SH_PFC_PIN_GROUP(i2c6),
++
+ 	SH_PFC_PIN_GROUP(scif0_data),
+ 	SH_PFC_PIN_GROUP(scif0_clk),
+ 	SH_PFC_PIN_GROUP(scif0_ctrl),
+@@ -1358,6 +1429,34 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(scif_clk),
+ };
  
--	if (pfc->info->unlock_reg)
--		sh_pfc_write_raw_reg(
--			sh_pfc_phys_to_virt(pfc, pfc->info->unlock_reg), 32,
--			~data);
--
-+	sh_pfc_unlock_reg(pfc, crp->reg, data);
- 	sh_pfc_write_raw_reg(mapped_reg, crp->reg_width, data);
- }
++static const char * const i2c0_groups[] = {
++	"i2c0",
++};
++
++static const char * const i2c1_groups[] = {
++	"i2c1",
++};
++
++static const char * const i2c2_groups[] = {
++	"i2c2",
++};
++
++static const char * const i2c3_groups[] = {
++	"i2c3",
++};
++
++static const char * const i2c4_groups[] = {
++	"i2c4",
++};
++
++static const char * const i2c5_groups[] = {
++	"i2c5",
++};
++
++static const char * const i2c6_groups[] = {
++	"i2c6",
++};
++
+ static const char * const scif0_groups[] = {
+ 	"scif0_data",
+ 	"scif0_clk",
+@@ -1388,6 +1487,14 @@ static const char * const scif_clk_groups[] = {
+ };
  
+ static const struct sh_pfc_function pinmux_functions[] = {
++	SH_PFC_FUNCTION(i2c0),
++	SH_PFC_FUNCTION(i2c1),
++	SH_PFC_FUNCTION(i2c2),
++	SH_PFC_FUNCTION(i2c3),
++	SH_PFC_FUNCTION(i2c4),
++	SH_PFC_FUNCTION(i2c5),
++	SH_PFC_FUNCTION(i2c6),
++
+ 	SH_PFC_FUNCTION(scif0),
+ 	SH_PFC_FUNCTION(scif1),
+ 	SH_PFC_FUNCTION(scif3),
 -- 
 2.20.1
 
