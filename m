@@ -2,31 +2,32 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65F1C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Dec 2020 11:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9FEC4332B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Dec 2020 11:23:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B636622A83
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Dec 2020 11:22:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 487802310D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Dec 2020 11:23:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbgLVLW5 (ORCPT
+        id S1726918AbgLVLXF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Dec 2020 06:22:57 -0500
+        Tue, 22 Dec 2020 06:23:05 -0500
 Received: from relmlor2.renesas.com ([210.160.252.172]:59808 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726024AbgLVLW5 (ORCPT
+        by vger.kernel.org with ESMTP id S1726756AbgLVLXC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Dec 2020 06:22:57 -0500
+        Tue, 22 Dec 2020 06:23:02 -0500
 X-IronPort-AV: E=Sophos;i="5.78,438,1599490800"; 
-   d="scan'208";a="66595826"
+   d="scan'208";a="66595844"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Dec 2020 20:22:25 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 22 Dec 2020 20:22:26 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A38D44008553;
-        Tue, 22 Dec 2020 20:22:25 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D713F4008553;
+        Tue, 22 Dec 2020 20:22:26 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
         matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
@@ -36,88 +37,76 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v5 00/12] treewide: bd9571mwv: Add support for BD9574MWF
-Date:   Tue, 22 Dec 2020 20:22:07 +0900
-Message-Id: <1608636139-564-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v5 10/12] mfd: bd9571mwv: Use devm_regmap_add_irq_chip()
+Date:   Tue, 22 Dec 2020 20:22:17 +0900
+Message-Id: <1608636139-564-11-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1608636139-564-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1608636139-564-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add BD9574MWF support into bd9571mwv gpio, mfd and regulator drivers.
-Latest Ebisu-4D boards has this chip instead of BD9571MWV so that
-we need this patch series to detect this chip at runtime.
+Use dev_regmap_add_irq_chip() to simplify the code.
 
-Note that the patch [1/12] is a bug-fix patch for mfd driver.
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/mfd/bd9571mwv.c | 27 ++++++---------------------
+ 1 file changed, 6 insertions(+), 21 deletions(-)
 
-Changes from v4:
- - Add Reviwed-by in patch 1, 10, 11 and 12.
- - Keep bd9571mwv_id_table[] as-is because unused in patch 12.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=404657
-
-Changes from v3:
- - Add "Acked-for-MFD-by" in patch 1, 3, 9 and 10.
- - Use "Co-developed-by" instead in patch 11.
- - In patch 11:
- -- Remove abusing kernel-doc formatting in patch.
- -- Rename bd957x_data with bd957x_ddata in patch.
- -- Remove product name printk.
- -- Rename bd9571mwv_identify() with bd957x_identify().
- -- Remove argument "part_name" from bd957x_identify().
- -- Modify dev_err() string.
- -- Rename BD9571MWV_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9571MWV.
- -- Fix errno from -ENOENT to -ENODEV.
- - In patch 12:
- -- Rename "MFD driver" to "core driver".
- -- Remove unnecessary comments.
- -- Rename BD9574MWF_PRODUCT_CODE_VAL with BD9571MWV_PRODUCT_CODE_BD9574MWF.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=402719
-
-Changes from v2:
- - Use devm_mfd_add_devices() to remove the mfd device in unload.
- - Update commit descriptions in patch 4 and 8.
- - Use regmap_get_device() to simplify in patch 4.
- - Remove "struct bd9571mwv" and bd9571mwv_remove().
- - Add Reviewed-by in patch 3 to 9.
- - Use devm_regmap_add_irq_chip() to simplify in patch 10.
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=400477
-
-Changes from v1:
- - Document BD9574MWF on the dt-binding.
- - Add ROHM_CHIP_TYPE_BD957[14] into rohm-generic.h.
- - To simplify gpio and regulator drivers, using regmap instead of
-   using struct bd9571mwv.
- - Remove BD9574MWF definitions to make gpio and regulator driver
-   simple to support for BD9574MWF.
- - Add BD9574MWF support for gpio and regulator drivers.
- - Add missing regmap ranges for BD9574MWF.
- - Rename "part_number" with "part_name".
- https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=398059
-
-Khiem Nguyen (2):
-  mfd: bd9571mwv: Make the driver more generic
-  mfd: bd9571mwv: Add support for BD9574MWF
-
-Yoshihiro Shimoda (10):
-  mfd: bd9571mwv: Use devm_mfd_add_devices()
-  dt-bindings: mfd: bd9571mwv: Document BD9574MWF
-  mfd: rohm-generic: Add BD9571 and BD9574
-  regulator: bd9571mwv: rid of using struct bd9571mwv
-  regulator: bd9571mwv: Add BD9574MWF support
-  gpio: bd9571mwv: Use the SPDX license identifier
-  gpio: bd9571mwv: rid of using struct bd9571mwv
-  gpio: bd9571mwv: Add BD9574MWF support
-  mfd: bd9571mwv: Use the SPDX license identifier
-  mfd: bd9571mwv: Use devm_regmap_add_irq_chip()
-
- .../devicetree/bindings/mfd/bd9571mwv.txt          |   4 +-
- drivers/gpio/gpio-bd9571mwv.c                      |  35 ++--
- drivers/mfd/bd9571mwv.c                            | 194 ++++++++++++++-------
- drivers/regulator/bd9571mwv-regulator.c            |  59 ++++---
- include/linux/mfd/bd9571mwv.h                      |  45 ++---
- include/linux/mfd/rohm-generic.h                   |   2 +
- 6 files changed, 201 insertions(+), 138 deletions(-)
-
+diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
+index e68c3fa..49e968e 100644
+--- a/drivers/mfd/bd9571mwv.c
++++ b/drivers/mfd/bd9571mwv.c
+@@ -170,31 +170,17 @@ static int bd9571mwv_probe(struct i2c_client *client,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = regmap_add_irq_chip(bd->regmap, bd->irq, IRQF_ONESHOT, 0,
+-				  &bd9571mwv_irq_chip, &bd->irq_data);
++	ret = devm_regmap_add_irq_chip(bd->dev, bd->regmap, bd->irq,
++				       IRQF_ONESHOT, 0, &bd9571mwv_irq_chip,
++				       &bd->irq_data);
+ 	if (ret) {
+ 		dev_err(bd->dev, "Failed to register IRQ chip\n");
+ 		return ret;
+ 	}
+ 
+-	ret = devm_mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO,
+-				   bd9571mwv_cells, ARRAY_SIZE(bd9571mwv_cells),
+-				   NULL, 0, regmap_irq_get_domain(bd->irq_data));
+-	if (ret) {
+-		regmap_del_irq_chip(bd->irq, bd->irq_data);
+-		return ret;
+-	}
+-
+-	return 0;
+-}
+-
+-static int bd9571mwv_remove(struct i2c_client *client)
+-{
+-	struct bd9571mwv *bd = i2c_get_clientdata(client);
+-
+-	regmap_del_irq_chip(bd->irq, bd->irq_data);
+-
+-	return 0;
++	return devm_mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO,
++				    bd9571mwv_cells, ARRAY_SIZE(bd9571mwv_cells),
++				    NULL, 0, regmap_irq_get_domain(bd->irq_data));
+ }
+ 
+ static const struct of_device_id bd9571mwv_of_match_table[] = {
+@@ -215,7 +201,6 @@ static struct i2c_driver bd9571mwv_driver = {
+ 		.of_match_table = bd9571mwv_of_match_table,
+ 	},
+ 	.probe		= bd9571mwv_probe,
+-	.remove		= bd9571mwv_remove,
+ 	.id_table       = bd9571mwv_id_table,
+ };
+ module_i2c_driver(bd9571mwv_driver);
 -- 
 2.7.4
 
