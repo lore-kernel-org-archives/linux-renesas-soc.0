@@ -2,50 +2,50 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D61A9C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Dec 2020 10:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FFEC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Dec 2020 10:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 88FC622AAC
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Dec 2020 10:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 184B52311D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Dec 2020 10:32:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbgLVKVT (ORCPT
+        id S1725994AbgLVKcH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Dec 2020 05:21:19 -0500
-Received: from mail-oi1-f176.google.com ([209.85.167.176]:45787 "EHLO
-        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbgLVKVS (ORCPT
+        Tue, 22 Dec 2020 05:32:07 -0500
+Received: from mail-oi1-f175.google.com ([209.85.167.175]:36867 "EHLO
+        mail-oi1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbgLVKcG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Dec 2020 05:21:18 -0500
-Received: by mail-oi1-f176.google.com with SMTP id f132so14202501oib.12
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Dec 2020 02:21:03 -0800 (PST)
+        Tue, 22 Dec 2020 05:32:06 -0500
+Received: by mail-oi1-f175.google.com with SMTP id l207so14314028oib.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Dec 2020 02:31:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=k/0cVKqpIJW+MdBT4b5pTrOBv/zs8wjbuz8Ob1ZRcxs=;
-        b=tdvMjkUi2ORoDI0nBOXhOPRiKjBa1YGcWC9jzW7TfV6zn5p9eOZNUbRIR/7TccicfX
-         bFI+TZLfl6tKp/PzZsmuH6xOYk6iNwUu7ouwTA8ejljlnTGWInnV6mit/JY0SqTT2/O0
-         zPBOzp3fQ+9swR1/FUc+4Vb32Jd2eFPU9joEvhxO4/FRltmBsByNAp4unuNmqx0nOf2A
-         1X1DX9k5XWaqpk/2q2hlwhvCujQAKJB9AKF5L0Tl1q8qir3sRoqywx47e0SFCbOd0E2g
-         8yz4HnR2L3bSwyKft+rfaEPn61PcKekXG/WXriGroqN0Az22d/ZXsKrcvWcrnxV3mAhy
-         kMTA==
-X-Gm-Message-State: AOAM533UBg7cH39YFdwnQRtPIGvfFbuz86/FSTaWiJPa9lQp6hZESUN5
-        KYa7oV1A6lzlmutOPHf3QLkq26fBPVYMTm4oEpU=
-X-Google-Smtp-Source: ABdhPJwmc7m6swV5j5+yUA+K1/YNcKSqRTPlBQ0h0VqE/iqkSigt8X6z/KQNZE8Q472KEN7wV05ybPwXNSqEDWNgx88=
-X-Received: by 2002:aca:3cc5:: with SMTP id j188mr12537377oia.54.1608632438310;
- Tue, 22 Dec 2020 02:20:38 -0800 (PST)
+        bh=FkW/WVSsRPSDyalC7/XMWf9sIHBqA1mG+fou6FQeT3M=;
+        b=ZnCwjlPOTzfkWHhEro+2tYUF9dGOEMCIUW97nZXKt7QHS3BDkXV2N+UHM+ea57zLS0
+         hzo0bld24wRz8+1dKeu/sUL5vXIpCmJFtEb1zCPtcQX7uhVkQsB56zILcI28HaeGkn/O
+         UyRZgzaU5uFumEFBuAdPQtN6QRJ8JhhQBomZBGnPjGVFg7UTkYvhZcmKaL0dpb4AbhDB
+         MqTHlhMf6CKWfazmw9nF6p5n+j/UsxYpv0B4wgKJBsO2daDz0SNHLkiGvwF1mU3hQOzf
+         oO7vxS1CZLAYc3eTn1JnooCZmBDE4w0S/htMinOygTTis2+UxIIqil7gwzAZ+8dhPNxh
+         KYhw==
+X-Gm-Message-State: AOAM531CC7u6Lh3PZTquUXQWALWecd0SxEek/GRO9s+h4zOHXYG7d2Lo
+        fwkmgaoUN3YbPICRUC1r15RPPmv3AWMtRWb5fgY=
+X-Google-Smtp-Source: ABdhPJx8pY6LoXQ1RT6Wg3sVmsQ/jCtW0JN3RYqumfQDcUMuxHa6U78pKyKeglcoeUALqhWp6s9sDmA9aDMPHvo5tfA=
+X-Received: by 2002:aca:3cc5:: with SMTP id j188mr12558054oia.54.1608633085310;
+ Tue, 22 Dec 2020 02:31:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20201221165541.27679-1-uli+renesas@fpond.eu> <20201221165541.27679-12-uli+renesas@fpond.eu>
-In-Reply-To: <20201221165541.27679-12-uli+renesas@fpond.eu>
+References: <20201221165448.27312-1-uli+renesas@fpond.eu> <20201221165448.27312-2-uli+renesas@fpond.eu>
+In-Reply-To: <20201221165448.27312-2-uli+renesas@fpond.eu>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 22 Dec 2020 11:20:27 +0100
-Message-ID: <CAMuHMdVfv0-_Y9VpbZkrwJcEW_=xb_pc20B4TrXfF4Xq_VkvRQ@mail.gmail.com>
-Subject: Re: [PATCH v2 11/12] pinctrl: renesas: r8a779a0: Add TMU pins, groups
- and functions
+Date:   Tue, 22 Dec 2020 11:31:14 +0100
+Message-ID: <CAMuHMdWFdk234Mnt6HmJM+sHKdRZu34oS5MVqtJwz0HXzqNr1g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] pinctrl: renesas: implement unlock register masks
 To:     Ulrich Hecht <uli+renesas@fpond.eu>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Wolfram Sang <wsa@the-dreams.de>, hoai.luu.ub@renesas.com
@@ -54,11 +54,24 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Uli,
+
 On Mon, Dec 21, 2020 at 5:55 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
-> This patch adds TMU TCLK1-4 pins, groups and functions to the R8A779A0
-> (V3U) SoC.
+> The V3U SoC has several unlock registers, one per register group. They
+> reside at offset zero in each 0x200 bytes-sized block.
+>
+> To avoid adding yet another table to the PFC implementation, this
+> patch adds the option to specify an address mask instead of the fixed
+> address in sh_pfc_soc_info::unlock_reg.
 >
 > Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+
+My comments for v1 are still valid:
+
+Perhaps a comment should be added to sh_pfc_soc_info.unlock_reg,
+to document this dual behavior?
+Or should we just always use masking, as that seems to be suited
+for all SoCs using unlock_reg?
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
