@@ -7,40 +7,38 @@ X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3FC1C43332
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FCBC4321A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:26:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E594224D3
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:26:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20794222BB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:26:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbgLWRZw (ORCPT
+        id S1728103AbgLWR0D (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Dec 2020 12:25:52 -0500
-Received: from www.zeus03.de ([194.117.254.33]:42322 "EHLO mail.zeus03.de"
+        Wed, 23 Dec 2020 12:26:03 -0500
+Received: from www.zeus03.de ([194.117.254.33]:42304 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726486AbgLWRZv (ORCPT
+        id S1726781AbgLWRZu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Dec 2020 12:25:51 -0500
+        Wed, 23 Dec 2020 12:25:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=63aSf89WovdWHo
-        ngsvBT8GMXHeiIvBmwGChFpGSieXU=; b=OObVyZtd/yJwJnLzr2OeXj4cvGvG1Y
-        HnJQOKZC4/3EdhdNc/XMxFh9Hbd5rdCbycbHeWC0WozuFEf7yl6gmhY68mznV3Xx
-        8omcQpLt6+hiteEwBLZfZPf/UX3UT7uPoeo9gA+AX5lNPjzLEDX3cTZjgHKsTdYZ
-        8yQLAiLOYOKW0=
-Received: (qmail 544621 invoked from network); 23 Dec 2020 18:25:09 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Dec 2020 18:25:09 +0100
-X-UD-Smtp-Session: l3s3148p1@ZMgT+SS3yudUhszw
+        :mime-version:content-transfer-encoding; s=k1; bh=bFZHVNr/wLE5t3
+        3ExpleTFxbiH3fS6rd+dcM1J0TmwM=; b=P5sr6/6A863pAt6pc72yscDf5LxWoB
+        1vdLcD+JeR60pvsn/U7QTXcMfDYIiBktIWxC8f+IuPcbz3mtJ6oO5/ojrs4CrAIY
+        iyUgGdR/o/7BbPkmkEBPrkpq6sWdAM665rOtHOULB3dN1LmBivJhLoG3Axwjc3AS
+        V7Q9zfwjYDsBw=
+Received: (qmail 544577 invoked from network); 23 Dec 2020 18:25:08 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Dec 2020 18:25:08 +0100
+X-UD-Smtp-Session: l3s3148p1@tdkH+SS3yOdUhszw
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/5] clk: renesas: r8a779a0: add clocks for I2C
-Date:   Wed, 23 Dec 2020 18:25:01 +0100
-Message-Id: <20201223172505.34736-3-wsa+renesas@sang-engineering.com>
+        Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/5] dt-bindings: i2c: renesas,i2c: add r8a779a0 (V3U) support
+Date:   Wed, 23 Dec 2020 18:25:00 +0100
+Message-Id: <20201223172505.34736-2-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.28.0
 In-Reply-To: <20201223172505.34736-1-wsa+renesas@sang-engineering.com>
 References: <20201223172505.34736-1-wsa+renesas@sang-engineering.com>
@@ -52,27 +50,21 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ Documentation/devicetree/bindings/i2c/renesas,i2c.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-index bf9fdcdd7d85..989b83c26421 100644
---- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-@@ -152,6 +152,13 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
- 	DEF_MOD("csi41",	400,	R8A779A0_CLK_CSI0),
- 	DEF_MOD("csi42",	401,	R8A779A0_CLK_CSI0),
- 	DEF_MOD("csi43",	402,	R8A779A0_CLK_CSI0),
-+	DEF_MOD("i2c0",		518,	R8A779A0_CLK_S3D2),
-+	DEF_MOD("i2c1",		519,	R8A779A0_CLK_S3D2),
-+	DEF_MOD("i2c2",		520,	R8A779A0_CLK_S3D2),
-+	DEF_MOD("i2c3",		521,	R8A779A0_CLK_S3D2),
-+	DEF_MOD("i2c4",		522,	R8A779A0_CLK_S3D2),
-+	DEF_MOD("i2c5",		523,	R8A779A0_CLK_S3D2),
-+	DEF_MOD("i2c6",		524,	R8A779A0_CLK_S3D2),
- 	DEF_MOD("scif0",	702,	R8A779A0_CLK_S1D8),
- 	DEF_MOD("scif1",	703,	R8A779A0_CLK_S1D8),
- 	DEF_MOD("scif3",	704,	R8A779A0_CLK_S1D8),
+diff --git a/Documentation/devicetree/bindings/i2c/renesas,i2c.txt b/Documentation/devicetree/bindings/i2c/renesas,i2c.txt
+index 96d869ac3839..5762d2d1ab9c 100644
+--- a/Documentation/devicetree/bindings/i2c/renesas,i2c.txt
++++ b/Documentation/devicetree/bindings/i2c/renesas,i2c.txt
+@@ -26,6 +26,7 @@ Required properties:
+ 	"renesas,i2c-r8a77980" if the device is a part of a R8A77980 SoC.
+ 	"renesas,i2c-r8a77990" if the device is a part of a R8A77990 SoC.
+ 	"renesas,i2c-r8a77995" if the device is a part of a R8A77995 SoC.
++	"renesas,i2c-r8a779a0" if the device is a part of a R8A779A0 SoC.
+ 	"renesas,rcar-gen1-i2c" for a generic R-Car Gen1 compatible device.
+ 	"renesas,rcar-gen2-i2c" for a generic R-Car Gen2 or RZ/G1 compatible
+ 				device.
 -- 
 2.28.0
 
