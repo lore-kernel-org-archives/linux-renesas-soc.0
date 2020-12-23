@@ -2,81 +2,75 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5DAC433E9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C59DEC433E6
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B27B22220B
+	by mail.kernel.org (Postfix) with ESMTP id 8F3CD207D8
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:22:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbgLWRWo (ORCPT
+        id S1726047AbgLWRWn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Dec 2020 12:22:44 -0500
-Received: from www.zeus03.de ([194.117.254.33]:41298 "EHLO mail.zeus03.de"
+        Wed, 23 Dec 2020 12:22:43 -0500
+Received: from www.zeus03.de ([194.117.254.33]:41266 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726247AbgLWRWn (ORCPT
+        id S1725807AbgLWRWn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 23 Dec 2020 12:22:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=nBOJOXfbfynAi/
-        Za9gqHZdbaWKCZVPPBMKA59PdkcyI=; b=GGMH6wuvkwMPt2idYzr5ziMw24nRbP
-        KHJoc4lGQI9COaoLdw7IPhBlCpp2SxM/x99nLsMlA951JOobr51c8Y1FPe4yD+Gj
-        qRzcGGkAyDE7ji5qfchHef4zSFWT6iwfiDkA0GcClWNYXVyUE/VZNsP+ycrcS1U0
-        suw0TGV2Bh1S0=
-Received: (qmail 543612 invoked from network); 23 Dec 2020 18:22:01 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Dec 2020 18:22:01 +0100
-X-UD-Smtp-Session: l3s3148p1@subl7SS3uOdUhszw
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=uTZyT5vHxos2I1dDSrY6tRmabz/
+        0wsIZIrXlzsjpOfw=; b=eegb11C+7iBETVCIFtaDppjrQQ3Gvtuqjl8nO8g9ecs
+        60ggq+33ojt7CV2R4C5PRWvHQIpT5ix3C2rbxhRYZ1oINaGvpAd1E1IWxhJ1GypY
+        TycldHxg1yoKDr4itqX0lhZLPqir/BOTZ9wavBQj7llXDmvY3hOwTNhvSP19mock
+        =
+Received: (qmail 543519 invoked from network); 23 Dec 2020 18:22:00 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Dec 2020 18:22:00 +0100
+X-UD-Smtp-Session: l3s3148p1@YKOY7SS3tOdUhszw
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 2/4] i2c: rcar: optimize cacheline to minimize HW race condition
-Date:   Wed, 23 Dec 2020 18:21:52 +0100
-Message-Id: <20201223172154.34462-3-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 0/4] i2c: rcar: handle Gen2 and Gen3 V3U quirks better
+Date:   Wed, 23 Dec 2020 18:21:50 +0100
+Message-Id: <20201223172154.34462-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201223172154.34462-1-wsa+renesas@sang-engineering.com>
-References: <20201223172154.34462-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-'flags' and 'io' are needed first, so they should be at the beginning of
-the private struct.
+The new V3U SoC needs handling of spurious interrupts which is handled
+in patch #4. However, this extra check is bad for Gen2 and earlier SoCs,
+so we need seperate interrupts now. While working on this, further
+improvements to avoid the HW race condition on Gen2 and earlier have
+been found, see patches 1-3.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-rcar.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+My measurements have shown that patches 1+2 really improve the
+situation. Before, I could see doubled messages after adding 2us of
+delay to the interrupt handler. After, they only started to appear after
+7us. I can't say much about the spurious interrupts on V3U. The BSP team
+experienced them, I did not so far.
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 824586d7ee56..ad6630e3cc77 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -119,6 +119,7 @@ enum rcar_i2c_type {
- };
- 
- struct rcar_i2c_priv {
-+	u32 flags;
- 	void __iomem *io;
- 	struct i2c_adapter adap;
- 	struct i2c_msg *msg;
-@@ -129,7 +130,6 @@ struct rcar_i2c_priv {
- 
- 	int pos;
- 	u32 icccr;
--	u32 flags;
- 	u8 recovery_icmcr;	/* protected by adapter lock */
- 	enum rcar_i2c_type devtype;
- 	struct i2c_client *slave;
+Let me know what you think...
+
+
+Wolfram Sang (4):
+  i2c: rcar: faster irq code to minimize HW race condition
+  i2c: rcar: optimize cacheline to minimize HW race condition
+  i2c: rcar: make sure irq is not threaded on Gen2 and earlier
+  i2c: rcar: protect against supurious interrupts on V3U
+
+ drivers/i2c/busses/i2c-rcar.c | 66 +++++++++++++++++++++++++----------
+ 1 file changed, 48 insertions(+), 18 deletions(-)
+
 -- 
 2.28.0
 
