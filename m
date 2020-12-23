@@ -2,89 +2,81 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A14EC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 16:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5DAC433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BC6E6221E2
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 16:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B27B22220B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:22:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbgLWQBh (ORCPT
+        id S1726424AbgLWRWo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Dec 2020 11:01:37 -0500
-Received: from sauhun.de ([88.99.104.3]:59794 "EHLO pokefinder.org"
+        Wed, 23 Dec 2020 12:22:44 -0500
+Received: from www.zeus03.de ([194.117.254.33]:41298 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726664AbgLWQBh (ORCPT
+        id S1726247AbgLWRWn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Dec 2020 11:01:37 -0500
-Received: from localhost (p5486ccf0.dip0.t-ipconnect.de [84.134.204.240])
-        by pokefinder.org (Postfix) with ESMTPSA id 27DEF2C052A;
-        Wed, 23 Dec 2020 17:00:56 +0100 (CET)
-Date:   Wed, 23 Dec 2020 17:00:55 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Ulrich Hecht <uli+renesas@fpond.eu>
-Cc:     linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        hoai.luu.ub@renesas.com,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v2 02/12] pinctrl: renesas: r8a779a0: Add EtherAVB pins,
- groups and functions
-Message-ID: <20201223160055.GD892@kunai>
-Mail-Followup-To: Wolfram Sang <wsa@the-dreams.de>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-        hoai.luu.ub@renesas.com,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20201221165541.27679-1-uli+renesas@fpond.eu>
- <20201221165541.27679-3-uli+renesas@fpond.eu>
+        Wed, 23 Dec 2020 12:22:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=nBOJOXfbfynAi/
+        Za9gqHZdbaWKCZVPPBMKA59PdkcyI=; b=GGMH6wuvkwMPt2idYzr5ziMw24nRbP
+        KHJoc4lGQI9COaoLdw7IPhBlCpp2SxM/x99nLsMlA951JOobr51c8Y1FPe4yD+Gj
+        qRzcGGkAyDE7ji5qfchHef4zSFWT6iwfiDkA0GcClWNYXVyUE/VZNsP+ycrcS1U0
+        suw0TGV2Bh1S0=
+Received: (qmail 543612 invoked from network); 23 Dec 2020 18:22:01 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Dec 2020 18:22:01 +0100
+X-UD-Smtp-Session: l3s3148p1@subl7SS3uOdUhszw
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 2/4] i2c: rcar: optimize cacheline to minimize HW race condition
+Date:   Wed, 23 Dec 2020 18:21:52 +0100
+Message-Id: <20201223172154.34462-3-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201223172154.34462-1-wsa+renesas@sang-engineering.com>
+References: <20201223172154.34462-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="jL2BoiuKMElzg3CS"
-Content-Disposition: inline
-In-Reply-To: <20201221165541.27679-3-uli+renesas@fpond.eu>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+'flags' and 'io' are needed first, so they should be at the beginning of
+the private struct.
 
---jL2BoiuKMElzg3CS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/i2c/busses/i2c-rcar.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, Dec 21, 2020 at 05:55:31PM +0100, Ulrich Hecht wrote:
-> This patch adds groups and function for AVB PHY, LINK, MAGIC, MII and
-> PTP pins for the R8A779A0 (V3U) SoC.
->=20
-> Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 824586d7ee56..ad6630e3cc77 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -119,6 +119,7 @@ enum rcar_i2c_type {
+ };
+ 
+ struct rcar_i2c_priv {
++	u32 flags;
+ 	void __iomem *io;
+ 	struct i2c_adapter adap;
+ 	struct i2c_msg *msg;
+@@ -129,7 +130,6 @@ struct rcar_i2c_priv {
+ 
+ 	int pos;
+ 	u32 icccr;
+-	u32 flags;
+ 	u8 recovery_icmcr;	/* protected by adapter lock */
+ 	enum rcar_i2c_type devtype;
+ 	struct i2c_client *slave;
+-- 
+2.28.0
 
-AVB0 works.
-
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com> # for AVB0
-
-
---jL2BoiuKMElzg3CS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl/jabcACgkQFA3kzBSg
-Kbbqww//Zoa1GCdEF8tqsPboaBMyyKgSif0AQaDmwQvpVjRihqkr56nmgMthynFb
-3YNKZnvAMCSw9dBoOn/k9Ml4y97oIviHN4ehT7XSHg4YycCkRoQKu8gdRI9orJi7
-qXv3sCRH03D8SssIsPRa5QQZoSHeCJW3oiwTe3a0B9hlqbPfMcfEO7tm4FPvPS4R
-OpGQGrB9czeZFSFRWmweqD0jDrHQPIjbPAKrGs5x2oP1wYjHHccmpswCuF0nt3+F
-/Jp06Mi6Vuq5MwcSgsmjH/NDfE53CPNATS9TrJ4wwGdv7CcFh18xx+Kmq/wJEZaU
-3YKXXks1uoM2FK2tz4tTwpxERlE6Gn2Aie6yTUvkqhOGnk4d0yAi4sijiQFY+CcC
-DEKaP6PSwHCkiXO9aafELMqn8304ffWwEL5xbc6v97S857mq6yO2aaqYKENBkO6D
-Y/2nQK72wCvX4VssIeHYjmufsab6k3vFWo8QP96Bme8wkS+tN9OCngsT+DHC2fEk
-/mPWPvB/bPQlBQnz3rXD9tmv6Q7yYKLpNYEFIacNHuHLpnXpftAGzk1ZUvWpepOt
-zrddG7h5TkYZV3XrEbwIeRHlkkQZ0Um8Hjr8WE9JbAEnrkjRzHiVq1jU9IV4UoXF
-15gu9c0ah6XRAmSXwwAjCEXefo+70Y1xGku2eCJjFFHhtO4Nf04=
-=k8L/
------END PGP SIGNATURE-----
-
---jL2BoiuKMElzg3CS--
