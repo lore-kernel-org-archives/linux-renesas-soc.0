@@ -2,100 +2,79 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78E1CC433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13161C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46BCF20723
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:22:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C455A2220B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 17:25:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbgLWRWn (ORCPT
+        id S1726923AbgLWRZu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Dec 2020 12:22:43 -0500
-Received: from www.zeus03.de ([194.117.254.33]:41280 "EHLO mail.zeus03.de"
+        Wed, 23 Dec 2020 12:25:50 -0500
+Received: from www.zeus03.de ([194.117.254.33]:42288 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726012AbgLWRWn (ORCPT
+        id S1725957AbgLWRZu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Dec 2020 12:22:43 -0500
+        Wed, 23 Dec 2020 12:25:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=7G4VEydHXtCuh4
-        d5tp3VbNjaXPr7rBC2TMVcx8Y/rhA=; b=jPPAaF+kVX3SWT6dOm+DcEZFJ06aL4
-        pojaRFwYY9qESsCkLO2FgvFt/iV5I80o2Glzg3yI3gZbOWOIPLxQGgZ7zgz5C4Xl
-        LMh3AzW9Vz6NE6FYJEcOndGmFdNuigXE0k9aa6Iw47ukKc6wFnLNM7wRSVH1juWW
-        Zs8FXgf5MQcTM=
-Received: (qmail 543566 invoked from network); 23 Dec 2020 18:22:01 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Dec 2020 18:22:01 +0100
-X-UD-Smtp-Session: l3s3148p1@//Hb7SS3tudUhszw
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=N5+gtJfhBgNR3GRzh/QZPrEtYyM
+        g8i3Kx+IQacgaj9I=; b=cMP3M95faKEZIFTKFE2HWoDRW+NDaASfONbOQym3oTY
+        mBc2c7OiK3EETFo1SmfJjhQjWxMD/1ya99Ua2fLHggsBZkfF9WEL0fYRanjp67fJ
+        77ytIq1RJwi4kYJrgYNWxmQyQorskT75tery+IQrp1W9aIcmyfisaYEAfMafMx/k
+        =
+Received: (qmail 544539 invoked from network); 23 Dec 2020 18:25:07 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Dec 2020 18:25:07 +0100
+X-UD-Smtp-Session: l3s3148p1@nub7+CS3xudUhszw
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/4] i2c: rcar: faster irq code to minimize HW race condition
-Date:   Wed, 23 Dec 2020 18:21:51 +0100
-Message-Id: <20201223172154.34462-2-wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] v3u: enable I2C0-6
+Date:   Wed, 23 Dec 2020 18:24:59 +0100
+Message-Id: <20201223172505.34736-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20201223172154.34462-1-wsa+renesas@sang-engineering.com>
-References: <20201223172154.34462-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-To avoid the HW race condition on R-Car Gen2 and earlier, we need to
-write to ICMCR as soon as possible in the interrupt handler. We can
-improve this by writing a static value instead of masking out bits.
+These patches are needed to enable I2C on the Falcon board for the V3U.
+Patch #5 is only for demonstration purposes. The series depends on my
+RWDT series, Ulrich's PFC v2 series and Geert's DMA placeholder. A
+branch can be found here:
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/busses/i2c-rcar.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/v3u/i2c
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 217def2d7cb4..824586d7ee56 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -91,7 +91,6 @@
- 
- #define RCAR_BUS_PHASE_START	(MDBS | MIE | ESG)
- #define RCAR_BUS_PHASE_DATA	(MDBS | MIE)
--#define RCAR_BUS_MASK_DATA	(~(ESG | FSB) & 0xFF)
- #define RCAR_BUS_PHASE_STOP	(MDBS | MIE | FSB)
- 
- #define RCAR_IRQ_SEND	(MNR | MAL | MST | MAT | MDE)
-@@ -621,7 +620,7 @@ static bool rcar_i2c_slave_irq(struct rcar_i2c_priv *priv)
- /*
-  * This driver has a lock-free design because there are IP cores (at least
-  * R-Car Gen2) which have an inherent race condition in their hardware design.
-- * There, we need to clear RCAR_BUS_MASK_DATA bits as soon as possible after
-+ * There, we need to switch to RCAR_BUS_PHASE_DATA as soon as possible after
-  * the interrupt was generated, otherwise an unwanted repeated message gets
-  * generated. It turned out that taking a spinlock at the beginning of the ISR
-  * was already causing repeated messages. Thus, this driver was converted to
-@@ -630,13 +629,11 @@ static bool rcar_i2c_slave_irq(struct rcar_i2c_priv *priv)
- static irqreturn_t rcar_i2c_irq(int irq, void *ptr)
- {
- 	struct rcar_i2c_priv *priv = ptr;
--	u32 msr, val;
-+	u32 msr;
- 
- 	/* Clear START or STOP immediately, except for REPSTART after read */
--	if (likely(!(priv->flags & ID_P_REP_AFTER_RD))) {
--		val = rcar_i2c_read(priv, ICMCR);
--		rcar_i2c_write(priv, ICMCR, val & RCAR_BUS_MASK_DATA);
--	}
-+	if (likely(!(priv->flags & ID_P_REP_AFTER_RD)))
-+		rcar_i2c_write(priv, ICMCR, RCAR_BUS_PHASE_DATA);
- 
- 	msr = rcar_i2c_read(priv, ICMSR);
- 
+There is also a series in-flight to handle spurious interrupts on the
+V3U. Because I have never seen one, I wouldn't call it a dependency, so
+the series is handled seperately.
+
+Looking forward to comments...
+
+
+Koji Matsuoka (2):
+  arm64: dts: renesas: Add I2C to R8A779A0
+  arm64: dts: renesas: Add I2C support for falcon board
+
+Wolfram Sang (3):
+  dt-bindings: i2c: renesas,i2c: add r8a779a0 (V3U) support
+  clk: renesas: r8a779a0: add clocks for I2C
+  v3u: enable other I2C busses for testing
+
+ .../devicetree/bindings/i2c/renesas,i2c.txt   |   1 +
+ .../boot/dts/renesas/r8a779a0-falcon.dts      |  93 +++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi     | 122 ++++++++++++++++++
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c       |   7 +
+ 4 files changed, 223 insertions(+)
+
 -- 
 2.28.0
 
