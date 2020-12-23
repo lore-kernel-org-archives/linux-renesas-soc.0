@@ -2,89 +2,139 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-24.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C60C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Dec 2020 18:45:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C270BC43331
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 02:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB4A229C5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Dec 2020 18:45:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A556922573
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Dec 2020 02:44:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726030AbgLVSpX (ORCPT
+        id S1729839AbgLWCnb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Dec 2020 13:45:23 -0500
-Received: from mail-oi1-f177.google.com ([209.85.167.177]:35207 "EHLO
-        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbgLVSpW (ORCPT
+        Tue, 22 Dec 2020 21:43:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52452 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729873AbgLWCXE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Dec 2020 13:45:22 -0500
-Received: by mail-oi1-f177.google.com with SMTP id s2so15765090oij.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 22 Dec 2020 10:45:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jDv3MPHxxqEavxvavk/PDVS22Wm6HGaeBw86ilNx5ms=;
-        b=LarHwqrvYW3eB3ZIvXQgxo6534UJuuFjDy+KvxpA3T2wfKCL0SEyU4jxXqAeUaDH38
-         0KMdsifYNGMwjldRXU+VQOA7MBcFbwTO8kmPzJEjI1TTJOAZJR2N8OelPz5MyEuTCFvU
-         FuaRVhyn4rYBfbSwUyJyDOpcKWdfkg6E7rC7IjrqwOA4lusH80BNlfB6ZX3utK3DbHcI
-         j4Z6oicArMAeOJlfZw+beuWRF0Qv1wLI5sLJ+dpfQSqvZpCxqvfxoDXJx9Deb6H0MUc9
-         s+F0SBVqlN+S5FK7m47EtOBh0Kit7omvAB+o+BT0fj9iNxGl6G3D410CNlP+FQ8WHDvN
-         gXmw==
-X-Gm-Message-State: AOAM533nfqQNAXD5hmNBPYBQQj/lS82RtI9Q5tdOoEBOnFFD3yqZw3AB
-        p+/LYf8dGttudTIuTCXwzEXT+c0CJ/rcCFrejxP50jy2
-X-Google-Smtp-Source: ABdhPJxi6yxkg1E2UCbg2yiarVaHeBiHwBQa4w0YXZenfNd/DZpTSP5wkGcUU/JqsOlp2rClR9op9L5OkQ5DvHJeyik=
-X-Received: by 2002:aca:4b16:: with SMTP id y22mr15234433oia.148.1608662681394;
- Tue, 22 Dec 2020 10:44:41 -0800 (PST)
+        Tue, 22 Dec 2020 21:23:04 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 2F14F22248;
+        Wed, 23 Dec 2020 02:22:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1608690143;
+        bh=qF9l755odwp307/T/N4iq49b/ec7+MuRGg7fKtWJgkU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GG3fI/0uKfXHDg7UO1rqpzI3WHly6c8nyu0srm88rM2uu4/lBxP5v3dOonIWMRRYu
+         EwZwLtMN0j4LXXR2F6Npfi3uRvq3RPWkWSPK3SgRUiWqrxG68CDPwAjxog9aaJ7nNP
+         ZR0lQaxXHOU55mj41ukWT9GbtDA0lJ4e0WRmddIocmeOZyjDh5KvUsmYY0+zOF+sZV
+         l2Pr+x+3vpYtouj7KsCnwCAy5AXcZZnTh7JheUX49J6f06RtlXUnku+u3aA3iBuT47
+         CUmJtQvLygv4+OlJGseV+KazpZdpU+ZJKKFMMcLAoP7Ct5hFOF6n0JBhVNx4KKj/Xr
+         9BxTLNRoQ1WNA==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 64/87] media: rcar-vin: Mask VNCSI_IFMD register
+Date:   Tue, 22 Dec 2020 21:20:40 -0500
+Message-Id: <20201223022103.2792705-64-sashal@kernel.org>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20201223022103.2792705-1-sashal@kernel.org>
+References: <20201223022103.2792705-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20201221165448.27312-1-uli+renesas@fpond.eu> <20201221165448.27312-3-uli+renesas@fpond.eu>
- <CAMuHMdVH_Cb28M5RPjS6pDiguq_q23ri0KXNxGky4tA6xm0mGw@mail.gmail.com> <1392786155.217714.1608655668850@webmail.strato.com>
-In-Reply-To: <1392786155.217714.1608655668850@webmail.strato.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 22 Dec 2020 19:44:30 +0100
-Message-ID: <CAMuHMdVhcn=-KhX=dc+bRzgfJMP7kzSt9rt6gpGArJouQFGbEw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] pinctrl: renesas: add I/O voltage level flag
-To:     Ulrich Hecht <uli@fpond.eu>
-Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>, hoai.luu.ub@renesas.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Uli,
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-On Tue, Dec 22, 2020 at 5:51 PM Ulrich Hecht <uli@fpond.eu> wrote:
-> > On 12/22/2020 11:45 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > --- a/drivers/pinctrl/renesas/pinctrl.c
-> > > +++ b/drivers/pinctrl/renesas/pinctrl.c
-> > > +               const struct sh_pfc_pin *pin = &pfc->info->pins[idx];
-> > > +               int lower_voltage;
-> >
-> > unsigned int
->
-> Fair enough...
->
-> > mV_low?
->
-> That, though, seems ambiguous to me because it could refer to the logical-zero voltage.
+[ Upstream commit fb25ca37317200fa97ea6b8952e07958f06da7a6 ]
 
-True.
+The VNCSI_IFMD register controls the data expansion mode and the
+channel routing between the CSI-2 receivers and VIN instances.
 
-> (Are internal capital letters even permitted in identifiers?)
+According to the chip manual revision 2.20 not all fields are available
+for all the SoCs:
+- V3M, V3H and E3 do not support the DES1 field has they do not feature
+  a CSI20 receiver.
+- D3 only supports parallel input, and the whole register shall always
+  be written as 0.
 
-We already have "mV".
+Inspect the per-SoC channel routing table where the available CSI-2
+instances are reported and configure VNCSI_IFMD accordingly.
 
-Gr{oetje,eeting}s,
+This patch supports this BSP change commit:
 
-                        Geert
+https://github.com/renesas-rcar/linux-bsp/commit/f54697394457
+("media: rcar-vin: Fix VnCSI_IFMD register access for r8a77990")
 
+[hverkuil: replace BSP commit ID with BSP URL]
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Suggested-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/platform/rcar-vin/rcar-dma.c | 25 +++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/rcar-vin/rcar-dma.c b/drivers/media/platform/rcar-vin/rcar-dma.c
+index 70a8cc433a03f..4fee9132472bb 100644
+--- a/drivers/media/platform/rcar-vin/rcar-dma.c
++++ b/drivers/media/platform/rcar-vin/rcar-dma.c
+@@ -1319,7 +1319,9 @@ int rvin_dma_register(struct rvin_dev *vin, int irq)
+  */
+ int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
+ {
+-	u32 ifmd, vnmc;
++	const struct rvin_group_route *route;
++	u32 ifmd = 0;
++	u32 vnmc;
+ 	int ret;
+ 
+ 	ret = pm_runtime_get_sync(vin->dev);
+@@ -1332,9 +1334,26 @@ int rvin_set_channel_routing(struct rvin_dev *vin, u8 chsel)
+ 	vnmc = rvin_read(vin, VNMC_REG);
+ 	rvin_write(vin, vnmc & ~VNMC_VUP, VNMC_REG);
+ 
+-	ifmd = VNCSI_IFMD_DES1 | VNCSI_IFMD_DES0 | VNCSI_IFMD_CSI_CHSEL(chsel);
++	/*
++	 * Set data expansion mode to "pad with 0s" by inspecting the routes
++	 * table to find out which bit fields are available in the IFMD
++	 * register. IFMD_DES1 controls data expansion mode for CSI20/21,
++	 * IFMD_DES0 controls data expansion mode for CSI40/41.
++	 */
++	for (route = vin->info->routes; route->mask; route++) {
++		if (route->csi == RVIN_CSI20 || route->csi == RVIN_CSI21)
++			ifmd |= VNCSI_IFMD_DES1;
++		else
++			ifmd |= VNCSI_IFMD_DES0;
+ 
+-	rvin_write(vin, ifmd, VNCSI_IFMD_REG);
++		if (ifmd == (VNCSI_IFMD_DES0 | VNCSI_IFMD_DES1))
++			break;
++	}
++
++	if (ifmd) {
++		ifmd |= VNCSI_IFMD_CSI_CHSEL(chsel);
++		rvin_write(vin, ifmd, VNCSI_IFMD_REG);
++	}
+ 
+ 	vin_dbg(vin, "Set IFMD 0x%x\n", ifmd);
+ 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.27.0
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
