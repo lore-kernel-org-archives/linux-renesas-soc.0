@@ -2,208 +2,172 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A06C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Dec 2020 13:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2D5C433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Dec 2020 17:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A955022287
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Dec 2020 13:54:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D828C22288
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Dec 2020 17:06:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbgLXNxn (ORCPT
+        id S1728795AbgLXRGK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Dec 2020 08:53:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52110 "EHLO
+        Thu, 24 Dec 2020 12:06:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727240AbgLXNxm (ORCPT
+        with ESMTP id S1728039AbgLXRGJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Dec 2020 08:53:42 -0500
-Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B059C061794;
-        Thu, 24 Dec 2020 05:53:02 -0800 (PST)
-Received: by mail-il1-x12c.google.com with SMTP id 2so2044766ilg.9;
-        Thu, 24 Dec 2020 05:53:02 -0800 (PST)
+        Thu, 24 Dec 2020 12:06:09 -0500
+Received: from mail-il1-x12d.google.com (mail-il1-x12d.google.com [IPv6:2607:f8b0:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FAAEC061575;
+        Thu, 24 Dec 2020 09:05:29 -0800 (PST)
+Received: by mail-il1-x12d.google.com with SMTP id 75so2409062ilv.13;
+        Thu, 24 Dec 2020 09:05:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lWTbHY81KjIshjNuJb4wW01azEJV2L6TrRBUVbFz5yM=;
-        b=MPyPErXN2l5kMYOUI66Phr3Fn8TyGh3fRQtreXjMN6KwViRYHIqK42dD83r2vA5ME0
-         z7kb5+IanYvH+sVbpC32Yv0e4p5nsRPcOunMNxeywG1I5OolmyDiDAMZsA56sS0E8tTJ
-         wNzXEB9iICcw/8gQ503nHDSJ6tisz5VX/xEuRWzrhF6SQCEREhcya2kyXQ5c9tQuepFs
-         AExoFA9UgnTVe+h8qjS3sTTBByzRu06eLIwfeD9hL6XhVtp5zLcODxsOM8lhbK4jcbQw
-         lfqy671lb6u7fS14IL9zKZdTBT/3wx281S4hEBg08ci3S5BBJYvFmWin2cQiyepixtxE
-         MoJg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=RC7cz4XzV8lhMElGRYTUL2l/Wg2mnAz5kpiinuzSRHs=;
+        b=u70PCBTkSAJsDuuGAOBOpSB30KHsWffMNC5s9NcLuGup9OdvV7dIiUKmkAwKGqpA9X
+         4JCpXpWJz/P5FIWgOibnY9Sri3PZr4sktM7pDgBnmkfWzEZUGW6twhMmJt++vNHYdo39
+         KJ7UgEv9cEUyWj8dI0yT0Lvvv8RVU9VrwiUDL5G4a8/RaPWO3sqMwZaz4KjyqsqE/vik
+         PnTGi5wIHBceAJjU88qZjziRg0+wDh2lpsuKVlZcB4aD/opDcLJ8MfpdHbQsJzV95XZW
+         QoexBzQOm+lix0w46LXnKcrw1mzFvP5XNxE60i4Ul1cvFfWRxQOtEaV7+M5Pudp5Ao7l
+         wJHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lWTbHY81KjIshjNuJb4wW01azEJV2L6TrRBUVbFz5yM=;
-        b=pSHtleMD+yGTNIfRjInQD1wDYaWMpIVQ/gJ7bexhd3Y8p4qGm2gvrQW/zNpxvevKVy
-         L8Wof4tLAsIQ8pJbokwvGxTnqErW8KU+PyM7ZHViyLtX9luoU5r1qQ7z4VZpT6HBbhdN
-         o9cyG8v7zU/0U5LNzD3mRgLhUCprm8wZ8zUJ7BId2hZ8rYub+2LqG4SmIN9XIsoLm/iI
-         sAS4k/2AwdSfFrMB517CqEUUHQVTZi6iLEaj/SVgZmnMvZsf/GHnQJuoNQFhtj4/V+4i
-         QuKpc5QIUVWkzAxnWdqFuYCiRh797vXE5cazyKwqDQCyZy2gw/QJd5QUOiP35R1X+tuk
-         wv6w==
-X-Gm-Message-State: AOAM530zEVUq6jxTvfj3ruUJLn8LQA+Ys29QZmQjMUjn/AQOPmAPqJRM
-        UZfxoCwyXjA95WH4CFvK0B6QlY5TInVe69wrWU+5+He4a+Y=
-X-Google-Smtp-Source: ABdhPJxE2icD5c/lgVivHCxytuGP4CovPpSoWzWPs6lMhNw6hkvSkH/JHwdVakD+Sg8/evHADGgwMq5vXjO4YxP8R/A=
-X-Received: by 2002:a92:7d14:: with SMTP id y20mr28873902ilc.196.1608817981468;
- Thu, 24 Dec 2020 05:53:01 -0800 (PST)
-MIME-Version: 1.0
-References: <20201213183759.223246-1-aford173@gmail.com> <20201213183759.223246-2-aford173@gmail.com>
- <CAMuHMdWRieM1H5WLySVDVQds-xKgsqo-OibegJrXgonfqbAL8g@mail.gmail.com>
- <CAHCN7xL3KU4dA=0-S7J5AEPmjAtpz4j-frEUqBD=JU7BV7g1WA@mail.gmail.com>
- <CAMuHMdWc=qD=Oqa-7o9K1bd_OM0L7Br8BVAbDvYNraO0wAX2jw@mail.gmail.com>
- <CAHCN7xKsSgM+=MFOKpNZTsJJiNyx6_mqZL2g_PKhN5fWyE6y7Q@mail.gmail.com>
- <CAMuHMdVxzcyVuK06BqE4GQPLE8J7V5Jc-W_RSENNxEQG68krCw@mail.gmail.com>
- <CAHCN7xJVn7gbCX8ibSFbyjA4HqyxPR9_vXvJQQSbJRKoaF_51Q@mail.gmail.com> <CAMuHMdV0djkKTSHbCuv0d2sh+rGs1=WNNEcCNXE3daM8uAcRxw@mail.gmail.com>
-In-Reply-To: <CAMuHMdV0djkKTSHbCuv0d2sh+rGs1=WNNEcCNXE3daM8uAcRxw@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=RC7cz4XzV8lhMElGRYTUL2l/Wg2mnAz5kpiinuzSRHs=;
+        b=QfeHKZpFa3OdMANyLXkzIbvNtL549QsICy9jy/GHYtAVUP+rvKOe3rpJgjdJqFbnEb
+         hed1RqlJD0pOcJ+e+qLNCH8hqK0yhx16poUcGUcKtv9C5z9dliqMiHKEqLihRnytduTi
+         9VRtji80zlX+ZDLXGKaCMbYqTQe4C1PWa8+1wVQOZemRkr/TNGU9HBC2DUtxbGH8iyUB
+         lD2G98ggBu325A598QnIW/3yDjh4vhwxbVqnA5vIsUU1S6tbIi8vDNzMV2069e8lbQg6
+         F5RpeztXKzg1cMZfY/tPAu2wGQcjhquNVU0ZERm9sLfRmj55j1FNNh50ETs2K8lI0v7C
+         AZWg==
+X-Gm-Message-State: AOAM531oB3P+niSwWVPBTOAgQRx7ZnSe5qbn9jYBivKgO9NEeBR2vUh9
+        h0VfdAXWo9YZIz23EQz/4fvIK/5TdHM=
+X-Google-Smtp-Source: ABdhPJzn+e5XK45iUIbW7VfVH3TgDR1AmeUm2ERnFIrdsgiZJsT8INq9IAdp0/+2zEpeNz5KVcqqug==
+X-Received: by 2002:a92:c990:: with SMTP id y16mr30772729iln.35.1608829528115;
+        Thu, 24 Dec 2020 09:05:28 -0800 (PST)
+Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:f45d:df49:9a4c:4914])
+        by smtp.gmail.com with ESMTPSA id f20sm9732965ilr.85.2020.12.24.09.05.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Dec 2020 09:05:27 -0800 (PST)
 From:   Adam Ford <aford173@gmail.com>
-Date:   Thu, 24 Dec 2020 07:52:50 -0600
-Message-ID: <CAHCN7x+re5Qswbw=n8Gq0newXW0WoO7=ZseD3YZWMvD_nmBq3w@mail.gmail.com>
-Subject: Re: [PATCH 01/18] arm64: dts: renesas: beacon kit: Configure
- programmable clocks
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luca Ceresoli <luca@lucaceresoli.net>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V2 2/9] arm64: dts: renesas: beacon kit: Fix Audio Clock sources
+Date:   Thu, 24 Dec 2020 11:04:55 -0600
+Message-Id: <20201224170502.2254683-2-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20201224170502.2254683-1-aford173@gmail.com>
+References: <20201224170502.2254683-1-aford173@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Dec 22, 2020 at 2:03 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Adam,
->
-> On Tue, Dec 22, 2020 at 2:39 AM Adam Ford <aford173@gmail.com> wrote:
-> > On Fri, Dec 18, 2020 at 7:16 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > On Thu, Dec 17, 2020 at 12:52 PM Adam Ford <aford173@gmail.com> wrote:
-> > > > On Thu, Dec 17, 2020 at 2:16 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > On Wed, Dec 16, 2020 at 6:03 PM Adam Ford <aford173@gmail.com> wrote:
-> > > > > > On Wed, Dec 16, 2020 at 8:55 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > > > On Sun, Dec 13, 2020 at 7:38 PM Adam Ford <aford173@gmail.com> wrote:
-> > > > > > > > When the board was added, clock drivers were being updated done at
-> > > > > > > > the same time to allow the versaclock driver to properly configure
-> > > > > > > > the modes.  Unforutnately, the updates were not applied to the board
-> > > > >
-> > > > > > > > --- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-> > > > > > > > +++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-> > > > > > > > @@ -5,6 +5,7 @@
-> > > > > > > >
-> > > > > > > >  #include <dt-bindings/gpio/gpio.h>
-> > > > > > > >  #include <dt-bindings/input/input.h>
-> > > > > > > > +#include <dt-bindings/clk/versaclock.h>
-> > > > > > > >
-> > > > > > > >  / {
-> > > > > > > >         backlight_lvds: backlight-lvds {
-> > > > > > > > @@ -294,12 +295,12 @@ &du_out_rgb {
-> > > > > > > >  &ehci0 {
-> > > > > > > >         dr_mode = "otg";
-> > > > > > > >         status = "okay";
-> > > > > > > > -       clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
-> > > > > > > > +       clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>, <&versaclock5 3>;
-> > > > > > >
-> > > > > > > Why this change? You said before you don't need this
-> > > > > > > https://lore.kernel.org/linux-renesas-soc/CAHCN7xJWbP16SA-Ok-5syNnqOZAt8OFJo2_rtg5VrNVsN2-eiQ@mail.gmail.com/
-> > > > > > >
-> > > > > >
-> > > > > > I had talked with the hardware guys about buy pre-programmed
-> > > > > > versaclock chips which would have been pre-configured and pre-enabled.
-> > > > > > I thought it was going to happen, but it didn't, so we need the
-> > > > > > versaclock driver to enable the reference clock for the USB
-> > > > > > controllers, ethernet controller and audio clocks.  Previously we were
-> > > > > > manually configuring it or it was coincidentally working. Ideally,
-> > > > > > we'd have the clock system intentionally enable/disable the clocks
-> > > > > > when drivers are loaded/unloaded for for power management reasons.
-> > > > >
-> > > > > Can you tell me how exactly the Versaclock outputs are wired?
-> > > >
-> > > > The SoC is expecting a fixed external 50 MHz clock connected to
-> > > > USB_EXTAL.  Instead of a fixed clock, we're using the Versaclock.
-> > > > We're also using the Versaclock to drive the AVB TXCRefClk,
-> > > > du_dotclkiun0 and du_dotclkin2 (also also called du_dotclkin3 on
-> > > > RZ/G2N) instead of fixed clocks.
-> > > >
-> > > > > E.g. for USB, the bindings don't say anything about a third clock input,
-> > > > > so I'd like to know where that clock is fed into USB.
-> > > >
-> > > > The way the driver is crafted, it can take in multiple clocks and it
-> > > > goes through a list to enable them all, so I added the versaclock to
-> > > > the array.  Without the versaclock reference, the clock doesn't get
-> > > > turned on and the USB fails to operate.
-> > >
-> > > According to the Hardware User's Manual, USBL_EXTAL is used for USB3.0,
-> > > while you added the clock references to the EHCI nodes.
-> > > Are you sure EHCI is failing without this?
+The SoC was expecting two clock sources with different frequencies.
+One to support 44.1KHz and one to support 48KHz.  With the newly added
+ability to configure the programmably clock, configure both clocks.
 
-Geert,
+Assign the rcar-sound clocks to reference the versaclock instead of
+the fixed clock.
 
-I talked to a colleague about the USB_EXTAL.  He pointed me to table
-60.1 of the RZ/2 Series, 2nd Generate reference manual
-(R01UH0808EJ0100 Rev.1.00),  which shows the USB EHCI needing the
-50MHz.  When I clear out the references from ehci0 and echi1, the USB
-stops working, so it does appear that using the versaclock as the 3rd
-clock is needed for operating.  The device tree bindings for the
-generic-ehci provide for up to 4 clocks, so it seems like referencing
-clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>, <&versaclock5 3> are
-not a violation of the bindings.
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+V2:  Go from fixed-factor-clock to just redefining the rcar-sound node
+     to reference the versaclock instead of the audio_clk_a.
 
-I can add a better description when I do the V2 update for this if you like.
+diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+index 46a3ba895330..4e86d308d07e 100644
+--- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
++++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+@@ -223,12 +223,6 @@ x304_clk: x304-clock {
+ 	};
+ };
+ 
+-&audio_clk_a {
+-	clock-frequency = <24576000>;
+-	assigned-clocks = <&versaclock6_bb 4>;
+-	assigned-clock-rates = <24576000>;
+-};
+-
+ &audio_clk_b {
+ 	clock-frequency = <22579200>;
+ };
+@@ -574,7 +568,7 @@ sound_pins: sound {
+ 	};
+ 
+ 	sound_clk_pins: sound_clk {
+-		groups = "audio_clk_a_a";
++		groups = "audio_clk_a_a", "audio_clk_b_a";
+ 		function = "audio_clk";
+ 	};
+ 
+@@ -625,23 +619,6 @@ &rcar_sound {
+ 
+ 	status = "okay";
+ 
+-	clocks = <&cpg CPG_MOD 1005>,
+-		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
+-		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
+-		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
+-		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
+-		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
+-		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
+-		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
+-		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
+-		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
+-		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
+-		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+-		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
+-		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
+-		 <&audio_clk_a>, <&audio_clk_b>, <&audio_clk_c>,
+-		 <&cpg CPG_CORE R8A774A1_CLK_S0D4>;
+-
+ 	ports {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
+index 2c5b057c30c6..25eeac411f12 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774a1-beacon-rzg2m-kit.dts
+@@ -27,3 +27,24 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ };
++
++/* Reference versaclock instead of audio_clk_a */
++&rcar_sound {
++	clocks = <&cpg CPG_MOD 1005>,
++		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
++		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
++		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
++		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
++		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
++		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
++		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
++		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
++		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
++		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
++		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
++		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
++		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
++		 <&versaclock6_bb 4>, <&audio_clk_b>,
++		 <&audio_clk_c>,
++		 <&cpg CPG_CORE R8A774A1_CLK_S0D4>;
++};
+-- 
+2.25.1
 
-
-> > > Still, it means we need to extend the bindings/driver for
-> > > renesas,rcar-gen3-xhci to handle USB_EXTAL.
-> >
-> > After investigating this, it looks like the USB_EXTAL is already
-> > referenced from the device tree and it's referenced by the USB3 Phy.
-> > The SoC calls it usb_extal_clk.  Since the phy driver is calling
-> > devm_clk_get() it looks like i could just redefine the clocks of
-> > usb3_phy0 to point to the versaclock instead of usb_extal_clk.
-> >
-> > The other option is to use a similar method I proposed for the audio
-> > reference clock and redefine the usb_extal_clk as a fixed
-> > fixed-factor-clock.
-> >
-> > Do you have a preference as to which direction I go?
->
-> I'd go for the classical solution: override the clocks property of the
-> usb3_phy0 node.
-
-I dug into the USB3_phy and it enables and immediately disables the
-clocks for the simple purpose of determining which clock reference to
-use between usb3s0_clk or usb_extal_clk.  I was hoping that simply
-referencing the versaclock here would be sufficient, but the Beacon
-board has a usb3s0_clk at 100MHz, and the driver appears to use it
-instead of the versaclock so adding the versaclock reference here
-isn't sufficient to make it work for the ehci, nor do I think it's
-appropriate.
-
-It seems like the driver shouldn't immediately disable the clocks, but
-they're expecting external fixed clocks.  Since we meet that criteria
-with the usb3s0_clk, the USB3 works without the versaclock reference.
-
-adam
->
-> Thanks!
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
