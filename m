@@ -2,187 +2,253 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.9 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFE6C433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Dec 2020 06:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF259C4332D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Dec 2020 07:05:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D409C22AAA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Dec 2020 06:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE42A22AAC
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Dec 2020 07:05:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725933AbgLXGr0 (ORCPT
+        id S1728065AbgLXHE7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Dec 2020 01:47:26 -0500
-Received: from mail-eopbgr1410108.outbound.protection.outlook.com ([40.107.141.108]:52217
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725871AbgLXGr0 (ORCPT
+        Thu, 24 Dec 2020 02:04:59 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:17304 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728012AbgLXHE6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Dec 2020 01:47:26 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=adhII4Vt/1L6qXIapKo3ZVMHq4QpQUYSO+WuLEvdEs1P3OqMPxUca0jN+HaKU9G6ISHudddYpt7u/2Iy0c1gir8cfpmaknyMiwnHslQ8SRre7gBKPn4vrYY98dp1iB2SsDvwulIH1DCLfadh+zJj8noQub0lW5oj1wl1+dYNxpc8NeInlmrCDRKWKzRa237lUhu7mZJZmJm2e90op8n5l1zdtnmQncnaunEuZwc3khMPOEMkPJ9Lc2c/aZPAsc6LKle+fVUwHRz9YvBVXOwr08eWOenlyRHkLXd+okhLt6XyJ6tqqFkEs8SVyC8nwbdS2dqXJ3lKQk38VYC5xmlEJQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bGnM1M/nyDwadV9cANY61s5tbI8UEDO0lhH55EYZn6s=;
- b=dfP21qsu9cZqqzAgUEBdUnAcNA2lkbu2zrFNp/a/s32LYgaRFrlK52EVd1Jlw5jk9RNhJwz8hRVwtzJ5vRNQ2yEIOjdsO13duFhO6i0ujeaugD2FobI5r8pxvajSBJu78TBjHn+TUkGjNJCknhiybbfS20O0Iumkk1CCUBY1XsxrPPQ3l1zjLmOxjxKMoBYAoPre6V9BT2hS9h73VHWej974KydjDh3twBkE7lKb8EBo0NooOBsXXWNU92MwkRqrN+gJm9bpLu5ZTnY0kAFCRwy63MsWO0BDasBb+lYN409XSJd1sAVc1/ZKQBsQq9hqsj62lICntGnNNYWIJsmCbg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bGnM1M/nyDwadV9cANY61s5tbI8UEDO0lhH55EYZn6s=;
- b=MzdV86+06ntAMPQ2kbMKVKSNljlVneQaI/MbNMa8xbAsE6OLlRRG71O3rFjZJXSUvW3kLUWk7xbcs1ympX/bKUnyKxKIqDKP06XtwYHmQrggk0qOWCPYtmWSGrYVNgC5fNbUkAxSEcTkYRy50OgfY60tBZ1KH3TUCh9EwfoY8FE=
-Received: from OSAPR01MB3683.jpnprd01.prod.outlook.com (2603:1096:604:33::12)
- by OSAPR01MB4196.jpnprd01.prod.outlook.com (2603:1096:604:54::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3676.33; Thu, 24 Dec
- 2020 06:46:36 +0000
-Received: from OSAPR01MB3683.jpnprd01.prod.outlook.com
- ([fe80::7df8:3b7f:f3d7:b560]) by OSAPR01MB3683.jpnprd01.prod.outlook.com
- ([fe80::7df8:3b7f:f3d7:b560%5]) with mapi id 15.20.3676.033; Thu, 24 Dec 2020
- 06:46:36 +0000
+        Thu, 24 Dec 2020 02:04:58 -0500
+X-IronPort-AV: E=Sophos;i="5.78,444,1599490800"; 
+   d="scan'208";a="67025554"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 24 Dec 2020 16:04:22 +0900
+Received: from localhost.localdomain (unknown [10.166.252.89])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7CFCC401227C;
+        Thu, 24 Dec 2020 16:04:22 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     "marek.vasut+renesas@gmail.com" <marek.vasut+renesas@gmail.com>,
-        "matti.vaittinen@fi.rohmeurope.com" 
-        <matti.vaittinen@fi.rohmeurope.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        Khiem Nguyen <khiem.nguyen.xt@renesas.com>,
-        "linux-power@fi.rohmeurope.com" <linux-power@fi.rohmeurope.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v6 11/12] mfd: bd9571mwv: Make the driver more generic
-Thread-Topic: [PATCH v6 11/12] mfd: bd9571mwv: Make the driver more generic
-Thread-Index: AQHW2RWSReZXi/5NNEyI3qMKK0VkFqoE0W0AgAD8NZA=
-Date:   Thu, 24 Dec 2020 06:46:36 +0000
-Message-ID: <OSAPR01MB368360D8A4E3AD1E6F928271D8DD0@OSAPR01MB3683.jpnprd01.prod.outlook.com>
-References: <1608718963-21818-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <1608718963-21818-12-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20201223153928.GA681741@dell>
-In-Reply-To: <20201223153928.GA681741@dell>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: linaro.org; dkim=none (message not signed)
- header.d=none;linaro.org; dmarc=none action=none header.from=renesas.com;
-x-originating-ip: [240f:60:5f3e:1:b0a7:a6bd:cb4a:efb1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 27b2e92f-fdfb-4e9a-4620-08d8a7d7a8dc
-x-ms-traffictypediagnostic: OSAPR01MB4196:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <OSAPR01MB41963DABF7156C9FD7D044ABD8DD0@OSAPR01MB4196.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5236;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: NTxE9qNjlYXOuocqkYGxMqGP4MHmgDZf8CywAWUG6qfPoWq5FHcyqgisBCAxTUn9QZUeynmdPNwGGBr1nkP0fdMbf9iKFkKIFpyqbHl19FDh6vwZHdFgZBV5gWVU5ByOjJu7urW2ApNYJyA8wAIlZgHZ4qtsAZtmRsLA6fmqKTBn3zIfqynyvzCl1WRcJNOcXnrT2EaUOyNSJepgGhtj+BiQ6uWRuW//deFQpRs3nQ2ipdmJfM5sDxttV3gdWwAfPOY4S/HS2uOFPKGBoQCnfRCCOwYEcSzynfBBKPi8qB/AEdls3RKlcoyxbhBiwQdN9209bw2JN+plzzZ9QSaXAnLDP+k1mY7RMocWI12fASgCo/F3pHJRrEgUAQ1izdozLEFGOnAZAqEY6q42B3TeSMl1gCjY6fqJv8dYYbNgEIXsNqArKwziB+mPVrkCJ4kM
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OSAPR01MB3683.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(136003)(396003)(39860400002)(376002)(346002)(9686003)(6916009)(52536014)(55016002)(6506007)(8676002)(71200400001)(76116006)(66946007)(54906003)(2906002)(86362001)(186003)(4326008)(8936002)(5660300002)(64756008)(66446008)(66476007)(33656002)(7416002)(7696005)(66556008)(83380400001)(316002)(478600001)(41533002);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata: =?utf-8?B?Wm1LUDBRY290cDBiS2padHhJWUJIY1hSLzlEZnl5L2RrRVhINTJQUDcyaTYv?=
- =?utf-8?B?ZVZuM0xmVFdVemthVTg2L1FtczdrQXRNQWc0RHpiNHRub1JJOWZ6RkkyQ2dQ?=
- =?utf-8?B?WWhhdk54Tm9UZmxtdk9qeXY3WDdhL3pGazRsOFJLZFlENmRJL3g1T0YydTA5?=
- =?utf-8?B?QmJ6WVJFWGZVbmNNYXREbzNERGZ0YWxBR2dINXFiOVlObVpoTVpaYkEzRUN5?=
- =?utf-8?B?U1pZdUJxcmJOZjEyMkliNDhHZmE0VUtsZW8yNWRWSHNyR3k4R2NYcjhqU3FY?=
- =?utf-8?B?WXVhbFoydDZ4Wk1BZGJjS0tDblc5OUd5TmV3NHFVbmsxWm94Y21PMU1LRk9n?=
- =?utf-8?B?WWszMHJ6RUtPY0FEaXExVU01cDFTdnVoZFZ1QmNQWHJkcUcrTmxLZ2ZrQmZ6?=
- =?utf-8?B?TEtaTHFsN0wwOXpyRHpGNCtnOTRvaVdHRHdlcVdJa0NkcUYvTkVrMU1LZVph?=
- =?utf-8?B?ejlNK0FpSWI3eEVqQXA2dHF3RUhsc0hBaTA3cHFoUk44WWlTNm51S0ZzTURG?=
- =?utf-8?B?WGY2N09TMHdlV0J1bkNKT0lGTmhTNWF4TDkwZ1lqaDg5MURiVTNvUy9FajQ2?=
- =?utf-8?B?Z3p1WlNHc0haS1FPVkRYV29NSi9tSU93R0NBL1o4OXljZHBVZFV1VzNPQ0Mx?=
- =?utf-8?B?SHBlOWd6MDdIdnVGRS9ZelF3aHA1czdvWHlITi9nQkxwOUZ1Zks4SVVyZ1Vk?=
- =?utf-8?B?M0ZxYjgrMUJ4M2JYZHlTcG9vdEZKZzlaZlFkVmVmTENvamlYb3ZoWmdUQnNz?=
- =?utf-8?B?a29oNlFjL0toK0JaZVR1NDRPU3R4ZmdkOEtZY01icFZKbU9qU1l5Y0ZST3g3?=
- =?utf-8?B?UmlVYmMyeHYyNFpJWTE5Qi9hQ3A5b3lTcU15bHE3aTZtQnJkNHRJb1pMRkxF?=
- =?utf-8?B?K0podzFET0JWYnNVQUprQXBBMlYvN1MvRW9mc2VUT3V3MjU2S1hBeUxLaThC?=
- =?utf-8?B?bE85ejN1NmRVSjA3ZHVnQTkxZHFpTURHRGMyS2c5VlAvalgycFBOSzVYUnN5?=
- =?utf-8?B?SDMxekxZeXovV1JibXFnS1ZJRnd6bFlQbEpaUlE3Q0VGbmRwRXV3ZDB6Nzl4?=
- =?utf-8?B?OUlydU9odk04YVc2L1FDUUU3bUFNcXh3Tjc3QUlzKzF1TmNpanVCdkJKWE44?=
- =?utf-8?B?RTgxc1hqVmtqVzNFMFAwb2ZWK0w1eDhybFhqbE42S2FkYkxRMWJRT3hoRmpY?=
- =?utf-8?B?dDdYUnBaaDRZa044YnlQb3ZFa2dpMWVkSE5qOHU3Mzl3aHBBZTUwQStsY1Q5?=
- =?utf-8?B?ZUpYRDMzNVRPcms4NnRFK01SejdoNlRLeWY2elMyUXI0a1A5a0NOdDVKN3BO?=
- =?utf-8?B?KzN0Z1VJLzNBSjlQOXFxQ3owbmtKT0VpRVB5YzZTOXpOdXVuRndmS1Jnd2JH?=
- =?utf-8?Q?UA0KIYfA3nKDANiRQZLBfOuzZ9Dm8Lqo=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OSAPR01MB3683.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27b2e92f-fdfb-4e9a-4620-08d8a7d7a8dc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Dec 2020 06:46:36.4511
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZXWJHNda+nyIkFiQUIGj5Gv1bhDrAj1Xa1Ochkp/EtR7fjrWGB5m2wbfAOwcF+875apXHzSMVsO3ymzjgRTkvKRXGR5CIvBWFpHf3570Ab+TCJF/rDGBLW5LlE34pM6q
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB4196
+To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
+        matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
+        broonie@kernel.org, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com
+Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
+        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v7 12/12] mfd: bd9571mwv: Add support for BD9574MWF
+Date:   Thu, 24 Dec 2020 16:04:17 +0900
+Message-Id: <1608793457-11997-13-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1608793457-11997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <1608793457-11997-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-SGkgTGVlLA0KDQo+IEZyb206IExlZSBKb25lcywgU2VudDogVGh1cnNkYXksIERlY2VtYmVyIDI0
-LCAyMDIwIDEyOjM5IEFNDQo+IE9uIFdlZCwgMjMgRGVjIDIwMjAsIFlvc2hpaGlybyBTaGltb2Rh
-IHdyb3RlOg0KPiA+IEZyb206IEtoaWVtIE5ndXllbiA8a2hpZW0ubmd1eWVuLnh0QHJlbmVzYXMu
-Y29tPg0KPiA+DQo+ID4gU2luY2UgdGhlIGRyaXZlciBzdXBwb3J0cyBCRDk1NzFNV1YgUE1JQyBv
-bmx5LCB0aGlzIHBhdGNoIG1ha2VzDQo+ID4gdGhlIGZ1bmN0aW9ucyBhbmQgZGF0YSBzdHJ1Y3R1
-cmUgYmVjb21lIG1vcmUgZ2VuZXJpYyBzbyB0aGF0DQo+ID4gaXQgY2FuIHN1cHBvcnQgb3RoZXIg
-UE1JQyB2YXJpYW50cyBhcyB3ZWxsLiBBbHNvIHJlbW92ZSBwcmludGluZw0KPiA+IHBhcnQgbmFt
-ZSB3aGljaCBMZWUgSm9uZXMgc3VnZ2VzdGVkLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogS2hp
-ZW0gTmd1eWVuIDxraGllbS5uZ3V5ZW4ueHRAcmVuZXNhcy5jb20+DQo+ID4gQ28tZGV2ZWxvcGVk
-LWJ5OiBZb3NoaWhpcm8gU2hpbW9kYSA8eW9zaGloaXJvLnNoaW1vZGEudWhAcmVuZXNhcy5jb20+
-DQo+ID4gU2lnbmVkLW9mZi1ieTogWW9zaGloaXJvIFNoaW1vZGEgPHlvc2hpaGlyby5zaGltb2Rh
-LnVoQHJlbmVzYXMuY29tPg0KPiA+IFJldmlld2VkLWJ5OiBNYXR0aSBWYWl0dGluZW4gPG1hdHRp
-LnZhaXR0aW5lbkBmaS5yb2htZXVyb3BlLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9tZmQv
-YmQ5NTcxbXd2LmMgICAgICAgfCA4OSArKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0t
-LS0tLS0tLS0tDQo+ID4gIGluY2x1ZGUvbGludXgvbWZkL2JkOTU3MW13di5oIHwgMTggKy0tLS0t
-LS0tDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgNTQgaW5zZXJ0aW9ucygrKSwgNTMgZGVsZXRpb25z
-KC0pDQo+IA0KPiBDb3VwbGUgb2Ygc21hbGwgcG9pbnRzLg0KPiANCj4gUmVtYWluZGVyIGxvb2tz
-IGdvb2QuDQoNClRoYW5rIHlvdSBmb3IgeW91ciByZXZpZXchDQoNCj4gPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9tZmQvYmQ5NTcxbXd2LmMgYi9kcml2ZXJzL21mZC9iZDk1NzFtd3YuYw0KPiA+IGlu
-ZGV4IDQ5ZTk2OGUuLmM5MDVhYjQgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9tZmQvYmQ5NTcx
-bXd2LmMNCj4gPiArKysgYi9kcml2ZXJzL21mZC9iZDk1NzFtd3YuYw0KPiA+IEBAIC0zLDYgKzMs
-NyBAQA0KPiA+ICAgKiBST0hNIEJEOTU3MU1XVi1NIE1GRCBkcml2ZXINCj4gPiAgICoNCj4gPiAg
-ICogQ29weXJpZ2h0IChDKSAyMDE3IE1hcmVrIFZhc3V0IDxtYXJlay52YXN1dCtyZW5lc2FzQGdt
-YWlsLmNvbT4NCj4gPiArICogQ29weXJpZ2h0IChDKSAyMDIwIFJlbmVzYXMgRWxlY3Ryb25pY3Mg
-Q29ycG9yYXRpb24NCj4gPiAgICoNCj4gPiAgICogQmFzZWQgb24gdGhlIFRQUzY1MDg2IGRyaXZl
-cg0KPiA+ICAgKi8NCj4gPiBAQCAtMTQsNiArMTUsMTQgQEANCj4gPg0KPiA+ICAjaW5jbHVkZSA8
-bGludXgvbWZkL2JkOTU3MW13di5oPg0KPiA+DQo+ID4gKy8qIERyaXZlciBkYXRhIHRvIGRpc3Rp
-bmd1aXNoIGJkOTU3eCB2YXJpYW50cyAqLw0KPiA+ICtzdHJ1Y3QgYmQ5NTd4X2RkYXRhIHsNCj4g
-PiArCWNvbnN0IHN0cnVjdCByZWdtYXBfY29uZmlnICpyZWdtYXBfY29uZmlnOw0KPiA+ICsJY29u
-c3Qgc3RydWN0IHJlZ21hcF9pcnFfY2hpcCAqaXJxX2NoaXA7DQo+IA0KPiA+ICsJY29uc3Qgc3Ry
-dWN0IG1mZF9jZWxsICpjZWxsczsNCj4gPiArCWludCBudW1fY2VsbHM7DQo+IA0KPiBBcmUgeW91
-IHVzaW5nIHRoZXNlIHBvc3QtcHJvYmU/DQo+IA0KPiBJZiBub3QsIHRoZXkncmUgbm90IGRkYXRh
-Lg0KDQpJJ20gbm90IHVzaW5nIGFsbCB0aGVzZSBtZW1iZXJzIHBvc3QtcHJvYmUuDQpTbywgSSds
-bCByZW1vdmUgZGRhdGEuDQoNCjxzbmlwPg0KPiA+ICBzdGF0aWMgaW50IGJkOTU3MW13dl9wcm9i
-ZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50LA0KPiA+IC0JCQkgIGNvbnN0IHN0cnVjdCBpMmNf
-ZGV2aWNlX2lkICppZHMpDQo+ID4gKwkJCSAgIGNvbnN0IHN0cnVjdCBpMmNfZGV2aWNlX2lkICpp
-ZHMpDQo+ID4gIHsNCj4gPiAtCXN0cnVjdCBiZDk1NzFtd3YgKmJkOw0KPiA+IC0JaW50IHJldDsN
-Cj4gPiAtDQo+ID4gLQliZCA9IGRldm1fa3phbGxvYygmY2xpZW50LT5kZXYsIHNpemVvZigqYmQp
-LCBHRlBfS0VSTkVMKTsNCj4gPiAtCWlmICghYmQpDQo+ID4gLQkJcmV0dXJuIC1FTk9NRU07DQo+
-ID4gLQ0KPiA+IC0JaTJjX3NldF9jbGllbnRkYXRhKGNsaWVudCwgYmQpOw0KPiA+IC0JYmQtPmRl
-diA9ICZjbGllbnQtPmRldjsNCj4gPiAtCWJkLT5pcnEgPSBjbGllbnQtPmlycTsNCj4gPiArCWNv
-bnN0IHN0cnVjdCBiZDk1N3hfZGRhdGEgKmRkYXRhOw0KPiA+ICsJc3RydWN0IGRldmljZSAqZGV2
-ID0gJmNsaWVudC0+ZGV2Ow0KPiA+ICsJc3RydWN0IHJlZ21hcCAqcmVnbWFwOw0KPiA+ICsJc3Ry
-dWN0IHJlZ21hcF9pcnFfY2hpcF9kYXRhICppcnFfZGF0YTsNCj4gPiArCWludCByZXQsIGlycSA9
-IGNsaWVudC0+aXJxOw0KPiA+ICsNCj4gPiArCS8qIFJlYWQgdGhlIFBNSUMgcHJvZHVjdCBjb2Rl
-ICovDQo+ID4gKwlyZXQgPSBpMmNfc21idXNfcmVhZF9ieXRlX2RhdGEoY2xpZW50LCBCRDk1NzFN
-V1ZfUFJPRFVDVF9DT0RFKTsNCj4gPiArCWlmIChyZXQgPCAwKSB7DQo+ID4gKwkJZGV2X2Vycihk
-ZXYsICJGYWlsZWQgdG8gcmVhZCBwcm9kdWN0IGNvZGVcbiIpOw0KPiA+ICsJCXJldHVybiByZXQ7
-DQo+ID4gKwl9DQo+IA0KPiBOaXQ6ICdcbicgaGVyZS4NCg0KSSBnb3QgaXQuIEknbGwgYWRkIGEg
-YmxhbmsgbGluZSBoZXJlLg0KDQo+ID4gKwlzd2l0Y2ggKHJldCkgew0KPiA+ICsJY2FzZSBCRDk1
-NzFNV1ZfUFJPRFVDVF9DT0RFX0JEOTU3MU1XVjoNCj4gPiArCQlkZGF0YSA9ICZiZDk1NzFtd3Zf
-ZGRhdGE7DQo+IA0KPiBTaW1wbHkgZGVjbGFyZSAnY29uc3Qgc3RydWN0IG1mZF9jZWxsICpjZWxs
-cycgbG9jYWxseSBpbiBwcm9iZSBhbmQNCj4gYXNzaWduIGl0IGhlcmUgaW5zdGVhZC4NCg0KSSBn
-b3QgaXQuIEknbGwgYWxzbyBhZGQgImNvbnN0IHN0cnVjdCByZWdtYXBfY29uZmlnICpyZWdtYXBf
-Y29uZmlnOyINCmFuZCAiY29uc3Qgc3RydWN0IHJlZ21hcF9pcnFfY2hpcCAqaXJxX2NoaXA7IiBs
-b2NhbGx5IGluIHByb2JlLg0KDQpCZXN0IHJlZ2FyZHMsDQpZb3NoaWhpcm8gU2hpbW9kYQ0KDQo=
+From: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+
+The new PMIC BD9574MWF inherits features from BD9571MWV.
+Add the support of new PMIC to existing bd9571mwv driver.
+
+Signed-off-by: Khiem Nguyen <khiem.nguyen.xt@renesas.com>
+Co-developed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+---
+ drivers/mfd/bd9571mwv.c       | 76 ++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/mfd/bd9571mwv.h | 17 ++++++++--
+ 2 files changed, 89 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
+index 2c1fcbb..e15b1ac 100644
+--- a/drivers/mfd/bd9571mwv.c
++++ b/drivers/mfd/bd9571mwv.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * ROHM BD9571MWV-M MFD driver
++ * ROHM BD9571MWV-M and BD9574MVF-M core driver
+  *
+  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
+  * Copyright (C) 2020 Renesas Electronics Corporation
+@@ -11,6 +11,7 @@
+ #include <linux/i2c.h>
+ #include <linux/interrupt.h>
+ #include <linux/mfd/core.h>
++#include <linux/mfd/rohm-generic.h>
+ #include <linux/module.h>
+ 
+ #include <linux/mfd/bd9571mwv.h>
+@@ -103,6 +104,72 @@ static struct regmap_irq_chip bd9571mwv_irq_chip = {
+ 	.num_irqs	= ARRAY_SIZE(bd9571mwv_irqs),
+ };
+ 
++static const struct mfd_cell bd9574mwf_cells[] = {
++	{ .name = "bd9574mwf-regulator", },
++	{ .name = "bd9574mwf-gpio", },
++};
++
++static const struct regmap_range bd9574mwf_readable_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_VENDOR_CODE, BD9571MWV_PRODUCT_REVISION),
++	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
++	regmap_reg_range(BD9571MWV_DVFS_VINIT, BD9571MWV_DVFS_SETVMAX),
++	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_MONIVDAC),
++	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
++	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INTMASK),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTMASK),
++};
++
++static const struct regmap_access_table bd9574mwf_readable_table = {
++	.yes_ranges	= bd9574mwf_readable_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9574mwf_readable_yes_ranges),
++};
++
++static const struct regmap_range bd9574mwf_writable_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_BKUP_MODE_CNT, BD9571MWV_BKUP_MODE_CNT),
++	regmap_reg_range(BD9571MWV_DVFS_SETVID, BD9571MWV_DVFS_SETVID),
++	regmap_reg_range(BD9571MWV_GPIO_DIR, BD9571MWV_GPIO_OUT),
++	regmap_reg_range(BD9571MWV_GPIO_INT_SET, BD9571MWV_GPIO_INTMASK),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTMASK),
++};
++
++static const struct regmap_access_table bd9574mwf_writable_table = {
++	.yes_ranges	= bd9574mwf_writable_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9574mwf_writable_yes_ranges),
++};
++
++static const struct regmap_range bd9574mwf_volatile_yes_ranges[] = {
++	regmap_reg_range(BD9571MWV_DVFS_MONIVDAC, BD9571MWV_DVFS_MONIVDAC),
++	regmap_reg_range(BD9571MWV_GPIO_IN, BD9571MWV_GPIO_IN),
++	regmap_reg_range(BD9571MWV_GPIO_INT, BD9571MWV_GPIO_INT),
++	regmap_reg_range(BD9571MWV_INT_INTREQ, BD9571MWV_INT_INTREQ),
++};
++
++static const struct regmap_access_table bd9574mwf_volatile_table = {
++	.yes_ranges	= bd9574mwf_volatile_yes_ranges,
++	.n_yes_ranges	= ARRAY_SIZE(bd9574mwf_volatile_yes_ranges),
++};
++
++static const struct regmap_config bd9574mwf_regmap_config = {
++	.reg_bits	= 8,
++	.val_bits	= 8,
++	.cache_type	= REGCACHE_RBTREE,
++	.rd_table	= &bd9574mwf_readable_table,
++	.wr_table	= &bd9574mwf_writable_table,
++	.volatile_table	= &bd9574mwf_volatile_table,
++	.max_register	= 0xff,
++};
++
++static struct regmap_irq_chip bd9574mwf_irq_chip = {
++	.name		= "bd9574mwf",
++	.status_base	= BD9571MWV_INT_INTREQ,
++	.mask_base	= BD9571MWV_INT_INTMASK,
++	.ack_base	= BD9571MWV_INT_INTREQ,
++	.init_ack_masked = true,
++	.num_regs	= 1,
++	.irqs		= bd9571mwv_irqs,
++	.num_irqs	= ARRAY_SIZE(bd9571mwv_irqs),
++};
++
+ static int bd957x_identify(struct device *dev, struct regmap *regmap)
+ {
+ 	unsigned int value;
+@@ -162,6 +229,12 @@ static int bd9571mwv_probe(struct i2c_client *client,
+ 		cells = bd9571mwv_cells;
+ 		num_cells = ARRAY_SIZE(bd9571mwv_cells);
+ 		break;
++	case BD9571MWV_PRODUCT_CODE_BD9574MWF:
++		regmap_config = &bd9574mwf_regmap_config;
++		irq_chip = &bd9574mwf_irq_chip;
++		cells = bd9574mwf_cells;
++		num_cells = ARRAY_SIZE(bd9574mwf_cells);
++		break;
+ 	default:
+ 		dev_err(dev, "Unsupported device 0x%x\n", ret);
+ 		return -ENODEV;
+@@ -190,6 +263,7 @@ static int bd9571mwv_probe(struct i2c_client *client,
+ 
+ static const struct of_device_id bd9571mwv_of_match_table[] = {
+ 	{ .compatible = "rohm,bd9571mwv", },
++	{ .compatible = "rohm,bd9574mwf", },
+ 	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(of, bd9571mwv_of_match_table);
+diff --git a/include/linux/mfd/bd9571mwv.h b/include/linux/mfd/bd9571mwv.h
+index e1716ec..8efd99d 100644
+--- a/include/linux/mfd/bd9571mwv.h
++++ b/include/linux/mfd/bd9571mwv.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0-only */
+ /*
+- * ROHM BD9571MWV-M driver
++ * ROHM BD9571MWV-M and BD9574MWF-M driver
+  *
+  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
+  * Copyright (C) 2020 Renesas Electronics Corporation
+@@ -14,11 +14,12 @@
+ #include <linux/device.h>
+ #include <linux/regmap.h>
+ 
+-/* List of registers for BD9571MWV */
++/* List of registers for BD9571MWV and BD9574MWF */
+ #define BD9571MWV_VENDOR_CODE			0x00
+ #define BD9571MWV_VENDOR_CODE_VAL		0xdb
+ #define BD9571MWV_PRODUCT_CODE			0x01
+ #define BD9571MWV_PRODUCT_CODE_BD9571MWV	0x60
++#define BD9571MWV_PRODUCT_CODE_BD9574MWF	0x74
+ #define BD9571MWV_PRODUCT_REVISION		0x02
+ 
+ #define BD9571MWV_I2C_FUSA_MODE			0x10
+@@ -48,6 +49,7 @@
+ #define BD9571MWV_VD33_VID			0x44
+ 
+ #define BD9571MWV_DVFS_VINIT			0x50
++#define BD9574MWF_VD09_VINIT			0x51
+ #define BD9571MWV_DVFS_SETVMAX			0x52
+ #define BD9571MWV_DVFS_BOOSTVID			0x53
+ #define BD9571MWV_DVFS_SETVID			0x54
+@@ -61,6 +63,7 @@
+ #define BD9571MWV_GPIO_INT_SET			0x64
+ #define BD9571MWV_GPIO_INT			0x65
+ #define BD9571MWV_GPIO_INTMASK			0x66
++#define BD9574MWF_GPIO_MUX			0x67
+ 
+ #define BD9571MWV_REG_KEEP(n)			(0x70 + (n))
+ 
+@@ -70,6 +73,8 @@
+ #define BD9571MWV_PROT_ERROR_STATUS2		0x83
+ #define BD9571MWV_PROT_ERROR_STATUS3		0x84
+ #define BD9571MWV_PROT_ERROR_STATUS4		0x85
++#define BD9574MWF_PROT_ERROR_STATUS5		0x86
++#define BD9574MWF_SYSTEM_ERROR_STATUS		0x87
+ 
+ #define BD9571MWV_INT_INTREQ			0x90
+ #define BD9571MWV_INT_INTREQ_MD1_INT		BIT(0)
+@@ -82,6 +87,12 @@
+ #define BD9571MWV_INT_INTREQ_BKUP_TRG_INT	BIT(7)
+ #define BD9571MWV_INT_INTMASK			0x91
+ 
++#define BD9574MWF_SSCG_CNT			0xA0
++#define BD9574MWF_POFFB_MRB			0xA1
++#define BD9574MWF_SMRB_WR_PROT			0xA2
++#define BD9574MWF_SMRB_ASSERT			0xA3
++#define BD9574MWF_SMRB_STATUS			0xA4
++
+ #define BD9571MWV_ACCESS_KEY			0xff
+ 
+ /* Define the BD9571MWV IRQ numbers */
+@@ -91,7 +102,7 @@ enum bd9571mwv_irqs {
+ 	BD9571MWV_IRQ_MD2_E2,
+ 	BD9571MWV_IRQ_PROT_ERR,
+ 	BD9571MWV_IRQ_GP,
+-	BD9571MWV_IRQ_128H_OF,
++	BD9571MWV_IRQ_128H_OF,	/* BKUP_HOLD on BD9574MWF */
+ 	BD9571MWV_IRQ_WDT_OF,
+ 	BD9571MWV_IRQ_BKUP_TRG,
+ };
+-- 
+2.7.4
+
