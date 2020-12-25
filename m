@@ -2,183 +2,106 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D86C43603
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Dec 2020 17:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35DE4C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Dec 2020 09:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA5DD22518
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Dec 2020 17:07:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02316230FF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Dec 2020 09:07:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbgLXRGs (ORCPT
+        id S1726023AbgLYJH2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Dec 2020 12:06:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53558 "EHLO
+        Fri, 25 Dec 2020 04:07:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728462AbgLXRGr (ORCPT
+        with ESMTP id S1725863AbgLYJH1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Dec 2020 12:06:47 -0500
-Received: from mail-io1-xd36.google.com (mail-io1-xd36.google.com [IPv6:2607:f8b0:4864:20::d36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD567C061794;
-        Thu, 24 Dec 2020 09:05:37 -0800 (PST)
-Received: by mail-io1-xd36.google.com with SMTP id q137so2441295iod.9;
-        Thu, 24 Dec 2020 09:05:37 -0800 (PST)
+        Fri, 25 Dec 2020 04:07:27 -0500
+Received: from mail-lf1-x135.google.com (mail-lf1-x135.google.com [IPv6:2a00:1450:4864:20::135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C5DDC061573;
+        Fri, 25 Dec 2020 01:06:47 -0800 (PST)
+Received: by mail-lf1-x135.google.com with SMTP id o13so9186061lfr.3;
+        Fri, 25 Dec 2020 01:06:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=keidSM+0JKPtXa4utKxP9pnPPIHIvqknPriiqSlZCi4=;
-        b=HyanygRCeqhbYyrax3v/aUqpYWKjHVg8hSkGoeUIaCBWKCohAxoWrKK1Jy/2Es51p/
-         CM15fNwAyW63WChJB9nn2Bh3TwwC6tf4MkzRRFNrAd7LlW/5M1GsO1FxQi29inFxjne5
-         FaZsJ7pKnWdqM03R0iSFE3frtOQQw+SMwjS0wXlF1dXBq/ac6J9UC9kGkkE4XoKwhkLL
-         pygw7pQ+FNGhPD9dCLbyVdf5xFJ9dAaoMuTKJ37+ptqI70HISdVXvuQa8VNZVMYxpsni
-         rhpwbZG3kZVnv9vmVAzsRaTJ8oArHk08FHyJtAhXeGeookcPAjCqVx3huF/SXvQKGdDD
-         gt8w==
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cUbyJb06o/hnZsz1MOHR+WMF5JNEWawg3ZDN0CmkUUQ=;
+        b=cUkepVbyR/kMQ8zl6sCVU1pYKH87b4JcGpsDrS5y/QkLl0l8aYy6yFFpkEe5vtPna/
+         QDW+KeDKCgoQ1vnGu7ifAlYmvoBFEW5zLeSLKhPE9JJTYYx3p2vCZnhq6YMaqwcYHyif
+         BMwQV+F0Vm1d4ZHp6cFoLc6mgnkuT0MJOrTQgQhfA+6fcKfZkO6h9D7gLcXKkdcjFbmT
+         bmHYT70Uysyb0O8ZUY1G8SwDeUH4okynNLZJxN66/Nb+CDxDP+y42qIevvmOuzChx8bv
+         4glm9SeKQsXZTkaHbQDft2xehRaQoonBorkeN4vrYsOQRpSAhShVcwu8snBnmPny55It
+         McXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=keidSM+0JKPtXa4utKxP9pnPPIHIvqknPriiqSlZCi4=;
-        b=ODbtqg6bVJq0g1h4If2h2YJy26LbjgHX34vvDQg9ocLx/rQuvmjlbrEGNm7wit28kR
-         LM4Com7G6kj2GlhwBptz+UT3sVDUsWKK7TW81zjucw0//rTpbfajxKQhYTHBxisVKDcf
-         FX4i+m1Pm+xKPytE8Re+jRimt3EsM0RCKK89Q46/yFTHFN4FyT/Xi+1LPI1AEBfovJ2r
-         kYxv7fnkRzTHshp/zS04kxy78Y7VxTsfUM2J5pdIHlQ2sWZwAWOvFn++bQ4pbdC4+noO
-         KUJ7xEC0k6U4XgRVS3yOMjuUv3Vi31ZjCrfQzgzbcVB5uxrD/X495xdT5gL2NpNJ0j2x
-         cgBw==
-X-Gm-Message-State: AOAM530KV1FKMbuIeqHOTGvZJRKEQnKrYhm2NiBWlyhbLKaeR87WMeSb
-        6MDTre9QVBw8EZYRCiKiTaQnb3G0PBI=
-X-Google-Smtp-Source: ABdhPJyPn3q0x4f7cw/HL6SgNRTlGqpnBT7YM85COnYOJqHkOTD6b5//+NelBW4ODR1VreUPxuttNg==
-X-Received: by 2002:a02:9f19:: with SMTP id z25mr27203861jal.30.1608829536784;
-        Thu, 24 Dec 2020 09:05:36 -0800 (PST)
-Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:f45d:df49:9a4c:4914])
-        by smtp.gmail.com with ESMTPSA id f20sm9732965ilr.85.2020.12.24.09.05.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Dec 2020 09:05:36 -0800 (PST)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=cUbyJb06o/hnZsz1MOHR+WMF5JNEWawg3ZDN0CmkUUQ=;
+        b=uLGL8/sPO9PGBZQtm0iolgFaoqdWF/CX0d8sXlKPlSSGIBn18gbq8y56G1xg59Jkl6
+         QIft/V1tVslc+G/HxylnByRza4svw+vfQgMuPtljg1eTF9/KCZJqMoiaXdDDK+YIm3Ks
+         cNHMay01VUJVrHYMMni4s5qNOMuErUiU/Pt/5qFuzCYW8qnA9Qpfo+uwaoyeBNGRSZ+F
+         CfMvgFnaO9VBvdL6CV0sq8x0EnZ9rlE6giogVKnMUtAa52K6esUNuz4BJoeP5jUdNhpg
+         2BksCwO77kp0WZPwCMClPn0Cl1HrAkthbkAiaqqnbdcQiw1P2hOLCsrbK0tIyim0PB4w
+         IAgg==
+X-Gm-Message-State: AOAM532ac/tX1T8Mam5wM7kAmmZM/+9+NqLuvvQasAPSlcCt/PahvOEO
+        PNdiMBzKfB33y+xjdBpQSeTCpSJ4H8rLjw==
+X-Google-Smtp-Source: ABdhPJxBbjrWqj6PhEuq6sWp9flyEd4AVkmve9TI+Uw52hNfCpWC+J6V4irHIoQlYoj3LmGXjsiEJA==
+X-Received: by 2002:a2e:9dd4:: with SMTP id x20mr14972581ljj.37.1608887205486;
+        Fri, 25 Dec 2020 01:06:45 -0800 (PST)
+Received: from [192.168.1.100] ([31.173.84.55])
+        by smtp.gmail.com with ESMTPSA id f15sm4035668lfc.10.2020.12.25.01.06.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 25 Dec 2020 01:06:44 -0800 (PST)
+Subject: Re: [PATCH V2 8/9] arm64: dts: renesas: Introduce
+ r8a774e1-beacon-rzg2h-kit
+To:     Adam Ford <aford173@gmail.com>, linux-renesas-soc@vger.kernel.org
+Cc:     aford@beaconembedded.com,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V2 7/9] arm64: dts: renesas: Introduce r8a774b1-beacon-rzg2n-kit
-Date:   Thu, 24 Dec 2020 11:05:00 -0600
-Message-Id: <20201224170502.2254683-7-aford173@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201224170502.2254683-1-aford173@gmail.com>
 References: <20201224170502.2254683-1-aford173@gmail.com>
+ <20201224170502.2254683-8-aford173@gmail.com>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Organization: Brain-dead Software
+Message-ID: <5e0abd1d-1006-dce9-5d15-dbda22ed459b@gmail.com>
+Date:   Fri, 25 Dec 2020 12:06:33 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20201224170502.2254683-8-aford173@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Beacon EmebeddedWorks is introducing a new kit based on the
-RZ/G2N SoC from Renesas.
+On 24.12.2020 20:05, Adam Ford wrote:
 
-The SOM supports eMMC, WiFi and Bluetooth, along with a Cat-M1
-cellular radio.
+> eacon EmebeddedWorks is introducing a new kit based on the
 
-The Baseboard has Ethernet, USB, HDMI, stereo audio in and out,
-along with a variety of push buttons and LED's, and support for
-a parallel RGB and an LVDS display.  It uses the same baseboard
-and SOM as the RZ/G2M.
+    Beacon?
 
-This SOM has only 2GB of DDR, and beacon-renesom-som.dtsi contains
-the base memory node, so an additional memory node isn't necessary.
+> RZ/G2H SoC from Renesas.
+> 
+> The SOM supports eMMC, WiFi and Bluetooth, along with a Cat-M1
+> cellular radio.
+> 
+> The Baseboard has Ethernet, USB, HDMI, stereo audio in and out,
+> along with a variety of push buttons and LED's, and support for
+> a parallel RGB and an LVDS display.  It uses the same baseboard
+> and SOM files as the RZ/G2M and RZ/G2N kits.
+> 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+[...]
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
----
-V2:  Add missing du node entries.
-
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index dffefe030a76..cf7e2f77e4ea 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -7,6 +7,7 @@ dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2.dtb
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex.dtb
- dtb-$(CONFIG_ARCH_R8A774A1) += r8a774a1-hihope-rzg2m-rev2-ex-idk-1110wr.dtb
- 
-+dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-beacon-rzg2n-kit.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex.dtb
- dtb-$(CONFIG_ARCH_R8A774B1) += r8a774b1-hihope-rzg2n-ex-idk-1110wr.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
-new file mode 100644
-index 000000000000..71763f4402a7
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1-beacon-rzg2n-kit.dts
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2020, Compass Electronics Group, LLC
-+ */
-+
-+/dts-v1/;
-+
-+#include "r8a774b1.dtsi"
-+#include "beacon-renesom-som.dtsi"
-+#include "beacon-renesom-baseboard.dtsi"
-+
-+/ {
-+	model = "Beacon Embedded Works RZ/G2N Development Kit";
-+	compatible =	"beacon,beacon-rzg2n", "renesas,r8a774b1";
-+
-+	aliases {
-+		serial0 = &scif2;
-+		serial1 = &hscif0;
-+		serial2 = &hscif1;
-+		serial3 = &scif0;
-+		serial4 = &hscif2;
-+		serial5 = &scif5;
-+		serial6 = &scif4;
-+		ethernet0 = &avb;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+};
-+
-+&du {
-+	pinctrl-0 = <&du_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	clocks = <&cpg CPG_MOD 724>,
-+		<&cpg CPG_MOD 723>,
-+		<&cpg CPG_MOD 721>,
-+		<&versaclock5 1>,
-+		<&x302_clk>,
-+		<&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.3",
-+		"dclkin.0", "dclkin.1", "dclkin.3";
-+};
-+
-+/* Reference versaclock instead of audio_clk_a */
-+&rcar_sound {
-+	clocks = <&cpg CPG_MOD 1005>,
-+		 <&cpg CPG_MOD 1006>, <&cpg CPG_MOD 1007>,
-+		 <&cpg CPG_MOD 1008>, <&cpg CPG_MOD 1009>,
-+		 <&cpg CPG_MOD 1010>, <&cpg CPG_MOD 1011>,
-+		 <&cpg CPG_MOD 1012>, <&cpg CPG_MOD 1013>,
-+		 <&cpg CPG_MOD 1014>, <&cpg CPG_MOD 1015>,
-+		 <&cpg CPG_MOD 1022>, <&cpg CPG_MOD 1023>,
-+		 <&cpg CPG_MOD 1024>, <&cpg CPG_MOD 1025>,
-+		 <&cpg CPG_MOD 1026>, <&cpg CPG_MOD 1027>,
-+		 <&cpg CPG_MOD 1028>, <&cpg CPG_MOD 1029>,
-+		 <&cpg CPG_MOD 1030>, <&cpg CPG_MOD 1031>,
-+		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
-+		 <&cpg CPG_MOD 1020>, <&cpg CPG_MOD 1021>,
-+		 <&cpg CPG_MOD 1019>, <&cpg CPG_MOD 1018>,
-+		 <&versaclock6_bb 4>, <&audio_clk_b>,
-+		 <&audio_clk_c>,
-+		 <&cpg CPG_CORE R8A774B1_CLK_S0D4>;
-+};
--- 
-2.25.1
-
+MBR, Sergei
