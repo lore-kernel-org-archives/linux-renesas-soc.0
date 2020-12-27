@@ -2,73 +2,158 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C17AC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Dec 2020 09:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD23AC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 27 Dec 2020 12:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD0D323382
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 25 Dec 2020 09:35:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7226820866
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 27 Dec 2020 12:20:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbgLYJeq (ORCPT
+        id S1726158AbgL0MUM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 25 Dec 2020 04:34:46 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:32384 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729111AbgLYJeI (ORCPT
+        Sun, 27 Dec 2020 07:20:12 -0500
+Received: from www.zeus03.de ([194.117.254.33]:56012 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726039AbgL0MUL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 25 Dec 2020 04:34:08 -0500
-X-IronPort-AV: E=Sophos;i="5.78,447,1599490800"; 
-   d="scan'208";a="67150483"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 25 Dec 2020 18:33:35 +0900
-Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A6E8840178D9;
-        Fri, 25 Dec 2020 18:33:35 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
-        matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
-        broonie@kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com
-Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
-        linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v8 03/12] mfd: rohm-generic: Add BD9571 and BD9574
-Date:   Fri, 25 Dec 2020 18:33:18 +0900
-Message-Id: <1608888807-3117-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1608888807-3117-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1608888807-3117-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        Sun, 27 Dec 2020 07:20:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=OLBuIGepKlSVnmvGOJPcnqAaTs1
+        pHZHKKgWY6yobjxk=; b=GS0VMtTRA8/I2eTF11iid3gIysSzmWR/b2aebbKSsy3
+        E3TL08YATnimvmjP9dZPBu5Duoq5thZ93eAMh5xJHfGP5zpwvgDnwcvDVBlxVyyN
+        ufGnRrY0fvjwYjutOdG7kA2Gn3klkxE17ky/t8Vp8ThfXo2fDZgEUBq5AEn2kbkA
+        =
+Received: (qmail 1494280 invoked from network); 27 Dec 2020 13:19:28 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Dec 2020 13:19:28 +0100
+X-UD-Smtp-Session: l3s3148p1@LAhEK3G3SsEgAwDPXwIpAOUwDQytQs2L
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [RFC PATCH] arm64: dts: r8a779a0: correct reset values for GPIO
+Date:   Sun, 27 Dec 2020 13:19:25 +0100
+Message-Id: <20201227121925.8431-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.29.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add chip IDs for BD9571MWV and BD9574MWF.
+Because the datasheet is ambigious, copy over the reset values from the
+latest BSP.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- include/linux/mfd/rohm-generic.h | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
-index 4283b5b..affacf8 100644
---- a/include/linux/mfd/rohm-generic.h
-+++ b/include/linux/mfd/rohm-generic.h
-@@ -12,6 +12,8 @@ enum rohm_chip_type {
- 	ROHM_CHIP_TYPE_BD71847,
- 	ROHM_CHIP_TYPE_BD70528,
- 	ROHM_CHIP_TYPE_BD71828,
-+	ROHM_CHIP_TYPE_BD9571,
-+	ROHM_CHIP_TYPE_BD9574,
- 	ROHM_CHIP_TYPE_AMOUNT
- };
- 
+While looking for a problem when obtaining the reset GPIO for RAVB, I
+noticed this difference and so send this patch as a notification. It
+sadly did not fix my RAVB problem, so I'll report it with the RAVB
+patches there. I didn't find a map from "pfc-clocks" to "GPIO block"
+yet, so this is all very confusing without it.
+
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+index 2c7bb1503cda..16c64ec548df 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+@@ -110,7 +110,7 @@ gpio0: gpio@e6058180 {
+ 			interrupts = <GIC_SPI 832 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 916>;
+ 			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
+-			resets =  <&cpg 916>;
++			resets =  <&cpg 1331>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			// gpio-ranges = <&pfc 0 0 28>;
+@@ -124,7 +124,7 @@ gpio1: gpio@e6050180 {
+ 			interrupts = <GIC_SPI 836 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 915>;
+ 			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
+-			resets =  <&cpg 915>;
++			resets =  <&cpg 1330>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			// gpio-ranges = <&pfc 0 32 31>;
+@@ -138,7 +138,7 @@ gpio2: gpio@e6050980 {
+ 			interrupts = <GIC_SPI 840 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 915>;
+ 			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
+-			resets =  <&cpg 915>;
++			resets =  <&cpg 1330>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			// gpio-ranges = <&pfc 0 64 25>;
+@@ -152,7 +152,7 @@ gpio3: gpio@e6058980 {
+ 			interrupts = <GIC_SPI 844 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 916>;
+ 			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
+-			resets =  <&cpg 916>;
++			resets =  <&cpg 1331>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			// gpio-ranges = <&pfc 0 96 17>;
+@@ -166,7 +166,7 @@ gpio4: gpio@e6060180 {
+ 			interrupts = <GIC_SPI 848 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 917>;
+ 			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
+-			resets =  <&cpg 917>;
++			resets =  <&cpg 1400>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			// gpio-ranges = <&pfc 0 128 27>;
+@@ -180,7 +180,7 @@ gpio5: gpio@e6060980 {
+ 			interrupts = <GIC_SPI 852 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 917>;
+ 			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
+-			resets =  <&cpg 917>;
++			resets =  <&cpg 1400>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			// gpio-ranges = <&pfc 0 160 21>;
+@@ -194,7 +194,7 @@ gpio6: gpio@e6068180 {
+ 			interrupts = <GIC_SPI 856 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 918>;
+ 			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
+-			resets =  <&cpg 918>;
++			resets =  <&cpg 1401>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			// gpio-ranges = <&pfc 0 192 21>;
+@@ -208,7 +208,7 @@ gpio7: gpio@e6068980 {
+ 			interrupts = <GIC_SPI 860 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 918>;
+ 			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
+-			resets =  <&cpg 918>;
++			resets =  <&cpg 1401>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			// gpio-ranges = <&pfc 0 224 21>;
+@@ -222,7 +222,7 @@ gpio8: gpio@e6069180 {
+ 			interrupts = <GIC_SPI 864 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 918>;
+ 			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
+-			resets =  <&cpg 918>;
++			resets =  <&cpg 1401>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			// gpio-ranges = <&pfc 0 256 21>;
+@@ -236,7 +236,7 @@ gpio9: gpio@e6069980 {
+ 			interrupts = <GIC_SPI 868 IRQ_TYPE_LEVEL_HIGH>;
+ 			clocks = <&cpg CPG_MOD 918>;
+ 			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
+-			resets =  <&cpg 918>;
++			resets =  <&cpg 1401>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+ 			// gpio-ranges = <&pfc 0 288 21>;
 -- 
-2.7.4
+2.29.2
 
