@@ -3,90 +3,132 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B996DC43332
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 27 Dec 2020 17:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F05DCC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 27 Dec 2020 17:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 908A2207D0
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 27 Dec 2020 17:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C06E620784
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 27 Dec 2020 17:43:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbgL0Rmw (ORCPT
+        id S1726523AbgL0Rne (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 27 Dec 2020 12:42:52 -0500
-Received: from www.zeus03.de ([194.117.254.33]:46724 "EHLO mail.zeus03.de"
+        Sun, 27 Dec 2020 12:43:34 -0500
+Received: from www.zeus03.de ([194.117.254.33]:47032 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbgL0Rmw (ORCPT
+        id S1726518AbgL0Rne (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 27 Dec 2020 12:42:52 -0500
+        Sun, 27 Dec 2020 12:43:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=6nOEJgrHuMyJRiP7Y/GclKld1qO
-        GTPICoxsA54xoaw8=; b=UL6vbB0FBI08lotn/SH2oWNRTk2ySXkF4RIzDp2BlLE
-        I0Zw3zjRcZvB+5FZSm0bM/7TKC1e1xvyB+g8DKA4rp9xrEfpe4Kj++ruviHNrsFz
-        7mkFT0uHAr3ZJHAHPOcFPu4n3usVNzRqlHQn6JsFVC0qRxHAYxAD4xVjxQjWFC+8
-        =
-Received: (qmail 1556957 invoked from network); 27 Dec 2020 18:42:09 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Dec 2020 18:42:09 +0100
-X-UD-Smtp-Session: l3s3148p1@7o74rHW3Tp5UhsuJ
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=z6uoKLkV9T1nr0
+        YH7Ec4kiIrykJl+cn+QHsvaT3QsEM=; b=eXiizXUnq7B+x1xBSiirL2jm25WjX6
+        Vqavnhy7i8MYOx+LibOxEUvQB5v5tfPAynRiIyUxMZtVjBTYOkA78CBFvFsRgf8+
+        pyV5NR6kfpvZ1ByrYDYmdedN/YQbMD2Ck/UewfgtOiLIqrytqEaZ6xNwpY5iOUle
+        lIW0KfsVC8//8=
+Received: (qmail 1557178 invoked from network); 27 Dec 2020 18:42:17 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Dec 2020 18:42:17 +0100
+X-UD-Smtp-Session: l3s3148p1@VYmvrXW3Wp5UhsuJ
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
-Subject: [PATCH 0/6] v3u: add SDHI/MMC support
-Date:   Sun, 27 Dec 2020 18:41:54 +0100
-Message-Id: <20201227174202.40834-1-wsa+renesas@sang-engineering.com>
+Cc:     Takeshi Saito <takeshi.saito.xv@renesas.com>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 6/6] arm64: dts: renesas: falcon: Enable MMC
+Date:   Sun, 27 Dec 2020 18:42:00 +0100
+Message-Id: <20201227174202.40834-7-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.28.0
+In-Reply-To: <20201227174202.40834-1-wsa+renesas@sang-engineering.com>
+References: <20201227174202.40834-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-So, this series adds SDHI/MMC support to the Renesas R-Car V3U SoC.
-While SDHI is usually complicated, adding basic support to V3U was
-refreshingly uncomplicated :) The crux was this time in the CPG driver.
-In order to avoid code duplication, a CPG library was introduced, so we
-can share the SD clock handling between generic Gen3, V3U, and hopefully
-Gen4 later. The library turned out to be a quite nice solution for SDHI.
-I am quite happy with it. I think we could have a similar benefit for
-RPC, but we still need to see if this is enabled on V3U after all.
+From: Takeshi Saito <takeshi.saito.xv@renesas.com>
 
-So much for now, looking forward to comments. The branch is here:
+Enable MMC on the Falcon board.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/v3u/sdhi
+Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+[wsa: double checked & rebased]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ .../boot/dts/renesas/r8a779a0-falcon.dts      | 41 +++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
-Happy hacking,
-
-   Wolfram
-
-Takeshi Saito (2):
-  arm64: dts: renesas: r8a779a0: Add MMC node
-  arm64: dts: renesas: falcon: Enable MMC
-
-Wolfram Sang (4):
-  dt-bindings: mmc: renesas,sdhi: Add r8a779a0 support
-  clk: renesas: rcar-gen3: remove cpg_quirks access when registering SD
-    clock
-  clk: renesas: rcar-gen3: factor out CPG library
-  clk: renesas: r8a779a0: add SDHI support
-
- .../devicetree/bindings/mmc/renesas,sdhi.yaml |   1 +
- .../boot/dts/renesas/r8a779a0-falcon.dts      |  41 +++
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi     |  12 +
- drivers/clk/renesas/Kconfig                   |   5 +
- drivers/clk/renesas/Makefile                  |   1 +
- drivers/clk/renesas/r8a779a0-cpg-mssr.c       |  17 +-
- drivers/clk/renesas/rcar-cpg-lib.c            | 270 ++++++++++++++++++
- drivers/clk/renesas/rcar-cpg-lib.h            |  33 +++
- drivers/clk/renesas/rcar-gen3-cpg.c           | 267 +----------------
- 9 files changed, 387 insertions(+), 260 deletions(-)
- create mode 100644 drivers/clk/renesas/rcar-cpg-lib.c
- create mode 100644 drivers/clk/renesas/rcar-cpg-lib.h
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+index 48801f2bdbe5..0c44466d398f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+@@ -20,6 +20,24 @@ aliases {
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
++
++	reg_1p8v: regulator0 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.8V";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <1800000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
++	reg_3p3v: regulator1 {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-3.3V";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
+ };
+ 
+ &avb0 {
+@@ -169,6 +187,23 @@ &i2c6 {
+ 	clock-frequency = <100000>;
+ };
+ 
++&mmc0 {
++	pinctrl-0 = <&mmc_pins>;
++	pinctrl-1 = <&mmc_pins>;
++	pinctrl-names = "default", "state_uhs";
++
++	vmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_1p8v>;
++	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
++	bus-width = <8>;
++	no-sd;
++	no-sdio;
++	non-removable;
++	full-pwr-cycle-in-suspend;
++	status = "okay";
++};
++
+ &pfc {
+ 	avb0_pins: avb0 {
+ 		mux {
+@@ -307,6 +342,12 @@ i2c6_pins: i2c6 {
+ 		groups = "i2c6";
+ 		function = "i2c6";
+ 	};
++
++	mmc_pins: mmc {
++		groups = "mmc_data8", "mmc_ctrl", "mmc_ds";
++		function = "mmc";
++		power-source = <1800>;
++	};
+ };
+ 
+ &rwdt {
 -- 
 2.28.0
 
