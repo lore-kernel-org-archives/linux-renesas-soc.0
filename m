@@ -2,89 +2,141 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 471AEC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 10:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8014C4332B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 118672084D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 10:59:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98E2422583
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:28:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbgL1K7R (ORCPT
+        id S1727302AbgL1L2B (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Dec 2020 05:59:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49902 "EHLO mail.kernel.org"
+        Mon, 28 Dec 2020 06:28:01 -0500
+Received: from www.zeus03.de ([194.117.254.33]:37524 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727019AbgL1K7R (ORCPT
+        id S1727171AbgL1L2B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Dec 2020 05:59:17 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPS id EDB862084D
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 28 Dec 2020 10:58:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609153117;
-        bh=8t34yV6JuabaCWsqflZlqF8dF8B6+wtLvEx69/aG/8A=;
-        h=Subject:From:Date:To:From;
-        b=k3S22zeM7kRvbPc65iOvlYoGFrDIssgX9fz1scVgQeWrIE9nkefHrYqlgGrXbU+WP
-         fsJFT4BpKm4LNnxjZRLwZXfvckSyS4MR+1FoTN4gdXKK2lGjAIMeRr0IE/F8Imkt5m
-         Pa7reL0izq+ryfEEOvPIukUPSwlD+RbMqnIGLNb2WxuafMCUEV590VL76+nId4HDKN
-         CbERiJvTg6Xz1FDBpfJmsZCPKw/SUT+OHTRlpGbio1gC2BMxIcX6COyp2ZEWoCIaPI
-         G1d5SzH9Xrdd352kDiFmeQmG8GyvPYer4lXztVqvyFyPhGVzHHcbfyBWlaM3qWP26Z
-         nNxicYLx/XzRw==
-Content-Type: text/plain; charset="utf-8"
+        Mon, 28 Dec 2020 06:28:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=HlfNr1WXDvlBkl
+        C7IhNxN50JYdrOHCZaVgQWUkMVSLc=; b=jDuNT4qLlRi6mRYvNVUE1VrHoOo13R
+        SEx/ua9du5Zan3+3JYFQe4kGcWOeaIe5PpmH30ioARKIbPGst+gE9P2Q+YpUb3dT
+        EfgJcCYH2XUItPFXfbBy/PvaA3EfYwMerllbHNZebITh2WBZ5FVQB58jG2vrczgZ
+        VLQdtgqnmHm8I=
+Received: (qmail 1739132 invoked from network); 28 Dec 2020 12:27:18 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Dec 2020 12:27:18 +0100
+X-UD-Smtp-Session: l3s3148p1@W2qKjoS3zpQgAwDPXwIpAOUwDQytQs2L
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Linh Phung <linh.phung.jy@renesas.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 5/6] arm64: dts: renesas: r8a779a0: Add HSCIF support
+Date:   Mon, 28 Dec 2020 12:27:12 +0100
+Message-Id: <20201228112715.14947-6-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20201228112715.14947-1-wsa+renesas@sang-engineering.com>
+References: <20201228112715.14947-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <160915311678.31533.17337011338198718909.git-patchwork-summary@kernel.org>
-Date:   Mon, 28 Dec 2020 10:58:36 +0000
-To:     linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+From: Linh Phung <linh.phung.jy@renesas.com>
 
-The following patches were marked "accepted", because they were applied to
-geert/renesas-devel.git (refs/heads/next):
+Define the generic parts of the HSCIF[0-3] device nodes.
 
-Patch: [GIT,PULL] pinctrl: sh-pfc: Updates for v5.11 (take two)
-  Submitter: Geert Uytterhoeven <geert@linux-m68k.org>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=392231
-  Lore link: https://lore.kernel.org/r/20201127134304.79252-1-geert@linux-m68k.org
-Series: tmio/sdhi: fix workaround for a regression
-  Submitter: Wolfram Sang <wsa+renesas@sang-engineering.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=378775
-  Lore link: https://lore.kernel.org/r/20201106072549.1495-1-wsa+renesas@sang-engineering.com
-    Patches: [1/3] mmc: tmio: when resetting, reset DMA controller, too
-             [2/3] mmc: tmio: bring tuning HW to a sane state with MMC_POWER_OFF
-             [3/3] Revert "mmc: renesas_sdhi: workaround a regression when reinserting SD cards"
-Patch: [GIT,PULL] clk: renesas: Updates for v5.11 (take three)
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=399583
-  Lore link: https://lore.kernel.org/r/20201210075018.2407915-1-geert+renesas@glider.be
-Patch: dma-mapping: Fix 32-bit overflow with CONFIG_ARM_LPAE=n
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=370571
-  Lore link: https://lore.kernel.org/r/20201026152755.3738293-1-geert+renesas@glider.be
-Patch: [net,v2] ravb: Fix bit fields checking in ravb_hwtstamp_get()
-  Submitter: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=370279
-  Lore link: https://lore.kernel.org/r/20201026102130.29368-1-andrew_gabbasov@mentor.com
-Patch: mmc: host: renesas_sdhi_core: Missing tmio_mmc_host_free() in renesas_sdhi_remove()
-  Submitter: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=378887
-  Lore link: https://lore.kernel.org/r/1604654730-29914-1-git-send-email-yoshihiro.shimoda.uh@renesas.com
-Patch: irqchip/renesas-intc-irqpin: Merge irlm_bit and needs_irlm
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=372207
-  Lore link: https://lore.kernel.org/r/20201028153955.1736767-1-geert+renesas@glider.be
+Signed-off-by: Linh Phung <linh.phung.jy@renesas.com>
+[wsa: double checked & rebased]
+Signed-off-by: Wolfram Sang <wsa@kernel.org>
+---
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 64 +++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
 
-Total patches: 9
-
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+index 583cf2e232a0..4741d167b707 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+@@ -313,6 +313,70 @@ i2c2: i2c@e6510000 {
+ 			status = "disabled";
+ 		};
+ 
++		hscif0: serial@e6540000 {
++			compatible = "renesas,hscif-r8a779a0",
++				     "renesas,rcar-gen3-hscif", "renesas,hscif";
++			reg = <0 0xe6540000 0 0x60>;
++			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 514>,
++				 <&cpg CPG_CORE R8A779A0_CLK_S1D2>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x31>, <&dmac1 0x30>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
++			resets = <&cpg 514>;
++			status = "disabled";
++		};
++
++		hscif1: serial@e6550000 {
++			compatible = "renesas,hscif-r8a779a0",
++				     "renesas,rcar-gen3-hscif", "renesas,hscif";
++			reg = <0 0xe6550000 0 0x60>;
++			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 515>,
++				 <&cpg CPG_CORE R8A779A0_CLK_S1D2>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x33>, <&dmac1 0x32>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
++			resets = <&cpg 515>;
++			status = "disabled";
++		};
++
++		hscif2: serial@e6560000 {
++			compatible = "renesas,hscif-r8a779a0",
++				     "renesas,rcar-gen3-hscif", "renesas,hscif";
++			reg = <0 0xe6560000 0 0x60>;
++			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 516>,
++				 <&cpg CPG_CORE R8A779A0_CLK_S1D2>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x35>, <&dmac1 0x34>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
++			resets = <&cpg 516>;
++			status = "disabled";
++		};
++
++		hscif3: serial@e66a0000 {
++			compatible = "renesas,hscif-r8a779a0",
++				     "renesas,rcar-gen3-hscif", "renesas,hscif";
++			reg = <0 0xe66a0000 0 0x60>;
++			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&cpg CPG_MOD 517>,
++				 <&cpg CPG_CORE R8A779A0_CLK_S1D2>,
++				 <&scif_clk>;
++			clock-names = "fck", "brg_int", "scif_clk";
++			dmas = <&dmac1 0x37>, <&dmac1 0x36>;
++			dma-names = "tx", "rx";
++			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
++			resets = <&cpg 517>;
++			status = "disabled";
++		};
++
+ 		i2c3: i2c@e66d0000 {
+ 			compatible = "renesas,i2c-r8a779a0",
+ 				     "renesas,rcar-gen3-i2c";
+-- 
+2.29.2
 
