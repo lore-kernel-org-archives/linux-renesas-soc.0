@@ -2,155 +2,188 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC128C433E9
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 13:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03D72C432C3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 14:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A668F22C7B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 13:50:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDCC320715
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 14:40:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406345AbgL1Nub (ORCPT
+        id S2505760AbgL1Ojx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Dec 2020 08:50:31 -0500
-Received: from www.zeus03.de ([194.117.254.33]:56064 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406339AbgL1Nua (ORCPT
+        Mon, 28 Dec 2020 09:39:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34998 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2505756AbgL1Ojw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Dec 2020 08:50:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=6f/McbvImz/4E7rQoIsCp+Rkhnw
-        pE6JVfs+Wsicf3Nk=; b=ymaDkTWRA/M8Cf6BIvtwAT3S8ixK1GagPdrdrxKvD0h
-        6ZyNb/4wP9pEgbpVtk3/LNm1Tg1INbtGQzJlXjWskSAQO/Sy5KM6hWMYOHyLto+1
-        S2F7m+GPgpBk4wGJYgoz+HzQaD0mFM451NQnyL0cCaDLV4npznlMyYUrBciw6dsk
-        =
-Received: (qmail 1771730 invoked from network); 28 Dec 2020 14:49:47 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Dec 2020 14:49:47 +0100
-X-UD-Smtp-Session: l3s3148p1@WtUSjIa3/pUgAwDPXwIpAOUwDQytQs2L
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] arm64: dts: r8a779a0: enable gpio-ranges
-Date:   Mon, 28 Dec 2020 14:49:41 +0100
-Message-Id: <20201228134941.70965-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.29.2
+        Mon, 28 Dec 2020 09:39:52 -0500
+Received: from mail-il1-x133.google.com (mail-il1-x133.google.com [IPv6:2607:f8b0:4864:20::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A69DEC061795;
+        Mon, 28 Dec 2020 06:39:11 -0800 (PST)
+Received: by mail-il1-x133.google.com with SMTP id 2so9602720ilg.9;
+        Mon, 28 Dec 2020 06:39:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aURPYtA3lpG+7e0e4HidMNiG4zYD+7X05J1ucN2OsKw=;
+        b=OmS8mazgyq9xAou1z6fMdsjY0v6XDZy2umiTInuR2Ze8Ys7UuVNx2R23Oxes1GD5xH
+         6nNECex5i0YMeQl6l8AeIPDrPruXfP+ljmChEmEwmdvJgCW1KolwovNATZszPggB6GRW
+         rw9svx/RDLrcT9tLWD6TXQ7Y3RXVODXwW9ZfKkMOM8HmgPGq2tb5WSe2JH0wwtVS+B40
+         klCMmV8pxFCiL9D5+xn/f96/YmEAbE1Z7/t6huI5aLe7S3fgimTAYxFR40AE4EYLqnVI
+         RyXCy7z3Q0UtZSfLSRAHAR9PNKWxK2C9gMNrnY76Q5A94dOEehhY/B2TDm2TWrhQzahg
+         GrTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aURPYtA3lpG+7e0e4HidMNiG4zYD+7X05J1ucN2OsKw=;
+        b=JF6CPFU0H3ywZM3gWLwAUQAMb2F5L2Xu6BcA/knAoRXNJmdTctDEpNwLQ7BRuglRD1
+         oYUSLJZa54VK7j1oOLrTFS5d2K33lgrDjCgD8hnRApkDt1AnKbvcXiZ57hK+Cw4v30zc
+         iCuoaCihGw7hCP9x+d86kz8ICtKQrOGplYT5esnPYM10FM47BA86X2DMcpBJq7/tfH6T
+         qQSJlIYwNgkEQsI+q9GBsiyRZOeGykI2gf7tIz/nbkNHWnROYZ4QjI0U9pfu6kWQ68Nu
+         W3T/m1U/cnT9NrttK7l3nm0Wb9ezdS3yz3fqWz0XhGMp5yPuXwXei/6KeFofR63y6nnd
+         putw==
+X-Gm-Message-State: AOAM532pRxl0qHv/tAWasqyBw6MqvAfW3UBWbpjmS9gMBWrRg9Me7jLz
+        B5KhpSPLbR54SdxOC3FEIvh7gAlqZpq2ah5nN0ZglSRBZCo=
+X-Google-Smtp-Source: ABdhPJyyLG1CQMwGZMhr267avKgtnbF7s0e0qmOVefJDnEfAi/7J/KcqMmqfK44TjwuWk0auViYbpqe58aUo+M7mf3k=
+X-Received: by 2002:a92:d2cf:: with SMTP id w15mr44414352ilg.214.1609166349557;
+ Mon, 28 Dec 2020 06:39:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201213183759.223246-1-aford173@gmail.com> <20201213183759.223246-2-aford173@gmail.com>
+ <CAMuHMdWRieM1H5WLySVDVQds-xKgsqo-OibegJrXgonfqbAL8g@mail.gmail.com>
+ <CAHCN7xL3KU4dA=0-S7J5AEPmjAtpz4j-frEUqBD=JU7BV7g1WA@mail.gmail.com>
+ <CAMuHMdWc=qD=Oqa-7o9K1bd_OM0L7Br8BVAbDvYNraO0wAX2jw@mail.gmail.com>
+ <CAHCN7xKsSgM+=MFOKpNZTsJJiNyx6_mqZL2g_PKhN5fWyE6y7Q@mail.gmail.com>
+ <CAMuHMdVxzcyVuK06BqE4GQPLE8J7V5Jc-W_RSENNxEQG68krCw@mail.gmail.com>
+ <CAHCN7xJVn7gbCX8ibSFbyjA4HqyxPR9_vXvJQQSbJRKoaF_51Q@mail.gmail.com>
+ <CAMuHMdV0djkKTSHbCuv0d2sh+rGs1=WNNEcCNXE3daM8uAcRxw@mail.gmail.com>
+ <CAHCN7x+re5Qswbw=n8Gq0newXW0WoO7=ZseD3YZWMvD_nmBq3w@mail.gmail.com> <CAMuHMdUDb8e3Vv3C3N74D2-VYgsyVEHG9iVcnuNESTX6NArkFA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUDb8e3Vv3C3N74D2-VYgsyVEHG9iVcnuNESTX6NArkFA@mail.gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Mon, 28 Dec 2020 08:38:58 -0600
+Message-ID: <CAHCN7xJdR13sqX0H_WTx795P8D1mcNQo65XwrvWYF6k0pUGEAg@mail.gmail.com>
+Subject: Re: [PATCH 01/18] arm64: dts: renesas: beacon kit: Configure
+ programmable clocks
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Now that we have PFC support, we can also enable gpio-ranges. This
-enables requesting GPIOs.
+On Mon, Dec 28, 2020 at 6:33 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Adam,
+>
+> On Thu, Dec 24, 2020 at 2:53 PM Adam Ford <aford173@gmail.com> wrote:
+> > On Tue, Dec 22, 2020 at 2:03 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > On Tue, Dec 22, 2020 at 2:39 AM Adam Ford <aford173@gmail.com> wrote:
+> > > > On Fri, Dec 18, 2020 at 7:16 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > > On Thu, Dec 17, 2020 at 12:52 PM Adam Ford <aford173@gmail.com> wrote:
+> > > > > > On Thu, Dec 17, 2020 at 2:16 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > > > > On Wed, Dec 16, 2020 at 6:03 PM Adam Ford <aford173@gmail.com> wrote:
+> > > > > > > > On Wed, Dec 16, 2020 at 8:55 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > > > > > > > > On Sun, Dec 13, 2020 at 7:38 PM Adam Ford <aford173@gmail.com> wrote:
+> > > > > > > > > > When the board was added, clock drivers were being updated done at
+> > > > > > > > > > the same time to allow the versaclock driver to properly configure
+> > > > > > > > > > the modes.  Unforutnately, the updates were not applied to the board
+> > > > > > >
+> > > > > > > > > > --- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+> > > > > > > > > > +++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
+> > > > > > > > > > @@ -5,6 +5,7 @@
+> > > > > > > > > >
+> > > > > > > > > >  #include <dt-bindings/gpio/gpio.h>
+> > > > > > > > > >  #include <dt-bindings/input/input.h>
+> > > > > > > > > > +#include <dt-bindings/clk/versaclock.h>
+> > > > > > > > > >
+> > > > > > > > > >  / {
+> > > > > > > > > >         backlight_lvds: backlight-lvds {
+> > > > > > > > > > @@ -294,12 +295,12 @@ &du_out_rgb {
+> > > > > > > > > >  &ehci0 {
+> > > > > > > > > >         dr_mode = "otg";
+> > > > > > > > > >         status = "okay";
+> > > > > > > > > > -       clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>;
+> > > > > > > > > > +       clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>, <&versaclock5 3>;
+> > > > > > > > >
+> > > > > > > > > Why this change? You said before you don't need this
+> > > > > > > > > https://lore.kernel.org/linux-renesas-soc/CAHCN7xJWbP16SA-Ok-5syNnqOZAt8OFJo2_rtg5VrNVsN2-eiQ@mail.gmail.com/
+> > > > > > > > >
+> > > > > > > >
+> > > > > > > > I had talked with the hardware guys about buy pre-programmed
+> > > > > > > > versaclock chips which would have been pre-configured and pre-enabled.
+> > > > > > > > I thought it was going to happen, but it didn't, so we need the
+> > > > > > > > versaclock driver to enable the reference clock for the USB
+> > > > > > > > controllers, ethernet controller and audio clocks.  Previously we were
+> > > > > > > > manually configuring it or it was coincidentally working. Ideally,
+> > > > > > > > we'd have the clock system intentionally enable/disable the clocks
+> > > > > > > > when drivers are loaded/unloaded for for power management reasons.
+> > > > > > >
+> > > > > > > Can you tell me how exactly the Versaclock outputs are wired?
+> > > > > >
+> > > > > > The SoC is expecting a fixed external 50 MHz clock connected to
+> > > > > > USB_EXTAL.  Instead of a fixed clock, we're using the Versaclock.
+> > > > > > We're also using the Versaclock to drive the AVB TXCRefClk,
+> > > > > > du_dotclkiun0 and du_dotclkin2 (also also called du_dotclkin3 on
+> > > > > > RZ/G2N) instead of fixed clocks.
+> > > > > >
+> > > > > > > E.g. for USB, the bindings don't say anything about a third clock input,
+> > > > > > > so I'd like to know where that clock is fed into USB.
+> > > > > >
+> > > > > > The way the driver is crafted, it can take in multiple clocks and it
+> > > > > > goes through a list to enable them all, so I added the versaclock to
+> > > > > > the array.  Without the versaclock reference, the clock doesn't get
+> > > > > > turned on and the USB fails to operate.
+> > > > >
+> > > > > According to the Hardware User's Manual, USBL_EXTAL is used for USB3.0,
+> > > > > while you added the clock references to the EHCI nodes.
+> > > > > Are you sure EHCI is failing without this?
+> >
+> > I talked to a colleague about the USB_EXTAL.  He pointed me to table
+> > 60.1 of the RZ/2 Series, 2nd Generate reference manual
+> > (R01UH0808EJ0100 Rev.1.00),  which shows the USB EHCI needing the
+> > 50MHz.  When I clear out the references from ehci0 and echi1, the USB
+> > stops working, so it does appear that using the versaclock as the 3rd
+> > clock is needed for operating.  The device tree bindings for the
+> > generic-ehci provide for up to 4 clocks, so it seems like referencing
+> > clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>, <&versaclock5 3> are
+> > not a violation of the bindings.
+>
+> Perhaps you need to use renesas,rcar-usb2-clock-sel?
+> Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.yaml
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Thanks for the pointer. I didn't know this existed.  It looks like the
+right thing to do.  With that node, it appears to enable the
+versaclock and USB works.
+I'll submit a V3 at some point with this node added to each of the
+kit-level files since they use slightly different power-domains.
 
-This is now part of my renesas/v3u/gpio branch. Geert, feel free to
-squash it into your GPIO series.
+Do I need to add updates to the bindings for
+renesas,r8a774a1-rcar-usb2-clock-sel; r8a774b1-rcar-usb2-clock-sel;
+and renesas,r8a774e1-rcar-usb2-clock-sel; or I can I just use the
+generic reference to renesas,rcar-gen3-usb2-clock-sel?
 
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-index 16c64ec548df..cd2d65c6c865 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-@@ -113,7 +113,7 @@ gpio0: gpio@e6058180 {
- 			resets =  <&cpg 1331>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			// gpio-ranges = <&pfc 0 0 28>;
-+			gpio-ranges = <&pfc 0 0 28>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-@@ -127,7 +127,7 @@ gpio1: gpio@e6050180 {
- 			resets =  <&cpg 1330>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			// gpio-ranges = <&pfc 0 32 31>;
-+			gpio-ranges = <&pfc 0 32 31>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-@@ -141,7 +141,7 @@ gpio2: gpio@e6050980 {
- 			resets =  <&cpg 1330>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			// gpio-ranges = <&pfc 0 64 25>;
-+			gpio-ranges = <&pfc 0 64 25>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-@@ -155,7 +155,7 @@ gpio3: gpio@e6058980 {
- 			resets =  <&cpg 1331>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			// gpio-ranges = <&pfc 0 96 17>;
-+			gpio-ranges = <&pfc 0 96 17>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-@@ -169,7 +169,7 @@ gpio4: gpio@e6060180 {
- 			resets =  <&cpg 1400>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			// gpio-ranges = <&pfc 0 128 27>;
-+			gpio-ranges = <&pfc 0 128 27>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-@@ -183,7 +183,7 @@ gpio5: gpio@e6060980 {
- 			resets =  <&cpg 1400>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			// gpio-ranges = <&pfc 0 160 21>;
-+			gpio-ranges = <&pfc 0 160 21>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-@@ -197,7 +197,7 @@ gpio6: gpio@e6068180 {
- 			resets =  <&cpg 1401>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			// gpio-ranges = <&pfc 0 192 21>;
-+			gpio-ranges = <&pfc 0 192 21>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-@@ -211,7 +211,7 @@ gpio7: gpio@e6068980 {
- 			resets =  <&cpg 1401>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			// gpio-ranges = <&pfc 0 224 21>;
-+			gpio-ranges = <&pfc 0 224 21>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-@@ -225,7 +225,7 @@ gpio8: gpio@e6069180 {
- 			resets =  <&cpg 1401>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			// gpio-ranges = <&pfc 0 256 21>;
-+			gpio-ranges = <&pfc 0 256 21>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
-@@ -239,7 +239,7 @@ gpio9: gpio@e6069980 {
- 			resets =  <&cpg 1401>;
- 			gpio-controller;
- 			#gpio-cells = <2>;
--			// gpio-ranges = <&pfc 0 288 21>;
-+			gpio-ranges = <&pfc 0 288 21>;
- 			interrupt-controller;
- 			#interrupt-cells = <2>;
- 		};
--- 
-2.29.2
-
+adam
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
