@@ -2,92 +2,155 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 357A9C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 12:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC128C433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 13:50:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06ECF208B6
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 12:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A668F22C7B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 13:50:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728158AbgL1Mx2 (ORCPT
+        id S2406345AbgL1Nub (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Dec 2020 07:53:28 -0500
-Received: from mail-oi1-f171.google.com ([209.85.167.171]:34290 "EHLO
-        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728119AbgL1Mx0 (ORCPT
+        Mon, 28 Dec 2020 08:50:31 -0500
+Received: from www.zeus03.de ([194.117.254.33]:56064 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2406339AbgL1Nua (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Dec 2020 07:53:26 -0500
-Received: by mail-oi1-f171.google.com with SMTP id s75so11373586oih.1;
-        Mon, 28 Dec 2020 04:53:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MqVTZLUYzpLGRsvmeYRnbEICtg3112T1D5wrEvu0WF8=;
-        b=Jp3Tib+hkHrVg2j+5A17svkhJcLIr+NmSDZn6NCZUUrHUIWQKjnPxx3vKytknTf8FX
-         OHQfVryAbXWVqAtyo6zfAZvgMkXibkJHKRg7u2oKbzenK4c5NqvjdbO4RgnCFTpl+uSo
-         t/RSMIqlqb90AEUDRhMpuGeQqb6ipKGhFTXtKdNXBtY/SmYBVs148W3Q9J5GZE4FsoAw
-         RjGchmIKe8hVQ2P/M0GzVpYV+KkXtkD2FaXS8KKb9+Xrbj2zJJXK8LztYc62E46Iv80i
-         2y9Y4KAIk7sz/eP6zqc5xCGv3TxUqV/P46ipfWG5GYFxaV5E9iZ9q1wSorg7cfpRPMdV
-         HzPg==
-X-Gm-Message-State: AOAM533mFwpos5OvrFd2OTot/o4182C8NTfJZ5Gf5y5aT6oeArtY9GOG
-        qvMz+jTk0LF070aaoaR8ZsPspK5ylx87kmLhRAM=
-X-Google-Smtp-Source: ABdhPJy9qjiMw2sR7A98E9EXAUa+LXgugsNTuFCVJdDAb0vPgIvZULk7EDqPspZn/vBLdzi5S08dTTOJAn8sNkO8ho4=
-X-Received: by 2002:aca:ec09:: with SMTP id k9mr11763889oih.153.1609159965775;
- Mon, 28 Dec 2020 04:52:45 -0800 (PST)
+        Mon, 28 Dec 2020 08:50:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=6f/McbvImz/4E7rQoIsCp+Rkhnw
+        pE6JVfs+Wsicf3Nk=; b=ymaDkTWRA/M8Cf6BIvtwAT3S8ixK1GagPdrdrxKvD0h
+        6ZyNb/4wP9pEgbpVtk3/LNm1Tg1INbtGQzJlXjWskSAQO/Sy5KM6hWMYOHyLto+1
+        S2F7m+GPgpBk4wGJYgoz+HzQaD0mFM451NQnyL0cCaDLV4npznlMyYUrBciw6dsk
+        =
+Received: (qmail 1771730 invoked from network); 28 Dec 2020 14:49:47 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Dec 2020 14:49:47 +0100
+X-UD-Smtp-Session: l3s3148p1@WtUSjIa3/pUgAwDPXwIpAOUwDQytQs2L
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH] arm64: dts: r8a779a0: enable gpio-ranges
+Date:   Mon, 28 Dec 2020 14:49:41 +0100
+Message-Id: <20201228134941.70965-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.29.2
 MIME-Version: 1.0
-References: <20201223172154.34462-1-wsa+renesas@sang-engineering.com> <20201223172154.34462-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20201223172154.34462-3-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 28 Dec 2020 13:52:34 +0100
-Message-ID: <CAMuHMdV7i28HjfLbrzrJaJw6hB51u=kgmqqYmK_zBETFXumCUg@mail.gmail.com>
-Subject: Re: [PATCH 2/4] i2c: rcar: optimize cacheline to minimize HW race condition
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+Now that we have PFC support, we can also enable gpio-ranges. This
+enables requesting GPIOs.
 
-On Wed, Dec 23, 2020 at 6:22 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> 'flags' and 'io' are needed first, so they should be at the beginning of
-> the private struct.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
-> --- a/drivers/i2c/busses/i2c-rcar.c
-> +++ b/drivers/i2c/busses/i2c-rcar.c
-> @@ -119,6 +119,7 @@ enum rcar_i2c_type {
->  };
->
->  struct rcar_i2c_priv {
-> +       u32 flags;
+This is now part of my renesas/v3u/gpio branch. Geert, feel free to
+squash it into your GPIO series.
 
-Note that this adds a hole on 64-bit.
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-But if this really can make a difference, IMHO it is still broken
-
->         void __iomem *io;
->         struct i2c_adapter adap;
->         struct i2c_msg *msg;
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+index 16c64ec548df..cd2d65c6c865 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+@@ -113,7 +113,7 @@ gpio0: gpio@e6058180 {
+ 			resets =  <&cpg 1331>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			// gpio-ranges = <&pfc 0 0 28>;
++			gpio-ranges = <&pfc 0 0 28>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
+@@ -127,7 +127,7 @@ gpio1: gpio@e6050180 {
+ 			resets =  <&cpg 1330>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			// gpio-ranges = <&pfc 0 32 31>;
++			gpio-ranges = <&pfc 0 32 31>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
+@@ -141,7 +141,7 @@ gpio2: gpio@e6050980 {
+ 			resets =  <&cpg 1330>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			// gpio-ranges = <&pfc 0 64 25>;
++			gpio-ranges = <&pfc 0 64 25>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
+@@ -155,7 +155,7 @@ gpio3: gpio@e6058980 {
+ 			resets =  <&cpg 1331>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			// gpio-ranges = <&pfc 0 96 17>;
++			gpio-ranges = <&pfc 0 96 17>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
+@@ -169,7 +169,7 @@ gpio4: gpio@e6060180 {
+ 			resets =  <&cpg 1400>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			// gpio-ranges = <&pfc 0 128 27>;
++			gpio-ranges = <&pfc 0 128 27>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
+@@ -183,7 +183,7 @@ gpio5: gpio@e6060980 {
+ 			resets =  <&cpg 1400>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			// gpio-ranges = <&pfc 0 160 21>;
++			gpio-ranges = <&pfc 0 160 21>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
+@@ -197,7 +197,7 @@ gpio6: gpio@e6068180 {
+ 			resets =  <&cpg 1401>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			// gpio-ranges = <&pfc 0 192 21>;
++			gpio-ranges = <&pfc 0 192 21>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
+@@ -211,7 +211,7 @@ gpio7: gpio@e6068980 {
+ 			resets =  <&cpg 1401>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			// gpio-ranges = <&pfc 0 224 21>;
++			gpio-ranges = <&pfc 0 224 21>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
+@@ -225,7 +225,7 @@ gpio8: gpio@e6069180 {
+ 			resets =  <&cpg 1401>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			// gpio-ranges = <&pfc 0 256 21>;
++			gpio-ranges = <&pfc 0 256 21>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
+@@ -239,7 +239,7 @@ gpio9: gpio@e6069980 {
+ 			resets =  <&cpg 1401>;
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-			// gpio-ranges = <&pfc 0 288 21>;
++			gpio-ranges = <&pfc 0 288 21>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
+ 		};
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.29.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
