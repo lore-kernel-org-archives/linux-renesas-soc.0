@@ -2,95 +2,168 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB69C4332B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 15:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C141C43333
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 15:38:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA1152245C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 15:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D397229C4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 15:38:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392622AbgL1P1j (ORCPT
+        id S2393003AbgL1PiP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Dec 2020 10:27:39 -0500
-Received: from www.zeus03.de ([194.117.254.33]:57590 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2407797AbgL1N52 (ORCPT
+        Mon, 28 Dec 2020 10:38:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55222 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406339AbgL1Nub (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Dec 2020 08:57:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=JpSS6SJxSrGFlfoJzPOk0zvGh8aI
-        +TuYM/8FlHNqQBk=; b=Jta7t7RYoAkAjAYoqr2FZ70Di+k6zforFCXuyd/XEZZ8
-        kbu+u4hlBku5k1IHThsmmDU1hsL8WlN2jtYoPHC5mBWdk8i3H+cNi/LdR+F/FLbB
-        vunIcZ9J6MVeUtrXe4AY8uvFWnREscTklmir2QaQZGdY/kI6CxkYPoUM1kxVWWg=
-Received: (qmail 1773424 invoked from network); 28 Dec 2020 14:56:46 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Dec 2020 14:56:46 +0100
-X-UD-Smtp-Session: l3s3148p1@RfcMpYa3ApYgAwDPXwIpAOUwDQytQs2L
-Date:   Mon, 28 Dec 2020 14:56:46 +0100
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] arm64: dts: r8a779a0: WIP disable reset-gpios for AVB
-Message-ID: <20201228135646.GE10822@kunai>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20201227130407.10991-1-wsa+renesas@sang-engineering.com>
- <20201227130407.10991-6-wsa+renesas@sang-engineering.com>
+        Mon, 28 Dec 2020 08:50:31 -0500
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44017C061794;
+        Mon, 28 Dec 2020 05:49:51 -0800 (PST)
+Received: by mail-io1-xd32.google.com with SMTP id y5so9421719iow.5;
+        Mon, 28 Dec 2020 05:49:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aY3+fF6ahur6BRAAf5s0alh02lNeUKehSGviAXjROSI=;
+        b=p2R639eutLj/ekQRl7oLIRUzjKG8W3xHyJI3x6H4EjLeKBgR9oxl5pUNxkRkTkg7LS
+         9ySap+Nwztuphg0TUJeraGRHJHhF7jBPjGODY2EDuwShgHADXKHY19YqM2fKfiMXjB47
+         veQE9NSLh8yB7IH1FcriExXeL1NgEYjd8JPcT94hg/hNeXFWlQgfC9/BCFynQ7Ka3Dfr
+         0fNBNQgoU2iZPY3dilnC7f71CfYucqG1eRakyCbvdYACUMsueoawnGyQYneBC6l6+elg
+         GDHeG3UavN/0JOgL0AtiuTFkL7JC54/BQbB4xO3zrG31oMqHPisfcXEfbgLJ3yo0ubnW
+         Yt3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aY3+fF6ahur6BRAAf5s0alh02lNeUKehSGviAXjROSI=;
+        b=UcdGPiCZiwb2uM9bHuhSaxh8Of4JmjpTkB7AgFnUn51x19HTFSGFiKYwLycXBP3/Eh
+         Lv9KLrsR8JWBoTyxof4jpFGpR4yuBVwX3UWv8HgAFHcSHJi35lPUHd+YPLs/OuhtRgG4
+         MYv/ziKiLF85lv/VjiMbQcFJ3UMtiOuClQ2OWdX3Pq/ui4QWiO8HeW9qtZsfGvcSRqjE
+         XmMxMmdvKcdsCf7OkNe6La/mLz0imecSPGWRji3uEdWXrJIAByBIsh+5nJNdoPYLUApK
+         9cGGdZzguWrvfuJKIr4/nTpo4zPg1b8mYHvrDZDWdCIWAWc1ACBpoSt2Uf8NrCdTc1Od
+         9JMQ==
+X-Gm-Message-State: AOAM533fgv4qWcQ06dbTKBaqGnKFs/rhv7sO4HRgbhIJZgA2b58UBOZu
+        urnALx4lQes8WUNKZGQzfbm5u1nXLhq7l9vHpqY=
+X-Google-Smtp-Source: ABdhPJxV3MQQijnCDs5PRer+8kGiEbxEcyeundH6v2iVn++5qu0ItwUnDD9NekDaNisM0C92aCYmrw189ktK0gzp1z4=
+X-Received: by 2002:a05:6638:296:: with SMTP id c22mr39135330jaq.65.1609163390490;
+ Mon, 28 Dec 2020 05:49:50 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="fWddYNRDgTk9wQGZ"
-Content-Disposition: inline
-In-Reply-To: <20201227130407.10991-6-wsa+renesas@sang-engineering.com>
+References: <20201212165648.166220-1-aford173@gmail.com> <CAMuHMdUr5MWpa5fhpKgAm7zRgzzJga=pjNSVG3aoTvCmuq5poQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdUr5MWpa5fhpKgAm7zRgzzJga=pjNSVG3aoTvCmuq5poQ@mail.gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Mon, 28 Dec 2020 07:49:39 -0600
+Message-ID: <CAHCN7x+jm8agBzqDqnkmW1Obtd0zL6EA_xbicvkroZ+kmgEqiA@mail.gmail.com>
+Subject: Re: [RFC] ravb: Add support for optional txc_refclk
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        Charles Stevens <charles.stevens@logicpd.com>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Mon, Dec 14, 2020 at 4:05 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Adam,
+>
+> On Sun, Dec 13, 2020 at 5:18 PM Adam Ford <aford173@gmail.com> wrote:
+> > The SoC expects the txv_refclk is provided, but if it is provided
+> > by a programmable clock, there needs to be a way to get and enable
+> > this clock to operate.  It needs to be optional since it's only
+> > necessary for those with programmable clocks.
+> >
+> > Signed-off-by: Adam Ford <aford173@gmail.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/net/ethernet/renesas/ravb.h
+> > +++ b/drivers/net/ethernet/renesas/ravb.h
+> > @@ -994,6 +994,7 @@ struct ravb_private {
+> >         struct platform_device *pdev;
+> >         void __iomem *addr;
+> >         struct clk *clk;
+> > +       struct clk *ref_clk;
+> >         struct mdiobb_ctrl mdiobb;
+> >         u32 num_rx_ring[NUM_RX_QUEUE];
+> >         u32 num_tx_ring[NUM_TX_QUEUE];
+> > diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> > index bd30505fbc57..4c3f95923ef2 100644
+> > --- a/drivers/net/ethernet/renesas/ravb_main.c
+> > +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> > @@ -2148,6 +2148,18 @@ static int ravb_probe(struct platform_device *pdev)
+> >                 goto out_release;
+> >         }
+> >
+> > +       priv->ref_clk = devm_clk_get(&pdev->dev, "txc_refclk");
+>
+> Please also update the DT bindings[1], to document the optional
+> presence of the clock.
 
---fWddYNRDgTk9wQGZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I am not all that familiar with the YAML syntax, but right now, the
+clock-names property isn't in the binding, and the driver doesn't use
+a name when requesting the single clock it's expecting.
+Since the txc_refclk is optional, can the clock-names property allow
+for 0-2 names while the number of clocks be 1-2?
 
-On Sun, Dec 27, 2020 at 02:04:06PM +0100, Wolfram Sang wrote:
-> Retrieving a GPIO currently fails, so probing the whole driver fails
-> then. Remove them for now to get a working AVB device for testing.
->=20
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+clocks:
+    minItems: 1
+    maxItems: 2
 
-I just pushed out another version of this branch. There, in the
-depending gpio branch, a fix for the GPIO DTS addition has been applied,
-so 'reset-gpios' work now as expected. So, this patch has been dropped.
+  clock-names:
+    minItems: 0
+    maxItems: 2
+    items:
+      enum:
+        - fck # AVB functional clock (optional if it is the only clock)
+        - txc_refclk # TXC reference clock
 
+With the above proposal, the clock-names would only be necessary when
+using the txc_refclk.
 
---fWddYNRDgTk9wQGZ
-Content-Type: application/pgp-signature; name="signature.asc"
+>
+> > +       if (IS_ERR(priv->ref_clk)) {
+> > +               if (PTR_ERR(priv->ref_clk) == -EPROBE_DEFER) {
+> > +                       /* for Probe defer return error */
+> > +                       error = PTR_ERR(priv->ref_clk);
+> > +                       goto out_release;
+> > +               }
+> > +               /* Ignore other errors since it's optional */
+> > +       } else {
+> > +               (void)clk_prepare_enable(priv->ref_clk);
+>
+> This can fail.
+> Does this clock need to be enabled all the time?
+> At least it should be disabled in the probe failure path, and in
+> ravb_remove().
 
------BEGIN PGP SIGNATURE-----
+I'll do that for the next rev.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl/p5BoACgkQFA3kzBSg
-KbaQwRAAi0sSIeBJxddxz+u6GkgNf+0wUSrPzu+WBp7kW5HpBDYy7JYrwVlv8pje
-Lqj8whWEPLSeCa60uLaigKqTrpK5MyjZthDG22KrIOR9kLHOUP+7cAnzC1pcXrX9
-tvsvkjnL9aUk3d+XivmgwY88Eg65e1RwWjjI4WXJi8REMWw9VmcY4s6pI9/wNfSE
-GLh3iMxomVSvEjVgqpWloT1AX5UxHe9GyOqxzfGuNP90ELZPiF49TigaTxdwkn1i
-Bx4U77zWUZcXstdvOFzJGA7LDM0ZAYn220DH6qFrNS2K9Z7+Wr33Ky3Z6owNg1fb
-fM+5GiqBvjCAFab2f9hNAqfGqRDBp5tP7A444Ms3bp414ZU5EeOXcJDHEYgu1jyM
-l/pL30nj8yPHPT//m/p2i6ZoapMd+hP4+ocJxyCDxQkzq8Fmmt73JnuW1GcDCWs5
-ufcMPizdfENjxJ2eY7BbFputaFXf2r64/jGrNPjCuaxwc1+aYZdKy4X5T5I8bYY7
-VdE/Fs7+WFqwhvWIrhLOo1DFp8TIB8balaxTESR54ZI1a2wST10EXFYX+iITkoNu
-awiMI8ta1Ty6rKzUjdlL3v0zfOC3uNToN0V9kQWy4F+pefttZBvbikzT/fkueoiY
-Zkz7NREePjZ54TGLX0lP9+xZquti0rzUmb4PY4dyfDMi7GlH6sE=
-=1AWs
------END PGP SIGNATURE-----
+thanks,
 
---fWddYNRDgTk9wQGZ--
+adam
+>
+> [1] Documentation/devicetree/bindings/net/renesas,etheravb.yaml
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
