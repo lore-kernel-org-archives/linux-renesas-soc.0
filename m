@@ -4,43 +4,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B7EEC43332
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EB3C43217
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29FF3229C4
+	by mail.kernel.org (Postfix) with ESMTP id 885EE22583
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 28 Dec 2020 11:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727239AbgL1L2I (ORCPT
+        id S1727224AbgL1L17 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Dec 2020 06:28:08 -0500
-Received: from www.zeus03.de ([194.117.254.33]:37558 "EHLO mail.zeus03.de"
+        Mon, 28 Dec 2020 06:27:59 -0500
+Received: from www.zeus03.de ([194.117.254.33]:37460 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727326AbgL1L2H (ORCPT
+        id S1727176AbgL1L17 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 28 Dec 2020 06:28:07 -0500
+        Mon, 28 Dec 2020 06:27:59 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=K97IZtztq8hzAS
-        3RRELRYWQuWuDkaP/jU9xKY1/j0fY=; b=bz5fPiEmnGjG7xvw+lEfcbUaUBqkP+
-        Xd6pPquDW41RiHDBqIDClATbYi0bBLodoYz5b0HCwKFqYISzXAVsNKLN6FCBIbqn
-        gsCh+8eU1NhPnhZmV9+vjYL+WrwkfBZ4M/iu4xahlHnnP2Nsc83XLQ5jtsMI+c3O
-        96U3dZ22cBTSs=
-Received: (qmail 1739106 invoked from network); 28 Dec 2020 12:27:18 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Dec 2020 12:27:18 +0100
-X-UD-Smtp-Session: l3s3148p1@4+9/joS3zJQgAwDPXwIpAOUwDQytQs2L
+        :mime-version:content-transfer-encoding; s=k1; bh=W+pl0Zfqv8jJLl
+        0q0jwg0xTR6yybbiXPZwQi3hWZffk=; b=yxbhuReixezQZYhggt6iM8A84/5JX3
+        KXNZzmszC1fW4q5kH4YBcw3kaQixA7anxsShfcnEC1faq7xOwcWSTH9hNrUKOXX7
+        InujHqmFpB0Dv+SjQXpM3T2Gk+r18lP0dRgFQH8ECAhohkC4JaDcf9GBkBGZNsvo
+        1BzaYikNDz0no=
+Received: (qmail 1739031 invoked from network); 28 Dec 2020 12:27:16 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Dec 2020 12:27:16 +0100
+X-UD-Smtp-Session: l3s3148p1@uYxsjoS3yJQgAwDPXwIpAOUwDQytQs2L
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] clk: renesas: r8a779a0: add HSCIF support
-Date:   Mon, 28 Dec 2020 12:27:11 +0100
-Message-Id: <20201228112715.14947-5-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 2/6] arm64: dts: renesas: falcon: add SCIF0 nodes
+Date:   Mon, 28 Dec 2020 12:27:09 +0100
+Message-Id: <20201228112715.14947-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20201228112715.14947-1-wsa+renesas@sang-engineering.com>
 References: <20201228112715.14947-1-wsa+renesas@sang-engineering.com>
@@ -50,26 +50,60 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+SCIF0 has been enabled by the firmware, so it worked already. Still, add
+the proper nodes to make it work in any case.
+
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../boot/dts/renesas/r8a779a0-falcon.dts      | 25 +++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-index d85c31a465e1..f518c9e12a49 100644
---- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-@@ -166,6 +166,10 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
- 	DEF_MOD("csi41",	400,	R8A779A0_CLK_CSI0),
- 	DEF_MOD("csi42",	401,	R8A779A0_CLK_CSI0),
- 	DEF_MOD("csi43",	402,	R8A779A0_CLK_CSI0),
-+	DEF_MOD("hscif0",	514,	R8A779A0_CLK_S1D2),
-+	DEF_MOD("hscif1",	515,	R8A779A0_CLK_S1D2),
-+	DEF_MOD("hscif2",	516,	R8A779A0_CLK_S1D2),
-+	DEF_MOD("hscif3",	517,	R8A779A0_CLK_S1D2),
- 	DEF_MOD("i2c0",		518,	R8A779A0_CLK_S3D2),
- 	DEF_MOD("i2c1",		519,	R8A779A0_CLK_S3D2),
- 	DEF_MOD("i2c2",		520,	R8A779A0_CLK_S3D2),
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+index 0c44466d398f..54763c73dc74 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+@@ -205,6 +205,9 @@ &mmc0 {
+ };
+ 
+ &pfc {
++	pinctrl-0 = <&scif_clk_pins>;
++	pinctrl-names = "default";
++
+ 	avb0_pins: avb0 {
+ 		mux {
+ 			groups = "avb0_link", "avb0_mdio", "avb0_rgmii", "avb0_txcrefclk";
+@@ -348,9 +351,31 @@ mmc_pins: mmc {
+ 		function = "mmc";
+ 		power-source = <1800>;
+ 	};
++
++	scif0_pins: scif0 {
++		groups = "scif0_data", "scif0_ctrl";
++		function = "scif0";
++	};
++
++	scif_clk_pins: scif_clk {
++		groups = "scif_clk";
++		function = "scif_clk";
++	};
+ };
+ 
+ &rwdt {
+ 	timeout-sec = <60>;
+ 	status = "okay";
+ };
++
++&scif0 {
++	pinctrl-0 = <&scif0_pins>;
++	pinctrl-names = "default";
++
++	uart-has-rtscts;
++	status = "okay";
++};
++
++&scif_clk {
++	clock-frequency = <24000000>;
++};
 -- 
 2.29.2
 
