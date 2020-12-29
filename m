@@ -2,111 +2,86 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 174DAC433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C63C433DB
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Dec 2020 16:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2B19221F8
+	by mail.kernel.org (Postfix) with ESMTP id F292B22209
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Dec 2020 16:27:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726111AbgL2Q11 (ORCPT
+        id S1726260AbgL2Q11 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 29 Dec 2020 11:27:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48152 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48154 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbgL2Q11 (ORCPT
+        with ESMTP id S1726156AbgL2Q11 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 29 Dec 2020 11:27:27 -0500
 Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85057C06179A
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9258DC06179C
         for <linux-renesas-soc@vger.kernel.org>; Tue, 29 Dec 2020 08:26:06 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
         by baptiste.telenet-ops.be with bizsmtp
-        id AGS4240084C55Sk01GS4Co; Tue, 29 Dec 2020 17:26:04 +0100
+        id AGS4240094C55Sk01GS4Cp; Tue, 29 Dec 2020 17:26:04 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kuHox-0014bE-Cg; Tue, 29 Dec 2020 17:26:03 +0100
+        id 1kuHox-0014bC-D4; Tue, 29 Dec 2020 17:26:03 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kuHow-0092Vz-MW; Tue, 29 Dec 2020 17:26:02 +0100
+        id 1kuHow-0092Vs-Kd; Tue, 29 Dec 2020 17:26:02 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Andrej Valek <andrej.valek@siemens.com>
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-input@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] Input: st1232 - do not read more bytes than needed
-Date:   Tue, 29 Dec 2020 17:26:00 +0100
-Message-Id: <20201229162601.2154566-3-geert+renesas@glider.be>
+Subject: [PATCH 0/3] Input: st1232 - fixes for resolution reading
+Date:   Tue, 29 Dec 2020 17:25:58 +0100
+Message-Id: <20201229162601.2154566-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20201229162601.2154566-1-geert+renesas@glider.be>
-References: <20201229162601.2154566-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-st1232_ts_read_data() already reads ts->read_buf_len bytes (8 or 20
-bytes) from the touchscreen controller.  This was fine when it was used
-to read touch point coordinates only, but is overkill for reading the
-touchscreen resolution, which just needs 3 bytes.
+	Hi Dmitry, Andrej,
 
-Optimize transfers by passing the wanted number of bytes.
+The recent commit 3a54a215410b1650 ("Input: st1232 - add support
+resolution reading") broke probing of the st1232 touchscreen on
+r8a7740/armadillo:
 
-Fixes: 3a54a215410b1650 ("Input: st1232 - add support resolution reading")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/input/touchscreen/st1232.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+    st1232-ts 1-0055: Failed to read resolution: -6
 
-diff --git a/drivers/input/touchscreen/st1232.c b/drivers/input/touchscreen/st1232.c
-index f18d4c7e03da17c6..459701056f2bda96 100644
---- a/drivers/input/touchscreen/st1232.c
-+++ b/drivers/input/touchscreen/st1232.c
-@@ -47,7 +47,8 @@ struct st1232_ts_data {
- 	u8 *read_buf;
- };
- 
--static int st1232_ts_read_data(struct st1232_ts_data *ts, u8 reg)
-+static int st1232_ts_read_data(struct st1232_ts_data *ts, u8 reg,
-+			       unsigned int n)
- {
- 	struct i2c_client *client = ts->client;
- 	struct i2c_msg msg[] = {
-@@ -59,7 +60,7 @@ static int st1232_ts_read_data(struct st1232_ts_data *ts, u8 reg)
- 		{
- 			.addr	= client->addr,
- 			.flags	= I2C_M_RD | I2C_M_DMA_SAFE,
--			.len	= ts->read_buf_len,
-+			.len	= n,
- 			.buf	= ts->read_buf,
- 		}
- 	};
-@@ -79,7 +80,7 @@ static int st1232_ts_read_resolution(struct st1232_ts_data *ts, u16 *max_x,
- 	int error;
- 
- 	/* select resolution register */
--	error = st1232_ts_read_data(ts, REG_XY_RESOLUTION);
-+	error = st1232_ts_read_data(ts, REG_XY_RESOLUTION, 3);
- 	if (error)
- 		return error;
- 
-@@ -140,7 +141,7 @@ static irqreturn_t st1232_ts_irq_handler(int irq, void *dev_id)
- 	int count;
- 	int error;
- 
--	error = st1232_ts_read_data(ts, REG_XY_COORDINATES);
-+	error = st1232_ts_read_data(ts, REG_XY_COORDINATES, ts->read_buf_len);
- 	if (error)
- 		goto out;
- 
+Upon investigation, this turned out to be a little bit more complicated
+than expected, hence I wrote not one but three fixes.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (3):
+  Input: st1232 - fix off-by-one error in resolution handling
+  Input: st1232 - do not read more bytes than needed
+  Input: st1232 - wait until device is ready before reading resolution
+
+ drivers/input/touchscreen/st1232.c | 48 ++++++++++++++++++++++++++----
+ 1 file changed, 42 insertions(+), 6 deletions(-)
+
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
