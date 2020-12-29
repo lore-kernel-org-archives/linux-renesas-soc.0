@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C81D8C43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C16DC433E6
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Dec 2020 00:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D812207FB
+	by mail.kernel.org (Postfix) with ESMTP id 6CD0A221F8
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 29 Dec 2020 00:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730193AbgL2AyN (ORCPT
+        id S1729812AbgL2AyO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 28 Dec 2020 19:54:13 -0500
-Received: from mga09.intel.com ([134.134.136.24]:7921 "EHLO mga09.intel.com"
+        Mon, 28 Dec 2020 19:54:14 -0500
+Received: from mga02.intel.com ([134.134.136.20]:13517 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729812AbgL2AyN (ORCPT
+        id S1730191AbgL2AyN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 28 Dec 2020 19:54:13 -0500
-IronPort-SDR: y771gHi7cYGEu921m5LxYnVwuyIzcd5fxwr/aDv6lvk7cPLB9JyS23p3KPRRRLnbo3Jc4GN8fs
- 0Q+t7GJX5KTw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9848"; a="176595173"
+IronPort-SDR: av3Uva/xyvthpl2n9mEq0CE0JUF9yq89EyXNOmmEnhJ5ltneaI5hMLBP2COMzdSWL2QU/+2sEl
+ E99cB7X1HaXA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9848"; a="163503489"
 X-IronPort-AV: E=Sophos;i="5.78,456,1599548400"; 
-   d="scan'208";a="176595173"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Dec 2020 16:53:31 -0800
-IronPort-SDR: sfe+t8L2JkwQsFpnq1ZKpwU2pNfPcyVGMw9j1p5vg2MZZ5Ii4TRfv8ghcQNn7RNkRiUxtbpQM6
- vLwW8KcYlrFA==
+   d="scan'208";a="163503489"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Dec 2020 16:53:31 -0800
+IronPort-SDR: rmMJIUNe5efVCQAfChhRyHxZPgbupHc6HhfESBdKh1OmoQ/5mB5dMJO4ZH3ZFqBl6DrQa07Zs4
+ 9stWUcoClSRA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.78,456,1599548400"; 
-   d="scan'208";a="567587326"
+   d="scan'208";a="384720350"
 Received: from lkp-server02.sh.intel.com (HELO 4242b19f17ef) ([10.239.97.151])
-  by fmsmga005.fm.intel.com with ESMTP; 28 Dec 2020 16:53:30 -0800
+  by orsmga007.jf.intel.com with ESMTP; 28 Dec 2020 16:53:30 -0800
 Received: from kbuild by 4242b19f17ef with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1ku3GT-0003CY-HT; Tue, 29 Dec 2020 00:53:29 +0000
-Date:   Tue, 29 Dec 2020 08:52:43 +0800
+        id 1ku3GT-0003CV-FJ; Tue, 29 Dec 2020 00:53:29 +0000
+Date:   Tue, 29 Dec 2020 08:52:55 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:master] BUILD SUCCESS
- 9f1a7624a84a2e942dffebf97e917415de3838e9
-Message-ID: <5fea7ddb.hiLvxJe/UfoNBgAT%lkp@intel.com>
+Subject: [renesas-devel:topic/renesas-defconfig] BUILD SUCCESS
+ 42d146227cd58aa996eefa88aa2bb36c3ef36e4e
+Message-ID: <5fea7de7.OZ5l4sbAmfMAw4dD%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,12 +53,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  master
-branch HEAD: 9f1a7624a84a2e942dffebf97e917415de3838e9  Merge branches 'renesas-next' and 'topic/renesas-defconfig' into renesas-devel
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git  topic/renesas-defconfig
+branch HEAD: 42d146227cd58aa996eefa88aa2bb36c3ef36e4e  arm64: renesas: defconfig: Enable Transparent Hugepage madvise
 
 elapsed time: 722m
 
-configs tested: 99
+configs tested: 111
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -70,30 +70,42 @@ arm64                            allyesconfig
 arm64                               defconfig
 arm                              allyesconfig
 arm                              allmodconfig
-sparc                            alldefconfig
-ia64                         bigsur_defconfig
-powerpc                 mpc85xx_cds_defconfig
-mips                  maltasmvp_eva_defconfig
-mips                         db1xxx_defconfig
+m68k                          hp300_defconfig
+powerpc                   lite5200b_defconfig
+mips                          rb532_defconfig
+powerpc                     tqm8548_defconfig
+powerpc                     tqm8560_defconfig
+sh                        sh7757lcr_defconfig
+c6x                        evmc6678_defconfig
+arm                         s3c6400_defconfig
+powerpc                        warp_defconfig
+arm                         s3c2410_defconfig
+sh                         apsh4a3a_defconfig
 arc                         haps_hs_defconfig
-arm                          badge4_defconfig
-powerpc                  mpc866_ads_defconfig
-xtensa                         virt_defconfig
+powerpc                  storcenter_defconfig
 powerpc                 mpc8540_ads_defconfig
-arm                            hisi_defconfig
-sh                         ecovec24_defconfig
-nds32                            alldefconfig
-arm                            qcom_defconfig
-m68k                         apollo_defconfig
-mips                      malta_kvm_defconfig
-m68k                        mvme147_defconfig
-sh                     sh7710voipgw_defconfig
+um                           x86_64_defconfig
+powerpc                     taishan_defconfig
+mips                          ath25_defconfig
+mips                            e55_defconfig
+arm                          lpd270_defconfig
 arm                         shannon_defconfig
 powerpc                      walnut_defconfig
 sh                        sh7763rdp_defconfig
 mips                             allmodconfig
 m68k                        stmark2_defconfig
 arm                           sunxi_defconfig
+mips                malta_kvm_guest_defconfig
+arc                     haps_hs_smp_defconfig
+powerpc                     powernv_defconfig
+mips                      fuloong2e_defconfig
+mips                  maltasmvp_eva_defconfig
+arm                      jornada720_defconfig
+arm                     eseries_pxa_defconfig
+sh                           se7751_defconfig
+powerpc               mpc834x_itxgp_defconfig
+powerpc                 mpc8313_rdb_defconfig
+parisc                generic-64bit_defconfig
 ia64                             allmodconfig
 ia64                                defconfig
 ia64                             allyesconfig
