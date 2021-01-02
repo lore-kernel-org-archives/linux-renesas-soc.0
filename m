@@ -2,62 +2,62 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2E0C43331
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Jan 2021 11:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D0DC43381
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Jan 2021 11:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBF7522285
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Jan 2021 11:55:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E042122241
+	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Jan 2021 11:55:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbhABLzL (ORCPT
+        id S1726610AbhABLzH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 2 Jan 2021 06:55:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42362 "EHLO
+        Sat, 2 Jan 2021 06:55:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42348 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbhABLzK (ORCPT
+        with ESMTP id S1726327AbhABLzG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Jan 2021 06:55:10 -0500
-Received: from mail-il1-x135.google.com (mail-il1-x135.google.com [IPv6:2607:f8b0:4864:20::135])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 857DFC0613ED;
-        Sat,  2 Jan 2021 03:54:29 -0800 (PST)
-Received: by mail-il1-x135.google.com with SMTP id r17so20984164ilo.11;
-        Sat, 02 Jan 2021 03:54:29 -0800 (PST)
+        Sat, 2 Jan 2021 06:55:06 -0500
+Received: from mail-io1-xd33.google.com (mail-io1-xd33.google.com [IPv6:2607:f8b0:4864:20::d33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F47CC0613C1;
+        Sat,  2 Jan 2021 03:54:26 -0800 (PST)
+Received: by mail-io1-xd33.google.com with SMTP id q137so20712067iod.9;
+        Sat, 02 Jan 2021 03:54:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QIxNzOg49Ezkj2elfguFMTM+G9xMNVKyeVpYdfk4ojs=;
-        b=UnLbBkf0Y5FmjlRfsDIC+HAnCQs1xJW+7TPTMINA4nHyHZGovb77DhUDpt2HnPZxy8
-         wJDHV3S9fLsSTGSlyPSQpAugkaaT0drHmliPIFZLjxEMv1rRX9eA20ptPjBOd8Lf5ZHu
-         FPlPEIqpOmXWPdzq7K4W/7UvQVH+t+Mdi05y9LqAy4yE46HEZKgpBmP5S1l8AL/sjI9l
-         UuvM1ygHq5kLqFbWWKPvglepW+Ym8ub9bkYOPJ+noUY5DcicEsCHAimkv7FSzaN+lanf
-         FioweL3TEZqywDKQTnEMAkjkFk96HcmX1bod+5cnJ+1zM2ZdgLI9llMW/eSoJNv3dF2O
-         rWUg==
+        bh=mjq47Z+cVurscJY++LQtiaCWJOefRFw0FC6F4fr2FBI=;
+        b=fuz6hm7+C7tDxz9jA94wOKMo+W+j6n8SVUg+qlb6kctnADvsMg2KxNfNQHMJGhQOcs
+         HH3J2LwzhlpTBkyjwXBXD8eLRdvBAz0/9VJacFAAVfOxH7npOOEW2PJ9cIsWoe1KXkte
+         CpW6Lg173VDzUX2A+7QiRuV9HlUVmwa7NgIzXQJPbDpvAiLPc1sx7OUkLCMwZ4Fdxckl
+         0mUnn2iVJfC8RrTgItdrRNGaUC21bCoGZ7VgjWHabPoZfiB4TaFju0qOugaJVzjYnQ4S
+         GlxPwuJ3Z0rbblYydNQ37wvTQ13BJn0SRB/9ZXEo9Lzf1bx5NFRMWjEp3vrHi7DhtkXp
+         OGAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QIxNzOg49Ezkj2elfguFMTM+G9xMNVKyeVpYdfk4ojs=;
-        b=dLInfOyCmW6hQogLqQa7OGurr3kE4WzgWFk1J2iZyQR8mXbB/bSIc0p0dRpk+dpfpn
-         DXgAweIAlDWjqJuktq0OHMZZURV6vRKRomQ2cAq+9iPLAJnhF252+tIAQzlUPBa2pm5g
-         GhI3xopKkLe2IQiC3YOSqWAT5rixsTwNWPkdL/VqHbmtzk2k+FmbADZybsSC9ceIqzDq
-         uTpNMtlolzTpcuWwr4d9ilQcVX5nye8OPH87N3Idll9k6VMZJT1fQ4YDsKCdLsZHpUnB
-         AFVj1XlMVrqmCEBpqw6l5KC4aOt+p0C3gLKPk1CalrhljRSgJRTvhhvMDhR8N0QbpybU
-         0KqQ==
-X-Gm-Message-State: AOAM531R7HVY7ZY7SVo7bbnpMmNrjn33jpqxRxbwmyYXeofYIPik2DFq
-        lGY38QbGFqjsu6VM4npWrwtYZx0b77+O9A==
-X-Google-Smtp-Source: ABdhPJwH8aDh5f6BG4Rad2t8bTqFS3WHZya7/511uLZx3dugZdUnxrzxoJqmO8Yzc9FXfzlkBsbZ3A==
-X-Received: by 2002:a92:8404:: with SMTP id l4mr62859671ild.49.1609588468488;
-        Sat, 02 Jan 2021 03:54:28 -0800 (PST)
+        bh=mjq47Z+cVurscJY++LQtiaCWJOefRFw0FC6F4fr2FBI=;
+        b=KgX2oR/qurKIRtE5iYRF2sv3s0xrhpiQU3dO/1HzJu9MWAoVqxIg2U2frISYkEwlbZ
+         jVg37lUnNstKEI3Sm8xcjboN7DxnWeO4pAhQTmhUjxqcfhfDFyIz3J2xzqGBHcD2v+Zd
+         7o9HvNVOaF+6C1YKhpotVMmT+TE5RCpPttAXAiayQPhkDNN2c/kTGdsCXqHV3XFUZjWu
+         7KTpEi7235xqyyitPKuvlWoA/Y6iW3gOq2WR1z6bxZDy67jbV52WvZze23Bnn2QST8FO
+         7xYIRl1tQxPcxQrzU0iWjqnc0tzVOhbvyDawtzP8Qdqoode2CUqoF9onGmLNW0l8ZCop
+         iBkw==
+X-Gm-Message-State: AOAM533yibYkNH6rjfXdcpi1QOQ0z3ZV5jEuBpna+qq4h6Rp6v+rkK6T
+        mbpeEdcAHUPGOmOyRCl+OFHXpe5hsRIFnA==
+X-Google-Smtp-Source: ABdhPJxNwUqtteAT+PKtpP0t7DaIWHFrSK3vamgKoJrUVRjNR9zRRAEWYe8+hXOX01XYgt1oeRSKkw==
+X-Received: by 2002:a6b:b8d6:: with SMTP id i205mr51909864iof.135.1609588465180;
+        Sat, 02 Jan 2021 03:54:25 -0800 (PST)
 Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:f45d:df49:9a4c:4914])
-        by smtp.gmail.com with ESMTPSA id l9sm37218245ilg.51.2021.01.02.03.54.27
+        by smtp.gmail.com with ESMTPSA id l9sm37218245ilg.51.2021.01.02.03.54.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jan 2021 03:54:27 -0800 (PST)
+        Sat, 02 Jan 2021 03:54:24 -0800 (PST)
 From:   Adam Ford <aford173@gmail.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     aford@beaconembedded.com, biju.das.jz@bp.renesas.com,
@@ -70,9 +70,9 @@ Cc:     aford@beaconembedded.com, biju.das.jz@bp.renesas.com,
         Sergei Shtylyov <sergei.shtylyov@gmail.com>,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         linux-spi@vger.kernel.org
-Subject: [PATCH V2 4/4] arm64: dts: renesas: rzg2: Add RPC-IF Support
-Date:   Sat,  2 Jan 2021 05:54:12 -0600
-Message-Id: <20210102115412.3402059-4-aford173@gmail.com>
+Subject: [PATCH V2 2/4] memory: renesas rpc-if: Update Add RZ/G2 to Kconfig description
+Date:   Sat,  2 Jan 2021 05:54:10 -0600
+Message-Id: <20210102115412.3402059-2-aford173@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210102115412.3402059-1-aford173@gmail.com>
 References: <20210102115412.3402059-1-aford173@gmail.com>
@@ -82,131 +82,34 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The RZ/G2 series contain the SPI Multi I/O Bus Controller (RPC-IF).
-Add the nodes, but make them disabled by default.
+The Renesas RPC-IF is present on the RZ/G2 Series.  Add that to
+the description.
 
+Suggested-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Adam Ford <aford173@gmail.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 17 +++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 17 +++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 17 +++++++++++++++++
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 17 +++++++++++++++++
- 4 files changed, 68 insertions(+)
+ drivers/memory/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-V2:  No Change
+V2:  New to series
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-index d37ec42a1caa..5246f4d91e84 100644
---- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
-@@ -2302,6 +2302,23 @@ sdhi3: mmc@ee160000 {
- 			status = "disabled";
- 		};
+diff --git a/drivers/memory/Kconfig b/drivers/memory/Kconfig
+index 3ea6913df176..d55252f349d4 100644
+--- a/drivers/memory/Kconfig
++++ b/drivers/memory/Kconfig
+@@ -202,9 +202,9 @@ config RENESAS_RPCIF
+ 	depends on ARCH_RENESAS || COMPILE_TEST
+ 	select REGMAP_MMIO
+ 	help
+-	  This supports Renesas R-Car Gen3 RPC-IF which provides either SPI
+-	  host or HyperFlash. You'll have to select individual components
+-	  under the corresponding menu.
++	  This supports Renesas R-Car Gen3 of RZ/G2 RPC-IF which provides
++	  either SPI host or HyperFlash. You'll have to select individual
++	  components under the corresponding menu.
  
-+		rpc: spi@ee200000 {
-+			compatible = "renesas,r8a774a1-rpc-if",
-+				     "renesas,rcar-gen3-rpc-if";
-+			reg = <0 0xee200000 0 0x200>,
-+			      <0 0x08000000 0 0x4000000>,
-+			      <0 0xee208000 0 0x100>;
-+			reg-names = "regs", "dirmap", "wbuf";
-+			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 917>;
-+			clock-names = "rpc";
-+			power-domains = <&sysc R8A774A1_PD_ALWAYS_ON>;
-+			resets = <&cpg 917>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1010000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-index 83523916d360..5862aa2ad2bf 100644
---- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
-@@ -2160,6 +2160,23 @@ sdhi3: mmc@ee160000 {
- 			status = "disabled";
- 		};
- 
-+		rpc: spi@ee200000 {
-+			compatible = "renesas,r8a774b1-rpc-if",
-+				     "renesas,rcar-gen3-rpc-if";
-+			reg = <0 0xee200000 0 0x200>,
-+			      <0 0x08000000 0 0x4000000>,
-+			      <0 0xee208000 0 0x100>;
-+			reg-names = "regs", "dirmap", "wbuf";
-+			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 917>;
-+			clock-names = "rpc";
-+			power-domains = <&sysc R8A774B1_PD_ALWAYS_ON>;
-+			resets = <&cpg 917>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		sata: sata@ee300000 {
- 			compatible = "renesas,sata-r8a774b1",
- 				     "renesas,rcar-gen3-sata";
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-index e0e54342cd4c..20fa3caa050e 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-@@ -1654,6 +1654,23 @@ sdhi3: mmc@ee160000 {
- 			status = "disabled";
- 		};
- 
-+		rpc: spi@ee200000 {
-+			compatible = "renesas,r8a774c0-rpc-if",
-+				     "renesas,rcar-gen3-rpc-if";
-+			reg = <0 0xee200000 0 0x200>,
-+			      <0 0x08000000 0 0x4000000>,
-+			      <0 0xee208000 0 0x100>;
-+			reg-names = "regs", "dirmap", "wbuf";
-+			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 917>;
-+			clock-names = "rpc";
-+			power-domains = <&sysc R8A774C0_PD_ALWAYS_ON>;
-+			resets = <&cpg 917>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1010000 {
- 			compatible = "arm,gic-400";
- 			#interrupt-cells = <3>;
-diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-index 1333b02d623a..9be94945af8c 100644
---- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-@@ -2393,6 +2393,23 @@ sdhi3: mmc@ee160000 {
- 			status = "disabled";
- 		};
- 
-+		rpc: spi@ee200000 {
-+			compatible = "renesas,r8a774e1-rpc-if",
-+				     "renesas,rcar-gen3-rpc-if";
-+			reg = <0 0xee200000 0 0x200>,
-+			      <0 0x08000000 0 0x4000000>,
-+			      <0 0xee208000 0 0x100>;
-+			reg-names = "regs", "dirmap", "wbuf";
-+			interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 917>;
-+			clock-names = "rpc";
-+			power-domains = <&sysc R8A774E1_PD_ALWAYS_ON>;
-+			resets = <&cpg 917>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		sata: sata@ee300000 {
- 			compatible = "renesas,sata-r8a774e1",
- 				     "renesas,rcar-gen3-sata";
+ config STM32_FMC2_EBI
+ 	tristate "Support for FMC2 External Bus Interface on STM32MP SoCs"
 -- 
 2.25.1
 
