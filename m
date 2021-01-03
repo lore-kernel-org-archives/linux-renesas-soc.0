@@ -2,114 +2,130 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32CBFC4332D
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Jan 2021 11:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A300FC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  3 Jan 2021 15:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 16D802151B
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  2 Jan 2021 11:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A56520780
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  3 Jan 2021 15:30:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbhABLzF (ORCPT
+        id S1726949AbhACPa0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 2 Jan 2021 06:55:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42340 "EHLO
+        Sun, 3 Jan 2021 10:30:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbhABLzE (ORCPT
+        with ESMTP id S1727156AbhACPa0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 2 Jan 2021 06:55:04 -0500
-Received: from mail-il1-x12f.google.com (mail-il1-x12f.google.com [IPv6:2607:f8b0:4864:20::12f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5BF97C061573;
-        Sat,  2 Jan 2021 03:54:24 -0800 (PST)
-Received: by mail-il1-x12f.google.com with SMTP id k8so21040547ilr.4;
-        Sat, 02 Jan 2021 03:54:24 -0800 (PST)
+        Sun, 3 Jan 2021 10:30:26 -0500
+Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E104BC061573
+        for <linux-renesas-soc@vger.kernel.org>; Sun,  3 Jan 2021 07:29:45 -0800 (PST)
+Received: by mail-ej1-x631.google.com with SMTP id x16so33612730ejj.7
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 03 Jan 2021 07:29:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=T+jIrXGESdOQtBefzWtZLA4kpu1nBEQulHABKRZimnA=;
-        b=RL1E/y8Xffsed+lHHUOonOwgsSpZs4tjgzclG0xxW7rVYNjE3I24cwMZ/Y9UiWynOm
-         WtC9dca8thAfnfeSN+zYP7ZTVEf9Jyk0HPmzZ/S4kxcRJoafQbfMEIt9wAQeOxW6b5Vh
-         BxO+8xP/xUeYf7DHCMT5x54HFuQcE6XvNsiu3qE0LJ1GEkClpbIFJhJ7zdUP23Q+nB/H
-         Q/OnspaAPRFDFzaXW+9WrOUxOBfrZhrANwFZUAm23GOpwNp57GgKv+jRCaVCbVIR6fP+
-         TE8yTz2AdkTtf1gD3aV0v7E1b4uF3DFOBgpy3PAx8el71u76gkhf1czdItQJKvUEteof
-         CxCw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QVR3QQVTATVRnPc00Pw9QhaKce8QLhd0JoT9CxmbxsM=;
+        b=HjhkAN35KRKoGFBhwvriiUGjdFo7LS0iI/HPw1kkLUmdTbsiaMoWYCGZPVcfqb/MbQ
+         0F2la0TeOtNMygS5AGmfq8BFOAVrTSG1SFG8Cvzo0bXm+rLImUsH746SmEtOMuqVkOTY
+         8J7FdgY/KWynSrQwthSA3hdeLUA5h3C1nVk3fO+Rtqz3V/brlr+I2D7XqoMF1o08jD3Q
+         xQUR9ncKWpLOeBkQC0iA+c+c5lrf7tiNzEM0jTmy7FQaCfUz4AbqagUx+gdZkVTHQTSg
+         YkBOGUuM8LjbG8we9ZMcYWGxjS0v5a/GK49CEKd3vNpj6rm/tIDr6sbcMC5T1yern3ni
+         5+yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=T+jIrXGESdOQtBefzWtZLA4kpu1nBEQulHABKRZimnA=;
-        b=St70b+eS75asYRF8qag37TJ33ZcMktv95uHhOou0Kf9JldQfLdh1YQR4b2wKXIRw9N
-         RdoK4VYo2tyreFE3Bn0TwdDGfNt24Of6WBn5Q4rL4A3P9EL0Rmfp2s7tiG1ssHxmKjWP
-         VuyG1KEeKUgPurVRvCbDWsr6KXez4qViQVkbOYuSS8zn5FtY6hNK45DC2A+t6Z2V0oij
-         ylno2pEdQ6gZ+aDZmYL+eR6WM4b0ihxaNZUWnWDnUodHN7ms0pQ50OFPQJFkiKXIf5Mk
-         4O+FTq2ncNY0vJXGXuGQCfCF2gtV/qbRJMi9kZlomCc3fiyyVk2j7f8Jou+v7IyrqIXb
-         6YoA==
-X-Gm-Message-State: AOAM531Xe75H/VDUQbtx/IrHRbcsJ4v+wbzsWwHWSSvgwkvqP36d3HRs
-        vTDQmOHjihRUY6D+wtLLYqQY6U24Mtxu4w==
-X-Google-Smtp-Source: ABdhPJyBe3ahe0tS1nlWYwA0x4B+LRuX2MnMLeazUjjQETd7K0c8kTHLw8KP26oXfSLIYVMKz0ZyKQ==
-X-Received: by 2002:a92:ccce:: with SMTP id u14mr63354835ilq.152.1609588463278;
-        Sat, 02 Jan 2021 03:54:23 -0800 (PST)
-Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:f45d:df49:9a4c:4914])
-        by smtp.gmail.com with ESMTPSA id l9sm37218245ilg.51.2021.01.02.03.54.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Jan 2021 03:54:22 -0800 (PST)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     aford@beaconembedded.com, biju.das.jz@bp.renesas.com,
-        Adam Ford <aford173@gmail.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: [PATCH V2 1/4] dt-bindings: memory: Renesas RPC-IF: Add support for RZ/G2 Series
-Date:   Sat,  2 Jan 2021 05:54:09 -0600
-Message-Id: <20210102115412.3402059-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QVR3QQVTATVRnPc00Pw9QhaKce8QLhd0JoT9CxmbxsM=;
+        b=UX8sI7mz4af7Eip9Nji6BdlLhMgMAHpoxdcwSkhbQzScMNMHzImybQVb2QkAlSzWDu
+         87QVPxPWI4OvsdAyab64l0+QgF8uAllEeSxDC+vA7wfy/gFnwNcHrSDKvcLLqHbwwd+V
+         Pz2bzbIIualFReNJURepmkq6Ufkd4HsNa/JOKuKzSQgsShYGmbrMcErmHBtq5yD3BU1G
+         pciz3Ftj3VqrLXKNWyrr3sJMQCMXRlXWL72GNm2kx6Xs/qUFxNR4Sr7cT6Hsn5wZIdaR
+         X8wT7AjnHLAcNFtPCa8szd9GlCiSm14yoYZEKXy52xT3tXrHYOCc6s8fGRkUSMUKcbSc
+         KAbA==
+X-Gm-Message-State: AOAM5332z1MlLgDMjiByiO8Q1qO1bxij2+5wGvMrUlqMRVzyzP/VXQEc
+        2dZ3z1siIRczN2VdSPIXhXD/mqwJs8ZKsQ6UKJcHZw==
+X-Google-Smtp-Source: ABdhPJyl0A7ZV4rGfkHC/DymAFo+BP1JJQaYfvVG7751yWsFsqOmVR7dK7EkNEmOsd2jjtqTz0M4NPz824sMjzwLroM=
+X-Received: by 2002:a17:906:3513:: with SMTP id r19mr62727164eja.445.1609687784668;
+ Sun, 03 Jan 2021 07:29:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20201231153842.25782-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <TYBPR01MB53095D8BBF8E17AB824243F786D50@TYBPR01MB5309.jpnprd01.prod.outlook.com>
+In-Reply-To: <TYBPR01MB53095D8BBF8E17AB824243F786D50@TYBPR01MB5309.jpnprd01.prod.outlook.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Sun, 3 Jan 2021 16:29:33 +0100
+Message-ID: <CAMpxmJVBAE=mh+ZapJ430sYjnwNh-kyMt0P=FjQ=vqjozb7zVA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: Kconfig: Update help description for GPIO_RCAR
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The RZ/G2 Series has the RPC-IF interface.
-Update bindings to support: r8a774a1, r8a774b1, r8a774c0, and r8a774e1
+On Fri, Jan 1, 2021 at 6:07 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+>
+> Hi Prabhakar,
+>
+> > -----Original Message-----
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Sent: 31 December 2020 15:39
+> > To: Linus Walleij <linus.walleij@linaro.org>; Bartosz Golaszewski
+> > <bgolaszewski@baylibre.com>; Geert Uytterhoeven <geert+renesas@glider.be>
+> > Cc: linux-gpio@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> > renesas-soc@vger.kernel.org; Prabhakar <prabhakar.csengg@gmail.com>;
+> > Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Subject: [PATCH] gpio: Kconfig: Update help description for GPIO_RCAR
+> >
+> > The gpio-rcar driver supports R-Car Gen{1,2,3} and RZ/G{1,2} SoC's, update
+> > the description to reflect this.
+>
+> Not sure we need to make this generic by  dropping {1,2,3}/{1,2} and use R-Car and RZ/G SoC's instead ???
+>
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
----
- .../bindings/memory-controllers/renesas,rpc-if.yaml         | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+This looks better IMO - if Geert is OK with that, then let's change it.
 
-V2:  Updated renesas,rcar-gen3-rpc-if to include RZ/G2
+Bart
 
-diff --git a/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml b/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
-index 6d6ba608fd22..990489fdd2ac 100644
---- a/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
-+++ b/Documentation/devicetree/bindings/memory-controllers/renesas,rpc-if.yaml
-@@ -26,10 +26,14 @@ properties:
-   compatible:
-     items:
-       - enum:
-+          - renesas,r8a774a1-rpc-if       # RZ/G2M
-+          - renesas,r8a774b1-rpc-if       # RZ/G2N
-+          - renesas,r8a774c0-rpc-if       # RZ/G2E
-+          - renesas,r8a774e1-rpc-if       # RZ/G2H
-           - renesas,r8a77970-rpc-if       # R-Car V3M
-           - renesas,r8a77980-rpc-if       # R-Car V3H
-           - renesas,r8a77995-rpc-if       # R-Car D3
--      - const: renesas,rcar-gen3-rpc-if   # a generic R-Car gen3 device
-+      - const: renesas,rcar-gen3-rpc-if   # a generic R-Car gen3 or RZ/G2 device
- 
-   reg:
-     items:
--- 
-2.25.1
-
+> Regards,
+> Biju
+>
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/gpio/Kconfig | 5 +++--
+> >  1 file changed, 3 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig index
+> > c70f46e80a3b..47e545d71df1 100644
+> > --- a/drivers/gpio/Kconfig
+> > +++ b/drivers/gpio/Kconfig
+> > @@ -486,11 +486,12 @@ config GPIO_PXA
+> >         Say yes here to support the PXA GPIO device
+> >
+> >  config GPIO_RCAR
+> > -     tristate "Renesas R-Car GPIO"
+> > +     tristate "Renesas R-Car Gen{1,2,3} and RZ/G{1,2} GPIO support"
+> >       depends on ARCH_RENESAS || COMPILE_TEST
+> >       select GPIOLIB_IRQCHIP
+> >       help
+> > -       Say yes here to support GPIO on Renesas R-Car SoCs.
+> > +       Say yes here to support GPIO on Renesas R-Car Gen{1,2,3} and
+> > +       RZ/G{1,2} SoCs.
+> >
+> >  config GPIO_RDA
+> >       bool "RDA Micro GPIO controller support"
+> > --
+> > 2.17.1
+>
