@@ -2,35 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACA71C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Jan 2021 06:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C40C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Jan 2021 06:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7ED0F229C4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Jan 2021 06:09:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4964227C3
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Jan 2021 06:10:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727967AbhAEGJ1 (ORCPT
+        id S1725766AbhAEGKJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Jan 2021 01:09:27 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:32962 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbhAEGJ1 (ORCPT
+        Tue, 5 Jan 2021 01:10:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35636 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbhAEGKJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Jan 2021 01:09:27 -0500
+        Tue, 5 Jan 2021 01:10:09 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31630C061574;
+        Mon,  4 Jan 2021 22:09:29 -0800 (PST)
 Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A32603D7;
-        Tue,  5 Jan 2021 07:08:42 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A7A03878;
+        Tue,  5 Jan 2021 07:08:45 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1609826923;
-        bh=k/JBWUln97pXxLNozC0mrLlPsnZZtSHeYPo3vG1jYAY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=LUcFnm+LG+JYtfQnJbIgXXv4RoJvJ2z6SKE4VHert/x7+rKt6b2WuYmu6CjRtpsn+
-         h/B7iTxCf1CE1J9YdTBUShM6GqG8DwjcaoRGJQOsQapfpeqXY6pMjc0t2DAagrFZmc
-         AyuPwDCQCY+IWfZG6CGy9NNE9W4mwvMGhnKShjhs=
+        s=mail; t=1609826926;
+        bh=JIba0CJH123Gme14P+fqrKrVNZ9cfWs3p53uWjTnBWA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZCiONuoN+RK5++4ugdjBJ7jdyA0xBeLvaQwgnN0tWLiYvHA8URqMkEwPeARv5PFdi
+         8/wGj+SqfjkauaPLaXTMQsmatqoxNHI/mu+EE8KuVuF+TBLTDactBKgwPmmb1PcHpP
+         78+9aH0N4c3oYG8mbElFT/Eq7l3IgG5vArooy94o=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
@@ -39,73 +42,243 @@ Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Maxime Ripard <maxime@cerno.tech>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Mark Yao <markyao0591@gmail.com>
-Subject: [PATCH v3 0/6] dt-bindings: display: Convert DWC HDMI TX bindings to YAML
-Date:   Tue,  5 Jan 2021 08:08:12 +0200
-Message-Id: <20210105060818.24158-1-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v3 3/6] dt-bindings: display: imx: hdmi: Convert binding to YAML
+Date:   Tue,  5 Jan 2021 08:08:15 +0200
+Message-Id: <20210105060818.24158-4-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20210105060818.24158-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20210105060818.24158-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+Convert the i.MX6 HDMI TX text binding to YAML.
 
-This patch series attempts a conversion of the DWC HDMI TX DT bindings
-to YAML. It's mostly identical to v2, with Mark Yao's e-mail address
-updated, tags picked, a small MAINTAINERS updated, and the series now
-sent to the devicetree@vger.kernel.org mailing list.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+Changes since v1:
 
-The DWC HDMI TX is an HDMI transmitter IP core from Synopsys, integrated
-in various SoCs with different glue layers. As such, some properties are
-defined in a common document, but sometimes need to be overridden by
-platform-specific bindings.
-
-Patch 1/6 adds a base schema for the common properties, based on the
-existing dw_hdmi.txt document. Patches 2/6 to 4/6 then convert the
-platform-specific bindings for Renesas, NXP and Rockchip SoCs. Patch 5/6
-replaces the reference to dw_hdmi.txt in the Allwinner bindings with a
-reference to the YAML base schema, and patch 6/6 drops dw_hdmi.txt.
-
-Compared to v1 (sent as an RFC), the base schema now works properly on
-all three platforms, and the schemas have been converted to use the OF
-graph schema. A more detailed changelog is available in individual
-patches.
-
-I have volunteered Philipp Zabel and Mark Yao as maintainers for the
-i.MX6 and Rockchip bindings respectively. Please let me know if you
-would prefer a different maintainer, or ack the respective patch if this
-is fine with you.
-
-Laurent Pinchart (6):
-  dt-bindings: display: bridge: Add YAML schema for Synopsys DW-HDMI
-  dt-bindings: display: bridge: renesas,dw-hdmi: Convert binding to YAML
-  dt-bindings: display: imx: hdmi: Convert binding to YAML
-  dt-bindings: display: rockchip: dw-hdmi: Convert binding to YAML
-  dt-bindings: display: sun8i-a83t-dw-hdmi: Reference dw-hdmi YAML
-    schema
-  dt-bindings: display: bridge: Remove deprecated dw_hdmi.txt
-
- .../display/allwinner,sun8i-a83t-dw-hdmi.yaml |   4 +-
- .../bindings/display/bridge/dw_hdmi.txt       |  33 ----
- .../display/bridge/renesas,dw-hdmi.txt        |  88 ----------
- .../display/bridge/renesas,dw-hdmi.yaml       | 128 ++++++++++++++
- .../display/bridge/synopsys,dw-hdmi.yaml      |  58 +++++++
- .../bindings/display/imx/fsl,imx6-hdmi.yaml   | 130 ++++++++++++++
- .../devicetree/bindings/display/imx/hdmi.txt  |  65 -------
- .../display/rockchip/dw_hdmi-rockchip.txt     |  74 --------
- .../display/rockchip/rockchip,dw-hdmi.yaml    | 158 ++++++++++++++++++
- MAINTAINERS                                   |   2 +-
- 10 files changed, 477 insertions(+), 263 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt
- delete mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
- create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.yaml
- create mode 100644 Documentation/devicetree/bindings/display/bridge/synopsys,dw-hdmi.yaml
+- Only specify maxItems for clocks
+- Drop reg and interrupts as they're checked in the base schema
+- Rebase on top of OF graph schema, dropped redundant properties
+- Fix identation for enum entries
+- Drop clock-names items, use maxItems only
+---
+ .../bindings/display/imx/fsl,imx6-hdmi.yaml   | 130 ++++++++++++++++++
+ .../devicetree/bindings/display/imx/hdmi.txt  |  65 ---------
+ 2 files changed, 130 insertions(+), 65 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx6-hdmi.yaml
  delete mode 100644 Documentation/devicetree/bindings/display/imx/hdmi.txt
- delete mode 100644 Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
- create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml
 
+diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx6-hdmi.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx6-hdmi.yaml
+new file mode 100644
+index 000000000000..f9b131bb3339
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/imx/fsl,imx6-hdmi.yaml
+@@ -0,0 +1,130 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/imx/fsl,imx6-hdmi.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale i.MX6 DWC HDMI TX Encoder
++
++maintainers:
++  - Philipp Zabel <p.zabel@pengutronix.de>
++
++description: |
++  The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
++  with a companion PHY IP.
++
++allOf:
++  - $ref: ../bridge/synopsys,dw-hdmi.yaml#
++
++properties:
++  compatible:
++    enum:
++      - fsl,imx6dl-hdmi
++      - fsl,imx6q-hdmi
++
++  reg-io-width:
++    const: 1
++
++  clocks:
++    maxItems: 2
++
++  clock-names:
++    maxItems: 2
++
++  ddc-i2c-bus:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      The HDMI DDC bus can be connected to either a system I2C master or the
++      functionally-reduced I2C master contained in the DWC HDMI. When connected
++      to a system I2C master this property contains a phandle to that I2C
++      master controller.
++
++  gpr:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      phandle to the iomuxc-gpr region containing the HDMI multiplexer control
++      register.
++
++  ports:
++    $ref: /schemas/graph.yaml#/properties/ports
++    description: |
++      This device has four video ports, corresponding to the four inputs of the
++      HDMI multiplexer. Each port shall have a single endpoint.
++
++    properties:
++      port@0:
++        $ref: /schemas/graph.yaml#/$defs/port-base
++        unevaluatedProperties: false
++        description: First input of the HDMI multiplexer
++
++      port@1:
++        $ref: /schemas/graph.yaml#/$defs/port-base
++        unevaluatedProperties: false
++        description: Second input of the HDMI multiplexer
++
++      port@2:
++        $ref: /schemas/graph.yaml#/$defs/port-base
++        unevaluatedProperties: false
++        description: Third input of the HDMI multiplexer
++
++      port@3:
++        $ref: /schemas/graph.yaml#/$defs/port-base
++        unevaluatedProperties: false
++        description: Fourth input of the HDMI multiplexer
++
++    anyOf:
++      - required:
++          - port@0
++      - required:
++          - port@1
++      - required:
++          - port@2
++      - required:
++          - port@3
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - gpr
++  - interrupts
++  - ports
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/imx6qdl-clock.h>
++
++    hdmi: hdmi@120000 {
++        reg = <0x00120000 0x9000>;
++        interrupts = <0 115 0x04>;
++        gpr = <&gpr>;
++        clocks = <&clks IMX6QDL_CLK_HDMI_IAHB>,
++                 <&clks IMX6QDL_CLK_HDMI_ISFR>;
++        clock-names = "iahb", "isfr";
++
++        ports {
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            port@0 {
++                reg = <0>;
++
++                hdmi_mux_0: endpoint {
++                    remote-endpoint = <&ipu1_di0_hdmi>;
++                };
++            };
++
++            port@1 {
++                reg = <1>;
++
++                hdmi_mux_1: endpoint {
++                    remote-endpoint = <&ipu1_di1_hdmi>;
++                };
++            };
++        };
++    };
++
++...
+diff --git a/Documentation/devicetree/bindings/display/imx/hdmi.txt b/Documentation/devicetree/bindings/display/imx/hdmi.txt
+deleted file mode 100644
+index 6d021e71c9cf..000000000000
+--- a/Documentation/devicetree/bindings/display/imx/hdmi.txt
++++ /dev/null
+@@ -1,65 +0,0 @@
+-Freescale i.MX6 DWC HDMI TX Encoder
+-===================================
+-
+-The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
+-with a companion PHY IP.
+-
+-These DT bindings follow the Synopsys DWC HDMI TX bindings defined in
+-Documentation/devicetree/bindings/display/bridge/dw_hdmi.txt with the
+-following device-specific properties.
+-
+-
+-Required properties:
+-
+-- compatible : Shall be one of "fsl,imx6q-hdmi" or "fsl,imx6dl-hdmi".
+-- reg: See dw_hdmi.txt.
+-- interrupts: HDMI interrupt number
+-- clocks: See dw_hdmi.txt.
+-- clock-names: Shall contain "iahb" and "isfr" as defined in dw_hdmi.txt.
+-- ports: See dw_hdmi.txt. The DWC HDMI shall have between one and four ports,
+-  numbered 0 to 3, corresponding to the four inputs of the HDMI multiplexer.
+-  Each port shall have a single endpoint.
+-- gpr : Shall contain a phandle to the iomuxc-gpr region containing the HDMI
+-  multiplexer control register.
+-
+-Optional properties
+-
+-- ddc-i2c-bus: The HDMI DDC bus can be connected to either a system I2C master
+-  or the functionally-reduced I2C master contained in the DWC HDMI. When
+-  connected to a system I2C master this property contains a phandle to that
+-  I2C master controller.
+-
+-
+-Example:
+-
+-	gpr: iomuxc-gpr@20e0000 {
+-		/* ... */
+-	};
+-
+-        hdmi: hdmi@120000 {
+-                #address-cells = <1>;
+-                #size-cells = <0>;
+-                compatible = "fsl,imx6q-hdmi";
+-                reg = <0x00120000 0x9000>;
+-                interrupts = <0 115 0x04>;
+-                gpr = <&gpr>;
+-                clocks = <&clks 123>, <&clks 124>;
+-                clock-names = "iahb", "isfr";
+-                ddc-i2c-bus = <&i2c2>;
+-
+-                port@0 {
+-                        reg = <0>;
+-
+-                        hdmi_mux_0: endpoint {
+-                                remote-endpoint = <&ipu1_di0_hdmi>;
+-                        };
+-                };
+-
+-                port@1 {
+-                        reg = <1>;
+-
+-                        hdmi_mux_1: endpoint {
+-                                remote-endpoint = <&ipu1_di1_hdmi>;
+-                        };
+-                };
+-        };
 -- 
 Regards,
 
