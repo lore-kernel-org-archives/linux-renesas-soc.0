@@ -2,256 +2,111 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2147C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Jan 2021 17:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5F3C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Jan 2021 20:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA73023106
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Jan 2021 17:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E90823133
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  6 Jan 2021 20:41:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbhAFRVs (ORCPT
+        id S1726581AbhAFUkX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 6 Jan 2021 12:21:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33456 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726362AbhAFRVs (ORCPT
+        Wed, 6 Jan 2021 15:40:23 -0500
+Received: from mxout01.lancloud.ru ([45.84.86.81]:46030 "EHLO
+        mxout01.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726993AbhAFUkX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 6 Jan 2021 12:21:48 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 81F7A23132
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  6 Jan 2021 17:21:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1609953666;
-        bh=cnw3GynrKyo3dlLPVXLO0TCrqrfIsT5WryEQsmZUU94=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=XXxjrGabz5YpTV0ZiYykJlBmIOa7n4AJZ2oUo8yCIbZfiLMv6fuZWBKm4lchB5LpK
-         JZeLWXh+DvnA6OdLcjexKNfFVcF73kng2IoDgN+MXdj81ljyndEi0tVu4s3GiyETEY
-         Ue+waDT4AuiNH+77yNq2WXi4jiU6mj8xsqlzpKT5ZHsGRJxqx2uD+bzKYrb1vNEBIP
-         uhc1o0X3xBP4k+2Hn8yo8HddY0iZg6tIc1h6a43EcGKwCIStK+bfwndV31ysUuHlvM
-         VVITuiSbE46hokGsUEo7VXZcsxzOjsGju4YPXew3UzkHBoiHBfcIHFgs09dAHvJ8+5
-         egrH7LYwjY+OA==
-Received: by mail-ed1-f51.google.com with SMTP id i24so5060829edj.8
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 06 Jan 2021 09:21:06 -0800 (PST)
-X-Gm-Message-State: AOAM530p1KGtG0KBRE8hRHLCHtU9jYxWFrsFJzMYmGVGqHhekyKvvMQG
-        l1hDSUqyz9lnjKj55bIo+YAku91fkPEeQtZYVw==
-X-Google-Smtp-Source: ABdhPJyOLyyeFx8yoKOp4OtqzviFmaEqRT2VI1WPg68NkowbxnEB38zDK/jSoHfWUrHhFs+3QohMLCuYwuuRJz+ke5Y=
-X-Received: by 2002:a05:6402:ca2:: with SMTP id cn2mr4623743edb.137.1609953665046;
- Wed, 06 Jan 2021 09:21:05 -0800 (PST)
+        Wed, 6 Jan 2021 15:40:23 -0500
+X-Greylist: delayed 533 seconds by postgrey-1.27 at vger.kernel.org; Wed, 06 Jan 2021 15:40:22 EST
+Received: from LanCloud
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout01.lancloud.ru 6EEBF20E410A
+Received: from LanCloud
+Received: from LanCloud
+Received: from LanCloud
+Subject: [PATCH net-next 1/2] ravb: remove APSR_DM
+From:   Sergey Shtylyov <s.shtylyov@omprussia.ru>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     <linux-renesas-soc@vger.kernel.org>
+References: <6aef8856-4bf5-1512-2ad4-62af05f00cc6@omprussia.ru>
+Organization: Open Mobile Platform, LLC
+Message-ID: <e1345e35-35d1-aea0-c9c8-775b28cd9f8b@omprussia.ru>
+Date:   Wed, 6 Jan 2021 23:31:37 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
-References: <20201220195005.26438-1-laurent.pinchart+renesas@ideasonboard.com>
- <20201220195005.26438-4-laurent.pinchart+renesas@ideasonboard.com>
- <810947ea1a18e06db1f36a4a8013fbca17e0ea89.camel@pengutronix.de>
- <X/P94CIrNtGkoZ4k@pendragon.ideasonboard.com> <dc0a8b0568c2b3f550a3069e4a34dd5e90079c8f.camel@pengutronix.de>
- <X/RShZkMICSW7Jnn@pendragon.ideasonboard.com> <aa406fa475100d30706025259527817c7f8d8b5b.camel@pengutronix.de>
- <X/XGfRCOWIBbJhek@pendragon.ideasonboard.com>
-In-Reply-To: <X/XGfRCOWIBbJhek@pendragon.ideasonboard.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Wed, 6 Jan 2021 10:20:52 -0700
-X-Gmail-Original-Message-ID: <CAL_JsqKk5LyhNDRcSg86BF6pLYOO=iW-zSTo5BkaRFaDXytUAg@mail.gmail.com>
-Message-ID: <CAL_JsqKk5LyhNDRcSg86BF6pLYOO=iW-zSTo5BkaRFaDXytUAg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/6] dt-bindings: display: imx: hdmi: Convert binding
- to YAML
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Sandy Huang <hjc@rock-chips.com>,
-        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
-        <linux-renesas-soc@vger.kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Mark Yao <mark.yao@rock-chips.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <6aef8856-4bf5-1512-2ad4-62af05f00cc6@omprussia.ru>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [192.168.11.198]
+X-ClientProxiedBy: LFEXT02.lancloud.ru (fd00:f066::142) To
+ LFEX1908.lancloud.ru (fd00:f066::208)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jan 6, 2021 at 7:17 AM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Philipp,
->
-> On Wed, Jan 06, 2021 at 03:10:32PM +0100, Philipp Zabel wrote:
-> > On Tue, 2021-01-05 at 13:50 +0200, Laurent Pinchart wrote:
-> > > On Tue, Jan 05, 2021 at 10:32:01AM +0100, Philipp Zabel wrote:
-> > > > On Tue, 2021-01-05 at 07:49 +0200, Laurent Pinchart wrote:
-> > > > > On Mon, Jan 04, 2021 at 04:30:36PM +0100, Philipp Zabel wrote:
-> > > > > > On Sun, 2020-12-20 at 21:50 +0200, Laurent Pinchart wrote:
-> > > > > > > Convert the i.MX6 HDMI TX text binding to YAML.
-> > > > > > >
-> > > > > > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > > > > > ---
-> > > > > > > Changes since v1:
-> > > > > > >
-> > > > > > > - Only specify maxItems for clocks
-> > > > > > > - Drop reg and interrupts as they're checked in the base schema
-> > > > > > > - Rebase on top of OF graph schema, dropped redundant properties
-> > > > > > > - Fix identation for enum entries
-> > > > > > > - Drop clock-names items, use maxItems only
-> > > > > > > ---
-> > > > > > >  .../bindings/display/imx/fsl,imx6-hdmi.yaml   | 130 ++++++++++++++++++
-> > > > > > >  .../devicetree/bindings/display/imx/hdmi.txt  |  65 ---------
-> > > > > > >  2 files changed, 130 insertions(+), 65 deletions(-)
-> > > > > > >  create mode 100644 Documentation/devicetree/bindings/display/imx/fsl,imx6-hdmi.yaml
-> > > > > > >  delete mode 100644 Documentation/devicetree/bindings/display/imx/hdmi.txt
-> > > > > > >
-> > > > > > > diff --git a/Documentation/devicetree/bindings/display/imx/fsl,imx6-hdmi.yaml b/Documentation/devicetree/bindings/display/imx/fsl,imx6-hdmi.yaml
-> > > > > > > new file mode 100644
-> > > > > > > index 000000000000..f9b131bb3339
-> > > > > > > --- /dev/null
-> > > > > > > +++ b/Documentation/devicetree/bindings/display/imx/fsl,imx6-hdmi.yaml
-> > > > > > > @@ -0,0 +1,130 @@
-> > > > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > > > +%YAML 1.2
-> > > > > > > +---
-> > > > > > > +$id: http://devicetree.org/schemas/display/imx/fsl,imx6-hdmi.yaml#
-> > > > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > > > +
-> > > > > > > +title: Freescale i.MX6 DWC HDMI TX Encoder
-> > > > > > > +
-> > > > > > > +maintainers:
-> > > > > > > +  - Philipp Zabel <p.zabel@pengutronix.de>
-> > > > > > > +
-> > > > > > > +description: |
-> > > > > > > +  The HDMI transmitter is a Synopsys DesignWare HDMI 1.4 TX controller IP
-> > > > > > > +  with a companion PHY IP.
-> > > > > > > +
-> > > > > > > +allOf:
-> > > > > > > +  - $ref: ../bridge/synopsys,dw-hdmi.yaml#
-> > > > > > > +
-> > > > > > > +properties:
-> > > > > > > +  compatible:
-> > > > > > > +    enum:
-> > > > > > > +      - fsl,imx6dl-hdmi
-> > > > > > > +      - fsl,imx6q-hdmi
-> > > > > > > +
-> > > > > > > +  reg-io-width:
-> > > > > > > +    const: 1
-> > > > > > > +
-> > > > > > > +  clocks:
-> > > > > > > +    maxItems: 2
-> > > > > > > +
-> > > > > > > +  clock-names:
-> > > > > > > +    maxItems: 2
-> > > > > > > +
-> > > > > > > +  ddc-i2c-bus:
-> > > > > > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > > > > > +    description:
-> > > > > > > +      The HDMI DDC bus can be connected to either a system I2C master or the
-> > > > > > > +      functionally-reduced I2C master contained in the DWC HDMI. When connected
-> > > > > > > +      to a system I2C master this property contains a phandle to that I2C
-> > > > > > > +      master controller.
-> > > > > > > +
-> > > > > > > +  gpr:
-> > > > > > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > > > > > +    description:
-> > > > > > > +      phandle to the iomuxc-gpr region containing the HDMI multiplexer control
-> > > > > > > +      register.
-> > > > > > > +
-> > > > > > > +  ports:
-> > > > > > > +    $ref: /schemas/graph.yaml#/properties/ports
-> > > > > > > +    description: |
-> > > > > > > +      This device has four video ports, corresponding to the four inputs of the
-> > > > > > > +      HDMI multiplexer. Each port shall have a single endpoint.
-> > > > > > > +
-> > > > > > > +    properties:
-> > > > > > > +      port@0:
-> > > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > > > > > +        unevaluatedProperties: false
-> > > > > > > +        description: First input of the HDMI multiplexer
-> > > > > > > +
-> > > > > > > +      port@1:
-> > > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > > > > > +        unevaluatedProperties: false
-> > > > > > > +        description: Second input of the HDMI multiplexer
-> > > > > > > +
-> > > > > > > +      port@2:
-> > > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > > > > > +        unevaluatedProperties: false
-> > > > > > > +        description: Third input of the HDMI multiplexer
-> > > > > > > +
-> > > > > > > +      port@3:
-> > > > > > > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > > > > > > +        unevaluatedProperties: false
-> > > > > > > +        description: Fourth input of the HDMI multiplexer
-> > > > > > > +
-> > > > > > > +    anyOf:
-> > > > > > > +      - required:
-> > > > > > > +          - port@0
-> > > > > > > +      - required:
-> > > > > > > +          - port@1
-> > > > > > > +      - required:
-> > > > > > > +          - port@2
-> > > > > > > +      - required:
-> > > > > > > +          - port@3
-> > > > > > > +
-> > > > > > > +required:
-> > > > > > > +  - compatible
-> > > > > > > +  - reg
-> > > > > > > +  - clocks
-> > > > > > > +  - clock-names
-> > > > > > > +  - gpr
-> > > > > > > +  - interrupts
-> > > > > > > +  - ports
-> > > >
-> > > > The binding marks the "ports" container node as required.
-> > > >
-> > > > > > Won't this break validation of current i.MX6 DTs, which don't use the
-> > > > > > ports node (in imx6q(dl).dtsi)?
-> > > > >
-> > > > > I may be missing something, but in imx6qdl.dtsi, we have
-> > > >
-> > > > [...]
-> > > >
-> > > > > and in imx6q.dtsi,
-> > > > >
-> > > > > &hdmi {
-> > > > >         compatible = "fsl,imx6q-hdmi";
-> > > > >
-> > > > >         port@2 {
-> > > > >                 reg = <2>;
-> > > > >
-> > > > >                 hdmi_mux_2: endpoint {
-> > > > >                         remote-endpoint = <&ipu2_di0_hdmi>;
-> > > > >                 };
-> > > > >         };
-> > > > >
-> > > > >         port@3 {
-> > > > >                 reg = <3>;
-> > > > >
-> > > > >                 hdmi_mux_3: endpoint {
-> > > > >                         remote-endpoint = <&ipu2_di1_hdmi>;
-> > > > >                 };
-> > > > >         };
-> > > > > };
-> > > > >
-> > > > > There are no other occurrences of "fsl,imx6q-hdmi" than in imx6q.dtsi
-> > > > > (and no occurrences of "fsl,imx6qdl-hdmi" at all).
-> > > >
-> > > > The port@[0-3] nodes are currently direct children of the &hdmi node,
-> > > > without the "ports" container node.
-> > >
-> > > Of course. Sorry, I've missed that that was the point.
-> > >
-> > > I can include a patch to update imx6q(dl).dtsi in the series. Would that
-> > > work for you ?
-> >
-> > Yes, that would work, thank you. Is the goal to slowly phase out all
-> > uses of multi-port bindings without the ports node?
->
-> I'm not sure there's an explicit effort in that direction, but I think
-> it would make sense as otherwise DT bindings would be too cumbersome to
-> express in YAML.
+According to the R-Car Series, 3rd Generation User's Manual: Hardware,
+Rev. 1.50, there's no APSR.DM field, instead therea are 2 independent
+RX/TX clock internal delay bits.  Follow the suit: remove #define APSR_DM
+and rename #define's APSR_DM_{R|T}DM to APSR_{R|T}DM.
 
-There's no requirement for 'ports'. The device's node can be the
-container. If there's not 'ports', we simply don't have any $ref to
-graph.yaml#/properties/ports. There was at least one case in the
-conversions I did. What we don't want is a given binding doing both
-ways.
+While at it, do several more things to the declaration of *enum* APSR_BIT:
+- remove superfluous indentation;
+- annotate APSR_MEMS as undocumented;
+- annotate APSR as R-Car Gen3 only.
 
-Though generally for new bindings, I'd recommend having 'ports' if
-there's more than one.
+Fixes: 61fccb2d6274 ("ravb: Add tx and rx clock internal delays mode of APSR")
+Signed-off-by: Sergey Shtylyov <s.shtylyov@omprussia.ru>
 
-Rob
+---
+ drivers/net/ethernet/renesas/ravb.h      |   11 +++++------
+ drivers/net/ethernet/renesas/ravb_main.c |    6 +++---
+ 2 files changed, 8 insertions(+), 9 deletions(-)
+
+Index: net-next/drivers/net/ethernet/renesas/ravb.h
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/ravb.h
++++ net-next/drivers/net/ethernet/renesas/ravb.h
+@@ -241,13 +241,12 @@ enum ESR_BIT {
+ 	ESR_EIL		= 0x00001000,
+ };
+ 
+-/* APSR */
++/* APSR (R-Car Gen3 only) */
+ enum APSR_BIT {
+-	APSR_MEMS		= 0x00000002,
+-	APSR_CMSW		= 0x00000010,
+-	APSR_DM			= 0x00006000,	/* Undocumented? */
+-	APSR_DM_RDM		= 0x00002000,
+-	APSR_DM_TDM		= 0x00004000,
++	APSR_MEMS	= 0x00000002,	/* Undocumented */
++	APSR_CMSW	= 0x00000010,
++	APSR_RDM	= 0x00002000,
++	APSR_TDM	= 0x00004000,
+ };
+ 
+ /* RCR */
+Index: net-next/drivers/net/ethernet/renesas/ravb_main.c
+===================================================================
+--- net-next.orig/drivers/net/ethernet/renesas/ravb_main.c
++++ net-next/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2034,10 +2034,10 @@ static void ravb_set_delay_mode(struct n
+ 	u32 set = 0;
+ 
+ 	if (priv->rxcidm)
+-		set |= APSR_DM_RDM;
++		set |= APSR_RDM;
+ 	if (priv->txcidm)
+-		set |= APSR_DM_TDM;
+-	ravb_modify(ndev, APSR, APSR_DM, set);
++		set |= APSR_TDM;
++	ravb_modify(ndev, APSR, APSR_RDM | APSR_TDM, set);
+ }
+ 
+ static int ravb_probe(struct platform_device *pdev)
