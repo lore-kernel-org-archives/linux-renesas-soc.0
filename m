@@ -2,92 +2,89 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1530C4332B
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Jan 2021 10:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3744C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Jan 2021 10:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BEF423770
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Jan 2021 10:22:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59E5E23770
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Jan 2021 10:29:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbhAHKVy (ORCPT
+        id S1727442AbhAHK3j (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Jan 2021 05:21:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44620 "EHLO
+        Fri, 8 Jan 2021 05:29:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbhAHKVx (ORCPT
+        with ESMTP id S1727016AbhAHK3j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Jan 2021 05:21:53 -0500
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 035CDC061282
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  8 Jan 2021 02:20:31 -0800 (PST)
+        Fri, 8 Jan 2021 05:29:39 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B726C0612F4
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  8 Jan 2021 02:28:58 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by laurent.telenet-ops.be with bizsmtp
-        id EALU2400S4C55Sk01ALUrP; Fri, 08 Jan 2021 11:20:29 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id EAUx240054C55Sk01AUxpP; Fri, 08 Jan 2021 11:28:57 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kxosd-001zdk-Qv; Fri, 08 Jan 2021 11:20:27 +0100
+        id 1kxp0q-001zhq-MH; Fri, 08 Jan 2021 11:28:56 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1kxosd-008Ufj-Dc; Fri, 08 Jan 2021 11:20:27 +0100
+        id 1kxp0q-008UsI-6H; Fri, 08 Jan 2021 11:28:56 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 1/3] dt-bindings: gpio: rcar: Add r8a779a0 support
-Date:   Fri,  8 Jan 2021 11:20:24 +0100
-Message-Id: <20210108102026.2024478-2-geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 0/2] arm64: dts: renesas: r8a779a0: Add GPIO support
+Date:   Fri,  8 Jan 2021 11:28:52 +0100
+Message-Id: <20210108102854.2025261-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210108102026.2024478-1-geert+renesas@glider.be>
-References: <20210108102026.2024478-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the compatible value for the GPIO block in the Renesas R-Car
-V3U (R8A779A0) SoC.
+	Hi all,
 
-While this GPIO block is mostly compatible with GPIO blocks on R-Car
-Gen3 SoCs, there are small differences, and one of the new registers
-needs to be configured differently from its initial reset state.
+This patch series enables GPIO in the R-Car V3U DTS file.
+It includes an RFC patch to add a Pin Controller device node, as the
+PFC node is a dependency for proper GPIO support.  It would be good to
+resolve the PFC issue soon, as PFC and GPIO are dependencies for most
+hardware support on the Falcon board.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-v3:
-  - No changes,
+Changes compared to v1:
+  - Include RFC patch to add PFC node,
+  - Add Tested-by,
+  - Fix "V3u" typo in patch description,
+  - Uncomment "gpio-ranges" properties,
+  - Verified resets values.
 
-v2:
-  - Add Reviewed-by.
----
- Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks!
 
-diff --git a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-index 5026662e45081b6c..f2541739ee3b9f7c 100644
---- a/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-+++ b/Documentation/devicetree/bindings/gpio/renesas,rcar-gpio.yaml
-@@ -48,6 +48,9 @@ properties:
-               - renesas,gpio-r8a77995     # R-Car D3
-           - const: renesas,rcar-gen3-gpio # R-Car Gen3 or RZ/G2
- 
-+      - items:
-+          - const: renesas,gpio-r8a779a0  # R-Car V3U
-+
-   reg:
-     maxItems: 1
- 
+Geert Uytterhoeven (2):
+  [RFC] arm64: dts: renesas: r8a779a0: Add PFC node
+  arm64: dts: renesas: r8a779a0: Add GPIO nodes
+
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 149 ++++++++++++++++++++++
+ 1 file changed, 149 insertions(+)
+
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
