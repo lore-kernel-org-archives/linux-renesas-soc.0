@@ -2,118 +2,160 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C7EEC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Jan 2021 09:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FC9C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Jan 2021 10:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5518423383
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Jan 2021 09:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AE6E236FB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Jan 2021 10:21:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbhAHJnA (ORCPT
+        id S1727047AbhAHKVN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Jan 2021 04:43:00 -0500
-Received: from www.zeus03.de ([194.117.254.33]:48852 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725791AbhAHJm7 (ORCPT
+        Fri, 8 Jan 2021 05:21:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44496 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726763AbhAHKVM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Jan 2021 04:42:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=gOYwXo14+tF/t3ehP5YDEMSGmk4v
-        LbbhZ+rjFrNvn1I=; b=R0gwzNtmzgomN4u/AojQmokheDR3NPeGUpmGQ3l/xU/D
-        sFv+Sy2v6e1Ncfib0bLoJq/I1VcreUVmxU6iM5Fkg2oMOeN+VqteBhpirSV15DI+
-        AA42fjtVhi0gJ0AtbGlci3dtUO6WPu9zfbznqPkph/gTjpM1ZYULs5uZwxorTXs=
-Received: (qmail 1048817 invoked from network); 8 Jan 2021 10:42:17 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Jan 2021 10:42:17 +0100
-X-UD-Smtp-Session: l3s3148p1@kks5X2C46MAgAwDPXyX1ACWcscxtZ2TX
-Date:   Fri, 8 Jan 2021 10:42:17 +0100
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Phong Hoang <phong.hoang.wz@renesas.com>
-Subject: Re: [RFC PATCH] arm64: dts: r8a779a0: correct reset values for GPIO
-Message-ID: <20210108094217.GB1223@kunai>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Phong Hoang <phong.hoang.wz@renesas.com>
-References: <20201227121925.8431-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdWVtACtyoQgxKTWpw_4xS-B1knkGOVU-7DpNzG3uoG-RQ@mail.gmail.com>
- <CAMuHMdU0rxV5cBLvMJp_8i6kkyL3mTdQU-uXny-eN3CcBFxeiQ@mail.gmail.com>
+        Fri, 8 Jan 2021 05:21:12 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B1D46C0612F5
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  8 Jan 2021 02:20:31 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by albert.telenet-ops.be with bizsmtp
+        id EALU2400D4C55Sk06ALUtZ; Fri, 08 Jan 2021 11:20:29 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kxosd-001zdl-W8; Fri, 08 Jan 2021 11:20:28 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1kxosd-008Ufo-EJ; Fri, 08 Jan 2021 11:20:27 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 2/3] gpio: rcar: Optimize GPIO pin state read on R-Car Gen3
+Date:   Fri,  8 Jan 2021 11:20:25 +0100
+Message-Id: <20210108102026.2024478-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210108102026.2024478-1-geert+renesas@glider.be>
+References: <20210108102026.2024478-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Fba/0zbH8Xs+Fj9o"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU0rxV5cBLvMJp_8i6kkyL3mTdQU-uXny-eN3CcBFxeiQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Currently, the R-Car GPIO driver treats R-Car Gen2 and R-Car Gen3 GPIO
+controllers the same.  However, there exist small differences, like the
+behavior of the General Input Register (INDT):
+  - On R-Car Gen1, R-Car Gen2, and RZ/G1, INDT only reflects the state
+    of an input pin if the GPIO is configured for input,
+  - On R-Car Gen3 and RZ/G2, INDT always reflects the state of the input
+    pins.
+Hence to accommodate all variants, the driver does not use the INDT
+register to read the status of a GPIO line when configured for output,
+at the expense of doing 2 or 3 register reads instead of 1.
 
---Fba/0zbH8Xs+Fj9o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Given register accesses are slow, change the .get() and .get_multiple()
+callbacks to always use INDT to read pin state on SoCs where this is
+supported.
 
-On Fri, Jan 08, 2021 at 10:06:51AM +0100, Geert Uytterhoeven wrote:
-> Hi Wolfram,
->=20
-> On Tue, Jan 5, 2021 at 1:19 PM Geert Uytterhoeven <geert@linux-m68k.org> =
-wrote:
-> > On Sun, Dec 27, 2020 at 1:19 PM Wolfram Sang
-> > <wsa+renesas@sang-engineering.com> wrote:
-> > > Because the datasheet is ambigious, copy over the reset values from t=
-he
-> > > latest BSP.
-> > >
-> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
->=20
-> > > --- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-> > > +++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-> > > @@ -110,7 +110,7 @@ gpio0: gpio@e6058180 {
-> > >                         interrupts =3D <GIC_SPI 832 IRQ_TYPE_LEVEL_HI=
-GH>;
-> > >                         clocks =3D <&cpg CPG_MOD 916>;
-> > >                         power-domains =3D <&sysc R8A779A0_PD_ALWAYS_O=
-N>;
-> > > -                       resets =3D  <&cpg 916>;
-> > > +                       resets =3D  <&cpg 1331>;
-> >
-> > I doubt the reset topology differs from the clock topology...
-> > Let's hope this will be clarified in a datasheet update soon.
->=20
-> I wrote a small test to check which reset bits reset the GPIO blocks.
-> I can confirm the original resets values are correct, and using the bits
-> marked PFCx in the Software Reset Registers 12/13/14 do not have any
-> impact on the GPIO registers.
->=20
-> So the BSP is wrong, and this patch should be dropped.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+v3:
+  - Add Reviewed-by, Tested-by,
+  - Reformat comment block to match coding style,
+  - Rebase on top of commit 3a57026a83ba363e ("gpio: rcar: Remove
+    redundant compatible values"),
 
-Thanks for checking!
+v2:
+  - New.
+---
+ drivers/gpio/gpio-rcar.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/gpio/gpio-rcar.c b/drivers/gpio/gpio-rcar.c
+index f3b8c4b44cabdfd2..edded6478792f7b8 100644
+--- a/drivers/gpio/gpio-rcar.c
++++ b/drivers/gpio/gpio-rcar.c
+@@ -35,6 +35,7 @@ struct gpio_rcar_bank_info {
+ struct gpio_rcar_info {
+ 	bool has_outdtsel;
+ 	bool has_both_edge_trigger;
++	bool has_always_in;
+ };
+ 
+ struct gpio_rcar_priv {
+@@ -302,9 +303,11 @@ static int gpio_rcar_get(struct gpio_chip *chip, unsigned offset)
+ 	struct gpio_rcar_priv *p = gpiochip_get_data(chip);
+ 	u32 bit = BIT(offset);
+ 
+-	/* testing on r8a7790 shows that INDT does not show correct pin state
+-	 * when configured as output, so use OUTDT in case of output pins */
+-	if (gpio_rcar_read(p, INOUTSEL) & bit)
++	/*
++	 * Before R-Car Gen3, INDT does not show correct pin state when
++	 * configured as output, so use OUTDT in case of output pins
++	 */
++	if (!p->info.has_always_in && (gpio_rcar_read(p, INOUTSEL) & bit))
+ 		return !!(gpio_rcar_read(p, OUTDT) & bit);
+ 	else
+ 		return !!(gpio_rcar_read(p, INDT) & bit);
+@@ -324,6 +327,11 @@ static int gpio_rcar_get_multiple(struct gpio_chip *chip, unsigned long *mask,
+ 	if (!bankmask)
+ 		return 0;
+ 
++	if (p->info.has_always_in) {
++		bits[0] = gpio_rcar_read(p, INDT) & bankmask;
++		return 0;
++	}
++
+ 	spin_lock_irqsave(&p->lock, flags);
+ 	outputs = gpio_rcar_read(p, INOUTSEL);
+ 	m = outputs & bankmask;
+@@ -383,11 +391,19 @@ static int gpio_rcar_direction_output(struct gpio_chip *chip, unsigned offset,
+ static const struct gpio_rcar_info gpio_rcar_info_gen1 = {
+ 	.has_outdtsel = false,
+ 	.has_both_edge_trigger = false,
++	.has_always_in = false,
+ };
+ 
+ static const struct gpio_rcar_info gpio_rcar_info_gen2 = {
+ 	.has_outdtsel = true,
+ 	.has_both_edge_trigger = true,
++	.has_always_in = false,
++};
++
++static const struct gpio_rcar_info gpio_rcar_info_gen3 = {
++	.has_outdtsel = true,
++	.has_both_edge_trigger = true,
++	.has_always_in = true,
+ };
+ 
+ static const struct of_device_id gpio_rcar_of_table[] = {
+@@ -399,8 +415,7 @@ static const struct of_device_id gpio_rcar_of_table[] = {
+ 		.data = &gpio_rcar_info_gen2,
+ 	}, {
+ 		.compatible = "renesas,rcar-gen3-gpio",
+-		/* Gen3 GPIO is identical to Gen2. */
+-		.data = &gpio_rcar_info_gen2,
++		.data = &gpio_rcar_info_gen3,
+ 	}, {
+ 		.compatible = "renesas,gpio-rcar",
+ 		.data = &gpio_rcar_info_gen1,
+-- 
+2.25.1
 
---Fba/0zbH8Xs+Fj9o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl/4KPUACgkQFA3kzBSg
-KbZQ3BAAnfZEQDvWpX2UZKyL9NnOcPUvB/dDi64us7a7OleRvm+35pX6F/pvAMey
-5mh+S4Rh5yQ4o+BCXKJhAnX2D+1F2eSS5cd00/Vm7XMh9u4fxipmd2gANgeXokcO
-47dpcBdjDrknii6eZz8/2cIcD5po0TM0M9/Kd2WROu/KcjcIYG+JP9CUTnaAYVwh
-bvoOUaXUZGHh52MjuZfc+9xRR0iN/cOBOWasoEMoKOzMxDS9y1qDoQDIgSSOCC4a
-Hxzv8qlw9F8CM4cOMT65PpRCWdSAVHo07cJUJhC3DLN/WcZkD1dTvwsoLar2FBdX
-XH2qMpUrnn4pe8Am9pwAVtXUBHKCcwyOzrnSvy6GCNwBsBYG1Zz2T0MYQ8/0vNQS
-IyOm95/1jxX/gngSwM5faxIxZ6sZ/vH40mYe1i7lWK3nByffkhrNk26X9a2jvzRT
-ypXTAgdRrcCxLiOKHp56KDZglV9oB5dMmlF3FtjwJv1kjkY3gh9jbxWu3BDMkBd/
-pOKK4jBcXEQIB19HiWliovzHKebNS3lYJRcifHYUEmIQghCy3OzRoMrsq4It3Bjx
-fm4dBEAhY6wu5HMwa4BMYGfT2G4tddzh21PFQtRwUMvqGrtEJP3S92qvTBjBxCZn
-+8L+nczXWq27qr3ZGiFae88jCQRsICuSlV8fDXydGNc9Vup5+oU=
-=Z7dl
------END PGP SIGNATURE-----
-
---Fba/0zbH8Xs+Fj9o--
