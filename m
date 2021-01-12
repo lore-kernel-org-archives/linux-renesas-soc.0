@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66612C4332E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 09:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4F6C43603
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 09:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 31BC522D2A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 09:02:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 579B122D2A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 09:02:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389001AbhALJCL (ORCPT
+        id S2405818AbhALJCd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Jan 2021 04:02:11 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:18782 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2405738AbhALJBy (ORCPT
+        Tue, 12 Jan 2021 04:02:33 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:61665 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2405680AbhALJBx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Jan 2021 04:01:54 -0500
+        Tue, 12 Jan 2021 04:01:53 -0500
 X-IronPort-AV: E=Sophos;i="5.79,340,1602514800"; 
-   d="scan'208";a="68514080"
+   d="scan'208";a="68731775"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 12 Jan 2021 18:01:19 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 12 Jan 2021 18:01:19 +0900
 Received: from localhost.localdomain (unknown [10.166.252.89])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 651DC40062D6;
-        Tue, 12 Jan 2021 18:01:19 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id EAD9C40061BC;
+        Tue, 12 Jan 2021 18:01:18 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     marek.vasut+renesas@gmail.com, lee.jones@linaro.org,
         matti.vaittinen@fi.rohmeurope.com, lgirdwood@gmail.com,
@@ -37,9 +37,9 @@ Cc:     khiem.nguyen.xt@renesas.com, linux-power@fi.rohmeurope.com,
         linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v9 10/12] mfd: bd9571mwv: Use devm_regmap_add_irq_chip()
-Date:   Tue, 12 Jan 2021 18:01:05 +0900
-Message-Id: <1610442067-7446-11-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v9 06/12] gpio: bd9571mwv: Use the SPDX license identifier
+Date:   Tue, 12 Jan 2021 18:01:01 +0900
+Message-Id: <1610442067-7446-7-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1610442067-7446-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1610442067-7446-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -47,66 +47,39 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Use devm_regmap_add_irq_chip() to simplify the code.
+Use the SPDX license identifier instead of a local description.
 
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-Reviewed-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Acked-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/mfd/bd9571mwv.c | 27 ++++++---------------------
- 1 file changed, 6 insertions(+), 21 deletions(-)
+ drivers/gpio/gpio-bd9571mwv.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/drivers/mfd/bd9571mwv.c b/drivers/mfd/bd9571mwv.c
-index e68c3fa..49e968e 100644
---- a/drivers/mfd/bd9571mwv.c
-+++ b/drivers/mfd/bd9571mwv.c
-@@ -170,31 +170,17 @@ static int bd9571mwv_probe(struct i2c_client *client,
- 	if (ret)
- 		return ret;
- 
--	ret = regmap_add_irq_chip(bd->regmap, bd->irq, IRQF_ONESHOT, 0,
--				  &bd9571mwv_irq_chip, &bd->irq_data);
-+	ret = devm_regmap_add_irq_chip(bd->dev, bd->regmap, bd->irq,
-+				       IRQF_ONESHOT, 0, &bd9571mwv_irq_chip,
-+				       &bd->irq_data);
- 	if (ret) {
- 		dev_err(bd->dev, "Failed to register IRQ chip\n");
- 		return ret;
- 	}
- 
--	ret = devm_mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO,
--				   bd9571mwv_cells, ARRAY_SIZE(bd9571mwv_cells),
--				   NULL, 0, regmap_irq_get_domain(bd->irq_data));
--	if (ret) {
--		regmap_del_irq_chip(bd->irq, bd->irq_data);
--		return ret;
--	}
--
--	return 0;
--}
--
--static int bd9571mwv_remove(struct i2c_client *client)
--{
--	struct bd9571mwv *bd = i2c_get_clientdata(client);
--
--	regmap_del_irq_chip(bd->irq, bd->irq_data);
--
--	return 0;
-+	return devm_mfd_add_devices(bd->dev, PLATFORM_DEVID_AUTO,
-+				    bd9571mwv_cells, ARRAY_SIZE(bd9571mwv_cells),
-+				    NULL, 0, regmap_irq_get_domain(bd->irq_data));
- }
- 
- static const struct of_device_id bd9571mwv_of_match_table[] = {
-@@ -215,7 +201,6 @@ static struct i2c_driver bd9571mwv_driver = {
- 		.of_match_table = bd9571mwv_of_match_table,
- 	},
- 	.probe		= bd9571mwv_probe,
--	.remove		= bd9571mwv_remove,
- 	.id_table       = bd9571mwv_id_table,
- };
- module_i2c_driver(bd9571mwv_driver);
+diff --git a/drivers/gpio/gpio-bd9571mwv.c b/drivers/gpio/gpio-bd9571mwv.c
+index c0abc9c..abb622c 100644
+--- a/drivers/gpio/gpio-bd9571mwv.c
++++ b/drivers/gpio/gpio-bd9571mwv.c
+@@ -1,17 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0-only
+ /*
+  * ROHM BD9571MWV-M GPIO driver
+  *
+  * Copyright (C) 2017 Marek Vasut <marek.vasut+renesas@gmail.com>
+  *
+- * This program is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * This program is distributed "as is" WITHOUT ANY WARRANTY of any
+- * kind, whether expressed or implied; without even the implied warranty
+- * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License version 2 for more details.
+- *
+  * Based on the TPS65086 driver
+  *
+  * NOTE: Interrupts are not supported yet.
 -- 
 2.7.4
 
