@@ -7,75 +7,75 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA66C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 12:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89350C43331
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 13:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CFED2310F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 12:55:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51CA022571
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 13:18:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388301AbhALMzB (ORCPT
+        id S1727652AbhALNSh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Jan 2021 07:55:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44722 "EHLO
+        Tue, 12 Jan 2021 08:18:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732025AbhALMzA (ORCPT
+        with ESMTP id S2387953AbhALNSg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Jan 2021 07:55:00 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47A9CC061575
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Jan 2021 04:54:20 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id iq13so1536823pjb.3
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Jan 2021 04:54:20 -0800 (PST)
+        Tue, 12 Jan 2021 08:18:36 -0500
+Received: from mail-pf1-x433.google.com (mail-pf1-x433.google.com [IPv6:2607:f8b0:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A3F5C061794
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Jan 2021 05:17:56 -0800 (PST)
+Received: by mail-pf1-x433.google.com with SMTP id d2so1380751pfq.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Jan 2021 05:17:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=egj4r9ZSUtdbM5jq2/rSJkt07r9u8Ewdj58C6W7/OHA=;
-        b=nzy8XkK4+j4yLhGCOtKRi1PFzzTJ/0+TPNMRkkEtPTYHeNY4YIclkTvx32PZE6cXhz
-         TCK99HnObOy54q4kDIDunEOF57K27K8n/U12YyvQ7OG1KQUg/2ggt3FDySK3bwwLQV5e
-         JI/sQSnRWjJMRYNVJYmcZ7TQ6EUjYi1yOtYaVRg5mFYZP9un+jvJNKHlGHNd8mCRFcLz
-         BNYrc9gN3k1l8ucBFWfoZChwoR15lX6f1lovW7U2itZSKNIwnUMa4X30TKAm5ILP3qBc
-         xQ3x8RYuzpJADLGJ/KmBhI0/gj73pGuehiA6t9nt2nOUWjuLJe2Vufr4JXKl/pEEqY7V
-         520g==
+        bh=OHnAyFt2B6tW+KMLFrsdOvg1rKwbSJ93K0WZAt2g4k4=;
+        b=FyMLjKsV+RMnOIWe9aj6r6kto1D5aSazgp32JuTDm2VfMZCFz3vDDZzpbnqXQon5sN
+         ADXwVi+Mnzjr+/uf/VmoqgvsAr4jeml68Dt0plkTdS70jR8HfI0ORLDXY0Ly1TSnLztq
+         OtN79zcV9SBH03m6C+a9e/rVG5O7CfgoY3G2piQ/VcC72XuAW6QO1Bte9RL2IU1mBIAz
+         2BxifpMfLguuHUIqiGvc4opv2dd6U9eMrKAP2fZDhHWpUj9l1//u3tJDk2Vng52E7XvI
+         9vSXrBz9PgCl3jlrTlNyCHyEOr8BiKW4ROYeKjM4hAdf8rwLk1d+RpGm+cS2Bxmn285h
+         OSdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=egj4r9ZSUtdbM5jq2/rSJkt07r9u8Ewdj58C6W7/OHA=;
-        b=Uc5WrJZAjWTeWZK0s/bO/HYkaxu+9foS+HuiqF508VNUl6T4NgW4IhKBx9f6n9+vQe
-         ZmuWx6+Zt6ew0NsldAd1EHUTa0f7i2/TgdN/hYwIsDYF7qsX2xlKI4j/9MvO2S+LIL0Q
-         r6C4+/r+hCIS51uxwnw9IHF0h3QI+jRvvKflC72qNa8LUhSNm4TZs4d6NQfUzmnrruv5
-         Zj3L8RmrxcM05paHU6GmtBrJ/2GNOdEz8gU46anxrwPdJUjEQTmQA0n+E2vjIHW7fzZS
-         JVsPTKL6xXaoZwnzFHcjbWqGnqtjAcw2jAKHuFC+WAzBZWePGFMyl4mT2+j1euVJSjeo
-         YCxw==
-X-Gm-Message-State: AOAM530s8q3yyxaFQUvIDjyTTtITdvFO5Rr9hBoRQrTnj3+z5fXVx8xC
-        oiod2QFVwI4eLwNpKxk2MSpYY1bA2aiDKQ==
-X-Google-Smtp-Source: ABdhPJy+ltbY6ckcnExKDdSnwDKxvMTO2ScCOeXVzT8Z3nau8Dv9CnBwM3KETtb2xROiQwxgybMFIQ==
-X-Received: by 2002:a17:902:7d94:b029:da:f673:18b9 with SMTP id a20-20020a1709027d94b02900daf67318b9mr4981246plm.37.1610456056108;
-        Tue, 12 Jan 2021 04:54:16 -0800 (PST)
+        bh=OHnAyFt2B6tW+KMLFrsdOvg1rKwbSJ93K0WZAt2g4k4=;
+        b=h2WjvWzR5xXByfqAeLdsVQ4B7v9sUzTgRLw8R7ho1nICSDeTq1hnuPG87CY4BuQIE1
+         xpGPehj1TLZ1NdaGss3058dO3LLF9JGEq+hU1St6I9+tAlP9U+uilKkgVmyfrLTx/ZBQ
+         S1T9No94kDjOGim36cWR4Csa81lb+/f/Q2+bH8fbk/2jfjonPr1MqAu75jGh2GRqHkck
+         50AZBVFtzzqdmkEkDic3N9VOS5DU/VxuF1prKTUx0azNw94R3hYsclVwCZOEXe4MjO7/
+         qLWt9ToL7O2cGVc81zS5UjFMDlPATm0Ho7MtnBj8P6EGSQ/gq5HHyBwnpfLl/9K2ggiq
+         gPUA==
+X-Gm-Message-State: AOAM532ht01LjG+5c41932gXOwPe4h8kFpRwzNdTkgIvjvDjVNg7Rblv
+        T2FgElBYx4o3LZvuLO40SV/5hMHpz7BRuQ==
+X-Google-Smtp-Source: ABdhPJxowO7/MGjI4h31J0LyXWkLLKrI8gbwhw0B0P9s271Tf635xIeGQY9ualAJWMGFEeCMyMsF4Q==
+X-Received: by 2002:aa7:9307:0:b029:1ae:6b43:e3e3 with SMTP id 7-20020aa793070000b02901ae6b43e3e3mr4726678pfj.57.1610457475674;
+        Tue, 12 Jan 2021 05:17:55 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id v125sm3508565pgv.6.2021.01.12.04.54.15
+        by smtp.gmail.com with ESMTPSA id z23sm3531016pfj.143.2021.01.12.05.17.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jan 2021 04:54:15 -0800 (PST)
-Message-ID: <5ffd9bf7.1c69fb81.b8a4f.6a3d@mx.google.com>
-Date:   Tue, 12 Jan 2021 04:54:15 -0800 (PST)
+        Tue, 12 Jan 2021 05:17:54 -0800 (PST)
+Message-ID: <5ffda182.1c69fb81.93a27.7a2a@mx.google.com>
+Date:   Tue, 12 Jan 2021 05:17:54 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: master
+X-Kernelci-Branch: next
 X-Kernelci-Tree: renesas
-X-Kernelci-Kernel: renesas-devel-2021-01-11-v5.11-rc3
+X-Kernelci-Kernel: renesas-next-2021-01-11-v5.11-rc1
 X-Kernelci-Report-Type: test
-Subject: renesas/master ltp-ipc: 18 runs,
- 1 regressions (renesas-devel-2021-01-11-v5.11-rc3)
+Subject: renesas/next ltp-ipc: 18 runs,
+ 1 regressions (renesas-next-2021-01-11-v5.11-rc1)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master ltp-ipc: 18 runs, 1 regressions (renesas-devel-2021-01-11-v5=
-.11-rc3)
+renesas/next ltp-ipc: 18 runs, 1 regressions (renesas-next-2021-01-11-v5.11=
+-rc1)
 
 Regressions Summary
 -------------------
@@ -88,16 +88,16 @@ bcm2836-rpi-2-b | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | 1 =
          =
 
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2021-01-11-v5.11-rc3/plan/ltp-ipc/
+  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
+s-next-2021-01-11-v5.11-rc1/plan/ltp-ipc/
 
   Test:     ltp-ipc
   Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2021-01-11-v5.11-rc3
+  Branch:   next
+  Describe: renesas-next-2021-01-11-v5.11-rc1
   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
 evel.git
-  SHA:      c3703437e37f2e38e831c893dda362271f836100
+  SHA:      ffb284986e56791dcd815b16c03adad3e2f36cbf
 
   Test suite revisions:
     ltp-tests
@@ -119,25 +119,25 @@ bcm2836-rpi-2-b | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | 1 =
          =
 
 
-  Details:     https://kernelci.org/test/plan/id/5ffd93d0ae994c87f1c94dea
+  Details:     https://kernelci.org/test/plan/id/5ffd9b4a7b15a6c127c94cb9
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: multi_v7_defconfig
   Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-01-11-v5.11-rc3/arm/multi_v7_defconfig/gcc-8/lab-collabora/ltp-ipc-bcm2=
-836-rpi-2-b.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-01-11-v5.11-rc3/arm/multi_v7_defconfig/gcc-8/lab-collabora/ltp-ipc-bcm2=
-836-rpi-2-b.html
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-01-11-v5.11-rc1/arm/multi_v7_defconfig/gcc-8/lab-collabora/ltp-ipc-bcm2836=
+-rpi-2-b.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-01-11-v5.11-rc1/arm/multi_v7_defconfig/gcc-8/lab-collabora/ltp-ipc-bcm2836=
+-rpi-2-b.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-ltp/=
 20201221.0/armhf/initrd.cpio.gz =
 
 
 
-  * ltp-ipc.login: https://kernelci.org/test/case/id/5ffd93d0ae994c87f1c94d=
-eb
-        failing since 7 days (last pass: renesas-devel-2020-12-21-v5.10, fi=
-rst fail: renesas-devel-2021-01-04-v5.11-rc2) =
+  * ltp-ipc.login: https://kernelci.org/test/case/id/5ffd9b4a7b15a6c127c94c=
+ba
+        failing since 6 days (last pass: renesas-next-2020-11-30-v5.10-rc1,=
+ first fail: renesas-next-2020-12-28-v5.11-rc1) =
 
  =20
