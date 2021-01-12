@@ -2,158 +2,97 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF747C433E9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 13:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05612C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 13:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AD0CF23104
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 13:19:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A927023101
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 13:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730772AbhALNSj (ORCPT
+        id S1729208AbhALNrJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Jan 2021 08:18:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49782 "EHLO
+        Tue, 12 Jan 2021 08:47:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387948AbhALNSg (ORCPT
+        with ESMTP id S1726594AbhALNrH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Jan 2021 08:18:36 -0500
-Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A9E2C061786
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Jan 2021 05:17:56 -0800 (PST)
-Received: by mail-pj1-x1036.google.com with SMTP id v1so1574916pjr.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Jan 2021 05:17:56 -0800 (PST)
+        Tue, 12 Jan 2021 08:47:07 -0500
+Received: from mail-io1-xd30.google.com (mail-io1-xd30.google.com [IPv6:2607:f8b0:4864:20::d30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD74AC061786;
+        Tue, 12 Jan 2021 05:46:26 -0800 (PST)
+Received: by mail-io1-xd30.google.com with SMTP id 81so4006809ioc.13;
+        Tue, 12 Jan 2021 05:46:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=wffNNAwk4jv0gPgqkywPVKwA21ahCkE4NlfvyXpP7IY=;
-        b=169hUC9K0caTTp5UMmpbfuwXafXSiHk1OrlIMcpgJb5L3z6cMWnSYKa7zVCxmjgGho
-         C35XOv6rYnH7u+2zx7G85W630vziZT55IZ784yzbfvEwYtyAmwEvXZukWEGNQ9/Mw+gt
-         5pSJZtYPq3SC1Zl4xRp/3ZJNFuaVurmTWhTVEF89jM0Bre7xQ55lELWPqJi0GlEqDJqd
-         grysU9D+Lchdv/Ti9kifDYCfeVKxh5dJeGDxQnERj3Lq/AEG/kLt6BJSESlfkTfTqaTC
-         GZHEbzi/Xd9vH64A1Nc523NKGYLJrLIyp58jEfggn7Vb04CT8s7MsWzk10Cj5C8cN8Bc
-         IlIw==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1pgvXSz+KcenK/bUkD4kOy3ITrvA2LEnG5WD/C+xaN8=;
+        b=m0uJtE8mA8oMPNJwIRj9LZjcexO19wC4Ka1Z2BK8C4cYfvcNS27VpMmuR47LBEgmWv
+         DsCb2GG5iZjeQDGxcxAv3Roxa3nZKXychQZqq/TmEV/SNFrELmyPbx/j3N8g1ofxeO+C
+         8/6Df+XPW7dpCqko5jTJrYdtPQ3RNC+/107m6h6uF15xDblzql3bs66C7myKrfoO2f6l
+         K1RiugHps6hkzrx/fAw99sEt/1ExVw8uKj+Cc1RGzstrwSqg+rfFj5pt7Yc/0KGCXefL
+         XBn1r97dWYXQ88yNZTxLZh6iKErJDK2rdL9veRpsgOdAouVjrooTbWsd8mc+qObKEIz4
+         lL5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=wffNNAwk4jv0gPgqkywPVKwA21ahCkE4NlfvyXpP7IY=;
-        b=rLK6U869J2yPZlsAS9N01nlNPPu00dm0swWXM5rkGZHv1mzUMnYuMYbIv6ONITpIRX
-         ELFbDO0PTESG2nIR/qtSrjzCtSU+4YGQlb4ht5G5Uu/UeflfTNr+E5o2A6awLr8i77HH
-         ciVWn4gvCXyxLaYuTrsJF/tgpufuxYGIxpNUpJpNEgJvJIQT97jWkyCjaNBBprbZm0lw
-         Qp4DRh7keSIMcU5IeWJS8VK6aE55SEGKltet+Ie3J+A/Cl2jojILk8e51/hSzO/5MBWU
-         PWaSXxF0Mrd/Ja4BN7Af+uebZb+6T2XYiY2Nny6WXTkYebVepzZM5/nOppYjvZinhCQB
-         clTg==
-X-Gm-Message-State: AOAM531Y6dNmrp6HXy3UgDOwuJ3Ngb/4cl+9F2Fd0EeRzI/kYY/+XKcL
-        SXxYZ+CU4RZ5HtSSWko3A7VrDZcQIiGWfQ==
-X-Google-Smtp-Source: ABdhPJwANbZT7biElWjwPQqZzp4Ysu8iwsXRTPT0Y0pET4HtXCwAZ5l3h/LvXa9o40VKr66hjjyPUw==
-X-Received: by 2002:a17:902:6103:b029:da:c46c:b3d6 with SMTP id t3-20020a1709026103b02900dac46cb3d6mr5149599plj.46.1610457475223;
-        Tue, 12 Jan 2021 05:17:55 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id q2sm3236412pjd.33.2021.01.12.05.17.54
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1pgvXSz+KcenK/bUkD4kOy3ITrvA2LEnG5WD/C+xaN8=;
+        b=uPBZeQOy+CCirUr/ccJClKIaWiLGUf9ehgKMSEAAtMhl1cE2gzMg1j2ZmcE8eM8iNp
+         Hl8pa1oSyiPe9o6qu3H5lEFOYRkU+BGblq10JKgsfHHbVwAwAvuyBV/XOKSj6by42jzG
+         Z3HXjre9EcdMeJ81rJI9+vecyVujDBu2Et2GmWaBHOl41M50IUFLGd8Kjz/CShHHVT2k
+         +4DKIr03IHfrXGmMajEUnKTYM6oCfdq4PVMHvoAyl7OKdnyEdS+8vfo5yWyBR2TIlR0x
+         hkRMaPSK2b4Wo4RgsPjgt7JhWsR+i0Sc0tXCXPDDVT+HIWPskxEDeImFIfCm3EsWOilB
+         zOoA==
+X-Gm-Message-State: AOAM531aGFhn6zJkZKv6bzx/HwFNh+7a6kV5GMHswQ68Yg7TcSXSy3jK
+        pD4XHeu1cUeJcoSTrCo817SYfk3QuYPIig==
+X-Google-Smtp-Source: ABdhPJx+ZVFrlKLsqIXZy1NhMJ3xAUjhzNEqaJ8Bc8mSEg6NIGWdUZA9VE/+OUXu/NFftueRZseJkA==
+X-Received: by 2002:a6b:6f07:: with SMTP id k7mr3333360ioc.48.1610459185714;
+        Tue, 12 Jan 2021 05:46:25 -0800 (PST)
+Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:3cd8:1112:d064:7fb2])
+        by smtp.gmail.com with ESMTPSA id r9sm2598116ill.72.2021.01.12.05.46.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Jan 2021 05:17:54 -0800 (PST)
-Message-ID: <5ffda182.1c69fb81.7d878.6258@mx.google.com>
-Date:   Tue, 12 Jan 2021 05:17:54 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 12 Jan 2021 05:46:24 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     geert+renesas@glider.be, aford@beaconembedded.com,
+        Adam Ford <aford173@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: defconfig: Enable CLK_RCAR_USB2_CLOCK_SEL
+Date:   Tue, 12 Jan 2021 07:45:55 -0600
+Message-Id: <20210112134555.1787924-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: next
-X-Kernelci-Tree: renesas
-X-Kernelci-Kernel: renesas-next-2021-01-11-v5.11-rc1
-X-Kernelci-Report-Type: test
-Subject: renesas/next sleep: 5 runs,
- 2 regressions (renesas-next-2021-01-11-v5.11-rc1)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/next sleep: 5 runs, 2 regressions (renesas-next-2021-01-11-v5.11-rc=
-1)
+The RZ/G2 Series has the optional CLK_RCAR_USB2_CLOCK_SEL.
+Enable it by default.  It's disabled by default in the
+the device tree, so it should be safe to enable it here.
 
-Regressions Summary
--------------------
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-platform            | arch | lab           | compiler | defconfig          =
-| regressions
---------------------+------+---------------+----------+--------------------=
-+------------
-rk3288-rock2-square | arm  | lab-collabora | gcc-8    | multi_v7_defconfig =
-| 2          =
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 838301650a79..84fcfa7a1865 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -932,6 +932,7 @@ CONFIG_SM_GCC_8250=y
+ CONFIG_SM_GPUCC_8150=y
+ CONFIG_SM_GPUCC_8250=y
+ CONFIG_QCOM_HFPLL=y
++CONFIG_CLK_RCAR_USB2_CLOCK_SEL=y
+ CONFIG_HWSPINLOCK=y
+ CONFIG_HWSPINLOCK_QCOM=y
+ CONFIG_ARM_MHU=y
+-- 
+2.25.1
 
-
-  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
-s-next-2021-01-11-v5.11-rc1/plan/sleep/
-
-  Test:     sleep
-  Tree:     renesas
-  Branch:   next
-  Describe: renesas-next-2021-01-11-v5.11-rc1
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      ffb284986e56791dcd815b16c03adad3e2f36cbf =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform            | arch | lab           | compiler | defconfig          =
-| regressions
---------------------+------+---------------+----------+--------------------=
-+------------
-rk3288-rock2-square | arm  | lab-collabora | gcc-8    | multi_v7_defconfig =
-| 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/5ffd91be5eddecc484c94cba
-
-  Results:     2 PASS, 11 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--01-11-v5.11-rc1/arm/multi_v7_defconfig/gcc-8/lab-collabora/sleep-rk3288-ro=
-ck2-square.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--01-11-v5.11-rc1/arm/multi_v7_defconfig/gcc-8/lab-collabora/sleep-rk3288-ro=
-ck2-square.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2020=
-1221.0/armhf/rootfs.cpio.gz =
-
-
-
-  * sleep.rtcwake-mem-4: https://kernelci.org/test/case/id/5ffd91be5eddecc4=
-84c94cbd
-        new failure (last pass: renesas-next-2020-12-28-v5.11-rc1)
-
-    2021-01-12 12:10:34.361000+00:00  ake: assuming RTC uses UTC ...
-    2021-01-12 12:10:34.361000+00:00  rtcwake: read rtc time failed: Invali=
-d argument
-    2021-01-12 12:10:34.361000+00:00  1 RESULT=3Dfail>
-    2021-01-12 12:10:34.362000+00:00  rtcwake: assuming RTC uses UTC ...
-    2021-01-12 12:10:34.362000+00:00  rtcwake: read rtc time failed: Invali=
-d argument
-    2021-01-12 12:10:34.363000+00:00  CASE_ID=3Drtcwake-mem-2 RESULT=3Dfail>
-    2021-01-12 12:10:34.363000+00:00  rtcwake: assuming RTC uses UTC ...
-    2021-01-12 12:10:34.409000+00:00  rtcwake: read rtc time failed: Invali=
-d argument
-    2021-01-12 12:10:34.410000+00:00  IGNAL_TESTCASE TEST_CASE_ID=3Drtcwake=
--mem-3 RESULT=3Dfail>
-    2021-01-12 12:10:34.410000+00:00  rtcwake: assuming RTC uses UTC ... =
-
-    ... (2 line(s) more)  =
-
-
-  * sleep.rtcwake-mem-5: https://kernelci.org/test/case/id/5ffd91be5eddecc4=
-84c94cbe
-        new failure (last pass: renesas-next-2020-12-28-v5.11-rc1) =
-
- =20
