@@ -2,100 +2,137 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB0BFC072AD
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 15:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD484C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 15:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB22E23130
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 15:14:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9367E23130
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 15:25:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404586AbhALPNT (ORCPT
+        id S2387660AbhALPY7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Jan 2021 10:13:19 -0500
-Received: from www.zeus03.de ([194.117.254.33]:42704 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404546AbhALPNR (ORCPT
+        Tue, 12 Jan 2021 10:24:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48760 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731029AbhALPY6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Jan 2021 10:13:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=s6ihzi/H6SO91B
-        NccpEWnsusP2MGY2Z0QbyU7t3aRUI=; b=tzqc+bW89Z/KHjBOXkEQAqHpyW7UC+
-        fYJDrOR9bDIeZE9uBYFdnWY3B53KBDiOq0OX3Q7KRADCr5f5QHntOwIP5HoEl1pU
-        i0jCfh1iUvjlT/wFRHIT6QCv0UyNQZg0FxeP9Tj8DWdBA97DAqUzD9CUoyZ+vkQA
-        zfDEs73zlL83Q=
-Received: (qmail 2786158 invoked from network); 12 Jan 2021 16:12:36 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Jan 2021 16:12:36 +0100
-X-UD-Smtp-Session: l3s3148p1@jrrZc7W4dr4gAwDPXwxzAXsl+VVkdePs
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/2] i2c: smbus: don't abuse loop variable
-Date:   Tue, 12 Jan 2021 16:12:29 +0100
-Message-Id: <20210112151230.46518-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210112151230.46518-1-wsa+renesas@sang-engineering.com>
-References: <20210112151230.46518-1-wsa+renesas@sang-engineering.com>
+        Tue, 12 Jan 2021 10:24:58 -0500
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1BC1C061794
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Jan 2021 07:24:18 -0800 (PST)
+Received: by mail-pl1-x629.google.com with SMTP id d4so752470plh.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Jan 2021 07:24:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=Xs/u3OvuVXae62YANoTmSRSonau+uoR4UvIkulLNLX4=;
+        b=TVmUhdKeOAbWXgti6DwfnR37o8ifzD+/VeL7H3rCnDnizWLAB45Kkzs6d/zTLxKRLP
+         tw3i4zFPhpuHu+fNBILkZeh7kj5E3n+5YpwbTS7nSLNGUMuxawlANqOLoWLH4AkQZbCK
+         UQdACTqGtetbiUGfEADlpuoQu62vKekv8zSU+bHYQNlHkTkIaiQeLGX2bpWy19HvtopF
+         1VkcmJCxWGfdqKrzw5qBqas2KdTBijb2sFvHqGV8t8imTVotytW5TOQja3yqy2v2fb+0
+         u413Ib4tFd8p2qzUhsg7MeTiFQEg+9cIvyWGg31gmWYbntAuyFMSN7h8pBRo/K9lVyFr
+         EptA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=Xs/u3OvuVXae62YANoTmSRSonau+uoR4UvIkulLNLX4=;
+        b=cuINzO98DFTmeTtbs8mvb7FjUm2EdPyPx6psgO2RunxjD8Hp2CvqSODe7dL2SN9OWE
+         nddTuDe8Z5kq9Uqaa7+zXT1V+Ppu/KzRN9INsdHOhCOcpvw/aIukbVNADJ1eR3e8YV2y
+         vJ6JKh+z8ujQQ+qIoRUk+ik+aUIvLJdZjxygZE+lcxMo9oAh2t7bdoGGnam9IlnoH8Q2
+         kz8t6V0V8KEFZbgGVeuEO2bdX1O07/LzCvYnFFdWpFfAg9OwMb6Nclm6B9tw+iZ8jTv4
+         FxbyGlbZ8av9UuQIGEcT/Ox1wU2cQjqz+NYyngbb4sfcCjdI80aLH2tY8Du73GK7pH4K
+         uXeA==
+X-Gm-Message-State: AOAM533eHDenHba0XwRK8DY3JATY1JGIQdN9/ODuYIEaSRG7Mj5c/Zc5
+        HWAKbhONLQPyHWZoGIMy/WPbzzQ8KGlpMA==
+X-Google-Smtp-Source: ABdhPJyEij3VXYBNlYlCRnNwtc56IL0so4vbwP1bp78cOaLKIK+Om9KlKU8bdXmd+ErfwefA5mmp8Q==
+X-Received: by 2002:a17:90a:4096:: with SMTP id l22mr5118465pjg.114.1610465058068;
+        Tue, 12 Jan 2021 07:24:18 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id ds24sm3776837pjb.30.2021.01.12.07.24.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Jan 2021 07:24:17 -0800 (PST)
+Message-ID: <5ffdbf21.1c69fb81.cda9b.739b@mx.google.com>
+Date:   Tue, 12 Jan 2021 07:24:17 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+X-Kernelci-Kernel: renesas-devel-2021-01-11-v5.11-rc3
+X-Kernelci-Report-Type: test
+Subject: renesas/master baseline-nfs: 23 runs,
+ 1 regressions (renesas-devel-2021-01-11-v5.11-rc3)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Don't use 'i' to carry data, make a specific variable for it. After the
-move to memcpy recently, we can even remove 'i'.
+renesas/master baseline-nfs: 23 runs, 1 regressions (renesas-devel-2021-01-=
+11-v5.11-rc3)
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core-smbus.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Regressions Summary
+-------------------
 
-diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-index bf6bfe7c5cfe..6cda46913d89 100644
---- a/drivers/i2c/i2c-core-smbus.c
-+++ b/drivers/i2c/i2c-core-smbus.c
-@@ -324,7 +324,6 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 	unsigned char msgbuf0[I2C_SMBUS_BLOCK_MAX+3];
- 	unsigned char msgbuf1[I2C_SMBUS_BLOCK_MAX+2];
- 	int num = read_write == I2C_SMBUS_READ ? 2 : 1;
--	int i;
- 	u8 partial_pec = 0;
- 	int status;
- 	struct i2c_msg msg[2] = {
-@@ -340,6 +339,8 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 			.buf = msgbuf1,
- 		},
- 	};
-+	bool wants_pec = ((flags & I2C_CLIENT_PEC) && size != I2C_SMBUS_QUICK
-+			  && size != I2C_SMBUS_I2C_BLOCK_DATA);
- 
- 	msgbuf0[0] = command;
- 	switch (size) {
-@@ -443,9 +444,7 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 		return -EOPNOTSUPP;
- 	}
- 
--	i = ((flags & I2C_CLIENT_PEC) && size != I2C_SMBUS_QUICK
--				      && size != I2C_SMBUS_I2C_BLOCK_DATA);
--	if (i) {
-+	if (wants_pec) {
- 		/* Compute PEC if first message is a write */
- 		if (!(msg[0].flags & I2C_M_RD)) {
- 			if (num == 1) /* Write only */
-@@ -468,7 +467,7 @@ static s32 i2c_smbus_xfer_emulated(struct i2c_adapter *adapter, u16 addr,
- 	status = 0;
- 
- 	/* Check PEC if last message is a read */
--	if (i && (msg[num-1].flags & I2C_M_RD)) {
-+	if (wants_pec && (msg[num-1].flags & I2C_M_RD)) {
- 		status = i2c_smbus_check_pec(partial_pec, &msg[num-1]);
- 		if (status < 0)
- 			goto cleanup;
--- 
-2.29.2
+platform   | arch | lab           | compiler | defconfig          | regress=
+ions
+-----------+------+---------------+----------+--------------------+--------=
+----
+odroid-xu3 | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | 1      =
+    =
 
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2021-01-11-v5.11-rc3/plan/baseline-nfs/
+
+  Test:     baseline-nfs
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2021-01-11-v5.11-rc3
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      c3703437e37f2e38e831c893dda362271f836100 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform   | arch | lab           | compiler | defconfig          | regress=
+ions
+-----------+------+---------------+----------+--------------------+--------=
+----
+odroid-xu3 | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | 1      =
+    =
+
+
+  Details:     https://kernelci.org/test/plan/id/5ffd970a11badc1b0dc94cb9
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-01-11-v5.11-rc3/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-nfs=
+-odroid-xu3.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-01-11-v5.11-rc3/arm/multi_v7_defconfig/gcc-8/lab-collabora/baseline-nfs=
+-odroid-xu3.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2020=
+1221.0/armhf/initrd.cpio.gz =
+
+
+
+  * baseline-nfs.login: https://kernelci.org/test/case/id/5ffd970a11badc1b0=
+dc94cba
+        failing since 42 days (last pass: renesas-devel-2020-11-27-v5.10-rc=
+5, first fail: renesas-devel-2020-11-30-v5.10-rc6) =
+
+ =20
