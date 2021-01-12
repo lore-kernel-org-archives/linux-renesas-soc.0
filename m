@@ -2,83 +2,93 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63941C4332B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B555AC43332
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 17:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43BBA2311F
+	by mail.kernel.org (Postfix) with ESMTP id 89C7A2311F
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Jan 2021 17:03:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391730AbhALRCz (ORCPT
+        id S2390994AbhALRDA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Jan 2021 12:02:55 -0500
-Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.20]:27664 "EHLO
-        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391729AbhALRCz (ORCPT
+        Tue, 12 Jan 2021 12:03:00 -0500
+Received: from mo4-p03-ob.smtp.rzone.de ([81.169.146.172]:17119 "EHLO
+        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390860AbhALRC7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Jan 2021 12:02:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1610470744;
+        Tue, 12 Jan 2021 12:02:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1610470798;
         s=strato-dkim-0002; d=fpond.eu;
-        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:From:
-        Subject:Sender;
-        bh=m14IsCtAslBc9rv+b0TjI56mJvkvnWhVfFXBLhQziVc=;
-        b=VAhQ6JytjMbdbfQm0CMJQHgn+z3Af/eopprHEVfXFRm511TZ6JhY80aZZQnI0JXjgu
-        JyfGxQCuukqMNvs2Bn5Wd2teJMRkocAAR5HYxPmr9iIqDGPyCB8zwDC1MponTlb0kHIa
-        Xn+K2sHGn6rJvHtuY/5YGGWuG11/FN2vPrOHVUUZl2hpIlEH8zqMyBWZ+/Q3xtvwUNZM
-        oO9Nq5ipZrGT9L31tahjz8QXcXWdFGF6STLCYjIkAlzIj/wyhYf6V7z70jl71i6TpGWI
-        DLZsJo7Uh0/igx9qBFv9lFKQFltCqEdUAmb+QsO5zSz9nobblEwWglmTkUJuI6REwSzC
-        Sapw==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fGl/wuMlg=="
+        h=Message-Id:Date:Subject:Cc:To:From:From:Subject:Sender;
+        bh=3Y6QvsWAWSE2LZaUsSvMEi5WOHirETlcfzXfSp2vINo=;
+        b=iqqqhWREOgDn0RFn/EO6U1g1Tpz5Rp4mrY6+k9WpCYkDhYIyHKntS+lilBKqiIcXzz
+        BfARMn8kqRGB74f5XW5b8g7TS2zOZq2597MqSOJm+yz7xjZcqFrMbIhNzsJsZzf6yHDb
+        cUMKgfOVlQMAdWKJr9t6nENK+rqcRYNOjThyII7HbwsnwTqxFxP9PKQE0I7+ajxUiCkN
+        YB5tHQPYsqcK88I+Q23eeBUDUTEXN4J+16eosSRQ/6JnZUZt9hvV9wPLqHEGHoB3XuSS
+        dTS1DOcHJ7BeEKLwcxJAHvkU0Bley8Y/Dvz9+9KTK/DW+2twy+DWTrAByE6FhnD3zx3g
+        M7rw==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR8XxYaA36"
 X-RZG-CLASS-ID: mo00
-Received: from oxapp01-01.back.ox.d0m.de
-        by smtp-ox.front (RZmta 47.12.1 AUTH)
-        with ESMTPSA id z08ea3x0CGwwNTy
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+Received: from groucho.site
+        by smtp.strato.de (RZmta 47.12.1 DYNA|AUTH)
+        with ESMTPSA id z08ea3x0CGxrNUk
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-        Tue, 12 Jan 2021 17:58:58 +0100 (CET)
-Date:   Tue, 12 Jan 2021 17:58:58 +0100 (CET)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>, hoai.luu.ub@renesas.com
-Message-ID: <466563365.401585.1610470738787@webmail.strato.com>
-In-Reply-To: <CAMuHMdWVC-E-=r2yGDNpXRbothAML6jvMozm9k=4PgDrDrcFqg@mail.gmail.com>
-References: <20201221165448.27312-1-uli+renesas@fpond.eu>
- <20201221165448.27312-5-uli+renesas@fpond.eu>
- <CAMuHMdWVC-E-=r2yGDNpXRbothAML6jvMozm9k=4PgDrDrcFqg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] pinctrl: renesas: Initial R8A779A0 (V3U) PFC
- support
+        Tue, 12 Jan 2021 17:59:53 +0100 (CET)
+From:   Ulrich Hecht <uli+renesas@fpond.eu>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     wsa@the-dreams.de, geert@linux-m68k.org, hoai.luu.ub@renesas.com,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Subject: [PATCH] arm64: dts: renesas: r8a779a0: Add pinctrl device node
+Date:   Tue, 12 Jan 2021 17:59:48 +0100
+Message-Id: <20210112165948.31162-1-uli+renesas@fpond.eu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Normal
-X-Mailer: Open-Xchange Mailer v7.10.3-Rev29
-X-Originating-Client: open-xchange-appsuite
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+This patch adds the pinctrl device node for the R8A779A0 (V3U) SoC.
 
-> On 12/22/2020 12:42 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > --- /dev/null
-> > +++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-> > @@ -0,0 +1,2527 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * R8A779A0 processor support - PFC hardware block.
-> > + *
-> > + * Copyright (C) 2020 Renesas Electronics Corp.
-> > + *
-> > + * This file is based on the drivers/pinctrl/renesas/pfc-r8a7795.c
-> 
-> based on drivers/pinctrl/renesas/pfc-r8a77951.c?
+Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+---
+Hi!
 
-I'm inclined to leave that as it is because that's what the file was called when the original patch was created.
+This enables the PFC on V3U SoCs as implemented and documented in the
+series "[PATCH v3 0/6] pinctrl: renesas: basic R8A779A0 (V3U) support".
 
 CU
 Uli
+
+
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+index f951e6b6f696..6ac2c9d37acd 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+@@ -80,6 +80,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		pfc: pin-controller@e6050000 {
++			compatible = "renesas,pfc-r8a779a0";
++			reg = <0 0xe6050000 0 0x16c>, <0 0xe6050800 0 0x16c>,
++			      <0 0xe6058000 0 0x16c>, <0 0xe6058800 0 0x16c>,
++			      <0 0xe6060000 0 0x16c>, <0 0xe6060800 0 0x16c>,
++			      <0 0xe6068000 0 0x16c>, <0 0xe6068800 0 0x16c>,
++			      <0 0xe6069000 0 0x16c>, <0 0xe6069800 0 0x16c>;
++		};
++
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a779a0-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x4000>;
+-- 
+2.20.1
+
