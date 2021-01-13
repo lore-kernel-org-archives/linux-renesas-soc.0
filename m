@@ -2,86 +2,164 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A451C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jan 2021 18:56:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C38C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jan 2021 18:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 511B42225E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jan 2021 18:56:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECB252222B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jan 2021 18:57:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbhAMSzk (ORCPT
+        id S1728697AbhAMS5A (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Jan 2021 13:55:40 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:41953 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbhAMSzk (ORCPT
+        Wed, 13 Jan 2021 13:57:00 -0500
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:53297 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728694AbhAMS5A (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Jan 2021 13:55:40 -0500
+        Wed, 13 Jan 2021 13:57:00 -0500
 X-Originating-IP: 93.61.96.190
-Received: from uno.LocalDomain (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
+Received: from uno.localdomain (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 247B11C0006;
-        Wed, 13 Jan 2021 18:54:55 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     kieran.bingham+renesas@ideasonboard.com,
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 4278FFF80E;
+        Wed, 13 Jan 2021 18:56:15 +0000 (UTC)
+Date:   Wed, 13 Jan 2021 19:56:33 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     kieran.bingham+renesas@ideasonboard.com,
         laurent.pinchart+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, geert@linux-m68k.org
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Hyun Kwon <hyunk@xilinx.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        sergei.shtylyov@gmail.com
-Subject: [PATCH v7 0/7] media: i2c: Add RDACM21 camera module
-Date:   Wed, 13 Jan 2021 19:54:58 +0100
-Message-Id: <20210113185506.119808-1-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.29.2
+        niklas.soderlund+renesas@ragnatech.se, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: rdacm20: Verify MAX9271 startup
+Message-ID: <20210113185633.yrrs5evt5emsddce@uno.localdomain>
+References: <20210112114702.26959-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210112114702.26959-1-jacopo+renesas@jmondi.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This iteration is only to ease review of the RDACM21 as it contains two
-broken out patches marked as fixups
+Hello,
+   please temporary ignore this patch, as I've applied the same on
+the twin RDACM21 driver and it doesn't actually help recovering
+failures.
 
-I've taken Laurent's comments on v6 in the driver, but once I've rebased on
-the GPIO handling fixes applied to the MAX9271 driver, I've opened the pandora
-can of properly resetting the OV490 ISP @_@
+Sorry for the noise
 
-The two broken out patches serve to show the difference on top of the v6
-version instead of having reviewers going through the changes  that might get
-lost between the two versions.
-
-With acks on the fixups patches, I'll squash in v8.
-
-All the other patches are reviewed already, so I hope if nothing big is in
-this version, v8 will be good for merging.
-
-Thanks
-  j
-
-Jacopo Mondi (7):
-  media: i2c: Add driver for RDACM21 camera module
-  fixup! media: i2c: rdacm21: Fix GPIO handling
-  fixup! media: i2c: rdacm21: Break-out ov10640 initialization
-  dt-bindings: media: max9286: Document
-    'maxim,reverse-channel-microvolt'
-  media: i2c: max9286: Break-out reverse channel setup
-  media: i2c: max9286: Make channel amplitude programmable
-  media: i2c: max9286: Configure reverse channel amplitude
-
- .../bindings/media/i2c/maxim,max9286.yaml     |  22 +
- MAINTAINERS                                   |  12 +
- drivers/media/i2c/Kconfig                     |  13 +
- drivers/media/i2c/Makefile                    |   2 +
- drivers/media/i2c/max9286.c                   |  60 +-
- drivers/media/i2c/rdacm21.c                   | 623 ++++++++++++++++++
- 6 files changed, 719 insertions(+), 13 deletions(-)
- create mode 100644 drivers/media/i2c/rdacm21.c
-
---
-2.29.2
-
+On Tue, Jan 12, 2021 at 12:47:02PM +0100, Jacopo Mondi wrote:
+> During the RDACM20 probe sequence the connected deserializer chip
+> has to uses its I2C auto-acknowledgment feature as the reverse
+> channel where I2C messages are transmitted on is not yet available.
+>
+> This makes it impossible to detect failures when communicating with
+> the remote cameras, as all messages are acknowledged automatically.
+>
+> Reading the serializer chip id and verify it is correct is thus the
+> only reliable way to make sure it has correctly started-up.
+>
+> The current implementation tries to read the chip id once, and bails
+> out if it not correct, but does not give the serializer any time to
+> exit from low power after the 'ping to wake-up' first transaction.
+>
+> Make the startup process more robust by:
+> 1) Add a 5 milliseconds delay after the wake up message before
+>    starting the configuration procedure as suggested by the chip
+>    manual
+> 2) Read the chip-id to make sure it has properly booted
+> 3) Wrap the procedure in a for-loop and attempt configuration up
+>    to 10 times
+>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/media/i2c/rdacm20.c | 53 ++++++++++++++++++++++++-------------
+>  1 file changed, 34 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
+> index 16bcb764b0e0..de4cb635eabe 100644
+> --- a/drivers/media/i2c/rdacm20.c
+> +++ b/drivers/media/i2c/rdacm20.c
+> @@ -29,6 +29,8 @@
+>
+>  #include "max9271.h"
+>
+> +#define MAX9271_RESET_CYCLES		10
+> +
+>  #define OV10635_I2C_ADDRESS		0x30
+>
+>  #define OV10635_SOFTWARE_RESET		0x0103
+> @@ -453,35 +455,48 @@ static struct v4l2_subdev_ops rdacm20_subdev_ops = {
+>  static int rdacm20_initialize(struct rdacm20_device *dev)
+>  {
+>  	unsigned int retry = 3;
+> +	unsigned int i;
+>  	int ret;
+>
+>  	/* Verify communication with the MAX9271: ping to wakeup. */
+>  	dev->serializer->client->addr = MAX9271_DEFAULT_ADDR;
+>  	i2c_smbus_read_byte(dev->serializer->client);
+>
+> -	/* Serial link disabled during config as it needs a valid pixel clock. */
+> -	ret = max9271_set_serial_link(dev->serializer, false);
+> -	if (ret)
+> -		return ret;
+> +	/* Configure MAX9271 and make sure we can read its ID. */
+> +	for (i = 0; i < MAX9271_RESET_CYCLES; ++i) {
+> +		usleep_range(5000, 8000);
+>
+> -	/*
+> -	 *  Ensure that we have a good link configuration before attempting to
+> -	 *  identify the device.
+> -	 */
+> -	max9271_configure_i2c(dev->serializer, MAX9271_I2CSLVSH_469NS_234NS |
+> -					       MAX9271_I2CSLVTO_1024US |
+> -					       MAX9271_I2CMSTBT_105KBPS);
+> +		/* Serial link disabled: it needs a valid pixel clock. */
+> +		ret = max9271_set_serial_link(dev->serializer, false);
+> +		if (ret)
+> +			return ret;
+>
+> -	max9271_configure_gmsl_link(dev->serializer);
+> +		/*
+> +		 *  Ensure that we have a good link configuration before
+> +		 *  attempting to identify the device.
+> +		 */
+> +		max9271_configure_i2c(dev->serializer,
+> +				      MAX9271_I2CSLVSH_469NS_234NS |
+> +				      MAX9271_I2CSLVTO_1024US |
+> +				      MAX9271_I2CMSTBT_105KBPS);
+> +
+> +		ret = max9271_configure_gmsl_link(dev->serializer);
+> +		if (ret)
+> +			return ret;
+>
+> -	ret = max9271_verify_id(dev->serializer);
+> -	if (ret < 0)
+> -		return ret;
+> +		ret = max9271_set_address(dev->serializer, dev->addrs[0]);
+> +		if (ret < 0)
+> +			return ret;
+> +		dev->serializer->client->addr = dev->addrs[0];
+>
+> -	ret = max9271_set_address(dev->serializer, dev->addrs[0]);
+> -	if (ret < 0)
+> -		return ret;
+> -	dev->serializer->client->addr = dev->addrs[0];
+> +		ret = max9271_verify_id(dev->serializer);
+> +		if (ret == 0)
+> +			break;
+> +	}
+> +	if (i == MAX9271_RESET_CYCLES) {
+> +		dev_err(dev->dev, "Failed to configure max9271");
+> +		return -ENODEV;
+> +	}
+>
+>  	/*
+>  	 * Reset the sensor by cycling the OV10635 reset signal connected to the
+> --
+> 2.29.2
+>
