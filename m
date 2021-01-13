@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DD97C433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jan 2021 00:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50582C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jan 2021 01:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 154DD2312E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jan 2021 00:48:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB3CC230FC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Jan 2021 01:05:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392393AbhAMAnM (ORCPT
+        id S1726814AbhAMBFZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Jan 2021 19:43:12 -0500
-Received: from mga12.intel.com ([192.55.52.136]:19839 "EHLO mga12.intel.com"
+        Tue, 12 Jan 2021 20:05:25 -0500
+Received: from mga17.intel.com ([192.55.52.151]:43610 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392248AbhAMAMR (ORCPT
+        id S1726815AbhAMBFZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Jan 2021 19:12:17 -0500
-IronPort-SDR: GZAzELzi/XGiWh6gaP3SVE5ZgIISHQOJylUpQ/SKMTpq1tvKGF2Syha2vjO8pQBAI1NF8YtV7j
- eRVczLfGxVsA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9862"; a="157306666"
-X-IronPort-AV: E=Sophos;i="5.79,342,1602572400"; 
-   d="gz'50?scan'50,208,50";a="157306666"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2021 16:11:36 -0800
-IronPort-SDR: +88RIw4KiuBKf1O73WhFNuZ3eGbahM3Xa5gCrVACcVBcji5tdda9FwZR3SzdZj5+O5xWMH9OXW
- tMLsCqXvKsqg==
+        Tue, 12 Jan 2021 20:05:25 -0500
+IronPort-SDR: xdjNaxNFLATzTtPO7WX2C6gGuh0bkICfcb5uwT/S/z35jLaKiI1s1Dq31aUHWYTuDaqfeEx8Th
+ r4s3taJi1hXA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9862"; a="157907866"
+X-IronPort-AV: E=Sophos;i="5.79,343,1602572400"; 
+   d="gz'50?scan'50,208,50";a="157907866"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jan 2021 17:04:43 -0800
+IronPort-SDR: TYBfgZNYkS3oMG5AotY9MjWYsfHZA+anqWRc5uXC6XBBjV34bSj2tNEJVqvGphBe56DVveUiY3
+ sPaxj6xdtdUA==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.79,342,1602572400"; 
-   d="gz'50?scan'50,208,50";a="400352242"
+X-IronPort-AV: E=Sophos;i="5.79,343,1602572400"; 
+   d="gz'50?scan'50,208,50";a="464722070"
 Received: from lkp-server01.sh.intel.com (HELO 974c6bfa98f0) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 12 Jan 2021 16:11:34 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 12 Jan 2021 17:04:37 -0800
 Received: from kbuild by 974c6bfa98f0 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1kzTl8-00002O-7W; Wed, 13 Jan 2021 00:11:34 +0000
-Date:   Wed, 13 Jan 2021 08:11:00 +0800
+        id 1kzUaS-00003P-SJ; Wed, 13 Jan 2021 01:04:36 +0000
+Date:   Wed, 13 Jan 2021 09:04:00 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     kbuild-all@lists.01.org, linux-renesas-soc@vger.kernel.org
-Subject: [renesas-drivers:topic/renesas-debug 3/20]
- drivers/soc/renesas/r8a73a4-mstp.c:486:13: warning: no previous prototype
- for 'r8a73a4_disable_mstp_clocks'
-Message-ID: <202101130851.JXorKxRa-lkp@intel.com>
+Subject: [renesas-drivers:topic/renesas-debug 4/20]
+ drivers/soc/renesas/r8a7740-mstp.c:323:13: warning: no previous prototype
+ for 'r8a7740_disable_mstp_clocks'
+Message-ID: <202101130950.WJLSz7jn-lkp@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="wac7ysb48OaltWcw"
+Content-Type: multipart/mixed; boundary="uAKRQypu60I7Lcqm"
 Content-Disposition: inline
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
@@ -55,22 +55,22 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---wac7ysb48OaltWcw
+--uAKRQypu60I7Lcqm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git topic/renesas-debug
 head:   19a13e050f789ac7d98a4b3320a376f5052e84a0
-commit: caeea68a3d5120fe48bd731ebae1ccab17b3dd0f [3/20] [DEBUG] soc: renesas: r8a73a4: MSTP debug handling
+commit: be80c9c440768cd7256b65dafb18c155d20d4a76 [4/20] [DEBUG] soc: renesas: r8a7740: MSTP debug handling
 config: arm-defconfig (attached as .config)
 compiler: arm-linux-gnueabi-gcc (GCC) 9.3.0
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
         chmod +x ~/bin/make.cross
-        # https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?id=caeea68a3d5120fe48bd731ebae1ccab17b3dd0f
+        # https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?id=be80c9c440768cd7256b65dafb18c155d20d4a76
         git remote add renesas-drivers https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
         git fetch --no-tags renesas-drivers topic/renesas-debug
-        git checkout caeea68a3d5120fe48bd731ebae1ccab17b3dd0f
+        git checkout be80c9c440768cd7256b65dafb18c155d20d4a76
         # save the attached .config to linux build tree
         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=arm 
 
@@ -79,26 +79,26 @@ Reported-by: kernel test robot <lkp@intel.com>
 
 All warnings (new ones prefixed by >>):
 
->> drivers/soc/renesas/r8a73a4-mstp.c:486:13: warning: no previous prototype for 'r8a73a4_disable_mstp_clocks' [-Wmissing-prototypes]
-     486 | void __init r8a73a4_disable_mstp_clocks(void)
+>> drivers/soc/renesas/r8a7740-mstp.c:323:13: warning: no previous prototype for 'r8a7740_disable_mstp_clocks' [-Wmissing-prototypes]
+     323 | void __init r8a7740_disable_mstp_clocks(void)
          |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-vim +/r8a73a4_disable_mstp_clocks +486 drivers/soc/renesas/r8a73a4-mstp.c
+vim +/r8a7740_disable_mstp_clocks +323 drivers/soc/renesas/r8a7740-mstp.c
 
-   485	
- > 486	void __init r8a73a4_disable_mstp_clocks(void)
+   322	
+ > 323	void __init r8a7740_disable_mstp_clocks(void)
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
 https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
---wac7ysb48OaltWcw
+--uAKRQypu60I7Lcqm
 Content-Type: application/gzip
 Content-Disposition: attachment; filename=".config.gz"
 Content-Transfer-Encoding: base64
 
-H4sICG0z/l8AAy5jb25maWcAlDzZctu4su/zFayZl5mHmUjUZt9bfoBIUMIRQTIAKMl+QWkc
+H4sICEw+/l8AAy5jb25maWcAlDzZctu4su/zFayZl5mHmUjUZt9bfoBIUMIRQTIAKMl+QWkc
 JaM6XnJkOSf5+9sANwAE7dxUqhJ2N7ZGozc09NsvvwXo9fL8eLic7g8PDz+CL8en4/lwOX4K
 Pp8ejv8bxHmQ5SLAMRF/AXF6enr9/uFwfgxmf83/Gv15vh8Hm+P56fgQRM9Pn09fXqHx6fnp
 l99+gb+/AfDxK/Rz/p8A2vz5oFr/+eXp9Xj4+/Tnl/v74PdVFP0RXP81+WsE9FGeJWQlo0gS
@@ -1056,4 +1056,4 @@ Go/jW9T4gQn3BYFTbZ64g96Yj9cBJt+WfmOVB48h2d772jyDm9D0YzxOJgnNbN2CASQ0rsJ7
 ehRbS/O6BLMyMFGcPTIwHv+5iWJIul7uv7hPTFnKAEeAoowB3wV3B4UIecTq0IiXAOq85ntQ
 qM/uV/Ph2H8zh9GuynQDAA==
 
---wac7ysb48OaltWcw--
+--uAKRQypu60I7Lcqm--
