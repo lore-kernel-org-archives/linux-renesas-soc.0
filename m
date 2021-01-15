@@ -2,102 +2,78 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3ACC433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 08:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A47EDC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 09:47:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 22F9A2339D
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 08:59:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58F24235F9
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 09:47:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbhAOI7Z (ORCPT
+        id S1728854AbhAOJq5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Jan 2021 03:59:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49416 "EHLO
+        Fri, 15 Jan 2021 04:46:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726381AbhAOI7Y (ORCPT
+        with ESMTP id S1728746AbhAOJqz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Jan 2021 03:59:24 -0500
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3751FC061757;
-        Fri, 15 Jan 2021 00:58:44 -0800 (PST)
-Received: by mail-lf1-x12c.google.com with SMTP id v24so5426837lfr.7;
-        Fri, 15 Jan 2021 00:58:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yoHSmWqLEgOaqrsaqCRDQK3B4dOZRw9xdRI7JhzzteE=;
-        b=vFRmv5ETC4uP8sDjMBmXiNUGt9deXfFgVIk4VckzrnU4FPtT0qCpoWgmneijK09ZWc
-         w5YlV5V1A3L3qpQ75u4tb5HBgO8Ia64zIR9L+M4aeyfXKoSioMCD07J7XvzOsx1neWIN
-         Sa3QFTH/WP8L6HByxqWjMVg/dbltNIP5pfkMfo0ypautkShhDBf2KakMaYJQej3+qRuJ
-         uEA2xIiqEmw8b8gQhoNyNSkA+71qGDh3K++j6fPFy1XdCEfblIQzZt3+LPem7RNBqXFk
-         YaWaE8x2kaDTvocyArhSabML8lzGZRn1vPJGBQNi4ymD/eM6n1ySSe+NO9oxYhJUReC5
-         m8UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=yoHSmWqLEgOaqrsaqCRDQK3B4dOZRw9xdRI7JhzzteE=;
-        b=lDgnPMwk53kCQPDEkN+CyTooINPTHuSUHUmGcd/epQLZRv0DmfHxwTmZi/OYPdaUdt
-         OlzbijCDPocoi9AHeYd+jelrS0b5heUyHvBjnFx+9b306KEMUi7SH2DJy14ebcXo8kky
-         W7rZxPP6UOdjggFId3sez19Uj/Ox6y9EiD29hNdvqFnIlyUzWDx49faiBhOYnHQJzpnI
-         hkiuL75j4grGQXK+S1dYUnZytwpTEdK5KB5niGmYL+BdqrZRIZRJUptpwn5weHqs9/Hy
-         E0i+F/XhDYKWnM2bNEuaWVJHz/0xDRSUjkBSzZtPAaelHRODIrd40s5MEZ9araevZBYe
-         a4cg==
-X-Gm-Message-State: AOAM531+ioSsKOsCaOfXoLYLdlDESkLeS58RsoAkQsDSIv5qJKneqIn3
-        +OGahXeGQX8fKVKsw97Oljlo0fwdlHIErg==
-X-Google-Smtp-Source: ABdhPJzWw+TkPMfkvIslzJD0f/V/yDnmC+fu05uR1a5pG0GBOMgIXw0UqbM9iL8o2SEEm8O8gUniYg==
-X-Received: by 2002:ac2:5981:: with SMTP id w1mr5560436lfn.374.1610701122526;
-        Fri, 15 Jan 2021 00:58:42 -0800 (PST)
-Received: from [192.168.1.100] ([31.173.86.2])
-        by smtp.gmail.com with ESMTPSA id y21sm508948lfl.84.2021.01.15.00.58.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 15 Jan 2021 00:58:41 -0800 (PST)
-Subject: Re: [PATCH v2 4/4] rcar-csi2: Do not try to recover after transfer
- error
-To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org
-References: <20210115002148.4079591-1-niklas.soderlund+renesas@ragnatech.se>
- <20210115002148.4079591-5-niklas.soderlund+renesas@ragnatech.se>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Organization: Brain-dead Software
-Message-ID: <664cfe51-1739-2294-75fb-f2357402fa91@gmail.com>
-Date:   Fri, 15 Jan 2021 11:58:27 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Fri, 15 Jan 2021 04:46:55 -0500
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB8BFC0613D3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 15 Jan 2021 01:46:23 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by laurent.telenet-ops.be with bizsmtp
+        id GxmN240034C55Sk01xmNVd; Fri, 15 Jan 2021 10:46:22 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1l0LgT-003iyK-KM; Fri, 15 Jan 2021 10:46:21 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1l0LgT-009nD6-6R; Fri, 15 Jan 2021 10:46:21 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+List-Id: <soc.lore.kernel.org>
+To:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL 2/2] Renesas DT binding updates for v5.12
+Date:   Fri, 15 Jan 2021 10:46:10 +0100
+Message-Id: <20210115094610.2334058-3-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210115094610.2334058-1-geert+renesas@glider.be>
+References: <20210115094610.2334058-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20210115002148.4079591-5-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
+The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e5e:
 
-On 15.01.2021 3:21, Niklas Söderlund wrote:
+  Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
 
-> Instead of restarting the R-Car CSI-2 receiver if a transmission error
-> is detected inform the R-Car VIN driver of the error so it can stop the
-              ^ , woiuldn't hurt here?
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v5.12-tag1
 
-> whole pipeline and inform user-space. This is done to reflect a updated
-                                                                 ^ an
+for you to fetch changes up to 0d2a7e15d7912aa27dd3366f75d181b5141ca9a2:
 
-> usage recommendation in later versions of the datasheet.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-[...]
+  dt-bindings: arm: renesas: Add Beacon RZ/G2N and RZ/G2H boards (2020-12-28 10:46:08 +0100)
 
-MBR, Sergei
+----------------------------------------------------------------
+Renesas DT binding updates for v5.12
+
+  - Document suport for the Beacon EmbeddedWorks RZ/G2N and RZ/H kits.
+
+----------------------------------------------------------------
+Adam Ford (1):
+      dt-bindings: arm: renesas: Add Beacon RZ/G2N and RZ/G2H boards
+
+ Documentation/devicetree/bindings/arm/renesas.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
