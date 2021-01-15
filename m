@@ -3,211 +3,292 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D0C3C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 20:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F6BC4332E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 20:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E319F23A9C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 20:21:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22F5323AC0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 20:30:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726410AbhAOUUt (ORCPT
+        id S2387526AbhAOUaP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Jan 2021 15:20:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55510 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388325AbhAOUUp (ORCPT
+        Fri, 15 Jan 2021 15:30:15 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50256 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732164AbhAOUaB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Jan 2021 15:20:45 -0500
-Received: from mail-io1-xd2f.google.com (mail-io1-xd2f.google.com [IPv6:2607:f8b0:4864:20::d2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67EE1C061793;
-        Fri, 15 Jan 2021 12:20:05 -0800 (PST)
-Received: by mail-io1-xd2f.google.com with SMTP id b19so18058635ioa.9;
-        Fri, 15 Jan 2021 12:20:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=JPp2MICEAg6U/ik/5DIk7A+2LVzYjg/o/oLNwTffQ30=;
-        b=LV79N7zy+K4lisf9lSupt9hMIYTafWKlHc/LuGvxy1/pqtrGuuFINZ+RwAXmT2EeZV
-         /Oqnw2xL8GvSO8Tx2pP2hdnIISKrZBagwtqh2Qi/gphP7eUDobFrwFhUBIZ8UbphOihk
-         GJtnuEQUOxQ+ARw+jyX0BBk2C7fMK2JauUJ4LZGfVuUyEpJy84YB08xBLp51G+Y4ywma
-         ep74eVz5XkxKDcjHC2ngwlZeX96XwP47aEeRb1sz9M656YNT69x69VM1l2nPCdrA0D1i
-         CylR8xEL9zXkJV9sz4d6aZ5bEPIlW6txdyHSDhVdMFvuf/sbDA4ApQNDXelPHb9M9CEk
-         Lj3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=JPp2MICEAg6U/ik/5DIk7A+2LVzYjg/o/oLNwTffQ30=;
-        b=T8psi9Xp7xcp2PeuJ7YuDyF7v57quqaWNlkySMdwjq7UK8Ch613lp/t3WBme63/mpp
-         nWBbdtPIFKC+I9eSXqppAfiCqKpGQdeaMy7tbbd/QGLlXJ244Rc0aVuPyQ587KVcnRnG
-         E9x0zxINJqCz8Jz/wyyr64KtiIClgi3us6K/MbBfBj0rKHCY1eSRZzgahpcwKCUmQVzs
-         jywLkNxoZMs3hCMb+g1bc0/ZqAvRsFqz2SJVuGuM14I2cJ3y1tm+CLCXFFJqqwfkB/sL
-         dQ780gYNF1+3NeTcPcd92TULBgfp/GtofAHXNTXzR/9jQ9xGUa8X1iKWMbbm/0+EmQf1
-         jKWg==
-X-Gm-Message-State: AOAM5321q1pFWVlztsdE5KIBigRJVEiPVPFT2GWPbWu2Q91KG6y0r0xh
-        tCKvIkPvs/oqPl1dEm6I+bXEYhp1TU3SCltD
-X-Google-Smtp-Source: ABdhPJyHKEeDnonZoqGOWu5d2fOj1HwjGWnH6m7YAbVrZXw4JkqMMG6lLJib+RA89EGhi4ah43873g==
-X-Received: by 2002:a05:6e02:929:: with SMTP id o9mr11920262ilt.42.1610742003860;
-        Fri, 15 Jan 2021 12:20:03 -0800 (PST)
-Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:475c:c79e:a431:bccb])
-        by smtp.gmail.com with ESMTPSA id e28sm4194900iov.38.2021.01.15.12.20.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Jan 2021 12:20:03 -0800 (PST)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 2/4] ARM: dts: renesas: Add fck to etheravb-rcar-gen2 clock-names list
-Date:   Fri, 15 Jan 2021 14:19:49 -0600
-Message-Id: <20210115201953.443710-2-aford173@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210115201953.443710-1-aford173@gmail.com>
-References: <20210115201953.443710-1-aford173@gmail.com>
+        Fri, 15 Jan 2021 15:30:01 -0500
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0E61358B;
+        Fri, 15 Jan 2021 21:29:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1610742556;
+        bh=8R5qOZgwIXX9QIBlCIV/R54viYQ+tS8st/8kK+PspT4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rXfe/Bd4sxDcopxrQyulKr6sWDtZgNWVEUmMmsnebMU4/0jVNn/8hLQVXHqwR4Iqy
+         dmLamgDdsuehH2QKJU5DVGWdiVNzsC5Rqtv2JHOZ59k4V2CtY3G/tqo9iglvRf5/6q
+         dndbBomFsfYf9WqlpJf3+ozL6ojiJBE1hiTgHRnI=
+Date:   Fri, 15 Jan 2021 22:28:59 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        "James (Qian) Wang" <james.qian.wang@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Mihail Atanassov <mihail.atanassov@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Dave Airlie <airlied@redhat.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Alison Wang <alison.wang@nxp.com>,
+        Xinliang Liu <xinliang.liu@linaro.org>,
+        Tian Tao <tiantao6@hisilicon.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Xinwei Kong <kong.kongxinwei@hisilicon.com>,
+        Chen Feng <puck.chen@hisilicon.com>,
+        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
+        Edmund Dea <edmund.j.dea@intel.com>,
+        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Tomi Valkeinen <tomba@kernel.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Sandy Huang <hjc@rock-chips.com>,
+        Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Vincent Abriou <vincent.abriou@st.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Philippe Cornu <philippe.cornu@st.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jyri Sarha <jyri.sarha@iki.fi>, Eric Anholt <eric@anholt.net>,
+        Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Melissa Wen <melissa.srw@gmail.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Roland Scheidegger <sroland@vmware.com>,
+        Hyun Kwon <hyun.kwon@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        virtualization@lists.linux-foundation.org,
+        spice-devel@lists.freedesktop.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-rockchip@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 02/10] drm: Rename plane atomic_check state names
+Message-ID: <YAH7C0EOsisHhqvR@pendragon.ideasonboard.com>
+References: <20210115125703.1315064-1-maxime@cerno.tech>
+ <20210115125703.1315064-2-maxime@cerno.tech>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20210115125703.1315064-2-maxime@cerno.tech>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The bindings have been updated to support two clocks, but the
-original clock now requires the name fck.  Add a clock-names
-list in the device tree with fck in it.
+Hi Maxime,
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7742.dtsi  | 1 +
- arch/arm/boot/dts/r8a7743.dtsi  | 1 +
- arch/arm/boot/dts/r8a7744.dtsi  | 1 +
- arch/arm/boot/dts/r8a7745.dtsi  | 1 +
- arch/arm/boot/dts/r8a77470.dtsi | 1 +
- arch/arm/boot/dts/r8a7790.dtsi  | 1 +
- arch/arm/boot/dts/r8a7791.dtsi  | 1 +
- arch/arm/boot/dts/r8a7792.dtsi  | 1 +
- arch/arm/boot/dts/r8a7794.dtsi  | 1 +
- 9 files changed, 9 insertions(+)
+Thank you for the patch.
 
-V2:  No change
+On Fri, Jan 15, 2021 at 01:56:54PM +0100, Maxime Ripard wrote:
+> Most drivers call the argument to the plane atomic_check hook simply
+> state, which is going to conflict with the global atomic state in a
+> later rework. Let's rename it to new_plane_state (or new_state depending
+> on the convention used in the driver).
+> 
+> This was done using the coccinelle script below, and built tested:
+> 
+> @ plane_atomic_func @
+> identifier helpers;
+> identifier func;
+> @@
+> 
+>  static const struct drm_plane_helper_funcs helpers = {
+>  	.atomic_check = func,
+>  };
+> 
+> @ has_old_state @
+> identifier plane_atomic_func.func;
+> identifier plane;
+> expression e;
+> symbol old_state;
+> symbol state;
+> @@
+> 
+>  func(struct drm_plane *plane, struct drm_plane_state *state)
+>  {
+>  	...
+>  	struct drm_plane_state *old_state = e;
+>  	...
+>  }
+> 
+> @ depends on has_old_state @
+> identifier plane_atomic_func.func;
+> identifier plane;
+> symbol old_state;
+> @@
+> 
+>  func(struct drm_plane *plane,
+> -	struct drm_plane_state *state
+> +	struct drm_plane_state *new_state
+>      )
+>  {
+>  	<+...
+> -	state
+> +	new_state
+> 	...+>
+>  }
+> 
+> @ has_state @
+> identifier plane_atomic_func.func;
+> identifier plane;
+> symbol state;
+> @@
+> 
+>  func(struct drm_plane *plane, struct drm_plane_state *state)
+>  {
+>  	...
+>  }
+> 
+> @ depends on has_state @
+> identifier plane_atomic_func.func;
+> identifier plane;
+> symbol old_state;
+> @@
+> 
+>  func(struct drm_plane *plane,
+> -	struct drm_plane_state *state
+> +	struct drm_plane_state *new_plane_state
+>      )
+>  {
+>  	<+...
+> -	state
+> +	new_plane_state
+> 	...+>
+>  }
+> 
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
 
-diff --git a/arch/arm/boot/dts/r8a7742.dtsi b/arch/arm/boot/dts/r8a7742.dtsi
-index 6a78c813057b..6b922f664fcd 100644
---- a/arch/arm/boot/dts/r8a7742.dtsi
-+++ b/arch/arm/boot/dts/r8a7742.dtsi
-@@ -750,6 +750,7 @@ avb: ethernet@e6800000 {
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 812>;
-+			clock-names = "fck";
- 			power-domains = <&sysc R8A7742_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/r8a7743.dtsi b/arch/arm/boot/dts/r8a7743.dtsi
-index f444e418f408..084bf3e039cf 100644
---- a/arch/arm/boot/dts/r8a7743.dtsi
-+++ b/arch/arm/boot/dts/r8a7743.dtsi
-@@ -702,6 +702,7 @@ avb: ethernet@e6800000 {
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 812>;
-+			clock-names = "fck";
- 			power-domains = <&sysc R8A7743_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/r8a7744.dtsi b/arch/arm/boot/dts/r8a7744.dtsi
-index 0442aad4f9db..d01eba99ceb0 100644
---- a/arch/arm/boot/dts/r8a7744.dtsi
-+++ b/arch/arm/boot/dts/r8a7744.dtsi
-@@ -702,6 +702,7 @@ avb: ethernet@e6800000 {
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 812>;
-+			clock-names = "fck";
- 			power-domains = <&sysc R8A7744_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/r8a7745.dtsi b/arch/arm/boot/dts/r8a7745.dtsi
-index 0f14ac22921d..d0d45a369047 100644
---- a/arch/arm/boot/dts/r8a7745.dtsi
-+++ b/arch/arm/boot/dts/r8a7745.dtsi
-@@ -645,6 +645,7 @@ avb: ethernet@e6800000 {
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 812>;
-+			clock-names = "fck";
- 			power-domains = <&sysc R8A7745_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/r8a77470.dtsi b/arch/arm/boot/dts/r8a77470.dtsi
-index 691b1a131c87..ae90a001d663 100644
---- a/arch/arm/boot/dts/r8a77470.dtsi
-+++ b/arch/arm/boot/dts/r8a77470.dtsi
-@@ -537,6 +537,7 @@ avb: ethernet@e6800000 {
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 812>;
-+			clock-names = "fck";
- 			power-domains = <&sysc R8A77470_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/r8a7790.dtsi b/arch/arm/boot/dts/r8a7790.dtsi
-index b0569b4ea5c8..af9cd3324f4c 100644
---- a/arch/arm/boot/dts/r8a7790.dtsi
-+++ b/arch/arm/boot/dts/r8a7790.dtsi
-@@ -768,6 +768,7 @@ avb: ethernet@e6800000 {
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 812>;
-+			clock-names = "fck";
- 			power-domains = <&sysc R8A7790_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/r8a7791.dtsi b/arch/arm/boot/dts/r8a7791.dtsi
-index 87f0d6dc3e5a..2354af7fa83f 100644
---- a/arch/arm/boot/dts/r8a7791.dtsi
-+++ b/arch/arm/boot/dts/r8a7791.dtsi
-@@ -728,6 +728,7 @@ avb: ethernet@e6800000 {
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 812>;
-+			clock-names = "fck";
- 			power-domains = <&sysc R8A7791_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/r8a7792.dtsi b/arch/arm/boot/dts/r8a7792.dtsi
-index f5b299bfcb23..60c184ab1b49 100644
---- a/arch/arm/boot/dts/r8a7792.dtsi
-+++ b/arch/arm/boot/dts/r8a7792.dtsi
-@@ -537,6 +537,7 @@ avb: ethernet@e6800000 {
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 812>;
-+			clock-names = "fck";
- 			power-domains = <&sysc R8A7792_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/r8a7794.dtsi b/arch/arm/boot/dts/r8a7794.dtsi
-index cd5e2904068a..18cc6f6b588d 100644
---- a/arch/arm/boot/dts/r8a7794.dtsi
-+++ b/arch/arm/boot/dts/r8a7794.dtsi
-@@ -598,6 +598,7 @@ avb: ethernet@e6800000 {
- 			reg = <0 0xe6800000 0 0x800>, <0 0xee0e8000 0 0x4000>;
- 			interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>;
- 			clocks = <&cpg CPG_MOD 812>;
-+			clock-names = "fck";
- 			power-domains = <&sysc R8A7794_PD_ALWAYS_ON>;
- 			resets = <&cpg 812>;
- 			#address-cells = <1>;
+[...]
+
+>  drivers/gpu/drm/omapdrm/omap_plane.c          | 19 +++++----
+>  drivers/gpu/drm/rcar-du/rcar_du_plane.c       |  7 ++--
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c         |  7 ++--
+>  drivers/gpu/drm/xlnx/zynqmp_disp.c            | 10 +++--
+
+For these, with the comment below addressed,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+>  41 files changed, 402 insertions(+), 357 deletions(-)
+
+[snip]
+
+> diff --git a/drivers/gpu/drm/omapdrm/omap_plane.c b/drivers/gpu/drm/omapdrm/omap_plane.c
+> index 51dc24acea73..78d0eb1fd69d 100644
+> --- a/drivers/gpu/drm/omapdrm/omap_plane.c
+> +++ b/drivers/gpu/drm/omapdrm/omap_plane.c
+> @@ -99,18 +99,19 @@ static void omap_plane_atomic_disable(struct drm_plane *plane,
+>  }
+>  
+>  static int omap_plane_atomic_check(struct drm_plane *plane,
+> -				   struct drm_plane_state *state)
+> +				   struct drm_plane_state *new_plane_state)
+>  {
+>  	struct drm_crtc_state *crtc_state;
+>  
+> -	if (!state->fb)
+> +	if (!new_plane_state->fb)
+>  		return 0;
+>  
+>  	/* crtc should only be NULL when disabling (i.e., !state->fb) */
+
+s/state/new_plane_state/ here too ?
+
+> -	if (WARN_ON(!state->crtc))
+> +	if (WARN_ON(!new_plane_state->crtc))
+>  		return 0;
+>  
+> -	crtc_state = drm_atomic_get_existing_crtc_state(state->state, state->crtc);
+> +	crtc_state = drm_atomic_get_existing_crtc_state(new_plane_state->state,
+> +							new_plane_state->crtc);
+>  	/* we should have a crtc state if the plane is attached to a crtc */
+>  	if (WARN_ON(!crtc_state))
+>  		return 0;
+> @@ -118,17 +119,17 @@ static int omap_plane_atomic_check(struct drm_plane *plane,
+>  	if (!crtc_state->enable)
+>  		return 0;
+>  
+> -	if (state->crtc_x < 0 || state->crtc_y < 0)
+> +	if (new_plane_state->crtc_x < 0 || new_plane_state->crtc_y < 0)
+>  		return -EINVAL;
+>  
+> -	if (state->crtc_x + state->crtc_w > crtc_state->adjusted_mode.hdisplay)
+> +	if (new_plane_state->crtc_x + new_plane_state->crtc_w > crtc_state->adjusted_mode.hdisplay)
+
+I can't help thinking we're using too long variable names... :-(
+
+>  		return -EINVAL;
+>  
+> -	if (state->crtc_y + state->crtc_h > crtc_state->adjusted_mode.vdisplay)
+> +	if (new_plane_state->crtc_y + new_plane_state->crtc_h > crtc_state->adjusted_mode.vdisplay)
+>  		return -EINVAL;
+>  
+> -	if (state->rotation != DRM_MODE_ROTATE_0 &&
+> -	    !omap_framebuffer_supports_rotation(state->fb))
+> +	if (new_plane_state->rotation != DRM_MODE_ROTATE_0 &&
+> +	    !omap_framebuffer_supports_rotation(new_plane_state->fb))
+>  		return -EINVAL;
+>  
+>  	return 0;
+
+[...]
+
 -- 
-2.25.1
+Regards,
 
+Laurent Pinchart
