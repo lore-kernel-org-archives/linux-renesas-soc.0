@@ -2,96 +2,128 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F50DC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 16:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 694FCC433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 20:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDD48222B3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 16:51:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D8D923A9C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 20:21:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbhAOQvW (ORCPT
+        id S2388602AbhAOUUz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Jan 2021 11:51:22 -0500
-Received: from mail-oi1-f171.google.com ([209.85.167.171]:42864 "EHLO
-        mail-oi1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727278AbhAOQvW (ORCPT
+        Fri, 15 Jan 2021 15:20:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55538 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388588AbhAOUUw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Jan 2021 11:51:22 -0500
-Received: by mail-oi1-f171.google.com with SMTP id l200so10162148oig.9;
-        Fri, 15 Jan 2021 08:51:06 -0800 (PST)
+        Fri, 15 Jan 2021 15:20:52 -0500
+Received: from mail-io1-xd2d.google.com (mail-io1-xd2d.google.com [IPv6:2607:f8b0:4864:20::d2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A8AEC0613D3;
+        Fri, 15 Jan 2021 12:20:12 -0800 (PST)
+Received: by mail-io1-xd2d.google.com with SMTP id d81so5430378iof.3;
+        Fri, 15 Jan 2021 12:20:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=3XzHspCX9O1x943fOc9JVbEHt7+srRIHgKjIIe0gcTw=;
+        b=NgWS5kVabAPxdHhBiKkubPCMxZN3NZ2xmbF8XalcBWU3OrQ3/tV+zpDt/IDcz+5IkC
+         U3+38yv5icRvZyOmDELIfUuDz2bazw0ZDq+9azXPkIlqimmDJ+H7dLk1zGUcuZbzXw7J
+         7/95a4q72b7v/RTX2DePIsNQIaentHQ63Vey+hFENcrAIMRia9po4SjMbhemuvPSPOJv
+         CxemdbgEYCzsYDesOub6heMvvjV3px1PPvTCbyYATyauWYmJqjOCdu8YRwROtwKtrJNL
+         8k41j0IB2qf8fy1A9fyrs/RWrWql4NwyH5z++D5WY0hFQ+cR2fydYUxMVl/rU09uZOB7
+         p/kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=5fLN7OulXncVQApei3ublkkTNVRLPQFG9EYgq/5LsEY=;
-        b=WQ6m5hWYjyEqtlUWvjF149iwNiPxq8RWiLfhawfv0Qh/VnEoXftZ9ldGkkGiQTviji
-         kk+DDTiV21sZAjCNJ+jJqrHJP4FI/aN4KM4YWYH0svalRb4u3x38peRtjOi/v0pE+G1l
-         ChfZgz39p0E19/6E7OUs7gBz51gqLCOVWJIW76fgRHgcuvckXE0o/aQZbp5uWG4iDxNH
-         1ox+ZzDfkThwzD16DOQE8tJD7KYdSNF/oUJ5giqJm4HoSIHgaWrZU81EWoh5tSooOeDX
-         OI+JHTMVWQCHo9eFaPmY/vOyMGOqyY8pZc/FwIpOZzNfhxxdylN4vMeH8fdXMVIRS5iX
-         O0/A==
-X-Gm-Message-State: AOAM530o08YzgAaDcYQNvBk3IZ6RT7EcnhNBTaHtr7eXM0sxtEY9mCBw
-        c3Lha0j34jn66I9mkdmqYeMONH+bDA==
-X-Google-Smtp-Source: ABdhPJyWVaI+1oubphuIPiK+3CWSN1uLPvtMMc/tQUOhs4fBs8IFxhHO1oH4JJo3TZe4FonyuohtsQ==
-X-Received: by 2002:a05:6808:253:: with SMTP id m19mr6041849oie.34.1610729441177;
-        Fri, 15 Jan 2021 08:50:41 -0800 (PST)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a15sm1735753oii.50.2021.01.15.08.50.39
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=3XzHspCX9O1x943fOc9JVbEHt7+srRIHgKjIIe0gcTw=;
+        b=Kid3kpYDTx3X69+CKIo+YJrDwH3JzquXxCYhgzVrwsMzsFf4ZJpRXM3mRoU794YyQN
+         oEXxFLZMIdVICVLzd2ICYXXV5GcU4Yu9/oQKgHbVOFWcdQB4YPaIr8bI5rV9Sy6dD4U0
+         h9uOe4lYRwgi23BxWRjrh1G99S5KzZ/BCJoE9k6VESVuBD2uWZbEHNoZIdV+mDOhcXbM
+         8gnhs+PKT/Q9RR641ksu3Qw4DZbjEtpI1+Rf30VonbKIx9NZd7jbFdHdzU4vWczbqjWr
+         A5tbWju8c25W2jMyN180fMlxRKRmLTov7zax4pObaNhzCL2hKW3MPHJBhvrOAnAzN3G5
+         dLHw==
+X-Gm-Message-State: AOAM530JvDvNi+QkjMK9eqKAT+onVGDnOdUHPjrtEvimdtK3JNrpTeAm
+        dEaWCJ5WW3eGODsxz12HVBOWEwvLAk3LuPC7
+X-Google-Smtp-Source: ABdhPJwKEbWqA8LJEeHIYAOPbhOtSAIGSkE20xlarQKNl+/RedBLvYsuTNRj6JxcFkzNL6Pch4Hy6w==
+X-Received: by 2002:a6b:6f09:: with SMTP id k9mr9923958ioc.30.1610742011324;
+        Fri, 15 Jan 2021 12:20:11 -0800 (PST)
+Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:475c:c79e:a431:bccb])
+        by smtp.gmail.com with ESMTPSA id e28sm4194900iov.38.2021.01.15.12.20.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 Jan 2021 08:50:40 -0800 (PST)
-Received: (nullmailer pid 1434041 invoked by uid 1000);
-        Fri, 15 Jan 2021 16:50:39 -0000
-Date:   Fri, 15 Jan 2021 10:50:39 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org,
-        Mark Yao <markyao0591@gmail.com>, devicetree@vger.kernel.org,
-        Sandy Huang <hjc@rock-chips.com>
-Subject: Re: [PATCH v4 5/7] dt-bindings: display: rockchip: dw-hdmi: Convert
- binding to YAML
-Message-ID: <20210115165039.GA1433984@robh.at.kernel.org>
-References: <20210114064437.5793-1-laurent.pinchart+renesas@ideasonboard.com>
- <20210114064437.5793-6-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 15 Jan 2021 12:20:10 -0800 (PST)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V2 4/4] net: ethernet: ravb: Enable optional refclk
+Date:   Fri, 15 Jan 2021 14:19:51 -0600
+Message-Id: <20210115201953.443710-4-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210115201953.443710-1-aford173@gmail.com>
+References: <20210115201953.443710-1-aford173@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210114064437.5793-6-laurent.pinchart+renesas@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 14 Jan 2021 08:44:35 +0200, Laurent Pinchart wrote:
-> Convert the Rockchip HDMI TX text binding to YAML.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
-> Changes since v3:
-> 
-> - Replace endpoint-base with endpoint
-> 
-> Changes since v2:
-> 
-> - Use Mark's @gmail.com e-mail address as the @rock-chips.com address
->   bounces
-> 
-> Changes since v1:
-> 
-> - Drop pinctrl-0 and pinctrl-1
-> - Use unevaluatedProperties instead of additionalProperties
-> - Drop reg and interrupts as they're checked in the base schema
-> - Rebase on top of OF graph schema, dropped redundant properties
-> - Fix identation for enum entries
-> - Tidy up clock names
-> ---
->  .../display/rockchip/dw_hdmi-rockchip.txt     |  74 ---------
->  .../display/rockchip/rockchip,dw-hdmi.yaml    | 156 ++++++++++++++++++
->  2 files changed, 156 insertions(+), 74 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/display/rockchip/dw_hdmi-rockchip.txt
->  create mode 100644 Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi.yaml
-> 
+For devices that use a programmable clock for the avb reference clock,
+the driver may need to enable them.  Add code to find the optional clock
+and enable it when available.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Adam Ford <aford173@gmail.com>
+---
+ drivers/net/ethernet/renesas/ravb.h      | 1 +
+ drivers/net/ethernet/renesas/ravb_main.c | 8 ++++++++
+ 2 files changed, 9 insertions(+)
+
+V2:  The previous patch to fetch the fclk was dropped.  In its place
+     is code to enable the refclk
+
+diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
+index 7453b17a37a2..ff363797bd2b 100644
+--- a/drivers/net/ethernet/renesas/ravb.h
++++ b/drivers/net/ethernet/renesas/ravb.h
+@@ -994,6 +994,7 @@ struct ravb_private {
+ 	struct platform_device *pdev;
+ 	void __iomem *addr;
+ 	struct clk *clk;
++	struct clk *refclk;
+ 	struct mdiobb_ctrl mdiobb;
+ 	u32 num_rx_ring[NUM_RX_QUEUE];
+ 	u32 num_tx_ring[NUM_TX_QUEUE];
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index bd30505fbc57..739e30f45daa 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2148,6 +2148,14 @@ static int ravb_probe(struct platform_device *pdev)
+ 		goto out_release;
+ 	}
+ 
++	priv->refclk = devm_clk_get_optional(&pdev->dev, "refclk");
++	if (IS_ERR(priv->refclk)) {
++		error = PTR_ERR(priv->refclk);
++		goto out_release;
++	} else {
++		(void)clk_prepare_enable(priv->refclk);
++	}
++
+ 	ndev->max_mtu = 2048 - (ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN);
+ 	ndev->min_mtu = ETH_MIN_MTU;
+ 
+-- 
+2.25.1
+
