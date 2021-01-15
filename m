@@ -7,35 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A37F0C433E9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E43FC433E0
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 00:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E4AD23AAC
+	by mail.kernel.org (Postfix) with ESMTP id 1D94623AA7
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 00:23:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731272AbhAOAXG (ORCPT
+        id S1731250AbhAOAXE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Jan 2021 19:23:06 -0500
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:57295 "EHLO
+        Thu, 14 Jan 2021 19:23:04 -0500
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:21845 "EHLO
         bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731271AbhAOAXG (ORCPT
+        by vger.kernel.org with ESMTP id S1731232AbhAOAXE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Jan 2021 19:23:06 -0500
-X-Halon-ID: bdae7d1b-56c7-11eb-b73f-0050569116f7
+        Thu, 14 Jan 2021 19:23:04 -0500
+X-Halon-ID: bbe56034-56c7-11eb-b73f-0050569116f7
 Authorized-sender: niklas.soderlund@fsdn.se
 Received: from bismarck.berto.se (p4fca2458.dip0.t-ipconnect.de [79.202.36.88])
         by bin-vsp-out-03.atm.binero.net (Halon) with ESMTPA
-        id bdae7d1b-56c7-11eb-b73f-0050569116f7;
-        Fri, 15 Jan 2021 01:22:25 +0100 (CET)
+        id bbe56034-56c7-11eb-b73f-0050569116f7;
+        Fri, 15 Jan 2021 01:22:22 +0100 (CET)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     linux-media@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 4/4] rcar-csi2: Do not try to recover after transfer error
-Date:   Fri, 15 Jan 2021 01:21:48 +0100
-Message-Id: <20210115002148.4079591-5-niklas.soderlund+renesas@ragnatech.se>
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: [PATCH v2 2/4] rcar-vin: Route events to correct video device
+Date:   Fri, 15 Jan 2021 01:21:46 +0100
+Message-Id: <20210115002148.4079591-3-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210115002148.4079591-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20210115002148.4079591-1-niklas.soderlund+renesas@ragnatech.se>
@@ -46,48 +47,80 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Instead of restarting the R-Car CSI-2 receiver if a transmission error
-is detected inform the R-Car VIN driver of the error so it can stop the
-whole pipeline and inform user-space. This is done to reflect a updated
-usage recommendation in later versions of the datasheet.
+The event route for VIN running with a media controller (Gen3) is
+incorrect as all events are only routed to the video device that are
+used to register the async notifier.
+
+Remedy this be examining which subdevice generated the event and route
+it to all VIN(s) that are connected to that subdevice.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/media/platform/rcar-vin/rcar-csi2.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 44 ++++++++++++++++++---
+ 1 file changed, 38 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index 945d2eb8723367f0..a7212ecc46572a3b 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -773,21 +773,19 @@ static irqreturn_t rcsi2_irq(int irq, void *data)
- 
- 	rcsi2_write(priv, INTERRSTATE_REG, err_status);
- 
--	dev_info(priv->dev, "Transfer error, restarting CSI-2 receiver\n");
--
- 	return IRQ_WAKE_THREAD;
+diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+index e6ea2b7991b8dcb3..457a65bf6b664f05 100644
+--- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
++++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+@@ -966,18 +966,50 @@ void rvin_v4l2_unregister(struct rvin_dev *vin)
+ 	video_unregister_device(&vin->vdev);
  }
  
- static irqreturn_t rcsi2_irq_thread(int irq, void *data)
- {
- 	struct rcar_csi2 *priv = data;
-+	struct v4l2_event event = {
-+		.type = V4L2_EVENT_EOS,
-+	};
- 
--	mutex_lock(&priv->lock);
--	rcsi2_stop(priv);
--	usleep_range(1000, 2000);
--	if (rcsi2_start(priv))
--		dev_warn(priv->dev, "Failed to restart CSI-2 receiver\n");
--	mutex_unlock(&priv->lock);
-+	dev_err(priv->dev, "Transfer error detected.\n");
++static void rvin_notify_video_device(struct rvin_dev *vin,
++				     unsigned int notification, void *arg)
++{
++	switch (notification) {
++	case V4L2_DEVICE_NOTIFY_EVENT:
++		v4l2_event_queue(&vin->vdev, arg);
++		break;
++	default:
++		break;
++	}
++}
 +
-+	v4l2_subdev_notify_event(&priv->subdev, &event);
+ static void rvin_notify(struct v4l2_subdev *sd,
+ 			unsigned int notification, void *arg)
+ {
++	struct v4l2_subdev *remote;
++	struct rvin_group *group;
++	struct media_pad *pad;
+ 	struct rvin_dev *vin =
+ 		container_of(sd->v4l2_dev, struct rvin_dev, v4l2_dev);
++	unsigned int i;
  
- 	return IRQ_HANDLED;
+-	switch (notification) {
+-	case V4L2_DEVICE_NOTIFY_EVENT:
+-		v4l2_event_queue(&vin->vdev, arg);
+-		break;
+-	default:
+-		break;
++	/* If no media controller, no need to route the event. */
++	if (!vin->info->use_mc) {
++		rvin_notify_video_device(vin, notification, arg);
++		return;
++	}
++
++	group = vin->group;
++
++	for (i = 0; i < RCAR_VIN_NUM; i++) {
++		vin = group->vin[i];
++		if (!vin)
++			continue;
++
++		pad = media_entity_remote_pad(&vin->pad);
++		if (!pad)
++			continue;
++
++		remote = media_entity_to_v4l2_subdev(pad->entity);
++		if (remote != sd)
++			continue;
++
++		rvin_notify_video_device(vin, notification, arg);
+ 	}
  }
+ 
 -- 
 2.30.0
 
