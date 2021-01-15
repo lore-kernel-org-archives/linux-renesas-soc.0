@@ -2,44 +2,40 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E43FC433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA5CC43381
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 00:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1D94623AA7
+	by mail.kernel.org (Postfix) with ESMTP id 8571A23AA7
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Jan 2021 00:23:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731250AbhAOAXE (ORCPT
+        id S1731195AbhAOAXB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Jan 2021 19:23:04 -0500
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:21845 "EHLO
-        bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731232AbhAOAXE (ORCPT
+        Thu, 14 Jan 2021 19:23:01 -0500
+Received: from bin-mail-out-05.binero.net ([195.74.38.228]:28610 "EHLO
+        bin-mail-out-05.binero.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731232AbhAOAXB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Jan 2021 19:23:04 -0500
-X-Halon-ID: bbe56034-56c7-11eb-b73f-0050569116f7
+        Thu, 14 Jan 2021 19:23:01 -0500
+X-Halon-ID: b83682b3-56c7-11eb-b73f-0050569116f7
 Authorized-sender: niklas.soderlund@fsdn.se
 Received: from bismarck.berto.se (p4fca2458.dip0.t-ipconnect.de [79.202.36.88])
         by bin-vsp-out-03.atm.binero.net (Halon) with ESMTPA
-        id bbe56034-56c7-11eb-b73f-0050569116f7;
-        Fri, 15 Jan 2021 01:22:22 +0100 (CET)
+        id b83682b3-56c7-11eb-b73f-0050569116f7;
+        Fri, 15 Jan 2021 01:22:19 +0100 (CET)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     linux-media@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: [PATCH v2 2/4] rcar-vin: Route events to correct video device
-Date:   Fri, 15 Jan 2021 01:21:46 +0100
-Message-Id: <20210115002148.4079591-3-niklas.soderlund+renesas@ragnatech.se>
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 0/4] rcar-csi2: Update handling of transfer error
+Date:   Fri, 15 Jan 2021 01:21:44 +0100
+Message-Id: <20210115002148.4079591-1-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210115002148.4079591-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20210115002148.4079591-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -47,80 +43,39 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The event route for VIN running with a media controller (Gen3) is
-incorrect as all events are only routed to the video device that are
-used to register the async notifier.
+Hello,
 
-Remedy this be examining which subdevice generated the event and route
-it to all VIN(s) that are connected to that subdevice.
+This series adapts the R-Car CSI-2 receiver recovery logic to match
+updates in the datasheet. The later datasheets recommend that the whole
+video pipeline shall be stopped if an transmission error is detected
+instead of just restarting the CSI-2 receiver.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/platform/rcar-vin/rcar-v4l2.c | 44 ++++++++++++++++++---
- 1 file changed, 38 insertions(+), 6 deletions(-)
+To do this we leverage the recent changes to support suspend/resume of
+time the whole pipeline and inform the C-Car VIN driver of the detected
+error so it can stop the whole pipeline and inform user-space of the
+detected fault.
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-index e6ea2b7991b8dcb3..457a65bf6b664f05 100644
---- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
-@@ -966,18 +966,50 @@ void rvin_v4l2_unregister(struct rvin_dev *vin)
- 	video_unregister_device(&vin->vdev);
- }
- 
-+static void rvin_notify_video_device(struct rvin_dev *vin,
-+				     unsigned int notification, void *arg)
-+{
-+	switch (notification) {
-+	case V4L2_DEVICE_NOTIFY_EVENT:
-+		v4l2_event_queue(&vin->vdev, arg);
-+		break;
-+	default:
-+		break;
-+	}
-+}
-+
- static void rvin_notify(struct v4l2_subdev *sd,
- 			unsigned int notification, void *arg)
- {
-+	struct v4l2_subdev *remote;
-+	struct rvin_group *group;
-+	struct media_pad *pad;
- 	struct rvin_dev *vin =
- 		container_of(sd->v4l2_dev, struct rvin_dev, v4l2_dev);
-+	unsigned int i;
- 
--	switch (notification) {
--	case V4L2_DEVICE_NOTIFY_EVENT:
--		v4l2_event_queue(&vin->vdev, arg);
--		break;
--	default:
--		break;
-+	/* If no media controller, no need to route the event. */
-+	if (!vin->info->use_mc) {
-+		rvin_notify_video_device(vin, notification, arg);
-+		return;
-+	}
-+
-+	group = vin->group;
-+
-+	for (i = 0; i < RCAR_VIN_NUM; i++) {
-+		vin = group->vin[i];
-+		if (!vin)
-+			continue;
-+
-+		pad = media_entity_remote_pad(&vin->pad);
-+		if (!pad)
-+			continue;
-+
-+		remote = media_entity_to_v4l2_subdev(pad->entity);
-+		if (remote != sd)
-+			continue;
-+
-+		rvin_notify_video_device(vin, notification, arg);
- 	}
- }
- 
+Patch 1/4 and 2/4 fixes faults in the VIN driver that where detected
+when working on this. Patch 3/4 prepares the VIN driver to deal with the
+EOS event from R-Car CSI-2 driver And patch 4/4 changes the error logic
+of the CSI-2 receiver to match the datasheet.
+
+This is tested on M3-N and a fault is injected by quickly removing and
+re-inserting the HDMI cable while streaming. This method does not always
+hit and is time consuming. To consistently prove correctness of handling
+a fake fault was introduced by a HACK and a debugfs entry.
+
+Niklas Söderlund (4):
+  rcar-vin: Do not try to stop stream if not running
+  rcar-vin: Route events to correct video device
+  rcar-vin: Stop stream when subdevice signal EOS
+  rcar-csi2: Do not try to recover after transfer error
+
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 14 +++--
+ drivers/media/platform/rcar-vin/rcar-dma.c  |  5 ++
+ drivers/media/platform/rcar-vin/rcar-v4l2.c | 58 ++++++++++++++++++---
+ 3 files changed, 63 insertions(+), 14 deletions(-)
+
 -- 
 2.30.0
 
