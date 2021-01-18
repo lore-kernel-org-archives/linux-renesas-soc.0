@@ -2,150 +2,188 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.3 required=3.0 tests=BAYES_00,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E22C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jan 2021 20:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F00BC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jan 2021 21:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C2D6207C4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jan 2021 20:55:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9CEF22D6D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jan 2021 21:20:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389319AbhARUmO (ORCPT
+        id S2394562AbhARVUV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Jan 2021 15:42:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49664 "EHLO
+        Mon, 18 Jan 2021 16:20:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437971AbhARUlr (ORCPT
+        with ESMTP id S2394540AbhARVUH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Jan 2021 15:41:47 -0500
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C74BDC061573;
-        Mon, 18 Jan 2021 12:41:03 -0800 (PST)
-Received: by mail-pf1-x42e.google.com with SMTP id i63so3793363pfg.7;
-        Mon, 18 Jan 2021 12:41:03 -0800 (PST)
+        Mon, 18 Jan 2021 16:20:07 -0500
+Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4448C061575
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Jan 2021 13:19:26 -0800 (PST)
+Received: by mail-yb1-xb2f.google.com with SMTP id y128so13949090ybf.10
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Jan 2021 13:19:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XEt+p0VH0Mt3UDzNuSZ5gd/vonSaeBsHxPfMF1613xI=;
-        b=QVcREkO6E03pZ35t4SFG34ZWgYyV2W8kKK+BslMmfJkLx5kJVYkSlcLCDMwj+r5mXw
-         shKZote+IpwaviD+P+YqhB1AMgQCXplD6w33c6AWRlicidFAzoMdEJ6govm/HVi5e5Ja
-         Ge7Ly4DnZhABPVnxOzizZEmYoSdIhzd/FrsMa55WcmfST1nP35AHOMq2MnAi4aJct4Xh
-         5+h+/VBN4XzddQLoFX39czJK3Sim+5unr1SfiRWA6zEUtuIFOMBG4LUt9gwRq5m3Qvwc
-         dqmjjGTPkZ/N8uxd1ED9HbqTmyMRY5Obm8hAkLURraCMQZlD/ksorXuZP5+XVtK61MEm
-         rtvw==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=COpFk8JVoGfb4E3tmL/piUQieYNkIMUogv9fM2rWfEQ=;
+        b=dzMYdiMm/qt2fGRQnCVarFPn+P9JZKC8QVxYZEUP4jo3StRHoS2SJXltwbYZVoqn9V
+         6WUQMsaka5XlT1trnLxHHGUfSp7HawAXe05IOId6xy/DMaYYsCV40Sm2yiRWJjzK5IJI
+         6mhq28awJQOorY+0FGmleW+pOwhBkkhDJo/kSfNcYlM7yrFg/6CxYhu3C5KKXtJXWc43
+         UxR3ofLCV+9Y3xlvZlWlRNhJGvqX15egcIkepBnCe6cqi2o+Q7v5e/LIprwTXkJYrbKe
+         uCCS2dcJMQYdJil9bxvtOMmkZVdRoer1sHynRyr37MFGBnVJyIW3NyvEnLElKuTI7USh
+         WwUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XEt+p0VH0Mt3UDzNuSZ5gd/vonSaeBsHxPfMF1613xI=;
-        b=e41flBa5aWP1NlgipZDrVd78R6PMRwA8hCs9EJYi/KYLkKCY9WBbPjI54ePKT1d2tW
-         8k0SraXrBYJ38srOTEbyZQ5a1ed00xigQBx0lI3nGdPfKMdJyP0eTYM6s4edGfDrRJu6
-         UwXmkCSBxxNJaCqeirjsOpL5qT3nBQQxSaPMsc5VLAYB4InHT5Rrf28YHpw3rLQDjp05
-         t9Oviz744y9AlhfO5tniBvtgfB2OQV8Rnot21ZlA+0Fqhao/Dx9j9A2y5aUvgRapPMMM
-         l3tGkJwPfINEpJqmNMZjuhLR1dM3KK2ODNxQtNQzHCsu0pvqEI41GywUxGcy5+tScjVQ
-         6VKg==
-X-Gm-Message-State: AOAM531GvjM9Lrq/0P++U9U4UCcU9UNye+5pbltUw3ecSV3wBYVpcEnP
-        T212Vjf60qfXa2QwmO6BodfLRyH+oGg=
-X-Google-Smtp-Source: ABdhPJyLjTYdmagnhqus/gAOrcz1oFASXA/BCZkIAYvcc9kUyRTd6YOSwO3KmLLMrOzpAVAjCjq6Bg==
-X-Received: by 2002:a63:464a:: with SMTP id v10mr1334521pgk.393.1611002462963;
-        Mon, 18 Jan 2021 12:41:02 -0800 (PST)
-Received: from [10.230.29.29] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id jx15sm253311pjb.17.2021.01.18.12.41.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Jan 2021 12:41:02 -0800 (PST)
-Subject: Re: [PATCH net v2 2/2] sh_eth: Make PHY access aware of Runtime PM to
- fix reboot crash
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210118150656.796584-1-geert+renesas@glider.be>
- <20210118150656.796584-3-geert+renesas@glider.be>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <ca2a63ba-95d8-8fad-94ed-e02d1a643df2@gmail.com>
-Date:   Mon, 18 Jan 2021 12:40:59 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.6.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=COpFk8JVoGfb4E3tmL/piUQieYNkIMUogv9fM2rWfEQ=;
+        b=ZR776qlBArOIV+2Yp7Yb99dgtEGfSUEKXSXzLvBAdUCVAldQbW1wrtdUqCTbgJmOsz
+         xjDQkFRZIvH1W8JxpDf9niqn1J9OGhBRcfHh9ShdcBeVf7Xir0CAt7l8E2s0/1w/Eyfl
+         BykMZ0ePMB8jijjdi43XQ0jAZUMQX0ZVww4Nw0kTzspK7m2+i16/sEtgqB4c1YuqPMyr
+         3z+DB39S+OtyfqDQAg3L6tn2HIKxnRvZDJq0B4VrlDRuiCR4mu2GF4aa5DVMJu/9c4Pw
+         nB8BZp4Ard/uz/eBczteLFKJN0RhnkfWnnRE/Kad2eMA6tEAj+KeZbCdGLuy1QCL+hkO
+         mJMw==
+X-Gm-Message-State: AOAM531GdBc+DWzVNYksllz8otzatPKmQsa0eksKeRGcXstpQ4bzib5V
+        KC6FFYhzjp/WiKc+3S2rz2E8qj9fr9KVdc87GhzSkA==
+X-Google-Smtp-Source: ABdhPJx8IeBF4yhe2K0BnEY45LvkWicIyHCSeaHwEKrUz3QJu3KbPh6X75QSTHYiynJ7NkkYd9feK5A5SvmJeecJI60=
+X-Received: by 2002:a25:77d4:: with SMTP id s203mr1731889ybc.32.1611004765635;
+ Mon, 18 Jan 2021 13:19:25 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20210118150656.796584-3-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20201218031703.3053753-1-saravanak@google.com>
+ <20201218031703.3053753-6-saravanak@google.com> <CAMuHMdWDAg6+utMDLunPXmVtnP+13G2s0E-Fcnkc9bkNBs-cEg@mail.gmail.com>
+ <86db7747ea6d48eebbf40a5855240d14@kernel.org> <CAMuHMdUUX22D7gV-LtDJ4jcxD=TD6soWzP=gUy4EqdFFAntoGA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUUX22D7gV-LtDJ4jcxD=TD6soWzP=gUy4EqdFFAntoGA@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 18 Jan 2021 13:18:49 -0800
+Message-ID: <CAGETcx_aroLLf_U50=KgfOBL-DW+VrgvgrSNEyHAyeSxWKZTgQ@mail.gmail.com>
+Subject: Re: [PATCH v1 5/5] driver core: Set fw_devlink=on by default
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Marc Zyngier <maz@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+On Mon, Jan 18, 2021 at 11:16 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Marc,
+>
+> On Mon, Jan 18, 2021 at 6:59 PM Marc Zyngier <maz@kernel.org> wrote:
+> > On 2021-01-18 17:39, Geert Uytterhoeven wrote:
+> > > On Fri, Dec 18, 2020 at 4:34 AM Saravana Kannan <saravanak@google.com>
+> > > wrote:
+> > >> Cyclic dependencies in some firmware was one of the last remaining
+> > >> reasons fw_devlink=on couldn't be set by default. Now that cyclic
+> > >> dependencies don't block probing, set fw_devlink=on by default.
+> > >>
+> > >> Setting fw_devlink=on by default brings a bunch of benefits
+> > >> (currently,
+> > >> only for systems with device tree firmware):
+> > >> * Significantly cuts down deferred probes.
+> > >> * Device probe is effectively attempted in graph order.
+> > >> * Makes it much easier to load drivers as modules without having to
+> > >>   worry about functional dependencies between modules (depmod is still
+> > >>   needed for symbol dependencies).
+> > >>
+> > >> If this patch prevents some devices from probing, it's very likely due
+> > >> to the system having one or more device drivers that "probe"/set up a
+> > >> device (DT node with compatible property) without creating a struct
+> > >> device for it.  If we hit such cases, the device drivers need to be
+> > >> fixed so that they populate struct devices and probe them like normal
+> > >> device drivers so that the driver core is aware of the devices and
+> > >> their
+> > >> status. See [1] for an example of such a case.
+> > >>
+> > >> [1] -
+> > >> https://lore.kernel.org/lkml/CAGETcx9PiX==mLxB9PO8Myyk6u2vhPVwTMsA5NkD-ywH5xhusw@mail.gmail.com/
+> > >> Signed-off-by: Saravana Kannan <saravanak@google.com>
+> > >
+> > > Shimoda-san reported that next-20210111 and later fail to boot
+> > > on Renesas R-Car Gen3 platforms. No output is seen, unless earlycon
+> > > is enabled.
+> > >
+> > > I have bisected this to commit e590474768f1cc04 ("driver core: Set
+> > > fw_devlink=on by default").
+> >
+> > There is a tentative patch from Saravana here[1], which works around
+> > some issues on my RK3399 platform, and it'd be interesting to find
+> > out whether that helps on your system.
+> >
+> > Thanks,
+> >
+> >          M.
+> >
+> > [1]
+> > https://lore.kernel.org/r/20210116011412.3211292-1-saravanak@google.com
+>
+> Thanks for the suggestion, but given no devices probe (incl. GPIO
+> providers), I'm afraid it won't help. [testing] Indeed.
+>
+> With the debug prints in device_links_check_suppliers enabled, and
+> some postprocessing, I get:
+>
+>     255 supplier e6180000.system-controller not ready
+>       9 supplier fe990000.iommu not ready
+>       9 supplier fe980000.iommu not ready
+>       6 supplier febd0000.iommu not ready
+>       6 supplier ec670000.iommu not ready
+>       3 supplier febe0000.iommu not ready
+>       3 supplier e7740000.iommu not ready
+>       3 supplier e6740000.iommu not ready
+>       3 supplier e65ee000.usb-phy not ready
+>       3 supplier e6570000.iommu not ready
+>       3 supplier e6054000.gpio not ready
+>       3 supplier e6053000.gpio not ready
+>
+> As everything is part of a PM Domain, the (lack of the) system controller
+> must be the culprit. What's wrong with it? It is registered very early in
+> the boot:
+>
+> [    0.142096] rcar_sysc_pd_init:442: of_genpd_add_provider_onecell() returned 0
 
+Hi Geert,
 
-On 1/18/2021 7:06 AM, Geert Uytterhoeven wrote:
-> Wolfram reports that his R-Car H2-based Lager board can no longer be
-> rebooted in v5.11-rc1, as it crashes with an imprecise external abort.
-> The issue can be reproduced on other boards (e.g. Koelsch with R-Car
-> M2-W) too, if CONFIG_IP_PNP is disabled, and the Ethernet interface is
-> down at reboot time:
-> 
->     Unhandled fault: imprecise external abort (0x1406) at 0x00000000
->     pgd = (ptrval)
->     [00000000] *pgd=422b6835, *pte=00000000, *ppte=00000000
->     Internal error: : 1406 [#1] ARM
->     Modules linked in:
->     CPU: 0 PID: 1105 Comm: init Tainted: G        W         5.10.0-rc1-00402-ge2f016cf7751 #1048
->     Hardware name: Generic R-Car Gen2 (Flattened Device Tree)
->     PC is at sh_mdio_ctrl+0x44/0x60
->     LR is at sh_mmd_ctrl+0x20/0x24
->     ...
->     Backtrace:
->     [<c0451f30>] (sh_mdio_ctrl) from [<c0451fd4>] (sh_mmd_ctrl+0x20/0x24)
->      r7:0000001f r6:00000020 r5:00000002 r4:c22a1dc4
->     [<c0451fb4>] (sh_mmd_ctrl) from [<c044fc18>] (mdiobb_cmd+0x38/0xa8)
->     [<c044fbe0>] (mdiobb_cmd) from [<c044feb8>] (mdiobb_read+0x58/0xdc)
->      r9:c229f844 r8:c0c329dc r7:c221e000 r6:00000001 r5:c22a1dc4 r4:00000001
->     [<c044fe60>] (mdiobb_read) from [<c044c854>] (__mdiobus_read+0x74/0xe0)
->      r7:0000001f r6:00000001 r5:c221e000 r4:c221e000
->     [<c044c7e0>] (__mdiobus_read) from [<c044c9d8>] (mdiobus_read+0x40/0x54)
->      r7:0000001f r6:00000001 r5:c221e000 r4:c221e458
->     [<c044c998>] (mdiobus_read) from [<c044d678>] (phy_read+0x1c/0x20)
->      r7:ffffe000 r6:c221e470 r5:00000200 r4:c229f800
->     [<c044d65c>] (phy_read) from [<c044d94c>] (kszphy_config_intr+0x44/0x80)
->     [<c044d908>] (kszphy_config_intr) from [<c044694c>] (phy_disable_interrupts+0x44/0x50)
->      r5:c229f800 r4:c229f800
->     [<c0446908>] (phy_disable_interrupts) from [<c0449370>] (phy_shutdown+0x18/0x1c)
->      r5:c229f800 r4:c229f804
->     [<c0449358>] (phy_shutdown) from [<c040066c>] (device_shutdown+0x168/0x1f8)
->     [<c0400504>] (device_shutdown) from [<c013de44>] (kernel_restart_prepare+0x3c/0x48)
->      r9:c22d2000 r8:c0100264 r7:c0b0d034 r6:00000000 r5:4321fedc r4:00000000
->     [<c013de08>] (kernel_restart_prepare) from [<c013dee0>] (kernel_restart+0x1c/0x60)
->     [<c013dec4>] (kernel_restart) from [<c013e1d8>] (__do_sys_reboot+0x168/0x208)
->      r5:4321fedc r4:01234567
->     [<c013e070>] (__do_sys_reboot) from [<c013e2e8>] (sys_reboot+0x18/0x1c)
->      r7:00000058 r6:00000000 r5:00000000 r4:00000000
->     [<c013e2d0>] (sys_reboot) from [<c0100060>] (ret_fast_syscall+0x0/0x54)
-> 
-> As of commit e2f016cf775129c0 ("net: phy: add a shutdown procedure"),
-> system reboot calls phy_disable_interrupts() during shutdown.  As this
-> happens unconditionally, the PHY registers may be accessed while the
-> device is suspended, causing undefined behavior, which may crash the
-> system.
-> 
-> Fix this by wrapping the PHY bitbang accessors in the sh_eth driver by
-> wrappers that take care of Runtime PM, to resume the device when needed.
-> 
-> Reported-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Suggested-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thanks for reporting the issue.
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Looks like you found the important logs. Can you please enable all
+these logs and send the early con logs as an attachment (so I don't
+need to deal with lines getting wrapped)?
+1. The ones in device_links_check_suppliers()
+2. The ones in device_link_add()
+3. initcall_debug=1
+
+That should help us figure out what's going on. Also, what's the DT
+that corresponds to one of the boards that see this issue?
+
+Lastly, can you please pick up these 3 patches (some need clean up
+before they merge) to make sure it's not an issue being worked on from
+other bug reports?
+https://lore.kernel.org/lkml/20210116011412.3211292-1-saravanak@google.com/
+https://lore.kernel.org/lkml/20210115210159.3090203-1-saravanak@google.com/
+https://lore.kernel.org/lkml/20201218210750.3455872-1-saravanak@google.com/
+
+I have a strong hunch the 2nd one will fix your issues. fw_devlink can
+handle cyclic dependencies now (it basically reverts to
+fw_devlink=permissive mode for devices in the cycle), but it needs to
+"see" all the dependencies to know there's a cycle. So want to make
+sure it "sees" the "gpios" binding used all over some of the Renesas
+DT files.
+
+Thanks,
+Saravana
