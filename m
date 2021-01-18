@@ -2,98 +2,126 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3331CC433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jan 2021 20:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E247AC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jan 2021 20:51:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 06B1322B39
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jan 2021 20:42:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A407022472
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jan 2021 20:51:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387998AbhARUmM (ORCPT
+        id S2388241AbhARUvV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Jan 2021 15:42:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49600 "EHLO
+        Mon, 18 Jan 2021 15:51:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437958AbhARUlc (ORCPT
+        with ESMTP id S2394482AbhARUuw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Jan 2021 15:41:32 -0500
-Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBF6DC061574;
-        Mon, 18 Jan 2021 12:40:45 -0800 (PST)
-Received: by mail-pf1-x42b.google.com with SMTP id b3so10886738pft.3;
-        Mon, 18 Jan 2021 12:40:45 -0800 (PST)
+        Mon, 18 Jan 2021 15:50:52 -0500
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FA47C061575
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Jan 2021 12:50:12 -0800 (PST)
+Received: by mail-lf1-x12c.google.com with SMTP id o13so25994352lfr.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Jan 2021 12:50:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fwAQFJhObfa7QSS1dGjWaJeUQJXlIyax8y6PCryLoDo=;
-        b=dDIFYIpseNfrsYS24pxxcBcGi6L1TwyLHvLHMYU4S+zgiqz6Eh9uysly9DM3lLahZv
-         7045M7DBlnNeuikx1FQHqi2u19LshX5Sr8OWOPNolKbiSDJLcAwV9ZCJLLVKPu/QWCWj
-         uZH/NVYJ1ZvmmobLqUlhwJQ7O2vPeAqsy3bsRZFY/kZwfyyZ+Wb/cnq4BUVrDOeUSojM
-         0Tghvh+hp4gJ85coAkIQPZvXykAiAl4KweKTXVbNrQ6WMxA+Eixu3wZ9bn2eantovfDB
-         U3DcQIaFdIyNuprwQK7t/w0CyXvcY/VQgVoxMCNUZZoqmfiPVhNbAQ+t2ArAPwbeCCVk
-         97iA==
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=PBJOvjAiOhmMWsZCYIdfqOTw6TCWRMDqPYu2m3TOPyA=;
+        b=ean573HMotYRkhpmfuWcuDU9xxWJXixSAnZTqXu+lzblvz5PPhlHX2pG1XMiWf9gj3
+         mBUGsa4kUt2npW6Z4XPzvnHSMZYHpQgb5wcgp4Yg5JjOAGZxHpTEvLJvpDeIOS8NqdeR
+         eFpMC0k5M26afcDq8GRIAe8bupmbEu4A6QEPJqqkwiOLCODzkh/kqjujK9wX6RWhiZX2
+         01i+p7pl5juQwhpyh6JHgz79hTRQnB3AjfprNPJWjMUKpp/1tU1GwPHpVKlzdFZ7Xvau
+         pRCXkkkz8c43spsSvOmaiTJ3IWDb6rZJFbJgDX9JihQviOn/TSY31zD9X+vS2gY53h6x
+         dC6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=fwAQFJhObfa7QSS1dGjWaJeUQJXlIyax8y6PCryLoDo=;
-        b=giKg5oqsHJEcW9dSKahfVlSRBOq2vRfVEacpkWc/BAPIbSeXKz2978VX/VT28aC8gY
-         rWZNHW+uHTjDadDC1n2gbY4ryOsPGf3enGOzIMHGmc+CtjyMBwWtdfaJ7kLX6YWdCaFa
-         8bpGaylFf+lDTV76zrTOGVD7MELl4ogBpPV4C0WBzxx7bDfN0KI1jnTPmP4wULTjK6rp
-         slTRe8/ln89Zltx4aKAc770BEQcUDPYy3Rv58ze7cfRz07R4oI6XZHELyPTih6shC3Wl
-         vV/OWC1LeRoVOGld6NN0JtlP9kf7+Q8RXw7/kQOB2efvOI73UU3+LSEm1P3kTlAgHQ03
-         V+3A==
-X-Gm-Message-State: AOAM533SzpobSfYX2E1jawUEarKXZoJ+a8cafs9uRoO2+c/NhfJ+Nq8b
-        879eWllXkhzMfxj+wNFsoixmu7/BNo0=
-X-Google-Smtp-Source: ABdhPJxIF9/LPwWGOdqniZXsqIrWna1N97RtfipR1GbexaNJ/mcQ0cTyecRLYXyBDplYJENdkRUdmw==
-X-Received: by 2002:a63:e049:: with SMTP id n9mr1312571pgj.339.1611002444900;
-        Mon, 18 Jan 2021 12:40:44 -0800 (PST)
-Received: from [10.230.29.29] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 3sm17476467pgk.81.2021.01.18.12.40.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Jan 2021 12:40:44 -0800 (PST)
-Subject: Re: [PATCH net v2 1/2] mdio-bitbang: Export mdiobb_{read,write}()
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=PBJOvjAiOhmMWsZCYIdfqOTw6TCWRMDqPYu2m3TOPyA=;
+        b=htd25UNcPLfml73BQT2bvdH8LE+P4YA2KuwpauANQv0Le9fIRduhfgzmrSqad8b9bs
+         hKe+FJV8xMURmXijP757Sxr1x1CM4Dt6bOP98lGGHsaN75Yx7BONxlc05coYJ8K/73/3
+         NyZsl54qKQwaKSlwXiYjcIhyoplT57l99VsoJnoIar4Wc05XYm408095aVjbkAsMf5uz
+         xP0vK1PoHF7cKC+8PGoUEUOTnBzB1hvA0cIrMKlKGF1FGjoagXY75j9n88yp2bMdC9kK
+         R/CgKRmKt5jRvryhoL5z0BSRY5wzpkqcri9SSOyYmV5GTqjkRZhhZVcLvZUcO/bfKrbR
+         CSIw==
+X-Gm-Message-State: AOAM532YQF2Yotf5XXv3064f3/OAKQ6x+snGmko0THSVEoSY4a2/UKGl
+        aDkqbjCgXi8Sg/+vdwsfuyT9pg==
+X-Google-Smtp-Source: ABdhPJyRdBzbTcJLLjUIbNdqXAdPYYwTNEavwmm4K5yZC4JkSGTHPIGL1GSU4vGZxVQVmLM95ztrBQ==
+X-Received: by 2002:a05:6512:3493:: with SMTP id v19mr374356lfr.569.1611003011132;
+        Mon, 18 Jan 2021 12:50:11 -0800 (PST)
+Received: from localhost (h-209-203.A463.priv.bahnhof.se. [155.4.209.203])
+        by smtp.gmail.com with ESMTPSA id k18sm1788227ljb.80.2021.01.18.12.50.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Jan 2021 12:50:10 -0800 (PST)
+Date:   Mon, 18 Jan 2021 21:50:09 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Sergei Shtylyov <sergei.shtylyov@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jakub Kicinski <kuba@kernel.org>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20210118150656.796584-1-geert+renesas@glider.be>
- <20210118150656.796584-2-geert+renesas@glider.be>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <1c7f5e04-d914-3b96-f412-6d355e666012@gmail.com>
-Date:   Mon, 18 Jan 2021 12:40:41 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Firefox/78.0 Thunderbird/78.6.1
+Subject: Re: [PATCH] sh_eth: Fix power down vs. is_opened flag ordering
+Message-ID: <YAX0gRahdHyZ8GwA@oden.dyn.berto.se>
+References: <20210118150812.796791-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20210118150656.796584-2-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210118150812.796791-1-geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Geert,
 
+Thanks for your work.
 
-On 1/18/2021 7:06 AM, Geert Uytterhoeven wrote:
-> Export mdiobb_read() and mdiobb_write(), so Ethernet controller drivers
-> can call them from their MDIO read/write wrappers.
+On 2021-01-18 16:08:12 +0100, Geert Uytterhoeven wrote:
+> sh_eth_close() does a synchronous power down of the device before
+> marking it closed.  Revert the order, to make sure the device is never
+> marked opened while suspended.
 > 
+> While at it, use pm_runtime_put() instead of pm_runtime_put_sync(), as
+> there is no reason to do a synchronous power down.
+> 
+> Fixes: 7fa2955ff70ce453 ("sh_eth: Fix sleeping function called from invalid context")
 > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  drivers/net/ethernet/renesas/sh_eth.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+> index 9b52d350e21a9f2b..590b088bc4c7f3e2 100644
+> --- a/drivers/net/ethernet/renesas/sh_eth.c
+> +++ b/drivers/net/ethernet/renesas/sh_eth.c
+> @@ -2606,10 +2606,10 @@ static int sh_eth_close(struct net_device *ndev)
+>  	/* Free all the skbuffs in the Rx queue and the DMA buffer. */
+>  	sh_eth_ring_free(ndev);
+>  
+> -	pm_runtime_put_sync(&mdp->pdev->dev);
+> -
+>  	mdp->is_opened = 0;
+>  
+> +	pm_runtime_put(&mdp->pdev->dev);
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.25.1
+> 
+
 -- 
-Florian
+Regards,
+Niklas Söderlund
