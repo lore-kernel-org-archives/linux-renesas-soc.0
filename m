@@ -2,115 +2,75 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB7FDC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACE5C433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95B5723139
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:48:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 009A42312E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:48:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387688AbhASOjG (ORCPT
+        id S2389261AbhASOjA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:39:06 -0500
-Received: from www.zeus03.de ([194.117.254.33]:55108 "EHLO mail.zeus03.de"
+        Tue, 19 Jan 2021 09:39:00 -0500
+Received: from www.zeus03.de ([194.117.254.33]:55054 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387715AbhASJkZ (ORCPT
+        id S2387671AbhASJkK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jan 2021 04:40:25 -0500
+        Tue, 19 Jan 2021 04:40:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=7oj9WQno7QEpA1
-        XamLc4MgaH1m7rUqRR3GpKdU/K1M0=; b=lFqM8BxbfRkKtAIH+OAQCIBqJ/edPp
-        JDKwf35ERefl3U+wvK83fIYZpnHZyz/s20k7uUNgt28icomNL6aOPYiQYsqwm1s1
-        bohjfIVCxb3R+hPN86P5QcokI9CG8yqb8p3Gkza8tfz+tcAnnLyUJR7ZYjy1yftS
-        viVYfXxUrMUNU=
-Received: (qmail 1003573 invoked from network); 19 Jan 2021 10:39:21 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Jan 2021 10:39:21 +0100
-X-UD-Smtp-Session: l3s3148p1@Gm/3nD258tkgAwDPXyX1ACWcscxtZ2TX
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=rKwj1AfOLCGXOesf4eVBjnn2gVf
+        wi0SlaspsyM9LG+I=; b=oee3ecn0uienirp2jDwWU+e7Y5MuiH5+fUUSnG1B98l
+        uag0O9R6618Ou5swlFlhnVVLeDxqpJh6tpiUnJaYetAWPBy0nSexXtazuqWvjN/E
+        +DQfSEaiuBH9Tipikok+JclDS0eyMAV15EO+WUdH0oF5tm4Fsxt19iRrnxTMU148
+        =
+Received: (qmail 1003424 invoked from network); 19 Jan 2021 10:39:19 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Jan 2021 10:39:19 +0100
+X-UD-Smtp-Session: l3s3148p1@dCTXnD257NkgAwDPXyX1ACWcscxtZ2TX
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Corey Minyard <minyard@acm.org>,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] ipmi: remove open coded version of SMBus block write
-Date:   Tue, 19 Jan 2021 10:39:10 +0100
-Message-Id: <20210119093912.1838-4-wsa+renesas@sang-engineering.com>
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net
+Subject: [PATCH 0/3] treewide: remove open coded SMBus block transfers
+Date:   Tue, 19 Jan 2021 10:39:07 +0100
+Message-Id: <20210119093912.1838-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210119093912.1838-1-wsa+renesas@sang-engineering.com>
-References: <20210119093912.1838-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The block-write function of the core was not used because there was no
-client-struct to use. However, in this case it seems apropriate to use a
-temporary client struct. Because we are answering a request we recieved
-when being a client ourselves. So, convert the code to use a temporary
-client and use the block-write function of the I2C core.
+The bigger picture is that I want to extend the maximum block length for
+SMBus block transfers from 32 (SMBus2) to 255 (SMBus3). That needs some
+cleanups and refactoring first. To make that easier, it would be helpful
+if all in-kernel users would call the helper functions of the I2C core
+for SMBus block transfers and not open code it via the generic
+smbus_xfer.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+This series converts the three users doing that. I don't have the
+hardware, so these patches are only build tested. Please let me know
+what you think.
 
 Changes since RFC:
-* don't use stack but kmemdup. No complaints from buildbots
+* addressed review comments, see individual patches
 
- drivers/char/ipmi/ipmb_dev_int.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+Wolfram Sang (3):
+  media: i2c: adv7842: remove open coded version of SMBus block write
+  media: i2c: adv7511: remove open coded version of SMBus block read
+  ipmi: remove open coded version of SMBus block write
 
-diff --git a/drivers/char/ipmi/ipmb_dev_int.c b/drivers/char/ipmi/ipmb_dev_int.c
-index 382b28f1cf2f..49b8f22fdcf0 100644
---- a/drivers/char/ipmi/ipmb_dev_int.c
-+++ b/drivers/char/ipmi/ipmb_dev_int.c
-@@ -137,7 +137,7 @@ static ssize_t ipmb_write(struct file *file, const char __user *buf,
- {
- 	struct ipmb_dev *ipmb_dev = to_ipmb_dev(file);
- 	u8 rq_sa, netf_rq_lun, msg_len;
--	union i2c_smbus_data data;
-+	struct i2c_client *temp_client;
- 	u8 msg[MAX_MSG_LEN];
- 	ssize_t ret;
- 
-@@ -160,21 +160,21 @@ static ssize_t ipmb_write(struct file *file, const char __user *buf,
- 	}
- 
- 	/*
--	 * subtract rq_sa and netf_rq_lun from the length of the msg passed to
--	 * i2c_smbus_xfer
-+	 * subtract rq_sa and netf_rq_lun from the length of the msg. Fill the
-+	 * temporary client. Note that its use is an exception for IPMI.
- 	 */
- 	msg_len = msg[IPMB_MSG_LEN_IDX] - SMBUS_MSG_HEADER_LENGTH;
--	if (msg_len > I2C_SMBUS_BLOCK_MAX)
--		msg_len = I2C_SMBUS_BLOCK_MAX;
-+	temp_client = kmemdup(ipmb_dev->client, sizeof(*temp_client), GFP_KERNEL);
-+	if (!temp_client)
-+		return -ENOMEM;
-+
-+	temp_client->addr = rq_sa;
- 
--	data.block[0] = msg_len;
--	memcpy(&data.block[1], msg + SMBUS_MSG_IDX_OFFSET, msg_len);
--	ret = i2c_smbus_xfer(ipmb_dev->client->adapter, rq_sa,
--			     ipmb_dev->client->flags,
--			     I2C_SMBUS_WRITE, netf_rq_lun,
--			     I2C_SMBUS_BLOCK_DATA, &data);
-+	ret = i2c_smbus_write_block_data(temp_client, netf_rq_lun, msg_len,
-+					 msg + SMBUS_MSG_IDX_OFFSET);
-+	kfree(temp_client);
- 
--	return ret ? : count;
-+	return ret < 0 ? ret : count;
- }
- 
- static __poll_t ipmb_poll(struct file *file, poll_table *wait)
+ drivers/char/ipmi/ipmb_dev_int.c | 24 +++++++++----------
+ drivers/media/i2c/adv7511-v4l2.c | 41 ++++++++++++--------------------
+ drivers/media/i2c/adv7842.c      | 24 ++++---------------
+ 3 files changed, 32 insertions(+), 57 deletions(-)
+
 -- 
 2.29.2
 
