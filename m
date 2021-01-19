@@ -2,158 +2,136 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40926C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jan 2021 22:09:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E42CC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:39:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1147822D58
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Jan 2021 22:09:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20C61206E5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:39:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732689AbhARWI7 (ORCPT
+        id S2387591AbhASOjD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Jan 2021 17:08:59 -0500
-Received: from mga04.intel.com ([192.55.52.120]:41704 "EHLO mga04.intel.com"
+        Tue, 19 Jan 2021 09:39:03 -0500
+Received: from www.zeus03.de ([194.117.254.33]:55084 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387532AbhARWI4 (ORCPT
+        id S2387688AbhASJkZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Jan 2021 17:08:56 -0500
-IronPort-SDR: huJTvbOvnfU6G05Jc2/RPFdDxyvhRX6syeg17QZ4tGxchJmjYLDjuMbCN6LDP5H6/8spnSfyf1
- FzZccsgNnpeA==
-X-IronPort-AV: E=McAfee;i="6000,8403,9868"; a="176281570"
-X-IronPort-AV: E=Sophos;i="5.79,357,1602572400"; 
-   d="scan'208";a="176281570"
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2021 14:08:13 -0800
-IronPort-SDR: 9ii295wGI+aOhgy27ZA+VGuQoRaJgV0WoQoQwdw9wTiHdiC0s10ZbiUHulDbp4RCn5OpKNpufS
- XkTA3Gg7w7hw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.79,357,1602572400"; 
-   d="scan'208";a="350322584"
-Received: from lkp-server01.sh.intel.com (HELO 260eafd5ecd0) ([10.239.97.150])
-  by orsmga003.jf.intel.com with ESMTP; 18 Jan 2021 14:08:11 -0800
-Received: from kbuild by 260eafd5ecd0 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1l1ch0-0004TX-TD; Mon, 18 Jan 2021 22:08:10 +0000
-Date:   Tue, 19 Jan 2021 06:07:37 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- b72b30fb341d0acba58431da7519d4643aa85b34
-Message-ID: <600606a9.LgVtdhFSWf8DM+Oc%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Tue, 19 Jan 2021 04:40:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=1V+YeFI2dhLbdh
+        a8QK5vAA8wcMmioJd9L4yOtd0w7DM=; b=naTxYIkcHy5MTF5FF23ZZtZ2GNSaz7
+        FU/dFDRK5W7nrpy9bqD73erJkovVPKFVm5YKxWSo9H/yd4W/D+l98CjQ49Gxv8j6
+        YH8clt89jPe+vpkwgyuvD33ZVDERQ76plV4HrsqIGCMhOg2J4F4Cv3HEPOJy7Gc9
+        amsu90IrAVsVk=
+Received: (qmail 1003486 invoked from network); 19 Jan 2021 10:39:20 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Jan 2021 10:39:20 +0100
+X-UD-Smtp-Session: l3s3148p1@pSHinD257tkgAwDPXyX1ACWcscxtZ2TX
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] media: i2c: adv7842: remove open coded version of SMBus block write
+Date:   Tue, 19 Jan 2021 10:39:08 +0100
+Message-Id: <20210119093912.1838-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210119093912.1838-1-wsa+renesas@sang-engineering.com>
+References: <20210119093912.1838-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-branch HEAD: b72b30fb341d0acba58431da7519d4643aa85b34  Merge branch 'renesas-arm-dt-for-v5.12' into renesas-next
+The version here is identical to the one in the I2C core, so use the
+latter version directly.
 
-elapsed time: 723m
-
-configs tested: 86
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-c6x                        evmc6457_defconfig
-c6x                                 defconfig
-sh                         microdev_defconfig
-powerpc                      ppc6xx_defconfig
-xtensa                          iss_defconfig
-mips                  decstation_64_defconfig
-powerpc                 mpc834x_itx_defconfig
-arm                           h3600_defconfig
-mips                        jmr3927_defconfig
-arc                           tb10x_defconfig
-powerpc                   motionpro_defconfig
-arm                         at91_dt_defconfig
-arm                            hisi_defconfig
-mips                       bmips_be_defconfig
-powerpc                 linkstation_defconfig
-m68k                          atari_defconfig
-arm                           omap1_defconfig
-mips                        bcm63xx_defconfig
-arm                         shannon_defconfig
-arm                            zeus_defconfig
-openrisc                  or1klitex_defconfig
-m68k                         amcore_defconfig
-powerpc                       holly_defconfig
-m68k                       m5275evb_defconfig
-mips                      bmips_stb_defconfig
-powerpc                        cell_defconfig
-powerpc                     stx_gp3_defconfig
-arm                      integrator_defconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-c6x                              allyesconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-parisc                              defconfig
-s390                             allyesconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                               tinyconfig
-i386                                defconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-x86_64                                   rhel
-x86_64                           allyesconfig
-x86_64                    rhel-7.6-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                      rhel-8.3-kbuiltin
-x86_64                                  kexec
-
-clang tested configs:
-x86_64               randconfig-a004-20210118
-x86_64               randconfig-a006-20210118
-x86_64               randconfig-a001-20210118
-x86_64               randconfig-a003-20210118
-x86_64               randconfig-a005-20210118
-x86_64               randconfig-a002-20210118
-
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+
+Changes since RFC:
+* skip define, use i2c_smbus_write_i2c_block_data directly
+
+ drivers/media/i2c/adv7842.c | 24 +++++-------------------
+ 1 file changed, 5 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
+index 0855f648416d..e0629d5ef17b 100644
+--- a/drivers/media/i2c/adv7842.c
++++ b/drivers/media/i2c/adv7842.c
+@@ -343,20 +343,6 @@ static void adv_smbus_write_byte_no_check(struct i2c_client *client,
+ 		       I2C_SMBUS_BYTE_DATA, &data);
+ }
+ 
+-static s32 adv_smbus_write_i2c_block_data(struct i2c_client *client,
+-				  u8 command, unsigned length, const u8 *values)
+-{
+-	union i2c_smbus_data data;
+-
+-	if (length > I2C_SMBUS_BLOCK_MAX)
+-		length = I2C_SMBUS_BLOCK_MAX;
+-	data.block[0] = length;
+-	memcpy(data.block + 1, values, length);
+-	return i2c_smbus_xfer(client->adapter, client->addr, client->flags,
+-			      I2C_SMBUS_WRITE, command,
+-			      I2C_SMBUS_I2C_BLOCK_DATA, &data);
+-}
+-
+ /* ----------------------------------------------------------------------- */
+ 
+ static inline int io_read(struct v4l2_subdev *sd, u8 reg)
+@@ -741,7 +727,7 @@ static int edid_write_vga_segment(struct v4l2_subdev *sd)
+ 	rep_write_and_or(sd, 0x77, 0xef, 0x10);
+ 
+ 	for (i = 0; !err && i < 256; i += I2C_SMBUS_BLOCK_MAX)
+-		err = adv_smbus_write_i2c_block_data(state->i2c_edid, i,
++		err = i2c_smbus_write_i2c_block_data(state->i2c_edid, i,
+ 					     I2C_SMBUS_BLOCK_MAX, val + i);
+ 	if (err)
+ 		return err;
+@@ -807,7 +793,7 @@ static int edid_write_hdmi_segment(struct v4l2_subdev *sd, u8 port)
+ 	rep_write_and_or(sd, 0x77, 0xef, 0x00);
+ 
+ 	for (i = 0; !err && i < 256; i += I2C_SMBUS_BLOCK_MAX)
+-		err = adv_smbus_write_i2c_block_data(state->i2c_edid, i,
++		err = i2c_smbus_write_i2c_block_data(state->i2c_edid, i,
+ 						     I2C_SMBUS_BLOCK_MAX, edid + i);
+ 	if (err)
+ 		return err;
+@@ -1079,7 +1065,7 @@ static void configure_custom_video_timings(struct v4l2_subdev *sd,
+ 		/* Should only be set in auto-graphics mode [REF_02, p. 91-92] */
+ 		/* setup PLL_DIV_MAN_EN and PLL_DIV_RATIO */
+ 		/* IO-map reg. 0x16 and 0x17 should be written in sequence */
+-		if (adv_smbus_write_i2c_block_data(client, 0x16, 2, pll)) {
++		if (i2c_smbus_write_i2c_block_data(client, 0x16, 2, pll)) {
+ 			v4l2_err(sd, "writing to reg 0x16 and 0x17 failed\n");
+ 			break;
+ 		}
+@@ -1135,7 +1121,7 @@ static void adv7842_set_offset(struct v4l2_subdev *sd, bool auto_offset, u16 off
+ 	offset_buf[3] = offset_c & 0x0ff;
+ 
+ 	/* Registers must be written in this order with no i2c access in between */
+-	if (adv_smbus_write_i2c_block_data(state->i2c_cp, 0x77, 4, offset_buf))
++	if (i2c_smbus_write_i2c_block_data(state->i2c_cp, 0x77, 4, offset_buf))
+ 		v4l2_err(sd, "%s: i2c error writing to CP reg 0x77, 0x78, 0x79, 0x7a\n", __func__);
+ }
+ 
+@@ -1164,7 +1150,7 @@ static void adv7842_set_gain(struct v4l2_subdev *sd, bool auto_gain, u16 gain_a,
+ 	gain_buf[3] = ((gain_c & 0x0ff));
+ 
+ 	/* Registers must be written in this order with no i2c access in between */
+-	if (adv_smbus_write_i2c_block_data(state->i2c_cp, 0x73, 4, gain_buf))
++	if (i2c_smbus_write_i2c_block_data(state->i2c_cp, 0x73, 4, gain_buf))
+ 		v4l2_err(sd, "%s: i2c error writing to CP reg 0x73, 0x74, 0x75, 0x76\n", __func__);
+ }
+ 
+-- 
+2.29.2
+
