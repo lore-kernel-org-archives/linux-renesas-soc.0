@@ -2,136 +2,63 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E42CC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A686C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:39:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20C61206E5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53AE2208E4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:39:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387591AbhASOjD (ORCPT
+        id S2387698AbhASOjT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:39:03 -0500
-Received: from www.zeus03.de ([194.117.254.33]:55084 "EHLO mail.zeus03.de"
+        Tue, 19 Jan 2021 09:39:19 -0500
+Received: from foss.arm.com ([217.140.110.172]:53610 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387688AbhASJkZ (ORCPT
+        id S2392272AbhASMDj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jan 2021 04:40:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=1V+YeFI2dhLbdh
-        a8QK5vAA8wcMmioJd9L4yOtd0w7DM=; b=naTxYIkcHy5MTF5FF23ZZtZ2GNSaz7
-        FU/dFDRK5W7nrpy9bqD73erJkovVPKFVm5YKxWSo9H/yd4W/D+l98CjQ49Gxv8j6
-        YH8clt89jPe+vpkwgyuvD33ZVDERQ76plV4HrsqIGCMhOg2J4F4Cv3HEPOJy7Gc9
-        amsu90IrAVsVk=
-Received: (qmail 1003486 invoked from network); 19 Jan 2021 10:39:20 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Jan 2021 10:39:20 +0100
-X-UD-Smtp-Session: l3s3148p1@pSHinD257tkgAwDPXyX1ACWcscxtZ2TX
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] media: i2c: adv7842: remove open coded version of SMBus block write
-Date:   Tue, 19 Jan 2021 10:39:08 +0100
-Message-Id: <20210119093912.1838-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210119093912.1838-1-wsa+renesas@sang-engineering.com>
-References: <20210119093912.1838-1-wsa+renesas@sang-engineering.com>
+        Tue, 19 Jan 2021 07:03:39 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11E16113E;
+        Tue, 19 Jan 2021 04:02:47 -0800 (PST)
+Received: from e123427-lin.arm.com (unknown [10.57.35.195])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B0733F719;
+        Tue, 19 Jan 2021 04:02:44 -0800 (PST)
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Rob Herring <robh@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: Drop PCIE_RCAR config option
+Date:   Tue, 19 Jan 2021 12:02:37 +0000
+Message-Id: <161105770999.14004.4826810359475024379.b4-ty@arm.com>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20201229170848.18482-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20201229170848.18482-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The version here is identical to the one in the I2C core, so use the
-latter version directly.
+On Tue, 29 Dec 2020 17:08:48 +0000, Lad Prabhakar wrote:
+> All the defconfig files have replaced PCIE_RCAR config option with
+> PCIE_RCAR_HOST config option which built the same driver, so we can
+> now safely drop PCIE_RCAR config option.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+Applied to pci/misc, thanks!
 
-Changes since RFC:
-* skip define, use i2c_smbus_write_i2c_block_data directly
+[1/1] PCI: Drop PCIE_RCAR config option
+      https://git.kernel.org/lpieralisi/pci/c/ff591f7490
 
- drivers/media/i2c/adv7842.c | 24 +++++-------------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
-index 0855f648416d..e0629d5ef17b 100644
---- a/drivers/media/i2c/adv7842.c
-+++ b/drivers/media/i2c/adv7842.c
-@@ -343,20 +343,6 @@ static void adv_smbus_write_byte_no_check(struct i2c_client *client,
- 		       I2C_SMBUS_BYTE_DATA, &data);
- }
- 
--static s32 adv_smbus_write_i2c_block_data(struct i2c_client *client,
--				  u8 command, unsigned length, const u8 *values)
--{
--	union i2c_smbus_data data;
--
--	if (length > I2C_SMBUS_BLOCK_MAX)
--		length = I2C_SMBUS_BLOCK_MAX;
--	data.block[0] = length;
--	memcpy(data.block + 1, values, length);
--	return i2c_smbus_xfer(client->adapter, client->addr, client->flags,
--			      I2C_SMBUS_WRITE, command,
--			      I2C_SMBUS_I2C_BLOCK_DATA, &data);
--}
--
- /* ----------------------------------------------------------------------- */
- 
- static inline int io_read(struct v4l2_subdev *sd, u8 reg)
-@@ -741,7 +727,7 @@ static int edid_write_vga_segment(struct v4l2_subdev *sd)
- 	rep_write_and_or(sd, 0x77, 0xef, 0x10);
- 
- 	for (i = 0; !err && i < 256; i += I2C_SMBUS_BLOCK_MAX)
--		err = adv_smbus_write_i2c_block_data(state->i2c_edid, i,
-+		err = i2c_smbus_write_i2c_block_data(state->i2c_edid, i,
- 					     I2C_SMBUS_BLOCK_MAX, val + i);
- 	if (err)
- 		return err;
-@@ -807,7 +793,7 @@ static int edid_write_hdmi_segment(struct v4l2_subdev *sd, u8 port)
- 	rep_write_and_or(sd, 0x77, 0xef, 0x00);
- 
- 	for (i = 0; !err && i < 256; i += I2C_SMBUS_BLOCK_MAX)
--		err = adv_smbus_write_i2c_block_data(state->i2c_edid, i,
-+		err = i2c_smbus_write_i2c_block_data(state->i2c_edid, i,
- 						     I2C_SMBUS_BLOCK_MAX, edid + i);
- 	if (err)
- 		return err;
-@@ -1079,7 +1065,7 @@ static void configure_custom_video_timings(struct v4l2_subdev *sd,
- 		/* Should only be set in auto-graphics mode [REF_02, p. 91-92] */
- 		/* setup PLL_DIV_MAN_EN and PLL_DIV_RATIO */
- 		/* IO-map reg. 0x16 and 0x17 should be written in sequence */
--		if (adv_smbus_write_i2c_block_data(client, 0x16, 2, pll)) {
-+		if (i2c_smbus_write_i2c_block_data(client, 0x16, 2, pll)) {
- 			v4l2_err(sd, "writing to reg 0x16 and 0x17 failed\n");
- 			break;
- 		}
-@@ -1135,7 +1121,7 @@ static void adv7842_set_offset(struct v4l2_subdev *sd, bool auto_offset, u16 off
- 	offset_buf[3] = offset_c & 0x0ff;
- 
- 	/* Registers must be written in this order with no i2c access in between */
--	if (adv_smbus_write_i2c_block_data(state->i2c_cp, 0x77, 4, offset_buf))
-+	if (i2c_smbus_write_i2c_block_data(state->i2c_cp, 0x77, 4, offset_buf))
- 		v4l2_err(sd, "%s: i2c error writing to CP reg 0x77, 0x78, 0x79, 0x7a\n", __func__);
- }
- 
-@@ -1164,7 +1150,7 @@ static void adv7842_set_gain(struct v4l2_subdev *sd, bool auto_gain, u16 gain_a,
- 	gain_buf[3] = ((gain_c & 0x0ff));
- 
- 	/* Registers must be written in this order with no i2c access in between */
--	if (adv_smbus_write_i2c_block_data(state->i2c_cp, 0x73, 4, gain_buf))
-+	if (i2c_smbus_write_i2c_block_data(state->i2c_cp, 0x73, 4, gain_buf))
- 		v4l2_err(sd, "%s: i2c error writing to CP reg 0x73, 0x74, 0x75, 0x76\n", __func__);
- }
- 
--- 
-2.29.2
-
+Thanks,
+Lorenzo
