@@ -2,111 +2,145 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AB7DC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF3EC433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:48:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 592AC208E4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:39:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DCDB23137
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Jan 2021 14:48:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725771AbhASOjd (ORCPT
+        id S2387715AbhASOjO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Jan 2021 09:39:33 -0500
-Received: from www.zeus03.de ([194.117.254.33]:47492 "EHLO mail.zeus03.de"
+        Tue, 19 Jan 2021 09:39:14 -0500
+Received: from www.zeus03.de ([194.117.254.33]:55092 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389994AbhASMq6 (ORCPT
+        id S2387698AbhASJkZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Jan 2021 07:46:58 -0500
+        Tue, 19 Jan 2021 04:40:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=B/tgnQe++TiNEzjAeZeldBhlj6A3
-        T8pYiGEsSUAtogQ=; b=uwbZfWInaxQBHij4qU8TlH4HF9hXI++CYIPEGHusGwls
-        V/xh7/4GL/Ben2yejWMuewPQWYN/FNF0ZKI5OLHJjhEuBKAZnSzOB56nJjdPk3vR
-        Ra4gFMfdnHcq02cZ6C56ryNmviQeZMWrcpEJfzUFlho/pM09Gvs3kJwoKRMttD4=
-Received: (qmail 1070386 invoked from network); 19 Jan 2021 13:46:11 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Jan 2021 13:46:11 +0100
-X-UD-Smtp-Session: l3s3148p1@rYodOUC5uNsgAwDPXyX1ACWcscxtZ2TX
-Date:   Tue, 19 Jan 2021 13:46:10 +0100
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=D/a5mp3Y9DlTj5
+        umviADmsnNfOp+6c9C7wik2zre4KU=; b=pTSWJo0UyyegjPqDm8A/9ZPRc+MkZF
+        Y+WA8nSgtQgzUvzBCcphEPt5W/XRQlLtZctEFJXjBc0+b1w12d/vbNga8jcPtfOw
+        7JZW5OjTwWl9xj6iIqOu1GCXnKS4Z2r9aP82VFOF4iVQvpkcTFEtVZbSDBAEuqtZ
+        XRmXVCHRVwO7Q=
+Received: (qmail 1003521 invoked from network); 19 Jan 2021 10:39:20 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 19 Jan 2021 10:39:20 +0100
+X-UD-Smtp-Session: l3s3148p1@VA3tnD258NkgAwDPXyX1ACWcscxtZ2TX
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 6/6] arm64: dts: renesas: falcon: Enable MMC
-Message-ID: <20210119124610.GB1259@kunai>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20201227174202.40834-1-wsa+renesas@sang-engineering.com>
- <20201227174202.40834-7-wsa+renesas@sang-engineering.com>
- <CAMuHMdWs5SWUpDkcX4m9MqVKa4KJvAfXSsRt=Fq3c9=2JtdwHQ@mail.gmail.com>
+To:     linux-i2c@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] media: i2c: adv7511: remove open coded version of SMBus block read
+Date:   Tue, 19 Jan 2021 10:39:09 +0100
+Message-Id: <20210119093912.1838-3-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210119093912.1838-1-wsa+renesas@sang-engineering.com>
+References: <20210119093912.1838-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eAbsdosE1cNLO4uF"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWs5SWUpDkcX4m9MqVKa4KJvAfXSsRt=Fq3c9=2JtdwHQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+The open coded version differs from the one in the core in one way: the
+buffer will be always copied back, even when the transfer failed. Be
+more robust: use the block read from the I2C core and propagate a
+potential errno further to the sanity checks.
 
---eAbsdosE1cNLO4uF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
 
+Changes since RFC:
+* removed wrong assumption from the commit message
 
-> > +       reg_1p8v: regulator0 {
->=20
-> Please use a better node name, to avoid accidental duplicates, cfr. commit
-> 45f5d5a9e34d3fe4 ("arm64: dts: renesas: r8a77995: draak: Fix backlight
-> regulator name")
+ drivers/media/i2c/adv7511-v4l2.c | 41 ++++++++++++--------------------
+ 1 file changed, 15 insertions(+), 26 deletions(-)
 
-Done.
+diff --git a/drivers/media/i2c/adv7511-v4l2.c b/drivers/media/i2c/adv7511-v4l2.c
+index a3161d709015..441bafa743a6 100644
+--- a/drivers/media/i2c/adv7511-v4l2.c
++++ b/drivers/media/i2c/adv7511-v4l2.c
+@@ -214,36 +214,25 @@ static inline void adv7511_wr_and_or(struct v4l2_subdev *sd, u8 reg, u8 clr_mask
+ 	adv7511_wr(sd, reg, (adv7511_rd(sd, reg) & clr_mask) | val_mask);
+ }
+ 
+-static int adv_smbus_read_i2c_block_data(struct i2c_client *client,
+-					 u8 command, unsigned length, u8 *values)
+-{
+-	union i2c_smbus_data data;
+-	int ret;
+-
+-	if (length > I2C_SMBUS_BLOCK_MAX)
+-		length = I2C_SMBUS_BLOCK_MAX;
+-	data.block[0] = length;
+-
+-	ret = i2c_smbus_xfer(client->adapter, client->addr, client->flags,
+-			     I2C_SMBUS_READ, command,
+-			     I2C_SMBUS_I2C_BLOCK_DATA, &data);
+-	memcpy(values, data.block + 1, length);
+-	return ret;
+-}
+-
+-static void adv7511_edid_rd(struct v4l2_subdev *sd, uint16_t len, uint8_t *buf)
++static int adv7511_edid_rd(struct v4l2_subdev *sd, uint16_t len, uint8_t *buf)
+ {
+ 	struct adv7511_state *state = get_adv7511_state(sd);
+ 	int i;
+-	int err = 0;
+ 
+ 	v4l2_dbg(1, debug, sd, "%s:\n", __func__);
+ 
+-	for (i = 0; !err && i < len; i += I2C_SMBUS_BLOCK_MAX)
+-		err = adv_smbus_read_i2c_block_data(state->i2c_edid, i,
++	for (i = 0; i < len; i += I2C_SMBUS_BLOCK_MAX) {
++		s32 ret;
++
++		ret = i2c_smbus_read_i2c_block_data(state->i2c_edid, i,
+ 						    I2C_SMBUS_BLOCK_MAX, buf + i);
+-	if (err)
+-		v4l2_err(sd, "%s: i2c read error\n", __func__);
++		if (ret < 0) {
++			v4l2_err(sd, "%s: i2c read error\n", __func__);
++			return ret;
++		}
++	}
++
++	return 0;
+ }
+ 
+ static inline int adv7511_cec_read(struct v4l2_subdev *sd, u8 reg)
+@@ -1668,20 +1657,20 @@ static bool adv7511_check_edid_status(struct v4l2_subdev *sd)
+ 	if (edidRdy & MASK_ADV7511_EDID_RDY) {
+ 		int segment = adv7511_rd(sd, 0xc4);
+ 		struct adv7511_edid_detect ed;
++		int err;
+ 
+ 		if (segment >= EDID_MAX_SEGM) {
+ 			v4l2_err(sd, "edid segment number too big\n");
+ 			return false;
+ 		}
+ 		v4l2_dbg(1, debug, sd, "%s: got segment %d\n", __func__, segment);
+-		adv7511_edid_rd(sd, 256, &state->edid.data[segment * 256]);
++		err = adv7511_edid_rd(sd, 256, &state->edid.data[segment * 256]);
+ 		adv7511_dbg_dump_edid(2, debug, sd, segment, &state->edid.data[segment * 256]);
+ 		if (segment == 0) {
+ 			state->edid.blocks = state->edid.data[0x7e] + 1;
+ 			v4l2_dbg(1, debug, sd, "%s: %d blocks in total\n", __func__, state->edid.blocks);
+ 		}
+-		if (!edid_verify_crc(sd, segment) ||
+-		    !edid_verify_header(sd, segment)) {
++		if (err < 0 || !edid_verify_crc(sd, segment) || !edid_verify_header(sd, segment)) {
+ 			/* edid crc error, force reread of edid segment */
+ 			v4l2_err(sd, "%s: edid crc or header error\n", __func__);
+ 			state->have_monitor = false;
+-- 
+2.29.2
 
-> > +       no-sd;
-> > +       no-sdio;
->=20
-> I'm no expert on the no-sd{,io} properties.
-> Just wondering if we need them on other R-Car gen3 boards with eMMC, too/
-
-Won't hurt. I'll prepare something...
-
-Thanks!
-
-
---eAbsdosE1cNLO4uF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmAG1I8ACgkQFA3kzBSg
-KbYiyw//bwI1CJ3F9ockT6j55WLc1MDFnVukvB0oA6xUzfVbQ4s//6IGFKz7yNIg
-ZESpSiagu7xD9dF6l4rxeaTHF0jRRENIJcyZLniTG5CCX0EirFLSCwtZZVuWuQ6k
-6a+gbiLPcuCs5XAZLQzARpOMVkW1GevPDHqEm0jj/D7+W8yMxAkpRbrSyHOVr3kx
-VnXaJ4ycTSakJHSc3uzzAOqxDP+9z9cGpQT0nmRgoVyqtTUwy8vFzzFwDqVuHujv
-fonmCgr8mZQR1aV2b3XYdQjgPhI040BzNKfjR/PD09qw9znV7Qi7W9ThLSwLrmdT
-TqVk9Rvzm+bO4AQtiLm9lcBhOOf+z3DBLnPr+wkMxrEWQs9iqQCWZU6daeOxtNFQ
-P6KqhG+zW0Y8JdDPi7/6s8fhwUSOW/NUezI5a9fKSZGEmoL+gVpG4F4DZTZUmokz
-iTGqQhSCzYXHnCWepUEwx4V1Ht8hnqwkcLcxIhxIRoNFDzcByZgnZv4ME7dCjQKU
-J0wJxRJqerWxjjbJhJHFxjSTCnN22p4/IFlZUn9c2hfrikwK3WFbhLdcMSYEpTr1
-6tb+qADtqIbFvElVfON2Nvy0uUWo2h58yryzBbvFkYgoF04V0F3HV3WmafIIINL9
-BRej6bYYX4UDuc94u+ophtpUCJVGpaumicacb9l3F0+bKwIEpI4=
-=kVoD
------END PGP SIGNATURE-----
-
---eAbsdosE1cNLO4uF--
