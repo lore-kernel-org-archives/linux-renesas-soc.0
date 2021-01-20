@@ -2,199 +2,101 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D64DEC433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Jan 2021 15:48:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E97C433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Jan 2021 16:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90D5223381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Jan 2021 15:48:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D3B1233E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Jan 2021 16:13:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390190AbhATPr1 (ORCPT
+        id S2390572AbhATQNF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Jan 2021 10:47:27 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42532 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729243AbhATPrT (ORCPT
+        Wed, 20 Jan 2021 11:13:05 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:49813 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2391280AbhATQJe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Jan 2021 10:47:19 -0500
-Received: from Q.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id AA6EF8F2;
-        Wed, 20 Jan 2021 16:46:18 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1611157578;
-        bh=t+k8MbkBGb4E8h8mHp338bHw6E1mm3YUccVXJ2/GGd4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QNnYkEh0mAOLV2Mv+0KIDWa27TkHHS2oRShajckj06caUYbr/QG9EFz8rpyYjhxoe
-         9c9UF3kUSZt/Gr7J1sTlXu5roABCGuXwECJ2HKWtobWhKRKwF96zBkx41OUeKN1G7g
-         GQYO8/iKwMgAOYFxuYIlwfKWJWCmaap1AnET/7sg=
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2 1/2] media: i2c: max9286: Use unsigned constants and BIT()
-Date:   Wed, 20 Jan 2021 15:46:13 +0000
-Message-Id: <20210120154614.2750268-2-kieran.bingham+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210120154614.2750268-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20210120154614.2750268-1-kieran.bingham+renesas@ideasonboard.com>
+        Wed, 20 Jan 2021 11:09:34 -0500
+Received: from [77.244.183.192] (port=62062 helo=[192.168.178.24])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1l2G2I-005oUX-7K; Wed, 20 Jan 2021 17:08:46 +0100
+Subject: Re: [PATCH v2] dt-bindings: clk: versaclock5: Miscellaneous fixes and
+ improvements:
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20210114125650.2233045-1-geert+renesas@glider.be>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <6d7a8180-b10d-481f-a3ca-05c37c17cb1a@lucaceresoli.net>
+Date:   Wed, 20 Jan 2021 17:08:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210114125650.2233045-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert the bitfield definitions to use unsigned integers, and BIT()
-where appropriate.
+Hi Geert,
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
-v2:
- - Fix up single bit fields to use BIT
+On 14/01/21 13:56, Geert Uytterhoeven wrote:
+>   - Add missing reference for "idt,voltage-microvolt",
+>   - Add missing "additionalProperties: false" for subnodes, to catch
+>     typos in properties,
+>   - Fix property names in example.
+> 
+> Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - Settle on "idt,voltage-microvolt", cfr. commit 4b003f5fcadfa2d0
+>     ('clk: vc5: Use "idt,voltage-microvolt" instead of
+>     "idt,voltage-microvolts"'),
+>   - Drop reference to clock.yaml, which is already applied
+>     unconditionally,
+>   - Drop removal of allOf around if condition, as it is unnecessary
+>     churn.
+> ---
+>  .../devicetree/bindings/clock/idt,versaclock5.yaml       | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> index 2ac1131fd9222a86..70239f992d714ae0 100644
+> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> @@ -75,12 +75,15 @@ patternProperties:
+>          maximum: 6
+>        idt,voltage-microvolt:
+>          description: The output drive voltage.
+> +        $ref: /schemas/types.yaml#/definitions/uint32
 
- drivers/media/i2c/max9286.c | 96 ++++++++++++++++++-------------------
- 1 file changed, 48 insertions(+), 48 deletions(-)
+"Vendor specific properties having a standard unit suffix don't need a
+type." -- Documentation/devicetree/bindings/example-schema.yaml
 
-diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-index d0cb60521d87..66d3e046db97 100644
---- a/drivers/media/i2c/max9286.c
-+++ b/drivers/media/i2c/max9286.c
-@@ -31,85 +31,85 @@
- #include <media/v4l2-subdev.h>
- 
- /* Register 0x00 */
--#define MAX9286_MSTLINKSEL_AUTO		(7 << 5)
-+#define MAX9286_MSTLINKSEL_AUTO		(7U << 5)
- #define MAX9286_MSTLINKSEL(n)		((n) << 5)
- #define MAX9286_EN_VS_GEN		BIT(4)
--#define MAX9286_LINKEN(n)		(1 << (n))
-+#define MAX9286_LINKEN(n)		BIT(n)
- /* Register 0x01 */
--#define MAX9286_FSYNCMODE_ECU		(3 << 6)
--#define MAX9286_FSYNCMODE_EXT		(2 << 6)
--#define MAX9286_FSYNCMODE_INT_OUT	(1 << 6)
--#define MAX9286_FSYNCMODE_INT_HIZ	(0 << 6)
-+#define MAX9286_FSYNCMODE_ECU		(3U << 6)
-+#define MAX9286_FSYNCMODE_EXT		(2U << 6)
-+#define MAX9286_FSYNCMODE_INT_OUT	(1U << 6)
-+#define MAX9286_FSYNCMODE_INT_HIZ	(0U << 6)
- #define MAX9286_GPIEN			BIT(5)
- #define MAX9286_ENLMO_RSTFSYNC		BIT(2)
--#define MAX9286_FSYNCMETH_AUTO		(2 << 0)
--#define MAX9286_FSYNCMETH_SEMI_AUTO	(1 << 0)
--#define MAX9286_FSYNCMETH_MANUAL	(0 << 0)
-+#define MAX9286_FSYNCMETH_AUTO		(2U << 0)
-+#define MAX9286_FSYNCMETH_SEMI_AUTO	(1U << 0)
-+#define MAX9286_FSYNCMETH_MANUAL	(0U << 0)
- #define MAX9286_REG_FSYNC_PERIOD_L	0x06
- #define MAX9286_REG_FSYNC_PERIOD_M	0x07
- #define MAX9286_REG_FSYNC_PERIOD_H	0x08
- /* Register 0x0a */
--#define MAX9286_FWDCCEN(n)		(1 << ((n) + 4))
--#define MAX9286_REVCCEN(n)		(1 << (n))
-+#define MAX9286_FWDCCEN(n)		BIT((n) + 4)
-+#define MAX9286_REVCCEN(n)		BIT(n)
- /* Register 0x0c */
- #define MAX9286_HVEN			BIT(7)
--#define MAX9286_EDC_6BIT_HAMMING	(2 << 5)
--#define MAX9286_EDC_6BIT_CRC		(1 << 5)
--#define MAX9286_EDC_1BIT_PARITY		(0 << 5)
-+#define MAX9286_EDC_6BIT_HAMMING	(2U << 5)
-+#define MAX9286_EDC_6BIT_CRC		(1U << 5)
-+#define MAX9286_EDC_1BIT_PARITY		(0U << 5)
- #define MAX9286_DESEL			BIT(4)
- #define MAX9286_INVVS			BIT(3)
- #define MAX9286_INVHS			BIT(2)
--#define MAX9286_HVSRC_D0		(2 << 0)
--#define MAX9286_HVSRC_D14		(1 << 0)
--#define MAX9286_HVSRC_D18		(0 << 0)
-+#define MAX9286_HVSRC_D0		(2U << 0)
-+#define MAX9286_HVSRC_D14		(1U << 0)
-+#define MAX9286_HVSRC_D18		(0U << 0)
- /* Register 0x0f */
- #define MAX9286_0X0F_RESERVED		BIT(3)
- /* Register 0x12 */
- #define MAX9286_CSILANECNT(n)		(((n) - 1) << 6)
- #define MAX9286_CSIDBL			BIT(5)
- #define MAX9286_DBL			BIT(4)
--#define MAX9286_DATATYPE_USER_8BIT	(11 << 0)
--#define MAX9286_DATATYPE_USER_YUV_12BIT	(10 << 0)
--#define MAX9286_DATATYPE_USER_24BIT	(9 << 0)
--#define MAX9286_DATATYPE_RAW14		(8 << 0)
--#define MAX9286_DATATYPE_RAW11		(7 << 0)
--#define MAX9286_DATATYPE_RAW10		(6 << 0)
--#define MAX9286_DATATYPE_RAW8		(5 << 0)
--#define MAX9286_DATATYPE_YUV422_10BIT	(4 << 0)
--#define MAX9286_DATATYPE_YUV422_8BIT	(3 << 0)
--#define MAX9286_DATATYPE_RGB555		(2 << 0)
--#define MAX9286_DATATYPE_RGB565		(1 << 0)
--#define MAX9286_DATATYPE_RGB888		(0 << 0)
-+#define MAX9286_DATATYPE_USER_8BIT	(11U << 0)
-+#define MAX9286_DATATYPE_USER_YUV_12BIT	(10U << 0)
-+#define MAX9286_DATATYPE_USER_24BIT	(9U << 0)
-+#define MAX9286_DATATYPE_RAW14		(8U << 0)
-+#define MAX9286_DATATYPE_RAW11		(7U << 0)
-+#define MAX9286_DATATYPE_RAW10		(6U << 0)
-+#define MAX9286_DATATYPE_RAW8		(5U << 0)
-+#define MAX9286_DATATYPE_YUV422_10BIT	(4U << 0)
-+#define MAX9286_DATATYPE_YUV422_8BIT	(3U << 0)
-+#define MAX9286_DATATYPE_RGB555		(2U << 0)
-+#define MAX9286_DATATYPE_RGB565		(1U << 0)
-+#define MAX9286_DATATYPE_RGB888		(0U << 0)
- /* Register 0x15 */
- #define MAX9286_VC(n)			((n) << 5)
- #define MAX9286_VCTYPE			BIT(4)
- #define MAX9286_CSIOUTEN		BIT(3)
--#define MAX9286_0X15_RESV		(3 << 0)
-+#define MAX9286_0X15_RESV		(3U << 0)
- /* Register 0x1b */
--#define MAX9286_SWITCHIN(n)		(1 << ((n) + 4))
--#define MAX9286_ENEQ(n)			(1 << (n))
-+#define MAX9286_SWITCHIN(n)		BIT((n) + 4)
-+#define MAX9286_ENEQ(n)			BIT(n)
- /* Register 0x27 */
- #define MAX9286_LOCKED			BIT(7)
- /* Register 0x31 */
- #define MAX9286_FSYNC_LOCKED		BIT(6)
- /* Register 0x34 */
- #define MAX9286_I2CLOCACK		BIT(7)
--#define MAX9286_I2CSLVSH_1046NS_469NS	(3 << 5)
--#define MAX9286_I2CSLVSH_938NS_352NS	(2 << 5)
--#define MAX9286_I2CSLVSH_469NS_234NS	(1 << 5)
--#define MAX9286_I2CSLVSH_352NS_117NS	(0 << 5)
--#define MAX9286_I2CMSTBT_837KBPS	(7 << 2)
--#define MAX9286_I2CMSTBT_533KBPS	(6 << 2)
--#define MAX9286_I2CMSTBT_339KBPS	(5 << 2)
--#define MAX9286_I2CMSTBT_173KBPS	(4 << 2)
--#define MAX9286_I2CMSTBT_105KBPS	(3 << 2)
--#define MAX9286_I2CMSTBT_84KBPS		(2 << 2)
--#define MAX9286_I2CMSTBT_28KBPS		(1 << 2)
--#define MAX9286_I2CMSTBT_8KBPS		(0 << 2)
--#define MAX9286_I2CSLVTO_NONE		(3 << 0)
--#define MAX9286_I2CSLVTO_1024US		(2 << 0)
--#define MAX9286_I2CSLVTO_256US		(1 << 0)
--#define MAX9286_I2CSLVTO_64US		(0 << 0)
-+#define MAX9286_I2CSLVSH_1046NS_469NS	(3U << 5)
-+#define MAX9286_I2CSLVSH_938NS_352NS	(2U << 5)
-+#define MAX9286_I2CSLVSH_469NS_234NS	(1U << 5)
-+#define MAX9286_I2CSLVSH_352NS_117NS	(0U << 5)
-+#define MAX9286_I2CMSTBT_837KBPS	(7U << 2)
-+#define MAX9286_I2CMSTBT_533KBPS	(6U << 2)
-+#define MAX9286_I2CMSTBT_339KBPS	(5U << 2)
-+#define MAX9286_I2CMSTBT_173KBPS	(4U << 2)
-+#define MAX9286_I2CMSTBT_105KBPS	(3U << 2)
-+#define MAX9286_I2CMSTBT_84KBPS		(2U << 2)
-+#define MAX9286_I2CMSTBT_28KBPS		(1U << 2)
-+#define MAX9286_I2CMSTBT_8KBPS		(0U << 2)
-+#define MAX9286_I2CSLVTO_NONE		(3U << 0)
-+#define MAX9286_I2CSLVTO_1024US		(2U << 0)
-+#define MAX9286_I2CSLVTO_256US		(1U << 0)
-+#define MAX9286_I2CSLVTO_64US		(0U << 0)
- /* Register 0x3b */
- #define MAX9286_REV_TRF(n)		((n) << 4)
- #define MAX9286_REV_AMP(n)		((((n) - 30) / 10) << 1) /* in mV */
+The rest looks good.
+
 -- 
-2.25.1
-
+Luca
