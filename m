@@ -7,40 +7,43 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96376C433E9
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F350C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:10:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 51784239E4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7645239E4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:10:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbhAUKKE (ORCPT
+        id S1728989AbhAUKKj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Jan 2021 05:10:04 -0500
-Received: from www.zeus03.de ([194.117.254.33]:48468 "EHLO mail.zeus03.de"
+        Thu, 21 Jan 2021 05:10:39 -0500
+Received: from www.zeus03.de ([194.117.254.33]:48378 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729013AbhAUKH2 (ORCPT
+        id S1728978AbhAUKH2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 21 Jan 2021 05:07:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=ikbIfM7+1dIC1e
-        1IQLe0jNrwz9NKadaOzjOrT7MTOC0=; b=HRxLTigWXYJXcdhgnPwnDXJ7PQ5Qbc
-        VDhdi333OFks4Wu+Y70Gqn334SKqiUTIT7aqdxNVg7LeQYMF/MPOkq100iY8u2Hr
-        M1BiHlwfri4S0/O24nElSaYVfgP9dcYxX+zdLplsMiUP08UCewl9/N/7eVIkr1L1
-        NBdTVuoROR2Po=
-Received: (qmail 1790615 invoked from network); 21 Jan 2021 11:06:29 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 11:06:29 +0100
-X-UD-Smtp-Session: l3s3148p1@B+S2OWa5ur4gAwDPXyX1ACWcscxtZ2TX
+        :mime-version:content-transfer-encoding; s=k1; bh=h70BkSbftDHvdg
+        OoDJAZ1FmD9GbR4klNFsNkdC9yb5k=; b=rMKG5roFmmlvaRsoNjab/CY1aFkN1n
+        8ou4zB4K5DDN8KmG+nrOv83aDITF07t1czBkmZ54SiRSRnlcuHBtstCeFE7xEG1H
+        S/xh6VnGhOGyKLjzIubNQy5F2GLpFkJft95MKuANu4UVBbwJXJWiA0eoQGx9gWPX
+        3yG0evTMDJ4QQ=
+Received: (qmail 1790393 invoked from network); 21 Jan 2021 11:06:26 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 11:06:26 +0100
+X-UD-Smtp-Session: l3s3148p1@mhNxOWa5sr4gAwDPXyX1ACWcscxtZ2TX
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] WIP! arm64: dts: renesas: falcon: Add Ethernet-AVB1-5 support
-Date:   Thu, 21 Jan 2021 11:06:19 +0100
-Message-Id: <20210121100619.5653-6-wsa+renesas@sang-engineering.com>
+        Rob Herring <robh@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/5] dt-bindings: net: renesas,etheravb: Add r8a779a0 support
+Date:   Thu, 21 Jan 2021 11:06:15 +0100
+Message-Id: <20210121100619.5653-2-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210121100619.5653-1-wsa+renesas@sang-engineering.com>
 References: <20210121100619.5653-1-wsa+renesas@sang-engineering.com>
@@ -50,202 +53,44 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-PHYs on the subboard could not be reached via remote access. But this is
-the latest DTS snipplet with some fixes suggested by Geert as a starting
-point. Not for upstream yet!
+Document the compatible value for the RAVB block in the Renesas R-Car
+V3U (R8A779A0) SoC. This variant has no stream buffer, so we only need
+to add the new compatible and add it to the TX delay block.
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
+
+Please apply via netdev tree.
+
 Change since v1:
+* add entry to TX delay block
+* added tags
 
-* new patch
-* removed rxc-skew-ps property
-* renamed phy-addresses to 0 ('@0')
-* dropped '_tx' suffix from 'pins_mii' config
-* added 'okay' status
-* moved entries to Falcon CPU dtsi
+ Documentation/devicetree/bindings/net/renesas,etheravb.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
- .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 160 ++++++++++++++++++
- 1 file changed, 160 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-index f96b03f39787..0059381443f6 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-@@ -50,6 +50,81 @@ phy0: ethernet-phy@0 {
- 	};
- };
+diff --git a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
+index 244befb6402a..c4c441c493ff 100644
+--- a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
++++ b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
+@@ -40,6 +40,7 @@ properties:
+               - renesas,etheravb-r8a77980     # R-Car V3H
+               - renesas,etheravb-r8a77990     # R-Car E3
+               - renesas,etheravb-r8a77995     # R-Car D3
++              - renesas,etheravb-r8a779a0     # R-Car V3U
+           - const: renesas,etheravb-rcar-gen3 # R-Car Gen3 and RZ/G2
  
-+&avb1 {
-+	pinctrl-0 = <&avb1_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&phy1>;
-+	phy-mode = "rgmii-txid";
-+	status = "okay";
-+
-+	phy1: ethernet-phy@0 {
-+		reg = <0>;
-+		interrupt-parent = <&gpio5>;
-+		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio5 15 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&avb2 {
-+	pinctrl-0 = <&avb2_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&phy2>;
-+	phy-mode = "rgmii-txid";
-+	status = "okay";
-+
-+	phy2: ethernet-phy@0 {
-+		reg = <0>;
-+		interrupt-parent = <&gpio6>;
-+		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&avb3 {
-+	pinctrl-0 = <&avb3_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&phy3>;
-+	phy-mode = "rgmii-txid";
-+	status = "okay";
-+
-+	phy3: ethernet-phy@0 {
-+		reg = <0>;
-+		interrupt-parent = <&gpio7>;
-+		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio7 15 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&avb4 {
-+	pinctrl-0 = <&avb4_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&phy4>;
-+	phy-mode = "rgmii-txid";
-+	status = "okay";
-+
-+	phy4: ethernet-phy@0 {
-+		reg = <0>;
-+		interrupt-parent = <&gpio8>;
-+		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio8 15 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&avb5 {
-+	pinctrl-0 = <&avb5_pins>;
-+	pinctrl-names = "default";
-+	phy-handle = <&phy5>;
-+	phy-mode = "rgmii-txid";
-+	status = "okay";
-+
-+	phy5: ethernet-phy@0 {
-+		reg = <0>;
-+		interrupt-parent = <&gpio9>;
-+		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
-+		reset-gpios = <&gpio9 15 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
-@@ -133,6 +208,91 @@ pins_mii {
- 
- 	};
- 
-+	avb1_pins: avb1 {
-+		mux {
-+			groups = "avb1_link", "avb1_mdio", "avb1_rgmii", "avb1_txcrefclk";
-+			function = "avb1";
-+		};
-+
-+		pins_mdio {
-+			groups = "avb1_mdio";
-+			drive-strength = <21>;
-+		};
-+
-+		pins_mii {
-+			groups = "avb1_rgmii";
-+			drive-strength = <21>;
-+		};
-+	};
-+
-+	avb2_pins: avb2 {
-+		mux {
-+			groups = "avb2_link", "avb2_mdio", "avb2_rgmii", "avb2_txcrefclk";
-+			function = "avb2";
-+		};
-+
-+		pins_mdio {
-+			groups = "avb2_mdio";
-+			drive-strength = <21>;
-+		};
-+
-+		pins_mii {
-+			groups = "avb2_rgmii";
-+			drive-strength = <21>;
-+		};
-+	};
-+
-+	avb3_pins: avb3 {
-+		mux {
-+			groups = "avb3_link", "avb3_mdio", "avb3_rgmii", "avb3_txcrefclk";
-+			function = "avb3";
-+		};
-+
-+		pins_mdio {
-+			groups = "avb3_mdio";
-+			drive-strength = <21>;
-+		};
-+
-+		pins_mii {
-+			groups = "avb3_rgmii";
-+			drive-strength = <21>;
-+		};
-+	};
-+
-+	avb4_pins: avb4 {
-+		mux {
-+			groups = "avb4_link", "avb4_mdio", "avb4_rgmii", "avb4_txcrefclk";
-+			function = "avb4";
-+		};
-+
-+		pins_mdio {
-+			groups = "avb4_mdio";
-+			drive-strength = <21>;
-+		};
-+
-+		pins_mii {
-+			groups = "avb4_rgmii";
-+			drive-strength = <21>;
-+		};
-+	};
-+
-+	avb5_pins: avb5 {
-+		mux {
-+			groups = "avb5_link", "avb5_mdio", "avb5_rgmii", "avb5_txcrefclk";
-+			function = "avb5";
-+		};
-+
-+		pins_mdio {
-+			groups = "avb5_mdio";
-+			drive-strength = <21>;
-+		};
-+
-+		ins_mii {
-+			groups = "avb5_rgmii";
-+			drive-strength = <21>;
-+		};
-+	};
-+
- 	i2c0_pins: i2c0 {
- 		groups = "i2c0";
- 		function = "i2c0";
+   reg: true
+@@ -169,6 +170,7 @@ allOf:
+               - renesas,etheravb-r8a77965
+               - renesas,etheravb-r8a77970
+               - renesas,etheravb-r8a77980
++              - renesas,etheravb-r8a779a0
+     then:
+       required:
+         - tx-internal-delay-ps
 -- 
 2.29.2
 
