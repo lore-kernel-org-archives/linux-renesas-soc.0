@@ -5,42 +5,42 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FB3C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96376C433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:10:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3652221F0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:09:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51784239E4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:10:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbhAUKJC (ORCPT
+        id S1726427AbhAUKKE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Jan 2021 05:09:02 -0500
-Received: from www.zeus03.de ([194.117.254.33]:48402 "EHLO mail.zeus03.de"
+        Thu, 21 Jan 2021 05:10:04 -0500
+Received: from www.zeus03.de ([194.117.254.33]:48468 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728952AbhAUKH2 (ORCPT
+        id S1729013AbhAUKH2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 21 Jan 2021 05:07:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=ZikhHhx/+77hpm
-        9dWRye8k/r5po7bFIMz3jw9cGrF70=; b=JZvy0Gmqi9tXbKzWHWlfUV3YcPmWkw
-        v6fv5+u0V4bIQLIw+3GREvOMHU5K0caW/BdRAfPI5r/7a4NVNTpR0AY4JuKibiNM
-        nb9Aid1AhMDu1WjMc/cuup9aKhTTTHO9oy/FGx5D6GeVjfg6l2SCjt2rs7+XWNSm
-        S7wPSddLAzZeI=
-Received: (qmail 1790479 invoked from network); 21 Jan 2021 11:06:27 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 11:06:27 +0100
-X-UD-Smtp-Session: l3s3148p1@dGqUOWa5tL4gAwDPXyX1ACWcscxtZ2TX
+        :mime-version:content-transfer-encoding; s=k1; bh=ikbIfM7+1dIC1e
+        1IQLe0jNrwz9NKadaOzjOrT7MTOC0=; b=HRxLTigWXYJXcdhgnPwnDXJ7PQ5Qbc
+        VDhdi333OFks4Wu+Y70Gqn334SKqiUTIT7aqdxNVg7LeQYMF/MPOkq100iY8u2Hr
+        M1BiHlwfri4S0/O24nElSaYVfgP9dcYxX+zdLplsMiUP08UCewl9/N/7eVIkr1L1
+        NBdTVuoROR2Po=
+Received: (qmail 1790615 invoked from network); 21 Jan 2021 11:06:29 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 11:06:29 +0100
+X-UD-Smtp-Session: l3s3148p1@B+S2OWa5ur4gAwDPXyX1ACWcscxtZ2TX
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] clk: renesas: r8a779a0: add clocks for RAVB
-Date:   Thu, 21 Jan 2021 11:06:16 +0100
-Message-Id: <20210121100619.5653-3-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 5/5] WIP! arm64: dts: renesas: falcon: Add Ethernet-AVB1-5 support
+Date:   Thu, 21 Jan 2021 11:06:19 +0100
+Message-Id: <20210121100619.5653-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210121100619.5653-1-wsa+renesas@sang-engineering.com>
 References: <20210121100619.5653-1-wsa+renesas@sang-engineering.com>
@@ -50,32 +50,202 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+PHYs on the subboard could not be reached via remote access. But this is
+the latest DTS snipplet with some fixes suggested by Geert as a starting
+point. Not for upstream yet!
+
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-
 Change since v1:
-* use S3D2 as parent clock
 
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+* new patch
+* removed rxc-skew-ps property
+* renamed phy-addresses to 0 ('@0')
+* dropped '_tx' suffix from 'pins_mii' config
+* added 'okay' status
+* moved entries to Falcon CPU dtsi
 
-diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-index f7391ea5c2e2..79e6c6571144 100644
---- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-@@ -156,6 +156,12 @@ static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
+ .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 160 ++++++++++++++++++
+ 1 file changed, 160 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+index f96b03f39787..0059381443f6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+@@ -50,6 +50,81 @@ phy0: ethernet-phy@0 {
+ 	};
  };
  
- static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
-+	DEF_MOD("avb0",		211,	R8A779A0_CLK_S3D2),
-+	DEF_MOD("avb1",		212,	R8A779A0_CLK_S3D2),
-+	DEF_MOD("avb2",		213,	R8A779A0_CLK_S3D2),
-+	DEF_MOD("avb3",		214,	R8A779A0_CLK_S3D2),
-+	DEF_MOD("avb4",		215,	R8A779A0_CLK_S3D2),
-+	DEF_MOD("avb5",		216,	R8A779A0_CLK_S3D2),
- 	DEF_MOD("csi40",	331,	R8A779A0_CLK_CSI0),
- 	DEF_MOD("csi41",	400,	R8A779A0_CLK_CSI0),
- 	DEF_MOD("csi42",	401,	R8A779A0_CLK_CSI0),
++&avb1 {
++	pinctrl-0 = <&avb1_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy1>;
++	phy-mode = "rgmii-txid";
++	status = "okay";
++
++	phy1: ethernet-phy@0 {
++		reg = <0>;
++		interrupt-parent = <&gpio5>;
++		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio5 15 GPIO_ACTIVE_LOW>;
++	};
++};
++
++&avb2 {
++	pinctrl-0 = <&avb2_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy2>;
++	phy-mode = "rgmii-txid";
++	status = "okay";
++
++	phy2: ethernet-phy@0 {
++		reg = <0>;
++		interrupt-parent = <&gpio6>;
++		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
++	};
++};
++
++&avb3 {
++	pinctrl-0 = <&avb3_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy3>;
++	phy-mode = "rgmii-txid";
++	status = "okay";
++
++	phy3: ethernet-phy@0 {
++		reg = <0>;
++		interrupt-parent = <&gpio7>;
++		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio7 15 GPIO_ACTIVE_LOW>;
++	};
++};
++
++&avb4 {
++	pinctrl-0 = <&avb4_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy4>;
++	phy-mode = "rgmii-txid";
++	status = "okay";
++
++	phy4: ethernet-phy@0 {
++		reg = <0>;
++		interrupt-parent = <&gpio8>;
++		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio8 15 GPIO_ACTIVE_LOW>;
++	};
++};
++
++&avb5 {
++	pinctrl-0 = <&avb5_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy5>;
++	phy-mode = "rgmii-txid";
++	status = "okay";
++
++	phy5: ethernet-phy@0 {
++		reg = <0>;
++		interrupt-parent = <&gpio9>;
++		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio9 15 GPIO_ACTIVE_LOW>;
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <16666666>;
+ };
+@@ -133,6 +208,91 @@ pins_mii {
+ 
+ 	};
+ 
++	avb1_pins: avb1 {
++		mux {
++			groups = "avb1_link", "avb1_mdio", "avb1_rgmii", "avb1_txcrefclk";
++			function = "avb1";
++		};
++
++		pins_mdio {
++			groups = "avb1_mdio";
++			drive-strength = <21>;
++		};
++
++		pins_mii {
++			groups = "avb1_rgmii";
++			drive-strength = <21>;
++		};
++	};
++
++	avb2_pins: avb2 {
++		mux {
++			groups = "avb2_link", "avb2_mdio", "avb2_rgmii", "avb2_txcrefclk";
++			function = "avb2";
++		};
++
++		pins_mdio {
++			groups = "avb2_mdio";
++			drive-strength = <21>;
++		};
++
++		pins_mii {
++			groups = "avb2_rgmii";
++			drive-strength = <21>;
++		};
++	};
++
++	avb3_pins: avb3 {
++		mux {
++			groups = "avb3_link", "avb3_mdio", "avb3_rgmii", "avb3_txcrefclk";
++			function = "avb3";
++		};
++
++		pins_mdio {
++			groups = "avb3_mdio";
++			drive-strength = <21>;
++		};
++
++		pins_mii {
++			groups = "avb3_rgmii";
++			drive-strength = <21>;
++		};
++	};
++
++	avb4_pins: avb4 {
++		mux {
++			groups = "avb4_link", "avb4_mdio", "avb4_rgmii", "avb4_txcrefclk";
++			function = "avb4";
++		};
++
++		pins_mdio {
++			groups = "avb4_mdio";
++			drive-strength = <21>;
++		};
++
++		pins_mii {
++			groups = "avb4_rgmii";
++			drive-strength = <21>;
++		};
++	};
++
++	avb5_pins: avb5 {
++		mux {
++			groups = "avb5_link", "avb5_mdio", "avb5_rgmii", "avb5_txcrefclk";
++			function = "avb5";
++		};
++
++		pins_mdio {
++			groups = "avb5_mdio";
++			drive-strength = <21>;
++		};
++
++		ins_mii {
++			groups = "avb5_rgmii";
++			drive-strength = <21>;
++		};
++	};
++
+ 	i2c0_pins: i2c0 {
+ 		groups = "i2c0";
+ 		function = "i2c0";
 -- 
 2.29.2
 
