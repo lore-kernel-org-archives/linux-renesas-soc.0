@@ -5,45 +5,42 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F350C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 050F0C433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:11:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7645239E4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7FA923A01
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:11:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728989AbhAUKKj (ORCPT
+        id S1728896AbhAUKKa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Jan 2021 05:10:39 -0500
-Received: from www.zeus03.de ([194.117.254.33]:48378 "EHLO mail.zeus03.de"
+        Thu, 21 Jan 2021 05:10:30 -0500
+Received: from www.zeus03.de ([194.117.254.33]:48444 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728978AbhAUKH2 (ORCPT
+        id S1729005AbhAUKH2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 21 Jan 2021 05:07:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=h70BkSbftDHvdg
-        OoDJAZ1FmD9GbR4klNFsNkdC9yb5k=; b=rMKG5roFmmlvaRsoNjab/CY1aFkN1n
-        8ou4zB4K5DDN8KmG+nrOv83aDITF07t1czBkmZ54SiRSRnlcuHBtstCeFE7xEG1H
-        S/xh6VnGhOGyKLjzIubNQy5F2GLpFkJft95MKuANu4UVBbwJXJWiA0eoQGx9gWPX
-        3yG0evTMDJ4QQ=
-Received: (qmail 1790393 invoked from network); 21 Jan 2021 11:06:26 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 11:06:26 +0100
-X-UD-Smtp-Session: l3s3148p1@mhNxOWa5sr4gAwDPXyX1ACWcscxtZ2TX
+        :mime-version:content-transfer-encoding; s=k1; bh=gttZ/1liVnb/3Z
+        3TVIe3G63cwP0OaP/4JR5ZxcIYYL0=; b=F1wLTCSiDwgAEN0yFWVuWUXxYHuVEb
+        5KR8cicL88ff/a3K9fjXmJcVbybcW/ivK1oc3587Crpxp7ApO+yrK5+fEFjO3Zga
+        HFpBdF4U8KN2jsu8T4Gu3cCgWkIk4RCd0N2haWu2CxY1kROtjaTGrwmKiCgOn/tF
+        KV8G5n6KDtTl0=
+Received: (qmail 1790576 invoked from network); 21 Jan 2021 11:06:29 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 11:06:29 +0100
+X-UD-Smtp-Session: l3s3148p1@J/6rOWa5uL4gAwDPXyX1ACWcscxtZ2TX
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/5] dt-bindings: net: renesas,etheravb: Add r8a779a0 support
-Date:   Thu, 21 Jan 2021 11:06:15 +0100
-Message-Id: <20210121100619.5653-2-wsa+renesas@sang-engineering.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/5] arm64: dts: renesas: falcon: Add Ethernet-AVB0 support
+Date:   Thu, 21 Jan 2021 11:06:18 +0100
+Message-Id: <20210121100619.5653-5-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210121100619.5653-1-wsa+renesas@sang-engineering.com>
 References: <20210121100619.5653-1-wsa+renesas@sang-engineering.com>
@@ -53,44 +50,92 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the compatible value for the RAVB block in the Renesas R-Car
-V3U (R8A779A0) SoC. This variant has no stream buffer, so we only need
-to add the new compatible and add it to the TX delay block.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-
-Please apply via netdev tree.
-
 Change since v1:
-* add entry to TX delay block
-* added tags
 
- Documentation/devicetree/bindings/net/renesas,etheravb.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+* removed avb1-5 which couldn't be tested
+* added alias for avb0 so firmware can add MAC address
+* added custom tx-internal-delay-ps
+* dropped '_tx' suffix from 'pins_mii' config
+* moved entries to Falcon CPU dtsi
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
-index 244befb6402a..c4c441c493ff 100644
---- a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
-+++ b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
-@@ -40,6 +40,7 @@ properties:
-               - renesas,etheravb-r8a77980     # R-Car V3H
-               - renesas,etheravb-r8a77990     # R-Car E3
-               - renesas,etheravb-r8a77995     # R-Car D3
-+              - renesas,etheravb-r8a779a0     # R-Car V3U
-           - const: renesas,etheravb-rcar-gen3 # R-Car Gen3 and RZ/G2
+ .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 35 +++++++++++++++++++
+ .../boot/dts/renesas/r8a779a0-falcon.dts      |  1 +
+ 2 files changed, 36 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+index 6dcd4683b071..f96b03f39787 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+@@ -5,6 +5,7 @@
+  * Copyright (C) 2020 Renesas Electronics Corp.
+  */
  
-   reg: true
-@@ -169,6 +170,7 @@ allOf:
-               - renesas,etheravb-r8a77965
-               - renesas,etheravb-r8a77970
-               - renesas,etheravb-r8a77980
-+              - renesas,etheravb-r8a779a0
-     then:
-       required:
-         - tx-internal-delay-ps
++#include <dt-bindings/gpio/gpio.h>
+ #include "r8a779a0.dtsi"
+ 
+ / {
+@@ -33,6 +34,22 @@ memory@700000000 {
+ 	};
+ };
+ 
++&avb0 {
++	pinctrl-0 = <&avb0_pins>;
++	pinctrl-names = "default";
++	phy-handle = <&phy0>;
++	tx-internal-delay-ps = <2000>;
++	status = "okay";
++
++	phy0: ethernet-phy@0 {
++		rxc-skew-ps = <1500>;
++		reg = <0>;
++		interrupt-parent = <&gpio4>;
++		interrupts = <16 IRQ_TYPE_LEVEL_LOW>;
++		reset-gpios = <&gpio4 15 GPIO_ACTIVE_LOW>;
++	};
++};
++
+ &extal_clk {
+ 	clock-frequency = <16666666>;
+ };
+@@ -98,6 +115,24 @@ &i2c6 {
+ };
+ 
+ &pfc {
++	avb0_pins: avb0 {
++		mux {
++			groups = "avb0_link", "avb0_mdio", "avb0_rgmii", "avb0_txcrefclk";
++			function = "avb0";
++		};
++
++		pins_mdio {
++			groups = "avb0_mdio";
++			drive-strength = <21>;
++		};
++
++		pins_mii {
++			groups = "avb0_rgmii";
++			drive-strength = <21>;
++		};
++
++	};
++
+ 	i2c0_pins: i2c0 {
+ 		groups = "i2c0";
+ 		function = "i2c0";
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+index fb9978ea18f4..5617b81dd7dc 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+@@ -13,6 +13,7 @@ / {
+ 	compatible = "renesas,falcon-breakout", "renesas,falcon-cpu", "renesas,r8a779a0";
+ 
+ 	aliases {
++		ethernet0 = &avb0;
+ 		serial0 = &scif0;
+ 	};
+ 
 -- 
 2.29.2
 
