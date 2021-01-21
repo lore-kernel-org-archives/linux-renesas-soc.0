@@ -2,80 +2,104 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BD2C433E9
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 490C3C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 11:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DBA52388E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 10:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECE36238E3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 11:02:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbhAUKsq (ORCPT
+        id S1729083AbhAULCR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Jan 2021 05:48:46 -0500
-Received: from www.zeus03.de ([194.117.254.33]:59106 "EHLO mail.zeus03.de"
+        Thu, 21 Jan 2021 06:02:17 -0500
+Received: from www.zeus03.de ([194.117.254.33]:34632 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729765AbhAUKr7 (ORCPT
+        id S1730065AbhAULBK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Jan 2021 05:47:59 -0500
+        Thu, 21 Jan 2021 06:01:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=o70t88LDGMvmpgqdCk0T19YtNOSo
-        Vzw6kJEyC/1uDlA=; b=JsD7UF/b2Yntw4ZRaBta4Ds08ikOQVU/KIR5cAE77lq3
-        OKE4Nor7zt0wMewVRC88e2EEq1ecc4zqiIhz2o2ZT/IgpDJ1UVjBqxLcMqHN8ovi
-        bunvy1UtU5RZ676Po6zz4QCilCTk/ssUDyKPYwyQ6XaQPsm0GECQ4RGVK46h5m8=
-Received: (qmail 1809551 invoked from network); 21 Jan 2021 11:47:15 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 11:47:15 +0100
-X-UD-Smtp-Session: l3s3148p1@SyNoy2a59L4gAwDPXyX1ACWcscxtZ2TX
-Date:   Thu, 21 Jan 2021 11:47:13 +0100
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=YqOi36rxngmg9I
+        7UHw0ysZAk6h7vPgYPUtwnt8rA7ZY=; b=OU9DvUqAAiJqEZZ7U+RlYxL2tuZ2qH
+        SsMc7STcArjhzQmsKNXuLiyzh44WB8LhOo26x7Um57z0vdf1MF1y2uIaM/XI49C+
+        Fhe1RC+ODAA25a73nngyy+p6HHvSjMnb05vVY0qgz0ArKL17UEZwxZfoUrEMF1pD
+        RhK373mdKz3JI=
+Received: (qmail 1815239 invoked from network); 21 Jan 2021 12:00:15 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 12:00:15 +0100
+X-UD-Smtp-Session: l3s3148p1@GNn5+Wa5HL8gAwDPXyX1ACWcscxtZ2TX
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 0/2] v3u: add support for SDHI
-Message-ID: <20210121104713.GA1401@kunai>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-renesas-soc@vger.kernel.org
-References: <20210121103830.9575-1-wsa+renesas@sang-engineering.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 4/4] HACK: make hscif0 console
+Date:   Thu, 21 Jan 2021 12:00:08 +0100
+Message-Id: <20210121110008.15894-5-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.29.2
+In-Reply-To: <20210121110008.15894-1-wsa+renesas@sang-engineering.com>
+References: <20210121110008.15894-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="W/nzBZO5zC0uMSeA"
-Content-Disposition: inline
-In-Reply-To: <20210121103830.9575-1-wsa+renesas@sang-engineering.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Just for testing, not for upstream!
 
---W/nzBZO5zC0uMSeA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+Changes since v1:
+* marked explicitly as HACK
 
-On Thu, Jan 21, 2021 at 11:38:28AM +0100, Wolfram Sang wrote:
-> Here is the updated series to enable SDHI on V3U. Please check the
-> individual patches for updates.
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 12 ++++++++----
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts      |  2 +-
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-Should be all "PATCH V2", of course. I am sorry that it slipped through.
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+index 1a36239cdc5d..60cc460612ab 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+@@ -372,9 +372,9 @@ mmc_pins: mmc {
+ 		power-source = <1800>;
+ 	};
+ 
+-	scif0_pins: scif0 {
+-		groups = "scif0_data", "scif0_ctrl";
+-		function = "scif0";
++	hscif0_pins: hscif0 {
++		groups = "hscif0_data", "hscif0_ctrl";
++		function = "hscif0";
+ 	};
+ 
+ 	scif_clk_pins: scif_clk {
+@@ -384,7 +384,11 @@ scif_clk_pins: scif_clk {
+ };
+ 
+ &scif0 {
+-	pinctrl-0 = <&scif0_pins>;
++	status = "disabled";
++};
++
++&hscif0 {
++	pinctrl-0 = <&hscif0_pins>;
+ 	pinctrl-names = "default";
+ 
+ 	uart-has-rtscts;
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+index 5617b81dd7dc..9a129e6a78b6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+@@ -14,7 +14,7 @@ / {
+ 
+ 	aliases {
+ 		ethernet0 = &avb0;
+-		serial0 = &scif0;
++		serial0 = &hscif0;
+ 	};
+ 
+ 	chosen {
+-- 
+2.29.2
 
-
---W/nzBZO5zC0uMSeA
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmAJW60ACgkQFA3kzBSg
-KbbF/A/7BODbXe006/xVopNQoZdz7iqz587yVpYmJl/PU8vNfWy2mcRsX/g+VJZ0
-EC9kbeZZgKui7KwwA7AzvaZs9qZNIVd+CJSRZQqT76NlFbh3rFCmDW+SAgvInt4X
-zOBq/idcSt4/gIVDtSfwr1jXoE7jv2AMixgWix0XdyLRBa7K/6iJDR6w57q1e1LK
-PITbliT0F9ydtFdWfLPfvKFOGC+r9iQJCzwaj9SP+BIA+YCnL9Ea8RVlvJCLj9Fc
-bQtBBI4nK1r/1yVn49uewCnTd7iNZ6XSUBUPXa5JonISiudRZ9d8hDWRQ7LGXtIS
-SK6DobcVmltxpAb6U33CZUb469I6/aBGTZNXIhCBVxun5vGcUIEyfUhsm7gk43yl
-dpZlS+Hue71Ynm9fm2aF6WXtYggqlrREqYHkJ3U3GU0xnZnP2GYMdyRhrnD8CEgM
-WHkE14f01z/Xa28s5P6zcpdpFf/DLfWhLOg2xYseOEo7ZBdwUKICrdgeRqSAI+Ss
-SttzdTBc9SDMHikwu7UlyLemp0N/Gup1SkZ+CpExlYzch5dbsM7NG4qxxKfiDvCx
-2Kpi+ms8qC/NZGE/g9+zQvvnAooPgDPHDAC8nJE95KCDWx/xnNWa1NQPLz8uhdVD
-lsuZAGD6ogBuHY0P33217xOOyEXUC6s26nVyx8Iid1yVRyv9gEI=
-=DUDu
------END PGP SIGNATURE-----
-
---W/nzBZO5zC0uMSeA--
