@@ -2,104 +2,65 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 490C3C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5C4C433E6
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 11:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECE36238E3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 11:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 504B7238A0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 11:02:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729083AbhAULCR (ORCPT
+        id S1730048AbhAULC1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Jan 2021 06:02:17 -0500
-Received: from www.zeus03.de ([194.117.254.33]:34632 "EHLO mail.zeus03.de"
+        Thu, 21 Jan 2021 06:02:27 -0500
+Received: from www.zeus03.de ([194.117.254.33]:34578 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730065AbhAULBK (ORCPT
+        id S1730037AbhAULBK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 21 Jan 2021 06:01:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=YqOi36rxngmg9I
-        7UHw0ysZAk6h7vPgYPUtwnt8rA7ZY=; b=OU9DvUqAAiJqEZZ7U+RlYxL2tuZ2qH
-        SsMc7STcArjhzQmsKNXuLiyzh44WB8LhOo26x7Um57z0vdf1MF1y2uIaM/XI49C+
-        Fhe1RC+ODAA25a73nngyy+p6HHvSjMnb05vVY0qgz0ArKL17UEZwxZfoUrEMF1pD
-        RhK373mdKz3JI=
-Received: (qmail 1815239 invoked from network); 21 Jan 2021 12:00:15 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 12:00:15 +0100
-X-UD-Smtp-Session: l3s3148p1@GNn5+Wa5HL8gAwDPXyX1ACWcscxtZ2TX
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=r48lPHVY77PEOGg/lMYbk/kknKz
+        D2sV642ac77leBdo=; b=OUFo1pvfjb384MzBkGgQ1tAqsZwLtKhOEhqkb44mvMj
+        jr49uValWW1Jiti+4BV8bBB61DIsamTEJXh3rFdyWrPhbKJ04B1j8wUB6XG5Ldz3
+        rOCbqzFcvWS2ZIMOLcAuLrWHJMxEynb3z5CnO7k9pCpK+P3LjIZXTL5zNu38lTSc
+        =
+Received: (qmail 1815140 invoked from network); 21 Jan 2021 12:00:13 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 12:00:13 +0100
+X-UD-Smtp-Session: l3s3148p1@cVTd+Wa5FL8gAwDPXyX1ACWcscxtZ2TX
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v2 4/4] HACK: make hscif0 console
-Date:   Thu, 21 Jan 2021 12:00:08 +0100
-Message-Id: <20210121110008.15894-5-wsa+renesas@sang-engineering.com>
+Subject: [PATCH v2 0/4] v3u: add support for SCIF
+Date:   Thu, 21 Jan 2021 12:00:04 +0100
+Message-Id: <20210121110008.15894-1-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210121110008.15894-1-wsa+renesas@sang-engineering.com>
-References: <20210121110008.15894-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Just for testing, not for upstream!
+Here is the updated series to enable SCIF & HSCIF on V3U. Please check
+the individual patches for updates. Please note that the last patch is
+not for upstream, but just for testing.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
-Changes since v1:
-* marked explicitly as HACK
+Linh Phung (1):
+  arm64: dts: renesas: r8a779a0: Add HSCIF support
 
- arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 12 ++++++++----
- arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts      |  2 +-
- 2 files changed, 9 insertions(+), 5 deletions(-)
+Wolfram Sang (3):
+  arm64: dts: renesas: r8a779a0: add & update SCIF nodes
+  arm64: dts: renesas: falcon: add SCIF0 nodes
+  HACK: make hscif0 console
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-index 1a36239cdc5d..60cc460612ab 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-@@ -372,9 +372,9 @@ mmc_pins: mmc {
- 		power-source = <1800>;
- 	};
- 
--	scif0_pins: scif0 {
--		groups = "scif0_data", "scif0_ctrl";
--		function = "scif0";
-+	hscif0_pins: hscif0 {
-+		groups = "hscif0_data", "hscif0_ctrl";
-+		function = "hscif0";
- 	};
- 
- 	scif_clk_pins: scif_clk {
-@@ -384,7 +384,11 @@ scif_clk_pins: scif_clk {
- };
- 
- &scif0 {
--	pinctrl-0 = <&scif0_pins>;
-+	status = "disabled";
-+};
-+
-+&hscif0 {
-+	pinctrl-0 = <&hscif0_pins>;
- 	pinctrl-names = "default";
- 
- 	uart-has-rtscts;
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-index 5617b81dd7dc..9a129e6a78b6 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-@@ -14,7 +14,7 @@ / {
- 
- 	aliases {
- 		ethernet0 = &avb0;
--		serial0 = &scif0;
-+		serial0 = &hscif0;
- 	};
- 
- 	chosen {
+ .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi |  25 ++++
+ .../boot/dts/renesas/r8a779a0-falcon.dts      |   2 +-
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi     | 114 ++++++++++++++++++
+ 3 files changed, 140 insertions(+), 1 deletion(-)
+
 -- 
 2.29.2
 
