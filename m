@@ -2,140 +2,171 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-20.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6811C433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 11:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C46CC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 14:44:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 590882389B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 11:05:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 076B12310A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 21 Jan 2021 14:44:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbhAULEi (ORCPT
+        id S1731981AbhAUOoN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 21 Jan 2021 06:04:38 -0500
-Received: from www.zeus03.de ([194.117.254.33]:34616 "EHLO mail.zeus03.de"
+        Thu, 21 Jan 2021 09:44:13 -0500
+Received: from www.zeus03.de ([194.117.254.33]:48798 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730062AbhAULBK (ORCPT
+        id S1731530AbhAUOoK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 21 Jan 2021 06:01:10 -0500
+        Thu, 21 Jan 2021 09:44:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=C3OK1cLM5dOOpS
-        c1/c5Jovho2u6hZBsF3oemxIyroQw=; b=hbNwZ4bRP9A7h7o8/McX+m01qHoIQK
-        DN1P0rLnRyhihEvoXAo9jVMbtrIanxwvqanGPT9DZInBLWgQSCSq+bVo5mBy4xdw
-        hEjoX3gpsz8Y8Oo117+Ehgl/LbfqCpm9InhYqEVNB/n+/NZqlVThy6h6tQ/9/+Fu
-        dHg3WGzyyQfSc=
-Received: (qmail 1815217 invoked from network); 21 Jan 2021 12:00:15 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 12:00:15 +0100
-X-UD-Smtp-Session: l3s3148p1@ZtTy+Wa5Gr8gAwDPXyX1ACWcscxtZ2TX
+        date:from:to:cc:subject:message-id:mime-version:content-type; s=
+        k1; bh=Et0l7eAzBPvk7QUBWKo9tbk3iLHWll+ZvqTrPuVTXy4=; b=ACPdIu7qf
+        yoR/5sGiiW8Uzr+L3vkUlBHJy+A3gykmClf0IWKaviqW5Hpgd1WY3rTX+/DYgxsm
+        BhGas+3oMPTk73jt9aBzZLrgrn30Q48cX3/Zxc2wgZJfxNMPJg/S5DLeTERI2NT9
+        ST1PC1zNCgXazEOxtosf4ijv+VnlyjL+No=
+Received: (qmail 1905597 invoked from network); 21 Jan 2021 15:43:25 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 21 Jan 2021 15:43:25 +0100
+X-UD-Smtp-Session: l3s3148p1@ep/ZF2q5StQgAwDPXw2wABErSCJ/rm3+
+Date:   Thu, 21 Jan 2021 15:43:21 +0100
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
-Cc:     Linh Phung <linh.phung.jy@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa@kernel.org>
-Subject: [PATCH v2 3/4] arm64: dts: renesas: r8a779a0: Add HSCIF support
-Date:   Thu, 21 Jan 2021 12:00:07 +0100
-Message-Id: <20210121110008.15894-4-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.29.2
-In-Reply-To: <20210121110008.15894-1-wsa+renesas@sang-engineering.com>
-References: <20210121110008.15894-1-wsa+renesas@sang-engineering.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PULL REQUEST] renesas/v3u/devel-v2 for renesas drivers
+Message-ID: <20210121144321.GA2101@kunai>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5mCyUwZo2JvN/JJP"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Linh Phung <linh.phung.jy@renesas.com>
 
-Define the generic parts of the HSCIF[0-3] device nodes.
+--5mCyUwZo2JvN/JJP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Linh Phung <linh.phung.jy@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa@kernel.org>
----
-Changes since v1: none
+Hi Geert,
 
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 64 +++++++++++++++++++++++
- 1 file changed, 64 insertions(+)
+here is my updated v3u devel branch for renesas-drivers. It is based on
+our agreed base, so quite some patches from the previous version are
+already upstream. For the remaining ones, all review comments have been
+addressed, and the patches have been resent. Most binding doc updates
+are in -next meanwhile. The watchdog patches have been reviewed by
+Guenter. The rest is mainly your realm :) There are some debugging
+patches in there which I left in place.
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-index 7e311b591d5c..6d93b1e4a471 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-@@ -308,6 +308,70 @@ i2c2: i2c@e6510000 {
- 			status = "disabled";
- 		};
- 
-+		hscif0: serial@e6540000 {
-+			compatible = "renesas,hscif-r8a779a0",
-+				     "renesas,rcar-gen3-hscif", "renesas,hscif";
-+			reg = <0 0xe6540000 0 0x60>;
-+			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 514>,
-+				 <&cpg CPG_CORE R8A779A0_CLK_S1D2>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x31>, <&dmac1 0x30>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets = <&cpg 514>;
-+			status = "disabled";
-+		};
-+
-+		hscif1: serial@e6550000 {
-+			compatible = "renesas,hscif-r8a779a0",
-+				     "renesas,rcar-gen3-hscif", "renesas,hscif";
-+			reg = <0 0xe6550000 0 0x60>;
-+			interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 515>,
-+				 <&cpg CPG_CORE R8A779A0_CLK_S1D2>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x33>, <&dmac1 0x32>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets = <&cpg 515>;
-+			status = "disabled";
-+		};
-+
-+		hscif2: serial@e6560000 {
-+			compatible = "renesas,hscif-r8a779a0",
-+				     "renesas,rcar-gen3-hscif", "renesas,hscif";
-+			reg = <0 0xe6560000 0 0x60>;
-+			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 516>,
-+				 <&cpg CPG_CORE R8A779A0_CLK_S1D2>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x35>, <&dmac1 0x34>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets = <&cpg 516>;
-+			status = "disabled";
-+		};
-+
-+		hscif3: serial@e66a0000 {
-+			compatible = "renesas,hscif-r8a779a0",
-+				     "renesas,rcar-gen3-hscif", "renesas,hscif";
-+			reg = <0 0xe66a0000 0 0x60>;
-+			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 517>,
-+				 <&cpg CPG_CORE R8A779A0_CLK_S1D2>,
-+				 <&scif_clk>;
-+			clock-names = "fck", "brg_int", "scif_clk";
-+			dmas = <&dmac1 0x37>, <&dmac1 0x36>;
-+			dma-names = "tx", "rx";
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets = <&cpg 517>;
-+			status = "disabled";
-+		};
-+
- 		i2c3: i2c@e66d0000 {
- 			compatible = "renesas,i2c-r8a779a0",
- 				     "renesas,rcar-gen3-i2c";
--- 
-2.29.2
+Please pull.
 
+Kind regards,
+
+   Wolfram
+
+
+The following changes since commit 748c9c1c5e7d00fe6d1e5d47140e4492d7e63719:
+
+  Merge branch 'topic/r8a779a0-dt-msiof-v2' into renesas-drivers (2021-01-12 12:36:54 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/v3u/devel-v2
+
+for you to fetch changes up to 4a1e26c947d213b717ee6c845dc922b1102305ef:
+
+  HACK: make hscif0 console (2021-01-21 11:41:52 +0100)
+
+----------------------------------------------------------------
+Koji Matsuoka (1):
+      arm64: dts: renesas: Add I2C to R8A779A0
+
+Linh Phung (1):
+      arm64: dts: renesas: r8a779a0: Add HSCIF support
+
+Takeshi Saito (2):
+      arm64: dts: renesas: r8a779a0: Add MMC node
+      arm64: dts: renesas: falcon: Enable MMC
+
+Tho Vu (1):
+      arm64: dts: renesas: r8a779a0: Add Ethernet-AVB support
+
+Wolfram Sang (18):
+      dt-bindings: watchdog: renesas,wdt: add r8a779a0 (V3U) support
+      WIP soc: v3u: allow WDT reset
+      arm64: proper comment formatting in reboot handler
+      watchdog: renesas_wdt: don't sleep in atomic context
+      watchdog: renesas_wdt: add grace period before rebooting
+      clk: renesas: r8a779a0: add clocks for I2C
+      arm64: dts: renesas: Add I2C0,1,6 support for falcon board
+      v3u: enable other I2C busses for testing
+      dt-bindings: net: renesas,etheravb: Add r8a779a0 support
+      clk: renesas: r8a779a0: add clocks for RAVB
+      arm64: dts: renesas: falcon: Add Ethernet-AVB0 support
+      WIP! arm64: dts: renesas: falcon: Add Ethernet-AVB1-5 support
+      dt-bindings: mmc: renesas,sdhi: Add r8a779a0 support
+      arm64: dts: renesas: disable SD functions for plain eMMC
+      dt-bindings: serial: renesas,hscif: Add r8a779a0 support
+      arm64: dts: renesas: r8a779a0: add & update SCIF nodes
+      arm64: dts: renesas: falcon: add SCIF0 nodes
+      HACK: make hscif0 console
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Geert Uytterhoeven (7):
+      (Rev.) arm64: dts: renesas: r8a779a0: Add HSCIF support
+      (Rev.) arm64: dts: renesas: r8a779a0: add & update SCIF nodes
+      (Rev.) dt-bindings: serial: renesas,hscif: Add r8a779a0 support
+      (Rev.) arm64: dts: renesas: r8a779a0: Add MMC node
+      (Rev.) arm64: dts: renesas: r8a779a0: Add Ethernet-AVB support
+      (Rev.) dt-bindings: net: renesas,etheravb: Add r8a779a0 support
+      (Rev.) arm64: dts: renesas: Add I2C to R8A779A0
+
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml      |   1 +
+ .../devicetree/bindings/net/renesas,etheravb.yaml  |   2 +
+ .../devicetree/bindings/serial/renesas,hscif.yaml  |   1 +
+ .../devicetree/bindings/watchdog/renesas,wdt.yaml  |   1 +
+ .../arm64/boot/dts/renesas/beacon-renesom-som.dtsi |   2 +
+ arch/arm64/boot/dts/renesas/hihope-common.dtsi     |   2 +
+ arch/arm64/boot/dts/renesas/r8a77980-condor.dts    |   2 +
+ arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts     |   2 +
+ arch/arm64/boot/dts/renesas/r8a77995-draak.dts     |   2 +
+ .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi      | 354 ++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts    |   3 +-
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi          | 530 +++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi   |   2 +
+ arch/arm64/boot/dts/renesas/ulcb.dtsi              |   2 +
+ arch/arm64/kernel/process.c                        |   4 +-
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c            |  13 +
+ drivers/soc/renesas/rcar-rst.c                     |   8 +
+ drivers/watchdog/renesas_wdt.c                     |  33 +-
+ 18 files changed, 954 insertions(+), 10 deletions(-)
+
+--5mCyUwZo2JvN/JJP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmAJkwMACgkQFA3kzBSg
+KbZZHw//UguA/ZiXr1HBfBDDSoDwUcWSpb6bNGkHjXCVIddFR3HM5omdQ9ht04Dg
+KIhRH5FYpO3HiHxYN1YBOStuT2p/M90OgZ2ELRO0swFLuPMq399jdO4kqD+XNgNu
+1RPnjerJ0pv3RV+l2oqZBQjGVDEs2xLplV3M7wew1MABudSLcRAaGFYeWI0TSvAk
+G7XdhbrW5yhQys8RnHAcoagAZm91/T17Wac/yerBpEwChNvSWVNYt5jF2wNlZ0PS
+Qqe/dJkBICFP6L4h5cOrl1xjcEz2lfOn6yf/LH7Omne1Q02B5WseccylJgZerUew
+OYzUqUGzz0N5fe4cQzmX2Jfvw7LpSzTwjYHP/aKkhg6ctqV/XH229j1rxwSZwwX7
+Cg8tMIfXXlqHEgQEegyIaJtLVgRwDBKvkoLBnVUjKxWLK9r15gLFNV0gOv+M0fYX
+y/RpDh4lVAJKMe9LJ4MIreXp5aTHk5AmY6lNsbYkamsR048nL1WOSjCcfLOpRQfs
+fGNLLpfpGZiv21EKkScGIeXXzPKgnwTMATyJMyoAuhcBe91sdsTOO6kZIHZDY1AF
+HE8XZISU7QYZhVqTYn5k+B3yEfomcBWNVodDrNT7AlNHXUdyJech09cVy6OrcT8L
+kPPGFObNmWgGX6NuumuAz4xueqiGpD2EUceaqvfYLHeSYux18jQ=
+=XkbQ
+-----END PGP SIGNATURE-----
+
+--5mCyUwZo2JvN/JJP--
