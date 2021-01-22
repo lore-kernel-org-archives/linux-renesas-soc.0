@@ -5,144 +5,351 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCABC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 11:37:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EA1C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 11:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B94B7235F7
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 11:37:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FE8023106
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 11:39:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbhAVLhw (ORCPT
+        id S1727203AbhAVLiD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Jan 2021 06:37:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43232 "EHLO
+        Fri, 22 Jan 2021 06:38:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbhAVLhZ (ORCPT
+        with ESMTP id S1728285AbhAVLfL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Jan 2021 06:37:25 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADAF0C06174A
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jan 2021 03:36:44 -0800 (PST)
+        Fri, 22 Jan 2021 06:35:11 -0500
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B489C061786
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jan 2021 03:34:30 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id Knci2400D4C55Sk01nciUh; Fri, 22 Jan 2021 12:36:43 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id KnaU2400H4C55Sk01naU8Y; Fri, 22 Jan 2021 12:34:28 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1l2uk6-005lJl-A8; Fri, 22 Jan 2021 12:36:42 +0100
+        id 1l2uhw-005lFX-5O; Fri, 22 Jan 2021 12:34:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1l2uk5-00Bt8D-UI; Fri, 22 Jan 2021 12:36:41 +0100
+        id 1l2uhv-00Bt2T-Nd; Fri, 22 Jan 2021 12:34:27 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+To:     Prabhakar <prabhakar.csengg@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
         linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] soc: renesas: rcar-sysc: Use readl_poll_timeout_atomic()
-Date:   Fri, 22 Jan 2021 12:36:37 +0100
-Message-Id: <20210122113637.2833489-1-geert+renesas@glider.be>
+Subject: [PATCH v5 1/2] ARM: dts: r8a7742-iwg21d-q7-dbcm-ca: Separate out ov5640 nodes
+Date:   Fri, 22 Jan 2021 12:34:23 +0100
+Message-Id: <20210122113424.2833127-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210122113424.2833127-1-geert+renesas@glider.be>
+References: <20210122113424.2833127-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Replace the open-coded polling loops by calls to the
-readl_poll_timeout_atomic() helper macro.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
+The camera daughter board can also be connected to 8-bit ov7725 sensors,
+so in preparation for configurable option to choose depending on the
+camera's connected separate out the ov5640 nodes in a dtsi file.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+[geert: describe a single camera in the .dtsi, include multiple times]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/soc/renesas/rcar-sysc.c | 33 ++++++++++++++-------------------
- 1 file changed, 14 insertions(+), 19 deletions(-)
+v5:
+  - Only enable i2c buses when needed,
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index a00bb098e1fe7488..4ff2671a699a4a3b 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -15,6 +15,7 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/soc/renesas/rcar-sysc.h>
+v4:
+  - Describe a single camera in the .dtsi file,
+  - Include the .dtsi multiple times.
+---
+ .../boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts    | 155 +++++++++---------
+ .../r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi |  32 ++++
+ 2 files changed, 107 insertions(+), 80 deletions(-)
+ create mode 100644 arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi
+
+diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+index 98c3fbd89fa6c5c7..bc8280b2ac47e3ec 100644
+--- a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
++++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+@@ -91,92 +91,20 @@ &hscif0 {
+ 	status = "okay";
+ };
  
- #include "rcar-sysc.h"
-@@ -44,13 +45,13 @@
- #define PWRER_OFFS		0x14	/* Power Shutoff/Resume Error */
- 
- 
--#define SYSCSR_RETRIES		100
-+#define SYSCSR_TIMEOUT		100
- #define SYSCSR_DELAY_US		1
- 
- #define PWRER_RETRIES		100
- #define PWRER_DELAY_US		1
- 
--#define SYSCISR_RETRIES		1000
-+#define SYSCISR_TIMEOUT		1000
- #define SYSCISR_DELAY_US	1
- 
- #define RCAR_PD_ALWAYS_ON	32	/* Always-on power area */
-@@ -68,7 +69,8 @@ static u32 rcar_sysc_extmask_offs, rcar_sysc_extmask_val;
- static int rcar_sysc_pwr_on_off(const struct rcar_sysc_ch *sysc_ch, bool on)
- {
- 	unsigned int sr_bit, reg_offs;
--	int k;
-+	u32 val;
-+	int ret;
- 
- 	if (on) {
- 		sr_bit = SYSCSR_PONENB;
-@@ -79,13 +81,10 @@ static int rcar_sysc_pwr_on_off(const struct rcar_sysc_ch *sysc_ch, bool on)
- 	}
- 
- 	/* Wait until SYSC is ready to accept a power request */
--	for (k = 0; k < SYSCSR_RETRIES; k++) {
--		if (ioread32(rcar_sysc_base + SYSCSR) & BIT(sr_bit))
--			break;
--		udelay(SYSCSR_DELAY_US);
--	}
+-&i2c0 {
+-	ov5640@3c {
+-		compatible = "ovti,ov5640";
+-		reg = <0x3c>;
+-		clocks = <&mclk_cam1>;
+-		clock-names = "xclk";
 -
--	if (k == SYSCSR_RETRIES)
-+	ret = readl_poll_timeout_atomic(rcar_sysc_base + SYSCSR, val,
-+					val & BIT(sr_bit), SYSCSR_DELAY_US,
-+					SYSCSR_TIMEOUT);
-+	if (ret)
- 		return -EAGAIN;
- 
- 	/* Submit power shutoff or power resume request */
-@@ -101,8 +100,7 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
- 	unsigned int chan_mask = BIT(sysc_ch->chan_bit);
- 	unsigned int status;
- 	unsigned long flags;
--	int ret = 0;
--	int k;
-+	int k, ret;
- 
- 	spin_lock_irqsave(&rcar_sysc_lock, flags);
- 
-@@ -145,13 +143,10 @@ static int rcar_sysc_power(const struct rcar_sysc_ch *sysc_ch, bool on)
- 	}
- 
- 	/* Wait until the power shutoff or resume request has completed * */
--	for (k = 0; k < SYSCISR_RETRIES; k++) {
--		if (ioread32(rcar_sysc_base + SYSCISR) & isr_mask)
--			break;
--		udelay(SYSCISR_DELAY_US);
--	}
+-		port {
+-			ov5640_0: endpoint {
+-				bus-width = <8>;
+-				data-shift = <2>;
+-				bus-type = <6>;
+-				pclk-sample = <1>;
+-				remote-endpoint = <&vin0ep>;
+-			};
+-		};
+-	};
+-};
 -
--	if (k == SYSCISR_RETRIES)
-+	ret = readl_poll_timeout_atomic(rcar_sysc_base + SYSCISR, status,
-+					status & isr_mask, SYSCISR_DELAY_US,
-+					SYSCISR_TIMEOUT);
-+	if (ret)
- 		ret = -EIO;
+ &i2c1 {
+ 	pinctrl-0 = <&i2c1_pins>;
+ 	pinctrl-names = "default";
  
- 	iowrite32(isr_mask, rcar_sysc_base + SYSCISCR);
+-	status = "okay";
++	/* status set to "okay" when needed by camera configuration below */
+ 	clock-frequency = <400000>;
+-
+-	ov5640@3c {
+-		compatible = "ovti,ov5640";
+-		reg = <0x3c>;
+-		clocks = <&mclk_cam2>;
+-		clock-names = "xclk";
+-
+-		port {
+-			ov5640_1: endpoint {
+-				bus-width = <8>;
+-				data-shift = <2>;
+-				bus-type = <6>;
+-				pclk-sample = <1>;
+-				remote-endpoint = <&vin1ep>;
+-			};
+-		};
+-	};
+-};
+-
+-&i2c2 {
+-	ov5640@3c {
+-		compatible = "ovti,ov5640";
+-		reg = <0x3c>;
+-		clocks = <&mclk_cam3>;
+-		clock-names = "xclk";
+-
+-		port {
+-			ov5640_2: endpoint {
+-				bus-width = <8>;
+-				data-shift = <2>;
+-				bus-type = <6>;
+-				pclk-sample = <1>;
+-				remote-endpoint = <&vin2ep>;
+-			};
+-		};
+-	};
+ };
+ 
+ &i2c3 {
+ 	pinctrl-0 = <&i2c3_pins>;
+ 	pinctrl-names = "default";
+ 
+-	status = "okay";
++	/* status set to "okay" when needed by camera configuration below */
+ 	clock-frequency = <400000>;
+-
+-	ov5640@3c {
+-		compatible = "ovti,ov5640";
+-		reg = <0x3c>;
+-		clocks = <&mclk_cam4>;
+-		clock-names = "xclk";
+-
+-		port {
+-			ov5640_3: endpoint {
+-				bus-width = <8>;
+-				data-shift = <2>;
+-				bus-type = <6>;
+-				pclk-sample = <1>;
+-				remote-endpoint = <&vin3ep>;
+-			};
+-		};
+-	};
+ };
+ 
+ &pfc {
+@@ -267,6 +195,21 @@ &scifb1 {
+ 	cts-gpios = <&gpio4 17 GPIO_ACTIVE_LOW>;
+ };
+ 
++/*
++ * Below configuration ties VINx endpoints to ov5640/ov7725 camera endpoints
++ *
++ * Uncomment the #include statements to change configuration
++ */
++
++/* 8bit CMOS Camera 1 (J13) */
++#define CAM_PARENT_I2C		i2c0
++#define MCLK_CAM		mclk_cam1
++#define CAM_EP			cam0ep
++#define VIN_EP			vin0ep
++#undef CAM_ENABLED
++#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++
++#ifdef CAM_ENABLED
+ &vin0 {
+ 	/*
+ 	 * Set SW2 switch on the SOM to 'ON'
+@@ -278,13 +221,28 @@ &vin0 {
+ 
+ 	port {
+ 		vin0ep: endpoint {
+-			remote-endpoint = <&ov5640_0>;
++			remote-endpoint = <&cam0ep>;
+ 			bus-width = <8>;
+ 			bus-type = <6>;
+ 		};
+ 	};
+ };
+-
++#endif /* CAM_ENABLED */
++
++#undef CAM_PARENT_I2C
++#undef MCLK_CAM
++#undef CAM_EP
++#undef VIN_EP
++
++/* 8bit CMOS Camera 2 (J14) */
++#define CAM_PARENT_I2C		i2c1
++#define MCLK_CAM		mclk_cam2
++#define CAM_EP			cam1ep
++#define VIN_EP			vin1ep
++#undef CAM_ENABLED
++#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++
++#ifdef CAM_ENABLED
+ &vin1 {
+ 	/* Set SW1 switch on the SOM to 'ON' */
+ 	status = "okay";
+@@ -293,13 +251,29 @@ &vin1 {
+ 
+ 	port {
+ 		vin1ep: endpoint {
+-			remote-endpoint = <&ov5640_1>;
++			remote-endpoint = <&cam1ep>;
+ 			bus-width = <8>;
+ 			bus-type = <6>;
+ 		};
+ 	};
+ };
+ 
++#endif /* CAM_ENABLED */
++
++#undef CAM_PARENT_I2C
++#undef MCLK_CAM
++#undef CAM_EP
++#undef VIN_EP
++
++/* 8bit CMOS Camera 3 (J12) */
++#define CAM_PARENT_I2C		i2c2
++#define MCLK_CAM		mclk_cam3
++#define CAM_EP			cam2ep
++#define VIN_EP			vin2ep
++#undef CAM_ENABLED
++#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++
++#ifdef CAM_ENABLED
+ &vin2 {
+ 	status = "okay";
+ 	pinctrl-0 = <&vin2_pins>;
+@@ -307,14 +281,29 @@ &vin2 {
+ 
+ 	port {
+ 		vin2ep: endpoint {
+-			remote-endpoint = <&ov5640_2>;
++			remote-endpoint = <&cam2ep>;
+ 			bus-width = <8>;
+ 			data-shift = <8>;
+ 			bus-type = <6>;
+ 		};
+ 	};
+ };
+-
++#endif /* CAM_ENABLED */
++
++#undef CAM_PARENT_I2C
++#undef MCLK_CAM
++#undef CAM_EP
++#undef VIN_EP
++
++/* 8bit CMOS Camera 4 (J11) */
++#define CAM_PARENT_I2C		i2c3
++#define MCLK_CAM		mclk_cam4
++#define CAM_EP			cam3ep
++#define VIN_EP			vin3ep
++#undef CAM_ENABLED
++#include "r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi"
++
++#ifdef CAM_ENABLED
+ &vin3 {
+ 	status = "okay";
+ 	pinctrl-0 = <&vin3_pins>;
+@@ -322,9 +311,15 @@ &vin3 {
+ 
+ 	port {
+ 		vin3ep: endpoint {
+-			remote-endpoint = <&ov5640_3>;
++			remote-endpoint = <&cam3ep>;
+ 			bus-width = <8>;
+ 			bus-type = <6>;
+ 		};
+ 	};
+ };
++#endif /* CAM_ENABLED */
++
++#undef CAM_PARENT_I2C
++#undef MCLK_CAM
++#undef CAM_EP
++#undef VIN_EP
+diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi
+new file mode 100644
+index 0000000000000000..70c72ba4fe724a70
+--- /dev/null
++++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ov5640-single.dtsi
+@@ -0,0 +1,32 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * This include file ties a VIN interface with a single ov5640 sensor on
++ * the iWave-RZ/G1H Qseven board development platform connected with the
++ * camera daughter board.
++ *
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
++
++#define CAM_ENABLED	1
++
++&CAM_PARENT_I2C {
++	status = "okay";
++
++	ov5640@3c {
++		compatible = "ovti,ov5640";
++		reg = <0x3c>;
++		clocks = <&MCLK_CAM>;
++		clock-names = "xclk";
++		status = "okay";
++
++		port {
++			CAM_EP: endpoint {
++				bus-width = <8>;
++				data-shift = <2>;
++				bus-type = <6>;
++				pclk-sample = <1>;
++				remote-endpoint = <&VIN_EP>;
++			};
++		};
++	};
++};
 -- 
 2.25.1
 
