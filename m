@@ -2,50 +2,51 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FFFEC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08278C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DFD75239D4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:25:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8D70223C8
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:36:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727187AbhAVKZ3 (ORCPT
+        id S1725988AbhAVKff (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:25:29 -0500
-Received: from mail-qk1-f173.google.com ([209.85.222.173]:37384 "EHLO
-        mail-qk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727973AbhAVKYk (ORCPT
+        Fri, 22 Jan 2021 05:35:35 -0500
+Received: from mail-qk1-f171.google.com ([209.85.222.171]:45329 "EHLO
+        mail-qk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727686AbhAVK1l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Jan 2021 05:24:40 -0500
-Received: by mail-qk1-f173.google.com with SMTP id h22so4606431qkk.4;
-        Fri, 22 Jan 2021 02:24:24 -0800 (PST)
+        Fri, 22 Jan 2021 05:27:41 -0500
+Received: by mail-qk1-f171.google.com with SMTP id r77so4398951qka.12;
+        Fri, 22 Jan 2021 02:27:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=D4xyWvJd0WQhoba1JvK+CVM+ObhZqX1GLAzkWEi51KY=;
-        b=ZzsPuZAj4hAKu4/zWg/6ti+jIDO7hGsh/5ST+AwExtpH7/KHruDIjDlpw3gae7h7P/
-         OKKIdBE1iYZze75GOfPWOZjfQSn9vA4/8yuJcodKCA4tkZabYJOXRVH/T/Qp8nKnltG1
-         jOZu51woZ9T30S7YtZcg0dK3O7Aw2OlzyYl8Byz6eP00tOVdrmn3O3dqCjA4Eu4JLwaN
-         zibt3YQA6ZWL0NlNKaGnX4fJd+U6RgEBWnacQHc3fkfTcgAyF1C8IIn0VVrKTayi0E3p
-         47QzD85nrU05CDUp6cFup14TtNcbWQBFlL3MN0fiuOCPk3G6H2pyLErttvoR3EGsd1I4
-         6MpA==
-X-Gm-Message-State: AOAM532J3MZBP1j6MGStqh5B777A8yL5E1aV8wL1G6MfDdziBcYHA5mS
-        wScZPEBTtqJu5riQ02N8vc9PrZyGroHVPF8yqSI=
-X-Google-Smtp-Source: ABdhPJxP8xuLCKDXPGjecsOw3R++y/Dp+lR7nxfBpnjyU1JcsmSF4+wwAvijTtYt9nn7d7OqTw7cQbLS+PXPW3H+bD8=
-X-Received: by 2002:a37:4c88:: with SMTP id z130mr4041558qka.122.1611311038016;
- Fri, 22 Jan 2021 02:23:58 -0800 (PST)
+        bh=vIhaoWWM2NuvcKtHLoEI/L9Ww4a1tUHzU1E2WQMOo5w=;
+        b=KDeilWXhLdJDNtixRhEP2hRLvuoXPXly9vb7deUsnUKL7K7kVZLHwf95U4lv8+uuBM
+         /dI7BXuA95MxyGyn2pAUIKhApHn8O+dFmhezgLgWgDaMvXC8WXBii1NrkIiysUFDuaZM
+         mT9dg9uMVdgKUUq9OEj1oF/sOyWu5eX/vOjYJQ3eYHca7i+sYkZ0ShRr/6pm6M1YWv3L
+         46o1Z4uo03Lu5ibTPrTRLHuWd05Ro0/1MO1Ce5NnqNrDPxoBgMC7Wvc4Cpniw2/WYQ24
+         knmqG91V9gvNQcuWmOe1nQzVz9eSJUc6t+bMIoqA0lxrOXB7zDoTOMwIlPDyjwdxJO/F
+         ZWqg==
+X-Gm-Message-State: AOAM532hKDS0PU0573mPqbwg4NaMtcL0wYfLw/uJsu9qCEP2bP5fdfa0
+        pXMVtQQglZTx7cISPfyZCPfCNPYpnzFyTbCTyr+3eCN4678=
+X-Google-Smtp-Source: ABdhPJz5gomdyAhwwTrS/cCraJKQYLV1Xstvybuakg5104eF8OEciWtScQ23mGx0NJemupv6WYheBYeYdD4Ct78hpeA=
+X-Received: by 2002:a05:620a:b8c:: with SMTP id k12mr1169848qkh.114.1611311219427;
+ Fri, 22 Jan 2021 02:26:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20210121100619.5653-1-wsa+renesas@sang-engineering.com> <20210121100619.5653-5-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20210121100619.5653-5-wsa+renesas@sang-engineering.com>
+References: <20210121100619.5653-1-wsa+renesas@sang-engineering.com> <20210121100619.5653-6-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20210121100619.5653-6-wsa+renesas@sang-engineering.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 22 Jan 2021 11:23:46 +0100
-Message-ID: <CAMuHMdWTi2_oCbpxewVBzr1fsva1voC9PNE5SU=Y80spgyMcDQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] arm64: dts: renesas: falcon: Add Ethernet-AVB0 support
+Date:   Fri, 22 Jan 2021 11:26:48 +0100
+Message-ID: <CAMuHMdX1PoB-YNXvtr5dFMKu9OE8TdOB43fRfED_wVV6LhRU8g@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] WIP! arm64: dts: renesas: falcon: Add
+ Ethernet-AVB1-5 support
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -58,20 +59,51 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Wolfram,
+
 On Thu, Jan 21, 2021 at 11:06 AM Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
+> PHYs on the subboard could not be reached via remote access. But this is
+> the latest DTS snipplet with some fixes suggested by Geert as a starting
+> point. Not for upstream yet!
+>
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
 > Change since v1:
 >
-> * removed avb1-5 which couldn't be tested
-> * added alias for avb0 so firmware can add MAC address
-> * added custom tx-internal-delay-ps
+> * new patch
+> * removed rxc-skew-ps property
+> * renamed phy-addresses to 0 ('@0')
 > * dropped '_tx' suffix from 'pins_mii' config
+> * added 'okay' status
 > * moved entries to Falcon CPU dtsi
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.12.
+Thanks for the update!
+
+>  .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 160 ++++++++++++++++++
+
+New file r8a779a0-falcon-ether.dtsi?
+
+> +       avb5_pins: avb5 {
+> +               mux {
+> +                       groups = "avb5_link", "avb5_mdio", "avb5_rgmii", "avb5_txcrefclk";
+> +                       function = "avb5";
+> +               };
+> +
+> +               pins_mdio {
+> +                       groups = "avb5_mdio";
+> +                       drive-strength = <21>;
+> +               };
+> +
+> +               ins_mii {
+
+pins_mii
+
+> +                       groups = "avb5_rgmii";
+> +                       drive-strength = <21>;
+> +               };
+> +       };
+> +
 
 Gr{oetje,eeting}s,
 
