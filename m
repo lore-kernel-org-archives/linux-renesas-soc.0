@@ -4,72 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AA7C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 004CAC433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D228622A99
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:36:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA348239EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:44:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727174AbhAVKfw (ORCPT
+        id S1727006AbhAVKZW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:35:52 -0500
-Received: from mail-qv1-f52.google.com ([209.85.219.52]:45018 "EHLO
-        mail-qv1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727908AbhAVKcd (ORCPT
+        Fri, 22 Jan 2021 05:25:22 -0500
+Received: from mail-qk1-f171.google.com ([209.85.222.171]:38995 "EHLO
+        mail-qk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbhAVKRt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Jan 2021 05:32:33 -0500
-Received: by mail-qv1-f52.google.com with SMTP id d11so2382409qvo.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jan 2021 02:32:18 -0800 (PST)
+        Fri, 22 Jan 2021 05:17:49 -0500
+Received: by mail-qk1-f171.google.com with SMTP id k193so4566306qke.6;
+        Fri, 22 Jan 2021 02:17:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eIVeelQ3mqNO4zm82oN04IB1+FI+GAjyZVdOckAwxYM=;
-        b=Eiw7jbg+MHFamkut/bwJceUVZQtSQ2xdcjUsLSCwM1eA5/F85UYHPluplSh1nE/Pxd
-         LzJ7j7Z/3hXfZXp7lPyivz1xvzrCwrlF+Z41SRvW5Nd9F5cc7o/hux5Dy/OhJTw2bp9L
-         HICB8mm9sL7NtAA6nuYXYUAGbG4zLeFBPcvQCEcNS1Gh9aKgibZYc9kTajrffyIaXF8w
-         OkQK4xLVJ2zRJ3/xZWr8D0DiNftXkvQ3hWGFr1TOrmu4FxFMpPEkLFLmlaf9fZGrXDTj
-         QksIZvQRTrti1IXeIVA3YDyXPeRIczIXGgQCC4OJ66sh8eI0DUNIxaH/aAegW00YHgEp
-         /JAQ==
-X-Gm-Message-State: AOAM530gwHShaM7kOHD8OKW/+kcdxwBLmi3ek32iLDH8BGi0Ou7h8tR2
-        h11a6hhMqDO0BR48xGvGbL8b61pkN/GS4AWPHHAQRIgtoJo=
-X-Google-Smtp-Source: ABdhPJx81BMMYbgtge7Jjl5Pq6P+VeAzmzHufsnbg4GKa9GY7gxa37rB1D0rU9b9If3emraImi742a9ApQVODmjRwps=
-X-Received: by 2002:ad4:43ca:: with SMTP id o10mr3845886qvs.25.1611311513082;
- Fri, 22 Jan 2021 02:31:53 -0800 (PST)
+        bh=7zsc6xzux0GCBLlL4UKSB6x9FSfXUZHxkP/Pv0eueKY=;
+        b=TKJjxvAyHCRiIepZ9/Fm33mMUpRAon8BdsdBwhO3XS4BytBNJPhSpNBKSfIBhmsAZx
+         5GyVEAJ3ydur7qW6X2NwWXA+7dvz9mv+81FVUC3qU2fb1c3WEwAhXE9Vm0o7t9O5PWSN
+         Sxhr2KUImS72dox09Puzmr24yKhmyPpnts6Px+373aFNW2lrwDx/8sZL7eprhD5JONH4
+         xfcOArBvloE349G5anQLCZbux6LsZLBcxeJ56RTy7nopZWSCqP5lqIcyeDaq3MLX4QIK
+         DyZrXpHTmo5WcmM9DduvmKsddlkmsfrNXz4lhVSGi+Shf+Zt9LannuGFuQ1il199PbA8
+         80Lw==
+X-Gm-Message-State: AOAM530Ib84Vlh4cUv3CFSgdxUomdXRY9DRXQaiMXL261+aHIULrRWoJ
+        oPvWTOtmTgvggMEzyt7PjFUvKdAuf8Z78K9v5OM=
+X-Google-Smtp-Source: ABdhPJyEtoIqIYr9dpcGXfp0DGUeqfGn7izIr0qNDH8dstFOi1qUddx7S8ySQ4XEN/zPxFI0wMe6UiaxAZnLHgMl2w0=
+X-Received: by 2002:a05:620a:11ad:: with SMTP id c13mr4011390qkk.134.1611310627579;
+ Fri, 22 Jan 2021 02:17:07 -0800 (PST)
 MIME-Version: 1.0
-References: <20210121103830.9575-1-wsa+renesas@sang-engineering.com> <20210121103830.9575-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20210121103830.9575-2-wsa+renesas@sang-engineering.com>
+References: <20210121100619.5653-1-wsa+renesas@sang-engineering.com> <20210121100619.5653-3-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20210121100619.5653-3-wsa+renesas@sang-engineering.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 22 Jan 2021 11:31:41 +0100
-Message-ID: <CAMuHMdV=RYfvf7sJxc_F1d3PUDtQPr0ROfqkTbf5quVaZ0LXqw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm64: dts: renesas: r8a779a0: Add MMC node
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Fri, 22 Jan 2021 11:16:55 +0100
+Message-ID: <CAMuHMdXbnMENy3czKL-+Dgp4M24D3A_HvaiUAasdENvKupRQfg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] clk: renesas: r8a779a0: add clocks for RAVB
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram, Matsuoka-san, Saito-san,
-
-On Thu, Jan 21, 2021 at 11:38 AM Wolfram Sang
+On Thu, Jan 21, 2021 at 11:06 AM Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
-> From: Takeshi Saito <takeshi.saito.xv@renesas.com>
->
-> Add a device node for MMC.
->
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> [wsa: double checked & rebased]
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Change since v1:
+> * use S3D2 as parent clock
 
-ERROR: Missing Signed-off-by: line by nominal patch author 'Takeshi
-Saito <takeshi.saito.xv@renesas.com>'
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk-for-v5.12.
 
 Gr{oetje,eeting}s,
 
