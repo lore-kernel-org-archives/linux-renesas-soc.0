@@ -4,71 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D957EC433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46964C433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97BFC238EE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:14:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07A5A2376F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727437AbhAVKOg (ORCPT
+        id S1727842AbhAVKVQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:14:36 -0500
-Received: from mail-ot1-f49.google.com ([209.85.210.49]:46721 "EHLO
-        mail-ot1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727691AbhAVKLy (ORCPT
+        Fri, 22 Jan 2021 05:21:16 -0500
+Received: from mail-qv1-f41.google.com ([209.85.219.41]:39763 "EHLO
+        mail-qv1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727836AbhAVKUy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Jan 2021 05:11:54 -0500
-Received: by mail-ot1-f49.google.com with SMTP id d1so4545464otl.13;
-        Fri, 22 Jan 2021 02:11:39 -0800 (PST)
+        Fri, 22 Jan 2021 05:20:54 -0500
+Received: by mail-qv1-f41.google.com with SMTP id s6so2374895qvn.6;
+        Fri, 22 Jan 2021 02:20:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qO/k63hdlnhEnZax8qhRJ2aSsKNFiyUqnjEq6FXzBy0=;
-        b=fedvoN4OLQYJSAqidDgVv2fA0DhtC3QM1uw5WVROg1/o5fpmhypfoar9IouNRiz/gK
-         iPD6Exp/Es91WjAlrMOJKn/7toiBUe+yZTyl9qiLfVV5EXaod6xreevbxJrhjAFSnowz
-         iSkTHZeTkK1ygz4TQl5++8Q5RXMEYhdJw/FyComfJ5TflFj1cmI8xWJqSehHJR2lnQUP
-         7PGYrCx+wpOL9N8L4RHoLgWv1YUFxch+axjP81LcmdVgz6K4aegx/ZU63mBs89kiZgt5
-         JPkhMlhJpgM1Lnf+kyAlXSairOc5OGpLOqZ/MF2Lq+h2NFk9sBsqIs2lUYG+HiF0yPcz
-         wBxg==
-X-Gm-Message-State: AOAM53046a1vFqPOLy5FQB2GzAXVZP1AqLr38ajBazkmrAQYnM1vsiyD
-        /Hwa/RotYyIhA/5gFjxUsgtk4ijFJ6XF8Xs38fM=
-X-Google-Smtp-Source: ABdhPJyN08c6Cj8bc52idh2ViP3eyZWobor79dvgcPtf9bxjZ9rGPUTH1CO67b+UjMRT8m9faT5bfc0U7tnJcSQedj0=
-X-Received: by 2002:a05:6830:1f5a:: with SMTP id u26mr2764880oth.250.1611310273810;
- Fri, 22 Jan 2021 02:11:13 -0800 (PST)
+        bh=9pnqYb3QY61gSashZ9AL/GOEj/gUcQuFqNmSe3PAmso=;
+        b=KCTXPDWs6Z0j9G3taXNjX75PQG1HEXUzbxXgvapQYoMf92XhAJb2zS5Tn1RaOLuNMi
+         azNa+e0LyyEYU2WWHnzmHwbSjsmQvWmzicpRG4gPkS6sWHtYP1PhRaJUTPsCI7NeaWnj
+         zZDHlVThBrlGRHow934AOivjhZw6KWFkx2wv+FXc32bIO1v4zRDgyn/OUzfbzQ5s830Y
+         Sb0s1mnSFoK/SI2z65HLwVpwxiaKr+2/nqoEUU0cJTCmasdUQSVbA6E6ltXKUmW4KKW0
+         BI/uDTeO1m8s1YRCvvqtwMB3uS5NU3c9oWX7/tNmVB6rXgIy30+q+1d1cuslvGL+x2dN
+         EsVQ==
+X-Gm-Message-State: AOAM533xlZkG2LCzU9iYQoJJ14zt8x4nFDy4Iv2WMu9uoacXkVjiK+mZ
+        r4gw4Fp4r6iS6dwHK9E6oxobxyDd9ufjrxAPI5BZVfIr
+X-Google-Smtp-Source: ABdhPJx0RyalLmfJx4OSUU4CPsArtw7xqkS3xCQi6kO7AZPnIGmmsalY8GT8lFuXxsRd2HAFLC+6yhORZmUCnWK2kdM=
+X-Received: by 2002:a05:6214:2b2:: with SMTP id m18mr3612576qvv.40.1611310813549;
+ Fri, 22 Jan 2021 02:20:13 -0800 (PST)
 MIME-Version: 1.0
-References: <20210121095420.5023-1-wsa+renesas@sang-engineering.com> <20210121095420.5023-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20210121095420.5023-3-wsa+renesas@sang-engineering.com>
+References: <20210121100619.5653-1-wsa+renesas@sang-engineering.com> <20210121100619.5653-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20210121100619.5653-4-wsa+renesas@sang-engineering.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 22 Jan 2021 11:11:02 +0100
-Message-ID: <CAMuHMdU-QK2xLrOy-OsS=H7tN5da2wrc3TuVKiwZFy0N6ueDtg@mail.gmail.com>
-Subject: Re: [PATCH V2 2/4] arm64: dts: renesas: Add I2C to R8A779A0
+Date:   Fri, 22 Jan 2021 11:20:02 +0100
+Message-ID: <CAMuHMdW6DnUAPimPh16omG1ZwhYDPAQA9wTKFnsvtixu8SF_dA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] arm64: dts: renesas: r8a779a0: Add Ethernet-AVB support
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
+        Tho Vu <tho.vu.wh@renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, Jan 21, 2021 at 10:54 AM Wolfram Sang
+On Thu, Jan 21, 2021 at 11:06 AM Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
-> From: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
+> From: Tho Vu <tho.vu.wh@renesas.com>
 >
-> Add I2C devicetree description to V3U
+> Define the generic parts of Ethernet-AVB device nodes. Only AVB0 was
+> tested because it was the only port with a PHY on current hardware.
 >
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> [wsa: rebased and double checked]
+> Signed-off-by: Tho Vu <tho.vu.wh@renesas.com>
+> [wsa: double checked, rebased, added "internal-delay" properties]
 > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+> Change since v1:
+> * added internal-delay properties
 
-Will queue in renesas-devel for v5.12 as
-"arm64: dts: renesas: r8a779a0: Add I2c nodes".
+Will queue in renesas-devel for v5.12.
 
 Gr{oetje,eeting}s,
 
