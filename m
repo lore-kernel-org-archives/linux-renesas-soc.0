@@ -7,75 +7,67 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C77BAC433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF3BC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8567B2376F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:45:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F6F6222B6
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Jan 2021 10:45:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbhAVKot (ORCPT
+        id S1726652AbhAVKpB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Jan 2021 05:44:49 -0500
-Received: from mail-qt1-f180.google.com ([209.85.160.180]:44920 "EHLO
-        mail-qt1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726880AbhAVKfj (ORCPT
+        Fri, 22 Jan 2021 05:45:01 -0500
+Received: from mail-oi1-f178.google.com ([209.85.167.178]:42715 "EHLO
+        mail-oi1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727314AbhAVKnz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Jan 2021 05:35:39 -0500
-Received: by mail-qt1-f180.google.com with SMTP id r9so3692029qtp.11
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jan 2021 02:35:23 -0800 (PST)
+        Fri, 22 Jan 2021 05:43:55 -0500
+Received: by mail-oi1-f178.google.com with SMTP id x71so5485461oia.9
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Jan 2021 02:43:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=uIs0ctLj6Scyu8rQsE09KeMGGUze7WYd2d4sBHjiuNg=;
-        b=CGyQV8eU7y20iEKEgA1rdFJCBZnRQaAEwlnmRuTAeWKMfpbgfd6phPTL/kPbwBjnS9
-         GKy4jwa0jPNZi7inTBS3c1voeLt96oc9iwsyZxdEgDygXJYLYEH4qnvnK8AgZIQ1shkX
-         EDGD0//vIKr+svygVRb46JTlfCVik9LLHwVPqfWu5RcsHGwcfjbGCUn/YpzvLVpBsjj+
-         9oOYQ/xyHXNnkRLwhSLlpZyMJVK/OcRTk/b15fS2mGscX/E5nkSjBJLlstfGst8dW8NB
-         xLaHzPX1CdEYItfliEsT37XuaPuC2lc4IsXDw9FZ7PjHbuUzvKqn4oEU85zh/LgVuH62
-         UxWQ==
-X-Gm-Message-State: AOAM530hbmbgB959IcgOuEFZpn4BiTRRs74E4bVKoPOYjqP2agwZwaQT
-        poeqbLxmDCpGh+Bhz72nBXTCDOK5MkvlNz1ucI+9Z92Xejk=
-X-Google-Smtp-Source: ABdhPJybL3hYDRNQAz5ULSjdPa/s/hPwV+xkj1HI0ZIqu0MJkYWCEWcYftydqjW2CwKG/DC2I65mJ3g5TNfppJAR1W0=
-X-Received: by 2002:ac8:3986:: with SMTP id v6mr3620431qte.308.1611311697945;
- Fri, 22 Jan 2021 02:34:57 -0800 (PST)
+        bh=fDv4OeKxurboysUj3U4UyOR4jJuQ13MYfUeTwSkxr+E=;
+        b=FVvf3egxckCbuA+EUOgVbm/8C+QF7fKJNR4Eia81qSZoBJNTMkFlyaDaEPFXIJeq6x
+         DbnrkWps+v50wKVHnAkp5L6r121s90v7OujsAjsRsUgz3AGlmKNCcYDlOAvE7rBInRgX
+         2Vo4fKvkn3Sl4G8LyoCYgPZNWjPDSV6epLH6afCBWg3FKZUM11V6Ee926un7ENxglXTV
+         93CsOc6/D7w2ykE0sVyQ1U/HmhqWHe/HyRgrKxtyrFJP6E1o0PLj9McEA4MHLzoVxf9c
+         CHFnuOd2zEwR+aJ+ezqX9Yk1Yb6vhVLDWolMfy5QsBkOPLqnpjt7SYr9UcZP5S4qGEVY
+         lTQA==
+X-Gm-Message-State: AOAM533WPnJG8D7VBWHp2K07qdchc0/lAy2XeekH9VcT7OR/raJ7jYln
+        eAIoQIXmlOob3WEcSTsjyPC0owESSmvdDnZ+kpQ=
+X-Google-Smtp-Source: ABdhPJwsUoesUVWwsn7DQyAtMQ/Y1n62aBW2LeOmnRtV50kIrPtkhsvGARS0GRy5F4dyU9UsOt70RMs/Yq1Eg878o+w=
+X-Received: by 2002:aca:31d5:: with SMTP id x204mr2737532oix.153.1611312192107;
+ Fri, 22 Jan 2021 02:43:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20210121103830.9575-1-wsa+renesas@sang-engineering.com> <20210121103830.9575-3-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20210121103830.9575-3-wsa+renesas@sang-engineering.com>
+References: <20210121110008.15894-1-wsa+renesas@sang-engineering.com> <20210121110008.15894-4-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20210121110008.15894-4-wsa+renesas@sang-engineering.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 22 Jan 2021 11:34:46 +0100
-Message-ID: <CAMuHMdWAA8bw338KsaT7ztnPo3oAWB_RWGSw=Lze11A+3_0D=w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: renesas: falcon: Enable MMC
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Takeshi Saito <takeshi.saito.xv@renesas.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Fri, 22 Jan 2021 11:43:01 +0100
+Message-ID: <CAMuHMdVuPh_t36n33pM_1re9W4VzU8b971AOG8wemQewJtUSjg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/4] arm64: dts: renesas: r8a779a0: Add HSCIF support
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linh Phung <linh.phung.jy@renesas.com>,
+        Wolfram Sang <wsa@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram, Saito-san, Matsuoka-san,
-
-On Thu, Jan 21, 2021 at 11:40 AM Wolfram Sang
+On Thu, Jan 21, 2021 at 12:00 PM Wolfram Sang
 <wsa+renesas@sang-engineering.com> wrote:
-> From: Takeshi Saito <takeshi.saito.xv@renesas.com>
+> From: Linh Phung <linh.phung.jy@renesas.com>
 >
-> Enable MMC on the Falcon board.
+> Define the generic parts of the HSCIF[0-3] device nodes.
 >
-> Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-> [wsa: double checked, rebased, slightly improved, moved to falcon-cpu]
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-ERROR: Missing Signed-off-by: line by nominal patch author 'Takeshi
-Saito <takeshi.saito.xv@renesas.com>'
-
+> Signed-off-by: Linh Phung <linh.phung.jy@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Wolfram Sang <wsa@kernel.org>
 > ---
-> Changes since v1:
-> * improved node names for regulators
-> * moved entries to Falcon CPU dtsi
+> Changes since v1: none
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Thx, will queue in renesas-devel for v5.12.
 
 Gr{oetje,eeting}s,
 
