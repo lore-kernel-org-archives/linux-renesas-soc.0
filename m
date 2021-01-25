@@ -2,113 +2,109 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E3BFC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jan 2021 20:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2917C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jan 2021 20:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BAFA222241
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jan 2021 20:17:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99C2F22241
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jan 2021 20:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732302AbhAZFWO (ORCPT
+        id S1731923AbhAZFWA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Jan 2021 00:22:14 -0500
-Received: from newton.telenet-ops.be ([195.130.132.45]:54858 "EHLO
-        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729567AbhAYOfl (ORCPT
+        Tue, 26 Jan 2021 00:22:00 -0500
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:57453 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727204AbhAYJsv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jan 2021 09:35:41 -0500
-X-Greylist: delayed 405 seconds by postgrey-1.27 at vger.kernel.org; Mon, 25 Jan 2021 09:35:40 EST
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 4DPXG700xNzMsLHT
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 25 Jan 2021 15:25:35 +0100 (CET)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by andre.telenet-ops.be with bizsmtp
-        id M2QZ2400D4C55Sk012QZ6m; Mon, 25 Jan 2021 15:24:34 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1l42nA-000eiW-OS; Mon, 25 Jan 2021 15:24:32 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1l42nA-004P5E-7x; Mon, 25 Jan 2021 15:24:32 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/4] dmaengine: rcar-dmac: Add helpers for clearing DMA channel status
-Date:   Mon, 25 Jan 2021 15:24:30 +0100
-Message-Id: <20210125142431.1049668-4-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210125142431.1049668-1-geert+renesas@glider.be>
-References: <20210125142431.1049668-1-geert+renesas@glider.be>
+        Mon, 25 Jan 2021 04:48:51 -0500
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id 3yJrlSq3WiWRg3yJulfgVM; Mon, 25 Jan 2021 10:38:03 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s2;
+        t=1611567483; bh=cRKWCdXjPiL2XlpvqcIxZhxldG0a5KVzheRGT3caeDc=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=Tnw5b+5VU9gyfGumDmaJ59suhuJbeF8Qw8hHr8rQzUfeLpCtLr7gfVYCtQRWQdfwa
+         2jAWacX95PAvpfOipK/W+XiRYtfBlDzoGuhmuS8Z+WWOrG2VLxqgchyPhfcKaecog8
+         sClpY7Voh7IMRynN6yPN12CRZz7ORtkBoQQSQDhHRpMETHqxByUTAytdnaJnau+YjX
+         rvHmPpakafKkPjrJxrKZQlkaKYNLpDBmLYBmPAt8bKnf4uL3HWs8PVK20Vbmd64rg3
+         Nf9xNeEm6vA/GrXoRgwZ8UzG76jmSMUKY21miNOWR9ulShSj3E7eqt6GFeBYWLzyGS
+         boGCeYwkF4iFg==
+Subject: Re: [PATCH v2 3/4] rcar-vin: Stop stream when subdevice signal EOS
+To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+References: <20210115002148.4079591-1-niklas.soderlund+renesas@ragnatech.se>
+ <20210115002148.4079591-4-niklas.soderlund+renesas@ragnatech.se>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <9d24ffee-120b-51af-cce0-089b96e9e0ed@xs4all.nl>
+Date:   Mon, 25 Jan 2021 10:37:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 MIME-Version: 1.0
+In-Reply-To: <20210115002148.4079591-4-niklas.soderlund+renesas@ragnatech.se>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4xfPknFU8MCKRNfDUhfhxQLihWHdtq9q27KJxMMb610mH0m+9NbOeP3vn9tYMRh16RHRvFlolWtBZqXZ1RmOaPPDBWcndIXSEougffh7ibO54W/AzaDdwL
+ dtkZzOnpKQE9Gkv5SkfzOGWiUDwu7thjcxljieTyBdOXww8q5z2g+p3zm9Zy2VaB8cVcjQzFv3LdE/xc+WGO3dEKIiWI0VuWsW7ep9sse/ayjPmiismj1nYu
+ 0DQEdNhc0CxpA9kPMOoXzNgmm/B1CR4F/SJQ/MecGFBgqxpn6GaOcPxkn+b3GcxmFDtonSfRAHP+6s8bxTWfnKxIKX4pncETb4EFwTvaB00=
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Extract the code to clear the status of one or all channels into their
-own helpers, to prepare for the different handling of the R-Car V3U SoC.
+On 15/01/2021 01:21, Niklas Söderlund wrote:
+> When a subdevice signals end of stream stop the VIN in addition to
+> informing user-space of the event.
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> ---
+>  drivers/media/platform/rcar-vin/rcar-v4l2.c | 16 +++++++++++++++-
+>  1 file changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-v4l2.c b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> index 457a65bf6b664f05..176eae2dd5151ac9 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-v4l2.c
+> @@ -969,9 +969,23 @@ void rvin_v4l2_unregister(struct rvin_dev *vin)
+>  static void rvin_notify_video_device(struct rvin_dev *vin,
+>  				     unsigned int notification, void *arg)
+>  {
+> +	const struct v4l2_event *event;
+> +
+>  	switch (notification) {
+>  	case V4L2_DEVICE_NOTIFY_EVENT:
+> -		v4l2_event_queue(&vin->vdev, arg);
+> +		event = arg;
+> +
+> +		switch (event->type) {
+> +		case V4L2_EVENT_EOS:
+> +			rvin_stop_streaming(vin);
+> +			v4l2_info(&vin->v4l2_dev,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
----
- drivers/dma/sh/rcar-dmac.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+Can you make this v4l2_dbg to avoid polluting the kernel log?
 
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 537550b4121bbc22..7a0f802c61e5152d 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -336,6 +336,17 @@ static void rcar_dmac_chan_write(struct rcar_dmac_chan *chan, u32 reg, u32 data)
- 		writel(data, chan->iomem + reg);
- }
- 
-+static void rcar_dmac_chan_clear(struct rcar_dmac *dmac,
-+				 struct rcar_dmac_chan *chan)
-+{
-+	rcar_dmac_write(dmac, RCAR_DMACHCLR, BIT(chan->index));
-+}
-+
-+static void rcar_dmac_chan_clear_all(struct rcar_dmac *dmac)
-+{
-+	rcar_dmac_write(dmac, RCAR_DMACHCLR, dmac->channels_mask);
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Initialization and configuration
-  */
-@@ -451,7 +462,7 @@ static int rcar_dmac_init(struct rcar_dmac *dmac)
- 	u16 dmaor;
- 
- 	/* Clear all channels and enable the DMAC globally. */
--	rcar_dmac_write(dmac, RCAR_DMACHCLR, dmac->channels_mask);
-+	rcar_dmac_chan_clear_all(dmac);
- 	rcar_dmac_write(dmac, RCAR_DMAOR,
- 			RCAR_DMAOR_PRI_FIXED | RCAR_DMAOR_DME);
- 
-@@ -1566,7 +1577,7 @@ static irqreturn_t rcar_dmac_isr_channel(int irq, void *dev)
- 		 * because channel is already stopped in error case.
- 		 * We need to clear register and check DE bit as recovery.
- 		 */
--		rcar_dmac_write(dmac, RCAR_DMACHCLR, 1 << chan->index);
-+		rcar_dmac_chan_clear(dmac, chan);
- 		rcar_dmac_chcr_de_barrier(chan);
- 		reinit = true;
- 		goto spin_lock_end;
--- 
-2.25.1
+Regards,
+
+	Hans
+
+> +				  "Subdevice signaled end of stream, stopping.\n");
+> +			break;
+> +		default:
+> +			break;
+> +		}
+> +
+> +		v4l2_event_queue(&vin->vdev, event);
+>  		break;
+>  	default:
+>  		break;
+> 
 
