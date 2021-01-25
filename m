@@ -2,92 +2,86 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2403C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Jan 2021 08:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D9FC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Jan 2021 09:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 944EB22CF6
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Jan 2021 08:11:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E37522E03
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 25 Jan 2021 09:02:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbhAYIJM (ORCPT
+        id S1725771AbhAYI5y (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 25 Jan 2021 03:09:12 -0500
-Received: from www.zeus03.de ([194.117.254.33]:50422 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727243AbhAYIAX (ORCPT
+        Mon, 25 Jan 2021 03:57:54 -0500
+Received: from mail-oo1-f51.google.com ([209.85.161.51]:46900 "EHLO
+        mail-oo1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725984AbhAYImu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 25 Jan 2021 03:00:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=9wPIw0rzjWZi/8
-        ymCQjoYEb19bczxKoJx3Rd627F0w4=; b=nczvnkV2y40RC+T8V8aw3CNbqPFXz+
-        zAr1/hlnBu63x7+Scwljrgl8yz5cKYntfKbt7BOg9CAgFHGEbTh+n5Qe2YT4mTCc
-        FA1qIqa4mzTQhg2X7xP1Bs4RmjU2+pt+o6TUD5ydXCk21Fz1uCw+g1u9BbcnwZgS
-        V1Gy1xWhtFWf4=
-Received: (qmail 3246842 invoked from network); 25 Jan 2021 08:58:48 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 Jan 2021 08:58:48 +0100
-X-UD-Smtp-Session: l3s3148p1@hZBk6LS5etJUhs5S
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Takeshi Saito <takeshi.saito.xv@renesas.com>,
-        Koji Matsuoka <koji.matsuoka.xm@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 1/2] arm64: dts: renesas: r8a779a0: Add MMC node
-Date:   Mon, 25 Jan 2021 08:58:44 +0100
-Message-Id: <20210125075845.3864-2-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.28.0
-In-Reply-To: <20210125075845.3864-1-wsa+renesas@sang-engineering.com>
-References: <20210125075845.3864-1-wsa+renesas@sang-engineering.com>
+        Mon, 25 Jan 2021 03:42:50 -0500
+Received: by mail-oo1-f51.google.com with SMTP id n127so3079760ooa.13;
+        Mon, 25 Jan 2021 00:42:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hiUJc/HdQm/xO1vbpPKcLW9aGOAJmDPSBwho7Vc1Vvo=;
+        b=X5mk8mcNrOSfNlO6pnwBFWN+OMwgK/AslZ75JVOD0t8Zn+mqHOSWx46xSNMt39CUr8
+         TTAuJTXBxA7JP7FT/JCdX+7WecJfJHJJrwAi7x+KL9gUGV37XhmVVH2g0hCZqKfshlql
+         50aQXxiiRYUl5hieptZ46Qp04lVDnZW2LxdfPMCvrD18vZti5ui/J4CCWlw51FU4FxSY
+         Cta+bqLNJeUeYlFkw5a6vpMX5M+r5pubQKiKpnyCDmd2bxajh11W0qW45UHRS+vI2NT4
+         ShQQCXWro4IpjPEW4e6AuivkxV7LV1e4XqHH+OkfAIGPb01a/DFEESuImpwReoiyolf9
+         wqFQ==
+X-Gm-Message-State: AOAM5314sYRS3bPCB6Zp4X2r2NM2r4eFoNJWDyUCL8TDchChz9EV54Y9
+        S1Y0pAS9ES9G3xhRuBcuk2b0epEDV0bWSfKvN9u+JXZ+
+X-Google-Smtp-Source: ABdhPJypBNe753D1tSXL7zrIq5K8wvq7SGNoPpWkP+tJo7lzRLWoSlBhA+bakJXgepB3QEIcn+vKD5ghu3CoO1Udifs=
+X-Received: by 2002:a05:6830:15cc:: with SMTP id j12mr946904otr.145.1611563479678;
+ Mon, 25 Jan 2021 00:31:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210123034428.2841052-1-swboyd@chromium.org> <20210123034428.2841052-2-swboyd@chromium.org>
+In-Reply-To: <20210123034428.2841052-2-swboyd@chromium.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 25 Jan 2021 09:30:58 +0100
+Message-ID: <CAMuHMdVVrkGX3pKFdTMqZYWdtFvy0Y0TcvB0UJoQ_f=NFkh6uQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] media: renesas-ceu: Use of_device_get_match_data()
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Rob Herring <robh@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Takeshi Saito <takeshi.saito.xv@renesas.com>
+On Sat, Jan 23, 2021 at 4:44 AM Stephen Boyd <swboyd@chromium.org> wrote:
+> This driver can use the replacement API instead of calling
+> of_match_device() and then dereferencing the pointer that is returned.
+> This nicely avoids referencing the match table when it is undefined with
+> configurations where CONFIG_OF=n.
+>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-Add a device node for MMC.
-
-Signed-off-by: Takeshi Saito <takeshi.saito.xv@renesas.com>
-Signed-off-by: Koji Matsuoka <koji.matsuoka.xm@renesas.com>
-[wsa: double checked & rebased]
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
 
-Changes since v2: added tags
+Gr{oetje,eeting}s,
 
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+                        Geert
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-index 4671a5840ae1..45b4ea1965d4 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-@@ -816,6 +816,18 @@ dmac2: dma-controller@e7351000 {
- 			dma-channels = <8>;
- 		};
- 
-+		mmc0: mmc@ee140000 {
-+			compatible = "renesas,sdhi-r8a779a0",
-+				     "renesas,rcar-gen3-sdhi";
-+			reg = <0 0xee140000 0 0x2000>;
-+			interrupts = <GIC_SPI 236 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 706>;
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets = <&cpg 706>;
-+			max-frequency = <200000000>;
-+			status = "disabled";
-+		};
-+
- 		gic: interrupt-controller@f1000000 {
- 			compatible = "arm,gic-v3";
- 			#interrupt-cells = <3>;
 -- 
-2.28.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
