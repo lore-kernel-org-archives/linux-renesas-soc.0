@@ -2,123 +2,106 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CD52C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jan 2021 11:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB327C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jan 2021 13:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E01FB23104
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jan 2021 11:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AA2323101
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 26 Jan 2021 13:03:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404860AbhAZLGY (ORCPT
+        id S2391769AbhAZNDi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Jan 2021 06:06:24 -0500
-Received: from mail-ot1-f54.google.com ([209.85.210.54]:45847 "EHLO
-        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726469AbhAZLFJ (ORCPT
+        Tue, 26 Jan 2021 08:03:38 -0500
+Received: from www.zeus03.de ([194.117.254.33]:56214 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392388AbhAZND2 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Jan 2021 06:05:09 -0500
-Received: by mail-ot1-f54.google.com with SMTP id n42so15786804ota.12
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Jan 2021 03:04:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wra+m2uskOa6FZ1lEQnpLyA+vPgYgZTL6cRsChTTktg=;
-        b=Vck43lKB670XIPwLPJYrUpAvIhaeaZPuVv9zKtb1rNPQDli2L+OOnwPSMky77z/s9M
-         hWx1vePktMqybbYN+nlNxfI6d+KKFZC2lpEOcsERWEM+7MzrTVe8we86gj1qCWtrd3Ql
-         riP3EWXpWhU0U9pFyF66mANBFqlE1mKgHBmMQgs7RLkSyHX/sIuqMy3grt5Dk7VorWvn
-         m6NGcbV234V0sTh6B/+UCIIZm/3YCQM2+aR60k0v7JlQrK6qK8vjjKxLy1PlecuwFP5y
-         vX1iWG/wYNJljjhM7JrvcTNlQ/3KIoXR5ij0v8btN6pNs7M1RJtDJhKlGvoCJHoDUN2Q
-         U1vQ==
-X-Gm-Message-State: AOAM533FYpNh98wiOqOufMV8dt7PBaOiM6GflWtpPuAuHFRUJ/hyWV9o
-        9SQBLKD0ZjAxy31x+wKOsd3rB6UC3QHdXtHemOQ=
-X-Google-Smtp-Source: ABdhPJxyvQpBn0h14th2G/gWcLUKW+IopXdAdD6V/eSpHxZOZC3/PuBW8DqrgtjUgrCem6DfothtgMy5yT4ACGzorio=
-X-Received: by 2002:a9d:c01:: with SMTP id 1mr3522535otr.107.1611659067702;
- Tue, 26 Jan 2021 03:04:27 -0800 (PST)
+        Tue, 26 Jan 2021 08:03:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=OXxuBB+uonFFfiiqu3sIMkGZ4ODC
+        F6W949PQcK+5J/0=; b=j8e74OLV25WH52PTkrwGGcT7j59MWHDPOrdtzNXA+D9s
+        kr6pIB2MOirRPQBsIASLVtPnGvOdmZ9Kj9l19EMp8odnV7Scr+WPjiMEKKOzMKFK
+        +XSqBLYrJwVYBKC6JhR7x6sYhg3mmnndN+18+7OkST3B6qcOw1OUEVbKYKfI2sE=
+Received: (qmail 3724474 invoked from network); 26 Jan 2021 14:02:44 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jan 2021 14:02:44 +0100
+X-UD-Smtp-Session: l3s3148p1@2VQCRc25EOsgAwDPXw95ATgah4/slKgO
+Date:   Tue, 26 Jan 2021 14:02:40 +0100
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm: smp: remove unused variable
+Message-ID: <20210126130240.GA2413@kunai>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Marc Zyngier <maz@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20201228120147.59387-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdWD-8YxdrTmaTW7YTOFj+8hHM5LvegnC274QOTOO_gXcg@mail.gmail.com>
+ <20210126104155.GF1551@shell.armlinux.org.uk>
 MIME-Version: 1.0
-References: <20210121144321.GA2101@kunai>
-In-Reply-To: <20210121144321.GA2101@kunai>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 26 Jan 2021 12:04:16 +0100
-Message-ID: <CAMuHMdV=r79KiCAzLF-vrYkGGu7bJP66CgNo2k-UyE0JQh2gZA@mail.gmail.com>
-Subject: Re: [PULL REQUEST] renesas/v3u/devel-v2 for renesas drivers
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
+Content-Disposition: inline
+In-Reply-To: <20210126104155.GF1551@shell.armlinux.org.uk>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
 
-On Thu, Jan 21, 2021 at 3:43 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> here is my updated v3u devel branch for renesas-drivers. It is based on
-> our agreed base, so quite some patches from the previous version are
+--fUYQa+Pmc3FrFX/N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Oops. When discussing this, I thought you were looking for a good base
-for development/testing, not for submitting ;-)
+Hi Russell,
 
-> already upstream. For the remaining ones, all review comments have been
-> addressed, and the patches have been resent. Most binding doc updates
-> are in -next meanwhile. The watchdog patches have been reviewed by
-> Guenter. The rest is mainly your realm :) There are some debugging
-> patches in there which I left in place.
->
-> Please pull.
->
-> Kind regards,
->
->    Wolfram
->
->
-> The following changes since commit 748c9c1c5e7d00fe6d1e5d47140e4492d7e63719:
->
->   Merge branch 'topic/r8a779a0-dt-msiof-v2' into renesas-drivers (2021-01-12 12:36:54 +0100)
->
-> are available in the Git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git renesas/v3u/devel-v2
->
-> for you to fetch changes up to 4a1e26c947d213b717ee6c845dc922b1102305ef:
->
->   HACK: make hscif0 console (2021-01-21 11:41:52 +0100)
+> Those who cause breakage really should be the ones to look at patches
+> that fix their breakage.
 
-Not to be included.
+Does it mean you want an explicit ack from Thomas or that it should go
+via his tree?
 
-> Wolfram Sang (18):
->       dt-bindings: watchdog: renesas,wdt: add r8a779a0 (V3U) support
->       WIP soc: v3u: allow WDT reset
+> The way patches get applied is if they end up in my patch system... if
+> they don't make it there, they don't get applied.
 
-This is nice to have, for now.
+The patch itself is here:
 
->       arm64: proper comment formatting in reboot handler
->       watchdog: renesas_wdt: don't sleep in atomic context
->       watchdog: renesas_wdt: add grace period before rebooting
+https://www.armlinux.org.uk/developer/patches/viewpatch.php?id=9047/1
 
-This is basically your "renesas/v3u/wdt-v2" branch.
+All the best,
 
->       v3u: enable other I2C busses for testing
+   Wolfram
 
-Not to be included.
 
-Due to the amount of conflicts between the old versions in your base,
-and the newer accepted versions, and due to the unwanted commits, I'm
-cherry-picking the top 5 commits of your "renesas/v3u/wdt-v2" branch
-instead.
+--fUYQa+Pmc3FrFX/N
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Gr{oetje,eeting}s,
+-----BEGIN PGP SIGNATURE-----
 
-                        Geert
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmAQEuwACgkQFA3kzBSg
+KbZAIBAAr63yxTapO/ktMY97kQJP0fLoFybC1wXuKNntVBxv+EKRJouOkJ0MSsM0
+FJyFgwQUlL2a/zdza9kb/+9nrC9jYT2GMmbN4nGxZnu8VhwT4L4d/AOZy+0u03VG
+ZQ0KRqjKpy08BtXgf9nC1nU21wGPyCs1gXVf0cHj9GupA0QN1jz1v+AZk1+s4JHe
+vAIDnM8naaV/a3uSMBhfREnKkpBicIZ/kAhscutw3SV8dRW+y5N4UPpkLmnfOTEE
+BJJOOgeb3a+bUV4ICoCz9P2F2Lmrn73g9pJDajaDlV0TzKn4DTb/mwes4Y/f4eaf
+h2do84ZEPJellS8J+b5TsiKlACSMV9a4y7l1gK+HRDqmNIxqroVEo6Kq5cUFM3fg
+gfB5w3s9fk/9Fvf1RcSbKxCQRYiEzRL1mZdgNLrxKn0fnyuMcyrP+ZygHFoicU+C
+nl0Z9oOpQd72+CZyz7dYBcpr7h8D6NZBKCyrjf+MTX4wnmFLqJBN/6wy+dGCQSJ/
+PZ8CBZKbtsruCw5+0DeZ+0Uwjhf8dC5EkVIjqDCtpY/hDl7ytB73Ilh2IaeX+2GT
+HA8IsAZfFupWUJeMcS7oZg3k5N8YNAqeNxvpMcWYpEf0gq67dM+HEqJ8KdCpqWx7
+np++lpuXpOM7GCq4+YQCKZpKQPuhxE531KXZRlXGZaHBYD8Nrq4=
+=K4YT
+-----END PGP SIGNATURE-----
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--fUYQa+Pmc3FrFX/N--
