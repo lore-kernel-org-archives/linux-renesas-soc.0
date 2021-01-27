@@ -2,321 +2,109 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1C8CC433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 14:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61531C433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 14:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9677720853
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 14:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27A21206C2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 14:25:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232633AbhA0OVx (ORCPT
+        id S234223AbhA0OYs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Jan 2021 09:21:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42582 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231277AbhA0OV3 (ORCPT
+        Wed, 27 Jan 2021 09:24:48 -0500
+Received: from mail-ot1-f54.google.com ([209.85.210.54]:44006 "EHLO
+        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234139AbhA0OYM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Jan 2021 09:21:29 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AF21C06174A
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 27 Jan 2021 06:20:43 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by baptiste.telenet-ops.be with bizsmtp
-        id MqLe240084C55Sk01qLeUd; Wed, 27 Jan 2021 15:20:39 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1l4lgU-0018sw-Hv; Wed, 27 Jan 2021 15:20:38 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1l4ksG-008TOt-Qe; Wed, 27 Jan 2021 14:28:44 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] [RFC] dt-bindings: power: sysc-remobile: Convert to json-schema
-Date:   Wed, 27 Jan 2021 14:28:40 +0100
-Message-Id: <20210127132840.2019595-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Wed, 27 Jan 2021 09:24:12 -0500
+Received: by mail-ot1-f54.google.com with SMTP id v1so1787943ott.10;
+        Wed, 27 Jan 2021 06:23:57 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZAFFdaTWcCoeAOYAjt5tZLCszT2OLPYW8upnvcx53i8=;
+        b=ZuOv8t/dIaHJS3rY4iIAAiMN6UzN2q2Bc1V5Dnpit+9M95YJhhQ1AaZBc7O8uwjDRr
+         n5Ysyy1SWIqKa+pPJar2cURBH3LCygXfIFmEN9RGZcDE8Jm43EvkJtvw0W82axLOjCs+
+         9cKyfQ+C0e3G3vXmv53RTD/A7aY+5XuOnF0RDN+JmmQUnle+bGalQfB0yWChd+WxEU2/
+         NGenLqaApqDBzkXOn7lfQ3thW/ZlBr6IeqJfRA2NQYt80raUwzA/SVrkjCX02VaO5aJl
+         l0jzTqk5ByZrVkoXy3FlV3WZAT/2fpOiBRP6KHw/YR51gG9D6bBzZ4SyWnPPa9QUCztt
+         Th9w==
+X-Gm-Message-State: AOAM5317Dmw4pQz9S2RQ7QzRpW+LHUrymkC/+8OBDNatWBn5hBLm3G55
+        PZlWr9Hj8ESJcMksYEJfTjX9BH830rd6PpLS8YE=
+X-Google-Smtp-Source: ABdhPJzz2MgeDqoR1lGnBvgELfIi+ixNL6+aGbddVY3mb6uoC0tuFESbi5l23JXRUhkGnrSqVZ+OpKErc4lVKhISK44=
+X-Received: by 2002:a05:6830:15cc:: with SMTP id j12mr7861017otr.145.1611757410154;
+ Wed, 27 Jan 2021 06:23:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210126163955.1933893-1-geert+renesas@glider.be> <1611756011.227921.1429689.nullmailer@robh.at.kernel.org>
+In-Reply-To: <1611756011.227921.1429689.nullmailer@robh.at.kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 27 Jan 2021 15:23:19 +0100
+Message-ID: <CAMuHMdV9xeH6_XkUDm4DVek468xY53P8PX2Y9HCU13b7P04ZAw@mail.gmail.com>
+Subject: Re: [PATCH v3] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
+To:     Rob Herring <robh@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert the Renesas R-Mobile System Controller (SYSC) Device Tree
-binding documentation to json-schema.
+Hi Rob,
 
-Document missing properties.
-Drop consumer example, as it does not belong here.
+On Wed, Jan 27, 2021 at 3:00 PM Rob Herring <robh@kernel.org> wrote:
+> On Tue, 26 Jan 2021 17:39:55 +0100, Geert Uytterhoeven wrote:
+> >   - Remove unneeded reference for "idt,slew-percent", as vendor specific
+> >     properties having a standard unit suffix don't need a type,
+> >   - Add missing "additionalProperties: false" for subnodes, to catch
+> >     typos in properties,
+> >   - Fix property names in example.
+> >
+> > Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > This depends on "[PATCH dt-schema 0/2] dt-schema: Add percentage"
+> > https://lore.kernel.org/r/20210126162756.1932692-1-geert+renesas@glider.be
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Marked RFC, as it does not check deeper levels than the first level of
-the "pm-domains" subnode.
+>
+> My bot found errors running 'make dt_binding_check' on your patch:
+>
+> yamllint warnings/errors:
+>
+> dtschema/dtc warnings/errors:
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml: patternProperties:^OUT[1-4]$:properties:idt,slew-percent: 'oneOf' conditional failed, one must be fixed:
+>         'type' is a required property
+>         Additional properties are not allowed ('enum' was unexpected)
+>         /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml: patternProperties:^OUT[1-4]$:properties:idt,slew-percent: 'oneOf' conditional failed, one must be fixed:
+>                 '$ref' is a required property
+>                 'allOf' is a required property
+>         80 is not of type 'string'
+>         85 is not of type 'string'
+>         90 is not of type 'string'
+>         100 is not of type 'string'
+> /builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml: ignoring, error in schema: patternProperties: ^OUT[1-4]$: properties: idt,slew-percent
+> warning: no schema found in file: ./Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
 
-I think the reference in
+Yep, your bot didn't take into account the dependencies mentioned above ;-)
 
-    additionalProperties:
-	$ref: "#/patternProperties"
+Gr{oetje,eeting}s,
 
-should become "#/patternProperties/0/additionalProperties", but that
-gives:
+                        Geert
 
-    Unresolvable JSON pointer: 'patternProperties/0/additionalProperties'
-
-https://opis.io/json-schema/1.x/pointers.html taught me about relative
-SJON pointers, but "2/additionalProperties" and "2/0" fail with
-
-    Unknown file referenced: [Errno 2] No such file or directory: 'dt-schema/dtschema/schemas/power/2/additionalProperties'
-    Unknown file referenced: [Errno 2] No such file or directory: 'dt-schema/dtschema/schemas/power/2/0'
-
-Anyone with a clue?
-
-Thanks!
----
- .../bindings/power/renesas,sysc-rmobile.txt   | 100 ---------------
- .../bindings/power/renesas,sysc-rmobile.yaml  | 117 ++++++++++++++++++
- 2 files changed, 117 insertions(+), 100 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/power/renesas,sysc-rmobile.txt
- create mode 100644 Documentation/devicetree/bindings/power/renesas,sysc-rmobile.yaml
-
-diff --git a/Documentation/devicetree/bindings/power/renesas,sysc-rmobile.txt b/Documentation/devicetree/bindings/power/renesas,sysc-rmobile.txt
-deleted file mode 100644
-index 49aba15dff8b7e4d..0000000000000000
---- a/Documentation/devicetree/bindings/power/renesas,sysc-rmobile.txt
-+++ /dev/null
-@@ -1,100 +0,0 @@
--DT bindings for the Renesas R-Mobile System Controller
--
--== System Controller Node ==
--
--The R-Mobile System Controller provides the following functions:
--  - Boot mode management,
--  - Reset generation,
--  - Power management.
--
--Required properties:
--- compatible: Should be "renesas,sysc-<soctype>", "renesas,sysc-rmobile" as
--	      fallback.
--	      Examples with soctypes are:
--		- "renesas,sysc-r8a73a4" (R-Mobile APE6)
--		- "renesas,sysc-r8a7740" (R-Mobile A1)
--		- "renesas,sysc-sh73a0" (SH-Mobile AG5)
--- reg: Two address start and address range blocks for the device:
--         - The first block refers to the normally accessible registers,
--         - the second block refers to the registers protected by the HPB
--	   semaphore.
--
--Optional nodes:
--- pm-domains: This node contains a hierarchy of PM domain nodes, which should
--  match the Power Area Hierarchy in the Power Domain Specifications section of
--  the device's datasheet.
--
--
--== PM Domain Nodes ==
--
--Each of the PM domain nodes represents a PM domain, as documented by the
--generic PM domain bindings in
--Documentation/devicetree/bindings/power/power-domain.yaml.
--
--The nodes should be named by the real power area names, and thus their names
--should be unique.
--
--Required properties:
--  - #power-domain-cells: Must be 0.
--
--Optional properties:
--- reg: If the PM domain is not always-on, this property must contain the bit
--       index number for the corresponding power area in the various Power
--       Control and Status Registers. The parent's node must contain the
--       following two properties:
--	 - #address-cells: Must be 1,
--	 - #size-cells: Must be 0.
--       If the PM domain is always-on, this property must be omitted.
--
--
--Example:
--
--This shows a subset of the r8a7740 PM domain hierarchy, containing the
--C5 "always-on" domain, 2 of its subdomains (A4S and A4SU), and the A3SP domain,
--which is a subdomain of A4S.
--
--	sysc: system-controller@e6180000 {
--		compatible = "renesas,sysc-r8a7740", "renesas,sysc-rmobile";
--		reg = <0xe6180000 0x8000>, <0xe6188000 0x8000>;
--
--		pm-domains {
--			pd_c5: c5 {
--				#address-cells = <1>;
--				#size-cells = <0>;
--				#power-domain-cells = <0>;
--
--				pd_a4s: a4s@10 {
--					reg = <10>;
--					#address-cells = <1>;
--					#size-cells = <0>;
--					#power-domain-cells = <0>;
--
--					pd_a3sp: a3sp@11 {
--						reg = <11>;
--						#power-domain-cells = <0>;
--					};
--				};
--
--				pd_a4su: a4su@20 {
--					reg = <20>;
--					#power-domain-cells = <0>;
--				};
--			};
--		};
--	};
--
--
--== PM Domain Consumers ==
--
--Hardware blocks belonging to a PM domain should contain a "power-domains"
--property that is a phandle pointing to the corresponding PM domain node.
--
--Example:
--
--	tpu: pwm@e6600000 {
--		compatible = "renesas,tpu-r8a7740", "renesas,tpu";
--		reg = <0xe6600000 0x100>;
--		clocks = <&mstp3_clks R8A7740_CLK_TPU0>;
--		power-domains = <&pd_a3sp>;
--		#pwm-cells = <3>;
--	};
-diff --git a/Documentation/devicetree/bindings/power/renesas,sysc-rmobile.yaml b/Documentation/devicetree/bindings/power/renesas,sysc-rmobile.yaml
-new file mode 100644
-index 0000000000000000..2081d8c59b91beee
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/renesas,sysc-rmobile.yaml
-@@ -0,0 +1,117 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/power/renesas,sysc-rmobile.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Renesas R-Mobile System Controller
-+
-+maintainers:
-+  - Geert Uytterhoeven <geert+renesas@glider.be>
-+  - Magnus Damm <magnus.damm@gmail.com>
-+
-+description: |
-+  The R-Mobile System Controller provides the following functions:
-+    - Boot mode management,
-+    - Reset generation,
-+    - Power management.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,sysc-r8a73a4    # R-Mobile APE6
-+          - renesas,sysc-r8a7740    # R-Mobile A1
-+          - renesas,sysc-sh73a0     # SH-Mobile AG5
-+      - const: renesas,sysc-rmobile # Generic SH/R-Mobile
-+
-+  reg:
-+    items:
-+      - description: Normally accessible register block
-+      - description: Register block protected by the HPB semaphore
-+
-+required:
-+  - compatible
-+  - reg
-+
-+patternProperties:
-+  "^pm-domains$":
-+    type: object
-+    description: |
-+      This node contains a hierarchy of PM domain nodes, which should match the
-+      Power Area Hierarchy in the Power Domain Specifications section of the
-+      device's datasheet.
-+
-+    properties:
-+      '#address-cells':
-+        const: 1
-+
-+      '#size-cells':
-+        const: 0
-+
-+    additionalProperties:
-+      type: object
-+      description:
-+        PM domain node representing a PM domain.  This node hould be named by
-+        the real power area names, and thus its names should be unique.
-+
-+      properties:
-+        '#address-cells':
-+          const: 1
-+
-+        '#size-cells':
-+          const: 0
-+
-+        reg:
-+          maxItems: 1
-+          description:
-+            If the PM domain is not always-on, this property must contain the
-+            bit index number for the corresponding power area in the various
-+            Power Control and Status Registers.
-+            If the PM domain is always-on, this property must be omitted.
-+
-+        '#power-domain-cells':
-+          const: 0
-+
-+      required:
-+        - '#power-domain-cells'
-+
-+      additionalProperties:
-+        $ref: "#/patternProperties"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    // This shows a subset of the r8a7740 PM domain hierarchy, containing the
-+    // C5 "always-on" domain, 2 of its subdomains (A4S and A4SU), and the A3SP
-+    // domain, which is a subdomain of A4S.
-+    sysc: system-controller@e6180000 {
-+            compatible = "renesas,sysc-r8a7740", "renesas,sysc-rmobile";
-+            reg = <0xe6180000 0x8000>, <0xe6188000 0x8000>;
-+
-+            pm-domains {
-+                    pd_c5: c5 {
-+                            #address-cells = <1>;
-+                            #size-cells = <0>;
-+                            #power-domain-cells = <0>;
-+
-+                            pd_a4s: a4s@10 {
-+                                    reg = <10>;
-+                                    #address-cells = <1>;
-+                                    #size-cells = <0>;
-+                                    #power-domain-cells = <0>;
-+
-+                                    pd_a3sp: a3sp@11 {
-+                                            reg = <11>;
-+                                            #power-domain-cells = <0>;
-+                                    };
-+                            };
-+
-+                            pd_a4su: a4su@20 {
-+                                    reg = <20>;
-+                                    #power-domain-cells = <0>;
-+                            };
-+                    };
-+            };
-+    };
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
