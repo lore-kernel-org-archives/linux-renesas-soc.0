@@ -2,172 +2,139 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C600C433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 10:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7D8C433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 10:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 446BD2072C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 10:19:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1289B2072C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 10:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S313892AbhAZXDt (ORCPT
+        id S234747AbhA0KVL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 26 Jan 2021 18:03:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36358 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392525AbhAZSIR (ORCPT
+        Wed, 27 Jan 2021 05:21:11 -0500
+Received: from www.zeus03.de ([194.117.254.33]:60236 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S235513AbhA0KS6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Jan 2021 13:08:17 -0500
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4950CC061574
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Jan 2021 10:07:37 -0800 (PST)
-Received: by mail-pg1-x536.google.com with SMTP id o16so2326867pgg.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 26 Jan 2021 10:07:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=t5hz7zIeNhAsjoIxj7YYXR6RQ5OB6/j5wYClCChC7l0=;
-        b=NbfnV+gFS/SZ5Hg/V9X8D0FKHrBXyeEUwKlMP8S1PkXyHGumjcIZThFAh4vYZR+Ksr
-         ggNqvq9sR1BTo5R2+9GYEfZxlFUSmIW9xTMlusXHkSf+SfoTRNWrn80NvqRbImwpy8OZ
-         pTRnZkaMAhDLPLIyomD/bVZAdXNZRoeiixxYCPpVORGfifZA/U+3pSh3/VpIzLW1dVe/
-         2f5chSG6VutAt+dVp7bW8wMEaH7r/Nh/A3bNoQ5LwjNMUXUYixGqOFEGFx4reSGB6Oug
-         kIdFmP9JGQMDQ0MFYBZyddxAFw2h2seQyPWSd2Mi0nY781QlV/GPLdLlk+iy1EU871H4
-         zXtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=t5hz7zIeNhAsjoIxj7YYXR6RQ5OB6/j5wYClCChC7l0=;
-        b=O5f16WwEH+amSpVxb8FT0Z7cj8tgvut8QgYjCHkQ+/BbbH4Go9UvLI8QBUoXZRaNCM
-         Cu8W1UYK+2fgD/acNgqxB8yq7+7q+Sa2yqoeUxoxPA6h3Tv94XbND8STCALuMtAfeLbb
-         DweN7wrn7DXSe30XUOl2QxEkpni8mphaaMe4a/m4nc0qnv6nm2X58CFicoq7ATvrhbMI
-         Ubs9ZBM0tEEtnjXaNdLQwORaLfPCMgI1oKXcppq2UWKfN3Ztr7+tLxl1PQmlI7iNcJ+P
-         chsCKpkgbOU1hn713ADgrQQ83QfcPVf9Oso0at76VfLIjJWyHNkx3hUQ06yx/PQmEdG8
-         2WHw==
-X-Gm-Message-State: AOAM531f/cvLp/2hnJnSQujU7OH5bCQeO+Df1UPCiQWOQhSBk6R2izqa
-        6MnB6OTXnCYdzjpDZlbWx8qmumv3aVMR895Y
-X-Google-Smtp-Source: ABdhPJzh6HqpE26q5oLMdXT2GmOfYyL9iwFFoV5C8kA+SnWAuKJcnb41KT/VZl+/7N9XxyLxIB6YAA==
-X-Received: by 2002:a65:6212:: with SMTP id d18mr6874585pgv.141.1611684456486;
-        Tue, 26 Jan 2021 10:07:36 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id e63sm20138428pfe.216.2021.01.26.10.07.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Jan 2021 10:07:35 -0800 (PST)
-Message-ID: <60105a67.1c69fb81.673e.0c72@mx.google.com>
-Date:   Tue, 26 Jan 2021 10:07:35 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Wed, 27 Jan 2021 05:18:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=PPiP/ibzC5qvpAjqZLJI3QP1DFP9
+        9sVIpItAR82zC04=; b=x9Sm89cskKvp0s3bJMCTBvIsFwiP0cv+D2lBJLcym/n9
+        Q8/EJYH+pozrJM8bsrdVesN89p+KeIPu9xhLEYcOJ+cBoUNOvNqAKYpQUxWH0b5P
+        R9uzzox1E+AndLeXIOmAquP8preQqMRgjB76rfF71YFZ/93Wv1HvpK65a6nNyk4=
+Received: (qmail 4019814 invoked from network); 27 Jan 2021 11:18:14 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 27 Jan 2021 11:18:14 +0100
+X-UD-Smtp-Session: l3s3148p1@d7PBFt+5bL0gAwDPXyX1AEdA8SGgn5QT
+Date:   Wed, 27 Jan 2021 11:18:14 +0100
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] media: i2c: adv7511: remove open coded version of
+ SMBus block read
+Message-ID: <20210127101814.GB928@ninjato>
+References: <20210119093912.1838-1-wsa+renesas@sang-engineering.com>
+ <20210119093912.1838-3-wsa+renesas@sang-engineering.com>
+ <1b3f4451-20e5-4f73-acab-d0deaa7ba63d@xs4all.nl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: renesas-devel-2021-01-26-v5.11-rc5
-X-Kernelci-Report-Type: test
-X-Kernelci-Tree: renesas
-X-Kernelci-Branch: master
-Subject: renesas/master baseline-nfs: 28 runs,
- 2 regressions (renesas-devel-2021-01-26-v5.11-rc5)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="LyciRD1jyfeSSjG0"
+Content-Disposition: inline
+In-Reply-To: <1b3f4451-20e5-4f73-acab-d0deaa7ba63d@xs4all.nl>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master baseline-nfs: 28 runs, 2 regressions (renesas-devel-2021-01-=
-26-v5.11-rc5)
 
-Regressions Summary
--------------------
+--LyciRD1jyfeSSjG0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-platform                  | arch  | lab          | compiler | defconfig    =
-      | regressions
---------------------------+-------+--------------+----------+--------------=
-------+------------
-meson-gxm-q200            | arm64 | lab-baylibre | gcc-8    | defconfig    =
-      | 1          =
+Hi Hans,
 
-sun7i-a20-olinuxino-lime2 | arm   | lab-baylibre | gcc-8    | multi_v7_defc=
-onfig | 1          =
+> > -		adv7511_edid_rd(sd, 256, &state->edid.data[segment * 256]);
+> > +		err =3D adv7511_edid_rd(sd, 256, &state->edid.data[segment * 256]);
+> >  		adv7511_dbg_dump_edid(2, debug, sd, segment, &state->edid.data[segme=
+nt * 256]);
+>=20
+> Only call adv7511_dbg_dump_edid if err >=3D 0.
 
+Yes.
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2021-01-26-v5.11-rc5/plan/baseline-nfs/
+>=20
+> >  		if (segment =3D=3D 0) {
+>=20
+> Change condition to: err >=3D 0 && segment =3D=3D 0
 
-  Test:     baseline-nfs
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2021-01-26-v5.11-rc5
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      27061b9ede03072796190d99f00a7fad4f57f184 =
+Yes.
 
+>=20
+> >  			state->edid.blocks =3D state->edid.data[0x7e] + 1;
+> >  			v4l2_dbg(1, debug, sd, "%s: %d blocks in total\n", __func__, state-=
+>edid.blocks);
+> >  		}
 
-
-Test Regressions
----------------- =
-
-
-
-platform                  | arch  | lab          | compiler | defconfig    =
-      | regressions
---------------------------+-------+--------------+----------+--------------=
-------+------------
-meson-gxm-q200            | arm64 | lab-baylibre | gcc-8    | defconfig    =
-      | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6010220c69d06c3582d3dfd9
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-01-26-v5.11-rc5/arm64/defconfig/gcc-8/lab-baylibre/baseline-nfs-meson-g=
-xm-q200.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-01-26-v5.11-rc5/arm64/defconfig/gcc-8/lab-baylibre/baseline-nfs-meson-g=
-xm-q200.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
-0125.1/arm64/initrd.cpio.gz =
+So I guarded the above block with an 'if (!err)' clause.
+adv7511_edid_rd() returns either 0 or errno, so we can take the above
+simpler condition.
 
 
 
-  * baseline-nfs.login: https://kernelci.org/test/case/id/6010220c69d06c358=
-2d3dfda
-        new failure (last pass: renesas-devel-2021-01-04-v5.11-rc2) =
+> > -		if (!edid_verify_crc(sd, segment) ||
+> > -		    !edid_verify_header(sd, segment)) {
+> > +		if (err < 0 || !edid_verify_crc(sd, segment) || !edid_verify_header(=
+sd, segment)) {
+> >  			/* edid crc error, force reread of edid segment */
+>=20
+> Hmm, this comment is a bit out of date. Change to:
+>=20
+> 			/*
+> 			 * Couldn't read EDID or EDID has invalid content.
+> 			 * Force reread of EDID segment.
+> 			 */
 
- =
+I updated the comment but kept it a oneliner.
+
+>=20
+> >  			v4l2_err(sd, "%s: edid crc or header error\n", __func__);
+>=20
+> Only show this message if err >=3D 0. For err < 0 the adv7511_edid_rd() a=
+lready
+> logs an error.
+
+Yes. I used 'if (!err)' again here.
+
+Will resend in a minute, thanks for the review!
+
+All the best,
+
+   Wolfram
 
 
+--LyciRD1jyfeSSjG0
+Content-Type: application/pgp-signature; name="signature.asc"
 
-platform                  | arch  | lab          | compiler | defconfig    =
-      | regressions
---------------------------+-------+--------------+----------+--------------=
-------+------------
-sun7i-a20-olinuxino-lime2 | arm   | lab-baylibre | gcc-8    | multi_v7_defc=
-onfig | 1          =
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmARPeUACgkQFA3kzBSg
+KbaU5RAAoHPCy8g/Hy0fafsjns1bhNX+atshAy42bkGoW8bcd55VZisvgAdk1fg3
+WKpPWVRDKxVJ9vTSEjB0TpYPQGm01kvi0l8britPcsRNkJ8VQ9uQGHqM6Jd9JY8P
+hMtJccF7RJDqKVXPRlGPH9k0BBr1jRhfa74pvCI9I3W4+TAqyPat/WbuLuhxHLGn
+xbFZjUSaJBwP/oyznL04HQ9aDV5YIOABzLmQHjLFraofn0HEtL3MpFZtuvs3nHuF
+D/rVjgs/6y//b4KUmaJweD3tbuVyUCruOwYLjljdJK1Se79FHukCHOcowNpbOnb+
+ow2Er7S+U05gjWiJOcMYjUJulryLGg23QLn7HfdvM6BJuuYi0qxQiU0O/cEtH1IB
+liKeGaWcDWWrmWcBinUx3Ldiyxh7wHSCL+22FyjNM8xxqTw5fslc+5CJR5lPMFHB
+WNOppwqO6cKnyql+lkaUijoWept+jDcOLjyKzVWxBaRpIH2z03P8EKt+a/DF2ysa
+cVOjaSfq5I/23pyeByh8yKud3N9tqS/go6j/79eQrhul3CNy7Urk3GraaAOcJUwL
+rodqyQ+upIVh1fNwzzwj/TwMZUPrxzD2Z+BodnSZ8DiNt0YImZtWuGys0XghWcIQ
+AzdL8U/W+0EIvpifOVNokVq3UpisBkVo2VA6ZpTeXl2f+XgIju0=
+=1s9r
+-----END PGP SIGNATURE-----
 
-  Details:     https://kernelci.org/test/plan/id/601040781dcbe8f104d3dfc9
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-01-26-v5.11-rc5/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-nfs-=
-sun7i-a20-olinuxino-lime2.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-01-26-v5.11-rc5/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-nfs-=
-sun7i-a20-olinuxino-lime2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
-0125.1/armhf/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/601040781dcbe8f10=
-4d3dfca
-        failing since 0 day (last pass: v5.11-rc4-383-g822f1d4bfbf2, first =
-fail: renesas-devel-2021-01-25-v5.11-rc5) =
-
- =20
+--LyciRD1jyfeSSjG0--
