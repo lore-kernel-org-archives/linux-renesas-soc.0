@@ -2,226 +2,122 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92545C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 13:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26B7DC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 14:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A3DB207E8
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 13:45:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCEDE207B3
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 14:03:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231191AbhA0NpM (ORCPT
+        id S232989AbhA0ODA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Jan 2021 08:45:12 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:37326 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229832AbhA0NpD (ORCPT
+        Wed, 27 Jan 2021 09:03:00 -0500
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:38984 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232753AbhA0OA6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 27 Jan 2021 08:45:03 -0500
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 069C1240;
-        Wed, 27 Jan 2021 14:44:11 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1611755052;
-        bh=4oiDLYDjV/1iW5vbdVFhfngF1nGARyrh6yFVi/JDSDw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pm4bcXmupTRF7F9J+jXq9lG/3OsjjCslY5cXy7Dr2D/GYJKmvhGQoQxZR0mq+FpnP
-         UONLHPueyFraKMWezd2lPdP0+IfceFXpRGNpdEuR0+o7fUJ/7dnggE7TtgkQvhTREN
-         JhV8oABIIHlp1qNVHbwP0AXU+9HUMCHySVj0YZ/8=
-Date:   Wed, 27 Jan 2021 15:43:52 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/4] dmaengine: rcar-dmac: Add support for R-Car V3U
-Message-ID: <YBFuGEdTYbcRFg4f@pendragon.ideasonboard.com>
-References: <20210125142431.1049668-1-geert+renesas@glider.be>
- <20210125142431.1049668-5-geert+renesas@glider.be>
- <YBCREUMJ0/LgxDlJ@pendragon.ideasonboard.com>
- <CAMuHMdUqCTvCQUmL-m7C=W0id+Oh5OqPxySutOs9DEdWnzKYEg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUqCTvCQUmL-m7C=W0id+Oh5OqPxySutOs9DEdWnzKYEg@mail.gmail.com>
+        Wed, 27 Jan 2021 09:00:58 -0500
+Received: by mail-ot1-f53.google.com with SMTP id i30so1718908ota.6;
+        Wed, 27 Jan 2021 06:00:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=TW7Wpb2KIFFK4UfpSOStUKOiAJLMLAKkwYIFgobvHzQ=;
+        b=T1e4/urpPab5XZo762gh2ejL6/ry8DmxwDnqlggQqadTKgY1KNgnpBdnzU7xc02+dJ
+         UqZ02eBMVNK/FrrZlJ1XSS2GAUTRX2LFDuEVOsWf/Yv6OVkakzXa9FUVqVcAW8ACE526
+         1oOG7TcL7mddpv7it1ygOes2FU06y2ptRCucbrKFKNp9KD9EzFclXSGMteyB5NMLbhL2
+         6OsyQ+EhamaF3W/NpS100P9nVa97UCL26nTr6xflg5WSWkUColJpGjvxd+mEx1dicTBX
+         BRSUH0FX7t3ftPIVWa1wetiVo7xAcPU7gdCu/AlctNlgXjfgtmKXjiBD7gHBClA6Ro63
+         wZGw==
+X-Gm-Message-State: AOAM5330dR1nZ3DN4mATufkOYM9d4a/GChmBKPs7kkEKeoCm2d4pl/Xq
+        LwoRJoFEV8bFbHwxb4CU/w==
+X-Google-Smtp-Source: ABdhPJytlWtURtPfHh2x0o/yCJoHwZCvTNmMqGIrab9kDn2vpXhT3od1CS/8GcqRerSXlHet00Pp2w==
+X-Received: by 2002:a05:6830:18a:: with SMTP id q10mr7572829ota.115.1611756016756;
+        Wed, 27 Jan 2021 06:00:16 -0800 (PST)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id f6sm373020ote.28.2021.01.27.06.00.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 27 Jan 2021 06:00:15 -0800 (PST)
+Received: (nullmailer pid 1429690 invoked by uid 1000);
+        Wed, 27 Jan 2021 14:00:11 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-renesas-soc@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        linux-clk@vger.kernel.org
+In-Reply-To: <20210126163955.1933893-1-geert+renesas@glider.be>
+References: <20210126163955.1933893-1-geert+renesas@glider.be>
+Subject: Re: [PATCH v3] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
+Date:   Wed, 27 Jan 2021 08:00:11 -0600
+Message-Id: <1611756011.227921.1429689.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+On Tue, 26 Jan 2021 17:39:55 +0100, Geert Uytterhoeven wrote:
+>   - Remove unneeded reference for "idt,slew-percent", as vendor specific
+>     properties having a standard unit suffix don't need a type,
+>   - Add missing "additionalProperties: false" for subnodes, to catch
+>     typos in properties,
+>   - Fix property names in example.
+> 
+> Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> This depends on "[PATCH dt-schema 0/2] dt-schema: Add percentage"
+> https://lore.kernel.org/r/20210126162756.1932692-1-geert+renesas@glider.be
+> 
+> v3:
+>   - Drop references for "idt,voltage-microvolt" and "idt,slew-percent",
+> 
+> v2:
+>   - Settle on "idt,voltage-microvolt", cfr. commit 4b003f5fcadfa2d0
+>     ('clk: vc5: Use "idt,voltage-microvolt" instead of
+>     "idt,voltage-microvolts"'),
+>   - Drop reference to clock.yaml, which is already applied
+>     unconditionally,
+>   - Drop removal of allOf around if condition, as it is unnecessary
+>     churn.
+> ---
+>  .../devicetree/bindings/clock/idt,versaclock5.yaml       | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
 
-On Wed, Jan 27, 2021 at 09:10:40AM +0100, Geert Uytterhoeven wrote:
-> On Tue, Jan 26, 2021 at 11:01 PM Laurent Pinchart wrote:
-> > On Mon, Jan 25, 2021 at 03:24:31PM +0100, Geert Uytterhoeven wrote:
-> > > The DMACs (both SYS-DMAC and RT-DMAC) on R-Car V3U differ slightly from
-> > > the DMACs on R-Car Gen2 and other R-Car Gen3 SoCs:
-> > >   1. The per-channel registers are located in a second register block.
-> > >      Add support for mapping the second block, using the appropriate
-> > >      offsets and stride.
-> > >   2. The common Channel Clear Register (DMACHCLR) was replaced by a
-> > >      per-channel register.
-> > >      Update rcar_dmac_chan_clear{,_all}() to handle this.
-> > >      As rcar_dmac_init() needs to clear the status before the individual
-> > >      channels are probed, channel index and base address initialization
-> > >      are moved forward.
-> > >
-> > > Inspired by a patch in the BSP by Phong Hoang
-> > > <phong.hoang.wz@renesas.com>.
-> > >
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> > > --- a/drivers/dma/sh/rcar-dmac.c
-> > > +++ b/drivers/dma/sh/rcar-dmac.c
-> > > @@ -189,7 +189,8 @@ struct rcar_dmac_chan {
-> > >   * struct rcar_dmac - R-Car Gen2 DMA Controller
-> > >   * @engine: base DMA engine object
-> > >   * @dev: the hardware device
-> > > - * @iomem: remapped I/O memory base
-> > > + * @dmac_base: remapped base register block
-> > > + * @chan_base: remapped channel register block (optional)
-> > >   * @n_channels: number of available channels
-> > >   * @channels: array of DMAC channels
-> > >   * @channels_mask: bitfield of which DMA channels are managed by this driver
-> > > @@ -198,7 +199,8 @@ struct rcar_dmac_chan {
-> > >  struct rcar_dmac {
-> > >       struct dma_device engine;
-> > >       struct device *dev;
-> > > -     void __iomem *iomem;
-> > > +     void __iomem *dmac_base;
-> > > +     void __iomem *chan_base;
-> > >
-> > >       unsigned int n_channels;
-> > >       struct rcar_dmac_chan *channels;
-> 
-> > > @@ -339,12 +344,23 @@ static void rcar_dmac_chan_write(struct rcar_dmac_chan *chan, u32 reg, u32 data)
-> > >  static void rcar_dmac_chan_clear(struct rcar_dmac *dmac,
-> > >                                struct rcar_dmac_chan *chan)
-> > >  {
-> > > -     rcar_dmac_write(dmac, RCAR_DMACHCLR, BIT(chan->index));
-> > > +     if (dmac->chan_base)
-> >
-> > Using dmac->chan_base to check if the device is a V3U seems a bit of a
-> > hack (especially given that the field is otherwise unused). I'd prefer
-> > adding a model field to struct rcar_dmac_of_data and struct rcar_dmac.
-> 
-> The check is not a check for R-Car V3U in particular, but a check for
-> the presence of a separate register block for channel registers.
-> I expect to see more SoCs having this, so IMHO checking for this feature,
-> instead of checking a model field, makes sense.
-> 
-> It's indeed unused otherwise, as beyond probe(), where per-channel bases
-> are calculated, no access to this pointer is needed anymore, (you can
-> blame devm_*() for not needing the pointer ;-)
-> Note that a model field would be "otherwise unused", too ;-)
+My bot found errors running 'make dt_binding_check' on your patch:
 
-I agree that this isn't a V3U check, but a DMAC
-"model/generation/version" check. With V3U as the only SoC we know of
-that uses this new DMAC model, it's a bit difficult to come up with a
-proper name, but conceptually I think a model check would be better than
-checking chan_base.
+yamllint warnings/errors:
 
-> > > +             rcar_dmac_chan_write(chan, RCAR_V3U_DMACHCLR, 1);
-> > > +     else
-> > > +             rcar_dmac_write(dmac, RCAR_DMACHCLR, BIT(chan->index));
-> > >  }
-> > >
-> > >  static void rcar_dmac_chan_clear_all(struct rcar_dmac *dmac)
-> > >  {
-> > > -     rcar_dmac_write(dmac, RCAR_DMACHCLR, dmac->channels_mask);
-> > > +     struct rcar_dmac_chan *chan;
-> > > +     unsigned int i;
-> > > +
-> > > +     if (dmac->chan_base) {
-> > > +             for_each_rcar_dmac_chan(i, chan, dmac)
-> > > +                     rcar_dmac_chan_write(chan, RCAR_V3U_DMACHCLR, 1);
-> > > +     } else {
-> > > +             rcar_dmac_write(dmac, RCAR_DMACHCLR, dmac->channels_mask);
-> > > +     }
-> > >  }
-> > >
-> > >  /* -----------------------------------------------------------------------------
-> > > @@ -1744,7 +1760,6 @@ static const struct dev_pm_ops rcar_dmac_pm = {
-> > >
-> > >  static int rcar_dmac_chan_probe(struct rcar_dmac *dmac,
-> > >                               struct rcar_dmac_chan *rchan,
-> > > -                             const struct rcar_dmac_of_data *data,
-> > >                               unsigned int index)
-> > >  {
-> > >       struct platform_device *pdev = to_platform_device(dmac->dev);
-> > > @@ -1753,9 +1768,6 @@ static int rcar_dmac_chan_probe(struct rcar_dmac *dmac,
-> > >       char *irqname;
-> > >       int ret;
-> > >
-> > > -     rchan->index = index;
-> > > -     rchan->iomem = dmac->iomem + data->chan_offset_base +
-> > > -                    data->chan_offset_stride * index;
-> > >       rchan->mid_rid = -EINVAL;
-> > >
-> > >       spin_lock_init(&rchan->lock);
-> > > @@ -1842,6 +1854,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
-> > >       const struct rcar_dmac_of_data *data;
-> > >       struct rcar_dmac_chan *chan;
-> > >       struct dma_device *engine;
-> > > +     void __iomem *chan_base;
-> > >       struct rcar_dmac *dmac;
-> > >       unsigned int i;
-> > >       int ret;
-> > > @@ -1880,9 +1893,24 @@ static int rcar_dmac_probe(struct platform_device *pdev)
-> > >               return -ENOMEM;
-> > >
-> > >       /* Request resources. */
-> > > -     dmac->iomem = devm_platform_ioremap_resource(pdev, 0);
-> > > -     if (IS_ERR(dmac->iomem))
-> > > -             return PTR_ERR(dmac->iomem);
-> > > +     dmac->dmac_base = devm_platform_ioremap_resource(pdev, 0);
-> > > +     if (IS_ERR(dmac->dmac_base))
-> > > +             return PTR_ERR(dmac->dmac_base);
-> > > +
-> > > +     if (!data->chan_offset_base) {
-> > > +             dmac->chan_base = devm_platform_ioremap_resource(pdev, 1);
-> > > +             if (IS_ERR(dmac->chan_base))
-> > > +                     return PTR_ERR(dmac->chan_base);
-> > > +
-> > > +             chan_base = dmac->chan_base;
-> > > +     } else {
-> > > +             chan_base = dmac->dmac_base + data->chan_offset_base;
-> > > +     }
-> > > +
-> > > +     for_each_rcar_dmac_chan(i, chan, dmac) {
-> > > +             chan->index = i;
-> >
-> > Now that chan->indew is set before calling rcar_dmac_chan_probe(), you
-> > don't have to pass the index to rcar_dmac_chan_probe() anymore.
-> 
-> Right, will fix.
-> 
-> > > +             chan->iomem = chan_base + i * data->chan_offset_stride;
-> > > +     }
-> > >
-> > >       /* Enable runtime PM and initialize the device. */
-> > >       pm_runtime_enable(&pdev->dev);
-> > > @@ -1929,7 +1957,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
-> > >       INIT_LIST_HEAD(&engine->channels);
-> > >
-> > >       for_each_rcar_dmac_chan(i, chan, dmac) {
-> > > -             ret = rcar_dmac_chan_probe(dmac, chan, data, i);
-> > > +             ret = rcar_dmac_chan_probe(dmac, chan, i);
-> > >               if (ret < 0)
-> > >                       goto error;
-> > >       }
-> 
-> Thanks for your comments!
+dtschema/dtc warnings/errors:
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml: patternProperties:^OUT[1-4]$:properties:idt,slew-percent: 'oneOf' conditional failed, one must be fixed:
+	'type' is a required property
+	Additional properties are not allowed ('enum' was unexpected)
+	/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml: patternProperties:^OUT[1-4]$:properties:idt,slew-percent: 'oneOf' conditional failed, one must be fixed:
+		'$ref' is a required property
+		'allOf' is a required property
+	80 is not of type 'string'
+	85 is not of type 'string'
+	90 is not of type 'string'
+	100 is not of type 'string'
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml: ignoring, error in schema: patternProperties: ^OUT[1-4]$: properties: idt,slew-percent
+warning: no schema found in file: ./Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
 
--- 
-Regards,
+See https://patchwork.ozlabs.org/patch/1432164
 
-Laurent Pinchart
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
