@@ -2,173 +2,231 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E16C433E9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 08:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD768C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 08:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24F8F2071E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 08:04:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90BB120754
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 27 Jan 2021 08:15:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234506AbhA0IDu (ORCPT
+        id S232674AbhA0IOx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 27 Jan 2021 03:03:50 -0500
-Received: from mga12.intel.com ([192.55.52.136]:45957 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S316561AbhAZXUV (ORCPT
+        Wed, 27 Jan 2021 03:14:53 -0500
+Received: from mail-ot1-f54.google.com ([209.85.210.54]:40521 "EHLO
+        mail-ot1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234460AbhA0IMo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 26 Jan 2021 18:20:21 -0500
-IronPort-SDR: 9G8wtJRV2WJxhLip8gB+hDwB+zM1HSmaD9Mm+F0XrLviJnj4gNdMX4Vg3qH/+MtMCEtrMzU4uZ
- 2X09KOFtoE8g==
-X-IronPort-AV: E=McAfee;i="6000,8403,9876"; a="159160872"
-X-IronPort-AV: E=Sophos;i="5.79,377,1602572400"; 
-   d="scan'208";a="159160872"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2021 15:16:15 -0800
-IronPort-SDR: NxRUESdkkYYDPJzbXlkn7Iqpn18D6DnOMpRB47QNNiszJEZXl43ByCsP/qyJ3E1nUlUokZ7Qy2
- Erhpgsi+Y05w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.79,377,1602572400"; 
-   d="scan'208";a="393889486"
-Received: from lkp-server02.sh.intel.com (HELO 625d3a354f04) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 26 Jan 2021 15:16:14 -0800
-Received: from kbuild by 625d3a354f04 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1l4XZF-00018E-M4; Tue, 26 Jan 2021 23:16:13 +0000
-Date:   Wed, 27 Jan 2021 07:15:38 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:master] BUILD SUCCESS
- 27061b9ede03072796190d99f00a7fad4f57f184
-Message-ID: <6010a29a.tJsDAVL9rT0V9KGj%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Wed, 27 Jan 2021 03:12:44 -0500
+Received: by mail-ot1-f54.google.com with SMTP id i20so878532otl.7;
+        Wed, 27 Jan 2021 00:11:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=f/iQz33kgh6xnvFreqr2JBmntO4WEFL9xyCLy3xIbC0=;
+        b=lQU3TTzCvmXOd5XXe8arsoH7nSZ2eJDyaFxuTqtkBamLgmWGEIClVHJXSzpyV/ejML
+         36+7aL5aNzt+5HufGEixm2cKgHGM17fVV4O4LpYBBODWfges9TiB9A4f/lyeXaoGszHL
+         R16kTUqBYLEGoOubmvtCLrrI7J2SmIYMHMuWMNzwlomB/vSkyVBXd2+yw+s27DsQb5wD
+         h783tc9wyDceAIyaZtJbQq1ST6i/Acdzd5rhBGdOGTUMdt9DKGgAXrUL2pIdQ9TCx5YN
+         nMxzq81DLZl3xENbEdW7qmCw/RfbmbaUDtRUVT/dB2lG9+CeIcXRcsRRbv9fhr71Dzid
+         LOTw==
+X-Gm-Message-State: AOAM530VdHb0sXUlSRZyNGHQe4ddUdnYajwaezpTj6h7O760blryJDfK
+        DH65fEZ7aw8dy+VCTXSc3a/hB5wpHyJF6fW6OXA=
+X-Google-Smtp-Source: ABdhPJwVJ5QU5cyczh35eHMkHRGaSDc7rqd/vvSHWfq2Q98yCiYxVmsxiAo478eNiF+zbFazNblMbwe+/6t4Iz2fDp0=
+X-Received: by 2002:a05:6830:1489:: with SMTP id s9mr6101130otq.250.1611735051520;
+ Wed, 27 Jan 2021 00:10:51 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+References: <20210125142431.1049668-1-geert+renesas@glider.be>
+ <20210125142431.1049668-5-geert+renesas@glider.be> <YBCREUMJ0/LgxDlJ@pendragon.ideasonboard.com>
+In-Reply-To: <YBCREUMJ0/LgxDlJ@pendragon.ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 27 Jan 2021 09:10:40 +0100
+Message-ID: <CAMuHMdUqCTvCQUmL-m7C=W0id+Oh5OqPxySutOs9DEdWnzKYEg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] dmaengine: rcar-dmac: Add support for R-Car V3U
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
-branch HEAD: 27061b9ede03072796190d99f00a7fad4f57f184  Merge branch 'renesas-next' into renesas-devel
+Hi Laurent,
 
-elapsed time: 726m
+On Tue, Jan 26, 2021 at 11:01 PM Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+> On Mon, Jan 25, 2021 at 03:24:31PM +0100, Geert Uytterhoeven wrote:
+> > The DMACs (both SYS-DMAC and RT-DMAC) on R-Car V3U differ slightly from
+> > the DMACs on R-Car Gen2 and other R-Car Gen3 SoCs:
+> >   1. The per-channel registers are located in a second register block.
+> >      Add support for mapping the second block, using the appropriate
+> >      offsets and stride.
+> >   2. The common Channel Clear Register (DMACHCLR) was replaced by a
+> >      per-channel register.
+> >      Update rcar_dmac_chan_clear{,_all}() to handle this.
+> >      As rcar_dmac_init() needs to clear the status before the individual
+> >      channels are probed, channel index and base address initialization
+> >      are moved forward.
+> >
+> > Inspired by a patch in the BSP by Phong Hoang
+> > <phong.hoang.wz@renesas.com>.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-configs tested: 101
-configs skipped: 2
+> > --- a/drivers/dma/sh/rcar-dmac.c
+> > +++ b/drivers/dma/sh/rcar-dmac.c
+> > @@ -189,7 +189,8 @@ struct rcar_dmac_chan {
+> >   * struct rcar_dmac - R-Car Gen2 DMA Controller
+> >   * @engine: base DMA engine object
+> >   * @dev: the hardware device
+> > - * @iomem: remapped I/O memory base
+> > + * @dmac_base: remapped base register block
+> > + * @chan_base: remapped channel register block (optional)
+> >   * @n_channels: number of available channels
+> >   * @channels: array of DMAC channels
+> >   * @channels_mask: bitfield of which DMA channels are managed by this driver
+> > @@ -198,7 +199,8 @@ struct rcar_dmac_chan {
+> >  struct rcar_dmac {
+> >       struct dma_device engine;
+> >       struct device *dev;
+> > -     void __iomem *iomem;
+> > +     void __iomem *dmac_base;
+> > +     void __iomem *chan_base;
+> >
+> >       unsigned int n_channels;
+> >       struct rcar_dmac_chan *channels;
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> > @@ -339,12 +344,23 @@ static void rcar_dmac_chan_write(struct rcar_dmac_chan *chan, u32 reg, u32 data)
+> >  static void rcar_dmac_chan_clear(struct rcar_dmac *dmac,
+> >                                struct rcar_dmac_chan *chan)
+> >  {
+> > -     rcar_dmac_write(dmac, RCAR_DMACHCLR, BIT(chan->index));
+> > +     if (dmac->chan_base)
+>
+> Using dmac->chan_base to check if the device is a V3U seems a bit of a
+> hack (especially given that the field is otherwise unused). I'd prefer
+> adding a model field to struct rcar_dmac_of_data and struct rcar_dmac.
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-arm                          gemini_defconfig
-arm                      tct_hammer_defconfig
-mips                        qi_lb60_defconfig
-arm                           omap1_defconfig
-arm                       versatile_defconfig
-mips                           ip27_defconfig
-powerpc                     tqm5200_defconfig
-sh                            shmin_defconfig
-arm                         s3c2410_defconfig
-sh                            migor_defconfig
-powerpc                 mpc832x_rdb_defconfig
-arm                         vf610m4_defconfig
-m68k                            mac_defconfig
-powerpc                        cell_defconfig
-powerpc                 mpc837x_rdb_defconfig
-powerpc                 xes_mpc85xx_defconfig
-powerpc                    adder875_defconfig
-ia64                                defconfig
-m68k                        mvme16x_defconfig
-mips                           ci20_defconfig
-riscv                            allyesconfig
-arm                             pxa_defconfig
-sh                          landisk_defconfig
-sh                           se7712_defconfig
-sparc                            alldefconfig
-powerpc                      bamboo_defconfig
-arm                         assabet_defconfig
-ia64                             allmodconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-c6x                              allyesconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-parisc                              defconfig
-s390                             allyesconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                               tinyconfig
-i386                                defconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-i386                 randconfig-a001-20210126
-i386                 randconfig-a002-20210126
-i386                 randconfig-a004-20210126
-i386                 randconfig-a006-20210126
-i386                 randconfig-a003-20210126
-i386                 randconfig-a005-20210126
-x86_64               randconfig-a012-20210126
-x86_64               randconfig-a016-20210126
-x86_64               randconfig-a015-20210126
-x86_64               randconfig-a011-20210126
-x86_64               randconfig-a013-20210126
-x86_64               randconfig-a014-20210126
-i386                 randconfig-a013-20210126
-i386                 randconfig-a011-20210126
-i386                 randconfig-a012-20210126
-i386                 randconfig-a015-20210126
-i386                 randconfig-a014-20210126
-i386                 randconfig-a016-20210126
-riscv                    nommu_k210_defconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-x86_64                                   rhel
-x86_64                           allyesconfig
-x86_64                    rhel-7.6-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                      rhel-8.3-kbuiltin
-x86_64                                  kexec
+The check is not a check for R-Car V3U in particular, but a check for
+the presence of a separate register block for channel registers.
+I expect to see more SoCs having this, so IMHO checking for this feature,
+instead of checking a model field, makes sense.
 
-clang tested configs:
-x86_64               randconfig-a003-20210126
-x86_64               randconfig-a002-20210126
-x86_64               randconfig-a001-20210126
-x86_64               randconfig-a005-20210126
-x86_64               randconfig-a006-20210126
-x86_64               randconfig-a004-20210126
+It's indeed unused otherwise, as beyond probe(), where per-channel bases
+are calculated, no access to this pointer is needed anymore, (you can
+blame devm_*() for not needing the pointer ;-)
+Note that a model field would be "otherwise unused", too ;-)
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+> > +             rcar_dmac_chan_write(chan, RCAR_V3U_DMACHCLR, 1);
+> > +     else
+> > +             rcar_dmac_write(dmac, RCAR_DMACHCLR, BIT(chan->index));
+> >  }
+> >
+> >  static void rcar_dmac_chan_clear_all(struct rcar_dmac *dmac)
+> >  {
+> > -     rcar_dmac_write(dmac, RCAR_DMACHCLR, dmac->channels_mask);
+> > +     struct rcar_dmac_chan *chan;
+> > +     unsigned int i;
+> > +
+> > +     if (dmac->chan_base) {
+> > +             for_each_rcar_dmac_chan(i, chan, dmac)
+> > +                     rcar_dmac_chan_write(chan, RCAR_V3U_DMACHCLR, 1);
+> > +     } else {
+> > +             rcar_dmac_write(dmac, RCAR_DMACHCLR, dmac->channels_mask);
+> > +     }
+> >  }
+> >
+> >  /* -----------------------------------------------------------------------------
+> > @@ -1744,7 +1760,6 @@ static const struct dev_pm_ops rcar_dmac_pm = {
+> >
+> >  static int rcar_dmac_chan_probe(struct rcar_dmac *dmac,
+> >                               struct rcar_dmac_chan *rchan,
+> > -                             const struct rcar_dmac_of_data *data,
+> >                               unsigned int index)
+> >  {
+> >       struct platform_device *pdev = to_platform_device(dmac->dev);
+> > @@ -1753,9 +1768,6 @@ static int rcar_dmac_chan_probe(struct rcar_dmac *dmac,
+> >       char *irqname;
+> >       int ret;
+> >
+> > -     rchan->index = index;
+> > -     rchan->iomem = dmac->iomem + data->chan_offset_base +
+> > -                    data->chan_offset_stride * index;
+> >       rchan->mid_rid = -EINVAL;
+> >
+> >       spin_lock_init(&rchan->lock);
+> > @@ -1842,6 +1854,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+> >       const struct rcar_dmac_of_data *data;
+> >       struct rcar_dmac_chan *chan;
+> >       struct dma_device *engine;
+> > +     void __iomem *chan_base;
+> >       struct rcar_dmac *dmac;
+> >       unsigned int i;
+> >       int ret;
+> > @@ -1880,9 +1893,24 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+> >               return -ENOMEM;
+> >
+> >       /* Request resources. */
+> > -     dmac->iomem = devm_platform_ioremap_resource(pdev, 0);
+> > -     if (IS_ERR(dmac->iomem))
+> > -             return PTR_ERR(dmac->iomem);
+> > +     dmac->dmac_base = devm_platform_ioremap_resource(pdev, 0);
+> > +     if (IS_ERR(dmac->dmac_base))
+> > +             return PTR_ERR(dmac->dmac_base);
+> > +
+> > +     if (!data->chan_offset_base) {
+> > +             dmac->chan_base = devm_platform_ioremap_resource(pdev, 1);
+> > +             if (IS_ERR(dmac->chan_base))
+> > +                     return PTR_ERR(dmac->chan_base);
+> > +
+> > +             chan_base = dmac->chan_base;
+> > +     } else {
+> > +             chan_base = dmac->dmac_base + data->chan_offset_base;
+> > +     }
+> > +
+> > +     for_each_rcar_dmac_chan(i, chan, dmac) {
+> > +             chan->index = i;
+>
+> Now that chan->indew is set before calling rcar_dmac_chan_probe(), you
+> don't have to pass the index to rcar_dmac_chan_probe() anymore.
+
+Right, will fix.
+
+> > +             chan->iomem = chan_base + i * data->chan_offset_stride;
+> > +     }
+> >
+> >       /* Enable runtime PM and initialize the device. */
+> >       pm_runtime_enable(&pdev->dev);
+> > @@ -1929,7 +1957,7 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+> >       INIT_LIST_HEAD(&engine->channels);
+> >
+> >       for_each_rcar_dmac_chan(i, chan, dmac) {
+> > -             ret = rcar_dmac_chan_probe(dmac, chan, data, i);
+> > +             ret = rcar_dmac_chan_probe(dmac, chan, i);
+> >               if (ret < 0)
+> >                       goto error;
+> >       }
+
+Thanks for your comments!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
