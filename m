@@ -5,105 +5,172 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E19C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Jan 2021 08:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EDEC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Jan 2021 08:47:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7A1206146D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Jan 2021 08:30:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B499D64DD9
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 28 Jan 2021 08:47:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231650AbhA1I35 (ORCPT
+        id S231665AbhA1IqR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 28 Jan 2021 03:29:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50506 "EHLO
+        Thu, 28 Jan 2021 03:46:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231432AbhA1I3n (ORCPT
+        with ESMTP id S232227AbhA1Ipz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 28 Jan 2021 03:29:43 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B92C061756
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 28 Jan 2021 00:28:57 -0800 (PST)
+        Thu, 28 Jan 2021 03:45:55 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D1F5C061351
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 28 Jan 2021 00:45:02 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by albert.telenet-ops.be with bizsmtp
-        id N8Up2400H4C55Sk068UpAC; Thu, 28 Jan 2021 09:28:55 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id N8kx2400h4C55Sk018kxwB; Thu, 28 Jan 2021 09:45:00 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1l52fY-001JNE-RG; Thu, 28 Jan 2021 09:28:48 +0100
+        id 1l52vB-001JYP-EM; Thu, 28 Jan 2021 09:44:57 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1l52fY-009Fsb-6J; Thu, 28 Jan 2021 09:28:48 +0100
+        id 1l52vA-009O1g-V7; Thu, 28 Jan 2021 09:44:56 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
-        Saravana Kannan <saravanak@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] soc: renesas: rcar-sysc: Mark device node OF_POPULATED after init
-Date:   Thu, 28 Jan 2021 09:28:47 +0100
-Message-Id: <20210128082847.2205950-1-geert+renesas@glider.be>
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v3 1/4] dt-bindings: renesas,rcar-dmac: Add r8a779a0 support
+Date:   Thu, 28 Jan 2021 09:44:52 +0100
+Message-Id: <20210128084455.2237256-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210128084455.2237256-1-geert+renesas@glider.be>
+References: <20210128084455.2237256-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The R-Car System Controller (SYSC) driver registers PM domains from an
-early_initcall().  It does not use a platform driver, as secondary CPU
-startup on R-Car H1 needs to control the CPU power domains, before
-initialization of the driver framework.
+Document the compatible value for the Direct Memory Access Controller
+blocks in the Renesas R-Car V3U (R8A779A0) SoC.
 
-As fw_devlink only considers devices, it does not know that the System
-Controller is ready.  Hence probing of on-chip devices that are part of
-the SYSC PM domain fails if fw_devlink is enabled:
-
-    probe deferral - supplier e6180000.system-controller not ready
-
-Fix this by setting the OF_POPULATED flag for the SYSC device node after
-successful initialization.  This will make of_link_to_phandle() ignore
-the SYSC device node as a dependency, and consumer devices will be
-probed again.
+The most visible difference with DMAC blocks on other R-Car SoCs is the
+move of the per-channel registers to a separate register block.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Saravana Kannan <saravanak@google.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
-As this seems to be harmless if commit e590474768f1cc04 ("driver core:
-Set fw_devlink=on by default") won't make v5.12, I plan to queue this in
-renesas-devel for v5.12.
+v3:
+  - Add Reviewed-by,
 
 v2:
-  - Add Reviewed-by,
-  - s/platform devices/devices/,
-  - Drop Fixes tag,
-  - Drop RFC.
+  - Add Reviewed-by.
 ---
- drivers/soc/renesas/rcar-sysc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/dma/renesas,rcar-dmac.yaml       | 76 ++++++++++++-------
+ 1 file changed, 48 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index d51ddc7d5232b9db..53387a72ca00ce79 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -434,6 +434,8 @@ static int __init rcar_sysc_pd_init(void)
- 	}
+diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
+index c07eb6f2fc8d2f12..7f2a54bc732d3a19 100644
+--- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
++++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.yaml
+@@ -14,34 +14,37 @@ allOf:
  
- 	error = of_genpd_add_provider_onecell(np, &domains->onecell_data);
-+	if (!error)
-+		of_node_set_flag(np, OF_POPULATED);
+ properties:
+   compatible:
+-    items:
+-      - enum:
+-          - renesas,dmac-r8a7742  # RZ/G1H
+-          - renesas,dmac-r8a7743  # RZ/G1M
+-          - renesas,dmac-r8a7744  # RZ/G1N
+-          - renesas,dmac-r8a7745  # RZ/G1E
+-          - renesas,dmac-r8a77470 # RZ/G1C
+-          - renesas,dmac-r8a774a1 # RZ/G2M
+-          - renesas,dmac-r8a774b1 # RZ/G2N
+-          - renesas,dmac-r8a774c0 # RZ/G2E
+-          - renesas,dmac-r8a774e1 # RZ/G2H
+-          - renesas,dmac-r8a7790  # R-Car H2
+-          - renesas,dmac-r8a7791  # R-Car M2-W
+-          - renesas,dmac-r8a7792  # R-Car V2H
+-          - renesas,dmac-r8a7793  # R-Car M2-N
+-          - renesas,dmac-r8a7794  # R-Car E2
+-          - renesas,dmac-r8a7795  # R-Car H3
+-          - renesas,dmac-r8a7796  # R-Car M3-W
+-          - renesas,dmac-r8a77961 # R-Car M3-W+
+-          - renesas,dmac-r8a77965 # R-Car M3-N
+-          - renesas,dmac-r8a77970 # R-Car V3M
+-          - renesas,dmac-r8a77980 # R-Car V3H
+-          - renesas,dmac-r8a77990 # R-Car E3
+-          - renesas,dmac-r8a77995 # R-Car D3
+-      - const: renesas,rcar-dmac
+-
+-  reg:
+-    maxItems: 1
++    oneOf:
++      - items:
++          - enum:
++              - renesas,dmac-r8a7742  # RZ/G1H
++              - renesas,dmac-r8a7743  # RZ/G1M
++              - renesas,dmac-r8a7744  # RZ/G1N
++              - renesas,dmac-r8a7745  # RZ/G1E
++              - renesas,dmac-r8a77470 # RZ/G1C
++              - renesas,dmac-r8a774a1 # RZ/G2M
++              - renesas,dmac-r8a774b1 # RZ/G2N
++              - renesas,dmac-r8a774c0 # RZ/G2E
++              - renesas,dmac-r8a774e1 # RZ/G2H
++              - renesas,dmac-r8a7790  # R-Car H2
++              - renesas,dmac-r8a7791  # R-Car M2-W
++              - renesas,dmac-r8a7792  # R-Car V2H
++              - renesas,dmac-r8a7793  # R-Car M2-N
++              - renesas,dmac-r8a7794  # R-Car E2
++              - renesas,dmac-r8a7795  # R-Car H3
++              - renesas,dmac-r8a7796  # R-Car M3-W
++              - renesas,dmac-r8a77961 # R-Car M3-W+
++              - renesas,dmac-r8a77965 # R-Car M3-N
++              - renesas,dmac-r8a77970 # R-Car V3M
++              - renesas,dmac-r8a77980 # R-Car V3H
++              - renesas,dmac-r8a77990 # R-Car E3
++              - renesas,dmac-r8a77995 # R-Car D3
++          - const: renesas,rcar-dmac
++
++      - items:
++          - const: renesas,dmac-r8a779a0 # R-Car V3U
++
++  reg: true
  
- out_put:
- 	of_node_put(np);
+   interrupts:
+     minItems: 9
+@@ -110,6 +113,23 @@ required:
+   - power-domains
+   - resets
+ 
++if:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - renesas,dmac-r8a779a0
++then:
++  properties:
++    reg:
++      items:
++        - description: Base register block
++        - description: Channel register block
++else:
++  properties:
++    reg:
++      maxItems: 1
++
+ additionalProperties: false
+ 
+ examples:
 -- 
 2.25.1
 
