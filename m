@@ -2,67 +2,54 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,TVD_SUBJ_WIPE_DEBT,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,TVD_SUBJ_WIPE_DEBT,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD4FC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Feb 2021 09:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F3E2C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Feb 2021 09:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20FD564E33
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Feb 2021 09:00:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E48564E3D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Feb 2021 09:05:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232520AbhBAI7s (ORCPT
+        id S232694AbhBAJFO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 1 Feb 2021 03:59:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41938 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232482AbhBAI7r (ORCPT
+        Mon, 1 Feb 2021 04:05:14 -0500
+Received: from mail-oi1-f182.google.com ([209.85.167.182]:39703 "EHLO
+        mail-oi1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232686AbhBAJE7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Feb 2021 03:59:47 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36BBDC061574
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  1 Feb 2021 00:59:07 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id d2so17950671edz.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 01 Feb 2021 00:59:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YO7mBFE+tnPFG3MuqP+RM+WeWF+bBTQ2zr7iiZtekbQ=;
-        b=RSP/ixQYEtW3D0MCcu+tNTgMGsf2IwC2u33UCCMgjKlXvTI4wzttUmK6LoKgsojdIm
-         bm0XLDdxE/xjRG3ZGUXzsWz2S5U2EfjqVqCYP4AwUV/6XCL/WDIKavosiRMHNND1NZSB
-         dW5ErpSx/7KGPHwQTE3mnVHWHe3eHAbfl0ZQV3i+wQCxgO7f/qq/aIv67gN1T54Ua0ge
-         PIMJLSbDPtpxEPYDwTlajukWWE4zyzSY9FnG+TjfTJAb2KgnSUzpyEWW8yj437Xk7KT8
-         a2LJqyRk4i/DN0vRWAQi8fAXl9Kh2bxbaoWUsuUCkzEGGNwTsuhT8240foGgp6Gilk3D
-         kThg==
+        Mon, 1 Feb 2021 04:04:59 -0500
+Received: by mail-oi1-f182.google.com with SMTP id w124so18051534oia.6;
+        Mon, 01 Feb 2021 01:04:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=YO7mBFE+tnPFG3MuqP+RM+WeWF+bBTQ2zr7iiZtekbQ=;
-        b=IixmSI/344GtUvNVUMiFfLvWliM4pfdlnAAeCz24ESyyZqtSAWimGwGKUflb6wdQ78
-         McUfMTV7hPpDTUifzgmcVec0Jv+Z4+oSxeZqPRZRxAOHCx2BlcxITrP7KH/rJ5xM7F7z
-         nWfggXJ4K9EHOaSpBGEBfdxcVaGecfk+BK31XbTQnhbt5Qg6sLyI362o09TUQBSeW9AX
-         Vz5QdB6YRWA36Ws8pEZxmvwvLLJnTAdV/Q7o1Bl/zRsZSZJdDiH+3flEfYqEYJfBrJKv
-         skAcqWroBtrZozj3T2JeRtiMhIUDUbVRQvTLVvNnJPOPrVJbfecmyJMzZvcuEQj9GcgX
-         OjyA==
-X-Gm-Message-State: AOAM531wb6ZZjisWZQ/l0J1d3y9SBSVqWTZ+vosxwY6GKv4BmNe7JxRt
-        0cspqCbEfKp6yDAPrhRHl6EV+ptEW7dfMkNHMm83aA==
-X-Google-Smtp-Source: ABdhPJxsUimNM1ukmldmIBP8S69QEICasyFTYbyT1ZQ+7qzmjRxlGlzUAQrBe0QQu1AvqU/n4owlss0KVc9KEFXpxPo=
-X-Received: by 2002:a50:b742:: with SMTP id g60mr17477914ede.113.1612169945982;
- Mon, 01 Feb 2021 00:59:05 -0800 (PST)
+        bh=a9pUZbXQ7As7rRxVPqaNasnPjRFzcKWXstZyAsnJ2/s=;
+        b=ubEoBnQWJ/q+55icKZbHxb3HTf98UhL/T6+0qg5+10ZTclX4PLshxWv+KKCoMP1Km+
+         ZvgE2MaRrYY7+gMFcnjYJtl+NybR2pUD2r/TpxaQY9nSek7nGM5mQgCAs+lAqbiwuLGN
+         j4PwP7O2psBm2p/+hMKwdCks1gNqL7Co2xYm+tY2LHBUranxy/6hi9NxIDoSmhKOoJEH
+         BKDyg/nexw1iGEcxw/TZYcKW8y1WViyk0Y+qMnLU52RqNCDCv/TEl3WzUNRscK+f9nk4
+         R8NI0qKZnq7JDSVc0z3HcYqFMRWnI08/xLAd/1CtuaW7cpFUZyUGgx8Y5pj/RO2SNnUT
+         6itA==
+X-Gm-Message-State: AOAM5302tG8ZwdcB70OtCynLKxBjl4ZfhnjHsqshtWZLSHYDvKeHF01k
+        QS7/2lwdLCdIDWEJuJW6419tkDDsJ3W73Izat2I=
+X-Google-Smtp-Source: ABdhPJzW6rGUgKUW5qLFq4OqvfnAY0sJ0Df8rO5EhFCEr9ssED6Uu/HizUfEVdHm5K86aGvSIiFaFynTFJxyF6+FG+E=
+X-Received: by 2002:aca:1219:: with SMTP id 25mr10393455ois.54.1612170252088;
+ Mon, 01 Feb 2021 01:04:12 -0800 (PST)
 MIME-Version: 1.0
 References: <20210105105914.13172-1-wsa+renesas@sang-engineering.com>
- <CAMuHMdUT8CEyJ1ERmLr443SuZgemFF40cDviSGwhYM7ZnN_b_g@mail.gmail.com> <20210127103919.GC928@ninjato>
-In-Reply-To: <20210127103919.GC928@ninjato>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Mon, 1 Feb 2021 09:58:55 +0100
-Message-ID: <CAMpxmJWKEHsdHAnQt-ozVPHDcjSPrTo3c7D8gGFiPvwrA8TzwQ@mail.gmail.com>
+ <CAMuHMdUT8CEyJ1ERmLr443SuZgemFF40cDviSGwhYM7ZnN_b_g@mail.gmail.com>
+ <20210127103919.GC928@ninjato> <CAMpxmJWKEHsdHAnQt-ozVPHDcjSPrTo3c7D8gGFiPvwrA8TzwQ@mail.gmail.com>
+In-Reply-To: <CAMpxmJWKEHsdHAnQt-ozVPHDcjSPrTo3c7D8gGFiPvwrA8TzwQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 1 Feb 2021 10:04:00 +0100
+Message-ID: <CAMuHMdVYjrs4R+s=ojBegn1PczZ8fiD+95od5Nj9wG02+6TBcA@mail.gmail.com>
 Subject: Re: [PATCH] gpio: gpiolib: remove shadowed variable
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>
@@ -71,26 +58,40 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jan 27, 2021 at 11:39 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> On Tue, Jan 05, 2021 at 12:14:34PM +0100, Geert Uytterhoeven wrote:
-> > On Tue, Jan 5, 2021 at 12:00 PM Wolfram Sang
-> > <wsa+renesas@sang-engineering.com> wrote:
-> > > After refactoring, we had two variables for the same thing. Remove the
-> > > second declaration, one is enough here. Found by cppcheck.
+Hi Bartosz,
+
+On Mon, Feb 1, 2021 at 9:59 AM Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+> On Wed, Jan 27, 2021 at 11:39 AM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+> > On Tue, Jan 05, 2021 at 12:14:34PM +0100, Geert Uytterhoeven wrote:
+> > > On Tue, Jan 5, 2021 at 12:00 PM Wolfram Sang
+> > > <wsa+renesas@sang-engineering.com> wrote:
+> > > > After refactoring, we had two variables for the same thing. Remove the
+> > > > second declaration, one is enough here. Found by cppcheck.
+> > > >
+> > > > drivers/gpio/gpiolib.c:2551:17: warning: Local variable 'ret' shadows outer variable [shadowVariable]
+> > > >
+> > > > Fixes: d377f56f34f5 ("gpio: gpiolib: Normalize return code variable name")
+> > > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > > >
-> > > drivers/gpio/gpiolib.c:2551:17: warning: Local variable 'ret' shadows outer variable [shadowVariable]
-> > >
-> > > Fixes: d377f56f34f5 ("gpio: gpiolib: Normalize return code variable name")
-> > > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Ccing Linus & Bartosz
+> >
 >
-> Ccing Linus & Bartosz
->
+> For some reason this is not on patchwork and I also don't have it in
+> my inbox, can you resend, please?
 
-For some reason this is not on patchwork and I also don't have it in
-my inbox, can you resend, please?
+https://lore.kernel.org/linux-gpio/20210105105914.13172-1-wsa+renesas@sang-engineering.com/
 
-Bart
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
