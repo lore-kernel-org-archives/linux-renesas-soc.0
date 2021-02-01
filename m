@@ -2,77 +2,64 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B8FC433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 31 Jan 2021 10:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B78BC433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Feb 2021 05:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 225DF64E1F
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 31 Jan 2021 10:37:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B624A64E2A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Feb 2021 05:59:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230122AbhAaKgQ (ORCPT
+        id S231834AbhBAF63 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 31 Jan 2021 05:36:16 -0500
-Received: from aruko.org ([45.79.249.221]:45612 "EHLO aruko.org"
+        Mon, 1 Feb 2021 00:58:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230439AbhAaKI2 (ORCPT
+        id S231514AbhBAFvV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 31 Jan 2021 05:08:28 -0500
-X-Greylist: delayed 621 seconds by postgrey-1.27 at vger.kernel.org; Sun, 31 Jan 2021 05:08:26 EST
-Received: from localhost.localdomain (unknown [213.111.80.72])
-        by aruko.org (Postfix) with ESMTPSA id 14C9B7F496;
-        Sun, 31 Jan 2021 09:57:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=aruko.org; s=mail;
-        t=1612087039; bh=WaYjN6LulNhQAZc5zhwsQAkXNQ91yI459HM4uMk/86Y=;
-        h=From:To:Cc:Subject:Date;
-        b=CRGZWkrihQ1uFYO2Y0oYzbvDecHao0u9aMQKSt76J5dxQ6FtdbgYTONUdxYRw/Gy6
-         eNAEK+hcPKWHOW5rwNQ3av+Thd6fMuOvPNi8vcFvfY8+5ZAy2FQp1LPIc4mwAa8pd9
-         FyfUvgVNBEKBRjUd9oJmdV/tiGMxqJtHP25JK7N0=
-From:   Mykyta Poturai <ddone@aruko.org>
-Cc:     Mykyta Poturai <ddone@aruko.org>,
+        Mon, 1 Feb 2021 00:51:21 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id DC1BA64E15;
+        Mon,  1 Feb 2021 05:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612158590;
+        bh=n1Ftlf0+nz05REHPi3P5OsNAYBNGf584f0+3bCYf448=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Psk+p6iLv4bsId/XCtKOYmxrKwT64Myag18LHge73gr0EPF9DPLaW6pAlg1RAAYyH
+         ZkzaOxDXq1p4vgOs7NgDcgOe2tHOpKhs7GnnKnWYQq6jZYADD3dt1xXoR2rVKPzuqT
+         lvkcl5EmOkvolo0Q+GMw6IivTcTzBPhUv4jOXUzPiDqgYFM0/8YUKZ9CNo3++BUGti
+         RwZgl7ov+m7NNy5ekT2TxFNMXEL4st3FwIf8kfIOiTpFiywTDtS1FT6TVLBl0BHE4B
+         7gH33NDZXz+Nwf7GvHJgKWHEA2SNC88jqy8sZSizN5jiri47oxYoNO6omAz5lznFVe
+         Hym5rs5960WGQ==
+Date:   Mon, 1 Feb 2021 11:19:46 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: display: Add "disable-hpd" binding
-Date:   Sun, 31 Jan 2021 11:57:01 +0200
-Message-Id: <20210131095701.965147-1-ddone@aruko.org>
-X-Mailer: git-send-email 2.30.0
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] dmaengine: rcar-dmac: Add support for R-Car V3U
+Message-ID: <20210201054946.GH2771@vkoul-mobl>
+References: <20210128084455.2237256-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210128084455.2237256-1-geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add the "disable-hpd" binding, used to disable hotplug detected
-functionality in the driver. When it's enabled the driver assumes that
-the connector is always connected and disables the hotplug detect
-related IRQ.
+On 28-01-21, 09:44, Geert Uytterhoeven wrote:
+> 	Hi Vinod,
+> 
+> This patch series adds support for the Direct Memory Access Controller
+> variant in the Renesas R-Car V3U (R8A779A0) SoC, to both DT bindings and
+> driver.
 
-Signed-off-by: Mykyta Poturai <ddone@aruko.org>
----
- .../devicetree/bindings/display/bridge/renesas,dw-hdmi.txt       | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-index 3f6072651182..b2b899f46b86 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,dw-hdmi.txt
-@@ -39,6 +39,7 @@ Optional properties:
- 
- - power-domains: Shall reference the power domain that contains the DWC HDMI,
-   if any.
-+- disable-hpd: Disables the hotplug detect feature
- 
- 
- Example:
+Applied all, thanks
 -- 
-2.30.0
-
+~Vinod
