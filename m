@@ -5,137 +5,87 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F92FC433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Feb 2021 17:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7922C433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Feb 2021 17:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B8B264E0D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Feb 2021 17:53:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F1DB64E0D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Feb 2021 17:54:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238448AbhBDRxi (ORCPT
+        id S238725AbhBDRx5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Feb 2021 12:53:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41482 "EHLO
+        Thu, 4 Feb 2021 12:53:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41492 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238710AbhBDRxG (ORCPT
+        with ESMTP id S238602AbhBDRxH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Feb 2021 12:53:06 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C3D1C061797
+        Thu, 4 Feb 2021 12:53:07 -0500
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A30BC0617A9
         for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Feb 2021 09:50:43 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by albert.telenet-ops.be with bizsmtp
-        id R5qf240094C55Sk065qfPV; Thu, 04 Feb 2021 18:50:41 +0100
+        by laurent.telenet-ops.be with bizsmtp
+        id R5qf2400D4C55Sk015qf6A; Thu, 04 Feb 2021 18:50:40 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1l7im7-003Fgj-3T; Thu, 04 Feb 2021 18:50:39 +0100
+        id 1l7im6-003Fgj-QX; Thu, 04 Feb 2021 18:50:38 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1l7eK2-006uUx-8Y; Thu, 04 Feb 2021 14:05:22 +0100
+        id 1l7f5G-006vw3-1C; Thu, 04 Feb 2021 14:54:10 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
 Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] arm64: dts: renesas: Group tuples in playback and capture properties
-Date:   Thu,  4 Feb 2021 14:05:16 +0100
-Message-Id: <20210204130517.1647073-5-geert+renesas@glider.be>
+Subject: [PATCH/RFC 4/6] ARM: dts: r8a73a4: Add Media RAM for SMP jump stub
+Date:   Thu,  4 Feb 2021 14:54:07 +0100
+Message-Id: <20210204135409.1652604-5-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210204130517.1647073-1-geert+renesas@glider.be>
-References: <20210204130517.1647073-1-geert+renesas@glider.be>
+In-Reply-To: <20210204135409.1652604-1-geert+renesas@glider.be>
+References: <20210204135409.1652604-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-To improve human readability and enable automatic validation, the tuples
-in "playback" and "capture" properties in sound device nodes should be
-grouped using angle brackets.
+R-Mobile APE6 has 2 MiB of Media RAM.
+Reserve 256 bytes for the jump stub for CPU core bringup.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi | 2 +-
- arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts           | 2 +-
- arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts            | 4 ++--
- arch/arm64/boot/dts/renesas/salvator-common.dtsi          | 4 ++--
- arch/arm64/boot/dts/renesas/ulcb.dtsi                     | 4 ++--
- 5 files changed, 8 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/r8a73a4.dtsi | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-index 30c169b08536a59d..c88229990d422d4d 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-baseboard.dtsi
-@@ -639,7 +639,7 @@ rsnd_endpoint0: endpoint {
- 				bitclock-master = <&rsnd_endpoint0>;
- 				frame-master = <&rsnd_endpoint0>;
- 
--				playback = <&ssi1 &dvc1 &src1>;
-+				playback = <&ssi1>, <&dvc1>, <&src1>;
- 				capture = <&ssi0>;
- 			};
- 		};
-diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-index ea87cb5a459c89b3..07fbbc4f4572016f 100644
---- a/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a774c0-cat874.dts
-@@ -365,7 +365,7 @@ &rcar_sound {
- 
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi0 &src0 &dvc0>;
-+			playback = <&ssi0>, <&src0>, <&dvc0>;
- 		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-index f74f8b9993f1d79c..0992fff676e3dab3 100644
---- a/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77990-ebisu.dts
-@@ -653,8 +653,8 @@ &rcar_sound {
- 
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi0 &src0 &dvc0>;
--			capture  = <&ssi1 &src1 &dvc1>;
-+			playback = <&ssi0>, <&src0>, <&dvc0>;
-+			capture  = <&ssi1>, <&src1>, <&dvc1>;
- 		};
+diff --git a/arch/arm/boot/dts/r8a73a4.dtsi b/arch/arm/boot/dts/r8a73a4.dtsi
+index d498f848d34ab6ed..9abf5e9bb240f0a2 100644
+--- a/arch/arm/boot/dts/r8a73a4.dtsi
++++ b/arch/arm/boot/dts/r8a73a4.dtsi
+@@ -479,6 +479,19 @@ scifb3: serial@e6cf0000 {
+ 		status = "disabled";
  	};
  
-diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-index 00a005776b5e7492..9a0ee01df51327f0 100644
---- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-+++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
-@@ -779,8 +779,8 @@ rsnd_endpoint0: endpoint {
- 				bitclock-master = <&rsnd_endpoint0>;
- 				frame-master = <&rsnd_endpoint0>;
- 
--				playback = <&ssi0 &src0 &dvc0>;
--				capture  = <&ssi1 &src1 &dvc1>;
-+				playback = <&ssi0>, <&src0>, <&dvc0>;
-+				capture  = <&ssi1>, <&src1>, <&dvc1>;
- 			};
- 		};
- 	};
-diff --git a/arch/arm64/boot/dts/renesas/ulcb.dtsi b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-index a04eae55dd6c42dc..97e9ed93cf15cd18 100644
---- a/arch/arm64/boot/dts/renesas/ulcb.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb.dtsi
-@@ -408,8 +408,8 @@ rsnd_for_ak4613: endpoint {
- 				bitclock-master = <&rsnd_for_ak4613>;
- 				frame-master = <&rsnd_for_ak4613>;
- 
--				playback = <&ssi0 &src0 &dvc0>;
--				capture  = <&ssi1 &src1 &dvc1>;
-+				playback = <&ssi0>, <&src0>, <&dvc0>;
-+				capture  = <&ssi1>, <&src1>, <&dvc1>;
- 			};
- 		};
- 		rsnd_port1: port@1 {
++	meram: sram@e8080000 {
++		compatible = "mmio-sram";
++		reg = <0 0xe8080000 0 0x200000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0 0xe8080000 0x200000>;
++
++		smp-sram@0 {
++			compatible = "renesas,smp-sram";
++			reg = <0 0x100>;
++		};
++	};
++
+ 	sdhi0: mmc@ee100000 {
+ 		compatible = "renesas,sdhi-r8a73a4";
+ 		reg = <0 0xee100000 0 0x100>;
 -- 
 2.25.1
 
