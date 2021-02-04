@@ -2,160 +2,73 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8CFC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Feb 2021 18:08:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA76C433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Feb 2021 19:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2498F64F38
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Feb 2021 18:08:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36A6264F38
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Feb 2021 19:34:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238350AbhBDSIv (ORCPT
+        id S239893AbhBDTeJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Feb 2021 13:08:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43666 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238825AbhBDSDE (ORCPT
+        Thu, 4 Feb 2021 14:34:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236563AbhBDTeC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Feb 2021 13:03:04 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10574C06178B
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Feb 2021 10:02:18 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by andre.telenet-ops.be with bizsmtp
-        id R62H2400W4C55Sk0162Hjs; Thu, 04 Feb 2021 19:02:17 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1l7im7-003Fgj-8P; Thu, 04 Feb 2021 18:50:39 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1l7eK2-006uUn-6M; Thu, 04 Feb 2021 14:05:22 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/5] ARM: dts: renesas: Group tuples in playback and capture properties
-Date:   Thu,  4 Feb 2021 14:05:14 +0100
-Message-Id: <20210204130517.1647073-3-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210204130517.1647073-1-geert+renesas@glider.be>
-References: <20210204130517.1647073-1-geert+renesas@glider.be>
+        Thu, 4 Feb 2021 14:34:02 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 774C164F38;
+        Thu,  4 Feb 2021 19:33:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612467198;
+        bh=qtf1pV8DNlFC9elXhMnkT4Ez5c4lIUk64uNS8v3GVVk=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=lghzVLiJpvWjTuZxwovKMSW8XkU1i4HOGX6tntUmrgfLSsJnpdJQEpUyhWjGpvwCg
+         ugTMgInu18AicwH6VXhXwpxzs+t3Rm4MBewF3wRPkpihdQ/R0P5tzSJv5U7ao50wEd
+         8VsOF9Ynjq8pCgMpeU1p3ytTIGFb8lWHNpLJLLqR/8qBAnA+bufGpU2Vu1O4SJ3jUz
+         TrfJ+Eu2uFIkPML4s7XeDUL8fu+4q2H1igAz7DJMW009sEwzJMa6QOjPOjFJiK+ODt
+         CXtlGtC5TSnHo9igDZcB1bMHDqh6DwCSoh+Ik/hkISjlBm++cmbK0fr/RJPwx92ABO
+         EuKpbHaKaDNDw==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20210115095248.2334597-1-geert+renesas@glider.be>
+References: <20210115095248.2334597-1-geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.12
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Thu, 04 Feb 2021 11:33:17 -0800
+Message-ID: <161246719705.76967.10807491823382635858@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-To improve human readability and enable automatic validation, the tuples
-in "playback" and "capture" properties in sound device nodes should be
-grouped using angle brackets.
+Quoting Geert Uytterhoeven (2021-01-15 01:52:48)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit 5c8fe583cce542aa0b84adc939ce85293de36e=
+5e:
+>=20
+>   Linux 5.11-rc1 (2020-12-27 15:30:22 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.12-tag1
+>=20
+> for you to fetch changes up to c706121386fe8414ac0a0acab37c74aac698c51d:
+>=20
+>   dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add support for RZ/G2=
+ M/N/H (2021-01-12 12:35:13 +0100)
+>=20
+> ----------------------------------------------------------------
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/iwg20d-q7-common.dtsi     | 4 ++--
- arch/arm/boot/dts/r8a7742-iwg21d-q7.dts     | 4 ++--
- arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts | 4 ++--
- arch/arm/boot/dts/r8a7790-lager.dts         | 4 ++--
- arch/arm/boot/dts/r8a7791-koelsch.dts       | 4 ++--
- arch/arm/boot/dts/r8a7793-gose.dts          | 4 ++--
- 6 files changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm/boot/dts/iwg20d-q7-common.dtsi b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-index 63cafd220dba1d04..bc857676d19104a1 100644
---- a/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-+++ b/arch/arm/boot/dts/iwg20d-q7-common.dtsi
-@@ -325,8 +325,8 @@ &rcar_sound {
- 
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi1 &src3 &dvc1>;
--			capture = <&ssi0 &src2 &dvc0>;
-+			playback = <&ssi1>, <&src3>, <&dvc1>;
-+			capture = <&ssi0>, <&src2>, <&dvc0>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts b/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
-index 0063ef92f50e35f1..94bf8a116b5242a9 100644
---- a/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
-+++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7.dts
-@@ -387,8 +387,8 @@ &rcar_sound {
- 
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi4 &src4 &dvc1>;
--			capture = <&ssi3 &src3 &dvc0>;
-+			playback = <&ssi4>, <&src4>, <&dvc1>;
-+			capture = <&ssi3>, <&src3>, <&dvc0>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-index 1c7b37a01f0ab923..73bd62d8a929e5da 100644
---- a/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-+++ b/arch/arm/boot/dts/r8a7745-iwg22d-sodimm.dts
-@@ -289,8 +289,8 @@ &rcar_sound {
- 
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi3 &src3 &dvc0>;
--			capture = <&ssi4 &src4 &dvc1>;
-+			playback = <&ssi3>, <&src3>, <&dvc0>;
-+			capture = <&ssi4>, <&src4>, <&dvc1>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 09a152b9155754ac..58687f2af3c504a8 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -918,8 +918,8 @@ &rcar_sound {
- 
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi0 &src2 &dvc0>;
--			capture  = <&ssi1 &src3 &dvc1>;
-+			playback = <&ssi0>, <&src2>, <&dvc0>;
-+			capture  = <&ssi1>, <&src3>, <&dvc1>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index f603cba5441fcb9e..7f58e56bcf13935e 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -888,8 +888,8 @@ &rcar_sound {
- 
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi0 &src2 &dvc0>;
--			capture  = <&ssi1 &src3 &dvc1>;
-+			playback = <&ssi0>, <&src2>, <&dvc0>;
-+			capture  = <&ssi1>, <&src3>, <&dvc1>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index abf487e8fe0f366f..7516811f98e20ae7 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -761,8 +761,8 @@ &rcar_sound {
- 
- 	rcar_sound,dai {
- 		dai0 {
--			playback = <&ssi0 &src2 &dvc0>;
--			capture  = <&ssi1 &src3 &dvc1>;
-+			playback = <&ssi0>, <&src2>, <&dvc0>;
-+			capture  = <&ssi1>, <&src3>, <&dvc1>;
- 		};
- 	};
- };
--- 
-2.25.1
-
+Thanks. Pulled into clk-next
