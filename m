@@ -2,74 +2,68 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97079C433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Feb 2021 19:58:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52119C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Feb 2021 03:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3784D64E35
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Feb 2021 19:58:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DFB664DE9
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Feb 2021 03:26:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239898AbhBDT6I (ORCPT
+        id S229996AbhBED0c (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Feb 2021 14:58:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60766 "EHLO mail.kernel.org"
+        Thu, 4 Feb 2021 22:26:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239883AbhBDT5y (ORCPT
+        id S229854AbhBED0b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Feb 2021 14:57:54 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 18F9E64F38;
-        Thu,  4 Feb 2021 19:57:14 +0000 (UTC)
+        Thu, 4 Feb 2021 22:26:31 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0B11264FBE;
+        Fri,  5 Feb 2021 03:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612468634;
-        bh=fRR1VB3c6VvutDVQB6PF/ZUKUqLlBrE1/9o/d8NDwMw=;
+        s=k20201202; t=1612495551;
+        bh=6rO+LAksh5ANnYBlADpBpGpr5iLoUNXdtIfn+08rEv0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Slcfxs99EIcG3+2XmBJjLOn5DvdF7Kq4ryaxVmjJQSfguQbLnqNwBnGJuv/9QS4OX
-         WxTdS2/OR+KKZrkW9pfI0K242LX8O/FuqdtelXVwMZthRjoYRQmVZtfaT99BGoi16k
-         +2MzqlfMZLYjjK0/enejc6JkMbe2FK+dEkClIQIZy/ySS/iVtcXguQ/VVBFtQlfycp
-         eEcDHbOLJAiRYr6aJYsdmf9gGheLGufe0p/1UUF6o5sxCH3a6+kskBfrqAGbF+1uGW
-         fPODfOBgSPSjxC2SZDdBo2tbPpC3ciauoKwC/Ag8J75iYC7yK2QuwdP0cvYeyDsGSc
-         9s1moXUhDnVaw==
+        b=RclseKkHcI9SzMP4+ZteFqN8kRQm8sUFcmQAysUYWsCEMsOqigCCMAwsW5BF+27fh
+         JJTgcb9U5y05UqK5hX1Boc7lRyqq5SY8+ju7yFdVjWczPW3OuZRakOjDMpGtZ1ehQY
+         kWUAuMvTKJPSOwLy79UlwSN3UDkKMfsV0smEbopBBynwpUTNm4RlP6DIog8TGZ/LM+
+         muOko2LBD86VNLzaZJvjmYwNRlUHuKcWC2i+zm1BO4IoPyc2uf6XG6XF62h0zNXWFI
+         gZUx/5RFlY/62STcKJ1U1Ai3ghVK6BxrmiDj84lAx3ERXV60umiMGLL22A8Xftw+S4
+         P3p27jJWSHO+g==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20210129091611.2552797-1-geert+renesas@glider.be>
-References: <20210129091611.2552797-1-geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v5.12 (take two)
+In-Reply-To: <20210126163955.1933893-1-geert+renesas@glider.be>
+References: <20210126163955.1933893-1-geert+renesas@glider.be>
+Subject: Re: [PATCH v3] dt-bindings: clk: versaclock5: Miscellaneous fixes and improvements:
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Thu, 04 Feb 2021 11:57:12 -0800
-Message-ID: <161246863272.76967.16202770505739428537@swboyd.mtv.corp.google.com>
+To:     Adam Ford <aford173@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Luca Ceresoli <luca@lucaceresoli.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 04 Feb 2021 19:25:49 -0800
+Message-ID: <161249554953.76967.8074850148342072118@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2021-01-29 01:16:11)
->         Hi Mike, Stephen,
+Quoting Geert Uytterhoeven (2021-01-26 08:39:55)
+>   - Remove unneeded reference for "idt,slew-percent", as vendor specific
+>     properties having a standard unit suffix don't need a type,
+>   - Add missing "additionalProperties: false" for subnodes, to catch
+>     typos in properties,
+>   - Fix property names in example.
 >=20
-> The following changes since commit c706121386fe8414ac0a0acab37c74aac698c5=
-1d:
->=20
->   dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add support for RZ/G2=
- M/N/H (2021-01-12 12:35:13 +0100)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v5.12-tag2
->=20
-> for you to fetch changes up to 24ece96554a963d5eab597be7d65a1812d854d10:
->=20
->   clk: renesas: cpg-mssr: Fix formatting issues for 'smstpcr_saved's docu=
-mentation (2021-01-28 09:45:56 +0100)
->=20
-> ----------------------------------------------------------------
+> Fixes: 45c940184b501fc6 ("dt-bindings: clk: versaclock5: convert to yaml")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Thanks. Pulled into clk-next
+Acked-by: Stephen Boyd <sboyd@kernel.org>
