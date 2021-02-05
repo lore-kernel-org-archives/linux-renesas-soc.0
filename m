@@ -2,142 +2,84 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17297C433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Feb 2021 19:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD47C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Feb 2021 20:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C14F164E2E
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Feb 2021 19:23:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 707A764FCC
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  5 Feb 2021 20:18:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233456AbhBERlE (ORCPT
+        id S233244AbhBESf2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 5 Feb 2021 12:41:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56412 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233478AbhBERiK (ORCPT
+        Fri, 5 Feb 2021 13:35:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35702 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S233255AbhBESeA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 5 Feb 2021 12:38:10 -0500
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DBF7C06178B
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  5 Feb 2021 11:19:53 -0800 (PST)
-Received: by mail-wr1-x435.google.com with SMTP id q7so8841737wre.13
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 05 Feb 2021 11:19:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=jKpWYq7VIIL6VYUoIW5OckVXatPGRV104LzvjFGIr1c=;
-        b=HwIpaNjwBxYkUwux2fQ5Do8bhE9RIxKGf3pBtqircLjR/ltu3YBNFOqrISVA9cKWcR
-         9LZ/kEg7RcmLgK7zzuGM6Ws9pPX2PHkVBWjx7IaAGU/LGoLG4WajR2fEp/7WTQlSp7Ad
-         Qm2lM6PHf5+u73jqSb5tFR4dD3MD2z/riun81VWe0cKVIlc0Ddfjp7OiBOmLWFjVOrZF
-         EabzDIVnsRVobIqrdK9/T4ed2N0Y+9XPWyFj+AimPzyyzBk+I1nxbBwpskI6zwL8GDSt
-         aDbX+8HiSKRQ4DZoeaTXWnA7xfkWaLrWQdZj0Tysv6O9oTbtpPZD6bTpfDxJJNyB+kiD
-         Gswg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=jKpWYq7VIIL6VYUoIW5OckVXatPGRV104LzvjFGIr1c=;
-        b=a31KGXpCnqBUiT2iOqd3BcRX9dxKnl7wsSHT0n+gcsJHQ1UhwsIbqpzSxNgViiwkgw
-         2D15vtGaV6CtPs8DBE9Vs4Mixs88WmTka8roVGq932LEpbX9oq99LjSAt6Xtgap40QaV
-         SP8sAIlsMxqK2DV9ASlovnHgkK74ljV28sWTHZuJ1ayt31TIfGmNemczd0+PmPLxjAvF
-         KUCd6zGXpSVlsIERct9EEpctzaAT0hDlulx/15KfKh7v5Xc0LB/18nIgJSgPrKUwHO32
-         DBpDr1U4ZRbE8swc58n3ns5a9bi4OiSfGwzzK7w3NsobX9mnWpFkrAaWu4w03yzSFAqb
-         P32g==
-X-Gm-Message-State: AOAM530Xh3lMQAutUp8I0c1EaWewzM5TwuqzDagw7h+GxSXkniV2B3L9
-        0yR4tBfxB/HJQOIYDVMxBh7anA==
-X-Google-Smtp-Source: ABdhPJzCBGvv1VGUurr+4N/vSECBVMAquwr4j/9tJjZbqQkfy05JU+uYe9sEdOTVfMMZi1qhBeuO9w==
-X-Received: by 2002:a5d:4dd0:: with SMTP id f16mr6639112wru.304.1612552791820;
-        Fri, 05 Feb 2021 11:19:51 -0800 (PST)
-Received: from dell ([91.110.221.188])
-        by smtp.gmail.com with ESMTPSA id k4sm14244388wrm.53.2021.02.05.11.19.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Feb 2021 11:19:51 -0800 (PST)
-Date:   Fri, 5 Feb 2021 19:19:48 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
-        Andy Gross <agross@kernel.org>,
-        Avi Fishman <avifishman70@gmail.com>,
-        Benjamin Fair <benjaminfair@google.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Boris BREZILLON <boris.brezillon@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Fabio Estevam <festevam@gmail.com>,
+        Fri, 5 Feb 2021 13:34:00 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id B2D1264FBB;
+        Fri,  5 Feb 2021 20:15:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1612556145;
+        bh=qgY/DVuIqSludWLeA3R0K2D/h0Yt+L6hRa2j/mG7ovM=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=JHNd0zi92Uv88DwkPWRe87CobScKHeKGVO7+dGg3kVNKeTOjx+YLRINqFRKnfog51
+         lYN6iYzA/2/ivVyELn2U7gAnD+J51SQhvZcMPsgqLf/Jlo39BV1Xxp4rWZ0o5XakBT
+         C2akIFP5EmLdIdf4QfoxT1iQriryfu6XT5d8/skqfheNX9JtNP480VLQMt6VcuQvhp
+         E5lDJ896C0lLyljjqpsgo5cC0Fo2HNhAvtOZYU93ga9OrxxWmBbsDNEq2vCy/ZDVxU
+         odY7UZOO1Git0+yg7qzvBw7u8tCrcXKF6JxQvs1Zg3gEo9x2bf/ptG6Nu3i1TxPQy4
+         deKcZTojy26Zw==
+From:   Mark Brown <broonie@kernel.org>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Jan Kotas <jank@cadence.com>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonathan Hunter <jonathanh@nvidia.com>, Loc Ho <lho@apm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Nuvoton Technologies <tali.perry@nuvoton.com>,
-        Patrick Venture <venture@google.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        P rashant Gaikwad <pgaikwad@nvidia.com>,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
-        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>,
-        Tali Perry <tali.perry1@gmail.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
-        openbmc@lists.ozlabs.org
-Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
-Message-ID: <20210205191948.GS2789116@dell>
-References: <20210126124540.3320214-1-lee.jones@linaro.org>
- <20210203083155.GA2329016@dell>
- <161255130506.76967.8682382463883809207@swboyd.mtv.corp.google.com>
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+In-Reply-To: <20210204130022.1646427-1-geert+renesas@glider.be>
+References: <20210204130022.1646427-1-geert+renesas@glider.be>
+Subject: Re: [PATCH] ASoC: dt-bindings: renesas, rsnd: Group tuples in playback/capture properties
+Message-Id: <161255607745.56562.5489379179875398712.b4-ty@kernel.org>
+Date:   Fri, 05 Feb 2021 20:14:37 +0000
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <161255130506.76967.8682382463883809207@swboyd.mtv.corp.google.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, 05 Feb 2021, Stephen Boyd wrote:
+On Thu, 4 Feb 2021 14:00:22 +0100, Geert Uytterhoeven wrote:
+> To improve human readability and enable automatic validation, the tuples
+> in "playback" and "capture" properties in sound device nodes should be
+> grouped using angle brackets.
 
-> Quoting Lee Jones (2021-02-03 00:31:55)
-> > On Tue, 26 Jan 2021, Lee Jones wrote:
-> > 
-> > > This set is part of a larger effort attempting to clean-up W=1
-> > > kernel builds, which are currently overwhelmingly riddled with
-> > > niggly little warnings.
-> > > 
-> > > This is the last set.  Clock is clean after this.
-> > 
-> > Out of interest, what normally happens to the patches which aren't
-> > picked up by individual driver Maintainers?
-> > 
-> 
-> I have to go in and figure it out! :)
+Applied to
 
-Thanks mate, much obliged.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Thanks!
+
+[1/1] ASoC: dt-bindings: renesas, rsnd: Group tuples in playback/capture properties
+      commit: f08c74a3b52d126d053c741b906ee1ca2a4f3568
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
