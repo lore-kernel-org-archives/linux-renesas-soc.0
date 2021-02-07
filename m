@@ -2,119 +2,82 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5605C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Feb 2021 08:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E29C433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  7 Feb 2021 17:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F26A64F91
-	for <linux-renesas-soc@archiver.kernel.org>; Sat,  6 Feb 2021 08:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2096964DFF
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  7 Feb 2021 17:45:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229741AbhBFIxX (ORCPT
+        id S229537AbhBGRpT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 6 Feb 2021 03:53:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33950 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229684AbhBFIxT (ORCPT
+        Sun, 7 Feb 2021 12:45:19 -0500
+Received: from m12-13.163.com ([220.181.12.13]:38218 "EHLO m12-13.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229506AbhBGRpS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 6 Feb 2021 03:53:19 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 841E5C06174A
-        for <linux-renesas-soc@vger.kernel.org>; Sat,  6 Feb 2021 00:52:39 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id p21so13939206lfu.11
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 06 Feb 2021 00:52:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=0cnSyR4XNAUGhazxKzpV0CfcJNheP6eqg1CN6Tljdvg=;
-        b=s2Yb/dy2Kis0zI+JHW3HSSJ63lqSQzEvZ2muMkug0mGc+JB76FnnCYSLEEhLL2UJzy
-         wDgEnU4kn9UpK56uDF5P4iuqy7qiQA0jtjdmo34IYzfiPrd8ESTtYaaHz/YKieafoDZa
-         ak9HpnL09YpXF1PnbPgy/UVxjyFzqDjPWPyKVpXBTF3EpvEpQn/+lnrkWwHIrVA6QNoN
-         jidZvMJ96ppecrdNMHpvAL54HNB64BMZnnSECIZjegW3AILx7egbV/3OfGaAU5JVZSU+
-         cEqv56viv17Ru52udijuh+QhYTUYl9M9FfD2ZaFRkL+rxDiCfbqaZAER4jFyMaHQWZ36
-         QDEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=0cnSyR4XNAUGhazxKzpV0CfcJNheP6eqg1CN6Tljdvg=;
-        b=hHtkbctJLAmdZ5rOqO3zvRjrKBJqBPeZzhbuYERf7QLbsdqAxR2AJfKGRxTcm/yjyF
-         ffkibZYBd/Ytmj3b3KHAaM+5eCage9fxwGFa6+UHfrNMVp0qMkvtCn5LGtVEjcP7uX6c
-         Xt5w5DFBFvLnSbapm0T/aVPwSUboj3I8e6J7yNOfX1vFwGdSn/+zkQopqvH3L+sN/8Z5
-         8Z3N1LbWPSNzUtVFc6LX5LjZn0SZoTA/8xJkEFGuGbO/ASEhQ0CJmetv7jdz8wdCIrzE
-         YKVOXU293mUZGOjX5gPpss1Ik0kWUHeMAGLG53rnyV9hnLi3HNmJDbOBWIzWCrF5XRTA
-         I3UA==
-X-Gm-Message-State: AOAM531SDJma4ve0szGTweWXNach+a5q/1SWHGKAhvknlkIlePVIGFKr
-        c4Xr3pRdOUaODd81Okmy2zZvdA==
-X-Google-Smtp-Source: ABdhPJwLx9Z/0PrBxToqY86vnI+YTktNutrQG5nZ0iMT6fGqtGbNdwdzcJZp0/kSalsO0DATuhMqBw==
-X-Received: by 2002:a19:791c:: with SMTP id u28mr5052510lfc.168.1612601558105;
-        Sat, 06 Feb 2021 00:52:38 -0800 (PST)
-Received: from localhost (h-209-203.A463.priv.bahnhof.se. [155.4.209.203])
-        by smtp.gmail.com with ESMTPSA id o27sm1257400lfb.126.2021.02.06.00.52.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 06 Feb 2021 00:52:37 -0800 (PST)
-Date:   Sat, 6 Feb 2021 09:52:36 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
+        Sun, 7 Feb 2021 12:45:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=xRGMz2+Y98v+90gy3L
+        YVUzAcWLPNy7FWsh6R8cGnp+E=; b=WTCyWP5fn7t9lJ5WOYxufV7nmpCgIWJbyF
+        kddKV5jveaw4Hoa0Dk4+rLYrzMYAqAoP4dx4/AfvEYsHhFqFs+wzGkt4T4TdshDB
+        cP5p2ix7nWD2KJ9DN6Pj3u5UwOH9rEqeJaJBslGWK3NaxsiniQaxWqNG4Y7GNRYi
+        I3GCRr3T0=
+Received: from localhost.localdomain (unknown [223.87.231.49])
+        by smtp9 (Coremail) with SMTP id DcCowADXFDpRAiBgqDBEeQ--.361S2;
+        Sun, 07 Feb 2021 23:08:03 +0800 (CST)
+From:   alex_luca@163.com
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Ulrich Hecht <uli+renesas@fpond.eu>,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] soc: renesas: rmobile-sysc: Remove unneeded platform
- includes
-Message-ID: <YB5Y1FTjzfDdWr5m@oden.dyn.berto.se>
-References: <20210205132113.1920047-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210205132113.1920047-1-geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alex_luca@163.com,
+        Zhang Kun <zhangkun@cdjrlc.com>
+Subject: [PATCH] pinctrl: renesas:fix possible null pointer dereference struct pinmux_range *
+Date:   Sun,  7 Feb 2021 23:07:36 +0800
+Message-Id: <20210207150736.24382-1-alex_luca@163.com>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: DcCowADXFDpRAiBgqDBEeQ--.361S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWrurW8Kr47ArW7urWfCw17ZFb_yoW3twc_Ca
+        48ta4xAFW5C3Z3ur4xZF43Xr9FkF48ursYqrnFqF43A347Xr4YyF95urZ7G348Gw17XFWq
+        yFWvqr4ftr17AjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUUHmh7UUUUU==
+X-Originating-IP: [223.87.231.49]
+X-CM-SenderInfo: xdoh5spoxftqqrwthudrp/1tbiThMyylUDHqWZUAAAsB
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+From: Zhang Kun <zhangkun@cdjrlc.com>
 
-Thanks for your work.
+The parameters of  sh_pfc_enum_in_range() pinmux_range *r should be checked
+first for possible null ponter, especially when PINMUX_TYPE_FUNCTION as the
+pinmux_type was passed by sh_pfc_config_mux().
 
-On 2021-02-05 14:21:13 +0100, Geert Uytterhoeven wrote:
-> As of commit b587288001f05c0e ("ARM: shmobile: R-Mobile: Remove legacy
-> PM Domain code"), the R-Mobile System Controller driver no longer
-> handles the adding of platform devices to PM Domains, but delegates that
-> to the PM Domain core code.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Zhang Kun <zhangkun@cdjrlc.com>
+---
+ drivers/pinctrl/renesas/core.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> To be queued in renesas-devel for v5.13.
-> 
->  drivers/soc/renesas/rmobile-sysc.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/soc/renesas/rmobile-sysc.c b/drivers/soc/renesas/rmobile-sysc.c
-> index 9046b8c933cbe031..bf64d052f9245db5 100644
-> --- a/drivers/soc/renesas/rmobile-sysc.c
-> +++ b/drivers/soc/renesas/rmobile-sysc.c
-> @@ -14,8 +14,6 @@
->  #include <linux/delay.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> -#include <linux/of_platform.h>
-> -#include <linux/platform_device.h>
->  #include <linux/pm.h>
->  #include <linux/pm_clock.h>
->  #include <linux/pm_domain.h>
-> -- 
-> 2.25.1
-> 
-
+diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
+index 2cc457279345..40bbc8366668 100644
+--- a/drivers/pinctrl/renesas/core.c
++++ b/drivers/pinctrl/renesas/core.c
+@@ -128,6 +128,9 @@ int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin)
+ 
+ static int sh_pfc_enum_in_range(u16 enum_id, const struct pinmux_range *r)
+ {
++	if (!r)
++		return 0;
++
+ 	if (enum_id < r->begin)
+ 		return 0;
+ 
 -- 
-Regards,
-Niklas Söderlund
+2.17.1
+
+
