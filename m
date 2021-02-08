@@ -4,113 +4,139 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AFFC43332
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Feb 2021 09:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D95B4C433E9
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Feb 2021 10:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA31A64E9A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Feb 2021 09:49:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8999464E8F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Feb 2021 10:19:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231603AbhBHJs6 (ORCPT
+        id S231971AbhBHKTZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 Feb 2021 04:48:58 -0500
-Received: from mail-oo1-f49.google.com ([209.85.161.49]:37289 "EHLO
-        mail-oo1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231808AbhBHJqy (ORCPT
+        Mon, 8 Feb 2021 05:19:25 -0500
+Received: from mail-ot1-f53.google.com ([209.85.210.53]:40157 "EHLO
+        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232295AbhBHKSx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Feb 2021 04:46:54 -0500
-Received: by mail-oo1-f49.google.com with SMTP id e17so1766593oow.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 08 Feb 2021 01:46:39 -0800 (PST)
+        Mon, 8 Feb 2021 05:18:53 -0500
+Received: by mail-ot1-f53.google.com with SMTP id i20so13664733otl.7;
+        Mon, 08 Feb 2021 02:18:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=53O7YGMEY18aIs5/quOn80e9abESgPdAxmMk/htppTQ=;
-        b=oure2nXzf/1MEOusWakY2QF6H1zR3zQhpCiDmGlD9WhGBqdkikQx+hErAkfTY/0G5E
-         HgEv7GQJjE2x19ksZw6Ui1gIVGpzOQhLcN8lpW2BbgugbIwjP0rTWN+bnrAyXlbEzCDZ
-         ITUcL7MfQkhuuHgoGB88oyHe8AaIeIzyaoRCcbAEVJ2BHNtdrqcv6V/Nl5wIJZUnwLnz
-         V/COS5j9p2iPSmxETBq2eVotRGgbL0xntNExRAiWZ9gxlngqHK3xc1BFhg22DrYF40Sm
-         aGuz1WeLqwUpyBs6cZbg3dCQRMQO6MfhvmjEvZc+wR8bSPd3Ki7qLU0ouho4/6k9xUYK
-         PQJg==
-X-Gm-Message-State: AOAM532UzWjHYzUxaivJJNBxjROaKfpNY1BexWVTocKrSLVp/jDYWGnG
-        3wutOdpZEGF3OD98qhcbY0Mbc1CELhn/Db2WoR4=
-X-Google-Smtp-Source: ABdhPJwkUZ6ngyHXn5URDnWr+y/bTg5pf6HS9RBx1qHjDcGiF6YJnKvdCsjLwoZu9oDdHAKL9ORuKoZjO1gzwgp9vpk=
-X-Received: by 2002:a4a:e6d2:: with SMTP id v18mr12003567oot.40.1612777574055;
- Mon, 08 Feb 2021 01:46:14 -0800 (PST)
+        bh=sYbVgLIX+r79AC92zSDbMeMyYfHTGLVOZJrkvK6/LKQ=;
+        b=ZKqKt2Gu/vTRGswruTe5S42pl3uzvr5Uvfs+RW8XMNCmeEjjpQ7DYmH2yAv2KFldiC
+         XtfHqlsOaL+fZs2d6NPjHiz7VekaGYrkVbS8f/QhiUEXvHwpKQax8GLyCJIqcDN1PZPP
+         wFsQHnceK7HgxKVx/ckv+wMyFGzqNsyvuZp5UgTmYS+z51+2Ya9YjTAYOkzLhobQcpsx
+         BjMorwCqec3NZJulGuADSIiVIBj4PAknhm7HHa42ECFyqLpKwVPX7+ubY9p4N6HKtcXw
+         TThdyFeShkp1QZeHtvrEQdFXJ8o7nh0Nj1V+M/AQHmLEkpt1GagjTRYwjolJB1zOOSOX
+         VROA==
+X-Gm-Message-State: AOAM531ku60lkbDSeMMZYUCM8wuOm+9pFEUypKH+Rw0lbMNbiqAWxke8
+        EBHn5WTUyLlTQXXcZuRZiZaOhwFa5RMYJikq5Zs=
+X-Google-Smtp-Source: ABdhPJzuE0WnFgQq2prS/EOzWrbfsuwPgtDDyydII7UXbUSgS/+JtVjC5DE9GL+Ns+9OFXHsGmG2zJDO4CdNX8b02MU=
+X-Received: by 2002:a9d:77d6:: with SMTP id w22mr1010723otl.145.1612779492055;
+ Mon, 08 Feb 2021 02:18:12 -0800 (PST)
 MIME-Version: 1.0
-References: <1612752464-27838-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1612752464-27838-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+References: <20210207000030.256592-1-memxor@gmail.com> <20210207173441.2902acac@canb.auug.org.au>
+ <20210207073827.7l7h3475tqgxxfte@apollo>
+In-Reply-To: <20210207073827.7l7h3475tqgxxfte@apollo>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 8 Feb 2021 10:46:03 +0100
-Message-ID: <CAMuHMdVBAy7wtB-_uOsTg5NiEorCwyHgENrwUQBxtcqRChvp1Q@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: renesas: add sdhi/mmc aliases
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 8 Feb 2021 11:18:01 +0100
+Message-ID: <CAMuHMdVE+a4gMwa206=CWCUzAPD9N5nnvsPa1avWq_t1isfizQ@mail.gmail.com>
+Subject: Re: [PATCH] staging: emxx_udc: Fix incorrectly defined global
+To:     Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nishad Kamdar <nishadkamdar@gmail.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Shimoda-san,
+Hi Kumar,
 
-CC Ulf
+CC Nishad, Magnus, linux-renesas-soc,
 
-On Mon, Feb 8, 2021 at 3:48 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> After the commit 7320915c8861 ("mmc: Set PROBE_PREFER_ASYNCHRONOUS
-> for drivers that existed in v4.14"), the order of /dev/mmcblkN
-> was not fixed in some SoCs which have multiple sdhi controllers.
-> So, we were hard to use an sdhi device as rootfs by using
-> the kernel parameter like "root=/dev/mmcblkNpM".
+On Sun, Feb 7, 2021 at 8:40 AM Kumar Kartikeya Dwivedi <memxor@gmail.com> wrote:
+> On Sun, Feb 07, 2021 at 12:04:41PM IST, Stephen Rothwell wrote:
+> > Given that drivers/staging/emxx_udc/emxx_udc.h is only included by
+> > drivers/staging/emxx_udc/emxx_udc.c, shouldn't these variables just be
+> > declared static in emxx_udc.c and removed from emxx_udc.h?
+> >
 >
-> According to the discussion on a mainling list [1], we can add
-> mmc aliases to fix the issue. So, add such aliases into R-Car Gen3
-> and RZ/G2 dtsi files. Note that, if an SoC like r8a77980 has one
-> sdhi controller only, the alias is not defined.
+> Either would be correct. I went this way because it was originally trying to
+> (incorrectly) define a global variable instead. I guess they can be static now
+> and when more users are added, the linkage can be adjusted as needed.
 >
-> [1]
-> https://lore.kernel.org/linux-arm-kernel/CAPDyKFptyEQNJu8cqzMt2WRFZcwEdjDiytMBp96nkoZyprTgmA@mail.gmail.com/
+> Here's another version of the patch:
 >
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> ---
->  Changes from v1:
->  - Revise the commit description.
->  - Remove some alias which SoC has one sdhi controller only.
-> https://patchwork.kernel.org/project/linux-renesas-soc/patch/1604654877-30010-1-git-send-email-yoshihiro.shimoda.uh@renesas.com/
-
-Thanks for the update!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. I plan to queue this in renesas-devel for v5.13.
-Unless you want to upstream this as a fix for v5.11, in which case we
-have to hurry. Note that v5.10 already has the issue, too.
-
-BTW, shouldn't we add the aliases on 32-bit arm, too?
-
-> --- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
-> @@ -14,6 +14,12 @@
->         #address-cells = <2>;
->         #size-cells = <2>;
+> --
+> From 5835ad916ceeba620c85bc32f52ecd69f21f8dab Mon Sep 17 00:00:00 2001
+> From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+> Date: Sun, 7 Feb 2021 12:53:39 +0530
+> Subject: [PATCH] staging: emxx_udc: Make incorrectly defined global static
 >
-> +       aliases {
-> +               mmc0 = &sdhi0;
-> +               mmc1 = &sdhi1;
-> +               mmc3 = &sdhi3;
-> +       };
+> The global gpio_desc pointer and int vbus_irq were defined in the header,
+> instead put the definitions in the translation unit and make them static as
+> there's only a single consumer in emxx_udc.c.
+>
+> This fixes the following sparse warnings for this driver:
+> drivers/staging/emxx_udc/emxx_udc.c: note: in included file:
+> drivers/staging/emxx_udc/emxx_udc.h:23:18: warning: symbol 'vbus_gpio' was not
+> declared. Should it be static?
+> drivers/staging/emxx_udc/emxx_udc.h:24:5: warning: symbol 'vbus_irq' was not
+> declared. Should it be static?
+>
+> Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
 
-BTW, this is one of the other issues with aliases: where is mmc2?
-Yes, I know why it's done this way ;-)
+Thanks for your patch!
+
+> --- a/drivers/staging/emxx_udc/emxx_udc.c
+> +++ b/drivers/staging/emxx_udc/emxx_udc.c
+> @@ -34,6 +34,9 @@
+>  #define        DRIVER_DESC     "EMXX UDC driver"
+>  #define        DMA_ADDR_INVALID        (~(dma_addr_t)0)
+>
+> +static struct gpio_desc *vbus_gpio;
+> +static int vbus_irq;
+
+While I agree these must be static, I expect the driver to be still
+broken, as vbus_gpio is never set?
+
+Commit 48101806c52203f6 ("Staging: emxx_udc: Switch to the gpio
+descriptor interface") introduced both variables, which was presumably
+never tested.
+
+Magnus: perhaps we should just remove this driver?
+
+> +
+>  static const char      driver_name[] = "emxx_udc";
+>  static const char      driver_desc[] = DRIVER_DESC;
+>
+> diff --git a/drivers/staging/emxx_udc/emxx_udc.h b/drivers/staging/emxx_udc/emxx_udc.h
+> index bca614d69..c9e37a1b8 100644
+> --- a/drivers/staging/emxx_udc/emxx_udc.h
+> +++ b/drivers/staging/emxx_udc/emxx_udc.h
+> @@ -20,8 +20,6 @@
+>  /* below hacked up for staging integration */
+>  #define GPIO_VBUS 0 /* GPIO_P153 on KZM9D */
+>  #define INT_VBUS 0 /* IRQ for GPIO_P153 */
+> -struct gpio_desc *vbus_gpio;
+> -int vbus_irq;
 
 Gr{oetje,eeting}s,
 
                         Geert
 
--- 
+
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
