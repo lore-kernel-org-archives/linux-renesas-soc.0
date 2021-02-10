@@ -2,136 +2,76 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6BBC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Feb 2021 23:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAAF6C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Feb 2021 09:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4CD38601FF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  9 Feb 2021 23:38:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63E4E64DB1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Feb 2021 09:18:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233802AbhBIXh7 (ORCPT
+        id S229611AbhBJJSp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 9 Feb 2021 18:37:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54298 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233814AbhBIXZA (ORCPT
+        Wed, 10 Feb 2021 04:18:45 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.24]:21066 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230235AbhBJJPo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 9 Feb 2021 18:25:00 -0500
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 23F6A64DED;
-        Tue,  9 Feb 2021 23:24:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1612913055;
-        bh=L2ymRxGDKr1/CMeTw1M5We+NqO3B9OwoCehMFDhBuLc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mKyRNYgBCRmMFPmy85Ps+nb6KEI85rO0dzbKj3/K+wo48RW5KhxSzRYe8oIiWQJf+
-         i14dBV2oAZjnKAQpNLQM5wJ3h3pXsuUvlSXQ6/EBIQt4cGZZ/vuf/JiFDnB7vv0pmP
-         WvyYFv2+4WyKLAIu+APCb0VfeVGA/R+PQ4bxkTqjh9mAoWFEgFX0llPK20hCnKnRch
-         GiCTRCKXYeJKROg3byU9lLLc2y91DE+QN7CgB9WO9+ON4pJxql9dIWHW16E7odwOrU
-         O1uw3buPv8K2ECLC5cilXYV8AWPfpiD1EF0QDSOkVCki644+RpwD+sNSgSuQLKdN77
-         1I3z6BbvOy0CA==
-Date:   Tue, 9 Feb 2021 16:24:13 -0700
-From:   Nathan Chancellor <nathan@kernel.org>
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH] media: i2c: Kconfig: Make MAX9271 a module
-Message-ID: <20210209232413.GA673593@ubuntu-m3-large-x86>
-References: <20210208182006.178740-1-jacopo+renesas@jmondi.org>
+        Wed, 10 Feb 2021 04:15:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1612948308;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+        From:Subject:Sender;
+        bh=ksVLQIGKM6kEiyt9+nRQ/u2KJw5M1esBBiSkOpbfAFI=;
+        b=MTlRC1sO7xWQA7U/KD0pSLriKKbtNBYfE6xBTsfKEmXbmladjxv1mba/k2Nwd08jMT
+        AFGYg/Kl33JiS7rT4qrjiTpydI2hfksUKx4NwFTbEX0+7nfgyyMBswrUsMa2CzyOvIyj
+        iR2CKZAqWTa/j1cO2m/f/gVfkLAcYAW+Aq4yn3KZac4uQ8JX9lf7ijvT4NBeRpklEDy3
+        Sunms1sNczFRU+1RNI+iVLOp/9tFdl37cxV0a4ihsiHUA7hLakkprqzJ2dR/8GDCOEwB
+        iV7xKGA9+6AKsOsAQfu9BSbt5QF9a32ZA8LvYcwaFtSam1aWUEVN6diGtl9VzmOs2xqK
+        m/vw==
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fGk/2qthug="
+X-RZG-CLASS-ID: mo00
+Received: from oxapp03-01.back.ox.d0m.de
+        by smtp-ox.front (RZmta 47.17.1 AUTH)
+        with ESMTPSA id c05ce8x1A9Bm3d0
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Wed, 10 Feb 2021 10:11:48 +0100 (CET)
+Date:   Wed, 10 Feb 2021 10:11:48 +0100 (CET)
+From:   Ulrich Hecht <uli@fpond.eu>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     linux-renesas-soc@vger.kernel.org
+Message-ID: <1749889389.830679.1612948308452@webmail.strato.com>
+In-Reply-To: <20210204135409.1652604-1-geert+renesas@glider.be>
+References: <20210204135409.1652604-1-geert+renesas@glider.be>
+Subject: Re: [PATCH/RFC 0/6] ARM: r8a73a4: Add SMP support
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210208182006.178740-1-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.3-Rev31
+X-Originating-Client: open-xchange-appsuite
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Feb 08, 2021 at 07:20:06PM +0100, Jacopo Mondi wrote:
-> With the introduction of the RDACM21 camera module support in
-> commit a59f853b3b4b ("media: i2c: Add driver for RDACM21 camera module")
-> the symbols defined by the max9271 library were exported twice
-> if multiple users of the library were compiled in at the same time.
-> 
-> In example:
-> WARNING: modpost: drivers/media/i2c/rdacm21-camera_module:
-> 'max9271_set_serial_link' exported twice. Previous export was in
-> drivers/media/i2c/rdacm20-camera_module.ko
-> 
-> Fix this by making the rdacm21 file a module and have the driver
-> using its functions select it.
-> 
-> Fixes: a59f853b3b4b ("media: i2c: Add driver for RDACM21 camera module")
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Suggested-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-That file needs a MODULE_LICENSE now otherwise there will be a fatal
-build error:
+> On 02/04/2021 2:54 PM Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> Questions:
+>   - Do we want to bring up the Cortex-A7 cores, too? We don't on R-Car
+>     H2 neither.
 
-ERROR: modpost: missing MODULE_LICENSE() in drivers/media/i2c/max9271.o
+What still needs to be done for that?
 
-Cheers,
-Nathan
+[I recall having issues bringing up the A7 cores on my old APE6 board (that has since failed and been returned to Renesas). The kernel failed to bring up the A7 cores if enabled at boot, but I was able to enable up to three (any three) of them one-by-one via sysfs. I'm not sure if that was specific to that board, though.]
 
-> ---
->  drivers/media/i2c/Kconfig  | 5 +++++
->  drivers/media/i2c/Makefile | 7 +++----
->  2 files changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-> index 2d3dc0d82f9e..84645f751da3 100644
-> --- a/drivers/media/i2c/Kconfig
-> +++ b/drivers/media/i2c/Kconfig
-> @@ -1240,12 +1240,16 @@ config VIDEO_NOON010PC30
-> 
->  source "drivers/media/i2c/m5mols/Kconfig"
-> 
-> +config VIDEO_MAX9271
-> +	tristate
-> +
->  config VIDEO_RDACM20
->  	tristate "IMI RDACM20 camera support"
->  	depends on I2C
->  	select V4L2_FWNODE
->  	select VIDEO_V4L2_SUBDEV_API
->  	select MEDIA_CONTROLLER
-> +	select VIDEO_MAX9271
->  	help
->  	  This driver supports the IMI RDACM20 GMSL camera, used in
->  	  ADAS systems.
-> @@ -1259,6 +1263,7 @@ config VIDEO_RDACM21
->  	select V4L2_FWNODE
->  	select VIDEO_V4L2_SUBDEV_API
->  	select MEDIA_CONTROLLER
-> +	select VIDEO_MAX9271
->  	help
->  	  This driver supports the IMI RDACM21 GMSL camera, used in
->  	  ADAS systems.
-> diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-> index 6bd22d63e1a7..c34a7de3158b 100644
-> --- a/drivers/media/i2c/Makefile
-> +++ b/drivers/media/i2c/Makefile
-> @@ -125,10 +125,9 @@ obj-$(CONFIG_VIDEO_IMX319)	+= imx319.o
->  obj-$(CONFIG_VIDEO_IMX334)	+= imx334.o
->  obj-$(CONFIG_VIDEO_IMX355)	+= imx355.o
->  obj-$(CONFIG_VIDEO_MAX9286)	+= max9286.o
-> -rdacm20-camera_module-objs	:= rdacm20.o max9271.o
-> -obj-$(CONFIG_VIDEO_RDACM20)	+= rdacm20-camera_module.o
-> -rdacm21-camera_module-objs	:= rdacm21.o max9271.o
-> -obj-$(CONFIG_VIDEO_RDACM21)	+= rdacm21-camera_module.o
-> +obj-$(CONFIG_VIDEO_MAX9271)	+= max9271.o
-> +obj-$(CONFIG_VIDEO_RDACM20)	+= rdacm20.o
-> +obj-$(CONFIG_VIDEO_RDACM21)	+= rdacm21.o
->  obj-$(CONFIG_VIDEO_ST_MIPID02) += st-mipid02.o
-> 
->  obj-$(CONFIG_SDR_MAX2175) += max2175.o
-> --
-> 2.30.0
-> 
+CU
+Uli
