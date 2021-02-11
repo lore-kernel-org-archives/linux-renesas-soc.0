@@ -2,1244 +2,315 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6638BC43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Feb 2021 12:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1638C4332B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Feb 2021 13:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 24D3C64DE7
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Feb 2021 12:41:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85D5A64E79
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 11 Feb 2021 13:04:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229756AbhBKMlC (ORCPT
+        id S229707AbhBKNEB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 11 Feb 2021 07:41:02 -0500
-Received: from mail-lf1-f46.google.com ([209.85.167.46]:35245 "EHLO
-        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230526AbhBKMg5 (ORCPT
+        Thu, 11 Feb 2021 08:04:01 -0500
+Received: from mail-ot1-f44.google.com ([209.85.210.44]:44262 "EHLO
+        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231635AbhBKNBh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 11 Feb 2021 07:36:57 -0500
-Received: by mail-lf1-f46.google.com with SMTP id u25so7874511lfc.2;
-        Thu, 11 Feb 2021 04:36:36 -0800 (PST)
+        Thu, 11 Feb 2021 08:01:37 -0500
+Received: by mail-ot1-f44.google.com with SMTP id e5so4999676otb.11;
+        Thu, 11 Feb 2021 05:01:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=IftGh2kqPwKu1K1hBvknQpAd+9pF1hC3IiEOB1P1ZKY=;
-        b=jk8sYsVsJpQM2WcBAa9LIUpKJTH7twrIk88k4ZKxeeRdBtHzoQWbflx6guAvS2zJ/r
-         ijSaHJVt2rGRvf2oZzkwbaPIhYrrSRpHt8WxNyvSP83ZtEIyVAnprfhY7Rvr7S6WXYN4
-         IjNSMfUprCRxaX+2MwbMmqzaLfTtOvZaw2rZzsWvZrSyftC1m/x56T8P7x0d6IV0zwIi
-         j+H0jqozeH1kQ3kC76MDpBEBKAahaQhGY+mc5XqJn5RQlf7x8MWPjH7C/tMEujY+rbxd
-         j4aW5C1cRiQ3BtYR8oWyy9RGdwdYryZ3Trkuiq8JAaDtMRWgGLwnEjI/ZkbYszJpRmKW
-         fR7A==
-X-Gm-Message-State: AOAM533ohybZCTNvfXLSHFKwClWcroLN0vgKsLCuq2Mqr5rtdq/zyR1H
-        Jv/k0hXPCv6O2H6W4BF7xoo=
-X-Google-Smtp-Source: ABdhPJzvb+9y6mnxQnrhYFCy8rEFteFnK3yjqQ6rSeQsiElZbSyFYZNhNl0NZwvmoku4vnHZblxoNA==
-X-Received: by 2002:a19:f016:: with SMTP id p22mr4047698lfc.402.1613046970427;
-        Thu, 11 Feb 2021 04:36:10 -0800 (PST)
-Received: from localhost.localdomain (62-78-225-252.bb.dnainternet.fi. [62.78.225.252])
-        by smtp.gmail.com with ESMTPSA id r3sm887567lji.130.2021.02.11.04.36.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Feb 2021 04:36:09 -0800 (PST)
-Date:   Thu, 11 Feb 2021 14:36:02 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-power@fi.rohmeurope.com, linux-arm-msm@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [RFC PATCH 6/7] regulator: bd9576: Support error reporting
-Message-ID: <17fb19aa9879764f4d2e7e5be91c3322a9b42498.1613042245.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1613042245.git.matti.vaittinen@fi.rohmeurope.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QMFNyDV7DmfIVLEmKQYa9awS7YrY55WsSx5JuI5FbdM=;
+        b=K8Fi9JmP4ane2ru66Z4kGgUDBZ5rpo2KNZKbxEZ0u6xbmAq6YGe/Eq+pKKteL9GrbX
+         /gvq4l3w5RecZocamcu5TEYGWKLkEuEHDjiZJ5kaebhR0j8YQ7i3i1HwS5srTESbhI/3
+         +x8o2Ecf7MLKJs+0SRKPW2m4GtetUTTOTV/SgXf7oywg4TPiJpYXUarrmZc4eFrDqlMz
+         9cD3MzVH1uOKmEvzU/+MTpc4eL0a9jwgcZOun2xxGU81oKBuCyN8plTA+vco854eJXZ5
+         fbTp2xdYqebFYf1om0yb91hH7480OVle2WLQoa3WgDcJi3x7Hn9pEYkrJhQLthcD3eIH
+         SUEw==
+X-Gm-Message-State: AOAM533lr9AYd//vNHSeEoBsn+KDgQnXoVrAjtMXUHMcw7r6fhKNUp9I
+        D6hGwcAdVjAGGKJmo72o9NYmwU5MDfL98UWT8vk=
+X-Google-Smtp-Source: ABdhPJxZDiUEbHhrzo8aCY9HhP7XU37YsKe5rfbHE0/8zTtJXnv01AsivsknDjLGR8Mn+hMIyIy6+OlyuPE1NQkrSOk=
+X-Received: by 2002:a9d:77d6:: with SMTP id w22mr5641603otl.145.1613048454541;
+ Thu, 11 Feb 2021 05:00:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1613042245.git.matti.vaittinen@fi.rohmeurope.com>
+References: <20210205222644.2357303-1-saravanak@google.com>
+In-Reply-To: <20210205222644.2357303-1-saravanak@google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 11 Feb 2021 14:00:43 +0100
+Message-ID: <CAMuHMdVL-1RKJ5u-HDVA4F4w_+8yGvQQuJQBcZMsdV4yXzzfcw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/8] Make fw_devlink=on more forgiving
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Len Brown <len.brown@intel.com>, Len Brown <lenb@kernel.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Marc Zyngier <maz@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-BD9573 and BD9576 support set of "protection" interrupts for "fatal"
-issues. Those lead to SOC reset as PMIC shuts the power outputs. Thus
-there is no relevant IRQ handling for them.
+Hi Saravana,
 
-Few "detection" interrupts were added to the BD9576 with the idea that
-SOC could take some recovery-action before error gets unrecoverable.
+On Fri, Feb 5, 2021 at 11:26 PM Saravana Kannan <saravanak@google.com> wrote:
+> There are a lot of devices/drivers where they never have a struct device
+> created for them or the driver initializes the hardware without ever
+> binding to the struct device.
+>
+> This series is intended to avoid any boot regressions due to such
+> devices/drivers when fw_devlink=on and also address the handling of
+> optional suppliers.
+>
+> Patch 1 and 2 addresses the issue of firmware nodes that look like
+> they'll have struct devices created for them, but will never actually
+> have struct devices added for them. For example, DT nodes with a
+> compatible property that don't have devices added for them.
+>
+> Patch 3 and 4 allow for handling optional DT bindings.
+>
+> Patch 5 sets up a generic API to handle drivers that never bind with
+> their devices.
+>
+> Patch 6 through 8 update different frameworks to use the new API.
+>
+> Thanks,
+> Saravana
+>
+> Saravana Kannan (8):
+>   driver core: fw_devlink: Detect supplier devices that will never be
+>     added
+>   of: property: Don't add links to absent suppliers
+>   driver core: Add fw_devlink.strict kernel param
+>   of: property: Add fw_devlink support for optional properties
+>   driver core: fw_devlink: Handle suppliers that don't use driver core
+>   irqdomain: Mark fwnodes when their irqdomain is added/removed
+>   PM: domains: Mark fwnodes when their powerdomain is added/removed
+>   clk: Mark fwnodes when their clock provider is added/removed
 
-Add support for over and under voltage detection for Vout1 ... Vout4
-and VoutL1. Add over-current detection for VoutS1 and finally a
-thermal warning (common for all regulators) which alerts 30 C
-before temperature reaches the thermal shutdown point. This way
-consumer drivers can build error-recovery mechanisms.
+Thanks for your series, which is now part of driver-core-next.
+I gave driver-core-next + [1] a try on various Renesas boards.
+Test results are below.
+In general, the result looks much better than before.
 
-Unfortunately the BD9576 interrupt logic was not re-evaluated. IRQs
-are not designed to be properly acknowleged - and IRQ line is kept
-active for whole duration of error condition (in comparison to
-informing only about state change).
+[1] - https://lore.kernel.org/lkml/20210210114435.122242-1-tudor.ambarus@microchip.com/
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/regulator/bd9576-regulator.c | 1026 ++++++++++++++++++++++----
- 1 file changed, 899 insertions(+), 127 deletions(-)
+  1. R-Car Gen2 (Koelsch), R-Car Gen3 (Salvator-X(S), Ebisu).
 
-diff --git a/drivers/regulator/bd9576-regulator.c b/drivers/regulator/bd9576-regulator.c
-index a8b5832a5a1b..8768f6145ec4 100644
---- a/drivers/regulator/bd9576-regulator.c
-+++ b/drivers/regulator/bd9576-regulator.c
-@@ -2,10 +2,10 @@
- // Copyright (C) 2020 ROHM Semiconductors
- // ROHM BD9576MUF/BD9573MUF regulator driver
- 
--#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
-+#include <linux/jiffies.h>
- #include <linux/kernel.h>
- #include <linux/mfd/rohm-bd957x.h>
- #include <linux/mfd/rohm-generic.h>
-@@ -16,11 +16,18 @@
- #include <linux/regulator/machine.h>
- #include <linux/regulator/of_regulator.h>
- #include <linux/slab.h>
-+#include <linux/spinlock.h>
-+#include <linux/workqueue.h>
- 
- #define BD957X_VOUTS1_VOLT	3300000
- #define BD957X_VOUTS4_BASE_VOLT	1030000
- #define BD957X_VOUTS34_NUM_VOLT	32
- 
-+#define BD9576_THERM_IRQ_MASK_TW	BIT(5)
-+#define BD9576_xVD_IRQ_MASK_VOUTL1	BIT(5)
-+#define BD9576_UVD_IRQ_MASK_VOUTS1_OCW	BIT(6)
-+#define BD9576_xVD_IRQ_MASK_VOUT1TO4	0x0F
-+
- static int vout1_volt_table[] = {5000000, 4900000, 4800000, 4700000, 4600000,
- 				 4500000, 4500000, 4500000, 5000000, 5100000,
- 				 5200000, 5300000, 5400000, 5500000, 5500000,
-@@ -39,6 +46,43 @@ static int voutl1_volt_table[] = {2500000, 2540000, 2580000, 2620000, 2660000,
- struct bd957x_regulator_data {
- 	struct regulator_desc desc;
- 	int base_voltage;
-+	struct regulator_dev *rdev;
-+	int ovd_notif;
-+	int uvd_notif;
-+	int temp_notif;
-+	int ovd_err;
-+	int uvd_err;
-+	int temp_err;
-+	const struct linear_range *xvd_ranges;
-+	int num_xvd_ranges;
-+	const struct linear_range *ocp_ranges;
-+	int num_ocp_ranges;
-+	const struct linear_range *ocw_ranges;
-+	int num_ocw_ranges;
-+	unsigned int ovd_reg;
-+	unsigned int uvd_reg;
-+	unsigned int xvd_mask;
-+	unsigned int ocp_reg;
-+	unsigned int ocp_mask;
-+	unsigned int ocw_reg;
-+	unsigned int ocw_mask;
-+	unsigned int ocw_rfet;
-+};
-+
-+#define BD9576_NUM_REGULATORS 6
-+#define BD9576_NUM_OVD_REGULATORS 5
-+
-+struct bd957x_data {
-+	struct bd957x_regulator_data regulator_data[BD9576_NUM_REGULATORS];
-+	struct regmap *regmap;
-+	struct delayed_work therm_irq_suppress;
-+	struct delayed_work ovd_irq_suppress;
-+	struct delayed_work uvd_irq_suppress;
-+	unsigned int therm_irq;
-+	unsigned int ovd_irq;
-+	unsigned int uvd_irq;
-+	spinlock_t err_lock;
-+	int regulator_global_err;
- };
- 
- static int bd957x_vout34_list_voltage(struct regulator_dev *rdev,
-@@ -72,151 +116,797 @@ static int bd957x_list_voltage(struct regulator_dev *rdev,
- 	return desc->volt_table[index];
- }
- 
--static const struct regulator_ops bd957x_vout34_ops = {
-+static void bd9576_fill_ovd_flags(struct bd957x_regulator_data *data,
-+				  bool warn)
-+{
-+	if (warn) {
-+		data->ovd_notif = REGULATOR_EVENT_OVER_VOLTAGE_WARN;
-+		data->ovd_err = REGULATOR_ERROR_OVER_VOLTAGE_WARN;
-+	} else {
-+		data->ovd_notif = REGULATOR_EVENT_REGULATION_OUT;
-+		data->ovd_err = REGULATOR_ERROR_REGULATION_OUT;
-+	}
-+}
-+
-+static void bd9576_fill_ocp_flags(struct bd957x_regulator_data *data,
-+				  bool warn)
-+{
-+	if (warn) {
-+		data->uvd_notif = REGULATOR_EVENT_OVER_CURRENT_WARN;
-+		data->uvd_err = REGULATOR_ERROR_OVER_CURRENT_WARN;
-+	} else {
-+		data->uvd_notif = REGULATOR_EVENT_OVER_CURRENT;
-+		data->uvd_err = REGULATOR_ERROR_OVER_CURRENT;
-+	}
-+}
-+
-+static void bd9576_fill_uvd_flags(struct bd957x_regulator_data *data,
-+				  bool warn)
-+{
-+	if (warn) {
-+		data->uvd_notif = REGULATOR_EVENT_UNDER_VOLTAGE_WARN;
-+		data->uvd_err = REGULATOR_ERROR_UNDER_VOLTAGE_WARN;
-+	} else {
-+		data->uvd_notif = REGULATOR_EVENT_UNDER_VOLTAGE;
-+		data->uvd_err = REGULATOR_ERROR_UNDER_VOLTAGE;
-+	}
-+}
-+
-+static void bd9576_fill_temp_flags(struct bd957x_regulator_data *data,
-+				   bool enable, bool warn)
-+{
-+	if (!enable) {
-+		data->temp_notif = 0;
-+		data->temp_err = 0;
-+	} else if (warn) {
-+		data->temp_notif = REGULATOR_EVENT_OVER_TEMP_WARN;
-+		data->temp_err = REGULATOR_ERROR_OVER_TEMP_WARN;
-+	} else {
-+		data->temp_notif = REGULATOR_EVENT_OVER_TEMP;
-+		data->temp_err = REGULATOR_ERROR_OVER_TEMP;
-+	}
-+}
-+
-+static int bd9576_set_limit(const struct linear_range *r, int num_ranges,
-+			    struct regmap *regmap, int reg, int mask, int lim)
-+{
-+	int ret;
-+	bool found;
-+	int sel = 0;
-+
-+	if (lim) {
-+
-+		ret = linear_range_get_selector_low_array(r, num_ranges,
-+							  lim, &sel, &found);
-+		if (ret)
-+			return ret;
-+
-+		if (!found)
-+			dev_warn(regmap_get_device(regmap),
-+				 "limit %d out of range. Setting lower\n",
-+				 lim);
-+	}
-+
-+	return regmap_update_bits(regmap, reg, mask, sel);
-+}
-+
-+static bool check_ocp_flag_mismatch(struct regulator_dev *rdev, int severity,
-+				    struct bd957x_regulator_data *r)
-+{
-+	if ((severity == REGULATOR_SEVERITY_ERR &&
-+	    r->uvd_notif != REGULATOR_EVENT_OVER_CURRENT) ||
-+	    (severity == REGULATOR_SEVERITY_WARN &&
-+	    r->uvd_notif != REGULATOR_EVENT_OVER_CURRENT_WARN)) {
-+		dev_warn(rdev_get_dev(rdev),
-+			 "Can't support both OCP WARN and ERR\n");
-+		/* Do not overwrite ERR config with WARN */
-+		if (severity == REGULATOR_SEVERITY_WARN)
-+			return true;
-+
-+		bd9576_fill_ocp_flags(r, 0);
-+	}
-+
-+	return false;
-+}
-+
-+static bool check_uvd_flag_mismatch(struct regulator_dev *rdev, int severity,
-+				    struct bd957x_regulator_data *r)
-+{
-+	if ((severity == REGULATOR_SEVERITY_ERR &&
-+	     r->uvd_notif != REGULATOR_EVENT_UNDER_VOLTAGE) ||
-+	     (severity == REGULATOR_SEVERITY_WARN &&
-+	     r->uvd_notif != REGULATOR_EVENT_UNDER_VOLTAGE_WARN)) {
-+		dev_warn(rdev_get_dev(rdev),
-+			 "Can't support both UVD WARN and ERR\n");
-+		if (severity == REGULATOR_SEVERITY_WARN)
-+			return true;
-+
-+		bd9576_fill_uvd_flags(r, 0);
-+	}
-+
-+	return false;
-+}
-+
-+static bool check_ovd_flag_mismatch(struct regulator_dev *rdev, int severity,
-+				    struct bd957x_regulator_data *r)
-+{
-+	if ((severity == REGULATOR_SEVERITY_ERR &&
-+	     r->ovd_notif != REGULATOR_EVENT_REGULATION_OUT) ||
-+	     (severity == REGULATOR_SEVERITY_WARN &&
-+	     r->ovd_notif != REGULATOR_EVENT_OVER_VOLTAGE_WARN)) {
-+		dev_warn(rdev_get_dev(rdev),
-+			 "Can't support both OVD WARN and ERR\n");
-+		if (severity == REGULATOR_SEVERITY_WARN)
-+			return true;
-+
-+		bd9576_fill_ovd_flags(r, 0);
-+	}
-+
-+	return false;
-+}
-+
-+static bool check_temp_flag_mismatch(struct regulator_dev *rdev, int severity,
-+				    struct bd957x_regulator_data *r)
-+{
-+	if ((severity == REGULATOR_SEVERITY_ERR &&
-+	     r->ovd_notif != REGULATOR_EVENT_OVER_TEMP) ||
-+	     (severity == REGULATOR_SEVERITY_WARN &&
-+	     r->ovd_notif != REGULATOR_EVENT_OVER_TEMP_WARN)) {
-+		dev_warn(rdev_get_dev(rdev),
-+			 "Can't support both thermal WARN and ERR\n");
-+		if (severity == REGULATOR_SEVERITY_WARN)
-+			return true;
-+	}
-+
-+	return false;
-+}
-+
-+static int bd9576_set_ocp(struct regulator_dev *rdev, int lim_uA, int severity,
-+			  bool enable)
-+{
-+	struct bd957x_data *d;
-+	struct bd957x_regulator_data *r;
-+	int reg, mask;
-+	int Vfet;
-+	const struct linear_range *range;
-+	int num_ranges;
-+
-+	if ((lim_uA && !enable) || (!lim_uA && enable))
-+		return -EINVAL;
-+
-+	r = container_of(rdev->desc, struct bd957x_regulator_data, desc);
-+	d = rdev_get_drvdata(rdev);
-+
-+	if (enable && !r->ocw_rfet) {
-+		dev_err(rdev_get_dev(rdev),
-+			"Need FET's ON-resistance value to monior current\n");
-+		return -EINVAL;
-+	}
-+
-+	Vfet = lim_uA * r->ocw_rfet;
-+
-+	if (severity == REGULATOR_SEVERITY_PROT) {
-+		reg = r->ocp_reg;
-+		mask = r->ocp_mask;
-+		range = r->ocp_ranges;
-+		num_ranges = r->num_ocp_ranges;
-+	} else {
-+		reg = r->ocw_reg;
-+		mask = r->ocw_mask;
-+		range = r->ocw_ranges;
-+		num_ranges = r->num_ocw_ranges;
-+
-+		/* We abuse uvd fields for OCW on VoutS1 */
-+		if (r->uvd_notif) {
-+			/*
-+			 * If both warning and error are requested, prioritize
-+			 * ERROR configuration
-+			 */
-+			if (check_ocp_flag_mismatch(rdev, severity, r))
-+				return 0;
-+		} else {
-+			bool warn = severity == REGULATOR_SEVERITY_WARN;
-+
-+			bd9576_fill_ocp_flags(r, warn);
-+		}
-+	}
-+
-+	return bd9576_set_limit(range, num_ranges, d->regmap,
-+				reg, mask, Vfet);
-+}
-+
-+static int bd9576_set_uvp(struct regulator_dev *rdev, int lim_uV, int severity,
-+			  bool enable)
-+{
-+	struct bd957x_data *d;
-+	struct bd957x_regulator_data *r;
-+	int mask, reg;
-+
-+	if (severity == REGULATOR_SEVERITY_PROT) {
-+		if (!enable || lim_uV)
-+			return -EINVAL;
-+		return 0;
-+	}
-+
-+	/*
-+	 * BD9576 has enable control as a special value in limit reg. Can't
-+	 * set limit but keep feature disabled or enable W/O given limit.
-+	 */
-+	if ((lim_uV && !enable) || (!lim_uV && enable))
-+		return -EINVAL;
-+
-+	r = container_of(rdev->desc, struct bd957x_regulator_data, desc);
-+	d = rdev_get_drvdata(rdev);
-+
-+	mask = r->xvd_mask;
-+	reg = r->uvd_reg;
-+	/*
-+	 * Check that there is no mismatch for what the detection IRQs are to
-+	 * be used.
-+	 */
-+	if (r->uvd_notif) {
-+		if (check_uvd_flag_mismatch(rdev, severity, r))
-+			return 0;
-+	} else {
-+		bd9576_fill_uvd_flags(r, severity == REGULATOR_SEVERITY_WARN);
-+	}
-+
-+	return bd9576_set_limit(r->xvd_ranges, r->num_xvd_ranges, d->regmap,
-+				reg, mask, lim_uV);
-+}
-+
-+static int bd9576_set_ovp(struct regulator_dev *rdev, int lim_uV, int severity,
-+			  bool enable)
-+{
-+	struct bd957x_data *d;
-+	struct bd957x_regulator_data *r;
-+	int mask, reg;
-+
-+	if (severity == REGULATOR_SEVERITY_PROT) {
-+		if (!enable || lim_uV)
-+			return -EINVAL;
-+		return 0;
-+	}
-+
-+	/*
-+	 * BD9576 has enable control as a special value in limit reg. Can't
-+	 * set limit but keep feature disabled or enable W/O given limit.
-+	 */
-+	if ((lim_uV && !enable) || (!lim_uV && enable))
-+		return -EINVAL;
-+
-+	r = container_of(rdev->desc, struct bd957x_regulator_data, desc);
-+	d = rdev_get_drvdata(rdev);
-+
-+	mask = r->xvd_mask;
-+	reg = r->ovd_reg;
-+	/*
-+	 * Check that there is no mismatch for what the detection IRQs are to
-+	 * be used.
-+	 */
-+	if (r->ovd_notif) {
-+		if (check_ovd_flag_mismatch(rdev, severity, r))
-+			return 0;
-+	} else {
-+		bd9576_fill_ovd_flags(r, severity == REGULATOR_SEVERITY_WARN);
-+	}
-+
-+	return bd9576_set_limit(r->xvd_ranges, r->num_xvd_ranges, d->regmap,
-+				reg, mask, lim_uV);
-+}
-+
-+
-+static int bd9576_set_tw(struct regulator_dev *rdev, int lim, int severity,
-+			  bool enable)
-+{
-+	struct bd957x_data *d;
-+	struct bd957x_regulator_data *r;
-+	int i;
-+
-+	/*
-+	 * BD9576MUF has fixed temperature limits
-+	 * The detection can only be enabled/disabled
-+	 */
-+	if (lim)
-+		return -EINVAL;
-+
-+	/* Protection can't be disabled */
-+	if (severity == REGULATOR_SEVERITY_PROT) {
-+		if (!enable)
-+			return -EINVAL;
-+		else
-+			return 0;
-+	}
-+
-+	r = container_of(rdev->desc, struct bd957x_regulator_data, desc);
-+	d = rdev_get_drvdata(rdev);
-+
-+	/*
-+	 * Check that there is no mismatch for what the detection IRQs are to
-+	 * be used.
-+	 */
-+	if (r->temp_notif)
-+		if (check_temp_flag_mismatch(rdev, severity, r))
-+			return 0;
-+
-+	bd9576_fill_temp_flags(r, enable, severity == REGULATOR_SEVERITY_WARN);
-+
-+	if (enable)
-+		return regmap_update_bits(d->regmap, BD957X_REG_INT_THERM_MASK,
-+					 BD9576_THERM_IRQ_MASK_TW, 0);
-+
-+	/*
-+	 * If any of the regulators is interested in thermal warning we keep IRQ
-+	 * enabled.
-+	 */
-+	for (i = 0; i < BD9576_NUM_REGULATORS; i++)
-+		if (d->regulator_data[i].temp_notif)
-+			return 0;
-+
-+	return regmap_update_bits(d->regmap, BD957X_REG_INT_THERM_MASK,
-+				  BD9576_THERM_IRQ_MASK_TW,
-+				  BD9576_THERM_IRQ_MASK_TW);
-+}
-+
-+static const struct regulator_ops bd9573_vout34_ops = {
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = bd957x_vout34_list_voltage,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+};
-+
-+static const struct regulator_ops bd9576_vout34_ops = {
- 	.is_enabled = regulator_is_enabled_regmap,
- 	.list_voltage = bd957x_vout34_list_voltage,
- 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_over_voltage_protection = bd9576_set_ovp,
-+	.set_under_voltage_protection = bd9576_set_uvp,
-+	.set_thermal_protection = bd9576_set_tw,
- };
- 
--static const struct regulator_ops bd957X_vouts1_regulator_ops = {
-+static const struct regulator_ops bd9573_vouts1_regulator_ops = {
- 	.is_enabled = regulator_is_enabled_regmap,
- };
- 
--static const struct regulator_ops bd957x_ops = {
-+static const struct regulator_ops bd9576_vouts1_regulator_ops = {
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.set_over_current_protection = bd9576_set_ocp,
-+};
-+
-+static const struct regulator_ops bd9573_ops = {
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.list_voltage = bd957x_list_voltage,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+};
-+
-+static const struct regulator_ops bd9576_ops = {
- 	.is_enabled = regulator_is_enabled_regmap,
- 	.list_voltage = bd957x_list_voltage,
- 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.set_over_voltage_protection = bd9576_set_ovp,
-+	.set_under_voltage_protection = bd9576_set_uvp,
-+	.set_thermal_protection = bd9576_set_tw,
-+};
-+
-+static const struct regulator_ops  *bd9573_ops_arr[] = {
-+	[BD957X_VD50]	= &bd9573_ops,
-+	[BD957X_VD18]	= &bd9573_ops,
-+	[BD957X_VDDDR]	= &bd9573_vout34_ops,
-+	[BD957X_VD10]	= &bd9573_vout34_ops,
-+	[BD957X_VOUTL1]	= &bd9573_ops,
-+	[BD957X_VOUTS1]	= &bd9573_vouts1_regulator_ops,
-+};
-+
-+static const struct regulator_ops  *bd9576_ops_arr[] = {
-+	[BD957X_VD50]	= &bd9576_ops,
-+	[BD957X_VD18]	= &bd9576_ops,
-+	[BD957X_VDDDR]	= &bd9576_vout34_ops,
-+	[BD957X_VD10]	= &bd9576_vout34_ops,
-+	[BD957X_VOUTL1]	= &bd9576_ops,
-+	[BD957X_VOUTS1]	= &bd9576_vouts1_regulator_ops,
-+};
-+
-+static const struct linear_range vout1_xvd_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(225000, 0x01, 0x2b, 0),
-+	REGULATOR_LINEAR_RANGE(225000, 0x2c, 0x54, 5000),
-+	REGULATOR_LINEAR_RANGE(425000, 0x55, 0x7f, 0),
-+};
-+
-+static const struct linear_range vout234_xvd_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(17000, 0x01, 0x0f, 0),
-+	REGULATOR_LINEAR_RANGE(17000, 0x10, 0x6d, 1000),
-+	REGULATOR_LINEAR_RANGE(110000, 0x6e, 0x7f, 0),
- };
- 
--static struct bd957x_regulator_data bd9576_regulators[] = {
--	{
--		.desc = {
--			.name = "VD50",
--			.of_match = of_match_ptr("regulator-vd50"),
--			.regulators_node = of_match_ptr("regulators"),
--			.id = BD957X_VD50,
--			.type = REGULATOR_VOLTAGE,
--			.ops = &bd957x_ops,
--			.volt_table = &vout1_volt_table[0],
--			.n_voltages = ARRAY_SIZE(vout1_volt_table),
--			.vsel_reg = BD957X_REG_VOUT1_TUNE,
--			.vsel_mask = BD957X_MASK_VOUT1_TUNE,
--			.enable_reg = BD957X_REG_POW_TRIGGER1,
--			.enable_mask = BD957X_REGULATOR_EN_MASK,
--			.enable_val = BD957X_REGULATOR_DIS_VAL,
--			.enable_is_inverted = true,
--			.owner = THIS_MODULE,
-+static const struct linear_range voutL1_xvd_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(34000, 0x01, 0x0f, 0),
-+	REGULATOR_LINEAR_RANGE(34000, 0x10, 0x6d, 2000),
-+	REGULATOR_LINEAR_RANGE(220000, 0x6e, 0x7f, 0),
-+};
-+
-+static struct linear_range voutS1_ocw_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(70000, 0x01, 0x05, 0),
-+	REGULATOR_LINEAR_RANGE(70000, 0x06, 0x1a, 10000),
-+	REGULATOR_LINEAR_RANGE(270000, 0x1b, 0x3f, 0),
-+};
-+
-+static struct linear_range voutS1_ocp_ranges[] = {
-+	REGULATOR_LINEAR_RANGE(170, 0x01, 0x0f, 0),
-+	REGULATOR_LINEAR_RANGE(170, 0x10, 0x24, 10000),
-+	REGULATOR_LINEAR_RANGE(370000, 0x25, 0x3f, 0),
-+};
-+
-+static int vouts1_get_fet_res(struct device_node *np,
-+				const struct regulator_desc *desc,
-+				struct regulator_config *cfg)
-+{
-+	struct bd957x_regulator_data *data;
-+	int ret;
-+	u32 mohms;
-+
-+	data = container_of(desc, struct bd957x_regulator_data, desc);
-+
-+	ret = of_property_read_u32(np, "rohm,ocw-fet-ron-milliohms", &mohms);
-+	if (ret) {
-+		if (ret != -EINVAL)
-+			return ret;
-+
-+		return 0;
-+	}
-+	data->ocw_rfet = mohms;
-+	return 0;
-+}
-+
-+static struct bd957x_data bd957x_regulators = {
-+	.regulator_data = {
-+		{
-+			.desc = {
-+				.name = "VD50",
-+				.of_match = of_match_ptr("regulator-vd50"),
-+				.regulators_node = of_match_ptr("regulators"),
-+				.id = BD957X_VD50,
-+				.type = REGULATOR_VOLTAGE,
-+				.volt_table = &vout1_volt_table[0],
-+				.n_voltages = ARRAY_SIZE(vout1_volt_table),
-+				.vsel_reg = BD957X_REG_VOUT1_TUNE,
-+				.vsel_mask = BD957X_MASK_VOUT1_TUNE,
-+				.enable_reg = BD957X_REG_POW_TRIGGER1,
-+				.enable_mask = BD957X_REGULATOR_EN_MASK,
-+				.enable_val = BD957X_REGULATOR_DIS_VAL,
-+				.enable_is_inverted = true,
-+				.owner = THIS_MODULE,
-+			},
-+			.xvd_ranges = vout1_xvd_ranges,
-+			.num_xvd_ranges = ARRAY_SIZE(vout1_xvd_ranges),
-+			.ovd_reg = BD9576_REG_VOUT1_OVD,
-+			.uvd_reg = BD9576_REG_VOUT1_UVD,
-+			.xvd_mask = BD9576_MASK_XVD,
- 		},
--	},
--	{
--		.desc = {
--			.name = "VD18",
--			.of_match = of_match_ptr("regulator-vd18"),
--			.regulators_node = of_match_ptr("regulators"),
--			.id = BD957X_VD18,
--			.type = REGULATOR_VOLTAGE,
--			.ops = &bd957x_ops,
--			.volt_table = &vout2_volt_table[0],
--			.n_voltages = ARRAY_SIZE(vout2_volt_table),
--			.vsel_reg = BD957X_REG_VOUT2_TUNE,
--			.vsel_mask = BD957X_MASK_VOUT2_TUNE,
--			.enable_reg = BD957X_REG_POW_TRIGGER2,
--			.enable_mask = BD957X_REGULATOR_EN_MASK,
--			.enable_val = BD957X_REGULATOR_DIS_VAL,
--			.enable_is_inverted = true,
--			.owner = THIS_MODULE,
-+		{
-+			.desc = {
-+				.name = "VD18",
-+				.of_match = of_match_ptr("regulator-vd18"),
-+				.regulators_node = of_match_ptr("regulators"),
-+				.id = BD957X_VD18,
-+				.type = REGULATOR_VOLTAGE,
-+				.volt_table = &vout2_volt_table[0],
-+				.n_voltages = ARRAY_SIZE(vout2_volt_table),
-+				.vsel_reg = BD957X_REG_VOUT2_TUNE,
-+				.vsel_mask = BD957X_MASK_VOUT2_TUNE,
-+				.enable_reg = BD957X_REG_POW_TRIGGER2,
-+				.enable_mask = BD957X_REGULATOR_EN_MASK,
-+				.enable_val = BD957X_REGULATOR_DIS_VAL,
-+				.enable_is_inverted = true,
-+				.owner = THIS_MODULE,
-+			},
-+			.xvd_ranges = vout234_xvd_ranges,
-+			.num_xvd_ranges = ARRAY_SIZE(vout234_xvd_ranges),
-+			.ovd_reg = BD9576_REG_VOUT2_OVD,
-+			.uvd_reg = BD9576_REG_VOUT2_UVD,
-+			.xvd_mask = BD9576_MASK_XVD,
- 		},
--	},
--	{
--		.desc = {
--			.name = "VDDDR",
--			.of_match = of_match_ptr("regulator-vdddr"),
--			.regulators_node = of_match_ptr("regulators"),
--			.id = BD957X_VDDDR,
--			.ops = &bd957x_vout34_ops,
--			.type = REGULATOR_VOLTAGE,
--			.n_voltages = BD957X_VOUTS34_NUM_VOLT,
--			.vsel_reg = BD957X_REG_VOUT3_TUNE,
--			.vsel_mask = BD957X_MASK_VOUT3_TUNE,
--			.enable_reg = BD957X_REG_POW_TRIGGER3,
--			.enable_mask = BD957X_REGULATOR_EN_MASK,
--			.enable_val = BD957X_REGULATOR_DIS_VAL,
--			.enable_is_inverted = true,
--			.owner = THIS_MODULE,
-+		{
-+			.desc = {
-+				.name = "VDDDR",
-+				.of_match = of_match_ptr("regulator-vdddr"),
-+				.regulators_node = of_match_ptr("regulators"),
-+				.id = BD957X_VDDDR,
-+				.type = REGULATOR_VOLTAGE,
-+				.n_voltages = BD957X_VOUTS34_NUM_VOLT,
-+				.vsel_reg = BD957X_REG_VOUT3_TUNE,
-+				.vsel_mask = BD957X_MASK_VOUT3_TUNE,
-+				.enable_reg = BD957X_REG_POW_TRIGGER3,
-+				.enable_mask = BD957X_REGULATOR_EN_MASK,
-+				.enable_val = BD957X_REGULATOR_DIS_VAL,
-+				.enable_is_inverted = true,
-+				.owner = THIS_MODULE,
-+			},
-+			.ovd_reg = BD9576_REG_VOUT3_OVD,
-+			.uvd_reg = BD9576_REG_VOUT3_UVD,
-+			.xvd_mask = BD9576_MASK_XVD,
-+			.xvd_ranges = vout234_xvd_ranges,
-+			.num_xvd_ranges = ARRAY_SIZE(vout234_xvd_ranges),
- 		},
--	},
--	{
--		.desc = {
--			.name = "VD10",
--			.of_match = of_match_ptr("regulator-vd10"),
--			.regulators_node = of_match_ptr("regulators"),
--			.id = BD957X_VD10,
--			.ops = &bd957x_vout34_ops,
--			.type = REGULATOR_VOLTAGE,
--			.fixed_uV = BD957X_VOUTS4_BASE_VOLT,
--			.n_voltages = BD957X_VOUTS34_NUM_VOLT,
--			.vsel_reg = BD957X_REG_VOUT4_TUNE,
--			.vsel_mask = BD957X_MASK_VOUT4_TUNE,
--			.enable_reg = BD957X_REG_POW_TRIGGER4,
--			.enable_mask = BD957X_REGULATOR_EN_MASK,
--			.enable_val = BD957X_REGULATOR_DIS_VAL,
--			.enable_is_inverted = true,
--			.owner = THIS_MODULE,
-+		{
-+			.desc = {
-+				.name = "VD10",
-+				.of_match = of_match_ptr("regulator-vd10"),
-+				.regulators_node = of_match_ptr("regulators"),
-+				.id = BD957X_VD10,
-+				.type = REGULATOR_VOLTAGE,
-+				.fixed_uV = BD957X_VOUTS4_BASE_VOLT,
-+				.n_voltages = BD957X_VOUTS34_NUM_VOLT,
-+				.vsel_reg = BD957X_REG_VOUT4_TUNE,
-+				.vsel_mask = BD957X_MASK_VOUT4_TUNE,
-+				.enable_reg = BD957X_REG_POW_TRIGGER4,
-+				.enable_mask = BD957X_REGULATOR_EN_MASK,
-+				.enable_val = BD957X_REGULATOR_DIS_VAL,
-+				.enable_is_inverted = true,
-+				.owner = THIS_MODULE,
-+			},
-+			.xvd_ranges = vout234_xvd_ranges,
-+			.num_xvd_ranges = ARRAY_SIZE(vout234_xvd_ranges),
-+			.ovd_reg = BD9576_REG_VOUT4_OVD,
-+			.uvd_reg = BD9576_REG_VOUT4_UVD,
-+			.xvd_mask = BD9576_MASK_XVD,
- 		},
--	},
--	{
--		.desc = {
--			.name = "VOUTL1",
--			.of_match = of_match_ptr("regulator-voutl1"),
--			.regulators_node = of_match_ptr("regulators"),
--			.id = BD957X_VOUTL1,
--			.ops = &bd957x_ops,
--			.type = REGULATOR_VOLTAGE,
--			.volt_table = &voutl1_volt_table[0],
--			.n_voltages = ARRAY_SIZE(voutl1_volt_table),
--			.vsel_reg = BD957X_REG_VOUTL1_TUNE,
--			.vsel_mask = BD957X_MASK_VOUTL1_TUNE,
--			.enable_reg = BD957X_REG_POW_TRIGGERL1,
--			.enable_mask = BD957X_REGULATOR_EN_MASK,
--			.enable_val = BD957X_REGULATOR_DIS_VAL,
--			.enable_is_inverted = true,
--			.owner = THIS_MODULE,
-+		{
-+			.desc = {
-+				.name = "VOUTL1",
-+				.of_match = of_match_ptr("regulator-voutl1"),
-+				.regulators_node = of_match_ptr("regulators"),
-+				.id = BD957X_VOUTL1,
-+				.type = REGULATOR_VOLTAGE,
-+				.volt_table = &voutl1_volt_table[0],
-+				.n_voltages = ARRAY_SIZE(voutl1_volt_table),
-+				.vsel_reg = BD957X_REG_VOUTL1_TUNE,
-+				.vsel_mask = BD957X_MASK_VOUTL1_TUNE,
-+				.enable_reg = BD957X_REG_POW_TRIGGERL1,
-+				.enable_mask = BD957X_REGULATOR_EN_MASK,
-+				.enable_val = BD957X_REGULATOR_DIS_VAL,
-+				.enable_is_inverted = true,
-+				.owner = THIS_MODULE,
-+			},
-+			.xvd_ranges = voutL1_xvd_ranges,
-+			.num_xvd_ranges = ARRAY_SIZE(voutL1_xvd_ranges),
-+			.ovd_reg = BD9576_REG_VOUTL1_OVD,
-+			.uvd_reg = BD9576_REG_VOUTL1_UVD,
-+			.xvd_mask = BD9576_MASK_XVD,
- 		},
--	},
--	{
--		.desc = {
--			.name = "VOUTS1",
--			.of_match = of_match_ptr("regulator-vouts1"),
--			.regulators_node = of_match_ptr("regulators"),
--			.id = BD957X_VOUTS1,
--			.ops = &bd957X_vouts1_regulator_ops,
--			.type = REGULATOR_VOLTAGE,
--			.n_voltages = 1,
--			.fixed_uV = BD957X_VOUTS1_VOLT,
--			.enable_reg = BD957X_REG_POW_TRIGGERS1,
--			.enable_mask = BD957X_REGULATOR_EN_MASK,
--			.enable_val = BD957X_REGULATOR_DIS_VAL,
--			.enable_is_inverted = true,
--			.owner = THIS_MODULE,
-+		{
-+			.desc = {
-+				.name = "VOUTS1",
-+				.of_match = of_match_ptr("regulator-vouts1"),
-+				.regulators_node = of_match_ptr("regulators"),
-+				.id = BD957X_VOUTS1,
-+				.type = REGULATOR_VOLTAGE,
-+				.n_voltages = 1,
-+				.fixed_uV = BD957X_VOUTS1_VOLT,
-+				.enable_reg = BD957X_REG_POW_TRIGGERS1,
-+				.enable_mask = BD957X_REGULATOR_EN_MASK,
-+				.enable_val = BD957X_REGULATOR_DIS_VAL,
-+				.enable_is_inverted = true,
-+				.owner = THIS_MODULE,
-+				.of_parse_cb = vouts1_get_fet_res,
-+			},
-+			.ocp_ranges = voutS1_ocp_ranges,
-+			.num_ocp_ranges = ARRAY_SIZE(voutS1_ocp_ranges),
-+			.ocw_ranges = voutS1_ocw_ranges,
-+			.num_ocw_ranges = ARRAY_SIZE(voutS1_ocw_ranges),
-+			.ocw_reg = BD9576_REG_VOUT1S_OCW,
-+			.ocw_mask = BD9576_MASK_VOUT1S_OCW,
-+			.ocp_reg = BD9576_REG_VOUT1S_OCP,
-+			.ocp_mask = BD9576_MASK_VOUT1S_OCP,
- 		},
- 	},
- };
- 
-+static int bd9576_renable(struct regulator_irq_data *rid, int reg, int mask)
-+{
-+	int val, ret;
-+	struct bd957x_data *d = (struct bd957x_data *)rid->data;
-+
-+	ret = regmap_read(d->regmap, reg, &val);
-+	if (ret)
-+		return REGULATOR_FAILED_RETRY;
-+
-+	if (rid->opaque && rid->opaque == (val & mask)) {
-+		/*
-+		 * It seems we stil have same status. Ack and return
-+		 * information that we are still out of limits and core
-+		 * should not enable IRQ
-+		 */
-+		regmap_write(d->regmap, reg, mask & val);
-+		return REGULATOR_ERROR_ON;
-+	}
-+	rid->opaque = 0;
-+	/*
-+	 * Status was changed. Either prolem was solved or we have new issues.
-+	 * Let's re-enable IRQs and be prepared to report problems again
-+	 */
-+	return REGULATOR_ERROR_CLEARED;
-+}
-+
-+static int bd9576_uvd_renable(struct regulator_irq_data *rid)
-+{
-+	return bd9576_renable(rid, BD957X_REG_INT_UVD_STAT, UVD_IRQ_VALID_MASK);
-+}
-+
-+static int bd9576_ovd_renable(struct regulator_irq_data *rid)
-+{
-+	return bd9576_renable(rid, BD957X_REG_INT_OVD_STAT, OVD_IRQ_VALID_MASK);
-+}
-+
-+static int bd9576_temp_renable(struct regulator_irq_data *rid)
-+{
-+	return bd9576_renable(rid, BD957X_REG_INT_THERM_STAT,
-+			      BD9576_THERM_IRQ_MASK_TW);
-+}
-+
-+static int bd9576_uvd_handler(int irq, struct regulator_irq_data *rid,
-+			      unsigned long *dev_mask)
-+{
-+	int val, ret, i;
-+	struct bd957x_data *d = (struct bd957x_data *)rid->data;
-+
-+	ret = regmap_read(d->regmap, BD957X_REG_INT_UVD_STAT, &val);
-+	if (ret)
-+		return REGULATOR_FAILED_RETRY;
-+
-+	*dev_mask = 0;
-+
-+	rid->opaque = val & UVD_IRQ_VALID_MASK;
-+
-+	/*
-+	 * Go through the set status bits and report either error or warning
-+	 * to the notifier depending on what was flagged in DT
-+	 */
-+	*dev_mask = val & BD9576_xVD_IRQ_MASK_VOUT1TO4;
-+	/* There is 1 bit gap in register after Vout1 .. Vout4 statuses */
-+	*dev_mask |= ((val & BD9576_xVD_IRQ_MASK_VOUTL1) >> 1);
-+	/*
-+	 * We (ab)use the uvd for OCW notification. DT parsing should
-+	 * have added correct OCW flag to uvd_notif and uvd_err for S1
-+	 */
-+	*dev_mask |= ((val & BD9576_UVD_IRQ_MASK_VOUTS1_OCW) >> 1);
-+
-+	for_each_set_bit(i, dev_mask, 6) {
-+		struct bd957x_regulator_data *rdata;
-+		struct regulator_err_state *stat;
-+
-+		rdata = &d->regulator_data[i];
-+		stat  = &rid->states[i];
-+
-+		stat->notifs	= rdata->uvd_notif;
-+		stat->errors	= rdata->uvd_err;
-+	}
-+
-+	ret = regmap_write(d->regmap, BD957X_REG_INT_UVD_STAT,
-+			   UVD_IRQ_VALID_MASK & val);
-+
-+	return 0;
-+}
-+
-+static int bd9576_ovd_handler(int irq, struct regulator_irq_data *rid,
-+			      unsigned long *dev_mask)
-+{
-+	int val, ret, i;
-+	struct bd957x_data *d = (struct bd957x_data *)rid->data;
-+
-+	ret = regmap_read(d->regmap, BD957X_REG_INT_OVD_STAT, &val);
-+	if (ret)
-+		return REGULATOR_FAILED_RETRY;
-+
-+	rid->opaque = val & OVD_IRQ_VALID_MASK;
-+	*dev_mask = 0;
-+
-+	if (!(val & OVD_IRQ_VALID_MASK))
-+		return 0;
-+
-+	*dev_mask = val & BD9576_xVD_IRQ_MASK_VOUT1TO4;
-+	/* There is 1 bit gap in register after Vout1 .. Vout4 statuses */
-+	*dev_mask |= ((val & BD9576_xVD_IRQ_MASK_VOUTL1) >> 1);
-+
-+	for_each_set_bit(i, dev_mask, 5) {
-+		struct bd957x_regulator_data *rdata;
-+		struct regulator_err_state *stat;
-+
-+		rdata = &d->regulator_data[i];
-+		stat  = &rid->states[i];
-+
-+		stat->notifs	= rdata->ovd_notif;
-+		stat->errors	= rdata->ovd_err;
-+	}
-+
-+	/* Clear the sub-IRQ status */
-+	regmap_write(d->regmap, BD957X_REG_INT_OVD_STAT,
-+		     OVD_IRQ_VALID_MASK & val);
-+
-+	return 0;
-+}
-+
-+#define BD9576_DEV_MASK_ALL_REGULATORS 0x3F
-+
-+static int bd9576_thermal_handler(int irq, struct regulator_irq_data *rid,
-+				  unsigned long *dev_mask)
-+{
-+	int val, ret, i;
-+	struct bd957x_data *d = (struct bd957x_data *)rid->data;
-+
-+	ret = regmap_read(d->regmap, BD957X_REG_INT_THERM_STAT, &val);
-+	if (ret)
-+		return REGULATOR_FAILED_RETRY;
-+
-+	if (!(val & BD9576_THERM_IRQ_MASK_TW)) {
-+		*dev_mask = 0;
-+		return 0;
-+	}
-+
-+	*dev_mask = BD9576_DEV_MASK_ALL_REGULATORS;
-+
-+	for (i = 0; i < BD9576_NUM_REGULATORS; i++) {
-+		struct bd957x_regulator_data *rdata;
-+		struct regulator_err_state *stat;
-+
-+		rdata = &d->regulator_data[i];
-+		stat  = &rid->states[i];
-+
-+		stat->notifs	= rdata->temp_notif;
-+		stat->errors	= rdata->temp_err;
-+	}
-+
-+	/* Clear the sub-IRQ status */
-+	regmap_write(d->regmap, BD957X_REG_INT_THERM_STAT,
-+		     BD9576_THERM_IRQ_MASK_TW);
-+
-+	return 0;
-+}
-+
- static int bd957x_probe(struct platform_device *pdev)
- {
- 	struct regmap *regmap;
- 	struct regulator_config config = { 0 };
--	int i, err;
--	bool vout_mode, ddr_sel;
--	const struct bd957x_regulator_data *reg_data = &bd9576_regulators[0];
--	unsigned int num_reg_data = ARRAY_SIZE(bd9576_regulators);
-+	int i, err = 0;
-+	bool vout_mode, ddr_sel, may_have_irqs;
-+	struct bd957x_data *ic_data;
-+	unsigned int num_reg_data;
-+	/* All regulators are related to UVD and thermal IRQs... */
-+	struct regulator_dev *rdevs[BD9576_NUM_REGULATORS];
-+	/* ...But VoutS1 is not flagged by OVD IRQ */
-+	struct regulator_dev *ovd_devs[BD9576_NUM_OVD_REGULATORS];
-+	static const struct regulator_irq_desc bd9576_notif_uvd = {
-+		.name = "bd9576-uvd",
-+		.irq_off_ms = 1000,
-+		.map_event = bd9576_uvd_handler,
-+		.renable = bd9576_uvd_renable,
-+		.data = &bd957x_regulators,
-+	};
-+	static const struct regulator_irq_desc bd9576_notif_ovd = {
-+		.name = "bd9576-ovd",
-+		.irq_off_ms = 1000,
-+		.map_event = bd9576_ovd_handler,
-+		.renable = bd9576_ovd_renable,
-+		.data = &bd957x_regulators,
-+	};
-+	static const struct regulator_irq_desc bd9576_notif_temp = {
-+		.name = "bd9576-temp",
-+		.irq_off_ms = 1000,
-+		.map_event = bd9576_thermal_handler,
-+		.renable = bd9576_temp_renable,
-+		.data = &bd957x_regulators,
-+	};
- 	enum rohm_chip_type chip = platform_get_device_id(pdev)->driver_data;
- 
-+	num_reg_data = ARRAY_SIZE(bd957x_regulators.regulator_data);
-+
-+	ic_data = &bd957x_regulators;
-+
- 	regmap = dev_get_regmap(pdev->dev.parent, NULL);
- 	if (!regmap) {
- 		dev_err(&pdev->dev, "No regmap\n");
- 		return -EINVAL;
- 	}
-+
-+	ic_data->regmap = regmap;
- 	vout_mode = of_property_read_bool(pdev->dev.parent->of_node,
- 					 "rohm,vout1-en-low");
- 	if (vout_mode) {
-@@ -263,15 +953,17 @@ static int bd957x_probe(struct platform_device *pdev)
- 	 * bytes and use bd9576_regulators directly for non-constant configs
- 	 * like DDR voltage selection.
- 	 */
-+	platform_set_drvdata(pdev, ic_data);
- 	ddr_sel =  of_property_read_bool(pdev->dev.parent->of_node,
- 					 "rohm,ddr-sel-low");
- 	if (ddr_sel)
--		bd9576_regulators[2].desc.fixed_uV = 1350000;
-+		ic_data->regulator_data[2].desc.fixed_uV = 1350000;
- 	else
--		bd9576_regulators[2].desc.fixed_uV = 1500000;
-+		ic_data->regulator_data[2].desc.fixed_uV = 1500000;
- 
- 	switch (chip) {
- 	case ROHM_CHIP_TYPE_BD9576:
-+		may_have_irqs = true;
- 		dev_dbg(&pdev->dev, "Found BD9576MUF\n");
- 		break;
- 	case ROHM_CHIP_TYPE_BD9573:
-@@ -280,37 +972,117 @@ static int bd957x_probe(struct platform_device *pdev)
- 	default:
- 		dev_err(&pdev->dev, "Unsupported chip type\n");
- 		err = -EINVAL;
--		goto err;
-+		goto err_out;
-+	}
-+
-+	for (i = 0; i < num_reg_data; i++) {
-+		struct regulator_desc *d;
-+
-+		d = &ic_data->regulator_data[i].desc;
-+
-+
-+		if (may_have_irqs) {
-+			if (d->id >= ARRAY_SIZE(bd9576_ops_arr))
-+				return -EINVAL;
-+
-+			d->ops = bd9576_ops_arr[d->id];
-+		} else {
-+			if (d->id >= ARRAY_SIZE(bd9573_ops_arr))
-+				return -EINVAL;
-+
-+			d->ops = bd9573_ops_arr[d->id];
-+		}
- 	}
- 
- 	config.dev = pdev->dev.parent;
- 	config.regmap = regmap;
-+	config.driver_data = ic_data;
- 
- 	for (i = 0; i < num_reg_data; i++) {
- 
--		const struct regulator_desc *desc;
--		struct regulator_dev *rdev;
--		const struct bd957x_regulator_data *r;
--
--		r = &reg_data[i];
--		desc = &r->desc;
-+		struct bd957x_regulator_data *r = &ic_data->regulator_data[i];
-+		const struct regulator_desc *desc = &r->desc;
- 
--		rdev = devm_regulator_register(&pdev->dev, desc, &config);
--		if (IS_ERR(rdev)) {
-+		r->rdev = devm_regulator_register(&pdev->dev, desc,
-+							   &config);
-+		if (IS_ERR(r->rdev)) {
- 			dev_err(&pdev->dev,
- 				"failed to register %s regulator\n",
- 				desc->name);
--			err = PTR_ERR(rdev);
--			goto err;
-+			err = PTR_ERR(r->rdev);
-+			goto err_out;
- 		}
- 		/*
- 		 * Clear the VOUT1 GPIO setting - rest of the regulators do not
- 		 * support GPIO control
- 		 */
- 		config.ena_gpiod = NULL;
-+
-+		if (!may_have_irqs)
-+			continue;
-+
-+		rdevs[i] = r->rdev;
-+		if (i < BD957X_VOUTS1)
-+			ovd_devs[i] = r->rdev;
- 	}
-+	if (may_have_irqs) {
-+		int ret;
-+		/*
-+		 * We can add both the possible error and warning flags here
-+		 * because the core uses these only for status clearing and
-+		 * if we use warnings - errors are always clear and the other
-+		 * way around. We can also add CURRENT flag for all regulators
-+		 * because it is never set if it is not supported. Same applies
-+		 * to setting UVD for VoutS1 - it is not accidentally cleared
-+		 * as it is never set.
-+		 */
-+		int uvd_errs = REGULATOR_ERROR_UNDER_VOLTAGE |
-+			       REGULATOR_ERROR_UNDER_VOLTAGE_WARN |
-+			       REGULATOR_ERROR_OVER_CURRENT |
-+			       REGULATOR_ERROR_OVER_CURRENT_WARN;
-+		int ovd_errs = REGULATOR_ERROR_OVER_VOLTAGE_WARN |
-+			       REGULATOR_ERROR_REGULATION_OUT;
-+		int temp_errs = REGULATOR_ERROR_OVER_TEMP |
-+				REGULATOR_ERROR_OVER_TEMP_WARN;
-+		int irq;
-+
-+		irq = platform_get_irq_byname(pdev, "bd9576-uvd");
-+
-+		/* Register notifiers - can fail if IRQ is not given */
-+		ret = regulator_irq_helper(&pdev->dev, &bd9576_notif_uvd, irq,
-+					   0, uvd_errs, NULL, &rdevs[0],
-+					   BD9576_NUM_REGULATORS);
-+		if (ret) {
-+			if (ret == -EPROBE_DEFER)
-+				return ret;
-+
-+			dev_warn(&pdev->dev, "UVD disabled %d\n", ret);
-+		}
- 
--err:
-+		irq = platform_get_irq_byname(pdev, "bd9576-ovd");
-+
-+		ret = regulator_irq_helper(&pdev->dev, &bd9576_notif_ovd, irq,
-+					   0, ovd_errs, NULL, &ovd_devs[0],
-+					   BD9576_NUM_OVD_REGULATORS);
-+		if (ret) {
-+			if (ret == -EPROBE_DEFER)
-+				return ret;
-+
-+			dev_warn(&pdev->dev, "OVD disabled %d\n", ret);
-+		}
-+		irq = platform_get_irq_byname(pdev, "bd9576-temp");
-+
-+		ret = regulator_irq_helper(&pdev->dev, &bd9576_notif_temp, irq,
-+					   0, temp_errs, NULL, &rdevs[0],
-+					   BD9576_NUM_REGULATORS);
-+		if (ret) {
-+			if (ret == -EPROBE_DEFER)
-+				return ret;
-+
-+			dev_warn(&pdev->dev, "Thermal warning disabled %d\n", ret);
-+		}
-+	}
-+err_out:
- 	return err;
- }
- 
--- 
-2.25.4
+      - Commit 2dfc564bda4a31bc ("soc: renesas: rcar-sysc: Mark device
+        node OF_POPULATED after init") is no longer needed (but already
+        queued for v5.12 anyway)
 
+      - Some devices are reprobed, despite their drivers returning
+        a real error code, and not -EPROBE_DEFER:
+
+            renesas_wdt e6020000.watchdog: Watchdog blacklisted on r8a7791 ES1.*
+            (rwdt_probe() returns -ENODEV)
+
+            sh-pfc e6060000.pinctrl: pin GP_7_23 already requested by
+ee090000.pci; cannot claim for e6590000.usb
+            sh-pfc e6060000.pinctrl: pin-247 (e6590000.usb) status -22
+            sh-pfc e6060000.pinctrl: could not request pin 247
+(GP_7_23) from group usb0  on device sh-pfc
+            renesas_usbhs e6590000.usb: Error applying setting,
+reverse things back
+            renesas_usbhs: probe of e6590000.usb failed with error -22
+
+            rcar-pcie fe000000.pcie: host bridge /soc/pcie@fe000000 ranges:
+            rcar-pcie fe000000.pcie:       IO
+0x00fe100000..0x00fe1fffff -> 0x0000000000
+            rcar-pcie fe000000.pcie:      MEM
+0x00fe200000..0x00fe3fffff -> 0x00fe200000
+            rcar-pcie fe000000.pcie:      MEM
+0x0030000000..0x0037ffffff -> 0x0030000000
+            rcar-pcie fe000000.pcie:      MEM
+0x0038000000..0x003fffffff -> 0x0038000000
+            rcar-pcie fe000000.pcie:   IB MEM
+0x0040000000..0x00bfffffff -> 0x0040000000
+            rcar-pcie fe000000.pcie:   IB MEM
+0x0200000000..0x02ffffffff -> 0x0200000000
+            rcar-pcie fe000000.pcie: PCIe link down
+            (rcar_pcie_probe() returns -ENODEV)
+
+            xhci-hcd ee000000.usb: xHCI Host Controller
+            xhci-hcd ee000000.usb: new USB bus registered, assigned bus number 7
+            xhci-hcd ee000000.usb: Direct firmware load for
+r8a779x_usb3_v3.dlmem failed with error -2
+            xhci-hcd ee000000.usb: can't setup: -2
+            xhci-hcd ee000000.usb: USB bus 7 deregistered
+            xhci-hcd: probe of ee000000.usb failed with error -2
+
+      - The PCI reprobing leads to a memory leak, for which I've sent a fix
+        "[PATCH] PCI: Fix memory leak in pci_register_io_range()"
+        https://lore.kernel.org/linux-pci/20210202100332.829047-1-geert+renesas@glider.be/
+
+      - I2C on R-Car Gen3 does not seem to use DMA, according to
+        /sys/kernel/debug/dmaengine/summary:
+
+            -dma4chan0    | e66d8000.i2c:tx
+            -dma4chan1    | e66d8000.i2c:rx
+            -dma5chan0    | e6510000.i2c:tx
+
+      - Disabling CONFIG_IPMMU_VMSA (IOMMU) now works, good!
+
+           ignoring dependency for device, assuming no driver
+
+      - Disabling CONFIG_RCAR_DMAC works for most devices, except for
+        sound:
+
+            -rcar_sound ec500000.sound: probed
+
+             ALSA device list:
+            -  #0: rcar-sound
+            +  No soundcards found.
+
+            # cat  /sys/kernel/debug/devices_deferred
+            2-0010
+            sound
+            ec500000.sound
+
+            platform e6510000.i2c: Linked as a sync state only
+consumer to ec500000.sound
+            platform ec500000.sound: Linked as a consumer to e6060000.pinctrl
+            platform ec500000.sound: Linked as a consumer to
+e6150000.clock-controller
+            i2c 2-0010: Linked as a consumer to ec500000.sound
+            platform ec500000.sound: Linked as a consumer to 2-004f
+            cs2000-cp 2-004f: revision - C1
+            i2c-rcar e6510000.i2c: probed
+            i2c-rcar e6510000.i2c: Dropping the link to ec500000.sound
+            i2c 2-0010: probe deferral - supplier ec500000.sound not ready
+
+        With CONFIG_RCAR_DMAC=y, ec500000.sound is probed quite early.
+
+            arch/arm64/boot/dts/renesas/r8a77951-salvator-xs.dts
+
+            ak4613: codec@10 {
+                    clocks = <&rcar_sound 3>;
+
+                    port {
+                            ak4613_endpoint: endpoint {
+                                    remote-endpoint = <&rsnd_endpoint0>;
+                            };
+                    };
+            };
+
+            sound_card: sound {
+                    dais = <&rsnd_port0     /* ak4613 */
+                            &rsnd_port1     /* HDMI0  */
+                            &rsnd_port2>;   /* HDMI1  */
+            };
+
+            rcar_sound: sound@ec500000 {
+                    ports {
+                            rsnd_port0: port@0 {
+                                    rsnd_endpoint0: endpoint {
+                                            remote-endpoint =
+<&ak4613_endpoint>;
+                                    }
+                            }
+                    }
+            };
+
+
+  2. SH/R-Mobile AG5 (kzm9g), APE6 (ape6evm), A1 (armadillo800-eva)
+
+      - "PATCH] soc: renesas: rmobile-sysc: Set OF_POPULATED and absorb
+        reset handling" is no longer needed
+        https://lore.kernel.org/linux-arm-kernel/20210205133319.1921108-1-geert+renesas@glider.be/
+
+      - On R-Mobile A1, I get a BUG and a memory leak:
+
+            BUG: spinlock bad magic on CPU#0, swapper/1
+             lock: lcdc0_device+0x10c/0x308, .magic: 00000000, .owner:
+<none>/-1, .owner_cpu: 0
+            CPU: 0 PID: 1 Comm: swapper Not tainted
+5.11.0-rc5-armadillo-00032-gf0a85c26907e #266
+            Hardware name: Generic R8A7740 (Flattened Device Tree)
+            [<c010c3c8>] (unwind_backtrace) from [<c010a49c>]
+(show_stack+0x10/0x14)
+            [<c010a49c>] (show_stack) from [<c0159534>]
+(do_raw_spin_lock+0x20/0x94)
+            [<c0159534>] (do_raw_spin_lock) from [<c04089d8>]
+(dev_pm_get_subsys_data+0x30/0xa0)
+            [<c04089d8>] (dev_pm_get_subsys_data) from [<c0413698>]
+(genpd_add_device+0x34/0x1c0)
+            [<c0413698>] (genpd_add_device) from [<c041389c>]
+(of_genpd_add_device+0x34/0x4c)
+            [<c041389c>] (of_genpd_add_device) from [<c0a1e9bc>]
+(board_staging_register_device+0xf8/0x118)
+            [<c0a1e9bc>] (board_staging_register_device) from
+[<c0a1ea00>] (board_staging_register_devices+0x24/0x28)
+            [<c0a1ea00>] (board_staging_register_devices) from
+[<c0a1ea30>] (runtime_board_check+0x2c/0x40)
+            [<c0a1ea30>] (runtime_board_check) from [<c0101fac>]
+(do_one_initcall+0xe0/0x278)
+            [<c0101fac>] (do_one_initcall) from [<c0a01034>]
+(kernel_init_freeable+0x174/0x1c0)
+            [<c0a01034>] (kernel_init_freeable) from [<c05fd568>]
+(kernel_init+0x8/0x118)
+            [<c05fd568>] (kernel_init) from [<c010011c>]
+(ret_from_fork+0x14/0x38)
+            Exception stack(0xc19c9fb0 to 0xc19c9ff8)
+            9fa0:                                     00000000
+00000000 00000000 00000000
+            9fc0: 00000000 00000000 00000000 00000000 00000000
+00000000 00000000 00000000
+            9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+
+            unreferenced object 0xc4134e00 (size 512):
+              comm "swapper", pid 1, jiffies 4294937296 (age 3541.930s)
+              hex dump (first 32 bytes):
+                00 4e 13 c4 00 4e 13 c4 ff ff ff 7f ff ff ff 7f
+.N...N..........
+                ff ff ff 7f 02 00 00 00 00 5f 13 c4 1c 4e 13 c4
+........._...N..
+              backtrace:
+                [<de1a3c34>] dev_pm_qos_constraints_allocate+0x10/0xcc
+                [<d21cf6e4>] dev_pm_qos_add_notifier+0x6c/0xd0
+                [<e04bbc90>] genpd_add_device+0x178/0x1c0
+                [<95067303>] of_genpd_add_device+0x34/0x4c
+                [<c334b97a>] board_staging_register_device+0xf8/0x118
+                [<01bd495a>] board_staging_register_devices+0x24/0x28
+                [<fb25a5d8>] runtime_board_check+0x2c/0x40
+                [<65aed679>] do_one_initcall+0xe0/0x278
+                [<97e3f4f7>] kernel_init_freeable+0x174/0x1c0
+                [<63c8fed0>] kernel_init+0x8/0x118
+                [<f704d96c>] ret_from_fork+0x14/0x38
+                [<00000000>] 0x0
+
+  3. RZ/A1 and RZ/A2: No issues.
+
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
