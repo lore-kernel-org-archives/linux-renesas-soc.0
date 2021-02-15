@@ -2,255 +2,104 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA06C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Feb 2021 17:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F08C433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Feb 2021 17:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56BA864DDA
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Feb 2021 17:27:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BD6E64DEB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Feb 2021 17:47:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232491AbhBOR1B (ORCPT
+        id S231190AbhBORqu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Feb 2021 12:27:01 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:60533 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232161AbhBORZ3 (ORCPT
+        Mon, 15 Feb 2021 12:46:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54534 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232184AbhBORpz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Feb 2021 12:25:29 -0500
-X-Originating-IP: 93.34.118.233
-Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 2EAF11C0002;
-        Mon, 15 Feb 2021 17:24:39 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] arm64: dts: renesas: eagle: Add GMSL .dtsi
-Date:   Mon, 15 Feb 2021 18:24:46 +0100
-Message-Id: <20210215172447.2026514-4-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210215172447.2026514-1-jacopo+renesas@jmondi.org>
-References: <20210215172447.2026514-1-jacopo+renesas@jmondi.org>
+        Mon, 15 Feb 2021 12:45:55 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0EAEA60C3D;
+        Mon, 15 Feb 2021 17:45:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1613411111;
+        bh=H142txNXU7FRt9uW2Sv16n19CyrevXPqFbx8ThdGOrI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=uglK3kwezVaW8PF9O7FxFnlzq7edOQYRV4JhCChBfp7IC1sZiO5UIKu4xOQ6CEbW0
+         9xuJibheu2jwvY9Fk3sEeGOyqm9b9LEUm3T7vPODQumpsqGUaGbMWpwakK5tdZRLh1
+         FsNuf+PV84M6z3tZ3okItznTl+4JAB0yOYeo3t1y+v8MvauJ89KKKgCMB+tqVRnAiC
+         4rXdPqCkNqgMoVW068L3bL/2Z7i5JSJoqmsEdsMsvAQ5RAsgsjvO+7jHs+gsVpMxXY
+         BOgODid5IqWfH0ncdktLpmuQr59nm0hZpCcT8hBeZWUwySMhkBk8M9e+yLrhjzfbZC
+         lDA4fVbX9OE7g==
+Date:   Mon, 15 Feb 2021 09:45:09 -0800
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Stephen Boyd <sboyd@kernel.org>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Tomer Maimon <tmaimon77@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rajeev Kumar <rajeev-dlh.kumar@st.com>,
+        Jan Kotas <jank@cadence.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
+        Boris BREZILLON <boris.brezillon@free-electrons.com>,
+        Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
+        Viresh Kumar <vireshk@kernel.org>, openbmc@lists.ozlabs.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nancy Yuen <yuenn@google.com>, Chen-Yu Tsai <wens@csie.org>,
+        Andy Gross <agross@kernel.org>, Loc Ho <lho@apm.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Richard Woodruff <r-woodruff2@ti.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-arm-msm@vger.kernel.org,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Maxime Ripard <mripard@kernel.org>,
+        linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org,
+        Shiraz Hashim <shiraz.linux.kernel@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Tero Kristo <kristo@kernel.org>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
+        Avi Fishman <avifishman70@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Nuvoton Technologies <tali.perry@nuvoton.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH 00/21] [Set 2] Rid W=1 warnings from Clock
+Message-ID: <20210215094509.0b1f0bbf@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <20210215084952.GF179940@dell>
+References: <20210212092016.GF4572@dell>
+        <161316374113.1254594.14156657225822268891@swboyd.mtv.corp.google.com>
+        <20210212212503.GC179940@dell>
+        <20210212212630.GD179940@dell>
+        <161316754567.1254594.9542583200097699504@swboyd.mtv.corp.google.com>
+        <20210212223739.GE179940@dell>
+        <161317480301.1254594.16648868282165823277@swboyd.mtv.corp.google.com>
+        <YCf4kkMsX+Ymgy6N@lunn.ch>
+        <161333644244.1254594.4498059850307971318@swboyd.mtv.corp.google.com>
+        <YCmUOHTtc+j4eLkO@lunn.ch>
+        <20210215084952.GF179940@dell>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+On Mon, 15 Feb 2021 08:49:52 +0000 Lee Jones wrote:
+> > Jakub can explain how he added these checks.  
+> 
+> Yes, please share.
 
-Describe the FAKRA connector available on Eagle board that allows
-connecting GMSL camera modules such as IMI RDACM20 and RDACM21.
-
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi | 186 ++++++++++++++++++++
- 1 file changed, 186 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi
-
-diff --git a/arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi b/arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi
-new file mode 100644
-index 000000000000..ec3e7493aa71
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi
-@@ -0,0 +1,186 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Device Tree Source (overlay) for the Eagle V3M GMSL connectors
-+ *
-+ * Copyright (C) 2017 Ideas on Board <kieran.bingham@ideasonboard.com>
-+ * Copyright (C) 2021 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ *
-+ * This overlay allows you to define GMSL cameras connected to the FAKRA
-+ * connectors on the Eagle-V3M (or compatible) board.
-+ *
-+ * The following cameras are currently supported:
-+ *    "imi,rdacm20"
-+ *    "imi,rdacm21"
-+ */
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/*
-+ * Select which cameras are in use:
-+ * #define EAGLE_CAMERA0_RDACM20
-+ * #define EAGLE_CAMERA0_RDACM21
-+ *
-+ * The two camera modules are configured with different image formats
-+ * and cannot be mixed.
-+ */
-+#define EAGLE_CAMERA0_RDACM20
-+#define EAGLE_CAMERA1_RDACM20
-+#define EAGLE_CAMERA2_RDACM20
-+#define EAGLE_CAMERA3_RDACM20
-+
-+/* Set the compatible string based on the camera model. */
-+#if defined(EAGLE_CAMERA0_RDACM21) || defined(EAGLE_CAMERA1_RDACM21) || \
-+    defined(EAGLE_CAMERA2_RDACM21) || defined(EAGLE_CAMERA3_RDACM21)
-+#define EAGLE_CAMERA_MODEL	"imi,rdacm21"
-+#define EAGLE_USE_RDACM21
-+#elif defined(EAGLE_CAMERA0_RDACM20) || defined(EAGLE_CAMERA1_RDACM20) || \
-+    defined(EAGLE_CAMERA2_RDACM20) || defined(EAGLE_CAMERA3_RDACM20)
-+#define EAGLE_CAMERA_MODEL	"imi,rdacm20"
-+#define EAGLE_USE_RDACM20
-+#endif
-+
-+/* Define which cameras are available. */
-+#if defined(EAGLE_CAMERA0_RDACM21) || defined(EAGLE_CAMERA0_RDACM20)
-+#define EAGLE_USE_CAMERA_0
-+#endif
-+
-+#if defined(EAGLE_CAMERA1_RDACM21) || defined(EAGLE_CAMERA1_RDACM20)
-+#define EAGLE_USE_CAMERA_1
-+#endif
-+
-+#if defined(EAGLE_CAMERA2_RDACM21) || defined(EAGLE_CAMERA2_RDACM20)
-+#define EAGLE_USE_CAMERA_2
-+#endif
-+
-+#if defined(EAGLE_CAMERA3_RDACM21) || defined(EAGLE_CAMERA3_RDACM20)
-+#define EAGLE_USE_CAMERA_3
-+#endif
-+
-+/* Define the endpoint links. */
-+#ifdef EAGLE_USE_CAMERA_0
-+&max9286_in0 {
-+	remote-endpoint = <&fakra_con0>;
-+};
-+#endif
-+
-+#ifdef EAGLE_USE_CAMERA_1
-+&max9286_in1 {
-+	remote-endpoint = <&fakra_con1>;
-+};
-+#endif
-+
-+#ifdef EAGLE_USE_CAMERA_2
-+&max9286_in2 {
-+	remote-endpoint = <&fakra_con2>;
-+};
-+#endif
-+
-+#ifdef EAGLE_USE_CAMERA_3
-+&max9286_in3 {
-+	remote-endpoint = <&fakra_con3>;
-+};
-+#endif
-+
-+/* Populate the GMSL i2c-mux bus with camera nodes. */
-+#if defined(EAGLE_USE_RDACM21) || defined(EAGLE_USE_RDACM20)
-+
-+#ifdef EAGLE_USE_CAMERA_0
-+&vin0 {
-+	status = "okay";
-+};
-+#endif
-+
-+#ifdef EAGLE_USE_CAMERA_1
-+&vin1 {
-+	status = "okay";
-+};
-+#endif
-+
-+#ifdef EAGLE_USE_CAMERA_2
-+&vin2 {
-+	status = "okay";
-+};
-+#endif
-+
-+#ifdef EAGLE_USE_CAMERA_3
-+&vin3 {
-+	status = "okay";
-+};
-+#endif
-+
-+&gmsl {
-+
-+	status = "okay";
-+	maxim,reverse-channel-microvolt = <100000>;
-+
-+	i2c-mux {
-+#ifdef EAGLE_USE_CAMERA_0
-+		i2c@0 {
-+			status = "okay";
-+
-+			camera@51 {
-+				compatible = EAGLE_CAMERA_MODEL;
-+				reg = <0x51>, <0x61>;
-+
-+				port {
-+					fakra_con0: endpoint {
-+						remote-endpoint = <&max9286_in0>;
-+					};
-+				};
-+			};
-+		};
-+#endif
-+
-+#ifdef EAGLE_USE_CAMERA_1
-+		i2c@1 {
-+			status = "okay";
-+
-+			camera@52 {
-+				compatible = EAGLE_CAMERA_MODEL;
-+				reg = <0x52>, <0x62>;
-+
-+				port {
-+					fakra_con1: endpoint {
-+						remote-endpoint = <&max9286_in1>;
-+					};
-+				};
-+			};
-+		};
-+#endif
-+
-+#ifdef EAGLE_USE_CAMERA_2
-+		i2c@2 {
-+			status = "okay";
-+
-+			camera@53 {
-+				compatible = EAGLE_CAMERA_MODEL;
-+				reg = <0x53>, <0x63>;
-+
-+				port {
-+					fakra_con2: endpoint {
-+						remote-endpoint = <&max9286_in2>;
-+					};
-+				};
-+			};
-+		};
-+#endif
-+
-+#ifdef EAGLE_USE_CAMERA_3
-+		i2c@3 {
-+			status = "okay";
-+
-+			camera@54 {
-+				compatible = EAGLE_CAMERA_MODEL;
-+				reg = <0x54>, <0x64>;
-+
-+				port {
-+					fakra_con3: endpoint {
-+						remote-endpoint = <&max9286_in3>;
-+					};
-+				};
-+			};
-+		};
-+#endif
-+	};
-+};
-+#endif
--- 
-2.30.0
-
+https://github.com/kuba-moo/nipa
