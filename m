@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2691C433E9
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Feb 2021 17:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F969C4332D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Feb 2021 17:42:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95D3E64E68
+	by mail.kernel.org (Postfix) with ESMTP id E692664E2B
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Feb 2021 17:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231164AbhBPRmT (ORCPT
+        id S231189AbhBPRmU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Feb 2021 12:42:19 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:57977 "EHLO
+        Tue, 16 Feb 2021 12:42:20 -0500
+Received: from relay12.mail.gandi.net ([217.70.178.232]:44681 "EHLO
         relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231133AbhBPRmQ (ORCPT
+        with ESMTP id S231145AbhBPRmS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Feb 2021 12:42:16 -0500
+        Tue, 16 Feb 2021 12:42:18 -0500
 Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 92D4720000C;
-        Tue, 16 Feb 2021 17:41:33 +0000 (UTC)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 5540C200011;
+        Tue, 16 Feb 2021 17:41:35 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     kieran.bingham+renesas@ideasonboard.com,
         laurent.pinchart+renesas@ideasonboard.com,
@@ -33,9 +33,9 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 04/16] media: i2c: rdacm20: Report camera module name
-Date:   Tue, 16 Feb 2021 18:41:34 +0100
-Message-Id: <20210216174146.106639-5-jacopo+renesas@jmondi.org>
+Subject: [PATCH 05/16] media: i2c: rdacm20: Check return values
+Date:   Tue, 16 Feb 2021 18:41:35 +0100
+Message-Id: <20210216174146.106639-6-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210216174146.106639-1-jacopo+renesas@jmondi.org>
 References: <20210216174146.106639-1-jacopo+renesas@jmondi.org>
@@ -45,30 +45,39 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-When the device is identified the driver currently reports the
-names of the chips embedded in the camera module.
-
-Report the name of the camera module itself instead.
-Cosmetic change only.
+The camera module initialization routine does not check the return
+value of a few functions. Fix that.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/media/i2c/rdacm20.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/rdacm20.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
-index 6504ed0bd3bc..56406d82b5ac 100644
+index 56406d82b5ac..e982373908f2 100644
 --- a/drivers/media/i2c/rdacm20.c
 +++ b/drivers/media/i2c/rdacm20.c
-@@ -532,7 +532,7 @@ static int rdacm20_initialize(struct rdacm20_device *dev)
- 	if (ret)
- 		return ret;
+@@ -470,11 +470,16 @@ static int rdacm20_initialize(struct rdacm20_device *dev)
+ 	 *  Ensure that we have a good link configuration before attempting to
+ 	 *  identify the device.
+ 	 */
+-	max9271_configure_i2c(&dev->serializer, MAX9271_I2CSLVSH_469NS_234NS |
+-						MAX9271_I2CSLVTO_1024US |
+-						MAX9271_I2CMSTBT_105KBPS);
++	ret = max9271_configure_i2c(&dev->serializer,
++				    MAX9271_I2CSLVSH_469NS_234NS |
++				    MAX9271_I2CSLVTO_1024US |
++				    MAX9271_I2CMSTBT_105KBPS);
++	if (ret)
++		return ret;
  
--	dev_info(dev->dev, "Identified MAX9271 + OV10635 device\n");
-+	dev_info(dev->dev, "Identified RDACM20 camera module\n");
+-	max9271_configure_gmsl_link(&dev->serializer);
++	ret = max9271_configure_gmsl_link(&dev->serializer);
++	if (ret)
++		return ret;
  
- 	/*
- 	 * Set reverse channel high threshold to increase noise immunity.
+ 	ret = max9271_verify_id(&dev->serializer);
+ 	if (ret < 0)
 -- 
 2.30.0
 
