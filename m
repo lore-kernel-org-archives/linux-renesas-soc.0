@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 204E9C43331
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E099C43333
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Feb 2021 17:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F41D864DAF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Feb 2021 17:43:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62A8964DA1
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Feb 2021 17:43:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbhBPRnL (ORCPT
+        id S231294AbhBPRnQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Feb 2021 12:43:11 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:58953 "EHLO
+        Tue, 16 Feb 2021 12:43:16 -0500
+Received: from relay12.mail.gandi.net ([217.70.178.232]:35499 "EHLO
         relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231273AbhBPRnA (ORCPT
+        with ESMTP id S231269AbhBPRnA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 16 Feb 2021 12:43:00 -0500
 Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 7E00020000A;
-        Tue, 16 Feb 2021 17:41:53 +0000 (UTC)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id B41C4200013;
+        Tue, 16 Feb 2021 17:41:51 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     kieran.bingham+renesas@ideasonboard.com,
         laurent.pinchart+renesas@ideasonboard.com,
@@ -33,9 +33,9 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 15/16] media: i2c: max9286: Rework comments in .bound()
-Date:   Tue, 16 Feb 2021 18:41:45 +0100
-Message-Id: <20210216174146.106639-16-jacopo+renesas@jmondi.org>
+Subject: [PATCH 14/16] media: i2c: max9286: Initialize remotes when bound
+Date:   Tue, 16 Feb 2021 18:41:44 +0100
+Message-Id: <20210216174146.106639-15-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210216174146.106639-1-jacopo+renesas@jmondi.org>
 References: <20210216174146.106639-1-jacopo+renesas@jmondi.org>
@@ -45,54 +45,69 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Re-phrase a comment in .bound() callback to make it clear we register
-a subdev notifier and remove a redundant comment about disabling i2c
-auto-ack.
+With the introduction of the .init() core subdev operation in the
+max9271 GMSL serializer, the max9286 deserializer needs to explicitly
+initialize the remote devices by calling the .init() subdev operation on
+each probed camera.
 
-No functional changes intended.
+Call the .init() subdev operation at remote bound time and toggle
+the reverse channel amplitude to compensate for the remote ends
+noise immunity threshold.
 
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/media/i2c/max9286.c | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/media/i2c/max9286.c | 24 +++++++++++++++++++-----
+ 1 file changed, 19 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-index c41284de89b6..aa01d5bb79ef 100644
+index 7913b5f2249e..c41284de89b6 100644
 --- a/drivers/media/i2c/max9286.c
 +++ b/drivers/media/i2c/max9286.c
-@@ -567,9 +567,9 @@ static int max9286_notify_bound(struct v4l2_async_notifier *notifier,
- 	}
+@@ -554,25 +554,39 @@ static int max9286_notify_bound(struct v4l2_async_notifier *notifier,
+ 	dev_dbg(&priv->client->dev, "Bound %s pad: %u on index %u\n",
+ 		subdev->name, src_pad, index);
  
++	/*
++	 * Initialize the remote camera. Increase the channel amplitude
++	 * to compensate for the remote noise immunity threshold.
++	 */
++	max9286_reverse_channel_setup(priv, MAX9286_REV_AMP_HIGH);
++	ret = v4l2_subdev_call(subdev, core, init, 0);
++	if (ret) {
++		dev_err(&priv->client->dev,
++			"Failed to initialize camera device %u\n", index);
++		return ret;
++	}
++
  	/*
--	 * We can only register v4l2_async_notifiers, which do not provide a
--	 * means to register a complete callback. bound_sources allows us to
--	 * identify when all remote serializers have completed their probe.
-+	 * As we register a subdev notifiers we won't get a .complete() callback
-+	 * here, so we have to use bound_sources to identify when all remote
-+	 * serializers have probed.
+ 	 * We can only register v4l2_async_notifiers, which do not provide a
+ 	 * means to register a complete callback. bound_sources allows us to
+ 	 * identify when all remote serializers have completed their probe.
  	 */
- 	if (priv->bound_sources != priv->source_mask) {
- 		/*
-@@ -583,16 +583,12 @@ static int max9286_notify_bound(struct v4l2_async_notifier *notifier,
+-	if (priv->bound_sources != priv->source_mask)
++	if (priv->bound_sources != priv->source_mask) {
++		/*
++		 * If not all remotes have probed yet, restore the initial
++		 * reverse channel amplitude to allow the next camera to probe.
++		 */
++		max9286_reverse_channel_setup(priv, priv->init_rev_chan_mv);
+ 		return 0;
++	}
+ 
  	/*
  	 * All enabled sources have probed and enabled their reverse control
  	 * channels:
-+	 * - The reverse channel amplitude stays high
+-	 *
+-	 * - Increase the reverse channel amplitude to compensate for the
+-	 *   remote ends high threshold
  	 * - Verify all configuration links are properly detected
--	 * - Disable auto-ack as communication on the control channel are now
--	 *   stable.
-+	 * - Disable auto-ack as communications on the control channel are now
-+	 *   stable
+ 	 * - Disable auto-ack as communication on the control channel are now
+ 	 *   stable.
  	 */
+-	max9286_reverse_channel_setup(priv, MAX9286_REV_AMP_HIGH);
  	max9286_check_config_link(priv, priv->source_mask);
--
--	/*
--	 * Re-configure I2C with local acknowledge disabled after cameras have
--	 * probed.
--	 */
- 	max9286_configure_i2c(priv, false);
  
- 	return max9286_set_pixelrate(priv);
+ 	/*
 -- 
 2.30.0
 
