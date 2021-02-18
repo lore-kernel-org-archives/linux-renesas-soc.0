@@ -2,316 +2,109 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D68BBC4332D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2AC5C433E9
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Feb 2021 18:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1836964ECC
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Feb 2021 18:03:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B74D064EB1
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Feb 2021 18:03:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234984AbhBRSCt (ORCPT
+        id S234974AbhBRSCi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 18 Feb 2021 13:02:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40028 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233271AbhBRQOf (ORCPT
+        Thu, 18 Feb 2021 13:02:38 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([81.169.146.221]:20498 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231815AbhBRQH7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Feb 2021 11:14:35 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F218DC061794;
-        Thu, 18 Feb 2021 08:13:19 -0800 (PST)
-Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 824B93E7;
-        Thu, 18 Feb 2021 17:13:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1613664797;
-        bh=NZXHmRuk+81g03fsYTzDeUQDDnQFVFpIlWdtgC35F1c=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UuB8UMVJa80cR3ev8fbrW2ziYHfkUHZCkgTo4WYxvO4mQvZBBWryY0V+3EdL3Am+l
-         ADwWSAlwH2GGrqFNrxjQmmxJ4dr6qvZUIkw8MwEDYRvM6iyt0/YsXnaPY5qlYIbvmN
-         RR1GTOna7MmAjwZnQVYDhSlcXKFcpaJ3KfwbJ6zM=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH 13/16] media: i2c: rdacm2x: Implement .init() subdev op
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, geert@linux-m68k.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20210216174146.106639-1-jacopo+renesas@jmondi.org>
- <20210216174146.106639-14-jacopo+renesas@jmondi.org>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <ce1673db-9ea7-f28c-a22a-0d129c0bff98@ideasonboard.com>
-Date:   Thu, 18 Feb 2021 16:13:14 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Thu, 18 Feb 2021 11:07:59 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1613664221; cv=none;
+        d=strato.com; s=strato-dkim-0002;
+        b=Vr+bpIlbgwBOIeSYHrWF/w/qcu9diZESE0JHwH8xbOhTSTdZJcOVO/ovVzwUnAwSgf
+        NhX0mWubNWnrxHDIH4T1J/lxkefqfz092bzAkL2uXRO/SQJp2QgudD2yo+JIn7sXZNSF
+        zkjXQdyK75XXM/C5XHM3iehGJSFmeg8qVwb1u9NDP7DofCqZ1PLZfT4M//HECGH2Dovs
+        FkgmzJBk1in2kkCJPXe9sp2hCeuobZ6ll63YvB/erRJ+sVgUosVEBGMIykS1O5vpB0NG
+        sUHyTbD5o3EYZ9X8NKmPN5nnBooH4UIa5/4TAVGXi3DOAKX1PPAGXLYU7UQkPim+WOcN
+        UT9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1613664221;
+        s=strato-dkim-0002; d=strato.com;
+        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+        From:Subject:Sender;
+        bh=dCcA+4UHDcZxfpa3Qd2giWQkgzUPwwUvFkfdkUk+cgY=;
+        b=DnDicTjdJT3bpA6orFMkwNnh+9ulKCNJyZune+kp7erFAYWvKcwfJ7QZGdrnhHejHj
+        nfXaIJzblvOB2IbMs7hDayAOfh65jLAvmLxIovoM/82is5pS42B/oUGfXqa0PZ83v+Tf
+        wb7XZuDPQ4DrOULMU154bkZJFOCnn/GczTK+HD5VBcD2ZfY3mnJv5lQd2B3GXIV0bk14
+        UgiB/S9kTjdzdKUI1QAgDbrQ5v2iZx8g52ur161pt28JJAyHAyRJA4DeZBCwlOgZVUSc
+        8p6vYuTfP/n6/UzF3AphWrWuMDrHYLCcvc51WfX8UlOEOtmi66V+NDfGaaSeA2l4NuFl
+        lCLQ==
+ARC-Authentication-Results: i=1; strato.com;
+        dkim=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1613664221;
+        s=strato-dkim-0002; d=fpond.eu;
+        h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+        From:Subject:Sender;
+        bh=dCcA+4UHDcZxfpa3Qd2giWQkgzUPwwUvFkfdkUk+cgY=;
+        b=iHJA/8Y6LuJVOLofRabjqcVYmGlMpyNT8TABoHcIH33zAKXu2oB4Osnn2+ehuTrnH/
+        +YqBb1DvmbqQ3AeKzw0bBu0CLWy1gf6L71baKFHrOK+izIWnYmeTu4BsXEEDCSkjqLae
+        uQAWvrsisY9ZFNSAq71J+/woQwln2kXBSsWkefBkB3q9UIO92qVeNz4+FO9NdJ09axxj
+        23T7nvLFoeC0UGugan37aBOZtN/i+PqmYCuQJnkrHtLvdGzP9Q1rdVEE8oE1jMMHSFkp
+        HqOP5b8y9XN3iGVUU6j9pqIszc4N5nkL+LTe+Dd7UrlpjJPNVhDROfJ/70n01LxLlJMb
+        7viQ==
+Authentication-Results: strato.com;
+        dkim=none
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fGk/2qthug="
+X-RZG-CLASS-ID: mo00
+Received: from oxapp03-01.back.ox.d0m.de
+        by smtp-ox.front (RZmta 47.18.0 AUTH)
+        with ESMTPSA id 20675ex1IG3f35x
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+        Thu, 18 Feb 2021 17:03:41 +0100 (CET)
+Date:   Thu, 18 Feb 2021 17:03:41 +0100 (CET)
+From:   Ulrich Hecht <uli@fpond.eu>
+To:     Wolfram Sang <wsa@the-dreams.de>,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Cc:     linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
+        linux-i2c@vger.kernel.org
+Message-ID: <1817984199.148366.1613664221431@webmail.strato.com>
+In-Reply-To: <20210218104936.GA890@ninjato>
+References: <20210212164541.8986-1-uli+renesas@fpond.eu>
+ <20210218104936.GA890@ninjato>
+Subject: Re: [PATCH] i2c: rcar: implement atomic transfers
 MIME-Version: 1.0
-In-Reply-To: <20210216174146.106639-14-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.4-Rev18
+X-Originating-Client: open-xchange-appsuite
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
 
-On 16/02/2021 17:41, Jacopo Mondi wrote:
-> The current probe() procedure of the RDACM20 and RDACM20 performs
-
-and RDACM21?
-
-> initialization of the serializer image sensors and increases the noise
-
-Of the serializer 'and' image sensors ?
-or perhaps just
-
-s/serializer/serializer,/ ?
-
-> immunity threshold as last operation, which is then compensated by the
-
-as a last operation
-or
-as a final operation
-
-
-> remote deserializer by increasing the reverse channel signal amplitude
-> once all remotes have bound.
+> On 02/18/2021 11:49 AM Wolfram Sang <wsa@the-dreams.de> wrote:
+> > Implements atomic transfers. Tested by rebooting an r8a7790 Lager board
+> > after connecting the i2c-rcar controller to the PMIC in
+> > arch/arm/boot/dts/r8a7790-lager.dts like so:
+> > 
+> > 		compatible = "i2c-demux-pinctrl";
+> > 		pinctrl-names = "default";
+> > 		pinctrl-0 = <&pmic_irq_pins>;
+> > -		i2c-parent = <&iic3>, <&i2c3>;
+> > +		i2c-parent = <&i2c3>, <&iic3>;
+> > 		i2c-bus-name = "i2c-pwr";
+> > 		#address-cells = <1>;
+> > 		#size-cells = <0>;
+> > 
+> > Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 > 
-> The probe routine is then run without noise immunity activated which
-> in noisy environment conditions makes the probe sequence less reliable as
-> the chips configuration requires a relevant amount of i2c transactions.
+> Doesn't apply against 5.11 or i2c/for-next. What is the base here?
 
-s/relevant/relatively high/ ?
+renesas-drivers-2021-02-09-v5.11-rc7
 
-> 
-> Break chip initialization in two:
-> - At probe time only configure the serializer's reverse channel with
->   noise immunity activated, to reduce the number of transactions
->   performed without noise immunity protection
-> - Move the chips initialization to the .init() core subdev operation to
->   be invoked by the deserializer after the camera has probed and it has
->   increased the reverse channel amplitude
-
-Is this the op you said was deprecated?
-
-
-Functionally in this code, it seems fine, but as mentioned on the next
-patch, I suspect it might need squashing to make sure it stays functional...
-
-I'm not fully sure of the implications of this patch, but your tests
-have reportede that this series is helping a lot with reliability so I
-don't want to block it.
-
-The code changes themselves look ok, with the following thougts:
-
- - If this op/methodology is deprecated it might be harder to get
-   acceptance?
-
- - now we have _init and _initialise - should that be made more
-   distinct?
-
- - Seeing the duplication of the MAX9271_DEFAULT_ADDR / ping again
-   really makes me want to see that wrapped in the max9271.c ;-)
-
- - Likely needs squashed with relevant changes in max9286?
-
-But even with those thoughts, I don't think this is necessarily wrong so:
-
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/media/i2c/rdacm20.c | 65 ++++++++++++++++++++++---------------
->  drivers/media/i2c/rdacm21.c | 65 ++++++++++++++++++++++---------------
->  2 files changed, 78 insertions(+), 52 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
-> index 39e4b4241870..0632ef98eea7 100644
-> --- a/drivers/media/i2c/rdacm20.c
-> +++ b/drivers/media/i2c/rdacm20.c
-> @@ -437,36 +437,12 @@ static int rdacm20_get_fmt(struct v4l2_subdev *sd,
->  	return 0;
->  }
->  
-> -static const struct v4l2_subdev_video_ops rdacm20_video_ops = {
-> -	.s_stream	= rdacm20_s_stream,
-> -};
-> -
-> -static const struct v4l2_subdev_pad_ops rdacm20_subdev_pad_ops = {
-> -	.enum_mbus_code = rdacm20_enum_mbus_code,
-> -	.get_fmt	= rdacm20_get_fmt,
-> -	.set_fmt	= rdacm20_get_fmt,
-> -};
-> -
-> -static const struct v4l2_subdev_ops rdacm20_subdev_ops = {
-> -	.video		= &rdacm20_video_ops,
-> -	.pad		= &rdacm20_subdev_pad_ops,
-> -};
-> -
-> -static int rdacm20_initialize(struct rdacm20_device *dev)
-> +static int rdacm20_init(struct v4l2_subdev *sd, unsigned int val)
->  {
-> +	struct rdacm20_device *dev = sd_to_rdacm20(sd);
->  	unsigned int i;
->  	int ret;
->  
-> -	/* Verify communication with the MAX9271: ping to wakeup. */
-> -	dev->serializer.client->addr = MAX9271_DEFAULT_ADDR;
-> -	i2c_smbus_read_byte(dev->serializer.client);
-> -	usleep_range(5000, 8000);
-> -
-> -	/* Serial link disabled during config as it needs a valid pixel clock. */
-> -	ret = max9271_set_serial_link(&dev->serializer, false);
-> -	if (ret)
-> -		return ret;
-> -
->  	/*
->  	 *  Ensure that we have a good link configuration before attempting to
->  	 *  identify the device.
-> @@ -537,6 +513,43 @@ static int rdacm20_initialize(struct rdacm20_device *dev)
->  
->  	dev_info(dev->dev, "Identified RDACM20 camera module\n");
->  
-> +	return 0;
-> +}
-> +
-> +static const struct v4l2_subdev_core_ops rdacm20_core_ops = {
-> +	.init           = rdacm20_init,
-> +};
-> +
-> +static const struct v4l2_subdev_video_ops rdacm20_video_ops = {
-> +	.s_stream	= rdacm20_s_stream,
-> +};
-> +
-> +static const struct v4l2_subdev_pad_ops rdacm20_subdev_pad_ops = {
-> +	.enum_mbus_code = rdacm20_enum_mbus_code,
-> +	.get_fmt	= rdacm20_get_fmt,
-> +	.set_fmt	= rdacm20_get_fmt,
-> +};
-> +
-> +static const struct v4l2_subdev_ops rdacm20_subdev_ops = {
-> +	.core		= &rdacm20_core_ops,
-> +	.video		= &rdacm20_video_ops,
-> +	.pad		= &rdacm20_subdev_pad_ops,
-> +};
-> +
-> +static int rdacm20_initialize(struct rdacm20_device *dev)
-> +{
-> +	int ret;
-> +
-> +	/* Verify communication with the MAX9271: ping to wakeup. */
-> +	dev->serializer.client->addr = MAX9271_DEFAULT_ADDR;
-> +	i2c_smbus_read_byte(dev->serializer.client);
-> +	usleep_range(5000, 8000);
-> +
-> +	/* Serial link disabled during config as it needs a valid pixel clock. */
-> +	ret = max9271_set_serial_link(&dev->serializer, false);
-> +	if (ret)
-> +		return ret;
-> +
->  	/*
->  	 * Set reverse channel high threshold to increase noise immunity.
->  	 *
-> diff --git a/drivers/media/i2c/rdacm21.c b/drivers/media/i2c/rdacm21.c
-> index c420a6b96879..80b6f16f87a8 100644
-> --- a/drivers/media/i2c/rdacm21.c
-> +++ b/drivers/media/i2c/rdacm21.c
-> @@ -314,21 +314,6 @@ static int rdacm21_get_fmt(struct v4l2_subdev *sd,
->  	return 0;
->  }
->  
-> -static const struct v4l2_subdev_video_ops rdacm21_video_ops = {
-> -	.s_stream	= rdacm21_s_stream,
-> -};
-> -
-> -static const struct v4l2_subdev_pad_ops rdacm21_subdev_pad_ops = {
-> -	.enum_mbus_code = rdacm21_enum_mbus_code,
-> -	.get_fmt	= rdacm21_get_fmt,
-> -	.set_fmt	= rdacm21_get_fmt,
-> -};
-> -
-> -static const struct v4l2_subdev_ops rdacm21_subdev_ops = {
-> -	.video		= &rdacm21_video_ops,
-> -	.pad		= &rdacm21_subdev_pad_ops,
-> -};
-> -
->  static int ov10640_initialize(struct rdacm21_device *dev)
->  {
->  	u8 val;
-> @@ -448,20 +433,11 @@ static int ov490_initialize(struct rdacm21_device *dev)
->  	return 0;
->  }
->  
-> -static int rdacm21_initialize(struct rdacm21_device *dev)
-> +static int rdacm21_init(struct v4l2_subdev *sd, unsigned int val)
->  {
-> +	struct rdacm21_device *dev = sd_to_rdacm21(sd);
->  	int ret;
->  
-> -	/* Verify communication with the MAX9271: ping to wakeup. */
-> -	dev->serializer.client->addr = MAX9271_DEFAULT_ADDR;
-> -	i2c_smbus_read_byte(dev->serializer.client);
-> -	usleep_range(5000, 8000);
-> -
-> -	/* Enable reverse channel and disable the serial link. */
-> -	ret = max9271_set_serial_link(&dev->serializer, false);
-> -	if (ret)
-> -		return ret;
-> -
->  	/* Configure I2C bus at 105Kbps speed and configure GMSL. */
->  	ret = max9271_configure_i2c(&dev->serializer,
->  				    MAX9271_I2CSLVSH_469NS_234NS |
-> @@ -508,6 +484,43 @@ static int rdacm21_initialize(struct rdacm21_device *dev)
->  	if (ret)
->  		return ret;
->  
-> +	return 0;
-> +}
-> +
-> +static const struct v4l2_subdev_core_ops rdacm21_core_ops = {
-> +	.init		= rdacm21_init,
-> +};
-> +
-> +static const struct v4l2_subdev_video_ops rdacm21_video_ops = {
-> +	.s_stream	= rdacm21_s_stream,
-> +};
-> +
-> +static const struct v4l2_subdev_pad_ops rdacm21_subdev_pad_ops = {
-> +	.enum_mbus_code = rdacm21_enum_mbus_code,
-> +	.get_fmt	= rdacm21_get_fmt,
-> +	.set_fmt	= rdacm21_get_fmt,
-> +};
-> +
-> +static const struct v4l2_subdev_ops rdacm21_subdev_ops = {
-> +	.core		= &rdacm21_core_ops,
-> +	.video		= &rdacm21_video_ops,
-> +	.pad		= &rdacm21_subdev_pad_ops,
-> +};
-> +
-> +static int rdacm21_initialize(struct rdacm21_device *dev)
-> +{
-> +	int ret;
-> +
-> +	/* Verify communication with the MAX9271: ping to wakeup. */
-> +	dev->serializer.client->addr = MAX9271_DEFAULT_ADDR;
-> +	i2c_smbus_read_byte(dev->serializer.client);
-> +	usleep_range(5000, 8000);
-> +
-> +	/* Enable reverse channel and disable the serial link. */
-> +	ret = max9271_set_serial_link(&dev->serializer, false);
-> +	if (ret)
-> +		return ret;
-> +
->  	/*
->  	 * Set reverse channel high threshold to increase noise immunity.
->  	 *
-> 
-
+CU
+Uli
