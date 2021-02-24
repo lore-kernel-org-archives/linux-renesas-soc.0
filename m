@@ -2,107 +2,69 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D47FC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Feb 2021 11:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CC68C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Feb 2021 15:30:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A8DC364EC3
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Feb 2021 11:54:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B89E564E83
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Feb 2021 15:30:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234973AbhBXLxy (ORCPT
+        id S231815AbhBXP1K (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Feb 2021 06:53:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50128 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235187AbhBXLxW (ORCPT
+        Wed, 24 Feb 2021 10:27:10 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:55836 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236851AbhBXNqb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Feb 2021 06:53:22 -0500
-Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02B3DC06178C;
-        Wed, 24 Feb 2021 03:52:12 -0800 (PST)
-Received: by mail-io1-xd31.google.com with SMTP id u20so1669209iot.9;
-        Wed, 24 Feb 2021 03:52:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Vv8e+Q64O0YOnZPfFWuAU+JcY2c3un2uq0nf6BdI8TQ=;
-        b=WUHmJpGd4JhuzwHrZklF4hnBIt30FW+aVavOfZzmRidKN66gbK85O+iCO9OGeZCn5J
-         YHV0isOxRHoayg74DqGLs/GWDcKgbK6t2J6G5Nt29E91ILFf0HqMSmEUYhmpWAxB+puA
-         zbv2uShMy5NN/a4zorI2zEjDf+FThgiEOAw40qrmnFo47KWHNdzeWHHUMCXkH0VOjjQ2
-         NHAlPGKLkXcEoS1S+voO5lt2aVqaqQGh1rjgYZv4AgichI4jlJZhZKpa8b4RJpBtF8Kx
-         JirQu+CWF+s1lTvXW6+W3tUv5ZZQcGjFP0efAkDVZwCBlT7zkD8M1LdDQa1Li7UuZVQ7
-         sekg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Vv8e+Q64O0YOnZPfFWuAU+JcY2c3un2uq0nf6BdI8TQ=;
-        b=d3ZRd+b16KbI3/FCm6kQiKDZVefs+Pgla/dlTLT/cII73ufqQAdfn/JSKO7OE2yyU7
-         e0/yxpmtZCu+sgXCN0BgO2ldXEfjnQsoyTG7aHM/AvGaCAz6NIM3eIEk44rA9y+ko+HA
-         qVvuM9lOKB3hrDZLOHp5u6w2RY+p78ceUwKx8sOXgqGPt7aRoUMg2A61QcAs0hyrIlZE
-         Wu9hh0XEMHX5GEOG+5wJvQEPjRgmyXuVw0jVwjeBIFpeexe9j0qJ0Od3giWEkgjFS0aQ
-         MCBa2BOdF248YPwbh42k6/dGCAGPadMShaB/zNihwIeRrPDIiXG8CjJsXl1Vj96ujb9m
-         +2/w==
-X-Gm-Message-State: AOAM532aat3Yzk7966ZD8wmpNCwMaCELXuKh1/IJoyJ17Td2woXZx3eQ
-        sN571YccM5f4/ptLcGvWtCn2jVxKLUa+Fw==
-X-Google-Smtp-Source: ABdhPJzqMuYbUTFoFmYyOX4XzjuCRsBxFbouWEUNy31yHTK43kr8jwYdhgn296WX4/ec6XTGuNPzEA==
-X-Received: by 2002:a6b:b415:: with SMTP id d21mr1377811iof.149.1614167531229;
-        Wed, 24 Feb 2021 03:52:11 -0800 (PST)
-Received: from aford-IdeaCentre-A730.lan ([2601:448:8400:9e8:de9c:d296:189b:385a])
-        by smtp.gmail.com with ESMTPSA id l16sm1500001ils.11.2021.02.24.03.52.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Feb 2021 03:52:10 -0800 (PST)
-From:   Adam Ford <aford173@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Wed, 24 Feb 2021 08:46:31 -0500
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94)
+        (envelope-from <andrew@lunn.ch>)
+        id 1lEuTw-008ESx-Lj; Wed, 24 Feb 2021 14:45:36 +0100
+Date:   Wed, 24 Feb 2021 14:45:36 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     netdev@vger.kernel.org, aford@beaconembedded.com,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sergei Shtylyov <sergei.shtylyov@gmail.com>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 5/5] arm64: dts: renesas: beacon kits: Setup AVB refclk
-Date:   Wed, 24 Feb 2021 05:51:45 -0600
-Message-Id: <20210224115146.9131-5-aford173@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210224115146.9131-1-aford173@gmail.com>
+Subject: Re: [PATCH V3 2/5] ARM: dts: renesas: Add fck to etheravb-rcar-gen2
+ clock-names list
+Message-ID: <YDZYgEm+wBFFJgXW@lunn.ch>
 References: <20210224115146.9131-1-aford173@gmail.com>
+ <20210224115146.9131-2-aford173@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210224115146.9131-2-aford173@gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The AVB refererence clock assumes an external clock that runs
-automatically.  Because the Versaclock is wired to provide the
-AVB refclock, the device tree needs to reference it in order for the
-driver to start the clock.
+On Wed, Feb 24, 2021 at 05:51:42AM -0600, Adam Ford wrote:
+> The bindings have been updated to support two clocks, but the
+> original clock now requires the name fck.  Add a clock-names
+> list in the device tree with fck in it.
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
----
-V3:  New to series
+Hi Adam
 
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-index 8d3a4d6ee885..75355c354c38 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-@@ -53,6 +53,8 @@ &avb {
- 	phy-handle = <&phy0>;
- 	rx-internal-delay-ps = <1800>;
- 	tx-internal-delay-ps = <2000>;
-+	clocks = <&cpg CPG_MOD 812>, <&versaclock5 4>;
-+	clock-names = "fck", "refclk";
- 	status = "okay";
- 
- 	phy0: ethernet-phy@0 {
--- 
-2.25.1
+I think requires is too strong. As far as i can see, you don't
+introduce a change using the name 'fck'. So the name is optional,
+which is good, because otherwise you would break backwards
+compatibility with DT blobs.
 
+Is the plan to merge this whole patchset via netdev? If so, you need
+to repost anyway, once netdev reopens. So maybe you can change the
+wording?
+
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
