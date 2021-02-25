@@ -2,206 +2,98 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFACC433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Feb 2021 20:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F063AC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Feb 2021 07:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B3C464E20
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Feb 2021 20:37:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92F6A64E20
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 25 Feb 2021 07:52:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235534AbhBXUgp (ORCPT
+        id S235218AbhBYHwO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Feb 2021 15:36:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49724 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229598AbhBXUgo (ORCPT
+        Thu, 25 Feb 2021 02:52:14 -0500
+Received: from mail-oo1-f54.google.com ([209.85.161.54]:44769 "EHLO
+        mail-oo1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235048AbhBYHwN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Feb 2021 15:36:44 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52ED2C061786;
-        Wed, 24 Feb 2021 12:36:04 -0800 (PST)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 020E76F2;
-        Wed, 24 Feb 2021 21:36:00 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1614198961;
-        bh=95Gl+LSHpLxdZZF3H9srUIvucB+IGvTAaHED4gu9G3s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uRjfJTtWm0+7KzU+BIlWnRoI80sB8dl5VlY6Mcqx2uRxDxM3nMOxZuqIcK5Kxzp8r
-         5b+w25aqa17Zmn0K6+0TO06XiHMZBtunlUprxVvpWGkwECA5bkVQYlRhWY+uawD1OB
-         dYPOD9d7Ja6TCgsJvgEMvU+MQFQCaz1jiVdZwMqs=
-Date:   Wed, 24 Feb 2021 22:35:33 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        niklas.soderlund+renesas@ragnatech.se, geert@linux-m68k.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/16] media: i2c: rdacm20: Enable noise immunity
-Message-ID: <YDa4leayx0E/AwyX@pendragon.ideasonboard.com>
-References: <20210216174146.106639-1-jacopo+renesas@jmondi.org>
- <20210216174146.106639-2-jacopo+renesas@jmondi.org>
- <5691f68f-724d-9d6a-9ea8-1e017b305c66@ideasonboard.com>
- <YDL/npLVS7vk3TV7@pendragon.ideasonboard.com>
- <20210222145905.ao4larxjv5tvk3yd@uno.localdomain>
+        Thu, 25 Feb 2021 02:52:13 -0500
+Received: by mail-oo1-f54.google.com with SMTP id n19so1150373ooj.11;
+        Wed, 24 Feb 2021 23:51:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RNLIw+6yPNbCnrIrprnlWvk8nVCDAaT6F2Etp6AuKbo=;
+        b=tArbcnqG5WgFqsBXJblN+fM4qryy+7a5UH4M8NV9hllSdlZsaPtedmoTNDETpoOQDL
+         IrA9YNpc0k46BDQsGrxeJjbQLz5ifefOxJfm5m30y9M883SpyiYU0HQWassZ2ec0Za8c
+         /uJcibv8bsAkiCwtfw3CksWYwMUwGQ4o1L+GiZmDr4icztxIpNC39vZD9F1VLN/SyLkX
+         c5zkXfnWabcRHCwAynwPgG0vAHRZ30jKMiVjdt4a5DR+M9HA2lrwDuhVha4fDgnSnnf2
+         UcI3iwmFwsZS1ow0z+iW3YHc4S2/eBYpecIHz77poRTxJQBEgm5PG9WhZVGOszp7AzgA
+         hbkg==
+X-Gm-Message-State: AOAM533ZUg5W7xlahlLKsbCQOOTFUSXH1f9dUyjTTkeCZ79jn1316jLR
+        FQKD3sdGLvjmXkrSnrghcl9CiY3qQFaGHx1S0DI=
+X-Google-Smtp-Source: ABdhPJxhxQAEQR74fgvjCGW0q2q027/ixLOgKLwLKhZ3kkBzj8Rfq2dKWsBCVNAaiZsGgWbDQShUHxCurmowJTxRh8I=
+X-Received: by 2002:a4a:bb14:: with SMTP id f20mr1372910oop.1.1614239492696;
+ Wed, 24 Feb 2021 23:51:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20210222145905.ao4larxjv5tvk3yd@uno.localdomain>
+References: <20210224115146.9131-1-aford173@gmail.com> <20210224115146.9131-2-aford173@gmail.com>
+ <YDZYgEm+wBFFJgXW@lunn.ch>
+In-Reply-To: <YDZYgEm+wBFFJgXW@lunn.ch>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 25 Feb 2021 08:51:21 +0100
+Message-ID: <CAMuHMdWO8hA8td+636TLu7kD4zajDuW5ArWnaYZ-C_sfupF0XA@mail.gmail.com>
+Subject: Re: [PATCH V3 2/5] ARM: dts: renesas: Add fck to etheravb-rcar-gen2
+ clock-names list
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Adam Ford <aford173@gmail.com>, netdev <netdev@vger.kernel.org>,
+        Adam Ford-BE <aford@beaconembedded.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+Hi Andrew,
 
-On Mon, Feb 22, 2021 at 03:59:05PM +0100, Jacopo Mondi wrote:
-> On Mon, Feb 22, 2021 at 02:49:34AM +0200, Laurent Pinchart wrote:
-> > On Wed, Feb 17, 2021 at 12:55:19PM +0000, Kieran Bingham wrote:
-> > > On 16/02/2021 17:41, Jacopo Mondi wrote:
-> > > > Enable the noise immunity threshold at the end of the rdacm20
-> > > > initialization routine.
-> > > >
-> > > > The rdcam20 camera module has been so far tested with a startup
-> >
-> > s/rdcam20/rdacm20/
-> >
-> > > > delay that allowed the embedded MCU to program the serializer. If
-> > > > the initialization routine is run before the MCU programs the
-> > > > serializer and the image sensor and their addresses gets changed
-> > > > by the rdacm20 driver it is required to manually enable the noise
-> > > > immunity threshold to make the communication on the control channel
-> > > > more reliable.
-> > >
-> > > Oh, this is interesting, ... booting up without the delays would be ...
-> > > much nicer.
-> >
-> > I second that, but I'm a bit worried. The MCU has caused us more pain
-> > than gain, the best way to fix it may be with a desoldering station ;-)
-> 
-> I wish we could
-> 
-> > Jokes aside, if we want to start initializing with the serializer before
-> > the MCU completes its initialization, then we'll have a racy process,
-> > with two I2C masters configuring the same device. I don't think anything
-> > good can come out of that :-S
-> >
-> > Taking into account the fact that on some platforms we'll want to
-> > implement power management for the cameras, disabling power (possibly
-> > individually) when the cameras are not in use, we'll have to handle the
-> > race carefully, and I'm not sure there any other way than waiting for
-> > the camera to be initialized with an initialization delay after power
-> > up.
-> 
-> Currently I really cannot tell how long the intialization takes, and
-> we downstream inserted a 'long enough' 8 seconds delay to accommodate
-> that, which seems one of those solution that work as long as they
-> don't work anymore.
-> 
-> One thing to notices is that I tried to interface with the MCU to read
-> its most basic parameters, like the number of i2c messages sent to the
-> serializer before programming the image sensor and that's just a mere 3
-> messages. What I noticed was also that I was not able to talk to the MCU
-> for 1.5 seconds, which I'm not sure it's because of a startup delay of
-> because of cross-talks. If that was a startup delay, it would really be
-> convenient, as we could change the chip addresses immediately and have
-> the MCU programming being sent to a non-existing id.
+On Wed, Feb 24, 2021 at 2:45 PM Andrew Lunn <andrew@lunn.ch> wrote:
+> On Wed, Feb 24, 2021 at 05:51:42AM -0600, Adam Ford wrote:
+> > The bindings have been updated to support two clocks, but the
+> > original clock now requires the name fck.  Add a clock-names
+> > list in the device tree with fck in it.
+>
+> I think requires is too strong. As far as i can see, you don't
+> introduce a change using the name 'fck'. So the name is optional,
+> which is good, because otherwise you would break backwards
+> compatibility with DT blobs.
+>
+> Is the plan to merge this whole patchset via netdev? If so, you need
+> to repost anyway, once netdev reopens. So maybe you can change the
+> wording?
 
-Scary :-)
+The DTS patches should go in through the renesas and soc trees.
+I can apply them as soon as the DT binding patch has been accepted.
 
-> > Based on this, I'm not concerned about this patch in particular, but
-> > potentially about the series as a whole. I'll comment on individual
-> > patches as applicable.
-> >
-> > Regarding this patch, doies the MCU enable high threshold for the
-> > reverse channel as part of its initialization procedure ? Do we have a
-> 
-> we always assumed so, as it was not required for the RDACM20 to start
-> with a de-serializer low power amplitude and increase it after the
-> camera has probed like we have to do for the un-programmed RDACM21
-> with the intiial startup delay (the custom maxim,reverse-channel-microvolt
-> property serves this purpose)
-> 
-> As a confirmation, if I remove the delay and probe the camera before
-> the MCU gets to program it, I need to enable the threshold manually
-> as otherwise I lose the ability to stream from cameras.
-> 
-> All in all, my best bet is that without the delay we get to probe and
-> re-program the serializer address before the MCU starts it programming
-> phase. All of this is without synchronization, without any known delay
-> being described in the camera manual, all based on empirical
-> deduction and repeated testing. I'll keep the opinion on GMSL as a
-> techology for myself here, but I think this solution is in-line with
-> the global quality level of the systems we're working with.
+Thanks!
 
-Your opinion may have transpired from that last sentence.
+Gr{oetje,eeting}s,
 
-> > full list of what it configures in the MAX9271 ? If so, could we capture
-> 
-> Not at the moment but I can investigate dumping that from the MCU as
-> I've been able to get its 'status' and a command to get its content
-> should be available
-
-Thanks, that would be very helpful.
-
-> > it in a comment in the driver ? That would be very helpful as a
-> > reference.
-> >
-> > > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > > ---
-> > > >  drivers/media/i2c/rdacm20.c | 8 +++++++-
-> > > >  1 file changed, 7 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
-> > > > index 90eb73f0e6e9..f7fd5ae955d0 100644
-> > > > --- a/drivers/media/i2c/rdacm20.c
-> > > > +++ b/drivers/media/i2c/rdacm20.c
-> > > > @@ -541,7 +541,13 @@ static int rdacm20_initialize(struct rdacm20_device *dev)
-> > > >
-> > > >  	dev_info(dev->dev, "Identified MAX9271 + OV10635 device\n");
-> > > >
-> > > > -	return 0;
-> > > > +	/*
-> > > > +	 * Set reverse channel high threshold to increase noise immunity.
-> > > > +	 *
-> > > > +	 * This should be compensated by increasing the reverse channel
-> > > > +	 * amplitude on the remote deserializer side.
-> > > > +	 */
-> > > > +	return max9271_set_high_threshold(&dev->serializer, true);
-> > >
-> > > Does this work 'out of the box' ? I.e. if this patch is applied, I
-> > > assume it is required to remove the regulator delays that I/we have in DT?
-> 
-> It doesn't hurt, as if this happen -after- the MCU has programmed the
-> chip, we're just re-enabling something that was enabled (remember
-> RDACM20 goes with maxim,reverse-channel-microvol=170 when the dealy
-> was inserted).
-> 
-> Without the dealy it could be operated as the RDACM21 (start low,
-> probe+enable threshold, set high).
-> 
-> > > Likewise, does that note mean this patch must also be accompanied by the
-> > > update in max9286 somehow?
-> 
-> Ee have a DT property to control this already, and the delay+channel
-> amplitude can be controlled from DTS entirely.
-> 
-> > > I guess we can't keep 'test bisectability' with this very easily so it
-> > > probably doesn't matter too much, the end result will be the interesting
-> > > part.
-> > >
-> > > Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > >
-> > > >  }
-> > > >
-> > > >  static int rdacm20_probe(struct i2c_client *client)
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
