@@ -2,80 +2,94 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 838C0C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 27 Feb 2021 09:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC8AC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 28 Feb 2021 18:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FDF364E86
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 27 Feb 2021 09:15:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 689E364E83
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 28 Feb 2021 18:49:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbhB0JPk (ORCPT
+        id S231216AbhB1Ssv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 27 Feb 2021 04:15:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37654 "EHLO
+        Sun, 28 Feb 2021 13:48:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230014AbhB0JPj (ORCPT
+        with ESMTP id S230084AbhB1Ssv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 27 Feb 2021 04:15:39 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E766EC06174A;
-        Sat, 27 Feb 2021 01:14:58 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id y12so485127ljj.12;
-        Sat, 27 Feb 2021 01:14:58 -0800 (PST)
+        Sun, 28 Feb 2021 13:48:51 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4649C06174A;
+        Sun, 28 Feb 2021 10:48:10 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id v13so1345075edw.9;
+        Sun, 28 Feb 2021 10:48:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rFn3WZXquuWhJU4qu+ClIPvji0Vi9A60lu/mbJJHGK0=;
-        b=PpqZWET30mB6ohRaAsLn8uBfFQFKXMjj/+gAF8bJmLlOt5L6QEf8EE3zJIRqpo1rHW
-         4pvjVFar0d7IZY6Aox8gdLYsuBG5twI6RQnEecBLmzcMcN3OzvopA5kGdBIF9DPST+C+
-         o+m821BNmiOyUZswIkQsiX5vLctqgqRe1+Up0T46jjW/2J+MgQXo7U4H+uaKsgjWo8Nj
-         xsDwD+1jkTRqXAiRomSufeqBE9uHHDYEGmtiZ2aJ362Iu2ReXcSxM3q5MlAYuZuqs43l
-         6rPVKQw2KgohXOGfZJdNHpFHTw2cDNtr70DuOcFE9rgXdthjJgNBdRJev5W33/uhcYEg
-         r5vg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6FN28+EGwV52y5fLBmFdolcmGnuxL558/53m8V0+MHs=;
+        b=PuwnMKZfF9jVmm8oa8y3QjE7JCwENco3bvbHskHMb3lb0hCkpHCrfv5oB/+tl45q1r
+         ZHDfY06rcWoX+6WMekZ9ezBMVVkUn/R7F2/6VDeXorStJJv5pwPOHQ7Llnwf9w3I4ubd
+         9V3/vRCvqJahnk4JIO1RRwiLSf9Zs/HlhxMGUfYdkH516u37+LgOsRkqoGC1qXARYrgM
+         HlmW1jIqUvg5vLyfvv1Fpz2EXuL/ILv2uNUgxP2xDb+f+NZXzQj51tBhdn1xWquiKvL8
+         xds4df9amNmFsI8+KGeKEBQjYACEfjtqetU85PW/kjIotDeFloSLcyIN1IGcqwxIj9Tp
+         ODQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=rFn3WZXquuWhJU4qu+ClIPvji0Vi9A60lu/mbJJHGK0=;
-        b=HG//b4U4g9tWdObP/Y+gWOFHKKnrxfcItCBNavqUTqBn41w/jzx2yzcRO6tglrtmjm
-         rKgYmZCF1E6qOU3P2GhThC1Oh8hruDrlsNRcp3VBW4quV+Yyp2/wrK0JHGkurHUMYswU
-         xrQDiblFOhEebJKfdmQMspTVQWIAYdlHvzPh9OwPngKDPPmu5r2SdW6fRfTKY1OtO5pn
-         Rh0+CUINdkjz7IqftbdnlDWun8MS1JSeGiBkwqCLOd8sWYgSUA99GgUDoxNjCTXtPGbI
-         9CIUY8lzshUUDdlGzNsCWLubLxZz3c+V5eM4I/4QYQ1MjAgu7j04Ie9tcB6LwJ+arJOG
-         E0Pw==
-X-Gm-Message-State: AOAM531+J74/limwoDVbC6d2hlOlvg+g+aFq0eSvzGT/C+RKQT5xnyuA
-        7jnnuJ5ZXLeuQ1j75fUaKIv3rCDIWWo=
-X-Google-Smtp-Source: ABdhPJzxHxyqZoK5YJNYJWF2+bNis5ySHfsDPBXcyUgRz7RW03QWtHc5QRPqs4W9O3qdpTDQRBoN0A==
-X-Received: by 2002:a2e:9143:: with SMTP id q3mr1090486ljg.283.1614417297367;
-        Sat, 27 Feb 2021 01:14:57 -0800 (PST)
-Received: from [192.168.1.100] ([178.176.75.167])
-        by smtp.gmail.com with ESMTPSA id h27sm1674574lfp.120.2021.02.27.01.14.56
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6FN28+EGwV52y5fLBmFdolcmGnuxL558/53m8V0+MHs=;
+        b=NA3gs50lOTf6eUiwoBvvR1NwoqckbMKJeyafYd9pJH6QL6+jO6n3i7+elg63Cim/8Z
+         fl1yniQDfS3HNMTmzQzhG1Hcf68SCHL+mVKlloJ6IrFOwdCz4Cagr8ZrzPCDXeCLxbGG
+         BJkh1fdKx5H61fsLtCCJehGeo6qJTqz0eEXUYLyScoRRAY9Zt4iv6G4bUutMNOnnpmOc
+         9Hu/wvn5Hq0VfmJfPHYbQQelvOSUj7O1Cb1wfgLUr1N8Kyr4HwA+/NSwsiEuAkCKoLIE
+         e/qAHgNY+NKNzLOKnY4n09yRKYgspBWnJxFSTCJ1Z1Ue4jBmtnsNO4fGE2S/y8qzy4gZ
+         3wbQ==
+X-Gm-Message-State: AOAM530PTXILCN52zuB3HU0o5ci+lLH0CCFNZ4+RxpQNDxPCUmemmEjJ
+        28pTweXvu3xwp/lxTqd63cNP/milBuUGyg==
+X-Google-Smtp-Source: ABdhPJyvjekRu+I/lGwxqSoORkOQNSsmlj+tMS3vgn/nZmYclX07Y31NzYvg3A/TchA4e9wvrpkp5g==
+X-Received: by 2002:a50:da4f:: with SMTP id a15mr12866517edk.301.1614538089407;
+        Sun, 28 Feb 2021 10:48:09 -0800 (PST)
+Received: from [192.168.1.4] (ip-89-176-112-137.net.upcbroadband.cz. [89.176.112.137])
+        by smtp.gmail.com with ESMTPSA id g25sm1425341edp.95.2021.02.28.10.48.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 27 Feb 2021 01:14:56 -0800 (PST)
-Subject: Re: [PATCH 1/2] list: Add list_is_null() to check if a list_head has
- been initialized
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-References: <20210226224938.18166-1-laurent.pinchart@ideasonboard.com>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Organization: Brain-dead Software
-Message-ID: <5272a97f-b221-82f0-f1ee-10eccd05fc09@gmail.com>
-Date:   Sat, 27 Feb 2021 12:14:55 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:78.0) Gecko/20100101
+        Sun, 28 Feb 2021 10:48:08 -0800 (PST)
+Subject: Re: [PATCH 02/13] PCI: rcar: Convert to MSI domains
+To:     Marc Zyngier <maz@kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Frank Wunderlich <frank-w@public-files.de>,
+        Thierry Reding <treding@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Wei Liu <wei.liu@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org
+References: <20210225151023.3642391-1-maz@kernel.org>
+ <20210225151023.3642391-3-maz@kernel.org>
+From:   Marek Vasut <marek.vasut@gmail.com>
+Message-ID: <91e327df-49de-e0b5-34bc-eae8b62e88ee@gmail.com>
+Date:   Sun, 28 Feb 2021 19:48:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.7.1
 MIME-Version: 1.0
-In-Reply-To: <20210226224938.18166-1-laurent.pinchart@ideasonboard.com>
+In-Reply-To: <20210225151023.3642391-3-maz@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -83,55 +97,18 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello!
-
-On 27.02.2021 1:49, Laurent Pinchart wrote:
-
-> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+On 2/25/21 4:10 PM, Marc Zyngier wrote:
+> In anticipation of the removal of the msi_controller structure, convert
+> the Rcar host controller driver to MSI domains.
 > 
-> The new function checks if the list_head prev and next pointers are
-> NULL, in order to see if a list_head that has been zeroed when allocated
-> has been initialized with INIT_LIST_HEAD() or added to a list.
-
-    So zeroed or initialized/added? :-)
-
-> This can be used in cleanup functions that want to support being safely
-> called when an object has not been initialized, to return immediately.
-> In most cases other fields of the object can be checked for this
-> purpose, but in some cases a list_head field is the only option.
+> We end-up with the usual two domain structure, the top one being a
+> generic PCI/MSI domain, the bottom one being Rcar-specific and handling
+> the actual HW interrupt allocation.
 > 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
->   include/linux/list.h | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
-> 
-> diff --git a/include/linux/list.h b/include/linux/list.h
-> index 85c92555e31f..e4fc6954de3b 100644
-> --- a/include/linux/list.h
-> +++ b/include/linux/list.h
-> @@ -29,6 +29,19 @@ static inline void INIT_LIST_HEAD(struct list_head *list)
->   	list->prev = list;
->   }
->   
-> +/**
-> + * list_is_null - check if a list_head has been initialized
-> + * @list: the list
-> + *
-> + * Check if the list_head prev and next pointers are NULL. This is useful to
-> + * see if a list_head that has been zeroed when allocated has been initialized
-> + * with INIT_LIST_HEAD() or added to a list.
+> Also take the opportunity to get rid of the cargo-culted memory allocation
+> for the MSI capture address. *ANY* sufficiently aligned address should
+> be good enough, so use the physical address of the msi structure instead.
 
-    So zeroed or initialized/added? :-)
-
-> + */
-> +static inline bool list_is_null(struct list_head *list)
-> +{
-> +	return list->prev == NULL && list->next == NULL;
-
-    Maybe instead:
-
-	return !list->prev && !list->next;
-
-[...]
-
-MBR, Sergei
+On R8A7795 with Intel 600p NVMe SSD and IWLwifi 6235 card,
+Tested-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Thanks.
