@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D62FC433E9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56417C433E6
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Mar 2021 14:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 470AD64F0D
+	by mail.kernel.org (Postfix) with ESMTP id 2BED764F11
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  2 Mar 2021 14:21:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349474AbhCBOLs (ORCPT
+        id S1349134AbhCBOLL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 2 Mar 2021 09:11:48 -0500
-Received: from mga09.intel.com ([134.134.136.24]:23599 "EHLO mga09.intel.com"
+        Tue, 2 Mar 2021 09:11:11 -0500
+Received: from mga04.intel.com ([192.55.52.120]:62594 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1346541AbhCAXtQ (ORCPT
+        id S1346520AbhCAXtA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 1 Mar 2021 18:49:16 -0500
-IronPort-SDR: 7t+/+pUzMyBbAt5oI8xRWVmgv+h6zXHpEWQZt8IiJUznqWdBBZGqe9s+cGAkyNef05qX5o5tOd
- 4GGQCsuCScvw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9910"; a="186749663"
+        Mon, 1 Mar 2021 18:49:00 -0500
+IronPort-SDR: 0Ro1jzCzRGfuMg17SSfxz7SuZfoLaH8GuwYfCjvi5nRkybZKN34gg0+qo2889wHUvSRaFhcGeZ
+ bBRr+Dk06uHw==
+X-IronPort-AV: E=McAfee;i="6000,8403,9910"; a="184193636"
 X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="186749663"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 15:48:41 -0800
-IronPort-SDR: 6E82LiunR7pxN36IPvHrUL1u5Hm7ofGoaZFQCc2NnSjDLs1MJvXnMEdTNt6AYvbk3Y49NM5oj8
- HO5FS0HDMnCw==
+   d="scan'208";a="184193636"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Mar 2021 15:48:13 -0800
+IronPort-SDR: Ym3h5kJRNhM3EMwcyt1UuUFx88giuWnVVmthik56jv7Qv+pQhKPPFV7a5+2XDD5BjGFpf8wJbz
+ bpE0Dl0TDNPw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.81,216,1610438400"; 
-   d="scan'208";a="435539284"
+   d="scan'208";a="405852310"
 Received: from lkp-server01.sh.intel.com (HELO 16660e54978b) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 01 Mar 2021 15:48:18 -0800
+  by orsmga007.jf.intel.com with ESMTP; 01 Mar 2021 15:48:11 -0800
 Received: from kbuild by 16660e54978b with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1lGsGo-0004oG-Q8; Mon, 01 Mar 2021 23:48:10 +0000
-Date:   Tue, 02 Mar 2021 07:47:30 +0800
+        id 1lGsGp-0004og-7Y; Mon, 01 Mar 2021 23:48:11 +0000
+Date:   Tue, 02 Mar 2021 07:47:22 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- 3158164f15266c9acdb4d53ec2df89b4723dcde7
-Message-ID: <603d7d12.73uN2//NE0X3RyLO%lkp@intel.com>
+Subject: [renesas-devel:renesas-arm-dt-for-v5.13] BUILD SUCCESS
+ 292e0f7520a565fe958e0256e0cd09ae1d9a2fcb
+Message-ID: <603d7d0a.Mk8ROMVEv2Zl0FkC%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,23 +53,23 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-branch HEAD: 3158164f15266c9acdb4d53ec2df89b4723dcde7  Merge branches 'renesas-arm-dt-for-v5.13' and 'renesas-drivers-for-v5.13' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-dt-for-v5.13
+branch HEAD: 292e0f7520a565fe958e0256e0cd09ae1d9a2fcb  arm64: dts: renesas: r8a77961-ulcb: add HDMI Display support
 
-elapsed time: 721m
+elapsed time: 720m
 
-configs tested: 95
-configs skipped: 2
+configs tested: 92
+configs skipped: 45
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
 
 gcc tested configs:
+arm                                 defconfig
+arm64                               defconfig
 arm64                            allyesconfig
 arm                              allyesconfig
 arm                              allmodconfig
-arm                                 defconfig
-arm64                               defconfig
 arm                          moxart_defconfig
 m68k                            q40_defconfig
 powerpc                      katmai_defconfig
@@ -120,9 +120,6 @@ i386                               tinyconfig
 i386                                defconfig
 mips                             allyesconfig
 mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
 i386                 randconfig-a006-20210228
 i386                 randconfig-a005-20210228
 i386                 randconfig-a004-20210228
