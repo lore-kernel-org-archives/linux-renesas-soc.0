@@ -2,97 +2,163 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21214C433E6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Mar 2021 06:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59002C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Mar 2021 06:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D313164EBC
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Mar 2021 06:14:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D1F964EC0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  3 Mar 2021 06:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238334AbhCCGFT (ORCPT
+        id S238812AbhCCGFf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Mar 2021 01:05:19 -0500
-Received: from mail-yb1-f171.google.com ([209.85.219.171]:37573 "EHLO
-        mail-yb1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350351AbhCBSpZ (ORCPT
+        Wed, 3 Mar 2021 01:05:35 -0500
+Received: from mga03.intel.com ([134.134.136.65]:15511 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S244123AbhCCDD0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 2 Mar 2021 13:45:25 -0500
-Received: by mail-yb1-f171.google.com with SMTP id p193so21780902yba.4;
-        Tue, 02 Mar 2021 10:44:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MpNiiFnvCV60eMMYrHSzbuK2BLlpKg0lToCXPm/qLyA=;
-        b=QvJEHr7HWt4e+jVHbZgJaXGflGcW7fdQZNaTxNwSDMzgnYd8aYzeJyQHSJ1Jyt/mfl
-         t0cVQAVDroHTjIJ4V0B/qv/0BdeEqZcZPnpk3CJCqAJCDRhGNNtFf6C0LQ9V4U1Xd4OO
-         /Ioe99pRlmUYhX6dxb6ysVCpKgcEMY7u7OKR9y7PIWNhoqyMThBS3XT0xK6muOoyiqog
-         Xa60sH4FwpfYPq3Fgwnca9P5akyC6cBWTBM2TNPKuiliAnSIfa3s177LFmzXfOyNxycA
-         1W9J5kA2NJhUzEJRrLjs4xSIC1+XhIHL3z6l12bdq9yvurOMXxjME1KfkoLxGj6H06TO
-         g6VQ==
-X-Gm-Message-State: AOAM531FBE/2aT9ABo6tBjP/p+ZfTtBngPQU/zaK3UfPkrQo+4OjSLcb
-        Kaw9iQOtcQq1/G5Coym2E6JuU4UFGToapqHFhSOePrH4C1I=
-X-Google-Smtp-Source: ABdhPJzaIVG+VBlnAnse4ZYp+F3Z5KTEhgQqGDYqpX+qx+pYEUwpPZIuu6q8OUSkjXLzaWEJYGrfrE5E3BAI2t8nHxc=
-X-Received: by 2002:ab0:60b8:: with SMTP id f24mr12577728uam.58.1614702747813;
- Tue, 02 Mar 2021 08:32:27 -0800 (PST)
+        Tue, 2 Mar 2021 22:03:26 -0500
+IronPort-SDR: Kb5rU86nCbGSQC5+7K1e7mHT8SdpaSJtKq9I/HZDQBDYVUJmzrLV9CY17Wa+SqhFyowOzK9GUM
+ 3W4mJIVty2YA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9911"; a="187139382"
+X-IronPort-AV: E=Sophos;i="5.81,218,1610438400"; 
+   d="scan'208";a="187139382"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Mar 2021 19:02:38 -0800
+IronPort-SDR: 3ILG+niBUZZySdYru++ilb1Y04JFpp19/ArSrtkTvVfWRPQ7N7qn9Xsufb/7r+exatreCoiDv8
+ Tei0VT6T2pIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,218,1610438400"; 
+   d="scan'208";a="435059153"
+Received: from lkp-server02.sh.intel.com (HELO 2482ff9f8ac0) ([10.239.97.151])
+  by FMSMGA003.fm.intel.com with ESMTP; 02 Mar 2021 19:02:37 -0800
+Received: from kbuild by 2482ff9f8ac0 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1lHHmW-0000r7-Iw; Wed, 03 Mar 2021 03:02:36 +0000
+Date:   Wed, 03 Mar 2021 11:01:46 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [renesas-drivers:master] BUILD SUCCESS
+ 22f1428c9cf59e471f251de633a5f14b2f12eb88
+Message-ID: <603efc1a.EkvE1U6TIa39TRN/%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-References: <7009ba70-4134-1acf-42b9-fa7e59b5d15d@omprussia.ru> <161463420785.14233.15454498386680107579.git-patchwork-notify@kernel.org>
-In-Reply-To: <161463420785.14233.15454498386680107579.git-patchwork-notify@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 2 Mar 2021 17:32:16 +0100
-Message-ID: <CAMuHMdU_v=0MDqR5rU6eqA0e7C16WN6g3zE2AKmB7JsNqa=xdw@mail.gmail.com>
-Subject: Re: [PATCH net 0/3] Fix TRSCER masks in the Ether driver
-To:     patchwork-bot+netdevbpf@kernel.org
-Cc:     Sergey Shtylyov <s.shtylyov@omprussia.ru>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Mar 1, 2021 at 10:38 PM <patchwork-bot+netdevbpf@kernel.org> wrote:
-> This series was applied to netdev/net.git (refs/heads/master):
->
-> On Sun, 28 Feb 2021 23:24:16 +0300 you wrote:
-> > Here are 3 patches against DaveM's 'net' repo. I'm fixing the TRSCER masks in
-> > the driver to match the manuals...
-> >
-> > [1/3] sh_eth: fix TRSCER mask for SH771x
-> > [2/3] sh_eth: fix TRSCER mask for R7S72100
-> > [3/3] sh_eth: fix TRSCER mask for R7S9210
->
-> Here is the summary with links:
->   - [net,1/3] sh_eth: fix TRSCER mask for SH771x
->     https://git.kernel.org/netdev/net/c/8c91bc3d44df
->   - [net,2/3] sh_eth: fix TRSCER mask for R7S72100
->     https://git.kernel.org/netdev/net/c/75be7fb7f978
->   - [net,3/3] sh_eth: fix TRSCER mask for R7S9210
->     https://git.kernel.org/netdev/net/c/165bc5a4f30e
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git master
+branch HEAD: 22f1428c9cf59e471f251de633a5f14b2f12eb88  [LOCAL] arm64: defconfig: Update renesas_defconfig
 
-That was quick.  And as they're queued in net, not net-next, they
-missed today's renesas-drivers release, and all related testing...
+elapsed time: 730m
 
-I applied them manually, and boot-tested rskrza1 (R7S72100) and
-rza2mevb (R7S9210) using nfsroot. Worked fine.
+configs tested: 91
+configs skipped: 6
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Review will take a bit longer...
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+powerpc                 mpc8540_ads_defconfig
+mips                      bmips_stb_defconfig
+sparc64                          alldefconfig
+arm                         vf610m4_defconfig
+sparc                       sparc32_defconfig
+sh                        sh7757lcr_defconfig
+mips                         bigsur_defconfig
+arm                        oxnas_v6_defconfig
+xtensa                  nommu_kc705_defconfig
+sh                        sh7763rdp_defconfig
+sh                          sdk7786_defconfig
+mips                     cu1000-neo_defconfig
+arm                        mvebu_v7_defconfig
+arm                           h5000_defconfig
+sh                            shmin_defconfig
+mips                         rt305x_defconfig
+sh                           se7750_defconfig
+sh                   sh7770_generic_defconfig
+arm                              alldefconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+c6x                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+parisc                              defconfig
+s390                             allyesconfig
+s390                             allmodconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                               tinyconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+i386                 randconfig-a005-20210302
+i386                 randconfig-a003-20210302
+i386                 randconfig-a002-20210302
+i386                 randconfig-a004-20210302
+i386                 randconfig-a006-20210302
+i386                 randconfig-a001-20210302
+i386                 randconfig-a016-20210302
+i386                 randconfig-a012-20210302
+i386                 randconfig-a014-20210302
+i386                 randconfig-a013-20210302
+i386                 randconfig-a011-20210302
+i386                 randconfig-a015-20210302
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                           allyesconfig
+x86_64                    rhel-7.6-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                      rhel-8.3-kbuiltin
+x86_64                                  kexec
 
-Gr{oetje,eeting}s,
+clang tested configs:
+x86_64               randconfig-a006-20210301
+x86_64               randconfig-a001-20210301
+x86_64               randconfig-a004-20210301
+x86_64               randconfig-a002-20210301
+x86_64               randconfig-a005-20210301
+x86_64               randconfig-a003-20210301
+x86_64               randconfig-a013-20210302
+x86_64               randconfig-a016-20210302
+x86_64               randconfig-a015-20210302
+x86_64               randconfig-a014-20210302
+x86_64               randconfig-a012-20210302
+x86_64               randconfig-a011-20210302
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
