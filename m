@@ -7,157 +7,97 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4044C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 00:28:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7666C4332E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 00:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7610A64E51
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 00:28:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67EEA64E51
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 00:28:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1359090AbhCDA1y (ORCPT
+        id S1351458AbhCDA14 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:27:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49764 "EHLO
+        Wed, 3 Mar 2021 19:27:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1380743AbhCCN3m (ORCPT
+        with ESMTP id S1381657AbhCCNaf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 3 Mar 2021 08:29:42 -0500
+        Wed, 3 Mar 2021 08:30:35 -0500
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 300B8C061222
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  3 Mar 2021 05:26:29 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6021DC061756
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  3 Mar 2021 05:29:45 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:cd47:42a6:c822:e50b])
         by laurent.telenet-ops.be with bizsmtp
-        id bpSR2400T4huzR801pSRhA; Wed, 03 Mar 2021 14:26:27 +0100
+        id bpVj2400d4huzR801pVjVg; Wed, 03 Mar 2021 14:29:44 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lHRWD-004Ps1-3U; Wed, 03 Mar 2021 14:26:25 +0100
+        id 1lHRZP-004Pt3-Az; Wed, 03 Mar 2021 14:29:43 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lHRWC-00GWV6-Mi; Wed, 03 Mar 2021 14:26:24 +0100
+        id 1lHRZO-00GWbD-So; Wed, 03 Mar 2021 14:29:42 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
+To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/6] pinctrl: renesas: Make sh_pfc_pin_to_bias_reg() static
-Date:   Wed,  3 Mar 2021 14:26:14 +0100
-Message-Id: <20210303132619.3938128-2-geert+renesas@glider.be>
+Subject: [PATCH] ARM: dts: koelsch: Configure pull-up for SOFT_SW GPIO keys
+Date:   Wed,  3 Mar 2021 14:29:41 +0100
+Message-Id: <20210303132941.3938516-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210303132619.3938128-1-geert+renesas@glider.be>
-References: <20210303132619.3938128-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Now all R-Car pin control drivers have been converted to the common
-R-Car bias handling, sh_pfc_pin_to_bias_reg() is only called from a
-single place.  Move it from core.c to pinctrl.c, make it static, and
-rename it to rcar_pin_to_bias_reg(), as it is specific to R-Car SoCs.
+The GPIO pins connected to the 4 Software Switches ("SOFT_SW", SW2) do
+not have external pull-up resistors, but rely on internal pull-ups being
+enabled.  Fortunately this is satisfied by the initial state of these
+pins.
+
+Make this explicit by enabling bias-pull-up, to remove the dependency on
+initial state and/or boot loader configuration.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/core.c    | 20 --------------------
- drivers/pinctrl/renesas/core.h    |  4 ----
- drivers/pinctrl/renesas/pinctrl.c | 24 ++++++++++++++++++++++--
- 3 files changed, 22 insertions(+), 26 deletions(-)
+To be queued in renesas-devel for v5.13.
 
-diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
-index 2bfd3006f6fda445..5ccc49b387f17eb9 100644
---- a/drivers/pinctrl/renesas/core.c
-+++ b/drivers/pinctrl/renesas/core.c
-@@ -394,26 +394,6 @@ int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type)
- 	return 0;
- }
+It is safe to apply this before R-Car M2-W bias support[1] has landed,
+as pinctrl_bind_pins() does not consider -ENOTSUPP a fatal error.
+
+[1] https://lore.kernel.org/r/20210303132619.3938128-1-geert+renesas@glider.be
+---
+ arch/arm/boot/dts/r8a7791-koelsch.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
+index 751e07fb102cf454..c6c93c4452ee1e88 100644
+--- a/arch/arm/boot/dts/r8a7791-koelsch.dts
++++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
+@@ -81,6 +81,9 @@ lbsc {
+ 	keyboard {
+ 		compatible = "gpio-keys";
  
--const struct pinmux_bias_reg *
--sh_pfc_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
--		       unsigned int *bit)
--{
--	unsigned int i, j;
--
--	for (i = 0; pfc->info->bias_regs[i].puen; i++) {
--		for (j = 0; j < ARRAY_SIZE(pfc->info->bias_regs[i].pins); j++) {
--			if (pfc->info->bias_regs[i].pins[j] == pin) {
--				*bit = j;
--				return &pfc->info->bias_regs[i];
--			}
--		}
--	}
--
--	WARN_ONCE(1, "Pin %u is not in bias info list\n", pin);
--
--	return NULL;
--}
--
- static int sh_pfc_init_ranges(struct sh_pfc *pfc)
- {
- 	struct sh_pfc_pin_range *range;
-diff --git a/drivers/pinctrl/renesas/core.h b/drivers/pinctrl/renesas/core.h
-index 5ca7e0830ae9de38..19f7b4308fac7a8f 100644
---- a/drivers/pinctrl/renesas/core.h
-+++ b/drivers/pinctrl/renesas/core.h
-@@ -29,10 +29,6 @@ void sh_pfc_write(struct sh_pfc *pfc, u32 reg, u32 data);
- int sh_pfc_get_pin_index(struct sh_pfc *pfc, unsigned int pin);
- int sh_pfc_config_mux(struct sh_pfc *pfc, unsigned mark, int pinmux_type);
- 
--const struct pinmux_bias_reg *
--sh_pfc_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
--		       unsigned int *bit);
--
- unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin);
- void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
- 			  unsigned int bias);
-diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
-index a49f74730272312e..963d217b940372b9 100644
---- a/drivers/pinctrl/renesas/pinctrl.c
-+++ b/drivers/pinctrl/renesas/pinctrl.c
-@@ -840,12 +840,32 @@ int sh_pfc_register_pinctrl(struct sh_pfc *pfc)
- 	return pinctrl_enable(pmx->pctl);
- }
- 
-+static const struct pinmux_bias_reg *
-+rcar_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
-+		     unsigned int *bit)
-+{
-+	unsigned int i, j;
++		pinctrl-0 = <&sw2_pins>;
++		pinctrl-names = "default";
 +
-+	for (i = 0; pfc->info->bias_regs[i].puen; i++) {
-+		for (j = 0; j < ARRAY_SIZE(pfc->info->bias_regs[i].pins); j++) {
-+			if (pfc->info->bias_regs[i].pins[j] == pin) {
-+				*bit = j;
-+				return &pfc->info->bias_regs[i];
-+			}
-+		}
-+	}
+ 		key-1 {
+ 			gpios = <&gpio5 0 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_1>;
+@@ -615,6 +618,11 @@ sound_clk_pins: sound_clk {
+ 		groups = "audio_clk_a";
+ 		function = "audio_clk";
+ 	};
 +
-+	WARN_ONCE(1, "Pin %u is not in bias info list\n", pin);
-+
-+	return NULL;
-+}
-+
- unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
- {
- 	const struct pinmux_bias_reg *reg;
- 	unsigned int bit;
++	sw2_pins: sw2 {
++		pins = "GP_5_0", "GP_5_1", "GP_5_2", "GP_5_3";
++		bias-pull-up;
++	};
+ };
  
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
-+	reg = rcar_pin_to_bias_reg(pfc, pin, &bit);
- 	if (!reg)
- 		return PIN_CONFIG_BIAS_DISABLE;
- 
-@@ -864,7 +884,7 @@ void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
- 	u32 enable, updown;
- 	unsigned int bit;
- 
--	reg = sh_pfc_pin_to_bias_reg(pfc, pin, &bit);
-+	reg = rcar_pin_to_bias_reg(pfc, pin, &bit);
- 	if (!reg)
- 		return;
- 
+ &ether {
 -- 
 2.25.1
 
