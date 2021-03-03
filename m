@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1006C43619
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BDFC4321A
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 00:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EB7664E68
+	by mail.kernel.org (Postfix) with ESMTP id 5592664EBD
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 00:28:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351474AbhCDA2A (ORCPT
+        id S1351466AbhCDA17 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 3 Mar 2021 19:28:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51308 "EHLO
+        Wed, 3 Mar 2021 19:27:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1355704AbhCCNhW (ORCPT
+        with ESMTP id S1355761AbhCCNhW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 3 Mar 2021 08:37:22 -0500
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82E3AC0617AB
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90909C06121D
         for <linux-renesas-soc@vger.kernel.org>; Wed,  3 Mar 2021 05:26:28 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:cd47:42a6:c822:e50b])
         by michel.telenet-ops.be with bizsmtp
-        id bpSR2400E4huzR806pSRhk; Wed, 03 Mar 2021 14:26:26 +0100
+        id bpSR2400P4huzR806pSRhp; Wed, 03 Mar 2021 14:26:26 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lHRWD-004Ps3-7K; Wed, 03 Mar 2021 14:26:25 +0100
+        id 1lHRWD-004Ps5-H9; Wed, 03 Mar 2021 14:26:25 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lHRWC-00GWVG-OC; Wed, 03 Mar 2021 14:26:24 +0100
+        id 1lHRWC-00GWVQ-Pg; Wed, 03 Mar 2021 14:26:24 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Ulrich Hecht <uli+renesas@fpond.eu>,
         Biju Das <biju.das.jz@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 3/6] pinctrl: renesas: Factor out common R-Mobile bias handling
-Date:   Wed,  3 Mar 2021 14:26:16 +0100
-Message-Id: <20210303132619.3938128-4-geert+renesas@glider.be>
+Subject: [PATCH 5/6] pinctrl: renesas: Add support for R-Car SoCs with pull-down only pins
+Date:   Wed,  3 Mar 2021 14:26:18 +0100
+Message-Id: <20210303132619.3938128-6-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210303132619.3938128-1-geert+renesas@glider.be>
 References: <20210303132619.3938128-1-geert+renesas@glider.be>
@@ -53,316 +53,121 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The pin control sub-drivers for SH/R-Mobile SoCs contain almost
-identical bias handling.  The only SoC-specific part is the mapping from
-pin numbers to PORTnCR registers.
+Currently, the common R-Car bias handling supports pin controllers with
+either:
+  1. Separate pin Pull-Enable (PUEN) and pin Pull-Up/Down control (PUD)
+     registers, for controlling both pin pull-up and pin pull-down,
+  2. A single pin Pull-Up control register (PUPR), for controlling pin
+     pull-up.
 
-Reduce code duplication by factoring out the bias handling to the common
-pinctrl.c code.  Use a callback to handle the pin/register mapping.
+Add support for a variant of #2, where some bits in the single pin
+Pull-Up control register (PUPR) control pin pull-down instead of pin
+pull-up.  This is the case for the "ASEBRK#/ACK" pin on R-Car M2-W,
+M2-N, and E2, and the "ACK" pin on RZ/G1M, RZ/G1N, RZ/G1E, and RZ/G1C.
+To describe such a register, SoC-specific drivers need to provide two
+instances of pinmux_bias_reg: a first one with the puen field filled in,
+listing pins with pull-up functionality, and a second one with the pud
+field filled in, listing pins with pull-down functionality.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a73a4.c | 48 +++------------------------
- drivers/pinctrl/renesas/pfc-r8a7740.c | 46 +++----------------------
- drivers/pinctrl/renesas/pfc-sh73a0.c  | 46 +++----------------------
- drivers/pinctrl/renesas/pinctrl.c     | 40 ++++++++++++++++++++++
- drivers/pinctrl/renesas/sh_pfc.h      |  5 +++
- 5 files changed, 59 insertions(+), 126 deletions(-)
+ drivers/pinctrl/renesas/pinctrl.c | 49 ++++++++++++++++++++-----------
+ drivers/pinctrl/renesas/sh_pfc.h  |  4 +--
+ 2 files changed, 34 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a73a4.c b/drivers/pinctrl/renesas/pfc-r8a73a4.c
-index b21f5afe610fb430..b26ff9d6ead4bb6c 100644
---- a/drivers/pinctrl/renesas/pfc-r8a73a4.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a73a4.c
-@@ -2649,59 +2649,21 @@ static const struct pinmux_irq pinmux_irqs[] = {
- 	PINMUX_IRQ(329),	/* IRQ57 */
- };
- 
--#define PORTCR_PULMD_OFF (0 << 6)
--#define PORTCR_PULMD_DOWN (2 << 6)
--#define PORTCR_PULMD_UP (3 << 6)
--#define PORTCR_PULMD_MASK (3 << 6)
--
- static const unsigned int r8a73a4_portcr_offsets[] = {
- 	0x00000000, 0x00001000, 0x00000000, 0x00001000,
- 	0x00001000, 0x00002000, 0x00002000, 0x00002000,
- 	0x00002000, 0x00003000, 0x00003000,
- };
- 
--static unsigned int r8a73a4_pinmux_get_bias(struct sh_pfc *pfc,
--					    unsigned int pin)
--{
--	void __iomem *addr;
--
--	addr = pfc->windows->virt + r8a73a4_portcr_offsets[pin >> 5] + pin;
--
--	switch (ioread8(addr) & PORTCR_PULMD_MASK) {
--	case PORTCR_PULMD_UP:
--		return PIN_CONFIG_BIAS_PULL_UP;
--	case PORTCR_PULMD_DOWN:
--		return PIN_CONFIG_BIAS_PULL_DOWN;
--	case PORTCR_PULMD_OFF:
--	default:
--		return PIN_CONFIG_BIAS_DISABLE;
--	}
--}
--
--static void r8a73a4_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
--				   unsigned int bias)
-+static void __iomem *r8a73a4_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
- {
--	void __iomem *addr;
--	u32 value;
--
--	addr = pfc->windows->virt + r8a73a4_portcr_offsets[pin >> 5] + pin;
--	value = ioread8(addr) & ~PORTCR_PULMD_MASK;
--
--	switch (bias) {
--	case PIN_CONFIG_BIAS_PULL_UP:
--		value |= PORTCR_PULMD_UP;
--		break;
--	case PIN_CONFIG_BIAS_PULL_DOWN:
--		value |= PORTCR_PULMD_DOWN;
--		break;
--	}
--
--	iowrite8(value, addr);
-+	return pfc->windows->virt + r8a73a4_portcr_offsets[pin >> 5] + pin;
- }
- 
- static const struct sh_pfc_soc_operations r8a73a4_pfc_ops = {
--	.get_bias = r8a73a4_pinmux_get_bias,
--	.set_bias = r8a73a4_pinmux_set_bias,
-+	.get_bias = rmobile_pinmux_get_bias,
-+	.set_bias = rmobile_pinmux_set_bias,
-+	.pin_to_portcr = r8a73a4_pin_to_portcr,
- };
- 
- const struct sh_pfc_soc_info r8a73a4_pinmux_info = {
-diff --git a/drivers/pinctrl/renesas/pfc-r8a7740.c b/drivers/pinctrl/renesas/pfc-r8a7740.c
-index fdf1b0f09f57e693..4eac3899d69bc488 100644
---- a/drivers/pinctrl/renesas/pfc-r8a7740.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a7740.c
-@@ -3672,11 +3672,6 @@ static const struct pinmux_irq pinmux_irqs[] = {
- 	PINMUX_IRQ(41,  167),	/* IRQ31A */
- };
- 
--#define PORTnCR_PULMD_OFF	(0 << 6)
--#define PORTnCR_PULMD_DOWN	(2 << 6)
--#define PORTnCR_PULMD_UP	(3 << 6)
--#define PORTnCR_PULMD_MASK	(3 << 6)
--
- struct r8a7740_portcr_group {
- 	unsigned int end_pin;
- 	unsigned int offset;
-@@ -3686,7 +3681,7 @@ static const struct r8a7740_portcr_group r8a7740_portcr_offsets[] = {
- 	{ 83, 0x0000 }, { 114, 0x1000 }, { 209, 0x2000 }, { 211, 0x3000 },
- };
- 
--static void __iomem *r8a7740_pinmux_portcr(struct sh_pfc *pfc, unsigned int pin)
-+static void __iomem *r8a7740_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
- {
- 	unsigned int i;
- 
-@@ -3701,43 +3696,10 @@ static void __iomem *r8a7740_pinmux_portcr(struct sh_pfc *pfc, unsigned int pin)
- 	return NULL;
- }
- 
--static unsigned int r8a7740_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
--{
--	void __iomem *addr = r8a7740_pinmux_portcr(pfc, pin);
--	u32 value = ioread8(addr) & PORTnCR_PULMD_MASK;
--
--	switch (value) {
--	case PORTnCR_PULMD_UP:
--		return PIN_CONFIG_BIAS_PULL_UP;
--	case PORTnCR_PULMD_DOWN:
--		return PIN_CONFIG_BIAS_PULL_DOWN;
--	case PORTnCR_PULMD_OFF:
--	default:
--		return PIN_CONFIG_BIAS_DISABLE;
--	}
--}
--
--static void r8a7740_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
--				   unsigned int bias)
--{
--	void __iomem *addr = r8a7740_pinmux_portcr(pfc, pin);
--	u32 value = ioread8(addr) & ~PORTnCR_PULMD_MASK;
--
--	switch (bias) {
--	case PIN_CONFIG_BIAS_PULL_UP:
--		value |= PORTnCR_PULMD_UP;
--		break;
--	case PIN_CONFIG_BIAS_PULL_DOWN:
--		value |= PORTnCR_PULMD_DOWN;
--		break;
--	}
--
--	iowrite8(value, addr);
--}
--
- static const struct sh_pfc_soc_operations r8a7740_pfc_ops = {
--	.get_bias = r8a7740_pinmux_get_bias,
--	.set_bias = r8a7740_pinmux_set_bias,
-+	.get_bias = rmobile_pinmux_get_bias,
-+	.set_bias = rmobile_pinmux_set_bias,
-+	.pin_to_portcr = r8a7740_pin_to_portcr,
- };
- 
- const struct sh_pfc_soc_info r8a7740_pinmux_info = {
-diff --git a/drivers/pinctrl/renesas/pfc-sh73a0.c b/drivers/pinctrl/renesas/pfc-sh73a0.c
-index 96b91e95b1e14de1..ed6db809e80de3b7 100644
---- a/drivers/pinctrl/renesas/pfc-sh73a0.c
-+++ b/drivers/pinctrl/renesas/pfc-sh73a0.c
-@@ -13,7 +13,6 @@
- #include <linux/regulator/machine.h>
- #include <linux/slab.h>
- 
--#include "core.h"
- #include "sh_pfc.h"
- 
- #define CPU_ALL_PORT(fn, pfx, sfx)					\
-@@ -4310,50 +4309,14 @@ static const struct regulator_init_data sh73a0_vccq_mc0_init_data = {
-  * Pin bias
-  */
- 
--#define PORTnCR_PULMD_OFF	(0 << 6)
--#define PORTnCR_PULMD_DOWN	(2 << 6)
--#define PORTnCR_PULMD_UP	(3 << 6)
--#define PORTnCR_PULMD_MASK	(3 << 6)
--
- static const unsigned int sh73a0_portcr_offsets[] = {
- 	0x00000000, 0x00001000, 0x00001000, 0x00002000, 0x00002000,
- 	0x00002000, 0x00002000, 0x00003000, 0x00003000, 0x00002000,
- };
- 
--static unsigned int sh73a0_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
-+static void __iomem *sh73a0_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
- {
--	void __iomem *addr = pfc->windows->virt
--			   + sh73a0_portcr_offsets[pin >> 5] + pin;
--	u32 value = ioread8(addr) & PORTnCR_PULMD_MASK;
--
--	switch (value) {
--	case PORTnCR_PULMD_UP:
--		return PIN_CONFIG_BIAS_PULL_UP;
--	case PORTnCR_PULMD_DOWN:
--		return PIN_CONFIG_BIAS_PULL_DOWN;
--	case PORTnCR_PULMD_OFF:
--	default:
--		return PIN_CONFIG_BIAS_DISABLE;
--	}
--}
--
--static void sh73a0_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
--				   unsigned int bias)
--{
--	void __iomem *addr = pfc->windows->virt
--			   + sh73a0_portcr_offsets[pin >> 5] + pin;
--	u32 value = ioread8(addr) & ~PORTnCR_PULMD_MASK;
--
--	switch (bias) {
--	case PIN_CONFIG_BIAS_PULL_UP:
--		value |= PORTnCR_PULMD_UP;
--		break;
--	case PIN_CONFIG_BIAS_PULL_DOWN:
--		value |= PORTnCR_PULMD_DOWN;
--		break;
--	}
--
--	iowrite8(value, addr);
-+	return pfc->windows->virt + sh73a0_portcr_offsets[pin >> 5] + pin;
- }
- 
- /* -----------------------------------------------------------------------------
-@@ -4383,8 +4346,9 @@ static int sh73a0_pinmux_soc_init(struct sh_pfc *pfc)
- 
- static const struct sh_pfc_soc_operations sh73a0_pfc_ops = {
- 	.init = sh73a0_pinmux_soc_init,
--	.get_bias = sh73a0_pinmux_get_bias,
--	.set_bias = sh73a0_pinmux_set_bias,
-+	.get_bias = rmobile_pinmux_get_bias,
-+	.set_bias = rmobile_pinmux_set_bias,
-+	.pin_to_portcr = sh73a0_pin_to_portcr,
- };
- 
- const struct sh_pfc_soc_info sh73a0_pinmux_info = {
 diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
-index 963d217b940372b9..b7ebbc877b544305 100644
+index b7ebbc877b544305..bb488af298623407 100644
 --- a/drivers/pinctrl/renesas/pinctrl.c
 +++ b/drivers/pinctrl/renesas/pinctrl.c
-@@ -10,6 +10,7 @@
- #include <linux/device.h>
- #include <linux/err.h>
- #include <linux/init.h>
-+#include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/pinctrl/consumer.h>
-@@ -902,3 +903,42 @@ void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+@@ -847,7 +847,7 @@ rcar_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
+ {
+ 	unsigned int i, j;
  
- 	sh_pfc_write(pfc, reg->puen, enable);
+-	for (i = 0; pfc->info->bias_regs[i].puen; i++) {
++	for (i = 0; pfc->info->bias_regs[i].puen || pfc->info->bias_regs[i].pud; i++) {
+ 		for (j = 0; j < ARRAY_SIZE(pfc->info->bias_regs[i].pins); j++) {
+ 			if (pfc->info->bias_regs[i].pins[j] == pin) {
+ 				*bit = j;
+@@ -870,12 +870,19 @@ unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
+ 	if (!reg)
+ 		return PIN_CONFIG_BIAS_DISABLE;
+ 
+-	if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
+-		return PIN_CONFIG_BIAS_DISABLE;
+-	else if (!reg->pud || (sh_pfc_read(pfc, reg->pud) & BIT(bit)))
+-		return PIN_CONFIG_BIAS_PULL_UP;
+-	else
+-		return PIN_CONFIG_BIAS_PULL_DOWN;
++	if (reg->puen) {
++		if (!(sh_pfc_read(pfc, reg->puen) & BIT(bit)))
++			return PIN_CONFIG_BIAS_DISABLE;
++		else if (!reg->pud || (sh_pfc_read(pfc, reg->pud) & BIT(bit)))
++			return PIN_CONFIG_BIAS_PULL_UP;
++		else
++			return PIN_CONFIG_BIAS_PULL_DOWN;
++	} else {
++		if (sh_pfc_read(pfc, reg->pud) & BIT(bit))
++			return PIN_CONFIG_BIAS_PULL_DOWN;
++		else
++			return PIN_CONFIG_BIAS_DISABLE;
++	}
  }
+ 
+ void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+@@ -889,19 +896,27 @@ void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+ 	if (!reg)
+ 		return;
+ 
+-	enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
+-	if (bias != PIN_CONFIG_BIAS_DISABLE)
+-		enable |= BIT(bit);
++	if (reg->puen) {
++		enable = sh_pfc_read(pfc, reg->puen) & ~BIT(bit);
++		if (bias != PIN_CONFIG_BIAS_DISABLE)
++			enable |= BIT(bit);
+ 
+-	if (reg->pud) {
+-		updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
+-		if (bias == PIN_CONFIG_BIAS_PULL_UP)
+-			updown |= BIT(bit);
++		if (reg->pud) {
++			updown = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
++			if (bias == PIN_CONFIG_BIAS_PULL_UP)
++				updown |= BIT(bit);
+ 
+-		sh_pfc_write(pfc, reg->pud, updown);
+-	}
++			sh_pfc_write(pfc, reg->pud, updown);
++		}
+ 
+-	sh_pfc_write(pfc, reg->puen, enable);
++		sh_pfc_write(pfc, reg->puen, enable);
++	} else {
++		enable = sh_pfc_read(pfc, reg->pud) & ~BIT(bit);
++		if (bias == PIN_CONFIG_BIAS_PULL_DOWN)
++			enable |= BIT(bit);
 +
-+#define PORTnCR_PULMD_OFF	(0 << 6)
-+#define PORTnCR_PULMD_DOWN	(2 << 6)
-+#define PORTnCR_PULMD_UP	(3 << 6)
-+#define PORTnCR_PULMD_MASK	(3 << 6)
-+
-+unsigned int rmobile_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
-+{
-+	void __iomem *reg = pfc->info->ops->pin_to_portcr(pfc, pin);
-+	u32 value = ioread8(reg) & PORTnCR_PULMD_MASK;
-+
-+	switch (value) {
-+	case PORTnCR_PULMD_UP:
-+		return PIN_CONFIG_BIAS_PULL_UP;
-+	case PORTnCR_PULMD_DOWN:
-+		return PIN_CONFIG_BIAS_PULL_DOWN;
-+	case PORTnCR_PULMD_OFF:
-+	default:
-+		return PIN_CONFIG_BIAS_DISABLE;
++		sh_pfc_write(pfc, reg->pud, enable);
 +	}
-+}
-+
-+void rmobile_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
-+			     unsigned int bias)
-+{
-+	void __iomem *reg = pfc->info->ops->pin_to_portcr(pfc, pin);
-+	u32 value = ioread8(reg) & ~PORTnCR_PULMD_MASK;
-+
-+	switch (bias) {
-+	case PIN_CONFIG_BIAS_PULL_UP:
-+		value |= PORTnCR_PULMD_UP;
-+		break;
-+	case PIN_CONFIG_BIAS_PULL_DOWN:
-+		value |= PORTnCR_PULMD_DOWN;
-+		break;
-+	}
-+
-+	iowrite8(value, reg);
-+}
+ }
+ 
+ #define PORTnCR_PULMD_OFF	(0 << 6)
 diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
-index 2d511c7280fa49e3..8dc0fbb012b0c970 100644
+index fc8391712af8cf4b..320898861c4b4c56 100644
 --- a/drivers/pinctrl/renesas/sh_pfc.h
 +++ b/drivers/pinctrl/renesas/sh_pfc.h
-@@ -273,6 +273,7 @@ struct sh_pfc_soc_operations {
- 	void (*set_bias)(struct sh_pfc *pfc, unsigned int pin,
- 			 unsigned int bias);
- 	int (*pin_to_pocctrl)(struct sh_pfc *pfc, unsigned int pin, u32 *pocctrl);
-+	void __iomem * (*pin_to_portcr)(struct sh_pfc *pfc, unsigned int pin);
+@@ -188,9 +188,9 @@ struct pinmux_drive_reg {
+ 	.reg = r, \
+ 	.fields =
+ 
+-struct pinmux_bias_reg {
++struct pinmux_bias_reg {	/* At least one of puen/pud must exist */
+ 	u32 puen;		/* Pull-enable or pull-up control register */
+-	u32 pud;		/* Pull-up/down control register (optional) */
++	u32 pud;		/* Pull-up/down or pull-down control register */
+ 	const u16 pins[32];
  };
  
- struct sh_pfc_soc_info {
-@@ -780,4 +781,8 @@ unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin);
- void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
- 			  unsigned int bias);
- 
-+unsigned int rmobile_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin);
-+void rmobile_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
-+			     unsigned int bias);
-+
- #endif /* __SH_PFC_H */
 -- 
 2.25.1
 
