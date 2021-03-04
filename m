@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54160C433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FCA8C433E6
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 15:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2753064F5C
+	by mail.kernel.org (Postfix) with ESMTP id 3DC7864F89
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 15:34:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234995AbhCDPeM (ORCPT
+        id S235066AbhCDPeO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Mar 2021 10:34:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48218 "EHLO
+        Thu, 4 Mar 2021 10:34:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234991AbhCDPdn (ORCPT
+        with ESMTP id S235196AbhCDPeF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Mar 2021 10:33:43 -0500
+        Thu, 4 Mar 2021 10:34:05 -0500
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86288C061756
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9ED28C061762
         for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Mar 2021 07:33:02 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:403a:b688:43fc:72a5])
         by andre.telenet-ops.be with bizsmtp
-        id cFZ0240050zmvuD01FZ0s4; Thu, 04 Mar 2021 16:33:00 +0100
+        id cFZ0240080zmvuD01FZ0s6; Thu, 04 Mar 2021 16:33:00 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lHpyF-004lvR-JL; Thu, 04 Mar 2021 16:32:59 +0100
+        id 1lHpyF-004lvP-Lh; Thu, 04 Mar 2021 16:32:59 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lHpyF-00H21G-1O; Thu, 04 Mar 2021 16:32:59 +0100
+        id 1lHpyE-00H216-WD; Thu, 04 Mar 2021 16:32:59 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -42,9 +42,9 @@ Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 3/3] arm64: dts: renesas: falcon: Add Ethernet sub-board
-Date:   Thu,  4 Mar 2021 16:32:57 +0100
-Message-Id: <20210304153257.4059277-4-geert+renesas@glider.be>
+Subject: [PATCH v2 1/3] arm64: dts: renesas: falcon: Add I2C EEPROM nodes
+Date:   Thu,  4 Mar 2021 16:32:55 +0100
+Message-Id: <20210304153257.4059277-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20210304153257.4059277-1-geert+renesas@glider.be>
 References: <20210304153257.4059277-1-geert+renesas@glider.be>
@@ -54,54 +54,56 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a DTS file for the Falcon Ethernet sub-board (RTP0RC779A0ETS0010S),
-and include it from the main r8a779a0-falcon.dts.
-
-For now its contents are limited to the Board ID EEPROM.
+Add device nodes for the I2C EEPROMs on the Falcon CPU and BreakOut
+boards.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v2:
-  - New (eeprom node extracted from first patch).
+  - Drop EEPROMs not located on the CPU or BreakOut board.
 ---
- .../dts/renesas/r8a779a0-falcon-ethernet.dtsi     | 15 +++++++++++++++
- arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts   |  1 +
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 7 +++++++
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts      | 9 +++++++++
  2 files changed, 16 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779a0-falcon-ethernet.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-ethernet.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-ethernet.dtsi
-new file mode 100644
-index 0000000000000000..e11bf9ace7768d54
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-ethernet.dtsi
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the Falcon Ethernet sub-board
-+ *
-+ * Copyright (C) 2021 Glider bv
-+ */
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+index fa284a7260d68251..286a5d5b9b08ff88 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+@@ -82,6 +82,13 @@ &i2c0 {
+ 
+ 	status = "okay";
+ 	clock-frequency = <400000>;
 +
-+&i2c0 {
-+	eeprom@53 {
++	eeprom@50 {
 +		compatible = "rohm,br24g01", "atmel,24c01";
-+		label = "ethernet-sub-board-id";
-+		reg = <0x53>;
++		label = "cpu-board";
++		reg = <0x50>;
++		pagesize = <8>;
++	};
+ };
+ 
+ &i2c1 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+index 5617b81dd7dc3e87..2047fc475a524576 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+@@ -22,6 +22,15 @@ chosen {
+ 	};
+ };
+ 
++&i2c0 {
++	eeprom@51 {
++		compatible = "rohm,br24g01", "atmel,24c01";
++		label = "breakout-board";
++		reg = <0x51>;
 +		pagesize = <8>;
 +	};
 +};
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-index 59d21d88788be6e8..7bc964c36f331270 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-@@ -8,6 +8,7 @@
- /dts-v1/;
- #include "r8a779a0-falcon-cpu.dtsi"
- #include "r8a779a0-falcon-csi-dsi.dtsi"
-+#include "r8a779a0-falcon-ethernet.dtsi"
- 
- / {
- 	model = "Renesas Falcon CPU and Breakout boards based on r8a779a0";
++
+ &rwdt {
+ 	timeout-sec = <60>;
+ 	status = "okay";
 -- 
 2.25.1
 
