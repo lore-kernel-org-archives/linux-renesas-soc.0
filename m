@@ -2,49 +2,46 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F50DC433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 15:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1771C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 16:54:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5257464F8A
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 15:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EAA064F5B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 16:54:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235000AbhCDPeO (ORCPT
+        id S238648AbhCDQyN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Mar 2021 10:34:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48224 "EHLO
+        Thu, 4 Mar 2021 11:54:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235171AbhCDPdx (ORCPT
+        with ESMTP id S238613AbhCDQxv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 4 Mar 2021 10:33:53 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98AACC061761
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Mar 2021 07:33:02 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:403a:b688:43fc:72a5])
-        by andre.telenet-ops.be with bizsmtp
-        id cFZ02400G0zmvuD01FZ0s7; Thu, 04 Mar 2021 16:33:00 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lHpyF-004lvO-OI; Thu, 04 Mar 2021 16:32:59 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lHpyE-00H213-VT; Thu, 04 Mar 2021 16:32:58 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 0/3] arm64: dts: renesas: falcon: Add I2C EEPROMs and sub-boards
-Date:   Thu,  4 Mar 2021 16:32:54 +0100
-Message-Id: <20210304153257.4059277-1-geert+renesas@glider.be>
+        Thu, 4 Mar 2021 11:53:51 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72AA6C061756;
+        Thu,  4 Mar 2021 08:53:11 -0800 (PST)
+Received: from Q.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 01AD527A;
+        Thu,  4 Mar 2021 17:53:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1614876789;
+        bh=EgoIjy06XpRjO0qHELBlmd9eCc8NGIkomXCVGwX+OBA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=AWyqLiu9HO5G3vqleQdWaJm0GLAfmCDxU8LhuKPgl5d5cI0ynQlv6CItMPnc2Dcj3
+         sFtI3O7J/sb4+DGPU7wCERszr4vyrbRLWeI+IQ6h9dm8fG4JsvFi+whTEyaPrcwT0w
+         eLrkP59SndDQ/8X+8NmB7vzY6NsRIo0J4VAro0WI=
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@glider.be>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH] arm64: dts: renesas: falcon: Add GP LEDs
+Date:   Thu,  4 Mar 2021 16:53:00 +0000
+Message-Id: <20210304165300.295952-1-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -52,48 +49,42 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+Three general purpose LEDs are provided on the Falcon CPU board.
 
-This patch series adds the device nodes for all I2C EEPROMs in the
-Falcon board stack.  As some EEPROMs are located on sub-boards,
-it also introduces individual .dtsi files for these sub-boards.
-Note that (for now) these sub-boards don't have compatible values or
-model strings, as I think this needs more discussion.
+Connect GP_LED1, GP_LED2, and GP_LED3 to the gpio-leds frameworks.
+These LEDs are arranged in a block of four LEDs on the board itself, but
+the fourth LED is as yet unidentified.
 
-This has been tested on the Falcon boards in Magnus' and Kieran's farms.
-The EEPROM on the CPU board in Magnus' farm contains some data.
-All other EEPROMs are present, but in pristine state (all ones).
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-Changes compared to v1:
-  - Move EEPROMs in sub-boards to separate .dtsi files and patches.
-
-To be queued in renesas-devel for v5.13.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  arm64: dts: renesas: falcon: Add I2C EEPROM nodes
-  arm64: dts: renesas: falcon: Add CSI/DSI sub-board
-  arm64: dts: renesas: falcon: Add Ethernet sub-board
-
- .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi     |  7 +++++++
- .../boot/dts/renesas/r8a779a0-falcon-csi-dsi.dtsi | 15 +++++++++++++++
- .../dts/renesas/r8a779a0-falcon-ethernet.dtsi     | 15 +++++++++++++++
- arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts   | 11 +++++++++++
- 4 files changed, 48 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779a0-falcon-csi-dsi.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779a0-falcon-ethernet.dtsi
-
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+index 5617b81dd7dc..a18f84128fe1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
+@@ -20,6 +20,20 @@ aliases {
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
++
++	leds {
++		compatible = "gpio-leds";
++
++		led1 {
++			gpios = <&gpio4 18 GPIO_ACTIVE_HIGH>;
++		};
++		led2 {
++			gpios = <&gpio4 19 GPIO_ACTIVE_HIGH>;
++		};
++		led3 {
++			gpios = <&gpio4 20 GPIO_ACTIVE_HIGH>;
++		};
++	};
+ };
+ 
+ &rwdt {
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
