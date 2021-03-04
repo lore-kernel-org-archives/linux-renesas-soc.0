@@ -2,39 +2,39 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9513C43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F50DC433DB
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 15:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B27D64F89
+	by mail.kernel.org (Postfix) with ESMTP id 5257464F8A
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Mar 2021 15:34:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234975AbhCDPeN (ORCPT
+        id S235000AbhCDPeO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Mar 2021 10:34:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48222 "EHLO
+        Thu, 4 Mar 2021 10:34:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235167AbhCDPdx (ORCPT
+        with ESMTP id S235171AbhCDPdx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 4 Mar 2021 10:33:53 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91DD2C061760
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98AACC061761
         for <linux-renesas-soc@vger.kernel.org>; Thu,  4 Mar 2021 07:33:02 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:403a:b688:43fc:72a5])
-        by baptiste.telenet-ops.be with bizsmtp
-        id cFZ02400J0zmvuD01FZ0xE; Thu, 04 Mar 2021 16:33:00 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id cFZ02400G0zmvuD01FZ0s7; Thu, 04 Mar 2021 16:33:00 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lHpyF-004lvQ-PH; Thu, 04 Mar 2021 16:32:59 +0100
+        id 1lHpyF-004lvO-OI; Thu, 04 Mar 2021 16:32:59 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lHpyF-00H21A-0e; Thu, 04 Mar 2021 16:32:59 +0100
+        id 1lHpyE-00H213-VT; Thu, 04 Mar 2021 16:32:58 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -42,66 +42,58 @@ Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/3] arm64: dts: renesas: falcon: Add CSI/DSI sub-board
-Date:   Thu,  4 Mar 2021 16:32:56 +0100
-Message-Id: <20210304153257.4059277-3-geert+renesas@glider.be>
+Subject: [PATCH v2 0/3] arm64: dts: renesas: falcon: Add I2C EEPROMs and sub-boards
+Date:   Thu,  4 Mar 2021 16:32:54 +0100
+Message-Id: <20210304153257.4059277-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210304153257.4059277-1-geert+renesas@glider.be>
-References: <20210304153257.4059277-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a DTS file for the Falcon CSI/DSI sub-board (RTP0RC779A0DCS0010S),
-and include it from the main r8a779a0-falcon.dts.
+	Hi all,
 
-For now its contents are limited to the Board ID EEPROM.
+This patch series adds the device nodes for all I2C EEPROMs in the
+Falcon board stack.  As some EEPROMs are located on sub-boards,
+it also introduces individual .dtsi files for these sub-boards.
+Note that (for now) these sub-boards don't have compatible values or
+model strings, as I think this needs more discussion.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - New (eeprom node extracted from first patch).
----
+This has been tested on the Falcon boards in Magnus' and Kieran's farms.
+The EEPROM on the CPU board in Magnus' farm contains some data.
+All other EEPROMs are present, but in pristine state (all ones).
+
+Changes compared to v1:
+  - Move EEPROMs in sub-boards to separate .dtsi files and patches.
+
+To be queued in renesas-devel for v5.13.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (3):
+  arm64: dts: renesas: falcon: Add I2C EEPROM nodes
+  arm64: dts: renesas: falcon: Add CSI/DSI sub-board
+  arm64: dts: renesas: falcon: Add Ethernet sub-board
+
+ .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi     |  7 +++++++
  .../boot/dts/renesas/r8a779a0-falcon-csi-dsi.dtsi | 15 +++++++++++++++
- arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts   |  1 +
- 2 files changed, 16 insertions(+)
+ .../dts/renesas/r8a779a0-falcon-ethernet.dtsi     | 15 +++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts   | 11 +++++++++++
+ 4 files changed, 48 insertions(+)
  create mode 100644 arch/arm64/boot/dts/renesas/r8a779a0-falcon-csi-dsi.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779a0-falcon-ethernet.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-csi-dsi.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-csi-dsi.dtsi
-new file mode 100644
-index 0000000000000000..14d3db5d6c16485d
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-csi-dsi.dtsi
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the Falcon CSI/DSI sub-board
-+ *
-+ * Copyright (C) 2021 Glider bv
-+ */
-+
-+&i2c0 {
-+	eeprom@52 {
-+		compatible = "rohm,br24g01", "atmel,24c01";
-+		label = "csi-dsi-sub-board-id";
-+		reg = <0x52>;
-+		pagesize = <8>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-index 2047fc475a524576..59d21d88788be6e8 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-@@ -7,6 +7,7 @@
- 
- /dts-v1/;
- #include "r8a779a0-falcon-cpu.dtsi"
-+#include "r8a779a0-falcon-csi-dsi.dtsi"
- 
- / {
- 	model = "Renesas Falcon CPU and Breakout boards based on r8a779a0";
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
