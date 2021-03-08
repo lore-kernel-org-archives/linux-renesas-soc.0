@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B122C433E6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4877CC433E0
 	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Mar 2021 22:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F10B65299
+	by mail.kernel.org (Postfix) with ESMTP id 1258C65173
 	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Mar 2021 22:55:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229627AbhCHWy6 (ORCPT
+        id S229972AbhCHWy6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 8 Mar 2021 17:54:58 -0500
-Received: from mga02.intel.com ([134.134.136.20]:46801 "EHLO mga02.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:39516 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229972AbhCHWyj (ORCPT
+        id S230070AbhCHWyj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 8 Mar 2021 17:54:39 -0500
-IronPort-SDR: yj6HZMIC5il9Rp7jso08Np5zkx5TE4LLcMCUBxlmjo5wL1un/WoIwpYeeq79Wion9gONZlX+Xn
- 12+ZZJg8Rpfg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="175229106"
+IronPort-SDR: BrHZW9yjS+jhBfkQ6pQGWxk+SiBPc6wh6/n58+yCqq9yQOX9mBwU5l2v5Gdn6w3zmfzw1nAZW6
+ 8USmexnUG6Tg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="185732193"
 X-IronPort-AV: E=Sophos;i="5.81,233,1610438400"; 
-   d="scan'208";a="175229106"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 14:54:38 -0800
-IronPort-SDR: 7kqrzQQq+AQUI0bt/Af6U6L8YP87oTEuCkuHgBBkO1UdSwSUPZoyFHrbMu7nUb3e51eMG3ZI3y
- YLs2h5jOXHbw==
+   d="scan'208";a="185732193"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 14:54:38 -0800
+IronPort-SDR: eV2G8xnEQv6M9Y/s05cCrvIWIx8mRZCAHK13l+VgO74AKxp8sZGgaLN01Vu3XBcbw/ZNouO4tb
+ kDghj08Mh4gw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.81,233,1610438400"; 
-   d="scan'208";a="437653004"
+   d="scan'208";a="386012122"
 Received: from lkp-server01.sh.intel.com (HELO 3e992a48ca98) ([10.239.97.150])
-  by FMSMGA003.fm.intel.com with ESMTP; 08 Mar 2021 14:54:36 -0800
+  by orsmga002.jf.intel.com with ESMTP; 08 Mar 2021 14:54:37 -0800
 Received: from kbuild by 3e992a48ca98 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1lJOlo-0001Cd-A7; Mon, 08 Mar 2021 22:54:36 +0000
-Date:   Tue, 09 Mar 2021 06:54:27 +0800
+        id 1lJOlo-0001Cf-B3; Mon, 08 Mar 2021 22:54:36 +0000
+Date:   Tue, 09 Mar 2021 06:54:25 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:renesas-drivers-for-v5.13] BUILD SUCCESS
- 1d9ffbc6b185561c65a5a599562dbb6c5d66e7d1
-Message-ID: <6046ab23.VXXNdmLN7UG3x2Rw%lkp@intel.com>
+Subject: [renesas-devel:renesas-arm-dt-for-v5.13] BUILD SUCCESS
+ af6f9b49874dc2f6af82b336c5f8c31eb4fa3261
+Message-ID: <6046ab21.SfDp0ytWV9fstcYP%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,13 +53,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v5.13
-branch HEAD: 1d9ffbc6b185561c65a5a599562dbb6c5d66e7d1  soc: renesas: rmobile-sysc: Mark fwnode when PM domain is added
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-dt-for-v5.13
+branch HEAD: af6f9b49874dc2f6af82b336c5f8c31eb4fa3261  arm64: dts: renesas: r8a779a0: Add TMU support
 
 elapsed time: 727m
 
-configs tested: 117
-configs skipped: 2
+configs tested: 89
+configs skipped: 30
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -79,15 +79,6 @@ s390                       zfcpdump_defconfig
 m68k                        m5407c3_defconfig
 mips                     loongson1c_defconfig
 sh                          lboxre2_defconfig
-arm                        shmobile_defconfig
-powerpc                 mpc832x_rdb_defconfig
-sh                        dreamcast_defconfig
-mips                          ath79_defconfig
-arc                          axs103_defconfig
-mips                         tb0219_defconfig
-xtensa                  audio_kc705_defconfig
-sparc                       sparc32_defconfig
-h8300                               defconfig
 powerpc                       maple_defconfig
 arm                       omap2plus_defconfig
 sh                   sh7770_generic_defconfig
@@ -99,11 +90,6 @@ powerpc                 mpc8313_rdb_defconfig
 sh                             espt_defconfig
 mips                  decstation_64_defconfig
 sh                              ul2_defconfig
-arm                        mvebu_v5_defconfig
-arm                           stm32_defconfig
-mips                         mpc30x_defconfig
-powerpc64                        alldefconfig
-mips                        bcm63xx_defconfig
 powerpc                 mpc834x_itx_defconfig
 parisc                           alldefconfig
 mips                           rs90_defconfig
@@ -113,20 +99,13 @@ sh                           se7721_defconfig
 h8300                       h8s-sim_defconfig
 powerpc                      mgcoge_defconfig
 sh                             sh03_defconfig
-arm                       aspeed_g4_defconfig
-sh                            titan_defconfig
-powerpc                       holly_defconfig
-mips                       bmips_be_defconfig
-xtensa                  nommu_kc705_defconfig
+xtensa                  audio_kc705_defconfig
 ia64                             allmodconfig
 ia64                                defconfig
 ia64                             allyesconfig
 m68k                             allmodconfig
 m68k                                defconfig
 m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
 nds32                               defconfig
 nios2                            allyesconfig
 csky                                defconfig
@@ -136,18 +115,11 @@ xtensa                           allyesconfig
 h8300                            allyesconfig
 arc                                 defconfig
 sh                               allmodconfig
-parisc                              defconfig
-s390                             allyesconfig
-s390                             allmodconfig
-parisc                           allyesconfig
-s390                                defconfig
 i386                             allyesconfig
 sparc                            allyesconfig
 sparc                               defconfig
 i386                               tinyconfig
 i386                                defconfig
-mips                             allyesconfig
-mips                             allmodconfig
 powerpc                          allyesconfig
 powerpc                          allmodconfig
 powerpc                           allnoconfig
