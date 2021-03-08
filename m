@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FC3C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Mar 2021 22:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B122C433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Mar 2021 22:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3654265299
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Mar 2021 22:48:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F10B65299
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Mar 2021 22:55:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230039AbhCHWsC (ORCPT
+        id S229627AbhCHWy6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 Mar 2021 17:48:02 -0500
-Received: from mga04.intel.com ([192.55.52.120]:38963 "EHLO mga04.intel.com"
+        Mon, 8 Mar 2021 17:54:58 -0500
+Received: from mga02.intel.com ([134.134.136.20]:46801 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229627AbhCHWrd (ORCPT
+        id S229972AbhCHWyj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Mar 2021 17:47:33 -0500
-IronPort-SDR: 7WtiyXXEq6IV56lmTpNPPXZ+3HIQE00f6ONCo3qXLQwCNTV1ndcd0gU6PM+qUhuLjznlpuoTqb
- OJPbSyi8skdw==
-X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="185731256"
+        Mon, 8 Mar 2021 17:54:39 -0500
+IronPort-SDR: yj6HZMIC5il9Rp7jso08Np5zkx5TE4LLcMCUBxlmjo5wL1un/WoIwpYeeq79Wion9gONZlX+Xn
+ 12+ZZJg8Rpfg==
+X-IronPort-AV: E=McAfee;i="6000,8403,9917"; a="175229106"
 X-IronPort-AV: E=Sophos;i="5.81,233,1610438400"; 
-   d="scan'208";a="185731256"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 14:47:33 -0800
-IronPort-SDR: 7guU7fgsrHjbfuqZcZzpMxBle7dbvKwM+p/7yFAXeZSZMlryYYL8H60kGw2yipgHqaySNypheF
- BJhohup7s40w==
+   d="scan'208";a="175229106"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Mar 2021 14:54:38 -0800
+IronPort-SDR: 7kqrzQQq+AQUI0bt/Af6U6L8YP87oTEuCkuHgBBkO1UdSwSUPZoyFHrbMu7nUb3e51eMG3ZI3y
+ YLs2h5jOXHbw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.81,233,1610438400"; 
-   d="scan'208";a="588212364"
+   d="scan'208";a="437653004"
 Received: from lkp-server01.sh.intel.com (HELO 3e992a48ca98) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 08 Mar 2021 14:47:31 -0800
+  by FMSMGA003.fm.intel.com with ESMTP; 08 Mar 2021 14:54:36 -0800
 Received: from kbuild by 3e992a48ca98 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1lJOex-0001C3-0S; Mon, 08 Mar 2021 22:47:31 +0000
-Date:   Tue, 09 Mar 2021 06:46:39 +0800
+        id 1lJOlo-0001Cd-A7; Mon, 08 Mar 2021 22:54:36 +0000
+Date:   Tue, 09 Mar 2021 06:54:27 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- 6f56f6c260995c9bcecd0b8a520d80b0d6c11007
-Message-ID: <6046a94f.0i+y1VT94wkEpxKk%lkp@intel.com>
+Subject: [renesas-devel:renesas-drivers-for-v5.13] BUILD SUCCESS
+ 1d9ffbc6b185561c65a5a599562dbb6c5d66e7d1
+Message-ID: <6046ab23.VXXNdmLN7UG3x2Rw%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,12 +53,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-branch HEAD: 6f56f6c260995c9bcecd0b8a520d80b0d6c11007  Merge branches 'renesas-arm-dt-for-v5.13' and 'renesas-drivers-for-v5.13' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v5.13
+branch HEAD: 1d9ffbc6b185561c65a5a599562dbb6c5d66e7d1  soc: renesas: rmobile-sysc: Mark fwnode when PM domain is added
 
-elapsed time: 720m
+elapsed time: 727m
 
-configs tested: 114
+configs tested: 117
 configs skipped: 2
 
 The following configs have been built successfully.
@@ -84,6 +84,10 @@ powerpc                 mpc832x_rdb_defconfig
 sh                        dreamcast_defconfig
 mips                          ath79_defconfig
 arc                          axs103_defconfig
+mips                         tb0219_defconfig
+xtensa                  audio_kc705_defconfig
+sparc                       sparc32_defconfig
+h8300                               defconfig
 powerpc                       maple_defconfig
 arm                       omap2plus_defconfig
 sh                   sh7770_generic_defconfig
@@ -109,7 +113,6 @@ sh                           se7721_defconfig
 h8300                       h8s-sim_defconfig
 powerpc                      mgcoge_defconfig
 sh                             sh03_defconfig
-xtensa                  audio_kc705_defconfig
 arm                       aspeed_g4_defconfig
 sh                            titan_defconfig
 powerpc                       holly_defconfig
@@ -143,8 +146,8 @@ sparc                            allyesconfig
 sparc                               defconfig
 i386                               tinyconfig
 i386                                defconfig
-mips                             allmodconfig
 mips                             allyesconfig
+mips                             allmodconfig
 powerpc                          allyesconfig
 powerpc                          allmodconfig
 powerpc                           allnoconfig
