@@ -2,78 +2,113 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-19.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDD4C43381
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Mar 2021 15:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DECC4361A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Mar 2021 16:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41DEE64F8B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Mar 2021 15:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E90C564FC6
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Mar 2021 16:11:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233368AbhCJPrP (ORCPT
+        id S233337AbhCJQLE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 10 Mar 2021 10:47:15 -0500
-Received: from vsp-unauthed02.binero.net ([195.74.38.227]:49434 "EHLO
-        vsp-unauthed02.binero.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232849AbhCJPrM (ORCPT
+        Wed, 10 Mar 2021 11:11:04 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:55680 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231519AbhCJQKi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Mar 2021 10:47:12 -0500
-X-Halon-ID: dba99f96-81b7-11eb-b73f-0050569116f7
-Authorized-sender: niklas.soderlund@fsdn.se
-Received: from bismarck.berto.se (p54ac5521.dip0.t-ipconnect.de [84.172.85.33])
-        by bin-vsp-out-03.atm.binero.net (Halon) with ESMTPA
-        id dba99f96-81b7-11eb-b73f-0050569116f7;
-        Wed, 10 Mar 2021 16:47:10 +0100 (CET)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org
-Cc:     Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] media: rcar-vin: Remove explicit device availability check
-Date:   Wed, 10 Mar 2021 16:47:01 +0100
-Message-Id: <20210310154701.3561914-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.30.1
+        Wed, 10 Mar 2021 11:10:38 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 12AGA6OX078381;
+        Wed, 10 Mar 2021 10:10:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1615392606;
+        bh=eQhxI1/W18BOVkUywuakjL/3whfh8fzgc4sdkMyr0SM=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=ancyOoAeMoTSdL6OiZYtTJRdFBX0yyOdK7/H5kCnujjLpA8douFdTTIUI0bVpwLH5
+         zvClUAWz4upC+foxrKQy1B5t6EimvYA5WgeRJs6mPUnO7MdjOZY/69cuudFM0Ig4ol
+         rLBUBMLjEFhigqYpaWDFMdqgc5CYnmlOagkeI61c=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 12AGA6gq004621
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 10 Mar 2021 10:10:06 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2; Wed, 10
+ Mar 2021 10:10:06 -0600
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2176.2 via
+ Frontend Transport; Wed, 10 Mar 2021 10:10:06 -0600
+Received: from a0393678-ssd.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 12AG9qks100440;
+        Wed, 10 Mar 2021 10:09:59 -0600
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Tom Joseph <tjoseph@cadence.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Nadeem Athani <nadeem@cadence.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        <linux-rockchip@lists.infradead.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>
+Subject: [PATCH v4 1/7] dt-bindings: PCI: pci-ep: Add binding to specify virtual function
+Date:   Wed, 10 Mar 2021 21:39:37 +0530
+Message-ID: <20210310160943.7606-2-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210310160943.7606-1-kishon@ti.com>
+References: <20210310160943.7606-1-kishon@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The fwnode is retrieved using fwnode_graph_get_endpoint_by_id() without
-the FWNODE_GRAPH_DEVICE_DISABLED flag set. So there is no need to
-explicitly check if the fwnode is available as it always will be when
-the check is performed, remove it.
+Add binding to specify virtual function (associated with each physical
+function) in endpoint mode.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 7 -------
- 1 file changed, 7 deletions(-)
+ Documentation/devicetree/bindings/pci/pci-ep.yaml | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index cb3025992817d625..adcf271ae0a0150d 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -834,13 +834,6 @@ static int rvin_mc_parse_of(struct rvin_dev *vin, unsigned int id)
- 		goto out;
- 	}
+diff --git a/Documentation/devicetree/bindings/pci/pci-ep.yaml b/Documentation/devicetree/bindings/pci/pci-ep.yaml
+index 7847bbcd4a03..ccec51ab5247 100644
+--- a/Documentation/devicetree/bindings/pci/pci-ep.yaml
++++ b/Documentation/devicetree/bindings/pci/pci-ep.yaml
+@@ -23,6 +23,13 @@ properties:
+     default: 1
+     maximum: 255
  
--	if (!of_device_is_available(to_of_node(fwnode))) {
--		vin_dbg(vin, "OF device %pOF disabled, ignoring\n",
--			to_of_node(fwnode));
--		ret = -ENOTCONN;
--		goto out;
--	}
--
- 	asd = v4l2_async_notifier_add_fwnode_subdev(&vin->group->notifier,
- 						    fwnode,
- 						    struct v4l2_async_subdev);
++  max-virtual-functions:
++    description: Array representing the number of virtual functions corresponding to each physical
++      function
++    $ref: /schemas/types.yaml#/definitions/uint8-array
++    minItems: 1
++    maxItems: 255
++
+   max-link-speed:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     enum: [ 1, 2, 3, 4 ]
 -- 
-2.30.1
+2.17.1
 
