@@ -2,95 +2,79 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2F3C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Mar 2021 12:00:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1532C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Mar 2021 12:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9479864FC8
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Mar 2021 12:00:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A58E564FDD
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Mar 2021 12:21:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230320AbhCJL72 (ORCPT
+        id S232859AbhCJMUz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 10 Mar 2021 06:59:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55392 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229948AbhCJL66 (ORCPT
+        Wed, 10 Mar 2021 07:20:55 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:51390 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232650AbhCJMUv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Mar 2021 06:58:58 -0500
-Received: from mail-wr1-x436.google.com (mail-wr1-x436.google.com [IPv6:2a00:1450:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D32EC061760
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Mar 2021 03:58:58 -0800 (PST)
-Received: by mail-wr1-x436.google.com with SMTP id l12so22981410wry.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 10 Mar 2021 03:58:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rUrQmd7md0y2mnEITUOs43I8wXuqCA0VPutH0poYyPg=;
-        b=IYUUsfTVeuYlEeAwGRPh1HPNnomx5Z0yp13XyvsNjHS+Pc6q0FmOjKM8llQpeetgzg
-         FRrUHxjIyXZ3Y+9GC7buCMjxeolAtA9Ds2+oLD9J7vM7kkTAjH9nENTDnOFWL3haXL5j
-         Gff97KCjB6/5XXo/rH74rP7t7f0xqoEKbxEUOhVsp6T5K/vW9kGm8/9KrwB/kOr6AWIg
-         vXs9VnkJIr3DUptCXoLLJhYJleYIXGXlO2KbXpi3AA5MaYlpKUXxH348fr0CMd4caUjp
-         Gs84xPkO0kag1iOqV7T56LyImDWmjMcBjg/XtkMNZVyMgya5woXQCn75sFXyZ/3zevZI
-         +W/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rUrQmd7md0y2mnEITUOs43I8wXuqCA0VPutH0poYyPg=;
-        b=gYZao4A88HYVoCum5fa4181gwckuQXsbJ5tfGgeDry1ttlU4ptKfT8ZwZMtYUkT8Th
-         9UPKzVJRN1i9istLVjeQ+8GCUT3TXbqpQLSYi0CdOwRpJ4zhGxQHZvy5aV4+pjzlKkA3
-         kMjHDl5g1donY4ie+4kg5R4yZ3LxTttTeBa4v1ge+MXP6YmiENIuYQaZqqRMLl29y9Th
-         9onkTgZolEA7Ri7+VH303kGoiiH5JvaUR8o/ZUIMD4Ye7kvU7dtyGFJrwfD4zkL01xGX
-         B5TDWzEaS8rDOcvWTidMN3cp9Hxz6Xsu/BwKX8bo6DjcXQOGp7gMXAuYhntgqnel+zsE
-         dPlw==
-X-Gm-Message-State: AOAM530J2xhcHhMEChod79f6Jm+pNUopqfKVlV6y4c8dg8u1u0CT1eTU
-        4QeKC7qEnneUk/bqYtqDZpMivr2soUrolw==
-X-Google-Smtp-Source: ABdhPJzNli5fgiwryc5GMOwljLQKLTlgS+lC6xLKe1ECaur6dGz4EvU5DM7NZfYF7QOq+Dh564b4Vg==
-X-Received: by 2002:adf:e60a:: with SMTP id p10mr3210372wrm.291.1615377536711;
-        Wed, 10 Mar 2021 03:58:56 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:8018:efa9:4421:9140? ([2a01:e34:ed2f:f020:8018:efa9:4421:9140])
-        by smtp.googlemail.com with ESMTPSA id m17sm29632508wrx.92.2021.03.10.03.58.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 10 Mar 2021 03:58:56 -0800 (PST)
-Subject: Re: [PATCH] thermal: rcar_gen3_thermal: Add support for up to five
- TSC nodes
-To:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>, linux-pm@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org
-References: <20210309162419.2621359-1-niklas.soderlund+renesas@ragnatech.se>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <ba60c08e-689b-849d-c232-26aad08ca036@linaro.org>
-Date:   Wed, 10 Mar 2021 12:58:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20210309162419.2621359-1-niklas.soderlund+renesas@ragnatech.se>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 10 Mar 2021 07:20:51 -0500
+X-IronPort-AV: E=Sophos;i="5.81,237,1610377200"; 
+   d="scan'208";a="74701229"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 10 Mar 2021 21:20:50 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 62CC040108E4;
+        Wed, 10 Mar 2021 21:20:47 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Pavel Machek <pavel@denx.de>,
+        Andrey Konovalov <andrey.konovalov@linaro.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: [PATCH 1/3] media: i2c: imx219: Enable vflip and hflip controls on stream stop
+Date:   Wed, 10 Mar 2021 12:20:12 +0000
+Message-Id: <20210310122014.28353-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210310122014.28353-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20210310122014.28353-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 09/03/2021 17:24, Niklas Söderlund wrote:
-> Add support for up to five TSC nodes. The new THCODE values are taken
-> from the example in the datasheet.
-> 
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> ---
+Enable vflip and hflip controls in resume error path when streaming
+is stopped.
 
-Applied, thanks
+Fixes: 1283b3b8f82b9 ("media: i2c: Add driver for Sony IMX219 sensor")
+Reported-by: Pavel Machek <pavel@denx.de>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/media/i2c/imx219.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-
+diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+index 6e3382b85a90..f0cf1985a4dc 100644
+--- a/drivers/media/i2c/imx219.c
++++ b/drivers/media/i2c/imx219.c
+@@ -1195,6 +1195,8 @@ static int __maybe_unused imx219_resume(struct device *dev)
+ error:
+ 	imx219_stop_streaming(imx219);
+ 	imx219->streaming = false;
++	__v4l2_ctrl_grab(imx219->vflip, false);
++	__v4l2_ctrl_grab(imx219->hflip, false);
+ 
+ 	return ret;
+ }
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.17.1
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
