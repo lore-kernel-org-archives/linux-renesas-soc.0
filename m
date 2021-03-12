@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB98C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Mar 2021 22:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6226FC433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Mar 2021 22:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8BCEB64E38
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Mar 2021 22:06:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3472D64F5E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 12 Mar 2021 22:16:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235436AbhCLWF5 (ORCPT
+        id S235442AbhCLWPe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 12 Mar 2021 17:05:57 -0500
-Received: from mga06.intel.com ([134.134.136.31]:60142 "EHLO mga06.intel.com"
+        Fri, 12 Mar 2021 17:15:34 -0500
+Received: from mga18.intel.com ([134.134.136.126]:13873 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235438AbhCLWF4 (ORCPT
+        id S235457AbhCLWPI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 12 Mar 2021 17:05:56 -0500
-IronPort-SDR: sVZfM5AWiSX+mYW6qBmoJ6hjdwI5td1Siaa26d1Vuc2iEmUVTkOMgqbxxWkZlQdK1EhKzm0HD8
- fm6a/yKoRxzg==
-X-IronPort-AV: E=McAfee;i="6000,8403,9921"; a="250262495"
+        Fri, 12 Mar 2021 17:15:08 -0500
+IronPort-SDR: u7U0/sdAEIw2TN9aAFOGz49UOKur3sJmENmL3kEtHj7fP9tfl3PpWDWScCEwAXS7/qz9QaBn0T
+ VNZLM0XPXX3A==
+X-IronPort-AV: E=McAfee;i="6000,8403,9921"; a="176486307"
 X-IronPort-AV: E=Sophos;i="5.81,244,1610438400"; 
-   d="scan'208";a="250262495"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2021 14:05:51 -0800
-IronPort-SDR: GEPKYjNKcEE2yBJZ9T+75rtKNxpT40rBnfHWSStTB5xkCYalJ+me4DiJO/iuUZcJMPUHATptu/
- l816PzgNu7cA==
+   d="scan'208";a="176486307"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Mar 2021 14:14:52 -0800
+IronPort-SDR: ZyikpMMGo1tQk9SkHcPgMHTcdN+wD2YOH1o+JWrJZNegU78lUGXxh7X9YYrdTQypW8EXTlTRCR
+ sRVzu5FlAYTA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.81,244,1610438400"; 
-   d="scan'208";a="404552374"
+   d="scan'208";a="409991289"
 Received: from lkp-server02.sh.intel.com (HELO ce64c092ff93) ([10.239.97.151])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Mar 2021 14:05:50 -0800
+  by orsmga007.jf.intel.com with ESMTP; 12 Mar 2021 14:14:51 -0800
 Received: from kbuild by ce64c092ff93 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1lKpun-0001dp-U4; Fri, 12 Mar 2021 22:05:49 +0000
-Date:   Sat, 13 Mar 2021 06:05:38 +0800
+        id 1lKq3W-0001e1-LM; Fri, 12 Mar 2021 22:14:50 +0000
+Date:   Sat, 13 Mar 2021 06:14:35 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-drivers:renesas-clk-for-v5.13] BUILD SUCCESS
- 0eedab655ec1817d450085dcb12219726cb415ff
-Message-ID: <604be5b2.zjg95qAer0Waz8EW%lkp@intel.com>
+Subject: [renesas-devel:next] BUILD SUCCESS
+ af038eda54d9a61e09711d7d4d3232356b510331
+Message-ID: <604be7cb.dROv+6xLWU+RxyqA%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -53,12 +53,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v5.13
-branch HEAD: 0eedab655ec1817d450085dcb12219726cb415ff  clk: renesas: r8a779a0: Add CMT clocks
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: af038eda54d9a61e09711d7d4d3232356b510331  Merge branches 'renesas-arm-defconfig-for-v5.13' and 'renesas-arm-dt-for-v5.13' into renesas-next
 
 elapsed time: 722m
 
-configs tested: 132
+configs tested: 141
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -76,18 +76,27 @@ sh                   sh7770_generic_defconfig
 riscv                               defconfig
 sh                        edosk7705_defconfig
 arc                          axs103_defconfig
+powerpc                      tqm8xx_defconfig
 arm                     davinci_all_defconfig
 powerpc                      pasemi_defconfig
 powerpc                     powernv_defconfig
 arm                   milbeaut_m10v_defconfig
 arm                       versatile_defconfig
-powerpc                      tqm8xx_defconfig
+sh                           se7722_defconfig
+arm                             mxs_defconfig
+powerpc                          g5_defconfig
+mips                          malta_defconfig
+sh                           sh2007_defconfig
 riscv                    nommu_k210_defconfig
 powerpc                  storcenter_defconfig
 sparc                       sparc64_defconfig
 i386                                defconfig
 m68k                            mac_defconfig
 xtensa                  cadence_csp_defconfig
+powerpc                      chrp32_defconfig
+powerpc                 mpc832x_mds_defconfig
+sh                   secureedge5410_defconfig
+powerpc                     pseries_defconfig
 powerpc                    sam440ep_defconfig
 h8300                     edosk2674_defconfig
 arm                         lpc18xx_defconfig
@@ -99,11 +108,9 @@ arm                             pxa_defconfig
 parisc                generic-64bit_defconfig
 arm                         s3c2410_defconfig
 powerpc                 mpc837x_mds_defconfig
-m68k                         apollo_defconfig
-arm                       cns3420vb_defconfig
-arc                        nsim_700_defconfig
-powerpc                 mpc85xx_cds_defconfig
+arc                                 defconfig
 sh                   sh7724_generic_defconfig
+sparc                               defconfig
 powerpc                      arches_defconfig
 sh                  sh7785lcr_32bit_defconfig
 sh                          urquell_defconfig
@@ -132,6 +139,10 @@ arm                         palmz72_defconfig
 alpha                               defconfig
 sh                        sh7757lcr_defconfig
 sh                          rsk7201_defconfig
+arm                       imx_v4_v5_defconfig
+sh                           se7750_defconfig
+sh                          polaris_defconfig
+arm                       cns3420vb_defconfig
 ia64                             allmodconfig
 ia64                                defconfig
 ia64                             allyesconfig
@@ -147,7 +158,6 @@ csky                                defconfig
 alpha                            allyesconfig
 xtensa                           allyesconfig
 h8300                            allyesconfig
-arc                                 defconfig
 sh                               allmodconfig
 parisc                              defconfig
 s390                             allyesconfig
@@ -155,7 +165,6 @@ s390                             allmodconfig
 parisc                           allyesconfig
 s390                                defconfig
 i386                             allyesconfig
-sparc                               defconfig
 i386                               tinyconfig
 mips                             allyesconfig
 mips                             allmodconfig
