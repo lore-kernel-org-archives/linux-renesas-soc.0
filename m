@@ -2,157 +2,94 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D483EC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 15:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 744FAC433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 16:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A877764EBD
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 15:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 412A164F2A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 16:31:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231915AbhCOPqm (ORCPT
+        id S231740AbhCOQa7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Mar 2021 11:46:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39502 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231424AbhCOPqM (ORCPT
+        Mon, 15 Mar 2021 12:30:59 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:51503 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231391AbhCOQar (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Mar 2021 11:46:12 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B99D9C06174A;
-        Mon, 15 Mar 2021 08:46:11 -0700 (PDT)
-Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F29F3556;
-        Mon, 15 Mar 2021 16:46:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1615823170;
-        bh=nu8Gce82/8YXWv4jDaw5uQPeKLuh08PfTtNioz/Z7GQ=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dtEilmM9dDsfprt13YcS4ga2cUztVfvlzkf080j44QsBK9GnT7llTxV7Hb0y9TZyt
-         UCzYUtEN+hVAe37oEmSXMTb1O5PQRd3bLYNoQEWJKzLgqYVJP6C+N1NVaJGj79WiLb
-         ine/oGoeOoGvBQHcIsZoAu6k/w8X94Erl/ecE81w=
-Reply-To: kieran.bingham+renesas@ideasonboard.com
-Subject: Re: [PATCH v2 06/18] media: i2c: max9271: Check max9271_write()
- return
-To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        laurent.pinchart+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, geert@linux-m68k.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Mon, 15 Mar 2021 12:30:47 -0400
+X-Originating-IP: 79.22.58.175
+Received: from uno.homenet.telecomitalia.it (host-79-22-58-175.retail.telecomitalia.it [79.22.58.175])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id C082E240002;
+        Mon, 15 Mar 2021 16:30:43 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20210315131512.133720-1-jacopo+renesas@jmondi.org>
- <20210315131512.133720-7-jacopo+renesas@jmondi.org>
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Organization: Ideas on Board
-Message-ID: <dc98a803-1559-e93c-3270-a55a0ca52849@ideasonboard.com>
-Date:   Mon, 15 Mar 2021 15:46:07 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+Subject: [PATCH v2 1/4] dt-bindings: media: max9286: Describe gpio-hog
+Date:   Mon, 15 Mar 2021 17:30:25 +0100
+Message-Id: <20210315163028.173148-2-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210315163028.173148-1-jacopo+renesas@jmondi.org>
+References: <20210315163028.173148-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-In-Reply-To: <20210315131512.133720-7-jacopo+renesas@jmondi.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+The MAX9286 GMSL deserializer features gpio controller capabilities,
+as it provides 2 GPIO lines.
 
-On 15/03/2021 13:15, Jacopo Mondi wrote:
-> Check the return value of the max9271_write() function in the
-> max9271 library driver.
-> 
-> While at it, modify an existing condition to be made identical
-> to other checks.
+As establishing a regulator that uses one of the GPIO lines and
+enabling/disabling it at run-time in the max9286 won't work due to
+a circular dependency on the gpio-controller/regulator creation, allow
+the usage of a gpio-hog for that purpose.
 
-Excellent, much better to catch write errors early.
+The usage of the gpio-hog is required in designs where the MAX9286
+GPIO lines control the remote cameras power.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ .../bindings/media/i2c/maxim,max9286.yaml        | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> ---
->  drivers/media/i2c/max9271.c | 30 +++++++++++++++++++++++-------
->  1 file changed, 23 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/max9271.c b/drivers/media/i2c/max9271.c
-> index c495582dcff6..2c7dc7fb9846 100644
-> --- a/drivers/media/i2c/max9271.c
-> +++ b/drivers/media/i2c/max9271.c
-> @@ -106,7 +106,10 @@ int max9271_set_serial_link(struct max9271_device *dev, bool enable)
->  	 * Short delays here appear to show bit-errors in the writes following.
->  	 * Therefore a conservative delay seems best here.
->  	 */
-> -	max9271_write(dev, 0x04, val);
-> +	ret = max9271_write(dev, 0x04, val);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	usleep_range(5000, 8000);
->  
->  	return 0;
-> @@ -118,7 +121,7 @@ int max9271_configure_i2c(struct max9271_device *dev, u8 i2c_config)
->  	int ret;
->  
->  	ret = max9271_write(dev, 0x0d, i2c_config);
-> -	if (ret)
-> +	if (ret < 0)
->  		return ret;
->  
->  	/* The delay required after an I2C bus configuration change is not
-> @@ -143,7 +146,10 @@ int max9271_set_high_threshold(struct max9271_device *dev, bool enable)
->  	 * Enable or disable reverse channel high threshold to increase
->  	 * immunity to power supply noise.
->  	 */
-> -	max9271_write(dev, 0x08, enable ? ret | BIT(0) : ret & ~BIT(0));
-> +	ret = max9271_write(dev, 0x08, enable ? ret | BIT(0) : ret & ~BIT(0));
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	usleep_range(2000, 2500);
->  
->  	return 0;
-> @@ -152,6 +158,8 @@ EXPORT_SYMBOL_GPL(max9271_set_high_threshold);
->  
->  int max9271_configure_gmsl_link(struct max9271_device *dev)
->  {
-> +	int ret;
-> +
->  	/*
->  	 * Configure the GMSL link:
->  	 *
-> @@ -162,16 +170,24 @@ int max9271_configure_gmsl_link(struct max9271_device *dev)
->  	 *
->  	 * TODO: Make the GMSL link configuration parametric.
->  	 */
-> -	max9271_write(dev, 0x07, MAX9271_DBL | MAX9271_HVEN |
-> -		      MAX9271_EDC_1BIT_PARITY);
-> +	ret = max9271_write(dev, 0x07, MAX9271_DBL | MAX9271_HVEN |
-> +			    MAX9271_EDC_1BIT_PARITY);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	usleep_range(5000, 8000);
->  
->  	/*
->  	 * Adjust spread spectrum to +4% and auto-detect pixel clock
->  	 * and serial link rate.
->  	 */
-> -	max9271_write(dev, 0x02, MAX9271_SPREAD_SPECT_4 | MAX9271_R02_RES |
-> -		      MAX9271_PCLK_AUTODETECT | MAX9271_SERIAL_AUTODETECT);
-> +	ret = max9271_write(dev, 0x02,
-> +			    MAX9271_SPREAD_SPECT_4 | MAX9271_R02_RES |
-> +			    MAX9271_PCLK_AUTODETECT |
-> +			    MAX9271_SERIAL_AUTODETECT);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	usleep_range(5000, 8000);
->  
->  	return 0;
-> 
+diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
+index ee16102fdfe7..9038300e373c 100644
+--- a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
+@@ -177,6 +177,22 @@ properties:
+ 
+     additionalProperties: false
+ 
++patternProperties:
++  "^(hog-[0-9]+|.+-hog(-[0-9]+)?)$":
++    type: object
++    properties:
++      gpio-hog: true
++      gpios: true
++      output-low: true
++      line-name: true
++
++    required:
++      - gpio-hog
++      - gpios
++      - output-low
++
++    additionalProperties: false
++
+ required:
+   - compatible
+   - reg
+-- 
+2.30.0
 
