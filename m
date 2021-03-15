@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1325C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 13:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B223BC28E85
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 13:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8673C64EF3
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 13:16:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77E2064EF3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 13:16:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230417AbhCONPf (ORCPT
+        id S230398AbhCONPe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Mar 2021 09:15:35 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:57337 "EHLO
+        Mon, 15 Mar 2021 09:15:34 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:53273 "EHLO
         relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229920AbhCONPZ (ORCPT
+        with ESMTP id S229952AbhCONPT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Mar 2021 09:15:25 -0400
+        Mon, 15 Mar 2021 09:15:19 -0400
 X-Originating-IP: 79.22.58.175
 Received: from uno.homenet.telecomitalia.it (host-79-22-58-175.retail.telecomitalia.it [79.22.58.175])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 885A9FF814;
-        Mon, 15 Mar 2021 13:15:21 +0000 (UTC)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 87F16FF807;
+        Mon, 15 Mar 2021 13:15:15 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     kieran.bingham+renesas@ideasonboard.com,
         laurent.pinchart+renesas@ideasonboard.com,
@@ -34,9 +34,9 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 11/18] media: i2c: rdacm21: Fix OV10640 powerdown
-Date:   Mon, 15 Mar 2021 14:15:05 +0100
-Message-Id: <20210315131512.133720-12-jacopo+renesas@jmondi.org>
+Subject: [PATCH v2 09/18] media: i2c: max9271: Introduce wake_up() function
+Date:   Mon, 15 Mar 2021 14:15:03 +0100
+Message-Id: <20210315131512.133720-10-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210315131512.133720-1-jacopo+renesas@jmondi.org>
 References: <20210315131512.133720-1-jacopo+renesas@jmondi.org>
@@ -46,56 +46,94 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The OV10640 image sensor powerdown signal is controlled by the first
-line of the OV490 GPIO pad #1, but the pad #0 identifier
-OV490_GPIO_OUTPUT_VALUE0 was erroneously used. As a result the image
-sensor powerdown signal was never asserted but was kept high by an
-internal pull-up resistor, causing sporadic failures during the
-image sensor startup phase.
+The MAX9271 chip manual prescribes a delay of 5 milliseconds
+after the chip exists from low power state.
 
-Fix this by using the correct GPIO pad identifier.
+Add a new function to the max9271 library driver that wakes up the chip
+with a dummy i2c transaction and implements the correct delay of 5
+milliseconds after the chip exits from low power state.
 
-While at it also fix the GPIO signal handling sequence, as the reset
-line was released before the powerdown one, and introduce the correct
-delays in between the two operations.
+Use the newly introduced function in the rdacm20 and rdacm21 camera
+drivers. The former was not respecting the required delay while the
+latter was waiting for a too-short timeout.
 
-Wait the mandatory 1 millisecond delay after the powerup lane is
-asserted. The reset delay is not characterized in the chip manual if
-not as "255 XVCLK + initialization". Wait for at least 3 milliseconds
-to guarantee the SCCB bus is available.
+Do not handle the initial i2c address configuration in the library
+driver function as the camera module drivers control address
+reprogramming.
 
-This commit fixes a sporadic start-up error triggered by a failure to
-read the OV10640 chip ID:
-rdacm21 8-0054: OV10640 ID mismatch: (0x01)
-
-Fixes: a59f853b3b4b ("media: i2c: Add driver for RDACM21 camera module")
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/media/i2c/rdacm21.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/i2c/max9271.c | 7 +++++++
+ drivers/media/i2c/max9271.h | 9 +++++++++
+ drivers/media/i2c/rdacm20.c | 2 +-
+ drivers/media/i2c/rdacm21.c | 3 +--
+ 4 files changed, 18 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/media/i2c/max9271.c b/drivers/media/i2c/max9271.c
+index 2c7dc7fb9846..f7bfe7266763 100644
+--- a/drivers/media/i2c/max9271.c
++++ b/drivers/media/i2c/max9271.c
+@@ -80,6 +80,13 @@ static int max9271_pclk_detect(struct max9271_device *dev)
+ 	return -EIO;
+ }
+ 
++void max9271_wake_up(struct max9271_device *dev)
++{
++	i2c_smbus_read_byte(dev->client);
++	usleep_range(5000, 8000);
++}
++EXPORT_SYMBOL_GPL(max9271_wake_up);
++
+ int max9271_set_serial_link(struct max9271_device *dev, bool enable)
+ {
+ 	int ret;
+diff --git a/drivers/media/i2c/max9271.h b/drivers/media/i2c/max9271.h
+index d78fb21441e9..dc5e4e70ba6f 100644
+--- a/drivers/media/i2c/max9271.h
++++ b/drivers/media/i2c/max9271.h
+@@ -85,6 +85,15 @@ struct max9271_device {
+ 	struct i2c_client *client;
+ };
+ 
++/**
++ * max9271_wake_up() - Wake up the serializer by issuing an i2c transaction
++ * @dev: The max9271 device
++ *
++ * This function shall be called before any other interaction with the
++ * serializer.
++ */
++void max9271_wake_up(struct max9271_device *dev);
++
+ /**
+  * max9271_set_serial_link() - Enable/disable serial link
+  * @dev: The max9271 device
+diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
+index b9aaa0f7db42..2265ef7c65d4 100644
+--- a/drivers/media/i2c/rdacm20.c
++++ b/drivers/media/i2c/rdacm20.c
+@@ -459,7 +459,7 @@ static int rdacm20_initialize(struct rdacm20_device *dev)
+ 
+ 	/* Verify communication with the MAX9271: ping to wakeup. */
+ 	dev->serializer.client->addr = MAX9271_DEFAULT_ADDR;
+-	i2c_smbus_read_byte(dev->serializer.client);
++	max9271_wake_up(&dev->serializer);
+ 
+ 	/* Serial link disabled during config as it needs a valid pixel clock. */
+ 	ret = max9271_set_serial_link(&dev->serializer, false);
 diff --git a/drivers/media/i2c/rdacm21.c b/drivers/media/i2c/rdacm21.c
-index 7bce55adfd7c..50a9b0d8255d 100644
+index 179d107f494c..7bce55adfd7c 100644
 --- a/drivers/media/i2c/rdacm21.c
 +++ b/drivers/media/i2c/rdacm21.c
-@@ -333,13 +333,15 @@ static int ov10640_initialize(struct rdacm21_device *dev)
- {
- 	u8 val;
+@@ -452,8 +452,7 @@ static int rdacm21_initialize(struct rdacm21_device *dev)
  
--	/* Power-up OV10640 by setting RESETB and PWDNB pins high. */
-+	/* Power-up OV10640 by setting PWDNB and RESETB pins high. */
- 	ov490_write_reg(dev, OV490_GPIO_SEL0, OV490_GPIO0);
- 	ov490_write_reg(dev, OV490_GPIO_SEL1, OV490_SPWDN0);
- 	ov490_write_reg(dev, OV490_GPIO_DIRECTION0, OV490_GPIO0);
- 	ov490_write_reg(dev, OV490_GPIO_DIRECTION1, OV490_SPWDN0);
-+
-+	ov490_write_reg(dev, OV490_GPIO_OUTPUT_VALUE1, OV490_SPWDN0);
-+	usleep_range(1500, 3000);
- 	ov490_write_reg(dev, OV490_GPIO_OUTPUT_VALUE0, OV490_GPIO0);
--	ov490_write_reg(dev, OV490_GPIO_OUTPUT_VALUE0, OV490_SPWDN0);
- 	usleep_range(3000, 5000);
+ 	/* Verify communication with the MAX9271: ping to wakeup. */
+ 	dev->serializer.client->addr = MAX9271_DEFAULT_ADDR;
+-	i2c_smbus_read_byte(dev->serializer.client);
+-	usleep_range(3000, 5000);
++	max9271_wake_up(&dev->serializer);
  
- 	/* Read OV10640 ID to test communications. */
+ 	/* Enable reverse channel and disable the serial link. */
+ 	ret = max9271_set_serial_link(&dev->serializer, false);
 -- 
 2.30.0
 
