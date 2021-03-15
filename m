@@ -2,30 +2,29 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 744FAC433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 16:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FEBFC433E6
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 16:31:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 412A164F2A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 16:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32E5B64F2B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 16:31:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231740AbhCOQa7 (ORCPT
+        id S231458AbhCOQa6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Mar 2021 12:30:59 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:51503 "EHLO
+        Mon, 15 Mar 2021 12:30:58 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:6691 "EHLO
         relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231391AbhCOQar (ORCPT
+        with ESMTP id S231890AbhCOQap (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Mar 2021 12:30:47 -0400
+        Mon, 15 Mar 2021 12:30:45 -0400
 X-Originating-IP: 79.22.58.175
 Received: from uno.homenet.telecomitalia.it (host-79-22-58-175.retail.telecomitalia.it [79.22.58.175])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id C082E240002;
-        Mon, 15 Mar 2021 16:30:43 +0000 (UTC)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 1B3BF24000A;
+        Mon, 15 Mar 2021 16:30:40 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -35,61 +34,45 @@ To:     Geert Uytterhoeven <geert+renesas@glider.be>,
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/4] dt-bindings: media: max9286: Describe gpio-hog
-Date:   Mon, 15 Mar 2021 17:30:25 +0100
-Message-Id: <20210315163028.173148-2-jacopo+renesas@jmondi.org>
+Subject: [PATCH v2 0/4]  arm64: dts: renesas: Enable GMSL on R8A77970 V3M Eagle
+Date:   Mon, 15 Mar 2021 17:30:24 +0100
+Message-Id: <20210315163028.173148-1-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210315163028.173148-1-jacopo+renesas@jmondi.org>
-References: <20210315163028.173148-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The MAX9286 GMSL deserializer features gpio controller capabilities,
-as it provides 2 GPIO lines.
+Hello,
+   this series adds a .dtsi fragment that allow to describe and
+enable GMSL cameras on the V3M Eagle board.
 
-As establishing a regulator that uses one of the GPIO lines and
-enabling/disabling it at run-time in the max9286 won't work due to
-a circular dependency on the gpio-controller/regulator creation, allow
-the usage of a gpio-hog for that purpose.
+The .dtsi supports connecting the RDACM20 and RDACM21 cameras to the
+FAKRA connectors installed on the board.
 
-The usage of the gpio-hog is required in designs where the MAX9286
-GPIO lines control the remote cameras power.
+Tested on V3M Eagle with RDACM20 and RDACM21
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- .../bindings/media/i2c/maxim,max9286.yaml        | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+v1->v2:
+- Use a pattern property to describe the gpio-hog
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-index ee16102fdfe7..9038300e373c 100644
---- a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-+++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-@@ -177,6 +177,22 @@ properties:
- 
-     additionalProperties: false
- 
-+patternProperties:
-+  "^(hog-[0-9]+|.+-hog(-[0-9]+)?)$":
-+    type: object
-+    properties:
-+      gpio-hog: true
-+      gpios: true
-+      output-low: true
-+      line-name: true
-+
-+    required:
-+      - gpio-hog
-+      - gpios
-+      - output-low
-+
-+    additionalProperties: false
-+
- required:
-   - compatible
-   - reg
--- 
+Thanks
+   j
+
+Jacopo Mondi (1):
+  dt-bindings: media: max9286: Describe gpio-hog
+
+Kieran Bingham (3):
+  arm64: dts: renesas: eagle: Enable MAX9286
+  arm64: dts: renesas: eagle: Add GMSL .dtsi
+  arm64: dts: renesas: eagle: Include eagle-gmsl
+
+ .../bindings/media/i2c/maxim,max9286.yaml     |  16 ++
+ arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi   | 186 ++++++++++++++++++
+ .../arm64/boot/dts/renesas/r8a77970-eagle.dts | 135 +++++++++++++
+ 3 files changed, 337 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi
+
+--
 2.30.0
 
