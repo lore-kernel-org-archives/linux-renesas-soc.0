@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E62DC4332B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 13:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11BCFC43332
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 13:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67B9264F10
+	by mail.kernel.org (Postfix) with ESMTP id D69E264EFB
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 13:15:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230227AbhCONP2 (ORCPT
+        id S230353AbhCONPd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Mar 2021 09:15:28 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:53705 "EHLO
+        Mon, 15 Mar 2021 09:15:33 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:44853 "EHLO
         relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230081AbhCONO6 (ORCPT
+        with ESMTP id S230147AbhCONPL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Mar 2021 09:14:58 -0400
+        Mon, 15 Mar 2021 09:15:11 -0400
 X-Originating-IP: 79.22.58.175
 Received: from uno.homenet.telecomitalia.it (host-79-22-58-175.retail.telecomitalia.it [79.22.58.175])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 2AABBFF815;
-        Mon, 15 Mar 2021 13:14:53 +0000 (UTC)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 02C47FF809;
+        Mon, 15 Mar 2021 13:15:05 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     kieran.bingham+renesas@ideasonboard.com,
         laurent.pinchart+renesas@ideasonboard.com,
@@ -34,9 +34,9 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/18] media: i2c: rdacm20: Enable noise immunity
-Date:   Mon, 15 Mar 2021 14:14:56 +0100
-Message-Id: <20210315131512.133720-3-jacopo+renesas@jmondi.org>
+Subject: [PATCH v2 06/18] media: i2c: max9271: Check max9271_write() return
+Date:   Mon, 15 Mar 2021 14:15:00 +0100
+Message-Id: <20210315131512.133720-7-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210315131512.133720-1-jacopo+renesas@jmondi.org>
 References: <20210315131512.133720-1-jacopo+renesas@jmondi.org>
@@ -46,42 +46,92 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enable the noise immunity threshold at the end of the rdacm20
-initialization routine.
+Check the return value of the max9271_write() function in the
+max9271 library driver.
 
-The rdacm20 camera module has been so far tested with a startup
-delay that allowed the embedded MCU to program the serializer. If
-the initialization routine is run before the MCU programs the
-serializer and the image sensor and their addresses gets changed
-by the rdacm20 driver it is required to manually enable the noise
-immunity threshold to make the communication on the control channel
-more reliable.
+While at it, modify an existing condition to be made identical
+to other checks.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/media/i2c/rdacm20.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/media/i2c/max9271.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
-index 90eb73f0e6e9..f7fd5ae955d0 100644
---- a/drivers/media/i2c/rdacm20.c
-+++ b/drivers/media/i2c/rdacm20.c
-@@ -541,7 +541,13 @@ static int rdacm20_initialize(struct rdacm20_device *dev)
+diff --git a/drivers/media/i2c/max9271.c b/drivers/media/i2c/max9271.c
+index c495582dcff6..2c7dc7fb9846 100644
+--- a/drivers/media/i2c/max9271.c
++++ b/drivers/media/i2c/max9271.c
+@@ -106,7 +106,10 @@ int max9271_set_serial_link(struct max9271_device *dev, bool enable)
+ 	 * Short delays here appear to show bit-errors in the writes following.
+ 	 * Therefore a conservative delay seems best here.
+ 	 */
+-	max9271_write(dev, 0x04, val);
++	ret = max9271_write(dev, 0x04, val);
++	if (ret < 0)
++		return ret;
++
+ 	usleep_range(5000, 8000);
  
- 	dev_info(dev->dev, "Identified MAX9271 + OV10635 device\n");
+ 	return 0;
+@@ -118,7 +121,7 @@ int max9271_configure_i2c(struct max9271_device *dev, u8 i2c_config)
+ 	int ret;
  
--	return 0;
-+	/*
-+	 * Set reverse channel high threshold to increase noise immunity.
-+	 *
-+	 * This should be compensated by increasing the reverse channel
-+	 * amplitude on the remote deserializer side.
-+	 */
-+	return max9271_set_high_threshold(&dev->serializer, true);
- }
+ 	ret = max9271_write(dev, 0x0d, i2c_config);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
  
- static int rdacm20_probe(struct i2c_client *client)
+ 	/* The delay required after an I2C bus configuration change is not
+@@ -143,7 +146,10 @@ int max9271_set_high_threshold(struct max9271_device *dev, bool enable)
+ 	 * Enable or disable reverse channel high threshold to increase
+ 	 * immunity to power supply noise.
+ 	 */
+-	max9271_write(dev, 0x08, enable ? ret | BIT(0) : ret & ~BIT(0));
++	ret = max9271_write(dev, 0x08, enable ? ret | BIT(0) : ret & ~BIT(0));
++	if (ret < 0)
++		return ret;
++
+ 	usleep_range(2000, 2500);
+ 
+ 	return 0;
+@@ -152,6 +158,8 @@ EXPORT_SYMBOL_GPL(max9271_set_high_threshold);
+ 
+ int max9271_configure_gmsl_link(struct max9271_device *dev)
+ {
++	int ret;
++
+ 	/*
+ 	 * Configure the GMSL link:
+ 	 *
+@@ -162,16 +170,24 @@ int max9271_configure_gmsl_link(struct max9271_device *dev)
+ 	 *
+ 	 * TODO: Make the GMSL link configuration parametric.
+ 	 */
+-	max9271_write(dev, 0x07, MAX9271_DBL | MAX9271_HVEN |
+-		      MAX9271_EDC_1BIT_PARITY);
++	ret = max9271_write(dev, 0x07, MAX9271_DBL | MAX9271_HVEN |
++			    MAX9271_EDC_1BIT_PARITY);
++	if (ret < 0)
++		return ret;
++
+ 	usleep_range(5000, 8000);
+ 
+ 	/*
+ 	 * Adjust spread spectrum to +4% and auto-detect pixel clock
+ 	 * and serial link rate.
+ 	 */
+-	max9271_write(dev, 0x02, MAX9271_SPREAD_SPECT_4 | MAX9271_R02_RES |
+-		      MAX9271_PCLK_AUTODETECT | MAX9271_SERIAL_AUTODETECT);
++	ret = max9271_write(dev, 0x02,
++			    MAX9271_SPREAD_SPECT_4 | MAX9271_R02_RES |
++			    MAX9271_PCLK_AUTODETECT |
++			    MAX9271_SERIAL_AUTODETECT);
++	if (ret < 0)
++		return ret;
++
+ 	usleep_range(5000, 8000);
+ 
+ 	return 0;
 -- 
 2.30.0
 
