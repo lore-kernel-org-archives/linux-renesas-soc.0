@@ -2,314 +2,242 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28511C43619
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 13:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24620C2BA1B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 14:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E860964EF8
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 13:16:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB4D964F33
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 14:04:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231207AbhCONQB (ORCPT
+        id S233973AbhCOOEI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Mar 2021 09:16:01 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:34785 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230513AbhCONPo (ORCPT
+        Mon, 15 Mar 2021 10:04:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231984AbhCOODg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Mar 2021 09:15:44 -0400
-X-Originating-IP: 79.22.58.175
-Received: from uno.homenet.telecomitalia.it (host-79-22-58-175.retail.telecomitalia.it [79.22.58.175])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id A3E6EFF803;
-        Mon, 15 Mar 2021 13:15:39 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     kieran.bingham+renesas@ideasonboard.com,
-        laurent.pinchart+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, geert@linux-m68k.org
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v2 17/18] media: gmsl: Reimplement initialization sequence
-Date:   Mon, 15 Mar 2021 14:15:11 +0100
-Message-Id: <20210315131512.133720-18-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210315131512.133720-1-jacopo+renesas@jmondi.org>
-References: <20210315131512.133720-1-jacopo+renesas@jmondi.org>
+        Mon, 15 Mar 2021 10:03:36 -0400
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 554BAC06174A
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Mar 2021 07:03:36 -0700 (PDT)
+Received: by mail-pj1-x102e.google.com with SMTP id ha17so8095666pjb.2
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 15 Mar 2021 07:03:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=uvrkAGKZQGvWC5JChhq836K5tnydNOjvK/9cRbPFWlo=;
+        b=xUEGxRAf+sWBdC9/7ZOPK9GNJ6Hsvaaroa12jDQ7BvC1nt3MKtJHbrKwa5cfwgW2JJ
+         Qpzv2CrxM4OWA1xMl5v6x9ZAT8JHpywZh956kQ0drwN6QZwWrVypk4WJl7VdNPz4Fsbz
+         36PzFII9g9OO8wBMlsFZs8ZEWs0jamV6PdSSgH+V+7Win2i8GmZOME0dQnPJ7Lx+znPu
+         W2xA1LM6QwrbXpxjVh3uT8U9Gnq0cp7wrG7x24XLEjek2o1le/Sx9POtb7HldUJEj3qX
+         qlTXrNLhhEHBH2vnSAl1XRKFXcZ/YV5Rkoqn4zmFA1kLv2KGNrsTrTml0Y3+s9Bjhn8g
+         9/Aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=uvrkAGKZQGvWC5JChhq836K5tnydNOjvK/9cRbPFWlo=;
+        b=TeDuMLPnZfxT051S4V2YJJieyhc0aDUfx8QlPrikS2EdHiA8i4L7IrRgyW5aH2VUBU
+         vcuJ0BJZd4YErjgTPCZZ0z6yko+wjqorcoypEackBXcP4vJWBk0vhMwJQa054iov1c9R
+         tLeqCrMQ2jqdTS7FzwcsDBl/el0QK/GYMTWvvPqKPw8RBsAKYNgtbStUKPnbEtDL0NbS
+         3k7b4VohLur/ZQPJHjd8Z7/zyu9PPXc2ZiFuhlHks2Q6ToyH/HLVDGqoUJW3hP0V67Bn
+         MRNmDxBgcKPyGtqsswjNXoL6qx3PO0w4b2QbPqv6dc7Dm5qGpsZJyayWNpNhhmau2WKN
+         RIsA==
+X-Gm-Message-State: AOAM5303XbHZzf0wUHLjr3+6jcCrPHM17p+fNnoS8UiD/rndO9u+d6MC
+        1r2mhDaHfoM4iKAcGAhvn8N4wSVFqJjClw==
+X-Google-Smtp-Source: ABdhPJw8xtFGykx/DIqHJQEvAOlxKflYncItH8OaPW2I/+TfHsi9Gk///CDz2M2QBDU2Y5maAv6qyw==
+X-Received: by 2002:a17:902:7d8d:b029:e6:4061:b767 with SMTP id a13-20020a1709027d8db02900e64061b767mr11644511plm.32.1615817015731;
+        Mon, 15 Mar 2021 07:03:35 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id o62sm12889575pga.43.2021.03.15.07.03.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Mar 2021 07:03:35 -0700 (PDT)
+Message-ID: <604f6937.1c69fb81.8f214.f905@mx.google.com>
+Date:   Mon, 15 Mar 2021 07:03:35 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: renesas-devel-2021-03-15-v5.12-rc3
+X-Kernelci-Report-Type: test
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+Subject: renesas/master baseline: 170 runs,
+ 4 regressions (renesas-devel-2021-03-15-v5.12-rc3)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The current probe() procedure of the RDACM20 and RDACM20 GMSL cameras is
-performed with the embedded MAX9271 serializer's noise immunity
-threshold disabled. Once the camera has been initialized by probing the
-embedded chips, the threshold is enabled and then compensated on the
-deserializer's side by increasing the reverse channel signal amplitude
-once all cameras have bound.
+renesas/master baseline: 170 runs, 4 regressions (renesas-devel-2021-03-15-=
+v5.12-rc3)
 
-The probe routine is thus run without noise immunity activated which
-in noisy environment conditions makes the probe sequence less reliable as
-the chips configuration requires a relatively high amount of i2c
-transactions.
+Regressions Summary
+-------------------
 
-Break chip initialization in two:
-- At probe time only configure the serializer's reverse channel with
-  noise immunity activated, to reduce the number of transactions
-  performed without noise immunity protection enabled
-- Move the chips initialization to the .init() core subdev operation
-  called by the deserializer after all camera have probed and
-  have increased their noise immunity threshold
+platform             | arch  | lab           | compiler | defconfig        =
+   | regressions
+---------------------+-------+---------------+----------+------------------=
+---+------------
+imx8mp-evk           | arm64 | lab-nxp       | gcc-8    | defconfig        =
+   | 1          =
 
-The initialization routine looks like the following:
+qemu_arm-versatilepb | arm   | lab-broonie   | gcc-8    | versatile_defconf=
+ig | 1          =
 
-            MAX9286                  RDACM20/21
+qemu_arm-versatilepb | arm   | lab-cip       | gcc-8    | versatile_defconf=
+ig | 1          =
 
-            probe()
-               |
-               ---------------------> |
-                                      probe() {
-                                         enable_threshold()
-                                      }
-               |<--------------------|
-            v4l2 async bound {
-                compensate_amplitude()
-                call subdev init()
-               |-------------------->|
-                                     init() {
-                                         access camera registers()
-                                    }
-               |<-------------------
-            }
+qemu_arm-versatilepb | arm   | lab-collabora | gcc-8    | versatile_defconf=
+ig | 1          =
 
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/i2c/max9286.c | 19 ++++++++---
- drivers/media/i2c/rdacm20.c | 63 ++++++++++++++++++++++---------------
- drivers/media/i2c/rdacm21.c | 63 ++++++++++++++++++++++---------------
- 3 files changed, 91 insertions(+), 54 deletions(-)
 
-diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-index 9124d5fa6ea3..b6347639901e 100644
---- a/drivers/media/i2c/max9286.c
-+++ b/drivers/media/i2c/max9286.c
-@@ -563,17 +563,28 @@ static int max9286_notify_bound(struct v4l2_async_notifier *notifier,
- 	if (priv->bound_sources != priv->source_mask)
- 		return 0;
- 
-+	/*
-+	 * Initialize all the remote camera. Increase the channel amplitude
-+	 * to compensate for the remote noise immunity threshold.
-+	 */
-+	max9286_reverse_channel_setup(priv, MAX9286_REV_AMP_HIGH);
-+	for_each_source(priv, source) {
-+		ret = v4l2_subdev_call(source->sd, core, init, 0);
-+		if (ret) {
-+			dev_err(&priv->client->dev,
-+				"Failed to initialize camera device %u\n",
-+				index);
-+			return ret;
-+		}
-+	}
-+
- 	/*
- 	 * All enabled sources have probed and enabled their reverse control
- 	 * channels:
--	 *
--	 * - Increase the reverse channel amplitude to compensate for the
--	 *   remote ends high threshold
- 	 * - Verify all configuration links are properly detected
- 	 * - Disable auto-ack as communication on the control channel are now
- 	 *   stable.
- 	 */
--	max9286_reverse_channel_setup(priv, MAX9286_REV_AMP_HIGH);
- 	max9286_check_config_link(priv, priv->source_mask);
- 
- 	/*
-diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
-index 2265ef7c65d4..57bf4d362cad 100644
---- a/drivers/media/i2c/rdacm20.c
-+++ b/drivers/media/i2c/rdacm20.c
-@@ -437,35 +437,12 @@ static int rdacm20_get_fmt(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
--static const struct v4l2_subdev_video_ops rdacm20_video_ops = {
--	.s_stream	= rdacm20_s_stream,
--};
--
--static const struct v4l2_subdev_pad_ops rdacm20_subdev_pad_ops = {
--	.enum_mbus_code = rdacm20_enum_mbus_code,
--	.get_fmt	= rdacm20_get_fmt,
--	.set_fmt	= rdacm20_get_fmt,
--};
--
--static const struct v4l2_subdev_ops rdacm20_subdev_ops = {
--	.video		= &rdacm20_video_ops,
--	.pad		= &rdacm20_subdev_pad_ops,
--};
--
--static int rdacm20_initialize(struct rdacm20_device *dev)
-+static int rdacm20_init(struct v4l2_subdev *sd, unsigned int val)
- {
-+	struct rdacm20_device *dev = sd_to_rdacm20(sd);
- 	unsigned int i;
- 	int ret;
- 
--	/* Verify communication with the MAX9271: ping to wakeup. */
--	dev->serializer.client->addr = MAX9271_DEFAULT_ADDR;
--	max9271_wake_up(&dev->serializer);
--
--	/* Serial link disabled during config as it needs a valid pixel clock. */
--	ret = max9271_set_serial_link(&dev->serializer, false);
--	if (ret)
--		return ret;
--
- 	/*
- 	 *  Ensure that we have a good link configuration before attempting to
- 	 *  identify the device.
-@@ -548,6 +525,42 @@ static int rdacm20_initialize(struct rdacm20_device *dev)
- 
- 	dev_info(dev->dev, "Identified RDACM20 camera module\n");
- 
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_core_ops rdacm20_core_ops = {
-+	.init           = rdacm20_init,
-+};
-+
-+static const struct v4l2_subdev_video_ops rdacm20_video_ops = {
-+	.s_stream	= rdacm20_s_stream,
-+};
-+
-+static const struct v4l2_subdev_pad_ops rdacm20_subdev_pad_ops = {
-+	.enum_mbus_code = rdacm20_enum_mbus_code,
-+	.get_fmt	= rdacm20_get_fmt,
-+	.set_fmt	= rdacm20_get_fmt,
-+};
-+
-+static const struct v4l2_subdev_ops rdacm20_subdev_ops = {
-+	.core		= &rdacm20_core_ops,
-+	.video		= &rdacm20_video_ops,
-+	.pad		= &rdacm20_subdev_pad_ops,
-+};
-+
-+static int rdacm20_initialize(struct rdacm20_device *dev)
-+{
-+	int ret;
-+
-+	/* Verify communication with the MAX9271: ping to wakeup. */
-+	dev->serializer.client->addr = MAX9271_DEFAULT_ADDR;
-+	max9271_wake_up(&dev->serializer);
-+
-+	/* Serial link disabled during config as it needs a valid pixel clock. */
-+	ret = max9271_set_serial_link(&dev->serializer, false);
-+	if (ret)
-+		return ret;
-+
- 	/*
- 	 * Set reverse channel high threshold to increase noise immunity.
- 	 *
-diff --git a/drivers/media/i2c/rdacm21.c b/drivers/media/i2c/rdacm21.c
-index 07cf077d8efd..0fc339d43d98 100644
---- a/drivers/media/i2c/rdacm21.c
-+++ b/drivers/media/i2c/rdacm21.c
-@@ -314,21 +314,6 @@ static int rdacm21_get_fmt(struct v4l2_subdev *sd,
- 	return 0;
- }
- 
--static const struct v4l2_subdev_video_ops rdacm21_video_ops = {
--	.s_stream	= rdacm21_s_stream,
--};
--
--static const struct v4l2_subdev_pad_ops rdacm21_subdev_pad_ops = {
--	.enum_mbus_code = rdacm21_enum_mbus_code,
--	.get_fmt	= rdacm21_get_fmt,
--	.set_fmt	= rdacm21_get_fmt,
--};
--
--static const struct v4l2_subdev_ops rdacm21_subdev_ops = {
--	.video		= &rdacm21_video_ops,
--	.pad		= &rdacm21_subdev_pad_ops,
--};
--
- static int ov10640_initialize(struct rdacm21_device *dev)
- {
- 	u8 val;
-@@ -448,19 +433,11 @@ static int ov490_initialize(struct rdacm21_device *dev)
- 	return 0;
- }
- 
--static int rdacm21_initialize(struct rdacm21_device *dev)
-+static int rdacm21_init(struct v4l2_subdev *sd, unsigned int val)
- {
-+	struct rdacm21_device *dev = sd_to_rdacm21(sd);
- 	int ret;
- 
--	/* Verify communication with the MAX9271: ping to wakeup. */
--	dev->serializer.client->addr = MAX9271_DEFAULT_ADDR;
--	max9271_wake_up(&dev->serializer);
--
--	/* Enable reverse channel and disable the serial link. */
--	ret = max9271_set_serial_link(&dev->serializer, false);
--	if (ret)
--		return ret;
--
- 	/* Configure I2C bus at 105Kbps speed and configure GMSL. */
- 	ret = max9271_configure_i2c(&dev->serializer,
- 				    MAX9271_I2CSLVSH_469NS_234NS |
-@@ -507,6 +484,42 @@ static int rdacm21_initialize(struct rdacm21_device *dev)
- 	if (ret)
- 		return ret;
- 
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_core_ops rdacm21_core_ops = {
-+	.init		= rdacm21_init,
-+};
-+
-+static const struct v4l2_subdev_video_ops rdacm21_video_ops = {
-+	.s_stream	= rdacm21_s_stream,
-+};
-+
-+static const struct v4l2_subdev_pad_ops rdacm21_subdev_pad_ops = {
-+	.enum_mbus_code = rdacm21_enum_mbus_code,
-+	.get_fmt	= rdacm21_get_fmt,
-+	.set_fmt	= rdacm21_get_fmt,
-+};
-+
-+static const struct v4l2_subdev_ops rdacm21_subdev_ops = {
-+	.core		= &rdacm21_core_ops,
-+	.video		= &rdacm21_video_ops,
-+	.pad		= &rdacm21_subdev_pad_ops,
-+};
-+
-+static int rdacm21_initialize(struct rdacm21_device *dev)
-+{
-+	int ret;
-+
-+	/* Verify communication with the MAX9271: ping to wakeup. */
-+	dev->serializer.client->addr = MAX9271_DEFAULT_ADDR;
-+	max9271_wake_up(&dev->serializer);
-+
-+	/* Enable reverse channel and disable the serial link. */
-+	ret = max9271_set_serial_link(&dev->serializer, false);
-+	if (ret)
-+		return ret;
-+
- 	/*
- 	 * Set reverse channel high threshold to increase noise immunity.
- 	 *
--- 
-2.30.0
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2021-03-15-v5.12-rc3/plan/baseline/
 
+  Test:     baseline
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2021-03-15-v5.12-rc3
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      7bd4543a30a76f48903e745f7b9decce1f019ece =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform             | arch  | lab           | compiler | defconfig        =
+   | regressions
+---------------------+-------+---------------+----------+------------------=
+---+------------
+imx8mp-evk           | arm64 | lab-nxp       | gcc-8    | defconfig        =
+   | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/604f34ede70044694caddce9
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-03-15-v5.12-rc3/arm64/defconfig/gcc-8/lab-nxp/baseline-imx8mp-evk.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-03-15-v5.12-rc3/arm64/defconfig/gcc-8/lab-nxp/baseline-imx8mp-evk.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-4-g97706c5d9567/arm64/baseline/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/604f34ede70044694cadd=
+cea
+        new failure (last pass: renesas-devel-2021-03-12-v5.12-rc2) =
+
+ =
+
+
+
+platform             | arch  | lab           | compiler | defconfig        =
+   | regressions
+---------------------+-------+---------------+----------+------------------=
+---+------------
+qemu_arm-versatilepb | arm   | lab-broonie   | gcc-8    | versatile_defconf=
+ig | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/604f324a64f1e6c7daaddcc5
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: versatile_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-03-15-v5.12-rc3/arm/versatile_defconfig/gcc-8/lab-broonie/baseline-qemu=
+_arm-versatilepb.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-03-15-v5.12-rc3/arm/versatile_defconfig/gcc-8/lab-broonie/baseline-qemu=
+_arm-versatilepb.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/604f324a64f1e6c7daadd=
+cc6
+        failing since 117 days (last pass: renesas-devel-2020-11-10-v5.10-r=
+c3, first fail: renesas-devel-2020-11-16-v5.10-rc4) =
+
+ =
+
+
+
+platform             | arch  | lab           | compiler | defconfig        =
+   | regressions
+---------------------+-------+---------------+----------+------------------=
+---+------------
+qemu_arm-versatilepb | arm   | lab-cip       | gcc-8    | versatile_defconf=
+ig | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/604f36df11ba0eae23addcb1
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: versatile_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-03-15-v5.12-rc3/arm/versatile_defconfig/gcc-8/lab-cip/baseline-qemu_arm=
+-versatilepb.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-03-15-v5.12-rc3/arm/versatile_defconfig/gcc-8/lab-cip/baseline-qemu_arm=
+-versatilepb.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/604f36df11ba0eae23add=
+cb2
+        failing since 117 days (last pass: renesas-devel-2020-11-10-v5.10-r=
+c3, first fail: renesas-devel-2020-11-16-v5.10-rc4) =
+
+ =
+
+
+
+platform             | arch  | lab           | compiler | defconfig        =
+   | regressions
+---------------------+-------+---------------+----------+------------------=
+---+------------
+qemu_arm-versatilepb | arm   | lab-collabora | gcc-8    | versatile_defconf=
+ig | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/604f31fe91f0ef8f22addcbe
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: versatile_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-03-15-v5.12-rc3/arm/versatile_defconfig/gcc-8/lab-collabora/baseline-qe=
+mu_arm-versatilepb.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-03-15-v5.12-rc3/arm/versatile_defconfig/gcc-8/lab-collabora/baseline-qe=
+mu_arm-versatilepb.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-4-g97706c5d9567/armel/baseline/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/604f31fe91f0ef8f22add=
+cbf
+        failing since 117 days (last pass: renesas-devel-2020-11-10-v5.10-r=
+c3, first fail: renesas-devel-2020-11-16-v5.10-rc4) =
+
+ =20
