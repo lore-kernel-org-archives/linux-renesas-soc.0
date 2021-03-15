@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9831CC433E0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFA6C4332B
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 13:16:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 400E864EF5
+	by mail.kernel.org (Postfix) with ESMTP id A3C0D64EFE
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Mar 2021 13:16:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230422AbhCONP6 (ORCPT
+        id S230409AbhCONQB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Mar 2021 09:15:58 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:44413 "EHLO
+        Mon, 15 Mar 2021 09:16:01 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:35041 "EHLO
         relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230157AbhCONPd (ORCPT
+        with ESMTP id S230486AbhCONPl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Mar 2021 09:15:33 -0400
+        Mon, 15 Mar 2021 09:15:41 -0400
 X-Originating-IP: 79.22.58.175
 Received: from uno.homenet.telecomitalia.it (host-79-22-58-175.retail.telecomitalia.it [79.22.58.175])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 3A081FF810;
-        Mon, 15 Mar 2021 13:15:27 +0000 (UTC)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id CF5C9FF810;
+        Mon, 15 Mar 2021 13:15:36 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     kieran.bingham+renesas@ideasonboard.com,
         laurent.pinchart+renesas@ideasonboard.com,
@@ -33,11 +33,10 @@ To:     kieran.bingham+renesas@ideasonboard.com,
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v2 13/18] media: i2c: max9286: Rename reverse_channel_mv
-Date:   Mon, 15 Mar 2021 14:15:07 +0100
-Message-Id: <20210315131512.133720-14-jacopo+renesas@jmondi.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 16/18] media: v4l2-subdev: De-deprecate init() subdev op
+Date:   Mon, 15 Mar 2021 14:15:10 +0100
+Message-Id: <20210315131512.133720-17-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210315131512.133720-1-jacopo+renesas@jmondi.org>
 References: <20210315131512.133720-1-jacopo+renesas@jmondi.org>
@@ -47,61 +46,80 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Rename the reverse_channel_mv variable to init_rev_chan_mv as
-the next patch will cache the reverse channel amplitude in
-a new driver variable.
+The init() subdev core operation is deemed to be deprecated for new
+subdevice drivers. However it could prove useful for complex
+architectures to defer operation that require access to the
+communication bus if said bus is not available (or fully configured)
+at the time when the subdevice probe() function is run.
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+As an example, the GMSL architecture requires the GMSL configuration
+link to be configured on the host side after the remote subdevice
+has completed its probe function. After the configuration on the host
+side has been performed, the subdevice registers can be accessed through
+the communication bus.
+
+In particular:
+
+	HOST			REMOTE
+
+	probe()
+	   |
+	   ---------------------> |
+				  probe() {
+				     bus config()
+				  }
+	   |<--------------------|
+	v4l2 async bound {
+	    bus config()
+	    call subdev init()
+	   |-------------------->|
+				 init() {
+				     access register on the bus()
+				}
+	   |<-------------------
+	}
+
+In the GMSL use case the bus configuration requires the enablement of the
+noise immunity threshold on the remote side which ensures reliability
+of communications in electrically noisy environments. After the subdevice
+has enabled the threshold at the end of its probe() sequence the host
+side shall compensate it with an higher signal amplitude. Once this
+sequence has completed the bus can be accessed with noise protection
+enabled and all the operations that require a considerable number of
+transactions on the bus (such as the image sensor configuration
+sequence) are run in the subdevice init() operation implementation.
+
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/media/i2c/max9286.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ include/media/v4l2-subdev.h | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-index 1d9951215868..82ec05e96cb7 100644
---- a/drivers/media/i2c/max9286.c
-+++ b/drivers/media/i2c/max9286.c
-@@ -163,7 +163,8 @@ struct max9286_priv {
- 	unsigned int mux_channel;
- 	bool mux_open;
- 
--	u32 reverse_channel_mv;
-+	/* The initial reverse control channel amplitude. */
-+	u32 init_rev_chan_mv;
- 
- 	struct v4l2_ctrl_handler ctrls;
- 	struct v4l2_ctrl *pixelrate;
-@@ -563,7 +564,7 @@ static int max9286_notify_bound(struct v4l2_async_notifier *notifier,
- 	 * - Disable auto-ack as communication on the control channel are now
- 	 *   stable.
- 	 */
--	if (priv->reverse_channel_mv < 170)
-+	if (priv->init_rev_chan_mv < 170)
- 		max9286_reverse_channel_setup(priv, 170);
- 	max9286_check_config_link(priv, priv->source_mask);
- 
-@@ -971,7 +972,7 @@ static int max9286_setup(struct max9286_priv *priv)
- 	 * only. This should be disabled after the mux is initialised.
- 	 */
- 	max9286_configure_i2c(priv, true);
--	max9286_reverse_channel_setup(priv, priv->reverse_channel_mv);
-+	max9286_reverse_channel_setup(priv, priv->init_rev_chan_mv);
- 
- 	/*
- 	 * Enable GMSL links, mask unused ones and autodetect link
-@@ -1236,9 +1237,9 @@ static int max9286_parse_dt(struct max9286_priv *priv)
- 	if (of_property_read_u32(dev->of_node,
- 				 "maxim,reverse-channel-microvolt",
- 				 &reverse_channel_microvolt))
--		priv->reverse_channel_mv = 170;
-+		priv->init_rev_chan_mv = 170;
- 	else
--		priv->reverse_channel_mv = reverse_channel_microvolt / 1000U;
-+		priv->init_rev_chan_mv = reverse_channel_microvolt / 1000U;
- 
- 	priv->route_mask = priv->source_mask;
- 
+diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+index d0e9a5bdb08b..3068d9940669 100644
+--- a/include/media/v4l2-subdev.h
++++ b/include/media/v4l2-subdev.h
+@@ -148,9 +148,18 @@ struct v4l2_subdev_io_pin_config {
+  *	each pin being configured.  This function could be called at times
+  *	other than just subdevice initialization.
+  *
+- * @init: initialize the sensor registers to some sort of reasonable default
+- *	values. Do not use for new drivers and should be removed in existing
+- *	drivers.
++ * @init: initialize the subdevice registers to some sort of reasonable default
++ *	values. Do not use for new drivers (and should be removed in existing
++ *	ones) for regular architectures where the image sensor is connected to
++ *	the host receiver. For more complex architectures where the subdevice
++ *	initialization should be deferred to the completion of the probe
++ *	sequence of some intermediate component, or the communication bus
++ *	requires configurations on the host side that depend on the completion
++ *	of the probe sequence of the remote subdevices, the usage of this
++ *	operation could be considered to allow the devices along the pipeline to
++ *	probe and register in the media graph and to defer any operation that
++ *	require actual access to the communication bus to their init() function
++ *	implementation.
+  *
+  * @load_fw: load firmware.
+  *
 -- 
 2.30.0
 
