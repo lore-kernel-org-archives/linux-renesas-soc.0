@@ -2,111 +2,114 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8820C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Mar 2021 09:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19028C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Mar 2021 09:17:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B07164F3C
+	by mail.kernel.org (Postfix) with ESMTP id AE4ED64F4D
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Mar 2021 09:17:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229535AbhCQJQj (ORCPT
+        id S229804AbhCQJQi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 17 Mar 2021 05:16:39 -0400
-Received: from www.zeus03.de ([194.117.254.33]:58802 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229830AbhCQJQ1 (ORCPT
+        Wed, 17 Mar 2021 05:16:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43466 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229967AbhCQJQR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Mar 2021 05:16:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=U8rFoutVvayULa
-        tQvOEqoJYD7LLyNBAp/kOUPoKLcCY=; b=lQ2d/ERwx4k+Yz0dK2VrfEJ4F0Upcp
-        zmIORAaSg52svtPl0+gHc9AzsOlDuuOayNv5cu3rPcFYwPAQHa40fsI+55OzqLGH
-        4PRyqOqIkpBnDzW/+9+fh44nfAStFHhg9NNMG2xkjfSoAfQe3+WflX5r+rNNSGhV
-        Weegsw/tvHaG8=
-Received: (qmail 2082629 invoked from network); 17 Mar 2021 10:16:26 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Mar 2021 10:16:26 +0100
-X-UD-Smtp-Session: l3s3148p1@mj3177e91JEgARa4RUHsAfjwOo+4/zku
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-mmc@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH v3 2/3] mmc: renesas_sdhi: break SCC reset into own function
-Date:   Wed, 17 Mar 2021 10:16:21 +0100
-Message-Id: <20210317091622.31890-3-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20210317091622.31890-1-wsa+renesas@sang-engineering.com>
-References: <20210317091622.31890-1-wsa+renesas@sang-engineering.com>
+        Wed, 17 Mar 2021 05:16:17 -0400
+Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02237C06175F
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Mar 2021 02:16:17 -0700 (PDT)
+Received: by mail-lf1-x130.google.com with SMTP id t18so1892119lfl.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Mar 2021 02:16:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=X4serOffhNvm2pn4rGEBM7dU/qYI9fXQKdGs5eoe7lU=;
+        b=mf7AyfcV3ENPr1mcx0NH8GgJCYZvVpz17lPU6/SdqBOcNLobzyLe3gjbgg90f9ddUH
+         qD2RwSLmTUG0/vByh/mcio2c9FvWrjKEsIcs6Zu/aNhiAtALx/QR+/n6BunXCbwjmdH3
+         8yqEi/BHQlqrFjlEMgGGH3ehlRAIcHGkzPIyZ+MqnQDVb/odNPmEW7ksNCkx4aTzKUPn
+         +rvNfMfQBDx5WmhkZJYYz2oGp0pWiDfD50qexFOzstlPG7eooMuY1NWhcqdamVA1TwZS
+         Sxn0pp+38j3p2U3WJN3jwQqRphIdF5Uq3jZDzXZLjL9ID79zSNNihS8OR5E8pwJt4x7g
+         4v1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=X4serOffhNvm2pn4rGEBM7dU/qYI9fXQKdGs5eoe7lU=;
+        b=MB7okoczL1Nt2Q+uN8THQKHM9EHOdk5HzwXoL2WBF5m41kaz2YlHxa9aKBFJgGl3XE
+         jiEX5HzuCedSFxBW34BukffCIaAW5Q9Vi9POk7C3NVBrWBa4AmuqIUh3/87fP1rAXhjg
+         zv3VQ5H6rbbsY9ZfjDg8U0Y4pvLq8KEua6hTmluAqmEyLIhshu3MsLtrawFwk3inXASH
+         +wVVFtXSGR5XXa+KfJexbKwCadu803AwNIkD26l5isQ0Fz3WlxOUXmjhno/WcLbASGPk
+         2/jr4xL75hVFu3gjhDpdjzOeJbBwKU4v7vfjZLaY6zn+Si1RbXyz5hPlnUiEM6gDyQ31
+         IWZA==
+X-Gm-Message-State: AOAM532k/LdF5nVMSTm6RG6FvOSGwZqQCNMPqeIUgKNrsBTaiB5I7Lte
+        4RqITIY3hEo5I33EHx2iifM/2Q==
+X-Google-Smtp-Source: ABdhPJzC+odnmrwNz3bHVgVaM0t/WP7hYoQAR/FOphuvAwRv3huL5i9CE+q9N440mINULn1Jv+ZlVw==
+X-Received: by 2002:ac2:491d:: with SMTP id n29mr1873655lfi.541.1615972575571;
+        Wed, 17 Mar 2021 02:16:15 -0700 (PDT)
+Received: from localhost (h-209-203.A463.priv.bahnhof.se. [155.4.209.203])
+        by smtp.gmail.com with ESMTPSA id c4sm110385ljf.101.2021.03.17.02.16.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Mar 2021 02:16:15 -0700 (PDT)
+Date:   Wed, 17 Mar 2021 10:16:14 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] media: rcar-vin: Enable support for r8a77961
+Message-ID: <YFHI3szl9yu3yU6Q@oden.dyn.berto.se>
+References: <20210312130543.1744180-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210312130543.1744180-1-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas_sdhi_reset used to mainly reset the SCC but is now doing more
-and even more will be added. So, factor out SCC reset to have a clear
-distinction when we want to reset either SCC or SDHI+SCC.
+Hello,
 
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/mmc/host/renesas_sdhi_core.c | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+On 2021-03-12 14:05:43 +0100, Niklas Söderlund wrote:
+> Enable support for M3-W+ (r8a77961).
+> 
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
-index 09a5e0dafbef..db753829eaf6 100644
---- a/drivers/mmc/host/renesas_sdhi_core.c
-+++ b/drivers/mmc/host/renesas_sdhi_core.c
-@@ -557,21 +557,25 @@ static int renesas_sdhi_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_io
- 	return 0;
- }
- 
-+static void renesas_sdhi_scc_reset(struct tmio_mmc_host *host, struct renesas_sdhi *priv)
-+{
-+	renesas_sdhi_disable_scc(host->mmc);
-+	renesas_sdhi_reset_hs400_mode(host, priv);
-+	priv->needs_adjust_hs400 = false;
-+
-+	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL,
-+		       ~SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &
-+		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
-+}
-+
- /* only populated for TMIO_MMC_MIN_RCAR2 */
- static void renesas_sdhi_reset(struct tmio_mmc_host *host)
- {
- 	struct renesas_sdhi *priv = host_to_priv(host);
- 	u16 val;
- 
--	if (priv->scc_ctl) {
--		renesas_sdhi_disable_scc(host->mmc);
--		renesas_sdhi_reset_hs400_mode(host, priv);
--		priv->needs_adjust_hs400 = false;
--
--		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL,
--			       ~SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &
--			       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
--	}
-+	if (priv->scc_ctl)
-+		renesas_sdhi_scc_reset(host, priv);
- 
- 	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, TMIO_MASK_ALL_RCAR2);
- 
-@@ -691,7 +695,7 @@ static int renesas_sdhi_execute_tuning(struct mmc_host *mmc, u32 opcode)
- 
- 	ret = renesas_sdhi_select_tuning(host);
- 	if (ret < 0)
--		renesas_sdhi_reset(host);
-+		renesas_sdhi_scc_reset(host, priv);
- 	return ret;
- }
- 
+I have off-band received a tag for this patch,
+
+Tested-by: LUU HOAI <hoai.luu.ub@renesas.com>
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-core.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+> index cb3025992817d625..33957cc9118ca79e 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-core.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-core.c
+> @@ -1362,6 +1362,10 @@ static const struct of_device_id rvin_of_id_table[] = {
+>  		.compatible = "renesas,vin-r8a7796",
+>  		.data = &rcar_info_r8a7796,
+>  	},
+> +	{
+> +		.compatible = "renesas,vin-r8a77961",
+> +		.data = &rcar_info_r8a7796,
+> +	},
+>  	{
+>  		.compatible = "renesas,vin-r8a77965",
+>  		.data = &rcar_info_r8a77965,
+> -- 
+> 2.30.1
+> 
+
 -- 
-2.30.0
-
+Regards,
+Niklas Söderlund
