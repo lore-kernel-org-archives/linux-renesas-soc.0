@@ -2,126 +2,111 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAEA1C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Mar 2021 09:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8820C433E0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Mar 2021 09:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E87964F2B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Mar 2021 09:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B07164F3C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 17 Mar 2021 09:17:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229673AbhCQJEO (ORCPT
+        id S229535AbhCQJQj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 17 Mar 2021 05:04:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40746 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229705AbhCQJD6 (ORCPT
+        Wed, 17 Mar 2021 05:16:39 -0400
+Received: from www.zeus03.de ([194.117.254.33]:58802 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229830AbhCQJQ1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 17 Mar 2021 05:03:58 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00777C06174A
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Mar 2021 02:03:57 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id m22so1829298lfg.5
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 17 Mar 2021 02:03:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=LSG6SWxWJuHPcTGZsM8iUu3d86J+/lNwY6mDj7224WA=;
-        b=UGKLpSXdDmoB+C4NuBT8KY4xtf/f28WMZIQHnb5lsZlIP5bX+B0ZCW3guIxXfIUPTR
-         mLPLkFV8Ea+Z0pM6G0nf/gC5Td0xkOS52ArLG/gfraw8twsUSc2o4w+7Tyaqh4ryuYaC
-         RaggmExdqrKCsIzA+ymfQcyKbeDo7ykq1FizuQk4K0j8HPM3k1nOpXVZx0nkVnyyoTGQ
-         D/dmO0xFB3tXmETETSKdDCUaDtTmB7K0pl2X42EGCKzhKia6eReXDBQnouuK9U/8CtpC
-         ULzxjfFaI2n8hLV+ua7de19XM0PB60iiWyYhhR2kf3Z7c7A9pvwJl8VITeAy56Vhectc
-         NO6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=LSG6SWxWJuHPcTGZsM8iUu3d86J+/lNwY6mDj7224WA=;
-        b=pzH6GQEqFx6pbPX3rycZ23uV0hu9t9Fisak4+Y2DLxoOH93c14s9vTE9km362Wtwv2
-         M3Lacz5eh0B9Xrg0CYRkzJBcmErT6YmjlmmOSw2KMzpQn3I7SyjZSSQ6bTB0tKenQTVM
-         vS49zNvIfAkNwghAWSc8u6fyueYEi1WbsNoS/TvoPNTUulgrHnV+9kOFwtxVuwHa5YM5
-         cXEGc8AMRrJ3BpW1zrFYaN8dPjeho+Zu7i7DBkjApTF6gCZtxOmDRQG20hQBgEkWJR/a
-         P+EhfjzFfGPhrahMSkQqyU9huKFhpLR/dzp3sNaJ4BB8VmZo1GbmYunmqdO2tLSPKoU9
-         dIDw==
-X-Gm-Message-State: AOAM531m4nlQkd/KD/LH2VjB91CDxfj604dihe7JhidMZyhFMFnGkEz8
-        bCNf4/VixmSNIhCU6b7+40nkHQ==
-X-Google-Smtp-Source: ABdhPJz+AxefPj8WNgBe0rDOynqt7C842Pdth59qNgbPAVbqkKdtUk+HhyBcioxs9E9ap+QPhVvcKg==
-X-Received: by 2002:a19:81d0:: with SMTP id c199mr1749394lfd.62.1615971836512;
-        Wed, 17 Mar 2021 02:03:56 -0700 (PDT)
-Received: from localhost (h-209-203.A463.priv.bahnhof.se. [155.4.209.203])
-        by smtp.gmail.com with ESMTPSA id k6sm3430408ljb.110.2021.03.17.02.03.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Mar 2021 02:03:55 -0700 (PDT)
-Date:   Wed, 17 Mar 2021 10:03:53 +0100
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Wed, 17 Mar 2021 05:16:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=U8rFoutVvayULa
+        tQvOEqoJYD7LLyNBAp/kOUPoKLcCY=; b=lQ2d/ERwx4k+Yz0dK2VrfEJ4F0Upcp
+        zmIORAaSg52svtPl0+gHc9AzsOlDuuOayNv5cu3rPcFYwPAQHa40fsI+55OzqLGH
+        4PRyqOqIkpBnDzW/+9+fh44nfAStFHhg9NNMG2xkjfSoAfQe3+WflX5r+rNNSGhV
+        Weegsw/tvHaG8=
+Received: (qmail 2082629 invoked from network); 17 Mar 2021 10:16:26 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 17 Mar 2021 10:16:26 +0100
+X-UD-Smtp-Session: l3s3148p1@mj3177e91JEgARa4RUHsAfjwOo+4/zku
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-mmc@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Hoang Vo <hoang.vo.eb@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/3] arm64: dts: renesas: falcon: Restructuring
-Message-ID: <YFHF+ell2AsMNj61@oden.dyn.berto.se>
-References: <20210316154705.2433528-1-geert+renesas@glider.be>
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH v3 2/3] mmc: renesas_sdhi: break SCC reset into own function
+Date:   Wed, 17 Mar 2021 10:16:21 +0100
+Message-Id: <20210317091622.31890-3-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20210317091622.31890-1-wsa+renesas@sang-engineering.com>
+References: <20210317091622.31890-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210316154705.2433528-1-geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+renesas_sdhi_reset used to mainly reset the SCC but is now doing more
+and even more will be added. So, factor out SCC reset to have a clear
+distinction when we want to reset either SCC or SDHI+SCC.
 
-Thanks for your work.
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/renesas_sdhi_core.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-On 2021-03-16 16:47:02 +0100, Geert Uytterhoeven wrote:
-> 	Hi all,
-> 
-> This patch series restructures the devices nodes in the Renesas Falcon
-> DTS board stack to better match the actual board stack structure.
-> The DTB generated after this series is the same as before, according to
-> scripts/dtc/dtx_diff.
-> 
-> I plan to queue this in renesas-devel for v5.13.
-> 
-> Geert Uytterhoeven (3):
->   arm64: dts: renesas: falcon: Move console config to CPU board DTS
->   arm64: dts: renesas: falcon: Move watchdog config to CPU board DTS
->   arm64: dts: renesas: falcon: Move AVB0 to main DTS
-
-These looks good to me,
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> 
->  .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 47 +++++--------------
->  .../boot/dts/renesas/r8a779a0-falcon.dts      | 39 ++++++++++++---
->  2 files changed, 46 insertions(+), 40 deletions(-)
-> 
-> -- 
-> 2.25.1
-> 
-> Gr{oetje,eeting}s,
-> 
-> 						Geert
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
-> 							    -- Linus Torvalds
-
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 09a5e0dafbef..db753829eaf6 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -557,21 +557,25 @@ static int renesas_sdhi_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_io
+ 	return 0;
+ }
+ 
++static void renesas_sdhi_scc_reset(struct tmio_mmc_host *host, struct renesas_sdhi *priv)
++{
++	renesas_sdhi_disable_scc(host->mmc);
++	renesas_sdhi_reset_hs400_mode(host, priv);
++	priv->needs_adjust_hs400 = false;
++
++	sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL,
++		       ~SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &
++		       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
++}
++
+ /* only populated for TMIO_MMC_MIN_RCAR2 */
+ static void renesas_sdhi_reset(struct tmio_mmc_host *host)
+ {
+ 	struct renesas_sdhi *priv = host_to_priv(host);
+ 	u16 val;
+ 
+-	if (priv->scc_ctl) {
+-		renesas_sdhi_disable_scc(host->mmc);
+-		renesas_sdhi_reset_hs400_mode(host, priv);
+-		priv->needs_adjust_hs400 = false;
+-
+-		sd_scc_write32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL,
+-			       ~SH_MOBILE_SDHI_SCC_RVSCNTL_RVSEN &
+-			       sd_scc_read32(host, priv, SH_MOBILE_SDHI_SCC_RVSCNTL));
+-	}
++	if (priv->scc_ctl)
++		renesas_sdhi_scc_reset(host, priv);
+ 
+ 	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, TMIO_MASK_ALL_RCAR2);
+ 
+@@ -691,7 +695,7 @@ static int renesas_sdhi_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 
+ 	ret = renesas_sdhi_select_tuning(host);
+ 	if (ret < 0)
+-		renesas_sdhi_reset(host);
++		renesas_sdhi_scc_reset(host, priv);
+ 	return ret;
+ }
+ 
 -- 
-Regards,
-Niklas Söderlund
+2.30.0
+
