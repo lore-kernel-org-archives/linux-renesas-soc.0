@@ -4,28 +4,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02122C433DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 237BBC433E3
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Mar 2021 16:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B254161986
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Mar 2021 16:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 046DC6199A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Mar 2021 16:43:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231136AbhCSQms (ORCPT
+        id S230361AbhCSQmv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 19 Mar 2021 12:42:48 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:36899 "EHLO
+        Fri, 19 Mar 2021 12:42:51 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:41879 "EHLO
         relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230253AbhCSQmR (ORCPT
+        with ESMTP id S230391AbhCSQm0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Mar 2021 12:42:17 -0400
+        Fri, 19 Mar 2021 12:42:26 -0400
 X-Originating-IP: 5.92.35.220
 Received: from uno.localdomain (mob-5-92-35-220.net.vodafone.it [5.92.35.220])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 4DCF9C0007;
-        Fri, 19 Mar 2021 16:42:13 +0000 (UTC)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 7C98EC0007;
+        Fri, 19 Mar 2021 16:42:19 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     kieran.bingham+renesas@ideasonboard.com,
         laurent.pinchart+renesas@ideasonboard.com,
@@ -33,10 +33,11 @@ To:     kieran.bingham+renesas@ideasonboard.com,
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 14/19] media: i2c: rdacm20: Enable noise immunity
-Date:   Fri, 19 Mar 2021 17:41:43 +0100
-Message-Id: <20210319164148.199192-15-jacopo+renesas@jmondi.org>
+        linux-kernel@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v3 16/19] media: i2c: rdacm20: Replace goto with a loop
+Date:   Fri, 19 Mar 2021 17:41:45 +0100
+Message-Id: <20210319164148.199192-17-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.30.0
 In-Reply-To: <20210319164148.199192-1-jacopo+renesas@jmondi.org>
 References: <20210319164148.199192-1-jacopo+renesas@jmondi.org>
@@ -46,48 +47,77 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enable the noise immunity threshold at the end of the rdacm20
-initialization routine.
+During the camera module initialization the image sensor PID is read to
+verify it can correctly be identified. The current implementation is
+rather confused and uses a loop implemented with a label and a goto.
 
-The rdacm20 camera module has been so far tested with a startup
-delay that allowed the embedded MCU to program the serializer. If
-the initialization routine is run before the MCU programs the
-serializer and the image sensor and their addresses gets changed
-by the rdacm20 driver it is required to manually enable the noise
-immunity threshold to make the communication on the control channel
-more reliable.
+Replace it with a more compact for() loop.
+
+No functional changes intended.
 
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/media/i2c/rdacm20.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ drivers/media/i2c/rdacm20.c | 29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
-index 2881e752efbe..554fd3b3ec3d 100644
+index 7bdcfafa6c10..760705dd2918 100644
 --- a/drivers/media/i2c/rdacm20.c
 +++ b/drivers/media/i2c/rdacm20.c
-@@ -518,7 +518,19 @@ static int rdacm20_init(struct v4l2_subdev *sd, unsigned int val)
+@@ -59,6 +59,8 @@
+  */
+ #define OV10635_PIXEL_RATE		(44000000)
  
- 	dev_info(dev->dev, "Identified MAX9271 + OV10635 device\n");
++#define OV10635_PID_TIMEOUT		3
++
+ static const struct ov10635_reg {
+ 	u16	reg;
+ 	u8	val;
+@@ -438,7 +440,7 @@ static int rdacm20_get_fmt(struct v4l2_subdev *sd,
+ static int rdacm20_init(struct v4l2_subdev *sd, unsigned int val)
+ {
+ 	struct rdacm20_device *dev = sd_to_rdacm20(sd);
+-	unsigned int retry = 3;
++	unsigned int i;
+ 	int ret;
  
--	return 0;
-+	/*
-+	 * Set reverse channel high threshold to increase noise immunity.
-+	 *
-+	 * This should be compensated by increasing the reverse channel
-+	 * amplitude on the remote deserializer side.
-+	 *
-+	 * TODO Inspect the embedded MCU programming sequence to make sure
-+	 * there are no conflicts with the configuration applied here.
-+	 *
-+	 * TODO Clarify the embedded MCU startup delay to avoid write
-+	 * collisions on the I2C bus.
-+	 */
-+	return max9271_set_high_threshold(&dev->serializer, true);
- }
+ 	/*
+@@ -478,23 +480,18 @@ static int rdacm20_init(struct v4l2_subdev *sd, unsigned int val)
+ 		return ret;
+ 	usleep_range(10000, 15000);
  
- static const struct v4l2_subdev_core_ops rdacm20_core_ops = {
+-again:
+-	ret = ov10635_read16(dev, OV10635_PID);
+-	if (ret < 0) {
+-		if (retry--)
+-			goto again;
++	for (i = 0; i < OV10635_PID_TIMEOUT; ++i) {
++		ret = ov10635_read16(dev, OV10635_PID);
++		if (ret == OV10635_VERSION)
++			break;
++		else if (ret >= 0)
++			/* Sometimes we get a successful read but a wrong ID. */
++			dev_dbg(dev->dev, "OV10635 ID mismatch (%d)\n", ret);
+ 
+-		dev_err(dev->dev, "OV10635 ID read failed (%d)\n",
+-			ret);
+-		return -ENXIO;
++		usleep_range(1000, 2000);
+ 	}
+-
+-	if (ret != OV10635_VERSION) {
+-		if (retry--)
+-			goto again;
+-
+-		dev_err(dev->dev, "OV10635 ID mismatch (0x%04x)\n",
+-			ret);
++	if (i == OV10635_PID_TIMEOUT) {
++		dev_err(dev->dev, "OV10635 ID read failed (%d)\n", ret);
+ 		return -ENXIO;
+ 	}
+ 
 -- 
 2.30.0
 
