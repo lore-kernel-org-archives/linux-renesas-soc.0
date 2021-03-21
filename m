@@ -2,108 +2,101 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC84DC433E5
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 21 Mar 2021 08:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C82C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 21 Mar 2021 12:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 861446195D
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 21 Mar 2021 08:35:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E05CD61941
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 21 Mar 2021 12:12:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230047AbhCUH7I (ORCPT
+        id S229870AbhCUMMI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 21 Mar 2021 03:59:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50744 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229996AbhCUH6i (ORCPT
+        Sun, 21 Mar 2021 08:12:08 -0400
+Received: from lists.levonline.com ([217.70.33.37]:46228 "EHLO
+        lists.levonline.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229894AbhCUMMG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 21 Mar 2021 03:58:38 -0400
-Received: from mail-qk1-x72b.google.com (mail-qk1-x72b.google.com [IPv6:2607:f8b0:4864:20::72b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B4A7C061574;
-        Sun, 21 Mar 2021 00:58:38 -0700 (PDT)
-Received: by mail-qk1-x72b.google.com with SMTP id y18so7514470qky.11;
-        Sun, 21 Mar 2021 00:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=w/FodDC12fPiOO8KW+LQzpBz2k4WggnFhqLfSXUOk7I=;
-        b=H0Tl3FAbKGNNdQY1nn7qXJAoUpOyIY1laxGMwhds2cDvmv77zy8ROW8tUBT/43pmWQ
-         JoE6R9uodvdFZuJpRRPcI7hAVNwpwhX1gjPkUuBm77PQXlqmqRuqBeg8SSxlwIwq73fv
-         tyutaF5pxdVXAA/8zpZmQXPMRI8jhs95LlW/rNVA6lfo6l74NpRBuZMwEqe3VkNcOM+i
-         8MaHIB5BBEEHBW2o+4bz+24yVyED2d5PPp66ZoADjtYOyesD1gzFwztPs3Q5y5JQX6Mh
-         wymI/gthKne2if6WGNTfWtpp/b8hq7ccDSt6RQuIuVQHi1vhUWN5hBUovoP5ywerYNEV
-         ghWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=w/FodDC12fPiOO8KW+LQzpBz2k4WggnFhqLfSXUOk7I=;
-        b=biRay4HkuvwE67msl29/E6rdC7BY3idaHbXamUx8QontcpWLvrAqBgFqkfiF4y2bDT
-         LrNxwzdyXjzH4KARO7j7XSwNMRnO3uVF23RYKQ4QluYLM30tMj7S3jTdCshEpOo7ZsPM
-         h7uYMiUp8ClpinU4r9o9/uMGnH4vtc/12K8sLJtqntz5okR8e5PWKcnV5fodOkaK+NeP
-         7FZW1BxW6VcgtWy8BHpn4dHKCD5CfdqPxLXGeVO6PdvXINc4KPocxwjXN7eRtuDJr8zK
-         00oKmyUzjUmxEE6B8RWm89U93j0agizqet9IKAEkNflsfqD/vKO7eEVu+TEWJWMiFBFg
-         xIAw==
-X-Gm-Message-State: AOAM5330bozn+e/OJzzDEOWpwjydhW8HdtkY5BsHEqlAfabAK0iYTeJM
-        NWsjUEJZoFbq4ed+jLSc3O0=
-X-Google-Smtp-Source: ABdhPJxNLUvkzFIE3YzBjX0C4EvNEPKtpihnwmObFP1TJ19QdzliFLuYNnnzcn50yB9+IqaPAxZBfA==
-X-Received: by 2002:ae9:f81a:: with SMTP id x26mr5608819qkh.497.1616313517322;
-        Sun, 21 Mar 2021 00:58:37 -0700 (PDT)
-Received: from Slackware.localdomain ([156.146.55.204])
-        by smtp.gmail.com with ESMTPSA id d23sm8298626qka.125.2021.03.21.00.58.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Mar 2021 00:58:36 -0700 (PDT)
-From:   Bhaskar Chowdhury <unixbhaskar@gmail.com>
-To:     renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     rdunlap@infradead.org, Bhaskar Chowdhury <unixbhaskar@gmail.com>
-Subject: [PATCH] clk: renesas: Couple of spelling fixes
-Date:   Sun, 21 Mar 2021 13:28:13 +0530
-Message-Id: <20210321075813.9471-1-unixbhaskar@gmail.com>
-X-Mailer: git-send-email 2.30.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sun, 21 Mar 2021 08:12:06 -0400
+X-Greylist: delayed 330 seconds by postgrey-1.27 at vger.kernel.org; Sun, 21 Mar 2021 08:12:06 EDT
+Received: from exc-halon1.levonline.com (exc-halon1.levonline.com [217.70.32.123])
+        by lists.levonline.com (Postfix) with ESMTP id A272C3A12E1
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 21 Mar 2021 13:12:03 +0100 (CET)
+X-SA-score: -1
+X-Halon-ID: a570bc42-8a3e-11eb-a51d-0050568168d4
+Received: from ormen1.djurnet.levonline.com (ormen1.djurnet.levonline.com [192.168.17.31])
+        by exc-halon1.levonline.com (Halon) with ESMTPS
+        id a570bc42-8a3e-11eb-a51d-0050568168d4;
+        Sun, 21 Mar 2021 13:12:03 +0100 (CET)
+Received: from [127.0.0.1] (l193216.ppp.asahi-net.or.jp [218.219.193.216])
+        (authenticated bits=0)
+        by ormen1.djurnet.levonline.com (8.13.8/8.13.8) with ESMTP id 12LCC1Qi028107;
+        Sun, 21 Mar 2021 13:12:02 +0100
+X-Origin-Levonline: b0359001
+From:   Magnus Damm <damm@opensource.se>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Magnus Damm <damm@opensource.se>, geert+renesas@glider.be
+Date:   Sun, 21 Mar 2021 20:38:35 +0900
+Message-Id: <161632671592.9191.18170615656272399147.sendpatchset@octo>
+Subject: [PATCH 0/2] sh73a0 CMT1 test setup using UIO
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+sh73a0 CMT test setup using UIO
 
-s/suposed/supposed/
-s/concurent/concurrent/
+[PATCH 1/2] sh73a0 CMT1 device exposed via UIO
+[PATCH 2/2] UIO CMT test program
 
-Signed-off-by: Bhaskar Chowdhury <unixbhaskar@gmail.com>
+These two patches contain kernel and user space modificatons to allow some
+basic testing from user space of the CMT1 device included on the sh73a0 SoC.
+
+Similar code for other target platforms have been posted earlier as:
+[PATCH 0/2] r8a77961 CMT test setup using UIO
+[PATCH] r8a77965 CMT test setup using UIO
+
+This time the SoC-specific part has been adjusted to fit sh73a0 and the
+user space test program has been extended to wait for and ack multiple IRQs.
+
+For the kernel, simply apply the kernel patch (including a few debug printouts)
+and make sure to extend your kernel config with CONFIG_UIO_PDRV_GENIRQ=y.
+
+The following log shows how to execute the test program on the target:
+
+# ./uio-cmt-test
+found matching UIO device at /sys/class/uio/uio0/
+[   39.717894] irqcontrol 1
+[   41.718729] irqhandler 33
+IRQ nr 0
+[   41.721397] irqcontrol 1
+[   43.718968] irqhandler 33
+IRQ nr 1
+[   43.721614] irqcontrol 1
+[   45.719211] irqhandler 33
+IRQ nr 2
+[   45.721854] irqcontrol 1
+/ #
+
+Test program output and /proc/interrupts (with or without kernel debug output)
+may be used to verify that several interrupts have been delivered:
+
+/ # cat /proc/interrupts
+           CPU0       CPU1
+24:          0          0     GIC-0  27 Edge      gt
+25:       2629        168     GIC-0  29 Edge      twd
+31:          0          0     GIC-0  87 Level     arm-pmu
+32:          0          0     GIC-0  88 Level     arm-pmu
+33:          3          0     GIC-0  97 Level     timer
+
+The code applies on v5.10. Not for upstream merge.
+
+Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
 ---
- drivers/clk/renesas/r9a06g032-clocks.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index 892e91b92f2c..1fe166e7f8bd 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -279,7 +279,7 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
- 	/*
- 	 * These are not hardware clocks, but are needed to handle the special
- 	 * case where we have a 'selector bit' that doesn't just change the
--	 * parent for a clock, but also the gate it's suposed to use.
-+	 * parent for a clock, but also the gate it's supposed to use.
- 	 */
- 	{
- 		.index = R9A06G032_UART_GROUP_012,
-@@ -311,7 +311,7 @@ static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
-
- struct r9a06g032_priv {
- 	struct clk_onecell_data data;
--	spinlock_t lock; /* protects concurent access to gates */
-+	spinlock_t lock; /* protects concurrent access to gates */
- 	void __iomem *reg;
- };
-
---
-2.30.1
-
+ arch/arm/boot/dts/sh73a0.dtsi |    2
+ drivers/uio/uio.c             |    3
+ drivers/uio/uio_pdrv_genirq.c |   10 +-
+ uio-cmt-test-20210321.c       |  179 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 190 insertions(+), 4 deletions(-)
