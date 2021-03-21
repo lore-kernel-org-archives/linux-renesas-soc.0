@@ -2,101 +2,229 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C82C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 21 Mar 2021 12:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F89C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 21 Mar 2021 12:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E05CD61941
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 21 Mar 2021 12:12:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E57F61947
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 21 Mar 2021 12:13:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbhCUMMI (ORCPT
+        id S229784AbhCUMMn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 21 Mar 2021 08:12:08 -0400
-Received: from lists.levonline.com ([217.70.33.37]:46228 "EHLO
+        Sun, 21 Mar 2021 08:12:43 -0400
+Received: from lists.levonline.com ([217.70.33.37]:46250 "EHLO
         lists.levonline.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229894AbhCUMMG (ORCPT
+        with ESMTP id S229897AbhCUMMU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 21 Mar 2021 08:12:06 -0400
-X-Greylist: delayed 330 seconds by postgrey-1.27 at vger.kernel.org; Sun, 21 Mar 2021 08:12:06 EDT
+        Sun, 21 Mar 2021 08:12:20 -0400
 Received: from exc-halon1.levonline.com (exc-halon1.levonline.com [217.70.32.123])
-        by lists.levonline.com (Postfix) with ESMTP id A272C3A12E1
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 21 Mar 2021 13:12:03 +0100 (CET)
+        by lists.levonline.com (Postfix) with ESMTP id 32E5A3A12E2
+        for <linux-renesas-soc@vger.kernel.org>; Sun, 21 Mar 2021 13:12:19 +0100 (CET)
 X-SA-score: -1
-X-Halon-ID: a570bc42-8a3e-11eb-a51d-0050568168d4
+X-Halon-ID: ae9e0758-8a3e-11eb-a51d-0050568168d4
 Received: from ormen1.djurnet.levonline.com (ormen1.djurnet.levonline.com [192.168.17.31])
         by exc-halon1.levonline.com (Halon) with ESMTPS
-        id a570bc42-8a3e-11eb-a51d-0050568168d4;
-        Sun, 21 Mar 2021 13:12:03 +0100 (CET)
+        id ae9e0758-8a3e-11eb-a51d-0050568168d4;
+        Sun, 21 Mar 2021 13:12:18 +0100 (CET)
 Received: from [127.0.0.1] (l193216.ppp.asahi-net.or.jp [218.219.193.216])
         (authenticated bits=0)
-        by ormen1.djurnet.levonline.com (8.13.8/8.13.8) with ESMTP id 12LCC1Qi028107;
-        Sun, 21 Mar 2021 13:12:02 +0100
+        by ormen1.djurnet.levonline.com (8.13.8/8.13.8) with ESMTP id 12LCCGxT028162;
+        Sun, 21 Mar 2021 13:12:17 +0100
 X-Origin-Levonline: b0359001
 From:   Magnus Damm <damm@opensource.se>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Magnus Damm <damm@opensource.se>, geert+renesas@glider.be
-Date:   Sun, 21 Mar 2021 20:38:35 +0900
-Message-Id: <161632671592.9191.18170615656272399147.sendpatchset@octo>
-Subject: [PATCH 0/2] sh73a0 CMT1 test setup using UIO
+Date:   Sun, 21 Mar 2021 20:38:51 +0900
+Message-Id: <161632673124.9191.8069161888906800635.sendpatchset@octo>
+In-Reply-To: <161632671592.9191.18170615656272399147.sendpatchset@octo>
+References: <161632671592.9191.18170615656272399147.sendpatchset@octo>
+Subject: [PATCH 2/2] UIO CMT test program
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-sh73a0 CMT test setup using UIO
-
-[PATCH 1/2] sh73a0 CMT1 device exposed via UIO
-[PATCH 2/2] UIO CMT test program
-
-These two patches contain kernel and user space modificatons to allow some
-basic testing from user space of the CMT1 device included on the sh73a0 SoC.
-
-Similar code for other target platforms have been posted earlier as:
-[PATCH 0/2] r8a77961 CMT test setup using UIO
-[PATCH] r8a77965 CMT test setup using UIO
-
-This time the SoC-specific part has been adjusted to fit sh73a0 and the
-user space test program has been extended to wait for and ack multiple IRQs.
-
-For the kernel, simply apply the kernel patch (including a few debug printouts)
-and make sure to extend your kernel config with CONFIG_UIO_PDRV_GENIRQ=y.
-
-The following log shows how to execute the test program on the target:
-
-# ./uio-cmt-test
-found matching UIO device at /sys/class/uio/uio0/
-[   39.717894] irqcontrol 1
-[   41.718729] irqhandler 33
-IRQ nr 0
-[   41.721397] irqcontrol 1
-[   43.718968] irqhandler 33
-IRQ nr 1
-[   43.721614] irqcontrol 1
-[   45.719211] irqhandler 33
-IRQ nr 2
-[   45.721854] irqcontrol 1
-/ #
-
-Test program output and /proc/interrupts (with or without kernel debug output)
-may be used to verify that several interrupts have been delivered:
-
-/ # cat /proc/interrupts
-           CPU0       CPU1
-24:          0          0     GIC-0  27 Edge      gt
-25:       2629        168     GIC-0  29 Edge      twd
-31:          0          0     GIC-0  87 Level     arm-pmu
-32:          0          0     GIC-0  88 Level     arm-pmu
-33:          3          0     GIC-0  97 Level     timer
-
-The code applies on v5.10. Not for upstream merge.
-
-Not-Yet-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
- arch/arm/boot/dts/sh73a0.dtsi |    2
- drivers/uio/uio.c             |    3
- drivers/uio/uio_pdrv_genirq.c |   10 +-
- uio-cmt-test-20210321.c       |  179 +++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 190 insertions(+), 4 deletions(-)
+--- /dev/null	2019-10-16 00:27:13.659405289 +0900
++++ uio-cmt-test-20210321.c	2021-03-21 19:41:24.469083859 +0900
+@@ -0,0 +1,179 @@
++/*
++ * uio-cmt-test-20210321.c - UIO CMT example test code, 20210321 Magnus Damm
++ *
++ * A small linux program that programs the CMT timer and waits for IRQs
++ *
++ * Compile for Linux using:
++ * $ cross-gcc -o uio-cmt-test uio-cmt-test.c
++ * 
++ * Designed to work with the Linux UIO kernel driver uio_pdrv_genirq.c
++ */
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <unistd.h>
++#include <string.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/mman.h>
++#include <fcntl.h>
++
++static int fgets_with_openclose(char *fname, char *buf, size_t maxlen) {
++       FILE *fp;
++
++       if ((fp = fopen(fname, "r")) != NULL) {
++               fgets(buf, maxlen, fp);
++               fclose(fp);
++               return strlen(buf);
++       } else {
++               return -1;
++       }
++}
++
++struct uio_device {
++       char *name;
++       char *path;
++       int fd;
++};
++
++#define MAXUIOIDS  100
++#define MAXNAMELEN 256
++
++static int locate_uio_device(char *name, struct uio_device *udp)
++{
++       char fname[MAXNAMELEN], buf[MAXNAMELEN];
++       int uio_id, i;
++
++       for (uio_id = 0; uio_id < MAXUIOIDS; uio_id++) {
++               sprintf(fname, "/sys/class/uio/uio%d/name", uio_id);
++               if (fgets_with_openclose(fname, buf, MAXNAMELEN) < 0)
++                       continue;
++               if (strncmp(name, buf, strlen(name)) == 0)
++                       break;
++       }
++
++       if (uio_id >= MAXUIOIDS)
++               return -1;
++
++       udp->name = strdup(buf);
++       udp->path = strdup(fname);
++       udp->path[strlen(udp->path) - 4] = '\0';
++
++       sprintf(buf, "/dev/uio%d", uio_id);
++       udp->fd = open(buf, O_RDWR|O_SYNC /*| O_NONBLOCK*/);
++
++       if (udp->fd < 0) {
++               perror("open");
++               return -1;
++       }
++
++       return 0;
++}
++
++/* offsets apply to sh73a0 */
++#define CMT_CMSTR 0x000 /* start/stop register, some bits reserved as 1 */
++#define CMT_CMSTR_CH0 (1 << 0) /* set bit to one to start channel */
++#define CMT_CMCSR 0x10 /* 0x124 enables interrupts and selects CLK/8 */
++#define CMT_CMCSR_CMF (1 << 15) /* clear bit to ack compare match event */
++#define CMT_CMCNT 0x14 /* counting up, set to 0 */
++#define CMT_CMCOR 0x18 /* match value, set to ~0 */
++
++struct uio_map {
++       unsigned long address;
++       unsigned long size;
++       void *iomem;
++};
++
++static int setup_uio_map(struct uio_device *udp, int nr, struct uio_map *ump)
++{
++       char fname[MAXNAMELEN], buf[MAXNAMELEN];
++ 
++       sprintf(fname, "%s/maps/map%d/addr", udp->path, nr);
++       if (fgets_with_openclose(fname, buf, MAXNAMELEN) <= 0)
++               return -1;
++
++       ump->address = strtoul(buf, NULL, 0);
++
++       sprintf(fname, "%s/maps/map%d/size", udp->path, nr);
++       if (fgets_with_openclose(fname, buf, MAXNAMELEN) <= 0)
++               return -1;
++
++       ump->size = strtoul(buf, NULL, 0);
++
++       ump->iomem = mmap(0, ump->size,
++                         PROT_READ|PROT_WRITE, MAP_SHARED,
++                         udp->fd, nr * getpagesize());
++
++       if (ump->iomem == MAP_FAILED)
++               return -1;
++
++       return 0;
++}
++
++struct uio_device uio_dev;
++struct uio_map uio_mmio;
++
++int main(int argc, char *argv[])
++{
++	int k;
++	int ret;
++
++	ret = locate_uio_device("timer", &uio_dev);
++	if (ret < 0)
++		return ret;
++       
++	printf("found matching UIO device at %s\n", uio_dev.path);
++
++	ret = setup_uio_map(&uio_dev, 0, &uio_mmio);
++	if (ret < 0)
++		return ret;
++
++	{
++		unsigned long *cmstr = (uio_mmio.iomem + CMT_CMSTR);
++		unsigned short *cmcsr = (uio_mmio.iomem + CMT_CMCSR);
++		unsigned long *cmcor = (uio_mmio.iomem + CMT_CMCOR);
++	  
++		/* Stop timer channel */
++		*cmstr &= ~CMT_CMSTR_CH0;
++
++		/* Initialize CMCSR */
++		*cmcsr = 0x124;
++
++		/* Initialize CMCOR */
++		*cmcor = (32768 / 8) * 2; /* interrupt after about 2s */
++
++		/* Enable interrupt in UIO driver */
++		{
++			unsigned long enable = 1;
++			write(uio_dev.fd, &enable, sizeof(u_long));
++		}
++
++		/* Start timer channel */
++		*cmstr |= CMT_CMSTR_CH0;
++
++		/* test by processing 3 interrupts */
++		for (k = 0; k < 3; k++) {
++			/* Wait for interrupt */
++			{
++				unsigned long n_pending;
++				read(uio_dev.fd, &n_pending, sizeof(u_long));
++			}
++
++			printf("IRQ nr %d\n", k);
++			
++			/* ack match in CMCSR */
++			*cmcsr &= ~CMT_CMCSR_CMF;
++
++			/* Enable interrupt in UIO driver */
++			{
++				unsigned long enable = 1;
++				write(uio_dev.fd, &enable, sizeof(u_long));
++			}
++		}
++
++		/* Stop timer channel */
++		*cmstr &= ~CMT_CMSTR_CH0;
++	}
++
++	return 0;
++}
