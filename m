@@ -4,108 +4,90 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC716C433DB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 17:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E441C433DB
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 17:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 899816192E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 17:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C934C6199F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 17:30:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232166AbhCVRUi (ORCPT
+        id S231435AbhCVR3z (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 22 Mar 2021 13:20:38 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:46114 "EHLO
+        Mon, 22 Mar 2021 13:29:55 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:46238 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232135AbhCVRUW (ORCPT
+        with ESMTP id S231708AbhCVR3Z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Mar 2021 13:20:22 -0400
+        Mon, 22 Mar 2021 13:29:25 -0400
 Received: from Q.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 817CEAD6;
-        Mon, 22 Mar 2021 18:20:20 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 01045FC8;
+        Mon, 22 Mar 2021 18:29:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1616433620;
-        bh=RykYS79G/EklvOuPe3QTpqCIrtSmT1khKCTlg7CNBas=;
-        h=From:To:Cc:Subject:Date:From;
-        b=SLp5X6Xtuy/HL6Y5GJJmCrjUCsGgjL6/71rU/yBI27dCHLcDAttYXCkNf5cTqWGdX
-         xHJAGy7CCdBDmgm8WUKdnOBQDLKQ430Sujt6dmmBX5WihoXEFmho2iPSl23Qz6LyEf
-         qNlRNUgNGBlV9BgmF3g0UV01qQdHz+iZ/ttvFtxU=
+        s=mail; t=1616434164;
+        bh=S7Yh3ZUgZA9bYyp+ND90ZSmYY0371zFYNMEWxMphkko=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=S4oBiABoXKvtIIsByqFksDqLoTODksVVhJtGzGID1FDNt/LXA9KC7p6W5MW4CjubD
+         l71y+x4nqiAvlk0gcvC67kYPdb3yeem0xyGp5Ne+EQi5crQmzoqPJndk9YgCoi8PdK
+         d6il4NTeUWPB9gv7iZnVF1pkLmZwXAS5iZTkpQKE=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     Geert Uytterhoeven <geert@glider.be>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v2] arm64: dts: renesas: falcon-cpu: Add GP LEDs
-Date:   Mon, 22 Mar 2021 17:20:13 +0000
-Message-Id: <20210322172013.1152121-1-kieran.bingham+renesas@ideasonboard.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@glider.be>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v2 1/2] arm64: dts: renesas: r8a779a0: Add FCPVD support
+Date:   Mon, 22 Mar 2021 17:29:18 +0000
+Message-Id: <20210322172919.1154686-2-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210322172919.1154686-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20210322172919.1154686-1-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Three general purpose LEDs are provided on the Falcon CPU board.
+Provide FCPVD support for the V3U.
 
-Connect GP_LED1, GP_LED2, and GP_LED3 to the gpio-leds frameworks as
-indicator LEDs.
-
-These LEDs are arranged in a block of four LEDs on the board itself, but
-the fourth LED is as yet unidentified.
-
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
---
-v2:
- - Move to r8a779a0-falcon-cpu.dtsi
- - Define the colour, and function.
 ---
- .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+v2:
+ - use the correct address for the register mappings.
+---
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-index 286a5d5b9b08..98aa918e716e 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-@@ -6,12 +6,37 @@
-  */
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+index 6f3eba4653a3..73036a5b8312 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+@@ -1102,6 +1102,22 @@ gic: interrupt-controller@f1000000 {
+ 			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
+ 		};
  
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/leds/common.h>
-+
- #include "r8a779a0.dtsi"
- 
- / {
- 	model = "Renesas Falcon CPU board";
- 	compatible = "renesas,falcon-cpu", "renesas,r8a779a0";
- 
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led1 {
-+			gpios = <&gpio4 18 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_INDICATOR;
-+			function-enumerator = <1>;
++		fcpvd0: fcp@fea10000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea10000 0 0x200>;
++			clocks = <&cpg CPG_MOD 508>;
++			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
++			resets = <&cpg 508>;
 +		};
-+		led2 {
-+			gpios = <&gpio4 19 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_INDICATOR;
-+			function-enumerator = <2>;
-+		};
-+		led3 {
-+			gpios = <&gpio4 20 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_INDICATOR;
-+			function-enumerator = <3>;
-+		};
-+	};
 +
- 	memory@48000000 {
- 		device_type = "memory";
- 		/* first 128MB is reserved for secure area. */
++		fcpvd1: fcp@fea11000 {
++			compatible = "renesas,fcpv";
++			reg = <0 0xfea11000 0 0x200>;
++			clocks = <&cpg CPG_MOD 509>;
++			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
++			resets = <&cpg 509>;
++		};
++
+ 		prr: chipid@fff00044 {
+ 			compatible = "renesas,prr";
+ 			reg = <0 0xfff00044 0 4>;
 -- 
 2.25.1
 
