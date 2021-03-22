@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E391EC4345C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 18:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD72C43331
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 18:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2E6B619A0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 18:47:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95712619A2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 18:47:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231886AbhCVSqm (ORCPT
+        id S232132AbhCVSqo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 22 Mar 2021 14:46:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33436 "EHLO mail.kernel.org"
+        Mon, 22 Mar 2021 14:46:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231332AbhCVSqb (ORCPT
+        id S231442AbhCVSqe (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Mar 2021 14:46:31 -0400
+        Mon, 22 Mar 2021 14:46:34 -0400
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D2DE619A0;
-        Mon, 22 Mar 2021 18:46:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9919619A1;
+        Mon, 22 Mar 2021 18:46:33 +0000 (UTC)
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <maz@kernel.org>)
-        id 1lOPZN-0038p5-CH; Mon, 22 Mar 2021 18:46:29 +0000
+        id 1lOPZQ-0038p5-5r; Mon, 22 Mar 2021 18:46:32 +0000
 From:   Marc Zyngier <maz@kernel.org>
 To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>
@@ -53,9 +53,9 @@ Cc:     Frank Wunderlich <frank-w@public-files.de>,
         linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH v2 06/15] PCI: hv: Drop msi_controller structure
-Date:   Mon, 22 Mar 2021 18:46:05 +0000
-Message-Id: <20210322184614.802565-7-maz@kernel.org>
+Subject: [PATCH v2 09/15] PCI/MSI: Kill default_teardown_msi_irqs()
+Date:   Mon, 22 Mar 2021 18:46:08 +0000
+Message-Id: <20210322184614.802565-10-maz@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210322184614.802565-1-maz@kernel.org>
 References: <20210322184614.802565-1-maz@kernel.org>
@@ -69,42 +69,56 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The Hyper-V PCI driver still makes use of a msi_controller structure,
-but it looks more like a distant leftover than anything actually
-useful, since it is initialised to 0 and never used for anything.
+It doesn't have any caller left.
 
-Just remove it.
-
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
-Tested-by: Michael Kelley <mikelley@microsoft.com>
 Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- drivers/pci/controller/pci-hyperv.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/pci/msi.c   | 11 +----------
+ include/linux/msi.h |  1 -
+ 2 files changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-index 27a17a1e4a7c..2c014ba7ed4b 100644
---- a/drivers/pci/controller/pci-hyperv.c
-+++ b/drivers/pci/controller/pci-hyperv.c
-@@ -473,7 +473,6 @@ struct hv_pcibus_device {
- 	struct list_head dr_list;
+diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+index 79b5a995bd02..d9c73c173c14 100644
+--- a/drivers/pci/msi.c
++++ b/drivers/pci/msi.c
+@@ -94,11 +94,7 @@ int __weak arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
+ 	return 0;
+ }
  
- 	struct msi_domain_info msi_info;
--	struct msi_controller msi_chip;
- 	struct irq_domain *irq_domain;
- 
- 	spinlock_t retarget_msi_interrupt_lock;
-@@ -1866,9 +1865,6 @@ static int create_root_hv_pci_bus(struct hv_pcibus_device *hbus)
- 	if (!hbus->pci_bus)
- 		return -ENODEV;
- 
--	hbus->pci_bus->msi = &hbus->msi_chip;
--	hbus->pci_bus->msi->dev = &hbus->hdev->device;
+-/*
+- * We have a default implementation available as a separate non-weak
+- * function, as it is used by the Xen x86 PCI code
+- */
+-void default_teardown_msi_irqs(struct pci_dev *dev)
++void __weak arch_teardown_msi_irqs(struct pci_dev *dev)
+ {
+ 	int i;
+ 	struct msi_desc *entry;
+@@ -108,11 +104,6 @@ void default_teardown_msi_irqs(struct pci_dev *dev)
+ 			for (i = 0; i < entry->nvec_used; i++)
+ 				arch_teardown_msi_irq(entry->irq + i);
+ }
 -
- 	pci_lock_rescan_remove();
- 	pci_scan_child_bus(hbus->pci_bus);
- 	hv_pci_assign_numa_node(hbus);
+-void __weak arch_teardown_msi_irqs(struct pci_dev *dev)
+-{
+-	return default_teardown_msi_irqs(dev);
+-}
+ #endif /* CONFIG_PCI_MSI_ARCH_FALLBACKS */
+ 
+ static void default_restore_msi_irq(struct pci_dev *dev, int irq)
+diff --git a/include/linux/msi.h b/include/linux/msi.h
+index 3f21e77b57b7..6aff469e511d 100644
+--- a/include/linux/msi.h
++++ b/include/linux/msi.h
+@@ -250,7 +250,6 @@ int arch_setup_msi_irq(struct pci_dev *dev, struct msi_desc *desc);
+ void arch_teardown_msi_irq(unsigned int irq);
+ int arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type);
+ void arch_teardown_msi_irqs(struct pci_dev *dev);
+-void default_teardown_msi_irqs(struct pci_dev *dev);
+ #else
+ static inline int arch_setup_msi_irqs(struct pci_dev *dev, int nvec, int type)
+ {
 -- 
 2.29.2
 
