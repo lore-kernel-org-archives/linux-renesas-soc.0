@@ -2,135 +2,266 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B38C433E3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B194CC433E5
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 16:36:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7B4E461998
+	by mail.kernel.org (Postfix) with ESMTP id 8EA2C61974
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 16:36:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231793AbhCVQfy (ORCPT
+        id S231896AbhCVQf5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 22 Mar 2021 12:35:54 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45308 "EHLO
+        Mon, 22 Mar 2021 12:35:57 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:45324 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229692AbhCVQfl (ORCPT
+        with ESMTP id S231406AbhCVQfq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Mar 2021 12:35:41 -0400
+        Mon, 22 Mar 2021 12:35:46 -0400
 Received: from Q.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 904E1AD6;
-        Mon, 22 Mar 2021 17:35:39 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BC8EF1025;
+        Mon, 22 Mar 2021 17:35:42 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1616430939;
-        bh=8x6jVZUTB5hPvbUyMB446A1rKjbZZwJeBzpTgWHhG/E=;
-        h=From:To:Cc:Subject:Date:From;
-        b=sBvW+ZMV+zmycfi6uC2Gpv10wwYB9gxMxds6F3jUgWCuWBo5JDTUxb+OumcfnDsZZ
-         aQSd2gNE+bmf5ZLRw9W7Lf1QBaoy3HrG6KsvFHm8pkCJ/FXIE8Y6DC+sjDzMozsuJT
-         15ieDQX4mS/hSQIPvmpGTA3mOgTXY3G7sYtMeZ7A=
+        s=mail; t=1616430943;
+        bh=6Aq4dbt5KCY8EGVlO1yyvfP45Qls6Y3sQHx0Wtahgs4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OC/ffXgzzU1XvP1zWbnNt02+3j2xU9Nw4ztUj3Ntnu2Zvnv00+SX+YZPrs1dZbbHA
+         pym5eV/lgPENyx9NqwES3ENjHT78/XUbvpQjKYuTnXfY6mbbxnEKFpYYHGW7Pfm+m8
+         T/T+H/+ZNuxWsEQnu5WXwJ79QNotf98JPp0Sut3U=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH v5 00/10] drm: rcar-du: Rework CRTC and groups for atomic commits
-Date:   Mon, 22 Mar 2021 16:35:25 +0000
-Message-Id: <20210322163535.1090570-1-kieran.bingham+renesas@ideasonboard.com>
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Ulrich Hecht <uli+renesas@fpond.eu>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH v5 05/10] drm: rcar-du: Handle CRTC standby from commit tail handler
+Date:   Mon, 22 Mar 2021 16:35:30 +0000
+Message-Id: <20210322163535.1090570-6-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20210322163535.1090570-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20210322163535.1090570-1-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series refactors atomic commit tail handling in the R-Car DU
-driver to simplify the code flow, and open the door to further
-optimisations. This iteration rebases the previous work and fixes a bug
-reported by the build bots.
+Manage the power state, and initial configuration of the CRTC from the
+commit tail handler. CRTCs which need to be activated are taken out of
+standby, and any deactivated CRTCs are put into standby.
 
-The R-Car DU is a bit of a strange beast, with support for up to four
-CRTCs that share resources in groups of two CRTCs. Depending on the
-generation, planes can be shared (on Gen 1 and Gen 2), and output
-routing configuration is also handled at the group level to some extent.
-Furthermore, many configuration parameters, especially those related to
-routing or clock handling, require the whole group to be restarted to
-take effect, even when the parameter itself affects a single CRTC only.
+This aims at removing CRTC state tracking from the rcar_du_crtc
+structure. The initial configuration of the CRTC background colours and
+disabling of all planes is taken out of rcar_du_crtc_setup() and moved
+inline into rcar_du_crtc_enable(). rcar_du_crtc_get() and
+rcar_du_crtc_put() are kept as they are needed to configure the VSP at
+the correct time, this will be addressed in a separate change.
 
-This hardware architecture is difficult to handle properly on the
-software side, and has resulted in group usage being reference-counted
-while CRTC usage only tracks the enabled state. Calls are then
-unbalanced and difficult to trace, especially for the configuration of
-output routing, and implementation of new shared resources is hindered.
-This patch series aims at solving this problem.
+Reviewed-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+Changes since v2:
 
-The series starts with 4 patches that touch the API between the DU and
-VSP drivers. It became apparent that we need to split the configuration
-of the VSP to allow fine grain control of setting the mode configuration
-and enabling/disabling of the pipeline. To support the cross-component
-API, the new interface is added in patch 01/10, including an
-implementation of vsp1_du_setup_lif() to support the transition. Patch
-02/10 prepares for the new call flow that will call the atomic flush
-handler before enabling the pipeline. The DRM usage is adapted in patch
-03/10, before the call is removed entirely in patch 04/10.
+- Add more documentation
+- Keep rcar_du_crtc_get() and rcar_du_crtc_put()
+- Renamed rcar_du_crtc_enable() to rcar_du_crtc_exit_standby() and
+  rcar_du_crtc_disable() to rcar_du_crtc_enter_standby()
+- Reword commit message
 
-The next two patches convert CRTC clock handling and initial setup,
-potentially called from both the CRTC .atomic_begin() and
-.atomic_enable() operations, to a simpler code flow controlled by the
-commit tail handler. Patch 05/10 takes the CRTCs out of standby and put
-them back in standby respectively at the beginning and end of the commit
-tail handler, based on the CRTC atomic state instead of state
-information stored in the custom rcar_du_crtc structure. Patch 06/10
-then performs a similar change for the CRTC mode setting configuration.
+Changes since v1:
 
-Finally, the last four patches introduce a DRM private object for the
-CRTC groups, along with an associated state. Patch 07/10 adds a helper
-macro to easily iterate over CRTC groups, and patch 08/10 adds the group
-private objects and empty states. Patches 09/10 and 10/10 respectively
-move the group setup and routing configuration under control of the
-commit tail handler, simplifying the configuration and moving state
-information from driver structures to state structures.
+- Registers sequence confirmed unchanged
+- Re-ordered in the series to handle before groups
+- Do not merge rcar_du_crtc_setup() (now handled by _crtc_pre_commit)
+---
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 90 ++++++++++++++++++++------
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.h |  5 ++
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c  |  4 ++
+ 3 files changed, 81 insertions(+), 18 deletions(-)
 
-More refactoring is expected, with plane assignment being moved to group
-states, and group restart being optimised to avoid flickering. Better
-configuration of pixel clocks could also be implemented on top of this
-series.
-
-The whole series has been tested on Salvator-XS with the DU test suite
-(http://git.ideasonboard.com/renesas/kms-tests.git).  No failure or
-change in behaviour has been noticed.
-
-Kieran Bingham (8):
-  media: vsp1: drm: Split vsp1_du_setup_lif()
-  drm: rcar-du: Convert to the new VSP atomic API
-  media: vsp1: drm: Remove vsp1_du_setup_lif()
-  drm: rcar-du: Handle CRTC standby from commit tail handler
-  drm: rcar-du: Handle CRTC configuration from commit tail handler
-  drm: rcar-du: Provide for_each_group helper
-  drm: rcar-du: Create a group state object
-  drm: rcar-du: Perform group setup from the atomic tail handler
-
-Laurent Pinchart (2):
-  media: vsp1: drm: Don't configure hardware when the pipeline is
-    disabled
-  drm: rcar-du: Centralise routing configuration in commit tail handler
-
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c  | 160 ++++++----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.h  |   9 +-
- drivers/gpu/drm/rcar-du/rcar_du_drv.h   |   6 +-
- drivers/gpu/drm/rcar-du/rcar_du_group.c | 390 +++++++++++++++++++-----
- drivers/gpu/drm/rcar-du/rcar_du_group.h |  44 ++-
- drivers/gpu/drm/rcar-du/rcar_du_kms.c   |  63 ++--
- drivers/gpu/drm/rcar-du/rcar_du_plane.c |  10 +-
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   |  20 +-
- drivers/gpu/drm/rcar-du/rcar_du_vsp.h   |   3 +
- drivers/media/platform/vsp1/vsp1_drm.c  | 188 ++++++++----
- drivers/media/platform/vsp1/vsp1_drm.h  |   2 +
- include/media/vsp1.h                    |  25 +-
- 12 files changed, 644 insertions(+), 276 deletions(-)
-
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 53838dde2f29..55c0e0259153 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -521,17 +521,10 @@ static void rcar_du_cmm_setup(struct drm_crtc *crtc)
+ 
+ static void rcar_du_crtc_setup(struct rcar_du_crtc *rcrtc)
+ {
+-	/* Set display off and background to black */
+-	rcar_du_crtc_write(rcrtc, DOOR, DOOR_RGB(0, 0, 0));
+-	rcar_du_crtc_write(rcrtc, BPOR, BPOR_RGB(0, 0, 0));
+-
+ 	/* Configure display timings and output routing */
+ 	rcar_du_crtc_set_display_timing(rcrtc);
+ 	rcar_du_group_set_routing(rcrtc->group);
+ 
+-	/* Start with all planes disabled. */
+-	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? DS2PR : DS1PR, 0);
+-
+ 	/* Enable the VSP compositor. */
+ 	if (rcar_du_has(rcrtc->dev, RCAR_DU_FEATURE_VSP1_SOURCE)) {
+ 		rcar_du_vsp_modeset(rcrtc);
+@@ -542,17 +535,10 @@ static void rcar_du_crtc_setup(struct rcar_du_crtc *rcrtc)
+ 	drm_crtc_vblank_on(&rcrtc->crtc);
+ }
+ 
+-static int rcar_du_crtc_get(struct rcar_du_crtc *rcrtc)
++static int rcar_du_crtc_exit_standby(struct rcar_du_crtc *rcrtc)
+ {
+ 	int ret;
+ 
+-	/*
+-	 * Guard against double-get, as the function is called from both the
+-	 * .atomic_enable() and .atomic_begin() handlers.
+-	 */
+-	if (rcrtc->initialized)
+-		return 0;
+-
+ 	ret = clk_prepare_enable(rcrtc->clock);
+ 	if (ret < 0)
+ 		return ret;
+@@ -565,8 +551,12 @@ static int rcar_du_crtc_get(struct rcar_du_crtc *rcrtc)
+ 	if (ret < 0)
+ 		goto error_group;
+ 
+-	rcar_du_crtc_setup(rcrtc);
+-	rcrtc->initialized = true;
++	/* Set display off and background to black. */
++	rcar_du_crtc_write(rcrtc, DOOR, DOOR_RGB(0, 0, 0));
++	rcar_du_crtc_write(rcrtc, BPOR, BPOR_RGB(0, 0, 0));
++
++	/* Start with all planes disabled. */
++	rcar_du_group_write(rcrtc->group, rcrtc->index % 2 ? DS2PR : DS1PR, 0);
+ 
+ 	return 0;
+ 
+@@ -577,13 +567,29 @@ static int rcar_du_crtc_get(struct rcar_du_crtc *rcrtc)
+ 	return ret;
+ }
+ 
+-static void rcar_du_crtc_put(struct rcar_du_crtc *rcrtc)
++static void rcar_du_crtc_enter_standby(struct rcar_du_crtc *rcrtc)
+ {
+ 	rcar_du_group_put(rcrtc->group);
+ 
+ 	clk_disable_unprepare(rcrtc->extclock);
+ 	clk_disable_unprepare(rcrtc->clock);
++}
++
++static void rcar_du_crtc_get(struct rcar_du_crtc *rcrtc)
++{
++	/*
++	 * Guard against double-get, as the function is called from both the
++	 * .atomic_enable() and .atomic_begin() handlers.
++	 */
++	if (rcrtc->initialized)
++		return;
++
++	rcar_du_crtc_setup(rcrtc);
++	rcrtc->initialized = true;
++}
+ 
++static void rcar_du_crtc_put(struct rcar_du_crtc *rcrtc)
++{
+ 	rcrtc->initialized = false;
+ }
+ 
+@@ -714,6 +720,54 @@ static int rcar_du_crtc_atomic_check(struct drm_crtc *crtc,
+ 	return 0;
+ }
+ 
++/*
++ * Take all CRTCs that are made active in this commit out of standby.
++ * CRTCs that are deactivated by the commit are untouched and will be
++ * put in standby by rcar_du_crtc_atomic_enter_standby().
++ */
++int rcar_du_crtc_atomic_exit_standby(struct drm_device *dev,
++				     struct drm_atomic_state *state)
++{
++	struct drm_crtc_state *crtc_state;
++	struct drm_crtc *crtc;
++	unsigned int i;
++	int ret;
++
++	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
++		struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
++
++		if (crtc_state->active_changed && crtc_state->active) {
++			ret = rcar_du_crtc_exit_standby(rcrtc);
++			if (ret)
++				return ret;
++		}
++	}
++
++	return 0;
++}
++
++/*
++ * Put all CRTCs that have been deactivated by this commit in standby.
++ * This shall be called at the end of the commit tail handler as the
++ * last operation that touches the CRTC hardware.
++ */
++int rcar_du_crtc_atomic_enter_standby(struct drm_device *dev,
++				      struct drm_atomic_state *state)
++{
++	struct drm_crtc_state *crtc_state;
++	struct drm_crtc *crtc;
++	unsigned int i;
++
++	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
++		struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
++
++		if (crtc_state->active_changed && !crtc_state->active)
++			rcar_du_crtc_enter_standby(rcrtc);
++	}
++
++	return 0;
++}
++
+ static void rcar_du_crtc_atomic_enable(struct drm_crtc *crtc,
+ 				       struct drm_atomic_state *state)
+ {
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+index 5f2940c42225..7ff0618b9998 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.h
+@@ -109,6 +109,11 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
+ 
+ void rcar_du_crtc_finish_page_flip(struct rcar_du_crtc *rcrtc);
+ 
++int rcar_du_crtc_atomic_exit_standby(struct drm_device *dev,
++				     struct drm_atomic_state *state);
++int rcar_du_crtc_atomic_enter_standby(struct drm_device *dev,
++				      struct drm_atomic_state *state);
++
+ void rcar_du_crtc_dsysr_clr_set(struct rcar_du_crtc *rcrtc, u32 clr, u32 set);
+ 
+ #endif /* __RCAR_DU_CRTC_H__ */
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index fdb8a0d127ad..ff50316b87b5 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -462,11 +462,15 @@ static void rcar_du_atomic_commit_tail(struct drm_atomic_state *old_state)
+ 	}
+ 
+ 	/* Apply the atomic update. */
++	rcar_du_crtc_atomic_exit_standby(dev, old_state);
++
+ 	drm_atomic_helper_commit_modeset_disables(dev, old_state);
+ 	drm_atomic_helper_commit_planes(dev, old_state,
+ 					DRM_PLANE_COMMIT_ACTIVE_ONLY);
+ 	drm_atomic_helper_commit_modeset_enables(dev, old_state);
+ 
++	rcar_du_crtc_atomic_enter_standby(dev, old_state);
++
+ 	drm_atomic_helper_commit_hw_done(old_state);
+ 	drm_atomic_helper_wait_for_flip_done(dev, old_state);
+ 
 -- 
 2.25.1
 
