@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34780C433EA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E279C433EB
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 03:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1FD561939
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 03:03:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56D5B61939
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 03:03:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229692AbhCVDC6 (ORCPT
+        id S230008AbhCVDC5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 21 Mar 2021 23:02:58 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:35456 "EHLO
+        Sun, 21 Mar 2021 23:02:57 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35480 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230021AbhCVDCa (ORCPT
+        with ESMTP id S230018AbhCVDCa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Sun, 21 Mar 2021 23:02:30 -0400
 Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id BFB4C1491;
-        Mon, 22 Mar 2021 04:02:23 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0AAC41447;
+        Mon, 22 Mar 2021 04:02:22 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1616382144;
-        bh=fSMyE55kwmqHdv+QNGjjhC7fi3fZJdw8eG2Ngoz3D+0=;
+        s=mail; t=1616382143;
+        bh=bWH9PqcLmDc3qsB9InG1ANF+YPQcTF0rlE7JQYiNZRY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DgHZEa/pCNrZwOKxAcKv3zyUD08EtJjZYrGJF1GL8s3Yi1RMRPXtkPgnP7RRksfhg
-         vzTYmL7Q3OR+IVUiS5lcsAeQb4gfwLHPOMeG8LU+3YBn2G2J8Mf3q30UMNttHE0/U8
-         B/5kVsasXXUOUKXNN9ftxKFEdBBAyymY6hP5FXUk=
+        b=tqKp/OLmBu41sgeeuYoOhBF4mIw0FUd7og6h6dF9Dw/i/5315TNB7CUWCBzLR7g4p
+         JQUfNWTeX6x/7Qy/uOjcb7ZEA2FcF1F1LI7iev5/581jcAmcmj8QE//HLucq0ytH2j
+         P1crAUkw4aInVlbOYdLB70WaP02anr3Np2/22U9U=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -40,9 +40,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Jernej Skrabec <jernej.skrabec@siol.net>,
         Douglas Anderson <dianders@chromium.org>,
         Stephen Boyd <swboyd@chromium.org>
-Subject: [RFC PATCH 10/11] drm/bridge: ti-sn65dsi86: Support DisplayPort (non-eDP) mode
-Date:   Mon, 22 Mar 2021 05:01:27 +0200
-Message-Id: <20210322030128.2283-11-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [RFC PATCH 09/11] drm/bridge: ti-sn65dsi86: Make connector creation optional
+Date:   Mon, 22 Mar 2021 05:01:26 +0200
+Message-Id: <20210322030128.2283-10-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.28.1
 In-Reply-To: <20210322030128.2283-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20210322030128.2283-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -52,99 +52,39 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Despite the SN65DSI86 being an eDP bridge, on some systems its output is
-routed to a DisplayPort connector. Enable DisplayPort mode when the next
-component in the display pipeline is not a panel, and disable eDP
-features in that case.
+Now that the driver supports the connector-related bridge operations,
+make the connector creation optional. This enables usage of the
+sn65dsi86 with the DRM bridge connector helper.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/bridge/ti-sn65dsi86.c | 32 ++++++++++++++++++++-------
- 1 file changed, 24 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-index e2527d597ccb..f792227142a7 100644
+index 6f6e075544e8..e2527d597ccb 100644
 --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
 +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
-@@ -55,6 +55,7 @@
- #define SN_LN_ASSIGN_REG			0x59
- #define  LN_ASSIGN_WIDTH			2
- #define SN_ENH_FRAME_REG			0x5A
-+#define  ASSR_CONTROL				BIT(0)
- #define  VSTREAM_ENABLE				BIT(3)
- #define  LN_POLRS_OFFSET			4
- #define  LN_POLRS_MASK				0xf0
-@@ -86,6 +87,8 @@
- #define SN_DATARATE_CONFIG_REG			0x94
- #define  DP_DATARATE_MASK			GENMASK(7, 5)
- #define  DP_DATARATE(x)				((x) << 5)
-+#define SN_TRAINING_SETTING_REG			0x95
-+#define  SCRAMBLE_DISABLE			BIT(4)
- #define SN_ML_TX_MODE_REG			0x96
- #define  ML_TX_MAIN_LINK_OFF			0
- #define  ML_TX_NORMAL_MODE			BIT(0)
-@@ -723,6 +726,11 @@ static int ti_sn_link_training(struct ti_sn_bridge *pdata, int dp_rate_idx,
- 	regmap_update_bits(pdata->regmap, SN_DATARATE_CONFIG_REG,
- 			   DP_DATARATE_MASK, DP_DATARATE(dp_rate_idx));
+@@ -380,15 +380,12 @@ static int ti_sn_bridge_attach(struct drm_bridge *bridge,
+ 						   .node = NULL,
+ 						 };
  
-+	/* For DisplayPort, use the standard DP scrambler seed. */
-+	if (pdata->bridge.type == DRM_MODE_CONNECTOR_DisplayPort)
-+		regmap_update_bits(pdata->regmap, SN_ENH_FRAME_REG,
-+				   ASSR_CONTROL, 0);
-+
- 	/* enable DP PLL */
- 	regmap_write(pdata->regmap, SN_PLL_ENABLE_REG, 1);
- 
-@@ -734,6 +742,11 @@ static int ti_sn_link_training(struct ti_sn_bridge *pdata, int dp_rate_idx,
- 		goto exit;
- 	}
- 
-+	/* For DisplayPort, disable scrambling mode. */
-+	if (pdata->bridge.type == DRM_MODE_CONNECTOR_DisplayPort)
-+		regmap_update_bits(pdata->regmap, SN_TRAINING_SETTING_REG,
-+				   SCRAMBLE_DISABLE, SCRAMBLE_DISABLE);
-+
- 	/*
- 	 * We'll try to link train several times.  As part of link training
- 	 * the bridge chip will write DP_SET_POWER_D0 to DP_SET_POWER.  If
-@@ -1288,18 +1301,20 @@ static int ti_sn_bridge_probe(struct i2c_client *client,
- 	pdata->dev = &client->dev;
- 
- 	ret = drm_of_find_panel_or_bridge(pdata->dev->of_node, 1, 0,
--					  &pdata->panel, NULL);
-+					  &pdata->panel, &pdata->next_bridge);
- 	if (ret) {
- 		DRM_ERROR("could not find any panel node\n");
- 		return ret;
- 	}
- 
--	pdata->next_bridge = devm_drm_panel_bridge_add(pdata->dev,
--						       pdata->panel);
--	if (IS_ERR(pdata->next_bridge)) {
--		DRM_ERROR("failed to create panel bridge\n");
--		ret = PTR_ERR(pdata->next_bridge);
--		return ret;
-+	if (!pdata->next_bridge) {
-+		pdata->next_bridge = devm_drm_panel_bridge_add(pdata->dev,
-+							       pdata->panel);
-+		if (IS_ERR(pdata->next_bridge)) {
-+			DRM_ERROR("failed to create panel bridge\n");
-+			ret = PTR_ERR(pdata->next_bridge);
+-	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR) {
+-		DRM_ERROR("Fix bridge driver to make connector optional!");
+-		return -EINVAL;
++	if (!(flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)) {
++		ret = ti_sn_bridge_connector_init(pdata);
++		if (ret < 0)
 +			return ret;
-+		}
  	}
  
- 	dev_set_drvdata(&client->dev, pdata);
-@@ -1351,7 +1366,8 @@ static int ti_sn_bridge_probe(struct i2c_client *client,
- 	pdata->bridge.funcs = &ti_sn_bridge_funcs;
- 	pdata->bridge.of_node = client->dev.of_node;
- 	pdata->bridge.ops = DRM_BRIDGE_OP_EDID;
--	pdata->bridge.type = DRM_MODE_CONNECTOR_eDP;
-+	pdata->bridge.type = pdata->panel ? DRM_MODE_CONNECTOR_eDP
-+			   : DRM_MODE_CONNECTOR_DisplayPort;
- 
- 	drm_bridge_add(&pdata->bridge);
- 
+-	ret = ti_sn_bridge_connector_init(pdata);
+-	if (ret < 0)
+-		return ret;
+-
+ 	/*
+ 	 * TODO: ideally finding host resource and dsi dev registration needs
+ 	 * to be done in bridge probe. But some existing DSI host drivers will
 -- 
 Regards,
 
