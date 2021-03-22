@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056CFC4345E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 18:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E391EC4345C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 18:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E35AB619A1
+	by mail.kernel.org (Postfix) with ESMTP id D2E6B619A0
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 22 Mar 2021 18:47:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230002AbhCVSqn (ORCPT
+        id S231886AbhCVSqm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 22 Mar 2021 14:46:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33530 "EHLO mail.kernel.org"
+        Mon, 22 Mar 2021 14:46:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230465AbhCVSqd (ORCPT
+        id S231332AbhCVSqb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 22 Mar 2021 14:46:33 -0400
+        Mon, 22 Mar 2021 14:46:31 -0400
 Received: from disco-boy.misterjones.org (disco-boy.misterjones.org [51.254.78.96])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAEAD619A7;
-        Mon, 22 Mar 2021 18:46:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D2DE619A0;
+        Mon, 22 Mar 2021 18:46:31 +0000 (UTC)
 Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why.lan)
         by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.94)
         (envelope-from <maz@kernel.org>)
-        id 1lOPZP-0038p5-6k; Mon, 22 Mar 2021 18:46:31 +0000
+        id 1lOPZN-0038p5-CH; Mon, 22 Mar 2021 18:46:29 +0000
 From:   Marc Zyngier <maz@kernel.org>
 To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Bjorn Helgaas <bhelgaas@google.com>
@@ -53,9 +53,9 @@ Cc:     Frank Wunderlich <frank-w@public-files.de>,
         linux-arm-kernel@lists.infradead.org, linux-hyperv@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, kernel-team@android.com
-Subject: [PATCH v2 08/15] PCI/MSI: Kill msi_controller structure
-Date:   Mon, 22 Mar 2021 18:46:07 +0000
-Message-Id: <20210322184614.802565-9-maz@kernel.org>
+Subject: [PATCH v2 06/15] PCI: hv: Drop msi_controller structure
+Date:   Mon, 22 Mar 2021 18:46:05 +0000
+Message-Id: <20210322184614.802565-7-maz@kernel.org>
 X-Mailer: git-send-email 2.29.2
 In-Reply-To: <20210322184614.802565-1-maz@kernel.org>
 References: <20210322184614.802565-1-maz@kernel.org>
@@ -69,52 +69,42 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-msi_controller had a good, long life as the abstraction for
-a driver providing MSIs to PCI devices. But it has been replaced
-in all drivers by the more expressive generic MSI framework.
+The Hyper-V PCI driver still makes use of a msi_controller structure,
+but it looks more like a distant leftover than anything actually
+useful, since it is initialised to 0 and never used for anything.
 
-Farewell, struct msi_controller.
+Just remove it.
 
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Tested-by: Michael Kelley <mikelley@microsoft.com>
 Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 Signed-off-by: Marc Zyngier <maz@kernel.org>
 ---
- include/linux/msi.h | 16 +---------------
- 1 file changed, 1 insertion(+), 15 deletions(-)
+ drivers/pci/controller/pci-hyperv.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/include/linux/msi.h b/include/linux/msi.h
-index aef35fd1cf11..3f21e77b57b7 100644
---- a/include/linux/msi.h
-+++ b/include/linux/msi.h
-@@ -240,8 +240,7 @@ void pci_msi_unmask_irq(struct irq_data *data);
- /*
-  * The arch hooks to setup up msi irqs. Default functions are implemented
-  * as weak symbols so that they /can/ be overriden by architecture specific
-- * code if needed. These hooks must be enabled by the architecture or by
-- * drivers which depend on them via msi_controller based MSI handling.
-+ * code if needed. These hooks can only be enabled by the architecture.
-  *
-  * If CONFIG_PCI_MSI_ARCH_FALLBACKS is not selected they are replaced by
-  * stubs with warnings.
-@@ -272,19 +271,6 @@ static inline void arch_teardown_msi_irqs(struct pci_dev *dev)
- void arch_restore_msi_irqs(struct pci_dev *dev);
- void default_restore_msi_irqs(struct pci_dev *dev);
+diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+index 27a17a1e4a7c..2c014ba7ed4b 100644
+--- a/drivers/pci/controller/pci-hyperv.c
++++ b/drivers/pci/controller/pci-hyperv.c
+@@ -473,7 +473,6 @@ struct hv_pcibus_device {
+ 	struct list_head dr_list;
  
--struct msi_controller {
--	struct module *owner;
--	struct device *dev;
--	struct device_node *of_node;
--	struct list_head list;
--
--	int (*setup_irq)(struct msi_controller *chip, struct pci_dev *dev,
--			 struct msi_desc *desc);
--	int (*setup_irqs)(struct msi_controller *chip, struct pci_dev *dev,
--			  int nvec, int type);
--	void (*teardown_irq)(struct msi_controller *chip, unsigned int irq);
--};
--
- #ifdef CONFIG_GENERIC_MSI_IRQ_DOMAIN
+ 	struct msi_domain_info msi_info;
+-	struct msi_controller msi_chip;
+ 	struct irq_domain *irq_domain;
  
- #include <linux/irqhandler.h>
+ 	spinlock_t retarget_msi_interrupt_lock;
+@@ -1866,9 +1865,6 @@ static int create_root_hv_pci_bus(struct hv_pcibus_device *hbus)
+ 	if (!hbus->pci_bus)
+ 		return -ENODEV;
+ 
+-	hbus->pci_bus->msi = &hbus->msi_chip;
+-	hbus->pci_bus->msi->dev = &hbus->hdev->device;
+-
+ 	pci_lock_rescan_remove();
+ 	pci_scan_child_bus(hbus->pci_bus);
+ 	hv_pci_assign_numa_node(hbus);
 -- 
 2.29.2
 
