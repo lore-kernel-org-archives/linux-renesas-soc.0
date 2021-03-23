@@ -5,69 +5,69 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BB6C433C1
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Mar 2021 21:09:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38D9EC433E1
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Mar 2021 21:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCB9A619A5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Mar 2021 21:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EBFC619A5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 23 Mar 2021 21:09:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233462AbhCWVJA (ORCPT
+        id S233422AbhCWVJC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 23 Mar 2021 17:09:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51162 "EHLO
+        Tue, 23 Mar 2021 17:09:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233409AbhCWVIh (ORCPT
+        with ESMTP id S233383AbhCWVIz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 23 Mar 2021 17:08:37 -0400
-Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1CF6C061574
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Mar 2021 14:08:36 -0700 (PDT)
-Received: by mail-qk1-x72a.google.com with SMTP id y18so15940543qky.11
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Mar 2021 14:08:36 -0700 (PDT)
+        Tue, 23 Mar 2021 17:08:55 -0400
+Received: from mail-qv1-xf2b.google.com (mail-qv1-xf2b.google.com [IPv6:2607:f8b0:4864:20::f2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BB82C061574
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Mar 2021 14:08:55 -0700 (PDT)
+Received: by mail-qv1-xf2b.google.com with SMTP id by2so11221323qvb.11
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Mar 2021 14:08:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fGp9OGhSFYep+wgICuctJHe6AunYvp6GoDFbNEb/8TM=;
-        b=j+5PaN95fKfswhdgD662vrvF8rN4CfNwG0kwHV81OlkvM8XS2H8sc20+r4YTghNet/
-         V0wWg+nF1W9hUBEZeCgYjjcdqHm1Fy539xa2f7uEmeWZ7IkAJ/1lPspWn7yLuI81nwHf
-         o3jILhpzIInb7kSAYo3jc2GypXixenKdS/mqU=
+        bh=GQwheX+ZOdsLRvA7XPASIVaHFFt/8Y47I6o+aENus34=;
+        b=FxoCgZ66CW4DEmPHCY36UziylrUzDCKhrdi+/rBZqANTFV3kACH/P/9Cm35U6ZrXt7
+         lebhYaqTec4eHBmwZucO69qCPAaky9irljkPvIZtE4z+NPF/8o/Ua2IsC7yP+cgyJysE
+         ibZdoKOJCd3A1z5FR5scNPjOAOZ/gBAEqp50k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fGp9OGhSFYep+wgICuctJHe6AunYvp6GoDFbNEb/8TM=;
-        b=jFM0cSZ+5nyyVET0dax74/bhalkAqXZ3d/2eV//r7xf0u9hNr1mhBTW+T8uax6yARM
-         cMWCbQ9gM/dA875Nmp9wIiLFpj8UIksHOw79hFLYrtzBzSLwExpAbUqo/y8f41F5fi+M
-         +JTazdy2aG+NDP63gAgHsSqlTjn+xUSfweDnjdRlVEnxLrmod9mViHYvvQDc6vkm44Q5
-         +vic6uA8JWY9Q6gpm6GZ23jneT1MHotdUVG+1P7JWfG/glRGYpX/UqLPqbz1EFRgd8pY
-         AsbyhOe6C592R5iMzOJ/NTt5yK4ENmfQo/7FjUgGqOZ5g7NMQNyypYgxxO2VQ/3i5zLQ
-         LzHA==
-X-Gm-Message-State: AOAM533p4jDMm3psDXMxHhU5TxZ1Uf+vxvxFaZC7ayFErljz20MspgtJ
-        ixWotPCUEkkFqE3wypYdaut+Z0QUhkosFg==
-X-Google-Smtp-Source: ABdhPJx7PTNYUY7aPMQb35qbALa2eYLQq4ZO/aVB2DU5iEpMuR6J8S9qIIARrAEggI5ldK2Tzsy9gQ==
-X-Received: by 2002:a37:e4e:: with SMTP id 75mr15862qko.54.1616533715781;
-        Tue, 23 Mar 2021 14:08:35 -0700 (PDT)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id h16sm76307qto.45.2021.03.23.14.08.35
+        bh=GQwheX+ZOdsLRvA7XPASIVaHFFt/8Y47I6o+aENus34=;
+        b=fsPxL2q4zsLV9+cXCc+2Jand+6pdNEc0Z7M1ff1KM/5Pvx8PamK83YBq4tBMORt+k1
+         rNgaWnXuH0RhgqTQcEQqnoq7UAWzAso4UnwGhnE2bgDwJMX8QI6rOU0phVOKjqcyouGf
+         QtJKRu/Fw1we22EmdaejXcDAwMWEY3lbbIgzBgssOX6Vjpc89S8Mij3XWRXwIIlY1Gqi
+         e7yBsJk2b5WC7f54KG3xGYX7wPp30xrUmnXSmHRDL4VxfTUW+0YdgZvff72ptsXaqttF
+         B5xOuI1+ZUbyjTRqFKeIKFHPBhH5QTXjTIrmHY9m4Q2vuItoNBCEBGXo6QERZYkPIWWw
+         +VrQ==
+X-Gm-Message-State: AOAM531e9ECErC+xekwmYkHIp7esugNJQCsq5WBdChaViJSssstNeryL
+        EEfYZiwL/F/xCCf7lkozBNO2ANa3TRCftA==
+X-Google-Smtp-Source: ABdhPJzo7qkE+5sp6/01SCHYBTJ1+oqlyUHXCM0pcInVF0UVaxxV+hqlsyDKWnPewlsBEF+nAWczQw==
+X-Received: by 2002:a0c:c488:: with SMTP id u8mr6586681qvi.47.1616533734377;
+        Tue, 23 Mar 2021 14:08:54 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id a138sm96121qkg.29.2021.03.23.14.08.53
         for <linux-renesas-soc@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Mar 2021 14:08:35 -0700 (PDT)
-Received: by mail-yb1-f178.google.com with SMTP id z1so11845258ybf.6
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Mar 2021 14:08:34 -0700 (PDT)
-X-Received: by 2002:a25:b443:: with SMTP id c3mr300894ybg.32.1616533714574;
- Tue, 23 Mar 2021 14:08:34 -0700 (PDT)
+        Tue, 23 Mar 2021 14:08:53 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id m132so11827826ybf.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 23 Mar 2021 14:08:53 -0700 (PDT)
+X-Received: by 2002:a25:ab54:: with SMTP id u78mr270728ybi.276.1616533733297;
+ Tue, 23 Mar 2021 14:08:53 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210322030128.2283-1-laurent.pinchart+renesas@ideasonboard.com> <20210322030128.2283-2-laurent.pinchart+renesas@ideasonboard.com>
-In-Reply-To: <20210322030128.2283-2-laurent.pinchart+renesas@ideasonboard.com>
+References: <20210322030128.2283-1-laurent.pinchart+renesas@ideasonboard.com> <20210322030128.2283-4-laurent.pinchart+renesas@ideasonboard.com>
+In-Reply-To: <20210322030128.2283-4-laurent.pinchart+renesas@ideasonboard.com>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Tue, 23 Mar 2021 14:08:23 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Xak21bi5zcoKv9o7aLcJpWsm67U9NzYZ6zJD+UnOOtfw@mail.gmail.com>
-Message-ID: <CAD=FV=Xak21bi5zcoKv9o7aLcJpWsm67U9NzYZ6zJD+UnOOtfw@mail.gmail.com>
-Subject: Re: [RFC PATCH 01/11] dt-bindings: drm/bridge: ti-sn65dsi8: Make
- enable GPIO optional
+Date:   Tue, 23 Mar 2021 14:08:42 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=W-+aS25wtnSmF8tWSDHTdNCjbFj0x02-1iqZ2p5qYzyA@mail.gmail.com>
+Message-ID: <CAD=FV=W-+aS25wtnSmF8tWSDHTdNCjbFj0x02-1iqZ2p5qYzyA@mail.gmail.com>
+Subject: Re: [RFC PATCH 03/11] drm/bridge: ti-sn65dsi86: Unregister AUX
+ adapter in remove()
 To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
         linux-renesas-soc@vger.kernel.org,
@@ -75,9 +75,7 @@ Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Jonas Karlman <jonas@kwiboo.se>,
         Jernej Skrabec <jernej.skrabec@siol.net>,
-        Stephen Boyd <swboyd@chromium.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
+        Stephen Boyd <swboyd@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
@@ -88,13 +86,37 @@ Hi,
 On Sun, Mar 21, 2021 at 8:02 PM Laurent Pinchart
 <laurent.pinchart+renesas@ideasonboard.com> wrote:
 >
-> The SN65DSI86 EN pin can be hardwired to a high level, or connected to a
-> global reset signal, not controllable by the kernel. Make it optional in
-> those cases.
+> The AUX adapter registered in probe() need to be unregistered in
+> remove(). Do so.
 >
+> Fixes: b814ec6d4535 ("drm/bridge: ti-sn65dsi86: Implement AUX channel")
 > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 > ---
->  .../devicetree/bindings/display/bridge/ti,sn65dsi86.yaml         | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> index da78a12e58b5..c45420a50e73 100644
+> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> @@ -1307,6 +1307,9 @@ static int ti_sn_bridge_remove(struct i2c_client *client)
+>                 return -EINVAL;
+>
+>         kfree(pdata->edid);
+> +
+> +       drm_dp_aux_unregister(&pdata->aux);
+> +
+>         ti_sn_debugfs_remove(pdata);
+>
+>         of_node_put(pdata->host_node);
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Good catch. One question, though. I know DRM sometimes has different
+conventions than the rest of the kernel, but I always look for the
+"remove" to be backwards of probe. That means that your code (and
+probably most of the remove function) should come _after_ the
+drm_bridge_remove(), right?  ...since drm_bridge_add() was the last
+thing in probe then drm_bridge_remove() should be the first thing in
+remove?
+
+
+-Doug
