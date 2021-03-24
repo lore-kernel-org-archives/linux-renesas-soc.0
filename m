@@ -6,73 +6,72 @@ X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AA1C433E1
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Mar 2021 16:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C5BC433E2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Mar 2021 16:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C3E7661A19
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Mar 2021 16:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB2E661A09
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Mar 2021 16:09:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236928AbhCXQCm (ORCPT
+        id S232405AbhCXQIk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Mar 2021 12:02:42 -0400
-Received: from mail-il1-f175.google.com ([209.85.166.175]:42949 "EHLO
-        mail-il1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236874AbhCXQCe (ORCPT
+        Wed, 24 Mar 2021 12:08:40 -0400
+Received: from mail-io1-f50.google.com ([209.85.166.50]:36494 "EHLO
+        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231944AbhCXQIg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Mar 2021 12:02:34 -0400
-Received: by mail-il1-f175.google.com with SMTP id l5so21833564ilv.9;
-        Wed, 24 Mar 2021 09:02:33 -0700 (PDT)
+        Wed, 24 Mar 2021 12:08:36 -0400
+Received: by mail-io1-f50.google.com with SMTP id f19so22046365ion.3;
+        Wed, 24 Mar 2021 09:08:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=D6yvyivfJcXYypZn3ro/Az36lap/wQW4K39YLMR8tZ0=;
-        b=PIVxXS7+bXrIe9xc/02qlkfOoLQIIHaCI86vMazQlZ6EeLNHaUj00tJWdq6OZ5l2gg
-         fjv5U4q7y3zLAiAaAIXQG+E4pHLKJ7I4/SlK8JtLo0v6JH47EnHwtBPxnO9NZ7VfEAus
-         K8jFOkoqy7wJDCLo3B/Lxn1yDp9IVxL+BgYPkn80YIfMhBRFJlSNOKOjrCG/t4QM/a0r
-         3Fl25UH23pe13p1fad65qUBRBlZMTzx72B0Oo3JKhE6cumLRuGD0KqdvHH3tUN4N08eq
-         Iqb5HUBmypM/1CYktvJ6bJbvr1atGXtiNVhheWjWTo7eJ6uYVrKpwqjMJRNDPboHhf/L
-         CP7w==
-X-Gm-Message-State: AOAM530IGN1RFNyZyygalsE5SH7gBzrueACpAC9bADVP4s69tz1gmQD7
-        749EbKBr1Gmnggbqk3mljA==
-X-Google-Smtp-Source: ABdhPJzlUq3dKD+xOunkl7LD4NdQQZpP8aezWSqFSUWvaiBKYZfPuP+nhch6KU2Rh1oZ8jGBBmse8w==
-X-Received: by 2002:a05:6e02:1bc2:: with SMTP id x2mr3048045ilv.205.1616601751968;
-        Wed, 24 Mar 2021 09:02:31 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=DC6sppFwNSh0V8SQXMfoXHnO/dG93+K4vUIX7b7Jn1g=;
+        b=FNdqwgkC43A+JoKA+y5tn/TuAcyouEG7LLXV1fLeJBZ5bMgUiIrc5IE4782EGYOVdp
+         6vBf7v8IDi6oDIzeQLPBEA/mJvitseSdKt2CaXr3hLYE5RtslId2OqL5/iSQ/HzfxG6U
+         XuPkoVBZZf9SwQGalJLLNbYBabZ71+wAnvxkA5/VCINln5A+PyvpP277hfqzLsXU+THS
+         Du8RHeplo2h65fxP38faGVv4A98gqCaC8FxVvSG/dx4Zj8AfmWEba1FHejfauIubrvtA
+         qtW94Xg9+BDWClUN+lLtRn15XQyrUyBDMuALSsLs2VavVOW4H/DPE4s+WsqbHLHU8njS
+         mmUA==
+X-Gm-Message-State: AOAM533zzXhYIa/H2F27AntNy0vtOxQSSvj0Q/2xLUpzPW0E44oh/nSF
+        xzqmgWL5U4AmEduDsTPJch4WiSCDDA==
+X-Google-Smtp-Source: ABdhPJw2gQcj61bgnRXQyecLd4GvAnJhIsD87E+oxbVR95LbjoF/R/1ll6zJeKQ2LtJ63x71M5GSOw==
+X-Received: by 2002:a5d:9807:: with SMTP id a7mr3092446iol.7.1616602116240;
+        Wed, 24 Mar 2021 09:08:36 -0700 (PDT)
 Received: from robh.at.kernel.org ([64.188.179.253])
-        by smtp.gmail.com with ESMTPSA id s9sm1219614iob.33.2021.03.24.09.02.30
+        by smtp.gmail.com with ESMTPSA id i18sm883584ilk.83.2021.03.24.09.08.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Mar 2021 09:02:31 -0700 (PDT)
-Received: (nullmailer pid 3153668 invoked by uid 1000);
-        Wed, 24 Mar 2021 16:02:28 -0000
-Date:   Wed, 24 Mar 2021 10:02:28 -0600
+        Wed, 24 Mar 2021 09:08:35 -0700 (PDT)
+Received: (nullmailer pid 3163532 invoked by uid 1000);
+        Wed, 24 Mar 2021 16:08:33 -0000
+Date:   Wed, 24 Mar 2021 10:08:33 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     geert+renesas@glider.be, linux-renesas-soc@vger.kernel.org,
-        magnus.damm@gmail.com, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, yusuke.goda.sx@renesas.com
-Subject: Re: [PATCH v2 1/2] dt-bindings: net: can: rcar_can: Document
- r8a77961 support
-Message-ID: <20210324160228.GA3153626@robh.at.kernel.org>
-References: <20210312095030.534957-1-yoshihiro.shimoda.uh@renesas.com>
- <20210312095030.534957-2-yoshihiro.shimoda.uh@renesas.com>
+To:     Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: media: renesas,csi2: Add r8a77961 support
+Message-ID: <20210324160833.GA3163480@robh.at.kernel.org>
+References: <20210312130421.1743226-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20210312095030.534957-2-yoshihiro.shimoda.uh@renesas.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210312130421.1743226-1-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, 12 Mar 2021 18:50:29 +0900, Yoshihiro Shimoda wrote:
-> Document SoC specific bindings for R-Car M3-W+ (r8a77961) SoC.
+On Fri, 12 Mar 2021 14:04:21 +0100, Niklas Söderlund wrote:
+> Add the compatible string for M3-W+ (r8a77961) to the list of supported
+> SoCs.
 > 
-> Also as R8A7796 is now called R8A77960 so that update those
-> references.
-> 
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 > ---
->  Documentation/devicetree/bindings/net/can/rcar_can.txt | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/media/renesas,csi2.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
