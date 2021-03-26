@@ -5,74 +5,80 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE6FC433EC
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Mar 2021 12:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA46BC433C1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Mar 2021 12:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A42561A48
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Mar 2021 12:03:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 740B261A38
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Mar 2021 12:11:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbhCZMC5 (ORCPT
+        id S229933AbhCZMLG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Mar 2021 08:02:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48042 "EHLO
+        Fri, 26 Mar 2021 08:11:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229589AbhCZMC0 (ORCPT
+        with ESMTP id S229882AbhCZMKy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Mar 2021 08:02:26 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B1F6C0613BD
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Mar 2021 05:02:18 -0700 (PDT)
+        Fri, 26 Mar 2021 08:10:54 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 411CEC0613AA
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Mar 2021 05:10:54 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:5cae:bca6:def7:9f08])
-        by michel.telenet-ops.be with bizsmtp
-        id l02G2400253vE1T0602GZz; Fri, 26 Mar 2021 13:02:16 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id l0As2400F53vE1T010AssA; Fri, 26 Mar 2021 13:10:52 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lPlAN-00AXLV-Ic; Fri, 26 Mar 2021 13:02:15 +0100
+        id 1lPlIi-00AXR6-8P; Fri, 26 Mar 2021 13:10:52 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lPlAM-006cQZ-BW; Fri, 26 Mar 2021 13:02:14 +0100
+        id 1lPlIh-006cdn-Mi; Fri, 26 Mar 2021 13:10:51 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Takeshi Kihara <takeshi.kihara.df@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Vladimir Barinov <vladimir.barinov@cogentembedded.com>
+Cc:     Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Valentine Barshak <valentine.barshak@cogentembedded.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/7] clk: renesas: rcar-gen3: Grammar s/dependent of/dependent on/
-Date:   Fri, 26 Mar 2021 13:00:57 +0100
-Message-Id: <20210326120100.1577596-5-geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: renesas: v3msk: Fix memory size
+Date:   Fri, 26 Mar 2021 13:10:50 +0100
+Message-Id: <20210326121050.1578460-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210326120100.1577596-1-geert+renesas@glider.be>
-References: <20210326120100.1577596-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fix grammar in comments for cpg_z_clk_set_rate().
+From: Valentine Barshak <valentine.barshak@cogentembedded.com>
 
+The V3MSK board has 2 GiB RAM according to the datasheet and schematics.
+
+Signed-off-by: Valentine Barshak <valentine.barshak@cogentembedded.com>
+[geert: Verified schematics]
+Fixes: cc3e267e9bb0ce7f ("arm64: dts: renesas: initial V3MSK board device tree")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 2 +-
+Untested due to lack of hardware
+---
+ arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index cf0d049aa8c78115..a241bf6e904f2f66 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -117,7 +117,7 @@ static int cpg_z_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	 *
- 	 * Using experimental measurements, it seems that no more than
- 	 * ~10 iterations are needed, independently of the CPU rate.
--	 * Since this value might be dependent of external xtal rate, pll1
-+	 * Since this value might be dependent on external xtal rate, pll1
- 	 * rate or even the other emulation clocks rate, use 1000 as a
- 	 * "super" safe value.
- 	 */
+diff --git a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+index 7417cf5fea0f0a65..2426e533128ceb42 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
++++ b/arch/arm64/boot/dts/renesas/r8a77970-v3msk.dts
+@@ -59,7 +59,7 @@ thc63lvd1024_out: endpoint {
+ 	memory@48000000 {
+ 		device_type = "memory";
+ 		/* first 128MB is reserved for secure area. */
+-		reg = <0x0 0x48000000 0x0 0x38000000>;
++		reg = <0x0 0x48000000 0x0 0x78000000>;
+ 	};
+ 
+ 	osc5_clk: osc5-clock {
 -- 
 2.25.1
 
