@@ -2,101 +2,76 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 248ACC433C1
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 28 Mar 2021 01:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B35F2C433C1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Mar 2021 07:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F01116198D
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 28 Mar 2021 01:22:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 781F861959
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Mar 2021 07:29:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230502AbhC1BVc (ORCPT
+        id S231184AbhC2H3Q (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 27 Mar 2021 21:21:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46698 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230442AbhC1BVD (ORCPT
+        Mon, 29 Mar 2021 03:29:16 -0400
+Received: from mail-ua1-f43.google.com ([209.85.222.43]:44018 "EHLO
+        mail-ua1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230322AbhC2H2n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 27 Mar 2021 21:21:03 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26B7FC0613B1;
-        Sat, 27 Mar 2021 18:21:03 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 77AD2527;
-        Sun, 28 Mar 2021 03:21:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1616894461;
-        bh=n9NwDJVlinrOdOhKsB7+CQlEiwm+wESdwsQGjOFT46Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HdZEGaeCYEW6FSI8bHdJeeCGwSawdyZ4doI63txBw/jyzj38STemY/Ie7xom59msd
-         /LtMBKvNs5qRHNXvO3tCxHux/p5g77S6C3jrN0xPle7eyDt5jy3e3NKmU3Lxet7iPY
-         e/WQFlxP2pBCE1BYkB+an8A+nQKTQRYj+bKbfZQw=
-Date:   Sun, 28 Mar 2021 04:20:18 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Ramesh Shanmugasundaram <rashanmu@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v5 0/5] Add r8a77965 DRIF support
-Message-ID: <YF/Z0kyepzD2MUJ6@pendragon.ideasonboard.com>
-References: <20201021135332.4928-1-fabrizio.castro.jz@renesas.com>
- <20201021214319.GO3942@pendragon.ideasonboard.com>
- <90cb3777-377c-84d0-9b35-8c4b15084ebd@xs4all.nl>
+        Mon, 29 Mar 2021 03:28:43 -0400
+Received: by mail-ua1-f43.google.com with SMTP id b7so3626264uam.10;
+        Mon, 29 Mar 2021 00:28:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dvbWeiO/clTTMNAnX8lNGcmJO6+fNShyOgdR5/QqtBI=;
+        b=aWum01dQlKLWW7MmYbZYQrEyGZDMA2voISMn5NhyTpLLDYCfdaIuCiVs6UcvNBmLZ8
+         3758HhiwNb15CZKqksAv4kXB1L6rmdrnRymCY+5eVvHnW7YQZoUp5/t6BvSJfG8cKs8q
+         e8uythQYslVMufmWhVSfw1+48SWFHA2b1O+MykL6RmK1XC/bJypE/D5jZ8UI3G7PZgZr
+         UYPn+aP9+Bq5PfeIEuUVdAX6YsxPTDko063EkVOODHm0ocAm74rqZ4WnSdQ5QUF8xHx5
+         heLtolisXgAtcHGZeHUBGn+s6ybGvgTMSHW+l8uCoWi9lZure6jUzokXBw2WWHYviiI3
+         vpzQ==
+X-Gm-Message-State: AOAM533MF4Yd3wYHPh+uSEJGHqEcH+ODE9ZXWJfJNADXA848ia1dsGoh
+        RxCWOukQjj0vB01SB2Hc8nG8zmSeK5IcEoS6TVnyHRkR
+X-Google-Smtp-Source: ABdhPJxRJZb0+HfOZj6Fiup/boinTl1lnnkCjy1tUsJc4fi574Gx+jzft8S3NIHMRUPhr3qxhwITbJmF1sACKxL5sr8=
+X-Received: by 2002:ab0:6954:: with SMTP id c20mr13903558uas.106.1617002922749;
+ Mon, 29 Mar 2021 00:28:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <90cb3777-377c-84d0-9b35-8c4b15084ebd@xs4all.nl>
+References: <20210322172919.1154686-1-kieran.bingham+renesas@ideasonboard.com> <20210322172919.1154686-2-kieran.bingham+renesas@ideasonboard.com>
+In-Reply-To: <20210322172919.1154686-2-kieran.bingham+renesas@ideasonboard.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 29 Mar 2021 09:28:31 +0200
+Message-ID: <CAMuHMdVp9R=MZUkvJ=wH-5Lu=BWCGcOF7gJJuZv+aC_J99FMEw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] arm64: dts: renesas: r8a779a0: Add FCPVD support
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Hans,
+On Mon, Mar 22, 2021 at 6:29 PM Kieran Bingham
+<kieran.bingham+renesas@ideasonboard.com> wrote:
+> Provide FCPVD support for the V3U.
+>
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-On Sat, Mar 27, 2021 at 11:05:01AM +0100, Hans Verkuil wrote:
-> On 21/10/2020 23:43, Laurent Pinchart wrote:
-> > On Wed, Oct 21, 2020 at 02:53:27PM +0100, Fabrizio Castro wrote:
-> >> Dear All,
-> >>
-> >> this series is to add DRIF support for the r8a77965
-> >> (a.k.a. R-Car M3-N). Version 5 fixes a warning reported
-> >> by 'make dt_binding_check', as reported by Rob.
-> > 
-> > Patch 1/5 to 4/5 taken in my tree, I'll send a pull request to
-> > linux-media when the merge window closes. I expect Geert to handle 5/5.
-> 
-> Patch 5 has been merged, but patches 1-4 aren't. I don't think there
-> was a PR for it. For some reason these patches are delegated to me in
-> patchwork. I've now delegated them to you for further processing.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.13.
 
-I've just sent a pull request, for these and other miscellaneous
-changes.
+Gr{oetje,eeting}s,
 
-> >> Fabrizio Castro (5):
-> >>   MAINTAINERS: Update MAINTAINERS for Renesas DRIF driver
-> >>   media: dt-bindings: media: renesas,drif: Convert to json-schema
-> >>   media: dt-bindings: media: renesas,drif: Add r8a77990 support
-> >>   media: dt-bindings: media: renesas,drif: Add r8a77965 support
-> >>   arm64: dts: r8a77965: Add DRIF support
-> >>
-> >>  .../bindings/media/renesas,drif.txt           | 177 -----------
-> >>  .../bindings/media/renesas,drif.yaml          | 279 ++++++++++++++++++
-> >>  MAINTAINERS                                   |   4 +-
-> >>  arch/arm64/boot/dts/renesas/r8a77965.dtsi     | 120 ++++++++
-> >>  4 files changed, 401 insertions(+), 179 deletions(-)
-> >>  delete mode 100644 Documentation/devicetree/bindings/media/renesas,drif.txt
-> >>  create mode 100644 Documentation/devicetree/bindings/media/renesas,drif.yaml
+                        Geert
 
 -- 
-Regards,
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
