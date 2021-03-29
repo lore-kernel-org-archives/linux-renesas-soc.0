@@ -7,75 +7,75 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F840C433E0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Mar 2021 21:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF0CC433C1
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Mar 2021 21:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9F366196E
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Mar 2021 21:00:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE6A66192E
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Mar 2021 21:21:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230362AbhC2U70 (ORCPT
+        id S231158AbhC2VU7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 Mar 2021 16:59:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45050 "EHLO
+        Mon, 29 Mar 2021 17:20:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229555AbhC2U7T (ORCPT
+        with ESMTP id S231543AbhC2VUi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Mar 2021 16:59:19 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5D56C061574
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Mar 2021 13:59:19 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id k8so1047038pgf.4
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Mar 2021 13:59:19 -0700 (PDT)
+        Mon, 29 Mar 2021 17:20:38 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C027AC061574
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Mar 2021 14:20:37 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id m7so10230064pgj.8
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Mar 2021 14:20:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=UOTSvs6Y/M2RCC5q3gx90aUO295bazC+gijpfwrOASw=;
-        b=XwKdWs2CZVf6ePy+jlMgtw71I/qbrpPcVQSbgYnISZ7V/Rn+x5YmkKHNGIWJTXw4F5
-         cJe+lU3oiTHWA0pXBM+3uZxVFNEYysgBbRYDUWukT+C7agk/MUAxblEy4WkLmvCqI/mQ
-         zAthtluCcB6Ljs5SPTqhUL6fKggun+ZY8nL6CbgN+RyHM3rf8nCbS7FqfRoFgZsyswGc
-         B1PwqzE2y/p148JC61J3uujG6OdOe8w5uDfQ9q64zlKkY7u1SHiq9parwocjIUOCxewB
-         iojuyRjt/fN9/l6j1Qrb5qnqhXDbpZQyuaapRLGtz5fHzvpVZRuvFpgdWmieKUd++vwi
-         LPng==
+        bh=owbwP7P1YhCf8PICQPtsFxuoSjiQDw6v7cD0kFBTHo8=;
+        b=BnIZ5f+dLyHEQFZrRozPdzg4TfVyeMX9Finxuw7/m8eszHTZ3XTDz1gvKgpvbvsZHy
+         iShfFZ+Hl8T3MpUDzr2kJBO1PmPeWqU3AIJ7OB8k3yxbQBqTVVwEHVPmjBEzmQHfDd2C
+         TgaijZPs3ifRCTB1W/0aQGl0b+pLYaerl7zU25sQUmIed9CPnQOeGVtAtUhjQYc+Agew
+         2z8rLu6AJApXJtq1FnMhU6LWt+eAK1XztdTKLlWWpMAiREz+oL+QKE4xMq7xomq1etnd
+         xgNPizJZ6nqXXrFayx5ZS5mJggOBRlIQxbrj0bavYKPpdMHjqF2/Y+B0XeacPxnV4+M+
+         nU6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=UOTSvs6Y/M2RCC5q3gx90aUO295bazC+gijpfwrOASw=;
-        b=UXWVsbxqPo/VMkcho6TZ77ldQ479FUnIrRZc5Kw+Fff/N7mbHNUxbWxUjRbGvdqygp
-         o5Fs35kMlkJgDA4ZOkpriojPJWEd8gAJ/QF2XJrtEhhmkb95IuHNAn5GV2XFJBEUy3sv
-         41BPA6+5bGcsWh+9ts51FyuGmzrwttBeMMTvPNPM/QzpA1J2Iir56SCc57zHGTpUpvqz
-         9/JaW8RSSZbP6cqB5pk9TcTAOMoC4Sd0pu18vDMsLboj/fFiUwoHnZHCCuet9Z4hImiQ
-         semaOefotgkH7ou3OlYe3rzT2xyhdbOt+c7CHkGRdu63XMjQU+UXbHD6S9yeIAVcX1y0
-         DrUQ==
-X-Gm-Message-State: AOAM5329pYpAvx02aBXntdflZfsmv4CrmWYkILxyYYIu7s0ubBopJTlO
-        4QBQktK6k3nSb3eIcUNOtZUaO083yVLlEw==
-X-Google-Smtp-Source: ABdhPJz+kIyGTCaEtlTP28aZuamG9XgkMPrvW0r8kCP3jueO7+uZfU1pRgDMeD+LxiNruhsSSNg2Aw==
-X-Received: by 2002:a63:5a4f:: with SMTP id k15mr25636789pgm.246.1617051558817;
-        Mon, 29 Mar 2021 13:59:18 -0700 (PDT)
+        bh=owbwP7P1YhCf8PICQPtsFxuoSjiQDw6v7cD0kFBTHo8=;
+        b=t5azWn8vv3oeiEidKOC9IR4pgaXObTpgRsSywDGBvzTXHxhpyvya+BpoH40V67sWWN
+         s7SstgwcwYujcwem9P68Gm/MM2A1FQ9ku8y1jzKOO10nEL6zOdphPMar6J0MNUeZVX03
+         MdaODXo/HSBNjtXv8A2ZJKdnJShiPLp4fOwrfF6roCPGFhNnJL+LNVrZxcYdg8oNkUmW
+         +Lf1Gsyxayp8KwB6FCMS4PEfPmK+v5HVs3fODBXCrMFfwtrQY1cinVynd18abYrKqJyo
+         RuuAi80ATHb4MRs8F7tgZXmZoBE544UxUd89u0cZOCWl5OJkCLcEzgy32Ofs205JHbur
+         iAow==
+X-Gm-Message-State: AOAM531XDrCqFPtCQz0Hs1lyFyHQSd9YtqasNue5an/vVGDZ9jaAbRGc
+        MG50rhqMy4vEBzh2POidT0W7zJmA7rfvBA==
+X-Google-Smtp-Source: ABdhPJxb5O5S3hJR2U1BDbhcTkEq935AI/zFYjYWZweejL+m2e6FkiDbBZ6pcFbwx5onre/2o6L71A==
+X-Received: by 2002:a63:d449:: with SMTP id i9mr24838007pgj.227.1617052837130;
+        Mon, 29 Mar 2021 14:20:37 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id ds3sm447097pjb.23.2021.03.29.13.59.18
+        by smtp.gmail.com with ESMTPSA id s22sm4599349pfe.150.2021.03.29.14.20.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Mar 2021 13:59:18 -0700 (PDT)
-Message-ID: <60623fa6.1c69fb81.9d704.10ea@mx.google.com>
-Date:   Mon, 29 Mar 2021 13:59:18 -0700 (PDT)
+        Mon, 29 Mar 2021 14:20:36 -0700 (PDT)
+Message-ID: <606244a4.1c69fb81.8ef21.b0fa@mx.google.com>
+Date:   Mon, 29 Mar 2021 14:20:36 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: renesas-devel-2021-03-29-v5.12-rc5
+X-Kernelci-Kernel: renesas-next-2021-03-29-v5.12-rc2
 X-Kernelci-Tree: renesas
-X-Kernelci-Branch: master
-Subject: renesas/master baseline-nfs: 17 runs,
- 1 regressions (renesas-devel-2021-03-29-v5.12-rc5)
+X-Kernelci-Branch: next
+Subject: renesas/next baseline-nfs: 17 runs,
+ 1 regressions (renesas-next-2021-03-29-v5.12-rc2)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master baseline-nfs: 17 runs, 1 regressions (renesas-devel-2021-03-=
-29-v5.12-rc5)
+renesas/next baseline-nfs: 17 runs, 1 regressions (renesas-next-2021-03-29-=
+v5.12-rc2)
 
 Regressions Summary
 -------------------
@@ -88,16 +88,16 @@ sun7i-a20-olinuxino-lime2 | arm  | lab-baylibre | gcc-8    | multi_v7_defco=
 nfig | 1          =
 
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2021-03-29-v5.12-rc5/plan/baseline-nfs/
+  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
+s-next-2021-03-29-v5.12-rc2/plan/baseline-nfs/
 
   Test:     baseline-nfs
   Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2021-03-29-v5.12-rc5
+  Branch:   next
+  Describe: renesas-next-2021-03-29-v5.12-rc2
   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
 evel.git
-  SHA:      bb48e88392ae845729086cf17d765fd2a3a60f2a =
+  SHA:      d084e52e5b7b16d25a5e32c4625fb205a2b272d8 =
 
 
 
@@ -114,25 +114,25 @@ sun7i-a20-olinuxino-lime2 | arm  | lab-baylibre | gcc-8    | multi_v7_defco=
 nfig | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/606211befb287beca5af02e3
+  Details:     https://kernelci.org/test/plan/id/606216aab74de860fbaf02d0
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: multi_v7_defconfig
   Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-03-29-v5.12-rc5/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-nfs-=
-sun7i-a20-olinuxino-lime2.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-03-29-v5.12-rc5/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-nfs-=
-sun7i-a20-olinuxino-lime2.html
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-03-29-v5.12-rc2/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-nfs-sun=
+7i-a20-olinuxino-lime2.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-03-29-v5.12-rc2/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-nfs-sun=
+7i-a20-olinuxino-lime2.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
 0315.0/armhf/initrd.cpio.gz =
 
 
 
-  * baseline-nfs.login: https://kernelci.org/test/case/id/606211befb287beca=
-5af02e4
-        failing since 7 days (last pass: renesas-devel-2021-02-15-v5.11, fi=
-rst fail: renesas-devel-2021-03-22-v5.12-rc4) =
+  * baseline-nfs.login: https://kernelci.org/test/case/id/606216aab74de860f=
+baf02d1
+        failing since 7 days (last pass: v5.12-rc2-14-g6f56f6c26099, first =
+fail: renesas-next-2021-03-22-v5.12-rc2) =
 
  =20
