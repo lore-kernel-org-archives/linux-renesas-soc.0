@@ -2,111 +2,126 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 979E7C433B4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 18:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0154C433B4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 21:45:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F0CB6023B
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 18:38:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 820B8610F8
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 21:45:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238019AbhDASh6 (ORCPT
+        id S234211AbhDAVph (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:37:58 -0400
-Received: from foss.arm.com ([217.140.110.172]:46726 "EHLO foss.arm.com"
+        Thu, 1 Apr 2021 17:45:37 -0400
+Received: from www.zeus03.de ([194.117.254.33]:54028 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S240340AbhDASaH (ORCPT
+        id S234902AbhDAVpg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Apr 2021 14:30:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C4AD3D6E;
-        Thu,  1 Apr 2021 04:27:53 -0700 (PDT)
-Received: from e123427-lin.arm.com (unknown [10.57.56.129])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D3193F694;
-        Thu,  1 Apr 2021 04:27:49 -0700 (PDT)
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Frank Wunderlich <frank-w@public-files.de>,
-        Michal Simek <michal.simek@xilinx.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>, linux-pci@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-tegra@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Bharat Kumar Gogada <bharatku@xilinx.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Wei Liu <wei.liu@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        linux-mediatek@lists.infradead.org,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        linux-hyperv@vger.kernel.org, Will Deacon <will@kernel.org>,
-        kernel-team@android.com, Michael Kelley <mikelley@microsoft.com>,
-        linux-kernel@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 00/14] PCI/MSI: Getting rid of msi_controller, and other cleanups
-Date:   Thu,  1 Apr 2021 12:27:42 +0100
-Message-Id: <161727636757.32506.11592578621890085687.b4-ty@arm.com>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20210330151145.997953-1-maz@kernel.org>
-References: <20210330151145.997953-1-maz@kernel.org>
+        Thu, 1 Apr 2021 17:45:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=0re/4MhL/HVSNQlJ26P2awZytOoB
+        TZt9SWkXNDLXpXg=; b=UelA4teuQjS5OAMHUdyUHY0u1WQXlz7ul/8OSE9VS99a
+        1p0kZlVayGtboNEwx/aiKMa9yeocX2V5VRkRHqkB4RwKFXk971XeVPXjiu2iAMM/
+        q7eZZ38+3keT5NMMUH/nofj4WTd3a3wlA+eMiCnXwxBykKVLNaOFha8U21X0am8=
+Received: (qmail 1102382 invoked from network); 1 Apr 2021 23:45:33 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Apr 2021 23:45:33 +0200
+X-UD-Smtp-Session: l3s3148p1@msp2JvC+HI0gAwDPXw1NAMt9GTaBIvNo
+Date:   Thu, 1 Apr 2021 23:45:28 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH RFC/RFT 1/1] misc: add simple logic analyzer using polling
+Message-ID: <20210401214528.GA892@kunai>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+References: <20210330085655.12615-1-wsa+renesas@sang-engineering.com>
+ <20210330085655.12615-2-wsa+renesas@sang-engineering.com>
+ <CACRpkdbABbvxRLGhzmiQ8kTmwHsRqevvmDpfLKv-dUhEHVpF6g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbABbvxRLGhzmiQ8kTmwHsRqevvmDpfLKv-dUhEHVpF6g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, 30 Mar 2021 16:11:31 +0100, Marc Zyngier wrote:
-> This is a respin of the series described at [1].
-> 
-> * From v2 [2]:
->   - Fixed the Xilinx driver, thanks to Bharat for testing it
->   - Dropped the no_msi attribute, and solely rely on msi_domain, which
->     has the same effect for the only platform that was using it.
->   - Fixed compilation on architectures that do not select the generic
->     MSI support
-> 
-> [...]
 
-I have applied it to pci/msi and should be moved into -next shortly
-for further testing/visibility, thanks a lot for putting it together.
+--envbJBWh7q8WU6mo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-[01/14] PCI: tegra: Convert to MSI domains
-        https://git.kernel.org/lpieralisi/pci/c/973a28677e
-[02/14] PCI: rcar: Don't allocate extra memory for the MSI capture address
-        https://git.kernel.org/lpieralisi/pci/c/c244dc15dc
-[03/14] PCI: rcar: Convert to MSI domains
-        https://git.kernel.org/lpieralisi/pci/c/516286287d
-[04/14] PCI: xilinx: Don't allocate extra memory for the MSI capture address
-        https://git.kernel.org/lpieralisi/pci/c/cc8cf90738
-[05/14] PCI: xilinx: Convert to MSI domains
-        https://git.kernel.org/lpieralisi/pci/c/b66873599e
-[06/14] PCI: hv: Drop msi_controller structure
-        https://git.kernel.org/lpieralisi/pci/c/65b131816a
-[07/14] PCI/MSI: Drop use of msi_controller from core code
-        https://git.kernel.org/lpieralisi/pci/c/54729d2a7a
-[08/14] PCI/MSI: Kill msi_controller structure
-        https://git.kernel.org/lpieralisi/pci/c/27278a3fac
-[09/14] PCI/MSI: Kill default_teardown_msi_irqs()
-        https://git.kernel.org/lpieralisi/pci/c/f68f571db9
-[10/14] PCI/MSI: Let PCI host bridges declare their reliance on MSI domains
-        https://git.kernel.org/lpieralisi/pci/c/419150a4ff
-[11/14] PCI/MSI: Make pci_host_common_probe() declare its reliance on MSI domains
-        https://git.kernel.org/lpieralisi/pci/c/98be0634c8
-[12/14] PCI: mediatek: Advertise lack of built-in MSI handling
-        https://git.kernel.org/lpieralisi/pci/c/77cbd88c90
-[13/14] PCI/MSI: Document the various ways of ending up with NO_MSI
-        https://git.kernel.org/lpieralisi/pci/c/44ec480daf
-[14/14] PCI: Refactor HT advertising of NO_MSI flag
-        https://git.kernel.org/lpieralisi/pci/c/18d56e5afe
+Hi Linus,
 
-Thanks,
-Lorenzo
+> I am a great supporter of this idea.
+
+Great, thanks!
+
+> When other debugging tools for GPIO got DT bindings it was concluded that
+> it is possible to create bindings like this for debugging without even
+> specifying
+> any formal bindings. They are just for debugging after all.
+
+So, I remove the yaml file and add the bindings to the documenation,
+then? Makes sense to me because it is for debugging and not really
+official.
+
+> I would consider housing this tool under drivers/gpio actually.
+> We have other funky things like gpio-sim and gpio-aggregator
+> so why not.
+
+Heh, my first draft was placed in drivers/gpio. I'd be happy to have it
+there.
+
+> I would create a Kconfig menu with "GPIO hardware hacking tools".
+>=20
+> But Bartosz would need to agree on that idea.
+
+Since he agreed, I'll update this in v2.
+
+> > +config GPIO_LOGIC_ANALYZER
+> > +       tristate "Simple GPIO logic analyzer"
+> > +       depends on GPIOLIB || COMPILE_TEST
+> > +       help
+>=20
+> depends on EXPERT
+
+Yes, good point!
+
+All the best,
+
+   Wolfram
+
+
+--envbJBWh7q8WU6mo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmBmPvMACgkQFA3kzBSg
+KbYdLA/+IU2QMANxwSFRdg2A9RK83WiwfbmbESqKoyLf/8u/F0JwkANKUW11ECxO
+whmec/QfqCFWNQxyJEA50B+M5/hRfl4cRJFfzXR8tXJrRjA06hw9NAibzlHtOLoX
+y5dq89MeMwnkJi0oZAE4s+CobDvuHLRU0XHW5IaQDKoai4TK+WTla5dmqbUmGvXK
+zo0jLm+EPS8lWBxZBLTd0jYqQMFJKhNUQ+1nQmDVc6t4H9lpHMeDow3wCcXqUgpI
+10Lydp0sqX7gaMJ0O/x3W/X0/XzuRwS9kgNLeTx6qJbkJCN9uarfOaUa4ho5jneW
+PCWxE0AB9YEyKLlvRS9NptlOpeLo1pz+kqvwnymk9FTciKi7+ei7JKCtN6LH+X6K
+TUtfg9/iYQtW4i55CCWsGs+4JYnlrmFkzFKlv2d62kJ+TFh3tPa6iKYOAMoWJISs
+oyFKLLfWZ5y98i5qifaVaa8PCwdTzQW7l52VlR/XOCFXVc4lET77UveFrMNe/5ZB
+5vzgNhQVzYgIWDQHO2bz445oUp5ZEvOKTaT98FrZnjfSSpW9CX29v2ej6bJEH8aG
+WpThl2pNgZaR7PewhLPMETS+q9ixNhkwGqlPDLTP3ftDYdC03nNDM4wChFpQV5d/
+b1yFsmOAwIRUd+xhf8EZO39Vgx7pqf0FG3Iq+D0nysRwq/Mrq4c=
+=9CKg
+-----END PGP SIGNATURE-----
+
+--envbJBWh7q8WU6mo--
