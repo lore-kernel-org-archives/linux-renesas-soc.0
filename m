@@ -2,114 +2,139 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83042C43600
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 18:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A4DC433ED
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 18:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48232610D1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 18:11:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F2BA610E8
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 18:29:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235246AbhDASK6 (ORCPT
+        id S237724AbhDAS3F (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 1 Apr 2021 14:10:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34414 "EHLO
+        Thu, 1 Apr 2021 14:29:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234323AbhDASDW (ORCPT
+        with ESMTP id S239889AbhDASRF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Apr 2021 14:03:22 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB3F2C05BD2D
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Apr 2021 06:01:43 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:7c3c:adbc:7a1a:b85f])
-        by baptiste.telenet-ops.be with bizsmtp
-        id nR1h240034A7w6i01R1haJ; Thu, 01 Apr 2021 15:01:41 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lRwxA-00CBkG-La; Thu, 01 Apr 2021 15:01:40 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lRwx9-003mtQ-MW; Thu, 01 Apr 2021 15:01:39 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 4/5] clk: renesas: div6: Consider all parents for requested rate
-Date:   Thu,  1 Apr 2021 15:01:37 +0200
-Message-Id: <60e639692b462f99e0b6ab868c3675b3d97dbdb0.1617281699.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1617281699.git.geert+renesas@glider.be>
-References: <cover.1617281699.git.geert+renesas@glider.be>
+        Thu, 1 Apr 2021 14:17:05 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEC2BC0045D8
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Apr 2021 07:25:49 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id g38so1944474ybi.12
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 01 Apr 2021 07:25:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WH+kAbagll9akxuUHqMFh3rNKMar4o3v6gTYdJcUIiE=;
+        b=1ypL8Wa8sUdG73EO99/NVS2TpkfsaRCNg8yduWkR4ElYHj8J8Veicor1vdONTuA43n
+         OJ2XHHopXV7W098Eo3dJsRU0SXAv2NMUywQSpWHPKw2RDZDGKUe707+8boGVlO8R4hTE
+         OcSGw7v8oQOoyhB+GQcoRumTPvBLcJRAIHWcBlY8JN/AXaFjjGShd+3NBaSJ4/CQ2CmH
+         HJoIl5WCTiDE7TglOXNvw5dmdGLa7oystpeEqIum56FPlPSwTVOkSAi59pE32FHVSc60
+         IZu4xxJOo6ZEXUup1WASLcIybVdw4j8naIvtiX3dmlVW+mrFVeCQCevrRyou8PKwWnYn
+         ynUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WH+kAbagll9akxuUHqMFh3rNKMar4o3v6gTYdJcUIiE=;
+        b=eu2I9P/sgTZdURbYWmyDmzBeWZyntjNvlHTOpBWzeZtQqiXtezJXkWQU0qrF40Q2Dp
+         q/mF63ecZxTdA6A+T4cmgY1yrRRGBdmccbDyCxhKCiOuFUOSgm/sZCojfgrSDKrD8epp
+         FjGetjVht6p1hiCwpc0YdlHEFTssD/bX7h6NOFn3AjMlUKBZ08AH6W8z4L9iorwu5ndT
+         6JPGgBaLhmp66Ej/lHcZdfYC1vl+WpkeR08E3m8Zn5XAS9ew3eU5nX+9e8xHfKwjsHZk
+         vRRxMc/DDF7tAiCXwJkqJm/s8rTH8aBYzEPNWN1WPu1d2/0bZatq20hN9/uDOBHelK7A
+         I0hw==
+X-Gm-Message-State: AOAM530fRLMKH8Jlulia7NzKEOZomSk7uGEblEeq05dQLPP8GHxYimU6
+        S3+9wqjiGXp00a8fMUIhVQtp//6mFU83MeF0XEQ8xg==
+X-Google-Smtp-Source: ABdhPJxupg8K9QOvfQqfplXb9385y7HzeRg1j4Fbtc/ryhIPKrlK5XiQrBgMkwdJ6XBrJHjAp/YvxoFroo98g+XW918=
+X-Received: by 2002:a25:c588:: with SMTP id v130mr12117757ybe.312.1617287149038;
+ Thu, 01 Apr 2021 07:25:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210330085655.12615-1-wsa+renesas@sang-engineering.com>
+ <20210330085655.12615-2-wsa+renesas@sang-engineering.com> <CACRpkdbABbvxRLGhzmiQ8kTmwHsRqevvmDpfLKv-dUhEHVpF6g@mail.gmail.com>
+In-Reply-To: <CACRpkdbABbvxRLGhzmiQ8kTmwHsRqevvmDpfLKv-dUhEHVpF6g@mail.gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Thu, 1 Apr 2021 16:25:38 +0200
+Message-ID: <CAMpxmJWihGgdThmisvqjpvK6NsORg1+SOE7+wz4HZVkM5Xj77A@mail.gmail.com>
+Subject: Re: [PATCH RFC/RFT 1/1] misc: add simple logic analyzer using polling
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Currently the .determine_rate() callback considers only the current
-parent clock, limiting the range of achievable clock rates on DIV6
-clocks with multiple parents, as found on SH/R-Mobile SoCs.
+On Thu, Apr 1, 2021 at 3:08 PM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Tue, Mar 30, 2021 at 10:58 AM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+>
+> > This is a simple logic analyzer using GPIO polling. It comes with a
+> > script to isolate a CPU for polling. While this is definately not a
+> > production level analyzer, it can be a helpful first view when remote
+> > debugging. Read the documentation for details.
+> >
+> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+>
+> I am a great supporter of this idea.
+>
+> When we created gpiod_get_array_value() and friends, the idea
+> was exactly to be able to do things like this. It's a good way to
+> utilize the fact that several GPIO lines can often be read from a single
+> register read.
+>
+> > +    i2c-analyzer {
+> > +            compatible = "gpio-logic-analyzer";
+> > +            probe-gpios = <&gpio6 21 GPIO_OPEN_DRAIN>, <&gpio6 4 GPIO_OPEN_DRAIN>;
+> > +            probe-names = "SCL", "SDA";
+> > +    };
+> > +
+> > +The binding documentation is in the ``misc`` folder of the Kernel binding
+> > +documentation.
+> (...)
+> > +++ b/Documentation/devicetree/bindings/misc/gpio-logic-analyzer.yaml
+>
+> When other debugging tools for GPIO got DT bindings it was concluded that
+> it is possible to create bindings like this for debugging without even
+> specifying
+> any formal bindings. They are just for debugging after all.
+>
+> Personally I like the bindings anyway.
+>
+> > diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+>
+> I would consider housing this tool under drivers/gpio actually.
+> We have other funky things like gpio-sim and gpio-aggregator
+> so why not.
+>
 
-Extend the callback to consider all available parent clocks.
+We have actually created a sub-menu for "Virtual GPIO drivers".
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/clk-div6.c | 35 +++++++++++++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 3 deletions(-)
+> I would create a Kconfig menu with "GPIO hardware hacking tools".
+>
+> But Bartosz would need to agree on that idea.
+>
 
-diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
-index 3af65ef5690e3d84..a9ac2a83c1d0daa0 100644
---- a/drivers/clk/renesas/clk-div6.c
-+++ b/drivers/clk/renesas/clk-div6.c
-@@ -103,10 +103,39 @@ static unsigned int cpg_div6_clock_calc_div(unsigned long rate,
- static int cpg_div6_clock_determine_rate(struct clk_hw *hw,
- 					 struct clk_rate_request *req)
- {
--	unsigned int div = cpg_div6_clock_calc_div(req->rate,
--						   req->best_parent_rate);
-+	unsigned long prate, calc_rate, diff, best_rate, best_prate;
-+	unsigned int num_parents = clk_hw_get_num_parents(hw);
-+	struct clk_hw *parent, *best_parent = NULL;
-+	unsigned long min_diff = ULONG_MAX;
-+	unsigned int i, div;
-+
-+	for (i = 0; i < num_parents; i++) {
-+		parent = clk_hw_get_parent_by_index(hw, i);
-+		if (!parent)
-+			continue;
-+
-+		prate = clk_hw_get_rate(parent);
-+		if (!prate)
-+			continue;
-+
-+		div = cpg_div6_clock_calc_div(req->rate, prate);
-+		calc_rate = prate / div;
-+		diff = calc_rate > req->rate ? calc_rate - req->rate
-+					     : req->rate - calc_rate;
-+		if (diff < min_diff) {
-+			best_rate = calc_rate;
-+			best_parent = parent;
-+			best_prate = prate;
-+			min_diff = diff;
-+		}
-+	}
-+
-+	if (!best_parent)
-+		return -EINVAL;
- 
--	req->rate = req->best_parent_rate / div;
-+	req->best_parent_rate = best_prate;
-+	req->best_parent_hw = best_parent;
-+	req->rate = best_rate;
- 	return 0;
- }
- 
--- 
-2.25.1
+It's perfect! If we ever get something like a generic bitbanging
+driver or something, it could go in there too.
 
+Bart
+
+> > +config GPIO_LOGIC_ANALYZER
+> > +       tristate "Simple GPIO logic analyzer"
+> > +       depends on GPIOLIB || COMPILE_TEST
+> > +       help
+>
+> depends on EXPERT
+>
+> I would say. Definitely not something for the average user.
+>
+> Yours,
+> Linus Walleij
