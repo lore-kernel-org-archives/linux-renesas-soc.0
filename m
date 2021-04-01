@@ -2,87 +2,79 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4009C43461
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 17:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88819C433B4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 17:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C23A161277
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 17:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65FA960BD3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Apr 2021 17:57:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234471AbhDARmR (ORCPT
+        id S235667AbhDAR5S (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 1 Apr 2021 13:42:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57240 "EHLO
+        Thu, 1 Apr 2021 13:57:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234630AbhDARic (ORCPT
+        with ESMTP id S235908AbhDARx3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Apr 2021 13:38:32 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C35EC05BD28
+        Thu, 1 Apr 2021 13:53:29 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A2C8C05BD23
         for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Apr 2021 06:01:43 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:7c3c:adbc:7a1a:b85f])
-        by xavier.telenet-ops.be with bizsmtp
-        id nR1g2400J4A7w6i01R1gp5; Thu, 01 Apr 2021 15:01:40 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id nR1g2400G4A7w6i01R1ga1; Thu, 01 Apr 2021 15:01:40 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lRwxA-00CBkC-04; Thu, 01 Apr 2021 15:01:40 +0200
+        id 1lRwxA-00CBkD-2C; Thu, 01 Apr 2021 15:01:40 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lRwx9-003mt8-IY; Thu, 01 Apr 2021 15:01:39 +0200
+        id 1lRwx9-003mtB-Jh; Thu, 01 Apr 2021 15:01:39 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/5] clk: renesas: div6: .determine_rate() conversion and improvements
-Date:   Thu,  1 Apr 2021 15:01:33 +0200
-Message-Id: <cover.1617281699.git.geert+renesas@glider.be>
+Subject: [PATCH 1/5] clk: renesas: div6: Use clamp() instead of clamp_t()
+Date:   Thu,  1 Apr 2021 15:01:34 +0200
+Message-Id: <2670c1e3c82a245666578cbbd1fb20d37932fd8e.1617281699.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1617281699.git.geert+renesas@glider.be>
+References: <cover.1617281699.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Mike, Stephen,
+As "div" is already "unsigned int", adding "U" suffixes to the constants
+"1" and "64" allows us to replace the call to clamp_t() by a call to
+clamp().  This removes hidden casts, and thus helps the compiler doing a
+better job at type-checking.
 
-This patch series converts the Renesas DIV6 clock driver from the old
-.round_rate() callback to the newer .determine_rate() callback, and
-improves the driver to switch parent clocks.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/clk-div6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This has been tested on R-Car Gen2, R-Car Gen3, SH-Mobile AG5, R-Mobile
-A1, and R-Mobile APE6.
-
-I plan to queue this series in renesas-clk for v5.14.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (5):
-  clk: renesas: div6: Use clamp() instead of clamp_t()
-  clk: renesas: div6: Simplify src mask handling
-  clk: renesas: div6: Switch to .determine_rate()
-  clk: renesas: div6: Consider all parents for requested rate
-  clk: renesas: div6: Implement range checking
-
- drivers/clk/renesas/clk-div6.c | 80 +++++++++++++++++++++++-----------
- 1 file changed, 54 insertions(+), 26 deletions(-)
-
+diff --git a/drivers/clk/renesas/clk-div6.c b/drivers/clk/renesas/clk-div6.c
+index 8fb68e703a6bab8c..a3c4fbeb7b0d2ec0 100644
+--- a/drivers/clk/renesas/clk-div6.c
++++ b/drivers/clk/renesas/clk-div6.c
+@@ -99,7 +99,7 @@ static unsigned int cpg_div6_clock_calc_div(unsigned long rate,
+ 		rate = 1;
+ 
+ 	div = DIV_ROUND_CLOSEST(parent_rate, rate);
+-	return clamp_t(unsigned int, div, 1, 64);
++	return clamp(div, 1U, 64U);
+ }
+ 
+ static long cpg_div6_clock_round_rate(struct clk_hw *hw, unsigned long rate,
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
