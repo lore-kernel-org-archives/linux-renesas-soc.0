@@ -2,2260 +2,698 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F7FC433B4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Apr 2021 16:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3799C433ED
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Apr 2021 19:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F5C4613A0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Apr 2021 16:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58592613B3
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  5 Apr 2021 19:19:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231805AbhDEQru (ORCPT
+        id S239963AbhDETTo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 5 Apr 2021 12:47:50 -0400
-Received: from ssl.serverraum.org ([176.9.125.105]:44237 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231725AbhDEQrq (ORCPT
+        Mon, 5 Apr 2021 15:19:44 -0400
+Received: from mga11.intel.com ([192.55.52.93]:63173 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232387AbhDETTn (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 5 Apr 2021 12:47:46 -0400
-Received: from mwalle01.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:fa59:71ff:fe9b:b851])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id 2E1082224A;
-        Mon,  5 Apr 2021 18:47:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1617641257;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+mkaYdNw8c/rXQDqYEDIxpmuRFiCxIcsk7XqeZjL1Qo=;
-        b=E1Y7UDkIYL1BF3k32hTYxWrIvqpqWNzjkjvuxfW08CBtFUP3abg3vo8UOLBkOWM87hgRKN
-        oV07I1+QVx6h/4H0+Km1AtAP0396zV/yViqKrzspzrziA3cxSh/YxialoDYWYclrj0fpLq
-        05o2s0YlLD04MvoTpI24i047ydd77m4=
-From:   Michael Walle <michael@walle.cc>
-To:     ath9k-devel@qca.qualcomm.com, UNGLinuxDriver@microchip.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
+        Mon, 5 Apr 2021 15:19:43 -0400
+IronPort-SDR: BgRdX4IzNqnKCsnfPOfjBopZTbNy2TbAFg2HbV0S55sQxUZP1llOg/ZWSX7XvtLpJNOrD/4SoX
+ mDAtdNzJR8Ig==
+X-IronPort-AV: E=McAfee;i="6000,8403,9945"; a="189691128"
+X-IronPort-AV: E=Sophos;i="5.81,307,1610438400"; 
+   d="gz'50?scan'50,208,50";a="189691128"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2021 12:19:37 -0700
+IronPort-SDR: mZfLxrOYIatzrkxrWBQtMbP6TLv1RYVXpAPUqcI4KPfLjzMHEVj2DJ/sbeTIB1qnPSrKmzKhHG
+ 9cr73Wdfvc+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.81,307,1610438400"; 
+   d="gz'50?scan'50,208,50";a="612246479"
+Received: from lkp-server01.sh.intel.com (HELO 69d8fcc516b7) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 05 Apr 2021 12:19:33 -0700
+Received: from kbuild by 69d8fcc516b7 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1lTUl3-000AZt-6k; Mon, 05 Apr 2021 19:19:33 +0000
+Date:   Tue, 6 Apr 2021 03:19:11 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Michael Walle <michael@walle.cc>, ath9k-devel@qca.qualcomm.com,
+        UNGLinuxDriver@microchip.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        netdev@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
-        linux-amlogic@lists.infradead.org, linux-oxnas@groups.io,
-        linux-omap@vger.kernel.org, linux-wireless@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-staging@lists.linux.dev
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Andreas Larsson <andreas@gaisler.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Joyce Ooi <joyce.ooi@intel.com>,
-        Chris Snook <chris.snook@gmail.com>,
-        =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Sunil Goutham <sgoutham@marvell.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        Pantelis Antoniou <pantelis.antoniou@gmail.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Vadym Kochan <vkochan@marvell.com>,
-        Taras Chornyi <tchornyi@marvell.com>,
-        Mirko Lindner <mlindner@marvell.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Mark Lee <Mark-MC.Lee@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Bryan Whitehead <bryan.whitehead@microchip.com>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        Byungho An <bh74.an@samsung.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Wingman Kwok <w-kwok2@ti.com>,
-        Murali Karicheri <m-karicheri2@ti.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Stanislaw Gruszka <stf_xl@wp.pl>,
-        Helmut Schaa <helmut.schaa@googlemail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Pouiller?= 
-        <jerome.pouiller@silabs.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH 1/2] of: net: pass the dst buffer to of_get_mac_address()
-Date:   Mon,  5 Apr 2021 18:46:42 +0200
-Message-Id: <20210405164643.21130-2-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20210405164643.21130-1-michael@walle.cc>
-References: <20210405164643.21130-1-michael@walle.cc>
+        linux-amlogic@lists.infradead.org
+Cc:     kbuild-all@lists.01.org
+Subject: Re: [PATCH 1/2] of: net: pass the dst buffer to of_get_mac_address()
+Message-ID: <202104060306.lmTxeOmW-lkp@intel.com>
+References: <20210405164643.21130-2-michael@walle.cc>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="vkogqOf2sHV7VnPd"
+Content-Disposition: inline
+In-Reply-To: <20210405164643.21130-2-michael@walle.cc>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-of_get_mac_address() returns a "const void*" pointer to a MAC address.
-Lately, support to fetch the MAC address by an NVMEM provider was added.
-But this will only work with platform devices. It will not work with
-PCI devices (e.g. of an integrated root complex) and esp. not with DSA
-ports.
 
-There is an of_* variant of the nvmem binding which works without
-devices. The returned data of a nvmem_cell_read() has to be freed after
-use. On the other hand the return of_get_mac_address() points to some
-static data without a lifetime. The trick for now, was to allocate a
-device resource managed buffer which is then returned. This will only
-work if we have an actual device.
+--vkogqOf2sHV7VnPd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Change it, so that the caller of of_get_mac_address() has to supply a
-buffer where the MAC address is written to. Unfortunately, this will
-touch all drivers which use the of_get_mac_address().
+Hi Michael,
 
-Usually the code looks like:
+I love your patch! Yet something to improve:
 
-  const char *addr;
-  addr = of_get_mac_address(np);
-  if (!IS_ERR(addr))
-    ether_addr_copy(ndev->dev_addr, addr);
+[auto build test ERROR on next-20210401]
+[cannot apply to sunxi/sunxi/for-next xlnx/master wireless-drivers-next/master wireless-drivers/master robh/for-next linus/master v5.12-rc6 v5.12-rc5 v5.12-rc4 v5.12-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-This can then be simply rewritten as:
+url:    https://github.com/0day-ci/linux/commits/Michael-Walle/of-net-support-non-platform-devices-in-of_get_mac_address/20210406-004940
+base:    454c576c3f5e51d60f00a4ac0dde07f4f9d70e9d
+config: x86_64-kexec (attached as .config)
+compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
+reproduce (this is a W=1 build):
+        # https://github.com/0day-ci/linux/commit/98b333048aecad0da786f9f8c3fe60674442b8cf
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Michael-Walle/of-net-support-non-platform-devices-in-of_get_mac_address/20210406-004940
+        git checkout 98b333048aecad0da786f9f8c3fe60674442b8cf
+        # save the attached .config to linux build tree
+        make W=1 ARCH=x86_64 
 
-  of_get_mac_address(np, ndev->dev_addr);
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-Sometimes is_valid_ether_addr() is used to test the MAC address.
-of_get_mac_address() already makes sure, it just returns a valid MAC
-address. Thus we can just test its return code. But we have to be
-careful if there are still other sources for the MAC address before the
-of_get_mac_address(). In this case we have to keep the
-is_valid_ether_addr() call.
+All errors (new ones prefixed by >>):
 
-The following coccinelle patch was used to convert common cases to the
-new style. Afterwards, I've manually gone over the drivers and fixed the
-return code variable: either used a new one or if one was already
-available use that. Mansour Moufid, thanks for that coccinelle patch!
+>> drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:630:1: error: conflicting types for 'stmmac_probe_config_dt'
+     630 | stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
+         | ^~~~~~~~~~~~~~~~~~~~~~
+   In file included from drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:20:
+   drivers/net/ethernet/stmicro/stmmac/stmmac_platform.h:15:1: note: previous declaration of 'stmmac_probe_config_dt' was here
+      15 | stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac);
+         | ^~~~~~~~~~~~~~~~~~~~~~
+   In file included from include/linux/linkage.h:7,
+                    from include/linux/kernel.h:8,
+                    from arch/x86/include/asm/percpu.h:27,
+                    from arch/x86/include/asm/current.h:6,
+                    from include/linux/sched.h:12,
+                    from include/linux/ratelimit.h:6,
+                    from include/linux/dev_printk.h:16,
+                    from include/linux/device.h:15,
+                    from include/linux/platform_device.h:13,
+                    from drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:11:
+   drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:640:19: error: conflicting types for 'stmmac_probe_config_dt'
+     640 | EXPORT_SYMBOL_GPL(stmmac_probe_config_dt);
+         |                   ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/export.h:98:21: note: in definition of macro '___EXPORT_SYMBOL'
+      98 |  extern typeof(sym) sym;       \
+         |                     ^~~
+   include/linux/export.h:155:34: note: in expansion of macro '__EXPORT_SYMBOL'
+     155 | #define _EXPORT_SYMBOL(sym, sec) __EXPORT_SYMBOL(sym, sec, "")
+         |                                  ^~~~~~~~~~~~~~~
+   include/linux/export.h:159:33: note: in expansion of macro '_EXPORT_SYMBOL'
+     159 | #define EXPORT_SYMBOL_GPL(sym)  _EXPORT_SYMBOL(sym, "_gpl")
+         |                                 ^~~~~~~~~~~~~~
+   drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:640:1: note: in expansion of macro 'EXPORT_SYMBOL_GPL'
+     640 | EXPORT_SYMBOL_GPL(stmmac_probe_config_dt);
+         | ^~~~~~~~~~~~~~~~~
+   In file included from drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c:20:
+   drivers/net/ethernet/stmicro/stmmac/stmmac_platform.h:15:1: note: previous declaration of 'stmmac_probe_config_dt' was here
+      15 | stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac);
+         | ^~~~~~~~~~~~~~~~~~~~~~
 
-<spml>
-@a@
-identifier x;
-expression y, z;
-@@
-- x = of_get_mac_address(y);
-+ x = of_get_mac_address(y, z);
-  <...
-- ether_addr_copy(z, x);
-  ...>
 
-@@
-identifier a.x;
-@@
-- if (<+... x ...+>) {}
+vim +/stmmac_probe_config_dt +630 drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
 
-@@
-identifier a.x;
-@@
-  if (<+... x ...+>) {
-      ...
-  }
-- else {}
+d2ed0a7755fe14 Johan Hovold     2016-11-30  614  
+d2ed0a7755fe14 Johan Hovold     2016-11-30  615  /**
+d2ed0a7755fe14 Johan Hovold     2016-11-30  616   * stmmac_remove_config_dt - undo the effects of stmmac_probe_config_dt()
+d2ed0a7755fe14 Johan Hovold     2016-11-30  617   * @pdev: platform_device structure
+d2ed0a7755fe14 Johan Hovold     2016-11-30  618   * @plat: driver data platform structure
+d2ed0a7755fe14 Johan Hovold     2016-11-30  619   *
+d2ed0a7755fe14 Johan Hovold     2016-11-30  620   * Release resources claimed by stmmac_probe_config_dt().
+d2ed0a7755fe14 Johan Hovold     2016-11-30  621   */
+d2ed0a7755fe14 Johan Hovold     2016-11-30  622  void stmmac_remove_config_dt(struct platform_device *pdev,
+d2ed0a7755fe14 Johan Hovold     2016-11-30  623  			     struct plat_stmmacenet_data *plat)
+d2ed0a7755fe14 Johan Hovold     2016-11-30  624  {
+4838a54050284d Jose Abreu       2019-06-14  625  	of_node_put(plat->phy_node);
+a249708bc2aa1f Julia Lawall     2017-01-17  626  	of_node_put(plat->mdio_node);
+d2ed0a7755fe14 Johan Hovold     2016-11-30  627  }
+6a228452d11eaf Stefan Roese     2012-03-13  628  #else
+402dae0bed98dd Joachim Eastwood 2015-07-17  629  struct plat_stmmacenet_data *
+b0003ead75f394 Joachim Eastwood 2015-07-17 @630  stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
+6a228452d11eaf Stefan Roese     2012-03-13  631  {
+b2a8315a5c655f LABBE Corentin   2017-02-08  632  	return ERR_PTR(-EINVAL);
+6a228452d11eaf Stefan Roese     2012-03-13  633  }
+d2ed0a7755fe14 Johan Hovold     2016-11-30  634  
 
-@@
-identifier a.x;
-expression e;
-@@
-- if (<+... x ...+>@e)
--     {}
-- else
-+ if (!(e))
-      {...}
-
-@@
-expression x, y, z;
-@@
-- x = of_get_mac_address(y, z);
-+ of_get_mac_address(y, z);
-  ... when != x
-</spml>
-
-All drivers, except drivers/net/ethernet/aeroflex/greth.c, were
-compile-time tested.
-
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Michael Walle <michael@walle.cc>
 ---
- arch/arm/mach-mvebu/kirkwood.c                |  3 +-
- arch/powerpc/sysdev/tsi108_dev.c              |  5 +-
- drivers/net/ethernet/aeroflex/greth.c         |  6 +-
- drivers/net/ethernet/allwinner/sun4i-emac.c   | 10 +---
- drivers/net/ethernet/altera/altera_tse_main.c |  7 +--
- drivers/net/ethernet/arc/emac_main.c          |  8 +--
- drivers/net/ethernet/atheros/ag71xx.c         |  7 +--
- drivers/net/ethernet/broadcom/bcm4908_enet.c  |  7 +--
- drivers/net/ethernet/broadcom/bcmsysport.c    |  7 +--
- drivers/net/ethernet/broadcom/bgmac-bcma.c    | 10 ++--
- .../net/ethernet/broadcom/bgmac-platform.c    | 11 ++--
- drivers/net/ethernet/cadence/macb_main.c      | 11 +---
- .../net/ethernet/cavium/octeon/octeon_mgmt.c  |  8 +--
- .../net/ethernet/cavium/thunder/thunder_bgx.c |  5 +-
- drivers/net/ethernet/davicom/dm9000.c         | 10 ++--
- drivers/net/ethernet/ethoc.c                  |  6 +-
- drivers/net/ethernet/ezchip/nps_enet.c        |  7 +--
- drivers/net/ethernet/freescale/fec_main.c     |  7 ++-
- drivers/net/ethernet/freescale/fec_mpc52xx.c  |  7 +--
- drivers/net/ethernet/freescale/fman/mac.c     |  9 +--
- .../ethernet/freescale/fs_enet/fs_enet-main.c |  5 +-
- drivers/net/ethernet/freescale/gianfar.c      |  8 +--
- drivers/net/ethernet/freescale/ucc_geth.c     |  5 +-
- drivers/net/ethernet/hisilicon/hisi_femac.c   |  7 +--
- drivers/net/ethernet/hisilicon/hix5hd2_gmac.c |  7 +--
- drivers/net/ethernet/lantiq_xrx200.c          |  7 +--
- drivers/net/ethernet/marvell/mv643xx_eth.c    |  5 +-
- drivers/net/ethernet/marvell/mvneta.c         |  6 +-
- .../ethernet/marvell/prestera/prestera_main.c | 11 ++--
- drivers/net/ethernet/marvell/pxa168_eth.c     |  9 +--
- drivers/net/ethernet/marvell/sky2.c           |  8 +--
- drivers/net/ethernet/mediatek/mtk_eth_soc.c   | 11 ++--
- drivers/net/ethernet/micrel/ks8851_common.c   |  7 +--
- drivers/net/ethernet/microchip/lan743x_main.c |  5 +-
- drivers/net/ethernet/nxp/lpc_eth.c            |  4 +-
- drivers/net/ethernet/qualcomm/qca_spi.c       | 10 +---
- drivers/net/ethernet/qualcomm/qca_uart.c      |  9 +--
- drivers/net/ethernet/renesas/ravb_main.c      | 12 ++--
- drivers/net/ethernet/renesas/sh_eth.c         |  5 +-
- .../ethernet/samsung/sxgbe/sxgbe_platform.c   | 13 ++--
- drivers/net/ethernet/socionext/sni_ave.c      | 10 +---
- .../ethernet/stmicro/stmmac/dwmac-anarion.c   |  2 +-
- .../stmicro/stmmac/dwmac-dwc-qos-eth.c        |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-generic.c   |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-imx.c   |  2 +-
- .../stmicro/stmmac/dwmac-intel-plat.c         |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-ipq806x.c   |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-lpc18xx.c   |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-mediatek.c  |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-meson.c |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-meson8b.c   |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-oxnas.c |  2 +-
- .../stmicro/stmmac/dwmac-qcom-ethqos.c        |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-rk.c    |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-socfpga.c   |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-sti.c   |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-stm32.c |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c |  2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-sunxi.c |  2 +-
- .../ethernet/stmicro/stmmac/dwmac-visconti.c  |  2 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  2 +-
- .../net/ethernet/stmicro/stmmac/stmmac_main.c |  4 +-
- .../ethernet/stmicro/stmmac/stmmac_platform.c | 12 ++--
- .../ethernet/stmicro/stmmac/stmmac_platform.h |  2 +-
- drivers/net/ethernet/ti/am65-cpsw-nuss.c      | 19 +++---
- drivers/net/ethernet/ti/cpsw.c                |  7 +--
- drivers/net/ethernet/ti/cpsw_new.c            |  7 +--
- drivers/net/ethernet/ti/davinci_emac.c        |  8 +--
- drivers/net/ethernet/ti/netcp_core.c          |  7 +--
- drivers/net/ethernet/wiznet/w5100-spi.c       |  8 ++-
- drivers/net/ethernet/wiznet/w5100.c           |  2 +-
- drivers/net/ethernet/xilinx/ll_temac_main.c   |  6 +-
- .../net/ethernet/xilinx/xilinx_axienet_main.c | 11 ++--
- drivers/net/ethernet/xilinx/xilinx_emaclite.c |  8 +--
- drivers/net/wireless/ath/ath9k/init.c         |  5 +-
- drivers/net/wireless/mediatek/mt76/eeprom.c   |  9 +--
- .../net/wireless/ralink/rt2x00/rt2x00dev.c    |  6 +-
- drivers/of/of_net.c                           | 60 +++++++++----------
- drivers/staging/octeon/ethernet.c             | 10 +---
- drivers/staging/wfx/main.c                    |  7 +--
- include/linux/of_net.h                        |  6 +-
- include/net/dsa.h                             |  2 +-
- net/dsa/dsa2.c                                |  2 +-
- net/dsa/slave.c                               |  2 +-
- net/ethernet/eth.c                            | 11 ++--
- 85 files changed, 215 insertions(+), 361 deletions(-)
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
 
-diff --git a/arch/arm/mach-mvebu/kirkwood.c b/arch/arm/mach-mvebu/kirkwood.c
-index ceaad6d5927e..06b1706595f4 100644
---- a/arch/arm/mach-mvebu/kirkwood.c
-+++ b/arch/arm/mach-mvebu/kirkwood.c
-@@ -84,6 +84,7 @@ static void __init kirkwood_dt_eth_fixup(void)
- 		struct device_node *pnp = of_get_parent(np);
- 		struct clk *clk;
- 		struct property *pmac;
-+		u8 tmpmac[ETH_ALEN];
- 		void __iomem *io;
- 		u8 *macaddr;
- 		u32 reg;
-@@ -93,7 +94,7 @@ static void __init kirkwood_dt_eth_fixup(void)
- 
- 		/* skip disabled nodes or nodes with valid MAC address*/
- 		if (!of_device_is_available(pnp) ||
--		    !IS_ERR(of_get_mac_address(np)))
-+		    !of_get_mac_address(np, tmpmac))
- 			goto eth_fixup_skip;
- 
- 		clk = of_clk_get(pnp, 0);
-diff --git a/arch/powerpc/sysdev/tsi108_dev.c b/arch/powerpc/sysdev/tsi108_dev.c
-index 0baec82510b9..4c4a6efd5e5f 100644
---- a/arch/powerpc/sysdev/tsi108_dev.c
-+++ b/arch/powerpc/sysdev/tsi108_dev.c
-@@ -73,7 +73,6 @@ static int __init tsi108_eth_of_init(void)
- 		struct device_node *phy, *mdio;
- 		hw_info tsi_eth_data;
- 		const unsigned int *phy_id;
--		const void *mac_addr;
- 		const phandle *ph;
- 
- 		memset(r, 0, sizeof(r));
-@@ -101,9 +100,7 @@ static int __init tsi108_eth_of_init(void)
- 			goto err;
- 		}
- 
--		mac_addr = of_get_mac_address(np);
--		if (!IS_ERR(mac_addr))
--			ether_addr_copy(tsi_eth_data.mac_addr, mac_addr);
-+		of_get_mac_address(np, tsi_eth_data.mac_addr);
- 
- 		ph = of_get_property(np, "mdio-handle", NULL);
- 		mdio = of_find_node_by_phandle(*ph);
-diff --git a/drivers/net/ethernet/aeroflex/greth.c b/drivers/net/ethernet/aeroflex/greth.c
-index 9c5891bbfe61..d77fafbc1530 100644
---- a/drivers/net/ethernet/aeroflex/greth.c
-+++ b/drivers/net/ethernet/aeroflex/greth.c
-@@ -1449,10 +1449,10 @@ static int greth_of_probe(struct platform_device *ofdev)
- 			break;
- 	}
- 	if (i == 6) {
--		const u8 *addr;
-+		u8 addr[ETH_ALEN];
- 
--		addr = of_get_mac_address(ofdev->dev.of_node);
--		if (!IS_ERR(addr)) {
-+		err = of_get_mac_address(ofdev->dev.of_node, addr);
-+		if (!err) {
- 			for (i = 0; i < 6; i++)
- 				macaddr[i] = (unsigned int) addr[i];
- 		} else {
-diff --git a/drivers/net/ethernet/allwinner/sun4i-emac.c b/drivers/net/ethernet/allwinner/sun4i-emac.c
-index 5ed80d9a6b9f..f99ae317c188 100644
---- a/drivers/net/ethernet/allwinner/sun4i-emac.c
-+++ b/drivers/net/ethernet/allwinner/sun4i-emac.c
-@@ -790,7 +790,6 @@ static int emac_probe(struct platform_device *pdev)
- 	struct emac_board_info *db;
- 	struct net_device *ndev;
- 	int ret = 0;
--	const char *mac_addr;
- 
- 	ndev = alloc_etherdev(sizeof(struct emac_board_info));
- 	if (!ndev) {
-@@ -853,12 +852,9 @@ static int emac_probe(struct platform_device *pdev)
- 	}
- 
- 	/* Read MAC-address from DT */
--	mac_addr = of_get_mac_address(np);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(ndev->dev_addr, mac_addr);
--
--	/* Check if the MAC address is valid, if not get a random one */
--	if (!is_valid_ether_addr(ndev->dev_addr)) {
-+	ret = of_get_mac_address(np, ndev->dev_addr);
-+	if (ret) {
-+		/* if the MAC address is invalid get a random one */
- 		eth_hw_addr_random(ndev);
- 		dev_warn(&pdev->dev, "using random MAC address %pM\n",
- 			 ndev->dev_addr);
-diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
-index 907125abef2c..1c00d719e5d7 100644
---- a/drivers/net/ethernet/altera/altera_tse_main.c
-+++ b/drivers/net/ethernet/altera/altera_tse_main.c
-@@ -1351,7 +1351,6 @@ static int altera_tse_probe(struct platform_device *pdev)
- 	struct resource *control_port;
- 	struct resource *dma_res;
- 	struct altera_tse_private *priv;
--	const unsigned char *macaddr;
- 	void __iomem *descmap;
- 	const struct of_device_id *of_id = NULL;
- 
-@@ -1525,10 +1524,8 @@ static int altera_tse_probe(struct platform_device *pdev)
- 	priv->rx_dma_buf_sz = ALTERA_RXDMABUFFER_SIZE;
- 
- 	/* get default MAC address from device tree */
--	macaddr = of_get_mac_address(pdev->dev.of_node);
--	if (!IS_ERR(macaddr))
--		ether_addr_copy(ndev->dev_addr, macaddr);
--	else
-+	ret = of_get_mac_address(pdev->dev.of_node, ndev->dev_addr);
-+	if (ret)
- 		eth_hw_addr_random(ndev);
- 
- 	/* get phy addr and create mdio */
-diff --git a/drivers/net/ethernet/arc/emac_main.c b/drivers/net/ethernet/arc/emac_main.c
-index b56a9e2aecd9..67b8113a2b53 100644
---- a/drivers/net/ethernet/arc/emac_main.c
-+++ b/drivers/net/ethernet/arc/emac_main.c
-@@ -857,7 +857,6 @@ int arc_emac_probe(struct net_device *ndev, int interface)
- 	struct device_node *phy_node;
- 	struct phy_device *phydev = NULL;
- 	struct arc_emac_priv *priv;
--	const char *mac_addr;
- 	unsigned int id, clock_frequency, irq;
- 	int err;
- 
-@@ -942,11 +941,8 @@ int arc_emac_probe(struct net_device *ndev, int interface)
- 	}
- 
- 	/* Get MAC address from device tree */
--	mac_addr = of_get_mac_address(dev->of_node);
--
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(ndev->dev_addr, mac_addr);
--	else
-+	err = of_get_mac_address(dev->of_node, ndev->dev_addr);
-+	if (err)
- 		eth_hw_addr_random(ndev);
- 
- 	arc_emac_set_address_internal(ndev);
-diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-index a60ce9030581..dc716156d87d 100644
---- a/drivers/net/ethernet/atheros/ag71xx.c
-+++ b/drivers/net/ethernet/atheros/ag71xx.c
-@@ -1856,7 +1856,6 @@ static int ag71xx_probe(struct platform_device *pdev)
- 	const struct ag71xx_dcfg *dcfg;
- 	struct net_device *ndev;
- 	struct resource *res;
--	const void *mac_addr;
- 	int tx_size, err, i;
- 	struct ag71xx *ag;
- 
-@@ -1957,10 +1956,8 @@ static int ag71xx_probe(struct platform_device *pdev)
- 	ag->stop_desc->ctrl = 0;
- 	ag->stop_desc->next = (u32)ag->stop_desc_dma;
- 
--	mac_addr = of_get_mac_address(np);
--	if (!IS_ERR(mac_addr))
--		memcpy(ndev->dev_addr, mac_addr, ETH_ALEN);
--	if (IS_ERR(mac_addr) || !is_valid_ether_addr(ndev->dev_addr)) {
-+	err = of_get_mac_address(np, ndev->dev_addr);
-+	if (err) {
- 		netif_err(ag, probe, ndev, "invalid MAC address, using random address\n");
- 		eth_random_addr(ndev->dev_addr);
- 	}
-diff --git a/drivers/net/ethernet/broadcom/bcm4908_enet.c b/drivers/net/ethernet/broadcom/bcm4908_enet.c
-index cbfed1d1477b..12945d754ebb 100644
---- a/drivers/net/ethernet/broadcom/bcm4908_enet.c
-+++ b/drivers/net/ethernet/broadcom/bcm4908_enet.c
-@@ -685,7 +685,6 @@ static int bcm4908_enet_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct net_device *netdev;
- 	struct bcm4908_enet *enet;
--	const u8 *mac;
- 	int err;
- 
- 	netdev = devm_alloc_etherdev(dev, sizeof(*enet));
-@@ -715,10 +714,8 @@ static int bcm4908_enet_probe(struct platform_device *pdev)
- 		return err;
- 
- 	SET_NETDEV_DEV(netdev, &pdev->dev);
--	mac = of_get_mac_address(dev->of_node);
--	if (!IS_ERR(mac))
--		ether_addr_copy(netdev->dev_addr, mac);
--	else
-+	err = of_get_mac_address(dev->of_node, netdev->dev_addr);
-+	if (err)
- 		eth_hw_addr_random(netdev);
- 	netdev->netdev_ops = &bcm4908_enet_netdev_ops;
- 	netdev->min_mtu = ETH_ZLEN;
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
-index 777bbf6d2586..d9f0f0df8f7b 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -2457,7 +2457,6 @@ static int bcm_sysport_probe(struct platform_device *pdev)
- 	struct bcm_sysport_priv *priv;
- 	struct device_node *dn;
- 	struct net_device *dev;
--	const void *macaddr;
- 	u32 txq, rxq;
- 	int ret;
- 
-@@ -2552,12 +2551,10 @@ static int bcm_sysport_probe(struct platform_device *pdev)
- 	}
- 
- 	/* Initialize netdevice members */
--	macaddr = of_get_mac_address(dn);
--	if (IS_ERR(macaddr)) {
-+	ret = of_get_mac_address(dn, dev->dev_addr);
-+	if (ret) {
- 		dev_warn(&pdev->dev, "using random Ethernet MAC\n");
- 		eth_hw_addr_random(dev);
--	} else {
--		ether_addr_copy(dev->dev_addr, macaddr);
- 	}
- 
- 	SET_NETDEV_DEV(dev, &pdev->dev);
-diff --git a/drivers/net/ethernet/broadcom/bgmac-bcma.c b/drivers/net/ethernet/broadcom/bgmac-bcma.c
-index a5fd161ab5ee..85fa0ab7201c 100644
---- a/drivers/net/ethernet/broadcom/bgmac-bcma.c
-+++ b/drivers/net/ethernet/broadcom/bgmac-bcma.c
-@@ -115,7 +115,7 @@ static int bgmac_probe(struct bcma_device *core)
- 	struct ssb_sprom *sprom = &core->bus->sprom;
- 	struct mii_bus *mii_bus;
- 	struct bgmac *bgmac;
--	const u8 *mac = NULL;
-+	const u8 *mac;
- 	int err;
- 
- 	bgmac = bgmac_alloc(&core->dev);
-@@ -128,11 +128,10 @@ static int bgmac_probe(struct bcma_device *core)
- 
- 	bcma_set_drvdata(core, bgmac);
- 
--	if (bgmac->dev->of_node)
--		mac = of_get_mac_address(bgmac->dev->of_node);
-+	err = of_get_mac_address(bgmac->dev->of_node, bgmac->net_dev->dev_addr);
- 
- 	/* If no MAC address assigned via device tree, check SPROM */
--	if (IS_ERR_OR_NULL(mac)) {
-+	if (err) {
- 		switch (core->core_unit) {
- 		case 0:
- 			mac = sprom->et0mac;
-@@ -149,10 +148,9 @@ static int bgmac_probe(struct bcma_device *core)
- 			err = -ENOTSUPP;
- 			goto err;
- 		}
-+		ether_addr_copy(bgmac->net_dev->dev_addr, mac);
- 	}
- 
--	ether_addr_copy(bgmac->net_dev->dev_addr, mac);
--
- 	/* On BCM4706 we need common core to access PHY */
- 	if (core->id.id == BCMA_CORE_4706_MAC_GBIT &&
- 	    !core->bus->drv_gmac_cmn.core) {
-diff --git a/drivers/net/ethernet/broadcom/bgmac-platform.c b/drivers/net/ethernet/broadcom/bgmac-platform.c
-index f37f1c58f368..9834b77cf4b6 100644
---- a/drivers/net/ethernet/broadcom/bgmac-platform.c
-+++ b/drivers/net/ethernet/broadcom/bgmac-platform.c
-@@ -173,7 +173,7 @@ static int bgmac_probe(struct platform_device *pdev)
- 	struct device_node *np = pdev->dev.of_node;
- 	struct bgmac *bgmac;
- 	struct resource *regs;
--	const u8 *mac_addr;
-+	int ret;
- 
- 	bgmac = bgmac_alloc(&pdev->dev);
- 	if (!bgmac)
-@@ -192,11 +192,10 @@ static int bgmac_probe(struct platform_device *pdev)
- 	bgmac->dev = &pdev->dev;
- 	bgmac->dma_dev = &pdev->dev;
- 
--	mac_addr = of_get_mac_address(np);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(bgmac->net_dev->dev_addr, mac_addr);
--	else
--		dev_warn(&pdev->dev, "MAC address not present in device tree\n");
-+	ret = of_get_mac_address(np, bgmac->net_dev->dev_addr);
-+	if (ret)
-+		dev_warn(&pdev->dev,
-+			 "MAC address not present in device tree\n");
- 
- 	bgmac->irq = platform_get_irq(pdev, 0);
- 	if (bgmac->irq < 0)
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index f56f3dbbc015..480ea7f5f6fc 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -4642,7 +4642,6 @@ static int macb_probe(struct platform_device *pdev)
- 	struct net_device *dev;
- 	struct resource *regs;
- 	void __iomem *mem;
--	const char *mac;
- 	struct macb *bp;
- 	int err, val;
- 
-@@ -4757,15 +4756,11 @@ static int macb_probe(struct platform_device *pdev)
- 	if (bp->caps & MACB_CAPS_NEEDS_RSTONUBR)
- 		bp->rx_intr_mask |= MACB_BIT(RXUBR);
- 
--	mac = of_get_mac_address(np);
--	if (PTR_ERR(mac) == -EPROBE_DEFER) {
--		err = -EPROBE_DEFER;
-+	err = of_get_mac_address(np, bp->dev->dev_addr);
-+	if (err == -EPROBE_DEFER)
- 		goto err_out_free_netdev;
--	} else if (!IS_ERR_OR_NULL(mac)) {
--		ether_addr_copy(bp->dev->dev_addr, mac);
--	} else {
-+	else if (err)
- 		macb_get_hwaddr(bp);
--	}
- 
- 	err = of_get_phy_mode(np, &interface);
- 	if (err)
-diff --git a/drivers/net/ethernet/cavium/octeon/octeon_mgmt.c b/drivers/net/ethernet/cavium/octeon/octeon_mgmt.c
-index ecffebd513be..48ff6fb0eed9 100644
---- a/drivers/net/ethernet/cavium/octeon/octeon_mgmt.c
-+++ b/drivers/net/ethernet/cavium/octeon/octeon_mgmt.c
-@@ -1385,7 +1385,6 @@ static int octeon_mgmt_probe(struct platform_device *pdev)
- 	struct net_device *netdev;
- 	struct octeon_mgmt *p;
- 	const __be32 *data;
--	const u8 *mac;
- 	struct resource *res_mix;
- 	struct resource *res_agl;
- 	struct resource *res_agl_prt_ctl;
-@@ -1502,11 +1501,8 @@ static int octeon_mgmt_probe(struct platform_device *pdev)
- 	netdev->min_mtu = 64 - OCTEON_MGMT_RX_HEADROOM;
- 	netdev->max_mtu = 16383 - OCTEON_MGMT_RX_HEADROOM - VLAN_HLEN;
- 
--	mac = of_get_mac_address(pdev->dev.of_node);
--
--	if (!IS_ERR(mac))
--		ether_addr_copy(netdev->dev_addr, mac);
--	else
-+	result = of_get_mac_address(pdev->dev.of_node, netdev->dev_addr);
-+	if (result)
- 		eth_hw_addr_random(netdev);
- 
- 	p->phy_np = of_parse_phandle(pdev->dev.of_node, "phy-handle", 0);
-diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-index 8ff28ed04b7f..0c783aadf393 100644
---- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-+++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-@@ -1474,7 +1474,6 @@ static int bgx_init_of_phy(struct bgx *bgx)
- 	device_for_each_child_node(&bgx->pdev->dev, fwn) {
- 		struct phy_device *pd;
- 		struct device_node *phy_np;
--		const char *mac;
- 
- 		/* Should always be an OF node.  But if it is not, we
- 		 * cannot handle it, so exit the loop.
-@@ -1483,9 +1482,7 @@ static int bgx_init_of_phy(struct bgx *bgx)
- 		if (!node)
- 			break;
- 
--		mac = of_get_mac_address(node);
--		if (!IS_ERR(mac))
--			ether_addr_copy(bgx->lmac[lmac].mac, mac);
-+		of_get_mac_address(node, bgx->lmac[lmac].mac);
- 
- 		SET_NETDEV_DEV(&bgx->lmac[lmac].netdev, &bgx->pdev->dev);
- 		bgx->lmac[lmac].lmacid = lmac;
-diff --git a/drivers/net/ethernet/davicom/dm9000.c b/drivers/net/ethernet/davicom/dm9000.c
-index 252adfa5d837..2374c51bf2b2 100644
---- a/drivers/net/ethernet/davicom/dm9000.c
-+++ b/drivers/net/ethernet/davicom/dm9000.c
-@@ -1385,7 +1385,7 @@ static struct dm9000_plat_data *dm9000_parse_dt(struct device *dev)
- {
- 	struct dm9000_plat_data *pdata;
- 	struct device_node *np = dev->of_node;
--	const void *mac_addr;
-+	int ret;
- 
- 	if (!IS_ENABLED(CONFIG_OF) || !np)
- 		return ERR_PTR(-ENXIO);
-@@ -1399,11 +1399,9 @@ static struct dm9000_plat_data *dm9000_parse_dt(struct device *dev)
- 	if (of_find_property(np, "davicom,no-eeprom", NULL))
- 		pdata->flags |= DM9000_PLATF_NO_EEPROM;
- 
--	mac_addr = of_get_mac_address(np);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(pdata->dev_addr, mac_addr);
--	else if (PTR_ERR(mac_addr) == -EPROBE_DEFER)
--		return ERR_CAST(mac_addr);
-+	ret = of_get_mac_address(np, pdata->dev_addr);
-+	if (ret == -EPROBE_DEFER)
-+		return ERR_PTR(ret);
- 
- 	return pdata;
- }
-diff --git a/drivers/net/ethernet/ethoc.c b/drivers/net/ethernet/ethoc.c
-index 3d9b0b161e24..e1b43b07755b 100644
---- a/drivers/net/ethernet/ethoc.c
-+++ b/drivers/net/ethernet/ethoc.c
-@@ -1151,11 +1151,7 @@ static int ethoc_probe(struct platform_device *pdev)
- 		ether_addr_copy(netdev->dev_addr, pdata->hwaddr);
- 		priv->phy_id = pdata->phy_id;
- 	} else {
--		const void *mac;
--
--		mac = of_get_mac_address(pdev->dev.of_node);
--		if (!IS_ERR(mac))
--			ether_addr_copy(netdev->dev_addr, mac);
-+		of_get_mac_address(pdev->dev.of_node, netdev->dev_addr);
- 		priv->phy_id = -1;
- 	}
- 
-diff --git a/drivers/net/ethernet/ezchip/nps_enet.c b/drivers/net/ethernet/ezchip/nps_enet.c
-index 815fb62c4b02..e3954d8835e7 100644
---- a/drivers/net/ethernet/ezchip/nps_enet.c
-+++ b/drivers/net/ethernet/ezchip/nps_enet.c
-@@ -575,7 +575,6 @@ static s32 nps_enet_probe(struct platform_device *pdev)
- 	struct net_device *ndev;
- 	struct nps_enet_priv *priv;
- 	s32 err = 0;
--	const char *mac_addr;
- 
- 	if (!dev->of_node)
- 		return -ENODEV;
-@@ -602,10 +601,8 @@ static s32 nps_enet_probe(struct platform_device *pdev)
- 	dev_dbg(dev, "Registers base address is 0x%p\n", priv->regs_base);
- 
- 	/* set kernel MAC address to dev */
--	mac_addr = of_get_mac_address(dev->of_node);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(ndev->dev_addr, mac_addr);
--	else
-+	err = of_get_mac_address(dev->of_node, ndev->dev_addr);
-+	if (err)
- 		eth_hw_addr_random(ndev);
- 
- 	/* Get IRQ number */
-diff --git a/drivers/net/ethernet/freescale/fec_main.c b/drivers/net/ethernet/freescale/fec_main.c
-index 3db882322b2b..622488241c2e 100644
---- a/drivers/net/ethernet/freescale/fec_main.c
-+++ b/drivers/net/ethernet/freescale/fec_main.c
-@@ -1665,6 +1665,7 @@ static void fec_get_mac(struct net_device *ndev)
- {
- 	struct fec_enet_private *fep = netdev_priv(ndev);
- 	unsigned char *iap, tmpaddr[ETH_ALEN];
-+	int ret;
- 
- 	/*
- 	 * try to get mac address in following order:
-@@ -1680,9 +1681,9 @@ static void fec_get_mac(struct net_device *ndev)
- 	if (!is_valid_ether_addr(iap)) {
- 		struct device_node *np = fep->pdev->dev.of_node;
- 		if (np) {
--			const char *mac = of_get_mac_address(np);
--			if (!IS_ERR(mac))
--				iap = (unsigned char *) mac;
-+			ret = of_get_mac_address(np, tmpaddr);
-+			if (!ret)
-+				iap = tmpaddr;
- 		}
- 	}
- 
-diff --git a/drivers/net/ethernet/freescale/fec_mpc52xx.c b/drivers/net/ethernet/freescale/fec_mpc52xx.c
-index b3bad429e03b..02c47658a215 100644
---- a/drivers/net/ethernet/freescale/fec_mpc52xx.c
-+++ b/drivers/net/ethernet/freescale/fec_mpc52xx.c
-@@ -813,7 +813,6 @@ static int mpc52xx_fec_probe(struct platform_device *op)
- 	const u32 *prop;
- 	int prop_size;
- 	struct device_node *np = op->dev.of_node;
--	const char *mac_addr;
- 
- 	phys_addr_t rx_fifo;
- 	phys_addr_t tx_fifo;
-@@ -891,10 +890,8 @@ static int mpc52xx_fec_probe(struct platform_device *op)
- 	 *
- 	 * First try to read MAC address from DT
- 	 */
--	mac_addr = of_get_mac_address(np);
--	if (!IS_ERR(mac_addr)) {
--		ether_addr_copy(ndev->dev_addr, mac_addr);
--	} else {
-+	rv = of_get_mac_address(np, ndev->dev_addr);
-+	if (rv) {
- 		struct mpc52xx_fec __iomem *fec = priv->fec;
- 
- 		/*
-diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
-index 901749a7a318..46ecb42f2ef8 100644
---- a/drivers/net/ethernet/freescale/fman/mac.c
-+++ b/drivers/net/ethernet/freescale/fman/mac.c
-@@ -605,7 +605,6 @@ static int mac_probe(struct platform_device *_of_dev)
- 	struct platform_device	*of_dev;
- 	struct resource		 res;
- 	struct mac_priv_s	*priv;
--	const u8		*mac_addr;
- 	u32			 val;
- 	u8			fman_id;
- 	phy_interface_t          phy_if;
-@@ -723,11 +722,9 @@ static int mac_probe(struct platform_device *_of_dev)
- 	priv->cell_index = (u8)val;
- 
- 	/* Get the MAC address */
--	mac_addr = of_get_mac_address(mac_node);
--	if (IS_ERR(mac_addr))
-+	err = of_get_mac_address(mac_node, mac_dev->addr);
-+	if (err)
- 		dev_warn(dev, "of_get_mac_address(%pOF) failed\n", mac_node);
--	else
--		ether_addr_copy(mac_dev->addr, mac_addr);
- 
- 	/* Get the port handles */
- 	nph = of_count_phandle_with_args(mac_node, "fsl,fman-ports", NULL);
-@@ -853,7 +850,7 @@ static int mac_probe(struct platform_device *_of_dev)
- 	if (err < 0)
- 		dev_err(dev, "fman_set_mac_active_pause() = %d\n", err);
- 
--	if (!IS_ERR(mac_addr))
-+	if (!is_zero_ether_addr(mac_dev->addr))
- 		dev_info(dev, "FMan MAC address: %pM\n", mac_dev->addr);
- 
- 	priv->eth_dev = dpaa_eth_add_device(fman_id, mac_dev);
-diff --git a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-index 78e008b81374..6ee325ad35c5 100644
---- a/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-+++ b/drivers/net/ethernet/freescale/fs_enet/fs_enet-main.c
-@@ -918,7 +918,6 @@ static int fs_enet_probe(struct platform_device *ofdev)
- 	const u32 *data;
- 	struct clk *clk;
- 	int err;
--	const u8 *mac_addr;
- 	const char *phy_connection_type;
- 	int privsize, len, ret = -ENODEV;
- 
-@@ -1006,9 +1005,7 @@ static int fs_enet_probe(struct platform_device *ofdev)
- 	spin_lock_init(&fep->lock);
- 	spin_lock_init(&fep->tx_lock);
- 
--	mac_addr = of_get_mac_address(ofdev->dev.of_node);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(ndev->dev_addr, mac_addr);
-+	of_get_mac_address(ofdev->dev.of_node, ndev->dev_addr);
- 
- 	ret = fep->ops->allocate_bd(ndev);
- 	if (ret)
-diff --git a/drivers/net/ethernet/freescale/gianfar.c b/drivers/net/ethernet/freescale/gianfar.c
-index 1cf8ef717453..1c023f12d06e 100644
---- a/drivers/net/ethernet/freescale/gianfar.c
-+++ b/drivers/net/ethernet/freescale/gianfar.c
-@@ -636,7 +636,6 @@ static phy_interface_t gfar_get_interface(struct net_device *dev)
- static int gfar_of_init(struct platform_device *ofdev, struct net_device **pdev)
- {
- 	const char *model;
--	const void *mac_addr;
- 	int err = 0, i;
- 	phy_interface_t interface;
- 	struct net_device *dev = NULL;
-@@ -778,11 +777,8 @@ static int gfar_of_init(struct platform_device *ofdev, struct net_device **pdev)
- 	if (stash_len || stash_idx)
- 		priv->device_flags |= FSL_GIANFAR_DEV_HAS_BUF_STASHING;
- 
--	mac_addr = of_get_mac_address(np);
--
--	if (!IS_ERR(mac_addr)) {
--		ether_addr_copy(dev->dev_addr, mac_addr);
--	} else {
-+	err = of_get_mac_address(np, dev->dev_addr);
-+	if (err) {
- 		eth_hw_addr_random(dev);
- 		dev_info(&ofdev->dev, "Using random MAC address: %pM\n", dev->dev_addr);
- 	}
-diff --git a/drivers/net/ethernet/freescale/ucc_geth.c b/drivers/net/ethernet/freescale/ucc_geth.c
-index ef4e2febeb5b..e0936510fa34 100644
---- a/drivers/net/ethernet/freescale/ucc_geth.c
-+++ b/drivers/net/ethernet/freescale/ucc_geth.c
-@@ -3562,7 +3562,6 @@ static int ucc_geth_probe(struct platform_device* ofdev)
- 	struct resource res;
- 	int err, ucc_num, max_speed = 0;
- 	const unsigned int *prop;
--	const void *mac_addr;
- 	phy_interface_t phy_interface;
- 	static const int enet_to_speed[] = {
- 		SPEED_10, SPEED_10, SPEED_10,
-@@ -3733,9 +3732,7 @@ static int ucc_geth_probe(struct platform_device* ofdev)
- 		goto err_free_netdev;
- 	}
- 
--	mac_addr = of_get_mac_address(np);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(dev->dev_addr, mac_addr);
-+	of_get_mac_address(np, dev->dev_addr);
- 
- 	ugeth->ug_info = ug_info;
- 	ugeth->dev = device;
-diff --git a/drivers/net/ethernet/hisilicon/hisi_femac.c b/drivers/net/ethernet/hisilicon/hisi_femac.c
-index 57c3bc4f7089..3c4db4a6b431 100644
---- a/drivers/net/ethernet/hisilicon/hisi_femac.c
-+++ b/drivers/net/ethernet/hisilicon/hisi_femac.c
-@@ -772,7 +772,6 @@ static int hisi_femac_drv_probe(struct platform_device *pdev)
- 	struct net_device *ndev;
- 	struct hisi_femac_priv *priv;
- 	struct phy_device *phy;
--	const char *mac_addr;
- 	int ret;
- 
- 	ndev = alloc_etherdev(sizeof(*priv));
-@@ -842,10 +841,8 @@ static int hisi_femac_drv_probe(struct platform_device *pdev)
- 			   (unsigned long)phy->phy_id,
- 			   phy_modes(phy->interface));
- 
--	mac_addr = of_get_mac_address(node);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(ndev->dev_addr, mac_addr);
--	if (!is_valid_ether_addr(ndev->dev_addr)) {
-+	ret = of_get_mac_address(node, ndev->dev_addr);
-+	if (ret) {
- 		eth_hw_addr_random(ndev);
- 		dev_warn(dev, "using random MAC address %pM\n",
- 			 ndev->dev_addr);
-diff --git a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
-index 8b2bf85039f1..c1aae0fca5e9 100644
---- a/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
-+++ b/drivers/net/ethernet/hisilicon/hix5hd2_gmac.c
-@@ -1098,7 +1098,6 @@ static int hix5hd2_dev_probe(struct platform_device *pdev)
- 	struct net_device *ndev;
- 	struct hix5hd2_priv *priv;
- 	struct mii_bus *bus;
--	const char *mac_addr;
- 	int ret;
- 
- 	ndev = alloc_etherdev(sizeof(struct hix5hd2_priv));
-@@ -1220,10 +1219,8 @@ static int hix5hd2_dev_probe(struct platform_device *pdev)
- 		goto out_phy_node;
- 	}
- 
--	mac_addr = of_get_mac_address(node);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(ndev->dev_addr, mac_addr);
--	if (!is_valid_ether_addr(ndev->dev_addr)) {
-+	ret = of_get_mac_address(node, ndev->dev_addr);
-+	if (ret) {
- 		eth_hw_addr_random(ndev);
- 		netdev_warn(ndev, "using random MAC address %pM\n",
- 			    ndev->dev_addr);
-diff --git a/drivers/net/ethernet/lantiq_xrx200.c b/drivers/net/ethernet/lantiq_xrx200.c
-index 0f8ef8f1232c..41c2ad210bc9 100644
---- a/drivers/net/ethernet/lantiq_xrx200.c
-+++ b/drivers/net/ethernet/lantiq_xrx200.c
-@@ -435,7 +435,6 @@ static int xrx200_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct xrx200_priv *priv;
- 	struct net_device *net_dev;
--	const u8 *mac;
- 	int err;
- 
- 	/* alloc the network device */
-@@ -477,10 +476,8 @@ static int xrx200_probe(struct platform_device *pdev)
- 		return PTR_ERR(priv->clk);
- 	}
- 
--	mac = of_get_mac_address(np);
--	if (!IS_ERR(mac))
--		ether_addr_copy(net_dev->dev_addr, mac);
--	else
-+	err = of_get_mac_address(np, net_dev->dev_addr);
-+	if (err)
- 		eth_hw_addr_random(net_dev);
- 
- 	/* bring up the dma engine and IP core */
-diff --git a/drivers/net/ethernet/marvell/mv643xx_eth.c b/drivers/net/ethernet/marvell/mv643xx_eth.c
-index ca1681aa951a..d207bfcaf31d 100644
---- a/drivers/net/ethernet/marvell/mv643xx_eth.c
-+++ b/drivers/net/ethernet/marvell/mv643xx_eth.c
-@@ -2702,7 +2702,6 @@ static int mv643xx_eth_shared_of_add_port(struct platform_device *pdev,
- 	struct platform_device *ppdev;
- 	struct mv643xx_eth_platform_data ppd;
- 	struct resource res;
--	const char *mac_addr;
- 	int ret;
- 	int dev_num = 0;
- 
-@@ -2733,9 +2732,7 @@ static int mv643xx_eth_shared_of_add_port(struct platform_device *pdev,
- 		return -EINVAL;
- 	}
- 
--	mac_addr = of_get_mac_address(pnp);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(ppd.mac_addr, mac_addr);
-+	of_get_mac_address(pnp, ppd.mac_addr);
- 
- 	mv643xx_eth_property(pnp, "tx-queue-size", ppd.tx_queue_size);
- 	mv643xx_eth_property(pnp, "tx-sram-addr", ppd.tx_sram_addr);
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index f20dfd1d7a6b..7d5cd9bc6c99 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -5141,7 +5141,6 @@ static int mvneta_probe(struct platform_device *pdev)
- 	struct net_device *dev;
- 	struct phylink *phylink;
- 	struct phy *comphy;
--	const char *dt_mac_addr;
- 	char hw_mac_addr[ETH_ALEN];
- 	phy_interface_t phy_mode;
- 	const char *mac_from;
-@@ -5237,10 +5236,9 @@ static int mvneta_probe(struct platform_device *pdev)
- 		goto err_free_ports;
- 	}
- 
--	dt_mac_addr = of_get_mac_address(dn);
--	if (!IS_ERR(dt_mac_addr)) {
-+	err = of_get_mac_address(dn, dev->dev_addr);
-+	if (!err) {
- 		mac_from = "device tree";
--		ether_addr_copy(dev->dev_addr, dt_mac_addr);
- 	} else {
- 		mvneta_get_mac_addr(pp, hw_mac_addr);
- 		if (is_valid_ether_addr(hw_mac_addr)) {
-diff --git a/drivers/net/ethernet/marvell/prestera/prestera_main.c b/drivers/net/ethernet/marvell/prestera/prestera_main.c
-index 25dd903a3e92..f08c420a5803 100644
---- a/drivers/net/ethernet/marvell/prestera/prestera_main.c
-+++ b/drivers/net/ethernet/marvell/prestera/prestera_main.c
-@@ -456,20 +456,17 @@ static int prestera_switch_set_base_mac_addr(struct prestera_switch *sw)
- {
- 	struct device_node *base_mac_np;
- 	struct device_node *np;
--	const char *base_mac;
-+	int ret;
- 
- 	np = of_find_compatible_node(NULL, NULL, "marvell,prestera");
- 	base_mac_np = of_parse_phandle(np, "base-mac-provider", 0);
- 
--	base_mac = of_get_mac_address(base_mac_np);
--	of_node_put(base_mac_np);
--	if (!IS_ERR(base_mac))
--		ether_addr_copy(sw->base_mac, base_mac);
--
--	if (!is_valid_ether_addr(sw->base_mac)) {
-+	ret = of_get_mac_address(base_mac_np, sw->base_mac);
-+	if (ret) {
- 		eth_random_addr(sw->base_mac);
- 		dev_info(prestera_dev(sw), "using random base mac address\n");
- 	}
-+	of_node_put(base_mac_np);
- 
- 	return prestera_hw_switch_mac_set(sw, sw->base_mac);
- }
-diff --git a/drivers/net/ethernet/marvell/pxa168_eth.c b/drivers/net/ethernet/marvell/pxa168_eth.c
-index 3712e1786091..e967867828d8 100644
---- a/drivers/net/ethernet/marvell/pxa168_eth.c
-+++ b/drivers/net/ethernet/marvell/pxa168_eth.c
-@@ -1392,7 +1392,6 @@ static int pxa168_eth_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct clk *clk;
- 	struct device_node *np;
--	const unsigned char *mac_addr = NULL;
- 	int err;
- 
- 	printk(KERN_NOTICE "PXA168 10/100 Ethernet Driver\n");
-@@ -1435,12 +1434,8 @@ static int pxa168_eth_probe(struct platform_device *pdev)
- 
- 	INIT_WORK(&pep->tx_timeout_task, pxa168_eth_tx_timeout_task);
- 
--	if (pdev->dev.of_node)
--		mac_addr = of_get_mac_address(pdev->dev.of_node);
--
--	if (!IS_ERR_OR_NULL(mac_addr)) {
--		ether_addr_copy(dev->dev_addr, mac_addr);
--	} else {
-+	err = of_get_mac_address(pdev->dev.of_node, dev->dev_addr);
-+	if (err) {
- 		/* try reading the mac address, if set by the bootloader */
- 		pxa168_eth_get_mac_address(dev, dev->dev_addr);
- 		if (!is_valid_ether_addr(dev->dev_addr)) {
-diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
-index 68c154d715d6..222c32367b2c 100644
---- a/drivers/net/ethernet/marvell/sky2.c
-+++ b/drivers/net/ethernet/marvell/sky2.c
-@@ -4728,7 +4728,7 @@ static struct net_device *sky2_init_netdev(struct sky2_hw *hw, unsigned port,
- {
- 	struct sky2_port *sky2;
- 	struct net_device *dev = alloc_etherdev(sizeof(*sky2));
--	const void *iap;
-+	int ret;
- 
- 	if (!dev)
- 		return NULL;
-@@ -4798,10 +4798,8 @@ static struct net_device *sky2_init_netdev(struct sky2_hw *hw, unsigned port,
- 	 * 1) from device tree data
- 	 * 2) from internal registers set by bootloader
- 	 */
--	iap = of_get_mac_address(hw->pdev->dev.of_node);
--	if (!IS_ERR(iap))
--		ether_addr_copy(dev->dev_addr, iap);
--	else
-+	ret = of_get_mac_address(hw->pdev->dev.of_node, dev->dev_addr);
-+	if (ret)
- 		memcpy_fromio(dev->dev_addr, hw->regs + B2_MAC_1 + port * 8,
- 			      ETH_ALEN);
- 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 810def064f11..6b00c12c6c43 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -2484,14 +2484,11 @@ static int __init mtk_init(struct net_device *dev)
- {
- 	struct mtk_mac *mac = netdev_priv(dev);
- 	struct mtk_eth *eth = mac->hw;
--	const char *mac_addr;
--
--	mac_addr = of_get_mac_address(mac->of_node);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(dev->dev_addr, mac_addr);
-+	int ret;
- 
--	/* If the mac address is invalid, use random mac address  */
--	if (!is_valid_ether_addr(dev->dev_addr)) {
-+	ret = of_get_mac_address(mac->of_node, dev->dev_addr);
-+	if (ret) {
-+		/* If the mac address is invalid, use random mac address */
- 		eth_hw_addr_random(dev);
- 		dev_err(eth->dev, "generated random MAC address %pM\n",
- 			dev->dev_addr);
-diff --git a/drivers/net/ethernet/micrel/ks8851_common.c b/drivers/net/ethernet/micrel/ks8851_common.c
-index 2feed6ce19d3..13eef6e9bd2d 100644
---- a/drivers/net/ethernet/micrel/ks8851_common.c
-+++ b/drivers/net/ethernet/micrel/ks8851_common.c
-@@ -193,11 +193,10 @@ static void ks8851_read_mac_addr(struct net_device *dev)
- static void ks8851_init_mac(struct ks8851_net *ks, struct device_node *np)
- {
- 	struct net_device *dev = ks->netdev;
--	const u8 *mac_addr;
-+	int ret;
- 
--	mac_addr = of_get_mac_address(np);
--	if (!IS_ERR(mac_addr)) {
--		ether_addr_copy(dev->dev_addr, mac_addr);
-+	ret = of_get_mac_address(np, dev->dev_addr);
-+	if (!ret) {
- 		ks8851_write_mac_addr(dev);
- 		return;
- 	}
-diff --git a/drivers/net/ethernet/microchip/lan743x_main.c b/drivers/net/ethernet/microchip/lan743x_main.c
-index e7ab5f3f73fd..a841aba69c5e 100644
---- a/drivers/net/ethernet/microchip/lan743x_main.c
-+++ b/drivers/net/ethernet/microchip/lan743x_main.c
-@@ -2771,7 +2771,6 @@ static int lan743x_pcidev_probe(struct pci_dev *pdev,
- {
- 	struct lan743x_adapter *adapter = NULL;
- 	struct net_device *netdev = NULL;
--	const void *mac_addr;
- 	int ret = -ENODEV;
- 
- 	netdev = devm_alloc_etherdev(&pdev->dev,
-@@ -2788,9 +2787,7 @@ static int lan743x_pcidev_probe(struct pci_dev *pdev,
- 			      NETIF_MSG_IFDOWN | NETIF_MSG_TX_QUEUED;
- 	netdev->max_mtu = LAN743X_MAX_FRAME_SIZE;
- 
--	mac_addr = of_get_mac_address(pdev->dev.of_node);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(adapter->mac_address, mac_addr);
-+	of_get_mac_address(pdev->dev.of_node, adapter->mac_address);
- 
- 	ret = lan743x_pci_init(adapter, pdev);
- 	if (ret)
-diff --git a/drivers/net/ethernet/nxp/lpc_eth.c b/drivers/net/ethernet/nxp/lpc_eth.c
-index e72fd33a214c..64c6842bd452 100644
---- a/drivers/net/ethernet/nxp/lpc_eth.c
-+++ b/drivers/net/ethernet/nxp/lpc_eth.c
-@@ -1350,9 +1350,7 @@ static int lpc_eth_drv_probe(struct platform_device *pdev)
- 	__lpc_get_mac(pldat, ndev->dev_addr);
- 
- 	if (!is_valid_ether_addr(ndev->dev_addr)) {
--		const char *macaddr = of_get_mac_address(np);
--		if (!IS_ERR(macaddr))
--			ether_addr_copy(ndev->dev_addr, macaddr);
-+		of_get_mac_address(np, ndev->dev_addr);
- 	}
- 	if (!is_valid_ether_addr(ndev->dev_addr))
- 		eth_hw_addr_random(ndev);
-diff --git a/drivers/net/ethernet/qualcomm/qca_spi.c b/drivers/net/ethernet/qualcomm/qca_spi.c
-index 5a3b65a6eb4f..ab9b02574a15 100644
---- a/drivers/net/ethernet/qualcomm/qca_spi.c
-+++ b/drivers/net/ethernet/qualcomm/qca_spi.c
-@@ -885,7 +885,7 @@ qca_spi_probe(struct spi_device *spi)
- 	struct net_device *qcaspi_devs = NULL;
- 	u8 legacy_mode = 0;
- 	u16 signature;
--	const char *mac;
-+	int ret;
- 
- 	if (!spi->dev.of_node) {
- 		dev_err(&spi->dev, "Missing device tree\n");
-@@ -962,12 +962,8 @@ qca_spi_probe(struct spi_device *spi)
- 
- 	spi_set_drvdata(spi, qcaspi_devs);
- 
--	mac = of_get_mac_address(spi->dev.of_node);
--
--	if (!IS_ERR(mac))
--		ether_addr_copy(qca->net_dev->dev_addr, mac);
--
--	if (!is_valid_ether_addr(qca->net_dev->dev_addr)) {
-+	ret = of_get_mac_address(spi->dev.of_node, qca->net_dev->dev_addr);
-+	if (ret) {
- 		eth_hw_addr_random(qca->net_dev);
- 		dev_info(&spi->dev, "Using random MAC address: %pM\n",
- 			 qca->net_dev->dev_addr);
-diff --git a/drivers/net/ethernet/qualcomm/qca_uart.c b/drivers/net/ethernet/qualcomm/qca_uart.c
-index 362b4f5c162c..bcdeca7b3366 100644
---- a/drivers/net/ethernet/qualcomm/qca_uart.c
-+++ b/drivers/net/ethernet/qualcomm/qca_uart.c
-@@ -323,7 +323,6 @@ static int qca_uart_probe(struct serdev_device *serdev)
- {
- 	struct net_device *qcauart_dev = alloc_etherdev(sizeof(struct qcauart));
- 	struct qcauart *qca;
--	const char *mac;
- 	u32 speed = 115200;
- 	int ret;
- 
-@@ -348,12 +347,8 @@ static int qca_uart_probe(struct serdev_device *serdev)
- 
- 	of_property_read_u32(serdev->dev.of_node, "current-speed", &speed);
- 
--	mac = of_get_mac_address(serdev->dev.of_node);
--
--	if (!IS_ERR(mac))
--		ether_addr_copy(qca->net_dev->dev_addr, mac);
--
--	if (!is_valid_ether_addr(qca->net_dev->dev_addr)) {
-+	ret = of_get_mac_address(serdev->dev.of_node, qca->net_dev->dev_addr);
-+	if (ret) {
- 		eth_hw_addr_random(qca->net_dev);
- 		dev_info(&serdev->dev, "Using random MAC address: %pM\n",
- 			 qca->net_dev->dev_addr);
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index eb0c03bdb12d..e196ad5816c3 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -109,11 +109,13 @@ static void ravb_set_buffer_align(struct sk_buff *skb)
-  * Ethernet AVB device doesn't have ROM for MAC address.
-  * This function gets the MAC address that was used by a bootloader.
-  */
--static void ravb_read_mac_address(struct net_device *ndev, const u8 *mac)
-+static void ravb_read_mac_address(struct device_node *np,
-+				  struct net_device *ndev)
- {
--	if (!IS_ERR(mac)) {
--		ether_addr_copy(ndev->dev_addr, mac);
--	} else {
-+	int ret;
-+
-+	ret = of_get_mac_address(np, ndev->dev_addr);
-+	if (ret) {
- 		u32 mahr = ravb_read(ndev, MAHR);
- 		u32 malr = ravb_read(ndev, MALR);
- 
-@@ -2200,7 +2202,7 @@ static int ravb_probe(struct platform_device *pdev)
- 	priv->msg_enable = RAVB_DEF_MSG_ENABLE;
- 
- 	/* Read and set MAC address */
--	ravb_read_mac_address(ndev, of_get_mac_address(np));
-+	ravb_read_mac_address(np, ndev);
- 	if (!is_valid_ether_addr(ndev->dev_addr)) {
- 		dev_warn(&pdev->dev,
- 			 "no valid MAC address supplied, using a random one\n");
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index ebedb1a11132..c5b154868c1f 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -3170,7 +3170,6 @@ static struct sh_eth_plat_data *sh_eth_parse_dt(struct device *dev)
- 	struct device_node *np = dev->of_node;
- 	struct sh_eth_plat_data *pdata;
- 	phy_interface_t interface;
--	const char *mac_addr;
- 	int ret;
- 
- 	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-@@ -3182,9 +3181,7 @@ static struct sh_eth_plat_data *sh_eth_parse_dt(struct device *dev)
- 		return NULL;
- 	pdata->phy_interface = interface;
- 
--	mac_addr = of_get_mac_address(np);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(pdata->mac_addr, mac_addr);
-+	of_get_mac_address(np, pdata->mac_addr);
- 
- 	pdata->no_ether_link =
- 		of_property_read_bool(np, "renesas,no-ether-link");
-diff --git a/drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c b/drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c
-index 33f79402850d..4639ed9438a3 100644
---- a/drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c
-+++ b/drivers/net/ethernet/samsung/sxgbe/sxgbe_platform.c
-@@ -25,8 +25,7 @@
- 
- #ifdef CONFIG_OF
- static int sxgbe_probe_config_dt(struct platform_device *pdev,
--				 struct sxgbe_plat_data *plat,
--				 const char **mac)
-+				 struct sxgbe_plat_data *plat)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct sxgbe_dma_cfg *dma_cfg;
-@@ -35,7 +34,6 @@ static int sxgbe_probe_config_dt(struct platform_device *pdev,
- 	if (!np)
- 		return -ENODEV;
- 
--	*mac = of_get_mac_address(np);
- 	err = of_get_phy_mode(np, &plat->interface);
- 	if (err && err != -ENODEV)
- 		return err;
-@@ -63,8 +61,7 @@ static int sxgbe_probe_config_dt(struct platform_device *pdev,
- }
- #else
- static int sxgbe_probe_config_dt(struct platform_device *pdev,
--				 struct sxgbe_plat_data *plat,
--				 const char **mac)
-+				 struct sxgbe_plat_data *plat)
- {
- 	return -ENOSYS;
- }
-@@ -85,7 +82,6 @@ static int sxgbe_platform_probe(struct platform_device *pdev)
- 	void __iomem *addr;
- 	struct sxgbe_priv_data *priv = NULL;
- 	struct sxgbe_plat_data *plat_dat = NULL;
--	const char *mac = NULL;
- 	struct net_device *ndev = platform_get_drvdata(pdev);
- 	struct device_node *node = dev->of_node;
- 
-@@ -101,7 +97,7 @@ static int sxgbe_platform_probe(struct platform_device *pdev)
- 		if (!plat_dat)
- 			return  -ENOMEM;
- 
--		ret = sxgbe_probe_config_dt(pdev, plat_dat, &mac);
-+		ret = sxgbe_probe_config_dt(pdev, plat_dat);
- 		if (ret) {
- 			pr_err("%s: main dt probe failed\n", __func__);
- 			return ret;
-@@ -122,8 +118,7 @@ static int sxgbe_platform_probe(struct platform_device *pdev)
- 	}
- 
- 	/* Get MAC address if available (DT) */
--	if (!IS_ERR_OR_NULL(mac))
--		ether_addr_copy(priv->dev->dev_addr, mac);
-+	of_get_mac_address(node, priv->dev->dev_addr);
- 
- 	/* Get the TX/RX IRQ numbers */
- 	for (i = 0, chan = 1; i < SXGBE_TX_QUEUES; i++) {
-diff --git a/drivers/net/ethernet/socionext/sni_ave.c b/drivers/net/ethernet/socionext/sni_ave.c
-index 501b9c7aba56..fcbb4bb31408 100644
---- a/drivers/net/ethernet/socionext/sni_ave.c
-+++ b/drivers/net/ethernet/socionext/sni_ave.c
-@@ -1559,7 +1559,6 @@ static int ave_probe(struct platform_device *pdev)
- 	struct ave_private *priv;
- 	struct net_device *ndev;
- 	struct device_node *np;
--	const void *mac_addr;
- 	void __iomem *base;
- 	const char *name;
- 	int i, irq, ret;
-@@ -1600,12 +1599,9 @@ static int ave_probe(struct platform_device *pdev)
- 
- 	ndev->max_mtu = AVE_MAX_ETHFRAME - (ETH_HLEN + ETH_FCS_LEN);
- 
--	mac_addr = of_get_mac_address(np);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(ndev->dev_addr, mac_addr);
--
--	/* if the mac address is invalid, use random mac address */
--	if (!is_valid_ether_addr(ndev->dev_addr)) {
-+	ret = of_get_mac_address(np, ndev->dev_addr);
-+	if (ret) {
-+		/* if the mac address is invalid, use random mac address */
- 		eth_hw_addr_random(ndev);
- 		dev_warn(dev, "Using random MAC address: %pM\n",
- 			 ndev->dev_addr);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c
-index 08c76636c164..dfbaea06d108 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-anarion.c
-@@ -115,7 +115,7 @@ static int anarion_dwmac_probe(struct platform_device *pdev)
- 	if (IS_ERR(gmac))
- 		return PTR_ERR(gmac);
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-index 27254b27d7ed..bc91fd867dcd 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-dwc-qos-eth.c
-@@ -438,7 +438,7 @@ static int dwc_eth_dwmac_probe(struct platform_device *pdev)
- 	if (IS_ERR(stmmac_res.addr))
- 		return PTR_ERR(stmmac_res.addr);
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
-index fad503820e04..fbfda55b4c52 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.c
-@@ -27,7 +27,7 @@ static int dwmac_generic_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	if (pdev->dev.of_node) {
--		plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+		plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 		if (IS_ERR(plat_dat)) {
- 			dev_err(&pdev->dev, "dt configuration failed\n");
- 			return PTR_ERR(plat_dat);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-index c1a361305a5a..84651207a1de 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.c
-@@ -231,7 +231,7 @@ static int imx_dwmac_probe(struct platform_device *pdev)
- 	if (!dwmac)
- 		return -ENOMEM;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
-index 6c19fcc76c6f..06d287f104be 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.c
-@@ -85,7 +85,7 @@ static int intel_eth_plat_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat)) {
- 		dev_err(&pdev->dev, "dt configuration failed\n");
- 		return PTR_ERR(plat_dat);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
-index 749585fe6fc9..28dd0ed85a82 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-ipq806x.c
-@@ -255,7 +255,7 @@ static int ipq806x_gmac_probe(struct platform_device *pdev)
- 	if (val)
- 		return val;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-lpc18xx.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-lpc18xx.c
-index 3d3f43d91b98..9d77c647badd 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-lpc18xx.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-lpc18xx.c
-@@ -37,7 +37,7 @@ static int lpc18xx_dwmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-index 9e4b83832938..58c0feaa8131 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
-@@ -407,7 +407,7 @@ static int mediatek_dwmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c
-index bbc16b5a410a..16fb66a0ca72 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c
-@@ -52,7 +52,7 @@ static int meson6_dwmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-index 848e5c37746b..c7a6588d9398 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
-@@ -398,7 +398,7 @@ static int meson8b_dwmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-oxnas.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-oxnas.c
-index 8551ea878ba5..adfeb8d3293d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-oxnas.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-oxnas.c
-@@ -118,7 +118,7 @@ static int oxnas_dwmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-index a674b7d6b49a..84382fc5cc4d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-qcom-ethqos.c
-@@ -461,7 +461,7 @@ static int qcom_ethqos_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat)) {
- 		dev_err(&pdev->dev, "dt configuration failed\n");
- 		return PTR_ERR(plat_dat);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-index 6ef30252bfe0..8d28a536e1bb 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -1396,7 +1396,7 @@ static int rk_gmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-index 70d41783329d..85208128f135 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-socfpga.c
-@@ -398,7 +398,7 @@ static int socfpga_dwmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sti.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sti.c
-index e1b63df6f96f..710d7435733e 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sti.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sti.c
-@@ -325,7 +325,7 @@ static int sti_dwmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-index 5d4df4c5254e..2b38a499a404 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-@@ -371,7 +371,7 @@ static int stm32_dwmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-index 19e7ec30af4c..4422baeed3d8 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-@@ -1221,7 +1221,7 @@ static int sun8i_dwmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return -EINVAL;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c
-index 0e1ca2cba3c7..527077c98ebc 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c
-@@ -108,7 +108,7 @@ static int sun7i_gmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-visconti.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-visconti.c
-index d23be45a64e5..d046e33b8a29 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-visconti.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-visconti.c
-@@ -208,7 +208,7 @@ static int visconti_eth_dwmac_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	plat_dat = stmmac_probe_config_dt(pdev, &stmmac_res.mac);
-+	plat_dat = stmmac_probe_config_dt(pdev, stmmac_res.mac);
- 	if (IS_ERR(plat_dat))
- 		return PTR_ERR(plat_dat);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-index c49debb62b05..8b4ff9c189a1 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-@@ -26,7 +26,7 @@
- 
- struct stmmac_resources {
- 	void __iomem *addr;
--	const char *mac;
-+	u8 mac[ETH_ALEN];
- 	int wol_irq;
- 	int lpi_irq;
- 	int irq;
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 77285646c5fc..229b842480d1 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -6016,8 +6016,8 @@ int stmmac_dvr_probe(struct device *device,
- 	for (i = 0; i < MTL_MAX_TX_QUEUES; i++)
- 		priv->tx_irq[i] = res->tx_irq[i];
- 
--	if (!IS_ERR_OR_NULL(res->mac))
--		memcpy(priv->dev->dev_addr, res->mac, ETH_ALEN);
-+	if (!is_zero_ether_addr(res->mac))
-+		ether_addr_copy(priv->dev->dev_addr, res->mac);
- 
- 	dev_set_drvdata(device, priv->dev);
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-index 5a1e018884e6..8794584974f6 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.c
-@@ -394,7 +394,7 @@ static int stmmac_of_get_mac_mode(struct device_node *np)
-  * set some private fields that will be used by the main at runtime.
-  */
- struct plat_stmmacenet_data *
--stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
-+stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac)
- {
- 	struct device_node *np = pdev->dev.of_node;
- 	struct plat_stmmacenet_data *plat;
-@@ -406,12 +406,12 @@ stmmac_probe_config_dt(struct platform_device *pdev, const char **mac)
- 	if (!plat)
- 		return ERR_PTR(-ENOMEM);
- 
--	*mac = of_get_mac_address(np);
--	if (IS_ERR(*mac)) {
--		if (PTR_ERR(*mac) == -EPROBE_DEFER)
--			return ERR_CAST(*mac);
-+	rc = of_get_mac_address(np, mac);
-+	if (rc) {
-+		if (rc == -EPROBE_DEFER)
-+			return ERR_PTR(rc);
- 
--		*mac = NULL;
-+		eth_zero_addr(mac);
- 	}
- 
- 	plat->phy_interface = device_get_phy_mode(&pdev->dev);
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.h b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.h
-index 3a4663b7b460..3fff3f59d73d 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_platform.h
-@@ -12,7 +12,7 @@
- #include "stmmac.h"
- 
- struct plat_stmmacenet_data *
--stmmac_probe_config_dt(struct platform_device *pdev, const char **mac);
-+stmmac_probe_config_dt(struct platform_device *pdev, u8 *mac);
- void stmmac_remove_config_dt(struct platform_device *pdev,
- 			     struct plat_stmmacenet_data *plat);
- 
-diff --git a/drivers/net/ethernet/ti/am65-cpsw-nuss.c b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-index 638d7b03be4b..6a67b026df0b 100644
---- a/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-+++ b/drivers/net/ethernet/ti/am65-cpsw-nuss.c
-@@ -1824,7 +1824,6 @@ static int am65_cpsw_nuss_init_slave_ports(struct am65_cpsw_common *common)
- 
- 	for_each_child_of_node(node, port_np) {
- 		struct am65_cpsw_port *port;
--		const void *mac_addr;
- 		u32 port_id;
- 
- 		/* it is not a slave port node, continue */
-@@ -1903,15 +1902,15 @@ static int am65_cpsw_nuss_init_slave_ports(struct am65_cpsw_common *common)
- 			return ret;
- 		}
- 
--		mac_addr = of_get_mac_address(port_np);
--		if (!IS_ERR(mac_addr)) {
--			ether_addr_copy(port->slave.mac_addr, mac_addr);
--		} else if (am65_cpsw_am654_get_efuse_macid(port_np,
--							   port->port_id,
--							   port->slave.mac_addr) ||
--			   !is_valid_ether_addr(port->slave.mac_addr)) {
--			random_ether_addr(port->slave.mac_addr);
--			dev_err(dev, "Use random MAC address\n");
-+		ret = of_get_mac_address(port_np, port->slave.mac_addr);
-+		if (ret) {
-+			am65_cpsw_am654_get_efuse_macid(port_np,
-+							port->port_id,
-+							port->slave.mac_addr);
-+			if (!is_valid_ether_addr(port->slave.mac_addr)) {
-+				random_ether_addr(port->slave.mac_addr);
-+				dev_err(dev, "Use random MAC address\n");
-+			}
- 		}
- 	}
- 	of_node_put(node);
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 074702af3dc6..c0cd7de88316 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -1296,7 +1296,6 @@ static int cpsw_probe_dt(struct cpsw_platform_data *data,
- 
- 	for_each_available_child_of_node(node, slave_node) {
- 		struct cpsw_slave_data *slave_data = data->slave_data + i;
--		const void *mac_addr = NULL;
- 		int lenp;
- 		const __be32 *parp;
- 
-@@ -1368,10 +1367,8 @@ static int cpsw_probe_dt(struct cpsw_platform_data *data,
- 		}
- 
- no_phy_slave:
--		mac_addr = of_get_mac_address(slave_node);
--		if (!IS_ERR(mac_addr)) {
--			ether_addr_copy(slave_data->mac_addr, mac_addr);
--		} else {
-+		ret = of_get_mac_address(slave_node, slave_data->mac_addr);
-+		if (ret) {
- 			ret = ti_cm_get_macid(&pdev->dev, i,
- 					      slave_data->mac_addr);
- 			if (ret)
-diff --git a/drivers/net/ethernet/ti/cpsw_new.c b/drivers/net/ethernet/ti/cpsw_new.c
-index 0751f77de2c7..69b7a4e0220a 100644
---- a/drivers/net/ethernet/ti/cpsw_new.c
-+++ b/drivers/net/ethernet/ti/cpsw_new.c
-@@ -1257,7 +1257,6 @@ static int cpsw_probe_dt(struct cpsw_common *cpsw)
- 
- 	for_each_child_of_node(tmp_node, port_np) {
- 		struct cpsw_slave_data *slave_data;
--		const void *mac_addr;
- 		u32 port_id;
- 
- 		ret = of_property_read_u32(port_np, "reg", &port_id);
-@@ -1316,10 +1315,8 @@ static int cpsw_probe_dt(struct cpsw_common *cpsw)
- 			goto err_node_put;
- 		}
- 
--		mac_addr = of_get_mac_address(port_np);
--		if (!IS_ERR(mac_addr)) {
--			ether_addr_copy(slave_data->mac_addr, mac_addr);
--		} else {
-+		ret = of_get_mac_address(port_np, slave_data->mac_addr);
-+		if (ret) {
- 			ret = ti_cm_get_macid(dev, port_id - 1,
- 					      slave_data->mac_addr);
- 			if (ret)
-diff --git a/drivers/net/ethernet/ti/davinci_emac.c b/drivers/net/ethernet/ti/davinci_emac.c
-index c7031e1960d4..14e7da7d302f 100644
---- a/drivers/net/ethernet/ti/davinci_emac.c
-+++ b/drivers/net/ethernet/ti/davinci_emac.c
-@@ -1687,7 +1687,6 @@ davinci_emac_of_get_pdata(struct platform_device *pdev, struct emac_priv *priv)
- 	const struct of_device_id *match;
- 	const struct emac_platform_data *auxdata;
- 	struct emac_platform_data *pdata = NULL;
--	const u8 *mac_addr;
- 
- 	if (!IS_ENABLED(CONFIG_OF) || !pdev->dev.of_node)
- 		return dev_get_platdata(&pdev->dev);
-@@ -1699,11 +1698,8 @@ davinci_emac_of_get_pdata(struct platform_device *pdev, struct emac_priv *priv)
- 	np = pdev->dev.of_node;
- 	pdata->version = EMAC_VERSION_2;
- 
--	if (!is_valid_ether_addr(pdata->mac_addr)) {
--		mac_addr = of_get_mac_address(np);
--		if (!IS_ERR(mac_addr))
--			ether_addr_copy(pdata->mac_addr, mac_addr);
--	}
-+	if (!is_valid_ether_addr(pdata->mac_addr))
-+		of_get_mac_address(np, pdata->mac_addr);
- 
- 	of_property_read_u32(np, "ti,davinci-ctrl-reg-offset",
- 			     &pdata->ctrl_reg_offset);
-diff --git a/drivers/net/ethernet/ti/netcp_core.c b/drivers/net/ethernet/ti/netcp_core.c
-index d7a144b4a09f..9030e619e543 100644
---- a/drivers/net/ethernet/ti/netcp_core.c
-+++ b/drivers/net/ethernet/ti/netcp_core.c
-@@ -1966,7 +1966,6 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
- 	struct resource res;
- 	void __iomem *efuse = NULL;
- 	u32 efuse_mac = 0;
--	const void *mac_addr;
- 	u8 efuse_mac_addr[6];
- 	u32 temp[2];
- 	int ret = 0;
-@@ -2036,10 +2035,8 @@ static int netcp_create_interface(struct netcp_device *netcp_device,
- 		devm_iounmap(dev, efuse);
- 		devm_release_mem_region(dev, res.start, size);
- 	} else {
--		mac_addr = of_get_mac_address(node_interface);
--		if (!IS_ERR(mac_addr))
--			ether_addr_copy(ndev->dev_addr, mac_addr);
--		else
-+		ret = of_get_mac_address(node_interface, ndev->dev_addr);
-+		if (ret)
- 			eth_random_addr(ndev->dev_addr);
- 	}
- 
-diff --git a/drivers/net/ethernet/wiznet/w5100-spi.c b/drivers/net/ethernet/wiznet/w5100-spi.c
-index 2b4126d2427d..2b84848dc26a 100644
---- a/drivers/net/ethernet/wiznet/w5100-spi.c
-+++ b/drivers/net/ethernet/wiznet/w5100-spi.c
-@@ -423,8 +423,14 @@ static int w5100_spi_probe(struct spi_device *spi)
- 	const struct of_device_id *of_id;
- 	const struct w5100_ops *ops;
- 	kernel_ulong_t driver_data;
-+	const void *mac = NULL;
-+	u8 tmpmac[ETH_ALEN];
- 	int priv_size;
--	const void *mac = of_get_mac_address(spi->dev.of_node);
-+	int ret;
-+
-+	ret = of_get_mac_address(spi->dev.of_node, tmpmac);
-+	if (!ret)
-+		mac = tmpmac;
- 
- 	if (spi->dev.of_node) {
- 		of_id = of_match_device(w5100_of_match, &spi->dev);
-diff --git a/drivers/net/ethernet/wiznet/w5100.c b/drivers/net/ethernet/wiznet/w5100.c
-index c0d181a7f83a..ec5db481c9cd 100644
---- a/drivers/net/ethernet/wiznet/w5100.c
-+++ b/drivers/net/ethernet/wiznet/w5100.c
-@@ -1157,7 +1157,7 @@ int w5100_probe(struct device *dev, const struct w5100_ops *ops,
- 	INIT_WORK(&priv->setrx_work, w5100_setrx_work);
- 	INIT_WORK(&priv->restart_work, w5100_restart_work);
- 
--	if (!IS_ERR_OR_NULL(mac_addr))
-+	if (mac_addr)
- 		memcpy(ndev->dev_addr, mac_addr, ETH_ALEN);
- 	else
- 		eth_hw_addr_random(ndev);
-diff --git a/drivers/net/ethernet/xilinx/ll_temac_main.c b/drivers/net/ethernet/xilinx/ll_temac_main.c
-index 030185301014..4eb81f467122 100644
---- a/drivers/net/ethernet/xilinx/ll_temac_main.c
-+++ b/drivers/net/ethernet/xilinx/ll_temac_main.c
-@@ -1351,7 +1351,7 @@ static int temac_probe(struct platform_device *pdev)
- 	struct device_node *temac_np = dev_of_node(&pdev->dev), *dma_np;
- 	struct temac_local *lp;
- 	struct net_device *ndev;
--	const void *addr;
-+	u8 addr[ETH_ALEN];
- 	__be32 *p;
- 	bool little_endian;
- 	int rc = 0;
-@@ -1542,8 +1542,8 @@ static int temac_probe(struct platform_device *pdev)
- 
- 	if (temac_np) {
- 		/* Retrieve the MAC address */
--		addr = of_get_mac_address(temac_np);
--		if (IS_ERR(addr)) {
-+		rc = of_get_mac_address(temac_np, addr);
-+		if (rc) {
- 			dev_err(&pdev->dev, "could not find MAC address\n");
- 			return -ENODEV;
- 		}
-diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-index 92cf9051d557..5e1e923d7e7e 100644
---- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
-@@ -1835,8 +1835,8 @@ static int axienet_probe(struct platform_device *pdev)
- 	struct device_node *np;
- 	struct axienet_local *lp;
- 	struct net_device *ndev;
--	const void *mac_addr;
- 	struct resource *ethres;
-+	u8 mac_addr[ETH_ALEN];
- 	int addr_width = 32;
- 	u32 value;
- 
-@@ -2062,13 +2062,14 @@ static int axienet_probe(struct platform_device *pdev)
- 		dev_info(&pdev->dev, "Ethernet core IRQ not defined\n");
- 
- 	/* Retrieve the MAC address */
--	mac_addr = of_get_mac_address(pdev->dev.of_node);
--	if (IS_ERR(mac_addr)) {
-+	ret = of_get_mac_address(pdev->dev.of_node, mac_addr);
-+	if (!ret) {
-+		axienet_set_mac_address(ndev, mac_addr);
-+	} else {
- 		dev_warn(&pdev->dev, "could not find MAC address property: %ld\n",
- 			 PTR_ERR(mac_addr));
--		mac_addr = NULL;
-+		axienet_set_mac_address(ndev, NULL);
- 	}
--	axienet_set_mac_address(ndev, mac_addr);
- 
- 	lp->coalesce_count_rx = XAXIDMA_DFT_RX_THRESHOLD;
- 	lp->coalesce_count_tx = XAXIDMA_DFT_TX_THRESHOLD;
-diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-index 007840d4a807..d9d58a7dabee 100644
---- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-+++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
-@@ -1115,7 +1115,6 @@ static int xemaclite_of_probe(struct platform_device *ofdev)
- 	struct net_device *ndev = NULL;
- 	struct net_local *lp = NULL;
- 	struct device *dev = &ofdev->dev;
--	const void *mac_address;
- 
- 	int rc = 0;
- 
-@@ -1157,12 +1156,9 @@ static int xemaclite_of_probe(struct platform_device *ofdev)
- 	lp->next_rx_buf_to_use = 0x0;
- 	lp->tx_ping_pong = get_bool(ofdev, "xlnx,tx-ping-pong");
- 	lp->rx_ping_pong = get_bool(ofdev, "xlnx,rx-ping-pong");
--	mac_address = of_get_mac_address(ofdev->dev.of_node);
- 
--	if (!IS_ERR(mac_address)) {
--		/* Set the MAC address. */
--		ether_addr_copy(ndev->dev_addr, mac_address);
--	} else {
-+	rc = of_get_mac_address(ofdev->dev.of_node, ndev->dev_addr);
-+	if (rc) {
- 		dev_warn(dev, "No MAC address found, using random\n");
- 		eth_hw_addr_random(ndev);
- 	}
-diff --git a/drivers/net/wireless/ath/ath9k/init.c b/drivers/net/wireless/ath/ath9k/init.c
-index 01f9c26f9bf3..e9a36dd7144f 100644
---- a/drivers/net/wireless/ath/ath9k/init.c
-+++ b/drivers/net/wireless/ath/ath9k/init.c
-@@ -617,7 +617,6 @@ static int ath9k_of_init(struct ath_softc *sc)
- 	struct ath_hw *ah = sc->sc_ah;
- 	struct ath_common *common = ath9k_hw_common(ah);
- 	enum ath_bus_type bus_type = common->bus_ops->ath_bus_type;
--	const char *mac;
- 	char eeprom_name[100];
- 	int ret;
- 
-@@ -640,9 +639,7 @@ static int ath9k_of_init(struct ath_softc *sc)
- 		ah->ah_flags |= AH_NO_EEP_SWAP;
- 	}
- 
--	mac = of_get_mac_address(np);
--	if (!IS_ERR(mac))
--		ether_addr_copy(common->macaddr, mac);
-+	of_get_mac_address(np, common->macaddr);
- 
- 	return 0;
- }
-diff --git a/drivers/net/wireless/mediatek/mt76/eeprom.c b/drivers/net/wireless/mediatek/mt76/eeprom.c
-index 665b54c5c8ae..6d895738222a 100644
---- a/drivers/net/wireless/mediatek/mt76/eeprom.c
-+++ b/drivers/net/wireless/mediatek/mt76/eeprom.c
-@@ -91,16 +91,9 @@ void
- mt76_eeprom_override(struct mt76_phy *phy)
- {
- 	struct mt76_dev *dev = phy->dev;
--
--#ifdef CONFIG_OF
- 	struct device_node *np = dev->dev->of_node;
--	const u8 *mac = NULL;
- 
--	if (np)
--		mac = of_get_mac_address(np);
--	if (!IS_ERR_OR_NULL(mac))
--		ether_addr_copy(phy->macaddr, mac);
--#endif
-+	of_get_mac_address(np, phy->macaddr);
- 
- 	if (!is_valid_ether_addr(phy->macaddr)) {
- 		eth_random_addr(phy->macaddr);
-diff --git a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
-index 61a4f1ad31e2..e95c101c2711 100644
---- a/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
-+++ b/drivers/net/wireless/ralink/rt2x00/rt2x00dev.c
-@@ -989,11 +989,7 @@ static void rt2x00lib_rate(struct ieee80211_rate *entry,
- 
- void rt2x00lib_set_mac_address(struct rt2x00_dev *rt2x00dev, u8 *eeprom_mac_addr)
- {
--	const char *mac_addr;
--
--	mac_addr = of_get_mac_address(rt2x00dev->dev->of_node);
--	if (!IS_ERR(mac_addr))
--		ether_addr_copy(eeprom_mac_addr, mac_addr);
-+	of_get_mac_address(rt2x00dev->dev->of_node, eeprom_mac_addr);
- 
- 	if (!is_valid_ether_addr(eeprom_mac_addr)) {
- 		eth_random_addr(eeprom_mac_addr);
-diff --git a/drivers/of/of_net.c b/drivers/of/of_net.c
-index bc0a27de69d4..2344ad7fff5e 100644
---- a/drivers/of/of_net.c
-+++ b/drivers/of/of_net.c
-@@ -45,42 +45,35 @@ int of_get_phy_mode(struct device_node *np, phy_interface_t *interface)
- }
- EXPORT_SYMBOL_GPL(of_get_phy_mode);
- 
--static const void *of_get_mac_addr(struct device_node *np, const char *name)
-+static int of_get_mac_addr(struct device_node *np, const char *name, u8 *addr)
- {
- 	struct property *pp = of_find_property(np, name, NULL);
- 
--	if (pp && pp->length == ETH_ALEN && is_valid_ether_addr(pp->value))
--		return pp->value;
--	return NULL;
-+	if (pp && pp->length == ETH_ALEN && is_valid_ether_addr(pp->value)) {
-+		ether_addr_copy(addr, pp->value);
-+		return 0;
-+	}
-+	return -ENODEV;
- }
- 
--static const void *of_get_mac_addr_nvmem(struct device_node *np)
-+static int of_get_mac_addr_nvmem(struct device_node *np, u8 addr)
- {
--	int ret;
--	const void *mac;
--	u8 nvmem_mac[ETH_ALEN];
- 	struct platform_device *pdev = of_find_device_by_node(np);
-+	int ret;
- 
- 	if (!pdev)
--		return ERR_PTR(-ENODEV);
-+		return -ENODEV;
- 
--	ret = nvmem_get_mac_address(&pdev->dev, &nvmem_mac);
--	if (ret) {
--		put_device(&pdev->dev);
--		return ERR_PTR(ret);
--	}
--
--	mac = devm_kmemdup(&pdev->dev, nvmem_mac, ETH_ALEN, GFP_KERNEL);
-+	ret = nvmem_get_mac_address(&pdev->dev, addr);
- 	put_device(&pdev->dev);
--	if (!mac)
--		return ERR_PTR(-ENOMEM);
- 
--	return mac;
-+	return ret;
- }
- 
- /**
-  * of_get_mac_address()
-  * @np:		Caller's Device Node
-+ * @addr:	Pointer to a six-byte array for the result
-  *
-  * Search the device tree for the best MAC address to use.  'mac-address' is
-  * checked first, because that is supposed to contain to "most recent" MAC
-@@ -101,24 +94,27 @@ static const void *of_get_mac_addr_nvmem(struct device_node *np)
-  * this case, the real MAC is in 'local-mac-address', and 'mac-address' exists
-  * but is all zeros.
-  *
-- * Return: Will be a valid pointer on success and ERR_PTR in case of error.
-+ * Return: 0 on success and errno in case of error.
- */
--const void *of_get_mac_address(struct device_node *np)
-+int of_get_mac_address(struct device_node *np, u8 *addr)
- {
--	const void *addr;
-+	int ret;
-+
-+	if (!np)
-+		return -ENODEV;
- 
--	addr = of_get_mac_addr(np, "mac-address");
--	if (addr)
--		return addr;
-+	ret = of_get_mac_addr(np, "mac-address", addr);
-+	if (!ret)
-+		return 0;
- 
--	addr = of_get_mac_addr(np, "local-mac-address");
--	if (addr)
--		return addr;
-+	ret = of_get_mac_addr(np, "local-mac-address", addr);
-+	if (!ret)
-+		return 0;
- 
--	addr = of_get_mac_addr(np, "address");
--	if (addr)
--		return addr;
-+	ret = of_get_mac_addr(np, "address", addr);
-+	if (!ret)
-+		return 0;
- 
--	return of_get_mac_addr_nvmem(np);
-+	return of_get_mac_addr_nvmem(np, addr);
- }
- EXPORT_SYMBOL(of_get_mac_address);
-diff --git a/drivers/staging/octeon/ethernet.c b/drivers/staging/octeon/ethernet.c
-index 5dea6e96ec90..da7c2cd8ebb8 100644
---- a/drivers/staging/octeon/ethernet.c
-+++ b/drivers/staging/octeon/ethernet.c
-@@ -407,14 +407,10 @@ static int cvm_oct_common_set_mac_address(struct net_device *dev, void *addr)
- int cvm_oct_common_init(struct net_device *dev)
- {
- 	struct octeon_ethernet *priv = netdev_priv(dev);
--	const u8 *mac = NULL;
-+	int ret;
- 
--	if (priv->of_node)
--		mac = of_get_mac_address(priv->of_node);
--
--	if (!IS_ERR_OR_NULL(mac))
--		ether_addr_copy(dev->dev_addr, mac);
--	else
-+	ret = of_get_mac_address(priv->of_node, dev->dev_addr);
-+	if (ret)
- 		eth_hw_addr_random(dev);
- 
- 	/*
-diff --git a/drivers/staging/wfx/main.c b/drivers/staging/wfx/main.c
-index e7bc1988124a..4b9fdf99981b 100644
---- a/drivers/staging/wfx/main.c
-+++ b/drivers/staging/wfx/main.c
-@@ -334,7 +334,6 @@ int wfx_probe(struct wfx_dev *wdev)
- {
- 	int i;
- 	int err;
--	const void *macaddr;
- 	struct gpio_desc *gpio_saved;
- 
- 	// During first part of boot, gpio_wakeup cannot yet been used. So
-@@ -423,9 +422,9 @@ int wfx_probe(struct wfx_dev *wdev)
- 
- 	for (i = 0; i < ARRAY_SIZE(wdev->addresses); i++) {
- 		eth_zero_addr(wdev->addresses[i].addr);
--		macaddr = of_get_mac_address(wdev->dev->of_node);
--		if (!IS_ERR_OR_NULL(macaddr)) {
--			ether_addr_copy(wdev->addresses[i].addr, macaddr);
-+		err = of_get_mac_address(wdev->dev->of_node,
-+					 wdev->addresses[i].addr);
-+		if (!err) {
- 			wdev->addresses[i].addr[ETH_ALEN - 1] += i;
- 		} else {
- 			ether_addr_copy(wdev->addresses[i].addr,
-diff --git a/include/linux/of_net.h b/include/linux/of_net.h
-index 71bbfcf3adcd..daef3b0d9270 100644
---- a/include/linux/of_net.h
-+++ b/include/linux/of_net.h
-@@ -13,7 +13,7 @@
- 
- struct net_device;
- extern int of_get_phy_mode(struct device_node *np, phy_interface_t *interface);
--extern const void *of_get_mac_address(struct device_node *np);
-+extern int of_get_mac_address(struct device_node *np, u8 *mac);
- extern struct net_device *of_find_net_device_by_node(struct device_node *np);
- #else
- static inline int of_get_phy_mode(struct device_node *np,
-@@ -22,9 +22,9 @@ static inline int of_get_phy_mode(struct device_node *np,
- 	return -ENODEV;
- }
- 
--static inline const void *of_get_mac_address(struct device_node *np)
-+static inline int of_get_mac_address(struct device_node *np, u8 *mac)
- {
--	return ERR_PTR(-ENODEV);
-+	return -ENODEV;
- }
- 
- static inline struct net_device *of_find_net_device_by_node(struct device_node *np)
-diff --git a/include/net/dsa.h b/include/net/dsa.h
-index 57b2c49f72f4..1259b0f40684 100644
---- a/include/net/dsa.h
-+++ b/include/net/dsa.h
-@@ -260,7 +260,7 @@ struct dsa_port {
- 	unsigned int		index;
- 	const char		*name;
- 	struct dsa_port		*cpu_dp;
--	const char		*mac;
-+	u8			mac[ETH_ALEN];
- 	struct device_node	*dn;
- 	unsigned int		ageing_time;
- 	bool			vlan_filtering;
-diff --git a/net/dsa/dsa2.c b/net/dsa/dsa2.c
-index d142eb2b288b..805118941dae 100644
---- a/net/dsa/dsa2.c
-+++ b/net/dsa/dsa2.c
-@@ -392,7 +392,7 @@ static int dsa_port_setup(struct dsa_port *dp)
- 
- 		break;
- 	case DSA_PORT_TYPE_USER:
--		dp->mac = of_get_mac_address(dp->dn);
-+		of_get_mac_address(dp->dn, dp->mac);
- 		err = dsa_slave_create(dp);
- 		if (err)
- 			break;
-diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-index 995e0e16f295..9300cb66e500 100644
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -1896,7 +1896,7 @@ int dsa_slave_create(struct dsa_port *port)
- 	slave_dev->hw_features |= NETIF_F_HW_TC;
- 	slave_dev->features |= NETIF_F_LLTX;
- 	slave_dev->ethtool_ops = &dsa_slave_ethtool_ops;
--	if (!IS_ERR_OR_NULL(port->mac))
-+	if (!is_zero_ether_addr(port->mac))
- 		ether_addr_copy(slave_dev->dev_addr, port->mac);
- 	else
- 		eth_hw_addr_inherit(slave_dev, master);
-diff --git a/net/ethernet/eth.c b/net/ethernet/eth.c
-index 933b427122be..9cce612e8976 100644
---- a/net/ethernet/eth.c
-+++ b/net/ethernet/eth.c
-@@ -511,13 +511,14 @@ unsigned char * __weak arch_get_platform_mac_address(void)
- 
- int eth_platform_get_mac_address(struct device *dev, u8 *mac_addr)
- {
--	const unsigned char *addr = NULL;
-+	unsigned char *addr;
-+	int ret;
- 
--	if (dev->of_node)
--		addr = of_get_mac_address(dev->of_node);
--	if (IS_ERR_OR_NULL(addr))
--		addr = arch_get_platform_mac_address();
-+	ret = of_get_mac_address(dev->of_node, mac_addr);
-+	if (!ret)
-+		return 0;
- 
-+	addr = arch_get_platform_mac_address();
- 	if (!addr)
- 		return -ENODEV;
- 
--- 
-2.20.1
+--vkogqOf2sHV7VnPd
+Content-Type: application/gzip
+Content-Disposition: attachment; filename=".config.gz"
+Content-Transfer-Encoding: base64
 
+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
+x2xgfXvdG25zB4Ok1e7lxuH2/wPb4boaztMBAA==
+
+--vkogqOf2sHV7VnPd--
