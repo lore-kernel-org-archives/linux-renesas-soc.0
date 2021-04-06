@@ -2,226 +2,194 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 536F7C433ED
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Apr 2021 07:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8474EC43460
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Apr 2021 07:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1756B61242
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Apr 2021 07:06:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E2DB613BE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  6 Apr 2021 07:12:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238422AbhDFHGz (ORCPT
+        id S233242AbhDFHM0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 6 Apr 2021 03:06:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58754 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237873AbhDFHGy (ORCPT
+        Tue, 6 Apr 2021 03:12:26 -0400
+Received: from mail-lf1-f51.google.com ([209.85.167.51]:33554 "EHLO
+        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232596AbhDFHM0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 6 Apr 2021 03:06:54 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75956C06174A
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  6 Apr 2021 00:06:47 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id d10so4840391pgf.12
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 06 Apr 2021 00:06:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=adkJ6DjWiRuo+VZGsAcXwXZhpVoDG7rs5RNyn3Cq7bQ=;
-        b=0pXdavK1wulB5Bu7kk8Zw8Vn457Ncw37cbrWNrszpAdAVLKOcKZcfdRXlI86vibNW2
-         BTBwf7ZMDul75DvocDt6dcSSGYMHaIoo/xiTLntzjb2E9lpO+ANwMwnELun2ABJgxU+m
-         6plvn5VJoGgZz816EQ5rg6ykitlxAj3ytpplCu9yYSX60igRsf35Ye2GjWpCiXwsIu/e
-         77bfiLcvkqzB0S0gwEB9G2iqW67vr+PdT+kEUUl5oRwLfLhe989xwnenEqdksyNxlwh3
-         YBBQWBQ2N6DLL6id+2s7iI8cDPIef1V7UZWfMibipMMDLFfnFh8QMo7pGgCqCvpwjFcq
-         7LZg==
+        Tue, 6 Apr 2021 03:12:26 -0400
+Received: by mail-lf1-f51.google.com with SMTP id o126so21175914lfa.0;
+        Tue, 06 Apr 2021 00:12:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=adkJ6DjWiRuo+VZGsAcXwXZhpVoDG7rs5RNyn3Cq7bQ=;
-        b=qW90qGWHJgR64IYT24OMlwpOl+VZgNc1YJkVmYBYy9oEvAxZAB7j0wJeobrlYT0wOr
-         xawU3XtU1vwXZyeKrTxrwXouILn0/9P2rD8MKp5Ida2tElHwHPKBSKcn7SxoBkug76Hh
-         IQdXnJ5COQ7yAOStS3MrL2F4fWDQ1CXWzTqBmiMOniH3YKU431tswfxRRfuxJF/VzOe2
-         BDXCVuCFuDuoe0qZlKvi4sAlJsdgRrGf6ewkT1Ch6S6MybrUw55/vEddI3VALqbAiTkc
-         yY8Zds8F8QxSJJHjG/04B84Sr3euGr3Qwuj6agj3W8luI/vRcLq79Zw+mVa/JT/vp0ih
-         i7bA==
-X-Gm-Message-State: AOAM533boAD1uAmth1Zy254Vhvk1EIcsQWe9xf7tEags8nb3kA2q+ekJ
-        8LRfA3vbp9fw2bodNi9kvyYCGu9GbjETQh70
-X-Google-Smtp-Source: ABdhPJyrG+muLzxfQGoXDzfbtuprrchI/oR+Y/WKh2O476rVHqCwLbNv3WflKpvrM9azwDBNgxCcoQ==
-X-Received: by 2002:a63:e903:: with SMTP id i3mr21017390pgh.374.1617692806817;
-        Tue, 06 Apr 2021 00:06:46 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id x33sm909395pfu.71.2021.04.06.00.06.46
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=JWpXtPxwcYaLcWPTdbUVcJYF2Cxw1aQmYGh7DtSPh6A=;
+        b=shCj0T0v6vvkn/65E42vMQ/yB85zRiCtzkerQU5ryMdf0mWHoLaqmSoHY7VUO0H/vK
+         JvmIgYAslTz2NWTsH4OfD4d6J8GGmppNaawVX9KG5BcDnm7njpsXSR2RoQVl700edgxK
+         Meo27+gymVqadY+lg9xo0h2gJPoyVvIdM8o4YDgOVAP64dekIa4jGfQ8Gz9swIbybP43
+         OakaaZORTUK5EZRoleHjaZdQnT/c0M73E4Ziz6ZSQzQ87Y3+72LlPq8P/hQxDHzyb1gL
+         CgHPs+VGWbMPJ0y2O3RPCDtYJhqRSudKSy3HFCSVsMwFPHhAaIbenofO2LQGY2DWsaHg
+         pj0A==
+X-Gm-Message-State: AOAM532W9ucMIH3S3zTzo230mOXSZgmz2UQ7x0do0qrdyCQZFRQdkKb9
+        JfCo3wvkYSZLs16p+MFq3HQ=
+X-Google-Smtp-Source: ABdhPJyi5TE1Cg+HM5nSC/YkyOREx2cRJrXa+bx0pgOVuESbM3ahI8wKz/U1y5n/g39HgW5ueEzP9w==
+X-Received: by 2002:a19:c54:: with SMTP id 81mr19628292lfm.401.1617693137223;
+        Tue, 06 Apr 2021 00:12:17 -0700 (PDT)
+Received: from localhost.localdomain (dc7vkhyyyyyyyyyyyyydy-3.rev.dnainternet.fi. [2001:14ba:16e2:8300::6])
+        by smtp.gmail.com with ESMTPSA id r3sm2049130lfn.122.2021.04.06.00.12.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Apr 2021 00:06:46 -0700 (PDT)
-Message-ID: <606c0886.1c69fb81.ca3c1.2949@mx.google.com>
-Date:   Tue, 06 Apr 2021 00:06:46 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 06 Apr 2021 00:12:16 -0700 (PDT)
+Date:   Tue, 6 Apr 2021 10:12:09 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Matti Vaittinen <mazziesaccount@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-power@fi.rohmeurope.com, linux-arm-msm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 0/7] Extend regulator notification support
+Message-ID: <cover.1617690965.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: renesas-devel-2021-04-05-v5.12-rc6
-X-Kernelci-Branch: master
-X-Kernelci-Tree: renesas
-Subject: renesas/master igt-kms-rockchip: 1 runs,
- 3 regressions (renesas-devel-2021-04-05-v5.12-rc6)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master igt-kms-rockchip: 1 runs, 3 regressions (renesas-devel-2021-=
-04-05-v5.12-rc6)
+Extend regulator notification support
 
-Regressions Summary
--------------------
+This series extends the regulator notification and error flag support. Initial
+discussion on the topic can be found here:
+https://lore.kernel.org/lkml/6046836e22b8252983f08d5621c35ececb97820d.camel@fi.rohmeurope.com/
 
-platform         | arch  | lab           | compiler | defconfig | regressio=
-ns
------------------+-------+---------------+----------+-----------+----------=
+This series is built on top of the BD9576MUF support patch series v9
+which is currently in MFD tree at immutable branch ib-mfd-watchdog-5.13
+https://lore.kernel.org/lkml/cover.1615219345.git.matti.vaittinen@fi.rohmeurope.com/
+(The series should apply without those patches but there is compile time
+dependency to definitions brought in at the last patch of the BD9576
+series. This should be Ok though as there is a Kconfig dependency in
+BD9576 regulator driver)
+
+In a nutshell - the series adds:
+
+1. WARNING level events/error flags. (Patch 2)
+  Current regulator 'ERROR' event notifications for over/under
+  voltage, over current and over temperature are used to indicate
+  condition where monitored entity is so badly "off" that it actually
+  indicates a hardware error which can not be recovered. The most
+  typical hanling for that is believed to be a (graceful)
+  system-shutdown. Here we add set of 'WARNING' level flags to allow
+  sending notifications to consumers before things are 'that badly off'
+  so that consumer drivers can implement recovery-actions.
+2. Device-tree properties for specifying limit values. (Patches 1, 4)
+  Add limits for above mentioned 'ERROR' and 'WARNING' levels (which
+  send notifications to consumers) and also for a 'PROTECTION' level
+  (which will be used to immediately shut-down the regulator(s) W/O
+  informing consumer drivers. Typically implemented by hardware).
+  Property parsing is implemented in regulator core which then calls
+  callback operations for limit setting from the IC drivers. A
+  warning is emitted if protection is requested by device tree but the
+  underlying IC does not support configuring requested protection.
+3. Helpers which can be registered by IC. (Patch 3)
+  Target is to avoid implementing IRQ handling and IRQ storm protection
+  in each IC driver. (Many of the ICs implementin these IRQs do not allow
+  masking or acking the IRQ but keep the IRQ asserted for the whole
+  duration of problem keeping the processor in IRQ handling loop).
+
+The helper was attempted to be done so it could be used to implement
+roughly same logic as is used in qcom-labibb regulator. This means
+amongst other things a safety shut-down if IC registers are not readable.
+Using these shut-down retry counters are optional. The idea is that the
+helper could be also used by simpler ICs which do not provide status
+register(s) which can be used to check if error is still active.
+
+ICs which do not have such status register can simply omit the 'renable'
+callback (and retry-counts etc) - and helper assumes the situation is Ok
+and re-enables IRQ after given time period. If problem persists the
+handler is ran again and another notification is sent - but at least the
+delay allows processor to avoid IRQ loop.
+
+Patch 6 takes this notification support in use at BD9576MUF.
+Patch 7 is related to MFD change which is not really related to the RFC
+here. It was added to this series in order to avoid potential conflicts.
+
+Changelog v4:
+   - rebased on v5.12-rc6
+   - dropped RFC
+   - fix external FET DT-binding.
+   - improve prints for cases when expecting HW failure.
+   - styling and typos
+Changelog v3:
+  Regulator core:
+   - Fix dangling pointer access at regulator_irq_helper()
+  stpmic1_regulator:
+   - fix function prototype (compile error)
+  bd9576-regulator:
+   - Update over current limits to what was given in new data-sheet
+     (REV00K)
+   - Allow over-current monitoring without external FET. Set limits to
+     values given in data-sheet (REV00K).
+
+Changelog v2:
+  Generic:
+  - rebase on v5.12-rc2 + BD9576 series
+  - Split devm variant of delayed wq to own series
+  Regulator framework:
+  - Provide non devm variant of IRQ notification helpers
+  - shorten dt-property names as suggested by Rob
+  - unconditionally call map_event in IRQ handling and require it to be
+    populated
+  BD9576 regulators:
+  - change the FET resistance property to micro-ohms
+  - fix voltage computation in OC limit setting
+
 --
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-8    | defconfig | 3        =
-  =
+
+Matti Vaittinen (7):
+  dt_bindings: Add protection limit properties
+  regulator: add warning flags
+  regulator: IRQ based event/error notification helpers
+  regulator: add property parsing and callbacks to set protection limits
+  dt-bindings: regulator: bd9576 add FET ON-resistance for OCW
+  regulator: bd9576: Support error reporting
+  regulator: bd9576: Fix the driver name in id table
+
+ .../bindings/regulator/regulator.yaml         |   82 ++
+ .../regulator/rohm,bd9576-regulator.yaml      |    6 +
+ drivers/regulator/Makefile                    |    2 +-
+ drivers/regulator/bd9576-regulator.c          | 1060 +++++++++++++++--
+ drivers/regulator/core.c                      |  146 ++-
+ drivers/regulator/irq_helpers.c               |  431 +++++++
+ drivers/regulator/of_regulator.c              |   58 +
+ drivers/regulator/qcom-labibb-regulator.c     |   10 +-
+ drivers/regulator/qcom_spmi-regulator.c       |    6 +-
+ drivers/regulator/stpmic1_regulator.c         |   20 +-
+ include/linux/regulator/consumer.h            |   14 +
+ include/linux/regulator/driver.h              |  176 ++-
+ include/linux/regulator/machine.h             |   26 +
+ 13 files changed, 1895 insertions(+), 142 deletions(-)
+ create mode 100644 drivers/regulator/irq_helpers.c
+
+-- 
+2.25.4
 
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2021-04-05-v5.12-rc6/plan/igt-kms-rockchip/
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
-  Test:     igt-kms-rockchip
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2021-04-05-v5.12-rc6
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      ea0aa7f2e67d781466efc1f9867e42062aa6e685
-
-  Test suite revisions:
-    drm
-      URL:  git://anongit.freedesktop.org/mesa/drm
-      SHA:  cd3681976c3bbefa08236be86551c11bd4599c88
-    igt-gpu-tools
-      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
-      SHA:  2c2fc6470646eb5e25fc6ea02449ef744f8b70c2 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform         | arch  | lab           | compiler | defconfig | regressio=
-ns
------------------+-------+---------------+----------+-----------+----------=
---
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-8    | defconfig | 3        =
-  =
-
-
-  Details:     https://kernelci.org/test/plan/id/606bf5b6da4fe2fd95dac6c5
-
-  Results:     77 PASS, 19 FAIL, 138 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-04-05-v5.12-rc6/arm64/defconfig/gcc-8/lab-collabora/igt-kms-rockchip-rk=
-3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-04-05-v5.12-rc6/arm64/defconfig/gcc-8/lab-collabora/igt-kms-rockchip-rk=
-3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-igt/=
-20210324.0/arm64/rootfs.cpio.gz =
-
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-B-ts-continuation-idle: https://kernel=
-ci.org/test/case/id/606bf5b7da4fe2fd95dac74b
-        failing since 28 days (last pass: renesas-devel-2021-02-15-v5.11, f=
-irst fail: v5.12-rc2-394-g4e589d84c742)
-
-    2021-04-06 05:45:55.689000+00:00  Test requirement: !(pipe >=3D display=
-->n_pipes || !display->pipes[pipe].enabled)
-    2021-04-06 05:45:55.692000+00:00  Pipe E does not exist or not enabled
-    2021-04-06 05:45:55.700000+00:00  Test requirement not met in function =
-igt_require_pipe, file ../lib/igt_kms.c:1910:
-    2021-04-06 05:45:55.710000+00:00  Test requirement: !(pipe >=3D display=
--><6>[  143.737510] Console: switching to colour dummy device 80x25
-    2021-04-06 05:45:55.715000+00:00  n_pipes || !display->pipes[pipe].enab=
-led)
-    2021-04-06 05:45:55.722000+00:00  Pipe F does not exist<14>[  143.74780=
-7] [IGT] kms_vblank: executing
-    2021-04-06 05:45:55.723000+00:00   or not enabled
-    2021-04-06 05:45:55.738000+00:00  IGT-Version: 1.25-g2c2fc64 (aarch64) =
-(Linux: 5.12.0-rc6 aarch64)<14>[  143.759643] [IGT] kms_vblank: starting su=
-btest pipe-B-ts-continuation-idle
-    2021-04-06 05:45:55.738000+00:00  =
-
-    2021-04-06 05:45:55.742000+00:00  Starting subtest: pipe-B-ts-continuat=
-ion-idle =
-
-    ... (67 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-B-ts-continuation-dpms-suspend: https:=
-//kernelci.org/test/case/id/606bf5b7da4fe2fd95dac74e
-        failing since 28 days (last pass: renesas-devel-2021-02-15-v5.11, f=
-irst fail: v5.12-rc2-394-g4e589d84c742)
-
-    2021-04-06 05:46:00.787000+00:00  <14>[  148.819518] [IGT] kms_vblank: =
-executing
-    2021-04-06 05:46:00.804000+00:00  IGT-Version: 1.25-g2c2fc64 (aarch64) =
-(Linux: 5.12.0-rc6 aarch64)<14>[  148.826513] [IGT] kms_vblank: starting su=
-btest pipe-B-ts-continuation-dpms-suspend
-    2021-04-06 05:46:00.805000+00:00  =
-
-    2021-04-06 05:46:00.810000+00:00  Starting subtest: pipe-B-ts-continuat=
-ion-dpms-suspend
-    2021-04-06 05:46:01.719000+00:00  (kms_vblank:774) igt_kms-CRITICAL: Te=
-st assertion failure function igt_wait_for_vblank, file ../lib/igt_kms.c:42=
-40:
-    2021-04-06 05:46:01.728000+00:00  (kms_vblank:774) igt_kms-CRITICAL: Fa=
-iled assertion: __igt_vblank_wait(drm_fd, crtc_offset, 1) =3D=3D 0
-    2021-04-06 05:46:01.735000+00:00  (kms_vblank:774) igt_kms-CRITICAL: La=
-st errno: 22, Invalid argument
-    2021-04-06 05:46:01.737000+00:00  Stack trace:
-    2021-04-06 05:46:01.741000+00:00    #0 ../lib/igt_core.c:1726 __igt_fai=
-l_assert()
-    2021-04-06 05:46:01.744000+00:00    #1 [igt_wait_for_vblank+0x4c] =
-
-    ... (61 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-B-ts-continuation-modeset: https://ker=
-nelci.org/test/case/id/606bf5b7da4fe2fd95dac750
-        failing since 28 days (last pass: renesas-devel-2021-02-15-v5.11, f=
-irst fail: v5.12-rc2-394-g4e589d84c742)
-
-    2021-04-06 05:46:05.668000+00:00  <6>[  153.698333] Console: switching =
-to colour dummy device 80x25
-    2021-04-06 05:46:05.673000+00:00  <14>[  153.705023] [IGT] kms_vblank: =
-executing
-    2021-04-06 05:46:05.689000+00:00  IGT-Version: 1.25-g2c2fc64 (aarch64) =
-(Linux: 5.12.0-rc6 aarch64)<14>[  153.712013] [IGT] kms_vblank: starting su=
-btest pipe-B-ts-continuation-modeset
-    2021-04-06 05:46:05.690000+00:00  =
-
-    2021-04-06 05:46:05.694000+00:00  Starting subtest: pipe-B-ts-continuat=
-ion-modeset
-    2021-04-06 05:46:06.623000+00:00  (kms_vblank:780) igt_kms-CRITICAL: Te=
-st assertion failure function igt_wait_for_vblank, file ../lib/igt_kms.c:42=
-40:
-    2021-04-06 05:46:06.632000+00:00  (kms_vblank:780) igt_kms-CRITICAL: Fa=
-iled assertion: __igt_vblank_wait(drm_fd, crtc_offset, 1) =3D=3D 0
-    2021-04-06 05:46:06.639000+00:00  (kms_vblank:780) igt_kms-CRITICAL: La=
-st errno: 22, Invalid argument
-    2021-04-06 05:46:06.641000+00:00  Stack trace:
-    2021-04-06 05:46:06.645000+00:00    #0 ../lib/igt_core.c:1726 __igt_fai=
-l_assert() =
-
-    ... (63 line(s) more)  =
-
- =20
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
