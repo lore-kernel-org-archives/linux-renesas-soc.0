@@ -2,99 +2,79 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC578C433B4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Apr 2021 09:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A31ADC43461
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DE3D61108
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Apr 2021 09:37:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 797116115C
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  9 Apr 2021 09:43:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232435AbhDIJho (ORCPT
+        id S233175AbhDIJoC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 9 Apr 2021 05:37:44 -0400
-Received: from www.zeus03.de ([194.117.254.33]:47008 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232042AbhDIJho (ORCPT
+        Fri, 9 Apr 2021 05:44:02 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:16556 "EHLO
+        szxga04-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233267AbhDIJnu (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 9 Apr 2021 05:37:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=C3Hrh9uQqNgl/Dm9ETQHS0pl2/Qn
-        lcWtGE9+76bqfuk=; b=dFcbLLf8Tc2b9ZOAs6VLqcvIhm/SbnJUYUnBCHZrII/o
-        TPxpPJgpCLXcUpHDiLERVIZDOvsqhCtt3ub1ayoGAHH0Q19OUN8QqZXcHgAGYYGg
-        Ovg5rOtZrwOfgcaWuqnZelSNNGhZXIHQ4mpDpedVEx0TlYoqPlTGk7SrywjAkhk=
-Received: (qmail 3721288 invoked from network); 9 Apr 2021 11:37:29 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Apr 2021 11:37:29 +0200
-X-UD-Smtp-Session: l3s3148p1@mYpt6Ya/drMgARa4RVM+AT5wAMFZBfoZ
-Date:   Fri, 9 Apr 2021 11:37:26 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Subject: Re: [PATCH RFT] mmc: renesas_sdhi: enable WAIT_WHILE_BUSY
-Message-ID: <20210409093726.GA879@ninjato>
-References: <20210408133420.2900-1-wsa+renesas@sang-engineering.com>
- <TY2PR01MB36920CDE15B59DD55825B2E5D8739@TY2PR01MB3692.jpnprd01.prod.outlook.com>
+        Fri, 9 Apr 2021 05:43:50 -0400
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4FGtS35Wttz19L9v;
+        Fri,  9 Apr 2021 17:41:23 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.498.0; Fri, 9 Apr 2021
+ 17:43:25 +0800
+From:   Ye Bin <yebin10@huawei.com>
+To:     <yebin10@huawei.com>, Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] clk: renesas: r8a77970: Use DEFINE_SPINLOCK() for spinlock
+Date:   Fri, 9 Apr 2021 17:51:50 +0800
+Message-ID: <20210409095150.2294437-1-yebin10@huawei.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
-Content-Disposition: inline
-In-Reply-To: <TY2PR01MB36920CDE15B59DD55825B2E5D8739@TY2PR01MB3692.jpnprd01.prod.outlook.com>
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.127.227]
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+spinlock can be initialized automatically with DEFINE_SPINLOCK()
+rather than explicitly calling spin_lock_init().
 
---0F1p//8PRICkK4MW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+---
+ drivers/clk/renesas/r8a77970-cpg-mssr.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/clk/renesas/r8a77970-cpg-mssr.c b/drivers/clk/renesas/r8a77970-cpg-mssr.c
+index 0f59c84229a8..7b153c6f299c 100644
+--- a/drivers/clk/renesas/r8a77970-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77970-cpg-mssr.c
+@@ -47,7 +47,7 @@ enum clk_ids {
+ 	MOD_CLK_BASE
+ };
+ 
+-static spinlock_t cpg_lock;
++static DEFINE_SPINLOCK(cpg_lock);
+ 
+ static const struct clk_div_table cpg_sd0h_div_table[] = {
+ 	{  0,  2 }, {  1,  3 }, {  2,  4 }, {  3,  6 },
+@@ -212,8 +212,6 @@ static int __init r8a77970_cpg_mssr_init(struct device *dev)
+ 	if (error)
+ 		return error;
+ 
+-	spin_lock_init(&cpg_lock);
+-
+ 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+ 
+ 	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
 
-> > +			  TMIO_MMC_HAVE_CBSY | MMC_CAP_WAIT_WHILE_BUSY,
->=20
-> We should add MMC_CAP_WAIT_WHILE_BUSY to .capabilities, not .tmio_flags.
-
-Ouch, can I have a brown paper bag, please!
-
->=20
-> >  	.tmio_ocr_mask	=3D MMC_VDD_32_33,
-> >  	.capabilities	=3D MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
-> >  			  MMC_CAP_CMD23,
-> > @@ -111,7 +111,7 @@ static const struct renesas_sdhi_of_data of_rcar_ge=
-n3_compatible =3D {
-> >  	.tmio_flags	=3D TMIO_MMC_HAS_IDLE_WAIT | TMIO_MMC_CLK_ACTUAL |
-> >  			  TMIO_MMC_HAVE_CBSY | TMIO_MMC_MIN_RCAR2,
-> >  	.capabilities	=3D MMC_CAP_SD_HIGHSPEED | MMC_CAP_SDIO_IRQ |
-> > -			  MMC_CAP_CMD23,
-> > +			  MMC_CAP_CMD23 | MMC_CAP_WAIT_WHILE_BUSY,
-
-At least for the machines I could test, I did it correctly :/
-
-
---0F1p//8PRICkK4MW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmBwIFIACgkQFA3kzBSg
-KbZECRAAhx6oFb29Lf8U2obo70DKsKAsfUHSoqzI30tCcyT06/VN+JMvGaUBG8id
-T5hOKT8GgIr4HquqOXFBXkX/iX6E0GYOYnN2FOumM6zs5AcqffDgn7fJNW5mv3rq
-OMghxEAVQC5ssFO6M7UnrhXE84yGAqdTeItlzqNcxS9W93vQXepsrU9eQ/MiXIRh
-Xt/xYs4sH3u6RFaYeDeaqnvuKk8lfAzEYrP1PoHGwHohj+pq4lAT6Yw65WWsNMqJ
-22iHknB/SLUrk7q/1h6Xr7tKpwnDe2L6ApJabFMuDSuoAUWmHcTeWjMh9OOSjQkx
-lDDM+3SPWtWSyxfTJSS6XnPYfEQ5QDb10r3zi1GC0i0dOYhzu8mGG0xHzH76IH22
-Koe0+pvvJcgJAVxP39JSsLpzcZDwblordt4mw5hi/g9rGFkcdpJzRmiI5X3ATdVC
-WzpAbMy3kyAgxJWCJ+iF2OXxe+lMVKvV7JVj+DXj8hcTfgo65wet/sBW8hlUDbxZ
-Zkro/JjQ2nBrARFqgXYzLPcJ82boN/gznwnmC2CALoeZNCrO92v0z9tyOMQwbHBE
-oWk3j3w8jdVVLnPXliHPsMugKeBF7/x/73H3RkHEGpN6Nn29ZJOvODgOkTd5N+uG
-og4hL4EVWq4qBHDtFr08WQoFWpq/QiLqAcHLnEufYWmPdgcjbxw=
-=ggzD
------END PGP SIGNATURE-----
-
---0F1p//8PRICkK4MW--
