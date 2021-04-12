@@ -7,24 +7,24 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1E8C433ED
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 12 Apr 2021 09:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3086C43462
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 12 Apr 2021 09:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A34761221
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 12 Apr 2021 09:37:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B77BC61241
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 12 Apr 2021 09:37:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240800AbhDLJhc (ORCPT
+        id S241283AbhDLJhh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 12 Apr 2021 05:37:32 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:58373 "EHLO
+        Mon, 12 Apr 2021 05:37:37 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:41995 "EHLO
         relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240692AbhDLJfA (ORCPT
+        with ESMTP id S240665AbhDLJez (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Apr 2021 05:35:00 -0400
+        Mon, 12 Apr 2021 05:34:55 -0400
 Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 20D4C20001A;
-        Mon, 12 Apr 2021 09:34:36 +0000 (UTC)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 9701B200006;
+        Mon, 12 Apr 2021 09:34:30 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     kieran.bingham+renesas@ideasonboard.com,
         laurent.pinchart+renesas@ideasonboard.com,
@@ -34,9 +34,9 @@ Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v4 09/17] media: i2c: rdacm21: Fix OV10640 powerup
-Date:   Mon, 12 Apr 2021 11:34:43 +0200
-Message-Id: <20210412093451.14198-10-jacopo+renesas@jmondi.org>
+Subject: [PATCH v4 06/17] media: i2c: max9271: Check max9271_write() return
+Date:   Mon, 12 Apr 2021 11:34:40 +0200
+Message-Id: <20210412093451.14198-7-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210412093451.14198-1-jacopo+renesas@jmondi.org>
 References: <20210412093451.14198-1-jacopo+renesas@jmondi.org>
@@ -46,60 +46,94 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The OV10640 image sensor powerdown signal is controlled by the first
-line of the OV490 GPIO pad #1, but the pad #0 identifier
-OV490_GPIO_OUTPUT_VALUE0 was erroneously used. As a result the image
-sensor powerdown signal was never asserted but was left floating and
-kept high by an internal pull-up resistor, causing sporadic failures
-during the image sensor startup phase.
+Check the return value of the max9271_write() function in the
+max9271 library driver.
 
-Fix this by using the correct GPIO pad identifier and wait the mandatory
-1.5 millisecond delay after the powerup lane is asserted. The reset
-delay is not characterized in the chip manual if not as "255 XVCLK +
-initialization". Wait for at least 3 milliseconds to guarantee the SCCB
-bus is available.
+While at it, modify an existing condition to be made identical
+to other checks.
 
-While at it also fix the reset sequence, as the reset line was released
-before the powerdown one, and the line was not cycled.
-
-This commit fixes a sporadic start-up error triggered by a failure to
-read the OV10640 chip ID:
-rdacm21 8-0054: OV10640 ID mismatch: (0x01)
-
-Fixes: a59f853b3b4b ("media: i2c: Add driver for RDACM21 camera module")
 Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- drivers/media/i2c/rdacm21.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/media/i2c/max9271.c | 30 +++++++++++++++++++++++-------
+ 1 file changed, 23 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/media/i2c/rdacm21.c b/drivers/media/i2c/rdacm21.c
-index 6be8ce130e78..7c0a4a84340a 100644
---- a/drivers/media/i2c/rdacm21.c
-+++ b/drivers/media/i2c/rdacm21.c
-@@ -333,13 +333,19 @@ static int ov10640_initialize(struct rdacm21_device *dev)
+diff --git a/drivers/media/i2c/max9271.c b/drivers/media/i2c/max9271.c
+index c495582dcff6..2c7dc7fb9846 100644
+--- a/drivers/media/i2c/max9271.c
++++ b/drivers/media/i2c/max9271.c
+@@ -106,7 +106,10 @@ int max9271_set_serial_link(struct max9271_device *dev, bool enable)
+ 	 * Short delays here appear to show bit-errors in the writes following.
+ 	 * Therefore a conservative delay seems best here.
+ 	 */
+-	max9271_write(dev, 0x04, val);
++	ret = max9271_write(dev, 0x04, val);
++	if (ret < 0)
++		return ret;
++
+ 	usleep_range(5000, 8000);
+ 
+ 	return 0;
+@@ -118,7 +121,7 @@ int max9271_configure_i2c(struct max9271_device *dev, u8 i2c_config)
+ 	int ret;
+ 
+ 	ret = max9271_write(dev, 0x0d, i2c_config);
+-	if (ret)
++	if (ret < 0)
+ 		return ret;
+ 
+ 	/* The delay required after an I2C bus configuration change is not
+@@ -143,7 +146,10 @@ int max9271_set_high_threshold(struct max9271_device *dev, bool enable)
+ 	 * Enable or disable reverse channel high threshold to increase
+ 	 * immunity to power supply noise.
+ 	 */
+-	max9271_write(dev, 0x08, enable ? ret | BIT(0) : ret & ~BIT(0));
++	ret = max9271_write(dev, 0x08, enable ? ret | BIT(0) : ret & ~BIT(0));
++	if (ret < 0)
++		return ret;
++
+ 	usleep_range(2000, 2500);
+ 
+ 	return 0;
+@@ -152,6 +158,8 @@ EXPORT_SYMBOL_GPL(max9271_set_high_threshold);
+ 
+ int max9271_configure_gmsl_link(struct max9271_device *dev)
  {
- 	u8 val;
- 
--	/* Power-up OV10640 by setting RESETB and PWDNB pins high. */
-+	/* Enable GPIO0#0 (reset) and GPIO1#0 (pwdn) as output lines. */
- 	ov490_write_reg(dev, OV490_GPIO_SEL0, OV490_GPIO0);
- 	ov490_write_reg(dev, OV490_GPIO_SEL1, OV490_SPWDN0);
- 	ov490_write_reg(dev, OV490_GPIO_DIRECTION0, OV490_GPIO0);
- 	ov490_write_reg(dev, OV490_GPIO_DIRECTION1, OV490_SPWDN0);
++	int ret;
 +
-+	/* Power up OV10640 and then reset it. */
-+	ov490_write_reg(dev, OV490_GPIO_OUTPUT_VALUE1, OV490_SPWDN0);
-+	usleep_range(1500, 3000);
+ 	/*
+ 	 * Configure the GMSL link:
+ 	 *
+@@ -162,16 +170,24 @@ int max9271_configure_gmsl_link(struct max9271_device *dev)
+ 	 *
+ 	 * TODO: Make the GMSL link configuration parametric.
+ 	 */
+-	max9271_write(dev, 0x07, MAX9271_DBL | MAX9271_HVEN |
+-		      MAX9271_EDC_1BIT_PARITY);
++	ret = max9271_write(dev, 0x07, MAX9271_DBL | MAX9271_HVEN |
++			    MAX9271_EDC_1BIT_PARITY);
++	if (ret < 0)
++		return ret;
 +
-+	ov490_write_reg(dev, OV490_GPIO_OUTPUT_VALUE0, 0x00);
-+	usleep_range(1500, 3000);
- 	ov490_write_reg(dev, OV490_GPIO_OUTPUT_VALUE0, OV490_GPIO0);
--	ov490_write_reg(dev, OV490_GPIO_OUTPUT_VALUE0, OV490_SPWDN0);
- 	usleep_range(3000, 5000);
+ 	usleep_range(5000, 8000);
  
- 	/* Read OV10640 ID to test communications. */
+ 	/*
+ 	 * Adjust spread spectrum to +4% and auto-detect pixel clock
+ 	 * and serial link rate.
+ 	 */
+-	max9271_write(dev, 0x02, MAX9271_SPREAD_SPECT_4 | MAX9271_R02_RES |
+-		      MAX9271_PCLK_AUTODETECT | MAX9271_SERIAL_AUTODETECT);
++	ret = max9271_write(dev, 0x02,
++			    MAX9271_SPREAD_SPECT_4 | MAX9271_R02_RES |
++			    MAX9271_PCLK_AUTODETECT |
++			    MAX9271_SERIAL_AUTODETECT);
++	if (ret < 0)
++		return ret;
++
+ 	usleep_range(5000, 8000);
+ 
+ 	return 0;
 -- 
 2.31.1
 
