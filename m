@@ -2,118 +2,110 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E07B7C04FE5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 12 Apr 2021 09:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D84C43460
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 12 Apr 2021 11:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACB8761248
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 12 Apr 2021 09:43:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93EEC61352
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 12 Apr 2021 11:22:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239290AbhDLJnm (ORCPT
+        id S240286AbhDLLWm convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 12 Apr 2021 05:43:42 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:41649 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239055AbhDLJgq (ORCPT
+        Mon, 12 Apr 2021 07:22:42 -0400
+Received: from mail-ua1-f51.google.com ([209.85.222.51]:46803 "EHLO
+        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238992AbhDLLWl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 12 Apr 2021 05:36:46 -0400
-Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 20BBF200018;
-        Mon, 12 Apr 2021 09:34:49 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     kieran.bingham+renesas@ideasonboard.com,
-        laurent.pinchart+renesas@ideasonboard.com,
-        niklas.soderlund+renesas@ragnatech.se, geert@linux-m68k.org
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v4 15/17] media: i2c: rdacm20: Re-work ov10635 reset
-Date:   Mon, 12 Apr 2021 11:34:49 +0200
-Message-Id: <20210412093451.14198-16-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210412093451.14198-1-jacopo+renesas@jmondi.org>
-References: <20210412093451.14198-1-jacopo+renesas@jmondi.org>
+        Mon, 12 Apr 2021 07:22:41 -0400
+Received: by mail-ua1-f51.google.com with SMTP id v23so4078584uaq.13
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 12 Apr 2021 04:22:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=BOw8Zb9w4xHJ1taZse28RR3kjNLN3a7583crYWk8gl8=;
+        b=M/HuT5KkNIV3EcfxLiSbciOqLE4HKHk0lqc7/qg9ceWceaqDp5+1375Kx/fngcjts/
+         VyGRcIKwqLOPiF964n/b/YUa2r5+4XjHw4LuDlX+dEsm/QwdSKrwhnV2+qh+6euW2mvh
+         MdCadIKbC742xtW2oPR0E6nNwtoXy6VooSaHzUL/BsfvpaNU6PDBQkhy6HHV2XUIC6B0
+         QsUFbMAe3tufdNYFJap17vL6zTpWe4HqAHVPifFcOrWHwfxQ8RQSXPmaRGUaw0jmMeT4
+         w+ldDe5MtOGT62r70N1H3YH9wj+VSJeWXE1taP0Q6Inw3JIcdSvuAjEFNoMyH0lnM/XZ
+         Hjvw==
+X-Gm-Message-State: AOAM530bGhIsbNHdoe6MynNQHTJDkm34n8xPSI1diPfMGZ+f1ZpWJ0bh
+        VRTsDZ2zJObvfTmh17lTaWT9rgRcl4WQcQ6Z/i8=
+X-Google-Smtp-Source: ABdhPJzwN/8I7ekYFgRmXOMQCCikWGGErXYZWEqFSkw6dmIHbUWE7b+UrKtmzgjr8PMBQmvA10PER2FVIpwY9UFT5+E=
+X-Received: by 2002:a9f:3852:: with SMTP id q18mr9655708uad.58.1618226543535;
+ Mon, 12 Apr 2021 04:22:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1617359678.git.geert+renesas@glider.be> <161789462010.1629934.8245364544434971043.b4-ty@arndb.de>
+In-Reply-To: <161789462010.1629934.8245364544434971043.b4-ty@arndb.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 12 Apr 2021 13:22:12 +0200
+Message-ID: <CAMuHMdWHLnXgBSjP7VKUdx-YNr9rSKFkE5Ge5q_tarU6HP9Lhw@mail.gmail.com>
+Subject: Re: [GIT PULL] Renesas ARM DT updates for v5.13 (take two)
+To:     Arnd Bergmann <arnd@kernel.org>
+List-Id: <soc.lore.kernel.org>
+Cc:     arm-soc <arm@kernel.org>, arm-soc <soc@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The OV10635 image sensor embedded in the camera module is currently
-reset after the MAX9271 initialization with two long delays that were
-most probably not correctly characterized.
+Hi Arnd,
 
-Re-work the image sensor reset procedure by holding the chip in reset
-during the MAX9271 configuration, removing the long sleep delays and
-only wait after the chip exits from reset for 350-500 microseconds
-interval, which is larger than the minimum (2048 * (1 / XVCLK)) timeout
-characterized in the chip manual.
+On Thu, Apr 8, 2021 at 5:24 PM Arnd Bergmann <arnd@kernel.org> wrote:
+> On Fri, 2 Apr 2021 12:37:15 +0200, Geert Uytterhoeven wrote:
+> > The following changes since commit c8aebc1346522d3569690867ce3996642ad52e01:
+> >
+> >   arm64: dts: renesas: r8a77980: Fix vin4-7 endpoint binding (2021-03-16 09:58:00 +0100)
+> >
+> > are available in the Git repository at:
+> >
+> > [...]
+>
+> Merged into arm/dt, thanks!
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/i2c/rdacm20.c | 29 +++++++++++++++++------------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+Thank you!
 
-diff --git a/drivers/media/i2c/rdacm20.c b/drivers/media/i2c/rdacm20.c
-index e6fed86a3281..cb725c2778c0 100644
---- a/drivers/media/i2c/rdacm20.c
-+++ b/drivers/media/i2c/rdacm20.c
-@@ -473,6 +473,19 @@ static int rdacm20_initialize(struct rdacm20_device *dev)
- 	if (ret)
- 		return ret;
- 
-+	/*
-+	 * Hold OV10635 in reset during max9271 configuration. The reset signal
-+	 * has to be asserted for at least 200 microseconds.
-+	 */
-+	ret = max9271_enable_gpios(&dev->serializer, MAX9271_GPIO1OUT);
-+	if (ret)
-+		return ret;
-+
-+	ret = max9271_clear_gpios(&dev->serializer, MAX9271_GPIO1OUT);
-+	if (ret)
-+		return ret;
-+	usleep_range(200, 500);
-+
- 	ret = max9271_configure_gmsl_link(&dev->serializer);
- 	if (ret)
- 		return ret;
-@@ -487,22 +500,14 @@ static int rdacm20_initialize(struct rdacm20_device *dev)
- 	dev->serializer.client->addr = dev->addrs[0];
- 
- 	/*
--	 * Reset the sensor by cycling the OV10635 reset signal connected to the
--	 * MAX9271 GPIO1 and verify communication with the OV10635.
-+	 * Release ov10635 from reset and initialize it. The image sensor
-+	 * requires at least 2048 XVCLK cycles (85 micro-seconds at 24MHz)
-+	 * before being available. Stay safe and wait up to 500 micro-seconds.
- 	 */
--	ret = max9271_enable_gpios(&dev->serializer, MAX9271_GPIO1OUT);
--	if (ret)
--		return ret;
--
--	ret = max9271_clear_gpios(&dev->serializer, MAX9271_GPIO1OUT);
--	if (ret)
--		return ret;
--	usleep_range(10000, 15000);
--
- 	ret = max9271_set_gpios(&dev->serializer, MAX9271_GPIO1OUT);
- 	if (ret)
- 		return ret;
--	usleep_range(10000, 15000);
-+	usleep_range(100, 500);
- 
- again:
- 	ret = ov10635_read16(dev, OV10635_PID);
+> There were a couple of added warnings from 'make dtbs_check W=1':
+>
+> renesas/r8a774a1-beacon-rzg2m-kit.dt.yaml: csi2@feaa0000: ports: 'port@0' is a required property
+
+The same issue is present in several other pre-existing DTS files, too.
+Commit 066a94e28a23e04c ("media: dt-bindings: media: Use graph and
+video-interfaces schemas") in v5.12-rc1 made port@0 mandatory, but that
+port is not present on boards were the interface isn't used (yet).
+Probably we should add placeholder port@0 nodes to all SoC .dtsi files,
+like we already have in display, audio, hdmi, and lvds nodes.
+
+> renesas/r8a779a0-falcon.dt.yaml: thermal-zones: 'sensor-thermal1', 'sensor-thermal2', 'sensor-thermal3', 'sensor-thermal4', 'sensor-thermal5' do not match any of the regexes: '^[a-zA-Z][a-zA-Z0-9\\-]{1,12}-thermal$', 'pinctrl-[0-9]+'
+
+I don't see that one with the latest bindings in linux-next (i.e. commit
+9468e7b031876935 ("dt-bindings: thermal: rcar-gen3-thermal: Support five
+TSC nodes on r8a779a0")).
+
+> renesas/r8a779a0-falcon.dt.yaml: timer@e61e0000: compatible:0: 'renesas,tmu-r8a779a0' is not one of ['renesas,tmu-r8a7740', 'renesas,tmu-r8a774a1', 'renesas,tmu-r8a774b1', 'renesas,tmu-r8a774c0', 'renesas,tmu-r8a774e1', 'renesas,tmu-r8a7778', 'renesas,tmu-r8a7779', 'renesas,tmu-r8a7795', 'renesas,tmu-r8a7796', 'renesas,tmu-r8a77961', 'renesas,tmu-r8a77965', 'renesas,tmu-r8a77970', 'renesas,tmu-r8a77980', 'renesas,tmu-r8a77990', 'renesas,tmu-r8a77995']
+
+Trivial DT binding update posted (but not CCed to devicetree) in
+https://lore.kernel.org/r/20210331124555.2150-1-wsa@kernel.org/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.31.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
