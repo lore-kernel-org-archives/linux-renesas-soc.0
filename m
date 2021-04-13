@@ -5,28 +5,28 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E6FC433B4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Apr 2021 18:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A12C433B4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Apr 2021 18:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 514DA613B6
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Apr 2021 18:04:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36808613B6
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Apr 2021 18:04:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S245471AbhDMSEZ (ORCPT
+        id S1344328AbhDMSE2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 13 Apr 2021 14:04:25 -0400
-Received: from bin-mail-out-06.binero.net ([195.74.38.229]:27646 "EHLO
+        Tue, 13 Apr 2021 14:04:28 -0400
+Received: from bin-mail-out-06.binero.net ([195.74.38.229]:27675 "EHLO
         bin-mail-out-06.binero.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S244803AbhDMSEX (ORCPT
+        by vger.kernel.org with ESMTP id S1343977AbhDMSEZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Apr 2021 14:04:23 -0400
-X-Halon-ID: 9f9d3d8d-9c82-11eb-aed0-005056917f90
+        Tue, 13 Apr 2021 14:04:25 -0400
+X-Halon-ID: a132f1c5-9c82-11eb-aed0-005056917f90
 Authorized-sender: niklas.soderlund@fsdn.se
 Received: from bismarck.berto.se (p54ac5521.dip0.t-ipconnect.de [84.172.85.33])
         by bin-vsp-out-02.atm.binero.net (Halon) with ESMTPA
-        id 9f9d3d8d-9c82-11eb-aed0-005056917f90;
-        Tue, 13 Apr 2021 20:04:00 +0200 (CEST)
+        id a132f1c5-9c82-11eb-aed0-005056917f90;
+        Tue, 13 Apr 2021 20:04:03 +0200 (CEST)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
@@ -34,9 +34,9 @@ To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 01/11] rcar-vin: Refactor controls creation for video device
-Date:   Tue, 13 Apr 2021 20:02:43 +0200
-Message-Id: <20210413180253.2575451-2-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 04/11] rcar-vin: Improve reuse of parallel notifier
+Date:   Tue, 13 Apr 2021 20:02:46 +0200
+Message-Id: <20210413180253.2575451-5-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210413180253.2575451-1-niklas.soderlund+renesas@ragnatech.se>
 References: <20210413180253.2575451-1-niklas.soderlund+renesas@ragnatech.se>
@@ -47,147 +47,113 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The controls for the video device are created in different code paths
-depending on if the driver is using the media graph centric model (Gen3)
-or the device centric model (Gen2 and earlier). This have lead to code
-duplication that can be consolidated.
+In preparation for adding a new media graph layout move the code reuse
+of the parallel notifier setup from probe directly to the current media
+graph initialization function. This is needed as there will be no
+parallel interface in the new graph layout.
 
 Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- drivers/media/platform/rcar-vin/rcar-core.c | 82 +++++++++++----------
- 1 file changed, 45 insertions(+), 37 deletions(-)
+ drivers/media/platform/rcar-vin/rcar-core.c | 48 ++++++++++-----------
+ 1 file changed, 22 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index cb3025992817d625..c798dc9409e4cdcd 100644
+index da23d55aa72b7f0d..81574bf33116ad59 100644
 --- a/drivers/media/platform/rcar-vin/rcar-core.c
 +++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -405,6 +405,45 @@ static const struct v4l2_ctrl_ops rvin_ctrl_ops = {
- 	.s_ctrl = rvin_s_ctrl,
- };
- 
-+static void rvin_free_controls(struct rvin_dev *vin)
-+{
-+	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+	vin->vdev.ctrl_handler = NULL;
-+}
-+
-+static int rvin_create_controls(struct rvin_dev *vin, struct v4l2_subdev *subdev)
-+{
-+	int ret;
-+
-+	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* The VIN directly deals with alpha component. */
-+	v4l2_ctrl_new_std(&vin->ctrl_handler, &rvin_ctrl_ops,
-+			  V4L2_CID_ALPHA_COMPONENT, 0, 255, 1, 255);
-+
-+	if (vin->ctrl_handler.error) {
-+		ret = vin->ctrl_handler.error;
-+		rvin_free_controls(vin);
-+		return ret;
-+	}
-+
-+	/* For the non-MC mode add controls from the subdevice. */
-+	if (subdev) {
-+		ret = v4l2_ctrl_add_handler(&vin->ctrl_handler,
-+					    subdev->ctrl_handler, NULL, true);
-+		if (ret < 0) {
-+			rvin_free_controls(vin);
-+			return ret;
-+		}
-+	}
-+
-+	vin->vdev.ctrl_handler = &vin->ctrl_handler;
-+
-+	return 0;
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Async notifier
-  */
-@@ -490,28 +529,10 @@ static int rvin_parallel_subdevice_attach(struct rvin_dev *vin,
- 		return ret;
- 
- 	/* Add the controls */
--	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 16);
-+	ret = rvin_create_controls(vin, subdev);
- 	if (ret < 0)
- 		return ret;
- 
--	v4l2_ctrl_new_std(&vin->ctrl_handler, &rvin_ctrl_ops,
--			  V4L2_CID_ALPHA_COMPONENT, 0, 255, 1, 255);
--
--	if (vin->ctrl_handler.error) {
--		ret = vin->ctrl_handler.error;
--		v4l2_ctrl_handler_free(&vin->ctrl_handler);
--		return ret;
--	}
--
--	ret = v4l2_ctrl_add_handler(&vin->ctrl_handler, subdev->ctrl_handler,
--				    NULL, true);
--	if (ret < 0) {
--		v4l2_ctrl_handler_free(&vin->ctrl_handler);
--		return ret;
--	}
--
--	vin->vdev.ctrl_handler = &vin->ctrl_handler;
--
- 	vin->parallel.subdev = subdev;
- 
- 	return 0;
-@@ -522,10 +543,8 @@ static void rvin_parallel_subdevice_detach(struct rvin_dev *vin)
- 	rvin_v4l2_unregister(vin);
- 	vin->parallel.subdev = NULL;
- 
--	if (!vin->info->use_mc) {
--		v4l2_ctrl_handler_free(&vin->ctrl_handler);
--		vin->vdev.ctrl_handler = NULL;
--	}
-+	if (!vin->info->use_mc)
-+		rvin_free_controls(vin);
- }
- 
- static int rvin_parallel_notify_complete(struct v4l2_async_notifier *notifier)
-@@ -935,21 +954,10 @@ static int rvin_mc_init(struct rvin_dev *vin)
+@@ -702,9 +702,8 @@ static int rvin_parallel_init(struct rvin_dev *vin)
  	if (ret)
- 		rvin_group_put(vin);
- 
--	ret = v4l2_ctrl_handler_init(&vin->ctrl_handler, 1);
-+	ret = rvin_create_controls(vin, NULL);
- 	if (ret < 0)
  		return ret;
  
--	v4l2_ctrl_new_std(&vin->ctrl_handler, &rvin_ctrl_ops,
--			  V4L2_CID_ALPHA_COMPONENT, 0, 255, 1, 255);
+-	/* If using mc, it's fine not to have any input registered. */
+ 	if (!vin->parallel.asd)
+-		return vin->info->use_mc ? 0 : -ENODEV;
++		return -ENODEV;
+ 
+ 	vin_dbg(vin, "Found parallel subdevice %pOF\n",
+ 		to_of_node(vin->parallel.asd->match.fwnode));
+@@ -955,11 +954,9 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
+ 
+ static void rvin_csi2_cleanup(struct rvin_dev *vin)
+ {
+-	if (!vin->info->use_mc)
+-		return;
 -
--	if (vin->ctrl_handler.error) {
--		ret = vin->ctrl_handler.error;
--		v4l2_ctrl_handler_free(&vin->ctrl_handler);
--		return ret;
--	}
--
--	vin->vdev.ctrl_handler = &vin->ctrl_handler;
--
- 	return ret;
+ 	rvin_group_notifier_cleanup(vin);
+ 	rvin_group_put(vin);
++	rvin_free_controls(vin);
  }
  
-@@ -1446,7 +1454,7 @@ static int rcar_vin_probe(struct platform_device *pdev)
+ static int rvin_csi2_init(struct rvin_dev *vin)
+@@ -979,11 +976,18 @@ static int rvin_csi2_init(struct rvin_dev *vin)
+ 	if (ret)
+ 		goto err_controls;
+ 
+-	ret = rvin_mc_parse_of_graph(vin);
+-	if (ret)
++	/* It's OK to not have a parallel subdevice. */
++	ret = rvin_parallel_init(vin);
++	if (ret && ret != -ENODEV)
+ 		goto err_group;
+ 
++	ret = rvin_mc_parse_of_graph(vin);
++	if (ret)
++		goto err_parallel;
++
  	return 0;
++err_parallel:
++	rvin_parallel_cleanup(vin);
+ err_group:
+ 	rvin_group_put(vin);
+ err_controls:
+@@ -1469,27 +1473,20 @@ static int rcar_vin_probe(struct platform_device *pdev)
  
- error_group_unregister:
--	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+	rvin_free_controls(vin);
+ 	platform_set_drvdata(pdev, vin);
  
- 	if (vin->info->use_mc) {
- 		mutex_lock(&vin->group->lock);
-@@ -1481,7 +1489,7 @@ static int rcar_vin_remove(struct platform_device *pdev)
- 		rvin_group_put(vin);
- 	}
+-	if (vin->info->use_mc) {
++	if (vin->info->use_mc)
+ 		ret = rvin_csi2_init(vin);
+-		if (ret)
+-			goto error_dma_unregister;
+-	}
++	else
++		ret = rvin_parallel_init(vin);
  
--	v4l2_ctrl_handler_free(&vin->ctrl_handler);
-+	rvin_free_controls(vin);
+-	ret = rvin_parallel_init(vin);
+-	if (ret)
+-		goto error_group_unregister;
++	if (ret) {
++		rvin_dma_unregister(vin);
++		return ret;
++	}
+ 
+ 	pm_suspend_ignore_children(&pdev->dev, true);
+ 	pm_runtime_enable(&pdev->dev);
+ 
+ 	return 0;
+-error_group_unregister:
+-	rvin_free_controls(vin);
+-	rvin_csi2_cleanup(vin);
+-error_dma_unregister:
+-	rvin_dma_unregister(vin);
+-
+-	return ret;
+ }
+ 
+ static int rcar_vin_remove(struct platform_device *pdev)
+@@ -1500,11 +1497,10 @@ static int rcar_vin_remove(struct platform_device *pdev)
+ 
+ 	rvin_v4l2_unregister(vin);
+ 
+-	rvin_parallel_cleanup(vin);
+-
+-	rvin_csi2_cleanup(vin);
+-
+-	rvin_free_controls(vin);
++	if (vin->info->use_mc)
++		rvin_csi2_cleanup(vin);
++	else
++		rvin_parallel_cleanup(vin);
  
  	rvin_dma_unregister(vin);
  
