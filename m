@@ -2,73 +2,114 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C7DC433B4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Apr 2021 13:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91933C433B4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Apr 2021 16:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E876C61164
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Apr 2021 13:51:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6336161154
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Apr 2021 16:49:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349210AbhDNNvg (ORCPT
+        id S232246AbhDNQuE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Apr 2021 09:51:36 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:55893 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349187AbhDNNvb (ORCPT
+        Wed, 14 Apr 2021 12:50:04 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:35408 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232143AbhDNQuD (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Apr 2021 09:51:31 -0400
-X-Originating-IP: 93.61.96.190
-Received: from uno.LocalDomain (93-61-96-190.ip145.fastwebnet.it [93.61.96.190])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 4966B60006;
-        Wed, 14 Apr 2021 13:51:07 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        Wed, 14 Apr 2021 12:50:03 -0400
+Received: from [192.168.0.20] (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0934F88C;
+        Wed, 14 Apr 2021 18:49:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1618418980;
+        bh=dmJqvtAu20k6uHA9vLOp5QC4mYsESyJYOScJUJjXNZs=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=B3ccg4yVp40KQopQ1JJo6fScBbqzdrk9REOT6GcwouBqZEK9BVxcW2WdAVXux/X1Q
+         vEqLxQzSiK+qhnnXOTaL5lyme080z2uzXihfTo4ebGO/OpM7FaBxItVJQr4NfT/iwM
+         L2TAd4EFx65K+U65JF19rOTOtZIjhybqPLH5h1e0=
+Reply-To: kieran.bingham+renesas@ideasonboard.com
+Subject: Re: [PATCH v4 08/17] media: i2c: rdacm21: Add dealy after OV490 reset
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        laurent.pinchart+renesas@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, geert@linux-m68k.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v3 5/5] arm64: dts: renesas: eagle: Include eagle-gmsl
-Date:   Wed, 14 Apr 2021 15:51:28 +0200
-Message-Id: <20210414135128.180980-6-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20210414135128.180980-1-jacopo+renesas@jmondi.org>
-References: <20210414135128.180980-1-jacopo+renesas@jmondi.org>
+References: <20210412093451.14198-1-jacopo+renesas@jmondi.org>
+ <20210412093451.14198-9-jacopo+renesas@jmondi.org>
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Organization: Ideas on Board
+Message-ID: <e47bbf9b-5ba0-d4a4-ee64-0724d6d55957@ideasonboard.com>
+Date:   Wed, 14 Apr 2021 17:49:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210412093451.14198-9-jacopo+renesas@jmondi.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Hi Jacopo,
 
-Include the eagle-gmsl.dtsi to enable GMSL camera support on the
-Eagle-V3M platform.
+There's still a s/dealy/delay/ in $SUBJECT
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts | 3 +++
- 1 file changed, 3 insertions(+)
+On 12/04/2021 10:34, Jacopo Mondi wrote:
+> Add a delay after the OV490 chip is put in reset state. The reset
+> signal shall be held for at least 250 useconds.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-index d2b6368d1e72..9b8dfb5132fb 100644
---- a/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-@@ -391,3 +391,6 @@ &scif0 {
- 
- 	status = "okay";
- };
-+
-+/* FAKRA Overlay */
-+#include "eagle-gmsl.dtsi"
--- 
-2.31.1
+I added this on v3...
+
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+> ---
+>  drivers/media/i2c/rdacm21.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/i2c/rdacm21.c b/drivers/media/i2c/rdacm21.c
+> index 553e3f03752b..6be8ce130e78 100644
+> --- a/drivers/media/i2c/rdacm21.c
+> +++ b/drivers/media/i2c/rdacm21.c
+> @@ -469,7 +469,10 @@ static int rdacm21_initialize(struct rdacm21_device *dev)
+>  	if (ret)
+>  		return ret;
+>  
+> -	/* Enable GPIO1 and hold OV490 in reset during max9271 configuration. */
+> +	/*
+> +	 * Enable GPIO1 and hold OV490 in reset during max9271 configuration.
+> +	 * The reset signal has to be asserted for at least 250 useconds.
+
+
+Is it worth mentioning here that it is asserted to active low? Just to
+make it clear that holding it low for 250 uS is the desired effect?
+
+It might not be worth it - but perhaps that was the reason for some
+confusion here.
+
+Eitherway RB tag still stands I think.
+
+--
+Kieran
+
+> +	 */
+>  	ret = max9271_enable_gpios(&dev->serializer, MAX9271_GPIO1OUT);
+>  	if (ret)
+>  		return ret;
+> @@ -477,6 +480,7 @@ static int rdacm21_initialize(struct rdacm21_device *dev)
+>  	ret = max9271_clear_gpios(&dev->serializer, MAX9271_GPIO1OUT);
+>  	if (ret)
+>  		return ret;
+> +	usleep_range(250, 500);
+>  
+>  	ret = max9271_configure_gmsl_link(&dev->serializer);
+>  	if (ret)
+> 
 
