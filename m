@@ -2,119 +2,132 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A249FC433B4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Apr 2021 07:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97325C43460
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Apr 2021 07:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7944961222
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Apr 2021 07:00:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65011610C8
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Apr 2021 07:33:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231196AbhDOHAZ (ORCPT
+        id S231388AbhDOHeR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 15 Apr 2021 03:00:25 -0400
-Received: from mail-vs1-f48.google.com ([209.85.217.48]:41491 "EHLO
-        mail-vs1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230090AbhDOHAZ (ORCPT
+        Thu, 15 Apr 2021 03:34:17 -0400
+Received: from spam.zju.edu.cn ([61.164.42.155]:20708 "EHLO zju.edu.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S230090AbhDOHeR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Apr 2021 03:00:25 -0400
-Received: by mail-vs1-f48.google.com with SMTP id d6so5419075vsm.8;
-        Thu, 15 Apr 2021 00:00:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vbzgJOlVxu5yO76Hjt4YIfAWsnQVrr2IcvyeAahZ2KQ=;
-        b=kC4/O6cX7Q75dObTn03vhx/q79eBlVAvfSVEk/WKBVVPHLDWsje8Q9DJVajzn0cl33
-         jKfZwaPN/qyq77JTsJJ7U/K1OVJjqE7VwdpxFOw78kRLNoV/JQesac6RIJCRtqVdbN6z
-         Zarw/vW9ROdP7Um3E+pNQHiF/4Jp1CH7fuB8dytlRr+XS/doH5oFiTalD8CBIm5IjUuw
-         LT29U7Ev6kBjY6w9RSdgIg1B+51+hpVbNwaBZQqjkupfSgQb1+mRE7Pbof+7vImUAWOZ
-         SYN4FE3wyQbvEeHciWn860TALqz8GoFRYlx4WkM8CcYsFOIzz6X8mOqPd+A3Ogfq3/Cb
-         +BCQ==
-X-Gm-Message-State: AOAM530BRqzec/M2iIf0xRZPB/4Ss4AZYSb4jXjRxirEBYX8Y3XTbq8r
-        kseMjpqS9oWPFJ2/702FKkUSa3D5xIa4J591hN6KOY2u
-X-Google-Smtp-Source: ABdhPJzLqx3+sTnBI59ImPcvOZLWyigNGqnXndOIssdcnUZiTr0YKH3CjOyOvll5xVJ+/Q7K4238d/3Jagum/tX5tTs=
-X-Received: by 2002:a67:7c8c:: with SMTP id x134mr1090046vsc.40.1618470001382;
- Thu, 15 Apr 2021 00:00:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210414135128.180980-1-jacopo+renesas@jmondi.org>
- <20210414135128.180980-2-jacopo+renesas@jmondi.org> <YHd/AKIfxIHhTjWO@pendragon.ideasonboard.com>
- <20210415065420.lbba2hig4p2ynx6c@uno.localdomain>
-In-Reply-To: <20210415065420.lbba2hig4p2ynx6c@uno.localdomain>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 15 Apr 2021 08:59:50 +0200
-Message-ID: <CAMuHMdV6=DXO4AzrhgcDzdCNB4qYua2jkGsEcZyi5FwnbF70tQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] dt-bindings: media: max9286: Define 'maxim,gpio-poc'
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 15 Apr 2021 03:34:17 -0400
+Received: from localhost.localdomain (unknown [10.192.139.175])
+        by mail-app3 (Coremail) with SMTP id cC_KCgD3LtRT7Hdgs8YnAQ--.20029S4;
+        Thu, 15 Apr 2021 15:33:44 +0800 (CST)
+From:   Dinghao Liu <dinghao.liu@zju.edu.cn>
+To:     dinghao.liu@zju.edu.cn, kjlu@umn.edu
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] [v3] clk: renesas: rcar-usb2-clock-sel: Fix error handling in rcar_usb2_clock_sel_probe
+Date:   Thu, 15 Apr 2021 15:33:38 +0800
+Message-Id: <20210415073338.22287-1-dinghao.liu@zju.edu.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: cC_KCgD3LtRT7Hdgs8YnAQ--.20029S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF4fJr17KFykCFyDKry7GFg_yoW8Kr4Dpw
+        18Xa4ftF4jgrZ2ganxtFsrZFyYka43tayjqFZ2gw18u3ZxC3W8Xr1rJFySgasYqrWkA3W3
+        X3y2gr4xCFs0vFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkq1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AE
+        w4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2
+        IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWl84ACjcxK6I8E
+        87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c
+        8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_
+        Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwI
+        xGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij64vIr41l42xK82IY6x8ErcxF
+        aVAv8VW8uw4UJr1UMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr
+        4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxG
+        rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
+        CI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAI
+        cVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbXdbUUUUUU==
+X-CM-SenderInfo: qrrzjiaqtzq6lmxovvfxof0/1tbiAgwNBlZdtTXCvwAMs-
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jacopo,
+The error handling paths after pm_runtime_get_sync() has no
+refcount decrement, which leads to refcount leak.
 
-On Thu, Apr 15, 2021 at 8:53 AM Jacopo Mondi <jacopo@jmondi.org> wrote:
-> On Thu, Apr 15, 2021 at 02:47:12AM +0300, Laurent Pinchart wrote:
-> > On Wed, Apr 14, 2021 at 03:51:24PM +0200, Jacopo Mondi wrote:
-> > > Define a new vendor property in the maxim,max9286 binding schema.
-> > >
-> > > The new property allows to declare that the remote camera
-> > > power-over-coax is controlled by one of the MAX9286 gpio lines.
-> > >
-> > > As it is currently not possible to establish a regulator as consumer
-> > > of the MAX9286 gpio controller for this purpose, the property allows to
-> > > declare that the camera power is controlled by the MAX9286 directly.
-> > >
-> > > The property accepts a gpio-index (0 or 1) and one line polarity
-> > > flag as defined by dt-bindings/gpio/gpio.h.
-> > >
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > ---
-> > >  .../bindings/media/i2c/maxim,max9286.yaml     | 53 ++++++++++++++++++-
-> > >  1 file changed, 52 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-> > > index ee16102fdfe7..480a491f3744 100644
-> > > --- a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-> > > +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
-> > > @@ -70,6 +70,24 @@ properties:
-> > >        a remote serializer whose high-threshold noise immunity is not enabled
-> > >        is 100000 micro volts
-> > >
-> > > +  maxim,gpio-poc:
-> >
-> > I would have written poc-gpio to match the order of the GPIO bindings
-> > syntax.
-> >
->
-> That's what I had :) but then the property gets matched against the
-> gpio schema and I get complains because it expects a phandle as first
-> argument... Maybe there's a way I've missed to prevent the property to
-> be matched with *-gpio ?
+Signed-off-by: Dinghao Liu <dinghao.liu@zju.edu.cn>
+---
 
-GPIO hogs also use gpio properties lacking the phandle.
-Hence the way this is handled for hogs may (or may not, it's yaml after all ;-)
-inspire you how to handle this here.
+Changelog:
 
-Gr{oetje,eeting}s,
+v2: - Move the position of pm_runtime_enable,_get_sync().
+      Use devm_clk_register() to simplify error handling.
 
-                        Geert
+v2: - Use devm_clk_hw_register() instead of devm_clk_register().
+---
+ drivers/clk/renesas/rcar-usb2-clock-sel.c | 23 +++++++++++++++--------
+ 1 file changed, 15 insertions(+), 8 deletions(-)
 
+diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+index 3abafd78f7c8..a6f82a5a6335 100644
+--- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
++++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
+@@ -131,7 +131,6 @@ static int rcar_usb2_clock_sel_remove(struct platform_device *pdev)
+ 	struct usb2_clock_sel_priv *priv = platform_get_drvdata(pdev);
+ 
+ 	of_clk_del_provider(dev->of_node);
+-	clk_hw_unregister(&priv->hw);
+ 	pm_runtime_put(dev);
+ 	pm_runtime_disable(dev);
+ 
+@@ -164,9 +163,6 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
+ 	if (IS_ERR(priv->rsts))
+ 		return PTR_ERR(priv->rsts);
+ 
+-	pm_runtime_enable(dev);
+-	pm_runtime_get_sync(dev);
+-
+ 	clk = devm_clk_get(dev, "usb_extal");
+ 	if (!IS_ERR(clk) && !clk_prepare_enable(clk)) {
+ 		priv->extal = !!clk_get_rate(clk);
+@@ -183,6 +179,8 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
+ 
++	pm_runtime_enable(dev);
++	pm_runtime_get_sync(dev);
+ 	platform_set_drvdata(pdev, priv);
+ 	dev_set_drvdata(dev, priv);
+ 
+@@ -193,11 +191,20 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
+ 	init.num_parents = 0;
+ 	priv->hw.init = &init;
+ 
+-	clk = clk_register(NULL, &priv->hw);
+-	if (IS_ERR(clk))
+-		return PTR_ERR(clk);
++	ret = devm_clk_hw_register(NULL, &priv->hw);
++	if (ret)
++		goto pm_put;
++
++	ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, &priv->hw);
++	if (ret)
++		goto pm_put;
++
++	return 0;
+ 
+-	return of_clk_add_hw_provider(np, of_clk_hw_simple_get, &priv->hw);
++pm_put:
++	pm_runtime_put(dev);
++	pm_runtime_disable(dev);
++	return ret;
+ }
+ 
+ static const struct dev_pm_ops rcar_usb2_clock_sel_pm_ops = {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
