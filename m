@@ -5,27 +5,27 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4068CC43460
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Apr 2021 14:23:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84191C43461
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Apr 2021 14:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0225761246
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Apr 2021 14:23:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E48561246
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Apr 2021 14:24:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239543AbhDSOYT (ORCPT
+        id S239378AbhDSOYt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Apr 2021 10:24:19 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:42791 "EHLO
+        Mon, 19 Apr 2021 10:24:49 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:41773 "EHLO
         relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239579AbhDSOXz (ORCPT
+        with ESMTP id S233823AbhDSOXr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Apr 2021 10:23:55 -0400
+        Mon, 19 Apr 2021 10:23:47 -0400
 X-Originating-IP: 93.34.118.233
 Received: from uno.lan (93-34-118-233.ip49.fastwebnet.it [93.34.118.233])
         (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 1B9D44000E;
-        Mon, 19 Apr 2021 14:23:22 +0000 (UTC)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id B572E4000C;
+        Mon, 19 Apr 2021 14:23:14 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -34,10 +34,10 @@ To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 6/7] arm64: dts: renesas: eagle: Add GMSL .dtsi
-Date:   Mon, 19 Apr 2021 16:23:44 +0200
-Message-Id: <20210419142345.53152-7-jacopo+renesas@jmondi.org>
+        linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: [PATCH v5 2/7] dt-bindings: media: max9286: Define 'maxim,gpio-poc'
+Date:   Mon, 19 Apr 2021 16:23:40 +0200
+Message-Id: <20210419142345.53152-3-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210419142345.53152-1-jacopo+renesas@jmondi.org>
 References: <20210419142345.53152-1-jacopo+renesas@jmondi.org>
@@ -47,202 +47,115 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Define a new vendor property in the maxim,max9286 binding schema.
 
-Describe the FAKRA connector available on Eagle board that allows
-connecting GMSL camera modules such as IMI RDACM20 and RDACM21.
+The new property allows to declare that the remote camera
+power-over-coax is controlled by one of the MAX9286 gpio lines.
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+As it is currently not possible to establish a regulator as consumer
+of the MAX9286 gpio controller for this purpose, the property allows to
+declare that the camera power is controlled by the MAX9286 directly.
+
+The property accepts a gpio-index (0 or 1) and one line polarity
+flag as defined by dt-bindings/gpio/gpio.h.
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi | 178 ++++++++++++++++++++
- 1 file changed, 178 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi
+ .../bindings/media/i2c/maxim,max9286.yaml     | 67 ++++++++++++++++++-
+ 1 file changed, 66 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi b/arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi
-new file mode 100644
-index 000000000000..d2e48dc3e820
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/eagle-gmsl.dtsi
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Device Tree Source (overlay) for the Eagle V3M GMSL connectors
-+ *
-+ * Copyright (C) 2017 Ideas on Board <kieran.bingham@ideasonboard.com>
-+ * Copyright (C) 2021 Jacopo Mondi <jacopo+renesas@jmondi.org>
-+ *
-+ * This overlay allows you to define GMSL cameras connected to the FAKRA
-+ * connectors on the Eagle-V3M (or compatible) board.
-+ *
-+ * The following cameras are currently supported: RDACM20 and RDACM21.
-+ *
-+ * The board .dts files that include this select which cameras are in use
-+ * by specifying the camera model with:
-+ *
-+ * #define GMSL_CAMERA_RDACM20
-+ * or
-+ * #define GMSL_CAMERA_RDACM21
-+ *
-+ * And which cameras are connected to the board by defining:
-+ * #define GMSL_CAMERA_0
-+ * #define GMSL_CAMERA_1
-+ * #define GMSL_CAMERA_2
-+ * #define GMSL_CAMERA_3
-+ */
+diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
+index 0e7162998b77..bf93fa73ce41 100644
+--- a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
++++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.yaml
+@@ -70,6 +70,28 @@ properties:
+       a remote serializer whose high-threshold noise immunity is not enabled
+       is 100000 micro volts
+ 
++  maxim,gpio-poc:
++    $ref: '/schemas/types.yaml#/definitions/uint32-array'
++    minItems: 2
++    maxItems: 2
++    description: |
++      Index of the MAX9286 gpio output line (0 or 1) that controls Power over
++      Coax to the cameras and its associated polarity flag.
 +
-+#include <dt-bindings/gpio/gpio.h>
++      The property accepts an array of two unsigned integers, the first being
++      the gpio line index (0 or 1) and the second being the gpio line polarity
++      flag (GPIO_ACTIVE_HIGH or GPIO_ACTIVE_LOW) as defined in
++      <include/dt-bindings/gpio/gpio.h>.
 +
-+/* Validate the board file settings. */
-+#if !defined(GMSL_CAMERA_RDACM20) && !defined(GMSL_CAMERA_RDACM21)
-+#error "Camera model should be defined by the board file"
-+#endif
++      When the remote cameras power is controlled by one of the MAX9286 gpio
++      lines, this property has to be used to specify which line among the two
++      available ones controls the remote camera power enablement.
 +
-+#if defined(GMSL_CAMERA_RDACM20) && defined(GMSL_CAMERA_RDACM21)
-+#error "A single camera model should be selected"
-+#endif
++      When this property is used it is not possible to register a gpio
++      controller as the gpio lines are controlled directly by the MAX9286 and
++      not available for consumers, nor the 'poc-supply' property should be
++      specified.
 +
-+#if !defined(GMSL_CAMERA_0) && !defined(GMSL_CAMERA_1) && \
-+    !defined(GMSL_CAMERA_2) && !defined(GMSL_CAMERA_3)
-+#error "At least one camera should be selected"
-+#endif
+   ports:
+     $ref: /schemas/graph.yaml#/properties/ports
+ 
+@@ -182,7 +204,16 @@ required:
+   - reg
+   - ports
+   - i2c-mux
+-  - gpio-controller
 +
-+#if defined(GMSL_CAMERA_RDACM20)
-+#define GMSL_CAMERA_MODEL "imi,rdacm20"
-+#elif defined(GMSL_CAMERA_RDACM21)
-+#define GMSL_CAMERA_MODEL "imi,rdacm21"
-+#endif
++# If 'maxim,gpio-poc' is present, then 'poc-supply' and 'gpio-controller'
++# are not allowed.
++if:
++  required:
++    - maxim,gpio-poc
++then:
++  properties:
++    poc-supply: false
++    gpio-controller: false
+ 
+ additionalProperties: false
+ 
+@@ -327,4 +358,38 @@ examples:
+                 };
+             };
+         };
 +
-+&vin0 {
-+	status = "okay";
-+};
++        /*
++        * Example of a deserializer that controls the camera Power over Coax
++        * through one of its gpio lines.
++        */
++        gmsl-deserializer@6c {
++            compatible = "maxim,max9286";
++            reg = <0x6c>;
++            enable-gpios = <&gpio 14 GPIO_ACTIVE_HIGH>;
 +
-+&vin1 {
-+	status = "okay";
-+};
++            /*
++            * The remote camera power is controlled by MAX9286 GPIO line #0.
++            * No 'poc-supply' nor 'gpio-controller' are specified.
++            */
++            maxim,gpio-poc = <0 GPIO_ACTIVE_LOW>;
 +
-+&vin2 {
-+	status = "okay";
-+};
++            /*
++            * Do not describe connections as they're the same as in the previous
++            * example.
++            */
++            ports {
++                #address-cells = <1>;
++                #size-cells = <0>;
 +
-+&vin3 {
-+	status = "okay";
-+};
++                port@4 {
++                    reg = <4>;
++                };
++            };
 +
-+&gmsl {
-+	status = "okay";
-+
-+#if defined(GMSL_CAMERA_RDACM21)
-+	maxim,reverse-channel-microvolt = <100000>;
-+#endif
-+
-+	ports {
-+#ifdef GMSL_CAMERA_0
-+		port@0 {
-+			max9286_in0: endpoint {
-+				remote-endpoint = <&fakra_con0>;
-+			};
-+		};
-+#endif
-+
-+#ifdef GMSL_CAMERA_1
-+		port@1 {
-+			max9286_in1: endpoint{
-+				remote-endpoint = <&fakra_con1>;
-+			};
-+
-+		};
-+#endif
-+
-+#ifdef GMSL_CAMERA_2
-+		port@2 {
-+			max9286_in2: endpoint {
-+				remote-endpoint = <&fakra_con2>;
-+			};
-+
-+		};
-+#endif
-+
-+#ifdef GMSL_CAMERA_3
-+		port@3 {
-+			max9286_in3: endpoint {
-+				remote-endpoint = <&fakra_con3>;
-+			};
-+
-+		};
-+#endif
-+	};
-+
-+	i2c-mux {
-+#ifdef GMSL_CAMERA_0
-+		i2c@0 {
-+			status = "okay";
-+
-+			camera@51 {
-+				compatible = GMSL_CAMERA_MODEL;
-+				reg = <0x51>, <0x61>;
-+
-+				port {
-+					fakra_con0: endpoint {
-+						remote-endpoint = <&max9286_in0>;
-+					};
-+				};
-+			};
-+		};
-+#endif
-+
-+#ifdef GMSL_CAMERA_1
-+		i2c@1 {
-+			status = "okay";
-+
-+			camera@52 {
-+				compatible = GMSL_CAMERA_MODEL;
-+				reg = <0x52>, <0x62>;
-+
-+				port {
-+					fakra_con1: endpoint {
-+						remote-endpoint = <&max9286_in1>;
-+					};
-+				};
-+			};
-+		};
-+#endif
-+
-+#ifdef GMSL_CAMERA_2
-+		i2c@2 {
-+			status = "okay";
-+
-+			camera@53 {
-+				compatible = GMSL_CAMERA_MODEL;
-+				reg = <0x53>, <0x63>;
-+
-+				port {
-+					fakra_con2: endpoint {
-+						remote-endpoint = <&max9286_in2>;
-+					};
-+				};
-+			};
-+		};
-+#endif
-+
-+#ifdef GMSL_CAMERA_3
-+		i2c@3 {
-+			status = "okay";
-+
-+			camera@54 {
-+				compatible = GMSL_CAMERA_MODEL;
-+				reg = <0x54>, <0x64>;
-+
-+				port {
-+					fakra_con3: endpoint {
-+						remote-endpoint = <&max9286_in3>;
-+					};
-+				};
-+			};
-+		};
-+#endif
-+	};
-+};
++            i2c-mux {
++                #address-cells = <1>;
++                #size-cells = <0>;
++            };
++        };
+     };
 -- 
 2.31.1
 
