@@ -2,171 +2,142 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 590F9C433B4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Apr 2021 23:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 796F6C433ED
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Apr 2021 02:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3210B611C9
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Apr 2021 23:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5171E61073
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Apr 2021 02:01:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232704AbhDSXnx (ORCPT
+        id S231759AbhDTCBy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Apr 2021 19:43:53 -0400
-Received: from gw.atmark-techno.com ([13.115.124.170]:42776 "EHLO
-        gw.atmark-techno.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232633AbhDSXnw (ORCPT
+        Mon, 19 Apr 2021 22:01:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56960 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229711AbhDTCBy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Apr 2021 19:43:52 -0400
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com [209.85.167.200])
-        by gw.atmark-techno.com (Postfix) with ESMTPS id 8082B804BF
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 20 Apr 2021 08:43:09 +0900 (JST)
-Received: by mail-oi1-f200.google.com with SMTP id n8-20020acad6080000b029018733b9e4b1so1281090oig.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Apr 2021 16:43:09 -0700 (PDT)
+        Mon, 19 Apr 2021 22:01:54 -0400
+Received: from mail-pg1-x535.google.com (mail-pg1-x535.google.com [IPv6:2607:f8b0:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9CB1C061763
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Apr 2021 19:01:23 -0700 (PDT)
+Received: by mail-pg1-x535.google.com with SMTP id p12so25550037pgj.10
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Apr 2021 19:01:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=LlFYROiz629P24Lfh0wmKvqKCL0wk7OZmlOkXhVWrtE=;
+        b=EwPmSFH9fu79OjizKA4AUXac3f+vcrDehff6hYHPZFNnGN3F51/xjjbsbAAAfJJ2vV
+         4by5i6Lpo4sg8uJWgdKymCPM2veK+4nplWRRy6ZDdOOpjKA0JgKSpced3Bd7qJQxNfhm
+         E6TQEh5OJJZwsZ7o6IsWXtOznlrZ9NVPYKsAnFgDyfOXww1FuK9WtN0tAqqT1TFf25K/
+         a/hBIv9QLwx5inHOkLtYTLVbzHjbgTf3+E9AIbIqyXWsBugizUjhkoMFyymo+73Wu7Z4
+         y2RU6RgV7bIpLOvuEkCAchsrpqyuQM4XY+XEMkQJXIZhcn9FQyqADX9OkBljYfLAx8iX
+         YSwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YfTDNxUjME1kzwn4ONpBlmaWp5uEs0PGjlewRbiJ8O0=;
-        b=CZN7vo8PkhblL9KSyLP5r3tsBLNWZq1wojXIkDZ/NdByjwQOMulvSyTKv9hcHvKYvD
-         XfAjmR9VW9yOpzbyLWIpSi4FifaqYjYdZj+6kojzlOTnuJkpUs2EONlEcmwCIVXuDyzG
-         jBmIkzKLH50uKpw/7x1mN2vauQBJC4JB5xbPw6whZvaKoFFweK0C0etj1LMrUIzhSdXW
-         PeZ3WOSGm1SllbuX4PXuddDWU+rJWnmCDUV2YYm2NesOytKLh6rwoJI8KOXszSC9AjJk
-         7QNOrcEMN+rlslY+IXWec7miDnpwK+dkJu3FA986o6eNJ7zrOwLxckxJdYMkzwKCTEi0
-         AARQ==
-X-Gm-Message-State: AOAM533tZyFVWoaB9XSEZIH+mMYzAlb5tV3yD/E0YN6UoVk3R/OWwCod
-        +IQKhjuZHsBk9qMLFV+vzOz4wKDo0vFuuAaLibRix2si7TFylWITqctQBZJA+7qfrEcaSoW/n0M
-        sXJl1+HRJC9ZNaGG9SaBlvi0HlcYz537ozVc=
-X-Received: by 2002:a17:90a:1c1:: with SMTP id 1mr1708168pjd.190.1618875776929;
-        Mon, 19 Apr 2021 16:42:56 -0700 (PDT)
-X-Google-Smtp-Source: ABdhPJzRGNIqy2AO5m9iOwuC4N09BxordE8LmUXYTIIeyniOtbCQKfA0MKaQl391n1ZLV3YIJOra8w==
-X-Received: by 2002:a17:90a:1c1:: with SMTP id 1mr1708139pjd.190.1618875776711;
-        Mon, 19 Apr 2021 16:42:56 -0700 (PDT)
-Received: from pc-0115 (76.125.194.35.bc.googleusercontent.com. [35.194.125.76])
-        by smtp.gmail.com with ESMTPSA id r3sm8384971pgn.82.2021.04.19.16.42.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Apr 2021 16:42:55 -0700 (PDT)
-Received: from martinet by pc-0115 with local (Exim 4.94)
-        (envelope-from <martinet@pc-0115>)
-        id 1lYdXa-002mPj-58; Tue, 20 Apr 2021 08:42:54 +0900
-Date:   Tue, 20 Apr 2021 08:42:44 +0900
-From:   Dominique MARTINET <dominique.martinet@atmark-techno.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        "Alice Guo (OSS)" <alice.guo@oss.nxp.com>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        aymen.sghaier@nxp.com, Herbert Xu <herbert@gondor.apana.org.au>,
-        David Miller <davem@davemloft.net>,
-        Tony Lindgren <tony@atomide.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        peter.ujfalusi@gmail.com, Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Kevin Hilman <khilman@baylibre.com>, tomba@kernel.org,
-        jyri.sarha@iki.fi, Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Kishon <kishon@ti.com>, Jakub Kicinski <kuba@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Roy Pledge <Roy.Pledge@nxp.com>, Leo Li <leoyang.li@nxp.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>, Felipe Balbi <balbi@kernel.org>,
-        Tony Prisk <linux@prisktech.co.nz>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, dmaengine@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "open list:ARM/Amlogic Meson SoC support" 
-        <linux-amlogic@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        linux-phy@lists.infradead.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-staging@lists.linux.dev,
-        "moderated list:ARM/Mediatek SoC..." 
-        <linux-mediatek@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
-Subject: Re: [RFC v1 PATCH 3/3] driver: update all the code that use
- soc_device_match
-Message-ID: <YH4VdPNO9cdzc5MD@atmark-techno.com>
-References: <20210419042722.27554-1-alice.guo@oss.nxp.com>
- <20210419042722.27554-4-alice.guo@oss.nxp.com>
- <YH0O907dfGY9jQRZ@atmark-techno.com>
- <CAMuHMdVY1SLZ0K30T2pimyrR6Mm=VoSTO=L-xxCy2Bj7_kostw@mail.gmail.com>
- <YH1OeFy+SepIYYG0@atmark-techno.com>
- <CAK8P3a1Mu2F0irDDCL-50HiHth29iYFL5b7WHZ=UX6W7zzoxAg@mail.gmail.com>
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=LlFYROiz629P24Lfh0wmKvqKCL0wk7OZmlOkXhVWrtE=;
+        b=Ho2YcIExV4UI4V9XzAwMLuY8SZ6lZ6d5QAqbijctRjzXqVxitip7zuJ4XFmoQB1YaY
+         7ZVZ5tM0voFD3CRlj5cRzjXAEd4dny3524axS1oW2nibQ87WEn4lrj8Xkf/CNnkd7yRc
+         yNtnCRUhPhwBzYkT62B1/sGKFoXJ6wUmkyJFazc9JUBZgLKb+v2DW/IQGA5B+hvzlsuP
+         WXX7awnJW1AuyLg/wYyaU1pOqHPiKf1FqqbYueymMdGsjTpm85z/eF6AC0sXhj34shrT
+         255Vrx3QAVUGXxtPD34FDhUKTvQ5vsjjVm10TxdVWJkXIzMIQO2d0ELt2nz7fEjyFPEg
+         Q+mw==
+X-Gm-Message-State: AOAM533gy3mfNF1MfVVmaDahes/9Nmk4f6+nOZpFC7g8xG+csgXkwzvW
+        qffX35/30vOH90vR3i2QdnBgMxWz/8PBqeuj
+X-Google-Smtp-Source: ABdhPJxsg/aEiVUhT5akgA4wmjX8akPaPICJ2ROWDqXCVnwaapLjU+80dJ2LWEkN89+Vs4JdN7SjYA==
+X-Received: by 2002:a63:40c1:: with SMTP id n184mr14490430pga.219.1618884083290;
+        Mon, 19 Apr 2021 19:01:23 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id e190sm13356071pfe.3.2021.04.19.19.01.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Apr 2021 19:01:23 -0700 (PDT)
+Message-ID: <607e35f3.1c69fb81.37305.3c85@mx.google.com>
+Date:   Mon, 19 Apr 2021 19:01:23 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1Mu2F0irDDCL-50HiHth29iYFL5b7WHZ=UX6W7zzoxAg@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: renesas-devel-2021-04-19-v5.12-rc8
+X-Kernelci-Report-Type: test
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+Subject: renesas/master ltp-ipc: 10 runs,
+ 1 regressions (renesas-devel-2021-04-19-v5.12-rc8)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Arnd Bergmann wrote on Mon, Apr 19, 2021 at 02:16:36PM +0200:
-> In some cases, you can use the device_link infrastructure to deal
-> with dependencies between devices. Not sure if this would help
-> in your case, but have a look at device_link_add() etc in drivers/base/core.c
+renesas/master ltp-ipc: 10 runs, 1 regressions (renesas-devel-2021-04-19-v5=
+.12-rc8)
 
-I'll need to actually try to convince myself but if creating the link
-forces driver registration then it should be workable.
+Regressions Summary
+-------------------
 
-> > In this particular case the problem is that since 7d981405d0fd ("soc:
-> > imx8m: change to use platform driver") the soc probe tries to use the
-> > nvmem driver for ocotp fuses for imx8m devices, which isn't ready yet.
-> > So soc loading gets pushed back to the end of the list because it gets
-> > defered and other drivers relying on soc_device_match get confused
-> > because they wrongly think a device doesn't match a quirk when it
-> > actually does.
-> >
-> > If there is a way to ensure the nvmem driver gets loaded before the soc,
-> > that would also solve the problem nicely, and avoid the need to mess
-> > with all the ~50 drivers which use it.
-> >
-> > Is there a way to control in what order drivers get loaded? Something in
-> > the dtb perhaps?
-> 
-> For built-in drivers, load order depends on the initcall level and
-> link order (how things are lined listed in the Makefile hierarchy).
-> 
-> For loadable modules, this is up to user space in the end.
-> 
-> Which of the drivers in this scenario are loadable modules?
-
-All the drivers involved in my case are built-in (nvmem, soc and final
-soc_device_match consumer e.g. caam_jr that crashes the kernel if soc is
-not identified properly).
-
-I frankly don't like the idea of moving nvmem/ above soc/ in
-drivers/Makefile as a "solution" to this (especially as there is one
-that seems to care about what soc they run on...), so I'll have a look
-at links first, hopefully that will work out.
+platform   | arch | lab           | compiler | defconfig          | regress=
+ions
+-----------+------+---------------+----------+--------------------+--------=
+----
+odroid-xu3 | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | 1      =
+    =
 
 
-Thanks,
--- 
-Dominique
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2021-04-19-v5.12-rc8/plan/ltp-ipc/
+
+  Test:     ltp-ipc
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2021-04-19-v5.12-rc8
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      a07b5a56e02f9a237f18f2335bd7f029b63739e3
+
+  Test suite revisions:
+    ltp-tests
+      URL:  https://github.com/linux-test-project/ltp.git
+      SHA:  3e0e60074495e1c350b634848e5dd1f7993ec2ef =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform   | arch | lab           | compiler | defconfig          | regress=
+ions
+-----------+------+---------------+----------+--------------------+--------=
+----
+odroid-xu3 | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | 1      =
+    =
+
+
+  Details:     https://kernelci.org/test/plan/id/607e34eac489a5dd119b77c3
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-04-19-v5.12-rc8/arm/multi_v7_defconfig/gcc-8/lab-collabora/ltp-ipc-odro=
+id-xu3.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-04-19-v5.12-rc8/arm/multi_v7_defconfig/gcc-8/lab-collabora/ltp-ipc-odro=
+id-xu3.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-ltp/=
+20210324.0/armhf/initrd.cpio.gz =
+
+
+
+  * ltp-ipc.login: https://kernelci.org/test/case/id/607e34eac489a5dd119b77=
+c4
+        failing since 12 days (last pass: renesas-devel-2021-03-24-v5.12-rc=
+4, first fail: renesas-devel-2021-04-05-v5.12-rc6) =
+
+ =20
