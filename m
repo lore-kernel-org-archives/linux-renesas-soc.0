@@ -2,100 +2,103 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F05C433ED
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Apr 2021 14:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D38C433ED
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Apr 2021 15:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1103761455
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Apr 2021 14:25:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F9DF6144B
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 21 Apr 2021 15:02:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238901AbhDUO0W (ORCPT
+        id S243330AbhDUPDJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 21 Apr 2021 10:26:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56972 "EHLO
+        Wed, 21 Apr 2021 11:03:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237528AbhDUO0V (ORCPT
+        with ESMTP id S240280AbhDUPDJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 21 Apr 2021 10:26:21 -0400
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2D69C06174A;
-        Wed, 21 Apr 2021 07:25:47 -0700 (PDT)
-Received: by mail-lf1-x130.google.com with SMTP id x20so36845126lfu.6;
-        Wed, 21 Apr 2021 07:25:47 -0700 (PDT)
+        Wed, 21 Apr 2021 11:03:09 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2088C06138A
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Apr 2021 08:02:35 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id e7so49661431edu.10
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 21 Apr 2021 08:02:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lbp80Z2/m16q78yp5xUIMHweqZaqCt6hIC8nVbgvRUI=;
-        b=l5sPqpJYICsJQGVW0x1RPcyFCm/bo4zkcOyfWXw8t9rOB7jcs8RtfpPWAgXbhByrwZ
-         i1yq3SLLH5PnHkBzTPgRdVpdFkzNCKi5jCjs7PF2A4oWcoNojcnZXkfcERBQtsiQ8eiP
-         aw4przHk0A4XQLPbqhYIgGu35d7ahd3jqo9R5tRQ6N7uKVl7n+SDfDbA8cgw6sNv9RzC
-         bXi2pvcDEBhkS8ExEibnT0Fd9BLwKzQs8h0KPUFAnYAT6TieFyH811UtRL6UQUNnoM1d
-         uFOYbowgplrKLsbOlNcAcq1kTSJTJ2Y0ycO7i+7BHp872FG7kf/wScnbCUyoOzIcxteS
-         czqA==
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mnvan/eG3rNIHa8KQ/ozU59f07FEevJHW+/7zIH5D+I=;
+        b=IuPmx+mXs5T1dp1hlusVOIxaxvC++YSAiWHi0UPbGr9oEWvg228bB8ltxbek9Y3WN8
+         56HAf3CL/O9Xv8I8QW7g/fm+knMr5l7AEmoYIfoT5hKwbDeK+k6q4zjyH87TELjZOza1
+         EQ45JJlVZFj1UCM76WafyOQ6J3+v57UTSMkaaj7fIfcc284ii1iyGjNTXA3yyz0nxFF8
+         EyyeTiYF+uMaIyG/umbP+K1LZGd4k8ZdgB9Wfxe1cKA2vm4YzPxlldnrOLKTR+14/yDH
+         5hbRNGsZrVVspClfsxCIWWhnZ22BWIhHlHtXSBv8+NVPsh1KmQRNZJfSdlhFNUsb0Gu3
+         I8bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lbp80Z2/m16q78yp5xUIMHweqZaqCt6hIC8nVbgvRUI=;
-        b=Sd8EB3hSF8x2xvzJcnsJEKfQK9MV/PhPKb0FAul7TqXzLgfgGniXcUU3c6h3m8FV9v
-         0cqQI1TqCSokhVZPkACUf2RUZq4Ikg9bMygAeu9Y/gR5bi7vBrdAMZ4zzjPpiCjJ7AKK
-         +ob5DMyb1RlhKYqoa+RFFRcKDu/6/E7rE6HezvxOM9GjdRW/dhqymWfxeqZ/N3JAmCO1
-         He79zNG9d0SqzCC8L8z0hcnG9RSVVUX9OVqgu6ZFiDMWvGJJMYi3BBt5gpsk2MQGKVgn
-         gCpBeVvNl0dv6Vb2vYRHdByq0o5LfmV9C6W1cVZWVdEfkWPq56YvUHabxb+fit4ZixQq
-         jnpQ==
-X-Gm-Message-State: AOAM530VvsHH7NxAf6cs/IrRDvqzgqyk7aO/JWhRT2h15uU+scnAh0BW
-        G9kZfL9DDfXtJP2vhK0yYW8wbwqSrkA=
-X-Google-Smtp-Source: ABdhPJxibOjfoGZApiCpR+P+jRW7w2w89HoaUN6PTu6njNc8WfS3bJvmUfmeHQMHZSlZz/3paQ8KWA==
-X-Received: by 2002:a05:6512:b26:: with SMTP id w38mr19512765lfu.152.1619015146177;
-        Wed, 21 Apr 2021 07:25:46 -0700 (PDT)
-Received: from [192.168.1.102] ([31.173.86.146])
-        by smtp.gmail.com with ESMTPSA id u6sm229441ljj.82.2021.04.21.07.25.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Apr 2021 07:25:45 -0700 (PDT)
-Subject: Re: [PATCH] net: ethernet: ravb: Fix release of refclk
-To:     Adam Ford <aford173@gmail.com>, netdev@vger.kernel.org
-Cc:     aford@beaconembedded.com, "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20210421140505.30756-1-aford173@gmail.com>
-From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
-Message-ID: <3937a792-8985-10c1-b818-af2fbc2241df@gmail.com>
-Date:   Wed, 21 Apr 2021 17:25:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.8.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mnvan/eG3rNIHa8KQ/ozU59f07FEevJHW+/7zIH5D+I=;
+        b=OwZrmZFL7Zl7Qk41RvEWmdNUT6riBxJrkHJuHYZyHXxMytmGz7RzPWLNtNsiNSSGkl
+         6fj4b3CyviUpEO4VPVgMHwLY84Uz0W2bXhbgST3By5J0EyaW4RtmVpFUZoRiU0QPTlXY
+         KuGg+2ihqt58ojfxi8PzOFjHo69sJtGQ3MBRDxOFWUbLYn5CbYDsNffUII1a9WdZxrN4
+         9abFB76n63k5rZvE29+PO97K1ngJdiH9mZyBFlAFvRd2wDt/OkcNK4bBQgBoQoO6r51b
+         oTlXKU2S2jXb5c9SM8Af0R/DP2ukitI8twUEY5qrw1gbKqbo4Bqk7C/zg0dsoBW4zPuE
+         /q5Q==
+X-Gm-Message-State: AOAM531a1p5l7iUcOpYqi36drutHL5b38eKO0vwnDVM/88XmVABbIsWj
+        CnqryXaUwY5fetjMTC12ed9O7g==
+X-Google-Smtp-Source: ABdhPJyYqB2eiVgLBMBqlxWC5tTDvO35lZOYm424dNZLdQo4pczRsc5Xtt8EVCP9zSPAHdAUQX0Ttw==
+X-Received: by 2002:aa7:c3ca:: with SMTP id l10mr30781204edr.55.1619017354679;
+        Wed, 21 Apr 2021 08:02:34 -0700 (PDT)
+Received: from bismarck.berto.se (p54ac5521.dip0.t-ipconnect.de. [84.172.85.33])
+        by smtp.googlemail.com with ESMTPSA id g11sm3692588edt.35.2021.04.21.08.02.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Apr 2021 08:02:34 -0700 (PDT)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 1/2] arm64: dts: renesas: aistarvision-mipi-adapter-2.1: Fix CSI40 ports
+Date:   Wed, 21 Apr 2021 17:02:20 +0200
+Message-Id: <20210421150221.3202955-2-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210421150221.3202955-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20210421150221.3202955-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-In-Reply-To: <20210421140505.30756-1-aford173@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 4/21/21 5:05 PM, Adam Ford wrote:
+Fix the DTS schema by explicitly stating that the input is port@0. This
+fixes a schema validation error but have no runtime effect as the
+default port number is 0 if not specified.
 
-> The call to clk_disable_unprepare() can happen before priv is
-> initialized.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   This still doesn't make sense for me...
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
+index e7b4a929bb174840..2e3d1981cac48144 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
++++ b/arch/arm64/boot/dts/renesas/r8a774c0-ek874-mipi-2.1.dts
+@@ -33,7 +33,7 @@ &csi40 {
+ 	status = "okay";
+ 
+ 	ports {
+-		port {
++		port@0 {
+ 			csi40_in: endpoint {
+ 				clock-lanes = <0>;
+ 				data-lanes = <1 2>;
+-- 
+2.31.1
 
-> This means moving clk_disable_unprepare out of
-                                         ^ call
-> out_release into a new label.
-> 
-> Fixes: 8ef7adc6beb2 ("net: ethernet: ravb: Enable optional refclk")
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@gmail.com>
-
-
-[...]
-
-MBR, Sergei
