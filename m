@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A766C43460
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 520F1C43600
 	for <linux-renesas-soc@archiver.kernel.org>; Sat, 24 Apr 2021 06:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF7D061580
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 24 Apr 2021 06:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C1166161C
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 24 Apr 2021 06:45:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233024AbhDXGqN (ORCPT
+        id S233209AbhDXGqP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 24 Apr 2021 02:46:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35766 "EHLO mail.kernel.org"
+        Sat, 24 Apr 2021 02:46:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231467AbhDXGqM (ORCPT
+        id S230471AbhDXGqL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 24 Apr 2021 02:46:12 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 05D5861492;
+        Sat, 24 Apr 2021 02:46:11 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 00F5561490;
         Sat, 24 Apr 2021 06:45:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1619246733;
-        bh=CEyymY4/rjVCo+aFrsQVbMV0NkXC9qbuhSIFfneK2dk=;
+        bh=vlWzPcglj3c5YNM8fjCOIG3b1giv6Ug3RyqxVuPOXCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T3cWwAl1vyVm77GVb6CNAu4mqCxFefBHk72chkY7qihZiy72NH46UMnelgEvu5DI9
-         orweLgePkbUar+wJ4mwLj+4FEKmMwxzKWFr2fs1Y0LBgxBBS9bd5wgRlpIy5f9Jbcj
-         C0iMThTi1fhA8tF56SlrMHiijR2aS1Heuc0805czBssKmZqJ5gTyX8H64riwlvbUoG
-         K9a7rRLNdDFk83BqoDqoR2aXZRlARvtGsvIWCN836H1YQtMk8jG1Apq9gLpMjn3+jD
-         DSwjNCpoeoJ+kCv7MJNlm40nyf+SNIPOoJDfUV0/upkieUhSd6H6TDaja86lBDDl29
-         4hcKAQpoMLHcA==
+        b=o3EHnDj8lhhvnbL6MRbpHKQ/z5hcFwYB1uy5+C27DD6o3NjrCIAnM8ePevlYORY1E
+         vDCdRSv/aGJRGra5RwV34014Euwi8obXklrpKcV/B0nbgOrDzQJDukjCPF2dKYXtJx
+         aRb17bfiiUsJsB3ed19jypufTmKuczryK+6CX/Z5eAGEblROp19TX6LRptFxkMdhxw
+         SXgUcfLSF6tHZWkCs0N/w9Y40O6Bd1CjS+nfLgWiI+S6eJ7+oXwzkBBpXUPXzebuxA
+         yF/oLgT53PzqbltJZ5DQX8XNegGPKaC7G+ohOZmkSSpePo0goIgxJUgHV1Io+vzjb2
+         oDJCxo5PtSS2w==
 Received: by mail.kernel.org with local (Exim 4.94)
         (envelope-from <mchehab@kernel.org>)
-        id 1laC2l-004Je0-1X; Sat, 24 Apr 2021 08:45:31 +0200
+        id 1laC2k-004Jdu-Vn; Sat, 24 Apr 2021 08:45:30 +0200
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 06/78] media: renesas-ceu: fix pm_runtime_get_sync() usage count
-Date:   Sat, 24 Apr 2021 08:44:16 +0200
-Message-Id: <29ba3fafde4d2643fae49789e6b378d6b1fd51f5.1619191723.git.mchehab+huawei@kernel.org>
+Subject: [PATCH 04/78] media: rcar_fdp1: fix pm_runtime_get_sync() usage count
+Date:   Sat, 24 Apr 2021 08:44:14 +0200
+Message-Id: <b9387e2fb2cbc2c9f0ba90ca8068e009de5fe007.1619191723.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <cover.1619191723.git.mchehab+huawei@kernel.org>
 References: <cover.1619191723.git.mchehab+huawei@kernel.org>
@@ -64,29 +64,45 @@ commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with us
 in order to properly decrement the usage counter and avoid memory
 leaks.
 
-While here, check if the PM runtime was caught at open time.
+Also, right now, the driver is ignoring any troubles when
+trying to do PM resume. So, add the proper error handling
+for the code.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/media/platform/renesas-ceu.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/media/platform/rcar_fdp1.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
-index cd137101d41e..965a7259e707 100644
---- a/drivers/media/platform/renesas-ceu.c
-+++ b/drivers/media/platform/renesas-ceu.c
-@@ -1099,7 +1099,10 @@ static int ceu_open(struct file *file)
+diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
+index 01c1fbb97bf6..c32d237af618 100644
+--- a/drivers/media/platform/rcar_fdp1.c
++++ b/drivers/media/platform/rcar_fdp1.c
+@@ -2140,7 +2140,13 @@ static int fdp1_open(struct file *file)
+ 	}
  
- 	mutex_lock(&ceudev->mlock);
- 	/* Causes soft-reset and sensor power on on first open */
--	pm_runtime_get_sync(ceudev->dev);
-+	ret = pm_runtime_resume_and_get(ceudev->dev);
+ 	/* Perform any power management required */
+-	pm_runtime_get_sync(fdp1->dev);
++	ret = pm_runtime_resume_and_get(fdp1->dev);
++	if (ret < 0) {
++		v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
++		v4l2_ctrl_handler_free(&ctx->hdl);
++		kfree(ctx);
++		goto done;
++	}
+ 
+ 	v4l2_fh_add(&ctx->fh);
+ 
+@@ -2351,7 +2357,9 @@ static int fdp1_probe(struct platform_device *pdev)
+ 
+ 	/* Power up the cells to read HW */
+ 	pm_runtime_enable(&pdev->dev);
+-	pm_runtime_get_sync(fdp1->dev);
++	ret = pm_runtime_resume_and_get(fdp1->dev);
 +	if (ret < 0)
 +		return ret;
-+
- 	mutex_unlock(&ceudev->mlock);
  
- 	return 0;
+ 	hw_version = fdp1_read(fdp1, FD1_IP_INTDATA);
+ 	switch (hw_version) {
 -- 
 2.30.2
 
