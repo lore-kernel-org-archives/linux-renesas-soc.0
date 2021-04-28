@@ -2,125 +2,107 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F41C433ED
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Apr 2021 14:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F46FC433B4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Apr 2021 14:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8BDA861222
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Apr 2021 14:36:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81A7361435
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Apr 2021 14:52:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239805AbhD1OhO (ORCPT
+        id S240287AbhD1Oxa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 28 Apr 2021 10:37:14 -0400
-Received: from mail-ua1-f46.google.com ([209.85.222.46]:46673 "EHLO
-        mail-ua1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239209AbhD1OhO (ORCPT
+        Wed, 28 Apr 2021 10:53:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35766 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240269AbhD1Ox3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Apr 2021 10:37:14 -0400
-Received: by mail-ua1-f46.google.com with SMTP id v23so19788244uaq.13;
-        Wed, 28 Apr 2021 07:36:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ebn3gqZWholSixRs2pG5TobMq2hnLDUwAQR5/Khu4nc=;
-        b=eERugtZFOP202OCD0PCAyD9C1KtmD7aER2U+q92/oQJ2JXfDZuUy+y1OFVroMn6oK1
-         /q1mlp2G/pYu/UW5W4y4QVN8edtDHgCzq1K2czuWC2rHen0EilVxqqI5kXL6QxJ72jnv
-         C4OSMe/wJINpsTdRee9ASX2LW5tcB8n5+iwwfORrut8KFRxWxAyq4cofTs28l3kyLLi5
-         fGQ2rfFBuKPrgfbsuO742anqpVeV+qkrH1ppc2zX100XgG91z5L0bl0pvG/lR0qDH5SO
-         RzQDluk/oCzatRR0XBzpzj7NkVBJ6oMdR2bHDD5ajRwMYuhK2Jd2KzVkpwgDAYR5AIsr
-         VLdA==
-X-Gm-Message-State: AOAM532nXTDc3boUiqQDRz+qO/ZSNX08dMAqPjse9ocNAP2vo2Y6ET+R
-        AnVtaj9AXfB+ov8Jv8BMZr97raJTInYPikT9tve95ysR5PU=
-X-Google-Smtp-Source: ABdhPJwUatWDsVLWaKfcODXGfntt6k65wAc/HgmLKSVwqyayTIfPoUGtSH7CGqXabeNrvPeitGp/bA9yp0EYJcGcyD4=
-X-Received: by 2002:a9f:262c:: with SMTP id 41mr24223522uag.4.1619620588733;
- Wed, 28 Apr 2021 07:36:28 -0700 (PDT)
+        Wed, 28 Apr 2021 10:53:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id C0EE461447;
+        Wed, 28 Apr 2021 14:52:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1619621563;
+        bh=vSVgVx9oCI4BykR40BTa4+7tin+dlK2U4+Benc8+UkQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IjmvDkezJvua0hzghdBZ4nL75WLBAmx7//xkI7b0W/JXRMiVDeYzNgmx38tXV6rku
+         2q68MMjEiNSRUwocDaahV8E0WBTtGDrvkm8d6v+ORAoUXoy+S9eKyGbvHPmYTzrsCN
+         eSZufzbPLh+8YA1rodM3dX3zHPoH0mlG71MUW7LVl8VrwLLxZapIP3SvpTTOy2YG//
+         +IdV1llrv2lUlxrSAluaiNTWrVadyvKZohfQJ0U5ee90AstCGV1sYU+jJTX17V2M7a
+         ZV12rplqUy8Gv8Is3Nqj0ojpD43bBz44OSk4aP7/TMKJe8LkybBF4Uimksyv1CVLLz
+         yf2W3T81gkrrQ==
+Received: by mail.kernel.org with local (Exim 4.94)
+        (envelope-from <mchehab@kernel.org>)
+        id 1lblYP-001Dq7-ST; Wed, 28 Apr 2021 16:52:41 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 11/79] media: rcar_fdp1: fix pm_runtime_get_sync() usage count
+Date:   Wed, 28 Apr 2021 16:51:32 +0200
+Message-Id: <6fb49df1ba7c80c2e6c51fb95322e025243ce36c.1619621413.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <cover.1619621413.git.mchehab+huawei@kernel.org>
+References: <cover.1619621413.git.mchehab+huawei@kernel.org>
 MIME-Version: 1.0
-References: <20210317091622.31890-1-wsa+renesas@sang-engineering.com> <20210317091622.31890-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20210317091622.31890-4-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 28 Apr 2021 16:36:17 +0200
-Message-ID: <CAMuHMdU6=rTHjvcgK8GBzd3OL_9YFqV77=KsAEGJvAVapnhsOQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] mmc: renesas_sdhi: do hard reset if possible
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+The pm_runtime_get_sync() internally increments the
+dev->power.usage_count without decrementing it, even on errors.
+Replace it by the new pm_runtime_resume_and_get(), introduced by:
+commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+in order to properly decrement the usage counter and avoid memory
+leaks.
 
-On Wed, Mar 17, 2021 at 10:17 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> All recent SDHI instances can be reset via the reset controller. If one
-> is found, use it instead of the open coded reset. This is to get a
-> future-proof sane reset state.
->
-> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Also, right now, the driver is ignoring any troubles when
+trying to do PM resume. So, add the proper error handling
+for the code.
 
-Thanks for your patch, which is now commit b4d86f37eacb7246 ("mmc:
-renesas_sdhi: do hard reset if possible") in mmc/next.
+Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+---
+ drivers/media/platform/rcar_fdp1.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-This breaks SDHI on koelsch (R-Car M2-W).
-In v5.10, v5.11, and v512, it works fine:
-
-    sh_mobile_sdhi ee100000.mmc: timeout waiting for hardware interrupt (CMD19)
-    mmc0: new ultra high speed SDR104 SDHC card at address aaaa
-    mmcblk0: mmc0:aaaa SM32G 29.7 GiB
-      mmcblk0: p1
-
-Note that I do see one timeout during identification.
-
-After b4d86f37eacb7246 (bisected), it fails:
-
-    sh_mobile_sdhi ee100000.mmc: timeout waiting for hardware interrupt (CMD19)
-    sh_mobile_sdhi ee100000.mmc: timeout waiting for hardware interrupt (CMD19)
-    [...]
-    sh_mobile_sdhi ee100000.mmc: timeout waiting for hardware interrupt (CMD19)
-    mmc0: tuning execution failed: -5
-    mmc0: error -5 whilst initialising SD card
-    sh_mobile_sdhi ee100000.mmc: timeout waiting for hardware interrupt (CMD19)
-    sh_mobile_sdhi ee100000.mmc: timeout waiting for hardware interrupt (CMD19)
-    [...]
-
-Given the single timeout I see with older kernels, the issue may be that the
-harder reset causes that timeout to repeat ad infinitum?
-
-With renesas-drivers-2021-04-27-v5.12, I saw various different timeouts:
-
-    sh_mobile_sdhi ee100000.mmc: timeout waiting for hardware interrupt (CMD19)
-    sh_mobile_sdhi ee140000.mmc: timeout waiting for hardware interrupt (CMD0)
-    sh_mobile_sdhi ee140000.mmc: timeout waiting for hardware interrupt (CMD5)
-    sh_mobile_sdhi ee140000.mmc: timeout waiting for hardware interrupt (CMD52)
-    sh_mobile_sdhi ee140000.mmc: timeout waiting for hardware interrupt (CMD55)
-    sh_mobile_sdhi ee140000.mmc: timeout waiting for hardware interrupt (CMD8)
-
-(ee100000 is the SD104 slot, ee140000 is the SDR50 slot).
-
-The card is a brand new SanDisk Extreme 32GB A1 microSD card in the
-microSD adapter that came with the card (Conrad 1553726).
-
-On R-Car H3 ES2.0 (Salvator-XS), the card works fine, without any timeouts:
-
-    mmc1: new ultra high speed SDR104 SDHC card at address aaaa
-    mmcblk1: mmc1:aaaa SM32G 29.7 GiB
-     mmcblk1: p1
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
+index 01c1fbb97bf6..c32d237af618 100644
+--- a/drivers/media/platform/rcar_fdp1.c
++++ b/drivers/media/platform/rcar_fdp1.c
+@@ -2140,7 +2140,13 @@ static int fdp1_open(struct file *file)
+ 	}
+ 
+ 	/* Perform any power management required */
+-	pm_runtime_get_sync(fdp1->dev);
++	ret = pm_runtime_resume_and_get(fdp1->dev);
++	if (ret < 0) {
++		v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
++		v4l2_ctrl_handler_free(&ctx->hdl);
++		kfree(ctx);
++		goto done;
++	}
+ 
+ 	v4l2_fh_add(&ctx->fh);
+ 
+@@ -2351,7 +2357,9 @@ static int fdp1_probe(struct platform_device *pdev)
+ 
+ 	/* Power up the cells to read HW */
+ 	pm_runtime_enable(&pdev->dev);
+-	pm_runtime_get_sync(fdp1->dev);
++	ret = pm_runtime_resume_and_get(fdp1->dev);
++	if (ret < 0)
++		return ret;
+ 
+ 	hw_version = fdp1_read(fdp1, FD1_IP_INTDATA);
+ 	switch (hw_version) {
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.30.2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
