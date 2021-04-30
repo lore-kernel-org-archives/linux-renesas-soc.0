@@ -2,103 +2,98 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B41C433ED
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 13:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C07AEC43460
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 13:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F4BB61477
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 13:11:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0B2761477
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 13:11:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232475AbhD3NLv (ORCPT
+        id S232519AbhD3NLv (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 30 Apr 2021 09:11:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58220 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58224 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232471AbhD3NLt (ORCPT
+        with ESMTP id S232476AbhD3NLt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 30 Apr 2021 09:11:49 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31C4FC06174A
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E51BC06138C
         for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Apr 2021 06:11:01 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:d4dd:70b4:3264:8d97])
-        by andre.telenet-ops.be with bizsmtp
-        id z1Az240094p6Y38011Azio; Fri, 30 Apr 2021 15:10:59 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id z1Az2400k4p6Y38011AzMR; Fri, 30 Apr 2021 15:11:00 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lcSv5-001f3p-8E; Fri, 30 Apr 2021 15:10:59 +0200
+        id 1lcSv5-001f3s-EV; Fri, 30 Apr 2021 15:10:59 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lcSv4-00FCOE-S2; Fri, 30 Apr 2021 15:10:58 +0200
+        id 1lcSv4-00FCP8-VN; Fri, 30 Apr 2021 15:10:58 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/5] ARM: dts: rcar2: Configure pull up for GPIO keys
-Date:   Fri, 30 Apr 2021 15:10:50 +0200
-Message-Id: <cover.1619785905.git.geert+renesas@glider.be>
+Subject: [PATCH 3/5] ARM: dts: blanche: Configure pull-up for SOFT_SW and SW25 GPIO keys
+Date:   Fri, 30 Apr 2021 15:10:53 +0200
+Message-Id: <011e4c461767f2dd690b655b3dd501eb554184c1.1619785905.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1619785905.git.geert+renesas@glider.be>
+References: <cover.1619785905.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+The GPIO pins connected to the 4 Software Switches (SW2) and the second
+Tact Switch (SW25) do not have external pull-up resistors, but rely on
+internal pull-ups being enabled.  Fortunately this is satisfied by the
+initial state of these pins.
 
-This patches series follows up on the work started with "[PATCH] ARM:
-dts: koelsch: Configure pull-up for SOFT_SW GPIO keys"[1], and
-explicitly configures pull-ups for pins used for GPIO keys without
-external pull-up resistors on R-Car Gen2 boards, preceded by a small
-cleanup.  Currently GPIO keys rely on the initial states of these pins,
-which fortunately match the expectations, but it is better to be
-explicit.
+Make this explicit by enabling bias-pull-up, to remove the dependency on
+initial state and/or boot loader configuration.
 
-To actually make a difference, this depends on "[PATCH 00/12] pinctrl:
-renesas: Add more bias pinconf support"[2].  Note that it is safe to
-apply this series before [2] has landed, as pinctrl_bind_pins() does not
-consider -ENOTSUPP a fatal error.
+Note that the GPIO pin connected to the first Tact Switch (SW24) does
+have an external pull-up resistor.
 
-It would be great if people with access to the hardware could do similar
-tests like I did on Koelsch[3].
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm/boot/dts/r8a7792-blanche.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-I hope to queue this in renesas-devel for v5.14.
-
-Thanks for your comments!
-
-[1] https://lore.kernel.org/r/20210303132941.3938516-1-geert+renesas@glider.be/
-[2] https://lore.kernel.org/r/cover.1619785375.git.geert+renesas@glider.be/	
-[3] https://lore.kernel.org/r/20210303132619.3938128-1-geert+renesas@glider.be
-
-Geert Uytterhoeven (5):
-  ARM: dts: koelsch: Rename sw2 to keyboard
-  ARM: dts: lager: Configure pull-up for SOFT_SW GPIO keys
-  ARM: dts: blanche: Configure pull-up for SOFT_SW and SW25 GPIO keys
-  ARM: dts: gose: Configure pull-up for SOFT_SW GPIO keys
-  ARM: dts: silk: Configure pull-up for SOFT_SW GPIO keys
-
- arch/arm/boot/dts/r8a7790-lager.dts   |  8 ++++++++
- arch/arm/boot/dts/r8a7791-koelsch.dts |  4 ++--
- arch/arm/boot/dts/r8a7792-blanche.dts |  8 ++++++++
- arch/arm/boot/dts/r8a7793-gose.dts    | 10 +++++++++-
- arch/arm/boot/dts/r8a7794-silk.dts    | 10 +++++++++-
- 5 files changed, 36 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm/boot/dts/r8a7792-blanche.dts b/arch/arm/boot/dts/r8a7792-blanche.dts
+index c100ae903a46bb1c..62aa9f61321bea74 100644
+--- a/arch/arm/boot/dts/r8a7792-blanche.dts
++++ b/arch/arm/boot/dts/r8a7792-blanche.dts
+@@ -112,6 +112,9 @@ x2_clk: x2 {
+ 	keyboard {
+ 		compatible = "gpio-keys";
+ 
++		pinctrl-0 = <&keyboard_pins>;
++		pinctrl-names = "default";
++
+ 		key-1 {
+ 			linux,code = <KEY_1>;
+ 			label = "SW2-1";
+@@ -235,6 +238,11 @@ du1_pins: du1 {
+ 		function = "du1";
+ 	};
+ 
++	keyboard_pins: keyboard {
++		pins = "GP_3_10", "GP_3_11", "GP_3_12", "GP_3_15", "GP_11_02";
++		bias-pull-up;
++	};
++
+ 	pmic_irq_pins: pmicirq {
+ 		groups = "intc_irq2";
+ 		function = "intc";
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
