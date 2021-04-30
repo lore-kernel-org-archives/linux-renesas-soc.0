@@ -2,86 +2,128 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFF8C433ED
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 13:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C87DC433B4
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 16:28:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F03786147F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 13:11:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1F4961186
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 16:28:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232481AbhD3NLy (ORCPT
+        id S230128AbhD3Q32 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 30 Apr 2021 09:11:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58236 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232505AbhD3NLu (ORCPT
+        Fri, 30 Apr 2021 12:29:28 -0400
+Received: from frasgout.his.huawei.com ([185.176.79.56]:2957 "EHLO
+        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230081AbhD3Q3X (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 30 Apr 2021 09:11:50 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AD1B5C06138F
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Apr 2021 06:11:01 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:d4dd:70b4:3264:8d97])
-        by baptiste.telenet-ops.be with bizsmtp
-        id z1B02400M4p6Y38011B0Md; Fri, 30 Apr 2021 15:11:00 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lcSv5-001f3q-TT; Fri, 30 Apr 2021 15:10:59 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lcSv4-00FCOW-TC; Fri, 30 Apr 2021 15:10:58 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/5] ARM: dts: koelsch: Rename sw2 to keyboard
-Date:   Fri, 30 Apr 2021 15:10:51 +0200
-Message-Id: <3d718cf69e21b1ceea0c29c0e841b9bdda44533d.1619785905.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1619785905.git.geert+renesas@glider.be>
-References: <cover.1619785905.git.geert+renesas@glider.be>
+        Fri, 30 Apr 2021 12:29:23 -0400
+Received: from fraeml734-chm.china.huawei.com (unknown [172.18.147.207])
+        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FWyFk0jGNz689rH;
+        Sat,  1 May 2021 00:17:46 +0800 (CST)
+Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
+ fraeml734-chm.china.huawei.com (10.206.15.215) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Fri, 30 Apr 2021 18:28:28 +0200
+Received: from localhost (10.52.124.90) by lhreml710-chm.china.huawei.com
+ (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Fri, 30 Apr
+ 2021 17:28:27 +0100
+Date:   Fri, 30 Apr 2021 17:26:52 +0100
+From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+CC:     <linuxarm@huawei.com>, <mauro.chehab@huawei.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v4 11/79] media: rcar_fdp1: fix pm_runtime_get_sync()
+ usage count
+Message-ID: <20210430172652.00003c45@Huawei.com>
+In-Reply-To: <6fb49df1ba7c80c2e6c51fb95322e025243ce36c.1619621413.git.mchehab+huawei@kernel.org>
+References: <cover.1619621413.git.mchehab+huawei@kernel.org>
+        <6fb49df1ba7c80c2e6c51fb95322e025243ce36c.1619621413.git.mchehab+huawei@kernel.org>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [10.52.124.90]
+X-ClientProxiedBy: lhreml719-chm.china.huawei.com (10.201.108.70) To
+ lhreml710-chm.china.huawei.com (10.201.108.61)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Rename "sw2_pins" and "sw2" to "keyboard_pins" resp. "keyboard", to
-comply with generic name recommendations.
+On Wed, 28 Apr 2021 16:51:32 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7791-koelsch.dts | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> The pm_runtime_get_sync() internally increments the
+> dev->power.usage_count without decrementing it, even on errors.
+> Replace it by the new pm_runtime_resume_and_get(), introduced by:
+> commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
+> in order to properly decrement the usage counter and avoid memory
+> leaks.
+> 
+> Also, right now, the driver is ignoring any troubles when
+> trying to do PM resume. So, add the proper error handling
+> for the code.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 61e881bbbf6ee5aa..2a8b6fd9095cceba 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -81,7 +81,7 @@ lbsc {
- 	keyboard {
- 		compatible = "gpio-keys";
- 
--		pinctrl-0 = <&sw2_pins>;
-+		pinctrl-0 = <&keyboard_pins>;
- 		pinctrl-names = "default";
- 
- 		key-1 {
-@@ -622,7 +622,7 @@ sound_clk_pins: sound_clk {
- 		function = "audio_clk";
- 	};
- 
--	sw2_pins: sw2 {
-+	keyboard_pins: keyboard {
- 		pins = "GP_5_0", "GP_5_1", "GP_5_2", "GP_5_3";
- 		bias-pull-up;
- 	};
--- 
-2.25.1
+Refactor to move the error handling block to one place perhaps?
+
+Also, I thin more cleanup is needed int he 
+> ---
+>  drivers/media/platform/rcar_fdp1.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
+> index 01c1fbb97bf6..c32d237af618 100644
+> --- a/drivers/media/platform/rcar_fdp1.c
+> +++ b/drivers/media/platform/rcar_fdp1.c
+> @@ -2140,7 +2140,13 @@ static int fdp1_open(struct file *file)
+>  	}
+>  
+>  	/* Perform any power management required */
+> -	pm_runtime_get_sync(fdp1->dev);
+> +	ret = pm_runtime_resume_and_get(fdp1->dev);
+> +	if (ret < 0) {
+> +		v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
+
+Next few lines repeated enough times that I'd suggest just pulling error handling out
+to it's own path.
+
+> +		v4l2_ctrl_handler_free(&ctx->hdl);
+> +		kfree(ctx);
+> +		goto done;
+> +	}
+>  
+>  	v4l2_fh_add(&ctx->fh);
+>  
+> @@ -2351,7 +2357,9 @@ static int fdp1_probe(struct platform_device *pdev)
+>  
+>  	/* Power up the cells to read HW */
+>  	pm_runtime_enable(&pdev->dev);
+> -	pm_runtime_get_sync(fdp1->dev);
+> +	ret = pm_runtime_resume_and_get(fdp1->dev);
+
+From a balance point of view, do you want to all pm_runtime_disable()
+if this happens and also I'd guess you need to unregister the device
+as done in other error paths in probe
+
+The lack of balance between ordering in probe and remove before
+your patch bothers me but I don't know the code well enough to tell
+if there are any actual bugs there.
+
+
+> +	if (ret < 0)
+> +		return ret;
+>  
+>  	hw_version = fdp1_read(fdp1, FD1_IP_INTDATA);
+>  	switch (hw_version) {
 
