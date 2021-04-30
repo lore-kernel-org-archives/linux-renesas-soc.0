@@ -2,77 +2,106 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E56EC43461
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 12:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB29C43470
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 12:31:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 672F961466
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 12:31:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACF1961476
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 30 Apr 2021 12:31:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232084AbhD3McH (ORCPT
+        id S232142AbhD3McI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 30 Apr 2021 08:32:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49162 "EHLO
+        Fri, 30 Apr 2021 08:32:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229864AbhD3McG (ORCPT
+        with ESMTP id S231766AbhD3McG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 30 Apr 2021 08:32:06 -0400
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC6F1C06174A
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BDD5DC06138E
         for <linux-renesas-soc@vger.kernel.org>; Fri, 30 Apr 2021 05:31:17 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:d4dd:70b4:3264:8d97])
         by andre.telenet-ops.be with bizsmtp
-        id z0XG2400B4p6Y38010XGUl; Fri, 30 Apr 2021 14:31:16 +0200
+        id z0XF2400M4p6Y38010XFUc; Fri, 30 Apr 2021 14:31:16 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lcSId-001ecG-NJ; Fri, 30 Apr 2021 14:31:15 +0200
+        id 1lcSId-001ecC-Fj; Fri, 30 Apr 2021 14:31:15 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lcSId-00Bdut-1r; Fri, 30 Apr 2021 14:31:15 +0200
+        id 1lcSIc-00BduX-VR; Fri, 30 Apr 2021 14:31:14 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/12] pinctrl: renesas: r8a7778: Remove unused PORT_GP_PUP_1() macro
-Date:   Fri, 30 Apr 2021 14:31:03 +0200
-Message-Id: <129147ac57f5e931cc7108db0a6483b803a1b8f4.1619785375.git.geert+renesas@glider.be>
+Subject: [PATCH 00/12] pinctrl: renesas: Add more bias pinconf support
+Date:   Fri, 30 Apr 2021 14:30:59 +0200
+Message-ID: <cover.1619785375.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1619785375.git.geert+renesas@glider.be>
-References: <cover.1619785375.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
+Message-ID: <20210430123059.B5NLA7omQCNgLIRNGXPiTxh1PWiXOo7XbXDLv2hKjos@z>
 
-The last user was removed in commit dd1f760bffcee2c5 ("pinctrl: sh-pfc:
-r8a7778: Use common PORT_GP_CFG_27() macro").
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/renesas/pfc-r8a7778.c | 3 ---
- 1 file changed, 3 deletions(-)
+This patch series add bias pinconf support to the R-Car Gen2, R-Car
+Gen3, RZ/G1, and RZ/G2 SoCs that do not have it yet, preceded by a two
+fixes and three cleanups.
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a7778.c b/drivers/pinctrl/renesas/pfc-r8a7778.c
-index 6185af9c499006e7..d641e408f1bd413c 100644
---- a/drivers/pinctrl/renesas/pfc-r8a7778.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a7778.c
-@@ -18,9 +18,6 @@
- 
- #include "sh_pfc.h"
- 
--#define PORT_GP_PUP_1(bank, pin, fn, sfx)	\
--	PORT_GP_CFG_1(bank, pin, fn, sfx, SH_PFC_PIN_CFG_PULL_UP)
--
- #define CPU_ALL_GP(fn, sfx)		\
- 	PORT_GP_CFG_32(0, fn, sfx, SH_PFC_PIN_CFG_PULL_UP),		\
- 	PORT_GP_CFG_32(1, fn, sfx, SH_PFC_PIN_CFG_PULL_UP),		\
+This has not been formally tested in the field, but did pass my
+work-in-progress bias registers checks in the Renesas pinctrl checker,
+which I hope to post soon.
+
+I hope to queue this in renesas-pinctrl for v5.14.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (12):
+  pinctrl: renesas: r8a7796: Add missing bias for PRESET# pin
+  pinctrl: renesas: r8a77990: JTAG pins do not have pull-down
+    capabilities
+  pinctrl: renesas: r8a77990: Drop bogus PUEN_ prefixes in comments
+  pinctrl: renesas: r8a7778: Remove unused PORT_GP_PUP_1() macro
+  pinctrl: renesas: r8a779{51,6,65}: Reduce non-functional differences
+  pinctrl: renesas: r8a77470: Add bias pinconf support
+  pinctrl: renesas: r8a7790: Add bias pinconf support
+  pinctrl: renesas: r8a7792: Add bias pinconf support
+  pinctrl: renesas: r8a7794: Add bias pinconf support
+  pinctrl: renesas: r8a77970: Add bias pinconf support
+  pinctrl: renesas: r8a77980: Add bias pinconf support
+  pinctrl: renesas: r8a77995: Add bias pinconf support
+
+ drivers/pinctrl/renesas/pfc-r8a77470.c | 346 ++++++++++++++--
+ drivers/pinctrl/renesas/pfc-r8a7778.c  |   3 -
+ drivers/pinctrl/renesas/pfc-r8a7790.c  | 301 +++++++++++++-
+ drivers/pinctrl/renesas/pfc-r8a7792.c  | 533 ++++++++++++++++++++++++-
+ drivers/pinctrl/renesas/pfc-r8a7794.c  | 360 ++++++++++++++++-
+ drivers/pinctrl/renesas/pfc-r8a77951.c |   4 +-
+ drivers/pinctrl/renesas/pfc-r8a7796.c  |  10 +-
+ drivers/pinctrl/renesas/pfc-r8a77965.c |  79 ++--
+ drivers/pinctrl/renesas/pfc-r8a77970.c | 175 +++++++-
+ drivers/pinctrl/renesas/pfc-r8a77980.c | 209 +++++++++-
+ drivers/pinctrl/renesas/pfc-r8a77990.c |  16 +-
+ drivers/pinctrl/renesas/pfc-r8a77995.c | 246 +++++++++++-
+ 12 files changed, 2138 insertions(+), 144 deletions(-)
+
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
