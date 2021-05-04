@@ -4,77 +4,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A45C43618
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB3EC433B4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9E807613C3
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:36:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4E8A613B4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:41:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231360AbhEDOhE (ORCPT
+        id S231448AbhEDOmY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 4 May 2021 10:37:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59616 "EHLO
+        Tue, 4 May 2021 10:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231378AbhEDOhB (ORCPT
+        with ESMTP id S230307AbhEDOmX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 May 2021 10:37:01 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C76FCC061344
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  4 May 2021 07:36:05 -0700 (PDT)
+        Tue, 4 May 2021 10:42:23 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1209C061574
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  4 May 2021 07:41:28 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:1ca1:e52f:3ec5:3ac5])
-        by andre.telenet-ops.be with bizsmtp
-        id 0ec32500B3aEpPb01ec3lF; Tue, 04 May 2021 16:36:04 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id 0ehT2500B3aEpPb06ehT2W; Tue, 04 May 2021 16:41:27 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ldw9a-002njx-NE; Tue, 04 May 2021 16:36:02 +0200
+        id 1ldwEo-002nqk-TE; Tue, 04 May 2021 16:41:26 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1ldw9a-00HQ9t-An; Tue, 04 May 2021 16:36:02 +0200
+        id 1ldwEo-00HQGe-DL; Tue, 04 May 2021 16:41:26 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Chris Brandt <chris.brandt@renesas.com>
-Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/6] i2c: rcar: Drop "renesas,i2c-rcar"
-Date:   Tue,  4 May 2021 16:35:53 +0200
-Message-Id: <a847c1866a006b4a4fb24ce4c97131493696c524.1620138454.git.geert+renesas@glider.be>
+Subject: [PATCH/RFC 1/2] ARM: dts: r8a7778: Correct internal delay for i2c[123]
+Date:   Tue,  4 May 2021 16:41:24 +0200
+Message-Id: <1eac63f15a776e492ff8a2d8447c5e1019982dd1.1620138979.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1620138454.git.geert+renesas@glider.be>
-References: <cover.1620138454.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1620138979.git.geert+renesas@glider.be>
+References: <cover.1620138979.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The compatible value "renesas,i2c-rcar" was deprecated in commit
-ad4a8dc3fec6485b ("i2c: rcar: Add per-Generation fallback bindings"),
-and never had any users in upstream Linux.  Drop its match entry from
-the driver.
+According to the R-Car M1A Hardware User's Manual Rev. 1.00, the LSI
+internal delay for I2C instances 1 to 3 is 5 ns (typ.), which differs
+from the default 50 ns as specified for instance 0.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/i2c/busses/i2c-rcar.c | 1 -
- 1 file changed, 1 deletion(-)
+i2c[123] are not used in upstream DTS files.
+---
+ arch/arm/boot/dts/r8a7778.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 327c092a4130bd20..bff9913c37b8b277 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -1013,7 +1013,6 @@ static const struct of_device_id rcar_i2c_dt_ids[] = {
- 	{ .compatible = "renesas,i2c-r8a7794", .data = (void *)I2C_RCAR_GEN2 },
- 	{ .compatible = "renesas,i2c-r8a7795", .data = (void *)I2C_RCAR_GEN3 },
- 	{ .compatible = "renesas,i2c-r8a7796", .data = (void *)I2C_RCAR_GEN3 },
--	{ .compatible = "renesas,i2c-rcar", .data = (void *)I2C_RCAR_GEN1 },	/* Deprecated */
- 	{ .compatible = "renesas,rcar-gen1-i2c", .data = (void *)I2C_RCAR_GEN1 },
- 	{ .compatible = "renesas,rcar-gen2-i2c", .data = (void *)I2C_RCAR_GEN2 },
- 	{ .compatible = "renesas,rcar-gen3-i2c", .data = (void *)I2C_RCAR_GEN3 },
+diff --git a/arch/arm/boot/dts/r8a7778.dtsi b/arch/arm/boot/dts/r8a7778.dtsi
+index c9f8735860bf824c..95efbafb0b7077a2 100644
+--- a/arch/arm/boot/dts/r8a7778.dtsi
++++ b/arch/arm/boot/dts/r8a7778.dtsi
+@@ -166,6 +166,7 @@ i2c1: i2c@ffc71000 {
+ 		interrupts = <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_I2C1>;
+ 		power-domains = <&cpg_clocks>;
++		i2c-scl-internal-delay-ns = <5>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -177,6 +178,7 @@ i2c2: i2c@ffc72000 {
+ 		interrupts = <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_I2C2>;
+ 		power-domains = <&cpg_clocks>;
++		i2c-scl-internal-delay-ns = <5>;
+ 		status = "disabled";
+ 	};
+ 
+@@ -188,6 +190,7 @@ i2c3: i2c@ffc73000 {
+ 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
+ 		clocks = <&mstp0_clks R8A7778_CLK_I2C3>;
+ 		power-domains = <&cpg_clocks>;
++		i2c-scl-internal-delay-ns = <5>;
+ 		status = "disabled";
+ 	};
+ 
 -- 
 2.25.1
 
