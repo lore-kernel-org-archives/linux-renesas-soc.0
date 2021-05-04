@@ -2,85 +2,212 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D243CC433B4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:05:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3212C433B4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:36:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0D4861164
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:05:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69EF6610A5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:36:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231392AbhEDOGq (ORCPT
+        id S231347AbhEDOhB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 4 May 2021 10:06:46 -0400
-Received: from mail-ot1-f52.google.com ([209.85.210.52]:38513 "EHLO
-        mail-ot1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231336AbhEDOGq (ORCPT
+        Tue, 4 May 2021 10:37:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59596 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231151AbhEDOhB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 May 2021 10:06:46 -0400
-Received: by mail-ot1-f52.google.com with SMTP id q7-20020a9d57870000b02902a5c2bd8c17so7634188oth.5;
-        Tue, 04 May 2021 07:05:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dJ098IqVRr87l/DzRCJEGpPHQTJM6HZjM/MT07n97Yo=;
-        b=Ol8gVmNCIC8fBjoRNQKLqSNicnO1abGzWxniRhtQJhurqrJhiUtrA3OHBQhP0lPcDK
-         5NcIK90XMGfHzvGFxbwRkMfib/UUi7zy+54ehfo7/7HDQLcfRenjM7N5K7WNxT0LglmG
-         T/gVL2bcXHI29sjCSsFpHjhRHtk9woKRF3ZifDZH2sHMw7YbVnA5JifzOYOTq5g6SwIs
-         Ly+W5Xx147rUFz0iUdkT/1kYmhQsJizSTXtMBpMK66otdnNjY55Fpzcj13KKnX/ezQQQ
-         VpugOsz5YDdaGqmTDJYUjdMtsheDBHXkDxaAQPpgAx5hP35TEib4D6G2rfntSTDTt/OL
-         YwdA==
-X-Gm-Message-State: AOAM5321nqL1Q5+IUJkXNo7axKwN9ZiCvaSaTAiBYrxcQOu2bHIt7qVB
-        Ia1U90O8p5foHaHibNUwRNzcB0BLrQ==
-X-Google-Smtp-Source: ABdhPJxIh1SpbK1ACKxULPdmeBkX4mc41//B0xuWCwcREZv6iqdtkBiwfuxUB/wXkhAIL4Au2olafQ==
-X-Received: by 2002:a05:6830:2004:: with SMTP id e4mr19573122otp.78.1620137151151;
-        Tue, 04 May 2021 07:05:51 -0700 (PDT)
-Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e11sm249249ook.20.2021.05.04.07.05.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 May 2021 07:05:49 -0700 (PDT)
-Received: (nullmailer pid 4063078 invoked by uid 1000);
-        Tue, 04 May 2021 14:05:48 -0000
-Date:   Tue, 4 May 2021 09:05:48 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     "David S . Miller" <davem@davemloft.net>,
-        Adam Ford <aford173@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        netdev@vger.kernel.org,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        Jakub Kicinski <kuba@kernel.org>
-Subject: Re: [PATCH] dt-bindings: net: renesas,etheravb: Fix optional second
- clock name
-Message-ID: <20210504140548.GA4063024@robh.at.kernel.org>
-References: <b3d91c9f70a15792ad19c87e4ea35fc876600fae.1620118901.git.geert+renesas@glider.be>
+        Tue, 4 May 2021 10:37:01 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B8FBC061763
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  4 May 2021 07:36:05 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:1ca1:e52f:3ec5:3ac5])
+        by andre.telenet-ops.be with bizsmtp
+        id 0ec32500e3aEpPb01ec3lV; Tue, 04 May 2021 16:36:03 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ldw9b-002nk1-11; Tue, 04 May 2021 16:36:03 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ldw9a-00HQAD-E4; Tue, 04 May 2021 16:36:02 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chris Brandt <chris.brandt@renesas.com>
+Cc:     linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 5/6] dt-bindings: i2c: renesas,riic: Convert to json-schema
+Date:   Tue,  4 May 2021 16:35:57 +0200
+Message-Id: <e1bb5790675b6f4a518c6a9cbc22eb7452a2f78c.1620138454.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1620138454.git.geert+renesas@glider.be>
+References: <cover.1620138454.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b3d91c9f70a15792ad19c87e4ea35fc876600fae.1620118901.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, 04 May 2021 11:03:00 +0200, Geert Uytterhoeven wrote:
-> If the optional "clock-names" property is present, but the optional TXC
-> reference clock is not, "make dtbs_check" complains:
-> 
->     ethernet@e6800000: clock-names: ['fck'] is too short
-> 
-> Fix this by declaring that a single clock name is valid.
-> While at it, drop the superfluous upper limit on the number of clocks,
-> as it is implied by the list of descriptions.
-> 
-> Fixes: 6f43735b6da64bd4 ("dt-bindings: net: renesas,etheravb: Add additional clocks")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  Documentation/devicetree/bindings/net/renesas,etheravb.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+Convert the Renesas RZ/A I2C Bus Interface (RIIC) Device Tree binding
+documentation to json-schema.
 
-Applied, thanks!
+Document missing properties.
+Update the example to match reality.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../devicetree/bindings/i2c/renesas,riic.txt  | 32 -------
+ .../devicetree/bindings/i2c/renesas,riic.yaml | 83 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 84 insertions(+), 33 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/renesas,riic.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+
+diff --git a/Documentation/devicetree/bindings/i2c/renesas,riic.txt b/Documentation/devicetree/bindings/i2c/renesas,riic.txt
+deleted file mode 100644
+index e26fe3ad86a9509f..0000000000000000
+--- a/Documentation/devicetree/bindings/i2c/renesas,riic.txt
++++ /dev/null
+@@ -1,32 +0,0 @@
+-Device tree configuration for Renesas RIIC driver
+-
+-Required properties:
+-- compatible      :
+-	"renesas,riic-r7s72100" if the device is a part of a R7S72100 SoC.
+-	"renesas,riic-r7s9210" if the device is a part of a R7S9210 SoC.
+-	"renesas,riic-rz" for a generic RZ/A compatible device.
+-- reg             : address start and address range size of device
+-- interrupts      : 8 interrupts (TEI, RI, TI, SPI, STI, NAKI, ALI, TMOI)
+-- clock-frequency : frequency of bus clock in Hz
+-- #address-cells  : should be <1>
+-- #size-cells     : should be <0>
+-
+-Pinctrl properties might be needed, too. See there.
+-
+-Example:
+-
+-	i2c0: i2c@fcfee000 {
+-		compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
+-		reg = <0xfcfee000 0x44>;
+-		interrupts = <0 157 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 158 IRQ_TYPE_EDGE_RISING>,
+-			     <0 159 IRQ_TYPE_EDGE_RISING>,
+-			     <0 160 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 161 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 162 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 163 IRQ_TYPE_LEVEL_HIGH>,
+-			     <0 164 IRQ_TYPE_LEVEL_HIGH>;
+-		clock-frequency = <100000>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-	};
+diff --git a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+new file mode 100644
+index 0000000000000000..e6951bf451d95cff
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+@@ -0,0 +1,83 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/renesas,riic.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/A I2C Bus Interface (RIIC)
++
++maintainers:
++  - Chris Brandt <chris.brandt@renesas.com>
++  - Wolfram Sang <wsa+renesas@sang-engineering.com>
++
++allOf:
++  - $ref: /schemas/i2c/i2c-controller.yaml#
++
++properties:
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++              - renesas,riic-r7s72100 # RZ/A1H
++              - renesas,riic-r7s9210  # RZ/A2M
++          - const: renesas,riic-rz    # RZ/A
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: Transmit End Interrupt (TEI)
++      - description: Receive Data Full Interrupt (RI)
++      - description: Transmit Data Empty Interrupt (TI)
++      - description: Stop Condition Detection Interrupt (SPI)
++      - description: Start Condition Detection Interrupt (STI)
++      - description: NACK Reception Interrupt (NAKI)
++      - description: Arbitration-Lost Interrupt (ALI)
++      - description: Timeout Interrupt (TMOI)
++
++  clock-frequency:
++    description:
++      Desired I2C bus clock frequency in Hz. The absence of this property
++      indicates the default frequency 100 kHz.
++
++  clocks:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++  - clock-frequency
++  - power-domains
++  - '#address-cells'
++  - '#size-cells'
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r7s72100-clock.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    i2c0: i2c@fcfee000 {
++            compatible = "renesas,riic-r7s72100", "renesas,riic-rz";
++            reg = <0xfcfee000 0x44>;
++            interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>,
++                         <GIC_SPI 159 IRQ_TYPE_EDGE_RISING>,
++                         <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
++                         <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++            clocks = <&mstp9_clks R7S72100_CLK_I2C0>;
++            clock-frequency = <100000>;
++            power-domains = <&cpg_clocks>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c8834d7a1aac0efd..ea519a8ffc6a9356 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15469,7 +15469,7 @@ F:	drivers/thermal/rcar_thermal.c
+ RENESAS RIIC DRIVER
+ M:	Chris Brandt <chris.brandt@renesas.com>
+ S:	Supported
+-F:	Documentation/devicetree/bindings/i2c/renesas,riic.txt
++F:	Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+ F:	drivers/i2c/busses/i2c-riic.c
+ 
+ RENESAS USB PHY DRIVER
+-- 
+2.25.1
+
