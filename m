@@ -2,88 +2,86 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 412BCC43461
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 09:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F4AAC433ED
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 12:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12174613AA
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 09:17:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BBF7613BC
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 12:17:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229814AbhEDJSc (ORCPT
+        id S230310AbhEDMSd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 4 May 2021 05:18:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45630 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229905AbhEDJSb (ORCPT
+        Tue, 4 May 2021 08:18:33 -0400
+Received: from www.zeus03.de ([194.117.254.33]:37332 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230188AbhEDMSc (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 May 2021 05:18:31 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F840C06174A
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  4 May 2021 02:17:31 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:1ca1:e52f:3ec5:3ac5])
-        by laurent.telenet-ops.be with bizsmtp
-        id 0ZHV2500U3aEpPb01ZHVfw; Tue, 04 May 2021 11:17:29 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ldrBJ-002jDL-7w; Tue, 04 May 2021 11:17:29 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ldrBI-00H7IP-JB; Tue, 04 May 2021 11:17:28 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Hai Nguyen Pham <hai.pham.ud@renesas.com>
-Subject: [PATCH 1/2] clk: renesas: cpg-mssr: Remove unused [RM]MSTPCR() definitions
-Date:   Tue,  4 May 2021 11:17:21 +0200
-Message-Id: <2d8bc4d9806b419ebb06030d2f31b2ea1e59b1d6.1620119700.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1620119700.git.geert+renesas@glider.be>
-References: <cover.1620119700.git.geert+renesas@glider.be>
+        Tue, 4 May 2021 08:18:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=k1; bh=2yyPH8se0+nZ6UbxlCbOuNBeCyT
+        1VfdEGO0/Rfn1+qg=; b=mg0cGIDNFEcN4pT7dU/bz4dBMh0S9LiKBCzdfA/hjsK
+        +ufW3tbvlzqhIVQyLYQcVzgp2d/IR2N56shr+N/Odo1PYijxOBKOSRxur1iz+sDu
+        743jJG6gUkDAvDFQiKm/K1Cbnatdvt6vnjx5FoipsXBOsp2+4u5bXyYnCJD9VIzw
+        =
+Received: (qmail 1352815 invoked from network); 4 May 2021 14:17:35 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 May 2021 14:17:35 +0200
+X-UD-Smtp-Session: l3s3148p1@n3zPD4DBqIsgAwDPXxOMAJUzfx/HAvHg
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: [PATCH] debugfs: only accept read attributes for blobs
+Date:   Tue,  4 May 2021 14:17:20 +0200
+Message-Id: <20210504121721.43385-1-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The Realtime Module Stop Control Register definitions (RMSTPCR(i)) are
-incorrect for i >= 8 on R-Car Gen2 and Gen3.
+Blobs can only be read. So, keep only 'read' file attributes because the
+others will not work and only confuse users.
 
-As these are unused, and not planned to be used, just like the
-corresponding Modem Module Stop Control Register definitions (MMSTPCR())
-on R-Mobile APE6 (they are intended for the software running on the
-Real-Time and Modem CPU cores), they can just be removed.
-
-Reported-by: Hai Nguyen Pham <hai.pham.ud@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 6 ------
- 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index fc531d35b269d3cd..c3230398e1c1b596 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -100,12 +100,6 @@ static const u16 srcr_for_v3u[] = {
- 	0x2C20, 0x2C24, 0x2C28, 0x2C2C, 0x2C30, 0x2C34, 0x2C38,
- };
+I was confused for a second, thinking blobs can be written to. I will
+fix the few in-kernel users doing it wrong seperately.
+
+ fs/debugfs/file.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+index 686e0ad28788..d6aa6e04b7af 100644
+--- a/fs/debugfs/file.c
++++ b/fs/debugfs/file.c
+@@ -890,7 +890,8 @@ static const struct file_operations fops_blob = {
+ /**
+  * debugfs_create_blob - create a debugfs file that is used to read a binary blob
+  * @name: a pointer to a string containing the name of the file to create.
+- * @mode: the permission that the file should have
++ * @mode: the read permission that the file should have (other permissions are
++ * 	  masked out)
+  * @parent: a pointer to the parent dentry for this file.  This should be a
+  *          directory dentry if set.  If this parameter is %NULL, then the
+  *          file will be created in the root of the debugfs filesystem.
+@@ -914,7 +915,7 @@ struct dentry *debugfs_create_blob(const char *name, umode_t mode,
+ 				   struct dentry *parent,
+ 				   struct debugfs_blob_wrapper *blob)
+ {
+-	return debugfs_create_file_unsafe(name, mode, parent, blob, &fops_blob);
++	return debugfs_create_file_unsafe(name, mode & S_IRUGO, parent, blob, &fops_blob);
+ }
+ EXPORT_SYMBOL_GPL(debugfs_create_blob);
  
--/* Realtime Module Stop Control Register offsets */
--#define RMSTPCR(i)	(smstpcr[i] - 0x20)
--
--/* Modem Module Stop Control Register offsets (r8a73a4) */
--#define MMSTPCR(i)	(smstpcr[i] + 0x20)
--
- /* Software Reset Clearing Register offsets */
- 
- static const u16 srstclr[] = {
 -- 
-2.25.1
+2.30.0
 
