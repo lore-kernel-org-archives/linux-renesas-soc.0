@@ -2,84 +2,69 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3388C43460
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E854C433ED
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 83DA6613B4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40C62613B4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  4 May 2021 14:42:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230307AbhEDOmY (ORCPT
+        id S231150AbhEDOnR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 4 May 2021 10:42:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60856 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231467AbhEDOmY (ORCPT
+        Tue, 4 May 2021 10:43:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36792 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230086AbhEDOnR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 4 May 2021 10:42:24 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76785C061574
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  4 May 2021 07:41:29 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:1ca1:e52f:3ec5:3ac5])
-        by albert.telenet-ops.be with bizsmtp
-        id 0ehT250083aEpPb06ehT2T; Tue, 04 May 2021 16:41:28 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ldwEo-002nql-QG; Tue, 04 May 2021 16:41:26 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1ldwEo-00HQGb-CF; Tue, 04 May 2021 16:41:26 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 0/2] ARM: dts: rcar-gen1: Correct internal delay for i2c[123]
-Date:   Tue,  4 May 2021 16:41:23 +0200
-Message-Id: <cover.1620138979.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Tue, 4 May 2021 10:43:17 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 59B5B613B3;
+        Tue,  4 May 2021 14:42:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1620139342;
+        bh=PYPsVpOMTvNJwbf8RMnEK/FX8y+faIhHsQH0q972Hpo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=JxYzEEDwLUP8zOrBerahSq6vHZSWM67cK8aNf0h3rNy9+WAzOkIYkU2IMAGCLwswu
+         8Aqy/7MyTMeLZzU9uhUoXsFY2cc83va0xSto8NQXrYNpv2cqpmIXn4FtJYOnw1qu1A
+         z10/etRdjB1rSG+65ZYv1fFcxP72CdpuVVZXtqP04t6W9rT70gWtcXsVBuI75PhTYP
+         P15zhg+pF24h2FR55fx3ciOsDzPFwrff5O69htjBcbPyU7Q6+3cqNMGZtEkdiktl3s
+         /lOQ/cYJ9U5GZw60jG4I35wYG8aJtcVWQKnaeAkJI3T52M1eRA+ZXmynKDWS8AsSTe
+         H2fPJa0ryIVyw==
+Received: by mail-qk1-f178.google.com with SMTP id i67so5602351qkc.4;
+        Tue, 04 May 2021 07:42:22 -0700 (PDT)
+X-Gm-Message-State: AOAM532SHoUQotPrwtBZntnzwVa2Gbc2Svm4jA+95/TdEj8T/hVKLLPM
+        dV2SZMBbbNp6+P8KqeECQJCESMxMEbB4aNC9MA==
+X-Google-Smtp-Source: ABdhPJxB4e7Sk9Wq5fxRct/7J6Zd7HsiLal+5KjbDTA1U1QuVbHi86pOHClFGrQblIfiKf5y8tKrEDoLRlmbHZ77xRc=
+X-Received: by 2002:a05:620a:1409:: with SMTP id d9mr25280915qkj.464.1620139341502;
+ Tue, 04 May 2021 07:42:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1620138454.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1620138454.git.geert+renesas@glider.be>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 4 May 2021 09:42:08 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKTYq0T6RP6oR928HmADSeoJREoF+RMAHNm+YGigiS4AQ@mail.gmail.com>
+Message-ID: <CAL_JsqKTYq0T6RP6oR928HmADSeoJREoF+RMAHNm+YGigiS4AQ@mail.gmail.com>
+Subject: Re: [PATCH 0/6] dt-bindings: i2c: renesas: Convert to json-schema
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+On Tue, May 4, 2021 at 9:36 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+>         Hi all,
+>
+> This patch series converts the DT bindings for the various I2C
+> controllers found in Renesas SoCs to json-schema, after a small cleanup
+> to ease the conversion.
 
-This patch series lowers the internal delays for the second to fourth
-I2C instances on R-Car Gen1 SoCs, to match the Hardware User's Manuals.
+You missed the DT list. Can you resend please.
 
-This is untested, because these I2C instances are not used in upstream
-DTS files, and due to lack of direct hardware access for measurements.
-
-If both patches are accepted, I'll probably squash them together while
-applying.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  ARM: dts: r8a7778: Correct internal delay for i2c[123]
-  ARM: dts: r8a7779: Correct internal delay for i2c[123]
-
- arch/arm/boot/dts/r8a7778.dtsi | 3 +++
- arch/arm/boot/dts/r8a7779.dtsi | 3 +++
- 2 files changed, 6 insertions(+)
-
--- 
-2.25.1
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+Rob
