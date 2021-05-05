@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A489DC43617
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 May 2021 09:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0CAC4363C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 May 2021 09:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7AF46613FE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 May 2021 09:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7296C613FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 May 2021 09:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232540AbhEEJnT (ORCPT
+        id S232593AbhEEJnV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 May 2021 05:43:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48656 "EHLO mail.kernel.org"
+        Wed, 5 May 2021 05:43:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232435AbhEEJnR (ORCPT
+        id S232441AbhEEJnR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 5 May 2021 05:43:17 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 44BC161423;
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 4F5F06142C;
         Wed,  5 May 2021 09:42:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1620207739;
-        bh=6MhSd0Gx/6VuoMI9uWT2v1VRzcCGAFf3IJvFSMDOw+M=;
+        bh=nQwSJPLaVBdYjIemEjVYgYFNl6DQmZf6LrKXcLdjxJM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FWPk3sVYJHJFzNk5hqt10Ix93PRAUjxWb5bPNk0UkGojFOgypyd5HMdoKdDdkjIEC
-         FyYah+GV1zFdewE7dpqboFKqO4wcfPy8jGC5Fr+mv44rI/AvHfZRgqZgJ5QVAM0skq
-         ve0rBKhepGUR1xCOq5IhUkPzDbZ/zWc43XQdw4rXgXOS0+t41Tg284oXVBq+WvqG99
-         MRIMHX5TC5iqXqH6heIRMiTJiln3DUNsQdjDwTagu+R7loMe7/vkynzzdmOGCSsMe+
-         2vszbikT8+ly+cOVJZaS+453+Ow+I8yhk2dUcQgcjOIpXPKnuGuNko/ds5ssfsTrOx
-         LOSBaFL3lQSMw==
+        b=F9WUUhkgAtjIMrRyssd4lqvAgaNoCpjaPTh7w7MGeWRglTuwvS98rekMY6tjnCFfU
+         qN1nJqOXFDSgxykV8A1UP4emDRvb/rsb3LW6ZZhBi5Ucb7BFnz4lMW1ZIpuZosoIDS
+         nQKYca3xqqSVSwNF9R5+gYdxDpyQJz+oBXc0yadciXJRqjDBS4uCl77uXuSRTFGhta
+         kXZxGGiZxKoCrim6BkWlJtAWscRtJXcd8Jrv5qtr7ZLOa2m5+PGFvksDUVVxC96Rru
+         xwL3j/PqrCyZpMKnz23T+WtGdFASUpZxmpX/TewQDPeA56fy040o3GUQv351bIF/IT
+         UXqf5fbLWQNpw==
 Received: by mail.kernel.org with local (Exim 4.94)
         (envelope-from <mchehab@kernel.org>)
-        id 1leE2r-00AHwU-6x; Wed, 05 May 2021 11:42:17 +0200
+        id 1leE2r-00AHwR-5F; Wed, 05 May 2021 11:42:17 +0200
 From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
         Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-        Jacopo Mondi <jacopo@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 14/25] media: renesas-ceu: Properly check for PM errors
-Date:   Wed,  5 May 2021 11:42:04 +0200
-Message-Id: <c3b5546444a33840c569e9b7b968f5f81db96ac0.1620207353.git.mchehab+huawei@kernel.org>
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 13/25] media: rcar_fdp1: fix pm_runtime_get_sync() usage count
+Date:   Wed,  5 May 2021 11:42:03 +0200
+Message-Id: <372d88637707ececab77fffaae49d455d90cf24f.1620207353.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <cover.1620207353.git.mchehab+huawei@kernel.org>
 References: <cover.1620207353.git.mchehab+huawei@kernel.org>
@@ -58,43 +57,67 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Right now, the driver just assumes that PM runtime resume
-worked, but it may fail.
-
-Well, the pm_runtime_get_sync() internally increments the
+The pm_runtime_get_sync() internally increments the
 dev->power.usage_count without decrementing it, even on errors.
-
-So, using it is tricky. Let's replace it by the new
-pm_runtime_resume_and_get(), introduced by:
+Replace it by the new pm_runtime_resume_and_get(), introduced by:
 commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
-and return an error if something bad happens.
+in order to properly decrement the usage counter, avoiding
+a potential PM usage counter leak.
 
-This should ensure that the PM runtime usage_count will be
-properly decremented if an error happens at open time.
+Also, right now, the driver is ignoring any troubles when
+trying to do PM resume. So, add the proper error handling
+for the code.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- drivers/media/platform/renesas-ceu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/media/platform/rcar_fdp1.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/renesas-ceu.c b/drivers/media/platform/renesas-ceu.c
-index cd137101d41e..17f01b6e3fe0 100644
---- a/drivers/media/platform/renesas-ceu.c
-+++ b/drivers/media/platform/renesas-ceu.c
-@@ -1099,10 +1099,10 @@ static int ceu_open(struct file *file)
+diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
+index d26413fa5205..89aac60066d9 100644
+--- a/drivers/media/platform/rcar_fdp1.c
++++ b/drivers/media/platform/rcar_fdp1.c
+@@ -2135,7 +2135,9 @@ static int fdp1_open(struct file *file)
+ 	}
  
- 	mutex_lock(&ceudev->mlock);
- 	/* Causes soft-reset and sensor power on on first open */
--	pm_runtime_get_sync(ceudev->dev);
-+	ret = pm_runtime_resume_and_get(ceudev->dev);
- 	mutex_unlock(&ceudev->mlock);
+ 	/* Perform any power management required */
+-	pm_runtime_get_sync(fdp1->dev);
++	ret = pm_runtime_resume_and_get(fdp1->dev);
++	if (ret < 0)
++		goto error_pm;
  
--	return 0;
-+	return ret;
- }
+ 	v4l2_fh_add(&ctx->fh);
  
- static int ceu_release(struct file *file)
+@@ -2145,6 +2147,8 @@ static int fdp1_open(struct file *file)
+ 	mutex_unlock(&fdp1->dev_mutex);
+ 	return 0;
+ 
++error_pm:
++       v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
+ error_ctx:
+ 	v4l2_ctrl_handler_free(&ctx->hdl);
+ 	kfree(ctx);
+@@ -2352,7 +2356,9 @@ static int fdp1_probe(struct platform_device *pdev)
+ 
+ 	/* Power up the cells to read HW */
+ 	pm_runtime_enable(&pdev->dev);
+-	pm_runtime_get_sync(fdp1->dev);
++	ret = pm_runtime_resume_and_get(fdp1->dev);
++	if (ret < 0)
++		goto disable_pm;
+ 
+ 	hw_version = fdp1_read(fdp1, FD1_IP_INTDATA);
+ 	switch (hw_version) {
+@@ -2381,6 +2387,9 @@ static int fdp1_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++disable_pm:
++	pm_runtime_disable(fdp1->dev);
++
+ release_m2m:
+ 	v4l2_m2m_release(fdp1->m2m_dev);
+ 
 -- 
 2.30.2
 
