@@ -2,126 +2,108 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43D7FC433ED
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 May 2021 12:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D471DC433ED
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 May 2021 19:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0BF8E613BC
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 May 2021 12:32:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB21461106
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  5 May 2021 19:00:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232370AbhEEMdy (ORCPT
+        id S234278AbhEETBg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 5 May 2021 08:33:54 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3024 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229793AbhEEMdx (ORCPT
+        Wed, 5 May 2021 15:01:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42618 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229821AbhEETBg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 5 May 2021 08:33:53 -0400
-Received: from fraeml712-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4FZwnL147Bz70gJ2;
-        Wed,  5 May 2021 20:21:58 +0800 (CST)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml712-chm.china.huawei.com (10.206.15.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 5 May 2021 14:32:55 +0200
-Received: from localhost (10.52.120.138) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 5 May 2021
- 13:32:54 +0100
-Date:   Wed, 5 May 2021 13:31:15 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-CC:     <linuxarm@huawei.com>, <mauro.chehab@huawei.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 13/25] media: rcar_fdp1: fix pm_runtime_get_sync() usage
- count
-Message-ID: <20210505133115.00007bd1@Huawei.com>
-In-Reply-To: <372d88637707ececab77fffaae49d455d90cf24f.1620207353.git.mchehab+huawei@kernel.org>
-References: <cover.1620207353.git.mchehab+huawei@kernel.org>
-        <372d88637707ececab77fffaae49d455d90cf24f.1620207353.git.mchehab+huawei@kernel.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
+        Wed, 5 May 2021 15:01:36 -0400
+Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 22677C061574;
+        Wed,  5 May 2021 12:00:39 -0700 (PDT)
+Received: by mail-lj1-x22f.google.com with SMTP id v6so3853867ljj.5;
+        Wed, 05 May 2021 12:00:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=FVvHTCqWtGpl0IGBF8jlGEDIVJKl+y97+gtbqKQlMW0=;
+        b=QwjCuTvJb6DtTlpb8Eiuk6IOwzDq55dN+V0c+GJa5LkEHVXp9cCyszJ91JM+34tJZ6
+         wodlgMd2WfQosHcag/TpshKoJORfN/D+yv4wTh/N1EbZWIILU8MsDDy7OctADUatMkqJ
+         Iw2S3K2yrOLil0RdCMasy+9MlUZRVq5npUlZhDg7NhNXAn2qjXfe2E16wCKIygOtyc1G
+         dsNTm3/uPyhRwXj1sQ+Pwe7n8pROHH2C6pEngEcyc2HLUf40jj1KFTRI9kvAFeQIOKql
+         mzqSlBPaVoOCMffjKR3yScUm9ErxbxCjQVZVpeIB834Wx+jlB6Xr7uXOPzUQuQfh7K7V
+         h85w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=FVvHTCqWtGpl0IGBF8jlGEDIVJKl+y97+gtbqKQlMW0=;
+        b=k6+W7Jr7fWvIyy0yyS7uJsn+UUCILE1FDNGWzLo9PZjGKwB+owBOooHi9O8fge6/Mh
+         60d7uqmwCGbmIziYX2zVwUGYqY8nzkTUlUUoOpsJQIhfShMtfpzG/h9LGQG8UY4JNwQ3
+         gTUMjszs6dcBZtxOiwTQUwJDGis5dpkPCnpIRbcnnVkEFPZUOtTDWnS6/2eQV7DaSEBk
+         hlYjCadIq0DILSZHjaTZ6ictBFC1WEQCEplTjwpT90QBi2kGpXerNqdQkr+5dCiAhzRd
+         jC+4kOPhHVu+3BMvvG05NZsg9liv28bQrW6PTxwWjuRLO6vGX38tN3E1jgCLmNE7foOE
+         yavA==
+X-Gm-Message-State: AOAM531wv0jSAhmxZoMFl2VJPem5J8bn9kV5QJRe13YRbibf9bQQEEV4
+        r2Bj42upsQEIRNqumk5aNcTu2Cn+ecs=
+X-Google-Smtp-Source: ABdhPJyosmh+LR6mHWaiBkYOJquewtQyCmXRwcXwfJp3mmit7oF8hqah3U2ureTL/pqh2iVVLJZzvA==
+X-Received: by 2002:a2e:9648:: with SMTP id z8mr230373ljh.328.1620241237538;
+        Wed, 05 May 2021 12:00:37 -0700 (PDT)
+Received: from [192.168.1.102] ([31.173.85.20])
+        by smtp.gmail.com with ESMTPSA id m11sm21297ljp.36.2021.05.05.12.00.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 May 2021 12:00:37 -0700 (PDT)
+Subject: Re: [PATCH] net: renesas: ravb: Fix a stuck issue when a lot of
+ frames are received
+To:     David Miller <davem@davemloft.net>
+Cc:     patchwork-bot+netdevbpf@kernel.org,
+        yoshihiro.shimoda.uh@renesas.com, kuba@kernel.org,
+        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20210421045246.215779-1-yoshihiro.shimoda.uh@renesas.com>
+ <161902800958.24373.15370499378110944137.git-patchwork-notify@kernel.org>
+ <d5dd135b-241f-6116-466d-8505b7e7d697@gmail.com>
+ <20210421.112020.2130812672604395386.davem@davemloft.net>
+From:   Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Message-ID: <c9afe6d8-12e8-32af-4fb0-527f6fd51703@gmail.com>
+Date:   Wed, 5 May 2021 22:00:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+In-Reply-To: <20210421.112020.2130812672604395386.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.52.120.138]
-X-ClientProxiedBy: lhreml725-chm.china.huawei.com (10.201.108.76) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 5 May 2021 11:42:03 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+Hello!
 
-> The pm_runtime_get_sync() internally increments the
-> dev->power.usage_count without decrementing it, even on errors.
-> Replace it by the new pm_runtime_resume_and_get(), introduced by:
-> commit dd8088d5a896 ("PM: runtime: Add pm_runtime_resume_and_get to deal with usage counter")
-> in order to properly decrement the usage counter, avoiding
-> a potential PM usage counter leak.
-> 
-> Also, right now, the driver is ignoring any troubles when
-> trying to do PM resume. So, add the proper error handling
-> for the code.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  drivers/media/platform/rcar_fdp1.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rcar_fdp1.c b/drivers/media/platform/rcar_fdp1.c
-> index d26413fa5205..89aac60066d9 100644
-> --- a/drivers/media/platform/rcar_fdp1.c
-> +++ b/drivers/media/platform/rcar_fdp1.c
-> @@ -2135,7 +2135,9 @@ static int fdp1_open(struct file *file)
->  	}
->  
->  	/* Perform any power management required */
-> -	pm_runtime_get_sync(fdp1->dev);
-> +	ret = pm_runtime_resume_and_get(fdp1->dev);
-> +	if (ret < 0)
-> +		goto error_pm;
->  
->  	v4l2_fh_add(&ctx->fh);
->  
-> @@ -2145,6 +2147,8 @@ static int fdp1_open(struct file *file)
->  	mutex_unlock(&fdp1->dev_mutex);
->  	return 0;
->  
-> +error_pm:
-> +       v4l2_m2m_ctx_release(ctx->fh.m2m_ctx);
->  error_ctx:
->  	v4l2_ctrl_handler_free(&ctx->hdl);
->  	kfree(ctx);
-> @@ -2352,7 +2356,9 @@ static int fdp1_probe(struct platform_device *pdev)
->  
->  	/* Power up the cells to read HW */
->  	pm_runtime_enable(&pdev->dev);
-> -	pm_runtime_get_sync(fdp1->dev);
-> +	ret = pm_runtime_resume_and_get(fdp1->dev);
-> +	if (ret < 0)
-> +		goto disable_pm;
->  
->  	hw_version = fdp1_read(fdp1, FD1_IP_INTDATA);
->  	switch (hw_version) {
-> @@ -2381,6 +2387,9 @@ static int fdp1_probe(struct platform_device *pdev)
->  
->  	return 0;
->  
-> +disable_pm:
-> +	pm_runtime_disable(fdp1->dev);
-> +
->  release_m2m:
->  	v4l2_m2m_release(fdp1->m2m_dev);
->  
+   Sorry for the late reply -- the patch got into my spam folder, and I haven't seen it
+until this evening. Blame GMail for that.
 
+On 4/21/21 9:20 PM, David Miller wrote:
+
+>>    WTF is this rush?! :-/
+>>    I was going to review this patch (it didn't look well to me from th 1s glance)...
+
+> Timely reviews are really important.  If I've inspired you to review more quickly in the future,
+> then good. :)
+
+   The the patch hit my mailbox in the morning, and I prepared to post comments once I log in
+to the Linux laptop. When I was going to start writing comments, I received your mail saying
+that the patch was queued -- that's all within one day... :-/
+
+> Just responding "I will review this don't apply yet." as quickly as you can could avoid
+> this in the future.
+
+   OK, I'll try to remember...
+
+> Thanks.
+
+MBR, Sergei
