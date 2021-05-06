@@ -2,81 +2,87 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13F9C433B4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 May 2021 17:56:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00691C433B4
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 May 2021 20:44:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B48D161157
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 May 2021 17:56:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B982F61107
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  6 May 2021 20:44:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236367AbhEFR5R (ORCPT
+        id S231197AbhEFUpp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 6 May 2021 13:57:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37636 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236399AbhEFR5M (ORCPT
+        Thu, 6 May 2021 16:45:45 -0400
+Received: from mail-ot1-f41.google.com ([209.85.210.41]:46904 "EHLO
+        mail-ot1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230104AbhEFUpp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 6 May 2021 13:57:12 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21DA4C06138C
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  6 May 2021 10:56:03 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:f434:20f9:aa9e:b80c])
-        by laurent.telenet-ops.be with bizsmtp
-        id 1Vvy2500U0ZPnBx01VvyXi; Thu, 06 May 2021 19:56:02 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1leiEA-003NT5-31; Thu, 06 May 2021 19:55:58 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1leiE9-00HHNK-Bk; Thu, 06 May 2021 19:55:57 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Sergei Shtylyov <sergei.shtylyov@gmail.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Cc:     linux-can@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/2] dt-bindings: can: renesas: Convert to json-schema
-Date:   Thu,  6 May 2021 19:55:52 +0200
-Message-Id: <cover.1620323639.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Thu, 6 May 2021 16:45:45 -0400
+Received: by mail-ot1-f41.google.com with SMTP id d3-20020a9d29030000b029027e8019067fso6054853otb.13;
+        Thu, 06 May 2021 13:44:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=yEgXRVHgBfCSp3TydSUffdkAuZnYxGWkRYFmYYdX1Ac=;
+        b=GaOCZnSo/Z1x7ccnx41C0uZCXypHE9Dh17Ao2liasT4V0ZfTvrO2n46xW6lspZiq31
+         ixGWUHgA7omcLb5htNteZDy8L434vV0b80+YT/04Dvn43ESNH+ya+C1LbuS155RujZLU
+         Qre0+PJDmtz5EtdaenBadV0yFkZLtMzEsflHyTcPn0SzLUhRgXTUbwgGjXE9ZWY0TrcJ
+         ixzGQpHjGlmhbCKhKJvQbnKXPnZ8HHjFNbywcEGeCU1F0zUKx0hDo6ewawBAI1OzSIA3
+         JU6QqzdXfkw2WsFvob6vB5A4/PN9wAE5/Ttd1SlUezXm7KbKm+E2nnnZouhUs4xER2p+
+         Ra3Q==
+X-Gm-Message-State: AOAM530jPq2u231NMITbxmBcLBc+Pe3ZNmSTsmePERJp+ptWG8vyBhod
+        5S95Cbz1a8fxcting5VkKBDb/6HoRQ==
+X-Google-Smtp-Source: ABdhPJyHZhKBO5buLzfc5n7iiB6PyyPcjQDWTM4bVCXASwmjMDsdzTHNOxIjcJgLrNQCXmyR12fesA==
+X-Received: by 2002:a9d:7997:: with SMTP id h23mr5360295otm.366.1620333886104;
+        Thu, 06 May 2021 13:44:46 -0700 (PDT)
+Received: from robh.at.kernel.org (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t5sm238759otm.33.2021.05.06.13.44.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 May 2021 13:44:45 -0700 (PDT)
+Received: (nullmailer pid 771472 invoked by uid 1000);
+        Thu, 06 May 2021 20:44:44 -0000
+Date:   Thu, 6 May 2021 15:44:44 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: power: sysc-rmobile: Convert to
+ json-schema
+Message-ID: <20210506204444.GA771402@robh.at.kernel.org>
+References: <22150cfd2ef9d57e84eb53a5dfed8379627a9423.1620119210.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22150cfd2ef9d57e84eb53a5dfed8379627a9423.1620119210.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi all,
+On Tue, 04 May 2021 11:09:00 +0200, Geert Uytterhoeven wrote:
+> Convert the Renesas R-Mobile System Controller (SYSC) Device Tree
+> binding documentation to json-schema.
+> 
+> Document missing properties.
+> Drop consumer example, as it does not belong here.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - Drop double quotes in $id and $schema,
+>   - Drop patternProperties and regex,
+>   - Move pm-domains to properties,
+>   - Add $defs with pd-node description to fix nested domains,
+>   - Make pm-domains required.
+> ---
+>  .../bindings/power/renesas,sysc-rmobile.txt   | 100 ---------------
+>  .../bindings/power/renesas,sysc-rmobile.yaml  | 121 ++++++++++++++++++
+>  2 files changed, 121 insertions(+), 100 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/power/renesas,sysc-rmobile.txt
+>  create mode 100644 Documentation/devicetree/bindings/power/renesas,sysc-rmobile.yaml
+> 
 
-This patch series converts the DT bindings for the Renesas R-Car CAN and
-CAN FD controllers found in Renesas SoCs to json-schema.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (2):
-  dt-bindings: can: rcar_can: Convert to json-schema
-  dt-bindings: can: rcar_canfd: Convert to json-schema
-
- .../devicetree/bindings/net/can/rcar_can.txt  |  80 ----------
- .../bindings/net/can/rcar_canfd.txt           | 107 --------------
- .../bindings/net/can/renesas,rcar-can.yaml    | 139 ++++++++++++++++++
- .../bindings/net/can/renesas,rcar-canfd.yaml  | 122 +++++++++++++++
- 4 files changed, 261 insertions(+), 187 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/net/can/rcar_can.txt
- delete mode 100644 Documentation/devicetree/bindings/net/can/rcar_canfd.txt
- create mode 100644 Documentation/devicetree/bindings/net/can/renesas,rcar-can.yaml
- create mode 100644 Documentation/devicetree/bindings/net/can/renesas,rcar-canfd.yaml
-
--- 
-2.25.1
-
+Applied, thanks!
