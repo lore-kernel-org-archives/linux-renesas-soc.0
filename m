@@ -2,140 +2,107 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A211C433B4
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 May 2021 08:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0BCC433B4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 May 2021 10:07:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 04905613E9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 May 2021 08:20:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65D7E613E9
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 12 May 2021 10:07:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbhELIV0 (ORCPT
+        id S230240AbhELKIy (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 12 May 2021 04:21:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50322 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229968AbhELIV0 (ORCPT
+        Wed, 12 May 2021 06:08:54 -0400
+Received: from mail02.asahi-net.or.jp ([202.224.55.14]:54289 "EHLO
+        mail02.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230230AbhELKIy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 12 May 2021 04:21:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1620807617; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Vza9DD+KUbiRtLfI0mIL3ImF5EprHsvwKgA+ti787LI=;
-        b=SEUCFz0zu0Zp1BQ9xz1mNFPtDYhbTNwQhQo77/WPTDUSYSs9YYUUH3rHkmMfCEgx7RVIJp
-        dwIeahyOWnteniGqdd3VuYtW/CarKwLYLktS4+AtvvPlDD3WewhKIPFriqz5n56j3P2hbq
-        S4D13UGTFc3ksE8v03AOtcpvvI1r4nc=
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 28C1BAF2C;
-        Wed, 12 May 2021 08:20:17 +0000 (UTC)
-Date:   Wed, 12 May 2021 10:20:16 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "agross@kernel.org" <agross@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        linux-power <linux-power@fi.rohmeurope.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Wed, 12 May 2021 06:08:54 -0400
+X-Greylist: delayed 442 seconds by postgrey-1.27 at vger.kernel.org; Wed, 12 May 2021 06:08:49 EDT
+Received: from sakura.ysato.name (ik1-413-38519.vs.sakura.ne.jp [153.127.30.23])
+        (Authenticated sender: PQ4Y-STU)
+        by mail02.asahi-net.or.jp (Postfix) with ESMTPA id 61E06218E5;
+        Wed, 12 May 2021 19:00:41 +0900 (JST)
+Received: from yo-satoh-debian.ysato.ml (v096177.dynamic.ppp.asahi-net.or.jp [124.155.96.177])
+        by sakura.ysato.name (Postfix) with ESMTPSA id 186721C0077;
+        Wed, 12 May 2021 19:00:41 +0900 (JST)
+Date:   Wed, 12 May 2021 19:00:40 +0900
+Message-ID: <87h7j86zlj.wl-ysato@users.sourceforge.jp>
+From:   Yoshinori Sato <ysato@users.sourceforge.jp>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Lee Jones <lee.jones@linaro.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Matteo Croce <mcroce@microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v9 02/10] reboot: Add hardware protection power-off
-Message-ID: <YJuPwAZroVZ/w633@alley>
-References: <cover.1620645507.git.matti.vaittinen@fi.rohmeurope.com>
- <97260f8e150abb898a262fade25860609b460912.1620645507.git.matti.vaittinen@fi.rohmeurope.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <97260f8e150abb898a262fade25860609b460912.1620645507.git.matti.vaittinen@fi.rohmeurope.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: pwm: renesas,tpu-pwm: Improve json-schema
+In-Reply-To: <d36e3690ce8c5a1e53d054552e4fd8b90d6a5478.1620648868.git.geert+renesas@glider.be>
+References: <cover.1620648868.git.geert+renesas@glider.be>
+        <d36e3690ce8c5a1e53d054552e4fd8b90d6a5478.1620648868.git.geert+renesas@glider.be>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/27
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon 2021-05-10 14:28:30, Matti Vaittinen wrote:
-> There can be few cases when we need to shut-down the system in order to
-> protect the hardware. Currently this is done at east by the thermal core
-> when temperature raises over certain limit.
+On Mon, 10 May 2021 21:18:34 +0900,
+Geert Uytterhoeven wrote:
 > 
-> Some PMICs can also generate interrupts for example for over-current or
-> over-voltage, voltage drops, short-circuit, ... etc. On some systems
-> these are a sign of hardware failure and only thing to do is try to
-> protect the rest of the hardware by shutting down the system.
+>   - Include the general PWM controller schema,
+>   - Make clocks, power-domains, and resets properties required.
 > 
-> Add shut-down logic which can be used by all subsystems instead of
-> implementing the shutdown in each subsystem. The logic is stolen from
-> thermal_core with difference of using atomic_t instead of a mutex in
-> order to allow calls directly from IRQ context.
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v2:
+>   - Keep additionalProperties, as pwm.yaml doesn't add any other
+>     properties.
+> ---
+>  .../bindings/pwm/renesas,tpu-pwm.yaml           | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
 > 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> 
-> diff --git a/kernel/reboot.c b/kernel/reboot.c
-> index a6ad5eb2fa73..5da8c80a2647 100644
-> --- a/kernel/reboot.c
-> +++ b/kernel/reboot.c
-> @@ -518,6 +519,85 @@ void orderly_reboot(void)
->  }
->  EXPORT_SYMBOL_GPL(orderly_reboot);
+> diff --git a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
+> index aa9a4570c9068226..7c99e42ad780c2cd 100644
+> --- a/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
+> +++ b/Documentation/devicetree/bindings/pwm/renesas,tpu-pwm.yaml
+> @@ -58,6 +58,23 @@ required:
+>    - compatible
+>    - reg
+>    - '#pwm-cells'
+> +  - clocks
+> +  - power-domains
+> +
+> +allOf:
+> +  - $ref: pwm.yaml#
+> +
+> +  - if:
+> +      not:
+> +        properties:
+> +          compatible:
+> +            contains:
+> +              enum:
+> +                - renesas,tpu-r8a73a4
+> +                - renesas,tpu-r8a7740
+> +    then:
+> +      required:
+> +        - resets
 >  
-> +/**
-> + * hw_failure_emergency_poweroff_func - emergency poweroff work after a known delay
-> + * @work: work_struct associated with the emergency poweroff function
-> + *
-> + * This function is called in very critical situations to force
-> + * a kernel poweroff after a configurable timeout value.
-> + */
-> +static void hw_failure_emergency_poweroff_func(struct work_struct *work)
-> +{
-> +	/*
-> +	 * We have reached here after the emergency shutdown waiting period has
-> +	 * expired. This means orderly_poweroff has not been able to shut off
-> +	 * the system for some reason.
-> +	 *
-> +	 * Try to shut down the system immediately using kernel_power_off
-> +	 * if populated
-> +	 */
-> +	WARN(1, "Hardware protection timed-out. Trying forced poweroff\n");
-> +	kernel_power_off();
+>  additionalProperties: false
+>  
+> -- 
+> 2.25.1
+> 
 
-WARN() look like an overkill here. It prints many lines that are not
-much useful in this case. The function is called from well-known
-context (workqueue worker).
+Acked-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 
-Also be aware that "panic_on_warn" commandline option will trigger
-panic() here.
-
-
-> +	/*
-> +	 * Worst of the worst case trigger emergency restart
-> +	 */
-> +	WARN(1,
-> +	     "Hardware protection shutdown failed. Trying emergency restart\n");
-> +	emergency_restart();
-
-Two consecutive WARN() calls are even less useful. They are eye
-catching but it is hard to find the only useful line with
-the custom message.
-
-Best Regards,
-Petr
+-- 
+Yosinori Sato
