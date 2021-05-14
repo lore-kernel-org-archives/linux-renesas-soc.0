@@ -2,300 +2,274 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-20.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65DAEC43460
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 May 2021 19:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 319BBC433ED
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 May 2021 20:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B00A61454
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 May 2021 19:29:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11937613BB
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 14 May 2021 20:06:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232473AbhENTa0 (ORCPT
+        id S232053AbhENUHT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 14 May 2021 15:30:26 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:62816 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231684AbhENTaZ (ORCPT
+        Fri, 14 May 2021 16:07:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43356 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231841AbhENUHS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 14 May 2021 15:30:25 -0400
-X-IronPort-AV: E=Sophos;i="5.82,300,1613401200"; 
-   d="scan'208";a="81148007"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 15 May 2021 04:24:08 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E40E64010914;
-        Sat, 15 May 2021 04:24:04 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Subject: [PATCH 15/16] arm64: dts: renesas: Add initial DTSI for RZ/G2{L,LC} SoC's
-Date:   Fri, 14 May 2021 20:22:17 +0100
-Message-Id: <20210514192218.13022-16-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210514192218.13022-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20210514192218.13022-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Fri, 14 May 2021 16:07:18 -0400
+Received: from mail-ed1-x52d.google.com (mail-ed1-x52d.google.com [IPv6:2a00:1450:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76685C061574;
+        Fri, 14 May 2021 13:06:05 -0700 (PDT)
+Received: by mail-ed1-x52d.google.com with SMTP id df21so8740830edb.3;
+        Fri, 14 May 2021 13:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BiGIBtdVws30LoLfAG6IIDlptJZEWM6VqDfkKAesSQM=;
+        b=WfAkctE+foUXBOJs/LBNeZkpmxWOr8ArhpFjN2qN2gzTQas2GUJzltv90oivb7Bg0p
+         HY4risKbU/SXZrdRODfSE7nA128Jx9jv802eDeqRQcRmopcNwYDwbAmzL4deSxQC4zeq
+         kzss8o/7BrHpTVOCoeABiWpi2JHQ+LxXGhP4oQucuFgl/DgQ8ojQRJveOEtzrj//rOz+
+         KjaLHtEhqaxQ9c2zIWreiDq3Vx2wtxPpXCk8/YlOCpGPfU9bRtyQUkQaSgTf50yUsllH
+         CZjgRtRzouKiJ52qJBf3gC3j8bMf4bcpSfGs+3R6YjDBUQXM0qAxyl6O9W+M5EW4zaZb
+         i3dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BiGIBtdVws30LoLfAG6IIDlptJZEWM6VqDfkKAesSQM=;
+        b=mrBOrIEZs5h7ELFCaJJ5aoJ0ZPF3Kyxk9ipcKjdHgHkTB4UVDfEtEReq+GLSWWfgmx
+         q9YgoLA+yEUNEE5yOsb61gpPe/iUHj2wcCflWRmFI0oS1Iqqt/3ZfbbPjh4+j2YNbgQ5
+         MUw1AJoV8Pc+UTGdsnNOpqStlEqsHW1oR0SumyDdvyKpVxsR7BfDDHcLlaHHoAAK61Uk
+         XOaSnOYrTasGAhG0tNXe/xFf/Tg4YvqHBhPZEUB7hCj/6xR/kH2gBK+yfNaETiyuvIGk
+         BLx/UA5gAgj6bqxBji5vJlMTwTJ0wHFq36o1YVa3DQvyA/yGFG3c2mjNSdTP9XsEbjyx
+         s2tA==
+X-Gm-Message-State: AOAM53370p77aZkkL1MwbVg1gZu9iwzmkG1vsvRBAXOPeJSAYwSqWOLa
+        LOkVldFsEJxOfuyvYSnjmCr+93vFEzs=
+X-Google-Smtp-Source: ABdhPJyGqdpU8scKEWNlwo5xC12pJf1WI8qgudSG+5uXpnvE/qYeRYAeJW2e8Jvn8iMNVJ/n7suDTQ==
+X-Received: by 2002:a05:6402:31b1:: with SMTP id dj17mr57609575edb.7.1621022764259;
+        Fri, 14 May 2021 13:06:04 -0700 (PDT)
+Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz. [89.176.112.137])
+        by smtp.gmail.com with ESMTPSA id o8sm4068556ejm.18.2021.05.14.13.06.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 May 2021 13:06:03 -0700 (PDT)
+From:   marek.vasut@gmail.com
+To:     linux-pci@vger.kernel.org
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH V6] PCI: rcar: Add L1 link state fix into data abort hook
+Date:   Fri, 14 May 2021 22:05:49 +0200
+Message-Id: <20210514200549.431275-1-marek.vasut@gmail.com>
+X-Mailer: git-send-email 2.30.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add initial DTSI for RZ/G2{L,LC} SoC's.
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-File structure:
-r9a07g044.dtsi  => RZ/G2L family SoC common parts
-r9a07g044l.dtsi => Specific to RZ/G2L (R9A07G044L) SoC
-r9a07g044l1.dtsi => Specific to RZ/G2L (R9A07G044L single cortex A55) SoC
-r9a07g044l2.dtsi => Specific to RZ/G2L (R9A07G044L dual cortex A55) SoC
+The R-Car PCIe controller is capable of handling L0s/L1 link states.
+While the controller can enter and exit L0s link state, and exit L1
+link state, without any additional action from the driver, to enter
+L1 link state, the driver must complete the link state transition by
+issuing additional commands to the controller.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+The problem is, this transition is not atomic. The controller sets
+PMEL1RX bit in PMSR register upon reception of PM_ENTER_L1 DLLP from
+the PCIe card, but then the controller enters some sort of inbetween
+state. The driver must detect this condition and complete the link
+state transition, by setting L1IATN bit in PMCTLR and waiting for
+the link state transition to complete.
+
+If a PCIe access happens inside this window, where the controller
+is between L0 and L1 link states, the access generates a fault and
+the ARM 'imprecise external abort' handler is invoked.
+
+Just like other PCI controller drivers, here we hook the fault handler,
+perform the fixup to help the controller enter L1 link state, and then
+restart the instruction which triggered the fault. Since the controller
+is in L1 link state now, the link can exit from L1 link state to L0 and
+successfully complete the access.
+
+While it was suggested to disable L1 link state support completely on
+the controller level, this would not prevent the L1 link state entry
+initiated by the link partner. This happens e.g. in case a PCIe card
+enters D3Hot state, which could be initiated from pci_set_power_state()
+if the card indicates D3Hot support, which in turn means link must enter
+L1 state. So instead, fix up the L1 link state after all.
+
+Note that this fixup is applicable only to Aarch32 R-Car controllers,
+the Aarch64 R-Car perform the same fixup in TFA, see TFA commit [1]
+0969397f2 ("rcar_gen3: plat: Prevent PCIe hang during L1X config access")
+[1] https://github.com/ARM-software/arm-trusted-firmware/commit/0969397f295621aa26b3d14b76dd397d22be58bf
+
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi   | 70 ++++++++++++++++++++
- arch/arm64/boot/dts/renesas/r9a07g044l.dtsi  | 21 ++++++
- arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi | 43 ++++++++++++
- arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi | 62 +++++++++++++++++
- 4 files changed, 196 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi
+V2: - Update commit message, add link to TFA repository commit
+    - Handle the LPAE case as in ARM fault.c and fsr-{2,3}level.c
+    - Cache clock and check whether they are enabled before register
+      access
+V3: - Fix commit message according to spellchecker
+    - Use of_find_matching_node() to apply hook only on Gen1 and Gen2 RCar
+      (in case the kernel is multiplatform)
+V4: - Mark rcar_pcie_abort_handler_of_match with __initconst
+V5: - Add mutex around rcar_pcie_aarch32_abort_handler()
+    - Update commit message again to point out issues with L1/D3Hot states
+V6: - Return 1 only if condition cannot be fixed
+---
+ drivers/pci/controller/pcie-rcar-host.c | 84 +++++++++++++++++++++++++
+ drivers/pci/controller/pcie-rcar.h      |  7 +++
+ 2 files changed, 91 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-new file mode 100644
-index 000000000000..c625d302f889
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -0,0 +1,70 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+index 765cf2b45e24..0d3f8dc5ff8a 100644
+--- a/drivers/pci/controller/pcie-rcar-host.c
++++ b/drivers/pci/controller/pcie-rcar-host.c
+@@ -13,6 +13,7 @@
+ 
+ #include <linux/bitops.h>
+ #include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+@@ -41,6 +42,21 @@ struct rcar_msi {
+ 	int irq2;
+ };
+ 
++#ifdef CONFIG_ARM
 +/*
-+ * Device Tree Source for the RZ/G2L and RZ/G2LC common SoC parts
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
++ * Here we keep a static copy of the remapped PCIe controller address.
++ * This is only used on aarch32 systems, all of which have one single
++ * PCIe controller, to provide quick access to the PCIe controller in
++ * the L1 link state fixup function, called from the ARM fault handler.
 + */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r9a07g044l-cpg.h>
-+
-+/ {
-+	compatible = "renesas,r9a07g044";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	soc: soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		scif0: serial@1004b800 {
-+			compatible = "renesas,scif-r9a07g044";
-+			reg = <0 0x1004b800 0 0x400>;
-+			interrupts =
-+				<GIC_SPI 380 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 382 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 381 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 384 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD R9A07G044_CLK_SCIF0>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A07G044_CLK_SCIF0>;
-+			status = "disabled";
-+		};
-+
-+		devid: chipid@11020a04 {
-+			compatible = "renesas,devid";
-+			reg = <0 0x11020a04 0 4>;
-+		};
-+
-+		gic: interrupt-controller@11900000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0x11900000 0 0x40000>,
-+			      <0x0 0x11940000 0 0x60000>;
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&cpg CPG_MOD R9A07G044_CLK_GIC600>;
-+			clock-names = "gic6000";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A07G044_CLK_GIC600>;
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044l.dtsi
-new file mode 100644
-index 000000000000..8d396b9100c1
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044l.dtsi
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0
++static void __iomem *pcie_base;
 +/*
-+ * Device Tree Source for the RZ/G2L common SoC parts
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
++ * Static copy of bus clock pointer, so we can check whether the clock
++ * is enabled or not.
 + */
++static struct clk *pcie_bus_clk;
++#endif
 +
-+/dts-v1/;
-+#include "r9a07g044.dtsi"
+ /* Structure representing the PCIe interface */
+ struct rcar_pcie_host {
+ 	struct rcar_pcie	pcie;
+@@ -776,6 +792,12 @@ static int rcar_pcie_get_resources(struct rcar_pcie_host *host)
+ 	}
+ 	host->msi.irq2 = i;
+ 
++#ifdef CONFIG_ARM
++	/* Cache static copy for L1 link state fixup hook on aarch32 */
++	pcie_base = pcie->base;
++	pcie_bus_clk = host->bus_clk;
++#endif
 +
-+&soc {
-+	cpg: clock-controller@11010000 {
-+		compatible = "renesas,r9a07g044l-cpg";
-+		reg = <0 0x11010000 0 0x10000>;
-+		clocks = <&extal_clk>;
-+		clock-names = "extal";
-+		#clock-cells = <2>;
-+		#reset-cells = <1>;
-+		#power-domain-cells = <0>;
-+	};
+ 	return 0;
+ 
+ err_irq2:
+@@ -1031,4 +1053,66 @@ static struct platform_driver rcar_pcie_driver = {
+ 	},
+ 	.probe = rcar_pcie_probe,
+ };
++
++#ifdef CONFIG_ARM
++static DEFINE_SPINLOCK(pmsr_lock);
++static int rcar_pcie_aarch32_abort_handler(unsigned long addr,
++		unsigned int fsr, struct pt_regs *regs)
++{
++	unsigned long flags;
++	int ret = 0;
++	u32 pmsr;
++
++	spin_lock_irqsave(&pmsr_lock, flags);
++
++	if (!pcie_base || !__clk_is_enabled(pcie_bus_clk)) {
++		ret = 1;
++		goto unlock_exit;
++	}
++
++	pmsr = readl(pcie_base + PMSR);
++
++	/*
++	 * Test if the PCIe controller received PM_ENTER_L1 DLLP and
++	 * the PCIe controller is not in L1 link state. If true, apply
++	 * fix, which will put the controller into L1 link state, from
++	 * which it can return to L0s/L0 on its own.
++	 */
++	if ((pmsr & PMEL1RX) && ((pmsr & PMSTATE) != PMSTATE_L1)) {
++		writel(L1IATN, pcie_base + PMCTLR);
++		while (!(readl(pcie_base + PMSR) & L1FAEG))
++			;
++		writel(L1FAEG | PMEL1RX, pcie_base + PMSR);
++	}
++
++unlock_exit:
++	spin_unlock_irqrestore(&pmsr_lock, flags);
++	return ret;
++}
++
++static const struct of_device_id rcar_pcie_abort_handler_of_match[] __initconst = {
++	{ .compatible = "renesas,pcie-r8a7779" },
++	{ .compatible = "renesas,pcie-r8a7790" },
++	{ .compatible = "renesas,pcie-r8a7791" },
++	{ .compatible = "renesas,pcie-rcar-gen2" },
++	{},
 +};
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
-new file mode 100644
-index 000000000000..44d4504e44c3
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZ/G2L R9A07G044L1 common parts
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
-+ */
 +
-+/dts-v1/;
-+#include "r9a07g044l.dtsi"
++static int __init rcar_pcie_init(void)
++{
++	if (of_find_matching_node(NULL, rcar_pcie_abort_handler_of_match)) {
++#ifdef CONFIG_ARM_LPAE
++		hook_fault_code(17, rcar_pcie_aarch32_abort_handler, SIGBUS, 0,
++				"asynchronous external abort");
++#else
++		hook_fault_code(22, rcar_pcie_aarch32_abort_handler, SIGBUS, 0,
++				"imprecise external abort");
++#endif
++	}
 +
-+/ {
-+	compatible = "renesas,r9a07g044l1";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
++	return platform_driver_register(&rcar_pcie_driver);
++}
++device_initcall(rcar_pcie_init);
++#else
+ builtin_platform_driver(rcar_pcie_driver);
++#endif
+diff --git a/drivers/pci/controller/pcie-rcar.h b/drivers/pci/controller/pcie-rcar.h
+index d4c698b5f821..9bb125db85c6 100644
+--- a/drivers/pci/controller/pcie-rcar.h
++++ b/drivers/pci/controller/pcie-rcar.h
+@@ -85,6 +85,13 @@
+ #define  LTSMDIS		BIT(31)
+ #define  MACCTLR_INIT_VAL	(LTSMDIS | MACCTLR_NFTS_MASK)
+ #define PMSR			0x01105c
++#define  L1FAEG			BIT(31)
++#define  PMEL1RX		BIT(23)
++#define  PMSTATE		GENMASK(18, 16)
++#define  PMSTATE_L1		(3 << 16)
++#define PMCTLR			0x011060
++#define  L1IATN			BIT(31)
 +
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		a55_0: cpu@0 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0>;
-+			device_type = "cpu";
-+			next-level-cache = <&L3_CA55>;
-+			enable-method = "psci";
-+		};
-+
-+		L3_CA55: cache-controller-0 {
-+			compatible = "cache";
-+			cache-unified;
-+			cache-size = <0x40000>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended =
-+			<&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+			<&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+			<&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+			<&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi
-new file mode 100644
-index 000000000000..33bb35e1c369
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi
-@@ -0,0 +1,62 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Device Tree Source for the RZ/G2L R9A07G044L2 common parts
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r9a07g044l.dtsi"
-+
-+/ {
-+	compatible = "renesas,r9a07g044l2";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&a55_0>;
-+				};
-+				core1 {
-+					cpu = <&a55_1>;
-+				};
-+			};
-+		};
-+
-+		a55_0: cpu@0 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0>;
-+			device_type = "cpu";
-+			next-level-cache = <&L3_CA55>;
-+			enable-method = "psci";
-+		};
-+
-+		a55_1: cpu@1 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0x100>;
-+			device_type = "cpu";
-+			next-level-cache = <&L3_CA55>;
-+			enable-method = "psci";
-+		};
-+
-+		L3_CA55: cache-controller-0 {
-+			compatible = "cache";
-+			cache-unified;
-+			cache-size = <0x40000>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended =
-+			<&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+			<&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
+ #define MACS2R			0x011078
+ #define MACCGSPSETR		0x011084
+ #define  SPCNGRSN		BIT(31)
 -- 
-2.17.1
+2.30.2
 
