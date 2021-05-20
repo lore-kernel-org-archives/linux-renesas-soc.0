@@ -2,172 +2,85 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F803C43470
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 May 2021 06:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B41C43462
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 May 2021 11:52:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EDC6361184
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 May 2021 06:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0B72610A1
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 20 May 2021 11:52:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230428AbhETGwS (ORCPT
+        id S243908AbhETLxe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 20 May 2021 02:52:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37172 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230417AbhETGwS (ORCPT
+        Thu, 20 May 2021 07:53:34 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:3624 "EHLO
+        szxga06-in.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S237124AbhETLv0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 20 May 2021 02:52:18 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FB6BC061574
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 19 May 2021 23:50:57 -0700 (PDT)
-Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0FF3AD41;
-        Thu, 20 May 2021 08:50:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1621493453;
-        bh=vSRVp1Sw6lrtgoMwUrvLyBrc/uM7bCRjftCbURz8V6g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gmGfVziRNmqCPDTFtz0pARJMAW3hKNh0VFYVGomACnQXPw6k3cICMm1NKtTgE41z+
-         2gp9zbPGRqy0d1ktn2ZBNgFiJd2USwpz3o/By+/cRaEfk8w1HkSrs5t70WQOPJguCw
-         4AvX0DiRZ/Ale7B3Fwkbb7oVUsWz7pyXvdh+YBGA=
-From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH v3 1/4] drm: bridge: dw-hdmi: Attach to next bridge if available
-Date:   Thu, 20 May 2021 09:50:43 +0300
-Message-Id: <20210520065046.28978-2-laurent.pinchart+renesas@ideasonboard.com>
-X-Mailer: git-send-email 2.28.1
-In-Reply-To: <20210520065046.28978-1-laurent.pinchart+renesas@ideasonboard.com>
-References: <20210520065046.28978-1-laurent.pinchart+renesas@ideasonboard.com>
+        Thu, 20 May 2021 07:51:26 -0400
+Received: from dggems706-chm.china.huawei.com (unknown [172.30.72.60])
+        by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Fm7Jw5xrrzmWbL;
+        Thu, 20 May 2021 19:47:44 +0800 (CST)
+Received: from dggpemm500006.china.huawei.com (7.185.36.236) by
+ dggems706-chm.china.huawei.com (10.3.19.183) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 20 May 2021 19:50:01 +0800
+Received: from thunder-town.china.huawei.com (10.174.177.72) by
+ dggpemm500006.china.huawei.com (7.185.36.236) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2176.2; Thu, 20 May 2021 19:50:01 +0800
+From:   Zhen Lei <thunder.leizhen@huawei.com>
+To:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Ramesh Shanmugasundaram" <rashanmu@gmail.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-renesas-soc <linux-renesas-soc@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+CC:     Zhen Lei <thunder.leizhen@huawei.com>
+Subject: [PATCH 1/1] media: dt-bindings: media: renesas,drif: Fix a dt_binding_check warning
+Date:   Thu, 20 May 2021 19:49:53 +0800
+Message-ID: <20210520114953.8206-1-thunder.leizhen@huawei.com>
+X-Mailer: git-send-email 2.26.0.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.174.177.72]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemm500006.china.huawei.com (7.185.36.236)
+X-CFilter-Loop: Reflected
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On all platforms except i.MX and Rockchip, the dw-hdmi DT bindings
-require a video output port connected to an HDMI sink (most likely an
-HDMI connector, in rare cases another bridges converting HDMI to another
-protocol). For those platforms, retrieve the next bridge and attach it
-from the dw-hdmi bridge attach handler.
+The value of the property 'clock-names' is a constant string, so the
+'maxItems: 1' is not needed, should be removed. Otherwise, the following
+warning is reported:
+properties:clock-names:maxItems: False schema does not allow 1
+ignoring, error in schema: properties: clock-names: maxItems
+warning: no schema found in file: xxx/bindings/media/renesas,drif.yaml
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
 ---
-Changes since v1:
+ Documentation/devicetree/bindings/media/renesas,drif.yaml | 1 -
+ 1 file changed, 1 deletion(-)
 
-- Make missing endpoint a fatal error
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 54 ++++++++++++++++++++++-
- include/drm/bridge/dw_hdmi.h              |  2 +
- 2 files changed, 55 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index e7c7c9b9c646..f9065ca4cd88 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -143,6 +143,7 @@ struct dw_hdmi_phy_data {
- struct dw_hdmi {
- 	struct drm_connector connector;
- 	struct drm_bridge bridge;
-+	struct drm_bridge *next_bridge;
+diff --git a/Documentation/devicetree/bindings/media/renesas,drif.yaml b/Documentation/devicetree/bindings/media/renesas,drif.yaml
+index f1bdaeab4053..b7f07062922f 100644
+--- a/Documentation/devicetree/bindings/media/renesas,drif.yaml
++++ b/Documentation/devicetree/bindings/media/renesas,drif.yaml
+@@ -67,7 +67,6 @@ properties:
+     maxItems: 1
  
- 	unsigned int version;
+   clock-names:
+-    maxItems: 1
+     items:
+       - const: fck
  
-@@ -2775,7 +2776,8 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge,
- 	struct dw_hdmi *hdmi = bridge->driver_private;
- 
- 	if (flags & DRM_BRIDGE_ATTACH_NO_CONNECTOR)
--		return 0;
-+		return drm_bridge_attach(bridge->encoder, hdmi->next_bridge,
-+					 bridge, flags);
- 
- 	return dw_hdmi_connector_create(hdmi);
- }
-@@ -3160,6 +3162,52 @@ static void dw_hdmi_init_hw(struct dw_hdmi *hdmi)
- /* -----------------------------------------------------------------------------
-  * Probe/remove API, used from platforms based on the DRM bridge API.
-  */
-+
-+static int dw_hdmi_parse_dt(struct dw_hdmi *hdmi)
-+{
-+	struct device_node *endpoint;
-+	struct device_node *remote;
-+
-+	if (!hdmi->plat_data->output_port)
-+		return 0;
-+
-+	endpoint = of_graph_get_endpoint_by_regs(hdmi->dev->of_node,
-+						 hdmi->plat_data->output_port,
-+						 -1);
-+	if (!endpoint) {
-+		/*
-+		 * On platforms whose bindings don't make the output port
-+		 * mandatory (such as Rockchip) the plat_data->output_port
-+		 * field isn't set, so it's safe to make this a fatal error.
-+		 */
-+		dev_err(hdmi->dev, "Missing endpoint in port@%u\n",
-+			hdmi->plat_data->output_port);
-+		return -ENODEV;
-+	}
-+
-+	remote = of_graph_get_remote_port_parent(endpoint);
-+	of_node_put(endpoint);
-+	if (!remote) {
-+		dev_err(hdmi->dev, "Endpoint in port@%u unconnected\n",
-+			hdmi->plat_data->output_port);
-+		return -ENODEV;
-+	}
-+
-+	if (!of_device_is_available(remote)) {
-+		dev_err(hdmi->dev, "port@%u remote device is disabled\n",
-+			hdmi->plat_data->output_port);
-+		of_node_put(remote);
-+		return -ENODEV;
-+	}
-+
-+	hdmi->next_bridge = of_drm_find_bridge(remote);
-+	of_node_put(remote);
-+	if (!hdmi->next_bridge)
-+		return -EPROBE_DEFER;
-+
-+	return 0;
-+}
-+
- struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
- 			      const struct dw_hdmi_plat_data *plat_data)
- {
-@@ -3196,6 +3244,10 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
- 	mutex_init(&hdmi->cec_notifier_mutex);
- 	spin_lock_init(&hdmi->audio_lock);
- 
-+	ret = dw_hdmi_parse_dt(hdmi);
-+	if (ret < 0)
-+		return ERR_PTR(ret);
-+
- 	ddc_node = of_parse_phandle(np, "ddc-i2c-bus", 0);
- 	if (ddc_node) {
- 		hdmi->ddc = of_get_i2c_adapter_by_node(ddc_node);
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index 6a5716655619..2a1f85f9a8a3 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -126,6 +126,8 @@ struct dw_hdmi_phy_ops {
- struct dw_hdmi_plat_data {
- 	struct regmap *regm;
- 
-+	unsigned int output_port;
-+
- 	unsigned long input_bus_encoding;
- 	bool use_drm_infoframe;
- 	bool ycbcr_420_allowed;
 -- 
-Regards,
+2.21.1
 
-Laurent Pinchart
 
