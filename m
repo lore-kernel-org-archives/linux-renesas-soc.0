@@ -2,172 +2,92 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C68C47085
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 15:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD18C4707F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 19:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 632E56128B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 15:01:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 483D9610A5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 19:55:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231975AbhEYPCm (ORCPT
+        id S232984AbhEYT4l (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 May 2021 11:02:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54704 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234192AbhEYPCj (ORCPT
+        Tue, 25 May 2021 15:56:41 -0400
+Received: from www.zeus03.de ([194.117.254.33]:51864 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231612AbhEYT4l (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 May 2021 11:02:39 -0400
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88B19C061574
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 May 2021 08:01:06 -0700 (PDT)
-Received: by mail-pg1-x52d.google.com with SMTP id m190so22963680pga.2
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 May 2021 08:01:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=/gz/aRmqyd3nVgcTsHG+ypHi1fHjgsjGDeUmzXSLdWE=;
-        b=LHbi6SS20WQW6zDfa6vEPB2FdBZBdkcdjl3vc+Mk4k17iPz1UXZ49Ma6k3+1I0k9u+
-         x9iCZdWdmghQtXto+ZD4aWde2xd+Qp76Ax+BQ/WeypL5qEseQ+GJ7rpRNqKahPgdTfNG
-         krHsm+P19QBNAb66/WGGLU0HfXuC6VmJYzFRyfJJ//E1DL33baptc8SkoYV5hgS9DY8O
-         9jkdL1cSPD25Gq14FyWr45XXd30RfUdsCLbzBQpzwFNebwvIJOG3lVk78OVpKcaQ11Mt
-         +Xz+vb8aiC+7MV9o+PUXtDH3xYIWPU/LpKdLnBWOI65byy4L8V/Sb3l22evLvgt1JZYZ
-         3TxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=/gz/aRmqyd3nVgcTsHG+ypHi1fHjgsjGDeUmzXSLdWE=;
-        b=l0g/zUu86CN12T0OmIEv7SoA1uOtiHvFn1E20nKz6PBXoaROGfC9QRYWirvnOka+8y
-         ZUDNQPQMZVPvJKBDKkY6ZauoX7rmqRXytX7RPR3uqJHrUMH3woGH0LvSj4Tlh0SL1c6S
-         Ej4cNQ4z3ySm1WiEHjhr0Lsr+TwwQSOzUmhor+qkd4idKYYb7NjPUl2PfWXMNRwH+e/2
-         u/v4PecBI5g71095pCuw1LI3Bdm7ICzJ0baa2YhhCimmaQ/NTG9Yt0eUhLPhoEejn6Lw
-         CJKeRZ0DWyNKEEgbAB4yYVjZjIPuoQlFq4QbftQY/6ukhtEZNwTmJ47uhad5FEONr5u8
-         L3pQ==
-X-Gm-Message-State: AOAM533cnw02i4XBBEDc6aCYNx+Fg1WcOiD1PRN4xSmQG9WYCx7tQdg/
-        cHz/xt5wZJPOvXJza0MO6PWgmtME91KvQvfT
-X-Google-Smtp-Source: ABdhPJzX4bjGrAj/paDFM2a/G8MTnnQVqmFBKArk7gU//pa62k6RPWHvOLZFFEeh00u7YAgS3vb1Gg==
-X-Received: by 2002:a65:625a:: with SMTP id q26mr12390796pgv.311.1621954865872;
-        Tue, 25 May 2021 08:01:05 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id r11sm14063222pgl.34.2021.05.25.08.01.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 May 2021 08:01:05 -0700 (PDT)
-Message-ID: <60ad1131.1c69fb81.6e4a2.df71@mx.google.com>
-Date:   Tue, 25 May 2021 08:01:05 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 25 May 2021 15:56:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=Mv4JG25a+BXgI2KX+LqI2nqSUGfC
+        gG1Sq8y6pwi3gag=; b=auvaGjP5CHFnqjTjFR6kNenyaLF6QrLJ666q/QMBUFlH
+        BtkOvawUok9WLH9zWgPRFYFFnaDVkzOO0Ponb+hPFu+w9qnFl4wAYAAscb+jkTKl
+        bGAZ5hsZHkjBurvsGu58eGhklqQaFLKPmkY2IuC1eXz3wj4FHgKQbhWA2F6NxLQ=
+Received: (qmail 1371109 invoked from network); 25 May 2021 21:55:09 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 May 2021 21:55:09 +0200
+X-UD-Smtp-Session: l3s3148p1@UXhD5yzDgNwgAwDPXxHuAKg5HweM3jRU
+Date:   Tue, 25 May 2021 21:55:09 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] i2c: sh_mobile: Use new clock calculation formulas for
+ RZ/G2E
+Message-ID: <YK1WHQEwXO+aFUwK@kunai>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        linux-i2c@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <2a1f0271cc00bf2821aa8b6609c452a9823980f6.1620299581.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: renesas
-X-Kernelci-Kernel: renesas-next-2021-05-25-v5.13-rc1
-X-Kernelci-Branch: next
-X-Kernelci-Report-Type: test
-Subject: renesas/next baseline-nfs: 15 runs,
- 2 regressions (renesas-next-2021-05-25-v5.13-rc1)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dH77TQQIEVD2QOwU"
+Content-Disposition: inline
+In-Reply-To: <2a1f0271cc00bf2821aa8b6609c452a9823980f6.1620299581.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/next baseline-nfs: 15 runs, 2 regressions (renesas-next-2021-05-25-=
-v5.13-rc1)
 
-Regressions Summary
--------------------
+--dH77TQQIEVD2QOwU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-platform            | arch  | lab             | compiler | defconfig       =
-   | regressions
---------------------+-------+-----------------+----------+-----------------=
----+------------
-dove-cubox          | arm   | lab-pengutronix | gcc-8    | multi_v7_defconf=
-ig | 1          =
+On Thu, May 06, 2021 at 01:15:40PM +0200, Geert Uytterhoeven wrote:
+> When switching the Gen3 SoCs to the new clock calculation formulas, the
+> match entry for RZ/G2E added in commit 51243b73455f2d12 ("i2c:
+> sh_mobile: Add support for r8a774c0 (RZ/G2E)") was forgotten.
+>=20
+> Fixes: e8a27567509b2439 ("i2c: sh_mobile: use new clock calculation formu=
+las for Gen3")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-r8a77950-salvator-x | arm64 | lab-baylibre    | gcc-8    | defconfig       =
-   | 1          =
-
-
-  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
-s-next-2021-05-25-v5.13-rc1/plan/baseline-nfs/
-
-  Test:     baseline-nfs
-  Tree:     renesas
-  Branch:   next
-  Describe: renesas-next-2021-05-25-v5.13-rc1
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      1931e709c701ea2913e8714f9658bea8cd5e361f =
+Applied to for-next, thanks!
 
 
+--dH77TQQIEVD2QOwU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Test Regressions
----------------- =
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmCtVh0ACgkQFA3kzBSg
+KbYS9w//U2MJzz9WE+omEUOrOQYH/ej/jbsTb/+bWTTHcQ0qJlZJSD0w4pA1Fp+/
+fATVVnJliJz/tDtxelqCLRhG3TxKqoTzGIVMdTrhyvQ0lVj1palWex450dHTkJB2
+iTErSzaInJC02+AubL+MXOBl7aH/s9NPFd3pj58vR0gVFwSqxigEIKmZeblHCC9h
+QfdskKnLXpDoAOzozF/QR34qZdPn6yay6uc7YB+/a4Q3WtadOwrH4inByPHHAriZ
+NoiGR1g6jH78eW7OIkFr2JNladKahpwMeIo0yMP0+tHTYQztqb0sGcJbny77pKI8
+uAgYFFKlB/Tvj2A9M9+VKDZZRSAJGDXUS4fAkSEygo6m8Z1ODcvLFphZFD7tSk/e
+r6W4du677CMUv2+9+9ebQ4LtH998Qe4yOpDNoCZEchG5MeshO/tUxN3ZQQYxGAZ+
+IJuNyzpmrY2CvqC12Jfc5d2SHG0XnzzbJpIWypAEhYQcINnMVcKLdP20GgfhsLhw
+xPbHntB42SHkUzRqu/clypt4ONZgmjq7PcMi5WGHlhRvt5+skZ9+9Ft17RbDZTEo
+Ur8FnyUCT3zkZ9g82PvhXvWqJnSuMV8yLj/hQ+vL7K/jALvFUNkokHmQQxAvLd6r
+nqKufUM0pxXOFsA6BTjqc9VAIewd+8SDfQNHhZcwvlTnF1mP0fg=
+=XLiL
+-----END PGP SIGNATURE-----
 
-
-platform            | arch  | lab             | compiler | defconfig       =
-   | regressions
---------------------+-------+-----------------+----------+-----------------=
----+------------
-dove-cubox          | arm   | lab-pengutronix | gcc-8    | multi_v7_defconf=
-ig | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/60acdd4938e3cc6a6fb3afbf
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--05-25-v5.13-rc1/arm/multi_v7_defconfig/gcc-8/lab-pengutronix/baseline-nfs-=
-dove-cubox.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--05-25-v5.13-rc1/arm/multi_v7_defconfig/gcc-8/lab-pengutronix/baseline-nfs-=
-dove-cubox.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
-0503.0/armhf/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/60acdd4938e3cc6a6=
-fb3afc0
-        failing since 28 days (last pass: renesas-next-2021-04-02-v5.12-rc2=
-, first fail: renesas-next-2021-04-02-v5.12-rc2-3-g0bacf4d3d276) =
-
- =
-
-
-
-platform            | arch  | lab             | compiler | defconfig       =
-   | regressions
---------------------+-------+-----------------+----------+-----------------=
----+------------
-r8a77950-salvator-x | arm64 | lab-baylibre    | gcc-8    | defconfig       =
-   | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/60ace1ea46b2db90d6b3afbf
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--05-25-v5.13-rc1/arm64/defconfig/gcc-8/lab-baylibre/baseline-nfs-r8a77950-s=
-alvator-x.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--05-25-v5.13-rc1/arm64/defconfig/gcc-8/lab-baylibre/baseline-nfs-r8a77950-s=
-alvator-x.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
-0503.0/arm64/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/60ace1ea46b2db90d=
-6b3afc0
-        new failure (last pass: renesas-next-2021-05-17-v5.13-rc1) =
-
- =20
+--dH77TQQIEVD2QOwU--
