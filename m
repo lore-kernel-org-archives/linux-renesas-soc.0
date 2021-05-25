@@ -2,223 +2,126 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 218CDC47084
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 12:23:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61B4EC2B9F8
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 13:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E457E61409
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 12:23:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DCEC6141B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 13:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232179AbhEYMZE (ORCPT
+        id S232862AbhEYNHD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 May 2021 08:25:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46770 "EHLO
+        Tue, 25 May 2021 09:07:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232073AbhEYMZE (ORCPT
+        with ESMTP id S232996AbhEYNHC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 May 2021 08:25:04 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDA7AC061574
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 May 2021 05:23:32 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id 22so23078554pfv.11
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 May 2021 05:23:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=+kCs5exBVf15EyFPRNxtW6htUqbihnKSWAGioBZA7SE=;
-        b=umDdU3XNg8qNAHD2ZSjCpUTNoWODN2gVYCPAeDyNqTvipT/q7D0xZVz48qNNQsJ5lj
-         O6zmCpCWZgfGOdbW5l6a1IVqyZfkwc16HRCX4546FZ2qjgMFd9Qlazy8+cYsKgXtwNDA
-         DTk3kvFQtCKJvmZMwHRlpj/zKoTruCg11y1jMm5P9SJUC0z4jflWS4htRz39sOXFgS4z
-         g7ijf1PPh86TwpTujgUd/RKa3Rjqlu2cA6gCYKr4EarcWeCCjuptwSEj0FrCNxne0I1J
-         XzhlHIZlqRStyU0hQID7HB1be5hvJssyZTUhOv6rZhgByhmg79sw1Z0IVu/gdcG557z4
-         VLFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=+kCs5exBVf15EyFPRNxtW6htUqbihnKSWAGioBZA7SE=;
-        b=RHAgDzori9HUxC6lCyMR6ehv7cf5ADxcB2DIQKQhr0Dnq+2EcMct0ksa8r3m61C1tE
-         0Is9fHfOa74wxiA0EjkSbNeWZWHS13RcJ3tj9GFbt6W23mj/1IyNmsEQU8JnebM9Xlrx
-         yqg0o+ES/JaCoRn/gWWcg5u+aeMSYWuFf3UMMRxod9t9bRjSc/xyCkl36AyLYNy1pYJ3
-         z2vt2qinOCyKgRerrjSec9BTekBEZ7Ta9JqDnGqbG2Dxnf/4nQBfGz+gWvdQRnaVDJiS
-         cgSvbcaHjdso7NGOGcoZKEEsgWyEfrSzFpOXN9jjofXfAXpXD8ShcqMrU88OaxD8E8sH
-         xrlg==
-X-Gm-Message-State: AOAM530qT92X7+JnJ92+SZmwm1rPU9VdeM6LSM/65XSTwTkoiLrMEzw+
-        82/jiUdUCNLSbR/nSvwHcfKj77oczvkxFJTe
-X-Google-Smtp-Source: ABdhPJxG1lIRNghs6Sh8zKcuPx7qO1ln6OW92kJVS2vy1fYbcKZ8VNPPbC9n66rUqaQaPAhyQnSAww==
-X-Received: by 2002:a62:1c0c:0:b029:2b7:6dd2:adb3 with SMTP id c12-20020a621c0c0000b02902b76dd2adb3mr29663118pfc.44.1621945411953;
-        Tue, 25 May 2021 05:23:31 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id v27sm4542095pfi.169.2021.05.25.05.23.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 May 2021 05:23:31 -0700 (PDT)
-Message-ID: <60acec43.1c69fb81.2f63f.ea4d@mx.google.com>
-Date:   Tue, 25 May 2021 05:23:31 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 25 May 2021 09:07:02 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75410C061574
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 May 2021 06:05:32 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:d8ed:c948:a7ff:27e4])
+        by albert.telenet-ops.be with bizsmtp
+        id 915W250030QkFpL0615Wsp; Tue, 25 May 2021 15:05:30 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1llWkT-009M1f-Or
+        for linux-renesas-soc@vger.kernel.org; Tue, 25 May 2021 15:05:29 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1llWkT-004tYs-B7
+        for linux-renesas-soc@vger.kernel.org; Tue, 25 May 2021 15:05:29 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2021-05-25-v5.13-rc3
+Date:   Tue, 25 May 2021 15:05:29 +0200
+Message-Id: <20210525130529.1166847-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Tree: renesas
-X-Kernelci-Kernel: renesas-devel-2021-05-25-v5.13-rc3
-X-Kernelci-Branch: master
-X-Kernelci-Report-Type: test
-Subject: renesas/master igt-kms-rockchip: 1 runs,
- 3 regressions (renesas-devel-2021-05-25-v5.13-rc3)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master igt-kms-rockchip: 1 runs, 3 regressions (renesas-devel-2021-=
-05-25-v5.13-rc3)
+I have pushed renesas-drivers-2021-05-25-v5.13-rc3 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Regressions Summary
--------------------
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the master branch of my
+renesas-devel.git tree.
 
-platform         | arch  | lab           | compiler | defconfig | regressio=
-ns
------------------+-------+---------------+----------+-----------+----------=
+Today's version is based on renesas-devel-2021-05-25-v5.13-rc3.
+
+Included branches with driver code:
+  - renesas-clk
+  - renesas-pinctrl
+  - topic/rcar-pinconf-v1
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#renesas/v3u/timers-v1-minimal
+
+Included fixes:
+  - WIP soc: v3u: allow WDT reset
+  - misc: add sloppy logic analyzer using polling
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#timers/drivers/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#testing/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
+  - git://github.com/bzolnier/linux.git#fbdev-for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git#driver-core-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+
+Gr{oetje,eeting}s,
+
+						Geert
+
 --
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-8    | defconfig | 3        =
-  =
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2021-05-25-v5.13-rc3/plan/igt-kms-rockchip/
-
-  Test:     igt-kms-rockchip
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2021-05-25-v5.13-rc3
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      d6e14d563167f1d9eb028bfec40b214368fc5c82
-
-  Test suite revisions:
-    drm
-      URL:  git://anongit.freedesktop.org/mesa/drm
-      SHA:  bf08984682a2bc7c4a1e01dd2af8d4c1d75cea46
-    igt-gpu-tools
-      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
-      SHA:  126a3f6fc0e97786e2819085efc84e741093aed5 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform         | arch  | lab           | compiler | defconfig | regressio=
-ns
------------------+-------+---------------+----------+-----------+----------=
---
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-8    | defconfig | 3        =
-  =
-
-
-  Details:     https://kernelci.org/test/plan/id/60acdafa348ed118f7b3afa4
-
-  Results:     77 PASS, 19 FAIL, 138 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-05-25-v5.13-rc3/arm64/defconfig/gcc-8/lab-collabora/igt-kms-rockchip-rk=
-3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-05-25-v5.13-rc3/arm64/defconfig/gcc-8/lab-collabora/igt-kms-rockchip-rk=
-3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-igt/=
-20210503.0/arm64/rootfs.cpio.gz =
-
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-B-ts-continuation-idle: https://kernel=
-ci.org/test/case/id/60acdafa348ed118f7b3afdd
-        failing since 77 days (last pass: renesas-devel-2021-02-15-v5.11, f=
-irst fail: v5.12-rc2-394-g4e589d84c742)
-
-    2021-05-25 11:09:12.160000+00:00  Pipe D does not exist or not enabled
-    2021-05-25 11:09:12.168000+00:00  Test requirement not met in function =
-igt_require_pipe, file ../lib/igt_kms.c:2094:
-    2021-05-25 11:09:12.176000+00:00  Test requirement: !(pipe >=3D display=
-->n_pipes || !display->pipes[pipe].enabled)
-    2021-05-25 11:09:12.180000+00:00  Pipe E does not exist or not enabled
-    2021-05-25 11:09:12.191000+00:00  Test requirement not met in function =
-igt_require_pipe, fi<6>[  145.171215] Console: switching to colour dummy de=
-vice 80x25
-    2021-05-25 11:09:12.194000+00:00  le ../lib/igt_kms.c:2094:
-    2021-05-25 11:09:12.203000+00:00  Test requirement: !(pipe >=3D display=
--><14>[  145.181907] [IGT] kms_vblank: executing
-    2021-05-25 11:09:12.206000+00:00  n_pipes || !display->pipes[pipe].enab=
-led)
-    2021-05-25 11:09:12.216000+00:00  Pipe F does not exist<14>[  145.19371=
-2] [IGT] kms_vblank: starting subtest pipe-B-ts-continuation-idle
-    2021-05-25 11:09:12.219000+00:00   or not enabled =
-
-    ... (69 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-B-ts-continuation-dpms-suspend: https:=
-//kernelci.org/test/case/id/60acdafa348ed118f7b3afe0
-        failing since 77 days (last pass: renesas-devel-2021-02-15-v5.11, f=
-irst fail: v5.12-rc2-394-g4e589d84c742)
-
-    2021-05-25 11:09:16.575000+00:00  <14>[  149.559642] [IGT] kms_vblank: =
-executing
-    2021-05-25 11:09:16.591000+00:00  IGT-Version: 1.26-g126a3f6 (aarch64) =
-(Linux: 5.13.0-rc3 aarch64)<14>[  149.566397] [IGT] kms_vblank: starting su=
-btest pipe-B-ts-continuation-dpms-suspend
-    2021-05-25 11:09:16.592000+00:00  =
-
-    2021-05-25 11:09:16.597000+00:00  Starting subtest: pipe-B-ts-continuat=
-ion-dpms-suspend
-    2021-05-25 11:09:17.535000+00:00  (kms_vblank:779) igt_kms-CRITICAL: Te=
-st assertion failure function igt_wait_for_vblank, file ../lib/igt_kms.c:44=
-47:
-    2021-05-25 11:09:17.544000+00:00  (kms_vblank:779) igt_kms-CRITICAL: Fa=
-iled assertion: __igt_vblank_wait(drm_fd, crtc_offset, 1) =3D=3D 0
-    2021-05-25 11:09:17.551000+00:00  (kms_vblank:779) igt_kms-CRITICAL: La=
-st errno: 22, Invalid argument
-    2021-05-25 11:09:17.552000+00:00  Stack trace:
-    2021-05-25 11:09:17.557000+00:00    #0 ../lib/igt_core.c:1745 __igt_fai=
-l_assert()
-    2021-05-25 11:09:17.560000+00:00    #1 [igt_wait_for_vblank+0x4c] =
-
-    ... (62 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-B-ts-continuation-modeset: https://ker=
-nelci.org/test/case/id/60acdafa348ed118f7b3afe2
-        failing since 77 days (last pass: renesas-devel-2021-02-15-v5.11, f=
-irst fail: v5.12-rc2-394-g4e589d84c742)
-
-    2021-05-25 11:09:20.780000+00:00  <14>[  153.764989] [IGT] kms_vblank: =
-executing
-    2021-05-25 11:09:20.795000+00:00  IGT-Version: 1.26-g126a3f6 (aarch64) =
-(Linux: 5.13.0-rc3 aarch64)<14>[  153.771223] [IGT] kms_vblank: starting su=
-btest pipe-B-ts-continuation-modeset
-    2021-05-25 11:09:20.796000+00:00  =
-
-    2021-05-25 11:09:20.800000+00:00  Starting subtest: pipe-B-ts-continuat=
-ion-modeset
-    2021-05-25 11:09:21.722000+00:00  (kms_vblank:785) igt_kms-CRITICAL: Te=
-st assertion failure function igt_wait_for_vblank, file ../lib/igt_kms.c:44=
-47:
-    2021-05-25 11:09:21.731000+00:00  (kms_vblank:785) igt_kms-CRITICAL: Fa=
-iled assertion: __igt_vblank_wait(drm_fd, crtc_offset, 1) =3D=3D 0
-    2021-05-25 11:09:21.738000+00:00  (kms_vblank:785) igt_kms-CRITICAL: La=
-st errno: 22, Invalid argument
-    2021-05-25 11:09:21.739000+00:00  Stack trace:
-    2021-05-25 11:09:21.743000+00:00    #0 ../lib/igt_core.c:1745 __igt_fai=
-l_assert()
-    2021-05-25 11:09:21.747000+00:00    #1 [igt_wait_for_vblank+0x4c] =
-
-    ... (62 line(s) more)  =
-
- =20
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
