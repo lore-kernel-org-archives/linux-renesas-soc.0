@@ -2,123 +2,154 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71A09C2B9F8
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 09:15:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E839DC2B9F8
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 12:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0EB613F4
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 09:15:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE648613F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 May 2021 12:23:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232091AbhEYJRE (ORCPT
+        id S232230AbhEYMZE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 May 2021 05:17:04 -0400
-Received: from www.zeus03.de ([194.117.254.33]:45932 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232464AbhEYJQ6 (ORCPT
+        Tue, 25 May 2021 08:25:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46772 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232179AbhEYMZE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 May 2021 05:16:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=k1; bh=N32Jaoqsed33jOQOjK+g7guRATu
-        YdbNDg1Jq5cVVl/o=; b=JVSwsPww0EwLtzvO3pgp4+j5C/eM1F82rD+qJY4eHMj
-        GszIi0mrhGl2C2iauvC4o2FGgRJkDj0a93E3IxMSYwpUDMFvIAXyvUjX8l+I2hyJ
-        3vCB8owuiQkh9tkMQrIBLNLEhdrr+PF849l3jMrFiLmNLdRgFxKR2aS+bglY9N0c
-        =
-Received: (qmail 1177944 invoked from network); 25 May 2021 11:15:19 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 25 May 2021 11:15:19 +0200
-X-UD-Smtp-Session: l3s3148p1@SroH9yPDmpQgARa4RYtfAdx6+N0ksazW
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH] ARM: dts: alt: add SW2 as GPIO keys
-Date:   Tue, 25 May 2021 11:15:12 +0200
-Message-Id: <20210525091512.29119-1-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 25 May 2021 08:25:04 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 927D7C061756
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 May 2021 05:23:33 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id v14so19875102pgi.6
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 May 2021 05:23:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=oYX1cgNtMv1XfZGQFJ22L4/AUv80i9yLmyMF4Ype1cE=;
+        b=JMELf2SdHRpGMUJBAmmcv9e/ypqV/6wlcvhTY4I7c83HPudTfKzUxBebqphv79HMck
+         NleJpoYOM/p6vqlc9wM8WnNJ5YslFAahcfY/Kb8x4+V2aPTb1au8gedbza6cfvoGZyGo
+         L4U0MFBocUE4aC720xZ2m/gKhcOX+2iE+9z6bM6UpPpKEKajg7X75O+R8rO/nHTy+Gq4
+         RKTGD1iJOeMGtXVbPxjlJPfHy7bZQ/yuCqWNTcBVL89qpxHURanCaV5UJq1o3Wh/9Sz5
+         0GE+2hVqf39wzEkEmZZULgBB6Jw9dzbqPzVQjxkGWGZzIJbMM5WSeeX6a/6bmX9aGJPp
+         QRiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=oYX1cgNtMv1XfZGQFJ22L4/AUv80i9yLmyMF4Ype1cE=;
+        b=g6hvJmTqO9JXiE/VPsJ6S54kJTO1onrmVQrAVD/r5XS4z75U7pHmPdiDcM0QWfRBPO
+         Zzzh/9lr4hRPumtPQPwjEKGRiUZaSr6tM6m6qs1b8/IUU/qY9aX0paXgQmajM2VI1qF8
+         +iJgPS8AYBy4AW5/EmZRdl0kPhMBGWqJTpBa5mOpngw8LxeD1dVyWDfbc2YhE8igneO8
+         XXxlA8TFO4ntnX3WywqTU/8hOOLuYEje3X2WwtzWSTzVWyx5WTUfcpv1d+tGRqyWiUCY
+         bDR1M0SX/oZe8sSR34hbgnC2T6xDCKtdLKyr1aix3nu3g4yRv6k25nFFMA7MpNVaeCCB
+         8tvQ==
+X-Gm-Message-State: AOAM531hEv9L9Z/DIGQCsktkhzYhQ5/Vo1r4+tudxsef6aL1CbjUr/nu
+        pWk63vTqzZ49z+2QnNKDSJPSW+N0PQsNHg7Z
+X-Google-Smtp-Source: ABdhPJyjasL8Q+opt7tCpxlFE+KrQ6/79HkdfLkLpt2E45HxA3V7D1kbij4pOeRkmQZcGO8nqUgN+Q==
+X-Received: by 2002:a62:8fcf:0:b029:2e8:f2ba:38e7 with SMTP id n198-20020a628fcf0000b02902e8f2ba38e7mr7654109pfd.1.1621945412788;
+        Tue, 25 May 2021 05:23:32 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id z187sm886161pfb.149.2021.05.25.05.23.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 May 2021 05:23:32 -0700 (PDT)
+Message-ID: <60acec44.1c69fb81.7da18.1f33@mx.google.com>
+Date:   Tue, 25 May 2021 05:23:32 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: renesas
+X-Kernelci-Kernel: renesas-devel-2021-05-25-v5.13-rc3
+X-Kernelci-Branch: master
+X-Kernelci-Report-Type: test
+Subject: renesas/master usb: 1 runs,
+ 1 regressions (renesas-devel-2021-05-25-v5.13-rc3)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-SW2 on Alt is connected as on Lager board. So, use the same GPIO
-settings.
+renesas/master usb: 1 runs, 1 regressions (renesas-devel-2021-05-25-v5.13-r=
+c3)
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- arch/arm/boot/dts/r8a7794-alt.dts | 42 +++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+Regressions Summary
+-------------------
 
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index f9dba5688d3f..f330d796a772 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -8,6 +8,7 @@
- /dts-v1/;
- #include "r8a7794.dtsi"
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- 
- / {
- 	model = "Alt";
-@@ -94,6 +95,42 @@ lbsc {
- 		#size-cells = <1>;
- 	};
- 
-+	keyboard {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&keyboard_pins>;
-+		pinctrl-names = "default";
-+
-+		one {
-+			linux,code = <KEY_1>;
-+			label = "SW2-1";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio3 9 GPIO_ACTIVE_LOW>;
-+		};
-+		two {
-+			linux,code = <KEY_2>;
-+			label = "SW2-2";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio3 10 GPIO_ACTIVE_LOW>;
-+		};
-+		three {
-+			linux,code = <KEY_3>;
-+			label = "SW2-3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio3 11 GPIO_ACTIVE_LOW>;
-+		};
-+		four {
-+			linux,code = <KEY_4>;
-+			label = "SW2-4";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+			gpios = <&gpio3 12 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
- 	vga-encoder {
- 		compatible = "adi,adv7123";
- 
-@@ -319,6 +356,11 @@ usb1_pins: usb1 {
- 		groups = "usb1";
- 		function = "usb1";
- 	};
-+
-+	keyboard_pins: keyboard {
-+		pins = "GP_3_9", "GP_3_10", "GP_3_11", "GP_3_12";
-+		bias-pull-up;
-+	};
- };
- 
- &cmt0 {
--- 
-2.30.2
+platform            | arch | lab           | compiler | defconfig          =
+| regressions
+--------------------+------+---------------+----------+--------------------=
++------------
+rk3288-rock2-square | arm  | lab-collabora | gcc-8    | multi_v7_defconfig =
+| 1          =
 
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2021-05-25-v5.13-rc3/plan/usb/
+
+  Test:     usb
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2021-05-25-v5.13-rc3
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      d6e14d563167f1d9eb028bfec40b214368fc5c82 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform            | arch | lab           | compiler | defconfig          =
+| regressions
+--------------------+------+---------------+----------+--------------------=
++------------
+rk3288-rock2-square | arm  | lab-collabora | gcc-8    | multi_v7_defconfig =
+| 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/60acdc779154ba0f9fb3afb1
+
+  Results:     2 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-05-25-v5.13-rc3/arm/multi_v7_defconfig/gcc-8/lab-collabora/usb-rk3288-r=
+ock2-square.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-05-25-v5.13-rc3/arm/multi_v7_defconfig/gcc-8/lab-collabora/usb-rk3288-r=
+ock2-square.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
+0503.0/armhf/rootfs.cpio.gz =
+
+
+
+  * usb.compare-freeze: https://kernelci.org/test/case/id/60acdc779154ba0f9=
+fb3afb4
+        new failure (last pass: renesas-devel-2021-05-11-v5.13-rc1)
+
+    2021-05-25 11:11:01.233000+00:00  + lsusb
+    2021-05-25 11:11:01.234000+00:00  + awk {print $6}
+    2021-05-25 11:11:01.234000+00:00  + sort
+    2021-05-25 11:11:01.234000+00:00  + seq 1 3
+    2021-05-25 11:11:01.234000+00:00  + /usr/sbin/rtcwake -d rtc0 -m freeze=
+ -s 1
+    2021-05-25 11:11:01.234000+00:00  rtcwake: assuming RTC uses UTC ...
+    2021-05-25 11:11:01.235000+00:00  rtcwake: wakeup from \"freeze\" using=
+ rtc0 at Tue May 25 11:11:03 2021
+    2021-05-25 11:11:01.291000+00:00  <6>[   13.532689] PM: suspend entry (=
+s2idle)
+    2021-05-25 11:11:01.292000+00:00  <6>[   13.537331] Filesystems sync: 0=
+.000 seconds
+    2021-05-25 11:11:01.292000+00:00  <6>[   13.544734] Freezing user space=
+ processes ... (elapsed 0.001 seconds) done. =
+
+    ... (130 line(s) more)  =
+
+ =20
