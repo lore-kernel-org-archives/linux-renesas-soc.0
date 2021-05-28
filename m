@@ -2,95 +2,96 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3804BC4708C
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 May 2021 08:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5A7C4708E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 May 2021 10:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12B75610C9
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 May 2021 08:03:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 702B36139A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 May 2021 10:35:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235714AbhE1IFQ (ORCPT
+        id S236510AbhE1Khb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 May 2021 04:05:16 -0400
-Received: from www.zeus03.de ([194.117.254.33]:50652 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229719AbhE1IFL (ORCPT
+        Fri, 28 May 2021 06:37:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37286 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236395AbhE1Kha (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 May 2021 04:05:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=VXoMljVzEVECXgf9hg23lFboUn+W
-        cDV1QOZKJ8wCwiw=; b=lgsBQ9tct0/9jmHNfPbqEzEAkyAuccG9HDUIr9BOemcf
-        2r/FVjPp2cjBcAmpWaOB70nUcQIOz+XGHWNRlOVZkjVIf2pGuHeOCcEa0+j4ic2P
-        3f1ZwqIYu8SpzJEICwmDcDRAl5QEARIs/UOmmWqouyPstLaqJInP3cWk9f0fDl4=
-Received: (qmail 2275190 invoked from network); 28 May 2021 10:03:35 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 May 2021 10:03:35 +0200
-X-UD-Smtp-Session: l3s3148p1@6HEJUF/D3N4gAwDPXwoXAEGfoBQqamfc
-Date:   Fri, 28 May 2021 10:03:35 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-Subject: Re: [PATCH 0/2] ARM: dts: r8a7745,r8a7794: Remove generic compatible
- strings from iic blocks
-Message-ID: <YLCj11FAJuIyTnIC@kunai>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Chris Paterson <chris.paterson2@renesas.com>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>
-References: <cover.1620139307.git.geert+renesas@glider.be>
- <CAMuHMdWJ40hcw9L=MAKH0dTByjW_a8NbLxZ6GDV81MiH+gAk3Q@mail.gmail.com>
+        Fri, 28 May 2021 06:37:30 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B252C061760
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 28 May 2021 03:35:54 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:751e:82a3:f2a2:3459])
+        by baptiste.telenet-ops.be with bizsmtp
+        id AAbs2500P20MPSF01AbsAb; Fri, 28 May 2021 12:35:52 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lmZqK-00AD9W-B3; Fri, 28 May 2021 12:35:52 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1lmYG8-007Gbk-Nt; Fri, 28 May 2021 10:54:24 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] pinctrl: sh-pfc: Updates for v5.14
+Date:   Fri, 28 May 2021 10:54:23 +0200
+Message-Id: <cover.1622191662.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="T/jI5RAeG32tZ8Av"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdWJ40hcw9L=MAKH0dTByjW_a8NbLxZ6GDV81MiH+gAk3Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+	Hi Linus,
 
---T/jI5RAeG32tZ8Av
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The following changes since commit 6efb943b8616ec53a5e444193dccf1af9ad627b5:
 
+  Linux 5.13-rc1 (2021-05-09 14:17:44 -0700)
 
-> While drivers/i2c/busses/i2c-sh_mobile.c already has a match entry for
-> "renesas,iic-r8a7794", it does not have one for "renesas,iic-r8a7745"
-> yet.  Hence patch 2/2 depends on a to-be-sent patch to update the
-> driver.
+are available in the Git repository at:
 
-For the record, this patch was never sent because we are still
-investigating the presence of those registers in IIC revisions.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v5.14-tag1
 
+for you to fetch changes up to 904ec4bebc1df908a943bf3178f6c633672ce47b:
 
---T/jI5RAeG32tZ8Av
-Content-Type: application/pgp-signature; name="signature.asc"
+  pinctrl: renesas: r8a779{51,6,65}: Reduce non-functional differences (2021-05-11 10:04:42 +0200)
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+pinctrl: renesas: Updates for v5.14
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmCwo9cACgkQFA3kzBSg
-KbYPAg/8D4Yj2kaT4/LWhAoixE3PjUzuhzmQyhYj/UietofbPwyRtrftEW/lr0jR
-SLRKVZK3Uc1C+tN594MiKDqhW7EO0a4bNN/PJmjtN8qlU21pmqFZdzHIwN/64NYe
-MTw2cNlQXtvEDPpu+yTTAQSUFCXxBtYt4XwI2e8yr02zEGvgvg50oi1kzZAeVMaQ
-vc93IaotHhtdOu2W8ljx/3DObrIw3TptnZlXZofqQlgdD+YU7TXw50NrWMPu4Hv3
-cSUk4fzsU5DQGlkkgSArHRp8UnHJEWe0YsXe8PsZ/Ff7axIw+sWVfKHDRRlFBkpD
-VOP2LfXcL5qImv6isnteDoXzED6jXROX14/PLOW7MfjgQiHynIiuqKm2xEPSQsuu
-JShoiYA/EGE0/QaoREOpoi5o+SGU99ast92TTiv32s2blq0LAayFmSr/dNaJS1J1
-Cf1CwLHdoAH8hC0O8sefBZHwFuLrP/4lCHlosjjxyZbLkuf21kb4TjFPwFj7hpfK
-rTdEd6pISSXghRqR2Ewi1+S5gdZldX2MIj+rkU1yf7J3uSQL8/u9VZ0/LOWFw4Ww
-6dHw+PkwDFfUijNyrcQPWfzZaAuNzFhftxpyDvw8wQxCfLS6r28ylm8HH1NLcyuz
-OiPRCVquq3d+/F06tW7Am6RBy1ZYlqiO+4swW2auwoM1xQloteg=
-=hniX
------END PGP SIGNATURE-----
+  - Minor fixes and improvements.
 
---T/jI5RAeG32tZ8Av--
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (5):
+      pinctrl: renesas: r8a7796: Add missing bias for PRESET# pin
+      pinctrl: renesas: r8a77990: JTAG pins do not have pull-down capabilities
+      pinctrl: renesas: r8a77990: Drop bogus PUEN_ prefixes in comments
+      pinctrl: renesas: r8a7778: Remove unused PORT_GP_PUP_1() macro
+      pinctrl: renesas: r8a779{51,6,65}: Reduce non-functional differences
+
+ drivers/pinctrl/renesas/pfc-r8a7778.c  |  3 --
+ drivers/pinctrl/renesas/pfc-r8a77951.c |  4 +-
+ drivers/pinctrl/renesas/pfc-r8a7796.c  | 10 +++--
+ drivers/pinctrl/renesas/pfc-r8a77965.c | 79 +++++++++++++++++-----------------
+ drivers/pinctrl/renesas/pfc-r8a77990.c | 16 +++----
+ 5 files changed, 56 insertions(+), 56 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
