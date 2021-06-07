@@ -2,280 +2,134 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88381C47082
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jun 2021 16:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62EC0C47095
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jun 2021 16:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6E9036136D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jun 2021 16:35:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4218D60C3D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Jun 2021 16:45:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230267AbhFGQhu (ORCPT
+        id S230330AbhFGQqx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Jun 2021 12:37:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53254 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230212AbhFGQhs (ORCPT
+        Mon, 7 Jun 2021 12:46:53 -0400
+Received: from mail-lf1-f49.google.com ([209.85.167.49]:39639 "EHLO
+        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230197AbhFGQqx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Jun 2021 12:37:48 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63185C061766
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Jun 2021 09:35:47 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id h12-20020a17090aa88cb029016400fd8ad8so374879pjq.3
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Jun 2021 09:35:47 -0700 (PDT)
+        Mon, 7 Jun 2021 12:46:53 -0400
+Received: by mail-lf1-f49.google.com with SMTP id p17so26575643lfc.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Jun 2021 09:45:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=JlISYtAzj6DerFdECqrqpmen2U5uvjrW/SFk+Fxltxg=;
-        b=DswjeTqQpOhCfBgtZuTbw7JwtTkwzJURPa26T2agKuePnWGSRoymxe/Y7cmeFKXeL6
-         mdPr/3hxZtn0MXP0TwZwxB4jdKKA3g3h746x2d4Q9Hl6zdzVYqjqJ8l2Uc2um8FRChoL
-         WGO+ydkooPa742jIVUGtFc6sxpwvVg/xJmQZHoMd6P/YB8UWAX8sATXl7L9s+vgmWMl+
-         I+Z0yPHHLG0tuylvuhuR/EDF0QDv/J/wx96BYobVFfecU9YlcvXfwrD9hkFhjAx7AqWH
-         YkWiAymp8avpLC/oFJLtkyW/llV64hMWxJPMi5ozEayRvNyP6p7Et4S+hEwnPHP/Rht5
-         AIiw==
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=UCH4XuaXVFrfpcxb9bP1cFx2Gud3zEeTHMEmvlTBNjM=;
+        b=OAsW2C/iXlAf0hbA45vWWDyy2q2a6JsIe3/CrYGLmR2gVSlsQ/CpVtX9WpHnTzKq7O
+         6cwHbFgb7HIyajOBDaEtsbsGHSPhFPaxSSPUZa6Az7JHs9NhTA9JJg6AefN0lOOqtijI
+         gi0xe+YMCcPlpj2FvN2No0M//9QEzAFiFQydpyE/pso9XbfXHJK+/4IsJCe87UcMUGTu
+         hU7XcwIXxhZEZSSESykxrzQdOPUQPM/vqfYbSlONrpGVx3vgQJuCn0phafqJUg8rcyjH
+         uRW2+kIXxgci4HsxzTO92A8KiRr1t29b0u3z4wg8s5h7xHBYILSbmb/+/XPWd16YylR5
+         g6UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=JlISYtAzj6DerFdECqrqpmen2U5uvjrW/SFk+Fxltxg=;
-        b=gI7NiuUwg3r96faVj+PcDHihWtqulK6UCsEGyh88FHR5QpE6D7C2WA/+Ev8eAT8ktY
-         czoUT2pNj2k7yG577l4/7eIlRhKx6AeJlMcwN8F+AGipz2riutwKk+9t+Vp8oyswkiD6
-         lMJs0MgtXHf+WhxhzrD8PXosuQMcpyeojaiH9kBkOuWQ8oaVzbjOYbsbUppWqzxNCKjZ
-         UHmvTHKuaPTRL70AuY/UIpSzyBKCVXX9ntjzGzPgLqhb2tE6N1gaxsHkmMgTJupJPNhv
-         7W8Yls3oaitkdu4M5gUkTxkfNlcCQeDEHF9/1hJkPz5fXoSQ4Al1EfswsvUcbDGs2rXi
-         zxTg==
-X-Gm-Message-State: AOAM533eWMEF3A325EPSvxlbZ9ivWQ7zQMGNrSVXRZiutn7LxhS+TvBY
-        r6ppysF5it/ltp+o7CZ6pdwmqyhFGtyeksWJ
-X-Google-Smtp-Source: ABdhPJyAgeLmaGshA84z8awen+zGhc52wXgP63/bex2kaEvOsDsylA81EzTusqSpHfLn+SZrkJS56Q==
-X-Received: by 2002:a17:903:2308:b029:110:41c3:70b0 with SMTP id d8-20020a1709032308b029011041c370b0mr13768193plh.32.1623083746683;
-        Mon, 07 Jun 2021 09:35:46 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id i2sm6436pjj.25.2021.06.07.09.35.45
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=UCH4XuaXVFrfpcxb9bP1cFx2Gud3zEeTHMEmvlTBNjM=;
+        b=NdmTSuXQBHJ4rMe60+hI0ZZYN7fduwFTR5/eR3D4ORY6V1Me7Q3b5QUJExPozYh2oB
+         Jgo+yb2lioc510vZEnliA6p8INlrmpdkowq6InmF+ZS0Cyisp67q/tVlw1oRbdFjrey3
+         hkhZ/JYCqBT3dp1D4yWnfZ0K4dBrUH7Z2sPIzaiZ4ThCbXGH212HsNtvB/SV0jYzThEq
+         dSYVJ+4GpBZycNi4f4HayqRqzJ0i77nZ3//f04GSt5chH+Tx8yaDGcxbTw3Y/SrwWcKa
+         h0gtuTtoYazfvkX/BZHwPj6l7wBPDVsk3Cq8/am14MMGsud8W3TXaoKUZwDWkyA63hkF
+         KDpA==
+X-Gm-Message-State: AOAM531vybxpezJ5OkbuLnoozNFBuJFrzV5esI1PX4BRgkMXUk8p8wan
+        wPDlGr77gpPxTM2UHBbNt8xNrg==
+X-Google-Smtp-Source: ABdhPJxS3h81wx9WQ5tifbrrisgQHLS6vkOP3cf7NIh97cc+tRpRfHJ+1Wv9dWLUtFfUfzFmGcTZYg==
+X-Received: by 2002:a19:c749:: with SMTP id x70mr12996580lff.77.1623084240705;
+        Mon, 07 Jun 2021 09:44:00 -0700 (PDT)
+Received: from localhost (h-62-63-236-217.A463.priv.bahnhof.se. [62.63.236.217])
+        by smtp.gmail.com with ESMTPSA id p28sm1548743lfa.74.2021.06.07.09.43.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 07 Jun 2021 09:35:46 -0700 (PDT)
-Message-ID: <60be4ae2.1c69fb81.dc5ff.005c@mx.google.com>
-Date:   Mon, 07 Jun 2021 09:35:46 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 07 Jun 2021 09:44:00 -0700 (PDT)
+Date:   Mon, 7 Jun 2021 18:43:59 +0200
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] thermal: rcar_gen3_thermal: Do not shadow
+ rcar_gen3_ths_tj_1
+Message-ID: <YL5Mz3F/pHkMmZCS@oden.dyn.berto.se>
+References: <9ea7e65d0331daba96f9a7925cb3d12d2170efb1.1623076804.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: renesas-next-2021-06-07-v5.13-rc1
-X-Kernelci-Report-Type: test
-X-Kernelci-Tree: renesas
-X-Kernelci-Branch: next
-Subject: renesas/next baseline-nfs: 57 runs,
- 5 regressions (renesas-next-2021-06-07-v5.13-rc1)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9ea7e65d0331daba96f9a7925cb3d12d2170efb1.1623076804.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/next baseline-nfs: 57 runs, 5 regressions (renesas-next-2021-06-07-=
-v5.13-rc1)
+Hi Geert,
 
-Regressions Summary
--------------------
+Thanks for your work.
 
-platform                     | arch  | lab             | compiler | defconf=
-ig          | regressions
------------------------------+-------+-----------------+----------+--------=
-------------+------------
-dove-cubox                   | arm   | lab-pengutronix | gcc-8    | multi_v=
-7_defconfig | 1          =
+On 2021-06-07 16:41:20 +0200, Geert Uytterhoeven wrote:
+> With -Wshadow:
+> 
+>     drivers/thermal/rcar_gen3_thermal.c: In function ‘rcar_gen3_thermal_probe’:
+>     drivers/thermal/rcar_gen3_thermal.c:310:13: warning: declaration of ‘rcar_gen3_ths_tj_1’ shadows a global declaration [-Wshadow]
+>       310 |  const int *rcar_gen3_ths_tj_1 = of_device_get_match_data(dev);
+> 	  |             ^~~~~~~~~~~~~~~~~~
+>     drivers/thermal/rcar_gen3_thermal.c:246:18: note: shadowed declaration is here
+>       246 | static const int rcar_gen3_ths_tj_1 = 126;
+> 	  |                  ^~~~~~~~~~~~~~~~~~
+> 
+> To add to the confusion, the local variable has a different type.
+> 
+> Fix the shadowing by renaming the local variable to ths_tj_1.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-meson-g12b-a311d-khadas-vim3 | arm64 | lab-collabora   | gcc-8    | defconf=
-ig          | 1          =
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-meson-gxm-q200               | arm64 | lab-baylibre    | gcc-8    | defconf=
-ig          | 1          =
+> ---
+>  drivers/thermal/rcar_gen3_thermal.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+> index e1e412348076b2ff..42c079ba0d51e4b3 100644
+> --- a/drivers/thermal/rcar_gen3_thermal.c
+> +++ b/drivers/thermal/rcar_gen3_thermal.c
+> @@ -307,7 +307,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+>  {
+>  	struct rcar_gen3_thermal_priv *priv;
+>  	struct device *dev = &pdev->dev;
+> -	const int *rcar_gen3_ths_tj_1 = of_device_get_match_data(dev);
+> +	const int *ths_tj_1 = of_device_get_match_data(dev);
+>  	struct resource *res;
+>  	struct thermal_zone_device *zone;
+>  	int ret, i;
+> @@ -352,8 +352,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+>  		priv->tscs[i] = tsc;
+>  
+>  		priv->thermal_init(tsc);
+> -		rcar_gen3_thermal_calc_coefs(tsc, ptat, thcodes[i],
+> -					     *rcar_gen3_ths_tj_1);
+> +		rcar_gen3_thermal_calc_coefs(tsc, ptat, thcodes[i], *ths_tj_1);
+>  
+>  		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
+>  							    &rcar_gen3_tz_of_ops);
+> -- 
+> 2.25.1
+> 
 
-sun7i-a20-olinuxino-lime2    | arm   | lab-baylibre    | gcc-8    | multi_v=
-7_defconfig | 1          =
-
-sun7i-a20-olinuxino-lime2    | arm   | lab-baylibre    | gcc-8    | sunxi_d=
-efconfig    | 1          =
-
-
-  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
-s-next-2021-06-07-v5.13-rc1/plan/baseline-nfs/
-
-  Test:     baseline-nfs
-  Tree:     renesas
-  Branch:   next
-  Describe: renesas-next-2021-06-07-v5.13-rc1
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      e1833059a1c5dac43b9e7352890ec727247341e0 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform                     | arch  | lab             | compiler | defconf=
-ig          | regressions
------------------------------+-------+-----------------+----------+--------=
-------------+------------
-dove-cubox                   | arm   | lab-pengutronix | gcc-8    | multi_v=
-7_defconfig | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/60be0d77bad020e0510c0eed
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--06-07-v5.13-rc1/arm/multi_v7_defconfig/gcc-8/lab-pengutronix/baseline-nfs-=
-dove-cubox.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--06-07-v5.13-rc1/arm/multi_v7_defconfig/gcc-8/lab-pengutronix/baseline-nfs-=
-dove-cubox.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
-0520.0/armhf/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/60be0d77bad020e05=
-10c0eee
-        failing since 41 days (last pass: renesas-next-2021-04-02-v5.12-rc2=
-, first fail: renesas-next-2021-04-02-v5.12-rc2-3-g0bacf4d3d276) =
-
- =
-
-
-
-platform                     | arch  | lab             | compiler | defconf=
-ig          | regressions
------------------------------+-------+-----------------+----------+--------=
-------------+------------
-meson-g12b-a311d-khadas-vim3 | arm64 | lab-collabora   | gcc-8    | defconf=
-ig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/60be0e5ab88b7c932a0c0e8a
-
-  Results:     4 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--06-07-v5.13-rc1/arm64/defconfig/gcc-8/lab-collabora/baseline-nfs-meson-g12=
-b-a311d-khadas-vim3.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--06-07-v5.13-rc1/arm64/defconfig/gcc-8/lab-collabora/baseline-nfs-meson-g12=
-b-a311d-khadas-vim3.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
-0520.0/arm64/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/60be0e5ab88b7c932=
-a0c0e8b
-        new failure (last pass: renesas-next-2021-05-31-v5.13-rc1) =
-
- =
-
-
-
-platform                     | arch  | lab             | compiler | defconf=
-ig          | regressions
------------------------------+-------+-----------------+----------+--------=
-------------+------------
-meson-gxm-q200               | arm64 | lab-baylibre    | gcc-8    | defconf=
-ig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/60be2c1bdde88486be0c0dff
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--06-07-v5.13-rc1/arm64/defconfig/gcc-8/lab-baylibre/baseline-nfs-meson-gxm-=
-q200.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--06-07-v5.13-rc1/arm64/defconfig/gcc-8/lab-baylibre/baseline-nfs-meson-gxm-=
-q200.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
-0520.0/arm64/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/60be2c1bdde88486b=
-e0c0e00
-        failing since 65 days (last pass: renesas-next-2020-10-26-v5.10-rc1=
-, first fail: renesas-next-2021-04-02-v5.12-rc2) =
-
- =
-
-
-
-platform                     | arch  | lab             | compiler | defconf=
-ig          | regressions
------------------------------+-------+-----------------+----------+--------=
-------------+------------
-sun7i-a20-olinuxino-lime2    | arm   | lab-baylibre    | gcc-8    | multi_v=
-7_defconfig | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/60be213c030d67e9e50c0df9
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--06-07-v5.13-rc1/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-nfs-sun=
-7i-a20-olinuxino-lime2.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--06-07-v5.13-rc1/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-nfs-sun=
-7i-a20-olinuxino-lime2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
-0520.0/armhf/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/60be213c030d67e9e=
-50c0dfa
-        failing since 76 days (last pass: v5.12-rc2-14-g6f56f6c26099, first=
- fail: renesas-next-2021-03-22-v5.12-rc2) =
-
- =
-
-
-
-platform                     | arch  | lab             | compiler | defconf=
-ig          | regressions
------------------------------+-------+-----------------+----------+--------=
-------------+------------
-sun7i-a20-olinuxino-lime2    | arm   | lab-baylibre    | gcc-8    | sunxi_d=
-efconfig    | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/60be1a1fd38e4899550c0e05
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: sunxi_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--06-07-v5.13-rc1/arm/sunxi_defconfig/gcc-8/lab-baylibre/baseline-nfs-sun7i-=
-a20-olinuxino-lime2.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--06-07-v5.13-rc1/arm/sunxi_defconfig/gcc-8/lab-baylibre/baseline-nfs-sun7i-=
-a20-olinuxino-lime2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
-0520.0/armhf/initrd.cpio.gz =
-
-
-
-  * baseline-nfs.login: https://kernelci.org/test/case/id/60be1a1fd38e48995=
-50c0e06
-        failing since 37 days (last pass: renesas-next-2021-04-02-v5.12-rc2=
-, first fail: renesas-next-2021-04-02-v5.12-rc2-3-g0bacf4d3d276) =
-
- =20
+-- 
+Regards,
+Niklas Söderlund
