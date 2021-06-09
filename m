@@ -2,66 +2,129 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D6EC48BCF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jun 2021 12:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA386C48BCF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jun 2021 15:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EBA5613AD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jun 2021 12:38:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F79961354
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jun 2021 15:30:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232443AbhFIMj6 (ORCPT
+        id S236513AbhFIPci (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Jun 2021 08:39:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50052 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231281AbhFIMj5 (ORCPT
+        Wed, 9 Jun 2021 11:32:38 -0400
+Received: from mail-vs1-f51.google.com ([209.85.217.51]:38629 "EHLO
+        mail-vs1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232656AbhFIPch (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Jun 2021 08:39:57 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 4C52E6139A;
-        Wed,  9 Jun 2021 12:37:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1623242266;
-        bh=j1He01BL+/BPL/pQH/frjE9ujMsnGBiizbfO/VqeQWs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nwccwyeTzNzTmexBM1MPkKNPl9QgsGQHQBo6OOMqHvEtZDFdLARZVs/ZDqjpErcvK
-         YUMwi5BoLnSFjM0Z3SmcZ7LNbpz7ngCV+/iCkm57q2Bg4x6hp0d2OjXwx/RKHJLgrj
-         mgrv+9oOxHldciqn3SYhdclvocihkClSwh+YMbCA=
-Date:   Wed, 9 Jun 2021 14:37:14 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     jirislaby@kernel.org, linux-serial@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v3] serial: sh-sci: Stop dmaengine transfer in
- sci_stop_tx()
-Message-ID: <YMC1+n/w74x33bLX@kroah.com>
-References: <20210609014902.271237-1-yoshihiro.shimoda.uh@renesas.com>
+        Wed, 9 Jun 2021 11:32:37 -0400
+Received: by mail-vs1-f51.google.com with SMTP id x8so144332vso.5;
+        Wed, 09 Jun 2021 08:30:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5VIIkzelMv7/CVp57eQ28eIePtVGukMPb/+T/jS9W/o=;
+        b=TMB4eVHvBJgo1R3Lqjb+tYkqUAOxdirBt53RwELF4QPeHYDJF2ut9U00Kx6CQ8MeQr
+         3lPGBs6ysLaaorbHfpavanbVbulC42CuAPc/nwLQW8xt/Qj8ueR1wzsX7BF1ihjLZ9Qs
+         nr/Hn6yNcmwBpI+paFzR3nUlx/fykZ83JgHasPYymlCQtr9Qx9URiSBwHLmncRIWDpq0
+         QeYCjwbCIhIPrlG4Tjrxch5r/EjzdjlhQ6wNRC4dKif+/SkWkuFV1+fhReK2hDfFDwbA
+         PSlz0D/ujcZcy5p9Uk2pmxsFIPNcRAPVPP3VyOzChPtfHrO4DVBXhqG9jycRVHfN9/uQ
+         jaew==
+X-Gm-Message-State: AOAM533EuKzQ9TLQgq1NMzeP0a1+T9vnKX9Zw2aqGZoOOQ/lMnCjNFxy
+        Ryg0j655BT5gX2O312xdpbqC4+7W6xYCbgJccO8=
+X-Google-Smtp-Source: ABdhPJzLvtMpkpYCQsS5rtqBsZHNCQ1AwyEOm4fpK+Q1sAWXkOVxaVe/oFCRLQe0boUJaNRrPxXofC8QcNUFBf7zW1M=
+X-Received: by 2002:a67:efd6:: with SMTP id s22mr728988vsp.3.1623252636626;
+ Wed, 09 Jun 2021 08:30:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20210609014902.271237-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20210609014902.271237-1-yoshihiro.shimoda.uh@renesas.com> <ac930164-6150-4358-8fe9-ab87654f68ce@gmail.com>
+In-Reply-To: <ac930164-6150-4358-8fe9-ab87654f68ce@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 9 Jun 2021 17:30:25 +0200
+Message-ID: <CAMuHMdW9oV80QdZmgwJBF99jnw56XuTSkanjHCdBY+h4jAVGew@mail.gmail.com>
+Subject: Re: [PATCH v3] serial: sh-sci: Stop dmaengine transfer in sci_stop_tx()
+To:     Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Cc:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Jun 09, 2021 at 10:49:02AM +0900, Yoshihiro Shimoda wrote:
-> Stop dmaengine transfer in sci_stop_tx(). Otherwise, the following
-> message is possible output when system enters suspend and while
-> transferring data, because clearing TIE bit in SCSCR is not able to
-> stop any dmaengine transfer.
-> 
->     sh-sci e6550000.serial: ttySC1: Unable to drain transmitter
-> 
-> Note that this patch uses dmaengine_terminate_async() so that
-> we can apply this patch into longterm kernel v4.9.x or later.
+Hi Sergei,
 
-What should it be using instead of this?  Don't worry about older
-kernels (you didn't cc: stable@vger.kernel.org so I guess you don't
-either), get it right here and then we can deal with backports later.
+On Wed, Jun 9, 2021 at 5:09 PM Sergei Shtylyov
+<sergei.shtylyov@gmail.com> wrote:
+> On 6/9/21 4:49 AM, Yoshihiro Shimoda wrote:
+> > Stop dmaengine transfer in sci_stop_tx(). Otherwise, the following
+> > message is possible output when system enters suspend and while
+> > transferring data, because clearing TIE bit in SCSCR is not able to
+> > stop any dmaengine transfer.
+> >
+> >     sh-sci e6550000.serial: ttySC1: Unable to drain transmitter
+> >
+> > Note that this patch uses dmaengine_terminate_async() so that
+> > we can apply this patch into longterm kernel v4.9.x or later.
+> >
+> > Fixes: 73a19e4c0301 ("serial: sh-sci: Add DMA support.")
+> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> > ---
+> >  Changes from v2:
+> >  - Don't use a macro.
+> >  - Revise the commit descrption.
+> >  https://lore.kernel.org/linux-renesas-soc/20210604095704.756190-1-yoshihiro.shimoda.uh@renesas.com/
+> >
+> >  Changes from v1:
+> >  - Don't put #ifdef in the .c file.
+> >  - Update the commit description.
+> >  https://lore.kernel.org/linux-renesas-soc/20210602114108.510527-1-yoshihiro.shimoda.uh@renesas.com/
+> >
+> >  drivers/tty/serial/sh-sci.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+> > index 4baf1316ea72..2d5487bf6855 100644
+> > --- a/drivers/tty/serial/sh-sci.c
+> > +++ b/drivers/tty/serial/sh-sci.c
+> > @@ -610,6 +610,14 @@ static void sci_stop_tx(struct uart_port *port)
+> >       ctrl &= ~SCSCR_TIE;
+> >
+> >       serial_port_out(port, SCSCR, ctrl);
+> > +
+> > +#ifdef CONFIG_SERIAL_SH_SCI_DMA
+>
+>    Why not use IS_ENABLED() instead? Gets rid of #ifdef. :-)
+>
+> > +     if (to_sci_port(port)->chan_tx &&
+> > +         !dma_submit_error(to_sci_port(port)->cookie_tx)) {
+> > +             dmaengine_terminate_async(to_sci_port(port)->chan_tx);
+> > +             to_sci_port(port)->cookie_tx = -EINVAL;
 
-thanks,
+Because chan_tx and cookie_tx do not exist if CONFIG_SERIAL_SH_SCI_DMA
+is disabled.
 
-greg k-h
+Yes, that's why all the DMA code in this driver (.c file) is protected by
+#ifdef CONFIG_SERIAL_SH_SCI_DMA.
+
+> > +     }
+> > +#endif
+> >  }
+> >
+> >  static void sci_start_rx(struct uart_port *port)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
