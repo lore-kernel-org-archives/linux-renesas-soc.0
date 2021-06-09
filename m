@@ -2,251 +2,160 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 918A6C48BE0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jun 2021 15:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F4EC48BCF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jun 2021 15:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB8461351
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jun 2021 15:33:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D52A660FEB
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Jun 2021 15:51:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239060AbhFIPfw (ORCPT
+        id S236269AbhFIPw4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Jun 2021 11:35:52 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:27851 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S239101AbhFIPfa (ORCPT
+        Wed, 9 Jun 2021 11:52:56 -0400
+Received: from mail-yb1-f172.google.com ([209.85.219.172]:33690 "EHLO
+        mail-yb1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235827AbhFIPwz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Jun 2021 11:35:30 -0400
-X-IronPort-AV: E=Sophos;i="5.83,261,1616425200"; 
-   d="scan'208";a="83733829"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 10 Jun 2021 00:33:30 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 22DC1400911A;
-        Thu, 10 Jun 2021 00:33:26 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 9 Jun 2021 11:52:55 -0400
+Received: by mail-yb1-f172.google.com with SMTP id f84so36218583ybg.0;
+        Wed, 09 Jun 2021 08:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aBTN9nJMcjuczcYEKzyMHwRihscHxKS/kDo9+PJCmN4=;
+        b=ms5C9nDO22l6b82s4qeFr0cb0SJcO5eHC60T8kui+Dd57hCUfr0CDSqt24AliiLEpd
+         BeoldJeG+yuqBDfHZYSJ8BG5U3Bk29hd8XmdTZ0blOOYvBP6dJveoUfEMbbXATMY4Mx+
+         OdUjHYuLznMpzbiw+5g4mMdoomZbXTPSx86iVLEFjjwsPYUywMzbQWDsi/vO7u1bd9Vx
+         eGhkD25LkM1UIsaoef92MQlQLoqV4AlQ6UaTYqBxhpuD/TelmGCkQEZLpLTrQu9eczUt
+         Pmu5sFbdnYxiX14buLaBbfGgGF50zh8TKGW3jkB51X6KP7CiIaeulyNckyS5NhnGfsQH
+         cQiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aBTN9nJMcjuczcYEKzyMHwRihscHxKS/kDo9+PJCmN4=;
+        b=V2KfjvSnrdO44DQ/n+lIwVy5DDkxivtadqdizV56WwFlAWAlREso2pKOWnwUeKxy70
+         L5UIcn7+O+pELYAKGCCLobQJpT5NInNFkxGU6dGyzH1QT5Rt4wOVy6LymMeVQvVbWsgD
+         6hFfizpV3ntKpxhCc2tFbZcNBLZdsK5ebeXz2m4WifMT1pA6Q+2wCoI1R68ovonVYAeJ
+         +DWIqFORQIzA5XZVULtwaWu5/W7qseDoWZMcdq9dp6rzD0zDaJ6ZyCPm6OIqlvoKBUT8
+         NZ2/+g0wICV7dihIc++3QkWXimn8or/gzEOW7T6EVQ5MUyUFgqq5qQDnarQZ/muOGw5b
+         joCA==
+X-Gm-Message-State: AOAM531NJLNBXb8awZ4djujZwaRih0/1q43Da6AkTOZBPu7WhCbmgAxG
+        jSHNRlhxNu3ED9rDueT48vEj5oasrHIMfNeVp9GVjwxdzt0=
+X-Google-Smtp-Source: ABdhPJzdYIkJvQwfRiIEk/K+MGk13mZ6eCQ5fCyo7dydKfGS8Ok1LiDkYnwNrOGFbrpLtbz8UGHSY6SGZyf/firFwSg=
+X-Received: by 2002:a25:743:: with SMTP id 64mr905819ybh.426.1623253800926;
+ Wed, 09 Jun 2021 08:50:00 -0700 (PDT)
+MIME-Version: 1.0
+References: <20210604180933.16754-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20210604180933.16754-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVkKhD3kU-DtPzrGfNf4Sn5Ht09Z1N0scwx1XJoG-F6Mg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVkKhD3kU-DtPzrGfNf4Sn5Ht09Z1N0scwx1XJoG-F6Mg@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Wed, 9 Jun 2021 16:49:34 +0100
+Message-ID: <CA+V-a8tOMtS59OoWVK-c=zy2iK_nv_16Xu+2DBcUQPTq7nCa1Q@mail.gmail.com>
+Subject: Re: [PATCH 2/3] soc: renesas: Add support to read LSI DEVID register
+ of RZ/G2{L,LC} SoC's
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 10/11] arm64: dts: renesas: Add initial DTSI for RZ/G2{L,LC} SoC's
-Date:   Wed,  9 Jun 2021 16:32:29 +0100
-Message-Id: <20210609153230.6967-11-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210609153230.6967-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20210609153230.6967-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add initial DTSI for RZ/G2{L,LC} SoC's.
+Hi Geert,
 
-File structure:
-r9a07g044.dtsi  => RZ/G2L family SoC common parts
-r9a07g044l1.dtsi => RZ/G2L R9A07G044L1 SoC specific parts
-r9a07g044l2.dtsi => RZ/G2L R9A07G044L2 SoC specific parts
+Thank you for the review.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi   | 120 +++++++++++++++++++
- arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi |  25 ++++
- arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi |  13 ++
- 3 files changed, 158 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
- create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi
+On Wed, Jun 9, 2021 at 8:27 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Fri, Jun 4, 2021 at 8:09 PM Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> > Add support for reading the LSI DEVID register which is present in
+> > SYSC block of RZ/G2{L,LC} SoC's.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/soc/renesas/renesas-soc.c
+> > +++ b/drivers/soc/renesas/renesas-soc.c
+> > @@ -56,6 +56,11 @@ static const struct renesas_family fam_rzg2 __initconst __maybe_unused = {
+> >         .reg    = 0xfff00044,           /* PRR (Product Register) */
+> >  };
+> >
+> > +static const struct renesas_family fam_rzg2l __initconst __maybe_unused = {
+> > +       .name   = "RZ/G2L",
+> > +       .reg    = 0x11020a04,
+>
+> Please don't add hardcoded register addresses for new SoCs (i.e. drop
+> ".reg").  The "renesas,r9a07g044-sysc" is always present.
+> And if it were missing, the hardcoded fallback would lead into the
+> classic CCCR/PRR scheme, which is not correct for RZ/G2L...
+>
+I wanted to avoid iomap for the entire sysc block for just a single register.
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-new file mode 100644
-index 000000000000..6a103a62eccb
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -0,0 +1,120 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G2L and RZ/G2LC common SoC parts
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
-+ */
-+
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/r9a07g044-cpg.h>
-+
-+/ {
-+	compatible = "renesas,r9a07g044";
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	/* clock can be either from exclk or crystal oscillator (XIN/XOUT) */
-+	extal_clk: extal {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		/* This value must be overridden by the board */
-+		clock-frequency = <0>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0", "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cpu0>;
-+				};
-+				core1 {
-+					cpu = <&cpu1>;
-+				};
-+			};
-+		};
-+
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0>;
-+			device_type = "cpu";
-+			next-level-cache = <&L3_CA55>;
-+			enable-method = "psci";
-+		};
-+
-+		cpu1: cpu@100 {
-+			compatible = "arm,cortex-a55";
-+			reg = <0x100>;
-+			device_type = "cpu";
-+			next-level-cache = <&L3_CA55>;
-+			enable-method = "psci";
-+		};
-+
-+		L3_CA55: cache-controller-0 {
-+			compatible = "cache";
-+			cache-unified;
-+			cache-size = <0x40000>;
-+		};
-+	};
-+
-+	soc: soc {
-+		compatible = "simple-bus";
-+		interrupt-parent = <&gic>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		scif0: serial@1004b800 {
-+			compatible = "renesas,scif-r9a07g044";
-+			reg = <0 0x1004b800 0 0x400>;
-+			interrupts = <GIC_SPI 380 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 382 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 383 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 381 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 384 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 384 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "eri", "rxi", "txi",
-+					  "bri", "dri", "tei";
-+			clocks = <&cpg CPG_MOD R9A07G044_CLK_SCIF0>;
-+			clock-names = "fck";
-+			power-domains = <&cpg>;
-+			resets = <&cpg R9A07G044_CLK_SCIF0>;
-+			status = "disabled";
-+		};
-+
-+		cpg: clock-controller@11010000 {
-+			compatible = "renesas,r9a07g044-cpg";
-+			reg = <0 0x11010000 0 0x10000>;
-+			clocks = <&extal_clk>;
-+			clock-names = "extal";
-+			#clock-cells = <2>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <0>;
-+		};
-+
-+		gic: interrupt-controller@11900000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg = <0x0 0x11900000 0 0x40000>,
-+			      <0x0 0x11940000 0 0x60000>;
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_LOW>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
-new file mode 100644
-index 000000000000..9d89d4590358
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
-@@ -0,0 +1,25 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G2L R9A07G044L1 SoC specific parts
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r9a07g044.dtsi"
-+
-+/ {
-+	compatible = "renesas,r9a07g044l1", "renesas,r9a07g044";
-+
-+	cpus {
-+		/delete-node/ cpu-map;
-+		/delete-node/ cpu@100;
-+	};
-+
-+	timer {
-+		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>,
-+				      <&gic GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(1) | IRQ_TYPE_LEVEL_LOW)>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi
-new file mode 100644
-index 000000000000..91dc10b2cdbb
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+/*
-+ * Device Tree Source for the RZ/G2L R9A07G044L2 SoC specific parts
-+ *
-+ * Copyright (C) 2021 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r9a07g044.dtsi"
-+
-+/ {
-+	compatible = "renesas,r9a07g044l2", "renesas,r9a07g044";
-+};
--- 
-2.17.1
+> > @@ -348,6 +361,25 @@ static int __init renesas_soc_init(void)
+> >                 goto done;
+> >         }
+> >
+> > +       np = of_find_compatible_node(NULL, NULL, "renesas,r9a07g044-sysc");
+> > +       if (np) {
+> > +               of_node_put(np);
+> > +               chipid = ioremap(family->reg, 4);
+>
+> Just use of_iomap(np, 0)...
+>
+will do.
 
+> > +
+> > +               if (chipid) {
+> > +                       product = readl(chipid);
+>
+> ... and add the DEVID offset within the SYSC block here.
+>
+will do.
+
+Cheers,
+Prabhakar
+
+> > +                       iounmap(chipid);
+> > +
+> > +                       if (soc->id && (product & 0xfffffff) != soc->id) {
+> > +                               pr_warn("SoC mismatch (product = 0x%x)\n",
+> > +                                       product);
+> > +                               return -ENODEV;
+> > +                       }
+> > +               }
+> > +
+> > +               goto done;
+> > +       }
+> > +
+> >         /* Try PRR first, then hardcoded fallback */
+> >         np = of_find_compatible_node(NULL, NULL, "renesas,prr");
+> >         if (np) {
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
