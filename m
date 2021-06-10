@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD9AC48BD1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 09:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C41C48BE5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 09:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A051D613FE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 09:37:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80D77613E3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 09:37:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230196AbhFJJji (ORCPT
+        id S230230AbhFJJjj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Jun 2021 05:39:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37404 "EHLO
+        Thu, 10 Jun 2021 05:39:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229961AbhFJJjh (ORCPT
+        with ESMTP id S230146AbhFJJji (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Jun 2021 05:39:37 -0400
+        Thu, 10 Jun 2021 05:39:38 -0400
 Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC6F8C061760
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Jun 2021 02:37:40 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A831C0613A4
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Jun 2021 02:37:41 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a946:bccb:b1a1:3055])
         by albert.telenet-ops.be with bizsmtp
-        id FMde2500M0wnyou06MdeEb; Thu, 10 Jun 2021 11:37:39 +0200
+        id FMdf2500Q0wnyou06MdfEq; Thu, 10 Jun 2021 11:37:39 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lrH86-00FDX0-8c; Thu, 10 Jun 2021 11:37:38 +0200
+        id 1lrH86-00FDXA-RX; Thu, 10 Jun 2021 11:37:38 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lrH85-00BTlL-Mz; Thu, 10 Jun 2021 11:37:37 +0200
+        id 1lrH85-00BTmV-Tj; Thu, 10 Jun 2021 11:37:37 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 01/14] dt-bindings: arm: renesas: Document R-Car H3e-2G and M3e-2G SoCs and boards
-Date:   Thu, 10 Jun 2021 11:37:14 +0200
-Message-Id: <f79841c1881f8b9a2c10fadb3d3ad6cb5fccc6a5.1623315732.git.geert+renesas@glider.be>
+Subject: [PATCH 11/14] arm64: dts: renesas: Add support for M3ULCB with R-Car M3e-2G
+Date:   Thu, 10 Jun 2021 11:37:24 +0200
+Message-Id: <dfef77a16c752ad7078d6f8d0ee40e579b9a82ff.1623315732.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1623315732.git.geert+renesas@glider.be>
 References: <cover.1623315732.git.geert+renesas@glider.be>
@@ -52,91 +52,76 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the compatible values for the R-Car H3e-2G (R8A779M1) and
-M3e-2G (R8A779M3) SoCs.  These are different gradings of the R-Car H3
-ES3.0 (R8A77951) and M3-W+ (R8A77961) SoCs.
-
-All R-Car Gen3e on-SoC devices are identical to the devices on the
-corresponding R-Car Gen3 SoCs, and thus just use the compatible values
-for the latter.  The root compatible properties do gain an additional
-value, to sort out integration issues if they ever arise.
-
-Document the use of these SoCs on the Salvator-XS and ULCB (with and
-without Kingfisher) development boards.
+Add support for the Renesas R-Car Starter Kit Pro equipped with an R-Car
+M3e-2G SiP.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../devicetree/bindings/arm/renesas.yaml      | 50 +++++++++++++++----
- 1 file changed, 39 insertions(+), 11 deletions(-)
+ arch/arm64/boot/dts/renesas/Makefile          |  1 +
+ arch/arm64/boot/dts/renesas/r8a779m3-ulcb.dts | 45 +++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779m3-ulcb.dts
 
-diff --git a/Documentation/devicetree/bindings/arm/renesas.yaml b/Documentation/devicetree/bindings/arm/renesas.yaml
-index 5fd0696a9f91f383..a01dd064bf16632a 100644
---- a/Documentation/devicetree/bindings/arm/renesas.yaml
-+++ b/Documentation/devicetree/bindings/arm/renesas.yaml
-@@ -238,17 +238,29 @@ properties:
-           - const: renesas,r8a77961
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 6a1061824a9f29f0..f29dd27692ba4a66 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -68,3 +68,4 @@ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-ulcb-kf.dtb
  
-       - description: Kingfisher (SBEV-RCAR-KF-M03)
--        items:
--          - const: shimafuji,kingfisher
--          - enum:
--              - renesas,h3ulcb
--              - renesas,m3ulcb
--              - renesas,m3nulcb
--          - enum:
--              - renesas,r8a7795
--              - renesas,r8a7796
--              - renesas,r8a77961
--              - renesas,r8a77965
-+        oneOf:
-+          - items:
-+              - const: shimafuji,kingfisher
-+              - enum:
-+                  - renesas,h3ulcb
-+                  - renesas,m3ulcb
-+                  - renesas,m3nulcb
-+              - enum:
-+                  - renesas,r8a7795
-+                  - renesas,r8a7796
-+                  - renesas,r8a77961
-+                  - renesas,r8a77965
-+          - items:
-+              - const: shimafuji,kingfisher
-+              - enum:
-+                  - renesas,h3ulcb
-+                  - renesas,m3ulcb
-+              - enum:
-+                  - renesas,r8a779m1
-+                  - renesas,r8a779m3
-+              - enum:
-+                  - renesas,r8a7795
-+                  - renesas,r8a77961
- 
-       - description: R-Car M3-N (R8A77965)
-         items:
-@@ -296,6 +308,22 @@ properties:
-           - const: renesas,falcon-cpu
-           - const: renesas,r8a779a0
- 
-+      - description: R-Car H3e-2G (R8A779M1)
-+        items:
-+          - enum:
-+              - renesas,h3ulcb      # H3ULCB (R-Car Starter Kit Premier)
-+              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version)
-+          - const: renesas,r8a779m1
-+          - const: renesas,r8a7795
+ dtb-$(CONFIG_ARCH_R8A77961) += r8a779m3-salvator-xs.dtb
++dtb-$(CONFIG_ARCH_R8A77961) += r8a779m3-ulcb.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a779m3-ulcb.dts b/arch/arm64/boot/dts/renesas/r8a779m3-ulcb.dts
+new file mode 100644
+index 0000000000000000..8f215a0b771b7c30
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a779m3-ulcb.dts
+@@ -0,0 +1,45 @@
++// SPDX-License-Identifier: (GPL-2.0 or MIT)
++/*
++ * Device Tree Source for the M3ULCB (R-Car Starter Kit Pro) with R-Car M3e-2G
++ *
++ * Copyright (C) 2021 Glider bv
++ *
++ * Based on r8a77961-ulcb.dts
++ * Copyright (C) 2020 Renesas Electronics Corp.
++ */
 +
-+      - description: R-Car M3e-2G (R8A779M3)
-+        items:
-+          - enum:
-+              - renesas,m3ulcb      # M3ULCB (R-Car Starter Kit Pro)
-+              - renesas,salvator-xs # Salvator-XS (Salvator-X 2nd version)
-+          - const: renesas,r8a779m3
-+          - const: renesas,r8a77961
++/dts-v1/;
++#include "r8a779m3.dtsi"
++#include "ulcb.dtsi"
 +
-       - description: RZ/N1D (R9A06G032)
-         items:
-           - enum:
++/ {
++	model = "Renesas M3ULCB board based on r8a779m3";
++	compatible = "renesas,m3ulcb", "renesas,r8a779m3", "renesas,r8a77961";
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x78000000>;
++	};
++
++	memory@480000000 {
++		device_type = "memory";
++		reg = <0x4 0x80000000 0x0 0x80000000>;
++	};
++
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x1 0x00000000>;
++	};
++};
++
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 722>,
++		 <&versaclock5 1>,
++		 <&versaclock5 3>,
++		 <&versaclock5 2>;
++	clock-names = "du.0", "du.1", "du.2",
++		      "dclkin.0", "dclkin.1", "dclkin.2";
++};
 -- 
 2.25.1
 
