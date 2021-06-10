@@ -5,44 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82E25C49EBC
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 09:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3326DC48BCD
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 09:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B4B0613E3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 09:37:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A689613DF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 09:37:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230051AbhFJJjn (ORCPT
+        id S229937AbhFJJjl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Jun 2021 05:39:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37450 "EHLO
+        Thu, 10 Jun 2021 05:39:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229895AbhFJJjj (ORCPT
+        with ESMTP id S230201AbhFJJji (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Jun 2021 05:39:39 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6DC0C0611F9
+        Thu, 10 Jun 2021 05:39:38 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8F05C0611C0
         for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Jun 2021 02:37:41 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a946:bccb:b1a1:3055])
-        by michel.telenet-ops.be with bizsmtp
-        id FMdf250060wnyou06MdflC; Thu, 10 Jun 2021 11:37:39 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id FMdf250130wnyou06MdfFG; Thu, 10 Jun 2021 11:37:39 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lrH86-00FDX7-NN; Thu, 10 Jun 2021 11:37:38 +0200
+        id 1lrH87-00FDX4-4G; Thu, 10 Jun 2021 11:37:39 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lrH85-00BTmA-Rc; Thu, 10 Jun 2021 11:37:37 +0200
+        id 1lrH85-00BTln-Pn; Thu, 10 Jun 2021 11:37:37 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
 Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 08/14] arm64: dts: renesas: Add support for H3ULCB with R-Car H3e-2G
-Date:   Thu, 10 Jun 2021 11:37:21 +0200
-Message-Id: <d091337a5ed190dc564d2b512be39b95949fda57.1623315732.git.geert+renesas@glider.be>
+Subject: [PATCH 05/14] arm64: dts: renesas: Add Renesas R8A779M1 SoC support
+Date:   Thu, 10 Jun 2021 11:37:18 +0200
+Message-Id: <96a1cfd2e8d86e10364fa330c6053b5136e82939.1623315732.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1623315732.git.geert+renesas@glider.be>
 References: <cover.1623315732.git.geert+renesas@glider.be>
@@ -52,84 +52,32 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for the Renesas R-Car Starter Kit Premier equipped with an
-R-Car H3e-2G SiP.
+Add support for the Renesas R-Car H3e-2G (R8A779M1) SoC, which is a
+different grading of the R-Car H3 ES3.0 (R8A77951) SoC.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/Makefile          |  1 +
- arch/arm64/boot/dts/renesas/r8a779m1-ulcb.dts | 54 +++++++++++++++++++
- 2 files changed, 55 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779m1-ulcb.dts
+ arch/arm64/boot/dts/renesas/r8a779m1.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779m1.dtsi
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 5a689a1d10821f1d..2a9119c8651815eb 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -64,3 +64,4 @@ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
- dtb-$(CONFIG_ARCH_R8A779A0) += r8a779a0-falcon.dtb
- 
- dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-salvator-xs.dtb
-+dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-ulcb.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a779m1-ulcb.dts b/arch/arm64/boot/dts/renesas/r8a779m1-ulcb.dts
+diff --git a/arch/arm64/boot/dts/renesas/r8a779m1.dtsi b/arch/arm64/boot/dts/renesas/r8a779m1.dtsi
 new file mode 100644
-index 0000000000000000..e294b6bda28c68c8
+index 0000000000000000..0e9b04469b83c661
 --- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779m1-ulcb.dts
-@@ -0,0 +1,54 @@
++++ b/arch/arm64/boot/dts/renesas/r8a779m1.dtsi
+@@ -0,0 +1,12 @@
 +// SPDX-License-Identifier: (GPL-2.0 or MIT)
 +/*
-+ * Device Tree Source for the H3ULCB (R-Car Starter Kit Premier) with R-Car H3e-2G
++ * Device Tree Source for the R-Car H3e-2G (R8A779M1) SoC
 + *
 + * Copyright (C) 2021 Glider bv
-+ *
-+ * Based on r8a77951-ulcb.dts
-+ *
-+ * Copyright (C) 2016 Renesas Electronics Corp.
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
 + */
 +
-+/dts-v1/;
-+#include "r8a779m1.dtsi"
-+#include "ulcb.dtsi"
++#include "r8a77951.dtsi"
 +
 +/ {
-+	model = "Renesas H3ULCB board based on r8a779m1";
-+	compatible = "renesas,h3ulcb", "renesas,r8a779m1", "renesas,r8a7795";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+
-+	memory@500000000 {
-+		device_type = "memory";
-+		reg = <0x5 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@700000000 {
-+		device_type = "memory";
-+		reg = <0x7 0x00000000 0x0 0x40000000>;
-+	};
-+};
-+
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&versaclock5 1>,
-+		 <&versaclock5 3>,
-+		 <&versaclock5 4>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.2", "du.3",
-+		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
++	compatible = "renesas,r8a779m1", "renesas,r8a7795";
 +};
 -- 
 2.25.1
