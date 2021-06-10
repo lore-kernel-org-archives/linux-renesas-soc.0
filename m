@@ -5,132 +5,95 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAB5C48BD1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 09:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5E3C47094
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 11:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1FB2613E3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 09:37:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2994C6128A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 10 Jun 2021 11:08:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230212AbhFJJjn (ORCPT
+        id S230051AbhFJLK0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Jun 2021 05:39:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37434 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230236AbhFJJjj (ORCPT
+        Thu, 10 Jun 2021 07:10:26 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:40195 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229961AbhFJLK0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Jun 2021 05:39:39 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 151AFC0611BC
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 10 Jun 2021 02:37:41 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a946:bccb:b1a1:3055])
-        by laurent.telenet-ops.be with bizsmtp
-        id FMdf250090wnyou01Mdf6U; Thu, 10 Jun 2021 11:37:39 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lrH86-00FDX6-U2; Thu, 10 Jun 2021 11:37:38 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lrH85-00BTm3-Qz; Thu, 10 Jun 2021 11:37:37 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 07/14] arm64: dts: renesas: Add support for Salvator-XS with R-Car H3e-2G
-Date:   Thu, 10 Jun 2021 11:37:20 +0200
-Message-Id: <fda1bc3516ac98084089b5565b486a0a41b3a62c.1623315732.git.geert+renesas@glider.be>
+        Thu, 10 Jun 2021 07:10:26 -0400
+X-IronPort-AV: E=Sophos;i="5.83,263,1616425200"; 
+   d="scan'208";a="83829546"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 10 Jun 2021 20:08:29 +0900
+Received: from localhost.localdomain (unknown [10.166.14.185])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 25EF2421A8A0;
+        Thu, 10 Jun 2021 20:08:29 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     gregkh@linuxfoundation.org, jirislaby@kernel.org
+Cc:     linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v4] serial: sh-sci: Stop dmaengine transfer in sci_stop_tx()
+Date:   Thu, 10 Jun 2021 20:08:06 +0900
+Message-Id: <20210610110806.277932-1-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1623315732.git.geert+renesas@glider.be>
-References: <cover.1623315732.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for the Renesas Salvator-X 2nd version development
-board equipped with an R-Car H3e-2G SiP.
+Stop dmaengine transfer in sci_stop_tx(). Otherwise, the following
+message is possible output when system enters suspend and while
+transferring data, because clearing TIE bit in SCSCR is not able to
+stop any dmaengine transfer.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+    sh-sci e6550000.serial: ttySC1: Unable to drain transmitter
+
+Note that this driver has already used some #ifdef in the .c file
+so that this patch also uses #ifdef to fix the issue. Otherwise,
+build errors happens if the CONFIG_SERIAL_SH_SCI_DMA is disabled.
+
+Fixes: 73a19e4c0301 ("serial: sh-sci: Add DMA support.")
+Cc: <stable@vger.kernel.org> # v4.9+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- arch/arm64/boot/dts/renesas/Makefile          |  2 +
- .../boot/dts/renesas/r8a779m1-salvator-xs.dts | 53 +++++++++++++++++++
- 2 files changed, 55 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779m1-salvator-xs.dts
+ Changes from v3:
+ - Add a description why the patch need #ifdef.
+ - Add Cc: stable ML tag.
+ https://lore.kernel.org/linux-renesas-soc/20210609014902.271237-1-yoshihiro.shimoda.uh@renesas.com/
 
-diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index f2de2fa0c8b890fb..5a689a1d10821f1d 100644
---- a/arch/arm64/boot/dts/renesas/Makefile
-+++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -62,3 +62,5 @@ dtb-$(CONFIG_ARCH_R8A77990) += r8a77990-ebisu.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+ Changes from v2:
+ - Don't use a macro.
+ - Revise the commit descrption.
+ https://lore.kernel.org/linux-renesas-soc/20210604095704.756190-1-yoshihiro.shimoda.uh@renesas.com/
+
+ Changes from v1:
+ - Don't put #ifdef in the .c file.
+ - Update the commit description.
+ https://lore.kernel.org/linux-renesas-soc/20210602114108.510527-1-yoshihiro.shimoda.uh@renesas.com/
+
+ drivers/tty/serial/sh-sci.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
+index 4baf1316ea72..2d5487bf6855 100644
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -610,6 +610,14 @@ static void sci_stop_tx(struct uart_port *port)
+ 	ctrl &= ~SCSCR_TIE;
  
- dtb-$(CONFIG_ARCH_R8A779A0) += r8a779a0-falcon.dtb
+ 	serial_port_out(port, SCSCR, ctrl);
 +
-+dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-salvator-xs.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a779m1-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a779m1-salvator-xs.dts
-new file mode 100644
-index 0000000000000000..084b75b046802339
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779m1-salvator-xs.dts
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: (GPL-2.0 or MIT)
-+/*
-+ * Device Tree Source for the Salvator-X 2nd version board with R-Car H3e-2G
-+ *
-+ * Copyright (C) 2021 Glider bv
-+ *
-+ * Based on r8a77951-salvator-xs.dts
-+ * Copyright (C) 2015-2017 Renesas Electronics Corp.
-+ */
-+
-+/dts-v1/;
-+#include "r8a779m1.dtsi"
-+#include "salvator-xs.dtsi"
-+
-+/ {
-+	model = "Renesas Salvator-X 2nd version board based on r8a779m1";
-+	compatible = "renesas,salvator-xs", "renesas,r8a779m1",
-+		     "renesas,r8a7795";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+
-+	memory@500000000 {
-+		device_type = "memory";
-+		reg = <0x5 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@700000000 {
-+		device_type = "memory";
-+		reg = <0x7 0x00000000 0x0 0x40000000>;
-+	};
-+};
-+
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&versaclock6 1>,
-+		 <&x21_clk>,
-+		 <&x22_clk>,
-+		 <&versaclock6 2>;
-+	clock-names = "du.0", "du.1", "du.2", "du.3",
-+		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
-+};
++#ifdef CONFIG_SERIAL_SH_SCI_DMA
++	if (to_sci_port(port)->chan_tx &&
++	    !dma_submit_error(to_sci_port(port)->cookie_tx)) {
++		dmaengine_terminate_async(to_sci_port(port)->chan_tx);
++		to_sci_port(port)->cookie_tx = -EINVAL;
++	}
++#endif
+ }
+ 
+ static void sci_start_rx(struct uart_port *port)
 -- 
 2.25.1
 
