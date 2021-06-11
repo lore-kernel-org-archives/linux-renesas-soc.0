@@ -7,38 +7,36 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0BFC48BD1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D5A6C48BE5
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 10:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01EAF61357
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 10:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CBE261357
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 10:54:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230230AbhFKK4Y (ORCPT
+        id S230349AbhFKK4Z (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Jun 2021 06:56:24 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:14385 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229633AbhFKK4Y (ORCPT
+        Fri, 11 Jun 2021 06:56:25 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:19596 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229969AbhFKK4Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 11 Jun 2021 06:56:24 -0400
 X-IronPort-AV: E=Sophos;i="5.83,265,1616425200"; 
-   d="scan'208";a="83947293"
+   d="scan'208";a="84095739"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 11 Jun 2021 19:54:25 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 11 Jun 2021 19:54:25 +0900
 Received: from localhost.localdomain (unknown [10.166.14.185])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 482544011405;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 39109401A46E;
         Fri, 11 Jun 2021 19:54:25 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     balbi@kernel.org
 Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] usb: renesas_usbhs: Fix superfluous irqs happen after usb_pkt_pop()
-Date:   Fri, 11 Jun 2021 19:54:11 +0900
-Message-Id: <20210611105411.543008-2-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] usb: renesas_usbhs: Fix superfluous interrupt happens after usb_pkt_pop()
+Date:   Fri, 11 Jun 2021 19:54:10 +0900
+Message-Id: <20210611105411.543008-1-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210611105411.543008-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20210611105411.543008-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -46,10 +44,10 @@ List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 This driver has a potential issue which this driver is possible to
-cause superfluous irqs after usb_pkt_pop() is called. So, after
-the commit 3af32605289e ("usb: renesas_usbhs: fix error return
-code of usbhsf_pkt_handler()") had been applied, we could observe
-the following error happened when we used g_audio.
+cause superfluous interrupts after usb_pkt_pop() is called. So,
+after the commit 3af32605289e ("usb: renesas_usbhs: fix error return
+code of usbhsf_pkt_handler()") had been applied, the following
+error happened when we use g_audio.
 
     renesas_usbhs e6590000.usb: irq_ready run_error 1 : -22
 
