@@ -2,38 +2,39 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E5EC48BD1
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 09:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C1BAC48BE0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 09:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC196610A3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 09:47:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA6CC613D5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 09:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231512AbhFKJtR (ORCPT
+        id S231600AbhFKJtU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Jun 2021 05:49:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48048 "EHLO
+        Fri, 11 Jun 2021 05:49:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48050 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231210AbhFKJtP (ORCPT
+        with ESMTP id S231295AbhFKJtP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 11 Jun 2021 05:49:15 -0400
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53439C061574
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53CF6C0617AF
         for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Jun 2021 02:47:17 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:2411:a261:8fe2:b47f])
         by xavier.telenet-ops.be with bizsmtp
-        id FlnD2500a25eH3q01lnDK6; Fri, 11 Jun 2021 11:47:14 +0200
+        id FlnD2500b25eH3q01lnEK7; Fri, 11 Jun 2021 11:47:14 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lrdkv-00FcQL-I0; Fri, 11 Jun 2021 11:47:13 +0200
+        id 1lrdkv-00FcQN-Hn; Fri, 11 Jun 2021 11:47:13 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1lrdku-00CZqj-NI; Fri, 11 Jun 2021 11:47:12 +0200
+        id 1lrdku-00CZqt-Pd; Fri, 11 Jun 2021 11:47:12 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: <soc.lore.kernel.org>
 To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
@@ -41,59 +42,75 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/4] Renesas ARM SoC updates for v5.14 (take two)
-Date:   Fri, 11 Jun 2021 11:47:00 +0200
-Message-Id: <cover.1623403793.git.geert+renesas@glider.be>
+Subject: [GIT PULL 2/4] Renesas ARM DT updates for v5.14 (take two)
+Date:   Fri, 11 Jun 2021 11:47:02 +0200
+Message-Id: <cover.1623403796.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1623403793.git.geert+renesas@glider.be>
+References: <cover.1623403793.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi soc folks,
+The following changes since commit 1b32fce42bff899dfb9b72962f46ca5542c7647c:
 
-This is my second pull request for the inclusion of Renesas SoC updates
-for v5.14.
+  ARM: dts: alt: Add SW2 as GPIO keys (2021-05-27 15:46:21 +0200)
 
-It consists of 4 parts:
+are available in the Git repository at:
 
-  [GIT PULL 1/4] Renesas ARM defconfig updates for v5.14 (take two)
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-dt-for-v5.14-tag2
 
-    - Enable support for the new RZ/G2L SoC variants in the arm64
-      defconfig.
+for you to fetch changes up to 42bbd003910906229cb1dc0eaa812d9cc59e4c77:
 
-  [GIT PULL 2/4] Renesas ARM DT updates for v5.14 (take two)
+  arm64: dts: renesas: r9a07g044: Add SYSC node (2021-06-10 15:36:41 +0200)
 
-    - External interrupt (INTC-EX) support for the R-Car M3-W+ SoC,
-    - Initial support for the new RZ/G2L SoC on the RZ/G2L SMARC EVK
-      board,
-    - Miscellaneous fixes and improvements.
+----------------------------------------------------------------
+Renesas ARM DT updates for v5.14 (take two)
 
-  [GIT PULL 3/4] Renesas driver updates for v5.14
+  - External interrupt (INTC-EX) support for the R-Car M3-W+ SoC,
+  - Initial support for the new RZ/G2L SoC on the RZ/G2L SMARC EVK
+    board,
+  - Miscellaneous fixes and improvements.
 
-    - Initial support for the new RZ/G2L SoC variants.
+----------------------------------------------------------------
+Geert Uytterhoeven (9):
+      arm64: dts: renesas: Add missing opp-suspend properties
+      arm64: dts: renesas: r8a7796[01]: Fix OPP table entry voltages
+      ARM: dts: lager: Configure pull-up for SOFT_SW GPIO keys
+      ARM: dts: blanche: Configure pull-up for SOFT_SW and SW25 GPIO keys
+      ARM: dts: gose: Configure pull-up for SOFT_SW GPIO keys
+      ARM: dts: silk: Configure pull-up for SOFT_SW GPIO keys
+      arm64: dts: renesas: r8a77961: Add INTC-EX device node
+      arm64: dts: renesas: r8a779a0: Drop power-domains property from GIC node
+      Merge tag 'renesas-r9a07g044-dt-binding-defs-tag' into renesas-arm-dt-for-v5.14
 
-  [GIT PULL 4/4] Renesas DT binding updates for v5.14
+Lad Prabhakar (4):
+      dt-bindings: clock: Add r9a07g044 CPG Clock Definitions
+      arm64: dts: renesas: Add initial DTSI for RZ/G2{L,LC} SoC's
+      arm64: dts: renesas: Add initial device tree for RZ/G2L SMARC EVK
+      arm64: dts: renesas: r9a07g044: Add SYSC node
 
-    - Document support for the new RZ/G2L, RZ/G2LC, and RZ/G2UL SoCs,
-    - Document support for the new RZ/G2L SMARC EVK board.
-
-Note that the new Renesas RZ/G2L DT Binding Definitions are shared by
-driver and DT source files, and thus included in multiple pull requests:
-  - "[GIT PULL] clk: renesas: Updates for v5.14 (take two)" (for clk),
-  - "[GIT PULL 2/4] Renesas ARM DT updates for v5.14 (take two)" (for
-    soc).
-
-Thanks for pulling!
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+ arch/arm/boot/dts/r8a7790-lager.dts               |   8 ++
+ arch/arm/boot/dts/r8a7792-blanche.dts             |   8 ++
+ arch/arm/boot/dts/r8a7793-gose.dts                |  10 +-
+ arch/arm/boot/dts/r8a7794-silk.dts                |  10 +-
+ arch/arm64/boot/dts/renesas/Makefile              |   2 +
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi         |   1 +
+ arch/arm64/boot/dts/renesas/r8a77960.dtsi         |   7 +-
+ arch/arm64/boot/dts/renesas/r8a77961.dtsi         |  18 ++-
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi         |   1 -
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi        | 132 ++++++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi      |  25 ++++
+ arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts |  21 ++++
+ arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi      |  13 +++
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi      |  27 +++++
+ include/dt-bindings/clock/r9a07g044-cpg.h         |  89 +++++++++++++++
+ 15 files changed, 362 insertions(+), 10 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l1.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l2-smarc.dts
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g044l2.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+ create mode 100644 include/dt-bindings/clock/r9a07g044-cpg.h
