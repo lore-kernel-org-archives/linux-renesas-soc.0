@@ -4,163 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 833C0C49EA4
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 10:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A0BFC48BD1
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 10:54:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC93613DE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 10:18:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01EAF61357
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 10:54:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231564AbhFKKUt (ORCPT
+        id S230230AbhFKK4Y (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Jun 2021 06:20:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55156 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231512AbhFKKUs (ORCPT
+        Fri, 11 Jun 2021 06:56:24 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:14385 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229633AbhFKK4Y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 11 Jun 2021 06:20:48 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E917C0617AF
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Jun 2021 03:18:50 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:2411:a261:8fe2:b47f])
-        by andre.telenet-ops.be with bizsmtp
-        id FmJm2500225eH3q01mJmNv; Fri, 11 Jun 2021 12:18:49 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lreFR-00Fd2A-Jn; Fri, 11 Jun 2021 12:18:45 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lreFQ-00CaZY-IG; Fri, 11 Jun 2021 12:18:44 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Rob Herring <robh+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>
-Cc:     Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/3] dt-bindings: dmaengine: Remove SHDMA Device Tree bindings
-Date:   Fri, 11 Jun 2021 12:18:39 +0200
-Message-Id: <ba56b7199fcf3516f202389d2c8f836c9ec51e7a.1623406640.git.geert+renesas@glider.be>
+        Fri, 11 Jun 2021 06:56:24 -0400
+X-IronPort-AV: E=Sophos;i="5.83,265,1616425200"; 
+   d="scan'208";a="83947293"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 11 Jun 2021 19:54:25 +0900
+Received: from localhost.localdomain (unknown [10.166.14.185])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 482544011405;
+        Fri, 11 Jun 2021 19:54:25 +0900 (JST)
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     balbi@kernel.org
+Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH] usb: renesas_usbhs: Fix superfluous irqs happen after usb_pkt_pop()
+Date:   Fri, 11 Jun 2021 19:54:11 +0900
+Message-Id: <20210611105411.543008-2-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1623406640.git.geert+renesas@glider.be>
-References: <cover.1623406640.git.geert+renesas@glider.be>
+In-Reply-To: <20210611105411.543008-1-yoshihiro.shimoda.uh@renesas.com>
+References: <20210611105411.543008-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Remove the Renesas SHDMA Device Tree bindings, as they are unused.
-The DMA multiplexer node and one DMA controller instance were added to
-the R-Mobile APE6 .dtsi file, but DMA support was never fully enabled,
-cfr. commit a19788612f51b787 ("dmaengine: sh: Remove R-Mobile APE6
-support").
+This driver has a potential issue which this driver is possible to
+cause superfluous irqs after usb_pkt_pop() is called. So, after
+the commit 3af32605289e ("usb: renesas_usbhs: fix error return
+code of usbhsf_pkt_handler()") had been applied, we could observe
+the following error happened when we used g_audio.
 
-Note that the mux idea was dropped when implementing support for DMA on
-R-Car Gen2, cfr. renesas,rcar-dmac.yaml.
+    renesas_usbhs e6590000.usb: irq_ready run_error 1 : -22
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+To fix the issue, disable the tx or rx interrupt in usb_pkt_pop().
+
+Fixes: 2743e7f90dc0 ("usb: renesas_usbhs: fix the usb_pkt_pop()")
+Cc: <stable@vger.kernel.org> # v4.4+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
- .../devicetree/bindings/dma/renesas,shdma.txt | 84 -------------------
- 1 file changed, 84 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/dma/renesas,shdma.txt
+ drivers/usb/renesas_usbhs/fifo.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,shdma.txt b/Documentation/devicetree/bindings/dma/renesas,shdma.txt
-deleted file mode 100644
-index a91920a49433c2b8..0000000000000000
---- a/Documentation/devicetree/bindings/dma/renesas,shdma.txt
-+++ /dev/null
-@@ -1,84 +0,0 @@
--* SHDMA Device Tree bindings
--
--Sh-/r-mobile and R-Car systems often have multiple identical DMA controller
--instances, capable of serving any of a common set of DMA slave devices, using
--the same configuration. To describe this topology we require all compatible
--SHDMA DT nodes to be placed under a DMA multiplexer node. All such compatible
--DMAC instances have the same number of channels and use the same DMA
--descriptors. Therefore respective DMA DT bindings can also all be placed in the
--multiplexer node. Even if there is only one such DMAC instance on a system, it
--still has to be placed under such a multiplexer node.
--
--* DMA multiplexer
--
--Required properties:
--- compatible:	should be "renesas,shdma-mux"
--- #dma-cells:	should be <1>, see "dmas" property below
--
--Optional properties (currently unused):
--- dma-channels:	number of DMA channels
--- dma-requests:	number of DMA request signals
--
--* DMA controller
--
--Required properties:
--- compatible:	should be of the form "renesas,shdma-<soc>", where <soc> should
--		be replaced with the desired SoC model, e.g.
--		"renesas,shdma-r8a73a4" for the system DMAC on r8a73a4 SoC
--
--Example:
--	dmac: dma-multiplexer@0 {
--		compatible = "renesas,shdma-mux";
--		#dma-cells = <1>;
--		dma-channels = <20>;
--		dma-requests = <256>;
--		#address-cells = <2>;
--		#size-cells = <2>;
--		ranges;
--
--		dma0: dma-controller@e6700020 {
--			compatible = "renesas,shdma-r8a73a4";
--			reg = <0 0xe6700020 0 0x89e0>;
--			interrupt-parent = <&gic>;
--			interrupts = <0 220 4
--					0 200 4
--					0 201 4
--					0 202 4
--					0 203 4
--					0 204 4
--					0 205 4
--					0 206 4
--					0 207 4
--					0 208 4
--					0 209 4
--					0 210 4
--					0 211 4
--					0 212 4
--					0 213 4
--					0 214 4
--					0 215 4
--					0 216 4
--					0 217 4
--					0 218 4
--					0 219 4>;
--			interrupt-names = "error",
--					"ch0", "ch1", "ch2", "ch3",
--					"ch4", "ch5", "ch6", "ch7",
--					"ch8", "ch9", "ch10", "ch11",
--					"ch12", "ch13", "ch14", "ch15",
--					"ch16", "ch17", "ch18", "ch19";
--		};
--	};
--
--* DMA client
--
--Required properties:
--- dmas:		a list of <[DMA multiplexer phandle] [MID/RID value]> pairs,
--		where MID/RID values are fixed handles, specified in the SoC
--		manual
--- dma-names:	a list of DMA channel names, one per "dmas" entry
--
--Example:
--	dmas = <&dmac 0xd1
--		&dmac 0xd2>;
--	dma-names = "tx", "rx";
+diff --git a/drivers/usb/renesas_usbhs/fifo.c b/drivers/usb/renesas_usbhs/fifo.c
+index b5e7991dc7d9..a3c2b01ccf7b 100644
+--- a/drivers/usb/renesas_usbhs/fifo.c
++++ b/drivers/usb/renesas_usbhs/fifo.c
+@@ -101,6 +101,8 @@ static struct dma_chan *usbhsf_dma_chan_get(struct usbhs_fifo *fifo,
+ #define usbhsf_dma_map(p)	__usbhsf_dma_map_ctrl(p, 1)
+ #define usbhsf_dma_unmap(p)	__usbhsf_dma_map_ctrl(p, 0)
+ static int __usbhsf_dma_map_ctrl(struct usbhs_pkt *pkt, int map);
++static void usbhsf_tx_irq_ctrl(struct usbhs_pipe *pipe, int enable);
++static void usbhsf_rx_irq_ctrl(struct usbhs_pipe *pipe, int enable);
+ struct usbhs_pkt *usbhs_pkt_pop(struct usbhs_pipe *pipe, struct usbhs_pkt *pkt)
+ {
+ 	struct usbhs_priv *priv = usbhs_pipe_to_priv(pipe);
+@@ -123,6 +125,11 @@ struct usbhs_pkt *usbhs_pkt_pop(struct usbhs_pipe *pipe, struct usbhs_pkt *pkt)
+ 		if (chan) {
+ 			dmaengine_terminate_all(chan);
+ 			usbhsf_dma_unmap(pkt);
++		} else {
++			if (usbhs_pipe_is_dir_in(pipe))
++				usbhsf_rx_irq_ctrl(pipe, 0);
++			else
++				usbhsf_tx_irq_ctrl(pipe, 0);
+ 		}
+ 
+ 		usbhs_pipe_clear_without_sequence(pipe, 0, 0);
 -- 
 2.25.1
 
