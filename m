@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 704EEC48BE6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D75A9C49EA2
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 02:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5870661376
+	by mail.kernel.org (Postfix) with ESMTP id BFCAE61376
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Jun 2021 02:05:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230370AbhFKCHg (ORCPT
+        id S231184AbhFKCHh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 10 Jun 2021 22:07:36 -0400
-Received: from mga06.intel.com ([134.134.136.31]:42404 "EHLO mga06.intel.com"
+        Thu, 10 Jun 2021 22:07:37 -0400
+Received: from mga03.intel.com ([134.134.136.65]:27145 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231164AbhFKCHf (ORCPT
+        id S231187AbhFKCHg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 10 Jun 2021 22:07:35 -0400
-IronPort-SDR: t3Cq7EQMMSCeCZ/yiP2uFCHfPcuf+cbrzUsWU4HT4pSJArIsWwVZmBvw/15Z5NQpR/e4qltq/Z
- QkPVQ4sL1XPw==
-X-IronPort-AV: E=McAfee;i="6200,9189,10011"; a="266597791"
+        Thu, 10 Jun 2021 22:07:36 -0400
+IronPort-SDR: XbnnLWpl/yrO6aSq0WwE9skQSGblb7Q/p6iQliPA5sG4/VnT4vz5w2TpBK51IuwQzQ5RFMMaVi
+ SB+I67ex7lOA==
+X-IronPort-AV: E=McAfee;i="6200,9189,10011"; a="205475720"
 X-IronPort-AV: E=Sophos;i="5.83,265,1616482800"; 
-   d="scan'208";a="266597791"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2021 19:05:38 -0700
-IronPort-SDR: 24+GRG07fb/a4plXLZEiis3WmK+FaL7g6D4cxQGyDjNFoO1oUPL4+uB5AN87Qcp9yuq1iFiNl1
- c7R75z04SNtQ==
+   d="scan'208";a="205475720"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Jun 2021 19:05:38 -0700
+IronPort-SDR: nfegMDLaR4+Jitp+YNwl7DfM02ef9D5rHlDAlv/+ojbxItJBhDbLHYhng0Be+nqofN+SvaPk9a
+ zwGAk7auZr1g==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.83,265,1616482800"; 
-   d="scan'208";a="486419454"
+   d="scan'208";a="441426417"
 Received: from lkp-server02.sh.intel.com (HELO 3cb98b298c7e) ([10.239.97.151])
-  by fmsmga002.fm.intel.com with ESMTP; 10 Jun 2021 19:05:36 -0700
+  by orsmga007.jf.intel.com with ESMTP; 10 Jun 2021 19:05:37 -0700
 Received: from kbuild by 3cb98b298c7e with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1lrWYC-0000Nx-Mz; Fri, 11 Jun 2021 02:05:36 +0000
-Date:   Fri, 11 Jun 2021 10:04:43 +0800
+        id 1lrWYD-0000O0-1R; Fri, 11 Jun 2021 02:05:37 +0000
+Date:   Fri, 11 Jun 2021 10:05:01 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:renesas-r9a07g044-dt-binding-defs] BUILD SUCCESS
- 403921373799a133e41b59cb730e2c4239663f51
-Message-ID: <60c2c4bb.tNsEF+XblGbnCCim%lkp@intel.com>
+Subject: [renesas-devel:renesas-drivers-for-v5.14] BUILD SUCCESS
+ 187cd57db09355fd169c661fa1c44bda06b013e8
+Message-ID: <60c2c4cd.3pZ4vloz3Ouae3dj%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -52,12 +52,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-r9a07g044-dt-binding-defs
-branch HEAD: 403921373799a133e41b59cb730e2c4239663f51  dt-bindings: clock: Add r9a07g044 CPG Clock Definitions
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v5.14
+branch HEAD: 187cd57db09355fd169c661fa1c44bda06b013e8  soc: renesas: Add support to read LSI DEVID register of RZ/G2{L,LC} SoC's
 
-elapsed time: 722m
+elapsed time: 723m
 
-configs tested: 202
+configs tested: 211
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -69,6 +69,11 @@ arm64                            allyesconfig
 arm64                               defconfig
 arm                              allyesconfig
 arm                              allmodconfig
+arm                         shannon_defconfig
+sh                          rsk7269_defconfig
+arm                       imx_v6_v7_defconfig
+arm                        mini2440_defconfig
+arm                        keystone_defconfig
 sh                          sdk7780_defconfig
 arc                    vdk_hs38_smp_defconfig
 arm                         vf610m4_defconfig
@@ -164,10 +169,14 @@ arm                            mmp2_defconfig
 powerpc                     sequoia_defconfig
 arm                        mvebu_v7_defconfig
 alpha                               defconfig
+powerpc                 xes_mpc85xx_defconfig
+powerpc                 mpc8313_rdb_defconfig
+powerpc                        cell_defconfig
+powerpc                 mpc85xx_cds_defconfig
 mips                         db1xxx_defconfig
 sh                               j2_defconfig
-powerpc                          allmodconfig
 powerpc                      pmac32_defconfig
+powerpc                          allmodconfig
 mips                         rt305x_defconfig
 powerpc                      tqm8xx_defconfig
 nios2                         3c120_defconfig
@@ -226,18 +235,18 @@ x86_64               randconfig-a012-20210610
 x86_64               randconfig-a014-20210610
 x86_64               randconfig-a016-20210610
 x86_64               randconfig-a013-20210610
-i386                 randconfig-a015-20210610
-i386                 randconfig-a013-20210610
-i386                 randconfig-a016-20210610
-i386                 randconfig-a014-20210610
-i386                 randconfig-a012-20210610
-i386                 randconfig-a011-20210610
 i386                 randconfig-a015-20210608
 i386                 randconfig-a013-20210608
 i386                 randconfig-a016-20210608
 i386                 randconfig-a011-20210608
 i386                 randconfig-a012-20210608
 i386                 randconfig-a014-20210608
+i386                 randconfig-a015-20210610
+i386                 randconfig-a013-20210610
+i386                 randconfig-a016-20210610
+i386                 randconfig-a014-20210610
+i386                 randconfig-a012-20210610
+i386                 randconfig-a011-20210610
 riscv                    nommu_k210_defconfig
 riscv                            allyesconfig
 riscv                    nommu_virt_defconfig
