@@ -2,282 +2,277 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B751C2B9F4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jun 2021 15:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D95B8C48BE6
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jun 2021 15:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 76A3D61352
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jun 2021 15:06:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B650E610A2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jun 2021 15:17:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233136AbhFNPIV (ORCPT
+        id S233387AbhFNPTS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Jun 2021 11:08:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36094 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232869AbhFNPIV (ORCPT
+        Mon, 14 Jun 2021 11:19:18 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:57663 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233299AbhFNPTR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Jun 2021 11:08:21 -0400
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55ADAC061574
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Jun 2021 08:06:04 -0700 (PDT)
-Received: by mail-pg1-x52b.google.com with SMTP id t17so8877630pga.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Jun 2021 08:06:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=+t9aBdbZvRXhuXnJzTKjQEIJYvOt4sCv5CeqfPgebdw=;
-        b=nORk234Tx+p/YQ+tNiHDFDeg3sZrrxB3GXmjFLHwOERE371zliuPlKMNfs4cIjrpue
-         sFCzCjpaw+fe4Sy3dpZvR0UgJhbW2d0JX34D2tp19LZHhaJEMLaaB9nwkHHSGgIYl12A
-         pOjhH44myEoge9+pBW5sr5t6zYdcDOIKxlQsFiQLVrT51qkjDedkELYZj1BF5i6AE9Ky
-         +v0P268Uvg3hJL0qDUCAZtFKzVrJsUYw7JnHLMr0uEkP7/X/Y80/px8bhraP960nK0Gl
-         NDm2r1oAxKUpXuUKYTlmIwCOESCFHNXb07Az3I+ZAKOHwUdbiN7wAICxbI1LpA+wreaJ
-         Rmkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=+t9aBdbZvRXhuXnJzTKjQEIJYvOt4sCv5CeqfPgebdw=;
-        b=i4tBcFPyFSYJjSRpe9zriH3e3SPdJ5VE+JI1sVGBDnk9KOxnnk/LNE6rowopb9KFQx
-         hVcMFJpJOYj0pqLR6VXIXi0z2KNZAfIpXeFSk0B34n0ZSZB0XnyVSx6GliYhHScfNg8O
-         DVRTUpPXD/r0yolAW4+en7m0vhM8LdNvuRCWp3gKvSG7L92rzj2CT03MBPAI/dGuNQ6z
-         LNjrnMgogucVX3FgQ/khjmae7vsAMiu9nVSwCW8JyX9iWOHnSkI3JovDAKXIJ8GJVHiO
-         OXe5snP9k3+r9VTXr8DzQHjRjJXdRU+NGZtNIg6MPvR/TdCtn2NZHO0Qwg9C5qFyEGw3
-         5jVA==
-X-Gm-Message-State: AOAM533OwhO3yBlpHxr0NFJ1r0zwGZS0i5EVQbTT87s2OQJDS68NaaAb
-        ihFsebA1a35QDv7E5mobFBwMS7WPOEZNQ8h+
-X-Google-Smtp-Source: ABdhPJyaHqjwx9wl/huFAITpc6uEYPp8og6eQrMlwJEluCaJ6iUOP88W0CZQhDKjGY+ohno/868t8Q==
-X-Received: by 2002:a05:6a00:d44:b029:2ee:12e1:5781 with SMTP id n4-20020a056a000d44b02902ee12e15781mr22083756pfv.75.1623683163523;
-        Mon, 14 Jun 2021 08:06:03 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id n6sm5007926pgt.7.2021.06.14.08.06.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Jun 2021 08:06:03 -0700 (PDT)
-Message-ID: <60c7705b.1c69fb81.4d2be.d54a@mx.google.com>
-Date:   Mon, 14 Jun 2021 08:06:03 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 14 Jun 2021 11:19:17 -0400
+Received: (Authenticated sender: jacopo@jmondi.org)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id A6A5EE0009;
+        Mon, 14 Jun 2021 15:17:09 +0000 (UTC)
+Date:   Mon, 14 Jun 2021 17:17:59 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        kieran.bingham+renesas@ideasonboard.com,
+        laurent.pinchart+renesas@ideasonboard.com,
+        niklas.soderlund+renesas@ragnatech.se, geert@linux-m68k.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Sakari Ailus <sakari.ailus@iki.fi>
+Subject: Re: [PATCH v4 16/17] media: v4l2-subdev: De-deprecate init() subdev
+ op
+Message-ID: <20210614151759.xwlqaixui6ylcw5p@uno.localdomain>
+References: <20210412093451.14198-1-jacopo+renesas@jmondi.org>
+ <20210412093451.14198-17-jacopo+renesas@jmondi.org>
+ <2ad9747e-7e2d-2c95-a98b-b6b0e7534e42@xs4all.nl>
+ <20210614094548.ufd6qczjj5zpkbfb@uno.localdomain>
+ <07c42c41-138a-7e48-a320-4a9e8873a168@xs4all.nl>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: renesas-devel-2021-06-14-v5.13-rc6
-X-Kernelci-Branch: master
-X-Kernelci-Tree: renesas
-Subject: renesas/master igt-kms-rockchip: 2 runs,
- 4 regressions (renesas-devel-2021-06-14-v5.13-rc6)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <07c42c41-138a-7e48-a320-4a9e8873a168@xs4all.nl>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master igt-kms-rockchip: 2 runs, 4 regressions (renesas-devel-2021-=
-06-14-v5.13-rc6)
+Hi again Hans,
+   I pondered a bit on your suggestion and I leave these here as
+a potential discussion starter
 
-Regressions Summary
--------------------
+On Mon, Jun 14, 2021 at 11:55:30AM +0200, Hans Verkuil wrote:
+> On 14/06/2021 11:45, Jacopo Mondi wrote:
+> > Hi Hans,
+> >    thanks for your reply
+> >
+> > On Mon, Jun 14, 2021 at 10:51:25AM +0200, Hans Verkuil wrote:
+> >> On 12/04/2021 11:34, Jacopo Mondi wrote:
+> >>> The init() subdev core operation is deemed to be deprecated for new
+> >>> subdevice drivers. However it could prove useful for complex
+> >>> architectures to defer operation that require access to the
+> >>> communication bus if said bus is not available (or fully configured)
+> >>> at the time when the subdevice probe() function is run.
+> >>>
+> >>> As an example, the GMSL architecture requires the GMSL configuration
+> >>> link to be configured on the host side after the remote subdevice
+> >>> has completed its probe function. After the configuration on the host
+> >>> side has been performed, the subdevice registers can be accessed through
+> >>> the communication bus.
+> >>>
+> >>> In particular:
+> >>>
+> >>> 	HOST			REMOTE
+> >>>
+> >>> 	probe()
+> >>> 	   |
+> >>> 	   ---------------------> |
+> >>> 				  probe() {
+> >>> 				     bus config()
+> >>> 				  }
+> >>> 	   |<--------------------|
+> >>> 	v4l2 async bound {
+> >>> 	    bus config()
+> >>> 	    call subdev init()
+> >>> 	   |-------------------->|
+> >>> 				 init() {
+> >>> 				     access register on the bus()
+> >>> 				}
+> >>> 	   |<-------------------
+> >>> 	}
+> >>>
+> >>> In the GMSL use case the bus configuration requires the enablement of the
+> >>> noise immunity threshold on the remote side which ensures reliability
+> >>> of communications in electrically noisy environments. After the subdevice
+> >>> has enabled the threshold at the end of its probe() sequence the host
+> >>> side shall compensate it with an higher signal amplitude. Once this
+> >>> sequence has completed the bus can be accessed with noise protection
+> >>> enabled and all the operations that require a considerable number of
+> >>> transactions on the bus (such as the image sensor configuration
+> >>> sequence) are run in the subdevice init() operation implementation.
+> >>>
+> >>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >>> ---
+> >>>  include/media/v4l2-subdev.h | 15 ++++++++++++---
+> >>>  1 file changed, 12 insertions(+), 3 deletions(-)
+> >>>
+> >>> diff --git a/include/media/v4l2-subdev.h b/include/media/v4l2-subdev.h
+> >>> index d0e9a5bdb08b..3068d9940669 100644
+> >>> --- a/include/media/v4l2-subdev.h
+> >>> +++ b/include/media/v4l2-subdev.h
+> >>> @@ -148,9 +148,18 @@ struct v4l2_subdev_io_pin_config {
+> >>>   *	each pin being configured.  This function could be called at times
+> >>>   *	other than just subdevice initialization.
+> >>>   *
+> >>> - * @init: initialize the sensor registers to some sort of reasonable default
+> >>> - *	values. Do not use for new drivers and should be removed in existing
+> >>> - *	drivers.
+> >>> + * @init: initialize the subdevice registers to some sort of reasonable default
+> >>> + *	values. Do not use for new drivers (and should be removed in existing
+> >>> + *	ones) for regular architectures where the image sensor is connected to
+> >>> + *	the host receiver. For more complex architectures where the subdevice
+> >>> + *	initialization should be deferred to the completion of the probe
+> >>> + *	sequence of some intermediate component, or the communication bus
+> >>> + *	requires configurations on the host side that depend on the completion
+> >>> + *	of the probe sequence of the remote subdevices, the usage of this
+> >>> + *	operation could be considered to allow the devices along the pipeline to
+> >>> + *	probe and register in the media graph and to defer any operation that
+> >>> + *	require actual access to the communication bus to their init() function
+> >>> + *	implementation.
+> >>
+> >> I don't like de-deprecating init. It was deprecated for a good reason, and
+> >> I'd like to keep it that way.
+> >
+> > I see, fair enough :)
+> >
+> >>
+> >> There are two alternatives: one is a bit quick-and-dirty, the other is a hint
+> >> towards a more generic solution (just a hint since it will require more research):
+> >>
+> >> 1) Quick-and-dirty: use the core callback op to create a custom INIT callback.
+> >> This depends on this patch:
+> >>
+> >> https://patchwork.linuxtv.org/project/linux-media/patch/20210610214305.4170835-8-arnd@kernel.org/
+> >>
+> >> This will make it clear to the reader that this is a highly specific interaction
+> >> between two drivers that are tightly coupled. It works in the current situation,
+> >> but not if we want to make this more generic.
+> >
+> > Depends what you mean with 'generic' :) I think such a solution would
+> > slightly abuse a generic API like 'command' is, but the GMSL
+> > deserializers/serializers are tighly coupled by definition, so this is
+> > less a concern, as long as we have a single driver for the whole
+> > camera module. If we're going to split it in 3 subdev drivers then
+> > yes, they will all have to implement .command() and they can be used
+> > with in isolation with a generic receiver driver.
+> >
+> >>
+> >> 2) Subdev drivers can implement the registered() op which is called by
+> >> v4l2_device_register_subdev(). This in turn is called from v4l2_async_match_notify().
+> >>
+> >> What you want is that when max9286 calls v4l2_async_subdev_notifier_register, it
+> >> can set a flag or something indicating that initialization has to be postponed.
+> >> Then, when v4l2_async_match_notify() calls the register() callback, that flag can
+> >> be read. If false, then the register() callback will initialize the device, if
+> >> true then that won't happen. Instead, it will do that when the max9286 calls a
+> >> post_register() callback.
+> >
+> > 2 questions to help me better understand this:
+> > 1) s/register()/registered() in this paragraph ?
+>
+> Yes, sorry.
+>
+> > 2) $ git grep post_register drivers/media/ include/media/
+> >    gives me back nothing.
+> >
+> >    Are you suggesting a new operation ?
+>
+> Yes, that would be a new op.
 
-platform          | arch  | lab           | compiler | defconfig          |=
- regressions
-------------------+-------+---------------+----------+--------------------+=
-------------
-rk3288-veyron-jaq | arm   | lab-collabora | gcc-8    | multi_v7_defconfig |=
- 1          =
+Thanks for the clarification. Let me start this by setting up the
+goals I would like to reach:
 
-rk3399-gru-kevin  | arm64 | lab-collabora | gcc-8    | defconfig          |=
- 3          =
+- Conditionally allow to run later parts of the probe/initialization
+  routine of a subdevice: a subdevice driver should be made capable to
+  post-pone the execution of parts (if not all) of its
+  probe/initialization routines to a later point in time, in example,
+  when all other subdevices on the same bus have been probed.
 
+  In the context of the use case at hand (GMSL) this means deferring
+  the completion of the camera devices initialization sequence that
+  heavily access the i2c-over-GMSL channel to a later time when all
+  others camera modules have probed and have enabled their high-noise
+  immunity so that the deserializer can now increase the channel signal
+  amplitude.
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2021-06-14-v5.13-rc6/plan/igt-kms-rockchip/
+- Initialization deferring should be made conditional so that when
+  used when host receivers that has not deferring requirements the
+  subdevice drivers work without changes
 
-  Test:     igt-kms-rockchip
-  Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2021-06-14-v5.13-rc6
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      62ebef21d49093d77b84633283806c94630e3694
+Implementing such a solution requires two mechanisms in place:
+A) A way to discern if initialization should be deferred
+b) A callback mechanism that automatically executes at the end of the
+   probe sequences
 
-  Test suite revisions:
-    drm
-      URL:  git://anongit.freedesktop.org/mesa/drm
-      SHA:  4c8365183ec52e9309ecae45c725aa315562854d
-    igt-gpu-tools
-      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
-      SHA:  8eeb9c130e75d4063d0dc2ed69c8acde66b6b5d0 =
+In detail:
 
+A)
+Can be made protocol dependent. I haven't been able to figure out a
+generic way for a host receiver to set a flag on the subdev to be
+inspected at probe/registered() time. Assuming such a generic mechanism
+does not exist, a per-use-case solution can be considered. In example
+for GMSL we have a deserializer property that specifies the initial
+amplitude of the control channel. If it's lower that a certain
+threshold it has to be increased at 'complete' time. The property can
+be duplicated on the camera module side such that:
+- If the channel amplitude is low, we know initialization should be
+  post-poned
+- If it's high already (or not present for non-GMSL use case)
+  initialization can be performed at probe() time.
 
+This is a very good match for GMSL. The initial deserializer channel
+amplitude only depend on the connected camera module. In example
+RDACM20 comes pre-programmed by an on-board MCU such that the deser
+can be started with high amplitude and the camera module can be
+programmed at probe() time. RDACM21 requires the deser to be started
+with low amp, all camera modules have to complete probe and enable
+their noise threshold so that the deser amplitude can be increased.
+The only drawback I see is that the same property should be specified
+in both endpoints. This happens already, in example, for the media bus
+configuration endpoint properties.
 
-Test Regressions
----------------- =
+B)
+The registered() internal callback is executed immediately once the
+async subdev has been matched against a notifier. For the use case at
+hand it is not useful as it does not allow to return control to the
+host driver before calling into the subdev.  The "right" time to
+trigger deferred initialization could be once the whole chain of async
+subdev and notifiers has completed, and we already have notifier ops
+complete() callback for that purpose, only executed on the root
+notifier. Adding a 'complete()' internal operation to be called on the
+list of the top v4l2_dev subdevices at the same time (or replace the
+complete notifier operation completely) might a good way forward ?
 
+Sorry for the long email, it mostly served me to clarify my thoughts.
 
+Thanks
+   j
 
-platform          | arch  | lab           | compiler | defconfig          |=
- regressions
-------------------+-------+---------------+----------+--------------------+=
-------------
-rk3288-veyron-jaq | arm   | lab-collabora | gcc-8    | multi_v7_defconfig |=
- 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/60c76c13052d146e1841f557
-
-  Results:     90 PASS, 3 FAIL, 37 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-06-14-v5.13-rc6/arm/multi_v7_defconfig/gcc-8/lab-collabora/igt-kms-rock=
-chip-rk3288-veyron-jaq.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-06-14-v5.13-rc6/arm/multi_v7_defconfig/gcc-8/lab-collabora/igt-kms-rock=
-chip-rk3288-veyron-jaq.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-igt/=
-20210520.0/armhf/rootfs.cpio.gz =
-
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-A-ts-continuation-suspend: https://ker=
-nelci.org/test/case/id/60c76c14052d146e1841f5c8
-        failing since 34 days (last pass: renesas-devel-2021-04-19-v5.12-rc=
-8, first fail: renesas-devel-2021-05-10-v5.13-rc1)
-
-    2021-06-14 14:41:31.968000+00:00  <14>[  168.647572] [IGT] kms_vblank: =
-executing
-    2021-06-14 14:41:31.986000+00:00  IGT-Version: 1.26-g8eeb9c1 (arm) (Lin=
-ux: 5.13.0-rc6 armv7l)<14>[  168.653412] [IGT] kms_vblank: starting subtest=
- pipe-A-ts-continuation-suspend
-    2021-06-14 14:41:31.987000+00:00  =
-
-    2021-06-14 14:41:31.987000+00:00  Starting subtest: pipe-A-ts-continuat=
-ion-suspend
-    2021-06-14 14:41:32.044000+00:00  Beginning pipe-A-ts-continuation-susp=
-end on pipe A, connector eDP-1
-    2021-06-14 14:41:32.078000+00:00  [cmd] rtcwake: assuming RTC uses UTC =
-...
-    2021-06-14 14:41:32.078000+00:00  rtcwake: wakeup from \"mem\" using /d=
-ev/rtc0 at Mon Jun 14 14:41:48 2021
-    2021-06-14 14:41:32.097000+00:00  <6>[  168.772244] PM: suspend entry (=
-deep)
-    2021-06-14 14:41:32.097000+00:00  <6>[  168.776622] Filesystems sync: 0=
-.000 seconds
-    2021-06-14 14:41:32.111000+00:00  <6>[  168.782366] Freezing user space=
- processes ... (elapsed 0.001 seconds) done. =
-
-    ... (106 line(s) more)  =
-
- =
-
-
-
-platform          | arch  | lab           | compiler | defconfig          |=
- regressions
-------------------+-------+---------------+----------+--------------------+=
-------------
-rk3399-gru-kevin  | arm64 | lab-collabora | gcc-8    | defconfig          |=
- 3          =
-
-
-  Details:     https://kernelci.org/test/plan/id/60c75cbc2bcfa82ca1940f50
-
-  Results:     77 PASS, 19 FAIL, 138 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-06-14-v5.13-rc6/arm64/defconfig/gcc-8/lab-collabora/igt-kms-rockchip-rk=
-3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-06-14-v5.13-rc6/arm64/defconfig/gcc-8/lab-collabora/igt-kms-rockchip-rk=
-3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-igt/=
-20210520.0/arm64/rootfs.cpio.gz =
-
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-B-ts-continuation-idle: https://kernel=
-ci.org/test/case/id/60c75cbd2bcfa82ca1940fd6
-        failing since 7 days (last pass: renesas-devel-2021-05-27-v5.13-rc3=
-, first fail: renesas-devel-2021-06-07-v5.13-rc5)
-
-    2021-06-14T13:41:48.559928  >pipes[pipe].enabled)
-    2021-06-14T13:41:48.563129  Pipe D does not exist or not enabled
-    2021-06-14T13:41:48.570605  Test requirement not met in function igt_re=
-quire_pipe, file ../lib/igt_kms.c:2094:
-    2021-06-14T13:41:48.578825  Test requirement: !(pipe >=3D display->n_pi=
-pes || !display->pipes[pipe].enabled)
-    2021-06-14T13:41:48.582824  Pipe E does not exist or not enabled
-    2021-06-14T13:41:48.594562  Test requirement not met in function igt_re=
-quire_pipe, fi<6>[  155.384568] Console: switching to colour dummy device 8=
-0x25
-    2021-06-14T13:41:48.596859  le ../lib/igt_kms.c:2094:
-    2021-06-14T13:41:48.605740  Test requirement: !(pipe >=3D display-><14>=
-[  155.395611] [IGT] kms_vblank: executing
-    2021-06-14T13:41:48.609788  n_pipes || !display->pipes[pipe].enabled)
-    2021-06-14T13:41:48.620091  Pipe F does not exist<14>[  155.407290] [IG=
-T] kms_vblank: starting subtest pipe-B-ts-continuation-idle =
-
-    ... (71 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-B-ts-continuation-dpms-suspend: https:=
-//kernelci.org/test/case/id/60c75cbd2bcfa82ca1940fd9
-        failing since 97 days (last pass: renesas-devel-2021-02-15-v5.11, f=
-irst fail: v5.12-rc2-394-g4e589d84c742)
-
-    2021-06-14T13:41:52.904968  <6>[  159.698580] Console: switching to col=
-our dummy device 80x25
-    2021-06-14T13:41:52.909783  <14>[  159.705276] [IGT] kms_vblank: execut=
-ing
-    2021-06-14T13:41:52.925317  IGT-Version: 1.26-g8eeb9c1 (aarch64) (Linux=
-: 5.13.0-rc6 aarch64)<14>[  159.712594] [IGT] kms_vblank: starting subtest =
-pipe-B-ts-continuation-dpms-suspend
-    2021-06-14T13:41:52.926326  =
-
-    2021-06-14T13:41:52.930769  Starting subtest: pipe-B-ts-continuation-dp=
-ms-suspend
-    2021-06-14T13:41:53.870917  (kms_vblank:784) igt_kms-CRITICAL: Test ass=
-ertion failure function igt_wait_for_vblank, file ../lib/igt_kms.c:4526:
-    2021-06-14T13:41:53.880592  (kms_vblank:784) igt_kms-CRITICAL: Failed a=
-ssertion: __igt_vblank_wait(drm_fd, crtc_offset, 1) =3D=3D 0
-    2021-06-14T13:41:53.887318  (kms_vblank:784) igt_kms-CRITICAL: Last err=
-no: 22, Invalid argument
-    2021-06-14T13:41:53.889198  Stack trace:
-    2021-06-14T13:41:53.894064    #0 ../lib/igt_core.c:1745 __igt_fail_asse=
-rt() =
-
-    ... (63 line(s) more)  =
-
-
-  * igt-kms-rockchip.kms_vblank.pipe-B-ts-continuation-modeset: https://ker=
-nelci.org/test/case/id/60c75cbd2bcfa82ca1940fdb
-        failing since 97 days (last pass: renesas-devel-2021-02-15-v5.11, f=
-irst fail: v5.12-rc2-394-g4e589d84c742)
-
-    2021-06-14T13:41:57.091298  <8>[  163.880314] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dpipe-B-ts-continuation-suspend RESULT=3Dfail>
-    2021-06-14T13:41:57.125070  <6>[  163.919120] Console: switching to col=
-our dummy device 80x25
-    2021-06-14T13:41:57.130580  <14>[  163.925847] [IGT] kms_vblank: execut=
-ing
-    2021-06-14T13:41:57.146163  IGT-Version: 1.26-g8eeb9c1 (aarch64) (Linux=
-: 5.13.0-rc6 aarch64)<14>[  163.932827] [IGT] kms_vblank: starting subtest =
-pipe-B-ts-continuation-modeset
-    2021-06-14T13:41:57.147442  =
-
-    2021-06-14T13:41:57.151382  Starting subtest: pipe-B-ts-continuation-mo=
-deset
-    2021-06-14T13:41:58.091041  (kms_vblank:790) igt_kms-CRITICAL: Test ass=
-ertion failure function igt_wait_for_vblank, file ../lib/igt_kms.c:4526:
-    2021-06-14T13:41:58.100181  (kms_vblank:790) igt_kms-CRITICAL: Failed a=
-ssertion: __igt_vblank_wait(drm_fd, crtc_offset, 1) =3D=3D 0
-    2021-06-14T13:41:58.107482  (kms_vblank:790) igt_kms-CRITICAL: Last err=
-no: 22, Invalid argument
-    2021-06-14T13:41:58.108770  Stack trace: =
-
-    ... (64 line(s) more)  =
-
- =20
+>
+> Regards,
+>
+> 	Hans
+>
+> >
+> > Thanks
+> >    j
+> >
+> >>
+> >> This is a lot more work (and research, since this is just a brainstorm from my
+> >> side), but it is a way towards making this a generic solution.
+> >>
+> >> Regards,
+> >>
+> >> 	Hans
+> >>
+> >>>   *
+> >>>   * @load_fw: load firmware.
+> >>>   *
+> >>> --
+> >>> 2.31.1
+> >>>
+> >>
+>
