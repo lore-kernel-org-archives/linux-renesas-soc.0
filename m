@@ -2,169 +2,154 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF1F9C2B9F4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jun 2021 14:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D44C2B9F4
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jun 2021 15:06:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94E1A611C0
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jun 2021 14:29:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BD9961350
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Jun 2021 15:06:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232995AbhFNOcB (ORCPT
+        id S233014AbhFNPIQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Jun 2021 10:32:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56404 "EHLO
+        Mon, 14 Jun 2021 11:08:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232978AbhFNOcA (ORCPT
+        with ESMTP id S232869AbhFNPIQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Jun 2021 10:32:00 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79CC2C061574;
-        Mon, 14 Jun 2021 07:29:57 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 924CBA59;
-        Mon, 14 Jun 2021 16:29:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1623680993;
-        bh=ItYUbNE1wkEmOLKTUmXApXsK2mUUF//5SSNCNuwzBbE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Qiqu8Wbe4qwcsIr7AZp7ivE6vXi5FF1di15cbmWxutpYnHjDHn9PLEahEFahvRxsB
-         dtcDhCltP+S4pw1BsHPz+fuyO/8iuDpLEDSb1/tPzTHmJUxUtP5AMByDes771T3AB+
-         nncT0Z83XXXsXAXyOWMAoge6Ld5KjQX6UQLpWwEk=
-Date:   Mon, 14 Jun 2021 17:29:33 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        dmaengine <dmaengine@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 1/5] dt-bindings: dma: Document RZ/G2L bindings
-Message-ID: <YMdnzdCvX/ur9qVr@pendragon.ideasonboard.com>
-References: <20210611113642.18457-1-biju.das.jz@bp.renesas.com>
- <20210611113642.18457-2-biju.das.jz@bp.renesas.com>
- <CAMuHMdUQRHtVFhqmgi5EE2TNobspM3tNTP10gz-yPDJSK31ytA@mail.gmail.com>
- <OS0PR01MB5922B2355864A98B14C6DE6D86319@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+        Mon, 14 Jun 2021 11:08:16 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E776C061766
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Jun 2021 08:06:05 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id m13-20020a17090b068db02901656cc93a75so10266519pjz.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 14 Jun 2021 08:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=dkhQU3EkcGLeWXE7GeiMAtnC+Vx4D9ZsIz/vwRGjspk=;
+        b=SvC+STSHHeMqI/CjZavr07T1j2Ua/pNihwJo6IHNQRLVDE9OgjdX4PBJiu72Q1mHR2
+         5w06iVegxocD6nh+iiuWsYJZjxyiIwLKpANCjn1BiRwJG9R2hXYzp6iAxRtBKuukkYFY
+         gdZ6nYqstgUngTvpVa9QIE4IF1HsWWDBXM4OrvBUvitXTFQxyaXG1e9PJlfLjKgzX7Oc
+         X0CziaOqCVX+yB9EYYj3tftOuA94yIUz5DB+B4xppWsrLJ+TQCJAvkAI0lod2QqdceU5
+         jb9Kvwq8xUCYFzEZATPgu1Gm08Jz8VjC3Tjqa5w3pUvt6Y8U7XvNR57afGwUCF3Umq6K
+         URpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=dkhQU3EkcGLeWXE7GeiMAtnC+Vx4D9ZsIz/vwRGjspk=;
+        b=ZkIoyMbNpyh+wwIkVTwK8bxJ2KwHmLHb/X7/BJuydo9x9cq/xWQJfnzlzpJ+Y4lUTN
+         tg9uLJ+ba/DGYZmNWv/tWuMiOQbYVbMw+zJK0NsGxZ/iYz5gGJhcvZRcXeqKUymPnoHk
+         rPAcw/gy8RAzT0DsRbN69eEYSrLAugVKb/bOgPgJjgwFMB1aXd6eW1D2+47JZLh7WKry
+         +aEmISrGOdLksbMfX4/mkR1zD0rYvDjI5gWrRWX53UdFx525U7nmGbKtohifdZPWW+2j
+         xJ+4jkXakA3O1UoJGiCYAc+fGXnBnboh9s4iHQsxNpnHwjDdeHVOxRRYpu9UT/iZWbPg
+         w3uw==
+X-Gm-Message-State: AOAM5335QMN46/gXDny5TP2VmDYSEMn+sl6/AFFsJhpsCbEAt94B5DbY
+        R0A+4ItJzaVSV+KgW4B8aE0xXh/Yl54TAzUb
+X-Google-Smtp-Source: ABdhPJw25bJhkn0Bcm2f8OMLzFXLjPSJzte33jMtWbubAzJkLG416k1nzzFAP0voJAR0adhGxcleNQ==
+X-Received: by 2002:a17:90a:fc1:: with SMTP id 59mr23863550pjz.94.1623683164564;
+        Mon, 14 Jun 2021 08:06:04 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id p17sm18374810pjg.54.2021.06.14.08.06.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Jun 2021 08:06:03 -0700 (PDT)
+Message-ID: <60c7705b.1c69fb81.d658b.62dc@mx.google.com>
+Date:   Mon, 14 Jun 2021 08:06:03 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <OS0PR01MB5922B2355864A98B14C6DE6D86319@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-devel-2021-06-14-v5.13-rc6
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+Subject: renesas/master usb: 5 runs,
+ 1 regressions (renesas-devel-2021-06-14-v5.13-rc6)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jun 14, 2021 at 12:54:02PM +0000, Biju Das wrote:
-> > -----Original Message-----
-> > Subject: Re: [PATCH 1/5] dt-bindings: dma: Document RZ/G2L bindings
-> > 
-> > Hi Biju,
-> > 
-> > On Fri, Jun 11, 2021 at 1:36 PM Biju Das <biju.das.jz@bp.renesas.com>
-> > wrote:
-> > > Document RZ/G2L DMAC bindings.
-> > >
-> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > 
-> > Thanks for your patch!
-> > 
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-> > > @@ -0,0 +1,132 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
-> > > +---
-> > > +$id:
-> > > +https://jpn01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevi
-> > > +cetree.org%2Fschemas%2Fdma%2Frenesas%2Crz-dmac.yaml%23&amp;data=04%7C
-> > > +01%7Cbiju.das.jz%40bp.renesas.com%7C4b547e10cbe64b6f4d8508d92f2da0c0%
-> > > +7C53d82571da1947e49cb4625a166a4a2a%7C0%7C0%7C637592695286846809%7CUnk
-> > > +nown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haW
-> > > +wiLCJXVCI6Mn0%3D%7C1000&amp;sdata=5Jh%2FxPaia5ZOY0CrViQCcrNtzuDejp8wo
-> > > +Nrx9iO0ht8%3D&amp;reserved=0
-> > > +$schema:
-> > > +https://jpn01.safelinks.protection.outlook.com/?url=http%3A%2F%2Fdevi
-> > > +cetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=04%7C01%7Cbiju.das.
-> > > +jz%40bp.renesas.com%7C4b547e10cbe64b6f4d8508d92f2da0c0%7C53d82571da19
-> > > +47e49cb4625a166a4a2a%7C0%7C0%7C637592695286846809%7CUnknown%7CTWFpbGZ
-> > > +sb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%
-> > > +3D%7C1000&amp;sdata=5qQ1PljM3e4Bn4%2FjdldYUHRBQL3jArJgRIAdLnhJraw%3D&
-> > > +amp;reserved=0
+renesas/master usb: 5 runs, 1 regressions (renesas-devel-2021-06-14-v5.13-r=
+c6)
 
-*sigh*
+Regressions Summary
+-------------------
 
-> > > +
-> > > +title: Renesas RZ/G2L DMA Controller
-> > > +
-> > > +maintainers:
-> > > +  - Biju Das <biju.das.jz@bp.renesas.com>
-> > > +
-> > > +allOf:
-> > > +  - $ref: "dma-controller.yaml#"
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    items:
-> > > +      - enum:
-> > > +          - renesas,dmac-r9a07g044  # RZ/G2{L,LC}
-> > 
-> > Please use "renesas,r9a07g044-dmac".
-> 
-> OK. Will change.
-> 
-> > > +      - const: renesas,rz-dmac
-> > 
-> > Does this need many changes for RZ/A1H and RZ/A2M?
-> 
-> It will work on both RZ/A1H and RZ/A2M. I have n't tested since I don't have the board.
-> There is some difference in MID bit size. Other wise both identical.
-> 
->  
-> > > +  renesas,rz-dmac-slavecfg:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > > +    description: |
-> > > +      DMA configuration for a slave channel. Each channel must have an
-> > array of
-> > > +      3 items as below.
-> > > +      first item in the array is MID+RID
-> > 
-> > Already in dmas.
-> > 
-> > > +      second item in the array is slave src or dst address
-> > 
-> > As pointed out by Rob, already known by the slave driver.
-> > 
-> > > +      third item in the array is channel configuration value.
-> > 
-> > What exactly is this?
+platform            | arch | lab           | compiler | defconfig          =
+| regressions
+--------------------+------+---------------+----------+--------------------=
++------------
+rk3288-rock2-square | arm  | lab-collabora | gcc-8    | multi_v7_defconfig =
+| 1          =
 
-What would prevent the DMA client from passing the configuration to the
-DMA channel through the DMA engine API, just like it passes the slave
-source or destination address ?
 
-> > Does the R-Car DMAC have this too? If yes, how does its driver handle it?
-> 
-> On R-CAR DMAC, we have only MID + RID values. Where as here we have channel configuration value With different set of parameter as mentioned in Table 16.4.
-> 
-> Please see Page 569, Table 16.4 On-Chip Module requests section. 
-> 
-> For eg:- as per Rob's suggestion, I have modelled the driver with the below entries in ALSA driver for playback/record use case.
-> 
-> dmas = <&dmac 0x255 0x10049c18 CH_CFG(0x1,0x0,0x1,0x0,0x2,0x1,0x1,0x0)>,
->        <&dmac 0x256 0x10049c1c CH_CFG(0x0,0x0,0x1,0x0,0x2,0x1,0x1,0x0)>;
-> dma-names = "tx", "rx";
-> 
-> Using first parameter, it gets dmac channel. using second and third parameter it configures 
-> the channel.
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2021-06-14-v5.13-rc6/plan/usb/
 
--- 
-Regards,
+  Test:     usb
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2021-06-14-v5.13-rc6
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      62ebef21d49093d77b84633283806c94630e3694 =
 
-Laurent Pinchart
+
+
+Test Regressions
+---------------- =
+
+
+
+platform            | arch | lab           | compiler | defconfig          =
+| regressions
+--------------------+------+---------------+----------+--------------------=
++------------
+rk3288-rock2-square | arm  | lab-collabora | gcc-8    | multi_v7_defconfig =
+| 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/60c76a747047d845d49cd0bf
+
+  Results:     2 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-06-14-v5.13-rc6/arm/multi_v7_defconfig/gcc-8/lab-collabora/usb-rk3288-r=
+ock2-square.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-06-14-v5.13-rc6/arm/multi_v7_defconfig/gcc-8/lab-collabora/usb-rk3288-r=
+ock2-square.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
+0520.0/armhf/rootfs.cpio.gz =
+
+
+
+  * usb.compare-freeze: https://kernelci.org/test/case/id/60c76a747047d845d=
+49cd0c2
+        failing since 14 days (last pass: renesas-devel-2021-05-27-v5.13-rc=
+3, first fail: renesas-devel-2021-05-31-v5.13-rc4)
+
+    2021-06-14T14:08:44.884381  3: ID 0ea0:2168 Bus 003 Device 002: ID 05e3=
+:0608 Bus 003 Device <8>[   14.759165] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=
+=3Dusb-presence RESULT=3Dpass>
+    2021-06-14T14:08:44.884733  001: ID 1d6b:0002 \"
+    2021-06-14T14:08:44.885043  + lsusb
+    2021-06-14T14:08:44.885351  + awk {print $6}
+    2021-06-14T14:08:44.885653  + sort
+    2021-06-14T14:08:44.885960  + seq 1 3
+    2021-06-14T14:08:44.886213  + /usr/sbin/rtcwake -d rtc0 -m freeze -s 1
+    2021-06-14T14:08:44.886525  rtcwake: assuming RTC uses UTC ...
+    2021-06-14T14:08:44.886770  rtcwake: wakeup from \"freeze\" using rtc0 =
+at Mon Jun 14 14:08:47 2021
+    2021-06-14T14:08:44.941415  <6>[   14.806807] PM: suspend entry (s2idle=
+) =
+
+    ... (148 line(s) more)  =
+
+ =20
