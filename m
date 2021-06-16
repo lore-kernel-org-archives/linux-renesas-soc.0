@@ -2,174 +2,98 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B54FAC48BE6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jun 2021 11:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 593B3C49EA4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jun 2021 11:18:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2F960FD9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jun 2021 11:18:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D7F261375
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Jun 2021 11:18:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229951AbhFPLU3 (ORCPT
+        id S229563AbhFPLUg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Jun 2021 07:20:29 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:58610 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229563AbhFPLU2 (ORCPT
+        Wed, 16 Jun 2021 07:20:36 -0400
+Received: from mail-ua1-f50.google.com ([209.85.222.50]:45728 "EHLO
+        mail-ua1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231741AbhFPLUg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Jun 2021 07:20:28 -0400
-X-IronPort-AV: E=Sophos;i="5.83,277,1616425200"; 
-   d="scan'208";a="84403327"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Jun 2021 20:18:21 +0900
-Received: from localhost.localdomain (unknown [10.226.93.117])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 050F54001964;
-        Wed, 16 Jun 2021 20:18:19 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: clk: renesas: Update {ETH,SDHI,USB} CPG Clock Definitions
-Date:   Wed, 16 Jun 2021 11:59:49 +0100
-Message-Id: <20210616105949.10215-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 16 Jun 2021 07:20:36 -0400
+Received: by mail-ua1-f50.google.com with SMTP id v17so627201uar.12;
+        Wed, 16 Jun 2021 04:18:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KFppgdT7CLKOLDaLJGeivAUUwv8mpERUMDgjR5mFX2Q=;
+        b=BBeVsvoZ4AVSy+Y8yHwdEmm5VnqLTJRxB/oarkG9s8C2HRFpJvpV+Y7+gkXdhdzCYt
+         u4gaF3RUWOnSk7QWmQPj7ejeGSlZAeTfbC28/PXrdt8awQpGrlkRIoEhANUrvvRxSoyw
+         3eVOo93+6DEDuBDZ/KwPQHg++XM7nzuLRTtUggwGA+FqHWeU1femrCrTUarsi5PLXOf6
+         GcmwOWzKQsjK5jwTp2qkrJW7XbmWyRyHPOPTvkQ97OnIMc62PmAbzh7UsxsdoJ9f2ZEA
+         TZvaW2iEjYkB3/73sZqNGjJZQ6RjwwzWNqg+mp2U7n6mF48qBWrN2dxUZmKY34MKnAag
+         jY3Q==
+X-Gm-Message-State: AOAM530+WmRtpWEfnV0XLLJs/TZZdUYqwriS8gjlBz5xfdYJ1RlZxr6d
+        aDD8hRf3fwcCqIOFf6l9dyjmAdY/YbBvXisARXk=
+X-Google-Smtp-Source: ABdhPJy9W5ndu5bvPys51QNrj75YVXl0pvjisg4IJQA0U4LMfMINRJyD7Z5sYALWQifxuYErXQHn1iBe9VLGxsU9S+A=
+X-Received: by 2002:ab0:647:: with SMTP id f65mr3978118uaf.4.1623842308529;
+ Wed, 16 Jun 2021 04:18:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1623405675.git.geert+renesas@glider.be> <0c6bdd6a-826c-6831-1477-3a1e782cced3@physik.fu-berlin.de>
+In-Reply-To: <0c6bdd6a-826c-6831-1477-3a1e782cced3@physik.fu-berlin.de>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 16 Jun 2021 13:18:17 +0200
+Message-ID: <CAMuHMdU_B4pRyaz4nhp3k0dtXy3A8tRYbdCpmYYaSpzeZCeWOw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Remove shdma DT support
+To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     Rob Herring <robh+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Guennadi Liakhovetski <guennadi.liakhovetski@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        dmaengine <dmaengine@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Update {ETH, SDHI, USB} clock definitions, as they need special
-handling.
+Hi Adrian,
 
-ETH has 2 clocks controlled by single bit.
-USB has 4 clocks pclock is shared by USB Ch0 and USB Ch1.
-SDHI has 4 clocks.
+On Wed, Jun 16, 2021 at 12:42 PM John Paul Adrian Glaubitz
+<glaubitz@physik.fu-berlin.de> wrote:
+> On 6/11/21 12:18 PM, Geert Uytterhoeven wrote:
+> > Hence this series removes the Renesas SHDMA Device Tree bindings, the
+> > SHDMA DMA multiplexer driver, and the corresponding description in the
+> > R-Mobile APE6 DTS.
+> Do these changes make life harder in case we want to convert SH to device
+> tree as already prepared by Yoshinori Sato? [1]
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- include/dt-bindings/clock/r9a07g044-cpg.h | 102 ++++++++++++----------
- 1 file changed, 56 insertions(+), 46 deletions(-)
+Probably not. The only modern DT-aware DMAC drivers for Renesas
+hardware are drivers/dma/sh/{rcar,usb}-dmac.c.  Soon there will be
+drivers/dma/sh/rz-dmac.c, for RZ/G2L (and RZ/A1 and RZ/A2 later).
+Given the R-Car DMAC is very similar to the SH/R-Mobile DMAC, the
+latter may be made to work with rcar-dmac.c, if anyone is willing
+to spend cycles on that.  Likewise, the RZ/A DMAC probably has its
+roots in older SH SoCs, so that may be helpful for you, too.
 
-diff --git a/include/dt-bindings/clock/r9a07g044-cpg.h b/include/dt-bindings/clock/r9a07g044-cpg.h
-index 1d8986563fc5..fe6db7519a63 100644
---- a/include/dt-bindings/clock/r9a07g044-cpg.h
-+++ b/include/dt-bindings/clock/r9a07g044-cpg.h
-@@ -39,51 +39,61 @@
- #define R9A07G044_CLK_SYSC		4
- #define R9A07G044_CLK_MTU		5
- #define R9A07G044_CLK_GPT		6
--#define R9A07G044_CLK_ETH0		7
--#define R9A07G044_CLK_ETH1		8
--#define R9A07G044_CLK_I2C0		9
--#define R9A07G044_CLK_I2C1		10
--#define R9A07G044_CLK_I2C2		11
--#define R9A07G044_CLK_I2C3		12
--#define R9A07G044_CLK_SCIF0		13
--#define R9A07G044_CLK_SCIF1		14
--#define R9A07G044_CLK_SCIF2		15
--#define R9A07G044_CLK_SCIF3		16
--#define R9A07G044_CLK_SCIF4		17
--#define R9A07G044_CLK_SCI0		18
--#define R9A07G044_CLK_SCI1		19
--#define R9A07G044_CLK_GPIO		20
--#define R9A07G044_CLK_SDHI0		21
--#define R9A07G044_CLK_SDHI1		22
--#define R9A07G044_CLK_USB0		23
--#define R9A07G044_CLK_USB1		24
--#define R9A07G044_CLK_CANFD		25
--#define R9A07G044_CLK_SSI0		26
--#define R9A07G044_CLK_SSI1		27
--#define R9A07G044_CLK_SSI2		28
--#define R9A07G044_CLK_SSI3		29
--#define R9A07G044_CLK_MHU		30
--#define R9A07G044_CLK_OSTM0		31
--#define R9A07G044_CLK_OSTM1		32
--#define R9A07G044_CLK_OSTM2		33
--#define R9A07G044_CLK_WDT0		34
--#define R9A07G044_CLK_WDT1		35
--#define R9A07G044_CLK_WDT2		36
--#define R9A07G044_CLK_WDT_PON		37
--#define R9A07G044_CLK_GPU		38
--#define R9A07G044_CLK_ISU		39
--#define R9A07G044_CLK_H264		40
--#define R9A07G044_CLK_CRU		41
--#define R9A07G044_CLK_MIPI_DSI		42
--#define R9A07G044_CLK_LCDC		43
--#define R9A07G044_CLK_SRC		44
--#define R9A07G044_CLK_RSPI0		45
--#define R9A07G044_CLK_RSPI1		46
--#define R9A07G044_CLK_RSPI2		47
--#define R9A07G044_CLK_ADC		48
--#define R9A07G044_CLK_TSU_PCLK		49
--#define R9A07G044_CLK_SPI		50
--#define R9A07G044_CLK_MIPI_DSI_V	51
--#define R9A07G044_CLK_MIPI_DSI_PIN	52
-+#define ETH0_CLK_AXI			7
-+#define ETH0_CLK_CHI			8
-+#define ETH1_CLK_AXI			9
-+#define ETH1_CLK_CHI			10
-+#define R9A07G044_CLK_I2C0		11
-+#define R9A07G044_CLK_I2C1		12
-+#define R9A07G044_CLK_I2C2		13
-+#define R9A07G044_CLK_I2C3		14
-+#define R9A07G044_CLK_SCIF0		15
-+#define R9A07G044_CLK_SCIF1		16
-+#define R9A07G044_CLK_SCIF2		17
-+#define R9A07G044_CLK_SCIF3		18
-+#define R9A07G044_CLK_SCIF4		19
-+#define R9A07G044_CLK_SCI0		20
-+#define R9A07G044_CLK_SCI1		21
-+#define R9A07G044_CLK_GPIO		22
-+#define R9A07G044_CLK_SDHI0_IMCLK	23
-+#define R9A07G044_CLK_SDHI0_IMCLK2	24
-+#define R9A07G044_CLK_SDHI0_CLK_HS	25
-+#define R9A07G044_CLK_SDHI0_ACLK	26
-+#define R9A07G044_CLK_SDHI1_IMCLK	27
-+#define R9A07G044_CLK_SDHI1_IMCLK2	28
-+#define R9A07G044_CLK_SDHI1_CLK_HS	29
-+#define R9A07G044_CLK_SDHI1_ACLK	30
-+#define R9A07G044_CLK_USB_U2H0_HCLK	31
-+#define R9A07G044_CLK_USB_U2H1_HCLK	32
-+#define R9A07G044_CLK_HSUSB		33
-+#define R9A07G044_CLK_USB_PCLK		34
-+#define R9A07G044_CLK_CANFD		35
-+#define R9A07G044_CLK_SSI0		36
-+#define R9A07G044_CLK_SSI1		37
-+#define R9A07G044_CLK_SSI2		38
-+#define R9A07G044_CLK_SSI3		39
-+#define R9A07G044_CLK_MHU		40
-+#define R9A07G044_CLK_OSTM0		41
-+#define R9A07G044_CLK_OSTM1		42
-+#define R9A07G044_CLK_OSTM2		43
-+#define R9A07G044_CLK_WDT0		44
-+#define R9A07G044_CLK_WDT1		45
-+#define R9A07G044_CLK_WDT2		46
-+#define R9A07G044_CLK_WDT_PON		47
-+#define R9A07G044_CLK_GPU		48
-+#define R9A07G044_CLK_ISU		49
-+#define R9A07G044_CLK_H264		50
-+#define R9A07G044_CLK_CRU		51
-+#define R9A07G044_CLK_MIPI_DSI		52
-+#define R9A07G044_CLK_LCDC		53
-+#define R9A07G044_CLK_SRC		54
-+#define R9A07G044_CLK_RSPI0		55
-+#define R9A07G044_CLK_RSPI1		56
-+#define R9A07G044_CLK_RSPI2		57
-+#define R9A07G044_CLK_ADC		58
-+#define R9A07G044_CLK_TSU_PCLK		59
-+#define R9A07G044_CLK_SPI		60
-+#define R9A07G044_CLK_MIPI_DSI_V	61
-+#define R9A07G044_CLK_MIPI_DSI_PIN	62
- 
- #endif /* __DT_BINDINGS_CLOCK_R9A07G044_CPG_H__ */
--- 
-2.17.1
+Chris (CCed) may know better...
 
+> > [1] https://lore.kernel.org/patchwork/cover/693910/
+
+None of these handle DMA?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
