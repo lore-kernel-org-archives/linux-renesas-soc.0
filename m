@@ -2,73 +2,100 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 617B7C2B9F4
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jun 2021 17:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4391BC49EA3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jun 2021 17:15:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 477C8608FC
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jun 2021 17:15:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F145608FC
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Jun 2021 17:15:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231526AbhFQRRm (ORCPT
+        id S232255AbhFQRRo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 17 Jun 2021 13:17:42 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:51679 "EHLO
+        Thu, 17 Jun 2021 13:17:44 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:38743 "EHLO
         relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232245AbhFQRRm (ORCPT
+        with ESMTP id S231864AbhFQRRo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 17 Jun 2021 13:17:42 -0400
+        Thu, 17 Jun 2021 13:17:44 -0400
 Received: (Authenticated sender: jacopo@jmondi.org)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id DF437E0005;
-        Thu, 17 Jun 2021 17:15:32 +0000 (UTC)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id CFFE3E0008;
+        Thu, 17 Jun 2021 17:15:34 +0000 (UTC)
 From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
 To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
         linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: [RFC 0/4] media: Introduce post_register() subdev operation
-Date:   Thu, 17 Jun 2021 19:16:07 +0200
-Message-Id: <20210617171611.80542-1-jacopo+renesas@jmondi.org>
+Subject: [RFC 2/4] media: v4l2-async: Add notifier flags
+Date:   Thu, 17 Jun 2021 19:16:09 +0200
+Message-Id: <20210617171611.80542-3-jacopo+renesas@jmondi.org>
 X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20210617171611.80542-1-jacopo+renesas@jmondi.org>
+References: <20210617171611.80542-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello Hans,
-   this is the result of the discussion we had yesterday, sent out just to
-have a taste of how it looks like.
+Add a 'flags' field to the async notifier structure and define the
+V4L2_ASYNC_NOTIFIER_SKIP_POST_REGISTER flag.
 
-I won't pretend I like the outcome: it feels a bit hackish and meant to support
-this precise use case.
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/media/v4l2-core/v4l2-async.c |  1 +
+ include/media/v4l2-async.h           | 10 ++++++++++
+ 2 files changed, 11 insertions(+)
 
-Compared to the proposal to resurect 'init()' it indeed has the advantage that
-the subdevice driver works in both deffered and non-deferred mode, but the
-notifier flags seems really custom.
-
-Also, being the new flag part of the notifier it won't be available for i2c
-subdevs.
-
-What do you think ? Does the result match your understanding ?
-
-Thanks
-  j
-
-Jacopo Mondi (4):
-  media: v4l2-subdev: Introduce post_register() core op
-  media: v4l2-async: Add notifier flags
-  media: v4l2-async: Call post_register() subdev op
-  media: i2c: gmsl: Defer camera intialization
-
- drivers/media/i2c/max9286.c          | 21 ++++++--
- drivers/media/i2c/rdacm20.c          | 81 ++++++++++++++++------------
- drivers/media/v4l2-core/v4l2-async.c | 11 ++++
- include/media/v4l2-async.h           | 10 ++++
- include/media/v4l2-subdev.h          |  3 ++
- 5 files changed, 89 insertions(+), 37 deletions(-)
-
---
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index cd9e78c63791..0836e01e59ca 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -472,6 +472,7 @@ static int v4l2_async_notifier_asd_valid(struct v4l2_async_notifier *notifier,
+ void v4l2_async_notifier_init(struct v4l2_async_notifier *notifier)
+ {
+ 	INIT_LIST_HEAD(&notifier->asd_list);
++	notifier->flags = 0;
+ }
+ EXPORT_SYMBOL(v4l2_async_notifier_init);
+ 
+diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
+index 5b275a845c20..3f0627bf8894 100644
+--- a/include/media/v4l2-async.h
++++ b/include/media/v4l2-async.h
+@@ -92,6 +92,13 @@ struct v4l2_async_notifier_operations {
+ 		       struct v4l2_async_subdev *asd);
+ };
+ 
++/*
++ * Set this flag to instruct the core framework not to call the post_register()
++ * core operation. The driver that registered the notifier will take care to
++ * do so eventually.
++ */
++#define V4L2_ASYNC_NOTIFIER_SKIP_POST_REGISTER		(1U << 0)
++
+ /**
+  * struct v4l2_async_notifier - v4l2_device notifier data
+  *
+@@ -103,6 +110,8 @@ struct v4l2_async_notifier_operations {
+  * @waiting:	list of struct v4l2_async_subdev, waiting for their drivers
+  * @done:	list of struct v4l2_subdev, already probed
+  * @list:	member in a global list of notifiers
++ * @flags:	notifier's flags. Can be:
++ * 	%V4L2_ASYNC_NOTIFIER_SKIP_POST_REGISTER
+  */
+ struct v4l2_async_notifier {
+ 	const struct v4l2_async_notifier_operations *ops;
+@@ -113,6 +122,7 @@ struct v4l2_async_notifier {
+ 	struct list_head waiting;
+ 	struct list_head done;
+ 	struct list_head list;
++	u32 flags;
+ };
+ 
+ /**
+-- 
 2.31.1
 
