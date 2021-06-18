@@ -2,83 +2,93 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBDFC48BDF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jun 2021 10:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6D4C49361
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jun 2021 11:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FB0161003
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jun 2021 10:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3715D613D6
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jun 2021 11:04:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233628AbhFRKzx (ORCPT
+        id S233898AbhFRLG2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Jun 2021 06:55:53 -0400
-Received: from mail-vk1-f172.google.com ([209.85.221.172]:46594 "EHLO
-        mail-vk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233744AbhFRKzq (ORCPT
+        Fri, 18 Jun 2021 07:06:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55352 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231590AbhFRLG0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Jun 2021 06:55:46 -0400
-Received: by mail-vk1-f172.google.com with SMTP id 184so2036270vkz.13;
-        Fri, 18 Jun 2021 03:53:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=sYxRfw3d4qaZ6McrYDOsqlLWoh2fC/NDUP03irOL83Q=;
-        b=ZzNwhJK4RTzHugsxA4Ln4XN0emPIu+CpNgl2Vow2uD3cnyvbI3jYuXLZS0eLld34AM
-         Exwke0hnCsGkImURv8q37vYoZ2ls1iMRJ1IwASsfc4yn5Cw8iFXBS6p3dXBe5EF3TKon
-         O7GRwWk3UIzLiVcsKEjOwx52ecB4VnklX0QRiQKk/a/0lI9yDWM4CdfklZqdvBzyetGg
-         F1JOxGGvDYKmj4g0BwGQwx8k3YprUFxi459vTMG8KXZJtf7JIpZnY3xw4DXE61mWKk7G
-         mMK6DLF1b6Ywk2GZWeF9ibZvUx4w4lIu8XOFyhjuMlxCSCVnLi0RMbECht9s+PhC9oym
-         IIiA==
-X-Gm-Message-State: AOAM532aoc9T3tGjP9deH/PIBp3Cebg+Vv4LxzgYuDyDB0CLH3Osk47E
-        4SUBykGvCS8wYc78YBvNoI3TrnXkc7ks5B3ab/c=
-X-Google-Smtp-Source: ABdhPJw75HBvQFIABtCnmnhIxHN01rtAFDlpJonWMok5IRC+aCrZDzRnUhOarwgCk3EKXzqfeROzfnBa/ez6Ma6YGqs=
-X-Received: by 2002:a1f:ac45:: with SMTP id v66mr5421719vke.1.1624013616586;
- Fri, 18 Jun 2021 03:53:36 -0700 (PDT)
+        Fri, 18 Jun 2021 07:06:26 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6CF5C061768
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 18 Jun 2021 04:04:16 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:104a:f93d:b771:fc40])
+        by laurent.telenet-ops.be with bizsmtp
+        id Jb4C2500H47PYg101b4CXE; Fri, 18 Jun 2021 13:04:13 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1luCIG-000yA5-87; Fri, 18 Jun 2021 13:04:12 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1luCIF-007GWP-NA; Fri, 18 Jun 2021 13:04:11 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 1/5] dt-bindings: i2c: renesas,iic: Always declare generic compatibility
+Date:   Fri, 18 Jun 2021 13:04:07 +0200
+Message-Id: <760fec5fa71bfff4c7bfe944cfc385f9d8e1945b.1624013699.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1624013699.git.geert+renesas@glider.be>
+References: <cover.1624013699.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-References: <20210317091622.31890-1-wsa+renesas@sang-engineering.com>
- <20210317091622.31890-4-wsa+renesas@sang-engineering.com> <CAMuHMdU6=rTHjvcgK8GBzd3OL_9YFqV77=KsAEGJvAVapnhsOQ@mail.gmail.com>
- <YMxpMKH39aYs4Zaz@ninjato> <CAMuHMdW1wr3j8DgL34V3RiHX9qmqo3tfSWxo3VBwHCO1XFMGGg@mail.gmail.com>
- <YMxt9JA0q1HGwS34@ninjato>
-In-Reply-To: <YMxt9JA0q1HGwS34@ninjato>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 18 Jun 2021 12:53:25 +0200
-Message-ID: <CAMuHMdV3fLJBoKOafrOPFnF+_nU+GCFz3V6XpJabBhSPJtLK3g@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] mmc: renesas_sdhi: do hard reset if possible
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+According to the Hardware User's Manual, automatic transmission for PMIC
+control (DVFS) is not available on the R-Car E3 and RZ/G2E SoC.
+Experiments showed this really means that support for automatic DVFS is
+not present, while the IIC automatic transmission feature itself is
+still available, albeit not super useful.
 
-On Fri, Jun 18, 2021 at 11:57 AM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> > BTW, does it work (really) fine on R-Car Gen3? Mine does.
->
-> Yes, mine does, too. So, I first wondered if the difference is an older
-> SCC variant. But when I let the timeouts run for a while, I get a DMA
-> problem. Which could also be the difference between Gen2 and Gen3 here:
->
-> [   53.328284] WARNING: CPU: 0 PID: 743 at kernel/dma/debug.c:498 add_dma_entry+0x158/0x180
-> [   53.336397] DMA-API: exceeded 7 overlapping mappings of cacheline 0x011807bc
+Hence there is no longer a reason not to declare compatibility with the
+R-Car Gen3-specific and generic versions, and the corresponding
+paragraph can be dropped.
 
-Someone's forgetting to clean up DMA mappings?
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - New.
 
-Gr{oetje,eeting}s,
+ Documentation/devicetree/bindings/i2c/renesas,iic.txt | 5 -----
+ 1 file changed, 5 deletions(-)
 
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/i2c/renesas,iic.txt b/Documentation/devicetree/bindings/i2c/renesas,iic.txt
+index 93d412832e66b682..5de808f79b0630c2 100644
+--- a/Documentation/devicetree/bindings/i2c/renesas,iic.txt
++++ b/Documentation/devicetree/bindings/i2c/renesas,iic.txt
+@@ -37,11 +37,6 @@ Required properties:
+ 			When compatible with "renesas,rmobile-iic" it should
+ 			be the last compatibility string listed.
+ 
+-			The r8a77990 (R-Car E3) and r8a774c0 (RZ/G2E)
+-			controllers are not considered compatible with
+-			"renesas,rcar-gen3-iic" or "renesas,rmobile-iic"
+-			due to the absence of automatic transmission registers.
+-
+ - reg             : address start and address range size of device
+ - interrupts      : interrupt of device
+ - clocks          : clock for device
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
