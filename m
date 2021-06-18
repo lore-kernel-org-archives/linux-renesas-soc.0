@@ -2,100 +2,93 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2123AC48BDF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jun 2021 18:43:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11E48C48BDF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jun 2021 19:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F0F0061175
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jun 2021 18:43:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E00F560FF0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Jun 2021 19:09:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234989AbhFRSpc (ORCPT
+        id S229848AbhFRTL0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Jun 2021 14:45:32 -0400
-Received: from www.zeus03.de ([194.117.254.33]:58654 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230377AbhFRSpc (ORCPT
+        Fri, 18 Jun 2021 15:11:26 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:50668 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232208AbhFRTLZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Jun 2021 14:45:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=I5gdECBkz7zsIYjLY7ohPiNWkV6x
-        wkX2+Y6NoWm8fng=; b=wO5lfvOq7pqz/jbHsrbPokfTv5J1e0hQPKfysJwqqsy4
-        OR3pPv+nAmaTjP9QqGpmqi1+jYT6iqhXUDFlDNb1K0tusc9l+A5NxF2TC5AS7VVz
-        kACTElzfBnWgQ9jWf7ejDw0RQTJg/zbCZTpY1WcO+s7weFGAC90gTQrSa6SvwFk=
-Received: (qmail 806836 invoked from network); 18 Jun 2021 20:43:20 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 18 Jun 2021 20:43:20 +0200
-X-UD-Smtp-Session: l3s3148p1@0cpjsg7F0oogAwDPXwaEAFEHweBlyxQF
-Date:   Fri, 18 Jun 2021 20:43:16 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] renesas,iic: Fixes and DT binding to json-schema
- conversion
-Message-ID: <YMzpRBecpbwwEhyI@kunai>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <cover.1624013644.git.geert+renesas@glider.be>
+        Fri, 18 Jun 2021 15:11:25 -0400
+Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 92B5B3F0;
+        Fri, 18 Jun 2021 21:09:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1624043354;
+        bh=4XJfXPrsv+/8lp80oVWiqyRtb2RTHa3MA6/bu8ZWY18=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ArMgnp0ELJ0QkS0Rc3T1qq7K3K6vVfxmz3313kNJXeQMyDbjpOUQujKKpQr/foSLI
+         3GIEqz34422bST/9nEWlGeWyMqQ7K/KP2cOI4Z/tdzMuXkgRCBNB8t2S89VcGZbFHL
+         /aE70xTN75+OXwT24eudxJk2p0bxlj/DQQmXRSQI=
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH] media: vsp1: Simplify DRM UIF handling
+Date:   Fri, 18 Jun 2021 20:09:05 +0100
+Message-Id: <20210618190905.580258-1-kieran.bingham@ideasonboard.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="6oYIEDPASqLcVoDU"
-Content-Disposition: inline
-In-Reply-To: <cover.1624013644.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
---6oYIEDPASqLcVoDU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+In commit 6732f3139380 ("media: v4l: vsp1: Fix uif null pointer access")
+the handling of the UIF was over complicated, and the patch applied
+before review.
 
-Hi Geert,
+Simplify it to keep the conditionals small.
 
-> I plan to queue patches 2-4 in renesas-devel for v5.15.
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
 
-I like the series! So, I will queue patches 1+5. For the rest:
+Another one that I had lying around in my tree for too long ....
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+ drivers/media/platform/vsp1/vsp1_drm.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Thanks for doing this!
+diff --git a/drivers/media/platform/vsp1/vsp1_drm.c b/drivers/media/platform/vsp1/vsp1_drm.c
+index 06f74d410973..0c2507dc03d6 100644
+--- a/drivers/media/platform/vsp1/vsp1_drm.c
++++ b/drivers/media/platform/vsp1/vsp1_drm.c
+@@ -455,6 +455,10 @@ static int vsp1_du_pipeline_setup_inputs(struct vsp1_device *vsp1,
+ 		dev_err(vsp1->dev, "%s: failed to setup UIF after %s\n",
+ 			__func__, BRX_NAME(pipe->brx));
+ 
++	/* If the DRM pipe does not have a UIF there is nothing we can update. */
++	if (!drm_pipe->uif)
++		return 0;
++
+ 	/*
+ 	 * If the UIF is not in use schedule it for removal by setting its pipe
+ 	 * pointer to NULL, vsp1_du_pipeline_configure() will remove it from the
+@@ -462,9 +466,9 @@ static int vsp1_du_pipeline_setup_inputs(struct vsp1_device *vsp1,
+ 	 * make sure it is present in the pipeline's list of entities if it
+ 	 * wasn't already.
+ 	 */
+-	if (drm_pipe->uif && !use_uif) {
++	if (!use_uif) {
+ 		drm_pipe->uif->pipe = NULL;
+-	} else if (drm_pipe->uif && !drm_pipe->uif->pipe) {
++	} else if (!drm_pipe->uif->pipe) {
+ 		drm_pipe->uif->pipe = pipe;
+ 		list_add_tail(&drm_pipe->uif->list_pipe, &pipe->entities);
+ 	}
+-- 
+2.30.2
 
-Have a nice weekend,
-
-   Wolfram
-
-
---6oYIEDPASqLcVoDU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmDM6T8ACgkQFA3kzBSg
-Kba5Rg//XovZVRBMxn5UrFi49mJVf8UgjGy6jcI0DgsiEUX/1R2xzZajXJSRng9K
-DdiG7+XlXYEv6lXLS/KxZz8OBqakmRCxCxoUH50jjUG11BWhZ4uipmULaP2pZgvm
-qkD6mLxbafU4t83UNSbWPc5ZLQ5rPE3AGfN4qSHnE/7tEjG9fzhYupjfNj7oew43
-SQdmn1P2Dn5JWUU2gAXkoSxuL9HqSvv2OTpQoeFKvPaJWEpWVoThJWgTDDrbT7sE
-DYhHWZcwl+ZlI94yq3pRfjQFTIS+AFZZJGIfW5LsOAxQO9fTHn0/c1WHAxaQpS8R
-wCn/LFNLpbcb0mW+BcxM7nuEkxp57K7FjaSgU40nfW9FJ6oBHraGLWfVHveKam1W
-581/QGOwRZIlTQiX5QVZ7cly1YXPBPTAwJSXb/v4wg2dPRD208IBe9nioZmLx9XH
-i++c0o3ft9T/UnxzXKhuuzm2OAzIYwh8Rtk+fiY0Qs/JSQ991bkmi+F46QmiIN8K
-Ca1igV08Pdzj6aKSZkV8qoARl1dQ66fGVDbXFfJ4+bN3vo7QqOeopZHk4Z6G2feN
-KiOPJU0ojjLQcndMABFh9E5K8u5q2/GylAmQhHJR+iMzz5H2UecV32aPyLfn8vZE
-Zrzzdls2a0xmoWwQ0jVPDhhvhwvAm7sfOUe8cnyLjhxnO5ZDGO0=
-=FOJc
------END PGP SIGNATURE-----
-
---6oYIEDPASqLcVoDU--
