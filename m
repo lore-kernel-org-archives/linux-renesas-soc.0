@@ -2,125 +2,59 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A3DC49EA3
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Jun 2021 06:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C9EC48BDF
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Jun 2021 20:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC9361059
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Jun 2021 06:07:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADD0E60FF4
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 20 Jun 2021 20:35:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229553AbhFTGJq (ORCPT
+        id S229901AbhFTUhz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 20 Jun 2021 02:09:46 -0400
-Received: from lists.levonline.com ([217.70.32.42]:44597 "EHLO
-        lists.levonline.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbhFTGJq (ORCPT
+        Sun, 20 Jun 2021 16:37:55 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:42365 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230204AbhFTUhx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 20 Jun 2021 02:09:46 -0400
-X-Greylist: delayed 384 seconds by postgrey-1.27 at vger.kernel.org; Sun, 20 Jun 2021 02:09:45 EDT
-Received: from exc-halon1.levonline.com (exc-halon1.levonline.com [217.70.32.123])
-        by lists.levonline.com (Postfix) with ESMTP id 287E73A0D55
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 20 Jun 2021 07:58:57 +0200 (CEST)
-X-SA-score: -1
-X-Halon-ID: ef235bb1-d18c-11eb-8ebc-0050568168d4
-Received: from ormen2.djurnet.levonline.com (ormen2.djurnet.levonline.com [192.168.17.32])
-        by exc-halon1.levonline.com (Halon) with ESMTPS
-        id ef235bb1-d18c-11eb-8ebc-0050568168d4;
-        Sun, 20 Jun 2021 08:01:20 +0200 (CEST)
-Received: from [127.0.0.1] (l193216.ppp.asahi-net.or.jp [218.219.193.216])
-        (authenticated bits=0)
-        by ormen2.djurnet.levonline.com (8.13.8/8.13.8) with ESMTP id 15K61HfW011889;
-        Sun, 20 Jun 2021 08:01:19 +0200
-X-Origin-Levonline: b0359001
-From:   Magnus Damm <damm@opensource.se>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Magnus Damm <damm@opensource.se>, geert+renesas@glider.be
-Date:   Sun, 20 Jun 2021 14:21:29 +0900
-Message-Id: <162416648909.11444.15000511904887495628.sendpatchset@octo>
-In-Reply-To: <162416647337.11444.4467438519249633023.sendpatchset@octo>
-References: <162416647337.11444.4467438519249633023.sendpatchset@octo>
-Subject: [PATCH 2/3] arm64: dts: renesas: r8a77970: eagle: Add SW2 support
+        Sun, 20 Jun 2021 16:37:53 -0400
+Received: (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 0A739240005;
+        Sun, 20 Jun 2021 20:35:38 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Pavel Machek <pavel@ucw.cz>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: rtc: ti,bq32k: Convert to json-schema
+Date:   Sun, 20 Jun 2021 22:35:37 +0200
+Message-Id: <162422133368.1091383.6886477741733498842.b4-ty@bootlin.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <42d9c71b4ee1f120e0cdcf6b266547d29d1fb9a4.1623851377.git.geert+renesas@glider.be>
+References: <42d9c71b4ee1f120e0cdcf6b266547d29d1fb9a4.1623851377.git.geert+renesas@glider.be>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Magnus Damm <damm+renesas@opensource.se>
+On Wed, 16 Jun 2021 15:51:43 +0200, Geert Uytterhoeven wrote:
+> Convert the TI BQ32000 I2C Serial Real-Time Clock Device Tree binding
+> documentation to json-schema.
+> 
+> Document missing properties.
 
-Add support for SW2 via "gpio-keys" on the R-Car V3M Eagle board.
+Applied, thanks!
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
----
+[1/1] dt-bindings: rtc: ti,bq32k: Convert to json-schema
+      commit: 4a7e7408688de048bffa5e0e00d246b5f854bcf7
 
- arch/arm64/boot/dts/renesas/r8a77970-eagle.dts |   43 ++++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
-
---- 0001/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts
-+++ work/arch/arm64/boot/dts/renesas/r8a77970-eagle.dts	2021-06-19 19:26:28.399714892 +0900
-@@ -8,6 +8,8 @@
- 
- /dts-v1/;
- #include "r8a77970.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- 
- / {
- 	model = "Renesas Eagle board based on r8a77970";
-@@ -43,6 +45,42 @@
- 		};
- 	};
- 
-+	keys {
-+		compatible = "gpio-keys";
-+
-+		pinctrl-0 = <&keys_pins>;
-+		pinctrl-names = "default";
-+
-+		key-1 {
-+			gpios = <&gpio1 21 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_1>;
-+			label = "SW2-1";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-2 {
-+			gpios = <&gpio1 22 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_2>;
-+			label = "SW2-2";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-3 {
-+			gpios = <&gpio1 23 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_3>;
-+			label = "SW2-3";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+		key-4 {
-+			gpios = <&gpio1 24 GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_4>;
-+			label = "SW2-4";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+	};
-+
- 	lvds-decoder {
- 		compatible = "thine,thc63lvd1024";
- 
-@@ -196,6 +234,11 @@
- 		function = "i2c0";
- 	};
- 
-+	keys_pins: keys {
-+		pins = "GP_1_21", "GP_1_22", "GP_1_23", "GP_1_24";
-+		bias-pull-up;
-+	};
-+
- 	qspi0_pins: qspi0 {
- 		groups = "qspi0_ctrl", "qspi0_data4";
- 		function = "qspi0";
+Best regards,
+-- 
+Alexandre Belloni <alexandre.belloni@bootlin.com>
