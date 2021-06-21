@@ -2,99 +2,133 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1E1C48BC2
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jun 2021 16:05:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 773FEC48BC2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jun 2021 17:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B11860FEB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jun 2021 16:05:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 603686120D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jun 2021 17:40:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230299AbhFUQHm (ORCPT
+        id S231375AbhFURmZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Jun 2021 12:07:42 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:58721 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230269AbhFUQHm (ORCPT
+        Mon, 21 Jun 2021 13:42:25 -0400
+Received: from mail-oi1-f174.google.com ([209.85.167.174]:38442 "EHLO
+        mail-oi1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231138AbhFURmY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Jun 2021 12:07:42 -0400
-Received: from [192.168.1.155] ([95.118.106.223]) by mrelayeu.kundenserver.de
- (mreue011 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MZkYx-1lk6xC1s2h-00WmrM; Mon, 21 Jun 2021 18:05:13 +0200
-Subject: Re: [PATH 0/4] [RFC] Support virtual DRM
-To:     Tomohito Esaki <etom@igel.co.jp>,
+        Mon, 21 Jun 2021 13:42:24 -0400
+Received: by mail-oi1-f174.google.com with SMTP id q10so20719250oij.5;
+        Mon, 21 Jun 2021 10:40:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=GOLlee18Cq+VZCrN2BSKn7jALbwR1Zc9vSp5DxBhXsc=;
+        b=GaQkr8EvLGEka0ojbR35GP88QlPBNvY07ts1vyEkwFcchnhbA0boHvmzjnWGx+cMAH
+         6rCM8TGCTAr5bTLAgMTAQ/GgT74RLocIS40BnlPQJvjlwccwCv7aKGchKD79FOy5cgH5
+         kJ4ZUY2YvF72gQuWaVX/7BstDpXf4NMfEMi69V2ukZOx5WFVJYoL6CZ/DePkKGdTwUnt
+         FvE7EMMD2de0RRhGThC1SNXDaUN8Q86ZpJX1ujzpT6Byoqr03Jj7BYARfM18bKx+2rLg
+         J8PhM3e5f9sLXKAvR1tNkaJ8YG/LceSgFuADoTOrOI+QzeCqyQcYAfpwEIgPdCu2PiFu
+         Ugkg==
+X-Gm-Message-State: AOAM533mmDptJwUTJXakQYMmiNARIZcwMQp0gkOMo01oPU9paD7LQ6uy
+        6U8aSKxNupMHHhWl7Tn4FQ==
+X-Google-Smtp-Source: ABdhPJxfENLRerkLK7CZCNrrEAOulpIKYqd89FEg+Mrdo1plFtf4lh4tQqcgcpzZACnhF6rlmAMLLw==
+X-Received: by 2002:aca:4d3:: with SMTP id 202mr17729526oie.9.1624297208354;
+        Mon, 21 Jun 2021 10:40:08 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id y13sm4184113ots.47.2021.06.21.10.40.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Jun 2021 10:40:07 -0700 (PDT)
+Received: (nullmailer pid 1161632 invoked by uid 1000);
+        Mon, 21 Jun 2021 17:40:02 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Tomohito Esaki <etom@igel.co.jp>
+Cc:     linux-kernel@vger.kernel.org,
         Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
         Thomas Zimmermann <tzimmermann@suse.de>,
         David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     dri-devlel@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20210621062742.26073-1-etom@igel.co.jp>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Message-ID: <7cde82a9-c60c-e527-eeac-eaad0c5842a1@metux.net>
-Date:   Mon, 21 Jun 2021 18:05:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
-MIME-Version: 1.0
-In-Reply-To: <20210621062742.26073-1-etom@igel.co.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: tl
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ZbI1RWxgocInH9UAHR6iDpdy/HJfu+bSz9Z2X6RE6gibrXly73l
- jgZ0HUAoSMsj7eoB5ficazIKQQImXBnqqX2nwA5iCta+OFxwBSPp+g3pewEOIcOyXuIuow8
- 014MAuba7Mrjwdeg9uyraO9/kmwtPM9bgTed9LHI0YvjIEILWKw2mbLTS+TKbsirguCmb1l
- Pc7g9+dSHBO6o7BUd964w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:9n13vlzoNqk=:aRYaqiT6BrZI+UguW1PoVs
- uKEvRY4VdRhJ1AGsObSRE0Zio4gd5xjOcoZp8/i3dgG9mTVi1BaP4Hr3hl2kYHzyiWnU3h7lq
- f3vuhAIWUEmLCcUvTjpmis93jBwALK+Cy4+iwe54TuXQgWy3RkMwzaNOW2vfNLuRR2V81G+MW
- wJqjlRYzpj0PPgbUPbxv2tuGB3t8+Bw7P3FUOBx/t5PITs9rIl9In/EJ7b6BXUD7/8CyHT0H5
- 8CAEQvPZBolbeQB2Fw03q47wkUlSNUhbyR2Y9zqfTwiPhXKAPQ3EWmkEJNlC/L4ohbVYQdWFt
- dq2thHVhGplX2hxpFXV66AHWvqa4XlQY3XBSfID9NzEgBOFCzrSQ6r13gdRoJtmLGp7ioGsfJ
- X3WJLozX3qXwyPr+5shDb5FE3XFfWv53mbXRC1dGlAOeVD4+w3QQnPoaQEf0NB1MIWP85UgNT
- 4HtMcAcK1u/txzMFb2mNGcSrUBn25NaH7N32DK/f0anyPmd6sZLrEEC3n7MQSfvlK1d2lOIWx
- kcFLj+HgeTtJuk6HyEnm2Y=
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        linux-doc@vger.kernel.org, devicetree@vger.kernel.org,
+        Maxime Ripard <mripard@kernel.org>
+In-Reply-To: <20210621064403.26663-4-etom@igel.co.jp>
+References: <20210621064403.26663-1-etom@igel.co.jp> <20210621064403.26663-4-etom@igel.co.jp>
+Subject: Re: [PATH 3/4] dt-bindings: display: Add virtual DRM
+Date:   Mon, 21 Jun 2021 11:40:02 -0600
+Message-Id: <1624297202.341994.1161630.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 21.06.21 08:27, Tomohito Esaki wrote:
-
-Hi,
-
-> Virtual DRM splits the overlay planes of a display controller into multiple
-> virtual devices to allow each plane to be accessed by each process.
+On Mon, 21 Jun 2021 15:44:02 +0900, Tomohito Esaki wrote:
+> Add device tree bindings documentation for virtual DRM.
 > 
-> This makes it possible to overlay images output from multiple processes on a
-> display. For example, one process displays the camera image without compositor
-> while another process overlays the UI.
+> Signed-off-by: Tomohito Esaki <etom@igel.co.jp>
+> ---
+>  .../devicetree/bindings/display/vdrm.yaml     | 67 +++++++++++++++++++
+>  1 file changed, 67 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/vdrm.yaml
+> 
 
-Are you attempting to create an simple in-kernel compositor ?
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-I don't think that's not the way to go, at least not by touching each
-single display driver, and not hardcoding the planes in DT.
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/display/vdrm.yaml:39:1: [error] syntax error: found character '\t' that cannot start any token (syntax)
 
-What's the actual use case you're doing that for ? Why not using some
-userland compositor ?
+dtschema/dtc warnings/errors:
+make[1]: *** Deleting file 'Documentation/devicetree/bindings/display/vdrm.example.dts'
+Traceback (most recent call last):
+  File "/usr/local/bin/dt-extract-example", line 45, in <module>
+    binding = yaml.load(open(args.yamlfile, encoding='utf-8').read())
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/main.py", line 434, in load
+    return constructor.get_single_data()
+  File "/usr/local/lib/python3.8/dist-packages/ruamel/yaml/constructor.py", line 120, in get_single_data
+    node = self.composer.get_single_node()
+  File "_ruamel_yaml.pyx", line 706, in _ruamel_yaml.CParser.get_single_node
+  File "_ruamel_yaml.pyx", line 724, in _ruamel_yaml.CParser._compose_document
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 775, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 889, in _ruamel_yaml.CParser._compose_mapping_node
+  File "_ruamel_yaml.pyx", line 731, in _ruamel_yaml.CParser._compose_node
+  File "_ruamel_yaml.pyx", line 904, in _ruamel_yaml.CParser._parse_next_event
+ruamel.yaml.scanner.ScannerError: while scanning a plain scalar
+  in "<unicode string>", line 38, column 15
+found a tab character that violates indentation
+  in "<unicode string>", line 39, column 1
+make[1]: *** [Documentation/devicetree/bindings/Makefile:20: Documentation/devicetree/bindings/display/vdrm.example.dts] Error 1
+make[1]: *** Waiting for unfinished jobs....
+./Documentation/devicetree/bindings/display/vdrm.yaml:  while scanning a plain scalar
+  in "<unicode string>", line 38, column 15
+found a tab character that violates indentation
+  in "<unicode string>", line 39, column 1
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/display/vdrm.yaml: ignoring, error parsing file
+warning: no schema found in file: ./Documentation/devicetree/bindings/display/vdrm.yaml
+make: *** [Makefile:1416: dt_binding_check] Error 2
+\ndoc reference errors (make refcheckdocs):
 
-If you really wanna build a kernel compositor, it should be completely
-independent of hw drivers. (well, almost - in case of gpus shall be
-used, the commands obviously need to be dispatched the actual driver)
+See https://patchwork.ozlabs.org/patch/1494913
 
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
 
---mtx
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
 
--- 
----
-Hinweis: unverschlüsselte E-Mails können leicht abgehört und manipuliert
-werden ! Für eine vertrauliche Kommunikation senden Sie bitte ihren
-GPG/PGP-Schlüssel zu.
----
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
+
