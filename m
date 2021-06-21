@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAF9C48BE5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jun 2021 18:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6121EC49EA2
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jun 2021 18:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA60C6124B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jun 2021 18:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 486C761040
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Jun 2021 18:03:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233551AbhFUSFb (ORCPT
+        id S233705AbhFUSFd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Jun 2021 14:05:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47246 "EHLO mail.kernel.org"
+        Mon, 21 Jun 2021 14:05:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233535AbhFUSCA (ORCPT
+        id S234021AbhFUSE3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Jun 2021 14:02:00 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 23D24613F5;
-        Mon, 21 Jun 2021 17:55:08 +0000 (UTC)
+        Mon, 21 Jun 2021 14:04:29 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 258616128C;
+        Mon, 21 Jun 2021 17:56:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1624298108;
-        bh=ixPtpWQFcVD5fCPnUsUUb8all2Nzn9FIVmPd+9/1ZP0=;
+        s=k20201202; t=1624298160;
+        bh=mDeuF3j6VCQAJOgEmmQlgahbvTMLe/sAxHkzDN2Z378=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HNXHnNH3BODfJJ1ut6blx56c383QQ4FXUAdijLtmXQvBJMrOHxdmXYGd4bwFa5Dov
-         n0RTssr9Et3jG54we50wfEdiS7rb1Lzbua5NYeO3uqjniwzsgIiNi6fthuvLtMUsAe
-         DbgrFUd/N+Sz3505E3cvoRUPQhlOuTSGDMpeZ9u40C52ZlHpex+MdGEPfGixkAyKDy
-         OMjnPAR8I3FFgDtQEaITxHQxHoFAMdg+cUv61wUCmMHcGqvorjUu2K4s9cPcEUrAKm
-         MJ/jxum1e5q7TRxEbrVBFU5E3+R1S5UsqwYo1BI+Ky0U0EmoKdP9au9uDCY+cQyklO
-         +4S6AeVuOgsuw==
+        b=S3O2AV9icr4EUh58f44cYIV0jfJGXu9IocU7q33+Sd4AXb9h+j74s7N5ChVPpXugv
+         A5kWb6JxZQ57HA77e0ahCUoORe94MNIRqDh/nSC/J6T+nZ+NBSq7YiE0HLBRQBNWqL
+         0aHIYZYEjMrVYMhV8+El6SvQUj++bdhPmDD3ciCcFlB3WJoh5wi0B4ls2LRJ0AGJfh
+         CtJefYUepYSkI0JMMmRgC5rraUt2dfQUekwYlmkWO6C5tJF2p6RF5GsmOSDidR6nhc
+         ILaFIcy/k8IotVQy53tvbyE15XWKrYH3YFVB9arvx40FG9Lhd/mQV2uABV745LAA01
+         EMfXdIF0B9WsA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Kees Cook <keescook@chromium.org>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 11/16] sh_eth: Avoid memcpy() over-reading of ETH_SS_STATS
-Date:   Mon, 21 Jun 2021 13:54:45 -0400
-Message-Id: <20210621175450.736067-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 10/13] sh_eth: Avoid memcpy() over-reading of ETH_SS_STATS
+Date:   Mon, 21 Jun 2021 13:55:40 -0400
+Message-Id: <20210621175544.736421-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210621175450.736067-1-sashal@kernel.org>
-References: <20210621175450.736067-1-sashal@kernel.org>
+In-Reply-To: <20210621175544.736421-1-sashal@kernel.org>
+References: <20210621175544.736421-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -73,10 +73,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 24638cb157ca..394ab9cdfe2c 100644
+index 0e5b1935af50..468f02beccee 100644
 --- a/drivers/net/ethernet/renesas/sh_eth.c
 +++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2302,7 +2302,7 @@ static void sh_eth_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
+@@ -2117,7 +2117,7 @@ static void sh_eth_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
  {
  	switch (stringset) {
  	case ETH_SS_STATS:
