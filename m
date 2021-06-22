@@ -2,89 +2,58 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7244BC48BE5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jun 2021 23:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70FADC2B9F4
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jun 2021 23:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C482600EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jun 2021 23:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5060E608FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 22 Jun 2021 23:27:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229945AbhFVXWu (ORCPT
+        id S229751AbhFVX3d (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 22 Jun 2021 19:22:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53792 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229922AbhFVXWt (ORCPT
+        Tue, 22 Jun 2021 19:29:33 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:55212 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229501AbhFVX3d (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jun 2021 19:22:49 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0C7FC061574;
-        Tue, 22 Jun 2021 16:20:32 -0700 (PDT)
+        Tue, 22 Jun 2021 19:29:33 -0400
 Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D0D85A66;
-        Wed, 23 Jun 2021 01:20:29 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 95564A66;
+        Wed, 23 Jun 2021 01:27:15 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1624404030;
-        bh=RUKRmqgyqz9U5gi8RB6Mid2ZJhoOlmXP7P4o2uLEwDc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=coJj0FCoteLsF2XFemV7SB+OtayQYRtpyjy8wzrGRmSHYIZJZmkLAytgWiLgknJMp
-         F7f0MB+3/AOjc4TBrXAPYGPEkRHyh1jbN9uodfnfPVpiV4R9OKEQ7qCKt6AvEY0Slh
-         u666184vPnJzeFio7YTRlKB0LHj/sio/Y2VCSVH0=
+        s=mail; t=1624404435;
+        bh=qxeKyFDrDk0vRpyJBb/WTgyhmJ98KFXY4ZP9cDuOhEg=;
+        h=From:To:Subject:Date:From;
+        b=QEA5bu3w0G9XLnYVhgF2KtucELC5KSFw2e5/JxtvInq1Ul0v6XwxNIhUyq62IWwjj
+         XJWrMhqbP8kEmCa0mKleN3YmbloETMfDozMDVpa4k4SPtQms5YXhRuNK6rmFOB4VvT
+         ShiN1XZ0lIeLv2x6kSg3IvPI5zRCzT8nw9xRqXRw=
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-renesas-soc@vger.kernel.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 2/3] drm: rcar-du: Only initialise TVM_TVSYNC mode when supported
-Date:   Wed, 23 Jun 2021 00:20:23 +0100
-Message-Id: <20210622232024.3215248-3-kieran.bingham@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@glider.be>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/2] clk: renesas: r8a779a0: V3U DU support
+Date:   Wed, 23 Jun 2021 00:27:09 +0100
+Message-Id: <20210622232711.3219697-1-kieran.bingham@ideasonboard.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210622232024.3215248-1-kieran.bingham@ideasonboard.com>
-References: <20210622232024.3215248-1-kieran.bingham@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Add support for the V3U DU by updating the required clock functionality.
 
-The R-Car DU as found on the D3, E3, and V3U do not have support
-for an external synchronisation method.
+Kieran Bingham (2):
+  clk: renesas: r8a779a0: Add the DU clock
+  clk: renesas: r8a779a0: Add the DSI clocks
 
-In these cases, the dsysr cached register should not be initialised
-in DSYSR_TVM_TVSYNC, but instead should be left clear to configure as
-DSYSR_TVM_MASTER by default.
-
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 5 ++++-
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index ea7e39d03545..cff0d82b9491 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -1243,7 +1243,10 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
- 	rcrtc->group = rgrp;
- 	rcrtc->mmio_offset = mmio_offsets[hwindex];
- 	rcrtc->index = hwindex;
--	rcrtc->dsysr = (rcrtc->index % 2 ? 0 : DSYSR_DRES) | DSYSR_TVM_TVSYNC;
-+	rcrtc->dsysr = (rcrtc->index % 2 ? 0 : DSYSR_DRES);
-+
-+	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_TVM_SYNC))
-+		rcrtc->dsysr |= DSYSR_TVM_TVSYNC;
- 
- 	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_VSP1_SOURCE))
- 		primary = &rcrtc->vsp->planes[rcrtc->vsp_pipe].plane;
 -- 
 2.30.2
 
