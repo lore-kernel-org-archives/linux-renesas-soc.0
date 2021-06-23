@@ -4,123 +4,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FF3C48BE5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jun 2021 13:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 791BAC4743C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jun 2021 13:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4724561076
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jun 2021 13:09:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EF9E60FD8
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jun 2021 13:12:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230454AbhFWNLh (ORCPT
+        id S230274AbhFWNOl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Jun 2021 09:11:37 -0400
-Received: from mail-ua1-f45.google.com ([209.85.222.45]:40545 "EHLO
-        mail-ua1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230163AbhFWNLg (ORCPT
+        Wed, 23 Jun 2021 09:14:41 -0400
+Received: from mail-vs1-f48.google.com ([209.85.217.48]:41479 "EHLO
+        mail-vs1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230019AbhFWNOg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Jun 2021 09:11:36 -0400
-Received: by mail-ua1-f45.google.com with SMTP id r9so828025ual.7;
-        Wed, 23 Jun 2021 06:09:17 -0700 (PDT)
+        Wed, 23 Jun 2021 09:14:36 -0400
+Received: by mail-vs1-f48.google.com with SMTP id c26so1393940vso.8
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Jun 2021 06:12:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2GyvRMqzd0j7dU3QjG5cKA3SND3uzGcIE5fba+nRyaE=;
-        b=VSmcRh4MftvCjl9E1F1HLcutSXjgX9Vt474J0i55jARkgepTWyfhCb4LDCikvqS9uG
-         VX0DbKBXly9p2BfiWzCDsSYNO7BFSDyQmhoEHWMyT1CcrgFkDj183O8qrhnUZCoJr9du
-         IhD7hId0I2qZMD+0NgKQO/JS6WkVAH9EAjHYvlAWfSZ69aP/xndgx7wr4XEax+8Jeoi+
-         oDZ9/nt3q9FAuE4qxxtxQ6ms/KNb67+zkpvye02ZRQrnZ2Z57asV3xfkXlItorYuB4qr
-         7zW3GS9XbExwT6DnSQqcGTybtxmz4wIGIZb0eRSTQAtioTkSUB/R0eCErPZJR6Phtk6C
-         YZjg==
-X-Gm-Message-State: AOAM533ng+XxvaNb0bBgtD9tRMM8GTKv0ZomdnQohh2Ds5DR0S1uuOMy
-        Qhp/SQdhXkjM7UFTjdtGMzxyOjl5cM4CJpchA2E=
-X-Google-Smtp-Source: ABdhPJy7fEj+42hR8loz80KZeBpk8m6cSVSkPMGaM+vOPsqzJ7EuBgra5HjzbA2XO5FoOuNmfwqhB3mqOHbBdX7nzSE=
-X-Received: by 2002:ab0:1e4c:: with SMTP id n12mr4441015uak.58.1624453757600;
- Wed, 23 Jun 2021 06:09:17 -0700 (PDT)
+        bh=Z7rFRIRYVnAhcIWsXCCdA/bizkATSrGafe3L9HwAMN8=;
+        b=iK3DWmev8TWYNpj2vuykibibnhGB29R71kxAsjMhWGIank0uDb5AZkt5oqquB9IDoL
+         Fd9/JnmXnpYKLbbUDaxXDqs7hK26nhKRhgurV957VCt39KgZCN2zCkC3vzedTGZkPdyK
+         8Q59Y2XCuAXENRC/xx1JKE33vdDrQDMwvuVXu8ia0mJlAVMTxqwWbgmZGv5ZvNabDoQd
+         JxTPLejugqzquEgdf3iNItrvckgFVaWr6tKcOEcLiZZLcRmTX6j8+a2gUYOCaf1cKWZY
+         pzk3on7FA5Q97pgZXPA2zJJDmS7JnIYGx+QkoX/d4aFjxggTm6KJ+Bs32X8P6NPM65mO
+         qU6Q==
+X-Gm-Message-State: AOAM532hT0KyKffq92HgDsedzoJfMH6bkkncQz0EJG0NBAHKHIBP8Cp0
+        r1u5YQKjYrV5bH/wKxhp4gq3IcerbjmcXSWJXSg=
+X-Google-Smtp-Source: ABdhPJzZI9MYYf2tOdqEUy8y9Qb/m+yl7lTQXg4ghKtEi+OUGC91Wm77OztA/Kq7tA1r9cQGp0HQl5n1FJ4ztveyudM=
+X-Received: by 2002:a67:efd6:: with SMTP id s22mr28617833vsp.3.1624453937586;
+ Wed, 23 Jun 2021 06:12:17 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210622231146.3208404-1-kieran.bingham@ideasonboard.com>
- <CAMuHMdW8vYC3+gVCv5eG_vkX79vU8RQL-6fSJd9McetDzikzSA@mail.gmail.com> <YNMv2KSjbwX5aAK2@pendragon.ideasonboard.com>
-In-Reply-To: <YNMv2KSjbwX5aAK2@pendragon.ideasonboard.com>
+References: <20210623034656.10316-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20210623034656.10316-2-laurent.pinchart+renesas@ideasonboard.com> <bc508b07-5028-b8e9-b0ac-994c9deca74d@ideasonboard.com>
+In-Reply-To: <bc508b07-5028-b8e9-b0ac-994c9deca74d@ideasonboard.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 23 Jun 2021 15:09:06 +0200
-Message-ID: <CAMuHMdXJTCyfMX3nN6pbAHeqqf5OCqJR4+7GJ=71+o1iKRrHhg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: display: renesas,du: Provide bindings for r8a779a0
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:DRM DRIVERS FOR RENESAS" <dri-devel@lists.freedesktop.org>,
-        "open list:DRM DRIVERS FOR RENESAS" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
+Date:   Wed, 23 Jun 2021 15:12:06 +0200
+Message-ID: <CAMuHMdUD-GsVCyAsNNdK1D-zoDiRAoKgmU+jXE6UT_uCOrc=hA@mail.gmail.com>
+Subject: Re: [RFC PATCH 01/15] dt-bindings: display: bridge: Add binding for
+ R-Car MIPI DSI/CSI-2 TX
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        LUU HOAI <hoai.luu.ub@renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
+Hi Kieran,
 
-On Wed, Jun 23, 2021 at 2:58 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
-> On Wed, Jun 23, 2021 at 02:53:33PM +0200, Geert Uytterhoeven wrote:
-> > On Wed, Jun 23, 2021 at 1:11 AM Kieran Bingham wrote:
-> > > From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> > >
-> > > Extend the Renesas DU display bindings to support the r8a779a0 V3U.
-> > >
-> > > Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+On Wed, Jun 23, 2021 at 11:06 AM Kieran Bingham
+<kieran.bingham@ideasonboard.com> wrote:
+> On 23/06/2021 04:46, Laurent Pinchart wrote:
+> > The R-Car MIPI DSI/CSI-2 TX is embedded in the Renesas R-Car V3U SoC. It
+> > can operate in either DSI or CSI-2 mode, with up to four data lanes.
 > >
-> > Thanks for your patch!
+> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > ---
+> >  .../display/bridge/renesas,dsi-csi2-tx.yaml   | 118 ++++++++++++++++++
+> >  1 file changed, 118 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.yaml
 > >
-> > > --- a/Documentation/devicetree/bindings/display/renesas,du.yaml
-> > > +++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
-> > > @@ -39,6 +39,7 @@ properties:
-> > >        - renesas,du-r8a77980 # for R-Car V3H compatible DU
-> > >        - renesas,du-r8a77990 # for R-Car E3 compatible DU
-> > >        - renesas,du-r8a77995 # for R-Car D3 compatible DU
-> > > +      - renesas,du-r8a779a0 # for R-Car V3U compatible DU
-> > >
-> > >    reg:
-> > >      maxItems: 1
-> > > @@ -774,6 +775,57 @@ allOf:
-> > >          - reset-names
-> > >          - renesas,vsps
-> > >
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            enum:
-> > > +              - renesas,du-r8a779a0
-> > > +    then:
-> > > +      properties:
-> > > +        clocks:
-> > > +          items:
-> > > +            - description: Functional clock for DU0
-> > > +            - description: Functional clock for DU1
-> > > +
-> > > +        clock-names:
-> > > +          items:
-> > > +            - const: du.0
-> > > +            - const: du.1
-> >
-> > The hardware block has only a single function clock for both channels,
-> > like on R-Car H1.
-> >
-> > And what about DU_DOTCLKIN?
+> > diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.yaml
+> > new file mode 100644
+> > index 000000000000..7e1b606a65ea
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/display/bridge/renesas,dsi-csi2-tx.yaml
+> > @@ -0,0 +1,118 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/display/bridge/renesas,dsi-csi2-tx.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Renesas R-Car MIPI DSI/CSI-2 Encoder
+> > +
+> > +maintainers:
+> > +  - Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > +
+> > +description: |
+> > +  This binding describes the MIPI DSI/CSI-2 encoder embedded in the Renesas
+> > +  R-Car V3U SoC. The encoder can operate in either DSI or CSI-2 mode, with up
+> > +  to four data lanes.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - renesas,r8a779a0-dsi-csi2-tx # for V3U
 >
-> As far as I can tell, there's no DU_DOTCLKIN in V3U.
+> Only a potential nit ...
+>
+> Is it worth moving the "# for V3U" over a bit to allow for extended
+> compatibles in the future without re-aligning the table?
+>
+> Looks like 37 chars before it currently, it could at least move to
+> position 40.
 
-See Table 6.13 of the Hardware User's Manual, pin IPC_CLKIN.
-Note that the register bits to configure it are present in
-drivers/pinctrl/renesas/pfc-r8a779a0.c, but the actual pin group is
-missing.
+Happy predicting the future ;-)
+
+Did you take into account adding items and/or oneOf, which will
+impact alignment, too?
 
 Gr{oetje,eeting}s,
 
