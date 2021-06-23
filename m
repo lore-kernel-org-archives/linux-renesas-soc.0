@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0DD3C49EA4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 007D7C4743C
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jun 2021 03:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 96D786100A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jun 2021 03:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB0606100A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jun 2021 03:47:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230273AbhFWDtz (ORCPT
+        id S230052AbhFWDtz (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 22 Jun 2021 23:49:55 -0400
 Received: from perceval.ideasonboard.com ([213.167.242.64]:57852 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230257AbhFWDtz (ORCPT
+        with ESMTP id S229890AbhFWDty (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 22 Jun 2021 23:49:55 -0400
+        Tue, 22 Jun 2021 23:49:54 -0400
 Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 740411518;
-        Wed, 23 Jun 2021 05:47:36 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9924EE51;
+        Wed, 23 Jun 2021 05:47:35 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1624420056;
-        bh=GPca9lm37gKSj2fVV51uF+EvI+9rdDy5phxvV9PtHTk=;
+        s=mail; t=1624420055;
+        bh=6NQgtVLndRjF2gy9zkQ6JM1jrFYS1CeXXgFotDV8qbQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vdYBAjW8oO/9erhDRVvCDfN24bx0AFY6C0/fItzGOigogGsXLKPcWP65WES1EXYlo
-         av4/p6CD+vLZzLVcK8jw5Yv5bSYqe8S2kJEmvlaSzulXLsHn/eT+JiqKtbuy1NLxQb
-         wF4zg4iqjyWiy+9Jl7++0T/6lpjvrU1xfK7g9LDw=
+        b=biLAj2toFDm/uPC5WLUYF+eFskgCJJss1OExBD1Xq6DDQ4aBulp31AtWmbX8uZKo6
+         788b6ilZt7N0BDfBq/Nc78qGt78qOzOnd8WETzW0MlOus3wjPlu3t7aaU9pDkO1rIq
+         EjYKpemuyPNdRU8ORbqNbIYbVJFhY4IbktLIE+dc=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
         LUU HOAI <hoai.luu.ub@renesas.com>
-Subject: [RFC PATCH 05/15] drm: rcar-du: dsi: Use dev_err_probe()
-Date:   Wed, 23 Jun 2021 06:46:46 +0300
-Message-Id: <20210623034656.10316-6-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [RFC PATCH 03/15] drm: rcar-du: dsi: Use the correct compatible
+Date:   Wed, 23 Jun 2021 06:46:44 +0300
+Message-Id: <20210623034656.10316-4-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210623034656.10316-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20210623034656.10316-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -47,27 +47,31 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+
+The compatible imported by the driver does not match the bindings
+created.
+
+Update accordingly.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
-index 92cd431631bf..17cff0305c6c 100644
+index ef2a9b283b4e..0c9887557761 100644
 --- a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
 +++ b/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
-@@ -781,9 +781,8 @@ static struct clk *rcar_mipi_dsi_get_clock(struct rcar_mipi_dsi *mipi_dsi,
- 	if (PTR_ERR(clk) == -ENOENT && optional)
- 		return NULL;
- 
--	if (PTR_ERR(clk) != -EPROBE_DEFER)
--		dev_err(mipi_dsi->dev, "failed to get %s clock\n",
--			name ? name : "module");
-+	dev_err_probe(mipi_dsi->dev, PTR_ERR(clk), "failed to get %s clock\n",
-+		      name ? name : "module");
- 
- 	return clk;
+@@ -875,7 +875,7 @@ static int rcar_mipi_dsi_remove(struct platform_device *pdev)
  }
+ 
+ static const struct of_device_id rcar_mipi_dsi_of_table[] = {
+-	{ .compatible = "renesas,r8a779a0-mipi-dsi" },
++	{ .compatible = "renesas,r8a779a0-dsi-csi2-tx" },
+ 	{ }
+ };
+ 
 -- 
 Regards,
 
