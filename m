@@ -2,164 +2,79 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF96C49EA5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jun 2021 09:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B046AC48BC2
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jun 2021 09:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B53660C3F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jun 2021 09:22:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CE4A6112D
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 23 Jun 2021 09:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230170AbhFWJZK (ORCPT
+        id S230304AbhFWJ7y (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 23 Jun 2021 05:25:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46348 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229918AbhFWJZJ (ORCPT
+        Wed, 23 Jun 2021 05:59:54 -0400
+Received: from www.zeus03.de ([194.117.254.33]:50008 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230103AbhFWJ7y (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 23 Jun 2021 05:25:09 -0400
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643F3C061574
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Jun 2021 02:22:51 -0700 (PDT)
-Received: by mail-pl1-x631.google.com with SMTP id c15so835489pls.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 23 Jun 2021 02:22:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=igel-co-jp.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XCajk1HrAlj47wC3+mkOuYZYpFGTdG0u/TJUK9omw44=;
-        b=ZjaDBmTSrHRM+Wans1JDGrXnF8h56nSyQWJrnDOhiSu9Q2czUooggcFrZeW5OrFfGe
-         4InlIJCaoDJvC2qM1tPyx5lrta50x/dPQl987+0qPfsgKDObwYOPDB7LmJS8+1QJB6Ww
-         rS4dOgQLwHHqitlVJ9tG0jT4jxLfdMi+JjSzv7Ow1bmZGT5tnQ66jeeP+GqznH6E+7lp
-         thH4WClVdZFYI68gRa5P93BRi8ycisjAk5KtuygYecegAGiEiByTGSGKIi1V/awM5lFS
-         qvSiNzLRZFXxpal4mpSeK0GodO80oZtbqoDYsqQ5OFx5ifVecqcyFaVxnOkGI1Ao75tN
-         jbtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XCajk1HrAlj47wC3+mkOuYZYpFGTdG0u/TJUK9omw44=;
-        b=un7kyvtfbXpZNWkFfRDPYMFp3Zk5tUfWDeGoCqtNSWevj7S+kN6/hyZNet76Jihpvw
-         BzReaJfCWIwt1b9yEQ2/nB45ESptyLndbjlupGFo5Rne/Q7gTv1iWqvSsqoE4QBiBSZn
-         fmnbyfQUnVb1A8IX6kQtXkakgdeJSrCCa1Mk/rx7LMMiaRhyBWv1IRrojvosmiHgLUu/
-         R4I/zpuVYRznAk5DbJqzZw/FHr+hF829hZ4BVs8xXhkNI4PsO7S3FElG7g1L7xp0hHzE
-         tQGl1RZTV24WMQ9a+zcENiYLGtg9qQE08cyO3YoeU1szdLrjloScZ5xQLdTgUvgv99WI
-         6iYA==
-X-Gm-Message-State: AOAM530O5LyE2KlnXy6s0bVtWT3nNET4wPVwTh4dy6XLq9tLqxFm253p
-        zhTKIKgtIbpeVb2qCMjOVon5/w==
-X-Google-Smtp-Source: ABdhPJylI81T3ZuU7pYZAujPUun/oGmu1PBLOBoGTzRXKdXQoIrLIXIJFcNz/PaxrTYzrPhhtomd+w==
-X-Received: by 2002:a17:902:8601:b029:11c:4b4:e967 with SMTP id f1-20020a1709028601b029011c04b4e967mr26767197plo.75.1624440170945;
-        Wed, 23 Jun 2021 02:22:50 -0700 (PDT)
-Received: from ?IPv6:240b:10:c9a0:ca00:d428:46bd:365e:3555? ([240b:10:c9a0:ca00:d428:46bd:365e:3555])
-        by smtp.gmail.com with ESMTPSA id q9sm460pgt.31.2021.06.23.02.22.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Jun 2021 02:22:50 -0700 (PDT)
-Subject: Re: [PATH 0/4] [RFC] Support virtual DRM
-To:     Pekka Paalanen <ppaalanen@gmail.com>
-Cc:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
-        devicetree@vger.kernel.org, Takanari Hayama <taki@igel.co.jp>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        linux-doc@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Damian Hobson-Garcia <dhobsong@igel.co.jp>
-References: <20210621062742.26073-1-etom@igel.co.jp>
- <7cde82a9-c60c-e527-eeac-eaad0c5842a1@metux.net>
- <1cfab5f9-f275-aa53-00de-5da3fcea71c5@igel.co.jp>
- <20210622111239.73aa87aa@eldfell>
- <ee0161b5-c88b-40ce-c02f-86e0927b70bb@igel.co.jp>
- <20210623113922.1e603139@eldfell>
-From:   Esaki Tomohito <etom@igel.co.jp>
-Message-ID: <ab816c34-ff98-911f-e53d-b91cd3be6f2b@igel.co.jp>
-Date:   Wed, 23 Jun 2021 18:22:47 +0900
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Wed, 23 Jun 2021 05:59:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=MoW0KjpEss8Low
+        ezwgSPse++B92AKDslAK7UfbEv+b4=; b=zvQYvGuxEjCQiJNOBZHTAAmvrS+pPw
+        y5U6BqDBY55H4ZP1sNplwvbi0W1AH3agwxeihX+EEsqxwlSOkdAMkoheUwbMmgzJ
+        QxbFkKHT0rvHGsSCh3eZ4WfP9gUgmuREhy5A/L7cAOkCzMvPnZhndQFuI1FvNTNI
+        TEe9HG/lXJAaA=
+Received: (qmail 2550992 invoked from network); 23 Jun 2021 11:57:35 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 23 Jun 2021 11:57:35 +0200
+X-UD-Smtp-Session: l3s3148p1@jhCV72vFAqogARa4RfhaAavnjlTTqzSz
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-mmc@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] mmc: renesas_sdhi_sys_dmac: : use proper DMAENGINE API for termination
+Date:   Wed, 23 Jun 2021 11:57:31 +0200
+Message-Id: <20210623095734.3046-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210623095734.3046-1-wsa+renesas@sang-engineering.com>
+References: <20210623095734.3046-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-In-Reply-To: <20210623113922.1e603139@eldfell>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2021/06/23 17:39, Pekka Paalanen wrote:
-> On Wed, 23 Jun 2021 15:56:05 +0900
-> Esaki Tomohito <etom@igel.co.jp> wrote:
-> 
->> Hi,
->> Thank you all for your comments.
->>
->> On 2021/06/22 17:12, Pekka Paalanen wrote:
->>> On Tue, 22 Jun 2021 13:03:39 +0900
->>> Esaki Tomohito <etom@igel.co.jp> wrote:
->>>   
->>>> Hi, Enrico Weigelt
->>>> Thank you for reply.
->>>>
->>>> On 2021/06/22 1:05, Enrico Weigelt, metux IT consult wrote:  
->>>>> On 21.06.21 08:27, Tomohito Esaki wrote:
->>>>>
->>>>> Hi,
->>>>>     
->>>>>> Virtual DRM splits the overlay planes of a display controller into multiple
->>>>>> virtual devices to allow each plane to be accessed by each process.
->>>>>>
->>>>>> This makes it possible to overlay images output from multiple processes on a
->>>>>> display. For example, one process displays the camera image without compositor
->>>>>> while another process overlays the UI.    
->>>>>
->>>>> Are you attempting to create an simple in-kernel compositor ?    
->>>>
->>>> I think the basic idea is the same as DRMlease.  
->>>
->>> Hi,
->>>
->>> indeed. Why not use DRM leases instead?
->>>   
->>
->> In this use case, I understand that this is not possible with DRM lease,
->> am I wrong?
->> I understand that it’s not possible to lease a plane and update planes
->> on the same output independently from different processes in current DRM
->> lease.
->>
->> If this is correct, what do you think of adding support for plane leases
->> to the DRM lease to handle this case?
-> 
-> Hi,
-> 
-> I would love to see support added for leasing individual planes,
-> especially to replace the virtual DRM proposal which seems to be
-> eradicating everything that atomic modesetting and nuclear pageflip
-> have built over the many years.
-> 
-> However, please note that "on the same output independently" is
-> physically impossible. Semantically, the planes define what a CRTC
-> scans out, and the CRTC defines the scanout timings. Therefore it is not
-> possible to update individual planes independently, they will all
-> always share the timings of the CRTC.
-> 
-> That combined with KMS not allowing multiple updates to be queued at
-> the same time for the same CRTC (atomic commits and legacy pageflips
-> returning EBUSY) makes the plane updates very much inter-dependent.
-> 
-> If you want to avoid EBUSY and have planes update on the vblank you
-> intended, you really need a userspace compositor to pull everything
-> together *before* submitting anything to the kernel.
+dmaengine_terminate_all() is deprecated in favor of explicitly saying if
+it should be sync or async. Here, we want dmaengine_terminate_sync()
+because there is no other synchronization code in the driver to handle
+an async case.
 
-Hi,
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+---
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thank you for your comments and advice.
-I will consider leasing a plane.
-
-Thanks,
-Esaki
-
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index ffa64211f4de..6956b83469c8 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -108,9 +108,9 @@ static void renesas_sdhi_sys_dmac_abort_dma(struct tmio_mmc_host *host)
+ 	renesas_sdhi_sys_dmac_enable_dma(host, false);
+ 
+ 	if (host->chan_rx)
+-		dmaengine_terminate_all(host->chan_rx);
++		dmaengine_terminate_sync(host->chan_rx);
+ 	if (host->chan_tx)
+-		dmaengine_terminate_all(host->chan_tx);
++		dmaengine_terminate_sync(host->chan_tx);
+ 
+ 	renesas_sdhi_sys_dmac_enable_dma(host, true);
+ }
+-- 
+2.30.2
 
