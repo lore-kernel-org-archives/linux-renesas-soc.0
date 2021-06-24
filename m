@@ -2,87 +2,88 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF61DC49EA6
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jun 2021 16:06:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E39C49EA6
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jun 2021 21:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B83FB613E3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jun 2021 16:06:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A33F0613CB
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 24 Jun 2021 21:13:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232261AbhFXQJN (ORCPT
+        id S232644AbhFXVQO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 24 Jun 2021 12:09:13 -0400
-Received: from mga11.intel.com ([192.55.52.93]:60575 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232131AbhFXQJD (ORCPT
+        Thu, 24 Jun 2021 17:16:14 -0400
+Received: from mail-il1-f182.google.com ([209.85.166.182]:34497 "EHLO
+        mail-il1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232591AbhFXVQN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 24 Jun 2021 12:09:03 -0400
-IronPort-SDR: DPRquJrvhgtI5ot/wsQPTq0z6LA/EjkjktQvlO8cWqq91gLJ4WuZZDypm7AoyM2VhiJqhyQTCF
- mfHnwBvJmHTg==
-X-IronPort-AV: E=McAfee;i="6200,9189,10025"; a="204496095"
-X-IronPort-AV: E=Sophos;i="5.83,296,1616482800"; 
-   d="scan'208";a="204496095"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2021 09:06:42 -0700
-IronPort-SDR: 2YJhgaeXRUIK4z5GnFC1FH84EaTwiaLMqs7UxE3g3kkcuPXOKYf8PcesXiHY+RzhbCU/HocWlN
- RL/ld5em7rhg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.83,296,1616482800"; 
-   d="scan'208";a="487818293"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.79]) ([10.237.72.79])
-  by orsmga001.jf.intel.com with ESMTP; 24 Jun 2021 09:06:37 -0700
-Subject: Re: [PATCH 0/3] mmc: avoid vicious circle when retuning
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        linux-mmc@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-References: <20210624151616.38770-1-wsa+renesas@sang-engineering.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <1741203b-c37e-fbc0-ef0b-bfd34f402e7d@intel.com>
-Date:   Thu, 24 Jun 2021 19:06:57 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Thu, 24 Jun 2021 17:16:13 -0400
+Received: by mail-il1-f182.google.com with SMTP id s19so7775390ilj.1;
+        Thu, 24 Jun 2021 14:13:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=47hUBuaqzfJJncm6RtEipODGGyZplZhj4icIYj/zpRs=;
+        b=gjOdURXYCoOytvAT38Bv/PhoQ7AQNnRoJx436mOPFhfvzNTMwIqovZlL+6opfR4zT5
+         afGTx6PwbTIxj8NtRArzoFne3/TkVp0le6iXGUEGNndq2Wqpj1QD5t863m/hgo49As6i
+         ljnjJfikmMY6VHZNtMj/ttBSfPA9WB0AInX5DFKDVSDJMp9nHzAJy4nMnpbmqzDWm38J
+         Jc7KvHfXNW9rwYGRK+AebYaYK0WbbMnZQ5jvPTW1gOaNphRCc0Y09eFWwsJAizOce9Xb
+         KvdBZfEV/VtEnRyVh94moSsVRbOS3GqWo+dJ8/VDSl9eg6xxpIAsMsorJ9fYf6aiCNIC
+         Ldaw==
+X-Gm-Message-State: AOAM53229kVi4pzqFQF40mva1LJPp7p6Ivqs9Sry55GdM1jJmbG+hbGF
+        DOifqZT0u/dC/GJ7NuesVg==
+X-Google-Smtp-Source: ABdhPJzXf/oo5u3B5EKv4LYB8gPOkFme6FZjtb+ncnezHDcwNH7+HV0lE+tkL+Dii4TAQiGhxLJC7A==
+X-Received: by 2002:a92:6509:: with SMTP id z9mr5007087ilb.184.1624569232997;
+        Thu, 24 Jun 2021 14:13:52 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id r8sm2398602iln.35.2021.06.24.14.13.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Jun 2021 14:13:52 -0700 (PDT)
+Received: (nullmailer pid 1996913 invoked by uid 1000);
+        Thu, 24 Jun 2021 21:13:48 -0000
+Date:   Thu, 24 Jun 2021 15:13:48 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Rob Herring <robh+dt@kernel.org>, linux-crypto@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-renesas-soc@vger.kernel.org,
+        Gilad Ben-Yossef <gilad@benyossef.com>
+Subject: Re: [PATCH] dt-bindings: crypto: ccree: Convert to json-schema
+Message-ID: <20210624211348.GA1991366@robh.at.kernel.org>
+References: <ab361a862755e281f5fef67b3f678d66ae201781.1623413974.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-In-Reply-To: <20210624151616.38770-1-wsa+renesas@sang-engineering.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ab361a862755e281f5fef67b3f678d66ae201781.1623413974.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 24/06/21 6:16 pm, Wolfram Sang wrote:
-> See patch 1 for a description of the problem. This series implements the
-> alternative approach suggested by Adrian (thanks!). It also adds some
-> documentation and a minor cleanup which I came up with while working on
-> the fix. Patch 1 can go to stable as is, the rest built on top of that.
+On Fri, 11 Jun 2021 14:20:17 +0200, Geert Uytterhoeven wrote:
+> Convert the Arm TrustZone CryptoCell cryptographic engine Device Tree
+> binding documentation to json-schema.
 > 
-> This series fixes the performance issue which we saw when injecting CRC
-> errors on Renesas R-Car Gen3 hardware.
+> Document missing properties.
+> Update the example to match reality.
 > 
-> Looking forward to comments!
-
-Looks good to me.  For all 3 patches:
-
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
-> 
-> 
-> Wolfram Sang (3):
->   mmc: core: clear flags before allowing to retune
->   mmc: host: add kdoc for mmc_retune_{en|dis}able
->   mmc: host: factor out clearing the retune state
-> 
->  drivers/mmc/core/core.c |  6 ++++--
->  drivers/mmc/core/host.c | 13 +++++++++++--
->  drivers/mmc/core/host.h |  6 ++++++
->  3 files changed, 21 insertions(+), 4 deletions(-)
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  .../bindings/crypto/arm,cryptocell.yaml       | 53 +++++++++++++++++++
+>  .../bindings/crypto/arm-cryptocell.txt        | 25 ---------
+>  2 files changed, 53 insertions(+), 25 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/crypto/arm,cryptocell.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/crypto/arm-cryptocell.txt
 > 
 
+I'm applying this version which is dual licensed as that is the 
+preference of my employeer, Arm, who is the copyright holder here. I'll 
+sort this out internally with Gilad.
+
+Besides, for the bulk of the new file Geert is the copyright holder.
+
+Rob
