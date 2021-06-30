@@ -2,218 +2,95 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C5EC11F68
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jun 2021 03:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D298FC11F65
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jun 2021 04:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 701C36187E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jun 2021 03:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9D9D613C8
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 30 Jun 2021 04:09:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232222AbhF3DFL (ORCPT
+        id S232790AbhF3ELc (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 29 Jun 2021 23:05:11 -0400
-Received: from mga18.intel.com ([134.134.136.126]:3700 "EHLO mga18.intel.com"
+        Wed, 30 Jun 2021 00:11:32 -0400
+Received: from www.zeus03.de ([194.117.254.33]:58310 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232417AbhF3DFK (ORCPT
+        id S229548AbhF3ELb (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 29 Jun 2021 23:05:10 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10030"; a="195571142"
-X-IronPort-AV: E=Sophos;i="5.83,310,1616482800"; 
-   d="scan'208";a="195571142"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jun 2021 20:02:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.83,310,1616482800"; 
-   d="scan'208";a="643935043"
-Received: from lkp-server01.sh.intel.com (HELO 4aae0cb4f5b5) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 29 Jun 2021 20:02:40 -0700
-Received: from kbuild by 4aae0cb4f5b5 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1lyQUp-0009Vw-U1; Wed, 30 Jun 2021 03:02:39 +0000
-Date:   Wed, 30 Jun 2021 11:02:29 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-drivers:topic/renesas-overlays] BUILD SUCCESS
- 0e38674ad80b6bf09f351b3ebf767c0477b32fcf
-Message-ID: <60dbdec5.931ASvHxW+4TYa7w%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Wed, 30 Jun 2021 00:11:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=2QIlR14ZkxijDjlRM62rKnOUixTv
+        8hUKPSqVOJ19kHs=; b=rS1NlL9FvuZpGHmPegmea7DccaGayRlmLM6eZSOBywTX
+        wdVfFQLFX/0qHcoLwqMurqu+PXgsfAVi2bAHFTfoOePZPZi5kRy1dS2h2tUfCsjL
+        l1HdNR67TWKVZKyJBCnzhltytXe2am69y+9T5PHFYp4wxwV8VL8NEaJwmPNLK+c=
+Received: (qmail 717796 invoked from network); 30 Jun 2021 06:09:01 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 30 Jun 2021 06:09:01 +0200
+X-UD-Smtp-Session: l3s3148p1@uwqg4fPFqtQgAwDPXwaiAGDoJRk6bv4I
+Date:   Wed, 30 Jun 2021 06:08:56 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Ulrich Hecht <uli@fpond.eu>, Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH] mmc: disable tuning when checking card presence
+Message-ID: <YNvuWMjr+Hnl8abE@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulrich Hecht <uli@fpond.eu>, Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+References: <20210618082317.58408-1-wsa+renesas@sang-engineering.com>
+ <CAPDyKFqkW9uwtJyWPFKggi2AJMtO4NJLW-6hviWgGSfoHyDm1A@mail.gmail.com>
+ <bbfbed66-5058-1263-159c-dabd345286c8@intel.com>
+ <563832257.373371.1624260736936@webmail.strato.com>
+ <5adc8601-23c7-4378-94e2-cb3641d9039c@intel.com>
+ <YNBJq7Lrtlc/qExN@ninjato>
+ <b5062770-ba5c-32d5-15f0-505a09bb4a2e@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ShEBYf1wyxmP5cwZ"
+Content-Disposition: inline
+In-Reply-To: <b5062770-ba5c-32d5-15f0-505a09bb4a2e@intel.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git topic/renesas-overlays
-branch HEAD: 0e38674ad80b6bf09f351b3ebf767c0477b32fcf  arm64: dts: renesas: salvator-x: exio-d: Add overlay for SCIF3
 
-elapsed time: 720m
+--ShEBYf1wyxmP5cwZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-configs tested: 150
-configs skipped: 4
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> Otherwise, you need to introduce a new card state or flag to indicate
+> that the card may not be present, and use that to suppress the message.
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-mips                         tb0219_defconfig
-mips                         db1xxx_defconfig
-sh                               j2_defconfig
-arm                          badge4_defconfig
-powerpc                        icon_defconfig
-sh                     magicpanelr2_defconfig
-powerpc                     mpc5200_defconfig
-sh                        edosk7760_defconfig
-mips                            ar7_defconfig
-sh                           se7712_defconfig
-mips                      maltasmvp_defconfig
-powerpc                 mpc837x_rdb_defconfig
-arm                         hackkit_defconfig
-m68k                        m5307c3_defconfig
-powerpc                      mgcoge_defconfig
-powerpc                     skiroot_defconfig
-arm                      integrator_defconfig
-powerpc                      chrp32_defconfig
-parisc                              defconfig
-arm                            mmp2_defconfig
-arm                         palmz72_defconfig
-powerpc                     stx_gp3_defconfig
-arm                         cm_x300_defconfig
-powerpc                      obs600_defconfig
-arm                        keystone_defconfig
-arm                          exynos_defconfig
-openrisc                 simple_smp_defconfig
-mips                 decstation_r4k_defconfig
-ia64                          tiger_defconfig
-powerpc                     tqm8548_defconfig
-arm                      jornada720_defconfig
-powerpc                  mpc885_ads_defconfig
-arm                            zeus_defconfig
-riscv                    nommu_k210_defconfig
-arc                         haps_hs_defconfig
-arm                      pxa255-idp_defconfig
-powerpc                     tqm8540_defconfig
-mips                           gcw0_defconfig
-powerpc                    amigaone_defconfig
-arm                            lart_defconfig
-riscv                    nommu_virt_defconfig
-arm                          moxart_defconfig
-arm                         s5pv210_defconfig
-arm                         s3c2410_defconfig
-h8300                            allyesconfig
-sh                         apsh4a3a_defconfig
-powerpc                   currituck_defconfig
-arc                          axs101_defconfig
-sh                          sdk7786_defconfig
-powerpc                       maple_defconfig
-powerpc                      ep88xc_defconfig
-arc                     haps_hs_smp_defconfig
-m68k                       bvme6000_defconfig
-xtensa                              defconfig
-arm                         shannon_defconfig
-mips                      pic32mzda_defconfig
-mips                          rm200_defconfig
-arm                           h5000_defconfig
-m68k                        mvme16x_defconfig
-m68k                          sun3x_defconfig
-arm                         lpc32xx_defconfig
-sh                         ap325rxa_defconfig
-openrisc                  or1klitex_defconfig
-powerpc                     powernv_defconfig
-arm                        vexpress_defconfig
-arc                          axs103_defconfig
-powerpc                     asp8347_defconfig
-powerpc                       holly_defconfig
-powerpc                       eiger_defconfig
-x86_64                            allnoconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-s390                             allyesconfig
-s390                             allmodconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-i386                 randconfig-a001-20210628
-i386                 randconfig-a002-20210628
-i386                 randconfig-a003-20210628
-i386                 randconfig-a006-20210628
-i386                 randconfig-a005-20210628
-i386                 randconfig-a004-20210628
-i386                 randconfig-a002-20210629
-i386                 randconfig-a001-20210629
-i386                 randconfig-a003-20210629
-i386                 randconfig-a006-20210629
-i386                 randconfig-a005-20210629
-i386                 randconfig-a004-20210629
-x86_64               randconfig-a012-20210628
-x86_64               randconfig-a016-20210628
-x86_64               randconfig-a015-20210628
-x86_64               randconfig-a013-20210628
-x86_64               randconfig-a014-20210628
-x86_64               randconfig-a011-20210628
-i386                 randconfig-a011-20210628
-i386                 randconfig-a014-20210628
-i386                 randconfig-a013-20210628
-i386                 randconfig-a015-20210628
-i386                 randconfig-a016-20210628
-i386                 randconfig-a012-20210628
-riscv                            allyesconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-x86_64                    rhel-8.3-kselftests
-um                           x86_64_defconfig
-um                             i386_defconfig
-um                            kunit_defconfig
-x86_64                           allyesconfig
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                      rhel-8.3-kbuiltin
-x86_64                                  kexec
+I now went this route and, for me, 'detect_change' worked. Will send a
+patch in a minute.
 
-clang tested configs:
-x86_64               randconfig-b001-20210628
-x86_64               randconfig-a002-20210628
-x86_64               randconfig-a005-20210628
-x86_64               randconfig-a001-20210628
-x86_64               randconfig-a003-20210628
-x86_64               randconfig-a004-20210628
-x86_64               randconfig-a006-20210628
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+--ShEBYf1wyxmP5cwZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmDb7lMACgkQFA3kzBSg
+KbaJ5xAAiOPGJam0MTywU4zQ2zXS8OVjJbZMrxEkJvHykWFoCtAIED+9pfn5+z3Q
+noMVERS8ZkN5gMXSyvqtr8Yng/C3LvRMIJzel3lw2a7sz6BDAt+2iJczD+A671fU
+RbsCM2L9rd7EXsdr9ARRQNLOOINH7fhMVuXClzET43ME8vl/C5VuCxHsoeewOpY/
+hPmg+rk3K2z2eB7EWmalPuJIQpX725Dp6AWNYCuP2Td65pp78qYKyp0zksG+3yIf
+aEAvaPv/iBcXeBCufvA8S1oVwXFp7xQdEQd5HKi/l2ox0bbGVS2/bnz3UK7u87JK
+O59KQIlD4pqpFgul4yQp1BuKUm2oBbcBKQ5H+xaWrEpoTHptbdx6oDpEKjRHz9/x
+IX00gdgPxaiJJC+iNCbzPk4GOyDbjQdOjnGzv7ALSWH+h44w2ZQmd/7YBFP19Y99
+v18rrolzeS5TBPq+zP/iAKmoYhSxPxZnsH50BdCgDxQRqWO8yDzOTrNHjF9tXqL7
+Lz9JA5EiSmqZNAfBh6/2RnCpTHsRXlUwWeWkn0D4NKd2d4tCI39vmEUl0FMHdcOh
+kS3AO2oYMarS9R1jOboCBOoz4GwfA874rb7gq7HgQGbqFlZw4oRJ2oSYY5Hw9Fo+
+c8ffYz+7dX8wuiazzeSOXPyc0CnCo+I6jM8y8p5VKEAVvvLUFo0=
+=nC3f
+-----END PGP SIGNATURE-----
+
+--ShEBYf1wyxmP5cwZ--
