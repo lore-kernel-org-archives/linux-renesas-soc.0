@@ -2,100 +2,103 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7108DC11F6F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Jul 2021 12:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6629FC11F64
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Jul 2021 12:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5F0C36145C
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Jul 2021 12:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3939261481
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  1 Jul 2021 12:16:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236407AbhGAME6 (ORCPT
+        id S236328AbhGAMSs (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 1 Jul 2021 08:04:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57022 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236273AbhGAME5 (ORCPT
+        Thu, 1 Jul 2021 08:18:48 -0400
+Received: from mail-vs1-f44.google.com ([209.85.217.44]:41524 "EHLO
+        mail-vs1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236192AbhGAMSr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 1 Jul 2021 08:04:57 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3F20C0617AE
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  1 Jul 2021 05:02:26 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:445e:1c3:be41:9e10])
-        by laurent.telenet-ops.be with bizsmtp
-        id Po2P2500c474TTe01o2Pjc; Thu, 01 Jul 2021 14:02:25 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lyvOh-005MHT-9J; Thu, 01 Jul 2021 14:02:23 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1lyvOg-00EXSE-LT; Thu, 01 Jul 2021 14:02:22 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v2 1/2] ARM: dts: qcom-apq8060: Correct Ethernet node name and drop bogus irq property
-Date:   Thu,  1 Jul 2021 14:02:20 +0200
-Message-Id: <d58c8323c3d544f91f7e4585a5b163bc374397d1.1625140615.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1625140615.git.geert+renesas@glider.be>
-References: <cover.1625140615.git.geert+renesas@glider.be>
+        Thu, 1 Jul 2021 08:18:47 -0400
+Received: by mail-vs1-f44.google.com with SMTP id c26so3665315vso.8;
+        Thu, 01 Jul 2021 05:16:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0ZwXwkzI4cMeR70rauGu/lDBYf0pn55GSU9Mr3EQf/s=;
+        b=Tsz97O68HRcPHRmBBlZUX5t9Q0OFHgaNEIqnCZjydYQcDoK0Uc+zsTA1QtlFovfTL5
+         fSiKk9KTdTBIKOseRIFBr1Kb1CT67a3RMmiGXdmjbP5D+xKXqmcdfmpsWEC39XIaf4P6
+         B6zdVcVQ+hncspaGCBVmY9cTo6DbmfIo9MXN/7JQeviQY+pDLdR3QD/O1KlAMB64Laq8
+         9M0pSVfPchOlSYl2t+Wn/1qRx1p+3qWxKGG2PVC3Ez3PcDrJbNFGCDtJbozns6ec4JZj
+         74j4EkYalOvkhtEQDPsXTvz7J5RBGW4o12FaVnc4d3b3SvGN6fC3H33rw8JbzD+rhfQY
+         tXww==
+X-Gm-Message-State: AOAM530wjB02mVHxESX6HOS1FioH5FQwkG5gYsn6bv8MWoM7AL3TT4AR
+        yMJPcPIuzT1E/Rek3PRlonPNCt8OKdgd4jERrHY1iodQTKo=
+X-Google-Smtp-Source: ABdhPJz6ehTG6ZDUCW6FzjBW7R3HbJ2WHUbjc60udrqfS5IadIT5wOjJ2MaugSjcRPJW+N1KFIcaODUZQSon+ra7nFU=
+X-Received: by 2002:a67:770d:: with SMTP id s13mr24027176vsc.40.1625141776985;
+ Thu, 01 Jul 2021 05:16:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210630073013.22415-1-biju.das.jz@bp.renesas.com> <20210630073013.22415-5-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210630073013.22415-5-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 1 Jul 2021 14:16:05 +0200
+Message-ID: <CAMuHMdV8sH6LnBXmVWO7ua+bHOqhbvmQ4XUbv-_UGCwfa83WOg@mail.gmail.com>
+Subject: Re: [PATCH v3 04/11] drivers: clk: renesas: r9a07g044-cpg: Add USB clocks/resets
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-make dtbs_check:
+Hi Biju,
 
-    ethernet-ebi2@2,0: $nodename:0: 'ethernet-ebi2@2,0' does not match '^ethernet(@.*)?$'
-    ethernet-ebi2@2,0: 'smsc,irq-active-low' does not match any of the regexes: 'pinctrl-[0-9]+'
+On Wed, Jun 30, 2021 at 9:30 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add clock/reset entries for USB PHY control, USB2.0 host and device.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->V3:
+>  * Added reset entries.
 
-There is no "smsc,irq-active-low" property, as active low is the
-default.
+Thanks for the update!
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
----
-v2:
-  - Add Reviewed-by.
----
- arch/arm/boot/dts/qcom-apq8060-dragonboard.dts | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+> --- a/drivers/clk/renesas/r9a07g044-cpg.c
+> +++ b/drivers/clk/renesas/r9a07g044-cpg.c
+> @@ -96,6 +96,14 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
+>                                 0x52c, 0),
+>         DEF_MOD("dmac_pclk",    R9A07G044_DMAC_PCLK, CLK_P1_DIV2,
+>                                 0x52c, 1),
+> +       DEF_MOD("usb0_host",    R9A07G044_USB_U2H0_HCLK, R9A07G044_CLK_P1,
+> +                               0x578, 0),
+> +       DEF_MOD("usb1_host",    R9A07G044_USB_U2H1_HCLK, R9A07G044_CLK_P1,
+> +                               0x578, 1),
+> +       DEF_MOD("usb0_device",  R9A07G044_USB_U2P_EXR_CPUCLK, R9A07G044_CLK_P1,
+> +                               0x578, 2),
 
-diff --git a/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts b/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts
-index dace8ffeb99118cb..0a4ffd10c48464f5 100644
---- a/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts
-+++ b/arch/arm/boot/dts/qcom-apq8060-dragonboard.dts
-@@ -581,7 +581,7 @@ external-bus@1a100000 {
- 			 * EBI2. This has a 25MHz chrystal next to it, so no
- 			 * clocking is needed.
- 			 */
--			ethernet-ebi2@2,0 {
-+			ethernet@2,0 {
- 				compatible = "smsc,lan9221", "smsc,lan9115";
- 				reg = <2 0x0 0x100>;
- 				/*
-@@ -598,8 +598,6 @@ ethernet-ebi2@2,0 {
- 				phy-mode = "mii";
- 				reg-io-width = <2>;
- 				smsc,force-external-phy;
--				/* IRQ on edge falling = active low */
--				smsc,irq-active-low;
- 				smsc,irq-push-pull;
- 
- 				/*
+The names are not really used, but the lock list spreadsheet describes
+this clock as the usb0 function clock, so perhaps "usb0_func" is
+more appropriate?
+
+Apart from that:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
