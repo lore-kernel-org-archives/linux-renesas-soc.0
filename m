@@ -2,80 +2,81 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2941C11F6A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jul 2021 14:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9CCC07E95
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jul 2021 21:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B687F6142F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jul 2021 14:03:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EAF2613FC
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jul 2021 21:23:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233045AbhGBOFs (ORCPT
+        id S231757AbhGBVZq (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Jul 2021 10:05:48 -0400
-Received: from mail-ua1-f54.google.com ([209.85.222.54]:33757 "EHLO
-        mail-ua1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232537AbhGBOFr (ORCPT
+        Fri, 2 Jul 2021 17:25:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49932 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230157AbhGBVZp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jul 2021 10:05:47 -0400
-Received: by mail-ua1-f54.google.com with SMTP id q3so3651073uao.0;
-        Fri, 02 Jul 2021 07:03:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3sdua17fppYVCyd0A1RC6ECzG0D7HbDuo2RWvtjwE1c=;
-        b=XKnE2qNdqAz/eFJotD8goSJG1+85lc2St/LDhyiefPTsUEdsMO/k2U6JRb/H5olTFy
-         AOkDJwfPA8JgjKVNQA9X+HtvLd13ejzAW1rwug7IKTR3XtV3G16pRc7PJwTmbmRCvlTk
-         OvJNw83D6V2HzJd26Jvf5X9AdiYIP+G/9o0bpwFNlxGhiJ1yIZh2cNFCppYE+PVZm1OV
-         lJaLGIXmck8D9VQlRxr9sk0leZBp20LD0ITqY5qvLnqvseNep8c8485PsoQbLHMZQAap
-         fuel6DSpv+D1lmgemEzmVFEbD5TuBgmxtBk7aeQchY2Bw8bMf1xo+dQLPov5ChEGygLR
-         orHw==
-X-Gm-Message-State: AOAM530VG2uBzXwREW4RpqwdZ/zG1UeLkwzJDfJ5igLHIVb5OF33KKEW
-        qrK/aJlv8tDhjyiHMl0+n74yebGf0y/LiTufW1A=
-X-Google-Smtp-Source: ABdhPJzHZp++2Q9zRjj4qQ3HOrjOqkshqYufMhBoKUPp8vHrNtCEacV7HlqpZnRsq/G2IX9EdrTHrv022c+Jk4F4/Wk=
-X-Received: by 2002:ab0:484b:: with SMTP id c11mr6794455uad.100.1625234595248;
- Fri, 02 Jul 2021 07:03:15 -0700 (PDT)
+        Fri, 2 Jul 2021 17:25:45 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 594BB61402;
+        Fri,  2 Jul 2021 21:23:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1625260993;
+        bh=yAhQFVf44jvVEKIgKmS7YsNEfX/ea54OOnmo6JElnSI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NX0DW4ndglFPz7ZC0wCE9ALh9NMbU4mvmVIItzA8+pKgOeUJpjpsOF0njK4EMlNuJ
+         cV4blNdSHCh1cjDywGwpPoymNKv8iUVdwnERbdrbez9g/XjaF73vDIytIGS6R8IyKi
+         0qHvZ5B8CaZU1M3cHVrLEbLmD9u53awwo0wzcXVLK5dR6dKvxFZw6C24a7QmOARj6Y
+         9AixBOAoSQpIqa0w2h9Z5n3rfR+isUPSdKRH9VQ7jvnefXBkzfQjjAvRFjZBSB/oY/
+         BL2NByQBPrlGaqMTYyAVqXtwuMhwsfD4OvShgDWYPROL+/CPYJTW6xKr23yMhvA1ru
+         ghDS3oJAnBaYw==
+Received: by mail-ej1-f51.google.com with SMTP id o5so18310828ejy.7;
+        Fri, 02 Jul 2021 14:23:13 -0700 (PDT)
+X-Gm-Message-State: AOAM532Fn23T03Er1pS2GguMsWRoGzOeyfjNmxeNvduQ0C0q9RYXXHUB
+        v18IhKCTvbrFvj0YT19Xdm2MY7TIRJO0CTCV2Q==
+X-Google-Smtp-Source: ABdhPJyL1BkaDJTaTIzttEw91SPz36BUktrJTaiBX9yCmMzBdceU6QMBM6nm3aeqLlVC4lmvvTW0iFZ3yjt4cFTBRJk=
+X-Received: by 2002:a17:907:2cc7:: with SMTP id hg7mr1730302ejc.360.1625260991859;
+ Fri, 02 Jul 2021 14:23:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210702135010.5937-1-biju.das.jz@bp.renesas.com> <20210702135010.5937-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20210702135010.5937-3-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 2 Jul 2021 16:03:04 +0200
-Message-ID: <CAMuHMdWYkgKWxK3aU3_Gz5PTawPPT3UxDz_AfmJ+0u+Gpqo50Q@mail.gmail.com>
-Subject: Re: [PATCH 2/9] drivers: clk: renesas: r9a07g044-cpg: Add SSIF-2
- clock and reset entries
+References: <20210702135010.5937-1-biju.das.jz@bp.renesas.com> <20210702135010.5937-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210702135010.5937-2-biju.das.jz@bp.renesas.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 2 Jul 2021 15:23:00 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKWzxVzrK+p3USL_nK28hf1JMq_P=zJmtCD2d+SufTzRA@mail.gmail.com>
+Message-ID: <CAL_JsqKWzxVzrK+p3USL_nK28hf1JMq_P=zJmtCD2d+SufTzRA@mail.gmail.com>
+Subject: Re: [PATCH 1/9] ASoC: dt-bindings: Document RZ/G2L bindings
 To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Chris Brandt <chris.brandt@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Jul 2, 2021 at 3:50 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add SSIF-2 clock and reset entries in CPG driver.
+On Fri, Jul 2, 2021 at 7:50 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+>
+> Document RZ/G2L ASoC serial sound interface bindings.
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> Note:-  This patch has dependency on #include <dt-bindings/clock/r9a07g044-cpg.h> file which will be in
+> next 5.14-rc1 release
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk-for-v5.15.
+That kind of means you should wait and send this once v5.14-rc1 is
+released as it is the merge window currently.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
