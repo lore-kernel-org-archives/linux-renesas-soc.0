@@ -3,82 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EE4C11F68
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jul 2021 10:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B55B8C11F6A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jul 2021 10:05:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81122613FA
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jul 2021 10:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F1E561413
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  2 Jul 2021 10:05:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231464AbhGBKIS (ORCPT
+        id S231302AbhGBKIW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 2 Jul 2021 06:08:18 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:21609 "EHLO
+        Fri, 2 Jul 2021 06:08:22 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:38891 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231455AbhGBKIR (ORCPT
+        by vger.kernel.org with ESMTP id S231367AbhGBKIT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 2 Jul 2021 06:08:17 -0400
+        Fri, 2 Jul 2021 06:08:19 -0400
 X-IronPort-AV: E=Sophos;i="5.83,317,1616425200"; 
-   d="scan'208";a="86432295"
+   d="scan'208";a="86432322"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Jul 2021 19:05:31 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 02 Jul 2021 19:05:39 +0900
 Received: from localhost.localdomain (unknown [10.226.92.6])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id ADB344010738;
-        Fri,  2 Jul 2021 19:05:29 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9E46A4010DC7;
+        Fri,  2 Jul 2021 19:05:37 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Vinod Koul <vkoul@kernel.org>, Rob Herring <robh+dt@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v3 0/4] Add RZ/G2L DMAC support
-Date:   Fri,  2 Jul 2021 11:05:23 +0100
-Message-Id: <20210702100527.28251-1-biju.das.jz@bp.renesas.com>
+        Chris Brandt <chris.brandt@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 3/4] arm64: dts: renesas: r9a07g044: Add DMAC support
+Date:   Fri,  2 Jul 2021 11:05:26 +0100
+Message-Id: <20210702100527.28251-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210702100527.28251-1-biju.das.jz@bp.renesas.com>
+References: <20210702100527.28251-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series aims to add DMAC support on RZ/G2L SoC's.
+Add DMAC support to RZ/G2L SoC DT.
 
-It is based on the work done by Chris Brandt for RZ/A DMA driver.
-
-This patch series is based on [1]
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/rzg2l-update-clock-defs-v4
-
-Note:-  This patch has dependency on #include <dt-bindings/clock/r9a07g044-cpg.h> file which will be in next 5.14-rc1 release.
-
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
 v2->v3:
-  * Described clocks and resets in binding file as per Rob's feedback.
+ * Updated reset properties
+v1->v2:
+ * Updated clock and reset properties.
+---
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 36 ++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
 
-v1->v2
- * Started using virtual DMAC
- * Added Geert's Rb tag for binding patch.
-
-Biju Das (4):
-  dt-bindings: dma: Document RZ/G2L bindings
-  drivers: dma: sh: Add DMAC driver for RZ/G2L SoC
-  arm64: dts: renesas: r9a07g044: Add DMAC support
-  arm64: defconfig: Enable DMA controller for RZ/G2L SoC's
-
- .../bindings/dma/renesas,rz-dmac.yaml         | 124 +++
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  36 +
- arch/arm64/configs/defconfig                  |   1 +
- drivers/dma/sh/Kconfig                        |   9 +
- drivers/dma/sh/Makefile                       |   1 +
- drivers/dma/sh/rz-dmac.c                      | 946 ++++++++++++++++++
- 6 files changed, 1117 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
- create mode 100644 drivers/dma/sh/rz-dmac.c
-
-
-base-commit: 06c1e6911a7a76b446e4b00fc8bad5d8465932f8
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index 81b31600bd6b..9f3e5ebd03f5 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -191,6 +191,42 @@
+ 			status = "disabled";
+ 		};
+ 
++		dmac: dma-controller@11820000 {
++			compatible = "renesas,r9a07g044-dmac",
++				     "renesas,rz-dmac";
++			reg = <0 0x11820000 0 0x10000>,
++			      <0 0x11830000 0 0x10000>;
++			interrupts = <GIC_SPI 141 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 125 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 126 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 127 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 128 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 129 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 130 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 131 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 132 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 133 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 134 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 135 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 136 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 137 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 138 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 139 IRQ_TYPE_EDGE_RISING>,
++				     <GIC_SPI 140 IRQ_TYPE_EDGE_RISING>;
++			interrupt-names = "error",
++					  "ch0", "ch1", "ch2", "ch3",
++					  "ch4", "ch5", "ch6", "ch7",
++					  "ch8", "ch9", "ch10", "ch11",
++					  "ch12", "ch13", "ch14", "ch15";
++			clocks = <&cpg CPG_MOD R9A07G044_DMAC_ACLK>,
++				 <&cpg CPG_MOD R9A07G044_DMAC_PCLK>;
++			power-domains = <&cpg>;
++			resets = <&cpg R9A07G044_DMAC_ARESETN>,
++				 <&cpg R9A07G044_DMAC_RST_ASYNC>;
++			#dma-cells = <1>;
++			dma-channels = <16>;
++		};
++
+ 		gic: interrupt-controller@11900000 {
+ 			compatible = "arm,gic-v3";
+ 			#interrupt-cells = <3>;
 -- 
 2.17.1
 
