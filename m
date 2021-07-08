@@ -2,130 +2,128 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A7DC07E96
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  8 Jul 2021 13:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D81BC07E99
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  8 Jul 2021 13:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C09A0616E8
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  8 Jul 2021 13:33:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F527613C1
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  8 Jul 2021 13:40:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230388AbhGHNgI (ORCPT
+        id S231152AbhGHNn0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 8 Jul 2021 09:36:08 -0400
-Received: from smtp1.de.adit-jv.com ([93.241.18.167]:41158 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229901AbhGHNgH (ORCPT
+        Thu, 8 Jul 2021 09:43:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38282 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S231922AbhGHNn0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 8 Jul 2021 09:36:07 -0400
-X-Greylist: delayed 569 seconds by postgrey-1.27 at vger.kernel.org; Thu, 08 Jul 2021 09:36:07 EDT
-Received: from hi2exch02.adit-jv.com (hi2exch02.adit-jv.com [10.72.92.28])
-        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        Thu, 8 Jul 2021 09:43:26 -0400
+Received: from lahtoruutu.iki.fi (lahtoruutu.iki.fi [IPv6:2a0b:5c81:1c1::37])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92542C061574
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  8 Jul 2021 06:40:44 -0700 (PDT)
+Received: from hillosipuli.retiisi.eu (dbdx-ftd5cf51mv6xr7xy-3.rev.dnainternet.fi [IPv6:2001:14ba:8e7:f240:7911:3355:4753:76e6])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 75D6A3C003F;
-        Thu,  8 Jul 2021 15:23:53 +0200 (CEST)
-Received: from vmlxhi-082.localdomain (10.72.92.227) by hi2exch02.adit-jv.com
- (10.72.92.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.14; Thu, 8 Jul
- 2021 15:23:53 +0200
-From:   Dennis Rachui <drachui@de.adit-jv.com>
-To:     <niklas.soderlund@ragnatech.se>
-CC:     <drachui@de.adit-jv.com>, Steve Longerbeam <slongerbeam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        <linux-media@vger.kernel.org>, <linux-renesas-soc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] media: rcar-csi2: do not update format while streaming
-Date:   Thu, 8 Jul 2021 15:22:58 +0200
-Message-ID: <1625750578-108454-1-git-send-email-drachui@de.adit-jv.com>
-X-Mailer: git-send-email 2.7.4
+        (Authenticated sender: sailus)
+        by lahtoruutu.iki.fi (Postfix) with ESMTPSA id 677581B00046;
+        Thu,  8 Jul 2021 16:40:41 +0300 (EEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=lahtoruutu;
+        t=1625751641;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HA7fj3g19lq5gWcUZScZyYOrZAHayfatKYXa+0phdwE=;
+        b=D0Z8hULfi2woY5IHAyG1L1rEExTTho78maYO/WMRKDEw0KYLVeHisQCvu0mxSE9ua17kGR
+        Nb+ZP0TgD96D+raTue6VwMSS1YMTy30/rTJ0CKkeLoS/I/nNEpP+zCs7w5MHBDs2RU1+5T
+        pUDLoCSIFHAkdt81WSCCleXsOa+Y/rsYkv309VT04DVCviAxC+VHQUlagTu+qx48wHrQ9D
+        ryaQnckH+HDlL/JyxnXRRIAOq171xQK4rcafdQ/XbtMmrp4hvnPcFqU1oHBXUTvl0kQdbp
+        zr7Zrqc1eQw3dizmFf90jCLCZNKZRK5dLioI0oekxKM+sUjeIaLMec1W8fhOHA==
+Received: from valkosipuli.localdomain (valkosipuli.localdomain [IPv6:fd35:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.eu (Postfix) with ESMTPS id 1B4D6634C87;
+        Thu,  8 Jul 2021 16:40:02 +0300 (EEST)
+Received: from localhost ([127.0.0.1] helo=valkosipuli.retiisi.eu)
+        by valkosipuli.localdomain with esmtp (Exim 4.92)
+        (envelope-from <sakari.ailus@iki.fi>)
+        id 1m1UGe-00020X-Gh; Thu, 08 Jul 2021 16:40:40 +0300
+Date:   Thu, 8 Jul 2021 16:40:40 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Jacopo Mondi <jacopo@jmondi.org>
+Cc:     Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 01/11] rcar-vin: Refactor controls creation for video
+ device
+Message-ID: <20210708134040.GB3@valkosipuli.retiisi.eu>
+References: <20210413180253.2575451-1-niklas.soderlund+renesas@ragnatech.se>
+ <20210413180253.2575451-2-niklas.soderlund+renesas@ragnatech.se>
+ <20210706160401.xssshab7nkxroxnp@uno.localdomain>
+ <YOSBxLV86PX63AWm@oden.dyn.berto.se>
+ <20210706165803.jepqksw4slo3xkyc@uno.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.72.92.227]
-X-ClientProxiedBy: hi2exch02.adit-jv.com (10.72.92.28) To
- hi2exch02.adit-jv.com (10.72.92.28)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210706165803.jepqksw4slo3xkyc@uno.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+        s=lahtoruutu; t=1625751641;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=HA7fj3g19lq5gWcUZScZyYOrZAHayfatKYXa+0phdwE=;
+        b=lpDaIAj7i/LDbLUzBW0XR3EuDJNvWF8YkIPbXW6y5uvBItWaLiyciaYukzkKCJyxolk5gU
+        8RVsoeps0ONhm6Yo0TypigXhe8iwkGQV6/jX/ghemxPHuYMBsGrd2Sg4/74q7C69BO4ore
+        D8ViuTxPBLgxDCKtv5+cDl4EiNm7fuQ9vOH0CGnfMfXFwZnRA89hS3LgJESnrDAZoV3IjT
+        zhOZRPBpx2Wa6CigS6Dhq1WcKt0ujFooBfs4dmsTGZr1tQRFeznOqVxmmn6aWHFyCUw9TY
+        pJ1HGoR+kCPG0eGkjnlc+De37/8rN8UL2yPYXeybePsF1O52FB4L6QEn7zRCuQ==
+ARC-Authentication-Results: i=1;
+        ORIGINATING;
+        auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
+ARC-Seal: i=1; s=lahtoruutu; d=iki.fi; t=1625751641; a=rsa-sha256;
+        cv=none;
+        b=uKmsTRTr4R2qqxVzJsx+T7+7JcOAw1f7T8yzfJBI8QpWVmMXIUNeYqyEPEQ4hncALiPshb
+        TafN8NnV2yLH8o/52Yv5do28Gg6UVZw/U2qrQdHIq1oj9ho/kQ+M5u70L/3iUjnRM7XWUE
+        eaJzG6jb6NQhpi4Ps8U7NtkFeIofqRSBLiFdQ4oizAx/ijXfnxuAw4kEhvuCywb5B+R4Du
+        V9z+q5Yrvzc3yBSyFvzGTX2NkIQydAonP5dga0QMC4sos5D83n0X9mj1RllrNEU37nkILH
+        cmpYr8OcDaZZQgz/0Mvd9SlSYa/ruSRScMBMKkiQ60vF9llU6hYU122yolxEuA==
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Verify that streaming is not active before setting the pad format.
+Hi Niklas, Jacopo,
 
-According to the VIDIOC documentation [1] changes to the active
-format of a media pad via the VIDIOC_SUBDEV_S_FMT ioctl are
-applied to the underlying hardware.
-In rcar-csi2 a format change only applies to hardware, when the
-pipeline is started. While the device is not in use, it is therefore
-okay to update the format.
+On Tue, Jul 06, 2021 at 06:58:03PM +0200, Jacopo Mondi wrote:
+> > > > @@ -522,10 +543,8 @@ static void rvin_parallel_subdevice_detach(struct rvin_dev *vin)
+> > > >  	rvin_v4l2_unregister(vin);
+> > > >  	vin->parallel.subdev = NULL;
+> > > >
+> > > > -	if (!vin->info->use_mc) {
+> > > > -		v4l2_ctrl_handler_free(&vin->ctrl_handler);
+> > > > -		vin->vdev.ctrl_handler = NULL;
+> > > > -	}
+> > > > +	if (!vin->info->use_mc)
+> > >
+> > > I know it was there already, but give that rvin_parallel_notify_unbind()
+> > > is only registered for parallel, can this happen ?
+> >
+> > Yes, on Gen2 where we don't use a media-graph.
+> >
+> 
+> Ah correct, for gen3 the controls are freed elsewhere, right!
+> 
+> Thanks for the clarification
 
-However, when the pipeline is active, this leads to a format
-mismatch between driver and device.
-Other applications can query the format with
-VIDIOC_SUBDEV_G_FMT at any time and would be reported
-a format that does not fit the current stream.
+I already had the set in my tree but I can throw it out if you'd prefer to
+send v2 instead. At least I noticed only minor matters in the comments.
 
-This commit prevents format update while streaming is active
-and returns -EBUSY to user space, as suggested by [1].
-
-[1] Documentation/userspace-api/media/v4l/vidioc-subdev-g-fmt.rst
-
-Note: after creation of this commit, it was noticed that Steve
-Longerbeam has a very similar solution in his fork.
-
-Fixes: 769afd212b16 ("media: rcar-csi2: add Renesas R-Car MIPI CSI-2 receiver driver")
-Cc: Steve Longerbeam <slongerbeam@gmail.com>
-Signed-off-by: Dennis Rachui <drachui@de.adit-jv.com>
----
- drivers/media/platform/rcar-vin/rcar-csi2.c | 21 ++++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-index e28eff0..98152e1 100644
---- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-+++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-@@ -724,18 +724,37 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
- {
- 	struct rcar_csi2 *priv = sd_to_csi2(sd);
- 	struct v4l2_mbus_framefmt *framefmt;
-+	int ret = 0;
-+
-+	mutex_lock(&priv->lock);
- 
- 	if (!rcsi2_code_to_fmt(format->format.code))
- 		format->format.code = rcar_csi2_formats[0].code;
- 
- 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
-+
-+		/*
-+		 * Do not apply changes to active format while streaming.
-+		 *
-+		 * Since video streams could be forwarded from sink pad to any
-+		 * source pad (depending on CSI-2 channel routing), all
-+		 * media pads are effected by this rule.
-+		 */
-+		if (priv->stream_count > 0) {
-+			ret = -EBUSY;
-+			goto out;
-+		}
-+
- 		priv->mf = format->format;
- 	} else {
- 		framefmt = v4l2_subdev_get_try_format(sd, sd_state, 0);
- 		*framefmt = format->format;
- 	}
- 
--	return 0;
-+out:
-+	mutex_unlock(&priv->lock);
-+
-+	return ret;
- }
- 
- static int rcsi2_get_pad_format(struct v4l2_subdev *sd,
 -- 
-2.7.4
+Regards,
 
+Sakari Ailus
