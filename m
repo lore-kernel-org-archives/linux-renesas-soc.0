@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DF3C11F66
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A81C07E9A
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Jul 2021 01:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4072961158
+	by mail.kernel.org (Postfix) with ESMTP id 340186115A
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Jul 2021 01:22:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230247AbhGMBY4 (ORCPT
+        id S231775AbhGMBY4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Mon, 12 Jul 2021 21:24:56 -0400
 Received: from mga12.intel.com ([192.55.52.136]:23013 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230396AbhGMBY4 (ORCPT
+        id S230247AbhGMBY4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 12 Jul 2021 21:24:56 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10043"; a="189763223"
+X-IronPort-AV: E=McAfee;i="6200,9189,10043"; a="189763226"
 X-IronPort-AV: E=Sophos;i="5.84,235,1620716400"; 
-   d="scan'208";a="189763223"
+   d="scan'208";a="189763226"
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
   by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Jul 2021 18:22:07 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.84,235,1620716400"; 
-   d="scan'208";a="464963997"
+   d="scan'208";a="464963998"
 Received: from lkp-server01.sh.intel.com (HELO 4aae0cb4f5b5) ([10.239.97.150])
   by fmsmga008.fm.intel.com with ESMTP; 12 Jul 2021 18:22:06 -0700
 Received: from kbuild by 4aae0cb4f5b5 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1m377d-000HOQ-Js; Tue, 13 Jul 2021 01:22:05 +0000
-Date:   Tue, 13 Jul 2021 09:21:11 +0800
+        id 1m377d-000HOS-KW; Tue, 13 Jul 2021 01:22:05 +0000
+Date:   Tue, 13 Jul 2021 09:21:03 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:next] BUILD SUCCESS
- cd117793e1ac66174038470d85471fa4d9e226b9
-Message-ID: <60ecea87.MyfmHvGle0EiSS3E%lkp@intel.com>
+Subject: [renesas-devel:renesas-fixes-for-v5.14] BUILD SUCCESS
+ c3e67ad6f5a2c698a055fb297c6f9962f5145edd
+Message-ID: <60ecea7f.s6T6hositfYSDMcp%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -48,12 +48,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-branch HEAD: cd117793e1ac66174038470d85471fa4d9e226b9  Merge branch 'renesas-arm-dt-for-v5.15' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-fixes-for-v5.14
+branch HEAD: c3e67ad6f5a2c698a055fb297c6f9962f5145edd  dt-bindings: clock: r9a07g044-cpg: Update clock/reset definitions
 
 elapsed time: 721m
 
-configs tested: 179
+configs tested: 172
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -65,6 +65,11 @@ arm64                            allyesconfig
 arm64                               defconfig
 arm                              allyesconfig
 arm                              allmodconfig
+powerpc                     pq2fads_defconfig
+arc                        nsim_700_defconfig
+sh                            shmin_defconfig
+arm                          simpad_defconfig
+sh                           se7721_defconfig
 sparc                               defconfig
 powerpc                        fsp2_defconfig
 arm                            hisi_defconfig
@@ -76,33 +81,20 @@ m68k                         amcore_defconfig
 riscv                    nommu_virt_defconfig
 sh                        sh7757lcr_defconfig
 i386                             alldefconfig
-powerpc                     pq2fads_defconfig
 sparc                       sparc32_defconfig
 mips                  decstation_64_defconfig
-powerpc                     akebono_defconfig
-m68k                        mvme16x_defconfig
-mips                    maltaup_xpa_defconfig
 powerpc                    adder875_defconfig
 arm                        vexpress_defconfig
 arm                        magician_defconfig
 arm                        spear3xx_defconfig
 mips                   sb1250_swarm_defconfig
 powerpc                      arches_defconfig
-powerpc                    ge_imp3a_defconfig
-sh                          polaris_defconfig
-sparc                            alldefconfig
-arm                  colibri_pxa270_defconfig
 nios2                         3c120_defconfig
 powerpc                 mpc8540_ads_defconfig
 arm64                            alldefconfig
 mips                            gpr_defconfig
 sh                  sh7785lcr_32bit_defconfig
 sh                          rsk7201_defconfig
-sh                   sh7724_generic_defconfig
-nios2                         10m50_defconfig
-mips                        bcm47xx_defconfig
-m68k                        mvme147_defconfig
-powerpc                      pmac32_defconfig
 arm                          moxart_defconfig
 mips                           xway_defconfig
 arm                           stm32_defconfig
@@ -115,17 +107,20 @@ powerpc                mpc7448_hpc2_defconfig
 mips                           ip32_defconfig
 powerpc                      tqm8xx_defconfig
 sh                         apsh4a3a_defconfig
-arc                        nsim_700_defconfig
 alpha                            allyesconfig
 powerpc                     ppa8548_defconfig
+powerpc                     akebono_defconfig
 arc                     haps_hs_smp_defconfig
 m68k                          atari_defconfig
 powerpc                       ppc64_defconfig
+powerpc                      pmac32_defconfig
 arm                          pxa168_defconfig
 arm                    vt8500_v6_v7_defconfig
 xtensa                generic_kc705_defconfig
 xtensa                    smp_lx200_defconfig
+m68k                        mvme147_defconfig
 um                               alldefconfig
+xtensa                           allyesconfig
 powerpc                 mpc836x_rdk_defconfig
 openrisc                            defconfig
 xtensa                  audio_kc705_defconfig
@@ -135,20 +130,19 @@ sh                          kfr2r09_defconfig
 sh                           se7712_defconfig
 sh                            hp6xx_defconfig
 sh                   rts7751r2dplus_defconfig
-sh                           se7721_defconfig
-powerpc                     rainier_defconfig
-powerpc                     asp8347_defconfig
-arm                         lubbock_defconfig
-powerpc                      ppc44x_defconfig
 mips                         tb0287_defconfig
 powerpc                   motionpro_defconfig
 powerpc                  storcenter_defconfig
 arm                   milbeaut_m10v_defconfig
 powerpc                     taishan_defconfig
 arm                        cerfcube_defconfig
+nios2                         10m50_defconfig
 s390                             allmodconfig
 arm                         vf610m4_defconfig
+arm                  colibri_pxa270_defconfig
 arm                         s3c2410_defconfig
+arm                             rpc_defconfig
+m68k                          multi_defconfig
 powerpc                     ep8248e_defconfig
 arm                           spitz_defconfig
 s390                             alldefconfig
@@ -171,7 +165,6 @@ nds32                               defconfig
 nios2                            allyesconfig
 csky                                defconfig
 alpha                               defconfig
-xtensa                           allyesconfig
 h8300                            allyesconfig
 arc                                 defconfig
 sh                               allmodconfig
@@ -212,10 +205,10 @@ i386                 randconfig-a013-20210712
 i386                 randconfig-a012-20210712
 i386                 randconfig-a016-20210712
 riscv                    nommu_k210_defconfig
+riscv                          rv32_defconfig
 riscv                            allyesconfig
 riscv                             allnoconfig
 riscv                               defconfig
-riscv                          rv32_defconfig
 riscv                            allmodconfig
 um                           x86_64_defconfig
 um                             i386_defconfig
