@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3AF0C07E95
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Jul 2021 20:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDFFBC07E95
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Jul 2021 20:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 846846128E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Jul 2021 20:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8FFE6136D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 13 Jul 2021 20:47:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234394AbhGMUjK (ORCPT
+        id S234290AbhGMUuK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 13 Jul 2021 16:39:10 -0400
-Received: from mga04.intel.com ([192.55.52.120]:55783 "EHLO mga04.intel.com"
+        Tue, 13 Jul 2021 16:50:10 -0400
+Received: from mga02.intel.com ([134.134.136.20]:19807 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234172AbhGMUjK (ORCPT
+        id S231499AbhGMUuK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 13 Jul 2021 16:39:10 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10044"; a="208422077"
+        Tue, 13 Jul 2021 16:50:10 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10044"; a="197424803"
 X-IronPort-AV: E=Sophos;i="5.84,237,1620716400"; 
-   d="scan'208";a="208422077"
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2021 13:36:18 -0700
+   d="scan'208";a="197424803"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Jul 2021 13:47:19 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.84,237,1620716400"; 
-   d="scan'208";a="654527192"
+   d="scan'208";a="493252998"
 Received: from lkp-server01.sh.intel.com (HELO 4aae0cb4f5b5) ([10.239.97.150])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Jul 2021 13:36:17 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 13 Jul 2021 13:47:17 -0700
 Received: from kbuild by 4aae0cb4f5b5 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1m3P8a-000I8g-T1; Tue, 13 Jul 2021 20:36:16 +0000
-Date:   Wed, 14 Jul 2021 04:35:46 +0800
+        id 1m3PJF-000I9A-8G; Tue, 13 Jul 2021 20:47:17 +0000
+Date:   Wed, 14 Jul 2021 04:47:07 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:fixes] BUILD SUCCESS
- 432b52eea3dcf48083bafa4b2b6ef5b054ead609
-Message-ID: <60edf922.I7BxESyzSznQLzNn%lkp@intel.com>
+Subject: [renesas-devel:topic/renesas-defconfig] BUILD SUCCESS
+ 239910c2b9dac8822d30834f44bc130c66275def
+Message-ID: <60edfbcb.UQkuFCOU+X5vL5JO%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -48,12 +48,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git fixes
-branch HEAD: 432b52eea3dcf48083bafa4b2b6ef5b054ead609  ARM: shmobile: defconfig: Restore graphical consoles
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git topic/renesas-defconfig
+branch HEAD: 239910c2b9dac8822d30834f44bc130c66275def  arm64: renesas: defconfig: Restore graphical consoles
 
-elapsed time: 720m
+elapsed time: 730m
 
-configs tested: 127
+configs tested: 117
 configs skipped: 4
 
 The following configs have been built successfully.
@@ -70,20 +70,16 @@ arm                         mv78xx0_defconfig
 powerpc                       eiger_defconfig
 sh                              ul2_defconfig
 sh                            hp6xx_defconfig
-powerpc                   bluestone_defconfig
-arm                         lpc32xx_defconfig
-sh                          lboxre2_defconfig
 powerpc                      ep88xc_defconfig
 arc                     haps_hs_smp_defconfig
 sh                             espt_defconfig
 arm                             ezx_defconfig
 riscv                          rv32_defconfig
-arm                       mainstone_defconfig
-arm                          moxart_defconfig
-powerpc                     pq2fads_defconfig
-powerpc                      walnut_defconfig
-openrisc                            defconfig
-arm                        trizeps4_defconfig
+sh                           se7705_defconfig
+mips                           gcw0_defconfig
+powerpc                    amigaone_defconfig
+mips                           ip32_defconfig
+arm                              alldefconfig
 arm                    vt8500_v6_v7_defconfig
 nds32                               defconfig
 arm                       netwinder_defconfig
@@ -95,31 +91,25 @@ sh                   sh7770_generic_defconfig
 arm                        neponset_defconfig
 mips                        vocore2_defconfig
 sh                        edosk7705_defconfig
-mips                         tb0287_defconfig
-powerpc                    ge_imp3a_defconfig
-powerpc                  storcenter_defconfig
-powerpc                     kilauea_defconfig
-sh                     magicpanelr2_defconfig
-powerpc                 mpc8313_rdb_defconfig
-sh                          r7785rp_defconfig
-microblaze                          defconfig
-arm                         nhk8815_defconfig
+arm                         hackkit_defconfig
+powerpc                      mgcoge_defconfig
+arm                        cerfcube_defconfig
 powerpc                 mpc8560_ads_defconfig
 arm                            mmp2_defconfig
 arm                        multi_v5_defconfig
 mips                            e55_defconfig
-sh                           se7705_defconfig
 arm                        mvebu_v5_defconfig
 arm                   milbeaut_m10v_defconfig
 openrisc                 simple_smp_defconfig
 arm                          lpd270_defconfig
-arm                         cm_x300_defconfig
-powerpc                    socrates_defconfig
-sparc64                             defconfig
-x86_64                            allnoconfig
+mips                        workpad_defconfig
+sh                         microdev_defconfig
+mips                        omega2p_defconfig
+powerpc                mpc7448_hpc2_defconfig
 ia64                             allmodconfig
 ia64                                defconfig
 ia64                             allyesconfig
+x86_64                            allnoconfig
 m68k                             allmodconfig
 m68k                                defconfig
 m68k                             allyesconfig
