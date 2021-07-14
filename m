@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DEFC11F70
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 12:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F79C11F67
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 12:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3CF8613B7
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 12:50:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36ABB613B6
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 12:50:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239374AbhGNMxn (ORCPT
+        id S239433AbhGNMxp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Jul 2021 08:53:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38470 "EHLO
+        Wed, 14 Jul 2021 08:53:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38498 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231391AbhGNMxl (ORCPT
+        with ESMTP id S239352AbhGNMxm (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jul 2021 08:53:41 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 996BAC061768
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jul 2021 05:50:49 -0700 (PDT)
+        Wed, 14 Jul 2021 08:53:42 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02E6BC061764
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jul 2021 05:50:50 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:39cc:190a:2775:cfe7])
-        by andre.telenet-ops.be with bizsmtp
-        id V0qX250061ccfby010qXp6; Wed, 14 Jul 2021 14:50:47 +0200
+        by baptiste.telenet-ops.be with bizsmtp
+        id V0qW250091ccfby010qWMs; Wed, 14 Jul 2021 14:50:49 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3eLO-0018dR-TJ; Wed, 14 Jul 2021 14:50:30 +0200
+        id 1m3eLO-0018dM-L3; Wed, 14 Jul 2021 14:50:30 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3eLN-00AaEQ-Qk; Wed, 14 Jul 2021 14:50:29 +0200
+        id 1m3eLN-00AaDr-NA; Wed, 14 Jul 2021 14:50:29 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Rob Herring <robh+dt@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -56,9 +56,9 @@ Cc:     Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
         linux-mm@kvack.org, linux-renesas-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 06/10] riscv: Remove non-standard linux,elfcorehdr handling
-Date:   Wed, 14 Jul 2021 14:50:16 +0200
-Message-Id: <170e7daa55aced148b8e57827f7c8fc65a0a8c7a.1626266516.git.geert+renesas@glider.be>
+Subject: [PATCH v4 01/10] crash_dump: Make elfcorehdr_{addr,size} always visible
+Date:   Wed, 14 Jul 2021 14:50:11 +0200
+Message-Id: <0721f629d5e75b7b7e655458a63cbd767baaa409.1626266516.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1626266516.git.geert+renesas@glider.be>
 References: <cover.1626266516.git.geert+renesas@glider.be>
@@ -68,55 +68,44 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-RISC-V uses platform-specific code to locate the elf core header in
-memory.  However, this does not conform to the standard
-"linux,elfcorehdr" DT bindings, as it relies on a reserved memory node
-with the "linux,elfcorehdr" compatible value, instead of on a
-"linux,elfcorehdr" property under the "/chosen" node.
+Make the forward declarations of elfcorehdr_addr and elfcorehdr_size
+always available, like is done for phys_initrd_start and
+phys_initrd_size.  Code referring to these symbols can then just check
+for IS_ENABLED(CONFIG_CRASH_DUMP), instead of requiring conditional
+compilation using an #ifdef, thus preparing to increase compile
+coverage.
 
-The non-compliant code can just be removed, as the standard behavior is
-already implemented by platform-agnostic handling in the FDT core code.
-
-Fixes: 5640975003d0234d ("RISC-V: Add crash kernel support")
+Suggested-by: Rob Herring <robh+dt@kernel.org>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
 v4:
-  - No changes.
+  - New.
 ---
- arch/riscv/mm/init.c | 20 --------------------
- 1 file changed, 20 deletions(-)
+ include/linux/crash_dump.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 269fc648ef3d84b2..4aa4b6a034086df6 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -829,26 +829,6 @@ static void __init reserve_crashkernel(void)
- }
- #endif /* CONFIG_KEXEC_CORE */
+diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
+index a5192b718dbe4f9a..ad31893d13d634de 100644
+--- a/include/linux/crash_dump.h
++++ b/include/linux/crash_dump.h
+@@ -10,13 +10,14 @@
  
--#ifdef CONFIG_CRASH_DUMP
--/*
-- * We keep track of the ELF core header of the crashed
-- * kernel with a reserved-memory region with compatible
-- * string "linux,elfcorehdr". Here we register a callback
-- * to populate elfcorehdr_addr/size when this region is
-- * present. Note that this region will be marked as
-- * reserved once we call early_init_fdt_scan_reserved_mem()
-- * later on.
-- */
--static int __init elfcore_hdr_setup(struct reserved_mem *rmem)
--{
--	elfcorehdr_addr = rmem->base;
--	elfcorehdr_size = rmem->size;
--	return 0;
--}
+ #include <linux/pgtable.h> /* for pgprot_t */
+ 
++/* For IS_ENABLED(CONFIG_CRASH_DUMP) */
++extern unsigned long long elfcorehdr_addr;
++extern unsigned long long elfcorehdr_size;
++
+ #ifdef CONFIG_CRASH_DUMP
+ #define ELFCORE_ADDR_MAX	(-1ULL)
+ #define ELFCORE_ADDR_ERR	(-2ULL)
+ 
+-extern unsigned long long elfcorehdr_addr;
+-extern unsigned long long elfcorehdr_size;
 -
--RESERVEDMEM_OF_DECLARE(elfcorehdr, "linux,elfcorehdr", elfcore_hdr_setup);
--#endif
--
- void __init paging_init(void)
- {
- 	setup_bootmem();
+ extern int elfcorehdr_alloc(unsigned long long *addr, unsigned long long *size);
+ extern void elfcorehdr_free(unsigned long long addr);
+ extern ssize_t elfcorehdr_read(char *buf, size_t count, u64 *ppos);
 -- 
 2.25.1
 
