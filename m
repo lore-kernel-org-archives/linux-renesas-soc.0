@@ -2,39 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A736C11F6B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B3AC11F6D
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 13:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30AC86128D
+	by mail.kernel.org (Postfix) with ESMTP id 5399A613B7
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 13:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231485AbhGNNXA (ORCPT
+        id S231522AbhGNNXL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Jul 2021 09:23:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45234 "EHLO
+        Wed, 14 Jul 2021 09:23:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231539AbhGNNW7 (ORCPT
+        with ESMTP id S239344AbhGNNXA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jul 2021 09:22:59 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBC0EC061767
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jul 2021 06:20:07 -0700 (PDT)
+        Wed, 14 Jul 2021 09:23:00 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 322A8C0613E1
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jul 2021 06:20:08 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:39cc:190a:2775:cfe7])
-        by andre.telenet-ops.be with bizsmtp
-        id V1L52500Z1ccfby011L5T8; Wed, 14 Jul 2021 15:20:06 +0200
+        by xavier.telenet-ops.be with bizsmtp
+        id V1L52500H1ccfby011L5pm; Wed, 14 Jul 2021 15:20:06 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3eo1-00193v-9c; Wed, 14 Jul 2021 15:20:05 +0200
+        id 1m3eo1-00193t-8r; Wed, 14 Jul 2021 15:20:05 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1m3eo0-00Aapp-SH; Wed, 14 Jul 2021 15:20:04 +0200
+        id 1m3eo0-00AapU-Pw; Wed, 14 Jul 2021 15:20:04 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -43,107 +42,53 @@ To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
 Cc:     linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
         devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 2/4] ARM: dts: rza: Add I2C interrupt-names
-Date:   Wed, 14 Jul 2021 15:20:01 +0200
-Message-Id: <7a073439e37f6672e4809af0a2ee9cd4ac820ec6.1626267422.git.geert+renesas@glider.be>
+Subject: [PATCH/RFC 0/4] dt-bindings: i2c: renesas,riic: Add interrupt-names
+Date:   Wed, 14 Jul 2021 15:19:59 +0200
+Message-Id: <cover.1626267422.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1626267422.git.geert+renesas@glider.be>
-References: <cover.1626267422.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add "interrupt-names" properties to the I2C device nodes of the RZ/A1H
-and RZ/A2M DTS files, to make it easier to review the interrupt mappings.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r7s72100.dtsi | 8 ++++++++
- arch/arm/boot/dts/r7s9210.dtsi  | 8 ++++++++
- 2 files changed, 16 insertions(+)
+The Renesas RZ/A and RZ/G2L I2C Bus Interface has no less than 8
+interrupts.  So I think it makes sense to use "interrupt-names"
+property, to make it easier to review the interrupt mappings in DTS
+files.
 
-diff --git a/arch/arm/boot/dts/r7s72100.dtsi b/arch/arm/boot/dts/r7s72100.dtsi
-index 45cf75b5824cbe7f..b07b71307f24ad59 100644
---- a/arch/arm/boot/dts/r7s72100.dtsi
-+++ b/arch/arm/boot/dts/r7s72100.dtsi
-@@ -608,6 +608,8 @@ i2c0: i2c@fcfee000 {
- 				     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
- 			clocks = <&mstp9_clks R7S72100_CLK_I2C0>;
- 			clock-frequency = <100000>;
- 			power-domains = <&cpg_clocks>;
-@@ -627,6 +629,8 @@ i2c1: i2c@fcfee400 {
- 				     <GIC_SPI 170 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 171 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 172 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
- 			clocks = <&mstp9_clks R7S72100_CLK_I2C1>;
- 			clock-frequency = <100000>;
- 			power-domains = <&cpg_clocks>;
-@@ -646,6 +650,8 @@ i2c2: i2c@fcfee800 {
- 				     <GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 179 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 180 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
- 			clocks = <&mstp9_clks R7S72100_CLK_I2C2>;
- 			clock-frequency = <100000>;
- 			power-domains = <&cpg_clocks>;
-@@ -665,6 +671,8 @@ i2c3: i2c@fcfeec00 {
- 				     <GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
- 			clocks = <&mstp9_clks R7S72100_CLK_I2C3>;
- 			clock-frequency = <100000>;
- 			power-domains = <&cpg_clocks>;
-diff --git a/arch/arm/boot/dts/r7s9210.dtsi b/arch/arm/boot/dts/r7s9210.dtsi
-index 85c0399b1339585b..fdeb0bc12cb794d6 100644
---- a/arch/arm/boot/dts/r7s9210.dtsi
-+++ b/arch/arm/boot/dts/r7s9210.dtsi
-@@ -236,6 +236,8 @@ i2c0: i2c@e803a000 {
- 				     <GIC_SPI 237 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 238 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 239 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
- 			clocks = <&cpg CPG_MOD 87>;
- 			power-domains = <&cpg>;
- 			clock-frequency = <100000>;
-@@ -255,6 +257,8 @@ i2c1: i2c@e803a400 {
- 				     <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
- 			clocks = <&cpg CPG_MOD 86>;
- 			power-domains = <&cpg>;
- 			clock-frequency = <100000>;
-@@ -274,6 +278,8 @@ i2c2: i2c@e803a800 {
- 				     <GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
- 			clocks = <&cpg CPG_MOD 85>;
- 			power-domains = <&cpg>;
- 			clock-frequency = <100000>;
-@@ -293,6 +299,8 @@ i2c3: i2c@e803ac00 {
- 				     <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 263 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
- 			clocks = <&cpg CPG_MOD 84>;
- 			power-domains = <&cpg>;
- 			clock-frequency = <100000>;
+Hence this series documents the "interrupt-names" property in the DT
+bindings, adds the property to the DTS files, and marks it required in
+the DT bindings. Obviously the last step cannot be applied until all
+earlier patches are upstream.
+
+What do you think?
+Thanks for your comments!
+
+Geert Uytterhoeven (4):
+  dt-bindings: i2c: renesas,riic: Add interrupt-names
+  ARM: dts: rza: Add I2C interrupt-names
+  arm64: dts: renesas: r9a07g044: Add I2C interrupt-names
+  dt-bindings: i2c: renesas,riic: Make interrupt-names required
+
+ .../devicetree/bindings/i2c/renesas,riic.yaml | 30 ++++++++++++++-----
+ arch/arm/boot/dts/r7s72100.dtsi               |  8 +++++
+ arch/arm/boot/dts/r7s9210.dtsi                |  8 +++++
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  8 +++++
+ 4 files changed, 46 insertions(+), 8 deletions(-)
+
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
