@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-19.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A6EC1B08C
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 19:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37966C12002
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 19:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EE716100A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 19:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20985613D6
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 19:54:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237950AbhGNT5H (ORCPT
+        id S239062AbhGNT5I (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Jul 2021 15:57:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47012 "EHLO mail.kernel.org"
+        Wed, 14 Jul 2021 15:57:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238767AbhGNTsj (ORCPT
+        id S240201AbhGNTte (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jul 2021 15:48:39 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id C378B613FE;
-        Wed, 14 Jul 2021 19:43:50 +0000 (UTC)
+        Wed, 14 Jul 2021 15:49:34 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 44F4A61426;
+        Wed, 14 Jul 2021 19:44:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1626291831;
-        bh=HqqOvqC15YrDxEeYulqHcBOQhJwP945aCtoFam1tPkk=;
+        s=k20201202; t=1626291891;
+        bh=mIX8swcJ0uAWzzsN4a+BRUB24TPb/lMattHRBn0i5a0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WG4ngpOLr0kA67qgjhNm/Uy2K/2m/ZlGdresAcIp5qDRgTuuIhyHiZXqawDiwhdVj
-         le44IjA57jmGJtNrRc2xM0LEQqJnqelRYkAVerfpW47N5pEPJ/9hpPaze8VpdMT4Vz
-         QuyB1F3jTUFqnHdixvdNmR+HlQGkfh/OrPn1RPHV4VPUEC/aDGzloqTNA30FARuH6K
-         upwn+WY9Wi8eebegeXd5u3dPztJgnsUULjpqgWrCgj/BqlaE/JdmqDUQHIzESqBi6a
-         I8bgaQlkpgFZvAFaDGleEW3D9lnKm4UBXw3kA5r6DVQEqjl1PxXNICN5DyjacEeS71
-         WZn0rSjOjwDXQ==
+        b=upmwXhrAJNCe8ya8z1JfjE1353C5WAXDRtDpzONjtRfNln2CA2lOEo4gp/uQOHNGg
+         gkyn65v70QBLGUUiMKOe+7pn/rKqp5PtDyMLj0dI5ro3wsGBHbVeNlDlZnRoFZucxg
+         kKLAe3pGya2GBLt0lvqz9ulEbw8UEdBuSRgAjIf8njLY7SIdtLazh0hKRYtvNTA3kn
+         vOSkGHMol3WpYdY8u7ER+Ap0vriTn8e7UZuOLU+6JRuog2JPDGrY3LeEIv1Wiwx5IT
+         5Jfkm5vh8QLJ5fVxMgD6+Ykt/U28GLGarSJDvACSXHpbuoLHFD05ZD5OFKA0nY3B3R
+         mnTNqC3wVj8Ng==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Adam Ford <aford173@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 30/88] arm64: dts: renesas: beacon: Fix USB extal reference
-Date:   Wed, 14 Jul 2021 15:42:05 -0400
-Message-Id: <20210714194303.54028-30-sashal@kernel.org>
+        linux-renesas-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.10 72/88] thermal/drivers/rcar_gen3_thermal: Do not shadow rcar_gen3_ths_tj_1
+Date:   Wed, 14 Jul 2021 15:42:47 -0400
+Message-Id: <20210714194303.54028-72-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210714194303.54028-1-sashal@kernel.org>
 References: <20210714194303.54028-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -53,41 +56,56 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Adam Ford <aford173@gmail.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit 56bc54496f5d6bc638127bfc9df3742cbf0039e7 ]
+[ Upstream commit 3ae5950db617d1cc3eb4eb55750fa9d138529b49 ]
 
-The USB extal clock reference isn't associated to a crystal, it's
-associated to a programmable clock, so remove the extal reference,
-add the usb2_clksel.  Since usb_extal is referenced by the versaclock,
-reference it here so the usb2_clksel can get the proper clock speed
-of 50MHz.
+With -Wshadow:
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Link: https://lore.kernel.org/r/20210513114617.30191-1-aford173@gmail.com
+    drivers/thermal/rcar_gen3_thermal.c: In function ‘rcar_gen3_thermal_probe’:
+    drivers/thermal/rcar_gen3_thermal.c:310:13: warning: declaration of ‘rcar_gen3_ths_tj_1’ shadows a global declaration [-Wshadow]
+      310 |  const int *rcar_gen3_ths_tj_1 = of_device_get_match_data(dev);
+	  |             ^~~~~~~~~~~~~~~~~~
+    drivers/thermal/rcar_gen3_thermal.c:246:18: note: shadowed declaration is here
+      246 | static const int rcar_gen3_ths_tj_1 = 126;
+	  |                  ^~~~~~~~~~~~~~~~~~
+
+To add to the confusion, the local variable has a different type.
+
+Fix the shadowing by renaming the local variable to ths_tj_1.
+
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Link: https://lore.kernel.org/r/9ea7e65d0331daba96f9a7925cb3d12d2170efb1.1623076804.git.geert+renesas@glider.be
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/thermal/rcar_gen3_thermal.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-index 289cf711307d..e3773b05c403 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-@@ -295,8 +295,10 @@ &sdhi3 {
- 	status = "okay";
- };
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 0dd47dca3e77..4e826d4b9140 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -366,7 +366,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ {
+ 	struct rcar_gen3_thermal_priv *priv;
+ 	struct device *dev = &pdev->dev;
+-	const int *rcar_gen3_ths_tj_1 = of_device_get_match_data(dev);
++	const int *ths_tj_1 = of_device_get_match_data(dev);
+ 	struct resource *res;
+ 	struct thermal_zone_device *zone;
+ 	int ret, irq, i;
+@@ -434,8 +434,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 		priv->tscs[i] = tsc;
  
--&usb_extal_clk {
--	clock-frequency = <50000000>;
-+&usb2_clksel {
-+	clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>,
-+		  <&versaclock5 3>, <&usb3s0_clk>;
-+	status = "okay";
- };
+ 		priv->thermal_init(tsc);
+-		rcar_gen3_thermal_calc_coefs(tsc, ptat, thcodes[i],
+-					     *rcar_gen3_ths_tj_1);
++		rcar_gen3_thermal_calc_coefs(tsc, ptat, thcodes[i], *ths_tj_1);
  
- &usb3s0_clk {
+ 		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
+ 							    &rcar_gen3_tz_of_ops);
 -- 
 2.30.2
 
