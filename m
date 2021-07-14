@@ -2,276 +2,117 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C292C11F66
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 12:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB63C11F67
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 12:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 441FB610F9
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 12:39:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CECC613C1
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 14 Jul 2021 12:50:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231363AbhGNMm2 (ORCPT
+        id S239385AbhGNMxl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 14 Jul 2021 08:42:28 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3401 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231341AbhGNMm2 (ORCPT
+        Wed, 14 Jul 2021 08:53:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38466 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S239347AbhGNMxk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 14 Jul 2021 08:42:28 -0400
-Received: from fraeml737-chm.china.huawei.com (unknown [172.18.147.200])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GPxgY0H72z6FD9F;
-        Wed, 14 Jul 2021 20:31:05 +0800 (CST)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml737-chm.china.huawei.com (10.206.15.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2176.2; Wed, 14 Jul 2021 14:39:34 +0200
-Received: from localhost (10.47.88.217) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Wed, 14 Jul
- 2021 13:39:33 +0100
-Date:   Wed, 14 Jul 2021 13:39:13 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-CC:     Jonathan Cameron <jic23@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Lars-Peter Clausen" <lars@metafoo.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        <linux-iio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS\" <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Biju Das <biju.das.jz@bp.renesas.com>"@domain.invalid
-Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: Add binding documentation
- for Renesas RZ/G2L A/D converter
-Message-ID: <20210714133913.000075a6@Huawei.com>
-In-Reply-To: <CA+V-a8uzeepfd+8Wfd2n2EXeXQ9QJZhR+X8j29Y7DGNu8+aH+g@mail.gmail.com>
-References: <20210629220328.13366-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-        <20210629220328.13366-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-        <20210703181937.510ec0fa@jic23-huawei>
-        <CA+V-a8uzeepfd+8Wfd2n2EXeXQ9QJZhR+X8j29Y7DGNu8+aH+g@mail.gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
+        Wed, 14 Jul 2021 08:53:40 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5B8CC061768
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 14 Jul 2021 05:50:48 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:39cc:190a:2775:cfe7])
+        by xavier.telenet-ops.be with bizsmtp
+        id V0qW2500U1ccfby010qW5T; Wed, 14 Jul 2021 14:50:46 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1m3eLO-0018dV-Ab; Wed, 14 Jul 2021 14:50:30 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1m3eLN-00AaEl-Sn; Wed, 14 Jul 2021 14:50:29 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Nick Kossifidis <mick@ics.forth.gr>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Dave Young <dyoung@redhat.com>, Mike Rapoport <rppt@kernel.org>
+Cc:     Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-riscv@lists.infradead.org, kexec@lists.infradead.org,
+        linux-mm@kvack.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v4 09/10] arm64: kdump: Use IS_ENABLED(CONFIG_CRASH_DUMP) instead of #ifdef
+Date:   Wed, 14 Jul 2021 14:50:19 +0200
+Message-Id: <767e34a7ec29c417fdd5ff6e0fc76bc93d4f3c6f.1626266516.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1626266516.git.geert+renesas@glider.be>
+References: <cover.1626266516.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.88.217]
-X-ClientProxiedBy: lhreml750-chm.china.huawei.com (10.201.108.200) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 14 Jul 2021 10:11:49 +0100
-"Lad, Prabhakar" <prabhakar.csengg@gmail.com> wrote:
+Replace the conditional compilation using "#ifdef CONFIG_CRASH_DUMP" by
+a check for "IS_ENABLED(CONFIG_CRASH_DUMP)", to increase compile
+coverage and to simplify the code.
 
-> Hi Jonathan,
-> 
-> Thank you for the review.
-> 
-> On Sat, Jul 3, 2021 at 6:17 PM Jonathan Cameron <jic23@kernel.org> wrote:
-> >
-> > On Tue, 29 Jun 2021 23:03:27 +0100
-> > Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> >  
-> > > Add binding documentation for Renesas RZ/G2L A/D converter block.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>  
-> > Hi,
-> >
-> > See inline
-> >
-> > Jonathan
-> >  
-> > > ---
-> > >  .../bindings/iio/adc/renesas,rzg2l-adc.yaml   | 121 ++++++++++++++++++
-> > >  1 file changed, 121 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
-> > > new file mode 100644
-> > > index 000000000000..db935d6d59eb
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
-> > > @@ -0,0 +1,121 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/iio/adc/renesas,rzg2l-adc.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Renesas RZ/G2L ADC
-> > > +
-> > > +maintainers:
-> > > +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > +
-> > > +description: |
-> > > +  A/D Converter block is a successive approximation analog-to-digital converter
-> > > +  with a 12-bit accuracy. Up to eight analog input channels can be selected.
-> > > +  Conversions can be performed in single or repeat mode. Result of the ADC is
-> > > +  stored in a 32-bit data register corresponding to each channel.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    oneOf:
-> > > +      - items:
-> > > +          - enum:
-> > > +              - renesas,r9a07g044-adc   # RZ/G2{L,LC}
-> > > +          - const: renesas,rzg2l-adc
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  interrupts:
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks:
-> > > +    items:
-> > > +      - description: converter clock
-> > > +      - description: peripheral clock
-> > > +
-> > > +  clock-names:
-> > > +    items:
-> > > +      - const: adclk
-> > > +      - const: pclk
-> > > +
-> > > +  power-domains:
-> > > +    maxItems: 1
-> > > +
-> > > +  resets:
-> > > +    maxItems: 2
-> > > +
-> > > +  reset-names:
-> > > +    items:
-> > > +      - const: presetn
-> > > +      - const: adrst-n
-> > > +
-> > > +  renesas-rzg2l,adc-trigger-mode:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint8
-> > > +    description: Trigger mode for A/D converter
-> > > +    enum:
-> > > +      - 0 # Software trigger mode (Defaults)
-> > > +      - 1 # Asynchronous trigger using ADC_TRG trigger input pin
-> > > +      - 2 # Synchronous trigger (Trigger from MTU3a/GPT)  
-> >
-> > Is this a function of the board in some fashion?  If not it sounds like
-> > something that should be in control of userspace.  Normally we'd
-> > do that by having the driver register some iio_triggers and depending
-> > on which one is selected do the equivalent of what you have here.
-> >  
-> Agreed for Asynchronous and Synchronous triggers. WRT Software trigger
-> should this be registered as a  iio_triggers too or read_raw()
-> callback (with IIO_CHAN_INFO_RAW case)  should be treated as Software
-> trigger?
-> 
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v4:
+  - New.
+---
+ arch/arm64/mm/init.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-Normally we'd use an external trigger to provide the software trigger
-(plus as you say sysfs reads will map to this functionality).
-
-Something like the sysfs trigger or the hrtimer one would get used, though
-also fine to use the dataready trigger from a different device (if you want
-approximately synced dta.
-
-> > > +    default: 0
-> > > +
-> > > +  gpios:
-> > > +    description:
-> > > +      ADC_TRG trigger input pin
-> > > +    maxItems: 1  
-> > Why is this mode useful?  I'm assuming the gpio write would take a register
-> > write and the software trigger mode also requires a register write.
-> >  
-> Yes gpio write would take a register write.
-> 
-> > Normally the reason for a pin like this is to support synchronising with
-> > external hardware.   If that's the case, we should call that out here.
-> > often the pin isn't even connected to a gpio in our control.
-> > (i.e. it's a trigger signal from some other device.)
-> >  
-> So just setting the GPIO pin as input should do the trick.
-
-Probably the best plan if you actually care about people writing some
-trigger up to it that is otherwise invisible to the system.
-
-> 
-> > > +
-> > > +  renesas-rzg2l,adc-channels:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> > > +    description: Input channels available on platform
-> > > +    uniqueItems: true
-> > > +    minItems: 1
-> > > +    maxItems: 8
-> > > +    items:
-> > > +      enum: [0, 1, 2, 3, 4, 5, 6, 7]  
-> >
-> > Is this a function of different devices (should have different compatibles)
-> > or of what is wired up.  If it's what is wired up, then how do you know which  
-> Its channels which are wired, for example if channels 0-5 are wired up
-> the board dts would include the property "renesas-rzg2l,adc-channels =
-> /bits/ 8 <0 1 2 3 4 5>;"
-> 
-> > subset of channels are connected?  We have the generic adc channel binding
-> > in iio/adc/adc.yaml for the case where we only want to expose those channels
-> > that are wired up.  It uses a node per channel.
-> >  
-> Agreed will do that and drop the custom "renesas-rzg2l,adc-channels"
-
-Great,
-
-Jonathan
-
-> 
-> Cheers,
-> Prabhakar
-> > > +
-> > > +  "#io-channel-cells":
-> > > +    const: 1
-> > > +
-> > > +required:
-> > > +  - compatible
-> > > +  - reg
-> > > +  - interrupts
-> > > +  - clocks
-> > > +  - clock-names
-> > > +  - power-domains
-> > > +  - resets
-> > > +  - reset-names
-> > > +  - renesas-rzg2l,adc-channels
-> > > +  - "#io-channel-cells"
-> > > +
-> > > +allOf:
-> > > +  - if:
-> > > +      properties:
-> > > +        renesas-rzg2l,adc-trigger-mode:
-> > > +          const: 1
-> > > +    then:
-> > > +      required:
-> > > +        - gpios
-> > > +
-> > > +additionalProperties: false
-> > > +
-> > > +examples:
-> > > +  - |
-> > > +    #include <dt-bindings/clock/r9a07g044-cpg.h>
-> > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > > +
-> > > +    adc: adc@10059000 {
-> > > +      compatible = "renesas,r9a07g044-adc", "renesas,rzg2l-adc";
-> > > +      reg = <0x10059000 0x400>;
-> > > +      interrupts = <GIC_SPI 347 IRQ_TYPE_EDGE_RISING>;
-> > > +      clocks = <&cpg CPG_MOD R9A07G044_ADC_ADCLK>,
-> > > +               <&cpg CPG_MOD R9A07G044_ADC_PCLK>;
-> > > +      clock-names = "adclk", "pclk";
-> > > +      power-domains = <&cpg>;
-> > > +      resets = <&cpg R9A07G044_ADC_PRESETN>,
-> > > +               <&cpg R9A07G044_ADC_ADRST_N>;
-> > > +      reset-names = "presetn", "adrst-n";
-> > > +      #io-channel-cells = <1>;
-> > > +      renesas-rzg2l,adc-trigger-mode = /bits/ 8 <0>;
-> > > +      renesas-rzg2l,adc-channels = /bits/ 8 <0 1 2 3 4 5 6>;
-> > > +    };  
-> >  
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index f90ba99437c0f3c9..dc2a5b73232843e4 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -124,7 +124,6 @@ static void __init reserve_crashkernel(void)
+ }
+ #endif /* CONFIG_KEXEC_CORE */
+ 
+-#ifdef CONFIG_CRASH_DUMP
+ /*
+  * reserve_elfcorehdr() - reserves memory for elf core header
+  *
+@@ -135,7 +134,7 @@ static void __init reserve_crashkernel(void)
+  */
+ static void __init reserve_elfcorehdr(void)
+ {
+-	if (!elfcorehdr_size)
++	if (!IS_ENABLED(CONFIG_CRASH_DUMP) || !elfcorehdr_size)
+ 		return;
+ 
+ 	if (memblock_is_region_reserved(elfcorehdr_addr, elfcorehdr_size)) {
+@@ -148,11 +147,6 @@ static void __init reserve_elfcorehdr(void)
+ 	pr_info("Reserving %lldKB of memory at 0x%llx for elfcorehdr\n",
+ 		elfcorehdr_size >> 10, elfcorehdr_addr);
+ }
+-#else
+-static void __init reserve_elfcorehdr(void)
+-{
+-}
+-#endif /* CONFIG_CRASH_DUMP */
+ 
+ /*
+  * Return the maximum physical address for a zone accessible by the given bits
+-- 
+2.25.1
 
