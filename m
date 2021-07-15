@@ -2,325 +2,81 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC67C07E96
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Jul 2021 13:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1840BC636C8
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Jul 2021 17:32:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9C16613C3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Jul 2021 13:02:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F106E613F2
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 15 Jul 2021 17:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232543AbhGONFu (ORCPT
+        id S231193AbhGORfS (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 15 Jul 2021 09:05:50 -0400
-Received: from frasgout.his.huawei.com ([185.176.79.56]:3416 "EHLO
-        frasgout.his.huawei.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229679AbhGONFt (ORCPT
+        Thu, 15 Jul 2021 13:35:18 -0400
+Received: from mail-il1-f176.google.com ([209.85.166.176]:34510 "EHLO
+        mail-il1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229621AbhGORfS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 15 Jul 2021 09:05:49 -0400
-Received: from fraeml702-chm.china.huawei.com (unknown [172.18.147.201])
-        by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4GQZ151VnFz6D92V;
-        Thu, 15 Jul 2021 20:48:25 +0800 (CST)
-Received: from lhreml710-chm.china.huawei.com (10.201.108.61) by
- fraeml702-chm.china.huawei.com (10.206.15.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.2176.2; Thu, 15 Jul 2021 15:02:54 +0200
-Received: from localhost (10.47.82.59) by lhreml710-chm.china.huawei.com
- (10.201.108.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2176.2; Thu, 15 Jul
- 2021 14:02:53 +0100
-Date:   Thu, 15 Jul 2021 14:02:32 +0100
-From:   Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-CC:     Jonathan Cameron <jic23@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Lars-Peter Clausen" <lars@metafoo.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        <linux-iio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: iio: adc: Add binding documentation
- for Renesas RZ/G2L A/D converter
-Message-ID: <20210715140232.0000408c@Huawei.com>
-In-Reply-To: <CA+V-a8spDa5PiGzp6-4mHTEMfQYJ5NnQ44vwgdtu_sfVG5OO5Q@mail.gmail.com>
-References: <20210629220328.13366-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-        <20210629220328.13366-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-        <20210703181937.510ec0fa@jic23-huawei>
-        <CA+V-a8uzeepfd+8Wfd2n2EXeXQ9QJZhR+X8j29Y7DGNu8+aH+g@mail.gmail.com>
-        <20210714133913.000075a6@Huawei.com>
-        <CA+V-a8spDa5PiGzp6-4mHTEMfQYJ5NnQ44vwgdtu_sfVG5OO5Q@mail.gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; i686-w64-mingw32)
+        Thu, 15 Jul 2021 13:35:18 -0400
+Received: by mail-il1-f176.google.com with SMTP id e13so5716566ilc.1;
+        Thu, 15 Jul 2021 10:32:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=L/JbGcL5UneA3N/Kc5Uozt/sqM+fxDCCN86JX+ouls8=;
+        b=rmRquY++yXkmmDvnK1Pnj0Z80PDIHMlBgNEp7w4PVmMf4gQ4JlCplo5yGfvXSfGFo8
+         yu84TsC9DYGnVcw7eKcXJOD20hbyibR5qHE38d5YXRgKSVopVu933GDiauVHzhSArvxo
+         Fj9UNQCzVq/445vW8UI+OGkeoN3A69nVSzG1vO8H8EQ2UgqnHJSceuKti14inQYoNddO
+         JqBMaeNQHfNc+8JqVI8yn2HVAko8n6djiIL3ak/rxR4hjrgAuZP2j6E4sn68eoV+iojS
+         r/GCX69QD+KSImyjcDk9SGaEqpulVgzrTxcq8EQOLPb8n71iUYCYCoTiE7BLz0rMxHUa
+         FNOw==
+X-Gm-Message-State: AOAM533vaNJTCl0TAaCA7Q2EyUS1ZStMOL2IamEe6rooacZMAXUdojAf
+        T7ULFpxSaSmbO27oUShs+Q==
+X-Google-Smtp-Source: ABdhPJxRce3xk7bLPbUtrq3dhlbc3XHR2GwbzcDzq62pAY3jd5i1HhXD3Gj/7AQzjzrQAKLR+K3S/Q==
+X-Received: by 2002:a92:a806:: with SMTP id o6mr3526259ilh.53.1626370344492;
+        Thu, 15 Jul 2021 10:32:24 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id r4sm3316508ilb.42.2021.07.15.10.32.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Jul 2021 10:32:23 -0700 (PDT)
+Received: (nullmailer pid 1292199 invoked by uid 1000);
+        Thu, 15 Jul 2021 17:32:21 -0000
+Date:   Thu, 15 Jul 2021 11:32:21 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Alex Helms <alexander.helms.jy@renesas.com>
+Cc:     michal.simek@xilinx.com, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, linux-renesas-soc@vger.kernel.org,
+        geert+renesas@glider.be, sboyd@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, david.cater.jc@renesas.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: Add binding for Renesas 8T49N241
+Message-ID: <20210715173221.GA1292141@robh.at.kernel.org>
+References: <20210713214126.2278-1-alexander.helms.jy@renesas.com>
+ <20210713214126.2278-2-alexander.helms.jy@renesas.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.47.82.59]
-X-ClientProxiedBy: lhreml732-chm.china.huawei.com (10.201.108.83) To
- lhreml710-chm.china.huawei.com (10.201.108.61)
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210713214126.2278-2-alexander.helms.jy@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 14 Jul 2021 19:24:27 +0100
-"Lad, Prabhakar" <prabhakar.csengg@gmail.com> wrote:
-
-> Hi Jonathan,
+On Tue, 13 Jul 2021 14:41:25 -0700, Alex Helms wrote:
+> Renesas 8T49N241 has 4 outputs, 1 integral and 3 fractional dividers.
+> The 8T49N241 accepts up to two differential or single-ended input clocks
+> and a fundamental-mode crystal input. The internal PLL can lock to either
+> of the input reference clocks or to the crystal to behave as a frequency
+> synthesizer.
 > 
-> On Wed, Jul 14, 2021 at 1:39 PM Jonathan Cameron
-> <Jonathan.Cameron@huawei.com> wrote:
-> >
-> > On Wed, 14 Jul 2021 10:11:49 +0100
-> > "Lad, Prabhakar" <prabhakar.csengg@gmail.com> wrote:
-> >  
-> > > Hi Jonathan,
-> > >
-> > > Thank you for the review.
-> > >
-> > > On Sat, Jul 3, 2021 at 6:17 PM Jonathan Cameron <jic23@kernel.org> wrote:  
-> > > >
-> > > > On Tue, 29 Jun 2021 23:03:27 +0100
-> > > > Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > > >  
-> > > > > Add binding documentation for Renesas RZ/G2L A/D converter block.
-> > > > >
-> > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>  
-> > > > Hi,
-> > > >
-> > > > See inline
-> > > >
-> > > > Jonathan
-> > > >  
-> > > > > ---
-> > > > >  .../bindings/iio/adc/renesas,rzg2l-adc.yaml   | 121 ++++++++++++++++++
-> > > > >  1 file changed, 121 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
-> > > > > new file mode 100644
-> > > > > index 000000000000..db935d6d59eb
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
-> > > > > @@ -0,0 +1,121 @@
-> > > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > > +%YAML 1.2
-> > > > > +---
-> > > > > +$id: http://devicetree.org/schemas/iio/adc/renesas,rzg2l-adc.yaml#
-> > > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > > +
-> > > > > +title: Renesas RZ/G2L ADC
-> > > > > +
-> > > > > +maintainers:
-> > > > > +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > +
-> > > > > +description: |
-> > > > > +  A/D Converter block is a successive approximation analog-to-digital converter
-> > > > > +  with a 12-bit accuracy. Up to eight analog input channels can be selected.
-> > > > > +  Conversions can be performed in single or repeat mode. Result of the ADC is
-> > > > > +  stored in a 32-bit data register corresponding to each channel.
-> > > > > +
-> > > > > +properties:
-> > > > > +  compatible:
-> > > > > +    oneOf:
-> > > > > +      - items:
-> > > > > +          - enum:
-> > > > > +              - renesas,r9a07g044-adc   # RZ/G2{L,LC}
-> > > > > +          - const: renesas,rzg2l-adc
-> > > > > +
-> > > > > +  reg:
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  interrupts:
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  clocks:
-> > > > > +    items:
-> > > > > +      - description: converter clock
-> > > > > +      - description: peripheral clock
-> > > > > +
-> > > > > +  clock-names:
-> > > > > +    items:
-> > > > > +      - const: adclk
-> > > > > +      - const: pclk
-> > > > > +
-> > > > > +  power-domains:
-> > > > > +    maxItems: 1
-> > > > > +
-> > > > > +  resets:
-> > > > > +    maxItems: 2
-> > > > > +
-> > > > > +  reset-names:
-> > > > > +    items:
-> > > > > +      - const: presetn
-> > > > > +      - const: adrst-n
-> > > > > +
-> > > > > +  renesas-rzg2l,adc-trigger-mode:
-> > > > > +    $ref: /schemas/types.yaml#/definitions/uint8
-> > > > > +    description: Trigger mode for A/D converter
-> > > > > +    enum:
-> > > > > +      - 0 # Software trigger mode (Defaults)
-> > > > > +      - 1 # Asynchronous trigger using ADC_TRG trigger input pin
-> > > > > +      - 2 # Synchronous trigger (Trigger from MTU3a/GPT)  
-> > > >
-> > > > Is this a function of the board in some fashion?  If not it sounds like
-> > > > something that should be in control of userspace.  Normally we'd
-> > > > do that by having the driver register some iio_triggers and depending
-> > > > on which one is selected do the equivalent of what you have here.
-> > > >  
-> > > Agreed for Asynchronous and Synchronous triggers. WRT Software trigger
-> > > should this be registered as a  iio_triggers too or read_raw()
-> > > callback (with IIO_CHAN_INFO_RAW case)  should be treated as Software
-> > > trigger?
-> > >  
-> >
-> > Normally we'd use an external trigger to provide the software trigger
-> > (plus as you say sysfs reads will map to this functionality).
-> >
-> > Something like the sysfs trigger or the hrtimer one would get used, though
-> > also fine to use the dataready trigger from a different device (if you want
-> > approximately synced dta.
-> >  
-> We can live with syfs reads for now for SW triggers. Coming back to HW
-> triggers I responded too quickly!. I am now trying to implement a gpio
-> based HW trigger i.e. to kick adc conversion start but I couldn't find
-> any drivers doing that. I looked at iio-trig-interrupt.c which
-> registers irq based triggers, so something similar needs to be
-> implemented in the adc driver? If that is the case the gpio has to be
-> passed via to DT and use gpio_to_irq to register the handler. Or is it
-> that I am missing something here ?
-
-Ok, I'm not really following the usecase for this. Is the thought that you'll
-get lower latency / jitter triggering via a gpio rather than using a
-bus write to the device (though on an integrated ADC I can't see why that would
-be the case)?
-
-If so, then what is actually setting the gpio?  Something is ultimately
-acting as the real trigger.  A common model would be an hrtimer trigger
-for example.   If you then want to wire the driver up to capture on demand
-using the gpio (to reduce latency) that's fine, but the gpio itself is
-never a trigger in the sense of an IIO trigger (rather than a trigger
-to the ADC itself).  In that case, have the trigger handler set the
-the gpio and wait for data capture to finish.  Quite a few drivers
-do this as some devices can only start sampling on an external pin being
-set.  E.g. adc/ad7606.c 
-
-The iio-trig-interrupt is about using an external interrupt to trigger
-a capture initialized by a register write or similar, it's not a direct
-hardware capture signal.
-
-Jonathan
-
+> Signed-off-by: Alex Helms <alexander.helms.jy@renesas.com>
+> ---
+>  .../bindings/clock/renesas,8t49n241.yaml      | 190 ++++++++++++++++++
+>  MAINTAINERS                                   |   6 +
+>  2 files changed, 196 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,8t49n241.yaml
 > 
-> Cheers,
-> Prabhakar
-> 
-> > > > > +    default: 0
-> > > > > +
-> > > > > +  gpios:
-> > > > > +    description:
-> > > > > +      ADC_TRG trigger input pin
-> > > > > +    maxItems: 1  
-> > > > Why is this mode useful?  I'm assuming the gpio write would take a register
-> > > > write and the software trigger mode also requires a register write.
-> > > >  
-> > > Yes gpio write would take a register write.
-> > >  
-> > > > Normally the reason for a pin like this is to support synchronising with
-> > > > external hardware.   If that's the case, we should call that out here.
-> > > > often the pin isn't even connected to a gpio in our control.
-> > > > (i.e. it's a trigger signal from some other device.)
-> > > >  
-> > > So just setting the GPIO pin as input should do the trick.  
-> >
-> > Probably the best plan if you actually care about people writing some
-> > trigger up to it that is otherwise invisible to the system.
-> >  
-> > >  
-> > > > > +
-> > > > > +  renesas-rzg2l,adc-channels:
-> > > > > +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> > > > > +    description: Input channels available on platform
-> > > > > +    uniqueItems: true
-> > > > > +    minItems: 1
-> > > > > +    maxItems: 8
-> > > > > +    items:
-> > > > > +      enum: [0, 1, 2, 3, 4, 5, 6, 7]  
-> > > >
-> > > > Is this a function of different devices (should have different compatibles)
-> > > > or of what is wired up.  If it's what is wired up, then how do you know which  
-> > > Its channels which are wired, for example if channels 0-5 are wired up
-> > > the board dts would include the property "renesas-rzg2l,adc-channels =
-> > > /bits/ 8 <0 1 2 3 4 5>;"
-> > >  
-> > > > subset of channels are connected?  We have the generic adc channel binding
-> > > > in iio/adc/adc.yaml for the case where we only want to expose those channels
-> > > > that are wired up.  It uses a node per channel.
-> > > >  
-> > > Agreed will do that and drop the custom "renesas-rzg2l,adc-channels"  
-> >
-> > Great,
-> >
-> > Jonathan
-> >  
-> > >
-> > > Cheers,
-> > > Prabhakar  
-> > > > > +
-> > > > > +  "#io-channel-cells":
-> > > > > +    const: 1
-> > > > > +
-> > > > > +required:
-> > > > > +  - compatible
-> > > > > +  - reg
-> > > > > +  - interrupts
-> > > > > +  - clocks
-> > > > > +  - clock-names
-> > > > > +  - power-domains
-> > > > > +  - resets
-> > > > > +  - reset-names
-> > > > > +  - renesas-rzg2l,adc-channels
-> > > > > +  - "#io-channel-cells"
-> > > > > +
-> > > > > +allOf:
-> > > > > +  - if:
-> > > > > +      properties:
-> > > > > +        renesas-rzg2l,adc-trigger-mode:
-> > > > > +          const: 1
-> > > > > +    then:
-> > > > > +      required:
-> > > > > +        - gpios
-> > > > > +
-> > > > > +additionalProperties: false
-> > > > > +
-> > > > > +examples:
-> > > > > +  - |
-> > > > > +    #include <dt-bindings/clock/r9a07g044-cpg.h>
-> > > > > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > > > > +
-> > > > > +    adc: adc@10059000 {
-> > > > > +      compatible = "renesas,r9a07g044-adc", "renesas,rzg2l-adc";
-> > > > > +      reg = <0x10059000 0x400>;
-> > > > > +      interrupts = <GIC_SPI 347 IRQ_TYPE_EDGE_RISING>;
-> > > > > +      clocks = <&cpg CPG_MOD R9A07G044_ADC_ADCLK>,
-> > > > > +               <&cpg CPG_MOD R9A07G044_ADC_PCLK>;
-> > > > > +      clock-names = "adclk", "pclk";
-> > > > > +      power-domains = <&cpg>;
-> > > > > +      resets = <&cpg R9A07G044_ADC_PRESETN>,
-> > > > > +               <&cpg R9A07G044_ADC_ADRST_N>;
-> > > > > +      reset-names = "presetn", "adrst-n";
-> > > > > +      #io-channel-cells = <1>;
-> > > > > +      renesas-rzg2l,adc-trigger-mode = /bits/ 8 <0>;
-> > > > > +      renesas-rzg2l,adc-channels = /bits/ 8 <0 1 2 3 4 5 6>;
-> > > > > +    };  
-> > > >  
-> >  
 
+Reviewed-by: Rob Herring <robh@kernel.org>
