@@ -2,106 +2,167 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA91C07E95
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 00:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 125B6C07E95
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 00:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1869461107
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 00:10:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECB676115B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 00:10:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239988AbhGSX1h (ORCPT
+        id S1355296AbhGSX2G (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Jul 2021 19:27:37 -0400
-Received: from mail-il1-f182.google.com ([209.85.166.182]:38514 "EHLO
-        mail-il1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1389538AbhGSVfs (ORCPT
+        Mon, 19 Jul 2021 19:28:06 -0400
+Received: from mga04.intel.com ([192.55.52.120]:43570 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1384822AbhGSWOa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jul 2021 17:35:48 -0400
-Received: by mail-il1-f182.google.com with SMTP id s5so10443501ild.5;
-        Mon, 19 Jul 2021 15:16:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=874ZtwewxQXPmAbbhVDeMiVd05ey4l+/IKy2ovtuitI=;
-        b=DqPpQCpL+FgzoM0rOjSL5tvgtM4gu5IVhQSHRJbntQ7AbaY+EewMB4IUJuhQui2q39
-         gUHNByDGHE2Ph4H/hxTVeT3MMOUCa3YCk79wyK13atRrJoVda/1YKRmAKlIQJVG8NvXq
-         vs3EH6EsMg9+Rbmi/HeCrsG97k5FJG2U1KPLmpZ0rJv0ROKTbPyx+4oKlYDxR73xY+X4
-         r/QJ1y06iJKkG7OLAG2r6nKZukLmynxkXJiWpRQFJuBeOU99kG6o2VSD3V7iMxd91jof
-         033BUpWaelyUF/Q+sC0zqhdHb8saCLb+ihXon5KATNRBrQA5OyyBHSV1lnyJn0wKVODC
-         /Vvw==
-X-Gm-Message-State: AOAM5313E/evp4JbWCxTwMTySCU4RqlUXJsa3fMMs3Veqdhd1hTCEHPG
-        eFoRpJmH3MVRSoVUj9eutg==
-X-Google-Smtp-Source: ABdhPJy0wIMrRJZvaZ8C3U3+0ufoLOCgddvaLLTczqOg1l4VABQ3B1O61gghWf9BfbPEH4Ip5Qcqeg==
-X-Received: by 2002:a92:c005:: with SMTP id q5mr16040538ild.117.1626732985753;
-        Mon, 19 Jul 2021 15:16:25 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id w14sm7444837ilj.76.2021.07.19.15.16.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jul 2021 15:16:25 -0700 (PDT)
-Received: (nullmailer pid 2698560 invoked by uid 1000);
-        Mon, 19 Jul 2021 22:16:22 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        alsa-devel@alsa-project.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>
-In-Reply-To: <20210719134040.7964-2-biju.das.jz@bp.renesas.com>
-References: <20210719134040.7964-1-biju.das.jz@bp.renesas.com> <20210719134040.7964-2-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v2 1/8] ASoC: dt-bindings: Document RZ/G2L bindings
-Date:   Mon, 19 Jul 2021 16:16:22 -0600
-Message-Id: <1626732982.918933.2698559.nullmailer@robh.at.kernel.org>
+        Mon, 19 Jul 2021 18:14:30 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10050"; a="209238825"
+X-IronPort-AV: E=Sophos;i="5.84,253,1620716400"; 
+   d="scan'208";a="209238825"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2021 15:50:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.84,253,1620716400"; 
+   d="scan'208";a="660948106"
+Received: from lkp-server01.sh.intel.com (HELO a467b34d8c10) ([10.239.97.150])
+  by fmsmga005.fm.intel.com with ESMTP; 19 Jul 2021 15:50:15 -0700
+Received: from kbuild by a467b34d8c10 with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1m5c5W-0000pB-MX; Mon, 19 Jul 2021 22:50:14 +0000
+Date:   Tue, 20 Jul 2021 06:49:30 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [renesas-devel:renesas-arm-defconfig-for-v5.15] BUILD SUCCESS
+ d016ed8d8ee821da772b6f6a8d63a7016a41d17c
+Message-ID: <60f6017a.nYyhKXwWeJRHLzB4%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, 19 Jul 2021 14:40:33 +0100, Biju Das wrote:
-> Document RZ/G2L ASoC serial sound interface bindings.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v1->v2:
->  * Rebased to latest mainline rc branch.
-> ---
->  .../bindings/sound/renesas,rz-ssi.yaml        | 85 +++++++++++++++++++
->  1 file changed, 85 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
-> 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-defconfig-for-v5.15
+branch HEAD: d016ed8d8ee821da772b6f6a8d63a7016a41d17c  arm64: defconfig: Enable RIIC
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+elapsed time: 722m
 
-yamllint warnings/errors:
+configs tested: 99
+configs skipped: 51
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/sound/renesas,rz-ssi.example.dts:31.34-35 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:380: Documentation/devicetree/bindings/sound/renesas,rz-ssi.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1418: dt_binding_check] Error 2
-\ndoc reference errors (make refcheckdocs):
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-See https://patchwork.ozlabs.org/patch/1507078
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+powerpc                     rainier_defconfig
+x86_64                              defconfig
+mips                   sb1250_swarm_defconfig
+mips                  maltasmvp_eva_defconfig
+sparc64                             defconfig
+arm                         mv78xx0_defconfig
+arm                         lpc32xx_defconfig
+arm                          imote2_defconfig
+xtensa                         virt_defconfig
+powerpc                    klondike_defconfig
+arm                            mmp2_defconfig
+arc                              alldefconfig
+powerpc                      ppc44x_defconfig
+arm                       imx_v4_v5_defconfig
+sh                          polaris_defconfig
+m68k                        m5307c3_defconfig
+parisc                              defconfig
+powerpc                 mpc8313_rdb_defconfig
+powerpc                   microwatt_defconfig
+arm                         at91_dt_defconfig
+mips                        bcm63xx_defconfig
+m68k                             allyesconfig
+mips                         bigsur_defconfig
+sh                          sdk7780_defconfig
+arm                          pcm027_defconfig
+xtensa                  audio_kc705_defconfig
+sh                         ecovec24_defconfig
+sh                     magicpanelr2_defconfig
+openrisc                         alldefconfig
+arm                          gemini_defconfig
+xtensa                    xip_kc705_defconfig
+sh                          r7780mp_defconfig
+riscv                    nommu_virt_defconfig
+arm                           spitz_defconfig
+powerpc                     ppa8548_defconfig
+powerpc                           allnoconfig
+arm                            qcom_defconfig
+m68k                       m5275evb_defconfig
+arm                          collie_defconfig
+x86_64                            allnoconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+s390                             allyesconfig
+s390                             allmodconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+x86_64               randconfig-a005-20210718
+x86_64               randconfig-a004-20210718
+x86_64               randconfig-a002-20210718
+x86_64               randconfig-a003-20210718
+x86_64               randconfig-a006-20210718
+x86_64               randconfig-a001-20210718
+i386                 randconfig-a005-20210719
+i386                 randconfig-a004-20210719
+i386                 randconfig-a006-20210719
+i386                 randconfig-a001-20210719
+i386                 randconfig-a003-20210719
+i386                 randconfig-a002-20210719
+i386                 randconfig-a014-20210719
+i386                 randconfig-a015-20210719
+i386                 randconfig-a011-20210719
+i386                 randconfig-a013-20210719
+i386                 randconfig-a016-20210719
+i386                 randconfig-a012-20210719
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+clang tested configs:
+x86_64               randconfig-b001-20210719
+x86_64               randconfig-a005-20210719
+x86_64               randconfig-a004-20210719
+x86_64               randconfig-a002-20210719
+x86_64               randconfig-a003-20210719
+x86_64               randconfig-a006-20210719
+x86_64               randconfig-a001-20210719
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
