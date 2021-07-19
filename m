@@ -2,173 +2,167 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28127C07E9D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD6EC6377B
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 00:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 052B960E0C
+	by mail.kernel.org (Postfix) with ESMTP id 1F41561107
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 00:10:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1355470AbhGSX2Z (ORCPT
+        id S1355865AbhGSX2d (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Jul 2021 19:28:25 -0400
-Received: from mga12.intel.com ([192.55.52.136]:5544 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1359102AbhGSWWI (ORCPT
+        Mon, 19 Jul 2021 19:28:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34426 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1442033AbhGSWdg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jul 2021 18:22:08 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10050"; a="190729729"
-X-IronPort-AV: E=Sophos;i="5.84,253,1620716400"; 
-   d="scan'208";a="190729729"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jul 2021 15:50:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.84,253,1620716400"; 
-   d="scan'208";a="509539153"
-Received: from lkp-server01.sh.intel.com (HELO a467b34d8c10) ([10.239.97.150])
-  by fmsmga002.fm.intel.com with ESMTP; 19 Jul 2021 15:50:15 -0700
-Received: from kbuild by a467b34d8c10 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1m5c5W-0000pD-NB; Mon, 19 Jul 2021 22:50:14 +0000
-Date:   Tue, 20 Jul 2021 06:49:33 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:renesas-arm-dt-for-v5.15] BUILD SUCCESS
- a0a6968c99595757b571147cac621cbbc25ba63d
-Message-ID: <60f6017d.M/v6kFHLBRabwllR%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Mon, 19 Jul 2021 18:33:36 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6761C05BD0E
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Jul 2021 15:32:49 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id b12so17966219pfv.6
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Jul 2021 15:32:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=+LPTNIiw3whjUeJjDC2D4AcOYYNzL07Nz+0ckPNw23w=;
+        b=IPh7JagIqPveFZhxYTrOkLDg8tRMkKBfY2OhcvCxqy7ipCi8FIe+EBspmQlrPRk/b/
+         YGH+ZFk7I4M3p87wnvA/0LKvEnhQCATDlEGbbbUE7crruyOQKZtx+opLBfwhtNG4ftE1
+         G94KMZAlF9WnjQ2Gsu6YcuD5+oCLZlLRvTXMqCGn8WQxKmrwX8wYDVltR11BPcwCyhAi
+         fC93KY/6NF9SvFW3255YCGdRjLI/+rEHYIaQqC/gKfZKSKw7LQ9xmwnzVMGBJPl7S4ee
+         yxkIZEVyDFDzZHqaSZVY3lQJlwb/0iwvFJYR5nz1DyN8PFQIxDrOtYH4Uo1tZi6Maiu8
+         42MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=+LPTNIiw3whjUeJjDC2D4AcOYYNzL07Nz+0ckPNw23w=;
+        b=DREwniJrDk05B6EfgEtC2bF+RkOp4FGoWettpYZyU9V/zjp0FuIrvpOkPyDvZraNG5
+         xJLpiEz+Q87s4jIT2fwPqLEte6R3yywKXSfagHTyyHaTEhvVpryhWDlQ/JIYSGe6O95d
+         ieDcnazuzxr4WwSAK10KGl6tmQKLztjyLdwKAOtrdxiwPCztM/NuGmRcvM28EWT0iwRt
+         fQaQDFCAOJtIZntExQVUlZ524aQlk6W45wXsIdlb94QbPKKrivjexIQ08hy5n0OjrF5p
+         LlXZruYvMS0LTnA0gRfKu2ebbDz+WjCbLKxrgTtSI4pMLJ8k07garpdrGsj0alQB0tUW
+         Khvw==
+X-Gm-Message-State: AOAM531AdILc5zq2+enlmR1e354DW61ukuyxIISKujDqQsWx5jq5lRpu
+        utwjYRlG9J7+NIm5RoOC8aHtPkj4BZ8N/GgU
+X-Google-Smtp-Source: ABdhPJyBAWw0ZCMvTHbac28vgFj6GxbI3dXcjr+htxEbrQDajTPxHLfCOQyiEm+oE9ZgJa+jZMiTyw==
+X-Received: by 2002:a63:b342:: with SMTP id x2mr27445052pgt.152.1626733969256;
+        Mon, 19 Jul 2021 15:32:49 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id d2sm21359450pfa.84.2021.07.19.15.32.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jul 2021 15:32:49 -0700 (PDT)
+Message-ID: <60f5fd91.1c69fb81.cd16.e74b@mx.google.com>
+Date:   Mon, 19 Jul 2021 15:32:49 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-devel-2021-07-19-v5.14-rc2
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+Subject: renesas/master igt-kms-rockchip: 1 runs,
+ 1 regressions (renesas-devel-2021-07-19-v5.14-rc2)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-dt-for-v5.15
-branch HEAD: a0a6968c99595757b571147cac621cbbc25ba63d  arm64: dts: renesas: rcar-gen3: Add SoC model to comment headers
+renesas/master igt-kms-rockchip: 1 runs, 1 regressions (renesas-devel-2021-=
+07-19-v5.14-rc2)
 
-elapsed time: 722m
+Regressions Summary
+-------------------
 
-configs tested: 105
-configs skipped: 54
+platform         | arch  | lab           | compiler | defconfig | regressio=
+ns
+-----------------+-------+---------------+----------+-----------+----------=
+--
+rk3399-gru-kevin | arm64 | lab-collabora | gcc-8    | defconfig | 1        =
+  =
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-mips                  maltasmvp_eva_defconfig
-sparc64                             defconfig
-arm                         mv78xx0_defconfig
-arm                         lpc32xx_defconfig
-arm                          imote2_defconfig
-xtensa                         virt_defconfig
-powerpc                    klondike_defconfig
-arm                            mmp2_defconfig
-arc                              alldefconfig
-powerpc                      ppc44x_defconfig
-arm                       imx_v4_v5_defconfig
-sh                          polaris_defconfig
-m68k                        m5307c3_defconfig
-parisc                              defconfig
-powerpc                 mpc8313_rdb_defconfig
-powerpc                   microwatt_defconfig
-arm                         at91_dt_defconfig
-mips                        bcm63xx_defconfig
-m68k                             allyesconfig
-mips                         bigsur_defconfig
-sh                          sdk7780_defconfig
-arm                          pcm027_defconfig
-xtensa                  audio_kc705_defconfig
-sh                         ecovec24_defconfig
-sh                     magicpanelr2_defconfig
-openrisc                         alldefconfig
-arm                          gemini_defconfig
-xtensa                    xip_kc705_defconfig
-sh                          r7780mp_defconfig
-riscv                    nommu_virt_defconfig
-arm                           spitz_defconfig
-powerpc                     ppa8548_defconfig
-powerpc                           allnoconfig
-arm                            qcom_defconfig
-m68k                       m5275evb_defconfig
-arm                          collie_defconfig
-x86_64                            allnoconfig
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-s390                             allyesconfig
-s390                             allmodconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-x86_64               randconfig-a005-20210718
-x86_64               randconfig-a004-20210718
-x86_64               randconfig-a002-20210718
-x86_64               randconfig-a003-20210718
-x86_64               randconfig-a006-20210718
-x86_64               randconfig-a001-20210718
-i386                 randconfig-a005-20210720
-i386                 randconfig-a003-20210720
-i386                 randconfig-a004-20210720
-i386                 randconfig-a002-20210720
-i386                 randconfig-a001-20210720
-i386                 randconfig-a006-20210720
-i386                 randconfig-a005-20210719
-i386                 randconfig-a004-20210719
-i386                 randconfig-a006-20210719
-i386                 randconfig-a001-20210719
-i386                 randconfig-a003-20210719
-i386                 randconfig-a002-20210719
-i386                 randconfig-a014-20210719
-i386                 randconfig-a015-20210719
-i386                 randconfig-a011-20210719
-i386                 randconfig-a013-20210719
-i386                 randconfig-a016-20210719
-i386                 randconfig-a012-20210719
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-um                           x86_64_defconfig
-um                             i386_defconfig
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2021-07-19-v5.14-rc2/plan/igt-kms-rockchip/
 
-clang tested configs:
-x86_64               randconfig-b001-20210720
-x86_64               randconfig-b001-20210719
-x86_64               randconfig-a005-20210719
-x86_64               randconfig-a004-20210719
-x86_64               randconfig-a002-20210719
-x86_64               randconfig-a003-20210719
-x86_64               randconfig-a006-20210719
-x86_64               randconfig-a001-20210719
+  Test:     igt-kms-rockchip
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2021-07-19-v5.14-rc2
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      2f3bebb9dc31fbb1e815f63cf3f61763f7d1d8f9
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+  Test suite revisions:
+    drm
+      URL:  git://anongit.freedesktop.org/mesa/drm
+      SHA:  9cef5dee3cd817728c83aeb3c2010c1954e4c402
+    igt-gpu-tools
+      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
+      SHA:  cd63c83e23789eb194d38b8d272247a88122f2f6 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform         | arch  | lab           | compiler | defconfig | regressio=
+ns
+-----------------+-------+---------------+----------+-----------+----------=
+--
+rk3399-gru-kevin | arm64 | lab-collabora | gcc-8    | defconfig | 1        =
+  =
+
+
+  Details:     https://kernelci.org/test/plan/id/60f5eddb060005701b1160fa
+
+  Results:     80 PASS, 14 FAIL, 141 SKIP
+  Full config: defconfig
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-07-19-v5.14-rc2/arm64/defconfig/gcc-8/lab-collabora/igt-kms-rockchip-rk=
+3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-07-19-v5.14-rc2/arm64/defconfig/gcc-8/lab-collabora/igt-kms-rockchip-rk=
+3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-igt/=
+20210709.0/arm64/rootfs.cpio.gz =
+
+
+
+  * igt-kms-rockchip.kms_vblank.pipe-A-ts-continuation-suspend: https://ker=
+nelci.org/test/case/id/60f5eddb060005701b116182
+        failing since 5 days (last pass: renesas-devel-2021-06-22-v5.13-rc7=
+, first fail: renesas-devel-2021-07-13-v5.14-rc1)
+
+    2021-07-19T21:23:59.993176  <6>[   79.401513] Console: switching to col=
+our dummy device 80x25
+    2021-07-19T21:23:59.997370  <14>[   79.408198] [IGT] kms_vblank: execut=
+ing
+    2021-07-19T21:24:00.013341  IGT-Version: 1.26-gcd63c83 (aarch64) (Linux=
+: 5.14.0-rc2 aarch64)<14>[   79.414755] [IGT] kms_vblank: starting subtest =
+pipe-A-ts-continuation-suspend
+    2021-07-19T21:24:00.013696  =
+
+    2021-07-19T21:24:00.018106  Starting subtest: pipe-A-ts-continuation-su=
+spend
+    2021-07-19T21:24:00.090233  Beginning pipe-A-ts-continuation-suspend on=
+ pipe A, connector eDP-1
+    2021-07-19T21:24:00.117616  [cmd] rtcwake: assuming RTC uses UTC ...
+    2021-07-19T21:24:00.124226  rtcwake: wakeup from \"mem\" using /dev/rtc=
+0 at Mon Jul 19 21:23:28 2021
+    2021-07-19T21:24:00.137504  <6>[   79.548515] PM: suspend entry (deep)
+    2021-07-19T21:24:00.142212  <6>[   79.552999] Filesystems sync: 0.000 s=
+econds =
+
+    ... (126 line(s) more)  =
+
+ =20
