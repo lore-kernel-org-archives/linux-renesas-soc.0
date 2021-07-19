@@ -2,127 +2,111 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52404C07E95
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 14:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F65FC07E9D
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 15:32:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B64D61003
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 14:40:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57AFA60FE7
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 15:32:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241304AbhGSN72 (ORCPT
+        id S242932AbhGSOvl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Jul 2021 09:59:28 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:58472 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S241233AbhGSN7Z (ORCPT
+        Mon, 19 Jul 2021 10:51:41 -0400
+Received: from mail-io1-f48.google.com ([209.85.166.48]:36481 "EHLO
+        mail-io1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S245585AbhGSOry (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jul 2021 09:59:25 -0400
-X-IronPort-AV: E=Sophos;i="5.84,252,1620658800"; 
-   d="scan'208";a="88086604"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Jul 2021 23:40:04 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id A06854003EAE;
-        Mon, 19 Jul 2021 23:40:00 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mon, 19 Jul 2021 10:47:54 -0400
+Received: by mail-io1-f48.google.com with SMTP id u7so20340960ion.3;
+        Mon, 19 Jul 2021 08:28:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
+         :message-id;
+        bh=eFIkG9Q3na2P9WfVxEfmGfFeBva/wNkbIdbDdNfP9ss=;
+        b=uVVxhfzz/SzKY2O4Dj50b7XIxkvoBL/28mZVj5BG2lybkhle+p5Op8hN/d6KlB4ej6
+         KSdrM/GuFRZ0OZvCxl0IDAStQFvq3Qv6R6aIRmm1bb7kKvAXWqydFKU29Z1LWT6ce2vm
+         7D4y9s4bUaKJ1EiJoDtPxOos8RCpERT+J0n90g0dDEDzBKMghXGkTiLhyLoTtPvt+Ex5
+         OyaaaZ6555piBg0N9pPsCsWMasNMeiVsCppvlR1uQmOuC2Sq23J4yfCBCqFoNkhA1jf4
+         joo3Oo9PgBQddxi3Uw9QhJIbyL5ilWoOlyCSzeea0BBqyNTnRQ/OC8MwnNFTN7ewNc8Y
+         lrRw==
+X-Gm-Message-State: AOAM530hCou6nHDcR/T8vuT4fWyC8r/Uim5i4WyRDM89UXV3otXL1lUi
+        pF8CcNpul2oWAJeyOdbgqhE9xF484w==
+X-Google-Smtp-Source: ABdhPJw8/LevWrg619EkdpGNxWnCipTPa+LBctYPqT12T8/8LeJEgpwWD4Dno/0xyBYDRyHsBk8Olw==
+X-Received: by 2002:a6b:7948:: with SMTP id j8mr18912639iop.32.1626708483880;
+        Mon, 19 Jul 2021 08:28:03 -0700 (PDT)
+Received: from robh.at.kernel.org ([64.188.179.248])
+        by smtp.gmail.com with ESMTPSA id 10sm483907iln.39.2021.07.19.08.28.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Jul 2021 08:28:03 -0700 (PDT)
+Received: (nullmailer pid 1967265 invoked by uid 1000);
+        Mon, 19 Jul 2021 15:27:59 -0000
+From:   Rob Herring <robh@kernel.org>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 5/5] arm64: dts: renesas: r9a07g044: Add CANFD node
-Date:   Mon, 19 Jul 2021 15:38:11 +0100
-Message-Id: <20210719143811.2135-6-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20210719143811.2135-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20210719143811.2135-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20210719121938.6532-4-biju.das.jz@bp.renesas.com>
+References: <20210719121938.6532-1-biju.das.jz@bp.renesas.com> <20210719121938.6532-4-biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v4 03/10] dt-bindings: reset: Document RZ/G2L USBPHY Control bindings
+Date:   Mon, 19 Jul 2021 09:27:59 -0600
+Message-Id: <1626708479.397199.1967264.nullmailer@robh.at.kernel.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add CANFD node to R9A07G044 (RZ/G2L) SoC DTSI.
+On Mon, 19 Jul 2021 13:19:31 +0100, Biju Das wrote:
+> Add device tree binding document for RZ/G2L USBPHY Control Device.
+> It mainly controls reset and power down of the USB/PHY.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+> v3->v4:
+>   * Dropped reset reference.
+>   * Added Rb-tag from Rob.
+>  v3:
+>   * New patch.
+>   * Modelled USBPHY control from phy bindings to reset bindings, since the
+>     IP mainly contols the reset of USB PHY.
+> ---
+>  .../reset/renesas,rzg2l-usbphy-ctrl.yaml      | 65 +++++++++++++++++++
+>  1 file changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
+> 
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
+on your patch (DT_CHECKER_FLAGS is new in v5.13):
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-index 28aafa34d583..24032f38e3a1 100644
---- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-@@ -13,6 +13,13 @@
- 	#address-cells = <2>;
- 	#size-cells = <2>;
- 
-+	/* External CAN clock - to be overridden by boards that provide it */
-+	can_clk: can {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <0>;
-+	};
-+
- 	/* clock can be either from exclk or crystal oscillator (XIN/XOUT) */
- 	extal_clk: extal {
- 		compatible = "fixed-clock";
-@@ -89,6 +96,41 @@
- 			status = "disabled";
- 		};
- 
-+		canfd: can@10050000 {
-+			compatible = "renesas,r9a07g044-canfd", "renesas,rzg2l-canfd";
-+			reg = <0 0x10050000 0 0x8000>;
-+			interrupts = <GIC_SPI 426 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "g_error", "g_rx_fifo",
-+					  "can0_error", "can0_tx",
-+					  "can0_tx_rx_fifo_receive_completion",
-+					  "can1_error", "can1_tx",
-+					  "can1_tx_rx_fifo_receive_completion";
-+			clocks = <&cpg CPG_MOD R9A07G044_CANFD_PCLK>,
-+				 <&cpg CPG_CORE R9A07G044_CLK_P0_DIV2>,
-+				 <&can_clk>;
-+			clock-names = "fck", "canfd", "can_clk";
-+			assigned-clocks = <&cpg CPG_CORE R9A07G044_CLK_P0_DIV2>;
-+			assigned-clock-rates = <50000000>;
-+			resets = <&cpg R9A07G044_CANFD_RSTP_N>,
-+				 <&cpg R9A07G044_CANFD_RSTC_N>;
-+			power-domains = <&cpg>;
-+			status = "disabled";
-+
-+			channel0 {
-+				status = "disabled";
-+			};
-+			channel1 {
-+				status = "disabled";
-+			};
-+		};
-+
- 		i2c0: i2c@10058000 {
- 			#address-cells = <1>;
- 			#size-cells = <0>;
--- 
-2.17.1
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Error: Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.example.dts:25.30-31 syntax error
+FATAL ERROR: Unable to parse input tree
+make[1]: *** [scripts/Makefile.lib:380: Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [Makefile:1418: dt_binding_check] Error 2
+\ndoc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/patch/1506961
+
+This check can fail if there are any dependencies. The base for a patch
+series is generally the most recent rc1.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit.
 
