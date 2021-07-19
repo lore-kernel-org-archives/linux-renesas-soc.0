@@ -2,118 +2,240 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B410CC07E9D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 13:47:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D52CC07E9B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 13:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D12D60FF4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 13:47:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF66561009
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 13:53:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240606AbhGSNHN (ORCPT
+        id S240986AbhGSNMr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Jul 2021 09:07:13 -0400
-Received: from mail-io1-f45.google.com ([209.85.166.45]:38862 "EHLO
-        mail-io1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240575AbhGSNHL (ORCPT
+        Mon, 19 Jul 2021 09:12:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42962 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240696AbhGSNKV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jul 2021 09:07:11 -0400
-Received: by mail-io1-f45.google.com with SMTP id k11so20008755ioa.5;
-        Mon, 19 Jul 2021 06:47:49 -0700 (PDT)
+        Mon, 19 Jul 2021 09:10:21 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2534C061574
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Jul 2021 06:13:45 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id b26so30316662lfo.4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 19 Jul 2021 06:50:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=zf+WSmXTCjVZqpUE8MeU/OdeERPZCVgPkWOf9dRsI0Q=;
+        b=x5NVWerdCP31z/OdQpUFdokrYLda8sAehGAY0j+cl1eu2pSPaCLFLkStL96qilEetR
+         9jhiDxo0jePWdMklYXnwLSBm9VDoUoLful0YKmSZDE3HV0GgfABlV9LjpEjPFKO37ATC
+         aHPRXluUKfoQ5vb0PtF3yb4CMQTnmgcZFRw7zZFADTfQbCDo6a+5+FVO40VFcP+CIYUt
+         4xf5/BPDlPUyNRu40YsOtWb7/dPtJKtl1sqlqf8AsUuiMoxbzpMg4mUtNlN/0gEEI4TS
+         +wn95gxVfgPJiy6QRFP64x7ntN+zIgIR/MQw0HHYbl07oVGtVFTQg3ptBdW4NqyeDG/t
+         bwpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=2fiuab3AUpirMe+xcclBf/WRW6F2pGS4dTs8jwQGUok=;
-        b=rRKzrFG5kP1ZnDRHejsXEeT2mvpcay1R8SgXex8sQTeMdMfibVvDKe9OriNc+L8PTU
-         8lOxpqlvhugX41u69deGWf8fRFJsHSZXape2AV/hHlU/aTPQo6SH1CSyjhRy1IMUmtiU
-         LgI3un7qrkRDz5DBRW4MZaE9/otEKKmxiAw2WrTEOgG9nKdR0TFBbGevqVeI53hl40le
-         2xxuZk9Loy7P8m2Ytfu0a4qA6syfHobjlaeryee6fLmslESPLTczhXkrKpyRgVcqDeK2
-         jSQ3aZ4j/fsGcNy+MY4vv/jVw4K9Y+Zyuuk0zSuGhwVaIgquYwgx3z5Jkdd3u3Z/oMIK
-         XaGQ==
-X-Gm-Message-State: AOAM531C/qAxfm2zkFOlHJPuFEa40H+NfSMRhZhxOtrLWiRrqyYbu2xP
-        BScEZLRBDpgz9ZDeZUZBfA==
-X-Google-Smtp-Source: ABdhPJwtlqHg9Kb15lUpckwCOQNa37haWnmd3xy+aNRnUC51mh9WF0lrFw3p6rfXDDQsCQrzJo6s+w==
-X-Received: by 2002:a5d:8888:: with SMTP id d8mr18994729ioo.170.1626702469074;
-        Mon, 19 Jul 2021 06:47:49 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id z12sm10612764iom.6.2021.07.19.06.47.46
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=zf+WSmXTCjVZqpUE8MeU/OdeERPZCVgPkWOf9dRsI0Q=;
+        b=MHCl4DObafGylZbia+KFQvfOZDWJ12pAMpMY0EU+MEFRjv96Cd/urq0hRCpO6AjCvn
+         wyQLIEHuaUQry5sWy6Uiaxwery/HsjeHhG2r8nZv0di1H9vaPkKimWKGqrySkPNNE8Vk
+         J6oUJmjQPck7gZL39fLqDXJdUbDqTU/1O1ClcDATkjW1xTaFGUFfJTJDZAzE9/Ka4xM6
+         o+TXmiDV5sI7Ksu38FkuEMhI/dZJ72yQPltSpE53shEEoBGohqjcL7yRgKatc4ARMq4u
+         Vsot6yUjh6uJAjhA1P8VU6HXB7hOLyn6sMSESSgkEEltUWb06Mw8S5rRVB55rv/RzgJQ
+         /t9w==
+X-Gm-Message-State: AOAM530dioifhH8kNsYfj+F4zD5LKdFJAwLEQ9YJz0JBni8/K0z2NRS0
+        J4nmIWGoR1069DuZOPpNf2briQ==
+X-Google-Smtp-Source: ABdhPJydMLPdU9JUIpdHmL160Zwcw+rwVzNzO5/wJNPri6U/ou4qisSDLwrs+uVwsvFbEUS+S3qynw==
+X-Received: by 2002:a05:6512:3053:: with SMTP id b19mr18697977lfb.167.1626702635506;
+        Mon, 19 Jul 2021 06:50:35 -0700 (PDT)
+Received: from localhost (h-46-59-88-219.A463.priv.bahnhof.se. [46.59.88.219])
+        by smtp.gmail.com with ESMTPSA id f25sm1654606ljo.126.2021.07.19.06.50.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Jul 2021 06:47:48 -0700 (PDT)
-Received: (nullmailer pid 1811208 invoked by uid 1000);
-        Mon, 19 Jul 2021 13:47:28 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-In-Reply-To: <20210719092842.4686-1-biju.das.jz@bp.renesas.com>
-References: <20210719092842.4686-1-biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v4 1/4] dt-bindings: dma: Document RZ/G2L bindings
-Date:   Mon, 19 Jul 2021 07:47:28 -0600
-Message-Id: <1626702448.459307.1811207.nullmailer@robh.at.kernel.org>
+        Mon, 19 Jul 2021 06:50:34 -0700 (PDT)
+Date:   Mon, 19 Jul 2021 15:50:34 +0200
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo@jmondi.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] media: i2c: max9286: Remove unneeded mutex for get_fmt
+ and set_fmt
+Message-ID: <YPWDKicqozwRW1MF@oden.dyn.berto.se>
+References: <20210708095550.682465-1-niklas.soderlund+renesas@ragnatech.se>
+ <20210719121039.gj6nc26nyk3lnmw3@uno.localdomain>
+ <YPVvfEd/HH6cpO1Q@oden.dyn.berto.se>
+ <YPV7AfCLUqRaIp+c@pendragon.ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <YPV7AfCLUqRaIp+c@pendragon.ideasonboard.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, 19 Jul 2021 10:28:42 +0100, Biju Das wrote:
-> Document RZ/G2L DMAC bindings.
+Hi Laurent,
+
+On 2021-07-19 16:15:45 +0300, Laurent Pinchart wrote:
+> Hi Niklas,
 > 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
-> v4->v5:
->   * Added Rob's Rb tag
-> v3->v4:
->   * Described clocks and reset properties
-> v2->v3:
->   * Added error interrupt first.
->   * Updated clock and reset maxitems.
->   * Added Geert's Rb tag.
-> v1->v2:
->   * Made interrupt names in defined order
->   * Removed src address and channel configuration from dma-cells.
->   * Changed the compatibele string to "renesas,r9a07g044-dmac".
-> v1:-
->   * https://patchwork.kernel.org/project/linux-renesas-soc/patch/20210611113642.18457-2-biju.das.jz@bp.renesas.com/
-> ---
->  .../bindings/dma/renesas,rz-dmac.yaml         | 124 ++++++++++++++++++
->  1 file changed, 124 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+> On Mon, Jul 19, 2021 at 02:26:36PM +0200, Niklas Söderlund wrote:
+> > On 2021-07-19 14:10:39 +0200, Jacopo Mondi wrote:
+> > > On Thu, Jul 08, 2021 at 11:55:50AM +0200, Niklas Söderlund wrote:
+> > > > There is no need to protect 'cfg_fmt' in get_fmt() and set_fmt() as the
+> > > > core protects these callbacks. As this is the only usage of the mutex it
+> > > > can be removed.
+> > > 
+> > > You know, I tried chasing where the vdev->lock used to protect the
+> > > subdev's ioctl is set for mex9286 and I wasn't able to find it.
+> > > 
+> > > Please validate my understanding:
+> > > 
+> > > - The lock used by the core to protect the set/get format subdev ioctl
+> > >   is the one in subdev_do_ioctl_lock()
+> > > 
+> > >   static long subdev_do_ioctl_lock(struct file *file, unsigned int cmd, void *arg)
+> > >   {
+> > >           struct video_device *vdev = video_devdata(file);
+> > >           struct mutex *lock = vdev->lock;
 > 
+> Let's also note that subdev operations can also be called directly
+> within the kernel, in video node-centric setups for instance. There are
+> little changes the max9286 driver would be used in such a setup, but the
+> .get_fmt() operation can be called during pipeline validation too.
+> That's why subdev drivers are supposed to use locks internally.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+This is a good point which disregarding of the ioctl lock issue pointed 
+out by Jacopo makes this patch bad.
 
-yamllint warnings/errors:
+> 
+> > > - the max9286 video subdevice node is registered (on R-Car) by
+> > >   __v4l2_device_register_subdev_nodes() called by the root notifier
+> > >   complete() callback
+> > > 
+> > > - The video_device created by __v4l2_device_register_subdev_nodes()
+> > >   doesn't initialize any lock
+> > > 
+> > > What am I missing ?
+> > 
+> > One of the fun idiosyncrasies of V4L2 :-)
+> > 
+> > The lock comes from and are initialized by the video device used to 
+> > register the V4L2 async notifier. Every subdevice created is bound to a 
+> > vdev this way, and for example this is the vdev that events get routed 
+> > to.
+> 
+> That doesn't seem right to me, could you point to the corresponding code
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/dma/renesas,rz-dmac.example.dts:49.30-31 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:380: Documentation/devicetree/bindings/dma/renesas,rz-dmac.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1418: dt_binding_check] Error 2
-\ndoc reference errors (make refcheckdocs):
+I was wrong it's the v4l2_device and not the vdev that is used for 
+events. When an sd generates an event with the call chain,
 
-See https://patchwork.ozlabs.org/patch/1506873
+v4l2_subdev_notify_event(priv->sd, ..)
+    v4l2_subdev_notify(priv->sd)
+        priv->sd->v4l2_dev->notify()
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+And v4l2_dev is the one passed to v4l2_async_notifier_register() and set 
+in the async logic by
 
-pip3 install dtschema --upgrade
+v4l2_async_register_subdev() OR v4l2_async_notifier_try_all_subdevs()
+    v4l2_async_match_notify()
+        v4l2_device_register_subdev()
+            sd->v4l2_dev = v4l2_dev
 
-Please check and re-submit.
 
+> ?
+> 
+> > I assume this dates back pre the media-graph where every subdevice could 
+> > be associated with a single vdev at probe time. With the media graph 
+> > this makes little sens and IMHO should really be reworked. I tried once 
+> > but it turned out to be a lot of work that I did not have time for at 
+> > the time.
+> 
+> The video_device above is the one corresponding to the V4L2 subdev
+> device node (when the MC API was developed, I attempted to split the
+> device node handling out of video_device, to avoid embedding a full
+> video_device in v4l2_subdev, but that was rejected).
+
+I'm sorry that got rejected. If you had gotten your way I wound not have 
+made the mistake and looked the fool by mixing between vdev and v4l2_dev 
+in this mail :-)
+
+> 
+> > > > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> > > > ---
+> > > >  drivers/media/i2c/max9286.c | 10 ----------
+> > > >  1 file changed, 10 deletions(-)
+> > > >
+> > > > diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+> > > > index 1aa2c58fd38c5d2b..b1d11a50d6e53ecc 100644
+> > > > --- a/drivers/media/i2c/max9286.c
+> > > > +++ b/drivers/media/i2c/max9286.c
+> > > > @@ -18,7 +18,6 @@
+> > > >  #include <linux/i2c.h>
+> > > >  #include <linux/i2c-mux.h>
+> > > >  #include <linux/module.h>
+> > > > -#include <linux/mutex.h>
+> > > >  #include <linux/of_graph.h>
+> > > >  #include <linux/regulator/consumer.h>
+> > > >  #include <linux/slab.h>
+> > > > @@ -173,9 +172,6 @@ struct max9286_priv {
+> > > >
+> > > >  	struct v4l2_mbus_framefmt fmt[MAX9286_N_SINKS];
+> > > >
+> > > > -	/* Protects controls and fmt structures */
+> > > > -	struct mutex mutex;
+> > > > -
+> > > >  	unsigned int nsources;
+> > > >  	unsigned int source_mask;
+> > > >  	unsigned int route_mask;
+> > > > @@ -768,9 +764,7 @@ static int max9286_set_fmt(struct v4l2_subdev *sd,
+> > > >  	if (!cfg_fmt)
+> > > >  		return -EINVAL;
+> > > >
+> > > > -	mutex_lock(&priv->mutex);
+> > > >  	*cfg_fmt = format->format;
+> > > > -	mutex_unlock(&priv->mutex);
+> 
+> On a side note, the usual practice is to use the same lock to prevent
+> the active format from being changed during streaming.
+> 
+> > > >
+> > > >  	return 0;
+> > > >  }
+> > > > @@ -796,9 +790,7 @@ static int max9286_get_fmt(struct v4l2_subdev *sd,
+> > > >  	if (!cfg_fmt)
+> > > >  		return -EINVAL;
+> > > >
+> > > > -	mutex_lock(&priv->mutex);
+> > > >  	format->format = *cfg_fmt;
+> > > > -	mutex_unlock(&priv->mutex);
+> > > >
+> > > >  	return 0;
+> > > >  }
+> > > > @@ -1259,8 +1251,6 @@ static int max9286_probe(struct i2c_client *client)
+> > > >  	if (!priv)
+> > > >  		return -ENOMEM;
+> > > >
+> > > > -	mutex_init(&priv->mutex);
+> > > > -
+> > > >  	priv->client = client;
+> > > >  	i2c_set_clientdata(client, priv);
+> > > >
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+
+-- 
+Regards,
+Niklas Söderlund
