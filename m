@@ -7,41 +7,40 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC048C12002
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 12:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E5CC6377C
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 12:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7B3061003
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 12:19:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4602D61003
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 19 Jul 2021 12:19:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236923AbhGSLjJ (ORCPT
+        id S236937AbhGSLjK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 19 Jul 2021 07:39:09 -0400
+        Mon, 19 Jul 2021 07:39:10 -0400
 Received: from relmlor2.renesas.com ([210.160.252.172]:59972 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S236664AbhGSLjH (ORCPT
+        by vger.kernel.org with ESMTP id S236916AbhGSLjK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 19 Jul 2021 07:39:07 -0400
+        Mon, 19 Jul 2021 07:39:10 -0400
 X-IronPort-AV: E=Sophos;i="5.84,252,1620658800"; 
-   d="scan'208";a="88077916"
+   d="scan'208";a="88077919"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Jul 2021 21:19:44 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 19 Jul 2021 21:19:49 +0900
 Received: from localhost.localdomain (unknown [10.226.92.6])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1F831400855B;
-        Mon, 19 Jul 2021 21:19:41 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id C1A7D400855B;
+        Mon, 19 Jul 2021 21:19:47 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+To:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v4 01/10] dt-bindings: usb: generic-ohci: Document dr_mode property
-Date:   Mon, 19 Jul 2021 13:19:29 +0100
-Message-Id: <20210719121938.6532-2-biju.das.jz@bp.renesas.com>
+Subject: [PATCH v4 03/10] dt-bindings: reset: Document RZ/G2L USBPHY Control bindings
+Date:   Mon, 19 Jul 2021 13:19:31 +0100
+Message-Id: <20210719121938.6532-4-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210719121938.6532-1-biju.das.jz@bp.renesas.com>
 References: <20210719121938.6532-1-biju.das.jz@bp.renesas.com>
@@ -49,42 +48,96 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the optional property dr_mode present on both RZ/G2 and
-R-Car Gen3 SoCs.
-
-It fixes the dtbs_check warning,
-'dr_mode' does not match any of the regexes: 'pinctrl-[0-9]+'
+Add device tree binding document for RZ/G2L USBPHY Control Device.
+It mainly controls reset and power down of the USB/PHY.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 v3->v4:
-  * Added Rob's Acked-by tag.
-v2->v3:
-  * Dropped RZ/G2L SoC and USBPHY control IP is modelled as reset binding.
-v2:
-  * New patch
+  * Dropped reset reference.
+  * Added Rb-tag from Rob.
+ v3:
+  * New patch.
+  * Modelled USBPHY control from phy bindings to reset bindings, since the
+    IP mainly contols the reset of USB PHY.     
 ---
- Documentation/devicetree/bindings/usb/generic-ohci.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
 
-diff --git a/Documentation/devicetree/bindings/usb/generic-ohci.yaml b/Documentation/devicetree/bindings/usb/generic-ohci.yaml
-index 0f5f6ea702d0..569777a76c90 100644
---- a/Documentation/devicetree/bindings/usb/generic-ohci.yaml
-+++ b/Documentation/devicetree/bindings/usb/generic-ohci.yaml
-@@ -109,6 +109,11 @@ properties:
-   iommus:
-     maxItems: 1
- 
-+  dr_mode:
-+    enum:
-+      - host
-+      - otg
+diff --git a/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
+new file mode 100644
+index 000000000000..b13514e6783d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/reset/renesas,rzg2l-usbphy-ctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- required:
-   - compatible
-   - reg
++title: Renesas RZ/G2L USBPHY Control
++
++maintainers:
++  - Biju Das <biju.das.jz@bp.renesas.com>
++
++description:
++  The RZ/G2L USBPHY Control mainly controls reset and power down of the
++  USB/PHY.
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a07g044-usbphy-ctrl # RZ/G2{L,LC}
++      - const: renesas,rzg2l-usbphy-ctrl
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  resets:
++    maxItems: 1
++
++  power-domains:
++    maxItems: 1
++
++  '#reset-cells':
++    const: 1
++    description: |
++      The phandle's argument in the reset specifier is the PHY reset associated
++      with the USB port.
++      0 = Port 1 Phy reset
++      1 = Port 2 Phy reset
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - resets
++  - power-domains
++  - '#reset-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r9a07g044-cpg.h>
++
++    phyrst: usbphy-ctrl@11c40000 {
++        compatible = "renesas,r9a07g044-usbphy-ctrl",
++                     "renesas,rzg2l-usbphy-ctrl";
++        reg = <0x11c40000 0x10000>;
++        clocks = <&cpg CPG_MOD R9A07G044_USB_PCLK>;
++        resets = <&cpg R9A07G044_USB_PRESETN>;
++        power-domains = <&cpg>;
++        #reset-cells = <1>;
++    };
 -- 
 2.17.1
 
