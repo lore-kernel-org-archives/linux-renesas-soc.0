@@ -2,197 +2,266 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FAAC07E9B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 15:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87338C07E95
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 15:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 250BD6108B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 15:32:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AABD61164
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 15:59:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241164AbhGTOva (ORCPT
+        id S239930AbhGTPS3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 20 Jul 2021 10:51:30 -0400
-Received: from mail-eopbgr1310124.outbound.protection.outlook.com ([40.107.131.124]:13442
-        "EHLO APC01-SG2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S239986AbhGTOWd (ORCPT
+        Tue, 20 Jul 2021 11:18:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52908 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240274AbhGTOgR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Jul 2021 10:22:33 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EJOW/wl/5w6y1i71ZCB6cDTBVSjCngYYXfZRwJXLtXpKKTN9cAOINBK3ZHvMsj0S1kiDWDwykOBtGa8Rkb7rYnNyWqkNsXkQT8ErGWeLK22uc1ggFOYGjXU8L9vW7aG0NcyVD8ClVVQ/VSy+y9VjVkdxrcMYrWckEZJqCfFL12ML24h0Q79ODPmWpcP5rIOi6v9RDyrHNGLhE48VcgwANlBkfWxFV7wyAVuWaZ8DPGfraFcEOaIQerVq4MB0CpLbFgvEmyjevxNW5KbPqphJFKokY/fXuWwKBRPl+KkY8BqVKXi6E1V/uD4bvUfYLOXCzCAJedGumVdrQqaz9EXpRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Md9bef20NhAmX42l1fABs/GxX/qORrAVwVgPz11Wc1Q=;
- b=HW44OCHWdcOeqgeTanbbGNw95eTFZv/oBGv5FS4x8y2NnXLCj7YSAEyq2XhqS5szfBml2eh+MaV4fVa1zNFAWFy3gmLOlKohaNiZgLnYv6cto3H6fnqwFn5rfN5n8jX1eTLlhqnhQVckxlLTKJkBYxKDC7q5pxkQ6sVXM1tW4jEeeliX2c8Rm4w5YnlZqxYKTob0B5rJjCcxeOC6vAcC04QWpAb7h4gszX4wb3zyep/oUm/L1se34EroyKwRM27Li1rSoqZjvOwcHo7lrzIb7UBWPZ9Wp/LqkmXf9l0HoyMQxe51x27ytECQh42m2O416Myr0o458xyZuzAwUvxqAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
+        Tue, 20 Jul 2021 10:36:17 -0400
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A009DC0613DC;
+        Tue, 20 Jul 2021 08:15:47 -0700 (PDT)
+Received: by mail-yb1-xb29.google.com with SMTP id x192so33191424ybe.6;
+        Tue, 20 Jul 2021 08:15:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Md9bef20NhAmX42l1fABs/GxX/qORrAVwVgPz11Wc1Q=;
- b=JEkRVqLd3lol0XqJr/afztmpelkW9qenavxyh/JhYZxSkRPf/RbBodr3KIeqcUwKf8SZeQKsulVmifdQtnF8wWACp8WzoBCzYYd6rFFPcxTY9/PAwMyYPPh0FVC7qMHpF1afaZ9XlAjH9lHyqgzZ4058OK8tnkir2x7Z+DRcueQ=
-Received: from TYCPR01MB6319.jpnprd01.prod.outlook.com (2603:1096:400:7f::5)
- by TY2PR01MB2761.jpnprd01.prod.outlook.com (2603:1096:404:6c::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.21; Tue, 20 Jul
- 2021 14:47:56 +0000
-Received: from TYCPR01MB6319.jpnprd01.prod.outlook.com
- ([fe80::10cd:b376:429:f160]) by TYCPR01MB6319.jpnprd01.prod.outlook.com
- ([fe80::10cd:b376:429:f160%3]) with mapi id 15.20.4331.034; Tue, 20 Jul 2021
- 14:47:56 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-CC:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Chris Paterson <Chris.Paterson2@renesas.com>
-Subject: RE: Regarding SDHI clocks on RZ/G2L
-Thread-Topic: Regarding SDHI clocks on RZ/G2L
-Thread-Index: Add7vsI9+kXhl+CeQLOqy9wopCg2QQBtkhtQ
-Date:   Tue, 20 Jul 2021 14:47:56 +0000
-Message-ID: <TYCPR01MB63193D71B89ED65ADFF521F58AE29@TYCPR01MB6319.jpnprd01.prod.outlook.com>
-References: <OS0PR01MB5922386AFB9BBEF95626761C86E09@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-In-Reply-To: <OS0PR01MB5922386AFB9BBEF95626761C86E09@OS0PR01MB5922.jpnprd01.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctN2I1NDMwNzktZTk2OS0xMWViLWFhODctOWNlYmU4Y2NjNTQ4XGFtZS10ZXN0XDdiNTQzMDdiLWU5NjktMTFlYi1hYTg3LTljZWJlOGNjYzU0OGJvZHkudHh0IiBzej0iMjQzMCIgdD0iMTMyNzEyNjYwODI1NDUxODEwIiBoPSJ3MndrKzRYdEMyY3g3SERpOFMxak9XV243bWs9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-authentication-results: bp.renesas.com; dkim=none (message not signed)
- header.d=none;bp.renesas.com; dmarc=none action=none header.from=renesas.com;
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 5d89f6e5-9b7d-405b-3825-08d94b8d5c8a
-x-ms-traffictypediagnostic: TY2PR01MB2761:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <TY2PR01MB2761191CE90433E80114DA788AE29@TY2PR01MB2761.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1186;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: f8AuQkcK1CVo6ArIJ6+S94LSjhgc0WFjGzpZpGLBS6RkbMV9fwWCHsQaNe/3JLPAW0hiZZ3BuoPykKtxdA5ynydd1XICG4Y/teaRC9oSuaLOepDX5SDe/VubidNJwaTPhr+YW1hR7kH7UHOt1RNPwDLBI+o0MowmzOPdAvhupq+evJU57xEZWzLB2z5wLFC0f6bdQchWzT4Oy35m+qyWZyAaxuyEIQXE5q45xjCYItFtlXzQ9wI8SH6Fz4rH68sTnqu2fpffL2V362GiQbFXndwla7hH8bVEc+kzoXgBVUQLao3fC5ll+TG1sJFGjI4m6+VRDLJsNgswsIQW6rWKGK/0AIBPHGvNoURNmg2CVjWW1gvbCaB3YLPg9STBLyIj6j3IJqsZHIkuInXWy6Ep6FkYqacZDupqw9Zuf/OIogRUEMKenwTmADfxpMRhemrScvefVfbWTPMJ8mSiqFJ6kRoHD6ycmV+3mGb4ouRGbvKJL2nyLo1jAtc6RpW5vm2OBYar3lHC5o+VM5zdW5vgn5u/ZxAIOgJBIuB3kE2+v5U3DOJsJJNj5/HAyOEDnJjxfjwX/ZFXPWmPBed8qkBbuO4gvv5nHAa+4EnYmbSFUCQnB1bVRXQLoiYwV8wCdFnZ0AToCUbX+3Fq3BZ++H3l9WtvDyDxELR+NpHDivq8o6Hq85saSvbt5MFPFxz1L+t/OtSQo+UNR/O/m3lwZUJszg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB6319.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(136003)(366004)(376002)(39860400002)(346002)(66946007)(8676002)(71200400001)(86362001)(55016002)(66446008)(76116006)(66476007)(66556008)(64756008)(2906002)(7696005)(122000001)(38100700002)(5660300002)(53546011)(6506007)(107886003)(4326008)(8936002)(9686003)(26005)(186003)(478600001)(33656002)(110136005)(83380400001)(52536014)(54906003)(316002)(38070700004);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?zjcM8SXSQzC7Y4GKmPnrUcUC6/HSjd2sDjnnk4iwaeZfVx/Id0Q4mGHXki/g?=
- =?us-ascii?Q?IaJJpJAC5wCLWpvwtMhbwRg5IRdBzab9/Nc3hb97aeSB9D/lhENknpPu7IhA?=
- =?us-ascii?Q?i6/R9DZVd6UFz6ZVXdN4mcCMc1zU+lHND7tVWqMdhMfCodry30Ia18ZSBetz?=
- =?us-ascii?Q?4LtOT4hbwqqmWwE4XBZFzAJKqDGyKMMXWPIuUx+Efhx63pAGlfVj6yWeIsoo?=
- =?us-ascii?Q?jqwpHtRcieakJarotxcgeZgfR7aEqnYzJXhI07l9VEjjvSSXTc5gaqYV1AN4?=
- =?us-ascii?Q?6FBHot48jsCqVXFi1R4Y5tcHWzz9LUB2CaW+VvJGXPOifO451koGcOjKFfrh?=
- =?us-ascii?Q?0r5Y+tDNvfKGA+w1XGv4mBCtbiXrQoRmsViQfO9iliC8373jNdL468vzgiz/?=
- =?us-ascii?Q?TNJEOJJ0CX1vOh6cPjPxKr/5jZ0VTnXvRJnnmS8GtP+oWJlzjKjjKEbySQ+t?=
- =?us-ascii?Q?V+eAhYMJs3hFx6EMXBXnFtcUazo7Sh1ob5Knwe144bKZdm8rHZjZdfWMkiWz?=
- =?us-ascii?Q?sbf0GKNiajCqlFOqBizKyTZNq4UGtbjAcXvPwc3cYIBiIUNua+36oP2Mh/VV?=
- =?us-ascii?Q?7ckQ2ktTxswdPKR55ePDiDPEbwHpi+oTVbXgE3uIjDzirKRvZqs3phZvI96t?=
- =?us-ascii?Q?LoQrdTQxFDwAyBClkk7hwHmu20Pv3qoVGsqrblGaehpmk8CgbwBlaMkgESfF?=
- =?us-ascii?Q?/y2zWMYyA4mjWdviREFLY7qZiMHlY0XeV3oOR+3kFHCxg0qN1XPz+Nydifsh?=
- =?us-ascii?Q?xiylZVuDjPHwIyR1vjq2DOK5awGkUDsj10dTQQK6g9JqtW/l89Wq44Z5DZ/v?=
- =?us-ascii?Q?LFss4nr3/rziHvyU15bF4DZq2SGRiEWOHTUXLq0bBeuE2yb69sB32eqObSsR?=
- =?us-ascii?Q?SC+xFqPVt8HCE7YEjB6rugvqUUYdY1OephmCva9lWH2+lmPkEkcZ/Bm7yuve?=
- =?us-ascii?Q?XbfnS3R1WEZReZsETfyzxJLYcUB0O9ku+ob+dPU5uKfgifX+Ck/HnluZ/EO1?=
- =?us-ascii?Q?W7fMBVyZmAOAa3u6ceiW+88JSG66LdePmubsHaY38avSPTw+Kd2ThOJoqg4O?=
- =?us-ascii?Q?1WVptyOWq6vR0V8c6fc7jAADpH88JByKUyZ0QcwCpT9qaysh0EiZjugN30X1?=
- =?us-ascii?Q?/AzPgd7GoDpeivUzGSWhJnA3cPV5l15Hgg+2O3Dh1lNYvciZs3Z/4XFq+KOI?=
- =?us-ascii?Q?09g41d8+GFrMionoMWFoHT6g8NDvI3RAFtprwJ5Ejp2vs/jOA6PFDXW0NP8A?=
- =?us-ascii?Q?vzTknIkqGI22BNhTd0QME2OSAy9YREYiOsN527pPwt+hnCMhtNWGbT1Ux8k2?=
- =?us-ascii?Q?9k8=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uaQPvq47KAC0e0Q736uuzY+FVBhHAhcKYYINkLHiZoE=;
+        b=Laz9/tp/dfCS4fjQUvlySWLHp2fuAlDtKgSMAcFKKKb8+DpPixU9AEdUXne9EThj0A
+         ZiyIRRE+Alp/kRfvHEav6GAAko5+aH1bgU26xPz9p0IUIjUszfRZLJWJQvsXsnDYYlF/
+         taEody36IDV5p3bdhiNAbRMv/66gz5w9DeRHDKEce3XWssHURxwVNpgXSbXxQ9CSE+up
+         Exl7Ofo3MN3xSTAeCenV+mCVhsKEf2OgUb8mOfvGuaNJCRx+ynCNGqra3fxQ78p22Z1I
+         oXzOSTkdg1+NZRkqWZW9hXnGqc3PwcAIoLReL/k/dfpaCk5iF2Cfk15JvDCGcTiVpu0v
+         h0iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uaQPvq47KAC0e0Q736uuzY+FVBhHAhcKYYINkLHiZoE=;
+        b=DZsDGMvLh4/wiJqvvaU5Rakzj3TSGfLdqx/C7XGLKxRp0qzm123yOlSJ0jsXy9J2e1
+         wVvOnfMUERM+wV4t8xsHKA9qkyY7hYb1wyyl89HRL+/LYW5BPBClIHD9CGPSRJSEMK56
+         0pJ+KNbXlQEcNtTymQSkbSmntUc5/tqkBAnNcnShIjs6mIzfMPH5uysli1uE0vNvUFKa
+         /WMkQx6GhVWgavTvAyerL0vTKr2NS7SAjbKNstYDApaUax28hTHbF0RqvJnjLNQXE24Z
+         Lap0MKW469dqzchlfw/d05kjz9FN9E/c4c4Ws/iQe7Ud6ST7EKlBXjKiOehr4JJIap13
+         eRwg==
+X-Gm-Message-State: AOAM533KxdyCIf04FLqtnInsDVcKI/gB9RA4Mzh9mbSx5GXWykYkKeDC
+        8ekR9R15G6Xd9d0Z4Fs6HaDRg/aRYPxPo6mo/J8=
+X-Google-Smtp-Source: ABdhPJyqufuskgWhbDx46oleIszFO/ZGvE4lcJf5djJEzqyAwn5fBvWyIl414WGgBeXzfRiRxYYlQ2QcBAtWdZzNk+I=
+X-Received: by 2002:a5b:94d:: with SMTP id x13mr36125505ybq.47.1626794145500;
+ Tue, 20 Jul 2021 08:15:45 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB6319.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d89f6e5-9b7d-405b-3825-08d94b8d5c8a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jul 2021 14:47:56.2141
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KHragmtTHDPd4fUgO33nEftzREtby3HCS2X9UBM77be+1YzN4TzcMK2mGvzwhpFeOFXHIT+7qPiDOYxBczKMtC2/M6sn6D77J2TEV2OB3as=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY2PR01MB2761
+References: <20210719143811.2135-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20210719143811.2135-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdXkPDaaRZZTCyn-Mwfakuzui69GWuiKUWYEOyhQmuFB=w@mail.gmail.com>
+In-Reply-To: <CAMuHMdXkPDaaRZZTCyn-Mwfakuzui69GWuiKUWYEOyhQmuFB=w@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Tue, 20 Jul 2021 16:15:19 +0100
+Message-ID: <CA+V-a8uge1Bn5BeuUjLR2+UkWN88uW99x92Ym3sgguiinbx=Ng@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] can: rcar_canfd: Add support for RZ/G2L family
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-can@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Biju,
+Hi Geert,
 
-> But on the SDHI driver, we are handing cd clocks for RZ/A devices.
-> Unfortunately we are turning of this clock
-> during suspend state.
+Thank you for the review.
 
-I think it is fine to shut off the cd clock in a suspend state because plug=
-/unplug a SD card is not really something that should wake up a system.
+On Tue, Jul 20, 2021 at 11:31 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, Jul 19, 2021 at 4:39 PM Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> > CANFD block on RZ/G2L SoC is almost identical to one found on
+> > R-Car Gen3 SoC's. On RZ/G2L SoC interrupt sources for each channel
+> > are split into different sources and the IP doesn't divide (1/2)
+> > CANFD clock within the IP.
+> >
+> > This patch adds compatible string for RZ/G2L family and registers
+> > the irq handlers required for CANFD operation. IRQ numbers are now
+> > fetched based on names instead of indices. For backward compatibility
+> > on non RZ/G2L SoC's we fallback reading based on indices.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Thanks for your patch!
+>
+> > --- a/drivers/net/can/rcar/rcar_canfd.c
+> > +++ b/drivers/net/can/rcar/rcar_canfd.c
+> > @@ -37,9 +37,15 @@
+> >  #include <linux/bitmap.h>
+> >  #include <linux/bitops.h>
+> >  #include <linux/iopoll.h>
+> > +#include <linux/reset.h>
+> >
+> >  #define RCANFD_DRV_NAME                        "rcar_canfd"
+> >
+> > +enum rcanfd_chip_id {
+> > +       RENESAS_RCAR_GEN3 = 0,
+> > +       RENESAS_RZG2L,
+> > +};
+> > +
+> >  /* Global register bits */
+> >
+> >  /* RSCFDnCFDGRMCFG */
+> > @@ -513,6 +519,9 @@ struct rcar_canfd_global {
+> >         enum rcar_canfd_fcanclk fcan;   /* CANFD or Ext clock */
+> >         unsigned long channels_mask;    /* Enabled channels mask */
+> >         bool fdmode;                    /* CAN FD or Classical CAN only mode */
+> > +       struct reset_control *rstc1;     /* Pointer to reset source1 */
+> > +       struct reset_control *rstc2;     /* Pointer to reset source2 */
+>
+> Are these comments helpful? IMHO they're stating the obvious.
+>
+No :D will drop those.
 
-SHDI should not be a 'wake up' event source in a system, so we don't need i=
-t running during a suspend state.
-Things like interrupt pins and GPIO are wake up triggers.
+> > +       enum rcanfd_chip_id chip_id;
+> >  };
+> >
+> >  /* CAN FD mode nominal rate constants */
+> > @@ -1577,6 +1586,45 @@ static int rcar_canfd_channel_probe(struct rcar_canfd_global *gpriv, u32 ch,
+> >         priv->can.clock.freq = fcan_freq;
+> >         dev_info(&pdev->dev, "can_clk rate is %u\n", priv->can.clock.freq);
+> >
+> > +       if (gpriv->chip_id == RENESAS_RZG2L) {
+> > +               char *irq_name;
+> > +               int err_irq;
+> > +               int tx_irq;
+> > +
+> > +               err_irq = platform_get_irq_byname(pdev, ch == 0 ? "can0_error" : "can1_error");
+> > +               if (err_irq < 0) {
+> > +                       err = err_irq;
+> > +                       goto fail;
+> > +               }
+> > +
+> > +               tx_irq = platform_get_irq_byname(pdev, ch == 0 ? "can0_tx" : "can1_tx");
+> > +               if (tx_irq < 0) {
+> > +                       err = tx_irq;
+> > +                       goto fail;
+> > +               }
+> > +
+> > +               irq_name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+> > +                                         "canfd.chnerr%d", ch);
+>
+> if (!irq_name) {
+>     ret = -ENOMEM;
+>     goto fail;
+> }
+>
+> > +               err = devm_request_irq(&pdev->dev, err_irq,
+> > +                                      rcar_canfd_channel_interrupt, 0,
+> > +                                      irq_name, gpriv);
+> > +               if (err) {
+> > +                       dev_err(&pdev->dev, "devm_request_irq CH Err(%d) failed, error %d\n",
+> > +                               err_irq, err);
+> > +                       goto fail;
+> > +               }
+> > +               irq_name = devm_kasprintf(&pdev->dev, GFP_KERNEL,
+> > +                                         "canfd.chntx%d", ch);
+>
+> Likewise.
+>
+> > +               err = devm_request_irq(&pdev->dev, tx_irq,
+> > +                                      rcar_canfd_channel_interrupt, 0,
+> > +                                      irq_name, gpriv);
+> > +               if (err) {
+> > +                       dev_err(&pdev->dev, "devm_request_irq Tx (%d) failed, error %d\n",
+> > +                               tx_irq, err);
+> > +                       goto fail;
+> > +               }
+> > +       }
+> > +
+> >         if (gpriv->fdmode) {
+> >                 priv->can.bittiming_const = &rcar_canfd_nom_bittiming_const;
+> >                 priv->can.data_bittiming_const =
+>
+> > @@ -1649,27 +1700,64 @@ static int rcar_canfd_probe(struct platform_device *pdev)
+> >         if (of_child && of_device_is_available(of_child))
+> >                 channels_mask |= BIT(1);        /* Channel 1 */
+> >
+> > -       ch_irq = platform_get_irq(pdev, 0);
+> > -       if (ch_irq < 0) {
+> > -               err = ch_irq;
+> > -               goto fail_dev;
+> > -       }
+> > +       if (chip_id == RENESAS_RCAR_GEN3) {
+> > +               ch_irq = platform_get_irq_byname(pdev, "ch_int");
+>
+> platform_get_irq_byname_optional()?
+> Unless you want to urge people to update their DTB.
+>
+Good point will change it to platform_get_irq_byname_optional().
 
-From a power perspective, I don't think it will save much power to turn all=
- the clocks off. So your #1 or #2 would be fine.
+> > +               if (ch_irq < 0) {
+> > +                       /* For backward compatibility get irq by index */
+> > +                       ch_irq = platform_get_irq(pdev, 0);
+> > +                       if (ch_irq < 0)
+> > +                               return ch_irq;
+> > +               }
+> >
+> > -       g_irq = platform_get_irq(pdev, 1);
+> > -       if (g_irq < 0) {
+> > -               err = g_irq;
+> > -               goto fail_dev;
+> > +               g_irq = platform_get_irq_byname(pdev, "g_int");
+>
+> Likewise,
+>
+agreed
 
-As for #2, it's not really a 'critical clock' for the system.....it is more=
- of a 'clock we don't care about'.
+Cheers,
+Prabhakar
 
-I would say go with the one that is the easiest and makes the least code ch=
-anges. If adding these to the SDHI driver make it very ugly, then we should=
- just add them as critical clock and be done with it.
-
-That's my opinion.
-
-Chris
-
-
-> -----Original Message-----
-> From: Biju Das
-> Sent: Sunday, July 18, 2021 6:26 AM
-> To: Wolfram Sang <wsa+renesas@sang-engineering.com>; Geert Uytterhoeven
-> <geert+renesas@glider.be>; Linux-Renesas <linux-renesas-soc@vger.kernel.o=
-rg>
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>; Chris Brandt
-> <Chris.Brandt@renesas.com>; Chris Paterson <Chris.Paterson2@renesas.com>
-> Subject: Regarding SDHI clocks on RZ/G2L
->=20
-> Hi All,
->=20
-> As per the RZ/G2L clock list document, SDHI has 4 clocks and  IMCLK2 shou=
-ld
-> not be turn off during suspend.
->=20
-> 1)IMCLK  Main Clock 1
-> 2)IMCLK2 Main Clock 2, this clk should be not be turned off during suspen=
-d
-> state, otherwise card detection won't work.
-> 3)CLK_HS High speed clock
-> 4)ACLK	Bus clock
->=20
-> Multi clock PM domain support for SDHI is available in RZ/G2L and we are
-> filtering this clock not to add
-> PM domain.
->=20
-> But on the SDHI driver, we are handing cd clocks for RZ/A devices.
-> Unfortunately we are turning of this clock
-> during suspend state.
->=20
-> Q1) Is it expected behaviour for this device?
->=20
-> Q2)What is the best way to handle cd clocks for RZ/G2L?
->=20
-> 1) Handle it in SDHI driver? ie, enable it during probe only once and avo=
-id
-> turning it off
->=20
-> or
->=20
-> 2) Add this clock as critical clock, so it will be turned on permanently =
-and
-> don't handle it in SDHI driver?
->=20
->=20
-> Regards,
-> Biju
+> > +               if (g_irq < 0) {
+> > +                       /* For backward compatibility get irq by index */
+> > +                       g_irq = platform_get_irq(pdev, 1);
+> > +                       if (g_irq < 0)
+> > +                               return g_irq;
+> > +               }
+> > +       } else {
+> > +               g_irq = platform_get_irq_byname(pdev, "g_error");
+> > +               if (g_irq < 0)
+> > +                       return g_irq;
+> > +
+> > +               g_rx_irq = platform_get_irq_byname(pdev, "g_rx_fifo");
+> > +               if (g_rx_irq < 0)
+> > +                       return g_rx_irq;
+> >         }
+> >
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
