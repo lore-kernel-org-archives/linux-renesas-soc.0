@@ -2,93 +2,208 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EFF5C07E9B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 10:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB13DC07E9B
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 11:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1E59D6120C
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 10:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCBE26113C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 20 Jul 2021 11:25:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233914AbhGTKBL (ORCPT
+        id S237620AbhGTKoY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 20 Jul 2021 06:01:11 -0400
-Received: from mail-vs1-f52.google.com ([209.85.217.52]:43676 "EHLO
-        mail-vs1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236747AbhGTJ6k (ORCPT
+        Tue, 20 Jul 2021 06:44:24 -0400
+Received: from mail-eopbgr1400134.outbound.protection.outlook.com ([40.107.140.134]:6126
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S237679AbhGTKoR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 20 Jul 2021 05:58:40 -0400
-Received: by mail-vs1-f52.google.com with SMTP id a66so10953111vsd.10;
-        Tue, 20 Jul 2021 03:39:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CSO/icj4gzKZwgdBUMKYFWUyTK7NvNCfOpft3VKskeo=;
-        b=SM08hSXDDv8IqRMCcmrpiyln7SaM2x80Dx31aLUACyGNZ/djx9JXyTFFx4Ad37BlTK
-         P1SXbq4ns0CJOuJr8LUeoMS1PdKete/G3GqIlblv+TtbRZF57e61GeFRNXHzF+bYAg8f
-         ORAUGvV6pTTz6q/S+fCX8xbj5ZoQV/E/sLj6AQ3eodPo3uVaNpkI57Td5xPPDQIN3Xrz
-         gRjGByHKXZ80HAObrlOPVPeTLdNTh4ewaoPHqyckOJcu3A1X/qMAv8uKuVhrR6s2K+rL
-         s9s7BsBmmyzw2oQO4HbnxboLyrrwq2poKetWoCh6ZdqS5xLl8xAsfMgb3Lds0UT6daKU
-         181g==
-X-Gm-Message-State: AOAM531/ftU7XlFuYnYRCUffR0xI8n4ssYSU/BNtzpVUvHY6fj7ZyKIr
-        fpWksK77fEAbblueFTJa9ILiA1s7BMiV6qVZT8E=
-X-Google-Smtp-Source: ABdhPJzRtcoT6owd3KcZf2ajJSjrqyZ2Ebluu5PNlZ7DbDPKNJmE2zJ7L7+yaj41O8uhqDPC+tueEC0bnsNjhfTlvzY=
-X-Received: by 2002:a67:1542:: with SMTP id 63mr28883617vsv.40.1626777558174;
- Tue, 20 Jul 2021 03:39:18 -0700 (PDT)
+        Tue, 20 Jul 2021 06:44:17 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UXgU4FP36Ise7itPqdk4MtTjhW++56RjUL2LFm16IAxPugtuQ6ASt3Zga1peOKkh7wgPX1ZbC1Euwi1Uc5GtyaCJuiQc8AMJUPThbFNNutGFHXzWZt6tFZDDAD2FEaqyVHk/0aGmJyYwB7dHz/ehD265BkQC2y/VLtjH09H8dU4qxKcu2mvcpaDG9Z9dVrONHWYtVCJQfEio2PpVe/6Hm1p/zwoal5MrIIi7pFhwDDGRIDyCast+kNyZrgQwYR+zE+sbDf4pA2KMaFAjs7I5YDcq2FxtZwKB4NfvNVsYMaSRkPYIl9hj2ENg5p4kbRbXWJZ0xlWXd4I6uCX5TGw6bg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mx40Dk69pWFGkOSn1ni5CCBl6/B2rIM4Uvc5FMigTMk=;
+ b=CWwATlyBSSgf5epydwQMNfEntcM98ack886nhvCjI3Hhn48jOdYsOf79gXJP+OuJGNqtU7ZtOFdwjUQYK41zMgB9GT2jh/X81mZ0VXMN+D5Eh8t/tSm38nsKviOff73/QEhCs+ZWOUUouLzM4RAaZo74vMrCegqjwvppGmeBBLPvNXsfPWbEqh9MLWArPTKO1gbuSdpN84GOyntPhDtuPmyi5FRB3+zvFoSw4IarbAoh3yNA6AhWjV3Nv1m1ehUM016IYquMtaW4doCjXmCxP5ytCZuMlpg/+76WWpGy1uYi96m1+199ZVdY9uOYiWeO1Gy4raUvLxyhKEZnxyJ/5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mx40Dk69pWFGkOSn1ni5CCBl6/B2rIM4Uvc5FMigTMk=;
+ b=IpK/TKCMRSZrPt/zdpFsdZ/Wv8ndXWw49GKPsgWd6Ig8VNpcqoyJmiXfBMUXa1gsK00RWVmiBGAiLg9ozjUeCEvF6MlIgpwl2Q0TDYYNhRlte4IukV6lQuM7E5/phCemGxeugZl608vCD7kqbK0rw66/uC3hl57D4afX5uU4+/Y=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by OS0PR01MB5844.jpnprd01.prod.outlook.com (2603:1096:604:bc::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4331.26; Tue, 20 Jul
+ 2021 11:24:53 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::c6f:e31f:eaa9:60fe]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::c6f:e31f:eaa9:60fe%9]) with mapi id 15.20.4331.034; Tue, 20 Jul 2021
+ 11:24:52 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: RE: [PATCH v2 1/8] ASoC: dt-bindings: Document RZ/G2L bindings
+Thread-Topic: [PATCH v2 1/8] ASoC: dt-bindings: Document RZ/G2L bindings
+Thread-Index: AQHXfKOxNqPJGSUS20elYyjHp4PYRatK3iEAgADbw2A=
+Date:   Tue, 20 Jul 2021 11:24:52 +0000
+Message-ID: <OS0PR01MB5922BDE7B11A51A980F682AE86E29@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20210719134040.7964-1-biju.das.jz@bp.renesas.com>
+ <20210719134040.7964-2-biju.das.jz@bp.renesas.com>
+ <1626732982.918933.2698559.nullmailer@robh.at.kernel.org>
+In-Reply-To: <1626732982.918933.2698559.nullmailer@robh.at.kernel.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5a33cd31-e6d7-4996-572a-08d94b70fea0
+x-ms-traffictypediagnostic: OS0PR01MB5844:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <OS0PR01MB5844BAAB92D0053DEC99301686E29@OS0PR01MB5844.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: iJaOm3x0o6lKhisAFe+ONA/M5BFM9lfHNDnxznMYxvQ4rTMyrXBRTnGgefm0W0jnTKq8ZSd81WGxCga6lp7IfgmxaKLt7ZSr0w66qhXECw3UrWojk4GHP5xzB4Du+QlZrT8XtPuYcufT13NFxnn/JgOpuvsTwlmCEvWhMpLuNhIkHzhR6lAlkrtrqkp2j7MLyS6bo912PFLAnJzOBNmVlUUMuYieWdFZoyETVOvvV6nq1G8yc0MpbQto71wFNf6W4dimvU3UiSYo83e3wLPTw97CEzylC3tgiW+l3LJSbeOz1Bx/WEk7wq0GkzOLtUSLICLQ9a8z2vyAJpQUnjlbMoOy+yp0vjz7o8+vJU6Hxg2nltcsWzA7zjV5eAjBrkMaII+9BRarQBKO010RXhnlE94XQTc5bjd+SOCZgW6NPqq/HYRDvV8eYuKFxff2GPcsOMCRY74ey4VjrNy1DUzldQkMXoCdK3ODAuA2G+X8+ijTC74e4QYmdSvxe4/mGLDkhiRuKU5cu/nsNWwbxP5AxjqmzMCMbe3PuQ8laEA6g4JrV5yX9bG7VxOO6J/hyGlYSZs+SF/019vhGd98t3ishHOxKXysBiaNwQiUkk5R91fiTkY31jE2AsjWdwX6rFwFAyvpu0ZNR/L8FSuoWUqNfps6R8r3U46vzmqpQhfVoBwS3DR7CBS0J2LOguruGHW31mexXNBf9z9L2+TWbvJAWCbhVKAXRNAIfWtGIWgPvNaVBiwj9w73LLvOKju7BtkTrCXryW5WjJITOC6q30uNqvb0wygwHEctw+rUPyW5Bi0=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(45080400002)(9686003)(966005)(26005)(33656002)(2906002)(316002)(508600001)(8936002)(55016002)(86362001)(186003)(83380400001)(8676002)(53546011)(6506007)(76116006)(54906003)(6916009)(5660300002)(52536014)(66446008)(64756008)(7696005)(122000001)(66476007)(66946007)(66556008)(4326008)(38100700002)(71200400001)(38070700004);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?1abHQ303W4KAJX5WP/vIC/4VvmVZ466RxukHgwfB5TyFZmuA4fUcwes0HMya?=
+ =?us-ascii?Q?gmJMaT+sKi7dj51sTOtxbuGohQP0hsHc5hEBVvn05K8bECb2eq4CWFusxSLi?=
+ =?us-ascii?Q?kUnxlZvFcPqgYkKV1BDIO8tIQq7nqBKKqnL/bLHMy2SWFW0csQRlHNa9M1NO?=
+ =?us-ascii?Q?Im3LJKTe+wAfxq8gs3y94+QZapg7oT3Fmn3U8Bm11ddhi99LD9lN2+EcZwP5?=
+ =?us-ascii?Q?amvLWs84jzbkyoFhiaxfEJmsC9F8oOmmhDBS/CXBTgFtcgF4CaQXsVhyd8cB?=
+ =?us-ascii?Q?apnCNbgB0Ma0FfhjHtwOvmKEZbGqidM5CP+4R6Yv/flgwTV8ki18xJ0NLwXA?=
+ =?us-ascii?Q?/EOMfQx+N0+2RvE+Qd3POVRdMiWPSeWWr8iJ8zENcqi9TqUlsqcXL5yeI+ke?=
+ =?us-ascii?Q?stiAX5uC68iCknEuvFoHZ9Q4IZbG+SxR+B76cxb+iSPvZXevpORMupjPRT8E?=
+ =?us-ascii?Q?9XyyrIkA72vDxdaA2s+aH7/ByiXRcPfRNnWWs7h4SzfoZugSLZzO3yIvByPZ?=
+ =?us-ascii?Q?j6wBIBMYHqRHNPUj0vxe8ZIp6C7kDxD9+Qtjaar/dI3HevKl57VuXhTgsyuL?=
+ =?us-ascii?Q?f3SDCp0/jowfLvkrXd67ek8Aw0CfTmQmZa4aoOxHZWArYcGATPHwa3a4pudS?=
+ =?us-ascii?Q?9pcpkArxKdo5e+gYIVARxnGRWTfPS+RLkC4m4K+YutCfduMmFpFOhpjXfhlx?=
+ =?us-ascii?Q?hv27FtZuIS3PNn5I4jwIWj+kjm5lakP2qUZsggoU9LHqR3gEO+IgGpS8PkZy?=
+ =?us-ascii?Q?zio76qVBSl/fphVav3dsP2JRnL8ry3YRKAinpKjSwwSHKL9qO+UftkhYUI9m?=
+ =?us-ascii?Q?4rZsFDywpT34DtjhNKr2y0HTk+S20W1VlRea5GT1h14O8G0ICjV4B91+NJfj?=
+ =?us-ascii?Q?eqmPZ+xvWehQqZPQ+wo6juPi4uaLxr9Gfe+NS+wNgISGqs8RJu09mFne0HHk?=
+ =?us-ascii?Q?m46B3oDFN61e+omW7Ozo/5SzQuzmpKQblo+pz1KSWzOULprtJZKOw9Yf7WNP?=
+ =?us-ascii?Q?/yMUQUsQVA4rybahZ4uETL8nEC4bO5iI76LR+McZF/EST+KioEmd23ZJ0RcP?=
+ =?us-ascii?Q?virl2GlrSYDX7E9+UQMzeAOXWeC7LFQUbKLONuR94K+iUVROWoGTi32qTHrM?=
+ =?us-ascii?Q?iMagQU5WdB2S/panpTWUkfqAAMIcG6qakKkjrgshDRq8HwGfv12MV092ih5n?=
+ =?us-ascii?Q?UxSsJQ06hwFBLYtNhVQx+DYJ1zyuTq1p7xQ3ilkfYWTNhsw2MY6LJ0k9b+ze?=
+ =?us-ascii?Q?mjr7RfJyZaTKwDNG7duiryyiPBWWnEz29DR8dGUdg+SHGAsuArJDFZ16Og5f?=
+ =?us-ascii?Q?6iEUcN4J50L2JCcQmiGxc6VL?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20210719143811.2135-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210719143811.2135-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20210719143811.2135-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 20 Jul 2021 12:39:07 +0200
-Message-ID: <CAMuHMdWkeCxyaSfD2aQ346DV0n1JsxxUCB1jBD92evBYVVLFNg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] dt-bindings: clk: r9a07g044-cpg: Add entry for
- P0_DIV2 core clock
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-can@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a33cd31-e6d7-4996-572a-08d94b70fea0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jul 2021 11:24:52.8045
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: M9tyCv4OrHRHLg8dbNnEvcaEkJW6fonycadw1JUsB6x806IXbH3QzzJ9jYxaGNrGsQG2hUkbfZEhTMKyV0OLFPBieWDo9XEb/o20jrjXw1k=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS0PR01MB5844
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Jul 19, 2021 at 4:39 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Add P0_DIV2 core clock required for CANFD module. CANFD core clock is
-> sourced from P0_DIV2 referenced from HW manual Rev.0.50.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+Hi Rob,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-r9a07g044-dt-binding-defs, to be shared by
-renesas-clk-for-v5.15 and renesas-devel for v5.15.
+The dependency patch for the below bot error is present on 5.14-rc2 but not=
+ on 5.14-rc1.
 
-Gr{oetje,eeting}s,
+Regards,
+Biju
 
-                        Geert
+> -----Original Message-----
+> From: Rob Herring <robh@kernel.org>
+> Sent: 19 July 2021 23:16
+> To: Biju Das <biju.das.jz@bp.renesas.com>
+> Cc: Liam Girdwood <lgirdwood@gmail.com>; Mark Brown <broonie@kernel.org>;
+> devicetree@vger.kernel.org; Biju Das <biju.das@bp.renesas.com>; Prabhakar
+> Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>; Chris Paterson
+> <Chris.Paterson2@renesas.com>; Kuninori Morimoto
+> <kuninori.morimoto.gx@renesas.com>; Chris Brandt
+> <Chris.Brandt@renesas.com>; alsa-devel@alsa-project.org; linux-renesas-
+> soc@vger.kernel.org; Geert Uytterhoeven <geert+renesas@glider.be>; Rob
+> Herring <robh+dt@kernel.org>
+> Subject: Re: [PATCH v2 1/8] ASoC: dt-bindings: Document RZ/G2L bindings
+>=20
+> On Mon, 19 Jul 2021 14:40:33 +0100, Biju Das wrote:
+> > Document RZ/G2L ASoC serial sound interface bindings.
+> >
+> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v1->v2:
+> >  * Rebased to latest mainline rc branch.
+> > ---
+> >  .../bindings/sound/renesas,rz-ssi.yaml        | 85 +++++++++++++++++++
+> >  1 file changed, 85 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/sound/renesas,rz-ssi.yaml
+> >
+>=20
+> My bot found errors running 'make DT_CHECKER_FLAGS=3D-m dt_binding_check'
+> on your patch (DT_CHECKER_FLAGS is new in v5.13):
+>=20
+> yamllint warnings/errors:
+>=20
+> dtschema/dtc warnings/errors:
+> Error: Documentation/devicetree/bindings/sound/renesas,rz-
+> ssi.example.dts:31.34-35 syntax error FATAL ERROR: Unable to parse input
+> tree
+> make[1]: *** [scripts/Makefile.lib:380:
+> Documentation/devicetree/bindings/sound/renesas,rz-ssi.example.dt.yaml]
+> Error 1
+> make[1]: *** Waiting for unfinished jobs....
+> make: *** [Makefile:1418: dt_binding_check] Error 2 \ndoc reference error=
+s
+> (make refcheckdocs):
+>=20
+> See
+> https://jpn01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%2Fpatch=
+wor
+> k.ozlabs.org%2Fpatch%2F1507078&amp;data=3D04%7C01%7Cbiju.das.jz%40bp.rene=
+sas
+> .com%7C6f79c990c61146a9789c08d94b02da61%7C53d82571da1947e49cb4625a166a4a2=
+a
+> %7C0%7C0%7C637623297898953993%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDA=
+i
+> LCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C1000&amp;sdata=3DcWgOhVR=
+wpt
+> e4WzvogZDDv1jq%2FfD3GZyJ4XuBafYI3R8%3D&amp;reserved=3D0
+>=20
+> This check can fail if there are any dependencies. The base for a patch
+> series is generally the most recent rc1.
+>=20
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+>=20
+> pip3 install dtschema --upgrade
+>=20
+> Please check and re-submit.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
