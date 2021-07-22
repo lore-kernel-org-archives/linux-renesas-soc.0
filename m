@@ -2,104 +2,148 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6342BC6377D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 538BDC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 20:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D2CC61285
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F87360EB8
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 20:31:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232383AbhGVN4m (ORCPT
+        id S230394AbhGVTvT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 22 Jul 2021 09:56:42 -0400
-Received: from mail-io1-f54.google.com ([209.85.166.54]:43785 "EHLO
-        mail-io1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230343AbhGVN4m (ORCPT
+        Thu, 22 Jul 2021 15:51:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45580 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230272AbhGVTvT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Jul 2021 09:56:42 -0400
-Received: by mail-io1-f54.google.com with SMTP id k16so6568574ios.10;
-        Thu, 22 Jul 2021 07:37:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:in-reply-to:references:subject:date
-         :message-id;
-        bh=S9oqNdeEmjzMYqfxKnMhuJAig6YozFawShXYrQNAVqU=;
-        b=X1hUm9xqwI8NrHwal/4X82uyONyH7SmwaiYih7A/hO06kBBU6OHw9zbjqaXfV7apzm
-         zwqjfchs80zkTBtfROpaL8WL+WYqM9w9Cuc80+qfduVZYxBDPYBZW3csqGas/MgprH7H
-         0Uy747xKsmGaAa+ErPdFNc8FcwjIAWbT1YHnMGUwAMZIpskdAtpzofA45Ze6dFMvhAXK
-         tXSP42jPf8WtzVxodZCVvRASyDcpyZQPzQCxpc10Ru4ylyFVGJGtGht8RD7wn8ItsXtu
-         zfdKVQsSqo3/XPHBqOPHbBIGKoT1g4k5MR5i2a4zk7KGx1KX8FhHlc5W/wo5NU85mOte
-         fTmw==
-X-Gm-Message-State: AOAM533lJUaWNb6bWH0Y/Tqr7TOMmi+kpWkHnkDP+QQqCiuEQpDO/Udk
-        /uKpgllRmPOiruVfY3haGA==
-X-Google-Smtp-Source: ABdhPJzNL5asZ1slIsXmHQueoDE6m957UCPdvi3vzleu5OadU6dIPbq9iYTm6K3LzeoCsL6DjZtBxA==
-X-Received: by 2002:a05:6602:584:: with SMTP id v4mr45750iox.181.1626964635747;
-        Thu, 22 Jul 2021 07:37:15 -0700 (PDT)
-Received: from robh.at.kernel.org ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id p9sm14626199ilj.65.2021.07.22.07.37.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Jul 2021 07:37:15 -0700 (PDT)
-Received: (nullmailer pid 4183864 invoked by uid 1000);
-        Thu, 22 Jul 2021 14:37:12 -0000
-From:   Rob Herring <robh@kernel.org>
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-gpio@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-In-Reply-To: <20210721191558.22484-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20210721191558.22484-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210721191558.22484-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: pinctrl: renesas,rzg2l-pinctrl: Add DT bindings for RZ/G2L pinctrl
-Date:   Thu, 22 Jul 2021 08:37:12 -0600
-Message-Id: <1626964632.914515.4183863.nullmailer@robh.at.kernel.org>
+        Thu, 22 Jul 2021 15:51:19 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id A1E9D60EB5;
+        Thu, 22 Jul 2021 20:31:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1626985913;
+        bh=5iqFA1lbsFotnXbfFAiYSt65yYKjjlDAwbAuyjAOQ5U=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OZfEx455Y0eIwzhbtcoCKkmYj6q44ydHpWJRGYwR7G/XutImK6W1CAwjjq3MQ0KtN
+         4aV0enap51LvQJiDC+6KNnKnqE1XYc/9jorSXpbPVO0hgFE5Mb8ZL98Qh/J/LCY98w
+         AkHsz+Hxy4D4xFjDiDu7P3MjgQuRipMQi2YVmNby0iBSvGBX6V0CmrXY3mfHTjTIvt
+         aXbzBYg0BcNI9uKzHNDAOAkrzA2QcAaIf0C7r+Ocp2WThVKyiWTxP28bYVikueQofs
+         1y+QXElAcdwKdWGInaRKmaq4oqp06mBcR698NvQP5fdzN/emL+BigDG6aN9hnmmrRZ
+         9/3+FYCker6BQ==
+Received: by pali.im (Postfix)
+        id 906A3805; Thu, 22 Jul 2021 22:31:51 +0200 (CEST)
+Date:   Thu, 22 Jul 2021 22:31:51 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To:     Marek Vasut <marek.vasut@gmail.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH V6] PCI: rcar: Add L1 link state fix into data abort hook
+Message-ID: <20210722203151.heytxzup2uti4noi@pali>
+References: <20210514200549.431275-1-marek.vasut@gmail.com>
+ <20210717173334.GA2232818@bjorn-Precision-5520>
+ <20210719085953.GA17481@lpieralisi>
+ <20210719172340.vvtnddbli2vgxndi@pali>
+ <62e8d92a-806b-15fb-672d-2519d5a2fa4b@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <62e8d92a-806b-15fb-672d-2519d5a2fa4b@gmail.com>
+User-Agent: NeoMutt/20180716
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 21 Jul 2021 20:15:55 +0100, Lad Prabhakar wrote:
-> Add device tree binding documentation and header file for Renesas
-> RZ/G2L pinctrl.
+On Monday 19 July 2021 20:39:13 Marek Vasut wrote:
+> On 7/19/21 7:23 PM, Pali Rohár wrote:
 > 
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  .../pinctrl/renesas,rzg2l-pinctrl.yaml        | 155 ++++++++++++++++++
->  include/dt-bindings/pinctrl/rzg2l-pinctrl.h   |  23 +++
->  2 files changed, 178 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
->  create mode 100644 include/dt-bindings/pinctrl/rzg2l-pinctrl.h
+> [...]
 > 
+> > > > > The R-Car PCIe controller is capable of handling L0s/L1 link states.
+> > > > > While the controller can enter and exit L0s link state, and exit L1
+> > > > > link state, without any additional action from the driver, to enter
+> > > > > L1 link state, the driver must complete the link state transition by
+> > > > > issuing additional commands to the controller.
+> > > > > 
+> > > > > The problem is, this transition is not atomic. The controller sets
+> > > > > PMEL1RX bit in PMSR register upon reception of PM_ENTER_L1 DLLP from
+> > > > > the PCIe card, but then the controller enters some sort of inbetween
+> > > > > state. The driver must detect this condition and complete the link
+> > > > > state transition, by setting L1IATN bit in PMCTLR and waiting for
+> > > > > the link state transition to complete.
+> > > > > 
+> > > > > If a PCIe access happens inside this window, where the controller
+> > > > > is between L0 and L1 link states, the access generates a fault and
+> > > > > the ARM 'imprecise external abort' handler is invoked.
+> > 
+> > And if PCIe MMIO access does not happen, what fixes this issue?
+> 
+> Then you have no problem because you don't hit this fault.
 
-My bot found errors running 'make DT_CHECKER_FLAGS=-m dt_binding_check'
-on your patch (DT_CHECKER_FLAGS is new in v5.13):
+When controller stucks in some "unknown" state you have a problem. And
+it does not matter if you are doing MMIO or not. If controller is in
+Recovery or Configuration state then endpoint card cannot send neither
+interrupt nor memory read / write messages to system.
 
-yamllint warnings/errors:
+Driver for endpoint card does not have to do active polling to check if
+something in endpoint card happened. It can just wait for interrupt and
+then do some stuff (which is IIRC preferred design if events are not too
+frequent). And in this case card is in dead state and you have this
+problem, right?
 
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.example.dts:29.34-35 syntax error
-FATAL ERROR: Unable to parse input tree
-make[1]: *** [scripts/Makefile.lib:380: Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.example.dt.yaml] Error 1
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1418: dt_binding_check] Error 2
-\ndoc reference errors (make refcheckdocs):
+> > In this
+> > patch is implemented only arm32 external abort hook handler (which is
+> > called only when PCIe MMIO access happens and aborts).
+> 
+> Yes, for the aarch64 rcar the same fix is implemented in atf (see below).
+> 
+> > > > > Just like other PCI controller drivers, here we hook the fault handler,
+> > > > > perform the fixup to help the controller enter L1 link state, and then
+> > > > > restart the instruction which triggered the fault. Since the controller
+> > > > > is in L1 link state now, the link can exit from L1 link state to L0 and
+> > > > > successfully complete the access.
+> > 
+> > Link cannot directly goes to L0 from L1. It first goes to Recovery state
+> > and in this state card can "disconnect" or reset...
+> > 
+> > What would happen if PCIe MMIO access is issued when link is not in some
+> > L* state? (This can be manually triggered by PCIe Hot Reset - toggling
+> > Secondary Bus Reset bit in Bridge Control register on parent PCIe Bridge
+> > device) Is R-Car working in this case and does not crash?
+> 
+> This seems to be exactly the situation the commit message describes -- the
+> controller is stuck between L states and needs manual register write to
+> proceed.
 
-See https://patchwork.ozlabs.org/patch/1508385
+No, I asked what happen when is *not* in L state. Commit message does
+not describe it.
 
-This check can fail if there are any dependencies. The base for a patch
-series is generally the most recent rc1.
+So what happen if you try to do MMIO e.g. during Hot Reset state? (This
+state can be easily "forced", so easy to test) Does it crash too (and
+therefore needs some other "hack")? Or it is working fine without any
+crash? Read operation in most cases returns all-ones and write just do
+nothing (as write has no response).
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+> [...]
+> 
+> > > > To be clear, I'm not objecting to the patch.  It's a hardware problem
+> > > > and we should work around it as best we can.
+> > 
+> > I'm not sure if current API of hook_fault_code or rather whole usage of
+> > it is prepared to expand into more and more drivers. Last time I looked
+> > at this arm32 part, it was possible to register only one callback from
+> > driver. So extending usage of this hook API can result that two drivers
+> > start fighting who register it earlier...
+> 
+> There doesn't seem to be much ongoing HW development on the arm32 r-car, so
+> I don't expect this list of hooks to grow much on this platform.
 
-pip3 install dtschema --upgrade
-
-Please check and re-submit.
-
+For R-Car it then fine. This was just general comment as arm32 is still
+actively developed platform.
