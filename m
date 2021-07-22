@@ -2,94 +2,87 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AB6C6377D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F6FC63793
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:14:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4BCA613AA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:14:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C55D561364
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:14:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232228AbhGVNd0 (ORCPT
+        id S232343AbhGVNd7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 22 Jul 2021 09:33:26 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:15283 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S232105AbhGVNdZ (ORCPT
+        Thu, 22 Jul 2021 09:33:59 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:24216 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232329AbhGVNdk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Jul 2021 09:33:25 -0400
+        Thu, 22 Jul 2021 09:33:40 -0400
 X-IronPort-AV: E=Sophos;i="5.84,261,1620658800"; 
-   d="scan'208";a="88463911"
+   d="scan'208";a="88414745"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 22 Jul 2021 23:13:59 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 22 Jul 2021 23:14:11 +0900
 Received: from localhost.localdomain (unknown [10.226.92.164])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 65D6D401224D;
-        Thu, 22 Jul 2021 23:13:55 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 654F3401224A;
+        Thu, 22 Jul 2021 23:14:09 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergey Shtylyov <s.shtylyov@omprussia.ru>,
-        Adam Ford <aford173@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Yuusuke Ashizuka <ashiduka@fujitsu.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next 00/18] Add Gigabit Ethernet driver support
-Date:   Thu, 22 Jul 2021 15:13:33 +0100
-Message-Id: <20210722141351.13668-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH net-next 04/18] drivers: clk: renesas: r9a07g044-cpg: Add GbEthernet clock/reset
+Date:   Thu, 22 Jul 2021 15:13:37 +0100
+Message-Id: <20210722141351.13668-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20210722141351.13668-1-biju.das.jz@bp.renesas.com>
+References: <20210722141351.13668-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The DMAC and EMAC blocks of Gigabit Ethernet IP is almost similar to Ethernet AVB.
+Add ETH{0,1} clock/reset entries to CPG driver.
 
-The Gigabit Etherner IP consists of Ethernet controller (E-MAC), Internal TCP/IP Offload Engine (TOE) and Dedicated Direct memory access controller (DMAC).
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ drivers/clk/renesas/r9a07g044-cpg.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-With few changes in driver, we can support Gigabit ethernet driver as well.
-
-This patch series is aims to support the same
-
-RFC->V1
-  * Incorporated feedback from Andrew, Sergei, Geert and Prabhakar
-  * https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=515525
-
-Biju Das (18):
-  dt-bindings: net: renesas,etheravb: Document Gigabit Ethernet IP
-  drivers: clk: renesas: rzg2l-cpg: Add support to handle MUX clocks
-  drivers: clk: renesas: r9a07g044-cpg: Add ethernet clock sources
-  drivers: clk: renesas: r9a07g044-cpg: Add GbEthernet clock/reset
-  ravb: Replace chip type with a structure for driver data
-  ravb: Factorise ptp feature
-  ravb: Add features specific to R-Car Gen3
-  ravb: Add R-Car common features
-  ravb: Factorise ravb_ring_free function
-  ravb: Factorise ravb_ring_format function
-  ravb: Factorise ravb_ring_init function
-  ravb: Factorise {emac,dmac} init function
-  ravb: Factorise ravb_rx function
-  ravb: Factorise ravb_adjust_link function
-  ravb: Factorise ravb_set_features
-  ravb: Add reset support
-  ravb: Add GbEthernet driver support
-  arm64: dts: renesas: r9a07g044: Add GbEther nodes
-
- .../bindings/net/renesas,etheravb.yaml        |  57 +-
- arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  42 +
- drivers/clk/renesas/r9a07g044-cpg.c           |  27 +
- drivers/clk/renesas/rzg2l-cpg.c               |  24 +
- drivers/clk/renesas/rzg2l-cpg.h               |  15 +
- drivers/net/ethernet/renesas/ravb.h           | 112 ++-
- drivers/net/ethernet/renesas/ravb_main.c      | 922 +++++++++++++++---
- 7 files changed, 1031 insertions(+), 168 deletions(-)
-
+diff --git a/drivers/clk/renesas/r9a07g044-cpg.c b/drivers/clk/renesas/r9a07g044-cpg.c
+index c78bea2f6ea8..8be09bcdf0f6 100644
+--- a/drivers/clk/renesas/r9a07g044-cpg.c
++++ b/drivers/clk/renesas/r9a07g044-cpg.c
+@@ -137,6 +137,14 @@ static struct rzg2l_mod_clk r9a07g044_mod_clks[] = {
+ 				0x578, 2),
+ 	DEF_MOD("usb_pclk",	R9A07G044_USB_PCLK, R9A07G044_CLK_P1,
+ 				0x578, 3),
++	DEF_MOD("eth0_axi",	R9A07G044_ETH0_CLK_AXI, R9A07G044_CLK_M0,
++				0x57c, 0),
++	DEF_MOD("eth0_chi",	R9A07G044_ETH0_CLK_CHI, R9A07G044_CLK_ZT,
++				0x57c, 0),
++	DEF_MOD("eth1_axi",	R9A07G044_ETH1_CLK_AXI, R9A07G044_CLK_M0,
++				0x57c, 1),
++	DEF_MOD("eth1_chi",	R9A07G044_ETH1_CLK_CHI, R9A07G044_CLK_ZT,
++				0x57c, 1),
+ 	DEF_MOD("i2c0",		R9A07G044_I2C0_PCLK, R9A07G044_CLK_P0,
+ 				0x580, 0),
+ 	DEF_MOD("i2c1",		R9A07G044_I2C1_PCLK, R9A07G044_CLK_P0,
+@@ -181,6 +189,8 @@ static struct rzg2l_reset r9a07g044_resets[] = {
+ 	DEF_RST(R9A07G044_USB_U2H1_HRESETN, 0x878, 1),
+ 	DEF_RST(R9A07G044_USB_U2P_EXL_SYSRST, 0x878, 2),
+ 	DEF_RST(R9A07G044_USB_PRESETN, 0x878, 3),
++	DEF_RST(R9A07G044_ETH0_RST_HW_N, 0x87c, 0),
++	DEF_RST(R9A07G044_ETH1_RST_HW_N, 0x87c, 1),
+ 	DEF_RST(R9A07G044_I2C0_MRST, 0x880, 0),
+ 	DEF_RST(R9A07G044_I2C1_MRST, 0x880, 1),
+ 	DEF_RST(R9A07G044_I2C2_MRST, 0x880, 2),
 -- 
 2.17.1
 
