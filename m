@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BF8C63799
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C07E1C6379C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:15:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E8AC60698
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:15:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB5DC60698
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:15:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232295AbhGVNeZ (ORCPT
+        id S232346AbhGVNe1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 22 Jul 2021 09:34:25 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:24216 "EHLO
+        Thu, 22 Jul 2021 09:34:27 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:54735 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S232336AbhGVNeA (ORCPT
+        by vger.kernel.org with ESMTP id S232363AbhGVNeG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Jul 2021 09:34:00 -0400
+        Thu, 22 Jul 2021 09:34:06 -0400
 X-IronPort-AV: E=Sophos;i="5.84,261,1620658800"; 
-   d="scan'208";a="88414766"
+   d="scan'208";a="88414780"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Jul 2021 23:14:29 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 22 Jul 2021 23:14:40 +0900
 Received: from localhost.localdomain (unknown [10.226.92.164])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 81643401224A;
-        Thu, 22 Jul 2021 23:14:26 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 767AE401224C;
+        Thu, 22 Jul 2021 23:14:37 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
@@ -42,9 +42,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next 09/18] ravb: Factorise ravb_ring_free function
-Date:   Thu, 22 Jul 2021 15:13:42 +0100
-Message-Id: <20210722141351.13668-10-biju.das.jz@bp.renesas.com>
+Subject: [PATCH net-next 12/18] ravb: Factorise {emac,dmac} init function
+Date:   Thu, 22 Jul 2021 15:13:45 +0100
+Message-Id: <20210722141351.13668-13-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210722141351.13668-1-biju.das.jz@bp.renesas.com>
 References: <20210722141351.13668-1-biju.das.jz@bp.renesas.com>
@@ -52,116 +52,126 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Extended descriptor support in RX is available for R-Car where as it
-is a normal descriptor for RZ/G2L. Factorise ravb_ring_free function
-so that it can support later SoC.
+The R-Car AVB module has Magic packet detection, multiple irq's and
+timestamp enable features which is not present on RZ/G2L Gigabit
+Ethernet module. Factorise emac and dmac initialization function to
+support the later SoC.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb.h      |  5 +++
- drivers/net/ethernet/renesas/ravb_main.c | 49 ++++++++++++++++--------
- 2 files changed, 37 insertions(+), 17 deletions(-)
+ drivers/net/ethernet/renesas/ravb.h      |  2 +
+ drivers/net/ethernet/renesas/ravb_main.c | 58 ++++++++++++++++--------
+ 2 files changed, 40 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index a474ed68db22..3a9cf6e8671a 100644
+index d82bfa6e57c1..4d5910dcda86 100644
 --- a/drivers/net/ethernet/renesas/ravb.h
 +++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -988,7 +988,12 @@ enum ravb_chip_id {
- 	RCAR_GEN3,
+@@ -992,6 +992,8 @@ struct ravb_ops {
+ 	void (*ring_free)(struct net_device *ndev, int q);
+ 	void (*ring_format)(struct net_device *ndev, int q);
+ 	bool (*alloc_rx_desc)(struct net_device *ndev, int q);
++	void (*emac_init)(struct net_device *ndev);
++	void (*dmac_init)(struct net_device *ndev);
  };
  
-+struct ravb_ops {
-+	void (*ring_free)(struct net_device *ndev, int q);
-+};
-+
  struct ravb_drv_data {
-+	const struct ravb_ops *ravb_ops;
- 	netdev_features_t net_features;
- 	netdev_features_t net_hw_features;
- 	const char (*gstrings_stats)[ETH_GSTRING_LEN];
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 4ef2565534d2..a3b8b243fd54 100644
+index 3d0f6598b936..e200114376e4 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -247,30 +247,39 @@ static int ravb_tx_free(struct net_device *ndev, int q, bool free_txed_only)
+@@ -454,7 +454,7 @@ static int ravb_ring_init(struct net_device *ndev, int q)
  }
  
- /* Free skb's and DMA buffers for Ethernet AVB */
--static void ravb_ring_free(struct net_device *ndev, int q)
-+static void ravb_ring_free_rx(struct net_device *ndev, int q)
+ /* E-MAC init function */
+-static void ravb_emac_init(struct net_device *ndev)
++static void ravb_emac_init_ex(struct net_device *ndev)
+ {
+ 	/* Receive frame limit set register */
+ 	ravb_write(ndev, ndev->mtu + ETH_HLEN + VLAN_HLEN + ETH_FCS_LEN, RFLR);
+@@ -480,30 +480,19 @@ static void ravb_emac_init(struct net_device *ndev)
+ 	ravb_write(ndev, ECSIPR_ICDIP | ECSIPR_MPDIP | ECSIPR_LCHNGIP, ECSIPR);
+ }
+ 
+-/* Device init function for Ethernet AVB */
+-static int ravb_dmac_init(struct net_device *ndev)
++static void ravb_emac_init(struct net_device *ndev)
  {
  	struct ravb_private *priv = netdev_priv(ndev);
--	int num_tx_desc = priv->num_tx_desc;
- 	int ring_size;
- 	int i;
+ 	const struct ravb_drv_data *info = priv->info;
+-	int error;
  
--	if (priv->rx_ring[q]) {
--		for (i = 0; i < priv->num_rx_ring[q]; i++) {
--			struct ravb_ex_rx_desc *desc = &priv->rx_ring[q][i];
-+	for (i = 0; i < priv->num_rx_ring[q]; i++) {
-+		struct ravb_ex_rx_desc *desc = &priv->rx_ring[q][i];
- 
--			if (!dma_mapping_error(ndev->dev.parent,
--					       le32_to_cpu(desc->dptr)))
--				dma_unmap_single(ndev->dev.parent,
--						 le32_to_cpu(desc->dptr),
--						 RX_BUF_SZ,
--						 DMA_FROM_DEVICE);
--		}
--		ring_size = sizeof(struct ravb_ex_rx_desc) *
--			    (priv->num_rx_ring[q] + 1);
--		dma_free_coherent(ndev->dev.parent, ring_size, priv->rx_ring[q],
--				  priv->rx_desc_dma[q]);
--		priv->rx_ring[q] = NULL;
-+		if (!dma_mapping_error(ndev->dev.parent,
-+				       le32_to_cpu(desc->dptr)))
-+			dma_unmap_single(ndev->dev.parent,
-+					 le32_to_cpu(desc->dptr),
-+					 RX_BUF_SZ,
-+					 DMA_FROM_DEVICE);
- 	}
-+	ring_size = sizeof(struct ravb_ex_rx_desc) *
-+		    (priv->num_rx_ring[q] + 1);
-+	dma_free_coherent(ndev->dev.parent, ring_size, priv->rx_ring[q],
-+			  priv->rx_desc_dma[q]);
-+	priv->rx_ring[q] = NULL;
+-	/* Set CONFIG mode */
+-	error = ravb_config(ndev);
+-	if (error)
+-		return error;
+-
+-	error = ravb_ring_init(ndev, RAVB_BE);
+-	if (error)
+-		return error;
+-	error = ravb_ring_init(ndev, RAVB_NC);
+-	if (error) {
+-		ravb_ring_free(ndev, RAVB_BE);
+-		return error;
+-	}
++	info->ravb_ops->emac_init(ndev);
 +}
-+
-+static void ravb_ring_free(struct net_device *ndev, int q)
+ 
+-	/* Descriptor format */
+-	ravb_ring_format(ndev, RAVB_BE);
+-	ravb_ring_format(ndev, RAVB_NC);
++/* Device init function for Ethernet AVB */
++static void ravb_dmac_init_ex(struct net_device *ndev)
 +{
 +	struct ravb_private *priv = netdev_priv(ndev);
 +	const struct ravb_drv_data *info = priv->info;
-+	int num_tx_desc = priv->num_tx_desc;
-+	int ring_size;
-+	int i;
-+
-+	if (priv->rx_ring[q])
-+		info->ravb_ops->ring_free(ndev, q);
  
- 	if (priv->tx_ring[q]) {
- 		ravb_tx_free(ndev, q, false);
-@@ -1987,7 +1996,12 @@ static int ravb_mdio_release(struct ravb_private *priv)
- 	return 0;
- }
- 
-+static const struct ravb_ops ravb_gen3_ops = {
-+	.ring_free = ravb_ring_free_rx,
-+};
+ 	/* Set AVB RX */
+ 	ravb_write(ndev,
+@@ -530,6 +519,33 @@ static int ravb_dmac_init(struct net_device *ndev)
+ 	ravb_write(ndev, RIC2_QFE0 | RIC2_QFE1 | RIC2_RFFE, RIC2);
+ 	/* Frame transmitted, timestamp FIFO updated */
+ 	ravb_write(ndev, TIC_FTE0 | TIC_FTE1 | TIC_TFUE, TIC);
++}
 +
- static const struct ravb_drv_data ravb_gen3_data = {
-+	.ravb_ops = &ravb_gen3_ops,
- 	.net_features = NETIF_F_RXCSUM,
- 	.net_hw_features = NETIF_F_RXCSUM,
- 	.gstrings_stats = ravb_gstrings_stats,
-@@ -2001,6 +2015,7 @@ static const struct ravb_drv_data ravb_gen3_data = {
++static int ravb_dmac_init(struct net_device *ndev)
++{
++	struct ravb_private *priv = netdev_priv(ndev);
++	const struct ravb_drv_data *info = priv->info;
++	int error;
++
++	/* Set CONFIG mode */
++	error = ravb_config(ndev);
++	if (error)
++		return error;
++
++	error = ravb_ring_init(ndev, RAVB_BE);
++	if (error)
++		return error;
++	error = ravb_ring_init(ndev, RAVB_NC);
++	if (error) {
++		ravb_ring_free(ndev, RAVB_BE);
++		return error;
++	}
++
++	/* Descriptor format */
++	ravb_ring_format(ndev, RAVB_BE);
++	ravb_ring_format(ndev, RAVB_NC);
++
++	info->ravb_ops->dmac_init(ndev);
+ 
+ 	/* Setting the control will start the AVB-DMAC process. */
+ 	ravb_modify(ndev, CCC, CCC_OPC, CCC_OPC_OPERATION);
+@@ -2018,6 +2034,8 @@ static const struct ravb_ops ravb_gen3_ops = {
+ 	.ring_free = ravb_ring_free_rx,
+ 	.ring_format = ravb_ring_format_rx,
+ 	.alloc_rx_desc = ravb_alloc_rx_desc,
++	.emac_init = ravb_emac_init_ex,
++	.dmac_init = ravb_dmac_init_ex,
  };
  
- static const struct ravb_drv_data ravb_gen2_data = {
-+	.ravb_ops = &ravb_gen3_ops,
- 	.net_features = NETIF_F_RXCSUM,
- 	.net_hw_features = NETIF_F_RXCSUM,
- 	.gstrings_stats = ravb_gstrings_stats,
+ static const struct ravb_drv_data ravb_gen3_data = {
 -- 
 2.17.1
 
