@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5AEC63797
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F39B3C63799
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 391EC61244
+	by mail.kernel.org (Postfix) with ESMTP id DF6BA6128A
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 22 Jul 2021 14:15:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232457AbhGVNeb (ORCPT
+        id S232362AbhGVNec (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 22 Jul 2021 09:34:31 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:31675 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S232383AbhGVNeN (ORCPT
+        Thu, 22 Jul 2021 09:34:32 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:16136 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232425AbhGVNeV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 22 Jul 2021 09:34:13 -0400
+        Thu, 22 Jul 2021 09:34:21 -0400
 X-IronPort-AV: E=Sophos;i="5.84,261,1620658800"; 
-   d="scan'208";a="88414788"
+   d="scan'208";a="88463978"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 22 Jul 2021 23:14:48 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 22 Jul 2021 23:14:55 +0900
 Received: from localhost.localdomain (unknown [10.226.92.164])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id D5067401224A;
-        Thu, 22 Jul 2021 23:14:44 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 24755401224A;
+        Thu, 22 Jul 2021 23:14:51 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
@@ -42,9 +42,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next 14/18] ravb: Factorise ravb_adjust_link function
-Date:   Thu, 22 Jul 2021 15:13:47 +0100
-Message-Id: <20210722141351.13668-15-biju.das.jz@bp.renesas.com>
+Subject: [PATCH net-next 16/18] ravb: Add reset support
+Date:   Thu, 22 Jul 2021 15:13:49 +0100
+Message-Id: <20210722141351.13668-17-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210722141351.13668-1-biju.das.jz@bp.renesas.com>
 References: <20210722141351.13668-1-biju.das.jz@bp.renesas.com>
@@ -52,58 +52,92 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-R-Car supports 100 and 1000 Mbs transfer speed where as RZ/G2L
-in addition support 10Mbps. Factorise ravb_adjust_link function
-in order to support 10Mbps speed.
+Reset support is present on R-Car. Let's support it, if it is
+available.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/net/ethernet/renesas/ravb.h      | 1 +
- drivers/net/ethernet/renesas/ravb_main.c | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/renesas/ravb.h      |  1 +
+ drivers/net/ethernet/renesas/ravb_main.c | 11 +++++++++++
+ 2 files changed, 12 insertions(+)
 
 diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 8a35b0ca1183..4725be4e85d0 100644
+index f1de095f21d9..af06e849db47 100644
 --- a/drivers/net/ethernet/renesas/ravb.h
 +++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -995,6 +995,7 @@ struct ravb_ops {
- 	void (*emac_init)(struct net_device *ndev);
- 	void (*dmac_init)(struct net_device *ndev);
- 	bool (*receive)(struct net_device *ndev, int *quota, int q);
-+	void (*set_rate)(struct net_device *ndev);
+@@ -1067,6 +1067,7 @@ struct ravb_private {
+ 	int num_tx_desc;		/* TX descriptors per packet */
+ 
+ 	const struct ravb_drv_data *info;
++	struct reset_control *rstc;
  };
  
- struct ravb_drv_data {
+ static inline u32 ravb_read(struct net_device *ndev, enum ravb_reg reg)
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index a0f19c6f8833..9d5ccd8f9bb1 100644
+index 5a375ac962a0..5a83dd83c635 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1049,6 +1049,7 @@ static int ravb_poll(struct napi_struct *napi, int budget)
- static void ravb_adjust_link(struct net_device *ndev)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
-+	const struct ravb_drv_data *info = priv->info;
- 	struct phy_device *phydev = ndev->phydev;
- 	bool new_state = false;
- 	unsigned long flags;
-@@ -1063,7 +1064,7 @@ static void ravb_adjust_link(struct net_device *ndev)
- 		if (phydev->speed != priv->speed) {
- 			new_state = true;
- 			priv->speed = phydev->speed;
--			ravb_set_rate(ndev);
-+			info->ravb_ops->set_rate(ndev);
- 		}
- 		if (!priv->link) {
- 			ravb_modify(ndev, ECMR, ECMR_TXF, 0);
-@@ -2045,6 +2046,7 @@ static const struct ravb_ops ravb_gen3_ops = {
- 	.emac_init = ravb_emac_init_ex,
- 	.dmac_init = ravb_dmac_init_ex,
- 	.receive = ravb_ex_rx,
-+	.set_rate = ravb_set_rate,
- };
+@@ -29,6 +29,7 @@
+ #include <linux/slab.h>
+ #include <linux/spinlock.h>
+ #include <linux/sys_soc.h>
++#include <linux/reset.h>
  
- static const struct ravb_drv_data ravb_gen3_data = {
+ #include <asm/div64.h>
+ 
+@@ -2204,6 +2205,7 @@ static int ravb_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *np = pdev->dev.of_node;
+ 	const struct ravb_drv_data *info;
++	struct reset_control *rstc;
+ 	struct ravb_private *priv;
+ 	struct net_device *ndev;
+ 	int error, irq, q;
+@@ -2216,6 +2218,11 @@ static int ravb_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++	rstc = devm_reset_control_get_optional_exclusive(&pdev->dev, NULL);
++	if (IS_ERR(rstc))
++		return dev_err_probe(&pdev->dev, PTR_ERR(rstc),
++				     "failed to get cpg reset\n");
++
+ 	ndev = alloc_etherdev_mqs(sizeof(struct ravb_private),
+ 				  NUM_TX_QUEUE, NUM_RX_QUEUE);
+ 	if (!ndev)
+@@ -2226,6 +2233,7 @@ static int ravb_probe(struct platform_device *pdev)
+ 	ndev->features = info->net_features;
+ 	ndev->hw_features = info->net_hw_features;
+ 
++	reset_control_deassert(rstc);
+ 	pm_runtime_enable(&pdev->dev);
+ 	pm_runtime_get_sync(&pdev->dev);
+ 
+@@ -2243,6 +2251,7 @@ static int ravb_probe(struct platform_device *pdev)
+ 
+ 	priv = netdev_priv(ndev);
+ 	priv->info = info;
++	priv->rstc = rstc;
+ 	priv->ndev = ndev;
+ 	priv->pdev = pdev;
+ 	priv->num_tx_ring[RAVB_BE] = BE_TX_RING_SIZE;
+@@ -2414,6 +2423,7 @@ static int ravb_probe(struct platform_device *pdev)
+ 
+ 	pm_runtime_put(&pdev->dev);
+ 	pm_runtime_disable(&pdev->dev);
++	reset_control_assert(rstc);
+ 	return error;
+ }
+ 
+@@ -2439,6 +2449,7 @@ static int ravb_remove(struct platform_device *pdev)
+ 	netif_napi_del(&priv->napi[RAVB_BE]);
+ 	ravb_mdio_release(priv);
+ 	pm_runtime_disable(&pdev->dev);
++	reset_control_assert(priv->rstc);
+ 	free_netdev(ndev);
+ 	platform_set_drvdata(pdev, NULL);
+ 
 -- 
 2.17.1
 
