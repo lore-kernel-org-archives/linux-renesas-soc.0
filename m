@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EE8C4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 01:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB89C4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 01:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D38CE60F58
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 01:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06D5560F58
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 01:10:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229528AbhG0AWT (ORCPT
+        id S231534AbhG0AaT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 26 Jul 2021 20:22:19 -0400
-Received: from mga01.intel.com ([192.55.52.88]:41838 "EHLO mga01.intel.com"
+        Mon, 26 Jul 2021 20:30:19 -0400
+Received: from mga07.intel.com ([134.134.136.100]:44398 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229524AbhG0AWS (ORCPT
+        id S229528AbhG0AaT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Jul 2021 20:22:18 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10057"; a="234206357"
+        Mon, 26 Jul 2021 20:30:19 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10057"; a="276134699"
 X-IronPort-AV: E=Sophos;i="5.84,272,1620716400"; 
-   d="scan'208";a="234206357"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2021 18:02:46 -0700
+   d="scan'208";a="276134699"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jul 2021 18:10:46 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.84,272,1620716400"; 
-   d="scan'208";a="437065076"
+   d="scan'208";a="664867536"
 Received: from lkp-server01.sh.intel.com (HELO d053b881505b) ([10.239.97.150])
-  by fmsmga007.fm.intel.com with ESMTP; 26 Jul 2021 18:02:45 -0700
+  by fmsmga005.fm.intel.com with ESMTP; 26 Jul 2021 18:10:45 -0700
 Received: from kbuild by d053b881505b with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1m8BUa-0006HY-FT; Tue, 27 Jul 2021 01:02:44 +0000
-Date:   Tue, 27 Jul 2021 09:01:57 +0800
+        id 1m8BcK-0006I2-Qt; Tue, 27 Jul 2021 01:10:44 +0000
+Date:   Tue, 27 Jul 2021 09:10:28 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-drivers:renesas-r9a07g044-dt-binding-defs] BUILD SUCCESS 0b256c403d4082bafc681143913442288010277c
-Message-ID: <60ff5b05.e84Nh80GfJ8uQiy0%lkp@intel.com>
+Subject: [renesas-devel:next] BUILD SUCCESS
+ cecb7cc88302b2e508c6cc1ce7663bba08c96a65
+Message-ID: <60ff5d04.WeKZkw3F1OxH+IoH%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -47,13 +48,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-r9a07g044-dt-binding-defs
-branch HEAD: 0b256c403d4082bafc681143913442288010277c  dt-bindings: clock: r9a07g044-cpg: Add entry for P0_DIV2 core clock
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: cecb7cc88302b2e508c6cc1ce7663bba08c96a65  Merge branch 'renesas-arm-dt-for-v5.15' into renesas-next
 
-elapsed time: 720m
+elapsed time: 727m
 
-configs tested: 159
-configs skipped: 3
+configs tested: 154
+configs skipped: 85
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -86,11 +87,6 @@ sh                          r7780mp_defconfig
 arm                            xcep_defconfig
 mips                       bmips_be_defconfig
 powerpc                          allmodconfig
-sh                         microdev_defconfig
-parisc                generic-64bit_defconfig
-arc                              alldefconfig
-sh                              ul2_defconfig
-sh                          rsk7201_defconfig
 powerpc                 mpc8313_rdb_defconfig
 powerpc                          g5_defconfig
 mips                           rs90_defconfig
@@ -129,10 +125,10 @@ mips                           ip27_defconfig
 mips                         bigsur_defconfig
 sh                        sh7763rdp_defconfig
 x86_64                              defconfig
-x86_64                            allnoconfig
 ia64                                defconfig
 ia64                             allyesconfig
 ia64                             allmodconfig
+x86_64                            allnoconfig
 m68k                             allmodconfig
 m68k                                defconfig
 m68k                             allyesconfig
@@ -152,8 +148,8 @@ s390                             allyesconfig
 s390                             allmodconfig
 parisc                           allyesconfig
 s390                                defconfig
-sparc                            allyesconfig
 i386                                defconfig
+sparc                            allyesconfig
 mips                             allmodconfig
 mips                             allyesconfig
 powerpc                          allyesconfig
