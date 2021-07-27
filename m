@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5D9C4320A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 20:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02F38C4320E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 20:26:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69E7560F0F
+	by mail.kernel.org (Postfix) with ESMTP id DC77860F0F
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 20:26:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232140AbhG0U0b (ORCPT
+        id S231771AbhG0U0b (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 27 Jul 2021 16:26:31 -0400
-Received: from mga12.intel.com ([192.55.52.136]:51467 "EHLO mga12.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:45096 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231771AbhG0U0a (ORCPT
+        id S231916AbhG0U0b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Jul 2021 16:26:30 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10058"; a="192118235"
+        Tue, 27 Jul 2021 16:26:31 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10058"; a="199704758"
 X-IronPort-AV: E=Sophos;i="5.84,274,1620716400"; 
-   d="scan'208";a="192118235"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2021 13:26:30 -0700
+   d="scan'208";a="199704758"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2021 13:26:29 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.84,274,1620716400"; 
-   d="scan'208";a="634523924"
+   d="scan'208";a="662962210"
 Received: from lkp-server01.sh.intel.com (HELO d053b881505b) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 27 Jul 2021 13:26:28 -0700
+  by fmsmga006.fm.intel.com with ESMTP; 27 Jul 2021 13:26:28 -0700
 Received: from kbuild by d053b881505b with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1m8Tem-0007FL-0R; Tue, 27 Jul 2021 20:26:28 +0000
-Date:   Wed, 28 Jul 2021 04:25:41 +0800
+        id 1m8Tel-0007FG-K7; Tue, 27 Jul 2021 20:26:27 +0000
+Date:   Wed, 28 Jul 2021 04:25:54 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-drivers:renesas-pinctrl-for-v5.15] BUILD SUCCESS
- 91d1be9fb7d667ae136f05cc645276eb2c9fa40e
-Message-ID: <61006bc5.FB6ZU7AQfHBgOMzD%lkp@intel.com>
+Subject: [renesas-devel:renesas-drivers-for-v5.15] BUILD SUCCESS
+ bfe6b5590ce6cab81b3ee51b4541bd1d0b18b3b2
+Message-ID: <61006bd2.EvAaUoMFW5jNDVdf%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -49,10 +49,10 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-pinctrl-for-v5.15
-branch HEAD: 91d1be9fb7d667ae136f05cc645276eb2c9fa40e  pinctrl: renesas: Fix pin control matching on R-Car H3e-2G
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v5.15
+branch HEAD: bfe6b5590ce6cab81b3ee51b4541bd1d0b18b3b2  soc: renesas: Identify R-Car H3e-2G and M3e-2G
 
-elapsed time: 728m
+elapsed time: 721m
 
 configs tested: 82
 configs skipped: 3
