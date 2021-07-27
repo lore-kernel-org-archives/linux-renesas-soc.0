@@ -2,115 +2,82 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 390DCC4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 20:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CCFC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 20:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 20AAD60F23
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 20:26:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B288A60F9C
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 20:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232261AbhG0U0e (ORCPT
+        id S232218AbhG0UbL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 27 Jul 2021 16:26:34 -0400
-Received: from mga11.intel.com ([192.55.52.93]:28464 "EHLO mga11.intel.com"
+        Tue, 27 Jul 2021 16:31:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231916AbhG0U0e (ORCPT
+        id S230409AbhG0UbK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 27 Jul 2021 16:26:34 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10058"; a="209412648"
-X-IronPort-AV: E=Sophos;i="5.84,274,1620716400"; 
-   d="scan'208";a="209412648"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2021 13:26:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.84,274,1620716400"; 
-   d="scan'208";a="498940111"
-Received: from lkp-server01.sh.intel.com (HELO d053b881505b) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 27 Jul 2021 13:26:28 -0700
-Received: from kbuild by d053b881505b with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1m8Tel-0007FD-Bk; Tue, 27 Jul 2021 20:26:27 +0000
-Date:   Wed, 28 Jul 2021 04:25:52 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:renesas-arm-dt-for-v5.15] BUILD SUCCESS
- 0ef844040c9b7df917f9a69ca3520eeea1493f61
-Message-ID: <61006bd0.xw9t1MrPIaqN1P9v%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Tue, 27 Jul 2021 16:31:10 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 41C7660F9D;
+        Tue, 27 Jul 2021 20:31:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1627417870;
+        bh=ZkhS55XggLNssuCIBqtuPZ0Y/L4fu7HoNPrNXlSi3H0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=kKbLYUkTlJrXfrhwcbofYMAT0Aop2PvcbQtZ3pTZQaKI/9fg5uvByY+V8OB2YlbXx
+         avrb24K+NrF9IHGKq/o/X1sMrUrrklEKceLo8l6bU/JEHpI2KKjmjZIaoS2XVo/oiM
+         XDM7rHWLlnYEoitiYzA4eUr4o+eg5Yz4WpFSfHgXUKqiQZF7Gezex3PzxwyqbZTopi
+         983GFo307ij96rxx1kGXi3dtJYQ82IKTPrsVT4vB0MVbJZiwOfPBv5SZB9nd/CVNR9
+         HPW/mRcDVq2/13wN9Jc3Vix0UXlMOXWjV+Oi9HnYcfznmCoC/RKCh3u0pleSI8s1mK
+         3y5NnRcetNDBw==
+Received: by mail-ed1-f43.google.com with SMTP id z26so201850edr.0;
+        Tue, 27 Jul 2021 13:31:10 -0700 (PDT)
+X-Gm-Message-State: AOAM531EIoykfp3aiB5j3mM90YqUhMBFhEwFRwgjzY4do3dtR2Ktu2dr
+        tZWdlX1HubQ1Zrnpqr5y7vcrfDVwSTENiEmsYg==
+X-Google-Smtp-Source: ABdhPJyj1o0RiCXcDt0UK5f2hKJR4DHqtubY4gmn20A+p9mszuTSkyEL1stsRYSj+yi431oxWeSE4QZmZUQ3HMqG0mg=
+X-Received: by 2002:a05:6402:1a4c:: with SMTP id bf12mr14265859edb.137.1627417868821;
+ Tue, 27 Jul 2021 13:31:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+References: <20210726182850.14328-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210726182850.14328-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20210726182850.14328-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 27 Jul 2021 14:30:57 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJXYJjPXUGEGqmiXB0o=40SjdizG6JhRbVCkjpqCZG2bQ@mail.gmail.com>
+Message-ID: <CAL_JsqJXYJjPXUGEGqmiXB0o=40SjdizG6JhRbVCkjpqCZG2bQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: iio: adc: Add binding documentation
+ for Renesas RZ/G2L A/D converter
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "open list:MEDIA DRIVERS FOR RENESAS - FCP" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-dt-for-v5.15
-branch HEAD: 0ef844040c9b7df917f9a69ca3520eeea1493f61  arm64: dts: renesas: r8a77961: Add iommus to ipmmu_ds[01] related nodes
+On Mon, Jul 26, 2021 at 12:31 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+>
+> Add binding documentation for Renesas RZ/G2L A/D converter block.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> ---
+>  .../bindings/iio/adc/renesas,rzg2l-adc.yaml   | 134 ++++++++++++++++++
+>  1 file changed, 134 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
 
-elapsed time: 721m
-
-configs tested: 47
-configs skipped: 90
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-i386                 randconfig-c001-20210727
-i386                 randconfig-c001-20210726
-sh                          urquell_defconfig
-sh                           se7712_defconfig
-arm                      integrator_defconfig
-x86_64                            allnoconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-i386                 randconfig-a005-20210727
-i386                 randconfig-a003-20210727
-i386                 randconfig-a004-20210727
-i386                 randconfig-a002-20210727
-i386                 randconfig-a001-20210727
-i386                 randconfig-a006-20210727
-x86_64               randconfig-a011-20210727
-x86_64               randconfig-a016-20210727
-x86_64               randconfig-a013-20210727
-x86_64               randconfig-a014-20210727
-x86_64               randconfig-a012-20210727
-x86_64               randconfig-a015-20210727
-x86_64                    rhel-8.3-kselftests
-um                           x86_64_defconfig
-um                             i386_defconfig
-x86_64                           allyesconfig
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                                  kexec
-
-clang tested configs:
-x86_64               randconfig-c001-20210727
-x86_64               randconfig-a003-20210727
-x86_64               randconfig-a006-20210727
-x86_64               randconfig-a001-20210727
-x86_64               randconfig-a005-20210727
-x86_64               randconfig-a004-20210727
-x86_64               randconfig-a002-20210727
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Reviewed-by: Rob Herring <robh@kernel.org>
