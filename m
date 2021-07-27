@@ -4,111 +4,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,TVD_SPACE_RATIO,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0618DC4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 01:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D7EC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 01:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7D6A60F93
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 01:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA60F60F6E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 27 Jul 2021 01:39:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbhG0Avd (ORCPT
+        id S229575AbhG0A7H (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 26 Jul 2021 20:51:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40766 "EHLO
+        Mon, 26 Jul 2021 20:59:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232296AbhG0Avc (ORCPT
+        with ESMTP id S233673AbhG0A7G (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 26 Jul 2021 20:51:32 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31344C061764
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Jul 2021 18:32:00 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id c11so13829571plg.11
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Jul 2021 18:32:00 -0700 (PDT)
+        Mon, 26 Jul 2021 20:59:06 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3FE7C061757
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Jul 2021 18:39:33 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id e2-20020a17090a4a02b029016f3020d867so2650959pjh.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 26 Jul 2021 18:39:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=7oUgk5HXlTElcD9uk/ry/YujipCFO7vaGzsv9T9nziY=;
-        b=T6Eu+YI31+oLagp/WI3VayutMHUBf0m2VrC48JbgMzSjZPcy3uTg+wVTSB6G9CqIW5
-         U3WsK4lB3blpvPIxjp9Rpyq+DjeEEaN9S0BJED4yxn0D5Zt6jmV+zpypNsm0yQY1tP0k
-         b6iGUIhGmKk0APOiKqYfUVv+sJk5HUsTyUHpz3jqhw1wVDxON54g6Ol4cppzWNIl2tCc
-         jhvYGQdYBprLzDH02Wj8m22LZEQ7aURv2tHOLOdBBPXKmCwyQpMxs1uQTgOaLP2IcZdo
-         8cJSls8v7Zx4Lm/4VmY+EjfCh5e4nSumVof1Iwg9tZhnlKSG/NT0fUlYQRaJNgScfwch
-         Srtg==
+        bh=po/o6Al5Lzl2f4tER6Q8AG3Y5V4S+6+KsmIGwsZWPjQ=;
+        b=ihJM8+8mMYbcyrm/UevrB67G/zrHOrAytElb9Ze1fWJcEH9+IiHnVjoZb8pTjEaXMO
+         /M22wXmY+im03HmP1tZXJIH7OKoTJZh9r4Qg34D/utP53aJaLYcvohCiNWBvrkFf6I5f
+         FN6a173v1GplYrTY3oKsL/X2BCiVsv1FWCPbQwOSY6lNye2rGZYSJkZNSKd7/jbcvt4P
+         nf1MRPGolVd+HsPdhWbZuH/eePafFZnTOAUPJE5PknQQfA4ipCz1rshKZo2VYi4YOoZX
+         Q58dt4GOAih549dppyxMlJLMZQthgSQfXndeeONvtgjRJsEmmFvFv8u/0jV8yNOWZpen
+         R9Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=7oUgk5HXlTElcD9uk/ry/YujipCFO7vaGzsv9T9nziY=;
-        b=Ob29GwbQIN+/l0wujRkGamfvnOatvF4fuH03I4JaobuLL7KUD39wKfsByhn6DNJua+
-         9aUWPokw4d+OGyT2y2psCpwVAPx8Vu2kjjzY5hubWWzbD5vDoim0N7OKAkdHdv+v/43O
-         TG0FA32TKiMkFJ5gn2gAyLJgqQAHvPq7vT7DgBL3viIDfsoSO4B24gJ/7cdg/DOWCVhG
-         o1yKE28gYZZQ2NPcnN1WSzxvQWUbqrpkQOz55Zb9+3s3oihFPE5idBpwGrofroDeWp3K
-         8zqWTr9rbMBWUQ1VfNSfF01Kz2ePAmzicRXWjs5rd8jCJffgFbBiHB1V4oOaOIr8NmUm
-         kHmA==
-X-Gm-Message-State: AOAM532bJH7BlNlpzF/16yxk2MRoZiOw5sGZhcCMY+lPrevB8hPcW9fz
-        7dBcfe4CX3lQvkb9af49BIEEXNV/6rFMnmWz
-X-Google-Smtp-Source: ABdhPJxhTxF5TvhWqJ9rFlgiHQheVDUQxFwUbJ3JkBNR+TLe6NNghMC1wnC6fkXeWmVTxlRMj7xMkQ==
-X-Received: by 2002:a17:902:6905:b029:12b:8f6a:7c60 with SMTP id j5-20020a1709026905b029012b8f6a7c60mr16473129plk.24.1627349519588;
-        Mon, 26 Jul 2021 18:31:59 -0700 (PDT)
+        bh=po/o6Al5Lzl2f4tER6Q8AG3Y5V4S+6+KsmIGwsZWPjQ=;
+        b=pFJY3Z5MJWd7ni1Fe6iANjEp1y6NbVh1NB5sbTtz/u4ATD2GJnSP/NukMtPaktDb3Q
+         29/NjwIVimuFx7QJTxDwcumZPCvdV0/hjOFP5grMQT582u6+diwQqYHhqLNuDDOX/cXV
+         qesdIQ0Ewmvxn6AZZeNsZ08R04QDhJpVmdAqaNr/KRUlv4O57+8Lq4E2vCxGmKI1zBeb
+         1eUvjLzRaQUtQ3Sam3djo0JNY4zTMyfV3NYDKPcbgTOlmHCgW+SgO59PsvYSnhIsP7Ky
+         0UbQWWWa2TaA2R5EOZWErEEs5tPKNdncoJIGdBboBrH/CtaJu0vUxADfJnLsj77rk1vE
+         txrw==
+X-Gm-Message-State: AOAM533oabiCknzM+P5clT17mz/IHEUfO1trkahtMLUs8TvTem84Kh+B
+        QfV5LOGMMeF+RZnCpeWZ7jAgKXSW4L+eNk7w
+X-Google-Smtp-Source: ABdhPJwfeE+5Op9TC5w9RyRCFHyn9FIgtd08EQm7SuqpxMQxmsxyAIQwKrdlbcMEAa5GksabWrpUbg==
+X-Received: by 2002:a05:6a00:189e:b029:32b:9f66:dcbb with SMTP id x30-20020a056a00189eb029032b9f66dcbbmr20724101pfh.72.1627349973379;
+        Mon, 26 Jul 2021 18:39:33 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id a22sm1304541pfa.215.2021.07.26.18.31.59
+        by smtp.gmail.com with ESMTPSA id h19sm1337660pfo.161.2021.07.26.18.39.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Jul 2021 18:31:59 -0700 (PDT)
-Message-ID: <60ff620f.1c69fb81.9c410.5c26@mx.google.com>
-Date:   Mon, 26 Jul 2021 18:31:59 -0700 (PDT)
+        Mon, 26 Jul 2021 18:39:33 -0700 (PDT)
+Message-ID: <60ff63d5.1c69fb81.b1ebb.5cda@mx.google.com>
+Date:   Mon, 26 Jul 2021 18:39:33 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: master
-X-Kernelci-Kernel: renesas-devel-2021-07-26-v5.14-rc3
+X-Kernelci-Branch: next
+X-Kernelci-Kernel: renesas-next-2021-07-26-v5.14-rc1
 X-Kernelci-Report-Type: test
 X-Kernelci-Tree: renesas
-Subject: renesas/master v4l2-compliance on uvcvideo: 2 runs,
- 3 regressions (renesas-devel-2021-07-26-v5.14-rc3)
+Subject: renesas/next cros-ec: 6 runs,
+ 1 regressions (renesas-next-2021-07-26-v5.14-rc1)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master v4l2-compliance on uvcvideo: 2 runs, 3 regressions (renesas-=
-devel-2021-07-26-v5.14-rc3)
+renesas/next cros-ec: 6 runs, 1 regressions (renesas-next-2021-07-26-v5.14-=
+rc1)
 
 Regressions Summary
 -------------------
 
-platform        | arch  | lab           | compiler | defconfig | regressions
-----------------+-------+---------------+----------+-----------+------------
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig | 3          =
+platform                 | arch   | lab           | compiler | defconfig   =
+                 | regressions
+-------------------------+--------+---------------+----------+-------------=
+-----------------+------------
+asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-8    | x86_64_defco=
+n...6-chromebook | 1          =
 
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2021-07-26-v5.14-rc3/plan/v4l2-compliance-uvc/
+  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
+s-next-2021-07-26-v5.14-rc1/plan/cros-ec/
 
-V4L2 Compliance on the uvcvideo driver.
-
-This test ran "v4l2-compliance -s" from v4l-utils:
-
-    https://www.linuxtv.org/wiki/index.php/V4l2-utils
-
-See each detailed section in the report below to find out the git URL and
-particular revision that was used to build the test binaries.
-
-
+  Test:     cros-ec
   Tree:     renesas
-  Branch:   master
-  Describe: renesas-devel-2021-07-26-v5.14-rc3
+  Branch:   next
+  Describe: renesas-next-2021-07-26-v5.14-rc1
   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
 evel.git
-  SHA:      42d1095acf6e228a6baeec100d31a57c0c4d7704
+  SHA:      cecb7cc88302b2e508c6cc1ce7663bba08c96a65
 
   Test suite revisions:
-    v4l2-compliance
-      URL:  git://linuxtv.org/v4l-utils.git
-      SHA:  a4f2e3a6f306f0bef6664451b44d5a7a18b26803 =
+    cros-ec-tests
+      URL:  https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform=
+/cros-ec-tests.git
+      SHA:  e4c91962f6e19466c1e43629a2c6cd04ff012e06 =
 
 
 
@@ -117,65 +112,33 @@ Test Regressions
 
 
 
-platform        | arch  | lab           | compiler | defconfig | regressions
-----------------+-------+---------------+----------+-----------+------------
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig | 3          =
+platform                 | arch   | lab           | compiler | defconfig   =
+                 | regressions
+-------------------------+--------+---------------+----------+-------------=
+-----------------+------------
+asus-C523NA-A20057-coral | x86_64 | lab-collabora | gcc-8    | x86_64_defco=
+n...6-chromebook | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/60ff486591b130cfcd3a2f31
+  Details:     https://kernelci.org/test/plan/id/60ff4c000f4430f3923a2f38
 
-  Results:     45 PASS, 10 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-07-26-v5.14-rc3/arm64/defconfig/gcc-8/lab-collabora/v4l2-compliance-uvc=
--mt8173-elm-hana.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-07-26-v5.14-rc3/arm64/defconfig/gcc-8/lab-collabora/v4l2-compliance-uvc=
--mt8173-elm-hana.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-v4l2=
-/20210722.0/arm64/rootfs.cpio.gz =
-
-
-
-  * v4l2-compliance-uvc.Format-ioctls-Input-0.VIDIOC_S_FMT: https://kernelc=
-i.org/test/case/id/60ff486591b130cfcd3a2f49
-        failing since 13 days (last pass: renesas-devel-2021-06-22-v5.13-rc=
-7, first fail: renesas-devel-2021-07-13-v5.14-rc1)
-
-    2021-07-26T23:42:03.974922  		fail: v4l2-test-formats.cpp(358): !colors=
-pace
-    2021-07-26T23:42:07.347253  <3>[   23.006776] usb 1-1: Failed to query =
-(SET_CUR) UVC control 10 on unit 2: -32 (exp. 2).
-    2021-07-26T23:42:07.367023  		fail: v4l2-test-formats.cpp(467): testCol=
-orspace(!node->is_io_mc, pix.pixelformat, pix.colorspace, pix.ycbcr_enc, pi=
-x.quantization)
-    2021-07-26T23:42:07.370356  	test VIDIOC_S_FMT: FAIL   =
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-8 (gcc (Debian 8.3.0-6) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-07-26-v5.14-rc1/x86_64/x86_64_defconfig+x86-chromebook/gcc-8/lab-collabora=
+/cros-ec-asus-C523NA-A20057-coral.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-07-26-v5.14-rc1/x86_64/x86_64_defconfig+x86-chromebook/gcc-8/lab-collabora=
+/cros-ec-asus-C523NA-A20057-coral.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-cros=
+-ec/20210722.0/amd64/rootfs.cpio.gz =
 
 
-  * v4l2-compliance-uvc.Format-ioctls-Input-0.VIDIOC_TRY_FMT: https://kerne=
-lci.org/test/case/id/60ff486591b130cfcd3a2f4a
-        failing since 13 days (last pass: renesas-devel-2021-06-22-v5.13-rc=
-7, first fail: renesas-devel-2021-07-13-v5.14-rc1)
 
-    2021-07-26T23:42:03.919982  		fail: v4l2-test-formats.cpp(358): !colors=
-pace
-    2021-07-26T23:42:03.939408  		fail: v4l2-test-formats.cpp(467): testCol=
-orspace(!node->is_io_mc, pix.pixelformat, pix.colorspace, pix.ycbcr_enc, pi=
-x.quantization)
-    2021-07-26T23:42:03.943324  	test VIDIOC_TRY_FMT: FAIL   =
-
-
-  * v4l2-compliance-uvc.Format-ioctls-Input-0.VIDIOC_G_FMT: https://kernelc=
-i.org/test/case/id/60ff486591b130cfcd3a2f4b
-        failing since 13 days (last pass: renesas-devel-2021-06-22-v5.13-rc=
-7, first fail: renesas-devel-2021-07-13-v5.14-rc1)
-
-    2021-07-26T23:42:03.867105  		fail: v4l2-test-formats.cpp(358): !colors=
-pace
-    2021-07-26T23:42:03.885104  		fail: v4l2-test-formats.cpp(467): testCol=
-orspace(!node->is_io_mc, pix.pixelformat, pix.colorspace, pix.ycbcr_enc, pi=
-x.quantization)
-    2021-07-26T23:42:03.888321  	test VIDIOC_G_FMT: FAIL   =
+  * cros-ec.login: https://kernelci.org/test/case/id/60ff4c000f4430f3923a2f=
+39
+        failing since 13 days (last pass: v5.14-rc1-17-gcd117793e1ac, first=
+ fail: renesas-next-2021-07-13-v5.14-rc1) =
 
  =20
