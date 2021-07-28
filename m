@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02343C41537
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Jul 2021 15:37:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BE3C4320E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Jul 2021 15:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D82D461019
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Jul 2021 15:37:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D46166101C
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 28 Jul 2021 15:37:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237177AbhG1Phy (ORCPT
+        id S237266AbhG1Ph4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 28 Jul 2021 11:37:54 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:56014 "EHLO
+        Wed, 28 Jul 2021 11:37:56 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:55994 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230025AbhG1Phx (ORCPT
+        with ESMTP id S230025AbhG1Ph4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 28 Jul 2021 11:37:53 -0400
+        Wed, 28 Jul 2021 11:37:56 -0400
 Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 019916EE;
-        Wed, 28 Jul 2021 17:37:49 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1589BD5E;
+        Wed, 28 Jul 2021 17:37:53 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1627486670;
-        bh=OmvNtp66srLQ+NcTX76l0rVt3aHK+j/AM4pQKPBXyKo=;
+        s=mail; t=1627486674;
+        bh=0y+4Quf+O+hZM5MLYS2vVE4wRqsEVjn1vFhb1VBhC50=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dw57NOaCBW/OJRl0MF4yWoEvgfoLUU1G1bX9sKKMKPNB/APnUpvBHoYF+k5c/3Eu+
-         E5lpxW30W/T+J0MyPoVdVQd1aP+Im6nE6MJ/DLwFyyIH6R8XOc+nn0fV/bfyicYz8Q
-         +XRseqy/1xx0SkKye8Yt4mXEtLU+vynPDQKcHz50=
+        b=D1MPU4QGTGwE1QYZHUv47qGPeG6M/ggi1ly6EFv0Jb8U1vMDGaNrhCVoyyyjjcLko
+         z9hJ4+dFPDZ+Z5Reyx1GsTJOzsgTAhFwTwwR7s4UyozvmEi5g4el91yzSBjVBHZt5r
+         LSo32NT97GFTQRH5RNWvqJqcLb5dPkNdStscsxXY=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Jyri Sarha <jyri.sarha@iki.fi>
-Subject: [PATCH 4/7] drm/omap: Enable COMPILE_TEST on all ARM and ARM64 platforms
-Date:   Wed, 28 Jul 2021 18:37:33 +0300
-Message-Id: <20210728153736.15240-5-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 7/7] drm/tilcdc: Enable COMPILE_TEST on all ARM64 platforms
+Date:   Wed, 28 Jul 2021 18:37:36 +0300
+Message-Id: <20210728153736.15240-8-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20210728153736.15240-1-laurent.pinchart+renesas@ideasonboard.com>
 References: <20210728153736.15240-1-laurent.pinchart+renesas@ideasonboard.com>
@@ -56,28 +56,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-To extend test coverage, relax the dependency on ARCH_OMAP2PLUS or
-ARCH_MULTIPLATFORM to also enable compilation on ARM or ARM4 when
-COMPILE_TEST is selected.
+To extend test coverage, support COMPILE_TEST on ARM64 in addition to
+ARM.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/omapdrm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/tilcdc/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/omapdrm/Kconfig b/drivers/gpu/drm/omapdrm/Kconfig
-index e7281da5bc6a..fd5ef00444c1 100644
---- a/drivers/gpu/drm/omapdrm/Kconfig
-+++ b/drivers/gpu/drm/omapdrm/Kconfig
-@@ -2,7 +2,7 @@
- config DRM_OMAP
- 	tristate "OMAP DRM"
- 	depends on DRM
--	depends on ARCH_OMAP2PLUS || ARCH_MULTIPLATFORM
-+	depends on ARCH_OMAP2PLUS || ARCH_MULTIPLATFORM || ((ARM || ARM64) && COMPILE_TEST)
- 	select OMAP2_DSS
+diff --git a/drivers/gpu/drm/tilcdc/Kconfig b/drivers/gpu/drm/tilcdc/Kconfig
+index 9f505a149990..37009f4ace9f 100644
+--- a/drivers/gpu/drm/tilcdc/Kconfig
++++ b/drivers/gpu/drm/tilcdc/Kconfig
+@@ -1,7 +1,8 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config DRM_TILCDC
+ 	tristate "DRM Support for TI LCDC Display Controller"
+-	depends on DRM && OF && ARM
++	depends on DRM && OF
++	depends on ARM || (ARM64 && COMPILE_TEST)
  	select DRM_KMS_HELPER
- 	select VIDEOMODE_HELPERS
+ 	select DRM_KMS_CMA_HELPER
+ 	select DRM_GEM_CMA_HELPER
 -- 
 Regards,
 
