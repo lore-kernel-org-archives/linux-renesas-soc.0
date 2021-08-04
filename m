@@ -2,177 +2,273 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 618C2C4320A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Aug 2021 08:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EBEC432BE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Aug 2021 09:18:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 464C760EE5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Aug 2021 08:11:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60E5560FC4
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Aug 2021 09:18:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236187AbhHDIMB (ORCPT
+        id S236380AbhHDJSx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 Aug 2021 04:12:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52438 "EHLO
+        Wed, 4 Aug 2021 05:18:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236142AbhHDIMA (ORCPT
+        with ESMTP id S235998AbhHDJSw (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Aug 2021 04:12:00 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48AFCC0613D5;
-        Wed,  4 Aug 2021 01:11:47 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id z18so2777662ybg.8;
-        Wed, 04 Aug 2021 01:11:47 -0700 (PDT)
+        Wed, 4 Aug 2021 05:18:52 -0400
+Received: from mail-wm1-x334.google.com (mail-wm1-x334.google.com [IPv6:2a00:1450:4864:20::334])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F7EC061799
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Aug 2021 02:18:39 -0700 (PDT)
+Received: by mail-wm1-x334.google.com with SMTP id i10-20020a05600c354ab029025a0f317abfso3426041wmq.3
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Aug 2021 02:18:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jPCIyaMUeP4YlX+eHOCe2Hk3dvS6J1yRREr3ZpK8PqE=;
-        b=mBZXRCJ9MZQM0MB8te1m5lfQcuzIgUJPb7Xs16M5wRmELRwp69N0rffDJeMYpwoJSx
-         VBM2jPH21DzzbruKOFYOTj4bKoPSSf8vJM0U4XZXPhpBThjCPGkzkiwUy1Q8QJBBVpC0
-         zPTZx8HLYHgQPvyFr8UIXLql7GnJMC9WuMtoHRkE/QT6lC1h0Lhwrz77ncevHQ8BlZ63
-         PvpTOtoG5SPZnOqNsRZkq+nwd5ohsAVeFnQQsPFOwJ+HwB28SaS+gYx8FHLy6TEGt4Jo
-         AvSqmPOr7CKNEy0JjDP+eBvGiAmKGyngDilCjhDGX6JJPoYj4Zge1ChrJmnf3kvGi/lr
-         nagA==
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=A71UIIEmzxTy7xNVG4UT+r8JIzT4ioreK+2pBDNyN20=;
+        b=zkt74dOJS36CObDVjtaEwjz7ph7JDKjOPdvWu2MbeghkW6zlgm1V6MVNJ7gDWjLagI
+         Lzoh47c+NSDiWdgLkveTEFKscLhQpH7dLD+viQypVnayatRUf0Hmi6j3a+tM8AP4Sye2
+         oQAqYuXEbEDRCBGcWQewYR3wp1sMMcaqS8tMTOyRd2p1lnn7ExgcjtOUA6QhJTCcG9lt
+         VtVQ+wLzr2Mk4I1CXy+p1KJf/oh47kMKRB9Q45js9ynZ8tejm80BrLmxwEvBbL6qZPqz
+         02h0c6JZPrZTk6IVLSBtnt3Q3UjgjYLnSCQ78BpTgWyeTS464x0wFahL+3K6GdkaHMDk
+         pgMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jPCIyaMUeP4YlX+eHOCe2Hk3dvS6J1yRREr3ZpK8PqE=;
-        b=ORfUHKGfyEc9EVIdbEaqg0Y6ZlxHuwy8cdg6Klf3Z2zZkOGQbJjm2b5trw45/TGB6V
-         3F4PhFo1tqOfhdNXbV8B7rquytD3K/NdGRNY93qcQj5aK7qYY/WJqqdCfQOj/wM1Bsqv
-         qyGWOHQnkMhTLxSmNapS7vdVsQy3sge8v9QcHNbmGW+0xy3MYX+EEsTk8N9hDhmM9Jto
-         K40HINA9brFh1QE+r59k9mD+GviWpuNIFqhMTQ+UYk9B0RUfsd1w1CaqWi1UKlRHOa/B
-         Mib3W39KQzwpITBw8J0ko1fUFxO9ylpl10FNjFJiKX4BZyCxPOxALYH21QyXfg9IaDvj
-         05aQ==
-X-Gm-Message-State: AOAM5336cXm0gwlIPxoVFN6t0/P7KLkOioy1/WoS2ZEwIuD7pjEZg3Fu
-        gr6pCkymK2XuhfHMr0ZXc0IajqozokJRwW5VEVI=
-X-Google-Smtp-Source: ABdhPJw64BR7H6H44pztlxskpaS2F1m6uWL8/z1U+9L2hJwCQ7r3CCvgZV8iT0vTOh9BsbeOkyUYAKMiJMIJWlqew6Q=
-X-Received: by 2002:a25:e404:: with SMTP id b4mr34296150ybh.426.1628064706525;
- Wed, 04 Aug 2021 01:11:46 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=A71UIIEmzxTy7xNVG4UT+r8JIzT4ioreK+2pBDNyN20=;
+        b=nLFCIL/Hyy8d/vswndLiXkZbpkq5Tp/48/hqVNVRYeZzoxbMhL0xsvUyvbA55a9Ha1
+         cB22bYxLamBy2EnJAD++0nUxrXxzFdTFXvnMYACqToncxsIobWfRZl9xOxxiOzeMwu9n
+         QRAco6AEVXuC4K8Negg0QJChQONFTMHjeaHaPppi622vabTIEniJdTBNp857MAtDgGEM
+         ZVsO6D+zg0l385+PgTJdtec94htvYbqaoETN9ujj8TLNYWYp3281QxWogtpAswYvK9pD
+         OoJ5j+Oz7B/W7+FtwPQ4bek85ta/XCz31mFX7HM8VbJ6LZQy6ZqPRKQfS1T9Kn7Asi9B
+         ZBxg==
+X-Gm-Message-State: AOAM530tudxHa3n3py9dS5vXUBDm0tJB7O1teyX9M3nKzYvQP2Xi+scO
+        S2SA+Swr590slZN4HekNaFfUWA==
+X-Google-Smtp-Source: ABdhPJyJaF9DOSpZqRV/7wf1SZ8CJUoJgD+WJ49fU+rjwhf41MhVId0ASIUSquwUMZNyzqmEKtk36g==
+X-Received: by 2002:a05:600c:35cb:: with SMTP id r11mr3195575wmq.31.1628068718549;
+        Wed, 04 Aug 2021 02:18:38 -0700 (PDT)
+Received: from bismarck.berto.se (p4fca2222.dip0.t-ipconnect.de. [79.202.34.34])
+        by smtp.googlemail.com with ESMTPSA id f74sm1653172wmf.16.2021.08.04.02.18.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Aug 2021 02:18:38 -0700 (PDT)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-pm@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2 1/2] thermal: rcar_gen3_thermal: Add support for hardware trip points
+Date:   Wed,  4 Aug 2021 11:18:17 +0200
+Message-Id: <20210804091818.2196806-2-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210804091818.2196806-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20210804091818.2196806-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
-References: <20210727133022.634-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20210727133022.634-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <20210804075855.2vjvfb67kufiibqx@pengutronix.de>
-In-Reply-To: <20210804075855.2vjvfb67kufiibqx@pengutronix.de>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Wed, 4 Aug 2021 09:11:20 +0100
-Message-ID: <CA+V-a8tWMVfnS3PWeOSqtDddO-M6zDS+WFpUSjv=2MgUV56Qvg@mail.gmail.com>
-Subject: Re: [PATCH v4 3/3] arm64: dts: renesas: r9a07g044: Add CANFD node
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-        Wolfgang Grandegger <wg@grandegger.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-can@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Marc,
+All supported hardware except V3U is capable of generating interrupts
+to the CPU when the temperature go below or above a set value. Use this
+to implement support for the set_trip() feature of the thermal core on
+supported hardware.
 
-On Wed, Aug 4, 2021 at 8:59 AM Marc Kleine-Budde <mkl@pengutronix.de> wrote:
->
-> On 27.07.2021 14:30:22, Lad Prabhakar wrote:
-> > Add CANFD node to R9A07G044 (RZ/G2L) SoC DTSI.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > ---
-> >  arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 41 ++++++++++++++++++++++
-> >  1 file changed, 41 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-> > index 9a7489dc70d1..51655c09f1f8 100644
-> > --- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-> > +++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
-> > @@ -13,6 +13,13 @@
-> >       #address-cells = <2>;
-> >       #size-cells = <2>;
-> >
-> > +     /* External CAN clock - to be overridden by boards that provide it */
-> > +     can_clk: can {
-> > +             compatible = "fixed-clock";
-> > +             #clock-cells = <0>;
-> > +             clock-frequency = <0>;
-> > +     };
-> > +
-> >       /* clock can be either from exclk or crystal oscillator (XIN/XOUT) */
-> >       extal_clk: extal {
-> >               compatible = "fixed-clock";
-> > @@ -89,6 +96,40 @@
-> >                       status = "disabled";
-> >               };
-> >
-> > +             canfd: can@10050000 {
-> > +                     compatible = "renesas,r9a07g044-canfd", "renesas,rzg2l-canfd";
-> > +                     reg = <0 0x10050000 0 0x8000>;
-> > +                     interrupts = <GIC_SPI 426 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 427 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 422 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 424 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 428 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 423 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 425 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 429 IRQ_TYPE_LEVEL_HIGH>;
-> > +                     interrupt-names = "g_err", "g_recc",
-> > +                                       "ch0_err", "ch0_rec", "ch0_trx",
-> > +                                       "ch1_err", "ch1_rec", "ch1_trx";
-> > +                     clocks = <&cpg CPG_MOD R9A07G044_CANFD_PCLK>,
-> > +                              <&cpg CPG_CORE R9A07G044_CLK_P0_DIV2>,
-> > +                              <&can_clk>;
-> > +                     clock-names = "fck", "canfd", "can_clk";
-> > +                     assigned-clocks = <&cpg CPG_CORE R9A07G044_CLK_P0_DIV2>;
-> > +                     assigned-clock-rates = <50000000>;
-> > +                     resets = <&cpg R9A07G044_CANFD_RSTP_N>,
-> > +                              <&cpg R9A07G044_CANFD_RSTC_N>;
-> > +                     reset-names = "rstp_n", "rstc_n";
-> > +                     power-domains = <&cpg>;
-> > +                     status = "disabled";
-> > +
-> > +                     channel0 {
-> > +                             status = "disabled";
-> > +                     };
-> > +                     channel1 {
-> > +                             status = "disabled";
-> > +                     };
-> > +             };
-> > +
-> >               i2c0: i2c@10058000 {
-> >                       #address-cells = <1>;
-> >                       #size-cells = <0>;
->
-> This doesn't apply to net-next/master, the r9a07g044.dtsi doesn't have a
-> i2c0 node at all. There isn't a i2c0 node in Linus' master branch, yet.
->
-I had based the patch on top [1] (sorry I should have mentioned the
-dependency), usually Geert picks up the DTS/I patches and queues it
-via ARM tree. Shall I rebase it on net-next and re-send ?
+The V3U have its interrupts routed to the ECM module and therefore can
+not be used to implement set_trip() as the driver can't be made aware of
+when the interrupt triggers.
 
-@Geert Uytterhoeven Is that OK ?
+Each TSC is capable of tracking up-to three different temperatures while
+only two are needed to implement the tracking of the thermal window.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git/log/?h=renesas-arm-dt-for-v5.15
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+* Changes since v1
+- Remove the 'have_irq' flag from the OF match data and auto-detect if
+  interrupts are available using platform_get_irq_optional().
+- Have a non-static thermal_zone_of_device_ops and clear the .set_trips
+  if interrupts are unavailable.
+---
+ drivers/thermal/rcar_gen3_thermal.c | 103 ++++++++++++++++++++++++++--
+ 1 file changed, 99 insertions(+), 4 deletions(-)
 
-Cheers,
-Prabhakar
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index fdf16aa34eb470c7..e49593437edeb3ca 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -190,10 +190,64 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
+ 	return 0;
+ }
+ 
+-static const struct thermal_zone_of_device_ops rcar_gen3_tz_of_ops = {
++static int rcar_gen3_thermal_mcelsius_to_temp(struct rcar_gen3_thermal_tsc *tsc,
++					      int mcelsius)
++{
++	int celsius, val;
++
++	celsius = DIV_ROUND_CLOSEST(mcelsius, 1000);
++	if (celsius <= INT_FIXPT(tsc->tj_t))
++		val = celsius * tsc->coef.a1 + tsc->coef.b1;
++	else
++		val = celsius * tsc->coef.a2 + tsc->coef.b2;
++
++	return INT_FIXPT(val);
++}
++
++static int rcar_gen3_thermal_set_trips(void *devdata, int low, int high)
++{
++	struct rcar_gen3_thermal_tsc *tsc = devdata;
++	u32 irqmsk = 0;
++
++	if (low != -INT_MAX) {
++		irqmsk |= IRQ_TEMPD1;
++		rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP1,
++					rcar_gen3_thermal_mcelsius_to_temp(tsc, low));
++	}
++
++	if (high != INT_MAX) {
++		irqmsk |= IRQ_TEMP2;
++		rcar_gen3_thermal_write(tsc, REG_GEN3_IRQTEMP2,
++					rcar_gen3_thermal_mcelsius_to_temp(tsc, high));
++	}
++
++	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, irqmsk);
++
++	return 0;
++}
++
++static struct thermal_zone_of_device_ops rcar_gen3_tz_of_ops = {
+ 	.get_temp	= rcar_gen3_thermal_get_temp,
++	.set_trips	= rcar_gen3_thermal_set_trips,
+ };
+ 
++static irqreturn_t rcar_gen3_thermal_irq(int irq, void *data)
++{
++	struct rcar_gen3_thermal_priv *priv = data;
++	unsigned int i;
++	u32 status;
++
++	for (i = 0; i < priv->num_tscs; i++) {
++		status = rcar_gen3_thermal_read(priv->tscs[i], REG_GEN3_IRQSTR);
++		rcar_gen3_thermal_write(priv->tscs[i], REG_GEN3_IRQSTR, 0);
++		if (status)
++			thermal_zone_device_update(priv->tscs[i]->zone,
++						   THERMAL_EVENT_UNSPECIFIED);
++	}
++
++	return IRQ_HANDLED;
++}
++
+ static const struct soc_device_attribute r8a7795es1[] = {
+ 	{ .soc_id = "r8a7795", .revision = "ES1.*" },
+ 	{ /* sentinel */ }
+@@ -210,6 +264,9 @@ static void rcar_gen3_thermal_init_r8a7795es1(struct rcar_gen3_thermal_tsc *tsc)
+ 
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0x3F);
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
++	if (tsc->zone->ops->set_trips)
++		rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN,
++					IRQ_TEMPD1 | IRQ_TEMP2);
+ 
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,
+ 				CTSR_PONM | CTSR_AOUT | CTSR_THBGR | CTSR_VMEN);
+@@ -235,6 +292,9 @@ static void rcar_gen3_thermal_init(struct rcar_gen3_thermal_tsc *tsc)
+ 
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQCTL, 0);
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_IRQMSK, 0);
++	if (tsc->zone->ops->set_trips)
++		rcar_gen3_thermal_write(tsc, REG_GEN3_IRQEN,
++					IRQ_TEMPD1 | IRQ_TEMP2);
+ 
+ 	reg_val = rcar_gen3_thermal_read(tsc, REG_GEN3_THCTR);
+ 	reg_val |= THCTR_THSST;
+@@ -303,6 +363,34 @@ static void rcar_gen3_hwmon_action(void *data)
+ 	thermal_remove_hwmon_sysfs(zone);
+ }
+ 
++static int rcar_gen3_thermal_request_irqs(struct rcar_gen3_thermal_priv *priv,
++					  struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	unsigned int i;
++	char *irqname;
++	int ret, irq;
++
++	for (i = 0; i < 2; i++) {
++		irq = platform_get_irq_optional(pdev, i);
++		if (irq < 0)
++			return irq;
++
++		irqname = devm_kasprintf(dev, GFP_KERNEL, "%s:ch%d",
++					 dev_name(dev), i);
++		if (!irqname)
++			return -ENOMEM;
++
++		ret = devm_request_threaded_irq(dev, irq, NULL,
++						rcar_gen3_thermal_irq,
++						IRQF_ONESHOT, irqname, priv);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
++
+ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ {
+ 	struct rcar_gen3_thermal_priv *priv;
+@@ -326,6 +414,9 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, priv);
+ 
++	if (rcar_gen3_thermal_request_irqs(priv, pdev))
++		rcar_gen3_tz_of_ops.set_trips = NULL;
++
+ 	pm_runtime_enable(dev);
+ 	pm_runtime_get_sync(dev);
+ 
+@@ -351,9 +442,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 
+ 		priv->tscs[i] = tsc;
+ 
+-		priv->thermal_init(tsc);
+-		rcar_gen3_thermal_calc_coefs(tsc, ptat, thcodes[i], *ths_tj_1);
+-
+ 		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
+ 							    &rcar_gen3_tz_of_ops);
+ 		if (IS_ERR(zone)) {
+@@ -363,6 +451,9 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 		}
+ 		tsc->zone = zone;
+ 
++		priv->thermal_init(tsc);
++		rcar_gen3_thermal_calc_coefs(tsc, ptat, thcodes[i], *ths_tj_1);
++
+ 		tsc->zone->tzp->no_hwmon = false;
+ 		ret = thermal_add_hwmon_sysfs(tsc->zone);
+ 		if (ret)
+@@ -401,8 +492,12 @@ static int __maybe_unused rcar_gen3_thermal_resume(struct device *dev)
+ 
+ 	for (i = 0; i < priv->num_tscs; i++) {
+ 		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
++		struct thermal_zone_device *zone = tsc->zone;
+ 
+ 		priv->thermal_init(tsc);
++		if (zone->ops->set_trips)
++			rcar_gen3_thermal_set_trips(tsc, zone->prev_low_trip,
++						    zone->prev_high_trip);
+ 	}
+ 
+ 	return 0;
+-- 
+2.32.0
 
-> Marc
->
-> --
-> Pengutronix e.K.                 | Marc Kleine-Budde           |
-> Embedded Linux                   | https://www.pengutronix.de  |
-> Vertretung West/Dortmund         | Phone: +49-231-2826-924     |
-> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-5555 |
