@@ -2,98 +2,199 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5640C4320E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Aug 2021 09:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3F7C432BE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Aug 2021 09:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D0476104F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Aug 2021 09:18:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1C5660F14
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  4 Aug 2021 09:19:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236438AbhHDJSy (ORCPT
+        id S235611AbhHDJUA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 4 Aug 2021 05:18:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39906 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236297AbhHDJSx (ORCPT
+        Wed, 4 Aug 2021 05:20:00 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:57742 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S235443AbhHDJUA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 4 Aug 2021 05:18:53 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52B7AC061798
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  4 Aug 2021 02:18:39 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id n12so1442503wrr.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 04 Aug 2021 02:18:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FU2QLdy7Hwt/eMlAilF6HLFsusjSV59ISM65hLzqQ0Y=;
-        b=xbL+yZkgwgR0S//ZciTQ8AwerQ6Z5Ws27xc1cqmvwpraTNa3ARSpWWU+7+X0AjZF6q
-         VMOfVksrEDGCqfmxwwVCgLgT1/XdxrO0S2Buj/TH3uLXCzBGuap7xiaofcGBUUwyAP3e
-         +pvH18R+rTXpEanzqndozn6Fkh8wtYdvVxxXpZe4Q2eDbPdwu3JWF3ZBWgCSiku2yL6D
-         8wgn0Wm+59i0QD3Bdigtao3x1ZpepKOypZM3oAKEeuxrDRddU+1SxNjAOa0Y4hFnsOKK
-         Rhusn6aZFxLtCOsWk8KUDlIN/5hUlzIC7Fk416QdVjcQnJ30GW175G047Va9mUS/M8G5
-         aYug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FU2QLdy7Hwt/eMlAilF6HLFsusjSV59ISM65hLzqQ0Y=;
-        b=V4zDTnIINLLcpFCebX1uPSOr6xNXwN4ZjaiwMyhB4pe5O80zrX6/3GMTMk12XgeAVp
-         1j4W86UyN2vpaD1bWIjCkZtLTkgWETdbjePL+cZ3QmkJSbpesmcGMA4Q044PVJ0Mfrcq
-         AP9JEuhvJHSWPy0+JdSsBDx0223vDPPPUc1/DJZE3h71yHNkN9Ui8dS4BiIuIhsWalvf
-         aWZZ28kN1mEBVLTC7bWH0RF5/reZmMOM+FvaIyHcKTXbPZa9By6n5TVoDkFblsKcHMND
-         KLTiFoBISFyNisTxdvRrizv4rCMb8ThmlypjUhWnVMjr69ZUt0hE2/i1hzjh6n2foRCw
-         wZzw==
-X-Gm-Message-State: AOAM5327VJtpFw9+cI03tIQEM1aO7nyYaa3yotnkFGzcsjOw/OV5VfC9
-        ytPYwEWSiSijZWhLxZcayf0cpQ==
-X-Google-Smtp-Source: ABdhPJwH6I9kobrJ9XlxF0zx91RgSpqdio53O0KlhveySWeUOqvr+B2mkWj1MA7E6gsUdwfvEa4Qgg==
-X-Received: by 2002:adf:ea41:: with SMTP id j1mr27803361wrn.147.1628068717861;
-        Wed, 04 Aug 2021 02:18:37 -0700 (PDT)
-Received: from bismarck.berto.se (p4fca2222.dip0.t-ipconnect.de. [79.202.34.34])
-        by smtp.googlemail.com with ESMTPSA id f74sm1653172wmf.16.2021.08.04.02.18.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Aug 2021 02:18:37 -0700 (PDT)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-pm@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 0/2] thermal: rcar_gen3_thermal: Add support for trip points
-Date:   Wed,  4 Aug 2021 11:18:16 +0200
-Message-Id: <20210804091818.2196806-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.32.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Wed, 4 Aug 2021 05:20:00 -0400
+X-IronPort-AV: E=Sophos;i="5.84,293,1620658800"; 
+   d="scan'208";a="89801999"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 04 Aug 2021 18:19:46 +0900
+Received: from localhost.localdomain (unknown [10.226.92.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1308E42389D2;
+        Wed,  4 Aug 2021 18:19:43 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: mmc: renesas,sdhi: Document RZ/G2L bindings
+Date:   Wed,  4 Aug 2021 10:19:40 +0100
+Message-Id: <20210804091940.23983-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Daniel,
+Document RZ/G2L SDHI controller bindings.
 
-This small series adds support for the .set_trips() to the
-rcar_gen3_thermal driver on the platforms that supports it.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+v1->v2:
+ * Fixed dtbs-check issue for RZ/A{1,2} platforms.
+---
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml | 95 ++++++++++++-------
+ 1 file changed, 60 insertions(+), 35 deletions(-)
 
-Patch 1/2 adds the actual trip point support while patch 2/2 is a drive-by fix of a
-datatype found while working on this feature.
-
-The work is based on-top of v5.14-rc1 and tested on M3-N and V3U
-without any regressions or other issues.
-
-Niklas Söderlund (2):
-  thermal: rcar_gen3_thermal: Add support for hardware trip points
-  thermal: rcar_gen3_thermal: Store TSC id as unsigned int
-
- drivers/thermal/rcar_gen3_thermal.c | 110 ++++++++++++++++++++++++++--
- 1 file changed, 103 insertions(+), 7 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+index 677989bc5924..3a90dd447e17 100644
+--- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
++++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+@@ -9,9 +9,6 @@ title: Renesas SDHI SD/MMC controller
+ maintainers:
+   - Wolfram Sang <wsa+renesas@sang-engineering.com>
+ 
+-allOf:
+-  - $ref: "mmc-controller.yaml"
+-
+ properties:
+   compatible:
+     oneOf:
+@@ -47,19 +44,20 @@ properties:
+           - const: renesas,sdhi-mmc-r8a77470 # RZ/G1C (SDHI/MMC IP)
+       - items:
+           - enum:
+-              - renesas,sdhi-r8a774a1 # RZ/G2M
+-              - renesas,sdhi-r8a774b1 # RZ/G2N
+-              - renesas,sdhi-r8a774c0 # RZ/G2E
+-              - renesas,sdhi-r8a774e1 # RZ/G2H
+-              - renesas,sdhi-r8a7795  # R-Car H3
+-              - renesas,sdhi-r8a7796  # R-Car M3-W
+-              - renesas,sdhi-r8a77961 # R-Car M3-W+
+-              - renesas,sdhi-r8a77965 # R-Car M3-N
+-              - renesas,sdhi-r8a77970 # R-Car V3M
+-              - renesas,sdhi-r8a77980 # R-Car V3H
+-              - renesas,sdhi-r8a77990 # R-Car E3
+-              - renesas,sdhi-r8a77995 # R-Car D3
+-              - renesas,sdhi-r8a779a0 # R-Car V3U
++              - renesas,sdhi-r8a774a1  # RZ/G2M
++              - renesas,sdhi-r8a774b1  # RZ/G2N
++              - renesas,sdhi-r8a774c0  # RZ/G2E
++              - renesas,sdhi-r8a774e1  # RZ/G2H
++              - renesas,sdhi-r8a7795   # R-Car H3
++              - renesas,sdhi-r8a7796   # R-Car M3-W
++              - renesas,sdhi-r8a77961  # R-Car M3-W+
++              - renesas,sdhi-r8a77965  # R-Car M3-N
++              - renesas,sdhi-r8a77970  # R-Car V3M
++              - renesas,sdhi-r8a77980  # R-Car V3H
++              - renesas,sdhi-r8a77990  # R-Car E3
++              - renesas,sdhi-r8a77995  # R-Car D3
++              - renesas,sdhi-r8a779a0  # R-Car V3U
++              - renesas,sdhi-r9a07g044 # RZ/G2{L,LC}
+           - const: renesas,rcar-gen3-sdhi # R-Car Gen3 or RZ/G2
+ 
+   reg:
+@@ -71,13 +69,11 @@ properties:
+ 
+   clocks:
+     minItems: 1
+-    maxItems: 2
++    maxItems: 4
+ 
+   clock-names:
+     minItems: 1
+-    items:
+-      - const: core
+-      - const: cd
++    maxItems: 4
+ 
+   dmas:
+     minItems: 4
+@@ -112,6 +108,50 @@ properties:
+ 
+   max-frequency: true
+ 
++allOf:
++  - $ref: "mmc-controller.yaml"
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,sdhi-r7s72100
++              - renesas,sdhi-r7s9210
++    then:
++      properties:
++        clocks:
++          maxItems: 2
++        clock-names:
++          items:
++            - const: core
++            - const: cd
++      required:
++        - clock-names
++      description:
++        The internal card detection logic that exists in these controllers is
++        sectioned off to be run by a separate second clock source to allow
++        the main core clock to be turned off to save power.
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,sdhi-r9a07g044
++    then:
++      properties:
++        clocks:
++          items:
++            - description: IMCLK, SDHI channel main clock1.
++            - description: IMCLK2, SDHI channel main clock2. When this clock is
++                           turned off, external SD card detection cannot be
++                           detected.
++            - description: CLK_HS, SDHI channel High speed clock which operates
++                           4 times that of SDHI channel main clock1.
++            - description: ACLK, SDHI channel bus clock.
++      required:
++        - resets
++
+ required:
+   - compatible
+   - reg
+@@ -119,21 +159,6 @@ required:
+   - clocks
+   - power-domains
+ 
+-if:
+-  properties:
+-    compatible:
+-      contains:
+-        enum:
+-          - renesas,sdhi-r7s72100
+-          - renesas,sdhi-r7s9210
+-then:
+-  required:
+-    - clock-names
+-  description:
+-    The internal card detection logic that exists in these controllers is
+-    sectioned off to be run by a separate second clock source to allow
+-    the main core clock to be turned off to save power.
+-
+ unevaluatedProperties: false
+ 
+ examples:
 -- 
-2.32.0
+2.17.1
 
