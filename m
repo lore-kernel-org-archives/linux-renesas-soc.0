@@ -2,95 +2,63 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8850EC4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Aug 2021 06:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F27AC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Aug 2021 13:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC7261029
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Aug 2021 06:30:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B9346113C
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  5 Aug 2021 13:10:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237318AbhHEGad (ORCPT
+        id S240404AbhHENKP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 5 Aug 2021 02:30:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44892 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237175AbhHEGa2 (ORCPT
+        Thu, 5 Aug 2021 09:10:15 -0400
+Received: from foss.arm.com ([217.140.110.172]:45322 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S240055AbhHENKP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 5 Aug 2021 02:30:28 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA3F9C0613C1;
-        Wed,  4 Aug 2021 23:30:14 -0700 (PDT)
-Received: from [192.168.1.111] (91-158-153-130.elisa-laajakaista.fi [91.158.153.130])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2356451D;
-        Thu,  5 Aug 2021 08:30:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1628145012;
-        bh=CRrZ8VyjuDTAN9FDBm5o5NHrzfW1DfDQmst2R7yK6BA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=oAIxeZXY61Mkdnn86oK0d8j+ts2KLL1M1gF9ls1DbQACtONM6RGcdOCK35osM1qVi
-         zozqSC75mjoqrEiZdxqJnXNuiKIn3ErxdR/qwtsr5oFwYV3v2PLQCshho4wKe+R+eA
-         fmXKXE0sLdVpBVdG26FhHou7fCf9o+fYxuVrEV+Q=
-Subject: Re: [PATCH v2 5/9] drm/omap: Enable COMPILE_TEST on all architectures
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        dri-devel@lists.freedesktop.org
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Jyri Sarha <jyri.sarha@iki.fi>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Thierry Reding <thierry.reding@gmail.com>, linux-imx@nxp.com,
-        Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-        linux-tegra@vger.kernel.org, Shawn Guo <shawnguo@kernel.org>,
-        Alain VOLMAT-SCND-01 <alain.volmat@foss.st.com>,
-        Benjamin Gaignard <benjamin.gaignard@collabora.com>
-References: <20210731013954.11926-1-laurent.pinchart+renesas@ideasonboard.com>
- <20210731013954.11926-6-laurent.pinchart+renesas@ideasonboard.com>
-From:   Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Message-ID: <ed900028-f1cd-56e8-f73f-5a17f932c0bf@ideasonboard.com>
-Date:   Thu, 5 Aug 2021 09:30:08 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Thu, 5 Aug 2021 09:10:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 967CC1042;
+        Thu,  5 Aug 2021 06:10:00 -0700 (PDT)
+Received: from e123427-lin.arm.com (unknown [10.57.41.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 11E553F719;
+        Thu,  5 Aug 2021 06:09:58 -0700 (PDT)
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     kjlu@umn.edu, Dinghao Liu <dinghao.liu@zju.edu.cn>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-renesas-soc@vger.kernel.org, Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH] PCI: rcar: Fix runtime PM imbalance in rcar_pcie_ep_probe
+Date:   Thu,  5 Aug 2021 14:09:52 +0100
+Message-Id: <162816897692.18338.7803269041100813329.b4-ty@arm.com>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20210408072402.15069-1-dinghao.liu@zju.edu.cn>
+References: <20210408072402.15069-1-dinghao.liu@zju.edu.cn>
 MIME-Version: 1.0
-In-Reply-To: <20210731013954.11926-6-laurent.pinchart+renesas@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 31/07/2021 04:39, Laurent Pinchart wrote:
-> To extend test coverage, relax the dependency on ARCH_OMAP2PLUS or
-> ARCH_MULTIPLATFORM to also enable compilation with COMPILE_TEST.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> ---
-> Changes since v1:
-> 
-> - Enable COMPILE_TEST on all architectures
-> ---
->   drivers/gpu/drm/omapdrm/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/omapdrm/Kconfig b/drivers/gpu/drm/omapdrm/Kconfig
-> index e7281da5bc6a..560d0cdd6156 100644
-> --- a/drivers/gpu/drm/omapdrm/Kconfig
-> +++ b/drivers/gpu/drm/omapdrm/Kconfig
-> @@ -2,7 +2,7 @@
->   config DRM_OMAP
->   	tristate "OMAP DRM"
->   	depends on DRM
-> -	depends on ARCH_OMAP2PLUS || ARCH_MULTIPLATFORM
-> +	depends on ARCH_OMAP2PLUS || ARCH_MULTIPLATFORM || COMPILE_TEST
->   	select OMAP2_DSS
->   	select DRM_KMS_HELPER
->   	select VIDEOMODE_HELPERS
-> 
+On Thu, 8 Apr 2021 15:24:02 +0800, Dinghao Liu wrote:
+> pm_runtime_get_sync() will increase the runtime PM counter
+> even it returns an error. Thus a pairing decrement is needed
+> to prevent refcount leak. Fix this by replacing this API with
+> pm_runtime_resume_and_get(), which will not change the runtime
+> PM counter on error.
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Applied to pci/rcar, thanks!
 
-  Tomi
+[1/1] PCI: rcar: Fix runtime PM imbalance in rcar_pcie_ep_probe()
+      https://git.kernel.org/lpieralisi/pci/c/1e29cd9983
+
+Thanks,
+Lorenzo
