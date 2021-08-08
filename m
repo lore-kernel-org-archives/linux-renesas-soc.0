@@ -2,108 +2,123 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,DATE_IN_PAST_03_06,
-	DKIM_SIGNED,DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.5 required=3.0 tests=BAYES_00,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7103AC4320A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  8 Aug 2021 15:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3320BC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  8 Aug 2021 16:58:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 482BB6044F
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  8 Aug 2021 15:50:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05E5360C3E
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  8 Aug 2021 16:58:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232161AbhHHPvG (ORCPT
+        id S230201AbhHHQ7R (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 8 Aug 2021 11:51:06 -0400
-Received: from mout.gmx.net ([212.227.15.18]:33365 "EHLO mout.gmx.net"
+        Sun, 8 Aug 2021 12:59:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229923AbhHHPvF (ORCPT
+        id S230169AbhHHQ7Q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Aug 2021 11:51:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1628437832;
-        bh=8WpITWSAmjBFl5ukEIIIh0d8OHw71Lp48DGXmRGeV/w=;
-        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=BYo69O9ZP31BaGHrttIW3DNXq5fsutLC41vClAk6H35xvuJnDEaTeQkt882+sli2S
-         2zRg9IM9rLshVQr76zjdU/siM1XIhrV5DGCa8+OSeFvcFWuXPM4fnl62KG2W/zcnMS
-         p5HBmLVDPLTX/xCePS6ePL3UqU+5U7dVMFUOgxHA=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from localhost.localdomain ([79.150.72.99]) by mail.gmx.net
- (mrgmx004 [212.227.17.184]) with ESMTPSA (Nemesis) id
- 1MmDEg-1muaHQ0Bxg-00i9Ax; Sun, 08 Aug 2021 17:50:32 +0200
-From:   Len Baker <len.baker@gmx.com>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sun, 8 Aug 2021 12:59:16 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35D34601FC;
+        Sun,  8 Aug 2021 16:58:53 +0000 (UTC)
+Date:   Sun, 8 Aug 2021 18:01:43 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-Cc:     Len Baker <len.baker@gmx.com>, Kees Cook <keescook@chromium.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-hardening@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 3/3] drivers/soc/ti: Prefer strscpy over strcpy
-Date:   Sun,  8 Aug 2021 14:50:12 +0200
-Message-Id: <20210808125012.4715-4-len.baker@gmx.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210808125012.4715-1-len.baker@gmx.com>
-References: <20210808125012.4715-1-len.baker@gmx.com>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Alexandru Ardelean <aardelean@deviqon.com>,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH v4 0/3] Renesas RZ/G2L ADC driver support
+Message-ID: <20210808180143.6b3dc882@jic23-huawei>
+In-Reply-To: <20210804202118.25745-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20210804202118.25745-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NAahUXrhbe23vphH2V5V8QzAnruX6eosbWznab34o/LlPE7OlPz
- ZAfqE/aSfFY2bE99SUHctzIhbGTUQWHJNn/Zi33p7hM9YmI1PaIFMOPJRHQnTYzgKnn6JtG
- TNmZoPeYiGN/nvP6EicoyWFdt6UhpXby+7FGeJAnE5Qm5siNwa/rOu+5cWNMuUolLKmgMet
- 1iEvwDwn9LM+wXyxXKeaQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:u4E+rKRzLoQ=:p3dXkD+lKAXeP09tYd/b7D
- qn8vWRi74uC9vfxuScHam1WxhNd120vw1V40MrsM6nyCiFv9Uc33D374I0bN9CGAkfJkWKwt7
- bxG5BcKad746HcV7lgz4WImjOEkbmILVwkvt4YULxO4eFLQzE9VJShbifmodkfN7V3n1jrv3d
- HU3ltcoOaxStaDVSwcJ7MIvwWqJCP08wks3Fp3IvPhfS9GusREs5YrE5MncFt/uSRNYRiCqxX
- JCRzxhHVi9bx2epIa1RVZa4IYTHsw6QYn2P14bTi/dg6tHhjRK0+Ax005k5Rc6MxLl+uGVmPy
- 7OlftBhjc14/CGGsFPtoiR86p+uFLP1CEMD4S81UPMER4UgAc3t03wTsocmJbpYh09V3gc9f6
- XmOoL8Aq3OV1WAymxGY0o9VvH/6F0H/HscnBM+hHScAJ4isMJondiGehJdIMCqqa6uS45oU7F
- 33EKZ25HmfSH+E5kXT7XZj6OqkcV3F62BfkTGcghqZiCCpuPtdUc57weM/04Zt3xC0Z6ogIPW
- DVv+un8BttTZSBfcyq4GkAPt0IO0l8MMZRot12IAGClnAfTJTOJWsTF42E+prGhZBGYgEbbkA
- 3K0z38AWuCSgyRWJXflj/4FNEYYk6QKrH6d2U+sSzM8VkgDzqGzElZqRU8KAJC8FaqMi0ccJr
- eyMRqePpr5jj4CbGuqldgl+gM0gPtuQ9MQJy2mRgvvtHfSBbbSVbnh59qybmlJ+3SQmo0ml5z
- mWsBRORfOFu1SR/980MlKJ9dY0s29bqcr8Lr1hIQ3WSz2AEeF9Ma1o0OBLIKd9TVPIzUTx79H
- bDrKeE4WYdVnkvtb5pyiuC7Gn47QwV4acL73BLQJvl25Mi/9bPDnRohcPpHq5BeT7wZX0dgTf
- fMJsQAcAL4nlEyopqtVJrQNdftSBfiipOkyFQupCTw4qGk2J8AAL2QAedYYWZ9yOT7fNbx+ue
- fo3jGU1RkiuHRzPS1OB50OgfUbpl9wQRrdJ3wdJUzTHDg0hZUjasOvDMUReP3VZCEoq5dCKNp
- BaNRaQ8RoJn31P9fd8crvjBwK4IgonyBGcajCsc0F3i6LrsFwKxu99hvCVAUS6I9eGWbKcVyz
- 7XMSfwykaJABkmtEi2C+bgh4crafcW7oUDA6pvxmPkZEdBEO0pDSpLkrQ==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-strcpy() performs no bounds checking on the destination buffer. This
-could result in linear overflows beyond the end of the buffer, leading
-to all kinds of misbehaviors. The safe replacement is strscpy().
+On Wed,  4 Aug 2021 21:21:15 +0100
+Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
 
-This is a previous step in the path to remove the strcpy() function
-entirely from the kernel.
+> Hi All,
+> 
+> This patch series adds ADC support for Renesas RZ/G2L family.
+> 
+> Patches apply on top of v5.14-rc2.
+Hi Lad, I'm fine with this, but need to pull my tree forwards
+to include the header that is only in rc2.
 
-Signed-off-by: Len Baker <len.baker@gmx.com>
-=2D--
- drivers/soc/ti/knav_dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I'll probably do that later in the week then pick up patches 1 and 2.
 
-diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
-index 591d14ebcb11..5f9816d317a5 100644
-=2D-- a/drivers/soc/ti/knav_dma.c
-+++ b/drivers/soc/ti/knav_dma.c
-@@ -691,7 +691,7 @@ static int dma_init(struct device_node *cloud, struct =
-device_node *dma_node)
- 	dma->max_rx_flow =3D max_rx_flow;
- 	dma->max_tx_chan =3D min(max_tx_chan, max_tx_sched);
- 	atomic_set(&dma->ref_count, 0);
--	strcpy(dma->name, node->name);
-+	strscpy(dma->name, node->name, sizeof(dma->name));
- 	spin_lock_init(&dma->lock);
+Thanks,
 
- 	for (i =3D 0; i < dma->max_tx_chan; i++) {
-=2D-
-2.25.1
+Jonathan
+> 
+> Cheers,
+> Prabhakar
+> 
+> Changes for v4:
+> * Fixed registering action to assert resets on failure/remove
+>   as reported by Philip.
+> * Fixed review comments suggested by Jonathan.
+> * Included RB tag from Rob for patch 1/3
+> * Note DTS patch applies on top of https://git.kernel.org/pub/scm/
+>   linux/kernel/git/geert/renesas-devel.git/log/
+>   ?h=renesas-arm-dt-for-v5.15
+> 
+> Changes for v3 (as requested by Jonathan):
+> * Made use of FIELD_PREP()
+> * Renamed _CLEAR to _MASK and inverted inline as required
+> * Moved |= pair's on same lines
+> * Made use of sysfs_emit() while reading the labels
+> * Used for_each_bit_set() in rzg2l_adc_isr()
+> * Renamed rzg2l_adc_parse_of() -> rzg2l_adc_parse_properties()
+> * Used devm_add_action_or_reset() for asserting the reset signals and
+>   disabling pm_runtime and eventually removing remove() callback
+> * Added comments in isr handler for channel select interrupt
+> * Moved enabling/disabling of pclk during hw init in rzg2l_adc_hw_init()
+> * Dropped clock patch 3/4 (https://lore.kernel.org/patchwork/patch/1462152/)
+>   from previous series as its queued up in renesas-clk-for-v5.15
+> 
+> Changes for v2:
+> * Update binding doc, dropped gpios/renesas-rzg2l,adc-trigger-mode
+>   properties included channel property to represent each wired channel.
+> * Fixed review comments pointed by Alexandru, implemented pm runtime
+>   support, dropped mlock usage
+> * Fixed review comments pointed by Jonathan, renamed the macros,
+>   simplified the code.
+> * Included clock and DT patches
+> 
+> v1: https://patchwork.kernel.org/project/linux-renesas-soc/cover/
+>     20210629220328.13366-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+> 
+> Lad Prabhakar (3):
+>   dt-bindings: iio: adc: Add binding documentation for Renesas RZ/G2L
+>     A/D converter
+>   iio: adc: Add driver for Renesas RZ/G2L A/D converter
+>   arm64: dts: renesas: r9a07g044: Add ADC node
+> 
+>  .../bindings/iio/adc/renesas,rzg2l-adc.yaml   | 134 ++++
+>  MAINTAINERS                                   |   8 +
+>  arch/arm64/boot/dts/renesas/r9a07g044.dtsi    |  42 ++
+>  drivers/iio/adc/Kconfig                       |  10 +
+>  drivers/iio/adc/Makefile                      |   1 +
+>  drivers/iio/adc/rzg2l_adc.c                   | 600 ++++++++++++++++++
+>  6 files changed, 795 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
+>  create mode 100644 drivers/iio/adc/rzg2l_adc.c
+> 
 
