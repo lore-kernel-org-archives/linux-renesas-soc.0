@@ -2,123 +2,130 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.3 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E50C1C4320A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  8 Aug 2021 17:06:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C935C4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Aug 2021 12:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CB87060EBB
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  8 Aug 2021 17:06:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F4F360F35
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  9 Aug 2021 12:06:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232131AbhHHRHC (ORCPT
+        id S233791AbhHIMHC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 8 Aug 2021 13:07:02 -0400
-Received: from smtp13.smtpout.orange.fr ([80.12.242.135]:26040 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S232123AbhHHRHB (ORCPT
+        Mon, 9 Aug 2021 08:07:02 -0400
+Received: from mail-ua1-f41.google.com ([209.85.222.41]:37470 "EHLO
+        mail-ua1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233785AbhHIMHA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 8 Aug 2021 13:07:01 -0400
-Received: from [192.168.1.18] ([90.126.253.178])
-        by mwinf5d75 with ME
-        id f56W250073riaq20356WZB; Sun, 08 Aug 2021 19:06:40 +0200
-X-ME-Helo: [192.168.1.18]
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sun, 08 Aug 2021 19:06:40 +0200
-X-ME-IP: 90.126.253.178
-Subject: Re: [PATCH v4 2/3] drivers/soc/renesas: Prefer memcpy over strcpy
-To:     Bernd Petrovitsch <bernd@petrovitsch.priv.at>,
-        Len Baker <len.baker@gmx.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-hardening@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20210808125012.4715-1-len.baker@gmx.com>
- <20210808125012.4715-3-len.baker@gmx.com>
- <39485c0e-511c-50a0-83be-f9ce6fc47e67@petrovitsch.priv.at>
-From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Message-ID: <c33adb9e-9604-3d89-5a5b-152eb03e5b54@wanadoo.fr>
-Date:   Sun, 8 Aug 2021 19:06:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.11.0
+        Mon, 9 Aug 2021 08:07:00 -0400
+Received: by mail-ua1-f41.google.com with SMTP id 67so6889326uaq.4;
+        Mon, 09 Aug 2021 05:06:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wdIFyUpYOmARtbdZwtri8h0Sw2cLxyVaWTJ/k1Vbtto=;
+        b=Iizz70hccW5JxKqLqyNkk1STfrgW3E7I63kAVQZIo4ROz6B/8bVDSelg/eIkhKNn8E
+         jDVH/eiLevOGDcZ4YKYgv9CXCX9AuDpAUZkl10WMcGiYi4gOQRw8tXE5gwyt+ILrVJyw
+         bEt4Opz6JIuNisX22PjGR6OPNmMR6gwRa3YT4TobOow9a/9fiqviJFGVfIA9gGqhlOTz
+         vxmKsBJfbwx3CC+p8YX+Akeso72i7+k/lAM7xt9Vc4xN0J2qUmJFhgtP0fw2b7UkTWsj
+         /39gLa3OnN5JDxblQie0vSaeCqZTneTwy355v+Fg+VjAFNnXnGlY5UHpwS31kOduvgYJ
+         mHfw==
+X-Gm-Message-State: AOAM533UmPWVCzsH4S1OrWh/kcIVZQwpPhgPZb/3ERftcfTdVEEnxLpk
+        /y4yivPYqJRb7x/CNPTgAz3h0CqeJliweiifZ3U=
+X-Google-Smtp-Source: ABdhPJzBjr9L/a/cJN4lt6cJw4cNlR1lJHDRbtmJgzlVTgNnjLG9tozWGcTvQaVgjF0HAOrpkA3PCyvZDLMwp0sJ5FM=
+X-Received: by 2002:ab0:60c9:: with SMTP id g9mr15368667uam.100.1628510799843;
+ Mon, 09 Aug 2021 05:06:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <39485c0e-511c-50a0-83be-f9ce6fc47e67@petrovitsch.priv.at>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20210802102654.5996-1-biju.das.jz@bp.renesas.com> <20210802102654.5996-2-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210802102654.5996-2-biju.das.jz@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 9 Aug 2021 14:06:28 +0200
+Message-ID: <CAMuHMdWuoLFDRbJZqpvT48q1zbH05tqerWMs50aFDa6pR+ecAg@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 1/8] ravb: Add struct ravb_hw_info to driver data
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergey Shtylyov <s.shtylyov@omprussia.ru>,
+        Adam Ford <aford173@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+        Yuusuke Ashizuka <ashiduka@fujitsu.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        netdev <netdev@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+Hi Biju,
 
-Le 08/08/2021 à 17:35, Bernd Petrovitsch a écrit :
-> Hi all!
-> 
-> On 08/08/2021 14:50, Len Baker wrote:
->> strcpy() performs no bounds checking on the destination buffer. This
->> could result in linear overflows beyond the end of the buffer, leading
->> to all kinds of misbehaviors. So, use memcpy() as a safe replacement.
->>
->> This is a previous step in the path to remove the strcpy() function
->> entirely from the kernel.
->>
->> Signed-off-by: Len Baker <len.baker@gmx.com>
->> ---
->>   drivers/soc/renesas/r8a779a0-sysc.c | 6 ++++--
->>   drivers/soc/renesas/rcar-sysc.c     | 6 ++++--
->>   2 files changed, 8 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/soc/renesas/r8a779a0-sysc.c b/drivers/soc/renesas/r8a779a0-sysc.c
->> index d464ffa1be33..7410b9fa9846 100644
->> --- a/drivers/soc/renesas/r8a779a0-sysc.c
->> +++ b/drivers/soc/renesas/r8a779a0-sysc.c
->> @@ -404,19 +404,21 @@ static int __init r8a779a0_sysc_pd_init(void)
->>   	for (i = 0; i < info->num_areas; i++) {
->>   		const struct r8a779a0_sysc_area *area = &info->areas[i];
->>   		struct r8a779a0_sysc_pd *pd;
->> +		size_t n;
->>
->>   		if (!area->name) {
->>   			/* Skip NULLified area */
->>   			continue;
->>   		}
->>
->> -		pd = kzalloc(sizeof(*pd) + strlen(area->name) + 1, GFP_KERNEL);
->> +		n = strlen(area->name) + 1;
->> +		pd = kzalloc(sizeof(*pd) + n, GFP_KERNEL);
-> Zeroing the allocated bytes is not needed since it's completly
-> overwritten with the strcpy()/memcpy().
+On Mon, Aug 2, 2021 at 12:27 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> The DMAC and EMAC blocks of Gigabit Ethernet IP found on RZ/G2L SoC are
+> similar to the R-Car Ethernet AVB IP. With a few changes in the driver we
+> can support both IPs.
+>
+> Currently a runtime decision based on the chip type is used to distinguish
+> the HW differences between the SoC families.
+>
+> The number of TX descriptors for R-Car Gen3 is 1 whereas on R-Car Gen2 and
+> RZ/G2L it is 2. For cases like this it is better to select the number of
+> TX descriptors by using a structure with a value, rather than a runtime
+> decision based on the chip type.
+>
+> This patch adds the num_tx_desc variable to struct ravb_hw_info and also
+> replaces the driver data chip type with struct ravb_hw_info by moving chip
+> type to it.
+>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-The strcpy()/memcpy() only overwrites the pd->name field, not the whole 
-pd structure.
-I think that it is needed to keep the kzalloc.
+Thanks for your patch!
 
-Just my 2c,
-CJ
+> --- a/drivers/net/ethernet/renesas/ravb.h
+> +++ b/drivers/net/ethernet/renesas/ravb.h
+> @@ -988,6 +988,11 @@ enum ravb_chip_id {
+>         RCAR_GEN3,
+>  };
+>
+> +struct ravb_hw_info {
+> +       enum ravb_chip_id chip_id;
+> +       int num_tx_desc;
 
->>   		if (!pd) {
->>   			error = -ENOMEM;
->>   			goto out_put;
->>   		}
->>
->> -		strcpy(pd->name, area->name);
->> +		memcpy(pd->name, area->name, n);
->>   		pd->genpd.name = pd->name;
->>   		pd->pdr = area->pdr;
->>   		pd->flags = area->flags;
-> 
-> And similar for the second hunk.
-> 
-> MfG,
-> 	Bernd
-> 
+Why not "unsigned int"? ...
+This comment applies to a few more subsequent patches.
 
+> +};
+> +
+>  struct ravb_private {
+>         struct net_device *ndev;
+>         struct platform_device *pdev;
+> @@ -1040,6 +1045,8 @@ struct ravb_private {
+>         unsigned txcidm:1;              /* TX Clock Internal Delay Mode */
+>         unsigned rgmii_override:1;      /* Deprecated rgmii-*id behavior */
+>         int num_tx_desc;                /* TX descriptors per packet */
+
+... oh, here's the original culprit.
+
+> +
+> +       const struct ravb_hw_info *info;
+>  };
+>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
