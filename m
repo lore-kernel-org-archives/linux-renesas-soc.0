@@ -2,168 +2,185 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B751C4320A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 16:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48EBEC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 18:12:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 42C2E60EB5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 16:00:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1563E60462
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 18:12:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242198AbhHJQBC (ORCPT
+        id S236057AbhHJSM3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Aug 2021 12:01:02 -0400
-Received: from mout.gmx.net ([212.227.15.18]:41865 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S239131AbhHJQBA (ORCPT
+        Tue, 10 Aug 2021 14:12:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59318 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236704AbhHJSML (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Aug 2021 12:01:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1628611197;
-        bh=G3sM2QcP/MH50Zmwdjb3PS8F5QBGj5Y8VFa/7F2tPSc=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=RLpZ0hqW/lrGAmurvpvHUFQYaAYshU/EL8HTj09Xa1VJXzVbI1pET09X0faIk0+qF
-         TZkmhHf9CmViqUxAAUCF+NxxGBpaiXeCn21JdMnfMEJPC5rbvtkbFoNvkRdRzCd495
-         83pnkOLc/giyhG64K1K/d/2czIyz0vQGQlpCbT94=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from titan ([79.150.72.99]) by mail.gmx.net (mrgmx005
- [212.227.17.184]) with ESMTPSA (Nemesis) id 1MAOJV-1mOBOw2Arz-00Bp83; Tue, 10
- Aug 2021 17:59:57 +0200
-Date:   Tue, 10 Aug 2021 17:59:53 +0200
-From:   Len Baker <len.baker@gmx.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Bernd Petrovitsch <bernd@petrovitsch.priv.at>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Len Baker <len.baker@gmx.com>,
-        Kees Cook <keescook@chromium.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-hardening@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 2/3] drivers/soc/renesas: Prefer memcpy over strcpy
-Message-ID: <20210810155953.GB2508@titan>
-References: <20210808125012.4715-1-len.baker@gmx.com>
- <20210808125012.4715-3-len.baker@gmx.com>
- <39485c0e-511c-50a0-83be-f9ce6fc47e67@petrovitsch.priv.at>
- <c33adb9e-9604-3d89-5a5b-152eb03e5b54@wanadoo.fr>
+        Tue, 10 Aug 2021 14:12:11 -0400
+Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC792C06179F
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Aug 2021 10:39:29 -0700 (PDT)
+Received: by mail-pj1-x102a.google.com with SMTP id t7-20020a17090a5d87b029017807007f23so5291781pji.5
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Aug 2021 10:39:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=RcAeQN+gmXLDK3m47qYKDkmMQSLuJXUR+/BsPFLKsLU=;
+        b=MIlb72VtpP7Qezq4+F9wH2a/vIpBNBLjH2KEeQUSdJqD+kbllu89MT/re0l1DpfSgg
+         TEUtTPWKRZNtMHVQioFewRjbVXKYnEfBPyauhU9YIAUTHH0qpsCVexMzxIBFwGV1VMgv
+         5q5wA5BE7nm9M+v8C3ypJ4yg98J2Txsnl/m9ftlbMKLPo5XecZWR2AdXNMFFDnLShozf
+         R9HM81GaK99eUUawBT9VH1y/3z6IHHRvfzcpScPzx0HbTBdK0eWr/1LSJQLaeM2OPTm1
+         48p3OeeXbVZG6AqWlzxv2ZARmdFKnrMRfh8h6Zyb0RYn/jI9hFOp9mVA/sNBSWDeiLRN
+         Cq7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=RcAeQN+gmXLDK3m47qYKDkmMQSLuJXUR+/BsPFLKsLU=;
+        b=UhdLp3yXkqhw6PJ/ZGl4d8Pk7uNcZUnlASGW6E1fLpjCCMKb5RjVT4Eec9bpUUNFD6
+         v8fqxomhRIzUxo+AgOkJfU2XcE+dfUN22id1G/EqnEEf1lVIe1a6Zq2vf0o+PMy/MRne
+         WytVxV/TcSpHQyjW2KZhasK0J/OIQn/Fw49BdM6eiMnntSVI1cYDzgVCDacxiTCLKefn
+         VvtIEbI9IQ+Aza175APZmmT4021i+k5IpbEIHqLjq0/GHuhH3JMvvBHP/bTSA0FLZiFh
+         IPuSGhJVhoU4swhOz68QMncge3iefj3COrRqF6fqLSEcc0KkHXEkn6Iw35+Iq4K5ijaE
+         LULQ==
+X-Gm-Message-State: AOAM533hOHTIN87CzM7Xy17RwSXJuaTmhgygR8LP30wvXPBvWx6SQJju
+        2XSYBiYW4Ed6r9JHv4EpY6hAAGCEFdnBcLiW
+X-Google-Smtp-Source: ABdhPJzcimx/0W6dHzTDuIGSv+/9Do9rWWeTb2zK2C+4RiLGjGyYBhgHiY5XVlrBtbq/HiGg2g2xIQ==
+X-Received: by 2002:a17:90a:c8c:: with SMTP id v12mr6117974pja.37.1628617169115;
+        Tue, 10 Aug 2021 10:39:29 -0700 (PDT)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id w130sm21828175pfd.118.2021.08.10.10.39.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Aug 2021 10:39:28 -0700 (PDT)
+Message-ID: <6112b9d0.1c69fb81.e2997.e8ed@mx.google.com>
+Date:   Tue, 10 Aug 2021 10:39:28 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c33adb9e-9604-3d89-5a5b-152eb03e5b54@wanadoo.fr>
-X-Provags-ID: V03:K1:FPnUfg9bHq3mnp/YBiXnJfdCYth5+kd8VoT92LWLiyrQC/T7qWV
- XqEMPQaChEtvXvpYQ0FF7Z/k5XfSetPCvutFfenyLdouGF3+8FbQSDYSzaKDcHfI9Dhk9pT
- nqMVMtEa8s6Uo4e8R+j6kuHpbSoJjrUwp2ujWigdUNW475H61eXq4DWibqEpwgxIo8irZ9S
- IzLJgN8K5DUg2AmYmO3Sw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xVByGEykzDo=:h92VZnFlg+VkvKpiRFRLaQ
- xPYCBWL7ImYXcrI8PHzLKgnvx0U0nAtR8VXIPzxaGS2RH0f/a614v6z4l9jMI4XuUhRBM0SNc
- RuACv5zcKcI6FLS9IDVu9IUViF/ptqpi0Aqs5HiXD0QXfLE+FSZHZezBncVgpaBNKN2Q9i9Bk
- feL7SK5a6hi14JIlmQUwYFqIsltXxuJw9HRh2QIQD1Xg765Kj9vMVFB16B+udtvO1OFoIHaz8
- 1wYWiODPzdSr/W6iLzLVQsP2xXPk8fZK35qAAMoH7/StbKKXMBwM/LYg5X5DPtGu9X3gznpGm
- JeAY0UZIAdYpRDmEck7ZCoCp94aHNDAZlWPiJrRRb8XcNzmPoj2EsdGdvW0I1DZk8P9TuVmI0
- RxcEs0TnCOOYmHKUo+Ryt4Le5QGsqbK4Ai7/cUCXGpIgAyqUnIYml4CuTj1xo9D3ekA0kzVZa
- pTuhuID0mA6mXzjJ+CET5Re8VGiODsRFBidz9sYs52BdOywTUQPl/RtaMJiuTc/rKoE/pMfY6
- FuWrq+2/cHU/F81lxmccNBCnkIq6lyIAZh2g3k67QqaYYLfg0JCLE4l07Qv/5QCKJTDM/ErHF
- J4kKjwxvybFLkYGtQI0x9Zwu+W++8SuHokR6PzwSJewR2zUtE6MxRgdeCVKiZNkX78ywQu5fc
- R7fq/cl3ZxhUWU4xBVY8FjoglKJkk4IeYaHrXRWB5JaYQY9bceFzcP4vqIkSLdIBMKOqWmVMw
- HaDIyZYNKaVxwrelDBPKQQic2rIJOD4MmoaehCgoZm4fzhqYHTrqgJSXSRaDgYE9+2xrPbfV6
- /ymc1tDje2S0RCukp5/WGd7pyM02KN0T90vEOdW7N3jZJgEoJ3TjEAOtpuPHZ/vt11jsOi3Aa
- /RinBa12sewbhNvzgkynJtSYppciAYDzrWoefKvl0s/UWr/czYfX+jxhLbOUyrP+ujaE//g/s
- Abm1m2QG0QgguPkPwb/TNHJJxMcMpk8lRU8elMr0+SXj/9HMPg+3KlW+31nWHNdu48xI91lK7
- Uto3xv0v7UtLZdO/NNKyXcbdhNYwgT6KHHSNVRPUGG4QxQgzgGES+DV70EO3koX3cakEsBsV6
- CP/4wY6tXJQB6khciYOs09qXEJsZgqDA44XBavobn8ilwZL/8/FvePXAg==
+X-Kernelci-Branch: master
+X-Kernelci-Tree: renesas
+X-Kernelci-Kernel: renesas-devel-2021-08-10-v5.14-rc5
+X-Kernelci-Report-Type: test
+Subject: renesas/master sleep: 10 runs,
+ 2 regressions (renesas-devel-2021-08-10-v5.14-rc5)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi,
+renesas/master sleep: 10 runs, 2 regressions (renesas-devel-2021-08-10-v5.1=
+4-rc5)
 
-On Sun, Aug 08, 2021 at 07:06:30PM +0200, Christophe JAILLET wrote:
-> Hi,
->
-> Le 08/08/2021 =E0 17:35, Bernd Petrovitsch a =E9crit=A0:
-> > Hi all!
-> >
-> > On 08/08/2021 14:50, Len Baker wrote:
-> > > strcpy() performs no bounds checking on the destination buffer. This
-> > > could result in linear overflows beyond the end of the buffer, leadi=
-ng
-> > > to all kinds of misbehaviors. So, use memcpy() as a safe replacement=
-.
-> > >
-> > > This is a previous step in the path to remove the strcpy() function
-> > > entirely from the kernel.
-> > >
-> > > Signed-off-by: Len Baker <len.baker@gmx.com>
-> > > ---
-> > >   drivers/soc/renesas/r8a779a0-sysc.c | 6 ++++--
-> > >   drivers/soc/renesas/rcar-sysc.c     | 6 ++++--
-> > >   2 files changed, 8 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/drivers/soc/renesas/r8a779a0-sysc.c b/drivers/soc/renes=
-as/r8a779a0-sysc.c
-> > > index d464ffa1be33..7410b9fa9846 100644
-> > > --- a/drivers/soc/renesas/r8a779a0-sysc.c
-> > > +++ b/drivers/soc/renesas/r8a779a0-sysc.c
-> > > @@ -404,19 +404,21 @@ static int __init r8a779a0_sysc_pd_init(void)
-> > >   	for (i =3D 0; i < info->num_areas; i++) {
-> > >   		const struct r8a779a0_sysc_area *area =3D &info->areas[i];
-> > >   		struct r8a779a0_sysc_pd *pd;
-> > > +		size_t n;
-> > >
-> > >   		if (!area->name) {
-> > >   			/* Skip NULLified area */
-> > >   			continue;
-> > >   		}
-> > >
-> > > -		pd =3D kzalloc(sizeof(*pd) + strlen(area->name) + 1, GFP_KERNEL);
-> > > +		n =3D strlen(area->name) + 1;
-> > > +		pd =3D kzalloc(sizeof(*pd) + n, GFP_KERNEL);
-> > Zeroing the allocated bytes is not needed since it's completly
-> > overwritten with the strcpy()/memcpy().
->
-> The strcpy()/memcpy() only overwrites the pd->name field, not the whole =
-pd
-> structure.
+Regressions Summary
+-------------------
 
-You are right.
+platform          | arch | lab           | compiler | defconfig          | =
+regressions
+------------------+------+---------------+----------+--------------------+-=
+-----------
+rk3288-veyron-jaq | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | =
+2          =
 
-> I think that it is needed to keep the kzalloc.
 
-Yes, I think so. The kzalloc is needed to guarantee that the whole struct =
-is
-initialize (all the members are initialized with zeros).
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2021-08-10-v5.14-rc5/plan/sleep/
 
-Regards,
-Len
+  Test:     sleep
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2021-08-10-v5.14-rc5
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      998b2a51c195410ed92f4f3a5ad117c2b567819f =
 
->
-> Just my 2c,
-> CJ
->
-> > >   		if (!pd) {
-> > >   			error =3D -ENOMEM;
-> > >   			goto out_put;
-> > >   		}
-> > >
-> > > -		strcpy(pd->name, area->name);
-> > > +		memcpy(pd->name, area->name, n);
-> > >   		pd->genpd.name =3D pd->name;
-> > >   		pd->pdr =3D area->pdr;
-> > >   		pd->flags =3D area->flags;
-> >
-> > And similar for the second hunk.
-> >
-> > MfG,
-> > 	Bernd
-> >
->
+
+
+Test Regressions
+---------------- =
+
+
+
+platform          | arch | lab           | compiler | defconfig          | =
+regressions
+------------------+------+---------------+----------+--------------------+-=
+-----------
+rk3288-veyron-jaq | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | =
+2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6112a2092399069a2eb136bd
+
+  Results:     21 PASS, 2 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-08-10-v5.14-rc5/arm/multi_v7_defconfig/gcc-8/lab-collabora/sleep-rk3288=
+-veyron-jaq.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-08-10-v5.14-rc5/arm/multi_v7_defconfig/gcc-8/lab-collabora/sleep-rk3288=
+-veyron-jaq.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
+0730.6/armhf/rootfs.cpio.gz =
+
+
+
+  * sleep.rtcwake-mem-3: https://kernelci.org/test/case/id/6112a2092399069a=
+2eb136d0
+        failing since 91 days (last pass: v5.12-451-gae657abc971d2, first f=
+ail: renesas-devel-2021-05-10-v5.13-rc1)
+
+    2021-08-10T15:55:56.632411  rtcwake: assuming RTC uses UTC ...
+    2021-08-10T15:55:56.632679  rtcwake: wakeup from \"mem\" using rtc0 at =
+Tue Aug 10 15:56:03 2021
+    2021-08-10T15:55:56.646963  <6>[  101.985929] PM: suspend entry (deep)
+    2021-08-10T15:55:56.647245  <6>[  101.990272] Filesystems sync: 0.000 s=
+econds
+    2021-08-10T15:55:56.661307  <6>[  101.995907] Freezing user space proce=
+sses ... (elapsed 0.001 seconds) done.
+    2021-08-10T15:55:56.661659  <6>[  102.005268] OOM killer disabled.
+    2021-08-10T15:55:58.800461  <6>[  102.009199] Freezing remaining freeza=
+ble tasks ... =
+
+    2021-08-10T15:55:58.801047  <3>[  104.136581] usb 2-1: device descripto=
+r read/64, error -110
+    2021-08-10T15:55:59.144969  <6>[  104.486505] usb 2-1: new high-speed U=
+SB device number 5 using dwc2
+    2021-08-10T15:56:04.394144  <3>[  109.736506] usb 2-1: device descripto=
+r read/64, error -110 =
+
+    ... (19 line(s) more)  =
+
+
+  * sleep.rtcwake-mem-2: https://kernelci.org/test/case/id/6112a2092399069a=
+2eb136d1
+        failing since 91 days (last pass: v5.12-451-gae657abc971d2, first f=
+ail: renesas-devel-2021-05-10-v5.13-rc1)
+
+    2021-08-10T15:55:36.436304  rtcwake: assuming RTC uses UTC ...
+    2021-08-10T15:55:36.441441  rtcwake: wakeup from \"mem\" using rtc0 at =
+Tue Aug 10 15:55:43 2021
+    2021-08-10T15:55:36.460087  <6>[   81.795443] PM: suspend entry (deep)
+    2021-08-10T15:55:36.460337  <6>[   81.799756] Filesystems sync: 0.000 s=
+econds
+    2021-08-10T15:55:36.470145  <6>[   81.805034] Freezing user space proce=
+sses ... (elapsed 0.001 seconds) done.
+    2021-08-10T15:55:36.470450  <6>[   81.814268] OOM killer disabled.
+    2021-08-10T15:55:36.914143  <6>[   81.818166] Freezing remaining freeza=
+ble tasks ... =
+
+    2021-08-10T15:55:36.914490  <3>[   82.249444] dwmmc_rockchip ff0c0000.m=
+mc: Busy; trying anyway
+    2021-08-10T15:55:37.424762  <3>[   82.761805] mmc_host mmc1: Timeout se=
+nding command (cmd 0x202000 arg 0x0 status 0x80202000)
+    2021-08-10T15:55:37.437755  <6>[   82.771583] usb 2-1: USB disconnect, =
+device number 2 =
+
+    ... (66 line(s) more)  =
+
+ =20
