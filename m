@@ -7,75 +7,74 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88893C4320A
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 00:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0523CC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 01:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6582C61004
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 00:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E00DA61052
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 01:13:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235246AbhHJAFy (ORCPT
+        id S229739AbhHJBNi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 9 Aug 2021 20:05:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35762 "EHLO
+        Mon, 9 Aug 2021 21:13:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50606 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230317AbhHJAFy (ORCPT
+        with ESMTP id S234504AbhHJBNi (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 9 Aug 2021 20:05:54 -0400
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E97EC0613D3
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  9 Aug 2021 17:05:33 -0700 (PDT)
-Received: by mail-pj1-x102e.google.com with SMTP id gz13-20020a17090b0ecdb0290178c0e0ce8bso1320429pjb.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Aug 2021 17:05:33 -0700 (PDT)
+        Mon, 9 Aug 2021 21:13:38 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F027BC061796
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  9 Aug 2021 18:13:16 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id u21-20020a17090a8915b02901782c36f543so1847992pjn.4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 09 Aug 2021 18:13:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20150623.gappssmtp.com; s=20150623;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=0FJQmsU+tdwyEk0teO/8a113CQbgifx8pRfZqVwFMnQ=;
-        b=mRd8uhbP6R8SBIP/KFdS1qOah8s2gKjMvOdK6h3mFve/4GqbkJoIVaeUO96gB9nZaC
-         OX4zCU1OvcScsu0TDhjQvBYTg4YrvuWEI4Qp81utLTfCVINMH7JI1/gpuO9/sm0a9avn
-         cWu6pNDNCL9Zhu0z/a8E1hdHY/yJ7HeoTIGDr8YmZBVQJhKzaZdIiWEZ6iXVSsO9G6lc
-         6hT2yCkwNaKMRFBBlCgZirnV8Z7m4DWc8h+druWHKF6qDzrLYq9ZwDVYZMU+4wJAjc1l
-         OXRWbta6ItBtpp4C/Wso/RQSU1EB+080Ztawx6DA0KPzXXJdR/RIkDZ6Tpg4lWZCzB1L
-         rqHw==
+        bh=TTII+IZOWaAN+5V/wAu+HVCuJUqtomxinLFvArhZyRs=;
+        b=2ACctyVdQxPu1mrVTKeR7UKkwIhmo7WK/oa0o+G1S7GZZvBbfxmI5Ie1pg394ak2qh
+         JEghnkOp2mrDVcU+O507N1cPCjNS/xkl37vFZBDCdC1AtdvG77z/59YzkR1SaMUCYKjR
+         9RHPda8y7aZMrpam2kGynJ8/wznk7I5vU+W50au7pgaF58qRohtBZ5kPPP12Bw82XYg9
+         O+VuNO4BLTNmmXkMFnWCEpmj1/qNYVkIpAfMfw9axVcdH5EUnhx6KN8pRUjUVugoGA5S
+         QzzhL58TuJ5/ZIV+x+6AXjgaOxfyVGbsuLDNzCEeMqjxi+/4pPnVBSsXyi/hzlQUm0dI
+         WOpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=0FJQmsU+tdwyEk0teO/8a113CQbgifx8pRfZqVwFMnQ=;
-        b=S2NRV2hrVzN+fgOoPW9ODW/4Kkdd+/uYqjL3WhqvS0MmpiK7wOx3XGJozzeXEBpDCr
-         WGwlIxaY1/AD29mHdxLNmP7mAzd6mOIE/T4DxoOFNiiMB0+KaXRQlNQz2JkmNhn3xcqU
-         XRxK0pHYhTtSgl05F2pJkAQ7udimNIVMdr594e+Na2PoXjzOpvjW/oSblgcvNqCA6IkC
-         PSDRgx0ZFTTryak2bmWJck/hPnbEwP3vyqXbqeg3qSW0zZvfm38nymUMLpZ9jyT55X+p
-         ZGlZc/ejiA1pmXNMYfmSLzO3mK/dyh4cnx0vfxzwd0fW6jOCvkNgkW6Ar1WD1Ml6icgL
-         QnDw==
-X-Gm-Message-State: AOAM531ZPVTt3bSQcMSLYOIjF9FHnPISNHmGIHe2wYuuj7C8VcOR3Zjm
-        W1fn7DvbjRBE5Wv1jxFisgKXNwfAbNXVPhrb
-X-Google-Smtp-Source: ABdhPJzVh4exf5kVpBWB5WlyytvSjO9g74i1USek3UVh1MRHAwnJjyeqSspFjry0fah6KxLrz/XKKA==
-X-Received: by 2002:a17:90a:4bcf:: with SMTP id u15mr27745595pjl.62.1628553932814;
-        Mon, 09 Aug 2021 17:05:32 -0700 (PDT)
+        bh=TTII+IZOWaAN+5V/wAu+HVCuJUqtomxinLFvArhZyRs=;
+        b=LJmxjG0AVJcag5Gmdm0xQi+xwVKnwD5YQqcn8XPhONzkh45AnGEYgwQXIGJ8gS3lGI
+         7Yv6mUXsN8s6fL4wcoJLEftsp+Jds/J3WHLNc+Ve42Diswd4PUnL5Pi3KReCFBgKFVgM
+         8ECFMNsNhsuMo6Nv9GIYdQo6UjOgfN4Pw7h3EaLnrnixuJUCDbBDNaZzHZpRv0yLQAmb
+         A0rhagt/hYW2PAzf3F01dwTXecULjQZ9kXZzbyItP4KzReykondoUuY+BVN9egxmxoGa
+         AipXmJB5ppmQDgzCH1WseBHzsZaBXH/bO5LVQKY68hBc+exXu8sXc8UVVip/nJ5inXxI
+         uP1w==
+X-Gm-Message-State: AOAM531dkXOFDesRE3DRlmOUhK2X1pCs7PB3PTOMQUOASkAhwa7AzYuS
+        jW1Gx4amFGni3NCdGi9aiZFTCw/XXGbKGMFB
+X-Google-Smtp-Source: ABdhPJyMhZKugYWana2SaczZ9y3UwrmB34BBBLXzymRtTtEvReaA61iWVFy1eo5cVLOULD218zJM6g==
+X-Received: by 2002:a62:e211:0:b029:3c7:ed35:7463 with SMTP id a17-20020a62e2110000b02903c7ed357463mr19353842pfi.14.1628557996279;
+        Mon, 09 Aug 2021 18:13:16 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id j128sm22078753pfd.38.2021.08.09.17.05.32
+        by smtp.gmail.com with ESMTPSA id 8sm10584790pfo.153.2021.08.09.18.13.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Aug 2021 17:05:32 -0700 (PDT)
-Message-ID: <6111c2cc.1c69fb81.fa1f1.0778@mx.google.com>
-Date:   Mon, 09 Aug 2021 17:05:32 -0700 (PDT)
+        Mon, 09 Aug 2021 18:13:15 -0700 (PDT)
+Message-ID: <6111d2ab.1c69fb81.fb336.f269@mx.google.com>
+Date:   Mon, 09 Aug 2021 18:13:15 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: next
+X-Kernelci-Branch: master
 X-Kernelci-Tree: renesas
-X-Kernelci-Kernel: renesas-next-2021-07-27-v5.14-rc1-14-g57ec7ff3f83a
+X-Kernelci-Kernel: v5.14-rc5-549-g3b20129c119f
 X-Kernelci-Report-Type: test
-Subject: renesas/next sleep: 8 runs,
- 3 regressions (renesas-next-2021-07-27-v5.14-rc1-14-g57ec7ff3f83a)
+Subject: renesas/master sleep: 7 runs,
+ 3 regressions (v5.14-rc5-549-g3b20129c119f)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/next sleep: 8 runs, 3 regressions (renesas-next-2021-07-27-v5.14-rc=
-1-14-g57ec7ff3f83a)
+renesas/master sleep: 7 runs, 3 regressions (v5.14-rc5-549-g3b20129c119f)
 
 Regressions Summary
 -------------------
@@ -91,16 +90,16 @@ rk3288-veyron-jaq  | arm    | lab-collabora | gcc-8    | multi_v7_defconfig=
            | 2          =
 
 
-  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
-s-next-2021-07-27-v5.14-rc1-14-g57ec7ff3f83a/plan/sleep/
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/v5.1=
+4-rc5-549-g3b20129c119f/plan/sleep/
 
   Test:     sleep
   Tree:     renesas
-  Branch:   next
-  Describe: renesas-next-2021-07-27-v5.14-rc1-14-g57ec7ff3f83a
+  Branch:   master
+  Describe: v5.14-rc5-549-g3b20129c119f
   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
 evel.git
-  SHA:      57ec7ff3f83a19aa366c58bd0f6a47a8844ac3fe =
+  SHA:      3b20129c119f50f3534a0e1a5c353bb502ffe2c6 =
 
 
 
@@ -117,42 +116,25 @@ hp-11A-G6-EE-grunt | x86_64 | lab-collabora | gcc-8    | x86_64_defcon...6-=
 chromebook | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/6111ac1a3f8d2276c6b13682
+  Details:     https://kernelci.org/test/plan/id/6111ba9fe65f81ecb0b13672
 
   Results:     22 PASS, 1 FAIL, 0 SKIP
   Full config: x86_64_defconfig+x86-chromebook
   Compiler:    gcc-8 (gcc (Debian 8.3.0-6) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--07-27-v5.14-rc1-14-g57ec7ff3f83a/x86_64/x86_64_defconfig+x86-chromebook/gc=
-c-8/lab-collabora/sleep-hp-11A-G6-EE-grunt.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--07-27-v5.14-rc1-14-g57ec7ff3f83a/x86_64/x86_64_defconfig+x86-chromebook/gc=
-c-8/lab-collabora/sleep-hp-11A-G6-EE-grunt.html
+  Plain log:   https://storage.kernelci.org//renesas/master/v5.14-rc5-549-g=
+3b20129c119f/x86_64/x86_64_defconfig+x86-chromebook/gcc-8/lab-collabora/sle=
+ep-hp-11A-G6-EE-grunt.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/v5.14-rc5-549-g=
+3b20129c119f/x86_64/x86_64_defconfig+x86-chromebook/gcc-8/lab-collabora/sle=
+ep-hp-11A-G6-EE-grunt.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
 0730.6/amd64/rootfs.cpio.gz =
 
 
 
-  * sleep.rtcwake-freeze-2: https://kernelci.org/test/case/id/6111ac1a3f8d2=
-276c6b1368c
-        new failure (last pass: renesas-next-2021-07-27-v5.14-rc1)
-
-    2021-08-09T22:27:31.154470  rtcwake: assuming RTC uses UTC ...
-    2021-08-09T22:27:31.161019  rtcwake: wakeup from \"freeze\" using rtc0 =
-at Mon Aug  9 22:27:37 2021
-    2021-08-09T22:27:31.163731  <6>[   33.998846] PM: suspend entry (deep)
-    2021-08-09T22:27:31.170471  <6>[   34.003089] Filesystems sync: 0.000 s=
-econds
-    2021-08-09T22:27:31.174186  <6>[   34.007720] PM: suspend entry (s2idle)
-    2021-08-09T22:27:31.177041  <6>[   34.011741] PM: suspend exit
-    2021-08-09T22:27:31.177413  rtcwake: write error
-    2021-08-09T22:27:31.186836  <6>[   34.015469] Freezing user space proce=
-sses ... (elapsed 0.001 seconds) done.
-    2021-08-09T22:27:31.190369  <6>[   34.024474] OOM killer disabled.
-    2021-08-09T22:27:31.193240  <6>[   34.027966] Freezing remaining freeza=
-ble tasks ...  =
-
-    ... (1150 line(s) more)  =
+  * sleep.rtcwake-freeze-3: https://kernelci.org/test/case/id/6111ba9fe65f8=
+1ecb0b1367b
+        new failure (last pass: renesas-devel-2021-07-27-v5.14-rc3) =
 
  =
 
@@ -166,81 +148,83 @@ rk3288-veyron-jaq  | arm    | lab-collabora | gcc-8    | multi_v7_defconfig=
            | 2          =
 
 
-  Details:     https://kernelci.org/test/plan/id/6111b07ab657cbecb4b13661
+  Details:     https://kernelci.org/test/plan/id/6111c3f4a6bdf3a1dfb136b1
 
   Results:     21 PASS, 2 FAIL, 0 SKIP
   Full config: multi_v7_defconfig
   Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--07-27-v5.14-rc1-14-g57ec7ff3f83a/arm/multi_v7_defconfig/gcc-8/lab-collabor=
-a/sleep-rk3288-veyron-jaq.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--07-27-v5.14-rc1-14-g57ec7ff3f83a/arm/multi_v7_defconfig/gcc-8/lab-collabor=
-a/sleep-rk3288-veyron-jaq.html
+  Plain log:   https://storage.kernelci.org//renesas/master/v5.14-rc5-549-g=
+3b20129c119f/arm/multi_v7_defconfig/gcc-8/lab-collabora/sleep-rk3288-veyron=
+-jaq.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/v5.14-rc5-549-g=
+3b20129c119f/arm/multi_v7_defconfig/gcc-8/lab-collabora/sleep-rk3288-veyron=
+-jaq.html
   Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
 0730.6/armhf/rootfs.cpio.gz =
 
 
 
-  * sleep.rtcwake-mem-3: https://kernelci.org/test/case/id/6111b07ab657cbec=
-b4b13674
-        failing since 76 days (last pass: renesas-next-2021-05-11-v5.13-rc1=
-, first fail: renesas-next-2021-05-25-v5.13-rc1)
+  * sleep.rtcwake-mem-3: https://kernelci.org/test/case/id/6111c3f4a6bdf3a1=
+dfb136c4
+        failing since 91 days (last pass: v5.12-451-gae657abc971d2, first f=
+ail: renesas-devel-2021-05-10-v5.13-rc1)
 
-    2021-08-09T22:45:03.628983  rtcwake: assuming RTC uses UTC ...
-    2021-08-09T22:45:03.634087  rtcwake: wakeup from \"mem\" using rtc0 at =
-Mon Aug  9 22:45:10 2021
-    2021-08-09T22:45:03.650523  <6>[  101.955823] PM: suspend entry (deep)
-    2021-08-09T22:45:03.650757  <6>[  101.960201] Filesystems sync: 0.000 s=
+    2021-08-10T00:08:03.809719  rtcwake: assuming RTC uses UTC ...
+    2021-08-10T00:08:03.814572  rtcwake: wakeup from \"mem\" using rtc0 at =
+Tue Aug 10 00:08:10 2021
+    2021-08-10T00:08:03.827276  <6>[  102.231872] PM: suspend entry (deep)
+    2021-08-10T00:08:03.827534  <6>[  102.236201] Filesystems sync: 0.000 s=
 econds
-    2021-08-09T22:45:03.664211  <6>[  101.965612] Freezing user space proce=
-sses ... (elapsed 0.000 seconds) done.
-    2021-08-09T22:45:03.664445  <6>[  101.974591] OOM killer disabled.
-    2021-08-09T22:45:04.714326  <6>[  101.978515] Freezing remaining freeza=
+    2021-08-10T00:08:03.841334  <6>[  102.242012] Freezing user space proce=
+sses ... (elapsed 0.001 seconds) done.
+    2021-08-10T00:08:03.841574  <6>[  102.251340] OOM killer disabled.
+    2021-08-10T00:08:04.615291  <6>[  102.255243] Freezing remaining freeza=
 ble tasks ... =
 
-    2021-08-09T22:45:04.714789  <3>[  103.016432] usb 2-1: device descripto=
+    2021-08-10T00:08:04.615677  <3>[  103.016606] usb 2-1: device descripto=
 r read/64, error -110
-    2021-08-09T22:45:05.058887  <6>[  103.366431] usb 2-1: new high-speed U=
+    2021-08-10T00:08:04.960114  <6>[  103.366485] usb 2-1: new high-speed U=
 SB device number 5 using dwc2
-    2021-08-09T22:45:10.307577  <3>[  108.616495] usb 2-1: device descripto=
+    2021-08-10T00:08:10.209067  <3>[  108.616479] usb 2-1: device descripto=
 r read/64, error -110 =
 
     ... (19 line(s) more)  =
 
 
-  * sleep.rtcwake-mem-2: https://kernelci.org/test/case/id/6111b07ab657cbec=
-b4b13675
-        failing since 76 days (last pass: renesas-next-2021-05-11-v5.13-rc1=
-, first fail: renesas-next-2021-05-25-v5.13-rc1)
+  * sleep.rtcwake-mem-2: https://kernelci.org/test/case/id/6111c3f4a6bdf3a1=
+dfb136c5
+        failing since 91 days (last pass: v5.12-451-gae657abc971d2, first f=
+ail: renesas-devel-2021-05-10-v5.13-rc1)
 
-    2021-08-09T22:44:43.250611  <6>[   81.536366] PM: suspend exit
-    2021-08-09T22:44:43.250877  =
-
-    2021-08-09T22:44:43.324906  <4>[   81.563125]  bluetooth cfg80211 ecdh_=
-generic ecc libaes cros_ec_chardev cros_ec_sysfs cros_ec_debugfs cros_ec_ke=
-yb i2c_cros_ec_tunnel cros_ec_dev cros_ec_spi cros_ec gpio_charger panel_si=
-mple snd_soc_rockchip_max98090 rk_crypto md5 nvmem_rockchip_efuse panfrost =
-gpu_sched sha256_generic libsha256 sha1_generic libdes snd_soc_rockchip_i2s=
- snd_soc_rockchip_pcm rtc_rk808 clk_rk808 phy_rockchip_dp snd_soc_max98090 =
-pwm_rockchip uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 vid=
-eobuf2_common videodev mc snd_soc_ts3a227e tpm_i2c_infineon snd_soc_core ac=
-97_bus snd_pcm_dmaengine snd_pcm tpm snd_timer snd soundcore spi_rockchip r=
-ockchipdrm dw_mipi_dsi analogix_dp dw_hdmi pwm_bl backlight
-    2021-08-09T22:44:43.325313  rtcwake: assuming RTC uses UTC ...
-    2021-08-09T22:44:43.336777  <4>[   81.631718] CPU: 2 PID: 136 Comm: kwo=
-rker/2:10 Tainted: G        W         5.14.0-rc2 #1
-    2021-08-09T22:44:43.350717  rtcwake: wakeup from \"mem\" using rtc0 at =
-Mon Aug  9 22:44:50 202<4>[   81.644523] Hardware name: Rockchip (Device Tr=
-ee)
-    2021-08-09T22:44:43.351011  1
-    2021-08-09T22:44:43.351352  <4>[   81.656282] Workqueue: usb_hub_wq hub=
+    2021-08-10T00:07:43.210196  <4>[   81.604686] ------------[ cut here ]-=
+-----------
+    2021-08-10T00:07:43.210545  rtcwake: assuming RTC uses UTC ...
+    2021-08-10T00:07:43.222934  <4>[   81.616254] WARNING: CPU: 0 PID: 5 at=
+ fs/kernfs/dir.c:1509 kernfs_remove_by_name_ns+0xa8/0xb0
+    2021-08-10T00:07:43.223177  <4>[   81.629575] kernfs: can not remove 'a=
+ttached_dev', no directory
+    2021-08-10T00:07:43.296590  <4>[   81.636487] Modules linked in: mwifie=
+x_sdio mwifiex btmrvl_sdio btmrvl bluetooth cfg80211 ecdh_generic ecc libae=
+s cros_ec_debugfs cros_ec_sysfs cros_ec_chardev cros_ec_dev cros_ec_keyb i2=
+c_cros_ec_tunnel cros_ec_spi cros_ec panel_simple snd_soc_rockchip_max98090=
+ rk_crypto md5 gpio_charger nvmem_rockchip_efuse sha256_generic libsha256 r=
+tc_rk808 clk_rk808 uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4=
+l2 phy_rockchip_dp panfrost videobuf2_common gpu_sched sha1_generic libdes =
+snd_soc_rockchip_i2s snd_soc_rockchip_pcm videodev snd_soc_ts3a227e snd_soc=
+_max98090 snd_soc_core ac97_bus snd_pcm_dmaengine snd_pcm snd_timer snd sou=
+ndcore pwm_rockchip tpm_i2c_infineon rockchipdrm mc dw_mipi_dsi analogix_dp=
+ pwm_bl tpm dw_hdmi backlight spi_rockchip
+    2021-08-10T00:07:43.309477  <4>[   81.710655] CPU: 0 PID: 5 Comm: kwork=
+er/0:0 Tainted: G        W         5.14.0-rc5 #1
+    2021-08-10T00:07:43.322093  <4>[   81.719700] Hardware name: Rockchip (=
+Device Tree)
+    2021-08-10T00:07:43.322315  <4>[   81.725245] Workqueue: usb_hub_wq hub=
 _event
-    2021-08-09T22:44:43.361879  <4>[   81.661529] [<c0311090>] (unwind_back=
+    2021-08-10T00:07:43.335096  <4>[   81.730215] [<c0311090>] (unwind_back=
 trace) from [<c030ba68>] (show_stack+0x10/0x14)
-    2021-08-09T22:44:43.374209  <4>[   81.670480] [<c030ba68>] (show_stack)=
- from [<c0fc54a8>] (dump_stack_lvl+0x40/0x4c) =
+    2021-08-10T00:07:43.335320  <4>[   81.739167] [<c030ba68>] (show_stack)=
+ from [<c0fc6978>] (dump_stack_lvl+0x40/0x4c) =
 
-    ... (62 line(s) more)  =
+    ... (60 line(s) more)  =
 
  =20
