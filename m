@@ -2,78 +2,125 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7AEC4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 10:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AD4C4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 14:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E798D6101E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 10:21:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7B6960F25
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 10 Aug 2021 14:47:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239802AbhHJKVV (ORCPT
+        id S241835AbhHJOsR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 10 Aug 2021 06:21:21 -0400
-Received: from mail-vs1-f43.google.com ([209.85.217.43]:36598 "EHLO
-        mail-vs1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238988AbhHJKVU (ORCPT
+        Tue, 10 Aug 2021 10:48:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S241596AbhHJOsQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 10 Aug 2021 06:21:20 -0400
-Received: by mail-vs1-f43.google.com with SMTP id y65so1569144vsy.3;
-        Tue, 10 Aug 2021 03:20:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l1gBoiYEO7XbkRs8hlFE3qe793CSdQbcY1z2rTY4odU=;
-        b=gWRnAcOQk9Pex17gjG0S/ABGc8h7dC4xQDvnTqANgZjvI8B2q4RMD+MHUBy5973i3h
-         2ntf9bcoUKwbDflhbV+0oaw5d90qnUOiDWFH0ndfFHyoSXN40BPo9+Q+diqb5citDSD5
-         GeKg444LRioVVoXvSnWhN464/6FY7Tz4tM7ZjtoLhe8zoskwxfohimQJ+3BQYFKpAX7+
-         DDRAKp89Gl3gT3lEow7PfD0AqQNbcmp8MdJffCgsJ3jeViPAzvkQsDXJE6CQAC0iIkKa
-         7wQtIq8Da5y3rsk0oLVivzsmr59YYF5aYBO8OqhcjK0fRtbxUCJs3yq0fCH5ALApCW0t
-         7hgQ==
-X-Gm-Message-State: AOAM533My07AuOD1YCdQDSr17F2VnBgqCRtIm9/hC1q8l1pgqhVayLku
-        EDup/TlOutkiJJzeu4sROBIrW6AXBvJkp4Chu7Y=
-X-Google-Smtp-Source: ABdhPJzOym84ueJA1uKY9xnfxHaBxHX6hUvp89HqSHr+H8RurhngSChw9Xes3S5wV6h+vA/1VtUSBq+Od6PYuOZNVR0=
-X-Received: by 2002:a67:ca1c:: with SMTP id z28mr13062605vsk.40.1628590858048;
- Tue, 10 Aug 2021 03:20:58 -0700 (PDT)
+        Tue, 10 Aug 2021 10:48:16 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD77EC0613C1
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 10 Aug 2021 07:47:51 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:5c69:2226:1f00:1a90])
+        by andre.telenet-ops.be with bizsmtp
+        id fqni250021ffYXh01qniA3; Tue, 10 Aug 2021 16:47:43 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mDT2b-001jFR-S8
+        for linux-renesas-soc@vger.kernel.org; Tue, 10 Aug 2021 16:47:41 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mDT2b-002wJ0-DU
+        for linux-renesas-soc@vger.kernel.org; Tue, 10 Aug 2021 16:47:41 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     linux-renesas-soc@vger.kernel.org
+Subject: renesas-drivers-2021-08-10-v5.14-rc5
+Date:   Tue, 10 Aug 2021 16:47:41 +0200
+Message-Id: <20210810144741.700739-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20210727185527.19907-1-biju.das.jz@bp.renesas.com> <20210727185527.19907-7-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20210727185527.19907-7-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 10 Aug 2021 12:20:46 +0200
-Message-ID: <CAMuHMdVgafPA9YT7gkqcZidJar+Mpb_m1DyYFqb6PXMWGfZQbg@mail.gmail.com>
-Subject: Re: [PATCH v5 6/6] arm64: dts: renesas: r9a07g044: Add USB2.0 device support
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Jul 27, 2021 at 8:55 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add USB2.0 device support to RZ/G2L SoC DT.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+I have pushed renesas-drivers-2021-08-10-v5.14-rc5 to
+https://git.kernel.org/cgit/linux/kernel/git/geert/renesas-drivers.git
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This tree is meant to ease development of platform support and drivers
+for Renesas ARM SoCs. It is created by merging (a) the for-next branches
+of various subsystem trees and (b) branches with driver code submitted
+or planned for submission to maintainers into the master branch of my
+renesas-devel.git tree.
+
+Today's version is based on renesas-devel-2021-08-10-v5.14-rc5.
+
+Included branches with driver code:
+  - renesas-clk
+  - renesas-pinctrl
+  - topic/rcar-gen3e-v2~1
+
+Included fixes:
+  - fix for "drm: Introduce the DP AUX bus"
+  - WIP soc: v3u: allow WDT reset
+  - misc: add sloppy logic analyzer using polling
+  - [LOCAL] arm64: defconfig: Update renesas_defconfig
+
+Included subsystem trees:
+  - git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git#linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git#clk-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git#gpio/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git#mtd/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git#tty-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git#i2c/for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/mkl/linux-can-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git#usb-next
+  - git://git.freedesktop.org/git/drm/drm.git#drm-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git#next
+  - git://linuxtv.org/media_tree.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git#for-next
+  - git://git.linaro.org/people/daniel.lezcano/linux.git#timers/drivers/next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/balbi/usb.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git#staging-next
+  - git://git.armlinux.org.uk/~rmk/linux-arm.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git#irq/core
+  - git://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git#for-next
+  - git://www.linux-watchdog.org/linux-watchdog-next.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git#for-next/core
+  - git://anongit.freedesktop.org/drm/drm-misc#for-linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/phy/linux-phy.git#next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git#thermal/linux-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git#for-mfd-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git#for-next
+  - git://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git#master
+  - git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/driver-core.git#driver-core-next
+  - git://git.libc.org/linux-sh#for-next
+  - https://git.pengutronix.de/git/pza/linux#reset/next
 
 Gr{oetje,eeting}s,
 
-                        Geert
+						Geert
 
--- 
+--
 Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
 In personal conversations with technical people, I call myself a hacker. But
 when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+							    -- Linus Torvalds
