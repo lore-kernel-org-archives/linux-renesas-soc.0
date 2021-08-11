@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A456C4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0BBC19F39
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30652604AC
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:51:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CA5E60FC0
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:51:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236584AbhHKIwD (ORCPT
+        id S236605AbhHKIwE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 11 Aug 2021 04:52:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33616 "EHLO
+        Wed, 11 Aug 2021 04:52:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33622 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236374AbhHKIwA (ORCPT
+        with ESMTP id S236439AbhHKIwA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 11 Aug 2021 04:52:00 -0400
 Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEFF7C0617B0
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FB0DC06179E
         for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Aug 2021 01:51:35 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:438:1ff1:1071:f524])
         by xavier.telenet-ops.be with bizsmtp
-        id g8rG2500m1gJxCh018rGUb; Wed, 11 Aug 2021 10:51:32 +0200
+        id g8rH2500H1gJxCh018rHUg; Wed, 11 Aug 2021 10:51:32 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mDjxE-001yaA-I3; Wed, 11 Aug 2021 10:51:16 +0200
+        id 1mDjxF-001yaF-1h; Wed, 11 Aug 2021 10:51:17 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mDjxD-0058x3-C2; Wed, 11 Aug 2021 10:51:15 +0200
+        id 1mDjxD-0058xR-F6; Wed, 11 Aug 2021 10:51:15 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Rob Herring <robh+dt@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -56,9 +56,9 @@ Cc:     Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
         linux-riscv@lists.infradead.org, kexec@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 4/9] of: fdt: Add generic support for handling usable memory range property
-Date:   Wed, 11 Aug 2021 10:51:02 +0200
-Message-Id: <3bd69bada93ee59b7d23c38b3527fc1654e19343.1628670468.git.geert+renesas@glider.be>
+Subject: [PATCH v5 7/9] arm64: kdump: Remove custom linux,elfcorehdr handling
+Date:   Wed, 11 Aug 2021 10:51:05 +0200
+Message-Id: <3b8f801f9b92066855e87f3079fafc153ab20f69.1628670468.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1628670468.git.geert+renesas@glider.be>
 References: <cover.1628670468.git.geert+renesas@glider.be>
@@ -68,97 +68,93 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for handling the "linux,usable-memory-range" property in the
-"/chosen" node to the FDT core code.  This can co-exist safely with the
-architecture-specific handling, until the latter has been removed.
+Remove the architecture-specific code for handling the
+"linux,elfcorehdr" property under the "/chosen" node in DT, as the
+platform-agnostic handling in the FDT core code already takes care of
+this.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-About the change to chosen.txt: I have a similar change for
-schemas/chosen.yaml in dt-schema.
-
 v5:
-  - Handle the actual capping in generic code, too,
+  - Remove all handling, not just parsing,
 
 v4:
-  - New.
+  - s/handlng/parsing/ in patch description.
 ---
- Documentation/devicetree/bindings/chosen.txt |  6 ++--
- drivers/of/fdt.c                             | 30 ++++++++++++++++++++
- 2 files changed, 33 insertions(+), 3 deletions(-)
+ arch/arm64/mm/init.c | 53 --------------------------------------------
+ 1 file changed, 53 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/chosen.txt b/Documentation/devicetree/bindings/chosen.txt
-index 5b0b94eb2d04e79d..1cc3aa10dcb10588 100644
---- a/Documentation/devicetree/bindings/chosen.txt
-+++ b/Documentation/devicetree/bindings/chosen.txt
-@@ -79,9 +79,9 @@ a different secondary CPU release mechanism)
- linux,usable-memory-range
- -------------------------
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 8490ed2917ff2430..bac4f06bb7d900a2 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -124,57 +124,6 @@ static void __init reserve_crashkernel(void)
+ }
+ #endif /* CONFIG_KEXEC_CORE */
  
--This property (arm64 only) holds a base address and size, describing a
--limited region in which memory may be considered available for use by
--the kernel. Memory outside of this range is not available for use.
-+This property holds a base address and size, describing a limited region in
-+which memory may be considered available for use by the kernel. Memory outside
-+of this range is not available for use.
+-#ifdef CONFIG_CRASH_DUMP
+-static int __init early_init_dt_scan_elfcorehdr(unsigned long node,
+-		const char *uname, int depth, void *data)
+-{
+-	const __be32 *reg;
+-	int len;
+-
+-	if (depth != 1 || strcmp(uname, "chosen") != 0)
+-		return 0;
+-
+-	reg = of_get_flat_dt_prop(node, "linux,elfcorehdr", &len);
+-	if (!reg || (len < (dt_root_addr_cells + dt_root_size_cells)))
+-		return 1;
+-
+-	elfcorehdr_addr = dt_mem_next_cell(dt_root_addr_cells, &reg);
+-	elfcorehdr_size = dt_mem_next_cell(dt_root_size_cells, &reg);
+-
+-	return 1;
+-}
+-
+-/*
+- * reserve_elfcorehdr() - reserves memory for elf core header
+- *
+- * This function reserves the memory occupied by an elf core header
+- * described in the device tree. This region contains all the
+- * information about primary kernel's core image and is used by a dump
+- * capture kernel to access the system memory on primary kernel.
+- */
+-static void __init reserve_elfcorehdr(void)
+-{
+-	of_scan_flat_dt(early_init_dt_scan_elfcorehdr, NULL);
+-
+-	if (!elfcorehdr_size)
+-		return;
+-
+-	if (memblock_is_region_reserved(elfcorehdr_addr, elfcorehdr_size)) {
+-		pr_warn("elfcorehdr is overlapped\n");
+-		return;
+-	}
+-
+-	memblock_reserve(elfcorehdr_addr, elfcorehdr_size);
+-
+-	pr_info("Reserving %lldKB of memory at 0x%llx for elfcorehdr\n",
+-		elfcorehdr_size >> 10, elfcorehdr_addr);
+-}
+-#else
+-static void __init reserve_elfcorehdr(void)
+-{
+-}
+-#endif /* CONFIG_CRASH_DUMP */
+-
+ /*
+  * Return the maximum physical address for a zone accessible by the given bits
+  * limit. If DRAM starts above 32-bit, expand the zone to the maximum
+@@ -395,8 +344,6 @@ void __init arm64_memblock_init(void)
  
- This property describes a limitation: memory within this range is only
- valid when also described through another mechanism that the kernel
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index 99be3e03af29089f..bc041d8141e86e62 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -956,6 +956,32 @@ static void __init early_init_dt_check_for_elfcorehdr(unsigned long node)
- 		 elfcorehdr_addr, elfcorehdr_size);
+ 	early_init_fdt_scan_reserved_mem();
+ 
+-	reserve_elfcorehdr();
+-
+ 	high_memory = __va(memblock_end_of_DRAM() - 1) + 1;
  }
  
-+static phys_addr_t cap_mem_addr;
-+static phys_addr_t cap_mem_size;
-+
-+/**
-+ * early_init_dt_check_for_usable_mem_range - Decode usable memory range
-+ * location from flat tree
-+ * @node: reference to node containing usable memory range location ('chosen')
-+ */
-+static void __init early_init_dt_check_for_usable_mem_range(unsigned long node)
-+{
-+	const __be32 *prop;
-+	int len;
-+
-+	pr_debug("Looking for usable-memory-range property... ");
-+
-+	prop = of_get_flat_dt_prop(node, "linux,usable-memory-range", &len);
-+	if (!prop || (len < (dt_root_addr_cells + dt_root_size_cells)))
-+		return;
-+
-+	cap_mem_addr = dt_mem_next_cell(dt_root_addr_cells, &prop);
-+	cap_mem_size = dt_mem_next_cell(dt_root_size_cells, &prop);
-+
-+	pr_debug("cap_mem_start=%pa cap_mem_size=%pa\n", &cap_mem_addr,
-+		 &cap_mem_size);
-+}
-+
- #ifdef CONFIG_SERIAL_EARLYCON
- 
- int __init early_init_dt_scan_chosen_stdout(void)
-@@ -1104,6 +1130,7 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
- 
- 	early_init_dt_check_for_initrd(node);
- 	early_init_dt_check_for_elfcorehdr(node);
-+	early_init_dt_check_for_usable_mem_range(node);
- 
- 	/* Retrieve command line */
- 	p = of_get_flat_dt_prop(node, "bootargs", &l);
-@@ -1258,6 +1285,9 @@ void __init early_init_dt_scan_nodes(void)
- 
- 	/* Setup memory, calling early_init_dt_add_memory_arch */
- 	of_scan_flat_dt(early_init_dt_scan_memory, NULL);
-+
-+	/* Handle linux,usable-memory-range property */
-+	memblock_cap_memory_range(cap_mem_addr, cap_mem_size);
- }
- 
- bool __init early_init_dt_scan(void *params)
 -- 
 2.25.1
 
