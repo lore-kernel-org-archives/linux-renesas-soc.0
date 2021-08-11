@@ -2,129 +2,70 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16834C4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 16:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8907FC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 17:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E786460E93
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 16:16:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6409861019
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 17:19:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229539AbhHKQQk (ORCPT
+        id S230394AbhHKRT7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 11 Aug 2021 12:16:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55052 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbhHKQQj (ORCPT
+        Wed, 11 Aug 2021 13:19:59 -0400
+Received: from mail.ispras.ru ([83.149.199.84]:39904 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229976AbhHKRT7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Aug 2021 12:16:39 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84B34C061765
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Aug 2021 09:16:15 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id f9-20020a05600c1549b029025b0f5d8c6cso4832281wmg.4
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Aug 2021 09:16:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=S3vLFcFZJGnPiKze6/43mDjwygvEmMXKFCkx/iULFG8=;
-        b=l+ZTa0gs6zMN9cz5T0WnnEPn5l4lsShoE4qZc2c16cC9vlc0sCKL5hNv29D6U8fMtf
-         4sfq6tuihuY1CRyX7FUEaNd8AL93lBW7ppHVA+xNlYsfhjefICyDvnsFFhp/8iVkPtLs
-         HqiePVtWrhRNoNJt5+yxE/XwPl4I1EbMvBMuhMhsZoIhqcjxFV2fbfS+edmyUUAIV2yN
-         9Oa3uzcKWSGKlopDy7RWkqTa+Hc5lZ6Z/yrC7rKpxfBE0G73SCNNyzUhtL/S0CNBJXk8
-         4BeTeTwrJ9WKvLZozkjLcP5wGu7ac0JR8vLt2FEomIH9pUfDoMdh8oxQPDHifTMu9Te8
-         7ypA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=S3vLFcFZJGnPiKze6/43mDjwygvEmMXKFCkx/iULFG8=;
-        b=lsn4Dn3NoopsVMWVoBnBF1swVxwceRZiEKHVDvumLC0E7kPnCcrXQmwvMSss5VfjrR
-         bBZBRUXDQJ9bfKuOXDDxS/spuCN4pk4vdSmQ+BX6NCE0R2mWPHG1xLc+jRBTR0vgk2py
-         Ujd/lnIwdq/s0cfPjYGgZsjyrbDWqMAjAmLai2woiia9zEaMpQxaFtNJo7aDSXJbSPGG
-         dJzbh7m4Y74Sy7/0VwIWz9Z0fxYrVfahjWMB79LPkNeM4YNfUVoJ305T5owOsv5pWjCO
-         tAalLmLspWXMSOE67jyJqtl/LsLwbh1nrSm8+DI9Kf7Jb9gKQLXQc/5M5FTn6z/AJjhl
-         qD6A==
-X-Gm-Message-State: AOAM532xdW+uzyRlUPbSwvXEH9dkJhM5RmE/LEIeYpCbloSKG40dhb6P
-        Mh4wpAhUn7DVmUclssLqoS5Jvhm3bJjNXP83gEc=
-X-Google-Smtp-Source: ABdhPJy9ScWKLb/I+YFqI58MNdymkzH4D94Jt3aJ5t/OnGU+A0W8jGL+oxrlYG9lRCAgEkuIUc8cNJk6E2ucy6iG9CI=
-X-Received: by 2002:a05:600c:4f83:: with SMTP id n3mr10906477wmq.123.1628698574110;
- Wed, 11 Aug 2021 09:16:14 -0700 (PDT)
-MIME-Version: 1.0
-References: <20210624000304.16281-1-laurent.pinchart+renesas@ideasonboard.com>
- <20210624000304.16281-5-laurent.pinchart+renesas@ideasonboard.com>
- <CAE-0n52Mw-ZzdqwKeEX2-WP6NyqdXvfzq=KeZJug9A-NiVo8aw@mail.gmail.com> <YRO/W8ZAuYEVs2MF@pendragon.ideasonboard.com>
-In-Reply-To: <YRO/W8ZAuYEVs2MF@pendragon.ideasonboard.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Wed, 11 Aug 2021 09:20:30 -0700
-Message-ID: <CAF6AEGttQ6iiXSG78fksDo6utfa3VFwFG5yXkk9XEr=+aEL95Q@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] drm/bridge: ti-sn65dsi86: Wrap panel with panel-bridge
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 11 Aug 2021 13:19:59 -0400
+Received: from kleverstation.intra.ispras.ru (unknown [10.10.2.220])
+        by mail.ispras.ru (Postfix) with ESMTPS id BC28A400FC5B;
+        Wed, 11 Aug 2021 17:19:33 +0000 (UTC)
+From:   Nadezda Lutovinova <lutovinova@ispras.ru>
+To:     =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+Cc:     Nadezda Lutovinova <lutovinova@ispras.ru>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Subject: [PATCH v2] media: rcar-csi2: Add checking to rcsi2_start_receiver()
+Date:   Wed, 11 Aug 2021 20:18:16 +0300
+Message-Id: <20210811171816.12012-1-lutovinova@ispras.ru>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <YRPUhqvcTxCVvnBG@oden.dyn.berto.se>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, Aug 11, 2021 at 5:15 AM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Stephen,
->
-> On Tue, Aug 10, 2021 at 10:26:33PM -0700, Stephen Boyd wrote:
-> > Quoting Laurent Pinchart (2021-06-23 17:03:02)
-> > > To simplify interfacing with the panel, wrap it in a panel-bridge and
-> > > let the DRM bridge helpers handle chaining of operations.
-> > >
-> > > This also prepares for support of DRM_BRIDGE_ATTACH_NO_CONNECTOR, which
-> > > requires all components in the display pipeline to be represented by
-> > > bridges.
-> > >
-> > > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > > Reviewed-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> >
-> > With this patch applied I get two eDP devices on Lazor sc7180 (it is the
-> > arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor*.dts files if you're
-> > looking for more info). As far as I can tell, we should only have one
-> > eDP device on the board, for the bridge.
-> >
-> > localhost ~ # ls -l /sys/class/drm/card1-eDP*
-> > lrwxrwxrwx. 1 root root 0 Aug 10 22:24 /sys/class/drm/card1-eDP-1 ->
-> > ../../devices/platform/soc@0/ae00000.mdss/drm/card1/card1-eDP-1
-> > lrwxrwxrwx. 1 root root 0 Aug 10 22:24 /sys/class/drm/card1-eDP-2 ->
-> > ../../devices/platform/soc@0/ae00000.mdss/drm/card1/card1-eDP-2
->
-> Indeed.
->
-> Does the display driver use the DRM connector bridge helper and
-> DRM_BRIDGE_ATTACH_NO_CONNECTOR on that platform ?
->
+If rcsi2_code_to_fmt() return NULL, then null pointer dereference occurs 
+in the next cycle. That should not be possible now but adding checking 
+protects from future bugs.
+The patch adds checking if format is NULL.
 
-There haven't been any recent changes about how we attach the bridge,
-it doesn't pass DRM_BRIDGE_ATTACH_NO_CONNECTOR.. tbh I've not been
-having time to follow too closely the recent changes with bridge stuff
-myself.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-But now with this patch we have both the ti bridge and the panel
-bridge creating a connector..  removing the connector created by the
-ti bridge "fixes" things, but not sure if that would break something
-on other platforms.  I guess there should now always be a panel
-bridge, so removing ti_sn_bridge_connector_init() would be a sane
-thing to do?
+Signed-off-by: Nadezda Lutovinova <lutovinova@ispras.ru>
+---
+v2: fix subject and commit message, remove dev_err()
+---
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-BR,
--R
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index e28eff039688..d28f83f7698b 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -553,6 +553,8 @@ static int rcsi2_start_receiver(struct rcar_csi2 *priv)
+ 
+ 	/* Code is validated in set_fmt. */
+ 	format = rcsi2_code_to_fmt(priv->mf.code);
++	if (!format)
++		return -EINVAL;
+ 
+ 	/*
+ 	 * Enable all supported CSI-2 channels with virtual channel and
+-- 
+2.17.1
+
