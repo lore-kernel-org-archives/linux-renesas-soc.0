@@ -2,109 +2,112 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40222C4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54924C4320E
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:51:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21EAA601FE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:28:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D51A604AC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:51:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235849AbhHKI3G (ORCPT
+        id S236498AbhHKIwA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 11 Aug 2021 04:29:06 -0400
-Received: from www.zeus03.de ([194.117.254.33]:51806 "EHLO mail.zeus03.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229679AbhHKI3G (ORCPT
+        Wed, 11 Aug 2021 04:52:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33606 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236361AbhHKIv6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Aug 2021 04:29:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=8Pm5n4YPSN8Lq7yE16wzJuvY0yXj
-        VPzc3wRo20Iwd80=; b=ckERZSVHy9hLcmJaGvWZFxlm3K4EtuAGvzdOUsauvzJR
-        /Fs36q3YFAMwDtXrFV/Ow2Ojxmx6aPu3zGJqpTqAkQmdNJgWLchGrxE0db7lquyg
-        6QCeHz4XSxiq6JDuVf8FQIPvBI/rdKGYqgi93lh3fV50EVUJxgXMzCxvU9Xxejc=
-Received: (qmail 2577701 invoked from network); 11 Aug 2021 10:28:41 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 11 Aug 2021 10:28:41 +0200
-X-UD-Smtp-Session: l3s3148p1@lSbmZ0TJjsYgAwDPXwY8AL9PxqFiRnVq
-Date:   Wed, 11 Aug 2021 10:28:41 +0200
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+        Wed, 11 Aug 2021 04:51:58 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77FFAC0613D5
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Aug 2021 01:51:35 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:438:1ff1:1071:f524])
+        by andre.telenet-ops.be with bizsmtp
+        id g8rG2500S1gJxCh018rGYb; Wed, 11 Aug 2021 10:51:32 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mDjxE-001ya9-4k; Wed, 11 Aug 2021 10:51:16 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mDjxD-0058wr-AC; Wed, 11 Aug 2021 10:51:15 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Nick Kossifidis <mick@ics.forth.gr>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Dave Young <dyoung@redhat.com>
+Cc:     Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
+        Mike Rapoport <rppt@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+        linux-riscv@lists.infradead.org, kexec@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v4] mmc: host: renesas_sdhi: Refactor renesas_sdhi_probe()
-Message-ID: <YROKOTm+EZmta4n0@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20210729103234.480743-1-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v5 2/9] crash_dump: Make elfcorehdr address/size symbols always visible
+Date:   Wed, 11 Aug 2021 10:51:00 +0200
+Message-Id: <ba965ca613c0cc82c1ec2fe353ee34fb13b36474.1628670468.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1628670468.git.geert+renesas@glider.be>
+References: <cover.1628670468.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aotWwR6XK/29MT2e"
-Content-Disposition: inline
-In-Reply-To: <20210729103234.480743-1-yoshihiro.shimoda.uh@renesas.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Make the forward declarations of elfcorehdr_addr and elfcorehdr_size,
+and the definitions of ELFCORE_ADDR_MAX and ELFCORE_ADDR_ERR always
+available, like is done for phys_initrd_start and phys_initrd_size.
+Code referring to these symbols can then just check for
+IS_ENABLED(CONFIG_CRASH_DUMP), instead of requiring conditional
+compilation using an #ifdef, thus preparing to increase compile
+coverage.
 
---aotWwR6XK/29MT2e
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Suggested-by: Rob Herring <robh+dt@kernel.org>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v5:
+  - Make ELFCORE_ADDR_{MAX,ERR} visible, too,
 
-On Thu, Jul 29, 2021 at 07:32:34PM +0900, Yoshihiro Shimoda wrote:
-> Refactor renesas_sdhi_probe() to avoid increasing numbers of
-> sdhi_quirks_match[] entry when we add other stable SoCs like
-> r8a779m*.
->=20
-> Note that the sdhi_quirks_match[] is only needed on
-> renesas_sdhi_internal_dmac.c so that of_data of
-> renesas_sdhi_sys_dmac.c keeps as-is.
->=20
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+v4:
+  - New.
+---
+ include/linux/crash_dump.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I like this change! Not only does it avoid the white listing, but it
-also puts things where they belong! Looks much more sorted to me.
+diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
+index a5192b718dbe4f9a..2618577a4d6da77e 100644
+--- a/include/linux/crash_dump.h
++++ b/include/linux/crash_dump.h
+@@ -10,13 +10,14 @@
+ 
+ #include <linux/pgtable.h> /* for pgprot_t */
+ 
+-#ifdef CONFIG_CRASH_DUMP
++/* For IS_ENABLED(CONFIG_CRASH_DUMP) */
+ #define ELFCORE_ADDR_MAX	(-1ULL)
+ #define ELFCORE_ADDR_ERR	(-2ULL)
+ 
+ extern unsigned long long elfcorehdr_addr;
+ extern unsigned long long elfcorehdr_size;
+ 
++#ifdef CONFIG_CRASH_DUMP
+ extern int elfcorehdr_alloc(unsigned long long *addr, unsigned long long *size);
+ extern void elfcorehdr_free(unsigned long long addr);
+ extern ssize_t elfcorehdr_read(char *buf, size_t count, u64 *ppos);
+-- 
+2.25.1
 
-I think we can base even further cleanup on this. Like merging
-soc_dma_quirks into the other quirks. But we can do this incrementally.
-
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-I also tested this on H3 ES1.0, M3-W ES1.0, M3-N, and E3 with some debug
-output. It all made sense and SDHI still works:
-
-I also tested H3 ES2.0 without debug output. SDHI still worked.
-
-Tested-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-
-
---aotWwR6XK/29MT2e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmETijUACgkQFA3kzBSg
-KbaOFA/+N4fs79obLJDnk1Z7QvhnXXeKWMFhnZ0YrPLEFodY4pzVgI1+UQxKatng
-KgpD57/RJFjAZTA0crRxI+GcM5naIzLw/07GON1MIo6LQpUjrztpfyA5sh2WIyxs
-tDcAVHweU/WFa68L613T8aFiYf8g4bNNAOwCX0uNN/MJ7v/nfLW5KUednyIyD1iK
-bEzykd3wkABK6QIScWDymyvqWXYDOZ8kx51A9Ah+uumn+0H65ZM/hC9BG8+hz6+k
-w71sCHGH0KuWVdmkKXDFinb6bskp+kGUe9y2fFNpnxlOMQxZJce/YX3YI0UuFf8n
-Yd4peM37kuOXAVTmeuzD98gI2zQoPTejIhfFUmuNM4pBMl3DBHpnbRIvG8ZObKcB
-YBxC5IrB4CtXFFiis6PMRNmOPs0RvKPIdPYFQVxLHuxDCj95QcuKqS6XZ0mRwFxD
-8f/xYPqnLh0UYt7eKhXy3XQmZvKjwl4LiUtg6pY8EpMPuwDjJRq3z494ps4tosbb
-MZ1v0H24GWMUsIuc+yHZ89MuQ2RDrrlaNujyjD6HReOX4YC6c3TOyCDVEkKWXlvv
-ymneWp+EFeTIYpG+QV6Msl3v6eP8XbXCr2I7hUsyhCEQtjwd/o26avqqKTMTCmsx
-hliE0fzPHPvuEN+6h42+wGRBfPe4PCRqoIdXYo1gjMxmsP6LeZo=
-=sOfU
------END PGP SIGNATURE-----
-
---aotWwR6XK/29MT2e--
