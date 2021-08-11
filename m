@@ -2,39 +2,39 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC751C4320A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 763EEC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D322160F55
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:51:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59064610CC
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 08:51:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236485AbhHKIwT (ORCPT
+        id S236532AbhHKIwT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 11 Aug 2021 04:52:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33622 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236532AbhHKIwB (ORCPT
+        with ESMTP id S236433AbhHKIwA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Aug 2021 04:52:01 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E37F7C0617BF
+        Wed, 11 Aug 2021 04:52:00 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A654EC06179F
         for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Aug 2021 01:51:35 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:438:1ff1:1071:f524])
-        by baptiste.telenet-ops.be with bizsmtp
-        id g8rG2500D1gJxCh018rG4B; Wed, 11 Aug 2021 10:51:33 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id g8rG2500H1gJxCh018rGYY; Wed, 11 Aug 2021 10:51:32 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mDjxE-001yaG-7u; Wed, 11 Aug 2021 10:51:16 +0200
+        id 1mDjxD-001yaB-TH; Wed, 11 Aug 2021 10:51:15 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mDjxD-0058xY-G7; Wed, 11 Aug 2021 10:51:15 +0200
+        id 1mDjxD-0058wf-87; Wed, 11 Aug 2021 10:51:15 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Rob Herring <robh+dt@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -56,83 +56,108 @@ Cc:     Baoquan He <bhe@redhat.com>, Vivek Goyal <vgoyal@redhat.com>,
         linux-riscv@lists.infradead.org, kexec@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v5 8/9] arm64: kdump: Remove custom linux,usable-memory-range handling
-Date:   Wed, 11 Aug 2021 10:51:06 +0200
-Message-Id: <7356c531c49a24b4a55577bf8e46d93f4d8ae460.1628670468.git.geert+renesas@glider.be>
+Subject: [PATCH v5 0/9] Add generic support for kdump DT properties
+Date:   Wed, 11 Aug 2021 10:50:58 +0200
+Message-Id: <cover.1628670468.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1628670468.git.geert+renesas@glider.be>
-References: <cover.1628670468.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Remove the architecture-specific code for handling the
-"linux,usable-memory-range" property under the "/chosen" node in DT, as
-the platform-agnostic FDT core code already takes care of this.
+	Hi all,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v5:
-  - Remove all handling, not just parsing,
+This patch series adds generic support for parsing DT properties related
+to crash dump kernels ("linux,elfcorehdr" and "linux,elfcorehdr" under
+the "/chosen" node), makes use of it on arm32, and performs a few
+cleanups.  It is an evolution of the combination of [1] and [2].
 
-v4:
-  - New.
----
- arch/arm64/mm/init.c | 35 -----------------------------------
- 1 file changed, 35 deletions(-)
+The series consists of 6 parts:
+  1. Patch 1 prepares architecture-specific code (needed for MIPS only)
+     to avoid duplicating elf core header reservation later.
+  2. Patch 2 prepares the visibility of variables used to hold
+     information retrieved from the DT properties.
+  3. Patches 3-5 add support to the FDT core for handling the
+     properties.
+     This can co-exist safely with architecture-specific handling, until
+     the latter has been removed.
+  4. Patch 6 removes the non-standard handling of "linux,elfcorehdr" on
+     riscv.
+  5. Patches 7-8 convert arm64 to use the generic handling instead of
+     its own implementation.
+  6. Patch 9 adds support for kdump properties to arm32.
+     The corresponding patch for kexec-tools is "[PATCH] arm: kdump: Add
+     DT properties to crash dump kernel's DTB"[3], which is still valid.
 
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index bac4f06bb7d900a2..4e90a1d170587376 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -197,45 +197,10 @@ static int __init early_mem(char *p)
- }
- early_param("mem", early_mem);
- 
--static int __init early_init_dt_scan_usablemem(unsigned long node,
--		const char *uname, int depth, void *data)
--{
--	struct memblock_region *usablemem = data;
--	const __be32 *reg;
--	int len;
--
--	if (depth != 1 || strcmp(uname, "chosen") != 0)
--		return 0;
--
--	reg = of_get_flat_dt_prop(node, "linux,usable-memory-range", &len);
--	if (!reg || (len < (dt_root_addr_cells + dt_root_size_cells)))
--		return 1;
--
--	usablemem->base = dt_mem_next_cell(dt_root_addr_cells, &reg);
--	usablemem->size = dt_mem_next_cell(dt_root_size_cells, &reg);
--
--	return 1;
--}
--
--static void __init fdt_enforce_memory_region(void)
--{
--	struct memblock_region reg = {
--		.size = 0,
--	};
--
--	of_scan_flat_dt(early_init_dt_scan_usablemem, &reg);
--
--	if (reg.size)
--		memblock_cap_memory_range(reg.base, reg.size);
--}
--
- void __init arm64_memblock_init(void)
- {
- 	const s64 linear_region_size = PAGE_END - _PAGE_OFFSET(vabits_actual);
- 
--	/* Handle linux,usable-memory-range property */
--	fdt_enforce_memory_region();
--
- 	/* Remove memory above our supported physical address size */
- 	memblock_remove(1ULL << PHYS_MASK_SHIFT, ULLONG_MAX);
- 
+Changes compared to v4[4]:
+  - New patch "[PATCH v5 1/9] MIPS: Avoid future duplicate elf core
+    header reservation",
+  - Drop "memblock: Add variables for usable memory limitation", as this
+    is now handled in FDT core code,
+  - Make ELFCORE_ADDR_{MAX,ERR} visible, too,
+  - Handle the actual elf core header reservation and memory capping in
+    FDT core code,
+  - Add Reviewed-by, Acked-by,
+  - Remove all architecture-specific handling on arm64,
+  - Drop "arm64: kdump: Use IS_ENABLED(CONFIG_CRASH_DUMP) instead of
+    #ifdef", as the affected code is gone,
+  - Remove the addition of "linux,elfcorehdr" and
+    "linux,usable-memory-range" handling to arch/arm/mm/init.c.
+
+Changes compared to older versions:
+  - Make elfcorehdr_{addr,size} always visible,
+  - Add variables for usable memory limitation,
+  - Use IS_ENABLED() instead of #ifdef (incl. initrd and arm64),
+  - Clarify what architecture-specific code is still responsible for,
+  - Add generic support for parsing linux,usable-memory-range,
+  - Remove custom linux,usable-memory-range parsing on arm64,
+  - Use generic handling on ARM.
+  
+This has been tested with kexec/kdump on arm32 and arm64, and
+boot-tested on riscv64 and DT-less MIPS.
+
+Thanks!
+
+[1] "[PATCH v3] ARM: Parse kdump DT properties"
+    https://lore.kernel.org/r/20210317113130.2554368-1-geert+renesas@glider.be/
+[2] "[PATCH 0/3] Add generic-support for linux,elfcorehdr and fix riscv"
+    https://lore.kernel.org/r/cover.1623780059.git.geert+renesas@glider.be/
+[3] "[PATCH] arm: kdump: Add DT properties to crash dump kernel's DTB"
+    https://lore.kernel.org/r/20200902154129.6358-1-geert+renesas@glider.be/
+[4] "[PATCH v4 00/10] Add generic support for kdump DT properties"
+    https://lore.kernel.org/r/cover.1626266516.git.geert+renesas@glider.be
+
+Geert Uytterhoeven (9):
+  MIPS: Avoid future duplicate elf core header reservation
+  crash_dump: Make elfcorehdr address/size symbols always visible
+  of: fdt: Add generic support for handling elf core headers property
+  of: fdt: Add generic support for handling usable memory range property
+  of: fdt: Use IS_ENABLED(CONFIG_BLK_DEV_INITRD) instead of #ifdef
+  riscv: Remove non-standard linux,elfcorehdr handling
+  arm64: kdump: Remove custom linux,elfcorehdr handling
+  arm64: kdump: Remove custom linux,usable-memory-range handling
+  ARM: uncompress: Parse "linux,usable-memory-range" DT property
+
+ Documentation/devicetree/bindings/chosen.txt  | 12 +--
+ .../arm/boot/compressed/fdt_check_mem_start.c | 48 ++++++++--
+ arch/arm64/mm/init.c                          | 88 -----------------
+ arch/mips/kernel/setup.c                      |  3 +-
+ arch/riscv/mm/init.c                          | 20 ----
+ drivers/of/fdt.c                              | 94 +++++++++++++++++--
+ include/linux/crash_dump.h                    |  3 +-
+ 7 files changed, 139 insertions(+), 129 deletions(-)
+
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
