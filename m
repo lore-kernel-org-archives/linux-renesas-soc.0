@@ -2,96 +2,85 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058ACC43214
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 12:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D50BC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 12:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DDBE060FA0
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 12:15:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F42D61073
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 11 Aug 2021 12:40:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237587AbhHKMQV (ORCPT
+        id S229685AbhHKMkl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 11 Aug 2021 08:16:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53054 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237585AbhHKMP4 (ORCPT
+        Wed, 11 Aug 2021 08:40:41 -0400
+Received: from mga02.intel.com ([134.134.136.20]:12540 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229617AbhHKMkl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 11 Aug 2021 08:15:56 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A22BC061765
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 11 Aug 2021 05:15:29 -0700 (PDT)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5A1D7EE;
-        Wed, 11 Aug 2021 14:15:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1628684126;
-        bh=3gtiBOYY81FyK7vbYGbqLcW65Xp6Q23Wda3j4MjndjQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hg9wQLAAbRfvqfx5IndWQTezXWQ/DJnC3V8JFsxe95VdtKV7HYVHVSNyoMcr8ZT3A
-         tXQHjEDflYEy8gUDPb2LMDdfE5/15bj+/cIaH0YdYRPz3YtZeXlVO8FC14hdczs/TV
-         DG55apFszHQ6YDk0LhwkylhF3LXWzgPAraG7/vkU=
-Date:   Wed, 11 Aug 2021 15:15:23 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Robert Foss <robert.foss@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, robdclark@gmail.com
-Subject: Re: [PATCH v2 4/6] drm/bridge: ti-sn65dsi86: Wrap panel with
- panel-bridge
-Message-ID: <YRO/W8ZAuYEVs2MF@pendragon.ideasonboard.com>
-References: <20210624000304.16281-1-laurent.pinchart+renesas@ideasonboard.com>
- <20210624000304.16281-5-laurent.pinchart+renesas@ideasonboard.com>
- <CAE-0n52Mw-ZzdqwKeEX2-WP6NyqdXvfzq=KeZJug9A-NiVo8aw@mail.gmail.com>
+        Wed, 11 Aug 2021 08:40:41 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10072"; a="202299361"
+X-IronPort-AV: E=Sophos;i="5.84,311,1620716400"; 
+   d="scan'208";a="202299361"
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2021 05:40:17 -0700
+X-IronPort-AV: E=Sophos;i="5.84,311,1620716400"; 
+   d="scan'208";a="503483379"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga001-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2021 05:40:15 -0700
+Received: from andy by smile with local (Exim 4.94.2)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1mDnWi-007p8s-SS; Wed, 11 Aug 2021 15:40:08 +0300
+Date:   Wed, 11 Aug 2021 15:40:08 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+Subject: Re: [RFC PATCH v2 1/1] misc: add sloppy logic analyzer using polling
+Message-ID: <YRPFKIF/eW9FBgP1@smile.fi.intel.com>
+References: <20210519132528.4394-1-wsa+renesas@sang-engineering.com>
+ <20210519132528.4394-2-wsa+renesas@sang-engineering.com>
+ <YKUlbsWhT45l5Zm0@smile.fi.intel.com>
+ <YQRZkFApESOIMRmv@ninjato>
+ <YQRk0vpo1V709z/Z@smile.fi.intel.com>
+ <YRI5l+T1o3QXZ9Lo@ninjato>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAE-0n52Mw-ZzdqwKeEX2-WP6NyqdXvfzq=KeZJug9A-NiVo8aw@mail.gmail.com>
+In-Reply-To: <YRI5l+T1o3QXZ9Lo@ninjato>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Stephen,
-
-On Tue, Aug 10, 2021 at 10:26:33PM -0700, Stephen Boyd wrote:
-> Quoting Laurent Pinchart (2021-06-23 17:03:02)
-> > To simplify interfacing with the panel, wrap it in a panel-bridge and
-> > let the DRM bridge helpers handle chaining of operations.
-> >
-> > This also prepares for support of DRM_BRIDGE_ATTACH_NO_CONNECTOR, which
-> > requires all components in the display pipeline to be represented by
-> > bridges.
-> >
-> > Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> > Reviewed-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
+On Tue, Aug 10, 2021 at 10:32:23AM +0200, Wolfram Sang wrote:
+> Hi Andy,
 > 
-> With this patch applied I get two eDP devices on Lazor sc7180 (it is the
-> arch/arm64/boot/dts/qcom/sc7180-trogdor-lazor*.dts files if you're
-> looking for more info). As far as I can tell, we should only have one
-> eDP device on the board, for the bridge.
+> > Nope. Below is the compile-tested one:
 > 
-> localhost ~ # ls -l /sys/class/drm/card1-eDP*
-> lrwxrwxrwx. 1 root root 0 Aug 10 22:24 /sys/class/drm/card1-eDP-1 ->
-> ../../devices/platform/soc@0/ae00000.mdss/drm/card1/card1-eDP-1
-> lrwxrwxrwx. 1 root root 0 Aug 10 22:24 /sys/class/drm/card1-eDP-2 ->
-> ../../devices/platform/soc@0/ae00000.mdss/drm/card1/card1-eDP-2
+> Well, then let's add this incrementally once it has actually been
+> tested.
 
-Indeed.
+I have no strong opinion here, I just considered that ACPI code is good to have
+as well.
 
-Does the display driver use the DRM connector bridge helper and
-DRM_BRIDGE_ATTACH_NO_CONNECTOR on that platform ?
+> > > I don't understand the first sentence. And we still need it to clean up?
+> > 
+> > If you know the name of the folder, you may look up it, no need to keep a
+> > variable for that.
+> 
+> I need the dentry twice, subdirs are also created in there. Of course, I
+> could look it up twice, but why the computation? The variable seems
+> simpler to me, despite it being static. Or is it a debugfs rule to not
+> save dentries?
+
+I think the best person to ask is Greg :-)
 
 -- 
-Regards,
+With Best Regards,
+Andy Shevchenko
 
-Laurent Pinchart
+
