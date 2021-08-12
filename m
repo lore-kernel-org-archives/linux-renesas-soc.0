@@ -5,36 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6408CC3F6A3
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22A9C41537
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F25E6103E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4E4E60F91
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236814AbhHLLY7 (ORCPT
+        id S236906AbhHLLZC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 12 Aug 2021 07:24:59 -0400
-Received: from leibniz.telenet-ops.be ([195.130.137.77]:53656 "EHLO
-        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236834AbhHLLYx (ORCPT
+        Thu, 12 Aug 2021 07:25:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33926 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236878AbhHLLYy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Aug 2021 07:24:53 -0400
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4GlkqF2bsKzMrDTk
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Aug 2021 13:24:25 +0200 (CEST)
+        Thu, 12 Aug 2021 07:24:54 -0400
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED0A3C061386
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Aug 2021 04:24:27 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:438:1ff1:1071:f524])
-        by baptiste.telenet-ops.be with bizsmtp
-        id gbQR2500B1gJxCh01bQR4y; Thu, 12 Aug 2021 13:24:25 +0200
+        by andre.telenet-ops.be with bizsmtp
+        id gbQR250121gJxCh01bQRZM; Thu, 12 Aug 2021 13:24:25 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mE8oy-002Fim-R2; Thu, 12 Aug 2021 13:24:24 +0200
+        id 1mE8oz-002Fj0-Cj; Thu, 12 Aug 2021 13:24:25 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mE8oy-007469-CO; Thu, 12 Aug 2021 13:24:24 +0200
+        id 1mE8ox-00744G-S6; Thu, 12 Aug 2021 13:24:23 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -42,9 +42,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v2 27/29] arm64: dts: renesas: Add support for H3ULCB with R-Car H3Ne
-Date:   Thu, 12 Aug 2021 13:24:17 +0200
-Message-Id: <1858660058f491e5a836d026bd68051f4511d010.1628766192.git.geert+renesas@glider.be>
+Subject: [PATCH v2 14/29] arm64: dts: renesas: Add support for H3ULCB+Kingfisher with R-Car H3e
+Date:   Thu, 12 Aug 2021 13:24:04 +0200
+Message-Id: <a21065484ebcb72c1a8684b63c39784201d3c74d.1628766192.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1628766192.git.geert+renesas@glider.be>
 References: <cover.1628766192.git.geert+renesas@glider.be>
@@ -54,8 +54,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for the Renesas R-Car Starter Kit Premier equipped with an
-R-Car H3Ne SiP.
+Add support for the Renesas R-Car Starter Kit Premier and Kingfisher
+combo equipped with an R-Car H3e SiP.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -64,78 +64,46 @@ v2:
   - Add Reviewed-by.
 ---
  arch/arm64/boot/dts/renesas/Makefile          |  1 +
- arch/arm64/boot/dts/renesas/r8a779m8-ulcb.dts | 52 +++++++++++++++++++
- 2 files changed, 53 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779m8-ulcb.dts
+ .../boot/dts/renesas/r8a779m0-ulcb-kf.dts     | 19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779m0-ulcb-kf.dts
 
 diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index a14642a9e45a2a4b..c7d2b91a833b00b8 100644
+index a18f9b9d2a335c78..5b31402f8579b19b 100644
 --- a/arch/arm64/boot/dts/renesas/Makefile
 +++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -92,5 +92,6 @@ dtb-$(CONFIG_ARCH_R8A77990) += r8a779m6-ebisu.dtb
- dtb-$(CONFIG_ARCH_R8A77995) += r8a779m7-draak.dtb
+@@ -65,6 +65,7 @@ dtb-$(CONFIG_ARCH_R8A779A0) += r8a779a0-falcon.dtb
  
- dtb-$(CONFIG_ARCH_R8A77951) += r8a779m8-salvator-xs.dtb
-+dtb-$(CONFIG_ARCH_R8A77951) += r8a779m8-ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m0-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m0-ulcb.dtb
++dtb-$(CONFIG_ARCH_R8A77951) += r8a779m0-ulcb-kf.dtb
  
- dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a779m8-ulcb.dts b/arch/arm64/boot/dts/renesas/r8a779m8-ulcb.dts
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-ulcb.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a779m0-ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a779m0-ulcb-kf.dts
 new file mode 100644
-index 0000000000000000..d91ae596a6bf1f02
+index 0000000000000000..76c40d63cf95f1b3
 --- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779m8-ulcb.dts
-@@ -0,0 +1,52 @@
++++ b/arch/arm64/boot/dts/renesas/r8a779m0-ulcb-kf.dts
+@@ -0,0 +1,19 @@
 +// SPDX-License-Identifier: (GPL-2.0 or MIT)
 +/*
-+ * Device Tree Source for the H3ULCB (R-Car Starter Kit Premier) with R-Car H3Ne
++ * Device Tree Source for the H3ULCB Kingfisher board with R-Car H3e
 + *
 + * Copyright (C) 2021 Glider bv
 + *
-+ * Based on r8a77951-ulcb.dts
-+ * Copyright (C) 2016 Cogent Embedded, Inc.
++ * Based on r8a77951-ulcb-kf.dts
++ * Copyright (C) 2017 Renesas Electronics Corp.
++ * Copyright (C) 2017 Cogent Embedded, Inc.
 + */
 +
-+/dts-v1/;
-+#include "r8a779m8.dtsi"
-+#include "ulcb.dtsi"
++#include "r8a779m0-ulcb.dts"
++#include "ulcb-kf.dtsi"
 +
 +/ {
-+	model = "Renesas H3ULCB board based on r8a779m8";
-+	compatible = "renesas,h3ulcb", "renesas,r8a779m8", "renesas,r8a7795";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x38000000>;
-+	};
-+
-+	memory@500000000 {
-+		device_type = "memory";
-+		reg = <0x5 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x0 0x40000000>;
-+	};
-+
-+	memory@700000000 {
-+		device_type = "memory";
-+		reg = <0x7 0x00000000 0x0 0x40000000>;
-+	};
-+};
-+
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&cpg CPG_MOD 721>,
-+		 <&versaclock5 1>,
-+		 <&versaclock5 3>,
-+		 <&versaclock5 4>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.2", "du.3",
-+		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
++	model = "Renesas H3ULCB Kingfisher board based on r8a779m0";
++	compatible = "shimafuji,kingfisher", "renesas,h3ulcb",
++		     "renesas,r8a779m0", "renesas,r8a7795";
 +};
 -- 
 2.25.1
