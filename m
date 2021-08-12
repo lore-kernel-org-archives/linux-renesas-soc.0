@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02BDC19F40
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6460DC25AF3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A4C1C60041
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4499660041
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236819AbhHLLY7 (ORCPT
+        id S236872AbhHLLZH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 12 Aug 2021 07:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33906 "EHLO
+        Thu, 12 Aug 2021 07:25:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236850AbhHLLYx (ORCPT
+        with ESMTP id S236861AbhHLLYx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 12 Aug 2021 07:24:53 -0400
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98FE1C0617A5
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E9DC0617BD
         for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Aug 2021 04:24:27 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:438:1ff1:1071:f524])
         by andre.telenet-ops.be with bizsmtp
-        id gbQR2500K1gJxCh01bQRYy; Thu, 12 Aug 2021 13:24:25 +0200
+        id gbQR250111gJxCh01bQRZL; Thu, 12 Aug 2021 13:24:25 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mE8oz-002Fj8-0M; Thu, 12 Aug 2021 13:24:25 +0200
+        id 1mE8oz-002FjO-CF; Thu, 12 Aug 2021 13:24:25 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mE8ox-00744U-VH; Thu, 12 Aug 2021 13:24:23 +0200
+        id 1mE8oy-00745V-6w; Thu, 12 Aug 2021 13:24:24 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -42,9 +42,9 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH v2 16/29] arm64: dts: renesas: Add support for M3ULCB with R-Car M3e
-Date:   Thu, 12 Aug 2021 13:24:06 +0200
-Message-Id: <79685f0f7b46cd490d948fe642dd71381c8685e0.1628766192.git.geert+renesas@glider.be>
+Subject: [PATCH v2 23/29] arm64: dts: renesas: Add support for M3NULCB+Kingfisher with R-Car M3Ne-2G
+Date:   Thu, 12 Aug 2021 13:24:13 +0200
+Message-Id: <0d2061798f9e86b3b24a7c8a54ea1e18f9199849.1628766192.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1628766192.git.geert+renesas@glider.be>
 References: <cover.1628766192.git.geert+renesas@glider.be>
@@ -54,8 +54,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for the Renesas R-Car Starter Kit Pro equipped with an R-Car
-M3e SiP.
+Add support for the Renesas R-Car Starter Kit Pro and Kingfisher combo
+equipped with an R-Car M3Ne-2G SiP.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -64,72 +64,45 @@ v2:
   - Add Reviewed-by.
 ---
  arch/arm64/boot/dts/renesas/Makefile          |  1 +
- arch/arm64/boot/dts/renesas/r8a779m2-ulcb.dts | 45 +++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779m2-ulcb.dts
+ .../boot/dts/renesas/r8a779m5-ulcb-kf.dts     | 19 +++++++++++++++++++
+ 2 files changed, 20 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779m5-ulcb-kf.dts
 
 diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
-index 2c542b2f1c9fe092..eb744f7876751699 100644
+index 9bee0eab5e2c2577..13446aecdfccb080 100644
 --- a/arch/arm64/boot/dts/renesas/Makefile
 +++ b/arch/arm64/boot/dts/renesas/Makefile
-@@ -72,6 +72,7 @@ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-ulcb.dtb
- dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-ulcb-kf.dtb
+@@ -85,5 +85,6 @@ dtb-$(CONFIG_ARCH_R8A77965) += r8a779m4-ulcb-kf.dtb
  
- dtb-$(CONFIG_ARCH_R8A77961) += r8a779m2-salvator-xs.dtb
-+dtb-$(CONFIG_ARCH_R8A77961) += r8a779m2-ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a779m5-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77965) += r8a779m5-ulcb.dtb
++dtb-$(CONFIG_ARCH_R8A77965) += r8a779m5-ulcb-kf.dtb
  
- dtb-$(CONFIG_ARCH_R8A77961) += r8a779m3-salvator-xs.dtb
- dtb-$(CONFIG_ARCH_R8A77961) += r8a779m3-ulcb.dtb
-diff --git a/arch/arm64/boot/dts/renesas/r8a779m2-ulcb.dts b/arch/arm64/boot/dts/renesas/r8a779m2-ulcb.dts
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a779m5-ulcb-kf.dts b/arch/arm64/boot/dts/renesas/r8a779m5-ulcb-kf.dts
 new file mode 100644
-index 0000000000000000..22edd2476ec40f28
+index 0000000000000000..79ccf581be1bf5ad
 --- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779m2-ulcb.dts
-@@ -0,0 +1,45 @@
++++ b/arch/arm64/boot/dts/renesas/r8a779m5-ulcb-kf.dts
+@@ -0,0 +1,19 @@
 +// SPDX-License-Identifier: (GPL-2.0 or MIT)
 +/*
-+ * Device Tree Source for the M3ULCB (R-Car Starter Kit Pro) with R-Car M3e
++ * Device Tree Source for the M3NULCB Kingfisher board with R-Car M3Ne-2G
 + *
 + * Copyright (C) 2021 Glider bv
 + *
-+ * Based on r8a77961-ulcb.dts
-+ * Copyright (C) 2020 Renesas Electronics Corp.
++ * Based on r8a77965-ulcb-kf.dts
++ * Copyright (C) 2018 Renesas Electronics Corp.
++ * Copyright (C) 2018 Cogent Embedded, Inc.
 + */
 +
-+/dts-v1/;
-+#include "r8a779m2.dtsi"
-+#include "ulcb.dtsi"
++#include "r8a779m5-ulcb.dts"
++#include "ulcb-kf.dtsi"
 +
 +/ {
-+	model = "Renesas M3ULCB board based on r8a779m2";
-+	compatible = "renesas,m3ulcb", "renesas,r8a779m2", "renesas,r8a77961";
-+
-+	memory@48000000 {
-+		device_type = "memory";
-+		/* first 128MB is reserved for secure area. */
-+		reg = <0x0 0x48000000 0x0 0x78000000>;
-+	};
-+
-+	memory@480000000 {
-+		device_type = "memory";
-+		reg = <0x4 0x80000000 0x0 0x80000000>;
-+	};
-+
-+	memory@600000000 {
-+		device_type = "memory";
-+		reg = <0x6 0x00000000 0x1 0x00000000>;
-+	};
-+};
-+
-+&du {
-+	clocks = <&cpg CPG_MOD 724>,
-+		 <&cpg CPG_MOD 723>,
-+		 <&cpg CPG_MOD 722>,
-+		 <&versaclock5 1>,
-+		 <&versaclock5 3>,
-+		 <&versaclock5 2>;
-+	clock-names = "du.0", "du.1", "du.2",
-+		      "dclkin.0", "dclkin.1", "dclkin.2";
++	model = "Renesas M3NULCB Kingfisher board based on r8a779m5";
++	compatible = "shimafuji,kingfisher", "renesas,m3nulcb",
++		     "renesas,r8a779m5", "renesas,r8a77965";
 +};
 -- 
 2.25.1
