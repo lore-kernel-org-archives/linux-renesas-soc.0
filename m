@@ -2,87 +2,87 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7A4C2BB1F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B071CC4320A
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 15:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05AE96103E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92F686044F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 15:08:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236931AbhHLLZI (ORCPT
+        id S238362AbhHLPI0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 12 Aug 2021 07:25:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33924 "EHLO
+        Thu, 12 Aug 2021 11:08:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57412 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236842AbhHLLY6 (ORCPT
+        with ESMTP id S238349AbhHLPIY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Aug 2021 07:24:58 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78A24C0613D3
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Aug 2021 04:24:33 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:438:1ff1:1071:f524])
-        by andre.telenet-ops.be with bizsmtp
-        id gbQR2500W1gJxCh01bQRYz; Thu, 12 Aug 2021 13:24:25 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mE8oz-002Fiu-2U; Thu, 12 Aug 2021 13:24:25 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mE8ox-00743o-NV; Thu, 12 Aug 2021 13:24:23 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 10/29] arm64: dts: renesas: Add Renesas R8A779M7 SoC support
-Date:   Thu, 12 Aug 2021 13:24:00 +0200
-Message-Id: <2aa5b34d5b50f757092bc6442bb59a8534f2ff24.1628766192.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1628766192.git.geert+renesas@glider.be>
-References: <cover.1628766192.git.geert+renesas@glider.be>
+        Thu, 12 Aug 2021 11:08:24 -0400
+Received: from ms.lwn.net (ms.lwn.net [IPv6:2600:3c01:e000:3a1::42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 002C1C061756;
+        Thu, 12 Aug 2021 08:07:58 -0700 (PDT)
+Received: from localhost (unknown [IPv6:2601:281:8300:104d::5f6])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 9E1D02CC;
+        Thu, 12 Aug 2021 15:07:58 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 9E1D02CC
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+        t=1628780878; bh=Ir7SHWH+PuCwXz2BKzIlhif8rFKrQ9xaedDIeOtDmVs=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=jvEiCujtVz3wh/UXFCHAo5zNx0zj0ssX7GDVOvPevyRxaqklcL3NmdicVrPwmA7XP
+         WTIxVPFTwHqWDPcZOwZ4Nf6d2HMqyx3+ccJDJaZuEfAgWACv57ZCeIysxUonqrrbjm
+         /2fTrMqadC32/7fiI65vT8+R1HNECcXnAktbJ0akYv5HtEXbVCIQVgdzLjNhHXlyJE
+         ns7OyyS06utzHCyusaDMjUIXwsete3fbErN4NKTNvplRsrpoWWLHydp5D1hcwC1iVm
+         3yPwB7J14QYXBaB038F+U2PtzTDpNW2dufL89v/DnBKxaT/HDH8ck2HWGvl6p0BbDT
+         SApRNRWAYZdbA==
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        linux-doc@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Subject: Re: [PATCH] scripts/kernel-doc: Override -Werror from KCFLAGS with
+ KDOC_WERROR
+In-Reply-To: <20210730225401.4401-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20210730225401.4401-1-laurent.pinchart+renesas@ideasonboard.com>
+Date:   Thu, 12 Aug 2021 09:07:58 -0600
+Message-ID: <87sfzezooh.fsf@meer.lwn.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for the Renesas R-Car D3e (R8A779M7) SoC, which is a
-different grading of the R-Car D3 (R8A77995) SoC.
+Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com> writes:
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
----
- arch/arm64/boot/dts/renesas/r8a779m7.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 arch/arm64/boot/dts/renesas/r8a779m7.dtsi
+> Since commit 2c12c8103d8f ("scripts/kernel-doc: optionally treat
+> warnings as errors"), the kernel-doc script will treat warnings as
+> errors when one of the following conditions is true:
+>
+> - The KDOC_WERROR environment variable is non-zero
+> - The KCFLAGS environment variable contains -Werror
+> - The -Werror parameter is passed to kernel-doc
+>
+> Checking KCFLAGS for -Werror allows piggy-backing on the C compiler
+> error handling. However, unlike the C compiler, kernel-doc has no
+> provision for -Wno-error. This makes compiling the kernel with -Werror
+> (to catch regressions) and W=1 (to enable more checks) always fail,
+> without the same possibility as offered by the C compiler to treating
+> some selected warnings as warnings despite the global -Werror setting.
+>
+> To fix this, evaluate KDOC_WERROR after KCFLAGS, which allows disabling
+> the warnings-as-errors behaviour of kernel-doc selectively by setting
+> KDOC_WERROR=0.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> ---
+>  scripts/kernel-doc | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779m7.dtsi b/arch/arm64/boot/dts/renesas/r8a779m7.dtsi
-new file mode 100644
-index 0000000000000000..4958babc52fd81ea
---- /dev/null
-+++ b/arch/arm64/boot/dts/renesas/r8a779m7.dtsi
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: (GPL-2.0 or MIT)
-+/*
-+ * Device Tree Source for the R-Car D3e (R8A779M7) SoC
-+ *
-+ * Copyright (C) 2021 Glider bv
-+ */
-+
-+#include "r8a77995.dtsi"
-+
-+/ {
-+	compatible = "renesas,r8a779m7", "renesas,r8a77995";
-+};
--- 
-2.25.1
+Applied, thanks.
 
+jon
