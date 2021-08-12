@@ -2,66 +2,144 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 083E1C4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDEEEC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDC2460EE2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1CF661101
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 12 Aug 2021 11:24:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235757AbhHLLAc (ORCPT
+        id S236815AbhHLLYw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 12 Aug 2021 07:00:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57844 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235696AbhHLLAa (ORCPT
+        Thu, 12 Aug 2021 07:24:52 -0400
+Received: from newton.telenet-ops.be ([195.130.132.45]:53174 "EHLO
+        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236810AbhHLLYv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 12 Aug 2021 07:00:30 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPS id A74C460EE2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Aug 2021 11:00:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1628766005;
-        bh=/oHiYdEnlEphS0bAK4Hx4OQ5Xkb6R7ES6vf0lbiYW1Y=;
-        h=Subject:From:Date:To:From;
-        b=S/oM+CrnZr4a+pPRVlILZ+/LiSzbIufRP42VNUmGVQrkyfFkculXGDDuglisEACWZ
-         QkZE53nFJ+Z4foUKyLW7mioGwhlVlLV5f6PgfOD2P78dfYotBpeH4Ynn13ncHCckQx
-         wlsvlv51pXZNx8MYOLhHlCCVHijngTlQ+HTPsPrpR9ZflPQwEpEa2d25pedfDLzPVS
-         q+W6r4S2pOK7HAqo1VQXvP31P//9Ep+EoYJSMzkLkxCdEbQkwHgd2gzs/TnzcsivQM
-         bpoots5KOvIkWkIMxX4mkERRNN2X99n72HRR9j2Zqx3w41na/PYdigzMBtYVk1gIpo
-         15tP3Q1G9OvIw==
-Content-Type: text/plain; charset="utf-8"
+        Thu, 12 Aug 2021 07:24:51 -0400
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 4GlkqF4j0gzMr92x
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 12 Aug 2021 13:24:25 +0200 (CEST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:438:1ff1:1071:f524])
+        by baptiste.telenet-ops.be with bizsmtp
+        id gbQR2500l1gJxCh01bQR5T; Thu, 12 Aug 2021 13:24:25 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mE8oz-002Fiw-3I; Thu, 12 Aug 2021 13:24:25 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mE8ox-007442-Pn; Thu, 12 Aug 2021 13:24:23 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v2 12/29] arm64: dts: renesas: Add support for Salvator-XS with R-Car H3e
+Date:   Thu, 12 Aug 2021 13:24:02 +0200
+Message-Id: <aa680c5f52864b0f5f7e2f82993bf92f0b17b680.1628766192.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1628766192.git.geert+renesas@glider.be>
+References: <cover.1628766192.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Patchwork summary for: linux-renesas-soc
-From:   patchwork-bot+linux-renesas-soc@kernel.org
-Message-Id: <162876600553.2278.1752397037008725126.git-patchwork-summary@kernel.org>
-Date:   Thu, 12 Aug 2021 11:00:05 +0000
-To:     linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello:
+Add support for the Renesas Salvator-X 2nd version development
+board equipped with an R-Car H3e SiP.
 
-The following patches were marked "mainlined", because they were applied to
-geert/renesas-devel.git (refs/heads/master):
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+v2:
+  - Add Reviewed-by.
+---
+ arch/arm64/boot/dts/renesas/Makefile          |  2 +
+ .../boot/dts/renesas/r8a779m0-salvator-xs.dts | 53 +++++++++++++++++++
+ 2 files changed, 55 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a779m0-salvator-xs.dts
 
-Series: dt-bindings: i2c: renesas,riic: Add interrupt-names
-  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
-  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=515483
-  Lore link: https://lore.kernel.org/r/cover.1626267422.git.geert+renesas@glider.be
-    Patches: [PATCH/RFC,1/4] dt-bindings: i2c: renesas,riic: Add interrupt-names
-             [PATCH/RFC,2/4] ARM: dts: rza: Add I2C interrupt-names
-             [PATCH/RFC,3/4] arm64: dts: renesas: r9a07g044: Add I2C interrupt-names
-             [PATCH/RFC,4/4] dt-bindings: i2c: renesas,riic: Make interrupt-names required
-
-Total patches: 4
-
---
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 15a53b5139669aa6..69bdf8e92a459f1f 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -63,6 +63,8 @@ dtb-$(CONFIG_ARCH_R8A77995) += r8a77995-draak.dtb
+ 
+ dtb-$(CONFIG_ARCH_R8A779A0) += r8a779a0-falcon.dtb
+ 
++dtb-$(CONFIG_ARCH_R8A77951) += r8a779m0-salvator-xs.dtb
++
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-salvator-xs.dtb
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-ulcb.dtb
+ dtb-$(CONFIG_ARCH_R8A77951) += r8a779m1-ulcb-kf.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r8a779m0-salvator-xs.dts b/arch/arm64/boot/dts/renesas/r8a779m0-salvator-xs.dts
+new file mode 100644
+index 0000000000000000..571c5e42240a6308
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r8a779m0-salvator-xs.dts
+@@ -0,0 +1,53 @@
++// SPDX-License-Identifier: (GPL-2.0 or MIT)
++/*
++ * Device Tree Source for the Salvator-X 2nd version board with R-Car H3e
++ *
++ * Copyright (C) 2021 Glider bv
++ *
++ * Based on r8a77951-salvator-xs.dts
++ * Copyright (C) 2015-2017 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r8a779m0.dtsi"
++#include "salvator-xs.dtsi"
++
++/ {
++	model = "Renesas Salvator-X 2nd version board based on r8a779m0";
++	compatible = "renesas,salvator-xs", "renesas,r8a779m0",
++		     "renesas,r8a7795";
++
++	memory@48000000 {
++		device_type = "memory";
++		/* first 128MB is reserved for secure area. */
++		reg = <0x0 0x48000000 0x0 0x38000000>;
++	};
++
++	memory@500000000 {
++		device_type = "memory";
++		reg = <0x5 0x00000000 0x0 0x40000000>;
++	};
++
++	memory@600000000 {
++		device_type = "memory";
++		reg = <0x6 0x00000000 0x0 0x40000000>;
++	};
++
++	memory@700000000 {
++		device_type = "memory";
++		reg = <0x7 0x00000000 0x0 0x40000000>;
++	};
++};
++
++&du {
++	clocks = <&cpg CPG_MOD 724>,
++		 <&cpg CPG_MOD 723>,
++		 <&cpg CPG_MOD 722>,
++		 <&cpg CPG_MOD 721>,
++		 <&versaclock6 1>,
++		 <&x21_clk>,
++		 <&x22_clk>,
++		 <&versaclock6 2>;
++	clock-names = "du.0", "du.1", "du.2", "du.3",
++		      "dclkin.0", "dclkin.1", "dclkin.2", "dclkin.3";
++};
+-- 
+2.25.1
 
