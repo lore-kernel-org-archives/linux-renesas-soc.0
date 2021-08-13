@@ -7,42 +7,41 @@ X-Spam-Status: No, score=-21.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8592C4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Aug 2021 10:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F64C4320A
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Aug 2021 10:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF7760C40
+	by mail.kernel.org (Postfix) with ESMTP id ED2E66109D
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 13 Aug 2021 10:28:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240118AbhHMK3F (ORCPT
+        id S240163AbhHMK3X (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 13 Aug 2021 06:29:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38222 "EHLO
+        Fri, 13 Aug 2021 06:29:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232931AbhHMK2x (ORCPT
+        with ESMTP id S239176AbhHMK25 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 13 Aug 2021 06:28:53 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB774C061756
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Aug 2021 03:28:17 -0700 (PDT)
+        Fri, 13 Aug 2021 06:28:57 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B03D9C0617AF
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 13 Aug 2021 03:28:26 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b151:f011:b544:c545])
-        by michel.telenet-ops.be with bizsmtp
-        id gyUG250041MlFFN06yUG82; Fri, 13 Aug 2021 12:28:16 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id gyUQ250051MlFFN01yUQRh; Fri, 13 Aug 2021 12:28:24 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mEUQB-002Wu8-Tr; Fri, 13 Aug 2021 12:28:15 +0200
+        id 1mEUQJ-002WuJ-Vw; Fri, 13 Aug 2021 12:28:23 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mEUQB-007SeM-FT; Fri, 13 Aug 2021 12:28:15 +0200
+        id 1mEUQJ-007SfU-BQ; Fri, 13 Aug 2021 12:28:23 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v5.15 (take two)
-Date:   Fri, 13 Aug 2021 12:28:14 +0200
-Message-Id: <cover.1628850207.git.geert+renesas@glider.be>
+Subject: [GIT PULL] pinctrl: renesas: Updates for v5.15 (take two)
+Date:   Fri, 13 Aug 2021 12:28:22 +0200
+Message-Id: <cover.1628850411.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -50,33 +49,41 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Mike, Stephen,
+	Hi Linus,
 
-The following changes since commit d28b1e03dc8d1070538ca3ea3f4e6732109ddf42:
+The following changes since commit 91d1be9fb7d667ae136f05cc645276eb2c9fa40e:
 
-  clk: renesas: r9a07g044: Add entry for fixed clock P0_DIV2 (2021-07-26 14:15:23 +0200)
+  pinctrl: renesas: Fix pin control matching on R-Car H3e-2G (2021-07-27 09:29:02 +0200)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.15-tag2
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v5.15-tag2
 
-for you to fetch changes up to e8425dd55abb12881694875972465f40bb0fe41b:
+for you to fetch changes up to c4c4637eb57f2a25c445421aadeb689a2538b20b:
 
-  clk: renesas: Make CLK_R9A06G032 invisible (2021-08-13 12:05:41 +0200)
+  pinctrl: renesas: Add RZ/G2L pin and gpio controller driver (2021-08-13 12:09:04 +0200)
 
 ----------------------------------------------------------------
-clk: renesas: Updates for v5.15 (take two)
+pinctrl: renesas: Updates for v5.15 (take two)
 
-  - Make CLK_R9A06G032 invisible.
+  - Add pin control and GPIO support for the new RZ/G2L SoC.
 
 Thanks for pulling!
 
 ----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      clk: renesas: Make CLK_R9A06G032 invisible
+Lad Prabhakar (2):
+      dt-bindings: pinctrl: renesas: Add DT bindings for RZ/G2L pinctrl
+      pinctrl: renesas: Add RZ/G2L pin and gpio controller driver
 
- drivers/clk/renesas/Kconfig | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ .../bindings/pinctrl/renesas,rzg2l-pinctrl.yaml    |  155 +++
+ drivers/pinctrl/renesas/Kconfig                    |   11 +
+ drivers/pinctrl/renesas/Makefile                   |    1 +
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c            | 1175 ++++++++++++++++++++
+ include/dt-bindings/pinctrl/rzg2l-pinctrl.h        |   23 +
+ 5 files changed, 1365 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzg2l-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/renesas/pinctrl-rzg2l.c
+ create mode 100644 include/dt-bindings/pinctrl/rzg2l-pinctrl.h
 
 Gr{oetje,eeting}s,
 
