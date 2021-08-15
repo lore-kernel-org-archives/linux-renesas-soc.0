@@ -2,92 +2,98 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2128C4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 14 Aug 2021 18:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1CF6C4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 15 Aug 2021 02:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C769460F42
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 14 Aug 2021 18:01:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5A0361002
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 15 Aug 2021 02:49:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238805AbhHNSB4 (ORCPT
+        id S233716AbhHOCuO (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 14 Aug 2021 14:01:56 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:47818 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S238785AbhHNSB4 (ORCPT
+        Sat, 14 Aug 2021 22:50:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41946 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230079AbhHOCuO (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 14 Aug 2021 14:01:56 -0400
-X-IronPort-AV: E=Sophos;i="5.84,322,1620658800"; 
-   d="scan'208";a="90637177"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 15 Aug 2021 03:01:26 +0900
-Received: from localhost.localdomain (unknown [10.226.92.6])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B7A3040BF759;
-        Sun, 15 Aug 2021 03:01:23 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        alsa-devel@alsa-project.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2] ASoC: sh: rz-ssi: Improve error handling in rz_ssi_dma_request function
-Date:   Sat, 14 Aug 2021 19:01:20 +0100
-Message-Id: <20210814180120.18082-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Sat, 14 Aug 2021 22:50:14 -0400
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18379C0613CF
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 14 Aug 2021 19:49:45 -0700 (PDT)
+Received: by mail-wr1-x42e.google.com with SMTP id f5so18555317wrm.13
+        for <linux-renesas-soc@vger.kernel.org>; Sat, 14 Aug 2021 19:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5ChIbjxPC/3cMynWSf7mvKQOps95HwYUJwOFzuOj4DI=;
+        b=O0WtdZXzwKh3+1sHDaKVnzN6oIAE5Lqx0/h2SMV/XCxoFzP4wKTu9VLjM48cXEEriv
+         6OVyDean67NXOJTx/Ie2R2v8SjWqhlSymmpZr39IUtDhWd2aUjf8XNVkrTh8fEacvHZA
+         2fVWSh38HGAYDhPI0eeDOqAF8aJ+2Bg8X9GRSPn1s/Jm9Z0jX3gFKDR8zF+rKjQ4a4Jo
+         pE1DVDHGEX4RktvjWmDqlq9FghdBDUDeh2u0KNer0I0FelnmNqW3KQfAnnD9B8y4l4kG
+         Qs9EvEYaoVyUJRaV+47qFYdHDlGCwVLE3Ssbk/55OQiIq23SI4jTibaE/Tnhz/CASrnC
+         RKQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5ChIbjxPC/3cMynWSf7mvKQOps95HwYUJwOFzuOj4DI=;
+        b=Fi2oZNmIruLcqY4B6TiqFvzZzlUshQDR9/Sn4wP09lLDf4VghsjgB6C8N+yLHPGUVe
+         n1I8an3U7Bv7JABRX24a/CMSIqILKVXFzez5WldmiQVhFP6lDwGeqrd639N+N4QHrqMe
+         iO296Mjw1SvJIBsja/g5DgUgaEZs9vbbeSvDUP6KTNX6h3QtyhVPM4FFybEu3dK/AeNP
+         IAbbZJuWNZivvnv90cNAB2wbxe/s87FoASbFxTAJPtr/Pe76901ABtRjlItpXCOhia2f
+         HmEowRo+GUUoRGL3wvGfAU0m87rC6IhJ8+jXrh9VStvfKVWKwPZCJWNseOE1mLu+T72k
+         1L7w==
+X-Gm-Message-State: AOAM533dx7EhfFS9YfXATmwslJpTLtXAO73Zd5rbSUj8Ux4PPmO76Zgl
+        a0FEtGBxu4ov7ADgYjCU1XbzYA==
+X-Google-Smtp-Source: ABdhPJyqjCVOlRlhVSd1rLnh5SyLGI8AgdsMhIV5kMB6qIFDHyAlpHRmiBgJCaKT81Au5sHlehQkyQ==
+X-Received: by 2002:a5d:508d:: with SMTP id a13mr10883227wrt.172.1628995782912;
+        Sat, 14 Aug 2021 19:49:42 -0700 (PDT)
+Received: from bismarck.berto.se (p54ac5892.dip0.t-ipconnect.de. [84.172.88.146])
+        by smtp.googlemail.com with ESMTPSA id h9sm5866342wmb.35.2021.08.14.19.49.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Aug 2021 19:49:42 -0700 (PDT)
+From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 0/2] rcar-csi2: Serialize format cfg and improve mutex handling
+Date:   Sun, 15 Aug 2021 04:49:13 +0200
+Message-Id: <20210815024915.1183417-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.32.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The pointer returned by the dma_request_chan function is an error pointer
-for the error cases. But on the rz_ssi_dma_request function, it checks for
-NULL pointer instead.
+Hello Hans,
 
-This patch fixes the issue by checking the error pointer instead of NULL
-pointer.
+This series improves the mutex handling of the R-Car CSI-2 driver. While 
+working with other drivers it have surfaced that drivers are responsible 
+to serialize format configuration.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
-v1->v2:
- * Replaced IS_ERR_OR_NULL with IS_ERR for error pointer check, as the
-   dma_request_chan function never returns NULL pointer for error case.
----
- sound/soc/sh/rz-ssi.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+Patch 1/2 adds a bit of housekeeping to the mutex used in the driver 
+while patch 2/2 adds the format serialization.
 
-diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index ea8d33ede5d2..2f9345415a15 100644
---- a/sound/soc/sh/rz-ssi.c
-+++ b/sound/soc/sh/rz-ssi.c
-@@ -676,11 +676,19 @@ static void rz_ssi_release_dma_channels(struct rz_ssi_priv *ssi)
- static int rz_ssi_dma_request(struct rz_ssi_priv *ssi, struct device *dev)
- {
- 	ssi->playback.dma_ch = dma_request_chan(dev, "tx");
-+	if (IS_ERR(ssi->playback.dma_ch))
-+		ssi->playback.dma_ch = NULL;
-+
- 	ssi->capture.dma_ch = dma_request_chan(dev, "rx");
-+	if (IS_ERR(ssi->capture.dma_ch))
-+		ssi->capture.dma_ch = NULL;
-+
- 	if (!ssi->playback.dma_ch && !ssi->capture.dma_ch) {
- 		ssi->playback.dma_ch = dma_request_chan(dev, "rt");
--		if (!ssi->playback.dma_ch)
-+		if (IS_ERR(ssi->playback.dma_ch)) {
-+			ssi->playback.dma_ch = NULL;
- 			goto no_dma;
-+		}
- 
- 		ssi->dma_rt = true;
- 	}
+The series is based on the latest media-tree and tested on M3-N and H3 
+ES2.0 without any regressions found.
+
+Niklas Söderlund (2):
+  media: rcar-csi2: Cleanup mutex on remove and fail
+  media: rcar-csi2: Serialize access to set_fmt and get_fmt
+
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 25 +++++++++++++++------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
+
 -- 
-2.17.1
+2.32.0
 
