@@ -2,74 +2,69 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4237BC19F3B
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Aug 2021 13:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113D7C432BE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Aug 2021 14:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2ABDA600D4
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Aug 2021 13:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE73663307
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Aug 2021 14:00:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231204AbhHPNZ1 (ORCPT
+        id S230041AbhHPOAj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Aug 2021 09:25:27 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:16424 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S239873AbhHPNVf (ORCPT
+        Mon, 16 Aug 2021 10:00:39 -0400
+Received: from foss.arm.com ([217.140.110.172]:45098 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231297AbhHPN5r (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Aug 2021 09:21:35 -0400
-X-IronPort-AV: E=Sophos;i="5.84,324,1620658800"; 
-   d="scan'208";a="90799322"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Aug 2021 22:20:55 +0900
-Received: from localhost.localdomain (unknown [10.226.93.25])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id C55F243028A9;
-        Mon, 16 Aug 2021 22:20:52 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        alsa-devel@alsa-project.org,
+        Mon, 16 Aug 2021 09:57:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72AAB6D;
+        Mon, 16 Aug 2021 06:57:15 -0700 (PDT)
+Received: from e123427-lin.arm.com (unknown [10.57.42.29])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 167723F66F;
+        Mon, 16 Aug 2021 06:57:13 -0700 (PDT)
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     linux-pci@vger.kernel.org,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ASoC: sh: rz-ssi: Fix dereference of noderef expression warning
-Date:   Mon, 16 Aug 2021 14:20:49 +0100
-Message-Id: <20210816132049.28128-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>
+Subject: Re: [PATCH V7] PCI: rcar: Add L1 link state fix into data abort hook
+Date:   Mon, 16 Aug 2021 14:57:04 +0100
+Message-Id: <162912206617.7498.10791199140703646138.b4-ty@arm.com>
+X-Mailer: git-send-email 2.31.0
+In-Reply-To: <20210815181650.132579-1-marek.vasut@gmail.com>
+References: <20210815181650.132579-1-marek.vasut@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fix following sparse warning:
-sound/soc/sh/rz-ssi.c:156:15: sparse: warning: dereference of
-noderef expression
+On Sun, 15 Aug 2021 20:16:50 +0200, marek.vasut@gmail.com wrote:
+> When the link is in L1, hardware should return it to L0
+> automatically whenever a transaction targets a component on the
+> other end of the link (PCIe r5.0, sec 5.2).
+> 
+> The R-Car PCIe controller doesn't handle this transition correctly.
+> If the link is not in L0, an MMIO transaction targeting a downstream
+> device fails, and the controller reports an ARM imprecise external
+> abort.
+> 
+> [...]
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reported-by: kernel test robot <lkp@intel.com>
----
- sound/soc/sh/rz-ssi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied to pci/rcar, thanks!
 
-diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index 2f9345415a15..7fa3737b90bf 100644
---- a/sound/soc/sh/rz-ssi.c
-+++ b/sound/soc/sh/rz-ssi.c
-@@ -148,7 +148,7 @@ static u32 rz_ssi_reg_readl(struct rz_ssi_priv *priv, uint reg)
- 	return readl(priv->base + reg);
- }
- 
--static void rz_ssi_reg_mask_setl(struct rz_ssi_priv __iomem *priv, uint reg,
-+static void rz_ssi_reg_mask_setl(struct rz_ssi_priv *priv, uint reg,
- 				 u32 bclr, u32 bset)
- {
- 	u32 val;
--- 
-2.17.1
+[1/1] PCI: rcar: Add L1 link state fix into data abort hook
+      https://git.kernel.org/lpieralisi/pci/c/a115b1bd3a
 
+Thanks,
+Lorenzo
