@@ -2,120 +2,94 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39AD0C4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Aug 2021 07:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45766C4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Aug 2021 07:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 19E1D60C3E
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Aug 2021 07:33:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F77F60C3E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Aug 2021 07:34:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234402AbhHQHdp (ORCPT
+        id S234762AbhHQHfZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 17 Aug 2021 03:33:45 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:44067 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238067AbhHQHdo (ORCPT
+        Tue, 17 Aug 2021 03:35:25 -0400
+Received: from mslow1.mail.gandi.net ([217.70.178.240]:60157 "EHLO
+        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234669AbhHQHfY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 17 Aug 2021 03:33:44 -0400
-X-Greylist: delayed 405 seconds by postgrey-1.27 at vger.kernel.org; Tue, 17 Aug 2021 03:33:44 EDT
+        Tue, 17 Aug 2021 03:35:24 -0400
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 0958FCD8F2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 17 Aug 2021 07:27:00 +0000 (UTC)
 Received: (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 83E37FF80A;
-        Tue, 17 Aug 2021 07:33:09 +0000 (UTC)
-Date:   Tue, 17 Aug 2021 09:33:57 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id CBB20FF811;
+        Tue, 17 Aug 2021 07:26:34 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 2/2] media: rcar-csi2: Serialize access to set_fmt and
- get_fmt
-Message-ID: <20210817073357.ey2l4lecz5vv5cdy@uno.localdomain>
-References: <20210815024915.1183417-1-niklas.soderlund+renesas@ragnatech.se>
- <20210815024915.1183417-3-niklas.soderlund+renesas@ragnatech.se>
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Thomas NIZAN <tnizan@witekio.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [RFC 4/5] media: i2c: max9286: Fetch PIXEL_RATE in s_stream
+Date:   Tue, 17 Aug 2021 09:27:02 +0200
+Message-Id: <20210817072703.1167-5-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.32.0
+In-Reply-To: <20210817072703.1167-1-jacopo+renesas@jmondi.org>
+References: <20210817072703.1167-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20210815024915.1183417-3-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Niklas,
+The max9286 driver needs to fetch the remote serializer PIXEL_RATE
+control value in order to compute its own one, as the sum of the
+values reported by the connected subdevices.
 
-On Sun, Aug 15, 2021 at 04:49:15AM +0200, Niklas Söderlund wrote:
-> The access to the internal storage of the format rcar_csi2.mf should be
-> serialized, extend the exciting lock mutex to also cover this.
+Currently the control is verified to be present at notifier's bound
+time, which requires the serializer driver to register the control at
+probe time. As the serializer driver might need to register the control
+later, by adding the control handler of its connected sensor, post-pone
+the max9286 check for the control availability at start stream time.
 
-truly an exciting lock mutex indeed! :D
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+---
+ drivers/media/i2c/max9286.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
->
-> While at it document the mutex.
->
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+index 1b92d18a1f94..98fc90339a9e 100644
+--- a/drivers/media/i2c/max9286.c
++++ b/drivers/media/i2c/max9286.c
+@@ -595,7 +595,7 @@ static int max9286_notify_bound(struct v4l2_async_notifier *notifier,
+ 	max9286_check_config_link(priv, priv->source_mask);
+ 	max9286_configure_i2c(priv, false);
+ 
+-	return max9286_set_pixelrate(priv);
++	return 0;
+ }
+ 
+ static void max9286_notify_unbind(struct v4l2_async_notifier *notifier,
+@@ -674,6 +674,10 @@ static int max9286_s_stream(struct v4l2_subdev *sd, int enable)
+ 	int ret;
+ 
+ 	if (enable) {
++		ret = max9286_set_pixelrate(priv);
++		if (ret)
++			return ret;
++
+ 		/*
+ 		 * The frame sync between cameras is transmitted across the
+ 		 * reverse channel as GPIO. We must open all channels while
+-- 
+2.32.0
 
-Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
-
-Thanks
-   j
-
-> ---
->  drivers/media/platform/rcar-vin/rcar-csi2.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> index a02573dbd5da4f62..2fdfdc38de424c72 100644
-> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
-> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
-> @@ -370,9 +370,8 @@ struct rcar_csi2 {
->  	struct v4l2_subdev *remote;
->  	unsigned int remote_pad;
->
-> +	struct mutex lock; /* Protects mf and stream_count. */
->  	struct v4l2_mbus_framefmt mf;
-> -
-> -	struct mutex lock;
->  	int stream_count;
->
->  	unsigned short lanes;
-> @@ -725,6 +724,8 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
->  	struct rcar_csi2 *priv = sd_to_csi2(sd);
->  	struct v4l2_mbus_framefmt *framefmt;
->
-> +	mutex_lock(&priv->lock);
-> +
->  	if (!rcsi2_code_to_fmt(format->format.code))
->  		format->format.code = rcar_csi2_formats[0].code;
->
-> @@ -735,6 +736,8 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
->  		*framefmt = format->format;
->  	}
->
-> +	mutex_unlock(&priv->lock);
-> +
->  	return 0;
->  }
->
-> @@ -744,11 +747,15 @@ static int rcsi2_get_pad_format(struct v4l2_subdev *sd,
->  {
->  	struct rcar_csi2 *priv = sd_to_csi2(sd);
->
-> +	mutex_lock(&priv->lock);
-> +
->  	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE)
->  		format->format = priv->mf;
->  	else
->  		format->format = *v4l2_subdev_get_try_format(sd, sd_state, 0);
->
-> +	mutex_unlock(&priv->lock);
-> +
->  	return 0;
->  }
->
-> --
-> 2.32.0
->
