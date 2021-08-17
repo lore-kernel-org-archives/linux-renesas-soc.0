@@ -2,73 +2,122 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C96C4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Aug 2021 18:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DABAC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Aug 2021 07:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A38C60F11
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 16 Aug 2021 18:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 111D360C3E
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 17 Aug 2021 07:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229763AbhHPSYT (ORCPT
+        id S234688AbhHQHav (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 16 Aug 2021 14:24:19 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:34143 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S230122AbhHPSYS (ORCPT
+        Tue, 17 Aug 2021 03:30:51 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:55517 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234402AbhHQHau (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 16 Aug 2021 14:24:18 -0400
-X-IronPort-AV: E=Sophos;i="5.84,326,1620658800"; 
-   d="scan'208";a="90815948"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 17 Aug 2021 03:23:42 +0900
-Received: from localhost.localdomain (unknown [10.226.93.25])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0650440D2C9C;
-        Tue, 17 Aug 2021 03:23:39 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        alsa-devel@alsa-project.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] ASoC: sh: rz-ssi: Fix wrong operator used issue
-Date:   Mon, 16 Aug 2021 19:23:36 +0100
-Message-Id: <20210816182336.29959-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 17 Aug 2021 03:30:50 -0400
+Received: (Authenticated sender: jacopo@jmondi.org)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 5F16F100007;
+        Tue, 17 Aug 2021 07:30:16 +0000 (UTC)
+Date:   Tue, 17 Aug 2021 09:31:04 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 1/2] media: rcar-csi2: Cleanup mutex on remove and fail
+Message-ID: <20210817073104.6qy7ltabl32hnh46@uno.localdomain>
+References: <20210815024915.1183417-1-niklas.soderlund+renesas@ragnatech.se>
+ <20210815024915.1183417-2-niklas.soderlund+renesas@ragnatech.se>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20210815024915.1183417-2-niklas.soderlund+renesas@ragnatech.se>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fix wrong operator used issue reported by Coverity by replacing |
-operator with & operator.
+Hi Niklas,
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reported-by: Colin Ian King <colin.king@canonical.com>
----
- sound/soc/sh/rz-ssi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Sun, Aug 15, 2021 at 04:49:14AM +0200, Niklas Söderlund wrote:
+> The mutex was not destroyed on remove or failed probe, fix this.
+>
+> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
-index 69b45ee2d445..f097c773d413 100644
---- a/sound/soc/sh/rz-ssi.c
-+++ b/sound/soc/sh/rz-ssi.c
-@@ -368,7 +368,7 @@ static int rz_ssi_stop(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
- 	/* Wait for idle */
- 	timeout = 100;
- 	while (--timeout) {
--		if (rz_ssi_reg_readl(ssi, SSISR) | SSISR_IIRQ)
-+		if (rz_ssi_reg_readl(ssi, SSISR) & SSISR_IIRQ)
- 			break;
- 		udelay(1);
- 	}
--- 
-2.17.1
+Looks good!
 
+Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+
+Thanks
+   j
+
+> ---
+>  drivers/media/platform/rcar-vin/rcar-csi2.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> index e28eff0396888f2d..a02573dbd5da4f62 100644
+> --- a/drivers/media/platform/rcar-vin/rcar-csi2.c
+> +++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+> @@ -1245,14 +1245,14 @@ static int rcsi2_probe(struct platform_device *pdev)
+>  	ret = rcsi2_probe_resources(priv, pdev);
+>  	if (ret) {
+>  		dev_err(priv->dev, "Failed to get resources\n");
+> -		return ret;
+> +		goto error_mutex;
+>  	}
+>
+>  	platform_set_drvdata(pdev, priv);
+>
+>  	ret = rcsi2_parse_dt(priv);
+>  	if (ret)
+> -		return ret;
+> +		goto error_mutex;
+>
+>  	priv->subdev.owner = THIS_MODULE;
+>  	priv->subdev.dev = &pdev->dev;
+> @@ -1272,21 +1272,23 @@ static int rcsi2_probe(struct platform_device *pdev)
+>  	ret = media_entity_pads_init(&priv->subdev.entity, NR_OF_RCAR_CSI2_PAD,
+>  				     priv->pads);
+>  	if (ret)
+> -		goto error;
+> +		goto error_async;
+>
+>  	pm_runtime_enable(&pdev->dev);
+>
+>  	ret = v4l2_async_register_subdev(&priv->subdev);
+>  	if (ret < 0)
+> -		goto error;
+> +		goto error_async;
+>
+>  	dev_info(priv->dev, "%d lanes found\n", priv->lanes);
+>
+>  	return 0;
+>
+> -error:
+> +error_async:
+>  	v4l2_async_notifier_unregister(&priv->notifier);
+>  	v4l2_async_notifier_cleanup(&priv->notifier);
+> +error_mutex:
+> +	mutex_destroy(&priv->lock);
+>
+>  	return ret;
+>  }
+> @@ -1301,6 +1303,8 @@ static int rcsi2_remove(struct platform_device *pdev)
+>
+>  	pm_runtime_disable(&pdev->dev);
+>
+> +	mutex_destroy(&priv->lock);
+> +
+>  	return 0;
+>  }
+>
+> --
+> 2.32.0
+>
