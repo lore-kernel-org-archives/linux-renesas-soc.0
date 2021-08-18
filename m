@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7497BC4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A56EAC4338F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BD58610FD
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9067E610E6
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233536AbhHRTJO (ORCPT
+        id S232375AbhHRTJU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Aug 2021 15:09:14 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:14414 "EHLO
+        Wed, 18 Aug 2021 15:09:20 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:34990 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S233350AbhHRTI6 (ORCPT
+        by vger.kernel.org with ESMTP id S233864AbhHRTJL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Aug 2021 15:08:58 -0400
+        Wed, 18 Aug 2021 15:09:11 -0400
 X-IronPort-AV: E=Sophos;i="5.84,332,1620658800"; 
-   d="scan'208";a="91033563"
+   d="scan'208";a="91033572"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 19 Aug 2021 04:08:22 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 19 Aug 2021 04:08:30 +0900
 Received: from localhost.localdomain (unknown [10.226.93.61])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 4437040D5D67;
-        Thu, 19 Aug 2021 04:08:19 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id CF44740D5D67;
+        Thu, 19 Aug 2021 04:08:26 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
@@ -42,9 +42,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next v3 4/9] ravb: Add max_rx_len to struct ravb_hw_info
-Date:   Wed, 18 Aug 2021 20:07:55 +0100
-Message-Id: <20210818190800.20191-5-biju.das.jz@bp.renesas.com>
+Subject: [PATCH net-next v3 6/9] ravb: Add gstrings_stats and gstrings_size to struct ravb_hw_info
+Date:   Wed, 18 Aug 2021 20:07:57 +0100
+Message-Id: <20210818190800.20191-7-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210818190800.20191-1-biju.das.jz@bp.renesas.com>
 References: <20210818190800.20191-1-biju.das.jz@bp.renesas.com>
@@ -52,93 +52,80 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The maximum descriptor size that can be specified on the reception side for
-R-Car is 2048 bytes, whereas for RZ/G2L it is 8096.
+The device stats strings for R-Car and RZ/G2L are different.
 
-Add the max_rx_len variable to struct ravb_hw_info for allocating different
-RX skb buffer sizes for R-Car and RZ/G2L using the netdev_alloc_skb
-function.
+R-Car provides 30 device stats, whereas RZ/G2L provides only 15. In
+addition, RZ/G2L has stats "rx_queue_0_csum_offload_errors" instead of
+"rx_queue_0_missed_errors".
+
+Add structure variables gstrings_stats and gstrings_size to struct
+ravb_hw_info, so that subsequent SoCs can be added without any code
+changes in the ravb_get_strings function.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Sergei Shtylyov <sergei.shtylyov@gmail.com>
 ---
-v3:
- * Retained Rb tag from Andrew, since the change is just renaming
-   the variable from skb_sz to max_rx_len.
+v2->v3:
+ * No change
+ * Added Rb tag from Andrew and Sergei.
 v2:
  * Incorporated Andrew and Sergei's review comments for making it smaller patch
    and provided detailed description.
 ---
- drivers/net/ethernet/renesas/ravb.h      |  1 +
- drivers/net/ethernet/renesas/ravb_main.c | 10 ++++++----
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/renesas/ravb.h      | 2 ++
+ drivers/net/ethernet/renesas/ravb_main.c | 9 ++++++++-
+ 2 files changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 4f71e5699ca1..976242ed6f7a 100644
+index cec0c062d9bb..69256d7c5ee7 100644
 --- a/drivers/net/ethernet/renesas/ravb.h
 +++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -990,6 +990,7 @@ enum ravb_chip_id {
- 
- struct ravb_hw_info {
- 	enum ravb_chip_id chip_id;
-+	size_t max_rx_len;
- 	unsigned aligned_tx: 1;
+@@ -989,6 +989,8 @@ enum ravb_chip_id {
  };
  
+ struct ravb_hw_info {
++	const char (*gstrings_stats)[ETH_GSTRING_LEN];
++	size_t gstrings_size;
+ 	enum ravb_chip_id chip_id;
+ 	int stats_len;
+ 	size_t max_rx_len;
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index dbccf2cd89b2..d9bb5a261d40 100644
+index 1fb03d04d9b4..48d24cd4e71d 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -339,6 +339,7 @@ static void ravb_ring_format(struct net_device *ndev, int q)
- static int ravb_ring_init(struct net_device *ndev, int q)
- {
- 	struct ravb_private *priv = netdev_priv(ndev);
-+	const struct ravb_hw_info *info = priv->info;
- 	unsigned int num_tx_desc = priv->num_tx_desc;
- 	unsigned int ring_size;
- 	struct sk_buff *skb;
-@@ -353,7 +354,7 @@ static int ravb_ring_init(struct net_device *ndev, int q)
- 		goto error;
+@@ -1177,9 +1177,12 @@ static void ravb_get_ethtool_stats(struct net_device *ndev,
  
- 	for (i = 0; i < priv->num_rx_ring[q]; i++) {
--		skb = netdev_alloc_skb(ndev, RX_BUF_SZ + RAVB_ALIGN - 1);
-+		skb = netdev_alloc_skb(ndev, info->max_rx_len);
- 		if (!skb)
- 			goto error;
- 		ravb_set_buffer_align(skb);
-@@ -535,6 +536,7 @@ static void ravb_rx_csum(struct sk_buff *skb)
- static bool ravb_rx(struct net_device *ndev, int *quota, int q)
+ static void ravb_get_strings(struct net_device *ndev, u32 stringset, u8 *data)
  {
- 	struct ravb_private *priv = netdev_priv(ndev);
++	struct ravb_private *priv = netdev_priv(ndev);
 +	const struct ravb_hw_info *info = priv->info;
- 	int entry = priv->cur_rx[q] % priv->num_rx_ring[q];
- 	int boguscnt = (priv->dirty_rx[q] + priv->num_rx_ring[q]) -
- 			priv->cur_rx[q];
-@@ -619,9 +621,7 @@ static bool ravb_rx(struct net_device *ndev, int *quota, int q)
- 		desc->ds_cc = cpu_to_le16(RX_BUF_SZ);
- 
- 		if (!priv->rx_skb[q][entry]) {
--			skb = netdev_alloc_skb(ndev,
--					       RX_BUF_SZ +
--					       RAVB_ALIGN - 1);
-+			skb = netdev_alloc_skb(ndev, info->max_rx_len);
- 			if (!skb)
- 				break;	/* Better luck next round. */
- 			ravb_set_buffer_align(skb);
-@@ -1926,10 +1926,12 @@ static int ravb_mdio_release(struct ravb_private *priv)
++
+ 	switch (stringset) {
+ 	case ETH_SS_STATS:
+-		memcpy(data, ravb_gstrings_stats, sizeof(ravb_gstrings_stats));
++		memcpy(data, info->gstrings_stats, info->gstrings_size);
+ 		break;
+ 	}
+ }
+@@ -1926,12 +1929,16 @@ static int ravb_mdio_release(struct ravb_private *priv)
+ }
  
  static const struct ravb_hw_info ravb_gen3_hw_info = {
++	.gstrings_stats = ravb_gstrings_stats,
++	.gstrings_size = sizeof(ravb_gstrings_stats),
  	.chip_id = RCAR_GEN3,
-+	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
+ 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
+ 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
  };
  
  static const struct ravb_hw_info ravb_gen2_hw_info = {
++	.gstrings_stats = ravb_gstrings_stats,
++	.gstrings_size = sizeof(ravb_gstrings_stats),
  	.chip_id = RCAR_GEN2,
-+	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
- 	.aligned_tx = 1,
- };
- 
+ 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
+ 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
 -- 
 2.17.1
 
