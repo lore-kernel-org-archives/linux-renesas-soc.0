@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDAEC4320A
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B03DAC432BE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7C6E61101
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98F03610E6
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233283AbhHRTJU (ORCPT
+        id S233798AbhHRTJW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Aug 2021 15:09:20 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:14414 "EHLO
+        Wed, 18 Aug 2021 15:09:22 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:22399 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S233896AbhHRTJM (ORCPT
+        by vger.kernel.org with ESMTP id S233836AbhHRTJL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Aug 2021 15:09:12 -0400
+        Wed, 18 Aug 2021 15:09:11 -0400
 X-IronPort-AV: E=Sophos;i="5.84,332,1620658800"; 
-   d="scan'208";a="91033577"
+   d="scan'208";a="91033568"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 19 Aug 2021 04:08:34 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 19 Aug 2021 04:08:26 +0900
 Received: from localhost.localdomain (unknown [10.226.93.61])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id EEBF740D5D67;
-        Thu, 19 Aug 2021 04:08:30 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 05A8B40D5D67;
+        Thu, 19 Aug 2021 04:08:22 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
@@ -42,9 +42,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next v3 7/9] ravb: Add net_features and net_hw_features to struct ravb_hw_info
-Date:   Wed, 18 Aug 2021 20:07:58 +0100
-Message-Id: <20210818190800.20191-8-biju.das.jz@bp.renesas.com>
+Subject: [PATCH net-next v3 5/9] ravb: Add stats_len to struct ravb_hw_info
+Date:   Wed, 18 Aug 2021 20:07:56 +0100
+Message-Id: <20210818190800.20191-6-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210818190800.20191-1-biju.das.jz@bp.renesas.com>
 References: <20210818190800.20191-1-biju.das.jz@bp.renesas.com>
@@ -52,86 +52,76 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On R-Car the checksum calculation on RX frames is done by the E-MAC
-module, whereas on RZ/G2L it is done by the TOE.
+R-Car provides 30 device stats, whereas RZ/G2L provides only 15. In
+addition, RZ/G2L has stats "rx_queue_0_csum_offload_errors" instead of
+"rx_queue_0_missed_errors".
 
-TOE calculates the checksum of received frames from E-MAC and outputs it to
-DMAC. TOE also calculates the checksum of transmission frames from DMAC and
-outputs it E-MAC.
-
-Add net_features and net_hw_features to struct ravb_hw_info, to support
-subsequent SoCs without any code changes in the ravb_probe function.
+Replace RAVB_STATS_LEN macro with a structure variable stats_len to
+struct ravb_hw_info, to support subsequent SoCs without any code changes
+to the ravb_get_sset_count function.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 Reviewed-by: Sergei Shtylyov <sergei.shtylyov@gmail.com>
 ---
 v2->v3:
- * No Change
- * Added Rb tag from Andrew and Sergei.
+ * No change.Added Rb tag from Sergei.
 v2:
  * Incorporated Andrew and Sergei's review comments for making it smaller patch
    and provided detailed description.
 ---
- drivers/net/ethernet/renesas/ravb.h      |  2 ++
- drivers/net/ethernet/renesas/ravb_main.c | 12 ++++++++----
- 2 files changed, 10 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/renesas/ravb.h      | 1 +
+ drivers/net/ethernet/renesas/ravb_main.c | 9 ++++++---
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 69256d7c5ee7..85eb3c69ac32 100644
+index 976242ed6f7a..cec0c062d9bb 100644
 --- a/drivers/net/ethernet/renesas/ravb.h
 +++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -991,6 +991,8 @@ enum ravb_chip_id {
+@@ -990,6 +990,7 @@ enum ravb_chip_id {
+ 
  struct ravb_hw_info {
- 	const char (*gstrings_stats)[ETH_GSTRING_LEN];
- 	size_t gstrings_size;
-+	netdev_features_t net_hw_features;
-+	netdev_features_t net_features;
  	enum ravb_chip_id chip_id;
- 	int stats_len;
++	int stats_len;
  	size_t max_rx_len;
+ 	unsigned aligned_tx: 1;
+ };
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 48d24cd4e71d..6b209ad19de7 100644
+index d9bb5a261d40..1fb03d04d9b4 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1931,6 +1931,8 @@ static int ravb_mdio_release(struct ravb_private *priv)
- static const struct ravb_hw_info ravb_gen3_hw_info = {
- 	.gstrings_stats = ravb_gstrings_stats,
- 	.gstrings_size = sizeof(ravb_gstrings_stats),
-+	.net_hw_features = NETIF_F_RXCSUM,
-+	.net_features = NETIF_F_RXCSUM,
- 	.chip_id = RCAR_GEN3,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
-@@ -1939,6 +1941,8 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
- static const struct ravb_hw_info ravb_gen2_hw_info = {
- 	.gstrings_stats = ravb_gstrings_stats,
- 	.gstrings_size = sizeof(ravb_gstrings_stats),
-+	.net_hw_features = NETIF_F_RXCSUM,
-+	.net_features = NETIF_F_RXCSUM,
- 	.chip_id = RCAR_GEN2,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
-@@ -2062,14 +2066,14 @@ static int ravb_probe(struct platform_device *pdev)
- 	if (!ndev)
- 		return -ENOMEM;
+@@ -1133,13 +1133,14 @@ static const char ravb_gstrings_stats[][ETH_GSTRING_LEN] = {
+ 	"rx_queue_1_over_errors",
+ };
  
--	ndev->features = NETIF_F_RXCSUM;
--	ndev->hw_features = NETIF_F_RXCSUM;
-+	info = of_device_get_match_data(&pdev->dev);
-+
-+	ndev->features = info->net_features;
-+	ndev->hw_features = info->net_hw_features;
- 
- 	pm_runtime_enable(&pdev->dev);
- 	pm_runtime_get_sync(&pdev->dev);
- 
--	info = of_device_get_match_data(&pdev->dev);
+-#define RAVB_STATS_LEN	ARRAY_SIZE(ravb_gstrings_stats)
 -
- 	if (info->chip_id == RCAR_GEN3)
- 		irq = platform_get_irq_byname(pdev, "ch22");
- 	else
+ static int ravb_get_sset_count(struct net_device *netdev, int sset)
+ {
++	struct ravb_private *priv = netdev_priv(netdev);
++	const struct ravb_hw_info *info = priv->info;
++
+ 	switch (sset) {
+ 	case ETH_SS_STATS:
+-		return RAVB_STATS_LEN;
++		return info->stats_len;
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
+@@ -1926,11 +1927,13 @@ static int ravb_mdio_release(struct ravb_private *priv)
+ 
+ static const struct ravb_hw_info ravb_gen3_hw_info = {
+ 	.chip_id = RCAR_GEN3,
++	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
+ 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
+ };
+ 
+ static const struct ravb_hw_info ravb_gen2_hw_info = {
+ 	.chip_id = RCAR_GEN2,
++	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
+ 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
+ 	.aligned_tx = 1,
+ };
 -- 
 2.17.1
 
