@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B03DAC432BE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB0FC4320A
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98F03610E6
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7107610FD
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 18 Aug 2021 19:08:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233798AbhHRTJW (ORCPT
+        id S234033AbhHRTJ1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 18 Aug 2021 15:09:22 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:22399 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S233836AbhHRTJL (ORCPT
+        Wed, 18 Aug 2021 15:09:27 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:2486 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S233785AbhHRTJT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 18 Aug 2021 15:09:11 -0400
+        Wed, 18 Aug 2021 15:09:19 -0400
 X-IronPort-AV: E=Sophos;i="5.84,332,1620658800"; 
-   d="scan'208";a="91033568"
+   d="scan'208";a="91051835"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 19 Aug 2021 04:08:26 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 19 Aug 2021 04:08:41 +0900
 Received: from localhost.localdomain (unknown [10.226.93.61])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 05A8B40D5D67;
-        Thu, 19 Aug 2021 04:08:22 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7E61140D5D67;
+        Thu, 19 Aug 2021 04:08:38 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
@@ -42,9 +42,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next v3 5/9] ravb: Add stats_len to struct ravb_hw_info
-Date:   Wed, 18 Aug 2021 20:07:56 +0100
-Message-Id: <20210818190800.20191-6-biju.das.jz@bp.renesas.com>
+Subject: [PATCH net-next v3 9/9] ravb: Add tx_counters to struct ravb_hw_info
+Date:   Wed, 18 Aug 2021 20:08:00 +0100
+Message-Id: <20210818190800.20191-10-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20210818190800.20191-1-biju.das.jz@bp.renesas.com>
 References: <20210818190800.20191-1-biju.das.jz@bp.renesas.com>
@@ -52,76 +52,67 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-R-Car provides 30 device stats, whereas RZ/G2L provides only 15. In
-addition, RZ/G2L has stats "rx_queue_0_csum_offload_errors" instead of
-"rx_queue_0_missed_errors".
+The register for retrieving TX counters is present only on R-Car Gen3
+and RZ/G2L; it is not present on R-Car Gen2.
 
-Replace RAVB_STATS_LEN macro with a structure variable stats_len to
-struct ravb_hw_info, to support subsequent SoCs without any code changes
-to the ravb_get_sset_count function.
+Add the tx_counters hw feature bit to struct ravb_hw_info, to enable this
+feature specifically for R-Car Gen3 now and later extend it to RZ/G2L.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@gmail.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
 v2->v3:
- * No change.Added Rb tag from Sergei.
+ * Retained Rb tag from Andrew, since change is just renaming the variable
+   and comment update.
 v2:
  * Incorporated Andrew and Sergei's review comments for making it smaller patch
    and provided detailed description.
 ---
  drivers/net/ethernet/renesas/ravb.h      | 1 +
- drivers/net/ethernet/renesas/ravb_main.c | 9 ++++++---
- 2 files changed, 7 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 976242ed6f7a..cec0c062d9bb 100644
+index 65a13ad458e6..37ad0f8aaf3c 100644
 --- a/drivers/net/ethernet/renesas/ravb.h
 +++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -990,6 +990,7 @@ enum ravb_chip_id {
+@@ -1000,6 +1000,7 @@ struct ravb_hw_info {
  
- struct ravb_hw_info {
- 	enum ravb_chip_id chip_id;
-+	int stats_len;
- 	size_t max_rx_len;
- 	unsigned aligned_tx: 1;
+ 	/* hardware features */
+ 	unsigned internal_delay:1;	/* AVB-DMAC has internal delays */
++	unsigned tx_counters:1;		/* E-MAC has TX counters */
  };
+ 
+ struct ravb_private {
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index d9bb5a261d40..1fb03d04d9b4 100644
+index 2fe4b9231523..02842b980a7f 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1133,13 +1133,14 @@ static const char ravb_gstrings_stats[][ETH_GSTRING_LEN] = {
- 	"rx_queue_1_over_errors",
- };
- 
--#define RAVB_STATS_LEN	ARRAY_SIZE(ravb_gstrings_stats)
--
- static int ravb_get_sset_count(struct net_device *netdev, int sset)
+@@ -1632,13 +1632,14 @@ static u16 ravb_select_queue(struct net_device *ndev, struct sk_buff *skb,
+ static struct net_device_stats *ravb_get_stats(struct net_device *ndev)
  {
-+	struct ravb_private *priv = netdev_priv(netdev);
+ 	struct ravb_private *priv = netdev_priv(ndev);
 +	const struct ravb_hw_info *info = priv->info;
-+
- 	switch (sset) {
- 	case ETH_SS_STATS:
--		return RAVB_STATS_LEN;
-+		return info->stats_len;
- 	default:
- 		return -EOPNOTSUPP;
- 	}
-@@ -1926,11 +1927,13 @@ static int ravb_mdio_release(struct ravb_private *priv)
+ 	struct net_device_stats *nstats, *stats0, *stats1;
  
- static const struct ravb_hw_info ravb_gen3_hw_info = {
- 	.chip_id = RCAR_GEN3,
-+	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
+ 	nstats = &ndev->stats;
+ 	stats0 = &priv->stats[RAVB_BE];
+ 	stats1 = &priv->stats[RAVB_NC];
+ 
+-	if (priv->chip_id == RCAR_GEN3) {
++	if (info->tx_counters) {
+ 		nstats->tx_dropped += ravb_read(ndev, TROCR);
+ 		ravb_write(ndev, 0, TROCR);	/* (write clear) */
+ 	}
+@@ -1937,6 +1938,7 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
+ 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
  	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
+ 	.internal_delay = 1,
++	.tx_counters = 1,
  };
  
  static const struct ravb_hw_info ravb_gen2_hw_info = {
- 	.chip_id = RCAR_GEN2,
-+	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
- 	.aligned_tx = 1,
- };
 -- 
 2.17.1
 
