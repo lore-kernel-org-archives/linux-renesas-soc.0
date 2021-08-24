@@ -2,95 +2,73 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BF4C4338F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Aug 2021 15:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D0FC4320A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Aug 2021 18:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E24661262
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Aug 2021 15:33:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F4F56128A
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 24 Aug 2021 18:38:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238260AbhHXPeI (ORCPT
+        id S233688AbhHXSjY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 24 Aug 2021 11:34:08 -0400
-Received: from foss.arm.com ([217.140.110.172]:37364 "EHLO foss.arm.com"
+        Tue, 24 Aug 2021 14:39:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S238284AbhHXPeH (ORCPT
+        id S230404AbhHXSjX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 24 Aug 2021 11:34:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2E9C431B;
-        Tue, 24 Aug 2021 08:33:23 -0700 (PDT)
-Received: from [10.57.15.112] (unknown [10.57.15.112])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C6F63F766;
-        Tue, 24 Aug 2021 08:33:21 -0700 (PDT)
-Subject: Re: [PATCH] iommu/io-pgtable: Abstract iommu_iotlb_gather access
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        kernel test robot <lkp@intel.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <83672ee76f6405c82845a55c148fa836f56fbbc1.1629465282.git.robin.murphy@arm.com>
- <CAMuHMdXL7ZtY8kBx=RHsRy1JECsGPDe+E3SM=--w7bUHMYHFBQ@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <ad5ae140-6398-a2d2-ed90-2d59cab01f0f@arm.com>
-Date:   Tue, 24 Aug 2021 16:33:16 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101
- Thunderbird/78.13.0
+        Tue, 24 Aug 2021 14:39:23 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 5672861212;
+        Tue, 24 Aug 2021 18:38:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1629830319;
+        bh=maEBqpCEjLOCqX6ajQ449eG3qPAnuFmvIOp4G98YB6E=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=d5UoQEosZIKn8XFGaDOjnsSb8zwnCKOv/NM+Y7ZFqspJz8iXiAxME9TMhJHX6qcyA
+         cry19Yvww3aJQptz1z6rdgsHLH+fMdqBAICc9LB7UmaAKK9SgK9PVPq0/E0KMtBtZz
+         pwLknwfGiOWUJt036U6IWByiuee/ngATPjyZMpCvb238FqXEpI2KGEe0NszAJi0mJ6
+         JyMvKnJWrkwFy/SjlFqnoidpyHT9iCANQKCCHXfzO8t9QxAqP3B1IZqcDKbrrjyQaW
+         ay6evygqSkJgL6VSfIZ8+U0OoQarllAQ38rhfZCweU0Rd/ilFmkW9362l6vP0sl/SB
+         Bs4h9p6yuddLg==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXL7ZtY8kBx=RHsRy1JECsGPDe+E3SM=--w7bUHMYHFBQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1628850207.git.geert+renesas@glider.be>
+References: <cover.1628850207.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.15 (take two)
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Tue, 24 Aug 2021 11:38:37 -0700
+Message-ID: <162983031799.1317818.3735529566901467357@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 2021-08-24 14:55, Geert Uytterhoeven wrote:
-> Hi Robin,
-> 
-> On Fri, Aug 20, 2021 at 3:22 PM Robin Murphy <robin.murphy@arm.com> wrote:
->> Previously io-pgtable merely passed the iommu_iotlb_gather pointer
->> through to helpers, but now it has grown its own direct dereference.
->> This turns out to break the build for !IOMMU_API configs where the
->> structure only has a dummy definition. It will probably also crash
->> drivers who don't use the gather mechanism and simply pass in NULL.
->>
->> Wrap this dereference in a suitable helper which can both be stubbed
->> out for !IOMMU_API and encapsulate a NULL check otherwise.
->>
->> Fixes: 7a7c5badf858 ("iommu: Indicate queued flushes via gather data")
-> 
-> Is this the right Fixes tag?
+Quoting Geert Uytterhoeven (2021-08-13 03:28:14)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit d28b1e03dc8d1070538ca3ea3f4e6732109ddf=
+42:
+>=20
+>   clk: renesas: r9a07g044: Add entry for fixed clock P0_DIV2 (2021-07-26 =
+14:15:23 +0200)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.15-tag2
+>=20
+> for you to fetch changes up to e8425dd55abb12881694875972465f40bb0fe41b:
+>=20
+>   clk: renesas: Make CLK_R9A06G032 invisible (2021-08-13 12:05:41 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Conceptually, yes - that's where the new member was introduced, so 
-that's where its accessor should have been introduced as well, had I not 
-managed to overlook the structure being conditionally defined and assume 
-it didn't need anything special doing. Of course it's not going to make 
-much difference in practice since they are immediately adjacent commits 
-anyway, but it felt right to point at where I made the fundamental 
-mistake rather than where the symptom appeared :)
-
-> The build issue was introduced by:
-> Fixes: a8e5f04458c4e496 ("iommu/io-pgtable: Remove non-strict quirk")
-> 
->> Reported-by: kernel test robot <lkp@intel.com>
->> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> 
-> Thanks, this fixes the build issues I was seeing.
-> 
-> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Thanks for confirming!
-
-Robin.
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
+Thanks. Pulled into clk-next
