@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+X-Spam-Status: No, score=-17.3 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2CAC4320E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Aug 2021 20:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7028DC432BE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Aug 2021 20:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1D3961004
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Aug 2021 20:27:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FB1C60FE7
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 26 Aug 2021 20:41:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232495AbhHZU23 (ORCPT
+        id S234338AbhHZUmW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 26 Aug 2021 16:28:29 -0400
-Received: from mxout02.lancloud.ru ([45.84.86.82]:60448 "EHLO
-        mxout02.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229916AbhHZU23 (ORCPT
+        Thu, 26 Aug 2021 16:42:22 -0400
+Received: from mxout04.lancloud.ru ([45.84.86.114]:49858 "EHLO
+        mxout04.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232115AbhHZUmW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 26 Aug 2021 16:28:29 -0400
+        Thu, 26 Aug 2021 16:42:22 -0400
 Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout02.lancloud.ru 0B9572077525
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout04.lancloud.ru 7110E208B737
 Received: from LanCloud
 Received: from LanCloud
 Received: from LanCloud
-Subject: Re: [PATCH net-next 07/13] ravb: Factorise ravb_ring_init function
+Subject: Re: [PATCH net-next 08/13] ravb: Factorise ravb_rx function
 To:     Biju Das <biju.das.jz@bp.renesas.com>,
         "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
@@ -40,15 +40,15 @@ CC:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>
 References: <20210825070154.14336-1-biju.das.jz@bp.renesas.com>
- <20210825070154.14336-8-biju.das.jz@bp.renesas.com>
+ <20210825070154.14336-9-biju.das.jz@bp.renesas.com>
 From:   Sergey Shtylyov <s.shtylyov@omp.ru>
 Organization: Open Mobile Platform
-Message-ID: <07c7fe9c-6b72-0603-c9b0-f23bc249b573@omp.ru>
-Date:   Thu, 26 Aug 2021 23:27:38 +0300
+Message-ID: <38945153-ae69-2817-91c3-3cec6ac9350d@omp.ru>
+Date:   Thu, 26 Aug 2021 23:41:27 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
  Thunderbird/78.10.1
 MIME-Version: 1.0
-In-Reply-To: <20210825070154.14336-8-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210825070154.14336-9-biju.das.jz@bp.renesas.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -61,17 +61,27 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 On 8/25/21 10:01 AM, Biju Das wrote:
 
-> The ravb_ring_init function uses an extended descriptor in RX for
-> R-Car and normal descriptor for RZ/G2L. Add a helper function
-> for RX ring buffer allocation to support later SoC.
+> R-Car uses an extended descriptor in RX whereas, RZ/G2L uses
+> normal descriptor in RX. Factorise the ravb_rx function to
+> support the later SoC.
 > 
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-   Here as well...
 [...]
+> diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+> index 148c974499b4..1cace5324261 100644
+> --- a/drivers/net/ethernet/renesas/ravb_main.c
+> +++ b/drivers/net/ethernet/renesas/ravb_main.c
+> @@ -562,8 +562,7 @@ static void ravb_rx_csum(struct sk_buff *skb)
+>  	skb_trim(skb, skb->len - sizeof(__sum16));
+>  }
+>  
+> -/* Packet receive function for Ethernet AVB */
+> -static bool ravb_rx(struct net_device *ndev, int *quota, int q)
+> +static bool ravb_rcar_rx(struct net_device *ndev, int *quota, int q)
 
-   Seems sane, so:
+   Mhm, isn't this too large a function to duplicate it all for RZ-G2?
 
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+[...]
 
 MBR, Sergey
