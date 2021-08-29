@@ -2,73 +2,85 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=BAYES_00,INCLUDES_CR_TRAILER,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F46CC4320A
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 29 Aug 2021 04:28:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AF8EC432BE
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 29 Aug 2021 16:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77E6A60F35
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 29 Aug 2021 04:28:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED8E960F46
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 29 Aug 2021 16:58:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230185AbhH2E32 (ORCPT
+        id S232245AbhH2Q7k (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 29 Aug 2021 00:29:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45170 "EHLO mail.kernel.org"
+        Sun, 29 Aug 2021 12:59:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S229534AbhH2E31 (ORCPT
+        id S229467AbhH2Q7j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 29 Aug 2021 00:29:27 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 505F3608FB;
-        Sun, 29 Aug 2021 04:28:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1630211316;
-        bh=F2YXzv8pODNGbftZpUm69vfaS8yG+ciIbCSP0Nnc0O8=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kYpdxOWShbK+JOr0P4qmSp+Pn1Z08aSiFdqbZXQBopjCCiiflYkbIMqpZWrlUEM54
-         1HPMNvUBooXUk6bUBXASVINPreRK44xzyXlLMSTOG2fedJRm89nbDRUrg348qp8PUz
-         O5xqiQ6QskPE6XLGcays5BrIM2VmyUfTtB3AGIsd1u6H9qFkSS0jbi9YZn35W4lcnK
-         K+YQRz3iofrsMGWPDrwlFcFC2iOfVS4TEhX6tQI4MFYa0kkkw51dgm/JAVt9aExuGc
-         uRwpd7qEH0LcdeeRJ4DSgbljyG1PuYEhvD56W85Fh03HkgUQb9cWjWfQQ8dOB0ty+4
-         h6EtGMe4wZgew==
-Content-Type: text/plain; charset="utf-8"
+        Sun, 29 Aug 2021 12:59:39 -0400
+Received: from jic23-huawei (cpc108967-cmbg20-2-0-cust86.5-4.cable.virginm.net [81.101.6.87])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC74760698;
+        Sun, 29 Aug 2021 16:58:43 +0000 (UTC)
+Date:   Sun, 29 Aug 2021 18:01:58 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Colin King <colin.king@canonical.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] iio: adc: Fix -EBUSY timeout error return
+Message-ID: <20210829180136.58a11601@jic23-huawei>
+In-Reply-To: <CA+V-a8ugKC8z2=0usUca4eYFLTHEorxdtmdmbE5vXZDo_Ob5vA@mail.gmail.com>
+References: <20210817172111.495897-1-colin.king@canonical.com>
+        <OSZPR01MB7019DD199CB1B9A4521A3C28AAFF9@OSZPR01MB7019.jpnprd01.prod.outlook.com>
+        <CAHp75VdWFTi4oSWG45NunJwpe=LdMhAMEAEJh21ML2QXszgS+A@mail.gmail.com>
+        <CA+V-a8ugKC8z2=0usUca4eYFLTHEorxdtmdmbE5vXZDo_Ob5vA@mail.gmail.com>
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAMuHMdV5iTg6yyM5E8OH6basnTxmvS9UrY2V+oxDrBe1kfhiOw@mail.gmail.com>
-References: <20210826141721.495067-1-aford173@gmail.com> <CAMuHMdV5iTg6yyM5E8OH6basnTxmvS9UrY2V+oxDrBe1kfhiOw@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: rcar-usb2-clock-sel: Fix kernel NULL pointer dereference
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Dinghao Liu <dinghao.liu@zju.edu.cn>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-To:     Adam Ford <aford173@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Sat, 28 Aug 2021 21:28:35 -0700
-Message-ID: <163021131515.2676726.6123327351640008838@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2021-08-26 10:42:29)
-> On Thu, Aug 26, 2021 at 4:17 PM Adam Ford <aford173@gmail.com> wrote:
-> > The probe was manually passing NULL instead of dev to devm_clk_hw_regis=
-ter.
-> > This caused a Unable to handle kernel NULL pointer dereference error.
-> > Fix this by passing 'dev'.
-> >
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
->=20
-> Fixes: a20a40a8bbc2cf4b ("clk: renesas: rcar-usb2-clock-sel: Fix error
-> handling in .probe()")
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->=20
-> Mike/Stephen: Can you please take this one directly, as we're
-> already at rc7.
-> Thanks!
->=20
+On Thu, 19 Aug 2021 18:39:02 +0100
+"Lad, Prabhakar" <prabhakar.csengg@gmail.com> wrote:
 
-It looks highly unlikely to make the cut but I'll try to send it off to
-Linus tomorrow.
+> On Thu, Aug 19, 2021 at 6:21 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> >
+> > On Wed, Aug 18, 2021 at 6:51 PM Prabhakar Mahadev Lad
+> > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> >  
+> > > with the subject changed to above: Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>  
+> >  
+> Again with the above fixed:
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+> > Always put your tags in a single tag per single line. This will allow
+> > tools to catch them up automatically.
+> >  
+> My bad, fixed that now.
+
+Tweaked patch name as suggested and applied to the fixes-togreg branch of iio.git
+
+Too late to sneak this in pre merge window, so I'll do it after rc1.
+
+Thanks,
+
+Jonathan
+
+> 
+> Cheers,
+> Prabhakar
+
