@@ -7,37 +7,38 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237A6C4320E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Sep 2021 09:17:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F015C43216
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Sep 2021 09:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0C7D960525
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Sep 2021 09:17:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1836660462
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  1 Sep 2021 09:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243418AbhIAJSc (ORCPT
+        id S243437AbhIAJSe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 1 Sep 2021 05:18:32 -0400
-Received: from www.zeus03.de ([194.117.254.33]:37090 "EHLO mail.zeus03.de"
+        Wed, 1 Sep 2021 05:18:34 -0400
+Received: from www.zeus03.de ([194.117.254.33]:37118 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233043AbhIAJSc (ORCPT
+        id S243428AbhIAJSd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 1 Sep 2021 05:18:32 -0400
+        Wed, 1 Sep 2021 05:18:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=7HGclFfH6wRdPT
-        zvFkwJj+XB89L8G7i3GPuu1iq+C44=; b=J3QTMzAj/4AssTiE4fuu+pRuLMzVky
-        orsbbLeBpdmGkEBYNiByCO3Jh3C5/aazzKPMp2FOCZnutLWib+zwi8b7yrjQ0mWg
-        dBQEM96P4KgLq4lG/g+Hsk+HYjXlXBIELhMJ0jVmcMiPDp2y4CYcASUIdUholj0G
-        bJaHMAixM7eq4=
-Received: (qmail 2978697 invoked from network); 1 Sep 2021 11:17:34 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Sep 2021 11:17:34 +0200
-X-UD-Smtp-Session: l3s3148p1@Hb5fievKUoMgARa4Rc4DAUbRC24QnL0V
+        :mime-version:content-transfer-encoding; s=k1; bh=tz22aSvl3Y+gmO
+        +Ta2RaeF1iNeG4aEnPWG95FTFcIug=; b=iqO6IJhitZLa0+AS6V7j2Vfsgvgeln
+        8hpcbn2bKoXwGGhJkAMv0+NPtkm5B932bMNICeOgaQu/YlksGrxy2BixiLU4OfLv
+        enSut2DBhWILY38vUukJTHZQKcU5fV6S/8XqEox7gVATe66SHSdJt25KRt1qk5Ax
+        Bklizt9/lMbnw=
+Received: (qmail 2978758 invoked from network); 1 Sep 2021 11:17:35 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Sep 2021 11:17:35 +0200
+X-UD-Smtp-Session: l3s3148p1@nzBvievKVoMgARa4Rc4DAUbRC24QnL0V
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [PATCH 1/3] clk: renesas: r8a779a0: Add TPU clock
-Date:   Wed,  1 Sep 2021 11:17:23 +0200
-Message-Id: <20210901091725.35610-2-wsa+renesas@sang-engineering.com>
+        Duc Nguyen <duc.nguyen.ub@renesas.com>,
+        Wolfram Sang <wsa@kernel.org>
+Subject: [RFC PATCH 3/3] arm64: dts: r8a779a0-falcon-cpu: Add TPU support
+Date:   Wed,  1 Sep 2021 11:17:25 +0200
+Message-Id: <20210901091725.35610-4-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210901091725.35610-1-wsa+renesas@sang-engineering.com>
 References: <20210901091725.35610-1-wsa+renesas@sang-engineering.com>
@@ -47,23 +48,46 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+From: Duc Nguyen <duc.nguyen.ub@renesas.com>
 
-diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-index acaf5a93f1d3..7bef98f1cd7f 100644
---- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-@@ -202,6 +202,7 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
- 	DEF_MOD("tmu2",		715,	R8A779A0_CLK_S1D4),
- 	DEF_MOD("tmu3",		716,	R8A779A0_CLK_S1D4),
- 	DEF_MOD("tmu4",		717,	R8A779A0_CLK_S1D4),
-+	DEF_MOD("tpu0",		718,	R8A779A0_CLK_S1D8),
- 	DEF_MOD("vin00",	730,	R8A779A0_CLK_S1D1),
- 	DEF_MOD("vin01",	731,	R8A779A0_CLK_S1D1),
- 	DEF_MOD("vin02",	800,	R8A779A0_CLK_S1D1),
+This patch enables TPU channel 1 for the Falcon board.
+
+Signed-off-by: Duc Nguyen <duc.nguyen.ub@renesas.com>
+Signed-off-by: Wolfram Sang <wsa@kernel.org>
+---
+
+Do we want this activated upstream? I think it is nice to have.
+
+ arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+index a0a1a1da0d87..cf777c2799e8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+@@ -175,6 +175,11 @@ scif_clk_pins: scif_clk {
+ 		groups = "scif_clk";
+ 		function = "scif_clk";
+ 	};
++
++	tpu_pin: tpu {
++		groups = "tpu_to1";
++		function = "tpu";
++	};
+ };
+ 
+ &rwdt {
+@@ -193,3 +198,10 @@ &scif0 {
+ &scif_clk {
+ 	clock-frequency = <24000000>;
+ };
++
++&tpu {
++	pinctrl-0 = <&tpu_pin>;
++	pinctrl-names = "default";
++
++	status = "okay";
++};
 -- 
 2.30.2
 
