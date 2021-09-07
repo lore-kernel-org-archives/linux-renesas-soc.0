@@ -2,122 +2,62 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4323BC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Sep 2021 08:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4BFC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Sep 2021 08:30:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2236E60F45
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Sep 2021 08:30:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AF4D60F6D
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  7 Sep 2021 08:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242286AbhIGIbt (ORCPT
+        id S242048AbhIGIbt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 7 Sep 2021 04:31:49 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:60072 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S242048AbhIGIbr (ORCPT
+Received: from relmlor2.renesas.com ([210.160.252.172]:26606 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S238139AbhIGIbr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 7 Sep 2021 04:31:47 -0400
 X-IronPort-AV: E=Sophos;i="5.85,274,1624287600"; 
-   d="scan'208";a="93151329"
+   d="scan'208";a="93225460"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Sep 2021 17:30:40 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 07 Sep 2021 17:30:40 +0900
 Received: from localhost.localdomain (unknown [10.166.14.185])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 9A0EF400D0FA;
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 61796400C4FB;
         Tue,  7 Sep 2021 17:30:40 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     joro@8bytes.org, will@kernel.org, robh+dt@kernel.org
 Cc:     iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 2/2] iommu/ipmmu-vmsa: Add support for r8a779a0
-Date:   Tue,  7 Sep 2021 17:30:20 +0900
-Message-Id: <20210907083020.907648-3-yoshihiro.shimoda.uh@renesas.com>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 0/2] iommu/ipmmu-vmsa: Add support for r8a779a0
+Date:   Tue,  7 Sep 2021 17:30:18 +0900
+Message-Id: <20210907083020.907648-1-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20210907083020.907648-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20210907083020.907648-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for r8a779a0 (R-Car V3U). The IPMMU hardware design
-of this SoC differs than others. So, add a new ipmmu_features for it.
+This patch series adds support for r8a779a0 (R-Car V3U).
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/iommu/ipmmu-vmsa.c | 29 +++++++++++++++++++++++++----
- 1 file changed, 25 insertions(+), 4 deletions(-)
+Changes from v1:
+ - Add {Ack,Review}ed-by in the patch 1.
+ - Add support 16 contexts in the patch 2.
+ - Add Reviewed-by in the patch 2.
+ https://lore.kernel.org/all/20210901102705.556093-1-yoshihiro.shimoda.uh@renesas.com/
 
-diff --git a/drivers/iommu/ipmmu-vmsa.c b/drivers/iommu/ipmmu-vmsa.c
-index d38ff29a76e8..d8fe5ba0cb23 100644
---- a/drivers/iommu/ipmmu-vmsa.c
-+++ b/drivers/iommu/ipmmu-vmsa.c
-@@ -33,10 +33,10 @@
- #define arm_iommu_detach_device(...)	do {} while (0)
- #endif
- 
--#define IPMMU_CTX_MAX		8U
-+#define IPMMU_CTX_MAX		16U
- #define IPMMU_CTX_INVALID	-1
- 
--#define IPMMU_UTLB_MAX		48U
-+#define IPMMU_UTLB_MAX		64U
- 
- struct ipmmu_features {
- 	bool use_ns_alias_offset;
-@@ -189,8 +189,12 @@ static void ipmmu_write(struct ipmmu_vmsa_device *mmu, unsigned int offset,
- static unsigned int ipmmu_ctx_reg(struct ipmmu_vmsa_device *mmu,
- 				  unsigned int context_id, unsigned int reg)
- {
--	return mmu->features->ctx_offset_base +
--	       context_id * mmu->features->ctx_offset_stride + reg;
-+	unsigned int base = mmu->features->ctx_offset_base;
-+
-+	if (context_id > 7)
-+		base += 0x800 - 8 * 0x40;
-+
-+	return base + context_id * mmu->features->ctx_offset_stride + reg;
- }
- 
- static u32 ipmmu_ctx_read(struct ipmmu_vmsa_device *mmu,
-@@ -922,6 +926,20 @@ static const struct ipmmu_features ipmmu_features_rcar_gen3 = {
- 	.utlb_offset_base = 0,
- };
- 
-+static const struct ipmmu_features ipmmu_features_r8a779a0 = {
-+	.use_ns_alias_offset = false,
-+	.has_cache_leaf_nodes = true,
-+	.number_of_contexts = 16,
-+	.num_utlbs = 64,
-+	.setup_imbuscr = false,
-+	.twobit_imttbcr_sl0 = true,
-+	.reserved_context = true,
-+	.cache_snoop = false,
-+	.ctx_offset_base = 0x10000,
-+	.ctx_offset_stride = 0x1040,
-+	.utlb_offset_base = 0x3000,
-+};
-+
- static const struct of_device_id ipmmu_of_ids[] = {
- 	{
- 		.compatible = "renesas,ipmmu-vmsa",
-@@ -959,6 +977,9 @@ static const struct of_device_id ipmmu_of_ids[] = {
- 	}, {
- 		.compatible = "renesas,ipmmu-r8a77995",
- 		.data = &ipmmu_features_rcar_gen3,
-+	}, {
-+		.compatible = "renesas,ipmmu-r8a779a0",
-+		.data = &ipmmu_features_r8a779a0,
- 	}, {
- 		/* Terminator */
- 	},
+Yoshihiro Shimoda (2):
+  dt-bindings: iommu: renesas,ipmmu-vmsa: add r8a779a0 support
+  iommu/ipmmu-vmsa: Add support for r8a779a0
+
+ .../bindings/iommu/renesas,ipmmu-vmsa.yaml    |  1 +
+ drivers/iommu/ipmmu-vmsa.c                    | 29 ++++++++++++++++---
+ 2 files changed, 26 insertions(+), 4 deletions(-)
+
 -- 
 2.25.1
 
