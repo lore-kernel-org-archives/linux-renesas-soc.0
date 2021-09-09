@@ -5,36 +5,36 @@ X-Spam-Level:
 X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D621C43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D007C43219
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 08:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 36A456113E
+	by mail.kernel.org (Postfix) with ESMTP id 844A261167
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 08:50:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232043AbhIIIvJ (ORCPT
+        id S232348AbhIIIvK (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 04:51:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53322 "EHLO
+        Thu, 9 Sep 2021 04:51:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231992AbhIIIvG (ORCPT
+        with ESMTP id S232065AbhIIIvG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 9 Sep 2021 04:51:06 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6ED11C0617A8
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8260FC0617AF
         for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Sep 2021 01:49:56 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:7d44:646d:3ffb:9bbf])
-        by albert.telenet-ops.be with bizsmtp
-        id rkpq2500Z3eH4vN06kpqrR; Thu, 09 Sep 2021 10:49:54 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id rkpr250073eH4vN01kprFC; Thu, 09 Sep 2021 10:49:54 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mOFkj-003Cqt-Ur; Thu, 09 Sep 2021 10:49:49 +0200
+        id 1mOFkk-003Cqr-De; Thu, 09 Sep 2021 10:49:50 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mOFkj-00Aj5q-8A; Thu, 09 Sep 2021 10:49:49 +0200
+        id 1mOFkj-00Aj5c-6c; Thu, 09 Sep 2021 10:49:49 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
@@ -48,9 +48,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
         devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 7/9] arm64: dts: renesas: Add compatible properties to AR8031 Ethernet PHYs
-Date:   Thu,  9 Sep 2021 10:49:43 +0200
-Message-Id: <3f1b58756f149f0c634c66abaecc88e699f4c3cc.1631174218.git.geert+renesas@glider.be>
+Subject: [PATCH 5/9] ARM: dts: renesas: Add compatible properties to RTL8201FL Ethernet PHYs
+Date:   Thu,  9 Sep 2021 10:49:41 +0200
+Message-Id: <a23eca16869457684b0300379233e335b4e2047e.1631174218.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1631174218.git.geert+renesas@glider.be>
 References: <cover.1631174218.git.geert+renesas@glider.be>
@@ -60,28 +60,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add compatible values to Ethernet PHY subnodes representing Atheros
-AR8031 PHYs on RZ/G2 boards.  This allows software to identify the PHY
-model at any time, regardless of the state of the PHY reset line.
+Add compatible values to Ethernet PHY subnodes representing Realtek
+RTL8201FL PHYs on RZ/A2 boards.  This allows software to identify the
+PHY model at any time, regardless of the state of the PHY reset line.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi | 2 ++
+ arch/arm/boot/dts/r7s9210-rza2mevb.dts | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-index 090dc9c4f57b5be1..a06cf770c12faa90 100644
---- a/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/beacon-renesom-som.dtsi
-@@ -58,6 +58,8 @@ &avb {
- 	status = "okay";
- 
- 	phy0: ethernet-phy@0 {
-+		compatible = "ethernet-phy-id004d.d074",
+diff --git a/arch/arm/boot/dts/r7s9210-rza2mevb.dts b/arch/arm/boot/dts/r7s9210-rza2mevb.dts
+index ececb1bc995a5918..9c0d9686fe01133b 100644
+--- a/arch/arm/boot/dts/r7s9210-rza2mevb.dts
++++ b/arch/arm/boot/dts/r7s9210-rza2mevb.dts
+@@ -100,6 +100,8 @@ &ether1 {
+ 	renesas,no-ether-link;
+ 	phy-handle = <&phy1>;
+ 	phy1: ethernet-phy@1 {
++		compatible = "ethernet-phy-id001c.c816",
 +			     "ethernet-phy-ieee802.3-c22";
  		reg = <0>;
- 		interrupt-parent = <&gpio2>;
- 		interrupts = <11 IRQ_TYPE_LEVEL_LOW>;
+ 	};
+ };
 -- 
 2.25.1
 
