@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D007C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 08:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FD6C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 08:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 844A261167
+	by mail.kernel.org (Postfix) with ESMTP id EDDFF61179
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 08:50:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232348AbhIIIvK (ORCPT
+        id S232065AbhIIIvM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 04:51:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53328 "EHLO
+        Thu, 9 Sep 2021 04:51:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232065AbhIIIvG (ORCPT
+        with ESMTP id S232139AbhIIIvG (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 9 Sep 2021 04:51:06 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8260FC0617AF
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Sep 2021 01:49:56 -0700 (PDT)
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71B62C061575
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Sep 2021 01:49:57 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:7d44:646d:3ffb:9bbf])
-        by laurent.telenet-ops.be with bizsmtp
-        id rkpr250073eH4vN01kprFC; Thu, 09 Sep 2021 10:49:54 +0200
+        by michel.telenet-ops.be with bizsmtp
+        id rkpq2500F3eH4vN06kpqq2; Thu, 09 Sep 2021 10:49:55 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mOFkk-003Cqr-De; Thu, 09 Sep 2021 10:49:50 +0200
+        id 1mOFkj-003Cqo-Ur; Thu, 09 Sep 2021 10:49:49 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mOFkj-00Aj5c-6c; Thu, 09 Sep 2021 10:49:49 +0200
+        id 1mOFkj-00Aj5F-4E; Thu, 09 Sep 2021 10:49:49 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Magnus Damm <magnus.damm@gmail.com>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
@@ -48,9 +48,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
         devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 5/9] ARM: dts: renesas: Add compatible properties to RTL8201FL Ethernet PHYs
-Date:   Thu,  9 Sep 2021 10:49:41 +0200
-Message-Id: <a23eca16869457684b0300379233e335b4e2047e.1631174218.git.geert+renesas@glider.be>
+Subject: [PATCH 2/9] ARM: dts: renesas: Add compatible properties to KSZ8081 Ethernet PHYs
+Date:   Thu,  9 Sep 2021 10:49:38 +0200
+Message-Id: <ec5c7dadf3c0fe5e47dfbae72fb435047203ad06.1631174218.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1631174218.git.geert+renesas@glider.be>
 References: <cover.1631174218.git.geert+renesas@glider.be>
@@ -60,28 +60,31 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add compatible values to Ethernet PHY subnodes representing Realtek
-RTL8201FL PHYs on RZ/A2 boards.  This allows software to identify the
-PHY model at any time, regardless of the state of the PHY reset line.
+Add compatible values to Ethernet PHY subnodes representing Micrel
+KSZ8081 PHYs on RZ/G1 boards. This allows software to identify the PHY
+model at any time, regardless of the state of the PHY reset line.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/boot/dts/r7s9210-rza2mevb.dts | 2 ++
+I could not verify the PHY revision number (least significant nibble of
+the ID), due to lack of hardware.
+---
+ arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/boot/dts/r7s9210-rza2mevb.dts b/arch/arm/boot/dts/r7s9210-rza2mevb.dts
-index ececb1bc995a5918..9c0d9686fe01133b 100644
---- a/arch/arm/boot/dts/r7s9210-rza2mevb.dts
-+++ b/arch/arm/boot/dts/r7s9210-rza2mevb.dts
-@@ -100,6 +100,8 @@ &ether1 {
- 	renesas,no-ether-link;
- 	phy-handle = <&phy1>;
+diff --git a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+index 2bcb229844abc5c2..33db5938f2d45c6e 100644
+--- a/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
++++ b/arch/arm/boot/dts/r8a7742-iwg21d-q7-dbcm-ca.dts
+@@ -66,6 +66,8 @@ &ether {
+ 	status = "okay";
+ 
  	phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id001c.c816",
++		compatible = "ethernet-phy-id0022.1560",
 +			     "ethernet-phy-ieee802.3-c22";
- 		reg = <0>;
+ 		reg = <1>;
+ 		micrel,led-mode = <1>;
  	};
- };
 -- 
 2.25.1
 
