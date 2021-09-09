@@ -2,101 +2,100 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 296B1C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 12:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB2EC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 13:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 151A06113E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 12:16:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96D7D60ED8
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 13:02:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1344117AbhIIMR1 (ORCPT
+        id S242975AbhIINDM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 08:17:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47410 "EHLO mail.kernel.org"
+        Thu, 9 Sep 2021 09:03:12 -0400
+Received: from www.zeus03.de ([194.117.254.33]:39126 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1351217AbhIIMJn (ORCPT
+        id S1355173AbhIIM5P (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Sep 2021 08:09:43 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 7442461245;
-        Thu,  9 Sep 2021 11:48:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631188093;
-        bh=JCUyILyV+6ACnUJ0rjVdIkqYyZqashxOxCmyeCo/XRk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h6H7OTvYtpEIhEqiIBvND4fCn4ixDLyYSWG5u07hujcKoEum6xrGhw9TN/MYTgkpl
-         Jqcv1VZykby/c18dfeTwNVKmQiur+EVfjz45mZgEcrcr3cYWRwfQqt7jU5cfugiSnI
-         dSGH7QpG0VYva9gzm+dJzRX2cz3tTkaTTUQ9JZBbVdivXic9xtCI/dvxxICyUjdYCM
-         +bw1x+NgzMsFVdHIolvjoYmak+NoB1V55cPbbywnXCnVFhdkwJ38c/mE+h4WncyFyx
-         /worvX5GO9Jr4b+C4DjzNQ/eRPfgsGUJqdf3d7YPAGFABnHRD7VXDEYbV79C011vfT
-         7jMVN8kXyGGTA==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.13 076/219] drm: rcar-du: Shutdown the display on system shutdown
-Date:   Thu,  9 Sep 2021 07:44:12 -0400
-Message-Id: <20210909114635.143983-76-sashal@kernel.org>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210909114635.143983-1-sashal@kernel.org>
-References: <20210909114635.143983-1-sashal@kernel.org>
+        Thu, 9 Sep 2021 08:57:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=MxucuO+OF4EIO9fKthYyVgp/RC4A
+        aEbo2isabOQHXvE=; b=t9bj8hETgXv1EbaLpMdMQItfjJudYYbOz1TSkTM3nxah
+        IpdoSVSGZBPVB59z62TLX30ozDok/SYVT72paS2IXVG9e9UQJB9tcJA/oiL0HW1q
+        b3iOeUMAVV98eXlng7a6ePKM1AS52Beq/EoIUjFnsa4Y+YqxC1NQKVsSz3wJOEk=
+Received: (qmail 1570801 invoked from network); 9 Sep 2021 14:56:02 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 9 Sep 2021 14:56:02 +0200
+X-UD-Smtp-Session: l3s3148p1@flZphY/L6MkgARa4Rc+IAenyySDM4eeF
+Date:   Thu, 9 Sep 2021 14:56:02 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH] mmc: renesas_sdhi: fix regression with hard reset on old
+ SDHIs
+Message-ID: <YToEYkJHj/fkOT88@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux MMC List <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+References: <20210826082107.47299-1-wsa+renesas@sang-engineering.com>
+ <CAMuHMdUXc0oSCXJ-5QmPJz0VkX1Aib+ZAv8K2LN_fT1+5mocqw@mail.gmail.com>
+ <YSelsjPyswWCr7Nu@shikoro>
+ <CAPDyKFp2Ut4UJoRXPD4t+k1+ZfmT-CQZ3obNA_iPF6OA-t+T7g@mail.gmail.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="TjpFRUoUSmx+VWBg"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFp2Ut4UJoRXPD4t+k1+ZfmT-CQZ3obNA_iPF6OA-t+T7g@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-[ Upstream commit 015f2ebb93767d40c442e749642fffaf10316d78 ]
+--TjpFRUoUSmx+VWBg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-When the system shuts down or warm reboots, the display may be active,
-with the hardware accessing system memory. Upon reboot, the DDR will not
-be accessible, which may cause issues.
+Hi Ulf,
 
-Implement the platform_driver .shutdown() operation and shut down the
-display to fix this.
+> Apologize for the delay!
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/rcar-du/rcar_du_drv.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+I seriously hope you have been on vacation :)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index bfbff90588cb..43de3d8686e8 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -561,6 +561,13 @@ static int rcar_du_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static void rcar_du_shutdown(struct platform_device *pdev)
-+{
-+	struct rcar_du_device *rcdu = platform_get_drvdata(pdev);
-+
-+	drm_atomic_helper_shutdown(&rcdu->ddev);
-+}
-+
- static int rcar_du_probe(struct platform_device *pdev)
- {
- 	struct rcar_du_device *rcdu;
-@@ -617,6 +624,7 @@ static int rcar_du_probe(struct platform_device *pdev)
- static struct platform_driver rcar_du_platform_driver = {
- 	.probe		= rcar_du_probe,
- 	.remove		= rcar_du_remove,
-+	.shutdown	= rcar_du_shutdown,
- 	.driver		= {
- 		.name	= "rcar-du",
- 		.pm	= &rcar_du_pm_ops,
--- 
-2.30.2
+> I have applied it for fixes (v5.15) and added a stable tag, hope that's okay.
 
+Sure, thanks a lot!
+
+All the best,
+
+   Wolfram
+
+
+--TjpFRUoUSmx+VWBg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmE6BGIACgkQFA3kzBSg
+KbbRzw/9FzuxTxzZTZGPY3Cl20yNEQwOB2MxfeAmmnhx990Stf0lggXkhh9ldjqJ
+QcyEbSIebbALeUy4H+fiyhVde5tCp822adwPWYpQ/Lm4NusrVki4cGVuAdwuUGKy
+doVgj/82gAW0gDlNhcpzciwN0CE07jRL81heW9PBbtCajRCD34XhUJCT1uQaaFZn
+fIzN48jOAfvI1PI7nsBFVW6rFlVkhHQ2t09T5k973PTMLfHMTiJgdOz0eOVs4Z+H
+e+4y4I4ap9SHRSYwEKNfmSvEJ+x+YveOwX0WgsYjRqklMhjam1REwEAqB/Vtsf3k
+bK3CBU0tZTkcQWKE7STcMiwggL27xQgqvH9Pj4KyA86768+Mxu7LVju01VxcbBtd
+OHU66bssxespI19xbj6cznqcBGQuV4t82P5VMRr608N5wZDXFxmDoUuZ34J0EP+w
+3BBtznMLGufsU8SbC3hZRQN/2s5kh3S3Zwd+8MVd4AkvF/7xY18UgXKn1jhFT5Ih
+Fne+SOZmlKsVRBuAFVNGB2WXWO4ilYpefF4IOGraXHXSsgGcvwG82p6zazx8qGap
+oa1jgR4OZf5sOZf/hV8J6BS86WGx3R6HDEZLkb9LVRJAJPa84cDjuw8MOjMOBY07
+AuY+46u5RQEuaiQDchMMUYbIOPG5/2B49HtegmI4/PL2HFZ2uoY=
+=L3VF
+-----END PGP SIGNATURE-----
+
+--TjpFRUoUSmx+VWBg--
