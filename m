@@ -2,116 +2,158 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6D8C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 14:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D0FDC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 15:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 985D561222
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 14:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31E8260E05
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 15:22:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240206AbhIIOr2 (ORCPT
+        id S236649AbhIIPXY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 10:47:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47468 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S245352AbhIIOrG (ORCPT
+        Thu, 9 Sep 2021 11:23:24 -0400
+Received: from mail-vk1-f178.google.com ([209.85.221.178]:38849 "EHLO
+        mail-vk1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232656AbhIIPXX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Sep 2021 10:47:06 -0400
-Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41C72C04E203
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Sep 2021 07:36:07 -0700 (PDT)
-Received: by mail-lf1-x12c.google.com with SMTP id s10so4126457lfr.11
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Sep 2021 07:36:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=nfWuSYzOTRC59I6qOR1SYjFia3S5j3gRmLTCIne6P4w=;
-        b=gv1filuwoj0quZ94cE+P7k2HrzlA86DLQyp/KFSQcMddUY50QDF5PXQo4FKTrN+E1k
-         2oeIzYOsMUCIEGPP5DLfBk7GLfGmxF5arlIos/kVpbwIbokkO5H9JGrMGyfjbRrag+7b
-         GL4htI7Zup5tJ5I/oZwE8xpxRfWikWjh7G0Imo1V6rCvtO/F291ATBkUqqvNEeNWJYSt
-         jZiEZBfAXRTFGKAm7KH7JnTB7iTCHVN7xpoZCsDUmcixxPx3KAUlK+yE3bFXqsatW6kU
-         e5m8bkUZac7uz/zFTSrOmpEgYZXcse/3Z6deYhACYniCrX6oTmoJpMrD9q6sWpUWsVnl
-         nYcw==
+        Thu, 9 Sep 2021 11:23:23 -0400
+Received: by mail-vk1-f178.google.com with SMTP id k124so845408vke.5;
+        Thu, 09 Sep 2021 08:22:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=nfWuSYzOTRC59I6qOR1SYjFia3S5j3gRmLTCIne6P4w=;
-        b=vk1DSAopLEKJU7vgFhSHCdbHXteRpopRlIdkT2ifPYDXXffyCZAMKsilENLgW6bFDn
-         a17uQQS8qGEtgzvJfp3uDzN8SWGVDS8tTnSNNzSsTZx2ta/pEeAz9PRZV3NqC49SgM75
-         nTb/PPX6uI1JB/qGJ3WonBp+RhD7unuZ7kDUitlzVS3c4OOYhvKWfa3JrjkRYKSbv8GQ
-         Su6C9/ErSJhMFk23pRvYmUpFDHzzjSVeXIPhTU1MYlHhvQAErXnBXWRhrpAAShUPUSiv
-         Q7IRv5H0uunDqLgLfZMeldDGLgOzjtLTT52gqfQ0dTY62B2BgwWtWSozHOXCi6pYSIsS
-         1B7w==
-X-Gm-Message-State: AOAM5313cTwwG7DqS2sE5Vz5x+79okcFamCC2+/RlACVjr54i6fKTQhb
-        C2LpE9V3aUhGg9vJaqtFfS6Cva48eEc4wymEhjKhUkb2Xi4=
-X-Google-Smtp-Source: ABdhPJz72X997WnFW2qZfhlhkH7As4zPBZKYQUMqXXBf92uIDZfUoMxjzPK3+3Lgd8EFuR5giPXv2D7+L/O6lKYQcrQ=
-X-Received: by 2002:a05:6512:1043:: with SMTP id c3mr149496lfb.358.1631198165457;
- Thu, 09 Sep 2021 07:36:05 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=jMdZxCtACotNgu9fcSUDCRRpS8pLXrlQN9yO6urHYyg=;
+        b=w7+QDR7LdJfgxtECbMMqXzBUcJvueG743R0dwLScZiGXnLbTN869yZ2jpkbMC06QaK
+         ZiBbp/7NOeWhMxa69+xRohQQMdfm1E/QCjXLdxUhlyIJw28LNV4bwPvoH27tH7Hpb4xp
+         y04i9sHX8aNBzyIKx4HrnpHY6W52eQ+ZwjVbwruCukUgXJd9wtwscQCbRPnjoHZrMGW5
+         kevtVsWMd0f/AjBLo4w5gC93siiPVIIjZLdG3G+0H1/vUClhawh7D1XBlacCPHiEx3QX
+         fNkdzeeqkka/W7cFMR8mYIDIDKqsAO0n/LLoMQH24OfTxPzjV9VAZ8X+ya8fHS47XgTR
+         ZZ8w==
+X-Gm-Message-State: AOAM530ygaFR/a1e1XurGzFMapemUopC/+xVpjjKbTocvbZ8cj3j6/p7
+        5K5X8tPg1DnUE6FgyZuVZaMDfsyDXYhxY0FieDY=
+X-Google-Smtp-Source: ABdhPJy4AEeHXVpZsVsOzXcULq6QeeWxboOzc3kpSRyQieHqZC+uyu5zFuVnW1w0ubYQbeCDPw1BGP5cIZOPos8YxVI=
+X-Received: by 2002:a1f:2055:: with SMTP id g82mr1978381vkg.11.1631200933555;
+ Thu, 09 Sep 2021 08:22:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210831133349.18203-1-wsa+renesas@sang-engineering.com>
- <CAPDyKFptgZgDsKyHt-sO6yyRBm+LqeWkwOSoB9ED+b3QTPqD-w@mail.gmail.com> <YToGHbgakZdrY/4R@shikoro>
-In-Reply-To: <YToGHbgakZdrY/4R@shikoro>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 9 Sep 2021 16:35:28 +0200
-Message-ID: <CAPDyKFpRA79THAEsuuNj36UY5KtsMJRP4suUDJwQNjwTkfo+vw@mail.gmail.com>
-Subject: Re: [PATCH RFC] HACK: mmc: core: also abort tuning with CMD12 for SD
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+References: <20200624195811.435857-1-maz@kernel.org> <20200624195811.435857-8-maz@kernel.org>
+In-Reply-To: <20200624195811.435857-8-maz@kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 9 Sep 2021 17:22:01 +0200
+Message-ID: <CAMuHMdV+Ev47K5NO8XHsanSq5YRMCHn2gWAQyV-q2LpJVy9HiQ@mail.gmail.com>
+Subject: Re: [PATCH v2 07/17] irqchip/gic: Atomically update affinity
+To:     Marc Zyngier <maz@kernel.org>,
+        Russell King <linux@arm.linux.org.uk>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Sumit Garg <sumit.garg@linaro.org>,
+        Valentin Schneider <Valentin.Schneider@arm.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Android Kernel Team <kernel-team@android.com>,
+        stable <stable@vger.kernel.org>,
+        Magnus Damm <damm+renesas@opensource.se>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Thu, 9 Sept 2021 at 15:03, Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
->
-> Hi Ulf,
->
-> > > 1) despite not being mentioned in the spec, do we want to allow CMD12 to
-> > >    abort tuning for SD as well?
-> >
-> > It sounds like we should give it a try with the CMD12 command for SD
-> > cards as well.
->
-> I think so.
->
-> > > 2) If so, how to make sure not apply it to SDIO but SD only?
-> >
-> > For now, I am fine with adding a new bus_ops callback
-> > (->abort_tuning()) and then let mmc_send_abort_tuning() to call it.
->
-> Cool, I like that approach.
->
-> > I have some additional plans to improve life cycle issues for the
-> > bus_ops, but let's ignore that for now. I can deal with that later.
->
-> Ok, good.
->
-> > That said, mmc_send_abort_tuning() should no longer need to take the
-> > opcode as an in-parameter, thus some additional cleanup should be
-> > needed in a few host drivers because of that.
-> >
-> > Would that work?
->
-> I think that would work nicely. I will have a go with the above approach
-> and come back then. Or do you want to implement it?
+Hi Marc, Russell,
 
-Please go ahead, I can review it.
+On Wed, Jun 24, 2020 at 9:59 PM Marc Zyngier <maz@kernel.org> wrote:
+> The GIC driver uses a RMW sequence to update the affinity, and
+> relies on the gic_lock_irqsave/gic_unlock_irqrestore sequences
+> to update it atomically.
+>
+> But these sequences only expend into anything meaningful if
+> the BL_SWITCHER option is selected, which almost never happens.
+>
+> It also turns out that using a RMW and locks is just as silly,
+> as the GIC distributor supports byte accesses for the GICD_TARGETRn
+> registers, which when used make the update atomic by definition.
+>
+> Drop the terminally broken code and replace it by a byte write.
+>
+> Fixes: 04c8b0f82c7d ("irqchip/gic: Make locking a BL_SWITCHER only feature")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
 
->
-> Thanks and happy hacking,
->
->    Wolfram
->
+Thanks for your patch, which is now commit 005c34ae4b44f085
+("irqchip/gic: Atomically update affinity"), to which I bisected a hard
+lock-up during boot on the Renesas EMMA Mobile EV2-based KZM-A9-Dual
+board, which has a dual Cortex-A9 with PL390.
 
-Kind regards
-Uffe
+Despite the ARM Generic Interrupt Controller Architecture Specification
+(both version 1.0 and 2.0) stating that the Interrupt Processor Targets
+Registers are byte-accessible, the EMMA Mobile EV2 User's Manual
+states that the interrupt registers can be accessed via the APB bus,
+in 32-bit units.  Using byte accesses locks up the system.
+
+Unfortunately I only have remote access to the board showing the
+issue.  I did check that adding the writeb_relaxed() before the
+writel_relaxed() that was used before also causes a lock-up, so the
+issue is not an endian mismatch.
+Looking at the driver history, these registers have always been
+accessed using 32-bit accesses before.  As byte accesses lead
+indeed to simpler code, I'm wondering if they had been tried before,
+and caused issues before?
+
+Since you said the locking was bogus before, due to the reliance on
+the BL_SWITCHER option, I'm not suggesting a plain revert, but I'm
+wondering what kind of locking you suggest to use instead?
+
+Thanks for your comments!
+
+> --- a/drivers/irqchip/irq-gic.c
+> +++ b/drivers/irqchip/irq-gic.c
+> @@ -329,10 +329,8 @@ static int gic_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu)
+>  static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+>                             bool force)
+>  {
+> -       void __iomem *reg = gic_dist_base(d) + GIC_DIST_TARGET + (gic_irq(d) & ~3);
+> -       unsigned int cpu, shift = (gic_irq(d) % 4) * 8;
+> -       u32 val, mask, bit;
+> -       unsigned long flags;
+> +       void __iomem *reg = gic_dist_base(d) + GIC_DIST_TARGET + gic_irq(d);
+> +       unsigned int cpu;
+>
+>         if (!force)
+>                 cpu = cpumask_any_and(mask_val, cpu_online_mask);
+> @@ -342,13 +340,7 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+>         if (cpu >= NR_GIC_CPU_IF || cpu >= nr_cpu_ids)
+>                 return -EINVAL;
+>
+> -       gic_lock_irqsave(flags);
+> -       mask = 0xff << shift;
+> -       bit = gic_cpu_map[cpu] << shift;
+> -       val = readl_relaxed(reg) & ~mask;
+> -       writel_relaxed(val | bit, reg);
+> -       gic_unlock_irqrestore(flags);
+> -
+> +       writeb_relaxed(gic_cpu_map[cpu], reg);
+>         irq_data_update_effective_affinity(d, cpumask_of(cpu));
+>
+>         return IRQ_SET_MASK_OK_DONE;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
