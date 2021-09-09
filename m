@@ -2,199 +2,147 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-15.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4DD6C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 08:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE03C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 08:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D10BA6113E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 08:50:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D77760FC0
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Sep 2021 08:54:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232294AbhIIIvR (ORCPT
+        id S232139AbhIIIzr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 04:51:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53348 "EHLO
+        Thu, 9 Sep 2021 04:55:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232273AbhIIIvI (ORCPT
+        with ESMTP id S231281AbhIIIzr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Sep 2021 04:51:08 -0400
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA214C06129F
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Sep 2021 01:49:57 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:7d44:646d:3ffb:9bbf])
-        by michel.telenet-ops.be with bizsmtp
-        id rkpq2500A3eH4vN06kpqpz; Thu, 09 Sep 2021 10:49:56 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mOFkj-003Cqn-Sb; Thu, 09 Sep 2021 10:49:49 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mOFkj-00Aj54-3N; Thu, 09 Sep 2021 10:49:49 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Adam Ford <aford173@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 1/9] ARM: dts: renesas: Add compatible properties to KSZ8041 Ethernet PHYs
-Date:   Thu,  9 Sep 2021 10:49:37 +0200
-Message-Id: <f9e26625924f90eff34fe6f6f02b15fa272c5d80.1631174218.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1631174218.git.geert+renesas@glider.be>
-References: <cover.1631174218.git.geert+renesas@glider.be>
+        Thu, 9 Sep 2021 04:55:47 -0400
+Received: from mail-ot1-x32f.google.com (mail-ot1-x32f.google.com [IPv6:2607:f8b0:4864:20::32f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6B2BC061757
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  9 Sep 2021 01:54:37 -0700 (PDT)
+Received: by mail-ot1-x32f.google.com with SMTP id m7-20020a9d4c87000000b0051875f56b95so1583661otf.6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 09 Sep 2021 01:54:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nUwxPK2qnu6YfMpPqLgyWf8PKUvt9ipGKjT6xs3uR2U=;
+        b=S3x8mkSe0GgTbDfxfxP0HaYii2BexzY72c8nSwNgE+CgK8uQ8haJWuL212g8B7Tf7p
+         HiiDZRW0Rf29a3+MIgSjFWFu/GYxDHYVmHnW/Stx/cbnYej8wMbiUo8wO/pUaGcTIJYR
+         2bCxft7WlwUg8778/PwAHIPW7PdVGiWhGzhc5gluLIQDT97nTZ2se/NgLcO+H83TIOgZ
+         fY+iuBE7fcnGLYjT+zo7PSahRd0tprNUG+JmbnON86vk5XkQZBKy8Qxva9xrx6XfMviA
+         etHYgjwOBAgUWoH2NNyJOjqBoM3YsqtmcKbXgmvQx2JNIlWkS/JJ0EPMUwUMpP/wg2a/
+         ldkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nUwxPK2qnu6YfMpPqLgyWf8PKUvt9ipGKjT6xs3uR2U=;
+        b=2Gt5aUNouMaVUiuTDITt4G4BsYrnmYOo76cf44fXX1bh68Vnb+zBSRJbBu0Z/uAkYC
+         O6HJZVqlKHZkqhpLrbXgH+K5UXMgCQPpuiUFvqwaiBEaAsJiyQJsJ341xeSQLoR8twxm
+         o8qDY6lFgwzj8U0kD8+tdjjj482ccKcyvVpePJtORzR1n30slSbwGCAfE1FlwsFE3zC0
+         a/yZYaGy0u7etBMry05FuXSl+gpHPx02OEUhTPnL4J06BNODTt07DrfRDqWFmkycbca2
+         mkZTK85XrjjARszv9CiC/+ZkcRfkyOlyVE/1FzoOPyk1aDB8+J0kTEY/CM5iDLw62oHd
+         muSw==
+X-Gm-Message-State: AOAM530CIV9CTvPnS1oA7tq2xFA94fPlgAwbw8i2bAJBvFpKBA6UsgQj
+        yffl+R0OU71sXltW0YgHq2Rdy7d2l5mgWOCam7HRvA==
+X-Google-Smtp-Source: ABdhPJy42YR/0tp9VhUslFmgSrIGKuKfDSEyPCb+BFSIwUmZSTBWxpIHxsdk8F1KXqlbkHkBdibH2a+Rng6rpxHR1g4=
+X-Received: by 2002:a9d:4e97:: with SMTP id v23mr1504061otk.236.1631177676988;
+ Thu, 09 Sep 2021 01:54:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20210831133349.18203-1-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20210831133349.18203-1-wsa+renesas@sang-engineering.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 9 Sep 2021 10:54:00 +0200
+Message-ID: <CAPDyKFptgZgDsKyHt-sO6yyRBm+LqeWkwOSoB9ED+b3QTPqD-w@mail.gmail.com>
+Subject: Re: [PATCH RFC] HACK: mmc: core: also abort tuning with CMD12 for SD
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     linux-mmc <linux-mmc@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add compatible values to Ethernet PHY subnodes representing Micrel
-KSZ8041 PHYs on RZ/G1 and R-Car Gen2 boards.  This allows software to
-identify the PHY model at any time, regardless of the state of the PHY
-reset line.
+On Tue, 31 Aug 2021 at 15:34, Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> We have various SanDisk cards which fail tuning to SDR104 unless we
+> allow a CMD12 also to be sent to abort a broken tuning. It is true that
+> the SD specs do not mention that CMD12 is allowed, but they also don't
+> say it is forbidden. And now reality tells that it is needed to make
+> some cards work. Other cards I tried did not regress.
+>
+> If we can agree to allow this for SD, then the problem is now SDIO which
+> does not support CMD12. mmc_card_sdio() does not work at this stage
+> because host->card is still NULL. Is there any other way to distinguish
+> SD and SDIO here?
+>
+> Not-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Hey guys,
+>
+> so, there are two questions here:
+> 1) despite not being mentioned in the spec, do we want to allow CMD12 to
+>    abort tuning for SD as well?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- arch/arm/boot/dts/r8a7743-sk-rzg1m.dts | 2 ++
- arch/arm/boot/dts/r8a7745-sk-rzg1e.dts | 2 ++
- arch/arm/boot/dts/r8a7790-lager.dts    | 2 ++
- arch/arm/boot/dts/r8a7790-stout.dts    | 2 ++
- arch/arm/boot/dts/r8a7791-koelsch.dts  | 2 ++
- arch/arm/boot/dts/r8a7791-porter.dts   | 2 ++
- arch/arm/boot/dts/r8a7793-gose.dts     | 2 ++
- arch/arm/boot/dts/r8a7794-alt.dts      | 2 ++
- arch/arm/boot/dts/r8a7794-silk.dts     | 2 ++
- 9 files changed, 18 insertions(+)
+It sounds like we should give it a try with the CMD12 command for SD
+cards as well.
 
-diff --git a/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts b/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-index 4ace117470e800f8..ce36cf404fa2b1c4 100644
---- a/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-+++ b/arch/arm/boot/dts/r8a7743-sk-rzg1m.dts
-@@ -69,6 +69,8 @@ &ether {
- 	status = "okay";
- 
- 	phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id0022.1537",
-+			     "ethernet-phy-ieee802.3-c22";
- 		reg = <1>;
- 		interrupt-parent = <&irqc>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-diff --git a/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts b/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-index 59d1a9bfab05a27e..4ab6d3fcc857f7db 100644
---- a/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-+++ b/arch/arm/boot/dts/r8a7745-sk-rzg1e.dts
-@@ -64,6 +64,8 @@ &ether {
- 	status = "okay";
- 
- 	phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id0022.1537",
-+			     "ethernet-phy-ieee802.3-c22";
- 		reg = <1>;
- 		interrupt-parent = <&irqc>;
- 		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index fa6d986b5d4632cf..57cd2fa722490b08 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -678,6 +678,8 @@ &ether {
- 	status = "okay";
- 
- 	phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id0022.1537",
-+			     "ethernet-phy-ieee802.3-c22";
- 		reg = <1>;
- 		interrupt-parent = <&irqc0>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-diff --git a/arch/arm/boot/dts/r8a7790-stout.dts b/arch/arm/boot/dts/r8a7790-stout.dts
-index d51f23572d7fc727..c802f9f13c18b837 100644
---- a/arch/arm/boot/dts/r8a7790-stout.dts
-+++ b/arch/arm/boot/dts/r8a7790-stout.dts
-@@ -199,6 +199,8 @@ &ether {
- 	status = "okay";
- 
- 	phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id0022.1537",
-+			     "ethernet-phy-ieee802.3-c22";
- 		reg = <1>;
- 		interrupt-parent = <&irqc0>;
- 		interrupts = <1 IRQ_TYPE_LEVEL_LOW>;
-diff --git a/arch/arm/boot/dts/r8a7791-koelsch.dts b/arch/arm/boot/dts/r8a7791-koelsch.dts
-index 2a8b6fd9095cceba..6e691b6cac05cdf4 100644
---- a/arch/arm/boot/dts/r8a7791-koelsch.dts
-+++ b/arch/arm/boot/dts/r8a7791-koelsch.dts
-@@ -637,6 +637,8 @@ &ether {
- 	status = "okay";
- 
- 	phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id0022.1537",
-+			     "ethernet-phy-ieee802.3-c22";
- 		reg = <1>;
- 		interrupt-parent = <&irqc0>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-diff --git a/arch/arm/boot/dts/r8a7791-porter.dts b/arch/arm/boot/dts/r8a7791-porter.dts
-index c6ef636965c16f39..38e2ab928707d99e 100644
---- a/arch/arm/boot/dts/r8a7791-porter.dts
-+++ b/arch/arm/boot/dts/r8a7791-porter.dts
-@@ -302,6 +302,8 @@ &ether {
- 	status = "okay";
- 
- 	phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id0022.1537",
-+			     "ethernet-phy-ieee802.3-c22";
- 		reg = <1>;
- 		interrupt-parent = <&irqc0>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-diff --git a/arch/arm/boot/dts/r8a7793-gose.dts b/arch/arm/boot/dts/r8a7793-gose.dts
-index 479e0fdf0c37311e..c8978f4f62e9f2dc 100644
---- a/arch/arm/boot/dts/r8a7793-gose.dts
-+++ b/arch/arm/boot/dts/r8a7793-gose.dts
-@@ -595,6 +595,8 @@ &ether {
- 	status = "okay";
- 
- 	phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id0022.1537",
-+			     "ethernet-phy-ieee802.3-c22";
- 		reg = <1>;
- 		interrupt-parent = <&irqc0>;
- 		interrupts = <0 IRQ_TYPE_LEVEL_LOW>;
-diff --git a/arch/arm/boot/dts/r8a7794-alt.dts b/arch/arm/boot/dts/r8a7794-alt.dts
-index f330d796a772c394..99d554fe3329eb7a 100644
---- a/arch/arm/boot/dts/r8a7794-alt.dts
-+++ b/arch/arm/boot/dts/r8a7794-alt.dts
-@@ -383,6 +383,8 @@ &ether {
- 	status = "okay";
- 
- 	phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id0022.1537",
-+			     "ethernet-phy-ieee802.3-c22";
- 		reg = <1>;
- 		interrupt-parent = <&irqc0>;
- 		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
-diff --git a/arch/arm/boot/dts/r8a7794-silk.dts b/arch/arm/boot/dts/r8a7794-silk.dts
-index cafa3046daa4baf4..92a76164432a8976 100644
---- a/arch/arm/boot/dts/r8a7794-silk.dts
-+++ b/arch/arm/boot/dts/r8a7794-silk.dts
-@@ -397,6 +397,8 @@ &ether {
- 	status = "okay";
- 
- 	phy1: ethernet-phy@1 {
-+		compatible = "ethernet-phy-id0022.1537",
-+			     "ethernet-phy-ieee802.3-c22";
- 		reg = <1>;
- 		interrupt-parent = <&irqc0>;
- 		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
--- 
-2.25.1
+>
+> 2) If so, how to make sure not apply it to SDIO but SD only?
 
+For now, I am fine with adding a new bus_ops callback
+(->abort_tuning()) and then let mmc_send_abort_tuning() to call it.
+
+I have some additional plans to improve life cycle issues for the
+bus_ops, but let's ignore that for now. I can deal with that later.
+
+That said, mmc_send_abort_tuning() should no longer need to take the
+opcode as an in-parameter, thus some additional cleanup should be
+needed in a few host drivers because of that.
+
+Would that work?
+
+>
+> Thanks for your input! Kind regards,
+>
+>    Wolfram
+
+Kind regards
+Uffe
+
+>
+>
+>  drivers/mmc/core/mmc_ops.c | 8 --------
+>  1 file changed, 8 deletions(-)
+>
+> diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
+> index 973756ed4016..02d378255895 100644
+> --- a/drivers/mmc/core/mmc_ops.c
+> +++ b/drivers/mmc/core/mmc_ops.c
+> @@ -704,14 +704,6 @@ int mmc_send_abort_tuning(struct mmc_host *host, u32 opcode)
+>  {
+>         struct mmc_command cmd = {};
+>
+> -       /*
+> -        * eMMC specification specifies that CMD12 can be used to stop a tuning
+> -        * command, but SD specification does not, so do nothing unless it is
+> -        * eMMC.
+> -        */
+> -       if (opcode != MMC_SEND_TUNING_BLOCK_HS200)
+> -               return 0;
+> -
+>         cmd.opcode = MMC_STOP_TRANSMISSION;
+>         cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
+>
+> --
+> 2.30.2
+>
