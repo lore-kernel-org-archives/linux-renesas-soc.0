@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCCFC43217
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3879C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89FF561108
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEC6661108
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 10 Sep 2021 00:45:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242432AbhIJAq5 (ORCPT
+        id S242428AbhIJAq4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 9 Sep 2021 20:46:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47592 "EHLO mail.kernel.org"
+        Thu, 9 Sep 2021 20:46:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233808AbhIJAVu (ORCPT
+        id S233473AbhIJAT4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 9 Sep 2021 20:21:50 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 83A3A61167;
-        Fri, 10 Sep 2021 00:20:39 +0000 (UTC)
+        Thu, 9 Sep 2021 20:19:56 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 86061610E9;
+        Fri, 10 Sep 2021 00:18:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631233240;
-        bh=ThNscb1eXMOwmXv1J52+3yPD7APMCFSDNbyH5NyxMi8=;
+        s=k20201202; t=1631233126;
+        bh=rRBE1FxzgRpoZTiMId60zViljNBha2zEeFXRj7gc0po=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=um8PFoQqtohXcToZBGDsgs0NLDG9urRyBiVtyXvI0LlA83yfqAOJGicpEwXr2oLmc
-         RD4OHCRv7AkUzI7oPyBJgx7B0pDZX3oNI8Sva+1KywVUoaQrk3aR8MqgXF2ct0uLCe
-         OlVCGqs/RmHz76GLWQ8WEAlg0W7dgOzFFtU3cuMSmhghIz33UHdsFQNymZVx6QQNH5
-         wL+90yJ6V47czymkFxOTfzdKSuPVY1njEvmKylYYnE+zZArRefXIsq00mzQgASUF/Q
-         ZR3WChCHFt3esrmUHIIFhPHhzfoQiY1mJsOzfInnF+TpLsMtfJAFntFJnLBtto98wK
-         rXxRcKr1QfgfQ==
+        b=hkwS+yDq4YJh+GS+VoQp991eyoCBv5DyBi8msWnRGlyOo8m3L4vvEiNvfwwcK9/mx
+         jdbBfnXFJWvXh1IMaPQ6/GbcnNlpZzUKcVJ4U/j1fPNplSm4lqD8FEyz4SQpVlKD8h
+         Epi9Ehi16PewU4Naih753iuX8M/3JjNZDoMVXweODnOMmAP2WxSWawmA3+iySqNbyj
+         pxx8VaAC49GWAF9fpyHb/ny5+/9BoatjHU8FA9KIIYJr9J95OYg0ZvetGixYJGvp2t
+         FIkuAVektnZzJikChbShY7ysMFs6rLfXn/MVi1SNkEmXajMu83CWO2G2cYdJwb7Y5h
+         b/BUaXelglwrA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -40,12 +40,12 @@ Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 08/53] pinctrl: renesas: Fix pin control matching on R-Car H3e-2G
-Date:   Thu,  9 Sep 2021 20:19:43 -0400
-Message-Id: <20210910002028.175174-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.13 18/88] pinctrl: renesas: Fix pin control matching on R-Car H3e-2G
+Date:   Thu,  9 Sep 2021 20:17:10 -0400
+Message-Id: <20210910001820.174272-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210910002028.175174-1-sashal@kernel.org>
-References: <20210910002028.175174-1-sashal@kernel.org>
+In-Reply-To: <20210910001820.174272-1-sashal@kernel.org>
+References: <20210910001820.174272-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -88,10 +88,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 14 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
-index c528c124fb0e..c2a2f1b3de06 100644
+index 5ccc49b387f1..f2ab02225837 100644
 --- a/drivers/pinctrl/renesas/core.c
 +++ b/drivers/pinctrl/renesas/core.c
-@@ -581,17 +581,21 @@ static const struct of_device_id sh_pfc_of_table[] = {
+@@ -571,17 +571,21 @@ static const struct of_device_id sh_pfc_of_table[] = {
  		.data = &r8a7794_pinmux_info,
  	},
  #endif
@@ -159,10 +159,10 @@ index c528c124fb0e..c2a2f1b3de06 100644
  			info = of_device_get_match_data(&pdev->dev);
  	} else
 diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
-index eff1bb872325..0d3f13230fe9 100644
+index 320898861c4b..0fdafef2dc69 100644
 --- a/drivers/pinctrl/renesas/sh_pfc.h
 +++ b/drivers/pinctrl/renesas/sh_pfc.h
-@@ -320,8 +320,8 @@ extern const struct sh_pfc_soc_info r8a7791_pinmux_info;
+@@ -332,8 +332,8 @@ extern const struct sh_pfc_soc_info r8a7791_pinmux_info;
  extern const struct sh_pfc_soc_info r8a7792_pinmux_info;
  extern const struct sh_pfc_soc_info r8a7793_pinmux_info;
  extern const struct sh_pfc_soc_info r8a7794_pinmux_info;
