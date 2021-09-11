@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6497AC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Sep 2021 13:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AAC4C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Sep 2021 13:17:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FBEE61372
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Sep 2021 13:14:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5324761152
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Sep 2021 13:17:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237042AbhIKNPn (ORCPT
+        id S236335AbhIKNSn (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 11 Sep 2021 09:15:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38124 "EHLO mail.kernel.org"
+        Sat, 11 Sep 2021 09:18:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236547AbhIKNON (ORCPT
+        id S236290AbhIKNQr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 11 Sep 2021 09:14:13 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id AA51861247;
-        Sat, 11 Sep 2021 13:12:46 +0000 (UTC)
+        Sat, 11 Sep 2021 09:16:47 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 410DD6126A;
+        Sat, 11 Sep 2021 13:13:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631365967;
+        s=k20201202; t=1631366005;
         bh=6n8ZrpCjHK/0owdGbK700/HKwHqdWGyYWY9zC/fI8/M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DXOsYAudqDfU0ewE/dwkPIPa8RTc7UYgApDuGYFeEmAkMrhHzcqNySKlMY7w2T6wP
-         mJt0GMwcDS9Fxye7z29VrgudwbLE0HceH6Vw1GTPnebaTCDZbiX78MUVhbnPlYADj5
-         xFQagELZxvoPqFAzOO3bEA2kQMN2CVWGnp0yWujoWXipjWT2ldWYcVHKnjE1jDJCje
-         7i+SVdLSDSZLOE2wun+LXcIlFbnkDoKmNHoZ9kFG7cOs09w4rBUKFBdF5bVVT7MGUC
-         fmnXAaEfUr74/VNTPgPISUnzugSmQYP8Inpr048VQgIT7yXlhCLZW4KbJugQC2UbJb
-         HLdeDWw09Y6Qw==
+        b=WCCFWjDUbYTul1nNoatdMa3AXtZKMYjI3SIBPi5fHdS8o87qQilnD9Y19HDkB+I9+
+         AwJs/EDbolc0yR7V90oiGCb432SQXeUjHiUxH0wSR1o6QV8stV75alGPvQ49sjfpAw
+         Z19HANu78SJfwnuYekQmXglvMWNQqI/EWd40lysfJB5y772GRR/4JtXDCW5EP/GQVA
+         Y0O4THPTH+EXi0H/b7PaBV/sJSjQ3QNmiUYmdTVWjDkzu+jHASHevKur39f8DE9vnF
+         pIg5AvoN6+FgoihpIth4h2otKaD6MwesEMNVqAlE4KKzJsLTnStF39P63LLqSXuzqK
+         Oq6wItJ9hPk1A==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
@@ -40,12 +40,12 @@ Cc:     Dinghao Liu <dinghao.liu@zju.edu.cn>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.13 10/29] PCI: rcar: Fix runtime PM imbalance in rcar_pcie_ep_probe()
-Date:   Sat, 11 Sep 2021 09:12:14 -0400
-Message-Id: <20210911131233.284800-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 09/25] PCI: rcar: Fix runtime PM imbalance in rcar_pcie_ep_probe()
+Date:   Sat, 11 Sep 2021 09:12:56 -0400
+Message-Id: <20210911131312.285225-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210911131233.284800-1-sashal@kernel.org>
-References: <20210911131233.284800-1-sashal@kernel.org>
+In-Reply-To: <20210911131312.285225-1-sashal@kernel.org>
+References: <20210911131312.285225-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
