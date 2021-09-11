@@ -7,32 +7,32 @@ X-Spam-Status: No, score=-19.4 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FECBC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Sep 2021 13:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F077C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Sep 2021 13:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5909761206
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Sep 2021 13:12:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AC3C61372
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 11 Sep 2021 13:14:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236279AbhIKNNh (ORCPT
+        id S236424AbhIKNPm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 11 Sep 2021 09:13:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37206 "EHLO mail.kernel.org"
+        Sat, 11 Sep 2021 09:15:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236001AbhIKNNT (ORCPT
+        id S236550AbhIKNON (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 11 Sep 2021 09:13:19 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id B92A6611BF;
-        Sat, 11 Sep 2021 13:12:05 +0000 (UTC)
+        Sat, 11 Sep 2021 09:14:13 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 0B43A61245;
+        Sat, 11 Sep 2021 13:12:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1631365926;
+        s=k20201202; t=1631365969;
         bh=2++X2B/yiaUbM2dzTHy03CmMwNl4sfW4HXCcQwfTfNA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OA6ektcPGUUkv+NM1PIKorVc1aiOz9N0TDwmmuL2c12D6KthSe3jjYEOCXW9Inu7y
-         99xn1ADCO8BpdEH+BqRcHenZNkNK8I4Q0bNcgRzl9djvtvC9H2ykX4bp6qDWYnkqbD
-         4+/4G2uS2xFMjbOVEZrKE+/8fhsAtHv5CiUPZCat5CgvC1zmEnAhlp72o8LAtgdDFi
-         tkzSncvLFA0qspL19CXlXkOBEJNTGce2MIB5YlnuNyr2mpSRIxyrMjEFisEvW1etxr
-         lL3YsernSSO+Q5e0sbKL4pCSXx/fc2KrRfQ5Y4RuUWl95tLAlV8SUvlNKy8KkcYcRP
-         /nWihtQ4A/hiQ==
+        b=mH5SlNWD0+OpDU+aPhDQ/BzG1BFH/QMvQy1o8EqyP6K/qhsmEhti2QBm8DXZpvUxr
+         ur5CotOdF6VYNWHE2hXYbzvknQ62mW2Gvel8PFyZaOECINyq2WA4TlSHUaiRxLocph
+         Wg50NXrhfTJs28UsGqa4WShut7LNh2VLbkWvueSPu7QvkJdNXrxLCv9ZSTdwuH+w2d
+         CzWUfyyzsPS7HOYYgSXbNNFP+rnOTiwPeJLQzd5HhtXkPFnr1mL+qUb4G6qhpwUaRT
+         asvSd7S1y2gppM8H4GgCqguRTX0ZJnY2lCiaOp46wx1lKO+lrrvnHt/ohgd36+zwGf
+         llK6mm88KEpJA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
@@ -43,12 +43,12 @@ Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
         linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.14 12/32] PCI: rcar: Add L1 link state fix into data abort hook
-Date:   Sat, 11 Sep 2021 09:11:29 -0400
-Message-Id: <20210911131149.284397-12-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.13 11/29] PCI: rcar: Add L1 link state fix into data abort hook
+Date:   Sat, 11 Sep 2021 09:12:15 -0400
+Message-Id: <20210911131233.284800-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210911131149.284397-1-sashal@kernel.org>
-References: <20210911131149.284397-1-sashal@kernel.org>
+In-Reply-To: <20210911131233.284800-1-sashal@kernel.org>
+References: <20210911131233.284800-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
