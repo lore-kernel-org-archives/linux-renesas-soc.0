@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F7EC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Sep 2021 22:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F78C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Sep 2021 22:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C047260F3A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Sep 2021 22:47:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91A8060F3A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Sep 2021 22:47:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348668AbhIMWsr (ORCPT
+        id S1344343AbhIMWst (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 13 Sep 2021 18:48:47 -0400
-Received: from mga07.intel.com ([134.134.136.100]:20463 "EHLO mga07.intel.com"
+        Mon, 13 Sep 2021 18:48:49 -0400
+Received: from mga18.intel.com ([134.134.136.126]:42098 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1350847AbhIMWrO (ORCPT
+        id S1350968AbhIMWrW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 13 Sep 2021 18:47:14 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10106"; a="285504352"
+        Mon, 13 Sep 2021 18:47:22 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10106"; a="208910784"
 X-IronPort-AV: E=Sophos;i="5.85,290,1624345200"; 
-   d="scan'208";a="285504352"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2021 15:36:46 -0700
+   d="scan'208";a="208910784"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Sep 2021 15:36:47 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.85,291,1624345200"; 
-   d="scan'208";a="528291029"
+X-IronPort-AV: E=Sophos;i="5.85,290,1624345200"; 
+   d="scan'208";a="543514600"
 Received: from lkp-server01.sh.intel.com (HELO 730d49888f40) ([10.239.97.150])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Sep 2021 15:36:44 -0700
+  by FMSMGA003.fm.intel.com with ESMTP; 13 Sep 2021 15:36:44 -0700
 Received: from kbuild by 730d49888f40 with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1mPuZ9-0007wg-Ul; Mon, 13 Sep 2021 22:36:43 +0000
-Date:   Tue, 14 Sep 2021 06:35:50 +0800
+        id 1mPuZ9-0007wl-WE; Mon, 13 Sep 2021 22:36:44 +0000
+Date:   Tue, 14 Sep 2021 06:36:03 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [renesas-devel:renesas-drivers-for-v5.16] BUILD SUCCESS
- 2ed1e4815922a3b22561b6e0e6f6d3d15a4e1007
-Message-ID: <613fd246.rvqwzcAwt4jJjCaa%lkp@intel.com>
+Subject: [renesas-devel:renesas-arm-dt-for-v5.16] BUILD SUCCESS
+ a457ee34ca852dbffeaab468e05ca3ca821d4319
+Message-ID: <613fd253.lTMPz5QpUq94L/2i%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -49,13 +49,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v5.16
-branch HEAD: 2ed1e4815922a3b22561b6e0e6f6d3d15a4e1007  soc: renesas: Identify more R-Car Gen3e SoCs
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-dt-for-v5.16
+branch HEAD: a457ee34ca852dbffeaab468e05ca3ca821d4319  arm64: dts: renesas: r8a779a0: Add iommus into sdhi node
 
 elapsed time: 732m
 
-configs tested: 126
-configs skipped: 3
+configs tested: 115
+configs skipped: 106
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -117,11 +117,6 @@ m68k                             allyesconfig
 nios2                               defconfig
 arc                              allyesconfig
 nds32                             allnoconfig
-nds32                               defconfig
-nios2                            allyesconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
 xtensa                           allyesconfig
 arc                                 defconfig
 sh                               allmodconfig
@@ -160,8 +155,6 @@ riscv                               defconfig
 riscv                          rv32_defconfig
 riscv                            allmodconfig
 x86_64                    rhel-8.3-kselftests
-um                           x86_64_defconfig
-um                             i386_defconfig
 x86_64                           allyesconfig
 x86_64                              defconfig
 x86_64                               rhel-8.3
@@ -187,10 +180,6 @@ i386                 randconfig-a015-20210913
 i386                 randconfig-a012-20210913
 i386                 randconfig-a013-20210913
 i386                 randconfig-a014-20210913
-riscv                randconfig-r042-20210913
-hexagon              randconfig-r045-20210913
-s390                 randconfig-r044-20210913
-hexagon              randconfig-r041-20210913
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
