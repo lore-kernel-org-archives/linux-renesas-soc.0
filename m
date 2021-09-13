@@ -2,85 +2,83 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_CR_TRAILER,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB77AC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Sep 2021 02:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 266F6C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Sep 2021 05:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9342161004
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Sep 2021 02:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07BD260E76
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 13 Sep 2021 05:52:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236902AbhIMCsr (ORCPT
+        id S232041AbhIMFxx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 12 Sep 2021 22:48:47 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:57175 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S235364AbhIMCsq (ORCPT
+        Mon, 13 Sep 2021 01:53:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230390AbhIMFxx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 12 Sep 2021 22:48:46 -0400
-X-IronPort-AV: E=Sophos;i="5.85,288,1624287600"; 
-   d="scan'208";a="93730201"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 13 Sep 2021 11:47:30 +0900
-Received: from localhost.localdomain (unknown [10.166.14.185])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 71D25400966A;
-        Mon, 13 Sep 2021 11:47:30 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     balbi@kernel.org
-Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH] usb: gadget: legacy: audio: add c_sync parameter
-Date:   Mon, 13 Sep 2021 11:47:23 +0900
-Message-Id: <20210913024723.1334206-1-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.25.1
+        Mon, 13 Sep 2021 01:53:53 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id E44C560F4B;
+        Mon, 13 Sep 2021 05:52:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1631512358;
+        bh=/CJlH/agN5jb675n1VWpDBk3jgGbQWAhdQoHNfFNYLg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bcbMuXtjNJ4FjQqmmXMAy43R6OM5aj4W/s2YbeNjSakbC2/VZYSdeejyv6XFtrdp3
+         jwZakLi6MQSJ+Eu4mRnaZ7p2sPurtDrKp69oEUYKDyG/L/OPFEHMWiK1E+csL4OqqL
+         4SLZOAU0V/is2Gkr3B9KwNwfg6bGUIaehidElwgk=
+Date:   Mon, 13 Sep 2021 07:52:15 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     balbi@kernel.org, linux-usb@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] usb: gadget: legacy: audio: add c_sync parameter
+Message-ID: <YT7nD+ToVpe135LU@kroah.com>
+References: <20210913024723.1334206-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20210913024723.1334206-1-yoshihiro.shimoda.uh@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The commit 40c73b30546e ("usb: gadget: f_uac2: add adaptive sync
-support for capture") supported 'c_sync' for configfs file.
-To configure the 'c_sync' via legacy audio driver, add c_sync
-parameter. And then, we can change the 'c_sync' to 'ADAPTIVE' like
-below:
+On Mon, Sep 13, 2021 at 11:47:23AM +0900, Yoshihiro Shimoda wrote:
+> The commit 40c73b30546e ("usb: gadget: f_uac2: add adaptive sync
+> support for capture") supported 'c_sync' for configfs file.
+> To configure the 'c_sync' via legacy audio driver, add c_sync
+> parameter. And then, we can change the 'c_sync' to 'ADAPTIVE' like
+> below:
+> 
+>     modprobe g_audio c_sync=8
+> 
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> ---
+>  drivers/usb/gadget/legacy/audio.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/usb/gadget/legacy/audio.c b/drivers/usb/gadget/legacy/audio.c
+> index a748ed0842e8..f9765bf63006 100644
+> --- a/drivers/usb/gadget/legacy/audio.c
+> +++ b/drivers/usb/gadget/legacy/audio.c
+> @@ -49,6 +49,11 @@ MODULE_PARM_DESC(c_srate, "Capture Sampling Rate");
+>  static int c_ssize = UAC2_DEF_CSSIZE;
+>  module_param(c_ssize, uint, S_IRUGO);
+>  MODULE_PARM_DESC(c_ssize, "Capture Sample Size(bytes)");
+> +
+> +/* Capture Default ASYNC */
+> +static int c_sync = UAC2_DEF_CSYNC;
+> +module_param(c_sync, uint, S_IRUGO);
+> +MODULE_PARM_DESC(c_sync, "Capture Sync Type");
 
-    modprobe g_audio c_sync=8
+Please do not add new module parameters when ever possible.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/usb/gadget/legacy/audio.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Why are you adding "new" features to the legacy driver?  Why can you not
+just use the newer driver instead if you want this feature?
 
-diff --git a/drivers/usb/gadget/legacy/audio.c b/drivers/usb/gadget/legacy/audio.c
-index a748ed0842e8..f9765bf63006 100644
---- a/drivers/usb/gadget/legacy/audio.c
-+++ b/drivers/usb/gadget/legacy/audio.c
-@@ -49,6 +49,11 @@ MODULE_PARM_DESC(c_srate, "Capture Sampling Rate");
- static int c_ssize = UAC2_DEF_CSSIZE;
- module_param(c_ssize, uint, S_IRUGO);
- MODULE_PARM_DESC(c_ssize, "Capture Sample Size(bytes)");
-+
-+/* Capture Default ASYNC */
-+static int c_sync = UAC2_DEF_CSYNC;
-+module_param(c_sync, uint, S_IRUGO);
-+MODULE_PARM_DESC(c_sync, "Capture Sync Type");
- #else
- #ifndef CONFIG_GADGET_UAC1_LEGACY
- #include "u_uac1.h"
-@@ -268,6 +273,8 @@ static int audio_bind(struct usb_composite_dev *cdev)
- 	uac2_opts->c_chmask = c_chmask;
- 	uac2_opts->c_srate = c_srate;
- 	uac2_opts->c_ssize = c_ssize;
-+	if (c_sync == USB_ENDPOINT_SYNC_ADAPTIVE)
-+		uac2_opts->c_sync = c_sync;
- 	uac2_opts->req_number = UAC2_DEF_REQ_NUM;
- #else
- #ifndef CONFIG_GADGET_UAC1_LEGACY
--- 
-2.25.1
+thanks,
 
+greg k-h
