@@ -2,689 +2,167 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB34C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Sep 2021 14:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E5ACC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Sep 2021 18:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B15D56108B
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Sep 2021 14:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E7AB60FC0
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 14 Sep 2021 18:20:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233416AbhINOCf (ORCPT
+        id S232019AbhINSWN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Sep 2021 10:02:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59842 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232682AbhINOCf (ORCPT
+        Tue, 14 Sep 2021 14:22:13 -0400
+Received: from www.zeus03.de ([194.117.254.33]:56726 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232004AbhINSV5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Sep 2021 10:02:35 -0400
-Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC7CCC061574
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Sep 2021 07:01:17 -0700 (PDT)
-Received: by mail-wm1-x32d.google.com with SMTP id y132so9367060wmc.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Sep 2021 07:01:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=twuIkbGQwq8cT33fnTwMogtm7ghJQBBWFWNSHG6ZDNU=;
-        b=p7j5QbugARaPBnT4WD0sOXi9X6v56FPfOTm9sbABvRk7Gkbse1SullY12sowPZxr4B
-         jkzsemcUA3mYNB7/ldaR4i8jQd6gNGsor+hrkYgNIekD8Zm/02Fh9jd8VQO4rEPQE9jJ
-         VxQGQPnxnbyoedzs0vrkpANTRYNo1G7dHBYTX/VHJEXsbx972WjOM7NQcQyPbdaBDV/3
-         uLbuvfadMnp0aQvP+eiJ5jVRdkfEviX7HNeUHDzxj8wp0wH62S47lfDvsA+wLqiYsxW4
-         ecePo/FEQzD7OK7bRgnuGABZ+Q6VYSk2g5fy15fQWo5qJj0KQAHLbWFcI4kTd8Bf8C5X
-         KE2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=twuIkbGQwq8cT33fnTwMogtm7ghJQBBWFWNSHG6ZDNU=;
-        b=pl1An3dRF8fV3vvj/+ns9Rs1tumYRRkEaS+Yf56VneWt7WU87xHS1iWfwgC2Vzjv0t
-         ESRliHTVLWbjSsFLbQV0ocpymHJBuCaHBg9lduTZSdS8OJri5JE6Z+RhXsYQ+RtOmtJN
-         lYrF6n/h6m+7uqO0QbcutVM0flga7H9ZuK27y4CGPted7qxC/YC+i9Fco0BrBNa4fE/9
-         uGpKVPOeqDTOFZWbcHn7t9uT+2coX9P5noGZTCip8QJrS8IAL20OrYCq9oQiqQL1BFrz
-         /Mmii+Y4qFFt5ph85fGJFs+mdB/avZGFrH+uvk95AudITkWd/1LBhlYZD8scrSjKePMZ
-         nTuw==
-X-Gm-Message-State: AOAM533xuoyaKnfuMlJdD4eFpltZelwGbdHBkEJTDXO+5s5GNHNR0mRt
-        xfq/yA9OL1xKa7PH4sF6MmSC1g==
-X-Google-Smtp-Source: ABdhPJz2YCa6xpP9now3CxApDyvLJKtZphmRE0BsFOGRZy8dOsb+12dWpsIiAxFssAGjh0tcke+tgQ==
-X-Received: by 2002:a1c:cc05:: with SMTP id h5mr2397645wmb.5.1631628076461;
-        Tue, 14 Sep 2021 07:01:16 -0700 (PDT)
-Received: from bismarck.berto.se (p54ac5892.dip0.t-ipconnect.de. [84.172.88.146])
-        by smtp.googlemail.com with ESMTPSA id o17sm10468929wrj.96.2021.09.14.07.01.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Sep 2021 07:01:16 -0700 (PDT)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@iki.fi>, linux-media@vger.kernel.org
+        Tue, 14 Sep 2021 14:21:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=FXWtXqpSRzIUuu
+        j9A/bTtWa9z8u/sxFXhKENNzrbSiY=; b=RFzZkChPLbbUKOCIPSk2OJQCa2pxKy
+        MKlSK227gO4FRV7wFmidNL24LIv/jLtSlavz/x8qkmrJVoL06PY8/Hbluc7bj7vK
+        FXle5aq8w3lKcKSm8IXCxaMqR21TezZYVCkFgufFO0dD1O4rnxy+mPQxccuFMbE/
+        X+tSjH0V8gZo0=
+Received: (qmail 518175 invoked from network); 14 Sep 2021 20:20:35 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 14 Sep 2021 20:20:35 +0200
+X-UD-Smtp-Session: l3s3148p1@x4VDo/jLIpEgAwDPXxMyACCkRmvQydX8
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-mmc@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v5] media: rcar-isp: Add Renesas R-Car Image Signal Processor driver
-Date:   Tue, 14 Sep 2021 16:00:57 +0200
-Message-Id: <20210914140057.2801405-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.33.0
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 2/3] mmc: core: also abort tuning with CMD12 for SD
+Date:   Tue, 14 Sep 2021 20:20:22 +0200
+Message-Id: <20210914182023.8103-3-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210914182023.8103-1-wsa+renesas@sang-engineering.com>
+References: <20210914182023.8103-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add a V4L2 driver for Renesas R-Car Image Signal Processor. The driver
-supports the R-Car V3U SoC where the ISP IP sits between the R-Car CSI-2
-receiver and VIN and filters the CSI-2 data based on VC/DT and directs
-the video stream to different VIN IPs.
+We have various SanDisk cards which fail tuning to SDR104 unless we
+allow a CMD12 also to be sent to abort a broken tuning. It is true that
+the SD specs do not mention that CMD12 is allowed, but they also don't
+say it is forbidden. And now reality tells that it is needed to make
+some cards work. Other cards I tried did not regress.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+So, add a new callback to the bus_ops which allows us to send STOP for
+MMC and SD cards but not SDIO which does not support CMD12.
+
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-* Changes since v4
-- Update to the new async function names.
-- Do not depend on external s_power, instead control the device power at stream start/stop.
-- Do not look at remote upstream subdevice format when starting (or at all).
-- Serialise access for format variables in get_fmt and set_fmt.
-- Make use of v4l2_subdev_link_validate_default()
-- Add mutex_destroy() on error paths and in remove function.
-- Propperly disable runtime PM if subdev registration fails.
 
-* Changes since v3
-- Fix spelling in header information.
-- Add parentheses around macro expansions.
-- Add explicit blocks to for-loop body.
-- Add documentation for mutex.
+Tested with a Renesas Salvator-XS board (R-Car H3 ES2.0) and a SanDisk
+Ultra 64GB card.
 
-* Changes since v2
-- Add description of IPS capabilities and that only channel selection is
-  currently supported.
-- Update signature of v4l2_subdev_pad_ops set_fmt.
-- Switch to pm_runtime_resume_and_get().
-- Make better use of devm_kzalloc().
----
- MAINTAINERS                       |   1 +
- drivers/media/platform/Kconfig    |  16 +
- drivers/media/platform/Makefile   |   1 +
- drivers/media/platform/rcar-isp.c | 517 ++++++++++++++++++++++++++++++
- 4 files changed, 535 insertions(+)
- create mode 100644 drivers/media/platform/rcar-isp.c
+ drivers/mmc/core/core.h    |  1 +
+ drivers/mmc/core/mmc.c     |  6 ++++++
+ drivers/mmc/core/mmc_ops.c | 21 +++------------------
+ drivers/mmc/core/sd.c      |  6 ++++++
+ 4 files changed, 16 insertions(+), 18 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 08c9612e769af24a..8164d1bd0a4df351 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11575,6 +11575,7 @@ T:	git git://linuxtv.org/media_tree.git
- F:	Documentation/devicetree/bindings/media/renesas,csi2.yaml
- F:	Documentation/devicetree/bindings/media/renesas,isp.yaml
- F:	Documentation/devicetree/bindings/media/renesas,vin.yaml
-+F:	drivers/media/platform/rcar-isp.c
- F:	drivers/media/platform/rcar-vin/
+diff --git a/drivers/mmc/core/core.h b/drivers/mmc/core/core.h
+index 7931a4f0137d..660873ba13ed 100644
+--- a/drivers/mmc/core/core.h
++++ b/drivers/mmc/core/core.h
+@@ -31,6 +31,7 @@ struct mmc_bus_ops {
+ 	int (*sw_reset)(struct mmc_host *);
+ 	bool (*cache_enabled)(struct mmc_host *);
+ 	int (*flush_cache)(struct mmc_host *);
++	int (*send_abort_tuning)(struct mmc_host *);
+ };
  
- MEDIA DRIVERS FOR RENESAS - VSP1
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index aa277a19e2759617..b95e9368110c7848 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -200,6 +200,22 @@ config VIDEO_TI_CAL_MC
+ void mmc_attach_bus(struct mmc_host *host, const struct mmc_bus_ops *ops);
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 29e58ffae379..d638477e0a49 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -2227,6 +2227,11 @@ static int _mmc_hw_reset(struct mmc_host *host)
+ 	return mmc_init_card(host, card->ocr, card);
+ }
  
- endif # VIDEO_TI_CAL
- 
-+config VIDEO_RCAR_ISP
-+	tristate "R-Car Image Signal Processor (ISP)"
-+	depends on VIDEO_V4L2 && OF
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	select MEDIA_CONTROLLER
-+	select VIDEO_V4L2_SUBDEV_API
-+	select RESET_CONTROLLER
-+	select V4L2_FWNODE
-+	help
-+	  Support for Renesas R-Car Image Signal Processor (ISP).
-+	  Enable this to support the Renesas R-Car Image Signal
-+	  Processor (ISP).
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called rcar-isp.
-+
- endif # V4L_PLATFORM_DRIVERS
- 
- menuconfig V4L_MEM2MEM_DRIVERS
-diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-index 73ce083c2fc6b51b..a148553babfc0944 100644
---- a/drivers/media/platform/Makefile
-+++ b/drivers/media/platform/Makefile
-@@ -63,6 +63,7 @@ obj-$(CONFIG_VIDEO_AM437X_VPFE)		+= am437x/
- 
- obj-$(CONFIG_VIDEO_XILINX)		+= xilinx/
- 
-+obj-$(CONFIG_VIDEO_RCAR_ISP)		+= rcar-isp.o
- obj-$(CONFIG_VIDEO_RCAR_VIN)		+= rcar-vin/
- 
- obj-$(CONFIG_VIDEO_ATMEL_ISC)		+= atmel/
-diff --git a/drivers/media/platform/rcar-isp.c b/drivers/media/platform/rcar-isp.c
-new file mode 100644
-index 0000000000000000..1055ca87975c8676
---- /dev/null
-+++ b/drivers/media/platform/rcar-isp.c
-@@ -0,0 +1,517 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2021 Renesas Electronics Corp.
-+ *
-+ * Driver for Renesas R-Car ISP Channel Selector
-+ *
-+ * The ISP hardware is capable of more than just channel selection, features
-+ * such as demosaicing, white balance control and color space conversion are
-+ * also possible. These more advanced features are not supported by the driver
-+ * due to lack of documentation.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+
-+#include <media/v4l2-subdev.h>
-+
-+#define ISPINPUTSEL0_REG				0x0008
-+#define ISPINPUTSEL0_SEL_CSI0				BIT(31)
-+
-+#define ISPSTART_REG					0x0014
-+#define ISPSTART_START					0xffff
-+#define ISPSTART_STOP					0x0000
-+
-+#define ISPPROCMODE_DT_REG(n)				(0x1100 + (0x4 * (n)))
-+#define ISPPROCMODE_DT_PROC_MODE_VC3(pm)		(((pm) & 0x3f) << 24)
-+#define ISPPROCMODE_DT_PROC_MODE_VC2(pm)		(((pm) & 0x3f) << 16)
-+#define ISPPROCMODE_DT_PROC_MODE_VC1(pm)		(((pm) & 0x3f) << 8)
-+#define ISPPROCMODE_DT_PROC_MODE_VC0(pm)		((pm) & 0x3f)
-+
-+#define ISPCS_FILTER_ID_CH_REG(n)			(0x3000 + (0x0100 * (n)))
-+
-+#define ISPCS_DT_CODE03_CH_REG(n)			(0x3008 + (0x100 * (n)))
-+#define ISPCS_DT_CODE03_EN3				BIT(31)
-+#define ISPCS_DT_CODE03_DT3(dt)				(((dt) & 0x3f) << 24)
-+#define ISPCS_DT_CODE03_EN2				BIT(23)
-+#define ISPCS_DT_CODE03_DT2(dt)				(((dt) & 0x3f) << 16)
-+#define ISPCS_DT_CODE03_EN1				BIT(15)
-+#define ISPCS_DT_CODE03_DT1(dt)				(((dt) & 0x3f) << 8)
-+#define ISPCS_DT_CODE03_EN0				BIT(7)
-+#define ISPCS_DT_CODE03_DT0(dt)				((dt) & 0x3f)
-+
-+struct rcar_isp_format {
-+	u32 code;
-+	unsigned int datatype;
-+	unsigned int procmode;
-+};
-+
-+static const struct rcar_isp_format rcar_isp_formats[] = {
-+	{ .code = MEDIA_BUS_FMT_RGB888_1X24,	.datatype = 0x24, .procmode = 0x15 },
-+	{ .code = MEDIA_BUS_FMT_Y10_1X10,	.datatype = 0x2b, .procmode = 0x10 },
-+	{ .code = MEDIA_BUS_FMT_UYVY8_1X16,	.datatype = 0x1e, .procmode = 0x0c },
-+	{ .code = MEDIA_BUS_FMT_YUYV8_1X16,	.datatype = 0x1e, .procmode = 0x0c },
-+	{ .code = MEDIA_BUS_FMT_UYVY8_2X8,	.datatype = 0x1e, .procmode = 0x0c },
-+	{ .code = MEDIA_BUS_FMT_YUYV10_2X10,	.datatype = 0x1e, .procmode = 0x0c },
-+};
-+
-+static const struct rcar_isp_format *risp_code_to_fmt(unsigned int code)
++static int _mmc_send_abort_tuning(struct mmc_host *host)
 +{
-+	unsigned int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(rcar_isp_formats); i++) {
-+		if (rcar_isp_formats[i].code == code)
-+			return &rcar_isp_formats[i];
-+	}
-+
-+	return NULL;
++	return mmc_send_stop(host, 150, 0);
 +}
 +
-+enum rcar_isp_input {
-+	RISP_CSI_INPUT0,
-+	RISP_CSI_INPUT1,
-+};
-+
-+enum rcar_isp_pads {
-+	RCAR_ISP_SINK,
-+	RCAR_ISP_PORT0,
-+	RCAR_ISP_PORT1,
-+	RCAR_ISP_PORT2,
-+	RCAR_ISP_PORT3,
-+	RCAR_ISP_PORT4,
-+	RCAR_ISP_PORT5,
-+	RCAR_ISP_PORT6,
-+	RCAR_ISP_PORT7,
-+	RCAR_ISP_MAX_PAD,
-+};
-+
-+struct rcar_isp {
-+	struct device *dev;
-+	void __iomem *base;
-+	struct reset_control *rstc;
-+
-+	enum rcar_isp_input csi_input;
-+
-+	struct v4l2_subdev subdev;
-+	struct media_pad pads[RCAR_ISP_MAX_PAD];
-+
-+	struct v4l2_async_notifier notifier;
-+	struct v4l2_subdev *remote;
-+	unsigned int remote_pad;
-+
-+	struct mutex lock; /* Protects mf and stream_count. */
-+	struct v4l2_mbus_framefmt mf;
-+	int stream_count;
-+};
-+
-+static inline struct rcar_isp *sd_to_isp(struct v4l2_subdev *sd)
-+{
-+	return container_of(sd, struct rcar_isp, subdev);
-+}
-+
-+static inline struct rcar_isp *notifier_to_isp(struct v4l2_async_notifier *n)
-+{
-+	return container_of(n, struct rcar_isp, notifier);
-+}
-+
-+static void risp_write(struct rcar_isp *isp, u32 offset, u32 value)
-+{
-+	iowrite32(value, isp->base + offset);
-+}
-+
-+static u32 risp_read(struct rcar_isp *isp, u32 offset)
-+{
-+	return ioread32(isp->base + offset);
-+}
-+
-+static int risp_power_on(struct rcar_isp *isp)
-+{
-+	int ret;
-+
-+	ret = pm_runtime_resume_and_get(isp->dev);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = reset_control_deassert(isp->rstc);
-+	if (ret < 0) {
-+		pm_runtime_put(isp->dev);
-+		return ret;
-+	}
-+
+ static const struct mmc_bus_ops mmc_ops = {
+ 	.remove = mmc_remove,
+ 	.detect = mmc_detect,
+@@ -2239,6 +2244,7 @@ static const struct mmc_bus_ops mmc_ops = {
+ 	.hw_reset = _mmc_hw_reset,
+ 	.cache_enabled = _mmc_cache_enabled,
+ 	.flush_cache = _mmc_flush_cache,
++	.send_abort_tuning = _mmc_send_abort_tuning,
+ };
+ 
+ /*
+diff --git a/drivers/mmc/core/mmc_ops.c b/drivers/mmc/core/mmc_ops.c
+index 0c54858e89c0..bc794419d443 100644
+--- a/drivers/mmc/core/mmc_ops.c
++++ b/drivers/mmc/core/mmc_ops.c
+@@ -705,26 +705,11 @@ EXPORT_SYMBOL_GPL(mmc_send_tuning);
+ 
+ int mmc_send_abort_tuning(struct mmc_host *host, u32 opcode)
+ {
+-	struct mmc_command cmd = {};
+-
+-	/*
+-	 * eMMC specification specifies that CMD12 can be used to stop a tuning
+-	 * command, but SD specification does not, so do nothing unless it is
+-	 * eMMC.
+-	 */
+-	if (opcode != MMC_SEND_TUNING_BLOCK_HS200)
+-		return 0;
++	if (host->bus_ops->send_abort_tuning)
++		return host->bus_ops->send_abort_tuning(host);
+ 
+-	cmd.opcode = MMC_STOP_TRANSMISSION;
+-	cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_AC;
+-
+-	/*
+-	 * For drivers that override R1 to R1b, set an arbitrary timeout based
+-	 * on the tuning timeout i.e. 150ms.
+-	 */
+-	cmd.busy_timeout = 150;
 +	return 0;
-+}
-+
-+static void risp_power_off(struct rcar_isp *isp)
+ 
+-	return mmc_wait_for_cmd(host, &cmd, 0);
+ }
+ EXPORT_SYMBOL_GPL(mmc_send_abort_tuning);
+ 
+diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
+index 4646b7a03db6..19c85e6088f4 100644
+--- a/drivers/mmc/core/sd.c
++++ b/drivers/mmc/core/sd.c
+@@ -1784,6 +1784,11 @@ static int mmc_sd_hw_reset(struct mmc_host *host)
+ 	return mmc_sd_init_card(host, host->card->ocr, host->card);
+ }
+ 
++static int sd_send_abort_tuning(struct mmc_host *host)
 +{
-+	reset_control_assert(isp->rstc);
-+	pm_runtime_put(isp->dev);
++	return mmc_send_stop(host, 150, 0);
 +}
 +
-+static int risp_start(struct rcar_isp *isp)
-+{
-+	const struct rcar_isp_format *format;
-+	unsigned int vc;
-+	u32 sel_csi = 0;
-+	int ret;
-+
-+	format = risp_code_to_fmt(isp->mf.code);
-+	if (!format) {
-+		dev_err(isp->dev, "Unsupported bus format\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = risp_power_on(isp);
-+	if (ret) {
-+		dev_err(isp->dev, "Failed to power on ISP\n");
-+		return ret;
-+	}
-+
-+	/* Select CSI-2 input source. */
-+	if (isp->csi_input == RISP_CSI_INPUT1)
-+		sel_csi = ISPINPUTSEL0_SEL_CSI0;
-+
-+	risp_write(isp, ISPINPUTSEL0_REG,
-+		   risp_read(isp, ISPINPUTSEL0_REG) | sel_csi);
-+
-+	/* Configure Channel Selector. */
-+	for (vc = 0; vc < 4; vc++) {
-+		u8 ch = vc + 4;
-+		u8 dt = format->datatype;
-+
-+		risp_write(isp, ISPCS_FILTER_ID_CH_REG(ch), BIT(vc));
-+		risp_write(isp, ISPCS_DT_CODE03_CH_REG(ch),
-+			   ISPCS_DT_CODE03_EN3 | ISPCS_DT_CODE03_DT3(dt) |
-+			   ISPCS_DT_CODE03_EN2 | ISPCS_DT_CODE03_DT2(dt) |
-+			   ISPCS_DT_CODE03_EN1 | ISPCS_DT_CODE03_DT1(dt) |
-+			   ISPCS_DT_CODE03_EN0 | ISPCS_DT_CODE03_DT0(dt));
-+	}
-+
-+	/* Setup processing method. */
-+	risp_write(isp, ISPPROCMODE_DT_REG(format->datatype),
-+		   ISPPROCMODE_DT_PROC_MODE_VC3(format->procmode) |
-+		   ISPPROCMODE_DT_PROC_MODE_VC2(format->procmode) |
-+		   ISPPROCMODE_DT_PROC_MODE_VC1(format->procmode) |
-+		   ISPPROCMODE_DT_PROC_MODE_VC0(format->procmode));
-+
-+	/* Start ISP. */
-+	risp_write(isp, ISPSTART_REG, ISPSTART_START);
-+
-+	ret = v4l2_subdev_call(isp->remote, video, s_stream, 1);
-+	if (ret)
-+		risp_power_off(isp);
-+
-+	return ret;
-+}
-+
-+static void risp_stop(struct rcar_isp *isp)
-+{
-+	v4l2_subdev_call(isp->remote, video, s_stream, 0);
-+
-+	/* Stop ISP. */
-+	risp_write(isp, ISPSTART_REG, ISPSTART_STOP);
-+
-+	risp_power_off(isp);
-+}
-+
-+static int risp_s_stream(struct v4l2_subdev *sd, int enable)
-+{
-+	struct rcar_isp *isp = sd_to_isp(sd);
-+	int ret = 0;
-+
-+	mutex_lock(&isp->lock);
-+
-+	if (!isp->remote) {
-+		ret = -ENODEV;
-+		goto out;
-+	}
-+
-+	if (enable && isp->stream_count == 0) {
-+		ret = risp_start(isp);
-+		if (ret)
-+			goto out;
-+	} else if (!enable && isp->stream_count == 1) {
-+		risp_stop(isp);
-+	}
-+
-+	isp->stream_count += enable ? 1 : -1;
-+out:
-+	mutex_unlock(&isp->lock);
-+
-+	return ret;
-+}
-+
-+static const struct v4l2_subdev_video_ops risp_video_ops = {
-+	.s_stream = risp_s_stream,
-+};
-+
-+static int risp_set_pad_format(struct v4l2_subdev *sd,
-+			       struct v4l2_subdev_state *sd_state,
-+			       struct v4l2_subdev_format *format)
-+{
-+	struct rcar_isp *isp = sd_to_isp(sd);
-+	struct v4l2_mbus_framefmt *framefmt;
-+
-+	mutex_lock(&isp->lock);
-+
-+	if (!risp_code_to_fmt(format->format.code))
-+		format->format.code = rcar_isp_formats[0].code;
-+
-+	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE) {
-+		isp->mf = format->format;
-+	} else {
-+		framefmt = v4l2_subdev_get_try_format(sd, sd_state, 0);
-+		*framefmt = format->format;
-+	}
-+
-+	mutex_unlock(&isp->lock);
-+
-+	return 0;
-+}
-+
-+static int risp_get_pad_format(struct v4l2_subdev *sd,
-+			       struct v4l2_subdev_state *sd_state,
-+			       struct v4l2_subdev_format *format)
-+{
-+	struct rcar_isp *isp = sd_to_isp(sd);
-+
-+	mutex_lock(&isp->lock);
-+
-+	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE)
-+		format->format = isp->mf;
-+	else
-+		format->format = *v4l2_subdev_get_try_format(sd, sd_state, 0);
-+
-+	mutex_unlock(&isp->lock);
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_pad_ops risp_pad_ops = {
-+	.set_fmt = risp_set_pad_format,
-+	.get_fmt = risp_get_pad_format,
-+	.link_validate = v4l2_subdev_link_validate_default,
-+};
-+
-+static const struct v4l2_subdev_ops rcar_isp_subdev_ops = {
-+	.video	= &risp_video_ops,
-+	.pad	= &risp_pad_ops,
-+};
-+
-+/* -----------------------------------------------------------------------------
-+ * Async handling and registration of subdevices and links
-+ */
-+
-+static int risp_notify_bound(struct v4l2_async_notifier *notifier,
-+			     struct v4l2_subdev *subdev,
-+			     struct v4l2_async_subdev *asd)
-+{
-+	struct rcar_isp *isp = notifier_to_isp(notifier);
-+	int pad;
-+
-+	pad = media_entity_get_fwnode_pad(&subdev->entity, asd->match.fwnode,
-+					  MEDIA_PAD_FL_SOURCE);
-+	if (pad < 0) {
-+		dev_err(isp->dev, "Failed to find pad for %s\n", subdev->name);
-+		return pad;
-+	}
-+
-+	isp->remote = subdev;
-+	isp->remote_pad = pad;
-+
-+	dev_dbg(isp->dev, "Bound %s pad: %d\n", subdev->name, pad);
-+
-+	return media_create_pad_link(&subdev->entity, pad,
-+				     &isp->subdev.entity, 0,
-+				     MEDIA_LNK_FL_ENABLED |
-+				     MEDIA_LNK_FL_IMMUTABLE);
-+}
-+
-+static void risp_notify_unbind(struct v4l2_async_notifier *notifier,
-+			       struct v4l2_subdev *subdev,
-+			       struct v4l2_async_subdev *asd)
-+{
-+	struct rcar_isp *isp = notifier_to_isp(notifier);
-+
-+	isp->remote = NULL;
-+
-+	dev_dbg(isp->dev, "Unbind %s\n", subdev->name);
-+}
-+
-+static const struct v4l2_async_notifier_operations risp_notify_ops = {
-+	.bound = risp_notify_bound,
-+	.unbind = risp_notify_unbind,
-+};
-+
-+static int risp_parse_dt(struct rcar_isp *isp)
-+{
-+	struct v4l2_async_subdev *asd;
-+	struct fwnode_handle *fwnode;
-+	struct fwnode_handle *ep;
-+	unsigned int id;
-+	int ret;
-+
-+	for (id = 0; id < 2; id++) {
-+		ep = fwnode_graph_get_endpoint_by_id(dev_fwnode(isp->dev),
-+						     0, id, 0);
-+		if (ep)
-+			break;
-+	}
-+
-+	if (!ep) {
-+		dev_err(isp->dev, "Not connected to subdevice\n");
-+		return -EINVAL;
-+	}
-+
-+	if (id == 1)
-+		isp->csi_input = RISP_CSI_INPUT1;
-+
-+	fwnode = fwnode_graph_get_remote_endpoint(ep);
-+	fwnode_handle_put(ep);
-+
-+	dev_dbg(isp->dev, "Found '%pOF'\n", to_of_node(fwnode));
-+
-+	v4l2_async_nf_init(&isp->notifier);
-+	isp->notifier.ops = &risp_notify_ops;
-+
-+	asd = v4l2_async_nf_add_fwnode(&isp->notifier, fwnode,
-+				       struct v4l2_async_subdev);
-+	fwnode_handle_put(fwnode);
-+	if (IS_ERR(asd))
-+		return PTR_ERR(asd);
-+
-+	ret = v4l2_async_subdev_nf_register(&isp->subdev, &isp->notifier);
-+	if (ret)
-+		v4l2_async_nf_cleanup(&isp->notifier);
-+
-+	return ret;
-+}
-+
-+/* -----------------------------------------------------------------------------
-+ * Platform Device Driver
-+ */
-+
-+static const struct media_entity_operations risp_entity_ops = {
-+	.link_validate = v4l2_subdev_link_validate,
-+};
-+
-+static int risp_probe_resources(struct rcar_isp *isp,
-+				struct platform_device *pdev)
-+{
-+	struct resource *res;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	isp->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(isp->base))
-+		return PTR_ERR(isp->base);
-+
-+	isp->rstc = devm_reset_control_get(&pdev->dev, NULL);
-+
-+	return PTR_ERR_OR_ZERO(isp->rstc);
-+}
-+
-+static const struct of_device_id risp_of_id_table[] = {
-+	{ .compatible = "renesas,r8a779a0-isp" },
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(of, risp_of_id_table);
-+
-+static int risp_probe(struct platform_device *pdev)
-+{
-+	struct rcar_isp *isp;
-+	unsigned int i;
-+	int ret;
-+
-+	isp = devm_kzalloc(&pdev->dev, sizeof(*isp), GFP_KERNEL);
-+	if (!isp)
-+		return -ENOMEM;
-+
-+	isp->dev = &pdev->dev;
-+
-+	mutex_init(&isp->lock);
-+
-+	ret = risp_probe_resources(isp, pdev);
-+	if (ret) {
-+		dev_err(isp->dev, "Failed to get resources\n");
-+		goto error_mutex;
-+	}
-+
-+	platform_set_drvdata(pdev, isp);
-+
-+	pm_runtime_enable(&pdev->dev);
-+
-+	ret = risp_parse_dt(isp);
-+	if (ret)
-+		goto error_pm;
-+
-+	isp->subdev.owner = THIS_MODULE;
-+	isp->subdev.dev = &pdev->dev;
-+	v4l2_subdev_init(&isp->subdev, &rcar_isp_subdev_ops);
-+	v4l2_set_subdevdata(&isp->subdev, &pdev->dev);
-+	snprintf(isp->subdev.name, V4L2_SUBDEV_NAME_SIZE, "%s %s",
-+		 KBUILD_MODNAME, dev_name(&pdev->dev));
-+	isp->subdev.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
-+
-+	isp->subdev.entity.function = MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER;
-+	isp->subdev.entity.ops = &risp_entity_ops;
-+
-+	isp->pads[RCAR_ISP_SINK].flags = MEDIA_PAD_FL_SINK;
-+	for (i = RCAR_ISP_PORT0; i < RCAR_ISP_MAX_PAD; i++)
-+		isp->pads[i].flags = MEDIA_PAD_FL_SOURCE;
-+
-+	ret = media_entity_pads_init(&isp->subdev.entity, RCAR_ISP_MAX_PAD,
-+				     isp->pads);
-+	if (ret)
-+		goto error_notifier;
-+
-+	ret = v4l2_async_register_subdev(&isp->subdev);
-+	if (ret < 0)
-+		goto error_notifier;
-+
-+	dev_info(isp->dev, "Using CSI-2 input: %u\n", isp->csi_input);
-+
-+	return 0;
-+error_notifier:
-+	v4l2_async_nf_unregister(&isp->notifier);
-+	v4l2_async_nf_cleanup(&isp->notifier);
-+error_pm:
-+	pm_runtime_disable(&pdev->dev);
-+error_mutex:
-+	mutex_destroy(&isp->lock);
-+
-+	return ret;
-+}
-+
-+static int risp_remove(struct platform_device *pdev)
-+{
-+	struct rcar_isp *isp = platform_get_drvdata(pdev);
-+
-+	v4l2_async_nf_unregister(&isp->notifier);
-+	v4l2_async_nf_cleanup(&isp->notifier);
-+
-+	v4l2_async_unregister_subdev(&isp->subdev);
-+
-+	pm_runtime_disable(&pdev->dev);
-+
-+	mutex_destroy(&isp->lock);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver rcar_isp_driver = {
-+	.driver = {
-+		.name = "rcar-isp",
-+		.of_match_table = risp_of_id_table,
-+	},
-+	.probe = risp_probe,
-+	.remove = risp_remove,
-+};
-+
-+module_platform_driver(rcar_isp_driver);
-+
-+MODULE_AUTHOR("Niklas Söderlund <niklas.soderlund@ragnatech.se>");
-+MODULE_DESCRIPTION("Renesas R-Car ISP Channel Selector driver");
-+MODULE_LICENSE("GPL");
+ static const struct mmc_bus_ops mmc_sd_ops = {
+ 	.remove = mmc_sd_remove,
+ 	.detect = mmc_sd_detect,
+@@ -1796,6 +1801,7 @@ static const struct mmc_bus_ops mmc_sd_ops = {
+ 	.hw_reset = mmc_sd_hw_reset,
+ 	.cache_enabled = sd_cache_enabled,
+ 	.flush_cache = sd_flush_cache,
++	.send_abort_tuning = sd_send_abort_tuning,
+ };
+ 
+ /*
 -- 
-2.33.0
+2.30.2
 
