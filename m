@@ -7,43 +7,42 @@ X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A79FBC43219
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D037C433FE
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Sep 2021 13:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89B9461268
+	by mail.kernel.org (Postfix) with ESMTP id 398DD61251
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Sep 2021 13:20:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234816AbhIONVm (ORCPT
+        id S234317AbhIONVm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Wed, 15 Sep 2021 09:21:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43678 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234488AbhIONVl (ORCPT
+        with ESMTP id S234478AbhIONVl (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 15 Sep 2021 09:21:41 -0400
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8553FC061767
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Sep 2021 06:20:20 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CD62C061574
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 15 Sep 2021 06:20:19 -0700 (PDT)
 Received: from ramsan.of.borg ([84.195.186.194])
         by laurent.telenet-ops.be with bizsmtp
-        id uDLH2500Y4C55Sk01DLHEp; Wed, 15 Sep 2021 15:20:18 +0200
+        id uDLH2500X4C55Sk01DLHEo; Wed, 15 Sep 2021 15:20:18 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mQUng-004eT9-1Q; Wed, 15 Sep 2021 15:18:08 +0200
+        id 1mQUnf-004eT9-UZ; Wed, 15 Sep 2021 15:18:07 +0200
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mQRWi-002T2q-S7; Wed, 15 Sep 2021 11:48:24 +0200
+        id 1mQULw-002gJr-1V; Wed, 15 Sep 2021 14:49:28 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     Julia Lawall <julia.lawall@inria.fr>,
-        linux-watchdog@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>
+Cc:     linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] watchdog: rza_wdt: Use semicolons instead of commas
-Date:   Wed, 15 Sep 2021 11:48:23 +0200
-Message-Id: <fa4451efd21e287f8fdf2f7f8495b070544209c0.1631699262.git.geert+renesas@glider.be>
+Subject: [PATCH] serial: 8250: SERIAL_8250_EM should depend on ARCH_RENESAS
+Date:   Wed, 15 Sep 2021 14:49:22 +0200
+Message-Id: <7b5a4bbf2f47b2c4c127817e8b1524a650795d97.1631710085.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,32 +50,29 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This code works, but it is cleaner to use semicolons at the end of
-statements instead of commas.
-
-Extracted from a big anonymous patch by Julia Lawall
-<julia.lawall@inria.fr>.
+The Emma Mobile integrated serial port hardware is only present on Emma
+Mobile SoCs.  Hence add a dependency on ARCH_RENESAS, to prevent asking
+the user about this driver when configuring a kernel without Renesas
+ARM32 SoC support.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/watchdog/rza_wdt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/tty/serial/8250/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/watchdog/rza_wdt.c b/drivers/watchdog/rza_wdt.c
-index 7b6c365f7cd36297..fe6c2ed35e04cc4b 100644
---- a/drivers/watchdog/rza_wdt.c
-+++ b/drivers/watchdog/rza_wdt.c
-@@ -189,8 +189,8 @@ static int rza_wdt_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 	}
- 
--	priv->wdev.info = &rza_wdt_ident,
--	priv->wdev.ops = &rza_wdt_ops,
-+	priv->wdev.info = &rza_wdt_ident;
-+	priv->wdev.ops = &rza_wdt_ops;
- 	priv->wdev.parent = dev;
- 
- 	priv->cks = (u8)(uintptr_t) of_device_get_match_data(dev);
+diff --git a/drivers/tty/serial/8250/Kconfig b/drivers/tty/serial/8250/Kconfig
+index 71ae16de0f90e06f..808268edd2e82a45 100644
+--- a/drivers/tty/serial/8250/Kconfig
++++ b/drivers/tty/serial/8250/Kconfig
+@@ -376,7 +376,7 @@ config SERIAL_8250_DW
+ config SERIAL_8250_EM
+ 	tristate "Support for Emma Mobile integrated serial port"
+ 	depends on SERIAL_8250 && HAVE_CLK
+-	depends on ARM || COMPILE_TEST
++	depends on (ARM && ARCH_RENESAS) || COMPILE_TEST
+ 	help
+ 	  Selecting this option will add support for the integrated serial
+ 	  port hardware found on the Emma Mobile line of processors.
 -- 
 2.25.1
 
