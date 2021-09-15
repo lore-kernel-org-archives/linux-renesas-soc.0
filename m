@@ -2,72 +2,75 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.7 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06591C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Sep 2021 01:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F7CAC43217
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Sep 2021 01:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D921060FBF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Sep 2021 01:50:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2822B60FBF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 15 Sep 2021 01:50:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230423AbhIOBv7 (ORCPT
+        id S234031AbhIOBwA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 14 Sep 2021 21:51:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56298 "EHLO
+        Tue, 14 Sep 2021 21:52:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56312 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230401AbhIOBv6 (ORCPT
+        with ESMTP id S233895AbhIOBwA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 14 Sep 2021 21:51:58 -0400
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76754C061762
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Sep 2021 18:50:40 -0700 (PDT)
-Received: by mail-wm1-x333.google.com with SMTP id z184-20020a1c7ec1000000b003065f0bc631so3583310wmc.0
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Sep 2021 18:50:40 -0700 (PDT)
+        Tue, 14 Sep 2021 21:52:00 -0400
+Received: from mail-wm1-x32b.google.com (mail-wm1-x32b.google.com [IPv6:2a00:1450:4864:20::32b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E278DC061762
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Sep 2021 18:50:41 -0700 (PDT)
+Received: by mail-wm1-x32b.google.com with SMTP id g19-20020a1c9d13000000b003075062d4daso900742wme.0
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 14 Sep 2021 18:50:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TnzgP/qqicRIPZKqRt4/Yh4sXYnq0DWhZShP0b5lRgM=;
-        b=qGWTMPesKciL+0EJnHbbQ39wpphg3YkpdaXhGnwwJ71iYesWBDPyaF5b4oW6+P0EGC
-         MAjPWXtomc23Hb65Yw34YuDo+qG9UNFd4ES426Oy6zyNXGa5eUNtUG1h/p3aF9Za3eCJ
-         UEuMMW79nCoQz5Q/q9fHyzz7KDcBEPeIzn8mRRUUQjElRzTK4GmGWHM7i86BPps3luXr
-         jhpwQ7hNhvzKnmyqR/RHsW7fldykcmjayJPFEaFoBKkAIOnVVzDU49S1MA9IF89co2iG
-         4LgimIa3bhuYzESTzUBnPRP7X6ReAY2I0gamupy3l5DW5yFeFlkwLed3clJoiD3ntIUD
-         i07A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=zM8FsXiM9O4eBZdkXaqFVNn1tTornIe046XH9M/vUAo=;
+        b=ITTklQFgG3s6JDx1la106SAbbJymHKIxsXGMVxvhhjWdDYHTqhnC+9/zigBbwHNwsC
+         j7ksWU2Ygjjtcgu2SZokKjzBzjIXIuXUyZ5cul0byJs4VQ5JO/6x524dmwzYshLXeMq1
+         1eYOL1kL9NJTUyoZuTKkj2vP60nk1WotYueH8uCxMtc42YNRf9c75QoVl3Z4NjKasqcQ
+         AkLlpjRi6E4kXsIl8alY0Dx3Lc8S9hsBIAP/RYeoY+QxktgieHW0ulgpj5jDDqG9nura
+         xr0QPnaeJH58Q0hRzvL0bZeRxZr4YFFeZMXCHwZ3bwYwWzTDCXw3vuLtJFx7xLD+PRkB
+         0m9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=TnzgP/qqicRIPZKqRt4/Yh4sXYnq0DWhZShP0b5lRgM=;
-        b=HcasAqWeV1Ri+LJXDPePSO4KyJ5mN6HiupCUd0Xjk6VhrG+XEjgv31R6P6Y4HiLLly
-         sDX1L7kM94xi81vjcVPWTCerb8Juet8hPtVsNs2qSmdOfl09EuHSvoKUrGSe1o3vx2UK
-         iCtdKh8DWTY8NfyjWAJ6ThkSRlN5YUtN02PeSkGKjVvGAPX5BTlmWmKd7G/FxA5CwmpM
-         jsV6hlxercHzOQMrdm9ggCB47f/39rhzl/6ED59OvPNGONb1fFGeBPMDNZsurlXwHCQO
-         0bYGSCMDt7938B9Snx8qP96uNGnRsfaBnJ0dV4inN6A4w1KZ1fQBDb/MJHBGCYHZTjzz
-         fctg==
-X-Gm-Message-State: AOAM530IONodta5+LQinfguBlNnoCrd37q0ZHauyd4liO40MrYs0eIWK
-        vZiqY0997UAHLbf25QE/M5dhwQ==
-X-Google-Smtp-Source: ABdhPJzmthYhyrsatvMJ0KfmOl3k7yncZgLrZW6fx/cyUF1nWKmXQQRrE6/PEjN3Y/2/xdS6TXM5zw==
-X-Received: by 2002:a7b:c3d0:: with SMTP id t16mr1827293wmj.169.1631670639067;
-        Tue, 14 Sep 2021 18:50:39 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=zM8FsXiM9O4eBZdkXaqFVNn1tTornIe046XH9M/vUAo=;
+        b=NfjZbjSlHEsdArNpfdORAO9s7P2vOubs4XRX9VDlFV+zMygjGIFs+DLA3ijLIJDGPD
+         2Eszt4BIhBgFGujZMP4YGgmQWFZoOwcbnv1r9iN1KJ+joEY9CweNCNy39Cy9CW/0E5hB
+         RYNiWprIS73OGqkNCu7Dkiv8BP7NAg8V91ici4eUBxyCeuXxx1Vv7LeYXp6/bJOBjpaw
+         NUTr2O9g43P8eJvt4/K33zGtivqTDJOb6rkw65zNkftOy6lpAhbhUG1JjD/V+zl4KEH/
+         tMsr6F3NuBVpc8uMEXvGT8dTxiCA7brs2+nmHS1cxhjpNuI07Ocag/wfMP9CHnLnnkD9
+         bEFQ==
+X-Gm-Message-State: AOAM5300wcDp1VdqALNZx6cZ7L7Kj8mL9+7lDYvBT9oHLMBMs93270Yw
+        yXP05mrfUSP+QfTfUkUHLSwuwA==
+X-Google-Smtp-Source: ABdhPJwbRo5NrwKJhg2n6ORF2bczxZ4tl+VhEo+No1jKxRFo79yONd7Liw3MJQ42pjX/XDzUkco6OQ==
+X-Received: by 2002:a7b:c30b:: with SMTP id k11mr1747912wmj.49.1631670640385;
+        Tue, 14 Sep 2021 18:50:40 -0700 (PDT)
 Received: from bismarck.berto.se (p54ac5892.dip0.t-ipconnect.de. [84.172.88.146])
-        by smtp.googlemail.com with ESMTPSA id k17sm3486863wmj.0.2021.09.14.18.50.38
+        by smtp.googlemail.com with ESMTPSA id k17sm3486863wmj.0.2021.09.14.18.50.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Sep 2021 18:50:38 -0700 (PDT)
+        Tue, 14 Sep 2021 18:50:40 -0700 (PDT)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         linux-media@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 0/2] rcar-csi2: Serialize format cfg and improve mutex handling
-Date:   Wed, 15 Sep 2021 03:50:11 +0200
-Message-Id: <20210915015013.3169934-1-niklas.soderlund+renesas@ragnatech.se>
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Jacopo Mondi <jacopo@jmondi.org>
+Subject: [PATCH v2 2/2] media: rcar-csi2: Serialize access to set_fmt and get_fmt
+Date:   Wed, 15 Sep 2021 03:50:13 +0200
+Message-Id: <20210915015013.3169934-3-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20210915015013.3169934-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20210915015013.3169934-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -75,25 +78,66 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello Hans,
+The access to the internal storage of the format rcar_csi2.mf should be
+serialized, extend the exciting lock mutex to also cover this.
 
-This series improves the mutex handling of the R-Car CSI-2 driver. While
-working with other drivers it have surfaced that drivers are responsible
-to serialize format configuration.
+While at it document the mutex.
 
-Patch 1/2 adds a bit of housekeeping to the mutex used in the driver
-while patch 2/2 adds the format serialization.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+Reviewed-by: Jacopo Mondi <jacopo@jmondi.org>
+---
+ drivers/media/platform/rcar-vin/rcar-csi2.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-The series is based on the latest media-tree and tested on M3-N and H3
-ES2.0 without any regressions found.
-
-Niklas Söderlund (2):
-  media: rcar-csi2: Cleanup mutex on remove and fail
-  media: rcar-csi2: Serialize access to set_fmt and get_fmt
-
- drivers/media/platform/rcar-vin/rcar-csi2.c | 25 +++++++++++++++------
- 1 file changed, 18 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-csi2.c b/drivers/media/platform/rcar-vin/rcar-csi2.c
+index a02573dbd5da4f62..2fdfdc38de424c72 100644
+--- a/drivers/media/platform/rcar-vin/rcar-csi2.c
++++ b/drivers/media/platform/rcar-vin/rcar-csi2.c
+@@ -370,9 +370,8 @@ struct rcar_csi2 {
+ 	struct v4l2_subdev *remote;
+ 	unsigned int remote_pad;
+ 
++	struct mutex lock; /* Protects mf and stream_count. */
+ 	struct v4l2_mbus_framefmt mf;
+-
+-	struct mutex lock;
+ 	int stream_count;
+ 
+ 	unsigned short lanes;
+@@ -725,6 +724,8 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
+ 	struct rcar_csi2 *priv = sd_to_csi2(sd);
+ 	struct v4l2_mbus_framefmt *framefmt;
+ 
++	mutex_lock(&priv->lock);
++
+ 	if (!rcsi2_code_to_fmt(format->format.code))
+ 		format->format.code = rcar_csi2_formats[0].code;
+ 
+@@ -735,6 +736,8 @@ static int rcsi2_set_pad_format(struct v4l2_subdev *sd,
+ 		*framefmt = format->format;
+ 	}
+ 
++	mutex_unlock(&priv->lock);
++
+ 	return 0;
+ }
+ 
+@@ -744,11 +747,15 @@ static int rcsi2_get_pad_format(struct v4l2_subdev *sd,
+ {
+ 	struct rcar_csi2 *priv = sd_to_csi2(sd);
+ 
++	mutex_lock(&priv->lock);
++
+ 	if (format->which == V4L2_SUBDEV_FORMAT_ACTIVE)
+ 		format->format = priv->mf;
+ 	else
+ 		format->format = *v4l2_subdev_get_try_format(sd, sd_state, 0);
+ 
++	mutex_unlock(&priv->lock);
++
+ 	return 0;
+ }
+ 
 -- 
 2.33.0
 
