@@ -7,45 +7,43 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BD2C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2B3C43217
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7464E60F3A
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64DCB611F0
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbhITJHa (ORCPT
+        id S236172AbhITJHZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 05:07:30 -0400
-Received: from www.zeus03.de ([194.117.254.33]:54358 "EHLO mail.zeus03.de"
+        Mon, 20 Sep 2021 05:07:25 -0400
+Received: from www.zeus03.de ([194.117.254.33]:54216 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S234811AbhITJHT (ORCPT
+        id S236086AbhITJHI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Sep 2021 05:07:19 -0400
+        Mon, 20 Sep 2021 05:07:08 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=GnB9PaNYAVWoSF
-        sgf1jz7+etGw0c6Zs8IYhl8WXWXSE=; b=b+nWIIMq23r6AsaJWdNuPhfv4+LZg3
-        gna6Yftspr/xvq6bIxktV26mcxPy+kpBtPeqsy9MJ8xvJVrz0HGhe3p2jl8zMyGJ
-        pygO1YxAdc9SU3lI2XjszJehRIRvgjfJGWLsRHVHyl9KfC8kxPM+edMfZg6phmiO
-        D2KOM3q7TS6OA=
-Received: (qmail 2412743 invoked from network); 20 Sep 2021 11:05:27 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:27 +0200
-X-UD-Smtp-Session: l3s3148p1@uof8lGnMFIsgAwDPXwlxANIWpbLKE1Uh
+        :mime-version:content-transfer-encoding; s=k1; bh=FMuJqDCHzK4uHq
+        kYECDzhFJ9tjA5iJrkLQtxJNEYXpE=; b=M3AVwcQtfiGfOsawZxa6RwHbrXn9r2
+        iAUDVtMNqHHXFfUJtfGRkAMd0UzYu6PDSXzvERcwTiqISvjajEWY8jyRw7yHd13b
+        QNEmAXzxn7xErxMPYbimcsnxv8I8h8srBTTqHHiL5iuFNdDkBevr5BL9TeUf/Ju8
+        tNEKcsR3TkWmI=
+Received: (qmail 2412611 invoked from network); 20 Sep 2021 11:05:24 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:24 +0200
+X-UD-Smtp-Session: l3s3148p1@FeDQlGnMCosgAwDPXwlxANIWpbLKE1Uh
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 7/9] net: mdio: mdio-bcm-iproc: simplify getting .driver_data
-Date:   Mon, 20 Sep 2021 11:05:19 +0200
-Message-Id: <20210920090522.23784-8-wsa+renesas@sang-engineering.com>
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH 2/9] firmware: meson: simplify getting .driver_data
+Date:   Mon, 20 Sep 2021 11:05:14 +0200
+Message-Id: <20210920090522.23784-3-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
 References: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
@@ -63,23 +61,27 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/net/mdio/mdio-bcm-iproc.c | 3 +--
+ drivers/firmware/meson/meson_sm.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/mdio/mdio-bcm-iproc.c b/drivers/net/mdio/mdio-bcm-iproc.c
-index 77fc970cdfde..5666cfab15b9 100644
---- a/drivers/net/mdio/mdio-bcm-iproc.c
-+++ b/drivers/net/mdio/mdio-bcm-iproc.c
-@@ -181,8 +181,7 @@ static int iproc_mdio_remove(struct platform_device *pdev)
- #ifdef CONFIG_PM_SLEEP
- static int iproc_mdio_resume(struct device *dev)
+diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
+index 77aa5c6398aa..714016e3aab3 100644
+--- a/drivers/firmware/meson/meson_sm.c
++++ b/drivers/firmware/meson/meson_sm.c
+@@ -240,12 +240,11 @@ EXPORT_SYMBOL_GPL(meson_sm_get);
+ static ssize_t serial_show(struct device *dev, struct device_attribute *attr,
+ 			 char *buf)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct iproc_mdio_priv *priv = platform_get_drvdata(pdev);
-+	struct iproc_mdio_priv *priv = dev_get_drvdata(dev);
+ 	struct meson_sm_firmware *fw;
+ 	uint8_t *id_buf;
+ 	int ret;
  
- 	/* restore the mii clock configuration */
- 	iproc_mdio_config_clk(priv->base);
+-	fw = platform_get_drvdata(pdev);
++	fw = dev_get_drvdata(dev);
+ 
+ 	id_buf = kmalloc(SM_CHIP_ID_LENGTH, GFP_KERNEL);
+ 	if (!id_buf)
 -- 
 2.30.2
 
