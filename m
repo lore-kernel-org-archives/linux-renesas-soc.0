@@ -4,44 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA512C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B31CC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3FEF608FB
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7291A60F48
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234740AbhITJHp (ORCPT
+        id S236160AbhITJHx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 05:07:45 -0400
-Received: from www.zeus03.de ([194.117.254.33]:54426 "EHLO mail.zeus03.de"
+        Mon, 20 Sep 2021 05:07:53 -0400
+Received: from www.zeus03.de ([194.117.254.33]:54334 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236160AbhITJHX (ORCPT
+        id S234800AbhITJHT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Sep 2021 05:07:23 -0400
+        Mon, 20 Sep 2021 05:07:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=kelsYgr6SqHCfz
-        FaSr+5PxcTB7+QvINlURnRo2qpgTs=; b=WVT+ZD4sJBq7gWM4rlglzY+jwq1feC
-        Iv+PxhjP77o6WHe8V1AE1WeSnpTMxxH4gZyg7m78AmfkaUzT11/C8u064DZyslkK
-        s1MWTEuxCq4WxVzg6GcQstBpo5kj8gK7k4DuaFdSR3dnjR0AOTw6or9YZYdiICKr
-        yjaOJR6+/zymY=
-Received: (qmail 2412787 invoked from network); 20 Sep 2021 11:05:28 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:28 +0200
-X-UD-Smtp-Session: l3s3148p1@zvcMlWnMGIsgAwDPXwlxANIWpbLKE1Uh
+        :mime-version:content-transfer-encoding; s=k1; bh=40/A5X1ISICwGc
+        +yxpC3FVjdEcLDofeLo02oc4lIiDw=; b=GJO6RKg3hE30a4q9iMo4xd8OeWjJ/c
+        /saDcxBsI7Z+kK9DkwlUaYUDfrnIMA6I845F6RtH6J/vvS0ogGth/V8aRjXXyqfG
+        0N70znhZvtec5jKt0TlcNs0FopjHdzOIIJx2h8fBb/w6SvkBPthaVcpfG/hBTBjG
+        k5mE1U8/QpCYQ=
+Received: (qmail 2412696 invoked from network); 20 Sep 2021 11:05:25 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:25 +0200
+X-UD-Smtp-Session: l3s3148p1@5TfslGnMEIsgAwDPXwlxANIWpbLKE1Uh
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        linux-remoteproc@vger.kernel.org
-Subject: [PATCH 9/9] remoteproc: omap_remoteproc: simplify getting .driver_data
-Date:   Mon, 20 Sep 2021 11:05:21 +0200
-Message-Id: <20210920090522.23784-10-wsa+renesas@sang-engineering.com>
+        Rob Herring <robh@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Steven Price <steven.price@arm.com>,
+        Alyssa Rosenzweig <alyssa.rosenzweig@collabora.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH 5/9] drm/panfrost: simplify getting .driver_data
+Date:   Mon, 20 Sep 2021 11:05:17 +0200
+Message-Id: <20210920090522.23784-6-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
 References: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
@@ -59,33 +62,33 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/remoteproc/omap_remoteproc.c | 6 ++----
+ drivers/gpu/drm/panfrost/panfrost_device.c | 6 ++----
  1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/remoteproc/omap_remoteproc.c b/drivers/remoteproc/omap_remoteproc.c
-index 43531caa1959..32a588fefbdc 100644
---- a/drivers/remoteproc/omap_remoteproc.c
-+++ b/drivers/remoteproc/omap_remoteproc.c
-@@ -901,8 +901,7 @@ static int _omap_rproc_resume(struct rproc *rproc, bool auto_suspend)
- 
- static int __maybe_unused omap_rproc_suspend(struct device *dev)
+diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
+index bd9b7be63b0f..fd4309209088 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_device.c
++++ b/drivers/gpu/drm/panfrost/panfrost_device.c
+@@ -400,8 +400,7 @@ void panfrost_device_reset(struct panfrost_device *pfdev)
+ #ifdef CONFIG_PM
+ int panfrost_device_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct rproc *rproc = platform_get_drvdata(pdev);
-+	struct rproc *rproc = dev_get_drvdata(dev);
- 	struct omap_rproc *oproc = rproc->priv;
- 	int ret = 0;
+-	struct panfrost_device *pfdev = platform_get_drvdata(pdev);
++	struct panfrost_device *pfdev = dev_get_drvdata(dev);
  
-@@ -938,8 +937,7 @@ static int __maybe_unused omap_rproc_suspend(struct device *dev)
+ 	panfrost_device_reset(pfdev);
+ 	panfrost_devfreq_resume(pfdev);
+@@ -411,8 +410,7 @@ int panfrost_device_resume(struct device *dev)
  
- static int __maybe_unused omap_rproc_resume(struct device *dev)
+ int panfrost_device_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct rproc *rproc = platform_get_drvdata(pdev);
-+	struct rproc *rproc = dev_get_drvdata(dev);
- 	struct omap_rproc *oproc = rproc->priv;
- 	int ret = 0;
+-	struct panfrost_device *pfdev = platform_get_drvdata(pdev);
++	struct panfrost_device *pfdev = dev_get_drvdata(dev);
  
+ 	if (!panfrost_job_is_idle(pfdev))
+ 		return -EBUSY;
 -- 
 2.30.2
 
