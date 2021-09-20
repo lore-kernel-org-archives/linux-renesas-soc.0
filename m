@@ -7,43 +7,42 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DD7C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FB4C433EF
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B94160F56
+	by mail.kernel.org (Postfix) with ESMTP id 65F3860F56
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236124AbhITJIH (ORCPT
+        id S230072AbhITJIJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 05:08:07 -0400
-Received: from www.zeus03.de ([194.117.254.33]:54236 "EHLO mail.zeus03.de"
+        Mon, 20 Sep 2021 05:08:09 -0400
+Received: from www.zeus03.de ([194.117.254.33]:54318 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236110AbhITJHR (ORCPT
+        id S232707AbhITJHR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 20 Sep 2021 05:07:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=BLeN3aWGvmhC6O
-        T7d18ejB5diYjwZjYQYq05PqGUqXk=; b=AxanZlvKFbWYt0LlZfzjao09kXgYzl
-        yy30P2Bfey4RoDaqY7/2Jm5wpzdC5zsxzDdA9KD+5UXepw6CMiA424XdMF8m5awq
-        7aYYpdxroaOen++2WBcT5sP7uDq7ucZbXmg8CCmk/KXaLi5MGLHYCF3ThDzRtiOe
-        pE5btDya/RTpk=
-Received: (qmail 2412655 invoked from network); 20 Sep 2021 11:05:24 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:24 +0200
-X-UD-Smtp-Session: l3s3148p1@37PYlGnMDIsgAwDPXwlxANIWpbLKE1Uh
+        :mime-version:content-transfer-encoding; s=k1; bh=+UKNkOTxYKV56+
+        cBXEkABbYKt7nc/fV5beJYjVps6qw=; b=Ld5dzk/OkWa511RNMIDMFphcKNNjnJ
+        3uiezv7zR+e3S6Y89D8q7vzPPZmcpAwVMiwkrw3eRkVhDWxR3EkVCGqoqbS1oiS5
+        hXNET3nOU+yfRqfSaz6sk7Pi0zIYGm6hGUhIozdQkH7afvedzljMmIJUp86FxrnH
+        38UB198D6zxHA=
+Received: (qmail 2412719 invoked from network); 20 Sep 2021 11:05:26 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:26 +0200
+X-UD-Smtp-Session: l3s3148p1@C4/0lGnMEosgAwDPXwlxANIWpbLKE1Uh
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        Srinivas Neeli <srinivas.neeli@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 3/9] gpio: xilinx: simplify getting .driver_data
-Date:   Mon, 20 Sep 2021 11:05:15 +0200
-Message-Id: <20210920090522.23784-4-wsa+renesas@sang-engineering.com>
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org
+Subject: [PATCH 6/9] iio: common: cros_ec_sensors: simplify getting .driver_data
+Date:   Mon, 20 Sep 2021 11:05:18 +0200
+Message-Id: <20210920090522.23784-7-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
 References: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
@@ -61,33 +60,23 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/gpio/gpio-xilinx.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-xilinx.c b/drivers/gpio/gpio-xilinx.c
-index a1b66338d077..b6d3a57e27ed 100644
---- a/drivers/gpio/gpio-xilinx.c
-+++ b/drivers/gpio/gpio-xilinx.c
-@@ -371,8 +371,7 @@ static int __maybe_unused xgpio_resume(struct device *dev)
+diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+index 28bde13003b7..b2725c6adc7f 100644
+--- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
++++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
+@@ -831,8 +831,7 @@ EXPORT_SYMBOL_GPL(cros_ec_sensors_core_write);
  
- static int __maybe_unused xgpio_runtime_suspend(struct device *dev)
+ static int __maybe_unused cros_ec_sensors_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct xgpio_instance *gpio = platform_get_drvdata(pdev);
-+	struct xgpio_instance *gpio = dev_get_drvdata(dev);
+-	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
++	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+ 	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
+ 	int ret = 0;
  
- 	clk_disable(gpio->clk);
- 
-@@ -381,8 +380,7 @@ static int __maybe_unused xgpio_runtime_suspend(struct device *dev)
- 
- static int __maybe_unused xgpio_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct xgpio_instance *gpio = platform_get_drvdata(pdev);
-+	struct xgpio_instance *gpio = dev_get_drvdata(dev);
- 
- 	return clk_enable(gpio->clk);
- }
 -- 
 2.30.2
 
