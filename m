@@ -7,43 +7,40 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2B3C43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99248C43219
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64DCB611F0
+	by mail.kernel.org (Postfix) with ESMTP id 6E16B60FC0
 	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236172AbhITJHZ (ORCPT
+        id S229724AbhITJHl (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 05:07:25 -0400
-Received: from www.zeus03.de ([194.117.254.33]:54216 "EHLO mail.zeus03.de"
+        Mon, 20 Sep 2021 05:07:41 -0400
+Received: from www.zeus03.de ([194.117.254.33]:54416 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236086AbhITJHI (ORCPT
+        id S234740AbhITJHX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Sep 2021 05:07:08 -0400
+        Mon, 20 Sep 2021 05:07:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=FMuJqDCHzK4uHq
-        kYECDzhFJ9tjA5iJrkLQtxJNEYXpE=; b=M3AVwcQtfiGfOsawZxa6RwHbrXn9r2
-        iAUDVtMNqHHXFfUJtfGRkAMd0UzYu6PDSXzvERcwTiqISvjajEWY8jyRw7yHd13b
-        QNEmAXzxn7xErxMPYbimcsnxv8I8h8srBTTqHHiL5iuFNdDkBevr5BL9TeUf/Ju8
-        tNEKcsR3TkWmI=
-Received: (qmail 2412611 invoked from network); 20 Sep 2021 11:05:24 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:24 +0200
-X-UD-Smtp-Session: l3s3148p1@FeDQlGnMCosgAwDPXwlxANIWpbLKE1Uh
+        :mime-version:content-transfer-encoding; s=k1; bh=f/zxZRGlnJpbe6
+        H96Hzt8uxtwQGLc86qedocs3VWYGA=; b=lj832Axr2/AczctzUdmCMQrrBZaEpb
+        sgQBzYMsw7XFq7QQHC62sWqHBwWEQKrB8V6+9dziQacstGjHZpmiejLLeEsQVijJ
+        Mo3gDWHErBHl98DFkBDwrD6Wjsvs98/tGsOVbrWgOlyNz/4SAHebWKTK4ic810dk
+        3jLN634vo/uRw=
+Received: (qmail 2412762 invoked from network); 20 Sep 2021 11:05:27 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:27 +0200
+X-UD-Smtp-Session: l3s3148p1@D7kElWnMFosgAwDPXwlxANIWpbLKE1Uh
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH 2/9] firmware: meson: simplify getting .driver_data
-Date:   Mon, 20 Sep 2021 11:05:14 +0200
-Message-Id: <20210920090522.23784-3-wsa+renesas@sang-engineering.com>
+        Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>
+Subject: [PATCH 8/9] platform: chrome: cros_ec_sensorhub: simplify getting .driver_data
+Date:   Mon, 20 Sep 2021 11:05:20 +0200
+Message-Id: <20210920090522.23784-9-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
 References: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
@@ -61,27 +58,33 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/firmware/meson/meson_sm.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/platform/chrome/cros_ec_sensorhub.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/firmware/meson/meson_sm.c b/drivers/firmware/meson/meson_sm.c
-index 77aa5c6398aa..714016e3aab3 100644
---- a/drivers/firmware/meson/meson_sm.c
-+++ b/drivers/firmware/meson/meson_sm.c
-@@ -240,12 +240,11 @@ EXPORT_SYMBOL_GPL(meson_sm_get);
- static ssize_t serial_show(struct device *dev, struct device_attribute *attr,
- 			 char *buf)
+diff --git a/drivers/platform/chrome/cros_ec_sensorhub.c b/drivers/platform/chrome/cros_ec_sensorhub.c
+index 9c4af76a9956..31fb8bdaad5a 100644
+--- a/drivers/platform/chrome/cros_ec_sensorhub.c
++++ b/drivers/platform/chrome/cros_ec_sensorhub.c
+@@ -224,8 +224,7 @@ static int cros_ec_sensorhub_probe(struct platform_device *pdev)
+  */
+ static int cros_ec_sensorhub_suspend(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
- 	struct meson_sm_firmware *fw;
- 	uint8_t *id_buf;
- 	int ret;
+-	struct cros_ec_sensorhub *sensorhub = platform_get_drvdata(pdev);
++	struct cros_ec_sensorhub *sensorhub = dev_get_drvdata(dev);
+ 	struct cros_ec_dev *ec = sensorhub->ec;
  
--	fw = platform_get_drvdata(pdev);
-+	fw = dev_get_drvdata(dev);
+ 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE_FIFO))
+@@ -235,8 +234,7 @@ static int cros_ec_sensorhub_suspend(struct device *dev)
  
- 	id_buf = kmalloc(SM_CHIP_ID_LENGTH, GFP_KERNEL);
- 	if (!id_buf)
+ static int cros_ec_sensorhub_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct cros_ec_sensorhub *sensorhub = platform_get_drvdata(pdev);
++	struct cros_ec_sensorhub *sensorhub = dev_get_drvdata(dev);
+ 	struct cros_ec_dev *ec = sensorhub->ec;
+ 
+ 	if (cros_ec_check_features(ec, EC_FEATURE_MOTION_SENSE_FIFO))
 -- 
 2.30.2
 
