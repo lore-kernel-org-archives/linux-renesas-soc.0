@@ -2,81 +2,97 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76FB4C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1431C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 65F3860F56
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D67DD60F9B
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:11:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230072AbhITJIJ (ORCPT
+        id S236118AbhITJNX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 05:08:09 -0400
-Received: from www.zeus03.de ([194.117.254.33]:54318 "EHLO mail.zeus03.de"
+        Mon, 20 Sep 2021 05:13:23 -0400
+Received: from www.zeus03.de ([194.117.254.33]:55212 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S232707AbhITJHR (ORCPT
+        id S236638AbhITJLT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Sep 2021 05:07:17 -0400
+        Mon, 20 Sep 2021 05:11:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=+UKNkOTxYKV56+
-        cBXEkABbYKt7nc/fV5beJYjVps6qw=; b=Ld5dzk/OkWa511RNMIDMFphcKNNjnJ
-        3uiezv7zR+e3S6Y89D8q7vzPPZmcpAwVMiwkrw3eRkVhDWxR3EkVCGqoqbS1oiS5
-        hXNET3nOU+yfRqfSaz6sk7Pi0zIYGm6hGUhIozdQkH7afvedzljMmIJUp86FxrnH
-        38UB198D6zxHA=
-Received: (qmail 2412719 invoked from network); 20 Sep 2021 11:05:26 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:26 +0200
-X-UD-Smtp-Session: l3s3148p1@C4/0lGnMEosgAwDPXwlxANIWpbLKE1Uh
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=5mI78+BHgh6VFMMJG0mi9Ba98u2z
+        ND/SaUOq/k4m3XM=; b=vDJtvlbSiFggG/CNrIvGnH48Tgl6J96K0ikk6pbNF38t
+        ZKPnp1GQKEySwIsmwnkt/jH2TiUTZTfzUz187USxvTsunEX161iKtqONYXH1dRxR
+        4RrQk+N3diiXPcv+1FTwQlrWDDN+KpOoXqIW8qd5lGzqp4UibQIQQpknBhXfEA0=
+Received: (qmail 2413987 invoked from network); 20 Sep 2021 11:08:52 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:08:52 +0200
+X-UD-Smtp-Session: l3s3148p1@JLM9oWnMGosgAwDPXwlxANIWpbLKE1Uh
+Date:   Mon, 20 Sep 2021 11:08:52 +0200
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>, linux-iio@vger.kernel.org
-Subject: [PATCH 6/9] iio: common: cros_ec_sensors: simplify getting .driver_data
-Date:   Mon, 20 Sep 2021 11:05:18 +0200
-Message-Id: <20210920090522.23784-7-wsa+renesas@sang-engineering.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
-References: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Duc Nguyen <duc.nguyen.ub@renesas.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH 1/2] pwm: renesas-tpu: better errno for impossible rates
+Message-ID: <YUhPpJc3ZjM8IYH4@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        linux-pwm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Duc Nguyen <duc.nguyen.ub@renesas.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de
+References: <20210915065542.1897-1-wsa+renesas@sang-engineering.com>
+ <20210915065542.1897-2-wsa+renesas@sang-engineering.com>
+ <20210917082543.2f5wum23nkvmzbdi@pengutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="EQCBVrWDu+yYdQK4"
+Content-Disposition: inline
+In-Reply-To: <20210917082543.2f5wum23nkvmzbdi@pengutronix.de>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-We should get 'driver_data' from 'struct device' directly. Going via
-platform_device is an unneeded step back and forth.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
+--EQCBVrWDu+yYdQK4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Build tested only. buildbot is happy.
+Hi Uwe,
 
- drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+thank you for your detailed review, much appreciated! I will look into
+your suggestions. However, it will probably not be before October
+because it seems some more work and internal discussion is needed
+beforehand. I'll get back to you.
 
-diff --git a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-index 28bde13003b7..b2725c6adc7f 100644
---- a/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-+++ b/drivers/iio/common/cros_ec_sensors/cros_ec_sensors_core.c
-@@ -831,8 +831,7 @@ EXPORT_SYMBOL_GPL(cros_ec_sensors_core_write);
- 
- static int __maybe_unused cros_ec_sensors_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct iio_dev *indio_dev = platform_get_drvdata(pdev);
-+	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct cros_ec_sensors_core_state *st = iio_priv(indio_dev);
- 	int ret = 0;
- 
--- 
-2.30.2
+Thanks again and happy hacking,
 
+   Wolfram
+
+
+--EQCBVrWDu+yYdQK4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmFIT6AACgkQFA3kzBSg
+Kbb1XQ//YCRJeljcXqNSSAbQp9iylk+Eua3xMivTzm13sde5a2A+oKzD/gQNqQF+
+O6bmoV9sqDXwDr7ChbPGzcmj3sf9vdDq9yKoavIt6+7Kw+szape7xcAUmVS53o7H
+iKEl2mt0J28Y11Sy0KM+mXHRQ1MpzX0yO0Ey1IU6Iubi1SVTj+NcgZxDQ2AK5UhU
+tYuW1YSKNHHoNkx4/bjr//HSa/bLLk1W7U82Ly34i6wI9Dpxo2Qg2eJpNo/hrB40
+3Rj6U9CcgG07UhkcqAiYvwTyQCeQvn8ldjPfAFaZOReia4ek5UGnsr3Rn2922xiP
+IdB+2NR09w1Lx53Mc7ilDr94l1ejvpA+FKOBHsLCflmD1ls/ejo2vTCKiUhIk+F3
+7aWIGXPrxacV1iAAqB2pTNrv++gxInAkUmMywJN3gpxmeRDZ1ANFh7YbtM3bPiw2
+XgF51HB9ZlbjkzGpIMB9kcgqmSZT357pRYiWGuys4kfxuGyg9gmMvagWmrxjQecG
+/IlsChY1AlAStE9xcl+6/EbICbgov3xfNJ4I5AkJ96te9ktPvfcRDxnEJmp29nA0
+C3RTPU2KuYIbgwvy9LG146Ftrz6PqwOBb9MzyQhW+WKi1BZG4U255IuPjOs8utkT
+9aXo3k3Nx6vzc6MWX3eWAMWWh3YBZQfaOvrYqzqBvIGdtnr6IS0=
+=zT9M
+-----END PGP SIGNATURE-----
+
+--EQCBVrWDu+yYdQK4--
