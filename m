@@ -2,48 +2,50 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-16.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F78BC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88BD2C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 57A08606A5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7464E60F3A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Sep 2021 09:06:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236046AbhITJH3 (ORCPT
+        id S229773AbhITJHa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 20 Sep 2021 05:07:29 -0400
-Received: from www.zeus03.de ([194.117.254.33]:54168 "EHLO mail.zeus03.de"
+        Mon, 20 Sep 2021 05:07:30 -0400
+Received: from www.zeus03.de ([194.117.254.33]:54358 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S236117AbhITJHR (ORCPT
+        id S234811AbhITJHT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 20 Sep 2021 05:07:17 -0400
+        Mon, 20 Sep 2021 05:07:19 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=k1; bh=v+d2EKH5Hm5rpn
-        klW0GzaZ84yipAYJED4MgP1hNorRw=; b=ENT1r8KQ+FnFXriV0P7EoLlZR5qLmH
-        4EOYIViXe50IwSpt8xAZqjd/BTaHNLa2HBMyuczSsS5CrB6fR6SgiWtgbCpPPdDe
-        uLB7SYVDrfMhxPNElI7Oa7CoAH33R8I5BsLwrEVeKLJ8MbAxrAMpg0g4p8wUekPo
-        1Q2x9yeDyWprg=
-Received: (qmail 2412559 invoked from network); 20 Sep 2021 11:05:23 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:23 +0200
-X-UD-Smtp-Session: l3s3148p1@z9vIlGnMCIsgAwDPXwlxANIWpbLKE1Uh
+        :mime-version:content-transfer-encoding; s=k1; bh=GnB9PaNYAVWoSF
+        sgf1jz7+etGw0c6Zs8IYhl8WXWXSE=; b=b+nWIIMq23r6AsaJWdNuPhfv4+LZg3
+        gna6Yftspr/xvq6bIxktV26mcxPy+kpBtPeqsy9MJ8xvJVrz0HGhe3p2jl8zMyGJ
+        pygO1YxAdc9SU3lI2XjszJehRIRvgjfJGWLsRHVHyl9KfC8kxPM+edMfZg6phmiO
+        D2KOM3q7TS6OA=
+Received: (qmail 2412743 invoked from network); 20 Sep 2021 11:05:27 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 20 Sep 2021 11:05:27 +0200
+X-UD-Smtp-Session: l3s3148p1@uof8lGnMFIsgAwDPXwlxANIWpbLKE1Uh
 From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
         Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        dmaengine@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
+        Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, netdev@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/9] dmaengine: stm32-dmamux: simplify getting .driver_data
-Date:   Mon, 20 Sep 2021 11:05:13 +0200
-Message-Id: <20210920090522.23784-2-wsa+renesas@sang-engineering.com>
+Subject: [PATCH 7/9] net: mdio: mdio-bcm-iproc: simplify getting .driver_data
+Date:   Mon, 20 Sep 2021 11:05:19 +0200
+Message-Id: <20210920090522.23784-8-wsa+renesas@sang-engineering.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
 References: <20210920090522.23784-1-wsa+renesas@sang-engineering.com>
@@ -61,59 +63,23 @@ Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
 Build tested only. buildbot is happy.
 
- drivers/dma/stm32-dmamux.c | 14 +++++---------
- 1 file changed, 5 insertions(+), 9 deletions(-)
+ drivers/net/mdio/mdio-bcm-iproc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/dma/stm32-dmamux.c b/drivers/dma/stm32-dmamux.c
-index a42164389ebc..175f06749df6 100644
---- a/drivers/dma/stm32-dmamux.c
-+++ b/drivers/dma/stm32-dmamux.c
-@@ -305,8 +305,7 @@ static int stm32_dmamux_probe(struct platform_device *pdev)
- #ifdef CONFIG_PM
- static int stm32_dmamux_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct stm32_dmamux_data *stm32_dmamux = platform_get_drvdata(pdev);
-+	struct stm32_dmamux_data *stm32_dmamux = dev_get_drvdata(dev);
- 
- 	clk_disable_unprepare(stm32_dmamux->clk);
- 
-@@ -315,13 +314,12 @@ static int stm32_dmamux_runtime_suspend(struct device *dev)
- 
- static int stm32_dmamux_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct stm32_dmamux_data *stm32_dmamux = platform_get_drvdata(pdev);
-+	struct stm32_dmamux_data *stm32_dmamux = dev_get_drvdata(dev);
- 	int ret;
- 
- 	ret = clk_prepare_enable(stm32_dmamux->clk);
- 	if (ret) {
--		dev_err(&pdev->dev, "failed to prepare_enable clock\n");
-+		dev_err(dev, "failed to prepare_enable clock\n");
- 		return ret;
- 	}
- 
-@@ -332,8 +330,7 @@ static int stm32_dmamux_runtime_resume(struct device *dev)
+diff --git a/drivers/net/mdio/mdio-bcm-iproc.c b/drivers/net/mdio/mdio-bcm-iproc.c
+index 77fc970cdfde..5666cfab15b9 100644
+--- a/drivers/net/mdio/mdio-bcm-iproc.c
++++ b/drivers/net/mdio/mdio-bcm-iproc.c
+@@ -181,8 +181,7 @@ static int iproc_mdio_remove(struct platform_device *pdev)
  #ifdef CONFIG_PM_SLEEP
- static int stm32_dmamux_suspend(struct device *dev)
+ static int iproc_mdio_resume(struct device *dev)
  {
 -	struct platform_device *pdev = to_platform_device(dev);
--	struct stm32_dmamux_data *stm32_dmamux = platform_get_drvdata(pdev);
-+	struct stm32_dmamux_data *stm32_dmamux = dev_get_drvdata(dev);
- 	int i, ret;
+-	struct iproc_mdio_priv *priv = platform_get_drvdata(pdev);
++	struct iproc_mdio_priv *priv = dev_get_drvdata(dev);
  
- 	ret = pm_runtime_resume_and_get(dev);
-@@ -353,8 +350,7 @@ static int stm32_dmamux_suspend(struct device *dev)
- 
- static int stm32_dmamux_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct stm32_dmamux_data *stm32_dmamux = platform_get_drvdata(pdev);
-+	struct stm32_dmamux_data *stm32_dmamux = dev_get_drvdata(dev);
- 	int i, ret;
- 
- 	ret = pm_runtime_force_resume(dev);
+ 	/* restore the mii clock configuration */
+ 	iproc_mdio_config_clk(priv->base);
 -- 
 2.30.2
 
