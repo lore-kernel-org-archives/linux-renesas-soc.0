@@ -5,48 +5,44 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2437BC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Sep 2021 23:47:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF32C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Sep 2021 23:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FE0661038
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Sep 2021 23:47:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F7C61038
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Sep 2021 23:47:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238542AbhIVXtE (ORCPT
+        id S238521AbhIVXtF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 22 Sep 2021 19:49:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45270 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238534AbhIVXtD (ORCPT
+        Wed, 22 Sep 2021 19:49:05 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33080 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238537AbhIVXtE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Sep 2021 19:49:03 -0400
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B259EC061574;
-        Wed, 22 Sep 2021 16:47:32 -0700 (PDT)
+        Wed, 22 Sep 2021 19:49:04 -0400
 Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F2BCC145A;
-        Thu, 23 Sep 2021 01:47:30 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 806F5E52;
+        Thu, 23 Sep 2021 01:47:32 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1632354451;
-        bh=M4HzucTGDNc0rbM8YBR0NsFDpYNesyaYd4ql1va3lT4=;
+        s=mail; t=1632354452;
+        bh=ZydzftsYaAUgiQ3QnGiZrwolWAwMZMRyP23CyfGYQ0Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e5be3O8Hf6YsJFUT8zO4nFCLxMGH17jAwhmgjWsxi9qGMMbyeywaQrjUVluLVoFpR
-         Be3XGnuO2BwKXkxrzT/8KBYzi24HFmvlBkH2AHknbACTELJOTHUr7iEoo/chFER9ln
-         42SwvvpRKVqZU2cvQRaspt0jxbWzbgq+QVM2yjfI=
+        b=qCb8N16G31AUa7SUEzEMTSwOe1h4j5/M77mkGHMpYwQzbc/m8NdmvPaVrMOGxHpqv
+         Sn+YCziqlGyv4DWynKVKaX5Jr1Y5Su321uhkBT1C9/AURFO4ailgrhnqdQbb9NfWpd
+         Bz6E1JVlIlKYWKz6ocEQjONpU/ZwsNoEpySiYtTo=
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 To:     linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
         dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 1/6] dt-bindings: display: renesas,du: Provide bindings for r8a779a0
-Date:   Thu, 23 Sep 2021 00:47:21 +0100
-Message-Id: <20210922234726.3337265-2-kieran.bingham@ideasonboard.com>
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 4/6] drm: rcar-du: Fix DIDSR field name
+Date:   Thu, 23 Sep 2021 00:47:24 +0100
+Message-Id: <20210922234726.3337265-5-kieran.bingham@ideasonboard.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210922234726.3337265-1-kieran.bingham@ideasonboard.com>
 References: <20210922234726.3337265-1-kieran.bingham@ideasonboard.com>
@@ -56,93 +52,62 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+The DIDSR fields named LDCS were incorrectly defined as LCDS.
+Both the Gen2 and Gen3 documentation refer to the fields as the "LVDS
+Dot Clock Select".
 
-Extend the Renesas DU display bindings to support the r8a779a0 V3U.
+Correct the definitions.
 
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
 ---
 v2:
- - Collected Laurent's tag
- - Remove clock-names requirement
- - Specify only a single clock
+ - New patch
 
 v3:
- - Use clocknames: 'du.0' instead of 'du' to remain consistent
+ - Collect tag
 
- .../bindings/display/renesas,du.yaml          | 50 +++++++++++++++++++
- 1 file changed, 50 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_group.c | 4 ++--
+ drivers/gpu/drm/rcar-du/rcar_du_regs.h  | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
-index e3ca5389c17d..6db6a3f15395 100644
---- a/Documentation/devicetree/bindings/display/renesas,du.yaml
-+++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
-@@ -39,6 +39,7 @@ properties:
-       - renesas,du-r8a77980 # for R-Car V3H compatible DU
-       - renesas,du-r8a77990 # for R-Car E3 compatible DU
-       - renesas,du-r8a77995 # for R-Car D3 compatible DU
-+      - renesas,du-r8a779a0 # for R-Car V3U compatible DU
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_group.c b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+index 88a783ceb3e9..a984eef265d2 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_group.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_group.c
+@@ -122,10 +122,10 @@ static void rcar_du_group_setup_didsr(struct rcar_du_group *rgrp)
+ 	didsr = DIDSR_CODE;
+ 	for (i = 0; i < num_crtcs; ++i, ++rcrtc) {
+ 		if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index))
+-			didsr |= DIDSR_LCDS_LVDS0(i)
++			didsr |= DIDSR_LDCS_LVDS0(i)
+ 			      |  DIDSR_PDCS_CLK(i, 0);
+ 		else
+-			didsr |= DIDSR_LCDS_DCLKIN(i)
++			didsr |= DIDSR_LDCS_DCLKIN(i)
+ 			      |  DIDSR_PDCS_CLK(i, 0);
+ 	}
  
-   reg:
-     maxItems: 1
-@@ -773,6 +774,55 @@ allOf:
-         - reset-names
-         - renesas,vsps
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_regs.h b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+index fb9964949368..fb7c467aa484 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_regs.h
++++ b/drivers/gpu/drm/rcar-du/rcar_du_regs.h
+@@ -257,10 +257,10 @@
  
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - renesas,du-r8a779a0
-+    then:
-+      properties:
-+        clocks:
-+          items:
-+            - description: Functional clock
-+
-+        clock-names:
-+          maxItems: 1
-+          items:
-+            - const: du.0
-+
-+        interrupts:
-+          maxItems: 2
-+
-+        resets:
-+          maxItems: 1
-+
-+        reset-names:
-+          items:
-+            - const: du.0
-+
-+        ports:
-+          properties:
-+            port@0:
-+              description: DSI 0
-+            port@1:
-+              description: DSI 1
-+            port@2: false
-+            port@3: false
-+
-+          required:
-+            - port@0
-+            - port@1
-+
-+        renesas,vsps:
-+          minItems: 2
-+
-+      required:
-+        - interrupts
-+        - resets
-+        - reset-names
-+        - renesas,vsps
-+
- additionalProperties: false
+ #define DIDSR			0x20028
+ #define DIDSR_CODE		(0x7790 << 16)
+-#define DIDSR_LCDS_DCLKIN(n)	(0 << (8 + (n) * 2))
+-#define DIDSR_LCDS_LVDS0(n)	(2 << (8 + (n) * 2))
+-#define DIDSR_LCDS_LVDS1(n)	(3 << (8 + (n) * 2))
+-#define DIDSR_LCDS_MASK(n)	(3 << (8 + (n) * 2))
++#define DIDSR_LDCS_DCLKIN(n)	(0 << (8 + (n) * 2))
++#define DIDSR_LDCS_LVDS0(n)	(2 << (8 + (n) * 2))
++#define DIDSR_LDCS_LVDS1(n)	(3 << (8 + (n) * 2))
++#define DIDSR_LDCS_MASK(n)	(3 << (8 + (n) * 2))
+ #define DIDSR_PDCS_CLK(n, clk)	(clk << ((n) * 2))
+ #define DIDSR_PDCS_MASK(n)	(3 << ((n) * 2))
  
- examples:
 -- 
 2.30.2
 
