@@ -5,44 +5,48 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA22CC43217
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2437BC4332F
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Sep 2021 23:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CEB461038
+	by mail.kernel.org (Postfix) with ESMTP id 0FE0661038
 	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Sep 2021 23:47:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238546AbhIVXtF (ORCPT
+        id S238542AbhIVXtE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 22 Sep 2021 19:49:05 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33100 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238535AbhIVXtE (ORCPT
-        <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 22 Sep 2021 19:49:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45270 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S238534AbhIVXtD (ORCPT
+        <rfc822;linux-renesas-soc@vger.kernel.org>);
+        Wed, 22 Sep 2021 19:49:03 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B259EC061574;
+        Wed, 22 Sep 2021 16:47:32 -0700 (PDT)
 Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F38EB1544;
-        Thu, 23 Sep 2021 01:47:31 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id F2BCC145A;
+        Thu, 23 Sep 2021 01:47:30 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1632354452;
-        bh=CJER95kuqVQg+IWr5D3fMe8U43dXHsjjYXDswSJYd88=;
+        s=mail; t=1632354451;
+        bh=M4HzucTGDNc0rbM8YBR0NsFDpYNesyaYd4ql1va3lT4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vWQUBbHCX+o8KFwzIGhNz1YT7X73SHO6cBbtlSbH5dXZrV9XPDuWskcbpk0MuGzni
-         Omklkc4SIlReS/oj7e0XYUQrc7yTjvr1fyqgYC66WJ89xX6/6NrYTdJ6OHVqgTkNbP
-         ZqkDVMKg98taoCYa38mJY+H30jCHQ4I4enuMilyk=
+        b=e5be3O8Hf6YsJFUT8zO4nFCLxMGH17jAwhmgjWsxi9qGMMbyeywaQrjUVluLVoFpR
+         Be3XGnuO2BwKXkxrzT/8KBYzi24HFmvlBkH2AHknbACTELJOTHUr7iEoo/chFER9ln
+         42SwvvpRKVqZU2cvQRaspt0jxbWzbgq+QVM2yjfI=
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 To:     linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
         dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR RENESAS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 3/6] drm: rcar-du: Only initialise TVM_TVSYNC mode when supported
-Date:   Thu, 23 Sep 2021 00:47:23 +0100
-Message-Id: <20210922234726.3337265-4-kieran.bingham@ideasonboard.com>
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/6] dt-bindings: display: renesas,du: Provide bindings for r8a779a0
+Date:   Thu, 23 Sep 2021 00:47:21 +0100
+Message-Id: <20210922234726.3337265-2-kieran.bingham@ideasonboard.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210922234726.3337265-1-kieran.bingham@ideasonboard.com>
 References: <20210922234726.3337265-1-kieran.bingham@ideasonboard.com>
@@ -52,39 +56,93 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The R-Car DU as found on the D3, E3, and V3U do not have support
-for an external synchronisation method.
+From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-In these cases, the dsysr cached register should not be initialised
-in DSYSR_TVM_TVSYNC, but instead should be left clear to configure as
-DSYSR_TVM_MASTER by default.
+Extend the Renesas DU display bindings to support the r8a779a0 V3U.
 
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
 ---
 v2:
- - Remove parenthesis
+ - Collected Laurent's tag
+ - Remove clock-names requirement
+ - Specify only a single clock
 
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+v3:
+ - Use clocknames: 'du.0' instead of 'du' to remain consistent
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index ea7e39d03545..a0f837e8243a 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -1243,7 +1243,10 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
- 	rcrtc->group = rgrp;
- 	rcrtc->mmio_offset = mmio_offsets[hwindex];
- 	rcrtc->index = hwindex;
--	rcrtc->dsysr = (rcrtc->index % 2 ? 0 : DSYSR_DRES) | DSYSR_TVM_TVSYNC;
-+	rcrtc->dsysr = rcrtc->index % 2 ? 0 : DSYSR_DRES;
-+
-+	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_TVM_SYNC))
-+		rcrtc->dsysr |= DSYSR_TVM_TVSYNC;
+ .../bindings/display/renesas,du.yaml          | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/renesas,du.yaml b/Documentation/devicetree/bindings/display/renesas,du.yaml
+index e3ca5389c17d..6db6a3f15395 100644
+--- a/Documentation/devicetree/bindings/display/renesas,du.yaml
++++ b/Documentation/devicetree/bindings/display/renesas,du.yaml
+@@ -39,6 +39,7 @@ properties:
+       - renesas,du-r8a77980 # for R-Car V3H compatible DU
+       - renesas,du-r8a77990 # for R-Car E3 compatible DU
+       - renesas,du-r8a77995 # for R-Car D3 compatible DU
++      - renesas,du-r8a779a0 # for R-Car V3U compatible DU
  
- 	if (rcar_du_has(rcdu, RCAR_DU_FEATURE_VSP1_SOURCE))
- 		primary = &rcrtc->vsp->planes[rcrtc->vsp_pipe].plane;
+   reg:
+     maxItems: 1
+@@ -773,6 +774,55 @@ allOf:
+         - reset-names
+         - renesas,vsps
+ 
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,du-r8a779a0
++    then:
++      properties:
++        clocks:
++          items:
++            - description: Functional clock
++
++        clock-names:
++          maxItems: 1
++          items:
++            - const: du.0
++
++        interrupts:
++          maxItems: 2
++
++        resets:
++          maxItems: 1
++
++        reset-names:
++          items:
++            - const: du.0
++
++        ports:
++          properties:
++            port@0:
++              description: DSI 0
++            port@1:
++              description: DSI 1
++            port@2: false
++            port@3: false
++
++          required:
++            - port@0
++            - port@1
++
++        renesas,vsps:
++          minItems: 2
++
++      required:
++        - interrupts
++        - resets
++        - reset-names
++        - renesas,vsps
++
+ additionalProperties: false
+ 
+ examples:
 -- 
 2.30.2
 
