@@ -2,113 +2,74 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0B4C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Sep 2021 20:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B829C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Sep 2021 21:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74BF86120E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Sep 2021 20:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBB6B61181
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 22 Sep 2021 21:20:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237309AbhIVUcD (ORCPT
+        id S238065AbhIVVW3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 22 Sep 2021 16:32:03 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:57854 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232274AbhIVUcC (ORCPT
+        Wed, 22 Sep 2021 17:22:29 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:51796 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S238177AbhIVVW1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Sep 2021 16:32:02 -0400
-Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D4696F1;
-        Wed, 22 Sep 2021 22:30:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1632342631;
-        bh=ul9fCFg1tRByddGFWfXoN4EyqWHQr5uWkhY1V0hbcVI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=rN2MyfFVkF3D84cvww+NlemN1EIfm993kWu7yyqvGJvXZvei5nrHfv0AnYtHGK3J7
-         59VgHtLSY4fGxCUtP0p4agZjz5MLpDNbURKXrlzCNy42qf+7VTC8MOAnn1O4B1MiXw
-         bLDbZMEmQhnqlDpm3RC8ZSHxaA5eHMKW/Ka3Rpss=
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-To:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@glider.be>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wed, 22 Sep 2021 17:22:27 -0400
+X-IronPort-AV: E=Sophos;i="5.85,315,1624287600"; 
+   d="scan'208";a="94853359"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 23 Sep 2021 06:20:55 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E2D6D4103C3F;
+        Thu, 23 Sep 2021 06:20:53 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] arm64: dts: renesas: r8a779a0: falcon-cpu: Add SW46 switch support
-Date:   Wed, 22 Sep 2021 21:30:27 +0100
-Message-Id: <20210922203027.3229474-1-kieran.bingham@ideasonboard.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/3] RZ/G2L SMARC EVK enable ADC and CAN interfaces
+Date:   Wed, 22 Sep 2021 22:20:46 +0100
+Message-Id: <20210922212049.19851-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add support for SW46-1 and SW46-2 as switches using the gpio-keys
-framework.
+Hi All,
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
----
+This patch series enables ADC and CAN interfaces on RZ/G2L SMARC EVK.
 
-SW_LID and SW_DOCK are selected as low-impact switch events for the
-default configuration. Would SW_RFKILL_ALL, and SW_MUTE_DEVICE be
-preferred as more 'functional' defaults? (I have otherwise avoided these
-to hopefully prevent unwanted / undocumented effects occuring on
-development hardware running a full interface which may parse these)
+Note: Patches apply on top of [1] + [2]
+[1] https://git.kernel.org/pub/scm/linux/kernel/
+git/geert/renesas-devel.git/log/?h=renesas-arm-dt-for-v5.16
+[2] https://patchwork.kernel.org/project/linux-renesas-soc/
+cover/20210921084605.16250-1-biju.das.jz@bp.renesas.com/
 
-I'd expect them to be overridden by any platform using them anyway.
+Cheers,
+Prabhakar
 
-Testing of these switches (and the buttons) shown at:
-  https://paste.debian.net/1212884/
----
- .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 21 ++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
+Lad Prabhakar (3):
+  arm64: dts: renesas: rzg2l-smarc-som: Move extal and memory nodes to
+    SOM DTSI
+  arm64: dts: renesas: rzg2l-smarc-som: Enable ADC on SMARC platform
+  arm64: dts: renesas: rzg2l-smarc: Enable CANFD
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-index d595fbad4589..5d188a7d6e73 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
-@@ -52,6 +52,24 @@ keys {
- 		pinctrl-0 = <&keys_pins>;
- 		pinctrl-names = "default";
- 
-+		sw-1 {
-+			gpios = <&gpio1 28 GPIO_ACTIVE_LOW>;
-+			linux,code = <SW_LID>;
-+			linux,input-type = <EV_SW>;
-+			label = "SW46-1";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+
-+		sw-2 {
-+			gpios = <&gpio1 29 GPIO_ACTIVE_LOW>;
-+			linux,code = <SW_DOCK>;
-+			linux,input-type = <EV_SW>;
-+			label = "SW46-2";
-+			wakeup-source;
-+			debounce-interval = <20>;
-+		};
-+
- 		key-1 {
- 			gpios = <&gpio6 18 GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_1>;
-@@ -193,7 +211,8 @@ i2c6_pins: i2c6 {
- 	};
- 
- 	keys_pins: keys {
--		pins = "GP_6_18", "GP_6_19", "GP_6_20";
-+		pins = "GP_1_28", "GP_1_29",
-+		       "GP_6_18", "GP_6_19", "GP_6_20";
- 		bias-pull-up;
- 	};
- 
+ .../boot/dts/renesas/r9a07g044l2-smarc.dts    |  7 +--
+ .../boot/dts/renesas/rzg2l-smarc-som.dtsi     | 35 +++++++++++++++
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  | 44 +++++++++++++++++--
+ 3 files changed, 76 insertions(+), 10 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
+
 -- 
-2.30.2
+2.17.1
 
