@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-18.8 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E83C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Sep 2021 01:04:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4FFC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Sep 2021 01:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 01CD261130
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Sep 2021 01:04:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A82561130
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Sep 2021 01:04:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238035AbhIWBFj (ORCPT
+        id S238783AbhIWBFm (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 22 Sep 2021 21:05:39 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:33818 "EHLO
+        Wed, 22 Sep 2021 21:05:42 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:33834 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234437AbhIWBFj (ORCPT
+        with ESMTP id S238757AbhIWBFk (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 22 Sep 2021 21:05:39 -0400
+        Wed, 22 Sep 2021 21:05:40 -0400
 Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0BC0B145A;
-        Thu, 23 Sep 2021 03:04:07 +0200 (CEST)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 35E781544;
+        Thu, 23 Sep 2021 03:04:08 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1632359047;
-        bh=AWpKGgAZnPbgSKyq9zFIJ8AREpLY7SQxBO1y7AQdQDE=;
+        s=mail; t=1632359048;
+        bh=9lKNehHtBlSmXLCn0XQYne0Kkaryt150ms/QkED1Z7U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jCWv4ZZKS7dMjY06uoWUVAaLjzBF8TNVM9GI5Z91ud2jayeBBmrGConG+0W6KqC3g
-         QiD3YOOM2imG0zy3oSb0j+9kak7u4qsTjkJheqN2lNVyFOc0snRCpAe1ceBrhskS39
-         o75JOOw/HaPzjofaWZU3UzKQ0KT/uoGyk9kcW4aA=
+        b=PXw9zVgWE7cEC2BdWrid9GEoJcpTQUthZvELTZRiKedXwJywFFA8O4xmPYQv6CnJ3
+         XHzFV/odwFM/nSm5gEa6M83sPMwMUcUmXxF3ZWDN6ByoKrcvCYzuHEf3WPr+lYCHBC
+         D8XfkLZmhj8v2dtcESQZiafwUAYxaTNBnXbMazMc=
 From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
 To:     linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
@@ -41,9 +41,9 @@ Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
         DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3 1/3] arm64: dts: renesas: r8a779a0: Add DU support
-Date:   Thu, 23 Sep 2021 02:04:00 +0100
-Message-Id: <20210923010402.3418555-2-kieran.bingham@ideasonboard.com>
+Subject: [PATCH v3 3/3] arm64: dts: renesas: r8a779a0: falcon-cpu: Add DSI display output
+Date:   Thu, 23 Sep 2021 02:04:02 +0100
+Message-Id: <20210923010402.3418555-4-kieran.bingham@ideasonboard.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20210923010402.3418555-1-kieran.bingham@ideasonboard.com>
 References: <20210923010402.3418555-1-kieran.bingham@ideasonboard.com>
@@ -55,62 +55,123 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
-Provide the device nodes for the DU on the V3U platforms.
+Provide the display output using the sn65dsi86 MIPI DSI bridge
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
-v2
- - Use a single clock specification for the whole DU.
-
 v3:
- - Use 'du.0' clock name instead of 'du'
+ - Fix the voltage regulator values
+ - No longer override the clocks
+ - use clk-x6 as clock node name
 
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 30 +++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 79 +++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-index f9a882b34f82..dfe99af89908 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-@@ -1251,6 +1251,36 @@ vspd1: vsp@fea28000 {
- 			renesas,fcp = <&fcpvd1>;
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+index a0a1a1da0d87..9943f09a5cc6 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon-cpu.dtsi
+@@ -66,6 +66,15 @@ memory@700000000 {
+ 		reg = <0x7 0x00000000 0x0 0x80000000>;
+ 	};
  
-+		du: display@feb00000 {
-+			compatible = "renesas,du-r8a779a0";
-+			reg = <0 0xfeb00000 0 0x40000>;
-+			interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&cpg CPG_MOD 411>;
-+			clock-names = "du.0";
-+			power-domains = <&sysc R8A779A0_PD_ALWAYS_ON>;
-+			resets = <&cpg 411>;
-+			vsps = <&vspd0 0>, <&vspd1 0>;
-+			status = "disabled";
++	reg_1p2v: regulator-1p2v {
++		compatible = "regulator-fixed";
++		regulator-name = "fixed-1.2V";
++		regulator-min-microvolt = <1200000>;
++		regulator-max-microvolt = <1200000>;
++		regulator-boot-on;
++		regulator-always-on;
++	};
 +
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
+ 	reg_1p8v: regulator-1p8v {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "fixed-1.8V";
+@@ -83,6 +92,41 @@ reg_3p3v: regulator-3p3v {
+ 		regulator-boot-on;
+ 		regulator-always-on;
+ 	};
 +
-+				port@0 {
-+					reg = <0>;
-+					du_out_dsi0: endpoint {
-+					};
++	mini-dp-con {
++		compatible = "dp-connector";
++		label = "CN5";
++		type = "mini";
++
++		port {
++			mini_dp_con_in: endpoint {
++				remote-endpoint = <&sn65dsi86_out>;
++			};
++		};
++	};
++
++	sn65dsi86_refclk: clk-x6 {
++		compatible = "fixed-clock";
++		#clock-cells = <0>;
++		clock-frequency = <38400000>;
++	};
++};
++
++&dsi0 {
++	status = "okay";
++
++	ports {
++		port@1 {
++			endpoint {
++				remote-endpoint = <&sn65dsi86_in>;
++				data-lanes = <1 2 3 4>;
++			};
++		};
++	};
++};
++
++&du {
++	status = "okay";
+ };
+ 
+ &extal_clk {
+@@ -114,6 +158,41 @@ &i2c1 {
+ 
+ 	status = "okay";
+ 	clock-frequency = <400000>;
++
++	sn65dsi86@2c {
++		compatible = "ti,sn65dsi86";
++		reg = <0x2c>;
++
++		clocks = <&sn65dsi86_refclk>;
++		clock-names = "refclk";
++
++		interrupt-parent = <&gpio1>;
++		interrupts = <24 IRQ_TYPE_LEVEL_HIGH>;
++
++		vccio-supply = <&reg_1p8v>;
++		vpll-supply = <&reg_1p8v>;
++		vcca-supply = <&reg_1p2v>;
++		vcc-supply = <&reg_1p2v>;
++
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			port@0 {
++				reg = <0>;
++				sn65dsi86_in: endpoint {
++					remote-endpoint = <&dsi0_out>;
 +				};
++			};
 +
-+				port@1 {
-+					reg = <1>;
-+					du_out_dsi1: endpoint {
-+					};
++			port@1 {
++				reg = <1>;
++				sn65dsi86_out: endpoint {
++					remote-endpoint = <&mini_dp_con_in>;
 +				};
 +			};
 +		};
-+
- 		prr: chipid@fff00044 {
- 			compatible = "renesas,prr";
- 			reg = <0 0xfff00044 0 4>;
++	};
+ };
+ 
+ &i2c6 {
 -- 
 2.30.2
 
