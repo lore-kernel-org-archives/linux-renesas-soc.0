@@ -2,49 +2,50 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_CR_TRAILER,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A32C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Sep 2021 08:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF16C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Sep 2021 08:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0053660F3A
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Sep 2021 08:05:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38E8A610CF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Sep 2021 08:14:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244561AbhIXIHC (ORCPT
+        id S244550AbhIXIQY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 24 Sep 2021 04:07:02 -0400
-Received: from mail-vs1-f54.google.com ([209.85.217.54]:37600 "EHLO
-        mail-vs1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244495AbhIXIHB (ORCPT
+        Fri, 24 Sep 2021 04:16:24 -0400
+Received: from mail-vs1-f46.google.com ([209.85.217.46]:36481 "EHLO
+        mail-vs1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S236281AbhIXIQX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Sep 2021 04:07:01 -0400
-Received: by mail-vs1-f54.google.com with SMTP id q66so9174756vsa.4;
-        Fri, 24 Sep 2021 01:05:28 -0700 (PDT)
+        Fri, 24 Sep 2021 04:16:23 -0400
+Received: by mail-vs1-f46.google.com with SMTP id h30so9199697vsq.3;
+        Fri, 24 Sep 2021 01:14:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OYUDHwYw1h4gP3Mb0ddjLCH65TqjAubVcrA3PqEmy1s=;
-        b=f708hWepBPkF5Jv4KIKWeDLv/RS9kOC/LKOjUVmY4qXAOi7QT7ahvREWO+8sQvqP4o
-         PhT0t1Hr7IanuEGNVVEIdRB01GqeRE+43h761SH34v48Q2yHeZi7zVLkWnFrW2RbgLdR
-         ZxcR2mLAfNsG0vQd0STKc3Zei0P9zFxqFdk60mMUltzUgMmJWbh8v5qVvXdMTXYR7lBL
-         uooxTx8fyu6rJR8Aa6ZcOm2Fkycz2aHCz1IqHHB5sb6qrfOjeUGc6XrYqFcVIeduOMuh
-         BqgfPh0Priz8JIhRTeBldGPtvwB4TEsICkKvmGxwKkBKxvMsg9sK2KPJHRfavY5ftr6J
-         7WoQ==
-X-Gm-Message-State: AOAM530A/uNaiQJZjbha9sO8UcJJaUo49JywXd17EHB4Yd2M68eRAjOB
-        NzIGgcXpsHaxl9CHDGHsIivPBIBHIFchDws8sQosrJ6H
-X-Google-Smtp-Source: ABdhPJxa3G4sYuZksM/AQwNv0yboNG4QZgHza2cE5ZVeBmnm3ZJU5AYqKXvH1ybc22Xtd+R49aeV10/k9dsf8nMk94Q=
-X-Received: by 2002:a67:cc1c:: with SMTP id q28mr7949368vsl.37.1632470727654;
- Fri, 24 Sep 2021 01:05:27 -0700 (PDT)
+        bh=dzhFkAPFq5tONqXJTUAJUDBr46WJlp/FhoV7NN9qWgA=;
+        b=oxDnDfuOLsmGJWbXklIqww4FSuaRuK9qfDQVadtBmuqfpFEzK6X0Wqy7gA5glARbor
+         alDTb351qYuXwkFPXfaeEvjdMicvn0rh4Jd59v/rbnaKUF0znBn/1Kxx4Fy4CJ7iMHwV
+         rRezQaa0SU5QNBlsvHw1seiQMTttZNnvNxtVDBbYelWckhxBA+RcxIAyPUnyGUI5D9ZH
+         6qFnPCsq65RLBJoweX/j3w9ZuyOyj+HJHm+Di/P5v8ydUo+sr91s9NqbYF+i1K4unO9Z
+         hbtuimwDrUHyj3zBhhxD8mC/XaHBV1GcqV57gTawy0RTH1cSxwTIveOwNCoc76NHW2M3
+         xjpQ==
+X-Gm-Message-State: AOAM531BskgzpKK8ObFdZ02/OFvcEJ/9NAbglxDxwVqbPnXR10AcLfSo
+        MUTD69q0nAQZIDroOISEPtAZu1EVDneJHHYYlaGNxxTLMEM=
+X-Google-Smtp-Source: ABdhPJxeBPNkjra80tDqWYQrEX4a5MA900DJMCa3/66wi0WJZEyIyyjppESH3NW32VM3nz5a9W8spXdqqc3uS6R1xps=
+X-Received: by 2002:a67:f147:: with SMTP id t7mr8099188vsm.41.1632471290663;
+ Fri, 24 Sep 2021 01:14:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20210921084605.16250-1-biju.das.jz@bp.renesas.com> <20210921084605.16250-3-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20210921084605.16250-3-biju.das.jz@bp.renesas.com>
+References: <20210921084605.16250-1-biju.das.jz@bp.renesas.com> <20210921084605.16250-4-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20210921084605.16250-4-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 24 Sep 2021 10:05:16 +0200
-Message-ID: <CAMuHMdV-cU3B--iAV2ed5HT_jgMcFSy3X+xf9f1NfxvsrhX-LQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] arm64: dts: renesas: rzg2l-smarc: Add WM8978 sound codec
+Date:   Fri, 24 Sep 2021 10:14:39 +0200
+Message-ID: <CAMuHMdXnZynye6mbp6aLyjWMDX07bKFoQccZ5u1AAZ1pw2129A@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm64: dts: renesas: rzg2l-smarc: Enable audio
 To:     Biju Das <biju.das.jz@bp.renesas.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -59,11 +60,35 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Biju,
+
 On Tue, Sep 21, 2021 at 10:46 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Add WM8978 sound codec node to RZ/G2L SMARC EVK.
+> Enable audio on RZ/G2L SMARC EVK by linking SSI0 with WM8978
+> audio CODEC.
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 > Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+> @@ -30,6 +66,14 @@
+>         };
+>  };
+>
+> +&audio_clk1{
+> +       clock-frequency = <11289600>;
+> +};
+> +
+> +&audio_clk2{
+> +       clock-frequency = <12288000>;
+> +};
+> +
+
+These are not fixed-factor clocks, but outputs from a programmable
+VersaClock 5P35023 clock generator.  However, we can start with this
+simple description, and describe the VersaClock topology later.
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-devel for v5.16.
