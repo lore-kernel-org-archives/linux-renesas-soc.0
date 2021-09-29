@@ -2,216 +2,281 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A78C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Sep 2021 01:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D621C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Sep 2021 06:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 017A060F21
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Sep 2021 01:01:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4280613A7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 29 Sep 2021 06:49:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243532AbhI2BDQ (ORCPT
+        id S244435AbhI2GvN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 28 Sep 2021 21:03:16 -0400
-Received: from mga12.intel.com ([192.55.52.136]:20442 "EHLO mga12.intel.com"
+        Wed, 29 Sep 2021 02:51:13 -0400
+Received: from www.zeus03.de ([194.117.254.33]:40918 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S243514AbhI2BDQ (ORCPT
+        id S244416AbhI2GvM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 28 Sep 2021 21:03:16 -0400
-X-IronPort-AV: E=McAfee;i="6200,9189,10121"; a="204323066"
-X-IronPort-AV: E=Sophos;i="5.85,330,1624345200"; 
-   d="scan'208";a="204323066"
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Sep 2021 18:01:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.85,330,1624345200"; 
-   d="scan'208";a="554407575"
-Received: from lkp-server02.sh.intel.com (HELO f7acefbbae94) ([10.239.97.151])
-  by FMSMGA003.fm.intel.com with ESMTP; 28 Sep 2021 18:01:34 -0700
-Received: from kbuild by f7acefbbae94 with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mVNyX-0001hC-HU; Wed, 29 Sep 2021 01:01:33 +0000
-Date:   Wed, 29 Sep 2021 09:01:05 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-clk-for-v5.16] BUILD SUCCESS
- cc3e8f97bbd370b51b3bb7fec391d65d461d7d02
-Message-ID: <6153bad1.0bljb5Mlgth258Eo%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Wed, 29 Sep 2021 02:51:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=k1; bh=mDY0y3DcYRQnTn
+        eeb8S86+mi+ESms9ED5Kb8RLEGCnA=; b=O1YC987UVBwt6afS1wyNKjxoeBYwH1
+        eN7CRKnBA/vXnDKXFkk7KtJO4PWxRe9IYcfhxh/DKK7dUJnZSTKKYgoFFxZT4I/N
+        U51sny7jmjp6KtFheUAVR6Y9nbJHDGkOw9mlBNOZKYqzTj3I83XRWWt+yR8SFoqf
+        RuUV2O2l1Ktsw=
+Received: (qmail 1544776 invoked from network); 29 Sep 2021 08:49:30 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Sep 2021 08:49:30 +0200
+X-UD-Smtp-Session: l3s3148p1@gb5euxzNwtcgAwDPXwj5ACKF5hhAYpZw
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     linux-renesas-soc@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
+Subject: [PATCH 1/4] clk: renesas: cpg-lib: move RPC clock registration to the library
+Date:   Wed, 29 Sep 2021 08:49:21 +0200
+Message-Id: <20210929064924.1997-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20210929064924.1997-1-wsa+renesas@sang-engineering.com>
+References: <20210929064924.1997-1-wsa+renesas@sang-engineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v5.16
-branch HEAD: cc3e8f97bbd370b51b3bb7fec391d65d461d7d02  clk: renesas: r8a779a0: Add Z0 and Z1 clock support
+We want to reuse this code for V3U soon. Because its RPCCKCR register is
+at a different offset, the moved functions do not use the base register
+as an argument anymore but the RPCCKCR register itself. Verified that an
+Eagle board with R-Car V3M still works.
 
-elapsed time: 739m
-
-configs tested: 153
-configs skipped: 3
-
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-i386                 randconfig-c001-20210928
-arc                 nsimosci_hs_smp_defconfig
-arm                  colibri_pxa270_defconfig
-powerpc                     ppa8548_defconfig
-powerpc                      pasemi_defconfig
-m68k                        m5307c3_defconfig
-sh                           se7343_defconfig
-powerpc                     mpc512x_defconfig
-mips                         cobalt_defconfig
-powerpc                     powernv_defconfig
-arm                      pxa255-idp_defconfig
-arm                          pxa168_defconfig
-sh                           se7721_defconfig
-mips                     decstation_defconfig
-arm                         s5pv210_defconfig
-sh                  sh7785lcr_32bit_defconfig
-powerpc                     skiroot_defconfig
-sh                           se7722_defconfig
-arm                            pleb_defconfig
-arm                          ep93xx_defconfig
-arm                     am200epdkit_defconfig
-mips                      maltasmvp_defconfig
-powerpc                 mpc837x_rdb_defconfig
-powerpc                      ep88xc_defconfig
-nios2                            allyesconfig
-m68k                          atari_defconfig
-mips                           ip32_defconfig
-arc                        nsimosci_defconfig
-nds32                               defconfig
-arm                       imx_v4_v5_defconfig
-arm                         bcm2835_defconfig
-powerpc                     ep8248e_defconfig
-m68k                       bvme6000_defconfig
-arc                        nsim_700_defconfig
-arm                           tegra_defconfig
-sh                          rsk7203_defconfig
-riscv                            alldefconfig
-sparc64                             defconfig
-arm                            hisi_defconfig
-powerpc                     kilauea_defconfig
-arm                         hackkit_defconfig
-mips                           ci20_defconfig
-arm                         lpc18xx_defconfig
-powerpc                      bamboo_defconfig
-powerpc                      ppc6xx_defconfig
-mips                  decstation_64_defconfig
-mips                      maltaaprp_defconfig
-arm                         axm55xx_defconfig
-mips                          rm200_defconfig
-arc                         haps_hs_defconfig
-um                             i386_defconfig
-arm                              alldefconfig
-h8300                            allyesconfig
-arm                        spear6xx_defconfig
-m68k                        mvme16x_defconfig
-sparc                       sparc32_defconfig
-sh                          urquell_defconfig
-mips                           ip27_defconfig
-mips                      fuloong2e_defconfig
-sh                          r7780mp_defconfig
-m68k                        m5272c3_defconfig
-csky                             alldefconfig
-powerpc                   currituck_defconfig
-sh                           se7619_defconfig
-s390                                defconfig
-sh                           se7780_defconfig
-powerpc                     tqm5200_defconfig
-powerpc                 linkstation_defconfig
-arm                         palmz72_defconfig
-powerpc                      acadia_defconfig
-microblaze                      mmu_defconfig
-sh                        sh7785lcr_defconfig
-sh                           se7751_defconfig
-sh                          sdk7780_defconfig
-arm                             ezx_defconfig
-sh                             shx3_defconfig
-x86_64               randconfig-c001-20210928
-arm                  randconfig-c002-20210928
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                                defconfig
-m68k                             allmodconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-xtensa                           allyesconfig
-parisc                              defconfig
-s390                             allyesconfig
-s390                             allmodconfig
-parisc                           allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-i386                             allyesconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-x86_64               randconfig-a014-20210928
-x86_64               randconfig-a011-20210928
-x86_64               randconfig-a013-20210928
-x86_64               randconfig-a012-20210928
-x86_64               randconfig-a015-20210928
-x86_64               randconfig-a016-20210928
-i386                 randconfig-a014-20210928
-i386                 randconfig-a013-20210928
-i386                 randconfig-a016-20210928
-i386                 randconfig-a011-20210928
-i386                 randconfig-a015-20210928
-i386                 randconfig-a012-20210928
-arc                  randconfig-r043-20210928
-riscv                randconfig-r042-20210928
-s390                 randconfig-r044-20210928
-riscv                    nommu_k210_defconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allyesconfig
-riscv                            allmodconfig
-x86_64                    rhel-8.3-kselftests
-um                           x86_64_defconfig
-x86_64                           allyesconfig
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                                  kexec
-
-clang tested configs:
-x86_64               randconfig-a002-20210928
-x86_64               randconfig-a001-20210928
-x86_64               randconfig-a003-20210928
-x86_64               randconfig-a004-20210928
-x86_64               randconfig-a005-20210928
-x86_64               randconfig-a006-20210928
-i386                 randconfig-a001-20210928
-i386                 randconfig-a005-20210928
-i386                 randconfig-a002-20210928
-i386                 randconfig-a006-20210928
-i386                 randconfig-a004-20210928
-i386                 randconfig-a003-20210928
-hexagon              randconfig-r045-20210928
-hexagon              randconfig-r041-20210928
-
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+ drivers/clk/renesas/rcar-cpg-lib.c  | 83 +++++++++++++++++++++++++++
+ drivers/clk/renesas/rcar-cpg-lib.h  |  7 +++
+ drivers/clk/renesas/rcar-gen3-cpg.c | 89 +----------------------------
+ 3 files changed, 92 insertions(+), 87 deletions(-)
+
+diff --git a/drivers/clk/renesas/rcar-cpg-lib.c b/drivers/clk/renesas/rcar-cpg-lib.c
+index 5678768ee1f2..e93f0011eb07 100644
+--- a/drivers/clk/renesas/rcar-cpg-lib.c
++++ b/drivers/clk/renesas/rcar-cpg-lib.c
+@@ -267,4 +267,87 @@ struct clk * __init cpg_sd_clk_register(const char *name,
+ 	return clk;
+ }
+ 
++struct rpc_clock {
++	struct clk_divider div;
++	struct clk_gate gate;
++	/*
++	 * One notifier covers both RPC and RPCD2 clocks as they are both
++	 * controlled by the same RPCCKCR register...
++	 */
++	struct cpg_simple_notifier csn;
++};
++
++static const struct clk_div_table cpg_rpc_div_table[] = {
++	{ 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 }, { 0, 0 },
++};
++
++struct clk * __init cpg_rpc_clk_register(const char *name,
++	void __iomem *rpcckcr, const char *parent_name,
++	struct raw_notifier_head *notifiers)
++{
++	struct rpc_clock *rpc;
++	struct clk *clk;
++
++	rpc = kzalloc(sizeof(*rpc), GFP_KERNEL);
++	if (!rpc)
++		return ERR_PTR(-ENOMEM);
++
++	rpc->div.reg = rpcckcr;
++	rpc->div.width = 3;
++	rpc->div.table = cpg_rpc_div_table;
++	rpc->div.lock = &cpg_lock;
++
++	rpc->gate.reg = rpcckcr;
++	rpc->gate.bit_idx = 8;
++	rpc->gate.flags = CLK_GATE_SET_TO_DISABLE;
++	rpc->gate.lock = &cpg_lock;
++
++	rpc->csn.reg = rpcckcr;
++
++	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
++				     &rpc->div.hw,  &clk_divider_ops,
++				     &rpc->gate.hw, &clk_gate_ops,
++				     CLK_SET_RATE_PARENT);
++	if (IS_ERR(clk)) {
++		kfree(rpc);
++		return clk;
++	}
++
++	cpg_simple_notifier_register(notifiers, &rpc->csn);
++	return clk;
++}
++
++struct rpcd2_clock {
++	struct clk_fixed_factor fixed;
++	struct clk_gate gate;
++};
++
++struct clk * __init cpg_rpcd2_clk_register(const char *name,
++					   void __iomem *rpcckcr,
++					   const char *parent_name)
++{
++	struct rpcd2_clock *rpcd2;
++	struct clk *clk;
++
++	rpcd2 = kzalloc(sizeof(*rpcd2), GFP_KERNEL);
++	if (!rpcd2)
++		return ERR_PTR(-ENOMEM);
++
++	rpcd2->fixed.mult = 1;
++	rpcd2->fixed.div = 2;
++
++	rpcd2->gate.reg = rpcckcr;
++	rpcd2->gate.bit_idx = 9;
++	rpcd2->gate.flags = CLK_GATE_SET_TO_DISABLE;
++	rpcd2->gate.lock = &cpg_lock;
++
++	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
++				     &rpcd2->fixed.hw, &clk_fixed_factor_ops,
++				     &rpcd2->gate.hw, &clk_gate_ops,
++				     CLK_SET_RATE_PARENT);
++	if (IS_ERR(clk))
++		kfree(rpcd2);
++
++	return clk;
++}
+ 
+diff --git a/drivers/clk/renesas/rcar-cpg-lib.h b/drivers/clk/renesas/rcar-cpg-lib.h
+index d00c91b116ca..35c0217c2f8b 100644
+--- a/drivers/clk/renesas/rcar-cpg-lib.h
++++ b/drivers/clk/renesas/rcar-cpg-lib.h
+@@ -30,4 +30,11 @@ struct clk * __init cpg_sd_clk_register(const char *name,
+ 	void __iomem *base, unsigned int offset, const char *parent_name,
+ 	struct raw_notifier_head *notifiers, bool skip_first);
+ 
++struct clk * __init cpg_rpc_clk_register(const char *name,
++	void __iomem *rpcckcr, const char *parent_name,
++	struct raw_notifier_head *notifiers);
++
++struct clk * __init cpg_rpcd2_clk_register(const char *name,
++					   void __iomem *rpcckcr,
++					   const char *parent_name);
+ #endif
+diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
+index 558191c99b48..741f6e74bbcf 100644
+--- a/drivers/clk/renesas/rcar-gen3-cpg.c
++++ b/drivers/clk/renesas/rcar-gen3-cpg.c
+@@ -301,95 +301,10 @@ static struct clk * __init cpg_z_clk_register(const char *name,
+ 	return clk;
+ }
+ 
+-struct rpc_clock {
+-	struct clk_divider div;
+-	struct clk_gate gate;
+-	/*
+-	 * One notifier covers both RPC and RPCD2 clocks as they are both
+-	 * controlled by the same RPCCKCR register...
+-	 */
+-	struct cpg_simple_notifier csn;
+-};
+-
+ static const struct clk_div_table cpg_rpcsrc_div_table[] = {
+ 	{ 2, 5 }, { 3, 6 }, { 0, 0 },
+ };
+ 
+-static const struct clk_div_table cpg_rpc_div_table[] = {
+-	{ 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 }, { 0, 0 },
+-};
+-
+-static struct clk * __init cpg_rpc_clk_register(const char *name,
+-	void __iomem *base, const char *parent_name,
+-	struct raw_notifier_head *notifiers)
+-{
+-	struct rpc_clock *rpc;
+-	struct clk *clk;
+-
+-	rpc = kzalloc(sizeof(*rpc), GFP_KERNEL);
+-	if (!rpc)
+-		return ERR_PTR(-ENOMEM);
+-
+-	rpc->div.reg = base + CPG_RPCCKCR;
+-	rpc->div.width = 3;
+-	rpc->div.table = cpg_rpc_div_table;
+-	rpc->div.lock = &cpg_lock;
+-
+-	rpc->gate.reg = base + CPG_RPCCKCR;
+-	rpc->gate.bit_idx = 8;
+-	rpc->gate.flags = CLK_GATE_SET_TO_DISABLE;
+-	rpc->gate.lock = &cpg_lock;
+-
+-	rpc->csn.reg = base + CPG_RPCCKCR;
+-
+-	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
+-				     &rpc->div.hw,  &clk_divider_ops,
+-				     &rpc->gate.hw, &clk_gate_ops,
+-				     CLK_SET_RATE_PARENT);
+-	if (IS_ERR(clk)) {
+-		kfree(rpc);
+-		return clk;
+-	}
+-
+-	cpg_simple_notifier_register(notifiers, &rpc->csn);
+-	return clk;
+-}
+-
+-struct rpcd2_clock {
+-	struct clk_fixed_factor fixed;
+-	struct clk_gate gate;
+-};
+-
+-static struct clk * __init cpg_rpcd2_clk_register(const char *name,
+-						  void __iomem *base,
+-						  const char *parent_name)
+-{
+-	struct rpcd2_clock *rpcd2;
+-	struct clk *clk;
+-
+-	rpcd2 = kzalloc(sizeof(*rpcd2), GFP_KERNEL);
+-	if (!rpcd2)
+-		return ERR_PTR(-ENOMEM);
+-
+-	rpcd2->fixed.mult = 1;
+-	rpcd2->fixed.div = 2;
+-
+-	rpcd2->gate.reg = base + CPG_RPCCKCR;
+-	rpcd2->gate.bit_idx = 9;
+-	rpcd2->gate.flags = CLK_GATE_SET_TO_DISABLE;
+-	rpcd2->gate.lock = &cpg_lock;
+-
+-	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
+-				     &rpcd2->fixed.hw, &clk_fixed_factor_ops,
+-				     &rpcd2->gate.hw, &clk_gate_ops,
+-				     CLK_SET_RATE_PARENT);
+-	if (IS_ERR(clk))
+-		kfree(rpcd2);
+-
+-	return clk;
+-}
+-
+-
+ static const struct rcar_gen3_cpg_pll_config *cpg_pll_config __initdata;
+ static unsigned int cpg_clk_extalr __initdata;
+ static u32 cpg_mode __initdata;
+@@ -600,11 +515,11 @@ struct clk * __init rcar_gen3_cpg_clk_register(struct device *dev,
+ 		break;
+ 
+ 	case CLK_TYPE_GEN3_RPC:
+-		return cpg_rpc_clk_register(core->name, base,
++		return cpg_rpc_clk_register(core->name, base + CPG_RPCCKCR,
+ 					    __clk_get_name(parent), notifiers);
+ 
+ 	case CLK_TYPE_GEN3_RPCD2:
+-		return cpg_rpcd2_clk_register(core->name, base,
++		return cpg_rpcd2_clk_register(core->name, base + CPG_RPCCKCR,
+ 					      __clk_get_name(parent));
+ 
+ 	default:
+-- 
+2.30.2
+
