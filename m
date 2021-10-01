@@ -2,34 +2,34 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1875CC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D58C3C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0275C61267
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD9C9613A0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:43:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353194AbhJAJom (ORCPT
+        id S1353264AbhJAJpA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Oct 2021 05:44:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43066 "EHLO
+        Fri, 1 Oct 2021 05:45:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353274AbhJAJoh (ORCPT
+        with ESMTP id S1353236AbhJAJop (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Oct 2021 05:44:37 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85520C06177F
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Oct 2021 02:42:53 -0700 (PDT)
+        Fri, 1 Oct 2021 05:44:45 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F59C06177C
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Oct 2021 02:43:01 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:5c32:c2e7:df7:3731])
-        by albert.telenet-ops.be with bizsmtp
-        id 0Zir2600h1ZoSwU06Zisk3; Fri, 01 Oct 2021 11:42:52 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id 0Zj12600B1ZoSwU01Zj1mE; Fri, 01 Oct 2021 11:43:01 +0200
 Received: from rox.of.borg ([192.168.97.57] helo=rox)
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mWF46-000zIm-H7; Fri, 01 Oct 2021 11:42:50 +0200
+        id 1mWF46-000zIi-QA; Fri, 01 Oct 2021 11:42:50 +0200
 Received: from geert by rox with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mWF46-00BE6V-0K; Fri, 01 Oct 2021 11:42:50 +0200
+        id 1mWF45-00BE66-Sw; Fri, 01 Oct 2021 11:42:49 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 List-Id: <soc.lore.kernel.org>
 To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
@@ -37,39 +37,63 @@ Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 4/4] Renesas DT binding updates for v5.16
-Date:   Fri,  1 Oct 2021 11:42:46 +0200
-Message-Id: <cover.1633081158.git.geert+renesas@glider.be>
+Subject: [GIT PULL 0/4] Renesas SoC updates for v5.16
+Date:   Fri,  1 Oct 2021 11:42:42 +0200
+Message-Id: <cover.1633081144.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1633081144.git.geert+renesas@glider.be>
-References: <cover.1633081144.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f:
+	Hi soc folks,
 
-  Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
+This is my first pull request for the inclusion of Renesas SoC updates
+for v5.15.
 
-are available in the Git repository at:
+It consists of 4 parts:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v5.16-tag1
+  [GIT PULL 1/4] Renesas ARM defconfig updates for v5.16
 
-for you to fetch changes up to e43eada9ac08941a98cad96eba9f3801b13e4f0b:
+    - Enable built-in (I2C, DMAC, USB PHY control) and modular (audio,
+      ADC) build of drivers for the RZ/G2L SoC and SMARC EVK board,
+    - Enable modular build of the Renesas TPU PWM driver for the R-Car
+      V3U SoC.
 
-  dt-bindings: arm: renesas: Document more R-Car Gen3e Socs and boards (2021-09-13 10:54:41 +0200)
+  [GIT PULL 2/4] Renesas ARM DT updates for v5.16
 
-----------------------------------------------------------------
-Renesas DT binding updates for v5.16
+    - I2C EEPROM support on the RZA2MEVB development board,
+    - DMA, USB2.0, and audio support for the RZ/G2L SoC,
+    - USB2.0, I2C, audio, ADC, and CANFD support for the RZ/G2L SMARC EVK
+      development board,
+    - Support for more R-Car Gen3e SoCs (H3e, M3e, M3Ne(-2G), D3e, E3e,
+      H3Ne),
+    - PWM support for the R-Car M3-W+ and V3U SoCs,
+    - IPMMU support for SDHI on the R-Car V3U SoC,
+    - Switches support for the Falcon development board,
+    - Improve Ethernet PHY descriptions to fix reset handling after kexec,
+    - Miscellaneous fixes and improvements.
 
-  - Document support for the new R-Car H3e, M3e, M3Ne(-2G), D3e, E3e, and
-    H3Ne SoCs and boards.
+  [GIT PULL 3/4] Renesas driver updates for v5.16
 
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      dt-bindings: arm: renesas: Document more R-Car Gen3e Socs and boards
+    - Initial support for the new R-Car H3e, M3e, M3Ne(-2G), D3e, E3e, and
+      H3Ne SoCs.
 
- Documentation/devicetree/bindings/arm/renesas.yaml | 61 ++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+  [GIT PULL 4/4] Renesas DT binding updates for v5.16
+
+    - Document support for the new R-Car H3e, M3e, M3Ne(-2G), D3e, E3e, and
+      H3Ne SoCs and boards.
+
+Thanks for pulling!
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
