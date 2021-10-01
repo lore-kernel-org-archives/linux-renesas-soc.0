@@ -2,87 +2,141 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BACC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F0A4C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 12:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6792361A08
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DA2461AD0
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 12:04:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353096AbhJAJu1 (ORCPT
+        id S1354228AbhJAMGL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Oct 2021 05:50:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44444 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353051AbhJAJu1 (ORCPT
+        Fri, 1 Oct 2021 08:06:11 -0400
+Received: from www.zeus03.de ([194.117.254.33]:55068 "EHLO mail.zeus03.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1354151AbhJAMGK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Oct 2021 05:50:27 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E6A2C06177B
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Oct 2021 02:48:43 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:5c32:c2e7:df7:3731])
-        by xavier.telenet-ops.be with bizsmtp
-        id 0Zog2600K1ZoSwU01ZogdD; Fri, 01 Oct 2021 11:48:41 +0200
-Received: from rox.of.borg ([192.168.97.57] helo=rox)
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mWF9k-000zNc-C6; Fri, 01 Oct 2021 11:48:40 +0200
-Received: from geert by rox with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mWF9j-00BEFA-NS; Fri, 01 Oct 2021 11:48:39 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] pinctrl: renesas: Updates for v5.16
-Date:   Fri,  1 Oct 2021 11:48:38 +0200
-Message-Id: <cover.1633081630.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Fri, 1 Oct 2021 08:06:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=sU1jHZ5AxD4VfGEdE0alKPxI1996
+        qYnc3sUVIk98xIA=; b=o2DkK4TEJ2MjNtxegdLBJeBjQFr16jn7wHO4G/EAQU1K
+        j1RK0i4oldYwujwtqM3GV/UGHQONbcgn6x9RtjmzfinIm+xq3fgXYuoL/LArmIRH
+        m2gGCz81yu6LMx18Kdm4IrvgKuRj9bp7gMlhcF+D7jWKpZmPbsyTgyNG7rNUaMw=
+Received: (qmail 2459946 invoked from network); 1 Oct 2021 14:04:22 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Oct 2021 14:04:22 +0200
+X-UD-Smtp-Session: l3s3148p1@MLMZXUnNftIgAwDPXwmDAJN1R91E6vGQ
+Date:   Fri, 1 Oct 2021 14:04:21 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Mark Brown <broonie@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-mtd@lists.infradead.org,
+        linux-spi <linux-spi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Subject: Re: [PATCH 6/6] memory: renesas-rpc-if: Add support for RZ/G2L
+Message-ID: <YVb5RXvh9agIS7MG@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Mark Brown <broonie@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+        linux-mtd@lists.infradead.org,
+        linux-spi <linux-spi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+References: <20210928140721.8805-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20210928140721.8805-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <YVXMc1A4D/y4kjim@shikoro>
+ <CA+V-a8sDSsyTGfTeQfG_ZhfrJHCm+2kBTEDWaoFMTgsMOmxEgQ@mail.gmail.com>
+ <YVbM3z7x+D0MCkTF@ninjato>
+ <CA+V-a8uyQmW3+4hAt4534spKeQHDoeZzuJJE4RY70KLZfYOXoA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5QK+6x2YA2y8yiDI"
+Content-Disposition: inline
+In-Reply-To: <CA+V-a8uyQmW3+4hAt4534spKeQHDoeZzuJJE4RY70KLZfYOXoA@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Linus,
 
-The following changes since commit 6880fa6c56601bb8ed59df6c30fd390cc5f6dd8f:
+--5QK+6x2YA2y8yiDI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-  Linux 5.15-rc1 (2021-09-12 16:28:37 -0700)
+Hi Prabhakar,
 
-are available in the Git repository at:
+I checked the G2L datasheet and reconsidered. It is better if your patch
+goes in first. That means...
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v5.16-tag1
+> > > > Is RPCIF_CMNCR_IO3FV and RPCIF_CMNCR_IO2FV actually documented in your
+> > > > datasheets? I am asking because I have a patch pending to remove writing
+> > > > to undocumented locations. So, I was aboout to remove the IO3FV and
+> > > > IO2FV macros.
+> > > >
+> > > Yes they are documented, you should be able to download the HW manual from [1]
+> >
+> > Great, then I will keep them!
 
-for you to fetch changes up to fcfb63148c241adad54ed99fc318167176d7254b:
+... that you could change the comments here from "undocumented" to
+"documened for G2L" or similar.
 
-  pinctrl: renesas: rzg2l: Fix missing port register 21h (2021-09-24 15:14:49 +0200)
+> > > > > +             regmap_read(rpc->regmap, RPCIF_PHYCNT, &dummy);
+> > > > > +             dummy &= ~RPCIF_PHYCNT_PHYMEM_MASK;
+> > > > > +             dummy |= RPCIF_PHYCNT_PHYMEM(hyperflash ? 3 : 0) | 0x260;
+> > > > > +             regmap_write(rpc->regmap, RPCIF_PHYCNT, dummy);
+> > > >
+> > > > regmap_update_bits?
+> > > >
+> > > Im a bit hesitant to use regmap_update_bits() here as some of the bits
+> > > are not documented.
 
-----------------------------------------------------------------
-pinctrl: renesas: Updates for v5.16
+Here you can keep your code as is. I will change it afterwards if needed
+once I clarified all undocumented locations.
 
-  - Fix duplicate port register on RZ/G2L,
-  - A minor improvement.
+Thanks and have a nice weekend,
 
-Thanks for pulling!
-----------------------------------------------------------------
-Biju Das (1):
-      pinctrl: renesas: rzg2l: Fix missing port register 21h
+   Wolfram
 
-Jason Wang (1):
-      pinctrl: renesas: No need to initialise global statics
 
- drivers/pinctrl/renesas/core.c          | 12 ++++++------
- drivers/pinctrl/renesas/pinctrl-rzg2l.c |  2 +-
- 2 files changed, 7 insertions(+), 7 deletions(-)
+--5QK+6x2YA2y8yiDI
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Gr{oetje,eeting}s,
+-----BEGIN PGP SIGNATURE-----
 
-						Geert
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmFW+UEACgkQFA3kzBSg
+Kbb9Nw//bCZjWZIYqwiSCfxBOafnLWkptccKRA/ccZ57W8k5zOSNRRPmx68uEr2+
+G6p3M5tlc9g9oqT0Yek9lce9f+7SIVrbOdHLONIpBpeEHEb4FfZUKqOiLzDB+JDf
+RlMF+IbEFNOwDAfhFCJdR9SY5GeobFjmLpTWyMfJlRnFvTFFe9S3NF7V1V9AQMHh
+KrTC2H67mMpgzVwT/iF7naTL4mHI7GaT9I1bm3U1meHYxDM7hDZB2uWvwErPzh1w
+plGrppDm02M6Bj+IllzZukxvC7ppzPDAjmuHMttjuurInrem5NrWCtTMT4mZdf/w
+0OIn2me7d40DI351em9tk5YL3tsqyIgTp+MpmrDGGi/9bs5FCQzPYh5RHtRVNwiZ
+XicfUYQzFXg5FxSwf2LcDOcuHu737TZxjjrr++cKC6e9uGnzfXUlAy+HNhzSce7M
+NqIZbnMNQD2t83mThggTvl+XgNQ/c4pMiJ11Je/fImfHkB/OV+ExZzhoTYqeRkjX
+STlHRriE+XIuotL+RFD/ImGqKXPauFhWJwCrQcJFmwMhV4vl8EkWdtZlNDiR9sR7
++ir4YTUv1s7FUEpRCozcHus1MiKtFdoxDgC+yNDLwbo/fDE21lBB7o/4nTm3P3Qd
+itXUJBUf8jxaSazpaURv1jiRCGSFZZEZCYmbnD2SDS3+y4J3PDM=
+=nApo
+-----END PGP SIGNATURE-----
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+--5QK+6x2YA2y8yiDI--
