@@ -2,176 +2,93 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48F73C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 15:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC713C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 16:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F1E161139
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 15:07:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE11461283
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 16:43:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354968AbhJAPJK (ORCPT
+        id S232139AbhJAQo5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Oct 2021 11:09:10 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:38307 "EHLO
+        Fri, 1 Oct 2021 12:44:57 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:34837 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1355084AbhJAPJA (ORCPT
+        by vger.kernel.org with ESMTP id S232094AbhJAQo4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Oct 2021 11:09:00 -0400
+        Fri, 1 Oct 2021 12:44:56 -0400
 X-IronPort-AV: E=Sophos;i="5.85,339,1624287600"; 
-   d="scan'208";a="95671642"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 02 Oct 2021 00:07:15 +0900
+   d="scan'208";a="95676880"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 02 Oct 2021 01:43:10 +0900
 Received: from localhost.localdomain (unknown [10.226.92.36])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8A22E43DDFC5;
-        Sat,  2 Oct 2021 00:07:12 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id CA1A54001DD6;
+        Sat,  2 Oct 2021 01:43:07 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Andrew Lunn <andrew@lunn.ch>,
         Sergei Shtylyov <sergei.shtylyov@gmail.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergey Shtylyov <s.shtylyov@omprussia.ru>,
-        Adam Ford <aford173@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Yuusuke Ashizuka <ashiduka@fujitsu.com>,
+        Adam Ford <aford173@gmail.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 09/10] ravb: Add half_duplex to struct ravb_hw_info
-Date:   Fri,  1 Oct 2021 16:06:35 +0100
-Message-Id: <20211001150636.7500-10-biju.das.jz@bp.renesas.com>
+        Biju Das <biju.das@bp.renesas.com>
+Subject: [PATCH 0/8] Fillup stubs for Gigabit Ethernet driver support
+Date:   Fri,  1 Oct 2021 17:42:57 +0100
+Message-Id: <20211001164305.8999-1-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211001150636.7500-1-biju.das.jz@bp.renesas.com>
-References: <20211001150636.7500-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-RZ/G2L supports half duplex mode.
-Add a half_duplex hw feature bit to struct ravb_hw_info for
-supporting half duplex mode for RZ/G2L.
+The DMAC and EMAC blocks of Gigabit Ethernet IP found on RZ/G2L SoC are
+similar to the R-Car Ethernet AVB IP.
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
----
-RFC->v1:
- * Added Sergei's Rb tag.
----
- drivers/net/ethernet/renesas/ravb.h      |  3 ++
- drivers/net/ethernet/renesas/ravb_main.c | 36 ++++++++++++++++++------
- 2 files changed, 31 insertions(+), 8 deletions(-)
+The Gigabit Ethernet IP consists of Ethernet controller (E-MAC), Internal
+TCP/IP Offload Engine (TOE)  and Dedicated Direct memory access controller
+(DMAC).
 
-diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index f0d9b7bc8c20..d83d3b4f3f5f 100644
---- a/drivers/net/ethernet/renesas/ravb.h
-+++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1008,6 +1008,7 @@ struct ravb_hw_info {
- 	unsigned ccc_gac:1;		/* AVB-DMAC has gPTP support active in config mode */
- 	unsigned nc_queue:1;		/* AVB-DMAC has NC queue */
- 	unsigned magic_pkt:1;		/* E-MAC supports magic packet detection */
-+	unsigned half_duplex:1;		/* E-MAC supports half duplex mode */
- };
- 
- struct ravb_private {
-@@ -1062,6 +1063,8 @@ struct ravb_private {
- 	unsigned rgmii_override:1;	/* Deprecated rgmii-*id behavior */
- 	unsigned int num_tx_desc;	/* TX descriptors per packet */
- 
-+	int duplex;
-+
- 	const struct ravb_hw_info *info;
- 	struct reset_control *rstc;
- };
-diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index 6fb11d4cfc57..3e694738e683 100644
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1091,6 +1091,13 @@ static int ravb_poll(struct napi_struct *napi, int budget)
- 	return budget - quota;
- }
- 
-+static void ravb_set_duplex_gbeth(struct net_device *ndev)
-+{
-+	struct ravb_private *priv = netdev_priv(ndev);
-+
-+	ravb_modify(ndev, ECMR, ECMR_DM, priv->duplex > 0 ? ECMR_DM : 0);
-+}
-+
- /* PHY state control function */
- static void ravb_adjust_link(struct net_device *ndev)
- {
-@@ -1107,6 +1114,12 @@ static void ravb_adjust_link(struct net_device *ndev)
- 		ravb_rcv_snd_disable(ndev);
- 
- 	if (phydev->link) {
-+		if (info->half_duplex && phydev->duplex != priv->duplex) {
-+			new_state = true;
-+			priv->duplex = phydev->duplex;
-+			ravb_set_duplex_gbeth(ndev);
-+		}
-+
- 		if (phydev->speed != priv->speed) {
- 			new_state = true;
- 			priv->speed = phydev->speed;
-@@ -1121,6 +1134,8 @@ static void ravb_adjust_link(struct net_device *ndev)
- 		new_state = true;
- 		priv->link = 0;
- 		priv->speed = 0;
-+		if (info->half_duplex)
-+			priv->duplex = -1;
- 	}
- 
- 	/* Enable TX and RX right over here, if E-MAC change is ignored */
-@@ -1143,6 +1158,7 @@ static int ravb_phy_init(struct net_device *ndev)
- {
- 	struct device_node *np = ndev->dev.parent->of_node;
- 	struct ravb_private *priv = netdev_priv(ndev);
-+	const struct ravb_hw_info *info = priv->info;
- 	struct phy_device *phydev;
- 	struct device_node *pn;
- 	phy_interface_t iface;
-@@ -1150,6 +1166,7 @@ static int ravb_phy_init(struct net_device *ndev)
- 
- 	priv->link = 0;
- 	priv->speed = 0;
-+	priv->duplex = -1;
- 
- 	/* Try connecting to PHY */
- 	pn = of_parse_phandle(np, "phy-handle", 0);
-@@ -1188,15 +1205,17 @@ static int ravb_phy_init(struct net_device *ndev)
- 		netdev_info(ndev, "limited PHY to 100Mbit/s\n");
- 	}
- 
--	/* 10BASE, Pause and Asym Pause is not supported */
--	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_10baseT_Half_BIT);
--	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_10baseT_Full_BIT);
--	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_Pause_BIT);
--	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_Asym_Pause_BIT);
-+	if (!info->half_duplex) {
-+		/* 10BASE, Pause and Asym Pause is not supported */
-+		phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_10baseT_Half_BIT);
-+		phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_10baseT_Full_BIT);
-+		phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_Pause_BIT);
-+		phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_Asym_Pause_BIT);
- 
--	/* Half Duplex is not supported */
--	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_1000baseT_Half_BIT);
--	phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_100baseT_Half_BIT);
-+		/* Half Duplex is not supported */
-+		phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_1000baseT_Half_BIT);
-+		phy_remove_link_mode(phydev, ETHTOOL_LINK_MODE_100baseT_Half_BIT);
-+	}
- 
- 	phy_attached_info(phydev);
- 
-@@ -2175,6 +2194,7 @@ static const struct ravb_hw_info gbeth_hw_info = {
- 	.tsrq = TCCR_TSRQ0,
- 	.aligned_tx = 1,
- 	.tx_counters = 1,
-+	.half_duplex = 1,
- };
- 
- static const struct of_device_id ravb_match_table[] = {
+With a few changes in the driver we can support both IPs.
+
+This patch series is for adding Gigabit ethernet driver support to RZ/G2L SoC.
+
+The number of patches after incorporatng RFC review comments is 18.
+So split the patches into 2 patchsets (10 + 8).
+
+This series is the second patchset, aims to fillup all the stubs for the
+Gigabit Ethernet driver.
+
+This patch series depend upon [1]
+[1] https://lore.kernel.org/linux-renesas-soc/20211001150636.7500-1-biju.das.jz@bp.renesas.com/T/#t
+
+RFC->V1:
+ * used rx_max_buf_size instead of rx_2k_buffers feature bit.
+ * renamed "rgeth" to "gbeth".
+ * renamed ravb_rx_ring_free to ravb_rx_ring_free_rcar
+ * renamed ravb_rx_ring_format to ravb_rx_ring_format_rcar
+ * renamed ravb_alloc_rx_desc to ravb_alloc_rx_desc_rcar
+ * renamed ravb_rcar_rx to ravb_rx_rcar
+ * Added Sergey's Rb tag for patch #6.
+ * Moved CSR0 initialization to patch #8.
+
+Biju Das (8):
+  ravb: Add rx_max_buf_size to struct ravb_hw_info
+  ravb: Fillup ravb_rx_ring_free_gbeth() stub
+  ravb: Fillup ravb_rx_ring_format_gbeth() stub
+  ravb: Fillup ravb_alloc_rx_desc_gbeth() stub
+  ravb: Fillup ravb_rx_gbeth() stub
+  ravb: Add carrier_counters to struct ravb_hw_info
+  ravb: Add support to retrieve stats for GbEthernet
+  ravb: Fillup ravb_set_features_gbeth() stub
+
+ drivers/net/ethernet/renesas/ravb.h      |  47 ++++
+ drivers/net/ethernet/renesas/ravb_main.c | 327 +++++++++++++++++++++--
+ 2 files changed, 352 insertions(+), 22 deletions(-)
+
 -- 
 2.17.1
 
