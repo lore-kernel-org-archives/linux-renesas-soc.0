@@ -2,44 +2,42 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D58C3C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA7EC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BD9C9613A0
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:43:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DE4961165
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  1 Oct 2021 09:46:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1353264AbhJAJpA (ORCPT
+        id S1353104AbhJAJsg (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 1 Oct 2021 05:45:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43104 "EHLO
+        Fri, 1 Oct 2021 05:48:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353236AbhJAJop (ORCPT
+        with ESMTP id S1353096AbhJAJsf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 1 Oct 2021 05:44:45 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6F59C06177C
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Oct 2021 02:43:01 -0700 (PDT)
+        Fri, 1 Oct 2021 05:48:35 -0400
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72775C06177B
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  1 Oct 2021 02:46:51 -0700 (PDT)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:5c32:c2e7:df7:3731])
-        by laurent.telenet-ops.be with bizsmtp
-        id 0Zj12600B1ZoSwU01Zj1mE; Fri, 01 Oct 2021 11:43:01 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id 0Zmp2600N1ZoSwU06ZmpS0; Fri, 01 Oct 2021 11:46:50 +0200
 Received: from rox.of.borg ([192.168.97.57] helo=rox)
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mWF46-000zIi-QA; Fri, 01 Oct 2021 11:42:50 +0200
+        id 1mWF7x-000zNB-Dy; Fri, 01 Oct 2021 11:46:49 +0200
 Received: from geert by rox with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mWF45-00BE66-Sw; Fri, 01 Oct 2021 11:42:49 +0200
+        id 1mWF7w-00BEBv-FW; Fri, 01 Oct 2021 11:46:48 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-List-Id: <soc.lore.kernel.org>
-To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 0/4] Renesas SoC updates for v5.16
-Date:   Fri,  1 Oct 2021 11:42:42 +0200
-Message-Id: <cover.1633081144.git.geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.16
+Date:   Fri,  1 Oct 2021 11:46:46 +0200
+Message-Id: <cover.1633081408.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -47,45 +45,45 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi soc folks,
+	Hi Mike, Stephen,
 
-This is my first pull request for the inclusion of Renesas SoC updates
-for v5.15.
+The following changes since commit fa2a30f8e0aa9304919750b116a9e9e322465299:
 
-It consists of 4 parts:
+  clk: renesas: rzg2l: Fix clk status function (2021-09-24 15:11:05 +0200)
 
-  [GIT PULL 1/4] Renesas ARM defconfig updates for v5.16
+are available in the Git repository at:
 
-    - Enable built-in (I2C, DMAC, USB PHY control) and modular (audio,
-      ADC) build of drivers for the RZ/G2L SoC and SMARC EVK board,
-    - Enable modular build of the Renesas TPU PWM driver for the R-Car
-      V3U SoC.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v5.16-tag1
 
-  [GIT PULL 2/4] Renesas ARM DT updates for v5.16
+for you to fetch changes up to cc3e8f97bbd370b51b3bb7fec391d65d461d7d02:
 
-    - I2C EEPROM support on the RZA2MEVB development board,
-    - DMA, USB2.0, and audio support for the RZ/G2L SoC,
-    - USB2.0, I2C, audio, ADC, and CANFD support for the RZ/G2L SMARC EVK
-      development board,
-    - Support for more R-Car Gen3e SoCs (H3e, M3e, M3Ne(-2G), D3e, E3e,
-      H3Ne),
-    - PWM support for the R-Car M3-W+ and V3U SoCs,
-    - IPMMU support for SDHI on the R-Car V3U SoC,
-    - Switches support for the Falcon development board,
-    - Improve Ethernet PHY descriptions to fix reset handling after kexec,
-    - Miscellaneous fixes and improvements.
+  clk: renesas: r8a779a0: Add Z0 and Z1 clock support (2021-09-28 09:28:53 +0200)
 
-  [GIT PULL 3/4] Renesas driver updates for v5.16
+----------------------------------------------------------------
+clk: renesas: Updates for v5.16
 
-    - Initial support for the new R-Car H3e, M3e, M3Ne(-2G), D3e, E3e, and
-      H3Ne SoCs.
-
-  [GIT PULL 4/4] Renesas DT binding updates for v5.16
-
-    - Document support for the new R-Car H3e, M3e, M3Ne(-2G), D3e, E3e, and
-      H3Ne SoCs and boards.
+  - Add TPU (PWM), and Z (Cortex-A76) clocks on R-Car V3U,
+  - Add Ethernet clocks on RZ/G2L.
 
 Thanks for pulling!
+----------------------------------------------------------------
+Biju Das (4):
+      clk: renesas: rzg2l: Add support to handle MUX clocks
+      clk: renesas: r9a07g044: Add ethernet clock sources
+      clk: renesas: rzg2l: Add support to handle coupled clocks
+      clk: renesas: r9a07g044: Add GbEthernet clock/reset
+
+Geert Uytterhoeven (1):
+      clk: renesas: r8a779a0: Add Z0 and Z1 clock support
+
+Wolfram Sang (1):
+      clk: renesas: r8a779a0: Add TPU clock
+
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 159 ++++++++++++++++++++++++++++++++
+ drivers/clk/renesas/r9a07g044-cpg.c     |  29 +++++-
+ drivers/clk/renesas/rzg2l-cpg.c         |  94 +++++++++++++++++++
+ drivers/clk/renesas/rzg2l-cpg.h         |  26 +++++-
+ 4 files changed, 306 insertions(+), 2 deletions(-)
 
 Gr{oetje,eeting}s,
 
