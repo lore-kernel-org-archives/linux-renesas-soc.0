@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E025BC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Oct 2021 11:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B22C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Oct 2021 11:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C2CAB61139
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Oct 2021 11:07:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28FB961181
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Oct 2021 11:07:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234388AbhJELJV (ORCPT
+        id S234397AbhJELJX (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 5 Oct 2021 07:09:21 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:51898 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S234430AbhJELJS (ORCPT
+        Tue, 5 Oct 2021 07:09:23 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:50357 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S234396AbhJELJV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 5 Oct 2021 07:09:18 -0400
+        Tue, 5 Oct 2021 07:09:21 -0400
 X-IronPort-AV: E=Sophos;i="5.85,348,1624287600"; 
-   d="scan'208";a="96182814"
+   d="scan'208";a="96017469"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 05 Oct 2021 20:07:23 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 05 Oct 2021 20:07:31 +0900
 Received: from localhost.localdomain (unknown [10.226.93.104])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id DCE7D40078B9;
-        Tue,  5 Oct 2021 20:07:20 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 1669840078B9;
+        Tue,  5 Oct 2021 20:07:27 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
@@ -37,9 +37,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [RFC 10/12] ravb: Rename "tsrq" variable
-Date:   Tue,  5 Oct 2021 12:06:40 +0100
-Message-Id: <20211005110642.3744-11-biju.das.jz@bp.renesas.com>
+Subject: [RFC 12/12] ravb: Update/Add comments
+Date:   Tue,  5 Oct 2021 12:06:42 +0100
+Message-Id: <20211005110642.3744-13-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211005110642.3744-1-biju.das.jz@bp.renesas.com>
 References: <20211005110642.3744-1-biju.das.jz@bp.renesas.com>
@@ -47,74 +47,61 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Rename the variable "tsrq" with "tccr_mask" as we are passing
-TCCR mask to the ravb_wait() function.
+This patch update/add the following comments
 
-There is no functional change.
+1) Fix the typo AVB->DMAC in comment, as the code following the comment
+   is for GbEthernet DMAC in ravb_dmac_init_gbeth()
+
+2) Update the comment "PAUSE prohibition"-> "EMAC Mode: PAUSE
+   prohibition; Duplex; TX; RX;" in ravb_emac_init_gbeth()
+
+3) Document PFRI register bit, as it is only supported for
+   R-Car Gen3 and RZ/G2L.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Suggested-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 ---
 RFC changes:
  * New patch.
 ---
  drivers/net/ethernet/renesas/ravb.h      | 2 +-
- drivers/net/ethernet/renesas/ravb_main.c | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb.h b/drivers/net/ethernet/renesas/ravb.h
-index 899e16c5eb1a..010dad82091c 100644
+index 010dad82091c..472254612d6a 100644
 --- a/drivers/net/ethernet/renesas/ravb.h
 +++ b/drivers/net/ethernet/renesas/ravb.h
-@@ -1052,7 +1052,7 @@ struct ravb_hw_info {
- 	netdev_features_t net_features;
- 	int stats_len;
- 	size_t max_rx_len;
--	u32 tsrq;
-+	u32 tccr_mask;
- 	u32 rx_max_buf_size;
- 	unsigned aligned_tx: 1;
+@@ -833,7 +833,7 @@ enum ECSR_BIT {
+ 	ECSR_MPD	= 0x00000002,
+ 	ECSR_LCHNG	= 0x00000004,
+ 	ECSR_PHYI	= 0x00000008,
+-	ECSR_PFRI	= 0x00000010,
++	ECSR_PFRI	= 0x00000010,	/* Documented for R-Car Gen3 and RZ/G2L */
+ };
  
+ /* ECSIPR */
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index e2238cea9f3e..5d00650e86b0 100644
+index dfbbda3681f8..4a057005a470 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1043,7 +1043,7 @@ static int ravb_stop_dma(struct net_device *ndev)
- 	int error;
+@@ -519,7 +519,7 @@ static void ravb_emac_init_gbeth(struct net_device *ndev)
+ 	/* Receive frame limit set register */
+ 	ravb_write(ndev, GBETH_RX_BUFF_MAX + ETH_FCS_LEN, RFLR);
  
- 	/* Wait for stopping the hardware TX process */
--	error = ravb_wait(ndev, TCCR, info->tsrq, 0);
-+	error = ravb_wait(ndev, TCCR, info->tccr_mask, 0);
+-	/* PAUSE prohibition */
++	/* EMAC Mode: PAUSE prohibition; Duplex; TX; RX; */
+ 	ravb_write(ndev, ECMR_ZPF | ((priv->duplex > 0) ? ECMR_DM : 0) |
+ 			 ECMR_TE | ECMR_RE | ECMR_RCPT |
+ 			 ECMR_TXF | ECMR_RXF | ECMR_PRM, ECMR);
+@@ -588,7 +588,7 @@ static int ravb_dmac_init_gbeth(struct net_device *ndev)
+ 	/* Descriptor format */
+ 	ravb_ring_format(ndev, RAVB_BE);
  
- 	if (error)
- 		return error;
-@@ -2467,7 +2467,7 @@ static const struct ravb_hw_info ravb_gen3_hw_info = {
- 	.net_features = NETIF_F_RXCSUM,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
--	.tsrq = TCCR_TSRQ0 | TCCR_TSRQ1 | TCCR_TSRQ2 | TCCR_TSRQ3,
-+	.tccr_mask = TCCR_TSRQ0 | TCCR_TSRQ1 | TCCR_TSRQ2 | TCCR_TSRQ3,
- 	.rx_max_buf_size = SZ_2K,
- 	.internal_delay = 1,
- 	.tx_counters = 1,
-@@ -2492,7 +2492,7 @@ static const struct ravb_hw_info ravb_gen2_hw_info = {
- 	.net_features = NETIF_F_RXCSUM,
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats),
- 	.max_rx_len = RX_BUF_SZ + RAVB_ALIGN - 1,
--	.tsrq = TCCR_TSRQ0 | TCCR_TSRQ1 | TCCR_TSRQ2 | TCCR_TSRQ3,
-+	.tccr_mask = TCCR_TSRQ0 | TCCR_TSRQ1 | TCCR_TSRQ2 | TCCR_TSRQ3,
- 	.rx_max_buf_size = SZ_2K,
- 	.aligned_tx = 1,
- 	.gptp = 1,
-@@ -2514,7 +2514,7 @@ static const struct ravb_hw_info gbeth_hw_info = {
- 	.gstrings_size = sizeof(ravb_gstrings_stats_gbeth),
- 	.stats_len = ARRAY_SIZE(ravb_gstrings_stats_gbeth),
- 	.max_rx_len = ALIGN(GBETH_RX_BUFF_MAX, RAVB_ALIGN),
--	.tsrq = TCCR_TSRQ0,
-+	.tccr_mask = TCCR_TSRQ0,
- 	.rx_max_buf_size = SZ_8K,
- 	.aligned_tx = 1,
- 	.tx_counters = 1,
+-	/* Set AVB RX */
++	/* Set DMAC RX */
+ 	ravb_write(ndev, 0x60000000, RCR);
+ 
+ 	/* Set Max Frame Length (RTC) */
 -- 
 2.17.1
 
