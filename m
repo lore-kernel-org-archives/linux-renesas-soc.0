@@ -2,58 +2,58 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F490C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F4EFC433FE
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Oct 2021 00:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7EE1613AC
+	by mail.kernel.org (Postfix) with ESMTP id 044BB6140A
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  5 Oct 2021 00:25:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229564AbhJEA11 (ORCPT
+        id S229549AbhJEA12 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 4 Oct 2021 20:27:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47798 "EHLO
+        Mon, 4 Oct 2021 20:27:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47800 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229549AbhJEA11 (ORCPT
+        with ESMTP id S229486AbhJEA11 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Mon, 4 Oct 2021 20:27:27 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF96EC061749
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Oct 2021 17:25:37 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id kk10so3476247pjb.1
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Oct 2021 17:25:37 -0700 (PDT)
+Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CB89C061745
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  4 Oct 2021 17:25:38 -0700 (PDT)
+Received: by mail-pl1-x629.google.com with SMTP id b22so1078412pls.1
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 04 Oct 2021 17:25:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=FBnPyV1e71Qu4BN+JSADy8RO92znuhMVCQ35ixiTIas=;
-        b=SzDrsmGG/kn0nKrNc5ENwtQoM0Y2xUEFFB+4XhADFEI8dGHHl2xO4E4rRxz2hjIRFW
-         tagYvPQQIPUS4vP/6peTCI/GpIl/hAw3fRJT0bq+z5WxDFKBC21R/d/nqeMD2bRSDdxZ
-         usiPTsRkFY5g3nUZwcNCQv3pRhTVQH8HwBy7IH4iKdS8Z1pqIYWNPSM78yHbnGLfrqSf
-         zw6kY2PYvGurbIOSDGz181qgivW/aATMPdAPnBcklLNQLSbxFJUJxUgnlwNRhlt9+qAp
-         2l6v5X+BiBHHdq78HWnBGGhrM9iEWwfrUCfoCOaVR0SQ0AZztAxiWYyEH+lEsXADC79c
-         IlCg==
+        bh=ZnGMzEOMuCbZz+2/9TA9u3DTAWULlnJit/IVcPyvD2E=;
+        b=py9ETwraK3uZ3arwf4D/cejGt75HSCxbxE+eNvu5flFwtqDLceDoH9ZD0crkJfDHTJ
+         3EvrbBdc4R/CL/XEYN2PzMJahF4P1qQ5/t1LHFdWe0t33kv/Aik58PM2ivl6vrrIMEnZ
+         Jj/GMWVD9c/wJjC7PhhBm7InHQjvz9PEovX4WafVplCLpso9Xt9QkqjVCPnTgbze3n7f
+         Lq/BtBrAVWAC+jLiFpTkgvte2w4WYmKyuEN7hnywmv6EZKmPhv4SP8MePpqxGfit/Uzi
+         bRz1bCc0m+8gSO/G8Z+3ulsNyKXEOkQr2t72dib5RKl8MhTOkCeFcJ7WvY4LCBDyP/Dh
+         sa0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=FBnPyV1e71Qu4BN+JSADy8RO92znuhMVCQ35ixiTIas=;
-        b=CBrV6flhn1cVP+EnLQfQ7AU70Ui+aWVNbH0+KuJjIHrASX0j5XMygfutNJsXPntzRX
-         hTpLc933OWWSadeXu5MhuuFaNzfYaXJgeFv71ufV0dQFJAk4b9y3NDzgsQlzsiFkVV57
-         Ss34Yol9Hg9jPbSXD++XVFH/rMUMl1AYBa/GK6orb7dtIo5SHqhaB112x9sT+gZl74y+
-         b1bfGd+ibazdnsdanRTa2EgxERr9fMPUErrrM7QMmlM0WfBE9r+L+gVmFwAxIa12816z
-         oC1xY4RFdx/7KRQJV1I9yl/MuznRcZXkAej1z3Fl6INMvgnmsdwWMZPKn7cyY7+Gc3Du
-         UIEQ==
-X-Gm-Message-State: AOAM533BW8O1q3rgcqChW+Fp6cRba9v+O835kKnQrc6ZYbhChEYfE+4D
-        x7tF96EzxTBVY+bBKv1Mr1I8ByuRtyB7K/qb
-X-Google-Smtp-Source: ABdhPJyimLKADm/magCKbiDkD4lEjRmL2t/x3djg8jRqEb8ScBTc5gb6ga+90Zoy7rp7a/DUxjRz5g==
-X-Received: by 2002:a17:902:e8c9:b0:13d:dae7:1d5b with SMTP id v9-20020a170902e8c900b0013ddae71d5bmr2365010plg.39.1633393537106;
+        bh=ZnGMzEOMuCbZz+2/9TA9u3DTAWULlnJit/IVcPyvD2E=;
+        b=Atf/5zmMJap35cqz+MzNIdFpY3+BIrRk+qC5b4Yj5q6VaaRswsTFySKOEZ9/YAsRIT
+         qm9EAnIz3S3DJdYM9034MhhH2kcmMyFCOBO5NxMh5HYnX0UM39IKA9o4px8rCISFVctw
+         xlxnH+i2Mv+zHMtr8/p5PkFxEHAKBt7Iw0oDtQgQjmqqEpA3agK/xUWxlYDHk0X71nMX
+         CjFrm923KmVjePr8XiuQ6n1ik1+xdXewmcRC1q13jhN4VlGdMNzhIvOCuVnPsV4TPQSZ
+         df7BwISTDMBzkKzrA6O2KCS12BKcxyC5AGcV19nIhIrumT86jb+Qi69RckJO1IGa+vFr
+         BmIQ==
+X-Gm-Message-State: AOAM5318T3j11O5+QLAzxAWaeizzSHS6bOKgXavD61WxGCHXpX34/e33
+        lbFupOsX9YWACmHXjNJFZFzqS2bIek2mNGj4
+X-Google-Smtp-Source: ABdhPJxV+HHvHFt/eCKtUC9ZHvFqyM1hqAQT5wEPuC5sCtLeUgrq4wNMQbywv3OT1LwxWkC2WEORBQ==
+X-Received: by 2002:a17:90a:7e90:: with SMTP id j16mr108859pjl.139.1633393537500;
         Mon, 04 Oct 2021 17:25:37 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id l185sm15622533pfd.29.2021.10.04.17.25.36
+        by smtp.gmail.com with ESMTPSA id q19sm12403546pfg.40.2021.10.04.17.25.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Oct 2021 17:25:36 -0700 (PDT)
-Message-ID: <615b9b80.1c69fb81.45249.f711@mx.google.com>
-Date:   Mon, 04 Oct 2021 17:25:36 -0700 (PDT)
+        Mon, 04 Oct 2021 17:25:37 -0700 (PDT)
+Message-ID: <615b9b81.1c69fb81.469b.594e@mx.google.com>
+Date:   Mon, 04 Oct 2021 17:25:37 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,52 +61,38 @@ X-Kernelci-Kernel: renesas-devel-2021-10-04-v5.15-rc4
 X-Kernelci-Report-Type: test
 X-Kernelci-Tree: renesas
 X-Kernelci-Branch: master
-Subject: renesas/master ltp-ipc: 12 runs,
- 4 regressions (renesas-devel-2021-10-04-v5.15-rc4)
+Subject: renesas/master usb: 2 runs,
+ 1 regressions (renesas-devel-2021-10-04-v5.15-rc4)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master ltp-ipc: 12 runs, 4 regressions (renesas-devel-2021-10-04-v5=
-.15-rc4)
+renesas/master usb: 2 runs, 1 regressions (renesas-devel-2021-10-04-v5.15-r=
+c4)
 
 Regressions Summary
 -------------------
 
-platform        | arch  | lab           | compiler | defconfig             =
-       | regressions
-----------------+-------+---------------+----------+-----------------------=
--------+------------
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig+ima         =
-       | 1          =
-
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig+CON...OMIZE_=
-BASE=3Dy | 1          =
-
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig             =
-       | 1          =
-
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig+crypto      =
-       | 1          =
+platform            | arch | lab           | compiler | defconfig          =
+| regressions
+--------------------+------+---------------+----------+--------------------=
++------------
+rk3288-rock2-square | arm  | lab-collabora | gcc-8    | multi_v7_defconfig =
+| 1          =
 
 
   Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2021-10-04-v5.15-rc4/plan/ltp-ipc/
+sas-devel-2021-10-04-v5.15-rc4/plan/usb/
 
-  Test:     ltp-ipc
+  Test:     usb
   Tree:     renesas
   Branch:   master
   Describe: renesas-devel-2021-10-04-v5.15-rc4
   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
 evel.git
-  SHA:      022b9ed809ab70e8e1cac03f6a50d8cb91cf4098
-
-  Test suite revisions:
-    ltp-tests
-      URL:  https://github.com/linux-test-project/ltp.git
-      SHA:  37fa90294a830ccc2860b5c7378b821a686b6ca0 =
+  SHA:      022b9ed809ab70e8e1cac03f6a50d8cb91cf4098 =
 
 
 
@@ -115,132 +101,49 @@ Test Regressions
 
 
 
-platform        | arch  | lab           | compiler | defconfig             =
-       | regressions
-----------------+-------+---------------+----------+-----------------------=
--------+------------
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig+ima         =
-       | 1          =
+platform            | arch | lab           | compiler | defconfig          =
+| regressions
+--------------------+------+---------------+----------+--------------------=
++------------
+rk3288-rock2-square | arm  | lab-collabora | gcc-8    | multi_v7_defconfig =
+| 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/615b8344580369652e99a321
+  Details:     https://kernelci.org/test/plan/id/615b90592d68bc8d8399a30d
 
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+ima
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Results:     2 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
   Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-04-v5.15-rc4/arm64/defconfig+ima/gcc-8/lab-collabora/ltp-ipc-mt8173-=
-elm-hana.txt
+021-10-04-v5.15-rc4/arm/multi_v7_defconfig/gcc-8/lab-collabora/usb-rk3288-r=
+ock2-square.txt
   HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-04-v5.15-rc4/arm64/defconfig+ima/gcc-8/lab-collabora/ltp-ipc-mt8173-=
-elm-hana.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-ltp/=
-20210913.0/arm64/initrd.cpio.gz =
+021-10-04-v5.15-rc4/arm/multi_v7_defconfig/gcc-8/lab-collabora/usb-rk3288-r=
+ock2-square.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
+0913.0/armhf/rootfs.cpio.gz =
 
 
 
-  * ltp-ipc.login: https://kernelci.org/test/case/id/615b8344580369652e99a3=
-22
-        failing since 21 days (last pass: renesas-devel-2021-08-23-v5.14-rc=
-7, first fail: v5.15-rc1-564-ge23d26d2dc9a) =
+  * usb.compare-freeze: https://kernelci.org/test/case/id/615b90592d68bc8d8=
+399a30f
+        new failure (last pass: renesas-devel-2021-09-24-v5.15-rc2)
 
- =
+    2021-10-04T23:32:54.969638  3: ID 0ea0:2168 Bus 003 Device 002: ID 05e3=
+:0608 Bus 003 Device <8>[   14.292973] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=
+=3Dusb-presence RESULT=3Dpass>
+    2021-10-04T23:32:54.969935  001: ID 1d6b:0002 \"
+    2021-10-04T23:32:54.970171  + lsusb
+    2021-10-04T23:32:54.970383  + awk {print $6}
+    2021-10-04T23:32:54.970587  + sort
+    2021-10-04T23:32:54.970787  + seq 1 3
+    2021-10-04T23:32:54.970983  + /usr/sbin/rtcwake -d rtc0 -m freeze -s 1
+    2021-10-04T23:32:54.971176  rtcwake: assuming RTC uses UTC ...
+    2021-10-04T23:32:54.971365  rtcwake: wakeup from \"freeze\" using rtc0 =
+at Mon Oct  4 23:32:57 2021
+    2021-10-04T23:32:55.029089  <6>[   14.340943] PM: suspend entry (s2idle=
+) =
 
-
-
-platform        | arch  | lab           | compiler | defconfig             =
-       | regressions
-----------------+-------+---------------+----------+-----------------------=
--------+------------
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig+CON...OMIZE_=
-BASE=3Dy | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/615b85a7ccfa76c2a799a2e6
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+CONFIG_RANDOMIZE_BASE=3Dy
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-04-v5.15-rc4/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-col=
-labora/ltp-ipc-mt8173-elm-hana.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-04-v5.15-rc4/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-col=
-labora/ltp-ipc-mt8173-elm-hana.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-ltp/=
-20210913.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-ipc.login: https://kernelci.org/test/case/id/615b85a7ccfa76c2a799a2=
-e7
-        failing since 13 days (last pass: renesas-devel-2021-08-23-v5.14-rc=
-7, first fail: renesas-devel-2021-09-20-v5.15-rc2) =
-
- =
-
-
-
-platform        | arch  | lab           | compiler | defconfig             =
-       | regressions
-----------------+-------+---------------+----------+-----------------------=
--------+------------
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig             =
-       | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/615b86f14332e84f5b99a33d
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-04-v5.15-rc4/arm64/defconfig/gcc-8/lab-collabora/ltp-ipc-mt8173-elm-=
-hana.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-04-v5.15-rc4/arm64/defconfig/gcc-8/lab-collabora/ltp-ipc-mt8173-elm-=
-hana.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-ltp/=
-20210913.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-ipc.login: https://kernelci.org/test/case/id/615b86f14332e84f5b99a3=
-3e
-        failing since 21 days (last pass: renesas-devel-2021-08-23-v5.14-rc=
-7, first fail: v5.15-rc1-564-ge23d26d2dc9a) =
-
- =
-
-
-
-platform        | arch  | lab           | compiler | defconfig             =
-       | regressions
-----------------+-------+---------------+----------+-----------------------=
--------+------------
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig+crypto      =
-       | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/615b871b163ddd899099a2f6
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+crypto
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-04-v5.15-rc4/arm64/defconfig+crypto/gcc-8/lab-collabora/ltp-ipc-mt81=
-73-elm-hana.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-04-v5.15-rc4/arm64/defconfig+crypto/gcc-8/lab-collabora/ltp-ipc-mt81=
-73-elm-hana.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-ltp/=
-20210913.0/arm64/initrd.cpio.gz =
-
-
-
-  * ltp-ipc.login: https://kernelci.org/test/case/id/615b871b163ddd899099a2=
-f7
-        failing since 21 days (last pass: renesas-devel-2021-08-23-v5.14-rc=
-7, first fail: v5.15-rc1-564-ge23d26d2dc9a) =
+    ... (138 line(s) more)  =
 
  =20
