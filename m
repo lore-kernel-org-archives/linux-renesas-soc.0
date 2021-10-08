@@ -2,58 +2,58 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E77DC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Oct 2021 20:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FA6C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Oct 2021 20:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6536461177
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Oct 2021 20:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BB0F610E7
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  8 Oct 2021 20:25:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242279AbhJHU1x (ORCPT
+        id S231727AbhJHU1w (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 8 Oct 2021 16:27:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45072 "EHLO
+        Fri, 8 Oct 2021 16:27:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45066 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S242193AbhJHU1x (ORCPT
+        with ESMTP id S242193AbhJHU1w (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 8 Oct 2021 16:27:53 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8500AC061570
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  8 Oct 2021 13:25:57 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id v11so4155789pgb.8
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 Oct 2021 13:25:57 -0700 (PDT)
+        Fri, 8 Oct 2021 16:27:52 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A66C1C061755
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  8 Oct 2021 13:25:56 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id kk10so8446020pjb.1
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 08 Oct 2021 13:25:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=KZLiqJqYe5FuNYk1FcLwiMnWDVxwmdt0gyhvD4iaD4s=;
-        b=svgksbwVFGEdYIsPgcjOaOlmEkAKDeVOiPhPoVngUP5W6Vh4+7Q1OlHDiTlYIsGYrL
-         wQdEfVjnCTQNwu7cxTTdN0PM0OcTycjFRab0VpGGTg7MXZ0lrTCekKNaZeUuF17ef/Fz
-         BejimGFGaiUvX7RGZD+shaRpZpCn2h4pOwMegNBJU81Y/EwmzsMRYI9koYdkXuMCw05Q
-         Z3I1lbl971pPCQPn6NN4ov7rxMTnorf2XT51Aa+6wGT7iFJ0t9Q5DM9VsrFVkHOS6vt2
-         NOVcoHWRw30SH//tTgt7x+KpCPtt3vJj9uUrCBIiBtTegV3mKZajoDva074KAri/gVAl
-         vBmw==
+        bh=fhnSc7LBvL1Ft/IiYW5e4FFkWJaJecS/B5GQZCPxke0=;
+        b=HVWgkPSHb8rV4gwCKQFLwIZdIZGDZsJll/O8zcL2r7n8cZunln5z0wDGZI+MqCL7gx
+         yNwtI2pFljw01fvbCaLT90PB0lKFNuhxDghsiEg7L54lMfpLQXDpBVlaxnKMvlHuv0bY
+         fsH1NQbWp7dT1+WycasHlIeZWmY6yVMr37L+FebFULd1tioC8pbx85Nh6ch/vw3UKT5z
+         n1Ov/Ms9DWHLFTwDgP1MUrXq6Jr/pJSZP0IEhLuPrRgCIF39skbUG0uzo+GmPrAJnVqS
+         OcAKDxi9dZBAgezxDNFlbHyMvGOG+WJYoc1bGcDbgyKVHDTtcTUB+hSzeg3ErFp8uNdS
+         OKtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=KZLiqJqYe5FuNYk1FcLwiMnWDVxwmdt0gyhvD4iaD4s=;
-        b=DRyNnumHoC0CBss93xT+cA+jELr43cCxd4mIQxkmzgWsqrLXP+daXCjIG/1coarThx
-         lI/WrLHpTHN/xn68RIseavGUA0W4RyXv62vkiOx2026NgFIFyW2VW6a03B/HJXaDQEr8
-         w0IiZqpD1hz3l73/DYoNhF/Htm+QtzG1Zrc/o0mLKnlJDZsR8ls21hNQpc+jDJw1uFfS
-         Jrf78l8lIy6shKLzJwmnBq5GWZMR1Zkzoi3OYd2tt3S3IOsQ7mk/NwjjGrU8CCFUwEdL
-         uzvcOTrFE9f6JTlQkBgFiTuXX9BSrNKXLynKxSpFmrmKuEdwJqKzGZxFlulVq78mep81
-         KPlA==
-X-Gm-Message-State: AOAM533GI+44k0Jc0gKIzhCwRCrTuKG2gruwVockuj2g6lKoNGm5OnLY
-        wsohhlFGYqwFAif/3JrGbF7dSJHio/RHKGKV
-X-Google-Smtp-Source: ABdhPJyzFc3rDWnNXIWG6m12jp6WKvUAD/SI23gIxeMn/m96XUd33ktggIeeTy7CldYMrgz7vNPvpw==
-X-Received: by 2002:a05:6a00:2449:b0:44c:2221:8c38 with SMTP id d9-20020a056a00244900b0044c22218c38mr12338296pfj.74.1633724756892;
+        bh=fhnSc7LBvL1Ft/IiYW5e4FFkWJaJecS/B5GQZCPxke0=;
+        b=urDS1PuyS6/OCZKrbV70yJR02NaluaPUx31ceb6IXOXdHLHYhf77I+QMLWkn7wj9pb
+         O9HApj3hU22lq1Q/9+Ty4T0AYVCGtFwKDJjk1vCSDIix5FKIeHQtCo1ca6QVhWMxl/TO
+         XLwJZ3UngMc1BCWq3QGuO/8WJJfQPNTTjIfxHkJ6KvYEqu7u7URvXri/1ss1K7vRWolt
+         AsYK8y2GysvQUIRB1QM+7a7M/sPwXZn8Nb16lWaAkx5kN9IaqcJtajGfKkCvs0P1MWk4
+         1GdSzIzTS2io57PTB/vV3W7YsJVD98wj6h0raBYSymR00ZYldq2S3Hq4pQLABs7bpZAj
+         U+9g==
+X-Gm-Message-State: AOAM531Qe6zHgMzbG1o0yMA8ozvwICOMIYWotY+/oCgdAX9etbA0xjA4
+        ULsmV/392Y9EdwrcyQ5wDQzvWnYci2QsgQbM
+X-Google-Smtp-Source: ABdhPJxFc0dZM6osCumVY+MPQ05f109E8UYWKfHa9D8yZ3AhlOnbLWZDQK7kvZiDWqlVei4AZpsTUw==
+X-Received: by 2002:a17:902:7783:b0:13d:fee6:8095 with SMTP id o3-20020a170902778300b0013dfee68095mr11262283pll.7.1633724756085;
         Fri, 08 Oct 2021 13:25:56 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id n19sm187574pff.37.2021.10.08.13.25.56
+        by smtp.gmail.com with ESMTPSA id p9sm177217pfh.162.2021.10.08.13.25.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 Oct 2021 13:25:56 -0700 (PDT)
-Message-ID: <6160a954.1c69fb81.a3779.0d64@mx.google.com>
-Date:   Fri, 08 Oct 2021 13:25:56 -0700 (PDT)
+        Fri, 08 Oct 2021 13:25:55 -0700 (PDT)
+Message-ID: <6160a953.1c69fb81.6f2a5.0cee@mx.google.com>
+Date:   Fri, 08 Oct 2021 13:25:55 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,38 +61,35 @@ X-Kernelci-Kernel: renesas-devel-2021-10-08-v5.15-rc4
 X-Kernelci-Report-Type: test
 X-Kernelci-Tree: renesas
 X-Kernelci-Branch: master
-Subject: renesas/master v4l2-compliance on uvcvideo: 2 runs,
- 1 regressions (renesas-devel-2021-10-08-v5.15-rc4)
+Subject: renesas/master ltp-ipc: 8 runs,
+ 2 regressions (renesas-devel-2021-10-08-v5.15-rc4)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master v4l2-compliance on uvcvideo: 2 runs, 1 regressions (renesas-=
-devel-2021-10-08-v5.15-rc4)
+renesas/master ltp-ipc: 8 runs, 2 regressions (renesas-devel-2021-10-08-v5.=
+15-rc4)
 
 Regressions Summary
 -------------------
 
-platform        | arch  | lab           | compiler | defconfig | regressions
-----------------+-------+---------------+----------+-----------+------------
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig | 1          =
+platform        | arch  | lab           | compiler | defconfig             =
+       | regressions
+----------------+-------+---------------+----------+-----------------------=
+-------+------------
+mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig             =
+       | 1          =
+
+mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig+CON...OMIZE_=
+BASE=3Dy | 1          =
 
 
   Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2021-10-08-v5.15-rc4/plan/v4l2-compliance-uvc/
+sas-devel-2021-10-08-v5.15-rc4/plan/ltp-ipc/
 
-V4L2 Compliance on the uvcvideo driver.
-
-This test ran "v4l2-compliance -s" from v4l-utils:
-
-    https://www.linuxtv.org/wiki/index.php/V4l2-utils
-
-See each detailed section in the report below to find out the git URL and
-particular revision that was used to build the test binaries.
-
-
+  Test:     ltp-ipc
   Tree:     renesas
   Branch:   master
   Describe: renesas-devel-2021-10-08-v5.15-rc4
@@ -101,9 +98,9 @@ evel.git
   SHA:      c2a19dc748287f470b9f2117e1b50206988efa8f
 
   Test suite revisions:
-    v4l2-compliance
-      URL:  git://linuxtv.org/v4l-utils.git
-      SHA:  05a468e033af0e4c775aaa10fe4d02c45de698ae =
+    ltp-tests
+      URL:  https://github.com/linux-test-project/ltp.git
+      SHA:  37fa90294a830ccc2860b5c7378b821a686b6ca0 =
 
 
 
@@ -112,47 +109,66 @@ Test Regressions
 
 
 
-platform        | arch  | lab           | compiler | defconfig | regressions
-----------------+-------+---------------+----------+-----------+------------
-mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig | 1          =
+platform        | arch  | lab           | compiler | defconfig             =
+       | regressions
+----------------+-------+---------------+----------+-----------------------=
+-------+------------
+mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig             =
+       | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/61609250afe08f131299a317
+  Details:     https://kernelci.org/test/plan/id/6160924fafe08f131299a30a
 
-  Results:     1 PASS, 1 FAIL, 0 SKIP
+  Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: defconfig
   Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
   Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-08-v5.15-rc4/arm64/defconfig/gcc-8/lab-collabora/v4l2-compliance-uvc=
--mt8173-elm-hana.txt
+021-10-08-v5.15-rc4/arm64/defconfig/gcc-8/lab-collabora/ltp-ipc-mt8173-elm-=
+hana.txt
   HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-08-v5.15-rc4/arm64/defconfig/gcc-8/lab-collabora/v4l2-compliance-uvc=
--mt8173-elm-hana.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-v4l2=
-/20210913.0/arm64/rootfs.cpio.gz =
+021-10-08-v5.15-rc4/arm64/defconfig/gcc-8/lab-collabora/ltp-ipc-mt8173-elm-=
+hana.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-ltp/=
+20210913.0/arm64/initrd.cpio.gz =
 
 
 
-  * v4l2-compliance-uvc.device-presence: https://kernelci.org/test/case/id/=
-61609250afe08f131299a319
+  * ltp-ipc.login: https://kernelci.org/test/case/id/6160924fafe08f131299a3=
+0b
         failing since 24 days (last pass: renesas-devel-2021-08-23-v5.14-rc=
-7, first fail: v5.15-rc1-564-ge23d26d2dc9a)
+7, first fail: v5.15-rc1-564-ge23d26d2dc9a) =
 
-    2021-10-08T18:47:29.685153  / # =
+ =
 
-    2021-10-08T18:47:29.688960  =
 
-    2021-10-08T18:47:29.795090  / # #
-    2021-10-08T18:47:29.798660  #
-    2021-10-08T18:47:29.901261  / # export SHELL=3D/bin/sh
-    2021-10-08T18:47:29.904090  export SHELL=3D/bin/sh
-    2021-10-08T18:47:30.007445  / # . /lava-4676761/environment
-    2021-10-08T18:47:30.010974  . /lava-4676761/environment
-    2021-10-08T18:47:30.114050  / # /lava-4676761/bin/lava-test-runner /lav=
-a-4676761/0
-    2021-10-08T18:47:30.117702  /lava-4676761/bin/lava-test-runner /lava-46=
-76761/0 =
 
-    ... (7 line(s) more)  =
+platform        | arch  | lab           | compiler | defconfig             =
+       | regressions
+----------------+-------+---------------+----------+-----------------------=
+-------+------------
+mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig+CON...OMIZE_=
+BASE=3Dy | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/6160961777f8fe7a8699a306
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+CONFIG_RANDOMIZE_BASE=3Dy
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-10-08-v5.15-rc4/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-col=
+labora/ltp-ipc-mt8173-elm-hana.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-10-08-v5.15-rc4/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-col=
+labora/ltp-ipc-mt8173-elm-hana.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-ltp/=
+20210913.0/arm64/initrd.cpio.gz =
+
+
+
+  * ltp-ipc.login: https://kernelci.org/test/case/id/6160961777f8fe7a8699a3=
+07
+        failing since 16 days (last pass: renesas-devel-2021-08-23-v5.14-rc=
+7, first fail: renesas-devel-2021-09-20-v5.15-rc2) =
 
  =20
