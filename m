@@ -2,27 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEC2C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 10 Oct 2021 07:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC907C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 10 Oct 2021 07:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77AE260F92
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 10 Oct 2021 07:30:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A465260F92
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 10 Oct 2021 07:30:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231302AbhJJHcP (ORCPT
+        id S231363AbhJJHcT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 10 Oct 2021 03:32:15 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:55371 "EHLO
+        Sun, 10 Oct 2021 03:32:19 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:42631 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231326AbhJJHcA (ORCPT
+        by vger.kernel.org with ESMTP id S231381AbhJJHcK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 10 Oct 2021 03:32:00 -0400
+        Sun, 10 Oct 2021 03:32:10 -0400
 X-IronPort-AV: E=Sophos;i="5.85,362,1624287600"; 
-   d="scan'208";a="96511144"
+   d="scan'208";a="96511218"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 10 Oct 2021 16:30:01 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 10 Oct 2021 16:30:12 +0900
 Received: from localhost.localdomain (unknown [10.226.92.12])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 369D74001958;
-        Sun, 10 Oct 2021 16:29:58 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id E8C9D400197C;
+        Sun, 10 Oct 2021 16:30:08 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>
@@ -37,9 +37,9 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH net-next v2 10/14] ravb: Optimize ravb_emac_init_gbeth function
-Date:   Sun, 10 Oct 2021 08:29:16 +0100
-Message-Id: <20211010072920.20706-11-biju.das.jz@bp.renesas.com>
+Subject: [PATCH net-next v2 13/14] ravb: Update EMAC configuration mode comment
+Date:   Sun, 10 Oct 2021 08:29:19 +0100
+Message-Id: <20211010072920.20706-14-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211010072920.20706-1-biju.das.jz@bp.renesas.com>
 References: <20211010072920.20706-1-biju.das.jz@bp.renesas.com>
@@ -47,37 +47,34 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Optimize CXR31 register initialization on ravb_emac_init_gbeth
-function.
+Update EMAC configuration mode comment from "PAUSE prohibition"
+to "EMAC Mode: PAUSE prohibition; Duplex; TX; RX; CRC Pass Through;
+Promiscuous".
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Suggested-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-Reviewed-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 ---
 v1->v2:
  * No change
-RFC->V1:
- * No Change. Added Sergey's Rb tag.
-RFC changes:
+V1:
  * New patch.
 ---
- drivers/net/ethernet/renesas/ravb_main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/ethernet/renesas/ravb_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
-index eac3bbefff11..081d9b70f038 100644
+index 9a770a05c017..b78aca235c37 100644
 --- a/drivers/net/ethernet/renesas/ravb_main.c
 +++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -538,8 +538,7 @@ static void ravb_emac_init_gbeth(struct net_device *ndev)
- 	/* E-MAC interrupt enable register */
- 	ravb_write(ndev, ECSIPR_ICDIP, ECSIPR);
+@@ -519,7 +519,7 @@ static void ravb_emac_init_gbeth(struct net_device *ndev)
+ 	/* Receive frame limit set register */
+ 	ravb_write(ndev, GBETH_RX_BUFF_MAX + ETH_FCS_LEN, RFLR);
  
--	ravb_modify(ndev, CXR31, CXR31_SEL_LINK1, 0);
--	ravb_modify(ndev, CXR31, CXR31_SEL_LINK0, CXR31_SEL_LINK0);
-+	ravb_modify(ndev, CXR31, CXR31_SEL_LINK0 | CXR31_SEL_LINK1, CXR31_SEL_LINK0);
- }
- 
- static void ravb_emac_init_rcar(struct net_device *ndev)
+-	/* PAUSE prohibition */
++	/* EMAC Mode: PAUSE prohibition; Duplex; TX; RX; CRC Pass Through; Promiscuous */
+ 	ravb_write(ndev, ECMR_ZPF | ((priv->duplex > 0) ? ECMR_DM : 0) |
+ 			 ECMR_TE | ECMR_RE | ECMR_RCPT |
+ 			 ECMR_TXF | ECMR_RXF | ECMR_PRM, ECMR);
 -- 
 2.17.1
 
