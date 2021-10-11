@@ -2,56 +2,56 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B8EC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Oct 2021 22:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6FAC43217
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Oct 2021 22:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 59FAC60EFE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Oct 2021 22:58:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52CF960F0F
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Oct 2021 22:58:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235609AbhJKXAQ (ORCPT
+        id S235600AbhJKXAR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Oct 2021 19:00:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47348 "EHLO
+        Mon, 11 Oct 2021 19:00:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235598AbhJKXAP (ORCPT
+        with ESMTP id S235611AbhJKXAQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Oct 2021 19:00:15 -0400
-Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 73145C06161C
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Oct 2021 15:58:14 -0700 (PDT)
-Received: by mail-wr1-x42e.google.com with SMTP id e3so27207189wrc.11
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Oct 2021 15:58:14 -0700 (PDT)
+        Mon, 11 Oct 2021 19:00:16 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7986C061570
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Oct 2021 15:58:15 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id o20so60613436wro.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Oct 2021 15:58:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZlsRZNfvSzGTWi21318I6BU3NjmBGIkRAKsEQydD1UU=;
-        b=BR5ARso6vid5H4M8/bbu6VMTMHOh+hl33zQwZZayVGIVN0ig3irjPQ3dkoyV9PkS3e
-         Qj+hl9zfqciAu5AbBDc5J1Xh8X1L7goAgaiBK/albb0JUCYavvSaT/z2IhjUFD3wBJFl
-         US/QX5JvCn2E+Q9kx38LfmbegiHqyychjc/NOtqXaYOS7FWPqUZcswlqW22EwZdck8CQ
-         UuvKmlPZfsX4Cjw+L9rwIIGtqMrtSa49p78txhb9o2mOAAdo5PQsFlz5Zw4EQ/SBne6Z
-         FwyMf8XNk/8WjymFDVBcqPz2+0/dIz3ihjA44nZwz6JkLFDVpxfkkQVB60Ozlou9JBWN
-         eS1A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=pn14IuVJg5cHmUa2BU6D6/oXtH1qICDQLXwkbJStSzE=;
+        b=nTdkHZKORyH6g2yiu+d0M9ifLE7PabYt/uoQjJWAEvLNls7HvW0C29Pw4HPtTQqG2G
+         qEKJvOEJjCDhzIt93Ts2QZLlzg6JRTxrsptHUmmhSv00Tb5IQX58YPCySf25gb9FyUx5
+         p60YsNUnpFQ+uB+WqnEy/9IoCc2ttsy02giIX+uqh5xSuW5vCWIr2jqieRr6tY9c+w4W
+         Z/AQesF+uc47nayE+sv+Nj21xO54zlXYaq0NsXTbTTX9L7aJgrbphv5kyU2/sWQlp0sJ
+         eLUwaozudHRn8UzrSvvqbXPqNAgb+2hakb6sp5lVTKst0Zm1i17beGpcwzh+tBHyBdDd
+         fQsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZlsRZNfvSzGTWi21318I6BU3NjmBGIkRAKsEQydD1UU=;
-        b=av0Phldpn0jgZFsBImpcPnznj9pG3B0cdteZWSfn2/2dBfLUgiHzFL2CfCA2yAXzQV
-         Hd/QcV03/iEalsJcd/pwZTJ/JQCR8O1TCqtRX6K7MtujfAhvwLTV+f/byVc4HzZ7MHfb
-         pNye88W6+JmNWoIebvHAJO2lWQ9Ihm1/Ida32tabl2VlyZW/+2dMBHLsgpS+AEuliyMy
-         8a4exAf0iJx/JNXswGyTOgzPsUj3Kh1ug2ZgO3TJ1W/wYg8yrYbL2qylLh0ygGJ9UdVE
-         X21lFJeH9KY23ZLmnf1airOnwUNJLzeSDGStAV89vozmDc117+k7ZgoD42/c0X776xmw
-         odcQ==
-X-Gm-Message-State: AOAM5319Idu3vX1kvbxi1G7XceA9O02UGyPikeGH6WHtR12GmD3OvDde
-        m0cnQFfwWIu60e2Bi5P6zW2W2nXfZpEphgmh
-X-Google-Smtp-Source: ABdhPJwf4cPrbGMvJZbtWoLqr6V5dll2BxzUzo2RaTzC83d4iAgqrI3HRfGxn3cZ5ZeHT+ZtuVZheA==
-X-Received: by 2002:adf:a443:: with SMTP id e3mr28283681wra.115.1633993093076;
-        Mon, 11 Oct 2021 15:58:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=pn14IuVJg5cHmUa2BU6D6/oXtH1qICDQLXwkbJStSzE=;
+        b=8MEqPlXmNnBQT7ulv2nFHLowucGOKwZZKhwNUXX+7ej5ChrGEIfxGUXDISVynYf4CK
+         auIC39kwuNZzActPlVhf+82Co7FSQEMgpjKmeJQDXkAVeP6YeOwSLBstN4vySW1nfLTH
+         WQKVV7hWBfmlKTt7JjmtlOkfY5TIZSYYcA8n+2Zn0YaUNLdaZV/xYgFAZzt3JGEPSvfu
+         n0Q1ZYL0J6zVyVYXGVz7lUjQDRlWRV6K3k8gZABeThr8MD4C6Dw8XQ/TsZXS5QA55f+/
+         fOCRwFtwt4sC+b4JRRqzPEorjZhNSv0FHvdQxkVS3yhF9ErEnPsRai5DyaPPvwPrNdl4
+         Ig6A==
+X-Gm-Message-State: AOAM532XCScYo8ICCDoUdkavcaAqo4Ocjg2Yf1vzxExtknKo1nf91MaY
+        ZEhnReCPRsbyVMZOTDteAn+8pA==
+X-Google-Smtp-Source: ABdhPJxYMWAxykwcFGkqewxLq+Hj2KuJazU5zWAaug0Okk+BEvkDutijtQZmnkxOsWNrVqjqq4Ymqg==
+X-Received: by 2002:a05:6000:1889:: with SMTP id a9mr12111829wri.400.1633993094532;
+        Mon, 11 Oct 2021 15:58:14 -0700 (PDT)
 Received: from bismarck.berto.se (p54ac5892.dip0.t-ipconnect.de. [84.172.88.146])
-        by smtp.googlemail.com with ESMTPSA id h8sm9240890wrm.27.2021.10.11.15.58.12
+        by smtp.googlemail.com with ESMTPSA id h8sm9240890wrm.27.2021.10.11.15.58.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Oct 2021 15:58:12 -0700 (PDT)
+        Mon, 11 Oct 2021 15:58:14 -0700 (PDT)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
@@ -61,10 +61,12 @@ To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/2] thermal: rcar_gen3_thermal: Read calibration from fuses
-Date:   Tue, 12 Oct 2021 00:58:00 +0200
-Message-Id: <20211011225802.11497-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/2] thermal: rcar_gen3_thermal: Read calibration from hardware
+Date:   Tue, 12 Oct 2021 00:58:02 +0200
+Message-Id: <20211011225802.11497-3-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.33.0
+In-Reply-To: <20211011225802.11497-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20211011225802.11497-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -72,50 +74,170 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello Morimoto-san,
+In production hardware the calibration values used to convert register
+values to temperatures can be read from hardware. While pre-production
+hardware still depends on pseudo values hard-coded in the driver.
 
-This series allows the Gen3 thermal driver to read its calibration
-values (THCODE and PTAT) from the fuses, if set. If the values are not
-set the driver fall-back to the previously used pseudo values from the
-datasheet.
+Add support for reading out calibration values from hardware if it's
+fused. The presence of fused calibration is indicated in the THSCP
+register.
 
-I don't have access to a system where the fuses are set but I have been 
-told that you Morimoto-san do have access to one. Would it be possible 
-for you to test this series for me?
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+* Changes since RFT
+- Keep thcodes array static.
+---
+ drivers/thermal/rcar_gen3_thermal.c | 94 +++++++++++++++++++++++------
+ 1 file changed, 74 insertions(+), 20 deletions(-)
 
-The test case is a rather straight forward boot test. The patches are 
-based on recent changes to the driver but everything is included in 
-v5.15-rc4. If you have time to build and boot these patches on top of 
-that and just check two things I would be very happy.
-
-1. Check that the driver uses the fused values, this is showed by the 
-   log message, dev_info(dev, "Using fused calibration values\n"); is 
-   trigged when the driver probe.
-
-2. Check the temperature readings in sysfs are reasonable, the values are 
-   in millidegree Celsius. On my system that uses the coefficients from 
-   the driver I have 41-42 degrees Celsius at the moment.
-
-   # grep . /sys/class/thermal/thermal_zone*/temp
-   /sys/class/thermal/thermal_zone0/temp:41000
-   /sys/class/thermal/thermal_zone1/temp:42000
-   /sys/class/thermal/thermal_zone2/temp:41000
-
-If these two checks are OK for you I think this patch is ready to be 
-consumed. Thanks for your help!
-
-Patch 1/2 prepare for reading the values from fuses by moving the
-storage of the values used during calculation from global const to
-members of the private data structures. While patch 2/2 populates the
-private members with data from the fuses if available.
-
-Niklas Söderlund (2):
-  thermal: rcar_gen3_thermal: Store thcode and ptat in priv data
-  thermal: rcar_gen3_thermal: Read calibration from hardware
-
- drivers/thermal/rcar_gen3_thermal.c | 113 +++++++++++++++++++++-------
- 1 file changed, 86 insertions(+), 27 deletions(-)
-
+diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
+index 7d7e6ebe837a83af..897b625e1b498f05 100644
+--- a/drivers/thermal/rcar_gen3_thermal.c
++++ b/drivers/thermal/rcar_gen3_thermal.c
+@@ -34,6 +34,10 @@
+ #define REG_GEN3_THCODE1	0x50
+ #define REG_GEN3_THCODE2	0x54
+ #define REG_GEN3_THCODE3	0x58
++#define REG_GEN3_PTAT1		0x5c
++#define REG_GEN3_PTAT2		0x60
++#define REG_GEN3_PTAT3		0x64
++#define REG_GEN3_THSCP		0x68
+ 
+ /* IRQ{STR,MSK,EN} bits */
+ #define IRQ_TEMP1		BIT(0)
+@@ -55,6 +59,9 @@
+ #define THCTR_PONM	BIT(6)
+ #define THCTR_THSST	BIT(0)
+ 
++/* THSCP bits */
++#define THSCP_COR_PARA_VLD	(BIT(15) | BIT(14))
++
+ #define CTEMP_MASK	0xFFF
+ 
+ #define MCELSIUS(temp)	((temp) * 1000)
+@@ -245,6 +252,64 @@ static const struct soc_device_attribute r8a7795es1[] = {
+ 	{ /* sentinel */ }
+ };
+ 
++static bool rcar_gen3_thermal_update_fuses(struct rcar_gen3_thermal_priv *priv)
++{
++	unsigned int i;
++	u32 thscp;
++
++	/* Default THCODE values in case FUSEs are not set. */
++	static const int thcodes[TSC_MAX_NUM][3] = {
++		{ 3397, 2800, 2221 },
++		{ 3393, 2795, 2216 },
++		{ 3389, 2805, 2237 },
++		{ 3415, 2694, 2195 },
++		{ 3356, 2724, 2244 },
++	};
++
++	/* If fuses are not set, fallback to pseudo values. */
++	thscp = rcar_gen3_thermal_read(priv->tscs[0], REG_GEN3_THSCP);
++	if ((thscp & THSCP_COR_PARA_VLD) != THSCP_COR_PARA_VLD) {
++		priv->ptat[0] = 2631;
++		priv->ptat[1] = 1509;
++		priv->ptat[2] = 435;
++
++		for (i = 0; i < priv->num_tscs; i++) {
++			struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
++
++			tsc->thcode[0] = thcodes[i][0];
++			tsc->thcode[1] = thcodes[i][1];
++			tsc->thcode[2] = thcodes[i][2];
++		}
++
++		return false;
++	}
++
++	/*
++	 * Set the pseudo calibration points with fused values.
++	 * PTAT is shared between all TSCs but only fused for the first
++	 * TSC while THCODEs are fused for each TSC.
++	 */
++	priv->ptat[0] = rcar_gen3_thermal_read(priv->tscs[0], REG_GEN3_PTAT1) &
++		GEN3_FUSE_MASK;
++	priv->ptat[1] = rcar_gen3_thermal_read(priv->tscs[0], REG_GEN3_PTAT2) &
++		GEN3_FUSE_MASK;
++	priv->ptat[2] = rcar_gen3_thermal_read(priv->tscs[0], REG_GEN3_PTAT3) &
++		GEN3_FUSE_MASK;
++
++	for (i = 0; i < priv->num_tscs; i++) {
++		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
++
++		tsc->thcode[0] = rcar_gen3_thermal_read(tsc, REG_GEN3_THCODE1) &
++			GEN3_FUSE_MASK;
++		tsc->thcode[1] = rcar_gen3_thermal_read(tsc, REG_GEN3_THCODE2) &
++			GEN3_FUSE_MASK;
++		tsc->thcode[2] = rcar_gen3_thermal_read(tsc, REG_GEN3_THCODE3) &
++			GEN3_FUSE_MASK;
++	}
++
++	return true;
++}
++
+ static void rcar_gen3_thermal_init_r8a7795es1(struct rcar_gen3_thermal_tsc *tsc)
+ {
+ 	rcar_gen3_thermal_write(tsc, REG_GEN3_CTSR,  CTSR_THBGR);
+@@ -393,16 +458,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	unsigned int i;
+ 	int ret;
+ 
+-	/* Default THCODE values in case FUSEs are not set. */
+-	/* TODO: Read values from hardware on supported platforms */
+-	static const int thcodes[TSC_MAX_NUM][3] = {
+-		{ 3397, 2800, 2221 },
+-		{ 3393, 2795, 2216 },
+-		{ 3389, 2805, 2237 },
+-		{ 3415, 2694, 2195 },
+-		{ 3356, 2724, 2244 },
+-	};
+-
+ 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return -ENOMEM;
+@@ -411,10 +466,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 	if (soc_device_match(r8a7795es1))
+ 		priv->thermal_init = rcar_gen3_thermal_init_r8a7795es1;
+ 
+-	priv->ptat[0] = 2631;
+-	priv->ptat[1] = 1509;
+-	priv->ptat[2] = 435;
+-
+ 	platform_set_drvdata(pdev, priv);
+ 
+ 	if (rcar_gen3_thermal_request_irqs(priv, pdev))
+@@ -442,11 +493,16 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 			goto error_unregister;
+ 		}
+ 
+-		tsc->thcode[0] = thcodes[i][0];
+-		tsc->thcode[1] = thcodes[i][1];
+-		tsc->thcode[2] = thcodes[i][2];
+-
+ 		priv->tscs[i] = tsc;
++	}
++
++	priv->num_tscs = i;
++
++	if (rcar_gen3_thermal_update_fuses(priv))
++		dev_info(dev, "Using fused calibration values\n");
++
++	for (i = 0; i < priv->num_tscs; i++) {
++		struct rcar_gen3_thermal_tsc *tsc = priv->tscs[i];
+ 
+ 		zone = devm_thermal_zone_of_sensor_register(dev, i, tsc,
+ 							    &rcar_gen3_tz_of_ops);
+@@ -476,8 +532,6 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
+ 		dev_info(dev, "TSC%u: Loaded %d trip points\n", i, ret);
+ 	}
+ 
+-	priv->num_tscs = i;
+-
+ 	if (!priv->num_tscs) {
+ 		ret = -ENODEV;
+ 		goto error_unregister;
 -- 
 2.33.0
 
