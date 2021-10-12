@@ -2,58 +2,58 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 831D8C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 17:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0519CC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 17:33:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69ED86109E
+	by mail.kernel.org (Postfix) with ESMTP id DDE5E6109E
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 17:33:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230268AbhJLRf1 (ORCPT
+        id S229810AbhJLRf2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Oct 2021 13:35:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45802 "EHLO
+        Tue, 12 Oct 2021 13:35:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229810AbhJLRf0 (ORCPT
+        with ESMTP id S229495AbhJLRf1 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Oct 2021 13:35:26 -0400
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFE7FC061570
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Oct 2021 10:33:24 -0700 (PDT)
-Received: by mail-pj1-x102b.google.com with SMTP id om14so159731pjb.5
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Oct 2021 10:33:24 -0700 (PDT)
+        Tue, 12 Oct 2021 13:35:27 -0400
+Received: from mail-pj1-x1036.google.com (mail-pj1-x1036.google.com [IPv6:2607:f8b0:4864:20::1036])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0DADC061570
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Oct 2021 10:33:25 -0700 (PDT)
+Received: by mail-pj1-x1036.google.com with SMTP id ls18-20020a17090b351200b001a00250584aso2417039pjb.4
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Oct 2021 10:33:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=zNZPoEvjurJhtiX4csmGPsRfeyyetZDAZcMglElRVEU=;
-        b=cn8arNgvQOhlIttE2rLvmqp6TJJhc2aoU6z39YcbKYOADjPmtWZOlMRgqpStRDgq7B
-         b1W+1EGMiBfFjMa1GcryUVHBpzOOMFZ1lJ+DCVbMInkupogHkdLRwHiivLMW/HYwY7Lf
-         KmkmnrpX7XKiWuvBSmrd9NdAMZlmuCb+s718CFB/J0/ZdNp5ABXhHKJPDE/r6cEviD1k
-         ULsJpgrT6y2XNOpuxhds/uzVr+EH5zVe+HPEfY/EXNmeOL2B74BKkOAr5WO+HUn+o3me
-         ptjyCfbCukoRMyGiAKilbi176a8oqtB+8Hm8Ysn+dkae9Y0Cmd2tm2rpHs6rYXEvCGrW
-         NVZw==
+        bh=v1HZKIbF73EO4nA9BfAzy1cGT+KT+Du6zdgLaRK+Q68=;
+        b=QDF+lt+VWQbbo0zlDzdG7s2msQrV0Th3muOVyzM2gSufSG+i36ZU4vSQ2gIz9nAMjm
+         zmdJP7hVGQ5PBMax1sMuklumWx4yzf4uTRNgRhOttRzrSDHN16mfWbOIWs1PyIM58D9W
+         quCFRS3rfMZpbpWwvMMHLGkPWzv0JC90brgY5+CRAz9kv2w7FvXlnohE2RLy/nWxRU7M
+         zBydpCaweeEgMWupaCmH6iQiOglxRp3X0fIjyezsAeqY4tgHiEe7uXhj4jwBtkhP3XDv
+         zRNY9FOmgXAgKVOjcc5yJlDYFmCVdovaX2+q5KjD/XIsZuSDnlTNfMzVSEr1JUuij6xA
+         jo4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=zNZPoEvjurJhtiX4csmGPsRfeyyetZDAZcMglElRVEU=;
-        b=hyQR3lE9d0sGs/Gx0KEeWM77dJ+9jrFyT73Dt3ap7W+2iZB6rBZD2n3S4OqxBmDXji
-         FuLSBAw5QdBx1f4rohA/hlbDkK0I/Kx67UwJJxcLJtmXoqEfWP4TMyLYRoNQhe1kknAv
-         pb5FkWnEnYl686DZ2nOOnaBp45Ny9ZUgpXZpJ96Cno/H6b2AnZ8QL25iNXZ8v4irMsFL
-         ZIp4GEBkLTUOSTfMwbvZ/c/XEcKslHx1kF24DnHrD6rnNWy2ekbYRbL4cy3jD44z3L8q
-         Jm7sZrXd24ztsbPE0L2TWlGyx7r8gYiNAevXccXUGBohkiaSEu3h2aKFBqcciuT2E0qM
-         N5sg==
-X-Gm-Message-State: AOAM531t/xjYOKE/vBvUdJz1Gw3PuQQ/6zK1sRVQws6kKHbzD4hr7JQK
-        RO59t1CQ3gaAR73agXWARfATdTAO5vEwOX/Y
-X-Google-Smtp-Source: ABdhPJxZpu6VUvWFm/a7cpTJXo7zJzrwcrEVuBjd8790lrd78B7n9ef/RWYeNwVnDZyGV0HyNGqo4w==
-X-Received: by 2002:a17:90a:29a6:: with SMTP id h35mr7624421pjd.188.1634060004279;
-        Tue, 12 Oct 2021 10:33:24 -0700 (PDT)
+        bh=v1HZKIbF73EO4nA9BfAzy1cGT+KT+Du6zdgLaRK+Q68=;
+        b=q5bfCbTu6K8RqUPbQDIP1iJKlesie8e359J+5ij/gSGhqQ4tjZfZEJbKrLtGxTIQTS
+         c9SOdWzHmL3E+r7hmqoWp0PGP5Y4c7OfT6UFN1SqUfsclsO82a63e9+uGGxUPEVJbw1J
+         tB0SvEjfvVjz/v0fFWQAGtE1tUxbJsBpxFG1oeYih07lOUPEREuRjP/KSpjZNdLBGVke
+         H4mc5scoGIEdDS3RIWMgNMRT2CPmHTMw3d9wlzgglMgjB1tC7d6rJSWU7tbvanbeH0F+
+         Sv9LKLz8dekEnD/l1S6QMDCVpUhYLiEkGsABMz0PwydfTQ3MagftMfHm3dr/ao7miJdY
+         Nlgw==
+X-Gm-Message-State: AOAM531VBR2ftprMhmLpa/H3EFv9U9noOzL5aVrTdgQDeo7+p5DmPIil
+        Y/0DljhWwKi0OWrzc+liLBOJ8XPubNBr5aT/
+X-Google-Smtp-Source: ABdhPJxSgmYY4icKkKGq3MIGqEU4ukL9fonnXHQUIJNkRSJnABfm5Ua3a5tzlvw50Z4n1yHG9mFJoQ==
+X-Received: by 2002:a17:90b:3b52:: with SMTP id ot18mr7526612pjb.245.1634060005271;
+        Tue, 12 Oct 2021 10:33:25 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id jz10sm3409246pjb.39.2021.10.12.10.33.23
+        by smtp.gmail.com with ESMTPSA id t2sm3386975pjo.4.2021.10.12.10.33.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 10:33:23 -0700 (PDT)
-Message-ID: <6165c6e3.1c69fb81.529b2.a375@mx.google.com>
-Date:   Tue, 12 Oct 2021 10:33:23 -0700 (PDT)
+        Tue, 12 Oct 2021 10:33:25 -0700 (PDT)
+Message-ID: <6165c6e5.1c69fb81.f68d7.a351@mx.google.com>
+Date:   Tue, 12 Oct 2021 10:33:25 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,7 +61,7 @@ X-Kernelci-Branch: master
 X-Kernelci-Tree: renesas
 X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: renesas-devel-2021-10-11-v5.15-rc5
-Subject: renesas/master igt-gpu-panfrost: 1 runs,
+Subject: renesas/master ltp-ipc: 2 runs,
  1 regressions (renesas-devel-2021-10-11-v5.15-rc5)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
@@ -69,24 +69,24 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master igt-gpu-panfrost: 1 runs, 1 regressions (renesas-devel-2021-=
-10-11-v5.15-rc5)
+renesas/master ltp-ipc: 2 runs, 1 regressions (renesas-devel-2021-10-11-v5.=
+15-rc5)
 
 Regressions Summary
 -------------------
 
-platform          | arch | lab           | compiler | defconfig          | =
-regressions
-------------------+------+---------------+----------+--------------------+-=
------------
-rk3288-veyron-jaq | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | =
-1          =
+platform        | arch  | lab           | compiler | defconfig             =
+       | regressions
+----------------+-------+---------------+----------+-----------------------=
+-------+------------
+mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig+CON...OMIZE_=
+BASE=3Dy | 1          =
 
 
   Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2021-10-11-v5.15-rc5/plan/igt-gpu-panfrost/
+sas-devel-2021-10-11-v5.15-rc5/plan/ltp-ipc/
 
-  Test:     igt-gpu-panfrost
+  Test:     ltp-ipc
   Tree:     renesas
   Branch:   master
   Describe: renesas-devel-2021-10-11-v5.15-rc5
@@ -95,12 +95,9 @@ evel.git
   SHA:      6e602e69ec04a3e0887e4fd9189250b4e7ee7e23
 
   Test suite revisions:
-    drm
-      URL:  git://anongit.freedesktop.org/mesa/drm
-      SHA:  8d0fb9b3f225183fb3276a0e4ae1f8354a3519e8
-    igt-gpu-tools
-      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
-      SHA:  b232a092b9e1b10a8be13601acaa440903b226bc =
+    ltp-tests
+      URL:  https://github.com/linux-test-project/ltp.git
+      SHA:  9ce71152bf21e410c471fd8d7ca43a06abbe7c54 =
 
 
 
@@ -109,55 +106,33 @@ Test Regressions
 
 
 
-platform          | arch | lab           | compiler | defconfig          | =
-regressions
-------------------+------+---------------+----------+--------------------+-=
------------
-rk3288-veyron-jaq | arm  | lab-collabora | gcc-8    | multi_v7_defconfig | =
-1          =
+platform        | arch  | lab           | compiler | defconfig             =
+       | regressions
+----------------+-------+---------------+----------+-----------------------=
+-------+------------
+mt8173-elm-hana | arm64 | lab-collabora | gcc-8    | defconfig+CON...OMIZE_=
+BASE=3Dy | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/6165addc6b758899ee08fab5
+  Details:     https://kernelci.org/test/plan/id/6165b5c0784ee58d1808fb31
 
-  Results:     15 PASS, 2 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: defconfig+CONFIG_RANDOMIZE_BASE=3Dy
+  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
   Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-11-v5.15-rc5/arm/multi_v7_defconfig/gcc-8/lab-collabora/igt-gpu-panf=
-rost-rk3288-veyron-jaq.txt
+021-10-11-v5.15-rc5/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-col=
+labora/ltp-ipc-mt8173-elm-hana.txt
   HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-10-11-v5.15-rc5/arm/multi_v7_defconfig/gcc-8/lab-collabora/igt-gpu-panf=
-rost-rk3288-veyron-jaq.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-igt/=
-20211008.0/armhf/rootfs.cpio.gz =
+021-10-11-v5.15-rc5/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-8/lab-col=
+labora/ltp-ipc-mt8173-elm-hana.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-ltp/=
+20211008.0/arm64/initrd.cpio.gz =
 
 
 
-  * igt-gpu-panfrost.panfrost_submit.pan-unhandled-pagefault: https://kerne=
-lci.org/test/case/id/6165addc6b758899ee08fab8
-        failing since 3 days (last pass: renesas-devel-2021-10-04-v5.15-rc4=
-, first fail: renesas-devel-2021-10-08-v5.15-rc4)
-
-    2021-10-12T15:46:29.811955  <6>[   14.362709] Console: switching to col=
-our dummy device 80x30
-    2021-10-12T15:46:29.812473  <14>[   14.369354] [IGT] panfrost_submit: e=
-xecuting
-    2021-10-12T15:46:29.824740  IGT-Version: 1.26-gb232a09 (arm) (Linux: 5.=
-15.0-rc5 armv7l)
-    2021-10-12T15:46:29.830543  <14>[   14.376288] [IGT] panfrost_submit: s=
-tarting subtest pan-unhandled-pagefault
-    2021-10-12T15:46:29.831060  Starting subtest: pan-unhandled-pagefault
-    2021-10-12T15:46:29.943251  (panfrost_submit:289) CRITICAL: Test assert=
-ion failure function __real_main65, file ../tests/panfrost_submit.c:179:
-    2021-10-12T15:46:29.955753  (panfrost_submit:289) CRITICAL: Failed asse=
-rtion: syncobj_wait(fd, &submit->args->out_sync, 1, abs_timeout(SHORT_TIME_=
-NSEC), 0, NULL)
-    2021-10-12T15:46:29.970628  Stack trace:
-    2021-10-12T15:46:29.971135    #0 ../lib/igt_core.c:1745 __igt_fail_asse=
-rt()
-    2021-10-12T15:46:29.971579  <14>[   14.525553] [IGT] panfrost_submit: e=
-xiting, ret=3D98 =
-
-    ... (12 line(s) more)  =
+  * ltp-ipc.login: https://kernelci.org/test/case/id/6165b5c0784ee58d1808fb=
+32
+        failing since 20 days (last pass: renesas-devel-2021-08-23-v5.14-rc=
+7, first fail: renesas-devel-2021-09-20-v5.15-rc2) =
 
  =20
