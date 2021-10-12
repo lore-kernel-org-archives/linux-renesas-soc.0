@@ -2,58 +2,58 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4166DC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 12:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB18C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 12:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0ECA460296
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 12:07:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2705560296
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 12:07:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235922AbhJLMJh (ORCPT
+        id S236366AbhJLMJi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Oct 2021 08:09:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54788 "EHLO
+        Tue, 12 Oct 2021 08:09:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236300AbhJLMJa (ORCPT
+        with ESMTP id S236368AbhJLMJd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Oct 2021 08:09:30 -0400
-Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D4C8C06161C
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Oct 2021 05:07:29 -0700 (PDT)
-Received: by mail-pl1-x636.google.com with SMTP id t11so13364954plq.11
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Oct 2021 05:07:29 -0700 (PDT)
+        Tue, 12 Oct 2021 08:09:33 -0400
+Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B922C061753
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Oct 2021 05:07:31 -0700 (PDT)
+Received: by mail-pg1-x52d.google.com with SMTP id e7so13703522pgk.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Oct 2021 05:07:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=69RWyl+tnaz/SumIMotYFG9nxDwl690/Ae5AAKiaXFM=;
-        b=rzzH9RxOUr3AyeOGv6GgTBROuWI1v8p0hnj5DJtiasTpanlffI887LDtNQa3XLmKNq
-         WgvSKEwp3D/Z21Tg29PdMxGoV9XzzaAW5NeI/Z211MlPHZDMvDyjcy+XMdXuZn4sdnnu
-         lfVPeyjwnr65lqUef0vWY/3y5tY9v7NSJbJygAqpAqAwhm3ReRhblO8uiRn8waF+EIpc
-         YIIdspdVhhpKSOFr6BPorzt1EMpUod66pOMHiLs7PwquBMd4N00SthRQ3QanA8SY+MM7
-         CwvxERYkl5XvQJUz75C8WjPODer1y+zjsS3cLvsXwM2xy/n/cm1xF95VAMk2/6rHqBH0
-         KnRQ==
+        bh=gURghvRWNoA++o2VFeVcVYw4TbRESAtmR/5Dm1UqSbk=;
+        b=AIEiNJvMbVLffm0cTU2EXRLjd46/i3JhNuEYCnQEd208t5hNzE58FtGZ/YG+eCZOfS
+         oLW/SSr8gvCSC2vxNa/t0hMJuD4xtQQuJg04K+gHKzyvZy5xbVpNkBSumBCYMWxGYItD
+         1k9TApev2lA9OeUtratgKPk4LO0aFqhwwP3CR8BE6uSawdcDbYN0guYisxRllbVByb6f
+         ZCvbzqOIUHyOfO1iDZprNB5r6QAWDOApbahC2Ds5bVmdUHsP4B/4oKSyLeJMdIFsINgZ
+         pSkKUdIQGXB4xwlp41GlrfbJlo4GrO9HyJLQQk7TLJAwu0pp/Sr1cS0A2JHioHRS/+Mr
+         6Qyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=69RWyl+tnaz/SumIMotYFG9nxDwl690/Ae5AAKiaXFM=;
-        b=U5WCQGEtZSisN84+sfguTwKxQnXyo5lC900PEvSN2E8E5eSubq46uPeH4//q76MhzK
-         8e1Ne8xL2v1et8eSST58KZwYSsWCqzAXVBx4ePi9DH45n08BKktDLrpWsDicG3xDxkZV
-         k4O6B3Q7/EMflOoFDJsGUDDR3aZr9oA9JGRw85E0O10Lz1KKALquEGiRy5oe0IptI5XU
-         PZBruPb17Jb6qXtqjw7ySOXy2Fu3AslK/NjR+oTBnmPtKrIDOQefUsS+g3w3NUuGXjuh
-         KQF+vl2W0NpUk65qRkxTa1QypNXf/elOO8l8zHFwWqjC3i4qDdRiRwuBsOpYVHJ3PsJW
-         QNbg==
-X-Gm-Message-State: AOAM530piUzMRHAWxX0yK2vw+YwyJyfP1AEC8pSvrr61bTig8+OPt1o4
-        JseJwQBsgah2Z9caK53YoKvvqwd7QnE20tFJ
-X-Google-Smtp-Source: ABdhPJyVyRGVtLZjpTkz4qSxM/CGO11g+c5yaA0ZTFb472saxSKWfruFYAu0+M3d6xPWgUdRHGUaqA==
-X-Received: by 2002:a17:90b:1d04:: with SMTP id on4mr5553459pjb.68.1634040448652;
-        Tue, 12 Oct 2021 05:07:28 -0700 (PDT)
+        bh=gURghvRWNoA++o2VFeVcVYw4TbRESAtmR/5Dm1UqSbk=;
+        b=detYP3GkFMFt9w+L28sbrG6UTUL9V+tt3bY1n7cXSwvh3UaLw+CoeD9PxAcEjtk+Vj
+         4O64HEudWJ47okGQ4y6T9qDBRFFXbrAGMi3muP2KH0B42bN1WZQPw20cAAt5CPGyixfu
+         shh1nx+z1uk77wE8vfDMY/BRzIB6W1/HnNyWhjn69Sw1tmafjkhNubklKXvpfF8IqVfI
+         1pX3RMBgKMdmc2HmOBDzKCi4Jjs8N+BKjTArYbLxVhRJR6NiYGJvAQiOn6hH/Q5/sUT7
+         oIdm824SW1zW/+oWoq5Mn6T3jI2pzfPex+cR39kRoFNpAdzkQMuDogkcNF4I38zBUu3E
+         Zhwg==
+X-Gm-Message-State: AOAM530EhmumQ2Arv7Hp02jrHDUPJp7Bg+fGYTO/pCDaj8bf/d3z+qFl
+        G/I9IHsPFJOw6oo57+CzQKbXwhrj0j/J7r35
+X-Google-Smtp-Source: ABdhPJxkEKmWYSUJI8yJuriWhKipPD4IFqTHfIs+f4EdBu/izgUgatHhyKb9BwWu8izsD7npgST7UQ==
+X-Received: by 2002:a05:6a00:1c60:b0:44c:def1:a66b with SMTP id s32-20020a056a001c6000b0044cdef1a66bmr24427752pfw.7.1634040450469;
+        Tue, 12 Oct 2021 05:07:30 -0700 (PDT)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id x10sm11190068pfn.172.2021.10.12.05.07.28
+        by smtp.gmail.com with ESMTPSA id c9sm11046738pgq.58.2021.10.12.05.07.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 05:07:28 -0700 (PDT)
-Message-ID: <61657a80.1c69fb81.c4371.eefc@mx.google.com>
-Date:   Tue, 12 Oct 2021 05:07:28 -0700 (PDT)
+        Tue, 12 Oct 2021 05:07:29 -0700 (PDT)
+Message-ID: <61657a81.1c69fb81.25209.ee93@mx.google.com>
+Date:   Tue, 12 Oct 2021 05:07:29 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -61,7 +61,7 @@ X-Kernelci-Branch: next
 X-Kernelci-Tree: renesas
 X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: renesas-next-2021-10-11-v5.15-rc1
-Subject: renesas/next igt-gpu-panfrost: 2 runs,
+Subject: renesas/next sleep: 10 runs,
  2 regressions (renesas-next-2021-10-11-v5.15-rc1)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
@@ -69,8 +69,8 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/next igt-gpu-panfrost: 2 runs, 2 regressions (renesas-next-2021-10-=
-11-v5.15-rc1)
+renesas/next sleep: 10 runs, 2 regressions (renesas-next-2021-10-11-v5.15-r=
+c1)
 
 Regressions Summary
 -------------------
@@ -87,23 +87,15 @@ rk3399-gru-kevin  | arm64 | lab-collabora | gcc-8    | defconfig          |=
 
 
   Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
-s-next-2021-10-11-v5.15-rc1/plan/igt-gpu-panfrost/
+s-next-2021-10-11-v5.15-rc1/plan/sleep/
 
-  Test:     igt-gpu-panfrost
+  Test:     sleep
   Tree:     renesas
   Branch:   next
   Describe: renesas-next-2021-10-11-v5.15-rc1
   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
 evel.git
-  SHA:      321d106e70eb261bd55bee08d881cbd5468d9d64
-
-  Test suite revisions:
-    drm
-      URL:  git://anongit.freedesktop.org/mesa/drm
-      SHA:  8d0fb9b3f225183fb3276a0e4ae1f8354a3519e8
-    igt-gpu-tools
-      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
-      SHA:  b232a092b9e1b10a8be13601acaa440903b226bc =
+  SHA:      321d106e70eb261bd55bee08d881cbd5468d9d64 =
 
 
 
@@ -120,24 +112,23 @@ rk3288-veyron-jaq | arm   | lab-collabora | gcc-8    | multi_v7_defconfig |=
  1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/616567f41a3f599bb108fab9
+  Details:     https://kernelci.org/test/plan/id/616567df712ebe33ba08faa6
 
   Results:     0 PASS, 1 FAIL, 0 SKIP
   Full config: multi_v7_defconfig
   Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
   Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-11-v5.15-rc1/arm/multi_v7_defconfig/gcc-8/lab-collabora/igt-gpu-panfros=
-t-rk3288-veyron-jaq.txt
+-10-11-v5.15-rc1/arm/multi_v7_defconfig/gcc-8/lab-collabora/sleep-rk3288-ve=
+yron-jaq.txt
   HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-11-v5.15-rc1/arm/multi_v7_defconfig/gcc-8/lab-collabora/igt-gpu-panfros=
-t-rk3288-veyron-jaq.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-igt/=
-20211008.0/armhf/rootfs.cpio.gz =
+-10-11-v5.15-rc1/arm/multi_v7_defconfig/gcc-8/lab-collabora/sleep-rk3288-ve=
+yron-jaq.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
+1008.0/armhf/rootfs.cpio.gz =
 
 
 
-  * igt-gpu-panfrost.login: https://kernelci.org/test/case/id/616567f41a3f5=
-99bb108faba
+  * sleep.login: https://kernelci.org/test/case/id/616567df712ebe33ba08faa7
         failing since 20 days (last pass: renesas-next-2021-08-10-v5.14-rc1=
 , first fail: renesas-next-2021-09-20-v5.15-rc1) =
 
@@ -153,47 +144,44 @@ rk3399-gru-kevin  | arm64 | lab-collabora | gcc-8    | defconfig          |=
  1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/616566447e8824630508fab3
+  Details:     https://kernelci.org/test/plan/id/61656644b3fbc2154408faa6
 
-  Results:     15 PASS, 2 FAIL, 0 SKIP
+  Results:     12 PASS, 1 FAIL, 0 SKIP
   Full config: defconfig
   Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
   Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-11-v5.15-rc1/arm64/defconfig/gcc-8/lab-collabora/igt-gpu-panfrost-rk339=
-9-gru-kevin.txt
+-10-11-v5.15-rc1/arm64/defconfig/gcc-8/lab-collabora/sleep-rk3399-gru-kevin=
+.txt
   HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-11-v5.15-rc1/arm64/defconfig/gcc-8/lab-collabora/igt-gpu-panfrost-rk339=
-9-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster-igt/=
-20211008.0/arm64/rootfs.cpio.gz =
+-10-11-v5.15-rc1/arm64/defconfig/gcc-8/lab-collabora/sleep-rk3399-gru-kevin=
+.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/buster/2021=
+1008.0/arm64/rootfs.cpio.gz =
 
 
 
-  * igt-gpu-panfrost.panfrost_submit.pan-unhandled-pagefault: https://kerne=
-lci.org/test/case/id/616566447e8824630508fab6
-        failing since 20 days (last pass: v5.15-rc1-39-gcbbd8f16ae1c, first=
- fail: renesas-next-2021-09-20-v5.15-rc1)
+  * sleep.rtcwake-mem-4: https://kernelci.org/test/case/id/61656644b3fbc215=
+4408faae
+        new failure (last pass: renesas-next-2021-09-28-v5.15-rc1)
 
-    2021-10-12T10:40:54.972194  <6>[   23.538741] Console: switching to col=
-our dummy device 80x25
-    2021-10-12T10:40:54.978520  <14>[   23.546158] [IGT] panfrost_submit: e=
-xecuting
-    2021-10-12T10:40:54.984901  IGT-Version: 1.26-gb232a09 (aarch64) (Linux=
-: 5.15.0-rc1 aarch64)
-    2021-10-12T10:40:54.996895  <14>[   23.561945] [IGT] panfrost_submit: s=
-tarting subtest pan-unhandled-pagefault
-    2021-10-12T10:40:55.001698  Starting subtest: pan-unhandled-pagefault
-    2021-10-12T10:40:55.112251  (panfrost_submit:348) CRITICAL: Test assert=
-ion failure function __real_main65, file ../tests/panfrost_submit.c:179:
-    2021-10-12T10:40:55.118709  (panfrost_s<14>[   23.682441] [IGT] panfros=
-t_submit: exiting, ret=3D98
-    2021-10-12T10:40:55.130650  ubmit:348) CRITICAL: Failed assertion: sync=
-obj_wait(fd, &submit->args->out_sync, 1, abs_timeout(SHORT_TIME_NSEC), 0, N=
-ULL)
-    2021-10-12T10:40:55.132762  Stack trace:
-    2021-10-12T10:40:55.137249    #0 ../lib/igt_core.c:1745 __igt_fail_asse=
-rt() =
+    2021-10-12T10:36:08.774352  rtcwake: assuming RTC uses UTC ...
+    2021-10-12T10:36:08.780570  rtcwake: wakeup from \"mem\" using rtc0 at =
+Tue Oct 12 09:32:58 2021
+    2021-10-12T10:36:08.794099  <6>[   25.723287] PM: suspend entry (deep)
+    2021-10-12T10:36:08.806982  <6>[   25.735414] Filesystems sync: 0.000 s=
+econds
+    2021-10-12T10:36:08.827143  <6>[   25.749945] Freezing user space proce=
+sses ... (elapsed 0.001 seconds) done.
+    2021-10-12T10:36:08.839338  <6>[   25.767675] OOM killer disabled.
+    2021-10-12T10:36:08.858091  <6>[   25.778774] Freezing remaining freeza=
+ble tasks ... (elapsed 0.004 seconds) done.
+    2021-10-12T10:36:08.871951  <6>[   25.796907] printk: Suspending consol=
+e(s) (use no_console_suspend to debug)
+    2021-10-12T10:36:15.379691  =EF=BF=BD=00=00<3>[   25.812969] mwifiex_pc=
+ie 0000:01:00.0: adapter is not valid
+    2021-10-12T10:36:15.395667  <6>[   26.082092] Disabling non-boot CPUs .=
+.. =
 
-    ... (17 line(s) more)  =
+    ... (43 line(s) more)  =
 
  =20
