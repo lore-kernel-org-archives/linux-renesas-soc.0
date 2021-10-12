@@ -2,223 +2,175 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3D6C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Oct 2021 22:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDAEDC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 02:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F29A60EFE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 11 Oct 2021 22:58:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B58BC60EE5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 02:33:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235598AbhJKXAQ (ORCPT
+        id S231271AbhJLCfL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 11 Oct 2021 19:00:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47350 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235600AbhJKXAP (ORCPT
+        Mon, 11 Oct 2021 22:35:11 -0400
+Received: from mga02.intel.com ([134.134.136.20]:62093 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230362AbhJLCfL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 11 Oct 2021 19:00:15 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34341C061745
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Oct 2021 15:58:15 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id v17so60759243wrv.9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 11 Oct 2021 15:58:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=BGMxwj9S4tGsGbVMFGP061SaoGO3sR5swaKq89xPTbo=;
-        b=lEUFXmfh6Pmy+jKTw8f9eUWzj6VB6oi4/cP7uEK6G2Cv1QmBeCnFAXh7vy6FaO1IFK
-         m5g2KzZ3SlBJRTW6n2FbKTFaQMtD+hd4HWlsJgNR9MBy5RvSNBI3Sj+EgbIEwrxur5ri
-         hGt3DYB6ZuxdjsUzAA6VU+Zp1jp0N/CZN4SOqNKUilNhi5eSDgb8YACezbcsFyexieTf
-         9AzSFAOabVcB21jL2iC7kFUCa02KHAW3N+llUAaxvFFoBNrrw4Q7BHoC0lrb1T3vJBjL
-         cAlryep1u0q9/d9M0HFsKBUdUR5TUGm3XV+TUSsanDVpXw67NcnaTDCk27FuJUIeikzM
-         V24Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=BGMxwj9S4tGsGbVMFGP061SaoGO3sR5swaKq89xPTbo=;
-        b=NJ97Pop8NecFQKOUXeauvXIBcrytewR4oHzUvPZS6awfRAhxFxAv8gy1U73u/lVo67
-         4okUfWD6RAxzeisEqRpy16p6DLS5FuF7eH8e3/CGe7Mt1g9w/2j9m59r7DVZMrG03U8B
-         kzObHWyNPJ1sRjWk1SlR3aDDJOU+GLmgErI+F+/xqn+csZv1Aj67AiXkQ8I1xRKmqYxx
-         S2MByqJD7fpsP/oQ3mXCSMcUSBL16Y3b1e3akBaSJHQdG0aTj0rzIAIbrR7SPUuKXSd8
-         ZTuvl9luxP2P/62MutMcORwjk8bdO3DCvG5Q23vvOS+FN9CLILEaeDfnx3QTe0+es013
-         1nwg==
-X-Gm-Message-State: AOAM5308q3H2bO5REL1vWkLig+rqXLyJRWLAvsr3UICZhbq3azQMWq7R
-        k++ASpMXv34JQ2/zfA/OihYu8Bs/z1KLirAT
-X-Google-Smtp-Source: ABdhPJxdqJD4q5Gygm2xNWaE+uKfpMbC5OAdqmxKZXgeBoBMG9RVEiGR6MpNsD1Fy5JHWDpdIdmeUA==
-X-Received: by 2002:adf:e584:: with SMTP id l4mr18083336wrm.173.1633993093743;
-        Mon, 11 Oct 2021 15:58:13 -0700 (PDT)
-Received: from bismarck.berto.se (p54ac5892.dip0.t-ipconnect.de. [84.172.88.146])
-        by smtp.googlemail.com with ESMTPSA id h8sm9240890wrm.27.2021.10.11.15.58.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 Oct 2021 15:58:13 -0700 (PDT)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-pm@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 1/2] thermal: rcar_gen3_thermal: Store thcode and ptat in priv data
-Date:   Tue, 12 Oct 2021 00:58:01 +0200
-Message-Id: <20211011225802.11497-2-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211011225802.11497-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20211011225802.11497-1-niklas.soderlund+renesas@ragnatech.se>
+        Mon, 11 Oct 2021 22:35:11 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10134"; a="214168797"
+X-IronPort-AV: E=Sophos;i="5.85,366,1624345200"; 
+   d="scan'208";a="214168797"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2021 19:33:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.85,366,1624345200"; 
+   d="scan'208";a="658891957"
+Received: from lkp-server02.sh.intel.com (HELO 08b2c502c3de) ([10.239.97.151])
+  by orsmga005.jf.intel.com with ESMTP; 11 Oct 2021 19:33:09 -0700
+Received: from kbuild by 08b2c502c3de with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1ma7bI-0002yf-RM; Tue, 12 Oct 2021 02:33:08 +0000
+Date:   Tue, 12 Oct 2021 10:32:44 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ 6e602e69ec04a3e0887e4fd9189250b4e7ee7e23
+Message-ID: <6164f3cc.CsXYdCPXnfEKsIm+%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Prepare for reading the THCODE and PTAT values from hardware fuses by
-storing the values used during calculations in the drivers private
-data structures.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: 6e602e69ec04a3e0887e4fd9189250b4e7ee7e23  Merge branch 'renesas-next', tag 'v5.15-rc5' into renesas-devel
 
-As the values are now stored directly in the private data structures
-there is no need to keep track of the TSC channel id as its only usage
-was to lookup the THCODE row, drop it.
+elapsed time: 723m
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+configs tested: 109
+configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+i386                 randconfig-c001-20211011
+powerpc              randconfig-c003-20211011
+powerpc                     mpc5200_defconfig
+powerpc                 mpc834x_itx_defconfig
+mips                          rm200_defconfig
+powerpc                       holly_defconfig
+powerpc                    gamecube_defconfig
+powerpc                 mpc8315_rdb_defconfig
+mips                        maltaup_defconfig
+parisc                generic-32bit_defconfig
+microblaze                          defconfig
+sh                        sh7785lcr_defconfig
+mips                           ip22_defconfig
+arc                 nsimosci_hs_smp_defconfig
+arm                      footbridge_defconfig
+mips                    maltaup_xpa_defconfig
+mips                         mpc30x_defconfig
+arm                        multi_v7_defconfig
+powerpc                   bluestone_defconfig
+mips                     loongson2k_defconfig
+mips                     loongson1b_defconfig
+mips                         db1xxx_defconfig
+arc                        nsimosci_defconfig
+arm                  randconfig-c002-20211011
+x86_64               randconfig-c001-20211011
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+nds32                             allnoconfig
+arc                              allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                             allyesconfig
+s390                             allmodconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+x86_64               randconfig-a015-20211011
+x86_64               randconfig-a012-20211011
+x86_64               randconfig-a016-20211011
+x86_64               randconfig-a014-20211011
+x86_64               randconfig-a013-20211011
+x86_64               randconfig-a011-20211011
+i386                 randconfig-a016-20211011
+i386                 randconfig-a014-20211011
+i386                 randconfig-a011-20211011
+i386                 randconfig-a015-20211011
+i386                 randconfig-a012-20211011
+i386                 randconfig-a013-20211011
+arc                  randconfig-r043-20211011
+s390                 randconfig-r044-20211011
+riscv                randconfig-r042-20211011
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                    rhel-8.3-kselftests
+um                           x86_64_defconfig
+um                             i386_defconfig
+x86_64                           allyesconfig
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                                  kexec
+
+clang tested configs:
+arm                  randconfig-c002-20211011
+mips                 randconfig-c004-20211011
+i386                 randconfig-c001-20211011
+s390                 randconfig-c005-20211011
+x86_64               randconfig-c007-20211011
+powerpc              randconfig-c003-20211011
+riscv                randconfig-c006-20211011
+x86_64               randconfig-a004-20211011
+x86_64               randconfig-a006-20211011
+x86_64               randconfig-a001-20211011
+x86_64               randconfig-a005-20211011
+x86_64               randconfig-a002-20211011
+x86_64               randconfig-a003-20211011
+i386                 randconfig-a001-20211011
+i386                 randconfig-a003-20211011
+i386                 randconfig-a004-20211011
+i386                 randconfig-a005-20211011
+i386                 randconfig-a002-20211011
+i386                 randconfig-a006-20211011
+hexagon              randconfig-r041-20211011
+hexagon              randconfig-r045-20211011
+
 ---
-* Changes since RFT
-- Keep thcodes array static.
----
- drivers/thermal/rcar_gen3_thermal.c | 51 ++++++++++++++++-------------
- 1 file changed, 28 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 85228d308dd35b19..7d7e6ebe837a83af 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -62,15 +62,6 @@
- 
- #define TSC_MAX_NUM	5
- 
--/* default THCODE values if FUSEs are missing */
--static const int thcodes[TSC_MAX_NUM][3] = {
--	{ 3397, 2800, 2221 },
--	{ 3393, 2795, 2216 },
--	{ 3389, 2805, 2237 },
--	{ 3415, 2694, 2195 },
--	{ 3356, 2724, 2244 },
--};
--
- /* Structure for thermal temperature calculation */
- struct equation_coefs {
- 	int a1;
-@@ -84,13 +75,14 @@ struct rcar_gen3_thermal_tsc {
- 	struct thermal_zone_device *zone;
- 	struct equation_coefs coef;
- 	int tj_t;
--	unsigned int id; /* thermal channel id */
-+	int thcode[3];
- };
- 
- struct rcar_gen3_thermal_priv {
- 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
- 	unsigned int num_tscs;
- 	void (*thermal_init)(struct rcar_gen3_thermal_tsc *tsc);
-+	int ptat[3];
- };
- 
- static inline u32 rcar_gen3_thermal_read(struct rcar_gen3_thermal_tsc *tsc,
-@@ -133,8 +125,8 @@ static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_tsc *tsc,
- /* no idea where these constants come from */
- #define TJ_3 -41
- 
--static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_tsc *tsc,
--					 int *ptat, const int *thcode,
-+static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_priv *priv,
-+					 struct rcar_gen3_thermal_tsc *tsc,
- 					 int ths_tj_1)
- {
- 	/* TODO: Find documentation and document constant calculation formula */
-@@ -143,16 +135,16 @@ static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_tsc *tsc,
- 	 * Division is not scaled in BSP and if scaled it might overflow
- 	 * the dividend (4095 * 4095 << 14 > INT_MAX) so keep it unscaled
- 	 */
--	tsc->tj_t = (FIXPT_INT((ptat[1] - ptat[2]) * (ths_tj_1 - TJ_3))
--		     / (ptat[0] - ptat[2])) + FIXPT_INT(TJ_3);
-+	tsc->tj_t = (FIXPT_INT((priv->ptat[1] - priv->ptat[2]) * (ths_tj_1 - TJ_3))
-+		     / (priv->ptat[0] - priv->ptat[2])) + FIXPT_INT(TJ_3);
- 
--	tsc->coef.a1 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[2]),
-+	tsc->coef.a1 = FIXPT_DIV(FIXPT_INT(tsc->thcode[1] - tsc->thcode[2]),
- 				 tsc->tj_t - FIXPT_INT(TJ_3));
--	tsc->coef.b1 = FIXPT_INT(thcode[2]) - tsc->coef.a1 * TJ_3;
-+	tsc->coef.b1 = FIXPT_INT(tsc->thcode[2]) - tsc->coef.a1 * TJ_3;
- 
--	tsc->coef.a2 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[0]),
-+	tsc->coef.a2 = FIXPT_DIV(FIXPT_INT(tsc->thcode[1] - tsc->thcode[0]),
- 				 tsc->tj_t - FIXPT_INT(ths_tj_1));
--	tsc->coef.b2 = FIXPT_INT(thcode[0]) - tsc->coef.a2 * ths_tj_1;
-+	tsc->coef.b2 = FIXPT_INT(tsc->thcode[0]) - tsc->coef.a2 * ths_tj_1;
- }
- 
- static int rcar_gen3_thermal_round(int temp)
-@@ -174,7 +166,7 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
- 	/* Read register and convert to mili Celsius */
- 	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
- 
--	if (reg <= thcodes[tsc->id][1])
-+	if (reg <= tsc->thcode[1])
- 		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1,
- 				tsc->coef.a1);
- 	else
-@@ -401,9 +393,15 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	unsigned int i;
- 	int ret;
- 
--	/* default values if FUSEs are missing */
-+	/* Default THCODE values in case FUSEs are not set. */
- 	/* TODO: Read values from hardware on supported platforms */
--	int ptat[3] = { 2631, 1509, 435 };
-+	static const int thcodes[TSC_MAX_NUM][3] = {
-+		{ 3397, 2800, 2221 },
-+		{ 3393, 2795, 2216 },
-+		{ 3389, 2805, 2237 },
-+		{ 3415, 2694, 2195 },
-+		{ 3356, 2724, 2244 },
-+	};
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -413,6 +411,10 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	if (soc_device_match(r8a7795es1))
- 		priv->thermal_init = rcar_gen3_thermal_init_r8a7795es1;
- 
-+	priv->ptat[0] = 2631;
-+	priv->ptat[1] = 1509;
-+	priv->ptat[2] = 435;
-+
- 	platform_set_drvdata(pdev, priv);
- 
- 	if (rcar_gen3_thermal_request_irqs(priv, pdev))
-@@ -439,7 +441,10 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 			ret = PTR_ERR(tsc->base);
- 			goto error_unregister;
- 		}
--		tsc->id = i;
-+
-+		tsc->thcode[0] = thcodes[i][0];
-+		tsc->thcode[1] = thcodes[i][1];
-+		tsc->thcode[2] = thcodes[i][2];
- 
- 		priv->tscs[i] = tsc;
- 
-@@ -453,7 +458,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 		tsc->zone = zone;
- 
- 		priv->thermal_init(tsc);
--		rcar_gen3_thermal_calc_coefs(tsc, ptat, thcodes[i], *ths_tj_1);
-+		rcar_gen3_thermal_calc_coefs(priv, tsc, *ths_tj_1);
- 
- 		tsc->zone->tzp->no_hwmon = false;
- 		ret = thermal_add_hwmon_sysfs(tsc->zone);
--- 
-2.33.0
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
