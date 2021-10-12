@@ -2,431 +2,186 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 679C9C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 18:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0768EC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 18:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 514116101D
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 18:48:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD07F60EDF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 12 Oct 2021 18:53:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235458AbhJLSuc (ORCPT
+        id S233551AbhJLSz4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 12 Oct 2021 14:50:32 -0400
-Received: from mail-ed1-f47.google.com ([209.85.208.47]:37402 "EHLO
-        mail-ed1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231586AbhJLSu1 (ORCPT
+        Tue, 12 Oct 2021 14:55:56 -0400
+Received: from mail-eopbgr1410102.outbound.protection.outlook.com ([40.107.141.102]:26208
+        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232684AbhJLSzz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 12 Oct 2021 14:50:27 -0400
-Received: by mail-ed1-f47.google.com with SMTP id y12so92758eda.4
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 12 Oct 2021 11:47:22 -0700 (PDT)
+        Tue, 12 Oct 2021 14:55:55 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DGfzEtAfveiHzcvkC4cpMHmSkVeMu45ldlKHNA7ZURR15sJ+v+82OM2Y6Cv92uMPUazb4dLIiiG272dzlihddcbhIeK8kVmoX9fvZodHJFk02i4Lwn9y/hNPAH4D/vHJXnwSWYJVs6yyY786hs072bM/iK9rSjLNJoUuLrg3P3sl0CzdDZqTEseDbGKgQy5SRoEjM8o95wfrNS0RRTaytPp5s0f+YTNQncxp2zRdmeStuYoDyAt+vMhDW/+ew20rpCZ3+aBX7LfJiGQLh1wC9DlsmUxiFDhfnfRr4h5zpAurtCmx8HLTGPESyK6Znt8HOA4wanqjIrqzeCS03NYPuA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+7r2cHSArT3jDP9S/skc+aiU1l1gR1eVS8G8zQV1CKo=;
+ b=AiUPY4hFzbzQ62drlExy6/GllRMksxeIGVkNnIdtsJvJWGBSpevuWdMhNiOeYCIEGbiWJnJiD5jYZavvaGNpvINPdFaaJPY07anlFz6SMPR36JRMqLXzVQpLM1qERUj4g1bAwhpOPv+iT2/85TGsz//I75itjWnksI+WJMMFxHF722eIWZ8qESLgPH9GIUE+uBSSvPuLi0KsG/o/LMcyqTQAy6C7GOCPhtWgQo34pp55mwtcCQN4rCwSbMJEnWjXxB6bRCwBvbJOIHC1nHfEmhmQ0zUioah0SaZQ0mQvPszb+1fPwgSjcOyFV1/AvtHAb3xLZkGV8xxfE+3OJhPHrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NsPhwQLI2oaG3F2DZCDWFpjOEOfSkj4Lirf6tYBwqKU=;
-        b=iwwKIy1UpAE9/iVFICD31Kdu8eVPxBpfTZuJPSBHDbpUW0p3YJymUX6XthYXO6CPPD
-         mrbkfLSAvbuEkQkGf9swfjsMqzKrS7sJYrZc5aPxLLjvPJ14lzDA+70nGJjcL28Bdu59
-         8KRZT5b0Q7vvSG4Lxqw8JFZa5aCToF3ZzBvtPtZJkq/X+ZVDE7NnMoRMuOFlWfJCu4/A
-         X9UpQ1XEnLWIAKVVgMCS7c/wCMlESsZQgr1Sb1q6MV6XL+Fxy6DGNNeZqqvxHGGnuNfq
-         zZzkUVhHU2fYlvuULfuINccaafMfWUa5Ia/0puMJOzrH1sbOQc4MJ5jVjGD9TKBrSAvd
-         G6ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NsPhwQLI2oaG3F2DZCDWFpjOEOfSkj4Lirf6tYBwqKU=;
-        b=OfegxQCEAN8HiZWrzGKEsDBXsmC2EhYfcy8U+zYBO981gbbMUHsjJrr4uPTTGRrBXZ
-         sPmQ1MNL1sf851JinZH7yy2lSKudcqQA9pIJztPm0OfQPjklpjItug5r5rTPKIh9p49a
-         nf7+GzU098iXu1RsPUq+uvL3UQuFr3+w0z0LCWxBrjdEkDrSOyWnx9FP+8y8SxdNujtI
-         Nc1dbXAK2u3eNimo01b1m/uP5C5sxQhj6JGnqKNJ99MfDlDJuoJCciAOozJ8qMDrQ0e5
-         jJBgtxBQKcJZ/v/4qTGZgvNis4F06Xf8bZ43ZtIDTvxuAOngevlIdh864NZQbi2Xc2WI
-         S5aA==
-X-Gm-Message-State: AOAM530LKlru4eEhUEYI7MRjOnTsVMDTs4slZu208wop5B3sCMw+xwQV
-        8Rvz0nHgZt1tHco8C8LTnOlAXABpvxqY9CkO
-X-Google-Smtp-Source: ABdhPJwsys0fnytBaeRkRy387lnlUqW10bBD5QoTXSex2GVsHk+Y+iEQLa61zQVv50TyPnnH7cbI6w==
-X-Received: by 2002:adf:e101:: with SMTP id t1mr35191963wrz.395.1634063621385;
-        Tue, 12 Oct 2021 11:33:41 -0700 (PDT)
-Received: from bismarck.berto.se (p54ac5892.dip0.t-ipconnect.de. [84.172.88.146])
-        by smtp.googlemail.com with ESMTPSA id v3sm11451631wrg.23.2021.10.12.11.33.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Oct 2021 11:33:41 -0700 (PDT)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        devicetree@vger.kernel.org, linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH] dt-bindings: adv748x: Convert bindings to json-schema
-Date:   Tue, 12 Oct 2021 20:33:24 +0200
-Message-Id: <20211012183324.717975-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.33.0
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+7r2cHSArT3jDP9S/skc+aiU1l1gR1eVS8G8zQV1CKo=;
+ b=UWWUiFR9Q4IiDVe369QgRyvCkpXe5OPNPSmU97u29UaaA312FgaAyz9b5OoVViHs9uUwiLFFrjtCt16nN5o9XgLlUEu/jAuSj+FykeQcIa8f8yiYSo5vne4c/JywXTtdCXV9jjBTfOp1QC6LPib1d5rSrk2eqm2MT3O/QKJf5ms=
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com (2603:1096:604:bb::5)
+ by OSBPR01MB2134.jpnprd01.prod.outlook.com (2603:1096:603:26::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4587.18; Tue, 12 Oct
+ 2021 18:53:50 +0000
+Received: from OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::9ca6:1cf:5:9fc1]) by OS0PR01MB5922.jpnprd01.prod.outlook.com
+ ([fe80::9ca6:1cf:5:9fc1%3]) with mapi id 15.20.4587.026; Tue, 12 Oct 2021
+ 18:53:50 +0000
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Jakub Kicinski <kuba@kernel.org>
+CC:     "David S. Miller" <davem@davemloft.net>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Sergei Shtylyov <sergei.shtylyov@gmail.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Adam Ford <aford173@gmail.com>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org>, Chris Paterson
+        <Chris.Paterson2@renesas.com>, Biju Das <biju.das@bp.renesas.com" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH net-next v3 00/14] Add functional support for Gigabit
+ Ethernet driver
+Thread-Topic: [PATCH net-next v3 00/14] Add functional support for Gigabit
+ Ethernet driver
+Thread-Index: AQHXv4dKgBnK88kVVkGc1kUz1FHm7qvPrEoAgAABg9CAAASpgIAAANWQ
+Date:   Tue, 12 Oct 2021 18:53:50 +0000
+Message-ID: <OS0PR01MB5922B6FD6195B9DC0F2C8EA986B69@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+References: <20211012163613.30030-1-biju.das.jz@bp.renesas.com>
+        <20211012111920.1f3886b2@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+        <OS0PR01MB59228B47A02008629DF1782A86B69@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+ <20211012114125.0a9d71ae@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+In-Reply-To: <20211012114125.0a9d71ae@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8cb91527-3b7e-430a-3719-08d98db1a174
+x-ms-traffictypediagnostic: OSBPR01MB2134:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <OSBPR01MB2134DFE7437B1052353D39A486B69@OSBPR01MB2134.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: rOWnT8yD1GHz74tSllprvK9WBducVyjr8FJB2OqZmSFwrpprHEbOI973ccs2bEPTArte9NMECM4tp4eL4c+dhQPZbx7c6fyavU6Do+x0X/JskCuS/YyD89LenElI7cWhpLNBL7KiVqNouYUl1xWRxxWH66Y7wElGWgeKpe3DdCnyMjldI72DF/7J608oatXWiYBRgFoQNRhz8Qd1jMT4dXA+n88U6k0fNRsSUS0HGTQy3kKubzJ4Ag+RAOr/g2pn6aoan6F9m1DDHx0XJh2wkR1mo9Pt77/b+hSd85DsFInAOFDF2k0yi9JbxOuweetg57zbedZfqKQCYe/mfhvXlSd2Fk4XrSve3AABuDTaY7G2PYMfXR3xwIIsiBWOtu7R2AGYTACnrr4AiR1zRzyMZdyNWYJSaPLE37yVoIN3Zudbqpp7L65L8njKtXsO2qBTZHBABH2Urh4wzse1qlrt9GzlV5nT80f1R7JMdH2riCgrsQ1WNyHtFm/1u8JT7sAQ71pqXf+UKRNkIZUyEjgxdaWgIlhoEAArevRFQZyBMKolTylxsv6AQHmr//BTZglbh15UXgG/F0rvdGzFqJwgXgmMFxrt/EsxSFtYHDXGm2Honw/ydO53ughwMsvflxhTjBluz4wycrmBOwPgr8H/Ev8Z1BaXquYJ5hGuDme01kCPiwVWbMV9RF8pGnTpnSwyEYWKmTOFZIGefPRKyW+R9Q==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS0PR01MB5922.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(66446008)(122000001)(6916009)(54906003)(66556008)(64756008)(55016002)(9686003)(8676002)(52536014)(38100700002)(66946007)(76116006)(66476007)(316002)(8936002)(33656002)(4326008)(2906002)(86362001)(508600001)(26005)(83380400001)(38070700005)(5660300002)(6506007)(71200400001)(186003)(7696005);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?viIcXi8cKNCxwGJ3VaGMqQ82YZ93uSwd7iV3aK+VN5x+eAXBjJGoocYcSrCM?=
+ =?us-ascii?Q?s52ML8EQdrL0p0YOFq9YZ0XomKVXizPNh4kF15FYt1Fmw8IjNk8pNImCd0wD?=
+ =?us-ascii?Q?iBVriaYIKyw42HuKCKmor1qxNTH2iL9L0qS0pWI3zt7RScULDf3Vt2iaL9Xq?=
+ =?us-ascii?Q?u6hpl3VKZcpdaYJmGxeW3Va3pULHM+Yye1dMntL1RygFCvyMljxOhsXEVmMJ?=
+ =?us-ascii?Q?KiL2oAWec6syLUj1plkfHUxXGnKHZh15n+E59AonFkw4eQn/Kd/WXNAR8VaH?=
+ =?us-ascii?Q?HyPzdCuvqtTSCni4XFysJFdArNHWKdbIdl8RPwQdf0Mfzxc6VfqtTdraY302?=
+ =?us-ascii?Q?ZFA7b+o0B8WEoGEIx8Lt2kNHkwIE2sbMCoqYQ/SgfHoBNcYSZup2Qah/Q7nn?=
+ =?us-ascii?Q?tj2uNWJTeRKy8w/l3wehIdmLu15hWnQtub7HTyjzN3QZBscKz/9tfXNIPwmz?=
+ =?us-ascii?Q?Ppgm62/V0pe9Iu4AV20fQhJEENq+IdOoR9x23I1sS23oe7qirlywN6vIaKrX?=
+ =?us-ascii?Q?jmtM7oE3foY9t/yiFDh03uFy8lmaomTrIhiRcAjsLBQpElKAMK7v5w8xG5/g?=
+ =?us-ascii?Q?v40stBnl9eKvzYY4HEQLry7tcYiMiJU/xTHMjnnxsNRPJH/Y+dcHvcOD2SZZ?=
+ =?us-ascii?Q?4/FYgq87xKFJyYGXZQLFuk6gAQ1EucIwt0g5MohSFLrFik5VBbimEkJnnAym?=
+ =?us-ascii?Q?lQaMmRftPlvldMdLgNcrsUz3ieKfnQahhg2WR/cy94jhAfqtrZMt0gQZBwDh?=
+ =?us-ascii?Q?h0kHeMH1aPkcRwK8W3Lb5ArWGYUKtdN+hrmIq5GDCfYIuKQTsW3fJmFsAAO2?=
+ =?us-ascii?Q?WU0gC+S5n5knmnzlfbpvh9MkwZsR7Y1eRYkv5IBkm/Z5iRlkZg6xmbNZxNb0?=
+ =?us-ascii?Q?j/kudbGJQ4mohZCpyVSVWExyHDhT/DO3+VpDcc0+V/xBwfbiHvDYrVwJyD1H?=
+ =?us-ascii?Q?ExV/W0gcUY+Xr6bCApW2WIID9yqbqQd1XYoTI1W2ZTtYypbFAQLx3FuaNNlj?=
+ =?us-ascii?Q?z4UbsS1rGWI7r+NgzQlHi9ryHobr4GxfaUty0jTcMVViDZVj2tBovP9F+1eJ?=
+ =?us-ascii?Q?CrOSGWfn8WiMySxSbCHpYKnJJurlvcdq7Haj/WAV8dusjVwIDnDG7FACEOgm?=
+ =?us-ascii?Q?p73LAEtYHFTmWZKcDPiWElBSl9XKiYmdrFRI3497IYpiSQJh16E8Mw68r0tJ?=
+ =?us-ascii?Q?zR2a6mtJjy4wBJwMUURWYvDCh/rSlGOXmYU1qGTVreMu2tyWlAGUFaPtV/Za?=
+ =?us-ascii?Q?gzAKB9kmDdzHNcV+fT7H+L2FOq37C/TaoRnZDjSrpESY7fZyX/3w83KgznxE?=
+ =?us-ascii?Q?f78=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: OS0PR01MB5922.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8cb91527-3b7e-430a-3719-08d98db1a174
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Oct 2021 18:53:50.4453
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NWA05TRWWG6tC6QRzEDw5JhTSY4USabuda4gGv67DNqO8Mvlzap6Y9KTHAqyxl2t6ih2WyYoMGaBxW6oMlnv5ZrbwALgbxzQ3Bf50D2QSw8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2134
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert ADV748X analog video decoder documentation to json-schema.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-Hello,
+Hi Jakub Kicinski,
 
-This conversion revealed a problem with the Renesas DTSI files for the 
-adv7482 nodes. A fix for that have been submitted in a separate patch,
+Thanks for the feedback.
 
-    [PATCH] arm64: dts: renesas: Add ports node to all adv7482 nodes
+> Subject: Re: [PATCH net-next v3 00/14] Add functional support for Gigabit
+> Ethernet driver
+>=20
+> On Tue, 12 Oct 2021 18:28:07 +0000 Biju Das wrote:
+> > > On Tue, 12 Oct 2021 17:35:59 +0100 Biju Das wrote:
+> > > > set_feature patch will send as separate RFC patch along with
+> > > > rx_checksum patch, as it needs further discussion related to HW
+> > > checksum.
+> > >
+> > > Is this part relating to the crash you observed because of TCP csum
+> > > offload?
+> >
+> > Yes, you are correct. Sergey, suggested use R-Car RX-HW checksum with
+> > RCSC/RCPT and But the TOE gives either 0x0 or 0xffff as csum output
+> > and feeding this value to skb->csum lead to kernel crash.
+>=20
+> That's quite concerning. Do you have any of the
+>=20
+> /proc/sys/kernel/panic_on_io_nmi
+> /proc/sys/kernel/panic_on_oops
+> /proc/sys/kernel/panic_on_rcu_stall
+> /proc/sys/kernel/panic_on_unrecovered_nmi
+> /proc/sys/kernel/panic_on_warn
+>=20
+> knobs set? I'm guessing we hit do_netdev_rx_csum_fault() when the checksu=
+m
+> is incorrect, but I'm surprised that causes a panic.
+>=20
 
-Kind Regards,
-Niklas Söderlund
----
- .../devicetree/bindings/media/i2c/adv748x.txt | 116 ----------
- .../bindings/media/i2c/adv748x.yaml           | 211 ++++++++++++++++++
- 2 files changed, 211 insertions(+), 116 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.txt
- create mode 100644 Documentation/devicetree/bindings/media/i2c/adv748x.yaml
+I tested this last week, if I remember correctly It was not panic, rather d=
+o_netdev_rx_csum_fault. I will recheck and will send you the stack trace ne=
+xt time.=20
 
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.txt b/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-deleted file mode 100644
-index 4f91686e54a6b939..0000000000000000
---- a/Documentation/devicetree/bindings/media/i2c/adv748x.txt
-+++ /dev/null
-@@ -1,116 +0,0 @@
--* Analog Devices ADV748X video decoder with HDMI receiver
--
--The ADV7481 and ADV7482 are multi format video decoders with an integrated
--HDMI receiver. They can output CSI-2 on two independent outputs TXA and TXB
--from three input sources HDMI, analog and TTL.
--
--Required Properties:
--
--  - compatible: Must contain one of the following
--    - "adi,adv7481" for the ADV7481
--    - "adi,adv7482" for the ADV7482
--
--  - reg: I2C slave addresses
--    The ADV748x has up to twelve 256-byte maps that can be accessed via the
--    main I2C ports. Each map has it own I2C address and acts as a standard
--    slave device on the I2C bus. The main address is mandatory, others are
--    optional and remain at default values if not specified.
--
--Optional Properties:
--
--  - interrupt-names: Should specify the interrupts as "intrq1", "intrq2" and/or
--		     "intrq3". All interrupts are optional. The "intrq3" interrupt
--		     is only available on the adv7481
--  - interrupts: Specify the interrupt lines for the ADV748x
--  - reg-names : Names of maps with programmable addresses.
--		It shall contain all maps needing a non-default address.
--		Possible map names are:
--		  "main", "dpll", "cp", "hdmi", "edid", "repeater",
--		  "infoframe", "cbus", "cec", "sdp", "txa", "txb"
--
--The device node must contain one 'port' child node per device input and output
--port, in accordance with the video interface bindings defined in
--Documentation/devicetree/bindings/media/video-interfaces.txt. The port nodes
--are numbered as follows.
--
--	  Name		Type		Port
--	---------------------------------------
--	  AIN0		sink		0
--	  AIN1		sink		1
--	  AIN2		sink		2
--	  AIN3		sink		3
--	  AIN4		sink		4
--	  AIN5		sink		5
--	  AIN6		sink		6
--	  AIN7		sink		7
--	  HDMI		sink		8
--	  TTL		sink		9
--	  TXA		source		10
--	  TXB		source		11
--
--The digital output port nodes, when present, shall contain at least one
--endpoint. Each of those endpoints shall contain the data-lanes property as
--described in video-interfaces.txt.
--
--Required source endpoint properties:
--  - data-lanes: an array of physical data lane indexes
--    The accepted value(s) for this property depends on which of the two
--    sources are described. For TXA 1, 2 or 4 data lanes can be described
--    while for TXB only 1 data lane is valid. See video-interfaces.txt
--    for detailed description.
--
--Ports are optional if they are not connected to anything at the hardware level.
--
--Example:
--
--	video-receiver@70 {
--		compatible = "adi,adv7482";
--		reg = <0x70 0x71 0x72 0x73 0x74 0x75
--		       0x60 0x61 0x62 0x63 0x64 0x65>;
--		reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
--			    "infoframe", "cbus", "cec", "sdp", "txa", "txb";
--
--		#address-cells = <1>;
--		#size-cells = <0>;
--
--		interrupt-parent = <&gpio6>;
--		interrupt-names = "intrq1", "intrq2";
--		interrupts = <30 IRQ_TYPE_LEVEL_LOW>,
--			     <31 IRQ_TYPE_LEVEL_LOW>;
--
--		port@7 {
--			reg = <7>;
--
--			adv7482_ain7: endpoint {
--				remote-endpoint = <&cvbs_in>;
--			};
--		};
--
--		port@8 {
--			reg = <8>;
--
--			adv7482_hdmi: endpoint {
--				remote-endpoint = <&hdmi_in>;
--			};
--		};
--
--		port@a {
--			reg = <10>;
--
--			adv7482_txa: endpoint {
--				clock-lanes = <0>;
--				data-lanes = <1 2 3 4>;
--				remote-endpoint = <&csi40_in>;
--			};
--		};
--
--		port@b {
--			reg = <11>;
--
--			adv7482_txb: endpoint {
--				clock-lanes = <0>;
--				data-lanes = <1>;
--				remote-endpoint = <&csi20_in>;
--			};
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/media/i2c/adv748x.yaml b/Documentation/devicetree/bindings/media/i2c/adv748x.yaml
-new file mode 100644
-index 0000000000000000..37df0441d8790c6e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/i2c/adv748x.yaml
-@@ -0,0 +1,211 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/media/i2c/adv748x.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Analog Devices ADV748X video decoder with HDMI receiver
-+
-+maintainers:
-+  - Kieran Bingham <kieran.bingham@ideasonboard.com>
-+
-+description:
-+  The ADV7481 and ADV7482 are multi format video decoders with an integrated
-+  HDMI receiver. They can output CSI-2 on two independent outputs TXA and TXB
-+  from three input sources HDMI, analog and TTL.
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - adi,adv7481
-+          - adi,adv7482
-+
-+  reg:
-+    minItems: 1
-+    maxItems: 12
-+    description:
-+      The ADV748x has up to twelve 256-byte maps that can be accessed via the
-+      main I2C ports. Each map has it own I2C address and acts as a standard
-+      slave device on the I2C bus. The main address is mandatory, others are
-+      optional and remain at default values if not specified.
-+
-+  reg-names:
-+    minItems: 1
-+    items:
-+      - const: main
-+      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
-+      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
-+      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
-+      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
-+      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
-+      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
-+      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
-+      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
-+      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
-+      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
-+      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
-+
-+  interrupts: true
-+
-+  interrupt-names: true
-+
-+  ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+
-+    patternProperties:
-+      "^port@[0-7]$":
-+        $ref: /schemas/graph.yaml#/properties/port
-+        description: Input port nodes for analog inputs AIN[0-7].
-+
-+    properties:
-+      port@8:
-+        $ref: /schemas/graph.yaml#/properties/port
-+        description: Input port node for HDMI.
-+
-+      port@9:
-+        $ref: /schemas/graph.yaml#/properties/port
-+        description: Input port node for TTL.
-+
-+      port@a:
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        unevaluatedProperties: false
-+        description:
-+          Output port node, single endpoint describing the CSI-2 transmitter TXA.
-+
-+        properties:
-+          endpoint:
-+            $ref: /schemas/media/video-interfaces.yaml#
-+            unevaluatedProperties: false
-+
-+            properties:
-+              clock-lanes:
-+                maxItems: 1
-+
-+              data-lanes:
-+                minItems: 1
-+                maxItems: 4
-+
-+            required:
-+              - clock-lanes
-+              - data-lanes
-+
-+      port@b:
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        unevaluatedProperties: false
-+        description:
-+          Output port node, single endpoint describing the CSI-2 transmitter TXB.
-+
-+        properties:
-+          endpoint:
-+            $ref: /schemas/media/video-interfaces.yaml#
-+            unevaluatedProperties: false
-+
-+            properties:
-+              clock-lanes:
-+                maxItems: 1
-+
-+              data-lanes:
-+                maxItems: 1
-+
-+            required:
-+              - clock-lanes
-+              - data-lanes
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: adi,adv7481
-+    then:
-+      properties:
-+        interrupts:
-+          minItems: 1
-+          maxItems: 3
-+
-+        interrupt-names:
-+          minItems: 1
-+          items:
-+            - enum: [ intrq1, intrq2, intrq3 ]
-+            - enum: [ intrq1, intrq2, intrq3 ]
-+            - enum: [ intrq1, intrq2, intrq3 ]
-+    else:
-+      properties:
-+        interrupts:
-+          minItems: 1
-+          maxItems: 2
-+
-+        interrupt-names:
-+          minItems: 1
-+          items:
-+            - enum: [ intrq1, intrq2 ]
-+            - enum: [ intrq1, intrq2 ]
-+
-+additionalProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - ports
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        video-receiver@70 {
-+            compatible = "adi,adv7482";
-+            reg = <0x70 0x71 0x72 0x73 0x74 0x75 0x60 0x61 0x62 0x63 0x64 0x65>;
-+            reg-names = "main", "dpll", "cp", "hdmi", "edid", "repeater",
-+                        "infoframe", "cbus", "cec", "sdp", "txa", "txb";
-+
-+            interrupt-parent = <&gpio6>;
-+            interrupts = <30 IRQ_TYPE_LEVEL_LOW>, <31 IRQ_TYPE_LEVEL_LOW>;
-+            interrupt-names = "intrq1", "intrq2";
-+
-+            ports {
-+                #address-cells = <1>;
-+                #size-cells = <0>;
-+
-+                port@7 {
-+                    reg = <7>;
-+
-+                    adv7482_ain7: endpoint {
-+                        remote-endpoint = <&cvbs_in>;
-+                    };
-+                };
-+
-+                port@8 {
-+                    reg = <8>;
-+
-+                    adv7482_hdmi: endpoint {
-+                        remote-endpoint = <&hdmi_in>;
-+                    };
-+                };
-+
-+                port@a {
-+                    reg = <10>;
-+
-+                    adv7482_txa: endpoint {
-+                        clock-lanes = <0>;
-+                        data-lanes = <1 2 3 4>;
-+                        remote-endpoint = <&csi40_in>;
-+                    };
-+                };
-+
-+                port@b {
-+                    reg = <11>;
-+
-+                    adv7482_txb: endpoint {
-+                        clock-lanes = <0>;
-+                        data-lanes = <1>;
-+                        remote-endpoint = <&csi20_in>;
-+                    };
-+                };
-+            };
-+        };
-+    };
--- 
-2.33.0
+>=20
+> BTW are you seeing 0 / ffff with good or bad checksums? If the device doe=
+s
+> a checksum over the IP pseudo-header + TCP only - 0 and ffff would be
+> correct for a packet with has a valid checksum. But you can't set it to
+> skb->csum and use CSUM_COMPLETE, you'd need to do something like:
+>=20
+> if (dev_csum =3D=3D 0 || dev_csum =3D=3D 0xffff)
+> 	skb->ip_summed =3D CHECKSUM_UNNECESSARY;
 
+Yes, it computes IPv4 header checksum and TCP/UDP/ICMP checksum.
+
+It will set to 0x0 for both csums, if there is no error.
+
+For IPV6, ipv4 header checksum is always set to 0xffff and 0 for TCP/UDP/IC=
+MP checksum.
+
+Ok I will use this logic on next RFC.
+
+Regards,
+Biju
