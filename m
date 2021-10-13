@@ -2,82 +2,101 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE4CC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Oct 2021 10:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E70BC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Oct 2021 12:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 63F106023E
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Oct 2021 10:37:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2BCD60E09
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 13 Oct 2021 12:24:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229715AbhJMKjP (ORCPT
+        id S232528AbhJMM0z (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 13 Oct 2021 06:39:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51954 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230181AbhJMKjO (ORCPT
+        Wed, 13 Oct 2021 08:26:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34330 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S230196AbhJMM0z (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 13 Oct 2021 06:39:14 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70A10C061746
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 13 Oct 2021 03:37:04 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:9c93:91ff:d58:ecfb])
-        by xavier.telenet-ops.be with bizsmtp
-        id 5Nd22600E0KW32a01Nd22Q; Wed, 13 Oct 2021 12:37:02 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mabMh-004XwN-5I; Wed, 13 Oct 2021 12:20:03 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1maa86-002spN-0O; Wed, 13 Oct 2021 11:00:54 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/LOCAL 2/4] arm64: renesas: defconfig: Refresh for v5.15-rc5
-Date:   Wed, 13 Oct 2021 11:00:43 +0200
-Message-Id: <050b89432129bc2816c6e1ea4419aabebf7c9488.1634115568.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <fa758f27d9153ae3d8d92d7452bce9aa881327c7.1634115568.git.geert+renesas@glider.be>
-References: <fa758f27d9153ae3d8d92d7452bce9aa881327c7.1634115568.git.geert+renesas@glider.be>
+        Wed, 13 Oct 2021 08:26:55 -0400
+Received: by mail.kernel.org (Postfix) with ESMTPSA id 9AF6A60F23;
+        Wed, 13 Oct 2021 12:24:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+        s=korg; t=1634127892;
+        bh=4s6wU6xVKQAR878cEXhPsqNrnWGlU/+dyX5KTUREZ18=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S4umREiHN43ck0bJtS5IRQc0Hf0stWqeWleSpMWn3iSIeP/bdGO8xsT0+JWIxLs+N
+         z7t0n7C+46wOreMyY5MtU9w9c1d+JcnbAnT6YWDcQQr6BtwS4UJZEPBRKt6KlwFZfz
+         T++70qYJgZK6yVJod1zvCaGaTM2uPd56fvopHfeg=
+Date:   Wed, 13 Oct 2021 14:24:49 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Christian Gromm <christian.gromm@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        linux-staging@lists.linux.dev, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 23/28] staging: most: dim2: use device tree
+Message-ID: <YWbQEQBYTrfmzq4N@kroah.com>
+References: <1525772716-15742-1-git-send-email-christian.gromm@microchip.com>
+ <1525772716-15742-24-git-send-email-christian.gromm@microchip.com>
+ <alpine.DEB.2.22.394.2110121749450.1045463@ramsan.of.borg>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.22.394.2110121749450.1045463@ramsan.of.borg>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Refresh the defconfig for Renesas R-Car Gen3 and RZ/G2 systems:
-  - Move CONFIG_DMIID (moved in commit 951cd3a0866d29cb ("firmware:
-    include drivers/firmware/Kconfig unconditionally")),
+On Tue, Oct 12, 2021 at 08:14:14PM +0200, Geert Uytterhoeven wrote:
+> 	Hi Christian, Greg,
+> 
+> CC devicetree, linux-renesas-soc
+> 
+> On Tue, 8 May 2018, Christian Gromm wrote:
+> > This patch removes the dependency to platform specific source files
+> > that do platform specific initialization and supply the IRQ number.
+> > Instead DT code is added
+> > 
+> > Signed-off-by: Christian Gromm <christian.gromm@microchip.com>
+> 
+> This patch bypassed review by the DT people, and ended up in v4.18 as
+> commit 21e57ff086056c01 ("staging: most: dim2: use device tree").
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-Not intended for upstream merge.
-To be applied to the topic/renesas-defconfig branch.
----
- arch/arm64/configs/renesas_defconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yeah, staging-only dt changes are not usually run by the dt maintainers.
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 829d459a2e1067fc..71fb5acd98b1ff5e 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -62,7 +62,6 @@ CONFIG_CPU_IDLE=y
- CONFIG_ARM_CPUIDLE=y
- CONFIG_CPU_FREQ=y
- CONFIG_CPUFREQ_DT=y
--# CONFIG_DMIID is not set
- CONFIG_VIRTUALIZATION=y
- CONFIG_KVM=y
- CONFIG_ARM64_CRYPTO=y
-@@ -111,6 +110,7 @@ CONFIG_PCI_ENDPOINT_CONFIGFS=y
- CONFIG_PCI_EPF_TEST=y
- CONFIG_DEVTMPFS=y
- CONFIG_DEVTMPFS_MOUNT=y
-+# CONFIG_DMIID is not set
- CONFIG_MTD=y
- CONFIG_MTD_BLOCK=y
- CONFIG_MTD_SPI_NOR=y
--- 
-2.25.1
+> 
+> > --- a/drivers/staging/most/dim2/dim2.c
+> > +++ b/drivers/staging/most/dim2/dim2.c
+> > +static const struct of_device_id dim2_of_match[] = {
+> > +	{
+> > +		.compatible = "fsl,imx6q-mlb150",
+> > +		.data = plat_data + FSL_MX6
+> > +	},
+> > +	{
+> > +		.compatible = "renesas,mlp",
+> > +		.data = plat_data + RCAR_H2
+> > +	},
+> > +	{
+> > +		.compatible = "rcar,medialb-dim2",
+> > +		.data = plat_data + RCAR_M3
+> > +	},
+> > +	{
+> > +		.compatible = "xlnx,axi4-os62420_3pin-1.00.a",
+> > +	},
+> > +	{
+> > +		.compatible = "xlnx,axi4-os62420_6pin-1.00.a",
+> > +	},
+> > +	{},
+> > };
+> 
+> There are no documented DT bindings for this hardware block, nor any
+> upstream example users.  Given some compatible values do not follow
+> standard practises (no idea about the other parts), it's very likely
+> these de facto bindings, and all their out-of-tree users, will have to
+> be changed.
 
+Great, fix the bindings and anything in-kernel here please.  We don't
+care about out-of-kernel stuff for drivers/staging/ at all.
+
+thanks,
+
+greg k-h
