@@ -2,228 +2,188 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2CEC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Oct 2021 10:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7294FC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Oct 2021 10:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64F0C610D0
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Oct 2021 10:39:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D87C60E09
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 14 Oct 2021 10:48:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230051AbhJNKlE (ORCPT
+        id S230288AbhJNKuG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 14 Oct 2021 06:41:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43332 "EHLO
+        Thu, 14 Oct 2021 06:50:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230030AbhJNKlD (ORCPT
+        with ESMTP id S230272AbhJNKuE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 14 Oct 2021 06:41:03 -0400
-Received: from mail-wr1-x42b.google.com (mail-wr1-x42b.google.com [IPv6:2a00:1450:4864:20::42b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7811C061760
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Oct 2021 03:38:58 -0700 (PDT)
-Received: by mail-wr1-x42b.google.com with SMTP id r7so18002349wrc.10
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Oct 2021 03:38:58 -0700 (PDT)
+        Thu, 14 Oct 2021 06:50:04 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F150AC06174E
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Oct 2021 03:47:59 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id j21so25373909lfe.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Oct 2021 03:47:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=07iRWTZVZdrUxqZfrZILFjejxL1y2USdMgVVO3Jzdkg=;
-        b=WNjMWJz1uGBgYQdFTguy9oLGV3OiQRH0epycml2BHF6rklVaRI+UKes3NafWspVf8I
-         mSo+yKGcE06YzQIIFhXn1S61wpMt9ae3JAxYzkVX0dwJW5AYpldN44xiiKWT9eOLHChj
-         Y2jkQJU5Cpt30AC24lgTxmW2DJWuDyb0PcdcV5WPauctTRDv0G8/QRPVhevVs1HLcihs
-         AMiLNGIDPZGJZHIvsIRPRWhfvTtuczboCd7DYIagvztcUUycYcmFEitM1JOJyEK8tg+t
-         dGLZluQLVHmqX3a71blzn+BVw3VZlsqMVUdQSOwd3cTQvcUDPmXHkp4GN0DeB21qpZ1s
-         hVnQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Y5SU88VxmkbI0mbNF2Xaeysw2Rm83gIlpNsXvM/RlQ0=;
+        b=4RgwXXXSWg3C2mppMJSND+KOR94oio05+Xw63mT7iar0p7GhNdHyDkT/Lozhx5izV2
+         UzmxuboW6Rk3kCgQWDR2EGckgx8pVIxL8wBbky1TRC1Cw9CefYgON7p8aX4/SG+wqSWQ
+         RT6D5W8HEJVxoAdgA0/o25eP2+uGpob+EIMlgtQhO+wY3acAnf0wN1K2mA5EO+a6AD/B
+         zHUTZbAnFCnMVov1FsUWbUmBEi98Wij7diWFlsOPMN9sZa/YupuWKzoG2Gi/vSEQYBvN
+         ezTEJvpQvPnQ2geBDtH9OZ0YMqIpClHnHD9YY6ps/Gc1bACqd4k6czH5ongLS8qQz1ke
+         aQ5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=07iRWTZVZdrUxqZfrZILFjejxL1y2USdMgVVO3Jzdkg=;
-        b=P4GUFHFAnI7Hj7Oi1FhDIb7ivyHxtArngntMIflHDbuBPNJPnx16sbbImDsy7HxLTq
-         GNx7ignSakl+JgXJZdiMWC1AI9ibTNVv+Wg/+J5YxbCnKIckIgU2m8YLxfJehl9SqJHa
-         aDEabItCJ68CujyFRJSXCabnrTMTJ4/2VSFwPluajduSQkdA1rs4Fsh7qiTJD2HhVcR4
-         9C+vscYYeg+0SAi9wPDBLZeldnCbyAuPE7FFawRQ2yYATOcRRVP0dr8JKDgwT6ZkTA7N
-         1YQtpNTiAg33ivIoABijdBkeBuyjUajqqo9Wreiy8FeNGvOQWdMW6l8G05T5lDISLKl3
-         IbYA==
-X-Gm-Message-State: AOAM5333TheEnNaSZmFOxT/T38ZJIR4pXFepA6W+M2IsOtTgRru8q1rD
-        BDBEHyDAEm67nHNzYVBKbTIsBw==
-X-Google-Smtp-Source: ABdhPJy0rJpJUgPSYk0qdWZzji7ewITW0C+cIsRVMhxOutUD2a2opy82iULOtj+S15pJ9lkf6uderg==
-X-Received: by 2002:a05:600c:4e94:: with SMTP id f20mr4995584wmq.166.1634207937303;
-        Thu, 14 Oct 2021 03:38:57 -0700 (PDT)
-Received: from bismarck.berto.se (p54ac5892.dip0.t-ipconnect.de. [84.172.88.146])
-        by smtp.googlemail.com with ESMTPSA id f6sm1744976wmj.28.2021.10.14.03.38.56
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Y5SU88VxmkbI0mbNF2Xaeysw2Rm83gIlpNsXvM/RlQ0=;
+        b=3uDG014mbgcXFPGwGQPQZoPp8130sZpM6MVKqqz0HLMLROZep0xx/owcDYb2VcbJvM
+         rSPJxhiKc0RRlAXaIoZQS5Vf2fL83im9AFLuwUQ1BTS62Wen0t65p83X0MEe6r7dygPw
+         NxS4VZfD89CwH0oJ+Fda5FK7ZJU9V7WDt1uVbKCL2tcVSzmfxiziHN8lFwBYI3g1L3cQ
+         GrYnq3zzxBhUuPQLr5fpSSXvZKFG0mYDg5cNap+Kx/PtChLO+cFu9N3IDwgglRzt8bHq
+         J4yHo1MeDKtIk1mr5al6QXk4x9dlvDkVnHeuMGZDTzHu2UBoIwDexBnJrZtpESc6Sh6/
+         KumA==
+X-Gm-Message-State: AOAM5339A8NQoiGqFGVbZflqsaAjXpLOWNvDrxFAdZka65KpLlcwZRTi
+        RK+mTdu/+TQd7jRV9xDYgKYVEg==
+X-Google-Smtp-Source: ABdhPJzcdE5baOuW79vInqMNEd95GdH46CZDxL0qynIX10cSbctJtc/a9FLLrvy1gtxkc5/UmSGp6Q==
+X-Received: by 2002:ac2:5a0c:: with SMTP id q12mr4440494lfn.133.1634208478334;
+        Thu, 14 Oct 2021 03:47:58 -0700 (PDT)
+Received: from localhost (h-46-59-88-219.A463.priv.bahnhof.se. [46.59.88.219])
+        by smtp.gmail.com with ESMTPSA id x1sm195759lfr.83.2021.10.14.03.47.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Oct 2021 03:38:57 -0700 (PDT)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        Thu, 14 Oct 2021 03:47:57 -0700 (PDT)
+Date:   Thu, 14 Oct 2021 12:47:57 +0200
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-pm@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/2] thermal: rcar_gen3_thermal: Store thcode and ptat in priv data
-Date:   Thu, 14 Oct 2021 12:38:15 +0200
-Message-Id: <20211014103816.1939782-2-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20211014103816.1939782-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20211014103816.1939782-1-niklas.soderlund+renesas@ragnatech.se>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: adv748x: Convert bindings to json-schema
+Message-ID: <YWgK3c+8wHWw8IYM@oden.dyn.berto.se>
+References: <20211012183324.717975-1-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdX8LzmksfB85iSMX4+RYq=SYTamw5C3GNgbAV+9f1uAyQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdX8LzmksfB85iSMX4+RYq=SYTamw5C3GNgbAV+9f1uAyQ@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Prepare for reading the THCODE and PTAT values from hardware fuses by
-storing the values used during calculations in the drivers private
-data structures.
+Hi Geert,
 
-As the values are now stored directly in the private data structures
-there is no need to keep track of the TSC channel id as its only usage
-was to lookup the THCODE row, drop it.
+Thanks for your review.
 
-Signed-off-by: Niklas SÃ¶derlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-* Changes since v1
-- Collect tags.
+On 2021-10-13 17:08:44 +0200, Geert Uytterhoeven wrote:
+> Hi Niklas,
+> 
+> Thanks for your patch!
+> 
+> On Tue, Oct 12, 2021 at 8:48 PM Niklas Söderlund
+> <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > Convert ADV748X analog video decoder documentation to json-schema.
+> 
+> You may want to list what changes you made:
+>   - Add missing ports subnode
+>   - Anything else I didn't notice? ;-)
 
-* Changes since RFT
-- Keep thcodes array static.
----
- drivers/thermal/rcar_gen3_thermal.c | 51 ++++++++++++++++-------------
- 1 file changed, 28 insertions(+), 23 deletions(-)
+Wops, I intended to mention the addition of ports node. Thanks for 
+noticing, will send a v2.
 
-diff --git a/drivers/thermal/rcar_gen3_thermal.c b/drivers/thermal/rcar_gen3_thermal.c
-index 85228d308dd35b19..7d7e6ebe837a83af 100644
---- a/drivers/thermal/rcar_gen3_thermal.c
-+++ b/drivers/thermal/rcar_gen3_thermal.c
-@@ -62,15 +62,6 @@
- 
- #define TSC_MAX_NUM	5
- 
--/* default THCODE values if FUSEs are missing */
--static const int thcodes[TSC_MAX_NUM][3] = {
--	{ 3397, 2800, 2221 },
--	{ 3393, 2795, 2216 },
--	{ 3389, 2805, 2237 },
--	{ 3415, 2694, 2195 },
--	{ 3356, 2724, 2244 },
--};
--
- /* Structure for thermal temperature calculation */
- struct equation_coefs {
- 	int a1;
-@@ -84,13 +75,14 @@ struct rcar_gen3_thermal_tsc {
- 	struct thermal_zone_device *zone;
- 	struct equation_coefs coef;
- 	int tj_t;
--	unsigned int id; /* thermal channel id */
-+	int thcode[3];
- };
- 
- struct rcar_gen3_thermal_priv {
- 	struct rcar_gen3_thermal_tsc *tscs[TSC_MAX_NUM];
- 	unsigned int num_tscs;
- 	void (*thermal_init)(struct rcar_gen3_thermal_tsc *tsc);
-+	int ptat[3];
- };
- 
- static inline u32 rcar_gen3_thermal_read(struct rcar_gen3_thermal_tsc *tsc,
-@@ -133,8 +125,8 @@ static inline void rcar_gen3_thermal_write(struct rcar_gen3_thermal_tsc *tsc,
- /* no idea where these constants come from */
- #define TJ_3 -41
- 
--static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_tsc *tsc,
--					 int *ptat, const int *thcode,
-+static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_priv *priv,
-+					 struct rcar_gen3_thermal_tsc *tsc,
- 					 int ths_tj_1)
- {
- 	/* TODO: Find documentation and document constant calculation formula */
-@@ -143,16 +135,16 @@ static void rcar_gen3_thermal_calc_coefs(struct rcar_gen3_thermal_tsc *tsc,
- 	 * Division is not scaled in BSP and if scaled it might overflow
- 	 * the dividend (4095 * 4095 << 14 > INT_MAX) so keep it unscaled
- 	 */
--	tsc->tj_t = (FIXPT_INT((ptat[1] - ptat[2]) * (ths_tj_1 - TJ_3))
--		     / (ptat[0] - ptat[2])) + FIXPT_INT(TJ_3);
-+	tsc->tj_t = (FIXPT_INT((priv->ptat[1] - priv->ptat[2]) * (ths_tj_1 - TJ_3))
-+		     / (priv->ptat[0] - priv->ptat[2])) + FIXPT_INT(TJ_3);
- 
--	tsc->coef.a1 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[2]),
-+	tsc->coef.a1 = FIXPT_DIV(FIXPT_INT(tsc->thcode[1] - tsc->thcode[2]),
- 				 tsc->tj_t - FIXPT_INT(TJ_3));
--	tsc->coef.b1 = FIXPT_INT(thcode[2]) - tsc->coef.a1 * TJ_3;
-+	tsc->coef.b1 = FIXPT_INT(tsc->thcode[2]) - tsc->coef.a1 * TJ_3;
- 
--	tsc->coef.a2 = FIXPT_DIV(FIXPT_INT(thcode[1] - thcode[0]),
-+	tsc->coef.a2 = FIXPT_DIV(FIXPT_INT(tsc->thcode[1] - tsc->thcode[0]),
- 				 tsc->tj_t - FIXPT_INT(ths_tj_1));
--	tsc->coef.b2 = FIXPT_INT(thcode[0]) - tsc->coef.a2 * ths_tj_1;
-+	tsc->coef.b2 = FIXPT_INT(tsc->thcode[0]) - tsc->coef.a2 * ths_tj_1;
- }
- 
- static int rcar_gen3_thermal_round(int temp)
-@@ -174,7 +166,7 @@ static int rcar_gen3_thermal_get_temp(void *devdata, int *temp)
- 	/* Read register and convert to mili Celsius */
- 	reg = rcar_gen3_thermal_read(tsc, REG_GEN3_TEMP) & CTEMP_MASK;
- 
--	if (reg <= thcodes[tsc->id][1])
-+	if (reg <= tsc->thcode[1])
- 		val = FIXPT_DIV(FIXPT_INT(reg) - tsc->coef.b1,
- 				tsc->coef.a1);
- 	else
-@@ -401,9 +393,15 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	unsigned int i;
- 	int ret;
- 
--	/* default values if FUSEs are missing */
-+	/* Default THCODE values in case FUSEs are not set. */
- 	/* TODO: Read values from hardware on supported platforms */
--	int ptat[3] = { 2631, 1509, 435 };
-+	static const int thcodes[TSC_MAX_NUM][3] = {
-+		{ 3397, 2800, 2221 },
-+		{ 3393, 2795, 2216 },
-+		{ 3389, 2805, 2237 },
-+		{ 3415, 2694, 2195 },
-+		{ 3356, 2724, 2244 },
-+	};
- 
- 	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
- 	if (!priv)
-@@ -413,6 +411,10 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 	if (soc_device_match(r8a7795es1))
- 		priv->thermal_init = rcar_gen3_thermal_init_r8a7795es1;
- 
-+	priv->ptat[0] = 2631;
-+	priv->ptat[1] = 1509;
-+	priv->ptat[2] = 435;
-+
- 	platform_set_drvdata(pdev, priv);
- 
- 	if (rcar_gen3_thermal_request_irqs(priv, pdev))
-@@ -439,7 +441,10 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 			ret = PTR_ERR(tsc->base);
- 			goto error_unregister;
- 		}
--		tsc->id = i;
-+
-+		tsc->thcode[0] = thcodes[i][0];
-+		tsc->thcode[1] = thcodes[i][1];
-+		tsc->thcode[2] = thcodes[i][2];
- 
- 		priv->tscs[i] = tsc;
- 
-@@ -453,7 +458,7 @@ static int rcar_gen3_thermal_probe(struct platform_device *pdev)
- 		tsc->zone = zone;
- 
- 		priv->thermal_init(tsc);
--		rcar_gen3_thermal_calc_coefs(tsc, ptat, thcodes[i], *ths_tj_1);
-+		rcar_gen3_thermal_calc_coefs(priv, tsc, *ths_tj_1);
- 
- 		tsc->zone->tzp->no_hwmon = false;
- 		ret = thermal_add_hwmon_sysfs(tsc->zone);
+> 
+> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+> 
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/i2c/adv748x.yaml
+> 
+> > +  reg-names:
+> > +    minItems: 1
+> > +    items:
+> > +      - const: main
+> > +      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
+> > +      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
+> > +      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
+> > +      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
+> > +      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
+> > +      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
+> > +      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
+> > +      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
+> > +      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
+> > +      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
+> > +      - enum: [ dpll, cp, hdmi, edid, repeater, infoframe, cbus, cec, sdp, txa, txb ]
+> 
+> They can really appear in any order?
+
+Yes they are refereed by i2c_new_ancillary_device() so any order is 
+fine. They can only appear once tho, but I'm not sure how to enforce 
+that.
+
+> 
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: adi,adv7481
+> > +    then:
+> > +      properties:
+> > +        interrupts:
+> > +          minItems: 1
+> > +          maxItems: 3
+> > +
+> > +        interrupt-names:
+> > +          minItems: 1
+> > +          items:
+> > +            - enum: [ intrq1, intrq2, intrq3 ]
+> > +            - enum: [ intrq1, intrq2, intrq3 ]
+> > +            - enum: [ intrq1, intrq2, intrq3 ]
+> 
+> They can really appear in any order?
+
+Yes, as not all interrupt lines may be wired up. It would be nice to 
+enforce that intrq2 must come before intrq3 if both are wired but I'm 
+not sure how to express that.
+
+> 
+> > +    else:
+> > +      properties:
+> > +        interrupts:
+> > +          minItems: 1
+> > +          maxItems: 2
+> > +
+> > +        interrupt-names:
+> > +          minItems: 1
+> > +          items:
+> > +            - enum: [ intrq1, intrq2 ]
+> > +            - enum: [ intrq1, intrq2 ]
+> 
+> They can really appear in any order?
+> 
+> If not, you can merge the entries, and just override maxItems.
+> 
+> The rest looks good to me, but I'm no graph expert.
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Thanks!
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
+
 -- 
-2.33.0
-
+Regards,
+Niklas Söderlund
