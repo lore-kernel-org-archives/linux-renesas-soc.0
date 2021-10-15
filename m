@@ -2,388 +2,189 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9289C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Oct 2021 04:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B76C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Oct 2021 07:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B1F09611C2
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Oct 2021 04:59:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 485CC61181
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 15 Oct 2021 07:53:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235320AbhJOFBK (ORCPT
+        id S236315AbhJOHzk (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 15 Oct 2021 01:01:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37590 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230186AbhJOFBK (ORCPT
+        Fri, 15 Oct 2021 03:55:40 -0400
+Received: from mga01.intel.com ([192.55.52.88]:23391 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S236272AbhJOHzd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 15 Oct 2021 01:01:10 -0400
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5034CC061570
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Oct 2021 21:59:04 -0700 (PDT)
-Received: by mail-pf1-x42e.google.com with SMTP id c29so7402962pfp.2
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 14 Oct 2021 21:59:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=B2Z5LQQ5hoayXnW7xZp+5rvES2HTOqrtQRljKKRI/KE=;
-        b=pw0xxNVfpcddAFEIyajp2XNTzp83pV/Kl13yXHBVSCmeIAxuTJv2ZQi0BllTmWsiQ4
-         xCZYSu0VRuo+XRdO0JlsE1umWTKpAs3PiMEQIAYZH1S4vivFhH4jVkyv0iDi9DHBxD3i
-         k5HyXCzdzpHLJQCXen+2kAI7pxEq/AKOf0FsFuMJ+PZeQ1P4fwFsh5buOEH15Tio0zcs
-         zhc/+UFbsyBeSPSflU51lisqqrr6ZL+rprogv58zxvrFK7IkTQtX0aMN80uT7hHCiuaU
-         H6eGM6MdmImpXYti4V+PVroxeVN3CpDdas/aHt3jRkzWFIQG38animdOiRc+11iAAuUM
-         w8RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=B2Z5LQQ5hoayXnW7xZp+5rvES2HTOqrtQRljKKRI/KE=;
-        b=LVAftC1jD2wzkxcz9A132DcxSP5bAH6W16kZ+nTso7boBmsmDXLRpcjVrBUQw+CVgC
-         gurZGJK5CyMDsUD8V5Z5DhoHJiiLAGySHhxnTdzsikbHhBcFn2V3ASfJFDcCKSImqtx8
-         shnH+dfd6RJbM1ZQFDBEowQKjytytI4iDU9ioS9X7/tsvzPg+F/dK2yjQS8+Pyn7g9RS
-         5ylwJf5dk8SriDXpPsufGAp5/kILqc3zlOAdkLLe3MJbDDkTE18t1biHG2sO8z6qaLv5
-         bVS2YBzu26/t+sqzoDBt82F7BiNpXdMftiCME7HDwM33ASZ9g3xvnDpDfZNURdRdQ4A8
-         a+6w==
-X-Gm-Message-State: AOAM530SarNafyUvFbF840IsBH+fSOApJrZ0sKqnduMnND0t8NdF8Gir
-        ifjdQ3VvKqDFvTaeICkHy0JGGzPXowDBY0M+
-X-Google-Smtp-Source: ABdhPJxt9ADXAI54U+34CtR1R//vZlADr2QLGfhGx8TltmzckIHMAD342rhnvGoMd6MG28D6nzkPuw==
-X-Received: by 2002:a63:b34e:: with SMTP id x14mr7312519pgt.423.1634273942975;
-        Thu, 14 Oct 2021 21:59:02 -0700 (PDT)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id b134sm3698509pga.3.2021.10.14.21.59.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Oct 2021 21:59:02 -0700 (PDT)
-Message-ID: <61690a96.1c69fb81.1be51.c4b4@mx.google.com>
-Date:   Thu, 14 Oct 2021 21:59:02 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 15 Oct 2021 03:55:33 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10137"; a="251315995"
+X-IronPort-AV: E=Sophos;i="5.85,375,1624345200"; 
+   d="scan'208";a="251315995"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Oct 2021 00:53:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.85,375,1624345200"; 
+   d="scan'208";a="442446224"
+Received: from lkp-server02.sh.intel.com (HELO 08b2c502c3de) ([10.239.97.151])
+  by orsmga006.jf.intel.com with ESMTP; 15 Oct 2021 00:53:22 -0700
+Received: from kbuild by 08b2c502c3de with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mbI1p-0007TI-KG; Fri, 15 Oct 2021 07:53:21 +0000
+Date:   Fri, 15 Oct 2021 15:53:15 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:next] BUILD SUCCESS
+ f9d9ae67a71d1c68b9961af72940aae2685f838b
+Message-ID: <6169336b.DbNKH7vAmZfCSY6r%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: next
-X-Kernelci-Tree: renesas
-X-Kernelci-Kernel: renesas-next-2021-10-14-v5.15-rc1
-X-Kernelci-Report-Type: test
-Subject: renesas/next baseline: 134 runs,
- 8 regressions (renesas-next-2021-10-14-v5.15-rc1)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/next baseline: 134 runs, 8 regressions (renesas-next-2021-10-14-v5.=
-15-rc1)
-
-Regressions Summary
--------------------
-
-platform              | arch  | lab          | compiler | defconfig        =
-            | regressions
-----------------------+-------+--------------+----------+------------------=
-------------+------------
-beagle-xm             | arm   | lab-baylibre | gcc-8    | multi_v7_defconfi=
-g+ima       | 1          =
-
-beagle-xm             | arm   | lab-baylibre | gcc-8    | omap2plus_defconf=
-ig          | 2          =
-
-imx6q-sabresd         | arm   | lab-nxp      | gcc-8    | imx_v6_v7_defconf=
-ig          | 1          =
-
-meson-gxm-khadas-vim2 | arm64 | lab-baylibre | gcc-8    | defconfig+CON...B=
-IG_ENDIAN=3Dy | 1          =
-
-qemu_arm-versatilepb  | arm   | lab-baylibre | gcc-8    | versatile_defconf=
-ig          | 1          =
-
-qemu_arm-versatilepb  | arm   | lab-broonie  | gcc-8    | versatile_defconf=
-ig          | 1          =
-
-qemu_arm-versatilepb  | arm   | lab-cip      | gcc-8    | versatile_defconf=
-ig          | 1          =
-
-
-  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
-s-next-2021-10-14-v5.15-rc1/plan/baseline/
-
-  Test:     baseline
-  Tree:     renesas
-  Branch:   next
-  Describe: renesas-next-2021-10-14-v5.15-rc1
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      f9d9ae67a71d1c68b9961af72940aae2685f838b =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform              | arch  | lab          | compiler | defconfig        =
-            | regressions
-----------------------+-------+--------------+----------+------------------=
-------------+------------
-beagle-xm             | arm   | lab-baylibre | gcc-8    | multi_v7_defconfi=
-g+ima       | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6168ce2b5398d40158335900
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig+ima
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/multi_v7_defconfig+ima/gcc-8/lab-baylibre/baseline-bea=
-gle-xm.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/multi_v7_defconfig+ima/gcc-8/lab-baylibre/baseline-bea=
-gle-xm.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6168ce2b5398d40158335=
-901
-        failing since 79 days (last pass: renesas-next-2021-07-26-v5.14-rc1=
-, first fail: renesas-next-2021-07-27-v5.14-rc1) =
-
- =
-
-
-
-platform              | arch  | lab          | compiler | defconfig        =
-            | regressions
-----------------------+-------+--------------+----------+------------------=
-------------+------------
-beagle-xm             | arm   | lab-baylibre | gcc-8    | omap2plus_defconf=
-ig          | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6168cdb34f0a3e5c293358e1
-
-  Results:     3 PASS, 2 FAIL, 1 SKIP
-  Full config: omap2plus_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/omap2plus_defconfig/gcc-8/lab-baylibre/baseline-beagle=
--xm.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/omap2plus_defconfig/gcc-8/lab-baylibre/baseline-beagle=
--xm.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/6168cdb34f0a3e5=
-c293358e5
-        new failure (last pass: renesas-next-2021-10-11-v5.15-rc1)
-        13 lines
-
-    2021-10-15T00:39:03.927827  <8>[   48.826354] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dcrit RESULT=3Dpass UNITS=3Dlines MEASUREMENT=3D0>
-    2021-10-15T00:39:03.966701  kern  :alert : Register r0 information: NUL=
-L pointer
-    2021-10-15T00:39:03.971634  kern  :alert : Register r1 information: non=
--paged memory
-    2021-10-15T00:39:03.976977  kern  :alert : Register r2 information: non=
--paged memory
-    2021-10-15T00:39:03.981884  kern  :alert : Register r3 information: non=
--paged memory   =
-
-
-  * baseline.dmesg.emerg: https://kernelci.org/test/case/id/6168cdb34f0a3e5=
-c293358e6
-        new failure (last pass: renesas-next-2021-10-11-v5.15-rc1)
-        15 lines
-
-    2021-10-15T00:39:03.992845  kern  :alert : R<8>[   48.885589] <LAVA_SIG=
-NAL_TESTCASE TEST_CASE_ID=3Dalert RESULT=3Dfail UNITS=3Dlines MEASUREMENT=
-=3D13>
-    2021-10-15T00:39:03.996526  egister r4 information: non-slab/vmalloc me=
-mory
-    2021-10-15T00:39:04.004106  kern  :alert : Register r5 information: sla=
-b task_struct start c40290c0 pointer offset 0
-    2021-10-15T00:39:04.008982  kern  :alert : Register r6 information: NUL=
-L pointer
-    2021-10-15T00:39:04.014721  kern  :alert : Register r7 information: non=
--slab/vmalloc memory
-    2021-10-15T00:39:04.020422  kern  :alert : Register r8 information: non=
--slab/vmalloc memory
-    2021-10-15T00:39:04.025038  kern  :alert : Register r9 information: NUL=
-L pointer
-    2021-10-15T00:39:04.030947  kern  :alert : Register r10 information: no=
-n-slab/vmalloc memory
-    2021-10-15T00:39:04.036722  kern  :alert : Register r11 information: no=
-n-slab/vmalloc memory
-    2021-10-15T00:39:04.042468  kern  :alert : Register r12 information: no=
-n-slab/vmalloc memory =
-
-    ... (1 line(s) more)  =
-
- =
-
-
-
-platform              | arch  | lab          | compiler | defconfig        =
-            | regressions
-----------------------+-------+--------------+----------+------------------=
-------------+------------
-imx6q-sabresd         | arm   | lab-nxp      | gcc-8    | imx_v6_v7_defconf=
-ig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6168cbe53c77aaa4573358dc
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: imx_v6_v7_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/imx_v6_v7_defconfig/gcc-8/lab-nxp/baseline-imx6q-sabre=
-sd.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/imx_v6_v7_defconfig/gcc-8/lab-nxp/baseline-imx6q-sabre=
-sd.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6168cbe53c77aaa457335=
-8dd
-        failing since 282 days (last pass: renesas-next-2020-11-30-v5.10-rc=
-1, first fail: renesas-next-2020-12-28-v5.11-rc1) =
-
- =
-
-
-
-platform              | arch  | lab          | compiler | defconfig        =
-            | regressions
-----------------------+-------+--------------+----------+------------------=
-------------+------------
-meson-gxm-khadas-vim2 | arm64 | lab-baylibre | gcc-8    | defconfig+CON...B=
-IG_ENDIAN=3Dy | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6168cde5f6fe4a4a55335902
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy
-  Compiler:    gcc-8 (aarch64-linux-gnu-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm64/defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy/gcc-8/lab-baylib=
-re/baseline-meson-gxm-khadas-vim2.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm64/defconfig+CONFIG_CPU_BIG_ENDIAN=3Dy/gcc-8/lab-baylib=
-re/baseline-meson-gxm-khadas-vim2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-6-g8983f3b738df/arm64be/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6168cde5f6fe4a4a55335=
-903
-        new failure (last pass: renesas-next-2021-10-11-v5.15-rc1) =
-
- =
-
-
-
-platform              | arch  | lab          | compiler | defconfig        =
-            | regressions
-----------------------+-------+--------------+----------+------------------=
-------------+------------
-qemu_arm-versatilepb  | arm   | lab-baylibre | gcc-8    | versatile_defconf=
-ig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6168c9246aff8e22043358dc
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: versatile_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/versatile_defconfig/gcc-8/lab-baylibre/baseline-qemu_a=
-rm-versatilepb.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/versatile_defconfig/gcc-8/lab-baylibre/baseline-qemu_a=
-rm-versatilepb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6168c9246aff8e2204335=
-8dd
-        failing since 325 days (last pass: renesas-next-2020-11-10-v5.10-rc=
-1, first fail: renesas-next-2020-11-23-v5.10-rc1) =
-
- =
-
-
-
-platform              | arch  | lab          | compiler | defconfig        =
-            | regressions
-----------------------+-------+--------------+----------+------------------=
-------------+------------
-qemu_arm-versatilepb  | arm   | lab-broonie  | gcc-8    | versatile_defconf=
-ig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6168c9e1328d15c0473358f7
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: versatile_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/versatile_defconfig/gcc-8/lab-broonie/baseline-qemu_ar=
-m-versatilepb.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/versatile_defconfig/gcc-8/lab-broonie/baseline-qemu_ar=
-m-versatilepb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6168c9e1328d15c047335=
-8f8
-        failing since 325 days (last pass: renesas-next-2020-11-10-v5.10-rc=
-1, first fail: renesas-next-2020-11-23-v5.10-rc1) =
-
- =
-
-
-
-platform              | arch  | lab          | compiler | defconfig        =
-            | regressions
-----------------------+-------+--------------+----------+------------------=
-------------+------------
-qemu_arm-versatilepb  | arm   | lab-cip      | gcc-8    | versatile_defconf=
-ig          | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/6168c98913fa6f99973358de
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: versatile_defconfig
-  Compiler:    gcc-8 (arm-linux-gnueabihf-gcc (Debian 8.3.0-2) 8.3.0)
-  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/versatile_defconfig/gcc-8/lab-cip/baseline-qemu_arm-ve=
-rsatilepb.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
--10-14-v5.15-rc1/arm/versatile_defconfig/gcc-8/lab-cip/baseline-qemu_arm-ve=
-rsatilepb.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
-.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/6168c98913fa6f9997335=
-8df
-        failing since 325 days (last pass: renesas-next-2020-11-10-v5.10-rc=
-1, first fail: renesas-next-2020-11-23-v5.10-rc1) =
-
- =20
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: f9d9ae67a71d1c68b9961af72940aae2685f838b  Merge branch 'renesas-arm-dt-for-v5.16' into renesas-next
+
+elapsed time: 1351m
+
+configs tested: 126
+configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+i386                 randconfig-c001-20211014
+sh                                  defconfig
+powerpc                 linkstation_defconfig
+powerpc                     mpc83xx_defconfig
+ia64                            zx1_defconfig
+sh                     sh7710voipgw_defconfig
+sh                          polaris_defconfig
+powerpc                     rainier_defconfig
+arm                             ezx_defconfig
+s390                             alldefconfig
+mips                 decstation_r4k_defconfig
+arm                          collie_defconfig
+s390                       zfcpdump_defconfig
+mips                        qi_lb60_defconfig
+arm                  colibri_pxa270_defconfig
+xtensa                         virt_defconfig
+mips                         bigsur_defconfig
+arc                              alldefconfig
+m68k                            q40_defconfig
+sh                        edosk7760_defconfig
+mips                malta_qemu_32r6_defconfig
+arm                         orion5x_defconfig
+m68k                             allyesconfig
+sh                          rsk7203_defconfig
+sparc                            allyesconfig
+mips                     loongson1c_defconfig
+arm                         lpc32xx_defconfig
+powerpc                     redwood_defconfig
+powerpc                    klondike_defconfig
+sh                          r7785rp_defconfig
+powerpc                      katmai_defconfig
+powerpc                     tqm8560_defconfig
+arm                         nhk8815_defconfig
+powerpc                         ps3_defconfig
+openrisc                  or1klitex_defconfig
+sh                          rsk7269_defconfig
+mips                          rm200_defconfig
+powerpc                     tqm8541_defconfig
+nios2                         3c120_defconfig
+mips                      fuloong2e_defconfig
+powerpc                   lite5200b_defconfig
+powerpc                        warp_defconfig
+openrisc                    or1ksim_defconfig
+m68k                          hp300_defconfig
+powerpc                      arches_defconfig
+riscv                          rv32_defconfig
+sh                        sh7757lcr_defconfig
+arm                  randconfig-c002-20211014
+x86_64               randconfig-c001-20211014
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                                defconfig
+m68k                             allmodconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+xtensa                           allyesconfig
+parisc                              defconfig
+s390                             allyesconfig
+s390                             allmodconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                               defconfig
+i386                                defconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                           allnoconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+x86_64               randconfig-a006-20211014
+x86_64               randconfig-a004-20211014
+x86_64               randconfig-a001-20211014
+x86_64               randconfig-a005-20211014
+x86_64               randconfig-a002-20211014
+x86_64               randconfig-a003-20211014
+i386                 randconfig-a003-20211014
+i386                 randconfig-a001-20211014
+i386                 randconfig-a005-20211014
+i386                 randconfig-a004-20211014
+i386                 randconfig-a002-20211014
+i386                 randconfig-a006-20211014
+arc                  randconfig-r043-20211014
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                            allmodconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+x86_64                    rhel-8.3-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                                  kexec
+x86_64                           allyesconfig
+
+clang tested configs:
+x86_64               randconfig-a012-20211014
+x86_64               randconfig-a015-20211014
+x86_64               randconfig-a016-20211014
+x86_64               randconfig-a014-20211014
+x86_64               randconfig-a011-20211014
+x86_64               randconfig-a013-20211014
+i386                 randconfig-a016-20211014
+i386                 randconfig-a014-20211014
+i386                 randconfig-a011-20211014
+i386                 randconfig-a015-20211014
+i386                 randconfig-a012-20211014
+i386                 randconfig-a013-20211014
+hexagon              randconfig-r041-20211014
+s390                 randconfig-r044-20211014
+riscv                randconfig-r042-20211014
+hexagon              randconfig-r045-20211014
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
