@@ -2,92 +2,245 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6696EC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Oct 2021 14:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC91C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Oct 2021 22:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4296360F9F
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Oct 2021 14:16:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B444D60F57
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 18 Oct 2021 22:17:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232127AbhJROSf (ORCPT
+        id S229941AbhJRWT5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 18 Oct 2021 10:18:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44358 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232201AbhJROSb (ORCPT
+        Mon, 18 Oct 2021 18:19:57 -0400
+Received: from mga06.intel.com ([134.134.136.31]:64772 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S229524AbhJRWT5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 18 Oct 2021 10:18:31 -0400
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4A76C061786
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 18 Oct 2021 07:01:14 -0700 (PDT)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:e87a:7c37:aec5:5884])
-        by andre.telenet-ops.be with bizsmtp
-        id 7S1D2600322VXnz01S1DK3; Mon, 18 Oct 2021 16:01:13 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mcTCS-005v0i-Pv; Mon, 18 Oct 2021 16:01:12 +0200
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mcTCS-00Ddmw-6W; Mon, 18 Oct 2021 16:01:12 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Adam Ford <aford173@gmail.com>, patches@opensource.cirrus.com
-Cc:     alsa-devel@alsa-project.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] ASoC: wm8962: Convert to devm_clk_get_optional()
-Date:   Mon, 18 Oct 2021 16:01:11 +0200
-Message-Id: <c2a8a1a628804a4439732d02847e25c227083690.1634565564.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Mon, 18 Oct 2021 18:19:57 -0400
+X-IronPort-AV: E=McAfee;i="6200,9189,10141"; a="289226685"
+X-IronPort-AV: E=Sophos;i="5.85,382,1624345200"; 
+   d="scan'208";a="289226685"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Oct 2021 15:17:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.85,382,1624345200"; 
+   d="scan'208";a="661558403"
+Received: from lkp-server02.sh.intel.com (HELO 08b2c502c3de) ([10.239.97.151])
+  by orsmga005.jf.intel.com with ESMTP; 18 Oct 2021 15:17:44 -0700
+Received: from kbuild by 08b2c502c3de with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mcawx-000Bno-Qx; Mon, 18 Oct 2021 22:17:43 +0000
+Date:   Tue, 19 Oct 2021 06:17:42 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:master] BUILD SUCCESS
+ 92f15e2e96185534d5d0af655ab7e29292989651
+Message-ID: <616df286.QJhNrXkmOyUbYj4k%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Use the existing devm_clk_get_optional() helper instead of building a
-similar construct on top of devm_clk_get() that fails to handle all
-errors but -EPROBE_DEFER.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
+branch HEAD: 92f15e2e96185534d5d0af655ab7e29292989651  Merge branch 'renesas-next', tag 'v5.15-rc6' into renesas-devel
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+elapsed time: 725m
+
+configs tested: 180
+configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+mips                         tb0287_defconfig
+s390                          debug_defconfig
+mips                      bmips_stb_defconfig
+powerpc                 mpc836x_mds_defconfig
+powerpc                    adder875_defconfig
+powerpc                      walnut_defconfig
+arc                        nsim_700_defconfig
+sparc                       sparc64_defconfig
+powerpc                     tqm8548_defconfig
+powerpc                     pseries_defconfig
+xtensa                       common_defconfig
+mips                            gpr_defconfig
+arm                       imx_v4_v5_defconfig
+sh                          rsk7264_defconfig
+arm                            mmp2_defconfig
+m68k                         amcore_defconfig
+sparc64                          alldefconfig
+xtensa                  nommu_kc705_defconfig
+powerpc                     powernv_defconfig
+openrisc                            defconfig
+sh                   secureedge5410_defconfig
+powerpc                       ppc64_defconfig
+arm                         palmz72_defconfig
+arm                         nhk8815_defconfig
+arm                       omap2plus_defconfig
+powerpc                      pasemi_defconfig
+mips                         db1xxx_defconfig
+powerpc                 mpc8560_ads_defconfig
+sh                          urquell_defconfig
+sh                          sdk7780_defconfig
+x86_64                              defconfig
+openrisc                    or1ksim_defconfig
+arm                        spear3xx_defconfig
+arc                        vdk_hs38_defconfig
+mips                    maltaup_xpa_defconfig
+powerpc                      acadia_defconfig
+um                                  defconfig
+mips                        nlm_xlp_defconfig
+arm                         vf610m4_defconfig
+m68k                        mvme147_defconfig
+powerpc                mpc7448_hpc2_defconfig
+arm                            dove_defconfig
+sh                     magicpanelr2_defconfig
+powerpc               mpc834x_itxgp_defconfig
+arm                         orion5x_defconfig
+powerpc                 mpc85xx_cds_defconfig
+arm                          imote2_defconfig
+powerpc                      makalu_defconfig
+s390                       zfcpdump_defconfig
+m68k                            q40_defconfig
+powerpc                 linkstation_defconfig
+arm                        keystone_defconfig
+powerpc                      pcm030_defconfig
+powerpc                   microwatt_defconfig
+sh                            shmin_defconfig
+sh                         ap325rxa_defconfig
+sh                          r7780mp_defconfig
+m68k                          sun3x_defconfig
+mips                     cu1000-neo_defconfig
+mips                       rbtx49xx_defconfig
+powerpc                 mpc837x_mds_defconfig
+mips                           ip28_defconfig
+powerpc                      mgcoge_defconfig
+arm                           u8500_defconfig
+powerpc64                        alldefconfig
+powerpc                      ep88xc_defconfig
+arm                            hisi_defconfig
+arm                  randconfig-c002-20211017
+i386                 randconfig-c001-20211017
+x86_64               randconfig-c001-20211017
+arm                  randconfig-c002-20211018
+i386                 randconfig-c001-20211018
+x86_64               randconfig-c001-20211018
+arm                  randconfig-c002-20211019
+i386                 randconfig-c001-20211019
+x86_64               randconfig-c001-20211019
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                                defconfig
+m68k                             allmodconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+xtensa                           allyesconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                                defconfig
+s390                             allyesconfig
+s390                             allmodconfig
+parisc                           allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                                defconfig
+i386                             allyesconfig
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+x86_64               randconfig-a004-20211018
+x86_64               randconfig-a006-20211018
+x86_64               randconfig-a005-20211018
+x86_64               randconfig-a001-20211018
+x86_64               randconfig-a002-20211018
+x86_64               randconfig-a003-20211018
+i386                 randconfig-a001-20211018
+i386                 randconfig-a003-20211018
+i386                 randconfig-a004-20211018
+i386                 randconfig-a005-20211018
+i386                 randconfig-a002-20211018
+i386                 randconfig-a006-20211018
+x86_64               randconfig-a015-20211019
+x86_64               randconfig-a012-20211019
+x86_64               randconfig-a016-20211019
+x86_64               randconfig-a014-20211019
+x86_64               randconfig-a013-20211019
+x86_64               randconfig-a011-20211019
+i386                 randconfig-a014-20211019
+i386                 randconfig-a016-20211019
+i386                 randconfig-a011-20211019
+i386                 randconfig-a015-20211019
+i386                 randconfig-a012-20211019
+i386                 randconfig-a013-20211019
+arc                  randconfig-r043-20211018
+riscv                    nommu_k210_defconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allyesconfig
+riscv                            allmodconfig
+um                           x86_64_defconfig
+um                             i386_defconfig
+x86_64                    rhel-8.3-kselftests
+x86_64                               rhel-8.3
+x86_64                                  kexec
+x86_64                           allyesconfig
+
+clang tested configs:
+mips                 randconfig-c004-20211017
+arm                  randconfig-c002-20211017
+i386                 randconfig-c001-20211017
+s390                 randconfig-c005-20211017
+x86_64               randconfig-c007-20211017
+powerpc              randconfig-c003-20211017
+riscv                randconfig-c006-20211017
+i386                 randconfig-a001-20211019
+i386                 randconfig-a003-20211019
+i386                 randconfig-a004-20211019
+i386                 randconfig-a005-20211019
+i386                 randconfig-a002-20211019
+i386                 randconfig-a006-20211019
+x86_64               randconfig-a015-20211018
+x86_64               randconfig-a012-20211018
+x86_64               randconfig-a016-20211018
+x86_64               randconfig-a014-20211018
+x86_64               randconfig-a013-20211018
+x86_64               randconfig-a011-20211018
+i386                 randconfig-a014-20211018
+i386                 randconfig-a016-20211018
+i386                 randconfig-a011-20211018
+i386                 randconfig-a015-20211018
+i386                 randconfig-a012-20211018
+i386                 randconfig-a013-20211018
+hexagon              randconfig-r041-20211018
+s390                 randconfig-r044-20211018
+riscv                randconfig-r042-20211018
+hexagon              randconfig-r045-20211018
+hexagon              randconfig-r041-20211019
+hexagon              randconfig-r045-20211019
+
 ---
-Compile-tested only.
----
- sound/soc/codecs/wm8962.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
-
-diff --git a/sound/soc/codecs/wm8962.c b/sound/soc/codecs/wm8962.c
-index ba16bdf9e478ca5f..a5584ba962dcf005 100644
---- a/sound/soc/codecs/wm8962.c
-+++ b/sound/soc/codecs/wm8962.c
-@@ -3538,9 +3538,8 @@ static int wm8962_set_pdata_from_of(struct i2c_client *i2c,
- 				pdata->gpio_init[i] = 0x0;
- 		}
- 
--	pdata->mclk = devm_clk_get(&i2c->dev, NULL);
--
--	return 0;
-+	pdata->mclk = devm_clk_get_optional(&i2c->dev, NULL);
-+	return PTR_ERR_OR_ZERO(pdata->mclk);
- }
- 
- static int wm8962_i2c_probe(struct i2c_client *i2c,
-@@ -3572,14 +3571,6 @@ static int wm8962_i2c_probe(struct i2c_client *i2c,
- 			return ret;
- 	}
- 
--	/* Mark the mclk pointer to NULL if no mclk assigned */
--	if (IS_ERR(wm8962->pdata.mclk)) {
--		/* But do not ignore the request for probe defer */
--		if (PTR_ERR(wm8962->pdata.mclk) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
--		wm8962->pdata.mclk = NULL;
--	}
--
- 	for (i = 0; i < ARRAY_SIZE(wm8962->supplies); i++)
- 		wm8962->supplies[i].supply = wm8962_supply_names[i];
- 
--- 
-2.25.1
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
