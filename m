@@ -2,94 +2,98 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5280FC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Oct 2021 12:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0CAC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Oct 2021 12:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D04561057
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Oct 2021 12:36:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 624AE61260
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Oct 2021 12:42:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235684AbhJSMiY (ORCPT
+        id S230338AbhJSMpC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Oct 2021 08:38:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34110 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S235726AbhJSMiX (ORCPT
+        Tue, 19 Oct 2021 08:45:02 -0400
+Received: from mslow1.mail.gandi.net ([217.70.178.240]:35343 "EHLO
+        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230267AbhJSMpC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Oct 2021 08:38:23 -0400
-Received: by mail.kernel.org (Postfix) with ESMTPSA id 9CEA361260;
-        Tue, 19 Oct 2021 12:36:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1634646971;
-        bh=u73RnjWbRxhH6CwTauke6NzU7tR5DI62J9FiY8yQVbs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TqrwQPwytMD1dfbq9Mtnro8tcleYatLeGtxlHL9aRTHzVTrMrqRCc5Q5qIXLoP1VL
-         y1gAC3s3q5RxgnG+mt1Mnd+MMkk20x3T442HHl9B7+jEiXygfHKeSDW1H5g96t6gMy
-         t5gEMN/JxlbDOfqjNgSWkdM9CSjmzW997iSiZs+h0wwKEN+QnwKo+/OKMaKZDgf24S
-         1GYnil1dhH0AcMlNL+G0oY5XDpSyLi83jl0XDBbmXuY2wvtFvZcg9nrO5Cj7etEUdw
-         TWFZEm6guT3uA6Y236lN1khW177KNWlDxeKN2w9Zx6wKZOGJenIpOvFpLZRoVUYwfo
-         KpON6gydXzB5w==
-Date:   Tue, 19 Oct 2021 13:36:06 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Meng Li <Meng.Li@windriver.com>
-Cc:     geert+renesas@glider.be, magnus.damm@gmail.com, robh+dt@kernel.org,
-        marek.vasut+renesas@gmail.com, yoshihiro.shimoda.uh@renesas.com,
-        lorenzo.pieralisi@arm.com, kw@linux.com, bhelgaas@google.com,
-        lgirdwood@gmail.com, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH] pci: pcie-rcar: add regulators support
-Message-ID: <YW67tsigF89EkDWS@sirena.org.uk>
-References: <20211019095858.21316-1-Meng.Li@windriver.com>
+        Tue, 19 Oct 2021 08:45:02 -0400
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id DA185C0C68;
+        Tue, 19 Oct 2021 12:42:47 +0000 (UTC)
+Received: (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 167E9FF812;
+        Tue, 19 Oct 2021 12:42:24 +0000 (UTC)
+Date:   Tue, 19 Oct 2021 14:43:15 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH] pinctrl: renesas: rza1: Fix kerneldoc function names
+Message-ID: <20211019124315.5dg5pfaas2qmm7lx@uno.localdomain>
+References: <2188ede78110c64b8a3bfbfa794a085dac0e4cd2.1634645735.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZkQuIMugRNgJ9HKi"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20211019095858.21316-1-Meng.Li@windriver.com>
-X-Cookie: I program, therefore I am.
+In-Reply-To: <2188ede78110c64b8a3bfbfa794a085dac0e4cd2.1634645735.git.geert+renesas@glider.be>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+Hi Geert,
 
---ZkQuIMugRNgJ9HKi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Oct 19, 2021 at 02:34:22PM +0200, Geert Uytterhoeven wrote:
+> make W=1:
+>
+>     drivers/pinctrl/renesas/pinctrl-rza1.c:770: warning: expecting prototype for rza1_gpio_disable_free(). Prototype was for rza1_gpio_free() instead
+>     drivers/pinctrl/renesas/pinctrl-rza1.c:889: warning: expecting prototype for rza1_parse_pmx_function(). Prototype was for rza1_parse_pinmux_node() instead
+>
+> Fixes: 5a49b644b3075f88 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Tue, Oct 19, 2021 at 05:58:58PM +0800, Meng Li wrote:
+Thanks, looking at the driver now it seems I was really eager to write
+comments at the time I wrote it! :)
 
-> From: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
->=20
-> Add PCIe regulators for KingFisher board.
->=20
-> Signed-off-by: Meng Li <Meng.Li@windriver.com>
+Probably all kernel-doc comments should be demoted to regular
+comments, as they're only internal driver functions.
+
+But for now, the change is good
+
 > ---
+> To be queued in renesas-pinctrl for v5.17.
+>
+>  drivers/pinctrl/renesas/pinctrl-rza1.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pinctrl/renesas/pinctrl-rza1.c b/drivers/pinctrl/renesas/pinctrl-rza1.c
+> index 10020fe302b8a09f..3ad0537febe4f6b4 100644
+> --- a/drivers/pinctrl/renesas/pinctrl-rza1.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rza1.c
+> @@ -757,7 +757,7 @@ static int rza1_gpio_request(struct gpio_chip *chip, unsigned int gpio)
+>  }
+>
+>  /**
+> - * rza1_gpio_disable_free() - reset a pin
+> + * rza1_gpio_free() - reset a pin
+>   *
+>   * Surprisingly, disable_free a gpio, is equivalent to request it.
 
-You've not provided a Signed-off-by for Andrey, please see
-Documentation/process/submitting-patches.rst for details on what this is
-and why it's important.
+s/disable_free/free ?
 
-> +	host->pcie3v3 =3D devm_regulator_get_optional(dev, "pcie3v3");
+Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-> +	host->pcie1v8 =3D devm_regulator_get_optional(dev, "pcie1v8");
+Thanks
+   j
 
-Unless PCIe works without these supplies (which are in my understanding
-mandatory according to the spec) these should not be optional, this API
-is for supplies that may be physically absent.
-
---ZkQuIMugRNgJ9HKi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmFuu7YACgkQJNaLcl1U
-h9Arnwf+PlApDFGSrd0BxXmjAa5FJY9Vb9EbiuK19rDX3HvMtAKrjMfYkmMoO/6w
-7vZ1B/AjW3O8GV7mVJZbela5JVwm3FeDUyL2YDRYsIyRChgwvD7zlUjBoT5bEZVa
-kad7VwGSBXaWZfGsm5xlAsN/AAKSKxSkGu/85fYlVWNm/Cg+Mb/N+qp5O+U+jHa6
-4eIsau9/dnP2Hu0wjq8+qvfTZQ9gaSqDZdXC8o1y/j5+3cWSGwwQ9cOQMnKO/YlN
-w5E5pJ8UCjeA2i7PNp8bFfkGOjqft377c2jpNyrQY8uKeWW/pBCHAQB+DoqR7n2p
-npgiAcdcadDCCYkAt0FBJyMjIH5oMg==
-=0qYG
------END PGP SIGNATURE-----
-
---ZkQuIMugRNgJ9HKi--
+>   * Reset pin to port mode, with input buffer disabled. This overwrites all
+> @@ -875,7 +875,7 @@ static int rza1_dt_node_pin_count(struct device_node *np)
+>  }
+>
+>  /**
+> - * rza1_parse_pmx_function() - parse a pin mux sub-node
+> + * rza1_parse_pinmux_node() - parse a pin mux sub-node
+>   *
+>   * @rza1_pctl: RZ/A1 pin controller device
+>   * @np: of pmx sub-node
+> --
+> 2.25.1
+>
