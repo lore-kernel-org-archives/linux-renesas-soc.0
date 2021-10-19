@@ -2,98 +2,95 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0CAC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Oct 2021 12:42:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7464CC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Oct 2021 12:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 624AE61260
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Oct 2021 12:42:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D2F061360
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 19 Oct 2021 12:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230338AbhJSMpC (ORCPT
+        id S235699AbhJSMpf (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 19 Oct 2021 08:45:02 -0400
-Received: from mslow1.mail.gandi.net ([217.70.178.240]:35343 "EHLO
-        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230267AbhJSMpC (ORCPT
+        Tue, 19 Oct 2021 08:45:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40312 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230338AbhJSMpf (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 19 Oct 2021 08:45:02 -0400
-Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
-        by mslow1.mail.gandi.net (Postfix) with ESMTP id DA185C0C68;
-        Tue, 19 Oct 2021 12:42:47 +0000 (UTC)
-Received: (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 167E9FF812;
-        Tue, 19 Oct 2021 12:42:24 +0000 (UTC)
-Date:   Tue, 19 Oct 2021 14:43:15 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: renesas: rza1: Fix kerneldoc function names
-Message-ID: <20211019124315.5dg5pfaas2qmm7lx@uno.localdomain>
-References: <2188ede78110c64b8a3bfbfa794a085dac0e4cd2.1634645735.git.geert+renesas@glider.be>
+        Tue, 19 Oct 2021 08:45:35 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 613D4C061745
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 19 Oct 2021 05:43:22 -0700 (PDT)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:b4c3:ba80:54db:46f])
+        by michel.telenet-ops.be with bizsmtp
+        id 7ojF2600T12AN0U06ojFz9; Tue, 19 Oct 2021 14:43:20 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mcoSZ-0069O3-4O; Tue, 19 Oct 2021 14:43:15 +0200
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mcoSY-00EESZ-FR; Tue, 19 Oct 2021 14:43:14 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Rob Herring <robh+dt@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Lechner <david@lechnology.com>,
+        Sebastian Reichel <sre@kernel.org>
+Cc:     devicetree@vger.kernel.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/3] dt-bindings: net: TI wlcore json schema conversion and fix
+Date:   Tue, 19 Oct 2021 14:43:10 +0200
+Message-Id: <cover.1634646975.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2188ede78110c64b8a3bfbfa794a085dac0e4cd2.1634645735.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Geert,
+	Hi all,
 
-On Tue, Oct 19, 2021 at 02:34:22PM +0200, Geert Uytterhoeven wrote:
-> make W=1:
->
->     drivers/pinctrl/renesas/pinctrl-rza1.c:770: warning: expecting prototype for rza1_gpio_disable_free(). Prototype was for rza1_gpio_free() instead
->     drivers/pinctrl/renesas/pinctrl-rza1.c:889: warning: expecting prototype for rza1_parse_pmx_function(). Prototype was for rza1_parse_pinmux_node() instead
->
-> Fixes: 5a49b644b3075f88 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patch series converts the Device Tree bindings for the Texas
+Instruments Wilink Wireless LAN and Bluetooth Controllers to
+json-schema, after fixing an issue in a Device Tree source file.
 
-Thanks, looking at the driver now it seems I was really eager to write
-comments at the time I wrote it! :)
+Thanks for your comments!
 
-Probably all kernel-doc comments should be demoted to regular
-comments, as they're only internal driver functions.
+Geert Uytterhoeven (3):
+  ARM: dts: motorola-mapphone: Drop second ti,wlcore compatible value
+  dt-bindings: net: wireless: ti,wlcore: Convert to json-schema
+  dt-bindings: net: ti,bluetooth: Convert to json-schema
 
-But for now, the change is good
+ .../devicetree/bindings/net/ti,bluetooth.yaml |  91 ++++++++++++
+ .../devicetree/bindings/net/ti-bluetooth.txt  |  60 --------
+ .../bindings/net/wireless/ti,wlcore,spi.txt   |  57 --------
+ .../bindings/net/wireless/ti,wlcore.txt       |  45 ------
+ .../bindings/net/wireless/ti,wlcore.yaml      | 134 ++++++++++++++++++
+ .../boot/dts/motorola-mapphone-common.dtsi    |   2 +-
+ arch/arm/boot/dts/omap3-gta04a5.dts           |   2 +-
+ 7 files changed, 227 insertions(+), 164 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/ti,bluetooth.yaml
+ delete mode 100644 Documentation/devicetree/bindings/net/ti-bluetooth.txt
+ delete mode 100644 Documentation/devicetree/bindings/net/wireless/ti,wlcore,spi.txt
+ delete mode 100644 Documentation/devicetree/bindings/net/wireless/ti,wlcore.txt
+ create mode 100644 Documentation/devicetree/bindings/net/wireless/ti,wlcore.yaml
 
-> ---
-> To be queued in renesas-pinctrl for v5.17.
->
->  drivers/pinctrl/renesas/pinctrl-rza1.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pinctrl/renesas/pinctrl-rza1.c b/drivers/pinctrl/renesas/pinctrl-rza1.c
-> index 10020fe302b8a09f..3ad0537febe4f6b4 100644
-> --- a/drivers/pinctrl/renesas/pinctrl-rza1.c
-> +++ b/drivers/pinctrl/renesas/pinctrl-rza1.c
-> @@ -757,7 +757,7 @@ static int rza1_gpio_request(struct gpio_chip *chip, unsigned int gpio)
->  }
->
->  /**
-> - * rza1_gpio_disable_free() - reset a pin
-> + * rza1_gpio_free() - reset a pin
->   *
->   * Surprisingly, disable_free a gpio, is equivalent to request it.
+-- 
+2.25.1
 
-s/disable_free/free ?
+Gr{oetje,eeting}s,
 
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+						Geert
 
-Thanks
-   j
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
->   * Reset pin to port mode, with input buffer disabled. This overwrites all
-> @@ -875,7 +875,7 @@ static int rza1_dt_node_pin_count(struct device_node *np)
->  }
->
->  /**
-> - * rza1_parse_pmx_function() - parse a pin mux sub-node
-> + * rza1_parse_pinmux_node() - parse a pin mux sub-node
->   *
->   * @rza1_pctl: RZ/A1 pin controller device
->   * @np: of pmx sub-node
-> --
-> 2.25.1
->
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
