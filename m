@@ -2,56 +2,56 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4035FC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Oct 2021 20:09:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73470C43217
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Oct 2021 20:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 23F31610C8
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Oct 2021 20:09:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B110610E7
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 20 Oct 2021 20:09:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231676AbhJTUL4 (ORCPT
+        id S231685AbhJTUL5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 20 Oct 2021 16:11:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45838 "EHLO
+        Wed, 20 Oct 2021 16:11:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231143AbhJTULz (ORCPT
+        with ESMTP id S231690AbhJTUL4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 20 Oct 2021 16:11:55 -0400
-Received: from mail-wm1-x330.google.com (mail-wm1-x330.google.com [IPv6:2a00:1450:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3CF9C06161C
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Oct 2021 13:09:40 -0700 (PDT)
-Received: by mail-wm1-x330.google.com with SMTP id m42so20773358wms.2
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Oct 2021 13:09:40 -0700 (PDT)
+        Wed, 20 Oct 2021 16:11:56 -0400
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9C90C06161C
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Oct 2021 13:09:41 -0700 (PDT)
+Received: by mail-wm1-x329.google.com with SMTP id g79-20020a1c2052000000b00323023159e1so3929288wmg.2
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 20 Oct 2021 13:09:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V88g9/D29zrL6QHXR48P4CVKxzPOpttF64BNB2SYKh0=;
-        b=T3xM4yevAQsdlSbe7tJduXmvuw1wLh41A21wunlqMrt2wPTvY48XfGZiA7811S17dh
-         fhg5V50GGtvAeWfHaI2Hw7AlbfPoqs/uaW+XySPKNvNSwHwUK/Mi9yBbtqO1leS68XEB
-         4Ds1Z3EqL5ksQ+4S8++1kx5LB+lcqleMFMroPMY+aKSM0RQcKMr/bj2HuV2x408SJi8n
-         sU4NHn1lVTm7RV7bpTpGFBsuVTEo8E9ovDwIefVa4h+cbW0ndY16MIDhgtlS2LWkXBXG
-         Fkh9SI5HxWSjchWgfJBBXycDlv9kXSHmE1Zm7QWSVgodD1Pe/3YH8BDSDidIoMGAmH9m
-         HX8A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nrAE4aRZDE6t7iD0Y4F3aNM7M8EVXqHIk1u6wQonne4=;
+        b=aCOqtUi95m1RfcT2abx53pMwNotN9DphtaXF4lT0oJKrhJlptRMh0uYQz5oYHliIBU
+         8A1lRGVyEfG5MRxwaP9UKQ5E23aByXceYzSlMKCuqk9fi5uplHZzC0QmLDOrscV1hHak
+         toOotcK5JC8KLr458mvLCYradp1jzj+4AcfXEJ93e8bRLieGdkxC0c5HQ0mxiO6Ejg1o
+         9O1MPEIgpB1qeDdS2ujP6AIWVEWxTihxLCfTvwK7eTbEqaPybGa1Co6gyK6Fd4Y4k4nZ
+         JPM2/DsCwC0G5n6EGtv0+7UL73e7fmV06C4WffBpfQ/Yqtt+EG6ybWS7BlWBWrbIJcg2
+         0Q9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V88g9/D29zrL6QHXR48P4CVKxzPOpttF64BNB2SYKh0=;
-        b=bLYjU4VOKF9MJeMrf4qNF3pgT1OQL507zYFKFhkEBfwrNDH4cLH6uk99VUZelfvnCs
-         aiz4lBkOjYKyzbf322zk6cP0VptbduPwPS3Drz7KVfB5yLGwCB4EpTmbooWlA4LY8sA9
-         CQkpiHdmPIPLVp6SPmawTv2tA2SCT+KUhVfpZ79eH4l1czOG21O/nyPcGGXSK3WU4tAV
-         Gs5pAYSbl4PvPNn0FUy5oZee+Ec6GutaqEDznXMddHdm2PUzezzUr+Q55HnjGV08fzXe
-         9LiEYPLAI3qTGzKHHA1eI3mNKF9Sa2/DnE+x48bYKLLgR4eNGnrt26BiaVXRqmFqoO14
-         w2Rw==
-X-Gm-Message-State: AOAM530fiiustW0dc+D5dDmXT79b9Nar6bAUz6zROCNDtSm9is8sCEup
-        yRDUyx9apDwAB3BzLmK7w6strmopEFiDZQ==
-X-Google-Smtp-Source: ABdhPJyAT9FcwRXpA2k33OerYwYt9w+1kD0AOmcY0kTScuHqKuKZ4CMbckfEc7ftLk2Fdf4jjo4emg==
-X-Received: by 2002:a7b:c941:: with SMTP id i1mr16398540wml.40.1634760579350;
-        Wed, 20 Oct 2021 13:09:39 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nrAE4aRZDE6t7iD0Y4F3aNM7M8EVXqHIk1u6wQonne4=;
+        b=rNDkKuzscYrEEX4KpBSSVWGDoVaX29t8F8qZ5OtFVDkHdLg5Miqy2Fnlzx1ih5E+aq
+         5DDnGCgTp51TYBrNPJAYorRoaRxIvfc61KmN/Yh62SCCV4PkzjaAHvjYE9DjGHA7/rWV
+         4iT2LYLoIXVn/3e7kjwJpuCSo0bqk561fYshzFuZsNVL3iAur+fc4A3/mCCHpvgCVaQA
+         rukq/Q3+AUj/+sYYpUnTr2rUDA8SEDz8wshYcyEMJA0S63QACFKjJNHGeBoDNmw3/jtJ
+         Sy9fptAdudYJsqMvIt8/jiWnWsnWXGp3RGB83fIVChcwbKQ0WjEDG0nPZynfJQVQ4CwF
+         SqhA==
+X-Gm-Message-State: AOAM532XByjvWxMrONP9rkLAgzCcqveJl9zgFGksqr6WtmqdFr5r7k/c
+        xSKVYH/WZ7XCIKL+7OMeVhheqQ==
+X-Google-Smtp-Source: ABdhPJxPw5XACmlR3m8nrfLec7lFsnut8zxDPGhEzvjBsTywgE9euNhlodFS8g3gmqG8vb8xkFy/1A==
+X-Received: by 2002:a05:600c:1c97:: with SMTP id k23mr16029506wms.80.1634760580534;
+        Wed, 20 Oct 2021 13:09:40 -0700 (PDT)
 Received: from bismarck.berto.se (p54ac5892.dip0.t-ipconnect.de. [84.172.88.146])
-        by smtp.googlemail.com with ESMTPSA id x7sm2849904wrq.69.2021.10.20.13.09.38
+        by smtp.googlemail.com with ESMTPSA id x7sm2849904wrq.69.2021.10.20.13.09.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 20 Oct 2021 13:09:38 -0700 (PDT)
+        Wed, 20 Oct 2021 13:09:40 -0700 (PDT)
 From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
 To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
@@ -60,10 +60,12 @@ To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
 Cc:     linux-renesas-soc@vger.kernel.org,
         =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 0/3] media: rcar-{csi2,vin}: Move to full Virtual Channel routing per CSI-2 IP
-Date:   Wed, 20 Oct 2021 22:02:22 +0200
-Message-Id: <20211020200225.1956048-1-niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH 2/3] media: rcar-vin: Breakout media link creation
+Date:   Wed, 20 Oct 2021 22:02:24 +0200
+Message-Id: <20211020200225.1956048-3-niklas.soderlund+renesas@ragnatech.se>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211020200225.1956048-1-niklas.soderlund+renesas@ragnatech.se>
+References: <20211020200225.1956048-1-niklas.soderlund+renesas@ragnatech.se>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -71,77 +73,81 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+In preparation of creating more links to allow for full Virtual Channel
+routing within the CSI-2 block break out the link creation logic to a
+helper function as the logic will grow in future work.
 
-This series attempts to increase the flexibility of the R-Car VIN 
-capture pipeline by allowing for free form Virtual Channel routing 
-within the same CSI-2 IP block.
+There is no functional change.
 
-When Gen3 support was first added to this R-Car VIN and CSI-2 driver the
-routing was centred around the CHSEL register which multiplex the
-different parallel buses that sits between the CSI-2 receivers source
-side and the VIN dma engines. This was a bad design as the multiplexing
-do allow for only a few combinations and do not play nice with many
-video streams in the system.
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+---
+ drivers/media/platform/rcar-vin/rcar-core.c | 38 ++++++++++-----------
+ 1 file changed, 18 insertions(+), 20 deletions(-)
 
-For example it's only possible for CSI-2 Virtual Channels 0 and 1 of any
-given CSI-2 receiver to be used together with the scaler.
-
-Later datasheets have expanded the documentation and it is now possible
-to improve on this design by allowing any Virtual Channel to be routed
-to any R-Car VIN instance, provided that there exists a parallel bus
-between them. This increases the flexibility as all Virtual Channels can
-now be used together with the scaler for example.
-
-The redesign is not however perfect. While the new design allows for
-many more routes, two constrains limit a small portion of routes that
-was possible in the old design but are no more.
-
-- It is no longer possible to route the same CSI-2 and VC to more then
-one VIN at a time. This was theoretically possible before if the
-specific SoC allowed for the same CSI-2 and VC to be routed to two
-different VIN capture groups.
-
-- It is no longer possible to simultaneously mix links from two CSI-2 IP
-blocks to the same VIN capture group.
-
-For example if VIN2 is capturing from CSI40 then VIN{0,1,3} must also
-capture from CSI40. While VIN{4,5,6,7} is still free to capture from
-any other CSI-2 IP in the system. Once all VIN{0,1,2,3} links to CSI40
-are disabled that VIN capture group is free again to capture from any
-other CSI-2 IP it is connected to.
-
-At the core of the redesign is greater cooperator of the R-Car VIN and
-CSI-2 drivers in configuring the routing. The VIN driver is after this
-change only responsible to configure the full VIN capture groups
-parallel buses to be to a particular CSI-2 IP. While the configuration
-of which CSI-2 Virtual Channel is outputted on which of the R-Car CSI-2
-IP output ports is handled by the CSI-2 driver.
-
-Before this change the CSI-2 Virtual Channel to output port was static
-in the CSI-2 driver and the different links only manipulated the VIN
-capture groups CHSEL register. With this change both the CHSEl register
-and the CSI-2 routing VCDT registers are modified for greater
-flexibility.
-
-Patch 1/3 and 2/3 are cleanup patches moving code around preparing for 
-the real work in 3/3. The work is based on the latest media-tree.
-
-Kind Regards,
-Niklas Söderlund
-
-Niklas Söderlund (3):
-  media: rcar-vin: Refactor link notify
-  media: rcar-vin: Breakout media link creation
-  media: rcar-{csi2,vin}: Move to full Virtual Channel routing per CSI-2
-    IP
-
- drivers/media/platform/rcar-vin/rcar-core.c | 379 ++++++--------------
- drivers/media/platform/rcar-vin/rcar-csi2.c |  58 ++-
- drivers/media/platform/rcar-vin/rcar-dma.c  |   2 +-
- drivers/media/platform/rcar-vin/rcar-vin.h  |  18 +-
- 4 files changed, 167 insertions(+), 290 deletions(-)
-
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index bd960c348ba5228c..65ab66a072e9d635 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -909,6 +909,22 @@ static const struct media_device_ops rvin_csi2_media_ops = {
+ 	.link_notify = rvin_csi2_link_notify,
+ };
+ 
++static int rvin_csi2_add_route(struct rvin_group *group,
++			       const struct rvin_group_route *route)
++
++{
++	struct media_entity *source = &group->remotes[route->csi].subdev->entity;
++	unsigned int source_idx = rvin_group_csi_channel_to_pad(route->channel);
++	struct media_entity *sink = &group->vin[route->vin]->vdev.entity;
++	struct media_pad *source_pad = &source->pads[source_idx];
++	struct media_pad *sink_pad = &sink->pads[0];
++
++	if (media_entity_find_link(source_pad, sink_pad))
++		return 0;
++
++	return media_create_pad_link(source, source_idx, sink, 0, 0);
++}
++
+ static int rvin_csi2_setup_links(struct rvin_dev *vin)
+ {
+ 	const struct rvin_group_route *route;
+@@ -917,10 +933,6 @@ static int rvin_csi2_setup_links(struct rvin_dev *vin)
+ 	/* Create all media device links between VINs and CSI-2's. */
+ 	mutex_lock(&vin->group->lock);
+ 	for (route = vin->info->routes; route->mask; route++) {
+-		struct media_pad *source_pad, *sink_pad;
+-		struct media_entity *source, *sink;
+-		unsigned int source_idx;
+-
+ 		/* Check that VIN is part of the group. */
+ 		if (!vin->group->vin[route->vin])
+ 			continue;
+@@ -933,23 +945,9 @@ static int rvin_csi2_setup_links(struct rvin_dev *vin)
+ 		if (!vin->group->remotes[route->csi].subdev)
+ 			continue;
+ 
+-		source = &vin->group->remotes[route->csi].subdev->entity;
+-		source_idx = rvin_group_csi_channel_to_pad(route->channel);
+-		source_pad = &source->pads[source_idx];
+-
+-		sink = &vin->group->vin[route->vin]->vdev.entity;
+-		sink_pad = &sink->pads[0];
+-
+-		/* Skip if link already exists. */
+-		if (media_entity_find_link(source_pad, sink_pad))
+-			continue;
+-
+-		ret = media_create_pad_link(source, source_idx, sink, 0, 0);
+-		if (ret) {
+-			vin_err(vin, "Error adding link from %s to %s\n",
+-				source->name, sink->name);
++		ret = rvin_csi2_add_route(vin->group, route);
++		if (ret)
+ 			break;
+-		}
+ 	}
+ 	mutex_unlock(&vin->group->lock);
+ 
 -- 
 2.33.1
 
