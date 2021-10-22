@@ -2,172 +2,128 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D709FC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Oct 2021 12:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B31C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Oct 2021 13:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BA6B161163
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Oct 2021 12:21:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0651A60232
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 22 Oct 2021 13:22:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230462AbhJVMXf (ORCPT
+        id S231516AbhJVNYa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 22 Oct 2021 08:23:35 -0400
-Received: from mail.iot.bzh ([51.75.236.24]:54461 "EHLO frontal.iot.bzh"
+        Fri, 22 Oct 2021 09:24:30 -0400
+Received: from www.zeus03.de ([194.117.254.33]:59190 "EHLO mail.zeus03.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230366AbhJVMXe (ORCPT
+        id S230342AbhJVNY3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 22 Oct 2021 08:23:34 -0400
-Received: from frontal.iot.bzh (localhost [127.0.0.1])
-        by frontal.iot.bzh (Proxmox) with ESMTP id B6A27190C9
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 22 Oct 2021 14:21:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iot.bzh; h=cc:cc
-        :content-transfer-encoding:date:from:from:message-id
-        :mime-version:reply-to:subject:subject:to:to; s=iot.bzh; bh=FCmq
-        yNNUvk+uiW7jrwJBOuammkRQV5kh08t1Na3OkR8=; b=M16upVT+w59b669OJh4x
-        0PuM6m7iI+zwZeQ6TddlWFS/lMaDiDHWGetnUnQhwmWumQVP1uCJWGR9rE+NcQ4c
-        VMx3JSYqYcWMZD3dMPpLo2TEbLwdUAqGshSinTGy365jGXJ5VP5bICIw68Y4EkE/
-        1lJjCG6J3F13RgImejtZnLQ3r03Qr6Wc5HNxefMwLnMaqQ73O1v4oSK81TPCp3Ue
-        Hmdgn5JZ3/ommm1AVcVKRtId/kQZi7RsrZhbKiE3zvbqug3/iUcCQAVQzLC8UL9Y
-        IdMfJZ+PZ8Mka28LVUVNpkPeFiRryU3V+bTXWRe0RZw/4wIFPbLvvVXbYkpyZsXx
-        NA==
-From:   Julien Massot <julien.massot@iot.bzh>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     Julien Massot <julien.massot@iot.bzh>
-Subject: [PATCH v4] soc: renesas: rcar-rst: Add support to set rproc boot address
-Date:   Fri, 22 Oct 2021 14:21:01 +0200
-Message-Id: <20211022122101.66998-1-julien.massot@iot.bzh>
-X-Mailer: git-send-email 2.31.1
+        Fri, 22 Oct 2021 09:24:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=RTqtPVw3g3tCKR7FXEuN2zio6hYu
+        Au/lbAATBypQbS0=; b=IQ+6pJ7iA9OY7M3EN23kdhj/v7Y/lmqlpRhFzb9S5GCZ
+        YaXGzeCBQ6D9wtRSVm4Hczx8f2S3tQbjJ/PV3NNa4daDqxqWopOcGL//HE+LANdc
+        BZsLq8Kepf5XVaQTaF3G8zBT1FU1YGKivKxfS/19n8SuOpEq49XPWy4j8uhE2ZA=
+Received: (qmail 3733262 invoked from network); 22 Oct 2021 15:22:10 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 22 Oct 2021 15:22:10 +0200
+X-UD-Smtp-Session: l3s3148p1@fFcG5vDOGrYgAwDPXxI0AHx8Irl6Mo8R
+Date:   Fri, 22 Oct 2021 15:22:09 +0200
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-mmc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] mmc: renesas_sdhi: Fix internal cd irq miss with hard
+ reset
+Message-ID: <YXK7AfUYxuFWl3rl@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-mmc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <20211006171605.6861-1-biju.das.jz@bp.renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tKdUITAL/m6G6pzU"
+Content-Disposition: inline
+In-Reply-To: <20211006171605.6861-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-R-Car Gen3 SoC series has a realtime processor, the boot
-address of this processor can be set thanks to CR7BAR register
-of the reset module.
 
-Export this function so that it's possible to set the boot
-address from a remoteproc driver.
+--tKdUITAL/m6G6pzU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Also drop the __initdata qualifier on rcar_rst_base,
-since we will use this address later than init time.
+On Wed, Oct 06, 2021 at 06:16:05PM +0100, Biju Das wrote:
+>=20
+> This patch fixes internal cd irq miss after hard reset by enabling
+> internal card insertion/removal interrupts.
+>=20
+> Fixes: b4d86f37eacb ("mmc: renesas_sdhi: do hard reset if possible")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Signed-off-by: Julien Massot <julien.massot@iot.bzh>
----
-Change since v3:
- - Change boot_addr type to u64 to match remoteproc type
- - Modify boot_addr sanity check to also check for 32 bits address
- - Export function using EXPORT_SYMBOL_GPL macro
+IIUC, the following should be the apropriate fix. Can you please test
+it? If it works, then I'll make a proper patch out of it.
 
----
- drivers/soc/renesas/rcar-rst.c       | 42 ++++++++++++++++++++++++++--
- include/linux/soc/renesas/rcar-rst.h |  2 ++
- 2 files changed, 41 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index 8a1e402ea799..12db1ce45d33 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -12,6 +12,13 @@
- 
- #define WDTRSTCR_RESET		0xA55A0002
- #define WDTRSTCR		0x0054
-+#define CR7BAR			0x0070
-+#define CR7BAREN		BIT(4)
-+#define CR7BAR_MASK		0xFFFC0000
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_c=
+ore.c
+index 7dfc26f48c18..9416245a7b56 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -195,6 +195,10 @@ static void tmio_mmc_reset(struct tmio_mmc_host *host)
+ 	sd_ctrl_write32_as_16_and_16(host, CTL_IRQ_MASK, host->sdcard_irq_mask_al=
+l);
+ 	host->sdcard_irq_mask =3D host->sdcard_irq_mask_all;
+=20
++	if (host->native_hotplug)
++		tmio_mmc_enable_mmc_irqs(host,
++				TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
 +
-+static void __iomem *rcar_rst_base;
-+static u32 saved_mode __initdata;
-+static int (*rcar_rst_set_rproc_boot_addr_func)(u64 boot_addr);
- 
- static int rcar_rst_enable_wdt_reset(void __iomem *base)
- {
-@@ -19,9 +26,29 @@ static int rcar_rst_enable_wdt_reset(void __iomem *base)
- 	return 0;
- }
- 
-+/*
-+ * Most of the R-Car Gen3 SoCs have an ARM Realtime Core.
-+ * Firmware boot address has to be set in CR7BAR before
-+ * starting the realtime core.
-+ * Boot address must be aligned on a 256k boundary.
-+ */
-+static int rcar_rst_set_gen3_rproc_boot_addr(u64 boot_addr)
-+{
-+	if (boot_addr & ~(u64)CR7BAR_MASK) {
-+		pr_warn("Invalid boot address got %llx\n", boot_addr);
-+		return -EINVAL;
-+	}
-+
-+	iowrite32((u32)boot_addr, rcar_rst_base + CR7BAR);
-+	iowrite32((u32)boot_addr | CR7BAREN, rcar_rst_base + CR7BAR);
-+
-+	return 0;
-+}
-+
- struct rst_config {
- 	unsigned int modemr;		/* Mode Monitoring Register Offset */
- 	int (*configure)(void __iomem *base);	/* Platform specific config */
-+	int (*set_rproc_boot_addr)(u64 boot_addr);
- };
- 
- static const struct rst_config rcar_rst_gen1 __initconst = {
-@@ -35,6 +62,7 @@ static const struct rst_config rcar_rst_gen2 __initconst = {
- 
- static const struct rst_config rcar_rst_gen3 __initconst = {
- 	.modemr = 0x60,
-+	.set_rproc_boot_addr = rcar_rst_set_gen3_rproc_boot_addr,
- };
- 
- static const struct rst_config rcar_rst_r8a779a0 __initconst = {
-@@ -76,9 +104,6 @@ static const struct of_device_id rcar_rst_matches[] __initconst = {
- 	{ /* sentinel */ }
- };
- 
--static void __iomem *rcar_rst_base __initdata;
--static u32 saved_mode __initdata;
+ 	tmio_mmc_set_bus_width(host, host->mmc->ios.bus_width);
+=20
+ 	if (host->pdata->flags & TMIO_MMC_SDIO_IRQ) {
+@@ -1185,10 +1189,6 @@ int tmio_mmc_host_probe(struct tmio_mmc_host *_host)
+ 	_host->set_clock(_host, 0);
+ 	tmio_mmc_reset(_host);
+=20
+-	if (_host->native_hotplug)
+-		tmio_mmc_enable_mmc_irqs(_host,
+-				TMIO_STAT_CARD_REMOVE | TMIO_STAT_CARD_INSERT);
 -
- static int __init rcar_rst_init(void)
- {
- 	const struct of_device_id *match;
-@@ -100,6 +125,8 @@ static int __init rcar_rst_init(void)
- 
- 	rcar_rst_base = base;
- 	cfg = match->data;
-+	rcar_rst_set_rproc_boot_addr_func = cfg->set_rproc_boot_addr;
-+
- 	saved_mode = ioread32(base + cfg->modemr);
- 	if (cfg->configure) {
- 		error = cfg->configure(base);
-@@ -130,3 +157,12 @@ int __init rcar_rst_read_mode_pins(u32 *mode)
- 	*mode = saved_mode;
- 	return 0;
- }
-+
-+int rcar_rst_set_rproc_boot_addr(u64 boot_addr)
-+{
-+	if (!rcar_rst_set_rproc_boot_addr_func)
-+		return -EIO;
-+
-+	return rcar_rst_set_rproc_boot_addr_func(boot_addr);
-+}
-+EXPORT_SYMBOL_GPL(rcar_rst_set_rproc_boot_addr);
-diff --git a/include/linux/soc/renesas/rcar-rst.h b/include/linux/soc/renesas/rcar-rst.h
-index 7899a5b8c247..1f1fe8bfaa76 100644
---- a/include/linux/soc/renesas/rcar-rst.h
-+++ b/include/linux/soc/renesas/rcar-rst.h
-@@ -4,8 +4,10 @@
- 
- #ifdef CONFIG_RST_RCAR
- int rcar_rst_read_mode_pins(u32 *mode);
-+int rcar_rst_set_rproc_boot_addr(u64 boot_addr);
- #else
- static inline int rcar_rst_read_mode_pins(u32 *mode) { return -ENODEV; }
-+static inline int rcar_rst_set_rproc_boot_addr(u64 boot_addr) { return -ENODEV; }
- #endif
- 
- #endif /* __LINUX_SOC_RENESAS_RCAR_RST_H__ */
--- 
-2.31.1
+ 	spin_lock_init(&_host->lock);
+ 	mutex_init(&_host->ios_lock);
+=20
 
 
+--tKdUITAL/m6G6pzU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmFyuv0ACgkQFA3kzBSg
+KbaHYg//RBzBLnEYi5DqWOrcHCh6rrtfl8Erqvh1papdqSmPtXoxvicJVO5AUFDu
+8hplRX6iAHC8VmjMfDjwfW3MUD3GgzEjdoHlT7FJJE492HQhFbqMtWIvXz3vp7+E
+/PK9MkQltbzHtzuZEorTzDfwM9PqjhUJ7UeJ6DfxwWAJCWeuOXQ3l/kaX1gQ527O
+AScJ7bC7GklDVnlZPNiPSyvZJjgE1Jrm5MsjWqV7fzQ5Km0f5kW6+tppAZ6dEhzr
+fHTzgpXauxNZdlDbDAuaeO7lljKtayWzmI7Pf8jw24dF/tvAweSum2iOxOjuA5Qg
+u0V7pzevqdygA/vvjJbNzURQXT7fDdJFQXHwA1xhpNFXqUEEZa/FsY/JcEJbYpzQ
+T744xsgbKnJ0hw49XZsvdsPM/GEaQOiO5bXGf6CrYOPn6lvxivpaPUXkeJGdBuy8
+f9zWbeFNTGxLVdQixI7ZjGYZhHIwIu/KKTeTGpPS2EQs3eibDo3MT1gSaEqMvNY/
+JS4rdK5fbCMN+z5M2RROUe9fBk9drYhLpFzGVPCGt8h91B/zQoCkfLvTDhkVRR6R
+hboUj1uHqayO45qoqGH4XdIL7Gu1n9CWsMwIL/I/jkeGAelr7P+2H5Mh9zY42CXO
+WxfUPlnj51TL8maSF4F/GEXWJANBAhfrYAsshOCEb4QRuzXTbPE=
+=l/0A
+-----END PGP SIGNATURE-----
+
+--tKdUITAL/m6G6pzU--
