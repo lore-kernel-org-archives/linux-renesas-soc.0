@@ -2,104 +2,92 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CDE8C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Oct 2021 16:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C75DC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Nov 2021 06:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E8A4F61165
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 29 Oct 2021 16:03:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6492760F45
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  1 Nov 2021 06:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229727AbhJ2QFn (ORCPT
+        id S229938AbhKAGwA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 29 Oct 2021 12:05:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38876 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229607AbhJ2QFm (ORCPT
+        Mon, 1 Nov 2021 02:52:00 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:19007 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230096AbhKAGv7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 29 Oct 2021 12:05:42 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CA69C061570
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 29 Oct 2021 09:03:14 -0700 (PDT)
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mgULU-0001XF-48; Fri, 29 Oct 2021 18:03:08 +0200
-Received: from [2a0a:edc0:0:900:1d::77] (helo=ptz.office.stw.pengutronix.de)
-        by drehscheibe.grey.stw.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mgULS-0006B0-R7; Fri, 29 Oct 2021 18:03:06 +0200
-Received: from ukl by ptz.office.stw.pengutronix.de with local (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1mgULS-0003nI-Q4; Fri, 29 Oct 2021 18:03:06 +0200
-Date:   Fri, 29 Oct 2021 18:03:03 +0200
-From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        linux-pwm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Duc Nguyen <duc.nguyen.ub@renesas.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: pwm: tpu: Add R-Car V3U device tree bindings
-Message-ID: <20211029160303.lv6je33mjr6zk7xh@pengutronix.de>
-References: <8ec1e2aadfc894a3cc8c412e266b87220fa0404e.1635337616.git.geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="huylye2lgi4m6fcw"
-Content-Disposition: inline
-In-Reply-To: <8ec1e2aadfc894a3cc8c412e266b87220fa0404e.1635337616.git.geert+renesas@glider.be>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+        Mon, 1 Nov 2021 02:51:59 -0400
+Date:   01 Nov 2021 15:49:24 +0900
+X-IronPort-AV: E=Sophos;i="5.87,198,1631545200"; 
+   d="scan'208";a="99116278"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 01 Nov 2021 15:49:24 +0900
+Received: from mercury.renesas.com (unknown [10.166.252.133])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 87FFD4000A85;
+        Mon,  1 Nov 2021 15:49:24 +0900 (JST)
+Message-ID: <87ilxc1ibv.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: HDMI isn't probed on v5.15-rc1 on ULCB+KF
+In-Reply-To: <87tuhtmn8u.wl-kuninori.morimoto.gx@renesas.com>
+References: <87ilya4zv8.wl-kuninori.morimoto.gx@renesas.com>
+        <YV5vB4c8J0xu2mOd@pendragon.ideasonboard.com>
+        <87v929moad.wl-kuninori.morimoto.gx@renesas.com>
+        <YV6A5xAWth6dkHor@pendragon.ideasonboard.com>
+        <87tuhtmn8u.wl-kuninori.morimoto.gx@renesas.com>
+User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 
---huylye2lgi4m6fcw
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi Laurent, again
 
-On Wed, Oct 27, 2021 at 02:28:09PM +0200, Geert Uytterhoeven wrote:
-> From: Duc Nguyen <duc.nguyen.ub@renesas.com>
->=20
-> Add device tree bindings for TPU with the PWM controller found
-> on R-Car V3U SoCs.
->=20
-> Signed-off-by: Duc Nguyen <duc.nguyen.ub@renesas.com>
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+About this topic, v5.15 was released, but it still
+has "No soundcards" issue.
+There is no dw-hdmi, thus no soundcards
 
-=46rom PWM POV:
+	...
+	[    1.431196] printk: console [ttySC0] enabled
+=>	[    1.442432] rcar-du feb00000.display: failed to initialize DRM/KMS (-6)
+	[    1.481179] loop: module loaded
+	...
+	[    9.568307] ALSA device list:
+=>	[    9.571446]   No soundcards found.
+	...
 
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+I re-start works for me if I reverted this patch
 
-Thanks
-Uwe
+	--------------------------------
+	commit d0f44e0dac29aca3f85d238dfbcd2e52450b38dc
+	Author: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+	Date:   Mon May 25 07:05:26 2020 +0300
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+	    drm: rcar-du: dw-hdmi: Set output port number
 
---huylye2lgi4m6fcw
-Content-Type: application/pgp-signature; name="signature.asc"
+	    Report the DT output port number in dw_hdmi_plat_data to connect to the
+	    next bridge in the dw-hdmi driver.
 
------BEGIN PGP SIGNATURE-----
+	    Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+	    Tested-by: Kieran Bingham <kieran.bingham@ideasonboard.com> # On V3U
+	    Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+	--------------------------------
 
-iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAmF8GzQACgkQwfwUeK3K
-7An7fQf8DFdybcvRxVh8XBIsxx+6d+5MzUKod0cQ0USNT23oy07go9t4QIF87SF0
-Wc3+JW7Csy+HU4yE+FJ4DUT+PD0J47i/xEccNoCKVYH7Y1WYr0Dbbfxga2olbeiN
-f/uzXvpENrLVwway31Lrved4JkAZypGZVpLYRQN/v2Gt/PE0sRQ9U2pTUrRiX787
-FYwNxW2B3hIDzZp1sqvJl8i5ApuFZutCxegtamcxSWcXvDZZ7flFApBX/DREax7M
-VFb5MNvfpqBevEWrnfP4rFVCoSKKRyoJFFyQ2m1FlwOxSlFf7WQ8ke4lSq4HoQQl
-4abm+2hvVP0WLK7ebqa5q8gp+WTjVg==
-=RkJf
------END PGP SIGNATURE-----
+	...
+	[    1.431130] printk: console [ttySC0] enabled
+=>	[    1.442219] rcar-du feb00000.display: failed to initialize DRM/KMS (-6)
+=>	[    1.451050] rcar-dw-hdmi fead0000.hdmi: Detected HDMI TX controller v2.01a with HDCP (DWC HDMI 2.0 TX PHY)
+=>	[    1.461560] rcar-dw-hdmi fead0000.hdmi: registered DesignWare HDMI I2C bus driver
+	[    1.501043] loop: module loaded
+	...
+	[    9.180464] ALSA device list:
+=>	[    9.183519]   #0: rcar-sound
+	...
 
---huylye2lgi4m6fcw--
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
