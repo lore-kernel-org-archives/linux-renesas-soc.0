@@ -2,39 +2,42 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BA3C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Nov 2021 22:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB3DC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Nov 2021 22:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A12A611F2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Nov 2021 22:40:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35A9D61260
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  4 Nov 2021 22:40:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232415AbhKDWnU (ORCPT
+        id S232409AbhKDWnV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 4 Nov 2021 18:43:20 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49130 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232397AbhKDWnT (ORCPT
+        Thu, 4 Nov 2021 18:43:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42214 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232405AbhKDWnT (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 4 Nov 2021 18:43:19 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 358A1C061714;
+        Thu,  4 Nov 2021 15:40:41 -0700 (PDT)
 Received: from Monstersaurus.ksquared.org.uk.beta.tailscale.net (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E536A1C4C;
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 3036D1C18;
         Thu,  4 Nov 2021 23:40:37 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1636065638;
-        bh=EuzVQhdEtwXTXwkbx/vYV40HSj57XPi3AHWA8OoE/H8=;
+        s=mail; t=1636065637;
+        bh=f3KuSZhlThaAVanz8coaKx6eNX2mIZGMJ9k/Ew/cTK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E4wMUlJ5Xh9pLJQOSI9H03xwodq1/d1gXSkI8oAPitZ/S3oG2+TaHfkn/RGm9puCP
-         qPqcJKRk23dub/nymEQ85xnvGcD2nrNdgALOFeb2jFOubDJ3jhFmDqlj039YyT/HqT
-         +PUalnMeUKVdQZPDtzLUE8ix8bQSNF5d1MYxl/Ho=
+        b=jRyBRMIbNd3oIOizVQULGmFtUpUcyJS0dqAb8tWhO5UieGpTE7C5t2/qVUtT5ys1E
+         I9N3Pxnijr2hc9jU/YZFsV35s+fVOtnX8WRP5vulLfpg+jRfLC0g+pbv8t6luNTSWw
+         K+w80tk/DWE0QNUbRJs3L91nOAEh43U875rgCFak=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 3/9] arm64: dts: renesas: r8a774e1: Fix thermal bindings
-Date:   Thu,  4 Nov 2021 22:40:27 +0000
-Message-Id: <20211104224033.3997504-4-kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 1/9] arm64: dts: renesas: r8a774a1: Fix thermal bindings
+Date:   Thu,  4 Nov 2021 22:40:25 +0000
+Message-Id: <20211104224033.3997504-2-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211104224033.3997504-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20211104224033.3997504-1-kieran.bingham+renesas@ideasonboard.com>
@@ -52,14 +55,14 @@ and sensor_thermalN to sensorN_thermal.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 6 +++---
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 6 +++---
  1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-index 379a1300272b..62209ab6deb9 100644
---- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
-@@ -2904,7 +2904,7 @@ prr: chipid@fff00044 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 6f4fffacfca2..e70aa5a08740 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -2784,7 +2784,7 @@ prr: chipid@fff00044 {
  	};
  
  	thermal-zones {
@@ -68,7 +71,7 @@ index 379a1300272b..62209ab6deb9 100644
  			polling-delay-passive = <250>;
  			polling-delay = <1000>;
  			thermal-sensors = <&tsc 0>;
-@@ -2919,7 +2919,7 @@ sensor1_crit: sensor1-crit {
+@@ -2799,7 +2799,7 @@ sensor1_crit: sensor1-crit {
  			};
  		};
  
@@ -77,7 +80,7 @@ index 379a1300272b..62209ab6deb9 100644
  			polling-delay-passive = <250>;
  			polling-delay = <1000>;
  			thermal-sensors = <&tsc 1>;
-@@ -2934,7 +2934,7 @@ sensor2_crit: sensor2-crit {
+@@ -2814,7 +2814,7 @@ sensor2_crit: sensor2-crit {
  			};
  		};
  
