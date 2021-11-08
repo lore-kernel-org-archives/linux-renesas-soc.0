@@ -2,137 +2,188 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E21C41535
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Nov 2021 14:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE98C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Nov 2021 15:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE3C8611C1
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Nov 2021 14:36:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A696560F5A
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  8 Nov 2021 15:33:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240538AbhKHOio (ORCPT
+        id S240903AbhKHPft (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 8 Nov 2021 09:38:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42784 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239345AbhKHOim (ORCPT
+        Mon, 8 Nov 2021 10:35:49 -0500
+Received: from mail-ua1-f43.google.com ([209.85.222.43]:36469 "EHLO
+        mail-ua1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240901AbhKHPfs (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 8 Nov 2021 09:38:42 -0500
-Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0AEAC061570;
-        Mon,  8 Nov 2021 06:35:57 -0800 (PST)
-Received: from zn.tnic (p200300ec2f331100b486bab6e60d7aaf.dip0.t-ipconnect.de [IPv6:2003:ec:2f33:1100:b486:bab6:e60d:7aaf])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1A75E1EC01FC;
-        Mon,  8 Nov 2021 15:35:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1636382156;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=B6oOQ1q4gjLTOu5usgfET43xDRmf4tLazw1TZ6CRXFw=;
-        b=Upd25HzfEqhrG5TAXmV4X7VLTXjG+2mbIZvAcNaA5XdFGwWxC22cjGdH367SqKuC2YI35V
-        XePkT+plNO8Rcdx9qRLbflORPHDjzc4q/HfinrM2oVoUmKJ3f3FbXqZbeiIVI7zzNRafCc
-        NDGlsVX5pxz7i7hCYlNzvvCrAxbHbAs=
-Date:   Mon, 8 Nov 2021 15:35:50 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Alan Stern <stern@rowland.harvard.edu>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Ayush Sawal <ayush.sawal@chelsio.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rohit Maheshwari <rohitm@chelsio.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Vinay Kumar Yadav <vinay.yadav@chelsio.com>,
-        alsa-devel@alsa-project.org, bcm-kernel-feedback-list@broadcom.com,
-        intel-gfx@lists.freedesktop.org,
-        intel-gvt-dev@lists.freedesktop.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, linux-hyperv@vger.kernel.org,
-        linux-iio@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linux-pm@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-remoteproc@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-sh@vger.kernel.org,
-        linux-staging@lists.linux.dev, linux-tegra@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-xtensa@linux-xtensa.org, netdev@vger.kernel.org,
-        openipmi-developer@lists.sourceforge.net, rcu@vger.kernel.org,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        xen-devel@lists.xenproject.org
-Subject: Re: [PATCH v0 00/42] notifiers: Return an error when callback is
- already registered
-Message-ID: <YYk1xi3eJdMJdjHC@zn.tnic>
-References: <20211108101157.15189-1-bp@alien8.de>
- <20211108101924.15759-1-bp@alien8.de>
- <20211108141703.GB1666297@rowland.harvard.edu>
- <YYkzJ3+faVga2Tl3@zn.tnic>
+        Mon, 8 Nov 2021 10:35:48 -0500
+Received: by mail-ua1-f43.google.com with SMTP id e10so32293872uab.3;
+        Mon, 08 Nov 2021 07:33:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VTpS+ObghtKC7xPz2lM+kE7ggidy/4BWxc00rHslQ+I=;
+        b=gWwy3gFh+So5NTeMQbTFasFlGyAMFg3woiC4uHfFmZ1nEU/uoJbDRUVmfKEoa6oNmP
+         /u1B6TmIzeVoOcNS+72nIstkegvCluQh/Vblg9MLaTMjmyLIpML41uQH9qHAkMwmFaLE
+         MmXiWqH19PqVOEkgUswJ7BQZxRA82po/Zf/AT7YBnWbxFw0X01opUmY9usB5pfgW5luH
+         jCX/jiRICGJ9RORTYLxIqbdnL8iTU/rRCoV/YAqpoVJTxRsBpRvFvFtNdp+HKQzlDGst
+         FCu3knoYfa76Z94RS+aq9TpHaXRaDl1tWPQpHciSy8Dc0GyFgD343wlDe3ZV+rXJFrKk
+         bDDA==
+X-Gm-Message-State: AOAM530snvjGsxjnXo0uXdWzoH/IlmwbMerAU0LKKN3V/4YCCP0EKlBJ
+        qiVpTkg2An+9ONDntLJ4oIOhqq773tRDWgIQ
+X-Google-Smtp-Source: ABdhPJwgqcClZIE5WX2DMIrzxhX7mr0L1NhN3UETWudQ1nHbOI4rRKvQA2RwQHtal+VzbAB+tLJYCQ==
+X-Received: by 2002:a67:c11c:: with SMTP id d28mr979832vsj.54.1636385583483;
+        Mon, 08 Nov 2021 07:33:03 -0800 (PST)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id v13sm3486260vsi.0.2021.11.08.07.33.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Nov 2021 07:33:03 -0800 (PST)
+Received: by mail-ua1-f52.google.com with SMTP id e2so32227583uax.7;
+        Mon, 08 Nov 2021 07:33:03 -0800 (PST)
+X-Received: by 2002:a05:6102:2910:: with SMTP id cz16mr39514390vsb.9.1636385582860;
+ Mon, 08 Nov 2021 07:33:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <YYkzJ3+faVga2Tl3@zn.tnic>
+References: <20211029124437.20721-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20211029124437.20721-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20211029124437.20721-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 8 Nov 2021 16:32:51 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUG4A26kBP_8fbraYxVOhtR5GZuwZyO8z6X5a8K6hmmYg@mail.gmail.com>
+Message-ID: <CAMuHMdUG4A26kBP_8fbraYxVOhtR5GZuwZyO8z6X5a8K6hmmYg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] pinctrl: renesas: pinctrl-rzg2l: Add helper
+ functions to read/write pin config
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Nov 08, 2021 at 03:24:39PM +0100, Borislav Petkov wrote:
-> I guess I can add another indirection to notifier_chain_register() and
-> avoid touching all the call sites.
+Hi Prabhakar,
 
-IOW, something like this below.
+On Fri, Oct 29, 2021 at 2:44 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add helper functions to read/read modify write pin config.
+>
+> Switch to use helper functions for pins supporting PIN_CONFIG_INPUT_ENABLE
+> capabilities.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-This way I won't have to touch all the callsites and the registration
-routines would still return a proper value instead of returning 0
-unconditionally.
+Thanks for your patch!
 
----
-diff --git a/kernel/notifier.c b/kernel/notifier.c
-index b8251dc0bc0f..04f08b2ef17f 100644
---- a/kernel/notifier.c
-+++ b/kernel/notifier.c
-@@ -19,14 +19,12 @@ BLOCKING_NOTIFIER_HEAD(reboot_notifier_list);
-  *	are layered on top of these, with appropriate locking added.
-  */
- 
--static int notifier_chain_register(struct notifier_block **nl,
--		struct notifier_block *n)
-+static int __notifier_chain_register(struct notifier_block **nl,
-+				     struct notifier_block *n)
- {
- 	while ((*nl) != NULL) {
--		if (unlikely((*nl) == n)) {
--			WARN(1, "double register detected");
--			return 0;
--		}
-+		if (unlikely((*nl) == n))
-+			return -EEXIST;
- 		if (n->priority > (*nl)->priority)
- 			break;
- 		nl = &((*nl)->next);
-@@ -36,6 +34,18 @@ static int notifier_chain_register(struct notifier_block **nl,
- 	return 0;
- }
- 
-+static int notifier_chain_register(struct notifier_block **nl,
-+				   struct notifier_block *n)
-+{
-+	int ret = __notifier_chain_register(nl, n);
-+
-+	if (ret == -EEXIST)
-+		WARN(1, "double register of notifier callback %ps detected",
-+			n->notifier_call);
-+
-+	return ret;
-+}
-+
- static int notifier_chain_unregister(struct notifier_block **nl,
- 		struct notifier_block *n)
- {
+> --- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> +++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+> @@ -91,6 +91,8 @@
+>  #define SD_CH(n)               (0x3000 + (n) * 4)
+>  #define QSPI                   (0x3008)
+>
+> +#define PORT_PIN_CFG_OFFSET    0x80
 
+This definition belongs in [PATCH v2 5/5].
 
--- 
-Regards/Gruss,
-    Boris.
+> +
+>  #define PVDD_1800              1       /* I/O domain voltage <= 1.8V */
+>  #define PVDD_3300              0       /* I/O domain voltage >= 3.3V */
+>
+> @@ -424,6 +426,52 @@ static int rzg2l_dt_node_to_map(struct pinctrl_dev *pctldev,
+>         return ret;
+>  }
+>
+> +static u32 rzg2l_read_pin_config(struct rzg2l_pinctrl *pctrl, bool port_pin,
+> +                                u32 offset, u8 bit, u32 mask)
+> +{
+> +       void __iomem *addr = pctrl->base + offset;
+> +       unsigned long flags;
+> +       u32 reg;
+> +
+> +       if (port_pin)
+> +               addr += PORT_PIN_CFG_OFFSET;
 
-https://people.kernel.org/tglx/notes-about-netiquette
+I'm wondering if it would be better to handle this in the caller,
+by passing an adjusted offset?
+Same for rzg2l_rmw_pin_config().
+
+> +
+> +       /* handle _L/_H for 32-bit register read/write */
+> +       if (bit >= 4) {
+> +               bit -= 4;
+> +               addr += 4;
+> +       }
+> +
+> +       spin_lock_irqsave(&pctrl->lock, flags);
+> +       reg = readl(addr) & (mask << (bit * 8));
+
+The masking is not needed here, as it is done below.
+
+> +       spin_unlock_irqrestore(&pctrl->lock, flags);
+
+I still think you don't need that spinlock here, as reading a MMIO
+register is an atomic operation.
+
+(/me fixes drivers/pinctrl/renesas/pinctrl.c you referred to before)
+
+> +       reg = (reg >> (bit * 8)) & mask;
+> +
+> +       return reg;
+
+return (reg >> (bit * 8)) & mask;
+
+> +}
+
+> @@ -432,10 +480,11 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+>         enum pin_config_param param = pinconf_to_config_param(*config);
+>         const struct pinctrl_pin_desc *pin = &pctrl->desc.pins[_pin];
+>         unsigned int *pin_data = pin->drv_data;
+> +       bool port_pin = false;
+
+Do you really need this?
+
+>         unsigned int arg = 0;
+>         unsigned long flags;
+>         void __iomem *addr;
+> -       u32 port = 0, reg;
+> +       u32 port = 0;
+>         u32 cfg = 0;
+>         u8 bit = 0;
+>
+> @@ -452,17 +501,8 @@ static int rzg2l_pinctrl_pinconf_get(struct pinctrl_dev *pctldev,
+>         case PIN_CONFIG_INPUT_ENABLE:
+>                 if (!(cfg & PIN_CFG_IEN))
+>                         return -EINVAL;
+> -               spin_lock_irqsave(&pctrl->lock, flags);
+> -               /* handle _L/_H for 32-bit register read/write */
+> -               addr = pctrl->base + IEN(port);
+> -               if (bit >= 4) {
+> -                       bit -= 4;
+> -                       addr += 4;
+> -               }
+>
+> -               reg = readl(addr) & (IEN_MASK << (bit * 8));
+> -               arg = (reg >> (bit * 8)) & 0x1;
+> -               spin_unlock_irqrestore(&pctrl->lock, flags);
+> +               arg = rzg2l_read_pin_config(pctrl, port_pin, IEN(port), bit, IEN_MASK);
+
+port_pin is always false here, as PIN_CFG_IEN is only ever set for
+dedicated pins.
+
+Same comments for rzg2l_pinctrl_pinconf_set().
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
