@@ -2,32 +2,31 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 696EBC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Nov 2021 08:32:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A183C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Nov 2021 08:32:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45F5561246
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Nov 2021 08:32:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70C1861076
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 10 Nov 2021 08:32:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230117AbhKJIeq (ORCPT
+        id S230254AbhKJIet (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 10 Nov 2021 03:34:46 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:41185 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S229930AbhKJIeq (ORCPT
+        Wed, 10 Nov 2021 03:34:49 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:41853 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230245AbhKJIet (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 10 Nov 2021 03:34:46 -0500
+        Wed, 10 Nov 2021 03:34:49 -0500
 X-IronPort-AV: E=Sophos;i="5.87,223,1631545200"; 
-   d="scan'208";a="100084941"
+   d="scan'208";a="99778034"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 10 Nov 2021 17:31:58 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 10 Nov 2021 17:32:01 +0900
 Received: from localhost.localdomain (unknown [10.226.92.40])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id B6E6040062CE;
-        Wed, 10 Nov 2021 17:31:54 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id AE7BE40062CE;
+        Wed, 10 Nov 2021 17:31:58 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
+        Alexandre Torgue <alexandre.torgue@foss.st.com>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -40,28 +39,78 @@ Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 0/2] Add RZ/G2L OSTM support
-Date:   Wed, 10 Nov 2021 08:31:50 +0000
-Message-Id: <20211110083152.31144-1-biju.das.jz@bp.renesas.com>
+Subject: [PATCH 1/2] dt-bindings: timer: renesas: ostm: Document Renesas RZ/G2L OSTM
+Date:   Wed, 10 Nov 2021 08:31:51 +0000
+Message-Id: <20211110083152.31144-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20211110083152.31144-1-biju.das.jz@bp.renesas.com>
+References: <20211110083152.31144-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This patch series aims to add Generic Timer Module (a.k.a OSTM) support
-for RZ/G2L series.
+Document the General Timer Module(a.k.a OSTM) found on the RZ/G2L SoC.
 
-OSTM modules needs to deassert the reset line before accessing
-any registers.
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+ .../bindings/timer/renesas,ostm.yaml          | 29 +++++++++++++++----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-Biju Das (2):
-  dt-bindings: timer: renesas: ostm: Document Renesas RZ/G2L OSTM
-  clocksource/drivers/renesas-ostm: Add RZ/G2L OSTM support
-
- .../bindings/timer/renesas,ostm.yaml          | 29 +++++++++++---
- drivers/clocksource/renesas-ostm.c            | 38 +++++++++++++++++++
- 2 files changed, 62 insertions(+), 5 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/timer/renesas,ostm.yaml b/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
+index 600d47ab7d58..5a8ffdc8b1cb 100644
+--- a/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
++++ b/Documentation/devicetree/bindings/timer/renesas,ostm.yaml
+@@ -19,11 +19,17 @@ description:
+ 
+ properties:
+   compatible:
+-    items:
+-      - enum:
+-          - renesas,r7s72100-ostm # RZ/A1H
+-          - renesas,r7s9210-ostm  # RZ/A2M
+-      - const: renesas,ostm       # Generic
++    oneOf:
++      - items:
++          - enum:
++              - renesas,r7s72100-ostm  # RZ/A1H
++              - renesas,r7s9210-ostm   # RZ/A2M
++          - const: renesas,ostm        # Generic
++
++      - items:
++          - enum:
++              - renesas,r9a07g044-ostm # RZ/G2{L,LC}
++          - const: renesas,rzg2l-ostm  # RZ/G2L
+ 
+   reg:
+     maxItems: 1
+@@ -37,6 +43,9 @@ properties:
+   power-domains:
+     maxItems: 1
+ 
++  resets:
++    maxItems: 1
++
+ required:
+   - compatible
+   - reg
+@@ -44,6 +53,16 @@ required:
+   - clocks
+   - power-domains
+ 
++if:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - renesas,rzg2l-ostm
++then:
++  required:
++    - resets
++
+ additionalProperties: false
+ 
+ examples:
 -- 
 2.17.1
 
