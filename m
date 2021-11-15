@@ -2,49 +2,53 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B25E8C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Nov 2021 12:02:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0188C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Nov 2021 12:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 914AA63214
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Nov 2021 12:02:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8A1663214
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 15 Nov 2021 12:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231150AbhKOMEv (ORCPT
+        id S229613AbhKOMEw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 15 Nov 2021 07:04:51 -0500
-Received: from smtp-out2.suse.de ([195.135.220.29]:49162 "EHLO
+        Mon, 15 Nov 2021 07:04:52 -0500
+Received: from smtp-out2.suse.de ([195.135.220.29]:49220 "EHLO
         smtp-out2.suse.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229613AbhKOMEp (ORCPT
+        with ESMTP id S230318AbhKOMEq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 15 Nov 2021 07:04:45 -0500
+        Mon, 15 Nov 2021 07:04:46 -0500
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 8E9C11FD67;
-        Mon, 15 Nov 2021 12:01:49 +0000 (UTC)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 1FECC1FD6A;
+        Mon, 15 Nov 2021 12:01:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1636977709; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=Roq9KIrJ5NH1GtmGpzHmXzH2zR1Gn+P59CyYumnHUwM=;
-        b=hp0vnWEUm/lz8cB0nk6BROWkBGdTUXGflSl2GPm3WkAN19XWaT4Xc7ZhqR4v4krZnsvWgq
-        J4gjqhFIqk/f/c3zS4yPl88gEqY+bsP9/ZivxJprOmmilGWQfjQ5vzXQquFPd9eeu0fdRu
-        /eylOysvxSCcdigrdO1kcO0wrtzcLNA=
+        t=1636977710; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=l9DtZghpKPDOhmopBq/LMF+Tqa+Vw9X5WmNclG02vUQ=;
+        b=L1HkpbUWzfUEfUegtI6cNgRDvielVKlk88v+74QGiwKYZ1e+a1Soqr7YsvYWxcm5MVgoF3
+        /UcnwUlXfoS64ukO54GDm6uzXTbQmaCkVr8vyRa/hplsbvQtnOndQmhZz5p0L1i75DxTi+
+        BByobYAZ5qYP+eNDK2i7F0FruMDBS44=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1636977709;
+        s=susede2_ed25519; t=1636977710;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-        bh=Roq9KIrJ5NH1GtmGpzHmXzH2zR1Gn+P59CyYumnHUwM=;
-        b=8u2IJ56Rzthay+Rv68HgqpyV0ASj334y38SnHz/7oSt6KkA5mnWOL2iipikunhXqdGU8Qu
-        C0ThfnQ0IkGn0pDg==
+         mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=l9DtZghpKPDOhmopBq/LMF+Tqa+Vw9X5WmNclG02vUQ=;
+        b=0IJ0n4z+n3/iyGgl3kEhIC5+825Ythn7Uy9Q3v1b59a5mgGOAtyTnvOTY69L3f/c42RvVM
+        KIcK8t1zjVGMZzCg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 528D213E37;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D4DCC13E37;
         Mon, 15 Nov 2021 12:01:49 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id TV0iEy1MkmHKVgAAMHmgww
+        id 0C4AMy1MkmHKVgAAMHmgww
         (envelope-from <tzimmermann@suse.de>); Mon, 15 Nov 2021 12:01:49 +0000
 From:   Thomas Zimmermann <tzimmermann@suse.de>
 To:     daniel@ffwll.ch, airlied@linux.ie, mripard@kernel.org,
@@ -53,43 +57,217 @@ To:     daniel@ffwll.ch, airlied@linux.ie, mripard@kernel.org,
         kieran.bingham+renesas@ideasonboard.com, emma@anholt.net
 Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         Thomas Zimmermann <tzimmermann@suse.de>
-Subject: [PATCH 0/3] drm/cma-helper: Clean up public interface
-Date:   Mon, 15 Nov 2021 13:01:45 +0100
-Message-Id: <20211115120148.21766-1-tzimmermann@suse.de>
+Subject: [PATCH 2/3] drm/cma-helper: Export dedicated wrappers for GEM object functions
+Date:   Mon, 15 Nov 2021 13:01:47 +0100
+Message-Id: <20211115120148.21766-3-tzimmermann@suse.de>
 X-Mailer: git-send-email 2.33.1
+In-Reply-To: <20211115120148.21766-1-tzimmermann@suse.de>
+References: <20211115120148.21766-1-tzimmermann@suse.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Convert GEM CMA functions to accept struct drm_gem_cma_object, provide
-small wrappers for GEM object callbacks and update all users. Brings
-up the interface to the pattern used in SHMEM and VRAM helpers.
+Wrap GEM CMA functions for struct drm_gem_object_funcs and update
+all callers. This will allow for an update of the public interfaces
+of the GEM CMA helper library.
 
-Converting all GEM object functions to use drm_gem_cma_object enables
-type checking by the C compiler. Previous callers could have passed any
-implementation of drm_gem_object to the GEM CMA helpers. It also
-removes upcasting in the GEM functions and simplifies the caller side.
-No functional changes.
+Signed-off-by: Thomas Zimmermann <tzimmermann@suse.de>
+---
+ drivers/gpu/drm/drm_gem_cma_helper.c  | 23 ++++----
+ drivers/gpu/drm/rcar-du/rcar_du_kms.c | 10 ++--
+ drivers/gpu/drm/vc4/vc4_bo.c          |  4 +-
+ include/drm/drm_gem_cma_helper.h      | 78 +++++++++++++++++++++++++++
+ 4 files changed, 94 insertions(+), 21 deletions(-)
 
-For GEM object callbacks, the CMA helper library now provides a
-number of small wrappers that do the necessary upcasting. Again no
-functional changes.
-
-Thomas Zimmermann (3):
-  drm/cma-helper: Move driver and file ops to the end of header
-  drm/cma-helper: Export dedicated wrappers for GEM object functions
-  drm/cma-helper: Pass GEM CMA object in public interfaces
-
- drivers/gpu/drm/drm_gem_cma_helper.c  |  73 +++++-----
- drivers/gpu/drm/rcar-du/rcar_du_kms.c |  10 +-
- drivers/gpu/drm/vc4/vc4_bo.c          |   8 +-
- include/drm/drm_gem_cma_helper.h      | 189 +++++++++++++++++++-------
- 4 files changed, 180 insertions(+), 100 deletions(-)
-
-
-base-commit: 9fccd12cfac1c863fa46d4d17c2d8ac25a44b190
---
+diff --git a/drivers/gpu/drm/drm_gem_cma_helper.c b/drivers/gpu/drm/drm_gem_cma_helper.c
+index 09e2cb80de08..27ccb71e3d66 100644
+--- a/drivers/gpu/drm/drm_gem_cma_helper.c
++++ b/drivers/gpu/drm/drm_gem_cma_helper.c
+@@ -35,11 +35,11 @@
+  */
+ 
+ static const struct drm_gem_object_funcs drm_gem_cma_default_funcs = {
+-	.free = drm_gem_cma_free_object,
+-	.print_info = drm_gem_cma_print_info,
+-	.get_sg_table = drm_gem_cma_get_sg_table,
+-	.vmap = drm_gem_cma_vmap,
+-	.mmap = drm_gem_cma_mmap,
++	.free = drm_gem_cma_object_free,
++	.print_info = drm_gem_cma_object_print_info,
++	.get_sg_table = drm_gem_cma_object_get_sg_table,
++	.vmap = drm_gem_cma_object_vmap,
++	.mmap = drm_gem_cma_object_mmap,
+ 	.vm_ops = &drm_gem_cma_vm_ops,
+ };
+ 
+@@ -198,8 +198,6 @@ drm_gem_cma_create_with_handle(struct drm_file *file_priv,
+  * This function frees the backing memory of the CMA GEM object, cleans up the
+  * GEM object state and frees the memory used to store the object itself.
+  * If the buffer is imported and the virtual address is set, it is released.
+- * Drivers using the CMA helpers should set this as their
+- * &drm_gem_object_funcs.free callback.
+  */
+ void drm_gem_cma_free_object(struct drm_gem_object *gem_obj)
+ {
+@@ -393,9 +391,8 @@ EXPORT_SYMBOL(drm_gem_cma_print_info);
+  *     pages for a CMA GEM object
+  * @obj: GEM object
+  *
+- * This function exports a scatter/gather table by
+- * calling the standard DMA mapping API. Drivers using the CMA helpers should
+- * set this as their &drm_gem_object_funcs.get_sg_table callback.
++ * This function exports a scatter/gather table by calling the standard
++ * DMA mapping API.
+  *
+  * Returns:
+  * A pointer to the scatter/gather table of pinned pages or NULL on failure.
+@@ -475,8 +472,7 @@ EXPORT_SYMBOL_GPL(drm_gem_cma_prime_import_sg_table);
+  * This function maps a buffer into the kernel's
+  * virtual address space. Since the CMA buffers are already mapped into the
+  * kernel virtual address space this simply returns the cached virtual
+- * address. Drivers using the CMA helpers should set this as their DRM
+- * driver's &drm_gem_object_funcs.vmap callback.
++ * address.
+  *
+  * Returns:
+  * 0 on success, or a negative error code otherwise.
+@@ -498,8 +494,7 @@ EXPORT_SYMBOL_GPL(drm_gem_cma_vmap);
+  *
+  * This function maps a buffer into a userspace process's address space.
+  * In addition to the usual GEM VMA setup it immediately faults in the entire
+- * object instead of using on-demand faulting. Drivers that use the CMA
+- * helpers should set this as their &drm_gem_object_funcs.mmap callback.
++ * object instead of using on-demand faulting.
+  *
+  * Returns:
+  * 0 on success or a negative error code on failure.
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+index eacb1f17f747..190dbb7f15dd 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
+@@ -327,11 +327,11 @@ const struct rcar_du_format_info *rcar_du_format_info(u32 fourcc)
+  */
+ 
+ static const struct drm_gem_object_funcs rcar_du_gem_funcs = {
+-	.free = drm_gem_cma_free_object,
+-	.print_info = drm_gem_cma_print_info,
+-	.get_sg_table = drm_gem_cma_get_sg_table,
+-	.vmap = drm_gem_cma_vmap,
+-	.mmap = drm_gem_cma_mmap,
++	.free = drm_gem_cma_object_free,
++	.print_info = drm_gem_cma_object_print_info,
++	.get_sg_table = drm_gem_cma_object_get_sg_table,
++	.vmap = drm_gem_cma_object_vmap,
++	.mmap = drm_gem_cma_object_mmap,
+ 	.vm_ops = &drm_gem_cma_vm_ops,
+ };
+ 
+diff --git a/drivers/gpu/drm/vc4/vc4_bo.c b/drivers/gpu/drm/vc4/vc4_bo.c
+index fddaeb0b09c1..830756b3159e 100644
+--- a/drivers/gpu/drm/vc4/vc4_bo.c
++++ b/drivers/gpu/drm/vc4/vc4_bo.c
+@@ -732,8 +732,8 @@ static const struct vm_operations_struct vc4_vm_ops = {
+ static const struct drm_gem_object_funcs vc4_gem_object_funcs = {
+ 	.free = vc4_free_object,
+ 	.export = vc4_prime_export,
+-	.get_sg_table = drm_gem_cma_get_sg_table,
+-	.vmap = drm_gem_cma_vmap,
++	.get_sg_table = drm_gem_cma_object_get_sg_table,
++	.vmap = drm_gem_cma_object_vmap,
+ 	.mmap = vc4_gem_object_mmap,
+ 	.vm_ops = &vc4_vm_ops,
+ };
+diff --git a/include/drm/drm_gem_cma_helper.h b/include/drm/drm_gem_cma_helper.h
+index e0fb7a0cf03f..56d2f9fdf9ac 100644
+--- a/include/drm/drm_gem_cma_helper.h
++++ b/include/drm/drm_gem_cma_helper.h
+@@ -48,6 +48,84 @@ struct sg_table *drm_gem_cma_get_sg_table(struct drm_gem_object *obj);
+ int drm_gem_cma_vmap(struct drm_gem_object *obj, struct dma_buf_map *map);
+ int drm_gem_cma_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma);
+ 
++/*
++ * GEM object functions
++ */
++
++/**
++ * drm_gem_cma_object_free - GEM object function for drm_gem_cma_free_object()
++ * @obj: GEM object to free
++ *
++ * This function wraps drm_gem_cma_free_object(). Drivers that employ the CMA helpers
++ * should use it as their &drm_gem_object_funcs.free handler.
++ */
++static inline void drm_gem_cma_object_free(struct drm_gem_object *obj)
++{
++	drm_gem_cma_free_object(obj);
++}
++
++/**
++ * drm_gem_cma_object_print_info() - Print &drm_gem_cma_object info for debugfs
++ * @p: DRM printer
++ * @indent: Tab indentation level
++ * @obj: GEM object
++ *
++ * This function wraps drm_gem_cma_print_info(). Drivers that employ the CMA helpers
++ * should use this function as their &drm_gem_object_funcs.print_info handler.
++ */
++static inline void drm_gem_cma_object_print_info(struct drm_printer *p, unsigned int indent,
++						 const struct drm_gem_object *obj)
++{
++	drm_gem_cma_print_info(p, indent, obj);
++}
++
++/**
++ * drm_gem_cma_object_get_sg_table - GEM object function for drm_gem_cma_get_sg_table()
++ * @obj: GEM object
++ *
++ * This function wraps drm_gem_cma_get_sg_table(). Drivers that employ the CMA helpers should
++ * use it as their &drm_gem_object_funcs.get_sg_table handler.
++ *
++ * Returns:
++ * A pointer to the scatter/gather table of pinned pages or NULL on failure.
++ */
++static inline struct sg_table *drm_gem_cma_object_get_sg_table(struct drm_gem_object *obj)
++{
++	return drm_gem_cma_get_sg_table(obj);
++}
++
++/*
++ * drm_gem_cma_object_vmap - GEM object function for drm_gem_cma_vmap()
++ * @obj: GEM object
++ * @map: Returns the kernel virtual address of the CMA GEM object's backing store.
++ *
++ * This function wraps drm_gem_cma_vmap(). Drivers that employ the CMA helpers should
++ * use it as their &drm_gem_object_funcs.vmap handler.
++ *
++ * Returns:
++ * 0 on success or a negative error code on failure.
++ */
++static inline int drm_gem_cma_object_vmap(struct drm_gem_object *obj, struct dma_buf_map *map)
++{
++	return drm_gem_cma_vmap(obj, map);
++}
++
++/**
++ * drm_gem_cma_object_mmap - GEM object function for drm_gem_cma_mmap()
++ * @obj: GEM object
++ * @vma: VMA for the area to be mapped
++ *
++ * This function wraps drm_gem_cma_mmap(). Drivers that employ the cma helpers should
++ * use it as their &drm_gem_object_funcs.mmap handler.
++ *
++ * Returns:
++ * 0 on success or a negative error code on failure.
++ */
++static inline int drm_gem_cma_object_mmap(struct drm_gem_object *obj, struct vm_area_struct *vma)
++{
++	return drm_gem_cma_mmap(obj, vma);
++}
++
+ /*
+  * Driver ops
+  */
+-- 
 2.33.1
 
