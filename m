@@ -2,31 +2,31 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D81C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Nov 2021 08:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11820C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Nov 2021 08:26:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 065D161B49
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Nov 2021 08:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9D4761B49
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Nov 2021 08:26:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232030AbhKPI3o (ORCPT
+        id S232069AbhKPI3v (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Nov 2021 03:29:44 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:42674 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S232032AbhKPI3l (ORCPT
+        Tue, 16 Nov 2021 03:29:51 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:55904 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S232034AbhKPI3q (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Nov 2021 03:29:41 -0500
-Date:   16 Nov 2021 17:26:44 +0900
+        Tue, 16 Nov 2021 03:29:46 -0500
+Date:   16 Nov 2021 17:26:48 +0900
 X-IronPort-AV: E=Sophos;i="5.87,238,1631545200"; 
-   d="scan'208";a="100773495"
+   d="scan'208";a="100439484"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 16 Nov 2021 17:26:44 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 16 Nov 2021 17:26:48 +0900
 Received: from mercury.renesas.com (unknown [10.166.252.133])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 119AC423B06F;
-        Tue, 16 Nov 2021 17:26:44 +0900 (JST)
-Message-ID: <87v90swlob.wl-kuninori.morimoto.gx@renesas.com>
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B2B15423B070;
+        Tue, 16 Nov 2021 17:26:48 +0900 (JST)
+Message-ID: <87tugcwlo7.wl-kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH 2/3] arm64: defconfig: Enable Audio Graph Card2 driver
+Subject: [PATCH 3/3] arm64: renesas: defconfig: Enable Audio Graph Card2 driver
 User-Agent: Wanderlust/2.15.9 Emacs/26.3 Mule/6.0
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     Magnus <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org
@@ -38,7 +38,6 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-
 From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
 commit 6e5f68fe3f2d35 ("ASoC: add Audio Graph Card2 driver")
@@ -48,21 +47,21 @@ This patch enables it on defconfig.
 
 Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 ---
- arch/arm64/configs/defconfig | 1 +
+ arch/arm64/configs/renesas_defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index f2e2b9bdd702..3bc3e1b6dd6a 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -802,6 +802,7 @@ CONFIG_SND_SOC_LPASS_WSA_MACRO=m
- CONFIG_SND_SOC_LPASS_VA_MACRO=m
- CONFIG_SND_SIMPLE_CARD=m
- CONFIG_SND_AUDIO_GRAPH_CARD=m
-+CONFIG_SND_AUDIO_GRAPH_CARD2=m
- CONFIG_HID_MULTITOUCH=m
- CONFIG_I2C_HID_ACPI=m
- CONFIG_I2C_HID_OF=m
+diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
+index 01ea7ff02d5d..9df805f6f385 100644
+--- a/arch/arm64/configs/renesas_defconfig
++++ b/arch/arm64/configs/renesas_defconfig
+@@ -263,6 +263,7 @@ CONFIG_SND_SOC_PCM3168A_I2C=y
+ CONFIG_SND_SOC_WM8978=y
+ CONFIG_SND_SIMPLE_CARD=y
+ CONFIG_SND_AUDIO_GRAPH_CARD=y
++CONFIG_SND_AUDIO_GRAPH_CARD2=y
+ CONFIG_USB=y
+ CONFIG_USB_OTG=y
+ CONFIG_USB_XHCI_HCD=y
 -- 
 2.25.1
 
