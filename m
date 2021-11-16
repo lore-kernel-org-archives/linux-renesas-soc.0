@@ -2,43 +2,39 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59559C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Nov 2021 15:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3DDC43219
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Nov 2021 15:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 46498630EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Nov 2021 15:18:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D43C363217
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 16 Nov 2021 15:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238004AbhKPPVB (ORCPT
+        id S238040AbhKPPVF (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 16 Nov 2021 10:21:01 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:28299 "EHLO
+        Tue, 16 Nov 2021 10:21:05 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:52019 "EHLO
         relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S237922AbhKPPU7 (ORCPT
+        by vger.kernel.org with ESMTP id S238073AbhKPPVF (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 16 Nov 2021 10:20:59 -0500
+        Tue, 16 Nov 2021 10:21:05 -0500
 X-IronPort-AV: E=Sophos;i="5.87,239,1631545200"; 
-   d="scan'208";a="100806885"
+   d="scan'208";a="100806898"
 Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 17 Nov 2021 00:18:02 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 17 Nov 2021 00:18:07 +0900
 Received: from localhost.localdomain (unknown [10.226.92.242])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 49E1240062CC;
-        Wed, 17 Nov 2021 00:17:59 +0900 (JST)
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id BB5B64007527;
+        Wed, 17 Nov 2021 00:18:05 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
 To:     Rob Herring <robh+dt@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 2/5] dt-bindings: thermal: Document Renesas RZ/G2L TSU
-Date:   Tue, 16 Nov 2021 15:17:47 +0000
-Message-Id: <20211116151750.24857-3-biju.das.jz@bp.renesas.com>
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 4/5] arm64: dts: renesas: r9a07g044: Add TSU node
+Date:   Tue, 16 Nov 2021 15:17:49 +0000
+Message-Id: <20211116151750.24857-5-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20211116151750.24857-1-biju.das.jz@bp.renesas.com>
 References: <20211116151750.24857-1-biju.das.jz@bp.renesas.com>
@@ -46,97 +42,58 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the Thermal Sensor Unit(TSU) in the RZ/G2L SoC.
+Add TSU node to RZ/G2L SoC DTSI.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- .../bindings/thermal/rzg2l-thermal.yaml       | 76 +++++++++++++++++++
- 1 file changed, 76 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml
+ arch/arm64/boot/dts/renesas/r9a07g044.dtsi | 26 ++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml b/Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml
-new file mode 100644
-index 000000000000..ccab9511a042
---- /dev/null
-+++ b/Documentation/devicetree/bindings/thermal/rzg2l-thermal.yaml
-@@ -0,0 +1,76 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/thermal/rzg2l-thermal.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+index 15b3576df114..b2d593ba07ad 100644
+--- a/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a07g044.dtsi
+@@ -490,6 +490,16 @@
+ 			};
+ 		};
+ 
++		tsu: thermal@10059400 {
++			compatible = "renesas,r9a07g044-tsu",
++				     "renesas,rzg2l-tsu";
++			reg = <0 0x10059400 0 0x400>;
++			clocks = <&cpg CPG_MOD R9A07G044_TSU_PCLK>;
++			resets = <&cpg R9A07G044_TSU_PRESETN>;
++			power-domains = <&cpg>;
++			#thermal-sensor-cells = <1>;
++		};
 +
-+title: Renesas RZ/G2L Thermal Sensor Unit
+ 		sbc: spi@10060000 {
+ 			compatible = "renesas,r9a07g044-rpc-if",
+ 				     "renesas,rzg2l-rpc-if";
+@@ -775,6 +785,22 @@
+ 		};
+ 	};
+ 
++	thermal-zones {
++		cpu-thermal {
++			polling-delay-passive = <250>;
++			polling-delay = <1000>;
++			thermal-sensors = <&tsu 0>;
 +
-+description:
-+  On RZ/G2L SoCs, the thermal sensor unit (TSU) measures the
-+  temperature(Tj) inside the LSI.
++			trips {
++				sensor_crit: sensor-crit {
++					temperature = <125000>;
++					hysteresis = <1000>;
++					type = "critical";
++				};
++			};
++		};
++	};
 +
-+maintainers:
-+  - Biju Das <biju.das.jz@bp.renesas.com>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - renesas,r9a07g044-tsu # RZ/G2{L,LC}
-+      - const: renesas,rzg2l-tsu
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+  resets:
-+    maxItems: 1
-+
-+  "#thermal-sensor-cells":
-+    const: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - power-domains
-+  - resets
-+  - "#thermal-sensor-cells"
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/r9a07g044-cpg.h>
-+
-+    tsu: thermal@10059400 {
-+            compatible = "renesas,r9a07g044-tsu",
-+                         "renesas,rzg2l-tsu";
-+            reg = <0x10059400 0x400>;
-+            clocks = <&cpg CPG_MOD R9A07G044_TSU_PCLK>;
-+            resets = <&cpg R9A07G044_TSU_PRESETN>;
-+            power-domains = <&cpg>;
-+            #thermal-sensor-cells = <1>;
-+    };
-+
-+    thermal-zones {
-+            cpu-thermal {
-+                    polling-delay-passive = <250>;
-+                    polling-delay = <1000>;
-+                    thermal-sensors = <&tsu 0>;
-+
-+                    trips {
-+                            sensor_crit: sensor-crit {
-+                                    temperature = <125000>;
-+                                    hysteresis = <1000>;
-+                                    type = "critical";
-+                            };
-+                    };
-+            };
-+    };
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts-extended = <&gic GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
 -- 
 2.17.1
 
