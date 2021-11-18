@@ -2,119 +2,164 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 977A7C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 14:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3001C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 14:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 81BE061107
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 14:07:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEB66617E3
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 14:56:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232501AbhKROKz (ORCPT
+        id S231405AbhKRO7F (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 18 Nov 2021 09:10:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38528 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232503AbhKROKy (ORCPT
+        Thu, 18 Nov 2021 09:59:05 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:34542 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S229587AbhKRO7F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Nov 2021 09:10:54 -0500
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89E93C061570;
-        Thu, 18 Nov 2021 06:07:54 -0800 (PST)
-Received: by mail-pf1-x42c.google.com with SMTP id x5so6175666pfr.0;
-        Thu, 18 Nov 2021 06:07:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=MC+uMtAqzrUGxiPuMGV2uquDaVscrAuApobHOB73Khc=;
-        b=iujRsX4QPoiun7MHP0bUBZW28PjBf6o6gfGjY/YCm/Lpia8P/wzPGdCWhiyGfZG09g
-         Gjrmitr/DvKW1Se/u30W1xBctEtQ460BlEKz4w4a4RRLsG/Z9uYu8quQ3S8YNaXabwUL
-         c0ODX2zYAPzZEc+6s3kYCQfPner0LQoYLnPLwcCCQxCnx5DSiPpfmdj91JA28o2Bh+zR
-         Xxth8mCjdAdYY8DkskQ2AL8PFVJqPwsIgFNlvyqn9V5Q7seZuDDq1aaOMfpUVkRLcLVb
-         p2wov/u8f1vPaBr2+y9SQZFEwiXZ5iREzuqbl0+ygDk3ftzRQ2vbE6NVCZ+zPwJOU+sx
-         PG0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=MC+uMtAqzrUGxiPuMGV2uquDaVscrAuApobHOB73Khc=;
-        b=4AmvMsilUFcc9yAL0G1NHGdVHQX1A7b376rkqlxdCW3fwAule/EkVKnarNDNZD3Xu5
-         tw4mRzYvBHUKfiaiNzF2p9tjsSBevq4V9FOCFvpE8yPhMviUvEw/XB+Bx0Y2Q//kGoW1
-         8ALbAfFz87Bs6bf3PDZC12jP2z1a/mU+45oXSzBuw7p8hzzJ/z/QfOtEsh9tEo9sUmxY
-         fDxW/SoMlmOoBAtuNDyFG4cBYMHi0bdrWWV8DNjOKn9aj8S/AYNF7V3bHUWrNY9O8xpA
-         SlNGlem4d4+n1R9jhu92AB0e+ejDvdcmFwdNBWzPIVsEPLlvFcnDoXGZsze7PimU23gG
-         1R/w==
-X-Gm-Message-State: AOAM530nda8+C5DufGi/C/JmEO2M1TdPnqCfjpgdGjG/TehvRG0JrR3x
-        G0qPPrz7epsTWAQALOGPXJw=
-X-Google-Smtp-Source: ABdhPJyuYGF3D5BwP9dBQadEZLcKBgGb+caRhXPH1nLvYia+cdRfnIzBQGuarTkOzB+UKMsDzzIvlg==
-X-Received: by 2002:a63:725e:: with SMTP id c30mr11339989pgn.240.1637244474011;
-        Thu, 18 Nov 2021 06:07:54 -0800 (PST)
-Received: from localhost.localdomain ([2406:7400:63:2c47:5ffe:fc34:61f0:f1ea])
-        by smtp.gmail.com with ESMTPSA id x14sm2822878pjl.27.2021.11.18.06.07.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Nov 2021 06:07:53 -0800 (PST)
-From:   Naveen Naidu <naveennaidu479@gmail.com>
-To:     bhelgaas@google.com
-Cc:     Naveen Naidu <naveennaidu479@gmail.com>,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        skhan@linuxfoundation.org,
+        Thu, 18 Nov 2021 09:59:05 -0500
+X-IronPort-AV: E=Sophos;i="5.87,245,1631545200"; 
+   d="scan'208";a="101052139"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 18 Nov 2021 23:56:03 +0900
+Received: from localhost.localdomain (unknown [10.226.93.19])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9DB4443D7FED;
+        Thu, 18 Nov 2021 23:56:01 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-        linux-renesas-soc@vger.kernel.org (open list:PCI DRIVER FOR RENESAS
-        R-CAR)
-Subject: [PATCH v4 14/25] PCI: rcar: Remove redundant error fabrication when device read fails
-Date:   Thu, 18 Nov 2021 19:33:24 +0530
-Message-Id: <83540eb3ae76a0d28bbe03d69d685a6d549b456b.1637243717.git.naveennaidu479@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1637243717.git.naveennaidu479@gmail.com>
-References: <cover.1637243717.git.naveennaidu479@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [RFC] pinctrl: renesas: rzg2l: Add support to select MII/RGMII mode
+Date:   Thu, 18 Nov 2021 14:55:58 +0000
+Message-Id: <20211118145558.32359-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-An MMIO read from a PCI device that doesn't exist or doesn't respond
-causes a PCI error. There's no real data to return to satisfy the
-CPU read, so most hardware fabricates ~0 data.
+RZ/G2L supports Ether MII/RGMII mode control which select
+the direction of the pins based on PHY mode.
 
-The host controller drivers sets the error response values (~0) and
-returns an error when faulty hardware read occurs. But the error
-response value (~0) is already being set in PCI_OP_READ and
-PCI_USER_READ_CONFIG whenever a read by host controller driver fails.
+This patch adds support to select MII/RGMII mode based on
+the phy-mode property present in the ether node, as the
+register for configuring the same is located in pinctrl block
+rather than GbEthernet block.
 
-Thus, it's no longer necessary for the host controller drivers to
-fabricate any error response.
-
-This helps unify PCI error response checking and make error check
-consistent and easier to find.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Naveen Naidu <naveennaidu479@gmail.com>
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- drivers/pci/controller/pcie-rcar-host.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Current names on HW manual is based on pins which is going to
+change in next version like below.
 
-diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-index e12c2d8be05a..6bd5619fbbf4 100644
---- a/drivers/pci/controller/pcie-rcar-host.c
-+++ b/drivers/pci/controller/pcie-rcar-host.c
-@@ -159,10 +159,8 @@ static int rcar_pcie_read_conf(struct pci_bus *bus, unsigned int devfn,
+P20_0->ETH0_mode
+P29_0->ETH1_mode
+---
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 70 +++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index ccee9c9e2e22..bc86119be01e 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -92,6 +92,7 @@
+ #define PWPR			(0x3014)
+ #define SD_CH(n)		(0x3000 + (n) * 4)
+ #define QSPI			(0x3008)
++#define ETHER_MODE		(0x3018)
  
- 	ret = rcar_pcie_config_access(host, RCAR_PCI_ACCESS_READ,
- 				      bus, devfn, where, val);
--	if (ret != PCIBIOS_SUCCESSFUL) {
--		*val = 0xffffffff;
-+	if (ret != PCIBIOS_SUCCESSFUL)
+ #define PVDD_1800		1	/* I/O domain voltage <= 1.8V */
+ #define PVDD_3300		0	/* I/O domain voltage >= 3.3V */
+@@ -104,6 +105,10 @@
+ #define PFC_MASK		0x07
+ #define IEN_MASK		0x01
+ #define IOLH_MASK		0x03
++#define ETHER_MODE_ETH0_MASK	BIT(0)
++#define ETHER_MODE_ETH1_MASK	BIT(1)
++#define ETHER_MODE_ETH0_ADDR	0x11c20000
++#define ETHER_MODE_ETH1_ADDR	0x11c30000
+ 
+ #define PM_INPUT		0x1
+ #define PM_OUTPUT		0x2
+@@ -1197,6 +1202,69 @@ static void rzg2l_pinctrl_clk_disable(void *data)
+ 	clk_disable_unprepare(data);
+ }
+ 
++static bool rzg2l_pinctrl_is_rgmii_mode(struct rzg2l_pinctrl *pctrl,
++					struct device_node *node)
++{
++	const char *mode = of_get_property(node, "phy-mode", NULL);
++	bool ret = false;
++
++	if (!mode) {
++		dev_err(pctrl->dev, "phy-mode missing, setting to mii mode");
++		return ret;
++	}
++
++	if ((!strcmp("rgmii", mode)) || (!strcmp("rgmii-id", mode)) ||
++	    (!strcmp("rgmii-rxid", mode)) || (!strcmp("rgmii-txid", mode)))
++		ret = true;
++
++	return ret;
++}
++
++static void rzg2l_pinctrl_set_eth_mode(struct rzg2l_pinctrl *pctrl,
++				       struct device_node *np)
++{
++	u8 reg = readb(pctrl->base + ETHER_MODE);
++	u8 mask = ETHER_MODE_ETH0_MASK;
++	const __be32 *prop;
++	u64 addr;
++
++	prop = of_get_property(np, "reg", NULL);
++	if (!prop)
++		return;
++
++	addr = of_read_number(prop, of_n_addr_cells(np));
++	if (addr == ETHER_MODE_ETH1_ADDR)
++		mask = ETHER_MODE_ETH1_MASK;
++
++	if (rzg2l_pinctrl_is_rgmii_mode(pctrl, np))
++		reg &= ~mask;
++	else
++		reg |= mask;
++
++	writeb(reg, pctrl->base + ETHER_MODE);
++}
++
++static void rzg2l_pinctrl_set_ether_modes(struct rzg2l_pinctrl *pctrl)
++{
++	struct device_node *np, *np1 = NULL;
++
++	np = of_find_compatible_node(NULL, NULL, "renesas,rzg2l-gbeth");
++	if (np) {
++		np1 = of_find_compatible_node(np, NULL, "renesas,rzg2l-gbeth");
++		if (of_device_is_available(np))
++			rzg2l_pinctrl_set_eth_mode(pctrl, np);
++
++		of_node_put(np);
++	}
++
++	if (np1) {
++		if (of_device_is_available(np1))
++			rzg2l_pinctrl_set_eth_mode(pctrl, np1);
++
++		of_node_put(np1);
++	}
++}
++
+ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+ {
+ 	struct rzg2l_pinctrl *pctrl;
+@@ -1246,6 +1314,8 @@ static int rzg2l_pinctrl_probe(struct platform_device *pdev)
+ 	if (ret)
  		return ret;
--	}
  
- 	if (size == 1)
- 		*val = (*val >> (BITS_PER_BYTE * (where & 3))) & 0xff;
++	rzg2l_pinctrl_set_ether_modes(pctrl);
++
+ 	dev_info(pctrl->dev, "%s support registered\n", DRV_NAME);
+ 	return 0;
+ }
 -- 
-2.25.1
+2.17.1
 
