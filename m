@@ -2,23 +2,23 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02755C43219
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 11:21:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03898C4167B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 11:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1D3F61AD2
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 11:21:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E48BF61B73
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 11:21:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343822AbhKRLY3 (ORCPT
+        id S1343799AbhKRLY1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 18 Nov 2021 06:24:29 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:54953 "EHLO
+        Thu, 18 Nov 2021 06:24:27 -0500
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:52865 "EHLO
         relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343693AbhKRLWt (ORCPT
+        with ESMTP id S1343737AbhKRLWp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Nov 2021 06:22:49 -0500
+        Thu, 18 Nov 2021 06:22:45 -0500
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 6DEF52001C;
-        Thu, 18 Nov 2021 11:19:47 +0000 (UTC)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 5421120011;
+        Thu, 18 Nov 2021 11:19:41 +0000 (UTC)
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Richard Weinberger <richard@nod.at>,
         Vignesh Raghavendra <vigneshr@ti.com>,
@@ -34,12 +34,10 @@ Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         <linux-arm-kernel@lists.infradead.org>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 3/3] MAINTAINERS: Add an entry for Renesas RZ/N1 NAND controller
-Date:   Thu, 18 Nov 2021 12:19:40 +0100
-Message-Id: <20211118111940.1275351-4-miquel.raynal@bootlin.com>
+Subject: [PATCH 0/3] Renesas RZ/N1 NAND controller support
+Date:   Thu, 18 Nov 2021 12:19:37 +0100
+Message-Id: <20211118111940.1275351-1-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20211118111940.1275351-1-miquel.raynal@bootlin.com>
-References: <20211118111940.1275351-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -47,31 +45,35 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Point to the driver and the bindings.
+Hello,
 
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Here is a short series bringing support for Renesas RZ/N1 NAND
+controller. I tried to follow the upstream conventions for the
+compatible name but used a more easy to read name for the driver itself,
+please tell me if this is an issue.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ca6d6fde85cf..d5ecc57820e9 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16004,6 +16004,13 @@ S:	Supported
- F:	Documentation/devicetree/bindings/iio/adc/renesas,rzg2l-adc.yaml
- F:	drivers/iio/adc/rzg2l_adc.c
- 
-+RENESAS RZ/N1X NAND CONTROLLER DRIVER
-+M:	Miquel Raynal <miquel.raynal@bootlin.com>
-+L:	linux-mtd@lists.infradead.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/mtd/renesas,r9a06g032-nand-controller.yaml
-+F:	drivers/mtd/nand/raw/rzn1-nand-controller.c
-+
- RESET CONTROLLER FRAMEWORK
- M:	Philipp Zabel <p.zabel@pengutronix.de>
- S:	Maintained
+So far this driver has been tested with a not-fully-upstream device tree
+because clock tree is not yet described entirely, I am going to work on
+it really soon but I believe we don't need full clock support to get the
+NAND controller driver merged for now.
+
+Cheers,
+Miquèl
+
+Miquel Raynal (3):
+  dt-bindings: mtd: rzn1: Describe Renesas RZ/N1 NAND controller
+  mtd: rawnand: rzn1: Add new NAND controller driver
+  MAINTAINERS: Add an entry for Renesas RZ/N1 NAND controller
+
+ .../renesas,r9a06g032-nand-controller.yaml    |   60 +
+ MAINTAINERS                                   |    7 +
+ drivers/mtd/nand/raw/Kconfig                  |    6 +
+ drivers/mtd/nand/raw/Makefile                 |    1 +
+ drivers/mtd/nand/raw/rzn1-nand-controller.c   | 1417 +++++++++++++++++
+ 5 files changed, 1491 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/renesas,r9a06g032-nand-controller.yaml
+ create mode 100644 drivers/mtd/nand/raw/rzn1-nand-controller.c
+
 -- 
 2.27.0
 
