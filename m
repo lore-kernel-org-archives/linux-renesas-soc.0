@@ -2,93 +2,125 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38525C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 11:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D7D1C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 11:21:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A07E619EA
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 11:09:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 869EB61A3D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 18 Nov 2021 11:21:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1343708AbhKRLME (ORCPT
+        id S1343809AbhKRLY2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 18 Nov 2021 06:12:04 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([185.58.86.151]:48999 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1343622AbhKRLLZ (ORCPT
+        Thu, 18 Nov 2021 06:24:28 -0500
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:33995 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343754AbhKRLWq (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 18 Nov 2021 06:11:25 -0500
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-267-yIaQ9ldLMt-dGp5bzBnaGQ-1; Thu, 18 Nov 2021 11:08:20 +0000
-X-MC-Unique: yIaQ9ldLMt-dGp5bzBnaGQ-1
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:994c:f5c2:35d6:9b65) with Microsoft SMTP
- Server (TLS) id 15.0.1497.26; Thu, 18 Nov 2021 11:08:19 +0000
-Received: from AcuMS.Aculab.com ([fe80::994c:f5c2:35d6:9b65]) by
- AcuMS.aculab.com ([fe80::994c:f5c2:35d6:9b65%12]) with mapi id
- 15.00.1497.026; Thu, 18 Nov 2021 11:08:19 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Sergey Shtylyov' <s.shtylyov@omp.ru>,
-        Yang Li <yang.lee@linux.alibaba.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-CC:     "kuba@kernel.org" <kuba@kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH -next] ethernet: renesas: Use div64_ul instead of do_div
-Thread-Topic: [PATCH -next] ethernet: renesas: Use div64_ul instead of do_div
-Thread-Index: AQHX3FvXWbL1hyrH7EOl5fQWEw6276wJH72w
-Date:   Thu, 18 Nov 2021 11:08:19 +0000
-Message-ID: <ca35a5ba3970462d8eba69ab440da1b3@AcuMS.aculab.com>
-References: <1637203805-125780-1-git-send-email-yang.lee@linux.alibaba.com>
- <6851a10a-e7cf-b533-ab9d-0df539bbba00@omp.ru>
-In-Reply-To: <6851a10a-e7cf-b533-ab9d-0df539bbba00@omp.ru>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 18 Nov 2021 06:22:46 -0500
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id A6CF720009;
+        Thu, 18 Nov 2021 11:19:43 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Pratyush Yadav <p.yadav@ti.com>,
+        Michael Walle <michael@walle.cc>,
+        <linux-mtd@lists.infradead.org>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org,
+        Magnus Damm <magnus.damm@gmail.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 1/3] dt-bindings: mtd: rzn1: Describe Renesas RZ/N1 NAND controller
+Date:   Thu, 18 Nov 2021 12:19:38 +0100
+Message-Id: <20211118111940.1275351-2-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20211118111940.1275351-1-miquel.raynal@bootlin.com>
+References: <20211118111940.1275351-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Authentication-Results: relay.mimecast.com;
-        auth=pass smtp.auth=C51A453 smtp.mailfrom=david.laight@aculab.com
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-RnJvbTogU2VyZ2V5IFNodHlseW92DQo+IFNlbnQ6IDE4IE5vdmVtYmVyIDIwMjEgMDk6MDgNCj4g
-T24gMTguMTEuMjAyMSA1OjUwLCBZYW5nIExpIHdyb3RlOg0KPiANCj4gPiBkb19kaXYoKSBkb2Vz
-IGEgNjQtYnktMzIgZGl2aXNpb24uIEhlcmUgdGhlIGRpdmlzb3IgaXMgYW4NCj4gPiB1bnNpZ25l
-ZCBsb25nIHdoaWNoIG9uIHNvbWUgcGxhdGZvcm1zIGlzIDY0IGJpdCB3aWRlLiBTbyB1c2UNCj4g
-PiBkaXY2NF91bCBpbnN0ZWFkIG9mIGRvX2RpdiB0byBhdm9pZCBhIHBvc3NpYmxlIHRydW5jYXRp
-b24uDQo+ID4NCj4gPiBFbGltaW5hdGUgdGhlIGZvbGxvd2luZyBjb2NjaWNoZWNrIHdhcm5pbmc6
-DQo+ID4gLi9kcml2ZXJzL25ldC9ldGhlcm5ldC9tYXJ2ZWxsL212cHAyL212cHAyX21haW4uYzoy
-NzQyOjEtNzogV0FSTklORzoNCj4gPiBkb19kaXYoKSBkb2VzIGEgNjQtYnktMzIgZGl2aXNpb24s
-IHBsZWFzZSBjb25zaWRlciB1c2luZyBkaXY2NF91bA0KPiA+IGluc3RlYWQuDQo+ID4NCj4gPiBS
-ZXBvcnRlZC1ieTogQWJhY2kgUm9ib3QgPGFiYWNpQGxpbnV4LmFsaWJhYmEuY29tPg0KPiA+IFNp
-Z25lZC1vZmYtYnk6IFlhbmcgTGkgPHlhbmcubGVlQGxpbnV4LmFsaWJhYmEuY29tPg0KPiA+IC0t
-LQ0KPiA+ICAgZHJpdmVycy9uZXQvZXRoZXJuZXQvcmVuZXNhcy9yYXZiX21haW4uYyB8IDIgKy0N
-Cj4gPiAgIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+
-DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L3JlbmVzYXMvcmF2Yl9tYWlu
-LmMgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9yZW5lc2FzL3JhdmJfbWFpbi5jDQo+ID4gaW5kZXgg
-YjRjNTk3Zi4uMmI4OTcxMCAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9y
-ZW5lc2FzL3JhdmJfbWFpbi5jDQo+ID4gKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvcmVuZXNh
-cy9yYXZiX21haW4uYw0KPiA+IEBAIC0yNDg5LDcgKzI0ODksNyBAQCBzdGF0aWMgaW50IHJhdmJf
-c2V0X2d0aShzdHJ1Y3QgbmV0X2RldmljZSAqbmRldikNCj4gPiAgIAkJcmV0dXJuIC1FSU5WQUw7
-DQo+ID4NCj4gPiAgIAlpbmMgPSAxMDAwMDAwMDAwVUxMIDw8IDIwOw0KPiA+IC0JZG9fZGl2KGlu
-YywgcmF0ZSk7DQo+ID4gKwlpbmMgPSBkaXY2NF91bChpbmMsIHJhdGUpOw0KPiANCj4gICAgIFdo
-eSBub3QganVzdDoNCj4gDQo+IAlpbmMgPSBkaXY2NF91bCgxMDAwMDAwMDAwVUxMIDw8IDIwLCBy
-YXRlKTsNCj4gDQo+ID4gICAJaWYgKGluYyA8IEdUSV9USVZfTUlOIHx8IGluYyA+IEdUSV9USVZf
-TUFYKSB7DQo+ID4gICAJCWRldl9lcnIoZGV2LCAiZ3RpLnRpdiBpbmNyZW1lbnQgMHglbGx4IGlz
-IG91dHNpZGUgdGhlIHJhbmdlIDB4JXggLSAweCV4XG4iLA0KDQpFdmVuIHdpdGggaGFyZHdhcmUg
-ZGl2aWRlIGEgNjQvMzIgZGl2aWRlIGlzIGxpa2VseSB0byBiZSBmYXN0ZXIgdGhhdCBhIDY0LzY0
-IG9uZS4NCg0KTWF5YmUgdGhlIGNvY2NpY2hlY2sgd2FybmluZyBtZXNzYWdlIHNob3VsZCBzdWdn
-ZXN0IGNoZWNraW5nIHRoZSBkb21haW4NCm9mIHRoZSBkaXZpc29yIGFuZCB0aGVuIGNoYW5naW5n
-IHRoZSB0eXBlPz8NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBMYWtlc2lkZSwg
-QnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBULCBVSw0KUmVn
-aXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
+Add a Yaml description for this Renesas NAND controller bindings.
+
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ .../renesas,r9a06g032-nand-controller.yaml    | 60 +++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/renesas,r9a06g032-nand-controller.yaml
+
+diff --git a/Documentation/devicetree/bindings/mtd/renesas,r9a06g032-nand-controller.yaml b/Documentation/devicetree/bindings/mtd/renesas,r9a06g032-nand-controller.yaml
+new file mode 100644
+index 000000000000..880b6e534573
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/renesas,r9a06g032-nand-controller.yaml
+@@ -0,0 +1,60 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mtd/renesas,r9a06g032-nand-controller.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/N1x NAND flash controller device tree bindings
++
++maintainers:
++  - Miquel Raynal <miquel.raynal@bootlin.com>
++
++allOf:
++  - $ref: "nand-controller.yaml"
++
++properties:
++  compatible:
++    const: renesas,r9a06g032-nand-controller
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Host controller clock
++      - description: External NAND bus clock
++
++  clock-names:
++    items:
++      - const: hclk
++      - const: eclk
++
++  "#address-cells": true
++  "#size-cells": true
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - interrupts
++
++additionalProperties: true
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    nand-controller@40102000 {
++        compatible = "renesas,r9a06g032-nand-controller";
++        reg = <0x40102000 0x2000>;
++        interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&hclk_nand>, <&clk_nand>;
++        clock-names = "hclk", "eclk";
++        #address-cells = <1>;
++        #size-cells = <0>;
++    };
+-- 
+2.27.0
 
