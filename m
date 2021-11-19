@@ -2,104 +2,110 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70498C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Nov 2021 11:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDC4C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Nov 2021 12:37:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 53BAE61AA3
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Nov 2021 11:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A31A661ACE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 19 Nov 2021 12:37:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235141AbhKSLkS convert rfc822-to-8bit (ORCPT
+        id S235076AbhKSMkj (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 19 Nov 2021 06:40:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48378 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235131AbhKSLkP (ORCPT
+        Fri, 19 Nov 2021 07:40:39 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:59276 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S230385AbhKSMkj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 19 Nov 2021 06:40:15 -0500
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1870AC06173E
-        for <linux-renesas-soc@vger.kernel.org>; Fri, 19 Nov 2021 03:37:14 -0800 (PST)
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1mo2CU-0001Lo-Gn; Fri, 19 Nov 2021 12:37:02 +0100
-Received: from pza by lupine with local (Exim 4.94.2)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1mo2CS-0008Yh-FY; Fri, 19 Nov 2021 12:37:00 +0100
-Message-ID: <b3bfa4b6e96f8a057c0ee7743a4e11aa9be4e8bb.camel@pengutronix.de>
-Subject: Re: [PATCH v3 1/4] reset: Add
- of_reset_control_get_optional_exclusive()
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Fri, 19 Nov 2021 07:40:39 -0500
+X-IronPort-AV: E=Sophos;i="5.87,247,1631545200"; 
+   d="scan'208";a="100832770"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie5.idc.renesas.com with ESMTP; 19 Nov 2021 21:37:36 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7961540061A3;
+        Fri, 19 Nov 2021 21:37:34 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         linux-renesas-soc@vger.kernel.org
-Date:   Fri, 19 Nov 2021 12:37:00 +0100
-In-Reply-To: <20211112184413.4391-2-biju.das.jz@bp.renesas.com>
-References: <20211112184413.4391-1-biju.das.jz@bp.renesas.com>
-         <20211112184413.4391-2-biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-User-Agent: Evolution 3.38.3-1 
-MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-renesas-soc@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] arm64: dts: renesas: rzg2l-smarc-som: Enable serial NOR flash
+Date:   Fri, 19 Nov 2021 12:37:10 +0000
+Message-Id: <20211119123710.31575-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Daniel, Thomas,
+Enable mt25qu512a flash connected to QSPI0.
 
-On Fri, 2021-11-12 at 18:44 +0000, Biju Das wrote:
-> Add optional variant of of_reset_control_get_exclusive(). If the
-> requested reset is not specified in the device tree, this function
-> returns NULL instead of an error.
-> 
-> Suggested-by: Philipp Zabel <p.zabel@pengutronix.de>
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> v2->v3:
->  * Added Geert's Rb tag
-> ---
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ .../boot/dts/renesas/rzg2l-smarc-som.dtsi     | 40 +++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-I've picked up this patch for the reset/next branch:
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
+index 7e84a29dddfa..e53c17954566 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
+@@ -178,6 +178,18 @@
+ 		line-name = "gpio_sd0_pwr_en";
+ 	};
+ 
++	qspi_pins0: qspi0 {
++		qspi0-data {
++			pins = "QSPI0_IO0", "QSPI0_IO1", "QSPI0_IO2", "QSPI0_IO3";
++			power-source  = <1800>;
++		};
++
++		qspi0-ctrl {
++			pins = "QSPI0_SPCLK", "QSPI0_SSL", "QSPI_RESET#";
++			power-source  = <1800>;
++		};
++	};
++
+ 	/*
+ 	 * SD0 device selection is XOR between GPIO_SD0_DEV_SEL and SW1[2]
+ 	 * The below switch logic can be used to select the device between
+@@ -243,6 +255,34 @@
+ 	};
+ };
+ 
++&sbc {
++	pinctrl-0 = <&qspi_pins0>;
++	pinctrl-names = "default";
++	status = "okay";
++
++	flash@0 {
++		compatible = "micron,mt25qu512a", "jedec,spi-nor";
++		reg = <0>;
++		m25p,fast-read;
++		spi-max-frequency = <50000000>;
++		spi-rx-bus-width = <4>;
++
++		partitions {
++			compatible = "fixed-partitions";
++			#address-cells = <1>;
++			#size-cells = <1>;
++
++			boot@0 {
++				reg = <0x00000000 0x2000000>;
++				read-only;
++			};
++			user@2000000 {
++				reg = <0x2000000 0x2000000>;
++			};
++		};
++	};
++};
++
+ #if SDHI
+ &sdhi0 {
+ 	pinctrl-0 = <&sdhi0_pins>;
+-- 
+2.17.1
 
-----------8<----------
-The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
-
-  Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
-
-are available in the Git repository at:
-
-  git://git.pengutronix.de/pza/linux reset/of-get-optional-exclusive
-
-for you to fetch changes up to c4f5b30dda01f2f6979a9681142de454991182ee:
-
-  reset: Add of_reset_control_get_optional_exclusive() (2021-11-19 12:23:45 +0100)
-
-----------------------------------------------------------------
-Biju Das (1):
-      reset: Add of_reset_control_get_optional_exclusive()
-
- include/linux/reset.h | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
----------->8----------
-
-Patch 3/4 of the "Add RZ/G2L OSTM support" series depends on it. Let me
-know if you prefer this to be merged together with the rest of the
-series instad, in which case you'll have my
-
-Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
-
-on the patch and I'll drop it from reset/next.
-
-regards
-Philipp
