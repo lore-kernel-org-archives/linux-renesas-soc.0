@@ -2,30 +2,30 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C74C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Nov 2021 15:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C788FC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Nov 2021 15:28:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235427AbhKXPbb (ORCPT
+        id S235915AbhKXPbh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Nov 2021 10:31:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33646 "EHLO
+        Wed, 24 Nov 2021 10:31:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33654 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235265AbhKXPbb (ORCPT
+        with ESMTP id S235524AbhKXPbd (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Nov 2021 10:31:31 -0500
+        Wed, 24 Nov 2021 10:31:33 -0500
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E1FFC061574;
-        Wed, 24 Nov 2021 07:28:21 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0FE2C061574;
+        Wed, 24 Nov 2021 07:28:22 -0800 (PST)
 Received: from Monstersaurus.ksquared.org.uk.beta.tailscale.net (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8F57A92A;
-        Wed, 24 Nov 2021 16:28:18 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 79FC41B61;
+        Wed, 24 Nov 2021 16:28:19 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1637767698;
-        bh=xeHGpCfeHP659Mrk09NQ8LS4JBZZlw2+CvqeH+Jh7VM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=vQHAXhCExBN8f1ujtPmuFbIC4XdB68KqdMhHxXuJznQinysadE/B9I0K7nQv9yZSz
-         LPJlcc0+8Qr+aqNV42vjHeJGmXSn0f7VwjQZTVMvMv9Rwv0k1h0GswVAgLz2TcAaPZ
-         1mbpjuF00GqqlDhb9+WYUvF4pmUKEAtgndPOj5Gc=
+        s=mail; t=1637767699;
+        bh=02LZgwJVqB2VPnE+9BTLe+RNzrUDHc/3RCZ0fj/g6uU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GN723sZUzWCfsaGOQUEd/xt3fryZYQxAZbBo8aS0+87xv3t+fdtH0JUWb7+kfTd9u
+         eHU8DanbjnSrCK1IoqQtGbE9kbPTHvkK/sN1Q71bziZsX3nuqWdgkj1R2dciDvnuYT
+         hGOCXMDrFX8zfZnaptk9AlK/UoocZFbqzXhtxh84=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -34,32 +34,52 @@ Cc:     Geert Uytterhoeven <geert@glider.be>,
         Rob Herring <robh+dt@kernel.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 0/2] arm64: dts: renesas: Merge hdmi0_con
-Date:   Wed, 24 Nov 2021 15:28:13 +0000
-Message-Id: <20211124152815.3926961-1-kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 2/2] arm64: dts: renesas: salvator-common: Merge hdmi0_con
+Date:   Wed, 24 Nov 2021 15:28:15 +0000
+Message-Id: <20211124152815.3926961-3-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211124152815.3926961-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20211124152815.3926961-1-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-These two board files have created a reference to the existing hdmi0_con
-node to update the endpoint.
+The remote endpoint for the hdmi connector is specfied through a
+reference to the hdmi0_con endpoint, which is in the same file.
 
-I found this extra level of indirection confusing while parsing the
-file, particularly as the node is in the same file.
+Simplify by specifying the remote-endpoint directly in the hdmi0_con
+endpoint.
 
-Remove the reference node, and update the endpoint directly.
-
-Kieran Bingham (2):
-  arm64: dts: renesas: ulcb: Merge hdmi0_con
-  arm64: dts: renesas: salvator-common: Merge hdmi0_con
-
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
  arch/arm64/boot/dts/renesas/salvator-common.dtsi | 5 +----
- arch/arm64/boot/dts/renesas/ulcb.dtsi            | 5 +----
- 2 files changed, 2 insertions(+), 8 deletions(-)
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index bf37777dca31..6092dc4531ad 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -97,6 +97,7 @@ hdmi0-out {
+ 
+ 		port {
+ 			hdmi0_con: endpoint {
++				remote-endpoint = <&rcar_dw_hdmi0_out>;
+ 			};
+ 		};
+ 	};
+@@ -424,10 +425,6 @@ dw_hdmi0_snd_in: endpoint {
+ 	};
+ };
+ 
+-&hdmi0_con {
+-	remote-endpoint = <&rcar_dw_hdmi0_out>;
+-};
+-
+ #ifdef SOC_HAS_HDMI1
+ &hdmi1 {
+ 	status = "okay";
 -- 
 2.30.2
 
