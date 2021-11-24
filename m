@@ -2,137 +2,227 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93EFEC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Nov 2021 14:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84813C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Nov 2021 14:49:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354373AbhKXOpG (ORCPT
+        id S1357766AbhKXOwW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Nov 2021 09:45:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50464 "EHLO
+        Wed, 24 Nov 2021 09:52:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51560 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354152AbhKXOpA (ORCPT
+        with ESMTP id S1355433AbhKXOwE (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Nov 2021 09:45:00 -0500
-Received: from sipsolutions.net (s3.sipsolutions.net [IPv6:2a01:4f8:191:4433::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EEC2C22459D;
-        Wed, 24 Nov 2021 06:09:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:MIME-Version:
-        Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-        Resent-Cc:Resent-Message-ID; bh=ehMa9pgWHBM7TnvPMQnjh4s1Rj7IHG2tDkzpNOpErAk=;
-        t=1637762985; x=1638972585; b=MthxQG5X8zlcOYtgAwIU9XAMBQI61ts+APPLEFUMJz+6PiG
-        zUIDfprGfp4uITF1NHPqp59IOvbY2qbQvKsmKrAmOSyiRTJpvAzSI8dI7IczyJlHDF7LVP9OPgfvr
-        eJua/j9ZHIfCEKXrFs5QtXVPratkZb/y48R6jsbkq2eHfWNKOYqAkayzyCNoWrikwedZPxLKnZpJr
-        GQw4lIzPBkRJ52WXlcSFsGmXXuplrTEHAqT43Fh6JprXcW/w9LbOp2ChgZP8eY2U6fJIU/s3AtWPD
-        UbnXANwy5qujn3tf/p5fy/5XkPe4bNiFltzNVIlqVW+Px02LqlsM+PWowW2L7x2A==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-        (Exim 4.95)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1mpsw9-002JSq-Fw;
-        Wed, 24 Nov 2021 15:07:49 +0100
-Message-ID: <eea90adf2d51326f6d0bf0b97834063752a35c3f.camel@sipsolutions.net>
-Subject: Re: [PATCH 01/17] bitfield: Add non-constant field_{prep,get}()
- helpers
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Paul Walmsley <paul@pwsan.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Tero Kristo <kristo@kernel.org>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Ping-Ke Shih <pkshih@realtek.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Keerthy <j-keerthy@ti.com>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amitk@kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Date:   Wed, 24 Nov 2021 15:07:47 +0100
-In-Reply-To: <20211124055935.416dc472@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-References: <cover.1637592133.git.geert+renesas@glider.be>
-         <3a54a6703879d10f08cf0275a2a69297ebd2b1d4.1637592133.git.geert+renesas@glider.be>
-         <01b44b38c087c151171f8d45a2090474c2559306.camel@sipsolutions.net>
-         <20211122171739.03848154@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-         <CAMuHMdWAAGrQUZN18cnDTDUUhuPNTZTFkRMe2Sbf+s7CedPSxA@mail.gmail.com>
-         <637a4183861a1f2cdab52b7652bfa7ed33fbcdd2.camel@sipsolutions.net>
-         <20211123154922.600fd3b5@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-         <05d4673a0343bfd83824d307e9cf8bf92e3814a6.camel@sipsolutions.net>
-         <20211124055935.416dc472@kicinski-fedora-pc1c0hjn.dhcp.thefacebook.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.1 (3.42.1-1.fc35) 
+        Wed, 24 Nov 2021 09:52:04 -0500
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4521C052917
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Nov 2021 06:39:47 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:844e:fa22:e340:cb8c])
+        by andre.telenet-ops.be with bizsmtp
+        id NEfi2600600MmeS01Efi0u; Wed, 24 Nov 2021 15:39:44 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mptQz-00Emf0-P7; Wed, 24 Nov 2021 15:39:41 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1mptQz-001PHz-9G; Wed, 24 Nov 2021 15:39:41 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] arm64: dts: renesas: Fix operating point table node names
+Date:   Wed, 24 Nov 2021 15:39:40 +0100
+Message-Id: <ac885456ffb00fa4cc4069b9967761df2c98c3d8.1637764588.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Wed, 2021-11-24 at 05:59 -0800, Jakub Kicinski wrote:
-> 
-> FWIW I never found the be/le versions useful. Most of the time the data
-> comes from bus accessors which swap or is unaligned so you have to do
-> be/le_get_unaligned, which swaps. Plus if you access/set multiple
-> fields you'd swap them one by one which seems wasteful.
+Align the node names of device nodes representing operating point v2
+tables with the expectations of the DT bindings in
+Documentation/devicetree/bindings/opp/opp-v2.yaml.
 
-Oh, we use them all the time in wifi!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in renesas-devel for v5.17.
+---
+ arch/arm64/boot/dts/renesas/r8a774a1.dtsi | 4 ++--
+ arch/arm64/boot/dts/renesas/r8a774b1.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a774c0.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a774e1.dtsi | 4 ++--
+ arch/arm64/boot/dts/renesas/r8a77951.dtsi | 4 ++--
+ arch/arm64/boot/dts/renesas/r8a77960.dtsi | 4 ++--
+ arch/arm64/boot/dts/renesas/r8a77961.dtsi | 4 ++--
+ arch/arm64/boot/dts/renesas/r8a77965.dtsi | 2 +-
+ arch/arm64/boot/dts/renesas/r8a77990.dtsi | 2 +-
+ 9 files changed, 14 insertions(+), 14 deletions(-)
 
-I'm not sure I'm too concerned about wasteful - actually in wifi most of
-the time it's little endian to start with, which matches the CPU for all
-practical uses of wifi (**), and often we just access one field or so.
-And anyway if we extract more than a single bit we need to swap anyway,
-and I hope if it's just a single bit the compiler will optimize since
-the one side is a constant? But whatever ...
+diff --git a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+index 98963bb96a2ceb56..eda6a840371a8c15 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774a1.dtsi
+@@ -58,7 +58,7 @@ can_clk: can {
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	cluster0_opp: opp_table0 {
++	cluster0_opp: opp-table-0 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+@@ -80,7 +80,7 @@ opp-1500000000 {
+ 		};
+ 	};
+ 
+-	cluster1_opp: opp_table1 {
++	cluster1_opp: opp-table-1 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
+index dcd65b1e15ab6a07..44f79fbd75dc9e48 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774b1.dtsi
+@@ -47,7 +47,7 @@ can_clk: can {
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	cluster0_opp: opp_table0 {
++	cluster0_opp: opp-table-0 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+index 5e16f6b1771e5c44..b8dcbbbf3db5397f 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774c0.dtsi
+@@ -44,7 +44,7 @@ can_clk: can {
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	cluster1_opp: opp_table10 {
++	cluster1_opp: opp-table-1 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 		opp-800000000 {
+diff --git a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+index 4b1019a0a6cecc0c..e6d8610730a84ab8 100644
+--- a/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a774e1.dtsi
+@@ -47,7 +47,7 @@ can_clk: can {
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	cluster0_opp: opp_table0 {
++	cluster0_opp: opp-table-0 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+@@ -69,7 +69,7 @@ opp-1500000000 {
+ 		};
+ 	};
+ 
+-	cluster1_opp: opp_table1 {
++	cluster1_opp: opp-table-1 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77951.dtsi b/arch/arm64/boot/dts/renesas/r8a77951.dtsi
+index 3be403ca4cd94fc2..9265a5702792c3f2 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77951.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77951.dtsi
+@@ -62,7 +62,7 @@ can_clk: can {
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	cluster0_opp: opp_table0 {
++	cluster0_opp: opp-table-0 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+@@ -96,7 +96,7 @@ opp-1700000000 {
+ 		};
+ 	};
+ 
+-	cluster1_opp: opp_table1 {
++	cluster1_opp: opp-table-1 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77960.dtsi b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
+index 616f44aaa55b0bec..26f7103d11da5985 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77960.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77960.dtsi
+@@ -57,7 +57,7 @@ can_clk: can {
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	cluster0_opp: opp_table0 {
++	cluster0_opp: opp-table-0 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+@@ -97,7 +97,7 @@ opp-1800000000 {
+ 		};
+ 	};
+ 
+-	cluster1_opp: opp_table1 {
++	cluster1_opp: opp-table-1 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77961.dtsi b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
+index 724a6a09f4579bf7..ac9b587f6fc513c1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77961.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77961.dtsi
+@@ -46,7 +46,7 @@ can_clk: can {
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	cluster0_opp: opp_table0 {
++	cluster0_opp: opp-table-0 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+@@ -86,7 +86,7 @@ opp-1800000000 {
+ 		};
+ 	};
+ 
+-	cluster1_opp: opp_table1 {
++	cluster1_opp: opp-table-1 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77965.dtsi b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+index b625cdd16a92ecc8..f898aad72b9d263c 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77965.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77965.dtsi
+@@ -62,7 +62,7 @@ can_clk: can {
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	cluster0_opp: opp_table0 {
++	cluster0_opp: opp-table-0 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 
+diff --git a/arch/arm64/boot/dts/renesas/r8a77990.dtsi b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+index 29b2a94d5ab6566d..bc0a4f8f20c337e1 100644
+--- a/arch/arm64/boot/dts/renesas/r8a77990.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a77990.dtsi
+@@ -55,7 +55,7 @@ can_clk: can {
+ 		clock-frequency = <0>;
+ 	};
+ 
+-	cluster1_opp: opp_table10 {
++	cluster1_opp: opp-table-1 {
+ 		compatible = "operating-points-v2";
+ 		opp-shared;
+ 		opp-800000000 {
+-- 
+2.25.1
 
-(**) I had a fight with big-endian ARM a few years ago just to get wifi
-tested on big-endian ...
-
-
-> Right now it seems the uppercase macros are more prevalent.
-> 
-
-Not in my world ;-)
-
-$ git grep FIELD_GET -- ... | wc -l
-20
-$ git grep le32_get_bits -- ... | wc -l
-44
-$ git grep le16_get_bits -- ... | wc -l
-12
-$ git grep u8_get_bits -- ... | wc -l
-17
-
-:-)
-
-johannes
