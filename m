@@ -2,95 +2,80 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B435DC4167B
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Nov 2021 13:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB903C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Nov 2021 14:04:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347498AbhKXNym (ORCPT
+        id S1349942AbhKXOH7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Nov 2021 08:54:42 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:60316 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1352134AbhKXNwP (ORCPT
+        Wed, 24 Nov 2021 09:07:59 -0500
+Received: from mail-ua1-f52.google.com ([209.85.222.52]:40558 "EHLO
+        mail-ua1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1354072AbhKXOF6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Nov 2021 08:52:15 -0500
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7694990E;
-        Wed, 24 Nov 2021 14:49:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1637761744;
-        bh=RQLrsWnzsrDIoombZHS1b9wa6UWjU3b5sI/mylyuGiI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dM64TiAx6OweN5yPg2HvOBAW08T8PvAWd5KHGQm/X9L29BvVKxqsmCTLUg5HjKB5e
-         +WklaRV028WH5mLz9k65bxS2bVyR9MV2htpMWVr+QfzqpVSTXeb/UpuRcfx/GcEpMH
-         KDCq6f4Lzy3kMZmRqTBVWp+2REycGOeWC68Tpk2o=
-Date:   Wed, 24 Nov 2021 15:48:42 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: HDMI isn't probed on v5.15-rc1 on ULCB+KF
-Message-ID: <YZ5CuiCyNDE7IyNm@pendragon.ideasonboard.com>
-References: <87ilya4zv8.wl-kuninori.morimoto.gx@renesas.com>
- <YV5vB4c8J0xu2mOd@pendragon.ideasonboard.com>
- <87v929moad.wl-kuninori.morimoto.gx@renesas.com>
- <CAMuHMdUxXP86Z-2Tb8t4bK6aBfRT1Toj0jpruEEd8YbeDL+h=A@mail.gmail.com>
- <163585809096.275423.10804585086979279969@Monstersaurus>
- <87bl302598.wl-kuninori.morimoto.gx@renesas.com>
+        Wed, 24 Nov 2021 09:05:58 -0500
+Received: by mail-ua1-f52.google.com with SMTP id y5so5300892ual.7;
+        Wed, 24 Nov 2021 06:02:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8XCw6XLv89zn/9TnapFRymYmBJHJwZAMSM2pMt9Z1KU=;
+        b=H4hInAak//HXxqu5aNjDbml+lp6UemFxIrGlIQ3jOI7XExKB832cEOHrMSgQPcy9eN
+         kaV2m7OiSd/PuQ0swi7Oo3Kv+nIpxdoSiFlzrOBJJU0+jnCdfp+/r8sF2xgQ3iDxs7hC
+         rbnOZe5oBZnY9MlhKdLxaqkfZBa/KTSq35j70PIzFAyfgjQp0gzGNY/vlprSBhMeZJfh
+         fuQlUVex7fa/ML9EPn0UToK006VVjpqyM/1Q0NcY1wOylOGs/IkRDOwfLRdi7gNUU6Dq
+         v/PsUspKraHlhjIhB09+rkQfqyVb+jrvvO+aCfxcGaMp/v1UiE2Mq8QoAr62h/zdUX+S
+         ar/w==
+X-Gm-Message-State: AOAM531/Ys5uWZVh4C/I1/GssqMglq27PLtNN21W+9GQLFa9TseOhoCE
+        bsP8gCTujWZDk5F/4d6ISqtAVWekr48iXA==
+X-Google-Smtp-Source: ABdhPJxCu9xtg4GI0FL9Hy3bXz24cFEXP4WnxF+ZFCTCJ2oOKUDc5bl9Jj9F5L4+NnAatLR2bUj8gA==
+X-Received: by 2002:a67:bb11:: with SMTP id m17mr23628144vsn.5.1637762567447;
+        Wed, 24 Nov 2021 06:02:47 -0800 (PST)
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com. [209.85.221.174])
+        by smtp.gmail.com with ESMTPSA id v17sm8483303uar.15.2021.11.24.06.02.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Nov 2021 06:02:47 -0800 (PST)
+Received: by mail-vk1-f174.google.com with SMTP id q21so1566210vkn.2;
+        Wed, 24 Nov 2021 06:02:47 -0800 (PST)
+X-Received: by 2002:a05:6122:54e:: with SMTP id y14mr27706749vko.24.1637762566622;
+ Wed, 24 Nov 2021 06:02:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87bl302598.wl-kuninori.morimoto.gx@renesas.com>
+References: <20211116074130.107554-1-yoshihiro.shimoda.uh@renesas.com> <20211116074130.107554-15-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20211116074130.107554-15-yoshihiro.shimoda.uh@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 24 Nov 2021 15:02:35 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXiNw_Bm30QHfqoj8H3h0BP7fy8hFEsk+79x39YGWYxYg@mail.gmail.com>
+Message-ID: <CAMuHMdXiNw_Bm30QHfqoj8H3h0BP7fy8hFEsk+79x39YGWYxYg@mail.gmail.com>
+Subject: Re: [PATCH 14/16] arm64: dts: renesas: Add Renesas R8A779F0 SoC support
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello Morimoto-san,
+On Tue, Nov 16, 2021 at 8:42 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Add initial support for the Renesas R8A779F0 (R-Car S4-8) support.
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-For some reason this mail hadn't made it to the list, nor to my inbox.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-On Thu, Nov 04, 2021 at 08:23:15AM +0900, Kuninori Morimoto wrote:
-> 
-> Hi Kieran
-> 
-> > > > =>      [    1.485684] rcar-dw-hdmi fead0000.hdmi: Detected HDMI TX controller v2.01a with HDCP (DWC HDMI 2.0 TX PHY)
-> > > > =>      [    1.496248] rcar-dw-hdmi fead0000.hdmi: registered DesignWare HDMI I2C bus driver
-> > > >         [    1.535173] loop: module loaded
-> > > >         ...
-> > > >
-> > > > This is NG case.
-> > > > DAM failed. rcar-dw-hdmi is not probed.
-> > 
-> > Was something changed to make this happen between this and the above
-> > test?
-> 
-> Only reverting the issue patch.
-> 
-> > > Note that in both cases feb00000.display failed to probe first
-> > > Is this an fw_devlink issue, due to HDMI linking to DU in DT?
-> > > Does it work with fw_devlink=permissive of fw_devlink=off?
-> > 
-> > The DT is all connected up with the ports as I would expect them on
-> > ulcb+kf, but I saw the unanswered question from Geert above. Could you
-> > check that please?
-> 
-> In my understanding, Laurent answered it at private meeting.
-> He said it is not related, if my memory was correct.
-> 
-> > Is there anything else specific to replicating this issue? Is it only on
-> > the ULCB+KF? Or does it occur on Salvator-XS too? (And does it need a
-> > specific kernel config to reproduce?)
-> 
-> I could reproduce the same issue on Salvator-XS.
-> I attached my .config on this mail.
+Gr{oetje,eeting}s,
 
-[snip]
+                        Geert
 
-> # CONFIG_DRM_DISPLAY_CONNECTOR is not set
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Enabling this option should help.
-
--- 
-Regards,
-
-Laurent Pinchart
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
