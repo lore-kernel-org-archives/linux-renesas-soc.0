@@ -2,82 +2,163 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA6CC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Nov 2021 14:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38E53C43219
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Nov 2021 14:18:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1357989AbhKXOUx (ORCPT
+        id S1351000AbhKXOVT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Nov 2021 09:20:53 -0500
-Received: from mail-ua1-f44.google.com ([209.85.222.44]:35572 "EHLO
-        mail-ua1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350639AbhKXORg (ORCPT
+        Wed, 24 Nov 2021 09:21:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45136 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1357767AbhKXOUg (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Nov 2021 09:17:36 -0500
-Received: by mail-ua1-f44.google.com with SMTP id l24so5440606uak.2;
-        Wed, 24 Nov 2021 06:14:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aHaXIml+9ov44sHf9RSNgNeXg3mPjcuDiHa6lfHBDmA=;
-        b=5Si0eDiJamOgzK7yAvWEUEiru6ElWgWq929YeX3Rm/uA/K8lSXqxnoWEWne9prW9a3
-         ltM0TISRRbo8feeBEAG547d+CSPqUsCaTeXCMKHrQQGTfpV9Pr7mlI2HYXpynhKHoJiN
-         +ryhSySLU7dmIiSTRbP8YgtkVFkmmsHQ/S/iP+F0MipkkkqXu+ElwG2vYVqleSb/nquS
-         0BzNgAcyK75zG4AbIbGEb/Pd3DgZUVURPfJWeIcjQWznvcTzuw/+A/+AISrCoMS8PsZh
-         1XEOB/FKSfF/PfFFJBaD27cntReEdE2w9f6uigerrR5DqvVRWx51OqcL30C90ZHCx82s
-         oN4A==
-X-Gm-Message-State: AOAM5328FCnuLgtKVzTt0knFd+gvVIECu3gEVEE6Ry/3RFnjMdx3lefe
-        zMsT44FgaBMcg0W6o3z5LeDYXC2SucTUWw==
-X-Google-Smtp-Source: ABdhPJw0MbtyBMiPRvYqO/fBm3nbtgrXreQDUVQdQDaqxr2OM1EVAlv9BNqj1AGjk2d7X/oOMTk6yw==
-X-Received: by 2002:a05:6102:105b:: with SMTP id h27mr23754383vsq.60.1637763264326;
-        Wed, 24 Nov 2021 06:14:24 -0800 (PST)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id r20sm7746082vkq.15.2021.11.24.06.14.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Nov 2021 06:14:24 -0800 (PST)
-Received: by mail-ua1-f53.google.com with SMTP id n6so5454080uak.1;
-        Wed, 24 Nov 2021 06:14:23 -0800 (PST)
-X-Received: by 2002:ab0:7354:: with SMTP id k20mr11059233uap.78.1637763263577;
- Wed, 24 Nov 2021 06:14:23 -0800 (PST)
+        Wed, 24 Nov 2021 09:20:36 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AA34C0619DF
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 24 Nov 2021 04:43:32 -0800 (PST)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B2E2E1224;
+        Wed, 24 Nov 2021 13:43:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1637757809;
+        bh=52CxSuMcqYGhhXKXy1ujH85gqLWy2ivpVLpvPyrtof0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UGQNovsMtp41yUAgDqBzr9qSrhkIhKud9oL58Aa5h/59B3FmxZCeABopk+i18mqBm
+         VFHi34pRgvoHfUKl8H2v0ADDSVZJk7upgXF1LNLTw7eDrLq+0ZSmwa22FfSV4box2x
+         EU0fkAme7VVZzoXZl30Zlnr/hovf5MhOsuT/7RW0=
+Date:   Wed, 24 Nov 2021 14:43:06 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: HDMI isn't probed on v5.15-rc1 on ULCB+KF
+Message-ID: <YZ4zWow+bfb5PITm@pendragon.ideasonboard.com>
+References: <87ilya4zv8.wl-kuninori.morimoto.gx@renesas.com>
+ <YV5vB4c8J0xu2mOd@pendragon.ideasonboard.com>
+ <87v929moad.wl-kuninori.morimoto.gx@renesas.com>
+ <YV6A5xAWth6dkHor@pendragon.ideasonboard.com>
+ <87tuhtmn8u.wl-kuninori.morimoto.gx@renesas.com>
+ <87ilxc1ibv.wl-kuninori.morimoto.gx@renesas.com>
+ <87r1bny1fl.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
-References: <20211112081003.15453-1-biju.das.jz@bp.renesas.com> <20211112081003.15453-4-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20211112081003.15453-4-biju.das.jz@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 24 Nov 2021 15:14:12 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXxRA0xe=h6ZBSFBGpt_V_kcNRboi-FLbAE9bdtuZ4ubA@mail.gmail.com>
-Message-ID: <CAMuHMdXxRA0xe=h6ZBSFBGpt_V_kcNRboi-FLbAE9bdtuZ4ubA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] arm64: dts: renesas: r9a07g044: Sort psci node
-To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87r1bny1fl.wl-kuninori.morimoto.gx@renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Nov 12, 2021 at 9:10 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Sort psci node alphabetically.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hello Morimoto-san,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v5.17.
+On Thu, Nov 11, 2021 at 09:35:10AM +0900, Kuninori Morimoto wrote:
+> 
+> Hi Laurent
+> 
+> You back !
 
-Gr{oetje,eeting}s,
+And now I'm even back in Finland. I've found my H3 ULCB and tried to
+boot it up, but I got stuck updating the firmware :-S
 
-                        Geert
+NOTICE:  BL2: R-Car Gen3 Initial Program Loader(CA57) Rev.2.0.6
+NOTICE:  BL2: PRR is R-Car H3 Ver.2.0
+NOTICE:  BL2: Board is Starter Kit Premier Rev.1.0
+NOTICE:  BL2: Boot device is HyperFlash(80MHz)
+NOTICE:  BL2: LCM state is CM
+NOTICE:  AVS setting succeeded. DVFS_SetVID=0x53
+NOTICE:  BL2: DDR3200(rev.0.40)
+NOTICE:  BL2: [COLD_BOOT]
+NOTICE:  BL2: Failed to DRAM initialize (-1).
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+This is on the ATF abloader branch from Marek. I've also tried the
+master branch from
+https://github.com/ARM-software/arm-trusted-firmware.git and the
+rcar_gen3_v2.5 branch from
+git://github.com/renesas-rcar/arm-trusted-firmware.git. They fail the
+same way.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I have compiled ATF with
+
+make PLAT=rcar LSI=H3 RCAR_DRAM_SPLIT=1 RCAR_GEN3_ULCB=1 SPD=opteed \
+	CROSS_COMPILE=aarch64-buildroot-linux-gnu- \
+	MBEDTLS_DIR=$PWD/../mbedtls/ clean bl2 bl31 rcar
+
+and have flashed the four files to the addresses listed in
+https://elinux.org/R-Car/Boards/H3SK#Flashing_firmware for the 4GiB
+model (my board is a RTP0RC77951SKBX010SA00, S/N 2298)..
+
+For reference, before trying to update the firmware, I had
+
+[    0.000190] NOTICE:  BL2: R-Car Gen3 Initial Program Loader(CA57) Rev.1.0.13
+[    0.005757] NOTICE:  BL2: PRR is R-Car H3 Ver2.0
+[    0.010336] NOTICE:  BL2: Boot device is HyperFlash(80MHz)
+[    0.015776] NOTICE:  BL2: LCM state is CM
+[    0.019752] NOTICE:  BL2: AVS setting succeeded. DVFS_SetVID=0x52
+[    0.025942] NOTICE:  BL2: DDR3200(rev.0.22)[    0.055637] NOTICE:  [COLD_BOOT][    0.087833] NOTICE:  ..0
+[    0.088885] NOTICE:  BL2: DRAM Split is 4ch
+[    0.093031] NOTICE:  BL2: QoS is default setting(rev.0.12)
+[    0.098531] NOTICE:  BL2: Lossy Decomp areas
+[    0.102708] NOTICE:       Entry 0: DCMPAREACRAx:0x80000540 DCMPAREACRBx:0x570
+[    0.109793] NOTICE:       Entry 1: DCMPAREACRAx:0x40000000 DCMPAREACRBx:0x0
+[    0.116705] NOTICE:       Entry 2: DCMPAREACRAx:0x20000000 DCMPAREACRBx:0x0
+[    0.123620] NOTICE:  BL2: v1.3(release):867d841
+[    0.128110] NOTICE:  BL2: Built : 16:02:18, Mar 16 2017
+[    0.133297] NOTICE:  BL2: Normal boot
+[    0.136938] NOTICE:  BL2: dst=0xe6320190 src=0x8180000 len=512(0x200)
+[    0.143484] NOTICE:  BL2: dst=0x43f00000 src=0x8180400 len=6144(0x1800)
+[    0.149946] NOTICE:  BL2: dst=0x44000000 src=0x81c0000 len=65536(0x10000)
+[    0.157172] NOTICE:  BL2: dst=0x44100000 src=0x8200000 len=524288(0x80000)
+[    0.167652] NOTICE:  BL2: dst=0x50000000 src=0x8640000 len=1048576(0x100000)
+
+I don't have firmware binaries I can use to boot the board, so I can't
+debug the HDMI probe issue :-(
+
+I wonder if someone could help me. Has the latest ATF been tested on H3
+ULCB ?
+
+> This is gentle ping mail not to buried in a large amount of emails,
+> it had happen before ;P
+> 
+> > About this topic, v5.15 was released, but it still
+> > has "No soundcards" issue.
+> > There is no dw-hdmi, thus no soundcards
+> > 
+> > 	...
+> > 	[    1.431196] printk: console [ttySC0] enabled
+> > =>	[    1.442432] rcar-du feb00000.display: failed to initialize DRM/KMS (-6)
+> > 	[    1.481179] loop: module loaded
+> > 	...
+> > 	[    9.568307] ALSA device list:
+> > =>	[    9.571446]   No soundcards found.
+> > 	...
+> > 
+> > I re-start works for me if I reverted this patch
+> > 
+> > 	--------------------------------
+> > 	commit d0f44e0dac29aca3f85d238dfbcd2e52450b38dc
+> > 	Author: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > 	Date:   Mon May 25 07:05:26 2020 +0300
+> > 
+> > 	    drm: rcar-du: dw-hdmi: Set output port number
+> > 
+> > 	    Report the DT output port number in dw_hdmi_plat_data to connect to the
+> > 	    next bridge in the dw-hdmi driver.
+> > 
+> > 	    Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > 	    Tested-by: Kieran Bingham <kieran.bingham@ideasonboard.com> # On V3U
+> > 	    Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> > 	--------------------------------
+> > 
+> > 	...
+> > 	[    1.431130] printk: console [ttySC0] enabled
+> > =>	[    1.442219] rcar-du feb00000.display: failed to initialize DRM/KMS (-6)
+> > =>	[    1.451050] rcar-dw-hdmi fead0000.hdmi: Detected HDMI TX controller v2.01a with HDCP (DWC HDMI 2.0 TX PHY)
+> > =>	[    1.461560] rcar-dw-hdmi fead0000.hdmi: registered DesignWare HDMI I2C bus driver
+> > 	[    1.501043] loop: module loaded
+> > 	...
+> > 	[    9.180464] ALSA device list:
+> > =>	[    9.183519]   #0: rcar-sound
+> > 	...
+
+-- 
+Regards,
+
+Laurent Pinchart
