@@ -2,71 +2,80 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2775C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Nov 2021 15:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D99C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 24 Nov 2021 15:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1345498AbhKXPql (ORCPT
+        id S1344869AbhKXPyI (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 24 Nov 2021 10:46:41 -0500
-Received: from mail-ua1-f50.google.com ([209.85.222.50]:45002 "EHLO
-        mail-ua1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345467AbhKXPqi (ORCPT
+        Wed, 24 Nov 2021 10:54:08 -0500
+Received: from mail-ua1-f41.google.com ([209.85.222.41]:37796 "EHLO
+        mail-ua1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242021AbhKXPyH (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 24 Nov 2021 10:46:38 -0500
-Received: by mail-ua1-f50.google.com with SMTP id p2so5929018uad.11;
-        Wed, 24 Nov 2021 07:43:28 -0800 (PST)
+        Wed, 24 Nov 2021 10:54:07 -0500
+Received: by mail-ua1-f41.google.com with SMTP id o1so6049390uap.4;
+        Wed, 24 Nov 2021 07:50:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zeCELLhZddPbGo/98TVOrh1kr1uHyaU/l/9VlHXOcLQ=;
-        b=OInSiMMrugvMzT2J4aAIagsfPfn+GAFNHPp0va8d2YCk1+NTgwDslZCADZphgMtMie
-         YbsP9BJFY/AJCMb1kNq0iAtJ+olOHp4NlZt2bhhg63adXr1NJZdpUVbvk8iVe0Oav5X7
-         bBRi3twDFLohU+wQ93UbMfZyizdT433kiMgwDSAlWOi+ASms3d2tDsjIlZwKWzu9ovIb
-         cBpdH/A2GILlYYux9qr/r6ipxxVMu4ETGl1ypQQUxYmPDpY0HqjwrPcdISiMKYYqBgy2
-         VOroPPYqo9gV+y78on4118RbgdkSTChSVAcUozpAm+V0MXryCglggLhUFI1OkKQdB4Gr
-         3nQQ==
-X-Gm-Message-State: AOAM531UO6SUQ93R3icVCDANdpFg3bPMxRC3nFd1PyvqkIqsHk37Xuaj
-        yQ+CVsZjtnqWGHxRM4+9j+PRl7WA1ItbZQ==
-X-Google-Smtp-Source: ABdhPJzfhuznJoFqsd0KjsZEmynczAwpVdXMwNqgMFkXsTI+khCAWXqi/Eh9Bi0KliId80znVyiicQ==
-X-Received: by 2002:a05:6102:3ece:: with SMTP id n14mr25502776vsv.55.1637768607609;
-        Wed, 24 Nov 2021 07:43:27 -0800 (PST)
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
-        by smtp.gmail.com with ESMTPSA id r20sm57503vkq.15.2021.11.24.07.43.27
+        bh=AqdjLPevtkpLJ208GAm/lw/k/TcIvnCN7h4y57XOZ6o=;
+        b=Ym0ve3pRmXzYGeWeutp9ln+ep/0484wVuhPSAt8n+zs7+d8cbNWXCH8iyknwM0ZmWK
+         og1E1tM64OCjvg+nSZ+lQvmdS9CSCQiR/IWEeQexhNloAQHKciVHMnvLr1m7J4ldYZxd
+         ftIpMPhUhJLblBki0BYnpqasezDfMl7vZ3U97B0D6jqUXCVpBOpP5UEj0xTMnpj/0sWK
+         uU9T/4UsJL4mloUDK0fshYmCV1HDkmaZZrmZFXXZPv/+n6OS4sD6th3EzbCbqkAKZX6d
+         ZTqvERyNEAx83WEEo3pK9TWQxV4kW9m1x1Gteyx9r6FHWv+m3nWbFZGSb8CoM3QG7Xmi
+         jB7g==
+X-Gm-Message-State: AOAM532j8fOeS9hdRvvukY8UjRymOCyCdHYSU5swyM1JvNzGT8WyZyV9
+        qWqaJPTAo5CeoOXV4RAu5YFJFh/HF8g5Jg==
+X-Google-Smtp-Source: ABdhPJwv/c3uWVtNxh5K+icYPrFl5r4iqoYN1NL4mhiVuF3dfEKgtfkhYbxqo/t0A9D5G8A+DZe4Kw==
+X-Received: by 2002:ab0:2041:: with SMTP id g1mr11875774ual.131.1637769057394;
+        Wed, 24 Nov 2021 07:50:57 -0800 (PST)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id b11sm147714vsp.6.2021.11.24.07.50.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Nov 2021 07:43:27 -0800 (PST)
-Received: by mail-vk1-f170.google.com with SMTP id q21so1813867vkn.2;
-        Wed, 24 Nov 2021 07:43:27 -0800 (PST)
-X-Received: by 2002:a1f:fe0b:: with SMTP id l11mr1251215vki.34.1637768606934;
- Wed, 24 Nov 2021 07:43:26 -0800 (PST)
+        Wed, 24 Nov 2021 07:50:57 -0800 (PST)
+Received: by mail-ua1-f42.google.com with SMTP id a14so6179829uak.0;
+        Wed, 24 Nov 2021 07:50:56 -0800 (PST)
+X-Received: by 2002:a05:6102:2910:: with SMTP id cz16mr25048289vsb.9.1637769056684;
+ Wed, 24 Nov 2021 07:50:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20211117103850.28397-1-wsa+renesas@sang-engineering.com> <CAPDyKFp=hMOY==VXhOh_KssKE5wWe6AnsNcJ2VdP+GVa-m5LGw@mail.gmail.com>
-In-Reply-To: <CAPDyKFp=hMOY==VXhOh_KssKE5wWe6AnsNcJ2VdP+GVa-m5LGw@mail.gmail.com>
+References: <20211124154316.28365-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20211124154316.28365-1-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 24 Nov 2021 16:43:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV+qp=yMHQ--phfRVt3vaLcwEzcA1+BUfgc67sRuTxUVw@mail.gmail.com>
-Message-ID: <CAMuHMdV+qp=yMHQ--phfRVt3vaLcwEzcA1+BUfgc67sRuTxUVw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: renesas_sdhi: simplify an expression
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Linux MMC List <linux-mmc@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Date:   Wed, 24 Nov 2021 16:50:45 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXNCb6OaQnjuz2PPcDGZ3QPe412v-Sh70HXn6V=a4w9jw@mail.gmail.com>
+Message-ID: <CAMuHMdXNCb6OaQnjuz2PPcDGZ3QPe412v-Sh70HXn6V=a4w9jw@mail.gmail.com>
+Subject: Re: [PATCH v3] arm64: dts: renesas: r9a07g044: Add OPP table
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Nov 22, 2021 at 12:38 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On Wed, 17 Nov 2021 at 11:38, Wolfram Sang
-> <wsa+renesas@sang-engineering.com> wrote:
-> >
-> > We already have 'quirks', no need to go via 'priv'.
-> >
-> > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Wed, Nov 24, 2021 at 4:43 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> Add OPP table for RZ/G2L SoC.
 >
-> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3:
+>  * Fixed dtbs_check warning. changed node name opp_table->opp-table-0
+>  * Added a blank line after opp-shared.
+> V1->v2:
+>  * Fixed typo cluster1_opp->cluster0_opp
 
-Thanks, will queue in renesas-clk-for-v5.17 with the other MMC patches.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.17.
 
 Gr{oetje,eeting}s,
 
