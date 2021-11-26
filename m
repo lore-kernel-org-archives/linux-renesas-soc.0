@@ -2,139 +2,115 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5ADC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 13:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E898C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 13:53:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349871AbhKZNuF convert rfc822-to-8bit (ORCPT
+        id S1350788AbhKZN4v (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Nov 2021 08:50:05 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:47613 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1353482AbhKZNsF (ORCPT
+        Fri, 26 Nov 2021 08:56:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55146 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348251AbhKZNyv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Nov 2021 08:48:05 -0500
-Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 916D4E0014;
-        Fri, 26 Nov 2021 13:44:48 +0000 (UTC)
-Date:   Fri, 26 Nov 2021 14:44:47 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Phil Edworthy <phil.edworthy@renesas.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Pratyush Yadav <p.yadav@ti.com>,
-        Michael Walle <michael@walle.cc>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
+        Fri, 26 Nov 2021 08:54:51 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BE34C0619D9;
+        Fri, 26 Nov 2021 05:08:53 -0800 (PST)
+Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 78966E2C;
+        Fri, 26 Nov 2021 14:08:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1637932130;
+        bh=lBWps+1UEJGn3hJNoN8UqjEY0CiXCLE4uMcvm/nlteo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=S77t3JagQVvjHOR4kU+6boeJuaylh/JISbFxXS+ktWFfKgtr2vjDVE1QPoQXX1tyD
+         IBM0JODRhafFXAYyjPZMDINu2sLrXEg5LF/OqZDtuucAC4ZdpVSDyRWvpJOVsTEBas
+         C/fxuKQ6Bv8+79JHXLrHIbZksHB0sq/5jnA0cNo4=
+Date:   Fri, 26 Nov 2021 15:08:27 +0200
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert@glider.be>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Gareth Williams <gareth.williams.jx@renesas.com>
-Subject: Re: [PATCH 2/3] mtd: rawnand: rzn1: Add new NAND controller driver
-Message-ID: <20211126144447.4fb300af@xps13>
-In-Reply-To: <TYYPR01MB7086AF009C6D6A4440B0CB21F59C9@TYYPR01MB7086.jpnprd01.prod.outlook.com>
-References: <20211118111940.1275351-1-miquel.raynal@bootlin.com>
-        <20211118111940.1275351-3-miquel.raynal@bootlin.com>
-        <TYYPR01MB7086AF009C6D6A4440B0CB21F59C9@TYYPR01MB7086.jpnprd01.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.7 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 4/4] arm64: dts: renesas: r8a779a0: Provide default
+ DSI data-lanes
+Message-ID: <YaDcS8BQd9rrMLHh@pendragon.ideasonboard.com>
+References: <20211126095445.932930-1-kieran.bingham+renesas@ideasonboard.com>
+ <20211126095445.932930-5-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211126095445.932930-5-kieran.bingham+renesas@ideasonboard.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Phil,
+Hi Kieran,
 
-phil.edworthy@renesas.com wrote on Fri, 19 Nov 2021 15:04:55 +0000:
+Thank you for the patch.
 
-> Hi Miquel,
+On Fri, Nov 26, 2021 at 09:54:45AM +0000, Kieran Bingham wrote:
+> The data-lanes is a mandatory property for the endpoints.
+> Provide a default when not connected that represents the maximum
+> lanes supported by the device.
 > 
-> Thanks for your patches.
+> A connected device should override the data-lanes if it uses a lower
+> number of lanes.
 > 
-> > Introduce Renesas RZ/N1x NAND controller driver which supports:
-> > - All ONFI timing modes
-> > - Different configurations of its internal ECC controller
-> > - On-die (not tested) and software ECC support
-> > - Several chips (not tested)
-> > - Subpage accesses
-> > - DMA and PIO
-> > 
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > ---  
-> It might be worth mentioning that this controller was originally provided
-> by Evatronix, then Cadence bought the Evatronix IP business.
-
-True I've added this in the commit log as well as the main header.
-
-> > +	rzn1_nand->tim_gen_seq2 =
-> > +		TIM_GEN_SEQ2_D8(TO_CYCLES64(sdr->tRR_min + sdr->tREA_max,
-> > period_ns)) |
-> > +		TIM_GEN_SEQ2_D9(TO_CYCLES64(sdr->tRR_min, period_ns)) |
-> > +		TIM_GEN_SEQ2_D10(TO_CYCLES64(cle - cyc, period_ns)) |
-> > +		TIM_GEN_SEQ2_D11(TO_CYCLES64(bef_dly, period_ns));  
-> In our out-of-tree driver for this controller [1], we allowed time for
-> the signal to propagate through the RZ/N1 io buffers; We just added 5ns
-> to all the timings. Don't you need to do something similar? I vaguely
-> recall that some values programmed to 0 caused issues.
-
-I have not experienced any issues yet, I don't think with these
-calculations there are many values set to 0 anyway. But thanks for the
-feedback, if anybody reports errors with these timings on another board
-then we'll know where to look.
-
-> > +static int rzn1_nand_chip_init(struct rzn1_nfc *nfc, struct device_node  
-> ...
-> > +	for (i = 0; i < nsels; i++) {
-> > +		ret = of_property_read_u32_index(np, "reg", i, &cs);
-> > +		if (ret) {
-> > +			dev_err(nfc->dev, "Incomplete reg property (%d)\n",
-> > +				ret);
-> > +			return ret;
-> > +		}  
-> Check cs is <= nr of bits in assigned_cs.
-
-I believe you mean that I should check that we don't request
-non-existing CS values (< 4). I've just added such a check, thanks. The
-fact that a CS might be selected twice is handled by the test_and_set()
-call right after.
-
-> > +static int rzn1_nfc_probe(struct platform_device *pdev) {  
-> ...
-> > +	nfc->regs = devm_platform_ioremap_resource(pdev, 0);
-> > +	if (IS_ERR(nfc->regs))
-> > +		return PTR_ERR(nfc->regs);
-> > +
-> > +	rzn1_nfc_dis_interrupts(nfc);  
-> You need to enable the clock before writing to the registers.
-
-Absolutely, thanks for the remainder.
-
-> > +static struct platform_driver rzn1_nfc_driver = {
-> > +	.driver = {
-> > +		.name   = "renesas-nfc",  
-> nit: whitespace
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> ---
 > 
-> btw, there was an attempt to upstream a driver for this IP a few years back, see [2]
+> This patch is split from 2/4 to keep it's change for distinct review.
+> The data-lanes is marked as a mandatory property in the DSI bindings
+> (which are out of tree, most recent posting at [0])
+> 
+> [0] https://lore.kernel.org/all/YQGFP%2FcFoSksPyn+@pendragon.ideasonboard.com/
+> 
+> The data-lanes property is marked as mandatory, which means it needs to
+> be provided even when supplying the port templates which get overridden
+> later. Is this expected behaviour?
+> 
+> Does this have sufficient meaning? Or will it always have to be
+> specified by any node overriding anyway...?
 
-Didn't know about this attempt :)
+Isn't the remote-endpoint also mandatory ?
 
-> 
-> Thanks
-> Phil
-> 
-> [1] https://github.com/renesas-rz/rzn1_linux/blob/rzn1-stable-v4.19/drivers/mtd/nand/raw/evatronix_nand.c
-> [2] https://patchwork.ozlabs.org/patch/629096/
-> 
-> 
-> 
+Given that there's no real good default value for data-lanes that is
+significantly more likely than others, I'd prefer dropping the endpoints
+from r8a779a0.dtsi and adding them in board files.
 
+>  arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+> index fdad8bc4a069..7322c4628e2b 100644
+> --- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+> @@ -2661,6 +2661,7 @@ dsi0_in: endpoint {
+>  				port@1 {
+>  					reg = <1>;
+>  					dsi0_out: endpoint {
+> +						data-lanes = <1 2 3 4>;
+>  					};
+>  				};
+>  			};
+> @@ -2691,7 +2692,9 @@ dsi1_in: endpoint {
+>  
+>  				port@1 {
+>  					reg = <1>;
+> +
+>  					dsi1_out: endpoint {
+> +						data-lanes = <1 2 3 4>;
+>  					};
+>  				};
+>  			};
 
-Thanks,
-Miquèl
+-- 
+Regards,
+
+Laurent Pinchart
