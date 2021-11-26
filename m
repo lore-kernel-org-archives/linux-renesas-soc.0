@@ -2,96 +2,98 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4191EC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 12:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB7CC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 13:32:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1377480AbhKZM4l (ORCPT
+        id S232898AbhKZNf0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Nov 2021 07:56:41 -0500
-Received: from mail-ua1-f51.google.com ([209.85.222.51]:35338 "EHLO
-        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232097AbhKZMyk (ORCPT
+        Fri, 26 Nov 2021 08:35:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50748 "EHLO mail.kernel.org"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S242876AbhKZNd0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Nov 2021 07:54:40 -0500
-Received: by mail-ua1-f51.google.com with SMTP id l24so18435608uak.2;
-        Fri, 26 Nov 2021 04:51:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/rnmb/InE6v1bIFF6J5KRBRwGAqDw2ehlGBUgCeFUDc=;
-        b=1k7pUOEKzjIN2nRqVSMPYSC/Bg5hEf9M8ELmyM+eiYKYo4dB5/2f1Ej73OvjE8PRiv
-         FtzkgEC6irUMSjttKt4NOr3W2QxaJmh78sR+b3owQmvzi1dyGJqf+PlWi7HLBMuiXa34
-         wAVTnATBW0kV4CREnVayyg/2jRz2bAcIsv9mmEqPvGIwW8WhKSYHQb7T6pUVSuOMsgQu
-         S5gVO7aa7DS8w98MkSOVy6zTaOcheVEOQBcGrjbJ/amTXoPA9IaYgHijnuXMujOYMgIj
-         eSmz2aXPN52+pzuu2EMoiRrH3klhodDdPHCkQIqOfLU+udpq+I9w7a9wpq3+U+G8MV8w
-         wEvA==
-X-Gm-Message-State: AOAM533jId2bDRKLx99SpMXkwKS6Zb24of690a/HlC6pNneReAGyQvEs
-        lKZIVkRvI/gPtqxvl72cx1WSvizlDAKfuQ==
-X-Google-Smtp-Source: ABdhPJxX23i/NyZFkE70IqAsrDhRCzePF03JRVgsqO2NK8NajZNudPiTljaSKmGoyjVwD9muBg0q6Q==
-X-Received: by 2002:a67:7247:: with SMTP id n68mr15610559vsc.6.1637931087191;
-        Fri, 26 Nov 2021 04:51:27 -0800 (PST)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id r20sm3402885vkq.15.2021.11.26.04.51.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Nov 2021 04:51:26 -0800 (PST)
-Received: by mail-ua1-f54.google.com with SMTP id n6so18414590uak.1;
-        Fri, 26 Nov 2021 04:51:26 -0800 (PST)
-X-Received: by 2002:ab0:7354:: with SMTP id k20mr33348196uap.78.1637931086446;
- Fri, 26 Nov 2021 04:51:26 -0800 (PST)
+        Fri, 26 Nov 2021 08:33:26 -0500
+Received: by mail.kernel.org (Postfix) with ESMTPS id 957166115A
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Nov 2021 13:30:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1637933413;
+        bh=zQ6T1F5ug8tBhH6WYTOnbR0/BAKeVA+i4EnoEcK8POo=;
+        h=Subject:From:Date:To:From;
+        b=gYYjcCOy0iBmUHlNIWToHlxaZK829CyAU4br3KxEk8P4bKjElfQnPQ3B2G//qoWIH
+         R+3ayaAsEPWPa8vbPy+xi5+XxcCY6QQyqpunlVb/5OQwSbYT4BGN2MLVsKpxXDOJLn
+         o9LDPLc4TMT0Oc5tRWyuv7HgSjv7YbTMFo7mxRbBzEZ2Bch7xdS4N444LlL0LkpxyM
+         I0Vj/nFNstwhj7be2np9cyP2D942whE7aNkoT2EydDqFcWWM34rg4pS5GWYn3HfCR3
+         jppGxE+QA/JqwSro6l0Rj8uavUO9J5AGVwfGxuy3N6HVAX1dcv3doG0r0FGrzyu5CU
+         x9Ya4uFzdp7IQ==
+Received: from pdx-korg-docbuild-2.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by pdx-korg-docbuild-2.ci.codeaurora.org (Postfix) with ESMTP id 8749C60A3E
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Nov 2021 13:30:13 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20211126095445.932930-1-kieran.bingham+renesas@ideasonboard.com> <20211126095445.932930-2-kieran.bingham+renesas@ideasonboard.com>
-In-Reply-To: <20211126095445.932930-2-kieran.bingham+renesas@ideasonboard.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 26 Nov 2021 13:51:15 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXv_XcGX3N5iC3zN=sYNEnxHLzgM4BnsWyrnA9OErXVdg@mail.gmail.com>
-Message-ID: <CAMuHMdXv_XcGX3N5iC3zN=sYNEnxHLzgM4BnsWyrnA9OErXVdg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] arm64: dts: renesas: r8a779a0: Add DU support
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Patchwork summary for: linux-renesas-soc
+From:   patchwork-bot+linux-renesas-soc@kernel.org
+Message-Id: <163793341349.20812.7902037154846412073.git-patchwork-summary@kernel.org>
+Date:   Fri, 26 Nov 2021 13:30:13 +0000
+To:     linux-renesas-soc@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+Hello:
 
-On Fri, Nov 26, 2021 at 10:54 AM Kieran Bingham
-<kieran.bingham+renesas@ideasonboard.com> wrote:
-> Provide the device nodes for the DU on the V3U platforms.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
-> v2
->  - Use a single clock specification for the whole DU.
->
-> v3:
->  - Use 'du.0' clock name instead of 'du'
->
-> v4:
->  - Add in missing reset-names
->  - Use full renesas,vsps
+The following patches were marked "mainlined", because they were applied to
+geert/renesas-devel.git (master):
 
-Thanks for the update!
-Will queue in renesas-devel for v5.17, with the du-node relocated to its
-final resting place.
+Patch: arm64: dts: renesas: Fix operating point table node names
+  Submitter: Geert Uytterhoeven <geert+renesas@glider.be>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=585259
+  Lore link: https://lore.kernel.org/r/ac885456ffb00fa4cc4069b9967761df2c98c3d8.1637764588.git.geert+renesas@glider.be
 
-Gr{oetje,eeting}s,
+Series: Enable RZ/G2L OSTM support
+  Submitter: Biju Das <biju.das.jz@bp.renesas.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=582609
+  Lore link: https://lore.kernel.org/r/20211118191826.2026-1-biju.das.jz@bp.renesas.com
+    Patches: [v2,1/2] arm64: dts: renesas: r9a07g044: Add OSTM nodes
+             [v2,2/2] arm64: dts: renesas: rzg2l-smarc-som: Enable OSTM
 
-                        Geert
+Series: Enable WDT driver support
+  Submitter: Biju Das <biju.das.jz@bp.renesas.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=584593
+  Lore link: https://lore.kernel.org/r/20211123141420.23529-1-biju.das.jz@bp.renesas.com
+    Patches: [1/2] arm64: dts: renesas: r9a07g044: Add WDT nodes
+             [2/2] arm64: dts: renesas: rzg2l-smarc-som: Enable watchdog
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Series: Rename RZ/G2L SDHI clocks
+  Submitter: Biju Das <biju.das.jz@bp.renesas.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=583803
+  Lore link: https://lore.kernel.org/r/20211122103905.14439-1-biju.das.jz@bp.renesas.com
+    Patches: [1/2] dt-bindings: mmc: renesas,sdhi: Rename RZ/G2L clocks
+             [2/2] arm64: dts: renesas: r9a07g044: Rename SDHI clocks
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Series: arm64: dts: renesas: Merge hdmi0_con
+  Submitter: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=585293
+  Lore link: https://lore.kernel.org/r/20211124152815.3926961-1-kieran.bingham+renesas@ideasonboard.com
+    Patches: [1/2] arm64: dts: renesas: ulcb: Merge hdmi0_con
+             [2/2] arm64: dts: renesas: salvator-common: Merge hdmi0_con
+
+Patch: [v3] arm64: dts: renesas: r9a07g044: Add OPP table
+  Submitter: Biju Das <biju.das.jz@bp.renesas.com>
+  Committer: Geert Uytterhoeven <geert+renesas@glider.be>
+  Patchwork: https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=585297
+  Lore link: https://lore.kernel.org/r/20211124154316.28365-1-biju.das.jz@bp.renesas.com
+
+
+Total patches: 10
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
