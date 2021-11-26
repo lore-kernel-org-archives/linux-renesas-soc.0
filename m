@@ -2,35 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F7FC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 10:19:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D93E4C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 10:29:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376635AbhKZKWj (ORCPT
+        id S1377239AbhKZKcu (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Nov 2021 05:22:39 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49812 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376685AbhKZKUj (ORCPT
+        Fri, 26 Nov 2021 05:32:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38924 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1376831AbhKZKat (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Nov 2021 05:20:39 -0500
+        Fri, 26 Nov 2021 05:30:49 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54D15C0619F1;
+        Fri, 26 Nov 2021 02:17:25 -0800 (PST)
 Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B82CC148B;
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 082271253;
         Fri, 26 Nov 2021 11:15:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
         s=mail; t=1637921723;
-        bh=qI1H7VYrHIFCPRdhdtphotkQv5wrmJn/4zKU6uqux7g=;
+        bh=/NxkguvbJpSme2X46XXvrov0xFXe3nBtHvsHHSVlCss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=acG8Dl7SOTF8ovCfnjpR6GAduMiAiuVuyn60hNQI92KGsFvQ+nwBHpydm8ndVOSnO
-         mSKqwNNZbxY3cCoJ7kKDDuki/Q6lqPS77F1y12/FwMsHCTepT2VxDXIQ5fF1QxxSR0
-         JMcO1z0O+KczeKN39DcPZUKNyzboHfaL0eWKQRQY=
+        b=pzzdZM+hekooz75iasjEsORioKOkxcFKn+cnUM0/LeFsdcLL+1vEv7atZ0R+MF5p7
+         qf+lNFkA+1ZhnlpSAuUFmLYzA1jUsRtu2AN/xeK7QsBTgJ8peNLsGft4RkBsBDAzLo
+         6/Zb9BqVBOKdwRDrAASuIXalJxDy+Jp8dCoFqcIo=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
 Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
         Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Subject: [PATCH 4/4] drm: rcar-du: mipi-dsi: Support bridge probe ordering
-Date:   Fri, 26 Nov 2021 10:15:18 +0000
-Message-Id: <20211126101518.938783-5-kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 2/4] drm: rcar-du: Select DRM_MIPI_DSI with DRM_RCAR_MIPI_DSI
+Date:   Fri, 26 Nov 2021 10:15:16 +0000
+Message-Id: <20211126101518.938783-3-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211126101518.938783-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20211126101518.938783-1-kieran.bingham+renesas@ideasonboard.com>
@@ -40,112 +43,27 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The bridge probe ordering for DSI devices has been clarified and further
-documented in
+The RCAR_MIPI_DSI uses the DRM_MIPI_DSI interface.
 
-To support connecting with the SN65DSI86 device after commit c3b75d4734cb
-("drm/bridge: sn65dsi86: Register and attach our DSI device at probe"),
-update to the new probe ordering to remove a perpetual -EPROBE_DEFER
-loop between the two devices.
+Ensure that it is selected when the option is enabled.
 
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c | 48 +++++++++++++------------
- 1 file changed, 26 insertions(+), 22 deletions(-)
+ drivers/gpu/drm/rcar-du/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
-index 833f4480bdf3..f783bacee8da 100644
---- a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
-@@ -639,6 +639,8 @@ static int rcar_mipi_dsi_host_attach(struct mipi_dsi_host *host,
- 					struct mipi_dsi_device *device)
- {
- 	struct rcar_mipi_dsi *dsi = host_to_rcar_mipi_dsi(host);
-+	struct drm_panel *panel;
-+	int ret;
+diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
+index 8cb94fe90639..8145c6d4cbc8 100644
+--- a/drivers/gpu/drm/rcar-du/Kconfig
++++ b/drivers/gpu/drm/rcar-du/Kconfig
+@@ -41,6 +41,7 @@ config DRM_RCAR_LVDS
+ config DRM_RCAR_MIPI_DSI
+ 	tristate "R-Car DU MIPI DSI Encoder Support"
+ 	depends on DRM && DRM_BRIDGE && OF
++	select DRM_MIPI_DSI
+ 	help
+ 	  Enable support for the R-Car Display Unit embedded MIPI DSI encoders.
  
- 	if (device->lanes > dsi->num_data_lanes)
- 		return -EINVAL;
-@@ -646,12 +648,36 @@ static int rcar_mipi_dsi_host_attach(struct mipi_dsi_host *host,
- 	dsi->lanes = device->lanes;
- 	dsi->format = device->format;
- 
-+	ret = drm_of_find_panel_or_bridge(dsi->dev->of_node, 1, 0, &panel,
-+					  &dsi->next_bridge);
-+	if (ret) {
-+		dev_err_probe(dsi->dev, ret, "could not find next bridge\n");
-+		return ret;
-+	}
-+
-+	if (!dsi->next_bridge) {
-+		dsi->next_bridge = devm_drm_panel_bridge_add(dsi->dev, panel);
-+		if (IS_ERR(dsi->next_bridge)) {
-+			dev_err(dsi->dev, "failed to create panel bridge\n");
-+			return PTR_ERR(dsi->next_bridge);
-+		}
-+	}
-+
-+	/* Initialize the DRM bridge. */
-+	dsi->bridge.funcs = &rcar_mipi_dsi_bridge_ops;
-+	dsi->bridge.of_node = dsi->dev->of_node;
-+	drm_bridge_add(&dsi->bridge);
-+
- 	return 0;
- }
- 
- static int rcar_mipi_dsi_host_detach(struct mipi_dsi_host *host,
- 					struct mipi_dsi_device *device)
- {
-+	struct rcar_mipi_dsi *dsi = host_to_rcar_mipi_dsi(host);
-+
-+	drm_bridge_remove(&dsi->bridge);
-+
- 	return 0;
- }
- 
-@@ -766,21 +792,6 @@ static int rcar_mipi_dsi_probe(struct platform_device *pdev)
- 		return PTR_ERR(dsi->rstc);
- 	}
- 
--	ret = drm_of_find_panel_or_bridge(dsi->dev->of_node, 1, 0, &panel,
--					  &dsi->next_bridge);
--	if (ret) {
--		dev_err_probe(dsi->dev, ret, "could not find next bridge\n");
--		return ret;
--	}
--
--	if (!dsi->next_bridge) {
--		dsi->next_bridge = devm_drm_panel_bridge_add(dsi->dev, panel);
--		if (IS_ERR(dsi->next_bridge)) {
--			dev_err(dsi->dev, "failed to create panel bridge\n");
--			return PTR_ERR(dsi->next_bridge);
--		}
--	}
--
- 	/* Initialize the DSI host. */
- 	dsi->host.dev = dsi->dev;
- 	dsi->host.ops = &rcar_mipi_dsi_host_ops;
-@@ -788,11 +799,6 @@ static int rcar_mipi_dsi_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		return ret;
- 
--	/* Initialize the DRM bridge. */
--	dsi->bridge.funcs = &rcar_mipi_dsi_bridge_ops;
--	dsi->bridge.of_node = dsi->dev->of_node;
--	drm_bridge_add(&dsi->bridge);
--
- 	return 0;
- }
- 
-@@ -800,8 +806,6 @@ static int rcar_mipi_dsi_remove(struct platform_device *pdev)
- {
- 	struct rcar_mipi_dsi *dsi = platform_get_drvdata(pdev);
- 
--	drm_bridge_remove(&dsi->bridge);
--
- 	mipi_dsi_host_unregister(&dsi->host);
- 
- 	return 0;
 -- 
 2.30.2
 
