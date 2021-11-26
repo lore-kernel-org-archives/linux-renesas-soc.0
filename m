@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1DFC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 10:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F0DC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 10:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376667AbhKZKUg (ORCPT
+        id S1348127AbhKZKWi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Nov 2021 05:20:36 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49756 "EHLO
+        Fri, 26 Nov 2021 05:22:38 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49810 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234676AbhKZKSg (ORCPT
+        with ESMTP id S1376671AbhKZKUh (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Nov 2021 05:18:36 -0500
+        Fri, 26 Nov 2021 05:20:37 -0500
 Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A1D3FE2C;
-        Fri, 26 Nov 2021 11:15:22 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 65D5D1269;
+        Fri, 26 Nov 2021 11:15:23 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1637921722;
-        bh=OfttgS/xTaJk42xnYb6koDiIyJnqo0L8BOT6eZE1OgQ=;
+        s=mail; t=1637921723;
+        bh=sHtu4YZjz1duGU3+mxBG0gSBUA7LlDf0Si/PgC3rKYg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VZyFt9FCi9zKXqrILKVXyodaEYAj8d20xeYEKHgPaiK2Xz73/JPCtqNH2tdGA5JYk
-         VelPUCSheUNNAWvP8TlYD1EfZ2aNZQZxutM23hRwrIgstuSIRtHSeuupde6pe/71Gc
-         kBXCrSmgdA54f9ZfSZEteMdzAPBti9D5HtwO9d/4=
+        b=VPJe0VExl9vnJC/1txZPwDwwcwu9Ku4mPlx1l1giIS2YgUNvSRcKIs8zkxFn6X7J4
+         AlDrMO7TIGIqrIseVDPqgwTPdyxO6KnH7Ar31Syoxr8TsVTpPItuTq95zqzsZzu0ho
+         +8UB0hG0NWdSKuNV8Nkm+C9KOhABEm0xU9LhOpS8=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         linux-renesas-soc@vger.kernel.org
 Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>
-Subject: [PATCH 1/4] drm: rcar-du: Fix Makefile indentation for DSI
-Date:   Fri, 26 Nov 2021 10:15:15 +0000
-Message-Id: <20211126101518.938783-2-kieran.bingham+renesas@ideasonboard.com>
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH 3/4] drm: rcar-du: mipi-dsi: Ensure correct fout is reported
+Date:   Fri, 26 Nov 2021 10:15:17 +0000
+Message-Id: <20211126101518.938783-4-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20211126101518.938783-1-kieran.bingham+renesas@ideasonboard.com>
 References: <20211126101518.938783-1-kieran.bingham+renesas@ideasonboard.com>
@@ -40,26 +40,53 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+The debug reporting for the clock calculations was erroneously reporting
+the last calculation of fout, rather than the fout that was determined
+to have the least error, and therefore be the values chosen to operate
+with.
 
-Signed-off-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Fix the reporting to show the correct output by storing the determined
+fout, along with the error value.
+
+Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
-index adc1b49d02cf..286bc81b3e7c 100644
---- a/drivers/gpu/drm/rcar-du/Makefile
-+++ b/drivers/gpu/drm/rcar-du/Makefile
-@@ -19,7 +19,7 @@ obj-$(CONFIG_DRM_RCAR_CMM)		+= rcar_cmm.o
- obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
- obj-$(CONFIG_DRM_RCAR_DW_HDMI)		+= rcar_dw_hdmi.o
- obj-$(CONFIG_DRM_RCAR_LVDS)		+= rcar_lvds.o
--obj-$(CONFIG_DRM_RCAR_MIPI_DSI)	+= rcar_mipi_dsi.o
-+obj-$(CONFIG_DRM_RCAR_MIPI_DSI)		+= rcar_mipi_dsi.o
+I spent /way/ too long confused why my clock values didn't make sense
+before I noticed this.. :-(
+
+
+ drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c b/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
+index e94245029f95..833f4480bdf3 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
++++ b/drivers/gpu/drm/rcar-du/rcar_mipi_dsi.c
+@@ -168,6 +168,7 @@ static int rcar_mipi_dsi_phtw_test(struct rcar_mipi_dsi *dsi, u32 phtw)
+  */
  
- # 'remote-endpoint' is fixed up at run-time
- DTC_FLAGS_rcar_du_of_lvds_r8a7790 += -Wno-graph_endpoint
+ struct dsi_setup_info {
++	unsigned long fout;
+ 	unsigned int err;
+ 	u16 vco_cntrl;
+ 	u16 prop_cntrl;
+@@ -247,6 +248,7 @@ static void rcar_mipi_dsi_parameters_calc(struct rcar_mipi_dsi *dsi,
+ 				setup_info->m = m - 2;
+ 				setup_info->n = n - 1;
+ 				setup_info->err = err;
++				setup_info->fout = fout;
+ 				if (err == 0)
+ 					goto done;
+ 			}
+@@ -256,7 +258,7 @@ static void rcar_mipi_dsi_parameters_calc(struct rcar_mipi_dsi *dsi,
+ done:
+ 	dev_dbg(dsi->dev,
+ 		"%pC %lu Hz -> Fout %lu Hz (target %lu Hz, error %d.%02u%%), PLL M/N/DIV %u/%u/%u\n",
+-		clk, fin, fout, fout_target, setup_info->err / 100,
++		clk, fin, setup_info->fout, fout_target, setup_info->err / 100,
+ 		setup_info->err % 100, setup_info->m,
+ 		setup_info->n, setup_info->div);
+ 	dev_dbg(dsi->dev,
 -- 
 2.30.2
 
