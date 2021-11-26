@@ -2,115 +2,134 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E898C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 13:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA053C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 14:22:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350788AbhKZN4v (ORCPT
+        id S1351301AbhKZOZY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Nov 2021 08:56:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55146 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348251AbhKZNyv (ORCPT
+        Fri, 26 Nov 2021 09:25:24 -0500
+Received: from mslow1.mail.gandi.net ([217.70.178.240]:53237 "EHLO
+        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348855AbhKZOXX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Nov 2021 08:54:51 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BE34C0619D9;
-        Fri, 26 Nov 2021 05:08:53 -0800 (PST)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 78966E2C;
-        Fri, 26 Nov 2021 14:08:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1637932130;
-        bh=lBWps+1UEJGn3hJNoN8UqjEY0CiXCLE4uMcvm/nlteo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=S77t3JagQVvjHOR4kU+6boeJuaylh/JISbFxXS+ktWFfKgtr2vjDVE1QPoQXX1tyD
-         IBM0JODRhafFXAYyjPZMDINu2sLrXEg5LF/OqZDtuucAC4ZdpVSDyRWvpJOVsTEBas
-         C/fxuKQ6Bv8+79JHXLrHIbZksHB0sq/5jnA0cNo4=
-Date:   Fri, 26 Nov 2021 15:08:27 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert@glider.be>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Fri, 26 Nov 2021 09:23:23 -0500
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id 842D6D29F6
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Nov 2021 14:06:57 +0000 (UTC)
+Received: (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id 24517FF81E;
+        Fri, 26 Nov 2021 14:06:34 +0000 (UTC)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
+        Pratyush Yadav <p.yadav@ti.com>,
+        Michael Walle <michael@walle.cc>,
+        <linux-mtd@lists.infradead.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Jimmy Lalande <jimmy.lalande@se.com>,
+        Milan Stevanovic <milan.stevanovic@se.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 4/4] arm64: dts: renesas: r8a779a0: Provide default
- DSI data-lanes
-Message-ID: <YaDcS8BQd9rrMLHh@pendragon.ideasonboard.com>
-References: <20211126095445.932930-1-kieran.bingham+renesas@ideasonboard.com>
- <20211126095445.932930-5-kieran.bingham+renesas@ideasonboard.com>
+        Gareth Williams <gareth.williams.jx@renesas.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH v2 1/3] dt-bindings: mtd: rzn1: Describe Renesas RZ/N1 NAND controller
+Date:   Fri, 26 Nov 2021 15:06:23 +0100
+Message-Id: <20211126140625.351697-2-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20211126140625.351697-1-miquel.raynal@bootlin.com>
+References: <20211126140625.351697-1-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211126095445.932930-5-kieran.bingham+renesas@ideasonboard.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+Add a Yaml description for this Renesas NAND controller bindings.
 
-Thank you for the patch.
+Provide a family-specific "rzn1" compatible and a more specific
+"r9a06g032" one.
 
-On Fri, Nov 26, 2021 at 09:54:45AM +0000, Kieran Bingham wrote:
-> The data-lanes is a mandatory property for the endpoints.
-> Provide a default when not connected that represents the maximum
-> lanes supported by the device.
-> 
-> A connected device should override the data-lanes if it uses a lower
-> number of lanes.
-> 
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> ---
-> 
-> This patch is split from 2/4 to keep it's change for distinct review.
-> The data-lanes is marked as a mandatory property in the DSI bindings
-> (which are out of tree, most recent posting at [0])
-> 
-> [0] https://lore.kernel.org/all/YQGFP%2FcFoSksPyn+@pendragon.ideasonboard.com/
-> 
-> The data-lanes property is marked as mandatory, which means it needs to
-> be provided even when supplying the port templates which get overridden
-> later. Is this expected behaviour?
-> 
-> Does this have sufficient meaning? Or will it always have to be
-> specified by any node overriding anyway...?
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+ .../mtd/renesas,rzn1-nand-controller.yaml     | 64 +++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/renesas,rzn1-nand-controller.yaml
 
-Isn't the remote-endpoint also mandatory ?
-
-Given that there's no real good default value for data-lanes that is
-significantly more likely than others, I'd prefer dropping the endpoints
-from r8a779a0.dtsi and adding them in board files.
-
->  arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-> index fdad8bc4a069..7322c4628e2b 100644
-> --- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-> @@ -2661,6 +2661,7 @@ dsi0_in: endpoint {
->  				port@1 {
->  					reg = <1>;
->  					dsi0_out: endpoint {
-> +						data-lanes = <1 2 3 4>;
->  					};
->  				};
->  			};
-> @@ -2691,7 +2692,9 @@ dsi1_in: endpoint {
->  
->  				port@1 {
->  					reg = <1>;
-> +
->  					dsi1_out: endpoint {
-> +						data-lanes = <1 2 3 4>;
->  					};
->  				};
->  			};
-
+diff --git a/Documentation/devicetree/bindings/mtd/renesas,rzn1-nand-controller.yaml b/Documentation/devicetree/bindings/mtd/renesas,rzn1-nand-controller.yaml
+new file mode 100644
+index 000000000000..65d45962b5b1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mtd/renesas,rzn1-nand-controller.yaml
+@@ -0,0 +1,64 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/mtd/renesas,rzn1-nand-controller.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas RZ/N1x NAND flash controller device tree bindings
++
++maintainers:
++  - Miquel Raynal <miquel.raynal@bootlin.com>
++
++allOf:
++  - $ref: "nand-controller.yaml"
++
++properties:
++  compatible:
++    items:
++      - enum:
++          - renesas,r9a06g032-nand-controller
++      - const: renesas,rzn1-nand-controller
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Host controller clock
++      - description: External NAND bus clock
++
++  clock-names:
++    items:
++      - const: hclk
++      - const: eclk
++
++  "#address-cells": true
++  "#size-cells": true
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - interrupts
++
++additionalProperties: true
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    nand-controller@40102000 {
++        compatible = "renesas,r9a06g032-nand-controller",
++                     "renesas,rzn1-nand-controller";
++        reg = <0x40102000 0x2000>;
++        interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&hclk_nand>, <&clk_nand>;
++        clock-names = "hclk", "eclk";
++        #address-cells = <1>;
++        #size-cells = <0>;
++    };
 -- 
-Regards,
+2.27.0
 
-Laurent Pinchart
