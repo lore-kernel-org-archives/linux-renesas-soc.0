@@ -2,98 +2,67 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66367C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 09:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B88EC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 10:02:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1376442AbhKZKAH (ORCPT
+        id S1376565AbhKZKFU (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Nov 2021 05:00:07 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:49528 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1376588AbhKZJ6F (ORCPT
+        Fri, 26 Nov 2021 05:05:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33828 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1376708AbhKZKDS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Nov 2021 04:58:05 -0500
+        Fri, 26 Nov 2021 05:03:18 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD5DC061375
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Nov 2021 01:54:50 -0800 (PST)
 Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EB43CE2C;
-        Fri, 26 Nov 2021 10:54:50 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id E5B3DE2C;
+        Fri, 26 Nov 2021 10:54:48 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1637920491;
-        bh=gDWf41GJ9wF0lnHEXzdtH0ScCqfwcfOYTY8fNdxgyTQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gNrU0LTY85tles7val6sqq7JGvSGccgZJakYIh1nxxKnd400qHZnU+z4uKRi+dTQ6
-         jDA2EWoIxOMB36aXqS2kqL5gNT+mpI5+BCm0cTN91lCwdlLRC5vXVQ0mOZH6V5BgS9
-         qJFDVx7NuOrXei9ChESds4pO9L129lceAogaowgQ=
+        s=mail; t=1637920489;
+        bh=TkM/qrUat4A8RJEClwFvcIPc77AgEITQhIQ91THF/4c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=CGlao/bjc3pUUqWNb7J4mgw3P5ZdsBM8auTpgt5ma2m2LiDMWuyn1THheSAwPQkZS
+         CGo0nXv/Pi+sLXe82eI71aFzWefBl/R2xZEwAvHwT2Sq4Gj7CKRmI0D/5xZc9zSDHI
+         t+7VktJpwpEYew99u5Npe8T/hSeM/a8H74l2tzzE=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 To:     linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Geert Uytterhoeven <geert@glider.be>
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v4 4/4] arm64: dts: renesas: r8a779a0: Provide default DSI data-lanes
-Date:   Fri, 26 Nov 2021 09:54:45 +0000
-Message-Id: <20211126095445.932930-5-kieran.bingham+renesas@ideasonboard.com>
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v4 0/4] arm64: dts: renesas: r8a779a0 DU support
+Date:   Fri, 26 Nov 2021 09:54:41 +0000
+Message-Id: <20211126095445.932930-1-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211126095445.932930-1-kieran.bingham+renesas@ideasonboard.com>
-References: <20211126095445.932930-1-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The data-lanes is a mandatory property for the endpoints.
-Provide a default when not connected that represents the maximum
-lanes supported by the device.
+Provide the DT nodes for the DU, and DSI found on the r8a779a0, and
+extend the falcon-cpu board add on with the TI SN65DSI86 bridge which is
+used to connect the DSI output to the mini display-port connector on the
+Falcon CPU board.
 
-A connected device should override the data-lanes if it uses a lower
-number of lanes.
+This has been successfully tested on a Falcon-V3U with patches to the
+rcar_du and sn65dsi86 which will be sent separately.
 
-Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
----
+Patch 4 could be expected to be merged with patch 2, but I have kept it
+separate for specific review. It can stay separate or be squashed if the
+change itself is approved.
 
-This patch is split from 2/4 to keep it's change for distinct review.
-The data-lanes is marked as a mandatory property in the DSI bindings
-(which are out of tree, most recent posting at [0])
+Kieran Bingham (4):
+  arm64: dts: renesas: r8a779a0: Add DU support
+  arm64: dts: renesas: r8a779a0: Add DSI encoders
+  arm64: dts: renesas: r8a779a0: falcon-cpu: Add DSI display output
+  arm64: dts: renesas: r8a779a0: Provide default DSI data-lanes
 
-[0] https://lore.kernel.org/all/YQGFP%2FcFoSksPyn+@pendragon.ideasonboard.com/
+ .../boot/dts/renesas/r8a779a0-falcon-cpu.dtsi | 79 +++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi     | 99 +++++++++++++++++++
+ 2 files changed, 178 insertions(+)
 
-The data-lanes property is marked as mandatory, which means it needs to
-be provided even when supplying the port templates which get overridden
-later. Is this expected behaviour?
-
-Does this have sufficient meaning? Or will it always have to be
-specified by any node overriding anyway...?
-
-
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-index fdad8bc4a069..7322c4628e2b 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
-@@ -2661,6 +2661,7 @@ dsi0_in: endpoint {
- 				port@1 {
- 					reg = <1>;
- 					dsi0_out: endpoint {
-+						data-lanes = <1 2 3 4>;
- 					};
- 				};
- 			};
-@@ -2691,7 +2692,9 @@ dsi1_in: endpoint {
- 
- 				port@1 {
- 					reg = <1>;
-+
- 					dsi1_out: endpoint {
-+						data-lanes = <1 2 3 4>;
- 					};
- 				};
- 			};
 -- 
 2.30.2
 
