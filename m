@@ -2,86 +2,98 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C48C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 09:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66367C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 26 Nov 2021 09:56:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347772AbhKZJnV (ORCPT
+        id S1376442AbhKZKAH (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Nov 2021 04:43:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56808 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359378AbhKZJlU (ORCPT
+        Fri, 26 Nov 2021 05:00:07 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:49528 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1376588AbhKZJ6F (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Nov 2021 04:41:20 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C88F4C0613F2;
-        Fri, 26 Nov 2021 01:35:20 -0800 (PST)
+        Fri, 26 Nov 2021 04:58:05 -0500
 Received: from Monstersaurus.local (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8BDEF340;
-        Fri, 26 Nov 2021 10:35:18 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id EB43CE2C;
+        Fri, 26 Nov 2021 10:54:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1637919318;
-        bh=Kb1OjapeoZTA+Iy4gBvfvPpWnG0GA3u3IPVikYIXN7E=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ZNti6pkY7q/Z8RUd2JtDrlhrCBvhQ47Hps5L/L7Ilw+YL6zLAG+FLdzhCKhyzC9AB
-         FCcBZQFMTxBpkz6eIdtgMwxMwOo3aUfSkxa/sSD5ErlOPQrIiOjTacVGbpuE/IwQTb
-         dMYHu52u/YhMK3aaYpVipEuPfSPnkY8mDEK3fjRY=
+        s=mail; t=1637920491;
+        bh=gDWf41GJ9wF0lnHEXzdtH0ScCqfwcfOYTY8fNdxgyTQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gNrU0LTY85tles7val6sqq7JGvSGccgZJakYIh1nxxKnd400qHZnU+z4uKRi+dTQ6
+         jDA2EWoIxOMB36aXqS2kqL5gNT+mpI5+BCm0cTN91lCwdlLRC5vXVQ0mOZH6V5BgS9
+         qJFDVx7NuOrXei9ChESds4pO9L129lceAogaowgQ=
 From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-To:     linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+To:     linux-renesas-soc@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm: rcar-du: crtc: Support external DSI dot clock
-Date:   Fri, 26 Nov 2021 09:35:14 +0000
-Message-Id: <20211126093514.927340-1-kieran.bingham+renesas@ideasonboard.com>
+        Geert Uytterhoeven <geert@glider.be>
+Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 4/4] arm64: dts: renesas: r8a779a0: Provide default DSI data-lanes
+Date:   Fri, 26 Nov 2021 09:54:45 +0000
+Message-Id: <20211126095445.932930-5-kieran.bingham+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20211126095445.932930-1-kieran.bingham+renesas@ideasonboard.com>
+References: <20211126095445.932930-1-kieran.bingham+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On platforms with an external clock, both the group and crtc must be
-handled accordingly to correctly pass through the external clock and
-configure the DU to use the external rate.
+The data-lanes is a mandatory property for the endpoints.
+Provide a default when not connected that represents the maximum
+lanes supported by the device.
 
-The CRTC support was missed while adding the DSI support on the r8a779a0
-which led to the output clocks being incorrectly determined.
+A connected device should override the data-lanes if it uses a lower
+number of lanes.
 
-Ensure that when a CRTC is routed through the DSI encoder, the external
-clock is used without any further divider being applied.
-
-Fixes: b291fdcf5114 ("drm: rcar-du: Add r8a779a0 device support")
 Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 5672830ca184..5236f917cc68 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -261,12 +261,13 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 		rcar_du_group_write(rcrtc->group, DPLLCR, dpllcr);
+This patch is split from 2/4 to keep it's change for distinct review.
+The data-lanes is marked as a mandatory property in the DSI bindings
+(which are out of tree, most recent posting at [0])
+
+[0] https://lore.kernel.org/all/YQGFP%2FcFoSksPyn+@pendragon.ideasonboard.com/
+
+The data-lanes property is marked as mandatory, which means it needs to
+be provided even when supplying the port templates which get overridden
+later. Is this expected behaviour?
+
+Does this have sufficient meaning? Or will it always have to be
+specified by any node overriding anyway...?
+
+
+ arch/arm64/boot/dts/renesas/r8a779a0.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+index fdad8bc4a069..7322c4628e2b 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+@@ -2661,6 +2661,7 @@ dsi0_in: endpoint {
+ 				port@1 {
+ 					reg = <1>;
+ 					dsi0_out: endpoint {
++						data-lanes = <1 2 3 4>;
+ 					};
+ 				};
+ 			};
+@@ -2691,7 +2692,9 @@ dsi1_in: endpoint {
  
- 		escr = ESCR_DCLKSEL_DCLKIN | div;
--	} else if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index)) {
-+	} else if (rcdu->info->lvds_clk_mask & BIT(rcrtc->index) ||
-+		   rcdu->info->dsi_clk_mask & BIT(rcrtc->index)) {
- 		/*
--		 * Use the LVDS PLL output as the dot clock when outputting to
--		 * the LVDS encoder on an SoC that supports this clock routing
--		 * option. We use the clock directly in that case, without any
--		 * additional divider.
-+		 * Use the external LVDS or DSI PLL output as the dot clock when
-+		 * outputting to the LVDS or DSI encoder on an SoC that supports
-+		 * this clock routing option. We use the clock directly in that
-+		 * case, without any additional divider.
- 		 */
- 		escr = ESCR_DCLKSEL_DCLKIN;
- 	} else {
+ 				port@1 {
+ 					reg = <1>;
++
+ 					dsi1_out: endpoint {
++						data-lanes = <1 2 3 4>;
+ 					};
+ 				};
+ 			};
 -- 
 2.30.2
 
