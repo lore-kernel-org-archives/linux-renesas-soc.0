@@ -2,158 +2,112 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0CCC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 27 Nov 2021 16:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCE0BC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 27 Nov 2021 17:46:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235754AbhK0Qrf (ORCPT
+        id S238372AbhK0RtW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sat, 27 Nov 2021 11:47:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37632 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233999AbhK0Qpc (ORCPT
+        Sat, 27 Nov 2021 12:49:22 -0500
+Received: from mga18.intel.com ([134.134.136.126]:56981 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S232836AbhK0RrW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sat, 27 Nov 2021 11:45:32 -0500
-Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B7C7C06174A
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 27 Nov 2021 08:42:16 -0800 (PST)
-Received: by mail-wr1-x433.google.com with SMTP id j3so25920162wrp.1
-        for <linux-renesas-soc@vger.kernel.org>; Sat, 27 Nov 2021 08:42:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=R3gkSM1pd5VakS31lqAU7GttEgDzPEtgx9VPbpSRfs4=;
-        b=z/zRZQH4M05YWZ4wApL6+tp31PtKtv/WLoCF16aEnEgtfaHHYzq9WjG+ZMRQ8qsF5G
-         lIqcxnuc7a5l5MXBGdartx2LgQarLwYWsilHqp3Ur7fvjUAYDXBJl1I2J2wjm0R55TX+
-         Znnta+U6bSq2PkpQapdo6TW+suXQGtsdSF6TiVds6eine2PNJZLEgFvpSVGvmWvaG0KI
-         zb3II74B96eikXPg+OGe/L4kHM2lgY61pUVZX2OxnbM4ETNV2Trt/dtG1qaJOjPMwGM0
-         nKyrRx9fDlO+BSeZrk6UR8X9rF87QHWPcasTE3Fl5kG8Nt9hqoo5zCkN2kRrnnhcmmSI
-         +i2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=R3gkSM1pd5VakS31lqAU7GttEgDzPEtgx9VPbpSRfs4=;
-        b=Zf21XnRII64qdGDrkiaXAVEmC2V+DfjB7OBhMyRNbFIoLPhCmsd8qPZ1/impoTQH4D
-         Wb0DK/ZOPFvRG+rPelnIgUSSgJH8Mq1sjVC8RkyEX9llMC6ZZZzREy4fPoBhcg+BsCvC
-         eSsDGhtnIlPjrgS64KhgdHQCReFUL4ApaGvipT6SYmCaXNuVZSFjPFAmPxYQ46Fqnk6C
-         kwGsdX+jmeZzVytH6CoVL3k3qi3BFv9AFnAq6zWByt44P6///t1BoXMla8bGQY3fhe3x
-         QPuzZc3wVDOnJEtp2yqRd9BlbmemCvXRfh46w2FRMSA2gHjAOXbhhglzTZx+vlt1eXmi
-         0m6A==
-X-Gm-Message-State: AOAM530xnm+9QZRXFk1elZU9EqgkRanul8Y6Z0Z7IGac7bqB5ktHk8kK
-        8q9Dv1IiHq9Y6JbiC0ce6w35Xw==
-X-Google-Smtp-Source: ABdhPJxaNqjUSV9aUPHbIMoYC506awgl56soNYUIMbuS2YqlBVofCibbAvDc+rKAJPbcxLDjLcRx6Q==
-X-Received: by 2002:a5d:648f:: with SMTP id o15mr21037223wri.381.1638031334784;
-        Sat, 27 Nov 2021 08:42:14 -0800 (PST)
-Received: from bismarck.berto.se (p54ac5892.dip0.t-ipconnect.de. [84.172.88.146])
-        by smtp.googlemail.com with ESMTPSA id u13sm2900104wmq.14.2021.11.27.08.42.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Nov 2021 08:42:14 -0800 (PST)
-From:   =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Cc:     linux-renesas-soc@vger.kernel.org,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2 2/3] media: rcar-vin: Breakout media link creation
-Date:   Sat, 27 Nov 2021 17:41:34 +0100
-Message-Id: <20211127164135.2617686-3-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.34.0
-In-Reply-To: <20211127164135.2617686-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20211127164135.2617686-1-niklas.soderlund+renesas@ragnatech.se>
+        Sat, 27 Nov 2021 12:47:22 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10181"; a="222644260"
+X-IronPort-AV: E=Sophos;i="5.87,269,1631602800"; 
+   d="scan'208";a="222644260"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Nov 2021 09:44:07 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.87,269,1631602800"; 
+   d="scan'208";a="457978468"
+Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
+  by orsmga003.jf.intel.com with ESMTP; 27 Nov 2021 09:44:03 -0800
+Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1mr1k2-0009pV-GY; Sat, 27 Nov 2021 17:44:02 +0000
+Date:   Sun, 28 Nov 2021 01:43:07 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:next] BUILD SUCCESS
+ aeb0ae2627f78fca02f76bf5cb64d0ea94ff31b1
+Message-ID: <61a26e2b.d4CHC4zxPNknIARU%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-In preparation of creating more links to allow for full Virtual Channel
-routing within the CSI-2 block break out the link creation logic to a
-helper function as the logic will grow in future work.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: aeb0ae2627f78fca02f76bf5cb64d0ea94ff31b1  Merge branches 'renesas-arm-dt-for-v5.17' and 'renesas-dt-bindings-for-v5.17' into renesas-next
 
-There is no functional change.
+elapsed time: 1650m
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-Tested-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+configs tested: 54
+configs skipped: 3
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm                              allyesconfig
+arm                              allmodconfig
+arm64                               defconfig
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                             allmodconfig
+s390                                defconfig
+parisc                           allyesconfig
+s390                             allyesconfig
+i386                             allyesconfig
+sparc                               defconfig
+i386                                defconfig
+i386                              debian-10.3
+i386                   debian-10.3-kselftests
+sparc                            allyesconfig
+mips                             allmodconfig
+mips                             allyesconfig
+powerpc                           allnoconfig
+powerpc                          allmodconfig
+powerpc                          allyesconfig
+riscv                    nommu_k210_defconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allyesconfig
+riscv                            allmodconfig
+um                             i386_defconfig
+um                           x86_64_defconfig
+x86_64                           allyesconfig
+x86_64                    rhel-8.3-kselftests
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                          rhel-8.3-func
+x86_64                                  kexec
+
 ---
-* Changers since v1
-- Rename rvin_csi2_add_route() to rvin_csi2_create_link().
-- Restored comment about skipping links aready created.
----
- drivers/media/platform/rcar-vin/rcar-core.c | 39 ++++++++++-----------
- 1 file changed, 19 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
-index 4c3c092a7cb9476b..278e55f6ff3da933 100644
---- a/drivers/media/platform/rcar-vin/rcar-core.c
-+++ b/drivers/media/platform/rcar-vin/rcar-core.c
-@@ -908,6 +908,23 @@ static const struct media_device_ops rvin_csi2_media_ops = {
- 	.link_notify = rvin_csi2_link_notify,
- };
- 
-+static int rvin_csi2_create_link(struct rvin_group *group,
-+				 const struct rvin_group_route *route)
-+
-+{
-+	struct media_entity *source = &group->remotes[route->csi].subdev->entity;
-+	unsigned int source_idx = rvin_group_csi_channel_to_pad(route->channel);
-+	struct media_entity *sink = &group->vin[route->vin]->vdev.entity;
-+	struct media_pad *source_pad = &source->pads[source_idx];
-+	struct media_pad *sink_pad = &sink->pads[0];
-+
-+	/* Skip if link already exists. */
-+	if (media_entity_find_link(source_pad, sink_pad))
-+		return 0;
-+
-+	return media_create_pad_link(source, source_idx, sink, 0, 0);
-+}
-+
- static int rvin_csi2_setup_links(struct rvin_dev *vin)
- {
- 	const struct rvin_group_route *route;
-@@ -916,10 +933,6 @@ static int rvin_csi2_setup_links(struct rvin_dev *vin)
- 	/* Create all media device links between VINs and CSI-2's. */
- 	mutex_lock(&vin->group->lock);
- 	for (route = vin->info->routes; route->mask; route++) {
--		struct media_pad *source_pad, *sink_pad;
--		struct media_entity *source, *sink;
--		unsigned int source_idx;
--
- 		/* Check that VIN is part of the group. */
- 		if (!vin->group->vin[route->vin])
- 			continue;
-@@ -932,23 +945,9 @@ static int rvin_csi2_setup_links(struct rvin_dev *vin)
- 		if (!vin->group->remotes[route->csi].subdev)
- 			continue;
- 
--		source = &vin->group->remotes[route->csi].subdev->entity;
--		source_idx = rvin_group_csi_channel_to_pad(route->channel);
--		source_pad = &source->pads[source_idx];
--
--		sink = &vin->group->vin[route->vin]->vdev.entity;
--		sink_pad = &sink->pads[0];
--
--		/* Skip if link already exists. */
--		if (media_entity_find_link(source_pad, sink_pad))
--			continue;
--
--		ret = media_create_pad_link(source, source_idx, sink, 0, 0);
--		if (ret) {
--			vin_err(vin, "Error adding link from %s to %s\n",
--				source->name, sink->name);
-+		ret = rvin_csi2_create_link(vin->group, route);
-+		if (ret)
- 			break;
--		}
- 	}
- 	mutex_unlock(&vin->group->lock);
- 
--- 
-2.34.0
-
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
