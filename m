@@ -2,207 +2,202 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E79EC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 27 Nov 2021 02:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F8CC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 27 Nov 2021 03:18:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231546AbhK0Ces (ORCPT
+        id S1351888AbhK0DWC (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 26 Nov 2021 21:34:48 -0500
-Received: from mga07.intel.com ([134.134.136.100]:6745 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233840AbhK0Ccs (ORCPT
+        Fri, 26 Nov 2021 22:22:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60948 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233355AbhK0DUC (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 26 Nov 2021 21:32:48 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10180"; a="299138164"
-X-IronPort-AV: E=Sophos;i="5.87,267,1631602800"; 
-   d="scan'208";a="299138164"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Nov 2021 18:19:32 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,267,1631602800"; 
-   d="scan'208";a="675705118"
-Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga005.jf.intel.com with ESMTP; 26 Nov 2021 18:19:30 -0800
-Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mqnJJ-0008vu-O3; Sat, 27 Nov 2021 02:19:29 +0000
-Date:   Sat, 27 Nov 2021 10:18:38 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-clk] BUILD SUCCESS
- 33b22d9c3272003a525ba2d6b7b851f3d4f30574
-Message-ID: <61a1957e.3NyUEs2eEXUsoh+D%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Fri, 26 Nov 2021 22:20:02 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3BABC09CE45
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Nov 2021 18:08:21 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id n26so10510497pff.3
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 26 Nov 2021 18:08:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=0hUpkk2bVLMlWbUm6FAXqYcsXcRQDfAu3do09rdMvQU=;
+        b=5hJow46YvRg9KynMaoLmRj620TjvX4/nvJv0JnMqOom+GtBc72VGF6DXRhSzqInvXR
+         GNdFQcm1DU3mm6fIXW9Mz/OuguH8uxUvbZpw6guTJEkdjWwvoTFA0iJg7Jw87zN+MW//
+         qVkqu05yBNKAl9SK/OzNjEN4XwLR5+nqDiUhowkqgF0bl5tuB5SMyaDLGcXRJJC27mRt
+         BKim+NwTyy6TN98cQqmw59pdUMo34/eBABSGggZ9nxJAf1/8l8Uvl3u4N0jmBjBPZhzm
+         grmB2PMuYFPLhcFMEojVuVSopcpC01ks1UjIDnZGDL95zXUQeOyYfdEDdL3znnGBRfjy
+         nCng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=0hUpkk2bVLMlWbUm6FAXqYcsXcRQDfAu3do09rdMvQU=;
+        b=YXI/Bcs/hBdiGAd/060eKk6ZYhlwyMPDTmvmpryWLNWT7pRpgi85fA86yACL+GcNQ2
+         oohDN19oaEdV2IrBenyB+F9m0ecJb5gCDFh0wkvm85HODtME0lkLKqIVySNcKgjjHWdC
+         3xCxfNyrCLtu+n47xad26PjBAU/b2Xq3IzFKbWE9w4zAMZTAHi7btOX7T49LoLDZE7x0
+         zT1hSjDJJ2gyuX0fAPCtCxo34rz2Z7QcqeHOJcpsizMAQdjXntlFWkbBr0zEZiz6vjg1
+         4K6U+9gc7+/NRVCFVWIWa8lLkBQfZyaxPMOuacgpYcYL3wmbIVckmwyuINeGo3slbypN
+         bDnA==
+X-Gm-Message-State: AOAM533PZIOrDEErTEtJhhtit97OhXmx9t26MDnqsFStZrQP1vhwUdFl
+        WJlGBeCTmkZntEgAXT1kQGvgAxcp3LOQqwd0
+X-Google-Smtp-Source: ABdhPJwftbOlaLnY9Drk7+YIuGcIWC1sY+8FpUFbJlvNobPwTMktkCLOHAyB0tUBfQ835JqPZYV/9Q==
+X-Received: by 2002:a63:894a:: with SMTP id v71mr24119849pgd.337.1637978901123;
+        Fri, 26 Nov 2021 18:08:21 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id il13sm13009252pjb.52.2021.11.26.18.08.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Nov 2021 18:08:20 -0800 (PST)
+Message-ID: <61a19314.1c69fb81.c850f.149f@mx.google.com>
+Date:   Fri, 26 Nov 2021 18:08:20 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: next
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-next-2021-11-26-v5.16-rc1
+Subject: renesas/next baseline: 436 runs,
+ 3 regressions (renesas-next-2021-11-26-v5.16-rc1)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
-branch HEAD: 33b22d9c3272003a525ba2d6b7b851f3d4f30574  clk: renesas: r9a07g044: Add TSU clock and reset entry
+renesas/next baseline: 436 runs, 3 regressions (renesas-next-2021-11-26-v5.=
+16-rc1)
 
-elapsed time: 727m
+Regressions Summary
+-------------------
 
-configs tested: 143
-configs skipped: 4
+platform            | arch | lab           | compiler | defconfig          =
+          | regressions
+--------------------+------+---------------+----------+--------------------=
+----------+------------
+rk3288-rock2-square | arm  | lab-collabora | gcc-10   | multi_v7_defc...G_A=
+RM_LPAE=3Dy | 1          =
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+rk3288-veyron-jaq   | arm  | lab-collabora | gcc-10   | multi_v7_defc...G_A=
+RM_LPAE=3Dy | 1          =
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-i386                 randconfig-c001-20211126
-powerpc              randconfig-c003-20211126
-mips                 randconfig-c004-20211126
-powerpc                     akebono_defconfig
-arm                         axm55xx_defconfig
-arm                           omap1_defconfig
-parisc                generic-32bit_defconfig
-csky                                defconfig
-arm                          pcm027_defconfig
-arm                            zeus_defconfig
-arm                  colibri_pxa300_defconfig
-arm                         lpc32xx_defconfig
-ia64                             allyesconfig
-s390                       zfcpdump_defconfig
-arm                       omap2plus_defconfig
-powerpc                    adder875_defconfig
-arm                            dove_defconfig
-m68k                        m5272c3_defconfig
-arm                        spear3xx_defconfig
-sh                        edosk7760_defconfig
-powerpc                 mpc8560_ads_defconfig
-m68k                          sun3x_defconfig
-arm                          ep93xx_defconfig
-arm                          simpad_defconfig
-powerpc                 xes_mpc85xx_defconfig
-powerpc                     tqm8540_defconfig
-sh                               j2_defconfig
-arm64                            alldefconfig
-powerpc                     rainier_defconfig
-xtensa                  audio_kc705_defconfig
-powerpc                     mpc5200_defconfig
-sh                           se7722_defconfig
-sh                          sdk7780_defconfig
-powerpc                    gamecube_defconfig
-powerpc                   motionpro_defconfig
-powerpc                 mpc832x_rdb_defconfig
-powerpc                     stx_gp3_defconfig
-arm                              alldefconfig
-sh                          kfr2r09_defconfig
-m68k                         apollo_defconfig
-m68k                        m5407c3_defconfig
-arm                            pleb_defconfig
-sh                            titan_defconfig
-xtensa                    smp_lx200_defconfig
-arm                          gemini_defconfig
-arm                       imx_v6_v7_defconfig
-arm                     am200epdkit_defconfig
-arm                         mv78xx0_defconfig
-sh                           se7724_defconfig
-sh                         microdev_defconfig
-sh                        apsh4ad0a_defconfig
-sh                 kfr2r09-romimage_defconfig
-arm                     eseries_pxa_defconfig
-arc                 nsimosci_hs_smp_defconfig
-sh                           sh2007_defconfig
-arm                       imx_v4_v5_defconfig
-arm                         s3c6400_defconfig
-arm                  colibri_pxa270_defconfig
-arm                  randconfig-c002-20211126
-ia64                             allmodconfig
-ia64                                defconfig
-m68k                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-nds32                               defconfig
-nios2                            allyesconfig
-alpha                               defconfig
-alpha                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-h8300                            allyesconfig
-xtensa                           allyesconfig
-parisc                              defconfig
-s390                             allyesconfig
-s390                             allmodconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-sparc                               defconfig
-i386                                defconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-x86_64               randconfig-a014-20211126
-x86_64               randconfig-a011-20211126
-x86_64               randconfig-a012-20211126
-x86_64               randconfig-a016-20211126
-x86_64               randconfig-a013-20211126
-x86_64               randconfig-a015-20211126
-i386                 randconfig-a016-20211126
-i386                 randconfig-a015-20211126
-i386                 randconfig-a012-20211126
-i386                 randconfig-a013-20211126
-i386                 randconfig-a014-20211126
-i386                 randconfig-a011-20211126
-arc                  randconfig-r043-20211126
-s390                 randconfig-r044-20211126
-riscv                randconfig-r042-20211126
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-x86_64                    rhel-8.3-kselftests
-um                           x86_64_defconfig
-um                             i386_defconfig
-x86_64                           allyesconfig
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                          rhel-8.3-func
-x86_64                                  kexec
+rk3288-veyron-jaq   | arm  | lab-collabora | gcc-10   | multi_v7_defconfig+=
+crypto    | 1          =
 
-clang tested configs:
-s390                 randconfig-c005-20211126
-i386                 randconfig-c001-20211126
-powerpc              randconfig-c003-20211126
-riscv                randconfig-c006-20211126
-arm                  randconfig-c002-20211126
-x86_64               randconfig-c007-20211126
-mips                 randconfig-c004-20211126
-x86_64               randconfig-a001-20211126
-x86_64               randconfig-a003-20211126
-x86_64               randconfig-a006-20211126
-x86_64               randconfig-a004-20211126
-x86_64               randconfig-a005-20211126
-x86_64               randconfig-a002-20211126
-i386                 randconfig-a002-20211126
-i386                 randconfig-a001-20211126
-i386                 randconfig-a005-20211126
-i386                 randconfig-a006-20211126
-i386                 randconfig-a004-20211126
-i386                 randconfig-a003-20211126
-hexagon              randconfig-r045-20211126
-hexagon              randconfig-r041-20211126
 
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
+s-next-2021-11-26-v5.16-rc1/plan/baseline/
+
+  Test:     baseline
+  Tree:     renesas
+  Branch:   next
+  Describe: renesas-next-2021-11-26-v5.16-rc1
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      aeb0ae2627f78fca02f76bf5cb64d0ea94ff31b1 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform            | arch | lab           | compiler | defconfig          =
+          | regressions
+--------------------+------+---------------+----------+--------------------=
+----------+------------
+rk3288-rock2-square | arm  | lab-collabora | gcc-10   | multi_v7_defc...G_A=
+RM_LPAE=3Dy | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/61a16024c07ec6f12518f6d9
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-11-26-v5.16-rc1/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/=
+gcc-10/lab-collabora/baseline-rk3288-rock2-square.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-11-26-v5.16-rc1/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/=
+gcc-10/lab-collabora/baseline-rk3288-rock2-square.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/61a16024c07ec6f12518f=
+6da
+        failing since 10 days (last pass: renesas-next-2021-10-18-v5.15-rc1=
+, first fail: renesas-next-2021-11-15-v5.16-rc1) =
+
+ =
+
+
+
+platform            | arch | lab           | compiler | defconfig          =
+          | regressions
+--------------------+------+---------------+----------+--------------------=
+----------+------------
+rk3288-veyron-jaq   | arm  | lab-collabora | gcc-10   | multi_v7_defc...G_A=
+RM_LPAE=3Dy | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/61a15e95eb50956d5318f71a
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-11-26-v5.16-rc1/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/=
+gcc-10/lab-collabora/baseline-rk3288-veyron-jaq.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-11-26-v5.16-rc1/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/=
+gcc-10/lab-collabora/baseline-rk3288-veyron-jaq.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/61a15e95eb50956d5318f=
+71b
+        new failure (last pass: renesas-next-2021-11-15-v5.16-rc1) =
+
+ =
+
+
+
+platform            | arch | lab           | compiler | defconfig          =
+          | regressions
+--------------------+------+---------------+----------+--------------------=
+----------+------------
+rk3288-veyron-jaq   | arm  | lab-collabora | gcc-10   | multi_v7_defconfig+=
+crypto    | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/61a16407ac8c83300118f6f2
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+crypto
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-11-26-v5.16-rc1/arm/multi_v7_defconfig+crypto/gcc-10/lab-collabora/baselin=
+e-rk3288-veyron-jaq.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2021=
+-11-26-v5.16-rc1/arm/multi_v7_defconfig+crypto/gcc-10/lab-collabora/baselin=
+e-rk3288-veyron-jaq.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/61a16407ac8c83300118f=
+6f3
+        new failure (last pass: renesas-next-2021-11-19-v5.16-rc1) =
+
+ =20
