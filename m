@@ -2,179 +2,165 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84744C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Nov 2021 22:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 355BFC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 29 Nov 2021 23:09:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232759AbhK2WdY (ORCPT
+        id S236161AbhK2XMp (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 29 Nov 2021 17:33:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60598 "EHLO
+        Mon, 29 Nov 2021 18:12:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41472 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231237AbhK2WdC (ORCPT
+        with ESMTP id S232730AbhK2XMZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 29 Nov 2021 17:33:02 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E09EAC143242;
-        Mon, 29 Nov 2021 10:33:16 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 3A43ACE16B8;
-        Mon, 29 Nov 2021 18:33:15 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E27BC53FCD;
-        Mon, 29 Nov 2021 18:33:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1638210793;
-        bh=NiqtQJK2sHeX2lVt677tbzluqXmsp5H2HGPufVwCMc8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=hkm0J5Ph16y30WP4a1mX9EuPTdjSmUXqlqekf7IBvZbKcJfKHsINGdBr6OjmhtFfi
-         dZ/IHyY/mzYuaQdfL30uV8tJFiastI6rTknXCtBAP1/Q6DVDFYn/GgiSPBD/f8WjdR
-         GwAUBUMcxzcG6W5CnGOsvrVVinxngbHJV4wj92IAB/6kGdovFDweGZ7NBaoPJW7W6X
-         idamoPI/3N+QMn/h5oU+jf2NbNxl5G16Zr9+K2kpGWzyWp4lGE1SsgTsB4WyKmN46A
-         MMZ/Z+Z0YPBsk9RkbVMc6c2U/zBmhGQdEJ5vkXZhKjnJR529Nv5C84qrbPCZ5nJzBM
-         UbOo5+MeO6HpQ==
-Received: by mail-ed1-f48.google.com with SMTP id y12so75810077eda.12;
-        Mon, 29 Nov 2021 10:33:13 -0800 (PST)
-X-Gm-Message-State: AOAM531AXYYCIdr3tTxNg/KCnE1cJfxkd8NvfJ96QFMgb8z+R+HLskJQ
-        bCcMXyn9+VelUsWLVJjjzgBL6Nsa/+QHQMMDRw==
-X-Google-Smtp-Source: ABdhPJwUZPHj6f/VpSA6KGNJB42uc5qu2+wTI2KYNSGCauPuJWl7D7Y4gH5mfRFT0MXZ7P55yltJvJRhp617QgYXvsQ=
-X-Received: by 2002:aa7:dc07:: with SMTP id b7mr75860840edu.327.1638210791676;
- Mon, 29 Nov 2021 10:33:11 -0800 (PST)
+        Mon, 29 Nov 2021 18:12:25 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1D92C0800D8
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Nov 2021 14:34:33 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id p18-20020a17090ad31200b001a78bb52876so16730599pju.3
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 29 Nov 2021 14:34:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=j0f3efyYCR0Suhks/6DFVO0Gq8KGIqAXzawNjBZbNcc=;
+        b=k/XdU9TWMoKfXJqTIzOvESsTk/SeT10Z98dZDUvgBGaD3K/CeRUEcD7PcbvhXW3W3X
+         TyxKxy7bbw/VZ9Vxxqv6wtZw3EpefsGQQdiIynj97vNOcL3JetUXgFnX6Q8yBTyxuE8o
+         ozLALiHKqSIi22ef14P27/Kev/5DqEu7u5I1vppnkFoHbEE+MsBqQ3ruJJrLdcJZV0Xa
+         CYdSI0L8EvoCzhtX4osXosvvHJR2E4IVxL1wPKXsELIyg7cyi6WKrwrXMitEhEj/EX6O
+         v3ZFvRG8gOjo504sRVfwnTHJ6ujB1OQwjJ+Fnf/MLbvONZRUg5elsbTgeKiuZpFToQxx
+         sStQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=j0f3efyYCR0Suhks/6DFVO0Gq8KGIqAXzawNjBZbNcc=;
+        b=rwY9u7AdXw3hUsWLQOccfE8OwgVjZvGHhVx7YqURKfyV8Pob9931u+yBfoy31nGhXv
+         VOB1lrIrHcThZoNoPK/8A3ET3TWyJ8Lck1zltkUdAKboUZsKpJOPmc9IC/6aDJGrdLHe
+         CrtYTIFdmto7P08VAuxrc0yfTSIKNFViYwjtOlNvW0rOMHOtna1Wlsn5+0mJ1CKgjHGy
+         mKWapNM+AV2yx3e4sT9v46aDzDyZwZom+NlbP+m4OwjcwAhgW7v8ohiI/j9SKCk5fvT1
+         K6QDGu2w0JbmfoDqXd71OvDU/db6CINI0KwUYl8PRdOtXoo+uHNCM06J6gtmt9gwk56M
+         yBRw==
+X-Gm-Message-State: AOAM530qpBm3nKeEp75vgCHtNm8Q5nxFBj1GRikmJdk5aVGYx3p0xt8I
+        3HdThdrEUMbIeIzql0PFISPMFDMCmN3M34iR
+X-Google-Smtp-Source: ABdhPJySliMHoYRUFvr0QPsfGV4gZIU4p4g47HywQAhJ827KJcqC8J13Qqg0hhQ+mgfOKLOGqi7HWg==
+X-Received: by 2002:a17:90b:1d0e:: with SMTP id on14mr1114892pjb.3.1638225273308;
+        Mon, 29 Nov 2021 14:34:33 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id f3sm17613630pfg.167.2021.11.29.14.34.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Nov 2021 14:34:33 -0800 (PST)
+Message-ID: <61a55579.1c69fb81.9d939.0fc0@mx.google.com>
+Date:   Mon, 29 Nov 2021 14:34:33 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20211122103032.517923-1-maz@kernel.org> <CAMuHMdX2ZRvDYA3idmw3nBcP6CO=2od6ZU-UeJo9vYsuB=fQNQ@mail.gmail.com>
- <8735no70tt.wl-maz@kernel.org> <CAMuHMdVS67BLP2XEdD6ZvVBVE2x11gKnQa1TqG659HXPM5scqQ@mail.gmail.com>
- <CAMuHMdWJhnXabKGpW7k944dzQHtwQtxw-yb2bRBsoaMw6N6nuA@mail.gmail.com>
- <87tug3clvc.wl-maz@kernel.org> <CAMuHMdWGb2xik+94RVwtq8E6+9eN=HfQLX3a4sTjKQXR96Udkw@mail.gmail.com>
- <87r1b7ck40.wl-maz@kernel.org> <OSZPR01MB7019E7DD7119EFF9C994AA62AA649@OSZPR01MB7019.jpnprd01.prod.outlook.com>
- <87tufvmes9.wl-maz@kernel.org> <CA+V-a8siHRjF+bJu88QFwz0a_MZ+kiJEwmER58_feyr8O+WNGA@mail.gmail.com>
-In-Reply-To: <CA+V-a8siHRjF+bJu88QFwz0a_MZ+kiJEwmER58_feyr8O+WNGA@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 29 Nov 2021 12:33:00 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK+GcnChx3i9fsYnw+FzZgON4PtKB=CzYLUj6sXtxX6fQ@mail.gmail.com>
-Message-ID: <CAL_JsqK+GcnChx3i9fsYnw+FzZgON4PtKB=CzYLUj6sXtxX6fQ@mail.gmail.com>
-Subject: Re: [PATCH] of/irq: Add a quirk for controllers with their own
- definition of interrupt-map
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
-        Marc Zyngier <maz@kernel.org>
-Cc:     Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "kernel-team@android.com" <kernel-team@android.com>,
-        John Crispin <john@phrozen.org>, Biwen Li <biwen.li@nxp.com>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: renesas-devel-2021-11-29-v5.16-rc3
+Subject: renesas/master baseline: 248 runs,
+ 2 regressions (renesas-devel-2021-11-29-v5.16-rc3)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Mon, Nov 29, 2021 at 6:13 AM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
->
+renesas/master baseline: 248 runs, 2 regressions (renesas-devel-2021-11-29-=
+v5.16-rc3)
 
-I timed my vacation well...
+Regressions Summary
+-------------------
 
-> On Mon, Nov 29, 2021 at 10:34 AM Marc Zyngier <maz@kernel.org> wrote:
-> >
-> > On Sat, 27 Nov 2021 00:42:49 +0000,
-> > Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > >
-> > > Hi Marc,
-> > >
-> > > > -----Original Message-----
-> > > > From: Marc Zyngier <maz@kernel.org>
-> > > > Sent: 23 November 2021 09:11
-> > > > To: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > > Cc: linux-kernel@vger.kernel.org; devicetree@vger.kernel.org; kernel-team@android.com; Rob Herring
-> > > > <robh@kernel.org>; John Crispin <john@phrozen.org>; Biwen Li <biwen.li@nxp.com>; Chris Brandt
-> > > > <Chris.Brandt@renesas.com>; linux-renesas-soc@vger.kernel.org; Prabhakar Mahadev Lad
-> > > > <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > Subject: Re: [PATCH] of/irq: Add a quirk for controllers with their own definition of interrupt-map
-> > > >
-> > > > On Tue, 23 Nov 2021 08:44:19 +0000,
-> > > > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > >
-> > > > > Hi Marc,
-> > > > >
-> > > > > On Tue, Nov 23, 2021 at 9:33 AM Marc Zyngier <maz@kernel.org> wrote:
-> > > > > > On Tue, 23 Nov 2021 07:57:48 +0000,
-> > > > > > Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > > > > > > Summarized:
-> > > > > > >   - Before the bad commit, and after your fix, irqc-rza1 is invoked,
-> > > > > > >     and the number of interrupts seen is correct, but input events
-> > > > > > >     are doubled.
-> > > > > > >   - After the bad commit, irqc-rza1 is not invoked, and there is an
-> > > > > > >     interrupt storm, but input events are OK.
-> > > > > >
-> > > > > > OK, that's reassuring, even if the "twice the events" stuff isn't
-> > > > > > what you'd expect. We at least know this is a separate issue, and
-> > > > > > that this patch on top of -rc1 brings you back to the 5.15 behaviour.
-> > > > > >
-> > > > > > I'd expect it to be the case for the other platforms as well.
-> > > > >
-> > > > > OK.
-> > > > >
-> > > > > BTW, what would have been the correct way to do this for irqc-rza1?
-> > > > > I think we're about to make the same mistake with RZ/G2L IRQC
-> > > > > support[1]?
-> > > >
-> > > > Indeed, and I was about to look into it.
-> > > >
-> > > > There are multiple ways to skin this cat, including renaming 'interrupt-map' to 'my-own-private-
-> > > > interrupt-map'. Or use something akin the new 'msi-range' (which we could call interrupt-range), and
-> > > > replace:
-> > > >
-> > > >   interrupt-map = <0 0 &gic GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-> > > >                   <1 0 &gic GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-> > > >                   <2 0 &gic GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-> > > >                   <3 0 &gic GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-> > > >                   <4 0 &gic GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-> > > >                   <5 0 &gic GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
-> > > >                   <6 0 &gic GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-> > > >                   <7 0 &gic GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-> > > >
-> > > > with:
-> > > >
-> > > >   interrupt-range = <&gic GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH 0 8>;
+platform                 | arch   | lab           | compiler | defconfig   =
+                 | regressions
+-------------------------+--------+---------------+----------+-------------=
+-----------------+------------
+bcm2836-rpi-2-b          | arm    | lab-collabora | gcc-10   | multi_v7_def=
+c...MB2_KERNEL=3Dy | 1          =
 
-interrupts would work just fine here:
+minnowboard-turbot-E3826 | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
+n...86_kvm_guest | 1          =
 
-interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-  <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
-  <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
-  <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
-  <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-  <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
-  <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
-  <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
 
-We don't need a different solution for N:1 interrupts from N:M. Sure,
-that could become unweldy if there are a lot of interrupts (just like
-interrupt-map), but is that an immediate problem?
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2021-11-29-v5.16-rc3/plan/baseline/
 
-> > > >
-> > > Just to clarify, do you suggest to add interrupt-range as a generic
-> > > DT property or SoC/company specific property?
-> >
-> > As a generic one. I have no interest in SoC-specific stuff (though you
-> > are free to invent your own and run it by Rob).
-> >
-> OK will go with a generic one.
->
-> > > If you meant to add generic property where would you suggest to
-> > > document this property?
-> >
-> > Ideally collocated with the rest of the interrupt properties.
-> >
-> OK, I will go with interrupts.txt for now. Is that OK with you Rob?
+  Test:     baseline
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2021-11-29-v5.16-rc3
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      6a9c878a0d6706f56258f8a8b084df215b5bda0e =
 
-Nope. As the rest of interrupts are documented in DT Spec it goes
-there and there needs to be a schema (in dtschema).
 
-> (the reason I ask because interrupt-map/mask haven't been documented).
 
-Yes, they are. Only for the last 20+ years.
+Test Regressions
+---------------- =
 
-Rob
+
+
+platform                 | arch   | lab           | compiler | defconfig   =
+                 | regressions
+-------------------------+--------+---------------+----------+-------------=
+-----------------+------------
+bcm2836-rpi-2-b          | arm    | lab-collabora | gcc-10   | multi_v7_def=
+c...MB2_KERNEL=3Dy | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/61a5224b68fdb49ac118f6de
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig+CONFIG_THUMB2_KERNEL=3Dy
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-11-29-v5.16-rc3/arm/multi_v7_defconfig+CONFIG_THUMB2_KERNEL=3Dy/gcc-10/=
+lab-collabora/baseline-bcm2836-rpi-2-b.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-11-29-v5.16-rc3/arm/multi_v7_defconfig+CONFIG_THUMB2_KERNEL=3Dy/gcc-10/=
+lab-collabora/baseline-bcm2836-rpi-2-b.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-6-g8983f3b738df/armel/baseline/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/61a5224b68fdb49ac118f=
+6df
+        failing since 13 days (last pass: renesas-devel-2021-11-02-v5.15, f=
+irst fail: renesas-devel-2021-11-15-v5.16-rc1) =
+
+ =
+
+
+
+platform                 | arch   | lab           | compiler | defconfig   =
+                 | regressions
+-------------------------+--------+---------------+----------+-------------=
+-----------------+------------
+minnowboard-turbot-E3826 | x86_64 | lab-collabora | gcc-10   | x86_64_defco=
+n...86_kvm_guest | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/61a51a6762ffe0ee9218f6d7
+
+  Results:     0 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86_kvm_guest
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-11-29-v5.16-rc3/x86_64/x86_64_defconfig+x86_kvm_guest/gcc-10/lab-collab=
+ora/baseline-minnowboard-turbot-E3826.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+021-11-29-v5.16-rc3/x86_64/x86_64_defconfig+x86_kvm_guest/gcc-10/lab-collab=
+ora/baseline-minnowboard-turbot-E3826.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/kci-2020=
+.05-6-g8983f3b738df/x86/baseline/rootfs.cpio.gz =
+
+
+
+  * baseline.login: https://kernelci.org/test/case/id/61a51a6762ffe0ee9218f=
+6d8
+        new failure (last pass: renesas-devel-2021-10-26-v5.15-rc7) =
+
+ =20
