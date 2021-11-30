@@ -2,37 +2,37 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75458C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Nov 2021 21:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2CFC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 30 Nov 2021 21:51:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232037AbhK3Vyw (ORCPT
+        id S230023AbhK3Vyw (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Tue, 30 Nov 2021 16:54:52 -0500
-Received: from mga02.intel.com ([134.134.136.20]:62228 "EHLO mga02.intel.com"
+Received: from mga09.intel.com ([134.134.136.24]:13358 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230023AbhK3Vyv (ORCPT
+        id S232408AbhK3Vyv (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Tue, 30 Nov 2021 16:54:51 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10184"; a="223554683"
+X-IronPort-AV: E=McAfee;i="6200,9189,10184"; a="236146626"
 X-IronPort-AV: E=Sophos;i="5.87,277,1631602800"; 
-   d="scan'208";a="223554683"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2021 13:51:29 -0800
+   d="scan'208";a="236146626"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2021 13:51:29 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,277,1631602800"; 
-   d="scan'208";a="512377774"
+   d="scan'208";a="459776780"
 Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga008.jf.intel.com with ESMTP; 30 Nov 2021 13:51:28 -0800
+  by orsmga006.jf.intel.com with ESMTP; 30 Nov 2021 13:51:28 -0800
 Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1msB27-000Dnr-MY; Tue, 30 Nov 2021 21:51:27 +0000
-Date:   Wed, 01 Dec 2021 05:50:46 +0800
+        id 1msB27-000Dnu-N1; Tue, 30 Nov 2021 21:51:27 +0000
+Date:   Wed, 01 Dec 2021 05:50:42 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:next] BUILD SUCCESS
- 168c85dfca1716272b5f75f1fd0e4361cf869546
-Message-ID: <61a69cb6.KkZ9e1VwnK8X5JHR%lkp@intel.com>
+Subject: [geert-renesas-devel:renesas-drivers-for-v5.17] BUILD SUCCESS
+ 05b22caa7490e4f4c94bbde33c61cf72d187b8f7
+Message-ID: <61a69cb2.iVbJWWOH1ljBn5de%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -41,12 +41,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
-branch HEAD: 168c85dfca1716272b5f75f1fd0e4361cf869546  Merge branch 'renesas-drivers-for-v5.17' into renesas-next
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v5.17
+branch HEAD: 05b22caa7490e4f4c94bbde33c61cf72d187b8f7  soc: renesas: Consolidate product register handling
 
-elapsed time: 727m
+elapsed time: 726m
 
-configs tested: 245
+configs tested: 241
 configs skipped: 4
 
 The following configs have been built successfully.
@@ -238,9 +238,7 @@ x86_64               randconfig-a003-20211130
 x86_64               randconfig-a004-20211130
 x86_64               randconfig-a005-20211130
 x86_64               randconfig-a002-20211130
-arc                  randconfig-r043-20211128
-s390                 randconfig-r044-20211128
-riscv                randconfig-r042-20211128
+arc                  randconfig-r043-20211129
 riscv                    nommu_k210_defconfig
 riscv                    nommu_virt_defconfig
 riscv                             allnoconfig
@@ -302,8 +300,6 @@ riscv                randconfig-r042-20211130
 hexagon              randconfig-r045-20211130
 s390                 randconfig-r044-20211130
 hexagon              randconfig-r041-20211130
-hexagon              randconfig-r045-20211128
-hexagon              randconfig-r041-20211128
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
