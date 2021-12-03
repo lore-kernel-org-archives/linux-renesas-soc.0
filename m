@@ -2,40 +2,40 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70864C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Dec 2021 11:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B152C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Dec 2021 11:31:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243778AbhLCLfK (ORCPT
+        id S243703AbhLCLfM (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 3 Dec 2021 06:35:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40408 "EHLO
+        Fri, 3 Dec 2021 06:35:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243703AbhLCLe4 (ORCPT
+        with ESMTP id S243608AbhLCLe4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 3 Dec 2021 06:34:56 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F4128C061758
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA8F1C061757
         for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Dec 2021 03:31:31 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:3191:9890:620a:6f4])
-        by baptiste.telenet-ops.be with bizsmtp
-        id RnXV2600Y3eLghq01nXVzX; Fri, 03 Dec 2021 12:31:29 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id RnXU2600V3eLghq01nXUGr; Fri, 03 Dec 2021 12:31:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mt6mn-002IYt-Bv; Fri, 03 Dec 2021 12:31:29 +0100
+        id 1mt6mm-002IYY-Fb; Fri, 03 Dec 2021 12:31:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mt6mm-000hRY-Pm; Fri, 03 Dec 2021 12:31:28 +0100
+        id 1mt6ml-000hR7-Si; Fri, 03 Dec 2021 12:31:27 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 4/4] Renesas DT binding updates for v5.17
-Date:   Fri,  3 Dec 2021 12:31:21 +0100
-Message-Id: <cover.1638530614.git.geert+renesas@glider.be>
+Subject: [GIT PULL 2/4] Renesas ARM SoC updates for v5.17
+Date:   Fri,  3 Dec 2021 12:31:19 +0100
+Message-Id: <cover.1638530611.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1638530605.git.geert+renesas@glider.be>
 References: <cover.1638530605.git.geert+renesas@glider.be>
@@ -51,32 +51,20 @@ The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0dbf:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v5.17-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-soc-for-v5.17-tag1
 
-for you to fetch changes up to 217c7d1840b5377543eff84fe28409d0bd4d3433:
+for you to fetch changes up to 85744f2d938c5f3cfc44cb6533c157469634da93:
 
-  dt-bindings: mmc: renesas,sdhi: Rename RZ/G2L clocks (2021-11-26 13:53:02 +0100)
-
-----------------------------------------------------------------
-Renesas DT binding updates for v5.17
-
-  - Document SDHI SDnH clocks on R-Car Gen2 and later,
-  - Document core support for the R-Car S4-8 (R8A779F0) SoC.
+  ARM: shmobile: rcar-gen2: Add missing of_node_put() (2021-11-15 09:58:53 +0100)
 
 ----------------------------------------------------------------
-Biju Das (1):
-      dt-bindings: mmc: renesas,sdhi: Rename RZ/G2L clocks
+Renesas ARM SoC updates for v5.17
 
-Wolfram Sang (1):
-      dt-bindings: mmc: renesas,sdhi: Add optional SDnH clock
+  - Add a missing of_node_put().
 
-Yoshihiro Shimoda (3):
-      dt-bindings: arm: renesas: Document R-Car S4-8 SoC DT bindings
-      dt-bindings: reset: renesas,rst: Document r8a779f0 reset module
-      dt-bindings: power: renesas,rcar-sysc: Document r8a779f0 SYSC bindings
+----------------------------------------------------------------
+Wan Jiabing (1):
+      ARM: shmobile: rcar-gen2: Add missing of_node_put()
 
- Documentation/devicetree/bindings/arm/renesas.yaml |  4 ++
- .../devicetree/bindings/mmc/renesas,sdhi.yaml      | 48 +++++++++++++++-------
- .../bindings/power/renesas,rcar-sysc.yaml          |  1 +
- .../devicetree/bindings/reset/renesas,rst.yaml     |  1 +
- 4 files changed, 40 insertions(+), 14 deletions(-)
+ arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
