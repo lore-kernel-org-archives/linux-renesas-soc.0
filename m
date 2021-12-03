@@ -2,76 +2,84 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A55C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Dec 2021 13:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81CFDC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Fri,  3 Dec 2021 13:35:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1352247AbhLCN0W (ORCPT
+        id S1381122AbhLCNin (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 3 Dec 2021 08:26:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37630 "EHLO
+        Fri, 3 Dec 2021 08:38:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244419AbhLCN0W (ORCPT
+        with ESMTP id S1381184AbhLCNii (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 3 Dec 2021 08:26:22 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55AACC06173E
-        for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Dec 2021 05:22:58 -0800 (PST)
+        Fri, 3 Dec 2021 08:38:38 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A317BC0617A1
+        for <linux-renesas-soc@vger.kernel.org>; Fri,  3 Dec 2021 05:35:13 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:3191:9890:620a:6f4])
-        by xavier.telenet-ops.be with bizsmtp
-        id RpNw2601B3eLghq01pNw9y; Fri, 03 Dec 2021 14:22:56 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id RpbA2600A3eLghq06pbAhz; Fri, 03 Dec 2021 14:35:11 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mt8We-002LFl-CL; Fri, 03 Dec 2021 14:22:56 +0100
+        id 1mt8iT-002LQY-Ph; Fri, 03 Dec 2021 14:35:09 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1mt8Wd-000kYw-RD; Fri, 03 Dec 2021 14:22:55 +0100
+        id 1mt8iT-000kkk-7l; Fri, 03 Dec 2021 14:35:09 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, Marc Zyngier <maz@kernel.org>
+Cc:     linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] pinctrl: renesas: r8a779a0: Align comments
-Date:   Fri,  3 Dec 2021 14:22:55 +0100
-Message-Id: <886ef84ea6b8314d348953792c9616b3e5dc28c0.1638537704.git.geert+renesas@glider.be>
+Subject: [PATCH 2/3] Input: gpio-keys - Use input_report_key()
+Date:   Fri,  3 Dec 2021 14:35:07 +0100
+Message-Id: <ec7f7eac6c603fb4b17725556cc3df87627c9a11.1638538079.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1638538079.git.geert+renesas@glider.be>
+References: <cover.1638538079.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Align the CANFD4_TX and AVB2_MDC comments with all others.
+Use the input_report_key() helper instead of open-coding the same
+operation.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-To be queued in renesas-pinctrl-for-v5.17.
----
- drivers/pinctrl/renesas/pfc-r8a779a0.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/input/keyboard/gpio_keys.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a779a0.c b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-index ad6532443a785b13..83580385c3ca9b1c 100644
---- a/drivers/pinctrl/renesas/pfc-r8a779a0.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-@@ -3835,7 +3835,7 @@ static const struct pinmux_drive_reg pinmux_drive_regs[] = {
- 		{ RCAR_GP_PIN(3, 12), 16, 3 },	/* CANFD5_RX */
- 		{ RCAR_GP_PIN(3, 11), 12, 3 },	/* CANFD5_TX */
- 		{ RCAR_GP_PIN(3, 10),  8, 3 },	/* CANFD4_RX */
--		{ RCAR_GP_PIN(3,  9),  4, 3 },	/* CANFD4_TX*/
-+		{ RCAR_GP_PIN(3,  9),  4, 3 },	/* CANFD4_TX */
- 		{ RCAR_GP_PIN(3,  8),  0, 3 },	/* CANFD3_RX */
- 	} },
- 	{ PINMUX_DRIVE_REG("DRV2CTRL3", 0xe6058888) {
-@@ -4305,7 +4305,7 @@ static const struct pinmux_bias_reg pinmux_bias_regs[] = {
- 		[11] = RCAR_GP_PIN(6, 11),	/* AVB2_TD3 */
- 		[12] = RCAR_GP_PIN(6, 12),	/* AVB2_TXCREFCLK */
- 		[13] = RCAR_GP_PIN(6, 13),	/* AVB2_MDIO */
--		[14] = RCAR_GP_PIN(6, 14),	/* AVB2_MDC*/
-+		[14] = RCAR_GP_PIN(6, 14),	/* AVB2_MDC */
- 		[15] = RCAR_GP_PIN(6, 15),	/* AVB2_MAGIC */
- 		[16] = RCAR_GP_PIN(6, 16),	/* AVB2_PHY_INT */
- 		[17] = RCAR_GP_PIN(6, 17),	/* AVB2_LINK */
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index fc706918d7b103cb..ab077dfb90a76ac3 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -456,7 +456,7 @@ static enum hrtimer_restart gpio_keys_irq_timer(struct hrtimer *t)
+ 	struct input_dev *input = bdata->input;
+ 
+ 	if (bdata->key_pressed) {
+-		input_event(input, EV_KEY, *bdata->code, 0);
++		input_report_key(input, *bdata->code, 0);
+ 		input_sync(input);
+ 		bdata->key_pressed = false;
+ 	}
+@@ -478,11 +478,11 @@ static irqreturn_t gpio_keys_irq_isr(int irq, void *dev_id)
+ 		if (bdata->button->wakeup)
+ 			pm_wakeup_event(bdata->input->dev.parent, 0);
+ 
+-		input_event(input, EV_KEY, *bdata->code, 1);
++		input_report_key(input, *bdata->code, 1);
+ 		input_sync(input);
+ 
+ 		if (!bdata->release_delay) {
+-			input_event(input, EV_KEY, *bdata->code, 0);
++			input_report_key(input, *bdata->code, 0);
+ 			input_sync(input);
+ 			goto out;
+ 		}
 -- 
 2.25.1
 
