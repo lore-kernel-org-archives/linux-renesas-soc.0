@@ -2,37 +2,36 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 915A9C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 05:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A6AC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 05:17:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229848AbhLHFI6 (ORCPT
+        id S231994AbhLHFVA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Dec 2021 00:08:58 -0500
-Received: from mga11.intel.com ([192.55.52.93]:40398 "EHLO mga11.intel.com"
+        Wed, 8 Dec 2021 00:21:00 -0500
+Received: from mga07.intel.com ([134.134.136.100]:41457 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230032AbhLHFG7 (ORCPT
+        id S231827AbhLHFVA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Dec 2021 00:06:59 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10191"; a="235269555"
+        Wed, 8 Dec 2021 00:21:00 -0500
+X-IronPort-AV: E=McAfee;i="6200,9189,10191"; a="301140874"
 X-IronPort-AV: E=Sophos;i="5.87,296,1631602800"; 
-   d="scan'208";a="235269555"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 21:03:27 -0800
+   d="scan'208";a="301140874"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 21:17:28 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,296,1631602800"; 
-   d="scan'208";a="563942241"
+   d="scan'208";a="502916681"
 Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Dec 2021 21:03:26 -0800
+  by orsmga007.jf.intel.com with ESMTP; 07 Dec 2021 21:17:27 -0800
 Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1mup6z-00005C-VU; Wed, 08 Dec 2021 05:03:25 +0000
-Date:   Wed, 08 Dec 2021 13:02:54 +0800
+        id 1mupKY-00006t-Mu; Wed, 08 Dec 2021 05:17:26 +0000
+Date:   Wed, 08 Dec 2021 13:16:53 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-pinctrl] BUILD SUCCESS
- ea7e26ebe6a90fe7962823a70ac91f010df71239
-Message-ID: <61b03c7e.ddOWTesRSRAi6E9A%lkp@intel.com>
+Subject: [geert-renesas-devel:renesas-dt-bindings-for-v5.17] BUILD SUCCESS d01986bec3887a3dbf61cbd821979f91cf0bb2dc
+Message-ID: <61b03fc5.vJ1hDzb+c92UrU+m%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -41,12 +40,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-pinctrl
-branch HEAD: ea7e26ebe6a90fe7962823a70ac91f010df71239  pinctrl: renesas: r8a779a0: Align comments
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dt-bindings-for-v5.17
+branch HEAD: d01986bec3887a3dbf61cbd821979f91cf0bb2dc  dt-bindings: arm: renesas: Document Renesas Spider boards
 
-elapsed time: 720m
+elapsed time: 734m
 
-configs tested: 179
+configs tested: 189
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -120,6 +119,10 @@ riscv             nommu_k210_sdcard_defconfig
 sh                         ecovec24_defconfig
 arm                         orion5x_defconfig
 sh                           se7780_defconfig
+powerpc                    ge_imp3a_defconfig
+powerpc                   microwatt_defconfig
+mips                         tb0226_defconfig
+arm                          pxa910_defconfig
 i386                             allyesconfig
 mips                         db1xxx_defconfig
 arc                            hsdk_defconfig
@@ -196,6 +199,12 @@ x86_64               randconfig-a013-20211208
 x86_64               randconfig-a012-20211208
 x86_64               randconfig-a015-20211208
 x86_64               randconfig-a014-20211208
+i386                 randconfig-a013-20211208
+i386                 randconfig-a016-20211208
+i386                 randconfig-a011-20211208
+i386                 randconfig-a014-20211208
+i386                 randconfig-a012-20211208
+i386                 randconfig-a015-20211208
 riscv                    nommu_k210_defconfig
 riscv                            allyesconfig
 riscv                    nommu_virt_defconfig
