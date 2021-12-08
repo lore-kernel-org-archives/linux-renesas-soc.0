@@ -2,69 +2,83 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD68DC43217
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 10:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B7FC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 11:57:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229446AbhLHKta (ORCPT
+        id S231331AbhLHMA4 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Dec 2021 05:49:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45190 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231841AbhLHKt3 (ORCPT
+        Wed, 8 Dec 2021 07:00:56 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:51432 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230390AbhLHMA4 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Dec 2021 05:49:29 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36814C061B38
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Dec 2021 02:45:57 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:a0bd:6217:e9a0:bd39])
-        by xavier.telenet-ops.be with bizsmtp
-        id Tmlt260072LoXaB01mltK0; Wed, 08 Dec 2021 11:45:53 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1muuSO-003dvS-Uq; Wed, 08 Dec 2021 11:45:52 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1muuF5-00BVl0-Vp; Wed, 08 Dec 2021 11:32:08 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Sergey Shtylyov <s.shtylyov@omp.ru>,
-        "David S . Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>
-Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] sh_eth: Use dev_err_probe() helper
-Date:   Wed,  8 Dec 2021 11:32:07 +0100
-Message-Id: <2576cc15bdbb5be636640f491bcc087a334e2c02.1638959463.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
+        Wed, 8 Dec 2021 07:00:56 -0500
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4F73E8BB;
+        Wed,  8 Dec 2021 12:57:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1638964643;
+        bh=CKBjaisU+3LuznPUGI3S80xtFDixfFdrhQCc78D6Z+E=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=rqMicXuGg9TqslZLSmHg/2YdeTuOqCdX1bSrxOKW1l9CX/Hfa+EDWWOl/LLF1km9d
+         mJ1zJEKOr7QVSAFPgcPYKCMyLxtkg4rNtBO+ZbvW1SFYUxTpx5iynycxZMIUYzWmMH
+         SM05j/ui0/maT8hSLM0xGIY0v2IRHJdTppnuwBHQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <62adddea1fc5e9133766af2d953be7334f4622aa.1638959417.git.geert+renesas@glider.be>
+References: <62adddea1fc5e9133766af2d953be7334f4622aa.1638959417.git.geert+renesas@glider.be>
+Subject: Re: [PATCH] drm: rcar-du: Use dev_err_probe() helper
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@linux.ie>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Date:   Wed, 08 Dec 2021 11:57:21 +0000
+Message-ID: <163896464129.995700.3492964836875185548@Monstersaurus>
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Use the dev_err_probe() helper, instead of open-coding the same
-operation.
+Quoting Geert Uytterhoeven (2021-12-08 10:30:53)
+> Use the dev_err_probe() helper, instead of open-coding the same
+> operation.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar=
+-du/rcar_du_drv.c
+> index 5612a9e7a9056cf7..86eeda769e2ebd10 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -661,9 +661,8 @@ static int rcar_du_probe(struct platform_device *pdev)
+>         /* DRM/KMS objects */
+>         ret =3D rcar_du_modeset_init(rcdu);
+>         if (ret < 0) {
+> -               if (ret !=3D -EPROBE_DEFER)
+> -                       dev_err(&pdev->dev,
+> -                               "failed to initialize DRM/KMS (%d)\n", re=
+t);
+> +               dev_err_probe(&pdev->dev, ret,
+> +                             "failed to initialize DRM/KMS\n");
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/net/ethernet/renesas/sh_eth.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I've just learned that dev_err_probe() sets a 'reason' for the deferral.
+Seems like a nice feature when exploring devices that are still waiting
+to probe. Is the message still appropriate enough in that case?
 
-diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
-index 223626290ce0e278..d947a628e1663009 100644
---- a/drivers/net/ethernet/renesas/sh_eth.c
-+++ b/drivers/net/ethernet/renesas/sh_eth.c
-@@ -3368,8 +3368,7 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
- 	/* MDIO bus init */
- 	ret = sh_mdio_init(mdp, pd);
- 	if (ret) {
--		if (ret != -EPROBE_DEFER)
--			dev_err(&pdev->dev, "MDIO init failed: %d\n", ret);
-+		dev_err_probe(&pdev->dev, ret, "MDIO init failed\n");
- 		goto out_release;
- 	}
- 
--- 
-2.25.1
+I think it's probably fine, so
 
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+
+
+>                 goto error;
+>         }
+> =20
+> --=20
+> 2.25.1
+>
