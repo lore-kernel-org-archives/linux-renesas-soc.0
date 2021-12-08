@@ -2,37 +2,37 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F6D2C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 05:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F485C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 05:05:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229842AbhLHFHC (ORCPT
+        id S229539AbhLHFI5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Dec 2021 00:07:02 -0500
-Received: from mga11.intel.com ([192.55.52.93]:40398 "EHLO mga11.intel.com"
+        Wed, 8 Dec 2021 00:08:57 -0500
+Received: from mga03.intel.com ([134.134.136.65]:56270 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230316AbhLHFHA (ORCPT
+        id S230332AbhLHFHA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 8 Dec 2021 00:07:00 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10191"; a="235269557"
+X-IronPort-AV: E=McAfee;i="6200,9189,10191"; a="237698138"
 X-IronPort-AV: E=Sophos;i="5.87,296,1631602800"; 
-   d="scan'208";a="235269557"
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 21:03:28 -0800
+   d="scan'208";a="237698138"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 21:03:28 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.87,296,1631602800"; 
-   d="scan'208";a="611972971"
+   d="scan'208";a="502914133"
 Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by orsmga004.jf.intel.com with ESMTP; 07 Dec 2021 21:03:26 -0800
+  by orsmga007.jf.intel.com with ESMTP; 07 Dec 2021 21:03:26 -0800
 Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1mup70-00005Z-6Y; Wed, 08 Dec 2021 05:03:26 +0000
-Date:   Wed, 08 Dec 2021 13:02:44 +0800
+        id 1mup70-00005U-59; Wed, 08 Dec 2021 05:03:26 +0000
+Date:   Wed, 08 Dec 2021 13:03:05 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-arm-dt-for-v5.17] BUILD SUCCESS
- 08b8699eb369d1b416c146922edfe827b41757a4
-Message-ID: <61b03c74.wazh7HPP8XtgdOPZ%lkp@intel.com>
+Subject: [geert-renesas-devel:next] BUILD SUCCESS
+ 0940300f8e1df4451b3a5c9e079a74cacc6b854d
+Message-ID: <61b03c89.BmsOItU9s0hFGKzy%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -41,10 +41,10 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-dt-for-v5.17
-branch HEAD: 08b8699eb369d1b416c146922edfe827b41757a4  arm64: dts: renesas: Add Renesas Spider boards support
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: 0940300f8e1df4451b3a5c9e079a74cacc6b854d  Merge branches 'renesas-arm-defconfig-for-v5.17', 'renesas-arm-dt-for-v5.17', 'renesas-drivers-for-v5.17' and 'renesas-dt-bindings-for-v5.17' into renesas-next
 
-elapsed time: 720m
+elapsed time: 721m
 
 configs tested: 179
 configs skipped: 3
