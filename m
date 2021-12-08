@@ -2,74 +2,73 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0597DC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 02:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A53AC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 04:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239272AbhLHC1y (ORCPT
+        id S240305AbhLHEah (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 7 Dec 2021 21:27:54 -0500
-Received: from mga17.intel.com ([192.55.52.151]:11148 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S233825AbhLHC1y (ORCPT
+        Tue, 7 Dec 2021 23:30:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44648 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S240029AbhLHEag (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 7 Dec 2021 21:27:54 -0500
-X-IronPort-AV: E=McAfee;i="6200,9189,10191"; a="218423401"
-X-IronPort-AV: E=Sophos;i="5.87,296,1631602800"; 
-   d="scan'208";a="218423401"
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2021 18:24:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.87,296,1631602800"; 
-   d="scan'208";a="580413054"
-Received: from lkp-server02.sh.intel.com (HELO 9e1e9f9b3bcb) ([10.239.97.151])
-  by fmsmga004.fm.intel.com with ESMTP; 07 Dec 2021 18:24:21 -0800
-Received: from kbuild by 9e1e9f9b3bcb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1mumd3-000NGU-62; Wed, 08 Dec 2021 02:24:21 +0000
-Date:   Wed, 8 Dec 2021 10:23:46 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     kbuild-all@lists.01.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [geert-renesas-drivers:renesas-clk-for-v5.17 25/30]
- aarch64-linux-ld: drivers/clk/renesas/r8a779a0-cpg-mssr.o:undefined
- reference to `rcar_gen4_cpg_clk_register'
-Message-ID: <202112081010.7vN3rLa4-lkp@intel.com>
+        Tue, 7 Dec 2021 23:30:36 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 848EAC061574;
+        Tue,  7 Dec 2021 20:27:05 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 3C11CB80F00;
+        Wed,  8 Dec 2021 04:27:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA2D6C00446;
+        Wed,  8 Dec 2021 04:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1638937622;
+        bh=gm5U+6nX0OqHUocW+vFgpvA0DdUInMV72h3j85gnI+Y=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=V3TUKJkHA0uNFg5mmnT50camm9hsWJeSbBH/9dbCObUrQJj2i3Sb3TT7AkLjtvyyE
+         xb2aYV4Ox8OF+5mTK5yDKm3y84zFBiTVGdW+1g6tER0rqMwBefVreUcf/GhGKmBbDt
+         HlMp90EYZg4pZf2J+Y7uW6NKC35pI66fqpaWh4V8bVbCrCZpRcmwcpLhsrDhuT0TML
+         DSdEdMiLAfG+l1wlGr2Hg2ytAUCgDnD3jwJXymtqPYdKl00u8WAWDBZAEKOgbDEhLq
+         DzUGQHKIdwtjUylKebAU/mppFeRdGmqtvnzdA85nElvNyb6eF4Yfpu+8BSqB7LVg+g
+         HAPODgp/n6n2A==
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cover.1638534376.git.geert+renesas@glider.be>
+References: <cover.1638534376.git.geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.17
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Tue, 07 Dec 2021 20:27:01 -0800
+User-Agent: alot/0.9.1
+Message-Id: <20211208042702.BA2D6C00446@smtp.kernel.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v5.17
-head:   6496166cb5d7dd163ceea55390060d77f008bc8b
-commit: 3e7c1099d948a41fbb99b7f6bc49189b66f81279 [25/30] clk: renesas: rcar-gen4: Introduce R-Car Gen4 CPG driver
-config: arm64-randconfig-p002-20211207 (https://download.01.org/0day-ci/archive/20211208/202112081010.7vN3rLa4-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 11.2.0
-reproduce (this is a W=1 build):
-        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-        chmod +x ~/bin/make.cross
-        # https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/commit/?id=3e7c1099d948a41fbb99b7f6bc49189b66f81279
-        git remote add geert-renesas-drivers https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git
-        git fetch --no-tags geert-renesas-drivers renesas-clk-for-v5.17
-        git checkout 3e7c1099d948a41fbb99b7f6bc49189b66f81279
-        # save the config file to linux build tree
-        mkdir build_dir
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-11.2.0 make.cross O=build_dir ARCH=arm64 SHELL=/bin/bash
+Quoting Geert Uytterhoeven (2021-12-03 04:30:58)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit fa55b7dcdc43c1aa1ba12bca9d2dd4318c2a0d=
+bf:
+>=20
+>   Linux 5.16-rc1 (2021-11-14 13:56:52 -0800)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/renesas-clk-for-v5.17-tag1
+>=20
+> for you to fetch changes up to 33b22d9c3272003a525ba2d6b7b851f3d4f30574:
+>=20
+>   clk: renesas: r9a07g044: Add TSU clock and reset entry (2021-11-26 14:0=
+6:16 +0100)
+>=20
+> ----------------------------------------------------------------
 
-If you fix the issue, kindly add following tag as appropriate
-Reported-by: kernel test robot <lkp@intel.com>
-
-All errors (new ones prefixed by >>):
-
-   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
-   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
-   aarch64-linux-ld: drivers/clk/renesas/r8a779a0-cpg-mssr.o: in function `r8a779a0_cpg_mssr_init':
-   r8a779a0-cpg-mssr.c:(.init.text+0x90): undefined reference to `rcar_gen4_cpg_init'
->> aarch64-linux-ld: drivers/clk/renesas/r8a779a0-cpg-mssr.o:(.init.rodata+0x70): undefined reference to `rcar_gen4_cpg_clk_register'
-
----
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+Thanks. Pulled into clk-next
