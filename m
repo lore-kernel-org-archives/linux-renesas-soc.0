@@ -2,40 +2,40 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C02CC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 10:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD68DC43217
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 10:46:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229528AbhLHKt3 (ORCPT
+        id S229446AbhLHKta (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Dec 2021 05:49:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45180 "EHLO
+        Wed, 8 Dec 2021 05:49:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbhLHKt3 (ORCPT
+        with ESMTP id S231841AbhLHKt3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 8 Dec 2021 05:49:29 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 20467C061746
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Dec 2021 02:45:56 -0800 (PST)
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 36814C061B38
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Dec 2021 02:45:57 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:a0bd:6217:e9a0:bd39])
-        by andre.telenet-ops.be with bizsmtp
-        id Tmlt2600G2LoXaB01mltQB; Wed, 08 Dec 2021 11:45:53 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id Tmlt260072LoXaB01mltK0; Wed, 08 Dec 2021 11:45:53 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1muuSO-003dvS-SU; Wed, 08 Dec 2021 11:45:52 +0100
+        id 1muuSO-003dvS-Uq; Wed, 08 Dec 2021 11:45:52 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1muuD7-00BVez-IR; Wed, 08 Dec 2021 11:30:05 +0100
+        id 1muuF5-00BVl0-Vp; Wed, 08 Dec 2021 11:32:08 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
+To:     Sergey Shtylyov <s.shtylyov@omp.ru>,
+        "David S . Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>
+Cc:     netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dt-bindings: at24: Rework special case compatible handling
-Date:   Wed,  8 Dec 2021 11:30:03 +0100
-Message-Id: <9ca85ea0eda03d581ccb435052cf37ba19000c3b.1638959309.git.geert+renesas@glider.be>
+Subject: [PATCH] sh_eth: Use dev_err_probe() helper
+Date:   Wed,  8 Dec 2021 11:32:07 +0100
+Message-Id: <2576cc15bdbb5be636640f491bcc087a334e2c02.1638959463.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -43,62 +43,28 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Sort the compatible values for the special cases by EEPROM size, like is
-done for the normal cases.
-Combine entries with a common fallback using enums, to compact the
-table.
+Use the dev_err_probe() helper, instead of open-coding the same
+operation.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../devicetree/bindings/eeprom/at24.yaml      | 25 ++++++++-----------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+ drivers/net/ethernet/renesas/sh_eth.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documentation/devicetree/bindings/eeprom/at24.yaml
-index 4c5396a9744f68f5..8b9f230e84156b5b 100644
---- a/Documentation/devicetree/bindings/eeprom/at24.yaml
-+++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
-@@ -95,17 +95,20 @@ properties:
-       # These are special cases that don't conform to the above pattern.
-       # Each requires a standard at24 model as fallback.
-       - items:
--          - const: nxp,se97b
--          - const: atmel,24c02
-+          - enum:
-+              - rohm,br24g01
-+              - rohm,br24t01
-+          - const: atmel,24c01
-       - items:
--          - const: onnn,cat24c04
--          - const: atmel,24c04
-+          - enum:
-+              - nxp,se97b
-+              - renesas,r1ex24002
-+          - const: atmel,24c02
-       - items:
--          - const: onnn,cat24c05
-+          - enum:
-+              - onnn,cat24c04
-+              - onnn,cat24c05
-           - const: atmel,24c04
--      - items:
--          - const: renesas,r1ex24002
--          - const: atmel,24c02
-       - items:
-           - const: renesas,r1ex24016
-           - const: atmel,24c16
-@@ -115,12 +118,6 @@ properties:
-       - items:
-           - const: renesas,r1ex24128
-           - const: atmel,24c128
--      - items:
--          - const: rohm,br24g01
--          - const: atmel,24c01
--      - items:
--          - const: rohm,br24t01
--          - const: atmel,24c01
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index 223626290ce0e278..d947a628e1663009 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -3368,8 +3368,7 @@ static int sh_eth_drv_probe(struct platform_device *pdev)
+ 	/* MDIO bus init */
+ 	ret = sh_mdio_init(mdp, pd);
+ 	if (ret) {
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(&pdev->dev, "MDIO init failed: %d\n", ret);
++		dev_err_probe(&pdev->dev, ret, "MDIO init failed\n");
+ 		goto out_release;
+ 	}
  
-   label:
-     description: Descriptive name of the EEPROM.
 -- 
 2.25.1
 
