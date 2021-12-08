@@ -2,93 +2,72 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8698AC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 10:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDAEC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  8 Dec 2021 10:45:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231805AbhLHKoN (ORCPT
+        id S231843AbhLHKt3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 8 Dec 2021 05:44:13 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:59747 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S231804AbhLHKoN (ORCPT
+        Wed, 8 Dec 2021 05:49:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45184 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S229448AbhLHKt3 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 8 Dec 2021 05:44:13 -0500
-X-IronPort-AV: E=Sophos;i="5.87,297,1631545200"; 
-   d="scan'208";a="103225009"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 08 Dec 2021 19:40:40 +0900
-Received: from localhost.localdomain (unknown [10.226.92.71])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9A38B4256968;
-        Wed,  8 Dec 2021 19:40:38 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v3 3/3] arm64: dts: renesas: rzg2l-smarc-som: Add vdd core regulator
-Date:   Wed,  8 Dec 2021 10:40:26 +0000
-Message-Id: <20211208104026.421-4-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20211208104026.421-1-biju.das.jz@bp.renesas.com>
-References: <20211208104026.421-1-biju.das.jz@bp.renesas.com>
+        Wed, 8 Dec 2021 05:49:29 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24FCFC0617A2
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  8 Dec 2021 02:45:57 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed10:a0bd:6217:e9a0:bd39])
+        by xavier.telenet-ops.be with bizsmtp
+        id Tmlt2600B2LoXaB01mltK1; Wed, 08 Dec 2021 11:45:53 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1muuSP-003dvS-0M; Wed, 08 Dec 2021 11:45:53 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1muuDu-00BVhx-8b; Wed, 08 Dec 2021 11:30:54 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] drm: rcar-du: Use dev_err_probe() helper
+Date:   Wed,  8 Dec 2021 11:30:53 +0100
+Message-Id: <62adddea1fc5e9133766af2d953be7334f4622aa.1638959417.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add vdd core regulator (1.1 V).
+Use the dev_err_probe() helper, instead of open-coding the same
+operation.
 
-This patch add regulator support for gpu.
-
-The H/W manual mentions nothing about a gpu regulator. So using vdd
-core regulator for gpu.
-
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-v2->v3:
- * Updated the commit description. Thanks to Sergey Shtylyov.
-v1->v2:
- * Added Rb tag from Geert.
----
- arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/gpu/drm/rcar-du/rcar_du_drv.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-index a4fc9517a0de..4ce799314f0f 100644
---- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
-@@ -52,6 +52,15 @@
- 		regulator-always-on;
- 	};
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+index 5612a9e7a9056cf7..86eeda769e2ebd10 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+@@ -661,9 +661,8 @@ static int rcar_du_probe(struct platform_device *pdev)
+ 	/* DRM/KMS objects */
+ 	ret = rcar_du_modeset_init(rcdu);
+ 	if (ret < 0) {
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(&pdev->dev,
+-				"failed to initialize DRM/KMS (%d)\n", ret);
++		dev_err_probe(&pdev->dev, ret,
++			      "failed to initialize DRM/KMS\n");
+ 		goto error;
+ 	}
  
-+	reg_1p1v: regulator-vdd-core {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.1V";
-+		regulator-min-microvolt = <1100000>;
-+		regulator-max-microvolt = <1100000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	vccq_sdhi0: regulator-vccq-sdhi0 {
- 		compatible = "regulator-gpio";
- 
-@@ -130,6 +139,10 @@
- 	clock-frequency = <24000000>;
- };
- 
-+&gpu {
-+	mali-supply = <&reg_1p1v>;
-+};
-+
- &ostm1 {
- 	status = "okay";
- };
 -- 
-2.17.1
+2.25.1
 
