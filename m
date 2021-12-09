@@ -2,63 +2,54 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB22C433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70148C433FE
 	for <linux-renesas-soc@archiver.kernel.org>; Thu,  9 Dec 2021 07:08:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233520AbhLIHL6 (ORCPT
+        id S233511AbhLIHL6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 9 Dec 2021 02:11:58 -0500
-Received: from relmlor2.renesas.com ([210.160.252.172]:50207 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S233517AbhLIHL5 (ORCPT
+Received: from relmlor1.renesas.com ([210.160.252.171]:54429 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S233510AbhLIHL5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 9 Dec 2021 02:11:57 -0500
 X-IronPort-AV: E=Sophos;i="5.88,191,1635174000"; 
-   d="scan'208";a="103324142"
+   d="scan'208";a="102895988"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 09 Dec 2021 16:08:23 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 09 Dec 2021 16:08:23 +0900
 Received: from localhost.localdomain (unknown [10.166.14.185])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2B2B441F8153;
-        Thu,  9 Dec 2021 16:08:23 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E9AC641F8153;
+        Thu,  9 Dec 2021 16:08:22 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     gregkh@linuxfoundation.org, robh+dt@kernel.org
 Cc:     geert+renesas@glider.be, linux-serial@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v3 2/2] tty: serial: sh-sci: Add support for R-Car Gen4
-Date:   Thu,  9 Dec 2021 16:08:17 +0900
-Message-Id: <20211209070817.1223888-3-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v3 0/2] tty: serial: sh-sci: Add support for R-Car S4
+Date:   Thu,  9 Dec 2021 16:08:15 +0900
+Message-Id: <20211209070817.1223888-1-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20211209070817.1223888-1-yoshihiro.shimoda.uh@renesas.com>
-References: <20211209070817.1223888-1-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add serial support for R-Car Gen4 SoC.
+This patch series is based on the latest tty/tty-next branch.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/tty/serial/sh-sci.c | 3 +++
- 1 file changed, 3 insertions(+)
+Changes from v2:
+ - Rebase this patch series on the latest tty/tty-next.
+ - Submitted sh-sci related patches only.
+ - Add Reviewed-by in the dt-bindings patch.
 
-diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-index 88005d2fc2a0..86731b816e3f 100644
---- a/drivers/tty/serial/sh-sci.c
-+++ b/drivers/tty/serial/sh-sci.c
-@@ -3181,6 +3181,9 @@ static const struct of_device_id of_sci_match[] = {
- 	}, {
- 		.compatible = "renesas,rcar-gen3-scif",
- 		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
-+	}, {
-+		.compatible = "renesas,rcar-gen4-scif",
-+		.data = SCI_OF_DATA(PORT_SCIF, SCIx_SH4_SCIF_BRG_REGTYPE),
- 	},
- 	/* Generic types */
- 	{
+Yoshihiro Shimoda (2):
+  dt-bindings: serial: renesas,scif: Document r8a779f0 bindings
+  tty: serial: sh-sci: Add support for R-Car Gen4
+
+ Documentation/devicetree/bindings/serial/renesas,scif.yaml | 7 +++++++
+ drivers/tty/serial/sh-sci.c                                | 3 +++
+ 2 files changed, 10 insertions(+)
+
 -- 
 2.25.1
 
