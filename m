@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BE0C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Dec 2021 18:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8436C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Dec 2021 18:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238081AbhLPSCJ (ORCPT
+        id S238170AbhLPSCL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Dec 2021 13:02:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39120 "EHLO
+        Thu, 16 Dec 2021 13:02:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237874AbhLPSCJ (ORCPT
+        with ESMTP id S237874AbhLPSCL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Dec 2021 13:02:09 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 758DFC061574
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Dec 2021 10:02:09 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id z9-20020a17090a7b8900b001b13558eadaso1687513pjc.4
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Dec 2021 10:02:09 -0800 (PST)
+        Thu, 16 Dec 2021 13:02:11 -0500
+Received: from mail-pl1-x634.google.com (mail-pl1-x634.google.com [IPv6:2607:f8b0:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EEB2C061574
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Dec 2021 10:02:11 -0800 (PST)
+Received: by mail-pl1-x634.google.com with SMTP id y7so20102668plp.0
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Dec 2021 10:02:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=x0tcMAFN5CPTsq6iDdAhQohHDk/3NwQQNM3c+Swg7Y8=;
-        b=fNujyGnyUOikYuIYo2hy1sMvI734ZpG8q+r4fPMy1711m2R8P3/ephBkCudCX0zNpt
-         Bpv16v41riuGEX7f+O0WUKnbUcc/y0QKRqIPtplfIQM5DNm0Yajw+WxjcZmva7ru0rp9
-         C30kJ2RUO6deRuOAI2gIMgY1hgjz2oe7zfQECEA7qh4/OO7pVSo7bVQmMNyMkwc+tprL
-         4eW2GH3W3mFGGmJA4Ny4tyBASg9v+SMd2G1Mv6P1hvRmv6HVOD0RnJUajUJrX9UPhoFH
-         1On5prvCghT3JvToiJrNQ/EUAhoJe0RgHO3vC/BRTHEJNQiBaAc+jCO37Sghx34Kdccv
-         /2fQ==
+        bh=GtxZIuPyVafhh7hcimXUV3cgpwSe7G7xEMxO695UvIw=;
+        b=5ZKXiSV7OXxscZeYFr+uaiVlXaXOc5CsKXKI32Z44akqYN4s9tKPkVHEz7DNNyt55c
+         QR3/lm4Y1JShz3MUhlI12UvNaP2K7b5Oru8BWE2gv6biPdjVmeUue3wFI4T9GXWy6eai
+         ajmIzIu5wdKUc+Qaovi85MPwrHZllsMH31noqGdvE5G6h1GolhQqxFejGtXDPxOPhwAX
+         DJkRm3BaWGl1IRWAZKvlWJVQG7EMFeFi6KOLMC3/KILOh/tX2zm1wdD6rXdBVkl95C2q
+         EhH2kvnI0Tzg7xC2SZ5woBwDkXIvurMJ0SfOesj1OKkfDEB9w5jpc/9CIaH6LzW0VbxA
+         VAdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=x0tcMAFN5CPTsq6iDdAhQohHDk/3NwQQNM3c+Swg7Y8=;
-        b=QJmZbmSo21XMgfiThYsCxGHTkHRwZ3ub2tutyy4/2WPc/BT2CXCxs2tm+1j5kbOBbd
-         yfRW9NDFoXiWN5+6obKiSeYlAOkfZKGFJ9eBCbLEQ/1QnwZgLyuZNBwCvQXAHnp41ZUC
-         HCcqC7jQL111A8tQ0hMhx6vZMwstALJ6IvXq+//relxEm2YVpYu4qlbGfnlG9x7j8PzE
-         C72fPiRyOxsvcUY6kS/Bkge+9TF9Pgu98yFAq09nkoA7KaiWytVtHbxPSgJz4bPfzN0m
-         NHsxl4s2mctwDd9D25+e6dSIYOVN2bS+9wAwtH3QwhzeronE97WNojS8Yytgg9Gx/KBn
-         iHOg==
-X-Gm-Message-State: AOAM531qOGLvSzc5Qm8Dmur7lfmccX5BBlx8iXuIqDc9jjjJuJRbQ34G
-        w5sSQQ3Nkgm4av6Xqb212kKK811mKX0iDcq4
-X-Google-Smtp-Source: ABdhPJweILz8CzWgnzvraeBCEiSKgPDWuxCGaDTfiwf7M1l8tcvlUES0o+kAI4wqeDRIIhxlN32O+g==
-X-Received: by 2002:a17:90b:380d:: with SMTP id mq13mr7411342pjb.110.1639677728860;
-        Thu, 16 Dec 2021 10:02:08 -0800 (PST)
+        bh=GtxZIuPyVafhh7hcimXUV3cgpwSe7G7xEMxO695UvIw=;
+        b=xClS7IQk/LV0b9Lhk5PLV058e/sFG9/hd5NnAyKEuBlKkDTy9RM9mIpxZOUfrfRqG3
+         iuH4LNHGpK92gC8z+lwdXYhPweghkTspPDAg63LLpUvm2kNOeCm/XadqFsrfJ2CBFth4
+         F3s0JKnoEPKdG1c3Nco9ariSrx9HHfjBhGxBQHTps4w8n4ceY/dDFS5kCtan+ADNRo/I
+         HLhnX0NUxEmaujSoL5g08gMNeLaRfukgs7z36+k0wO0eCiLrBnnq60Y/zWDh1NU265FV
+         PgvkUtNECS20UDKLjWce6TAOb+IaIGRYtSz2KvBjGFmNfvn4nT7nkvPvWetJmMP470iD
+         7DOw==
+X-Gm-Message-State: AOAM530noijGuisbDmB+tDWm680YFl5GNRvggErWhJKeopgzBANDcr6o
+        vRGIFHYF6yv8B8rr6xAbw584EHqopW61TnSy
+X-Google-Smtp-Source: ABdhPJy3Y0Dza3tZLURm+IuRpRRFIawJYzr6tTZaKfWSsDasXiMiVUVj5zyx7yRY5tHgwhrtgm6I1Q==
+X-Received: by 2002:a17:902:f781:b0:148:ada1:e913 with SMTP id q1-20020a170902f78100b00148ada1e913mr8371930pln.97.1639677730357;
+        Thu, 16 Dec 2021 10:02:10 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id 59sm5937429pjz.34.2021.12.16.10.02.08
+        by smtp.gmail.com with ESMTPSA id gf4sm5768247pjb.56.2021.12.16.10.02.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Dec 2021 10:02:08 -0800 (PST)
-Message-ID: <61bb7f20.1c69fb81.48594.039c@mx.google.com>
-Date:   Thu, 16 Dec 2021 10:02:08 -0800 (PST)
+        Thu, 16 Dec 2021 10:02:10 -0800 (PST)
+Message-ID: <61bb7f22.1c69fb81.3c92a.fce8@mx.google.com>
+Date:   Thu, 16 Dec 2021 10:02:10 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,7 +58,7 @@ X-Kernelci-Kernel: renesas-devel-2021-12-16-v5.16-rc5
 X-Kernelci-Report-Type: test
 X-Kernelci-Branch: master
 X-Kernelci-Tree: renesas
-Subject: renesas/master igt-gpu-panfrost: 1 runs,
+Subject: renesas/master sleep: 6 runs,
  1 regressions (renesas-devel-2021-12-16-v5.16-rc5)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
@@ -66,38 +66,30 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master igt-gpu-panfrost: 1 runs, 1 regressions (renesas-devel-2021-=
-12-16-v5.16-rc5)
+renesas/master sleep: 6 runs, 1 regressions (renesas-devel-2021-12-16-v5.16=
+-rc5)
 
 Regressions Summary
 -------------------
 
-platform         | arch  | lab           | compiler | defconfig | regressio=
-ns
------------------+-------+---------------+----------+-----------+----------=
---
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig | 1        =
-  =
+platform           | arch   | lab           | compiler | defconfig         =
+           | regressions
+-------------------+--------+---------------+----------+-------------------=
+-----------+------------
+hp-11A-G6-EE-grunt | x86_64 | lab-collabora | gcc-10   | x86_64_defcon...6-=
+chromebook | 1          =
 
 
   Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
-sas-devel-2021-12-16-v5.16-rc5/plan/igt-gpu-panfrost/
+sas-devel-2021-12-16-v5.16-rc5/plan/sleep/
 
-  Test:     igt-gpu-panfrost
+  Test:     sleep
   Tree:     renesas
   Branch:   master
   Describe: renesas-devel-2021-12-16-v5.16-rc5
   URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
 evel.git
-  SHA:      b33e75b3e597788be243c04aba22d39431b9ecfb
-
-  Test suite revisions:
-    drm
-      URL:  git://anongit.freedesktop.org/mesa/drm
-      SHA:  8d0fb9b3f225183fb3276a0e4ae1f8354a3519e8
-    igt-gpu-tools
-      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
-      SHA:  136258e86a093fdb50a7a341de1c09ac9a076fea =
+  SHA:      b33e75b3e597788be243c04aba22d39431b9ecfb =
 
 
 
@@ -106,55 +98,52 @@ Test Regressions
 
 
 
-platform         | arch  | lab           | compiler | defconfig | regressio=
-ns
------------------+-------+---------------+----------+-----------+----------=
---
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig | 1        =
-  =
+platform           | arch   | lab           | compiler | defconfig         =
+           | regressions
+-------------------+--------+---------------+----------+-------------------=
+-----------+------------
+hp-11A-G6-EE-grunt | x86_64 | lab-collabora | gcc-10   | x86_64_defcon...6-=
+chromebook | 1          =
 
 
-  Details:     https://kernelci.org/test/plan/id/61bb70837b79669d7d39714b
+  Details:     https://kernelci.org/test/plan/id/61bb66fe43ea45dba139713e
 
-  Results:     15 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
+  Results:     22 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
   Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-12-16-v5.16-rc5/arm64/defconfig/gcc-10/lab-collabora/igt-gpu-panfrost-r=
-k3399-gru-kevin.txt
+021-12-16-v5.16-rc5/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-colla=
+bora/sleep-hp-11A-G6-EE-grunt.txt
   HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
-021-12-16-v5.16-rc5/arm64/defconfig/gcc-10/lab-collabora/igt-gpu-panfrost-r=
-k3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ig=
-t/20211210.0/arm64/rootfs.cpio.gz =
+021-12-16-v5.16-rc5/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-colla=
+bora/sleep-hp-11A-G6-EE-grunt.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+211210.0/amd64/rootfs.cpio.gz =
 
 
 
-  * igt-gpu-panfrost.panfrost_submit.pan-unhandled-pagefault: https://kerne=
-lci.org/test/case/id/61bb70837b79669d7d39714e
+  * sleep.rtcwake-freeze-2: https://kernelci.org/test/case/id/61bb66fe43ea4=
+5dba1397148
         new failure (last pass: renesas-devel-2021-12-14-v5.16-rc5)
 
-    2021-12-16T16:59:41.268429  <6>[   24.009415] Console: switching to col=
-our dummy device 80x25
-    2021-12-16T16:59:41.273839  <14>[   24.016891] [IGT] panfrost_submit: e=
-xecuting
-    2021-12-16T16:59:41.280950  IGT-Version: 1.26-g136258e (aarch64) (Linux=
-: 5.16.0-rc5 aarch64)
-    2021-12-16T16:59:41.291977  <14>[   24.031821] [IGT] panfrost_submit: s=
-tarting subtest pan-unhandled-pagefault
-    2021-12-16T16:59:41.296732  Starting subtest: pan-unhandled-pagefault
-    2021-12-16T16:59:41.416081  (panfrost_submit:338) CRITICAL: Test assert=
-ion failure function __igt_unique____real_main65, file ../tests/panfrost_su=
-bmit.c:178<14>[   24.154683] [IGT] panfrost_submit: exiting, ret=3D98
-    2021-12-16T16:59:41.416830  :
-    2021-12-16T16:59:41.429922  (panfrost_submit:338) CRITICAL: Failed asse=
-rtion: syncobj_wait(fd, &submit->args->out_sync, 1, abs_timeout(SHORT_TIME_=
-NSEC), 0, NULL)
-    2021-12-16T16:59:41.431255  Stack trace:
-    2021-12-16T16:59:41.435573    #0 ../lib/igt_core.c:1745 __igt_fail_asse=
-rt() =
+    2021-12-16T16:17:46.927582  rtcwake: assuming RTC uses UTC ...
+    2021-12-16T16:17:46.934173  rtcwake: wakeup from \"freeze\" using rtc0 =
+at Thu Dec 16 16:17:52 2021
+    2021-12-16T16:17:46.945409  <6>[   28.785274] PM: suspend entry (s2idle)
+    2021-12-16T16:17:46.948477  <6>[   28.789324] Filesystems sync: 0.000 s=
+econds
+    2021-12-16T16:17:46.958622  <6>[   28.793997] Freezing user space proce=
+sses ... (elapsed 0.001 seconds) done.
+    2021-12-16T16:17:46.961776  <6>[   28.802348] OOM killer disabled.
+    2021-12-16T16:17:47.968929  <6>[   28.805836] Freezing remaining freeza=
+ble tasks ... (elapsed 1.046 seconds) done.
+    2021-12-16T16:17:47.975469  <6>[   29.813310] printk: Suspending consol=
+e(s) (use no_console_suspend to debug)
+    2021-12-16T16:17:52.495529  <6>[   29.894396] ACPI: EC: interrupt block=
+ed
+    2021-12-16T16:17:52.498955  <6>[   34.053742] ACPI: EC: interrupt unblo=
+cked =
 
-    ... (14 line(s) more)  =
+    ... (3 line(s) more)  =
 
  =20
