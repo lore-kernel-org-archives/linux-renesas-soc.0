@@ -2,67 +2,74 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BB03C4321E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Dec 2021 15:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6E5C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 16 Dec 2021 16:07:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238634AbhLPPoA (ORCPT
+        id S238877AbhLPQHP (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Dec 2021 10:44:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32954 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229704AbhLPPoA (ORCPT
+        Thu, 16 Dec 2021 11:07:15 -0500
+Received: from mail.iot.bzh ([51.75.236.24]:64067 "EHLO frontal.iot.bzh"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S238898AbhLPQHM (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Dec 2021 10:44:00 -0500
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2C18C061747
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 16 Dec 2021 07:43:59 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:d13f:527c:5504:a743])
-        by laurent.telenet-ops.be with bizsmtp
-        id X3jy26007250X30013jymD; Thu, 16 Dec 2021 16:43:58 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mxsvF-005RBt-Ov; Thu, 16 Dec 2021 16:43:57 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1mxsvE-00A3P3-V1; Thu, 16 Dec 2021 16:43:56 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
+        Thu, 16 Dec 2021 11:07:12 -0500
+Received: from frontal.iot.bzh (localhost [127.0.0.1])
+        by frontal.iot.bzh (Proxmox) with ESMTP id D633310308;
+        Thu, 16 Dec 2021 17:07:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iot.bzh; h=cc:cc
+        :content-transfer-encoding:date:from:from:message-id
+        :mime-version:reply-to:subject:subject:to:to; s=iot.bzh; bh=DV8D
+        SOsgN21ssw6Dl4edg2TiykDN2Fiu/h2qfb7vOWw=; b=jOm92vhN6veL9BXgoN8H
+        Z+hdpxEqyGlGfYDmaX7G/GIhbRPJc0w4cx59fe02rDYtXdqkQPkPkzVmeAALMrHN
+        HP5wV7gWE1B+/wC+lhISfEshrdNbtTW7Qoj299L7TbCctdcEuUIyEyebgEyQlKdT
+        W+tjql6NXORQpurdpUoN00suy/Asq3NX+TjVEpH9tJvaC6+a6yIWnOuJ44CHRDk8
+        7YQEumbl6MRpawpybpSk3kgLeh1bcgbs/+WNe04f348UKQzOiCIk+R79NDlGQ4wr
+        Z61r0TiiGVupBglf9iH2C+X8uUi1+hdqUEf2+lTcaA8A1+JbXqbRmQnt/cL9TUHF
+        JA==
+From:   Julien Massot <julien.massot@iot.bzh>
+To:     bjorn.andersson@linaro.org, mathieu.poirier@linaro.org,
+        geert+renesas@glider.be, dan.carpenter@oracle.com
 Cc:     linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/LOCAL 4/5] arm64: renesas: defconfig: Enable CONFIG_SPI_RSPI
-Date:   Thu, 16 Dec 2021 16:43:55 +0100
-Message-Id: <35d92f7afb963976f93b7849ab2db139041643d2.1639669217.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1639669217.git.geert+renesas@glider.be>
-References: <cover.1639669217.git.geert+renesas@glider.be>
+        linux-remoteproc@vger.kernel.org,
+        Julien Massot <julien.massot@iot.bzh>
+Subject: [PATCH 1/2] remoteproc: rcar_rproc: fix pm_runtime_get_sync error check
+Date:   Thu, 16 Dec 2021 17:06:53 +0100
+Message-Id: <20211216160653.203768-1-julien.massot@iot.bzh>
+X-Mailer: git-send-email 2.33.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enable support for the Renesas RSPI controller, as used on the RZ/G2L
-SMARC EVK board.
+pm_runtime_get_sync can also return 1 on success, change
+to use pm_runtime_resume_and_get which return 0 only on
+success.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This bug has been discovered by Dan Carpenter by using Smatch
+static checker.
+
+Fixes: 285892a74f13 ("remoteproc: Add Renesas rcar driver")
+
+Signed-off-by: Julien Massot <julien.massot@iot.bzh>
 ---
- arch/arm64/configs/renesas_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/remoteproc/rcar_rproc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/configs/renesas_defconfig b/arch/arm64/configs/renesas_defconfig
-index 6488805e418f3414..fcb28227a2decbb6 100644
---- a/arch/arm64/configs/renesas_defconfig
-+++ b/arch/arm64/configs/renesas_defconfig
-@@ -160,6 +160,7 @@ CONFIG_I2C_SH_MOBILE=y
- CONFIG_I2C_RCAR=y
- CONFIG_SPI=y
- CONFIG_SPI_RPCIF=y
-+CONFIG_SPI_RSPI=y
- CONFIG_SPI_SH_MSIOF=y
- CONFIG_SPI_SPIDEV=y
- CONFIG_PINCTRL_SINGLE=y
+diff --git a/drivers/remoteproc/rcar_rproc.c b/drivers/remoteproc/rcar_rproc.c
+index 34fd867f9f8c..3408c6e51a7c 100644
+--- a/drivers/remoteproc/rcar_rproc.c
++++ b/drivers/remoteproc/rcar_rproc.c
+@@ -167,7 +167,7 @@ static int rcar_rproc_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	pm_runtime_enable(dev);
+-	ret = pm_runtime_get_sync(dev);
++	ret = pm_runtime_resume_and_get(dev);
+ 	if (ret) {
+ 		dev_err(dev, "failed to power up\n");
+ 		return ret;
 -- 
-2.25.1
+2.33.1
+
 
