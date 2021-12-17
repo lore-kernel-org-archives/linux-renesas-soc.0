@@ -2,259 +2,69 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B4DC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Dec 2021 11:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 592F1C4321E
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Dec 2021 11:07:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235172AbhLQLHT (ORCPT
+        id S235099AbhLQLHV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Dec 2021 06:07:19 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:55217 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235099AbhLQLHS (ORCPT
+        Fri, 17 Dec 2021 06:07:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51764 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235242AbhLQLHU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Dec 2021 06:07:18 -0500
-Received: (Authenticated sender: jacopo@jmondi.org)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 204DB24000E;
-        Fri, 17 Dec 2021 11:07:14 +0000 (UTC)
-Date:   Fri, 17 Dec 2021 12:08:08 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        Thomas Nizan <tnizan@witekio.com>
-Subject: Re: [PATCH 2/3] media: i2c: max9286: Add support for port regulators
-Message-ID: <20211217110808.rn6lw2htbxlzgdcl@uno.localdomain>
-References: <20211216220946.20771-1-laurent.pinchart+renesas@ideasonboard.com>
- <20211216220946.20771-3-laurent.pinchart+renesas@ideasonboard.com>
+        Fri, 17 Dec 2021 06:07:20 -0500
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB48FC061574
+        for <linux-renesas-soc@vger.kernel.org>; Fri, 17 Dec 2021 03:07:19 -0800 (PST)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:d13f:527c:5504:a743])
+        by xavier.telenet-ops.be with bizsmtp
+        id XP7H2600E250X3001P7HcS; Fri, 17 Dec 2021 12:07:17 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1myB53-005Y8V-69; Fri, 17 Dec 2021 12:07:17 +0100
+Received: from geert by rox.of.borg with local (Exim 4.93)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1myB52-00AQSi-JK; Fri, 17 Dec 2021 12:07:16 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL 4/4] Renesas DT binding updates for v5.17 (take two)
+Date:   Fri, 17 Dec 2021 12:07:15 +0100
+Message-Id: <cover.1639736725.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1639736716.git.geert+renesas@glider.be>
+References: <cover.1639736716.git.geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20211216220946.20771-3-laurent.pinchart+renesas@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Laurent,
+The following changes since commit 217c7d1840b5377543eff84fe28409d0bd4d3433:
 
-On Fri, Dec 17, 2021 at 12:09:45AM +0200, Laurent Pinchart wrote:
-> From: Thomas Nizan <tnizan@witekio.com>
->
-> Allow users to use one PoC regulator per port, instead of a global
-> regulator.
->
-> The properties '^port[0-3]-poc-supply$' in the DT node are used to
-> indicate the regulators for individual ports.
->
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+  dt-bindings: mmc: renesas,sdhi: Rename RZ/G2L clocks (2021-11-26 13:53:02 +0100)
 
-These patches will badly conflic with the gpio-poc series :(
+are available in the Git repository at:
 
-> ---
->  drivers/media/i2c/max9286.c | 112 +++++++++++++++++++++++++++++++-----
->  1 file changed, 98 insertions(+), 14 deletions(-)
->
-> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
-> index 7c663fd587bb..fa2f6a823fe6 100644
-> --- a/drivers/media/i2c/max9286.c
-> +++ b/drivers/media/i2c/max9286.c
-> @@ -136,8 +136,10 @@
->  #define MAX9286_SRC_PAD			4
->
->  struct max9286_source {
-> +	unsigned int index;
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v5.17-tag2
 
-Can't you use the to_index() macro ?
+for you to fetch changes up to d01986bec3887a3dbf61cbd821979f91cf0bb2dc:
 
->  	struct v4l2_subdev *sd;
->  	struct fwnode_handle *fwnode;
-> +	struct regulator *regulator;
->  };
->
->  struct max9286_asd {
-> @@ -1072,6 +1074,49 @@ static int max9286_register_gpio(struct max9286_priv *priv)
->  	return ret;
->  }
->
-> +static int max9286_poc_power_on(struct max9286_priv *priv)
-> +{
-> +	struct max9286_source *source;
-> +	unsigned int enabled = 0;
-> +	int ret;
-> +
-> +	/* Enable the global regulator if available. */
-> +	if (priv->regulator)
-> +		return regulator_enable(priv->regulator);
-> +
-> +	/* Otherwise use the per-port regulators. */
-> +	for_each_source(priv, source) {
-> +		ret = regulator_enable(source->regulator);
-> +		if (ret < 0)
-> +			goto error;
-> +
-> +		enabled |= BIT(source->index);
-> +	}
-> +
-> +	return 0;
-> +
-> +error:
-> +	for_each_source(priv, source) {
-> +		if (enabled & BIT(source->index))
-> +			regulator_disable(source->regulator);
+  dt-bindings: arm: renesas: Document Renesas Spider boards (2021-12-07 16:27:13 +0100)
 
-I would if a regulator can be unconditionally disabled...
+----------------------------------------------------------------
+Renesas DT binding updates for v5.17 (take two)
 
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void max9286_poc_power_off(struct max9286_priv *priv)
-> +{
-> +	struct max9286_source *source;
-> +
-> +	if (priv->regulator) {
-> +		regulator_disable(priv->regulator);
-> +		return;
-> +	}
-> +
-> +	for_each_source(priv, source)
-> +		regulator_disable(source->regulator);
-> +}
-> +
->  static int max9286_init(struct device *dev)
->  {
->  	struct max9286_priv *priv;
-> @@ -1082,9 +1127,9 @@ static int max9286_init(struct device *dev)
->  	priv = i2c_get_clientdata(client);
->
->  	/* Enable the bus power. */
-> -	ret = regulator_enable(priv->regulator);
-> +	ret = max9286_poc_power_on(priv);
->  	if (ret < 0) {
-> -		dev_err(&client->dev, "Unable to turn PoC on\n");
-> +		dev_err(dev, "Unable to turn PoC on\n");
->  		return ret;
->  	}
->
-> @@ -1118,7 +1163,7 @@ static int max9286_init(struct device *dev)
->  err_v4l2_register:
->  	max9286_v4l2_unregister(priv);
->  err_regulator:
-> -	regulator_disable(priv->regulator);
-> +	max9286_poc_power_off(priv);
->
->  	return ret;
->  }
-> @@ -1215,6 +1260,7 @@ static int max9286_parse_dt(struct max9286_priv *priv)
->  		}
->
->  		source = &priv->sources[ep.port];
-> +		source->index = ep.port;
->  		source->fwnode = fwnode_graph_get_remote_endpoint(
->  						of_fwnode_handle(node));
->  		if (!source->fwnode) {
-> @@ -1249,6 +1295,50 @@ static int max9286_parse_dt(struct max9286_priv *priv)
->  	return 0;
->  }
->
-> +static int max9286_get_poc_supplies(struct max9286_priv *priv)
-> +{
-> +	struct device *dev = &priv->client->dev;
-> +	struct max9286_source *source;
-> +
-> +	/*
-> +	 * Start by getting the global regulator. Usage of the exclusive API is
-> +	 * required to receive an error in case the supply isn't specified in
-> +	 * the device tree.
-> +	 */
-> +	priv->regulator = devm_regulator_get_exclusive(dev, "poc");
+  - Document support for the R-Car S4-8 Spider CPU and BreakOut boards.
 
-doesn't get_optional() return -ENODEV if there's no such regulator too
-without locking the usage of the regulator ? Oh wait, maybe we want
-exclusive locking ? :)
+----------------------------------------------------------------
+Yoshihiro Shimoda (1):
+      dt-bindings: arm: renesas: Document Renesas Spider boards
 
-> +	if (!IS_ERR(priv->regulator))
-> +		return 0;
-> +
-> +	if (PTR_ERR(priv->regulator) != -ENODEV) {
-> +		if (PTR_ERR(priv->regulator) != -EPROBE_DEFER)
-> +			dev_err(dev, "Unable to get PoC regulator: %ld\n",
-> +				PTR_ERR(priv->regulator));
-> +		return PTR_ERR(priv->regulator);
-> +	}
-> +
-> +	/* If there's no global regulator, get per-port regulators. */
-> +	dev_dbg(dev,
-> +		"No global PoC regulator, looking for per-port regulators\n");
-> +	priv->regulator = NULL;
-> +
-> +	for_each_source(priv, source) {
-> +		char name[10];
-> +
-> +		snprintf(name, sizeof(name), "port%u-poc", source->index);
-> +		source->regulator = devm_regulator_get_exclusive(dev, name);
-
-I guess the fact we don't have a fixed number of sources makes it even
-harder to use the _bulk version of the regulators API...
-
-> +		if (IS_ERR(source->regulator)) {
-> +			if (PTR_ERR(source->regulator) != -EPROBE_DEFER)
-> +				dev_err(dev,
-> +					"Unable to get port %u PoC regulator: %ld\n",
-> +					source->index,
-> +					PTR_ERR(source->regulator));
-> +			return PTR_ERR(source->regulator);
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->  static int max9286_probe(struct i2c_client *client)
->  {
->  	struct max9286_priv *priv;
-> @@ -1293,17 +1383,11 @@ static int max9286_probe(struct i2c_client *client)
->  	if (ret)
->  		goto err_powerdown;
->
-> -	priv->regulator = devm_regulator_get(&client->dev, "poc");
-> -	if (IS_ERR(priv->regulator)) {
-> -		if (PTR_ERR(priv->regulator) != -EPROBE_DEFER)
-> -			dev_err(&client->dev,
-> -				"Unable to get PoC regulator (%ld)\n",
-> -				PTR_ERR(priv->regulator));
-> -		ret = PTR_ERR(priv->regulator);
-> -		goto err_powerdown;
-> -	}
-> -
->  	ret = max9286_parse_dt(priv);
-> +	if (ret)
-> +		goto err_cleanup_dt;
-> +
-> +	ret = max9286_get_poc_supplies(priv);
->  	if (ret)
->  		goto err_powerdown;
-
-I think the error path is wrong, you should cleanup_dt here.
-
-Thanks
-   j
-
->
-> @@ -1329,7 +1413,7 @@ static int max9286_remove(struct i2c_client *client)
->
->  	max9286_v4l2_unregister(priv);
->
-> -	regulator_disable(priv->regulator);
-> +	max9286_poc_power_off(priv);
->
->  	gpiod_set_value_cansleep(priv->gpiod_pwdn, 0);
->
-> --
-> Regards,
->
-> Laurent Pinchart
->
+ Documentation/devicetree/bindings/arm/renesas.yaml | 8 ++++++++
+ 1 file changed, 8 insertions(+)
