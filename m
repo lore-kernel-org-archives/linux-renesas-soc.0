@@ -2,118 +2,259 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BF2C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Dec 2021 11:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B4DC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Dec 2021 11:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233151AbhLQLC2 (ORCPT
+        id S235172AbhLQLHT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 17 Dec 2021 06:02:28 -0500
-Received: from mail-pf1-f178.google.com ([209.85.210.178]:33564 "EHLO
-        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232148AbhLQLC1 (ORCPT
+        Fri, 17 Dec 2021 06:07:19 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:55217 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S235099AbhLQLHS (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 17 Dec 2021 06:02:27 -0500
-Received: by mail-pf1-f178.google.com with SMTP id x5so2004501pfr.0;
-        Fri, 17 Dec 2021 03:02:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CzRODjcJJkmc7LYh+2mnvUIKs4AKBEWasXQMzh6C4sI=;
-        b=WoCwcNccYAZOS1duN0R4QjMvx1jQb5RHN/AAd9VcRYpHRKg9/jhjArRT7Y0/jz0uqn
-         0yXvyGwaSPPxyfA9ZNVqMsVyqD3aRKwdHgWxSTNSC0sZ//ZKijIe/jWGnxkgnzcU+mnc
-         9f8m7X/NehO/1+DwU1M6NKMGW8CSmRkIVAE9mhFLCG4GalQCU/i3y0GgTPqWVxfxy174
-         GWTyVWuaCk+WZTyKG4+B1DPrtJmmn8XfiupVTwWV3VN0DwSY/X7I4dxqui6a6M0+5q6b
-         OdRw+goEX1BlFS1xGlA0SC+ihZ64mOVjtSrH5CNpI9oJB9zKWoQoeWOhTmOrhPKMsDYF
-         thqg==
-X-Gm-Message-State: AOAM533vi/QMyl4xXSQrSqQfAa0E0OUKR9UOgsT5UVTemeEJSHFI33/N
-        qO1h38qZ8d1V5jy7UEEkykKTS6EWGIoApw==
-X-Google-Smtp-Source: ABdhPJwcOLNM0+g+I9t3WR7WUrpmlaJLqhGHYN2kArxq8xNgS/npCKD7YGlUVx+I+R443rngP4mbaw==
-X-Received: by 2002:a63:a4c:: with SMTP id z12mr1165590pgk.446.1639738947085;
-        Fri, 17 Dec 2021 03:02:27 -0800 (PST)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com. [209.85.216.52])
-        by smtp.gmail.com with ESMTPSA id h4sm9613097pfi.79.2021.12.17.03.02.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Dec 2021 03:02:26 -0800 (PST)
-Received: by mail-pj1-f52.google.com with SMTP id b1-20020a17090a990100b001b14bd47532so1887888pjp.0;
-        Fri, 17 Dec 2021 03:02:26 -0800 (PST)
-X-Received: by 2002:a05:6122:104f:: with SMTP id z15mr855694vkn.39.1639738529014;
- Fri, 17 Dec 2021 02:55:29 -0800 (PST)
+        Fri, 17 Dec 2021 06:07:18 -0500
+Received: (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 204DB24000E;
+        Fri, 17 Dec 2021 11:07:14 +0000 (UTC)
+Date:   Fri, 17 Dec 2021 12:08:08 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Thomas Nizan <tnizan@witekio.com>
+Subject: Re: [PATCH 2/3] media: i2c: max9286: Add support for port regulators
+Message-ID: <20211217110808.rn6lw2htbxlzgdcl@uno.localdomain>
+References: <20211216220946.20771-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20211216220946.20771-3-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-References: <20211217090248.259122-1-miquel.raynal@bootlin.com>
- <20211217090248.259122-3-miquel.raynal@bootlin.com> <YbxjXgIIj6yma+Ch@shikoro>
-In-Reply-To: <YbxjXgIIj6yma+Ch@shikoro>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 17 Dec 2021 11:55:17 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXUdRb1VuTgw5-dMkMa_1=YBnODpv1Ja2KRpkNsPWaDeQ@mail.gmail.com>
-Message-ID: <CAMuHMdXUdRb1VuTgw5-dMkMa_1=YBnODpv1Ja2KRpkNsPWaDeQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/4] mtd: rawnand: rzn1: Add new NAND controller driver
-To:     Wolfram Sang <wsa@kernel.org>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>,
-        Pratyush Yadav <p.yadav@ti.com>,
-        Michael Walle <michael@walle.cc>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Milan Stevanovic <milan.stevanovic@se.com>,
-        Jimmy Lalande <jimmy.lalande@se.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Gareth Williams <gareth.williams.jx@renesas.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Ralph Siemsen <ralph.siemsen@linaro.org>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20211216220946.20771-3-laurent.pinchart+renesas@ideasonboard.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Wolfram,
+Hi Laurent,
 
-CC Chris Brandt
-
-On Fri, Dec 17, 2021 at 11:16 AM Wolfram Sang <wsa@kernel.org> wrote:
-> On Fri, Dec 17, 2021 at 10:02:46AM +0100, Miquel Raynal wrote:
-> > Introduce Renesas RZ/N1x NAND controller driver which supports:
-> > - All ONFI timing modes
-> > - Different configurations of its internal ECC controller
-> > - On-die (not tested) and software ECC support
-> > - Several chips (not tested)
-> > - Subpage accesses
-> > - DMA and PIO
-> >
-> > This controller was originally provided by Evatronix before being bought
-> > by Cadence.
-> >
-> > Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> > Tested-by: Ralph Siemsen <ralph.siemsen@linaro.org>
+On Fri, Dec 17, 2021 at 12:09:45AM +0200, Laurent Pinchart wrote:
+> From: Thomas Nizan <tnizan@witekio.com>
 >
-> This IP core is also available on some Renesas R-Car Gen3 SoCs. I don't
-> have a board with NAND equipped, so I sadly cannot test your patch and
-> can only say that the code looks like it is in a really good shape and
-> can only suggest some renaming.
+> Allow users to use one PoC regulator per port, instead of a global
+> regulator.
+>
+> The properties '^port[0-3]-poc-supply$' in the DT node are used to
+> indicate the regulators for individual ports.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Also on RZ/A2M.
-RZ/A1 seems to use a different one.
+These patches will badly conflic with the gpio-poc series :(
 
-Note that RZ/N1 NANDC claims to support up to ONFI2.2, while
-R-Car Gen3 and RZ/A2M do ONFI1.x only?
+> ---
+>  drivers/media/i2c/max9286.c | 112 +++++++++++++++++++++++++++++++-----
+>  1 file changed, 98 insertions(+), 14 deletions(-)
+>
+> diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+> index 7c663fd587bb..fa2f6a823fe6 100644
+> --- a/drivers/media/i2c/max9286.c
+> +++ b/drivers/media/i2c/max9286.c
+> @@ -136,8 +136,10 @@
+>  #define MAX9286_SRC_PAD			4
+>
+>  struct max9286_source {
+> +	unsigned int index;
 
-Chris: usually you are good at IP history ;-) Do you have anything to add?
-Thanks!
+Can't you use the to_index() macro ?
 
-Gr{oetje,eeting}s,
+>  	struct v4l2_subdev *sd;
+>  	struct fwnode_handle *fwnode;
+> +	struct regulator *regulator;
+>  };
+>
+>  struct max9286_asd {
+> @@ -1072,6 +1074,49 @@ static int max9286_register_gpio(struct max9286_priv *priv)
+>  	return ret;
+>  }
+>
+> +static int max9286_poc_power_on(struct max9286_priv *priv)
+> +{
+> +	struct max9286_source *source;
+> +	unsigned int enabled = 0;
+> +	int ret;
+> +
+> +	/* Enable the global regulator if available. */
+> +	if (priv->regulator)
+> +		return regulator_enable(priv->regulator);
+> +
+> +	/* Otherwise use the per-port regulators. */
+> +	for_each_source(priv, source) {
+> +		ret = regulator_enable(source->regulator);
+> +		if (ret < 0)
+> +			goto error;
+> +
+> +		enabled |= BIT(source->index);
+> +	}
+> +
+> +	return 0;
+> +
+> +error:
+> +	for_each_source(priv, source) {
+> +		if (enabled & BIT(source->index))
+> +			regulator_disable(source->regulator);
 
-                        Geert
+I would if a regulator can be unconditionally disabled...
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static void max9286_poc_power_off(struct max9286_priv *priv)
+> +{
+> +	struct max9286_source *source;
+> +
+> +	if (priv->regulator) {
+> +		regulator_disable(priv->regulator);
+> +		return;
+> +	}
+> +
+> +	for_each_source(priv, source)
+> +		regulator_disable(source->regulator);
+> +}
+> +
+>  static int max9286_init(struct device *dev)
+>  {
+>  	struct max9286_priv *priv;
+> @@ -1082,9 +1127,9 @@ static int max9286_init(struct device *dev)
+>  	priv = i2c_get_clientdata(client);
+>
+>  	/* Enable the bus power. */
+> -	ret = regulator_enable(priv->regulator);
+> +	ret = max9286_poc_power_on(priv);
+>  	if (ret < 0) {
+> -		dev_err(&client->dev, "Unable to turn PoC on\n");
+> +		dev_err(dev, "Unable to turn PoC on\n");
+>  		return ret;
+>  	}
+>
+> @@ -1118,7 +1163,7 @@ static int max9286_init(struct device *dev)
+>  err_v4l2_register:
+>  	max9286_v4l2_unregister(priv);
+>  err_regulator:
+> -	regulator_disable(priv->regulator);
+> +	max9286_poc_power_off(priv);
+>
+>  	return ret;
+>  }
+> @@ -1215,6 +1260,7 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+>  		}
+>
+>  		source = &priv->sources[ep.port];
+> +		source->index = ep.port;
+>  		source->fwnode = fwnode_graph_get_remote_endpoint(
+>  						of_fwnode_handle(node));
+>  		if (!source->fwnode) {
+> @@ -1249,6 +1295,50 @@ static int max9286_parse_dt(struct max9286_priv *priv)
+>  	return 0;
+>  }
+>
+> +static int max9286_get_poc_supplies(struct max9286_priv *priv)
+> +{
+> +	struct device *dev = &priv->client->dev;
+> +	struct max9286_source *source;
+> +
+> +	/*
+> +	 * Start by getting the global regulator. Usage of the exclusive API is
+> +	 * required to receive an error in case the supply isn't specified in
+> +	 * the device tree.
+> +	 */
+> +	priv->regulator = devm_regulator_get_exclusive(dev, "poc");
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+doesn't get_optional() return -ENODEV if there's no such regulator too
+without locking the usage of the regulator ? Oh wait, maybe we want
+exclusive locking ? :)
+
+> +	if (!IS_ERR(priv->regulator))
+> +		return 0;
+> +
+> +	if (PTR_ERR(priv->regulator) != -ENODEV) {
+> +		if (PTR_ERR(priv->regulator) != -EPROBE_DEFER)
+> +			dev_err(dev, "Unable to get PoC regulator: %ld\n",
+> +				PTR_ERR(priv->regulator));
+> +		return PTR_ERR(priv->regulator);
+> +	}
+> +
+> +	/* If there's no global regulator, get per-port regulators. */
+> +	dev_dbg(dev,
+> +		"No global PoC regulator, looking for per-port regulators\n");
+> +	priv->regulator = NULL;
+> +
+> +	for_each_source(priv, source) {
+> +		char name[10];
+> +
+> +		snprintf(name, sizeof(name), "port%u-poc", source->index);
+> +		source->regulator = devm_regulator_get_exclusive(dev, name);
+
+I guess the fact we don't have a fixed number of sources makes it even
+harder to use the _bulk version of the regulators API...
+
+> +		if (IS_ERR(source->regulator)) {
+> +			if (PTR_ERR(source->regulator) != -EPROBE_DEFER)
+> +				dev_err(dev,
+> +					"Unable to get port %u PoC regulator: %ld\n",
+> +					source->index,
+> +					PTR_ERR(source->regulator));
+> +			return PTR_ERR(source->regulator);
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int max9286_probe(struct i2c_client *client)
+>  {
+>  	struct max9286_priv *priv;
+> @@ -1293,17 +1383,11 @@ static int max9286_probe(struct i2c_client *client)
+>  	if (ret)
+>  		goto err_powerdown;
+>
+> -	priv->regulator = devm_regulator_get(&client->dev, "poc");
+> -	if (IS_ERR(priv->regulator)) {
+> -		if (PTR_ERR(priv->regulator) != -EPROBE_DEFER)
+> -			dev_err(&client->dev,
+> -				"Unable to get PoC regulator (%ld)\n",
+> -				PTR_ERR(priv->regulator));
+> -		ret = PTR_ERR(priv->regulator);
+> -		goto err_powerdown;
+> -	}
+> -
+>  	ret = max9286_parse_dt(priv);
+> +	if (ret)
+> +		goto err_cleanup_dt;
+> +
+> +	ret = max9286_get_poc_supplies(priv);
+>  	if (ret)
+>  		goto err_powerdown;
+
+I think the error path is wrong, you should cleanup_dt here.
+
+Thanks
+   j
+
+>
+> @@ -1329,7 +1413,7 @@ static int max9286_remove(struct i2c_client *client)
+>
+>  	max9286_v4l2_unregister(priv);
+>
+> -	regulator_disable(priv->regulator);
+> +	max9286_poc_power_off(priv);
+>
+>  	gpiod_set_value_cansleep(priv->gpiod_pwdn, 0);
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
