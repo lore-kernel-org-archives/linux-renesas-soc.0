@@ -2,205 +2,260 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F58C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Dec 2021 03:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4FF8C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 17 Dec 2021 04:25:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232512AbhLQDhr (ORCPT
+        id S229591AbhLQEZo (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 16 Dec 2021 22:37:47 -0500
-Received: from mga07.intel.com ([134.134.136.100]:6260 "EHLO mga07.intel.com"
+        Thu, 16 Dec 2021 23:25:44 -0500
+Received: from mga03.intel.com ([134.134.136.65]:28542 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S230206AbhLQDhr (ORCPT
+        id S229511AbhLQEZo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 16 Dec 2021 22:37:47 -0500
+        Thu, 16 Dec 2021 23:25:44 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1639712267; x=1671248267;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=YhFI5FrJRx32CXwKZ9rECjZUvFUUIVm8yawFvSHPi/g=;
-  b=nYAeKI1lmhOXuQooywGyUr5/BQN6qXp6Nt0nqWhEOJk5mIl3ybNuf/Nw
-   wmmxVAkPjGNn8Qg8y/lL8SDzFG3v6apLTw3B1XMd/hvikWYfgGYaCAGqb
-   7gxkkylKLffK9yxLvMAN5OQzFFOYetbf/SPZhKRAiCBcHuDTaneYi4g6s
-   E2x7SVh75QtKeo+5wTOBp/dIifXCeGFlDQIz0mSHGo8TjcIIpUnskSeGc
-   VZhx6hBtJLE46j+Enip0DiB0ye495jlO84oFQqwqPb/NdljeCgIXepnNp
-   qb8V73mPsQQ9ALZ+Mqbm6r3MClq3PPvAg68sIEhjCTbOVcqktorsyhdj8
-   A==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10200"; a="303047265"
+  t=1639715144; x=1671251144;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=omY6dEQJJursasw1eZP0Tp34dpXgpfmQ2niOY0oc+no=;
+  b=PfKIVgfI4/hCvhX2DP4Ifuto700ZIgGyZdQ0j6dSfDll2WSKJvCFWNe+
+   QjtOpfEKR1kOMCMk5L/V/qX2jnYXUJOykDfYc2D5aELMk+pzuNbEl/+rG
+   FL1ZFOtrRd9cgKOQgaO/Ang6xV9wXGwXXAYMce7tCjsV7zQ+GcmlEq1jh
+   BhzIXiCYdhkefTTP6NSjWMG/2vMUCKdk55jH0QQsuB9I488HVL2/hWOOP
+   VBOe+ZYkofVezdoZIvbJmzptPtTaUYFs3t+SLpWk6VM5qLaYAmE97trKy
+   5jzigL2Ckp3WPAQN4TlLQE0l7fao8aDZew1qnFyX80+cu0wZNvgp4Cds+
+   g==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10200"; a="239626542"
 X-IronPort-AV: E=Sophos;i="5.88,213,1635231600"; 
-   d="scan'208";a="303047265"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2021 19:37:37 -0800
+   d="scan'208";a="239626542"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Dec 2021 20:25:43 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,213,1635231600"; 
-   d="scan'208";a="506605271"
+   d="scan'208";a="756355457"
 Received: from lkp-server02.sh.intel.com (HELO 9f38c0981d9f) ([10.239.97.151])
-  by orsmga007.jf.intel.com with ESMTP; 16 Dec 2021 19:37:35 -0800
+  by fmsmga005.fm.intel.com with ESMTP; 16 Dec 2021 20:25:40 -0800
 Received: from kbuild by 9f38c0981d9f with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1my43r-0004BH-5w; Fri, 17 Dec 2021 03:37:35 +0000
-Date:   Fri, 17 Dec 2021 11:37:09 +0800
+        id 1my4oN-0004Dj-Ue; Fri, 17 Dec 2021 04:25:39 +0000
+Date:   Fri, 17 Dec 2021 12:24:45 +0800
 From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-arm-dt-for-v5.17] BUILD SUCCESS
- d563f4bac9914fca6f34711ad22647125e773dd0
-Message-ID: <61bc05e5.JNs4icrHEkQFzrhc%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        tomi.valkeinen@ideasonboard.com, sakari.ailus@linux.intel.com,
+        laurent.pinchart@ideasonboard.com, niklas.soderlund@ragnatech.se,
+        kieran.bingham@ideasonboard.com
+Cc:     kbuild-all@lists.01.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH 2/5] media: adv748x: Add support for v4l2_subdev_state
+Message-ID: <202112171114.znOy3iE9-lkp@intel.com>
+References: <20211216170323.141321-3-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <20211216170323.141321-3-jacopo+renesas@jmondi.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-dt-for-v5.17
-branch HEAD: d563f4bac9914fca6f34711ad22647125e773dd0  arm64: dts: renesas: rzg2l-smarc-som: Add vdd core regulator
+Hi Jacopo,
 
-elapsed time: 732m
+I love your patch! Yet something to improve:
 
-configs tested: 133
-configs skipped: 3
+[auto build test ERROR on media-tree/master]
+[also build test ERROR on v5.16-rc5 next-20211215]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch]
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+url:    https://github.com/0day-ci/linux/commits/Jacopo-Mondi/media-adv748x-Add-CSI-2-VC-support/20211217-010519
+base:   git://linuxtv.org/media_tree.git master
+config: i386-randconfig-m031-20211216 (https://download.01.org/0day-ci/archive/20211217/202112171114.znOy3iE9-lkp@intel.com/config)
+compiler: gcc-9 (Debian 9.3.0-22) 9.3.0
+reproduce (this is a W=1 build):
+        # https://github.com/0day-ci/linux/commit/beac1be47b64ce291e1647699be3f26d88028b3b
+        git remote add linux-review https://github.com/0day-ci/linux
+        git fetch --no-tags linux-review Jacopo-Mondi/media-adv748x-Add-CSI-2-VC-support/20211217-010519
+        git checkout beac1be47b64ce291e1647699be3f26d88028b3b
+        # save the config file to linux build tree
+        mkdir build_dir
+        make W=1 O=build_dir ARCH=i386 SHELL=/bin/bash drivers/media/i2c/adv748x/
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-i386                 randconfig-c001-20211216
-m68k                       m5475evb_defconfig
-sh                           se7712_defconfig
-arm                         lubbock_defconfig
-arm                        magician_defconfig
-arm                         s3c2410_defconfig
-ia64                            zx1_defconfig
-arm                      tct_hammer_defconfig
-powerpc                      katmai_defconfig
-sh                            migor_defconfig
-sh                           se7724_defconfig
-m68k                       m5208evb_defconfig
-sparc                               defconfig
-mips                        vocore2_defconfig
-sh                   rts7751r2dplus_defconfig
-powerpc                 xes_mpc85xx_defconfig
-arm                            pleb_defconfig
-mips                         mpc30x_defconfig
-powerpc                   currituck_defconfig
-mips                     loongson1b_defconfig
-m68k                          atari_defconfig
-h8300                    h8300h-sim_defconfig
-sh                        dreamcast_defconfig
-arm                           sunxi_defconfig
-nds32                             allnoconfig
-sh                           se7722_defconfig
-mips                           mtx1_defconfig
-csky                                defconfig
-arm                        mvebu_v7_defconfig
-sparc                       sparc32_defconfig
-powerpc                 mpc836x_mds_defconfig
-arm                           sama5_defconfig
-riscv                            alldefconfig
-mips                malta_qemu_32r6_defconfig
-arm                          ixp4xx_defconfig
-arm                        oxnas_v6_defconfig
-arm                       omap2plus_defconfig
-arm                           u8500_defconfig
-m68k                         amcore_defconfig
-arm                      integrator_defconfig
-arm                         at91_dt_defconfig
-sh                        sh7763rdp_defconfig
-powerpc                      bamboo_defconfig
-powerpc                      ppc64e_defconfig
-xtensa                  audio_kc705_defconfig
-arm                         lpc32xx_defconfig
-s390                       zfcpdump_defconfig
-arm                       imx_v4_v5_defconfig
-arm                        mvebu_v5_defconfig
-sparc64                             defconfig
-mips                           ip32_defconfig
-mips                            e55_defconfig
-arm                     davinci_all_defconfig
-powerpc                       ebony_defconfig
-sh                  sh7785lcr_32bit_defconfig
-sh                        edosk7705_defconfig
-powerpc                    adder875_defconfig
-parisc                generic-32bit_defconfig
-arm                  randconfig-c002-20211216
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                               defconfig
-nios2                            allyesconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-parisc                              defconfig
-s390                             allyesconfig
-s390                             allmodconfig
-parisc                           allyesconfig
-s390                                defconfig
-i386                             allyesconfig
-sparc                            allyesconfig
-i386                                defconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-x86_64               randconfig-a006-20211216
-x86_64               randconfig-a005-20211216
-x86_64               randconfig-a001-20211216
-x86_64               randconfig-a002-20211216
-x86_64               randconfig-a003-20211216
-x86_64               randconfig-a004-20211216
-i386                 randconfig-a001-20211216
-i386                 randconfig-a002-20211216
-i386                 randconfig-a005-20211216
-i386                 randconfig-a003-20211216
-i386                 randconfig-a006-20211216
-i386                 randconfig-a004-20211216
-i386                 randconfig-a013-20211217
-i386                 randconfig-a011-20211217
-i386                 randconfig-a016-20211217
-i386                 randconfig-a014-20211217
-i386                 randconfig-a015-20211217
-i386                 randconfig-a012-20211217
-arc                  randconfig-r043-20211216
-riscv                    nommu_k210_defconfig
-riscv                            allyesconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-x86_64                    rhel-8.3-kselftests
-um                           x86_64_defconfig
-um                             i386_defconfig
-x86_64                           allyesconfig
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                          rhel-8.3-func
-x86_64                                  kexec
+If you fix the issue, kindly add following tag as appropriate
+Reported-by: kernel test robot <lkp@intel.com>
 
-clang tested configs:
-hexagon              randconfig-r045-20211216
-hexagon              randconfig-r041-20211216
-s390                 randconfig-r044-20211216
-riscv                randconfig-r042-20211216
+All errors (new ones prefixed by >>):
+
+   drivers/media/i2c/adv748x/adv748x-csi2.c: In function 'adv748x_csi2_init_cfg':
+>> drivers/media/i2c/adv748x/adv748x-csi2.c:146:27: error: array type has incomplete element type 'struct v4l2_subdev_route'
+     146 |  struct v4l2_subdev_route routes[ADV748X_CSI2_STREAMS] = {
+         |                           ^~~~~~
+>> drivers/media/i2c/adv748x/adv748x-csi2.c:148:4: error: field name not in record or union initializer
+     148 |    .sink_pad = ADV748X_CSI2_SINK,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:148:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:149:4: error: field name not in record or union initializer
+     149 |    .sink_stream = 0,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:149:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:150:4: error: field name not in record or union initializer
+     150 |    .source_pad = ADV748X_CSI2_SOURCE,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:150:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:151:4: error: field name not in record or union initializer
+     151 |    .source_stream = 0,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:151:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:152:4: error: field name not in record or union initializer
+     152 |    .flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:152:4: note: (near initialization for 'routes')
+>> drivers/media/i2c/adv748x/adv748x-csi2.c:152:13: error: 'V4L2_SUBDEV_ROUTE_FL_ACTIVE' undeclared (first use in this function); did you mean 'V4L2_SUBDEV_FORMAT_ACTIVE'?
+     152 |    .flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |             V4L2_SUBDEV_FORMAT_ACTIVE
+   drivers/media/i2c/adv748x/adv748x-csi2.c:152:13: note: each undeclared identifier is reported only once for each function it appears in
+   drivers/media/i2c/adv748x/adv748x-csi2.c:155:4: error: field name not in record or union initializer
+     155 |    .sink_pad = ADV748X_CSI2_SINK,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:155:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:156:4: error: field name not in record or union initializer
+     156 |    .sink_stream = 0,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:156:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:157:4: error: field name not in record or union initializer
+     157 |    .source_pad = ADV748X_CSI2_SOURCE,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:157:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:158:4: error: field name not in record or union initializer
+     158 |    .source_stream = 1,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:158:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:161:4: error: field name not in record or union initializer
+     161 |    .sink_pad = ADV748X_CSI2_SINK,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:161:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:162:4: error: field name not in record or union initializer
+     162 |    .sink_stream = 0,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:162:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:163:4: error: field name not in record or union initializer
+     163 |    .source_pad = ADV748X_CSI2_SOURCE,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:163:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:164:4: error: field name not in record or union initializer
+     164 |    .source_stream = 2,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:164:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:167:4: error: field name not in record or union initializer
+     167 |    .sink_pad = ADV748X_CSI2_SINK,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:167:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:168:4: error: field name not in record or union initializer
+     168 |    .sink_stream = 0,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:168:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:169:4: error: field name not in record or union initializer
+     169 |    .source_pad = ADV748X_CSI2_SOURCE,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:169:4: note: (near initialization for 'routes')
+   drivers/media/i2c/adv748x/adv748x-csi2.c:170:4: error: field name not in record or union initializer
+     170 |    .source_stream = 3,
+         |    ^
+   drivers/media/i2c/adv748x/adv748x-csi2.c:170:4: note: (near initialization for 'routes')
+>> drivers/media/i2c/adv748x/adv748x-csi2.c:173:30: error: storage size of 'routing' isn't known
+     173 |  struct v4l2_subdev_krouting routing;
+         |                              ^~~~~~~
+>> drivers/media/i2c/adv748x/adv748x-csi2.c:179:2: error: implicit declaration of function 'v4l2_subdev_lock_state'; did you mean 'v4l2_subdev_alloc_state'? [-Werror=implicit-function-declaration]
+     179 |  v4l2_subdev_lock_state(state);
+         |  ^~~~~~~~~~~~~~~~~~~~~~
+         |  v4l2_subdev_alloc_state
+>> drivers/media/i2c/adv748x/adv748x-csi2.c:180:8: error: implicit declaration of function 'v4l2_subdev_set_routing'; did you mean 'v4l2_subdev_notify'? [-Werror=implicit-function-declaration]
+     180 |  ret = v4l2_subdev_set_routing(sd, state, &routing);
+         |        ^~~~~~~~~~~~~~~~~~~~~~~
+         |        v4l2_subdev_notify
+>> drivers/media/i2c/adv748x/adv748x-csi2.c:181:2: error: implicit declaration of function 'v4l2_subdev_unlock_state'; did you mean 'v4l2_subdev_alloc_state'? [-Werror=implicit-function-declaration]
+     181 |  v4l2_subdev_unlock_state(state);
+         |  ^~~~~~~~~~~~~~~~~~~~~~~~
+         |  v4l2_subdev_alloc_state
+   drivers/media/i2c/adv748x/adv748x-csi2.c:173:30: warning: unused variable 'routing' [-Wunused-variable]
+     173 |  struct v4l2_subdev_krouting routing;
+         |                              ^~~~~~~
+   drivers/media/i2c/adv748x/adv748x-csi2.c:146:27: warning: unused variable 'routes' [-Wunused-variable]
+     146 |  struct v4l2_subdev_route routes[ADV748X_CSI2_STREAMS] = {
+         |                           ^~~~~~
+   drivers/media/i2c/adv748x/adv748x-csi2.c: In function 'adv748x_csi2_init':
+>> drivers/media/i2c/adv748x/adv748x-csi2.c:362:8: error: 'V4L2_SUBDEV_FL_MULTIPLEXED' undeclared (first use in this function)
+     362 |        V4L2_SUBDEV_FL_MULTIPLEXED,
+         |        ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/media/i2c/adv748x/adv748x-csi2.c:379:8: error: implicit declaration of function 'v4l2_subdev_init_finalize'; did you mean 'v4l2_subdev_init'? [-Werror=implicit-function-declaration]
+     379 |  ret = v4l2_subdev_init_finalize(&tx->sd);
+         |        ^~~~~~~~~~~~~~~~~~~~~~~~~
+         |        v4l2_subdev_init
+>> drivers/media/i2c/adv748x/adv748x-csi2.c:396:2: error: implicit declaration of function 'v4l2_subdev_cleanup'; did you mean 'v4l2_subdev_call'? [-Werror=implicit-function-declaration]
+     396 |  v4l2_subdev_cleanup(&tx->sd);
+         |  ^~~~~~~~~~~~~~~~~~~
+         |  v4l2_subdev_call
+   cc1: some warnings being treated as errors
+
+
+vim +146 drivers/media/i2c/adv748x/adv748x-csi2.c
+
+   134	
+   135	/* -----------------------------------------------------------------------------
+   136	 * v4l2_subdev_pad_ops
+   137	 *
+   138	 * The CSI2 bus pads are ignorant to the data sizes or formats.
+   139	 * But we must support setting the pad formats for format propagation.
+   140	 */
+   141	
+   142	static int adv748x_csi2_init_cfg(struct v4l2_subdev *sd,
+   143					 struct v4l2_subdev_state *state)
+   144	{
+   145		/* One route for each virtual channel. Route 0 enabled by default. */
+ > 146		struct v4l2_subdev_route routes[ADV748X_CSI2_STREAMS] = {
+   147			{
+ > 148				.sink_pad = ADV748X_CSI2_SINK,
+   149				.sink_stream = 0,
+   150				.source_pad = ADV748X_CSI2_SOURCE,
+   151				.source_stream = 0,
+ > 152				.flags = V4L2_SUBDEV_ROUTE_FL_ACTIVE,
+   153			},
+   154			{
+   155				.sink_pad = ADV748X_CSI2_SINK,
+   156				.sink_stream = 0,
+   157				.source_pad = ADV748X_CSI2_SOURCE,
+   158				.source_stream = 1,
+   159			},
+   160			{
+   161				.sink_pad = ADV748X_CSI2_SINK,
+   162				.sink_stream = 0,
+   163				.source_pad = ADV748X_CSI2_SOURCE,
+   164				.source_stream = 2,
+   165			},
+   166			{
+   167				.sink_pad = ADV748X_CSI2_SINK,
+   168				.sink_stream = 0,
+   169				.source_pad = ADV748X_CSI2_SOURCE,
+   170				.source_stream = 3,
+   171			},
+   172		};
+ > 173		struct v4l2_subdev_krouting routing;
+   174		int ret;
+   175	
+   176		routing.num_routes = ADV748X_CSI2_STREAMS;
+   177		routing.routes = routes;
+   178	
+ > 179		v4l2_subdev_lock_state(state);
+ > 180		ret = v4l2_subdev_set_routing(sd, state, &routing);
+ > 181		v4l2_subdev_unlock_state(state);
+   182	
+   183		return ret;
+   184	}
+   185	
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
