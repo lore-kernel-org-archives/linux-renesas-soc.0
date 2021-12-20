@@ -2,79 +2,218 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A029C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Dec 2021 02:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAA9C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 20 Dec 2021 08:44:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234429AbhLTCP1 (ORCPT
+        id S232741AbhLTIoh (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 19 Dec 2021 21:15:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34640 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232388AbhLTCP0 (ORCPT
+        Mon, 20 Dec 2021 03:44:37 -0500
+Received: from mslow1.mail.gandi.net ([217.70.178.240]:58969 "EHLO
+        mslow1.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S232711AbhLTIof (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 19 Dec 2021 21:15:26 -0500
-Received: from mail-ot1-x330.google.com (mail-ot1-x330.google.com [IPv6:2607:f8b0:4864:20::330])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 161E7C061574
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 19 Dec 2021 18:15:26 -0800 (PST)
-Received: by mail-ot1-x330.google.com with SMTP id n104-20020a9d2071000000b005799790cf0bso10806944ota.5
-        for <linux-renesas-soc@vger.kernel.org>; Sun, 19 Dec 2021 18:15:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5h2KtcdPv4y3SmM2InmueE/jIOkvBdjenQb53tW6148=;
-        b=cBz4mUamnc7CUE7Ih+IjPPfzhfBNJT3KyyvkV3qZpgW6EuQhCh/mJ7JI0tGzfWkPBQ
-         cawyvcHPm6Byz3w2Po4WAg13M2r8VqieV/yN+xTmIcs7HhmkWvWLNDqi/6RFDfYhNX5p
-         EbuxC514XghPW4Zo1HzZK/Q9O8H+oXXgXySOH4qnwe78n7GCvJ8MqvpP64xDf1hJVhd4
-         t4YWCQ30Te2/v3pHOIyUOv4AX1dHxZZdWmPPUgFspQy/GLmLBv1dEk81D4vd9K7UamXW
-         Uex1RIBASXN8I/HaNiArw6ZCHZQqL8oqb9Qg4sxUJnBfIRGfjBGl3m3Et0IS/4XlCnZf
-         Vekg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5h2KtcdPv4y3SmM2InmueE/jIOkvBdjenQb53tW6148=;
-        b=MuknEYBtA8mCCtS0gqh2pLbxEQQwB2hez5RHRo8YhJyw+FEeJriUVAMOzZe1o9PYCQ
-         iyZXjmuaRmB6fS2DBln2aE+NaOJEZ0ZGr/m5nDRNrgff2eLB23HqX0zJeTVuQJSIkT65
-         SlmK231198uqxl4KviYWy5yeLPUv1DhsUVdwq3oG0vvDqomrnZi3cgcCmlrX/jWv+oPx
-         2Yw9uQPcogCPytIOPvm5QNtEzTzJW2ugFrZKoVPOoy2AZpLcKRrcVaQito0pwFRL5Zba
-         Vta0HJk5L1SpfIzC7u3RtyTIwYz7YyBbrLa4U9owVVhE+RSn2/cpo2uIEvVpV4danqyb
-         /8CQ==
-X-Gm-Message-State: AOAM5302X4iahTQlAyX+wMQH9S8p85YRIfgCsEzDkHv0xgRjXOtnngfz
-        BRkqkIcVAqQOc4Hkp0F4GTi9s+of5x07/++BXWBLAg==
-X-Google-Smtp-Source: ABdhPJxVAFt48JolAeGMsaufCVGExDvCPz3S/Yp8XmDDk3CKAwtkfbSRI4yVpcEjwc04TzWmalvEs7oFGVMBIadtX8c=
-X-Received: by 2002:a9d:74d0:: with SMTP id a16mr9557267otl.237.1639966525423;
- Sun, 19 Dec 2021 18:15:25 -0800 (PST)
+        Mon, 20 Dec 2021 03:44:35 -0500
+Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
+        by mslow1.mail.gandi.net (Postfix) with ESMTP id C33A2CEA9D
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 20 Dec 2021 08:43:25 +0000 (UTC)
+Received: (Authenticated sender: jacopo@jmondi.org)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 26001C000B;
+        Mon, 20 Dec 2021 08:43:01 +0000 (UTC)
+Date:   Mon, 20 Dec 2021 09:43:57 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        Thomas Nizan <tnizan@witekio.com>
+Subject: Re: [PATCH 3/3] media: i2c: max9286: Support manual framesync
+ operation
+Message-ID: <20211220084357.zqwunvppuxst7e6f@uno.localdomain>
+References: <20211216220946.20771-1-laurent.pinchart+renesas@ideasonboard.com>
+ <20211216220946.20771-4-laurent.pinchart+renesas@ideasonboard.com>
+ <20211217111403.3hgb67bwuor5ysiq@uno.localdomain>
+ <Yby1LUfI9fmuUneJ@pendragon.ideasonboard.com>
+ <YbzNk7p6Fk28ay7q@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-References: <cover.1639736856.git.geert+renesas@glider.be>
-In-Reply-To: <cover.1639736856.git.geert+renesas@glider.be>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 20 Dec 2021 03:15:13 +0100
-Message-ID: <CACRpkdYVuyBMvo4MnKzwfzv88-d1mu+jW_XZ9jRChSm21=ff0w@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: renesas: Updates for v5.17 (take two)
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-gpio@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <YbzNk7p6Fk28ay7q@pendragon.ideasonboard.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Fri, Dec 17, 2021 at 12:07 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
+Hi Laurent,
 
-> The following changes since commit 7c50a407b8687ae3589c740d2347d9ae73887889:
+On Fri, Dec 17, 2021 at 07:49:07PM +0200, Laurent Pinchart wrote:
+> Hi Jacopo,
 >
->   pinctrl: renesas: Remove unneeded locking around sh_pfc_read() calls (2021-11-19 10:55:21 +0100)
+> On Fri, Dec 17, 2021 at 06:05:02PM +0200, Laurent Pinchart wrote:
+> > On Fri, Dec 17, 2021 at 12:14:03PM +0100, Jacopo Mondi wrote:
+> > > On Fri, Dec 17, 2021 at 12:09:46AM +0200, Laurent Pinchart wrote:
+> > > > From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > >
+> > > > The MAX9286 can generate a framesync signal to synchronize the cameras,
+> > > > using an internal timer. Support this mode of operation and configure it
+> > > > through the .s_frameinterval() operation. If the frame interval is not
+> > > > 0, framesync is switched to manual mode with the specified interval,
+> > > > otherwise automatic mode is used.
+> > > >
+> > > > Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > ---
+> > > >  drivers/media/i2c/max9286.c | 66 +++++++++++++++++++++++++++++++++++--
+> > > >  1 file changed, 63 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/drivers/media/i2c/max9286.c b/drivers/media/i2c/max9286.c
+> > > > index fa2f6a823fe6..dce1146635d2 100644
+> > > > --- a/drivers/media/i2c/max9286.c
+> > > > +++ b/drivers/media/i2c/max9286.c
+> > > > @@ -174,6 +174,7 @@ struct max9286_priv {
+> > > >  	struct v4l2_ctrl *pixelrate;
+> > > >
+> > > >  	struct v4l2_mbus_framefmt fmt[MAX9286_N_SINKS];
+> > > > +	struct v4l2_fract interval;
+> > > >
+> > > >  	/* Protects controls and fmt structures */
+> > > >  	struct mutex mutex;
+> > > > @@ -474,6 +475,37 @@ static int max9286_check_config_link(struct max9286_priv *priv,
+> > > >  	return 0;
+> > > >  }
+> > > >
+> > > > +static void max9286_set_fsync_period(struct max9286_priv *priv)
+> > > > +{
+> > > > +	u32 fsync;
+> > > > +
+> > > > +	if (!priv->interval.numerator || !priv->interval.denominator) {
+> > > > +		/*
+> > > > +		 * Special case, a null interval enables automatic FRAMESYNC
+> > > > +		 * mode. FRAMESYNC is taken from the slowest link.
+> > > > +		 */
+> > > > +		max9286_write(priv, 0x01, MAX9286_FSYNCMODE_INT_HIZ |
+> > > > +			      MAX9286_FSYNCMETH_AUTO);
+> > > > +		return;
+> > > > +	}
+> > > > +
+> > > > +	/*
+> > > > +	 * Manual FRAMESYNC
+> > > > +	 *
+> > > > +	 * The FRAMESYNC generator is configured with a period expressed as a
+> > > > +	 * number of PCLK periods, which runs at 75MHz.
+> > > > +	 */
+> > > > +	fsync = div_u64(75000000ULL * priv->interval.numerator,
+> > > > +			priv->interval.denominator);
+> > >
+> > > Don't we calculate the pixel rate dynamically based on the number of
+> > > enabled sources ?
+> >
+> > That's a good point, this hardcodes operation for 4 cameras. I'll see
+> > how I can fix that.
+> >
+> > > > +
+> > > > +	max9286_write(priv, 0x01, MAX9286_FSYNCMODE_INT_OUT |
+> > > > +		      MAX9286_FSYNCMETH_MANUAL);
+> > > > +
+> > > > +	max9286_write(priv, 0x06, (fsync >> 0) & 0xff);
+> > > > +	max9286_write(priv, 0x07, (fsync >> 8) & 0xff);
+> > > > +	max9286_write(priv, 0x08, (fsync >> 16) & 0xff);
+> > > > +}
+> > > > +
+> > > >  /* -----------------------------------------------------------------------------
+> > > >   * V4L2 Subdev
+> > > >   */
+> > > > @@ -656,6 +688,8 @@ static int max9286_s_stream(struct v4l2_subdev *sd, int enable)
+> > > >  	int ret;
+> > > >
+> > > >  	if (enable) {
+> > > > +		max9286_set_fsync_period(priv);
+> > > > +
+> > > >  		/*
+> > > >  		 * The frame sync between cameras is transmitted across the
+> > > >  		 * reverse channel as GPIO. We must open all channels while
+> > > > @@ -715,6 +749,32 @@ static int max9286_s_stream(struct v4l2_subdev *sd, int enable)
+> > > >  	return 0;
+> > > >  }
+> > > >
+> > > > +static int max9286_g_frame_interval(struct v4l2_subdev *sd,
+> > > > +				    struct v4l2_subdev_frame_interval *interval)
+> > > > +{
+> > > > +	struct max9286_priv *priv = sd_to_max9286(sd);
+> > > > +
+> > > > +	if (interval->pad == MAX9286_SRC_PAD)
+> > >
+> > > Ah!
+> > >
+> > > I would have expected, as this setting applies to all cameras, and
+> > > consequentially to the output image stream frame rate, that the
+> > > operation should have been done on the single source pad... Why is
+> > > this not the case ?
+> >
+> > I went back and forth between the two, I think it would work fine on the
+> > source pad as well. I'll give it a try.
 >
-> are available in the Git repository at:
+> Note that once we'll move to the muxed streams API, the frame interval
+> will be per stream, so setting it on the source pad won't make much of a
+> difference. What do you think ?
 >
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-pinctrl-for-v5.17-tag2
->
-> for you to fetch changes up to ea7e26ebe6a90fe7962823a70ac91f010df71239:
->
->   pinctrl: renesas: r8a779a0: Align comments (2021-12-07 16:58:02 +0100)
 
-Pulled in!
+Per-stream means you have it apply on all the enabled source pads, and
+potentially configure cameras differently, which is not supported
+because frame sync is a configuration parameter which applies to all
+sources.
 
-Yours,
-Linus Walleij
+If I were you I would have used the single source pad, as from the
+user perspective what is relevant is the max9286 produced frame rate,
+but I understand the counter-argument, so up to you :)
+
+Thanks
+   j
+
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	interval->interval = priv->interval;
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static int max9286_s_frame_interval(struct v4l2_subdev *sd,
+> > > > +				    struct v4l2_subdev_frame_interval *interval)
+> > > > +{
+> > > > +	struct max9286_priv *priv = sd_to_max9286(sd);
+> > > > +
+> > > > +	if (interval->pad == MAX9286_SRC_PAD)
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	priv->interval = interval->interval;
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > >  static int max9286_enum_mbus_code(struct v4l2_subdev *sd,
+> > > >  				  struct v4l2_subdev_state *sd_state,
+> > > >  				  struct v4l2_subdev_mbus_code_enum *code)
+> > > > @@ -806,6 +866,8 @@ static int max9286_get_fmt(struct v4l2_subdev *sd,
+> > > >
+> > > >  static const struct v4l2_subdev_video_ops max9286_video_ops = {
+> > > >  	.s_stream	= max9286_s_stream,
+> > > > +	.g_frame_interval = max9286_g_frame_interval,
+> > > > +	.s_frame_interval = max9286_s_frame_interval,
+> > > >  };
+> > > >
+> > > >  static const struct v4l2_subdev_pad_ops max9286_pad_ops = {
+> > > > @@ -998,9 +1060,7 @@ static int max9286_setup(struct max9286_priv *priv)
+> > > >  		      MAX9286_CSILANECNT(priv->csi2_data_lanes) |
+> > > >  		      MAX9286_DATATYPE_YUV422_8BIT);
+> > > >
+> > > > -	/* Automatic: FRAMESYNC taken from the slowest Link. */
+> > > > -	max9286_write(priv, 0x01, MAX9286_FSYNCMODE_INT_HIZ |
+> > > > -		      MAX9286_FSYNCMETH_AUTO);
+> > > > +	max9286_set_fsync_period(priv);
+> > > >
+> > > >  	/* Enable HS/VS encoding, use D14/15 for HS/VS, invert VS. */
+> > > >  	max9286_write(priv, 0x0c, MAX9286_HVEN | MAX9286_INVVS |
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
