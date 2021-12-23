@@ -2,70 +2,92 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 941EDC35264
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32411C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 17:30:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239907AbhLWO4h (ORCPT
+        id S1349448AbhLWRae (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:56:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52284 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243914AbhLWO4c (ORCPT
+        Thu, 23 Dec 2021 12:30:34 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:26649 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S233445AbhLWRae (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Dec 2021 09:56:32 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18899C061763
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:56:30 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id ZqwV260084C55Sk01qwV2d; Thu, 23 Dec 2021 15:56:29 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-        (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW8-006aME-Vb; Thu, 23 Dec 2021 15:56:28 +0100
-Received: from geert by rox.of.borg with local (Exim 4.93)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW8-003rwr-14; Thu, 23 Dec 2021 15:56:28 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/10] pinctrl: renesas: checker: Simplify same_name()
-Date:   Thu, 23 Dec 2021 15:56:20 +0100
-Message-Id: <509c70041bcf4302e284758abe1fd8165644b505.1640270559.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1640270559.git.geert+renesas@glider.be>
-References: <cover.1640270559.git.geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 23 Dec 2021 12:30:34 -0500
+X-IronPort-AV: E=Sophos;i="5.88,230,1635174000"; 
+   d="scan'208";a="104503560"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 24 Dec 2021 02:30:32 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9816640C4A40;
+        Fri, 24 Dec 2021 02:30:30 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     linux-media@vger.kernel.org
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 00/13] media: Use platform_get_irq*() variants to fetch IRQ's
+Date:   Thu, 23 Dec 2021 17:30:01 +0000
+Message-Id: <20211223173015.22251-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Simplify the helper that checks if two strings are valid and identical.
+Hi All,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/renesas/core.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+This patch series aims to drop using platform_get_resource() for IRQ types
+in preparation for removal of static setup of IRQ resource from DT core
+code.
 
-diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
-index 0d4ea2e22a53599f..5c0a6212706270e7 100644
---- a/drivers/pinctrl/renesas/core.c
-+++ b/drivers/pinctrl/renesas/core.c
-@@ -777,10 +777,7 @@ static bool __init is0s(const u16 *enum_ids, unsigned int n)
- 
- static bool __init same_name(const char *a, const char *b)
- {
--	if (!a || !b)
--		return false;
--
--	return !strcmp(a, b);
-+	return a && b && !strcmp(a, b);
- }
- 
- static void __init sh_pfc_check_reg(const char *drvname, u32 reg, u32 bits)
+Dropping usage of platform_get_resource() was agreed based on
+the discussion [0].
+
+[0] https://patchwork.kernel.org/project/linux-renesas-soc/
+patch/20211209001056.29774-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (13):
+  media: vsp1: Use platform_get_irq() to get the interrupt
+  media: camss: Use platform_get_irq_byname() to get the interrupt
+  media: bdisp: Use platform_get_irq() to get the interrupt
+  media: s5p-mfc: Use platform_get_irq() to get the interrupt
+  media: stm32-dma2d: Use platform_get_irq() to get the interrupt
+  media: davinci: vpif: Use platform_get_irq_optional() to get the
+    interrupt
+  media: exynos-gsc: Use platform_get_irq() to get the interrupt
+  media: marvell-ccic: Use platform_get_irq() to get the interrupt
+  media: mtk-vcodec: Drop unnecessary call to platform_get_resource()
+  media: exynos4-is: Use platform_get_irq() to get the interrupt
+  media: s5p-g2d: Use platform_get_irq() to get the interrupt
+  media: mtk-vpu: Drop unnecessary call to platform_get_resource()
+  media: coda: Use platform_get_irq() to get the interrupt
+
+ drivers/media/platform/coda/imx-vdoa.c          |  9 ++++-----
+ drivers/media/platform/davinci/vpif.c           | 17 ++++++++++++++---
+ drivers/media/platform/davinci/vpif_capture.c   | 16 +++++++---------
+ drivers/media/platform/davinci/vpif_display.c   | 13 ++++++-------
+ drivers/media/platform/exynos-gsc/gsc-core.c    | 14 ++++++--------
+ drivers/media/platform/exynos4-is/fimc-core.c   | 11 +++++------
+ drivers/media/platform/exynos4-is/fimc-lite.c   | 11 +++++------
+ .../media/platform/marvell-ccic/mmp-driver.c    |  8 +++-----
+ .../platform/mtk-vcodec/mtk_vcodec_dec_drv.c    | 11 ++++-------
+ .../platform/mtk-vcodec/mtk_vcodec_enc_drv.c    | 10 +++-------
+ drivers/media/platform/mtk-vpu/mtk_vpu.c        | 10 +++-------
+ drivers/media/platform/qcom/camss/camss-csid.c  | 12 ++++--------
+ .../media/platform/qcom/camss/camss-csiphy.c    | 12 ++++--------
+ drivers/media/platform/qcom/camss/camss-ispif.c | 12 ++++--------
+ drivers/media/platform/qcom/camss/camss-vfe.c   | 12 ++++--------
+ drivers/media/platform/s5p-g2d/g2d.c            | 10 +++-------
+ drivers/media/platform/s5p-mfc/s5p_mfc.c        | 11 ++++-------
+ drivers/media/platform/sti/bdisp/bdisp-v4l2.c   | 10 +++-------
+ drivers/media/platform/stm32/dma2d/dma2d.c      |  9 +++------
+ drivers/media/platform/vsp1/vsp1_drv.c          | 13 +++++--------
+ 20 files changed, 94 insertions(+), 137 deletions(-)
+
 -- 
-2.25.1
+2.17.1
 
