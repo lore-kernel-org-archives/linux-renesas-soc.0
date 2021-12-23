@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 927B2C4167E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42844C46467
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239962AbhLWO4e (ORCPT
+        id S239987AbhLWO4f (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:56:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52278 "EHLO
+        Thu, 23 Dec 2021 09:56:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239978AbhLWO4c (ORCPT
+        with ESMTP id S243929AbhLWO4c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 23 Dec 2021 09:56:32 -0500
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 012B2C06175E
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:56:30 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C521C061784
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:56:31 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
         by andre.telenet-ops.be with bizsmtp
-        id ZqwV2600J4C55Sk01qwVZA; Thu, 23 Dec 2021 15:56:29 +0100
+        id ZqwV2600b4C55Sk01qwVZL; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW8-006aMG-UM; Thu, 23 Dec 2021 15:56:28 +0100
+        id 1n0PW9-006aMC-7r; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW8-003rx5-3G; Thu, 23 Dec 2021 15:56:28 +0100
+        id 1n0PW7-003rwc-Vs; Thu, 23 Dec 2021 15:56:27 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 06/10] pinctrl: renesas: checker: Validate bias configs consistency
-Date:   Thu, 23 Dec 2021 15:56:22 +0100
-Message-Id: <19b3e0773fbb36c015a43db683f79e75b0fec3ee.1640270559.git.geert+renesas@glider.be>
+Subject: [PATCH 02/10] pinctrl: renesas: Factor out .pin_to_portcr() address handling
+Date:   Thu, 23 Dec 2021 15:56:18 +0100
+Message-Id: <a485d4986a17259256988eb14e3a4c2b8d61c303.1640270559.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640270559.git.geert+renesas@glider.be>
 References: <cover.1640270559.git.geert+renesas@glider.be>
@@ -43,172 +43,118 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Validate consistency of the pin control tables for pins with pull-up
-and/or pull-down capabilities.  If a pin has bias register bits
-declarations in bias_regs[] or through .pin_to_portcr(), the
-corresponding SH_PFC_PIN_CFG_PULL* flags should be set in the pin's
-configs, and vice versa, and the .get_bias() and .set_bias() callbacks
-should be implemented.
+All implementations of the .pin_to_portcr() method implement the same
+conversion from Port Control Register offset to virtual address.  Factor
+it out into the two callers.
+Remove the pfc parameter, as it is no longer used.
+
+Note that the failure handling in r8a7740_pin_to_portcr() is pro forma,
+as the function is never called with an invalid pin number.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/core.c | 80 +++++++++++++++++++++++++++++++---
- 1 file changed, 73 insertions(+), 7 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a73a4.c | 4 ++--
+ drivers/pinctrl/renesas/pfc-r8a7740.c | 6 +++---
+ drivers/pinctrl/renesas/pfc-sh73a0.c  | 4 ++--
+ drivers/pinctrl/renesas/pinctrl.c     | 6 ++++--
+ drivers/pinctrl/renesas/sh_pfc.h      | 2 +-
+ 5 files changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
-index 57a06b5ea17444e2..dce511a22b31de3d 100644
---- a/drivers/pinctrl/renesas/core.c
-+++ b/drivers/pinctrl/renesas/core.c
-@@ -745,6 +745,7 @@ static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
+diff --git a/drivers/pinctrl/renesas/pfc-r8a73a4.c b/drivers/pinctrl/renesas/pfc-r8a73a4.c
+index 1e569f6a03bf13e0..ba3a1857f80a08c4 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a73a4.c
++++ b/drivers/pinctrl/renesas/pfc-r8a73a4.c
+@@ -2606,9 +2606,9 @@ static const unsigned int r8a73a4_portcr_offsets[] = {
+ 	0x00002000, 0x00003000, 0x00003000,
+ };
  
- static unsigned int sh_pfc_errors __initdata;
- static unsigned int sh_pfc_warnings __initdata;
-+static bool sh_pfc_bias_done __initdata;
- static struct {
- 	u32 reg;
- 	u32 bits;
-@@ -758,6 +759,15 @@ static u32 sh_pfc_num_enums __initdata;
- 		pr_err("%s: " fmt, drvname, ##__VA_ARGS__);	\
- 		sh_pfc_errors++;				\
- 	} while (0)
-+
-+#define sh_pfc_err_once(type, fmt, ...)				\
-+	do {							\
-+		if (!sh_pfc_ ## type ## _done) {		\
-+			sh_pfc_ ## type ## _done = true;	\
-+			sh_pfc_err(fmt, ##__VA_ARGS__);		\
-+		}						\
-+	} while (0)
-+
- #define sh_pfc_warn(fmt, ...)					\
- 	do {							\
- 		pr_warn("%s: " fmt, drvname, ##__VA_ARGS__);	\
-@@ -836,21 +846,22 @@ static void __init sh_pfc_check_reg_enums(const char *drvname, u32 reg,
- 	}
+-static void __iomem *r8a73a4_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
++static int r8a73a4_pin_to_portcr(unsigned int pin)
+ {
+-	return pfc->windows->virt + r8a73a4_portcr_offsets[pin >> 5] + pin;
++	return r8a73a4_portcr_offsets[pin >> 5] + pin;
  }
  
--static void __init sh_pfc_check_pin(const struct sh_pfc_soc_info *info,
--				    u32 reg, unsigned int pin)
-+static const struct sh_pfc_pin __init *sh_pfc_find_pin(
-+	const struct sh_pfc_soc_info *info, u32 reg, unsigned int pin)
+ static const struct sh_pfc_soc_operations r8a73a4_pfc_ops = {
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7740.c b/drivers/pinctrl/renesas/pfc-r8a7740.c
+index 3214331ba4e243cb..e8b9fb74a802ac03 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7740.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7740.c
+@@ -3495,7 +3495,7 @@ static const struct r8a7740_portcr_group r8a7740_portcr_offsets[] = {
+ 	{ 83, 0x0000 }, { 114, 0x1000 }, { 209, 0x2000 }, { 211, 0x3000 },
+ };
+ 
+-static void __iomem *r8a7740_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
++static int r8a7740_pin_to_portcr(unsigned int pin)
  {
- 	const char *drvname = info->name;
  	unsigned int i;
  
- 	if (pin == SH_PFC_PIN_NONE)
--		return;
-+		return NULL;
+@@ -3504,10 +3504,10 @@ static void __iomem *r8a7740_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
+ 			&r8a7740_portcr_offsets[i];
  
- 	for (i = 0; i < info->nr_pins; i++) {
- 		if (pin == info->pins[i].pin)
--			return;
-+			return &info->pins[i];
+ 		if (pin <= group->end_pin)
+-			return pfc->windows->virt + group->offset + pin;
++			return group->offset + pin;
  	}
  
- 	sh_pfc_err("reg 0x%x: pin %u not found\n", reg, pin);
-+	return NULL;
+-	return NULL;
++	return -1;
  }
  
- static void __init sh_pfc_check_cfg_reg(const char *drvname,
-@@ -902,13 +913,15 @@ static void __init sh_pfc_check_drive_reg(const struct sh_pfc_soc_info *info,
- 				 GENMASK(field->offset + field->size - 1,
- 					 field->offset));
+ static const struct sh_pfc_soc_operations r8a7740_pfc_ops = {
+diff --git a/drivers/pinctrl/renesas/pfc-sh73a0.c b/drivers/pinctrl/renesas/pfc-sh73a0.c
+index 44cf1adaff13b02c..5d8a0179fd60fee4 100644
+--- a/drivers/pinctrl/renesas/pfc-sh73a0.c
++++ b/drivers/pinctrl/renesas/pfc-sh73a0.c
+@@ -4137,9 +4137,9 @@ static const unsigned int sh73a0_portcr_offsets[] = {
+ 	0x00002000, 0x00002000, 0x00003000, 0x00003000, 0x00002000,
+ };
  
--		sh_pfc_check_pin(info, drive->reg, field->pin);
-+		sh_pfc_find_pin(info, drive->reg, field->pin);
- 	}
- }
- 
- static void __init sh_pfc_check_bias_reg(const struct sh_pfc_soc_info *info,
- 					 const struct pinmux_bias_reg *bias)
+-static void __iomem *sh73a0_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
++static int sh73a0_pin_to_portcr(unsigned int pin)
  {
-+	const char *drvname = info->name;
-+	const struct sh_pfc_pin *pin;
- 	unsigned int i;
- 	u32 bits;
- 
-@@ -920,8 +933,32 @@ static void __init sh_pfc_check_bias_reg(const struct sh_pfc_soc_info *info,
- 		sh_pfc_check_reg(info->name, bias->puen, bits);
- 	if (bias->pud)
- 		sh_pfc_check_reg(info->name, bias->pud, bits);
--	for (i = 0; i < ARRAY_SIZE(bias->pins); i++)
--		sh_pfc_check_pin(info, bias->puen, bias->pins[i]);
-+	for (i = 0; i < ARRAY_SIZE(bias->pins); i++) {
-+		pin = sh_pfc_find_pin(info, bias->puen, bias->pins[i]);
-+		if (!pin)
-+			continue;
-+
-+		if (bias->puen && bias->pud) {
-+			/*
-+			 * Pull-enable and pull-up/down control registers
-+			 * As some SoCs have pins that support only pull-up
-+			 * or pull-down, we just check for one of them
-+			 */
-+			if (!(pin->configs & SH_PFC_PIN_CFG_PULL_UP_DOWN))
-+				sh_pfc_err("bias_reg 0x%x:%u: pin %s lacks one or more SH_PFC_PIN_CFG_PULL_* flags\n",
-+					   bias->puen, i, pin->name);
-+		} else if (bias->puen) {
-+			/* Pull-up control register only */
-+			if (!(pin->configs & SH_PFC_PIN_CFG_PULL_UP))
-+				sh_pfc_err("bias_reg 0x%x:%u: pin %s lacks SH_PFC_PIN_CFG_PULL_UP flag\n",
-+					   bias->puen, i, pin->name);
-+		} else if (bias->pud) {
-+			/* Pull-down control register only */
-+			if (!(pin->configs & SH_PFC_PIN_CFG_PULL_DOWN))
-+				sh_pfc_err("bias_reg 0x%x:%u: pin %s lacks SH_PFC_PIN_CFG_PULL_DOWN flag\n",
-+					   bias->pud, i, pin->name);
-+		}
-+	}
+-	return pfc->windows->virt + sh73a0_portcr_offsets[pin >> 5] + pin;
++	return sh73a0_portcr_offsets[pin >> 5] + pin;
  }
  
- static void __init sh_pfc_compare_groups(const char *drvname,
-@@ -963,10 +1000,12 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	pr_info("sh_pfc: Checking %s\n", drvname);
- 	sh_pfc_num_regs = 0;
- 	sh_pfc_num_enums = 0;
-+	sh_pfc_bias_done = false;
+ /* -----------------------------------------------------------------------------
+diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
+index a5862c67a6ecc22e..f0c42c053f8e2460 100644
+--- a/drivers/pinctrl/renesas/pinctrl.c
++++ b/drivers/pinctrl/renesas/pinctrl.c
+@@ -919,7 +919,8 @@ void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
  
- 	/* Check pins */
- 	for (i = 0; i < info->nr_pins; i++) {
- 		const struct sh_pfc_pin *pin = &info->pins[i];
-+		unsigned int x;
+ unsigned int rmobile_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
+ {
+-	void __iomem *reg = pfc->info->ops->pin_to_portcr(pfc, pin);
++	void __iomem *reg = pfc->windows->virt +
++			    pfc->info->ops->pin_to_portcr(pin);
+ 	u32 value = ioread8(reg) & PORTnCR_PULMD_MASK;
  
- 		if (!pin->name) {
- 			sh_pfc_err("empty pin %u\n", i);
-@@ -988,6 +1027,33 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 					   pin->name, pin2->name,
- 					   pin->enum_id);
- 		}
-+
-+		if (pin->configs & SH_PFC_PIN_CFG_PULL_UP_DOWN) {
-+			if (!info->ops || !info->ops->get_bias ||
-+			    !info->ops->set_bias)
-+				sh_pfc_err_once(bias, "SH_PFC_PIN_CFG_PULL_* flag set but .[gs]et_bias() not implemented\n");
-+
-+			if (!bias_regs &&
-+			     (!info->ops || !info->ops->pin_to_portcr))
-+				sh_pfc_err_once(bias, "SH_PFC_PIN_CFG_PULL_UP flag set but no bias_regs defined and .pin_to_portcr() not implemented\n");
-+		}
-+
-+		if ((pin->configs & SH_PFC_PIN_CFG_PULL_UP_DOWN) && bias_regs) {
-+			const struct pinmux_bias_reg *bias_reg =
-+				rcar_pin_to_bias_reg(info, pin->pin, &x);
-+
-+			if (!bias_reg ||
-+			    ((pin->configs & SH_PFC_PIN_CFG_PULL_UP) &&
-+			     !bias_reg->puen))
-+				sh_pfc_err("pin %s: SH_PFC_PIN_CFG_PULL_UP flag set but pin not in bias_regs\n",
-+					   pin->name);
-+
-+			if (!bias_reg ||
-+			    ((pin->configs & SH_PFC_PIN_CFG_PULL_DOWN) &&
-+			     !bias_reg->pud))
-+				sh_pfc_err("pin %s: SH_PFC_PIN_CFG_PULL_DOWN flag set but pin not in bias_regs\n",
-+					   pin->name);
-+		}
- 	}
+ 	switch (value) {
+@@ -936,7 +937,8 @@ unsigned int rmobile_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
+ void rmobile_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+ 			     unsigned int bias)
+ {
+-	void __iomem *reg = pfc->info->ops->pin_to_portcr(pfc, pin);
++	void __iomem *reg = pfc->windows->virt +
++			    pfc->info->ops->pin_to_portcr(pin);
+ 	u32 value = ioread8(reg) & ~PORTnCR_PULMD_MASK;
  
- 	/* Check groups and functions */
+ 	switch (bias) {
+diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
+index d8a6bd0412e496d3..7191c1c9ca959954 100644
+--- a/drivers/pinctrl/renesas/sh_pfc.h
++++ b/drivers/pinctrl/renesas/sh_pfc.h
+@@ -255,7 +255,7 @@ struct sh_pfc_soc_operations {
+ 	void (*set_bias)(struct sh_pfc *pfc, unsigned int pin,
+ 			 unsigned int bias);
+ 	int (*pin_to_pocctrl)(unsigned int pin, u32 *pocctrl);
+-	void __iomem * (*pin_to_portcr)(struct sh_pfc *pfc, unsigned int pin);
++	int (*pin_to_portcr)(unsigned int pin);
+ };
+ 
+ struct sh_pfc_soc_info {
 -- 
 2.25.1
 
