@@ -2,159 +2,112 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42844C46467
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CC1C2BBC7
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239987AbhLWO4f (ORCPT
+        id S243954AbhLWO4f (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 23 Dec 2021 09:56:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52286 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243929AbhLWO4c (ORCPT
+        with ESMTP id S243965AbhLWO4c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 23 Dec 2021 09:56:32 -0500
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C521C061784
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44734C061792
         for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:56:31 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
         by andre.telenet-ops.be with bizsmtp
-        id ZqwV2600b4C55Sk01qwVZL; Thu, 23 Dec 2021 15:56:29 +0100
+        id ZqwV2600c4C55Sk01qwVZM; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW9-006aMC-7r; Thu, 23 Dec 2021 15:56:29 +0100
+        id 1n0PW9-006aMA-8X; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW7-003rwc-Vs; Thu, 23 Dec 2021 15:56:27 +0100
+        id 1n0PW7-003rwS-Tl; Thu, 23 Dec 2021 15:56:27 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 02/10] pinctrl: renesas: Factor out .pin_to_portcr() address handling
-Date:   Thu, 23 Dec 2021 15:56:18 +0100
-Message-Id: <a485d4986a17259256988eb14e3a4c2b8d61c303.1640270559.git.geert+renesas@glider.be>
+Subject: [PATCH 00/10] pinctrl: renesas: checker: Miscellaneous improvements
+Date:   Thu, 23 Dec 2021 15:56:16 +0100
+Message-Id: <cover.1640270559.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1640270559.git.geert+renesas@glider.be>
-References: <cover.1640270559.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-All implementations of the .pin_to_portcr() method implement the same
-conversion from Port Control Register offset to virtual address.  Factor
-it out into the two callers.
-Remove the pfc parameter, as it is no longer used.
+	Hi Linus,
 
-Note that the failure handling in r8a7740_pin_to_portcr() is pro forma,
-as the function is never called with an invalid pin number.
+This patch series improves the Renesas pin control table validator
+(enabled when DEBUG is defined, e.g. with CONFIG_DEBUG_PINCTRL=y), by:
+  1. Suggesting which pin groups can share pins,
+  2. Adding more checks to catch common errors.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/pinctrl/renesas/pfc-r8a73a4.c | 4 ++--
- drivers/pinctrl/renesas/pfc-r8a7740.c | 6 +++---
- drivers/pinctrl/renesas/pfc-sh73a0.c  | 4 ++--
- drivers/pinctrl/renesas/pinctrl.c     | 6 ++++--
- drivers/pinctrl/renesas/sh_pfc.h      | 2 +-
- 5 files changed, 12 insertions(+), 10 deletions(-)
+If you enable the checker, you may be disappointed by the (lack of)
+output.  Indeed, it is much easier to fix detected issues, than to get
+the checker code in a state that is suitable for upstream submission
+;-)
+Hence most issues detected have been fixed already for quite some time,
+or never arrived upstream in the first place. Recent fixes are [1] and
+[2].
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a73a4.c b/drivers/pinctrl/renesas/pfc-r8a73a4.c
-index 1e569f6a03bf13e0..ba3a1857f80a08c4 100644
---- a/drivers/pinctrl/renesas/pfc-r8a73a4.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a73a4.c
-@@ -2606,9 +2606,9 @@ static const unsigned int r8a73a4_portcr_offsets[] = {
- 	0x00002000, 0x00003000, 0x00003000,
- };
- 
--static void __iomem *r8a73a4_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
-+static int r8a73a4_pin_to_portcr(unsigned int pin)
- {
--	return pfc->windows->virt + r8a73a4_portcr_offsets[pin >> 5] + pin;
-+	return r8a73a4_portcr_offsets[pin >> 5] + pin;
- }
- 
- static const struct sh_pfc_soc_operations r8a73a4_pfc_ops = {
-diff --git a/drivers/pinctrl/renesas/pfc-r8a7740.c b/drivers/pinctrl/renesas/pfc-r8a7740.c
-index 3214331ba4e243cb..e8b9fb74a802ac03 100644
---- a/drivers/pinctrl/renesas/pfc-r8a7740.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a7740.c
-@@ -3495,7 +3495,7 @@ static const struct r8a7740_portcr_group r8a7740_portcr_offsets[] = {
- 	{ 83, 0x0000 }, { 114, 0x1000 }, { 209, 0x2000 }, { 211, 0x3000 },
- };
- 
--static void __iomem *r8a7740_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
-+static int r8a7740_pin_to_portcr(unsigned int pin)
- {
- 	unsigned int i;
- 
-@@ -3504,10 +3504,10 @@ static void __iomem *r8a7740_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
- 			&r8a7740_portcr_offsets[i];
- 
- 		if (pin <= group->end_pin)
--			return pfc->windows->virt + group->offset + pin;
-+			return group->offset + pin;
- 	}
- 
--	return NULL;
-+	return -1;
- }
- 
- static const struct sh_pfc_soc_operations r8a7740_pfc_ops = {
-diff --git a/drivers/pinctrl/renesas/pfc-sh73a0.c b/drivers/pinctrl/renesas/pfc-sh73a0.c
-index 44cf1adaff13b02c..5d8a0179fd60fee4 100644
---- a/drivers/pinctrl/renesas/pfc-sh73a0.c
-+++ b/drivers/pinctrl/renesas/pfc-sh73a0.c
-@@ -4137,9 +4137,9 @@ static const unsigned int sh73a0_portcr_offsets[] = {
- 	0x00002000, 0x00002000, 0x00003000, 0x00003000, 0x00002000,
- };
- 
--static void __iomem *sh73a0_pin_to_portcr(struct sh_pfc *pfc, unsigned int pin)
-+static int sh73a0_pin_to_portcr(unsigned int pin)
- {
--	return pfc->windows->virt + sh73a0_portcr_offsets[pin >> 5] + pin;
-+	return sh73a0_portcr_offsets[pin >> 5] + pin;
- }
- 
- /* -----------------------------------------------------------------------------
-diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
-index a5862c67a6ecc22e..f0c42c053f8e2460 100644
---- a/drivers/pinctrl/renesas/pinctrl.c
-+++ b/drivers/pinctrl/renesas/pinctrl.c
-@@ -919,7 +919,8 @@ void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
- 
- unsigned int rmobile_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
- {
--	void __iomem *reg = pfc->info->ops->pin_to_portcr(pfc, pin);
-+	void __iomem *reg = pfc->windows->virt +
-+			    pfc->info->ops->pin_to_portcr(pin);
- 	u32 value = ioread8(reg) & PORTnCR_PULMD_MASK;
- 
- 	switch (value) {
-@@ -936,7 +937,8 @@ unsigned int rmobile_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
- void rmobile_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
- 			     unsigned int bias)
- {
--	void __iomem *reg = pfc->info->ops->pin_to_portcr(pfc, pin);
-+	void __iomem *reg = pfc->windows->virt +
-+			    pfc->info->ops->pin_to_portcr(pin);
- 	u32 value = ioread8(reg) & ~PORTnCR_PULMD_MASK;
- 
- 	switch (bias) {
-diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
-index d8a6bd0412e496d3..7191c1c9ca959954 100644
---- a/drivers/pinctrl/renesas/sh_pfc.h
-+++ b/drivers/pinctrl/renesas/sh_pfc.h
-@@ -255,7 +255,7 @@ struct sh_pfc_soc_operations {
- 	void (*set_bias)(struct sh_pfc *pfc, unsigned int pin,
- 			 unsigned int bias);
- 	int (*pin_to_pocctrl)(unsigned int pin, u32 *pocctrl);
--	void __iomem * (*pin_to_portcr)(struct sh_pfc *pfc, unsigned int pin);
-+	int (*pin_to_portcr)(unsigned int pin);
- };
- 
- struct sh_pfc_soc_info {
+If accepted, I intend to queue this in renesas-pinctrl for v5.18.
+Thanks for your comments!
+
+[1] "[PATCH 00/60] pinctrl: renesas: Share more pin group data"
+    https://lore.kernel.org/r/cover.1640269757.git.geert+renesas@glider.be/
+[2] "[PATCH] pinctrl: renesas: r8a7794: Add range checking to
+     .pin_to_pocctrl()"
+    https://lore.kernel.org/r/d23767ad7152327654192d7191f4b8ae19493966.1640269510.git.geert+renesas@glider.be/
+
+Geert Uytterhoeven (10):
+  pinctrl: renesas: Remove unused pfc parameter from .pin_to_pocctrl()
+  pinctrl: renesas: Factor out .pin_to_portcr() address handling
+  pinctrl: renesas: Pass sh_pfc_soc_info to rcar_pin_to_bias_reg()
+  pinctrl: renesas: checker: Simplify same_name()
+  pinctrl: renesas: checker: Add pin group sharing checks
+  pinctrl: renesas: checker: Validate bias configs consistency
+  pinctrl: renesas: checker: Validate drive strength configs consistency
+  pinctrl: renesas: checker: Validate I/O voltage configs consistency
+  pinctrl: renesas: checker: Check bias pin conflicts
+  pinctrl: renesas: checker: Check drive pin conflicts
+
+ drivers/pinctrl/renesas/core.c         | 208 ++++++++++++++++++++++---
+ drivers/pinctrl/renesas/pfc-r8a73a4.c  |   4 +-
+ drivers/pinctrl/renesas/pfc-r8a7740.c  |   6 +-
+ drivers/pinctrl/renesas/pfc-r8a77470.c |   3 +-
+ drivers/pinctrl/renesas/pfc-r8a7790.c  |   2 +-
+ drivers/pinctrl/renesas/pfc-r8a7791.c  |   2 +-
+ drivers/pinctrl/renesas/pfc-r8a7794.c  |   2 +-
+ drivers/pinctrl/renesas/pfc-r8a77950.c |   3 +-
+ drivers/pinctrl/renesas/pfc-r8a77951.c |   3 +-
+ drivers/pinctrl/renesas/pfc-r8a7796.c  |   3 +-
+ drivers/pinctrl/renesas/pfc-r8a77965.c |   3 +-
+ drivers/pinctrl/renesas/pfc-r8a77970.c |   3 +-
+ drivers/pinctrl/renesas/pfc-r8a77980.c |   3 +-
+ drivers/pinctrl/renesas/pfc-r8a77990.c |   3 +-
+ drivers/pinctrl/renesas/pfc-r8a77995.c |   4 +-
+ drivers/pinctrl/renesas/pfc-r8a779a0.c |   3 +-
+ drivers/pinctrl/renesas/pfc-sh73a0.c   |   4 +-
+ drivers/pinctrl/renesas/pinctrl.c      |  24 +--
+ drivers/pinctrl/renesas/sh_pfc.h       |   6 +-
+ 19 files changed, 227 insertions(+), 62 deletions(-)
+
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
