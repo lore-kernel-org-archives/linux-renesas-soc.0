@@ -2,160 +2,106 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB0BC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B283C43217
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348863AbhLWOmP (ORCPT
+        id S1348875AbhLWOmQ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:42:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48956 "EHLO
+        Thu, 23 Dec 2021 09:42:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243895AbhLWOmP (ORCPT
+        with ESMTP id S1348862AbhLWOmP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 23 Dec 2021 09:42:15 -0500
 Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E4A9C061401
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 248AAC06175E
         for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:42:14 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a9f6:6306:a80a:fe6a])
         by albert.telenet-ops.be with bizsmtp
-        id ZqiC2600L1rdBcm06qiCq1; Thu, 23 Dec 2021 15:42:12 +0100
+        id ZqiD2600E1rdBcm06qiDqJ; Thu, 23 Dec 2021 15:42:13 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIK-006a8t-99; Thu, 23 Dec 2021 15:42:12 +0100
+        id 1n0PIK-006a95-Rz; Thu, 23 Dec 2021 15:42:12 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIJ-003rYG-NY; Thu, 23 Dec 2021 15:42:11 +0100
+        id 1n0PIK-003raw-EM; Thu, 23 Dec 2021 15:42:12 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/60] pinctrl: renesas: Share more pin group data
-Date:   Thu, 23 Dec 2021 15:41:10 +0100
-Message-Id: <cover.1640269757.git.geert+renesas@glider.be>
+Subject: [PATCH 23/60] pinctrl: renesas: r8a77995: Share MMC pin group data
+Date:   Thu, 23 Dec 2021 15:41:33 +0100
+Message-Id: <8da25ab2d65c31d9300b59d28b80c326aae9e787.1640269757.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1640269757.git.geert+renesas@glider.be>
+References: <cover.1640269757.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Linus,
+Pin groups mmc_data[14] are subsets of mmc_data8.
 
-It is fairly common for the pins in a pin group to be a subset of the
-pins in another pin group, e.g. in case of resizable buses.  Currently
-we have support for sharing pin data for VIN (video-in), where the
-number of data lanes used can be varied.
+This reduces kernel size by 40 bytes.
 
-This patch series, after a few customary cleanups, adds the
-infastructure for defining pin groups that share pin data with another
-group, either as an arbitrary subset, or as a resizable bus, and
-converts lots of existing pin groups to make use of this.  This not only
-saves memory, but also makes it easier to review future support for new
-SoCs and for new pin groups on existing SoCs.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/renesas/pfc-r8a77995.c | 26 +++++---------------------
+ 1 file changed, 5 insertions(+), 21 deletions(-)
 
-This reduces kernel size for a kernel including all Renesas pin control
-drivers by ca. 5 KiB.
-
-If accepted, I intend to queue this in renesas-pinctrl for v5.18.
-Thanks for your comments!
-
-Geert Uytterhoeven (60):
-  pinctrl: renesas: r8a77470: Reduce size for narrow VIN1 channel
-  pinctrl: renesas: Rename sh_pfc_soc_operations instances
-  pinctrl: renesas: Reformat macros defining struct initializers
-  pinctrl: renesas: Rename SH_PFC_PIN_GROUP{,_ALIAS} args
-  pinctrl: renesas: Add generic support for pin group subsets
-  pinctrl: renesas: Add generic support for resizable buses
-  pinctrl: renesas: r8a7740: Share BSC pin group data
-  pinctrl: renesas: emev2: Share CF pin group data
-  pinctrl: renesas: r8a7791: Share HSCIF1 pin group data
-  pinctrl: renesas: sh73a0: Share KEYIN pin group data
-  pinctrl: renesas: r8a7740: Share LCD pin group data
-  pinctrl: renesas: sh73a0: Share LCD pin group data
-  pinctrl: renesas: r8a73a4: Share MMC pin group data
-  pinctrl: renesas: r8a7740: Share MMC pin group data
-  pinctrl: renesas: r8a77470: Share MMC pin group data
-  pinctrl: renesas: r8a7778: Share MMC pin group data
-  pinctrl: renesas: r8a7779: Share MMC pin group data
-  pinctrl: renesas: r8a7790: Share MMC pin group data
-  pinctrl: renesas: r8a7791: Share MMC pin group data
-  pinctrl: renesas: r8a7794: Share MMC pin group data
-  pinctrl: renesas: r8a77970: Share MMC pin group data
-  pinctrl: renesas: r8a77980: Share MMC pin group data
-  pinctrl: renesas: r8a77995: Share MMC pin group data
-  pinctrl: renesas: r8a779a0: Share MMC pin group data
-  pinctrl: renesas: sh73a0: Share MMC pin group data
-  pinctrl: renesas: r8a77470: Share QSPI pin group data
-  pinctrl: renesas: r8a7790: Share QSPI pin group data
-  pinctrl: renesas: r8a7791: Share QSPI pin group data
-  pinctrl: renesas: r8a7792: Share QSPI pin group data
-  pinctrl: renesas: r8a7794: Share QSPI pin group data
-  pinctrl: renesas: r8a77950: Share QSPI pin group data
-  pinctrl: renesas: r8a77951: Share QSPI pin group data
-  pinctrl: renesas: r8a77965: Share QSPI pin group data
-  pinctrl: renesas: r8a7796: Share QSPI pin group data
-  pinctrl: renesas: r8a77990: Share QSPI pin group data
-  pinctrl: renesas: r8a779a0: Share QSPI pin group data
-  pinctrl: renesas: r8a77970: Share RPC pin group data
-  pinctrl: renesas: r8a77980: Share RPC pin group data
-  pinctrl: renesas: r8a73a4: Share SDHI pin group data
-  pinctrl: renesas: r8a7740: Share SDHI pin group data
-  pinctrl: renesas: r8a77470: Share SDHI pin group data
-  pinctrl: renesas: r8a7778: Share SDHI pin group data
-  pinctrl: renesas: r8a7779: Share SDHI pin group data
-  pinctrl: renesas: r8a7790: Share SDHI pin group data
-  pinctrl: renesas: r8a7791: Share SDHI pin group data
-  pinctrl: renesas: r8a7792: Share SDHI pin group data
-  pinctrl: renesas: r8a7794: Share SDHI pin group data
-  pinctrl: renesas: r8a77950: Share SDHI pin group data
-  pinctrl: renesas: r8a77951: Share SDHI pin group data
-  pinctrl: renesas: r8a77965: Share SDHI pin group data
-  pinctrl: renesas: r8a7796: Share SDHI pin group data
-  pinctrl: renesas: r8a77990: Share SDHI pin group data
-  pinctrl: renesas: sh73a0: Share SDHI pin group data
-  pinctrl: renesas: emev2: Share SDI pin group data
-  pinctrl: renesas: r8a7790: Share USB1 pin group data
-  pinctrl: renesas: r8a7790: Share more VIN pin group data
-  pinctrl: renesas: r8a77951: Share more VIN pin group data
-  pinctrl: renesas: r8a7796: Share more VIN pin group data
-  pinctrl: renesas: r8a77965: Share more VIN pin group data
-  pinctrl: renesas: r8a77990: Share more VIN pin group data
-
- drivers/pinctrl/renesas/pfc-emev2.c    |  71 +---
- drivers/pinctrl/renesas/pfc-r8a73a4.c  |  93 ++---
- drivers/pinctrl/renesas/pfc-r8a7740.c  | 276 +++-----------
- drivers/pinctrl/renesas/pfc-r8a77470.c | 237 +++++-------
- drivers/pinctrl/renesas/pfc-r8a7778.c  |  69 ++--
- drivers/pinctrl/renesas/pfc-r8a7779.c  | 110 ++----
- drivers/pinctrl/renesas/pfc-r8a7790.c  | 483 ++++++++++---------------
- drivers/pinctrl/renesas/pfc-r8a7791.c  | 285 ++++++---------
- drivers/pinctrl/renesas/pfc-r8a7792.c  | 446 +++++++++++------------
- drivers/pinctrl/renesas/pfc-r8a7794.c  | 209 ++++-------
- drivers/pinctrl/renesas/pfc-r8a77950.c | 116 ++----
- drivers/pinctrl/renesas/pfc-r8a77951.c | 310 ++++++----------
- drivers/pinctrl/renesas/pfc-r8a7796.c  | 312 ++++++----------
- drivers/pinctrl/renesas/pfc-r8a77965.c | 330 ++++++-----------
- drivers/pinctrl/renesas/pfc-r8a77970.c | 162 +++------
- drivers/pinctrl/renesas/pfc-r8a77980.c | 190 ++++------
- drivers/pinctrl/renesas/pfc-r8a77990.c | 308 ++++++----------
- drivers/pinctrl/renesas/pfc-r8a77995.c |  98 ++---
- drivers/pinctrl/renesas/pfc-r8a779a0.c |  60 +--
- drivers/pinctrl/renesas/pfc-sh73a0.c   | 265 +++-----------
- drivers/pinctrl/renesas/sh_pfc.h       | 161 ++++-----
- 21 files changed, 1536 insertions(+), 3055 deletions(-)
-
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77995.c b/drivers/pinctrl/renesas/pfc-r8a77995.c
+index b086c7501472afa2..c3106fd040d90ae4 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77995.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77995.c
+@@ -1258,30 +1258,14 @@ static const unsigned int i2c3_b_mux[] = {
+ };
+ 
+ /* - MMC ------------------------------------------------------------------- */
+-static const unsigned int mmc_data1_pins[] = {
+-	/* D0 */
+-	RCAR_GP_PIN(3, 2),
+-};
+-static const unsigned int mmc_data1_mux[] = {
+-	MMC_D0_MARK,
+-};
+-static const unsigned int mmc_data4_pins[] = {
+-	/* D[0:3] */
+-	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3),
+-	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
+-};
+-static const unsigned int mmc_data4_mux[] = {
+-	MMC_D0_MARK, MMC_D1_MARK,
+-	MMC_D2_MARK, MMC_D3_MARK,
+-};
+-static const unsigned int mmc_data8_pins[] = {
++static const unsigned int mmc_data_pins[] = {
+ 	/* D[0:7] */
+ 	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3),
+ 	RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
+ 	RCAR_GP_PIN(3, 6), RCAR_GP_PIN(3, 7),
+ 	RCAR_GP_PIN(3, 8), RCAR_GP_PIN(3, 9),
+ };
+-static const unsigned int mmc_data8_mux[] = {
++static const unsigned int mmc_data_mux[] = {
+ 	MMC_D0_MARK, MMC_D1_MARK,
+ 	MMC_D2_MARK, MMC_D3_MARK,
+ 	MMC_D4_MARK, MMC_D5_MARK,
+@@ -2045,9 +2029,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(i2c2_b),
+ 	SH_PFC_PIN_GROUP(i2c3_a),
+ 	SH_PFC_PIN_GROUP(i2c3_b),
+-	SH_PFC_PIN_GROUP(mmc_data1),
+-	SH_PFC_PIN_GROUP(mmc_data4),
+-	SH_PFC_PIN_GROUP(mmc_data8),
++	BUS_DATA_PIN_GROUP(mmc_data, 1),
++	BUS_DATA_PIN_GROUP(mmc_data, 4),
++	BUS_DATA_PIN_GROUP(mmc_data, 8),
+ 	SH_PFC_PIN_GROUP(mmc_ctrl),
+ 	SH_PFC_PIN_GROUP(msiof0_clk),
+ 	SH_PFC_PIN_GROUP(msiof0_sync),
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
