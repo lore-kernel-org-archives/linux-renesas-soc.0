@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A60C4167D
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A13C43217
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348916AbhLWOmR (ORCPT
+        id S1348971AbhLWOmT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:42:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48978 "EHLO
+        Thu, 23 Dec 2021 09:42:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348865AbhLWOmP (ORCPT
+        with ESMTP id S231823AbhLWOmP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 23 Dec 2021 09:42:15 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6019AC061401
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F79AC061761
         for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:42:15 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a9f6:6306:a80a:fe6a])
-        by albert.telenet-ops.be with bizsmtp
-        id ZqiD2600F1rdBcm06qiDqH; Thu, 23 Dec 2021 15:42:13 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id ZqiC2600h1rdBcm06qiDac; Thu, 23 Dec 2021 15:42:13 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIK-006a91-RD; Thu, 23 Dec 2021 15:42:12 +0100
+        id 1n0PIK-006a8u-I0; Thu, 23 Dec 2021 15:42:12 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIK-003rc7-OI; Thu, 23 Dec 2021 15:42:12 +0100
+        id 1n0PIJ-003rYK-Os; Thu, 23 Dec 2021 15:42:11 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 31/60] pinctrl: renesas: r8a77950: Share QSPI pin group data
-Date:   Thu, 23 Dec 2021 15:41:41 +0100
-Message-Id: <6d9de5b50bbad0c7b22f08d241a23c25e487c102.1640269757.git.geert+renesas@glider.be>
+Subject: [PATCH 01/60] pinctrl: renesas: r8a77470: Reduce size for narrow VIN1 channel
+Date:   Thu, 23 Dec 2021 15:41:11 +0100
+Message-Id: <52716fa89139f6f92592633edb52804d4c5e18f0.1640269757.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640269757.git.geert+renesas@glider.be>
 References: <cover.1640269757.git.geert+renesas@glider.be>
@@ -43,77 +43,45 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Pin groups qspi[01]_data2 are subsets of qspi[01]_data4.
+The second video-in channel on RZ/G1C has only 12 data lanes, but the
+pin control driver uses the vin_data union, which is meant for 24 data
+lanes, thus wasting space.
 
-This reduces kernel size by 32 bytes.
+Fix this by using the vin_data12 union instead.
 
+This reduces kernel size by 96 bytes.
+
+Fixes: 50f3f2d73e3426ba ("pinctrl: sh-pfc: Reduce kernel size for narrow VIN channels")
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a77950.c | 30 +++++++-------------------
- 1 file changed, 8 insertions(+), 22 deletions(-)
+All other Renesas pin control drivers were fixed, but RZ/G1C was
+forgotten, as RZ/G1C video-in support went in just before these fixes.
+---
+ drivers/pinctrl/renesas/pfc-r8a77470.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a77950.c b/drivers/pinctrl/renesas/pfc-r8a77950.c
-index ea10dfe8726ab4fe..b6646e74be60a502 100644
---- a/drivers/pinctrl/renesas/pfc-r8a77950.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a77950.c
-@@ -3140,18 +3140,11 @@ static const unsigned int qspi0_ctrl_pins[] = {
- static const unsigned int qspi0_ctrl_mux[] = {
- 	QSPI0_SPCLK_MARK, QSPI0_SSL_MARK,
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77470.c b/drivers/pinctrl/renesas/pfc-r8a77470.c
+index e6e5487691c16f35..cf7153d06a953863 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77470.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77470.c
+@@ -2140,7 +2140,7 @@ static const unsigned int vin0_clk_mux[] = {
+ 	VI0_CLK_MARK,
  };
--static const unsigned int qspi0_data2_pins[] = {
--	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1 */
--	PIN_QSPI0_MOSI_IO0, PIN_QSPI0_MISO_IO1,
--};
--static const unsigned int qspi0_data2_mux[] = {
--	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
--};
--static const unsigned int qspi0_data4_pins[] = {
-+static const unsigned int qspi0_data_pins[] = {
- 	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1, QSPI0_IO2, QSPI0_IO3 */
- 	PIN_QSPI0_MOSI_IO0, PIN_QSPI0_MISO_IO1, PIN_QSPI0_IO2, PIN_QSPI0_IO3,
+ /* - VIN1 ------------------------------------------------------------------- */
+-static const union vin_data vin1_data_pins = {
++static const union vin_data12 vin1_data_pins = {
+ 	.data12 = {
+ 		RCAR_GP_PIN(3,  1), RCAR_GP_PIN(3, 2),
+ 		RCAR_GP_PIN(3,  3), RCAR_GP_PIN(3, 4),
+@@ -2150,7 +2150,7 @@ static const union vin_data vin1_data_pins = {
+ 		RCAR_GP_PIN(3, 15), RCAR_GP_PIN(3, 16),
+ 	},
  };
--static const unsigned int qspi0_data4_mux[] = {
-+static const unsigned int qspi0_data_mux[] = {
- 	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
- 	QSPI0_IO2_MARK, QSPI0_IO3_MARK,
- };
-@@ -3163,18 +3156,11 @@ static const unsigned int qspi1_ctrl_pins[] = {
- static const unsigned int qspi1_ctrl_mux[] = {
- 	QSPI1_SPCLK_MARK, QSPI1_SSL_MARK,
- };
--static const unsigned int qspi1_data2_pins[] = {
--	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1 */
--	PIN_QSPI1_MOSI_IO0, PIN_QSPI1_MISO_IO1,
--};
--static const unsigned int qspi1_data2_mux[] = {
--	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
--};
--static const unsigned int qspi1_data4_pins[] = {
-+static const unsigned int qspi1_data_pins[] = {
- 	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1, QSPI1_IO2, QSPI1_IO3 */
- 	PIN_QSPI1_MOSI_IO0, PIN_QSPI1_MISO_IO1, PIN_QSPI1_IO2, PIN_QSPI1_IO3,
- };
--static const unsigned int qspi1_data4_mux[] = {
-+static const unsigned int qspi1_data_mux[] = {
- 	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
- 	QSPI1_IO2_MARK, QSPI1_IO3_MARK,
- };
-@@ -4103,11 +4089,11 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(pwm6_a),
- 	SH_PFC_PIN_GROUP(pwm6_b),
- 	SH_PFC_PIN_GROUP(qspi0_ctrl),
--	SH_PFC_PIN_GROUP(qspi0_data2),
--	SH_PFC_PIN_GROUP(qspi0_data4),
-+	BUS_DATA_PIN_GROUP(qspi0_data, 2),
-+	BUS_DATA_PIN_GROUP(qspi0_data, 4),
- 	SH_PFC_PIN_GROUP(qspi1_ctrl),
--	SH_PFC_PIN_GROUP(qspi1_data2),
--	SH_PFC_PIN_GROUP(qspi1_data4),
-+	BUS_DATA_PIN_GROUP(qspi1_data, 2),
-+	BUS_DATA_PIN_GROUP(qspi1_data, 4),
- 	SH_PFC_PIN_GROUP(sata0_devslp_a),
- 	SH_PFC_PIN_GROUP(sata0_devslp_b),
- 	SH_PFC_PIN_GROUP(scif0_data),
+-static const union vin_data vin1_data_mux = {
++static const union vin_data12 vin1_data_mux = {
+ 	.data12 = {
+ 		VI1_DATA0_MARK, VI1_DATA1_MARK,
+ 		VI1_DATA2_MARK, VI1_DATA3_MARK,
 -- 
 2.25.1
 
