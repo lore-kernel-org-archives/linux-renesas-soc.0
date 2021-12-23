@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E7EC352A1
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D27FC4167B
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239732AbhLWOmh (ORCPT
+        id S1348921AbhLWOmi (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:42:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49004 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348970AbhLWOmU (ORCPT
+        Thu, 23 Dec 2021 09:42:38 -0500
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:45194 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348953AbhLWOmU (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 23 Dec 2021 09:42:20 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0629EC061759
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:42:18 -0800 (PST)
-Received: from ramsan.of.borg ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id ZqiF260174C55Sk01qiFdb; Thu, 23 Dec 2021 15:42:15 +0100
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4JKXw73nFzzMqq96
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 15:42:15 +0100 (CET)
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a9f6:6306:a80a:fe6a])
+        by baptiste.telenet-ops.be with bizsmtp
+        id ZqiF2600N1rdBcm01qiFNK; Thu, 23 Dec 2021 15:42:15 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIM-006aCy-Pf; Thu, 23 Dec 2021 15:42:14 +0100
+        id 1n0PIM-006aAv-Uz; Thu, 23 Dec 2021 15:42:14 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIL-003rku-Oo; Thu, 23 Dec 2021 15:42:13 +0100
+        id 1n0PIL-003rfZ-5F; Thu, 23 Dec 2021 15:42:13 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 60/60] pinctrl: renesas: r8a77990: Share more VIN pin group data
-Date:   Thu, 23 Dec 2021 15:42:10 +0100
-Message-Id: <cfb71c90c19723ba2770f7512f138e4b17857141.1640269757.git.geert+renesas@glider.be>
+Subject: [PATCH 42/60] pinctrl: renesas: r8a7778: Share SDHI pin group data
+Date:   Thu, 23 Dec 2021 15:41:52 +0100
+Message-Id: <997df5b8a01657ede685c0869d73e4d6b71dce26.1640269757.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640269757.git.geert+renesas@glider.be>
 References: <cover.1640269757.git.geert+renesas@glider.be>
@@ -43,80 +43,124 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Pin group vin4_g8 is a subset of vin4_data24_a.
-Pin group vin5_high8 is a subset of vin5_data16_a.
+Pin group sdhi0_data1 is a subset of sdhi0_data4.
+Pin groups sdhi[12]_data1_[ab] are subsets of sdhi[12]_data4_[ab].
 
-This reduces kernel size by 128 bytes.
+This reduces kernel size by 40 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a77990.c | 32 ++------------------------
- 1 file changed, 2 insertions(+), 30 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a7778.c | 51 +++++++++++----------------
+ 1 file changed, 20 insertions(+), 31 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a77990.c b/drivers/pinctrl/renesas/pfc-r8a77990.c
-index 37db292b649a700b..68e82d4bc06ec663 100644
---- a/drivers/pinctrl/renesas/pfc-r8a77990.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a77990.c
-@@ -3636,20 +3636,6 @@ static const unsigned int vin4_data_b_mux[] = {
- 	VI4_DATA22_MARK,  VI4_DATA23_MARK,
- };
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7778.c b/drivers/pinctrl/renesas/pfc-r8a7778.c
+index 3b9bdd27cab98cc6..a24672ca3c01babe 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7778.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7778.c
+@@ -1522,7 +1522,6 @@ SCIF_PFC_DAT(scif5_data_b,	TX5_B,			RX5_B);
  
--static const unsigned int vin4_g8_pins[] = {
--	RCAR_GP_PIN(1, 4),  RCAR_GP_PIN(1, 5),
--	RCAR_GP_PIN(1, 6),  RCAR_GP_PIN(1, 7),
--	RCAR_GP_PIN(1, 3),  RCAR_GP_PIN(1, 10),
--	RCAR_GP_PIN(1, 13), RCAR_GP_PIN(1, 14),
--};
--
--static const unsigned int vin4_g8_mux[] = {
--	VI4_DATA8_MARK,  VI4_DATA9_MARK,
--	VI4_DATA10_MARK, VI4_DATA11_MARK,
--	VI4_DATA12_MARK, VI4_DATA13_MARK,
--	VI4_DATA14_MARK, VI4_DATA15_MARK,
--};
--
- static const unsigned int vin4_sync_pins[] = {
- 	/* HSYNC, VSYNC */
- 	RCAR_GP_PIN(2, 25), RCAR_GP_PIN(2, 24),
-@@ -3720,20 +3706,6 @@ static const unsigned int vin5_data8_b_mux[] = {
- 	VI5_DATA6_B_MARK,  VI5_DATA7_B_MARK,
- };
- 
--static const unsigned int vin5_high8_pins[] = {
--	RCAR_GP_PIN(0, 12), RCAR_GP_PIN(0, 13),
--	RCAR_GP_PIN(0, 9),  RCAR_GP_PIN(0, 11),
--	RCAR_GP_PIN(0, 8),  RCAR_GP_PIN(0, 10),
--	RCAR_GP_PIN(0, 2),  RCAR_GP_PIN(0, 3),
--};
--
--static const unsigned int vin5_high8_mux[] = {
--	VI5_DATA8_A_MARK,  VI5_DATA9_A_MARK,
--	VI5_DATA10_A_MARK, VI5_DATA11_A_MARK,
--	VI5_DATA12_A_MARK, VI5_DATA13_A_MARK,
--	VI5_DATA14_A_MARK, VI5_DATA15_A_MARK,
--};
--
- static const unsigned int vin5_sync_a_pins[] = {
- 	/* HSYNC_N, VSYNC_N */
- 	RCAR_GP_PIN(1, 8), RCAR_GP_PIN(1, 9),
-@@ -4021,7 +3993,7 @@ static const struct {
- 		SH_PFC_PIN_GROUP(vin4_data18_b),
- 		BUS_DATA_PIN_GROUP(vin4_data, 20, _b),
- 		BUS_DATA_PIN_GROUP(vin4_data, 24, _b),
--		SH_PFC_PIN_GROUP(vin4_g8),
-+		SH_PFC_PIN_GROUP_SUBSET(vin4_g8, vin4_data_a, 8, 8),
- 		SH_PFC_PIN_GROUP(vin4_sync),
- 		SH_PFC_PIN_GROUP(vin4_field),
- 		SH_PFC_PIN_GROUP(vin4_clkenb),
-@@ -4031,7 +4003,7 @@ static const struct {
- 		BUS_DATA_PIN_GROUP(vin5_data, 12, _a),
- 		BUS_DATA_PIN_GROUP(vin5_data, 16, _a),
- 		SH_PFC_PIN_GROUP(vin5_data8_b),
--		SH_PFC_PIN_GROUP(vin5_high8),
-+		SH_PFC_PIN_GROUP_SUBSET(vin5_high8, vin5_data_a, 8, 8),
- 		SH_PFC_PIN_GROUP(vin5_sync_a),
- 		SH_PFC_PIN_GROUP(vin5_field_a),
- 		SH_PFC_PIN_GROUP(vin5_clkenb_a),
+ /* - SDHI macro ------------------------------------------------------------- */
+ #define SDHI_PFC_PINS(name, args...)		SH_PFC_PINS(name, args)
+-#define SDHI_PFC_DAT1(name, d0)			SH_PFC_MUX1(name, d0)
+ #define SDHI_PFC_DAT4(name, d0, d1, d2, d3)	SH_PFC_MUX4(name, d0, d1, d2, d3)
+ #define SDHI_PFC_CTRL(name, clk, cmd)		SH_PFC_MUX2(name, clk, cmd)
+ #define SDHI_PFC_CDPN(name, cd)			SH_PFC_MUX1(name, cd)
+@@ -1533,11 +1532,9 @@ SDHI_PFC_PINS(sdhi0_cd,		RCAR_GP_PIN(3, 17));
+ SDHI_PFC_CDPN(sdhi0_cd,		SD0_CD);
+ SDHI_PFC_PINS(sdhi0_ctrl,	RCAR_GP_PIN(3, 11),	RCAR_GP_PIN(3, 12));
+ SDHI_PFC_CTRL(sdhi0_ctrl,	SD0_CLK,		SD0_CMD);
+-SDHI_PFC_PINS(sdhi0_data1,	RCAR_GP_PIN(3, 13));
+-SDHI_PFC_DAT1(sdhi0_data1,	SD0_DAT0);
+-SDHI_PFC_PINS(sdhi0_data4,	RCAR_GP_PIN(3, 13),	RCAR_GP_PIN(3, 14),
++SDHI_PFC_PINS(sdhi0_data,	RCAR_GP_PIN(3, 13),	RCAR_GP_PIN(3, 14),
+ 				RCAR_GP_PIN(3, 15),	RCAR_GP_PIN(3, 16));
+-SDHI_PFC_DAT4(sdhi0_data4,	SD0_DAT0,		SD0_DAT1,
++SDHI_PFC_DAT4(sdhi0_data,	SD0_DAT0,		SD0_DAT1,
+ 				SD0_DAT2,		SD0_DAT3);
+ SDHI_PFC_PINS(sdhi0_wp,		RCAR_GP_PIN(3, 18));
+ SDHI_PFC_WPPN(sdhi0_wp,		SD0_WP);
+@@ -1551,17 +1548,13 @@ SDHI_PFC_PINS(sdhi1_ctrl_a,	RCAR_GP_PIN(1, 5),	RCAR_GP_PIN(1, 6));
+ SDHI_PFC_CTRL(sdhi1_ctrl_a,	SD1_CLK_A,		SD1_CMD_A);
+ SDHI_PFC_PINS(sdhi1_ctrl_b,	RCAR_GP_PIN(1, 17),	RCAR_GP_PIN(1, 16));
+ SDHI_PFC_CTRL(sdhi1_ctrl_b,	SD1_CLK_B,		SD1_CMD_B);
+-SDHI_PFC_PINS(sdhi1_data1_a,	RCAR_GP_PIN(1, 7));
+-SDHI_PFC_DAT1(sdhi1_data1_a,	SD1_DAT0_A);
+-SDHI_PFC_PINS(sdhi1_data1_b,	RCAR_GP_PIN(1, 18));
+-SDHI_PFC_DAT1(sdhi1_data1_b,	SD1_DAT0_B);
+-SDHI_PFC_PINS(sdhi1_data4_a,	RCAR_GP_PIN(1, 7),	RCAR_GP_PIN(1, 8),
++SDHI_PFC_PINS(sdhi1_data_a,	RCAR_GP_PIN(1, 7),	RCAR_GP_PIN(1, 8),
+ 				RCAR_GP_PIN(0, 5),	RCAR_GP_PIN(0, 6));
+-SDHI_PFC_DAT4(sdhi1_data4_a,	SD1_DAT0_A,		SD1_DAT1_A,
++SDHI_PFC_DAT4(sdhi1_data_a,	SD1_DAT0_A,		SD1_DAT1_A,
+ 				SD1_DAT2_A,		SD1_DAT3_A);
+-SDHI_PFC_PINS(sdhi1_data4_b,	RCAR_GP_PIN(1, 18),	RCAR_GP_PIN(1, 19),
++SDHI_PFC_PINS(sdhi1_data_b,	RCAR_GP_PIN(1, 18),	RCAR_GP_PIN(1, 19),
+ 				RCAR_GP_PIN(1, 20),	RCAR_GP_PIN(1, 21));
+-SDHI_PFC_DAT4(sdhi1_data4_b,	SD1_DAT0_B,		SD1_DAT1_B,
++SDHI_PFC_DAT4(sdhi1_data_b,	SD1_DAT0_B,		SD1_DAT1_B,
+ 				SD1_DAT2_B,		SD1_DAT3_B);
+ SDHI_PFC_PINS(sdhi1_wp_a,	RCAR_GP_PIN(0, 31));
+ SDHI_PFC_WPPN(sdhi1_wp_a,	SD1_WP_A);
+@@ -1577,17 +1570,13 @@ SDHI_PFC_PINS(sdhi2_ctrl_a,	RCAR_GP_PIN(4, 17),	RCAR_GP_PIN(4, 18));
+ SDHI_PFC_CTRL(sdhi2_ctrl_a,	SD2_CLK_A,		SD2_CMD_A);
+ SDHI_PFC_PINS(sdhi2_ctrl_b,	RCAR_GP_PIN(4, 5),	RCAR_GP_PIN(4, 6));
+ SDHI_PFC_CTRL(sdhi2_ctrl_b,	SD2_CLK_B,		SD2_CMD_B);
+-SDHI_PFC_PINS(sdhi2_data1_a,	RCAR_GP_PIN(4, 19));
+-SDHI_PFC_DAT1(sdhi2_data1_a,	SD2_DAT0_A);
+-SDHI_PFC_PINS(sdhi2_data1_b,	RCAR_GP_PIN(4, 7));
+-SDHI_PFC_DAT1(sdhi2_data1_b,	SD2_DAT0_B);
+-SDHI_PFC_PINS(sdhi2_data4_a,	RCAR_GP_PIN(4, 19),	RCAR_GP_PIN(4, 20),
++SDHI_PFC_PINS(sdhi2_data_a,	RCAR_GP_PIN(4, 19),	RCAR_GP_PIN(4, 20),
+ 				RCAR_GP_PIN(4, 21),	RCAR_GP_PIN(4, 22));
+-SDHI_PFC_DAT4(sdhi2_data4_a,	SD2_DAT0_A,		SD2_DAT1_A,
++SDHI_PFC_DAT4(sdhi2_data_a,	SD2_DAT0_A,		SD2_DAT1_A,
+ 				SD2_DAT2_A,		SD2_DAT3_A);
+-SDHI_PFC_PINS(sdhi2_data4_b,	RCAR_GP_PIN(4, 7),	RCAR_GP_PIN(4, 8),
++SDHI_PFC_PINS(sdhi2_data_b,	RCAR_GP_PIN(4, 7),	RCAR_GP_PIN(4, 8),
+ 				RCAR_GP_PIN(3, 25),	RCAR_GP_PIN(3, 26));
+-SDHI_PFC_DAT4(sdhi2_data4_b,	SD2_DAT0_B,		SD2_DAT1_B,
++SDHI_PFC_DAT4(sdhi2_data_b,	SD2_DAT0_B,		SD2_DAT1_B,
+ 				SD2_DAT2_B,		SD2_DAT3_B);
+ SDHI_PFC_PINS(sdhi2_wp_a,	RCAR_GP_PIN(4, 24));
+ SDHI_PFC_WPPN(sdhi2_wp_a,	SD2_WP_A);
+@@ -1773,27 +1762,27 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(scif5_data_b),
+ 	SH_PFC_PIN_GROUP(sdhi0_cd),
+ 	SH_PFC_PIN_GROUP(sdhi0_ctrl),
+-	SH_PFC_PIN_GROUP(sdhi0_data1),
+-	SH_PFC_PIN_GROUP(sdhi0_data4),
++	BUS_DATA_PIN_GROUP(sdhi0_data, 1),
++	BUS_DATA_PIN_GROUP(sdhi0_data, 4),
+ 	SH_PFC_PIN_GROUP(sdhi0_wp),
+ 	SH_PFC_PIN_GROUP(sdhi1_cd_a),
+ 	SH_PFC_PIN_GROUP(sdhi1_cd_b),
+ 	SH_PFC_PIN_GROUP(sdhi1_ctrl_a),
+ 	SH_PFC_PIN_GROUP(sdhi1_ctrl_b),
+-	SH_PFC_PIN_GROUP(sdhi1_data1_a),
+-	SH_PFC_PIN_GROUP(sdhi1_data1_b),
+-	SH_PFC_PIN_GROUP(sdhi1_data4_a),
+-	SH_PFC_PIN_GROUP(sdhi1_data4_b),
++	BUS_DATA_PIN_GROUP(sdhi1_data, 1, _a),
++	BUS_DATA_PIN_GROUP(sdhi1_data, 1, _b),
++	BUS_DATA_PIN_GROUP(sdhi1_data, 4, _a),
++	BUS_DATA_PIN_GROUP(sdhi1_data, 4, _b),
+ 	SH_PFC_PIN_GROUP(sdhi1_wp_a),
+ 	SH_PFC_PIN_GROUP(sdhi1_wp_b),
+ 	SH_PFC_PIN_GROUP(sdhi2_cd_a),
+ 	SH_PFC_PIN_GROUP(sdhi2_cd_b),
+ 	SH_PFC_PIN_GROUP(sdhi2_ctrl_a),
+ 	SH_PFC_PIN_GROUP(sdhi2_ctrl_b),
+-	SH_PFC_PIN_GROUP(sdhi2_data1_a),
+-	SH_PFC_PIN_GROUP(sdhi2_data1_b),
+-	SH_PFC_PIN_GROUP(sdhi2_data4_a),
+-	SH_PFC_PIN_GROUP(sdhi2_data4_b),
++	BUS_DATA_PIN_GROUP(sdhi2_data, 1, _a),
++	BUS_DATA_PIN_GROUP(sdhi2_data, 1, _b),
++	BUS_DATA_PIN_GROUP(sdhi2_data, 4, _a),
++	BUS_DATA_PIN_GROUP(sdhi2_data, 4, _b),
+ 	SH_PFC_PIN_GROUP(sdhi2_wp_a),
+ 	SH_PFC_PIN_GROUP(sdhi2_wp_b),
+ 	SH_PFC_PIN_GROUP(ssi012_ctrl),
 -- 
 2.25.1
 
