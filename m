@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 105E9C4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E152DC43219
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:56:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239938AbhLWO4d (ORCPT
+        id S244005AbhLWO4e (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:56:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52274 "EHLO
+        Thu, 23 Dec 2021 09:56:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239971AbhLWO4c (ORCPT
+        with ESMTP id S239962AbhLWO4c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 23 Dec 2021 09:56:32 -0500
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7184C06175C
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E246AC06175B
         for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:56:30 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id ZqwV260044C55Sk01qwV2a; Thu, 23 Dec 2021 15:56:29 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id ZqwV2600H4C55Sk01qwVZ9; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW8-006aMM-SG; Thu, 23 Dec 2021 15:56:28 +0100
+        id 1n0PW8-006aML-Sp; Thu, 23 Dec 2021 15:56:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW8-003rxQ-62; Thu, 23 Dec 2021 15:56:28 +0100
+        id 1n0PW8-003rxJ-5G; Thu, 23 Dec 2021 15:56:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 09/10] pinctrl: renesas: checker: Check bias pin conflicts
-Date:   Thu, 23 Dec 2021 15:56:25 +0100
-Message-Id: <dbda76f342258f8029f0420fbe3f341a9abd6f01.1640270559.git.geert+renesas@glider.be>
+Subject: [PATCH 08/10] pinctrl: renesas: checker: Validate I/O voltage configs consistency
+Date:   Thu, 23 Dec 2021 15:56:24 +0100
+Message-Id: <de81cced01ae3f26d341177d66d4b8e918fbfb76.1640270559.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640270559.git.geert+renesas@glider.be>
 References: <cover.1640270559.git.geert+renesas@glider.be>
@@ -43,47 +43,55 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Check that there is only a single entry for each pin with pull-up and/or
-pull-down capabilities.
+Validate consistency of the pin control tables for pins with I/O voltage
+capabilities.  If a pin has I/O voltage register bits declarations
+through .pin_to_pocctrl(), the SH_PFC_PIN_CFG_IO_VOLTAGE flag should be
+set in the pin's configs, and vice versa.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/core.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+ drivers/pinctrl/renesas/core.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
 diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
-index ef88359ddf5c0f2a..1e0b21428e83c549 100644
+index 1789c96ad2aa2c79..ef88359ddf5c0f2a 100644
 --- a/drivers/pinctrl/renesas/core.c
 +++ b/drivers/pinctrl/renesas/core.c
-@@ -1161,6 +1161,28 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
- 	for (i = 0; bias_regs && (bias_regs[i].puen || bias_regs[i].pud); i++)
- 		sh_pfc_check_bias_reg(info, &bias_regs[i]);
+@@ -747,6 +747,7 @@ static unsigned int sh_pfc_errors __initdata;
+ static unsigned int sh_pfc_warnings __initdata;
+ static bool sh_pfc_bias_done __initdata;
+ static bool sh_pfc_drive_done __initdata;
++static bool sh_pfc_power_done __initdata;
+ static struct {
+ 	u32 reg;
+ 	u32 bits;
+@@ -1009,6 +1010,7 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 	sh_pfc_num_enums = 0;
+ 	sh_pfc_bias_done = false;
+ 	sh_pfc_drive_done = false;
++	sh_pfc_power_done = false;
  
-+	for (i = 0; bias_regs &&
-+		    (bias_regs[i / 32].puen || bias_regs[i / 32].pud); i++) {
-+		if (bias_regs[i / 32].pins[i % 32] == SH_PFC_PIN_NONE)
-+			continue;
+ 	/* Check pins */
+ 	for (i = 0; i < info->nr_pins; i++) {
+@@ -1082,6 +1084,18 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 						   pin->name);
+ 			}
+ 		}
 +
-+		for (j = 0; j < i; j++) {
-+			if (bias_regs[i / 32].pins[i % 32] !=
-+			    bias_regs[j / 32].pins[j % 32])
-+				continue;
-+
-+			if (bias_regs[i / 32].puen && bias_regs[j / 32].puen)
-+				sh_pfc_err("bias_reg 0x%x:%u/0x%x:%u: pin conflict\n",
-+					   bias_regs[i / 32].puen, i % 32,
-+					   bias_regs[j / 32].puen, j % 32);
-+			if (bias_regs[i / 32].pud && bias_regs[j / 32].pud)
-+				sh_pfc_err("bias_reg 0x%x:%u/0x%x:%u: pin conflict\n",
-+					   bias_regs[i / 32].pud, i % 32,
-+					   bias_regs[j / 32].pud, j % 32);
++		if (pin->configs & SH_PFC_PIN_CFG_IO_VOLTAGE) {
++			if (!info->ops || !info->ops->pin_to_pocctrl)
++				sh_pfc_err_once(power, "SH_PFC_PIN_CFG_IO_VOLTAGE flag set but .pin_to_pocctrl() not implemented\n");
++			else if (info->ops->pin_to_pocctrl(pin->pin, &x) < 0)
++				sh_pfc_err("pin %s: SH_PFC_PIN_CFG_IO_VOLTAGE set but invalid pin_to_pocctrl()\n",
++					   pin->name);
++		} else if (info->ops && info->ops->pin_to_pocctrl &&
++			   info->ops->pin_to_pocctrl(pin->pin, &x) >= 0) {
++			sh_pfc_warn("pin %s: SH_PFC_PIN_CFG_IO_VOLTAGE not set but valid pin_to_pocctrl()\n",
++				    pin->name);
 +		}
-+
-+	}
-+
- 	/* Check ioctrl registers */
- 	for (i = 0; info->ioctrl_regs && info->ioctrl_regs[i].reg; i++)
- 		sh_pfc_check_reg(drvname, info->ioctrl_regs[i].reg, U32_MAX);
+ 	}
+ 
+ 	/* Check groups and functions */
 -- 
 2.25.1
 
