@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B91B2C3526E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BEF4C4167D
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348886AbhLWOmZ (ORCPT
+        id S1348885AbhLWOmZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 23 Dec 2021 09:42:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49006 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48974 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348896AbhLWOmQ (ORCPT
+        with ESMTP id S1348900AbhLWOmQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 23 Dec 2021 09:42:16 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09FC2C061398
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C213C061761
         for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:42:15 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a9f6:6306:a80a:fe6a])
-        by andre.telenet-ops.be with bizsmtp
-        id ZqiD2600N1rdBcm01qiDPR; Thu, 23 Dec 2021 15:42:13 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id ZqiD260081rdBcm06qiDaj; Thu, 23 Dec 2021 15:42:14 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIK-006a95-T5; Thu, 23 Dec 2021 15:42:12 +0100
+        id 1n0PIK-006a91-QB; Thu, 23 Dec 2021 15:42:12 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIK-003rd8-Qw; Thu, 23 Dec 2021 15:42:12 +0100
+        id 1n0PIK-003rb3-FL; Thu, 23 Dec 2021 15:42:12 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 33/60] pinctrl: renesas: r8a77965: Share QSPI pin group data
-Date:   Thu, 23 Dec 2021 15:41:43 +0100
-Message-Id: <725d18018c5899b33a20b8f898a421547b0bb6c5.1640269757.git.geert+renesas@glider.be>
+Subject: [PATCH 24/60] pinctrl: renesas: r8a779a0: Share MMC pin group data
+Date:   Thu, 23 Dec 2021 15:41:34 +0100
+Message-Id: <cae71e970dbf49409673c2a7e2a74d549539a240.1640269757.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640269757.git.geert+renesas@glider.be>
 References: <cover.1640269757.git.geert+renesas@glider.be>
@@ -43,81 +43,65 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Pin groups qspi[01]_data2 are subsets of qspi[01]_data4.
+Pin groups mmc_data[14] are subsets of mmc_data8.
 
-This reduces kernel size by 32 bytes.
+This reduces kernel size by 40 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a77965.c | 30 +++++++-------------------
- 1 file changed, 8 insertions(+), 22 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a779a0.c | 26 +++++---------------------
+ 1 file changed, 5 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a77965.c b/drivers/pinctrl/renesas/pfc-r8a77965.c
-index b70bf9217cec9cd0..44568e549ff8cfe6 100644
---- a/drivers/pinctrl/renesas/pfc-r8a77965.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a77965.c
-@@ -3424,20 +3424,13 @@ static const unsigned int qspi0_ctrl_pins[] = {
- static const unsigned int qspi0_ctrl_mux[] = {
- 	QSPI0_SPCLK_MARK, QSPI0_SSL_MARK,
+diff --git a/drivers/pinctrl/renesas/pfc-r8a779a0.c b/drivers/pinctrl/renesas/pfc-r8a779a0.c
+index 81c0baea36f19ca1..161f5e09163a26a3 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a779a0.c
++++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
+@@ -2009,30 +2009,14 @@ static const unsigned int intc_ex_irq5_mux[] = {
  };
--static const unsigned int qspi0_data2_pins[] = {
--	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1 */
--	PIN_QSPI0_MOSI_IO0, PIN_QSPI0_MISO_IO1,
+ 
+ /* - MMC -------------------------------------------------------------------- */
+-static const unsigned int mmc_data1_pins[] = {
+-	/* MMC_SD_D0 */
+-	RCAR_GP_PIN(0, 19),
 -};
--static const unsigned int qspi0_data2_mux[] = {
--	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
+-static const unsigned int mmc_data1_mux[] = {
+-	MMC_SD_D0_MARK,
 -};
--static const unsigned int qspi0_data4_pins[] = {
-+static const unsigned int qspi0_data_pins[] = {
- 	/* QSPI0_MOSI_IO0, QSPI0_MISO_IO1 */
- 	PIN_QSPI0_MOSI_IO0, PIN_QSPI0_MISO_IO1,
- 	/* QSPI0_IO2, QSPI0_IO3 */
- 	PIN_QSPI0_IO2, PIN_QSPI0_IO3,
- };
--static const unsigned int qspi0_data4_mux[] = {
-+static const unsigned int qspi0_data_mux[] = {
- 	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
- 	QSPI0_IO2_MARK, QSPI0_IO3_MARK,
- };
-@@ -3449,20 +3442,13 @@ static const unsigned int qspi1_ctrl_pins[] = {
- static const unsigned int qspi1_ctrl_mux[] = {
- 	QSPI1_SPCLK_MARK, QSPI1_SSL_MARK,
- };
--static const unsigned int qspi1_data2_pins[] = {
--	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1 */
--	PIN_QSPI1_MOSI_IO0, PIN_QSPI1_MISO_IO1,
+-static const unsigned int mmc_data4_pins[] = {
+-	/* MMC_SD_D[0:3] */
+-	RCAR_GP_PIN(0, 19), RCAR_GP_PIN(0, 20),
+-	RCAR_GP_PIN(0, 21), RCAR_GP_PIN(0, 22),
 -};
--static const unsigned int qspi1_data2_mux[] = {
--	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
+-static const unsigned int mmc_data4_mux[] = {
+-	MMC_SD_D0_MARK, MMC_SD_D1_MARK,
+-	MMC_SD_D2_MARK, MMC_SD_D3_MARK,
 -};
--static const unsigned int qspi1_data4_pins[] = {
-+static const unsigned int qspi1_data_pins[] = {
- 	/* QSPI1_MOSI_IO0, QSPI1_MISO_IO1 */
- 	PIN_QSPI1_MOSI_IO0, PIN_QSPI1_MISO_IO1,
- 	/* QSPI1_IO2, QSPI1_IO3 */
- 	PIN_QSPI1_IO2, PIN_QSPI1_IO3,
+-static const unsigned int mmc_data8_pins[] = {
++static const unsigned int mmc_data_pins[] = {
+ 	/* MMC_SD_D[0:3], MMC_D[4:7] */
+ 	RCAR_GP_PIN(0, 19), RCAR_GP_PIN(0, 20),
+ 	RCAR_GP_PIN(0, 21), RCAR_GP_PIN(0, 22),
+ 	RCAR_GP_PIN(0, 24), RCAR_GP_PIN(0, 25),
+ 	RCAR_GP_PIN(0, 26), RCAR_GP_PIN(0, 27),
  };
--static const unsigned int qspi1_data4_mux[] = {
-+static const unsigned int qspi1_data_mux[] = {
- 	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
- 	QSPI1_IO2_MARK, QSPI1_IO3_MARK,
- };
-@@ -4662,11 +4648,11 @@ static const struct {
- 		SH_PFC_PIN_GROUP(pwm6_a),
- 		SH_PFC_PIN_GROUP(pwm6_b),
- 		SH_PFC_PIN_GROUP(qspi0_ctrl),
--		SH_PFC_PIN_GROUP(qspi0_data2),
--		SH_PFC_PIN_GROUP(qspi0_data4),
-+		BUS_DATA_PIN_GROUP(qspi0_data, 2),
-+		BUS_DATA_PIN_GROUP(qspi0_data, 4),
- 		SH_PFC_PIN_GROUP(qspi1_ctrl),
--		SH_PFC_PIN_GROUP(qspi1_data2),
--		SH_PFC_PIN_GROUP(qspi1_data4),
-+		BUS_DATA_PIN_GROUP(qspi1_data, 2),
-+		BUS_DATA_PIN_GROUP(qspi1_data, 4),
- 		SH_PFC_PIN_GROUP(sata0_devslp_a),
- 		SH_PFC_PIN_GROUP(sata0_devslp_b),
- 		SH_PFC_PIN_GROUP(scif0_data),
+-static const unsigned int mmc_data8_mux[] = {
++static const unsigned int mmc_data_mux[] = {
+ 	MMC_SD_D0_MARK, MMC_SD_D1_MARK,
+ 	MMC_SD_D2_MARK, MMC_SD_D3_MARK,
+ 	MMC_D4_MARK, MMC_D5_MARK,
+@@ -2715,9 +2699,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(intc_ex_irq4),
+ 	SH_PFC_PIN_GROUP(intc_ex_irq5),
+ 
+-	SH_PFC_PIN_GROUP(mmc_data1),
+-	SH_PFC_PIN_GROUP(mmc_data4),
+-	SH_PFC_PIN_GROUP(mmc_data8),
++	BUS_DATA_PIN_GROUP(mmc_data, 1),
++	BUS_DATA_PIN_GROUP(mmc_data, 4),
++	BUS_DATA_PIN_GROUP(mmc_data, 8),
+ 	SH_PFC_PIN_GROUP(mmc_ctrl),
+ 	SH_PFC_PIN_GROUP(mmc_cd),
+ 	SH_PFC_PIN_GROUP(mmc_wp),
 -- 
 2.25.1
 
