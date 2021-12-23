@@ -2,42 +2,41 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A42FCC4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478E3C4332F
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:52:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238918AbhLWOwM (ORCPT
+        id S237852AbhLWOwL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:52:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51308 "EHLO
+        Thu, 23 Dec 2021 09:52:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236473AbhLWOwL (ORCPT
+        with ESMTP id S236468AbhLWOwL (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 23 Dec 2021 09:52:11 -0500
-X-Greylist: delayed 594 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 23 Dec 2021 06:52:11 PST
 Received: from newton.telenet-ops.be (newton.telenet-ops.be [IPv6:2a02:1800:120:4::f00:d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43DB3C061401
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 538CFC061757
         for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:52:11 -0800 (PST)
 Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 4JKXw72kjDzMqbdb
+        by newton.telenet-ops.be (Postfix) with ESMTPS id 4JKXw76gV7zMqbfR
         for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 15:42:15 +0100 (CET)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a9f6:6306:a80a:fe6a])
+Received: from ramsan.of.borg ([84.195.186.194])
         by baptiste.telenet-ops.be with bizsmtp
-        id ZqiF2600F1rdBcm01qiFN9; Thu, 23 Dec 2021 15:42:15 +0100
+        id ZqiF2600f4C55Sk01qiFNZ; Thu, 23 Dec 2021 15:42:15 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIM-006aCk-GY; Thu, 23 Dec 2021 15:42:14 +0100
+        id 1n0PIM-006a9P-Rd; Thu, 23 Dec 2021 15:42:14 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIL-003rio-Jb; Thu, 23 Dec 2021 15:42:13 +0100
+        id 1n0PIK-003rae-CF; Thu, 23 Dec 2021 15:42:12 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 55/60] pinctrl: renesas: r8a7790: Share USB1 pin group data
-Date:   Thu, 23 Dec 2021 15:42:05 +0100
-Message-Id: <b9f37cf00064293b4b6f9068bda8c1ab819090f5.1640269757.git.geert+renesas@glider.be>
+Subject: [PATCH 21/60] pinctrl: renesas: r8a77970: Share MMC pin group data
+Date:   Thu, 23 Dec 2021 15:41:31 +0100
+Message-Id: <9354645f58c12a275923046fe913cfc9602ca710.1640269757.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640269757.git.geert+renesas@glider.be>
 References: <cover.1640269757.git.geert+renesas@glider.be>
@@ -47,68 +46,65 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Pin group usb0_ovc_vbus is a subset of usb0.
-Pin group usb1_pwen is a subset of usb1.
+Pin groups mmc_data[14] are subsets of mmc_data8.
 
-This reduces kernel size by 16 bytes.
+This reduces kernel size by 40 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a7790.c | 24 +++++-------------------
- 1 file changed, 5 insertions(+), 19 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a77970.c | 26 +++++---------------------
+ 1 file changed, 5 insertions(+), 21 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a7790.c b/drivers/pinctrl/renesas/pfc-r8a7790.c
-index d8f99f0843d6a301..26a696b5335c184d 100644
---- a/drivers/pinctrl/renesas/pfc-r8a7790.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a7790.c
-@@ -3609,18 +3609,11 @@ static const unsigned int tpu0_to3_mux[] = {
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77970.c b/drivers/pinctrl/renesas/pfc-r8a77970.c
+index 35370d2d2c7269fb..c842a9b2bf25e9b7 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77970.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77970.c
+@@ -1102,30 +1102,14 @@ static const unsigned int intc_ex_irq5_mux[] = {
  };
- /* - USB0 ------------------------------------------------------------------- */
- static const unsigned int usb0_pins[] = {
--	/* PWEN, OVC/VBUS */
--	RCAR_GP_PIN(5, 18), RCAR_GP_PIN(5, 19),
-+	/* OVC/VBUS, PWEN */
-+	RCAR_GP_PIN(5, 19), RCAR_GP_PIN(5, 18),
+ 
+ /* - MMC -------------------------------------------------------------------- */
+-static const unsigned int mmc_data1_pins[] = {
+-	/* D0 */
+-	RCAR_GP_PIN(3, 6),
+-};
+-static const unsigned int mmc_data1_mux[] = {
+-	MMC_D0_MARK,
+-};
+-static const unsigned int mmc_data4_pins[] = {
+-	/* D[0:3] */
+-	RCAR_GP_PIN(3, 6), RCAR_GP_PIN(3, 7),
+-	RCAR_GP_PIN(3, 8), RCAR_GP_PIN(3, 9),
+-};
+-static const unsigned int mmc_data4_mux[] = {
+-	MMC_D0_MARK, MMC_D1_MARK,
+-	MMC_D2_MARK, MMC_D3_MARK,
+-};
+-static const unsigned int mmc_data8_pins[] = {
++static const unsigned int mmc_data_pins[] = {
+ 	/* D[0:7] */
+ 	RCAR_GP_PIN(3, 6), RCAR_GP_PIN(3, 7),
+ 	RCAR_GP_PIN(3, 8), RCAR_GP_PIN(3, 9),
+ 	RCAR_GP_PIN(3, 11), RCAR_GP_PIN(3, 12),
+ 	RCAR_GP_PIN(3, 13), RCAR_GP_PIN(3, 14),
  };
- static const unsigned int usb0_mux[] = {
--	USB0_PWEN_MARK, USB0_OVC_VBUS_MARK,
--};
--static const unsigned int usb0_ovc_vbus_pins[] = {
--	/* OVC/VBUS */
--	RCAR_GP_PIN(5, 19),
--};
--static const unsigned int usb0_ovc_vbus_mux[] = {
--	USB0_OVC_VBUS_MARK,
-+	USB0_OVC_VBUS_MARK, USB0_PWEN_MARK,
- };
- /* - USB1 ------------------------------------------------------------------- */
- static const unsigned int usb1_pins[] = {
-@@ -3630,13 +3623,6 @@ static const unsigned int usb1_pins[] = {
- static const unsigned int usb1_mux[] = {
- 	USB1_PWEN_MARK, USB1_OVC_MARK,
- };
--static const unsigned int usb1_pwen_pins[] = {
--	/* PWEN */
--	RCAR_GP_PIN(5, 20),
--};
--static const unsigned int usb1_pwen_mux[] = {
--	USB1_PWEN_MARK,
--};
- /* - USB2 ------------------------------------------------------------------- */
- static const unsigned int usb2_pins[] = {
- 	/* PWEN, OVC */
-@@ -4315,9 +4301,9 @@ static const struct {
- 		SH_PFC_PIN_GROUP(tpu0_to2),
- 		SH_PFC_PIN_GROUP(tpu0_to3),
- 		SH_PFC_PIN_GROUP(usb0),
--		SH_PFC_PIN_GROUP(usb0_ovc_vbus),
-+		SH_PFC_PIN_GROUP_SUBSET(usb0_ovc_vbus, usb0, 0, 1),
- 		SH_PFC_PIN_GROUP(usb1),
--		SH_PFC_PIN_GROUP(usb1_pwen),
-+		SH_PFC_PIN_GROUP_SUBSET(usb1_pwen, usb1, 0, 1),
- 		SH_PFC_PIN_GROUP(usb2),
- 		BUS_DATA_PIN_GROUP(vin0_data, 24),
- 		BUS_DATA_PIN_GROUP(vin0_data, 20),
+-static const unsigned int mmc_data8_mux[] = {
++static const unsigned int mmc_data_mux[] = {
+ 	MMC_D0_MARK, MMC_D1_MARK,
+ 	MMC_D2_MARK, MMC_D3_MARK,
+ 	MMC_D4_MARK, MMC_D5_MARK,
+@@ -1775,9 +1759,9 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(intc_ex_irq3),
+ 	SH_PFC_PIN_GROUP(intc_ex_irq4),
+ 	SH_PFC_PIN_GROUP(intc_ex_irq5),
+-	SH_PFC_PIN_GROUP(mmc_data1),
+-	SH_PFC_PIN_GROUP(mmc_data4),
+-	SH_PFC_PIN_GROUP(mmc_data8),
++	BUS_DATA_PIN_GROUP(mmc_data, 1),
++	BUS_DATA_PIN_GROUP(mmc_data, 4),
++	BUS_DATA_PIN_GROUP(mmc_data, 8),
+ 	SH_PFC_PIN_GROUP(mmc_ctrl),
+ 	SH_PFC_PIN_GROUP(msiof0_clk),
+ 	SH_PFC_PIN_GROUP(msiof0_sync),
 -- 
 2.25.1
 
