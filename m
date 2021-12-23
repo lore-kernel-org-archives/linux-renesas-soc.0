@@ -2,112 +2,133 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78CC1C2BBC7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2718C4707A
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243954AbhLWO4f (ORCPT
+        id S243965AbhLWO4g (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:56:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52290 "EHLO
+        Thu, 23 Dec 2021 09:56:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52272 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243965AbhLWO4c (ORCPT
+        with ESMTP id S232601AbhLWO4c (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 23 Dec 2021 09:56:32 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44734C061792
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D6FCC06179C
         for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:56:31 -0800 (PST)
 Received: from ramsan.of.borg ([84.195.186.194])
-        by andre.telenet-ops.be with bizsmtp
-        id ZqwV2600c4C55Sk01qwVZM; Thu, 23 Dec 2021 15:56:29 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id ZqwV2600Z4C55Sk01qwV2n; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW9-006aMA-8X; Thu, 23 Dec 2021 15:56:29 +0100
+        id 1n0PW9-006aMI-9o; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PW7-003rwS-Tl; Thu, 23 Dec 2021 15:56:27 +0100
+        id 1n0PW8-003rxC-4R; Thu, 23 Dec 2021 15:56:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 00/10] pinctrl: renesas: checker: Miscellaneous improvements
-Date:   Thu, 23 Dec 2021 15:56:16 +0100
-Message-Id: <cover.1640270559.git.geert+renesas@glider.be>
+Subject: [PATCH 07/10] pinctrl: renesas: checker: Validate drive strength configs consistency
+Date:   Thu, 23 Dec 2021 15:56:23 +0100
+Message-Id: <0d5de01b5fe2c5fd23c3bea41077dc57ad105b9e.1640270559.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1640270559.git.geert+renesas@glider.be>
+References: <cover.1640270559.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Linus,
+Validate consistency of the pin control tables for pins with drive
+strength capabilities.  If a pin has drive strength register bits
+declarations in drive_regs[], the SH_PFC_PIN_CFG_DRIVE_STRENGTH flag
+should be set in the pin's configs, and vice versa.
 
-This patch series improves the Renesas pin control table validator
-(enabled when DEBUG is defined, e.g. with CONFIG_DEBUG_PINCTRL=y), by:
-  1. Suggesting which pin groups can share pins,
-  2. Adding more checks to catch common errors.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/pinctrl/renesas/core.c | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
-If you enable the checker, you may be disappointed by the (lack of)
-output.  Indeed, it is much easier to fix detected issues, than to get
-the checker code in a state that is suitable for upstream submission
-;-)
-Hence most issues detected have been fixed already for quite some time,
-or never arrived upstream in the first place. Recent fixes are [1] and
-[2].
-
-If accepted, I intend to queue this in renesas-pinctrl for v5.18.
-Thanks for your comments!
-
-[1] "[PATCH 00/60] pinctrl: renesas: Share more pin group data"
-    https://lore.kernel.org/r/cover.1640269757.git.geert+renesas@glider.be/
-[2] "[PATCH] pinctrl: renesas: r8a7794: Add range checking to
-     .pin_to_pocctrl()"
-    https://lore.kernel.org/r/d23767ad7152327654192d7191f4b8ae19493966.1640269510.git.geert+renesas@glider.be/
-
-Geert Uytterhoeven (10):
-  pinctrl: renesas: Remove unused pfc parameter from .pin_to_pocctrl()
-  pinctrl: renesas: Factor out .pin_to_portcr() address handling
-  pinctrl: renesas: Pass sh_pfc_soc_info to rcar_pin_to_bias_reg()
-  pinctrl: renesas: checker: Simplify same_name()
-  pinctrl: renesas: checker: Add pin group sharing checks
-  pinctrl: renesas: checker: Validate bias configs consistency
-  pinctrl: renesas: checker: Validate drive strength configs consistency
-  pinctrl: renesas: checker: Validate I/O voltage configs consistency
-  pinctrl: renesas: checker: Check bias pin conflicts
-  pinctrl: renesas: checker: Check drive pin conflicts
-
- drivers/pinctrl/renesas/core.c         | 208 ++++++++++++++++++++++---
- drivers/pinctrl/renesas/pfc-r8a73a4.c  |   4 +-
- drivers/pinctrl/renesas/pfc-r8a7740.c  |   6 +-
- drivers/pinctrl/renesas/pfc-r8a77470.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a7790.c  |   2 +-
- drivers/pinctrl/renesas/pfc-r8a7791.c  |   2 +-
- drivers/pinctrl/renesas/pfc-r8a7794.c  |   2 +-
- drivers/pinctrl/renesas/pfc-r8a77950.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77951.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a7796.c  |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77965.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77970.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77980.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77990.c |   3 +-
- drivers/pinctrl/renesas/pfc-r8a77995.c |   4 +-
- drivers/pinctrl/renesas/pfc-r8a779a0.c |   3 +-
- drivers/pinctrl/renesas/pfc-sh73a0.c   |   4 +-
- drivers/pinctrl/renesas/pinctrl.c      |  24 +--
- drivers/pinctrl/renesas/sh_pfc.h       |   6 +-
- 19 files changed, 227 insertions(+), 62 deletions(-)
-
+diff --git a/drivers/pinctrl/renesas/core.c b/drivers/pinctrl/renesas/core.c
+index dce511a22b31de3d..1789c96ad2aa2c79 100644
+--- a/drivers/pinctrl/renesas/core.c
++++ b/drivers/pinctrl/renesas/core.c
+@@ -746,6 +746,7 @@ static int sh_pfc_suspend_init(struct sh_pfc *pfc) { return 0; }
+ static unsigned int sh_pfc_errors __initdata;
+ static unsigned int sh_pfc_warnings __initdata;
+ static bool sh_pfc_bias_done __initdata;
++static bool sh_pfc_drive_done __initdata;
+ static struct {
+ 	u32 reg;
+ 	u32 bits;
+@@ -901,6 +902,8 @@ static void __init sh_pfc_check_cfg_reg(const char *drvname,
+ static void __init sh_pfc_check_drive_reg(const struct sh_pfc_soc_info *info,
+ 					  const struct pinmux_drive_reg *drive)
+ {
++	const char *drvname = info->name;
++	const struct sh_pfc_pin *pin;
+ 	unsigned int i;
+ 
+ 	for (i = 0; i < ARRAY_SIZE(drive->fields); i++) {
+@@ -913,7 +916,10 @@ static void __init sh_pfc_check_drive_reg(const struct sh_pfc_soc_info *info,
+ 				 GENMASK(field->offset + field->size - 1,
+ 					 field->offset));
+ 
+-		sh_pfc_find_pin(info, drive->reg, field->pin);
++		pin = sh_pfc_find_pin(info, drive->reg, field->pin);
++		if (pin && !(pin->configs & SH_PFC_PIN_CFG_DRIVE_STRENGTH))
++			sh_pfc_err("drive_reg 0x%x: field %u: pin %s lacks SH_PFC_PIN_CFG_DRIVE_STRENGTH flag\n",
++				   drive->reg, i, pin->name);
+ 	}
+ }
+ 
+@@ -992,6 +998,7 @@ static void __init sh_pfc_compare_groups(const char *drvname,
+ 
+ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ {
++	const struct pinmux_drive_reg *drive_regs = info->drive_regs;
+ 	const struct pinmux_bias_reg *bias_regs = info->bias_regs;
+ 	const char *drvname = info->name;
+ 	unsigned int *refcnts;
+@@ -1001,6 +1008,7 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 	sh_pfc_num_regs = 0;
+ 	sh_pfc_num_enums = 0;
+ 	sh_pfc_bias_done = false;
++	sh_pfc_drive_done = false;
+ 
+ 	/* Check pins */
+ 	for (i = 0; i < info->nr_pins; i++) {
+@@ -1054,6 +1062,26 @@ static void __init sh_pfc_check_info(const struct sh_pfc_soc_info *info)
+ 				sh_pfc_err("pin %s: SH_PFC_PIN_CFG_PULL_DOWN flag set but pin not in bias_regs\n",
+ 					   pin->name);
+ 		}
++
++		if (pin->configs & SH_PFC_PIN_CFG_DRIVE_STRENGTH) {
++			if (!drive_regs) {
++				sh_pfc_err_once(drive, "SH_PFC_PIN_CFG_DRIVE_STRENGTH flag set but drive_regs missing\n");
++			} else {
++				for (j = 0; drive_regs[j / 8].reg; j++) {
++					if (!drive_regs[j / 8].fields[j % 8].pin &&
++					    !drive_regs[j / 8].fields[j % 8].offset &&
++					    !drive_regs[j / 8].fields[j % 8].size)
++						continue;
++
++					if (drive_regs[j / 8].fields[j % 8].pin == pin->pin)
++						break;
++				}
++
++				if (!drive_regs[j / 8].reg)
++					sh_pfc_err("pin %s: SH_PFC_PIN_CFG_DRIVE_STRENGTH flag set but not in drive_regs\n",
++						   pin->name);
++			}
++		}
+ 	}
+ 
+ 	/* Check groups and functions */
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
