@@ -2,123 +2,131 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6DD3C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73122C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231679AbhLWOwM (ORCPT
+        id S243950AbhLWO4c (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:52:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51312 "EHLO
+        Thu, 23 Dec 2021 09:56:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236529AbhLWOwL (ORCPT
+        with ESMTP id S239935AbhLWO4b (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 23 Dec 2021 09:52:11 -0500
-Received: from newton.telenet-ops.be (newton.telenet-ops.be [IPv6:2a02:1800:120:4::f00:d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C75FC061756
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:52:11 -0800 (PST)
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 4JKXw727dczMqZy0
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 15:42:15 +0100 (CET)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a9f6:6306:a80a:fe6a])
-        by andre.telenet-ops.be with bizsmtp
-        id ZqiF2600D1rdBcm01qiFQC; Thu, 23 Dec 2021 15:42:15 +0100
+        Thu, 23 Dec 2021 09:56:31 -0500
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90403C061757
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:56:30 -0800 (PST)
+Received: from ramsan.of.borg ([84.195.186.194])
+        by baptiste.telenet-ops.be with bizsmtp
+        id ZqwU2600N4C55Sk01qwUoK; Thu, 23 Dec 2021 15:56:29 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIL-006aAc-UZ; Thu, 23 Dec 2021 15:42:13 +0100
+        id 1n0PW8-006aMD-Gk; Thu, 23 Dec 2021 15:56:28 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIK-003reh-Ta; Thu, 23 Dec 2021 15:42:12 +0100
+        id 1n0PW8-003rwk-0N; Thu, 23 Dec 2021 15:56:28 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 36/60] pinctrl: renesas: r8a779a0: Share QSPI pin group data
-Date:   Thu, 23 Dec 2021 15:41:46 +0100
-Message-Id: <bba05f9ac803ecd55c6c480fa139fa1a0d268d78.1640269757.git.geert+renesas@glider.be>
+Subject: [PATCH 03/10] pinctrl: renesas: Pass sh_pfc_soc_info to rcar_pin_to_bias_reg()
+Date:   Thu, 23 Dec 2021 15:56:19 +0100
+Message-Id: <3065a12dde606bacec9e5f14f10cabeaae75e265.1640270559.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1640269757.git.geert+renesas@glider.be>
-References: <cover.1640269757.git.geert+renesas@glider.be>
+In-Reply-To: <cover.1640270559.git.geert+renesas@glider.be>
+References: <cover.1640270559.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Pin groups qspi[01]_data2 are subsets of qspi[01]_data4.
+Currently rcar_pin_to_bias_reg() takes a struct sh_pfc pointer, which is
+only available after the pin control driver has been initialized,
+thus preventing the checker from calling this function for validating
+consistency of the pin control tables.
 
-This reduces kernel size by 32 bytes.
+Fix this by replacing the parameter by a struct sh_pfc_soc_info pointer.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a779a0.c | 30 +++++++-------------------
- 1 file changed, 8 insertions(+), 22 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a77995.c |  2 +-
+ drivers/pinctrl/renesas/pinctrl.c      | 14 +++++++-------
+ drivers/pinctrl/renesas/sh_pfc.h       |  2 +-
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a779a0.c b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-index 161f5e09163a26a3..463ebd6c6c70d931 100644
---- a/drivers/pinctrl/renesas/pfc-r8a779a0.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a779a0.c
-@@ -2368,19 +2368,12 @@ static const unsigned int qspi0_ctrl_pins[] = {
- static const unsigned int qspi0_ctrl_mux[] = {
- 	QSPI0_SPCLK_MARK, QSPI0_SSL_MARK,
- };
--static const unsigned int qspi0_data2_pins[] = {
--	/* MOSI_IO0, MISO_IO1 */
--	RCAR_GP_PIN(0, 1), RCAR_GP_PIN(0, 2),
--};
--static const unsigned int qspi0_data2_mux[] = {
--	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
--};
--static const unsigned int qspi0_data4_pins[] = {
-+static const unsigned int qspi0_data_pins[] = {
- 	/* MOSI_IO0, MISO_IO1, IO2, IO3 */
- 	RCAR_GP_PIN(0, 1), RCAR_GP_PIN(0, 2),
- 	RCAR_GP_PIN(0, 3), RCAR_GP_PIN(0, 4),
- };
--static const unsigned int qspi0_data4_mux[] = {
-+static const unsigned int qspi0_data_mux[] = {
- 	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
- 	QSPI0_IO2_MARK, QSPI0_IO3_MARK
- };
-@@ -2393,19 +2386,12 @@ static const unsigned int qspi1_ctrl_pins[] = {
- static const unsigned int qspi1_ctrl_mux[] = {
- 	QSPI1_SPCLK_MARK, QSPI1_SSL_MARK,
- };
--static const unsigned int qspi1_data2_pins[] = {
--	/* MOSI_IO0, MISO_IO1 */
--	RCAR_GP_PIN(0, 7), RCAR_GP_PIN(0, 8),
--};
--static const unsigned int qspi1_data2_mux[] = {
--	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
--};
--static const unsigned int qspi1_data4_pins[] = {
-+static const unsigned int qspi1_data_pins[] = {
- 	/* MOSI_IO0, MISO_IO1, IO2, IO3 */
- 	RCAR_GP_PIN(0, 7), RCAR_GP_PIN(0, 8),
- 	RCAR_GP_PIN(0, 9), RCAR_GP_PIN(0, 10),
- };
--static const unsigned int qspi1_data4_mux[] = {
-+static const unsigned int qspi1_data_mux[] = {
- 	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
- 	QSPI1_IO2_MARK, QSPI1_IO3_MARK
- };
-@@ -2751,11 +2737,11 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(pwm4),
+diff --git a/drivers/pinctrl/renesas/pfc-r8a77995.c b/drivers/pinctrl/renesas/pfc-r8a77995.c
+index e8c896f19f45e376..9fe6646bfafaf2b5 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a77995.c
++++ b/drivers/pinctrl/renesas/pfc-r8a77995.c
+@@ -3058,7 +3058,7 @@ r8a77995_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
+ 	const struct pinmux_bias_reg *reg;
+ 	unsigned int bit;
  
- 	SH_PFC_PIN_GROUP(qspi0_ctrl),
--	SH_PFC_PIN_GROUP(qspi0_data2),
--	SH_PFC_PIN_GROUP(qspi0_data4),
-+	BUS_DATA_PIN_GROUP(qspi0_data, 2),
-+	BUS_DATA_PIN_GROUP(qspi0_data, 4),
- 	SH_PFC_PIN_GROUP(qspi1_ctrl),
--	SH_PFC_PIN_GROUP(qspi1_data2),
--	SH_PFC_PIN_GROUP(qspi1_data4),
-+	BUS_DATA_PIN_GROUP(qspi1_data, 2),
-+	BUS_DATA_PIN_GROUP(qspi1_data, 4),
+-	reg = rcar_pin_to_bias_reg(pfc, pin, &bit);
++	reg = rcar_pin_to_bias_reg(pfc->info, pin, &bit);
+ 	if (!reg)
+ 		return reg;
  
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
+diff --git a/drivers/pinctrl/renesas/pinctrl.c b/drivers/pinctrl/renesas/pinctrl.c
+index f0c42c053f8e2460..1fa9431601fad209 100644
+--- a/drivers/pinctrl/renesas/pinctrl.c
++++ b/drivers/pinctrl/renesas/pinctrl.c
+@@ -835,16 +835,16 @@ int sh_pfc_register_pinctrl(struct sh_pfc *pfc)
+ }
+ 
+ const struct pinmux_bias_reg *
+-rcar_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
++rcar_pin_to_bias_reg(const struct sh_pfc_soc_info *info, unsigned int pin,
+ 		     unsigned int *bit)
+ {
+ 	unsigned int i, j;
+ 
+-	for (i = 0; pfc->info->bias_regs[i].puen || pfc->info->bias_regs[i].pud; i++) {
+-		for (j = 0; j < ARRAY_SIZE(pfc->info->bias_regs[i].pins); j++) {
+-			if (pfc->info->bias_regs[i].pins[j] == pin) {
++	for (i = 0; info->bias_regs[i].puen || info->bias_regs[i].pud; i++) {
++		for (j = 0; j < ARRAY_SIZE(info->bias_regs[i].pins); j++) {
++			if (info->bias_regs[i].pins[j] == pin) {
+ 				*bit = j;
+-				return &pfc->info->bias_regs[i];
++				return &info->bias_regs[i];
+ 			}
+ 		}
+ 	}
+@@ -859,7 +859,7 @@ unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin)
+ 	const struct pinmux_bias_reg *reg;
+ 	unsigned int bit;
+ 
+-	reg = rcar_pin_to_bias_reg(pfc, pin, &bit);
++	reg = rcar_pin_to_bias_reg(pfc->info, pin, &bit);
+ 	if (!reg)
+ 		return PIN_CONFIG_BIAS_DISABLE;
+ 
+@@ -885,7 +885,7 @@ void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
+ 	u32 enable, updown;
+ 	unsigned int bit;
+ 
+-	reg = rcar_pin_to_bias_reg(pfc, pin, &bit);
++	reg = rcar_pin_to_bias_reg(pfc->info, pin, &bit);
+ 	if (!reg)
+ 		return;
+ 
+diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
+index 7191c1c9ca959954..2bd96b28bb8b49c9 100644
+--- a/drivers/pinctrl/renesas/sh_pfc.h
++++ b/drivers/pinctrl/renesas/sh_pfc.h
+@@ -759,7 +759,7 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+  * Bias helpers
+  */
+ const struct pinmux_bias_reg *
+-rcar_pin_to_bias_reg(const struct sh_pfc *pfc, unsigned int pin,
++rcar_pin_to_bias_reg(const struct sh_pfc_soc_info *info, unsigned int pin,
+ 		     unsigned int *bit);
+ unsigned int rcar_pinmux_get_bias(struct sh_pfc *pfc, unsigned int pin);
+ void rcar_pinmux_set_bias(struct sh_pfc *pfc, unsigned int pin,
 -- 
 2.25.1
 
