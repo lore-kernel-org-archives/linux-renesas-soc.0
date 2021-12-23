@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D86E3C4167E
-	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFE2C4707E
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348883AbhLWOmV (ORCPT
+        id S1348857AbhLWOmW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 23 Dec 2021 09:42:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48992 "EHLO
+        Thu, 23 Dec 2021 09:42:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348881AbhLWOmQ (ORCPT
+        with ESMTP id S1348884AbhLWOmQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 23 Dec 2021 09:42:16 -0500
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7A8CC06179E
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4C47C06175F
         for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:42:15 -0800 (PST)
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a9f6:6306:a80a:fe6a])
-        by laurent.telenet-ops.be with bizsmtp
-        id ZqiD260091rdBcm01qiD0z; Thu, 23 Dec 2021 15:42:13 +0100
+Received: from ramsan.of.borg ([84.195.186.194])
+        by albert.telenet-ops.be with bizsmtp
+        id ZqiF2600C4C55Sk06qiFql; Thu, 23 Dec 2021 15:42:15 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIK-006a95-Qo; Thu, 23 Dec 2021 15:42:12 +0100
+        id 1n0PIL-006a9Q-My; Thu, 23 Dec 2021 15:42:13 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIK-003rZS-1l; Thu, 23 Dec 2021 15:42:12 +0100
+        id 1n0PIL-003rfn-6t; Thu, 23 Dec 2021 15:42:13 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 11/60] pinctrl: renesas: r8a7740: Share LCD pin group data
-Date:   Thu, 23 Dec 2021 15:41:21 +0100
-Message-Id: <2018113779b3084c4175b04bb32acf2de0557a37.1640269757.git.geert+renesas@glider.be>
+Subject: [PATCH 44/60] pinctrl: renesas: r8a7790: Share SDHI pin group data
+Date:   Thu, 23 Dec 2021 15:41:54 +0100
+Message-Id: <88a3c2b09d34f2a528ecaa1bd55b6a96e156f5b1.1640269757.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640269757.git.geert+renesas@glider.be>
 References: <cover.1640269757.git.geert+renesas@glider.be>
@@ -43,183 +43,135 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Pin groups lcd0_data{8,9,12,16,18} are subsets of lcd0_data24_0.
-Pin groups lcd1_data{8,9,12,16,18} are subsets of lcd1_data24.
+Pin groups sdhi[0-3]_data1 are subsets of sdhi[0-3]_data4.
 
-This reduces kernel size by 1008 bytes.
+This reduces kernel size by 32 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a7740.c | 130 +++-----------------------
- 1 file changed, 13 insertions(+), 117 deletions(-)
+ drivers/pinctrl/renesas/pfc-r8a7790.c | 60 +++++++--------------------
+ 1 file changed, 16 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a7740.c b/drivers/pinctrl/renesas/pfc-r8a7740.c
-index 0e20a0f0bb717f46..8534e0799527d243 100644
---- a/drivers/pinctrl/renesas/pfc-r8a7740.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a7740.c
-@@ -2031,58 +2031,6 @@ IRQC_PINS_MUX(31, 0, 41);
- IRQC_PINS_MUX(31, 1, 167);
- 
- /* - LCD0 ------------------------------------------------------------------- */
--static const unsigned int lcd0_data8_pins[] = {
--	/* D[0:7] */
--	58, 57, 56, 55, 54, 53, 52, 51,
--};
--static const unsigned int lcd0_data8_mux[] = {
--	LCD0_D0_MARK, LCD0_D1_MARK, LCD0_D2_MARK, LCD0_D3_MARK,
--	LCD0_D4_MARK, LCD0_D5_MARK, LCD0_D6_MARK, LCD0_D7_MARK,
--};
--static const unsigned int lcd0_data9_pins[] = {
--	/* D[0:8] */
--	58, 57, 56, 55, 54, 53, 52, 51,
--	50,
--};
--static const unsigned int lcd0_data9_mux[] = {
--	LCD0_D0_MARK, LCD0_D1_MARK, LCD0_D2_MARK, LCD0_D3_MARK,
--	LCD0_D4_MARK, LCD0_D5_MARK, LCD0_D6_MARK, LCD0_D7_MARK,
--	LCD0_D8_MARK,
--};
--static const unsigned int lcd0_data12_pins[] = {
--	/* D[0:11] */
--	58, 57, 56, 55, 54, 53, 52, 51,
--	50, 49, 48, 47,
--};
--static const unsigned int lcd0_data12_mux[] = {
--	LCD0_D0_MARK, LCD0_D1_MARK, LCD0_D2_MARK, LCD0_D3_MARK,
--	LCD0_D4_MARK, LCD0_D5_MARK, LCD0_D6_MARK, LCD0_D7_MARK,
--	LCD0_D8_MARK, LCD0_D9_MARK, LCD0_D10_MARK, LCD0_D11_MARK,
--};
--static const unsigned int lcd0_data16_pins[] = {
--	/* D[0:15] */
--	58, 57, 56, 55, 54, 53, 52, 51,
--	50, 49, 48, 47, 46, 45, 44, 43,
--};
--static const unsigned int lcd0_data16_mux[] = {
--	LCD0_D0_MARK, LCD0_D1_MARK, LCD0_D2_MARK, LCD0_D3_MARK,
--	LCD0_D4_MARK, LCD0_D5_MARK, LCD0_D6_MARK, LCD0_D7_MARK,
--	LCD0_D8_MARK, LCD0_D9_MARK, LCD0_D10_MARK, LCD0_D11_MARK,
--	LCD0_D12_MARK, LCD0_D13_MARK, LCD0_D14_MARK, LCD0_D15_MARK,
--};
--static const unsigned int lcd0_data18_pins[] = {
--	/* D[0:17] */
--	58, 57, 56, 55, 54, 53, 52, 51,
--	50, 49, 48, 47, 46, 45, 44, 43,
--	42, 41,
--};
--static const unsigned int lcd0_data18_mux[] = {
--	LCD0_D0_MARK, LCD0_D1_MARK, LCD0_D2_MARK, LCD0_D3_MARK,
--	LCD0_D4_MARK, LCD0_D5_MARK, LCD0_D6_MARK, LCD0_D7_MARK,
--	LCD0_D8_MARK, LCD0_D9_MARK, LCD0_D10_MARK, LCD0_D11_MARK,
--	LCD0_D12_MARK, LCD0_D13_MARK, LCD0_D14_MARK, LCD0_D15_MARK,
--	LCD0_D16_MARK, LCD0_D17_MARK,
--};
- static const unsigned int lcd0_data24_0_pins[] = {
- 	/* D[0:23] */
- 	58, 57, 56, 55, 54, 53, 52, 51,
-@@ -2149,65 +2097,13 @@ static const unsigned int lcd0_sys_mux[] = {
- 	LCD0_CS_MARK, LCD0_WR_MARK, LCD0_RD_MARK, LCD0_RS_MARK,
+diff --git a/drivers/pinctrl/renesas/pfc-r8a7790.c b/drivers/pinctrl/renesas/pfc-r8a7790.c
+index f24894071d78ac8c..d8f99f0843d6a301 100644
+--- a/drivers/pinctrl/renesas/pfc-r8a7790.c
++++ b/drivers/pinctrl/renesas/pfc-r8a7790.c
+@@ -3280,18 +3280,11 @@ static const unsigned int scif_clk_b_mux[] = {
+ 	SCIF_CLK_B_MARK,
  };
- /* - LCD1 ------------------------------------------------------------------- */
--static const unsigned int lcd1_data8_pins[] = {
--	/* D[0:7] */
--	4, 3, 2, 1, 0, 91, 92, 23,
+ /* - SDHI0 ------------------------------------------------------------------ */
+-static const unsigned int sdhi0_data1_pins[] = {
+-	/* D0 */
+-	RCAR_GP_PIN(3, 2),
 -};
--static const unsigned int lcd1_data8_mux[] = {
--	LCD1_D0_MARK, LCD1_D1_MARK, LCD1_D2_MARK, LCD1_D3_MARK,
--	LCD1_D4_MARK, LCD1_D5_MARK, LCD1_D6_MARK, LCD1_D7_MARK,
+-static const unsigned int sdhi0_data1_mux[] = {
+-	SD0_DAT0_MARK,
 -};
--static const unsigned int lcd1_data9_pins[] = {
--	/* D[0:8] */
--	4, 3, 2, 1, 0, 91, 92, 23,
--	93,
--};
--static const unsigned int lcd1_data9_mux[] = {
--	LCD1_D0_MARK, LCD1_D1_MARK, LCD1_D2_MARK, LCD1_D3_MARK,
--	LCD1_D4_MARK, LCD1_D5_MARK, LCD1_D6_MARK, LCD1_D7_MARK,
--	LCD1_D8_MARK,
--};
--static const unsigned int lcd1_data12_pins[] = {
--	/* D[0:11] */
--	4, 3, 2, 1, 0, 91, 92, 23,
--	93, 94, 21, 201,
--};
--static const unsigned int lcd1_data12_mux[] = {
--	LCD1_D0_MARK, LCD1_D1_MARK, LCD1_D2_MARK, LCD1_D3_MARK,
--	LCD1_D4_MARK, LCD1_D5_MARK, LCD1_D6_MARK, LCD1_D7_MARK,
--	LCD1_D8_MARK, LCD1_D9_MARK, LCD1_D10_MARK, LCD1_D11_MARK,
--};
--static const unsigned int lcd1_data16_pins[] = {
--	/* D[0:15] */
--	4, 3, 2, 1, 0, 91, 92, 23,
--	93, 94, 21, 201, 200, 199, 196, 195,
--};
--static const unsigned int lcd1_data16_mux[] = {
--	LCD1_D0_MARK, LCD1_D1_MARK, LCD1_D2_MARK, LCD1_D3_MARK,
--	LCD1_D4_MARK, LCD1_D5_MARK, LCD1_D6_MARK, LCD1_D7_MARK,
--	LCD1_D8_MARK, LCD1_D9_MARK, LCD1_D10_MARK, LCD1_D11_MARK,
--	LCD1_D12_MARK, LCD1_D13_MARK, LCD1_D14_MARK, LCD1_D15_MARK,
--};
--static const unsigned int lcd1_data18_pins[] = {
--	/* D[0:17] */
--	4, 3, 2, 1, 0, 91, 92, 23,
--	93, 94, 21, 201, 200, 199, 196, 195,
--	194, 193,
--};
--static const unsigned int lcd1_data18_mux[] = {
--	LCD1_D0_MARK, LCD1_D1_MARK, LCD1_D2_MARK, LCD1_D3_MARK,
--	LCD1_D4_MARK, LCD1_D5_MARK, LCD1_D6_MARK, LCD1_D7_MARK,
--	LCD1_D8_MARK, LCD1_D9_MARK, LCD1_D10_MARK, LCD1_D11_MARK,
--	LCD1_D12_MARK, LCD1_D13_MARK, LCD1_D14_MARK, LCD1_D15_MARK,
--	LCD1_D16_MARK, LCD1_D17_MARK,
--};
--static const unsigned int lcd1_data24_pins[] = {
-+static const unsigned int lcd1_data_pins[] = {
- 	/* D[0:23] */
- 	4, 3, 2, 1, 0, 91, 92, 23,
- 	93, 94, 21, 201, 200, 199, 196, 195,
- 	194, 193, 198, 197, 75, 74, 15, 14,
+-static const unsigned int sdhi0_data4_pins[] = {
++static const unsigned int sdhi0_data_pins[] = {
+ 	/* D[0:3] */
+ 	RCAR_GP_PIN(3, 2), RCAR_GP_PIN(3, 3), RCAR_GP_PIN(3, 4), RCAR_GP_PIN(3, 5),
  };
--static const unsigned int lcd1_data24_mux[] = {
-+static const unsigned int lcd1_data_mux[] = {
- 	LCD1_D0_MARK, LCD1_D1_MARK, LCD1_D2_MARK, LCD1_D3_MARK,
- 	LCD1_D4_MARK, LCD1_D5_MARK, LCD1_D6_MARK, LCD1_D7_MARK,
- 	LCD1_D8_MARK, LCD1_D9_MARK, LCD1_D10_MARK, LCD1_D11_MARK,
-@@ -2814,11 +2710,11 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(intc_irq30_1),
- 	SH_PFC_PIN_GROUP(intc_irq31_0),
- 	SH_PFC_PIN_GROUP(intc_irq31_1),
--	SH_PFC_PIN_GROUP(lcd0_data8),
--	SH_PFC_PIN_GROUP(lcd0_data9),
--	SH_PFC_PIN_GROUP(lcd0_data12),
--	SH_PFC_PIN_GROUP(lcd0_data16),
--	SH_PFC_PIN_GROUP(lcd0_data18),
-+	SH_PFC_PIN_GROUP_SUBSET(lcd0_data8, lcd0_data24_0, 0, 8),
-+	SH_PFC_PIN_GROUP_SUBSET(lcd0_data9, lcd0_data24_0, 0, 9),
-+	SH_PFC_PIN_GROUP_SUBSET(lcd0_data12, lcd0_data24_0, 0, 12),
-+	SH_PFC_PIN_GROUP_SUBSET(lcd0_data16, lcd0_data24_0, 0, 16),
-+	SH_PFC_PIN_GROUP_SUBSET(lcd0_data18, lcd0_data24_0, 0, 18),
- 	SH_PFC_PIN_GROUP(lcd0_data24_0),
- 	SH_PFC_PIN_GROUP(lcd0_data24_1),
- 	SH_PFC_PIN_GROUP(lcd0_display),
-@@ -2826,12 +2722,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(lcd0_lclk_1),
- 	SH_PFC_PIN_GROUP(lcd0_sync),
- 	SH_PFC_PIN_GROUP(lcd0_sys),
--	SH_PFC_PIN_GROUP(lcd1_data8),
--	SH_PFC_PIN_GROUP(lcd1_data9),
--	SH_PFC_PIN_GROUP(lcd1_data12),
--	SH_PFC_PIN_GROUP(lcd1_data16),
--	SH_PFC_PIN_GROUP(lcd1_data18),
--	SH_PFC_PIN_GROUP(lcd1_data24),
-+	BUS_DATA_PIN_GROUP(lcd1_data, 8),
-+	BUS_DATA_PIN_GROUP(lcd1_data, 9),
-+	BUS_DATA_PIN_GROUP(lcd1_data, 12),
-+	BUS_DATA_PIN_GROUP(lcd1_data, 16),
-+	BUS_DATA_PIN_GROUP(lcd1_data, 18),
-+	BUS_DATA_PIN_GROUP(lcd1_data, 24),
- 	SH_PFC_PIN_GROUP(lcd1_display),
- 	SH_PFC_PIN_GROUP(lcd1_lclk),
- 	SH_PFC_PIN_GROUP(lcd1_sync),
+-static const unsigned int sdhi0_data4_mux[] = {
++static const unsigned int sdhi0_data_mux[] = {
+ 	SD0_DAT0_MARK, SD0_DAT1_MARK, SD0_DAT2_MARK, SD0_DAT3_MARK,
+ };
+ static const unsigned int sdhi0_ctrl_pins[] = {
+@@ -3316,18 +3309,11 @@ static const unsigned int sdhi0_wp_mux[] = {
+ 	SD0_WP_MARK,
+ };
+ /* - SDHI1 ------------------------------------------------------------------ */
+-static const unsigned int sdhi1_data1_pins[] = {
+-	/* D0 */
+-	RCAR_GP_PIN(3, 10),
+-};
+-static const unsigned int sdhi1_data1_mux[] = {
+-	SD1_DAT0_MARK,
+-};
+-static const unsigned int sdhi1_data4_pins[] = {
++static const unsigned int sdhi1_data_pins[] = {
+ 	/* D[0:3] */
+ 	RCAR_GP_PIN(3, 10), RCAR_GP_PIN(3, 11), RCAR_GP_PIN(3, 12), RCAR_GP_PIN(3, 13),
+ };
+-static const unsigned int sdhi1_data4_mux[] = {
++static const unsigned int sdhi1_data_mux[] = {
+ 	SD1_DAT0_MARK, SD1_DAT1_MARK, SD1_DAT2_MARK, SD1_DAT3_MARK,
+ };
+ static const unsigned int sdhi1_ctrl_pins[] = {
+@@ -3352,18 +3338,11 @@ static const unsigned int sdhi1_wp_mux[] = {
+ 	SD1_WP_MARK,
+ };
+ /* - SDHI2 ------------------------------------------------------------------ */
+-static const unsigned int sdhi2_data1_pins[] = {
+-	/* D0 */
+-	RCAR_GP_PIN(3, 18),
+-};
+-static const unsigned int sdhi2_data1_mux[] = {
+-	SD2_DAT0_MARK,
+-};
+-static const unsigned int sdhi2_data4_pins[] = {
++static const unsigned int sdhi2_data_pins[] = {
+ 	/* D[0:3] */
+ 	RCAR_GP_PIN(3, 18), RCAR_GP_PIN(3, 19), RCAR_GP_PIN(3, 20), RCAR_GP_PIN(3, 21),
+ };
+-static const unsigned int sdhi2_data4_mux[] = {
++static const unsigned int sdhi2_data_mux[] = {
+ 	SD2_DAT0_MARK, SD2_DAT1_MARK, SD2_DAT2_MARK, SD2_DAT3_MARK,
+ };
+ static const unsigned int sdhi2_ctrl_pins[] = {
+@@ -3388,18 +3367,11 @@ static const unsigned int sdhi2_wp_mux[] = {
+ 	SD2_WP_MARK,
+ };
+ /* - SDHI3 ------------------------------------------------------------------ */
+-static const unsigned int sdhi3_data1_pins[] = {
+-	/* D0 */
+-	RCAR_GP_PIN(3, 26),
+-};
+-static const unsigned int sdhi3_data1_mux[] = {
+-	SD3_DAT0_MARK,
+-};
+-static const unsigned int sdhi3_data4_pins[] = {
++static const unsigned int sdhi3_data_pins[] = {
+ 	/* D[0:3] */
+ 	RCAR_GP_PIN(3, 26), RCAR_GP_PIN(3, 27), RCAR_GP_PIN(3, 28), RCAR_GP_PIN(3, 29),
+ };
+-static const unsigned int sdhi3_data4_mux[] = {
++static const unsigned int sdhi3_data_mux[] = {
+ 	SD3_DAT0_MARK, SD3_DAT1_MARK, SD3_DAT2_MARK, SD3_DAT3_MARK,
+ };
+ static const unsigned int sdhi3_ctrl_pins[] = {
+@@ -4292,23 +4264,23 @@ static const struct {
+ 		SH_PFC_PIN_GROUP(scifb2_data_c),
+ 		SH_PFC_PIN_GROUP(scif_clk),
+ 		SH_PFC_PIN_GROUP(scif_clk_b),
+-		SH_PFC_PIN_GROUP(sdhi0_data1),
+-		SH_PFC_PIN_GROUP(sdhi0_data4),
++		BUS_DATA_PIN_GROUP(sdhi0_data, 1),
++		BUS_DATA_PIN_GROUP(sdhi0_data, 4),
+ 		SH_PFC_PIN_GROUP(sdhi0_ctrl),
+ 		SH_PFC_PIN_GROUP(sdhi0_cd),
+ 		SH_PFC_PIN_GROUP(sdhi0_wp),
+-		SH_PFC_PIN_GROUP(sdhi1_data1),
+-		SH_PFC_PIN_GROUP(sdhi1_data4),
++		BUS_DATA_PIN_GROUP(sdhi1_data, 1),
++		BUS_DATA_PIN_GROUP(sdhi1_data, 4),
+ 		SH_PFC_PIN_GROUP(sdhi1_ctrl),
+ 		SH_PFC_PIN_GROUP(sdhi1_cd),
+ 		SH_PFC_PIN_GROUP(sdhi1_wp),
+-		SH_PFC_PIN_GROUP(sdhi2_data1),
+-		SH_PFC_PIN_GROUP(sdhi2_data4),
++		BUS_DATA_PIN_GROUP(sdhi2_data, 1),
++		BUS_DATA_PIN_GROUP(sdhi2_data, 4),
+ 		SH_PFC_PIN_GROUP(sdhi2_ctrl),
+ 		SH_PFC_PIN_GROUP(sdhi2_cd),
+ 		SH_PFC_PIN_GROUP(sdhi2_wp),
+-		SH_PFC_PIN_GROUP(sdhi3_data1),
+-		SH_PFC_PIN_GROUP(sdhi3_data4),
++		BUS_DATA_PIN_GROUP(sdhi3_data, 1),
++		BUS_DATA_PIN_GROUP(sdhi3_data, 4),
+ 		SH_PFC_PIN_GROUP(sdhi3_ctrl),
+ 		SH_PFC_PIN_GROUP(sdhi3_cd),
+ 		SH_PFC_PIN_GROUP(sdhi3_wp),
 -- 
 2.25.1
 
