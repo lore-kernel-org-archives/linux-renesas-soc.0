@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66091C35272
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114E1C4321E
 	for <linux-renesas-soc@archiver.kernel.org>; Thu, 23 Dec 2021 14:42:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348900AbhLWOm0 (ORCPT
+        id S1348891AbhLWOm0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Thu, 23 Dec 2021 09:42:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48992 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1348902AbhLWOmQ (ORCPT
+Received: from leibniz.telenet-ops.be ([195.130.137.77]:45146 "EHLO
+        leibniz.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1348877AbhLWOmQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Thu, 23 Dec 2021 09:42:16 -0500
 Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C311C061763
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 06:42:15 -0800 (PST)
+        by leibniz.telenet-ops.be (Postfix) with ESMTPS id 4JKXw726XjzMqnh6
+        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 15:42:15 +0100 (CET)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:a9f6:6306:a80a:fe6a])
         by andre.telenet-ops.be with bizsmtp
-        id ZqiE260041rdBcm01qiEPf; Thu, 23 Dec 2021 15:42:14 +0100
+        id ZqiF2600C1rdBcm01qiFQE; Thu, 23 Dec 2021 15:42:15 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIL-006a99-5K; Thu, 23 Dec 2021 15:42:13 +0100
+        id 1n0PIL-006a93-NZ; Thu, 23 Dec 2021 15:42:13 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n0PIK-003rZg-4i; Thu, 23 Dec 2021 15:42:12 +0100
+        id 1n0PIK-003rZL-18; Thu, 23 Dec 2021 15:42:12 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 13/60] pinctrl: renesas: r8a73a4: Share MMC pin group data
-Date:   Thu, 23 Dec 2021 15:41:23 +0100
-Message-Id: <ad30961d71631577c2bdbf8dfa4874c9585caba9.1640269757.git.geert+renesas@glider.be>
+Subject: [PATCH 10/60] pinctrl: renesas: sh73a0: Share KEYIN pin group data
+Date:   Thu, 23 Dec 2021 15:41:20 +0100
+Message-Id: <6d11be0accdaf4a42ce2a64e64201ab0670d65db.1640269757.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1640269757.git.geert+renesas@glider.be>
 References: <cover.1640269757.git.geert+renesas@glider.be>
@@ -43,95 +43,72 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Pin groups mmc[01]_data[14] are subsets of mmc[01]_data8.
+Pin groups keysc_in[567] are subsets of keysc_in8.
 
-This reduces kernel size by 80 bytes.
+This reduces kernel size by 144 bytes.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/pinctrl/renesas/pfc-r8a73a4.c | 48 ++++++---------------------
- 1 file changed, 10 insertions(+), 38 deletions(-)
+ drivers/pinctrl/renesas/pfc-sh73a0.c | 36 +++++-----------------------
+ 1 file changed, 6 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a73a4.c b/drivers/pinctrl/renesas/pfc-r8a73a4.c
-index b26ff9d6ead4bb6c..87442a1e17791917 100644
---- a/drivers/pinctrl/renesas/pfc-r8a73a4.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a73a4.c
-@@ -1449,25 +1449,11 @@ IRQC_PINS_MUX(327, 55);
- IRQC_PINS_MUX(328, 56);
- IRQC_PINS_MUX(329, 57);
- /* - MMCIF0 ----------------------------------------------------------------- */
--static const unsigned int mmc0_data1_pins[] = {
--	/* D[0] */
--	164,
--};
--static const unsigned int mmc0_data1_mux[] = {
--	MMCD0_0_MARK,
--};
--static const unsigned int mmc0_data4_pins[] = {
--	/* D[0:3] */
--	164, 165, 166, 167,
--};
--static const unsigned int mmc0_data4_mux[] = {
--	MMCD0_0_MARK, MMCD0_1_MARK, MMCD0_2_MARK, MMCD0_3_MARK,
--};
--static const unsigned int mmc0_data8_pins[] = {
-+static const unsigned int mmc0_data_pins[] = {
- 	/* D[0:7] */
- 	164, 165, 166, 167, 168, 169, 170, 171,
+diff --git a/drivers/pinctrl/renesas/pfc-sh73a0.c b/drivers/pinctrl/renesas/pfc-sh73a0.c
+index ed6db809e80de3b7..3d03854b9833a093 100644
+--- a/drivers/pinctrl/renesas/pfc-sh73a0.c
++++ b/drivers/pinctrl/renesas/pfc-sh73a0.c
+@@ -1777,35 +1777,11 @@ static const unsigned int irda_1_mux[] = {
+ 	PORT49_IRDA_OUT_MARK, PORT53_IRDA_IN_MARK, PORT54_IRDA_FIRSEL_MARK,
  };
--static const unsigned int mmc0_data8_mux[] = {
-+static const unsigned int mmc0_data_mux[] = {
- 	MMCD0_0_MARK, MMCD0_1_MARK, MMCD0_2_MARK, MMCD0_3_MARK,
- 	MMCD0_4_MARK, MMCD0_5_MARK, MMCD0_6_MARK, MMCD0_7_MARK,
- };
-@@ -1479,25 +1465,11 @@ static const unsigned int mmc0_ctrl_mux[] = {
- 	MMCCMD0_MARK, MMCCLK0_MARK,
- };
- /* - MMCIF1 ----------------------------------------------------------------- */
--static const unsigned int mmc1_data1_pins[] = {
--	/* D[0] */
--	199,
+ /* - KEYSC ------------------------------------------------------------------ */
+-static const unsigned int keysc_in5_pins[] = {
+-	/* KEYIN[0:4] */
+-	66, 67, 68, 69, 70,
 -};
--static const unsigned int mmc1_data1_mux[] = {
--	MMCD1_0_MARK,
+-static const unsigned int keysc_in5_mux[] = {
+-	KEYIN0_MARK, KEYIN1_MARK, KEYIN2_MARK, KEYIN3_MARK,
+-	KEYIN4_MARK,
 -};
--static const unsigned int mmc1_data4_pins[] = {
--	/* D[0:3] */
--	199, 198, 197, 196,
+-static const unsigned int keysc_in6_pins[] = {
+-	/* KEYIN[0:5] */
+-	66, 67, 68, 69, 70, 71,
 -};
--static const unsigned int mmc1_data4_mux[] = {
--	MMCD1_0_MARK, MMCD1_1_MARK, MMCD1_2_MARK, MMCD1_3_MARK,
+-static const unsigned int keysc_in6_mux[] = {
+-	KEYIN0_MARK, KEYIN1_MARK, KEYIN2_MARK, KEYIN3_MARK,
+-	KEYIN4_MARK, KEYIN5_MARK,
 -};
--static const unsigned int mmc1_data8_pins[] = {
-+static const unsigned int mmc1_data_pins[] = {
- 	/* D[0:7] */
- 	199, 198, 197, 196, 195, 194, 193, 192,
+-static const unsigned int keysc_in7_pins[] = {
+-	/* KEYIN[0:6] */
+-	66, 67, 68, 69, 70, 71, 72,
+-};
+-static const unsigned int keysc_in7_mux[] = {
+-	KEYIN0_MARK, KEYIN1_MARK, KEYIN2_MARK, KEYIN3_MARK,
+-	KEYIN4_MARK, KEYIN5_MARK, KEYIN6_MARK,
+-};
+-static const unsigned int keysc_in8_pins[] = {
++static const unsigned int keysc_in_pins[] = {
+ 	/* KEYIN[0:7] */
+ 	66, 67, 68, 69, 70, 71, 72, 73,
  };
--static const unsigned int mmc1_data8_mux[] = {
-+static const unsigned int mmc1_data_mux[] = {
- 	MMCD1_0_MARK, MMCD1_1_MARK, MMCD1_2_MARK, MMCD1_3_MARK,
- 	MMCD1_4_MARK, MMCD1_5_MARK, MMCD1_6_MARK, MMCD1_7_MARK,
+-static const unsigned int keysc_in8_mux[] = {
++static const unsigned int keysc_in_mux[] = {
+ 	KEYIN0_MARK, KEYIN1_MARK, KEYIN2_MARK, KEYIN3_MARK,
+ 	KEYIN4_MARK, KEYIN5_MARK, KEYIN6_MARK, KEYIN7_MARK,
  };
-@@ -1843,13 +1815,13 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(irqc_irq55),
- 	SH_PFC_PIN_GROUP(irqc_irq56),
- 	SH_PFC_PIN_GROUP(irqc_irq57),
--	SH_PFC_PIN_GROUP(mmc0_data1),
--	SH_PFC_PIN_GROUP(mmc0_data4),
--	SH_PFC_PIN_GROUP(mmc0_data8),
-+	BUS_DATA_PIN_GROUP(mmc0_data, 1),
-+	BUS_DATA_PIN_GROUP(mmc0_data, 4),
-+	BUS_DATA_PIN_GROUP(mmc0_data, 8),
- 	SH_PFC_PIN_GROUP(mmc0_ctrl),
--	SH_PFC_PIN_GROUP(mmc1_data1),
--	SH_PFC_PIN_GROUP(mmc1_data4),
--	SH_PFC_PIN_GROUP(mmc1_data8),
-+	BUS_DATA_PIN_GROUP(mmc1_data, 1),
-+	BUS_DATA_PIN_GROUP(mmc1_data, 4),
-+	BUS_DATA_PIN_GROUP(mmc1_data, 8),
- 	SH_PFC_PIN_GROUP(mmc1_ctrl),
- 	SH_PFC_PIN_GROUP(scifa0_data),
- 	SH_PFC_PIN_GROUP(scifa0_clk),
+@@ -3138,10 +3114,10 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(i2c3_2),
+ 	SH_PFC_PIN_GROUP(irda_0),
+ 	SH_PFC_PIN_GROUP(irda_1),
+-	SH_PFC_PIN_GROUP(keysc_in5),
+-	SH_PFC_PIN_GROUP(keysc_in6),
+-	SH_PFC_PIN_GROUP(keysc_in7),
+-	SH_PFC_PIN_GROUP(keysc_in8),
++	BUS_DATA_PIN_GROUP(keysc_in, 5),
++	BUS_DATA_PIN_GROUP(keysc_in, 6),
++	BUS_DATA_PIN_GROUP(keysc_in, 7),
++	BUS_DATA_PIN_GROUP(keysc_in, 8),
+ 	SH_PFC_PIN_GROUP(keysc_out04),
+ 	SH_PFC_PIN_GROUP(keysc_out5),
+ 	SH_PFC_PIN_GROUP(keysc_out6_0),
 -- 
 2.25.1
 
