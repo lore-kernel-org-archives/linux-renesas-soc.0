@@ -2,96 +2,102 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9804C4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Dec 2021 05:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4404C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 24 Dec 2021 09:57:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1351345AbhLXFXq (ORCPT
+        id S1352367AbhLXJ5C (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 24 Dec 2021 00:23:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45562 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1351338AbhLXFXo (ORCPT
+        Fri, 24 Dec 2021 04:57:02 -0500
+Received: from mail-ua1-f51.google.com ([209.85.222.51]:34625 "EHLO
+        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343931AbhLXJ5B (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 24 Dec 2021 00:23:44 -0500
-Received: from mail-lf1-x12a.google.com (mail-lf1-x12a.google.com [IPv6:2a00:1450:4864:20::12a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB41EC061401
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 21:23:43 -0800 (PST)
-Received: by mail-lf1-x12a.google.com with SMTP id bq20so16913313lfb.4
-        for <linux-renesas-soc@vger.kernel.org>; Thu, 23 Dec 2021 21:23:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=+A6R7NBtfUQnLlLDkSBl+KL94Li6QNQFhWmSmSRXFes=;
-        b=T+j4o5YtE3hx3HWodazGWr+DMJhdsDMjBjNNr4kfrcKEjB/Y+DnF80FniEAppTSWJZ
-         fI2O5+RlOFitBe88RtpukpDWl+6K/rT0/dD8YzPDqH8rooaogqsUe9CMFaDw771YLCSz
-         5MzAlJGEHjfDMwMHb0/l82bvl5RXauwU9xBpmhdM4KXf+9A3lAYQIauW2QaZbEvl+Q0B
-         4a0a98BtRewN1Zdzkp3Xk6Je0rFf//bGxe1b+wY0KpnxmwOY6LeetVrlPiuBj2tlgyqH
-         BE1pWujq2lYxsZglorCeEMdwZHSC3rTvvC2IG5FHrRcPTeENjJV3XU+hlag1ZhIgD2CQ
-         MtLg==
+        Fri, 24 Dec 2021 04:57:01 -0500
+Received: by mail-ua1-f51.google.com with SMTP id t18so7120231uaj.1;
+        Fri, 24 Dec 2021 01:57:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=+A6R7NBtfUQnLlLDkSBl+KL94Li6QNQFhWmSmSRXFes=;
-        b=i9KN2QAwKQ4fWiGKxyBROZiUkMDBUMXjjmC1b7GPdYjI4SthmbjBlBNYhOR3PAELnE
-         wD3Kr5K1glu0IMfqujbkd2Vhr+zlKpXR/sxPhOOt/6oyj1Zuuj+TO5mIOfmwKNpdALS7
-         QZ6lpIZK4EbCemPZPjZ62mD+AzU1eRMG1b838NO75w5qQ1tN9rxaYteQ610SwnCXf3cQ
-         lDSLl7nGxRpM/8OaNtWvMKI7zYZTkQ+lA25N3o4wuddzNUGcVYgfA4ARmt+fCTEH/THr
-         wskvMTXrOkkVEY46IKWKXdkdvDz6XyXkQERnyIeFmHy7mjwjkxEMn7N8wtl7gyVvmMx8
-         QpiQ==
-X-Gm-Message-State: AOAM531KkHxv2gs/UcCjdiIRHiTa49GOoUNnXoTqNXrgXD6NrJRGpjA8
-        mfrfWyqkpRWK+zRe53rERSmDRQ==
-X-Google-Smtp-Source: ABdhPJw2hgZNyZhh1NpwjrhB8tKAf5hRDZK9f2T43eAkIbL4fGq35UrtZxCmRf3mIhJTxldmA6SbVQ==
-X-Received: by 2002:a05:6512:10d3:: with SMTP id k19mr4010796lfg.448.1640323422107;
-        Thu, 23 Dec 2021 21:23:42 -0800 (PST)
-Received: from cobook.home (nikaet.starlink.ru. [94.141.168.29])
-        by smtp.gmail.com with ESMTPSA id e13sm702858lfs.306.2021.12.23.21.23.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Dec 2021 21:23:41 -0800 (PST)
-From:   Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH 3/3] dt-bindings: display: bridge: renesas,lvds: Document r8a77961 bindings
-Date:   Fri, 24 Dec 2021 08:23:09 +0300
-Message-Id: <20211224052309.1997096-4-nikita.yoush@cogentembedded.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20211224052309.1997096-1-nikita.yoush@cogentembedded.com>
-References: <20211224052309.1997096-1-nikita.yoush@cogentembedded.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Xb8gepiAxWVOzLBmsrXQFsLC7BJrap9Wr/FddK1jAqM=;
+        b=T/OwfwswjVFWFwDTLtfelFClysxHAGHWElViM3hxZTDEFy/tw97mrf/KjmcfOOnZ5M
+         VyspRgB6D1oslVJeU65hlskpq51ERt1TEhaozMrCVDJOv3qQaqgugqJ30MNd4HeIkSED
+         mhF5IObtYoQdxY67sv62cieK6lK+1QfFs/0ioyfpUR1Qewn9kXCEoeBg6IGikr3rn3/+
+         USid88n2UPiupElrIKex5hkG+J4aEFeVAd8o6UlzGgly6pLi25N2zTxgu1kziCv4f/+k
+         FS1k6XmFU26DFwXe5Y9sT4fW7Q0JzaNKlGC75BlbtuEUpGtbJK6vSQwSxIs2qO/2Ufaf
+         KEoQ==
+X-Gm-Message-State: AOAM531HLVpM2/Gxam8oht+S9l40O6wCwH1zJEByhaNAM1qhAOB3T47Z
+        lC2WvTcLnmCbIsW9XFQLiXGPFAWGBLRjEg==
+X-Google-Smtp-Source: ABdhPJze5JzOHJlUUaJRlnDitvbrrHGFH8ljysMeX1K/Xa9UF9XdJBKoSxEW8/KFfRzTx5C6ve1Wbg==
+X-Received: by 2002:a05:6102:c46:: with SMTP id y6mr1852278vss.53.1640339820859;
+        Fri, 24 Dec 2021 01:57:00 -0800 (PST)
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com. [209.85.221.172])
+        by smtp.gmail.com with ESMTPSA id q185sm1499818vka.14.2021.12.24.01.57.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Dec 2021 01:57:00 -0800 (PST)
+Received: by mail-vk1-f172.google.com with SMTP id m200so4677223vka.6;
+        Fri, 24 Dec 2021 01:57:00 -0800 (PST)
+X-Received: by 2002:a1f:9f04:: with SMTP id i4mr1878477vke.33.1640339820241;
+ Fri, 24 Dec 2021 01:57:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <d4a00def-7765-e0e4-c5c7-8d648eeb8cf2@omp.ru> <20211214140607.1147976-1-nikita.yoush@cogentembedded.com>
+ <CAMuHMdW=MytCOsghcH9p1GXOPCO3=1mSF8PKj_UAjYEqAq4-1Q@mail.gmail.com> <82b37f1e-a461-8d16-219b-2319e11e1991@cogentembedded.com>
+In-Reply-To: <82b37f1e-a461-8d16-219b-2319e11e1991@cogentembedded.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 24 Dec 2021 10:56:48 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVhYoFrN59JE3WNmfgiQ59eQBCKiVcHrx7F-zxR=JJ9SQ@mail.gmail.com>
+Message-ID: <CAMuHMdVhYoFrN59JE3WNmfgiQ59eQBCKiVcHrx7F-zxR=JJ9SQ@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: renesas: r8a77961: Add lvds0 device node
+To:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Document the R-Car M3-W+ (R8A77961) SoC in the R-Car LVDS encoder
-bindings.
+Hi Nikita,
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- .../devicetree/bindings/display/bridge/renesas,lvds.yaml         | 1 +
- 1 file changed, 1 insertion(+)
+On Fri, Dec 24, 2021 at 6:00 AM Nikita Yushchenko
+<nikita.yoush@cogentembedded.com> wrote:
+> >> +               lvds0: lvds@feb90000 {
+> >> +                       compatible = "renesas,r8a7796-lvds";
+> >
+> > This should be "renesas,r8a77961-lvds".
+> > To handle that, both the DT bindings[1] and the driver[2] should
+> > be updated.
+> >
+> > [1] Documentation/devicetree/bindings/display/bridge/renesas,lvds.yaml
+> > [2] drivers/gpu/drm/rcar-du/rcar_lvds.c
+>
+> Ok, will redo that way, although I don't really understand what for to have different compatible strings
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.yaml b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.yaml
-index acfc327f70a7..ca5443e5c2e3 100644
---- a/Documentation/devicetree/bindings/display/bridge/renesas,lvds.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/renesas,lvds.yaml
-@@ -27,6 +27,7 @@ properties:
-       - renesas,r8a7791-lvds # for R-Car M2-W compatible LVDS encoders
-       - renesas,r8a7793-lvds # for R-Car M2-N compatible LVDS encoders
-       - renesas,r8a7795-lvds # for R-Car H3 compatible LVDS encoders
-+      - renesas,r8a77961-lvds # for R-Car M3-W+ compatible LVDS encoders
-       - renesas,r8a7796-lvds # for R-Car M3-W compatible LVDS encoders
-       - renesas,r8a77965-lvds # for R-Car M3-N compatible LVDS encoders
-       - renesas,r8a77970-lvds # for R-Car V3M compatible LVDS encoders
--- 
-2.30.2
+Thank you!
 
+> for exactly same IP inside different chips.
+
+Ca. 30% of the "presumed identical" IP blocks in R-Car Gen3 SoCs
+turned out not to be that identical...
+
+> Also note that arch/arm64/boot/dts/renesas/r8a77951.dtsi currently has renesas,r8a7795-lvds
+
+That was an early judgment error, which we regret making.
+Initially, R-Car H3 ES2.0 (r8a77951) was assumed to be a slightly
+improved variant of R-Car H3 ES1.x (r8a77950), while it turned out
+to be a completely different SoC.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
