@@ -2,40 +2,37 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 325F0C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jan 2022 13:47:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 354EFC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jan 2022 13:47:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234317AbiAJNrx (ORCPT
+        id S233982AbiAJNr6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Jan 2022 08:47:53 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:26568 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S234182AbiAJNrf (ORCPT
+        Mon, 10 Jan 2022 08:47:58 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:42483 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S234580AbiAJNrr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jan 2022 08:47:35 -0500
+        Mon, 10 Jan 2022 08:47:47 -0500
 X-IronPort-AV: E=Sophos;i="5.88,277,1635174000"; 
-   d="scan'208";a="106014830"
+   d="scan'208";a="106558155"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 10 Jan 2022 22:47:35 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 10 Jan 2022 22:47:42 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9688242E354C;
-        Mon, 10 Jan 2022 22:47:32 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 32C1342E3548;
+        Mon, 10 Jan 2022 22:47:40 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         linux-renesas-soc@vger.kernel.org,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@gmail.com>
+        Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Prabhakar <prabhakar.csengg@gmail.com>,
         linux-kernel@vger.kernel.org,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v2 09/12] dt-bindings: net: renesas,etheravb: Document RZ/V2L SoC
-Date:   Mon, 10 Jan 2022 13:46:56 +0000
-Message-Id: <20220110134659.30424-10-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 11/12] arm64: dts: renesas: Add initial device tree for RZ/V2L SMARC EVK
+Date:   Mon, 10 Jan 2022 13:46:58 +0000
+Message-Id: <20220110134659.30424-12-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20220110134659.30424-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <20220110134659.30424-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -45,35 +42,109 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Document Gigabit Ethernet IP found on RZ/V2L SoC. Gigabit Ethernet
-Interface is identical to one found on the RZ/G2L SoC. No driver changes
-are required as generic compatible string "renesas,rzg2l-gbeth" will be
-used as a fallback.
+Add basic support for RZ/V2L SMARC EVK (based on R9A07G054L2):
+- memory
+- External input clock
+- CPG
+- Pin controller
+- SCIF
+- GbEthernet
+- Audio Clock
+
+It shares the same carrier board with RZ/G2L with the same pin mapping.
+Delete the gpio-hog nodes from pinctrl as this will be added later when
+the functionality has been tested.
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
 v1->v2
-* Included ACK from ROB
+* None
 ---
- Documentation/devicetree/bindings/net/renesas,etheravb.yaml | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/renesas/Makefile          |  1 +
+ .../boot/dts/renesas/r9a07g054l2-smarc.dts    | 25 +++++++++++++++++++
+ .../dts/renesas/rzg2l-smarc-pinfunction.dtsi  |  2 +-
+ .../boot/dts/renesas/rzg2l-smarc-som.dtsi     |  2 +-
+ arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi  |  2 +-
+ 5 files changed, 29 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
 
-diff --git a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
-index bda821065a2b..db0ad6fbad89 100644
---- a/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
-+++ b/Documentation/devicetree/bindings/net/renesas,etheravb.yaml
-@@ -46,7 +46,8 @@ properties:
-       - items:
-           - enum:
-               - renesas,r9a07g044-gbeth # RZ/G2{L,LC}
--          - const: renesas,rzg2l-gbeth  # RZ/G2L
-+              - renesas,r9a07g054-gbeth # RZ/V2L
-+          - const: renesas,rzg2l-gbeth  # RZ/{G2L,V2L} family
+diff --git a/arch/arm64/boot/dts/renesas/Makefile b/arch/arm64/boot/dts/renesas/Makefile
+index 8e696a38c560..2daba38d1161 100644
+--- a/arch/arm64/boot/dts/renesas/Makefile
++++ b/arch/arm64/boot/dts/renesas/Makefile
+@@ -77,3 +77,4 @@ dtb-$(CONFIG_ARCH_R8A77965) += r8a779m5-salvator-xs.dtb
  
-   reg: true
- 
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044l2-smarc.dtb
+ dtb-$(CONFIG_ARCH_R9A07G044) += r9a07g044c2-smarc.dtb
++dtb-$(CONFIG_ARCH_R9A07G054) += r9a07g054l2-smarc.dtb
+diff --git a/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts b/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
+new file mode 100644
+index 000000000000..39ef55bfe0c3
+--- /dev/null
++++ b/arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++/*
++ * Device Tree Source for the RZ/G2L SMARC EVK board
++ *
++ * Copyright (C) 2021 Renesas Electronics Corp.
++ */
++
++/dts-v1/;
++#include "r9a07g054l2.dtsi"
++#include "rzg2l-smarc-som.dtsi"
++#include "rzg2l-smarc-pinfunction.dtsi"
++#include "rzg2l-smarc.dtsi"
++
++/ {
++	model = "Renesas SMARC EVK based on r9a07g054l2";
++	compatible = "renesas,smarc-evk", "renesas,r9a07g054l2", "renesas,r9a07g054";
++};
++
++&pinctrl {
++	/delete-node/ can0-stb;
++	/delete-node/ can1-stb;
++	/delete-node/ gpio-sd0-pwr-en-hog;
++	/delete-node/ sd0-dev-sel-hog;
++	/delete-node/ sd1-pwr-en-hog;
++};
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
+index 71d83e447670..2ef217445f72 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-pinfunction.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ /*
+- * Device Tree Source for the RZ/G2L SMARC pincontrol parts
++ * Device Tree Source for the RZ/{G2L,V2L} SMARC pincontrol parts
+  *
+  * Copyright (C) 2021 Renesas Electronics Corp.
+  */
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
+index 9112e79079a1..aeacd22e9eb0 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc-som.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ /*
+- * Device Tree Source for the RZ/G2L SMARC SOM common parts
++ * Device Tree Source for the RZ/{G2L,V2L} SMARC SOM common parts
+  *
+  * Copyright (C) 2021 Renesas Electronics Corp.
+  */
+diff --git a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+index 46abb29718cc..78034f36156d 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2l-smarc.dtsi
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+ /*
+- * Device Tree Source for the RZ/G2L SMARC EVK common parts
++ * Device Tree Source for the RZ/{G2L,V2L} SMARC EVK common parts
+  *
+  * Copyright (C) 2021 Renesas Electronics Corp.
+  */
 -- 
 2.17.1
 
