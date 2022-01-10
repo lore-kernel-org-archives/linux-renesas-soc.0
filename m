@@ -2,71 +2,119 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0001CC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jan 2022 10:51:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C49C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 10 Jan 2022 10:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S244260AbiAJKvM (ORCPT
+        id S244315AbiAJK5i (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 10 Jan 2022 05:51:12 -0500
-Received: from mail-ua1-f49.google.com ([209.85.222.49]:36384 "EHLO
-        mail-ua1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S244239AbiAJKvC (ORCPT
+        Mon, 10 Jan 2022 05:57:38 -0500
+Received: from mail-ua1-f50.google.com ([209.85.222.50]:42945 "EHLO
+        mail-ua1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S244301AbiAJK5h (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 10 Jan 2022 05:51:02 -0500
-Received: by mail-ua1-f49.google.com with SMTP id r15so22642855uao.3;
-        Mon, 10 Jan 2022 02:51:01 -0800 (PST)
+        Mon, 10 Jan 2022 05:57:37 -0500
+Received: by mail-ua1-f50.google.com with SMTP id p1so22591192uap.9;
+        Mon, 10 Jan 2022 02:57:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=7lKB7LPyy07fwqNZkXQvWdDl8rNbAh7GVFzkcYGJL+4=;
-        b=mQsTZmFZMJkGpHWM/8TRQT2yiMq2Cn9i8F40fUl/frZX3ciRsn7jtZudPEa8br4RDC
-         0IpyAiJIsZ2G9jxb/A5t4RVDutrI92gGzjvHPD4Aeq4kbio26BIONjzOq4m9E2WuYwvy
-         eVkfl8+mHzayxmiEtnCs+sqqhDjwsWROApCBC+gjXW7p8Ion678Lk8RfNKghjFTeZHK7
-         VGeeVq54sovTKoaRlttYDyLbT3ajDTmspwzKVNtY6IqqqGNn7cuIUJRn386DnoIQ60OY
-         NxYtE0oZQh+MiBNry28fsnon3Dq0murYNlA/MR5vZURqpmkY8P41anwk+0zP352sKjAb
-         QriQ==
-X-Gm-Message-State: AOAM531RHmJ5DwKHUyUcy1otdJ4nNzX3KdjC2SzoKZZ3m+9Wh/lVy7kD
-        s9PyPze+pHDiNvl0gkzPFG6eGuOQP0NGvg==
-X-Google-Smtp-Source: ABdhPJxSxprVygfc8AWWx8au9xHjS4fasIuLCIrGmc582S07e1DSVdbNzW75hhRoFjYLv1Yd3iOxOA==
-X-Received: by 2002:a05:6102:304f:: with SMTP id w15mr24355992vsa.82.1641811860809;
-        Mon, 10 Jan 2022 02:51:00 -0800 (PST)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com. [209.85.221.176])
-        by smtp.gmail.com with ESMTPSA id s12sm3904796vsj.26.2022.01.10.02.51.00
+        bh=OyoGsoFBBq9ImALPMX/uND5ztYbxYfQJAbF4lcqlrQM=;
+        b=d8qkdWz5n/cVJru5BxY+zQ1sKKKBVEJneHDRF6l99XOQIFsZFSGunDzskmEvzyCaAW
+         MNVREWYpFN1RrZ8gvn89/4jff9dpsihS8cvP9kXZREFZ/ydjsPLsR+kl0PqQ62O5ClR/
+         MGbkEHvHy01JIDiWKOD2W/Dbvbu+9meu5T9+K+gJxBn9Qhe3g6ZcytJ+9MgDt6nNwCd8
+         EtjmdI1AZIADVtes1ZcrOYcw6tl6jAs4IEEPbkNfPrThSAPqiAL8Y6q5w7ejMb5Fotfn
+         dG4Xz907gVgR1yfXGdtsPefKoByZztH8WkUjOhl6hD+3dN6d2+IaJw/qRKUOEtd6UTbZ
+         Sx8A==
+X-Gm-Message-State: AOAM533eKO/tuMvtNXQqr6dP4VPac1FNww8avlhpqGwJv7E+GtujMVX9
+        NmwwKpfBxd0ZKG2oq/qTBLcK1uqho8V+mg==
+X-Google-Smtp-Source: ABdhPJzZzd7FA+nM9kwVvOVEqObh+5KmQTt3ZRzWBMMa1IKvZ5b7ld2uDSjQXnJ7FDNk9t0u/FQ8QQ==
+X-Received: by 2002:a67:f497:: with SMTP id o23mr1403309vsn.70.1641812256525;
+        Mon, 10 Jan 2022 02:57:36 -0800 (PST)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
+        by smtp.gmail.com with ESMTPSA id j129sm2565698vkh.16.2022.01.10.02.57.36
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Jan 2022 02:51:00 -0800 (PST)
-Received: by mail-vk1-f176.google.com with SMTP id b77so7809946vka.11;
-        Mon, 10 Jan 2022 02:51:00 -0800 (PST)
-X-Received: by 2002:a1f:384b:: with SMTP id f72mr807514vka.0.1641811860022;
- Mon, 10 Jan 2022 02:51:00 -0800 (PST)
+        Mon, 10 Jan 2022 02:57:36 -0800 (PST)
+Received: by mail-vk1-f175.google.com with SMTP id n12so220676vkc.12;
+        Mon, 10 Jan 2022 02:57:36 -0800 (PST)
+X-Received: by 2002:a1f:5702:: with SMTP id l2mr85598vkb.33.1641812255898;
+ Mon, 10 Jan 2022 02:57:35 -0800 (PST)
 MIME-Version: 1.0
-References: <20220102224803.27463-1-laurent.pinchart+renesas@ideasonboard.com> <164116567398.210256.8635439327374336545@Monstersaurus>
-In-Reply-To: <164116567398.210256.8635439327374336545@Monstersaurus>
+References: <20220104181249.3174-1-biju.das.jz@bp.renesas.com>
+ <20220104181249.3174-2-biju.das.jz@bp.renesas.com> <CAMuHMdWYQXsiik3z63UX4fXNfOFqGFt4VnkwOzr9mHkPMZiyWA@mail.gmail.com>
+ <OS0PR01MB5922F9FAC00C07568D399F6C86509@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB5922F9FAC00C07568D399F6C86509@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 10 Jan 2022 11:50:49 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX_D2Dn0q9y4T=nOe7j1C+EECg=xg_VSvmpgrL-svoD4w@mail.gmail.com>
-Message-ID: <CAMuHMdX_D2Dn0q9y4T=nOe7j1C+EECg=xg_VSvmpgrL-svoD4w@mail.gmail.com>
-Subject: Re: [PATCH] media: i2c: max9271: Add header include guards to max9271.h
-To:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
+Date:   Mon, 10 Jan 2022 11:57:24 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdViRF+zNyOTRTu0qAgDG1gSG-VsXXT+SLyJZ7bBHb1Yvg@mail.gmail.com>
+Message-ID: <CAMuHMdViRF+zNyOTRTu0qAgDG1gSG-VsXXT+SLyJZ7bBHb1Yvg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] watchdog: rzg2l_wdt: Use force reset for WDT reset
+To:     Biju Das <biju.das.jz@bp.renesas.com>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kieran,
+Hi Biju,
 
-On Mon, Jan 3, 2022 at 8:48 AM Kieran Bingham
-<kieran.bingham+renesas@ideasonboard.com> wrote:
-> I wonder if we'll ever #pragma once outside of /tools/testing/selftests.
+On Mon, Jan 10, 2022 at 11:51 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > Subject: Re: [PATCH v3 2/4] watchdog: rzg2l_wdt: Use force reset for WDT
+> > reset
+> > On Tue, Jan 4, 2022 at 7:12 PM Biju Das <biju.das.jz@bp.renesas.com>
+> > wrote:
+> > > This patch uses the force reset(WDTRSTB) for triggering WDT reset for
+> > > restart callback. This method is faster compared to the overflow
+> > > method for triggering watchdog reset.
+> > >
+> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Probably not anytime soon
-https://lore.kernel.org/all/CAHk-=wi13+FLcRo4zmnRUmmY=AAns-Yd5NR_mVdcAd6ZrPq2fA@mail.gmail.com/
+> > > --- a/drivers/watchdog/rzg2l_wdt.c
+> > > +++ b/drivers/watchdog/rzg2l_wdt.c
+
+> > >  #define WDT_DEFAULT_TIMEOUT            60U
+> > >
+> > > @@ -116,15 +119,11 @@ static int rzg2l_wdt_restart(struct
+> > > watchdog_device *wdev,  {
+> > >         struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+> > >
+> > > -       /* Reset the module before we modify any register */
+> > > -       reset_control_reset(priv->rstc);
+> > > -       pm_runtime_get_sync(wdev->parent);
+> >
+> > Why are these no longer needed? Because .probe() takes care of that?
+>
+> This code is added to modify WDTSET register.
+> Once watchdog is started, On the fly, we won't be able to
+> update WDTSET register. By resetting(assert/deassert) the module
+> we can update the WDTSET register. It takes 34 millisec to trigger reset.
+>
+> But with PEEN_FORCE, on the fly we can update register and it immediately triggers reset.
+>
+> Then why do .start() and .stop() have
+> > reset and Runtime PM handling, too?
+>
+> .start-> turns on the Clocks using Runtime PM.
+>
+> We cannot Update WDTSET/WDTEN registers, once watchdog is started.
+> Adding reset and Runtime PM handling in .stop, allows to stop the watchdog.
+>
+> .stop-> turns off the clock using Runtime PM and does the reset(assert/deassert) of the module
+>         in order to modify WDTSET/WDTEN registers after stop operation.
+>
+> May be I should keep pm_runtime_get_sync(wdev->parent) in restart callback,
+> To turn on the clocks, If someone calls stop followed by restart
+
+I'm still confused: .probe() turns the clock on through Runtime PM,
+so it's always running.  Calling .start() merely increases the usage
+count, and a subsequent .stop() will decrease it again.  But the
+clock keeps on running? What am I missing?
 
 Gr{oetje,eeting}s,
 
