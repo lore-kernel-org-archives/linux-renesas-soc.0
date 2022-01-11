@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A2BC4332F
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Jan 2022 16:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5F0BC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Jan 2022 16:28:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349967AbiAKQ2k (ORCPT
+        id S1349971AbiAKQ2o (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Jan 2022 11:28:40 -0500
-Received: from mo4-p03-ob.smtp.rzone.de ([85.215.255.101]:33667 "EHLO
-        mo4-p03-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343719AbiAKQ2j (ORCPT
+        Tue, 11 Jan 2022 11:28:44 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:32911 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1349977AbiAKQ2n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jan 2022 11:28:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1641918162;
+        Tue, 11 Jan 2022 11:28:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1641918159;
     s=strato-dkim-0002; d=fpond.eu;
     h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Cc:Date:
     From:Subject:Sender;
-    bh=vO8GJaNAbF5R3pgLp5BXrfSzQRuLbozBLegd5OaGRrw=;
-    b=gIX4DUK2YX9EIDD9GZsv/xykFlX5w4db4Covn7pSPV++18/YQGTzv+UVB+Gj/PTFp3
-    BPAB21DPTc5n5nDBbgk0h8iJtXwwFaQkwwp+2/m+aEeUqiRspkGW4YVeTvOz74tpQ0tz
-    Nk05GJgTGM/VBmgrax3lA/Q0806SdTlpRj9lSNC2//Li+BsxYD26JrDc+TM6w7DzTAMZ
-    DjEuOKc4/HMrjDUPVKNk0fbOPDlwlv3lVNaYny0HkOKJkvQwPRoEgiIY+ebuzGI2gp6d
-    VX7wCMppXvA+Wi+bSiQD8eJI/v4+CxSbbLCLD3NbJQGy7EPcIGkh1QkFWuJYV7g+yMYm
-    52FQ==
+    bh=26V/zdrL+JyppG2XyT3B/o+gGDVMKccXxGHmJw1lG6g=;
+    b=nt4rw6dA3Ry4EsJwc0rgizf9tWJcdY0aru2wgSUReQBalCFRIBu21+VgKPmcsBWtrs
+    ueA5THOfwVhWEEjE2Hg7WSTKrXeOm112TFLxKepcbYo38gwlE4TVMI8M3rMkt5Z6jWvj
+    2qrwiYerkxVi+jdI80xQhX/3p9C+G6bc2RDvFcCSxvEI/UOE5idklKFzd2cDQ86Al4JO
+    YuJ8ueS2DDHL3A1TRxoNf/9dsEvy1cGeCbGRCioTwwOG5noAN+JKUycnFqi3+KwL1ul1
+    zyLmwNtR46wEgELFYiPizivYf8JC8Twcj9AS1WaKUi4HReygqKNhxXPyWNKpyteVycBs
+    s0UA==
 Authentication-Results: strato.com;
     dkim=none
 X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR8nxYa0aI"
 X-RZG-CLASS-ID: mo00
 Received: from gummo.fritz.box
     by smtp.strato.de (RZmta 47.37.6 DYNA|AUTH)
-    with ESMTPSA id a48ca5y0BGMfHKu
+    with ESMTPSA id a48ca5y0BGMdHKr
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
         (Client did not present a certificate);
-    Tue, 11 Jan 2022 17:22:41 +0100 (CET)
+    Tue, 11 Jan 2022 17:22:39 +0100 (CET)
 From:   Ulrich Hecht <uli+renesas@fpond.eu>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     netdev@vger.kernel.org, davem@davemloft.net,
@@ -44,9 +44,9 @@ Cc:     netdev@vger.kernel.org, davem@davemloft.net,
         socketcan@hartkopp.net, geert@linux-m68k.org,
         kieran.bingham@ideasonboard.com,
         Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH v2 4/5] arm64: dts: renesas: r8a779a0-falcon: enable CANFD 0 and 1
-Date:   Tue, 11 Jan 2022 17:22:30 +0100
-Message-Id: <20220111162231.10390-5-uli+renesas@fpond.eu>
+Subject: [PATCH v2 1/5] clk: renesas: r8a779a0: add CANFD module clock
+Date:   Tue, 11 Jan 2022 17:22:27 +0100
+Message-Id: <20220111162231.10390-2-uli+renesas@fpond.eu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20220111162231.10390-1-uli+renesas@fpond.eu>
 References: <20220111162231.10390-1-uli+renesas@fpond.eu>
@@ -56,46 +56,25 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Enables confirmed-working CAN interfaces 0 and 1 on the Falcon board.
+Adds "canfd0" to mod clocks.
 
 Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 ---
- .../boot/dts/renesas/r8a779a0-falcon.dts      | 24 +++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-index e46dc9aa0a43..75e27f950ac0 100644
---- a/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779a0-falcon.dts
-@@ -65,4 +65,28 @@
- 		};
- 
- 	};
-+
-+	canfd0_pins: canfd0 {
-+		groups = "canfd0_data";
-+		function = "canfd0";
-+	};
-+
-+	canfd1_pins: canfd1 {
-+		groups = "canfd1_data";
-+		function = "canfd1";
-+	};
-+};
-+
-+&canfd {
-+	pinctrl-0 = <&canfd0_pins>, <&canfd1_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	channel0 {
-+		status = "okay";
-+	};
-+
-+	channel1 {
-+		status = "okay";
-+	};
- };
+diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+index 1c09d4ebe90f..fadd8a1718c6 100644
+--- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+@@ -136,6 +136,7 @@ static const struct mssr_mod_clk r8a779a0_mod_clks[] __initconst = {
+ 	DEF_MOD("avb3",		214,	R8A779A0_CLK_S3D2),
+ 	DEF_MOD("avb4",		215,	R8A779A0_CLK_S3D2),
+ 	DEF_MOD("avb5",		216,	R8A779A0_CLK_S3D2),
++	DEF_MOD("canfd0",	328,	R8A779A0_CLK_CANFD),
+ 	DEF_MOD("csi40",	331,	R8A779A0_CLK_CSI0),
+ 	DEF_MOD("csi41",	400,	R8A779A0_CLK_CSI0),
+ 	DEF_MOD("csi42",	401,	R8A779A0_CLK_CSI0),
 -- 
 2.20.1
 
