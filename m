@@ -2,135 +2,98 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9B11C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Jan 2022 16:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99979C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 11 Jan 2022 16:27:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349920AbiAKQXN (ORCPT
+        id S1349898AbiAKQ1j (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 11 Jan 2022 11:23:13 -0500
-Received: from mail-vk1-f181.google.com ([209.85.221.181]:46638 "EHLO
-        mail-vk1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1343692AbiAKQXL (ORCPT
+        Tue, 11 Jan 2022 11:27:39 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.82]:44821 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1343701AbiAKQ1j (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 11 Jan 2022 11:23:11 -0500
-Received: by mail-vk1-f181.google.com with SMTP id bj47so5699666vkb.13;
-        Tue, 11 Jan 2022 08:23:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ibmuXY2d4QvS3H2IyD2t1BJ8+qE8/4OrKlqbySBpfZw=;
-        b=ylhhRGbEhSPbcK4ThoW9iayv006f31oxB20wWz0R9WqZozvAVnQNCqlInGnQpSCVvr
-         H4mJnUkLY0bJvNtAPyJZsib95cSPLp/gRhCnqels13DjMAyqSp4qOVfC143opebBwfGs
-         BLaEmo9dPs1hHbzWFSCmpTGGnpu31aPNRzX/eqlYLMcnHWIXnOm8T0mzwH8ys0DpUV2B
-         /8rRdrCOslHB9wtm4QZ2R/cyVE9iYjJu5oCXxBGmPYqm/YLa5OPMM/NW5dyg2gwweJKm
-         3UsNaD1d6P16cA0Qy79GMiFBXZTwST7TIJt8wWf7q0VJDewK+6oEPj0plvOySnQv2PqO
-         ZrHA==
-X-Gm-Message-State: AOAM532+NziSDCHV9kb8LHAOehVDRzRw+14YVMbtbcDrG7JiPpBsTGFt
-        +oLOscPwhm6uTmy3O1d7dCki5SvF+v7kxQ==
-X-Google-Smtp-Source: ABdhPJz6Xep7GQaFwxXXg6FUTH81husz/nDPykOeiqNGzei76rMt++y0edT5C90dPr5u5VVGvRfC5g==
-X-Received: by 2002:a05:6122:2225:: with SMTP id bb37mr2380426vkb.27.1641918190405;
-        Tue, 11 Jan 2022 08:23:10 -0800 (PST)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id l27sm3593845vko.17.2022.01.11.08.23.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jan 2022 08:23:09 -0800 (PST)
-Received: by mail-ua1-f50.google.com with SMTP id c36so30643243uae.13;
-        Tue, 11 Jan 2022 08:23:09 -0800 (PST)
-X-Received: by 2002:a67:e985:: with SMTP id b5mr2267085vso.77.1641918189316;
- Tue, 11 Jan 2022 08:23:09 -0800 (PST)
-MIME-Version: 1.0
-References: <20211221094717.16187-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20211221094717.16187-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20211221094717.16187-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 11 Jan 2022 17:22:58 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUB-wK_0Vqn4fmqQ0jaHWmo9OTRPT1bwWsZh76U1J729A@mail.gmail.com>
-Message-ID: <CAMuHMdUB-wK_0Vqn4fmqQ0jaHWmo9OTRPT1bwWsZh76U1J729A@mail.gmail.com>
-Subject: Re: [PATCH 06/16] dt-bindings: serial: renesas,scif: Document RZ/V2L SoC
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Sergey Shtylyov <s.shtylyov@omp.ru>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Biju Das <biju.das.jz@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dmaengine <dmaengine@vger.kernel.org>,
+        Tue, 11 Jan 2022 11:27:39 -0500
+X-Greylist: delayed 333 seconds by postgrey-1.27 at vger.kernel.org; Tue, 11 Jan 2022 11:27:38 EST
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1641918095;
+    s=strato-dkim-0002; d=fpond.eu;
+    h=Subject:References:In-Reply-To:Message-ID:Cc:To:From:Date:Cc:Date:
+    From:Subject:Sender;
+    bh=WYxOVMJEua/viqwXCpPe8hCmc3c6YDyeIcfa5CvuSnI=;
+    b=HYrjPv/UvtkB/Zsi8gVoNrD1nDgs80V54dsmT99QO5Jox/PsskUzjXZZmAmaJQ4O3I
+    wreeV2PbOilrqWMDlug8YZrrjTe/p6/n+mMCtpZys9FGny+je1vSkBIhiy5fBFE6qPQ1
+    WGzZJ9D2hTPZlI8O78mlYHJwOeGvENxDrjbtZdFMb9twg2rNgNiJmejvuBxAZ7Bp8KGo
+    SnyxzeL35crEIvdYTIDTYIdkOttsC1svsAD8HV46tZrNh4l5p5Y5CWgW4YVb4YW1Z5m7
+    S9vpwhM8NyBEsklD0F3f+FtvDFaiip68UvaeVoc7fez3Z1NeNe6ubyCwxuGX6ZqdMeR0
+    /gVw==
+Authentication-Results: strato.com;
+    dkim=none
+X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzvv3qxio1R8fCv/x28jVM="
+X-RZG-CLASS-ID: mo00
+Received: from oxapp06-01.back.ox.d0m.de
+    by smtp.strato.de (RZmta 47.37.6 AUTH)
+    with ESMTPSA id a48ca5y0BGLZHKk
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
+        (Client did not present a certificate);
+    Tue, 11 Jan 2022 17:21:35 +0100 (CET)
+Date:   Tue, 11 Jan 2022 17:21:35 +0100 (CET)
+From:   Ulrich Hecht <uli@fpond.eu>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Ulrich Hecht <uli+renesas@fpond.eu>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         netdev <netdev@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
+        "Lad, Prabhakar" <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Wolfram Sang <wsa@kernel.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Jakub Kicinski <kuba@kernel.org>, mailhol.vincent@wanadoo.fr,
+        socketcan@hartkopp.net
+Message-ID: <607177102.2794009.1641918095844@webmail.strato.com>
+In-Reply-To: <CAMuHMdXKuvxnLBRXUgaT=kvvyE4LY9tzM8WiM1J+=4__kY8Stw@mail.gmail.com>
+References: <20210924153113.10046-1-uli+renesas@fpond.eu>
+ <20210924153113.10046-4-uli+renesas@fpond.eu>
+ <CAMuHMdXKuvxnLBRXUgaT=kvvyE4LY9tzM8WiM1J+=4__kY8Stw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] arm64: dts: r8a779a0: Add CANFD device node
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Normal
+X-Mailer: Open-Xchange Mailer v7.10.5-Rev33
+X-Originating-Client: open-xchange-appsuite
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Prabhakar,
 
-On Tue, Dec 21, 2021 at 10:48 AM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
->
-> Add SCIF binding documentation for Renesas RZ/V2L SoC. SCIF block on RZ/V2L
-> is identical to one found on the RZ/G2L SoC. No driver changes are required
-> as RZ/G2L compatible string "renesas,scif-r9a07g044" will be used as a
-> fallback.
->
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> On 10/05/2021 3:20 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> 
+>  
+> Hi Uli,
+> 
+> On Fri, Sep 24, 2021 at 5:34 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> > This patch adds CANFD device node for r8a779a0.
+> >
+> > Based on patch by Kazuya Mizuguchi.
+> >
+> > Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+> 
+> Thanks for your patch!
+> 
+> > --- a/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+> > +++ b/arch/arm64/boot/dts/renesas/r8a779a0.dtsi
+> 
+> > @@ -236,6 +243,54 @@
+> >                         #interrupt-cells = <2>;
+> >                 };
+> >
+> > +               canfd: can@e6660000 {
+> 
+> Please preserve sort order (by unit address).
 
-Thanks for your patch!
+Nothing to preserve there, the file isn't sorted by address. :)
 
-> --- a/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-> +++ b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-> @@ -67,6 +67,12 @@ properties:
->        - items:
->            - enum:
->                - renesas,scif-r9a07g044      # RZ/G2{L,LC}
-> +              - renesas,scif-r9a07g054      # RZ/V2L
-
-As the idea is to rely on the RZ/G2L fallback for matching, cfr. below,
-the above addition is not needed or wanted.
-
-> +
-> +      - items:
-> +          - enum:
-> +              - renesas,scif-r9a07g054      # RZ/V2L
-> +          - const: renesas,scif-r9a07g044   # RZ/G2{L,LC} fallback for RZ/V2L
->
->    reg:
->      maxItems: 1
-> @@ -154,6 +160,7 @@ if:
->            - renesas,rcar-gen2-scif
->            - renesas,rcar-gen3-scif
->            - renesas,scif-r9a07g044
-> +          - renesas,scif-r9a07g054
-
-This addition is not needed if the fallback is always present.
-
->  then:
->    required:
->      - resets
-
-Given Greg already applied your patch, I think you have to send a
-follow-up patch.
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+CU
+Uli
