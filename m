@@ -2,96 +2,86 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3701CC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jan 2022 16:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8EAAC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jan 2022 17:09:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234020AbiARQzJ (ORCPT
+        id S230126AbiARRJR (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 18 Jan 2022 11:55:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34238 "EHLO
+        Tue, 18 Jan 2022 12:09:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347020AbiARQyn (ORCPT
+        with ESMTP id S238016AbiARRJQ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 18 Jan 2022 11:54:43 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EAA9C061574
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jan 2022 08:54:42 -0800 (PST)
+        Tue, 18 Jan 2022 12:09:16 -0500
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4B748C06173E
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 18 Jan 2022 09:09:15 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed20:76d0:2bff:fec8:549])
-        by andre.telenet-ops.be with bizsmtp
-        id kGug260060kcUhD01GugUo; Tue, 18 Jan 2022 17:54:40 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id kH992600H0kcUhD06H99m4; Tue, 18 Jan 2022 18:09:13 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n9rkl-00AGxf-R9; Tue, 18 Jan 2022 17:54:39 +0100
+        id 1n9ryn-00AH3D-4M; Tue, 18 Jan 2022 18:09:09 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1n9rkl-001BJ1-At; Tue, 18 Jan 2022 17:54:39 +0100
+        id 1n9rym-001Bli-Er; Tue, 18 Jan 2022 18:09:08 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Magnus Damm <magnus.damm@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Magnus Damm <magnus.damm@gmail.com>
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        LUU HOAI <hoai.luu.ub@renesas.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH LOCAL v2] soc: renesas: rcar-rst: Allow WDT reset on R-Car Gen4
-Date:   Tue, 18 Jan 2022 17:54:28 +0100
-Message-Id: <39005cf749a99afc6d3ba96ff155fd2a231418a8.1642524743.git.geert+renesas@glider.be>
+Subject: [PATCH 4/5] arm64: dts: renesas: r8a779f0: Add RWDT node
+Date:   Tue, 18 Jan 2022 18:09:04 +0100
+Message-Id: <556a7f41bdadceecbe8b59b79ac7e9f592ca17a2.1642525158.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1642525158.git.geert+renesas@glider.be>
+References: <cover.1642525158.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Add a device node for the RCLK Watchdog Timer (RWDT) on the Renesas
+R-Car S4-8 (R8A779F0) SoC.
 
-Other Gen3 SoCs do this in the bootloader. Maybe R-Car V3U and S4-8 will
-also later?  For now, add it so we can properly reboot via remote.
+Extracted from a larger patch in the BSP by LUU HOAI.
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-[geert: Generalize for R-Car Gen4]
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
-Not intended for upstream merge.
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-v2:
-  - Generalize for R-Car Gen4
----
- drivers/soc/renesas/rcar-rst.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/soc/renesas/rcar-rst.c b/drivers/soc/renesas/rcar-rst.c
-index 4d293eb2d8f315d9..c9f2910361255fc5 100644
---- a/drivers/soc/renesas/rcar-rst.c
-+++ b/drivers/soc/renesas/rcar-rst.c
-@@ -12,6 +12,7 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+index 5426532d10e2a472..0ac8c345558efc17 100644
+--- a/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a779f0.dtsi
+@@ -59,6 +59,16 @@ soc: soc {
+ 		#size-cells = <2>;
+ 		ranges;
  
- #define WDTRSTCR_RESET		0xA55A0002
- #define WDTRSTCR		0x0054
-+#define GEN4_WDTRSTCR		0x0010
- 
- #define CR7BAR			0x0070
- #define CR7BAREN		BIT(4)
-@@ -27,6 +28,12 @@ static int rcar_rst_enable_wdt_reset(void __iomem *base)
- 	return 0;
- }
- 
-+static int rcar_rst_gen4_enable_wdt_reset(void __iomem *base)
-+{
-+	iowrite32(WDTRSTCR_RESET, base + GEN4_WDTRSTCR);
-+	return 0;
-+}
++		rwdt: watchdog@e6020000 {
++			compatible = "renesas,r8a779f0-wdt",
++				     "renesas,rcar-gen4-wdt";
++			reg = <0 0xe6020000 0 0x0c>;
++			clocks = <&cpg CPG_MOD 907>;
++			power-domains = <&sysc R8A779F0_PD_ALWAYS_ON>;
++			resets = <&cpg 907>;
++			status = "disabled";
++		};
 +
- /*
-  * Most of the R-Car Gen3 SoCs have an ARM Realtime Core.
-  * Firmware boot address has to be set in CR7BAR before
-@@ -68,6 +75,7 @@ static const struct rst_config rcar_rst_gen3 __initconst = {
- 
- static const struct rst_config rcar_rst_gen4 __initconst = {
- 	.modemr = 0x00,		/* MODEMR0 and it has CPG related bits */
-+	.configure = rcar_rst_gen4_enable_wdt_reset,
- };
- 
- static const struct of_device_id rcar_rst_matches[] __initconst = {
+ 		cpg: clock-controller@e6150000 {
+ 			compatible = "renesas,r8a779f0-cpg-mssr";
+ 			reg = <0 0xe6150000 0 0x4000>;
 -- 
 2.25.1
 
