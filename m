@@ -2,45 +2,44 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2343DC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jan 2022 03:45:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D07C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 18 Jan 2022 03:47:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1349547AbiARDpv (ORCPT
+        id S1351948AbiARDrG (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 17 Jan 2022 22:45:51 -0500
-Received: from ams.source.kernel.org ([145.40.68.75]:50968 "EHLO
+        Mon, 17 Jan 2022 22:47:06 -0500
+Received: from ams.source.kernel.org ([145.40.68.75]:50064 "EHLO
         ams.source.kernel.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1345636AbiARCmQ (ORCPT
+        with ESMTP id S1347181AbiARCkz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 17 Jan 2022 21:42:16 -0500
+        Mon, 17 Jan 2022 21:40:55 -0500
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 3853BB8125D;
-        Tue, 18 Jan 2022 02:42:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CE6FC36AF2;
-        Tue, 18 Jan 2022 02:42:10 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B8D13B811D6;
+        Tue, 18 Jan 2022 02:40:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 841E4C36AEF;
+        Tue, 18 Jan 2022 02:40:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1642473732;
-        bh=WQCIdyoCBqzT1RiVCy6TIWZuU6QVvUeH/y9HpzGEJrU=;
+        s=k20201202; t=1642473652;
+        bh=k/Lz/Zo8RSedFrd/Cb57u0V3RMctMpavMVRb8b8/edc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VrIUp4rEIRJ0vY4LBj64W+dnTt23tEV/Nww6hQs+WX5wtKyfOF/kjNBMNyGlmqqCW
-         MXLKEX7ynNenxjLcRqJiW+l64lOX1ezjwTiDzXFuwNPg+BKE2drehLdCpU3jsPXJLs
-         u23OB3W+r+QGXlCnUf24TgdAqcVGLkda4zDkzNKLCe2so3U4zDKnv351i8+XyoZrRH
-         k7GsNLa02EMIlQVnDSsKzru4GpOBR5B5Fd+dbtCFzun0dmNo+TPRXUi74VWBHje5PZ
-         zOp+o5R0H+s5wyKY6ao8ujifBuk2Ihb3JfDvvBhox40RdEaHUqssIJqJQXTTYblB1e
-         qcFixUgNvIAfw==
+        b=ezn2DdYM0M9srU2XJ8dHOC5UAZ1VipoXDgDOc+Wi6uNDHIRnQGga4PEtR7Ea1zwFh
+         O9aCOCLEo+EX21eCQR6z/T9zuE3T9Zx7Hs42ddrvcTxyZYInatFtK04OugKbDnWir4
+         gsbtMtIoEpwHaed6KNg8QLlqTU0TA+ufi7RqX2EZZMUh/y0pfMidVPc782cuD7H0Re
+         VBDagUW3+etNBTpgKq9OWtjr03KhZYY64ySn3pzXJseqYM5QFyCI1t6BVFkK9pLS0d
+         XHUBVVrLGGmoWWrvzVFgD0iCGX7l28pZpuXBY4lImceaovSElD27oFPF8jUl+qGVAV
+         5hpnfGjjfPh5A==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sasha Levin <sashal@kernel.org>,
-        laurent.pinchart@ideasonboard.com,
-        kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
-        daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
+Cc:     Wan Jiabing <wanjiabing@vivo.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sasha Levin <sashal@kernel.org>, magnus.damm@gmail.com,
+        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 044/116] drm: rcar-du: Fix CRTC timings when CMM is used
-Date:   Mon, 17 Jan 2022 21:38:55 -0500
-Message-Id: <20220118024007.1950576-44-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 012/116] ARM: shmobile: rcar-gen2: Add missing of_node_put()
+Date:   Mon, 17 Jan 2022 21:38:23 -0500
+Message-Id: <20220118024007.1950576-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20220118024007.1950576-1-sashal@kernel.org>
 References: <20220118024007.1950576-1-sashal@kernel.org>
@@ -52,80 +51,50 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Wan Jiabing <wanjiabing@vivo.com>
 
-[ Upstream commit f0ce591dc9a97067c6e783a2eaccd22c5476144d ]
+[ Upstream commit 85744f2d938c5f3cfc44cb6533c157469634da93 ]
 
-When the CMM is enabled, an offset of 25 pixels must be subtracted from
-the HDS (horizontal display start) and HDE (horizontal display end)
-registers. Fix the timings calculation, and take this into account in
-the mode validation.
+Fix following coccicheck warning:
+./arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c:156:1-33: Function
+for_each_matching_node_and_match should have of_node_put() before break
+and goto.
 
-This fixes a visible horizontal offset in the image with VGA monitors.
-HDMI monitors seem to be generally more tolerant to incorrect timings,
-but may be affected too.
+Early exits from for_each_matching_node_and_match() should decrement the
+node reference counter.
 
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Signed-off-by: Wan Jiabing <wanjiabing@vivo.com>
+Link: https://lore.kernel.org/r/20211018014503.7598-1-wanjiabing@vivo.com
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+ arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 1b9738e44909d..065604c5837de 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -215,6 +215,7 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	const struct drm_display_mode *mode = &rcrtc->crtc.state->adjusted_mode;
- 	struct rcar_du_device *rcdu = rcrtc->dev;
- 	unsigned long mode_clock = mode->clock * 1000;
-+	unsigned int hdse_offset;
- 	u32 dsmr;
- 	u32 escr;
+diff --git a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+index ee949255ced3f..09ef73b99dd86 100644
+--- a/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
++++ b/arch/arm/mach-shmobile/regulator-quirk-rcar-gen2.c
+@@ -154,8 +154,10 @@ static int __init rcar_gen2_regulator_quirk(void)
+ 		return -ENODEV;
  
-@@ -298,10 +299,15 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 	     | DSMR_DIPM_DISP | DSMR_CSPM;
- 	rcar_du_crtc_write(rcrtc, DSMR, dsmr);
+ 	for_each_matching_node_and_match(np, rcar_gen2_quirk_match, &id) {
+-		if (!of_device_is_available(np))
++		if (!of_device_is_available(np)) {
++			of_node_put(np);
+ 			break;
++		}
  
-+	hdse_offset = 19;
-+	if (rcrtc->group->cmms_mask & BIT(rcrtc->index % 2))
-+		hdse_offset += 25;
-+
- 	/* Display timings */
--	rcar_du_crtc_write(rcrtc, HDSR, mode->htotal - mode->hsync_start - 19);
-+	rcar_du_crtc_write(rcrtc, HDSR, mode->htotal - mode->hsync_start -
-+					hdse_offset);
- 	rcar_du_crtc_write(rcrtc, HDER, mode->htotal - mode->hsync_start +
--					mode->hdisplay - 19);
-+					mode->hdisplay - hdse_offset);
- 	rcar_du_crtc_write(rcrtc, HSWR, mode->hsync_end -
- 					mode->hsync_start - 1);
- 	rcar_du_crtc_write(rcrtc, HCR,  mode->htotal - 1);
-@@ -831,6 +837,7 @@ rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
- 	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
- 	struct rcar_du_device *rcdu = rcrtc->dev;
- 	bool interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
-+	unsigned int min_sync_porch;
- 	unsigned int vbp;
+ 		ret = of_property_read_u32(np, "reg", &addr);
+ 		if (ret)	/* Skip invalid entry and continue */
+@@ -164,6 +166,7 @@ static int __init rcar_gen2_regulator_quirk(void)
+ 		quirk = kzalloc(sizeof(*quirk), GFP_KERNEL);
+ 		if (!quirk) {
+ 			ret = -ENOMEM;
++			of_node_put(np);
+ 			goto err_mem;
+ 		}
  
- 	if (interlaced && !rcar_du_has(rcdu, RCAR_DU_FEATURE_INTERLACED))
-@@ -838,9 +845,14 @@ rcar_du_crtc_mode_valid(struct drm_crtc *crtc,
- 
- 	/*
- 	 * The hardware requires a minimum combined horizontal sync and back
--	 * porch of 20 pixels and a minimum vertical back porch of 3 lines.
-+	 * porch of 20 pixels (when CMM isn't used) or 45 pixels (when CMM is
-+	 * used), and a minimum vertical back porch of 3 lines.
- 	 */
--	if (mode->htotal - mode->hsync_start < 20)
-+	min_sync_porch = 20;
-+	if (rcrtc->group->cmms_mask & BIT(rcrtc->index % 2))
-+		min_sync_porch += 25;
-+
-+	if (mode->htotal - mode->hsync_start < min_sync_porch)
- 		return MODE_HBLANK_NARROW;
- 
- 	vbp = (mode->vtotal - mode->vsync_end) / (interlaced ? 2 : 1);
 -- 
 2.34.1
 
