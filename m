@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C90C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jan 2022 14:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2236EC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jan 2022 14:02:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354986AbiASOCw (ORCPT
+        id S1354987AbiASOCx (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Jan 2022 09:02:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38834 "EHLO
+        Wed, 19 Jan 2022 09:02:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38836 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354987AbiASOCp (ORCPT
+        with ESMTP id S1354988AbiASOCp (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 19 Jan 2022 09:02:45 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87122C061748
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8EFACC061749
         for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Jan 2022 06:02:43 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:a44d:f245:bac9:611c])
-        by andre.telenet-ops.be with bizsmtp
-        id ke2h2600P2FKFx601e2h0L; Wed, 19 Jan 2022 15:02:41 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id ke2h2600L2FKFx601e2hX7; Wed, 19 Jan 2022 15:02:41 +0100
 Received: from rox.of.borg ([192.168.97.57] helo=rox)
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nABXt-00AS0x-02; Wed, 19 Jan 2022 15:02:41 +0100
+        id 1nABXs-00AS14-Vn; Wed, 19 Jan 2022 15:02:40 +0100
 Received: from geert by rox with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nABXs-009iHj-5M; Wed, 19 Jan 2022 15:02:40 +0100
+        id 1nABXs-009iIB-A9; Wed, 19 Jan 2022 15:02:40 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     LUU HOAI <hoai.luu.ub@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 08/15] pinctrl: renesas: r8a779f0: Add INTC-EX pins, groups, and function
-Date:   Wed, 19 Jan 2022 15:02:25 +0100
-Message-Id: <14d3b8c17a6949b73a22a2ab6294c5f400148fd8.1642599415.git.geert+renesas@glider.be>
+Subject: [PATCH/RFC 12/15] pinctrl: renesas: r8a779f0: Add QSPI pins, groups, and functions
+Date:   Wed, 19 Jan 2022 15:02:29 +0100
+Message-Id: <42d37df94b17c74a0cbf07d0338cbde6ed5f2818.1642599415.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1642599415.git.geert+renesas@glider.be>
 References: <cover.1642599415.git.geert+renesas@glider.be>
@@ -43,109 +43,109 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add pins, groups, and function for the Interrupt Controller for External
-Devices (INTC-EX) on the Renesas R-Car S4-8 (R8A779F0) SoC.
+Add pins, groups, and functions for the Quad SPI Controllers on the
+Renesas R-Car S4-8 (R8A779F0) SoC.
 
 Based on a larger patch in the BSP by LUU HOAI.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
+This depends on "[PATCH 00/60] pinctrl: renesas: Share more pin group
+data"[1].
+
 Changes compared to the BSP:
-  - Add IRQ[45] pin groups.
+  - Share QSPI pin group data.
+
+[1] https://lore.kernel.org/r/cover.1640269757.git.geert+renesas@glider.be
 ---
- drivers/pinctrl/renesas/pfc-r8a779f0.c | 61 ++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+ drivers/pinctrl/renesas/pfc-r8a779f0.c | 56 ++++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
 diff --git a/drivers/pinctrl/renesas/pfc-r8a779f0.c b/drivers/pinctrl/renesas/pfc-r8a779f0.c
-index 71dbe7dae03b2463..a326e134216773ec 100644
+index 8c294664bf4c28eb..0ecb7ce7565e712c 100644
 --- a/drivers/pinctrl/renesas/pfc-r8a779f0.c
 +++ b/drivers/pinctrl/renesas/pfc-r8a779f0.c
-@@ -1388,6 +1388,51 @@ static const unsigned int i2c5_mux[] = {
- 	SDA5_MARK, SCL5_MARK,
+@@ -1671,6 +1671,42 @@ static const unsigned int pcie1_clkreq_n_mux[] = {
+ 	PCIE1_CLKREQ_N_MARK,
  };
  
++/* - QSPI0 ------------------------------------------------------------------ */
++static const unsigned int qspi0_ctrl_pins[] = {
++	/* SPCLK, SSL */
++	RCAR_GP_PIN(2, 10), RCAR_GP_PIN(2, 13),
++};
++static const unsigned int qspi0_ctrl_mux[] = {
++	QSPI0_SPCLK_MARK, QSPI0_SSL_MARK,
++};
++static const unsigned int qspi0_data_pins[] = {
++	/* MOSI_IO0, MISO_IO1, IO2, IO3 */
++	RCAR_GP_PIN(2, 9), RCAR_GP_PIN(2, 12),
++	RCAR_GP_PIN(2, 11), RCAR_GP_PIN(2, 14),
++};
++static const unsigned int qspi0_data_mux[] = {
++	QSPI0_MOSI_IO0_MARK, QSPI0_MISO_IO1_MARK,
++	QSPI0_IO2_MARK, QSPI0_IO3_MARK
++};
 +
-+/* - INTC-EX ---------------------------------------------------------------- */
-+static const unsigned int intc_ex_irq0_pins[] = {
-+	/* IRQ0 */
-+	RCAR_GP_PIN(0, 17),
++/* - QSPI1 ------------------------------------------------------------------ */
++static const unsigned int qspi1_ctrl_pins[] = {
++	/* SPCLK, SSL */
++	RCAR_GP_PIN(2, 8), RCAR_GP_PIN(2, 3),
 +};
-+static const unsigned int intc_ex_irq0_mux[] = {
-+	IRQ0_MARK,
++static const unsigned int qspi1_ctrl_mux[] = {
++	QSPI1_SPCLK_MARK, QSPI1_SSL_MARK,
 +};
-+static const unsigned int intc_ex_irq1_pins[] = {
-+	/* IRQ1 */
-+	RCAR_GP_PIN(0, 18),
++static const unsigned int qspi1_data_pins[] = {
++	/* MOSI_IO0, MISO_IO1, IO2, IO3 */
++	RCAR_GP_PIN(2, 7), RCAR_GP_PIN(2, 5),
++	RCAR_GP_PIN(2, 6), RCAR_GP_PIN(2, 4),
 +};
-+static const unsigned int intc_ex_irq1_mux[] = {
-+	IRQ1_MARK,
-+};
-+static const unsigned int intc_ex_irq2_pins[] = {
-+	/* IRQ2 */
-+	RCAR_GP_PIN(0, 19),
-+};
-+static const unsigned int intc_ex_irq2_mux[] = {
-+	IRQ2_MARK,
-+};
-+static const unsigned int intc_ex_irq3_pins[] = {
-+	/* IRQ3 */
-+	RCAR_GP_PIN(0, 20),
-+};
-+static const unsigned int intc_ex_irq3_mux[] = {
-+	IRQ3_MARK,
-+};
-+static const unsigned int intc_ex_irq4_pins[] = {
-+	/* IRQ4 */
-+	RCAR_GP_PIN(0, 11),
-+};
-+static const unsigned int intc_ex_irq4_mux[] = {
-+	IRQ4_MARK,
-+};
-+static const unsigned int intc_ex_irq5_pins[] = {
-+	/* IRQ5 */
-+	RCAR_GP_PIN(0, 15),
-+};
-+static const unsigned int intc_ex_irq5_mux[] = {
-+	IRQ5_MARK,
++static const unsigned int qspi1_data_mux[] = {
++	QSPI1_MOSI_IO0_MARK, QSPI1_MISO_IO1_MARK,
++	QSPI1_IO2_MARK, QSPI1_IO3_MARK
 +};
 +
  /* - SCIF0 ------------------------------------------------------------------ */
  static const unsigned int scif0_data_pins[] = {
  	/* RX0, TX0 */
-@@ -1508,6 +1553,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(i2c3),
- 	SH_PFC_PIN_GROUP(i2c4),
- 	SH_PFC_PIN_GROUP(i2c5),
-+	SH_PFC_PIN_GROUP(intc_ex_irq0),
-+	SH_PFC_PIN_GROUP(intc_ex_irq1),
-+	SH_PFC_PIN_GROUP(intc_ex_irq2),
-+	SH_PFC_PIN_GROUP(intc_ex_irq3),
-+	SH_PFC_PIN_GROUP(intc_ex_irq4),
-+	SH_PFC_PIN_GROUP(intc_ex_irq5),
+@@ -1830,6 +1866,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
+ 	SH_PFC_PIN_GROUP(msiof3_rxd),
+ 	SH_PFC_PIN_GROUP(pcie0_clkreq_n),
+ 	SH_PFC_PIN_GROUP(pcie1_clkreq_n),
++	SH_PFC_PIN_GROUP(qspi0_ctrl),
++	BUS_DATA_PIN_GROUP(qspi0_data, 2),
++	BUS_DATA_PIN_GROUP(qspi0_data, 4),
++	SH_PFC_PIN_GROUP(qspi1_ctrl),
++	BUS_DATA_PIN_GROUP(qspi1_data, 2),
++	BUS_DATA_PIN_GROUP(qspi1_data, 4),
  	SH_PFC_PIN_GROUP(scif0_data),
  	SH_PFC_PIN_GROUP(scif0_clk),
  	SH_PFC_PIN_GROUP(scif0_ctrl),
-@@ -1571,6 +1622,15 @@ static const char * const i2c5_groups[] = {
- 	"i2c5",
+@@ -1953,6 +1995,18 @@ static const char * const pcie_groups[] = {
+ 	"pcie1_clkreq_n",
  };
  
-+static const char * const intc_ex_groups[] = {
-+	"intc_ex_irq0",
-+	"intc_ex_irq1",
-+	"intc_ex_irq2",
-+	"intc_ex_irq3",
-+	"intc_ex_irq4",
-+	"intc_ex_irq5",
++static const char * const qspi0_groups[] = {
++	"qspi0_ctrl",
++	"qspi0_data2",
++	"qspi0_data4",
++};
++
++static const char * const qspi1_groups[] = {
++	"qspi1_ctrl",
++	"qspi1_data2",
++	"qspi1_data4",
 +};
 +
  static const char * const scif0_groups[] = {
  	"scif0_data",
  	"scif0_clk",
-@@ -1610,6 +1670,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(i2c3),
- 	SH_PFC_FUNCTION(i2c4),
- 	SH_PFC_FUNCTION(i2c5),
-+	SH_PFC_FUNCTION(intc_ex),
+@@ -1999,6 +2053,8 @@ static const struct sh_pfc_function pinmux_functions[] = {
+ 	SH_PFC_FUNCTION(msiof2),
+ 	SH_PFC_FUNCTION(msiof3),
+ 	SH_PFC_FUNCTION(pcie),
++	SH_PFC_FUNCTION(qspi0),
++	SH_PFC_FUNCTION(qspi1),
  	SH_PFC_FUNCTION(scif0),
  	SH_PFC_FUNCTION(scif1),
  	SH_PFC_FUNCTION(scif3),
