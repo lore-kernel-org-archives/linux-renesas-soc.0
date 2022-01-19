@@ -2,38 +2,38 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3712C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jan 2022 14:02:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C8D4C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 19 Jan 2022 14:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1354957AbiASOCq (ORCPT
+        id S1354981AbiASOCr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 19 Jan 2022 09:02:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38816 "EHLO
+        Wed, 19 Jan 2022 09:02:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1354981AbiASOCo (ORCPT
+        with ESMTP id S1354983AbiASOCo (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 19 Jan 2022 09:02:44 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B5A5C06161C
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66B34C061574
         for <linux-renesas-soc@vger.kernel.org>; Wed, 19 Jan 2022 06:02:43 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:a44d:f245:bac9:611c])
-        by baptiste.telenet-ops.be with bizsmtp
-        id ke2g2600E2FKFx601e2gWJ; Wed, 19 Jan 2022 15:02:41 +0100
+        by xavier.telenet-ops.be with bizsmtp
+        id ke2g2600Q2FKFx601e2hWz; Wed, 19 Jan 2022 15:02:41 +0100
 Received: from rox.of.borg ([192.168.97.57] helo=rox)
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nABXs-00AS0j-C2; Wed, 19 Jan 2022 15:02:40 +0100
+        id 1nABXs-00AS0l-Kn; Wed, 19 Jan 2022 15:02:40 +0100
 Received: from geert by rox with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nABXr-009iGw-S8; Wed, 19 Jan 2022 15:02:39 +0100
+        id 1nABXr-009iHA-UO; Wed, 19 Jan 2022 15:02:39 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     linux-renesas-soc@vger.kernel.org
 Cc:     LUU HOAI <hoai.luu.ub@renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH/RFC 01/15] clk: renesas: r8a779f0: Add PFC clock
-Date:   Wed, 19 Jan 2022 15:02:18 +0100
-Message-Id: <0657b04f706119c56462ea6437c518804e9d5330.1642599415.git.geert+renesas@glider.be>
+Subject: [PATCH/RFC 03/15] pinctrl: renesas: Add PORT_GP_CFG_19 macros
+Date:   Wed, 19 Jan 2022 15:02:20 +0100
+Message-Id: <b2c72cceb9f03803c80d65eed2dd273adc1c3a3f.1642599415.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1642599415.git.geert+renesas@glider.be>
 References: <cover.1642599415.git.geert+renesas@glider.be>
@@ -43,28 +43,39 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add the module clock used by the Pin Function (PFC/GPIO) controller
-on the Renesas R-Car S4-8 (R8A779F0) SoC.
+Add PORT_GP_CFG_19() and PORT_GP_19() helper macros, to be used by the
+r8a779f0 subdriver.
 
-Extracted from a larger patch in the BSP by LUU HOAI.
+Based on a larger patch in the BSP by LUU HOAI.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+Changes compared to the BSP:
+  - Rework PORT_GP_CFG_20() on top of the new PORT_GP_CFG_19().
+---
+ drivers/pinctrl/renesas/sh_pfc.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index e48c5af7341454a7..16271b8c3ed8ea31 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -122,6 +122,7 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
- 	DEF_MOD("sys-dmac0",	709,	R8A779F0_CLK_S0D3_PER),
- 	DEF_MOD("sys-dmac1",	710,	R8A779F0_CLK_S0D3_PER),
- 	DEF_MOD("wdt",		907,	R8A779F0_CLK_R),
-+	DEF_MOD("pfc0",		915,	R8A779F0_CLK_CL16M),
- };
+diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
+index fba4217acb3fa3f2..f9852702a697a089 100644
+--- a/drivers/pinctrl/renesas/sh_pfc.h
++++ b/drivers/pinctrl/renesas/sh_pfc.h
+@@ -525,9 +525,13 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+ 	PORT_GP_CFG_1(bank, 17, fn, sfx, cfg)
+ #define PORT_GP_18(bank, fn, sfx)	PORT_GP_CFG_18(bank, fn, sfx, 0)
  
- static const unsigned int r8a779f0_crit_mod_clks[] __initconst = {
+-#define PORT_GP_CFG_20(bank, fn, sfx, cfg)				\
++#define PORT_GP_CFG_19(bank, fn, sfx, cfg)				\
+ 	PORT_GP_CFG_18(bank, fn, sfx, cfg),				\
+-	PORT_GP_CFG_1(bank, 18, fn, sfx, cfg),				\
++	PORT_GP_CFG_1(bank, 18, fn, sfx, cfg)
++#define PORT_GP_19(bank, fn, sfx)	PORT_GP_CFG_19(bank, fn, sfx, 0)
++
++#define PORT_GP_CFG_20(bank, fn, sfx, cfg)				\
++	PORT_GP_CFG_19(bank, fn, sfx, cfg),				\
+ 	PORT_GP_CFG_1(bank, 19, fn, sfx, cfg)
+ #define PORT_GP_20(bank, fn, sfx)	PORT_GP_CFG_20(bank, fn, sfx, 0)
+ 
 -- 
 2.25.1
 
