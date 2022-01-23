@@ -2,30 +2,27 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EECC43219
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 23 Jan 2022 16:09:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8809C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 23 Jan 2022 16:09:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238439AbiAWQJX (ORCPT
+        id S238443AbiAWQJY (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 23 Jan 2022 11:09:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47408 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238446AbiAWQJW (ORCPT
+        Sun, 23 Jan 2022 11:09:24 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42248 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S234211AbiAWQJX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 23 Jan 2022 11:09:22 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62C8AC06173B;
-        Sun, 23 Jan 2022 08:09:22 -0800 (PST)
+        Sun, 23 Jan 2022 11:09:23 -0500
 Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0247225E;
-        Sun, 23 Jan 2022 17:09:16 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2AABF1253;
+        Sun, 23 Jan 2022 17:09:20 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1642954157;
-        bh=gGqAnNSXfqGvE1bAbOp2NcHyz9dnl2btGOUK4uBAu4Y=;
-        h=From:To:Cc:Subject:Date:From;
-        b=NYrTcD82aEtrqWB+19vtcWSL1YFjM2gzuBcinCxfoJ8dbhlE+IXVRoNhTGsqyRVRE
-         Ux6FW4k1I+d1gzWceRl2/IgR8VMXIjL0c19+qBeoL5KAHIZ8h3cOUamHKYEKI4QLmw
-         yxvMSOBqi8eUh7SgFfay5vATGJUdotWcDixoRa8U=
+        s=mail; t=1642954160;
+        bh=3geSuoEz6g+fTciggs4nXwS8/gLrJ4EqA6eox6uSlLg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YjqVuEhBKqsOdZkebLJrEzUIU6CK1n68nea6o7rGW2rG3A60q8k1oqKa4v/nK4/Y4
+         lKo4eaCKrt9Lhq6cWRG7xP0ZOH8gK0BCa92nheoEGwqtwmDspOhhDWU9enNJjVBWb2
+         BfegWCOyN7a6lIxObQht4vjjnEHmjQe9n7FJ33l4=
 From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 To:     linux-media@vger.kernel.org
 Cc:     linux-renesas-soc@vger.kernel.org,
@@ -36,46 +33,76 @@ Cc:     linux-renesas-soc@vger.kernel.org,
         Maxime Ripard <mripard@kernel.org>,
         Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
         Pratyush Yadav <p.yadav@ti.com>
-Subject: [PATCH 0/6] media: Centralize MIPI CSI-2 data types in shared header
-Date:   Sun, 23 Jan 2022 18:08:51 +0200
-Message-Id: <20220123160857.24161-1-laurent.pinchart+renesas@ideasonboard.com>
+Subject: [PATCH 3/6] media: rcar-isp: Use mipi-csi2.h
+Date:   Sun, 23 Jan 2022 18:08:54 +0200
+Message-Id: <20220123160857.24161-4-laurent.pinchart+renesas@ideasonboard.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220123160857.24161-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20220123160857.24161-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hello,
+Replace the hardcoded MIPI CSI-2 data types with macros from
+mipi-csi2.h.
 
-This short patch series is the result of me being fed up with seeing
-MIPI CSI-2 data types duplicated through drivers.
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ drivers/media/platform/rcar-isp.c | 32 +++++++++++++++++++++++++------
+ 1 file changed, 26 insertions(+), 6 deletions(-)
 
-Patch 1/6 adds a new shared header to define the data types, and patches
-2/6 to 6/6 replace custom macros or hardcoded values in drivers. There
-are a few other drivers left that should still be updated, additional
-patches are welcome on top of this series :-)
-
-Laurent Pinchart (6):
-  media: Define MIPI CSI-2 data types in a shared header file
-  media: cadence: cdns-csi2tx: Use mipi-csi2.h
-  media: rcar-isp: Use mipi-csi2.h
-  media: rcar-csi2: Use mipi-csi2.h
-  media: rockchip: rkisp1: Use mipi-csi2.h
-  media: xilinx: csi2rxss: Use mipi-csi2.h
-
- drivers/media/platform/cadence/cdns-csi2tx.c  |   5 +-
- drivers/media/platform/rcar-isp.c             |  32 +++++-
- drivers/media/platform/rcar-vin/rcar-csi2.c   |  57 ++++++++--
- .../platform/rockchip/rkisp1/rkisp1-isp.c     |  34 +++---
- .../platform/rockchip/rkisp1/rkisp1-regs.h    |  11 --
- .../media/platform/xilinx/xilinx-csi2rxss.c   | 106 ++++++++----------
- include/media/mipi-csi2.h                     |  45 ++++++++
- 7 files changed, 183 insertions(+), 107 deletions(-)
- create mode 100644 include/media/mipi-csi2.h
-
-
-base-commit: 68b9bcc8a534cd11fe55f8bc82f948aae7d81b3c
+diff --git a/drivers/media/platform/rcar-isp.c b/drivers/media/platform/rcar-isp.c
+index 2ffab30bc011..10b3474f93a4 100644
+--- a/drivers/media/platform/rcar-isp.c
++++ b/drivers/media/platform/rcar-isp.c
+@@ -17,6 +17,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
+ 
++#include <media/mipi-csi2.h>
+ #include <media/v4l2-subdev.h>
+ 
+ #define ISPINPUTSEL0_REG				0x0008
+@@ -51,12 +52,31 @@ struct rcar_isp_format {
+ };
+ 
+ static const struct rcar_isp_format rcar_isp_formats[] = {
+-	{ .code = MEDIA_BUS_FMT_RGB888_1X24,	.datatype = 0x24, .procmode = 0x15 },
+-	{ .code = MEDIA_BUS_FMT_Y10_1X10,	.datatype = 0x2b, .procmode = 0x10 },
+-	{ .code = MEDIA_BUS_FMT_UYVY8_1X16,	.datatype = 0x1e, .procmode = 0x0c },
+-	{ .code = MEDIA_BUS_FMT_YUYV8_1X16,	.datatype = 0x1e, .procmode = 0x0c },
+-	{ .code = MEDIA_BUS_FMT_UYVY8_2X8,	.datatype = 0x1e, .procmode = 0x0c },
+-	{ .code = MEDIA_BUS_FMT_YUYV10_2X10,	.datatype = 0x1e, .procmode = 0x0c },
++	{
++		.code = MEDIA_BUS_FMT_RGB888_1X24,
++		.datatype = MIPI_CSI2_DT_RGB888,
++		.procmode = 0x15
++	}, {
++		.code = MEDIA_BUS_FMT_Y10_1X10,
++		.datatype = MIPI_CSI2_DT_RAW10,
++		.procmode = 0x10,
++	}, {
++		.code = MEDIA_BUS_FMT_UYVY8_1X16,
++		.datatype = MIPI_CSI2_DT_YUV422_8B,
++		.procmode = 0x0c,
++	}, {
++		.code = MEDIA_BUS_FMT_YUYV8_1X16,
++		.datatype = MIPI_CSI2_DT_YUV422_8B,
++		.procmode = 0x0c,
++	}, {
++		.code = MEDIA_BUS_FMT_UYVY8_2X8,
++		.datatype = MIPI_CSI2_DT_YUV422_8B,
++		.procmode = 0x0c,
++	}, {
++		.code = MEDIA_BUS_FMT_YUYV10_2X10,
++		.datatype = MIPI_CSI2_DT_YUV422_8B,
++		.procmode = 0x0c,
++	},
+ };
+ 
+ static const struct rcar_isp_format *risp_code_to_fmt(unsigned int code)
 -- 
 Regards,
 
