@@ -2,113 +2,116 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8D4C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 23 Jan 2022 16:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 438D6C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Sun, 23 Jan 2022 16:09:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238383AbiAWQGn (ORCPT
+        id S238434AbiAWQJV (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 23 Jan 2022 11:06:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46792 "EHLO
+        Sun, 23 Jan 2022 11:09:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234089AbiAWQGn (ORCPT
+        with ESMTP id S238437AbiAWQJV (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 23 Jan 2022 11:06:43 -0500
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00819C06173B;
-        Sun, 23 Jan 2022 08:06:42 -0800 (PST)
-Received: by mail-ed1-x531.google.com with SMTP id n10so36438437edv.2;
-        Sun, 23 Jan 2022 08:06:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:mime-version:user-agent:subject:content-language:to
-         :cc:references:from:in-reply-to:content-transfer-encoding;
-        bh=A+UmaYERh4ChTu3TUCQPUglKoveOWBsGh8yOqReo2gE=;
-        b=HreA47bF2jNtruBFxYPB17MuxUeL6iSA5dhVQRFMCglzOhKywlQrrBMzalK/8huCd3
-         xTLslcyIVvADEy71wDd7z0dM6XB8661U5PzAMzi2U5y/6bP5V7WJtuchQLzbSVvU4a/r
-         O9j/gTyGinkLMBQ+204oF+2PF3uB9z3+hSZ9cx7x5vNFMDEhQPDwIOWMfD4NhK22UkYt
-         Gk1ig5m0rdaYKOuUB+4VGjhFDOoCoPqkKKScktTNDz/PuK8TFxQvQZNG8TH5ep3HPQhp
-         RGzTyDWKkJmkvTfhh1HPcDSN1XuCaum2mOfvBufnRl0P3aVqpctu3aOOpIn5k71nUvXr
-         EWaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
-         :content-language:to:cc:references:from:in-reply-to
-         :content-transfer-encoding;
-        bh=A+UmaYERh4ChTu3TUCQPUglKoveOWBsGh8yOqReo2gE=;
-        b=nKKIlc0HEgFtZ368oaYPvbi9lArjlubeG/PaZKw1I+ltY1ip3D2WRz2kwSJr4ZCKvM
-         0WL7zgsZfugJzyBklfYMK0oItv0AQEDMpB3jvAgzwOs8Ns9wOTX0rvp/UbbI9a1S0O1z
-         8y9Q5c90/cLCzpG9+z7M+qh0q9XhygRR/Qs2AmUMWfYlbEw//N+scoMCNG0QsoXkay2b
-         JIK6Hq5Edze0PqvHJrPLP4H/fjUB/BqZls/XQ3Z0tpVdi7aFuNzes+YZ7yOhEWEC15LG
-         eOPIm5hdfA6Y6QGDSGmfVuP40+36RrHD1eP0EWmR01Jg7Wvpm2TN4F/QRYahw9PQ4mzI
-         qnXQ==
-X-Gm-Message-State: AOAM530ysfKw4tr93G/488iJWtSyZnUzWbCnJIBvE/6nWV/3+8A1bjO8
-        A6hBFEz4UZvQfzW58pvruQA=
-X-Google-Smtp-Source: ABdhPJw7H19xKHk4xWD3idrDpf6tkl7esz9jhdnFeZmkevRtWAItdTVkF4UEECX+vNwzcF1JOy7hyw==
-X-Received: by 2002:a05:6402:4253:: with SMTP id g19mr3667484edb.152.1642954001434;
-        Sun, 23 Jan 2022 08:06:41 -0800 (PST)
-Received: from [192.168.1.4] (ip-89-176-112-137.net.upcbroadband.cz. [89.176.112.137])
-        by smtp.gmail.com with ESMTPSA id f18sm3924230ejh.97.2022.01.23.08.06.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Jan 2022 08:06:40 -0800 (PST)
-Message-ID: <dbf8286b-902b-7ab5-6249-31504d0c364f@gmail.com>
-Date:   Sun, 23 Jan 2022 17:02:36 +0100
+        Sun, 23 Jan 2022 11:09:21 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EE96C06173B;
+        Sun, 23 Jan 2022 08:09:21 -0800 (PST)
+Received: from pendragon.lan (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 21527D41;
+        Sun, 23 Jan 2022 17:09:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1642954158;
+        bh=i3ofNbCQD8+Oh+oNjXsm99gpWh2SU1NNLToXOporhAk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=K/OzT/60ctNSK0tEHYjPdC9OzJut0EeFN/W1yhtgEQltpq+6ee1MhlXnFJi0/glIR
+         ZU9zxh6TJGV9fqscFKVrfHEmBSkAYW8Devjo3yI5qt2K6cjtIdY9STgeUBoWerI37f
+         LpYpSiyM1zjxY8CJMYN0SSOb4Z6gEgbxK1sEo63s=
+From:   Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+To:     linux-media@vger.kernel.org
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Sakari Ailus <sakari.ailus@iki.fi>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Dafna Hirschfeld <dafna.hirschfeld@collabora.com>,
+        Pratyush Yadav <p.yadav@ti.com>
+Subject: [PATCH 1/6] media: Define MIPI CSI-2 data types in a shared header file
+Date:   Sun, 23 Jan 2022 18:08:52 +0200
+Message-Id: <20220123160857.24161-2-laurent.pinchart+renesas@ideasonboard.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220123160857.24161-1-laurent.pinchart+renesas@ideasonboard.com>
+References: <20220123160857.24161-1-laurent.pinchart+renesas@ideasonboard.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.5.0
-Subject: Re: [PATCH v3 2/2] PCI: rcar: Return all Fs from read which triggered
- an exception
-Content-Language: en-US
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-pci <linux-pci@vger.kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-References: <20220122221554.196311-1-marek.vasut@gmail.com>
- <20220122221554.196311-2-marek.vasut@gmail.com>
- <CAK8P3a1vw3n_QbT-aqSzWFavKMmYtBqQptvMxeZmDF+-bO0dGA@mail.gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-In-Reply-To: <CAK8P3a1vw3n_QbT-aqSzWFavKMmYtBqQptvMxeZmDF+-bO0dGA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On 1/23/22 15:12, Arnd Bergmann wrote:
+There are many CSI-2-related drivers in the media subsystem that come
+with their own macros to handle the CSI-2 data types (or just hardcode
+the numerical values). Provide a shared header with definitions for
+those data types that driver can use.
 
-[...]
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+---
+ include/media/mipi-csi2.h | 45 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 include/media/mipi-csi2.h
 
->> +#ifdef CONFIG_ARM
->> +#define __rcar_pci_rw_reg_workaround(instr)                            \
->> +               "1:     " instr " %1, [%2]\n"                           \
->> +               "2:     isb\n"                                          \
->> +               "3:     .pushsection .text.fixup,\"ax\"\n"              \
->> +               "       .align  2\n"                                    \
->> +               "4:     mov     %0, #" __stringify(PCIBIOS_SET_FAILED) "\n" \
->> +               "       b       3b\n"                                   \
->> +               "       .popsection\n"                                  \
->> +               "       .pushsection __ex_table,\"a\"\n"                \
->> +               "       .align  3\n"                                    \
->> +               "       .long   1b, 4b\n"                               \
->> +               "       .long   1b, 4b\n"                               \
->> +               "       .popsection\n"
->> +#endif
-> 
-> You list the fixup for the ldr/str instruction here twice, (.long 1b,4b), but
-> no fixup for the isb instruction (.long 2b, 4b). Your description says that
-> the fault happens on the isb, not the ldr, so I don't understand what is
-> going on here.
+diff --git a/include/media/mipi-csi2.h b/include/media/mipi-csi2.h
+new file mode 100644
+index 000000000000..392794e5badd
+--- /dev/null
++++ b/include/media/mipi-csi2.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * MIPI CSI-2 Data Types
++ *
++ * Copyright (C) 2022 Laurent Pinchart <laurent.pinchart@ideasonboard.com>
++ */
++
++#ifndef _MEDIA_MIPI_CSI2_H
++#define _MEDIA_MIPI_CSI2_H
++
++/* Short packet data types */
++#define MIPI_CSI2_DT_FS			0x00
++#define MIPI_CSI2_DT_FE			0x01
++#define MIPI_CSI2_DT_LS			0x02
++#define MIPI_CSI2_DT_LE			0x03
++#define MIPI_CSI2_DT_GENERIC_SHORT(n)	(0x08 + (n))	/* 0..7 */
++
++/* Long packet data types */
++#define MIPI_CSI2_DT_NULL		0x10
++#define MIPI_CSI2_DT_BLANKING		0x11
++#define MIPI_CSI2_DT_EMBEDDED_8B	0x12
++#define MIPI_CSI2_DT_YUV420_8B		0x18
++#define MIPI_CSI2_DT_YUV420_10B		0x19
++#define MIPI_CSI2_DT_YUV420_8B_LEGACY	0x1a
++#define MIPI_CSI2_DT_YUV420_8B_CS	0x1c
++#define MIPI_CSI2_DT_YUV420_10B_CS	0x1d
++#define MIPI_CSI2_DT_YUV422_8B		0x1e
++#define MIPI_CSI2_DT_YUV422_10B		0x1f
++#define MIPI_CSI2_DT_RGB444		0x20
++#define MIPI_CSI2_DT_RGB555		0x21
++#define MIPI_CSI2_DT_RGB565		0x22
++#define MIPI_CSI2_DT_RGB666		0x23
++#define MIPI_CSI2_DT_RGB888		0x24
++#define MIPI_CSI2_DT_RAW24		0x27
++#define MIPI_CSI2_DT_RAW6		0x28
++#define MIPI_CSI2_DT_RAW7		0x29
++#define MIPI_CSI2_DT_RAW8		0x2a
++#define MIPI_CSI2_DT_RAW10		0x2b
++#define MIPI_CSI2_DT_RAW12		0x2c
++#define MIPI_CSI2_DT_RAW14		0x2d
++#define MIPI_CSI2_DT_RAW16		0x2e
++#define MIPI_CSI2_DT_RAW20		0x2f
++#define MIPI_CSI2_DT_USER_DEFINED(n)	(0x30 + (n))	/* 0..7 */
++
++#endif /* _MEDIA_MIPI_CSI2_H */
+-- 
+Regards,
 
-Copy-paste error when deduplicating the patch content, should be
+Laurent Pinchart
 
-.long   1b, 4b
-.long   2b, 4b
-
-to cover both ldr/str and isb.
-
-I can imagine on CA7, the abort would trigger on the ldr/str already.
