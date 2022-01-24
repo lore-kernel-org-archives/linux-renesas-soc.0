@@ -2,55 +2,55 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6EBC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 04:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1BAC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 04:12:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S249657AbiAYEMA (ORCPT
+        id S249689AbiAYEMJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Jan 2022 23:12:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41574 "EHLO
+        Mon, 24 Jan 2022 23:12:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1312899AbiAYCq5 (ORCPT
+        with ESMTP id S1318722AbiAYDG5 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Jan 2022 21:46:57 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6C76C055A8E
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jan 2022 18:14:12 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id z10-20020a17090acb0a00b001b520826011so754482pjt.5
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jan 2022 18:14:12 -0800 (PST)
+        Mon, 24 Jan 2022 22:06:57 -0500
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91FF5C078501
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jan 2022 15:44:12 -0800 (PST)
+Received: by mail-pl1-x62a.google.com with SMTP id j16so6900288plx.4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jan 2022 15:44:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernelci-org.20210112.gappssmtp.com; s=20210112;
         h=message-id:date:mime-version:content-transfer-encoding:subject:to
          :from;
-        bh=EyuRLJo4Jujr3vEydcptGZcPbc3pEoYYBCMgUJCHx6M=;
-        b=zNkLuDtu45C6n/cVOGoe6HGtetlOQMkH7H9ppwJjPZgvaOCxiC1pWnXBWVWHDMqHpl
-         zPfva12eUiFicMqemgzxiczT4yQCFrgsxIIADxEM//7/6dFDZoayjaTpLJswkL+KpUeh
-         aXvLGX52BZr6CloadWq/9t16GbWze3L16wKZMkWcH45vcoPw718hvRuACqqOGL7TkDeG
-         5mM69WGgo3QkXlJyVSQLFUJ6zba63oN2d2WbrLdHAlO/bvi6tdZUFolqneSd4TGfZjdw
-         c8fXBEm75epwC1YZv/plUkllsYO/u2Q3MpxpncpQbVqhAn9aGi3/PsKrQ2UaaHogq/xk
-         yWlw==
+        bh=vN8AhQfunA4fDY4LB4ySU/3XYG/wpbIAPSzmppofL20=;
+        b=AqEZwOZjF4xT0IIEQDbIVLR2M7n7ASsyKi6sK5pY3WjhSbCVt9SivZAXh4qLkjE6uf
+         G3vJOYZLblM15eTYiiXLfRbrAHYUrV2Fj0qAAtXGtpE9jfgMdTqKRmL24qHZ0OSFrHO9
+         4CzVVi4JeqYoZ8kOlis05DlYYTezO0Hr9XqeO0Ee8FR/VMGYp5PyP9eVGzNsngoI6yqY
+         vIagO6X5BWpFcaZ/EFchM7zBfSjPLzNZ2omS7+rLKx7PMvwV0OYDtqVPUe+ZJ5RLm/nj
+         FKvbEO4Qc69Y796e8ZmR5xMPwmINMH5AtFWoYpbKCIsLI+We+XQrDh9GWmMYtx1vNQ/H
+         drmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:message-id:date:mime-version
          :content-transfer-encoding:subject:to:from;
-        bh=EyuRLJo4Jujr3vEydcptGZcPbc3pEoYYBCMgUJCHx6M=;
-        b=Ki0Agl6M5m9Q51uJIKmOLP+oh/jCBXDgIO6HqeYsXdS+ZNO2P56ToPtBWyuW4dOld5
-         PClYXLYRMQvuDObHCFIrdxzCdihooJW2nl2k7AqyOnrNi/08S9/Xo1D14M8aoN4L72eO
-         i2KPHis8psjiPqk+vakdj/T3P2U1xdCBp0FXxaychvOOD35o0MDLYALmbkVhgnC4E/4r
-         2BxzLeSReq3tzWn8jPztfAapM0h1vqB4Adwoz3QHYcLx3turEkdBPx7p1a4rL7y8fJnw
-         Lg6TdxVS+2mIixO92zS/4VdUMhEGhHUhEjwwydcgKpqT1hYdpLYzn0M/9uBDnmFlcrv6
-         l8bQ==
-X-Gm-Message-State: AOAM5326XVDXzid+xppJBUHyEDTMeVXzBwTE+L2cRQNpW7rpxu65RsI+
-        QGSh5nsa/uuDfQx5VcGgNrFY7RHzsEXasYlg
-X-Google-Smtp-Source: ABdhPJyyUP1N4sB0dajrn5yXaRks/OUIDuelOg5cdBfp1muPyJ3lB+dITUpQFGKsXUyzdr948UvYug==
-X-Received: by 2002:a17:902:bcc2:b0:149:b095:6a75 with SMTP id o2-20020a170902bcc200b00149b0956a75mr16266684pls.163.1643076851964;
-        Mon, 24 Jan 2022 18:14:11 -0800 (PST)
+        bh=vN8AhQfunA4fDY4LB4ySU/3XYG/wpbIAPSzmppofL20=;
+        b=3WzuhiIkzGXCrocYdoCe+h+nheF9hDu4b/7wtHRbDyi4FIYCFMuX930nUE6FXgFTaw
+         4kDZiclTCF7xP+nBAOe0Rp9C06nIdE1qpGRm1du+oo3+WEQjCaAG9I3p8S699GShQAmo
+         kA6t8zMq59Gcoh6KOoF/FIC63oyGKL/OBf4CY0fVARCf90TZXyKnzF2jQyJ7rokExOXu
+         lyXfGjRX1/El48tIcMOt5hy8qTLShIYcq67ZDWKCedM0T4nXdulWL0N4o8BiIEqC10D6
+         a7cF+pvIV6ABHyf5nNO8E2WW85x0ZyJm+WI67jEE938ONokXo0kRu6fJ6vXQHmZeLAC5
+         7Izg==
+X-Gm-Message-State: AOAM5338/7WRqaXyAG5Yj9LT+hqY19Br+wle/qyODEnBgnp3fojqvHIZ
+        CLdx8Ug6lgn2AtBmTuI9kXXdutE7FO6WQr76
+X-Google-Smtp-Source: ABdhPJxi7znGCPV3IzjDdFem5x4IQzkB7R7srGVHcSBnRj2fzbfcCdNM92t4vb5E51FYVb+XVg/PCg==
+X-Received: by 2002:a17:90b:390a:: with SMTP id ob10mr698605pjb.92.1643067851722;
+        Mon, 24 Jan 2022 15:44:11 -0800 (PST)
 Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id nk11sm571064pjb.55.2022.01.24.18.14.11
+        by smtp.gmail.com with ESMTPSA id q9sm17847276pfk.137.2022.01.24.15.44.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jan 2022 18:14:11 -0800 (PST)
-Message-ID: <61ef5cf3.1c69fb81.57543.2a69@mx.google.com>
-Date:   Mon, 24 Jan 2022 18:14:11 -0800 (PST)
+        Mon, 24 Jan 2022 15:44:11 -0800 (PST)
+Message-ID: <61ef39cb.1c69fb81.85a20.03e2@mx.google.com>
+Date:   Mon, 24 Jan 2022 15:44:11 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -58,49 +58,30 @@ X-Kernelci-Report-Type: test
 X-Kernelci-Kernel: v5.17-rc1-18-g925b6371c834
 X-Kernelci-Tree: renesas
 X-Kernelci-Branch: next
-Subject: renesas/next baseline: 365 runs,
- 12 regressions (v5.17-rc1-18-g925b6371c834)
+Subject: renesas/next sleep: 5 runs, 4 regressions (v5.17-rc1-18-g925b6371c834)
 To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
 From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/next baseline: 365 runs, 12 regressions (v5.17-rc1-18-g925b6371c834)
+renesas/next sleep: 5 runs, 4 regressions (v5.17-rc1-18-g925b6371c834)
 
 Regressions Summary
 -------------------
 
-platform               | arch  | lab           | compiler | defconfig      =
-              | regressions
------------------------+-------+---------------+----------+----------------=
---------------+------------
-imx6ul-14x14-evk       | arm   | lab-nxp       | gcc-10   | imx_v6_v7_defco=
-nfig          | 1          =
-
-imx8mn-ddr4-evk        | arm64 | lab-nxp       | gcc-10   | defconfig+crypt=
-o             | 2          =
-
-kontron-kbox-a-230-ls  | arm64 | lab-kontron   | gcc-10   | defconfig+CON..=
-.OMIZE_BASE=3Dy | 2          =
-
-kontron-kbox-a-230-ls  | arm64 | lab-kontron   | gcc-10   | defconfig+crypt=
-o             | 2          =
-
-kontron-sl28-var3-ads2 | arm64 | lab-kontron   | gcc-10   | defconfig+CON..=
-.OMIZE_BASE=3Dy | 2          =
-
-kontron-sl28-var3-ads2 | arm64 | lab-kontron   | gcc-10   | defconfig+crypt=
-o             | 2          =
-
-rk3288-veyron-jaq      | arm   | lab-collabora | gcc-10   | multi_v7_defc..=
-.G_ARM_LPAE=3Dy | 1          =
+platform            | arch | lab           | compiler | defconfig          =
+| regressions
+--------------------+------+---------------+----------+--------------------=
++------------
+rk3288-rock2-square | arm  | lab-collabora | gcc-10   | multi_v7_defconfig =
+| 4          =
 
 
   Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/v5.17-=
-rc1-18-g925b6371c834/plan/baseline/
+rc1-18-g925b6371c834/plan/sleep/
 
-  Test:     baseline
+  Test:     sleep
   Tree:     renesas
   Branch:   next
   Describe: v5.17-rc1-18-g925b6371c834
@@ -115,314 +96,136 @@ Test Regressions
 
 
 
-platform               | arch  | lab           | compiler | defconfig      =
-              | regressions
------------------------+-------+---------------+----------+----------------=
---------------+------------
-imx6ul-14x14-evk       | arm   | lab-nxp       | gcc-10   | imx_v6_v7_defco=
-nfig          | 1          =
+platform            | arch | lab           | compiler | defconfig          =
+| regressions
+--------------------+------+---------------+----------+--------------------=
++------------
+rk3288-rock2-square | arm  | lab-collabora | gcc-10   | multi_v7_defconfig =
+| 4          =
 
 
-  Details:     https://kernelci.org/test/plan/id/61ef27d81b9cda3584abbd16
+  Details:     https://kernelci.org/test/plan/id/61ef276a15d3b32588abbd11
 
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: imx_v6_v7_defconfig
+  Results:     3 PASS, 9 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
   Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
 10110)
   Plain log:   https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm/imx_v6_v7_defconfig/gcc-10/lab-nxp/baseline-imx6ul-14x14-evk.=
-txt
+b6371c834/arm/multi_v7_defconfig/gcc-10/lab-collabora/sleep-rk3288-rock2-sq=
+uare.txt
   HTML log:    https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm/imx_v6_v7_defconfig/gcc-10/lab-nxp/baseline-imx6ul-14x14-evk.=
-html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/armel/rootfs.cpio.gz =
+b6371c834/arm/multi_v7_defconfig/gcc-10/lab-collabora/sleep-rk3288-rock2-sq=
+uare.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220121.0/armhf/rootfs.cpio.gz =
 
 
 
-  * baseline.login: https://kernelci.org/test/case/id/61ef27d81b9cda3584abb=
-d17
-        new failure (last pass: renesas-next-2021-12-16-v5.16-rc1) =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-              | regressions
------------------------+-------+---------------+----------+----------------=
---------------+------------
-imx8mn-ddr4-evk        | arm64 | lab-nxp       | gcc-10   | defconfig+crypt=
-o             | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef25ae342e859c6fabbd2b
-
-  Results:     4 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig+crypto
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm64/defconfig+crypto/gcc-10/lab-nxp/baseline-imx8mn-ddr4-evk.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm64/defconfig+crypto/gcc-10/lab-nxp/baseline-imx8mn-ddr4-evk.ht=
-ml
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/61ef25ae342e859=
-c6fabbd32
-        new failure (last pass: renesas-next-2021-12-16-v5.16-rc1)
-        12 lines
-
-    2022-01-24T22:17:55.853093  kern  :alert : Unable to handle kernel NULL=
- pointer dereference <8>[   15.247072] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=
-=3Dalert RESULT=3Dfail UNITS=3Dlines MEASUREMENT=3D12>
-    2022-01-24T22:17:55.853290  at virtual address 0000000000000000
-    2022-01-24T22:17:55.853446  kern  :alert : Mem abort info:
-    2022-01-24T22:17:55.853593  kern  :alert :   ESR =3D 0x96000006   =
-
-
-  * baseline.dmesg.emerg: https://kernelci.org/test/case/id/61ef25ae342e859=
-c6fabbd33
-        new failure (last pass: renesas-next-2021-12-16-v5.16-rc1)
-        2 lines
-
-    2022-01-24T22:17:55.854488  kern  :alert :   EC =3D 0x25: DABT (current=
- EL), IL =3D 32 bits
-    2022-01-24T22:17:55.854645  kern  :alert :   SET =3D <8>[   15.272407] =
-<LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Demerg RESULT=3Dfail UNITS=3Dlines MEAS=
-UREMENT=3D2>
-    2022-01-24T22:17:55.854791  0, FnV =3D 0   =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-              | regressions
------------------------+-------+---------------+----------+----------------=
---------------+------------
-kontron-kbox-a-230-ls  | arm64 | lab-kontron   | gcc-10   | defconfig+CON..=
-.OMIZE_BASE=3Dy | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef232aa9131800d7abbd2e
-
-  Results:     91 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig+CONFIG_RANDOMIZE_BASE=3Dy
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-10/lab-kontron/base=
-line-kontron-kbox-a-230-ls.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-10/lab-kontron/base=
-line-kontron-kbox-a-230-ls.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.ftm-alarm-driver-present: https://kernelci.org/test/cas=
-e/id/61ef232ba9131800d7abbd6f
+  * sleep.rtcwake-mem-4: https://kernelci.org/test/case/id/61ef276a15d3b325=
+88abbd18
         new failure (last pass: renesas-next-2021-12-17-v5.16-rc1)
 
-    2022-01-24T22:07:14.707945  /lava-83103/1/../bin/lava-test-case   =
+    2022-01-24T22:21:33.421485  rtcwake: assuming RTC uses UTC ...
+    2022-01-24T22:21:33.421806  rtcwake: wakeup from \"mem\" using rtc0 at =
+Mon Jan 24 22:21:39 2022
+    2022-01-24T22:21:33.440205  <6>[   77.135197] PM: suspend entry (deep)
+    2022-01-24T22:21:33.440773  <6>[   77.139548] Filesystems sync: 0.000 s=
+econds
+    2022-01-24T22:21:53.492787  <6>[   77.145552] Freezing user space proce=
+sses ... =
+
+    2022-01-24T22:21:53.493398  <3>[   97.166530] Freezing of tasks failed =
+after 20.015 seconds (1 tasks refusing to freeze, wq_busy=3D0):
+    2022-01-24T22:21:53.493790  <6>[   97.176949] task:systemd-udevd   stat=
+e:D stack:    0 pid:  125 ppid:   116 flags:0x00000081
+    2022-01-24T22:21:53.497414  <6>[   97.186665]  __schedule from schedule=
++0x48/0xd0
+    2022-01-24T22:21:53.497912  <6>[   97.192087]  schedule from io_schedul=
+e+0x34/0x44
+    2022-01-24T22:21:53.498413  <6>[   97.197541]  io_schedule from folio_w=
+ait_bit_common+0x1cc/0x32c =
+
+    ... (14 line(s) more)  =
 
 
-  * baseline.bootrr.ftm-alarm-probed: https://kernelci.org/test/case/id/61e=
-f232ba9131800d7abbd70
+  * sleep.rtcwake-mem-3: https://kernelci.org/test/case/id/61ef276a15d3b325=
+88abbd19
         new failure (last pass: renesas-next-2021-12-17-v5.16-rc1)
 
-    2022-01-24T22:07:14.711585  <8>[   13.829232] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-driver-present RESULT=3Dfail>
-    2022-01-24T22:07:15.758051  /lava-83103/1/../bin/lava-test-case
-    2022-01-24T22:07:15.758453  <8>[   14.848295] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-probed RESULT=3Dfail>
-    2022-01-24T22:07:15.758729  /lava-83103/1/../bin/lava-test-case
-    2022-01-24T22:07:15.758954  <8>[   14.864448] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dsimple-mfd-i2c-driver-present RESULT=3Dpass>   =
+    2022-01-24T22:21:13.246767  rtcwake: assuming RTC uses UTC ...
+    2022-01-24T22:21:13.246847  rtcwake: wakeup from \"mem\" using rtc0 at =
+Mon Jan 24 22:21:19 2022
+    2022-01-24T22:21:13.267389  <6>[   56.963740] PM: suspend entry (deep)
+    2022-01-24T22:21:13.267545  <6>[   56.968208] Filesystems sync: 0.000 s=
+econds
+    2022-01-24T22:21:33.316961  <6>[   56.974586] Freezing user space proce=
+sses ... =
 
- =
+    2022-01-24T22:21:33.317595  <3>[   76.989471] Freezing of tasks failed =
+after 20.009 seconds (1 tasks refusing to freeze, wq_busy=3D0):
+    2022-01-24T22:21:33.318016  <6>[   77.000022] task:systemd-udevd   stat=
+e:D stack:    0 pid:  125 ppid:   116 flags:0x00000081
+    2022-01-24T22:21:33.321812  <6>[   77.009847]  __schedule from schedule=
++0x48/0xd0
+    2022-01-24T22:21:33.322360  <6>[   77.015434]  schedule from io_schedul=
+e+0x34/0x44
+    2022-01-24T22:21:33.322744  <6>[   77.021060]  io_schedule from folio_w=
+ait_bit_common+0x1cc/0x32c =
 
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-              | regressions
------------------------+-------+---------------+----------+----------------=
---------------+------------
-kontron-kbox-a-230-ls  | arm64 | lab-kontron   | gcc-10   | defconfig+crypt=
-o             | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef24fac4842b099babbd23
-
-  Results:     91 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig+crypto
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm64/defconfig+crypto/gcc-10/lab-kontron/baseline-kontron-kbox-a=
--230-ls.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm64/defconfig+crypto/gcc-10/lab-kontron/baseline-kontron-kbox-a=
--230-ls.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/arm64/rootfs.cpio.gz =
+    ... (14 line(s) more)  =
 
 
-
-  * baseline.bootrr.ftm-alarm-driver-present: https://kernelci.org/test/cas=
-e/id/61ef24fac4842b099babbd64
-        new failure (last pass: renesas-next-2021-12-16-v5.16-rc1)
-
-    2022-01-24T22:14:56.280461  <8>[   16.503658] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Drcpm-probed RESULT=3Dpass>
-    2022-01-24T22:14:57.294529  /lava-83109/1/../bin/lava-test-case   =
-
-
-  * baseline.bootrr.ftm-alarm-probed: https://kernelci.org/test/case/id/61e=
-f24fac4842b099babbd65
-        new failure (last pass: renesas-next-2021-12-16-v5.16-rc1)
-
-    2022-01-24T22:14:57.297663  <8>[   17.520120] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-driver-present RESULT=3Dfail>
-    2022-01-24T22:14:58.346585  /lava-83109/1/../bin/lava-test-case
-    2022-01-24T22:14:58.346983  <8>[   18.538361] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-probed RESULT=3Dfail>   =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-              | regressions
------------------------+-------+---------------+----------+----------------=
---------------+------------
-kontron-sl28-var3-ads2 | arm64 | lab-kontron   | gcc-10   | defconfig+CON..=
-.OMIZE_BASE=3Dy | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef22239e86fc9faaabbd32
-
-  Results:     99 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig+CONFIG_RANDOMIZE_BASE=3Dy
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-10/lab-kontron/base=
-line-kontron-sl28-var3-ads2.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm64/defconfig+CONFIG_RANDOMIZE_BASE=3Dy/gcc-10/lab-kontron/base=
-line-kontron-sl28-var3-ads2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.ftm-alarm-driver-present: https://kernelci.org/test/cas=
-e/id/61ef22239e86fc9faaabbd7a
+  * sleep.rtcwake-mem-2: https://kernelci.org/test/case/id/61ef276a15d3b325=
+88abbd1a
         new failure (last pass: renesas-next-2021-12-17-v5.16-rc1)
 
-    2022-01-24T22:02:50.728199  /lava-83101/1/../bin/lava-test-case   =
+    2022-01-24T22:20:53.073379  rtcwake: assuming RTC uses UTC ...
+    2022-01-24T22:20:53.073694  rtcwake: wakeup from \"mem\" using rtc0 at =
+Mon Jan 24 22:20:59 2022
+    2022-01-24T22:20:53.092344  <6>[   36.787427] PM: suspend entry (deep)
+    2022-01-24T22:20:53.092839  <6>[   36.791812] Filesystems sync: 0.000 s=
+econds
+    2022-01-24T22:21:13.141016  <6>[   36.797774] Freezing user space proce=
+sses ... =
+
+    2022-01-24T22:21:13.141291  <3>[   56.814800] Freezing of tasks failed =
+after 20.011 seconds (1 tasks refusing to freeze, wq_busy=3D0):
+    2022-01-24T22:21:13.141419  <6>[   56.825220] task:systemd-udevd   stat=
+e:D stack:    0 pid:  125 ppid:   116 flags:0x00000081
+    2022-01-24T22:21:13.141523  <6>[   56.834986]  __schedule from schedule=
++0x48/0xd0
+    2022-01-24T22:21:13.141620  <6>[   56.840417]  schedule from io_schedul=
+e+0x34/0x44
+    2022-01-24T22:21:13.141711  <6>[   56.845965]  io_schedule from folio_w=
+ait_bit_common+0x1cc/0x32c =
+
+    ... (14 line(s) more)  =
 
 
-  * baseline.bootrr.ftm-alarm-probed: https://kernelci.org/test/case/id/61e=
-f22239e86fc9faaabbd7b
+  * sleep.rtcwake-mem-1: https://kernelci.org/test/case/id/61ef276a15d3b325=
+88abbd1b
         new failure (last pass: renesas-next-2021-12-17-v5.16-rc1)
 
-    2022-01-24T22:02:50.731620  <8>[   13.555116] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-driver-present RESULT=3Dfail>
-    2022-01-24T22:02:51.780270  /lava-83101/1/../bin/lava-test-case
-    2022-01-24T22:02:51.780664  <8>[   14.574339] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-probed RESULT=3Dfail>
-    2022-01-24T22:02:51.780901  /lava-83101/1/../bin/lava-test-case
-    2022-01-24T22:02:51.781122  <8>[   14.591404] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dsimple-mfd-i2c-driver-present RESULT=3Dpass>   =
+    2022-01-24T22:20:32.907032  rtcwake: assuming RTC uses UTC ...
+    2022-01-24T22:20:32.907132  rtcwake: wakeup from \"mem\" using rtc0 at =
+Mon Jan 24 22:20:39 2022
+    2022-01-24T22:20:32.907234  <6>[   16.616452] PM: suspend entry (deep)
+    2022-01-24T22:20:32.921054  <6>[   16.621106] Filesystems sync: 0.000 s=
+econds
+    2022-01-24T22:20:52.969974  <6>[   16.630799] Freezing user space proce=
+sses ... =
 
- =
+    2022-01-24T22:20:52.970698  <3>[   36.643005] Freezing of tasks failed =
+after 20.006 seconds (1 tasks refusing to freeze, wq_busy=3D0):
+    2022-01-24T22:20:52.971120  <6>[   36.653491] task:systemd-udevd   stat=
+e:D stack:    0 pid:  125 ppid:   116 flags:0x00000081
+    2022-01-24T22:20:52.971493  <6>[   36.663177]  __schedule from schedule=
++0x48/0xd0
+    2022-01-24T22:20:52.971848  <6>[   36.668542]  schedule from io_schedul=
+e+0x34/0x44
+    2022-01-24T22:20:52.972192  <6>[   36.674000]  io_schedule from folio_w=
+ait_bit_common+0x1cc/0x32c =
 
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-              | regressions
------------------------+-------+---------------+----------+----------------=
---------------+------------
-kontron-sl28-var3-ads2 | arm64 | lab-kontron   | gcc-10   | defconfig+crypt=
-o             | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef24f76e602d4531abbd24
-
-  Results:     99 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig+crypto
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm64/defconfig+crypto/gcc-10/lab-kontron/baseline-kontron-sl28-v=
-ar3-ads2.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm64/defconfig+crypto/gcc-10/lab-kontron/baseline-kontron-sl28-v=
-ar3-ads2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.ftm-alarm-driver-present: https://kernelci.org/test/cas=
-e/id/61ef24f76e602d4531abbd6c
-        new failure (last pass: renesas-next-2021-12-16-v5.16-rc1)
-
-    2022-01-24T22:14:59.137067  /lava-83106/1/../bin/lava-test-case   =
-
-
-  * baseline.bootrr.ftm-alarm-probed: https://kernelci.org/test/case/id/61e=
-f24f76e602d4531abbd6d
-        new failure (last pass: renesas-next-2021-12-16-v5.16-rc1)
-
-    2022-01-24T22:14:59.140350  <8>[   13.475253] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-driver-present RESULT=3Dfail>
-    2022-01-24T22:15:00.186886  /lava-83106/1/../bin/lava-test-case
-    2022-01-24T22:15:00.187312  <8>[   14.494087] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-probed RESULT=3Dfail>
-    2022-01-24T22:15:00.187549  /lava-83106/1/../bin/lava-test-case
-    2022-01-24T22:15:00.187771  <8>[   14.509977] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dsimple-mfd-i2c-driver-present RESULT=3Dpass>   =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-              | regressions
------------------------+-------+---------------+----------+----------------=
---------------+------------
-rk3288-veyron-jaq      | arm   | lab-collabora | gcc-10   | multi_v7_defc..=
-.G_ARM_LPAE=3Dy | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef42e75ef5ec7a3babbd12
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/gcc-10/=
-lab-collabora/baseline-rk3288-veyron-jaq.txt
-  HTML log:    https://storage.kernelci.org//renesas/next/v5.17-rc1-18-g925=
-b6371c834/arm/multi_v7_defconfig+CONFIG_EFI=3Dy+CONFIG_ARM_LPAE=3Dy/gcc-10/=
-lab-collabora/baseline-rk3288-veyron-jaq.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/61ef42e75ef5ec7a3babb=
-d13
-        new failure (last pass: renesas-next-2021-12-17-v5.16-rc1) =
+    ... (14 line(s) more)  =
 
  =20
