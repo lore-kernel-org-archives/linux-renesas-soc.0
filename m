@@ -2,215 +2,140 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D09C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Sun, 23 Jan 2022 21:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 282B0C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 24 Jan 2022 02:12:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240245AbiAWVpy (ORCPT
+        id S240742AbiAXCMB (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 23 Jan 2022 16:45:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37998 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240234AbiAWVpy (ORCPT
+        Sun, 23 Jan 2022 21:12:01 -0500
+Received: from mail-os0jpn01on2111.outbound.protection.outlook.com ([40.107.113.111]:11072
+        "EHLO JPN01-OS0-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S232200AbiAXCMB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 23 Jan 2022 16:45:54 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 188C9C06173B;
-        Sun, 23 Jan 2022 13:45:53 -0800 (PST)
-Received: from pendragon.ideasonboard.com (62-78-145-57.bb.dnainternet.fi [62.78.145.57])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 64061D41;
-        Sun, 23 Jan 2022 22:45:51 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1642974351;
-        bh=SUGQ4I/NfdTXsFSCHUc16iN2+6Zmi855cTdPMbrW0xk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lemnulwLjp4/JNUpfjeKFYDBS+1W2dBX6VSsIU6t6TLuOxLLf8I20kgVO5+BKNGPm
-         WBUnOrUKT0HfLUgxCMd34crq2Zm8GagdJEjaktk4mOlaYrWoyn6C/ZEt1oOsS3R4i1
-         edcu4cfpyewLZtZypNuVS/b2Hvhi4LoQT6qo4OhA=
-Date:   Sun, 23 Jan 2022 23:45:34 +0200
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc:     Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: vsp1: mask interrupts before enabling
-Message-ID: <Ye3MfnICIv0PeqT9@pendragon.ideasonboard.com>
-References: <20220120081530.799399-1-nikita.yoush@cogentembedded.com>
+        Sun, 23 Jan 2022 21:12:01 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=iLlMCyoKN71KfIWG+ZLErXnzd8BLmjJRanESD+YN0eahJ17wFgIgVQUn+Diq5BH+lQ5U0sVtqYIX3xb4n0HyqPZMDTrUua9C2S6azNm7UO3Q62VDLRXv40XYAhrLFgw0RrF9uyWgfpEI89yai9AcgzkxlO+oB0YEj7Uh1wnHxSFsIm2vNrXWNaJap6n2QlsOK14Irzfn0aoGVfq4TgkYSs8YDZSt7sTOwX5l7u28GOZCitxfCb1bgLlerqRspebpKEMDmNXmv1OCWfEambPiDGEjeg8dq81DVpVOp4cdc4GT9/KP7Uv8F9fnOXGNAh1lvxPAGSNBM5nGvFgytWw92A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cja0g5qh5HWgiW13vva1nifv+o5CGjZilaYewdr+iaU=;
+ b=Du3GK0oTWivoJeKIueHYbDF+CXulgA3aSNyhHYMKafJeKn7K1xyuk8OKFsJQs82nUKWAbzlmH2T4VO0JaPouyCpKLDcw9clHVUj++Yz95pJGkq+kEcSabEDoYjIXhuHmlqD6CnNjxSAiX5Q9NZsUdjosu4HoJUACrp5XC4+w6A4Tv4bSTWePINNBxKo1D0G2P5L//af5vXmYW7DwT/2mI3hawhQyoaYotKnttWJtWHDcwaKEcansGd/2WxHutCx3jidrDJV4/OhHmxOEDH9J5t4Pb3dbsCWonfidejiskUeMeHXK3iGe4naJN0o7t7hPnLYxy3vIgEEZD3odiRTOiA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cja0g5qh5HWgiW13vva1nifv+o5CGjZilaYewdr+iaU=;
+ b=g4UYYerfihQF270m/U0iOokbjRmkRpsQsBg/3+t6AN8eHXPEqK/80Cv2866j9CMjrhhfEpvty5ojoOFPNEqQV8EKTeQv0sE9IuOqSYLWzn+6ObvVEMR7ufl8DzaqKTsx7BGbdjE2avQjSxvMyxVNVfVU3HITCLAKo8aF82XJGS4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from OS3PR01MB8426.jpnprd01.prod.outlook.com (2603:1096:604:194::10)
+ by OS3PR01MB6657.jpnprd01.prod.outlook.com (2603:1096:604:10b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.4909.7; Mon, 24 Jan
+ 2022 02:11:59 +0000
+Received: from OS3PR01MB8426.jpnprd01.prod.outlook.com
+ ([fe80::b1eb:2ee8:fb39:e48c]) by OS3PR01MB8426.jpnprd01.prod.outlook.com
+ ([fe80::b1eb:2ee8:fb39:e48c%8]) with mapi id 15.20.4909.017; Mon, 24 Jan 2022
+ 02:11:59 +0000
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH v2 2/3] arm64: defconfig: Enable Audio Graph Card2 driver
+Date:   Mon, 24 Jan 2022 11:11:41 +0900
+Message-Id: <20220124021142.224592-3-kuninori.morimoto.gx@renesas.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20220124021142.224592-1-kuninori.morimoto.gx@renesas.com>
+References: <20220124021142.224592-1-kuninori.morimoto.gx@renesas.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY2PR01CA0003.jpnprd01.prod.outlook.com
+ (2603:1096:404:a::15) To OS3PR01MB8426.jpnprd01.prod.outlook.com
+ (2603:1096:604:194::10)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20220120081530.799399-1-nikita.yoush@cogentembedded.com>
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 73cf67f6-af6f-41cf-166c-08d9dedee75f
+X-MS-TrafficTypeDiagnostic: OS3PR01MB6657:EE_
+X-Microsoft-Antispam-PRVS: <OS3PR01MB665738CAC15E80445B27826DD45E9@OS3PR01MB6657.jpnprd01.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:54;
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: xEjcb3jVcTsDL12zbSwjwm4OFtI4Im0XFPsR1jOgv7KHSSHwRYCAgBQSmkhA9fEw9a66S9XQNafal91vub1b6FH3CI3QNIyrgQVoFZrQlDuEwAoNfU8hmAeqzypIUrmXHFcyQQkwht7WxMFH0kdQlQq3B2nrmMdKUbewJJp5hte8LIR1eTduTFFUoz1HKbNo7Cwa6IeoHvPZ9zNzHhQyRZV1jlyQzXgxL8fNGk+z74YrBZTe6ghI/ouQ0iGkYWtTnatHtPDML3godLYDQQNkjaRA5gRhgtwWLn/u+Cv7dPER6q9NAM1Ugw2+2nDa8QI7tf4e/boyANxCMGrRChIjSZmmxjncRhb1QxprMsPuBuotWkYTHiN69pI4eeWonopAvH45WtCV6WbBae3wcx+0tDcIz8xEX3ly7wlT2HicXYntfsFEHl1cYSSbkJKVL2l8zoEZrxXwbjb4cVCt0NqZqjPXImN1Mftep2RaCN+3B+1XfaJgZhKoiQ8yLfYMw2VnW6vsfl/PhcWhKVKSrZDdqExTUXhRovw3qM/N3jfVwdQWZ5SsmZYRTNsI+W5cUbRYyutFKXqp5w01fCOKhxqYDhHF9nD7vDzKm2AFiVlovW2tDNaBKcDkwN6bSpG9vfrPhSnFQr/knB8kWfeImariK1vmA5oH7egsCdpUwUpRG/Fpiz1K1IWxKOWT8zJROyB74bHyFaI5aad85MWdjTJkDw==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB8426.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(366004)(186003)(2616005)(4744005)(5660300002)(36756003)(8936002)(38100700002)(66946007)(66556008)(8676002)(38350700002)(316002)(6506007)(4326008)(1076003)(107886003)(2906002)(52116002)(86362001)(103116003)(508600001)(6666004)(26005)(6486002)(66476007)(6512007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VEHlghIwrvej/Aj5M7y09l1FqzzAA1+ZwClIYB2MIUqEYTkHF6EX5aozGAtF?=
+ =?us-ascii?Q?2YHakh9J3DZS1ByZ4WIOBreb9KuMJ4dwjElI5Fi4xOnG7IaOHtAJ5e0tVXYC?=
+ =?us-ascii?Q?onC0Eb2+Fo1m0E1ZzDMui9Yy4mfT02zR/s4Z33X2Wvny81PBdZ5LyR6Dd1/7?=
+ =?us-ascii?Q?mvWNc3RVtuW0nKACWU3F20tq4ZrP057LssvAMi5Mx3k1wTea+3rUmbpRs8WS?=
+ =?us-ascii?Q?pOHyImBnIJuD30elIy7HXNd8PVzu+rHs7Txgi7oMgOyyLUXsI1t54XgT8hCg?=
+ =?us-ascii?Q?nvMRajmieBBTY97MVNX1w9jIa3kutZkWRSkYv7hPVTDV5PSoad8OWtn4z1Ye?=
+ =?us-ascii?Q?ihoeJRSQhM8F/etoR0cUKa+SVFNwCzdYNfJLgoo5DOZRUbMoVw1oMMLcfXn7?=
+ =?us-ascii?Q?nHxfbezY7Y1izrV6+PrvYHpmdSLoOwYkYtOpdpmeGFcuNXC0y0Fn5kSXXA3W?=
+ =?us-ascii?Q?+NudfUUZeiLa/sm3Z6Xi47vJdJ0FOM7KT9tS6OVKclWHuXiIAQTLQTyE+QUP?=
+ =?us-ascii?Q?gVKn/xH+zYLdip0bIRdQewlHN8PkmdJaQkpalPEO68l8uYbUqQSNz56V8SGl?=
+ =?us-ascii?Q?3VqzMuiaMI8gtdejzEz/TU2crcV5C0qIrSBrOkrzXNyEUs+EEN3JcjtP3y1f?=
+ =?us-ascii?Q?FmiSqOEVPva+KNbz/KRoCzXk8rrorzsmpLTKWQPhTcOr5tokOpbgxkB53KrB?=
+ =?us-ascii?Q?AGRhYdL6GxtX5laK7T6tXlAAeIt4UGVt2pdPzy47uQ+DzC3zxI6rpcYEfkIv?=
+ =?us-ascii?Q?bTyaIYFKMGzBJNHcbIVuXFz2GfP/z2yQAEV1pjMMl6gx6wOezfWahrPW/e2V?=
+ =?us-ascii?Q?vLWOhfMq0zGDOHkwx+H30J2GkUo8ayETcetYkzechRjAeftWCXzrilLZSWBX?=
+ =?us-ascii?Q?qu22X5/se7Lz1fv0k7k9+RZJ8951M8npYGPJSxccvKDjpaVoadsOuuDPiOnV?=
+ =?us-ascii?Q?pPgvmXk5k1S4W/AGXdaJ4Zi7UUt0rkGZTgenb34/vNxeY96x/Hz7Uf+10ieK?=
+ =?us-ascii?Q?6S5sOudYwXlVn8arM1LdFD2PyYNwZurAH5SOCUqNnrut6/ggYSN9QKW4jzwD?=
+ =?us-ascii?Q?KzTE4nlwdSzRtgIPVAely2e0zYU/J8VeoA2Z3H49rsK4F7NbsjTTieMoCb9K?=
+ =?us-ascii?Q?kOs3iRuScyACZmu5I9bDPOx5Py0l0VJCU4xoDQomDyNPa770+jr+EeNw50Kk?=
+ =?us-ascii?Q?CFbtRCDs5wH9nY7slwsA1Ri68RWboqIfKZuP5n6E9uhcUUy/UV7i1R7Oxgbc?=
+ =?us-ascii?Q?FfDE94Vczk3+38BDcoTspkTPU0cjRIK5cFzL0SMcUfH217TWQp3/8gpVcQEs?=
+ =?us-ascii?Q?Hq4YDkHCPKDwPIiqI+3NW9Ziwx8pxMRCmJGumoLXE+VEyiBlhHwY3dKfLtUM?=
+ =?us-ascii?Q?ZSjZ6FD35pr/B3lmg2AAk3lH+gBDsmkr0qoKwsJfx5E/15dH9e38x2kGR+8F?=
+ =?us-ascii?Q?yKbOPFX71KTgMQi02J7LiX/85KZfJjBad2ujOqdNg3g0+1Tzmg4jyyk5T8t1?=
+ =?us-ascii?Q?jKzABToUDc7KnoPeZIn+uYa5hgifLcYqVQ/Sm6EhPyHkME/3SB0l8jmkMNKb?=
+ =?us-ascii?Q?ENTTNlMDxqB80rQHsg1qEgCa9tuyUWH1ErkTRTwzJifkdl7PM/XCChJVk3qy?=
+ =?us-ascii?Q?cyT5zeZXHuztcNp1c8yBqgvauiXsGAmyTIyF935e8b+p5vhKO/Cvii/cuFNO?=
+ =?us-ascii?Q?Me2V5djFhqzKZwmH6IuNgs/D2Cl6MtdHZXnQq2C/IQE+ILfF9VApj4W5iP71?=
+ =?us-ascii?Q?RVUBZRFP5w=3D=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 73cf67f6-af6f-41cf-166c-08d9dedee75f
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB8426.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jan 2022 02:11:59.6829
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: FCvwDO/XCXcrK6aTXCHUur5bY+oqvyk1iHIbp3bTUtK0Zsq/vLA5XUSkYCrQ1+f5Nj0hQr2gRnDAbASi8s89vJYZj21lOaR5+T1mwfjypoF59e+R/cmUc9Ww4Ot93BL7
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS3PR01MB6657
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Nikita,
 
-Thank you for the patch.
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-On Thu, Jan 20, 2022 at 11:15:30AM +0300, Nikita Yushchenko wrote:
-> VSP hardware could be used (e.g. by the bootloader) before driver load,
-> and some interrupts could be left in enabled and pending state. In this
-> case, setting up VSP interrupt handler without masking interrupts before
-> causes interrupt handler to be immediately called (and crash due to null
-> vsp->info dereference).
-> 
-> Fix that by explicitly masking all interrupts before setting the interrupt
-> handler. To do so, have to set the interrupt handler later, after hw
-> revision is already detected and number of interrupts to mask gets
-> known.
-> 
-> Based on patch by Koji Matsuoka <koji.matsuoka.xm@renesas.com> included
-> in the Renesas BSP kernel.
-> 
-> Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> ---
-> v1: https://lore.kernel.org/all/20210926155356.23861-1-nikita.yoush@cogentembedded.com/
-> Changes since v1:
-> - move interrupt masking to a dedicated routine
-> - update comments and patch description
-> 
-> > I think I would rather see the code to reset them done in
-> > vsp1_reset_wpf(), rather than in probe directly as that is what we are
-> > doing, and is I believe already in the call path.
-> 
-> First, vsp1_reset_wpf() does not get called on driver early init.
-> 
-> It is normally called from within vsp1_device_get() when device is powered
-> on, but vsp1_probe() calls vsp1_device_get() when vsp1->info is not yet set,
-> and in this case call from vsp1_pm_runtime_resume() to vsp1_device_init() 
-> is skipped.
-> 
-> I've tried to add extra vsp1_device_put() / vsp1_device_get() calls to the
-> probe path, and dumped related registers in vsp1_pm_runtime_resume() after
-> return from vsp1_device_init(), and got
-> 
-> [    2.477315][    T1] vsp1 fea28000.vsp: VI6_DISP_IRQ_ENB(0) = 0x00000100
-> [    2.483933][    T1] vsp1 fea28000.vsp: VI6_DISP_IRQ_STA(0) = 0x00000121
-> [    2.490556][    T1] vsp1 fea28000.vsp: VI6_WPF_IRQ_ENB(0) = 0x00010002
-> [    2.497088][    T1] vsp1 fea28000.vsp: VI6_WPF_IRQ_STA(0) = 0x00010003
-> [    2.503618][    T1] vsp1 fea28000.vsp: VI6_WPF_IRQ_ENB(1) = 0x00000000
-> [    2.510148][    T1] vsp1 fea28000.vsp: VI6_WPF_IRQ_STA(1) = 0x00000000
-> 
-> which shows that
-> (1) WPF interrupt is not cleared by WPF reset,
-> (2) also DISP interrupt is enabled and pending, and driver does not seem
-> to control it at all.
-> 
-> Given that, I think it is safer to explicitly mask all interrupts before
-> setting the handler. I've moved interrupt masking to a separate routine.
-> 
-> > (But I'm reallly ... reallly concerned that the hardware is not really
-> > getting reset when it should, and that might merit some further
-> > investigation).
-> 
-> The documentation for WFP reset bit has notes that under some situations,
-> reset is postponed for a long time, and reported via interrupt. I'm not
-> sure what exactly goes on there, but I'd assume that such logic implies
-> that interrupt subsystem is not reset.
-> 
-> I agree that not having exact understand of hardware state is not good.
-> But, given that no signs of misfunction have been detected for a long time
-> (the patch was in vendor BSP for years), I think we can assume it is
-> "safe enough".
+commit 6e5f68fe3f2d35 ("ASoC: add Audio Graph Card2 driver")
+added new Audio Graph Card2 driver which can handle
+sound card more flexibly.
+This patch enables it on defconfig.
 
-We could also use the reset provided by the SRCR registers in the CPG.
-In the meantime, this patch seems to go in the right direction, it fixes
-the problem without being too intrusive.
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+---
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
->  drivers/media/platform/vsp1/vsp1_drv.c | 34 ++++++++++++++++++++------
->  1 file changed, 26 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vsp1/vsp1_drv.c b/drivers/media/platform/vsp1/vsp1_drv.c
-> index c9044785b903..92a95e2c21c7 100644
-> --- a/drivers/media/platform/vsp1/vsp1_drv.c
-> +++ b/drivers/media/platform/vsp1/vsp1_drv.c
-> @@ -550,6 +550,16 @@ static int vsp1_device_init(struct vsp1_device *vsp1)
->  	return 0;
->  }
->  
-> +static void vsp1_mask_all_interrupts(struct vsp1_device *vsp1)
-> +{
-> +	int i;
-
-This should be unsigned int as it never takes negative values.
-
-> +
-> +	for (i = 0; i < vsp1->info->lif_count; ++i)
-> +		vsp1_write(vsp1, VI6_DISP_IRQ_ENB(i), 0);
-> +	for (i = 0; i < vsp1->info->wpf_count; ++i)
-> +		vsp1_write(vsp1, VI6_WPF_IRQ_ENB(i), 0);
-> +}
-> +
->  /*
->   * vsp1_device_get - Acquire the VSP1 device
->   *
-> @@ -819,13 +829,6 @@ static int vsp1_probe(struct platform_device *pdev)
->  		return -EINVAL;
->  	}
->  
-> -	ret = devm_request_irq(&pdev->dev, irq->start, vsp1_irq_handler,
-> -			      IRQF_SHARED, dev_name(&pdev->dev), vsp1);
-> -	if (ret < 0) {
-> -		dev_err(&pdev->dev, "failed to request IRQ\n");
-> -		return ret;
-> -	}
-> -
->  	/* FCP (optional). */
->  	fcp_node = of_parse_phandle(pdev->dev.of_node, "renesas,fcp", 0);
->  	if (fcp_node) {
-> @@ -855,7 +858,6 @@ static int vsp1_probe(struct platform_device *pdev)
->  		goto done;
->  
->  	vsp1->version = vsp1_read(vsp1, VI6_IP_VERSION);
-> -	vsp1_device_put(vsp1);
->  
->  	for (i = 0; i < ARRAY_SIZE(vsp1_device_infos); ++i) {
->  		if ((vsp1->version & VI6_IP_VERSION_MODEL_MASK) ==
-> @@ -868,12 +870,28 @@ static int vsp1_probe(struct platform_device *pdev)
->  	if (!vsp1->info) {
->  		dev_err(&pdev->dev, "unsupported IP version 0x%08x\n",
->  			vsp1->version);
-> +		vsp1_device_put(vsp1);
->  		ret = -ENXIO;
->  		goto done;
->  	}
->  
->  	dev_dbg(&pdev->dev, "IP version 0x%08x\n", vsp1->version);
->  
-> +	/*
-> +	 * Previous use of the hardware (e.g. by the bootloader) could leave
-> +	 * some interrupts enabled and pending.
-
-I would add
-
-	 * TODO: Investigate if this shouldn't be better handled by using the
-	 * device reset provided by the CPG.
-
-to avoid forgetting about it.
-
-If you're fine with those two changes, there's no need for a v3, I can
-handle this when applying the patch.
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> +	 */
-> +	vsp1_mask_all_interrupts(vsp1);
-> +
-> +	vsp1_device_put(vsp1);
-> +
-> +	ret = devm_request_irq(&pdev->dev, irq->start, vsp1_irq_handler,
-> +			       IRQF_SHARED, dev_name(&pdev->dev), vsp1);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "failed to request IRQ\n");
-> +		goto done;
-> +	}
-> +
->  	/* Instantiate entities. */
->  	ret = vsp1_create_entities(vsp1);
->  	if (ret < 0) {
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 30516dc0b70e..92635ca9f635 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -809,6 +809,7 @@ CONFIG_SND_SOC_LPASS_WSA_MACRO=m
+ CONFIG_SND_SOC_LPASS_VA_MACRO=m
+ CONFIG_SND_SIMPLE_CARD=m
+ CONFIG_SND_AUDIO_GRAPH_CARD=m
++CONFIG_SND_AUDIO_GRAPH_CARD2=m
+ CONFIG_HID_MULTITOUCH=m
+ CONFIG_I2C_HID_ACPI=m
+ CONFIG_I2C_HID_OF=m
 -- 
-Regards,
+2.25.1
 
-Laurent Pinchart
