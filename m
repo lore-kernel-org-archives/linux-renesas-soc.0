@@ -2,129 +2,230 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FE4C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 02:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31254C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 02:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1356789AbiAYCMF (ORCPT
+        id S3418173AbiAYCND (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Jan 2022 21:12:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53418 "EHLO
+        Mon, 24 Jan 2022 21:13:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1457499AbiAXX2Q (ORCPT
+        with ESMTP id S3414886AbiAYAwx (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Jan 2022 18:28:16 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CDF52C01D7FB;
-        Mon, 24 Jan 2022 13:32:17 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8ACCEB8105C;
-        Mon, 24 Jan 2022 21:32:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BCD4C340E4;
-        Mon, 24 Jan 2022 21:32:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1643059935;
-        bh=kYzQ6x4/8WDwUsKjGgcujq30v/9ofPlAvon/fiopj00=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oJrWUXi2vxbgCPV2sF5oWKv2H1PXleQVcB/lmwkr36GM0ZWY+on95eCMTO6IopfwV
-         LlB9xqXfQHFmeArSRoYPph8oK2J7qDPdUUEHIjBC7+9+BmKV9A5eGS1r5kgf/8ygnf
-         e3EqN0xw/HgOrCQ4r8yCTWBtiKxn36SQiW3/I+Hs=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.16 0784/1039] PCI: rcar: Check if device is runtime suspended instead of __clk_is_enabled()
-Date:   Mon, 24 Jan 2022 19:42:53 +0100
-Message-Id: <20220124184151.639481546@linuxfoundation.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220124184125.121143506@linuxfoundation.org>
-References: <20220124184125.121143506@linuxfoundation.org>
-User-Agent: quilt/0.66
+        Mon, 24 Jan 2022 19:52:53 -0500
+Received: from mail-pf1-x42b.google.com (mail-pf1-x42b.google.com [IPv6:2607:f8b0:4864:20::42b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7325DC0E5315
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jan 2022 14:34:23 -0800 (PST)
+Received: by mail-pf1-x42b.google.com with SMTP id u10so12935792pfg.10
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jan 2022 14:34:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=/1sFTEaiavVn4gI8jy5XjIYOFQKJ6nrPVGngHoTu8zc=;
+        b=tHKtoZLmpzYyHCYmstcGA+/Z2Z922quMq9sxJ5KsOk9JagoFcOhJVOeaRtWfUlaTYe
+         6HBMs+6pNcftHzm28md3ItrQTp/7RsE0pBe0GpAxAlvB9XnmuF/qaN1/Ls9Hr6AOpK0q
+         dHMU+ugLAJgljxU5O1qdJpR2XDtuLBMScK/3jMvf1SmsMQcGEOGznh1oN8iOUTOVzClm
+         KNnT/9DOhPZOSgWEMS4xDnih0ZyX83sxTOygBiYyD4aSp4Zmq7MvSpP58oM+c4wDdUTc
+         gKIyS7ofJ8WgjJzGqoNJoP5rifvVP+wkZMTSBRUUa6RqQPm6A7SX60EMLqsOxd65qYgP
+         wEbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=/1sFTEaiavVn4gI8jy5XjIYOFQKJ6nrPVGngHoTu8zc=;
+        b=AnHaBN8s/asAJnwRalkrnC8TMwxZNZDh+lMs48mdqmscPuDovT2PapMC7/Bf8DiHrS
+         D2N2taVQQ6rdecqqRVCcUVgQ0OV7Hv9NA/npnQebUsrVPmJ3OktbS05bZvtD+GkvrGeD
+         gSvIdz67MoeVUg/RN3n1ma+FNwWYSywA9ewMwP+huWnJOz6O1k6rnreD106P5iu7pF9K
+         FgbWAoE39MZ5UO3mANBHSx0XelroZhLJbReyWrkmdfxqTtPWVI116CdU2hh7bqxHOCxJ
+         yn4/6nznC3ILXnMWKIfXUK8ArEi/FpdB59pXbLnQq/CsUCd78QhCkPC0YYC694DHFURm
+         nXVg==
+X-Gm-Message-State: AOAM5306s79m7i5re4Xg4FUU4Y3l1gDkVbD44R/pEheOzNQjwd8AaHhR
+        gOlr4Ddei9BtpdQMV2K+tHu0aEw94QRr0NeX
+X-Google-Smtp-Source: ABdhPJz4B4zjLiTr+/NEG1juHYMXWOPZ+hwYhWs7V1/c+s+ZkthCmtBIzUYh8W12Gvn01NxKX843Aw==
+X-Received: by 2002:a05:6a02:18a:: with SMTP id bj10mr9585017pgb.132.1643063662793;
+        Mon, 24 Jan 2022 14:34:22 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id s22sm17554693pfu.34.2022.01.24.14.34.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jan 2022 14:34:22 -0800 (PST)
+Message-ID: <61ef296e.1c69fb81.da464.fe62@mx.google.com>
+Date:   Mon, 24 Jan 2022 14:34:22 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Report-Type: test
+X-Kernelci-Kernel: v5.17-rc1-611-g4ccda2778be0
+X-Kernelci-Tree: renesas
+X-Kernelci-Branch: master
+Subject: renesas/master sleep: 8 runs,
+ 5 regressions (v5.17-rc1-611-g4ccda2778be0)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Marek Vasut <marek.vasut+renesas@gmail.com>
+renesas/master sleep: 8 runs, 5 regressions (v5.17-rc1-611-g4ccda2778be0)
 
-[ Upstream commit d2a14b54989e9ccea8401895fdfbc213bd1f56af ]
+Regressions Summary
+-------------------
 
-Replace __clk_is_enabled() with pm_runtime_suspended(),
-as __clk_is_enabled() was checking the wrong bus clock
-and caused the following build error too:
-  arm-linux-gnueabi-ld: drivers/pci/controller/pcie-rcar-host.o: in function `rcar_pcie_aarch32_abort_handler':
-  pcie-rcar-host.c:(.text+0xdd0): undefined reference to `__clk_is_enabled'
+platform            | arch   | lab           | compiler | defconfig        =
+            | regressions
+--------------------+--------+---------------+----------+------------------=
+------------+------------
+hp-11A-G6-EE-grunt  | x86_64 | lab-collabora | gcc-10   | x86_64_defcon...6=
+-chromebook | 1          =
 
-Link: https://lore.kernel.org/r/20211115204641.12941-1-marek.vasut@gmail.com
-Fixes: a115b1bd3af0 ("PCI: rcar: Add L1 link state fix into data abort hook")
-Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/pci/controller/pcie-rcar-host.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+rk3288-rock2-square | arm    | lab-collabora | gcc-10   | multi_v7_defconfi=
+g           | 4          =
 
-diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
-index e12c2d8be05a3..780e60159993c 100644
---- a/drivers/pci/controller/pcie-rcar-host.c
-+++ b/drivers/pci/controller/pcie-rcar-host.c
-@@ -50,10 +50,10 @@ struct rcar_msi {
-  */
- static void __iomem *pcie_base;
- /*
-- * Static copy of bus clock pointer, so we can check whether the clock
-- * is enabled or not.
-+ * Static copy of PCIe device pointer, so we can check whether the
-+ * device is runtime suspended or not.
-  */
--static struct clk *pcie_bus_clk;
-+static struct device *pcie_dev;
- #endif
- 
- /* Structure representing the PCIe interface */
-@@ -792,7 +792,7 @@ static int rcar_pcie_get_resources(struct rcar_pcie_host *host)
- #ifdef CONFIG_ARM
- 	/* Cache static copy for L1 link state fixup hook on aarch32 */
- 	pcie_base = pcie->base;
--	pcie_bus_clk = host->bus_clk;
-+	pcie_dev = pcie->dev;
- #endif
- 
- 	return 0;
-@@ -1062,7 +1062,7 @@ static int rcar_pcie_aarch32_abort_handler(unsigned long addr,
- 
- 	spin_lock_irqsave(&pmsr_lock, flags);
- 
--	if (!pcie_base || !__clk_is_enabled(pcie_bus_clk)) {
-+	if (!pcie_base || pm_runtime_suspended(pcie_dev)) {
- 		ret = 1;
- 		goto unlock_exit;
- 	}
--- 
-2.34.1
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/v5.1=
+7-rc1-611-g4ccda2778be0/plan/sleep/
+
+  Test:     sleep
+  Tree:     renesas
+  Branch:   master
+  Describe: v5.17-rc1-611-g4ccda2778be0
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      4ccda2778be03d61d70b8c8da55ef54d69a7f3cd =
 
 
 
+Test Regressions
+---------------- =
+
+
+
+platform            | arch   | lab           | compiler | defconfig        =
+            | regressions
+--------------------+--------+---------------+----------+------------------=
+------------+------------
+hp-11A-G6-EE-grunt  | x86_64 | lab-collabora | gcc-10   | x86_64_defcon...6=
+-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/61ef1343796d6f7a12abbd1b
+
+  Results:     22 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
+4ccda2778be0/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora/sl=
+eep-hp-11A-G6-EE-grunt.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
+4ccda2778be0/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-collabora/sl=
+eep-hp-11A-G6-EE-grunt.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220121.0/amd64/rootfs.cpio.gz =
+
+
+
+  * sleep.rtcwake-mem-10: https://kernelci.org/test/case/id/61ef1343796d6f7=
+a12abbd27
+        new failure (last pass: renesas-devel-2022-01-11-v5.16)
+
+    2022-01-24T20:58:13.544740  <6>[   31.053463] PM: suspend entry (deep)
+    2022-01-24T20:58:13.548650  rtcwake: assuming RTC uses UTC ...
+    2022-01-24T20:58:13.553741  rtcwake: wakeup from \"mem\" using rtc0 at =
+Mon Jan 24 20:58:19 2022
+    2022-01-24T20:58:13.557567  <6>[   31.057943] Filesystems sync: 0.000 s=
+econds
+    2022-01-24T20:58:13.562948  <6>[   31.071303] PM: suspend entry (deep)
+    2022-01-24T20:58:13.567426  <6>[   31.071646] Freezing user space proce=
+sses ... =
+
+    2022-01-24T20:58:13.569544  <6>[   31.075155] PM: suspend exit
+    2022-01-24T20:58:13.581145  <4>[   31.090046] (elapsed 0.014 seconds) d=
+one.
+    2022-01-24T20:58:13.584910  <6>[   31.094461] OOM killer disabled.
+    2022-01-24T20:58:15.113164  <6>[   31.097973] Freezing remaining freeza=
+ble tasks ... (elapsed 1.515 seconds) done. =
+
+    ... (1149 line(s) more)  =
+
+ =
+
+
+
+platform            | arch   | lab           | compiler | defconfig        =
+            | regressions
+--------------------+--------+---------------+----------+------------------=
+------------+------------
+rk3288-rock2-square | arm    | lab-collabora | gcc-10   | multi_v7_defconfi=
+g           | 4          =
+
+
+  Details:     https://kernelci.org/test/plan/id/61ef17f0cd9a43af2cabbd22
+
+  Results:     2 PASS, 16 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
+4ccda2778be0/arm/multi_v7_defconfig/gcc-10/lab-collabora/sleep-rk3288-rock2=
+-square.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
+4ccda2778be0/arm/multi_v7_defconfig/gcc-10/lab-collabora/sleep-rk3288-rock2=
+-square.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220121.0/armhf/rootfs.cpio.gz =
+
+
+
+  * sleep.rtcwake-mem-5: https://kernelci.org/test/case/id/61ef17f0cd9a43af=
+2cabbd30
+        new failure (last pass: renesas-devel-2022-01-11-v5.16)
+
+    2022-01-24T21:19:31.125403  rtcwake: assuming RTC uses UTC ...
+    2022-01-24T21:19:31.170549  <4>[   15.737915] rtc-hym8563 0-0051: no va=
+lid clock/calendar values available
+    2022-01-24T21:19:31.171046  rtcwake: read rtc time failed: Invalid argu=
+ment
+    2022-01-24T21:19:31.171788  rtcwake: assumin<4>[   15.758192] rtc-hym85=
+63 0-0051: no valid clock/calendar values available
+    2022-01-24T21:19:31.172136  g RTC uses UTC ...
+    2022-01-24T21:19:31.172525  rtcwake: read rtc time failed: Invalid argu=
+ment   =
+
+
+  * sleep.rtcwake-mem-4: https://kernelci.org/test/case/id/61ef17f0cd9a43af=
+2cabbd31
+        new failure (last pass: renesas-devel-2022-01-11-v5.16)
+
+    2022-01-24T21:19:31.122245  rtcwake: ass<4>[   15.683732] rtc-hym8563 0=
+-0051: no valid clock/calendar values available
+    2022-01-24T21:19:31.122731  uming RTC uses UTC ...
+    2022-01-24T21:19:31.123113  rtcwake: read rtc time failed: Invalid a<4>=
+[   15.702803] rtc-hym8563 0-0051: no valid clock/calendar values available
+    2022-01-24T21:19:31.123469  rgument
+    2022-01-24T21:19:31.124131  rtcwake: assuming RTC uses UTC ...
+    2022-01-24T21:19:31.124449  rtcwake: read rtc ti<4>[   15.717969] rtc-h=
+ym8563 0-0051: no valid clock/calendar values available
+    2022-01-24T21:19:31.124770  me failed: Invalid argument   =
+
+
+  * sleep.rtcwake-mem-3: https://kernelci.org/test/case/id/61ef17f0cd9a43af=
+2cabbd32
+        new failure (last pass: renesas-devel-2022-01-11-v5.16) =
+
+
+  * sleep.rtcwake-mem-2: https://kernelci.org/test/case/id/61ef17f0cd9a43af=
+2cabbd33
+        new failure (last pass: renesas-devel-2022-01-11-v5.16)
+
+    2022-01-24T21:19:31.029281  SULT=3Dpass>
+    2022-01-24T21:19:31.029603  rtcwake: assuming RTC uses UTC ...
+    2022-01-24T21:19:31.074153  rtcwake: read rtc time failed: Invalid argu=
+ment
+    2022-01-24T21:19:31.075026  _ID=3Drtcwake-mem-1 RESULT=3Dfail>
+    2022-01-24T21:19:31.075372  rtcwake: assuming RTC uses UTC .<4>[   15.6=
+68629] rtc-hym8563 0-0051: no valid clock/calendar values available
+    2022-01-24T21:19:31.075710  ..
+    2022-01-24T21:19:31.076128  rtcwake: read rtc time failed: Invalid argu=
+ment   =
+
+ =20
