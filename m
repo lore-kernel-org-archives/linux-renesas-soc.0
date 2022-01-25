@@ -2,81 +2,110 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E199C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 13:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9A2C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 13:27:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1383735AbiAYNTH (ORCPT
+        id S1576955AbiAYN1X (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 Jan 2022 08:19:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48718 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1576139AbiAYNQ6 (ORCPT
+        Tue, 25 Jan 2022 08:27:23 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:40774 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1386661AbiAYNZP (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Jan 2022 08:16:58 -0500
-Received: from mail-yb1-xb2d.google.com (mail-yb1-xb2d.google.com [IPv6:2607:f8b0:4864:20::b2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7EA4C061744
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Jan 2022 05:16:54 -0800 (PST)
-Received: by mail-yb1-xb2d.google.com with SMTP id g14so61492951ybs.8
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Jan 2022 05:16:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dxDIleSdPjMpBpJXvMKmY50lGGT3wpsRBxESNq54YNc=;
-        b=ZmGzS4P1j3E0P0teX4rYGr+O8/ol16n0HDJFBkPrTEI9UCFoa6IowESp9LbdF3+hVs
-         RAeMeSIGWmvuBVAIB/PPCAsxnVj2tkZeBQyooBP0xCiJWY5s79Vj93bQVv1ue+SxLaFC
-         nvcIRDmcOyZbjp2Hb3uIjf6/Q8QvNZRT9nqCe5I23tptZwIWNPqnsk4YmSf6Bc5hYfof
-         60X0OCbpmeL+YRAmc4Ul5zpK6gpSXU9Xb5om7xpMO9dxFk3Gi48+YaxzyIqR0rLGVkHf
-         F7VynZNliF2WM2OPaTBoIUEn93jxwPuVfUuo9ZiYN0s5RBUSP7y+Mwv8nTb+F4xcaAUY
-         BaxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dxDIleSdPjMpBpJXvMKmY50lGGT3wpsRBxESNq54YNc=;
-        b=Amfopcf9S/kDDUiHMl9mp9R307+wIwIZb4NN2xvFisXYHWudHczRtIB7YBTitP0GXG
-         pt+Na42aY7t3Ew6xQT30IeE5WP+WquIuwndYBIOeQYNNxJrKy/hdugQ5JDRoUznjU1SB
-         Pja/8XZ4UvBU1dONzQb6RI7GAbCh+LhiErUaKYGUcDDv8dO31LUXcDdsaP8I85tajuky
-         d1Q+1t2mjrbi2M5DsNHdaLWX53lfUsMXlYf2EAKLpjTMGbPVExT5WbjOtETiT+/gGyoz
-         MuIpf1KnWJMKkANOYq+M/lUStouJyOaWjlgoEoqjEq1qw2Fkl+u2k/3v1j+Sb+hcS8T8
-         eOMQ==
-X-Gm-Message-State: AOAM530rJy94+SZkseSTQ32VkuYTWQv7ENUPsT97LJU+VU7C7X8xu6A9
-        A+8Xqz1SPrubiiOWoVTanzQLgVSODsykjdsFthVDpQKY3Q4=
-X-Google-Smtp-Source: ABdhPJx4fKXwpFfJBJvCsE9hVDM7PkEAN6XxTUwNmJIG01bR4d9MYvM/9qY3WC5WEsMS/X9CIFvUgj4mNwmD3iXpJ/k=
-X-Received: by 2002:a25:d40c:: with SMTP id m12mr29118072ybf.669.1643116614040;
- Tue, 25 Jan 2022 05:16:54 -0800 (PST)
-MIME-Version: 1.0
-References: <20220115012303.29651-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <164310602822.74844.12177586903406990983.b4-ty@kernel.org>
- <CA+V-a8vooHnZqTvuq+qq5u+JLrSirj0vOYnfWXVFB19UhhRdAw@mail.gmail.com> <Ye/tS4CQe0FIl6/k@sirena.org.uk>
-In-Reply-To: <Ye/tS4CQe0FIl6/k@sirena.org.uk>
-From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date:   Tue, 25 Jan 2022 13:16:28 +0000
-Message-ID: <CA+V-a8vofffq7z2b2tbcBZMfRa6aX0V4soqg1h54r9qGMJMm=A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] ASoC: sh: rz-ssi: Code cleanup and fixes
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Tue, 25 Jan 2022 08:25:15 -0500
+X-IronPort-AV: E=Sophos;i="5.88,314,1635174000"; 
+   d="scan'208";a="107606147"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 25 Jan 2022 22:25:14 +0900
+Received: from localhost.localdomain (unknown [10.226.36.204])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 486034295951;
+        Tue, 25 Jan 2022 22:25:12 +0900 (JST)
+From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Pavel Machek <pavel@denx.de>
+Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         Biju Das <biju.das.jz@bp.renesas.com>,
-        Pavel Machek <pavel@denx.de>,
-        Cezary Rojewski <cezary.rojewski@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 1/3] ASoC: sh: rz-ssi: Use a do-while loop in rz_ssi_pio_recv()
+Date:   Tue, 25 Jan 2022 13:24:55 +0000
+Message-Id: <20220125132457.14984-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20220125132457.14984-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220125132457.14984-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Tue, Jan 25, 2022 at 12:30 PM Mark Brown <broonie@kernel.org> wrote:
->
-> On Tue, Jan 25, 2022 at 12:25:32PM +0000, Lad, Prabhakar wrote:
->
-> > It looks like you have applied v1 series instead of v2 to your next
-> > [0] (v2 series [1]). And your comment on your patch 1/5 of not being
-> > applying isn't true as you have already applied it ;).
-> > You haven't applied patch 5/5 (this applies cleanly to your -next)
->
-> Like I said, please resend.
+Use a do-while loop while reading the samples from RX FIFO. The "done"
+flag was only changed as an outcome of the last if-statement (last step)
+in this entire procedure. This patch moves the condition from if
+statement to while and drops the "done" variable for readability.
 
-Will do.
+While at it, also drop the unneeded parentheses around runtime->dma_area.
+
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+Hi All,
+
+This change was part of patch [0], as v1 series was applied I am just
+sending the cosmetic changes from v2 for readability.
+
+[0] https://patchwork.kernel.org/project/alsa-devel/patch/
+20220115012303.29651-6-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
 Cheers,
 Prabhakar
+---
+ sound/soc/sh/rz-ssi.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/sound/soc/sh/rz-ssi.c b/sound/soc/sh/rz-ssi.c
+index 81e1786b827d..2c8775d37f50 100644
+--- a/sound/soc/sh/rz-ssi.c
++++ b/sound/soc/sh/rz-ssi.c
+@@ -408,7 +408,6 @@ static int rz_ssi_pio_recv(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
+ {
+ 	struct snd_pcm_substream *substream = strm->substream;
+ 	struct snd_pcm_runtime *runtime;
+-	bool done = false;
+ 	u16 *buf;
+ 	int fifo_samples;
+ 	int frames_left;
+@@ -420,7 +419,7 @@ static int rz_ssi_pio_recv(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
+ 
+ 	runtime = substream->runtime;
+ 
+-	while (!done) {
++	do {
+ 		/* frames left in this period */
+ 		frames_left = runtime->period_size -
+ 			      (strm->buffer_pos % runtime->period_size);
+@@ -444,7 +443,7 @@ static int rz_ssi_pio_recv(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
+ 			break;
+ 
+ 		/* calculate new buffer index */
+-		buf = (u16 *)(runtime->dma_area);
++		buf = (u16 *)runtime->dma_area;
+ 		buf += strm->buffer_pos * runtime->channels;
+ 
+ 		/* Note, only supports 16-bit samples */
+@@ -453,11 +452,7 @@ static int rz_ssi_pio_recv(struct rz_ssi_priv *ssi, struct rz_ssi_stream *strm)
+ 
+ 		rz_ssi_reg_mask_setl(ssi, SSIFSR, SSIFSR_RDF, 0);
+ 		rz_ssi_pointer_update(strm, samples / runtime->channels);
+-
+-		/* check if there are no more samples in the RX FIFO */
+-		if (!(!frames_left && fifo_samples >= runtime->channels))
+-			done = true;
+-	}
++	} while (!frames_left && fifo_samples >= runtime->channels);
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
+
