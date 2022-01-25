@@ -2,50 +2,50 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE74C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 04:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAEAC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 04:11:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229682AbiAYELG (ORCPT
+        id S235513AbiAYELN (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Jan 2022 23:11:06 -0500
-Received: from mga04.intel.com ([192.55.52.120]:35763 "EHLO mga04.intel.com"
+        Mon, 24 Jan 2022 23:11:13 -0500
+Received: from mga05.intel.com ([192.55.52.43]:15022 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S3419845AbiAYCUr (ORCPT
+        id S3420109AbiAYCWr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Jan 2022 21:20:47 -0500
+        Mon, 24 Jan 2022 21:22:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643077246; x=1674613246;
+  t=1643077367; x=1674613367;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=FNpti3qMZYHB40gCN8KVtuo5+yZLTMC7BzlUyrJ+G1A=;
-  b=dIi8UwGnXona6IMB2EVlb/2hzeFm4CsqFUp541a/sthdbrpNeXkK8W0I
-   dZ0mx/oU4xtxLBgw4F3iSCxpv+YlXJumw+8FB8wCNNgYHbVW+CJtyQbys
-   crtON3y5A/mzrJTIofdR+S7BiLYkayFCoMOmLiEzY0frXBVLlJKSzgL3p
-   v80rwAjcSW3S9mwxxW7BMtYzqruDsK+Mz18TM6enDUWJ7Ydy6khkgwRLp
-   BcZ7z+mzyDgLFReou51CvVphyUurP8K06KRgj/Gj2z4HEBAEjd3zYm4bw
-   NIpQR5f2ec3GQXqC4JNJ/Sc7fxhNPLpZ3mCONzR+/s3+tds9c/cVOhv8f
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10237"; a="245025980"
+  bh=ZDp1wWCINl2ttduLoRnyEWjUDIAPNqYWjviHrlnRhj8=;
+  b=fCFtapD/lpk8/IF8StAaH/jL0Z0KdRZfzcyqX0ZKn1as6Bk2VFgsyIRM
+   KZQs0gCtFUgwVqpbEtRlazzpzdRyo33pN75dgp/Q47UZj/lB3awCE0fgZ
+   UT61LK1QTHagYE7v4aszJYX0XY47ctIeRRSk92bF5bg9J84CONx6XhBo/
+   6xidzAxMgSZh/0T/j5PrDP95Min/0aFX8ddOjKb2nik1ygIsSIikPOy48
+   uOjLgADAvjM2YnggrldAgSau7TIFW8SuyYe2366lfUiqKZVcLnju/2usx
+   shUHoii6eQMfCosaBE4NvQ4Mw7Yd851SegQiJ/YC8nZjXv8EYWSuMulry
+   Q==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10237"; a="332546150"
 X-IronPort-AV: E=Sophos;i="5.88,313,1635231600"; 
-   d="scan'208";a="245025980"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 17:29:19 -0800
+   d="scan'208";a="332546150"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 17:29:19 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,313,1635231600"; 
-   d="scan'208";a="695639573"
+   d="scan'208";a="580588295"
 Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
-  by orsmga005.jf.intel.com with ESMTP; 24 Jan 2022 17:29:18 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 24 Jan 2022 17:29:18 -0800
 Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1nCAe5-000JB9-Ho; Tue, 25 Jan 2022 01:29:17 +0000
-Date:   Tue, 25 Jan 2022 09:28:27 +0800
+        id 1nCAe5-000JAp-Cd; Tue, 25 Jan 2022 01:29:17 +0000
+Date:   Tue, 25 Jan 2022 09:28:54 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-clk-for-v5.18] BUILD SUCCESS
- 9b621b6adff533468798404acca062c46da141af
-Message-ID: <61ef523b.6v8rpI6rHE4dNTg8%lkp@intel.com>
+Subject: [geert-renesas-devel:renesas-drivers-for-v5.18] BUILD SUCCESS
+ 860122d80251c64484883324128ca82fa35423ef
+Message-ID: <61ef5256.mv7KIMIczZENgNMw%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -54,12 +54,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v5.18
-branch HEAD: 9b621b6adff533468798404acca062c46da141af  clk: renesas: r8a779a0: Add CANFD module clock
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v5.18
+branch HEAD: 860122d80251c64484883324128ca82fa35423ef  soc: renesas: Identify RZ/V2L SoC
 
-elapsed time: 721m
+elapsed time: 734m
 
-configs tested: 132
+configs tested: 144
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -82,6 +82,10 @@ mips                     decstation_defconfig
 sparc                       sparc64_defconfig
 powerpc                      ppc6xx_defconfig
 mips                            gpr_defconfig
+arm                         s3c6400_defconfig
+mips                        jmr3927_defconfig
+powerpc                        warp_defconfig
+sh                         ecovec24_defconfig
 sh                          polaris_defconfig
 um                                  defconfig
 sh                           se7206_defconfig
@@ -92,17 +96,23 @@ arm                        trizeps4_defconfig
 h8300                            allyesconfig
 arm                        mvebu_v7_defconfig
 arm                           viper_defconfig
-sh                          r7780mp_defconfig
-mips                  maltasmvp_eva_defconfig
-sh                             shx3_defconfig
+arc                 nsimosci_hs_smp_defconfig
+sh                            migor_defconfig
+sh                           se7705_defconfig
+sh                          rsk7201_defconfig
+nds32                            alldefconfig
+sh                          sdk7786_defconfig
+arm                            mps2_defconfig
+mips                        vocore2_defconfig
 arm                            lart_defconfig
 arm                            pleb_defconfig
 sparc64                          alldefconfig
+mips                  maltasmvp_eva_defconfig
 mips                            ar7_defconfig
 arm                       aspeed_g5_defconfig
 arm                  randconfig-c002-20220124
-ia64                             allmodconfig
 ia64                                defconfig
+ia64                             allmodconfig
 ia64                             allyesconfig
 m68k                             allmodconfig
 m68k                                defconfig
@@ -119,10 +129,10 @@ xtensa                           allyesconfig
 arc                                 defconfig
 sh                               allmodconfig
 parisc                              defconfig
-s390                             allyesconfig
 s390                             allmodconfig
 parisc                           allyesconfig
 s390                                defconfig
+s390                             allyesconfig
 i386                             allyesconfig
 sparc                            allyesconfig
 sparc                               defconfig
@@ -131,9 +141,9 @@ i386                   debian-10.3-kselftests
 i386                              debian-10.3
 mips                             allyesconfig
 mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
 powerpc                           allnoconfig
+powerpc                          allmodconfig
+powerpc                          allyesconfig
 x86_64               randconfig-a002-20220124
 x86_64               randconfig-a003-20220124
 x86_64               randconfig-a001-20220124
@@ -146,6 +156,7 @@ i386                 randconfig-a003-20220124
 i386                 randconfig-a004-20220124
 i386                 randconfig-a001-20220124
 i386                 randconfig-a006-20220124
+arc                  randconfig-r043-20220124
 riscv                    nommu_k210_defconfig
 riscv                            allyesconfig
 riscv                    nommu_virt_defconfig
@@ -204,6 +215,7 @@ i386                 randconfig-a012-20220124
 riscv                randconfig-r042-20220124
 hexagon              randconfig-r045-20220124
 hexagon              randconfig-r041-20220124
+s390                 randconfig-r044-20220124
 
 ---
 0-DAY CI Kernel Test Service, Intel Corporation
