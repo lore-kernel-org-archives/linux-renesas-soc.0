@@ -2,50 +2,49 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA62C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 04:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7154DC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 04:11:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S3420109AbiAYELN (ORCPT
+        id S248616AbiAYEL1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Jan 2022 23:11:13 -0500
-Received: from mga05.intel.com ([192.55.52.43]:15188 "EHLO mga05.intel.com"
+        Mon, 24 Jan 2022 23:11:27 -0500
+Received: from mga12.intel.com ([192.55.52.136]:22031 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S3420125AbiAYCWr (ORCPT
+        id S3420573AbiAYCYt (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Jan 2022 21:22:47 -0500
+        Mon, 24 Jan 2022 21:24:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643077367; x=1674613367;
+  t=1643077489; x=1674613489;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=ZHtswv+OcGLSwbeURYn6qb+X7tFNySx0nYcHP7OivQI=;
-  b=ZcIcBQfd0wUvSo91VjKLgof7f3yybRgh5bP+jQmpb4JSiJ0fd7FLzPaV
-   C1IPG9RN+wHD9bWDzRALwuhrFBTYKp3m9fQiMgkp8+ETQi1lz+FNExgQ4
-   EFCocJDFWlbTJymGRQntVKYqrqtudol9CySKPXNdmjQ4R+wHXeNPxndzm
-   wRYiaMsZZoSPghdoTpj6v25fKSwElWHx5osi6b9zH4fbg89D6uVtkK368
-   vHS7IWj5YwNnddO7Y4QxnckUwwCmhdIlExwm9mLLOXgJdIYwpQu4oFPCa
-   hEsuTI3efx+ISbQLk6LIDEH9Dq0/Oalnq0R8vh/uMEo8vj0H1L2Qfp8fk
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10237"; a="332546152"
+  bh=eRKXHV53JaEjQh7nq3So9VmzACCSqij1wuwS/vcAqMI=;
+  b=jCEHWsL/EwwO/boIdq4MRHw10SnnWqElCsqGocP6iRrGnjtme/ttJOKe
+   Y5O2GYjZ3LG0UTNCTAJl1HAIAn+JXLVQzw6J+GPcdpCzpm+URr4yx7mrh
+   wP8v1kBOTWFVZgW1Lc5FG8vjrAqY3QGTo2QjtQK3JU5ihwOo9lj6lZVIu
+   cNTaz7QdWy8ZWxfBUgt1PcPwbK3AKfLyiPBo1rnNr6te8WSHMSOj+Nj3u
+   eFKzE5clbRfYhkOfwPAP1saenp13If4ru7Nm0kLACuxj8ls6f2LCOmf6i
+   kxWy8Oq3xsRQKvFtIb2+8uCG6tu0AYjOjjPh1+jtcrLN6ZUWEO4OaBXPj
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10237"; a="226170078"
 X-IronPort-AV: E=Sophos;i="5.88,313,1635231600"; 
-   d="scan'208";a="332546152"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 17:29:19 -0800
+   d="scan'208";a="226170078"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 17:29:19 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,313,1635231600"; 
-   d="scan'208";a="580588296"
+   d="scan'208";a="476926085"
 Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 24 Jan 2022 17:29:18 -0800
+  by orsmga003.jf.intel.com with ESMTP; 24 Jan 2022 17:29:18 -0800
 Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1nCAe5-000JBJ-Ks; Tue, 25 Jan 2022 01:29:17 +0000
-Date:   Tue, 25 Jan 2022 09:28:21 +0800
+        id 1nCAe5-000JBC-Ic; Tue, 25 Jan 2022 01:29:17 +0000
+Date:   Tue, 25 Jan 2022 09:28:47 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-arm-dt-for-v5.18] BUILD SUCCESS
- 86db90921943867aefc827ff92745101a698df32
-Message-ID: <61ef5235.DA9/XIsu2PkOmRaj%lkp@intel.com>
+Subject: [geert-renesas-devel:renesas-dt-bindings-for-v5.18] BUILD SUCCESS 4b4a0fd666303a06bbe159552bc055b490b77cdc
+Message-ID: <61ef524f.Q2uLiABxACdesFrQ%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -54,13 +53,13 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-dt-for-v5.18
-branch HEAD: 86db90921943867aefc827ff92745101a698df32  arm64: dts: renesas: Add initial device tree for RZ/V2L SMARC EVK
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-dt-bindings-for-v5.18
+branch HEAD: 4b4a0fd666303a06bbe159552bc055b490b77cdc  dt-bindings: power: renesas,rzg2l-sysc: Document RZ/V2L SoC
 
-elapsed time: 734m
+elapsed time: 733m
 
 configs tested: 142
-configs skipped: 87
+configs skipped: 3
 
 The following configs have been built successfully.
 More configs may be tested in the coming days.
@@ -72,6 +71,7 @@ arm64                               defconfig
 arm                              allyesconfig
 arm                              allmodconfig
 i386                 randconfig-c001-20220124
+powerpc              randconfig-c003-20220124
 m68k                          hp300_defconfig
 m68k                        mvme16x_defconfig
 sh                   sh7770_generic_defconfig
