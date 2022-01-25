@@ -2,97 +2,100 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A490C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 09:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FC7C4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 10:23:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233736AbiAYJub (ORCPT
+        id S1348627AbiAYKW6 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 25 Jan 2022 04:50:31 -0500
-Received: from mail-ua1-f44.google.com ([209.85.222.44]:43839 "EHLO
-        mail-ua1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236910AbiAYJoT (ORCPT
+        Tue, 25 Jan 2022 05:22:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36846 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S242894AbiAYKUR (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 25 Jan 2022 04:44:19 -0500
-Received: by mail-ua1-f44.google.com with SMTP id 2so36319989uax.10
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Jan 2022 01:44:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tG+PhwrdWvZ0/pjVWL6fyTYlATFvYhpU0iYSURvp3Zg=;
-        b=pppHFZzRf8sM1rcPpM59st/3pVLqUBcrCRbQckk5Y/nyz0f4M58/ehkFlkRNacfPFJ
-         NbZXw64o4CUpNZgHe/tta7xMSdf1tAql542xZI38cUxKCNAf6PJquXM+TN0IuwXH6TCm
-         awQPAmfbwmJNLyvfhV33OHNfF6E0JSKIpVH1bVUTaGFzu0ZzJHx90RhDP642huBVen9D
-         nXDV/V69zf2zliclizqvwnDV++jBEcjqffGhJ+x8RVRqJBrYvMrFDQnPVyL1xeS1cjxa
-         VRb7SCZ0ZFDfoNC+GZhbZul0q5whYIvdRsGbpV9vbqLO2Rrlp+AeZtPU/N/+PVP3LM0A
-         xO9Q==
-X-Gm-Message-State: AOAM531rz/kblQ45clezvsL+3h7ZUV9Z0+5KQLbRLYGRk8fb/yA7y59x
-        AR2fJ3uFrxi0l5f+GL+90A3uljwCDrteSw==
-X-Google-Smtp-Source: ABdhPJwJSpAhLFaHAnl7fQ5vuSpsJO2zwo2F6SVye4TDxzlECRBIcjlMYE0vUNE2R91mJJEfGOFODw==
-X-Received: by 2002:a05:6130:411:: with SMTP id ba17mr8038810uab.70.1643103856545;
-        Tue, 25 Jan 2022 01:44:16 -0800 (PST)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id d202sm910704vkd.38.2022.01.25.01.44.16
-        for <linux-renesas-soc@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jan 2022 01:44:16 -0800 (PST)
-Received: by mail-ua1-f51.google.com with SMTP id y4so36322987uad.1
-        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Jan 2022 01:44:16 -0800 (PST)
-X-Received: by 2002:a9f:2070:: with SMTP id 103mr3752982uam.122.1643103856132;
- Tue, 25 Jan 2022 01:44:16 -0800 (PST)
+        Tue, 25 Jan 2022 05:20:17 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3911C06174E
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Jan 2022 02:20:15 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 68AB6B81756
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 25 Jan 2022 10:20:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2089CC340E8;
+        Tue, 25 Jan 2022 10:20:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1643106013;
+        bh=z0bkA1DOtzXT/Y9S38wKVIbWBfbEwX445rAyqA7vHpI=;
+        h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+        b=M27YfqXh5nzytxCWsS86alhRhWJzy5bfaVXl9Fc9vnC0JrjKOkTbX4Iad4pYwyh1v
+         UHcyFju1qrONgdFSmwxQW68uZy02ZnG6LZ4pg490opeie+mEXhZsvhwI+QVH5CZF95
+         0VHugl6RZ4Qt5po4O0uylgcgkDQv/HVP/Zu3hYjOnTxeX/FkBO5RkpSCokOdX/dCuv
+         fCyYC0BvryXk0CuZ8YP/qzT+Ls4QcKdSR0NEUIYNU23ftOpv0aT3WOSlFtOqtldpaD
+         YW9SCD9DW1eiHFJfS8xxeQZGouF7/ZvctnptrbZaFBK/NqO8coGHqQHIcJkKz576XD
+         oZApfE3h94TXQ==
+From:   Mark Brown <broonie@kernel.org>
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Pavel Machek <pavel@denx.de>, linux-renesas-soc@vger.kernel.org,
+        Biju Das <biju.das.jz@bp.renesas.com>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+In-Reply-To: <20220110094711.8574-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20220110094711.8574-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: (subset) [PATCH 0/5] ASoC: sh: rz-ssi: Code cleanup and fixes
+Message-Id: <164310601186.74844.5990821411200273836.b4-ty@kernel.org>
+Date:   Tue, 25 Jan 2022 10:20:11 +0000
 MIME-Version: 1.0
-References: <61ef5253.dX1h+KToNxbVl4p8%lkp@intel.com>
-In-Reply-To: <61ef5253.dX1h+KToNxbVl4p8%lkp@intel.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 25 Jan 2022 10:44:04 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdX5cyS-q7ayp-5cXySdO1yREBUMc8MT9bJJHuXZ_rGqxQ@mail.gmail.com>
-Message-ID: <CAMuHMdX5cyS-q7ayp-5cXySdO1yREBUMc8MT9bJJHuXZ_rGqxQ@mail.gmail.com>
-Subject: Re: [geert-renesas-devel:master] BUILD SUCCESS 4ccda2778be03d61d70b8c8da55ef54d69a7f3cd
-To:     kernel test robot <lkp@intel.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Kernel Test Robot,
+On Mon, 10 Jan 2022 09:47:06 +0000, Lad Prabhakar wrote:
+> This patch series does code cleanup and fixes to the rz-ssi driver.
+> 
+> Cheers,
+> Prabhakar
+> 
+> Lad Prabhakar (5):
+>   ASoC: sh: rz-ssi: Drop calling rz_ssi_pio_recv() recursively
+>   ASoC: sh: rz-ssi: Make the data structures available before
+>     registering the handlers
+>   ASoC: sh: rz-ssi: Drop ssi parameter from rz_ssi_stream_init()
+>   ASoC: sh: rz-ssi: Make return type of rz_ssi_stream_is_valid() to bool
+>   ASoC: sh: rz-ssi: Add functions to get/set substream pointer
+> 
+> [...]
 
-On Tue, Jan 25, 2022 at 2:29 AM kernel test robot <lkp@intel.com> wrote:
-> tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
-> branch HEAD: 4ccda2778be03d61d70b8c8da55ef54d69a7f3cd  Merge branch 'renesas-next' into renesas-devel
->
-> elapsed time: 736m
->
-> configs tested: 133
-> configs skipped: 3
->
-> The following configs have been built successfully.
-> More configs may be tested in the coming days.
->
-> gcc tested configs:
-> arm                                 defconfig
-> arm64                            allyesconfig
-> arm64                               defconfig
+Applied to
 
-How come arm64/defconfig built successfully?
-It is supposed to fail due to a missing file:
-
-    In file included from arch/arm64/boot/dts/renesas/r9a07g054l2.dtsi:9,
-                     from arch/arm64/boot/dts/renesas/r9a07g054l2-smarc.dts:9:
-    arch/arm64/boot/dts/renesas/r9a07g054.dtsi:9:10: fatal error:
-dt-bindings/clock/r9a07g054-cpg.h: No such file or directory
-        9 | #include <dt-bindings/clock/r9a07g054-cpg.h>
-          |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
 Thanks!
 
-Gr{oetje,eeting}s,
+[1/5] ASoC: sh: rz-ssi: Drop calling rz_ssi_pio_recv() recursively
+      commit: 6570f991582e32b7992601d0497c61962a2c5dcc
+[2/5] ASoC: sh: rz-ssi: Make the data structures available before registering the handlers
+      commit: 0788785c78342d422f93b1c9831c2b2b7f137937
+[3/5] ASoC: sh: rz-ssi: Drop ssi parameter from rz_ssi_stream_init()
+      commit: 4f78f3c970f131a179fd135806a9b693fa606beb
+[4/5] ASoC: sh: rz-ssi: Make return type of rz_ssi_stream_is_valid() to bool
+      commit: e42c903e8bf400728c4ae1f922169b4d28b72efa
 
-                        Geert
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
