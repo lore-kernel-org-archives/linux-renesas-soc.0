@@ -2,157 +2,219 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0B9C433F5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEC5C4332F
 	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 02:17:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S3418222AbiAYCNO (ORCPT
+        id S3418249AbiAYCNT (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Jan 2022 21:13:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44834 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S3414885AbiAYAwx (ORCPT
+        Mon, 24 Jan 2022 21:13:19 -0500
+Received: from mga01.intel.com ([192.55.52.88]:58686 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S3415744AbiAYBvY (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Jan 2022 19:52:53 -0500
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B649C0E5313
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jan 2022 14:34:23 -0800 (PST)
-Received: by mail-pf1-x42c.google.com with SMTP id u130so13199477pfc.2
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jan 2022 14:34:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=aEbuGg3RfUOIJ+7yeIsn57BsaXLAd9EQUcv/YuCgp38=;
-        b=RFuVEvx50uXVY+bdt7KJQFczVjxLU50pvztFktwT4FS4cM7YC4d/b7EiDM4h/6LEdZ
-         rUk2TsLuIojw5+s8MPoayzivBhznZAcVaK1ZGOVSN60o+gv8QUK7wnzoQ8KN0UhAkIxb
-         fSlxhWu3PykILAXsw2xR5VFbKpRiECBKZ0enUEYS2ZrSostjpmuPuJK60j3xPOylIDOe
-         zsUOabTyrmLXODYMSr5IeYVOmdPpjLwaQb/RA3UdziGQeVf7tGQ5sdhf26YA/GGcPyp0
-         +xrwOBZoCkQ1B2jGcJr2mkYmlLPJdJ6Q5M5BQCp1S6Qf0/u3jiHTX9NhCzFBkDNUzSJG
-         aLIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=aEbuGg3RfUOIJ+7yeIsn57BsaXLAd9EQUcv/YuCgp38=;
-        b=WPnoRuhtuy8Wi4D5gVSRYu7TSsnuhpC3edIDCRn3lhfCtwVBZ6x9mAXnAJSV1qeF2K
-         IT5Bmk6rbdlxk/4+6M1wtLINyn58oNHW8GgdLQreTuHv7BbjUd1mH6rM2GCb9Y0oUnee
-         BjbIrgqxtebT5OjGqFDfeMU9ZBnhFo6FyE7uMVGEPmLELkLlo7y2cbP+JG9kpvd/AH0/
-         ts04iOUJX6gC4ObOBfKAIYEIzC0ZE1LxD0bl1uzjyDstG7Z52FS/Nyd5y8dV9OTMSJCT
-         GlqzA33MjbTM+9a8Oa7JLmURmHpIffkIgU8tmHqRl8p5E1+QD5EMMh0aC2507h3GedLw
-         utzQ==
-X-Gm-Message-State: AOAM531kPHjLHSph2IvjBqUglZ6RsG/0IGYHIl4ebCzBNirkKBbGZu8J
-        dzS4NxiQgH8EKxjWv8bL33O2MFvGuky414KQ
-X-Google-Smtp-Source: ABdhPJw0VIkfWxoixOJbdyGvJa4oRnksjs/ouQeZadpLW2wv4VUkCiGlPkQ8fmw8jOvqOJxlTTKrHA==
-X-Received: by 2002:a63:7210:: with SMTP id n16mr13309536pgc.527.1643063662332;
-        Mon, 24 Jan 2022 14:34:22 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id ml14sm323092pjb.10.2022.01.24.14.34.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jan 2022 14:34:22 -0800 (PST)
-Message-ID: <61ef296e.1c69fb81.16bcd.16b8@mx.google.com>
-Date:   Mon, 24 Jan 2022 14:34:22 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Mon, 24 Jan 2022 20:51:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643075484; x=1674611484;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=xrg1EHX2I0G57dJPxWHUSSAV1gs16U9K3dMO3AMBUo4=;
+  b=FiHpsefjyZBJovoDdVRIC5/HUjR8Isvb4+Mfyj6KhvYCLFsZQCTBTAc3
+   8EjnslXJJx19SMU/LdBgPdHwrKq3fnxCZVUUPP2jrfjNr3IF0eUrDkuwO
+   5XUV+VoYNu+sXttcXSHsxDPAsVPC9SeYQMaNqVOOYqdWewrDssYVXTOdU
+   PghBRfdFh8/RA2gTrBJ9H27DUt3lhuVXwYC8EA2TjzJLFfFhSIdkIIAOO
+   gIu+BTgwoPWSpJ8+eSzruba7AU3bJvNWQ1Fq2alhqr6uSypmm7SI1edko
+   9HKK3itNyiiT0DKI19Y9o6xgwTZmi9Y3qa1j/x1pN1fXiRHkcIgSc4zve
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10237"; a="270633190"
+X-IronPort-AV: E=Sophos;i="5.88,313,1635231600"; 
+   d="scan'208";a="270633190"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jan 2022 17:29:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,313,1635231600"; 
+   d="scan'208";a="766603938"
+Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
+  by fmsmga006.fm.intel.com with ESMTP; 24 Jan 2022 17:29:18 -0800
+Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nCAe5-000JAz-Fp; Tue, 25 Jan 2022 01:29:17 +0000
+Date:   Tue, 25 Jan 2022 09:28:42 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-devel:next] BUILD SUCCESS
+ 925b6371c8340f967fc54b8102fdf6b94e87013b
+Message-ID: <61ef524a.XtDAnGWOhT8/NN1u%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.17-rc1-611-g4ccda2778be0
-X-Kernelci-Tree: renesas
-X-Kernelci-Branch: master
-Subject: renesas/master igt-kms-rockchip: 2 runs,
- 1 regressions (v5.17-rc1-611-g4ccda2778be0)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master igt-kms-rockchip: 2 runs, 1 regressions (v5.17-rc1-611-g4ccd=
-a2778be0)
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: 925b6371c8340f967fc54b8102fdf6b94e87013b  Merge branches 'renesas-arm-dt-for-v5.18', 'renesas-drivers-for-v5.18' and 'renesas-dt-bindings-for-v5.18' into renesas-next
 
-Regressions Summary
--------------------
+elapsed time: 735m
 
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
-ebook | 1          =
+configs tested: 142
+configs skipped: 3
 
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/v5.1=
-7-rc1-611-g4ccda2778be0/plan/igt-kms-rockchip/
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+i386                 randconfig-c001-20220124
+powerpc              randconfig-c003-20220124
+m68k                          hp300_defconfig
+m68k                        mvme16x_defconfig
+sh                   sh7770_generic_defconfig
+arc                           tb10x_defconfig
+sh                           se7722_defconfig
+mips                     decstation_defconfig
+sparc                       sparc64_defconfig
+powerpc                      ppc6xx_defconfig
+mips                            gpr_defconfig
+arm                         s3c6400_defconfig
+mips                        jmr3927_defconfig
+powerpc                        warp_defconfig
+sh                         ecovec24_defconfig
+sh                          polaris_defconfig
+um                                  defconfig
+sh                           se7206_defconfig
+ia64                          tiger_defconfig
+arc                            hsdk_defconfig
+arm                       multi_v4t_defconfig
+arm                        trizeps4_defconfig
+h8300                            allyesconfig
+arm                        mvebu_v7_defconfig
+arm                           viper_defconfig
+arc                 nsimosci_hs_smp_defconfig
+sh                            migor_defconfig
+sh                           se7705_defconfig
+sh                          rsk7201_defconfig
+nds32                            alldefconfig
+sh                          sdk7786_defconfig
+arm                            mps2_defconfig
+mips                        vocore2_defconfig
+arm                            lart_defconfig
+arm                            pleb_defconfig
+sparc64                          alldefconfig
+mips                  maltasmvp_eva_defconfig
+mips                            ar7_defconfig
+arm                       aspeed_g5_defconfig
+arm                  randconfig-c002-20220124
+ia64                             allmodconfig
+ia64                                defconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+m68k                             allyesconfig
+nios2                               defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+alpha                            allyesconfig
+xtensa                           allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                             allyesconfig
+s390                             allmodconfig
+parisc                           allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                            allyesconfig
+sparc                               defconfig
+i386                                defconfig
+i386                   debian-10.3-kselftests
+i386                              debian-10.3
+mips                             allyesconfig
+mips                             allmodconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+x86_64               randconfig-a002-20220124
+x86_64               randconfig-a003-20220124
+x86_64               randconfig-a001-20220124
+x86_64               randconfig-a004-20220124
+x86_64               randconfig-a005-20220124
+x86_64               randconfig-a006-20220124
+i386                 randconfig-a002-20220124
+i386                 randconfig-a005-20220124
+i386                 randconfig-a003-20220124
+i386                 randconfig-a004-20220124
+i386                 randconfig-a001-20220124
+i386                 randconfig-a006-20220124
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                    rhel-8.3-kselftests
+um                           x86_64_defconfig
+um                             i386_defconfig
+x86_64                           allyesconfig
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                          rhel-8.3-func
+x86_64                                  kexec
 
-  Test:     igt-kms-rockchip
-  Tree:     renesas
-  Branch:   master
-  Describe: v5.17-rc1-611-g4ccda2778be0
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      4ccda2778be03d61d70b8c8da55ef54d69a7f3cd
+clang tested configs:
+arm                  randconfig-c002-20220124
+riscv                randconfig-c006-20220124
+i386                 randconfig-c001-20220124
+powerpc              randconfig-c003-20220124
+mips                 randconfig-c004-20220124
+x86_64               randconfig-c007-20220124
+mips                  cavium_octeon_defconfig
+mips                        omega2p_defconfig
+powerpc                    mvme5100_defconfig
+arm                         lpc32xx_defconfig
+riscv                          rv32_defconfig
+mips                        bcm63xx_defconfig
+powerpc                          g5_defconfig
+arm                          imote2_defconfig
+mips                           mtx1_defconfig
+powerpc                   lite5200b_defconfig
+arm                   milbeaut_m10v_defconfig
+powerpc                     tqm5200_defconfig
+mips                       lemote2f_defconfig
+powerpc                        icon_defconfig
+arm                     davinci_all_defconfig
+mips                     cu1000-neo_defconfig
+powerpc                      ppc44x_defconfig
+arm                              alldefconfig
+arm                         hackkit_defconfig
+mips                     loongson2k_defconfig
+x86_64               randconfig-a011-20220124
+x86_64               randconfig-a013-20220124
+x86_64               randconfig-a015-20220124
+x86_64               randconfig-a016-20220124
+x86_64               randconfig-a014-20220124
+x86_64               randconfig-a012-20220124
+i386                 randconfig-a011-20220124
+i386                 randconfig-a016-20220124
+i386                 randconfig-a013-20220124
+i386                 randconfig-a014-20220124
+i386                 randconfig-a015-20220124
+i386                 randconfig-a012-20220124
+riscv                randconfig-r042-20220124
+hexagon              randconfig-r045-20220124
+hexagon              randconfig-r041-20220124
 
-  Test suite revisions:
-    drm
-      URL:  git://anongit.freedesktop.org/mesa/drm
-      SHA:  8d0fb9b3f225183fb3276a0e4ae1f8354a3519e8
-    igt-gpu-tools
-      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
-      SHA:  f73008bac9a8db0779264b170f630483e9165764 =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform         | arch  | lab           | compiler | defconfig            =
-      | regressions
------------------+-------+---------------+----------+----------------------=
-------+------------
-rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
-ebook | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef19b0aa52fe494aabbd26
-
-  Results:     79 PASS, 15 FAIL, 142 SKIP
-  Full config: defconfig+arm64-chromebook
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/igt-kms-=
-rockchip-rk3399-gru-kevin.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/igt-kms-=
-rockchip-rk3399-gru-kevin.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ig=
-t/20220121.0/arm64/rootfs.cpio.gz =
-
-
-
-  * igt-kms-rockchip.kms_setmode.basic: https://kernelci.org/test/case/id/6=
-1ef19b0aa52fe494aabbdcc
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-
-    2022-01-24T21:24:24.891134  <8>[   44.334025] <LAVA_SIGNAL_TESTSET STOP>
-    2022-01-24T21:24:24.929206  <8>[   44.370819] <LAVA_SIGNAL_TESTSET STAR=
-T kms_setmode>
-    2022-01-24T21:24:24.961836  <6>[   44.403456] Console: switching to col=
-our dummy device 80x25
-    2022-01-24T21:24:24.966935  <14>[   44.410121] [IGT] kms_setmode: execu=
-ting
-    2022-01-24T21:24:24.979262  IGT-Version: 1.26-gf73008b (aarch64) (Linux=
-: 5.17.0-rc1 aarch64)<14>[   44.415798] [IGT] kms_setmode: starting subtest=
- basic
-    2022-01-24T21:24:24.980043  =
-
-    2022-01-24T21:24:24.981909  Starting subtest: basic
-    2022-01-24T21:24:24.985833  Testing: basic 1 connector combinations
-    2022-01-24T21:24:25.086424    Test id#1 CRTC count 1
-    2022-01-24T21:24:25.093774      CRTC[37] [Pipe A] Mode: 2400x1600@60Hz =
-Connectors: eDP-1[49] =
-
-    ... (67 line(s) more)  =
-
- =20
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
