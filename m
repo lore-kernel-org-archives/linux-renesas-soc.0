@@ -2,526 +2,221 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE36C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 04:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE9BC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue, 25 Jan 2022 06:49:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S243742AbiAYEMU (ORCPT
+        id S1359255AbiAYGt1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 24 Jan 2022 23:12:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49172 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1321040AbiAYDPf (ORCPT
+        Tue, 25 Jan 2022 01:49:27 -0500
+Received: from esa2.mentor.iphmx.com ([68.232.141.98]:2460 "EHLO
+        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1358497AbiAYGpy (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 24 Jan 2022 22:15:35 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00311C055A8B
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jan 2022 17:04:23 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id w12-20020a17090a528c00b001b276aa3aabso683358pjh.0
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 24 Jan 2022 17:04:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from;
-        bh=HBdvwRNNLdoUiDLvdLiYLof5tBaFRQtmZrQwF2Ki/po=;
-        b=hL1+6xqpQVRDcVtzfZcIGQWyrfZrjppL02Xz4Bc4BKRNfcCl1XF3M8q7j4YZl232Tv
-         tAkvtmhrj1EY3ZRZVEmfQ0MJYpM3NaM/p71Q3wcoUe3QlPD7OpdvOqckqJFttJ4k4KkO
-         N1fxJ4pYA+Lkeq/DSdudwZrvVfqiGYe7rS6uGJPxTocCUtR36FbLY4/0QlTyq4XZruxh
-         gNtkfARtu1DXRieT5oYyhyGCPG5KvOAuBmIXG0G1IPDANPEHnsmnlLWR/ya7Sf8t3j/f
-         xWQZ6pkdKB/KLne1XwJXZa2Qp8aYTF2L2Xgl4aTLk9gUp4LZgqLUZfe83Q0jDAeBWtT0
-         oFng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from;
-        bh=HBdvwRNNLdoUiDLvdLiYLof5tBaFRQtmZrQwF2Ki/po=;
-        b=tyNyBV4ZgKPTTQWmsHBtLM0LlqnRX/gUwF7lbt40Ldz5gv18mEHARjWllXsEU2gBs5
-         +EDl1dS6MzG8rdaAol7Ze04h8qBDKUTc+JxRJbewhKRdfk0ag83sAJYeVAz+03EFLFtG
-         elFwQlnFYgDcGmOk3Wm7vLx5JgSLx7qhYBBGRvx6+5fvurznSd+ujP1RYCt8MzGROPk5
-         DeDmgHjg1+5YRWTnFD6GPSAkafhsFgPUk6t2tKHLmo4pzsfjAiN5F6liyMk8d2wGWR/p
-         7moLPi1Xi1yw75Eo4Tz5BlJTldbb5cgYMqvDElSPDz6HCQm+3eEG9tBEMf2BFZLHJt+H
-         z1Qg==
-X-Gm-Message-State: AOAM531Kpk9pCadtsgbzzqJSgDNaA5JDYVGb0o3TkW31ITagnzJCbrCX
-        JD4GW5uIkGL2F0/bxBmFdVRcRc3u6VDaCbPE
-X-Google-Smtp-Source: ABdhPJz9etQdDG0wMnGIH1V5JSzKwAUH4LfsumF8i9VCHLsv9uEzEE6QrQryZc5AzguQ2ZjhSK184Q==
-X-Received: by 2002:a17:902:868d:b0:14a:d70d:a29a with SMTP id g13-20020a170902868d00b0014ad70da29amr16794983plo.5.1643072663180;
-        Mon, 24 Jan 2022 17:04:23 -0800 (PST)
-Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
-        by smtp.gmail.com with ESMTPSA id a38sm6627670pfx.46.2022.01.24.17.04.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jan 2022 17:04:22 -0800 (PST)
-Message-ID: <61ef4c96.1c69fb81.e9625.230d@mx.google.com>
-Date:   Mon, 24 Jan 2022 17:04:22 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Tue, 25 Jan 2022 01:45:54 -0500
+IronPort-SDR: RavLzcctKxeWmPfeSVQq0/h5zi++CKjs+wR40FTuoPI91FkRRmWfCwlNsdt8mCTWoAHhJiWhEz
+ 1A/osGKKPX+xgTj+Kv510RU6YsW/At6kse/y2ILH/H9Hv7LlqvAtgpknUiGE87IiVC7Tx+EjWa
+ d9E0tF9H4EHlp7Rje0hmr2lmH5unf2U1Df+jiMy/brZbRr07W2zt9rk3+VpoXjDqDDQ0mnbPSu
+ frq92heBJUYWnA+G9MPKziRYatr2IZjvhyPmdwMSeLJdEyGlvtrfYgJY2oDGsMPBFMd5rlaO9i
+ i1zh22CU1pwxg1N28SOtNu4c
+X-IronPort-AV: E=Sophos;i="5.88,314,1635235200"; 
+   d="scan'208";a="71173504"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa2.mentor.iphmx.com with ESMTP; 24 Jan 2022 22:45:47 -0800
+IronPort-SDR: twu5CcYaTiNsnA+NYdGL2X0/4vzJI8f01adpyAyQxPSMZaYlztDK4Dm2bMVvPq1mcRTS77pWG4
+ OHvUqjtl9v+sisYWUersXHILqmetzMJt9WFll7qylz3MrFZbQXIu4EExt1w4exHXce0dZ6qzHa
+ 6BNOnUbDgvuh0Xf74tQwHcPc3H8fSQNaCpDTrjSfE8Klk3nTke+COZ5ymW01Mj/GXu41i93ZSn
+ 9Wl2Q5xurIdHVeyZxhv6B9B4fIOHhqub1TvSZ9BV+jrbu14nvIRKwhH7lOLfTWOWRYm2J2iuso
+ JFg=
+From:   Andrew Gabbasov <andrew_gabbasov@mentor.com>
+To:     'Geert Uytterhoeven' <geert@linux-m68k.org>
+CC:     'Linux-Renesas' <linux-renesas-soc@vger.kernel.org>,
+        'Linux I2C' <linux-i2c@vger.kernel.org>,
+        'Linux Kernel Mailing List' <linux-kernel@vger.kernel.org>,
+        'Wolfram Sang' <wsa+renesas@sang-engineering.com>,
+        "Surachari, Bhuvanesh" <Bhuvanesh_Surachari@mentor.com>
+References: <20210922160649.28449-1-andrew_gabbasov@mentor.com> <CAMuHMdVVDpBAQR+H1TAnpf65aVbAL0Mm0km7Z9L7+1JuF6n1gQ@mail.gmail.com>   
+In-Reply-To: 
+Subject: RE: [PATCH] i2c: rcar: add SMBus block read support
+Date:   Tue, 25 Jan 2022 09:45:34 +0300
+Organization: Mentor Graphics Corporation
+Message-ID: <000001d811b7$2bd58310$83808930$@mentor.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Report-Type: test
-X-Kernelci-Kernel: v5.17-rc1-611-g4ccda2778be0
-X-Kernelci-Tree: renesas
-X-Kernelci-Branch: master
-Subject: renesas/master baseline: 283 runs,
- 15 regressions (v5.17-rc1-611-g4ccda2778be0)
-To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
-From:   "kernelci.org bot" <bot@kernelci.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHXue1eCQdNXjaiK021FrevUeTu7qvGRbCQgEMVGxCAUkv+EIAYU0UA
+Content-Language: en-us
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: svr-ies-mbx-10.mgc.mentorg.com (139.181.222.10) To
+ svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2)
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-renesas/master baseline: 283 runs, 15 regressions (v5.17-rc1-611-g4ccda2778=
-be0)
+Hello Geert, Wolfram,
+
+Any feedback on the patch, please?
+
+Thanks.
+
+Best regards,
+Andrew
+
+> -----Original Message-----
+> From: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+> Sent: Sunday, January 09, 2022 10:20 PM
+> To: 'Geert Uytterhoeven' <geert@linux-m68k.org>
+> Cc: 'Linux-Renesas' <linux-renesas-soc@vger.kernel.org>; 'Linux I2C' <linux-i2c@vger.kernel.org>; 'Linux Kernel
+> Mailing List' <linux-kernel@vger.kernel.org>; 'Wolfram Sang' <wsa+renesas@sang-engineering.com>; Surachari,
+> Bhuvanesh <Bhuvanesh_Surachari@mentor.com>
+> Subject: RE: [PATCH] i2c: rcar: add SMBus block read support
+> 
+> Hello Geert, Wolfram,
+> 
+> Could you please let me know your opinion on version 2 of this patch,
+> that addressed your earlier review comments?
+> 
+> https://lore.kernel.org/all/20211006182314.10585-1-andrew_gabbasov@mentor.com/
+> 
+> Does it still need any further modifications or are you going to promote it further upstream?
+> 
+> Thanks.
+> 
+> Best regards,
+> Andrew
+> 
+> > -----Original Message-----
+> > From: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+> > Sent: Thursday, November 18, 2021 1:35 PM
+> > To: 'Geert Uytterhoeven' <geert@linux-m68k.org>
+> > Cc: 'Linux-Renesas' <linux-renesas-soc@vger.kernel.org>; 'Linux I2C' <linux-i2c@vger.kernel.org>; 'Linux Kernel
+> > Mailing List' <linux-kernel@vger.kernel.org>; 'Wolfram Sang' <wsa+renesas@sang-engineering.com>; Surachari,
+> > Bhuvanesh <Bhuvanesh_Surachari@mentor.com>
+> > Subject: RE: [PATCH] i2c: rcar: add SMBus block read support
+> >
+> > Hello Geert, Wolfram,
+> >
+> > Do you have any feedback on version 2 of this patch, that was submitted
+> > after your review comments below?
+> >
+> > https://lore.kernel.org/all/20211006182314.10585-1-andrew_gabbasov@mentor.com/
+> >
+> > Thanks!
+> >
+> > Best regards,
+> > Andrew
+> >
+> > > -----Original Message-----
+> > > From: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+> > > Sent: Wednesday, October 06, 2021 9:12 PM
+> > > To: 'Geert Uytterhoeven' <geert@linux-m68k.org>
+> > > Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>; Linux I2C <linux-i2c@vger.kernel.org>; Linux Kernel
+> > > Mailing List <linux-kernel@vger.kernel.org>; Wolfram Sang <wsa+renesas@sang-engineering.com>; Surachari,
+> > > Bhuvanesh <Bhuvanesh_Surachari@mentor.com>
+> > > Subject: RE: [PATCH] i2c: rcar: add SMBus block read support
+> > >
+> > > Hi Geert,
+> > >
+> > > Thank you for your review!
+> > >
+> > > > -----Original Message-----
+> > > > From: Geert Uytterhoeven <geert@linux-m68k.org>
+> > > > Sent: Tuesday, October 05, 2021 4:32 PM
+> > > > To: Gabbasov, Andrew <Andrew_Gabbasov@mentor.com>
+> > > > Cc: Linux-Renesas <linux-renesas-soc@vger.kernel.org>; Linux I2C <linux-i2c@vger.kernel.org>; Linux Kernel
+> > > > Mailing List <linux-kernel@vger.kernel.org>; Wolfram Sang <wsa+renesas@sang-engineering.com>; Surachari,
+> > > > Bhuvanesh <Bhuvanesh_Surachari@mentor.com>
+> > > > Subject: Re: [PATCH] i2c: rcar: add SMBus block read support
+> > > >
+> > > > Hi Andrew,
+> > > >
+> > > > On Wed, Sep 22, 2021 at 6:14 PM Andrew Gabbasov
+> > > > <andrew_gabbasov@mentor.com> wrote:
+> > > > > The smbus block read is not currently supported for rcar i2c devices.
+> > > > > This patchset adds the support to rcar i2c bus so that blocks of data
+> > > > > can be read using SMbus block reads.(using i2c_smbus_read_block_data()
+> > > > > function from the i2c-core-smbus.c).
+> > > > >
+> > > > > Inspired by commit 8e8782c71595 ("i2c: imx: add SMBus block read support")
+> > > > >
+> > > > > This patch (adapted) was tested with v4.14, but due to lack of real
+> > > > > hardware with SMBus block read operations support, using "simulation",
+> > > > > that is manual analysis of data, read from plain I2C devices with
+> > > > > SMBus block read request.
+> > > > >
+> > > > > Signed-off-by: Bhuvanesh Surachari <bhuvanesh_surachari@mentor.com>
+> > > > > Signed-off-by: Andrew Gabbasov <andrew_gabbasov@mentor.com>
+> > > >
+> > > > Thanks for your patch!
+> > > >
+> > > > > --- a/drivers/i2c/busses/i2c-rcar.c
+> > > > > +++ b/drivers/i2c/busses/i2c-rcar.c
+> > > > > @@ -429,9 +431,16 @@ static bool rcar_i2c_dma(struct rcar_i2c_priv *priv)
+> > > > >                 /*
+> > > > >                  * The last two bytes needs to be fetched using PIO in
+> > > > >                  * order for the STOP phase to work.
+> > > > > +                *
+> > > > > +                * For SMBus block read the first byte was received using PIO.
+> > > >
+> > > > So it might be easier to read, and more maintainable, to keep the
+> > > > old assignments:
+> > > >
+> > > >     buf = priv->msg->buf;
+> > > >     len = priv->msg->len - 2;
+> > > >
+> > > > and adjust them for SMBus afterwards:
+> > > >
+> > > >     if (block_data) {
+> > > >             /* For SMBus block read the first byte was received using PIO */
+> > > >             buf++;
+> > > >             len--;
+> > > >     }
+> > > >
+> > > > ?
+> > > >
+> > > > >                  */
+> > > > > -               buf = priv->msg->buf;
+> > > > > -               len = priv->msg->len - 2;
+> > > > > +               if (block_data) {
+> > > > > +                       buf = priv->msg->buf + 1;
+> > > > > +                       len = priv->msg->len - 3;
+> > > > > +               } else {
+> > > > > +                       buf = priv->msg->buf;
+> > > > > +                       len = priv->msg->len - 2;
+> > > > > +               }
+> > > > >         } else {
+> > > > >                 /*
+> > > > >                  * First byte in message was sent using PIO.
+> > > >
+> > > > And below we have another case handling buf and len :-(
+> > > >
+> > > > So perhaps:
+> > > >
+> > > >     buf = priv->msg->buf;
+> > > >     len = priv->msg->len;
+> > > >
+> > > >     if (read) {
+> > > >             /*
+> > > >              * The last two bytes needs to be fetched using PIO in
+> > > >              * order for the STOP phase to work.
+> > > >              */
+> > > >             len -= 2;
+> > > >     }
+> > > >     if (!read || block_data) {
+> > > >             /* First byte in message was sent using PIO *
+> > > >             buf++;
+> > > >             len--;
+> > > >     }
+> > >
+> > > Probably I was trying to minimize the changes ;-)
+> > >
+> > > However, I agree with you that the whole code fragment can be simplified
+> > > and your variant indeed looks more clean and understandable.
+> > > Thank you for your suggestion, I'll submit version 2 of the patch
+> > > with this fragment changed.
+> > >
+> > > Thanks!
+> > >
+> > > Best regards,
+> > > Andrew
 
-Regressions Summary
--------------------
-
-platform               | arch  | lab           | compiler | defconfig      =
-           | regressions
------------------------+-------+---------------+----------+----------------=
------------+------------
-imx8mn-ddr4-evk        | arm64 | lab-nxp       | gcc-10   | defconfig      =
-           | 2          =
-
-imx8mn-ddr4-evk        | arm64 | lab-nxp       | gcc-10   | defconfig+ima  =
-           | 2          =
-
-kontron-kbox-a-230-ls  | arm64 | lab-kontron   | gcc-10   | defconfig      =
-           | 2          =
-
-kontron-kbox-a-230-ls  | arm64 | lab-kontron   | gcc-10   | defconfig+ima  =
-           | 2          =
-
-kontron-sl28-var3-ads2 | arm64 | lab-kontron   | gcc-10   | defconfig      =
-           | 2          =
-
-kontron-sl28-var3-ads2 | arm64 | lab-kontron   | gcc-10   | defconfig+ima  =
-           | 2          =
-
-tegra124-nyan-big      | arm   | lab-collabora | gcc-10   | multi_v7_defcon=
-fig+crypto | 1          =
-
-tegra124-nyan-big      | arm   | lab-collabora | gcc-10   | multi_v7_defcon=
-fig        | 1          =
-
-tegra124-nyan-big      | arm   | lab-collabora | gcc-10   | tegra_defconfig=
-           | 1          =
-
-
-  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/v5.1=
-7-rc1-611-g4ccda2778be0/plan/baseline/
-
-  Test:     baseline
-  Tree:     renesas
-  Branch:   master
-  Describe: v5.17-rc1-611-g4ccda2778be0
-  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
-evel.git
-  SHA:      4ccda2778be03d61d70b8c8da55ef54d69a7f3cd =
-
-
-
-Test Regressions
----------------- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-           | regressions
------------------------+-------+---------------+----------+----------------=
------------+------------
-imx8mn-ddr4-evk        | arm64 | lab-nxp       | gcc-10   | defconfig      =
-           | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef157357a66807fbabbd25
-
-  Results:     4 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig/gcc-10/lab-nxp/baseline-imx8mn-ddr4-evk.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig/gcc-10/lab-nxp/baseline-imx8mn-ddr4-evk.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/61ef157357a6680=
-7fbabbd2c
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-        12 lines
-
-    2022-01-24T21:08:40.427741  kern  :alert : Unable to handle kernel NULL=
- pointer dereference at virtual address 000000000000<8>[   14.787519] <LAVA=
-_SIGNAL_TESTCASE TEST_CASE_ID=3Dalert RESULT=3Dfail UNITS=3Dlines MEASUREME=
-NT=3D12>
-    2022-01-24T21:08:40.427990  0000
-    2022-01-24T21:08:40.428141  kern  :alert : Mem abort info:
-    2022-01-24T21:08:40.428327  kern  :alert :   ESR =3D 0x96000006
-    2022-01-24T21:08:40.428524  kern  :alert :   EC =3D 0x25: DABT (current=
- EL), IL =3D 32 bits
-    2022-01-24T21:08:40.428643  kern  :alert :   SET =3D 0, FnV =3D 0   =
-
-
-  * baseline.dmesg.emerg: https://kernelci.org/test/case/id/61ef157357a6680=
-7fbabbd2d
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-        2 lines
-
-    2022-01-24T21:08:40.429604  kern  :alert :   EA<8>[   14.814882] <LAVA_=
-SIGNAL_TESTCASE TEST_CASE_ID=3Demerg RESULT=3Dfail UNITS=3Dlines MEASUREMEN=
-T=3D2>
-    2022-01-24T21:08:40.429750   =3D 0, S1PTW =3D 0   =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-           | regressions
------------------------+-------+---------------+----------+----------------=
------------+------------
-imx8mn-ddr4-evk        | arm64 | lab-nxp       | gcc-10   | defconfig+ima  =
-           | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef17f6fe7a1a74a0abbe37
-
-  Results:     4 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig+ima
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig+ima/gcc-10/lab-nxp/baseline-imx8mn-ddr4-evk.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig+ima/gcc-10/lab-nxp/baseline-imx8mn-ddr4-evk.ht=
-ml
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.dmesg.alert: https://kernelci.org/test/case/id/61ef17f6fe7a1a7=
-4a0abbe3e
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-        12 lines
-
-    2022-01-24T21:19:26.614733  kern  :alert : Unable to handle kernel NULL=
- pointer dereference <8>[   15.157180] <LAVA_SIGNAL_TESTCASE TEST_CASE_ID=
-=3Dalert RESULT=3Dfail UNITS=3Dlines MEASUREMENT=3D12>
-    2022-01-24T21:19:26.614899  at virtual address 0000000000000000
-    2022-01-24T21:19:26.615009  kern  :alert : Mem abort info:
-    2022-01-24T21:19:26.615114  kern  :alert :   ESR =3D 0x96000006
-    2022-01-24T21:19:26.615216  kern  :alert :   EC =3D 0x25: DABT (current=
- EL), IL =3D 32 bits   =
-
-
-  * baseline.dmesg.emerg: https://kernelci.org/test/case/id/61ef17f6fe7a1a7=
-4a0abbe3f
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-        2 lines
-
-    2022-01-24T21:19:26.615900  kern  :alert :   SET =3D <8>[   15.182264] =
-<LAVA_SIGNAL_TESTCASE TEST_CASE_ID=3Demerg RESULT=3Dfail UNITS=3Dlines MEAS=
-UREMENT=3D2>
-    2022-01-24T21:19:26.616005  0, FnV =3D 0   =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-           | regressions
------------------------+-------+---------------+----------+----------------=
------------+------------
-kontron-kbox-a-230-ls  | arm64 | lab-kontron   | gcc-10   | defconfig      =
-           | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef185ecde4c742d1abbd12
-
-  Results:     91 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-kbox-a-230=
--ls.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-kbox-a-230=
--ls.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.ftm-alarm-driver-present: https://kernelci.org/test/cas=
-e/id/61ef185fcde4c742d1abbd53
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-
-    2022-01-24T21:21:07.666111  /lava-83078/1/../bin/lava-test-case   =
-
-
-  * baseline.bootrr.ftm-alarm-probed: https://kernelci.org/test/case/id/61e=
-f185fcde4c742d1abbd54
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-
-    2022-01-24T21:21:07.669208  <8>[   16.658770] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-driver-present RESULT=3Dfail>
-    2022-01-24T21:21:08.718309  /lava-83078/1/../bin/lava-test-case
-    2022-01-24T21:21:08.718769  <8>[   17.677476] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-probed RESULT=3Dfail>
-    2022-01-24T21:21:08.719052  /lava-83078/1/../bin/lava-test-case
-    2022-01-24T21:21:08.719348  <8>[   17.694648] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dsimple-mfd-i2c-driver-present RESULT=3Dpass>
-    2022-01-24T21:21:08.719623  /lava-83078/1/../bin/lava-test-case
-    2022-01-24T21:21:08.719881  <8>[   17.711800] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dsimple-mfd-i2c-probed RESULT=3Dpass>
-    2022-01-24T21:21:08.720141  /lava-83078/1/../bin/lava-test-case   =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-           | regressions
------------------------+-------+---------------+----------+----------------=
------------+------------
-kontron-kbox-a-230-ls  | arm64 | lab-kontron   | gcc-10   | defconfig+ima  =
-           | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef196210588fdfe7abbd1b
-
-  Results:     91 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig+ima
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig+ima/gcc-10/lab-kontron/baseline-kontron-kbox-a=
--230-ls.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig+ima/gcc-10/lab-kontron/baseline-kontron-kbox-a=
--230-ls.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.ftm-alarm-driver-present: https://kernelci.org/test/cas=
-e/id/61ef196310588fdfe7abbd5c
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-
-    2022-01-24T21:25:30.370248  /lava-83085/1/../bin/lava-test-case
-    2022-01-24T21:25:30.391304  <8>[   16.434381] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-driver-present RESULT=3Dfail>   =
-
-
-  * baseline.bootrr.ftm-alarm-probed: https://kernelci.org/test/case/id/61e=
-f196310588fdfe7abbd5d
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-
-    2022-01-24T21:25:31.438861  /lava-83085/1/../bin/lava-test-case
-    2022-01-24T21:25:31.439308  <8>[   17.453842] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-probed RESULT=3Dfail>
-    2022-01-24T21:25:31.439675  /lava-83085/1/../bin/lava-test-case
-    2022-01-24T21:25:31.439890  <8>[   17.469810] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dsimple-mfd-i2c-driver-present RESULT=3Dpass>   =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-           | regressions
------------------------+-------+---------------+----------+----------------=
------------+------------
-kontron-sl28-var3-ads2 | arm64 | lab-kontron   | gcc-10   | defconfig      =
-           | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef15cadd0dca74b6abbd12
-
-  Results:     99 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-sl28-var3-=
-ads2.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig/gcc-10/lab-kontron/baseline-kontron-sl28-var3-=
-ads2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.ftm-alarm-driver-present: https://kernelci.org/test/cas=
-e/id/61ef15cbdd0dca74b6abbd5a
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-
-    2022-01-24T21:10:27.461627  /lava-83075/1/../bin/lava-test-case
-    2022-01-24T21:10:27.464762  <8>[   13.502298] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-driver-present RESULT=3Dfail>   =
-
-
-  * baseline.bootrr.ftm-alarm-probed: https://kernelci.org/test/case/id/61e=
-f15cbdd0dca74b6abbd5b
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-
-    2022-01-24T21:10:28.513447  /lava-83075/1/../bin/lava-test-case
-    2022-01-24T21:10:28.513848  <8>[   14.521031] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-probed RESULT=3Dfail>
-    2022-01-24T21:10:28.514090  /lava-83075/1/../bin/lava-test-case
-    2022-01-24T21:10:28.514314  <8>[   14.536500] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dsimple-mfd-i2c-driver-present RESULT=3Dpass>   =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-           | regressions
------------------------+-------+---------------+----------+----------------=
------------+------------
-kontron-sl28-var3-ads2 | arm64 | lab-kontron   | gcc-10   | defconfig+ima  =
-           | 2          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef16f64cafedd7afabbd40
-
-  Results:     99 PASS, 2 FAIL, 0 SKIP
-  Full config: defconfig+ima
-  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
-110)
-  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig+ima/gcc-10/lab-kontron/baseline-kontron-sl28-v=
-ar3-ads2.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm64/defconfig+ima/gcc-10/lab-kontron/baseline-kontron-sl28-v=
-ar3-ads2.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/arm64/rootfs.cpio.gz =
-
-
-
-  * baseline.bootrr.ftm-alarm-driver-present: https://kernelci.org/test/cas=
-e/id/61ef16f64cafedd7afabbd88
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-
-    2022-01-24T21:15:14.531763  /lava-83082/1/../bin/lava-test-case   =
-
-
-  * baseline.bootrr.ftm-alarm-probed: https://kernelci.org/test/case/id/61e=
-f16f64cafedd7afabbd89
-        new failure (last pass: renesas-devel-2022-01-11-v5.16)
-
-    2022-01-24T21:15:14.534926  <8>[   13.549409] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-driver-present RESULT=3Dfail>
-    2022-01-24T21:15:15.581460  /lava-83082/1/../bin/lava-test-case
-    2022-01-24T21:15:15.581858  <8>[   14.568605] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dftm-alarm-probed RESULT=3Dfail>
-    2022-01-24T21:15:15.582099  /lava-83082/1/../bin/lava-test-case
-    2022-01-24T21:15:15.582325  <8>[   14.584305] <LAVA_SIGNAL_TESTCASE TES=
-T_CASE_ID=3Dsimple-mfd-i2c-driver-present RESULT=3Dpass>   =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-           | regressions
------------------------+-------+---------------+----------+----------------=
------------+------------
-tegra124-nyan-big      | arm   | lab-collabora | gcc-10   | multi_v7_defcon=
-fig+crypto | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef449fbe4cf4c414abbd13
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig+crypto
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm/multi_v7_defconfig+crypto/gcc-10/lab-collabora/baseline-te=
-gra124-nyan-big.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm/multi_v7_defconfig+crypto/gcc-10/lab-collabora/baseline-te=
-gra124-nyan-big.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/61ef449fbe4cf4c414abb=
-d14
-        new failure (last pass: renesas-devel-2022-01-11-v5.16) =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-           | regressions
------------------------+-------+---------------+----------+----------------=
------------+------------
-tegra124-nyan-big      | arm   | lab-collabora | gcc-10   | multi_v7_defcon=
-fig        | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef47bd1bcdbb429babbd26
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: multi_v7_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm/multi_v7_defconfig/gcc-10/lab-collabora/baseline-tegra124-=
-nyan-big.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm/multi_v7_defconfig/gcc-10/lab-collabora/baseline-tegra124-=
-nyan-big.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/61ef47bd1bcdbb429babb=
-d27
-        new failure (last pass: renesas-devel-2022-01-11-v5.16) =
-
- =
-
-
-
-platform               | arch  | lab           | compiler | defconfig      =
-           | regressions
------------------------+-------+---------------+----------+----------------=
------------+------------
-tegra124-nyan-big      | arm   | lab-collabora | gcc-10   | tegra_defconfig=
-           | 1          =
-
-
-  Details:     https://kernelci.org/test/plan/id/61ef442575fc149688abbd34
-
-  Results:     0 PASS, 1 FAIL, 0 SKIP
-  Full config: tegra_defconfig
-  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
-10110)
-  Plain log:   https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm/tegra_defconfig/gcc-10/lab-collabora/baseline-tegra124-nya=
-n-big.txt
-  HTML log:    https://storage.kernelci.org//renesas/master/v5.17-rc1-611-g=
-4ccda2778be0/arm/tegra_defconfig/gcc-10/lab-collabora/baseline-tegra124-nya=
-n-big.html
-  Rootfs:      http://storage.kernelci.org/images/rootfs/buildroot/buildroo=
-t-baseline/20220121.0/armel/rootfs.cpio.gz =
-
-
-
-  * baseline.login: https://kernelci.org/test/case/id/61ef442575fc149688abb=
-d35
-        new failure (last pass: renesas-devel-2022-01-11-v5.16) =
-
- =20
