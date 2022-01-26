@@ -2,38 +2,41 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A88DC636C8
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Jan 2022 12:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C96C28CF5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 26 Jan 2022 12:32:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241312AbiAZM3h (ORCPT
+        id S241334AbiAZMcJ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 26 Jan 2022 07:29:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58344 "EHLO
+        Wed, 26 Jan 2022 07:32:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241314AbiAZM3f (ORCPT
+        with ESMTP id S241332AbiAZMcI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 26 Jan 2022 07:29:35 -0500
-Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CF6BC061751
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Jan 2022 04:29:35 -0800 (PST)
+        Wed, 26 Jan 2022 07:32:08 -0500
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BF3FC06161C
+        for <linux-renesas-soc@vger.kernel.org>; Wed, 26 Jan 2022 04:32:08 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:c4c8:1afa:4649:d034])
-        by andre.telenet-ops.be with bizsmtp
-        id nQVZ260072MCa5R01QVZ62; Wed, 26 Jan 2022 13:29:33 +0100
+        by baptiste.telenet-ops.be with bizsmtp
+        id nQY62600V2MCa5R01QY61S; Wed, 26 Jan 2022 13:32:07 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nChQb-00BUGl-0B; Wed, 26 Jan 2022 13:29:33 +0100
+        id 1nChT4-00BUI7-IN; Wed, 26 Jan 2022 13:32:06 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nChQa-004bWc-KX; Wed, 26 Jan 2022 13:29:32 +0100
+        id 1nChT3-004bbf-Se; Wed, 26 Jan 2022 13:32:05 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] pinctrl: renesas: r8a7779: Restore pin group and function sort order
-Date:   Wed, 26 Jan 2022 13:29:28 +0100
-Message-Id: <cover.1643199959.git.geert+renesas@glider.be>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <maz@kernel.org>, Rob Herring <robh+dt@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Subject: [PATCH v2] dt-bindings: irqchip: renesas-irqc: Add R-Car V3U support
+Date:   Wed, 26 Jan 2022 13:32:05 +0100
+Message-Id: <85b246cc0792663c72c1bb12a8576bd23d2299d3.1643200256.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -41,35 +44,30 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-	Hi Linus,
+Document support for the Interrupt Controller for External Devices
+(INT-EC) in the Renesas R-Car V3U (r8a779a0) SoC.
 
-This patch series reorders some pin group and pin function declarations
-in various Renesas pin control drivers, to restore sort order.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+---
+v2:
+  - Add Tested-by.
+---
+ .../devicetree/bindings/interrupt-controller/renesas,irqc.yaml   | 1 +
+ 1 file changed, 1 insertion(+)
 
-I intend to queue these in renesas-pinctrl-for-v5.18.
-
-Thanks for your comments!
-
-Geert Uytterhoeven (3):
-  pinctrl: renesas: r8a7779: Restore pin function sort order
-  pinctrl: renesas: r8a7790: Restore pin function sort order
-  pinctrl: renesas: r8a77995: Restore pin group sort order
-
- drivers/pinctrl/renesas/pfc-r8a7779.c  |  8 +--
- drivers/pinctrl/renesas/pfc-r8a7790.c  |  2 +-
- drivers/pinctrl/renesas/pfc-r8a77995.c | 86 +++++++++++++-------------
- 3 files changed, 48 insertions(+), 48 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml
+index 79d0358e2f612f24..620f01775e429c3e 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,irqc.yaml
+@@ -36,6 +36,7 @@ properties:
+           - renesas,intc-ex-r8a77980    # R-Car V3H
+           - renesas,intc-ex-r8a77990    # R-Car E3
+           - renesas,intc-ex-r8a77995    # R-Car D3
++          - renesas,intc-ex-r8a779a0    # R-Car V3U
+       - const: renesas,irqc
+ 
+   '#interrupt-cells':
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
