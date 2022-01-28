@@ -2,38 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C42C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jan 2022 18:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5EE4C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jan 2022 20:38:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350645AbiA1Scq (ORCPT
+        id S235207AbiA1Uim (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 Jan 2022 13:32:46 -0500
-Received: from mxout04.lancloud.ru ([45.84.86.114]:53992 "EHLO
-        mxout04.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350616AbiA1Sco (ORCPT
+        Fri, 28 Jan 2022 15:38:42 -0500
+Received: from mxout03.lancloud.ru ([45.84.86.113]:45920 "EHLO
+        mxout03.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230427AbiA1Uim (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jan 2022 13:32:44 -0500
+        Fri, 28 Jan 2022 15:38:42 -0500
 Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout04.lancloud.ru EB81D209A655
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru 9E82920A441C
 Received: from LanCloud
 Received: from LanCloud
 Received: from LanCloud
 From:   Sergey Shtylyov <s.shtylyov@omp.ru>
-Subject: [PATCH v2] phy: make phy_set_max_speed() *void*
-To:     <netdev@vger.kernel.org>, "David S. Miller" <davem@davemloft.net>,
-        "Jakub Kicinski" <kuba@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Russell King <linux@armlinux.org.uk>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>, <netdev@vger.kernel.org>
 CC:     <linux-renesas-soc@vger.kernel.org>
-Organization: Open Mobile Platform
-Message-ID: <4889c4d5-cff8-5b15-bd50-8014b95b18e8@omp.ru>
-Date:   Fri, 28 Jan 2022 21:32:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+Subject: [PATCH 1/2] ravb: ravb_close() always returns 0
+Date:   Fri, 28 Jan 2022 23:38:37 +0300
+Message-ID: <20220128203838.17423-2-s.shtylyov@omp.ru>
+X-Mailer: git-send-email 2.26.3
+In-Reply-To: <20220128203838.17423-1-s.shtylyov@omp.ru>
+References: <20220128203838.17423-1-s.shtylyov@omp.ru>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [192.168.11.198]
 X-ClientProxiedBy: LFEXT02.lancloud.ru (fd00:f066::142) To
  LFEX1907.lancloud.ru (fd00:f066::207)
@@ -41,162 +38,33 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-After following the call tree of phy_set_max_speed(), it became clear
-that this function never returns anything but 0, so we can change its
-result type to *void* and drop the result checks from the three drivers
-that actually bothered to do it...
+ravb_close() always returns 0, hence the check in ravb_wol_restore() is
+pointless (however, we cannot change the prototype of ravb_close() as it
+implements the driver's ndo_stop() method).
 
 Found by Linux Verification Center (linuxtesting.org) with the SVACE static
 analysis tool.
 
 Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
 ---
-This patch is against the DaveM's 'net-next.git' repo.
+ drivers/net/ethernet/renesas/ravb_main.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Changes in version 2:
-- added Andrew Lunn's tag.
-
- drivers/net/ethernet/renesas/ravb_main.c |    8 +-------
- drivers/net/ethernet/renesas/sh_eth.c    |   10 ++--------
- drivers/net/phy/aquantia_main.c          |    4 +---
- drivers/net/phy/phy-core.c               |   22 ++++++++--------------
- include/linux/phy.h                      |    2 +-
- 5 files changed, 13 insertions(+), 33 deletions(-)
-
-Index: net-next/drivers/net/ethernet/renesas/ravb_main.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/ravb_main.c
-+++ net-next/drivers/net/ethernet/renesas/ravb_main.c
-@@ -1432,11 +1432,7 @@ static int ravb_phy_init(struct net_devi
- 	 * at this time.
- 	 */
- 	if (soc_device_match(r8a7795es10)) {
--		err = phy_set_max_speed(phydev, SPEED_100);
--		if (err) {
--			netdev_err(ndev, "failed to limit PHY to 100Mbit/s\n");
--			goto err_phy_disconnect;
--		}
-+		phy_set_max_speed(phydev, SPEED_100);
+diff --git a/drivers/net/ethernet/renesas/ravb_main.c b/drivers/net/ethernet/renesas/ravb_main.c
+index b215cde68e10..02fa8cfc2b7b 100644
+--- a/drivers/net/ethernet/renesas/ravb_main.c
++++ b/drivers/net/ethernet/renesas/ravb_main.c
+@@ -2863,9 +2863,7 @@ static int ravb_wol_restore(struct net_device *ndev)
+ 	/* Disable MagicPacket */
+ 	ravb_modify(ndev, ECMR, ECMR_MPDE, 0);
  
- 		netdev_info(ndev, "limited PHY to 100Mbit/s\n");
- 	}
-@@ -1457,8 +1453,6 @@ static int ravb_phy_init(struct net_devi
- 
- 	return 0;
- 
--err_phy_disconnect:
--	phy_disconnect(phydev);
- err_deregister_fixed_link:
- 	if (of_phy_is_fixed_link(np))
- 		of_phy_deregister_fixed_link(np);
-Index: net-next/drivers/net/ethernet/renesas/sh_eth.c
-===================================================================
---- net-next.orig/drivers/net/ethernet/renesas/sh_eth.c
-+++ net-next/drivers/net/ethernet/renesas/sh_eth.c
-@@ -2026,14 +2026,8 @@ static int sh_eth_phy_init(struct net_de
- 	}
- 
- 	/* mask with MAC supported features */
--	if (mdp->cd->register_type != SH_ETH_REG_GIGABIT) {
--		int err = phy_set_max_speed(phydev, SPEED_100);
--		if (err) {
--			netdev_err(ndev, "failed to limit PHY to 100 Mbit/s\n");
--			phy_disconnect(phydev);
--			return err;
--		}
--	}
-+	if (mdp->cd->register_type != SH_ETH_REG_GIGABIT)
-+		phy_set_max_speed(phydev, SPEED_100);
- 
- 	phy_attached_info(phydev);
- 
-Index: net-next/drivers/net/phy/aquantia_main.c
-===================================================================
---- net-next.orig/drivers/net/phy/aquantia_main.c
-+++ net-next/drivers/net/phy/aquantia_main.c
-@@ -533,9 +533,7 @@ static int aqcs109_config_init(struct ph
- 	 * PMA speed ability bits are the same for all members of the family,
- 	 * AQCS109 however supports speeds up to 2.5G only.
- 	 */
--	ret = phy_set_max_speed(phydev, SPEED_2500);
--	if (ret)
+-	ret = ravb_close(ndev);
+-	if (ret < 0)
 -		return ret;
-+	phy_set_max_speed(phydev, SPEED_2500);
++	ravb_close(ndev);
  
- 	return aqr107_set_downshift(phydev, MDIO_AN_VEND_PROV_DOWNSHIFT_DFLT);
+ 	return disable_irq_wake(priv->emac_irq);
  }
-Index: net-next/drivers/net/phy/phy-core.c
-===================================================================
---- net-next.orig/drivers/net/phy/phy-core.c
-+++ net-next/drivers/net/phy/phy-core.c
-@@ -243,7 +243,7 @@ size_t phy_speeds(unsigned int *speeds,
- 	return count;
- }
- 
--static int __set_linkmode_max_speed(u32 max_speed, unsigned long *addr)
-+static void __set_linkmode_max_speed(u32 max_speed, unsigned long *addr)
- {
- 	const struct phy_setting *p;
- 	int i;
-@@ -254,13 +254,11 @@ static int __set_linkmode_max_speed(u32
- 		else
- 			break;
- 	}
--
--	return 0;
- }
- 
--static int __set_phy_supported(struct phy_device *phydev, u32 max_speed)
-+static void __set_phy_supported(struct phy_device *phydev, u32 max_speed)
- {
--	return __set_linkmode_max_speed(max_speed, phydev->supported);
-+	__set_linkmode_max_speed(max_speed, phydev->supported);
- }
- 
- /**
-@@ -273,17 +271,11 @@ static int __set_phy_supported(struct ph
-  * is connected to a 1G PHY. This function allows the MAC to indicate its
-  * maximum speed, and so limit what the PHY will advertise.
-  */
--int phy_set_max_speed(struct phy_device *phydev, u32 max_speed)
-+void phy_set_max_speed(struct phy_device *phydev, u32 max_speed)
- {
--	int err;
--
--	err = __set_phy_supported(phydev, max_speed);
--	if (err)
--		return err;
-+	__set_phy_supported(phydev, max_speed);
- 
- 	phy_advertise_supported(phydev);
--
--	return 0;
- }
- EXPORT_SYMBOL(phy_set_max_speed);
- 
-@@ -440,7 +432,9 @@ int phy_speed_down_core(struct phy_devic
- 	if (min_common_speed == SPEED_UNKNOWN)
- 		return -EINVAL;
- 
--	return __set_linkmode_max_speed(min_common_speed, phydev->advertising);
-+	__set_linkmode_max_speed(min_common_speed, phydev->advertising);
-+
-+	return 0;
- }
- 
- static void mmd_phy_indirect(struct mii_bus *bus, int phy_addr, int devad,
-Index: net-next/include/linux/phy.h
-===================================================================
---- net-next.orig/include/linux/phy.h
-+++ net-next/include/linux/phy.h
-@@ -1661,7 +1661,7 @@ int phy_disable_interrupts(struct phy_de
- void phy_request_interrupt(struct phy_device *phydev);
- void phy_free_interrupt(struct phy_device *phydev);
- void phy_print_status(struct phy_device *phydev);
--int phy_set_max_speed(struct phy_device *phydev, u32 max_speed);
-+void phy_set_max_speed(struct phy_device *phydev, u32 max_speed);
- void phy_remove_link_mode(struct phy_device *phydev, u32 link_mode);
- void phy_advertise_supported(struct phy_device *phydev);
- void phy_support_sym_pause(struct phy_device *phydev);
+-- 
+2.26.3
+
