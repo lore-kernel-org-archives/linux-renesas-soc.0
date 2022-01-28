@@ -2,19 +2,19 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED89C433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA004C4332F
 	for <linux-renesas-soc@archiver.kernel.org>; Fri, 28 Jan 2022 20:38:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237297AbiA1Uim (ORCPT
+        id S237457AbiA1Uim (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 28 Jan 2022 15:38:42 -0500
-Received: from mxout01.lancloud.ru ([45.84.86.81]:37002 "EHLO
-        mxout01.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231166AbiA1Uim (ORCPT
+Received: from mxout03.lancloud.ru ([45.84.86.113]:45928 "EHLO
+        mxout03.lancloud.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S233574AbiA1Uim (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 28 Jan 2022 15:38:42 -0500
 Received: from LanCloud
-DKIM-Filter: OpenDKIM Filter v2.11.0 mxout01.lancloud.ru 2894C20AB5F2
+DKIM-Filter: OpenDKIM Filter v2.11.0 mxout03.lancloud.ru 1D89B20A441E
 Received: from LanCloud
 Received: from LanCloud
 Received: from LanCloud
@@ -22,10 +22,12 @@ From:   Sergey Shtylyov <s.shtylyov@omp.ru>
 To:     "David S. Miller" <davem@davemloft.net>,
         Jakub Kicinski <kuba@kernel.org>, <netdev@vger.kernel.org>
 CC:     <linux-renesas-soc@vger.kernel.org>
-Subject: [PATCH 0/2] Kill some dead code in the Renesas Ethernet drivers
-Date:   Fri, 28 Jan 2022 23:38:36 +0300
-Message-ID: <20220128203838.17423-1-s.shtylyov@omp.ru>
+Subject: [PATCH 2/2] sh_eth: sh_eth_close() always returns 0
+Date:   Fri, 28 Jan 2022 23:38:38 +0300
+Message-ID: <20220128203838.17423-3-s.shtylyov@omp.ru>
 X-Mailer: git-send-email 2.26.3
+In-Reply-To: <20220128203838.17423-1-s.shtylyov@omp.ru>
+References: <20220128203838.17423-1-s.shtylyov@omp.ru>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -36,18 +38,33 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Here are 2 patches against DaveM's 'net-next.git' repo. The Renesas drivers
-call their ndo_stop() methods directly and they always return 0, making the
-result checks pointless, hence remove them...
+sh_eth_close() always returns 0, hence the check in sh_eth_wol_restore()
+is pointless (however we cannot change the prototype of sh_eth_close() as
+it implements the driver's ndo_stop() method).
 
-Sergey Shtylyov (2):
-  ravb: ravb_close() always returns 0
-  sh_eth: sh_eth_close() always returns 0
+Found by Linux Verification Center (linuxtesting.org) with the SVACE static
+analysis tool.
 
- drivers/net/ethernet/renesas/ravb_main.c | 4 +---
- drivers/net/ethernet/renesas/sh_eth.c    | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
+---
+ drivers/net/ethernet/renesas/sh_eth.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
+diff --git a/drivers/net/ethernet/renesas/sh_eth.c b/drivers/net/ethernet/renesas/sh_eth.c
+index d947a628e166..b21e101b4484 100644
+--- a/drivers/net/ethernet/renesas/sh_eth.c
++++ b/drivers/net/ethernet/renesas/sh_eth.c
+@@ -3450,9 +3450,7 @@ static int sh_eth_wol_restore(struct net_device *ndev)
+ 	 * both be reset and all registers restored. This is what
+ 	 * happens during suspend and resume without WoL enabled.
+ 	 */
+-	ret = sh_eth_close(ndev);
+-	if (ret < 0)
+-		return ret;
++	sh_eth_close(ndev);
+ 	ret = sh_eth_open(ndev);
+ 	if (ret < 0)
+ 		return ret;
 -- 
 2.26.3
 
