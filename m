@@ -2,243 +2,181 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB79FC43217
-	for <linux-renesas-soc@archiver.kernel.org>; Sat, 29 Jan 2022 00:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0088C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Sat, 29 Jan 2022 04:39:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1348343AbiA2ASM (ORCPT
+        id S1352375AbiA2EjD (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 28 Jan 2022 19:18:12 -0500
-Received: from mga17.intel.com ([192.55.52.151]:29814 "EHLO mga17.intel.com"
+        Fri, 28 Jan 2022 23:39:03 -0500
+Received: from phobos.denx.de ([85.214.62.61]:51072 "EHLO phobos.denx.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1350176AbiA2ASL (ORCPT
+        id S1352373AbiA2Ei6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jan 2022 19:18:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643415491; x=1674951491;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=aW3RimyNPkb/jo8NcNX5WU1IkCTrdpgVdLPrG3thODc=;
-  b=Fp3cDm+c4+4CZKvSzjIqXaoVmaEjLMqlaBr3ddDW5DY7QjjtBqjwMWIx
-   gU5OFI2MbWXtyr7HYh8bsaeEG5oEbJoy1fOBTXS4W8Yfd7EYYMzjcNHlP
-   j7EF0Lxrr5vz15sw9G9p9Y6P7gnv7Tk8MWu/Zo2gvX9DShyxa58cYawEG
-   yxWKwAC0WhIlKzdT2aH0inDorEyTD+O0faMo7H0AEwq9M+TxIDYtwneup
-   uNVkwa6dLMQW9MolEecraapozi6fC4aLT1/O5PeZWkziP3Nviq/S2r6Q5
-   qxkTSJf2kjpDcpAdQMJ+lXduTuonZonX3I01VND1hzTx9jC/lRWSIVnmt
-   g==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10241"; a="227889886"
-X-IronPort-AV: E=Sophos;i="5.88,325,1635231600"; 
-   d="scan'208";a="227889886"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2022 16:18:11 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.88,325,1635231600"; 
-   d="scan'208";a="521900705"
-Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 28 Jan 2022 16:18:09 -0800
-Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
-        (envelope-from <lkp@intel.com>)
-        id 1nDbRR-000OVy-2J; Sat, 29 Jan 2022 00:18:09 +0000
-Date:   Sat, 29 Jan 2022 08:17:13 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:master] BUILD SUCCESS
- ba94d205dc71120401744a925da52c4098644e40
-Message-ID: <61f48789.L/Jn4zEwymYv6eoX%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Fri, 28 Jan 2022 23:38:58 -0500
+Received: from tr.lan (ip-89-176-112-137.net.upcbroadband.cz [89.176.112.137])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: marex@denx.de)
+        by phobos.denx.de (Postfix) with ESMTPSA id DDFA183282;
+        Sat, 29 Jan 2022 05:38:56 +0100 (CET)
+From:   marek.vasut@gmail.com
+To:     linux-pci@vger.kernel.org
+Cc:     Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH v4 2/2] PCI: rcar: Use PCI_SET_ERROR_RESPONSE after read which triggered an exception
+Date:   Sat, 29 Jan 2022 05:38:37 +0100
+Message-Id: <20220129043837.172126-2-marek.vasut@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20220129043837.172126-1-marek.vasut@gmail.com>
+References: <20220129043837.172126-1-marek.vasut@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.5 at phobos.denx.de
+X-Virus-Status: Clean
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git master
-branch HEAD: ba94d205dc71120401744a925da52c4098644e40  Merge branches 'renesas-next' and 'topic/renesas-defconfig' into renesas-devel
+From: Marek Vasut <marek.vasut+renesas@gmail.com>
 
-elapsed time: 730m
+In case the controller is transitioning to L1 in rcar_pcie_config_access(),
+any read/write access to PCIECDR triggers asynchronous external abort. This
+is because the transition to L1 link state must be manually finished by the
+driver. The PCIe IP can transition back from L1 state to L0 on its own.
 
-configs tested: 167
-configs skipped: 3
+The current asynchronous external abort hook implementation restarts
+the instruction which finally triggered the fault, which can be a
+different instruction than the read/write instruction which started
+the faulting access. Usually the instruction which finally triggers
+the fault is one which has some data dependency on the result of the
+read/write. In case of read, the read value after fixup is undefined,
+while a read value of faulting read should be all Fs.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+It is possible to enforce the fault using 'isb' instruction placed
+right after the read/write instruction which started the faulting
+access. Add custom register accessors which perform the read/write
+followed immediately by 'isb'.
 
-gcc tested configs:
-arm                                 defconfig
-arm64                            allyesconfig
-arm64                               defconfig
-arm                              allyesconfig
-arm                              allmodconfig
-i386                 randconfig-c001-20220124
-nios2                         10m50_defconfig
-xtensa                  audio_kc705_defconfig
-powerpc                      ppc40x_defconfig
-powerpc                 mpc837x_mds_defconfig
-arm64                            alldefconfig
-mips                        jmr3927_defconfig
-sh                           se7780_defconfig
-powerpc                      mgcoge_defconfig
-mips                            ar7_defconfig
-arm                           tegra_defconfig
-sh                        edosk7760_defconfig
-sh                             espt_defconfig
-um                                  defconfig
-parisc                generic-64bit_defconfig
-sparc                       sparc64_defconfig
-mips                        bcm47xx_defconfig
-arm                           sunxi_defconfig
-arm                        multi_v7_defconfig
-powerpc                      ep88xc_defconfig
-powerpc                     ep8248e_defconfig
-m68k                        stmark2_defconfig
-nios2                            allyesconfig
-arm                            xcep_defconfig
-sh                            shmin_defconfig
-ia64                      gensparse_defconfig
-powerpc                     rainier_defconfig
-mips                    maltaup_xpa_defconfig
-riscv                            allyesconfig
-openrisc                         alldefconfig
-arc                 nsimosci_hs_smp_defconfig
-powerpc                     sequoia_defconfig
-m68k                           sun3_defconfig
-powerpc                 mpc834x_mds_defconfig
-powerpc                     tqm8541_defconfig
-mips                           xway_defconfig
-sh                           se7705_defconfig
-xtensa                    smp_lx200_defconfig
-arm                        mini2440_defconfig
-sh                           se7343_defconfig
-powerpc                      ppc6xx_defconfig
-arc                              alldefconfig
-arc                        nsimosci_defconfig
-h8300                     edosk2674_defconfig
-nios2                         3c120_defconfig
-xtensa                    xip_kc705_defconfig
-sh                         apsh4a3a_defconfig
-mips                           ci20_defconfig
-powerpc                    adder875_defconfig
-powerpc                 linkstation_defconfig
-powerpc                        cell_defconfig
-xtensa                  nommu_kc705_defconfig
-arm                  randconfig-c002-20220124
-arm                  randconfig-c002-20220127
-ia64                             allmodconfig
-ia64                                defconfig
-ia64                             allyesconfig
-m68k                             allmodconfig
-m68k                                defconfig
-m68k                             allyesconfig
-nios2                               defconfig
-arc                              allyesconfig
-nds32                             allnoconfig
-nds32                               defconfig
-csky                                defconfig
-alpha                               defconfig
-alpha                            allyesconfig
-xtensa                           allyesconfig
-h8300                            allyesconfig
-arc                                 defconfig
-sh                               allmodconfig
-parisc                              defconfig
-s390                             allmodconfig
-parisc                           allyesconfig
-s390                                defconfig
-s390                             allyesconfig
-i386                             allyesconfig
-i386                                defconfig
-i386                   debian-10.3-kselftests
-i386                              debian-10.3
-sparc                               defconfig
-sparc                            allyesconfig
-mips                             allyesconfig
-mips                             allmodconfig
-powerpc                          allyesconfig
-powerpc                          allmodconfig
-powerpc                           allnoconfig
-x86_64               randconfig-a002-20220124
-x86_64               randconfig-a003-20220124
-x86_64               randconfig-a001-20220124
-x86_64               randconfig-a004-20220124
-x86_64               randconfig-a005-20220124
-x86_64               randconfig-a006-20220124
-i386                 randconfig-a002-20220124
-i386                 randconfig-a003-20220124
-i386                 randconfig-a001-20220124
-i386                 randconfig-a006-20220124
-i386                 randconfig-a005-20220124
-i386                 randconfig-a004-20220124
-x86_64                        randconfig-a006
-x86_64                        randconfig-a004
-x86_64                        randconfig-a002
-i386                          randconfig-a012
-i386                          randconfig-a014
-i386                          randconfig-a016
-riscv                    nommu_k210_defconfig
-riscv                    nommu_virt_defconfig
-riscv                             allnoconfig
-riscv                               defconfig
-riscv                          rv32_defconfig
-riscv                            allmodconfig
-um                           x86_64_defconfig
-um                             i386_defconfig
-x86_64                           allyesconfig
-x86_64                    rhel-8.3-kselftests
-x86_64                              defconfig
-x86_64                               rhel-8.3
-x86_64                          rhel-8.3-func
-x86_64                                  kexec
+This way, the fault always happens on the 'isb' and in case of read,
+which is located one instruction before the 'isb', it is now possible
+to fix up the return value of the read in the asynchronous external
+abort hook and make that read return all Fs.
 
-clang tested configs:
-arm                  randconfig-c002-20220124
-i386                 randconfig-c001-20220124
-powerpc              randconfig-c003-20220124
-mips                 randconfig-c004-20220124
-x86_64               randconfig-c007-20220124
-s390                 randconfig-c005-20220124
-riscv                randconfig-c006-20220124
-powerpc                 mpc8560_ads_defconfig
-arm                       netwinder_defconfig
-arm                         orion5x_defconfig
-arm                     davinci_all_defconfig
-arm                   milbeaut_m10v_defconfig
-powerpc                          allmodconfig
-arm                    vt8500_v6_v7_defconfig
-powerpc                          g5_defconfig
-powerpc                      acadia_defconfig
-arm                        magician_defconfig
-mips                     cu1830-neo_defconfig
-powerpc                     kilauea_defconfig
-powerpc                      katmai_defconfig
-mips                        bcm63xx_defconfig
-i386                          randconfig-a002
-i386                          randconfig-a006
-i386                          randconfig-a004
-x86_64               randconfig-a011-20220124
-x86_64               randconfig-a013-20220124
-x86_64               randconfig-a015-20220124
-x86_64               randconfig-a016-20220124
-x86_64               randconfig-a014-20220124
-x86_64               randconfig-a012-20220124
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-x86_64                        randconfig-a016
-i386                 randconfig-a011-20220124
-i386                 randconfig-a016-20220124
-i386                 randconfig-a013-20220124
-i386                 randconfig-a014-20220124
-i386                 randconfig-a015-20220124
-i386                 randconfig-a012-20220124
-riscv                randconfig-r042-20220124
-hexagon              randconfig-r045-20220125
-hexagon              randconfig-r045-20220124
-hexagon              randconfig-r045-20220127
-hexagon              randconfig-r041-20220125
-hexagon              randconfig-r041-20220124
-hexagon              randconfig-r041-20220127
-
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Krzysztof Wilczyński <kw@linux.com>
+Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org
 ---
-0-DAY CI Kernel Test Service, Intel Corporation
-https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+V2: Rebase on 1/2
+V3: - Add .text.fixup on all three ldr/str/isb instructions and call
+      fixup_exception() in the abort handler to trigger the fixup.
+    - Propagate return value from read/write accessors, in case the
+      access fails, return PCIBIOS_SET_FAILED, else PCIBIOS_SUCCESSFUL.
+V4: - Cover both ldr/str and isb with the fixup
+    - Add RB from Arnd
+    - Use PCI_SET_ERROR_RESPONSE instead of val = 0xffffffff
+    - Update commit message
+---
+ drivers/pci/controller/pcie-rcar-host.c | 53 +++++++++++++++++++++++--
+ 1 file changed, 49 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/pci/controller/pcie-rcar-host.c b/drivers/pci/controller/pcie-rcar-host.c
+index 7d38a9c50093..529259daee21 100644
+--- a/drivers/pci/controller/pcie-rcar-host.c
++++ b/drivers/pci/controller/pcie-rcar-host.c
+@@ -114,6 +114,51 @@ static u32 rcar_read_conf(struct rcar_pcie *pcie, int where)
+ 	return val >> shift;
+ }
+ 
++#ifdef CONFIG_ARM
++#define __rcar_pci_rw_reg_workaround(instr)				\
++		"1:	" instr " %1, [%2]\n"				\
++		"2:	isb\n"						\
++		"3:	.pushsection .text.fixup,\"ax\"\n"		\
++		"	.align	2\n"					\
++		"4:	mov	%0, #" __stringify(PCIBIOS_SET_FAILED) "\n" \
++		"	b	3b\n"					\
++		"	.popsection\n"					\
++		"	.pushsection __ex_table,\"a\"\n"		\
++		"	.align	3\n"					\
++		"	.long	1b, 4b\n"				\
++		"	.long	2b, 4b\n"				\
++		"	.popsection\n"
++#endif
++
++int rcar_pci_write_reg_workaround(struct rcar_pcie *pcie, u32 val, unsigned int reg)
++{
++	int error = PCIBIOS_SUCCESSFUL;
++#ifdef CONFIG_ARM
++	asm volatile(
++		__rcar_pci_rw_reg_workaround("str")
++	: "+r"(error):"r"(val), "r"(pcie->base + reg) : "memory");
++#else
++	rcar_pci_write_reg(pcie, val, reg);
++#endif
++	return error;
++}
++
++int rcar_pci_read_reg_workaround(struct rcar_pcie *pcie, u32 *val, unsigned int reg)
++{
++	int error = PCIBIOS_SUCCESSFUL;
++#ifdef CONFIG_ARM
++	asm volatile(
++		__rcar_pci_rw_reg_workaround("ldr")
++	: "+r"(error), "=r"(*val) : "r"(pcie->base + reg) : "memory");
++
++	if (error != PCIBIOS_SUCCESSFUL)
++		PCI_SET_ERROR_RESPONSE(val);
++#else
++	*val = rcar_pci_read_reg(pcie, reg);
++#endif
++	return error;
++}
++
+ /* Serialization is provided by 'pci_lock' in drivers/pci/access.c */
+ static int rcar_pcie_config_access(struct rcar_pcie_host *host,
+ 		unsigned char access_type, struct pci_bus *bus,
+@@ -185,14 +230,14 @@ static int rcar_pcie_config_access(struct rcar_pcie_host *host,
+ 		return PCIBIOS_DEVICE_NOT_FOUND;
+ 
+ 	if (access_type == RCAR_PCI_ACCESS_READ)
+-		*data = rcar_pci_read_reg(pcie, PCIECDR);
++		ret = rcar_pci_read_reg_workaround(pcie, data, PCIECDR);
+ 	else
+-		rcar_pci_write_reg(pcie, *data, PCIECDR);
++		ret = rcar_pci_write_reg_workaround(pcie, *data, PCIECDR);
+ 
+ 	/* Disable the configuration access */
+ 	rcar_pci_write_reg(pcie, 0, PCIECCTLR);
+ 
+-	return PCIBIOS_SUCCESSFUL;
++	return ret;
+ }
+ 
+ static int rcar_pcie_read_conf(struct pci_bus *bus, unsigned int devfn,
+@@ -1097,7 +1142,7 @@ static struct platform_driver rcar_pcie_driver = {
+ static int rcar_pcie_aarch32_abort_handler(unsigned long addr,
+ 		unsigned int fsr, struct pt_regs *regs)
+ {
+-	return !!rcar_pcie_wakeup(pcie_dev, pcie_base);
++	return !fixup_exception(regs);
+ }
+ 
+ static const struct of_device_id rcar_pcie_abort_handler_of_match[] __initconst = {
+-- 
+2.34.1
+
