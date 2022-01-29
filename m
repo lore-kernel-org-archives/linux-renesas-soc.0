@@ -2,50 +2,50 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 535CDC433FE
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3927CC433F5
 	for <linux-renesas-soc@archiver.kernel.org>; Sat, 29 Jan 2022 00:18:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241141AbiA2ASL (ORCPT
+        id S1351895AbiA2ASL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
         Fri, 28 Jan 2022 19:18:11 -0500
-Received: from mga14.intel.com ([192.55.52.115]:6459 "EHLO mga14.intel.com"
+Received: from mga04.intel.com ([192.55.52.120]:35791 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1348189AbiA2ASL (ORCPT
+        id S241141AbiA2ASK (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 28 Jan 2022 19:18:11 -0500
+        Fri, 28 Jan 2022 19:18:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1643415491; x=1674951491;
+  t=1643415490; x=1674951490;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=188cjJsFWwnRXd4fQORZVGbRnAWu3fPrEOgLIaQglSo=;
-  b=Qke5fFgvf6QvrmLnLGB1blhe2oIxmo6njuo1mpf3iNaolcMdk3IGXQaz
-   UwyGS1EOE1aWxYH5urKC19GnbaNjrxwSSSlt+dL/RAC7Judkqs8ySSdvQ
-   BIpvKJ2hnMQAS3c0/BpEdeFu1n9d8n+azulUH6mTNJTxFJD3kV02LJqRk
-   Z2AaXf3BE4DB+J3c2Fga5atw+VeHbmGbUvsfcXAQYDE/58FsktBJQ5YKP
-   eI2PFoAiMN/sQ+fWCiLqqMcbuL6yWcrIkmbkRiMjp/7NC3XIn0qJ48Qkd
-   +JrdOJObB6bthSdToV4+gu2VbICfHqJK1M/Scbxm/85+7Q2DRm8B6cpg8
+  bh=DYrvYI+VF5GD5AGrmZRk98h8CQjY1hGc7AYLil9NWxE=;
+  b=GIbZl2TbYJDFU5VnZCnxrqei92JqNPQE9njDXZ4cXjLlRuGIdtr4SziL
+   iwUo1cAeZ2aAk3uj2fdwVHEOW2yyZpXCiMCsQ3ocAcO+6FodwRY5lzvr+
+   WD5Eo+cuUE72tzHZT3coNtv025RYHUne8pmvRLsfdMRmpZbRVqT6537Gt
+   HRFlLZ5cbHF2Busj8ADURDOtPgEloffGodzljrE+4pHbr3HydzHcugXhk
+   IWGuM5E/vOUI3ejJjhAMcse7SGkRSrKHaw5FLFJVIkpACH6p4Nh1uHc89
+   wiiVS2PelWlw8DreHKk3O+Y8hRq6tnkSzR4gRENmkw4ygg/uAeoYqeOc9
    w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10241"; a="247443186"
+X-IronPort-AV: E=McAfee;i="6200,9189,10241"; a="246061783"
 X-IronPort-AV: E=Sophos;i="5.88,325,1635231600"; 
-   d="scan'208";a="247443186"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2022 16:18:10 -0800
+   d="scan'208";a="246061783"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2022 16:18:10 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,325,1635231600"; 
-   d="scan'208";a="582010698"
+   d="scan'208";a="768044881"
 Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
-  by fmsmga008.fm.intel.com with ESMTP; 28 Jan 2022 16:18:09 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 28 Jan 2022 16:18:09 -0800
 Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1nDbRR-000OW5-3K; Sat, 29 Jan 2022 00:18:09 +0000
-Date:   Sat, 29 Jan 2022 08:17:22 +0800
+        id 1nDbRR-000OVu-1H; Sat, 29 Jan 2022 00:18:09 +0000
+Date:   Sat, 29 Jan 2022 08:17:09 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-devel:renesas-drivers-for-v5.18] BUILD SUCCESS
- 92dfff382af0ce65216e05f056e7cb7f18ef6f78
-Message-ID: <61f48792.Rko31IEFX9beBvb5%lkp@intel.com>
+Subject: [geert-renesas-devel:next] BUILD SUCCESS
+ 7fb968536682d96db805b040a0d8376c36c718a5
+Message-ID: <61f48785./96gAVLmWq9Z5bf6%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -54,12 +54,12 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-drivers-for-v5.18
-branch HEAD: 92dfff382af0ce65216e05f056e7cb7f18ef6f78  soc: renesas: Add support for reading product revision for RZ/G2L family
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git next
+branch HEAD: 7fb968536682d96db805b040a0d8376c36c718a5  Merge branches 'renesas-arm-defconfig-for-v5.18', 'renesas-arm-dt-for-v5.18' and 'renesas-drivers-for-v5.18' into renesas-next
 
-elapsed time: 728m
+elapsed time: 730m
 
-configs tested: 161
+configs tested: 158
 configs skipped: 3
 
 The following configs have been built successfully.
@@ -108,14 +108,13 @@ sh                           se7343_defconfig
 powerpc                      ppc6xx_defconfig
 arc                              alldefconfig
 arc                        nsimosci_defconfig
-sh                   secureedge5410_defconfig
-arm                          lpd270_defconfig
-m68k                          hp300_defconfig
+mips                       bmips_be_defconfig
+powerpc                 mpc85xx_cds_defconfig
 h8300                     edosk2674_defconfig
 nios2                         3c120_defconfig
+xtensa                    xip_kc705_defconfig
 sh                         apsh4a3a_defconfig
 mips                           ci20_defconfig
-xtensa                    xip_kc705_defconfig
 powerpc                    adder875_defconfig
 powerpc                 linkstation_defconfig
 powerpc                        cell_defconfig
@@ -167,9 +166,9 @@ i386                 randconfig-a003-20220124
 i386                 randconfig-a004-20220124
 i386                 randconfig-a001-20220124
 i386                 randconfig-a006-20220124
+x86_64                        randconfig-a006
 x86_64                        randconfig-a004
 x86_64                        randconfig-a002
-x86_64                        randconfig-a006
 i386                          randconfig-a012
 i386                          randconfig-a014
 i386                          randconfig-a016
@@ -198,8 +197,10 @@ powerpc                          g5_defconfig
 powerpc                      acadia_defconfig
 arm                        magician_defconfig
 powerpc                     kilauea_defconfig
-mips                malta_qemu_32r6_defconfig
-powerpc                 mpc832x_mds_defconfig
+arm                       cns3420vb_defconfig
+arm                     am200epdkit_defconfig
+arm                          ixp4xx_defconfig
+arm                                 defconfig
 powerpc                      katmai_defconfig
 mips                        bcm63xx_defconfig
 i386                          randconfig-a002
@@ -214,9 +215,6 @@ x86_64               randconfig-a012-20220124
 x86_64                        randconfig-a012
 x86_64                        randconfig-a014
 x86_64                        randconfig-a016
-x86_64                        randconfig-a003
-x86_64                        randconfig-a001
-x86_64                        randconfig-a005
 i386                 randconfig-a011-20220124
 i386                 randconfig-a016-20220124
 i386                 randconfig-a013-20220124
