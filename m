@@ -2,15 +2,15 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4122FC433EF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E286AC433FE
 	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Feb 2022 22:02:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347739AbiBBWCa (ORCPT
+        id S231777AbiBBWCb (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 2 Feb 2022 17:02:30 -0500
-Received: from mga06.intel.com ([134.134.136.31]:58711 "EHLO mga06.intel.com"
+        Wed, 2 Feb 2022 17:02:31 -0500
+Received: from mga07.intel.com ([134.134.136.100]:61257 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S231777AbiBBWCa (ORCPT
+        id S1347729AbiBBWCa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Wed, 2 Feb 2022 17:02:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -18,34 +18,34 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1643839350; x=1675375350;
   h=date:from:to:cc:subject:message-id:mime-version:
    content-transfer-encoding;
-  bh=i6uutqznXUngP7+9wUqDBuDlMwwkylEV6I7VFIckEj0=;
-  b=BkqU8Sg0kQohPN5Nu8u/uYyGKG2gSJr+tDms10Zmy2Eb9W/8MDU1QquY
-   7Q1h14VAAYhU2zlQbdfWd6L82yvSsuvaGwa8K0KsoKntYdrgw0oHL99jK
-   C/fkDR9YZUIvIKERMWYAM6fvmJoY2JfApDEMUXtZNJKUHeV7YiKtmloPG
-   NLvWRFSD1WvISfI9uqhKWgc6sCRzUulxhgx5NJUCNrL4AhT68omTcbnsT
-   Jmy8UuIblOx0MjvpocsSDply3HR4yIR6UN0w16HJI8M7XAPaj4poxrfEv
-   hOCGzxM/H9DgMAnM82s+wyFCwanyMXs1qPheM1ymen1JIuRg0drR0VMLb
-   w==;
-X-IronPort-AV: E=McAfee;i="6200,9189,10246"; a="308756727"
+  bh=XTnXyKUodXs6aSy+MgJRhR1Y5AJiDuRdfL4HVM6igcc=;
+  b=hvBmJnCDHH3/moTgE69/L2x+HfoXIwO32rJENOABWoN/TNh1eQU5EGOp
+   Y2lTnKztf6y2iUb/Qu+KDYJUkH+L5MYXffAmT7UcvsYpPyBqU9iS6JWQj
+   um++s77WC88mNUGbms58oFuJtxi9svHHmzPVWBSrXuKIuMbX8b1F4Kwv6
+   dkYYdVWjRHX4WLA2CELrjr6qf7qY2YcvtDv13xAwUR/ZLfEL3DwckUcit
+   dm7ZQPcvKohllJFwH1ST16y8C940zisHK/4o+0/nuqFQgaRzufutnIxlj
+   qKuzSl+kvwprtnKWMPlCRK3dMKCM4N+gq8aE2ZSW4EuY08AV9pKC9Yim9
+   A==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10246"; a="311334274"
 X-IronPort-AV: E=Sophos;i="5.88,337,1635231600"; 
-   d="scan'208";a="308756727"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2022 14:02:30 -0800
+   d="scan'208";a="311334274"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2022 14:02:30 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.88,337,1635231600"; 
-   d="scan'208";a="497920730"
+   d="scan'208";a="676586176"
 Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
-  by orsmga002.jf.intel.com with ESMTP; 02 Feb 2022 14:02:28 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 02 Feb 2022 14:02:29 -0800
 Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
         (envelope-from <lkp@intel.com>)
-        id 1nFNhs-000VBU-9h; Wed, 02 Feb 2022 22:02:28 +0000
-Date:   Thu, 03 Feb 2022 06:02:14 +0800
+        id 1nFNhs-000VBa-Ch; Wed, 02 Feb 2022 22:02:28 +0000
+Date:   Thu, 03 Feb 2022 06:02:08 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>
 Cc:     linux-renesas-soc@vger.kernel.org
-Subject: [geert-renesas-drivers:renesas-clk-for-v5.18] BUILD SUCCESS
- 678eb67513a963e5ce00a4ed6a07a5722bd1267e
-Message-ID: <61faff66.5b/PC3HBWmwjTrqr%lkp@intel.com>
+Subject: [geert-renesas-devel:renesas-arm-dt-for-v5.18] BUILD SUCCESS
+ 81a27b1f69022174567e8237d3de2534821671ba
+Message-ID: <61faff60.ur8VrOZiUa/tdfjI%lkp@intel.com>
 User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -54,10 +54,10 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v5.18
-branch HEAD: 678eb67513a963e5ce00a4ed6a07a5722bd1267e  dt-bindings: clock: renesas: Document RZ/V2L SoC
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git renesas-arm-dt-for-v5.18
+branch HEAD: 81a27b1f69022174567e8237d3de2534821671ba  arm64: dts: renesas: rzg2lc-smarc: Enable microSD on SMARC platform
 
-elapsed time: 726m
+elapsed time: 724m
 
 configs tested: 166
 configs skipped: 3
@@ -141,11 +141,11 @@ m68k                             allmodconfig
 m68k                                defconfig
 arc                              allyesconfig
 nds32                             allnoconfig
-alpha                            allyesconfig
 nds32                               defconfig
 nios2                            allyesconfig
 csky                                defconfig
 alpha                               defconfig
+alpha                            allyesconfig
 xtensa                           allyesconfig
 h8300                            allyesconfig
 arc                                 defconfig
@@ -153,16 +153,16 @@ sh                               allmodconfig
 parisc                              defconfig
 s390                             allmodconfig
 parisc                           allyesconfig
-s390                             allyesconfig
 s390                                defconfig
+s390                             allyesconfig
 i386                             allyesconfig
 sparc                               defconfig
 i386                                defconfig
 i386                   debian-10.3-kselftests
 i386                              debian-10.3
 sparc                            allyesconfig
-mips                             allmodconfig
 mips                             allyesconfig
+mips                             allmodconfig
 powerpc                          allyesconfig
 powerpc                          allmodconfig
 powerpc                           allnoconfig
