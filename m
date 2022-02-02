@@ -2,144 +2,241 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34666C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Feb 2022 19:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4122FC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  2 Feb 2022 22:02:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240688AbiBBT7A (ORCPT
+        id S1347739AbiBBWCa (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 2 Feb 2022 14:59:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33638 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbiBBT67 (ORCPT
+        Wed, 2 Feb 2022 17:02:30 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58711 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S231777AbiBBWCa (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 2 Feb 2022 14:58:59 -0500
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D964BC061714
-        for <linux-renesas-soc@vger.kernel.org>; Wed,  2 Feb 2022 11:58:59 -0800 (PST)
-Received: by mail-pg1-x536.google.com with SMTP id s16so371147pgs.13
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 02 Feb 2022 11:58:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=f3tBDDMz1Cl7wSR0qYXsf1pk6gj1XoAYJtYA02SWsWc=;
-        b=ERt7l2GrHpmbR9DfZcfO/4G0u2ftbECA90n/T2MYtJcF7KHFBaulB2Y3elqwXaErj1
-         SgvMX6enKgKi6ipwi3GMJOLq7A0vUuj+OsY4FTRYGfXeeKMbMo5SyR8KcChUElrIWjP9
-         IpVaglb+4cq+qD6XUS4B5zEK/B8IayPMTqhDakgUHyry0Qxa2ItcvneZnv5x2qc46k/8
-         A4UpBr5ygkm0tyA0ul4/XSajfr/oc0EOYQuT0FLTZsqNS6z0Bm7NgJmChV/kC881wVL1
-         R62PgB5ZIfasDbZ0uRPC0crSVv72woWDxTwCwfMvG3Yi3hUIqeHQq7rAUtZ0br6HfozV
-         89eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=f3tBDDMz1Cl7wSR0qYXsf1pk6gj1XoAYJtYA02SWsWc=;
-        b=JWafQtuqM9lfcmGj2SdyeZtV2l3Dhsjwq9ZnB42lT182V2XGnXf9qCn0xAaf+DtQq0
-         +pUU2dyVttL9vlVoC+T9Ry/D/pLhr6ckYUcfQ/OypIZQlevKYSxhJVvRF9yD5T8fZG8v
-         5TkmNx4jHWfKmEw8egpCFqOveDmU8IpBk0v833nUHntTR39KRWag9QSIBB/tszslDCh+
-         SZdaWmfqf6zbwmhoAVntDjXelXgyhBXYspxUqY61D8UdlvGBIAA3nS5c3bd1rViv6KWW
-         Kj7lOiCATag5s1GPjR9w67NqbUXZUB78mv8RCluRP6O/TLCsS4EIoi3ucs1btDvPn7QU
-         FofA==
-X-Gm-Message-State: AOAM531aebQP4nSrse28Sr8PGlPlpJrGbMJPIvDUl1x4aKUcVndXKE8v
-        rWPg2nYaQwNl9P3FxERLecM9dA==
-X-Google-Smtp-Source: ABdhPJz4O1XMyNrRMSsccUAwZX/YKxQmjX8hl66qxIZUzVjXNWSKEFQOBJlAS5f+CRg6eHpU2klvjw==
-X-Received: by 2002:a63:6586:: with SMTP id z128mr26035966pgb.103.1643831939129;
-        Wed, 02 Feb 2022 11:58:59 -0800 (PST)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id nu15sm8160658pjb.5.2022.02.02.11.58.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Feb 2022 11:58:58 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, kernel-team@android.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-oxnas@groups.io, linux-renesas-soc@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v4 1/2] drivers: bus: simple-pm-bus: Add support for
- probing simple bus only devices
-In-Reply-To: <7hee4mmo2s.fsf@baylibre.com>
-References: <20210929000735.585237-1-saravanak@google.com>
- <20210929000735.585237-2-saravanak@google.com>
- <7hk0efmfzo.fsf@baylibre.com>
- <CAGETcx_YEUxEBSBnzFaBxW=9=jO6BO0GuThaMGF+JPkDeC-ivw@mail.gmail.com>
- <7hee4mmo2s.fsf@baylibre.com>
-Date:   Wed, 02 Feb 2022 11:58:58 -0800
-Message-ID: <7hpmo5kpkt.fsf@baylibre.com>
+        Wed, 2 Feb 2022 17:02:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1643839350; x=1675375350;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=i6uutqznXUngP7+9wUqDBuDlMwwkylEV6I7VFIckEj0=;
+  b=BkqU8Sg0kQohPN5Nu8u/uYyGKG2gSJr+tDms10Zmy2Eb9W/8MDU1QquY
+   7Q1h14VAAYhU2zlQbdfWd6L82yvSsuvaGwa8K0KsoKntYdrgw0oHL99jK
+   C/fkDR9YZUIvIKERMWYAM6fvmJoY2JfApDEMUXtZNJKUHeV7YiKtmloPG
+   NLvWRFSD1WvISfI9uqhKWgc6sCRzUulxhgx5NJUCNrL4AhT68omTcbnsT
+   Jmy8UuIblOx0MjvpocsSDply3HR4yIR6UN0w16HJI8M7XAPaj4poxrfEv
+   hOCGzxM/H9DgMAnM82s+wyFCwanyMXs1qPheM1ymen1JIuRg0drR0VMLb
+   w==;
+X-IronPort-AV: E=McAfee;i="6200,9189,10246"; a="308756727"
+X-IronPort-AV: E=Sophos;i="5.88,337,1635231600"; 
+   d="scan'208";a="308756727"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2022 14:02:30 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.88,337,1635231600"; 
+   d="scan'208";a="497920730"
+Received: from lkp-server01.sh.intel.com (HELO 276f1b88eecb) ([10.239.97.150])
+  by orsmga002.jf.intel.com with ESMTP; 02 Feb 2022 14:02:28 -0800
+Received: from kbuild by 276f1b88eecb with local (Exim 4.92)
+        (envelope-from <lkp@intel.com>)
+        id 1nFNhs-000VBU-9h; Wed, 02 Feb 2022 22:02:28 +0000
+Date:   Thu, 03 Feb 2022 06:02:14 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-renesas-soc@vger.kernel.org
+Subject: [geert-renesas-drivers:renesas-clk-for-v5.18] BUILD SUCCESS
+ 678eb67513a963e5ce00a4ed6a07a5722bd1267e
+Message-ID: <61faff66.5b/PC3HBWmwjTrqr%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Kevin Hilman <khilman@baylibre.com> writes:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk-for-v5.18
+branch HEAD: 678eb67513a963e5ce00a4ed6a07a5722bd1267e  dt-bindings: clock: renesas: Document RZ/V2L SoC
 
-> Saravana Kannan <saravanak@google.com> writes:
->
->> On Mon, Jan 31, 2022 at 7:18 PM Kevin Hilman <khilman@baylibre.com> wrote:
->>>
->>> Hi Saravana,
->>>
->>> Saravana Kannan <saravanak@google.com> writes:
->>>
->>> > fw_devlink could end up creating device links for bus only devices.
->>> > However, bus only devices don't get probed and can block probe() or
->>> > sync_state() [1] call backs of other devices. To avoid this, probe these
->>> > devices using the simple-pm-bus driver.
->>> >
->>> > However, there are instances of devices that are not simple buses (they get
->>> > probed by their specific drivers) that also list the "simple-bus" (or other
->>> > bus only compatible strings) in their compatible property to automatically
->>> > populate their child devices. We still want these devices to get probed by
->>> > their specific drivers. So, we make sure this driver only probes devices
->>> > that are only buses.
->>> >
->>> > [1] - https://lore.kernel.org/lkml/CAPDyKFo9Bxremkb1dDrr4OcXSpE0keVze94Cm=zrkOVxHHxBmQ@mail.gmail.com/
->>> > Fixes: c442a0d18744 ("driver core: Set fw_devlink to "permissive" behavior by default")
->>> > Signed-off-by: Saravana Kannan <saravanak@google.com>
->>> > Tested-by: Saravana Kannan <saravanak@google.com>
->>> > Tested-by: Ulf Hansson <ulf.hansson@linaro.org>
->>>
->>> This patch landed in stable/linux-5.10.y as commit d5f13bbb5104 and it
->>> broke suspend/resume on at least one TI AM335x board I'm testing on:
->>> upstream dts: arch/arm/boot/dts/am335x-icev2.dts, upstream defconfig:
->>> arch/arm/configs/omap2plus_defconfig.
->>>
->>> Bisecting between vanilla v5.10 (good) and stable/linux-5.10.y (bad)
->>> pointed me to this patch, and I confirmed that reverting just this patch
->>> on top of stable/linux-5.10.y makes it work again.
->>>
->>> Also interesting, this same platform works fine on vanilla v5.15, which
->>> also includes this patch.  That suggests that either 1) this patch
->>> should not have been backported to v5.10 stable or 2) there are some
->>> other dependencies that are missing in v5.10.
->>>
->>> Since vanilla v5.10 works fine, I'm leaning towards (1), but if you have
->>> any ideas for deps that need backporting, I'm happy to try.
->>
->> Oh wow! I didn't realize I made so many changes AFTER 5.10! Unless I'm
->> doing something wrong with my git commands.
->> $ git log v5.10..v5.15 --oneline -- drivers/of/property.c
->> $ git log v5.10..v5.15 --oneline --author=saravanak -- drivers/base/
->>
->> If you don't think I got my git command completely wrong, yeah, way
->> too many patches are missing on 5.10. I'd go with the option of
->> dropping this patch on 5.10.
->
-> I agree.  Could you submit a revert for v5.10 stable?  As the patch
-> author, it's probably better if it comes from you.
+elapsed time: 726m
 
-Nevermind, I'm impatient and submitted a revert to stable[1] :)
+configs tested: 166
+configs skipped: 3
 
-Kevin
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-[1] https://lore.kernel.org/stable/20220202195705.3598798-1-khilman@baylibre.com/
+gcc tested configs:
+arm                                 defconfig
+arm64                            allyesconfig
+arm64                               defconfig
+arm                              allyesconfig
+arm                              allmodconfig
+i386                 randconfig-c001-20220131
+powerpc              randconfig-c003-20220131
+i386                          randconfig-c001
+nios2                         3c120_defconfig
+nios2                         10m50_defconfig
+arc                         haps_hs_defconfig
+sh                           sh2007_defconfig
+powerpc                     stx_gp3_defconfig
+mips                  maltasmvp_eva_defconfig
+m68k                          sun3x_defconfig
+arm                          iop32x_defconfig
+arc                              alldefconfig
+powerpc                    amigaone_defconfig
+powerpc                      ppc6xx_defconfig
+arm                        mvebu_v7_defconfig
+arc                     nsimosci_hs_defconfig
+arm                        trizeps4_defconfig
+sh                               alldefconfig
+parisc                generic-32bit_defconfig
+arc                           tb10x_defconfig
+powerpc                      ppc40x_defconfig
+powerpc                mpc7448_hpc2_defconfig
+arc                        nsimosci_defconfig
+sh                               j2_defconfig
+m68k                       bvme6000_defconfig
+m68k                             allyesconfig
+ia64                                defconfig
+sh                        apsh4ad0a_defconfig
+sh                        dreamcast_defconfig
+arm                      jornada720_defconfig
+s390                       zfcpdump_defconfig
+h8300                       h8s-sim_defconfig
+powerpc                      pcm030_defconfig
+parisc                generic-64bit_defconfig
+m68k                        mvme147_defconfig
+sh                           se7343_defconfig
+mips                           ip32_defconfig
+sh                            migor_defconfig
+arm                        multi_v7_defconfig
+powerpc                      tqm8xx_defconfig
+arm                     eseries_pxa_defconfig
+um                             i386_defconfig
+ia64                      gensparse_defconfig
+s390                          debug_defconfig
+microblaze                          defconfig
+mips                           ci20_defconfig
+sh                                  defconfig
+powerpc                     asp8347_defconfig
+sh                          rsk7203_defconfig
+sh                        edosk7760_defconfig
+sh                           se7721_defconfig
+nios2                               defconfig
+h8300                     edosk2674_defconfig
+arm                         axm55xx_defconfig
+sh                             espt_defconfig
+m68k                           sun3_defconfig
+mips                           gcw0_defconfig
+powerpc                     taishan_defconfig
+sh                     sh7710voipgw_defconfig
+powerpc                     tqm8541_defconfig
+m68k                       m5208evb_defconfig
+powerpc                   currituck_defconfig
+arm                  randconfig-c002-20220131
+arm                  randconfig-c002-20220130
+ia64                             allmodconfig
+ia64                             allyesconfig
+m68k                             allmodconfig
+m68k                                defconfig
+arc                              allyesconfig
+nds32                             allnoconfig
+alpha                            allyesconfig
+nds32                               defconfig
+nios2                            allyesconfig
+csky                                defconfig
+alpha                               defconfig
+xtensa                           allyesconfig
+h8300                            allyesconfig
+arc                                 defconfig
+sh                               allmodconfig
+parisc                              defconfig
+s390                             allmodconfig
+parisc                           allyesconfig
+s390                             allyesconfig
+s390                                defconfig
+i386                             allyesconfig
+sparc                               defconfig
+i386                                defconfig
+i386                   debian-10.3-kselftests
+i386                              debian-10.3
+sparc                            allyesconfig
+mips                             allmodconfig
+mips                             allyesconfig
+powerpc                          allyesconfig
+powerpc                          allmodconfig
+powerpc                           allnoconfig
+x86_64               randconfig-a004-20220131
+x86_64               randconfig-a003-20220131
+x86_64               randconfig-a001-20220131
+x86_64               randconfig-a006-20220131
+x86_64               randconfig-a005-20220131
+x86_64               randconfig-a002-20220131
+i386                 randconfig-a006-20220131
+i386                 randconfig-a005-20220131
+i386                 randconfig-a003-20220131
+i386                 randconfig-a002-20220131
+i386                 randconfig-a001-20220131
+i386                 randconfig-a004-20220131
+i386                          randconfig-a012
+i386                          randconfig-a014
+i386                          randconfig-a016
+riscv                randconfig-r042-20220130
+arc                  randconfig-r043-20220130
+s390                 randconfig-r044-20220130
+riscv                    nommu_k210_defconfig
+riscv                            allyesconfig
+riscv                    nommu_virt_defconfig
+riscv                             allnoconfig
+riscv                               defconfig
+riscv                          rv32_defconfig
+riscv                            allmodconfig
+x86_64                    rhel-8.3-kselftests
+um                           x86_64_defconfig
+x86_64                           allyesconfig
+x86_64                              defconfig
+x86_64                               rhel-8.3
+x86_64                          rhel-8.3-func
+x86_64                                  kexec
+
+clang tested configs:
+riscv                randconfig-c006-20220130
+x86_64                        randconfig-c007
+arm                  randconfig-c002-20220130
+powerpc              randconfig-c003-20220130
+mips                 randconfig-c004-20220130
+i386                          randconfig-c001
+powerpc                     ppa8548_defconfig
+powerpc                 xes_mpc85xx_defconfig
+powerpc                 mpc8313_rdb_defconfig
+mips                      maltaaprp_defconfig
+powerpc                      katmai_defconfig
+powerpc                     kilauea_defconfig
+arm                              alldefconfig
+powerpc                 mpc836x_rdk_defconfig
+arm                         shannon_defconfig
+powerpc                        icon_defconfig
+i386                          randconfig-a002
+i386                          randconfig-a006
+i386                          randconfig-a004
+x86_64               randconfig-a013-20220131
+x86_64               randconfig-a015-20220131
+x86_64               randconfig-a014-20220131
+x86_64               randconfig-a016-20220131
+x86_64               randconfig-a011-20220131
+x86_64               randconfig-a012-20220131
+i386                 randconfig-a011-20220131
+i386                 randconfig-a013-20220131
+i386                 randconfig-a014-20220131
+i386                 randconfig-a012-20220131
+i386                 randconfig-a015-20220131
+i386                 randconfig-a016-20220131
+riscv                randconfig-r042-20220131
+hexagon              randconfig-r045-20220131
+hexagon              randconfig-r041-20220131
+hexagon              randconfig-r045-20220130
+hexagon              randconfig-r041-20220130
+
+---
+0-DAY CI Kernel Test Service, Intel Corporation
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
