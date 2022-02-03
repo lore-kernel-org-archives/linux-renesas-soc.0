@@ -2,71 +2,82 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 833B0C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Feb 2022 13:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABCCC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Thu,  3 Feb 2022 14:33:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350932AbiBCN6N (ORCPT
+        id S1351295AbiBCOdd (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Thu, 3 Feb 2022 08:58:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50050 "EHLO
+        Thu, 3 Feb 2022 09:33:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232957AbiBCN6N (ORCPT
+        with ESMTP id S1351238AbiBCOd0 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Thu, 3 Feb 2022 08:58:13 -0500
+        Thu, 3 Feb 2022 09:33:26 -0500
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2F3BC061714
-        for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Feb 2022 05:58:12 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25DF9C061748
+        for <linux-renesas-soc@vger.kernel.org>; Thu,  3 Feb 2022 06:33:23 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:15aa:ab80:d2f:edb])
         by michel.telenet-ops.be with bizsmtp
-        id qdy92600a4dXKBW06dy9BZ; Thu, 03 Feb 2022 14:58:10 +0100
+        id qeZN2600B4dXKBW06eZNje; Thu, 03 Feb 2022 15:33:22 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nFccj-00D0MJ-9o; Thu, 03 Feb 2022 14:58:09 +0100
+        id 1nFdAo-00D0Xl-1i; Thu, 03 Feb 2022 15:33:22 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nFcci-002m4B-NP; Thu, 03 Feb 2022 14:58:08 +0100
+        id 1nFdAn-002sr2-D8; Thu, 03 Feb 2022 15:33:21 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH resend] dt-bindings: ata: renesas,rcar-sata: Add r8a774e1 support
-Date:   Thu,  3 Feb 2022 14:58:08 +0100
-Message-Id: <507cc45f44603afa6a70c05a3956fb7b13b49ed9.1643896347.git.geert+renesas@glider.be>
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 1/2] dt-bindings: i2c: renesas,rcar-i2c: Add r8a779f0 support
+Date:   Thu,  3 Feb 2022 15:33:16 +0100
+Message-Id: <9558127ad3a49fc6e03a0f9cb9ff19917f4e52ab.1643898531.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1643898531.git.geert+renesas@glider.be>
+References: <cover.1643898531.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Document support for the I2C Bus Interfaces in the Renesas R-Car S4-8
+(R8A779F0) SoC, including a new family-specific compatible value for the
+R-Car Gen4 family.
 
-Document SATA support for the RZ/G2H SoC, no driver change required.
-
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Acked-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/i2c/renesas,rcar-i2c.yaml | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml b/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
-index c060c7914cae6573..c4e4a9eab658056d 100644
---- a/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
-+++ b/Documentation/devicetree/bindings/ata/renesas,rcar-sata.yaml
-@@ -26,6 +26,7 @@ properties:
-       - items:
-           - enum:
-               - renesas,sata-r8a774b1     # RZ/G2N
-+              - renesas,sata-r8a774e1     # RZ/G2H
-               - renesas,sata-r8a7795      # R-Car H3
-               - renesas,sata-r8a77965     # R-Car M3-N
-           - const: renesas,rcar-gen3-sata # generic R-Car Gen3 or RZ/G2
+diff --git a/Documentation/devicetree/bindings/i2c/renesas,rcar-i2c.yaml b/Documentation/devicetree/bindings/i2c/renesas,rcar-i2c.yaml
+index 052aad44e781a561..c30107833a5145f9 100644
+--- a/Documentation/devicetree/bindings/i2c/renesas,rcar-i2c.yaml
++++ b/Documentation/devicetree/bindings/i2c/renesas,rcar-i2c.yaml
+@@ -49,6 +49,11 @@ properties:
+               - renesas,i2c-r8a779a0     # R-Car V3U
+           - const: renesas,rcar-gen3-i2c # R-Car Gen3 and RZ/G2
+ 
++      - items:
++          - enum:
++              - renesas,i2c-r8a779f0     # R-Car S4-8
++          - const: renesas,rcar-gen4-i2c # R-Car Gen4
++
+   reg:
+     maxItems: 1
+ 
+@@ -132,6 +137,7 @@ allOf:
+             enum:
+               - renesas,rcar-gen2-i2c
+               - renesas,rcar-gen3-i2c
++              - renesas,rcar-gen4-i2c
+     then:
+       required:
+         - resets
 -- 
 2.25.1
 
