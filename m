@@ -2,76 +2,75 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 753E8C4321E
-	for <linux-renesas-soc@archiver.kernel.org>; Sun,  6 Feb 2022 18:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B39D1C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Sun,  6 Feb 2022 19:46:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1347286AbiBFSxI (ORCPT
+        id S231365AbiBFTqW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Sun, 6 Feb 2022 13:53:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59438 "EHLO
+        Sun, 6 Feb 2022 14:46:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46464 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1347243AbiBFSxF (ORCPT
+        with ESMTP id S240053AbiBFTqW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Sun, 6 Feb 2022 13:53:05 -0500
+        Sun, 6 Feb 2022 14:46:22 -0500
 Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id A7129C043185;
-        Sun,  6 Feb 2022 10:53:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7E0E8C06173B
+        for <linux-renesas-soc@vger.kernel.org>; Sun,  6 Feb 2022 11:46:21 -0800 (PST)
 X-IronPort-AV: E=Sophos;i="5.88,348,1635174000"; 
-   d="scan'208";a="110316725"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 07 Feb 2022 03:48:00 +0900
+   d="scan'208";a="110327371"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 07 Feb 2022 04:46:20 +0900
 Received: from localhost.localdomain (unknown [10.226.92.17])
-        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 41DD04007554;
-        Mon,  7 Feb 2022 03:47:58 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 2D35B40E9806;
+        Mon,  7 Feb 2022 04:46:18 +0900 (JST)
 From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 3/3] dt-bindings: serial: renesas,sci: Document RZ/G2UL SoC
-Date:   Sun,  6 Feb 2022 18:47:49 +0000
-Message-Id: <20220206184749.11532-3-biju.das.jz@bp.renesas.com>
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 2/2] pinctrl: renesas: rzg2l: Improve rzg2l_gpio_register()
+Date:   Sun,  6 Feb 2022 19:46:14 +0000
+Message-Id: <20220206194614.13209-2-biju.das.jz@bp.renesas.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220206184749.11532-1-biju.das.jz@bp.renesas.com>
-References: <20220206184749.11532-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220206194614.13209-1-biju.das.jz@bp.renesas.com>
+References: <20220206194614.13209-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add SCI binding documentation for Renesas RZ/G2UL SoC. No driver changes
-are required as generic compatible string "renesas,sci" will be used as
-a fallback.
+Update rzg2l_gpio_register() to use driver data for chip->names
+and check for gpio-range. This allows reusing the driver for
+SoC's with different port pin definitions(eg:- RZ/G2UL SoC has
+fewer ports compared to RZ/G2L and port pin definitions are
+different).
 
 Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Documentation/devicetree/bindings/serial/renesas,sci.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/pinctrl/renesas/pinctrl-rzg2l.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci.yaml b/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-index 8dda4e10e09d..bf7708a7a2c0 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-@@ -17,6 +17,7 @@ properties:
-     oneOf:
-       - items:
-           - enum:
-+              - renesas,r9a07g043-sci     # RZ/G2UL
-               - renesas,r9a07g044-sci     # RZ/G2{L,LC}
-               - renesas,r9a07g054-sci     # RZ/V2L
-           - const: renesas,sci            # generic SCI compatible UART
-@@ -67,6 +68,7 @@ if:
-     compatible:
-       contains:
-         enum:
-+          - renesas,r9a07g043-sci
-           - renesas,r9a07g044-sci
-           - renesas,r9a07g054-sci
- then:
+diff --git a/drivers/pinctrl/renesas/pinctrl-rzg2l.c b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+index ccee9c9e2e22..cb805502fb0f 100644
+--- a/drivers/pinctrl/renesas/pinctrl-rzg2l.c
++++ b/drivers/pinctrl/renesas/pinctrl-rzg2l.c
+@@ -1090,12 +1090,12 @@ static int rzg2l_gpio_register(struct rzg2l_pinctrl *pctrl)
+ 	}
+ 
+ 	if (of_args.args[0] != 0 || of_args.args[1] != 0 ||
+-	    of_args.args[2] != ARRAY_SIZE(rzg2l_gpio_names)) {
++	    of_args.args[2] != pctrl->data->n_port_pins) {
+ 		dev_err(pctrl->dev, "gpio-ranges does not match selected SOC\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	chip->names = rzg2l_gpio_names;
++	chip->names = pctrl->data->port_pins;
+ 	chip->request = rzg2l_gpio_request;
+ 	chip->free = rzg2l_gpio_free;
+ 	chip->get_direction = rzg2l_gpio_get_direction;
 -- 
 2.17.1
 
