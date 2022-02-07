@@ -2,133 +2,198 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD2BC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Feb 2022 16:59:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A748BC433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Feb 2022 17:24:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234523AbiBGQ6F (ORCPT
+        id S236017AbiBGRYe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Feb 2022 11:58:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49724 "EHLO
+        Mon, 7 Feb 2022 12:24:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1391397AbiBGQq1 (ORCPT
+        with ESMTP id S1382879AbiBGRPZ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Feb 2022 11:46:27 -0500
-X-Greylist: delayed 602 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 07 Feb 2022 08:46:12 PST
-Received: from wnew4-smtp.messagingengine.com (wnew4-smtp.messagingengine.com [64.147.123.18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0108C03FEC3
-        for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Feb 2022 08:46:12 -0800 (PST)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailnew.west.internal (Postfix) with ESMTP id A75632B0014F;
-        Mon,  7 Feb 2022 11:36:08 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Mon, 07 Feb 2022 11:36:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=cc
-        :cc:content-transfer-encoding:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; bh=3ECsOgE6DiFXZvAslMe1/R9Cbtn2FP
-        rfKSgkACIPH+M=; b=aWPv/V+MBXUmywDI6fVrx2Z6lGwT0ik6Kj/4rm/zuEKmWM
-        8gqtyv+HwtCgr7XBzxUOHJh8INlp4xA/m2hDgeNrk+lLEg75VsDxZSkuTLmrCIG5
-        SOPGCaMIVfR96zmpbiWNUo4A7mpEixydBwFn1x23KE1BRkZX/TjkKCXxqqUOdWb6
-        SxNRL5n6PXP9k9ocQhavxq1W0TtoN/xLt+vnZCUCbqHtYcHN4AaqxOIfYuSjaD2s
-        XacfZiLCRjSCgtY9xXHceBEkV6zHzm2RwveSb4wuCYNURpnLzzcKS6ehrjypTcb5
-        deEXcC81WwF3aq55ui4WuXDpyzXjqX5l4qGyGmFw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding:date:date
-        :from:from:in-reply-to:in-reply-to:message-id:mime-version
-        :references:reply-to:sender:subject:subject:to:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=3ECsOg
-        E6DiFXZvAslMe1/R9Cbtn2FPrfKSgkACIPH+M=; b=GArr8k/Jy8ef71AAKZ48EA
-        BCdgEpXhDCpruogFWDhwHaocGMNPlViPzFbXWcSAq72hPfkjkch9JajrItsB2QME
-        nZX/gqOdc/79WdVvxjolbrmLmtDjsc87ZoCieD1XPUPJWoxAw2iHMRXiF6FGWvaj
-        stiISLf79oiCdSUmJIPfawE38DOaTQiUByc4828a1nfALtKYYquNo+zcABX7tyoY
-        ntuRoAKP2Nj0Bx8vFmSdPETiQm3qrKCwqjWcAYiiron8k4RMfUaVbP9ayY3yiQb6
-        4FzQH56PyMvCR8ofY9Sbo8bhWialA7bV683C8GUpVCmDW7rRTPzIHVAk08ET6KtQ
-        ==
-X-ME-Sender: <xms:eEoBYr0nr5iONbJECYx_lRdndmoregh4za46cY8cwglnQqzCkFI4Kw>
-    <xme:eEoBYqHVeTChSYdv2P8gINnwaEd6UBBfb3WI4SvmGRIpAFh1mlb5BtSaLHdAP5O2r
-    cg2-A_Xhva84Jy5BuY>
-X-ME-Received: <xmr:eEoBYr7zmp-vaOfUXF2YqYe8Q5yeKhXEWX6Sk3MrW6fSrnjqQPEuy5msPJqR145t6ji82VvU2ZqHHiGbHYUQfE_kq5CG7LkhSlUu4QA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvvddrheehgdekkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgjfhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveevheeh
-    vdenucevlhhushhtvghrufhiiigvpeefnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrg
-    igihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:eEoBYg3oAehT3kFOw-ggEwioQNcT8K5UQ6v9j4oX9BPUkunMpseB0A>
-    <xmx:eEoBYuE_i-0NE8Fz8MdSeo9dWznQ3NBUorkS_5h8HLJqZVLnSZ4ouw>
-    <xmx:eEoBYh_1AMIv3a8MxKlNiel4aCjWkWOP7rGPwfaaxAXNoUPCnzNC4Q>
-    <xmx:eEoBYp-NyjTPupmenEjHYw8oK40K106qVUjAgPaOk1yVjvZGnZsVay42rnA>
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 7 Feb 2022 11:36:07 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>
-Cc:     dri-devel@lists.freedesktop.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH 16/23] drm/rcar: plane: Remove redundant zpos initialisation
-Date:   Mon,  7 Feb 2022 17:35:08 +0100
-Message-Id: <20220207163515.1038648-17-maxime@cerno.tech>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20220207163515.1038648-1-maxime@cerno.tech>
-References: <20220207163515.1038648-1-maxime@cerno.tech>
+        Mon, 7 Feb 2022 12:15:25 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF74EC0401D8
+        for <linux-renesas-soc@vger.kernel.org>; Mon,  7 Feb 2022 09:15:24 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id i17so14058595pfq.13
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 07 Feb 2022 09:15:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=o2jK4dQG5lYeldQntCcw2Wprg6Xt5GsPYAVGkxrUju8=;
+        b=tL4xznP0Ilh/vmueJPaMMAauaRXNwWkNc7yN0DseTxwxKdSt3aqzZcYozsjVWrbGSr
+         RZ63XD020AJ1HQEQvJdPyELFr3ysYQ0bChmppNi0NwRBfvCJqcRvvQOzkZdGH3b0nsTE
+         zxs9u2H3NXS2Nhqy29IAYv+839p38gPAY91WzTRGCTLHwYIX4709x6/5Rk4uDK4Zyplm
+         nDHwlNc5Eb7uoUTGCFKv78HjSfTVvIS606VgvX2opicq5aUSRngvKc9cnJP8abHqY+aa
+         T31TC4Q/QhUpfGWogFe8PuAY2bYeGNwxjp35JCVJKZjxSf+ioxiWXhGkWS/RQul4IdCD
+         wR/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=o2jK4dQG5lYeldQntCcw2Wprg6Xt5GsPYAVGkxrUju8=;
+        b=YmRN9hmYPpHvXBVMWxRT98ZathPm2io3Wd2kXb4qz9PPxC98996f98A27WC7GT0bAC
+         NqA7+aXe9/bWyhGQKPM5W2RRfI0kJy6SAdh9ZeqV3/XKCo+1uNgyuB57HznfAji4oyoo
+         cKvDsWRanyWU6KZQ/Ozbdf8wEztAgsV8sDrAQdYKNV+TExWTA32GW4CIT8caLEJppnyo
+         r4ro3pDtLUdvDTq7e7cVf9Bz6fVUqV/Dbx1F3p4LWQn9LPxd9znGqjp/75Iyhn9SUn4U
+         ZCsiCrr7LCUvCVGnJuu60cD2E7rKiRxTnCjbYTMk8xZCAYDtEuA18JnrxcPHwELe7KYt
+         49OQ==
+X-Gm-Message-State: AOAM5336YfRZJ+qweFw64BTwXvqG96TovFxAqB7sjQ1gETl+6YiGxN0p
+        IflKbAPH5CvS8r2gD5Qfp2y9ZoQ40btRvnxJ
+X-Google-Smtp-Source: ABdhPJx329XRdoxBAbPy7Mfd6qduSNDgfG/Py2Wjhr5YxqJdBa75VGedE5IIhykN851GFW3LqMrVtg==
+X-Received: by 2002:a63:8941:: with SMTP id v62mr306594pgd.183.1644254124071;
+        Mon, 07 Feb 2022 09:15:24 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id ot9sm12942662pjb.47.2022.02.07.09.15.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 07 Feb 2022 09:15:23 -0800 (PST)
+Message-ID: <620153ab.1c69fb81.4beb6.f8ee@mx.google.com>
+Date:   Mon, 07 Feb 2022 09:15:23 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: renesas-devel-2022-02-07-v5.17-rc3
+X-Kernelci-Tree: renesas
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: master
+Subject: renesas/master sleep: 7 runs,
+ 3 regressions (renesas-devel-2022-02-07-v5.17-rc3)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-The rcar-du KMS driver will call drm_plane_create_zpos_property() with an
-init value depending on the plane type.
+renesas/master sleep: 7 runs, 3 regressions (renesas-devel-2022-02-07-v5.17=
+-rc3)
 
-Since the initial value wasn't carried over in the state, the driver had
-to set it again in rcar_du_plane_reset() and rcar_du_vsp_plane_reset().
-However, the helpers have been adjusted to set it properly at reset, so
-this is not needed anymore.
+Regressions Summary
+-------------------
 
-Cc: linux-renesas-soc@vger.kernel.org
-Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/gpu/drm/rcar-du/rcar_du_plane.c | 1 -
- drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 1 -
- 2 files changed, 2 deletions(-)
+platform            | arch   | lab           | compiler | defconfig        =
+            | regressions
+--------------------+--------+---------------+----------+------------------=
+------------+------------
+hp-11A-G6-EE-grunt  | x86_64 | lab-collabora | gcc-10   | x86_64_defcon...6=
+-chromebook | 1          =
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-index 862197be1e01..9dda5e06457d 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-@@ -696,7 +696,6 @@ static void rcar_du_plane_reset(struct drm_plane *plane)
- 	state->hwindex = -1;
- 	state->source = RCAR_DU_PLANE_MEMORY;
- 	state->colorkey = RCAR_DU_COLORKEY_NONE;
--	state->state.zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
- }
- 
- static int rcar_du_plane_atomic_set_property(struct drm_plane *plane,
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-index b7fc5b069cbc..719c60034952 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-@@ -362,7 +362,6 @@ static void rcar_du_vsp_plane_reset(struct drm_plane *plane)
- 		return;
- 
- 	__drm_atomic_helper_plane_reset(plane, &state->state);
--	state->state.zpos = plane->type == DRM_PLANE_TYPE_PRIMARY ? 0 : 1;
- }
- 
- static const struct drm_plane_funcs rcar_du_vsp_plane_funcs = {
--- 
-2.34.1
+rk3288-rock2-square | arm    | lab-collabora | gcc-10   | multi_v7_defconfi=
+g           | 2          =
 
+
+  Details:  https://kernelci.org/test/job/renesas/branch/master/kernel/rene=
+sas-devel-2022-02-07-v5.17-rc3/plan/sleep/
+
+  Test:     sleep
+  Tree:     renesas
+  Branch:   master
+  Describe: renesas-devel-2022-02-07-v5.17-rc3
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      1473d361292c53a189d07c296105887e45695417 =
+
+
+
+Test Regressions
+---------------- =
+
+
+
+platform            | arch   | lab           | compiler | defconfig        =
+            | regressions
+--------------------+--------+---------------+----------+------------------=
+------------+------------
+hp-11A-G6-EE-grunt  | x86_64 | lab-collabora | gcc-10   | x86_64_defcon...6=
+-chromebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62013fbd4cef4ad5fe5d6f06
+
+  Results:     22 PASS, 1 FAIL, 0 SKIP
+  Full config: x86_64_defconfig+x86-chromebook
+  Compiler:    gcc-10 (gcc (Debian 10.2.1-6) 10.2.1 20210110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-02-07-v5.17-rc3/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-colla=
+bora/sleep-hp-11A-G6-EE-grunt.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-02-07-v5.17-rc3/x86_64/x86_64_defconfig+x86-chromebook/gcc-10/lab-colla=
+bora/sleep-hp-11A-G6-EE-grunt.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220128.0/amd64/rootfs.cpio.gz =
+
+
+
+  * sleep.rtcwake-freeze-2: https://kernelci.org/test/case/id/62013fbd4cef4=
+ad5fe5d6f10
+        new failure (last pass: renesas-devel-2022-02-02-v5.17-rc2)
+
+    2022-02-07T15:49:06.682675  <6>[   34.716072] PM: suspend entry (deep)
+    2022-02-07T15:49:06.686026  rtcwake: assuming RTC uses UTC ...
+    2022-02-07T15:49:06.692441  rtcwake: wakeup from \"freeze\" using rtc0 =
+at Mon Feb  7 15:49:12 2022
+    2022-02-07T15:49:06.699155  <6>[   34.723804] Filesystems sync: 0.000 s=
+econds
+    2022-02-07T15:49:06.702397  <6>[   34.728128] r8152 2-4:1.0 eth0: carri=
+er on
+    2022-02-07T15:49:06.712377  <6>[   34.741887] Freezing user space proce=
+sses ... (elapsed 0.001 seconds) done.
+    2022-02-07T15:49:06.715730  <6>[   34.750741] OOM killer disabled.
+    2022-02-07T15:49:07.740875  <6>[   34.754250] Freezing remaining freeza=
+ble tasks ... (elapsed 1.017 seconds) done.
+    2022-02-07T15:49:07.747326  <6>[   35.779857] printk: Suspending consol=
+e(s) (use no_console_suspend to debug)
+    2022-02-07T15:49:07.848801   =
+
+    ... (1150 line(s) more)  =
+
+ =
+
+
+
+platform            | arch   | lab           | compiler | defconfig        =
+            | regressions
+--------------------+--------+---------------+----------+------------------=
+------------+------------
+rk3288-rock2-square | arm    | lab-collabora | gcc-10   | multi_v7_defconfi=
+g           | 2          =
+
+
+  Details:     https://kernelci.org/test/plan/id/620152f08713ea96df5d6ef1
+
+  Results:     2 PASS, 11 FAIL, 0 SKIP
+  Full config: multi_v7_defconfig
+  Compiler:    gcc-10 (arm-linux-gnueabihf-gcc (Debian 10.2.1-6) 10.2.1 202=
+10110)
+  Plain log:   https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-02-07-v5.17-rc3/arm/multi_v7_defconfig/gcc-10/lab-collabora/sleep-rk328=
+8-rock2-square.txt
+  HTML log:    https://storage.kernelci.org//renesas/master/renesas-devel-2=
+022-02-07-v5.17-rc3/arm/multi_v7_defconfig/gcc-10/lab-collabora/sleep-rk328=
+8-rock2-square.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye/20=
+220128.0/armhf/rootfs.cpio.gz =
+
+
+
+  * sleep.rtcwake-mem-2: https://kernelci.org/test/case/id/620152f08713ea96=
+df5d6efc
+        new failure (last pass: renesas-devel-2022-01-31-v5.17-rc2)
+
+    2022-02-07T17:12:06.653265  rtcwake: assuming RTC uses UTC ...
+    2022-02-07T17:12:06.697931  rtcwake: read rt<4>[   15.571906] rtc-hym85=
+63 0-0051: no valid clock/calendar values available
+    2022-02-07T17:12:06.698519  c time failed: Invalid argument
+    2022-02-07T17:12:06.699325  rtcwake: assuming RTC uses UTC .<4>[   15.5=
+92383] rtc-hym8563 0-0051: no valid clock/calendar values available
+    2022-02-07T17:12:06.699705  ..
+    2022-02-07T17:12:06.700072  rtcwake: read rtc time failed: Invalid argu=
+ment   =
+
+
+  * sleep.rtcwake-mem-1: https://kernelci.org/test/case/id/620152f08713ea96=
+df5d6efd
+        new failure (last pass: renesas-devel-2022-01-31-v5.17-rc2) =
+
+ =20
