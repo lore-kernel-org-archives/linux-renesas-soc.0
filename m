@@ -2,80 +2,83 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B77DC35296
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Feb 2022 14:46:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74322C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Feb 2022 14:49:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240750AbiBGOqQ (ORCPT
+        id S1441910AbiBGOq1 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Feb 2022 09:46:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37064 "EHLO
+        Mon, 7 Feb 2022 09:46:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1391795AbiBGOWZ (ORCPT
+        with ESMTP id S1392302AbiBGO1R (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Feb 2022 09:22:25 -0500
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E5A64C0401E0;
-        Mon,  7 Feb 2022 06:22:23 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.88,349,1635174000"; 
-   d="scan'208";a="110511708"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 07 Feb 2022 23:22:23 +0900
-Received: from localhost.localdomain (unknown [10.226.92.17])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 854C143487D0;
-        Mon,  7 Feb 2022 23:22:21 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 3/3] dt-bindings: serial: renesas,sci: Document RZ/G2UL SoC
-Date:   Mon,  7 Feb 2022 14:22:13 +0000
-Message-Id: <20220207142213.19552-3-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220207142213.19552-1-biju.das.jz@bp.renesas.com>
-References: <20220207142213.19552-1-biju.das.jz@bp.renesas.com>
+        Mon, 7 Feb 2022 09:27:17 -0500
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5188C0401C2;
+        Mon,  7 Feb 2022 06:27:16 -0800 (PST)
+Received: by mail-vk1-f176.google.com with SMTP id v192so7914484vkv.4;
+        Mon, 07 Feb 2022 06:27:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cjodH+zCyALNPMiBPcK9ULdaejBlXthJyh10D4W5H+s=;
+        b=EbUwSmYFvCtuMoAYBKb2JmNIAewpH6wpfwLzCk0WtvhgjZSLU98Dej1DqbKDauI0OL
+         F09j6drPMHHOXh9bmRjrmDNpxoZAMchEZ4p81UdlMVhh4QIqdlIyPiuziNi9w55HwUTQ
+         +WT1g68kYn3n2xpKw/UOQBxy8BfINJypVEVY4bhLIsQNaZ0m5JZYUt7SmJw2gahSV87L
+         KInJq8RvpW2sybfVl3ex8hXqaNO5lh/rLGhSfqsPmJCXJZJ2h48DDdmzSKykTCwlTwPG
+         XhZhpiDHPh63dpshPgCKONGW1jVOd+S98HOnNREOJH4ioSBgOvsvWrmpEAdcgfB/khQm
+         qABQ==
+X-Gm-Message-State: AOAM532x2pLqdeb3Ct8PGGV8VYUGihOHxPLVRkPJ2Phfbgs6p1gHprG3
+        ziK2IkRCbf9hUvJ52WEn7XCdTS4HAouWbg==
+X-Google-Smtp-Source: ABdhPJxjzlMFKp+AB697Yl9V7tjMIKQZFdvARTj3tr+Gyp0C7v/ezPCntVf43izyDpJC7NBDSUvWGQ==
+X-Received: by 2002:a05:6122:d0b:: with SMTP id az11mr4987562vkb.41.1644244035885;
+        Mon, 07 Feb 2022 06:27:15 -0800 (PST)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id 143sm4737vkw.11.2022.02.07.06.27.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Feb 2022 06:27:15 -0800 (PST)
+Received: by mail-ua1-f45.google.com with SMTP id w18so19759509uar.8;
+        Mon, 07 Feb 2022 06:27:15 -0800 (PST)
+X-Received: by 2002:a67:c198:: with SMTP id h24mr4669413vsj.5.1644244035167;
+ Mon, 07 Feb 2022 06:27:15 -0800 (PST)
+MIME-Version: 1.0
+References: <20220204125653.1194249-1-yoshihiro.shimoda.uh@renesas.com> <20220204125653.1194249-3-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <20220204125653.1194249-3-yoshihiro.shimoda.uh@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 7 Feb 2022 15:27:04 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXmcbv2Foo8njcCv2hrbG=09uff=WduVa3VDRn331LQSw@mail.gmail.com>
+Message-ID: <CAMuHMdXmcbv2Foo8njcCv2hrbG=09uff=WduVa3VDRn331LQSw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] iommu/ipmmu-vmsa: Add support for R-Car Gen4
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add SCI binding documentation for Renesas RZ/G2UL SoC. No driver changes
-are required as generic compatible string "renesas,sci" will be used as
-a fallback.
+On Fri, Feb 4, 2022 at 4:49 PM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> Add support for R-Car Gen4 like r8a779f0 (R-Car S4-8). The IPMMU
+> hardware design of r8a779f0 is the same as r8a779a0. So, rename
+> "r8a779a0" to "rcar_gen4".
+>
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2:
- * Added Rb tag from Geert.
----
- Documentation/devicetree/bindings/serial/renesas,sci.yaml | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,sci.yaml b/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-index 8dda4e10e09d..bf7708a7a2c0 100644
---- a/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,sci.yaml
-@@ -17,6 +17,7 @@ properties:
-     oneOf:
-       - items:
-           - enum:
-+              - renesas,r9a07g043-sci     # RZ/G2UL
-               - renesas,r9a07g044-sci     # RZ/G2{L,LC}
-               - renesas,r9a07g054-sci     # RZ/V2L
-           - const: renesas,sci            # generic SCI compatible UART
-@@ -67,6 +68,7 @@ if:
-     compatible:
-       contains:
-         enum:
-+          - renesas,r9a07g043-sci
-           - renesas,r9a07g044-sci
-           - renesas,r9a07g054-sci
- then:
--- 
-2.17.1
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
