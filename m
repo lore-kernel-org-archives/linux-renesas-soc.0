@@ -2,59 +2,60 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A0E1C4321E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE24C4332F
 	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Feb 2022 14:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1441868AbiBGOqS (ORCPT
+        id S1441909AbiBGOq0 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Feb 2022 09:46:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44374 "EHLO
+        Mon, 7 Feb 2022 09:46:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1392556AbiBGObL (ORCPT
+        with ESMTP id S1345973AbiBGOkX (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Feb 2022 09:31:11 -0500
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B18DC0401C1;
-        Mon,  7 Feb 2022 06:31:11 -0800 (PST)
-Received: by mail-ua1-f53.google.com with SMTP id 60so23177718uae.1;
-        Mon, 07 Feb 2022 06:31:11 -0800 (PST)
+        Mon, 7 Feb 2022 09:40:23 -0500
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B9ECC0401C1;
+        Mon,  7 Feb 2022 06:40:22 -0800 (PST)
+Received: by mail-vk1-f175.google.com with SMTP id m131so7913069vkm.7;
+        Mon, 07 Feb 2022 06:40:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dQgv4afEeE0oGRr7V8OVvKpCaM7RnaueAuYduEDE4zE=;
-        b=jgzSZFJJSDw5C8NkMMx9IoIxq4ZToxERUkHNLjuEs9GVXdNIl0hOmSgkq5jAbxCUxM
-         BjgEaAcx5MgOS28pwWtAATWdT3KLpfqa9OAL1Sb3cdv0M9WcfXi904Gs82OH1JIrWem/
-         NrGE1fdkfHMy/VbcnOh6rq03QiKLRSHh8WIq4jY7xWB+d0Qnq5AB2UGFjzcTnCV4DMcW
-         styCdFkh7QIA8T21H7vamrq960NrP2E8Nzegw6zc4EZ6lk1mrA7F8pGgFW8QQPUDbXSP
-         ZmW2zyNXB5XNRYUTbMPO9+2qV7lw7+HJSjTFAAYA1uQw/XkNp+wP8gObZfmiqTbj5xNm
-         zEPA==
-X-Gm-Message-State: AOAM530rW7grMn3rcLP+C+ALk/RXLHPGT3lFgeHOJlI2L6UJJLLF7R4L
-        gsMUosJzsHvlaI3kGTjh7nAFE4UWJwzckw==
-X-Google-Smtp-Source: ABdhPJwssTLNbrDf13OvocN+8NtbAsVu0U6oDr8KIPHQICSGlu1VKuvGjqsOd1We6cCecCDdKb2a2A==
-X-Received: by 2002:a05:6102:3210:: with SMTP id r16mr4581963vsf.25.1644244270206;
-        Mon, 07 Feb 2022 06:31:10 -0800 (PST)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
-        by smtp.gmail.com with ESMTPSA id l67sm2618410vkh.9.2022.02.07.06.31.09
+        bh=jo47vG6ydmJ/GIN4IdD70/epyPcTnuVU6TGxbCKCEvw=;
+        b=UWGGZ6ZwC3LcHC0KJs2nM83hQoFdyNoBznq4EyhU5GtpObzJia6JoNbeFMu7iGOajq
+         r8A9IEiEfuUjyIztTQo5Y6VpFUp9BMQ3LwFLapCPMVPAX2ckH8jOiA1WZUPJt+L8xYmL
+         BK1yX+0hGGvqeYEdfMqtdcJbS1T74j9k8NDmZvAX1I6Z6TeykwEUQdbOOB0cQV3al/Cu
+         9G37U5IimmyyhJ+ta5g7IxB6uWW2J/FbvTwuoWp3Hv7CTn6/WkgK54p/Iny0FI9esjZn
+         29Valppr5NkUP9a7w1s4G+BH5oup9T2gXX8b/FnD3xm8/1a1CjY/Kn7TbhvWkUtDUfhH
+         jJnQ==
+X-Gm-Message-State: AOAM532OlLYmaCovMhciDvJe1c4kq5vTDPqq3OPDPBNll8JNkyjkC06s
+        lYB7Sw5BvytEscCh7d7R5YmPHSfoZfvLjw==
+X-Google-Smtp-Source: ABdhPJzszmBwl4BlbKd74VJgN6LHZHhOYg2UaAKEeXlt1KCXQR5iCLFAqWwouqxAuUDCibJAfBImKw==
+X-Received: by 2002:a05:6122:202a:: with SMTP id l42mr5331827vkd.40.1644244821631;
+        Mon, 07 Feb 2022 06:40:21 -0800 (PST)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id o16sm2180058vss.9.2022.02.07.06.40.20
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Feb 2022 06:31:09 -0800 (PST)
-Received: by mail-vk1-f171.google.com with SMTP id o15so7933126vki.2;
-        Mon, 07 Feb 2022 06:31:09 -0800 (PST)
-X-Received: by 2002:a1f:2555:: with SMTP id l82mr5208000vkl.7.1644244269430;
- Mon, 07 Feb 2022 06:31:09 -0800 (PST)
+        Mon, 07 Feb 2022 06:40:21 -0800 (PST)
+Received: by mail-ua1-f45.google.com with SMTP id v5so12132842uam.3;
+        Mon, 07 Feb 2022 06:40:20 -0800 (PST)
+X-Received: by 2002:a67:fd63:: with SMTP id h3mr4193212vsa.77.1644244820669;
+ Mon, 07 Feb 2022 06:40:20 -0800 (PST)
 MIME-Version: 1.0
-References: <20220206194614.13209-1-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220206194614.13209-1-biju.das.jz@bp.renesas.com>
+References: <20220205084006.7142-1-biju.das.jz@bp.renesas.com>
+ <CAMuHMdXqzQOatPXxEPfuSRyzJ81ADX0EhR5xng7XwpoCAh325g@mail.gmail.com> <OS0PR01MB59229CBA63FBDFBC8758A762862C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
+In-Reply-To: <OS0PR01MB59229CBA63FBDFBC8758A762862C9@OS0PR01MB5922.jpnprd01.prod.outlook.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 7 Feb 2022 15:30:58 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUXr9hWGKR8bzvweLJKX0m3sdCPSCawgbJ9Sjn6rdC+mg@mail.gmail.com>
-Message-ID: <CAMuHMdUXr9hWGKR8bzvweLJKX0m3sdCPSCawgbJ9Sjn6rdC+mg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: renesas: Kconfig: Update description for
- RZ/V2L pin control support
+Date:   Mon, 7 Feb 2022 15:40:09 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVH9LMhVxfBZtTK7eMBFS8w4VLm28dqM02uYw+YxD=DLg@mail.gmail.com>
+Message-ID: <CAMuHMdVH9LMhVxfBZtTK7eMBFS8w4VLm28dqM02uYw+YxD=DLg@mail.gmail.com>
+Subject: Re: [PATCH v5] clk: renesas: rzg2l-cpg: Add support for RZ/V2L SoC
 To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -65,19 +66,47 @@ X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
 Hi Biju,
 
-On Sun, Feb 6, 2022 at 8:46 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> RZ/V2L uses RZ/G2L GPIO and pinctrl driver.
-> This patch updates description for RZ/V2L pin control support.
+On Mon, Feb 7, 2022 at 3:35 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> > Subject: Re: [PATCH v5] clk: renesas: rzg2l-cpg: Add support for RZ/V2L
+> > SoC
+> > On Sat, Feb 5, 2022 at 9:40 AM Biju Das <biju.das.jz@bp.renesas.com>
+> > wrote:
+> > > The clock structure for RZ/V2L is almost identical to RZ/G2L SoC. The
+> > > only difference being RZ/V2L has an additional registers to control
+> > > clock and reset for the DRP-AI block.
+> > >
+> > > This patch reuses r9a07g044-cpg.c, as the common clock IDS and rest
+> > > IDS are same between RZ/G2L and RZ/V2L and adding a separate
+> > > r9a07g054_cpg_info to take care of DRP-AI clocks/resets.
+> > >
+> > > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+> > > --- a/drivers/clk/renesas/r9a07g044-cpg.c
+> > > +++ b/drivers/clk/renesas/r9a07g044-cpg.c
+
+> > > @@ -80,252 +81,285 @@ static const char * const sel_pll6_2[]    = {
+> > ".pll6_250", ".pll5_250" };
+> > >  static const char * const sel_shdi[] = { ".clk_533", ".clk_400",
+> > > ".clk_266" };  static const char * const sel_gpu2[] = { ".pll6",
+> > > ".pll3_div2_2" };
+> > >
+> > > -static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
+> > > -       /* External Clock Inputs */
+> > > -       DEF_INPUT("extal", CLK_EXTAL),
+> > > +static struct {
+> > > +       const struct cpg_core_clk common[44]; #ifdef
+> > > +CONFIG_CLK_R9A07G054
+> > > +       const struct cpg_core_clk drp[0]; #endif } const core_clks
+> > > +__initconst = {
+> >
+> > Having a single "const" between "static" and "struct" is sufficient.
 >
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> I got a check patch error "ERROR: Use of const init definition must use __initconst"
+> Which is fixed by "const core_clks __initconst". Looks like checkpatch needs this in one line.
 
-Thanks for your patch!
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-I think it makes sense to fold this into commit 9d6ae5b72f78a94f
-("pinctrl: renesas: Kconfig: Select PINCTRL_RZG2L if RZ/V2L SoC is
-enabled") in renesas-pinctrl-for-v5.18?
+Checkpatch is not a full C source parser, and is confused by the #ifdef/#endif
+block, and by the combination of struct definition and declaration.
 
 Gr{oetje,eeting}s,
 
