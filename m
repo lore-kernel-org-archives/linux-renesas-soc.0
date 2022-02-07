@@ -2,81 +2,89 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E561C3526C
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Feb 2022 14:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 353DDC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Feb 2022 15:46:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1441891AbiBGOqY (ORCPT
+        id S235702AbiBGPo7 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Feb 2022 09:46:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38796 "EHLO
+        Mon, 7 Feb 2022 10:44:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1391786AbiBGOWY (ORCPT
+        with ESMTP id S237073AbiBGPfA (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Feb 2022 09:22:24 -0500
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 90778C0401C7;
-        Mon,  7 Feb 2022 06:22:21 -0800 (PST)
-X-IronPort-AV: E=Sophos;i="5.88,349,1635174000"; 
-   d="scan'208";a="109792071"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 07 Feb 2022 23:22:21 +0900
-Received: from localhost.localdomain (unknown [10.226.92.17])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E31D643487D2;
-        Mon,  7 Feb 2022 23:22:18 +0900 (JST)
-From:   Biju Das <biju.das.jz@bp.renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 2/3] dt-bindings: serial: renesas,scif: Document RZ/G2UL SoC
-Date:   Mon,  7 Feb 2022 14:22:12 +0000
-Message-Id: <20220207142213.19552-2-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20220207142213.19552-1-biju.das.jz@bp.renesas.com>
-References: <20220207142213.19552-1-biju.das.jz@bp.renesas.com>
+        Mon, 7 Feb 2022 10:35:00 -0500
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F58BC0401C1;
+        Mon,  7 Feb 2022 07:34:58 -0800 (PST)
+Received: by mail-ua1-f50.google.com with SMTP id b37so23283292uad.12;
+        Mon, 07 Feb 2022 07:34:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yr/4ROsgOU431C1IiWwLR/syaidumkl+irkvpYDiwSI=;
+        b=bJXmYzmzwSDfgMR1pZL/ZRobj//YHYggW4BxivvYjEKZxP4DFOCTLVZ1lnzRWyb/Y2
+         9JkEoaVJ+B7i1PJ9MSZjisp74wh03A/oIbgEH6SPK8knPo1KP1CWuDOaYxEOQjqEOILt
+         0+Qsyizb0QRlS5+DR01Pf6ygBXhArNJzsNu5irMlCrX+Z7jn3SAcZElMsGwH5yQtcBf5
+         +P+NGaLRXvVGli/HGkDuCG7Y6/5y27+ZJkQv6PfDs8MOwMUWa+yAZE+7Us5149MqZVo6
+         sX3u/9d8WJQayoM2oihanAjSOkC1D3rH89UNsxjoOcdXDnK1ceJS7QqZlwiAlx7ha+4w
+         tANQ==
+X-Gm-Message-State: AOAM530vvXPTdkk5kog3ava3rcTFqnpx443Tf7sAnIZ6ODvFzoQ2ircr
+        5k3rCzlU3zy1PwyhExLd81OnG1OVaCUP7g==
+X-Google-Smtp-Source: ABdhPJxMrIwxEwZadMNHbyaEOfAt8qT7Ifbk5/OuvGu+3OLCP/EFGhigjnyztPKSD8ENauTGHcUSvA==
+X-Received: by 2002:ab0:4d6d:: with SMTP id k45mr56143uag.55.1644248097141;
+        Mon, 07 Feb 2022 07:34:57 -0800 (PST)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id o16sm2201539vss.9.2022.02.07.07.34.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Feb 2022 07:34:56 -0800 (PST)
+Received: by mail-ua1-f53.google.com with SMTP id w21so23313835uan.7;
+        Mon, 07 Feb 2022 07:34:56 -0800 (PST)
+X-Received: by 2002:a67:b00e:: with SMTP id z14mr93827vse.57.1644248096517;
+ Mon, 07 Feb 2022 07:34:56 -0800 (PST)
+MIME-Version: 1.0
+References: <20220204161806.3126321-1-jjhiblot@traphandler.com> <20220204161806.3126321-2-jjhiblot@traphandler.com>
+In-Reply-To: <20220204161806.3126321-2-jjhiblot@traphandler.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 7 Feb 2022 16:34:45 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUsWSXqQ6oOP8c0XBJpAoMUg74kTJN1rU8uiq7UXRiKkw@mail.gmail.com>
+Message-ID: <CAMuHMdUsWSXqQ6oOP8c0XBJpAoMUg74kTJN1rU8uiq7UXRiKkw@mail.gmail.com>
+Subject: Re: [PATCH 1/6] clk: renesas: r9a06g032: Enable the watchdog reset sources
+To:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add SCIF binding documentation for Renesas RZ/G2UL SoC. SCIF block on
-RZ/G2UL is identical to one found on the RZ/G2L SoC. No driver changes
-are required as RZ/G2L compatible string "renesas,scif-r9a07g044" will
-be used as a fallback.
+Hi Jean-Jacques,
 
-Whilst dropped the comments after RZ/G2{L,LC} fallback as to
-avoid updating the comment over and over again when a new IP
-is added
+On Fri, Feb 4, 2022 at 5:18 PM Jean-Jacques Hiblot
+<jjhiblot@traphandler.com> wrote:
+> The watchdog reset sources are not enabled by default.
+> Enabling them here to make sure that the system resets when the watchdog
+> timers expire.
+>
+> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v1->v2:
- * Dropped the comments RZ/G2{L,LC} fallback
- * Added Rb tag from Geert.
----
- Documentation/devicetree/bindings/serial/renesas,scif.yaml | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Thanks for your patch!
 
-diff --git a/Documentation/devicetree/bindings/serial/renesas,scif.yaml b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-index 461392091579..5d37f8f189fb 100644
---- a/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-+++ b/Documentation/devicetree/bindings/serial/renesas,scif.yaml
-@@ -76,8 +76,9 @@ properties:
- 
-       - items:
-           - enum:
-+              - renesas,scif-r9a07g043      # RZ/G2UL
-               - renesas,scif-r9a07g054      # RZ/V2L
--          - const: renesas,scif-r9a07g044   # RZ/G2{L,LC} fallback for RZ/V2L
-+          - const: renesas,scif-r9a07g044   # RZ/G2{L,LC} fallback
- 
-   reg:
-     maxItems: 1
--- 
-2.17.1
+R-Car Gen3 and RZ/G2 SoCs have a similar mechanism.
+On these SoCs, the boot loader takes care of the configuration, as this
+is a system policy that goes beyond the Linux realm.
+Perhaps the RZ/N1 boot loader can do the same?
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
