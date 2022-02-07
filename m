@@ -2,58 +2,60 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E170FC433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Feb 2022 14:50:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C5ABC433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Mon,  7 Feb 2022 14:50:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1441883AbiBGOqY (ORCPT
+        id S1441901AbiBGOqZ (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 7 Feb 2022 09:46:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45582 "EHLO
+        Mon, 7 Feb 2022 09:46:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S243347AbiBGOeC (ORCPT
+        with ESMTP id S1392128AbiBGOYB (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 7 Feb 2022 09:34:02 -0500
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51DA8C0401C1;
-        Mon,  7 Feb 2022 06:34:02 -0800 (PST)
-Received: by mail-ua1-f53.google.com with SMTP id d22so4854159uaw.2;
-        Mon, 07 Feb 2022 06:34:02 -0800 (PST)
+        Mon, 7 Feb 2022 09:24:01 -0500
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0BE5FC0401C8;
+        Mon,  7 Feb 2022 06:24:00 -0800 (PST)
+Received: by mail-ua1-f51.google.com with SMTP id g18so12902397uak.5;
+        Mon, 07 Feb 2022 06:24:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=uHMf/afAoztPucTkA6ZDQ3ZP2SUdh+DTP9NF8vTRtFs=;
-        b=YSO5WHusN5OdDlSpMLeufdhU4GwzWHXOLanm/LOi2JqJAcJXJgudBhYHGGTkCr88BQ
-         eMvX8FuVD5fWNcxPk6PlmOGJcaQ1gzBWszPmVHvA0y8fibbDrMq5nXxg03zcgTxBiMgp
-         SnspP5vPvzJtM5w9b92mA4Co0aSsYSn+CiYa7KhJCqfbTnFySQBOCuUVpqCj9VxVbx2E
-         63PElpoxiV+Mv52XrTwYRwmo79TxeHdhAKkf1vRgew6GwQVUHpUT63+4H4w1RFPzuhuG
-         OZxiKjA2cHy16YuMMYRxS38ezUMreTSCcGiP0KYB5JUV2T2syn6Cpbl5bR0XeQ7DrZDj
-         9CFw==
-X-Gm-Message-State: AOAM532G5jAC5Sq2NdjpmWffagvX+shKDtxvhH0snnjeL9NCiG6fUIt7
-        M5MMlFCOgjIovxu2evHhBPc+PFLEAIZSKw==
-X-Google-Smtp-Source: ABdhPJxqyEyMaAwkRR7kDhZG2sBowEXTgrJJwz8nvdPuciZYJqx2h/i3qSm0ByrRQkOYaWK75W2ziQ==
-X-Received: by 2002:ab0:3045:: with SMTP id x5mr3507781ual.17.1644244439933;
-        Mon, 07 Feb 2022 06:33:59 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id x64sm2322076vke.40.2022.02.07.06.33.59
+        bh=tBG65btqjKnrtOXYzj97x0Tpp2FieJYY+mjia0/4uaI=;
+        b=pEB5loNS1akCKmsNwgGN01JFliEJm6zTZWjvLPJE2Oj/+wg1Y38dSykqp9Fx6YpZHd
+         sscLTZF7tTPfp2xDZQLHT8agTrX2WyC9mCLxa0ETqCGZ1vkYRlsBDzoYNKeRRKqRp9QR
+         ITZR7I7LO9UI9UU7jDudi11b/S3BNinsAyI+lpJqg42lSIVQoXoNUo8PgdGIgTZgXB4T
+         0MYeXiRJ9GeLoWeWbphMXNfqwZbDUcwmUsCPcLG/DQ8+c8uNuiiTt60s4uIlpDwJPdOF
+         0kE8zL7psKploGbm/FN65EJ4g+XEOVBWECfISE4dTQod91tF5DA0axHgspkfGq9ZRE4s
+         hsWQ==
+X-Gm-Message-State: AOAM531FNfXzfahbR4p6RA1fX9+RA+kS5iapsS5B2RX0ZfgJYq2+qAZH
+        fPftm0fwhQp5KqTbMBGhDu8rG67mV2NHCA==
+X-Google-Smtp-Source: ABdhPJyQQuEnehO0Njo58qUfgjqu1AS2n2oE/v3a2haJi9HpX8yavLxzFgCItSF0yAsODmraR/9vDw==
+X-Received: by 2002:a67:c58b:: with SMTP id h11mr4360966vsk.82.1644243838964;
+        Mon, 07 Feb 2022 06:23:58 -0800 (PST)
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
+        by smtp.gmail.com with ESMTPSA id n10sm2234178vso.34.2022.02.07.06.23.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Feb 2022 06:33:59 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id v5so12098111uam.3;
-        Mon, 07 Feb 2022 06:33:59 -0800 (PST)
-X-Received: by 2002:a67:a401:: with SMTP id n1mr4306144vse.38.1644244439218;
- Mon, 07 Feb 2022 06:33:59 -0800 (PST)
+        Mon, 07 Feb 2022 06:23:58 -0800 (PST)
+Received: by mail-ua1-f48.google.com with SMTP id u77so9307548uau.6;
+        Mon, 07 Feb 2022 06:23:58 -0800 (PST)
+X-Received: by 2002:a67:c198:: with SMTP id h24mr4664195vsj.5.1644243838027;
+ Mon, 07 Feb 2022 06:23:58 -0800 (PST)
 MIME-Version: 1.0
-References: <20220206194614.13209-1-biju.das.jz@bp.renesas.com> <20220206194614.13209-2-biju.das.jz@bp.renesas.com>
-In-Reply-To: <20220206194614.13209-2-biju.das.jz@bp.renesas.com>
+References: <20220205084006.7142-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20220205084006.7142-1-biju.das.jz@bp.renesas.com>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 7 Feb 2022 15:33:48 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWy2aF2hjSQbBtXi0ot2LOutwD0Rm2ecaTExeGhVS73DA@mail.gmail.com>
-Message-ID: <CAMuHMdWy2aF2hjSQbBtXi0ot2LOutwD0Rm2ecaTExeGhVS73DA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] pinctrl: renesas: rzg2l: Improve rzg2l_gpio_register()
+Date:   Mon, 7 Feb 2022 15:23:47 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXqzQOatPXxEPfuSRyzJ81ADX0EhR5xng7XwpoCAh325g@mail.gmail.com>
+Message-ID: <CAMuHMdXqzQOatPXxEPfuSRyzJ81ADX0EhR5xng7XwpoCAh325g@mail.gmail.com>
+Subject: Re: [PATCH v5] clk: renesas: rzg2l-cpg: Add support for RZ/V2L SoC
 To:     Biju Das <biju.das.jz@bp.renesas.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Biju Das <biju.das@bp.renesas.com>,
         Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -62,17 +64,70 @@ Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-On Sun, Feb 6, 2022 at 8:46 PM Biju Das <biju.das.jz@bp.renesas.com> wrote:
-> Update rzg2l_gpio_register() to use driver data for chip->names
-> and check for gpio-range. This allows reusing the driver for
-> SoC's with different port pin definitions(eg:- RZ/G2UL SoC has
-> fewer ports compared to RZ/G2L and port pin definitions are
-> different).
+Hi Biju,
+
+On Sat, Feb 5, 2022 at 9:40 AM Biju Das <biju.das.jz@bp.renesas.com> wrote:
+> The clock structure for RZ/V2L is almost identical to RZ/G2L SoC. The only
+> difference being RZ/V2L has an additional registers to control clock and
+> reset for the DRP-AI block.
+>
+> This patch reuses r9a07g044-cpg.c, as the common clock IDS and rest IDS are
+> same between RZ/G2L and RZ/V2L and adding a separate r9a07g054_cpg_info to
+> take care of DRP-AI clocks/resets.
 >
 > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> This patch depend upon [1]
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/include/dt-bindings/clock?h=next-20220204&id=4decd2e54b61686787f36b727d2772e067a46ea5
+> v4->v5:
+> * Rebased on latest clk-driver
+> * Added base commit ID
+> v3->v4:
+> * Added common/drp split for core clocks and resets
+
+Thanks for the updates!
+
+> --- a/drivers/clk/renesas/r9a07g044-cpg.c
+> +++ b/drivers/clk/renesas/r9a07g044-cpg.c
+> @@ -11,12 +11,13 @@
+>  #include <linux/kernel.h>
+>
+>  #include <dt-bindings/clock/r9a07g044-cpg.h>
+> +#include <dt-bindings/clock/r9a07g054-cpg.h>
+>
+>  #include "rzg2l-cpg.h"
+>
+>  enum clk_ids {
+>         /* Core Clock Outputs exported to DT */
+> -       LAST_DT_CORE_CLK = R9A07G044_CLK_P0_DIV2,
+> +       LAST_DT_CORE_CLK = R9A07G054_CLK_DRP_A,
+>
+>         /* External Input Clocks */
+>         CLK_EXTAL,
+> @@ -80,252 +81,285 @@ static const char * const sel_pll6_2[]    = { ".pll6_250", ".pll5_250" };
+>  static const char * const sel_shdi[] = { ".clk_533", ".clk_400", ".clk_266" };
+>  static const char * const sel_gpu2[] = { ".pll6", ".pll3_div2_2" };
+>
+> -static const struct cpg_core_clk r9a07g044_core_clks[] __initconst = {
+> -       /* External Clock Inputs */
+> -       DEF_INPUT("extal", CLK_EXTAL),
+> +static struct {
+> +       const struct cpg_core_clk common[44];
+> +#ifdef CONFIG_CLK_R9A07G054
+> +       const struct cpg_core_clk drp[0];
+> +#endif
+> +} const core_clks __initconst = {
+
+Having a single "const" between "static" and "struct" is sufficient.
+
+> +       .common = {
+> +               /* External Clock Inputs */
+> +               DEF_INPUT("extal", CLK_EXTAL),
+>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl-for-v5.18.
+i.e. will queue in renesas-clk-for-v5.18, with the above fixed.
 
 Gr{oetje,eeting}s,
 
