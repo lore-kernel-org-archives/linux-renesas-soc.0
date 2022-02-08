@@ -2,87 +2,105 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B3EDC4332F
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4C5C433FE
 	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Feb 2022 18:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1384911AbiBHSn6 (ORCPT
+        id S1385024AbiBHSn5 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Feb 2022 13:43:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37600 "EHLO
+        Tue, 8 Feb 2022 13:43:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1385243AbiBHSni (ORCPT
+        with ESMTP id S1385391AbiBHSnj (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Feb 2022 13:43:38 -0500
+        Tue, 8 Feb 2022 13:43:39 -0500
 Received: from smtpout1.mo3004.mail-out.ovh.net (smtpout1.mo3004.mail-out.ovh.net [79.137.123.219])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08475C03FEEA;
-        Tue,  8 Feb 2022 10:43:07 -0800 (PST)
-Received: from pro2.mail.ovh.net (unknown [10.109.156.54])
-        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id A02432473FB;
-        Tue,  8 Feb 2022 18:35:30 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 210C0C03E943;
+        Tue,  8 Feb 2022 10:43:13 -0800 (PST)
+Received: from pro2.mail.ovh.net (unknown [10.108.1.178])
+        by mo3004.mail-out.ovh.net (Postfix) with ESMTPS id E50A7246E7F;
+        Tue,  8 Feb 2022 18:35:27 +0000 (UTC)
 Received: from localhost.localdomain (88.125.132.78) by DAG1EX2.emp2.local
  (172.16.2.2) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.18; Tue, 8 Feb
- 2022 19:35:29 +0100
+ 2022 19:35:26 +0100
 From:   Jean-Jacques Hiblot <jjhiblot@traphandler.com>
 To:     <linux-renesas-soc@vger.kernel.org>, <geert+renesas@glider.be>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
         Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>
 CC:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 3/6] ARM: dts: r9a06g032: Add the watchdog nodes
-Date:   Tue, 8 Feb 2022 19:35:07 +0100
-Message-ID: <20220208183511.2925304-4-jjhiblot@traphandler.com>
+        <linux-watchdog@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v2 0/6] ARM: r9a06g032: add support for the watchdogs
+Date:   Tue, 8 Feb 2022 19:35:04 +0100
+Message-ID: <20220208183511.2925304-1-jjhiblot@traphandler.com>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20220208183511.2925304-1-jjhiblot@traphandler.com>
-References: <20220208183511.2925304-1-jjhiblot@traphandler.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
 X-Originating-IP: [88.125.132.78]
 X-ClientProxiedBy: DAG1EX1.emp2.local (172.16.2.1) To DAG1EX2.emp2.local
  (172.16.2.2)
-X-Ovh-Tracer-Id: 13254656654614739419
+X-Ovh-Tracer-Id: 13254093705174858197
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrheejgdduudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojghfggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeefueeggfeiuedthfdvgeevtedvueevgfevgeelieelveevheefjeejfffguddukeenucfkpheptddrtddrtddrtddpkeekrdduvdehrddufedvrdejkeenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepmhhouggvpehsmhhtphhouhhtpdhhvghlohepphhrohdvrdhmrghilhdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepjhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmpdhnsggprhgtphhtthhopedupdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedvvddrheejgdduudduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffoggfgtghisehtkeertdertddtnecuhfhrohhmpeflvggrnhdqlfgrtghquhgvshcujfhisghlohhtuceojhhjhhhisghlohhtsehtrhgrphhhrghnughlvghrrdgtohhmqeenucggtffrrghtthgvrhhnpeejudfgffelleehheevveeutdejfffgjeekudekkedugfeutdeffeeuhfeuveehieenucffohhmrghinhepghhithhhuhgsrdgtohhmnecukfhppedtrddtrddtrddtpdekkedruddvhedrudefvddrjeeknecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmohguvgepshhmthhpohhuthdphhgvlhhopehprhhovddrmhgrihhlrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehjjhhhihgslhhothesthhrrghphhgrnhgulhgvrhdrtghomhdpnhgspghrtghpthhtohepuddprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhg
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-This SOC includes 2 watchdog controllers (one per A7 core).
+Hi all,
 
-Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
----
- arch/arm/boot/dts/r9a06g032.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+This series adds support for the watchdog timers of the RZ/N1.
+The watchdog driver (rzn1-wdt.c) is derived from the driver available at
+https://github.com/renesas-rz/rzn1_linux.git with a few modifications
 
-diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-index c47896e4ab58..c5659db1581b 100644
---- a/arch/arm/boot/dts/r9a06g032.dtsi
-+++ b/arch/arm/boot/dts/r9a06g032.dtsi
-@@ -66,6 +66,22 @@ soc {
- 		interrupt-parent = <&gic>;
- 		ranges;
- 
-+		wdt0: watchdog@40008000 {
-+			compatible = "renesas,r9a06g032-wdt";
-+			reg = <0x40008000 0x1000>;
-+			interrupts = <GIC_SPI 73 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&sysctrl R9A06G032_CLK_WATCHDOG>;
-+			status = "disabled";
-+		};
-+
-+		wdt1: watchdog@40009000 {
-+			compatible = "renesas,r9a06g032-wdt";
-+			reg = <0x40009000 0x1000>;
-+			interrupts = <GIC_SPI 74 IRQ_TYPE_EDGE_RISING>;
-+			clocks = <&sysctrl R9A06G032_CLK_WATCHDOG>;
-+			status = "disabled";
-+		};
-+
- 		sysctrl: system-controller@4000c000 {
- 			compatible = "renesas,r9a06g032-sysctrl";
- 			reg = <0x4000c000 0x1000>;
+In order to be able to reset the board when a watchdog timer expires,
+the RSTEN register must be configured. it is the responsability of the
+bootloader to set those bits (or not, depending on the chosen policy).
+
+If the watchdog reset source is not enabled, an interrupt is triggered
+when the watchdog expires. Currently this interrupt doesn't much apart
+from printing a message.
+
+Changes v1 -> v2:
+* Modified the clock driver to not enable the watchdog reset sources.
+  On other renesas platforms, those bits are by the bootloader. The
+  watchdog reset sources are still disabled when the platform is halted
+  to prevent a watchdog reset.
+* Added a SOC-specific compatible "renesas,r9a06g032-wdt"
+* reordered the dts/i entries
+* default timeout is 60 seconds
+* reworked the probe function of the wdt driver to better error cases
+* removed the set_timeout() and use a fixed period computed in probe().
+  This removes the confusion and makes it clear that the period defined
+  by the user space in indeed handled by the watchdog core
+
+Jean-Jacques Hiblot (5):
+  dt-bindings: clock: r9a06g032: Add the definition of the the watchdog
+    clock
+  dt-bindings: watchdog: renesas,wdt: Add support for RZ/N1
+  ARM: dts: r9a06g032: Add the watchdog nodes
+  ARM: dts: r9a06g032-rzn1d400-db: Enable watchdog0 with a 60s timeout
+  clk: renesas: r9a06g032: Disable the watchdog reset sources when
+    halting
+
+Phil Edworthy (1):
+  watchdog: Add Renesas RZ/N1 Watchdog driver
+
+ .../bindings/watchdog/renesas,wdt.yaml        |   6 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts   |   5 +
+ arch/arm/boot/dts/r9a06g032.dtsi              |  16 ++
+ drivers/clk/renesas/r9a06g032-clocks.c        |  30 +++
+ drivers/watchdog/Kconfig                      |   8 +
+ drivers/watchdog/Makefile                     |   1 +
+ drivers/watchdog/rzn1_wdt.c                   | 208 ++++++++++++++++++
+ include/dt-bindings/clock/r9a06g032-sysctrl.h |   1 +
+ 8 files changed, 275 insertions(+)
+ create mode 100644 drivers/watchdog/rzn1_wdt.c
+
 -- 
 2.25.1
 
