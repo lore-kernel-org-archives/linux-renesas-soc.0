@@ -2,92 +2,157 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D83C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Feb 2022 13:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC4A1C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Feb 2022 13:17:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235485AbiBHNP3 (ORCPT
+        id S234122AbiBHNP2 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Feb 2022 08:15:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59440 "EHLO
+        Tue, 8 Feb 2022 08:15:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1359192AbiBHMmN (ORCPT
+        with ESMTP id S1348201AbiBHMZ6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Feb 2022 07:42:13 -0500
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8753C03FEC0
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Feb 2022 04:42:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=vvNfBi9E3b3v3d/OUVzRUnSe+Z48
-        koHP8XeagZ/M7po=; b=aI9gD9NnPN5Dcq6KdDESP5KICDFbD7W4qTzNqvT3AUab
-        r6x8lzlfbNnTRi0lBF5j8oOFyeLhc4+9dh6+R0X/wShbq9l3BFURBExmgu1ktq59
-        GpW1uxUDQV7etbEFaeO7kJxBHwSXMMcZrq128+qTNR+dVHccJrmqGUgaRDWV0zc=
-Received: (qmail 249715 invoked from network); 8 Feb 2022 13:35:28 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Feb 2022 13:35:28 +0100
-X-UD-Smtp-Session: l3s3148p1@yUK+84DXXskgAQnoAF1FAEKPHF9sYOFO
-Date:   Tue, 8 Feb 2022 13:35:28 +0100
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 2/2] i2c: rcar: Add R-Car Gen4 support
-Message-ID: <YgJjkOqg6YL7499D@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-References: <cover.1643898531.git.geert+renesas@glider.be>
- <127a63594229deca2f63c7393b9bdf17b572163a.1643898531.git.geert+renesas@glider.be>
- <CAMuHMdVVN2Jc0sYpsc=V6gfQRGXk44Uh4r=2JWhM28gF4ePASg@mail.gmail.com>
+        Tue, 8 Feb 2022 07:25:58 -0500
+Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 611ABC03FEC0
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Feb 2022 04:25:58 -0800 (PST)
+Received: by mail-pf1-x42c.google.com with SMTP id z35so1516756pfw.2
+        for <linux-renesas-soc@vger.kernel.org>; Tue, 08 Feb 2022 04:25:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20210112.gappssmtp.com; s=20210112;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from;
+        bh=2Cj0XR69XjLuaJSbCPnxCoss1WvOh57UDdXj2d6XOc4=;
+        b=T1c+YmX7fnk9pnv/BMmcfiqlqw7AGYlB+4n+UVsWyIfnbUZIWj6bceVPV51RRthcM7
+         klqtOmvlKdBYN+QsQ41oceXd2jhlKmTxElNmCkzPqLwwjI4/yCwuXrTHzSAHtX7qWWcN
+         x67fJrDGPp0kv9hMbHakf/IFk8Ly4fOPrUgH19tyqIHaCc+9DRrgSOcjBDnnP48X8RzE
+         yD6Ytwe+feFnAKZscN5TKHdyVTuZCacGHpIYhlB2FfvhwL8n4TgLaQkl2QvbOlSKjzl/
+         IWiywa/qM3ZBjdeavEidLmo+reHB9zbce2z41+vmQn59pr3ghxuLe0m1amBq3jsJNzl0
+         52jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from;
+        bh=2Cj0XR69XjLuaJSbCPnxCoss1WvOh57UDdXj2d6XOc4=;
+        b=GpLeYzBbOznKjJNIpWo4fascUc/lJENin3KYefe+owuTCHHMgc0rSleIHjrsDSEOvU
+         5jBIQ1orFSpF2N4Z4F62/E5w9oYMiYEHsd+J+2t8SVtRpb4UU95Ru5Z35hidm78YhAVn
+         WvxUQJp3LzoosyoDVgNmYlgaYL3cn+aOI5OTvyqkNA39WInwHT0Pz6HQz92+gA56egKP
+         xZFNy0E3eBqITCEzKBMWeZbebQJ5viqkC5gZDSFU7G16plYVEOE8ihdnkh9WmAuOx7rC
+         IsAzctNT/SuCtPzZ64bTvuV/tHxPMnzIMkiOV5B9hl2h0N8Hxb5Xi4/2bzqY6O9Po8kG
+         Bq7A==
+X-Gm-Message-State: AOAM533Uk9o9Bo2Ug54Ks8/hLsI8SYCrFK3kax8f5ovNcLoheS96JXiJ
+        YYqqVzZWsWh2khd8zgrZI+zKhdgeI3hQ8QC8
+X-Google-Smtp-Source: ABdhPJzgqXhy/AFTQKuwTa25EOrCKLP1ajKjgLOB4AXHQDwdaXbURqdecrqsIz6E+EGbB6GX0Hzr8g==
+X-Received: by 2002:a63:f50f:: with SMTP id w15mr3297269pgh.113.1644323157717;
+        Tue, 08 Feb 2022 04:25:57 -0800 (PST)
+Received: from kernelci-production.internal.cloudapp.net ([52.250.1.28])
+        by smtp.gmail.com with ESMTPSA id s15sm15512892pfg.145.2022.02.08.04.25.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Feb 2022 04:25:57 -0800 (PST)
+Message-ID: <62026155.1c69fb81.a5118.7578@mx.google.com>
+Date:   Tue, 08 Feb 2022 04:25:57 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="dV2F7HwC6DjyoOlT"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVVN2Jc0sYpsc=V6gfQRGXk44Uh4r=2JWhM28gF4ePASg@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Kernel: renesas-next-2022-02-08-v5.17-rc1
+X-Kernelci-Tree: renesas
+X-Kernelci-Report-Type: test
+X-Kernelci-Branch: next
+Subject: renesas/next igt-kms-rockchip: 1 runs,
+ 1 regressions (renesas-next-2022-02-08-v5.17-rc1)
+To:     linux-renesas-soc@vger.kernel.org, kernelci-results@groups.io
+From:   "kernelci.org bot" <bot@kernelci.org>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
+renesas/next igt-kms-rockchip: 1 runs, 1 regressions (renesas-next-2022-02-=
+08-v5.17-rc1)
 
---dV2F7HwC6DjyoOlT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Regressions Summary
+-------------------
 
-
-> > While I2C on R-Car Gen4 does support some extra features (Slave Clock
-> > Stretch Select, Fast-mode Plus), for now it is treated the same as I2C
->=20
-> Correction: R-Car S4 does not support Fast-mode Plus, so there will be
-> a v2 of this patch, eventually.
-
-But why? Unless we implement slave clock stretching, we can still keep
-it at Gen3 level. Which does also not have FM+.
+platform         | arch  | lab           | compiler | defconfig            =
+      | regressions
+-----------------+-------+---------------+----------+----------------------=
+------+------------
+rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
+ebook | 1          =
 
 
---dV2F7HwC6DjyoOlT
-Content-Type: application/pgp-signature; name="signature.asc"
+  Details:  https://kernelci.org/test/job/renesas/branch/next/kernel/renesa=
+s-next-2022-02-08-v5.17-rc1/plan/igt-kms-rockchip/
 
------BEGIN PGP SIGNATURE-----
+  Test:     igt-kms-rockchip
+  Tree:     renesas
+  Branch:   next
+  Describe: renesas-next-2022-02-08-v5.17-rc1
+  URL:      https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-d=
+evel.git
+  SHA:      65a3b7e5807616a88f3c6a25ce47cbc706676b63
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmICY5AACgkQFA3kzBSg
-KbZ2qRAAn7qOZRcamtx8zAvBqb6eWJQcFTvRKlafW2bUoTqJGpZwymZLhHeJn/OF
-9XqCIFoLiglRHGYFhg/yExcIBaUzfjWePnmmPxwAPCZjEY/PdIM3r78i4DSbRa9b
-19B6ckobqUekKZjQjf7GyzxxD1n4f7kdHuMzBaQNwcM7eOFyzCvOFTrcxL+OHEoW
-yrE510hBOAcyv7EmL/YBSx/oWnnGFQKxTkGyryYWxAJQZmv0ntru+YzbSu4sDgRN
-ASNy5LIFhqcOmZ0/hhBL9Vs56tsa747Ym0YS0SDjUp2x4zQu+FSZhFptC9ve7/AD
-dNlvHnfF9mXGQ32WCBmUtGNSSb52CSaZPvF44ThoQhZJqZSzSUViRavFEJzbvg+S
-QEtgALwvW4MRMBnZBw5WSjdegLb4c9cNUfLJ7esRTLMHXLVgFAx3qYr0Bbb/9nBa
-u+W3QgjoxK/1Isajf3dnud8t2umFNAEpn+HHx7QjMH9EKcJEfGlJ73tA/zKIX0Xh
-bbSZJyHIgq7aqz7cmH6WZmEH8Fnf8bT8WD2pVr/s9o18F7vUSZ8wLio/ECwMfAtG
-0t3gGxM4OAmtiFexGs8Ne3WcEapHxIYbm4fZLAmK2s04YjrTJJrrsZ/egildX4ja
-3pdw5tHPCzTz4OHzAh8LRCzcIvUd/vluMDSCN1uUnWtEXfiI4OM=
-=D76J
------END PGP SIGNATURE-----
+  Test suite revisions:
+    drm
+      URL:  git://anongit.freedesktop.org/mesa/drm
+      SHA:  8d0fb9b3f225183fb3276a0e4ae1f8354a3519e8
+    igt-gpu-tools
+      URL:  https://gitlab.freedesktop.org/drm/igt-gpu-tools.git
+      SHA:  ae2eb9e18bc58a4c45f28cfd80962938198dec3c =
 
---dV2F7HwC6DjyoOlT--
+
+
+Test Regressions
+---------------- =
+
+
+
+platform         | arch  | lab           | compiler | defconfig            =
+      | regressions
+-----------------+-------+---------------+----------+----------------------=
+------+------------
+rk3399-gru-kevin | arm64 | lab-collabora | gcc-10   | defconfig+arm64-chrom=
+ebook | 1          =
+
+
+  Details:     https://kernelci.org/test/plan/id/62024b64aa0e537d495d6f1c
+
+  Results:     79 PASS, 15 FAIL, 142 SKIP
+  Full config: defconfig+arm64-chromebook
+  Compiler:    gcc-10 (aarch64-linux-gnu-gcc (Debian 10.2.1-6) 10.2.1 20210=
+110)
+  Plain log:   https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-02-08-v5.17-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/igt-=
+kms-rockchip-rk3399-gru-kevin.txt
+  HTML log:    https://storage.kernelci.org//renesas/next/renesas-next-2022=
+-02-08-v5.17-rc1/arm64/defconfig+arm64-chromebook/gcc-10/lab-collabora/igt-=
+kms-rockchip-rk3399-gru-kevin.html
+  Rootfs:      http://storage.kernelci.org/images/rootfs/debian/bullseye-ig=
+t/20220128.0/arm64/rootfs.cpio.gz =
+
+
+
+  * igt-kms-rockchip.kms_setmode.basic: https://kernelci.org/test/case/id/6=
+2024b64aa0e537d495d6fc2
+        new failure (last pass: renesas-next-2022-01-28-v5.17-rc1)
+
+    2022-02-08T10:49:45.926071  <8>[   44.669717] <LAVA_SIGNAL_TESTCASE TES=
+T_CASE_ID=3Dinvalid-set-prop RESULT=3Dpass>
+    2022-02-08T10:49:45.931930  <8>[   44.681219] <LAVA_SIGNAL_TESTSET STOP>
+    2022-02-08T10:49:45.969461  <8>[   44.717606] <LAVA_SIGNAL_TESTSET STAR=
+T kms_setmode>
+    2022-02-08T10:49:46.003285  <6>[   44.750505] Console: switching to col=
+our dummy device 80x25
+    2022-02-08T10:49:46.008113  <14>[   44.757243] [IGT] kms_setmode: execu=
+ting
+    2022-02-08T10:49:46.021007  IGT-Version: 1.26-gae2eb9e (aarch64) (Linux=
+: 5.17.0-rc1 aarch64)<14>[   44.763296] [IGT] kms_setmode: starting subtest=
+ basic
+    2022-02-08T10:49:46.021812  =
+
+    2022-02-08T10:49:46.024126  Starting subtest: basic
+    2022-02-08T10:49:46.027981  Testing: basic 1 connector combinations
+    2022-02-08T10:49:46.135065    Test id#1 CRTC count 1 =
+
+    ... (143 line(s) more)  =
+
+ =20
