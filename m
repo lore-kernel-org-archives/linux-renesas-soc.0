@@ -2,100 +2,110 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D98C43217
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Feb 2022 13:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B057C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Feb 2022 13:17:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241111AbiBHNPf (ORCPT
+        id S240110AbiBHNPe (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Feb 2022 08:15:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58104 "EHLO
+        Tue, 8 Feb 2022 08:15:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1357873AbiBHMiX (ORCPT
+        with ESMTP id S1349522AbiBHMQJ (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Feb 2022 07:38:23 -0500
-X-Greylist: delayed 168 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 08 Feb 2022 04:38:20 PST
-Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46904C03FECA
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Feb 2022 04:38:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=k1; bh=mblPKvsTR+I38VBuTL3AMx3pOcg6
-        Ef8IgRkhKBFuNgU=; b=qMBmciIXgm9mIqfnNnuy1GxVTBCm9tAO5J0INHCm1qRK
-        ai5Am6gaNi2jpsyZoL7/l+u3C4p6vXaC1/hcsqzv2J7ywpwfbbKw5JPbPP8rA8VO
-        2YUUZZ0kPN8raQwnbfrRuB3Rq5dlXQPBcS289NUEHWeL7p/+i9yzEIHoOeEAqCA=
-Received: (qmail 251182 invoked from network); 8 Feb 2022 13:38:17 +0100
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Feb 2022 13:38:17 +0100
-X-UD-Smtp-Session: l3s3148p1@0J7M/YDXYMkgAQnoAF1FAEKPHF9sYOFO
-Date:   Tue, 8 Feb 2022 13:38:17 +0100
-From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        LUU HOAI <hoai.luu.ub@renesas.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH 1/5] clk: renesas: r8a779f0: Add WDT clock
-Message-ID: <YgJkOVpdZdMWj0m6@ninjato>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        LUU HOAI <hoai.luu.ub@renesas.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-References: <cover.1642525158.git.geert+renesas@glider.be>
- <8d9b280065a663f2cf31db7b21a010aa781a0af1.1642525158.git.geert+renesas@glider.be>
+        Tue, 8 Feb 2022 07:16:09 -0500
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A24EC03FEC0
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Feb 2022 04:16:07 -0800 (PST)
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 30151A04;
+        Tue,  8 Feb 2022 13:16:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1644322563;
+        bh=/GjjOJT4Zd/yjR14F3vzx2OEgv5DVvS++eiwwIpsgp8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=YHcLbg2g9OgWFlm4ZhjhS1A+Ossx/2xqFz2PV6wKWq42D8pMK2doeq4NniO88aIOf
+         rePI9uum4QzGdRmApy4oCNCKIYhvKajFZExspZuCsD/oNfr43F00mviLwt3D8DDyl9
+         2ADY6LdwbGUrkCGd34Up29KYNbTJ2WROrvPfxals=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CuXxExDNR0gwWf+V"
-Content-Disposition: inline
-In-Reply-To: <8d9b280065a663f2cf31db7b21a010aa781a0af1.1642525158.git.geert+renesas@glider.be>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20220207163515.1038648-17-maxime@cerno.tech>
+References: <20220207163515.1038648-1-maxime@cerno.tech> <20220207163515.1038648-17-maxime@cerno.tech>
+Subject: Re: [PATCH 16/23] drm/rcar: plane: Remove redundant zpos initialisation
+From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dom Cobley <dom@raspberrypi.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Daniel Vetter <daniel.vetter@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Maxime Ripard <maxime@cerno.tech>
+Date:   Tue, 08 Feb 2022 12:16:00 +0000
+Message-ID: <164432256019.2921404.17702222253648308632@Monstersaurus>
+User-Agent: alot/0.10
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-
---CuXxExDNR0gwWf+V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jan 18, 2022 at 06:09:01PM +0100, Geert Uytterhoeven wrote:
-> Add the module clock used by the RCLK Watchdog Timer (RWDT) on the
-> Renesas R-Car S4-8 (r8a779f0) SoC.  Mark it as a critical clock, to
-> ensure uninterrupted watchdog operation.
+Quoting Maxime Ripard (2022-02-07 16:35:08)
+> The rcar-du KMS driver will call drm_plane_create_zpos_property() with an
+> init value depending on the plane type.
 >=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Since the initial value wasn't carried over in the state, the driver had
+> to set it again in rcar_du_plane_reset() and rcar_du_vsp_plane_reset().
+> However, the helpers have been adjusted to set it properly at reset, so
+> this is not needed anymore.
 
-Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Sounds helpful ;-)
 
+> Cc: linux-renesas-soc@vger.kernel.org
+> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
---CuXxExDNR0gwWf+V
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmICZDkACgkQFA3kzBSg
-KbYRxQ//UzcAb6CurhSVTJgjpRYr3RCkJdwUUJ5icYWg8tinwKd2litbjZFFJgp4
-+VCbypK2gK3a2hfdZZpelee9hCFGpd95sfFQUm12HPJ2wIsj+pBW0Feuem0lCQbT
-JqYTt259nxMudemRt1JZz3oYKC4NUdYXuzIPF8Bm50p8AL+ANNJThbc4tEXjQbUc
-txaP3dbbv4nNDlf2NCYPQQne+k6zyYnMqoi1a8UMD8wxZARnsnH/HwsyjF5Yg/a7
-YhynhkpeaLDIo7VsFYZbEQCjGLY560lwVzzUo8a+suzKCqFGarb70z4vCIs589Bb
-qHdRhCCTf3qWNRt2ziO1lxVWrRRpXA9MstfL+CP36WZqVSwqfFWn0tOwHaITweKD
-wqN9Zcygz4kZDQzaSpoZTLnfcfYNjr/leXrgn+oX5pVM8J7axQDBe74uA9myPylE
-IoUbtc+qRrRQ4FATKWVGW9tQFh9aBquawg0Sf75/P01f4us2RdnxXZhkHJQNs35P
-QQhxjzkH5WU+S3vfecU/hyM6m4HL74xakN+un6vghWHAy514hd+f+9SQEKlBvGGc
-rNHRNACIQdZUvxcBtPtJyqfYL/1GOjVSNlYl4/KhFM0TgsOwGZZSD9KrtsxyXTX7
-9yZImUJf0r+7vEkwQQYiN3t22C4gk93u9AHhiZ8nSWftK/fIkwk=
-=akA/
------END PGP SIGNATURE-----
-
---CuXxExDNR0gwWf+V--
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 1 -
+>  drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 1 -
+>  2 files changed, 2 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rc=
+ar-du/rcar_du_plane.c
+> index 862197be1e01..9dda5e06457d 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
+> @@ -696,7 +696,6 @@ static void rcar_du_plane_reset(struct drm_plane *pla=
+ne)
+>         state->hwindex =3D -1;
+>         state->source =3D RCAR_DU_PLANE_MEMORY;
+>         state->colorkey =3D RCAR_DU_COLORKEY_NONE;
+> -       state->state.zpos =3D plane->type =3D=3D DRM_PLANE_TYPE_PRIMARY ?=
+ 0 : 1;
+>  }
+> =20
+>  static int rcar_du_plane_atomic_set_property(struct drm_plane *plane,
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar=
+-du/rcar_du_vsp.c
+> index b7fc5b069cbc..719c60034952 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
+> @@ -362,7 +362,6 @@ static void rcar_du_vsp_plane_reset(struct drm_plane =
+*plane)
+>                 return;
+> =20
+>         __drm_atomic_helper_plane_reset(plane, &state->state);
+> -       state->state.zpos =3D plane->type =3D=3D DRM_PLANE_TYPE_PRIMARY ?=
+ 0 : 1;
+>  }
+> =20
+>  static const struct drm_plane_funcs rcar_du_vsp_plane_funcs =3D {
+> --=20
+> 2.34.1
+>
