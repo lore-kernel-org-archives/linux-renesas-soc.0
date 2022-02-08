@@ -2,110 +2,92 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B057C433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Feb 2022 13:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D83C433FE
+	for <linux-renesas-soc@archiver.kernel.org>; Tue,  8 Feb 2022 13:17:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240110AbiBHNPe (ORCPT
+        id S235485AbiBHNP3 (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Tue, 8 Feb 2022 08:15:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52396 "EHLO
+        Tue, 8 Feb 2022 08:15:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1349522AbiBHMQJ (ORCPT
+        with ESMTP id S1359192AbiBHMmN (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Tue, 8 Feb 2022 07:16:09 -0500
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A24EC03FEC0
-        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Feb 2022 04:16:07 -0800 (PST)
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust3082.18-1.cable.virginm.net [86.31.172.11])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 30151A04;
-        Tue,  8 Feb 2022 13:16:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1644322563;
-        bh=/GjjOJT4Zd/yjR14F3vzx2OEgv5DVvS++eiwwIpsgp8=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YHcLbg2g9OgWFlm4ZhjhS1A+Ossx/2xqFz2PV6wKWq42D8pMK2doeq4NniO88aIOf
-         rePI9uum4QzGdRmApy4oCNCKIYhvKajFZExspZuCsD/oNfr43F00mviLwt3D8DDyl9
-         2ADY6LdwbGUrkCGd34Up29KYNbTJ2WROrvPfxals=
-Content-Type: text/plain; charset="utf-8"
+        Tue, 8 Feb 2022 07:42:13 -0500
+Received: from mail.zeus03.de (www.zeus03.de [194.117.254.33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8753C03FEC0
+        for <linux-renesas-soc@vger.kernel.org>; Tue,  8 Feb 2022 04:42:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple; d=sang-engineering.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=k1; bh=vvNfBi9E3b3v3d/OUVzRUnSe+Z48
+        koHP8XeagZ/M7po=; b=aI9gD9NnPN5Dcq6KdDESP5KICDFbD7W4qTzNqvT3AUab
+        r6x8lzlfbNnTRi0lBF5j8oOFyeLhc4+9dh6+R0X/wShbq9l3BFURBExmgu1ktq59
+        GpW1uxUDQV7etbEFaeO7kJxBHwSXMMcZrq128+qTNR+dVHccJrmqGUgaRDWV0zc=
+Received: (qmail 249715 invoked from network); 8 Feb 2022 13:35:28 +0100
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 8 Feb 2022 13:35:28 +0100
+X-UD-Smtp-Session: l3s3148p1@yUK+84DXXskgAQnoAF1FAEKPHF9sYOFO
+Date:   Tue, 8 Feb 2022 13:35:28 +0100
+From:   Wolfram Sang <wsa+renesas@sang-engineering.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 2/2] i2c: rcar: Add R-Car Gen4 support
+Message-ID: <YgJjkOqg6YL7499D@ninjato>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+References: <cover.1643898531.git.geert+renesas@glider.be>
+ <127a63594229deca2f63c7393b9bdf17b572163a.1643898531.git.geert+renesas@glider.be>
+ <CAMuHMdVVN2Jc0sYpsc=V6gfQRGXk44Uh4r=2JWhM28gF4ePASg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20220207163515.1038648-17-maxime@cerno.tech>
-References: <20220207163515.1038648-1-maxime@cerno.tech> <20220207163515.1038648-17-maxime@cerno.tech>
-Subject: Re: [PATCH 16/23] drm/rcar: plane: Remove redundant zpos initialisation
-From:   Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dom Cobley <dom@raspberrypi.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Daniel Vetter <daniel.vetter@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        Maxime Ripard <maxime@cerno.tech>
-Date:   Tue, 08 Feb 2022 12:16:00 +0000
-Message-ID: <164432256019.2921404.17702222253648308632@Monstersaurus>
-User-Agent: alot/0.10
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dV2F7HwC6DjyoOlT"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVVN2Jc0sYpsc=V6gfQRGXk44Uh4r=2JWhM28gF4ePASg@mail.gmail.com>
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Quoting Maxime Ripard (2022-02-07 16:35:08)
-> The rcar-du KMS driver will call drm_plane_create_zpos_property() with an
-> init value depending on the plane type.
+
+--dV2F7HwC6DjyoOlT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+> > While I2C on R-Car Gen4 does support some extra features (Slave Clock
+> > Stretch Select, Fast-mode Plus), for now it is treated the same as I2C
 >=20
-> Since the initial value wasn't carried over in the state, the driver had
-> to set it again in rcar_du_plane_reset() and rcar_du_vsp_plane_reset().
-> However, the helpers have been adjusted to set it properly at reset, so
-> this is not needed anymore.
+> Correction: R-Car S4 does not support Fast-mode Plus, so there will be
+> a v2 of this patch, eventually.
 
-Sounds helpful ;-)
+But why? Unless we implement slave clock stretching, we can still keep
+it at Gen3 level. Which does also not have FM+.
 
-> Cc: linux-renesas-soc@vger.kernel.org
-> Cc: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+--dV2F7HwC6DjyoOlT
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> ---
->  drivers/gpu/drm/rcar-du/rcar_du_plane.c | 1 -
->  drivers/gpu/drm/rcar-du/rcar_du_vsp.c   | 1 -
->  2 files changed, 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_plane.c b/drivers/gpu/drm/rc=
-ar-du/rcar_du_plane.c
-> index 862197be1e01..9dda5e06457d 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_plane.c
-> @@ -696,7 +696,6 @@ static void rcar_du_plane_reset(struct drm_plane *pla=
-ne)
->         state->hwindex =3D -1;
->         state->source =3D RCAR_DU_PLANE_MEMORY;
->         state->colorkey =3D RCAR_DU_COLORKEY_NONE;
-> -       state->state.zpos =3D plane->type =3D=3D DRM_PLANE_TYPE_PRIMARY ?=
- 0 : 1;
->  }
-> =20
->  static int rcar_du_plane_atomic_set_property(struct drm_plane *plane,
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c b/drivers/gpu/drm/rcar=
--du/rcar_du_vsp.c
-> index b7fc5b069cbc..719c60034952 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vsp.c
-> @@ -362,7 +362,6 @@ static void rcar_du_vsp_plane_reset(struct drm_plane =
-*plane)
->                 return;
-> =20
->         __drm_atomic_helper_plane_reset(plane, &state->state);
-> -       state->state.zpos =3D plane->type =3D=3D DRM_PLANE_TYPE_PRIMARY ?=
- 0 : 1;
->  }
-> =20
->  static const struct drm_plane_funcs rcar_du_vsp_plane_funcs =3D {
-> --=20
-> 2.34.1
->
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmICY5AACgkQFA3kzBSg
+KbZ2qRAAn7qOZRcamtx8zAvBqb6eWJQcFTvRKlafW2bUoTqJGpZwymZLhHeJn/OF
+9XqCIFoLiglRHGYFhg/yExcIBaUzfjWePnmmPxwAPCZjEY/PdIM3r78i4DSbRa9b
+19B6ckobqUekKZjQjf7GyzxxD1n4f7kdHuMzBaQNwcM7eOFyzCvOFTrcxL+OHEoW
+yrE510hBOAcyv7EmL/YBSx/oWnnGFQKxTkGyryYWxAJQZmv0ntru+YzbSu4sDgRN
+ASNy5LIFhqcOmZ0/hhBL9Vs56tsa747Ym0YS0SDjUp2x4zQu+FSZhFptC9ve7/AD
+dNlvHnfF9mXGQ32WCBmUtGNSSb52CSaZPvF44ThoQhZJqZSzSUViRavFEJzbvg+S
+QEtgALwvW4MRMBnZBw5WSjdegLb4c9cNUfLJ7esRTLMHXLVgFAx3qYr0Bbb/9nBa
+u+W3QgjoxK/1Isajf3dnud8t2umFNAEpn+HHx7QjMH9EKcJEfGlJ73tA/zKIX0Xh
+bbSZJyHIgq7aqz7cmH6WZmEH8Fnf8bT8WD2pVr/s9o18F7vUSZ8wLio/ECwMfAtG
+0t3gGxM4OAmtiFexGs8Ne3WcEapHxIYbm4fZLAmK2s04YjrTJJrrsZ/egildX4ja
+3pdw5tHPCzTz4OHzAh8LRCzcIvUd/vluMDSCN1uUnWtEXfiI4OM=
+=D76J
+-----END PGP SIGNATURE-----
+
+--dV2F7HwC6DjyoOlT--
