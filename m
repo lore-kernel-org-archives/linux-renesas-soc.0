@@ -2,117 +2,116 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D05BC433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Feb 2022 16:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A1DEC4332F
+	for <linux-renesas-soc@archiver.kernel.org>; Wed,  9 Feb 2022 17:27:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237377AbiBIQlZ (ORCPT
+        id S238198AbiBIR1p (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 9 Feb 2022 11:41:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49486 "EHLO
+        Wed, 9 Feb 2022 12:27:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55512 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237389AbiBIQlU (ORCPT
+        with ESMTP id S238216AbiBIR1n (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 9 Feb 2022 11:41:20 -0500
-Received: from mo4-p01-ob.smtp.rzone.de (mo4-p01-ob.smtp.rzone.de [85.215.255.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C1D5C05CB82;
-        Wed,  9 Feb 2022 08:41:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1644424696;
-    s=strato-dkim-0002; d=fpond.eu;
-    h=Message-Id:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=GWoW+C14An674JYgH1kVI2DMXd0W/O9lGw79zuetDYY=;
-    b=jbDOrriwEGEuai39q/GjMKSBj/3M+zTQTKyMexAp4JH3DfVQH7HZilCdVPk99yWC3y
-    gaffGex0k1uwW0IPLL+U+jG1/5lN2RZLeoNTAevVfw3xq0dgiVljaydU53VH5/uZ5nsG
-    mRy92TlQwQot2qgc02h3pzWhzDfu2ZIBDEIIFW8pneZerZLq7HyelUqFJtfy/EynPW+E
-    PCjQLn/nOGjY4Q8jh1CT7VLTubBFxdIo96m4khgtjqOAjW4oMqxvf+u9R9XmL8prX64r
-    rJfXarNw2NS/fW/oq4luix27hXSdv8XHklKbZftkmyJq9WVrwXGVB7vPD8n4YAkA//5H
-    TJEg==
-Authentication-Results: strato.com;
-    dkim=none
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR82dfdzLc5sE="
-X-RZG-CLASS-ID: mo00
-Received: from gummo.fritz.box
-    by smtp.strato.de (RZmta 47.39.0 DYNA|AUTH)
-    with ESMTPSA id ufcb0fy19GcE7bt
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-    Wed, 9 Feb 2022 17:38:14 +0100 (CET)
-From:   Ulrich Hecht <uli+renesas@fpond.eu>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     netdev@vger.kernel.org, davem@davemloft.net,
-        linux-can@vger.kernel.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-        biju.das.jz@bp.renesas.com, wsa@kernel.org,
-        yoshihiro.shimoda.uh@renesas.com, wg@grandegger.com,
-        mkl@pengutronix.de, kuba@kernel.org, mailhol.vincent@wanadoo.fr,
-        socketcan@hartkopp.net, geert@linux-m68k.org,
-        kieran.bingham@ideasonboard.com,
-        Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH v3 0/4] can: rcar_canfd: Add support for V3U flavor
-Date:   Wed,  9 Feb 2022 17:38:02 +0100
-Message-Id: <20220209163806.18618-1-uli+renesas@fpond.eu>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 9 Feb 2022 12:27:43 -0500
+Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id CE2CCC05CBB0
+        for <linux-renesas-soc@vger.kernel.org>; Wed,  9 Feb 2022 09:27:42 -0800 (PST)
+X-IronPort-AV: E=Sophos;i="5.88,356,1635174000"; 
+   d="scan'208";a="110765425"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 10 Feb 2022 02:22:40 +0900
+Received: from localhost.localdomain (unknown [10.226.92.190])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id EFC51401071C;
+        Thu, 10 Feb 2022 02:22:38 +0900 (JST)
+From:   Biju Das <biju.das.jz@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das.jz@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] clk: renesas: rzg2l-cpg: Add id to struct rzg2l_reset
+Date:   Wed,  9 Feb 2022 17:22:36 +0000
+Message-Id: <20220209172236.21151-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi!
+We now have the reset ID split between common and additional entries.
+But the index is hidden inside the DEF_RST macro and this can create
+compilation issue when we add a reset ID on the additional entry
+array.
 
-This adds CANFD support for V3U (R8A779A0) SoCs. The V3U's IP supports up
-to eight channels and has some other minor differences to the Gen3 variety:
+This patch adds id to struct rzg2l_reset, so that we can lookup an
+ID entry in the reset table instead of just using the ID as the
+index.
 
-- changes to some register offsets and layouts
-- absence of "classic CAN" registers, both modes are handled through the
-  CANFD register set
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+---
+ drivers/clk/renesas/rzg2l-cpg.c | 17 +++++++++++++----
+ drivers/clk/renesas/rzg2l-cpg.h |  7 +++++--
+ 2 files changed, 18 insertions(+), 6 deletions(-)
 
-This patch set tries to accommodate these changes in a minimally intrusive
-way.
-
-This revision tries to address all issues raised by reviewers, and drops
-the clock patch that has since been picked up; see below for details.
-Thanks to Vincent, Marc and Geert for their reviews and suggestions.
-
-It has been successfully tested remotely on a V3U Falcon board, but only
-with channels 0 and 1. We were not able to get higher channels to work in
-both directions yet. It is not currently clear if this is an issue with the
-driver, the board or the silicon, but the BSP vendor driver only works with
-channels 0 and 1 as well, so my bet is on one of the latter. For this
-reason, this series only enables known-working channels 0 and 1 on Falcon.
-
-CU
-Uli
-
-
-Changes since v2:
-- dropped upstreamed clock patch
-- replaced bracket/ternary maze with inline functions
-- improved indentation to better reflect the logic
-- removed redundant CAN mode check
-- replaced strcpy() with initializer
-- minor refactoring
-- add Reviewed-Bys
-
-Changes since v1:
-- clk: added missing CANFD module clock
-- driver: fixed tests for RZ/G2L so they won't break V3U
-- driver: simplified two macros
-- DT: enabled devices 0 and 1 on Falcon board
-- DT: changed assigned-clock-rates to 80000000
-- DT: added interrupt names
-
-
-Ulrich Hecht (4):
-  can: rcar_canfd: Add support for r8a779a0 SoC
-  arm64: dts: renesas: r8a779a0: Add CANFD device node
-  arm64: dts: renesas: r8a779a0-falcon: enable CANFD 0 and 1
-  dt-bindings: can: renesas,rcar-canfd: Document r8a779a0 support
-
- .../bindings/net/can/renesas,rcar-canfd.yaml  |   2 +
- .../boot/dts/renesas/r8a779a0-falcon.dts      |  24 ++
- arch/arm64/boot/dts/renesas/r8a779a0.dtsi     |  56 +++++
- drivers/net/can/rcar/rcar_canfd.c             | 219 ++++++++++++------
- 4 files changed, 228 insertions(+), 73 deletions(-)
-
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 8c0a6252c984..adb3353a419d 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -760,13 +760,22 @@ static int rzg2l_cpg_reset_xlate(struct reset_controller_dev *rcdev,
+ 	struct rzg2l_cpg_priv *priv = rcdev_to_priv(rcdev);
+ 	const struct rzg2l_cpg_info *info = priv->info;
+ 	unsigned int id = reset_spec->args[0];
++	unsigned int i;
++
++	if (id >= rcdev->nr_resets)
++		goto err;
+ 
+-	if (id >= rcdev->nr_resets || !info->resets[id].off) {
+-		dev_err(rcdev->dev, "Invalid reset index %u\n", id);
+-		return -EINVAL;
++	for (i = 0; i < rcdev->nr_resets; i++) {
++		if (info->resets[i].id == id)
++			break;
+ 	}
+ 
+-	return id;
++	if (info->resets[i].off)
++		return i;
++
++err:
++	dev_err(rcdev->dev, "Invalid reset index %u\n", id);
++	return -EINVAL;
+ }
+ 
+ static int rzg2l_cpg_reset_controller_register(struct rzg2l_cpg_priv *priv)
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index 92c88f42ca7f..fe2bcf9cce5d 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -150,16 +150,19 @@ struct rzg2l_mod_clk {
+  *
+  * @off: register offset
+  * @bit: reset bit
++ * @id: reset index
+  */
+ struct rzg2l_reset {
+ 	u16 off;
+ 	u8 bit;
++	u8 id;
+ };
+ 
+ #define DEF_RST(_id, _off, _bit)	\
+-	[_id] = { \
++	{ \
+ 		.off = (_off), \
+-		.bit = (_bit) \
++		.bit = (_bit), \
++		.id = (_id) \
+ 	}
+ 
+ /**
 -- 
-2.20.1
+2.17.1
 
