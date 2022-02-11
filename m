@@ -2,40 +2,40 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B491BC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Feb 2022 14:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C174C43217
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 11 Feb 2022 14:19:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241051AbiBKOTs (ORCPT
+        id S1347617AbiBKOTt (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 11 Feb 2022 09:19:48 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56472 "EHLO
+        Fri, 11 Feb 2022 09:19:49 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56476 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1346037AbiBKOTr (ORCPT
+        with ESMTP id S1347704AbiBKOTr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
         Fri, 11 Feb 2022 09:19:47 -0500
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 565A026D
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA643B6E
         for <linux-renesas-soc@vger.kernel.org>; Fri, 11 Feb 2022 06:19:45 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:5d5d:ef67:a872:c0be])
-        by albert.telenet-ops.be with bizsmtp
-        id tqKi260043ZSXJh06qKiu0; Fri, 11 Feb 2022 15:19:42 +0100
+        by laurent.telenet-ops.be with bizsmtp
+        id tqKi2600E3ZSXJh01qKidh; Fri, 11 Feb 2022 15:19:44 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nIWlx-000M8j-KY; Fri, 11 Feb 2022 15:19:41 +0100
+        id 1nIWlx-000M8j-RL; Fri, 11 Feb 2022 15:19:41 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nIWLx-00Gh94-Nh; Fri, 11 Feb 2022 14:52:49 +0100
+        id 1nIWLx-00Gh8R-Kd; Fri, 11 Feb 2022 14:52:49 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     arm-soc <arm@kernel.org>, soc <soc@kernel.org>
 Cc:     Magnus Damm <magnus.damm@gmail.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL 4/4] Renesas DT binding updates for v5.18
-Date:   Fri, 11 Feb 2022 14:52:14 +0100
-Message-Id: <cover.1644587209.git.geert+renesas@glider.be>
+Subject: [GIT PULL 1/4] Renesas ARM defconfig updates for v5.18
+Date:   Fri, 11 Feb 2022 14:52:11 +0100
+Message-Id: <cover.1644587198.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <cover.1644587197.git.geert+renesas@glider.be>
 References: <cover.1644587197.git.geert+renesas@glider.be>
@@ -51,23 +51,29 @@ The following changes since commit e783362eb54cd99b2cac8b3a9aeac942e6f6ac07:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-dt-bindings-for-v5.18-tag1
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel.git tags/renesas-arm-defconfig-for-v5.18-tag1
 
-for you to fetch changes up to 4b4a0fd666303a06bbe159552bc055b490b77cdc:
+for you to fetch changes up to 2e8a3335472461927e57d1741ccf1791ff416075:
 
-  dt-bindings: power: renesas,rzg2l-sysc: Document RZ/V2L SoC (2022-01-24 10:45:14 +0100)
-
-----------------------------------------------------------------
-Renesas DT binding updates for v5.18
-
-  - Document support for the new RZ/V2L SoC and the RZ/V2L SMARC EVK
-    board.
+  arm64: defconfig: Enable additional support for Renesas platforms (2022-02-02 09:12:40 +0100)
 
 ----------------------------------------------------------------
-Biju Das (2):
-      dt-bindings: arm: renesas: Document Renesas RZ/V2L SoC on SMARC EVK
-      dt-bindings: power: renesas,rzg2l-sysc: Document RZ/V2L SoC
+Renesas ARM defconfig updates for v5.18
 
- Documentation/devicetree/bindings/arm/renesas.yaml              | 9 +++++++++
- Documentation/devicetree/bindings/power/renesas,rzg2l-sysc.yaml | 7 ++++---
- 2 files changed, 13 insertions(+), 3 deletions(-)
+  - Enable the new Audio Graph Card2 driver which can handle sound cards
+    more flexibly in the arm64 defconfig,
+  - Disable unneeded 8250 serial options in shmobile_defconfig,
+  - Enable additional support for Renesas platforms in the arm64
+    defconfig.
+
+----------------------------------------------------------------
+Geert Uytterhoeven (2):
+      ARM: shmobile: defconfig: Disable unneeded 8250 serial options
+      arm64: defconfig: Enable additional support for Renesas platforms
+
+Kuninori Morimoto (1):
+      arm64: defconfig: Enable Audio Graph Card2 driver
+
+ arch/arm/configs/shmobile_defconfig | 4 ++++
+ arch/arm64/configs/defconfig        | 7 +++++++
+ 2 files changed, 11 insertions(+)
