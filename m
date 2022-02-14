@@ -2,181 +2,172 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B08C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Feb 2022 11:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C97C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 14 Feb 2022 11:24:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1350494AbiBNLQB (ORCPT
+        id S1351144AbiBNLYw convert rfc822-to-8bit (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 14 Feb 2022 06:16:01 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:45942 "EHLO
+        Mon, 14 Feb 2022 06:24:52 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1350694AbiBNLPu (ORCPT
+        with ESMTP id S1351226AbiBNLX7 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 14 Feb 2022 06:15:50 -0500
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D03496C1FE;
-        Mon, 14 Feb 2022 02:45:48 -0800 (PST)
-Received: by mail-ua1-f43.google.com with SMTP id 4so5162217uaf.0;
-        Mon, 14 Feb 2022 02:45:48 -0800 (PST)
+        Mon, 14 Feb 2022 06:23:59 -0500
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6AAC7E0AA;
+        Mon, 14 Feb 2022 02:59:32 -0800 (PST)
+Received: by mail-qv1-f50.google.com with SMTP id a19so14432712qvm.4;
+        Mon, 14 Feb 2022 02:59:32 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wpsKiepJz/NjXSBpI+epGj0sOrly3NjEOR9KULzKccQ=;
-        b=bE5DmghwEdFI+7Y7rHMw2XGuNaY5jJtASWRRJ/zwK3nGXgIHodO0GZEd+gU/jSpr2i
-         +3ULrZQXfi4gs6bSodxmPfOvtWToxTr27f/7q9dmxvmmTdIPo4vNTEOGoLvaH9kz4jZe
-         fsdOXo9fmeB078oiU5Pt/FQZgfpIN81tdbi96JKLJD60sahfByHkfznBD9JY5bS8szem
-         HynGVT0OqH83yzp84jvxvpMLiLlOlJQvwh1CYm1JB3zXN5W2BCfY89B9HHQuE+0umdqo
-         m6JN/qnfm07wAOUkeZ9Zryj6v8mEHcAB+HdHxlHVAiB2uoYGPjP+SaDN4Vm1G9o/qHqA
-         TngA==
-X-Gm-Message-State: AOAM533WxwE6PHRT5C7ItEIHCgN641mWkS/q6RtlNGYoyOTeVJDuOHAB
-        quUAgJxDzdSldAz54eG5BL4G9niyafMZlQ==
-X-Google-Smtp-Source: ABdhPJzPHngeLFoB4phNLjn73R4ONFF5aDIHpjpxsEGDZqwGf5TJmsPxWC9P8nsJL0m9WvWPR/aRUg==
-X-Received: by 2002:ab0:7183:: with SMTP id l3mr238501uao.80.1644835547819;
-        Mon, 14 Feb 2022 02:45:47 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id v13sm1758493vsr.10.2022.02.14.02.45.47
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=3zUaM8opKL0LG20PPLjLO0sGhx6OMEFs8RjHjfjsiY4=;
+        b=tzYW5L5xOK2xjgIhwKD7wo4utCRQktTYnmyF5KtC7nyd4QwxINuVYG0oZDuj2UWxgT
+         v/aCYx8fYJ460CRM8cqFGhvZWVTV32Txdva7EilCtR5KuJUaUdqVVS7A7bSNU3h32VJ+
+         2pJ2Y3tGDfNi2ZOUy2aWpZT0nVb7NeQpDeHk76U1HFWgRfZgnwSl3z8nfQ4JYELBC7w+
+         anK5B90Xh4HPCL5PMFl7xyPXyFTTOvibl637EXBhEt2cmJo4/fZJ0Y71K7/l41QRDnHU
+         eA/djqj4anfQA78O8QEI0s/RYo5qs13hiZUR71hMLnibfSqINLjWfOOnZb42aq7YUf4q
+         CRrQ==
+X-Gm-Message-State: AOAM531hvoqH7tmhpaGYLCsoe+Zw1pr4CRNoNkqjMA02M0yksh9tEj9K
+        nnVGq0KJ/mQRARxLUWcaA+SwQIlmvrkhXw==
+X-Google-Smtp-Source: ABdhPJwrRq7LQh4v5o0CPVNGHtwumDUPKtYShp4qDGuprC6H2gTwWZ7lqh2fqI8sviBIFGzuhsrVZw==
+X-Received: by 2002:a1f:9092:: with SMTP id s140mr849683vkd.38.1644829287597;
+        Mon, 14 Feb 2022 01:01:27 -0800 (PST)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id o2sm1719696vke.47.2022.02.14.01.01.26
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Feb 2022 02:45:47 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id e26so1915004vso.3;
-        Mon, 14 Feb 2022 02:45:47 -0800 (PST)
-X-Received: by 2002:a05:6102:440d:: with SMTP id df13mr1050592vsb.5.1644835547102;
- Mon, 14 Feb 2022 02:45:47 -0800 (PST)
+        Mon, 14 Feb 2022 01:01:27 -0800 (PST)
+Received: by mail-vk1-f171.google.com with SMTP id bj24so2718190vkb.8;
+        Mon, 14 Feb 2022 01:01:26 -0800 (PST)
+X-Received: by 2002:a1f:7307:: with SMTP id o7mr818150vkc.0.1644829286141;
+ Mon, 14 Feb 2022 01:01:26 -0800 (PST)
 MIME-Version: 1.0
-References: <20220208183511.2925304-1-jjhiblot@traphandler.com> <20220208183511.2925304-7-jjhiblot@traphandler.com>
-In-Reply-To: <20220208183511.2925304-7-jjhiblot@traphandler.com>
+References: <20220212201631.12648-1-s.shtylyov@omp.ru> <20220212201631.12648-2-s.shtylyov@omp.ru>
+ <20220214071351.pcvstrzkwqyrg536@pengutronix.de>
+In-Reply-To: <20220214071351.pcvstrzkwqyrg536@pengutronix.de>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 14 Feb 2022 11:45:36 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUCT-qwhN53mRnAUox2pqw+Y5-7Gw5EbC+-HCF054kkgQ@mail.gmail.com>
-Message-ID: <CAMuHMdUCT-qwhN53mRnAUox2pqw+Y5-7Gw5EbC+-HCF054kkgQ@mail.gmail.com>
-Subject: Re: [PATCH v2 6/6] clk: renesas: r9a06g032: Disable the watchdog
- reset sources when halting
-To:     Jean-Jacques Hiblot <jjhiblot@traphandler.com>
-Cc:     linux-renesas-soc@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-watchdog@vger.kernel.org
+Date:   Mon, 14 Feb 2022 10:01:14 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWi8gno_FBbc=AwsdRtDJik8_bANjQrrRtUOOBRjFN=KA@mail.gmail.com>
+Message-ID: <CAMuHMdWi8gno_FBbc=AwsdRtDJik8_bANjQrrRtUOOBRjFN=KA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] platform: make platform_get_irq_optional() optional
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Sergey Shtylyov <s.shtylyov@omp.ru>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Jiri Slaby <jirislaby@kernel.org>, linux-iio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Amit Kucheria <amitk@kernel.org>, alsa-devel@alsa-project.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-phy@lists.infradead.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-gpio@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Guenter Roeck <groeck@chromium.org>, linux-spi@vger.kernel.org,
+        Lee Jones <lee.jones@linaro.org>,
+        openipmi-developer@lists.sourceforge.net,
+        Peter Korsgaard <peter@korsgaard.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        kvm@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-serial@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        platform-driver-x86@vger.kernel.org, linux-pwm@vger.kernel.org,
+        Zha Qipeng <qipeng.zha@intel.com>,
+        Corey Minyard <minyard@acm.org>, linux-pm@vger.kernel.org,
+        John Garry <john.garry@huawei.com>,
+        William Breathitt Gray <vilhelm.gray@gmail.com>,
+        Mark Gross <markgross@kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Takashi Iwai <tiwai@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Benson Leung <bleung@chromium.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Mun Yew Tham <mun.yew.tham@intel.com>,
+        Eric Auger <eric.auger@redhat.com>, netdev@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Cornelia Huck <cohuck@redhat.com>, linux-mmc@vger.kernel.org,
+        Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Oleksij Rempel <linux@rempel-privat.de>,
+        linux-renesas-soc@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Brian Norris <computersforpeace@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Hi Jean-Jacques,
+Hi Uwe,
 
-CC watchdog people, who only received some patches.
-
-On Tue, Feb 8, 2022 at 7:35 PM Jean-Jacques Hiblot
-<jjhiblot@traphandler.com> wrote:
-> The watchdog reset sources must be disabled when the system is halted.
-> Otherwise the watchdogs will trigger a reset if they have been armed.
+On Mon, Feb 14, 2022 at 8:29 AM Uwe Kleine-König
+<u.kleine-koenig@pengutronix.de> wrote:
+> On Sat, Feb 12, 2022 at 11:16:30PM +0300, Sergey Shtylyov wrote:
+> > This patch is based on the former Andy Shevchenko's patch:
+> >
+> > https://lore.kernel.org/lkml/20210331144526.19439-1-andriy.shevchenko@linux.intel.com/
+> >
+> > Currently platform_get_irq_optional() returns an error code even if IRQ
+> > resource simply has not been found.  It prevents the callers from being
+> > error code agnostic in their error handling:
+> >
+> >       ret = platform_get_irq_optional(...);
+> >       if (ret < 0 && ret != -ENXIO)
+> >               return ret; // respect deferred probe
+> >       if (ret > 0)
+> >               ...we get an IRQ...
+> >
+> > All other *_optional() APIs seem to return 0 or NULL in case an optional
+> > resource is not available.  Let's follow this good example, so that the
+> > callers would look like:
+> >
+> >       ret = platform_get_irq_optional(...);
+> >       if (ret < 0)
+> >               return ret;
+> >       if (ret > 0)
+> >               ...we get an IRQ...
+> >
+> > Reported-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> > Signed-off-by: Sergey Shtylyov <s.shtylyov@omp.ru>
 >
-> Signed-off-by: Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+> While this patch is better than v1, I still don't like it for the
+> reasons discussed for v1. (i.e. 0 isn't usable as a dummy value which I
+> consider the real advantage for the other _get_optional() functions.)
 
-Thanks for your patch!
+IMHO the real advantage is the simplified error handling, which is the
+area where most of the current bugs are. So I applaud the core change.
 
-[inserting changelog]
+Also IMHO, the dummy value handling is a red herring.  Contrary to
+optional clocks and resets, a missing optional interrupt does not
+always mean there is nothing to do: in case of polling, something
+else must definitely be done.  So even if request_irq() would accept
+a dummy interrupt zero and just do nothing, it would give the false
+impression that that is all there is to do, while an actual check
+for zero with polling code handling may still need to be present,
+thus leading to more not less bugs.
 
-| Changes v1 -> v2:
-| * Modified the clock driver to not enable the watchdog reset sources.
-|   On other renesas platforms, those bits are by the bootloader. The
-|   watchdog reset sources are still disabled when the platform is halted
-|   to prevent a watchdog reset.
+> Apart from that, I think the subject is badly chosen. With "Make
+> somefunc() optional" I would expect that you introduce a Kconfig symbol
+> that results in the function not being available when disabled.
 
-I still have my doubts about this part. So on halt, you override the
-policy configured by the boot loader, which means the watchdog is no
-longer triggered on halt.
-
-From a system perspective, the system can be in five states:
-  1. Running,
-  2. Crashed/lock-ed up,
-  3. Halt,
-  4. Reboot,
-  5. Poweroff.
-
-Now, from a policy perspective, what is the difference between a
-system that crashes or locks up, and a system that halts?
-I.e. should the system reboot on halt, or not?
-
-I think halting a system where the watchdog has been activated makes
-no sense, and the user either wants to explicitly reboot the system, or
-power it off, but never halt it.  So I think this patch is not needed.
-
-Watchdog people: what is your opinion?
-Thanks!
-
-> --- a/drivers/clk/renesas/r9a06g032-clocks.c
-> +++ b/drivers/clk/renesas/r9a06g032-clocks.c
-> @@ -129,6 +129,11 @@ enum { K_GATE = 0, K_FFC, K_DIV, K_BITSEL, K_DUALGATE };
->
->  #define R9A06G032_CLOCK_COUNT          (R9A06G032_UART_GROUP_34567 + 1)
->
-> +#define R9A06G032_SYSCTRL_REG_RSTEN            0x120
-> +#define WDA7RST1       BIT(2)
-> +#define WDA7RST0       BIT(1)
-> +#define MRESET         BIT(0)
-> +
->  static const struct r9a06g032_clkdesc r9a06g032_clocks[] = {
->         D_ROOT(CLKOUT, "clkout", 25, 1),
->         D_ROOT(CLK_PLL_USB, "clk_pll_usb", 12, 10),
-> @@ -893,6 +898,19 @@ static void r9a06g032_clocks_del_clk_provider(void *data)
->         of_clk_del_provider(data);
->  }
->
-> +static void r9a06g032_reset_sources(struct r9a06g032_priv *clocks,
-> +                       uint32_t mask, uint32_t value)
-> +{
-> +       uint32_t rsten;
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(&clocks->lock, flags);
-> +       rsten = readl(clocks->reg);
-> +       rsten = (rsten & ~mask) | (value & mask);
-> +       writel(rsten, clocks->reg + R9A06G032_SYSCTRL_REG_RSTEN);
-> +       spin_unlock_irqrestore(&clocks->lock, flags);
-> +}
-> +
->  static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
-> @@ -910,6 +928,8 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
->         if (!clocks || !clks)
->                 return -ENOMEM;
->
-> +       platform_set_drvdata(pdev, clocks);
-> +
->         spin_lock_init(&clocks->lock);
->
->         clocks->data.clks = clks;
-> @@ -963,9 +983,18 @@ static int __init r9a06g032_clocks_probe(struct platform_device *pdev)
->         if (error)
->                 return error;
->
-> +
->         return r9a06g032_add_clk_domain(dev);
->  }
->
-> +static void r9a06g032_clocks_shutdown(struct platform_device *pdev)
-> +{
-> +       struct r9a06g032_priv *clocks = platform_get_drvdata(pdev);
-> +
-> +       /* Disable the watchdog reset sources */
-> +       r9a06g032_reset_sources(clocks, WDA7RST0 | WDA7RST1, 0);
-> +}
-> +
->  static const struct of_device_id r9a06g032_match[] = {
->         { .compatible = "renesas,r9a06g032-sysctrl" },
->         { }
-> @@ -976,6 +1005,7 @@ static struct platform_driver r9a06g032_clock_driver = {
->                 .name   = "renesas,r9a06g032-sysctrl",
->                 .of_match_table = r9a06g032_match,
->         },
-> +       .shutdown = r9a06g032_clocks_shutdown,
->  };
->
->  static int __init r9a06g032_clocks_init(void)
+Agreed.
 
 Gr{oetje,eeting}s,
 
