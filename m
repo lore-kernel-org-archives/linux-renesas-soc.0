@@ -2,92 +2,123 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 692AEC433EF
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Feb 2022 18:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E18A4C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Feb 2022 21:04:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237459AbiBPSKm (ORCPT
+        id S233705AbiBPVEL (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Feb 2022 13:10:42 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:49726 "EHLO
+        Wed, 16 Feb 2022 16:04:11 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:52406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237454AbiBPSKl (ORCPT
+        with ESMTP id S234064AbiBPVEI (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Feb 2022 13:10:41 -0500
-Received: from mail-lf1-x130.google.com (mail-lf1-x130.google.com [IPv6:2a00:1450:4864:20::130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08D6A2A4A37
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Feb 2022 10:10:28 -0800 (PST)
-Received: by mail-lf1-x130.google.com with SMTP id e5so5347331lfr.9
-        for <linux-renesas-soc@vger.kernel.org>; Wed, 16 Feb 2022 10:10:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20210112.gappssmtp.com; s=20210112;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IcjZSFFwvzH/2up3CoXhhR79DVF3xC2YmgnlBmig55Y=;
-        b=w0bfYwr/yIGgKsMa1Lc2zzEf7dvcqLF1kzRhwu0wytHvdRAS+simDuAOgxyM7Vwzu9
-         tlA5U3ssSqPOn3EMDTDRu2aq9oU+7vOWm6Roq0/pqSQOMdVBM3gbeduVwjmbT2DHWVMb
-         q9D5CEfQHC+J+H/Y7rnP2d/ViEGlk215M49G6LxjPZ3Yv1Gz1UZBEOmnRjhgIuqmvUgU
-         C8Eiuf2J1pQ6sjyI8nRt/GyZ2yP3Kbqx5fXJXA3lcicj7pPDK7CF//nRb9Wy/Et7Qb1y
-         iIZdq5bvjNBVYdqRcmCwQjysllfixuxZE6Oo5rcbxX4XfaY1rB9fH43GUQvoq0ccjNTB
-         HcQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=IcjZSFFwvzH/2up3CoXhhR79DVF3xC2YmgnlBmig55Y=;
-        b=sAWTVcFheU3GJbHHp/yuC8dvqV/INbCM4jYY3sJ0EjWwj7OOcGDCgBhviYQfVMdixI
-         yRJH1zN+8q+77mWQ5btmR7GCbW8sFXAoEjgOxyRxAaKDOpJBw+eMdA6FolYOToUvFts5
-         rP1G9NBs/UuNPcmXiJu32QeUwipkyeAfkUyTCHl9VLJnuQiEsH0mBH0WyuQP4Yel1irS
-         Hd8PlLMB9uiVVCmno9VDszEDNOEkgBemYnqDe8rwZ4TVkR9a28FrcrXWhF4yucchna2d
-         4cyiTW5L0fupWIehEdfSrtKLyA5r6tkg+3eIJlHwEm1kIJhK/yYPkNDVFGXMacfclzwH
-         GR/A==
-X-Gm-Message-State: AOAM531w3TsJJb1DMsBlYuvgLO7qDN/5eDDQlwC/Q/DEvGfZirb457oa
-        WVD8fxH3Uuk/aYjqoQMErg9t2Q==
-X-Google-Smtp-Source: ABdhPJyHHJ2z98x3FxWyYQVGxbdwLK7ZNxTg/1MKt2UFEenBVMHIcz9Wxy7OW5QZqcMRz5JB8DYs3Q==
-X-Received: by 2002:a05:6512:1507:b0:443:7e88:ce57 with SMTP id bq7-20020a056512150700b004437e88ce57mr2877346lfb.659.1645035026383;
-        Wed, 16 Feb 2022 10:10:26 -0800 (PST)
-Received: from cobook.home (nikaet.starlink.ru. [94.141.168.29])
-        by smtp.gmail.com with ESMTPSA id y18sm567909ljd.13.2022.02.16.10.10.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Feb 2022 10:10:25 -0800 (PST)
-From:   Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH] arm64: dts: renesas: ulcb-kf: fix wrong comment
-Date:   Wed, 16 Feb 2022 21:10:04 +0300
-Message-Id: <20220216181003.114049-1-nikita.yoush@cogentembedded.com>
-X-Mailer: git-send-email 2.30.2
+        Wed, 16 Feb 2022 16:04:08 -0500
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::228])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E82742B0B23;
+        Wed, 16 Feb 2022 13:03:47 -0800 (PST)
+Received: (Authenticated sender: jacopo@jmondi.org)
+        by mail.gandi.net (Postfix) with ESMTPSA id C478E1BF209;
+        Wed, 16 Feb 2022 21:03:44 +0000 (UTC)
+From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
+To:     niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
+Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        tomi.valkeinen@ideasonboard.com, linux-media@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 01/10] media: adv748x: Add flags to adv748x_subdev_init()
+Date:   Wed, 16 Feb 2022 22:04:38 +0100
+Message-Id: <20220216210447.481006-2-jacopo+renesas@jmondi.org>
+X-Mailer: git-send-email 2.35.0
+In-Reply-To: <20220216210447.481006-1-jacopo+renesas@jmondi.org>
+References: <20220216210447.481006-1-jacopo+renesas@jmondi.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Fix comment referencing salvator board, likely a copy-paste leftover.
+Add a flags parameter to the adv748x_subdev_init() function that
+allows to pass additional flags to the v4l2_subdevice.
 
-ulcb-kf.dtsi has nothing to do with salvator.
+This will be used to identify the CSI-2 subdevices as multiplexed.
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 ---
- arch/arm64/boot/dts/renesas/ulcb-kf.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/i2c/adv748x/adv748x-afe.c  | 2 +-
+ drivers/media/i2c/adv748x/adv748x-core.c | 4 ++--
+ drivers/media/i2c/adv748x/adv748x-csi2.c | 2 +-
+ drivers/media/i2c/adv748x/adv748x-hdmi.c | 2 +-
+ drivers/media/i2c/adv748x/adv748x.h      | 2 +-
+ 5 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-index d122e645a892..40147920bdf7 100644
---- a/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-+++ b/arch/arm64/boot/dts/renesas/ulcb-kf.dtsi
-@@ -413,7 +413,7 @@ &sound_clk_pins
- 		     &sound_pcm_pins>;
+diff --git a/drivers/media/i2c/adv748x/adv748x-afe.c b/drivers/media/i2c/adv748x/adv748x-afe.c
+index 02eabe10ab97..0d05e8a8887f 100644
+--- a/drivers/media/i2c/adv748x/adv748x-afe.c
++++ b/drivers/media/i2c/adv748x/adv748x-afe.c
+@@ -510,7 +510,7 @@ int adv748x_afe_init(struct adv748x_afe *afe)
+ 	afe->curr_norm = V4L2_STD_NTSC_M;
  
- 	ports {
--		/* rsnd_port0/1 are on salvator-common */
-+		/* rsnd_port0/1 are defined in ulcb.dtsi */
- 		rsnd_port2: port@2 {
- 			reg = <2>;
- 			rsnd_for_pcm3168a_play: endpoint {
+ 	adv748x_subdev_init(&afe->sd, state, &adv748x_afe_ops,
+-			    MEDIA_ENT_F_ATV_DECODER, "afe");
++			    MEDIA_ENT_F_ATV_DECODER, 0, "afe");
+ 
+ 	/* Identify the first connector found as a default input if set */
+ 	for (i = ADV748X_PORT_AIN0; i <= ADV748X_PORT_AIN7; i++) {
+diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+index 4e54148147b9..0961b1468465 100644
+--- a/drivers/media/i2c/adv748x/adv748x-core.c
++++ b/drivers/media/i2c/adv748x/adv748x-core.c
+@@ -583,10 +583,10 @@ static int __maybe_unused adv748x_resume_early(struct device *dev)
+ 
+ void adv748x_subdev_init(struct v4l2_subdev *sd, struct adv748x_state *state,
+ 			 const struct v4l2_subdev_ops *ops, u32 function,
+-			 const char *ident)
++			 u32 flags, const char *ident)
+ {
+ 	v4l2_subdev_init(sd, ops);
+-	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
++	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | flags;
+ 
+ 	/* the owner is the same as the i2c_client's driver owner */
+ 	sd->owner = state->dev->driver->owner;
+diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
+index 589e9644fcdc..6cbb47a715ab 100644
+--- a/drivers/media/i2c/adv748x/adv748x-csi2.c
++++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
+@@ -313,7 +313,7 @@ int adv748x_csi2_init(struct adv748x_state *state, struct adv748x_csi2 *tx)
+ 		return 0;
+ 
+ 	adv748x_subdev_init(&tx->sd, state, &adv748x_csi2_ops,
+-			    MEDIA_ENT_F_VID_IF_BRIDGE,
++			    MEDIA_ENT_F_VID_IF_BRIDGE, 0,
+ 			    is_txa(tx) ? "txa" : "txb");
+ 
+ 	/* Ensure that matching is based upon the endpoint fwnodes */
+diff --git a/drivers/media/i2c/adv748x/adv748x-hdmi.c b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+index 52fa7bd75660..535a21b3c350 100644
+--- a/drivers/media/i2c/adv748x/adv748x-hdmi.c
++++ b/drivers/media/i2c/adv748x/adv748x-hdmi.c
+@@ -732,7 +732,7 @@ int adv748x_hdmi_init(struct adv748x_hdmi *hdmi)
+ 	hdmi->aspect_ratio.denominator = 9;
+ 
+ 	adv748x_subdev_init(&hdmi->sd, state, &adv748x_ops_hdmi,
+-			    MEDIA_ENT_F_IO_DTV, "hdmi");
++			    MEDIA_ENT_F_IO_DTV, 0, "hdmi");
+ 
+ 	hdmi->pads[ADV748X_HDMI_SINK].flags = MEDIA_PAD_FL_SINK;
+ 	hdmi->pads[ADV748X_HDMI_SOURCE].flags = MEDIA_PAD_FL_SOURCE;
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index 31bac06d46b5..92c8caee6a42 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -426,7 +426,7 @@ static inline struct v4l2_subdev *adv748x_get_remote_sd(struct media_pad *pad)
+ 
+ void adv748x_subdev_init(struct v4l2_subdev *sd, struct adv748x_state *state,
+ 			 const struct v4l2_subdev_ops *ops, u32 function,
+-			 const char *ident);
++			 u32 flags, const char *ident);
+ 
+ int adv748x_register_subdevs(struct adv748x_state *state,
+ 			     struct v4l2_device *v4l2_dev);
 -- 
-2.30.2
+2.35.0
 
