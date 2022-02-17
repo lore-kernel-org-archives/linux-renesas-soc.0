@@ -2,166 +2,137 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 939A7C433F5
-	for <linux-renesas-soc@archiver.kernel.org>; Wed, 16 Feb 2022 21:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04CF7C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Thu, 17 Feb 2022 03:24:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234296AbiBPVFD (ORCPT
+        id S232676AbiBQDYr (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Wed, 16 Feb 2022 16:05:03 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:53016 "EHLO
+        Wed, 16 Feb 2022 22:24:47 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:56468 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234157AbiBPVEI (ORCPT
+        with ESMTP id S231846AbiBQDYr (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Wed, 16 Feb 2022 16:04:08 -0500
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF2A52B0B2E;
-        Wed, 16 Feb 2022 13:03:51 -0800 (PST)
-Received: (Authenticated sender: jacopo@jmondi.org)
-        by mail.gandi.net (Postfix) with ESMTPSA id 69F071BF208;
-        Wed, 16 Feb 2022 21:03:49 +0000 (UTC)
-From:   Jacopo Mondi <jacopo+renesas@jmondi.org>
-To:     niklas.soderlund@ragnatech.se, laurent.pinchart@ideasonboard.com
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        tomi.valkeinen@ideasonboard.com, linux-media@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH 04/10] media: adv748x: Implement .get_frame_desc()
-Date:   Wed, 16 Feb 2022 22:04:41 +0100
-Message-Id: <20220216210447.481006-5-jacopo+renesas@jmondi.org>
-X-Mailer: git-send-email 2.35.0
-In-Reply-To: <20220216210447.481006-1-jacopo+renesas@jmondi.org>
-References: <20220216210447.481006-1-jacopo+renesas@jmondi.org>
+        Wed, 16 Feb 2022 22:24:47 -0500
+Received: from mail-ej1-x62f.google.com (mail-ej1-x62f.google.com [IPv6:2a00:1450:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35CE12804FA;
+        Wed, 16 Feb 2022 19:24:33 -0800 (PST)
+Received: by mail-ej1-x62f.google.com with SMTP id gb39so3884504ejc.1;
+        Wed, 16 Feb 2022 19:24:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:mime-version:user-agent:subject:content-language:to
+         :cc:references:from:in-reply-to:content-transfer-encoding;
+        bh=wPqUuIAoRjn9OQTO6LbxiDyz2F3AQNhOn0jv2s05Fp8=;
+        b=TeSEffi6/OQYJmLEScTxFlStVCJNxtZr/Abuup7uIIkKQ5lgextlIKIpMjCz/SLfyA
+         aRZ8+bBL976wrjqXFwPVBzLhz4Zq2+rsCfenHEgIPCjkaJpAKLOJAPgiOBbO73HMVg2J
+         g+Nl46qVg02XmrwwFbcruts0Qtusv2UjYNWLsVLto3bx7ul8XbFdOpWfvr6VppAgNxtr
+         uXrojuuzInMsidfMdYPHcuXq/mwAOtdpFXDiWrhEQ61UPN+Zy3CXxrIrQvt7B1nxL6Rj
+         rMy7xQYQGFllIs6yEUFUEW8lwpAVWv0+HlgjYYM/6auyNma4lQ9SZZQaZ04pzUNpS18W
+         tdbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=x-gm-message-state:message-id:date:mime-version:user-agent:subject
+         :content-language:to:cc:references:from:in-reply-to
+         :content-transfer-encoding;
+        bh=wPqUuIAoRjn9OQTO6LbxiDyz2F3AQNhOn0jv2s05Fp8=;
+        b=NOjipIeyxgpjPwFz8e9qGdzApA21Oo1qVoXx5rd//Zx7sk0QrDsEPUTdgqpwIRTJVk
+         KBAGGHYJ2VhFsUCfxn/G0G4lc5kl0XSgDpauUMgXIALP96FNDsjnyPlbt+AZQJY6irP7
+         WQPgb/hnAIHxzcSnTHOJrkJ/vggHAuIjZzmGtTbWV6OPGOfiUQsBcjq9c/tE+kthvdaS
+         rJfJ5i4e6bjwO2ebSh06u+E+BV38w7wOliKfA6GsARkQu++O8HnxrA/YKMz1z/slShe8
+         1vgdA2UytjAX3zOOoMJax4Ov7boEIGwzRMX6yFjdL6sMwqwXBRp6W6Fwe1G8CsUQC3Af
+         xhzQ==
+X-Gm-Message-State: AOAM533re0mYGf/fWebhtVypsKpBuIycOrF5XGPTa5XcAJaqTrc8cMDa
+        PgfcqpTrMXJeEkHBw+i0oYo=
+X-Google-Smtp-Source: ABdhPJxDbe5Dx1vwRMLVcC+X4KbbjnlfAS4UTiNu4iV9dE93aTyxc67jBKVuR96iA8cc5UMxXv+73Q==
+X-Received: by 2002:a17:906:7714:b0:6ba:8a6a:b464 with SMTP id q20-20020a170906771400b006ba8a6ab464mr785885ejm.613.1645068271668;
+        Wed, 16 Feb 2022 19:24:31 -0800 (PST)
+Received: from [192.168.1.4] (ip-89-176-112-137.net.upcbroadband.cz. [89.176.112.137])
+        by smtp.gmail.com with ESMTPSA id dz8sm2663258edb.96.2022.02.16.19.24.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Feb 2022 19:24:31 -0800 (PST)
+Message-ID: <912a2a2a-b8f6-6819-8974-ab2db2cf0f77@gmail.com>
+Date:   Thu, 17 Feb 2022 04:24:24 +0100
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.5.1
+Subject: Re: [PATCH v3 2/2] PCI: rcar: Return all Fs from read which triggered
+ an exception
+Content-Language: en-US
+To:     =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     linux-pci@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+References: <20220122221554.196311-1-marek.vasut@gmail.com>
+ <20220122221554.196311-2-marek.vasut@gmail.com>
+ <20220216115044.kslb47pup4dsukgh@pali>
+From:   Marek Vasut <marek.vasut@gmail.com>
+In-Reply-To: <20220216115044.kslb47pup4dsukgh@pali>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Implement the get_frame_desc subdev pad operation.
+On 2/16/22 12:50, Pali Rohár wrote:
 
-Implement the get_frame_desc pad operation to allow retrieving the
-stream configuration of the adv748x csi2 subdevice.
+Hi,
 
-Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
----
- drivers/media/i2c/adv748x/adv748x-csi2.c | 93 ++++++++++++++++++++++++
- 1 file changed, 93 insertions(+)
+>> In case the controller is transitioning to L1 in rcar_pcie_config_access(),
+>> any read/write access to PCIECDR triggers asynchronous external abort. This
+>> is because the transition to L1 link state must be manually finished by the
+>> driver. The PCIe IP can transition back from L1 state to L0 on its own.
+>>
+>> The current asynchronous external abort hook implementation restarts
+>> the instruction which finally triggered the fault, which can be a
+>> different instruction than the read/write instruction which started
+>> the faulting access. Usually the instruction which finally triggers
+>> the fault is one which has some data dependency on the result of the
+>> read/write. In case of read, the read value after fixup is undefined,
+>> while a read value of faulting read should be all Fs.
+>>
+>> It is possible to enforce the fault using 'isb' instruction placed
+>> right after the read/write instruction which started the faulting
+>> access. Add custom register accessors which perform the read/write
+>> followed immediately by 'isb'.
+>>
+>> This way, the fault always happens on the 'isb' and in case of read,
+>> which is located one instruction before the 'isb', it is now possible
+>> to fix up the return value of the read in the asynchronous external
+>> abort hook and make that read return all Fs.
+> 
+> I'm looking at this again and I do not think that this is reliable.
 
-diff --git a/drivers/media/i2c/adv748x/adv748x-csi2.c b/drivers/media/i2c/adv748x/adv748x-csi2.c
-index 549c3cd96006..9824ebe44eb1 100644
---- a/drivers/media/i2c/adv748x/adv748x-csi2.c
-+++ b/drivers/media/i2c/adv748x/adv748x-csi2.c
-@@ -14,6 +14,50 @@
- 
- #include "adv748x.h"
- 
-+/* Describes a format bit depth and CSI-2 defined Data Type. */
-+struct adv748x_csi2_format_info {
-+	u8 dt;
-+	u8 bpp;
-+};
-+
-+static int adv748x_csi2_get_format_info(struct adv748x_csi2 *tx,
-+					u32 mbus_code,
-+					struct adv748x_csi2_format_info *fmt)
-+{
-+	switch (mbus_code) {
-+	case MEDIA_BUS_FMT_YUYV8_1X16:
-+	case MEDIA_BUS_FMT_YUYV8_2X8:
-+		fmt->dt = 0x1e;
-+		fmt->bpp = 16;
-+		break;
-+	case MEDIA_BUS_FMT_YUYV10_2X10:
-+	case MEDIA_BUS_FMT_YUYV10_1X20:
-+		fmt->dt = 0x1f;
-+		fmt->bpp = 20;
-+		break;
-+	case MEDIA_BUS_FMT_RGB565_1X16:
-+	case MEDIA_BUS_FMT_RGB565_2X8_LE:
-+	case MEDIA_BUS_FMT_RGB565_2X8_BE:
-+		fmt->dt = 0x22;
-+		fmt->bpp = 16;
-+		break;
-+	case MEDIA_BUS_FMT_RGB666_1X18:
-+		fmt->dt = 0x23;
-+		fmt->bpp = 18;
-+		break;
-+	case MEDIA_BUS_FMT_RGB888_1X24:
-+		fmt->dt = 0x24;
-+		fmt->bpp = 24;
-+		break;
-+	default:
-+		dev_err(tx->state->dev,
-+			"Unsupported media bus code: %u\n", mbus_code);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- int adv748x_csi2_set_virtual_channel(struct adv748x_csi2 *tx, unsigned int vc)
- {
- 	return tx_write(tx, ADV748X_CSI_VC_REF, vc << ADV748X_CSI_VC_REF_SHIFT);
-@@ -248,11 +292,60 @@ static int adv748x_csi2_get_mbus_config(struct v4l2_subdev *sd, unsigned int pad
- 	return 0;
- }
- 
-+static int adv748x_csi2_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
-+				       struct v4l2_mbus_frame_desc *fd)
-+{
-+	struct adv748x_csi2 *tx = adv748x_sd_to_csi2(sd);
-+	struct adv748x_csi2_format_info info = {};
-+	struct v4l2_mbus_frame_desc_entry *entry;
-+	struct v4l2_subdev_route *route;
-+	struct v4l2_subdev_state *state;
-+	struct v4l2_mbus_framefmt *fmt;
-+	int ret;
-+
-+	if (pad != ADV748X_CSI2_SOURCE)
-+		return -EINVAL;
-+
-+	state = v4l2_subdev_lock_active_state(sd);
-+
-+	/* A single route is available. */
-+	route = &state->routing.routes[0];
-+	fmt = v4l2_state_get_stream_format(state, pad, route->source_stream);
-+	if (!fmt) {
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	ret = adv748x_csi2_get_format_info(tx, fmt->code, &info);
-+	if (ret)
-+		goto out;
-+
-+	memset(fd, 0, sizeof(*fd));
-+
-+	/* A single stream is available. */
-+	fd->num_entries = 1;
-+	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
-+
-+	entry = &fd->entry[0];
-+	entry->stream = 0;
-+	entry->flags = V4L2_MBUS_FRAME_DESC_FL_LEN_MAX;
-+	entry->length = fmt->width * fmt->height * info.bpp / 8;
-+	entry->pixelcode = fmt->code;
-+	entry->bus.csi2.vc = route->source_stream;
-+	entry->bus.csi2.dt = info.dt;
-+
-+out:
-+	v4l2_subdev_unlock_state(state);
-+
-+	return ret;
-+}
-+
- static const struct v4l2_subdev_pad_ops adv748x_csi2_pad_ops = {
- 	.init_cfg = adv748x_csi2_init_cfg,
- 	.get_fmt = v4l2_subdev_get_fmt,
- 	.set_fmt = adv748x_csi2_set_format,
- 	.get_mbus_config = adv748x_csi2_get_mbus_config,
-+	.get_frame_desc = adv748x_csi2_get_frame_desc,
- };
- 
- /* -----------------------------------------------------------------------------
--- 
-2.35.0
+Are you still running into any problems on your hardware with these 
+patches applied ?
 
+> Asynchronous aborts are by definition asynchronous. Placing isb looks
+> like a hack to decrease probability that asynchronous abort would be
+> triggered at wrong time.
+
+That is exactly what this patch fixes, the ISB enforces the async 
+exception at the right moment so it can be fixed up in the fixup handler 
+(thanks Arnd).
+
+> Marek: Cannot you change the code to trigger proper synchronous abort
+> for this operation? If this is ARMv7 system, what about trying to change
+> memory mapping where is the accessing address to strongly-ordered?
+> Writing to strongly-ordered ARMv7 mapping could not report asynchronous
+> aborts anymore, but I'm not sure.
+
+No, last time I tried tweaking the mapping, that didn't lead to sync aborts.
+
+> Marek: Are you sure that also ldr instruction is causing asynchronous
+> abort? This is strange as normally load from memory mapped config space
+> could not finish earlier than data from config space are fetched.
+> Normally these load instructions should cause synchronous abort on data
+> errors.
+
+I am positive LDR triggers async abort on this hardware, since that's 
+how this problem was triggered by Geert.
+
+[...]
