@@ -2,35 +2,35 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B666EC41535
-	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Feb 2022 18:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EC7C433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Fri, 18 Feb 2022 18:12:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235805AbiBRSMw (ORCPT
+        id S239016AbiBRSNA (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Fri, 18 Feb 2022 13:12:52 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35128 "EHLO
+        Fri, 18 Feb 2022 13:13:00 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:35642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239010AbiBRSMw (ORCPT
+        with ESMTP id S239023AbiBRSM6 (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Fri, 18 Feb 2022 13:12:52 -0500
+        Fri, 18 Feb 2022 13:12:58 -0500
 Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::227])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1946836300;
-        Fri, 18 Feb 2022 10:12:33 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3086B35DFC;
+        Fri, 18 Feb 2022 10:12:39 -0800 (PST)
 Received: (Authenticated sender: miquel.raynal@bootlin.com)
-        by mail.gandi.net (Postfix) with ESMTPSA id D612020003;
-        Fri, 18 Feb 2022 18:12:28 +0000 (UTC)
+        by mail.gandi.net (Postfix) with ESMTPSA id 1F65820004;
+        Fri, 18 Feb 2022 18:12:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-        t=1645207950;
+        t=1645207955;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=EGwulRQWUdeID+R0ltPV+hvVeG6IiTvELdB/8Uiez8g=;
-        b=fMvtuvzDTQhJpik9Y3P03fMAIWHf+3oSPDDqzrvFd9cWhkXN1WB/7vhONcNwSb8h76PHKW
-        Jj3YsSSiQOPVZSlnwdA6XtKv/H7AefRCSnItsBGtvtcein7WhM1qSMecGcbL/cnjX2pQJd
-        6p+Ns04xgUddG1qBtBcZv5rafOAMHkF+P6tye8HOSqV1yqdTDe4C4qp67n43tsMyzoNGYh
-        3yTVAmuEvvVs6cTRMjpfkY8KFVbUvo/jns/bfgX7rZ+zQPoYyc82eo9kf0WNI7acKhMROA
-        gbml0rUJqR/4mwK66e/djDRIKvaZCltAxvTeoSkkB+xiij4fOoEgbXx4FIjcXQ==
+        bh=IC8lFvXRL1fNo+5ENEfO2RVo3H7nGIfCsrQqrZ/74nk=;
+        b=jHPHZivsTTsI1vnJ/i/p0Kt78pXiE0v1bZ4Vv3TVpTe/Yd2cyWiZHY9gdFv+AFdRWQzJna
+        FBmqbnPbQOy8SXH19jsFNqRG6FcfVO0Qq5Wt3b3gQL5ZnRwjbp6KTiXY6cOn52W4MPu5Uh
+        Du2f6+boFc4x5F9p5hEqCam5WwHi49CUxcU75xV+rkmBD0Dm6w8u36TS4GHhtSIzbf1PMK
+        PAlfYunut5SR5yTNUtoQVS8tpRiQuCyQE8J3goPLm39Uh0w+XjoIJu8Tqx+HRUYyjUP/zK
+        iiflf5w6cuwHXJe9bK8UCqHr9d3I4fahprv9s526TXWa4//O/sudL9kow1DX1w==
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Viresh Kumar <vireshk@kernel.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
@@ -47,9 +47,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
         Jimmy Lalande <jimmy.lalande@se.com>,
         Laetitia MARIOTTINI <laetitia.mariottini@se.com>,
         Miquel Raynal <miquel.raynal@bootlin.com>
-Subject: [PATCH 1/8] dt-bindings: dma: Introduce RZN1 dmamux bindings
-Date:   Fri, 18 Feb 2022 19:12:19 +0100
-Message-Id: <20220218181226.431098-2-miquel.raynal@bootlin.com>
+Subject: [PATCH 4/8] dma: dmamux: Introduce RZN1 DMA router support
+Date:   Fri, 18 Feb 2022 19:12:22 +0100
+Message-Id: <20220218181226.431098-5-miquel.raynal@bootlin.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20220218181226.431098-1-miquel.raynal@bootlin.com>
 References: <20220218181226.431098-1-miquel.raynal@bootlin.com>
@@ -65,73 +65,211 @@ dmamux register located in the system control area which can take up to
 32 requests (16 per DMA controller). Each DMA channel can be wired to
 two different peripherals.
 
+We need two additional information from the 'dmas' property: the channel
+(bit in the dmamux register) that must be accessed and the value of the
+mux for this channel.
+
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- .../bindings/dma/renesas,rzn1-dmamux.yaml     | 42 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- 2 files changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+ drivers/dma/dw/Makefile |   2 +-
+ drivers/dma/dw/dmamux.c | 175 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 176 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/dma/dw/dmamux.c
 
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
+diff --git a/drivers/dma/dw/Makefile b/drivers/dma/dw/Makefile
+index a6f358ad8591..d8cfbf36b381 100644
+--- a/drivers/dma/dw/Makefile
++++ b/drivers/dma/dw/Makefile
+@@ -4,7 +4,7 @@ dw_dmac_core-y			:= core.o dw.o idma32.o
+ dw_dmac_core-$(CONFIG_ACPI)	+= acpi.o
+ 
+ obj-$(CONFIG_DW_DMAC)		+= dw_dmac.o
+-dw_dmac-y			:= platform.o
++dw_dmac-y			:= platform.o dmamux.o
+ dw_dmac-$(CONFIG_OF)		+= of.o
+ 
+ obj-$(CONFIG_DW_DMAC_PCI)	+= dw_dmac_pci.o
+diff --git a/drivers/dma/dw/dmamux.c b/drivers/dma/dw/dmamux.c
 new file mode 100644
-index 000000000000..e2c82e43b8b1
+index 000000000000..30de776f195e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
-@@ -0,0 +1,42 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/dma/renesas,rzn1-dmamux.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/dma/dw/dmamux.c
+@@ -0,0 +1,175 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2022 Schneider-Electric
++ * Author: Miquel Raynal <miquel.raynal@bootlin.com
++ * Based on TI crossbar driver written by Peter Ujfalusi <peter.ujfalusi@ti.com>
++ */
++#include <linux/slab.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/list.h>
++#include <linux/io.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/of_dma.h>
++#include <linux/soc/renesas/r9a06g032-syscon.h>
 +
-+title: Renesas RZ/N1 DMA mux
++#define RZN1_DMAMUX_LINES	64
 +
-+maintainers:
-+  - Miquel Raynal <miquel.raynal@bootlin.com>
++struct rzn1_dmamux_data {
++	struct dma_router dmarouter;
++	unsigned int dmac_requests;
++	unsigned int dmamux_requests;
++	u32 used_chans;
++	struct mutex lock;
++};
 +
-+allOf:
-+  - $ref: "dma-router.yaml#"
++struct rzn1_dmamux_map {
++	unsigned int req_idx;
++};
 +
-+properties:
-+  compatible:
-+    const: renesas,rzn1-dmamux
++static void rzn1_dmamux_free(struct device *dev, void *route_data)
++{
++	struct rzn1_dmamux_data *dmamux = dev_get_drvdata(dev);
++	struct rzn1_dmamux_map *map = route_data;
 +
-+  '#dma-cells':
-+    const: 6
-+    description:
-+      The first four cells are dedicated to the master DMA controller. The fifth
-+      cell gives the DMA mux bit index that must be set starting from 0. The
-+      sixth cell gives the binary value that must be written there, ie. 0 or 1.
++	dev_dbg(dev, "Unmapping DMAMUX request %u\n", map->req_idx);
 +
-+  dma-masters:
-+    minItems: 1
-+    maxItems: 2
++	mutex_lock(&dmamux->lock);
++	dmamux->used_chans &= ~BIT(map->req_idx);
++	mutex_unlock(&dmamux->lock);
 +
-+  dma-requests:
-+    const: 32
++	kfree(map);
++}
 +
-+additionalProperties: false
++static void *rzn1_dmamux_route_allocate(struct of_phandle_args *dma_spec,
++					struct of_dma *ofdma)
++{
++	struct platform_device *pdev = of_find_device_by_node(ofdma->of_node);
++	struct rzn1_dmamux_data *dmamux = platform_get_drvdata(pdev);
++	struct rzn1_dmamux_map *map;
++	unsigned int master, chan, val;
++	int ret;
 +
-+examples:
-+  - |
-+    dma-router {
-+      compatible = "renesas,rzn1-dmamux";
-+      #dma-cells = <6>;
-+      dma-masters = <&dma0 &dma1>;
-+      dma-requests = <32>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ea3e6c914384..c70c9c39a2f3 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18636,6 +18636,7 @@ SYNOPSYS DESIGNWARE DMAC DRIVER
- M:	Viresh Kumar <vireshk@kernel.org>
- R:	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
- S:	Maintained
-+F:	Documentation/devicetree/bindings/dma/renesas,rzn1-dmamux.yaml
- F:	Documentation/devicetree/bindings/dma/snps,dma-spear1340.yaml
- F:	drivers/dma/dw/
- F:	include/dt-bindings/dma/dw-dmac.h
++	map = kzalloc(sizeof(*map), GFP_KERNEL);
++	if (!map)
++		return ERR_PTR(-ENOMEM);
++
++	if (dma_spec->args_count != 6)
++		return ERR_PTR(-EINVAL);
++
++	chan = dma_spec->args[0];
++	map->req_idx = dma_spec->args[4];
++	val = dma_spec->args[5];
++	dma_spec->args_count -= 2;
++
++	if (chan >= dmamux->dmac_requests) {
++		dev_err(&pdev->dev, "Invalid DMA request line: %d\n", chan);
++		return ERR_PTR(-EINVAL);
++	}
++
++	if (map->req_idx >= dmamux->dmamux_requests ||
++	    map->req_idx % dmamux->dmac_requests != chan) {
++		dev_err(&pdev->dev, "Invalid MUX request line: %d\n", map->req_idx);
++		return ERR_PTR(-EINVAL);
++	}
++
++	/* The of_node_put() will be done in the core for the node */
++	master = map->req_idx < dmamux->dmac_requests ? 0 : 1;
++	dma_spec->np = of_parse_phandle(ofdma->of_node, "dma-masters", master);
++	if (!dma_spec->np) {
++		dev_err(&pdev->dev, "Can't get DMA master\n");
++		return ERR_PTR(-EINVAL);
++	}
++
++	dev_dbg(&pdev->dev, "Mapping DMAMUX request %u to DMAC%u request %u\n",
++		map->req_idx, master, chan);
++
++	mutex_lock(&dmamux->lock);
++	dmamux->used_chans |= BIT(map->req_idx);
++	ret = r9a06g032_syscon_set_dmamux(BIT(map->req_idx),
++					  val ? BIT(map->req_idx) : 0);
++	mutex_unlock(&dmamux->lock);
++	if (ret) {
++		rzn1_dmamux_free(&pdev->dev, map);
++		return ERR_PTR(ret);
++	}
++
++	return map;
++}
++
++static const struct of_device_id rzn1_dmac_match[] __maybe_unused = {
++	{ .compatible = "renesas,rzn1-dma", },
++	{},
++};
++
++static int rzn1_dmamux_probe(struct platform_device *pdev)
++{
++	struct device_node *node = pdev->dev.of_node;
++	const struct of_device_id *match;
++	struct device_node *dmac_node;
++	struct rzn1_dmamux_data *dmamux;
++
++	if (!node)
++		return -ENODEV;
++
++	dmamux = devm_kzalloc(&pdev->dev, sizeof(*dmamux), GFP_KERNEL);
++	if (!dmamux)
++		return -ENOMEM;
++
++	mutex_init(&dmamux->lock);
++
++	dmac_node = of_parse_phandle(node, "dma-masters", 0);
++	if (!dmac_node) {
++		dev_err(&pdev->dev, "Can't get DMA master node\n");
++		return -ENODEV;
++	}
++
++	match = of_match_node(rzn1_dmac_match, dmac_node);
++	if (!match) {
++		dev_err(&pdev->dev, "DMA master is not supported\n");
++		of_node_put(dmac_node);
++		return -EINVAL;
++	}
++
++	if (of_property_read_u32(dmac_node, "dma-requests",
++				 &dmamux->dmac_requests)) {
++		dev_err(&pdev->dev, "Missing DMAC requests information\n");
++		of_node_put(dmac_node);
++		return -EINVAL;
++	}
++	of_node_put(dmac_node);
++
++	if (of_property_read_u32(node, "dma-requests",
++				 &dmamux->dmamux_requests)) {
++		dev_err(&pdev->dev, "Missing DMA mux requests information\n");
++		return -EINVAL;
++	}
++
++	dmamux->dmarouter.dev = &pdev->dev;
++	dmamux->dmarouter.route_free = rzn1_dmamux_free;
++
++	platform_set_drvdata(pdev, dmamux);
++
++	return of_dma_router_register(node, rzn1_dmamux_route_allocate,
++				      &dmamux->dmarouter);
++}
++
++static const struct of_device_id rzn1_dmamux_match[] = {
++	{ .compatible = "renesas,rzn1-dmamux", },
++	{},
++};
++
++static struct platform_driver rzn1_dmamux_driver = {
++	.driver = {
++		.name = "renesas,rzn1-dmamux",
++		.of_match_table = rzn1_dmamux_match,
++	},
++	.probe	= rzn1_dmamux_probe,
++};
++
++static int rzn1_dmamux_init(void)
++{
++	return platform_driver_register(&rzn1_dmamux_driver);
++}
++arch_initcall(rzn1_dmamux_init);
 -- 
 2.27.0
 
