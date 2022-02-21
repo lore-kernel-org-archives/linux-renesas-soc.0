@@ -2,89 +2,89 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FEB1C433FE
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Feb 2022 15:36:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD529C433EF
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Feb 2022 15:44:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379285AbiBUPg3 (ORCPT
+        id S1348987AbiBUPpE (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Feb 2022 10:36:29 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:54914 "EHLO
+        Mon, 21 Feb 2022 10:45:04 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:38612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379284AbiBUPg2 (ORCPT
+        with ESMTP id S1379432AbiBUPoz (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Feb 2022 10:36:28 -0500
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E190F220D9
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Feb 2022 07:36:01 -0800 (PST)
+        Mon, 21 Feb 2022 10:44:55 -0500
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBFDF22B1D
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Feb 2022 07:43:53 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:49dc:a1b5:3fe0:3d2b])
-        by baptiste.telenet-ops.be with bizsmtp
-        id xrby2600B3YJRAw01rbyN8; Mon, 21 Feb 2022 16:35:58 +0100
+        by laurent.telenet-ops.be with bizsmtp
+        id xrjr2600Q3YJRAw01rjrfa; Mon, 21 Feb 2022 16:43:52 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAjF-001TRf-Qz; Mon, 21 Feb 2022 16:35:57 +0100
+        id 1nMAqt-001TTo-Ar; Mon, 21 Feb 2022 16:43:51 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAjF-006Eaf-Ar; Mon, 21 Feb 2022 16:35:57 +0100
+        id 1nMAqs-006EhY-BV; Mon, 21 Feb 2022 16:43:50 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
+Cc:     LUU HOAI <hoai.luu.ub@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2] clk: renesas: r8a779f0: Add PFC clock
-Date:   Mon, 21 Feb 2022 16:35:56 +0100
-Message-Id: <4ef3d3dfe714ad75112e4886efea0b66e40a33bc.1645457502.git.geert+renesas@glider.be>
+Subject: [PATCH v2 02/12] pinctrl: renesas: Add PORT_GP_CFG_19 macros
+Date:   Mon, 21 Feb 2022 16:43:37 +0100
+Message-Id: <f7fc711d065f78911bac1b616880ba3dbc858158.1645457792.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1645457792.git.geert+renesas@glider.be>
+References: <cover.1645457792.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add the module clock used by the Pin Function (PFC/GPIO) controller
-on the Renesas R-Car S4-8 (R8A779F0) SoC.
+Add PORT_GP_CFG_19() and PORT_GP_19() helper macros, to be used by the
+r8a779f0 subdriver.
 
-Extracted from a larger patch in the BSP by LUU HOAI.
+Based on a larger patch in the BSP by LUU HOAI.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-To be queued in renesas-clk-for-v5.18.
-
 v2:
-  - Add Reviewed-by,
-  - Split off from the actual pinctrl patches.
+  - Add Reviewed-by.
 
-v1:
-  - https://lore.kernel.org/r/cover.1642599415.git.geert+renesas@glider.be
+Changes compared to the BSP:
+  - Rework PORT_GP_CFG_20() on top of the new PORT_GP_CFG_19().
 ---
- drivers/clk/renesas/r8a779f0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/pinctrl/renesas/sh_pfc.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index 123c1b01550d97bc..76b441965037798d 100644
---- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -128,6 +128,7 @@ static const struct mssr_mod_clk r8a779f0_mod_clks[] __initconst = {
- 	DEF_MOD("sys-dmac0",	709,	R8A779F0_CLK_S0D3_PER),
- 	DEF_MOD("sys-dmac1",	710,	R8A779F0_CLK_S0D3_PER),
- 	DEF_MOD("wdt",		907,	R8A779F0_CLK_R),
-+	DEF_MOD("pfc0",		915,	R8A779F0_CLK_CL16M),
- };
+diff --git a/drivers/pinctrl/renesas/sh_pfc.h b/drivers/pinctrl/renesas/sh_pfc.h
+index 2bd96b28bb8b49c9..2932c8d4e993509f 100644
+--- a/drivers/pinctrl/renesas/sh_pfc.h
++++ b/drivers/pinctrl/renesas/sh_pfc.h
+@@ -517,9 +517,13 @@ extern const struct sh_pfc_soc_info shx3_pinmux_info;
+ 	PORT_GP_CFG_1(bank, 17, fn, sfx, cfg)
+ #define PORT_GP_18(bank, fn, sfx)	PORT_GP_CFG_18(bank, fn, sfx, 0)
  
- static const unsigned int r8a779f0_crit_mod_clks[] __initconst = {
+-#define PORT_GP_CFG_20(bank, fn, sfx, cfg)				\
++#define PORT_GP_CFG_19(bank, fn, sfx, cfg)				\
+ 	PORT_GP_CFG_18(bank, fn, sfx, cfg),				\
+-	PORT_GP_CFG_1(bank, 18, fn, sfx, cfg),				\
++	PORT_GP_CFG_1(bank, 18, fn, sfx, cfg)
++#define PORT_GP_19(bank, fn, sfx)	PORT_GP_CFG_19(bank, fn, sfx, 0)
++
++#define PORT_GP_CFG_20(bank, fn, sfx, cfg)				\
++	PORT_GP_CFG_19(bank, fn, sfx, cfg),				\
+ 	PORT_GP_CFG_1(bank, 19, fn, sfx, cfg)
+ #define PORT_GP_20(bank, fn, sfx)	PORT_GP_CFG_20(bank, fn, sfx, 0)
+ 
 -- 
 2.25.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
