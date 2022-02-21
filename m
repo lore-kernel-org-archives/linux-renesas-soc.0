@@ -2,160 +2,83 @@ Return-Path: <linux-renesas-soc-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B08E3C4167D
-	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Feb 2022 15:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 035EAC433F5
+	for <linux-renesas-soc@archiver.kernel.org>; Mon, 21 Feb 2022 15:49:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1379466AbiBUPpp (ORCPT
+        id S1379511AbiBUPtW (ORCPT
         <rfc822;linux-renesas-soc@archiver.kernel.org>);
-        Mon, 21 Feb 2022 10:45:45 -0500
-Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:36930 "EHLO
+        Mon, 21 Feb 2022 10:49:22 -0500
+Received: from mxb-00190b01.gslb.pphosted.com ([23.128.96.19]:46084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1379481AbiBUPo4 (ORCPT
+        with ESMTP id S1379480AbiBUPtW (ORCPT
         <rfc822;linux-renesas-soc@vger.kernel.org>);
-        Mon, 21 Feb 2022 10:44:56 -0500
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77EA123BDC
-        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Feb 2022 07:43:54 -0800 (PST)
+        Mon, 21 Feb 2022 10:49:22 -0500
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [IPv6:2a02:1800:120:4::f00:15])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3314E240A4
+        for <linux-renesas-soc@vger.kernel.org>; Mon, 21 Feb 2022 07:48:58 -0800 (PST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed40:49dc:a1b5:3fe0:3d2b])
-        by michel.telenet-ops.be with bizsmtp
-        id xrjr2600Z3YJRAw06rjrUN; Mon, 21 Feb 2022 16:43:52 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id xrow2600X3YJRAw01row3q; Mon, 21 Feb 2022 16:48:56 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
         (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqt-001TTt-Cn; Mon, 21 Feb 2022 16:43:51 +0100
+        id 1nMAvo-001TX9-9Y; Mon, 21 Feb 2022 16:48:56 +0100
 Received: from geert by rox.of.borg with local (Exim 4.93)
         (envelope-from <geert@linux-m68k.org>)
-        id 1nMAqs-006Ei9-Fb; Mon, 21 Feb 2022 16:43:50 +0100
+        id 1nMAvn-006Eqr-PD; Mon, 21 Feb 2022 16:48:55 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@canonical.com>
-Cc:     LUU HOAI <hoai.luu.ub@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org,
+To:     Magnus Damm <magnus.damm@gmail.com>
+Cc:     linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 07/12] pinctrl: renesas: r8a779f0: Add INTC-EX pins, groups, and function
-Date:   Mon, 21 Feb 2022 16:43:42 +0100
-Message-Id: <dc6e25da42ac4bd19ca31b5b32b43a10a0e1aa7e.1645457792.git.geert+renesas@glider.be>
+Subject: [PATCH v2 0/2] arm64: renesas: Add R-Car S4-8 Pin control support
+Date:   Mon, 21 Feb 2022 16:48:52 +0100
+Message-Id: <cover.1645458249.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1645457792.git.geert+renesas@glider.be>
-References: <cover.1645457792.git.geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
 List-ID: <linux-renesas-soc.vger.kernel.org>
 X-Mailing-List: linux-renesas-soc@vger.kernel.org
 
-Add pins, groups, and function for the Interrupt Controller for External
-Devices (INTC-EX) on the Renesas R-Car S4-8 (R8A779F0) SoC.
+	Hi all,
 
-Based on a larger patch in the BSP by LUU HOAI.
+This patch series adds pin control support for the Renesas R-Car S4-8
+Soc on the Spider board, and enables pin control for the serial console.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - No changes.
+Changes compared to v1[1]:
+  - Drop register banks 4-7, as they can only be accessed from the
+    Control Domain.
 
-Changes compared to the BSP:
-  - Add IRQ[45] pin groups.
----
- drivers/pinctrl/renesas/pfc-r8a779f0.c | 61 ++++++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
+Serial console and I2C[2] have been tested on the Renesas Spider
+development board.
 
-diff --git a/drivers/pinctrl/renesas/pfc-r8a779f0.c b/drivers/pinctrl/renesas/pfc-r8a779f0.c
-index b323b291fd97adb2..89da0cc179f51f2b 100644
---- a/drivers/pinctrl/renesas/pfc-r8a779f0.c
-+++ b/drivers/pinctrl/renesas/pfc-r8a779f0.c
-@@ -634,6 +634,51 @@ static const unsigned int i2c5_mux[] = {
- 	SDA5_MARK, SCL5_MARK,
- };
- 
-+
-+/* - INTC-EX ---------------------------------------------------------------- */
-+static const unsigned int intc_ex_irq0_pins[] = {
-+	/* IRQ0 */
-+	RCAR_GP_PIN(0, 17),
-+};
-+static const unsigned int intc_ex_irq0_mux[] = {
-+	IRQ0_MARK,
-+};
-+static const unsigned int intc_ex_irq1_pins[] = {
-+	/* IRQ1 */
-+	RCAR_GP_PIN(0, 18),
-+};
-+static const unsigned int intc_ex_irq1_mux[] = {
-+	IRQ1_MARK,
-+};
-+static const unsigned int intc_ex_irq2_pins[] = {
-+	/* IRQ2 */
-+	RCAR_GP_PIN(0, 19),
-+};
-+static const unsigned int intc_ex_irq2_mux[] = {
-+	IRQ2_MARK,
-+};
-+static const unsigned int intc_ex_irq3_pins[] = {
-+	/* IRQ3 */
-+	RCAR_GP_PIN(0, 20),
-+};
-+static const unsigned int intc_ex_irq3_mux[] = {
-+	IRQ3_MARK,
-+};
-+static const unsigned int intc_ex_irq4_pins[] = {
-+	/* IRQ4 */
-+	RCAR_GP_PIN(0, 11),
-+};
-+static const unsigned int intc_ex_irq4_mux[] = {
-+	IRQ4_MARK,
-+};
-+static const unsigned int intc_ex_irq5_pins[] = {
-+	/* IRQ5 */
-+	RCAR_GP_PIN(0, 15),
-+};
-+static const unsigned int intc_ex_irq5_mux[] = {
-+	IRQ5_MARK,
-+};
-+
- /* - SCIF0 ------------------------------------------------------------------ */
- static const unsigned int scif0_data_pins[] = {
- 	/* RX0, TX0 */
-@@ -754,6 +799,12 @@ static const struct sh_pfc_pin_group pinmux_groups[] = {
- 	SH_PFC_PIN_GROUP(i2c3),
- 	SH_PFC_PIN_GROUP(i2c4),
- 	SH_PFC_PIN_GROUP(i2c5),
-+	SH_PFC_PIN_GROUP(intc_ex_irq0),
-+	SH_PFC_PIN_GROUP(intc_ex_irq1),
-+	SH_PFC_PIN_GROUP(intc_ex_irq2),
-+	SH_PFC_PIN_GROUP(intc_ex_irq3),
-+	SH_PFC_PIN_GROUP(intc_ex_irq4),
-+	SH_PFC_PIN_GROUP(intc_ex_irq5),
- 	SH_PFC_PIN_GROUP(scif0_data),
- 	SH_PFC_PIN_GROUP(scif0_clk),
- 	SH_PFC_PIN_GROUP(scif0_ctrl),
-@@ -817,6 +868,15 @@ static const char * const i2c5_groups[] = {
- 	"i2c5",
- };
- 
-+static const char * const intc_ex_groups[] = {
-+	"intc_ex_irq0",
-+	"intc_ex_irq1",
-+	"intc_ex_irq2",
-+	"intc_ex_irq3",
-+	"intc_ex_irq4",
-+	"intc_ex_irq5",
-+};
-+
- static const char * const scif0_groups[] = {
- 	"scif0_data",
- 	"scif0_clk",
-@@ -856,6 +916,7 @@ static const struct sh_pfc_function pinmux_functions[] = {
- 	SH_PFC_FUNCTION(i2c3),
- 	SH_PFC_FUNCTION(i2c4),
- 	SH_PFC_FUNCTION(i2c5),
-+	SH_PFC_FUNCTION(intc_ex),
- 	SH_PFC_FUNCTION(scif0),
- 	SH_PFC_FUNCTION(scif1),
- 	SH_PFC_FUNCTION(scif3),
+Thanks for your comments!
+
+[1] "[PATCH/RFC 00/15] arm64: renesas: Add-R-Car S4-8 Pin control support"
+    https://lore.kernel.org/r/cover.1642599415.git.geert+renesas@glider.be
+[2] "[PATCH 0/3] arm64: dts: renesas: spider: Add I2C and EEPROM support"
+    https://lore.kernel.org/r/cover.1643898884.git.geert+renesas@glider.be
+
+Geert Uytterhoeven (2):
+  arm64: dts: renesas: r8a779f0: Add pinctrl device node
+  arm64: dts: renesas: spider: Complete SCIF3 description
+
+ .../boot/dts/renesas/r8a779f0-spider-cpu.dtsi | 23 +++++++++++++++++++
+ arch/arm64/boot/dts/renesas/r8a779f0.dtsi     |  6 +++++
+ 2 files changed, 29 insertions(+)
+
 -- 
 2.25.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
